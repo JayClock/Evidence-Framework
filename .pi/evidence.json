@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "maxRounds": 3,
+  "autoContinueArtifacts": true,
+  "newSessionPerPhase": true,
+  "gitCheckpointOnApproval": false,
+  "qualityCommands": ["npm test", "npm run lint", "npm run build"],
+  "commandTimeoutMs": 600000,
+  "models": {
+    "requirements": { "model": null, "thinkingLevel": "high" },
+    "domain": { "model": null, "thinkingLevel": "high" },
+    "architecture": { "model": null, "thinkingLevel": "high" },
+    "planning": { "model": null, "thinkingLevel": "medium" },
+    "coding": { "model": null, "thinkingLevel": "high" },
+    "review": { "model": null, "thinkingLevel": "high" }
+  },
+  "gates": {
+    "requirements": "review",
+    "domain": "review",
+    "architecture": "review",
+    "planning": "review",
+    "coding": "review",
+    "review": "review"
+  }
+}
