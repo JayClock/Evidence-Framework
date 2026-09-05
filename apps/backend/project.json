@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "backend",
+  "projectType": "application",
+  "sourceRoot": "apps/backend/src",
+  "targets": {
+    "serve": {
+      "executor": "@nx/gradle:gradle",
+      "continuous": true,
+      "options": {
+        "taskName": ":bootRun",
+        "continuous": true
+      }
+    }
+  },
+  "tags": ["type:app", "scope:backend"]
+}

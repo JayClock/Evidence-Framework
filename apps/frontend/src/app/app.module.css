@@ -1,0 +1,74 @@
+.app {
+  min-height: 100vh;
+  color: #172033;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid #dce3ee;
+  background: rgb(255 255 255 / 85%);
+  backdrop-filter: blur(12px);
+}
+
+.header a {
+  color: inherit;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.main {
+  display: grid;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem;
+  place-items: center;
+}
+
+.card {
+  width: min(100%, 42rem);
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid #dce3ee;
+  border-radius: 1.5rem;
+  background: white;
+  box-shadow: 0 1.5rem 4rem rgb(46 61 84 / 12%);
+}
+
+.card h1 {
+  margin: 1rem 0;
+  font-size: clamp(2.25rem, 7vw, 4rem);
+  line-height: 1.05;
+}
+
+.card p {
+  color: #58657a;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  color: #4338ca;
+  background: #eef2ff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.9rem;
+  background: #f7f9fc;
+}
+
+.status span {
+  color: #58657a;
+}
