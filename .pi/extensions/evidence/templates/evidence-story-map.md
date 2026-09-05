@@ -31,6 +31,18 @@ description: 生成 Evidence 用户故事地图
 - 依赖：无或故事 ID
 - MVP：是/否
 
+## 机器可读验收目录
+
+在本工件中输出且只输出一个 `kind=acceptance-catalog` 的 JSON 代码块。目录必须与上面的故事/场景表完全一致，覆盖全部故事与场景；不要把示例原样保留，也不要写执行结果。首次分配 ID 后保持稳定。
+
+```json
+{
+  "kind": "acceptance-catalog",
+  "version": 1,
+  "stories": [{ "id": "US-001", "scenarioIds": ["AC-001-01", "AC-001-02", "AC-001-03"] }]
+}
+```
+
 ## 故事地图切片
 
 说明 MVP、下一版本和远期版本的横向切片。

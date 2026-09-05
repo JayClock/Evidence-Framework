@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCodingChecks, runCommand, runReviewChecks } from './checks.ts';
+import { seedCompletedStory } from './testing-test-support.ts';
 import {
   DEFAULT_CONFIG,
   createInitialState,
@@ -59,7 +60,7 @@ describe('command checks', () => {
 
 ## 审查结论
 
-通过 US-001。${'证据完整。'.repeat(150)}
+通过 US-001，覆盖 AC-001-01、AC-001-02。${'证据完整。'.repeat(150)}
 
 ## 质量门
 
@@ -82,16 +83,7 @@ describe('command checks', () => {
 `;
     await Promise.all([
       writeTextAtomic(root, 'artifacts/06-review/final-review.md', review),
-      writeTextAtomic(
-        root,
-        'artifacts/04-planning/sprint-1-backlog.md',
-        '# Sprint 1 Backlog\n\n## 用户故事\n\nUS-001\n',
-      ),
-      writeTextAtomic(
-        root,
-        'artifacts/05-coding/US-001.md',
-        '# US-001 TDD 执行记录\n',
-      ),
+      seedCompletedStory(root, state),
     ]);
     const config = structuredClone(DEFAULT_CONFIG);
     config.qualityCommands = ['npm test'];
@@ -116,6 +108,8 @@ describe('command checks', () => {
       'artifacts/06-review/final-review.md',
       'Sprint 1 story traceability',
       'FM applicability',
+      'TASK-001-01/CHECK-001-01',
+      'TASK-001-02/CHECK-001-02',
       'npm test',
     ]);
   });
@@ -125,27 +119,41 @@ describe('command checks', () => {
     const pi = {
       exec: vi
         .fn()
+        .mockResolvedValueOnce({
+          code: 0,
+          stdout: '2 tests passed',
+          stderr: '',
+        })
+        .mockResolvedValueOnce({
+          code: 0,
+          stdout: '2 tests passed',
+          stderr: '',
+        })
         .mockResolvedValueOnce({ code: 0, stdout: 'ok', stderr: '' })
         .mockResolvedValueOnce({ code: 1, stdout: '', stderr: 'failed' }),
     };
     const state = createInitialState('test', 'goal');
     state.phase = 'coding';
-    const config = structuredClone(DEFAULT_CONFIG);
-    config.qualityCommands = ['first', 'second', 'third'];
-
+    await seedCompletedStory(root, state);
     const result = await runCodingChecks({
       pi,
       root,
       state,
-      config,
       storyId: 'US-001',
+      config: {
+        ...DEFAULT_CONFIG,
+        qualityCommands: ['first', 'second', 'third'],
+      },
       timeoutMs: 1000,
     });
     expect(result.report.passed).toBe(false);
     expect(result.report.items.map((item) => item.name)).toEqual([
+      '工序与验收证据',
+      'TASK-001-01/CHECK-001-01',
+      'TASK-001-02/CHECK-001-02',
       'first',
       'second',
     ]);
-    expect(pi.exec).toHaveBeenCalledTimes(2);
+    expect(pi.exec).toHaveBeenCalledTimes(4);
   });
 });

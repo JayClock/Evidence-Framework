@@ -14,8 +14,8 @@ When `.evidence/state.json` exists and the Evidence extension reports an active 
 2. Stay within the phase, artifact, user story, and round named in the active prompt.
 3. Read existing artifacts before producing dependent artifacts. Files, not conversation memory, are the phase hand-off contract.
 4. Document phases must finish through `evidence_submit_artifact`; do not write the expected artifact with `write`, `edit`, or shell commands.
-5. Coding must modify real source/test files and follow Red → Green → Refactor. Record Red through `evidence_tdd_red` before implementation and Green through `evidence_tdd_green`; a Red failure must represent missing behavior, not a broken command, syntax, or environment.
-6. Coding must finish through `evidence_complete_story`, listing every changed source/test file and a truthful Refactor summary. Never stage or commit changes yourself; optional checkpoints belong to the extension.
+5. Coding must modify real source/test files and follow the approved test plan. Record Red with its task/check IDs through `evidence_tdd_red` before implementation, Green through `evidence_tdd_green`, then finish each Refactor with `evidence_complete_tdd_cycle`. Use `evidence_verify_task` for planned reuse/acceptance tasks. A Red failure must represent missing behavior, not a broken command, syntax, or environment; never invent Red for existing behavior.
+6. After all applicable planned tasks and cycles are evidenced, Coding must finish through `evidence_complete_story`, listing every changed source/test file and a truthful Refactor summary. Never stage or commit changes yourself; optional checkpoints belong to the extension.
 7. Review phases are read-only. Report issues; do not silently fix them.
 8. Do not advance phases or approve gates yourself. Human decisions are made through `/evidence-review`.
 9. Keep generated engineering artifacts in Chinese unless the original requirements or technical contract requires English.

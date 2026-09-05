@@ -2,6 +2,19 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { withFileMutationQueue } from '@earendil-works/pi-coding-agent';
+import { Type } from 'typebox';
+import { Value } from 'typebox/value';
+import {
+  CommandEvidenceSchema,
+  CycleBindingSchema,
+  StoryRecordReferenceSchema,
+} from './testing-schema.ts';
+import {
+  decodeCompletedCycles,
+  decodeVerifications,
+  isPassingEvidence,
+  isRedEvidence,
+} from './testing-integrity.ts';
 import {
   ACTIVE_PHASES,
   type ActivePhase,
@@ -207,7 +220,7 @@ function decodeNullableString(value: unknown, name: string): string | null {
 }
 
 function decodeTddCycle(value: unknown): TddCycle {
-  if (!isRecord(value)) return { stage: 'red', red: null, green: null };
+  if (!isRecord(value)) return invalidState('missing TDD cycle');
   const stage = value.stage;
   if (!isOneOf(stage, TDD_STAGES)) return invalidState('unknown TDD stage');
   const red = value.red;
@@ -222,8 +235,32 @@ function decodeTddCycle(value: unknown): TddCycle {
   if (stage === 'refactor' && !isCommandEvidence(green)) {
     return invalidState('Refactor stage requires Green evidence');
   }
+  const binding = value.binding;
+  if (stage === 'red') {
+    if (red !== null || green !== null || binding !== null)
+      return invalidState('Red stage must be empty');
+  } else {
+    if (
+      !Value.Check(CycleBindingSchema, binding) ||
+      Object.keys(binding.testFileHashes).length === 0
+    )
+      return invalidState('invalid TDD binding');
+    if (!Value.Check(CommandEvidenceSchema, red) || !isRedEvidence(red))
+      return invalidState('invalid Red result');
+    if (stage === 'green' && green !== null)
+      return invalidState('unexpected Green evidence');
+    if (
+      stage === 'refactor' &&
+      (!Value.Check(CommandEvidenceSchema, green) ||
+        !isPassingEvidence(green) ||
+        green.command !== red.command ||
+        Date.parse(red.recordedAt) > Date.parse(green.recordedAt))
+    )
+      return invalidState('invalid Green result');
+  }
   return {
     stage,
+    binding: Value.Check(CycleBindingSchema, binding) ? binding : null,
     red: isCommandEvidence(red) ? red : null,
     green: isCommandEvidence(green) ? green : null,
   };
@@ -427,8 +464,10 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
   const raw = await readJson<unknown>(root, STATE_PATH);
   if (raw === null) return null;
   if (!isRecord(raw)) return invalidState('expected a JSON object');
-  if (raw.version !== 2)
+  if (raw.version !== 3)
     return invalidState(`unsupported version ${String(raw.version)}`);
+  if (typeof raw.runId !== 'string' || !/^[a-f0-9-]{36}$/.test(raw.runId))
+    return invalidState('invalid runId');
   if (!isOneOf(raw.phase, WORKFLOW_PHASES))
     return invalidState('unknown phase');
   if (!isOneOf(raw.status, WORKFLOW_STATUSES))
@@ -466,8 +505,34 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     return invalidState('complete phase and status must agree');
   }
 
+  const cycles = decodeCompletedCycles(coding.cycles);
+  const verifications = decodeVerifications(coding.verifications);
+  if (
+    !isNonNegativeInteger(coding.revisionStart) ||
+    coding.revisionStart > cycles.length
+  )
+    return invalidState('invalid revision cycle boundary');
+  if (
+    coding.planDigest !== null &&
+    (typeof coding.planDigest !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(coding.planDigest))
+  )
+    return invalidState('invalid test plan digest');
+  if (
+    !Value.Check(
+      Type.Record(
+        Type.String({ pattern: '^US-\\d{3}$' }),
+        StoryRecordReferenceSchema,
+        { additionalProperties: false },
+      ),
+      coding.records,
+    )
+  )
+    return invalidState('invalid story record references');
+
   return {
-    version: 2,
+    version: 3,
+    runId: raw.runId,
     projectName: raw.projectName,
     goal: raw.goal,
     phase: raw.phase,
@@ -489,6 +554,11 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
         typeof value === 'string' ? [value] : [],
       ),
       baseline: decodeCodingBaseline(coding.baseline),
+      planDigest: coding.planDigest,
+      cycles,
+      verifications,
+      revisionStart: coding.revisionStart,
+      records: coding.records,
       tdd: decodeTddCycle(coding.tdd),
     },
     history: decodeHistory(raw.history),
@@ -528,7 +598,8 @@ export function createInitialState(
 ): EvidenceState {
   const now = new Date().toISOString();
   const state: EvidenceState = {
-    version: 2,
+    version: 3,
+    runId: randomUUID(),
     projectName,
     goal,
     phase: 'requirements',
@@ -552,8 +623,14 @@ export function createInitialState(
       currentStoryIndex: 0,
       changedFiles: [],
       baseline: null,
+      planDigest: null,
+      cycles: [],
+      verifications: [],
+      revisionStart: 0,
+      records: {},
       tdd: {
         stage: 'red',
+        binding: null,
         red: null,
         green: null,
       },

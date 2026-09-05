@@ -27,6 +27,49 @@ description: 生成 Sprint 1 Backlog 工件
 
 逐场景关联 Q2 业务验证与支撑它的 Q1 测试，允许多对多关联并明确集成验证的真实路径。计划中的命令、用例和结果不是已经执行的证据；新脚本标为待建设，不伪造执行结果。
 
+## 机器可读测试计划
+
+输出且只输出一个 `kind=test-plan` 的 JSON 代码块。它是 Coding 的执行契约，与以上表格一致，故事顺序就是交付顺序。引用 story-map.md 的 `acceptance-catalog` 和 test-procedures.md 的工序目录，不自行新增上游 ID。以下仅为结构示例，命令和路径必须替换为仓库真实、可准备执行的入口；不要保留示例文件名：
+
+```json
+{
+  "kind": "test-plan",
+  "version": 1,
+  "stories": [
+    {
+      "id": "US-001",
+      "scenarioIds": ["AC-001-01", "AC-001-02", "AC-001-03"],
+      "tasks": [
+        {
+          "id": "TASK-001-01",
+          "procedureId": "TP-DOMAIN",
+          "scenarioIds": ["AC-001-01", "AC-001-02", "AC-001-03"],
+          "mode": "tdd",
+          "dependsOn": [],
+          "checks": [{ "id": "CHECK-001-01", "command": "npm test -- domain.spec.ts", "testFiles": ["src/domain.spec.ts"] }]
+        },
+        {
+          "id": "TASK-001-02",
+          "procedureId": "TP-ACCEPTANCE",
+          "scenarioIds": ["AC-001-01", "AC-001-02", "AC-001-03"],
+          "mode": "verify",
+          "reason": "复用实现并验证真实装配路径，不人为破坏已有行为制造 Red。",
+          "dependsOn": ["TASK-001-01"],
+          "checks": [{ "id": "CHECK-001-02", "command": "npm test -- acceptance.spec.ts", "testFiles": ["src/acceptance.spec.ts"] }]
+        }
+      ]
+    }
+  ]
+}
+```
+
+- 故事场景集合必须与上游该故事完全一致。TASK、CHECK ID 在计划中全局唯一，依赖限于同故事且无环；共享前置任务由多个任务引用，不能复制 ID。
+- 每个场景至少关联一个可执行 Q2 任务和 Q1 任务（Q1 可有理由地不适用）；每个故事至少一个真实 TDD 任务，不承接仅文档或纯验证故事到 Coding。
+- `tdd` 的每个 CHECK 至少完成一个 Red/Green/Refactor 循环，允许继续追加行为循环；`verify` 必须有至少 10 字符的复用/验收理由及非空 checks；`not-applicable` 必须给出理由且 checks 为空。不能在 Coding 临时改为不适用来绕过失败。
+- 所有适用任务均需完成。一个 CHECK 可以覆盖一组相关场景，但必须说明真实断言与数据；若需分别强制执行，应拆为独立 CHECK。机器不推断测试内容的业务覆盖。
+- 命令从项目根目录运行，使用 npm/Nx/Vitest/Jest/Gradle/Maven 等受支持入口，禁止命令连接、重定向、跳过测试、快照更新或 dry-run。`testFiles` 为明确的项目相对测试文件，不是 glob、目录或生成报告。规划时允许文件尚未创建，记录证据和重新检查时必须存在且非空。
+- Q3/Q4 留在 Sprint 计划、DoD 与人工审查中，不纳入当前仅支持 Q1/Q2 的自动任务 JSON。基础设施不足必须在 Gate 前解决或回退修订，不能将不可执行任务伪装成完成。
+
 ## 验收标准
 
 逐个故事保留原始验收场景 ID（如 AC-001-01）、Given/When/Then 和示例数据，覆盖成功、失败和边界场景。不重编号或改变验收语义；上游缺少 ID 或规则有冲突时列为阻塞并要求上游修订。履约模型适用时另外关联对应 FM Scenario ID，并将正常与异常场景转化为可执行测试。
@@ -35,4 +78,4 @@ description: 生成 Sprint 1 Backlog 工件
 
 说明场景内依赖顺序、可以并行的任务和第一个应实现的故事。提前落实适用 Q3/Q4 评价的负责人角色、时机、环境、通过标准及证据；可以引用 Sprint 计划中的共享评价安排，不能等到最终审查才首次规划。
 
-当前表格是开发与人工审查依据。扩展仍只记录每故事每修订轮的一组故事级 TDD 检查点，尚不提供逐工序状态或跨工件 ID 语义校验；不要把计划表或结构校验通过宣称为逐工序执行已完成。
+扩展在提交和 Planning Gate 检查时校验 JSON 结构、ID 引用、场景覆盖声明和依赖。Gate 绑定上游契约摘要；Coding 只执行已批准的任务/检查项，保存追加式循环和实际验证结果。计划表通过不等于行为覆盖已通过；必须审核表格与 JSON 一致性、命令是否真的选择声明的测试及 Q3/Q4 证据。契约变化时回退对应上游阶段并重新审核，不复用旧运行证据。

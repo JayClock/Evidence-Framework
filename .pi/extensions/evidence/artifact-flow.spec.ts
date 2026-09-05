@@ -207,7 +207,7 @@ describe('artifact-driven workflow without interviews', () => {
     );
     await command('evidence-init', '新工作流');
     expect(await loadState(root)).toMatchObject({
-      version: 2,
+      version: 3,
       phase: 'requirements',
       status: 'running',
     });

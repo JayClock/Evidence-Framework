@@ -100,9 +100,9 @@ pi
 
 初始化后直接从原始需求生成用户画像、问题陈述/MVP 和用户故事地图，不设置前置访谈或单独的基线确认。Domain 直接判断 FM 适用性并按需建模。假设和待决策项记录在工件中，通过阶段 Gate 集中审核；就绪任务用 `/evidence-run` 继续，审核用 `/evidence-review`，修订用 `/evidence-revise`。
 
-当前工作流状态版本为 2，不兼容旧状态。更新扩展后运行 `/reload`；旧运行需先 `/evidence-reset` 再 `/evidence-init`，不提供迁移。配置文件仍为版本 1。
+当前工作流状态版本为 3，不兼容版本 1/2 的旧状态。更新扩展后运行 `/reload`；旧运行需先 `/evidence-reset` 再 `/evidence-init`，不提供迁移。配置文件仍为版本 1。
 
-扩展会按阶段限制模型工具、校验 Markdown 工件、运行真实测试/lint/build，并将状态保存到 `.evidence/state.json`。完整说明见 [docs/evidence.md](docs/evidence.md)。
+扩展会按阶段限制模型工具、校验 Markdown 与机器测试契约、记录逐任务多循环 TDD 和验收结果、重跑全部计划检查及测试/lint/build，并将状态保存到 `.evidence/state.json`。完整说明见 [docs/evidence.md](docs/evidence.md)。
 
 扩展自身检查：
 

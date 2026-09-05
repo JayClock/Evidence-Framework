@@ -10,6 +10,7 @@ import {
   writeTextAtomic,
 } from './storage.ts';
 import { validateDocumentPhase } from './validation.ts';
+import { seedCompletedStory } from './testing-test-support.ts';
 
 vi.mock('./modeling.ts', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./modeling.ts')>()),
@@ -60,13 +61,16 @@ async function checkHarness(phase: 'domain' | 'review') {
     items: [],
   });
   if (phase === 'review') {
-    for (const path of [
-      'artifacts/04-planning/sprint-1-backlog.md',
+    await writeTextAtomic(
+      root,
       'artifacts/06-review/final-review.md',
-      'artifacts/05-coding/US-001.md',
-    ]) {
-      await writeTextAtomic(root, path, '# US-001\n');
-    }
+      '# US-001 AC-001-01 AC-001-02\n',
+    );
+    await writeTextAtomic(
+      root,
+      'artifacts/02-domain/fm-model/generated/model.json',
+      '{}',
+    );
   }
   const pi = {
     exec: vi.fn(async () => ({
@@ -80,14 +84,16 @@ async function checkHarness(phase: 'domain' | 'review') {
     ...structuredClone(DEFAULT_CONFIG),
     qualityCommands: ['npm test'],
   };
-  const run = () =>
-    (phase === 'domain' ? runDomainChecks : runReviewChecks)({
+  const run = async () => {
+    if (phase === 'review') await seedCompletedStory(root, state);
+    return (phase === 'domain' ? runDomainChecks : runReviewChecks)({
       root,
       state,
       pi,
       config,
       timeoutMs: 1000,
     });
+  };
   return { state, pi, run };
 }
 
@@ -103,11 +109,18 @@ describe.each(['domain', 'review'] as const)('%s FM gate checks', (phase) => {
     expect(pi.exec).not.toHaveBeenCalled();
   });
 
-  it('refreshes the exact model inventory after revalidation', async () => {
+  it('refreshes model inventory but blocks Review evidence reuse if that inventory changes', async () => {
     const { state, run } = await checkHarness(phase);
     state.modeling.applicable = true;
     const result = await run();
-    expect(result.report.passed).toBe(true);
+    expect(result.report.passed).toBe(phase === 'domain');
+    if (phase === 'review')
+      expect(result.report.items).toContainEqual(
+        expect.objectContaining({
+          status: 'fail',
+          details: expect.stringContaining('测试契约已变化'),
+        }),
+      );
     expect(state.modeling.files).toEqual([
       'artifacts/02-domain/fm-model/generated/model.json',
     ]);

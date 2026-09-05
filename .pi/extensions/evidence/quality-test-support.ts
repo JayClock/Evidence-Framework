@@ -16,8 +16,20 @@ import {
   writeTextAtomic,
 } from './storage.ts';
 import type { ArtifactSpec } from './types.ts';
+import {
+  acceptanceCatalog,
+  procedureCatalog,
+  testingPlan,
+  manifest,
+} from './testing-fixtures.ts';
 
 export function validDocument(spec: ArtifactSpec): string {
+  const catalogs: Record<string, unknown> = {
+    'story-map': acceptanceCatalog,
+    'test-procedures': procedureCatalog,
+    'sprint-1-backlog': testingPlan,
+  };
+  const catalog = catalogs[spec.key];
   return [
     '# 测试工件',
     ...spec.requiredSections.map((heading) => `## ${heading}`),
@@ -29,6 +41,7 @@ export function validDocument(spec: ArtifactSpec): string {
     ),
     '```mermaid\ngraph LR\nA --> B\n```',
     '这是已经有依据的测试业务描述。'.repeat(150),
+    ...(catalog ? [manifest(catalog)] : []),
   ].join('\n');
 }
 

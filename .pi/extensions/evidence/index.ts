@@ -9,7 +9,6 @@ import {
 import { Type } from 'typebox';
 import {
   runCodingChecks,
-  runCommand,
   runDocumentChecks,
   runDomainChecks,
   runReviewChecks,
@@ -21,6 +20,15 @@ import {
   refreshGate,
 } from './gates.ts';
 import { captureCodingBaseline, verifyCodingChanges } from './git.ts';
+import { registerTddTools, withCodingLock } from './tdd-tools.ts';
+import { assertTestingInputs, validateTestingArtifact } from './test-plan.ts';
+import {
+  requireCompleteStory,
+  loadStoryRecord,
+  saveStoryRecord,
+} from './testing-evidence.ts';
+import { isTestFile, isProductionSourceFile } from './test-files.ts';
+import type { StoryRecord } from './testing-schema.ts';
 import {
   FM_MODEL_ROOT,
   FM_STATUS_PATH,
@@ -56,7 +64,6 @@ import { normalizeMarkdown, validateArtifactContent } from './validation.ts';
 import {
   advanceAfterApproval,
   currentCodingStory,
-  extractStoryIds,
   moveBackOnePhase,
   requestRevision,
 } from './workflow.ts';
@@ -71,6 +78,8 @@ const CODING_TOOLS = [
   'write',
   'evidence_tdd_red',
   'evidence_tdd_green',
+  'evidence_complete_tdd_cycle',
+  'evidence_verify_task',
   'evidence_complete_story',
 ];
 const NORMAL_TOOLS = ['read', 'bash', 'edit', 'write'];
@@ -84,37 +93,6 @@ const PROTECTED_PATHS = [
   'AGENTS.md',
   'docs/evidence.md',
 ];
-
-interface StoryEvidence {
-  command: string;
-  observation: string;
-  exitCode: number;
-  killed: boolean;
-  output: string;
-  recordedAt: string;
-}
-
-interface StoryCompletionDetails {
-  storyId: string;
-  summary: string;
-  changedFiles: string[];
-  red: StoryEvidence;
-  green: StoryEvidence;
-  refactor: StoryEvidence;
-}
-
-function isTestFile(path: string): boolean {
-  return /(?:^|\/)(?:test|tests|__tests__)(?:\/|$)|(?:^|\/)[^/]*\.(?:spec|test)\.[^/]+$/i.test(
-    path,
-  );
-}
-
-function isProductionSourceFile(path: string): boolean {
-  return (
-    !isTestFile(path) &&
-    /\.(?:css|html|java|js|jsx|kt|kts|scss|sql|ts|tsx)$/i.test(path)
-  );
-}
 
 function isAllowedReadOnlyShell(
   command: string,
@@ -148,30 +126,6 @@ function isAllowedReadOnlyShell(
   ].some((pattern) => pattern.test(normalized));
 }
 
-function validateFocusedTestCommand(command: string): string {
-  const normalized = command.trim();
-  if (!normalized || /[\n\r;|&><`]|\$\(/.test(normalized)) {
-    throw new Error(
-      '聚焦测试命令必须是单条命令，不能包含重定向、管道、命令替换或命令连接符。',
-    );
-  }
-  const testRunner =
-    /^(?:npm(?:\s+run)?\s+test\b|npx\s+(?:nx\s+test|vitest|jest)\b|pnpm(?:\s+run)?\s+test\b|yarn\s+test\b|nx\s+test\b|(?:\.\/)?[\w./-]*gradlew(?:\.bat)?\s+(?:test|check)\b|(?:\.\/)?[\w./-]*mvnw(?:\.cmd)?\s+test\b)/i;
-  if (!testRunner.test(normalized)) {
-    throw new Error(
-      '聚焦命令必须直接调用受支持的测试入口（npm/nx/vitest/jest/Gradle/Maven）。',
-    );
-  }
-  return normalized;
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
-}
-
 function isProtectedPath(path: string): boolean {
   return PROTECTED_PATHS.some((protectedPath) => {
     const prefix = protectedPath.replace(/\/$/, '');
@@ -184,7 +138,7 @@ function isRuntimeGeneratedPath(path: string): boolean {
     path === STATE_PATH ||
     path.startsWith('reports/') ||
     path.startsWith('artifacts/gates/') ||
-    /^artifacts\/05-coding\/US-\d{3}\.md$/.test(path)
+    /^artifacts\/05-coding\/US-\d{3}\.(?:md|json)$/.test(path)
   );
 }
 
@@ -243,7 +197,7 @@ function progressText(state: EvidenceState): string {
     const total = state.coding.storyIds.length;
     const current =
       total === 0 ? 0 : Math.min(state.coding.currentStoryIndex + 1, total);
-    return `${current}/${total || '?'} stories`;
+    return `${current}/${total || '?'} stories · ${state.coding.cycles.length} cycles · ${state.coding.tdd.binding?.taskId ?? state.coding.tdd.stage}`;
   }
   const total = getPhaseDefinition(state.phase).artifacts.length;
   const current =
@@ -391,20 +345,12 @@ async function ensureCodingStories(
   root: string,
   state: EvidenceState,
 ): Promise<void> {
-  if (state.phase !== 'coding' || state.coding.storyIds.length > 0) return;
-  const backlog = await readText(
-    root,
-    'artifacts/04-planning/sprint-1-backlog.md',
-  );
-  const storyIds = extractStoryIds(backlog);
-  if (storyIds.length === 0) {
-    throw new Error(
-      'Sprint 1 Backlog 中没有找到 US-xxx 用户故事 ID。请回到 planning 阶段修订。 ',
-    );
+  if (state.phase !== 'coding') return;
+  if (state.coding.planDigest !== null) {
+    await assertTestingInputs(root, state);
+    return;
   }
-  state.coding.storyIds = storyIds;
-  state.coding.currentStoryIndex = 0;
-  appendHistory(state, 'coding_stories_loaded', storyIds.join(', '));
+  throw new Error('测试计划尚未通过 Planning Gate，请回退计划阶段重新审核。');
 }
 
 async function persistPassedGate(
@@ -514,49 +460,6 @@ ${options.files.length > 0 ? options.files.map((path) => `- \`${path}\``).join('
 `;
 }
 
-function evidenceMarkdown(label: string, evidence: StoryEvidence): string {
-  const observationLabel = label === 'Red' ? '预期失败' : '观察';
-  return `## ${label}
-
-- 命令：\`${evidence.command}\`
-- 退出码：${evidence.exitCode}${evidence.killed ? '（被终止）' : ''}
-- 时间：${evidence.recordedAt}
-- ${observationLabel}：${evidence.observation}
-
-<details>
-<summary>实际输出</summary>
-
-<pre>${escapeHtml(evidence.output || '(no output)')}</pre>
-
-</details>`;
-}
-
-function storySummaryMarkdown(
-  details: StoryCompletionDetails,
-  reportPath: string,
-): string {
-  return `# ${details.storyId} TDD 执行记录
-
-## 实现摘要
-
-${details.summary.trim()}
-
-## 变更文件
-
-${details.changedFiles.map((path) => `- \`${path}\``).join('\n')}
-
-${evidenceMarkdown('Red', details.red)}
-
-${evidenceMarkdown('Green', details.green)}
-
-${evidenceMarkdown('Refactor', details.refactor)}
-
-## 最终质量报告
-
-- [${basename(reportPath)}](../../${reportPath})
-`;
-}
-
 async function startCurrentWork(
   pi: ExtensionAPI,
   ctx: ExtensionCommandContext,
@@ -635,6 +538,16 @@ async function runCurrentCheck(
       );
     }
     const result = await runCodingChecks({
+      verifyChanges: async () => {
+        if (!state.coding.baseline) throw new Error('Coding 基线缺失');
+        await verifyCodingChanges(
+          pi,
+          ctx.cwd,
+          state.coding.baseline,
+          state.coding.changedFiles,
+          isRuntimeGeneratedPath,
+        );
+      },
       pi,
       root: ctx.cwd,
       state,
@@ -657,6 +570,13 @@ async function runCurrentCheck(
       );
       return;
     }
+    const record = await loadStoryRecord(ctx.cwd, state, storyId);
+    const story = await requireCompleteStory(ctx.cwd, state, storyId);
+    await saveStoryRecord(ctx.cwd, state, story, {
+      ...record,
+      reportPath: result.markdownPath,
+      passed: true,
+    });
     if (state.pendingGate) {
       state.pendingGate = await refreshGate(
         ctx.cwd,
@@ -1014,6 +934,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         );
       }
 
+      await validateTestingArtifact(ctx.cwd, artifact.key, content);
       await writeTextAtomic(ctx.cwd, artifact.output, content);
       state.currentArtifactIndex += 1;
       state.lastError = null;
@@ -1296,192 +1217,13 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     },
   });
 
-  pi.registerTool({
-    name: 'evidence_tdd_red',
-    label: 'Record TDD Red',
-    description:
-      'Run the focused test selected by the coding agent and record a real failing Red checkpoint for the current story.',
-    promptSnippet: "Run and record the current story's focused failing test",
-    promptGuidelines: [
-      'Call evidence_tdd_red after adding the focused test and before implementing the behavior. The failure must represent missing behavior, not a broken command or syntax error.',
-    ],
-    parameters: Type.Object({
-      storyId: Type.String({
-        description: 'Current story ID, for example US-001',
-      }),
-      command: Type.String({
-        description: 'Focused test command to execute in the project root',
-        minLength: 3,
-      }),
-      expectedFailure: Type.String({
-        description:
-          'Expected assertion or behavior failure that would prove the story behavior is missing',
-        minLength: 20,
-      }),
-    }),
-    async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      const state = await loadState(ctx.cwd);
-      if (!state || state.phase !== 'coding' || state.status !== 'running') {
-        throw new Error(
-          'A running coding story is required for a Red checkpoint.',
-        );
-      }
-      const storyId = currentCodingStory(state);
-      if (!storyId || params.storyId !== storyId) {
-        throw new Error(
-          `Expected story ${storyId ?? 'none'}, received ${params.storyId}.`,
-        );
-      }
-      if (state.coding.tdd.stage !== 'red') {
-        throw new Error(
-          `TDD checkpoint is ${state.coding.tdd.stage}; Red has already been recorded.`,
-        );
-      }
-
-      const config = await loadConfig(ctx.cwd);
-      const command = validateFocusedTestCommand(params.command);
-      onUpdate?.({
-        content: [{ type: 'text', text: `执行 Red：${command}` }],
-        details: { storyId },
-      });
-      const result = await runCommand({
-        pi,
-        root: ctx.cwd,
-        command,
-        timeoutMs: config.commandTimeoutMs,
-        signal,
-      });
-      if (result.exitCode === 0) {
-        throw new Error(
-          'Red 检查失败：聚焦测试已经通过。请先添加能证明缺失行为的测试。',
-        );
-      }
-      if (
-        result.killed ||
-        result.exitCode === 126 ||
-        result.exitCode === 127 ||
-        !result.output.trim()
-      ) {
-        throw new Error(
-          `Red 检查不是有效测试失败（退出码 ${result.exitCode}）。请修正测试命令。`,
-        );
-      }
-
-      state.coding.tdd.red = {
-        ...result,
-        observation: params.expectedFailure.trim(),
-        recordedAt: new Date().toISOString(),
-      };
-      state.coding.tdd.green = null;
-      state.coding.tdd.stage = 'green';
-      appendHistory(state, 'tdd_red_recorded', `${storyId}: ${result.command}`);
-      await saveState(ctx.cwd, state);
-      updateUi(ctx, state);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `已记录真实 Red（退出码 ${result.exitCode}）。请核对实际输出是否符合预期失败，再编写最小实现并调用 evidence_tdd_green。\n\n${result.output}`,
-          },
-        ],
-        details: {
-          storyId,
-          command: result.command,
-          exitCode: result.exitCode,
-        },
-      };
-    },
-  });
-
-  pi.registerTool({
-    name: 'evidence_tdd_green',
-    label: 'Record TDD Green',
-    description:
-      'Re-run the exact focused Red command and record a passing Green checkpoint for the current story.',
-    promptSnippet:
-      "Re-run and record the current story's focused test after the minimal implementation",
-    promptGuidelines: [
-      'Call evidence_tdd_green only after the smallest implementation. It executes exactly the command captured by evidence_tdd_red.',
-    ],
-    parameters: Type.Object({
-      storyId: Type.String({
-        description: 'Current story ID, for example US-001',
-      }),
-      observation: Type.String({
-        description: 'What minimal behavior now passes',
-        minLength: 10,
-      }),
-    }),
-    async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      const state = await loadState(ctx.cwd);
-      if (!state || state.phase !== 'coding' || state.status !== 'running') {
-        throw new Error(
-          'A running coding story is required for a Green checkpoint.',
-        );
-      }
-      const storyId = currentCodingStory(state);
-      if (!storyId || params.storyId !== storyId) {
-        throw new Error(
-          `Expected story ${storyId ?? 'none'}, received ${params.storyId}.`,
-        );
-      }
-      const red = state.coding.tdd.red;
-      if (state.coding.tdd.stage !== 'green' || !red) {
-        throw new Error('A valid Red checkpoint is required before Green.');
-      }
-
-      const config = await loadConfig(ctx.cwd);
-      onUpdate?.({
-        content: [{ type: 'text', text: `执行 Green：${red.command}` }],
-        details: { storyId },
-      });
-      const result = await runCommand({
-        pi,
-        root: ctx.cwd,
-        command: red.command,
-        timeoutMs: config.commandTimeoutMs,
-        signal,
-      });
-      if (result.exitCode !== 0 || result.killed) {
-        throw new Error(
-          `Green 尚未通过（退出码 ${result.exitCode}）：\n${result.output}`,
-        );
-      }
-
-      state.coding.tdd.green = {
-        ...result,
-        observation: params.observation.trim(),
-        recordedAt: new Date().toISOString(),
-      };
-      state.coding.tdd.stage = 'refactor';
-      appendHistory(
-        state,
-        'tdd_green_recorded',
-        `${storyId}: ${result.command}`,
-      );
-      await saveState(ctx.cwd, state);
-      updateUi(ctx, state);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: '已记录真实 Green。现在进行 Refactor，随后调用 evidence_complete_story。',
-          },
-        ],
-        details: {
-          storyId,
-          command: result.command,
-          exitCode: result.exitCode,
-        },
-      };
-    },
-  });
+  registerTddTools(pi, updateUi);
 
   pi.registerTool({
     name: 'evidence_complete_story',
     label: 'Complete TDD Story',
     description:
-      'Complete Refactor for the current Evidence story after extension-recorded Red and Green checkpoints. The extension re-runs the focused test and all configured quality commands before creating a gate.',
+      'Complete the story only after all planned tasks and TDD cycles are evidenced. Re-run every planned check and all quality commands before creating a gate.',
     promptSnippet: 'Verify and complete the current Evidence TDD story',
     promptGuidelines: [
       'Use evidence_complete_story as the final action after changing real code and completing Red, Green, and Refactor for the current story.',
@@ -1493,6 +1235,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       summary: Type.String({
         description: 'Concise implementation and design summary',
         minLength: 40,
+        maxLength: 2000,
       }),
       changedFiles: Type.Array(Type.String(), {
         description: 'All project-relative source and test files changed',
@@ -1501,162 +1244,151 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       refactorSummary: Type.String({
         description: 'Refactoring performed while preserving behavior',
         minLength: 20,
+        maxLength: 2000,
       }),
     }),
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      const state = await loadState(ctx.cwd);
-      if (!state)
-        throw new Error('Evidence is not initialized. Run /evidence-init.');
-      if (state.phase !== 'coding' || state.status !== 'running') {
-        throw new Error(
-          `Expected running coding phase, got ${state.phase}/${state.status}.`,
-        );
-      }
-      const storyId = currentCodingStory(state);
-      if (!storyId || params.storyId !== storyId) {
-        throw new Error(
-          `Expected story ${storyId ?? 'none'}, received ${params.storyId}.`,
-        );
-      }
-      const { red, green, stage } = state.coding.tdd;
-      if (stage !== 'refactor' || !red || !green) {
-        throw new Error(
-          'evidence_complete_story requires extension-recorded Red and Green checkpoints.',
-        );
-      }
-
-      const changedFiles = [
-        ...new Set(
-          params.changedFiles.map((path) => relativeProjectPath(ctx.cwd, path)),
-        ),
-      ];
-      for (const path of changedFiles) {
-        const absolute = projectPath(ctx.cwd, path);
-        if (!(await pathExists(absolute)))
-          throw new Error(`Changed file does not exist: ${path}`);
-        if (isProtectedPath(path)) {
+      return withCodingLock(ctx.cwd, async () => {
+        const state = await loadState(ctx.cwd);
+        if (!state)
+          throw new Error('Evidence is not initialized. Run /evidence-init.');
+        if (
+          state.phase !== 'coding' ||
+          state.status !== 'running' ||
+          state.paused
+        ) {
           throw new Error(
-            `Workflow control file cannot be submitted as a code change: ${path}`,
+            `Expected running coding phase, got ${state.phase}/${state.status}.`,
           );
         }
-      }
-      if (!changedFiles.some(isTestFile)) {
-        throw new Error(
-          'TDD completion must include at least one changed test file.',
-        );
-      }
-      if (!changedFiles.some(isProductionSourceFile)) {
-        throw new Error(
-          'Story completion must include at least one changed production source file.',
-        );
-      }
-      if (!state.coding.baseline)
-        throw new Error('Coding 基线缺失，请重新运行 /evidence-run。');
-      await verifyCodingChanges(
-        pi,
-        ctx.cwd,
-        state.coding.baseline,
-        changedFiles,
-        isRuntimeGeneratedPath,
-      );
+        const storyId = currentCodingStory(state);
+        if (!storyId || params.storyId !== storyId) {
+          throw new Error(
+            `Expected story ${storyId ?? 'none'}, received ${params.storyId}.`,
+          );
+        }
+        const story = await requireCompleteStory(ctx.cwd, state, storyId);
 
-      const config = await loadConfig(ctx.cwd);
-      onUpdate?.({
-        content: [{ type: 'text', text: `验证 Refactor：${red.command}` }],
-        details: { storyId },
-      });
-      const refactorResult = await runCommand({
-        pi,
-        root: ctx.cwd,
-        command: red.command,
-        timeoutMs: config.commandTimeoutMs,
-        signal,
-      });
-      if (refactorResult.exitCode !== 0 || refactorResult.killed) {
-        throw new Error(
-          `Refactor 后聚焦测试失败（退出码 ${refactorResult.exitCode}）：\n${refactorResult.output}`,
-        );
-      }
-      appendHistory(
-        state,
-        'tdd_refactor_verified',
-        `${storyId}: ${refactorResult.command}`,
-      );
-
-      const checked = await runCodingChecks({
-        pi,
-        root: ctx.cwd,
-        state,
-        config,
-        storyId,
-        signal,
-        timeoutMs: config.commandTimeoutMs,
-        onProgress: (message) => {
-          onUpdate?.({
-            content: [{ type: 'text', text: message }],
-            details: { storyId },
-          });
-        },
-      });
-      await verifyCodingChanges(
-        pi,
-        ctx.cwd,
-        state.coding.baseline,
-        changedFiles,
-        isRuntimeGeneratedPath,
-      );
-      state.lastReport = checked.markdownPath;
-      state.coding.changedFiles = changedFiles;
-      const details: StoryCompletionDetails = {
-        storyId,
-        summary: params.summary,
-        changedFiles,
-        red,
-        green,
-        refactor: {
-          ...refactorResult,
-          observation: params.refactorSummary.trim(),
-          recordedAt: new Date().toISOString(),
-        },
-      };
-      await writeTextAtomic(
-        ctx.cwd,
-        `artifacts/05-coding/${storyId}.md`,
-        storySummaryMarkdown(details, checked.markdownPath),
-      );
-      appendHistory(state, 'coding_story_submitted', storyId);
-
-      let message: string;
-      if (!checked.report.passed) {
-        await markFailedCheck(
+        const changedFiles = [
+          ...new Set(
+            params.changedFiles.map((path) =>
+              relativeProjectPath(ctx.cwd, path),
+            ),
+          ),
+        ];
+        for (const path of changedFiles) {
+          const absolute = projectPath(ctx.cwd, path);
+          if (!(await pathExists(absolute)))
+            throw new Error(`Changed file does not exist: ${path}`);
+          if (isProtectedPath(path)) {
+            throw new Error(
+              `Workflow control file cannot be submitted as a code change: ${path}`,
+            );
+          }
+        }
+        if (!changedFiles.some(isTestFile)) {
+          throw new Error(
+            'TDD completion must include at least one changed test file.',
+          );
+        }
+        if (!changedFiles.some(isProductionSourceFile)) {
+          throw new Error(
+            'Story completion must include at least one changed production source file.',
+          );
+        }
+        if (!state.coding.baseline)
+          throw new Error('Coding 基线缺失，请重新运行 /evidence-run。');
+        await verifyCodingChanges(
+          pi,
           ctx.cwd,
-          state,
-          config,
-          checked.report,
-          checked.markdownPath,
-        );
-        message = `最终质量命令未通过。读取 ${checked.markdownPath} 后修复，再运行 /evidence-run。`;
-      } else {
-        message = await persistPassedGate(
-          ctx.cwd,
-          state,
-          config,
-          checked.report,
-          checked.markdownPath,
-        );
-        await applyPhaseProfile(pi, ctx, state, config);
-      }
-      updateUi(ctx, state);
-      return {
-        content: [{ type: 'text', text: message }],
-        details: {
-          storyId,
+          state.coding.baseline,
           changedFiles,
-          report: checked.markdownPath,
+          isRuntimeGeneratedPath,
+        );
+
+        const config = await loadConfig(ctx.cwd);
+        const sourceDigest = await hashArtifacts(ctx.cwd, changedFiles);
+        const record: StoryRecord = {
+          version: 1,
+          runId: state.runId,
+          storyId,
+          planDigest: state.coding.planDigest!,
+          cycles: state.coding.cycles,
+          verifications: state.coding.verifications,
+          revisionStart: state.coding.revisionStart,
+          changedFiles,
+          summary: params.summary,
+          refactorSummary: params.refactorSummary,
+          reportPath: 'pending',
+          passed: false,
+        };
+        const checked = await runCodingChecks({
+          record,
+          pi,
+          root: ctx.cwd,
+          state,
+          config,
+          storyId,
+          signal,
+          timeoutMs: config.commandTimeoutMs,
+          onProgress: (message) => {
+            onUpdate?.({
+              content: [{ type: 'text', text: message }],
+              details: { storyId },
+            });
+          },
+        });
+        await verifyCodingChanges(
+          pi,
+          ctx.cwd,
+          state.coding.baseline,
+          changedFiles,
+          isRuntimeGeneratedPath,
+        );
+        await assertTestingInputs(ctx.cwd, state);
+        if (sourceDigest !== (await hashArtifacts(ctx.cwd, changedFiles)))
+          throw new Error('质量检查期间源文件发生变化，请重新验证。');
+        state.lastReport = checked.markdownPath;
+        state.coding.changedFiles = changedFiles;
+        await saveStoryRecord(ctx.cwd, state, story, {
+          ...record,
+          reportPath: checked.markdownPath,
           passed: checked.report.passed,
-        },
-        terminate: true,
-      };
+        });
+        appendHistory(state, 'coding_story_submitted', storyId);
+
+        let message: string;
+        if (!checked.report.passed) {
+          await markFailedCheck(
+            ctx.cwd,
+            state,
+            config,
+            checked.report,
+            checked.markdownPath,
+          );
+          message = `最终质量命令未通过。读取 ${checked.markdownPath} 后修复，再运行 /evidence-run。`;
+        } else {
+          message = await persistPassedGate(
+            ctx.cwd,
+            state,
+            config,
+            checked.report,
+            checked.markdownPath,
+          );
+          await applyPhaseProfile(pi, ctx, state, config);
+        }
+        updateUi(ctx, state);
+        return {
+          content: [{ type: 'text', text: message }],
+          details: {
+            storyId,
+            changedFiles,
+            report: checked.markdownPath,
+            passed: checked.report.passed,
+          },
+          terminate: true,
+        };
+      });
     },
   });
 

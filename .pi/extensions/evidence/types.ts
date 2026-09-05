@@ -1,3 +1,10 @@
+import type {
+  CycleBinding,
+  CompletedTddCycle,
+  TaskVerification,
+  StoryRecordReference,
+} from './testing-schema.ts';
+
 export const ACTIVE_PHASES = [
   'requirements',
   'domain',
@@ -67,6 +74,7 @@ export interface TddCommandEvidence {
 
 export interface TddCycle {
   stage: TddStage;
+  binding: CycleBinding | null;
   red: TddCommandEvidence | null;
   green: TddCommandEvidence | null;
 }
@@ -83,6 +91,11 @@ export interface CodingProgress {
   currentStoryIndex: number;
   changedFiles: string[];
   baseline: CodingBaseline | null;
+  planDigest: string | null;
+  cycles: CompletedTddCycle[];
+  verifications: TaskVerification[];
+  revisionStart: number;
+  records: Record<string, StoryRecordReference>;
   tdd: TddCycle;
 }
 
@@ -103,7 +116,8 @@ export interface HistoryEntry {
 }
 
 export interface EvidenceState {
-  version: 2;
+  version: 3;
+  runId: string;
   projectName: string;
   goal: string;
   phase: WorkflowPhase;

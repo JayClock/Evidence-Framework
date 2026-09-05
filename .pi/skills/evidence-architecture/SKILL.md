@@ -38,6 +38,7 @@ This repository currently uses Nx, React/TypeScript/Vite, Spring Boot/Java/Gradl
 - 明确真实实现与 Dummy/Fake/Stub/Spy/Mock 的选择，不替换被测业务逻辑；基于验收场景建立 Q2 与 Q1 的多对多关联，不要求二者必然同时失败。
 - 测试策略说明“验证什么及为什么”，工序说明“如何开发与验证”；分别使用 test-strategy.md、test-procedures.md 模板，不复制整份 Sprint 任务。
 - 只采用仓库实际存在或已批准引入的工具。数据库、浏览器测试等基础设施缺失时列为待建设/待定，不照搬示例框架，也不虚构成功的命令或已批准阈值。
+- test-procedures.md 按模板输出一个 `test-procedures` JSON 目录，保存稳定工序 ID 及主要象限，和逐工序定义一致。Planning 只实例化 Q1/Q2 自动任务；Q3/Q4 另由计划和 DoD 安排人工证据。
 - 结构校验不证明策略有效、工序已执行或业务验收完成；风险接受由人工 Gate 决定。
 
 ## Outputs

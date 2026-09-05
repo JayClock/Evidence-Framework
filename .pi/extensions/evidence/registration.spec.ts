@@ -24,6 +24,8 @@ describe('extension registration', () => {
       'evidence_submit_fm_model',
       'evidence_tdd_red',
       'evidence_tdd_green',
+      'evidence_complete_tdd_cycle',
+      'evidence_verify_task',
       'evidence_complete_story',
     ]);
     expect(commands).toEqual([

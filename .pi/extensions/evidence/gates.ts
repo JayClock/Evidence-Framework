@@ -5,6 +5,12 @@ import { FM_STATUS_PATH } from './modeling.ts';
 import { getPhaseDefinition, phaseNumber } from './phases.ts';
 import { readText, writeTextAtomic } from './storage.ts';
 import { currentCodingStory } from './workflow.ts';
+import {
+  loadTestPlan,
+  testingEvidencePaths,
+  testingInputDigest,
+} from './test-plan.ts';
+import { storyRecordPath } from './testing-evidence.ts';
 import type { CheckReport, EvidenceState, PendingGate } from './types.ts';
 
 function safeId(value: string): string {
@@ -21,10 +27,22 @@ export function gateArtifactPaths(state: EvidenceState): string[] {
   if (state.phase === 'complete') return [];
   if (state.phase === 'coding') {
     const story = currentCodingStory(state);
+    const reference = story ? state.coding.records[story] : null;
     return [
-      REQUIREMENTS_PATH,
-      ...state.coding.changedFiles,
-      ...(story ? [`artifacts/05-coding/${story}.md`] : []),
+      ...new Set([
+        ...testingEvidencePaths(state),
+        ...state.coding.changedFiles,
+        ...(reference?.files ?? []),
+        ...(reference
+          ? [
+              reference.reportPath,
+              reference.reportPath.replace(/\.md$/, '.json'),
+            ]
+          : []),
+        ...(story
+          ? [storyRecordPath(story), `artifacts/05-coding/${story}.md`]
+          : []),
+      ]),
     ];
   }
   const artifactPaths = [
@@ -33,9 +51,26 @@ export function gateArtifactPaths(state: EvidenceState): string[] {
       (artifact) => artifact.output,
     ),
   ];
+  if (state.phase === 'planning' || state.phase === 'review')
+    artifactPaths.push(...testingEvidencePaths(state));
+  if (state.phase === 'review') {
+    for (const storyId of state.coding.storyIds) {
+      artifactPaths.push(
+        storyRecordPath(storyId),
+        `artifacts/05-coding/${storyId}.md`,
+      );
+      const record = state.coding.records[storyId];
+      if (record)
+        artifactPaths.push(
+          ...record.files,
+          record.reportPath,
+          record.reportPath.replace(/\.md$/, '.json'),
+        );
+    }
+  }
   return state.phase === 'domain' || state.phase === 'review'
     ? [...new Set([...artifactPaths, FM_STATUS_PATH, ...state.modeling.files])]
-    : artifactPaths;
+    : [...new Set(artifactPaths)];
 }
 
 function gateEvidencePaths(state: EvidenceState, reportPath: string): string[] {
@@ -118,6 +153,17 @@ ${items.join('\n')}
 `;
 }
 
+async function bindPlanningInputs(
+  root: string,
+  state: EvidenceState,
+): Promise<void> {
+  if (state.phase !== 'planning') return;
+  const plan = await loadTestPlan(root);
+  state.coding.storyIds = plan.stories.map((story) => story.id);
+  state.coding.currentStoryIndex = 0;
+  state.coding.planDigest = await testingInputDigest(root, state);
+}
+
 export async function createGate(
   root: string,
   state: EvidenceState,
@@ -126,6 +172,7 @@ export async function createGate(
 ): Promise<PendingGate> {
   if (state.phase === 'complete')
     throw new Error('Cannot create a gate for a completed workflow');
+  await bindPlanningInputs(root, state);
   const subject = gateSubject(state);
   const artifactPaths = gateEvidencePaths(state, reportPath);
   const artifactDigest = await hashArtifacts(root, artifactPaths);
@@ -153,6 +200,7 @@ export async function refreshGate(
   reportPath: string,
 ): Promise<PendingGate> {
   if (!state.pendingGate) throw new Error('No pending gate to refresh');
+  await bindPlanningInputs(root, state);
   const artifactPaths = gateEvidencePaths(state, reportPath);
   const gate: PendingGate = {
     ...state.pendingGate,

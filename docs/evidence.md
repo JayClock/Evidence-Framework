@@ -46,7 +46,7 @@ Agent 根据原始需求和对应方法论直接生成草稿，不再进行分�
 
 ### 2.2 破坏性升级
 
-工作流状态版本为 **2**，不兼容旧版状态，不提供迁移或自动确认。更新扩展后运行 `/reload`；若已有版本 1 的运行，先执行 `/evidence-reset`，再 `/evidence-init`。重置可选择保留工件或删除生成工件，请按实际需要选择。配置文件 `.pi/evidence.json` 仍使用版本 1，FM 仍使用 Schema v2。
+工作流状态版本为 **3**，新增运行 ID、测试计划摘要、追加式 TDD 循环、任务验证与故事证据引用。不兼容版本 1/2，不自动迁移或伪造旧运行的逐任务证据。更新后运行 `/reload`；旧运行先备份，再 `/evidence-reset`、`/evidence-init`。加载旧状态只报错，不重写旧文件；重置可保留工件供参考，但旧 Gate 和记录不能作为新运行的通过证据。配置文件 `.pi/evidence.json` 仍为版本 1，FM 仍为 Schema v2。
 
 独立访谈工具、回答命令及等待回答状态已删除，不再生成或依赖访谈快照。不要手工改写状态版本来绕过重新初始化。
 
@@ -121,14 +121,26 @@ Architecture 在 data-model.md 之后依次新增：
 
 Q1/Q2 按目的和受众区分，不等同于单元/集成测试；Q3/Q4 是产品评价，应提前规划，不要求全部自动化。功能上下文不等于 DDD 限界上下文，允许有依据地合并测试边界。Q2 与 Q1 要有关联，但不保证同时失败；真实装配和跨组件契约仍需集成验证。
 
-**当前能力边界（第一批）**：本次只打通工件、Skills、提示词和结构校验，未改变宏观阶段、工具协议、TDD 状态机、状态版本、Gate 决策或质量命令。扩展仍仅记录每故事每修订轮的一组故事级 Red/Green/Refactor，不支持逐工序状态和多循环证据校验。场景/任务/工序 ID 的语义及跨工件关联仍由 Agent 与人工审查，文档表格或命令通过不能证明逐工序 TDD、完整验收覆盖、性能达标或 UAT 完成。
+第二批在同一 Markdown 工件中增加机器可读契约（均为 schema version 1，不另设阶段或 Slash Command）：
+
+| 工件                | 唯一 JSON 块的 kind  | 机器契约                                       |
+| :------------------ | :------------------- | :--------------------------------------------- |
+| story-map.md        | `acceptance-catalog` | 全部 US 与稳定 AC 场景 ID                      |
+| test-procedures.md  | `test-procedures`    | TP 工序 ID 与主要象限                          |
+| sprint-1-backlog.md | `test-plan`          | 有序故事、TASK/依赖、模式、CHECK/命令/测试文件 |
+
+具体格式见对应模板。提交和阶段检查拒绝缺失/重复 JSON 块、未知引用、场景集合不一致、依赖环及不安全的测试命令。每个故事至少一个 TDD 任务；每个场景关联可执行 Q2 和支撑 Q1 任务（Q1 可以批准理由声明不适用）。TASK/CHECK 全局唯一，依赖限于同一故事。自动执行只接受 Q1/Q2；Q3/Q4 留在计划、DoD 和人工审查中。
+
+Planning Gate 绑定需求、DDD、架构、规划、FM 输入和配置的 SHA-256 摘要。Coding/Review 检查摘要，拒绝过期契约；Gate 包括结构化编码记录、计划测试文件、代码及命令报告的摘要，变化后必须重新检查。
+
+**能力边界**：机器能核对声明的 ID、依赖、文件存在性、命令结果和循环顺序，不能证明叙述与 JSON 一致、命令实际选中了每个声明用例、断言覆盖全部业务语义、替身符合策略或 Q3/Q4/UAT 完成。测试失败识别是启发式过滤，不是通用测试报告解析；运行脚本仍是受信任项目代码，不是安全沙箱。人工 Gate 仍需审核这些内容。
 
 ### 3.3 使用新版测试契约
 
-- 更新后执行 `/reload`。没有活动运行时，使用 `/evidence-init` 开始，扩展会在架构阶段生成两份新工件，不需手工创建。
-- 已有版本 2 的运行不需改状态版本。若已到架构或下游阶段但缺少测试契约，使用 `/evidence-back` 回到 Architecture；在该阶段使用 `/evidence-revise <补充测试契约的反馈>` 后执行 `/evidence-run`，重新生成并人工审核，再核对下游计划与验收证据。
-- 如果旧故事地图缺少稳定场景 ID 或可执行验收数据，应先回退 Requirements 修订，经后续阶段 Gate 重新审核；不要让 Coding 自行编造 ID 或需求。
-- 旧 Gate 不等于批准了新增工件。不要为了继续而直接写入 artifacts/reports、修改 `.evidence/state.json` 或伪造检查结果；原有修订轮次限制仍然生效。
+- 更新后执行 `/reload`，工具列表应出现 `evidence_complete_tdd_cycle` 和 `evidence_verify_task`；Red 增加必需的 `taskId`、`checkId` 参数。
+- 版本 1/2 运行按 §2.2 重置并重新初始化，不能仅回退阶段或手改版本号。新运行会按模板生成三个 JSON 契约和测试策略工件。
+- 版本 3 中缺少目录、场景数据、工序或需要修改测试命令时，使用 `/evidence-back` 回到对应上游，再 `/evidence-revise`、`/evidence-run` 并重新审核。回到 Planning 后的新 Gate 会重新绑定契约；下游证据必须重新取得。
+- 保留的旧工件只供修订比对，不等于批准。不要直接改 artifacts/reports 或 `.evidence/state.json`，不要由 Coding 编造上游 ID、N/A 理由或通过结果。
 
 ## 4. 人工 Gate
 
@@ -150,14 +162,17 @@ Q1/Q2 按目的和受众区分，不等同于单元/集成测试；Q3/Q4 是产�
 
 ## 5. 编码与真实 TDD
 
-Planning 阶段会从 `sprint-1-backlog.md` 提取去重后的 `US-xxx`。Coding Agent 每次只处理一个故事，并必须：
+故事及顺序只来自批准的 `test-plan`，不再从任意 Markdown 文本提取 US ID。Coding 一次处理一个故事：
 
-1. Red：先写真实测试，调用 `evidence_tdd_red` 并预先描述期望失败；扩展只接受单条直接调用 npm/Nx/Vitest/Jest/Gradle/Maven 的测试命令（禁止管道、重定向和命令连接），执行后只接受真实非零退出，并保存、返回实际输出供核对；
-2. Green：写最小实现，调用 `evidence_tdd_green`；扩展重新执行与 Red **完全相同**的命令，只接受零退出；
-3. Refactor：改善设计并保持行为不变；
-4. 调用 `evidence_complete_story` 提交实现、Refactor 摘要和变更文件。扩展确认至少包含一个测试文件、一个生产源码文件；在 Git 仓库中还会以故事开始时的脏工作区哈希为基线，确认每个声明文件确实在本故事中变化，并拒绝遗漏的额外故事变更。
+1. 选择依赖已完成的 `tdd` 任务及 CHECK，先添加真实行为测试，再调用 `evidence_tdd_red({storyId, taskId, checkId, command, expectedFailure})`。command 必须与计划完全一致；非零退出、有效输出和非空测试文件才可能成为 Red，环境/语法/零测试不算行为失败。
+2. 写最小实现，调用 `evidence_tdd_green({storyId, observation})`。重跑与 Red **完全相同**的命令，要求通过，且 Red 的测试文件哈希不变，不能删除或削弱测试取得 Green。
+3. 重构后调用 `evidence_complete_tdd_cycle({storyId, refactorSummary})`。聚焦检查重新通过后追加完整循环，清空活动检查点并返回 Red；继续同一 CHECK 的下一行为或其他任务。循环数量不占 `maxRounds`，也不重置故事 Git 基线。
+4. 对批准的 `verify` 任务调用 `evidence_verify_task({storyId, taskId})`，检查依赖后执行全部 CHECK。用于复用与业务验收，不制造虚假 Red。`not-applicable` 只能来自计划中的理由，不能在 Coding 临时豁免。
+5. 每个 tdd CHECK 至少一个完整循环、所有适用任务完成、当前修订至少一个新循环且没有活动循环，才可最后调用 `evidence_complete_story`。提交实现/重构摘要和全部真实变更文件，至少一个生产文件及一个测试文件；Git 可用时核对故事开始时的脏工作区基线，拒绝遗漏或未在本故事中改变的文件。
 
-最后扩展再次执行聚焦测试，并独立执行 `.pi/evidence.json` 中的命令。默认是：
+工具串行化当前项目的 TDD 操作，状态跨 Session 恢复保留活动任务、命令、历史循环、验证结果和故事基线。每故事生成 `artifacts/05-coding/US-xxx.json` 与 `.md`，包括运行/契约摘要和逐项真实证据；不是由 Agent 手写的通过声明。
+
+故事完成时重跑**所有适用计划 CHECK**（不仅最后一个循环），再执行 `.pi/evidence.json` 中的质量命令。默认是：
 
 ```bash
 npm test
@@ -165,7 +180,11 @@ npm run lint
 npm run build
 ```
 
-任何最终质量命令失败都会产生 `reports/coding-*.md`，工作流保留在当前故事和 Refactor 检查点，等待下一轮修复。人工在 Coding Gate 要求修改时，新一轮会从 Red 重新开始；最终 Review 阶段还会确认 Sprint 1 每个 `US-xxx` 都有扩展生成的 Coding 记录并出现在审查报告中，然后重新执行相同的质量命令，而不是只相信审查文本。
+聚焦 Red/Green/Refactor 或 verify 失败保留当前状态，修复后重试，不占人工修订轮次。最终计划检查或质量命令失败生成报告，保留已完成循环，按原有失败轮次规则等待修复；没有通过证据不能产生 Gate。
+
+人工要求修改（含 Review 回退最后故事）保留完整循环和故事基线，设置修订边界并要求至少一个新循环；既有验收记录不是永久通过保证，故事提交时仍全部重跑。下一故事才重置基线及当前故事循环；前面故事的结构化记录仍保留。
+
+Coding 重新检查与最终 Review 都验证结构化记录摘要、运行/计划归属、循环及任务覆盖，并重跑全部批准检查和质量命令。Review 报告必须列出每个承诺 US/AC ID；任一旧故事缺失、证据被篡改、测试文件不存在或契约过期都会阻塞。最终 Review 的 Gate 摘要涵盖全部故事，而不是只看最后一个。
 
 ## 6. 常用命令
 
@@ -251,4 +270,4 @@ npm run evidence:format:check
 npm run evidence:verify
 ```
 
-这些命令不会调用语言模型。测试契约的回归测试覆盖工件顺序、模板加载、必需章节、下游输入缺失和 Architecture Gate 衔接；它们验证扩展的确定性接线，不是模型生成内容的质量评测。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行真实 Schema v2 模型的校验、追溯、模拟、确定性编译，以及建模 Skill 的 Python 自测。首次运行可能需要下载 Python 依赖。
+这些命令不会调用语言模型。回归测试覆盖工件接线、JSON 契约、任务依赖、多循环/恢复、验收阻塞、文件/证据篡改、Gate 摘要、旧状态拒绝及质量命令。它们验证确定性流程，不是模型生成工件质量或真实 TUI 人工端到端评测。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行真实 Schema v2 模型的校验、追溯、模拟、确定性编译，以及建模 Skill 的 Python 自测。首次运行可能需要下载 Python 依赖。

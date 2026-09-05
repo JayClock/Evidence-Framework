@@ -91,30 +91,35 @@ describe('state decoding', () => {
     });
   });
 
-  it('round-trips a version 2 state without creating interview state or a snapshot', async () => {
+  it('round-trips a version 3 state without creating interview state or a snapshot', async () => {
     const root = await temporaryRoot();
     const state = createInitialState('project', 'goal');
-    expect(state.version).toBe(2);
+    expect(state.version).toBe(3);
+    expect(state.runId).toMatch(/^[a-f0-9-]{36}$/);
     expect(state).not.toHaveProperty('interviews');
     await saveState(root, state);
     expect(await loadState(root)).toEqual(state);
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
   });
 
-  it('rejects version 1 rather than migrating or fabricating confirmation', async () => {
-    const root = await temporaryRoot();
-    const legacy = { ...createInitialState('project', 'goal'), version: 1 };
-    await writeJsonAtomic(root, STATE_PATH, legacy);
-    const before = await readText(root, STATE_PATH);
-    await expect(loadState(root)).rejects.toThrow('unsupported version 1');
-    expect(await readText(root, STATE_PATH)).toBe(before);
-  });
+  it.each([1, 2])(
+    'rejects version %s rather than migrating or fabricating evidence',
+    async (version) => {
+      const root = await temporaryRoot();
+      const legacy = { ...createInitialState('project', 'goal'), version };
+      await writeJsonAtomic(root, STATE_PATH, legacy);
+      const before = await readText(root, STATE_PATH);
+      await expect(loadState(root)).rejects.toThrow(
+        `unsupported version ${version}`,
+      );
+      expect(await readText(root, STATE_PATH)).toBe(before);
+    },
+  );
 
   it('rejects the retired waiting_input status', async () => {
     const root = await temporaryRoot();
     await writeJsonAtomic(root, STATE_PATH, {
       ...createInitialState('project', 'goal'),
-      version: 2,
       status: 'waiting_input',
     });
     await expect(loadState(root)).rejects.toThrow('unknown status');

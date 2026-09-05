@@ -1,12 +1,7 @@
 import { rm } from 'node:fs/promises';
 import { afterEach, describe, expect, it } from 'vitest';
-import { qualityHarness } from './quality-test-support.ts';
-import {
-  createInitialState,
-  loadState,
-  saveState,
-  writeTextAtomic,
-} from './storage.ts';
+import { codingHarness, redParameters } from './testing-test-support.ts';
+import { loadState, writeTextAtomic } from './storage.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -17,18 +12,7 @@ afterEach(async () => {
 
 describe('TDD remains mandatory without business interviews', () => {
   it('executes Red, the identical Green/refactor command and final quality checks before creating a gate', async () => {
-    const { root, api, tool } = await qualityHarness(roots);
-    const state = createInitialState('test', '逐故事执行测试');
-    state.phase = 'coding';
-    state.status = 'running';
-    state.coding.storyIds = ['US-001'];
-    state.coding.baseline = {
-      gitAvailable: false,
-      dirtyPaths: [],
-      fileHashes: {},
-      capturedAt: new Date().toISOString(),
-    };
-    await saveState(root, state);
+    const { root, api, tool } = await codingHarness(roots);
     const completion = {
       storyId: 'US-001',
       summary:
@@ -60,7 +44,7 @@ describe('TDD remains mandatory without business interviews', () => {
       stderr: '',
     });
     await tool('evidence_tdd_red', {
-      storyId: 'US-001',
+      ...redParameters,
       command,
       expectedFailure: '功能尚未实现，测试应因返回 false 而不是 true 失败。',
     });
@@ -80,11 +64,22 @@ describe('TDD remains mandatory without business interviews', () => {
       storyId: 'US-001',
       observation: '最小实现使功能返回 true，聚焦测试通过。',
     });
+    await tool('evidence_complete_tdd_cycle', {
+      storyId: 'US-001',
+      refactorSummary: completion.refactorSummary,
+    });
+    await tool('evidence_verify_task', {
+      storyId: 'US-001',
+      taskId: 'TASK-001-02',
+    });
     await tool('evidence_complete_story', completion);
     expect(api.exec.mock.calls.map((call) => call[1][1])).toEqual([
       command,
       command,
       command,
+      'npm test -- acceptance.spec.ts',
+      command,
+      'npm test -- acceptance.spec.ts',
       'npm test',
       'npm run lint',
       'npm run build',
@@ -92,7 +87,11 @@ describe('TDD remains mandatory without business interviews', () => {
     expect(await loadState(root)).toMatchObject({
       phase: 'coding',
       status: 'waiting_review',
-      coding: { currentStoryIndex: 0, tdd: { stage: 'refactor' } },
+      coding: {
+        currentStoryIndex: 0,
+        tdd: { stage: 'red' },
+        cycles: [expect.objectContaining({ id: 1 })],
+      },
     });
   });
 });

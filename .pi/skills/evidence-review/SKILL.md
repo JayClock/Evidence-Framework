@@ -23,7 +23,8 @@ Review the delivered Sprint increment independently. The purpose is evidence and
 - 核对适用工序的测试文件、用例与结果；复用或 N/A 需有依据，发现遗漏时报告，不自行补造证据或修改工件。
 - 依据计划核对 Q3/Q4 的负责人、环境、阈值依据和实际证据，分别标注已执行、待人工执行、经批准不适用或未验证；未执行不能写成通过。
 - Q1/Q2 的关联用于覆盖与诊断，不以是否同步失败作为有效性标准；测试总数、覆盖率或 npm test/lint/build 通过不能替代业务验收。
-- 当前扩展只有故事级一组 TDD 检查点；Markdown 结构校验不证明逐场景覆盖、逐工序 TDD 或跨工件 ID 语义正确。明确人工检查结论与机器证据的不同粒度。
+- 读取每故事的 `artifacts/05-coding/US-xxx.json` 和 `.md`，核对 run/契约摘要、TASK/CHECK/TP/AC 引用、所有循环与 verify 记录。扩展会复核摘要、证据结构并重跑全部批准检查和质量命令；缺失、篡改、过期或任务未完成会阻塞 Gate。
+- 审查报告明确列出 Sprint 每个 US 和 AC ID。机器引用匹配不证明叙述与 JSON 一致、命令真正执行了声明用例或断言覆盖全部语义；仍人工检查代码、测试、替身和 Q3/Q4，不把元数据校验当成完整业务证明。
 
 ## Review rules
 

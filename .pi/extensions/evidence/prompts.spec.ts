@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { gateArtifactPaths } from './gates.ts';
 import { getPhaseDefinition, PHASE_ORDER } from './phases.ts';
 import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
+import { writeTestingInputs } from './testing-test-support.ts';
+import { testingInputDigest } from './test-plan.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -64,13 +66,20 @@ async function preparePromptRoot(): Promise<string> {
       await mkdir(join(root, input), { recursive: true });
     }
   }
+  await writeTestingInputs(root);
   return root;
 }
 
 const testingTemplates = [
   {
     key: 'story-map',
-    fragments: ['验收场景 ID', 'AC-001-01', '示例数据', '质量约束'],
+    fragments: [
+      '验收场景 ID',
+      'AC-001-01',
+      '示例数据',
+      '质量约束',
+      '"kind": "acceptance-catalog"',
+    ],
   },
   {
     key: 'test-strategy',
@@ -85,11 +94,25 @@ const testingTemplates = [
   },
   {
     key: 'test-procedures',
-    fragments: ['TP-*', '操作步骤', '场景实例化规则', '故事级'],
+    fragments: [
+      'TP-*',
+      '操作步骤',
+      '场景实例化规则',
+      'evidence_complete_tdd_cycle',
+      '"kind": "test-procedures"',
+    ],
   },
   {
     key: 'sprint-1-backlog',
-    fragments: ['验收场景 ID', '工序 ID', '测试映射', 'Q2', 'Q1'],
+    fragments: [
+      '验收场景 ID',
+      '工序 ID',
+      '测试映射',
+      'Q2',
+      'Q1',
+      '"kind": "test-plan"',
+      'not-applicable',
+    ],
   },
   {
     key: 'definition-of-done',
@@ -123,6 +146,7 @@ describe('artifact prompt inputs', () => {
       state.status = 'running';
       state.currentArtifactIndex = index;
       state.coding.storyIds = ['US-001'];
+      state.coding.planDigest = await testingInputDigest(root, state);
       const prompt = await buildCurrentPrompt(root, state, DEFAULT_CONFIG);
       expect(prompt).toContain(REQUIREMENTS_PATH);
       expect(prompt).not.toMatch(
@@ -158,7 +182,11 @@ describe('artifact prompt inputs', () => {
         expect(prompt).toContain('验收场景 ID');
         expect(prompt).toContain('工序 ID');
         expect(prompt).toContain('故事级');
-        expect(prompt).toContain('不代表逐工序 TDD 已被机器验证');
+        expect(prompt).toContain('evidence_complete_tdd_cycle');
+        expect(prompt).toContain('evidence_verify_task');
+        expect(prompt).toContain('TASK-001-01 / TP-DOMAIN / tdd');
+        expect(prompt).toContain('CHECK-001-01: npm test -- feature.spec.ts');
+        expect(prompt).toContain('不证明断言语义');
       }
       await rm(join(root, REQUIREMENTS_PATH));
       await expect(

@@ -5,6 +5,8 @@ import {
 } from './phases.ts';
 import { projectEntryExists, readText, REQUIREMENTS_PATH } from './storage.ts';
 import { currentCodingStory } from './workflow.ts';
+import { assertTestingInputs } from './test-plan.ts';
+import { taskComplete } from './testing-evidence.ts';
 import type { EvidenceConfig, EvidenceState } from './types.ts';
 
 function stripFrontmatter(markdown: string): string {
@@ -68,6 +70,15 @@ export async function buildCurrentPrompt(
       'README.md',
     ];
     await requireInputs(root, inputs);
+    const story = (await assertTestingInputs(root, state)).stories.find(
+      (story) => story.id === storyId,
+    )!;
+    const progress = story.tasks
+      .map(
+        (task) =>
+          `- ${task.id} / ${task.procedureId} / ${task.mode}：${taskComplete(task, state.coding.cycles, state.coding.verifications) ? '已记录' : '待完成'}；场景 ${task.scenarioIds.join(', ')}；依赖 ${task.dependsOn.join(', ') || '无'}；检查 ${task.checks.map((check) => `${check.id}: ${check.command}`).join('；') || task.reason}`,
+      )
+      .join('\n');
     return `# Evidence 本地执行任务
 
 ## 当前任务
@@ -76,7 +87,17 @@ export async function buildCurrentPrompt(
 - 用户故事：\`${storyId}\`
 - 轮次：${state.round}
 - TDD 检查点：\`${state.coding.tdd.stage}\`
+- 已完成循环：${state.coding.cycles.length}；本修订须有循环索引大于 ${state.coding.revisionStart}
+- 活动任务/检查：${state.coding.tdd.binding ? `${state.coding.tdd.binding.taskId}/${state.coding.tdd.binding.checkId}` : '无，可开始下一循环或验证任务'}
+- 已记录 Red 命令：${state.coding.tdd.red?.command ?? '无'}
+- 已记录 Red 观察：${state.coding.tdd.red?.observation ?? '无'}
 - 项目目标：${state.goal}
+
+## 计划与恢复进度
+
+${progress}
+
+状态和命令来自已批准机器计划及扩展记录；恢复后沿用当前检查点，不重新造 Red，不重置 Git 基线。
 
 ## 方法论
 
@@ -90,12 +111,12 @@ ${inputList(inputs)}
 
 1. 在 Sprint 1 Backlog 中定位 ${storyId}，只实现该故事的范围；保留验收场景 ID、任务 ID、工序 ID 及适用的 FM 引用。
 2. 先检查现有代码与测试，不要假设技术栈。按已批准的测试策略和当前适用工序明确被测边界、真实依赖、测试替身、场景数据和预期结果；不把被测业务逻辑替换掉。
-3. 当前检查点为 \`${state.coding.tdd.stage}\`。在 Red 阶段先写真实测试，再调用 \`evidence_tdd_red\` 让扩展执行聚焦测试并记录失败；不得把语法错误、命令错误或无关失败当作 Red。
-4. Red 被记录后写最小实现，并调用 \`evidence_tdd_green\`；扩展会重新执行完全相同的聚焦测试，且必须通过。
-5. Green 被记录后进行 Refactor，保持测试通过。最终由扩展再次执行聚焦测试以及这些质量命令：${config.qualityCommands.map((command) => `\`${command}\``).join('、') || '未配置'}。
-6. 不要只生成 Markdown 或伪代码，必须修改真实项目源码和测试。完成前核对当前故事各验收场景的 Q2 证据、关联 Q1 测试与适用工序；在实现摘要中列明测试文件/用例、真实结果及未完成项，不以测试总数代替验收覆盖。
-7. 当前扩展仍仅记录每故事每修订轮的一组故事级 Red/Green/Refactor，不代表逐工序 TDD 已被机器验证。不要为切换工序重置状态、重复调用已完成检查点或虚构逐工序工具；无法满足的要求应报告并交由人工处理。
-8. 最后调用 \`evidence_complete_story\`，提交实现摘要、Refactor 摘要和全部真实变更文件。调用后停止。${feedbackSection(state)}
+3. 当前检查点为 \`${state.coding.tdd.stage}\`。按前置依赖选 tdd 任务，先写真实行为测试，再调用 \`evidence_tdd_red\`，传 storyId、taskId、checkId、与计划完全一致的 command 及 expectedFailure。环境、语法、零测试和无关失败不算 Red。
+4. Red 后只写最小实现，再调用 \`evidence_tdd_green\`。扩展运行完全相同的命令，并要求 Red 的测试文件未改变；不能删除、削弱失败测试取得 Green。
+5. Green 后进行 Refactor，调用 \`evidence_complete_tdd_cycle\` 传 storyId、refactorSummary；聚焦测试再次通过才追加循环并返回 Red。可继续同一检查项或下一任务，不重置状态，不消耗修订轮次。
+6. 对 verify 任务调用 \`evidence_verify_task\`，传 storyId、taskId；扩展检查依赖并实际执行全部计划检查。复用测试不造 Red；not-applicable 必须来自已批准计划中的明确理由。
+7. 每个 tdd CHECK 至少一个完整循环、所有适用任务/场景的 Q1/Q2 声明都有记录后才能完成故事。不能仅生成 Markdown，必须改变真实生产源码和测试。机器只验证声明及执行，不证明断言语义、完整验收覆盖或 Q3/Q4/UAT 结论。
+8. 最后调用 \`evidence_complete_story\`，提交实现摘要、Refactor 摘要和全部真实变更文件。扩展重跑所有适用计划检查以及 ${config.qualityCommands.map((command) => `\`${command}\``).join('、') || '未配置的质量命令'}，生成逐循环 JSON/Markdown 记录及 Gate。调用后停止；契约不符或缺失时必须回退上游修订，不能手改状态或工件。${feedbackSection(state)}
 `;
   }
 
@@ -189,7 +210,7 @@ export function buildPhaseGuard(state: EvidenceState): string {
         state.phase);
   const tdd =
     state.phase === 'coding'
-      ? `; TDD checkpoint: ${state.coding.tdd.stage}`
+      ? `; TDD checkpoint: ${state.coding.tdd.stage}; completed cycles: ${state.coding.cycles.length}; active task/check: ${state.coding.tdd.binding ? `${state.coding.tdd.binding.taskId}/${state.coding.tdd.binding.checkId}` : 'none'}`
       : '';
   return `\n\n## Evidence active scope
 The deterministic local workflow is active. Current phase: ${state.phase}; current subject: ${subject}; round: ${state.round}${tdd}. Stay inside this scope. Do not advance workflow state yourself. Finish through the designated evidence_* submission tool.`;

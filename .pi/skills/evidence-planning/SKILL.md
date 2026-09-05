@@ -32,7 +32,10 @@ Create a delivery plan that maximizes early validated value instead of merely sc
 - 逐场景列出 Q2 业务验证与支撑 Q1 测试的关联；不适用项写明 N/A 及理由，不以总覆盖率代替验收覆盖。
 - Sprint 计划提前安排 Q3/Q4 的负责人角色、时机、环境、阈值依据和证据。待人工执行不是已通过，基础设施缺失应影响容量、风险或范围。
 - DoD 同时要求适用工序的实际证据、验收验证及现有质量命令；例外交由人工批准，不能用文档例外绕过扩展阻塞检查。
-- 当前扩展仅记录故事级一组 Red/Green/Refactor，没有逐工序状态机或跨工件 ID 语义校验；任务表是执行与人工审查依据，不宣称它已被机器完整校验。
+- Sprint 1 Backlog 必须按模板输出一个 `test-plan` JSON。故事顺序即交付顺序，场景集合与 Requirements 目录完全一致，TP 来自 Architecture 目录；TASK/CHECK 全局唯一，同故事依赖无环。
+- 区分 `tdd`（每 CHECK 至少一个完整循环）、`verify`（有理由且实际重跑全部检查）与 `not-applicable`（有理由、无 checks）。每故事至少一个真实 TDD 任务，每场景至少有可执行 Q2 与 Q1 任务或明确 Q1 不适用声明。不能把仅文档故事送入必须改源码/测试的 Coding。
+- 指定从项目根运行的受支持命令与明确测试文件；文件可待创建，基础设施需先准备。若需强制分别验证多个行为，拆成不同 CHECK；一项 CHECK 关联多场景时解释实际断言覆盖。
+- Planning Gate 会绑定上游契约摘要；后续修改必须回退重新审核。机器校验声明的 ID/依赖/命令记录，不能证明 JSON 与叙述、真实测试语义一致；人工仍核对完整验收及 Q3/Q4。
 
 ## Outputs
 

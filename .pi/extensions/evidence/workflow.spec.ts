@@ -3,20 +3,9 @@ import { createInitialState } from './storage.ts';
 import {
   advanceAfterApproval,
   currentCodingStory,
-  extractStoryIds,
   moveBackOnePhase,
   requestRevision,
 } from './workflow.ts';
-
-describe('story extraction', () => {
-  it('keeps first occurrence order and removes duplicates', () => {
-    expect(extractStoryIds('US-002, US-001, US-002, US-010')).toEqual([
-      'US-002',
-      'US-001',
-      'US-010',
-    ]);
-  });
-});
 
 describe('workflow transitions', () => {
   it('advances document phases', () => {
@@ -36,7 +25,12 @@ describe('workflow transitions', () => {
     expect(currentCodingStory(state)).toBe('US-001');
     expect(advanceAfterApproval(state).nextPhase).toBe('coding:US-002');
     expect(currentCodingStory(state)).toBe('US-002');
-    expect(state.coding.tdd).toEqual({ stage: 'red', red: null, green: null });
+    expect(state.coding.tdd).toEqual({
+      stage: 'red',
+      binding: null,
+      red: null,
+      green: null,
+    });
     expect(advanceAfterApproval(state).nextPhase).toBe('review');
     expect(state.phase).toBe('review');
   });
@@ -47,6 +41,16 @@ describe('workflow transitions', () => {
     state.coding.storyIds = ['US-OLD'];
     expect(advanceAfterApproval(state).nextPhase).toBe('coding');
     expect(state.coding.storyIds).toEqual([]);
+  });
+
+  it('keeps the ordered story IDs already bound by the Planning Gate', () => {
+    const state = createInitialState('test', 'goal');
+    state.phase = 'planning';
+    state.coding.storyIds = ['US-002', 'US-001'];
+    state.coding.planDigest = 'a'.repeat(64);
+    advanceAfterApproval(state);
+    expect(state.coding.storyIds).toEqual(['US-002', 'US-001']);
+    expect(currentCodingStory(state)).toBe('US-002');
   });
 
   it('blocks when revision reaches the configured limit', () => {

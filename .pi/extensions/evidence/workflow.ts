@@ -4,11 +4,10 @@ import type { ActivePhase, EvidenceState } from './types.ts';
 
 function resetTddCycle(state: EvidenceState): void {
   state.coding.baseline = null;
-  state.coding.tdd = {
-    stage: 'red',
-    red: null,
-    green: null,
-  };
+  state.coding.cycles = [];
+  state.coding.verifications = [];
+  state.coding.revisionStart = 0;
+  state.coding.tdd = { stage: 'red', binding: null, red: null, green: null };
 }
 
 // Changing business scope invalidates FM validation, not its historical files.
@@ -22,11 +21,6 @@ function invalidateModelingDecision(state: EvidenceState): void {
 
 export function currentCodingStory(state: EvidenceState): string | null {
   return state.coding.storyIds[state.coding.currentStoryIndex] ?? null;
-}
-
-export function extractStoryIds(backlog: string): string[] {
-  const matches = backlog.match(/\bUS-\d{3}\b/g) ?? [];
-  return [...new Set(matches)];
 }
 
 export function advanceAfterApproval(state: EvidenceState): {
@@ -74,11 +68,14 @@ export function advanceAfterApproval(state: EvidenceState): {
   state.pendingGate = null;
   state.feedback = null;
   state.lastError = null;
-  state.coding.changedFiles = [];
-  resetTddCycle(state);
+  if (next !== 'review' && next !== 'complete') {
+    state.coding.changedFiles = [];
+    resetTddCycle(state);
+  }
   if (next === 'coding') {
-    state.coding.storyIds = [];
+    if (state.coding.planDigest === null) state.coding.storyIds = [];
     state.coding.currentStoryIndex = 0;
+    state.coding.records = {};
   }
   appendHistory(state, 'gate_approved', `${completedSubject} → ${next}`);
   return { completedSubject, nextPhase: next };
@@ -99,7 +96,10 @@ export function requestRevision(
   state.lastError = null;
   if (state.phase === 'coding') {
     state.coding.changedFiles = [];
-    resetTddCycle(state);
+    state.coding.tdd = { stage: 'red', binding: null, red: null, green: null };
+    state.coding.revisionStart = state.coding.cycles.length;
+    const story = currentCodingStory(state);
+    if (story) delete state.coding.records[story];
   }
   if (state.round >= maxRounds) {
     state.status = 'blocked';
@@ -129,7 +129,10 @@ export function moveBackOnePhase(state: EvidenceState): ActivePhase | null {
       state.coding.storyIds.length - 1,
     );
     state.coding.changedFiles = [];
-    resetTddCycle(state);
+    state.coding.tdd = { stage: 'red', binding: null, red: null, green: null };
+    state.coding.revisionStart = state.coding.cycles.length;
+    const story = currentCodingStory(state);
+    if (story) delete state.coding.records[story];
   }
   appendHistory(state, 'phase_rolled_back', `${from} → ${previous}`);
   return previous;

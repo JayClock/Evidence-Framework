@@ -1,5 +1,6 @@
 import { getPhaseDefinition } from './phases.ts';
 import { readText } from './storage.ts';
+import { validateTestingArtifact } from './test-plan.ts';
 import type {
   ActivePhase,
   ArtifactSpec,
@@ -153,6 +154,31 @@ export async function validateDocumentPhase(
       ? `${validation.chars} 字符，${validation.tableRows} 个表格行`
       : validation.issues.map((issue) => issue.message).join('；'),
   }));
+
+  for (const spec of definition.artifacts) {
+    if (
+      !['story-map', 'test-procedures', 'sprint-1-backlog'].includes(spec.key)
+    )
+      continue;
+    const name =
+      spec.key === 'sprint-1-backlog'
+        ? '测试计划追溯'
+        : `${spec.output} 机器目录`;
+    try {
+      await validateTestingArtifact(
+        root,
+        spec.key,
+        await readText(root, spec.output),
+      );
+      items.push({
+        name,
+        status: 'pass',
+        details: '机器目录/引用校验通过（不代替业务语义审核）',
+      });
+    } catch (error) {
+      items.push({ name, status: 'fail', details: (error as Error).message });
+    }
+  }
 
   return {
     phase: state.phase as ActivePhase,
