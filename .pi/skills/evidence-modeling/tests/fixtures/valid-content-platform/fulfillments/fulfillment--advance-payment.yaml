@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.advance-payment
+label: 支付创作者预付款
+contextRef: context.content-production
+contractRef: contract.content-production
+rightHolderRoleRef: role.creator
+obligorRoleRef: role.platform-content-production
+requestRef: request.advance-payment
+confirmationRefs:
+  - confirmation.advance-payment
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: AdvancePaymentRequested
+  actsForRoleRef: role.creator
+confirmationTriggers:
+  - confirmationRef: confirmation.advance-payment
+    trigger:
+      kind: domain_event
+      eventType: AdvancePaymentConfirmed
+      actsForRoleRef: role.platform-content-production
+subjectRefs:
+  - thing.content

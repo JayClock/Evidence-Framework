@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.operator
+category: role
+kind: party
+label: 内容运营
+contextRef: context.operations-performance

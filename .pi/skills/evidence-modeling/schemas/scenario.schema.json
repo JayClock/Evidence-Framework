@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/scenario.schema.json",
+  "title": "FM deterministic evidence simulation scenario",
+  "type": "object",
+  "required": ["type", "id", "label", "asOf", "steps", "expectations"],
+  "properties": {
+    "type": { "const": "fm_scenario" },
+    "id": { "$ref": "#/$defs/id" },
+    "label": { "type": "string", "minLength": 1 },
+    "asOf": { "type": "string", "minLength": 1 },
+    "givenInstanceRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "uniqueItems": true
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evaluation" }
+    },
+    "manualCompletionRequestRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "uniqueItems": true
+    },
+    "expectations": { "$ref": "#/$defs/expectations" },
+    "stakeholderReview": { "$ref": "#/$defs/stakeholderReview" },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "step": {
+      "type": "object",
+      "required": ["sequence", "actingRoleRef", "issueInstanceRef"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "actingRoleRef": { "$ref": "#/$defs/id" },
+        "issueInstanceRef": { "$ref": "#/$defs/id" },
+        "availableInstanceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "evaluationBinding": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["instanceRef"],
+          "properties": { "instanceRef": { "$ref": "#/$defs/id" } },
+          "additionalProperties": false
+        },
+        {
+          "required": ["instanceRefs"],
+          "properties": {
+            "instanceRefs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/id" },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "required": ["value"],
+          "properties": { "value": {} },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["ruleRef", "bindings", "expectedResult"],
+      "properties": {
+        "ruleRef": { "$ref": "#/$defs/id" },
+        "bindings": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/evaluationBinding" }
+        },
+        "targetInstanceRef": { "$ref": "#/$defs/id" },
+        "expectedResult": {},
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "fulfillmentStatus": {
+      "type": "object",
+      "required": ["fulfillmentRef", "requestInstanceRef", "status"],
+      "properties": {
+        "fulfillmentRef": { "$ref": "#/$defs/id" },
+        "requestInstanceRef": { "$ref": "#/$defs/id" },
+        "status": {
+          "enum": ["not_requested", "pending", "completed", "breached"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectations": {
+      "type": "object",
+      "required": ["fulfillmentStatuses"],
+      "properties": {
+        "fulfillmentStatuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/fulfillmentStatus" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "stakeholderReview": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "confirmed", "rejected"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reviewedAt": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["confirmed", "rejected"] } },
+            "required": ["status"]
+          },
+          "then": { "required": ["reviewer", "reviewedAt"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

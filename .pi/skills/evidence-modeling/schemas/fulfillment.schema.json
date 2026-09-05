@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/fulfillment.schema.json",
+  "title": "Fulfillment Modeling fulfillment relation",
+  "type": "object",
+  "required": [
+    "type",
+    "id",
+    "label",
+    "contextRef",
+    "contractRef",
+    "rightHolderRoleRef",
+    "obligorRoleRef",
+    "requestRef",
+    "confirmationRefs",
+    "completionPolicy",
+    "requestTrigger",
+    "confirmationTriggers"
+  ],
+  "properties": {
+    "type": { "const": "fulfillment" },
+    "id": { "$ref": "#/$defs/id" },
+    "label": { "type": "string", "minLength": 1 },
+    "contextRef": { "$ref": "#/$defs/id" },
+    "contractRef": { "$ref": "#/$defs/id" },
+    "rightHolderRoleRef": { "$ref": "#/$defs/id" },
+    "obligorRoleRef": { "$ref": "#/$defs/id" },
+    "requestRef": { "$ref": "#/$defs/id" },
+    "confirmationRefs": {
+      "description": "Stable IDs of concrete Fulfillment Confirmation entities or open Evidence Role confirmation slots.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "subjectRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "uniqueItems": true
+    },
+    "completionPolicy": { "$ref": "#/$defs/completionPolicy" },
+    "requestTrigger": { "$ref": "#/$defs/trigger" },
+    "confirmationTriggers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["confirmationRef", "trigger"],
+        "properties": {
+          "confirmationRef": {
+            "description": "A member of confirmationRefs: concrete Confirmation or Evidence Role.",
+            "$ref": "#/$defs/id"
+          },
+          "trigger": { "$ref": "#/$defs/trigger" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "breaches": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/breach" }
+    },
+    "sharedConfirmationRationale": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "completionPolicy": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["any", "all", "count", "amount", "manual"] },
+        "minimumConfirmations": { "type": "integer", "minimum": 1 },
+        "completionRuleRef": { "$ref": "#/$defs/id" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "mode": { "const": "count" } },
+            "required": ["mode"]
+          },
+          "then": { "required": ["minimumConfirmations"] },
+          "else": { "not": { "required": ["minimumConfirmations"] } }
+        },
+        {
+          "if": {
+            "properties": { "mode": { "const": "amount" } },
+            "required": ["mode"]
+          },
+          "then": { "required": ["completionRuleRef"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["kind", "actsForRoleRef"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "manual",
+            "schedule",
+            "domain_event",
+            "integration_event",
+            "rule"
+          ]
+        },
+        "actsForRoleRef": { "$ref": "#/$defs/id" },
+        "eventType": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "schedule": { "type": "string", "minLength": 1 },
+        "ruleRef": { "$ref": "#/$defs/id" },
+        "sourceContextRef": { "$ref": "#/$defs/id" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": { "enum": ["domain_event", "integration_event"] }
+            },
+            "required": ["kind"]
+          },
+          "then": { "required": ["eventType"] }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "schedule" } },
+            "required": ["kind"]
+          },
+          "then": { "required": ["schedule"] }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "rule" } },
+            "required": ["kind"]
+          },
+          "then": { "required": ["ruleRef"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "breach": {
+      "type": "object",
+      "required": ["conditionRuleRef", "outcome"],
+      "properties": {
+        "conditionRuleRef": { "$ref": "#/$defs/id" },
+        "outcome": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "enum": [
+                "fulfillment",
+                "terminate_contract",
+                "external_dispute",
+                "record_only"
+              ]
+            },
+            "fulfillmentRef": { "$ref": "#/$defs/id" },
+            "notes": { "type": "string", "minLength": 1 }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "kind": { "const": "fulfillment" } },
+                "required": ["kind"]
+              },
+              "then": { "required": ["fulfillmentRef"] }
+            },
+            {
+              "if": {
+                "properties": { "kind": { "const": "record_only" } },
+                "required": ["kind"]
+              },
+              "then": { "required": ["notes"] }
+            }
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

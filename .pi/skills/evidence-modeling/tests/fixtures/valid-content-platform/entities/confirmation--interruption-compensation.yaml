@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.interruption-compensation
+category: evidence
+kind: fulfillment_confirmation
+label: 断更补偿确认
+contextRef: context.content-subscription
+responsibleRoleRef: role.platform-subscription
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

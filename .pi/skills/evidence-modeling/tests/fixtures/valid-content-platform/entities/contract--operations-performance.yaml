@@ -1,0 +1,16 @@
+---
+type: entity
+id: contract.operations-performance
+category: evidence
+kind: contract
+label: 绩效协议
+contextRef: context.operations-performance
+roleRefs:
+  - role.operator
+  - role.platform-performance
+attributes:
+  - name: signedAt
+    label: 签约时间
+    valueType: timestamp
+    required: true
+    meaning: 双方合同成立时间

@@ -1,0 +1,185 @@
+# 属性追溯与业务单据模拟
+
+## 1. 两个不同的 Gate
+
+- 属性追溯回答：关键金额、数量、时间、KPI 和结论从哪一个凭证属性产生？
+- 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建权责与结果？
+
+结构合法不等于业务已验证。状态必须区分：
+
+```text
+machineValidated → simulationPassed → stakeholderReview.confirmed
+```
+
+脚本只能自动产生前两项；没有具名审核人与审核时间时，不得声称业务方已确认。
+
+## 2. 关键数据项
+
+在 Entity Attribute 上使用 `keyData: true`：
+
+```yaml
+attributes:
+  - name: payableMinorUnits
+    label: 应付最小货币单位金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 本次请求要求支付的整数金额
+    derivedByRuleRef: rule.requested-amount
+```
+
+关键属性只有两种依据：
+
+1. `asserted`：由所属 Evidence 自身确认，例如合同签署的价格或付款确认记录的实付金额；
+2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
+
+不要另写 `sourceAttributeRefs`。派生依据由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务输入必须建模为 Evidence Attribute，不能藏在无依据的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`。
+
+规则 binding 默认 `cardinality: one`；集合必须显式声明：
+
+```yaml
+bindings:
+  confirmations:
+    ref: confirmation.delivery
+    cardinality: many
+```
+
+集合属性只能通过 `all`、`exists`、`filter`、`map` 等 CEL collection macro 的局部变量访问。
+
+## 3. 属性追溯验证
+
+```bash
+python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> \
+  --output <model-dir>/generated/traceability.json
+```
+
+校验与报告覆盖：
+
+- CEL 读取的 Entity Attribute 必须存在；
+- derivation target、`derivedByRuleRef` 和结果类型必须相互一致；
+- key derived attribute 至少读取一个已建模属性；
+- 集合 binding 的 cardinality 与 macro 用法一致；
+- 属性派生图不得成环；
+- 非 derivation 规则列为约束，不伪装成数据生产边；
+- 输出按稳定属性路径和 Rule ID 排序。
+
+`traceability.json` 是可删除重建的确定性产物，不是新的事实源。
+
+## 4. Validation Suite
+
+场景输入与核心 FM 类型模型分离：
+
+```text
+fm-model/validation/
+├── instances/
+│   └── instance--payment-request.yaml
+└── scenarios/
+    └── scenario--successful-payment.yaml
+```
+
+### Evidence Instance
+
+```yaml
+type: evidence_instance
+id: instance.payment-request
+entityRef: request.payment
+values:
+  startedAt: '2026-09-01T09:01:00Z'
+basedOn:
+  - instance.sales-contract
+```
+
+规则：
+
+- 只能实例化 Evidence Entity；
+- 非派生的必填属性必须在单据形成时给出；
+- 派生必填属性可以先缺省，但场景结束前必须由 CEL evaluation 产生；
+- `basedOn` 只能指向更早可用的单据；
+- 更正、退款、冲正和补偿新增 Instance，不修改旧 Instance。
+
+### Scenario
+
+```yaml
+type: fm_scenario
+id: scenario.successful-payment
+label: 成功付款
+asOf: '2026-09-01T09:15:00Z'
+givenInstanceRefs:
+  - instance.sales-contract
+steps:
+  - sequence: 1
+    actingRoleRef: role.seller
+    issueInstanceRef: instance.payment-request
+    availableInstanceRefs:
+      - instance.sales-contract
+  - sequence: 2
+    actingRoleRef: role.buyer
+    issueInstanceRef: instance.payment-confirmation
+    availableInstanceRefs:
+      - instance.payment-request
+evaluations:
+  - ruleRef: rule.payment-matches-request
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      payment:
+        instanceRef: instance.payment-confirmation
+    expectedResult: true
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.payment
+      requestInstanceRef: instance.payment-request
+      status: completed
+stakeholderReview:
+  status: pending
+```
+
+`asOf` 必须固定；禁止使用执行机器当前时间。`availableInstanceRefs` 决定角色扮演时该 Role 可以看到什么；省略时只默认包含新单据的 `basedOn`，显式空数组表示没有可见凭证。不能把后续凭证或 facilitator 答案提前暴露。
+
+Rule evaluation binding 支持：
+
+```yaml
+variableA: { instanceRef: instance.one }
+variableB: { instanceRefs: [instance.a, instance.b] }
+now: { value: '2026-09-01T09:15:00Z' }
+```
+
+Derivation evaluation 还必须给出 `targetInstanceRef`。Rule 中名为 `now` 或 `asOf` 的 `timestamp` binding 可以省略，模拟器会注入 Scenario 的固定 `asOf`；若显式提供，值必须与 `asOf` 完全相同。其它时间输入不得读取机器当前时间。如果单据预填值与计算结果冲突，模拟失败，不静默覆盖。
+
+## 5. 确定性模拟
+
+```bash
+python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> \
+  --output <model-dir>/generated/simulation.json
+```
+
+可用 `--scenario <id>` 重复选择场景。执行器：
+
+1. 校验 Instance 与 Scenario Schema；
+2. 按 sequence 追加单据；
+3. 检查 acting Role 与 Evidence `responsibleRoleRef`；
+4. 保证 `basedOn` 和可见凭证已经形成；
+5. 按声明顺序执行 CEL；
+6. 计算 `any`、`all`、`count`、`amount` 或显式 manual completion；
+7. 按 Request Instance 及其 `basedOn` 后继限定 completion／breach 结果，计算违约状态；
+8. 对比期望并输出确定性 JSON。
+
+同一请求的 breach 条件为真时，`breached` 优先于 `completed`，避免迟到的 Confirmation 抹去已经发生的违约。Roleized Confirmation 由模型中的 Evidence→Evidence Role `plays_role` 解析。具体跨 Context Confirmation Instance 仍须通过 `basedOn` 关联当前 Request Instance，避免把无关凭证误当成履约证明。
+
+## 6. 人工角色扮演包
+
+```bash
+python3 <skill-dir>/scripts/generate_role_play_pack.py \
+  <model-dir> <scenario-id> --output <role-play-dir>
+```
+
+输出包括：
+
+- `facilitator.md`：完整顺序、预期值和预期结果；
+- `source-documents/`：开始时已成立、可发给参与者的凭证；
+- `blank-documents/`：由各 Role 在演练中填写的单据；
+- `role--*.md`：每个 Role 的步骤、可见凭证和当时可用的 CEL 政策表达式，不含预期值或后续答案；
+- `audit-checklist.md`：权责、时限、关键数据、异常和口头知识检查；
+- `manifest.json`：场景、机器模拟和 stakeholder review 状态。
+
+角色扮演至少检查一个正常场景和一个异常／追责场景。任何必须依赖“大家都知道”的口头事实都记录为模型 gap。人工确认必须由业务方显式写入 `stakeholderReview`，不能由 Agent 推断。

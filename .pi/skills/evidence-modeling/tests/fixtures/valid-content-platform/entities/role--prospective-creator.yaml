@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.prospective-creator
+category: role
+kind: party
+label: 候选创作者
+contextRef: context.content-production-precontract

@@ -1,0 +1,19 @@
+---
+type: entity
+id: request.external-payment
+category: evidence
+kind: fulfillment_request
+label: 外部付款请求
+contextRef: context.external-payment
+responsibleRoleRef: role.external-payment-customer
+attributes:
+  - name: startedAt
+    label: 发起时间
+    valueType: timestamp
+    required: true
+    meaning: 履约时段开始时间
+  - name: expiresAt
+    label: 截止时间
+    valueType: timestamp
+    required: true
+    meaning: 履约时段截止时间

@@ -1,0 +1,23 @@
+---
+type: fulfillment
+id: fulfillment.external-payment
+label: 完成外部支付
+contextRef: context.external-payment
+contractRef: contract.external-payment
+rightHolderRoleRef: role.external-payment-customer
+obligorRoleRef: role.external-payment-provider
+requestRef: request.external-payment
+confirmationRefs:
+  - confirmation.external-payment
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: MobilePaymentRequested
+  actsForRoleRef: role.external-payment-customer
+confirmationTriggers:
+  - confirmationRef: confirmation.external-payment
+    trigger:
+      kind: domain_event
+      eventType: MobilePaymentConfirmed
+      actsForRoleRef: role.external-payment-provider

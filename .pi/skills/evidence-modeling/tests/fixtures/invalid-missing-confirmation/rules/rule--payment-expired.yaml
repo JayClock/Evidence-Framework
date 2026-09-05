@@ -1,0 +1,15 @@
+---
+type: rule
+id: rule.payment-expired
+kind: breach
+label: 付款逾期
+contextRef: context.content-subscription
+bindings:
+  request:
+    ref: request.content-payment
+  paymentConfirmed:
+    type: bool
+  now:
+    type: timestamp
+expression: now > request.expiresAt && !paymentConfirmed
+resultType: bool

@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.external-payment-customer
+category: role
+kind: party
+label: 客户
+contextRef: context.external-payment

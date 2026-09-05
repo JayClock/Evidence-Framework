@@ -1,0 +1,8 @@
+---
+type: entity
+id: proposal.content-project
+category: evidence
+kind: proposal
+label: 内容产品立项提案
+contextRef: context.content-production-precontract
+responsibleRoleRef: role.prospective-creator

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/traceability.schema.json",
+  "title": "FM deterministic attribute traceability report",
+  "type": "object",
+  "required": ["schemaVersion", "modelId", "nodes", "edges", "constraints"],
+  "properties": {
+    "schemaVersion": { "const": "2.0" },
+    "modelId": { "$ref": "#/$defs/id" },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/constraint" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "attributePath": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*#[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "path",
+        "entityRef",
+        "attribute",
+        "valueType",
+        "keyData",
+        "origin"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/attributePath" },
+        "entityRef": { "$ref": "#/$defs/id" },
+        "attribute": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "valueType": { "type": "string", "minLength": 1 },
+        "keyData": { "type": "boolean" },
+        "origin": { "enum": ["asserted", "derived"] },
+        "derivedByRuleRef": { "$ref": "#/$defs/id" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "origin": { "const": "derived" } },
+            "required": ["origin"]
+          },
+          "then": { "required": ["derivedByRuleRef"] },
+          "else": { "not": { "required": ["derivedByRuleRef"] } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": ["source", "target", "ruleRef"],
+      "properties": {
+        "source": { "$ref": "#/$defs/attributePath" },
+        "target": { "$ref": "#/$defs/attributePath" },
+        "ruleRef": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "constraint": {
+      "type": "object",
+      "required": ["ruleRef", "kind", "attributeRefs"],
+      "properties": {
+        "ruleRef": { "$ref": "#/$defs/id" },
+        "kind": {
+          "enum": [
+            "precondition",
+            "invariant",
+            "eligibility",
+            "completion",
+            "breach"
+          ]
+        },
+        "attributeRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/attributePath" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

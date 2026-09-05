@@ -1,0 +1,11 @@
+---
+type: fm_model
+schemaVersion: '2.0'
+id: platform-roleized-payment
+name: 内容平台多渠道付款确认角色化模型
+version: 2.0.0
+ruleLanguage: CEL
+entryContextRefs:
+  - context.content-subscription
+  - context.external-payment
+  - context.prepaid-payment

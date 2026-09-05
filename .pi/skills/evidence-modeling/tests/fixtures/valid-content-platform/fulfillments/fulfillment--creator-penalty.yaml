@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.creator-penalty
+label: 支付断更违约金
+contextRef: context.content-production
+contractRef: contract.content-production
+rightHolderRoleRef: role.platform-content-production
+obligorRoleRef: role.creator
+requestRef: request.creator-penalty
+confirmationRefs:
+  - confirmation.creator-penalty
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: CreatorPenaltyRequested
+  actsForRoleRef: role.platform-content-production
+confirmationTriggers:
+  - confirmationRef: confirmation.creator-penalty
+    trigger:
+      kind: domain_event
+      eventType: CreatorPenaltyConfirmed
+      actsForRoleRef: role.creator
+subjectRefs:
+  - thing.content

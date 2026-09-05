@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.goal-setting
+category: evidence
+kind: fulfillment_confirmation
+label: 目标设定确认
+contextRef: context.operations-performance
+responsibleRoleRef: role.platform-performance
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

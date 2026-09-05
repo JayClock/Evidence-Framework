@@ -1,0 +1,16 @@
+---
+type: entity
+id: contract.prepaid-payment
+category: evidence
+kind: contract
+label: 预付费合同
+contextRef: context.prepaid-payment
+roleRefs:
+  - role.prepaid-customer
+  - role.prepaid-platform
+attributes:
+  - name: signedAt
+    label: 签约时间
+    valueType: timestamp
+    required: true
+    meaning: 双方合同成立时间

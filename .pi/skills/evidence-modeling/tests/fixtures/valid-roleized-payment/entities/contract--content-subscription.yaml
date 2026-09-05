@@ -1,0 +1,16 @@
+---
+type: entity
+id: contract.content-subscription
+category: evidence
+kind: contract
+label: 内容产品订阅合同
+contextRef: context.content-subscription
+roleRefs:
+  - role.subscriber
+  - role.platform-subscription
+attributes:
+  - name: signedAt
+    label: 签约时间
+    valueType: timestamp
+    required: true
+    meaning: 双方合同成立时间

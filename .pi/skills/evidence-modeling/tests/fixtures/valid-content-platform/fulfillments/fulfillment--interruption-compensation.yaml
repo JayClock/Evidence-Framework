@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.interruption-compensation
+label: 提供断更补偿
+contextRef: context.content-subscription
+contractRef: contract.content-subscription
+rightHolderRoleRef: role.subscriber
+obligorRoleRef: role.platform-subscription
+requestRef: request.interruption-compensation
+confirmationRefs:
+  - confirmation.interruption-compensation
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: InterruptionCompensationRequested
+  actsForRoleRef: role.subscriber
+confirmationTriggers:
+  - confirmationRef: confirmation.interruption-compensation
+    trigger:
+      kind: domain_event
+      eventType: InterruptionCompensationConfirmed
+      actsForRoleRef: role.platform-subscription
+subjectRefs:
+  - thing.content

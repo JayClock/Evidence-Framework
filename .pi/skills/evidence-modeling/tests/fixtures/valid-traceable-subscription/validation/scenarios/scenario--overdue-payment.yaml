@@ -1,0 +1,46 @@
+---
+type: fm_scenario
+id: scenario.overdue-payment
+label: 付款逾期并触发合同终止
+asOf: '2026-09-01T10:00:00Z'
+givenInstanceRefs:
+  - instance.subscription-contract
+steps:
+  - sequence: 1
+    actingRoleRef: role.platform-subscription
+    issueInstanceRef: instance.payment-request
+    availableInstanceRefs:
+      - instance.subscription-contract
+evaluations:
+  - ruleRef: rule.payment-deadline
+    bindings:
+      self:
+        instanceRef: instance.payment-request
+    targetInstanceRef: instance.payment-request
+    expectedResult: '2026-09-01T09:31:00Z'
+  - ruleRef: rule.payment-request-amount
+    bindings:
+      contract:
+        instanceRef: instance.subscription-contract
+    targetInstanceRef: instance.payment-request
+    expectedResult: 19900
+  - ruleRef: rule.payment-request-currency
+    bindings:
+      contract:
+        instanceRef: instance.subscription-contract
+    targetInstanceRef: instance.payment-request
+    expectedResult: CNY
+  - ruleRef: rule.payment-expired
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      paymentConfirmed:
+        value: false
+    expectedResult: true
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.content-payment
+      requestInstanceRef: instance.payment-request
+      status: breached
+stakeholderReview:
+  status: pending

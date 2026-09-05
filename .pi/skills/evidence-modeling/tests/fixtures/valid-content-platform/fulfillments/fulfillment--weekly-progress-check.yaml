@@ -1,0 +1,23 @@
+---
+type: fulfillment
+id: fulfillment.weekly-progress-check
+label: 完成周进度检查
+contextRef: context.operations-performance
+contractRef: contract.operations-performance
+rightHolderRoleRef: role.platform-performance
+obligorRoleRef: role.operator
+requestRef: request.weekly-progress-check
+confirmationRefs:
+  - confirmation.weekly-progress-check
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: WeeklyProgressCheckRequested
+  actsForRoleRef: role.platform-performance
+confirmationTriggers:
+  - confirmationRef: confirmation.weekly-progress-check
+    trigger:
+      kind: domain_event
+      eventType: WeeklyProgressCheckConfirmed
+      actsForRoleRef: role.operator

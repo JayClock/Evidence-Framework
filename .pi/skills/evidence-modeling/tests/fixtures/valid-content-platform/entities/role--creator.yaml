@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.creator
+category: role
+kind: party
+label: 创作者
+contextRef: context.content-production

@@ -1,0 +1,8 @@
+---
+type: entity
+id: context.content-production-precontract
+category: context
+kind: pre_contract
+label: 创作合同签约前上下文
+rootRefs:
+  - rfp.content-topic

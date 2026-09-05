@@ -1,0 +1,8 @@
+---
+type: entity
+id: context.cms
+category: context
+kind: domain
+label: 内容管理领域上下文
+rootRefs:
+  - thing.content

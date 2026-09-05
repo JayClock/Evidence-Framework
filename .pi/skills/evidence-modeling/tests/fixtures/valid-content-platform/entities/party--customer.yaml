@@ -1,0 +1,6 @@
+---
+type: entity
+id: party.customer
+category: participant
+kind: party
+label: 客户

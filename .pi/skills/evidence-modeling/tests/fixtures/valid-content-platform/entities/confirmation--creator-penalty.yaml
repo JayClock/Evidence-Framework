@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.creator-penalty
+category: evidence
+kind: fulfillment_confirmation
+label: 违约金支付确认
+contextRef: context.content-production
+responsibleRoleRef: role.creator
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

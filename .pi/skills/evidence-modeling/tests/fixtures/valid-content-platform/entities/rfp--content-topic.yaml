@@ -1,0 +1,8 @@
+---
+type: entity
+id: rfp.content-topic
+category: evidence
+kind: rfp
+label: 内容产品选题请求
+contextRef: context.content-production-precontract
+responsibleRoleRef: role.precontract-operator

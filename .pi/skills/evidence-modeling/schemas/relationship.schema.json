@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/relationship.schema.json",
+  "title": "Fulfillment Modeling relationship",
+  "type": "object",
+  "required": ["type", "id", "kind", "sourceRef", "targetRef", "label"],
+  "properties": {
+    "type": { "const": "relationship" },
+    "id": { "$ref": "#/$defs/id" },
+    "kind": {
+      "enum": [
+        "plays_role",
+        "references",
+        "evidences",
+        "precedes",
+        "derived_from",
+        "cross_context_reference",
+        "uses_role"
+      ]
+    },
+    "sourceRef": { "$ref": "#/$defs/id" },
+    "targetRef": { "$ref": "#/$defs/id" },
+    "label": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+---
+type: entity
+id: context.external-payment
+category: context
+kind: contract
+label: 外部支付协议上下文
+rootRefs:
+  - contract.external-payment

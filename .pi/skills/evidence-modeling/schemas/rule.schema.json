@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/rule.schema.json",
+  "title": "Fulfillment Modeling CEL rule",
+  "type": "object",
+  "required": [
+    "type",
+    "id",
+    "kind",
+    "label",
+    "contextRef",
+    "bindings",
+    "expression",
+    "resultType"
+  ],
+  "properties": {
+    "type": { "const": "rule" },
+    "id": { "$ref": "#/$defs/id" },
+    "kind": {
+      "enum": [
+        "derivation",
+        "precondition",
+        "invariant",
+        "eligibility",
+        "completion",
+        "breach"
+      ]
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "contextRef": { "$ref": "#/$defs/id" },
+    "bindings": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/binding" }
+    },
+    "expression": { "type": "string", "minLength": 1 },
+    "resultType": { "$ref": "#/$defs/valueType" },
+    "target": {
+      "type": "object",
+      "required": ["entityRef", "attribute"],
+      "properties": {
+        "entityRef": { "$ref": "#/$defs/id" },
+        "attribute": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "kind": { "const": "derivation" } },
+        "required": ["kind"]
+      },
+      "then": { "required": ["target"] }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "valueType": {
+      "enum": [
+        "bool",
+        "int",
+        "uint",
+        "double",
+        "decimal",
+        "string",
+        "bytes",
+        "timestamp",
+        "duration",
+        "date",
+        "money",
+        "enum",
+        "id",
+        "list",
+        "map",
+        "dynamic"
+      ]
+    },
+    "binding": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["ref"],
+          "properties": {
+            "ref": { "$ref": "#/$defs/id" },
+            "cardinality": {
+              "description": "Whether the CEL binding is one modeled instance or a collection of instances.",
+              "enum": ["one", "many"]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "required": ["type"],
+          "properties": { "type": { "$ref": "#/$defs/valueType" } },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

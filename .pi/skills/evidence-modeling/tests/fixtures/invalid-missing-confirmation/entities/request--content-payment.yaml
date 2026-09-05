@@ -1,0 +1,20 @@
+---
+type: entity
+id: request.content-payment
+category: evidence
+kind: fulfillment_request
+label: 内容产品付款请求
+contextRef: context.content-subscription
+responsibleRoleRef: role.platform-subscription
+attributes:
+  - name: startedAt
+    label: 发起时间
+    valueType: timestamp
+    required: true
+    meaning: 付款履约时段开始时间
+  - name: expiresAt
+    label: 截止时间
+    valueType: timestamp
+    required: true
+    meaning: 付款履约时段截止时间
+    derivedByRuleRef: rule.payment-deadline

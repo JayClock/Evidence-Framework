@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.external-payment-provider
+category: role
+kind: party
+label: 外部支付服务方
+contextRef: context.external-payment

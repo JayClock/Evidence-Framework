@@ -1,0 +1,7 @@
+---
+type: relationship
+id: relation.external-payment-plays-content-payment
+kind: plays_role
+sourceRef: confirmation.external-payment
+targetRef: role.content-payment-confirmation
+label: 外部支付确认扮演内容产品付款确认

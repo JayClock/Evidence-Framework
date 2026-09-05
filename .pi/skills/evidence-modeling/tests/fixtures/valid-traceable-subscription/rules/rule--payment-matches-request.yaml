@@ -1,0 +1,15 @@
+---
+type: rule
+id: rule.payment-matches-request
+kind: invariant
+label: 实付金额和币种必须匹配付款请求
+contextRef: context.content-subscription
+bindings:
+  request:
+    ref: request.content-payment
+  payment:
+    ref: confirmation.content-payment
+expression: >-
+  payment.paidMinorUnits == request.requestedMinorUnits &&
+  payment.currency == request.currency
+resultType: bool

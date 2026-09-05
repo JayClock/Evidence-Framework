@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.content-access
+category: evidence
+kind: fulfillment_confirmation
+label: 付费内容访问确认
+contextRef: context.content-subscription
+responsibleRoleRef: role.platform-subscription
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

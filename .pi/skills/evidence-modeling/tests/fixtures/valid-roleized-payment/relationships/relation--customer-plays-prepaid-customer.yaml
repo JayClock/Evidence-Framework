@@ -1,0 +1,7 @@
+---
+type: relationship
+id: relation.customer-plays-prepaid-customer
+kind: plays_role
+sourceRef: party.customer
+targetRef: role.prepaid-customer
+label: 客户扮演预付费使用方

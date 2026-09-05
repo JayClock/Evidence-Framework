@@ -1,0 +1,7 @@
+---
+type: relationship
+id: relation.proposal-precedes-content-production-contract
+kind: precedes
+sourceRef: proposal.content-project
+targetRef: contract.content-production
+label: 立项提案形成创作合同

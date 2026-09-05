@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.revenue-share
+category: evidence
+kind: fulfillment_confirmation
+label: 收入分成支付确认
+contextRef: context.content-production
+responsibleRoleRef: role.platform-content-production
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

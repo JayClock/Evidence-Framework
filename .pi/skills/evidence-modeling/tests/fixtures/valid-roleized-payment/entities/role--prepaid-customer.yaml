@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.prepaid-customer
+category: role
+kind: party
+label: 客户
+contextRef: context.prepaid-payment

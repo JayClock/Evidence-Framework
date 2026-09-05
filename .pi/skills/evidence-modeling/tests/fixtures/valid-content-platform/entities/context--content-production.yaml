@@ -1,0 +1,8 @@
+---
+type: entity
+id: context.content-production
+category: context
+kind: contract
+label: 创作合同上下文
+rootRefs:
+  - contract.content-production

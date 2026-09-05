@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.weekly-progress-check
+category: evidence
+kind: fulfillment_confirmation
+label: 周进度检查确认
+contextRef: context.operations-performance
+responsibleRoleRef: role.operator
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

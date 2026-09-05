@@ -1,0 +1,7 @@
+---
+type: relationship
+id: relation.customer-plays-external-payment-customer
+kind: plays_role
+sourceRef: party.customer
+targetRef: role.external-payment-customer
+label: 客户扮演外部支付服务使用方

@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.revenue-share
+label: 支付创作者收入分成
+contextRef: context.content-production
+contractRef: contract.content-production
+rightHolderRoleRef: role.creator
+obligorRoleRef: role.platform-content-production
+requestRef: request.revenue-share
+confirmationRefs:
+  - confirmation.revenue-share
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: RevenueShareRequested
+  actsForRoleRef: role.creator
+confirmationTriggers:
+  - confirmationRef: confirmation.revenue-share
+    trigger:
+      kind: domain_event
+      eventType: RevenueShareConfirmed
+      actsForRoleRef: role.platform-content-production
+subjectRefs:
+  - thing.content

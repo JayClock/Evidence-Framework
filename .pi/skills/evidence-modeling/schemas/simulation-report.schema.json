@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/simulation-report.schema.json",
+  "title": "FM deterministic scenario simulation report",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "modelId",
+    "machineValidated",
+    "simulationPassed",
+    "scenarioResults",
+    "errors"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "2.0" },
+    "modelId": { "$ref": "#/$defs/id" },
+    "machineValidated": { "type": "boolean" },
+    "simulationPassed": { "type": "boolean" },
+    "scenarioResults": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/scenarioResult" }
+    },
+    "errors": { "$ref": "#/$defs/errors" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["ruleRef", "result", "passed"],
+      "properties": {
+        "ruleRef": { "$ref": "#/$defs/id" },
+        "result": {},
+        "passed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "instanceValues": {
+      "type": "object",
+      "required": ["instanceRef", "entityRef", "values"],
+      "properties": {
+        "instanceRef": { "$ref": "#/$defs/id" },
+        "entityRef": { "$ref": "#/$defs/id" },
+        "values": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "fulfillmentStatus": {
+      "type": "object",
+      "required": [
+        "fulfillmentRef",
+        "requestInstanceRef",
+        "status",
+        "expectedStatus",
+        "passed"
+      ],
+      "properties": {
+        "fulfillmentRef": { "$ref": "#/$defs/id" },
+        "requestInstanceRef": { "$ref": "#/$defs/id" },
+        "status": {
+          "enum": ["not_requested", "pending", "completed", "breached"]
+        },
+        "expectedStatus": {
+          "enum": ["not_requested", "pending", "completed", "breached"]
+        },
+        "passed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "stakeholderReview": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "confirmed", "rejected"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reviewedAt": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["confirmed", "rejected"] } },
+            "required": ["status"]
+          },
+          "then": { "required": ["reviewer", "reviewedAt"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "scenarioResult": {
+      "type": "object",
+      "required": [
+        "scenarioId",
+        "asOf",
+        "machineValidated",
+        "simulationPassed",
+        "stakeholderReview",
+        "issuedInstanceRefs",
+        "instanceValues",
+        "evaluations",
+        "fulfillmentStatuses",
+        "errors"
+      ],
+      "properties": {
+        "scenarioId": { "$ref": "#/$defs/id" },
+        "asOf": { "type": "string", "minLength": 1 },
+        "machineValidated": { "type": "boolean" },
+        "simulationPassed": { "type": "boolean" },
+        "stakeholderReview": { "$ref": "#/$defs/stakeholderReview" },
+        "issuedInstanceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "instanceValues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/instanceValues" }
+        },
+        "evaluations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evaluation" }
+        },
+        "fulfillmentStatuses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fulfillmentStatus" }
+        },
+        "errors": { "$ref": "#/$defs/errors" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

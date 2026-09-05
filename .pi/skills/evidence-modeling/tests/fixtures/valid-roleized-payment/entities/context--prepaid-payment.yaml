@@ -1,0 +1,8 @@
+---
+type: entity
+id: context.prepaid-payment
+category: context
+kind: contract
+label: 预付费合同上下文
+rootRefs:
+  - contract.prepaid-payment

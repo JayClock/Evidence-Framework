@@ -1,0 +1,7 @@
+---
+type: relationship
+id: relation.prepaid-payment-plays-content-payment
+kind: plays_role
+sourceRef: confirmation.prepaid-payment
+targetRef: role.content-payment-confirmation
+label: 预付费付款确认扮演内容产品付款确认

@@ -1,0 +1,7 @@
+---
+type: entity
+id: thing.content
+category: participant
+kind: thing
+label: 内容产品
+contextRef: context.cms

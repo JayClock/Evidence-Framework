@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.subscriber
+category: role
+kind: party
+label: 订阅者
+contextRef: context.content-subscription

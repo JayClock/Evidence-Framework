@@ -1,0 +1,19 @@
+---
+type: entity
+id: request.revenue-share
+category: evidence
+kind: fulfillment_request
+label: 收入分成支付请求
+contextRef: context.content-production
+responsibleRoleRef: role.creator
+attributes:
+  - name: startedAt
+    label: 发起时间
+    valueType: timestamp
+    required: true
+    meaning: 履约时段开始时间
+  - name: expiresAt
+    label: 截止时间
+    valueType: timestamp
+    required: true
+    meaning: 履约时段截止时间

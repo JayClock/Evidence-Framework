@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v2/entity.schema.json",
+  "title": "Fulfillment Modeling entity",
+  "type": "object",
+  "required": ["type", "id", "category", "kind", "label"],
+  "properties": {
+    "type": { "const": "entity" },
+    "id": { "$ref": "#/$defs/id" },
+    "category": { "enum": ["evidence", "participant", "role", "context"] },
+    "kind": { "type": "string", "minLength": 1 },
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "contextRef": { "$ref": "#/$defs/id" },
+    "parentContextRef": { "$ref": "#/$defs/id" },
+    "rootRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "elasticityBoundaryCandidate": { "type": "boolean" },
+    "responsibleRoleRef": { "$ref": "#/$defs/id" },
+    "roleRefs": {
+      "description": "For Contract evidence, exactly two contextual Party Role IDs; explicit Participant players are optional.",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/id" },
+      "uniqueItems": true
+    },
+    "attributes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/attribute" }
+    },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "category": { "const": "evidence" } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "rfp",
+              "proposal",
+              "contract",
+              "fulfillment_request",
+              "fulfillment_confirmation",
+              "other_evidence"
+            ]
+          }
+        },
+        "required": ["contextRef"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": {
+            "enum": [
+              "rfp",
+              "proposal",
+              "fulfillment_request",
+              "fulfillment_confirmation",
+              "other_evidence"
+            ]
+          }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["responsibleRoleRef"] }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "contract" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["roleRefs"] }
+    },
+    {
+      "if": {
+        "properties": { "category": { "const": "participant" } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": { "kind": { "enum": ["party", "place", "thing"] } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "category": { "const": "role" } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "enum": ["party", "domain", "third_party", "context", "evidence"]
+          }
+        },
+        "required": ["contextRef"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "category": { "const": "context" } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "contract",
+              "fulfillment",
+              "pre_contract",
+              "channel",
+              "domain",
+              "external"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "attribute": {
+      "type": "object",
+      "required": ["name", "label", "valueType", "required", "meaning"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "valueType": {
+          "enum": [
+            "bool",
+            "int",
+            "uint",
+            "double",
+            "decimal",
+            "string",
+            "bytes",
+            "timestamp",
+            "duration",
+            "date",
+            "money",
+            "enum",
+            "id",
+            "list",
+            "map",
+            "dynamic"
+          ]
+        },
+        "required": { "type": "boolean" },
+        "meaning": { "type": "string", "minLength": 1 },
+        "keyData": {
+          "description": "Marks a financially, temporally, quantitatively, or audit-significant value for lineage reporting.",
+          "type": "boolean"
+        },
+        "derivedByRuleRef": { "$ref": "#/$defs/id" },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

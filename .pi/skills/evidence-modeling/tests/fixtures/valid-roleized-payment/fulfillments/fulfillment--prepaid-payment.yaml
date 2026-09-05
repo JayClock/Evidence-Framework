@@ -1,0 +1,23 @@
+---
+type: fulfillment
+id: fulfillment.prepaid-payment
+label: 完成预付费抵扣
+contextRef: context.prepaid-payment
+contractRef: contract.prepaid-payment
+rightHolderRoleRef: role.prepaid-customer
+obligorRoleRef: role.prepaid-platform
+requestRef: request.prepaid-payment
+confirmationRefs:
+  - confirmation.prepaid-payment
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: PrepaidPaymentRequested
+  actsForRoleRef: role.prepaid-customer
+confirmationTriggers:
+  - confirmationRef: confirmation.prepaid-payment
+    trigger:
+      kind: domain_event
+      eventType: PrepaidPaymentConfirmed
+      actsForRoleRef: role.prepaid-platform

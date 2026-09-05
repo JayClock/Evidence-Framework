@@ -1,0 +1,14 @@
+---
+type: entity
+id: confirmation.prepaid-payment
+category: evidence
+kind: fulfillment_confirmation
+label: 预付费付款确认
+contextRef: context.prepaid-payment
+responsibleRoleRef: role.prepaid-platform
+attributes:
+  - name: confirmedAt
+    label: 确认时间
+    valueType: timestamp
+    required: true
+    meaning: 确定履约结果形成的时间

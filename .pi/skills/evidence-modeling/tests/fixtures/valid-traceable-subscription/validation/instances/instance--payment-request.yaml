@@ -1,0 +1,8 @@
+---
+type: evidence_instance
+id: instance.payment-request
+entityRef: request.content-payment
+values:
+  startedAt: '2026-09-01T09:01:00Z'
+basedOn:
+  - instance.subscription-contract

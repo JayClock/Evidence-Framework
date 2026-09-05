@@ -1,0 +1,7 @@
+---
+type: entity
+id: role.platform-performance
+category: role
+kind: party
+label: 内容平台
+contextRef: context.operations-performance

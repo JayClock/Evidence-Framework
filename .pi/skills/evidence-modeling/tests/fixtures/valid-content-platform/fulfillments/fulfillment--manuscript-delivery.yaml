@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.manuscript-delivery
+label: 按期交稿
+contextRef: context.content-production
+contractRef: contract.content-production
+rightHolderRoleRef: role.platform-content-production
+obligorRoleRef: role.creator
+requestRef: request.manuscript-delivery
+confirmationRefs:
+  - confirmation.manuscript-delivery
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: ManuscriptDeliveryRequested
+  actsForRoleRef: role.platform-content-production
+confirmationTriggers:
+  - confirmationRef: confirmation.manuscript-delivery
+    trigger:
+      kind: domain_event
+      eventType: ManuscriptDeliveryConfirmed
+      actsForRoleRef: role.creator
+subjectRefs:
+  - thing.article

@@ -1,0 +1,25 @@
+---
+type: fulfillment
+id: fulfillment.content-payment
+label: 支付内容产品费用
+contextRef: context.content-subscription
+contractRef: contract.content-subscription
+rightHolderRoleRef: role.platform-subscription
+obligorRoleRef: role.subscriber
+requestRef: request.content-payment
+confirmationRefs:
+  - confirmation.content-payment
+completionPolicy:
+  mode: all
+requestTrigger:
+  kind: domain_event
+  eventType: ContentPaymentRequested
+  actsForRoleRef: role.platform-subscription
+confirmationTriggers:
+  - confirmationRef: confirmation.content-payment
+    trigger:
+      kind: domain_event
+      eventType: ContentPaymentConfirmed
+      actsForRoleRef: role.subscriber
+subjectRefs:
+  - thing.content
