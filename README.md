@@ -25,6 +25,7 @@ apps/
 - Node.js 20 或更高版本
 - npm 10 或更高版本
 - JDK 17 或更高版本
+- Python 3.10 或更高版本（仅在 Evidence 判定履约建模适用或执行扩展自测时需要）
 
 Gradle Wrapper 已包含在后端项目中，无需单独安装 Gradle。
 
@@ -73,4 +74,38 @@ npx nx build @evidence-poc/frontend
 npx nx build backend
 npx nx test @evidence-poc/frontend
 npx nx test backend
+```
+
+## Evidence 工程工作流
+
+仓库内置了一个项目级 Pi Extension，通过本地 TUI 驱动以下流程：
+
+```text
+需求分析 → DDD 领域建模（按需执行 FM Schema v2 履约建模）
+        → 架构设计 → Sprint 计划 → 逐故事真实 TDD → 独立审查 → 完成
+```
+
+首次使用：
+
+```bash
+npm install
+pi
+```
+
+信任项目并重启 Pi 后执行：
+
+```text
+/evidence-init
+```
+
+初始化后直接从原始需求生成用户画像、问题陈述/MVP 和用户故事地图，不设置前置访谈或单独的基线确认。Domain 直接判断 FM 适用性并按需建模。假设和待决策项记录在工件中，通过阶段 Gate 集中审核；就绪任务用 `/evidence-run` 继续，审核用 `/evidence-review`，修订用 `/evidence-revise`。
+
+当前工作流状态版本为 2，不兼容旧状态。更新扩展后运行 `/reload`；旧运行需先 `/evidence-reset` 再 `/evidence-init`，不提供迁移。配置文件仍为版本 1。
+
+扩展会按阶段限制模型工具、校验 Markdown 工件、运行真实测试/lint/build，并将状态保存到 `.evidence/state.json`。完整说明见 [docs/evidence.md](docs/evidence.md)。
+
+扩展自身检查：
+
+```bash
+npm run evidence:verify
 ```
