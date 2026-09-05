@@ -17,4 +17,4 @@ description: 生成 Scrum Product Backlog 工件
 
 ## 依赖与风险
 
-识别关键路径、可并行项和需要 Spike 的未知项。
+识别关键路径、可并行项和需要 Spike 的未知项。结合 test-strategy.md 和 test-procedures.md，说明测试环境、真实集成依赖及 Q3/Q4 评价如何影响风险、估算和验收就绪。缺少场景 ID、数据或通过标准的故事应标明阻塞；不要为补齐测试目录增加未经批准的产品能力。

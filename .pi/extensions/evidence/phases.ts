@@ -9,6 +9,13 @@ const prompt = (name: string) =>
   `.pi/extensions/evidence/templates/evidence-${name}.md`;
 
 const requirementsInput = 'artifacts/00-input/requirements.md';
+const testStrategyInput = 'artifacts/03-architecture/test-strategy.md';
+const testProceduresInput = 'artifacts/03-architecture/test-procedures.md';
+
+export const TESTING_CONTRACT_INPUTS = [
+  testStrategyInput,
+  testProceduresInput,
+] as const;
 
 const artifact = (
   value: Omit<ArtifactSpec, 'promptFile'> & { promptName: string },
@@ -246,6 +253,66 @@ export const PHASE_DEFINITIONS = {
         requiredSections: ['数据模型', '约束', '迁移'],
         minTableRows: 6,
       }),
+      artifact({
+        key: 'test-strategy',
+        label: '测试策略',
+        output: testStrategyInput,
+        promptName: 'test-strategy',
+        inputs: [
+          'artifacts/01-requirements/personas.md',
+          'artifacts/01-requirements/problem-statement.md',
+          'artifacts/01-requirements/story-map.md',
+          'artifacts/02-domain/aggregates.md',
+          'artifacts/02-domain/domain-events.md',
+          'artifacts/02-domain/fm-model',
+          'artifacts/03-architecture/architecture-style.md',
+          'artifacts/03-architecture/tech-stack.md',
+          'artifacts/03-architecture/module-structure.md',
+          'artifacts/03-architecture/api-contracts.md',
+          'artifacts/03-architecture/data-model.md',
+          'README.md',
+          'package.json',
+          '.pi/evidence.json',
+          'apps',
+        ],
+        minChars: 1000,
+        requiredSections: [
+          '测试策略',
+          '目标与风险',
+          '四象限',
+          '功能上下文',
+          '测试替身',
+          '追溯规则',
+          '测试数据与环境',
+          '执行与通过标准',
+          '风险接受',
+        ],
+        minTableRows: 5,
+      }),
+      artifact({
+        key: 'test-procedures',
+        label: '测试工序',
+        output: testProceduresInput,
+        promptName: 'test-procedures',
+        inputs: [
+          testStrategyInput,
+          'artifacts/03-architecture/tech-stack.md',
+          'artifacts/03-architecture/module-structure.md',
+          'artifacts/03-architecture/api-contracts.md',
+          'artifacts/03-architecture/data-model.md',
+          'package.json',
+          'apps',
+        ],
+        minChars: 900,
+        requiredSections: [
+          '测试工序',
+          '工序目录',
+          '工序定义',
+          '场景实例化规则',
+          '证据与例外',
+        ],
+        minTableRows: 2,
+      }),
     ],
   },
   planning: {
@@ -262,6 +329,7 @@ export const PHASE_DEFINITIONS = {
           'artifacts/01-requirements/story-map.md',
           'artifacts/02-domain/fm-model',
           'artifacts/03-architecture/module-structure.md',
+          ...TESTING_CONTRACT_INPUTS,
         ],
         minChars: 800,
         requiredSections: ['Product Backlog', '依赖'],
@@ -273,7 +341,10 @@ export const PHASE_DEFINITIONS = {
         label: 'Sprint 计划',
         output: 'artifacts/04-planning/sprint-plan.md',
         promptName: 'sprint-plan',
-        inputs: ['artifacts/04-planning/product-backlog.md'],
+        inputs: [
+          'artifacts/04-planning/product-backlog.md',
+          ...TESTING_CONTRACT_INPUTS,
+        ],
         minChars: 650,
         requiredSections: ['Sprint 1', 'Sprint 目标', '风险'],
       }),
@@ -287,6 +358,7 @@ export const PHASE_DEFINITIONS = {
           'artifacts/02-domain/fm-model',
           'artifacts/04-planning/sprint-plan.md',
           'artifacts/03-architecture/module-structure.md',
+          ...TESTING_CONTRACT_INPUTS,
         ],
         minChars: 800,
         requiredSections: ['Sprint 1 Backlog', '验收标准'],
@@ -301,6 +373,7 @@ export const PHASE_DEFINITIONS = {
         inputs: [
           'artifacts/04-planning/sprint-1-backlog.md',
           'artifacts/03-architecture/architecture-style.md',
+          ...TESTING_CONTRACT_INPUTS,
         ],
         minChars: 650,
         requiredSections: ['Definition of Done', '验证'],
@@ -325,6 +398,9 @@ export const PHASE_DEFINITIONS = {
         output: 'artifacts/06-review/final-review.md',
         promptName: 'final-review',
         inputs: [
+          'artifacts/01-requirements/story-map.md',
+          'artifacts/04-planning/sprint-1-backlog.md',
+          ...TESTING_CONTRACT_INPUTS,
           'artifacts/03-architecture/architecture-style.md',
           'artifacts/03-architecture/module-structure.md',
           'artifacts/03-architecture/api-contracts.md',

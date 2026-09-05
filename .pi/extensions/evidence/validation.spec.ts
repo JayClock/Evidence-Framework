@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PHASE_DEFINITIONS } from './phases.ts';
+import { validDocument } from './quality-test-support.ts';
 import {
   countMarkdownTableRows,
   normalizeMarkdown,
@@ -90,6 +91,28 @@ describe('artifact validation', () => {
       'minimum_unique_story_ids',
     );
   });
+
+  it.each(['test-strategy', 'test-procedures'])(
+    'requires the testing contract sections in %s',
+    (key) => {
+      const testingSpec = PHASE_DEFINITIONS.architecture.artifacts.find(
+        (item) => item.key === key,
+      );
+      expect(testingSpec).toBeDefined();
+      const document = validDocument(testingSpec!);
+      expect(validateArtifactContent(testingSpec!, document).passed).toBe(true);
+      for (const section of testingSpec!.requiredSections) {
+        const result = validateArtifactContent(
+          testingSpec!,
+          document.replace(`## ${section}\n`, ''),
+        );
+        expect(result.issues).toContainEqual({
+          code: 'missing_section',
+          message: `缺少包含“${section}”的 Markdown 标题`,
+        });
+      }
+    },
+  );
 
   it('counts table headers and data but not separator rows', () => {
     expect(countMarkdownTableRows('| A | B |\n|:---|:---|\n| 1 | 2 |\n')).toBe(

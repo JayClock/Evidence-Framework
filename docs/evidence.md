@@ -99,6 +99,37 @@ Python 依赖按 `requirements.txt` 哈希安装到 `node_modules/.cache/evidenc
 
 三个结论保持独立：`machineValidated` 表示机器结构与语义校验，`simulationPassed` 表示场景模拟，模型内的 `stakeholderReview` 表示具名业务方确认。扩展通过 `validate_fm_model.py --model-only` 校验模型，再独立执行模拟；合法模型可以得到“结构通过、场景失败”，但整体检查仍失败。前两者通过不能替代业务确认。Domain Gate 和最终 Review 都会重新校验适用模型；未作适用性决策会失败，不适用会以带理由的 warning 记录。每次重新校验都会刷新模型文件清单；FM YAML、状态文件和 `generated/*.json` 都进入 Domain 与最终 Review 的 Gate 摘要，变化后必须重新审核。零退出码不足以证明校验成功：结果 JSON 无效、缺少明确通过标记、命令异常或后续步骤失败，都会阻止 Gate 放行。后续 DDD、架构、计划、编码与审查 Prompt 均可读取该模型目录，并通过 Fulfillment/Scenario、Trigger/Evidence 等字段维持追溯。
 
+### 3.2 测试策略与测试工序
+
+测试不是编码后的独立阶段，而是贯穿现有六个阶段的交接契约：
+
+| 阶段         | 职责                                                                                           |
+| :----------- | :--------------------------------------------------------------------------------------------- |
+| Requirements | 给出稳定的验收场景 ID（如 US-001 下的 AC-001-01）、Given/When/Then、示例数据及有依据的质量约束 |
+| Domain       | 提供领域不变条件、异常规则及适用的 FM Scenario，不在此选择测试替身                             |
+| Architecture | 定义 Q1–Q4 策略、功能测试边界、真实依赖/替身与可复用 TP-\* 工序                                |
+| Planning     | 按“故事 → 场景 → 适用工序 → 任务”实例化，关联 Q1/Q2 测试；提前安排 Q3/Q4 评价及 DoD            |
+| Coding       | 按策略和适用工序编写真实代码/测试，在实现摘要中关联场景、任务、工序和验证结果                  |
+| Review       | 独立核对实际边界、替身、场景覆盖、工序符合性及 Q3/Q4 证据，报告缺口而不静默修复                |
+
+Architecture 在 data-model.md 之后依次新增：
+
+- `artifacts/03-architecture/test-strategy.md`：风险、四象限、功能上下文、替身、追溯规则、环境、通过标准与风险接受。
+- `artifacts/03-architecture/test-procedures.md`：工序目录、适用性、输入、准备/清理、操作、验证、退出条件与场景实例化规则。
+
+两份文件通过现有 `evidence_submit_artifact` 提交，由现有结构校验检查必需章节，并纳入 Architecture Gate 的证据摘要。Planning、Coding 和 Review 的提示词显式要求读取它们；文件缺失时拒绝生成当前提示词，要求回退上游。复杂技术细节放在工序自己的小节，编码只读取当前适用部分，不新增 Slash Command 或 Skill。
+
+Q1/Q2 按目的和受众区分，不等同于单元/集成测试；Q3/Q4 是产品评价，应提前规划，不要求全部自动化。功能上下文不等于 DDD 限界上下文，允许有依据地合并测试边界。Q2 与 Q1 要有关联，但不保证同时失败；真实装配和跨组件契约仍需集成验证。
+
+**当前能力边界（第一批）**：本次只打通工件、Skills、提示词和结构校验，未改变宏观阶段、工具协议、TDD 状态机、状态版本、Gate 决策或质量命令。扩展仍仅记录每故事每修订轮的一组故事级 Red/Green/Refactor，不支持逐工序状态和多循环证据校验。场景/任务/工序 ID 的语义及跨工件关联仍由 Agent 与人工审查，文档表格或命令通过不能证明逐工序 TDD、完整验收覆盖、性能达标或 UAT 完成。
+
+### 3.3 使用新版测试契约
+
+- 更新后执行 `/reload`。没有活动运行时，使用 `/evidence-init` 开始，扩展会在架构阶段生成两份新工件，不需手工创建。
+- 已有版本 2 的运行不需改状态版本。若已到架构或下游阶段但缺少测试契约，使用 `/evidence-back` 回到 Architecture；在该阶段使用 `/evidence-revise <补充测试契约的反馈>` 后执行 `/evidence-run`，重新生成并人工审核，再核对下游计划与验收证据。
+- 如果旧故事地图缺少稳定场景 ID 或可执行验收数据，应先回退 Requirements 修订，经后续阶段 Gate 重新审核；不要让 Coding 自行编造 ID 或需求。
+- 旧 Gate 不等于批准了新增工件。不要为了继续而直接写入 artifacts/reports、修改 `.evidence/state.json` 或伪造检查结果；原有修订轮次限制仍然生效。
+
 ## 4. 人工 Gate
 
 阶段检查通过后运行：
@@ -220,4 +251,4 @@ npm run evidence:format:check
 npm run evidence:verify
 ```
 
-这些命令不会调用语言模型。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行真实 Schema v2 模型的校验、追溯、模拟、确定性编译，以及建模 Skill 的 Python 自测。首次运行可能需要下载 Python 依赖。
+这些命令不会调用语言模型。测试契约的回归测试覆盖工件顺序、模板加载、必需章节、下游输入缺失和 Architecture Gate 衔接；它们验证扩展的确定性接线，不是模型生成内容的质量评测。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行真实 Schema v2 模型的校验、追溯、模拟、确定性编译，以及建模 Skill 的 Python 自测。首次运行可能需要下载 Python 依赖。

@@ -1,4 +1,5 @@
-import { rm } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { gateArtifactPaths } from './gates.ts';
 import { getPhaseDefinition } from './phases.ts';
@@ -6,6 +7,7 @@ import { qualityHarness, validDocument } from './quality-test-support.ts';
 import {
   createInitialState,
   loadState,
+  projectEntryExists,
   readText,
   saveState,
   writeTextAtomic,
@@ -60,6 +62,72 @@ describe('artifact-driven workflow without interviews', () => {
     expect(await readText(root, waiting.pendingGate!.path)).toContain(
       'decision: approved',
     );
+  });
+
+  it('submits testing contracts before the architecture gate and rejects missing contracts on recheck', async () => {
+    const { root, state, api, tool, command } = await freshHarness();
+    const definition = getPhaseDefinition('architecture');
+    expect(definition.artifacts).toHaveLength(8);
+    state.phase = 'architecture';
+    await saveState(root, state);
+    await writeTextAtomic(
+      root,
+      definition.skillFile,
+      await readText(process.cwd(), definition.skillFile),
+    );
+    const outputs = new Set(definition.artifacts.map((spec) => spec.output));
+    for (const spec of definition.artifacts) {
+      await writeTextAtomic(
+        root,
+        spec.promptFile,
+        await readText(process.cwd(), spec.promptFile),
+      );
+      for (const input of spec.inputs) {
+        if (outputs.has(input) || (await projectEntryExists(root, input)))
+          continue;
+        if (/\.(md|json)$/.test(input)) {
+          await writeTextAtomic(root, input, '# 已有上游输入');
+        } else {
+          await mkdir(join(root, input), { recursive: true });
+        }
+      }
+    }
+    for (const spec of definition.artifacts.slice(0, 6)) {
+      await tool('evidence_submit_artifact', { content: validDocument(spec) });
+    }
+    expect(await loadState(root)).toMatchObject({
+      status: 'running',
+      currentArtifactIndex: 6,
+      pendingGate: null,
+    });
+    expect(api.sendUserMessage).toHaveBeenLastCalledWith(
+      expect.stringContaining('artifacts/03-architecture/test-strategy.md'),
+      { deliverAs: 'followUp' },
+    );
+    await expect(
+      tool('evidence_submit_artifact', {
+        content: '# 测试策略\n缺少测试边界和替身说明',
+      }),
+    ).rejects.toThrow('工件校验失败');
+    for (const spec of definition.artifacts.slice(6)) {
+      await tool('evidence_submit_artifact', { content: validDocument(spec) });
+    }
+    const waiting = (await loadState(root))!;
+    expect(waiting.status).toBe('waiting_review');
+    expect(waiting.pendingGate?.artifactPaths).toEqual(
+      expect.arrayContaining([
+        'artifacts/03-architecture/test-strategy.md',
+        'artifacts/03-architecture/test-procedures.md',
+      ]),
+    );
+    await rm(join(root, 'artifacts/03-architecture/test-procedures.md'));
+    await command('evidence-check');
+    expect(await loadState(root)).toMatchObject({
+      phase: 'architecture',
+      status: 'ready',
+      pendingGate: null,
+      round: 1,
+    });
   });
 
   it('continues from bounded contexts directly into FM and accepts the explicit non-applicable branch', async () => {

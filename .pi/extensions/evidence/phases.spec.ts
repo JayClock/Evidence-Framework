@@ -23,6 +23,63 @@ describe('phase definitions', () => {
     });
   });
 
+  it('defines test strategy and reusable procedures at the end of architecture', () => {
+    const artifacts = PHASE_DEFINITIONS.architecture.artifacts;
+    expect(artifacts.map((item) => item.key)).toEqual([
+      'context-map',
+      'architecture-style',
+      'tech-stack',
+      'module-structure',
+      'api-contracts',
+      'data-model',
+      'test-strategy',
+      'test-procedures',
+    ]);
+    expect(artifacts.at(-1)?.inputs).toContain(
+      'artifacts/03-architecture/test-strategy.md',
+    );
+  });
+
+  it('passes testing contracts into planning and review without adding phases', () => {
+    const testingInputs = [
+      'artifacts/03-architecture/test-strategy.md',
+      'artifacts/03-architecture/test-procedures.md',
+    ];
+    for (const artifact of [
+      ...PHASE_DEFINITIONS.planning.artifacts,
+      ...PHASE_DEFINITIONS.review.artifacts,
+    ]) {
+      expect(artifact.inputs).toEqual(expect.arrayContaining(testingInputs));
+    }
+    expect(PHASE_DEFINITIONS.review.artifacts[0].inputs).toEqual(
+      expect.arrayContaining([
+        'artifacts/01-requirements/story-map.md',
+        'artifacts/04-planning/sprint-1-backlog.md',
+      ]),
+    );
+    expect(PHASE_ORDER).toEqual([
+      'requirements',
+      'domain',
+      'architecture',
+      'planning',
+      'coding',
+      'review',
+    ]);
+  });
+
+  it('only depends on earlier generated artifacts', () => {
+    const artifacts = PHASE_ORDER.flatMap(
+      (phase) => PHASE_DEFINITIONS[phase].artifacts,
+    );
+    const outputs = artifacts.map((item) => item.output);
+    for (const [index, artifact] of artifacts.entries()) {
+      for (const input of artifact.inputs) {
+        const upstreamIndex = outputs.indexOf(input);
+        if (upstreamIndex !== -1) expect(upstreamIndex).toBeLessThan(index);
+      }
+    }
+  });
+
   it('uses unique artifact paths', () => {
     const outputs = PHASE_ORDER.flatMap((phase) =>
       PHASE_DEFINITIONS[phase].artifacts.map((item) => item.output),
