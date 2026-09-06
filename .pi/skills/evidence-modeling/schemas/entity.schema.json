@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/entity.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/entity.schema.json",
   "title": "Fulfillment Modeling entity",
   "type": "object",
   "required": ["type", "id", "category", "kind", "label"],
@@ -23,7 +23,6 @@
       "minItems": 1,
       "uniqueItems": true
     },
-    "elasticityBoundaryCandidate": { "type": "boolean" },
     "responsibleRoleRef": { "$ref": "#/$defs/id" },
     "roleRefs": {
       "description": "For Contract evidence, exactly two contextual Party Role IDs; explicit Participant players are optional.",
@@ -100,6 +99,16 @@
     },
     {
       "if": {
+        "properties": {
+          "category": { "const": "participant" },
+          "kind": { "enum": ["place", "thing"] }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["contextRef"] }
+    },
+    {
+      "if": {
         "properties": { "category": { "const": "role" } },
         "required": ["category"]
       },
@@ -131,6 +140,16 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "context" },
+          "kind": { "const": "fulfillment" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["parentContextRef"] }
     }
   ],
   "additionalProperties": false,

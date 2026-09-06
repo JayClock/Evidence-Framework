@@ -17,7 +17,7 @@ pi
 /trust
 ```
 
-保存决定后重启 Pi。启动页应显示 `evidence` Extension 和七个 `evidence-*` Skills。履约建模适用时还需要 Python 3.10 或更高版本；可用 `EVIDENCE_PYTHON` 指定解释器。
+保存决定后重启 Pi。启动页应显示 `evidence` Extension 和七个 `evidence-*` Skills。统一 FM 建模适用时还需要 Python 3.10 或更高版本；可用 `EVIDENCE_PYTHON` 指定解释器。
 
 ## 2. 初始化
 
@@ -46,7 +46,7 @@ Agent 根据原始需求和对应方法论直接生成草稿，不再进行分�
 
 ### 2.2 破坏性升级
 
-工作流状态版本为 **3**，新增运行 ID、测试计划摘要、追加式 TDD 循环、任务验证与故事证据引用。不兼容版本 1/2，不自动迁移或伪造旧运行的逐任务证据。更新后运行 `/reload`；旧运行先备份，再 `/evidence-reset`、`/evidence-init`。加载旧状态只报错，不重写旧文件；重置可保留工件供参考，但旧 Gate 和记录不能作为新运行的通过证据。配置文件 `.pi/evidence.json` 仍为版本 1，FM 仍为 Schema v2。
+工作流状态版本为 **4**。统一 FM v3 工件已移到 DDD 限界上下文之前，适用性也从合同履约扩展为领域/渠道/履约语义，因此旧索引、旧“不适用”结论及 Gate 不能复用。不兼容状态版本 1/2/3，不自动迁移或伪造旧证据。更新后运行 `/reload`；旧运行先备份，再 `/evidence-reset`、`/evidence-init`。加载旧状态只报错，不重写文件；重置可保留工件供参考，但不是新运行的通过证据。不要手改版本号。配置版本仍为 1，测试契约 JSON 版本仍为 1；FM 模型格式升级为 Schema v3。
 
 独立访谈工具、回答命令及等待回答状态已删除，不再生成或依赖访谈快照。不要手工改写状态版本来绕过重新初始化。
 
@@ -69,35 +69,56 @@ requirements → domain → architecture → planning
 
 阶段间通过 `artifacts/` 文件交接，而不是依赖长对话历史。
 
-### 3.1 条件化履约建模
+### 3.1 统一 FM 建模与 DDD 设计投影
 
-Domain 阶段在通用语言和限界上下文之后判断 Fulfillment Modeling（FM）是否适用。只有范围涉及合同、双方权责、支付、KPI/SLA、验收、异常补偿或审计凭证链时才建模；普通 CRUD 或纯技术工具应通过 `evidence_submit_fm_model` 明确提交“不适用”理由，不得虚构合同关系。
+Domain 阶段保持一个 Gate，按以下顺序生成工件：
 
-Agent 依据原始需求和上游工件直接提交适用性决策，不再设置独立问答前置条件。适用性、业务假设和模型内容交由 Domain Gate 审核；信息不足不能冒充“不适用”，也不能虚构合同规则。Requirements 或 Domain 修订、回退到这些阶段时，旧的 FM 适用性及机器校验结果会失效，需要重新提交和验证，已有模型文件保留供比对。
+```text
+统一语言 → 统一 FM v3 模型 → DDD 限界上下文映射
+         → 实体/值对象 → 聚合与一致性边界 → 领域事件
+```
 
-适用时，Agent 读取 `evidence-modeling` Skill，按 Role-first 顺序提交 FM Schema v2 YAML：
+`evidence-domain` 编排阶段及设计投影，`evidence-modeling` 负责同一 FM 格式中的领域、签约前渠道、合同履约或混合范围。纯领域和纯渠道允许没有 Contract/Fulfillment，不再按“没有合同”或“普通 CRUD”跳过建模。只有简单胶水且无独立业务/领域语义时，才通过 `evidence_submit_fm_model` 提交不适用理由和空文件集。
+
+FM YAML 是可表达业务/领域语义的事实源；DDD 文档引用 Context/Entity/Rule ID，解释设计取舍、规则执行位置与表达 gap，不重复改写规则。FM Context 不等于 DDD Bounded Context、聚合或微服务；子 Fulfillment Context 不自动对应独立软件模块。Domain 工件不规定术语、上下文、实体、聚合或事件数量，极小范围可说明某项设计不适用及替代方案。
+
+Agent 从原始需求、批准需求和统一语言直接判断范围，不设置独立问答前置步骤。discovery 方法用于整理事实、候选、假设、来源及问题，通过 Domain Gate 或修订反馈处理。信息不足不是不适用：不能形成有效范围时明确阻塞，请人工补充或缩小范围，不编造身份、公式、时限或权责。
+
+适用时只提交 Schema v3 源文件：
 
 ```text
 artifacts/02-domain/fm-model/
-├── model.yaml
-├── entities/*.yaml
-├── fulfillments/*.yaml
-├── relationships/*.yaml
-├── rules/*.yaml
+├── model.yaml                       # 必需
+├── README.md                        # 范围、来源、待决策项、gap
+├── 00-overview.md / 01-glossary.md   # 说明，词义引用统一语言
+├── entities/*.yaml                  # 必需，至少一个实体及有效入口 Context
+├── fulfillments/*.yaml              # 有履约时需要，可省略
+├── relationships/*.yaml             # 可省略
+├── rules/*.yaml                     # 可省略
+├── business-patterns/*.yaml         # 可选权责复用模式源文件
+├── discovery/*.md 或 *.yaml         # 单层，候选/问题而非正式事实
 └── validation/
-    ├── instances/*.yaml
-    └── scenarios/*.yaml
+    ├── instances/*.yaml             # 可选 Evidence 单据数据
+    └── scenarios/*.yaml             # 可选确定性单据场景
 ```
 
-提交必须通过 `evidence_submit_fm_model`；路径受白名单、文件数量和大小限制，不能提交 `generated/`。扩展在临时目录中执行 Schema/语义校验、CEL 校验、属性追溯、场景模拟和确定性编译，全部成功后才原子替换模型目录，并生成：
+每个 YAML 一个文档，文件名小写 ASCII kebab-case，稳定 ID 引用。无履约编译为 `fulfillments: []`；已有 Request、Fulfillment、Role、Context 仍严格检查，空集合不能掩盖孤立请求。
+
+v3 履约位于父 Contract 的子 Fulfillment Context；Request interval 起止引用 required、keyData timestamp，无固定期限须有已确认依据。合同双方 Party Role 留在父上下文，Place/Thing 属于 Domain Context，Party 在 Context 外；不能只改 v2 版本号完成迁移。具体步骤见 Skill 的 `references/migration-v3.md`。
+
+提交必须通过 `evidence_submit_fm_model`，白名单、文件数量和大小限制保持不变。Agent 不能提交 `generated/`、`02-business-patterns.md` 或 `status.md`。扩展在临时目录中校验 Schema/语义、CEL、lineage、适用单据模拟、业务模式文档与编译，全部成功才原子替换，并生成：
 
 - `generated/model.json`：确定性编译结果；
-- `generated/traceability.json`：属性和规则追溯；
-- `generated/simulation.json`：场景模拟结果（提交场景时）。
+- `generated/traceability.json`：属性/规则追溯；
+- `generated/simulation.json`：实际单据模拟结果，仅有验证输入时执行；孤立 instances 等无效套件不能跳过；
+- `02-business-patterns.md`：由 business-patterns YAML 派生，不手工维护；
+- `status.md`：扩展状态说明，人工状态指向 model.yaml，不复制或提升。
 
-Python 依赖按 `requirements.txt` 哈希安装到 `node_modules/.cache/evidence-fm-runtime`，不污染系统 Python。扩展优先探测 Python 3.13 至 3.10，也可通过 `EVIDENCE_PYTHON` 指定路径。校验脚本使用 `-B` 禁止向 Skill 目录写入字节码；当前本机集成验证使用 Python 3.12。
+Python 依赖按 requirements.txt 哈希装入 `node_modules/.cache/evidence-fm-runtime`，不污染系统 Python；可用 `EVIDENCE_PYTHON` 指定 Python 3.10+。脚本使用 `-B`，当前集成测试使用 Python 3.12。上游固定版本和本地适配见 `.pi/skills/evidence-modeling/UPSTREAM.md`。
 
-三个结论保持独立：`machineValidated` 表示机器结构与语义校验，`simulationPassed` 表示场景模拟，模型内的 `stakeholderReview` 表示具名业务方确认。扩展通过 `validate_fm_model.py --model-only` 校验模型，再独立执行模拟；合法模型可以得到“结构通过、场景失败”，但整体检查仍失败。前两者通过不能替代业务确认。Domain Gate 和最终 Review 都会重新校验适用模型；未作适用性决策会失败，不适用会以带理由的 warning 记录。每次重新校验都会刷新模型文件清单；FM YAML、状态文件和 `generated/*.json` 都进入 Domain 与最终 Review 的 Gate 摘要，变化后必须重新审核。零退出码不足以证明校验成功：结果 JSON 无效、缺少明确通过标记、命令异常或后续步骤失败，都会阻止 Gate 放行。后续 DDD、架构、计划、编码与审查 Prompt 均可读取该模型目录，并通过 Fulfillment/Scenario、Trigger/Evidence 等字段维持追溯。
+**证据边界**：`machineValidated`、实际 `simulationPassed`、模型 `modelStatus/stakeholderReview` 和 Domain Gate 相互独立。模型校验使用本地 `--model-only`，再独立模拟；合法模型可“结构通过、场景失败”，整体仍失败。无适用单据场景时模拟为 null/未执行，不是 true；有履约却缺场景则报告覆盖 warning。纯领域模拟器不实例化 Thing/Party，也不证明操作或状态机已执行；领域规则及 v3 尚不能完整表达的操作、状态迁移、关系基数和复杂算法，需 DDD 明确 gap，Architecture/Planning 安排正常、边界和反例 Q1/Q2 测试。
+
+Domain Gate 与最终 Review 重新校验并刷新文件清单；模型源文件、discovery、状态及派生产物都进入摘要，变化需重新审核。零退出码但校验 JSON 缺明确通过标记、命令异常或后续步骤失败，均阻止放行。Requirements/Domain 修订和回退会使旧决策/机器结果失效，已有文件仅供比对。后续工件追溯 Context/Entity/Rule，以及实际存在的 Fulfillment/Evidence/Scenario；API、数据模型、Repository、并发和消息重试等实现机制留给 Architecture，不写回 FM。
 
 ### 3.2 测试策略与测试工序
 
@@ -138,8 +159,8 @@ Planning Gate 绑定需求、DDD、架构、规划、FM 输入和配置的 SHA-2
 ### 3.3 使用新版测试契约
 
 - 更新后执行 `/reload`，工具列表应出现 `evidence_complete_tdd_cycle` 和 `evidence_verify_task`；Red 增加必需的 `taskId`、`checkId` 参数。
-- 版本 1/2 运行按 §2.2 重置并重新初始化，不能仅回退阶段或手改版本号。新运行会按模板生成三个 JSON 契约和测试策略工件。
-- 版本 3 中缺少目录、场景数据、工序或需要修改测试命令时，使用 `/evidence-back` 回到对应上游，再 `/evidence-revise`、`/evidence-run` 并重新审核。回到 Planning 后的新 Gate 会重新绑定契约；下游证据必须重新取得。
+- 版本 1/2/3 运行按 §2.2 重置并重新初始化，不能仅回退阶段或手改版本号。新运行会按模板生成三个 JSON 契约和测试策略工件。
+- 版本 4 中缺少目录、场景数据、工序或需要修改测试命令时，使用 `/evidence-back` 回到对应上游，再 `/evidence-revise`、`/evidence-run` 并重新审核。回到 Planning 后的新 Gate 会重新绑定契约；下游证据必须重新取得。
 - 保留的旧工件只供修订比对，不等于批准。不要直接改 artifacts/reports 或 `.evidence/state.json`，不要由 Coding 编造上游 ID、N/A 理由或通过结果。
 
 ## 4. 人工 Gate
@@ -270,4 +291,4 @@ npm run evidence:format:check
 npm run evidence:verify
 ```
 
-这些命令不会调用语言模型。回归测试覆盖工件接线、JSON 契约、任务依赖、多循环/恢复、验收阻塞、文件/证据篡改、Gate 摘要、旧状态拒绝及质量命令。它们验证确定性流程，不是模型生成工件质量或真实 TUI 人工端到端评测。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行真实 Schema v2 模型的校验、追溯、模拟、确定性编译，以及建模 Skill 的 Python 自测。首次运行可能需要下载 Python 依赖。
+这些命令不会调用语言模型。回归测试覆盖工件接线、JSON 契约、任务依赖、多循环/恢复、验收阻塞、文件/证据篡改、Gate 摘要、旧状态拒绝及质量命令。它们验证确定性流程，不是模型生成工件质量或真实 TUI 人工端到端评测。`evidence:test` 还会准备隔离的 FM Python 运行环境，执行 Schema v3 纯领域、纯渠道、混合与履约模型的校验、追溯、适用单据模拟、业务模式派生、确定性编译，以及建模 Skill 的 Python 自测。这些合成回归不是外部 Agent 生成质量对照基准或具名业务验收。首次运行可能需要下载 Python 依赖。

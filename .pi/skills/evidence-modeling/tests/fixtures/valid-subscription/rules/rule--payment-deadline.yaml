@@ -1,9 +1,8 @@
----
 type: rule
 id: rule.payment-deadline
 kind: derivation
 label: 付款截止时间
-contextRef: context.content-subscription
+contextRef: context.content-payment-fulfillment
 bindings:
   self:
     ref: request.content-payment

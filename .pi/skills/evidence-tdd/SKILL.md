@@ -9,7 +9,7 @@ description: Implement a local Evidence Sprint story with real Red-Green-Refacto
 
 ## 测试策略与工序输入
 
-- 读取 story-map.md 的验收标准及 `acceptance-catalog`、已批准的 test-strategy.md、test-procedures.md 和 Sprint 1 Backlog 的 `test-plan`；定位 US、AC、TASK、CHECK、TP ID，适用时另关联 FM Fulfillment/Scenario。
+- 读取 story-map.md 的验收标准及 `acceptance-catalog`、已批准的 test-strategy.md、test-procedures.md 和 Sprint 1 Backlog 的 `test-plan`；定位 US、AC、TASK、CHECK、TP ID，关联 FM Context/Entity/Rule 及适用的 Fulfillment/Evidence/Scenario ID。纯领域规则、操作/状态迁移 gap 的真实行为仍需 Q1/Q2 验证；模型结构通过不是软件验收。
 - 只读取当前适用工序的细节，明确被测功能、真实依赖、测试替身、数据和预期结果，不把目标业务逻辑替换掉。
 - 以当前 Prompt 的计划与恢复进度为准。任务模式、命令、测试文件和不适用理由只能来自已批准计划；契约改变必须回退上游重新审核，不在 Coding 修改工件或状态。
 - 按端到端薄切片和前置依赖推进，不按技术层批量开发；每个故事至少一个真实 TDD 任务，每个适用检查项都需记录，不能用故事测试总数冒充覆盖。

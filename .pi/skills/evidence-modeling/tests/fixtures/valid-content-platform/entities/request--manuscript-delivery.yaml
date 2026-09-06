@@ -1,10 +1,9 @@
----
 type: entity
 id: request.manuscript-delivery
 category: evidence
 kind: fulfillment_request
 label: 交稿请求
-contextRef: context.content-production
+contextRef: context.manuscript-delivery-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

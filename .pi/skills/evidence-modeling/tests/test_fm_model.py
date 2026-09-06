@@ -15,6 +15,7 @@ SKILL_DIR = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
+from build_fm_business_patterns import render_business_patterns  # noqa: E402
 from fm_model import (  # type: ignore[import-not-found]  # noqa: E402
     compiled_document,
     load_model,
@@ -162,6 +163,14 @@ class FulfillmentModelTests(unittest.TestCase):
         ]
         self.assertEqual(3, len(contracts))
         self.assertEqual(9, len(model.fulfillments))
+        fulfillment_contexts = [
+            entity
+            for entity in model.entities
+            if (entity.get("category"), entity.get("kind"))
+            == ("context", "fulfillment")
+        ]
+        self.assertEqual(9, len(fulfillment_contexts))
+        self.assertEqual(1, len(model.business_patterns))
         self.assertIn("party.customer", model.entities_by_id)
         self.assertNotIn("party.subscriber", model.entities_by_id)
 
@@ -207,7 +216,7 @@ class FulfillmentModelTests(unittest.TestCase):
                     "category": "evidence",
                     "kind": "fulfillment_confirmation",
                     "label": "本上下文付款确认",
-                    "contextRef": "context.content-subscription",
+                    "contextRef": "context.content-payment-fulfillment",
                     "responsibleRoleRef": "role.subscriber",
                 },
             )
@@ -360,7 +369,7 @@ class FulfillmentModelTests(unittest.TestCase):
                     "id": "rule.three-payment-confirmations",
                     "kind": "completion",
                     "label": "三次付款确认完成履约",
-                    "contextRef": "context.content-subscription",
+                    "contextRef": "context.content-payment-fulfillment",
                     "expression": "confirmations.filter(c, c.accepted).size() >= 3",
                     "resultType": "bool",
                     "bindings": {"confirmations": {"type": "list"}},
@@ -375,10 +384,247 @@ class FulfillmentModelTests(unittest.TestCase):
                 any("identifiers ['c']" in error for error in errors), errors
             )
 
-    def test_compiled_document_is_deterministic(self) -> None:
-        model = load_model(self.fixture("valid-roleized-payment"))
+    def test_fulfillment_requires_child_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            payment = self.read_yaml(path)
+            payment["contextRef"] = "context.content-subscription"
+            self.write_yaml(path, payment)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "contextRef must reference a Fulfillment Context" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+    def test_fulfillment_rules_stay_in_child_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            for filename in (
+                "rule--payment-deadline.yaml",
+                "rule--payment-expired.yaml",
+            ):
+                path = root / "rules" / filename
+                rule = self.read_yaml(path)
+                rule["contextRef"] = "context.content-subscription"
+                self.write_yaml(path, rule)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "derivation Rule must belong to the target Entity Context" in error
+                    for error in errors
+                ),
+                errors,
+            )
+            self.assertTrue(
+                any("breach Rule must belong" in error for error in errors), errors
+            )
+
+    def test_request_interval_requires_timestamp_key_data(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            request_path = root / "entities" / "request--content-payment.yaml"
+            request = self.read_yaml(request_path)
+            started_at = next(
+                attribute
+                for attribute in request["attributes"]
+                if attribute["name"] == "startedAt"
+            )
+            started_at["keyData"] = False
+            self.write_yaml(request_path, request)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "requestInterval.startAttribute must reference keyData" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+    def test_open_ended_request_interval_requires_explicit_reason(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            payment = self.read_yaml(path)
+            payment["requestInterval"] = {
+                "startAttribute": "startedAt",
+                "openEndedReason": "合同约定持续履行，直到一方发出终止通知。",
+            }
+            self.write_yaml(path, payment)
+            self.assertEqual([], validate_model(load_model(root)))
+
+            payment["requestInterval"] = {"startAttribute": "startedAt"}
+            self.write_yaml(path, payment)
+            errors = validate_model(load_model(root))
+            self.assertTrue(any("requestInterval" in error for error in errors), errors)
+
+    def test_participant_thing_must_belong_to_domain_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = root / "entities" / "thing--content.yaml"
+            thing = self.read_yaml(path)
+            thing["contextRef"] = "context.content-subscription"
+            self.write_yaml(path, thing)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "Participant Thing must belong to a Domain Context" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+    def test_business_pattern_needs_two_domains_before_supported(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-content-platform", directory)
+            pattern_path = (
+                root / "business-patterns" / "pattern--paid-content-operation.yaml"
+            )
+            pattern = self.read_yaml(pattern_path)
+            pattern["reuseStatus"] = "supported"
+            self.write_yaml(pattern_path, pattern)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "requires at least two Domain Context examples" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+            self.write_yaml(
+                root / "entities" / "context--video-domain.yaml",
+                {
+                    "type": "entity",
+                    "id": "context.video-domain",
+                    "category": "context",
+                    "kind": "domain",
+                    "label": "视频领域上下文",
+                    "rootRefs": ["thing.video"],
+                },
+            )
+            pattern["domainExampleContextRefs"].append("context.video-domain")
+            self.write_yaml(pattern_path, pattern)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "Domain examples lack referenced Domain inputs" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+            self.write_yaml(
+                root / "entities" / "thing--video.yaml",
+                {
+                    "type": "entity",
+                    "id": "thing.video",
+                    "category": "participant",
+                    "kind": "thing",
+                    "label": "视频",
+                    "contextRef": "context.video-domain",
+                },
+            )
+            pattern["domainInputRefs"].append("thing.video")
+            self.write_yaml(pattern_path, pattern)
+            self.assertEqual([], validate_model(load_model(root)))
+
+            pattern["reuseStatus"] = "confirmed"
+            self.write_yaml(pattern_path, pattern)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any("confirmed reuse requires" in error for error in errors), errors
+            )
+
+            pattern["stakeholderReview"] = {
+                "status": "confirmed",
+                "reviewer": "业务平台主管",
+                "reviewedAt": "2026-09-04T12:00:00+08:00",
+            }
+            self.write_yaml(pattern_path, pattern)
+            self.assertEqual([], validate_model(load_model(root)))
+
+    def test_optional_empty_directories_may_be_absent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            shutil.rmtree(root / "relationships")
+            shutil.rmtree(root / "rules")
+            request_path = root / "entities" / "request--content-payment.yaml"
+            request = self.read_yaml(request_path)
+            for attribute in request["attributes"]:
+                attribute.pop("derivedByRuleRef", None)
+            self.write_yaml(request_path, request)
+            fulfillment_path = (
+                root / "fulfillments" / "fulfillment--content-payment.yaml"
+            )
+            fulfillment = self.read_yaml(fulfillment_path)
+            fulfillment.pop("breaches", None)
+            self.write_yaml(fulfillment_path, fulfillment)
+            self.assertEqual([], validate_model(load_model(root)))
+
+    def test_schema_v2_manifest_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = root / "model.yaml"
+            manifest = self.read_yaml(path)
+            manifest["schemaVersion"] = "2.0"
+            self.write_yaml(path, manifest)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any("'3.0' was expected" in error for error in errors), errors
+            )
+
+    def test_confirmed_model_requires_named_stakeholder_review(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = root / "model.yaml"
+            manifest = self.read_yaml(path)
+            manifest["modelStatus"] = "confirmed"
+            self.write_yaml(path, manifest)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any(
+                    "confirmed status requires stakeholderReview" in error
+                    for error in errors
+                ),
+                errors,
+            )
+
+            manifest["stakeholderReview"] = {
+                "status": "confirmed",
+                "reviewer": "业务负责人",
+                "reviewedAt": "not-a-timestamp",
+            }
+            self.write_yaml(path, manifest)
+            errors = validate_model(load_model(root))
+            self.assertTrue(
+                any("must be an RFC 3339 timestamp" in error for error in errors),
+                errors,
+            )
+
+            manifest["stakeholderReview"]["reviewedAt"] = "2026-09-04T12:00:00+08:00"
+            self.write_yaml(path, manifest)
+            self.assertEqual([], validate_model(load_model(root)))
+
+    def test_business_pattern_markdown_is_deterministic(self) -> None:
+        model = load_model(self.fixture("valid-content-platform"))
         self.assertEqual([], validate_model(model))
-        first = json.dumps(compiled_document(model), ensure_ascii=False, sort_keys=True)
+        first = render_business_patterns(model)
+        second = render_business_patterns(model)
+        self.assertEqual(first, second)
+        self.assertIn("付费内容运营模式", first)
+        self.assertIn("<!-- Generated by build_fm_business_patterns.py", first)
+
+    def test_compiled_document_is_deterministic(self) -> None:
+        model = load_model(self.fixture("valid-content-platform"))
+        self.assertEqual([], validate_model(model))
+        first_document = compiled_document(model)
+        self.assertEqual("3.0", first_document["schemaVersion"])
+        self.assertEqual(1, len(first_document["businessPatterns"]))
+        first = json.dumps(first_document, ensure_ascii=False, sort_keys=True)
         second = json.dumps(
             compiled_document(model), ensure_ascii=False, sort_keys=True
         )

@@ -1,10 +1,9 @@
----
 type: entity
 id: request.weekly-progress-check
 category: evidence
 kind: fulfillment_request
 label: 周进度检查请求
-contextRef: context.operations-performance
+contextRef: context.weekly-progress-check-fulfillment
 responsibleRoleRef: role.platform-performance
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

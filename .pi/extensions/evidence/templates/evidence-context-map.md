@@ -17,4 +17,4 @@ description: 生成 DDD 上下文映射工件
 
 ## 集成约束
 
-说明事务、一致性、幂等、超时、重试以及可观测性要求。若履约模型适用，说明 FM Contract Context 及跨上下文时刻凭证如何投影到架构边界；API、数据库和消息设计不得写回 FM 核心模型。
+说明事务、一致性、幂等、超时、重试以及可观测性要求。引用统一 FM Context/Entity/Rule 与 DDD 投影，说明领域、渠道及适用的 Contract/Fulfillment Context 如何映射到架构边界；不机械按每个 FM Context 拆服务。有跨上下文凭证时保留 Evidence Role 语义。API、数据库和消息机制不得写回 FM 核心模型。

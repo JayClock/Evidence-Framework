@@ -130,10 +130,10 @@ describe('artifact-driven workflow without interviews', () => {
     });
   });
 
-  it('continues from bounded contexts directly into FM and accepts the explicit non-applicable branch', async () => {
+  it('continues from language into FM then DDD boundaries and accepts an explicit glue-only scope', async () => {
     const { root, state, api, tool } = await freshHarness();
     state.phase = 'domain';
-    state.currentArtifactIndex = 1;
+    state.currentArtifactIndex = 0;
     await saveState(root, state);
     const specs = getPhaseDefinition('domain').artifacts;
     await writeTextAtomic(root, specs[0]!.output, validDocument(specs[0]!));
@@ -143,7 +143,7 @@ describe('artifact-driven workflow without interviews', () => {
       '# FM 方法',
     );
     await tool('evidence_submit_artifact', {
-      content: validDocument(specs[1]!),
+      content: validDocument(specs[0]!),
     });
     expect(api.sendUserMessage).toHaveBeenLastCalledWith(
       expect.stringContaining('evidence_submit_fm_model'),
@@ -157,13 +157,13 @@ describe('artifact-driven workflow without interviews', () => {
     await tool('evidence_submit_fm_model', {
       applicable: false,
       rationale:
-        '当前是本地技术工具，不涉及合同、权责、支付、验收、异常补偿或履约凭证链，不适用 FM。',
+        '当前只是简单工具胶水，无独立对象身份、领域规则、关系、签约前协商或履约语义，不需 FM 建模。',
       files: [],
     });
     expect(await loadState(root)).toMatchObject({
       phase: 'domain',
       status: 'running',
-      currentArtifactIndex: 3,
+      currentArtifactIndex: 2,
       modeling: {
         applicable: false,
         machineValidated: false,
@@ -207,7 +207,7 @@ describe('artifact-driven workflow without interviews', () => {
     );
     await command('evidence-init', '新工作流');
     expect(await loadState(root)).toMatchObject({
-      version: 3,
+      version: 4,
       phase: 'requirements',
       status: 'running',
     });

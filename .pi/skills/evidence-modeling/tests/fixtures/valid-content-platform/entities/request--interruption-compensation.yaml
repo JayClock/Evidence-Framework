@@ -1,10 +1,9 @@
----
 type: entity
 id: request.interruption-compensation
 category: evidence
 kind: fulfillment_request
 label: 断更补偿请求
-contextRef: context.content-subscription
+contextRef: context.interruption-compensation-fulfillment
 responsibleRoleRef: role.subscriber
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

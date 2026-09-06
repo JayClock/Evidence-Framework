@@ -1,10 +1,9 @@
----
 type: entity
 id: request.creator-penalty
 category: evidence
 kind: fulfillment_request
 label: 违约金支付请求
-contextRef: context.content-production
+contextRef: context.creator-penalty-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

@@ -116,7 +116,7 @@ export interface HistoryEntry {
 }
 
 export interface EvidenceState {
-  version: 3;
+  version: 4;
   runId: string;
   projectName: string;
   goal: string;

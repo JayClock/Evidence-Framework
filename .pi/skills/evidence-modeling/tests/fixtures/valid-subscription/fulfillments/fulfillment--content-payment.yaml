@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.content-payment
 label: 支付内容产品费用
-contextRef: context.content-subscription
+contextRef: context.content-payment-fulfillment
 contractRef: contract.content-subscription
 rightHolderRoleRef: role.platform-subscription
 obligorRoleRef: role.subscriber
 requestRef: request.content-payment
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.content-payment
 completionPolicy:

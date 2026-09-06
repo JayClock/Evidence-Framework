@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.content-access
 label: 提供付费内容访问
-contextRef: context.content-subscription
+contextRef: context.content-access-fulfillment
 contractRef: contract.content-subscription
 rightHolderRoleRef: role.subscriber
 obligorRoleRef: role.platform-subscription
 requestRef: request.content-access
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.content-access
 completionPolicy:

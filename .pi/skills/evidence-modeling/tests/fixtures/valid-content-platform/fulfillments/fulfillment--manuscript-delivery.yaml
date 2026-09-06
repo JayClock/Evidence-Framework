@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.manuscript-delivery
 label: 按期交稿
-contextRef: context.content-production
+contextRef: context.manuscript-delivery-fulfillment
 contractRef: contract.content-production
 rightHolderRoleRef: role.platform-content-production
 obligorRoleRef: role.creator
 requestRef: request.manuscript-delivery
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.manuscript-delivery
 completionPolicy:

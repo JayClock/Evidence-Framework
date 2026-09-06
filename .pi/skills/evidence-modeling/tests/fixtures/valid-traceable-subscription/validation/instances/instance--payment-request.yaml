@@ -1,4 +1,3 @@
----
 type: evidence_instance
 id: instance.payment-request
 entityRef: request.content-payment

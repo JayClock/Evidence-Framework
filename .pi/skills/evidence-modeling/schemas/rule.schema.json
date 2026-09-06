@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/rule.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/rule.schema.json",
   "title": "Fulfillment Modeling CEL rule",
   "type": "object",
   "required": [

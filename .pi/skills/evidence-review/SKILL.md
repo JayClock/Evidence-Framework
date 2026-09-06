@@ -9,10 +9,10 @@ Review the delivered Sprint increment independently. The purpose is evidence and
 
 ## Workflow
 
-1. Read approved requirements, fulfillment-model status and generated checks, architecture, API contracts, test-strategy.md, test-procedures.md, Sprint 1 Backlog, DoD, coding records, and quality reports.
+1. Read approved requirements, unified FM v3 sources, status and generated checks, DDD projections and expression gaps, architecture, API contracts, test-strategy.md, test-procedures.md, Sprint 1 Backlog, DoD, coding records, and quality reports.
 2. Inspect the actual source and tests; do not treat generated reports as sufficient proof.
 3. Run safe read-only verification commands such as tests, lint, build, diff, and searches.
-4. Trace every Sprint story and acceptance scenario ID to task/procedure IDs, implementation, Q2 acceptance evidence, supporting Q1 tests, and applicable FM Fulfillment/Scenario IDs.
+4. Trace every Sprint story and acceptance scenario ID to task/procedure IDs, implementation, Q2 acceptance evidence, supporting Q1 tests, and FM Context/Entity/Rule IDs and applicable Fulfillment/Evidence/Scenario IDs; check that DDD design does not redefine model facts.
 5. Compare code boundaries and API behavior with approved architecture.
 6. Check common security, error handling, data validation, accessibility, operability, and maintainability risks relevant to the actual stack.
 7. Classify issues by impact and provide reproducible evidence.
@@ -32,7 +32,8 @@ Review the delivered Sprint increment independently. The purpose is evidence and
 - Distinguish confirmed defects from risks or suggestions.
 - Do not invent line numbers, command results, or coverage values.
 - “通过” requires all blocking quality checks, applicable FM validation/simulation, and Sprint acceptance evidence.
-- Never equate machine validation or simulation with stakeholder confirmation.
+- Never equate machine validation, simulation or Domain Gate approval with named business/domain expert confirmation. Read modelStatus/stakeholderReview from model.yaml, not a copied default.
+- Pure domain lineage/compilation is not a domain instance or state-machine simulation; verify Q1/Q2 coverage of rules and expression gaps without demanding fabricated contracts or Evidence scenarios.
 - “有条件通过” must state exact conditions; “不通过” must identify mandatory fixes.
 - State review limitations and untested assumptions.
 

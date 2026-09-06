@@ -1,0 +1,11 @@
+{
+  "include": [".pi/skills/evidence-modeling"],
+  "exclude": ["**/__pycache__", "**/.ruff_cache"],
+  "venvPath": "node_modules/.cache",
+  "venv": "evidence-fm-runtime",
+  "extraPaths": [
+    ".pi/skills/evidence-modeling/scripts",
+    ".pi/skills/evidence-modeling/tests",
+    ".pi/skills/evidence-modeling/evals"
+  ]
+}

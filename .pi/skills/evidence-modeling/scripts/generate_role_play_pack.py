@@ -76,13 +76,6 @@ def document_template(
     return "\n".join(lines)
 
 
-def required_int(value: Any) -> int:
-    try:
-        return int(value)
-    except (TypeError, ValueError) as error:
-        raise ValueError(f"expected integer, found {value!r}") from error
-
-
 def role_sheet(
     role: dict[str, Any],
     steps: list[dict[str, Any]],
@@ -100,7 +93,7 @@ def role_sheet(
         "",
     ]
     sequence_by_instance = {
-        str(step.get("issueInstanceRef")): required_int(step.get("sequence", 0))
+        str(step.get("issueInstanceRef")): step.get("sequence", 0)
         for step in scenario.get("steps") or []
         if isinstance(step, dict)
     }
@@ -130,7 +123,7 @@ def role_sheet(
                 "",
             ]
         )
-        current_sequence = required_int(step.get("sequence", 0))
+        current_sequence = step.get("sequence", 0)
         issued_so_far = given_refs | {
             ref
             for ref, sequence in sequence_by_instance.items()
@@ -278,7 +271,7 @@ def main() -> int:
         try:
             shutil.rmtree(output)
         except OSError as error:
-            print(f"Cannot replace output directory: {error}", file=sys.stderr)
+            print(f"Cannot replace role-play packet: {error}", file=sys.stderr)
             return 1
     documents_dir = output / "blank-documents"
     source_documents_dir = output / "source-documents"

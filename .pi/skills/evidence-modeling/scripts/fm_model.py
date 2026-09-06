@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Load, validate, and compile Fulfillment Modeling Schema v2 directories."""
+"""Load, validate, and compile Fulfillment Modeling Schema v3 directories."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import re
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,15 +28,20 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
     Environment = None  # type: ignore[assignment,misc]
 
 
-SCHEMA_VERSION = "2.0"
+SCHEMA_VERSION = "3.0"
 DOCUMENT_DIRS = {
     "entity": "entities",
     "fulfillment": "fulfillments",
     "relationship": "relationships",
     "rule": "rules",
+    "business_pattern": "business-patterns",
 }
+REQUIRED_DOCUMENT_TYPES = {"entity"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
 BOOL_RULE_KINDS = {"precondition", "invariant", "eligibility", "completion", "breach"}
+RFC3339_TIMESTAMP_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
+)
 IMPLEMENTATION_PARTY_TERMS = {
     "system",
     "scheduler",
@@ -86,6 +92,7 @@ class LoadedModel:
     fulfillments: list[dict[str, Any]] = field(default_factory=list)
     relationships: list[dict[str, Any]] = field(default_factory=list)
     rules: list[dict[str, Any]] = field(default_factory=list)
+    business_patterns: list[dict[str, Any]] = field(default_factory=list)
     files_by_id: dict[str, Path] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
 
@@ -118,6 +125,14 @@ class LoadedModel:
         return {
             str(item["id"]): item
             for item in self.rules
+            if isinstance(item.get("id"), str)
+        }
+
+    @property
+    def business_patterns_by_id(self) -> dict[str, dict[str, Any]]:
+        return {
+            str(item["id"]): item
+            for item in self.business_patterns
             if isinstance(item.get("id"), str)
         }
 
@@ -219,18 +234,23 @@ def load_model(root: Path) -> LoadedModel:
         "fulfillment": model.fulfillments,
         "relationship": model.relationships,
         "rule": model.rules,
+        "business_pattern": model.business_patterns,
     }
     schemas = {
         "entity": "entity.schema.json",
         "fulfillment": "fulfillment.schema.json",
         "relationship": "relationship.schema.json",
         "rule": "rule.schema.json",
+        "business_pattern": "business-pattern.schema.json",
     }
 
     for expected_type, directory_name in DOCUMENT_DIRS.items():
         directory = root / directory_name
         if not directory.is_dir():
-            model.errors.append(f"{directory_name}/ directory is required")
+            if directory.exists():
+                model.errors.append(f"{directory_name}/ must be a directory")
+            elif expected_type in REQUIRED_DOCUMENT_TYPES:
+                model.errors.append(f"{directory_name}/ directory is required")
             continue
         for path in sorted(directory.iterdir()):
             if path.is_dir():
@@ -272,8 +292,6 @@ def load_model(root: Path) -> LoadedModel:
 
     if not model.entities:
         model.errors.append("entities/ must contain at least one entity")
-    if not model.fulfillments:
-        model.errors.append("fulfillments/ must contain at least one fulfillment")
     return model
 
 
@@ -321,6 +339,7 @@ def validate_model(model: LoadedModel) -> list[str]:
 
     entities = model.entities_by_id
     fulfillments = model.fulfillments_by_id
+    relationships = model.relationships_by_id
     rules = model.rules_by_id
 
     validate_manifest(model.manifest, entities, errors)
@@ -328,6 +347,14 @@ def validate_model(model: LoadedModel) -> list[str]:
     validate_fulfillments(model.fulfillments, entities, fulfillments, rules, errors)
     validate_relationships(model.relationships, entities, fulfillments, rules, errors)
     validate_rules(model.rules, entities, fulfillments, rules, errors)
+    validate_business_patterns(
+        model.business_patterns,
+        entities,
+        fulfillments,
+        relationships,
+        rules,
+        errors,
+    )
     validate_derived_attributes(model.entities, rules, errors)
 
     # Imported lazily because the traceability module reuses LoadedModel and CEL helpers.
@@ -336,6 +363,17 @@ def validate_model(model: LoadedModel) -> list[str]:
     _, traceability_errors = analyze_traceability(model)
     errors.extend(traceability_errors)
     return dedupe(errors)
+
+
+def is_rfc3339_timestamp(value: Any) -> bool:
+    if not isinstance(value, str) or RFC3339_TIMESTAMP_RE.fullmatch(value) is None:
+        return False
+    normalized = f"{value[:-1]}+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None
 
 
 def validate_manifest(
@@ -347,6 +385,31 @@ def validate_manifest(
             errors.append(
                 f"model.entryContextRefs contains non-Context or unknown id '{ref}'"
             )
+
+    model_status = manifest.get("modelStatus")
+    raw_review = manifest.get("stakeholderReview")
+    review = raw_review if isinstance(raw_review, dict) else {}
+    review_status = review.get("status")
+    if review_status in {
+        "reviewed",
+        "confirmed",
+        "rejected",
+    } and not is_rfc3339_timestamp(review.get("reviewedAt")):
+        errors.append(
+            "model: stakeholderReview.reviewedAt must be an RFC 3339 timestamp"
+        )
+    if model_status == "confirmed" and review_status != "confirmed":
+        errors.append(
+            "model: confirmed status requires stakeholderReview.status 'confirmed'"
+        )
+    if model_status == "reviewed" and review_status != "reviewed":
+        errors.append(
+            "model: reviewed status requires stakeholderReview.status 'reviewed'"
+        )
+    if model_status == "draft" and review_status in {"reviewed", "confirmed"}:
+        errors.append(
+            f"model: stakeholderReview.status '{review_status}' is inconsistent with modelStatus 'draft'"
+        )
 
 
 def validate_entities(
@@ -393,6 +456,7 @@ def validate_entities(
                     )
             continue
 
+        context: dict[str, Any] | None = None
         if category in {"evidence", "role"} or (
             category == "participant" and kind in {"place", "thing"}
         ):
@@ -401,6 +465,7 @@ def validate_entities(
             )
             if entity_signature(context)[0] != "context":
                 errors.append(f"{entity_id}: contextRef must reference a Context")
+
         if (category, kind) == ("participant", "party") and context_ref is not None:
             errors.append(
                 f"{entity_id}: Participant Party must stay outside every Context"
@@ -414,6 +479,20 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: Participant Party looks like an implementation actor {hits}; use trigger.actsForRoleRef"
                 )
+        if (category, kind) in {
+            ("participant", "place"),
+            ("participant", "thing"),
+        } and entity_signature(context) != ("context", "domain"):
+            errors.append(
+                f"{entity_id}: Participant {str(kind).title()} must belong to a Domain Context"
+            )
+        if (category, kind) == ("role", "party") and entity_signature(context) == (
+            "context",
+            "fulfillment",
+        ):
+            errors.append(
+                f"{entity_id}: Party Role must stay in the parent Contract Context, not a Fulfillment Context"
+            )
 
         attribute_names: set[str] = set()
         for attribute in entity.get("attributes") or []:
@@ -430,7 +509,6 @@ def validate_entities(
                 )
 
         if (category, kind) == ("evidence", "contract"):
-            context = entities.get(context_ref or "")
             if entity_signature(context) != ("context", "contract"):
                 errors.append(
                     f"{entity_id}: Contract must belong to a Contract Context"
@@ -461,14 +539,79 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: responsibleRoleRef must reference a Party Role"
                 )
-            elif object_context_ref(role) != context_ref:
+                continue
+
+            context_kind = entity_signature(context)[1]
+            expected_role_context = context_ref
+            if context_kind == "fulfillment" and context is not None:
+                expected_role_context = normalize(context.get("parentContextRef"))
+            if object_context_ref(role) != expected_role_context:
                 errors.append(
-                    f"{entity_id}: responsible Party Role must belong to the same Context"
+                    f"{entity_id}: responsible Party Role must belong to Context '{expected_role_context}'"
+                )
+
+            if (
+                kind in {"fulfillment_request", "fulfillment_confirmation"}
+                and context_kind != "fulfillment"
+            ):
+                errors.append(
+                    f"{entity_id}: {kind} must belong to a Fulfillment Context"
+                )
+            if kind in {"rfp", "proposal"} and context_kind not in {
+                "pre_contract",
+                "channel",
+            }:
+                errors.append(
+                    f"{entity_id}: {kind} must belong to a Pre-contract or Channel Context"
                 )
 
 
 def contract_context_ref(contract: dict[str, Any]) -> str | None:
     return normalize(contract.get("contextRef"))
+
+
+def validate_request_interval(
+    fulfillment_id: str,
+    interval: dict[str, Any],
+    request: dict[str, Any],
+    errors: list[str],
+) -> None:
+    attributes = {
+        normalize(attribute.get("name")): attribute
+        for attribute in request.get("attributes") or []
+        if isinstance(attribute, dict)
+    }
+    names = [normalize(interval.get("startAttribute"))]
+    end_attribute = normalize(interval.get("endAttribute"))
+    if end_attribute is not None:
+        names.append(end_attribute)
+    if len(names) == 2 and names[0] == names[1]:
+        errors.append(
+            f"{fulfillment_id}: request interval start and end attributes must differ"
+        )
+
+    for field_name, attribute_name in zip(
+        ("startAttribute", "endAttribute"), names, strict=False
+    ):
+        attribute = attributes.get(attribute_name)
+        if attribute is None:
+            errors.append(
+                f"{fulfillment_id}.requestInterval.{field_name} references missing Request "
+                f"attribute '{attribute_name}'"
+            )
+            continue
+        if attribute.get("valueType") != "timestamp":
+            errors.append(
+                f"{fulfillment_id}.requestInterval.{field_name} must reference a timestamp attribute"
+            )
+        if not isinstance(attribute.get("required"), bool) or not attribute["required"]:
+            errors.append(
+                f"{fulfillment_id}.requestInterval.{field_name} must reference a required attribute"
+            )
+        if not isinstance(attribute.get("keyData"), bool) or not attribute["keyData"]:
+            errors.append(
+                f"{fulfillment_id}.requestInterval.{field_name} must reference keyData"
+            )
 
 
 def validate_fulfillments(
@@ -487,12 +630,9 @@ def validate_fulfillments(
             continue
         context_ref = normalize(fulfillment.get("contextRef"))
         context = entities.get(context_ref or "")
-        if entity_signature(context) not in {
-            ("context", "contract"),
-            ("context", "fulfillment"),
-        }:
+        if entity_signature(context) != ("context", "fulfillment"):
             errors.append(
-                f"{fulfillment_id}: contextRef must reference Contract or Fulfillment Context"
+                f"{fulfillment_id}: contextRef must reference a Fulfillment Context"
             )
 
         contract_ref = normalize(fulfillment.get("contractRef"))
@@ -504,13 +644,6 @@ def validate_fulfillments(
             assert isinstance(contract, dict)
             contract_roles = {str(ref) for ref in contract.get("roleRefs") or []}
             contract_context = contract_context_ref(contract)
-            if (
-                entity_signature(context) == ("context", "contract")
-                and context_ref != contract_context
-            ):
-                errors.append(
-                    f"{fulfillment_id}: Contract and Fulfillment must share the Contract Context"
-                )
             if entity_signature(context) == ("context", "fulfillment"):
                 assert isinstance(context, dict)
                 if context.get("parentContextRef") != contract_context:
@@ -555,6 +688,9 @@ def validate_fulfillments(
                 errors.append(
                     f"{fulfillment_id}: Request responsibleRoleRef must equal rightHolderRoleRef"
                 )
+            interval = fulfillment.get("requestInterval")
+            if isinstance(interval, dict):
+                validate_request_interval(fulfillment_id, interval, request, errors)
 
         confirmation_refs = [
             str(ref) for ref in fulfillment.get("confirmationRefs") or []
@@ -600,6 +736,7 @@ def validate_fulfillments(
                 "requestTrigger",
                 request_trigger,
                 right_ref,
+                context_ref,
                 entities,
                 rules,
                 errors,
@@ -623,6 +760,7 @@ def validate_fulfillments(
                     f"confirmationTriggers[{index}].trigger",
                     trigger,
                     obligor_ref,
+                    context_ref,
                     entities,
                     rules,
                     errors,
@@ -710,6 +848,7 @@ def validate_trigger(
     field_name: str,
     trigger: dict[str, Any],
     expected_role_ref: str | None,
+    expected_context_ref: str | None,
     entities: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
@@ -732,10 +871,16 @@ def validate_trigger(
             f"{owner_id}.{field_name}.sourceContextRef references unknown Context '{source_context_ref}'"
         )
     rule_ref = normalize(trigger.get("ruleRef"))
-    if trigger.get("kind") == "rule" and rule_ref not in rules:
-        errors.append(
-            f"{owner_id}.{field_name}.ruleRef references unknown Rule '{rule_ref}'"
-        )
+    if trigger.get("kind") == "rule":
+        rule = rules.get(rule_ref or "")
+        if rule is None:
+            errors.append(
+                f"{owner_id}.{field_name}.ruleRef references unknown Rule '{rule_ref}'"
+            )
+        elif object_context_ref(rule) != expected_context_ref:
+            errors.append(
+                f"{owner_id}.{field_name}.ruleRef must belong to the Fulfillment Context"
+            )
 
 
 def validate_relationships(
@@ -956,6 +1101,169 @@ def validate_rules(
             )
 
 
+def validate_business_patterns(
+    pattern_list: list[dict[str, Any]],
+    entities: dict[str, dict[str, Any]],
+    fulfillments: dict[str, dict[str, Any]],
+    relationships: dict[str, dict[str, Any]],
+    rules: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    objects = {**entities, **fulfillments, **relationships, **rules}
+    allowed_variation_roles = {"domain", "third_party", "context", "evidence"}
+    allowed_variation_contexts = {"pre_contract", "channel", "fulfillment", "domain"}
+
+    for pattern in pattern_list:
+        pattern_id = normalize(pattern.get("id"))
+        if pattern_id is None:
+            continue
+
+        spine_contract_contexts: set[str] = set()
+        for ref in pattern.get("businessSpineRefs") or []:
+            fulfillment = fulfillments.get(ref)
+            if fulfillment is None:
+                errors.append(
+                    f"{pattern_id}: businessSpineRef '{ref}' must reference Fulfillment"
+                )
+                continue
+            contract = entities.get(str(fulfillment.get("contractRef")))
+            contract_context = object_context_ref(contract)
+            if contract_context is not None:
+                spine_contract_contexts.add(contract_context)
+        for ref in pattern.get("invariantRefs") or []:
+            if ref not in objects:
+                errors.append(
+                    f"{pattern_id}: invariantRef '{ref}' references unknown model object"
+                )
+
+        for ref in pattern.get("variationPointRefs") or []:
+            target = entities.get(ref)
+            category, kind = entity_signature(target)
+            is_variation_role = category == "role" and kind in allowed_variation_roles
+            is_variation_context = (
+                category == "context" and kind in allowed_variation_contexts
+            )
+            if not (is_variation_role or is_variation_context):
+                errors.append(
+                    f"{pattern_id}: variationPointRef '{ref}' must reference a variation Role "
+                    "or Pre-contract, Channel, Fulfillment, or Domain Context"
+                )
+
+        for ref in pattern.get("domainInputRefs") or []:
+            target = entities.get(ref)
+            signature = entity_signature(target)
+            if signature not in {
+                ("participant", "place"),
+                ("participant", "thing"),
+                ("role", "domain"),
+                ("context", "domain"),
+            }:
+                errors.append(
+                    f"{pattern_id}: domainInputRef '{ref}' must reference a domain input"
+                )
+
+        contract_context_refs = pattern.get("supportedByContractContextRefs") or []
+        for ref in contract_context_refs:
+            if entity_signature(entities.get(ref)) != ("context", "contract"):
+                errors.append(
+                    f"{pattern_id}: supportedByContractContextRef '{ref}' must reference Contract Context"
+                )
+        missing_spine_contexts = spine_contract_contexts - set(contract_context_refs)
+        if missing_spine_contexts:
+            errors.append(
+                f"{pattern_id}: supportedByContractContextRefs omit business-spine Contexts "
+                f"{sorted(missing_spine_contexts)}"
+            )
+        empty_contract_examples = set(contract_context_refs) - spine_contract_contexts
+        if empty_contract_examples:
+            errors.append(
+                f"{pattern_id}: Contract examples lack referenced business-spine Fulfillments "
+                f"{sorted(empty_contract_examples)}"
+            )
+
+        domain_context_refs = pattern.get("domainExampleContextRefs") or []
+        for ref in domain_context_refs:
+            if entity_signature(entities.get(ref)) != ("context", "domain"):
+                errors.append(
+                    f"{pattern_id}: domainExampleContextRef '{ref}' must reference Domain Context"
+                )
+        domain_input_contexts: set[str] = set()
+        for ref in pattern.get("domainInputRefs") or []:
+            target = entities.get(ref)
+            signature = entity_signature(target)
+            if signature == ("context", "domain"):
+                domain_input_contexts.add(ref)
+                continue
+            if signature in {("participant", "place"), ("participant", "thing")}:
+                input_context_ref = object_context_ref(target)
+                if input_context_ref is not None:
+                    domain_input_contexts.add(input_context_ref)
+                continue
+            if signature == ("role", "domain"):
+                role_context_ref = object_context_ref(target)
+                if entity_signature(entities.get(role_context_ref or "")) == (
+                    "context",
+                    "domain",
+                ):
+                    domain_input_contexts.add(str(role_context_ref))
+                for relationship in relationships.values():
+                    if (
+                        relationship.get("kind") == "plays_role"
+                        and relationship.get("targetRef") == ref
+                    ):
+                        player_context_ref = object_context_ref(
+                            entities.get(str(relationship.get("sourceRef")))
+                        )
+                        if entity_signature(entities.get(player_context_ref or "")) == (
+                            "context",
+                            "domain",
+                        ):
+                            domain_input_contexts.add(str(player_context_ref))
+        missing_domain_examples = domain_input_contexts - set(domain_context_refs)
+        if missing_domain_examples:
+            errors.append(
+                f"{pattern_id}: domainExampleContextRefs omit Domain inputs "
+                f"{sorted(missing_domain_examples)}"
+            )
+        empty_domain_examples = set(domain_context_refs) - domain_input_contexts
+        if empty_domain_examples:
+            errors.append(
+                f"{pattern_id}: Domain examples lack referenced Domain inputs "
+                f"{sorted(empty_domain_examples)}"
+            )
+
+        reuse_status = pattern.get("reuseStatus")
+        if reuse_status in {"supported", "confirmed"}:
+            if len(set(contract_context_refs)) < 2:
+                errors.append(
+                    f"{pattern_id}: reuseStatus '{reuse_status}' requires at least two Contract Context examples"
+                )
+            if len(set(domain_context_refs)) < 2:
+                errors.append(
+                    f"{pattern_id}: reuseStatus '{reuse_status}' requires at least two Domain Context examples"
+                )
+
+        raw_review = pattern.get("stakeholderReview")
+        review = raw_review if isinstance(raw_review, dict) else {}
+        review_status = review.get("status")
+        if review_status in {
+            "reviewed",
+            "confirmed",
+            "rejected",
+        } and not is_rfc3339_timestamp(review.get("reviewedAt")):
+            errors.append(
+                f"{pattern_id}: stakeholderReview.reviewedAt must be an RFC 3339 timestamp"
+            )
+        if reuse_status == "confirmed" and review_status != "confirmed":
+            errors.append(
+                f"{pattern_id}: confirmed reuse requires stakeholderReview.status 'confirmed'"
+            )
+        if reuse_status != "confirmed" and review_status == "confirmed":
+            errors.append(
+                f"{pattern_id}: confirmed stakeholder review requires reuseStatus 'confirmed'"
+            )
+
+
 def undeclared_cel_identifiers(ast: Any, declared: set[str]) -> set[str]:
     """Return free CEL identifiers while respecting standard macro-local variables."""
 
@@ -1045,6 +1353,10 @@ def validate_derived_attributes(
                 errors.append(
                     f"{entity_id}.{attribute_name}: derivedByRuleRef '{rule_ref}' must target this exact attribute"
                 )
+            if object_context_ref(rule) != object_context_ref(entity):
+                errors.append(
+                    f"{entity_id}.{attribute_name}: derivation Rule must belong to the target Entity Context"
+                )
 
 
 def dedupe(errors: Iterable[str]) -> list[str]:
@@ -1071,4 +1383,8 @@ def compiled_document(model: LoadedModel) -> dict[str, Any]:
             model.relationships, key=lambda item: str(item.get("id", ""))
         ),
         "rules": sorted(model.rules, key=lambda item: str(item.get("id", ""))),
+        "businessPatterns": sorted(
+            model.business_patterns,
+            key=lambda item: str(item.get("id", "")),
+        ),
     }

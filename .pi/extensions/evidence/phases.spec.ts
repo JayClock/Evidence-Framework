@@ -8,19 +8,37 @@ describe('phase definitions', () => {
     expect(Object.keys(PHASE_DEFINITIONS)).toEqual(PHASE_ORDER);
   });
 
-  it('inserts machine-verifiable fulfillment modeling before structural domain design', () => {
+  it('builds a unified FM model before DDD boundary and tactical projections', () => {
     expect(PHASE_DEFINITIONS.domain.artifacts.map((item) => item.key)).toEqual([
       'ubiquitous-language',
-      'bounded-contexts',
       'fulfillment-model',
+      'bounded-contexts',
       'entities-and-value-objects',
       'aggregates',
       'domain-events',
     ]);
-    expect(PHASE_DEFINITIONS.domain.artifacts[2]).toMatchObject({
+    expect(PHASE_DEFINITIONS.domain.artifacts[1]).toMatchObject({
       kind: 'fm-model',
       skillFile: '.pi/skills/evidence-modeling/SKILL.md',
     });
+  });
+
+  it('feeds FM into every domain projection and architecture contract without quantity quotas', () => {
+    const domain = PHASE_DEFINITIONS.domain.artifacts;
+    expect(domain[1].inputs).not.toContain(
+      'artifacts/02-domain/bounded-contexts.md',
+    );
+    for (const spec of domain.slice(2)) {
+      expect(spec.inputs).toContain('artifacts/02-domain/fm-model');
+      expect(spec.minTableRows).toBeUndefined();
+    }
+    for (const key of ['api-contracts', 'data-model']) {
+      expect(
+        PHASE_DEFINITIONS.architecture.artifacts.find(
+          (spec) => spec.key === key,
+        )?.inputs,
+      ).toContain('artifacts/02-domain/fm-model');
+    }
   });
 
   it('defines test strategy and reusable procedures at the end of architecture', () => {

@@ -1,14 +1,19 @@
 ---
-description: 判断履约建模适用性并生成可校验的 FM Schema v2 模型
+description: 按当前范围生成统一 FM Schema v3 领域、渠道、履约或混合模型
 ---
 
-# 履约模型要求
+# 统一 FM 模型要求
 
-依据原始需求和上游领域工件直接判断当前业务是否存在合同、权责、支付、KPI/SLA、验收、异常补偿或审计凭证链。适用性、分析假设及待决策项交由 Domain Gate 审核，不设独立问答前置条件。信息不足不等于“不适用”。
+读取原始需求、批准需求和统一语言。先确认当前问题及独立业务/领域语义，再展开存在的上下文；本工件先于 DDD 限界上下文映射，不读取未来工件。
 
-- 不适用时，调用专用提交工具并给出明确理由，不得虚构合同、参与方或金额规则。
-- 适用时，按 Role-first 顺序建立 Contract Context、双方 Role、Fulfillment、Request、Confirmation、Trigger 与必要的 CEL Rule。
-- 只提交模型定义和验证场景，不提交 `generated/` 派生产物。
-- ID 和文件名必须稳定；YAML 一个文件一个文档。
-- 对金额、KPI、赔偿、审计或复杂完成策略，至少提交一个正常场景和一个异常或追责场景。
-- 机器校验和场景模拟不能代表业务方确认；`stakeholderReview` 默认保持 `pending`。
+- 领域对象身份、关系、规则和计算使用同一 FM YAML；纯领域和纯渠道允许没有 Contract/Fulfillment，不能因此判不适用。
+- 只有简单胶水且无独立业务/领域语义时才提交不适用理由和空文件集；信息不足不是不适用。
+- 有履约时按 Role-first 建立父 Contract、两个 Party Role、子 Fulfillment Context、Request interval、确认、触发、完成和异常规则。内部 KPI 与对外合同共用机制。
+- v3 要求 Place/Thing 属于 Domain Context；Party 在 Context 外。玩家仅按来源明确建立，系统或调度器不是 Party。
+- 规则用 CEL 和 keyData/AST lineage；不自造 Command、状态迁移或关系基数字段，不用假 Fulfillment/Evidence 填表达缺口。
+- `README.md` 说明范围、来源、假设、待确认项及 gap；discovery 是发现记录而非正式事实。疑点交由 Domain Gate，不增设独立问答步骤。无法建立有效范围时明确阻塞，不编造成功模型。
+- 有金额、KPI、赔偿、审计或复杂完成策略的单据链，至少提供正常和异常/追责场景。纯领域记录正常、边界和反例及后续 Q1/Q2 验证需求，不能宣称单据模拟器已验证领域对象或状态机。
+- 有权责复用主张才提交 `business-patterns/*.yaml`。只提交源 YAML、必要说明和场景，不提交 `generated/`、`02-business-patterns.md` 或 `status.md`。
+- `modelStatus` 默认 draft，`stakeholderReview` 默认 pending；机器校验和 Domain Gate 不代替具名业务/领域专家确认。
+
+最后通过 `evidence_submit_fm_model` 提交全部源文件；不要直接写盘或自行运行派生命令。

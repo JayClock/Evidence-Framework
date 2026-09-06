@@ -10,10 +10,10 @@ description: 生成 Scrum Product Backlog 工件
 
 ## Backlog
 
-| ID  | 用户故事 | Epic | FM Fulfillment/Scenario | 优先级 | Story Point | 依赖 | 验收就绪 | 目标版本 |
-| :-- | :------- | :--- | :---------------------- | :----: | :---------: | :--- | :------: | :------- |
+| ID  | 用户故事 | Epic | FM 模型引用 | 优先级 | Story Point | 依赖 | 验收就绪 | 目标版本 |
+| :-- | :------- | :--- | :---------- | :----: | :---------: | :--- | :------: | :------- |
 
-包含故事地图中的全部用户故事，不改变故事 ID。按可交付价值而不是技术层次纵向排序。履约模型适用时填写稳定的 Fulfillment/Scenario ID；不适用时填写 N/A。
+包含故事地图中的全部用户故事，不改变故事 ID。按可交付价值而不是技术层次纵向排序。填写稳定的 Context/Entity/Rule ID 及适用的 Fulfillment/Evidence/Scenario ID；无相关引用时注明 N/A 和依据。纯领域不是 FM 不适用，领域规则及 DDD 表达 gap 也须追溯到实现和测试。
 
 ## 依赖与风险
 

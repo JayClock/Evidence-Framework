@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build deterministic attribute-level traceability for an FM Schema v2 model."""
+"""Build deterministic attribute-level traceability for an FM Schema v3 model."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from fm_traceability import analyze_traceability
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build FM Schema v2 attribute lineage."
+        description="Build FM Schema v3 attribute lineage."
     )
     parser.add_argument(
         "model_dir", help="Directory containing model.yaml and FM shards"

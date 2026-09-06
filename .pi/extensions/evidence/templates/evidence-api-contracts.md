@@ -26,3 +26,7 @@ description: 生成 API 契约工件
 ## 契约测试
 
 说明前后端如何验证兼容性和破坏性变更。
+
+## 模型追溯与事件契约
+
+引用 FM Context/Entity/Rule ID 及适用的 Fulfillment/Evidence，说明 DDD Command/Operation/状态迁移 gap 如何投影为 API 行为；不得把 endpoint 写成 FM 实体。领域事件的传输 Schema、排序、重试、重复消费及敏感数据策略在此设计，不写回模型事实。

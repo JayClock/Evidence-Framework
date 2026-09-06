@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.advance-payment
 category: evidence
 kind: fulfillment_confirmation
 label: 支付预付款确认
-contextRef: context.content-production
+contextRef: context.advance-payment-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: confirmedAt

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v3/business-pattern.schema.json",
+  "title": "Fulfillment Modeling reusable business pattern",
+  "type": "object",
+  "required": [
+    "type",
+    "id",
+    "label",
+    "businessGoals",
+    "operationInvariant",
+    "domainNeutralClaim",
+    "businessSpineRefs",
+    "variationPointRefs",
+    "domainInputRefs",
+    "supportedByContractContextRefs",
+    "domainExampleContextRefs",
+    "reuseStatus",
+    "stakeholderReview"
+  ],
+  "properties": {
+    "type": { "const": "business_pattern" },
+    "id": { "$ref": "#/$defs/id" },
+    "label": { "type": "string", "minLength": 1 },
+    "businessGoals": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["revenue", "cost", "kpi", "compliance", "risk"] }
+    },
+    "operationInvariant": { "type": "string", "minLength": 1 },
+    "domainNeutralClaim": { "type": "string", "minLength": 1 },
+    "businessSpineRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "invariantRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "variationPointRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "domainInputRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "supportedByContractContextRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "domainExampleContextRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "reuseStatus": { "enum": ["candidate", "supported", "confirmed"] },
+    "stakeholderReview": { "$ref": "#/$defs/stakeholderReview" },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "reuseStatus": { "enum": ["supported", "confirmed"] } },
+        "required": ["reuseStatus"]
+      },
+      "then": {
+        "properties": {
+          "supportedByContractContextRefs": { "minItems": 2 },
+          "domainExampleContextRefs": { "minItems": 2 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "reuseStatus": { "const": "confirmed" } },
+        "required": ["reuseStatus"]
+      },
+      "then": {
+        "properties": {
+          "stakeholderReview": {
+            "properties": { "status": { "const": "confirmed" } }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "stakeholderReview": {
+            "properties": { "status": { "enum": ["pending", "rejected"] } }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "stakeholderReview": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "confirmed", "rejected"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["confirmed", "rejected"] } },
+            "required": ["status"]
+          },
+          "then": { "required": ["reviewer", "reviewedAt"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

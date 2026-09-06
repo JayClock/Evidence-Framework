@@ -21,10 +21,10 @@ const ROOT_FILES = new Set([
   'README.md',
   '00-overview.md',
   '01-glossary.md',
-  '02-business-patterns.md',
 ]);
 const MODEL_FILE_PATTERN =
-  /^(?:entities|fulfillments|relationships|rules)\/[a-z0-9][a-z0-9-]*\.yaml$/;
+  /^(?:entities|fulfillments|relationships|rules|business-patterns)\/[a-z0-9][a-z0-9-]*\.yaml$/;
+const DISCOVERY_FILE_PATTERN = /^discovery\/[a-z0-9][a-z0-9-]*\.(?:md|yaml)$/;
 const VALIDATION_FILE_PATTERN =
   /^validation\/(?:instances|scenarios)\/[a-z0-9][a-z0-9-]*\.yaml$/;
 
@@ -79,6 +79,7 @@ function normalizedRelativePath(path: string): string {
   if (
     !ROOT_FILES.has(normalized) &&
     !MODEL_FILE_PATTERN.test(normalized) &&
+    !DISCOVERY_FILE_PATTERN.test(normalized) &&
     !VALIDATION_FILE_PATTERN.test(normalized)
   ) {
     throw new Error(`FM 文件路径不在允许范围内：${path}`);
@@ -263,11 +264,31 @@ export async function validateFmModel(
     },
   ];
   const scenariosExist = await hasScenarios(modelDir);
-  if (scenariosExist) {
+  // Any submitted validation inputs must be checked; orphan instances cannot be skipped.
+  const validationExists = await stat(join(modelDir, 'validation')).then(
+    () => true,
+    () => false,
+  );
+  const patternsExist = await stat(join(modelDir, 'business-patterns')).then(
+    () => true,
+    () => false,
+  );
+  if (!validationExists)
+    await rm(join(generated, 'simulation.json'), { force: true });
+  if (!patternsExist)
+    await rm(join(modelDir, '02-business-patterns.md'), { force: true });
+  if (validationExists) {
     commands.push({
       name: 'FM scenario simulation',
       script: 'simulate_fm_model.py',
       args: [modelDir, '--output', join(generated, 'simulation.json')],
+    });
+  }
+  if (patternsExist) {
+    commands.push({
+      name: 'FM business pattern projection',
+      script: 'build_fm_business_patterns.py',
+      args: [modelDir, '--output', join(modelDir, '02-business-patterns.md')],
     });
   }
   commands.push({
@@ -277,7 +298,8 @@ export async function validateFmModel(
   });
 
   let machineValidated = false;
-  let simulationPassed: boolean | null = scenariosExist ? false : null;
+  let simulationPassed: boolean | null = validationExists ? false : null;
+  let hasFulfillments = false;
   for (const command of commands) {
     options.onProgress?.(`执行 ${command.name}`);
     const result = await runProcess(options, python, [
@@ -293,10 +315,12 @@ export async function validateFmModel(
         const parsed = JSON.parse(result.stdout ?? '') as {
           valid?: boolean;
           machineValidated?: boolean;
+          counts?: { fulfillments?: number };
         } | null;
         if (parsed?.valid !== true || parsed.machineValidated !== true) {
           throw new Error('缺少明确通过的机器校验结果');
         }
+        hasFulfillments = (parsed.counts?.fulfillments ?? 0) > 0;
       } catch (error) {
         item.status = 'fail';
         item.details += `\nFM 结果无效：${error instanceof Error ? error.message : String(error)}`;
@@ -309,8 +333,10 @@ export async function validateFmModel(
   if (!scenariosExist) {
     items.push({
       name: 'FM validation scenarios',
-      status: 'warn',
-      details: '未提交场景；机器结构已校验，但未执行单据模拟',
+      status: hasFulfillments ? 'warn' : 'pass',
+      details: hasFulfillments
+        ? '存在履约但未提交场景；未执行单据模拟，需人工审查覆盖缺口'
+        : '无适用单据场景；未执行模拟。纯领域结构与 lineage 不证明领域实例或状态机行为，需下游 Q1/Q2 验证',
     });
   }
   const passed =

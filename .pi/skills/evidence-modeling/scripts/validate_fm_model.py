@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a Fulfillment Modeling Schema v2 directory."""
+"""Validate a Fulfillment Modeling Schema v3 directory."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from fm_simulation import load_validation_suite, simulate_validation_suite
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate an FM Schema v2 model directory."
+        description="Validate an FM Schema v3 model directory."
     )
     parser.add_argument(
         "model_dir", help="Directory containing model.yaml and FM shards"
@@ -25,7 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model-only",
         action="store_true",
-        help="Validate model structure, semantics and lineage without running scenarios",
+        help="Validate model semantics and lineage without running Evidence scenarios",
     )
     return parser.parse_args()
 
@@ -49,11 +49,16 @@ def main() -> int:
         "schemaVersion": model.manifest.get("schemaVersion")
         if model.manifest
         else None,
+        "modelStatus": model.manifest.get("modelStatus") if model.manifest else None,
+        "stakeholderReview": model.manifest.get("stakeholderReview")
+        if model.manifest
+        else None,
         "counts": {
             "entities": len(model.entities),
             "fulfillments": len(model.fulfillments),
             "relationships": len(model.relationships),
             "rules": len(model.rules),
+            "businessPatterns": len(model.business_patterns),
             "evidenceInstances": len(suite.instances) if suite is not None else 0,
             "scenarios": len(suite.scenarios) if suite is not None else 0,
         },
@@ -65,7 +70,7 @@ def main() -> int:
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif errors:
-        print("FM Schema v2 validation failed:", file=sys.stderr)
+        print("FM Schema v3 validation failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
     else:
@@ -77,9 +82,10 @@ def main() -> int:
             else ""
         )
         print(
-            "FM Schema v2 validation passed "
+            "FM Schema v3 validation passed "
             f"(entities={counts['entities']}, fulfillments={counts['fulfillments']}, "
-            f"relationships={counts['relationships']}, rules={counts['rules']}"
+            f"relationships={counts['relationships']}, rules={counts['rules']}, "
+            f"businessPatterns={counts['businessPatterns']}"
             f"{scenario_summary})."
         )
     return 0 if not errors else 1

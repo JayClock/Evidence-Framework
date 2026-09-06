@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attribute-level traceability for Fulfillment Modeling Schema v2."""
+"""Attribute-level traceability for Fulfillment Modeling Schema v3."""
 
 from __future__ import annotations
 
@@ -9,12 +9,12 @@ from contextlib import suppress
 from dataclasses import dataclass
 from typing import Any
 
-try:
-    from celpy import Environment  # pyright: ignore[reportMissingImports]
-except ImportError:  # pragma: no cover
-    Environment = None  # type: ignore[assignment,misc]
-
-from fm_model import LoadedModel, normalize, undeclared_cel_identifiers
+from fm_model import (
+    Environment,  # pyright: ignore[reportAttributeAccessIssue]
+    LoadedModel,
+    normalize,
+    undeclared_cel_identifiers,
+)
 
 MACRO_NAMES = {"all", "exists", "exists_one", "filter", "map"}
 
@@ -365,6 +365,7 @@ def analyze_traceability(model: LoadedModel) -> tuple[dict[str, Any], list[str]]
                 used_variables: set[str] = set()
                 expression = derivation_rule.get("expression")
                 if Environment is not None and isinstance(expression, str):
+                    # CEL syntax diagnostics are emitted by validate_rules.
                     with suppress(Exception):
                         used_variables = undeclared_cel_identifiers(
                             Environment().compile(expression), set()
@@ -379,7 +380,7 @@ def analyze_traceability(model: LoadedModel) -> tuple[dict[str, Any], list[str]]
                 if attribute.get("keyData") and scalar_inputs:
                     errors.append(
                         f"{path}: key derivation scalar inputs {sorted(scalar_inputs)} must be "
-                        "modeled as Evidence attributes"
+                        "modeled as Entity attributes"
                     )
 
     for target_path, rule_id in target_to_rule.items():
@@ -392,7 +393,7 @@ def analyze_traceability(model: LoadedModel) -> tuple[dict[str, Any], list[str]]
 
     errors.extend(_lineage_cycle_errors(edges))
     document = {
-        "schemaVersion": "2.0",
+        "schemaVersion": "3.0",
         "modelId": model.manifest.get("id") if model.manifest else None,
         "nodes": sorted(nodes, key=lambda item: item["path"]),
         "edges": sorted(

@@ -1,10 +1,9 @@
----
 type: entity
 id: request.goal-setting
 category: evidence
 kind: fulfillment_request
 label: 目标设定请求
-contextRef: context.operations-performance
+contextRef: context.goal-setting-fulfillment
 responsibleRoleRef: role.operator
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

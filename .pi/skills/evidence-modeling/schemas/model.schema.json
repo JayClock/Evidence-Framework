@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/model.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/model.schema.json",
   "title": "Fulfillment Modeling manifest",
   "type": "object",
   "required": [
@@ -10,11 +10,13 @@
     "name",
     "version",
     "ruleLanguage",
+    "modelStatus",
+    "stakeholderReview",
     "entryContextRefs"
   ],
   "properties": {
     "type": { "const": "fm_model" },
-    "schemaVersion": { "const": "2.0" },
+    "schemaVersion": { "const": "3.0" },
     "id": { "$ref": "#/$defs/id" },
     "name": { "type": "string", "minLength": 1 },
     "version": {
@@ -22,6 +24,8 @@
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
     },
     "ruleLanguage": { "const": "CEL" },
+    "modelStatus": { "enum": ["draft", "reviewed", "confirmed"] },
+    "stakeholderReview": { "$ref": "#/$defs/stakeholderReview" },
     "entryContextRefs": {
       "type": "array",
       "minItems": 1,
@@ -30,11 +34,74 @@
     },
     "description": { "type": "string", "minLength": 1 }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "modelStatus": { "const": "draft" } },
+        "required": ["modelStatus"]
+      },
+      "then": {
+        "properties": {
+          "stakeholderReview": {
+            "properties": { "status": { "enum": ["pending", "rejected"] } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "modelStatus": { "const": "reviewed" } },
+        "required": ["modelStatus"]
+      },
+      "then": {
+        "properties": {
+          "stakeholderReview": {
+            "properties": { "status": { "const": "reviewed" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "modelStatus": { "const": "confirmed" } },
+        "required": ["modelStatus"]
+      },
+      "then": {
+        "properties": {
+          "stakeholderReview": {
+            "properties": { "status": { "const": "confirmed" } }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false,
   "$defs": {
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "stakeholderReview": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "reviewed", "confirmed", "rejected"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["reviewed", "confirmed", "rejected"] }
+            },
+            "required": ["status"]
+          },
+          "then": { "required": ["reviewer", "reviewedAt"] }
+        }
+      ],
+      "additionalProperties": false
     }
   }
 }

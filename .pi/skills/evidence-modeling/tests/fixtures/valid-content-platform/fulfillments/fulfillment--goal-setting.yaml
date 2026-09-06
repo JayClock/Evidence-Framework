@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.goal-setting
 label: 确认内容运营绩效目标
-contextRef: context.operations-performance
+contextRef: context.goal-setting-fulfillment
 contractRef: contract.operations-performance
 rightHolderRoleRef: role.operator
 obligorRoleRef: role.platform-performance
 requestRef: request.goal-setting
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.goal-setting
 completionPolicy:

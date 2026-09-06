@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.weekly-progress-check
 category: evidence
 kind: fulfillment_confirmation
 label: 周进度检查确认
-contextRef: context.operations-performance
+contextRef: context.weekly-progress-check-fulfillment
 responsibleRoleRef: role.operator
 attributes:
   - name: confirmedAt

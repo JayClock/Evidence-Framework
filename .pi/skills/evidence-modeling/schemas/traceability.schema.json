@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/traceability.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/traceability.schema.json",
   "title": "FM deterministic attribute traceability report",
   "type": "object",
   "required": ["schemaVersion", "modelId", "nodes", "edges", "constraints"],
   "properties": {
-    "schemaVersion": { "const": "2.0" },
+    "schemaVersion": { "const": "3.0" },
     "modelId": { "$ref": "#/$defs/id" },
     "nodes": {
       "type": "array",

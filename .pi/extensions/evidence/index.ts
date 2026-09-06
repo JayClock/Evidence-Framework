@@ -432,7 +432,7 @@ function modelingStatusMarkdown(options: {
       : options.simulationPassed
         ? '通过'
         : '失败';
-  return `# 履约模型状态
+  return `# 统一 FM 模型状态
 
 ## 适用性
 
@@ -442,7 +442,7 @@ function modelingStatusMarkdown(options: {
 ## 机器校验
 
 - machineValidated：${options.machineValidated}
-- 说明：${options.applicable ? '模型结构、引用、CEL 与属性追溯由扩展执行确定性校验。' : '当前业务不适用 FM，因此没有生成模型定义。'}
+- 说明：${options.applicable ? '模型结构、引用、CEL 与属性追溯由扩展执行确定性校验；DDD 文档是设计投影，不是第二份业务事实源。' : '当前范围无独立业务或领域语义，不需生成 FM 定义。'}
 
 ## 场景模拟
 
@@ -451,8 +451,8 @@ function modelingStatusMarkdown(options: {
 
 ## 业务确认
 
-- stakeholderReview：pending
-- 说明：机器校验与场景模拟不能替代具名业务方确认。
+- modelStatus / stakeholderReview：${options.applicable ? '以 model.yaml 为准；默认 draft / pending，本状态页不复制或提升人工评审状态。' : '不适用，未生成模型。'}
+- 说明：机器校验、单据模拟与 Domain Gate 不能替代具名业务／领域专家确认；纯领域未执行实例或状态机模拟。
 
 ## 模型文件
 
@@ -922,7 +922,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           `No artifact expected at index ${state.currentArtifactIndex}.`,
         );
       if (artifact.kind === 'fm-model') {
-        throw new Error('履约模型必须通过 evidence_submit_fm_model 提交。');
+        throw new Error('统一 FM 模型必须通过 evidence_submit_fm_model 提交。');
       }
 
       if (state.paused) throw new Error('Evidence 已暂停。');
@@ -1053,14 +1053,15 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     name: 'evidence_submit_fm_model',
     label: 'Submit FM Model',
     description:
-      'Submit an optional Fulfillment Modeling Schema v2 bundle. The extension validates paths, runs schema/lineage/simulation/compile checks, and records deterministic outputs.',
-    promptSnippet: 'Validate and submit the current fulfillment model bundle',
+      'Submit a unified FM Schema v3 bundle for domain, channel, fulfillment or mixed scope. No contract is required for pure domain/channel models. Only simple glue without independent semantics may be not applicable. The extension validates, traces, simulates applicable evidence and derives patterns/compiled outputs.',
+    promptSnippet: 'Validate and submit the current unified FM v3 model bundle',
     promptGuidelines: [
-      'Use evidence_submit_fm_model only for the current fulfillment-model artifact. Submit source YAML and validation scenarios, never generated files.',
+      'Use evidence_submit_fm_model only for the current fulfillment-model artifact (unified FM). Submit source YAML, discovery notes and validation scenarios; never generated files or 02-business-patterns.md.',
     ],
     parameters: Type.Object({
       applicable: Type.Boolean({
-        description: 'Whether the current business scope is suitable for FM',
+        description:
+          'Whether the scope has independent domain, channel or fulfillment semantics; absence of contracts is not a reason to skip FM',
       }),
       rationale: Type.String({
         description:
@@ -1086,14 +1087,14 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const state = await loadState(ctx.cwd);
       if (!state || state.phase !== 'domain' || state.status !== 'running') {
-        throw new Error('A running domain fulfillment-model task is required.');
+        throw new Error('A running domain unified FM model task is required.');
       }
       const artifact = getExpectedArtifact(
         state.phase,
         state.currentArtifactIndex,
       );
       if (artifact?.kind !== 'fm-model') {
-        throw new Error('当前工件不是履约模型。');
+        throw new Error('当前工件不是统一 FM 模型。');
       }
       if (state.paused) throw new Error('Evidence 已暂停。');
       if (!params.applicable && params.files.length > 0) {
@@ -1123,7 +1124,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         });
         if (!validation.passed) {
           throw new Error(
-            `履约模型校验失败：\n${validation.items
+            `统一 FM 模型校验失败：\n${validation.items
               .filter((item) => item.status === 'fail')
               .map((item) => `- ${item.name}: ${item.details}`)
               .join('\n')}`,
@@ -1172,7 +1173,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         state.currentArtifactIndex,
       );
       if (!nextArtifact) {
-        throw new Error('履约模型之后缺少领域设计工件。');
+        throw new Error('统一 FM 模型之后缺少 DDD 设计投影工件。');
       }
       await applyPhaseProfile(pi, ctx, state, config);
       if (config.autoContinueArtifacts) {
@@ -1185,7 +1186,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           content: [
             {
               type: 'text',
-              text: `已提交履约模型决策；下一工件：${nextArtifact.output}`,
+              text: `已提交统一 FM 模型决策；下一工件：${nextArtifact.output}`,
             },
           ],
           details: {
@@ -1204,7 +1205,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         content: [
           {
             type: 'text',
-            text: `已提交履约模型决策。运行 /evidence-run 生成 ${nextArtifact.output}。`,
+            text: `已提交统一 FM 模型决策。运行 /evidence-run 生成 ${nextArtifact.output}。`,
           },
         ],
         details: {

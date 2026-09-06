@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createGate, hashArtifacts } from './gates.ts';
+import { domain } from './modeling-scope-test-support.ts';
 import evidenceExtension from './index.ts';
 import { createInitialState } from './storage.ts';
 import {
@@ -56,20 +57,19 @@ async function submissionHarness() {
   const state = createInitialState('test', 'goal');
   state.phase = 'domain';
   state.status = 'running';
-  state.currentArtifactIndex = 2;
+  state.currentArtifactIndex = 1;
   await saveState(root, state);
   for (const path of [
     'artifacts/00-input/requirements.md',
     'artifacts/01-requirements/problem-statement.md',
     'artifacts/01-requirements/story-map.md',
     'artifacts/02-domain/ubiquitous-language.md',
-    'artifacts/02-domain/bounded-contexts.md',
   ]) {
     await writeTextAtomic(root, path, `# ${path}\n`);
   }
   for (const path of [
     '.pi/skills/evidence-domain/SKILL.md',
-    '.pi/extensions/evidence/templates/evidence-entities-and-value-objects.md',
+    '.pi/extensions/evidence/templates/evidence-bounded-contexts.md',
   ]) {
     await writeTextAtomic(
       root,
@@ -111,8 +111,8 @@ async function submissionHarness() {
       {
         applicable,
         rationale: applicable
-          ? '订阅合同包含双方付款权责与审计凭证链，需要验证正常支付和逾期场景；机器结果不代替业务确认。'
-          : '当前范围只有本地工具操作，不包含合同、双方权责、支付、KPI、验收或审计凭证链。',
+          ? '当前包含独立领域规则或合同权责，需要建立统一 FM 并如实记录校验和单据模拟适用性；机器结果不代替业务确认。'
+          : '当前范围只有简单的本地工具胶水集成，无独立对象身份、领域关系、规则、渠道协商或合同履约语义，不需建模。',
         files,
       },
       undefined,
@@ -122,7 +122,7 @@ async function submissionHarness() {
   return { root, state, api, submit };
 }
 
-describe('fulfillment modeling submission', () => {
+describe('unified FM modeling submission', () => {
   it('records an explicit not-applicable decision and continues domain design', async () => {
     const { root, api, submit } = await submissionHarness();
     await submit(false);
@@ -132,17 +132,72 @@ describe('fulfillment modeling submission', () => {
       machineValidated: false,
       simulationPassed: null,
     });
-    expect(updated?.currentArtifactIndex).toBe(3);
+    expect(updated?.currentArtifactIndex).toBe(2);
     expect(updated?.status).toBe('running');
     expect(await readText(root, FM_STATUS_PATH)).toContain('结论：不适用');
     expect(api.exec).not.toHaveBeenCalled();
     expect(api.sendUserMessage).toHaveBeenCalledWith(
-      expect.stringContaining(
-        'artifacts/02-domain/entities-and-value-objects.md',
-      ),
+      expect.stringContaining('artifacts/02-domain/bounded-contexts.md'),
       { deliverAs: 'followUp' },
     );
   });
+
+  it('submits a pure domain before DDD boundaries without claiming simulation or expert confirmation', async () => {
+    const { root, submit } = await submissionHarness();
+    await prepareFmSkill(root);
+    const files = [
+      ...domain,
+      {
+        path: 'discovery/open-questions.md',
+        content: '# 待确认\n归档规则待具名领域专家确认。',
+      },
+    ];
+    await submit(true, files);
+    const updated = (await loadState(root))!;
+    expect(updated.currentArtifactIndex).toBe(2);
+    expect(updated.modeling).toMatchObject({
+      applicable: true,
+      machineValidated: true,
+      simulationPassed: null,
+    });
+    const compiled = JSON.parse(
+      await readText(root, `${FM_MODEL_ROOT}/generated/model.json`),
+    );
+    expect(compiled.fulfillments).toEqual([]);
+    expect(compiled.model).toMatchObject({
+      modelStatus: 'draft',
+      stakeholderReview: { status: 'pending' },
+    });
+    expect(await readText(root, FM_STATUS_PATH)).toContain('未执行');
+    expect(updated.modeling.files).not.toContain(
+      `${FM_MODEL_ROOT}/generated/simulation.json`,
+    );
+    const gate = await createGate(
+      root,
+      updated,
+      {
+        phase: 'domain',
+        subject: '领域建模',
+        round: 0,
+        passed: true,
+        warnings: 0,
+        createdAt: new Date().toISOString(),
+        items: [],
+      },
+      'reports/domain-test.md',
+    );
+    expect(gate.artifactPaths).toContain(
+      `${FM_MODEL_ROOT}/discovery/open-questions.md`,
+    );
+    await writeTextAtomic(
+      root,
+      `${FM_MODEL_ROOT}/discovery/open-questions.md`,
+      '# 已变更的发现记录',
+    );
+    expect(await hashArtifacts(root, gate.artifactPaths)).not.toBe(
+      gate.artifactDigest,
+    );
+  }, 180_000);
 
   it('submits a real model, hashes its generated evidence, and preserves it on rejection', async () => {
     const { root, state, api, submit } = await submissionHarness();
@@ -156,7 +211,7 @@ describe('fulfillment modeling submission', () => {
       machineValidated: true,
       simulationPassed: true,
     });
-    expect(updated.currentArtifactIndex).toBe(3);
+    expect(updated.currentArtifactIndex).toBe(2);
     expect(updated.modeling.files).toEqual(await listFmModelFiles(root));
     expect(updated.modeling.files).toEqual(
       expect.arrayContaining([
@@ -168,7 +223,7 @@ describe('fulfillment modeling submission', () => {
       ]),
     );
     expect(await readText(root, FM_STATUS_PATH)).toContain(
-      'stakeholderReview：pending',
+      '以 model.yaml 为准；默认 draft / pending',
     );
     expect(
       await readText(
@@ -205,13 +260,13 @@ describe('fulfillment modeling submission', () => {
     // Missing business evidence is a real schema/semantic failure, not broken YAML.
     const beforeRetry = await loadState(root);
     if (!beforeRetry) throw new Error('Submitted state is missing');
-    beforeRetry.currentArtifactIndex = 2;
+    beforeRetry.currentArtifactIndex = 1;
     await saveState(root, beforeRetry);
     const beforeState = await readText(root, '.evidence/state.json');
     const invalid = files.filter(
       (file) => file.path !== 'entities/confirmation--content-payment.yaml',
     );
-    await expect(submit(true, invalid)).rejects.toThrow('履约模型校验失败');
+    await expect(submit(true, invalid)).rejects.toThrow('统一 FM 模型校验失败');
     expect(await readText(root, '.evidence/state.json')).toBe(beforeState);
     expect(await hashArtifacts(root, updated.modeling.files)).toBe(digest);
     expect(await readdir(join(root, '.evidence/staging'))).toEqual([]);

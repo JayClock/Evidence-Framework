@@ -25,17 +25,34 @@ describe('FM model submission paths', () => {
     ]);
   });
 
-  it.each(['../state.json', '/tmp/model.yaml', 'generated/model.json'])(
-    'rejects an unsafe or generated path: %s',
-    (path) => {
-      expect(() =>
-        normalizeFmModelFiles([
-          { path: 'model.yaml', content: 'type: fm_model' },
-          { path, content: '{}' },
-        ]),
-      ).toThrow();
-    },
-  );
+  it('accepts business-pattern sources and bounded discovery notes', () => {
+    const files = [
+      'model.yaml',
+      'business-patterns/pattern--payment.yaml',
+      'discovery/scope.md',
+      'discovery/domain-inventory.yaml',
+    ];
+    expect(
+      normalizeFmModelFiles(files.map((path) => ({ path, content: 'source' }))),
+    ).toHaveLength(files.length);
+  });
+
+  it.each([
+    '../state.json',
+    '/tmp/model.yaml',
+    'generated/model.json',
+    '02-business-patterns.md',
+    'discovery/../model.yaml',
+    'discovery/script.py',
+    'status.md',
+  ])('rejects an unsafe or generated path: %s', (path) => {
+    expect(() =>
+      normalizeFmModelFiles([
+        { path: 'model.yaml', content: 'type: fm_model' },
+        { path, content: '{}' },
+      ]),
+    ).toThrow();
+  });
 
   it('requires a manifest and unique paths', () => {
     expect(() =>
@@ -49,7 +66,7 @@ describe('FM model submission paths', () => {
     ).toThrow('重复');
   });
 
-  it('validates, simulates, and deterministically compiles a real Schema v2 model', async () => {
+  it('validates, simulates, and deterministically compiles a real Schema v3 model', async () => {
     const root = process.cwd();
     await mkdir(join(root, 'node_modules/.cache'), { recursive: true });
     const worktree = await mkdtemp(

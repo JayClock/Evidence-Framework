@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/scenario.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/scenario.schema.json",
   "title": "FM deterministic evidence simulation scenario",
   "type": "object",
   "required": ["type", "id", "label", "asOf", "steps", "expectations"],

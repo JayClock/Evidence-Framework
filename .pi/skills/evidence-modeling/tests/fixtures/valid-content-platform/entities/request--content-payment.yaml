@@ -1,10 +1,9 @@
----
 type: entity
 id: request.content-payment
 category: evidence
 kind: fulfillment_request
 label: 内容产品付款请求
-contextRef: context.content-subscription
+contextRef: context.content-payment-fulfillment
 responsibleRoleRef: role.platform-subscription
 attributes:
   - name: startedAt
@@ -12,8 +11,10 @@ attributes:
     valueType: timestamp
     required: true
     meaning: 履约时段开始时间
+    keyData: true
   - name: expiresAt
     label: 截止时间
     valueType: timestamp
     required: true
     meaning: 履约时段截止时间
+    keyData: true

@@ -1,4 +1,3 @@
----
 type: relationship
 id: relation.customer-plays-subscriber
 kind: plays_role

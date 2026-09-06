@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.content-access
 category: evidence
 kind: fulfillment_confirmation
 label: 付费内容访问确认
-contextRef: context.content-subscription
+contextRef: context.content-access-fulfillment
 responsibleRoleRef: role.platform-subscription
 attributes:
   - name: confirmedAt

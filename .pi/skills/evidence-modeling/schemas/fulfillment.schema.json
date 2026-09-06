@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/fulfillment.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/fulfillment.schema.json",
   "title": "Fulfillment Modeling fulfillment relation",
   "type": "object",
   "required": [
@@ -12,6 +12,7 @@
     "rightHolderRoleRef",
     "obligorRoleRef",
     "requestRef",
+    "requestInterval",
     "confirmationRefs",
     "completionPolicy",
     "requestTrigger",
@@ -26,6 +27,7 @@
     "rightHolderRoleRef": { "$ref": "#/$defs/id" },
     "obligorRoleRef": { "$ref": "#/$defs/id" },
     "requestRef": { "$ref": "#/$defs/id" },
+    "requestInterval": { "$ref": "#/$defs/requestInterval" },
     "confirmationRefs": {
       "description": "Stable IDs of concrete Fulfillment Confirmation entities or open Evidence Role confirmation slots.",
       "type": "array",
@@ -68,6 +70,30 @@
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "requestInterval": {
+      "type": "object",
+      "required": ["startAttribute"],
+      "properties": {
+        "startAttribute": { "$ref": "#/$defs/attributeName" },
+        "endAttribute": { "$ref": "#/$defs/attributeName" },
+        "openEndedReason": { "type": "string", "minLength": 1 }
+      },
+      "oneOf": [
+        {
+          "required": ["endAttribute"],
+          "not": { "required": ["openEndedReason"] }
+        },
+        {
+          "required": ["openEndedReason"],
+          "not": { "required": ["endAttribute"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "attributeName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
     },
     "completionPolicy": {
       "type": "object",

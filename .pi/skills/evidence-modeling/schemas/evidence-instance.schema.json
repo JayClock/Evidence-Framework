@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/evidence-instance.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/evidence-instance.schema.json",
   "title": "FM evidence document instance",
   "type": "object",
   "required": ["type", "id", "entityRef", "values"],

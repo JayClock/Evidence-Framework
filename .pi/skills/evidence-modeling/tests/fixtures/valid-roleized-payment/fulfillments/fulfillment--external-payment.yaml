@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.external-payment
 label: 完成外部支付
-contextRef: context.external-payment
+contextRef: context.external-payment-fulfillment
 contractRef: contract.external-payment
 rightHolderRoleRef: role.external-payment-customer
 obligorRoleRef: role.external-payment-provider
 requestRef: request.external-payment
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.external-payment
 completionPolicy:

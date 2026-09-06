@@ -1,4 +1,4 @@
-# FM Schema v2 校验清单
+# FM Schema v3 校验清单
 
 ## 自动校验
 
@@ -6,65 +6,91 @@
 python3 scripts/validate_fm_model.py <model-dir>
 python3 scripts/build_fm_lineage.py <model-dir> --output <model-dir>/generated/traceability.json
 python3 scripts/simulate_fm_model.py <model-dir> --output <model-dir>/generated/simulation.json  # 存在 validation/ 时
+python3 scripts/build_fm_business_patterns.py <model-dir> --output <model-dir>/02-business-patterns.md  # 存在业务模式时
 python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/model.json
 ```
 
-`python3 -m unittest discover -s tests -v` 只在修改 Skill、Schema 或脚本时运行，不是每次业务建模的外部回归评测。
-
 自动校验覆盖：
 
-- JSON Schema、文件位置、文件名、唯一 ID 与引用；
-- Context、Evidence、Role、Participant 类型约束；
-- Contract 恰好两个同 Context Party Role；
-- Role 在没有玩家时仍可独立成立；
-- 每个 Request 恰好属于一个 Fulfillment；
-- 权利方、义务方和具体 Evidence 责任 Role 一致；
-- Confirmation 目标可以是具体 Confirmation 或 Evidence Role；
-- completion policy、trigger、违约后果与共享确认理由；
-- `plays_role` 的方向、端点与 Evidence Role 跨上下文约束；
-- CEL 语法、bindings、属性访问、结果类型和派生目标；
-- key data 依据、属性级追溯和派生环；
-- 可选 Evidence Instance、acting Role、可见单据、规则求值和 Fulfillment 状态；
-- `machineValidated`、`simulationPassed` 与人工 stakeholder review 分离；
-- 确定性 JSON 编译及追溯／模拟报告。
+- Schema v3、文件位置、文件名、唯一 ID 与引用；纯领域／纯渠道允许没有 Fulfillment，已有履约的约束不放松；
+- Contract、Fulfillment、Domain、Pre-contract／Channel Context 边界；
+- Contract 恰好两个 Party Role，Role 可在没有玩家时独立成立；
+- Fulfillment 必须位于父 Contract 的子 Fulfillment Context；
+- Request interval 的 required/keyData timestamp 起点、截止点或明确无固定期限依据；
+- Request、Confirmation、权利方、义务方和父 Contract Role 一致；
+- completion policy、trigger、违约后果、共享确认和 Evidence Role；
+- Place/Thing 必须属于 Domain Context；
+- CEL、关键数据 lineage、派生环与确定性场景；
+- Business Pattern 的业务脊梁、变化点、Domain／Contract 案例和复用状态门槛；
+- `modelStatus`、机器状态、复用状态与 stakeholder review 分离；
+- 确定性 JSON、追溯、模拟与业务模式 Markdown。
 
-## Role / Participant 语义检查
+## 发现与事实检查
 
-1. Contract 的两个参与方是否首先表示为 Role，而不是被误建成两个 Party？
-2. 每个显式 Participant→Role 是否有依据依据？
-3. 依据已经明确稳定玩家时，是否遗漏了对应的 `plays_role`？
-4. 依据只给出上下文角色而没有玩家证据时，是否错误补造了 Party？
-5. 同一 Participant 跨上下文扮演多个 Role 时，是否保持 Role 分离而没有把上下文逻辑塞回 Participant？
-6. Third-party、Context、Domain 和 Evidence Role 是否被当成可独立变化点，而不是被强迫绑定 Party？
+1. 是否明确本次问题、范围、来源与不展开部分，而不是按 CRM 等系统名称选固定模式？
+2. 合同／渠道事实不足时是否做凭证发现与时间线回放；领域事实不足时是否做对象身份、关系、规则及反例核对？不强制所有范围完成四阶段。
+3. 当前范围内的权责、时限、完成证明或领域规则是否有来源或明确待确认？不存在的上下文不要求补造。
+4. KPI 与外部交易是否共用履约机制，目标协商／变更及不同管理方式下的权责是否按事实区分？
+5. `modelStatus` 是否忠实反映当前范围的人工评审，而不是随机器校验升级？
 
-## Evidence / Fulfillment 语义检查
+## Context 检查
 
-1. 是否从收入、支出或目标—实际/KPI 找到业务脊梁？
-2. 每个 Evidence 能否想象成可留存、签字、盖章、审计或追责的记录？
-3. 每个 Fulfillment 是否回答“哪个 Role 有权要求哪个 Role 在何时完成什么”？
-4. Request 后什么具体 Confirmation 或 Evidence Role 足以证明完整/部分履约？
-5. Roleized Confirmation 是否只由其它 Context 的时刻 Evidence 扮演？
-6. 增加新的支付/交付渠道时，核心 Evidence Role 是否无需修改？
-7. 系统触发是否用 `actsForRoleRef`，并避免把系统、调度器、服务或队列建成 Party？
-8. 金额、时间、数量、KPI、资格和违约条件是否可追溯到 Evidence、输入或 CEL？
-9. 取消、退款、冲正、更正和补偿是否新增凭证，而非覆盖旧凭证？
-10. 跨上下文是否只通过签约依据、时刻凭证或 Evidence Role？
-11. FM 是否混入 API、数据库、页面、SDK、消息或部署对象？
-12. 是否至少用一个正常场景和一个异常/追责场景检查凭证链？
-13. 每个关键数据项是 Evidence 自身断言，还是能通过 CEL 追溯到前序属性？
-14. 角色演练时是否只暴露当时可用单据，而没有提前泄露 facilitator 预期值？
-15. 是否把机器校验通过误写成了业务方已经确认？
+1. Contract Context 是否只作为两方交互聚合／服务边界，而没有被当作单一弹性边界？
+2. 每个 Fulfillment 是否位于子 Fulfillment Context？
+3. Request、Confirmation、Evidence Role 和履约 Rule 是否位于同一个 Fulfillment Context？
+4. 它们的责任 Role 是否来自父 Contract 的两个 Role？
+5. Place/Thing 是否位于 Domain Context？
+6. RFP／Proposal 是否位于 Pre-contract／Channel Context，并与 Contract Context 分离？
+7. `entryContextRefs` 是否指向真实 Context；纯领域／纯渠道是否没有为了校验虚构合同、履约或期限？
 
-## 禁止的旧结构
+## Role、Evidence 与 Fulfillment 检查
 
-完成前搜索并清除：
+1. 每个显式 Participant→Role 是否有来源依据？来源已明确玩家时是否遗漏关系？
+2. 是否从收入、支出或目标—实际/KPI 找到业务脊梁？
+3. 每个 Evidence 能否想象成可留存、签字、审计或追责的记录？
+4. 每个 Fulfillment 是否回答“哪个 Role 有权要求哪个 Role 在什么时段完成什么”？
+5. Confirmation 或 Evidence Role 是否足以证明完整／部分履约？
+6. 增加支付／交付渠道时，核心 Evidence Role 是否无需修改？
+7. 自动触发是否使用 `actsForRoleRef`，并避免把系统建成 Party？
+8. 取消、退款、冲正、更正和补偿是否新增凭证，而非覆盖旧凭证？
+9. 跨 Context 的 Evidence 协作是否只通过签约来源、时刻凭证或 Evidence Role？Participant／Context 的 Role 扮演及领域输入是否符合各自规则，而没有被误当完成证明？
+10. FM 是否混入 API、数据库、页面、SDK、消息或部署对象？
 
-- `partyAssignments`；
-- `sourceEvidenceRefs`；
-- “每个 Role 必须恰好由一个 Party 扮演”；
-- 仅由角色名称推导出的占位 Party；
-- Contract→Contract 和 Request→Evidence Role 的扮演关系。
+## 领域检查
+
+1. 领域问题是否用同一 FM 的 Entity／Relationship／Rule 表达，而不是只列 Thing 或转交另一种格式？
+2. 是否区分稳定 Party 与档案等 Thing、局部属性与独立对象、上下文身份与玩家？
+3. 对象关系的端点、方向与范围是否合法；需要但尚不支持的基数／操作／迁移语义是否明确列为 gap？
+4. 领域 invariant／eligibility／precondition／derivation 是否在 Domain Context，引用真实属性，派生目标与 Rule 一致？
+5. 领域专家是否核对正常、边界和反例？CEL 能编译不等于规则符合实际，也不等于自动执行操作或状态迁移。
+6. 是否没有用假 Evidence 绕过只支持单据实例的模拟器？纯领域结构和 lineage 通过不宣称领域运行时模拟通过。
+
+## Request interval 与数据检查
+
+1. 起点与 fixed 模式的截止属性是否为 required、`keyData: true` 的 timestamp？
+2. `openEndedReason` 是否来自已确认合同事实，而不是“材料没写期限”？
+3. 逾期、金额、数量、KPI、资格和赔偿是否可追溯到 Evidence 或 CEL？
+4. 是否至少用一个正常和一个异常／追责场景检查凭证链？
+5. 角色演练是否只暴露当时可见单据，而没有提前泄露答案？
+
+## Business Pattern 检查
+
+1. 是否引用真实 Fulfillment 作为业务脊梁？
+2. 运营不变量和领域中立主张是否区别于产品功能？
+3. 变化点是否来自 Evidence／Domain／Context Role 或业务 Context，而不是技术组件？
+4. 单一 Domain 是否保持 `candidate`？
+5. `supported`／`confirmed` 是否满足两个 Contract 和两个 Domain 案例？
+6. `confirmed` 是否有具名审核人与时间？
 
 ## 完成标准
 
-日常模型的结构校验、属性追溯和编译通过；存在 `validation/` 时，全部自动场景通过。正式金额、KPI、赔偿或审计模型还应完成人工单据演练，并由真实审核者记录 stakeholder review。`generated/` 下所有报告均可删除后无损重建。无法确认的玩家或事实记录为假设/待确认项，不用技术常识补齐。
+按实际存在的结构验收，不新增范围 profile 来跳过已有对象的规则：
+
+- 所有模型：结构、边界、引用、CEL、属性追溯与编译通过。
+- 有履约：双方 Role、Request interval、确认、完成策略和违约引用完整；空集合不能掩盖孤立 Request 或缺失 Confirmation。
+- 纯渠道：RFP／Proposal、责任 Role 和回应关系合法；合同未纳入范围可不生成。
+- 纯领域：领域检查通过，明确实例／状态机模拟等尚未覆盖部分；允许省略 `fulfillments/`。
+- 有单据场景：实际执行的场景全部通过；有 Business Pattern：派生 Markdown 与 YAML 一致。
+- 简单集成：确无独立领域语义时，范围说明即可正常结束，不要求补合同。
+
+正式金额、KPI、赔偿、审计或复用模型还需适用的人工演练与具名评审；领域部分由具名领域专家确认。无法确认的事实保持 draft，不能把局部模型验证当作整个系统已完整。

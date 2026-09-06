@@ -109,7 +109,7 @@ ${inputList(inputs)}
 
 ## 执行要求
 
-1. 在 Sprint 1 Backlog 中定位 ${storyId}，只实现该故事的范围；保留验收场景 ID、任务 ID、工序 ID 及适用的 FM 引用。
+1. 在 Sprint 1 Backlog 中定位 ${storyId}，只实现该故事的范围；保留验收场景 ID、任务 ID、工序 ID 及 FM Context/Entity/Rule ID，以及适用的 Fulfillment/Evidence/Scenario ID；纯领域运行时行为仍需 Q1/Q2 验证。
 2. 先检查现有代码与测试，不要假设技术栈。按已批准的测试策略和当前适用工序明确被测边界、真实依赖、测试替身、场景数据和预期结果；不把被测业务逻辑替换掉。
 3. 当前检查点为 \`${state.coding.tdd.stage}\`。按前置依赖选 tdd 任务，先写真实行为测试，再调用 \`evidence_tdd_red\`，传 storyId、taskId、checkId、与计划完全一致的 command 及 expectedFailure。环境、语法、零测试和无关失败不算 Red。
 4. Red 后只写最小实现，再调用 \`evidence_tdd_green\`。扩展运行完全相同的命令，并要求 Red 的测试文件未改变；不能删除、削弱失败测试取得 Green。
@@ -132,7 +132,7 @@ ${inputList(inputs)}
       root,
       artifact.skillFile ?? definition.skillFile,
     );
-    return `# Evidence 履约建模任务
+    return `# Evidence 统一 FM 建模任务
 
 ## 当前任务
 
@@ -146,7 +146,7 @@ ${inputList(inputs)}
 
 ${skill}
 
-## 履约建模方法
+## 统一 FM 建模方法
 
 ${modelingSkill}
 
@@ -160,9 +160,9 @@ ${artifactPrompt}
 
 ## 提交约束
 
-- 先判断 FM 是否适用；不适用时必须给出具体理由。
+- 先判断当前范围是否有独立业务/领域语义；纯领域、纯渠道仍用同一 FM v3，不因没有合同而跳过。不适用仅限简单胶水等无独立语义范围，必须给出具体理由。
 - 适用时读取所需的 \`.pi/skills/evidence-modeling/references/\` 文件，构造完整的分片 YAML 和可选验证场景。
-- 不要提交 \`generated/\`，它由扩展确定性生成。
+- 不要提交 \`generated/\`、\`02-business-patterns.md\` 或 \`status.md\`，它们由扩展确定性生成。
 - 不要使用 \`write\` 或 \`edit\` 写入模型目录。
 - 最后调用 \`evidence_submit_fm_model\`，传入适用性、理由以及全部模型文件；该工具必须是最后一个动作。${feedbackSection(state)}
 `;

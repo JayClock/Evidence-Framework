@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.revenue-share
 label: 支付创作者收入分成
-contextRef: context.content-production
+contextRef: context.revenue-share-fulfillment
 contractRef: contract.content-production
 rightHolderRoleRef: role.creator
 obligorRoleRef: role.platform-content-production
 requestRef: request.revenue-share
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.revenue-share
 completionPolicy:

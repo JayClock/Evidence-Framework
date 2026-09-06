@@ -464,7 +464,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
   const raw = await readJson<unknown>(root, STATE_PATH);
   if (raw === null) return null;
   if (!isRecord(raw)) return invalidState('expected a JSON object');
-  if (raw.version !== 3)
+  if (raw.version !== 4)
     return invalidState(`unsupported version ${String(raw.version)}`);
   if (typeof raw.runId !== 'string' || !/^[a-f0-9-]{36}$/.test(raw.runId))
     return invalidState('invalid runId');
@@ -531,7 +531,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     return invalidState('invalid story record references');
 
   return {
-    version: 3,
+    version: 4,
     runId: raw.runId,
     projectName: raw.projectName,
     goal: raw.goal,
@@ -598,7 +598,7 @@ export function createInitialState(
 ): EvidenceState {
   const now = new Date().toISOString();
   const state: EvidenceState = {
-    version: 3,
+    version: 4,
     runId: randomUUID(),
     projectName,
     goal,

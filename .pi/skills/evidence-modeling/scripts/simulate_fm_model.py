@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run deterministic document-instance scenarios against an FM Schema v2 model."""
+"""Run deterministic document-instance scenarios against an FM Schema v3 model."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from fm_simulation import load_validation_suite, simulate_validation_suite
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Simulate FM Schema v2 evidence scenarios."
+        description="Simulate FM Schema v3 evidence scenarios."
     )
     parser.add_argument(
         "model_dir", help="Directory containing the model and validation suite"

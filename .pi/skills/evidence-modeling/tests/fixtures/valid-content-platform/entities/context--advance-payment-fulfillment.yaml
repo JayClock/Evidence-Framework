@@ -1,0 +1,6 @@
+type: entity
+id: context.advance-payment-fulfillment
+category: context
+kind: fulfillment
+label: 支付创作者预付款履约上下文
+parentContextRef: context.content-production

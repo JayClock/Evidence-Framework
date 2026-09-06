@@ -1,4 +1,3 @@
----
 type: relationship
 id: relation.customer-plays-external-payment-customer
 kind: plays_role

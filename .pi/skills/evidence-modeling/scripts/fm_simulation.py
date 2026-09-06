@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic evidence-instance simulation for FM Schema v2."""
+"""Deterministic evidence-instance simulation for FM Schema v3."""
 
 from __future__ import annotations
 
@@ -691,7 +691,7 @@ def simulate_validation_suite(
     for result in results:
         errors.extend(result["errors"])
     document = {
-        "schemaVersion": "2.0",
+        "schemaVersion": "3.0",
         "modelId": model.manifest.get("id") if model.manifest else None,
         "machineValidated": not static_errors,
         "simulationPassed": not errors,
@@ -839,20 +839,6 @@ def scoped_rule_results(
     return results
 
 
-def required_int(value: Any) -> int:
-    try:
-        return int(value)
-    except (TypeError, ValueError) as error:
-        raise ValueError(f"expected integer, found {value!r}") from error
-
-
-def required_float(value: Any) -> float:
-    try:
-        return float(value)
-    except (TypeError, ValueError) as error:
-        raise ValueError(f"expected number, found {value!r}") from error
-
-
 def fulfillment_status(
     model: LoadedModel,
     instances: dict[str, dict[str, Any]],
@@ -912,7 +898,7 @@ def fulfillment_status(
             for values in matching_by_target.values()
             for instance_ref in values
         }
-        completed = len(unique_confirmations) >= required_int(
+        completed = len(unique_confirmations) >= integer_value(
             policy.get("minimumConfirmations", 1)
         )
     elif mode == "amount":
@@ -1018,10 +1004,26 @@ def typed_to_cel(value: Any, value_type: str) -> Any:
     if value_type == "uint":
         return celtypes.UintType(value)
     if value_type in {"double", "decimal"}:
-        return celtypes.DoubleType(required_float(value))
+        return celtypes.DoubleType(float_value(value))
     if value_type in {"string", "bytes", "enum", "id", "date"}:
         return celtypes.StringType(str(value))
     return json_to_cel(value)
+
+
+def integer_value(value: Any) -> int:
+    """Normalize CEL numeric values; the scenario boundary reports conversion failures."""
+    try:
+        return int(value)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError(f"Cannot normalize integer value: {value!r}") from error
+
+
+def float_value(value: Any) -> float:
+    """Normalize decimal input with an explicit error for the scenario report."""
+    try:
+        return float(value)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError(f"Cannot normalize decimal value: {value!r}") from error
 
 
 def from_cel_value(value: Any) -> Any:
@@ -1031,15 +1033,13 @@ def from_cel_value(value: Any) -> Any:
         text = value.astimezone(timezone.utc).isoformat(timespec="seconds")
         return text.replace("+00:00", "Z")
     if isinstance(value, celtypes.DurationType):
-        return f"{required_int(value.total_seconds())}s"
+        return f"{integer_value(value.total_seconds())}s"
     if isinstance(value, (celtypes.BoolType, bool)):
         return bool(value)
-    if isinstance(value, celtypes.IntType):
-        return required_int(value)
-    if isinstance(value, (celtypes.UintType,)):
-        return required_int(value)
+    if isinstance(value, (celtypes.IntType, celtypes.UintType)):
+        return integer_value(value)
     if isinstance(value, celtypes.DoubleType):
-        return required_float(value)
+        return float_value(value)
     if isinstance(value, (celtypes.StringType, str)):
         return str(value)
     if isinstance(value, (list, tuple, celtypes.ListType)):
@@ -1069,7 +1069,7 @@ def normalize_json_value(value: Any) -> Any:
     if isinstance(value, float) and not math.isfinite(value):
         return str(value)
     if isinstance(value, float) and value.is_integer():
-        return required_int(value)
+        return integer_value(value)
     if isinstance(value, list):
         return [normalize_json_value(item) for item in value]
     if isinstance(value, dict):

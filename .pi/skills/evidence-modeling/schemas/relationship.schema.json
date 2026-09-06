@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/relationship.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/relationship.schema.json",
   "title": "Fulfillment Modeling relationship",
   "type": "object",
   "required": ["type", "id", "kind", "sourceRef", "targetRef", "label"],

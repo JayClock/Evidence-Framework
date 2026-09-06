@@ -1,4 +1,3 @@
----
 type: relationship
 id: relation.proposal-precedes-content-production-contract
 kind: precedes

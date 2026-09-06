@@ -166,8 +166,9 @@ async function runModelingCheckItems(
         status: modeling.applicable === false ? 'warn' : 'fail',
         details:
           modeling.applicable === false
-            ? (modeling.rationale ?? '当前领域不适用履约建模')
-            : '缺少履约建模适用性决策',
+            ? (modeling.rationale ??
+              '当前范围无独立业务或领域语义，不需 FM 建模')
+            : '缺少统一 FM 建模适用性决策',
       },
     ];
   }
@@ -189,7 +190,7 @@ async function runModelingCheckItems(
         {
           name: 'FM validation',
           status: 'fail',
-          details: '履约模型校验未通过',
+          details: '统一 FM 模型校验未通过',
         },
       ];
 }

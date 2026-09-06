@@ -1,12 +1,14 @@
----
 type: fulfillment
 id: fulfillment.prepaid-payment
 label: 完成预付费抵扣
-contextRef: context.prepaid-payment
+contextRef: context.prepaid-payment-fulfillment
 contractRef: contract.prepaid-payment
 rightHolderRoleRef: role.prepaid-customer
 obligorRoleRef: role.prepaid-platform
 requestRef: request.prepaid-payment
+requestInterval:
+  startAttribute: startedAt
+  endAttribute: expiresAt
 confirmationRefs:
   - confirmation.prepaid-payment
 completionPolicy:

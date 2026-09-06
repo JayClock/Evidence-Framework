@@ -91,10 +91,10 @@ describe('state decoding', () => {
     });
   });
 
-  it('round-trips a version 3 state without creating interview state or a snapshot', async () => {
+  it('round-trips a version 4 state without creating interview state or a snapshot', async () => {
     const root = await temporaryRoot();
     const state = createInitialState('project', 'goal');
-    expect(state.version).toBe(3);
+    expect(state.version).toBe(4);
     expect(state.runId).toMatch(/^[a-f0-9-]{36}$/);
     expect(state).not.toHaveProperty('interviews');
     await saveState(root, state);
@@ -102,7 +102,7 @@ describe('state decoding', () => {
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
   });
 
-  it.each([1, 2])(
+  it.each([1, 2, 3])(
     'rejects version %s rather than migrating or fabricating evidence',
     async (version) => {
       const root = await temporaryRoot();

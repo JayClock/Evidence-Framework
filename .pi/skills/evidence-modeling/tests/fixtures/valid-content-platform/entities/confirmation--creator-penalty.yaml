@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.creator-penalty
 category: evidence
 kind: fulfillment_confirmation
 label: 违约金支付确认
-contextRef: context.content-production
+contextRef: context.creator-penalty-fulfillment
 responsibleRoleRef: role.creator
 attributes:
   - name: confirmedAt

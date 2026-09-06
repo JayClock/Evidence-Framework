@@ -2,13 +2,15 @@
 
 ## 1. 两个不同的 Gate
 
-- 属性追溯回答：关键金额、数量、时间、KPI 和结论从哪一个凭证属性产生？
+- 属性追溯回答：关键金额、数量、时间、KPI 或领域结论从哪一个已建模 Entity 属性产生？
 - 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建权责与结果？
 
-结构合法不等于业务已验证。状态必须区分：
+结构合法不等于业务已验证。模型、机器与人工状态必须区分：
 
 ```text
-machineValidated → simulationPassed → stakeholderReview.confirmed
+modelStatus / model.stakeholderReview
+machineValidated → simulationPassed
+businessPattern.reuseStatus / businessPattern.stakeholderReview
 ```
 
 脚本只能自动产生前两项；没有具名审核人与审核时间时，不得声称业务方已确认。
@@ -28,12 +30,12 @@ attributes:
     derivedByRuleRef: rule.requested-amount
 ```
 
-关键属性只有两种依据：
+Request interval 的开始属性以及 fixed 模式的截止属性必须是 required `timestamp` 且 `keyData: true`；open-ended 模式只要求开始属性，并保留经业务方确认的 `openEndedReason`。关键属性只有两种来源：
 
-1. `asserted`：由所属 Evidence 自身确认，例如合同签署的价格或付款确认记录的实付金额；
+1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
 2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
 
-不要另写 `sourceAttributeRefs`。派生依据由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务输入必须建模为 Evidence Attribute，不能藏在无依据的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`。
+不要另写 `sourceAttributeRefs`。派生来源由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务／领域输入必须建模为 Entity Attribute（Evidence 或领域对象属性），不能藏在无来源的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`。
 
 规则 binding 默认 `cardinality: one`；集合必须显式声明：
 
@@ -66,6 +68,8 @@ python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> \
 `traceability.json` 是可删除重建的确定性产物，不是新的事实源。
 
 ## 4. Validation Suite
+
+当前模拟器只实例化 Evidence，不实例化 Party／Place／Thing。纯领域可以通过结构校验、CEL 编译和 lineage，但不能据此声称领域实例或状态机模拟通过；不要把 Thing 改称 Evidence 来绕过限制。纯渠道有适用单据场景时可模拟，不需要补造履约。
 
 场景输入与核心 FM 类型模型分离：
 

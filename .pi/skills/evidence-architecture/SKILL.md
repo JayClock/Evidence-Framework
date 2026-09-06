@@ -10,12 +10,12 @@ Turn approved domain boundaries into an evolvable implementation contract while 
 ## Workflow
 
 1. Inspect the real repository before making technology claims.
-2. Read the fulfillment-model status. When applicable, treat its compiled model and traceability as domain inputs, then map bounded-context relationships and define contract ownership, failure behavior, and consistency.
+2. Read unified FM v3 status, source YAML, compiled model, lineage, DDD projections and expression gaps. Context/Entity/Rule IDs are model inputs; Fulfillment/Evidence/Scenario apply only where present. FM Context is not a DDD boundary or deployable service by itself. Define ownership, failure behavior and consistency without rewriting model facts.
 3. Choose the simplest architecture style that satisfies current quality attributes and constraints.
 4. Record major decisions in Context/Decision/Consequences form and compare credible alternatives.
 5. Define modules and allowed dependency directions before designing endpoints or storage.
-6. Specify API behavior, schemas, errors, idempotency, and compatibility.
-7. Derive the logical data model from aggregates, FM key data, and use cases; do not let tables redefine domain boundaries or write implementation details back into FM.
+6. Specify API behavior, schemas, errors, idempotency, compatibility, event ordering/retries and transport schemas; trace operations to FM rules and documented DDD operation/state-transition gaps.
+7. Derive the logical data model from aggregates, FM key data and use cases; define Repository boundaries, persistence concurrency and transaction mechanisms here. Do not let tables redefine domain boundaries or write implementation details back into FM.
 8. 根据验收场景、领域规则、质量属性和真实仓库定义 Q1–Q4 测试策略，明确被测功能上下文、真实依赖、测试替身、环境与通过标准。
 9. 将策略转化为稳定 TP-\* ID 的可复用测试工序，定义适用条件、输入、操作、验证和退出条件；具体故事任务由 Planning 实例化。
 
@@ -40,6 +40,7 @@ This repository currently uses Nx, React/TypeScript/Vite, Spring Boot/Java/Gradl
 - 只采用仓库实际存在或已批准引入的工具。数据库、浏览器测试等基础设施缺失时列为待建设/待定，不照搬示例框架，也不虚构成功的命令或已批准阈值。
 - test-procedures.md 按模板输出一个 `test-procedures` JSON 目录，保存稳定工序 ID 及主要象限，和逐工序定义一致。Planning 只实例化 Q1/Q2 自动任务；Q3/Q4 另由计划和 DoD 安排人工证据。
 - 结构校验不证明策略有效、工序已执行或业务验收完成；风险接受由人工 Gate 决定。
+- 纯领域规则、关系基数与状态迁移 gap 安排正常、边界和反例的 Q1/Q2 测试；FM lineage 通过不等于领域实例/状态机模拟通过，没有单据场景时不要求假 Scenario。
 
 ## Outputs
 

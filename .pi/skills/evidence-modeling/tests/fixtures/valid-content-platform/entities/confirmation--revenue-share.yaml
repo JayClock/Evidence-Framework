@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.revenue-share
 category: evidence
 kind: fulfillment_confirmation
 label: 收入分成支付确认
-contextRef: context.content-production
+contextRef: context.revenue-share-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: confirmedAt

@@ -1,107 +1,75 @@
 ---
 name: evidence-modeling
-description: 将合同、服务协议、业务流程、收入/支出、KPI、异常与追责材料建模为机器可读的 Fulfillment Modeling（FM / 8X Flow）Schema v2。凡用户要求创建、更新、审查或校验合同上下文、合约前/渠道上下文、履约请求与确认、凭证链、Role、可选 Party/Place/Thing、跨上下文 Evidence Role、系统触发履约、违约补偿、业务脊梁、关键数据追溯或业务单据模拟时使用。本 skill 生成稳定 ID、显式权利方/义务方、CEL 规则和完成策略的 YAML，构建属性级 lineage，运行追加式 Evidence 场景，并编译确定性 JSON；数据库设计留给后续架构阶段。
+description: 在 Evidence Domain 阶段使用统一 FM / 8X Flow Schema v3 建模领域对象、关系、规则、签约前渠道和合同履约。凡需要创建、迁移、审查或校验客户档案、商品、内容等领域语义、RFP/Proposal、合同权责、KPI、履约请求与确认、Role、Participant、凭证链、CEL、属性追溯或业务模式时使用。纯领域和纯渠道仍使用同一 FM 格式，不强制生成合同或履约；仅无独立业务/领域语义的简单工具胶水可不建模。通过 Evidence 提交工具交付源文件，数据库和 API 留给架构阶段。
 ---
 
-# Fulfillment Modeling · Schema v2
+# 统一 FM / 8X Flow · Schema v3
 
-## 权威规则
+## 权威规则与本地适配
 
-先读取 `references/README.md`，再按索引加载任务所需 reference。Schema v2 只接受稳定 `id`、第一等 `fulfillment`、明确关系类型与 CEL；不兼容旧版名称引用、通用 association 或自定义计算 DSL。
+先读 `references/README.md`，再按实际范围加载语义、格式、领域、CEL、发现及验证 reference。上游来源和本地差异见 `UPSTREAM.md`。
 
-## 不可混淆的三个层次
+**同一格式、按上下文展开**：领域、渠道、合同履约不是三套 Schema 或互斥流水线。只接受 v3；旧模型按 `references/migration-v3.md` 显式重建，不能只改版本号。
 
-- **Role**：合同或事件上下文中的参与身份，是发现权责的起点。
-- **Participant（party/place/thing）**：可能扮演 Role 的稳定领域对象；仅在依据明确或跨上下文身份确有价值时建立。
-- **Trigger mechanism**：系统、调度器、API、队列等实现机制；不是业务 Role 或 Participant。
+Evidence 的阶段编排、路径保护和提交规则以本节为准：references 中独立使用的发现问答、直接写盘及 CLI 命令，不替代本地 Gate 和专用提交工具。
 
-`Role` 不以显式 Participant 为完整性前提。依据明确给出稳定对象扮演某个 Role 时，应建模 `plays_role`；只给出上下文 Role 而没有玩家证据时，必须停在 Role，不得补造 Participant。
+## 语义职责
 
-## 建模原则
+- **Domain Context**：对象身份、属性、关系、能力、资格、前置条件、不变条件和计算，可独立成为模型入口。
+- **Pre-contract/Channel Context**：RFP、Proposal、协商及签约来源；没有合同也可独立建模，不把协商伪装为履约。
+- **Contract Context**：两个不同 Party Role 的交互聚合；内部绩效与对外交易共用权责机制。
+- **Fulfillment Context**：父 Contract 的子上下文，包含当前履约 Request、Confirmation/Evidence Role 和 Rule；合同 Party Role 留在父上下文。
+- **Role**：上下文身份或能力插槽，不等于稳定玩家或系统组件。只有来源明确时建立 Participant→Role 的 `plays_role`。
+- **Participant**：Party/Place/Thing 为并列 kind；Party 在 Context 外，Place/Thing 属于 Domain Context。字段通常是属性，不为每个字段创建 Thing。
+- **Trigger**：自动动作的实现机制，用 `actsForRoleRef` 指向所代表的合同 Role；系统、API、调度器不是业务参与方。
 
-1. 纯领域算法、页面、工具集成或技术流程不强行做 FM；先确认是否存在合同、权责、支付、KPI、验收、异常或审计凭证。
-2. 一个 Contract Context 聚合两个 Role 之间的业务交互。Contract 必须且只能引用两个不同的 Party Role，但这些 Role 不要求显式绑定 Participant Party。
-3. 先识别合同参与 Role，再从现金收入、现金支出或目标—实际/KPI/SLA 找业务脊梁和凭证链；不要先枚举 Party。
-4. 每个履约项明确 Contract、权利方 Role、义务方 Role、Request、一个或多个 Confirmation 目标、完成策略、触发方式、标的物和违约后果。
-5. Role 的实际扮演者只按依据证据建立。不得从角色标签自动推导、归并或虚构 Party，也不得因为多个上下文中的标签相似就断言它们由同一对象扮演。
-6. 保留 `party`、`domain`、`third_party`、`context`、`evidence` 五种 Role 子类型。Third-party Role 可以作为未展开的外部协作者独立存在。
-7. 履约确认可以是具体 Fulfillment Confirmation，也可以是 Evidence Role。外部时刻 Evidence 通过入向 `plays_role` 注册；核心 Role 不枚举实现者。
-8. 系统和调度器不是业务参与方。自动动作在 trigger 中记录机制，并用 `actsForRoleRef` 指明它代表哪个合同 Role。
-9. 运行时 Evidence 只追加。取消、退款、冲正、更正、补偿和赔偿必须成为新 Evidence 或新 Fulfillment，不覆盖旧凭证。
-10. 金额、数量、时间、KPI 与审计结论等关键属性用 `keyData: true` 标识；派生依据只从 CEL AST 提取，不另写重复依赖 DSL。
-11. 单据模拟使用独立 `validation/` 测试数据和固定 `asOf`；机器通过不能代替具名业务方确认。
-12. FM 保持实现无关；REST、消息、数据库、页面和部署设计不得成为 FM 实体。
+FM Context 不等于 DDD Bounded Context、聚合、模块或微服务；后续 DDD 文档说明有依据的设计映射，不建立第二份业务事实源。
 
-## Evidence 工件输入与审核
+## Evidence 执行顺序
 
-读取 `artifacts/00-input/requirements.md`、已批准需求、统一语言和限界上下文，直接判断 FM 适用性并生成当前工件，不设置独立问答或单独的基线确认步骤。
+1. **读取输入**：原始需求、已批准需求及统一语言；本工件在 DDD 限界上下文映射之前。不依赖尚未生成的 DDD 工件。
+2. **确定当前问题与范围**：按独立业务/领域语义判断适用性，不按系统名称、是否出现合同或是否 CRUD 分类。没有履约不等于 FM 不适用，信息不足也不等于不适用。
+3. **按事实展开**：领域按对象身份→关系→规则展开；渠道按真实协商凭证展开；有履约才按 Role-first 从收入、支出、目标—实际/KPI 展开权责脊梁。局部模型不补齐整个系统。
+4. **核对依据和未知项**：使用 discovery 方法整理事实、候选、假设、来源与待决策项，问题写入工件，交由 Domain Gate 处理；不增加独立问答或基线确认步骤。依据不足以形成有效范围时明确阻塞，请人工补充或缩小范围，不能提交虚假的成功模型。
+5. **表达规则与缺口**：使用稳定 ID、CEL、`keyData` 和 AST 派生 lineage。v3 没有第一等 Command/Operation/状态迁移实体，也不能完整表达关系基数；这些语义明确列为 gap，由 DDD/架构设计和后续 Q1/Q2 验证承担，不自造 DSL 或假 Fulfillment。
+6. **履约专项核对**：每项履约位于子 Fulfillment Context，明确双方、Request interval、确认、完成策略、触发与异常。interval 起止引用 required、keyData timestamp；`openEndedReason` 必须有已确认依据，不能代表“材料没写期限”。
+7. **按需验证与模式提取**：有金额、KPI、赔偿、审计或复杂完成策略的单据链，提供正常和异常/追责场景；实例只放 `validation/`，固定 `asOf`。纯领域的正常、边界和反例写入说明及后续测试要求，不创建假 Evidence 绕过模拟器。只有权责复用主张才提交 Business Pattern YAML。
+8. **提交全部源文件**：最后调用 `evidence_submit_fm_model`，不适用传明确理由和空 files；适用传完整模型、必要说明及可选场景。不要直接写模型目录，不要自行运行生成命令，不提交派生产物。工具执行校验、lineage、适用单据模拟、模式文档生成和编译后原子保存。
 
-按范围 → 双方 Role 与权责 → 请求与触发 → 完成凭证 → 金额/期限/KPI → 异常后果 → 正常与异常案例核对已有材料。区分输入事实、分析假设和待决策项，在领域工件及模型说明中记录来源、影响和待人工处理事项，由 Domain Gate 审核。
+## 事实与评审边界
 
-缺少材料不等于不适用，不得为了通过校验而编造合同、金额公式或完成凭证。关键依据不足以建立有效模型时，应明确指出阻塞原因，由人工通过修订反馈补充或缩小范围，不提交虚假的成功结果。
+- 分片 YAML 是可表达业务/领域语义的事实源；DDD 文档引用 Context/Entity/Rule 等稳定 ID，说明战术设计及表达缺口，不重复改写规则。
+- `discovery/` 是候选、事实定位及问题整理，不是已确认模型事实；`validation/` 是测试数据，不是生产事实。
+- Evidence 只追加：取消、退款、冲正、更正与补偿新增凭证或履约；该约束不代表所有领域对象不可修改。
+- `modelStatus` 默认 `draft`，`stakeholderReview` 默认 `pending`；只有真实具名审核记录才能改变，不因机器校验、场景模拟或 Domain Gate 批准而自动提升。
+- 模拟器只实例化 Evidence，不实例化 Thing/Party，也不证明领域操作或状态机已执行。没有适用单据场景时 `simulationPassed` 为 null/未执行，不是 true。
+- REST、消息、SQL、数据库、页面和部署由 Architecture 投影，不写回 FM。
 
-Domain Gate 批准不等于模型内具名 `stakeholderReview`；不得自动填写审核人或改变业务演练结论。机器校验、场景模拟和具名业务审核仍是独立证据。
+## 输出目录与允许路径
 
-## 默认工作流
-
-1. **确定范围**：Evidence 工作流中使用任务指定的 `artifacts/02-domain/fm-model/`；独立使用且未指定目录时才使用当前工作目录下的 `fm-model/`。
-2. **找合同与 Role**：为每个 Contract Context 找到恰好两个上下文 Role；不要求先找到 Party。
-3. **找主履约**：沿收入、支出、KPI/SLA 识别权利方、义务方、Request、Confirmation 和业务时限。
-4. **找违约履约**：把取消、退款、赔偿、补偿或终止建成新凭证/履约，直到外部争议边界。
-5. **找变化点**：按需要引入 Domain Role、Third-party Role、Context Role 和 Evidence Role；跨合同优先通过确定性时刻凭证协作。
-6. **按需找 Participant**：最后检查依据是否明确某个稳定 Party/Place/Thing 扮演 Role。明确则建立 `plays_role`；不明确则保留 Role 独立。
-7. **写第一等 Fulfillment**：每条责任写入一个 `fulfillments/*.yaml`，不要靠图关系猜测权责与完成条件。
-8. **写 CEL 与关键数据**：所有可执行规则放入 `rules/*.yaml`；表达式是纯 CEL，派生目标放在 `target`，重要属性标记 `keyData: true`。
-9. **写验证场景**：对金额、KPI、赔偿、审计或复杂完成策略，至少建立一个正常场景和一个异常／追责场景；实例只放在 `validation/`，不混入模型类型。
-10. **提交并验证**：语义删除时同步删除过时对象和引用。Evidence 工作流中不要直接写目录或运行以下命令，而应将全部定义交给 `evidence_submit_fm_model`，由扩展执行：
-
-```bash
-python3 -m pip install -r <skill-dir>/requirements.txt
-python3 <skill-dir>/scripts/validate_fm_model.py <model-dir>
-python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> --output <model-dir>/generated/traceability.json
-python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> --output <model-dir>/generated/simulation.json  # 存在 validation/ 时
-python3 <skill-dir>/scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/model.json
-```
-
-1. **人工检查**：执行 `references/validation.md`。正式高风险模型用 `generate_role_play_pack.py` 生成角色演练包；只有真实审核者明确记录后才能把 stakeholder review 标为 confirmed。
-
-## 输出目录
+模型根目录固定为 `artifacts/02-domain/fm-model/`：
 
 ```text
 fm-model/
-├── model.yaml
-├── README.md                    # 完整交付时提供
-├── 00-overview.md               # 完整交付时提供
-├── 01-glossary.md               # 完整交付时提供
-├── 02-business-patterns.md      # 涉及复用/平台化时提供
-├── entities/
-├── fulfillments/
-├── relationships/
-├── rules/
-├── validation/                  # 可选；测试单据和确定性场景
-│   ├── instances/
-│   └── scenarios/
-└── generated/
-    ├── model.json               # 派生产物
-    ├── traceability.json        # 派生产物
-    └── simulation.json          # 派生产物
+├── model.yaml                       # 必需，schemaVersion: "3.0"
+├── README.md                        # 范围、来源、假设、问题、表达 gap
+├── 00-overview.md                   # 范围内上下文及连接
+├── 01-glossary.md                   # 引用统一语言，不另造词义
+├── entities/                        # 必需，至少一个实体和有效入口 Context
+├── fulfillments/                    # 有履约才需要，可省略
+├── relationships/                   # 可省略
+├── rules/                           # 可省略
+├── business-patterns/               # 可选源 YAML
+├── discovery/                       # 可选单层 .md/.yaml，不作为模型事实
+├── validation/instances/            # 可选单据数据
+├── validation/scenarios/            # 可选单据场景
+├── 02-business-patterns.md          # 扩展生成，不能提交
+├── generated/                       # 扩展生成，不能提交
+└── status.md                        # 扩展生成，不能提交
 ```
 
-最小模型包含 `model.yaml`、`entities/`、`fulfillments/`、`relationships/` 和 `rules/`；后两者可为空目录。一个 YAML 文件只放一个文档。文件名使用小写 ASCII kebab-case，引用一律使用稳定 ID。`validation/` 是测试输入而非生产事实；`generated/` 可随时删除重建。
-
-## 输出边界
-
-- 物理表、SQL、Outbox/Inbox 或不可变账本留给 Evidence 的架构阶段。
-- API、HATEOAS、OpenAPI、AsyncAPI 或微服务路由是完成 FM 后的独立投影，不写回 FM。
-- 材料不足时列明待决策项及影响，通过阶段审核或人工修订反馈补充、缩小范围；不要用技术常识补造合同事实、Party 或金额公式。
+每个 YAML 文件一个文档，文件名小写 ASCII kebab-case，引用稳定 ID；模型分片名由 ID 中的点替换为双连字符。无履约模型编译为 `fulfillments: []`；空集合不能掩盖孤立 Request 或缺失确认。语义删除时提交完整新文件集，让扩展清理失效引用及派生产物。
 
 ## 回复要求
 
-简要说明：
-
-- 识别出的合同上下文、双方 Role 与业务脊梁；
-- 明确建立了哪些 Participant→Role 关系，以及证据依据；
-- 新增或修改的路径；
-- 校验、属性追溯、场景模拟和编译结果；
-- `machineValidated`、`simulationPassed` 与 stakeholder review 的实际状态；
-- 仍需业务确认的事实。
+简要报告实际范围、上下文连接、来源明确的对象/权责、提交路径、机器校验与实际模拟结果、人工评审状态及待确认事实/gap。纯领域不报告虚构业务脊梁；建模不适用也是合法范围结论，但不是信息不足的退路。

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v2/simulation-report.schema.json",
+  "$id": "https://jayclock.dev/fm/v3/simulation-report.schema.json",
   "title": "FM deterministic scenario simulation report",
   "type": "object",
   "required": [
@@ -12,7 +12,7 @@
     "errors"
   ],
   "properties": {
-    "schemaVersion": { "const": "2.0" },
+    "schemaVersion": { "const": "3.0" },
     "modelId": { "$ref": "#/$defs/id" },
     "machineValidated": { "type": "boolean" },
     "simulationPassed": { "type": "boolean" },

@@ -1,10 +1,9 @@
----
 type: entity
 id: confirmation.goal-setting
 category: evidence
 kind: fulfillment_confirmation
 label: 目标设定确认
-contextRef: context.operations-performance
+contextRef: context.goal-setting-fulfillment
 responsibleRoleRef: role.platform-performance
 attributes:
   - name: confirmedAt
