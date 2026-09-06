@@ -45,7 +45,7 @@ export const DEFAULT_CONFIG: EvidenceConfig = {
   commandTimeoutMs: 600_000,
   models: {
     requirements: { model: null, thinkingLevel: DEFAULT_THINKING },
-    domain: { model: null, thinkingLevel: DEFAULT_THINKING },
+    modeling: { model: null, thinkingLevel: DEFAULT_THINKING },
     architecture: { model: null, thinkingLevel: DEFAULT_THINKING },
     planning: { model: null, thinkingLevel: 'medium' },
     coding: { model: null, thinkingLevel: DEFAULT_THINKING },
@@ -53,7 +53,7 @@ export const DEFAULT_CONFIG: EvidenceConfig = {
   },
   gates: {
     requirements: 'review',
-    domain: 'review',
+    modeling: 'review',
     architecture: 'review',
     planning: 'review',
     coding: 'review',
@@ -399,6 +399,11 @@ export async function loadConfig(root: string): Promise<EvidenceConfig> {
 
   const configuredModels = isRecord(configured.models) ? configured.models : {};
   const configuredGates = isRecord(configured.gates) ? configured.gates : {};
+  if ('domain' in configuredModels || 'domain' in configuredGates) {
+    throw new Error(
+      `Invalid ${CONFIG_PATH}: domain 阶段已合并为 modeling；请将 models.domain / gates.domain 改为 modeling。`,
+    );
+  }
   const models = structuredClone(DEFAULT_CONFIG.models);
   const gates = { ...DEFAULT_CONFIG.gates };
   for (const phase of ACTIVE_PHASES) {
@@ -464,7 +469,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
   const raw = await readJson<unknown>(root, STATE_PATH);
   if (raw === null) return null;
   if (!isRecord(raw)) return invalidState('expected a JSON object');
-  if (raw.version !== 4)
+  if (raw.version !== 5)
     return invalidState(`unsupported version ${String(raw.version)}`);
   if (typeof raw.runId !== 'string' || !/^[a-f0-9-]{36}$/.test(raw.runId))
     return invalidState('invalid runId');
@@ -531,7 +536,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     return invalidState('invalid story record references');
 
   return {
-    version: 4,
+    version: 5,
     runId: raw.runId,
     projectName: raw.projectName,
     goal: raw.goal,
@@ -598,7 +603,7 @@ export function createInitialState(
 ): EvidenceState {
   const now = new Date().toISOString();
   const state: EvidenceState = {
-    version: 4,
+    version: 5,
     runId: randomUUID(),
     projectName,
     goal,
@@ -648,7 +653,7 @@ export async function ensureWorkspace(root: string): Promise<void> {
     '.evidence',
     'artifacts/00-input',
     'artifacts/01-requirements',
-    'artifacts/02-domain',
+    'artifacts/02-modeling',
     'artifacts/03-architecture',
     'artifacts/04-planning',
     'artifacts/05-coding',
@@ -673,6 +678,8 @@ export async function removeWorkflowState(
   await Promise.all(
     [
       'artifacts/01-requirements',
+      'artifacts/02-modeling',
+      // Retired layout is removed only when the human explicitly deletes artifacts.
       'artifacts/02-domain',
       'artifacts/03-architecture',
       'artifacts/04-planning',

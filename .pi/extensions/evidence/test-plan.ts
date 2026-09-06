@@ -24,11 +24,12 @@ export const PROCEDURES_PATH = 'artifacts/03-architecture/test-procedures.md';
 export const BACKLOG_PATH = 'artifacts/04-planning/sprint-1-backlog.md';
 export const TEST_PLAN_INPUTS = [
   REQUIREMENTS_PATH,
-  ...(['requirements', 'domain', 'architecture', 'planning'] as const).flatMap(
-    (phase) =>
-      getPhaseDefinition(phase)
-        .artifacts.filter((artifact) => artifact.kind !== 'fm-model')
-        .map((artifact) => artifact.output),
+  ...(
+    ['requirements', 'modeling', 'architecture', 'planning'] as const
+  ).flatMap((phase) =>
+    getPhaseDefinition(phase)
+      .artifacts.filter((artifact) => artifact.kind !== 'fm-model')
+      .map((artifact) => artifact.output),
   ),
 ] as const;
 
@@ -223,7 +224,7 @@ export function testingEvidencePaths(state: EvidenceState): string[] {
     ...new Set([
       ...TEST_PLAN_INPUTS,
       '.pi/evidence.json',
-      'artifacts/02-domain/fm-model/status.md',
+      'artifacts/02-modeling/fm-model/status.md',
       ...state.modeling.files,
     ]),
   ];

@@ -81,8 +81,8 @@ npx nx test backend
 仓库内置了一个项目级 Pi Extension，通过本地 TUI 驱动以下流程：
 
 ```text
-需求分析 → 领域建模（统一 FM Schema v3 + DDD 设计投影）
-        → 架构设计 → Sprint 计划 → 逐故事真实 TDD → 独立审查 → 完成
+需求分析 → 统一建模（统一语言 + FM Schema v3）
+        → 架构设计（按需 DDD 映射）→ Sprint 计划 → 逐故事真实 TDD → 独立审查 → 完成
 ```
 
 首次使用：
@@ -98,9 +98,9 @@ pi
 /evidence-init
 ```
 
-初始化后直接从原始需求生成用户画像、问题陈述/MVP 和用户故事地图，不设置前置访谈或单独的基线确认。Domain 按统一语言 → 统一 FM → DDD 设计投影推进，支持纯领域、纯渠道及履约混合范围，不因没有合同而跳过。假设和待决策项记录在工件中，通过阶段 Gate 集中审核；就绪任务用 `/evidence-run` 继续，审核用 `/evidence-review`，修订用 `/evidence-revise`。
+初始化后直接从原始需求生成用户画像、问题陈述/MVP 和用户故事地图，不设置前置访谈或单独的基线确认。Modeling 是唯一建模入口，按统一语言 → 统一 FM → 阶段 Gate 推进，支持纯领域、纯渠道及履约混合范围，不因没有合同而跳过。DDD 边界和战术设计按需并入架构工件，不再独立生成四篇文档，也不把设计取舍当成自动计算。假设和待决策项记录在工件中，通过阶段 Gate 集中审核；就绪任务用 `/evidence-run` 继续，审核用 `/evidence-review`，修订用 `/evidence-revise`。
 
-当前工作流状态版本为 4，不兼容版本 1/2/3 的旧状态。更新扩展后运行 `/reload`；旧运行先备份，再 `/evidence-reset`、`/evidence-init`，不自动迁移或复用 Gate。配置文件和测试契约仍为版本 1；FM v2 源模型必须显式迁移为 v3，不能仅改版本号。
+当前工作流状态版本为 5，不兼容版本 1/2/3/4。产物路径为 `artifacts/02-modeling/`，旧运行先备份，将配置中的 `models.domain` / `gates.domain` 改为 `modeling`，再 `/reload`、`/evidence-reset`、`/evidence-init`；不自动迁移或复用 Gate。配置文件和测试契约仍为版本 1；FM 仍为 Schema v3，Domain Context 语义不改名。不要手改状态或模型版本号绕过迁移。
 
 扩展会按阶段限制模型工具、校验 Markdown 与机器测试契约、记录逐任务多循环 TDD 和验收结果、重跑全部计划检查及测试/lint/build，并将状态保存到 `.evidence/state.json`。完整说明见 [docs/evidence.md](docs/evidence.md)。
 

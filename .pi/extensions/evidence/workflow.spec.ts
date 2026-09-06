@@ -11,8 +11,8 @@ describe('workflow transitions', () => {
   it('advances document phases', () => {
     const state = createInitialState('test', 'goal');
     const result = advanceAfterApproval(state);
-    expect(result.nextPhase).toBe('domain');
-    expect(state.phase).toBe('domain');
+    expect(result.nextPhase).toBe('modeling');
+    expect(state.phase).toBe('modeling');
     expect(state.status).toBe('ready');
   });
 
@@ -63,8 +63,8 @@ describe('workflow transitions', () => {
   it('moves back without deleting artifacts', () => {
     const state = createInitialState('test', 'goal');
     state.phase = 'architecture';
-    expect(moveBackOnePhase(state)).toBe('domain');
-    expect(state.phase).toBe('domain');
+    expect(moveBackOnePhase(state)).toBe('modeling');
+    expect(state.phase).toBe('modeling');
     expect(state.status).toBe('ready');
   });
 });

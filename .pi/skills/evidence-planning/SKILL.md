@@ -9,11 +9,11 @@ Create a delivery plan that maximizes early validated value instead of merely sc
 
 ## Workflow
 
-1. Read approved stories, unified FM v3 status and DDD expression gaps, architecture, test-strategy.md, and test-procedures.md; preserve every US-xxx, acceptance scenario ID, TP-\* procedure ID, and FM Context/Entity/Rule identifier and applicable Fulfillment/Evidence/Scenario identifier.
+1. Read approved stories, unified FM v3 status and model expression gaps, architecture including context-map/module-structure design mappings, test-strategy.md, and test-procedures.md; preserve every US-xxx, acceptance scenario ID, TP-\* procedure ID, and FM Context/Entity/Rule identifier and applicable Fulfillment/Evidence/Scenario identifier.
 2. Check stories against INVEST and expose stories that are too large, dependent, or untestable.
 3. Order the Product Backlog using value, risk, dependency, and learning—not priority labels alone.
 4. Define a Sprint goal as one demonstrable business outcome.
-5. Select a small, coherent Sprint 1 slice. 按“故事 → 验收场景 → 适用工序 → 可验证任务”拆分，关联目标功能上下文、测试数据/预期结果、Q1/Q2 测试、前置任务、文件范围及完成证据。Map FM rules and DDD operation/state-transition gaps to normal, boundary and counterexample tests; map Evidence Scenario IDs only when present. Do not invent fulfillment scenarios for pure domains.
+5. Select a small, coherent Sprint 1 slice. 按“故事 → 验收场景 → 适用工序 → 可验证任务”拆分，关联目标功能上下文、测试数据/预期结果、Q1/Q2 测试、前置任务、文件范围及完成证据。Map FM rules and documented operation/state-transition gaps to normal, boundary and counterexample tests; map Evidence Scenario IDs only when present. Do not invent fulfillment scenarios for pure domains.
 6. Define an objective Definition of Done with commands or evidence for every item.
 7. Identify assumptions about capacity and explain how scope will be adjusted.
 

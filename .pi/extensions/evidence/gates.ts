@@ -68,7 +68,7 @@ export function gateArtifactPaths(state: EvidenceState): string[] {
         );
     }
   }
-  return state.phase === 'domain' || state.phase === 'review'
+  return state.phase === 'modeling' || state.phase === 'review'
     ? [...new Set([...artifactPaths, FM_STATUS_PATH, ...state.modeling.files])]
     : [...new Set(artifactPaths)];
 }

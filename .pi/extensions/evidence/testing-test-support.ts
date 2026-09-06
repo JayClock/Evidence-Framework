@@ -27,7 +27,7 @@ export async function writeTestingInputs(root: string): Promise<void> {
     );
   for (const phase of [
     'requirements',
-    'domain',
+    'modeling',
     'architecture',
     'planning',
   ] as const) {
@@ -38,7 +38,7 @@ export async function writeTestingInputs(root: string): Promise<void> {
   }
   await writeTextAtomic(
     root,
-    'artifacts/02-domain/fm-model/status.md',
+    'artifacts/02-modeling/fm-model/status.md',
     '# FM 不适用',
   );
   await writeTextAtomic(

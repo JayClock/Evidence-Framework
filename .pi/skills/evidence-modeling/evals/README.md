@@ -52,7 +52,7 @@ source only gives a contextual identity → Role only
 
 ## Running in Evidence
 
-先运行 `npm run evidence:test` 准备隔离 Python 依赖。以下是独立开发评测，不是活动 Evidence 工作流的工件提交入口：不要在活动产品任务中绕过提交工具写业务工件。原始场景保留上游预期，runner 准备提示时替换为本地 `$evidence-modeling`；发现问题由 Evidence Domain Gate 审核，不新增前置访谈 Gate。
+先运行 `npm run evidence:test` 准备隔离 Python 依赖。以下是独立开发评测，不是活动 Evidence 工作流的工件提交入口：不要在活动产品任务中绕过提交工具写业务工件。原始场景保留上游预期，runner 准备提示时替换为本地 `$evidence-modeling`；发现问题由 Evidence Modeling Gate 审核，不新增前置访谈 Gate。
 
 Prepare workspaces without invoking an external agent:
 

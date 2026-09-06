@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { runDomainChecks, runReviewChecks } from './checks.ts';
+import { runModelingChecks, runReviewChecks } from './checks.ts';
 import { listFmModelFiles, validateFmModel } from './modeling.ts';
 import {
   createInitialState,
@@ -37,7 +37,7 @@ beforeEach(() => {
     });
   vi.mocked(listFmModelFiles)
     .mockReset()
-    .mockResolvedValue(['artifacts/02-domain/fm-model/generated/model.json']);
+    .mockResolvedValue(['artifacts/02-modeling/fm-model/generated/model.json']);
 });
 
 afterEach(async () => {
@@ -46,7 +46,7 @@ afterEach(async () => {
   );
 });
 
-async function checkHarness(phase: 'domain' | 'review') {
+async function checkHarness(phase: 'modeling' | 'review') {
   const root = await mkdtemp(join(tmpdir(), 'evidence-fm-checks-'));
   roots.push(root);
   const state = createInitialState('test', 'goal');
@@ -68,7 +68,7 @@ async function checkHarness(phase: 'domain' | 'review') {
     );
     await writeTextAtomic(
       root,
-      'artifacts/02-domain/fm-model/generated/model.json',
+      'artifacts/02-modeling/fm-model/generated/model.json',
       '{}',
     );
   }
@@ -86,7 +86,7 @@ async function checkHarness(phase: 'domain' | 'review') {
   };
   const run = async () => {
     if (phase === 'review') await seedCompletedStory(root, state);
-    return (phase === 'domain' ? runDomainChecks : runReviewChecks)({
+    return (phase === 'modeling' ? runModelingChecks : runReviewChecks)({
       root,
       state,
       pi,
@@ -97,7 +97,7 @@ async function checkHarness(phase: 'domain' | 'review') {
   return { state, pi, run };
 }
 
-describe.each(['domain', 'review'] as const)('%s FM gate checks', (phase) => {
+describe.each(['modeling', 'review'] as const)('%s FM gate checks', (phase) => {
   it('blocks an undecided model without executing a validator', async () => {
     const { run, pi } = await checkHarness(phase);
     const result = await run();
@@ -113,7 +113,7 @@ describe.each(['domain', 'review'] as const)('%s FM gate checks', (phase) => {
     const { state, run } = await checkHarness(phase);
     state.modeling.applicable = true;
     const result = await run();
-    expect(result.report.passed).toBe(phase === 'domain');
+    expect(result.report.passed).toBe(phase === 'modeling');
     if (phase === 'review')
       expect(result.report.items).toContainEqual(
         expect.objectContaining({
@@ -122,7 +122,7 @@ describe.each(['domain', 'review'] as const)('%s FM gate checks', (phase) => {
         }),
       );
     expect(state.modeling.files).toEqual([
-      'artifacts/02-domain/fm-model/generated/model.json',
+      'artifacts/02-modeling/fm-model/generated/model.json',
     ]);
     expect(state.modeling.machineValidated).toBe(true);
     expect(state.modeling.simulationPassed).toBe(true);

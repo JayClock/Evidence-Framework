@@ -12,7 +12,7 @@ import {
 import { dirname, join, relative, resolve } from 'node:path';
 import type { CheckItem } from './types.ts';
 
-export const FM_MODEL_ROOT = 'artifacts/02-domain/fm-model';
+export const FM_MODEL_ROOT = 'artifacts/02-modeling/fm-model';
 export const FM_STATUS_PATH = `${FM_MODEL_ROOT}/status.md`;
 const FM_SKILL_ROOT = '.pi/skills/evidence-modeling';
 const RUNTIME_ROOT = 'node_modules/.cache/evidence-fm-runtime';

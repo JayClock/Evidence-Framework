@@ -72,7 +72,7 @@ description: 生成 Sprint 1 Backlog 工件
 
 ## 验收标准
 
-逐个故事保留原始验收场景 ID（如 AC-001-01）、Given/When/Then 和示例数据，覆盖成功、失败和边界场景。不重编号或改变验收语义；上游缺少 ID 或规则有冲突时列为阻塞并要求上游修订。关联 FM Context/Entity/Rule 和 DDD 表达 gap，将正常、边界和反例转化为可执行测试；有单据场景才另关联 FM Scenario ID，不为纯领域编造合同或履约。
+逐个故事保留原始验收场景 ID（如 AC-001-01）、Given/When/Then 和示例数据，覆盖成功、失败和边界场景。不重编号或改变验收语义；上游缺少 ID 或规则有冲突时列为阻塞并要求上游修订。关联 FM Context/Entity/Rule 和模型/架构表达 gap，将正常、边界和反例转化为可执行测试；有单据场景才另关联 FM Scenario ID，不为纯领域编造合同或履约。
 
 ## 执行顺序
 

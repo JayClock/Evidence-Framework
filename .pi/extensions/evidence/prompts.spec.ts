@@ -47,13 +47,6 @@ async function preparePromptRoot(): Promise<string> {
         artifact.promptFile,
         await readText(process.cwd(), artifact.promptFile),
       );
-      if (artifact.skillFile) {
-        await writeTextAtomic(
-          root,
-          artifact.skillFile,
-          await readText(process.cwd(), artifact.skillFile),
-        );
-      }
       for (const input of artifact.inputs) inputs.add(input);
     }
   }
@@ -71,6 +64,22 @@ async function preparePromptRoot(): Promise<string> {
 }
 
 const testingTemplates = [
+  {
+    key: 'context-map',
+    fragments: ['FM 映射', '数据所有权', '不适用', 'Modeling 修订'],
+  },
+  {
+    key: 'module-structure',
+    fragments: [
+      '按需领域设计',
+      '实体与值对象',
+      '聚合与一致性边界',
+      '领域事件与操作',
+      '表达缺口',
+      '未验证部分',
+      '不在这里重写公式',
+    ],
+  },
   {
     key: 'story-map',
     fragments: [
@@ -177,6 +186,12 @@ describe('artifact prompt inputs', () => {
           ).rejects.toThrow(`当前任务缺少输入：${path}`);
           await writeTextAtomic(root, path, content);
         }
+      }
+      expect(prompt).not.toMatch(/evidence-domain|artifacts\/02-domain/);
+      if (kind === 'fm-model') {
+        expect(prompt.split('# 统一 FM / 8X Flow · Schema v3')).toHaveLength(2);
+        expect(prompt).toContain('Modeling Gate');
+        expect(prompt).toContain('不再独立生成');
       }
       if (phase === 'coding') {
         expect(prompt).toContain('验收场景 ID');

@@ -10,7 +10,7 @@ import { Type } from 'typebox';
 import {
   runCodingChecks,
   runDocumentChecks,
-  runDomainChecks,
+  runModelingChecks,
   runReviewChecks,
 } from './checks.ts';
 import {
@@ -419,6 +419,38 @@ async function markFailedCheck(
   await saveState(root, state);
 }
 
+async function finishPhaseSubmission(
+  pi: ExtensionAPI,
+  ctx: ExtensionContext,
+  state: EvidenceState,
+  config: EvidenceConfig,
+  checked: Awaited<ReturnType<typeof runDocumentChecks>>,
+): Promise<string> {
+  state.lastReport = checked.markdownPath;
+  let message: string;
+  if (!checked.report.passed) {
+    await markFailedCheck(
+      ctx.cwd,
+      state,
+      config,
+      checked.report,
+      checked.markdownPath,
+    );
+    message = `阶段检查未通过，请查看 ${checked.markdownPath}。`;
+  } else {
+    message = await persistPassedGate(
+      ctx.cwd,
+      state,
+      config,
+      checked.report,
+      checked.markdownPath,
+    );
+    await applyPhaseProfile(pi, ctx, state, config);
+  }
+  updateUi(ctx, state);
+  return message;
+}
+
 function modelingStatusMarkdown(options: {
   applicable: boolean;
   rationale: string;
@@ -442,7 +474,7 @@ function modelingStatusMarkdown(options: {
 ## 机器校验
 
 - machineValidated：${options.machineValidated}
-- 说明：${options.applicable ? '模型结构、引用、CEL 与属性追溯由扩展执行确定性校验；DDD 文档是设计投影，不是第二份业务事实源。' : '当前范围无独立业务或领域语义，不需生成 FM 定义。'}
+- 说明：${options.applicable ? '模型结构、引用、CEL 与属性追溯由扩展执行确定性校验；架构中的 DDD 映射是设计投影，不是第二份业务事实源。' : '当前范围无独立业务或领域语义，不需生成 FM 定义。'}
 
 ## 场景模拟
 
@@ -452,7 +484,7 @@ function modelingStatusMarkdown(options: {
 ## 业务确认
 
 - modelStatus / stakeholderReview：${options.applicable ? '以 model.yaml 为准；默认 draft / pending，本状态页不复制或提升人工评审状态。' : '不适用，未生成模型。'}
-- 说明：机器校验、单据模拟与 Domain Gate 不能替代具名业务／领域专家确认；纯领域未执行实例或状态机模拟。
+- 说明：机器校验、单据模拟与 Modeling Gate 不能替代具名业务／领域专家确认；纯领域未执行实例或状态机模拟。
 
 ## 模型文件
 
@@ -613,8 +645,8 @@ async function runCurrentCheck(
         ctx.ui.setStatus('evidence-check', ctx.ui.theme.fg('warning', message));
       },
     });
-  } else if (state.phase === 'domain') {
-    result = await runDomainChecks({
+  } else if (state.phase === 'modeling') {
+    result = await runModelingChecks({
       pi,
       root: ctx.cwd,
       state,
@@ -998,8 +1030,8 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
             });
           },
         });
-      } else if (state.phase === 'domain') {
-        checked = await runDomainChecks({
+      } else if (state.phase === 'modeling') {
+        checked = await runModelingChecks({
           pi,
           root: ctx.cwd,
           state,
@@ -1015,28 +1047,13 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       } else {
         checked = await runDocumentChecks(ctx.cwd, state);
       }
-      state.lastReport = checked.markdownPath;
-      let message: string;
-      if (!checked.report.passed) {
-        await markFailedCheck(
-          ctx.cwd,
-          state,
-          config,
-          checked.report,
-          checked.markdownPath,
-        );
-        message = `阶段检查未通过，请查看 ${checked.markdownPath}。`;
-      } else {
-        message = await persistPassedGate(
-          ctx.cwd,
-          state,
-          config,
-          checked.report,
-          checked.markdownPath,
-        );
-        await applyPhaseProfile(pi, ctx, state, config);
-      }
-      updateUi(ctx, state);
+      const message = await finishPhaseSubmission(
+        pi,
+        ctx,
+        state,
+        config,
+        checked,
+      );
       return {
         content: [{ type: 'text', text: message }],
         details: {
@@ -1086,8 +1103,8 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     }),
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const state = await loadState(ctx.cwd);
-      if (!state || state.phase !== 'domain' || state.status !== 'running') {
-        throw new Error('A running domain unified FM model task is required.');
+      if (!state || state.phase !== 'modeling' || state.status !== 'running') {
+        throw new Error('A running modeling FM task is required.');
       }
       const artifact = getExpectedArtifact(
         state.phase,
@@ -1168,50 +1185,36 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         params.applicable ? `${files.length} files` : 'not applicable',
       );
 
-      const nextArtifact = getExpectedArtifact(
-        state.phase,
-        state.currentArtifactIndex,
+      // FM is the final modeling artifact. Recheck the complete phase before
+      // applying its gate policy; autoContinueArtifacts never skips this gate.
+      const checked = await runModelingChecks({
+        pi,
+        root: ctx.cwd,
+        state,
+        signal,
+        timeoutMs: config.commandTimeoutMs,
+        onProgress: (progress) => {
+          onUpdate?.({
+            content: [{ type: 'text', text: progress }],
+            details: { path: FM_MODEL_ROOT },
+          });
+        },
+      });
+      const message = await finishPhaseSubmission(
+        pi,
+        ctx,
+        state,
+        config,
+        checked,
       );
-      if (!nextArtifact) {
-        throw new Error('统一 FM 模型之后缺少 DDD 设计投影工件。');
-      }
-      await applyPhaseProfile(pi, ctx, state, config);
-      if (config.autoContinueArtifacts) {
-        state.status = 'running';
-        await saveState(ctx.cwd, state);
-        updateUi(ctx, state);
-        const nextPrompt = await buildCurrentPrompt(ctx.cwd, state, config);
-        pi.sendUserMessage(nextPrompt, { deliverAs: 'followUp' });
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `已提交统一 FM 模型决策；下一工件：${nextArtifact.output}`,
-            },
-          ],
-          details: {
-            applicable: params.applicable,
-            files,
-            next: nextArtifact.output,
-          },
-          terminate: true,
-        };
-      }
-
-      state.status = 'ready';
-      await saveState(ctx.cwd, state);
-      updateUi(ctx, state);
       return {
-        content: [
-          {
-            type: 'text',
-            text: `已提交统一 FM 模型决策。运行 /evidence-run 生成 ${nextArtifact.output}。`,
-          },
-        ],
+        content: [{ type: 'text', text: message }],
         details: {
           applicable: params.applicable,
-          files,
-          next: nextArtifact.output,
+          files: state.modeling.files,
+          path: FM_STATUS_PATH,
+          report: checked.markdownPath,
+          passed: checked.report.passed,
         },
         terminate: true,
       };

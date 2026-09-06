@@ -28,7 +28,7 @@ afterEach(async () => {
 });
 
 describe('human gates', () => {
-  it.each(['domain', 'review'] as const)(
+  it.each(['modeling', 'review'] as const)(
     'includes every FM input, status, and generated output in a %s gate digest',
     async (phase) => {
       const root = await temporaryRoot();
@@ -40,30 +40,30 @@ describe('human gates', () => {
         machineValidated: true,
         simulationPassed: true,
         files: [
-          'artifacts/02-domain/fm-model/model.yaml',
-          'artifacts/02-domain/fm-model/entities/role--buyer.yaml',
-          'artifacts/02-domain/fm-model/generated/model.json',
-          'artifacts/02-domain/fm-model/generated/traceability.json',
-          'artifacts/02-domain/fm-model/generated/simulation.json',
+          'artifacts/02-modeling/fm-model/model.yaml',
+          'artifacts/02-modeling/fm-model/entities/role--buyer.yaml',
+          'artifacts/02-modeling/fm-model/generated/model.json',
+          'artifacts/02-modeling/fm-model/generated/traceability.json',
+          'artifacts/02-modeling/fm-model/generated/simulation.json',
         ],
       };
       const report: CheckReport = {
         phase,
-        subject: '领域建模',
+        subject: '统一建模',
         round: 0,
         passed: true,
         warnings: 0,
         createdAt: new Date().toISOString(),
         items: [],
       };
-      const reportPath = 'reports/domain-round-0.md';
+      const reportPath = 'reports/modeling-round-0.md';
       await Promise.all([
         ...state.modeling.files.map((path) =>
           writeTextAtomic(root, path, `${path}\n`),
         ),
         writeTextAtomic(
           root,
-          'artifacts/02-domain/fm-model/status.md',
+          'artifacts/02-modeling/fm-model/status.md',
           '# FM status\n',
         ),
         writeTextAtomic(root, reportPath, '# Passed\n'),
@@ -74,7 +74,7 @@ describe('human gates', () => {
       expect(gate.artifactPaths).toEqual(
         expect.arrayContaining([
           ...state.modeling.files,
-          'artifacts/02-domain/fm-model/status.md',
+          'artifacts/02-modeling/fm-model/status.md',
           reportPath,
           reportPath.replace(/\.md$/, '.json'),
         ]),
@@ -82,7 +82,7 @@ describe('human gates', () => {
 
       await writeTextAtomic(
         root,
-        'artifacts/02-domain/fm-model/generated/simulation.json',
+        'artifacts/02-modeling/fm-model/generated/simulation.json',
         '{"changed":true}\n',
       );
       expect(await hashArtifacts(root, gate.artifactPaths)).not.toBe(

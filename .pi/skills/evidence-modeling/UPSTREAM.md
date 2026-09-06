@@ -10,7 +10,7 @@ references、schemas、scripts、tests 和 evals 以该提交为基线，保留�
 
 本地适配：
 
-1. `SKILL.md` 保留名称 evidence-modeling，使用 Evidence 原始需求/批准工件与 Domain Gate；不执行独立发现问答或直接写 artifacts。
+1. `SKILL.md` 保留名称 evidence-modeling，作为唯一建模入口，使用 Evidence 原始需求/批准工件与 Modeling Gate；统一语言和 FM 同阶段交付，DDD 设计映射并入 Architecture。模型路径为 artifacts/02-modeling/fm-model，不改 Schema 的 Domain Context 语义。不执行独立发现问答或直接写 artifacts。
 2. `validate_fm_model.py --model-only` 保留本地扩展入口，将模型校验与单据模拟分开记录。默认 CLI 仍验证提交的 validation 套件。数值转换报告明确错误上下文，role-play 清理失败返回可读错误；不放松 Schema 验证。
 3. `modeling.ts` 白名单允许单层 discovery Markdown/YAML 与业务模式 YAML，拒绝派生文件；扩展统一执行业务模式文档生成。
 4. 无适用单据场景不冒称模拟成功；领域运行时行为仍由下游 Q1/Q2 验证。人工状态以模型源文件为准，不由状态页复制或提升。

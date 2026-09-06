@@ -21,8 +21,8 @@ afterEach(async () => {
   );
 });
 
-async function freshHarness() {
-  const harness = await qualityHarness(roots);
+async function freshHarness(config = {}) {
+  const harness = await qualityHarness(roots, config);
   const state = createInitialState('test', '直接生成可审核的需求草稿');
   state.status = 'running';
   await saveState(harness.root, state);
@@ -56,7 +56,7 @@ describe('artifact-driven workflow without interviews', () => {
     ui.select.mockResolvedValue('批准并继续');
     await command('evidence-review');
     expect(await loadState(root)).toMatchObject({
-      phase: 'domain',
+      phase: 'modeling',
       status: 'ready',
     });
     expect(await readText(root, waiting.pendingGate!.path)).toContain(
@@ -130,12 +130,12 @@ describe('artifact-driven workflow without interviews', () => {
     });
   });
 
-  it('continues from language into FM then DDD boundaries and accepts an explicit glue-only scope', async () => {
-    const { root, state, api, tool } = await freshHarness();
-    state.phase = 'domain';
+  it('continues from language into FM and finishes at the modeling gate for glue-only scope', async () => {
+    const { root, state, api, tool, command, ui } = await freshHarness();
+    state.phase = 'modeling';
     state.currentArtifactIndex = 0;
     await saveState(root, state);
-    const specs = getPhaseDefinition('domain').artifacts;
+    const specs = getPhaseDefinition('modeling').artifacts;
     await writeTextAtomic(root, specs[0]!.output, validDocument(specs[0]!));
     await writeTextAtomic(
       root,
@@ -161,8 +161,8 @@ describe('artifact-driven workflow without interviews', () => {
       files: [],
     });
     expect(await loadState(root)).toMatchObject({
-      phase: 'domain',
-      status: 'running',
+      phase: 'modeling',
+      status: 'waiting_review',
       currentArtifactIndex: 2,
       modeling: {
         applicable: false,
@@ -171,6 +171,87 @@ describe('artifact-driven workflow without interviews', () => {
       },
     });
     expect(api.exec).not.toHaveBeenCalled();
+    expect(api.sendUserMessage).toHaveBeenCalledTimes(1);
+    const waiting = (await loadState(root))!;
+    expect(waiting.pendingGate?.artifactPaths).toEqual(
+      expect.arrayContaining([
+        'artifacts/02-modeling/ubiquitous-language.md',
+        'artifacts/02-modeling/fm-model/status.md',
+      ]),
+    );
+    // No retired DDD files exist; approval must still allow architecture to start.
+    const architecture = getPhaseDefinition('architecture');
+    for (const path of [
+      architecture.skillFile,
+      architecture.artifacts[0].promptFile,
+    ]) {
+      await writeTextAtomic(root, path, await readText(process.cwd(), path));
+    }
+    ui.select.mockResolvedValue('批准并继续');
+    await command('evidence-review');
+    expect(await loadState(root)).toMatchObject({
+      phase: 'architecture',
+      status: 'ready',
+    });
+    await command('evidence-run');
+    expect(await loadState(root)).toMatchObject({
+      phase: 'architecture',
+      status: 'running',
+    });
+    expect(api.sendUserMessage).toHaveBeenLastCalledWith(
+      expect.stringContaining('artifacts/03-architecture/context-map.md'),
+    );
+  });
+
+  it.each([
+    { gate: 'auto', phase: 'architecture', status: 'ready' },
+    { gate: 'review_if', phase: 'modeling', status: 'waiting_review' },
+    { gate: 'review', phase: 'modeling', status: 'waiting_review' },
+  ])(
+    'completes FM with $gate policy even when auto-continuation is off',
+    async ({ gate, phase, status }) => {
+      const { root, state, api, tool } = await freshHarness({
+        autoContinueArtifacts: false,
+        gates: { modeling: gate },
+      });
+      state.phase = 'modeling';
+      state.currentArtifactIndex = 1;
+      const spec = getPhaseDefinition('modeling').artifacts[0];
+      await writeTextAtomic(root, spec.output, validDocument(spec));
+      await saveState(root, state);
+      const result = await tool('evidence_submit_fm_model', {
+        applicable: false,
+        rationale:
+          '仅本地工具胶水，没有独立对象身份、领域规则、渠道协商或履约语义；不适用决策仍需审核。',
+        files: [],
+      });
+      expect(result).toMatchObject({
+        terminate: true,
+        details: { passed: true },
+      });
+      expect(await loadState(root)).toMatchObject({ phase, status });
+      expect(api.sendUserMessage).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not gate a final FM submission when the language artifact is missing', async () => {
+    const { root, state, tool } = await freshHarness();
+    state.phase = 'modeling';
+    state.currentArtifactIndex = 1;
+    await saveState(root, state);
+    await tool('evidence_submit_fm_model', {
+      applicable: false,
+      rationale:
+        '仅本地工具胶水，没有独立对象身份、领域规则、渠道协商或履约语义；仍不得跳过统一语言工件。',
+      files: [],
+    });
+    expect(await loadState(root)).toMatchObject({
+      phase: 'modeling',
+      status: 'ready',
+      round: 1,
+      currentArtifactIndex: 0,
+      pendingGate: null,
+    });
   });
 
   it('retains structural failures and prevents check or review from skipping missing artifacts', async () => {
@@ -207,7 +288,7 @@ describe('artifact-driven workflow without interviews', () => {
     );
     await command('evidence-init', '新工作流');
     expect(await loadState(root)).toMatchObject({
-      version: 4,
+      version: 5,
       phase: 'requirements',
       status: 'running',
     });
@@ -244,7 +325,7 @@ describe('artifact-driven workflow without interviews', () => {
     ui.confirm.mockResolvedValue(true);
     await command('evidence-back');
     expect(await loadState(root)).toMatchObject({
-      phase: 'domain',
+      phase: 'modeling',
       status: 'ready',
       modeling: { applicable: null },
     });

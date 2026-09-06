@@ -29,4 +29,4 @@ description: 生成 API 契约工件
 
 ## 模型追溯与事件契约
 
-引用 FM Context/Entity/Rule ID 及适用的 Fulfillment/Evidence，说明 DDD Command/Operation/状态迁移 gap 如何投影为 API 行为；不得把 endpoint 写成 FM 实体。领域事件的传输 Schema、排序、重试、重复消费及敏感数据策略在此设计，不写回模型事实。
+引用 FM Context/Entity/Rule ID 及适用的 Fulfillment/Evidence，根据 module-structure.md 的按需领域设计与表达缺口，说明 Command/Operation/状态迁移如何投影为 API 行为；不得把 endpoint 写成 FM 实体。领域事件的传输 Schema、排序、重试、重复消费及敏感数据策略在此设计，不写回模型事实。

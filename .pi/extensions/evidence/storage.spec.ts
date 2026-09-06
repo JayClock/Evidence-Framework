@@ -10,6 +10,10 @@ import {
   loadState,
   projectPath,
   relativeProjectPath,
+  ensureWorkspace,
+  removeWorkflowState,
+  projectEntryExists,
+  writeTextAtomic,
   writeJsonAtomic,
   saveState,
   readText,
@@ -50,7 +54,63 @@ describe('project paths', () => {
   });
 });
 
+describe('workspace layout', () => {
+  it('creates only the modeling layout and preserves legacy artifacts until explicit deletion', async () => {
+    const root = await temporaryRoot();
+    await ensureWorkspace(root);
+    expect(await projectEntryExists(root, 'artifacts/02-modeling')).toBe(true);
+    expect(await projectEntryExists(root, 'artifacts/02-domain')).toBe(false);
+    const legacy = 'artifacts/02-domain/aggregates.md';
+    const current = 'artifacts/02-modeling/fm-model/model.yaml';
+    await writeTextAtomic(root, legacy, '# 旧设计');
+    await writeTextAtomic(root, current, 'schemaVersion: "3.0"');
+    await saveState(root, createInitialState('test', 'goal'));
+    await removeWorkflowState(root, false);
+    expect(await loadState(root)).toBeNull();
+    expect(await readText(root, legacy)).toBe('# 旧设计');
+    expect(await projectEntryExists(root, current)).toBe(true);
+    await removeWorkflowState(root, true);
+    expect(await projectEntryExists(root, legacy)).toBe(false);
+    expect(await projectEntryExists(root, current)).toBe(false);
+    expect(await projectEntryExists(root, 'artifacts/02-modeling')).toBe(true);
+  });
+});
+
 describe('configuration decoding', () => {
+  it('loads modeling profiles and gates without a separate domain phase', async () => {
+    const root = await temporaryRoot();
+    await writeJsonAtomic(root, CONFIG_PATH, {
+      models: {
+        modeling: { model: 'openai/example', thinkingLevel: 'medium' },
+      },
+      gates: { modeling: 'review_if' },
+    });
+    const config = await loadConfig(root);
+    expect(config.models.modeling).toEqual({
+      model: 'openai/example',
+      thinkingLevel: 'medium',
+    });
+    expect(config.gates.modeling).toBe('review_if');
+    expect(config.models).not.toHaveProperty('domain');
+    expect(config.gates).not.toHaveProperty('domain');
+  });
+
+  it.each([
+    { models: { domain: { model: 'openai/old' } } },
+    { gates: { domain: 'auto' } },
+    { gates: { domain: 'auto', modeling: 'review' } },
+  ])(
+    'rejects legacy domain config rather than silently dropping it: %j',
+    async (config) => {
+      const root = await temporaryRoot();
+      await writeJsonAtomic(root, CONFIG_PATH, config);
+      const before = await readText(root, CONFIG_PATH);
+      await expect(loadConfig(root)).rejects.toThrow(
+        'domain 阶段已合并为 modeling',
+      );
+      expect(await readText(root, CONFIG_PATH)).toBe(before);
+    },
+  );
   it('sanitizes invalid optional values and preserves an intentional empty command list', async () => {
     const root = await temporaryRoot();
     await writeJsonAtomic(root, CONFIG_PATH, {
@@ -91,10 +151,10 @@ describe('state decoding', () => {
     });
   });
 
-  it('round-trips a version 4 state without creating interview state or a snapshot', async () => {
+  it('round-trips a version 5 state without creating interview state or a snapshot', async () => {
     const root = await temporaryRoot();
     const state = createInitialState('project', 'goal');
-    expect(state.version).toBe(4);
+    expect(state.version).toBe(5);
     expect(state.runId).toMatch(/^[a-f0-9-]{36}$/);
     expect(state).not.toHaveProperty('interviews');
     await saveState(root, state);
@@ -102,7 +162,7 @@ describe('state decoding', () => {
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
   });
 
-  it.each([1, 2, 3])(
+  it.each([1, 2, 3, 4])(
     'rejects version %s rather than migrating or fabricating evidence',
     async (version) => {
       const root = await temporaryRoot();
@@ -115,6 +175,15 @@ describe('state decoding', () => {
       expect(await readText(root, STATE_PATH)).toBe(before);
     },
   );
+
+  it('rejects retired domain phase even if the version was manually changed', async () => {
+    const root = await temporaryRoot();
+    await writeJsonAtomic(root, STATE_PATH, {
+      ...createInitialState('project', 'goal'),
+      phase: 'domain',
+    });
+    await expect(loadState(root)).rejects.toThrow('unknown phase');
+  });
 
   it('rejects the retired waiting_input status', async () => {
     const root = await temporaryRoot();

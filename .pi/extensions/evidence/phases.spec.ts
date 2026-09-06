@@ -8,37 +8,56 @@ describe('phase definitions', () => {
     expect(Object.keys(PHASE_DEFINITIONS)).toEqual(PHASE_ORDER);
   });
 
-  it('builds a unified FM model before DDD boundary and tactical projections', () => {
-    expect(PHASE_DEFINITIONS.domain.artifacts.map((item) => item.key)).toEqual([
+  it('has one modeling entry with language and FM, not standalone DDD documents', () => {
+    expect(PHASE_ORDER).toContain('modeling');
+    expect(PHASE_ORDER).not.toContain('domain');
+    const definition = PHASE_DEFINITIONS[PHASE_ORDER[1]];
+    expect(definition.skillFile).toBe('.pi/skills/evidence-modeling/SKILL.md');
+    expect(definition.artifacts.map((item) => item.key)).toEqual([
       'ubiquitous-language',
       'fulfillment-model',
-      'bounded-contexts',
-      'entities-and-value-objects',
-      'aggregates',
-      'domain-events',
     ]);
-    expect(PHASE_DEFINITIONS.domain.artifacts[1]).toMatchObject({
+    expect(definition.artifacts[1]).toMatchObject({
       kind: 'fm-model',
-      skillFile: '.pi/skills/evidence-modeling/SKILL.md',
+      output: 'artifacts/02-modeling/fm-model/status.md',
     });
+    for (const spec of definition.artifacts) {
+      expect(spec.minTableRows).toBeUndefined();
+      expect(spec.inputs.some((path) => path.includes('03-architecture'))).toBe(
+        false,
+      );
+    }
   });
 
-  it('feeds FM into every domain projection and architecture contract without quantity quotas', () => {
-    const domain = PHASE_DEFINITIONS.domain.artifacts;
-    expect(domain[1].inputs).not.toContain(
-      'artifacts/02-domain/bounded-contexts.md',
+  it('feeds FM into architecture design mappings and contracts without legacy DDD inputs', () => {
+    for (const key of [
+      'context-map',
+      'module-structure',
+      'api-contracts',
+      'data-model',
+      'test-strategy',
+    ]) {
+      const spec = PHASE_DEFINITIONS.architecture.artifacts.find(
+        (item) => item.key === key,
+      )!;
+      expect(spec.inputs).toContain('artifacts/02-modeling/fm-model');
+    }
+    const specs = PHASE_ORDER.flatMap(
+      (phase) => PHASE_DEFINITIONS[phase].artifacts,
     );
-    for (const spec of domain.slice(2)) {
-      expect(spec.inputs).toContain('artifacts/02-domain/fm-model');
-      expect(spec.minTableRows).toBeUndefined();
+    for (const spec of specs) {
+      expect([spec.output, ...spec.inputs].join('\n')).not.toMatch(
+        /02-domain|bounded-contexts\.md|entities-and-value-objects\.md|aggregates\.md|domain-events\.md/,
+      );
     }
-    for (const key of ['api-contracts', 'data-model']) {
-      expect(
-        PHASE_DEFINITIONS.architecture.artifacts.find(
-          (spec) => spec.key === key,
-        )?.inputs,
-      ).toContain('artifacts/02-domain/fm-model');
-    }
+    expect(
+      PHASE_DEFINITIONS.architecture.artifacts[0].requiredSections,
+    ).toContain('FM 映射');
+    expect(
+      PHASE_DEFINITIONS.architecture.artifacts.find(
+        (spec) => spec.key === 'module-structure',
+      )?.requiredSections,
+    ).toEqual(expect.arrayContaining(['按需领域设计', '表达缺口']));
   });
 
   it('defines test strategy and reusable procedures at the end of architecture', () => {
@@ -77,7 +96,7 @@ describe('phase definitions', () => {
     );
     expect(PHASE_ORDER).toEqual([
       'requirements',
-      'domain',
+      'modeling',
       'architecture',
       'planning',
       'coding',
@@ -92,8 +111,25 @@ describe('phase definitions', () => {
     const outputs = artifacts.map((item) => item.output);
     for (const [index, artifact] of artifacts.entries()) {
       for (const input of artifact.inputs) {
-        const upstreamIndex = outputs.indexOf(input);
-        if (upstreamIndex !== -1) expect(upstreamIndex).toBeLessThan(index);
+        if (
+          !input.startsWith('artifacts/') ||
+          [
+            'artifacts/00-input/requirements.md',
+            'artifacts/05-coding',
+          ].includes(input)
+        )
+          continue;
+        const upstreamIndex = outputs.findIndex(
+          (output) => output === input || output.startsWith(`${input}/`),
+        );
+        expect(
+          upstreamIndex,
+          `missing producer for ${input}`,
+        ).toBeGreaterThanOrEqual(0);
+        expect(
+          upstreamIndex,
+          `future input ${input} for ${artifact.key}`,
+        ).toBeLessThan(index);
       }
     }
   });
@@ -103,6 +139,22 @@ describe('phase definitions', () => {
       PHASE_DEFINITIONS[phase].artifacts.map((item) => item.output),
     );
     expect(new Set(outputs).size).toBe(outputs.length);
+  });
+
+  it('removes the duplicate domain skill and standalone DDD templates', async () => {
+    for (const path of [
+      '.pi/skills/evidence-domain/SKILL.md',
+      ...[
+        'bounded-contexts',
+        'entities-and-value-objects',
+        'aggregates',
+        'domain-events',
+      ].map((key) => `.pi/extensions/evidence/templates/evidence-${key}.md`),
+    ]) {
+      await expect(access(resolve(process.cwd(), path))).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+    }
   });
 
   it('references existing skills and prompt templates', async () => {

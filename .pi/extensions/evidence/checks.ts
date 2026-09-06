@@ -55,7 +55,7 @@ interface ReviewCheckOptions extends CommandOptions {
   onProgress?: (message: string) => void;
 }
 
-type DomainCheckOptions = CommandOptions & {
+type ModelingCheckOptions = CommandOptions & {
   state: EvidenceState;
   onProgress?: (message: string) => void;
 };
@@ -156,7 +156,7 @@ export async function runDocumentChecks(
 }
 
 async function runModelingCheckItems(
-  options: DomainCheckOptions,
+  options: ModelingCheckOptions,
 ): Promise<CheckItem[]> {
   const { modeling } = options.state;
   if (modeling.applicable !== true) {
@@ -195,8 +195,8 @@ async function runModelingCheckItems(
       ];
 }
 
-export async function runDomainChecks(
-  options: DomainCheckOptions,
+export async function runModelingChecks(
+  options: ModelingCheckOptions,
 ): Promise<{ report: CheckReport; jsonPath: string; markdownPath: string }> {
   const documentReport = await validateDocumentPhase(
     options.root,

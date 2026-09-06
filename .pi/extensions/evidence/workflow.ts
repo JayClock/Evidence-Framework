@@ -12,7 +12,7 @@ function resetTddCycle(state: EvidenceState): void {
 
 // Changing business scope invalidates FM validation, not its historical files.
 function invalidateModelingDecision(state: EvidenceState): void {
-  if (state.phase !== 'requirements' && state.phase !== 'domain') return;
+  if (state.phase !== 'requirements' && state.phase !== 'modeling') return;
   state.modeling.applicable = null;
   state.modeling.rationale = null;
   state.modeling.machineValidated = false;

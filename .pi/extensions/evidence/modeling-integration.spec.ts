@@ -1,9 +1,11 @@
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createGate, hashArtifacts } from './gates.ts';
+import { hashArtifacts } from './gates.ts';
+import { getPhaseDefinition } from './phases.ts';
+import { validDocument } from './quality-test-support.ts';
 import { domain } from './modeling-scope-test-support.ts';
 import evidenceExtension from './index.ts';
 import { createInitialState } from './storage.ts';
@@ -55,7 +57,7 @@ async function submissionHarness() {
   const root = await mkdtemp(join(tmpdir(), 'evidence-modeling-tool-test-'));
   temporaryRoots.push(root);
   const state = createInitialState('test', 'goal');
-  state.phase = 'domain';
+  state.phase = 'modeling';
   state.status = 'running';
   state.currentArtifactIndex = 1;
   await saveState(root, state);
@@ -63,20 +65,11 @@ async function submissionHarness() {
     'artifacts/00-input/requirements.md',
     'artifacts/01-requirements/problem-statement.md',
     'artifacts/01-requirements/story-map.md',
-    'artifacts/02-domain/ubiquitous-language.md',
   ]) {
     await writeTextAtomic(root, path, `# ${path}\n`);
   }
-  for (const path of [
-    '.pi/skills/evidence-domain/SKILL.md',
-    '.pi/extensions/evidence/templates/evidence-bounded-contexts.md',
-  ]) {
-    await writeTextAtomic(
-      root,
-      path,
-      await readFile(join(process.cwd(), path), 'utf8'),
-    );
-  }
+  const language = getPhaseDefinition('modeling').artifacts[0];
+  await writeTextAtomic(root, language.output, validDocument(language));
   const tools = new Map<string, RegisteredTool>();
   const api = {
     exec: vi.fn(executeProcess),
@@ -123,7 +116,7 @@ async function submissionHarness() {
 }
 
 describe('unified FM modeling submission', () => {
-  it('records an explicit not-applicable decision and continues domain design', async () => {
+  it('records an explicit not-applicable decision and waits for the modeling gate', async () => {
     const { root, api, submit } = await submissionHarness();
     await submit(false);
     const updated = await loadState(root);
@@ -133,16 +126,14 @@ describe('unified FM modeling submission', () => {
       simulationPassed: null,
     });
     expect(updated?.currentArtifactIndex).toBe(2);
-    expect(updated?.status).toBe('running');
+    expect(updated?.status).toBe('waiting_review');
+    expect(updated?.pendingGate?.phase).toBe('modeling');
     expect(await readText(root, FM_STATUS_PATH)).toContain('结论：不适用');
     expect(api.exec).not.toHaveBeenCalled();
-    expect(api.sendUserMessage).toHaveBeenCalledWith(
-      expect.stringContaining('artifacts/02-domain/bounded-contexts.md'),
-      { deliverAs: 'followUp' },
-    );
+    expect(api.sendUserMessage).not.toHaveBeenCalled();
   });
 
-  it('submits a pure domain before DDD boundaries without claiming simulation or expert confirmation', async () => {
+  it('gates a pure domain model without claiming simulation or expert confirmation', async () => {
     const { root, submit } = await submissionHarness();
     await prepareFmSkill(root);
     const files = [
@@ -172,20 +163,8 @@ describe('unified FM modeling submission', () => {
     expect(updated.modeling.files).not.toContain(
       `${FM_MODEL_ROOT}/generated/simulation.json`,
     );
-    const gate = await createGate(
-      root,
-      updated,
-      {
-        phase: 'domain',
-        subject: '领域建模',
-        round: 0,
-        passed: true,
-        warnings: 0,
-        createdAt: new Date().toISOString(),
-        items: [],
-      },
-      'reports/domain-test.md',
-    );
+    expect(updated.status).toBe('waiting_review');
+    const gate = updated.pendingGate!;
     expect(gate.artifactPaths).toContain(
       `${FM_MODEL_ROOT}/discovery/open-questions.md`,
     );
@@ -231,22 +210,9 @@ describe('unified FM modeling submission', () => {
         `${FM_MODEL_ROOT}/validation/scenarios/scenario--successful-payment.yaml`,
       ),
     ).toContain('status: pending');
-    expect(api.sendUserMessage).toHaveBeenCalledTimes(1);
-
-    const gate = await createGate(
-      root,
-      updated,
-      {
-        phase: 'domain',
-        subject: '领域建模',
-        round: 0,
-        passed: true,
-        warnings: 0,
-        createdAt: new Date().toISOString(),
-        items: [],
-      },
-      'reports/domain-test.md',
-    );
+    expect(api.sendUserMessage).not.toHaveBeenCalled();
+    expect(updated.status).toBe('waiting_review');
+    const gate = updated.pendingGate!;
     expect(gate.artifactPaths).toEqual(
       expect.arrayContaining(updated.modeling.files),
     );
@@ -261,6 +227,8 @@ describe('unified FM modeling submission', () => {
     const beforeRetry = await loadState(root);
     if (!beforeRetry) throw new Error('Submitted state is missing');
     beforeRetry.currentArtifactIndex = 1;
+    beforeRetry.status = 'running';
+    beforeRetry.pendingGate = null;
     await saveState(root, beforeRetry);
     const beforeState = await readText(root, '.evidence/state.json');
     const invalid = files.filter(
@@ -270,7 +238,7 @@ describe('unified FM modeling submission', () => {
     expect(await readText(root, '.evidence/state.json')).toBe(beforeState);
     expect(await hashArtifacts(root, updated.modeling.files)).toBe(digest);
     expect(await readdir(join(root, '.evidence/staging'))).toEqual([]);
-    expect(api.sendUserMessage).toHaveBeenCalledTimes(2);
+    expect(api.sendUserMessage).not.toHaveBeenCalled();
     expect(
       await readdir(join(root, '.pi/skills/evidence-modeling/scripts')),
     ).not.toContain('__pycache__');

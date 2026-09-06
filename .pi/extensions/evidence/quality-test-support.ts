@@ -112,7 +112,7 @@ export async function qualityHarness(roots: string[], config = {}) {
     'artifacts/00-input/requirements.md',
     '# 原始需求\n可审计的需求草稿',
   );
-  for (const phase of ['requirements', 'domain'] as const) {
+  for (const phase of ['requirements', 'modeling'] as const) {
     const definition = getPhaseDefinition(phase);
     await writeTextAtomic(root, definition.skillFile, '# 阶段方法');
     for (const spec of definition.artifacts) {

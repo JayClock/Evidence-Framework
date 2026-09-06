@@ -6,7 +6,7 @@ description: 根据业务风险与架构边界生成 Q1–Q4 测试策略
 
 ## 目标与风险
 
-从已批准的需求、验收场景、领域不变条件、API 契约及质量属性提取主要风险，引用来源和稳定 ID。保留 FM Context/Entity/Rule 引用及适用的 Fulfillment/Evidence/Scenario ID；模型模拟通过不是软件验收通过。纯领域结构和 lineage 不验证对象实例/操作/状态机，需为规则及 DDD 表达 gap 安排正常、边界和反例的 Q1/Q2 测试，不补造单据场景。
+从已批准的需求、验收场景、领域不变条件、API 契约及质量属性提取主要风险，引用来源和稳定 ID。保留 FM Context/Entity/Rule 引用及适用的 Fulfillment/Evidence/Scenario ID；模型模拟通过不是软件验收通过。纯领域结构和 lineage 不验证对象实例/操作/状态机，需为规则及 Modeling README / module-structure 中的表达 gap 安排正常、边界和反例的 Q1/Q2 测试，不补造单据场景。
 
 ## 四象限
 

@@ -7,7 +7,7 @@ import type {
 
 export const ACTIVE_PHASES = [
   'requirements',
-  'domain',
+  'modeling',
   'architecture',
   'planning',
   'coding',
@@ -116,7 +116,7 @@ export interface HistoryEntry {
 }
 
 export interface EvidenceState {
-  version: 4;
+  version: 5;
   runId: string;
   projectName: string;
   goal: string;
@@ -149,7 +149,6 @@ export interface ArtifactSpec {
   promptFile: string;
   inputs: string[];
   kind?: 'markdown' | 'fm-model';
-  skillFile?: string;
   minChars: number;
   requiredSections: string[];
   minTableRows?: number;

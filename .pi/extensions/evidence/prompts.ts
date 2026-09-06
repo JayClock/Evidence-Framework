@@ -64,7 +64,7 @@ export async function buildCurrentPrompt(
       'artifacts/03-architecture/module-structure.md',
       'artifacts/03-architecture/api-contracts.md',
       ...TESTING_CONTRACT_INPUTS,
-      'artifacts/02-domain/fm-model',
+      'artifacts/02-modeling/fm-model',
       'artifacts/04-planning/sprint-1-backlog.md',
       'artifacts/04-planning/definition-of-done.md',
       'README.md',
@@ -128,27 +128,19 @@ ${inputList(inputs)}
   const artifactPrompt = await requireInstructions(root, artifact.promptFile);
 
   if (artifact.kind === 'fm-model') {
-    const modelingSkill = await requireInstructions(
-      root,
-      artifact.skillFile ?? definition.skillFile,
-    );
     return `# Evidence 统一 FM 建模任务
 
 ## 当前任务
 
 - 阶段：${definition.label}（\`${state.phase}\`）
 - 工件：${artifact.label}
-- 模型目录：\`artifacts/02-domain/fm-model/\`
+- 模型目录：\`artifacts/02-modeling/fm-model/\`
 - 轮次：${state.round}
 - 项目目标：${state.goal}
 
-## 领域方法
+## 统一建模方法
 
 ${skill}
-
-## 统一 FM 建模方法
-
-${modelingSkill}
 
 ## 必须读取的输入
 
