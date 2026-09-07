@@ -28,6 +28,7 @@ export function discoveryContent(): DiscoveryContent {
     candidates: [
       {
         id: 'C-001',
+        label: '测试对象规则',
         description: '测试对象规则',
         confidence: 'explicit',
         sourceRefs: ['INPUT'],
@@ -56,9 +57,10 @@ export function contractContent(): DiscoveryContent {
     '支付分成',
     '逾期补偿',
   ];
-  base.candidates = labels.map((description, i) => ({
+  base.candidates = labels.map((label, i) => ({
     id: `C-00${i + 1}`,
-    description,
+    label,
+    description: label,
     confidence: i === 5 ? 'inferred' : 'explicit',
     sourceRefs: ['INPUT'],
     modelRefs: [],
@@ -106,6 +108,69 @@ export function contractContent(): DiscoveryContent {
     ],
   };
   return base;
+}
+
+// Synthetic regression from the subscription example: realistic analysis length,
+// deliberately separate from the short names shown in the business card.
+export function subscriptionContent(): DiscoveryContent {
+  const content = discoveryContent();
+  content.scope = '仅梳理专栏订阅上下文的付款确认、阅读权益及超时处理。';
+  content.focus = 'evidence';
+  content.candidates = [
+    {
+      id: 'C-001',
+      label: '专栏订阅合同',
+      description:
+        '读者与平台的专栏订阅合同上下文：订阅费用交换对应专栏付费内容访问权，未按规定时间支付则合同自动作废。合同形成依据、签署时刻待明确。',
+    },
+    {
+      id: 'C-002',
+      label: '读者',
+      description:
+        '订阅合同中的读者角色：支付订阅费用，获得对应专栏阅读权益，并在断更补偿及重新上架场景保留原读者关联。',
+    },
+    {
+      id: 'C-003',
+      label: '平台',
+      description:
+        '订阅合同中的平台角色：提供对应专栏付费内容访问权，断更时应下架并退款。外部系统或执行能力不等同于合同一方。',
+    },
+    {
+      id: 'C-004',
+      label: '支付订阅费',
+      description:
+        '支付订阅费履约：读者支付费用和平台提供阅读权益的交换已明确；以外部付款确认为支付完成依据。具体请求机制、支付期限、凭证提供方待明确。平台请求读者付款的结构为候选映射，不因这些局部缺口将支付义务整体视为未知。超时合同作废且读者无额外责任。',
+    },
+  ].map((candidate) => ({
+    ...candidate,
+    confidence: candidate.id === 'C-004' ? 'inferred' : 'explicit',
+    sourceRefs: ['INPUT'],
+    modelRefs: [],
+  }));
+  content.contractView = {
+    current: { contractRef: 'C-001', fulfillmentRef: 'C-004' },
+    contracts: [
+      {
+        contextRef: 'C-001',
+        roleRefs: ['C-002', 'C-003'],
+        sourceRefs: ['INPUT'],
+        fulfillments: [
+          {
+            candidateRef: 'C-004',
+            rightHolderRef: 'C-003',
+            obligorRef: 'C-002',
+            request: '按订阅约定支付对应专栏费用（业务背景、核心需求4）',
+            deadline: null,
+            confirmation: '外部付款确认；提供方及具体凭证待明确',
+            parentFulfillmentRef: null,
+            trigger: null,
+            sourceRefs: ['INPUT'],
+          },
+        ],
+      },
+    ],
+  };
+  return content;
 }
 
 // A current registry across multiple dialogue rounds, not a legacy snapshot.

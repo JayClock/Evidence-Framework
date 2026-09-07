@@ -398,7 +398,7 @@ export function registerDiscoveryTools(
     name: 'evidence_ask_questions',
     label: '业务发现提问',
     description:
-      'Ask exactly ONE core business question based on the latest saved understanding. First consume each human answer/skip and save the updated discovery; briefly explain what changed and what remains unknown. Do not bundle subquestions, precompute a questionnaire, re-ask facts already provided, or repeat deferred gaps under a new ID. An unchanged historical unanswered question may be selected by its existing Q-ID. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
+      'Ask exactly ONE core business question based on the latest saved understanding. First consume each human answer/skip and save the updated discovery. Before asking, show the sourced candidate structure and its gaps; for fulfillment use request (who asks whom for what) -> confirmation evidence (who provides what proof), not an assumed approval step. Briefly explain what changed and what remains unknown. Do not bundle subquestions, precompute a questionnaire, re-ask facts already provided, or repeat deferred gaps under a new ID. An unchanged historical unanswered question may be selected by its existing Q-ID. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
     parameters: Type.Object({
       expectedRevision: revision,
       questions: Type.Array(QuestionSchema, { minItems: 1, maxItems: 1 }),
@@ -410,6 +410,14 @@ export function registerDiscoveryTools(
         await refresh(ctx, state);
         if (ctx.hasUI)
           pendingOffer = { root: ctx.cwd, state: structuredClone(state) };
+        // TUI owns the business presentation in its answer card. RPC/headless
+        // clients still need the textual question because they have no card.
+        if (ctx.mode === 'tui' && ctx.hasUI)
+          return result(
+            `问题 ${params.questions[0].id} 已保存，稍后打开问答卡片。可用 /evidence-answer 重开，/evidence-status 查看完整结构。`,
+            state,
+            true,
+          );
         return result(
           `${contractViewLines(await loadDiscovery(ctx.cwd, state)).join('\n')}\n\n${ctx.hasUI ? '本次生成结束后将自动打开「回答／结束本轮」菜单。Esc 仅关闭菜单，可用 /evidence-answer 重新打开。' : '请在交互模式中运行 /evidence-answer 回答。'} 未知、排除、跳过或历史更正可用 /evidence-answer Q-ID。`,
           state,
@@ -422,7 +430,7 @@ export function registerDiscoveryTools(
     name: 'evidence_save_discovery',
     label: '保存业务发现',
     description:
-      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Always provide contractView with current (null if unlocated) and sourced contract/role/fulfillment candidate references; unknown parties or request/deadline/confirmation remain null. Do not invent contracts for domain/channel discovery. Invalidates drafts and finalization; stopping after saving is valid.',
+      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Every candidate must have a short single-line label (1-40 characters, no surrounding whitespace) separate from its full description. Do not put duties, caveats or review markers in labels. Keep request/confirmation concise; preserve detailed reasoning and partial unknowns in description/notes without downgrading known facts. Old v3 snapshots without labels remain readable; supply sourced labels on the next normal save without rewriting history. Always provide contractView with current (null if unlocated) and sourced contract/role/fulfillment candidate references; unknown parties or request/deadline/confirmation remain null. Request describes the requirement and basis, with a representative only if sourced. Confirmation describes who provides or forms what evidence proving which outcome; preserve partial knowledge and mark remaining gaps, never infer an approver from either party. Do not invent contracts for domain/channel discovery. Invalidates drafts and finalization; stopping after saving is valid.',
     parameters: Type.Object({
       expectedRevision: revision,
       content: DiscoveryContentSchema,
@@ -448,7 +456,10 @@ export function registerDiscoveryTools(
             state,
           );
         }
-        return result('发现记录已保存；继续局部建模、追问或案例回放。', state);
+        return result(
+          '发现记录已保存；先展示更新后的候选结构、依据及缺口，再决定一个必要问题或案例回放。没有必要问题时可停止。',
+          state,
+        );
       });
     },
   });

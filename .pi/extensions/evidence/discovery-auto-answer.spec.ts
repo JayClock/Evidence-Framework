@@ -1,4 +1,5 @@
 import { rm } from 'node:fs/promises';
+import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { qualityHarness } from './quality-test-support.ts';
 import { contractContent } from './discovery-test-support.ts';
@@ -26,12 +27,16 @@ const question = {
   blocking: true,
   sourceRefs: ['INPUT'],
 };
-async function setup(hasUI = true) {
+async function setup(
+  hasUI = true,
+  mode: ExtensionContext['mode'] = hasUI ? 'rpc' : 'print',
+) {
   const h = await qualityHarness(roots);
   const state = createInitialState('test', '合成问答交互测试');
   state.status = 'running';
   await saveState(h.root, state);
   h.ctx.hasUI = hasUI;
+  h.ctx.mode = mode;
   await h.tool('evidence_save_discovery', {
     expectedRevision: 0,
     content: contractContent(),
@@ -152,15 +157,33 @@ describe('automatic current-question entry', () => {
     },
   );
 
-  it('does not offer a menu in noninteractive mode', async () => {
-    const h = await setup(false);
-    await h.settled();
-    expect(h.ui.select).not.toHaveBeenCalled();
-    expect((await loadState(h.root))!.status).toBe('waiting_answer');
-    expect(h.result.content).toEqual([
-      { type: 'text', text: expect.stringContaining('请在交互模式中') },
-    ]);
-  });
+  it.each(['rpc', 'print', 'json'] as const)(
+    'retains textual context and the question for %s clients without TUI cards',
+    async (mode) => {
+      const h = await setup(mode === 'rpc', mode);
+      const text = JSON.stringify(h.result.content);
+      expect(text).toContain('合同上下文：作者合作协议');
+      expect(text).toContain('履约请求：作者 → 平台');
+      expect(text).toContain('履约确认凭证：待明确');
+      expect(text).toContain(question.prompt);
+      expect(text).toContain('/evidence-answer');
+      expect(text).not.toContain('稍后打开问答卡片');
+      expect(h.result).toMatchObject({
+        terminate: true,
+        details: { revision: 2 },
+      });
+      await h.settled();
+      expect((await loadState(h.root))!.status).toBe('waiting_answer');
+      if (mode === 'rpc') {
+        expect(h.ui.select).toHaveBeenCalledTimes(1);
+        expect(h.ui.select.mock.lastCall![0]).toContain(question.prompt);
+      } else {
+        expect(h.ui.select).not.toHaveBeenCalled();
+        expect(text).toContain('请在交互模式中');
+      }
+      expect((await snapshot(h)).answers).toEqual([]);
+    },
+  );
 
   it('defers the offer while Pi is not idle', async () => {
     const h = await setup();

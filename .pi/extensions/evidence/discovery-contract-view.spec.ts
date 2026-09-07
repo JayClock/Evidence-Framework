@@ -68,12 +68,14 @@ describe('contract-centered discovery messages', () => {
     for (const expected of [
       '合同上下文：作者合作协议',
       '双方角色：平台 ↔ 作者',
-      '平台 ── 交付稿件 ──▶ 作者',
-      '▶ 作者 ── 支付分成 ──▶ 平台',
+      '候选履约（请求 → 确认凭证）',
+      '履约请求：平台 → 作者（权利方 → 义务方）',
+      '▶ 支付分成',
+      '履约请求：作者 → 平台（权利方 → 义务方）',
       '当前展开：支付分成',
-      '请求依据：合作协议、结算单',
+      '要求／依据：合作协议、结算单',
       '履约期限：待明确',
-      '确认依据：待明确',
+      '履约确认凭证：待明确',
       '逾期未支付 → 逾期补偿（候选）',
       'Q-001 什么凭证证明分成已支付？',
     ])
@@ -105,7 +107,9 @@ describe('contract-centered discovery messages', () => {
     h.ui.editor.mockResolvedValue(undefined);
     await h.command('evidence-answer', 'Q-001');
     const heading = h.ui.editor.mock.lastCall![0];
-    expect(heading).toContain('▶ 作者 ── 支付分成 ──▶ 平台');
+    expect(heading).toContain('▶ 支付分成');
+    expect(heading).toContain('履约请求：作者 → 平台');
+    expect(heading).toContain('履约确认凭证：待明确');
     expect(heading).toContain('github.com/tester');
     expect(heading).not.toMatch(noise);
     expect(heading).not.toContain('焦点：');
@@ -133,7 +137,32 @@ describe('contract-centered discovery messages', () => {
     }
     const text = contractViewLines(value).join('\n');
     expect(text).toContain('双方角色：平台 ↔ 待明确');
-    expect(text).toContain('待明确 ── 支付分成 ──▶ 平台');
+    expect(text).toContain('履约请求：待明确 → 平台');
+  });
+
+  it('preserves partial and cross-contract confirmation evidence without inventing an approver', async () => {
+    const h = await setup();
+    const value = await snapshot(h);
+    const item = value.content!.contractView.contracts[0].fulfillments[1];
+    item.confirmation = '支付服务商提供的支付回执，证明本次分成已到账';
+    item.request = '作者依据结算单要求平台支付本期分成';
+    item.deadline = '结算单约定的到期日';
+    const before = structuredClone(value);
+    const text = contractViewLines(value).join('\n');
+    expect(text).toContain(`履约确认凭证：${item.confirmation}`);
+    expect(text).toContain(`要求／依据：${item.request}`);
+    expect(text).toContain(`履约期限：${item.deadline}`);
+    expect(text).not.toMatch(/确认人：|审批人：|验收通过/);
+    expect(value).toEqual(before);
+
+    item.confirmation = '银行流水；提供方待明确';
+    expect(contractViewLines(value).join('\n')).toContain(
+      '履约确认凭证：银行流水；提供方待明确',
+    );
+    item.confirmation = null;
+    expect(contractViewLines(value).join('\n')).toContain(
+      '履约确认凭证：待明确',
+    );
   });
 
   it('uses the selected question target, not the last saved cursor, and never falls back from a null target', async () => {
@@ -146,7 +175,7 @@ describe('contract-centered discovery messages', () => {
     });
     expect(
       contractViewLines(value, { questionId: 'Q-002' }).join('\n'),
-    ).toContain('▶ 平台 ── 交付稿件 ──▶ 作者');
+    ).toContain('▶ 交付稿件');
     value.questions[1].target = null;
     expect(
       contractViewLines(value, { questionId: 'Q-002' }).join('\n'),
@@ -162,6 +191,7 @@ describe('contract-centered discovery messages', () => {
       value.content!.candidates.push({
         ...value.content!.candidates[0],
         id: `C-0${i}`,
+        label: `其他履约${i}`,
         description: `其他履约${i}`,
       });
       contract.fulfillments.unshift({
@@ -170,7 +200,8 @@ describe('contract-centered discovery messages', () => {
       });
     }
     const lines = contractViewLines(value);
-    expect(lines.join('\n')).toContain('▶ 作者 ── 支付分成 ──▶ 平台');
+    expect(lines.join('\n')).toContain('▶ 支付分成');
+    expect(lines.join('\n')).toContain('履约请求：作者 → 平台');
     expect(lines.join('\n')).toContain('项见 /evidence-status');
   });
 
@@ -229,6 +260,7 @@ describe('contract-centered discovery messages', () => {
       ...value.content!.candidates.map((c) => ({
         ...c,
         id: ref(c.id)!,
+        label: `另一合同的${c.label}`,
         description: `另一合同的${c.description}`,
       })),
     );
@@ -265,6 +297,10 @@ describe('contract-centered discovery messages', () => {
     const lines = contractViewLines(value);
     expect(lines.every((line) => !/[\n\u001b]/.test(line))).toBe(true);
     expect(lines.join('\n').length).toBeLessThan(2000);
+    expect(lines[0]).toBe('合同上下文：作者合作协议');
+    const detailed = contractViewLines(value, { detailed: true });
+    expect(detailed.every((line) => !/[\n\u001b]/.test(line))).toBe(true);
+    expect(detailed.join('\n')).toContain('名称'.repeat(1000));
     expect(value.content!.candidates[0].description).toBe(original);
   });
 

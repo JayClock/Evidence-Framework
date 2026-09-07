@@ -1,5 +1,6 @@
 import { stripVTControlCharacters } from 'node:util';
 import type {
+  ContractView,
   DiscoverySnapshot,
   DiscussionTarget,
 } from './discovery-schema.ts';
@@ -23,14 +24,59 @@ export function brief(text: string, limit = 100): string {
     : chars.join('');
 }
 
-function describe(snapshot: DiscoverySnapshot, ref: string | null): string {
+export function candidateName(
+  snapshot: DiscoverySnapshot,
+  ref: string | null,
+): string {
   if (ref === null) return '待明确';
   const candidate = snapshot.content?.candidates.find((c) => c.id === ref);
   if (!candidate) return '待重新核对';
   const mark = { inferred: '（候选）', unknown: '（待明确）', explicit: '' }[
     candidate.confidence
   ];
-  return `${brief(candidate.description, 40)}${mark}`;
+  const label = candidate.label
+    ? brief(candidate.label, 40)
+    : `${ref}（名称待整理）`;
+  return `${label}${mark}`;
+}
+
+// Full explanations belong to on-demand views, never to names or arrow ends.
+export function candidateDescriptionLines(
+  snapshot: DiscoverySnapshot,
+  refs: Array<string | null>,
+): string[] {
+  return [...new Set(refs)].flatMap((ref) => {
+    const candidate = snapshot.content?.candidates.find((c) => c.id === ref);
+    if (!candidate) return [];
+    return [
+      `${candidate.id} ${candidateName(snapshot, candidate.id)}：${brief(candidate.description, Infinity)}`,
+      `  来源：${candidate.sourceRefs.map((source) => brief(source, Infinity)).join('、')}`,
+    ];
+  });
+}
+
+// Shared by TUI cards and text/RPC views. A confirmation is evidence, not an
+// inferred approver or a runtime completion status. Legacy text stays verbatim.
+export function fulfillmentInteractionLines(
+  snapshot: DiscoverySnapshot,
+  item: ContractView['contracts'][number]['fulfillments'][number],
+  fullText = false,
+): string[] {
+  const name = (ref: string | null) => candidateName(snapshot, ref);
+  const field = (value: string | null) =>
+    value === null ? '待明确' : brief(value, fullText ? Infinity : 100);
+  return [
+    `履约请求：${name(item.rightHolderRef)} → ${name(item.obligorRef)}（权利方 → 义务方）`,
+    `要求／依据：${field(item.request)}`,
+    `履约期限：${field(item.deadline)}`,
+    `履约确认凭证：${field(item.confirmation)}`,
+    ...(!fullText &&
+    [item.request, item.deadline, item.confirmation].some(
+      (value) => value !== null && brief(value) !== brief(value, Infinity),
+    )
+      ? ['说明已截短，完整原文见 /evidence-status']
+      : []),
+  ];
 }
 
 export function questionLabel(
@@ -47,9 +93,9 @@ export function questionLabel(
   }
   let path = '';
   if (question.target) {
-    const parts = [describe(snapshot, question.target.contractRef)];
+    const parts = [candidateName(snapshot, question.target.contractRef)];
     if (question.target.fulfillmentRef)
-      parts.push(describe(snapshot, question.target.fulfillmentRef));
+      parts.push(candidateName(snapshot, question.target.fulfillmentRef));
     path = `${parts.join(' › ')} · `;
   }
   return `${question.id} ${path}${brief(question.prompt)}`;
@@ -91,11 +137,11 @@ export function contractViewLines(
   const current = contract.fulfillments.find(
     (f) => f.candidateRef === target.fulfillmentRef,
   );
-  const name = (ref: string | null) => describe(snapshot, ref);
+  const name = (ref: string | null) => candidateName(snapshot, ref);
   const lines = [
     `合同上下文：${name(contract.contextRef)}`,
     `双方角色：${contract.roleRefs.map(name).join(' ↔ ')}`,
-    '履约权责（权利方 → 义务方）：',
+    '候选履约（请求 → 确认凭证）：',
   ];
   const ordered: Array<{
     item: (typeof contract.fulfillments)[number];
@@ -121,7 +167,10 @@ export function contractViewLines(
     const marker = item === current ? '▶' : ' ';
     const branch = depth ? `${'  '.repeat(Math.min(depth, 3))}↳ ` : '';
     lines.push(
-      `${marker} ${branch}${name(item.rightHolderRef)} ── ${name(item.candidateRef)} ──▶ ${name(item.obligorRef)}`,
+      `${marker} ${branch}${name(item.candidateRef)}`,
+      ...fulfillmentInteractionLines(snapshot, item, options.detailed).map(
+        (line) => `    ${line}`,
+      ),
     );
     if (options.detailed && item.parentFulfillmentRef)
       lines.push(
@@ -134,15 +183,6 @@ export function contractViewLines(
     `当前展开：${current ? name(current.candidateRef) : '未选择履约项'}`,
   );
   if (current) {
-    lines.push(
-      `  请求依据：${current.request === null ? '待明确' : brief(current.request)}`,
-    );
-    lines.push(
-      `  履约期限：${current.deadline === null ? '待明确' : brief(current.deadline)}`,
-    );
-    lines.push(
-      `  确认依据：${current.confirmation === null ? '待明确' : brief(current.confirmation)}`,
-    );
     if (current.parentFulfillmentRef)
       lines.push(
         `  前序／触发：${name(current.parentFulfillmentRef)} · ${brief(current.trigger!)}`,
@@ -164,6 +204,12 @@ export function contractViewLines(
   if (options.detailed)
     lines.push(
       `来源引用：${[...new Set([...contract.sourceRefs, ...(current?.sourceRefs ?? [])])].join('、')}（发现依据，不是业务批准；材料新鲜度由定稿检查核对）`,
+      '候选详细说明：',
+      ...candidateDescriptionLines(snapshot, [
+        contract.contextRef,
+        ...contract.roleRefs,
+        ...contract.fulfillments.map((item) => item.candidateRef),
+      ]),
     );
   lines.push(questionLine);
   return lines;

@@ -13,9 +13,14 @@ import {
   saveState,
 } from './storage.ts';
 import { loadDiscovery } from './discovery.ts';
-import { contractContent, discoveryContent } from './discovery-test-support.ts';
+import {
+  contractContent,
+  discoveryContent,
+  subscriptionContent,
+} from './discovery-test-support.ts';
 import type { DiscoverySnapshot } from './discovery-schema.ts';
 import { discoveryAnswerView } from './discovery-answer-view.ts';
+import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
 import {
   editDiscoveryView,
   selectDiscoveryView,
@@ -114,13 +119,63 @@ describe('structured discovery answer view', () => {
     const view = discoveryAnswerView(value);
     const summary = JSON.stringify(view.sections);
     expect(summary).toContain('作者合作协议');
-    expect(summary).toContain('权利方：作者');
-    expect(summary).toContain('义务方：平台');
+    expect(summary).toContain('履约请求：作者 → 平台（权利方 → 义务方）');
+    expect(summary).toContain('要求／依据：合作协议、结算单');
     expect(summary).toContain('履约期限：待明确');
+    expect(summary).toContain('履约确认凭证：待明确');
     expect(summary).toContain('当前问题 · Q-001');
     expect(summary).not.toContain('逾期补偿');
-    expect(view.details.join('\n')).toContain('逾期补偿');
+    expect(view.details.join('\n')).not.toMatch(/逾期补偿|交付稿件|履约请求：/);
     expect(view.details.join('\n')).toContain('来源引用：INPUT');
+    expect(view.details.join('\n')).toContain('完整履约结构：/evidence-status');
+    expect(value).toEqual(before);
+  });
+
+  it.each([
+    null,
+    '银行流水；提供方待明确',
+    '支付服务商提供支付回执，证明分成到账',
+    '编辑依据约定验收标准形成稿件验收单',
+  ])(
+    'shares request and confirmation semantics with the text view (%j)',
+    (confirmation) => {
+      const value = snapshot();
+      value.content!.contractView.contracts[0].fulfillments[1].confirmation =
+        confirmation;
+      const before = structuredClone(value);
+      const lines = discoveryAnswerView(value).sections[1].lines;
+      const text = contractViewLines(value).join('\n');
+      for (const line of lines) expect(text).toContain(line);
+      expect(lines).toContain(`履约确认凭证：${confirmation ?? '待明确'}`);
+      expect(lines.join('\n')).not.toMatch(/确认人：|审批人：/);
+      expect(value).toEqual(before);
+    },
+  );
+
+  it('shows sourced representatives and uncertain candidates without deriving the confirmation provider', () => {
+    const value = snapshot();
+    const item = value.content!.contractView.contracts[0].fulfillments[0];
+    value.questions[0].target!.fulfillmentRef = item.candidateRef;
+    value.content!.candidates[3].confidence = 'inferred';
+    item.request = '平台由编辑代表向作者提出按约交稿要求';
+    item.confirmation = null;
+    const lines = discoveryAnswerView(value).sections[1].lines;
+    expect(lines).toContain('交付稿件（候选）');
+    expect(lines).toContain(`要求／依据：${item.request}`);
+    expect(lines).toContain('履约确认凭证：待明确');
+    expect(lines.join('\n')).not.toContain('编辑验收');
+    expect(lines.join('\n')).not.toContain('确认人');
+  });
+
+  it('keeps only the selected exception predecessor and sources in details', () => {
+    const value = snapshot();
+    value.questions[0].target!.fulfillmentRef = 'C-006';
+    const before = structuredClone(value);
+    const view = discoveryAnswerView(value);
+    expect(view.sections[1].lines[0]).toBe('逾期补偿（候选）');
+    expect(view.details).toContain('前序／触发：支付分成 · 逾期未支付');
+    expect(view.details.join('\n')).toContain('来源引用：INPUT');
+    expect(view.details.join('\n')).not.toContain('交付稿件');
     expect(value).toEqual(before);
   });
 
@@ -159,6 +214,55 @@ describe('structured discovery answer view', () => {
     expect(view).not.toContain('作者合作协议');
   });
 
+  it('uses short subscription names instead of repeating long analyses on cards and arrows', () => {
+    const value = snapshot();
+    value.content = subscriptionContent();
+    value.questions[0].target = value.content.contractView.current;
+    value.questions[0].prompt = '一笔专栏订阅的支付截止时间按什么规则确定？';
+    const before = structuredClone(value);
+    const view = discoveryAnswerView(value);
+    expect(view.sections[0].lines).toEqual([
+      '专栏订阅合同',
+      '双方角色：读者 ↔ 平台',
+    ]);
+    expect(view.sections[1].lines).toEqual([
+      '支付订阅费（候选）',
+      '履约请求：平台 → 读者（权利方 → 义务方）',
+      '要求／依据：按订阅约定支付对应专栏费用（业务背景、核心需求4）',
+      '履约期限：待明确',
+      '履约确认凭证：外部付款确认；提供方及具体凭证待明确',
+    ]);
+    const summary = JSON.stringify(view.sections);
+    for (const candidate of value.content.candidates)
+      expect(summary).not.toContain(candidate.description);
+    expect(view.details.join('\n')).toContain(
+      value.content.candidates[3].description,
+    );
+    const status = contractViewLines(value, { detailed: true }).join('\n');
+    for (const candidate of value.content.candidates)
+      expect(status).toContain(candidate.description);
+    expect(questionLabel(value, 'Q-001')).toBe(
+      'Q-001 专栏订阅合同 › 支付订阅费（候选） · 一笔专栏订阅的支付截止时间按什么规则确定？',
+    );
+    expect(value).toEqual(before);
+  });
+
+  it('bounds long request details explicitly while keeping original text in the detailed view', () => {
+    const value = snapshot();
+    const item = value.content!.contractView.contracts[0].fulfillments[1];
+    item.request = `作者向平台请求分成；${'完整业务依据。'.repeat(40)}请求末尾`;
+    item.confirmation = `外部支付回执；${'提供方尚待核实。'.repeat(40)}确认末尾`;
+    const before = structuredClone(value);
+    const lines = discoveryAnswerView(value).sections[1].lines;
+    expect(lines).toContain('说明已截短，完整原文见 /evidence-status');
+    expect(lines.join('\n')).not.toMatch(/请求末尾|确认末尾/);
+    expect(lines.every((line) => Array.from(line).length < 120)).toBe(true);
+    const detailed = contractViewLines(value, { detailed: true }).join('\n');
+    expect(detailed).toContain(item.request);
+    expect(detailed).toContain(item.confirmation);
+    expect(value).toEqual(before);
+  });
+
   it('keeps the complete question and sanitizes terminal controls without altering source text', () => {
     const value = snapshot();
     const prompt = `${'长问题'.repeat(120)}\n最后一句？\u001b[31m`;
@@ -184,18 +288,46 @@ describe('discovery answer TUI', () => {
       expectedRevision: 0,
       content: contractContent(),
     });
-    await h.tool('evidence_ask_questions', {
+    const result = await h.tool('evidence_ask_questions', {
       expectedRevision: 1,
       questions: snapshot().questions,
     });
+    expect(result).toMatchObject({
+      terminate: true,
+      details: { revision: 2 },
+      content: [{ text: expect.stringContaining('问题 Q-001 已保存') }],
+    });
+    const message = JSON.stringify(result.content);
+    expect(message).toContain('/evidence-answer');
+    expect(message).toContain('/evidence-status');
+    expect(message).not.toMatch(/作者合作协议|履约请求：|履约确认凭证：/);
+    expect(message).not.toContain(snapshot().questions[0].prompt);
+    expect(tui.ui.custom).not.toHaveBeenCalled();
+    expect(h.api.sendMessage).not.toHaveBeenCalled();
+    const current = (await loadState(h.root))!;
+    expect(current.status).toBe('waiting_answer');
     const before = await readText(h.root, '.evidence/state.json');
-    const cancelled = h.command('evidence-answer');
+    const original = await readText(h.root, current.discovery.path!);
+    const cancelled = h.events.get('agent_settled')!({}, h.ctx);
     await vi.waitFor(() => expect(tui.ui.custom).toHaveBeenCalledTimes(1));
-    tui.render();
+    const card = tui.render().join('\n');
+    expect(card).toContain('履约请求：作者 → 平台');
+    expect(card).toContain('履约确认凭证：待明确');
+    expect(card).toContain(snapshot().questions[0].prompt);
     tui.input('\u001b');
     await cancelled;
-    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+    await h.events.get('agent_settled')!({}, h.ctx);
+    expect(tui.ui.custom).toHaveBeenCalledTimes(1);
     expect(h.api.exec).not.toHaveBeenCalled();
+    await h.command('evidence-status');
+    const status = h.api.sendMessage.mock.lastCall![0].content;
+    expect(status).toContain('作者合作协议');
+    expect(status).toContain('交付稿件');
+    expect(status).toContain('支付分成');
+    expect(status).toContain('逾期补偿');
+    expect(status).toContain('来源引用：INPUT');
+    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+    expect(await readText(h.root, current.discovery.path!)).toBe(original);
     h.api.exec.mockResolvedValue({
       code: 0,
       killed: false,
@@ -236,12 +368,31 @@ describe('discovery answer TUI', () => {
     h.input('\u001bOQ'); // F2
     h.input('\u001b[1;5B'); // Ctrl+Down: scroll context
     text = h.render().join('\n');
-    expect(text).toContain('详情');
-    expect(text).toContain('逾期补偿');
+    expect(text).toContain('详情 · 当前依据');
+    expect(text).not.toMatch(/逾期补偿|交付稿件/);
     expect(text).toContain('来源引用：INPUT');
+    expect(text).toContain('完整履约结构：/evidence-status');
     h.input('\u001b[B');
     h.input('\r');
     expect(await result).toBe('结束本轮');
+    h.component().dispose?.();
+  });
+
+  it('renders the subscription regression as short names in the actual TUI', async () => {
+    const h = uiHarness(40),
+      value = snapshot();
+    value.content = subscriptionContent();
+    value.questions[0].target = value.content.contractView.current;
+    value.questions[0].prompt = '一笔专栏订阅的支付截止时间按什么规则确定？';
+    const result = select(h, value);
+    const text = h.render(80).join('\n');
+    expect(text).toContain('双方角色：读者 ↔ 平台');
+    expect(text).toContain('履约请求：平台 → 读者');
+    expect(text).toContain(value.questions[0].prompt);
+    expect(text).not.toContain('外部系统或执行能力不等同于合同一方');
+    expect(text).not.toContain('合同形成依据、签署时刻待明确');
+    h.input('\u001b');
+    expect(await result).toBeUndefined();
     h.component().dispose?.();
   });
 
@@ -333,6 +484,8 @@ describe('discovery answer TUI', () => {
     h.ui.select.mockResolvedValue('回答');
     expect(await select(h)).toBe('回答');
     expect(h.ui.select.mock.lastCall![0]).toContain('合同上下文：作者合作协议');
+    expect(h.ui.select.mock.lastCall![0]).toContain('履约请求：作者 → 平台');
+    expect(h.ui.select.mock.lastCall![0]).toContain('履约确认凭证：待明确');
     const value = snapshot();
     h.ui.editor.mockResolvedValue('答复');
     expect(

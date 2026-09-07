@@ -1,4 +1,9 @@
-import { brief, contractViewLines } from './discovery-contract-view.ts';
+import {
+  brief,
+  candidateName,
+  candidateDescriptionLines,
+  fulfillmentInteractionLines,
+} from './discovery-contract-view.ts';
 import type { DiscoverySnapshot } from './discovery-schema.ts';
 import {
   assertDiscoveryContracts,
@@ -61,22 +66,13 @@ export function discoveryAnswerView(
     };
   }
   const content = snapshot.content!;
-  const name = (ref: string | null): string => {
-    if (!ref) return '待明确';
-    const candidate = content.candidates.find((c) => c.id === ref)!;
-    const mark = { explicit: '', inferred: '（候选）', unknown: '（待明确）' }[
-      candidate.confidence
-    ];
-    return `${text(candidate.description)}${mark}`;
-  };
+  const name = (ref: string | null) => candidateName(snapshot, ref);
   const contract = content.contractView.contracts.find(
     (c) => c.contextRef === target.contractRef,
   )!;
   const item = contract.fulfillments.find(
     (f) => f.candidateRef === target.fulfillmentRef,
   );
-  const field = (label: string, value: string | null) =>
-    `${label}：${value === null ? '待明确' : text(value)}`;
   return {
     sections: [
       {
@@ -87,24 +83,27 @@ export function discoveryAnswerView(
         ],
       },
       {
-        title: '当前履约项',
+        title: '当前履约项（候选结构）',
         lines: item
           ? [
               name(item.candidateRef),
-              `权利方：${name(item.rightHolderRef)}`,
-              `义务方：${name(item.obligorRef)}`,
-              field('请求依据', item.request),
-              field('履约期限', item.deadline),
-              field('确认依据', item.confirmation),
+              ...fulfillmentInteractionLines(snapshot, item),
             ]
           : ['尚未选择履约项'],
       },
       currentQuestion,
     ],
-    // Reuse the audited business view for rights, exception lineage and sources.
-    details: contractViewLines(snapshot, {
-      questionId: question?.id,
-      detailed: true,
-    }).filter((line) => !line.startsWith('当前问题：')),
+    // Keep the card focused. The complete relationship tree is available only
+    // on demand via /evidence-status, not repeated inside the answer dialog.
+    details: [
+      ...candidateDescriptionLines(snapshot, [item?.candidateRef ?? null]),
+      ...(item?.parentFulfillmentRef && item.trigger !== null
+        ? [
+            `前序／触发：${name(item.parentFulfillmentRef)} · ${text(item.trigger)}`,
+          ]
+        : []),
+      `来源引用：${[...new Set([...contract.sourceRefs, ...(item?.sourceRefs ?? [])])].map(text).join('、')}（发现依据，不是业务批准；材料新鲜度由定稿检查核对）`,
+      '完整履约结构：/evidence-status',
+    ],
   };
 }

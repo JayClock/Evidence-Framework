@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { realpath } from 'node:fs/promises';
 import { Value } from 'typebox/value';
 import {
+  DiscoveryContentSchema,
   DiscoverySnapshotSchema,
   type DiscussionTarget,
   type DiscoveryAnswer,
@@ -467,6 +468,10 @@ export async function saveDiscoveryContent(
   state: EvidenceState,
   content: DiscoveryContent,
 ): Promise<void> {
+  if (!Value.Check(DiscoveryContentSchema, content))
+    throw new Error(
+      '发现内容格式无效：新保存的每个候选必须有 label（1–40字符、单行、无首尾空白）及 description；未保存。',
+    );
   const snapshot = await loadDiscovery(root, state);
   snapshot.content = content;
   for (const list of [content.candidates, content.cases]) {

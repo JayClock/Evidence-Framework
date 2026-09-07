@@ -55,7 +55,7 @@ function renderContext(
   }
   const detailsOffset = lines.length;
   if (expanded) {
-    lines.push('', ...heading('详情 · 权责与依据'));
+    lines.push('', ...heading('详情 · 当前依据'));
     for (const line of view.details)
       lines.push(...render(theme.fg('muted', line)));
   }

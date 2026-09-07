@@ -5,7 +5,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
 import { getPhaseDefinition } from './phases.ts';
 import { answerQuestion, saveDiscoveryContent } from './discovery.ts';
-import { discoveryContent, seedQuestions } from './discovery-test-support.ts';
+import {
+  contractContent,
+  discoveryContent,
+  seedQuestions,
+} from './discovery-test-support.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -68,6 +72,33 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     expect(h.state).toEqual(before);
   });
 
+  it('requires a sourced candidate before the next question without imposing an approval stage', async () => {
+    const h = await setup();
+    const first = await h.prompt();
+    await saveDiscoveryContent(h.root, h.state, contractContent());
+    const resumed = await h.prompt();
+    for (const prompt of [first, resumed]) {
+      for (const rule of [
+        '提问前先展示有来源的候选结构、依据与不确定点',
+        '履约请求 → 确认凭证',
+        'Confirmation 不默认是人工审批',
+        '不从权责方推导确认人',
+        '独立验收须有业务依据',
+        '先通过 evidence_save_discovery 保存当前完整理解',
+        '全未知的文本为 null，部分已知保留原依据',
+        '没有约定依据时先问一件真实发生的事',
+        'label 不含职责、来源、缺口、候选标记或建模纪律',
+        '局部未知不抹去已知事实',
+        '旧 v3 缺 label 时继续读取原说明',
+        '详细分析放 description／notes',
+      ])
+        expect(prompt).toContain(rule);
+    }
+    expect(resumed).toContain('履约请求：作者 → 平台');
+    expect(resumed).toContain('履约确认凭证：待明确');
+    expect(resumed).toContain('当前展开：支付分成');
+  });
+
   it('loads mandatory evidence time knowledge on the first discovery turn', async () => {
     const h = await setup();
     const prompt = (await h.prompt()).replace(/[ \t]+/g, ' ');
@@ -97,8 +128,8 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
 
   it.each([
     ['scope', '核对具体业务边界'],
-    ['responsibilities', '合同双方与履约项'],
-    ['evidence', '请求、完成与确认凭证'],
+    ['responsibilities', '合同双方与候选履约结构'],
+    ['evidence', '履约请求与确认凭证'],
     ['lineage', '关键数据与历史依据'],
     ['exceptions', '异常、更正与新责任'],
     ['domain', '领域对象与规则'],
