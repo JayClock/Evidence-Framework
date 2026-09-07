@@ -34,6 +34,7 @@ describe('extension registration', () => {
     ]);
     expect(commands).toEqual([
       'evidence-answer',
+      'evidence-discovery',
       'evidence-init',
       'evidence-run',
       'evidence-status',

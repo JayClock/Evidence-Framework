@@ -98,6 +98,19 @@ export const DiscoverySnapshotSchema = Type.Object(
     sourceHashes: Type.Record(Type.String(), Type.String()),
     questions: Type.Array(QuestionSchema, { maxItems: 500 }),
     answers: Type.Array(AnswerSchema, { maxItems: 2000 }),
+    // Optional for existing v1 snapshots. Interaction decisions are not A-* facts.
+    interaction: Type.Optional(
+      Type.Object(
+        {
+          stopped: Type.Boolean(),
+          deferredQuestionIds: Type.Array(
+            Type.String({ pattern: '^Q-[0-9]{3,}$' }),
+            { maxItems: 500, uniqueItems: true },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
     draft: Type.Union([
       Type.Object(
         {

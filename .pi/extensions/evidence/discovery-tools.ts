@@ -1,7 +1,6 @@
 import type {
   ExtensionAPI,
   ExtensionCommandContext,
-  ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
 import {
@@ -9,6 +8,7 @@ import {
   QuestionSchema,
   type DiscoveryAnswer,
   type DiscoveryQuestion,
+  type DiscoverySnapshot,
 } from './discovery-schema.ts';
 import {
   answerQuestion,
@@ -20,13 +20,22 @@ import {
   loadDiscovery,
   persistDiscovery,
   saveDiscoveryContent,
-  unansweredQuestions,
+  pendingQuestions,
+  unresolvedBlockingQuestions,
   withModelingLock,
 } from './discovery.ts';
 import { loadConfig, loadState } from './storage.ts';
 import { recordGateDecision } from './gates.ts';
 import { normalizeFmModelFiles, replaceFmModel } from './modeling.ts';
 import type { EvidenceState } from './types.ts';
+import {
+  changeDiscoveryInteraction,
+  finishDiscoveryInteraction,
+  FINISH_DISCOVERY,
+  SKIP_QUESTION,
+  type StartDiscoveryWork,
+  type RefreshDiscovery as Refresh,
+} from './discovery-interaction.ts';
 
 const revision = Type.Integer({
   minimum: 0,
@@ -42,7 +51,11 @@ export const DISCOVERY_TOOL_NAMES = [
   'evidence_finalize_discovery',
 ];
 
-type Refresh = (ctx: ExtensionContext, state: EvidenceState) => Promise<void>;
+const answerModes = new Map<string, DiscoveryAnswer['status']>([
+  ['事实或决定', 'answered'],
+  ['未知，仍需澄清', 'unknown'],
+  ['移出本次范围（回答中说明原因）', 'excluded'],
+]);
 
 function questionText(question: DiscoveryQuestion): string {
   return `${question.id}：${question.prompt}\n焦点：${question.focus}\n依据：${question.sourceRefs.join('、') || '未引用材料，需澄清事实'}\n定稿阻塞：${question.blocking ? '是' : '否'}\n影响：${question.impact}`;
@@ -95,11 +108,48 @@ async function githubRespondent(
   return undefined;
 }
 
+async function selectDiscoveryAction(
+  ctx: ExtensionCommandContext,
+  snapshot: DiscoverySnapshot,
+  selectedId: string,
+  discovering: boolean,
+): Promise<
+  | { kind: 'finish' }
+  | { kind: 'question'; question: DiscoveryQuestion; mode: string }
+  | undefined
+> {
+  const pending = pendingQuestions(snapshot);
+  const choices = pending.length ? pending : snapshot.questions;
+  const back = '返回场景选择';
+  while (true) {
+    const selected =
+      selectedId ||
+      (await ctx.ui.select('选择场景／问题（已回答的问题可更正）', [
+        ...choices.map((q) => `${q.id} ${q.prompt}`),
+        ...(discovering ? [FINISH_DISCOVERY] : []),
+      ]));
+    selectedId = '';
+    if (discovering && selected === FINISH_DISCOVERY) return { kind: 'finish' };
+    const question = snapshot.questions.find(
+      (q) => q.id === selected?.split(' ')[0],
+    );
+    if (!question) return;
+    const mode = await ctx.ui.select(
+      `${questionText(question)}\n如何处理这个问题？`,
+      [...answerModes.keys(), ...(discovering ? [SKIP_QUESTION] : []), back],
+    );
+    if (mode === back) continue;
+    if (!mode) return;
+    return { kind: 'question', question, mode };
+  }
+}
+
 export async function collectAnswer(
   pi: ExtensionAPI,
   ctx: ExtensionCommandContext,
   refresh: Refresh,
-  selectedId = '',
+  selectedId: string,
+  startWork: StartDiscoveryWork,
 ): Promise<void> {
   await ctx.waitForIdle();
   const state = await loadState(ctx.cwd);
@@ -120,18 +170,28 @@ export async function collectAnswer(
     return;
   }
   const snapshot = await loadDiscovery(ctx.cwd, state);
-  const pending = unansweredQuestions(snapshot);
-  const choices = pending.length ? pending : snapshot.questions;
-  const selected =
-    selectedId ||
-    (await ctx.ui.select(
-      '选择问题（已回答的问题可更正）',
-      choices.map((q) => `${q.id} ${q.prompt}`),
-    ));
-  const question = snapshot.questions.find(
-    (q) => q.id === selected?.split(' ')[0],
+  const action = await selectDiscoveryAction(
+    ctx,
+    snapshot,
+    selectedId,
+    state.discovery.stage === 'discovering',
   );
-  if (!question) return;
+  if (!action) return;
+  if (action.kind === 'finish') {
+    await finishDiscoveryInteraction(ctx, refresh, startWork, state);
+    return;
+  }
+  const { question, mode } = action;
+  if (mode === SKIP_QUESTION) {
+    await changeDiscoveryInteraction(ctx, refresh, {
+      action: 'skip',
+      expected: state,
+      questionId: question.id,
+    });
+    return;
+  }
+  const status = answerModes.get(mode);
+  if (!status) return;
   const respondent = await githubRespondent(pi, ctx.cwd);
   if (!respondent) {
     ctx.ui.notify(
@@ -146,18 +206,6 @@ export async function collectAnswer(
     previous?.text ?? '',
   );
   if (text === undefined || !text.trim()) return;
-  const mode = await ctx.ui.select('如何记录这个回答？', [
-    '事实或决定',
-    '未知，仍需澄清',
-    '移出本次范围（回答中说明原因）',
-  ]);
-  if (!mode) return;
-  const status: DiscoveryAnswer['status'] =
-    mode === '事实或决定'
-      ? 'answered'
-      : mode.startsWith('未知')
-        ? 'unknown'
-        : 'excluded';
   await withModelingLock(ctx.cwd, async () => {
     const current = await loadState(ctx.cwd);
     if (!current || current.runId !== state.runId)
@@ -195,11 +243,28 @@ export async function collectAnswer(
 export function registerDiscoveryTools(
   pi: ExtensionAPI,
   refresh: Refresh,
+  startWork: StartDiscoveryWork,
 ): void {
   pi.registerCommand('evidence-answer', {
     description:
       '回答当前发现问题；可传 Q-ID 更正历史回答，保留原文并使旧定稿失效',
-    handler: (args, ctx) => collectAnswer(pi, ctx, refresh, args.trim()),
+    handler: (args, ctx) =>
+      collectAnswer(pi, ctx, refresh, args.trim(), startWork),
+  });
+  pi.registerCommand('evidence-discovery', {
+    description:
+      'finish：结束问答并整理已有信息；resume：恢复问答和暂缓问题（均不批准定稿）',
+    handler: async (args, ctx) => {
+      if (args.trim() === 'finish')
+        await finishDiscoveryInteraction(ctx, refresh, startWork);
+      else if (args.trim() === 'resume')
+        await changeDiscoveryInteraction(ctx, refresh, { action: 'resume' });
+      else
+        ctx.ui.notify(
+          '用法：/evidence-discovery finish 或 /evidence-discovery resume',
+          'info',
+        );
+    },
   });
   pi.registerTool({
     name: 'evidence_ask_questions',
@@ -217,7 +282,7 @@ export function registerDiscoveryTools(
         await refresh(ctx, state);
         ctx.ui.setEditorText('/evidence-answer');
         return result(
-          `${params.questions.map(questionText).join('\n\n')}\n\n请运行 /evidence-answer。`,
+          `${params.questions.map(questionText).join('\n\n')}\n\n请运行 /evidence-answer；可跳过此题，或用 /evidence-discovery finish 结束本轮并整理。`,
           state,
           true,
         );
@@ -238,6 +303,22 @@ export function registerDiscoveryTools(
         const state = await runningState(ctx.cwd, params.expectedRevision);
         await saveDiscoveryContent(ctx.cwd, state, params.content);
         await refresh(ctx, state);
+        const snapshot = await loadDiscovery(ctx.cwd, state);
+        if (snapshot.interaction?.stopped) {
+          const blockers = unresolvedBlockingQuestions(snapshot);
+          if (blockers.length) {
+            ctx.ui.setEditorText('/evidence-answer');
+            return result(
+              `发现草稿已保存，本轮整理结束。阻塞项：${blockers.map((q) => q.id).join('、')}。未定稿；可用 /evidence-answer Q-ID 补充，或 /evidence-discovery resume 恢复问答。`,
+              state,
+              true,
+            );
+          }
+          return result(
+            '发现记录已保存；禁止自动追问。无问题阻塞，可继续原有来源、回放及定稿校验。',
+            state,
+          );
+        }
         return result('发现记录已保存；继续局部建模、追问或案例回放。', state);
       });
     },

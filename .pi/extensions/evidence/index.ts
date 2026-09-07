@@ -239,7 +239,9 @@ function statusMarkdown(state: EvidenceState): string {
       `- 发现：${state.discovery.stage} / v${state.discovery.revision} / ${state.discovery.path ?? '尚无记录'}`,
     );
   if (state.status === 'waiting_answer')
-    lines.push('- 下一步：`/evidence-answer`');
+    lines.push(
+      '- 下一步：`/evidence-answer`（可跳过），或 `/evidence-discovery finish` 结束本轮并整理',
+    );
   if (state.phase === 'coding')
     lines.push(`- TDD 检查点：\`${state.coding.tdd.stage}\``);
   if (state.lastError) lines.push(`- 最近错误：${state.lastError}`);
@@ -541,7 +543,7 @@ async function startCurrentWork(
   if (state.status === 'waiting_answer') {
     ctx.ui.setEditorText('/evidence-answer');
     ctx.ui.notify(
-      '当前等待业务回答，请运行 /evidence-answer；不会重复生成工件。',
+      '当前等待业务回答，请运行 /evidence-answer（可跳过），或 /evidence-discovery finish 结束本轮并整理；不会重复生成工件。',
       'info',
     );
     return;
@@ -985,7 +987,9 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
     updateUi(ctx, state);
   };
-  registerDiscoveryTools(pi, refreshDiscovery);
+  const startDiscoveryWork = (ctx: ExtensionCommandContext) =>
+    startCurrentWork(pi, ctx);
+  registerDiscoveryTools(pi, refreshDiscovery, startDiscoveryWork);
   pi.registerTool({
     name: 'evidence_submit_artifact',
     label: 'Submit Evidence Artifact',
@@ -1595,7 +1599,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       if (!state) return;
       if (state.status === 'waiting_review') await reviewCurrentGate(pi, ctx);
       else if (state.status === 'waiting_answer')
-        await collectAnswer(pi, ctx, refreshDiscovery);
+        await collectAnswer(pi, ctx, refreshDiscovery, '', startDiscoveryWork);
       else await startCurrentWork(pi, ctx);
     },
   });

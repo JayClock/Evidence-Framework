@@ -168,13 +168,81 @@ export function unansweredQuestions(
   );
 }
 
+// Waiting for input and unresolved business knowledge are deliberately separate.
+export function pendingQuestions(
+  snapshot: DiscoverySnapshot,
+): DiscoveryQuestion[] {
+  if (snapshot.interaction?.stopped) return [];
+  const deferred = new Set(snapshot.interaction?.deferredQuestionIds);
+  return unansweredQuestions(snapshot).filter(
+    (question) => !deferred.has(question.id),
+  );
+}
+
+export function unresolvedBlockingQuestions(
+  snapshot: DiscoverySnapshot,
+): DiscoveryQuestion[] {
+  return snapshot.questions.filter((question) => {
+    const answer = latestAnswer(snapshot, question.id);
+    return question.blocking && (!answer || answer.status === 'unknown');
+  });
+}
+
+// Called only by manual commands, never exposed as an agent tool or an answer source.
+export async function controlDiscoveryInteraction(
+  root: string,
+  state: EvidenceState,
+  action: 'finish' | 'resume' | 'skip',
+  questionId?: string,
+): Promise<void> {
+  if (
+    state.phase !== 'modeling' ||
+    state.paused ||
+    state.status === 'running' ||
+    state.discovery.stage !== 'discovering'
+  )
+    throw new Error('请在未暂停且空闲的 Modeling 发现阶段操作');
+  const snapshot = await loadDiscovery(root, state);
+  const interaction = snapshot.interaction ?? {
+    stopped: false,
+    deferredQuestionIds: [],
+  };
+  if (action === 'skip') {
+    if (
+      !questionId ||
+      !unansweredQuestions(snapshot).some((q) => q.id === questionId)
+    )
+      throw new Error('只能暂缓尚未回答的问题；更正请记录真实回答');
+    interaction.deferredQuestionIds = [
+      ...new Set([...interaction.deferredQuestionIds, questionId]),
+    ];
+  } else {
+    interaction.stopped = action === 'finish';
+    if (action === 'resume') interaction.deferredQuestionIds = [];
+  }
+  snapshot.interaction = interaction;
+  snapshot.draft = null;
+  reopenDiscovery(state);
+  state.status = pendingQuestions(snapshot).length ? 'waiting_answer' : 'ready';
+  appendHistory(
+    state,
+    'discovery_interaction',
+    `manual:${action}${questionId ? `:${questionId}` : ''}`,
+  );
+  await persistDiscovery(root, state, snapshot);
+}
+
 export async function askQuestions(
   root: string,
   state: EvidenceState,
   questions: DiscoveryQuestion[],
 ): Promise<void> {
   const snapshot = await loadDiscovery(root, state);
-  if (unansweredQuestions(snapshot).length)
+  if (snapshot.interaction?.stopped)
+    throw new Error(
+      '人工已结束本轮问答；仅整理已有信息。由人工运行 /evidence-discovery resume 后才能重新提问',
+    );
+  if (pendingQuestions(snapshot).length)
     throw new Error('仍有待回答问题，请先运行 /evidence-answer');
   const ids = new Set(snapshot.questions.map((question) => question.id));
   for (const question of questions) {
@@ -211,11 +279,14 @@ export async function answerQuestion(
     id: `A-${String(snapshot.answers.length + 1).padStart(3, '0')}`,
     recordedAt: new Date().toISOString(),
   });
+  if (snapshot.interaction)
+    snapshot.interaction.deferredQuestionIds =
+      snapshot.interaction.deferredQuestionIds.filter(
+        (id) => id !== answer.questionId,
+      );
   snapshot.draft = null;
   reopenDiscovery(state);
-  state.status = unansweredQuestions(snapshot).length
-    ? 'waiting_answer'
-    : 'ready';
+  state.status = pendingQuestions(snapshot).length ? 'waiting_answer' : 'ready';
   await persistDiscovery(root, state, snapshot);
 }
 
@@ -301,7 +372,11 @@ export async function saveDiscoveryContent(
   snapshot.sourceHashes = await captureSources(root, content);
   snapshot.draft = null;
   reopenDiscovery(state);
-  state.status = 'running';
+  state.status =
+    snapshot.interaction?.stopped &&
+    unresolvedBlockingQuestions(snapshot).length
+      ? 'ready'
+      : 'running';
   await persistDiscovery(root, state, snapshot);
 }
 
@@ -330,11 +405,9 @@ export async function assertDiscoveryReady(
   if (predecessor !== null) throw new Error('发现历史链起点无效');
   if (!snapshot.content || !Object.keys(snapshot.sourceHashes).length)
     throw new Error('尚未保存范围、来源、候选及场景回放记录');
-  for (const question of snapshot.questions) {
-    const answer = latestAnswer(snapshot, question.id);
-    if (!answer || (question.blocking && answer.status === 'unknown'))
-      throw new Error(`阻塞问题未解决：${question.id}`);
-  }
+  const blockers = unresolvedBlockingQuestions(snapshot);
+  if (blockers.length)
+    throw new Error(`阻塞问题未解决：${blockers.map((q) => q.id).join('、')}`);
   for (const [path, hash] of Object.entries(snapshot.sourceHashes)) {
     if (digestText(await readText(root, path)) !== hash)
       throw new Error(`原始材料已变化，需要重新发现：${path}`);

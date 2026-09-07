@@ -20,6 +20,8 @@ Agent 先从业务叙述识别有依据的候选上下文，再引导合同双�
 
 - 状态由扩展持有；按阶段和发现/定稿状态选择工具与模型。
 - 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；人类用 `/evidence-answer [Q-ID]` 回答或更正，自动记录 `gh` 当前认证的 github.com 账号，不再输入姓名；读取失败不保存。取消不记录，未知可继续发现但不能解除业务阻塞。
+- “结束本轮问答，整理已有信息”与场景／问题选择并列于首层菜单；单题菜单仅处理当前回答，可无文本跳过，或“返回场景选择”，不重复放置结束本轮操作。`/evidence-discovery finish` 同样保存人工停止标记并启动整理；有阻塞项时保存草稿、列出 Q-ID 后停止，不强制定稿。`/evidence-discovery resume` 才恢复自动提问并重新排队暂缓问题；普通 run、暂停/恢复、重载均保留停止标记。
+- 暂缓/结束不调用 GitHub、不生成业务回答、不排除范围、不解除定稿阻塞。控制记录位于快照的可选 `interaction` 字段及追加历史中，不可充当 `A-*` 来源；兼容缺少该字段的旧 v1 快照。非阻塞未答项可保留为缺口，不升级为明确事实。
 - `evidence_save_discovery` 保存范围、原始来源摘要、候选和三类回放；所有写入绑定 expectedRevision 并串行化，历史快照不覆盖。
 - `evidence_check_model_draft` 复用 FM 管线进行隔离检查，不替换正式产物；`evidence_finalize_discovery` 检查声明就绪后启用正式提交，不自动批准。
 - 纯领域/纯渠道仍采用 FM，不强制合同；四色是凭证与数据发现方法，不是新的实体 DSL。
@@ -34,7 +36,8 @@ Agent 先从业务叙述识别有依据的候选上下文，再引导合同双�
 - `index.ts`：注册、命令、工具白名单、事件、Session 和 Gate UI。
 - `discovery-schema.ts`：问题、人工回答、来源、候选、回放及快照结构。
 - `discovery.ts`：发现版本、来源检查、追加快照、恢复和定稿就绪检查。
-- `discovery-tools.ts`：问答编辑器、发现保存、隔离草稿检查和定稿入口。
+- `discovery-tools.ts`：问答操作菜单、编辑器、发现保存、隔离草稿检查和定稿入口。
+- `discovery-interaction.ts`：人工暂缓、结束/恢复入口，串行化与版本保护，以及结束后的整理任务启动。
 - `phases.ts` / `prompts.ts`：确定性的阶段/工件定义、输入加载及发现/定稿检查点约束。
 - `discovery-prompt.ts`：只读组装发现焦点、未回答/仍未知问题与接续提示；完整注入 Skill 的 `references/discovery-workshop.md` 作为统一发现指南，不另维护业务问卷。指南缺失或为空时拒绝运行。
 - `storage.ts`：配置、状态解码和原子持久化。
