@@ -6,6 +6,10 @@ import type {
 import { Type } from 'typebox';
 import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
 import {
+  editDiscoveryView,
+  selectDiscoveryView,
+} from './discovery-answer-ui.ts';
+import {
   DiscoveryContentSchema,
   QuestionSchema,
   type DiscoveryAnswer,
@@ -121,17 +125,17 @@ async function selectDiscoveryAction(
   const discovering = state.discovery.stage === 'discovering';
   const active = pendingQuestions(snapshot)[0];
   if (!selectedId && discovering && !snapshot.interaction.stopped && active) {
-    const action = await ctx.ui.select(
-      contractViewLines(snapshot, { questionId: active.id }).join('\n'),
-      ['回答', FINISH_DISCOVERY],
-      { signal },
-    );
+    const action = await selectDiscoveryView(ctx, snapshot, {
+      questionId: active.id,
+      title: '业务建模 · 等待回答',
+      choices: ['回答', FINISH_DISCOVERY],
+      signal,
+    });
     if (action === FINISH_DISCOVERY) return { kind: 'finish' };
     return action === '回答'
       ? { kind: 'question', question: active, mode: '事实或决定' }
       : undefined;
   }
-  const view = contractViewLines(snapshot).join('\n');
   const pending = pendingQuestions(snapshot);
   // Current question first; history is for voluntary context switching/corrections, not a checklist.
   const choices = [
@@ -142,25 +146,30 @@ async function selectDiscoveryAction(
   while (true) {
     const selected =
       selectedId ||
-      (await ctx.ui.select(
-        `选择合同／履约问题（历史问题可更正）\n${view}`,
-        [
+      (await selectDiscoveryView(ctx, snapshot, {
+        title: '选择业务问题（历史问题可更正）',
+        choices: [
           ...choices.map((q) => questionLabel(snapshot, q.id)),
           ...(discovering ? [FINISH_DISCOVERY] : []),
         ],
-        { signal },
-      ));
+        signal,
+      }));
     selectedId = '';
     if (discovering && selected === FINISH_DISCOVERY) return { kind: 'finish' };
     const question = snapshot.questions.find(
       (q) => q.id === selected?.split(' ')[0],
     );
     if (!question) return;
-    const mode = await ctx.ui.select(
-      `${contractViewLines(snapshot, { questionId: question.id }).join('\n')}\n如何处理这个问题？`,
-      [...answerModes.keys(), ...(discovering ? [SKIP_QUESTION] : []), back],
-      { signal },
-    );
+    const mode = await selectDiscoveryView(ctx, snapshot, {
+      questionId: question.id,
+      title: '如何处理这个问题？',
+      choices: [
+        ...answerModes.keys(),
+        ...(discovering ? [SKIP_QUESTION] : []),
+        back,
+      ],
+      signal,
+    });
     if (mode === back) continue;
     if (!mode) return;
     return { kind: 'question', question, mode };
@@ -265,10 +274,12 @@ async function collectIdleAnswer(
   if (signal.aborted) return;
   await assertCurrent();
   const previous = latestAnswer(snapshot, question.id);
-  const text = await ctx.ui.editor(
-    `${contractViewLines(snapshot, { questionId: question.id }).join('\n')}\n回答者：${respondent}（自动记录）`,
-    previous?.text ?? '',
-  );
+  const text = await editDiscoveryView(ctx, snapshot, {
+    question,
+    respondent,
+    prefill: previous?.text ?? '',
+    signal,
+  });
   if (text === undefined || !text.trim() || signal.aborted) return;
   const saved = await withModelingLock(ctx.cwd, async () => {
     const current = await assertCurrent();

@@ -27,6 +27,7 @@
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.85.0",
     "@earendil-works/pi-server": "0.85.0",
+    "@earendil-works/pi-tui": "0.85.0",
     "@eslint/js": "^9.8.0",
     "@nx/eslint": "23.2.0",
     "@nx/eslint-plugin": "23.2.0",
