@@ -99,6 +99,49 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     expect(resumed).toContain('当前展开：支付分成');
   });
 
+  it.each([
+    [
+      'recursive responsibility discovery',
+      [
+        '逐项检查主要履约的违约情况',
+        '对新增的补偿履约重复检查',
+        '不因已有一项赔付就认为整个合同的异常已覆盖',
+        '直到有依据地确认只能诉诸法律',
+      ],
+    ],
+    [
+      'sourced suggestions and terminal branches',
+      [
+        '先展示“前序履约 → 违约触发条件 → 新履约候选”',
+        '缺少责任约定时，提出具体违约情景和责任缺口',
+        '不默认存在罚息、退款、赔偿或直接诉讼',
+        '自动作废且不产生额外义务',
+        '不能仅因由系统自动执行就排除真实的退款或赔付义务',
+        'parentFulfillmentRef',
+      ],
+    ],
+    [
+      'bounded interaction and recorded gaps',
+      [
+        '逐项检查是 Agent 的分析责任，不是预排问卷',
+        '未检查、待核实、已明确新责任、已明确终点',
+        '未知、跳过、暂缓和范围外都不等于责任链已经闭合',
+        '人工停止后只保存已知结论与缺口',
+        '不新建结构化检查表或第二套状态字段',
+      ],
+    ],
+  ])('injects %s on initial and resumed discovery', async (_name, rules) => {
+    const h = await setup();
+    const first = await h.prompt();
+    await saveDiscoveryContent(h.root, h.state, contractContent());
+    const resumed = await h.prompt();
+    for (const prompt of [first, resumed]) {
+      for (const rule of rules) expect(prompt).toContain(rule);
+      expect(prompt).toContain('每轮只问一个核心问题');
+      expect(prompt).toContain('不换 Q-ID 重问同一缺口');
+    }
+  });
+
   it('loads mandatory evidence time knowledge on the first discovery turn', async () => {
     const h = await setup();
     const prompt = (await h.prompt()).replace(/[ \t]+/g, ' ');
