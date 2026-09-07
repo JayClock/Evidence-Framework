@@ -243,12 +243,6 @@ function statusMarkdown(
   return `${lines.join('\n')}\n`;
 }
 
-function sessionName(state: EvidenceState): string {
-  if (state.phase === 'complete') return 'evidence:complete';
-  const subject = state.phase === 'coding' ? currentCodingStory(state) : null;
-  return `evidence:${state.phase}${subject ? `:${subject}` : ''}:r${state.round}`;
-}
-
 function clearStatusDisplay(ctx: ExtensionContext): void {
   // Remove displays left by an earlier extension load; status now lives in messages.
   ctx.ui.setWidget('evidence', undefined);
@@ -557,7 +551,6 @@ async function startIdleWork(
     appendHistory(state, 'work_started', subjectLabel(state));
     await saveState(ctx.cwd, state);
 
-    pi.setSessionName(sessionName(state));
     pi.sendUserMessage(prompt);
   } catch (error) {
     state.status = 'blocked';
@@ -911,12 +904,10 @@ async function reviewCurrentGate(
 
   if (state.phase === 'complete') {
     ctx.ui.notify('Evidence 全部阶段已完成。', 'info');
-    pi.setSessionName('evidence:complete');
     return;
   }
 
   if (!config.newSessionPerPhase) {
-    pi.setSessionName(sessionName(state));
     ctx.ui.setEditorText('/evidence-run');
     ctx.ui.notify(
       `已进入 ${transition.nextPhase}，运行 /evidence-run 继续。`,
@@ -1507,7 +1498,6 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       await saveState(ctx.cwd, state);
       const config = await loadConfig(ctx.cwd);
       await applyPhaseProfile(pi, ctx, state, config);
-      pi.setSessionName(sessionName(state));
 
       ctx.ui.notify(
         'Evidence 已初始化，直接开始问题定位与交互式建模。',
@@ -1714,7 +1704,6 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       await saveState(ctx.cwd, state);
     }
     await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
-    pi.setSessionName(sessionName(state));
   });
 
   pi.on('before_agent_start', async (event, ctx) => {
