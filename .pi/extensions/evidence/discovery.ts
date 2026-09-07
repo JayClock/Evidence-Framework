@@ -4,6 +4,7 @@ import { realpath } from 'node:fs/promises';
 import { Value } from 'typebox/value';
 import {
   DiscoverySnapshotSchema,
+  type DiscussionTarget,
   type DiscoveryAnswer,
   type DiscoveryContent,
   type DiscoveryQuestion,
@@ -65,7 +66,7 @@ export async function loadDiscovery(
 ): Promise<DiscoverySnapshot> {
   if (!state.discovery.path) {
     return {
-      version: 1,
+      version: 3,
       runId: state.runId,
       revision: 0,
       previousDigest: null,
@@ -73,6 +74,12 @@ export async function loadDiscovery(
       sourceHashes: {},
       questions: [],
       answers: [],
+      interaction: {
+        stopped: false,
+        deferredQuestionIds: [],
+        activeQuestionId: null,
+        needsConsolidation: false,
+      },
       draft: null,
       recordedAt: '',
     };
@@ -88,6 +95,15 @@ export async function loadDiscovery(
   } catch {
     throw new Error('发现快照不是有效 JSON');
   }
+  if (
+    snapshot &&
+    typeof snapshot === 'object' &&
+    'version' in snapshot &&
+    snapshot.version !== 3
+  )
+    throw new Error(
+      '仅支持发现快照 v3，不迁移旧快照；请先备份，再由人工 /evidence-reset 并 /evidence-init',
+    );
   if (
     !Value.Check(DiscoverySnapshotSchema, snapshot) ||
     snapshot.runId !== state.runId ||
@@ -172,10 +188,12 @@ export function unansweredQuestions(
 export function pendingQuestions(
   snapshot: DiscoverySnapshot,
 ): DiscoveryQuestion[] {
-  if (snapshot.interaction?.stopped) return [];
-  const deferred = new Set(snapshot.interaction?.deferredQuestionIds);
+  if (snapshot.interaction.stopped || snapshot.interaction.needsConsolidation)
+    return [];
+  const active = snapshot.interaction.activeQuestionId;
+  const deferred = new Set(snapshot.interaction.deferredQuestionIds);
   return unansweredQuestions(snapshot).filter(
-    (question) => !deferred.has(question.id),
+    (question) => !deferred.has(question.id) && active === question.id,
   );
 }
 
@@ -203,10 +221,7 @@ export async function controlDiscoveryInteraction(
   )
     throw new Error('请在未暂停且空闲的 Modeling 发现阶段操作');
   const snapshot = await loadDiscovery(root, state);
-  const interaction = snapshot.interaction ?? {
-    stopped: false,
-    deferredQuestionIds: [],
-  };
+  const interaction = snapshot.interaction;
   if (action === 'skip') {
     if (
       !questionId ||
@@ -216,9 +231,17 @@ export async function controlDiscoveryInteraction(
     interaction.deferredQuestionIds = [
       ...new Set([...interaction.deferredQuestionIds, questionId]),
     ];
+    interaction.activeQuestionId = null;
+    interaction.needsConsolidation = true;
   } else {
     interaction.stopped = action === 'finish';
-    if (action === 'resume') interaction.deferredQuestionIds = [];
+    if (action === 'resume') {
+      interaction.deferredQuestionIds = [];
+      if (interaction.needsConsolidation) interaction.activeQuestionId = null;
+      else
+        interaction.activeQuestionId =
+          unansweredQuestions(snapshot)[0]?.id ?? null;
+    }
   }
   snapshot.interaction = interaction;
   snapshot.draft = null;
@@ -238,25 +261,40 @@ export async function askQuestions(
   questions: DiscoveryQuestion[],
 ): Promise<void> {
   const snapshot = await loadDiscovery(root, state);
-  if (snapshot.interaction?.stopped)
+  if (snapshot.interaction.stopped)
     throw new Error(
       '人工已结束本轮问答；仅整理已有信息。由人工运行 /evidence-discovery resume 后才能重新提问',
     );
+  if (questions.length !== 1)
+    throw new Error('每次只提出一个核心问题；不要将多个问题塞进一题');
+  assertConsolidated(snapshot);
   if (pendingQuestions(snapshot).length)
     throw new Error('仍有待回答问题，请先运行 /evidence-answer');
-  const ids = new Set(snapshot.questions.map((question) => question.id));
-  for (const question of questions) {
-    if (ids.has(question.id)) throw new Error(`问题 ID 已存在：${question.id}`);
-    ids.add(question.id);
-    validateRefs(snapshot, question.sourceRefs, false);
-  }
-  if (
-    !questions.length ||
-    questions.length > 4 ||
-    snapshot.questions.length + questions.length > 500
-  )
-    throw new Error('每次提出 1–4 个相关问题，单次发现最多 500 个问题');
-  snapshot.questions.push(...questions);
+  const question = questions[0];
+  const existing = snapshot.questions.find((q) => q.id === question.id);
+  if (existing) {
+    if (
+      latestAnswer(snapshot, question.id) ||
+      snapshot.interaction.deferredQuestionIds.includes(question.id)
+    )
+      throw new Error('已回答或暂缓的问题不能自动重问；请由人工补充或恢复问答');
+    if (
+      existing.focus !== question.focus ||
+      existing.prompt !== question.prompt ||
+      existing.impact !== question.impact ||
+      existing.blocking !== question.blocking ||
+      JSON.stringify(existing.sourceRefs) !==
+        JSON.stringify(question.sourceRefs) ||
+      existing.target?.contractRef !== question.target?.contractRef ||
+      existing.target?.fulfillmentRef !== question.target?.fulfillmentRef
+    )
+      throw new Error('重用历史未答问题必须保持原文；新的缺口使用新 Q-ID');
+  } else if (snapshot.questions.length >= 500)
+    throw new Error('单次发现最多 500 个问题');
+  validateRefs(snapshot, question.sourceRefs, false);
+  assertDiscussionTarget(snapshot, question.target);
+  if (!existing) snapshot.questions.push(question);
+  snapshot.interaction.activeQuestionId = question.id;
   snapshot.draft = null;
   reopenDiscovery(state);
   state.status = 'waiting_answer';
@@ -279,15 +317,23 @@ export async function answerQuestion(
     id: `A-${String(snapshot.answers.length + 1).padStart(3, '0')}`,
     recordedAt: new Date().toISOString(),
   });
-  if (snapshot.interaction)
-    snapshot.interaction.deferredQuestionIds =
-      snapshot.interaction.deferredQuestionIds.filter(
-        (id) => id !== answer.questionId,
-      );
+  snapshot.interaction.deferredQuestionIds =
+    snapshot.interaction.deferredQuestionIds.filter(
+      (id) => id !== answer.questionId,
+    );
   snapshot.draft = null;
+  snapshot.interaction.activeQuestionId = null;
+  snapshot.interaction.needsConsolidation = true;
   reopenDiscovery(state);
-  state.status = pendingQuestions(snapshot).length ? 'waiting_answer' : 'ready';
+  state.status = 'ready';
   await persistDiscovery(root, state, snapshot);
+}
+
+export function assertConsolidated(snapshot: DiscoverySnapshot): void {
+  if (snapshot.interaction.needsConsolidation)
+    throw new Error(
+      '先保存消化结果，再决定下一问或执行草稿／定稿校验；回答和跳过不能直接当作已更新的模型',
+    );
 }
 
 function validateRefs(
@@ -308,6 +354,72 @@ function validateRefs(
       throw new Error(`未知/排除回答不能支持正式事实：${ref}`);
   }
   if (explicit && !refs.length) throw new Error('明确事实和场景预期必须有来源');
+}
+
+export function assertDiscussionTarget(
+  snapshot: DiscoverySnapshot,
+  target: DiscussionTarget,
+): void {
+  if (target === null) return;
+  const contract = snapshot.content?.contractView.contracts.find(
+    (c) => c.contextRef === target.contractRef,
+  );
+  if (
+    !contract ||
+    (target.fulfillmentRef !== null &&
+      !contract.fulfillments.some(
+        (f) => f.candidateRef === target.fulfillmentRef,
+      ))
+  )
+    throw new Error('讨论目标必须属于已记录的合同及其履约项');
+}
+
+export function assertDiscoveryContracts(snapshot: DiscoverySnapshot): void {
+  const view = snapshot.content?.contractView;
+  if (!view) return;
+  const used = new Set<string>();
+  const candidate = (ref: string) => {
+    if (used.has(ref)) throw new Error(`合同、角色或履约候选重复占用：${ref}`);
+    used.add(ref);
+    const value = snapshot.content?.candidates.find((c) => c.id === ref);
+    if (!value) throw new Error(`合同视图引用的候选不存在：${ref}`);
+    validateRefs(snapshot, value.sourceRefs, value.confidence === 'explicit');
+    return value;
+  };
+  for (const contract of view.contracts) {
+    const context = candidate(contract.contextRef);
+    validateRefs(
+      snapshot,
+      contract.sourceRefs,
+      context.confidence === 'explicit',
+    );
+    for (const role of contract.roleRefs) if (role !== null) candidate(role);
+    const items = new Map(
+      contract.fulfillments.map((f) => [f.candidateRef, f]),
+    );
+    for (const item of contract.fulfillments) {
+      const value = candidate(item.candidateRef);
+      validateRefs(snapshot, item.sourceRefs, value.confidence === 'explicit');
+      const { rightHolderRef, obligorRef } = item;
+      if (rightHolderRef !== null && rightHolderRef === obligorRef)
+        throw new Error('履约权利方和义务方不能相同');
+      for (const role of [rightHolderRef, obligorRef])
+        if (role !== null && !contract.roleRefs.includes(role))
+          throw new Error('履约权责方必须属于当前合同双方');
+      if ((item.parentFulfillmentRef === null) !== (item.trigger === null))
+        throw new Error('异常履约必须同时记录前序履约与触发条件');
+      const visited = new Set([item.candidateRef]);
+      let parent = item.parentFulfillmentRef;
+      while (parent !== null) {
+        if (visited.has(parent)) throw new Error('异常履约关系不能循环');
+        visited.add(parent);
+        const predecessor = items.get(parent);
+        if (!predecessor) throw new Error('异常履约的前序项必须属于同一合同');
+        parent = predecessor.parentFulfillmentRef;
+      }
+    }
+  }
+  assertDiscussionTarget(snapshot, view.current);
 }
 
 function allowedSourcePath(path: string): boolean {
@@ -369,12 +481,13 @@ export async function saveDiscoveryContent(
     );
   for (const scenario of content.cases)
     validateRefs(snapshot, scenario.sourceRefs, true);
+  assertDiscoveryContracts(snapshot);
   snapshot.sourceHashes = await captureSources(root, content);
+  snapshot.interaction.needsConsolidation = false;
   snapshot.draft = null;
   reopenDiscovery(state);
   state.status =
-    snapshot.interaction?.stopped &&
-    unresolvedBlockingQuestions(snapshot).length
+    snapshot.interaction.stopped && unresolvedBlockingQuestions(snapshot).length
       ? 'ready'
       : 'running';
   await persistDiscovery(root, state, snapshot);
@@ -405,6 +518,8 @@ export async function assertDiscoveryReady(
   if (predecessor !== null) throw new Error('发现历史链起点无效');
   if (!snapshot.content || !Object.keys(snapshot.sourceHashes).length)
     throw new Error('尚未保存范围、来源、候选及场景回放记录');
+  assertDiscoveryContracts(snapshot);
+  assertConsolidated(snapshot);
   const blockers = unresolvedBlockingQuestions(snapshot);
   if (blockers.length)
     throw new Error(`阻塞问题未解决：${blockers.map((q) => q.id).join('、')}`);

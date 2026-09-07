@@ -1,7 +1,7 @@
 import { rm } from 'node:fs/promises';
 import { afterEach, describe, expect, it } from 'vitest';
 import { qualityHarness } from './quality-test-support.ts';
-import { discoveryContent } from './discovery-test-support.ts';
+import { discoveryContent, seedQuestions } from './discovery-test-support.ts';
 import {
   assertDiscoveryReady,
   controlDiscoveryInteraction,
@@ -33,17 +33,19 @@ async function setup(blocking = true) {
     expectedRevision: 0,
     content: discoveryContent(),
   });
-  await h.tool('evidence_ask_questions', {
-    expectedRevision: 1,
-    questions: ['Q-001', 'Q-002'].map((id) => ({
+  await seedQuestions(
+    h.root,
+    (await loadState(h.root))!,
+    ['Q-001', 'Q-002'].map((id) => ({
       id,
       focus: 'domain',
+      target: null,
       prompt: `${id} 如何识别重复客户？`,
       impact: '决定身份规则',
       blocking,
       sourceRefs: ['INPUT'],
     })),
-  });
+  );
   h.api.exec.mockResolvedValue({
     code: 0,
     killed: false,
@@ -65,34 +67,36 @@ describe('manual discovery interaction controls', () => {
     expect(h.ui.editor).not.toHaveBeenCalled();
     expect(h.api.exec).not.toHaveBeenCalled();
     expect((await current(h)).snapshot.answers).toEqual([]);
-    expect((await current(h)).state.status).toBe('waiting_answer');
+    expect((await current(h)).state.status).toBe('running');
+    await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-answer', 'Q-002');
     expect((await current(h)).state).toMatchObject({
-      status: 'ready',
+      status: 'running',
       round: 0,
     });
     await h.command('evidence-run');
     expect(h.api.sendUserMessage).toHaveBeenLastCalledWith(
       expect.stringContaining('暂缓问题：Q-001、Q-002'),
     );
+    await h.tool('evidence_save_discovery', {
+      expectedRevision: (await current(h)).state.discovery.revision,
+      content: discoveryContent(),
+    });
     await expect(
       assertDiscoveryReady(h.root, (await current(h)).state),
     ).rejects.toThrow('阻塞问题未解决');
   });
 
   it.each(['evidence-answer', 'evidence-next'])(
-    'places finish beside scenarios in the first menu of %s',
+    'offers only answer or finish for the current question in %s',
     async (command) => {
       const h = await setup();
       h.ui.select.mockResolvedValue(finish);
       await h.command(command);
       expect(h.ui.select).toHaveBeenCalledExactlyOnceWith(
-        '选择场景／问题（已回答的问题可更正）',
-        [
-          'Q-001 Q-001 如何识别重复客户？',
-          'Q-002 Q-002 如何识别重复客户？',
-          finish,
-        ],
+        expect.stringContaining('当前问题：Q-001'),
+        ['回答', finish],
+        { signal: expect.any(AbortSignal) },
       );
       expect(h.ui.editor).not.toHaveBeenCalled();
       expect(h.api.exec).not.toHaveBeenCalled();
@@ -136,7 +140,7 @@ describe('manual discovery interaction controls', () => {
         text: '按客户编号判断。',
       }),
     ]);
-    expect((await current(h)).state.status).toBe('waiting_answer');
+    expect((await current(h)).state.status).toBe('running');
   });
 
   it('does not write anything when returning to scenario selection and cancelling', async () => {
@@ -159,6 +163,7 @@ describe('manual discovery interaction controls', () => {
     await h.command('evidence-answer', 'Q-001');
     const before = await current(h);
     const original = await readText(h.root, before.state.discovery.path!);
+    await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-discovery', 'finish');
     let saved = await current(h);
     expect(saved.snapshot.answers).toEqual(before.snapshot.answers);
@@ -227,8 +232,10 @@ describe('manual discovery interaction controls', () => {
     const h = await setup();
     h.ui.select.mockResolvedValue(skip);
     await h.command('evidence-answer', 'Q-001');
+    await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-answer', 'Q-002');
     for (const id of ['Q-001', 'Q-002']) {
+      await h.events.get('agent_settled')!({}, h.ctx);
       h.ui.select.mockResolvedValue('事实或决定');
       h.ui.editor.mockResolvedValue('客户编号唯一。');
       await h.command('evidence-answer', id);
@@ -236,6 +243,10 @@ describe('manual discovery interaction controls', () => {
     expect(
       (await current(h)).snapshot.interaction?.deferredQuestionIds,
     ).toEqual([]);
+    await h.tool('evidence_save_discovery', {
+      expectedRevision: (await current(h)).state.discovery.revision,
+      content: discoveryContent(),
+    });
     await expect(
       assertDiscoveryReady(h.root, (await current(h)).state),
     ).resolves.toBeDefined();
@@ -245,7 +256,13 @@ describe('manual discovery interaction controls', () => {
     const h = await setup();
     h.ui.select.mockResolvedValue(skip);
     await h.command('evidence-answer', 'Q-001');
+    await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-answer', 'Q-002');
+    await h.tool('evidence_save_discovery', {
+      expectedRevision: (await current(h)).state.discovery.revision,
+      content: discoveryContent(),
+    });
+    await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-discovery', 'resume');
     expect((await current(h)).state.status).toBe('waiting_answer');
     expect(
@@ -276,6 +293,8 @@ describe('manual discovery interaction controls', () => {
     expect((await current(h)).snapshot.interaction).toEqual({
       stopped: true,
       deferredQuestionIds: [],
+      activeQuestionId: 'Q-001',
+      needsConsolidation: false,
     });
     expect((await current(h)).state.discovery.revision).toBe(3);
   });
@@ -285,6 +304,7 @@ describe('manual discovery interaction controls', () => {
     h.ui.select.mockResolvedValue('事实或决定');
     h.ui.editor.mockResolvedValue('按客户编号判断。');
     await h.command('evidence-answer', 'Q-001');
+    await h.events.get('agent_settled')!({}, h.ctx);
     const before = await readText(h.root, '.evidence/state.json');
     h.ui.select.mockResolvedValue(skip);
     await expect(h.command('evidence-answer', 'Q-001')).rejects.toThrow(

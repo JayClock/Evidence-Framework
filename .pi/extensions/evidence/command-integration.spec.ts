@@ -72,6 +72,7 @@ describe('evidence-init command', () => {
     const context = {
       cwd: root,
       hasUI: true,
+      isIdle: vi.fn(() => true),
       waitForIdle: vi.fn().mockResolvedValue(undefined),
       modelRegistry: { find: vi.fn() },
       ui: {

@@ -7,6 +7,7 @@ import {
   type ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
+import { loadContractView } from './discovery-contract-view.ts';
 import {
   runCodingChecks,
   runDocumentChecks,
@@ -70,7 +71,6 @@ import {
 
 import {
   DISCOVERY_TOOL_NAMES,
-  collectAnswer,
   registerDiscoveryTools,
 } from './discovery-tools.ts';
 import { requireFinalizing, withModelingLock } from './discovery.ts';
@@ -186,22 +186,6 @@ function statusIcon(status: EvidenceState['status']): string {
   }
 }
 
-function statusColor(
-  status: EvidenceState['status'],
-): 'accent' | 'error' | 'success' | 'warning' {
-  switch (status) {
-    case 'blocked':
-      return 'error';
-    case 'waiting_answer':
-    case 'waiting_review':
-      return 'warning';
-    case 'complete':
-      return 'success';
-    default:
-      return 'accent';
-  }
-}
-
 function progressText(state: EvidenceState): string {
   if (state.phase === 'complete') return '5/5';
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
@@ -220,7 +204,10 @@ function progressText(state: EvidenceState): string {
   return `${current}/${total} artifacts`;
 }
 
-function statusMarkdown(state: EvidenceState): string {
+function statusMarkdown(
+  state: EvidenceState,
+  contractView: string[] = [],
+): string {
   const lines = [
     '# Evidence 状态',
     '',
@@ -246,6 +233,13 @@ function statusMarkdown(state: EvidenceState): string {
     lines.push(`- TDD 检查点：\`${state.coding.tdd.stage}\``);
   if (state.lastError) lines.push(`- 最近错误：${state.lastError}`);
   if (state.feedback) lines.push('', '## 当前反馈', '', state.feedback);
+  if (contractView.length)
+    lines.push(
+      '',
+      '## 合同履约权责',
+      '',
+      ...contractView.map((line) => `- ${line}`),
+    );
   return `${lines.join('\n')}\n`;
 }
 
@@ -255,39 +249,11 @@ function sessionName(state: EvidenceState): string {
   return `evidence:${state.phase}${subject ? `:${subject}` : ''}:r${state.round}`;
 }
 
-function updateUi(ctx: ExtensionContext, state: EvidenceState | null): void {
-  if (!state) {
-    ctx.ui.setStatus('evidence', undefined);
-    ctx.ui.setWidget('evidence', undefined);
-    return;
-  }
-
-  const color = statusColor(state.status);
-  const paused = state.paused ? ' paused' : '';
-  ctx.ui.setStatus(
-    'evidence',
-    ctx.ui.theme.fg(
-      color,
-      `${statusIcon(state.status)} evidence:${state.phase}${paused}`,
-    ),
-  );
-  ctx.ui.setWidget(
-    'evidence',
-    (_tui, theme) => ({
-      render: () => [
-        theme.fg(
-          'muted',
-          `Evidence · ${phaseLabel(state)} · ${subjectLabel(state)}`,
-        ),
-        theme.fg(
-          'dim',
-          `${progressText(state)} · round ${state.round} · ${state.status}${state.paused ? ' · paused' : ''}`,
-        ),
-      ],
-      invalidate: () => {},
-    }),
-    { placement: 'belowEditor' },
-  );
+function clearStatusDisplay(ctx: ExtensionContext): void {
+  // Remove displays left by an earlier extension load; status now lives in messages.
+  ctx.ui.setWidget('evidence', undefined);
+  ctx.ui.setStatus('evidence', undefined);
+  ctx.ui.setStatus('evidence-check', undefined);
 }
 
 function configuredTools(state: EvidenceState): string[] {
@@ -484,7 +450,7 @@ async function finishPhaseSubmission(
     );
     await applyPhaseProfile(pi, ctx, state, config);
   }
-  updateUi(ctx, state);
+
   return message;
 }
 
@@ -534,6 +500,14 @@ async function startCurrentWork(
   ctx: ExtensionCommandContext,
 ): Promise<void> {
   await ctx.waitForIdle();
+  await startIdleWork(pi, ctx);
+}
+
+async function startIdleWork(
+  pi: ExtensionAPI,
+  ctx: ExtensionContext,
+): Promise<void> {
+  if (!ctx.isIdle()) return;
   const state = await loadRequiredState(ctx);
   if (!state) return;
   if (state.phase === 'complete' || state.status === 'complete') {
@@ -582,7 +556,7 @@ async function startCurrentWork(
     state.lastError = null;
     appendHistory(state, 'work_started', subjectLabel(state));
     await saveState(ctx.cwd, state);
-    updateUi(ctx, state);
+
     pi.setSessionName(sessionName(state));
     pi.sendUserMessage(prompt);
   } catch (error) {
@@ -590,7 +564,7 @@ async function startCurrentWork(
     state.lastError = (error as Error).message;
     appendHistory(state, 'work_start_failed', state.lastError);
     await saveState(ctx.cwd, state);
-    updateUi(ctx, state);
+
     ctx.ui.notify(state.lastError, 'error');
   }
 }
@@ -630,9 +604,6 @@ async function runCurrentCheck(
       state,
       config,
       storyId,
-      onProgress: (message) => {
-        ctx.ui.setStatus('evidence-check', ctx.ui.theme.fg('warning', message));
-      },
       timeoutMs: config.commandTimeoutMs,
     });
     ctx.ui.setStatus('evidence-check', undefined);
@@ -686,9 +657,6 @@ async function runCurrentCheck(
       state,
       config,
       timeoutMs: config.commandTimeoutMs,
-      onProgress: (message) => {
-        ctx.ui.setStatus('evidence-check', ctx.ui.theme.fg('warning', message));
-      },
     });
   } else if (state.phase === 'modeling') {
     result = await runModelingChecks({
@@ -696,9 +664,6 @@ async function runCurrentCheck(
       root: ctx.cwd,
       state,
       timeoutMs: config.commandTimeoutMs,
-      onProgress: (message) => {
-        ctx.ui.setStatus('evidence-check', ctx.ui.theme.fg('warning', message));
-      },
     });
   } else {
     result = await runDocumentChecks(ctx.cwd, state);
@@ -763,7 +728,7 @@ async function requestChanges(
   if (state.status === 'blocked') state.round = 0;
   requestRevision(state, feedback, config.maxRounds);
   await saveState(ctx.cwd, state);
-  updateUi(ctx, state);
+
   ctx.ui.setEditorText('/evidence-run');
   ctx.ui.notify(
     state.status === 'blocked'
@@ -841,7 +806,6 @@ async function createLocalCheckpoint(
   } else {
     ctx.ui.notify(`已创建本地 Git 检查点：${message}`, 'info');
   }
-  updateUi(ctx, state);
 }
 
 async function reviewCurrentGate(
@@ -878,7 +842,7 @@ async function reviewCurrentGate(
   if (decision === '重新运行质量检查') {
     await runCurrentCheck(pi, ctx, state, config);
     const refreshed = await loadState(ctx.cwd);
-    updateUi(ctx, refreshed);
+
     ctx.ui.notify(
       refreshed?.lastError ? '质量检查未通过。' : '质量检查完成。',
       refreshed?.lastError ? 'error' : 'info',
@@ -909,8 +873,6 @@ async function reviewCurrentGate(
     if (edited === undefined || edited === original) return;
     await writeTextAtomic(ctx.cwd, selected, normalizeMarkdown(edited));
     await runCurrentCheck(pi, ctx, state, config);
-    const refreshed = await loadState(ctx.cwd);
-    updateUi(ctx, refreshed);
     ctx.ui.notify(
       '工件已保存并重新检查，请再次运行 /evidence-review。',
       'info',
@@ -946,7 +908,6 @@ async function reviewCurrentGate(
     checkpointFiles,
     `evidence(${gate.phase}): approve ${gate.subject}`,
   );
-  updateUi(ctx, state);
 
   if (state.phase === 'complete') {
     ctx.ui.notify('Evidence 全部阶段已完成。', 'info');
@@ -985,11 +946,34 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     state: EvidenceState,
   ) => {
     await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
-    updateUi(ctx, state);
   };
-  const startDiscoveryWork = (ctx: ExtensionCommandContext) =>
-    startCurrentWork(pi, ctx);
-  registerDiscoveryTools(pi, refreshDiscovery, startDiscoveryWork);
+  const startDiscoveryWork = async (
+    ctx: ExtensionContext,
+    expected?: EvidenceState,
+  ) => {
+    if (!ctx.isIdle()) return;
+    await withModelingLock(ctx.cwd, async () => {
+      const current = await loadState(ctx.cwd);
+      if (
+        !current ||
+        !ctx.isIdle() ||
+        current.phase !== 'modeling' ||
+        current.paused ||
+        current.status !== 'ready' ||
+        (expected &&
+          (current.runId !== expected.runId ||
+            current.discovery.revision !== expected.discovery.revision))
+      )
+        return;
+      // Event contexts cannot waitForIdle; settled handlers recheck idle without holding up the agent loop.
+      await startIdleWork(pi, ctx);
+    });
+  };
+  const discovery = registerDiscoveryTools(
+    pi,
+    refreshDiscovery,
+    startDiscoveryWork,
+  );
   pi.registerTool({
     name: 'evidence_submit_artifact',
     label: 'Submit Evidence Artifact',
@@ -1062,7 +1046,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           if (config.autoContinueArtifacts) {
             state.status = 'running';
             await saveState(ctx.cwd, state);
-            updateUi(ctx, state);
+
             const nextPrompt = await buildCurrentPrompt(ctx.cwd, state, config);
             pi.sendUserMessage(nextPrompt, { deliverAs: 'followUp' });
             return {
@@ -1078,7 +1062,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           }
           state.status = 'ready';
           await saveState(ctx.cwd, state);
-          updateUi(ctx, state);
+
           return {
             content: [
               {
@@ -1273,7 +1257,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         state.status = config.autoContinueArtifacts ? 'running' : 'ready';
         await saveState(ctx.cwd, state);
         await applyPhaseProfile(pi, ctx, state, config);
-        updateUi(ctx, state);
+
         if (config.autoContinueArtifacts)
           pi.sendUserMessage(await buildCurrentPrompt(ctx.cwd, state, config), {
             deliverAs: 'followUp',
@@ -1298,7 +1282,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     },
   });
 
-  registerTddTools(pi, updateUi);
+  registerTddTools(pi);
 
   pi.registerTool({
     name: 'evidence_complete_story',
@@ -1458,7 +1442,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           );
           await applyPhaseProfile(pi, ctx, state, config);
         }
-        updateUi(ctx, state);
+
         return {
           content: [{ type: 'text', text: message }],
           details: {
@@ -1524,7 +1508,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       const config = await loadConfig(ctx.cwd);
       await applyPhaseProfile(pi, ctx, state, config);
       pi.setSessionName(sessionName(state));
-      updateUi(ctx, state);
+
       ctx.ui.notify(
         'Evidence 已初始化，直接开始问题定位与交互式建模。',
         'info',
@@ -1545,10 +1529,12 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       if (!state) return;
       pi.sendMessage({
         customType: 'evidence-status',
-        content: statusMarkdown(state),
+        content: statusMarkdown(
+          state,
+          await loadContractView(ctx.cwd, state, true),
+        ),
         display: true,
       });
-      updateUi(ctx, state);
     },
   });
 
@@ -1575,7 +1561,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         await ensureCodingStories(ctx.cwd, state);
         await runCurrentCheck(pi, ctx, state, config);
         const refreshed = await loadState(ctx.cwd);
-        updateUi(ctx, refreshed);
+
         ctx.ui.notify(
           refreshed?.lastError ? '检查未通过，请查看报告。' : '检查通过。',
           refreshed?.lastError ? 'error' : 'info',
@@ -1599,7 +1585,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       if (!state) return;
       if (state.status === 'waiting_review') await reviewCurrentGate(pi, ctx);
       else if (state.status === 'waiting_answer')
-        await collectAnswer(pi, ctx, refreshDiscovery, '', startDiscoveryWork);
+        await discovery.collectAnswer(ctx);
       else await startCurrentWork(pi, ctx);
     },
   });
@@ -1644,7 +1630,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       moveBackOnePhase(state);
       await saveState(ctx.cwd, state);
       await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
-      updateUi(ctx, state);
+
       ctx.ui.setEditorText('/evidence-run');
       ctx.ui.notify(`已回退到 ${previous}。`, 'info');
     },
@@ -1664,7 +1650,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
           pi.getAllTools().some((tool) => tool.name === name),
         ),
       );
-      updateUi(ctx, state);
+
       ctx.ui.notify(
         'Evidence 已暂停。运行 /evidence-resume 恢复阶段约束。',
         'info',
@@ -1682,7 +1668,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       appendHistory(state, 'workflow_resumed');
       await saveState(ctx.cwd, state);
       await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
-      updateUi(ctx, state);
+
       ctx.ui.notify('Evidence 阶段约束已恢复。', 'info');
     },
   });
@@ -1706,7 +1692,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       );
       if (!confirmed) return;
       await removeWorkflowState(ctx.cwd, removeArtifacts);
-      updateUi(ctx, null);
+
       pi.setActiveTools(
         NORMAL_TOOLS.filter((name) =>
           pi.getAllTools().some((tool) => tool.name === name),
@@ -1717,11 +1703,9 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
   });
 
   pi.on('session_start', async (_event, ctx) => {
+    clearStatusDisplay(ctx);
     const state = await loadState(ctx.cwd);
-    if (!state) {
-      updateUi(ctx, null);
-      return;
-    }
+    if (!state) return;
     if (state.status === 'running') {
       state.status = 'ready';
       state.lastError =
@@ -1731,7 +1715,6 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     }
     await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
     pi.setSessionName(sessionName(state));
-    updateUi(ctx, state);
   });
 
   pi.on('before_agent_start', async (event, ctx) => {
@@ -1765,7 +1748,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
         discovering ? 'info' : 'warning',
       );
     }
-    updateUi(ctx, state);
+    await discovery.offerQuestion(ctx);
   });
 
   pi.on('tool_call', async (event, ctx) => {

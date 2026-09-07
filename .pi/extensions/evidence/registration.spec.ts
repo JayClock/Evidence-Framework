@@ -48,6 +48,7 @@ describe('extension registration', () => {
       'evidence-reset',
     ]);
     expect(events).toEqual([
+      'session_shutdown',
       'session_start',
       'before_agent_start',
       'agent_settled',

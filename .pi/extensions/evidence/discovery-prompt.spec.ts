@@ -4,12 +4,8 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
 import { getPhaseDefinition } from './phases.ts';
-import {
-  answerQuestion,
-  askQuestions,
-  saveDiscoveryContent,
-} from './discovery.ts';
-import { discoveryContent } from './discovery-test-support.ts';
+import { answerQuestion, saveDiscoveryContent } from './discovery.ts';
+import { discoveryContent, seedQuestions } from './discovery-test-support.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -50,6 +46,7 @@ async function setup() {
 const question = {
   id: 'Q-001',
   focus: 'responsibilities',
+  target: null,
   prompt: '双方分别承诺什么？',
   impact: '识别真实约定义务，而不是把每个动作当作履约。',
   blocking: true,
@@ -108,9 +105,9 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     },
   );
 
-  it('waits for partial answers, then consumes answers even before the first content snapshot', async () => {
+  it('consumes each answer without requiring the rest of the question registry even before the first content snapshot', async () => {
     const h = await setup();
-    await askQuestions(h.root, h.state, [
+    await seedQuestions(h.root, h.state, [
       question,
       { ...question, id: 'Q-002' },
     ]);
@@ -121,9 +118,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
       status: 'answered',
     });
     expect(await h.prompt()).toContain('尚未回答：Q-002');
-    expect(await h.prompt()).toContain(
-      '等待 /evidence-answer，不重复提问或代答',
-    );
+    expect(await h.prompt()).toContain('先保存消化结果，再决定下一问');
     await answerQuestion(h.root, h.state, {
       questionId: 'Q-002',
       text: '尚不清楚完成标准。',
@@ -131,7 +126,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
       status: 'unknown',
     });
     const prompt = await h.prompt();
-    expect(prompt).toContain('先消化已保存的人工回答');
+    expect(prompt).toContain('先保存消化结果，再决定下一问');
     expect(prompt).toContain('阻塞且仍未知：Q-002');
     await answerQuestion(h.root, h.state, {
       questionId: 'Q-002',

@@ -1,8 +1,10 @@
 import type {
   ExtensionAPI,
   ExtensionCommandContext,
+  ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
+import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
 import {
   DiscoveryContentSchema,
   QuestionSchema,
@@ -13,6 +15,7 @@ import {
 import {
   answerQuestion,
   askQuestions,
+  assertConsolidated,
   assertDiscoveryRevision,
   digestText,
   finalizeDiscovery,
@@ -56,10 +59,6 @@ const answerModes = new Map<string, DiscoveryAnswer['status']>([
   ['未知，仍需澄清', 'unknown'],
   ['移出本次范围（回答中说明原因）', 'excluded'],
 ]);
-
-function questionText(question: DiscoveryQuestion): string {
-  return `${question.id}：${question.prompt}\n焦点：${question.focus}\n依据：${question.sourceRefs.join('、') || '未引用材料，需澄清事实'}\n定稿阻塞：${question.blocking ? '是' : '否'}\n影响：${question.impact}`;
-}
 
 async function runningState(
   root: string,
@@ -109,25 +108,48 @@ async function githubRespondent(
 }
 
 async function selectDiscoveryAction(
-  ctx: ExtensionCommandContext,
+  ctx: ExtensionContext,
   snapshot: DiscoverySnapshot,
   selectedId: string,
-  discovering: boolean,
+  state: EvidenceState,
+  signal: AbortSignal,
 ): Promise<
   | { kind: 'finish' }
   | { kind: 'question'; question: DiscoveryQuestion; mode: string }
   | undefined
 > {
+  const discovering = state.discovery.stage === 'discovering';
+  const active = pendingQuestions(snapshot)[0];
+  if (!selectedId && discovering && !snapshot.interaction.stopped && active) {
+    const action = await ctx.ui.select(
+      contractViewLines(snapshot, { questionId: active.id }).join('\n'),
+      ['回答', FINISH_DISCOVERY],
+      { signal },
+    );
+    if (action === FINISH_DISCOVERY) return { kind: 'finish' };
+    return action === '回答'
+      ? { kind: 'question', question: active, mode: '事实或决定' }
+      : undefined;
+  }
+  const view = contractViewLines(snapshot).join('\n');
   const pending = pendingQuestions(snapshot);
-  const choices = pending.length ? pending : snapshot.questions;
+  // Current question first; history is for voluntary context switching/corrections, not a checklist.
+  const choices = [
+    ...pending,
+    ...snapshot.questions.filter((q) => !pending.some((p) => p.id === q.id)),
+  ];
   const back = '返回场景选择';
   while (true) {
     const selected =
       selectedId ||
-      (await ctx.ui.select('选择场景／问题（已回答的问题可更正）', [
-        ...choices.map((q) => `${q.id} ${q.prompt}`),
-        ...(discovering ? [FINISH_DISCOVERY] : []),
-      ]));
+      (await ctx.ui.select(
+        `选择合同／履约问题（历史问题可更正）\n${view}`,
+        [
+          ...choices.map((q) => questionLabel(snapshot, q.id)),
+          ...(discovering ? [FINISH_DISCOVERY] : []),
+        ],
+        { signal },
+      ));
     selectedId = '';
     if (discovering && selected === FINISH_DISCOVERY) return { kind: 'finish' };
     const question = snapshot.questions.find(
@@ -135,8 +157,9 @@ async function selectDiscoveryAction(
     );
     if (!question) return;
     const mode = await ctx.ui.select(
-      `${questionText(question)}\n如何处理这个问题？`,
+      `${contractViewLines(snapshot, { questionId: question.id }).join('\n')}\n如何处理这个问题？`,
       [...answerModes.keys(), ...(discovering ? [SKIP_QUESTION] : []), back],
+      { signal },
     );
     if (mode === back) continue;
     if (!mode) return;
@@ -144,14 +167,16 @@ async function selectDiscoveryAction(
   }
 }
 
-export async function collectAnswer(
+async function collectIdleAnswer(
   pi: ExtensionAPI,
-  ctx: ExtensionCommandContext,
+  ctx: ExtensionContext,
   refresh: Refresh,
   selectedId: string,
   startWork: StartDiscoveryWork,
+  signal: AbortSignal,
+  expected?: EvidenceState,
 ): Promise<void> {
-  await ctx.waitForIdle();
+  if (!ctx.isIdle() || signal.aborted) return;
   const state = await loadState(ctx.cwd);
   if (
     !state ||
@@ -169,25 +194,62 @@ export async function collectAnswer(
     ctx.ui.notify('回答需要人工编辑器。', 'warning');
     return;
   }
+  if (
+    expected &&
+    (state.runId !== expected.runId ||
+      state.discovery.revision !== expected.discovery.revision ||
+      state.status !== 'waiting_answer')
+  )
+    return;
   const snapshot = await loadDiscovery(ctx.cwd, state);
+  if (
+    expected &&
+    (snapshot.interaction.stopped || !pendingQuestions(snapshot).length)
+  )
+    return;
+  const assertCurrent = async () => {
+    signal.throwIfAborted();
+    const current = await loadState(ctx.cwd);
+    if (!current || current.runId !== state.runId)
+      throw new Error('运行已改变，请重新回答');
+    assertDiscoveryRevision(current, state.discovery.revision);
+    if (
+      !ctx.isIdle() ||
+      current.paused ||
+      current.phase !== 'modeling' ||
+      current.status === 'running'
+    )
+      throw new Error('任务状态已改变，请稍后重新回答');
+    return current;
+  };
+  await assertCurrent();
   const action = await selectDiscoveryAction(
     ctx,
     snapshot,
     selectedId,
-    state.discovery.stage === 'discovering',
+    state,
+    signal,
   );
-  if (!action) return;
+  if (!action || signal.aborted) return;
+  await assertCurrent();
   if (action.kind === 'finish') {
-    await finishDiscoveryInteraction(ctx, refresh, startWork, state);
+    await finishDiscoveryInteraction(ctx, refresh, startWork, state, signal);
     return;
   }
   const { question, mode } = action;
   if (mode === SKIP_QUESTION) {
-    await changeDiscoveryInteraction(ctx, refresh, {
+    const saved = await changeDiscoveryInteraction(ctx, refresh, {
       action: 'skip',
       expected: state,
       questionId: question.id,
+      signal,
     });
+    if (
+      saved &&
+      !signal.aborted &&
+      !(await loadDiscovery(ctx.cwd, saved)).interaction.stopped
+    )
+      await startWork(ctx, saved);
     return;
   }
   const status = answerModes.get(mode);
@@ -200,19 +262,16 @@ export async function collectAnswer(
     );
     return;
   }
+  if (signal.aborted) return;
+  await assertCurrent();
   const previous = latestAnswer(snapshot, question.id);
   const text = await ctx.ui.editor(
-    `${questionText(question)}\n回答者：${respondent}（自动记录）`,
+    `${contractViewLines(snapshot, { questionId: question.id }).join('\n')}\n回答者：${respondent}（自动记录）`,
     previous?.text ?? '',
   );
-  if (text === undefined || !text.trim()) return;
-  await withModelingLock(ctx.cwd, async () => {
-    const current = await loadState(ctx.cwd);
-    if (!current || current.runId !== state.runId)
-      throw new Error('运行已改变，请重新回答');
-    assertDiscoveryRevision(current, state.discovery.revision);
-    if (current.status === 'running')
-      throw new Error('任务已经开始，请稍后回答');
+  if (text === undefined || !text.trim() || signal.aborted) return;
+  const saved = await withModelingLock(ctx.cwd, async () => {
+    const current = await assertCurrent();
     const previousGate = current.pendingGate;
     await answerQuestion(ctx.cwd, current, {
       questionId: question.id,
@@ -228,33 +287,91 @@ export async function collectAnswer(
         '人工回答或更正使当前定稿失效',
       );
     await refresh(ctx, current);
-    ctx.ui.setEditorText(
-      current.status === 'waiting_answer'
-        ? '/evidence-answer'
-        : '/evidence-run',
-    );
+    ctx.ui.setEditorText('/evidence-run');
     ctx.ui.notify(
-      '原文已保存；旧回答保留。运行 /evidence-run 消化回答，或继续回答剩余问题。',
+      '原文已保存；旧回答保留。先消化回答并更新候选，再决定下一问。',
       'info',
     );
+    return current;
   });
+  // Start outside the mutation lock; a stopped round remains under manual control.
+  if (
+    !signal.aborted &&
+    !(await loadDiscovery(ctx.cwd, saved)).interaction.stopped
+  )
+    await startWork(ctx, saved);
 }
 
 export function registerDiscoveryTools(
   pi: ExtensionAPI,
   refresh: Refresh,
   startWork: StartDiscoveryWork,
-): void {
+) {
+  // UI ownership is session-local, not workflow evidence. Esc consumes this offer only.
+  let dialog: AbortController | undefined;
+  let pendingOffer: { root: string; state: EvidenceState } | undefined;
+  let closed = false;
+  const showAnswer = async (
+    ctx: ExtensionContext,
+    selectedId = '',
+    expected?: EvidenceState,
+  ) => {
+    if (closed || dialog || !ctx.isIdle() || !ctx.hasUI) return;
+    const controller = new AbortController();
+    dialog = controller;
+    try {
+      await collectIdleAnswer(
+        pi,
+        ctx,
+        refresh,
+        selectedId,
+        startWork,
+        controller.signal,
+        expected,
+      );
+    } finally {
+      dialog = undefined;
+    }
+  };
+  const collectAnswer = async (
+    ctx: ExtensionCommandContext,
+    selectedId = '',
+  ) => {
+    await ctx.waitForIdle();
+    // Manual entry supersedes any not-yet-displayed automatic offer.
+    pendingOffer = undefined;
+    await showAnswer(ctx, selectedId);
+  };
+  const offerQuestion = async (ctx: ExtensionContext) => {
+    const offer = pendingOffer;
+    if (!offer || closed || dialog || !ctx.hasUI || !ctx.isIdle()) return;
+    pendingOffer = undefined;
+    if (offer.root !== ctx.cwd) return;
+    try {
+      await showAnswer(ctx, '', offer.state);
+    } catch (error) {
+      if (!closed)
+        ctx.ui.notify(
+          `问答入口未完成：${(error as Error).message}。可用 /evidence-answer 重试。`,
+          'warning',
+        );
+    }
+  };
+  pi.on('session_shutdown', () => {
+    closed = true;
+    pendingOffer = undefined;
+    dialog?.abort();
+  });
   pi.registerCommand('evidence-answer', {
     description:
       '回答当前发现问题；可传 Q-ID 更正历史回答，保留原文并使旧定稿失效',
-    handler: (args, ctx) =>
-      collectAnswer(pi, ctx, refresh, args.trim(), startWork),
+    handler: (args, ctx) => collectAnswer(ctx, args.trim()),
   });
   pi.registerCommand('evidence-discovery', {
     description:
       'finish：结束问答并整理已有信息；resume：恢复问答和暂缓问题（均不批准定稿）',
     handler: async (args, ctx) => {
+      await ctx.waitForIdle();
       if (args.trim() === 'finish')
         await finishDiscoveryInteraction(ctx, refresh, startWork);
       else if (args.trim() === 'resume')
@@ -270,19 +387,20 @@ export function registerDiscoveryTools(
     name: 'evidence_ask_questions',
     label: '业务发现提问',
     description:
-      'Ask 1–4 concrete questions about a sourced candidate context or its current gap; include the basis and uncertainty in each prompt. Do not start with a scope questionnaire or require the human to choose a modeling mode. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
+      'Ask exactly ONE core business question based on the latest saved understanding. First consume each human answer/skip and save the updated discovery; briefly explain what changed and what remains unknown. Do not bundle subquestions, precompute a questionnaire, re-ask facts already provided, or repeat deferred gaps under a new ID. An unchanged historical unanswered question may be selected by its existing Q-ID. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
     parameters: Type.Object({
       expectedRevision: revision,
-      questions: Type.Array(QuestionSchema, { minItems: 1, maxItems: 4 }),
+      questions: Type.Array(QuestionSchema, { minItems: 1, maxItems: 1 }),
     }),
     async execute(_id, params, _signal, _update, ctx) {
       return withModelingLock(ctx.cwd, async () => {
         const state = await runningState(ctx.cwd, params.expectedRevision);
         await askQuestions(ctx.cwd, state, params.questions);
         await refresh(ctx, state);
-        ctx.ui.setEditorText('/evidence-answer');
+        if (ctx.hasUI)
+          pendingOffer = { root: ctx.cwd, state: structuredClone(state) };
         return result(
-          `${params.questions.map(questionText).join('\n\n')}\n\n请运行 /evidence-answer；可跳过此题，或用 /evidence-discovery finish 结束本轮并整理。`,
+          `${contractViewLines(await loadDiscovery(ctx.cwd, state)).join('\n')}\n\n${ctx.hasUI ? '本次生成结束后将自动打开「回答／结束本轮」菜单。Esc 仅关闭菜单，可用 /evidence-answer 重新打开。' : '请在交互模式中运行 /evidence-answer 回答。'} 未知、排除、跳过或历史更正可用 /evidence-answer Q-ID。`,
           state,
           true,
         );
@@ -293,7 +411,7 @@ export function registerDiscoveryTools(
     name: 'evidence_save_discovery',
     label: '保存业务发现',
     description:
-      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Invalidates drafts and finalization; stopping after saving is valid.',
+      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Always provide contractView with current (null if unlocated) and sourced contract/role/fulfillment candidate references; unknown parties or request/deadline/confirmation remain null. Do not invent contracts for domain/channel discovery. Invalidates drafts and finalization; stopping after saving is valid.',
     parameters: Type.Object({
       expectedRevision: revision,
       content: DiscoveryContentSchema,
@@ -304,7 +422,7 @@ export function registerDiscoveryTools(
         await saveDiscoveryContent(ctx.cwd, state, params.content);
         await refresh(ctx, state);
         const snapshot = await loadDiscovery(ctx.cwd, state);
-        if (snapshot.interaction?.stopped) {
+        if (snapshot.interaction.stopped) {
           const blockers = unresolvedBlockingQuestions(snapshot);
           if (blockers.length) {
             ctx.ui.setEditorText('/evidence-answer');
@@ -345,6 +463,7 @@ export function registerDiscoveryTools(
           throw new Error('请先保存新的发现版本以重新打开草稿');
         const snapshot = await loadDiscovery(ctx.cwd, state);
         if (!snapshot.content) throw new Error('先保存范围及场景依据');
+        assertConsolidated(snapshot);
         const config = await loadConfig(ctx.cwd);
         const files = normalizeFmModelFiles(params.files);
         const checked = await replaceFmModel({
@@ -399,4 +518,5 @@ export function registerDiscoveryTools(
       });
     },
   });
+  return { collectAnswer, offerQuestion };
 }

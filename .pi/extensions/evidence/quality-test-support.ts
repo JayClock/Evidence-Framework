@@ -101,6 +101,7 @@ export async function qualityHarness(roots: string[], config = {}) {
   const ctx = {
     cwd: root,
     hasUI: true,
+    isIdle: vi.fn(() => true),
     waitForIdle: vi.fn(),
     ui,
   } as unknown as ExtensionCommandContext;

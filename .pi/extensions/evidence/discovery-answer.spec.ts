@@ -33,6 +33,7 @@ async function waiting() {
       {
         id: 'Q-001',
         focus: 'scope',
+        target: null,
         prompt: '本次范围是什么？',
         impact: '决定建模边界',
         blocking: true,
@@ -88,6 +89,7 @@ describe('GitHub attribution for discovery answers', () => {
     await h.command('evidence-answer', 'Q-001');
     const originalPath = (await loadState(h.root))!.discovery.path!;
     const original = await readText(h.root, originalPath);
+    await h.events.get('agent_settled')!({}, h.ctx);
     h.api.exec.mockResolvedValue({
       ...success,
       stdout: '{"login":"other-user"}\n',
@@ -104,9 +106,7 @@ describe('GitHub attribution for discovery answers', () => {
 
   it('also uses GitHub attribution when evidence-next opens the answer flow', async () => {
     const h = await waiting();
-    h.ui.select
-      .mockResolvedValueOnce('Q-001 本次范围是什么？')
-      .mockResolvedValueOnce('事实或决定');
+    h.ui.select.mockResolvedValueOnce('回答');
     await h.command('evidence-next');
     expect((await snapshot(h)).answers[0].respondent).toBe(
       'github.com/current-user',

@@ -109,10 +109,7 @@ async function executeCheck(
     hashes,
   };
 }
-export function registerTddTools(
-  pi: ExtensionAPI,
-  updateUi: (ctx: ExtensionContext, state: EvidenceState) => void,
-): void {
+export function registerTddTools(pi: ExtensionAPI): void {
   const storyParameters = { storyId: Type.String({ pattern: '^US-\\d{3}$' }) };
   const finish = async (
     ctx: ExtensionContext,
@@ -120,7 +117,7 @@ export function registerTddTools(
     text: string,
   ) => {
     await saveState(ctx.cwd, state);
-    updateUi(ctx, state);
+
     return {
       content: [{ type: 'text' as const, text }],
       details: {

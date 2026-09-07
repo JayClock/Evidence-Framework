@@ -10,7 +10,7 @@ references、schemas、scripts、tests 和 evals 以该提交为基线，保留�
 
 本地适配：
 
-1. `SKILL.md` 保留名称 evidence-modeling。Evidence v6 从 Init 直接进入交互发现，以 8X Flow 权责与四色凭证/数据追溯、案例回放共同迭代术语和模型。本地 `references/discovery-workshop.md` 重构为上下文识别引导指南，由发现提示词直接加载：合同先识别双方约定与履约项，领域先识别对象身份与规则，渠道沿真实协商凭证；三者可组合，范围是发现成果而非前置问卷。该交互重构不改变状态 v6、发现快照 v1 或 FM v3。问题与人工回答通过扩展持久化，完整草稿可隔离检查；定稿后生成软件范围及 US/AC，共用 Modeling Gate，不再有前置 Requirements 阶段。模型路径为 artifacts/02-modeling/fm-model，Schema v3 不变；DDD 设计映射留给 Architecture。禁止 Agent 直接写 artifacts 或伪造人工回答。
+1. `SKILL.md` 保留名称 evidence-modeling。Evidence v6 从 Init 直接进入交互发现，以 8X Flow 权责与四色凭证/数据追溯、案例回放共同迭代术语和模型。本地 `references/discovery-workshop.md` 重构为上下文识别引导指南，由发现提示词直接加载：合同先识别双方约定与履约项，领域先识别对象身份与规则，渠道沿真实协商凭证；三者可组合，范围是发现成果而非前置问卷。当前状态 v6、FM v3 不变；问答主界面使用发现快照 v3，以 contractView 引用候选合同、双方角色及履约权责，问题 target 对齐讨论项；工程进度仅按需查看。逐问 interaction 控制全部必填，移除旧 position 导航及缺字段回退，不兼容或迁移 v1/v2 快照。问题与人工回答通过扩展持久化，完整草稿可隔离检查；定稿后生成软件范围及 US/AC，共用 Modeling Gate，不再有前置 Requirements 阶段。模型路径为 artifacts/02-modeling/fm-model，Schema v3 不变；DDD 设计映射留给 Architecture。禁止 Agent 直接写 artifacts 或伪造人工回答。
 2. `validate_fm_model.py --model-only` 保留本地扩展入口，将模型校验与单据模拟分开记录。默认 CLI 仍验证提交的 validation 套件。数值转换报告明确错误上下文，role-play 清理失败返回可读错误；不放松 Schema 验证。
 3. `modeling.ts` 白名单允许单层 discovery Markdown/YAML 与业务模式 YAML，拒绝派生文件；扩展统一执行业务模式文档生成。
 4. 无适用单据场景不冒称模拟成功；领域运行时行为仍由下游 Q1/Q2 验证。人工状态以模型源文件为准，不由状态页复制或提升。

@@ -2,8 +2,12 @@ import { rm, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { qualityHarness, validDocument } from './quality-test-support.ts';
-import { discoveryContent } from './discovery-test-support.ts';
-import { assertDiscoveryReady, loadDiscovery } from './discovery.ts';
+import { discoveryContent, seedQuestions } from './discovery-test-support.ts';
+import {
+  assertDiscoveryReady,
+  digestText,
+  loadDiscovery,
+} from './discovery.ts';
 import {
   createInitialState,
   loadState,
@@ -25,6 +29,7 @@ afterEach(async () => {
 const question = {
   id: 'Q-001',
   focus: 'responsibilities',
+  target: null,
   prompt: '平台向作者承诺何时支付？',
   impact: '影响付款期限及违约规则',
   blocking: true,
@@ -60,9 +65,88 @@ async function answer(
   h.ui.editor.mockResolvedValue(text);
   h.ui.select.mockResolvedValue(mode);
   await h.command('evidence-answer', 'Q-001');
+  // Simulate the automatically started agent settling before the next manual command.
+  await h.events.get('agent_settled')!({}, h.ctx);
 }
 
 describe('interactive discovery state and provenance', () => {
+  it('creates only v3 snapshots with explicit contract view and interaction state', async () => {
+    const h = await fresh();
+    expect(await loadDiscovery(h.root, h.state)).toMatchObject({
+      version: 3,
+      content: null,
+      interaction: {
+        stopped: false,
+        deferredQuestionIds: [],
+        activeQuestionId: null,
+        needsConsolidation: false,
+      },
+    });
+    await saveContent(h);
+    expect(
+      await loadDiscovery(h.root, (await loadState(h.root))!),
+    ).toMatchObject({
+      version: 3,
+      content: { contractView: { current: null, contracts: [] } },
+      interaction: {
+        stopped: false,
+        deferredQuestionIds: [],
+        activeQuestionId: null,
+        needsConsolidation: false,
+      },
+    });
+  });
+
+  it.each([
+    'v1',
+    'v2',
+    'missing-contractView',
+    'missing-interaction',
+    'missing-activeQuestionId',
+    'missing-needsConsolidation',
+  ])(
+    'rejects %s snapshots without migration or state changes',
+    async (kind) => {
+      const h = await fresh();
+      await saveContent(h);
+      const state = (await loadState(h.root))!;
+      const snapshot = JSON.parse(
+        await readText(h.root, state.discovery.path!),
+      );
+      if (kind === 'v1') snapshot.version = 1;
+      if (kind === 'v2') snapshot.version = 2;
+      if (kind === 'missing-contractView') delete snapshot.content.contractView;
+      if (kind === 'missing-interaction') delete snapshot.interaction;
+      if (kind === 'missing-activeQuestionId')
+        delete snapshot.interaction.activeQuestionId;
+      if (kind === 'missing-needsConsolidation')
+        delete snapshot.interaction.needsConsolidation;
+      const raw = JSON.stringify(snapshot);
+      await writeTextAtomic(h.root, state.discovery.path!, raw);
+      state.discovery.digest = digestText(raw);
+      await saveState(h.root, state);
+      const before = await readText(h.root, '.evidence/state.json');
+      await expect(loadDiscovery(h.root, state)).rejects.toThrow(
+        kind.startsWith('v')
+          ? '仅支持发现快照 v3'
+          : '发现记录结构或运行版本不一致',
+      );
+      expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+      expect(await readText(h.root, state.discovery.path!)).toBe(raw);
+    },
+  );
+
+  it('requires contractView in new submissions and rejects the old position shape', async () => {
+    const h = await fresh();
+    const content: Record<string, unknown> = { ...discoveryContent() };
+    delete content.contractView;
+    content.position = null;
+    await expect(
+      h.tool('evidence_save_discovery', { expectedRevision: 0, content }),
+    ).rejects.toThrow();
+    expect(await revision(h)).toBe(0);
+  });
+
   it('shows discovery as the current subject until formalization, not the future language artifact', async () => {
     const h = await fresh();
     await h.command('evidence-status');
@@ -88,13 +172,13 @@ describe('interactive discovery state and provenance', () => {
     );
   });
 
-  it('shows question provenance and blockers consistently in the tool result and answer editor', async () => {
+  it('shows the business question without workflow metadata, preserving provenance in the snapshot', async () => {
     const h = await fresh();
     const result = await h.tool('evidence_ask_questions', {
       expectedRevision: 0,
       questions: [question],
     });
-    const context = '焦点：responsibilities\n依据：INPUT\n定稿阻塞：是';
+    const context = '当前问题：Q-001 平台向作者承诺何时支付？';
     expect(result).toMatchObject({
       terminate: true,
       content: [{ type: 'text', text: expect.stringContaining(context) }],
@@ -104,6 +188,9 @@ describe('interactive discovery state and provenance', () => {
       expect.stringContaining(context),
       '',
     );
+    const saved = await loadDiscovery(h.root, (await loadState(h.root))!);
+    expect(saved.questions[0]).toEqual(question);
+    expect(h.ui.editor.mock.lastCall![0]).not.toContain('定稿阻塞');
   });
 
   it('rejects premature formal submission and stage checks cannot bypass discovery', async () => {
@@ -123,13 +210,10 @@ describe('interactive discovery state and provenance', () => {
 
   it('persists questions across settled/reload and records partial human answers without a revision round', async () => {
     const h = await fresh();
-    await h.tool('evidence_ask_questions', {
-      expectedRevision: 0,
-      questions: [
-        question,
-        { ...question, id: 'Q-002', prompt: '谁核对账单？' },
-      ],
-    });
+    await seedQuestions(h.root, h.state, [
+      question,
+      { ...question, id: 'Q-002', prompt: '谁核对账单？' },
+    ]);
     await h.events.get('agent_settled')!({}, h.ctx);
     await h.events.get('session_start')!({}, h.ctx);
     await h.command('evidence-run');
@@ -140,7 +224,7 @@ describe('interactive discovery state and provenance', () => {
     expect(h.api.sendUserMessage).not.toHaveBeenCalled();
     await answer(h);
     let state = (await loadState(h.root))!;
-    expect(state.status).toBe('waiting_answer');
+    expect(state.status).toBe('ready');
     const snapshot = await loadDiscovery(h.root, state);
     expect(snapshot.answers[0]).toMatchObject({
       id: 'A-001',
@@ -150,6 +234,7 @@ describe('interactive discovery state and provenance', () => {
     });
     h.ui.editor.mockResolvedValue('财务与作者共同核对');
     await h.command('evidence-answer', 'Q-002');
+    await h.events.get('agent_settled')!({}, h.ctx);
     state = (await loadState(h.root))!;
     expect(state).toMatchObject({
       status: 'ready',
@@ -356,8 +441,15 @@ describe('interactive discovery state and provenance', () => {
     );
     expect((await loadDiscovery(h.root, current)).answers).toHaveLength(2);
     await expect(assertDiscoveryReady(h.root, current)).rejects.toThrow(
-      '回答已被更正',
+      '先保存消化结果',
     );
+    await h.command('evidence-run');
+    await expect(
+      h.tool('evidence_save_discovery', {
+        expectedRevision: current.discovery.revision,
+        content,
+      }),
+    ).rejects.toThrow('回答已被更正');
   });
 
   it('checks real FM drafts in isolation and keeps formal bytes even on successful validation', async () => {
