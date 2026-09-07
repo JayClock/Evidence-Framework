@@ -10,6 +10,7 @@
     "entityRef": { "$ref": "#/$defs/id" },
     "values": {
       "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$" },
       "additionalProperties": true
     },
     "basedOn": {

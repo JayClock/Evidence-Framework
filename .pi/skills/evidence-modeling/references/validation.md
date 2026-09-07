@@ -16,7 +16,8 @@ python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/m
 - Contract、Fulfillment、Domain、Pre-contract／Channel Context 边界；
 - Contract 恰好两个 Party Role，Role 可在没有玩家时独立成立；
 - Fulfillment 必须位于父 Contract 的子 Fulfillment Context；
-- Request interval 的 required/keyData timestamp 起点、截止点或明确无固定期限依据；
+- 所有 Evidence 的类型级时间属性显式定义：RFP／Proposal／Request 的 start_at、expired_at，Contract 的 signed_at，Confirmation 的 confirmed_at，Other Evidence 的 created_at；全部 required/keyData timestamp；
+- Request interval 固定引用 start_at／expired_at；拒绝 openEndedReason、缺失字段和无确定截止依据；
 - Request、Confirmation、权利方、义务方和父 Contract Role 一致；
 - completion policy、trigger、违约后果、共享确认和 Evidence Role；
 - Place/Thing 必须属于 Domain Context；
@@ -67,8 +68,8 @@ python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/m
 
 ## Request interval 与数据检查
 
-1. 起点与 fixed 模式的截止属性是否为 required、`keyData: true` 的 timestamp？
-2. `openEndedReason` 是否来自已确认合同事实，而不是“材料没写期限”？
+1. 每个 Evidence 源 YAML 的 attributes 是否唯一、显式包含其 kind 的必备时间属性，并为 required、`keyData: true` 的 timestamp？不能只存在于说明或编译结果。
+2. RFP／Proposal／Request 是否有确定的截止时间或有来源的确定性推导？是否已经去掉 openEndedReason？缺依据保持发现阻塞，不以 null、占位日期、无期限或编译默认值规避。
 3. 逾期、金额、数量、KPI、资格和赔偿是否可追溯到 Evidence 或 CEL？
 4. 是否至少用一个正常和一个异常／追责场景检查凭证链？
 5. 角色演练是否只暴露当时可见单据，而没有提前泄露答案？
@@ -88,7 +89,7 @@ python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/m
 
 - 所有模型：结构、边界、引用、CEL、属性追溯与编译通过。
 - 有履约：双方 Role、Request interval、确认、完成策略和违约引用完整；空集合不能掩盖孤立 Request 或缺失 Confirmation。
-- 纯渠道：RFP／Proposal、责任 Role 和回应关系合法；合同未纳入范围可不生成。
+- 纯渠道：RFP／Proposal、责任 Role、start_at／expired_at 时间属性和回应关系合法；合同未纳入范围可不生成。
 - 纯领域：领域检查通过，明确实例／状态机模拟等尚未覆盖部分；允许省略 `fulfillments/`。
 - 有单据场景：实际执行的场景全部通过；有 Business Pattern：派生 Markdown 与 YAML 一致。
 - 简单集成：确无独立领域语义时，范围说明即可正常结束，不要求补合同。

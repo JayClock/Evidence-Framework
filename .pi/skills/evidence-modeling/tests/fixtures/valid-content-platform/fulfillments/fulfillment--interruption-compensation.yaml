@@ -7,8 +7,8 @@ rightHolderRoleRef: role.subscriber
 obligorRoleRef: role.platform-subscription
 requestRef: request.interruption-compensation
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.interruption-compensation
 completionPolicy:

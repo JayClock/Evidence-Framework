@@ -6,8 +6,8 @@ contextRef: context.content-payment-fulfillment
 bindings:
   contract:
     ref: contract.content-subscription
-expression: contract.priceMinorUnits
+expression: contract.price_minor_units
 resultType: int
 target:
   entityRef: request.content-payment
-  attribute: requestedMinorUnits
+  attribute: requested_minor_units

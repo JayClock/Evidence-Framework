@@ -68,7 +68,7 @@ kind: thing
 label: 客户档案
 contextRef: context.customer-information
 attributes:
-  - name: profileId
+  - name: profile_id
     label: 档案标识
     valueType: string
     required: true

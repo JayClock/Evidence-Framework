@@ -6,15 +6,15 @@ label: 收入分成支付请求
 contextRef: context.revenue-share-fulfillment
 responsibleRoleRef: role.creator
 attributes:
-  - name: startedAt
+  - name: start_at
     label: 发起时间
     valueType: timestamp
     required: true
-    meaning: 履约时段开始时间
     keyData: true
-  - name: expiresAt
+    meaning: 履约时段开始时间
+  - name: expired_at
     label: 截止时间
     valueType: timestamp
     required: true
-    meaning: 履约时段截止时间
     keyData: true
+    meaning: 履约时段截止时间

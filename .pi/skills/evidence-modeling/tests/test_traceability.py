@@ -54,7 +54,7 @@ class TraceabilityTests(unittest.TestCase):
         model = load_model(self.fixture("valid-traceable-subscription"))
         rule = model.rules_by_id["rule.payment-request-amount"]
         rule["bindings"]["adjustment"] = {"type": "int"}
-        rule["expression"] = "contract.priceMinorUnits + adjustment"
+        rule["expression"] = "contract.price_minor_units + adjustment"
         _, errors = analyze_traceability(model)
         self.assertTrue(any("scalar inputs" in error for error in errors), errors)
 
@@ -77,16 +77,16 @@ class TraceabilityTests(unittest.TestCase):
         }
         self.assertIn(
             (
-                "contract.content-subscription#priceMinorUnits",
-                "request.content-payment#requestedMinorUnits",
+                "contract.content-subscription#price_minor_units",
+                "request.content-payment#requested_minor_units",
                 "rule.payment-request-amount",
             ),
             edges,
         )
         self.assertIn(
             (
-                "request.content-payment#startedAt",
-                "request.content-payment#expiresAt",
+                "request.content-payment#start_at",
+                "request.content-payment#expired_at",
                 "rule.payment-deadline",
             ),
             edges,
@@ -101,35 +101,36 @@ class TraceabilityTests(unittest.TestCase):
     def test_static_index_syntax_is_included_in_lineage(self) -> None:
         model = load_model(self.fixture("valid-traceable-subscription"))
         rule = model.rules_by_id["rule.payment-request-amount"]
-        rule["expression"] = 'contract["priceMinorUnits"]'
+        rule["expression"] = 'contract["price_minor_units"]'
         report, errors = analyze_traceability(model)
         self.assertEqual([], errors)
         self.assertIn(
             {
-                "source": "contract.content-subscription#priceMinorUnits",
-                "target": "request.content-payment#requestedMinorUnits",
+                "source": "contract.content-subscription#price_minor_units",
+                "target": "request.content-payment#requested_minor_units",
                 "ruleRef": "rule.payment-request-amount",
             },
             report["edges"],
         )
 
-    def test_unknown_cel_attribute_is_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = self.copied_fixture(directory)
-            path = root / "rules" / "rule--payment-request-amount.yaml"
-            rule = self.read_yaml(path)
-            rule["expression"] = "contract.missingPrice"
-            self.write_yaml(path, rule)
-            errors = validate_model(load_model(root))
-            self.assertTrue(
-                any("reads unknown attribute" in error for error in errors), errors
-            )
+    def test_unknown_or_legacy_cel_attribute_is_rejected(self) -> None:
+        for name in ("missing_price", "priceMinorUnits"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = self.copied_fixture(directory)
+                path = root / "rules" / "rule--payment-request-amount.yaml"
+                rule = self.read_yaml(path)
+                rule["expression"] = f"contract.{name}"
+                self.write_yaml(path, rule)
+                errors = validate_model(load_model(root))
+                self.assertTrue(
+                    any("reads unknown attribute" in error for error in errors), errors
+                )
 
     def test_chained_filter_macro_preserves_collection_entity_source(self) -> None:
         rule = {
             "id": "rule.confirmation-filter",
             "expression": (
-                'payments.filter(p, p.paidMinorUnits > 0).all(p, p.currency == "CNY")'
+                'payments.filter(p, p.paid_minor_units > 0).all(p, p.currency == "CNY")'
             ),
             "bindings": {
                 "payments": {
@@ -141,7 +142,7 @@ class TraceabilityTests(unittest.TestCase):
         accesses, errors = extract_rule_attribute_accesses(rule)
         self.assertEqual([], errors)
         self.assertEqual(
-            {"paidMinorUnits", "currency"},
+            {"paid_minor_units", "currency"},
             {access.attribute for access in accesses},
         )
 
@@ -166,7 +167,7 @@ class TraceabilityTests(unittest.TestCase):
             started_at = next(
                 attribute
                 for attribute in request["attributes"]
-                if attribute["name"] == "startedAt"
+                if attribute["name"] == "start_at"
             )
             started_at["derivedByRuleRef"] = "rule.payment-start"
             self.write_yaml(request_path, request)
@@ -179,11 +180,11 @@ class TraceabilityTests(unittest.TestCase):
                     "label": "从截止时间反推开始时间",
                     "contextRef": "context.content-subscription",
                     "bindings": {"request": {"ref": "request.content-payment"}},
-                    "expression": 'request.expiresAt - duration("30m")',
+                    "expression": 'request.expired_at - duration("30m")',
                     "resultType": "timestamp",
                     "target": {
                         "entityRef": "request.content-payment",
-                        "attribute": "startedAt",
+                        "attribute": "start_at",
                     },
                 },
             )
@@ -202,12 +203,12 @@ class TraceabilityTests(unittest.TestCase):
                         "cardinality": "many",
                     }
                 },
-                "expression": "payments.all(payment, payment.paidMinorUnits > 0)",
+                "expression": "payments.all(payment, payment.paid_minor_units > 0)",
             }
         )
         self.assertEqual([], errors)
         self.assertEqual(
-            [("confirmation.content-payment", "paidMinorUnits")],
+            [("confirmation.content-payment", "paid_minor_units")],
             [(access.entity_ref, access.attribute) for access in accesses],
         )
 

@@ -2,8 +2,8 @@ type: evidence_instance
 id: instance.payment-confirmation
 entityRef: confirmation.content-payment
 values:
-  confirmedAt: '2026-09-01T09:10:00Z'
-  paidMinorUnits: 19900
+  confirmed_at: '2026-09-01T09:10:00Z'
+  paid_minor_units: 19900
   currency: CNY
 basedOn:
   - instance.payment-request

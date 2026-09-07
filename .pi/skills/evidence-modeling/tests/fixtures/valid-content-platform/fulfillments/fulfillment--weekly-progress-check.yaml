@@ -7,8 +7,8 @@ rightHolderRoleRef: role.platform-performance
 obligorRoleRef: role.operator
 requestRef: request.weekly-progress-check
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.weekly-progress-check
 completionPolicy:

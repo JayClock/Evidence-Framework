@@ -13,11 +13,11 @@ contextRef: context.payment-fulfillment
 bindings:
   self:
     ref: request.payment
-expression: 'self.startedAt + duration("30m")'
+expression: 'self.start_at + duration("30m")'
 resultType: timestamp
 target:
   entityRef: request.payment
-  attribute: expiresAt
+  attribute: expired_at
 ```
 
 CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request、Confirmation 一样位于对应 Fulfillment Context；领域规则则位于 Domain Context，不需要虚构合同或 Request。
@@ -47,7 +47,7 @@ bindings:
 
 - `ref` 绑定到模型对象，默认 `cardinality: one`；集合实例必须声明 `cardinality: many`，并通过 CEL collection macro 访问元素属性；
 - `type` 声明由运行时传入的标量或结构变量；
-- 变量名使用 CEL 标识符；
+- 变量名使用 CEL 标识符；别名不等于业务属性。Entity 属性访问与 `target.attribute` 统一 snake_case，和 Entity 定义逐字一致；内置函数如 `startsWith` 保持 CEL 原名；
 - 表达式不得引用未声明的顶层变量。
 
 允许的声明类型：`bool`、`int`、`uint`、`double`、`decimal`、`string`、`bytes`、`timestamp`、`duration`、`date`、`money`、`list`、`map`、`dynamic`。
@@ -56,35 +56,35 @@ bindings:
 
 ```cel
 // 截止时间
-self.startedAt + duration("30m")
+self.start_at + duration("30m")
 
 // 金额一致（最小货币单位整数 + 币种）
-payment.paidMinorUnits == contract.priceMinorUnits && payment.currency == contract.currency
+payment.paid_minor_units == contract.price_minor_units && payment.currency == contract.currency
 
-// 退款资格
-payment.confirmedAt != null && shipment.confirmedAt == null
+// 退款资格：集合 binding 使用 cardinality: many；没有凭证不等于时间为 null
+payments.size() > 0 && shipments.size() == 0
 
 // SLA 违约
-confirmation.confirmedAt > request.expiresAt
+confirmation.confirmed_at > request.expired_at
 
 // 条件赔偿金额；比例必须来自已确认合同事实
-breached ? int(double(payment.paidMinorUnits) * penaltyRate) : 0
+breached ? int(double(payment.paid_minor_units) * penaltyRate) : 0
 
 // KPI 达成
-actual.callCount >= target.callCount && actual.emailCount >= target.emailCount
+actual.call_count >= target.call_count && actual.email_count >= target.email_count
 ```
 
 不要在 CEL 中写自然语言、SQL、脚本语句、赋值、外部网络调用或实现组件名。
 
-`money` 保留为 FM 语义类型，但 `cel-python` 目前主要用于语法编译，并不提供项目约定的原生 Money 运算。需要精确比较或计算时，优先分别建模 `minorUnits: int` 与 `currency: string`；比例、汇率和舍入规则必须来自已确认业务材料，不能由 Agent 猜测。
+`money` 保留为 FM 语义类型，但 `cel-python` 目前主要用于语法编译，并不提供项目约定的原生 Money 运算。需要精确比较或计算时，优先分别建模 `minor_units: int` 与 `currency: string`；比例、汇率和舍入规则必须来自已确认业务材料，不能由 Agent 猜测。
 
 ## 5. 属性派生
 
-实体属性使用 `derivedByRuleRef` 指向唯一 derivation Rule。Request interval 引用的开始属性和 fixed 模式的截止属性还必须是 required、`keyData: true` 的 timestamp：
+实体属性使用 `derivedByRuleRef` 指向唯一 derivation Rule。所有 Evidence 的必备时间属性均为 required、`keyData: true` 的 timestamp，Request interval 固定引用 `start_at`、`expired_at`。RFP／Proposal 的截止时间也可按真实来源用 CEL 派生，但不能缺少属性定义或使用无期限。示例中的 30 分钟不是默认期限，必须有业务依据：
 
 ```yaml
 attributes:
-  - name: expiresAt
+  - name: expired_at
     label: 付款截止时间
     valueType: timestamp
     required: true

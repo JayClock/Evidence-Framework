@@ -73,27 +73,16 @@
     },
     "requestInterval": {
       "type": "object",
-      "required": ["startAttribute"],
+      "required": ["startAttribute", "endAttribute"],
       "properties": {
-        "startAttribute": { "$ref": "#/$defs/attributeName" },
-        "endAttribute": { "$ref": "#/$defs/attributeName" },
-        "openEndedReason": { "type": "string", "minLength": 1 }
+        "startAttribute": { "const": "start_at" },
+        "endAttribute": { "const": "expired_at" }
       },
-      "oneOf": [
-        {
-          "required": ["endAttribute"],
-          "not": { "required": ["openEndedReason"] }
-        },
-        {
-          "required": ["openEndedReason"],
-          "not": { "required": ["endAttribute"] }
-        }
-      ],
       "additionalProperties": false
     },
     "attributeName": {
       "type": "string",
-      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
     },
     "completionPolicy": {
       "type": "object",

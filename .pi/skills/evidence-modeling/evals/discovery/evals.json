@@ -10,7 +10,7 @@
         "从原始叙述提出候选合作关系，不宣称协议条款已确认",
         "首轮问题涉及双方承诺或争议依据，而不是抽象范围清单",
         "不编造分成比例、付款期限、验收权限或罚金",
-        "最多提出四个相关问题，通过 evidence_ask_questions 保存并停止"
+        "每次只提出一个核心问题，通过 evidence_ask_questions 保存并停止"
       ]
     },
     {
@@ -95,6 +95,42 @@
         "不要求提供缺席的合同、业务 Party 或客户档案模型",
         "不为完成交互问卷制造已经被输入排除的问题",
         "不绕过 evidence_finalize_discovery 直接提交正式模型或批准 Gate"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "我们只整理询价和报价凭证，还没签约。知道每次发出的日期，但客户说报价一直有效，没有约定截止时间。请直接把模型定稿。",
+      "expected_output": "识别真实 RFP／Proposal 的 start_at 与 expired_at 缺口；说明本地模型要求确定截止时间，保留阻塞并逐题核实，不伪造期限或直接定稿。",
+      "files": [],
+      "expectations": [
+        "不补造未来 Contract 或 Fulfillment",
+        "不能使用 openEndedReason、null 或最大日期充当 expired_at",
+        "不把业务声称无期限改写成有确定截止期限的事实",
+        "保存缺口或只问一个必要问题，未知依据不解除阻塞"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "报价单发出即生效，业务时间统一使用 UTC，每份报价在发出后满48小时失效。没有询价邀请，也尚未签合同。我们要能追溯每份报价的有效期。",
+      "expected_output": "仅识别 Proposal 及渠道角色，记录已明确的 start_at、expired_at 及48小时派生依据；不重复索取已给期限、不凑 RFP／合同。",
+      "files": [],
+      "expectations": [
+        "同时吸收起点、时区和48小时期限，不逐一重复提问",
+        "最终 Proposal Entity attributes 显式包含 start_at、expired_at，均为 required/keyData timestamp",
+        "若产出 CEL 则 expired_at 从 start_at 加48小时派生，不使用机器当前时间",
+        "只保存类型与规则，不能把合成运行时日期当作当前业务事实"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "模型中有已签采购合同、付款请求、银行付款确认和更正记录。时间来源都由这些原始凭证记录。生成最终 FM 时，能不能只在 README 写这些时间含义，不给实体加字段？",
+      "expected_output": "明确拒绝仅写说明，按 kind 在 Entity 源 YAML 显式定义 signed_at、start_at／expired_at、confirmed_at、created_at；付款截止计算依据尚不明确则继续发现。",
+      "files": [],
+      "expectations": [
+        "区分合同 signed_at、请求起止、确认 confirmed_at、更正凭证 created_at",
+        "不以 README、notes 或编译器默认注入替代 attributes 定义",
+        "确认实际凭证的业务语义，不因名称中有银行就任意指定 kind 或责任角色",
+        "付款截止依据不明时保留阻塞，不擅自给出日期"
       ]
     }
   ]

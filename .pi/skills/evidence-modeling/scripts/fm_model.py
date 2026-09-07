@@ -80,6 +80,7 @@ CEL_BUILTINS = {
     "uint",
 }
 ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+ATTRIBUTE_NAME_RE = re.compile(r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*")
 TOP_LEVEL_IDENTIFIER_RE = re.compile(r"(?<![A-Za-z0-9_.])([A-Za-z_][A-Za-z0-9_]*)")
 STRING_RE = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
 
@@ -412,6 +413,56 @@ def validate_manifest(
         )
 
 
+EVIDENCE_TIME_ATTRIBUTES = {
+    "rfp": ("start_at", "expired_at"),
+    "proposal": ("start_at", "expired_at"),
+    "fulfillment_request": ("start_at", "expired_at"),
+    "contract": ("signed_at",),
+    "fulfillment_confirmation": ("confirmed_at",),
+    "other_evidence": ("created_at",),
+}
+
+
+def validate_attribute_names(entity: dict[str, Any], errors: list[str]) -> None:
+    """Check every category, including Context; do not normalize source names."""
+    for attribute in entity.get("attributes") or []:
+        if not isinstance(attribute, dict):
+            continue  # Structural errors are reported by JSON Schema.
+        name = attribute.get("name")
+        if not isinstance(name, str) or ATTRIBUTE_NAME_RE.fullmatch(name) is None:
+            errors.append(
+                f"{entity.get('id')}: attribute name {name!r} must use lower snake_case"
+            )
+
+
+def validate_evidence_times(entity: dict[str, Any], errors: list[str]) -> None:
+    """Also protect in-memory validation; never insert missing source attributes."""
+    category, kind = entity_signature(entity)
+    if category != "evidence":
+        return
+    attributes = {
+        attribute.get("name"): attribute
+        for attribute in entity.get("attributes") or []
+        if isinstance(attribute, dict)
+    }
+    for name in EVIDENCE_TIME_ATTRIBUTES.get(kind or "", ()):
+        attribute = attributes.get(name)
+        if attribute is None:
+            errors.append(
+                f"{entity.get('id')}: {kind} requires explicit time attribute '{name}'"
+            )
+        elif not (
+            attribute.get("valueType") == "timestamp"
+            and isinstance(attribute.get("required"), bool)
+            and attribute["required"]
+            and isinstance(attribute.get("keyData"), bool)
+            and attribute["keyData"]
+        ):
+            errors.append(
+                f"{entity.get('id')}.{name}: must be a required keyData timestamp"
+            )
+
+
 def validate_entities(
     entity_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
@@ -423,6 +474,8 @@ def validate_entities(
         if entity_id is None:
             continue
         category, kind = entity_signature(entity)
+        validate_attribute_names(entity, errors)
+        validate_evidence_times(entity, errors)
         context_ref = normalize(entity.get("contextRef"))
 
         if category == "context":
@@ -581,10 +634,22 @@ def validate_request_interval(
         for attribute in request.get("attributes") or []
         if isinstance(attribute, dict)
     }
-    names = [normalize(interval.get("startAttribute"))]
-    end_attribute = normalize(interval.get("endAttribute"))
-    if end_attribute is not None:
-        names.append(end_attribute)
+    for field_name, expected in (
+        ("startAttribute", "start_at"),
+        ("endAttribute", "expired_at"),
+    ):
+        if interval.get(field_name) != expected:
+            errors.append(
+                f"{fulfillment_id}.requestInterval.{field_name} must reference '{expected}'"
+            )
+    if "openEndedReason" in interval:
+        errors.append(
+            f"{fulfillment_id}.requestInterval: openEndedReason is not supported; a definite deadline is required"
+        )
+    names = [
+        normalize(interval.get("startAttribute")),
+        normalize(interval.get("endAttribute")),
+    ]
     if len(names) == 2 and names[0] == names[1]:
         errors.append(
             f"{fulfillment_id}: request interval start and end attributes must differ"

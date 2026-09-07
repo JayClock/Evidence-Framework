@@ -32,17 +32,11 @@ Customer Party
 
 ```yaml
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 ```
 
-合同确认无固定期限：
-
-```yaml
-requestInterval:
-  startAttribute: startedAt
-  openEndedReason: 合同约定持续履行，直到终止通知
-```
+每个请求必须有确定的截止时间；不支持无期限或 `openEndedReason`。若来源只说明持续合作，继续核实每次请求的具体期限或确定性计算规则，不自行补造。
 
 一次确认使用 `all`／`any`。分批履约仍只建一个 Confirmation 类型，使用 `count`；累计金额使用 `amount` 和 CEL completion Rule。不要复制类型节点模拟运行时实例。
 
@@ -90,7 +84,7 @@ Channel C Confirmation ─┘
 - 招标：一个 RFP 对多个 Proposal，最终 Contract 追溯被接受 Proposal；
 - 拼团、赠送、活动和谈判位于独立 Channel／Pre-contract Context。
 
-RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、时间和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯渠道可没有 Contract 和 Fulfillment，不补造未来履约。
+RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`start_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯渠道可没有 Contract 和 Fulfillment，不补造未来履约。
 
 ## 9. KPI／目标—实际
 
@@ -113,7 +107,7 @@ Performance Contract
     └── Review Request → Actual Result Confirmation
 ```
 
-联系记录、周报等只作为证明材料时建成 Other Evidence；真正关闭当前责任的结果才是 Confirmation。周检查、季度目标等是否共用确认，仍按共享确认的证明理由和边界判断。
+联系记录、周报等只作为证明材料时建成 Other Evidence，必备 `created_at`；真正关闭当前责任的结果才是 Confirmation，必备 `confirmed_at`。周检查、季度目标等是否共用确认，仍按共享确认的证明理由和边界判断。
 
 ## 10. 取消、退款与补偿
 

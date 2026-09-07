@@ -7,8 +7,8 @@ rightHolderRoleRef: role.operator
 obligorRoleRef: role.platform-performance
 requestRef: request.goal-setting
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.goal-setting
 completionPolicy:

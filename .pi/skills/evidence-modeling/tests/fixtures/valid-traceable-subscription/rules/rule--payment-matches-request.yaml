@@ -9,6 +9,6 @@ bindings:
   payment:
     ref: confirmation.content-payment
 expression:
-  payment.paidMinorUnits == request.requestedMinorUnits && payment.currency
+  payment.paid_minor_units == request.requested_minor_units && payment.currency
   == request.currency
 resultType: bool

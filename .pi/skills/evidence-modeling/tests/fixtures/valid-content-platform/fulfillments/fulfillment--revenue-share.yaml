@@ -7,8 +7,8 @@ rightHolderRoleRef: role.creator
 obligorRoleRef: role.platform-content-production
 requestRef: request.revenue-share
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.revenue-share
 completionPolicy:

@@ -11,5 +11,5 @@ bindings:
     type: bool
   now:
     type: timestamp
-expression: now > request.expiresAt && !paymentConfirmed
+expression: now > request.expired_at && !paymentConfirmed
 resultType: bool

@@ -6,8 +6,9 @@ label: 交稿确认
 contextRef: context.manuscript-delivery-fulfillment
 responsibleRoleRef: role.creator
 attributes:
-  - name: confirmedAt
+  - name: confirmed_at
     label: 确认时间
     valueType: timestamp
     required: true
+    keyData: true
     meaning: 确定履约结果形成的时间

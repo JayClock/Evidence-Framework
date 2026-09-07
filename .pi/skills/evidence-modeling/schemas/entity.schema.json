@@ -41,6 +41,116 @@
   "allOf": [
     {
       "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "enum": ["rfp", "proposal", "fulfillment_request"] }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": {
+        "required": ["attributes"],
+        "properties": {
+          "attributes": {
+            "allOf": [
+              {
+                "contains": {
+                  "allOf": [
+                    { "$ref": "#/$defs/evidenceTime" },
+                    { "properties": { "name": { "const": "start_at" } } }
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "allOf": [
+                    { "$ref": "#/$defs/evidenceTime" },
+                    { "properties": { "name": { "const": "expired_at" } } }
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "contract" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": {
+        "required": ["attributes"],
+        "properties": {
+          "attributes": {
+            "contains": {
+              "allOf": [
+                { "$ref": "#/$defs/evidenceTime" },
+                { "properties": { "name": { "const": "signed_at" } } }
+              ]
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "fulfillment_confirmation" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": {
+        "required": ["attributes"],
+        "properties": {
+          "attributes": {
+            "contains": {
+              "allOf": [
+                { "$ref": "#/$defs/evidenceTime" },
+                { "properties": { "name": { "const": "confirmed_at" } } }
+              ]
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "other_evidence" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": {
+        "required": ["attributes"],
+        "properties": {
+          "attributes": {
+            "contains": {
+              "allOf": [
+                { "$ref": "#/$defs/evidenceTime" },
+                { "properties": { "name": { "const": "created_at" } } }
+              ]
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
         "properties": { "category": { "const": "evidence" } },
         "required": ["category"]
       },
@@ -154,6 +264,15 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "evidenceTime": {
+      "type": "object",
+      "required": ["name", "valueType", "required", "keyData"],
+      "properties": {
+        "valueType": { "const": "timestamp" },
+        "required": { "const": true },
+        "keyData": { "const": true }
+      }
+    },
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
@@ -162,7 +281,10 @@
       "type": "object",
       "required": ["name", "label", "valueType", "required", "meaning"],
       "properties": {
-        "name": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
+        },
         "label": { "type": "string", "minLength": 1 },
         "valueType": {
           "enum": [
@@ -185,11 +307,11 @@
           ]
         },
         "required": { "type": "boolean" },
-        "meaning": { "type": "string", "minLength": 1 },
         "keyData": {
           "description": "Marks a financially, temporally, quantitatively, or audit-significant value for lineage reporting.",
           "type": "boolean"
         },
+        "meaning": { "type": "string", "minLength": 1 },
         "derivedByRuleRef": { "$ref": "#/$defs/id" },
         "notes": { "type": "string", "minLength": 1 }
       },

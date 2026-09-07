@@ -6,6 +6,10 @@ Schema v3 不接受 Schema v2 模型。统一表达合同履约、签约前渠�
 
 本次范围重构保留 v3 文档形状与既有履约约束：只放开无履约范围的空 `fulfillments` 集合，不新增领域／绩效 profile。使用旧版 v3 加载器或 compiled Schema 的消费者需同步更新，否则仍会拒绝空集合。
 
+本地时间契约进一步收紧：所有 Evidence 按 kind 显式定义必备 snake_case 时间属性，RFP／Proposal／Request 不再允许无期限；详见 `format.md` 的时间表及 `migration-v3.md`。源 YAML 和编译 Schema 同步校验，未知时间依据先回到发现，不为通过校验造日期。此规则不要求纯领域模型创建 Evidence。
+
+所有 Entity 业务属性及其引用统一小写 snake_case，协议字段保持现有 camelCase；不自动改名既有模型。YAML 排版与属性键顺序见 `format.md`，它们是生成规范而非业务语义；迁移边界见 `migration-v3.md`。
+
 ## 按任务加载
 
 | 任务                                               | 必读                                              |

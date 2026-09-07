@@ -7,8 +7,8 @@ rightHolderRoleRef: role.prepaid-customer
 obligorRoleRef: role.prepaid-platform
 requestRef: request.prepaid-payment
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.prepaid-payment
 completionPolicy:

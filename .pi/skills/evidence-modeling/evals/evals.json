@@ -129,17 +129,18 @@
       "assertions": [
         "纯领域使用同一 FM v3，结构与确定性编译通过，不生成合同或履约。",
         "同时包含对象属性、同域关系、领域 CEL 规则，而非 Thing 清单。",
-        "客户 Party 与档案 Thing 分开，派生可用性具有 Entity 属性 lineage。"
+        "客户 Party 与档案 Thing 分开，派生可用性具有 Entity 属性 lineage。",
+        "生成的属性与 CEL 使用 profile_id、contact_id；原输入 profileId、contactId 的映射有说明，contextRef 等协议键不改名。"
       ]
     },
     {
       "id": 16,
       "name": "channel-only-no-contract",
       "prompt": "用 $modeling 只建模客户询价和供应方报价，双方尚未签约。询价方发出带 requestedAt 的询价，报价方回应带 proposedAt 的报价；本次没有合同或后续履约事实。用 FM v3 表达 Channel Context、双方 Role、RFP/Proposal 和回应关系，校验并编译，不为了目录要求虚构合同、履约或截止时间。",
-      "expected_output": "纯渠道 FM v3 保留真实角色、RFP/Proposal 与回应关系；没有 Contract 或 Fulfillment；缺少未来合同不是 blocker；校验与编译通过。",
+      "expected_output": "纯渠道保留真实角色、RFP/Proposal 与回应关系；没有 Contract 或 Fulfillment。缺少未来合同不是 blocker，但当前未给询价与报价截止依据，必须保持阻塞并核实，不宣称完整模型校验或编译通过。",
       "files": [],
       "assertions": [
-        "纯渠道没有 Contract/Fulfillment，仍通过校验及确定性编译。",
+        "纯渠道不补 Contract/Fulfillment；指出凭证截止依据缺失，不编造 expired_at 或声称无期限模型通过校验。",
         "RFP/Proposal 具有正确责任 Role 和同渠道回应关系。"
       ]
     },
@@ -176,7 +177,8 @@
       "assertions": [
         "领域与绩效使用同一 FM，领域有关系与规则而不是占位。",
         "履约引用领域 Participant，完成证明仍为 Confirmation 或 Evidence Role。",
-        "领域输入没有放松履约请求、期限与确认的校验。"
+        "领域输入没有放松履约请求、期限与确认的校验。",
+        "所有 Entity 业务属性与引用采用 snake_case，协议键仍使用 Schema 原名。"
       ]
     }
   ]

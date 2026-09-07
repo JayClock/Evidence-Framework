@@ -6,15 +6,15 @@ label: 周进度检查请求
 contextRef: context.weekly-progress-check-fulfillment
 responsibleRoleRef: role.platform-performance
 attributes:
-  - name: startedAt
+  - name: start_at
     label: 发起时间
     valueType: timestamp
     required: true
-    meaning: 履约时段开始时间
     keyData: true
-  - name: expiresAt
+    meaning: 履约时段开始时间
+  - name: expired_at
     label: 截止时间
     valueType: timestamp
     required: true
-    meaning: 履约时段截止时间
     keyData: true
+    meaning: 履约时段截止时间

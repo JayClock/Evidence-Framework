@@ -57,6 +57,15 @@ export const domain = [
     resultType: 'bool',
   }),
 ];
+// Synthetic channel facts, not runtime defaults or inferred business deadlines.
+const channelTimes = ['start_at', 'expired_at'].map((name) => ({
+  name,
+  label: name,
+  valueType: 'timestamp',
+  required: true,
+  keyData: true,
+  meaning: name === 'start_at' ? '凭证发出时间' : '明确约定的有效期截止时间',
+}));
 export const channel = [
   source('model.yaml', manifest),
   entity('context.sample', 'context', 'channel'),
@@ -65,10 +74,12 @@ export const channel = [
   entity('rfp.inquiry', 'evidence', 'rfp', {
     contextRef: 'context.sample',
     responsibleRoleRef: 'role.buyer',
+    attributes: channelTimes,
   }),
   entity('proposal.quote', 'evidence', 'proposal', {
     contextRef: 'context.sample',
     responsibleRoleRef: 'role.seller',
+    attributes: channelTimes,
   }),
   source('relationships/relation--quote.yaml', {
     type: 'relationship',

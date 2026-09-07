@@ -42,7 +42,7 @@
         "entityRef": { "$ref": "#/$defs/id" },
         "attribute": {
           "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
         }
       },
       "additionalProperties": false

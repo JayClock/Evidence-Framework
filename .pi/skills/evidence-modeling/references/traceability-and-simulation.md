@@ -21,7 +21,7 @@ businessPattern.reuseStatus / businessPattern.stakeholderReview
 
 ```yaml
 attributes:
-  - name: payableMinorUnits
+  - name: payable_minor_units
     label: 应付最小货币单位金额
     valueType: int
     required: true
@@ -30,12 +30,12 @@ attributes:
     derivedByRuleRef: rule.requested-amount
 ```
 
-Request interval 的开始属性以及 fixed 模式的截止属性必须是 required `timestamp` 且 `keyData: true`；open-ended 模式只要求开始属性，并保留经业务方确认的 `openEndedReason`。关键属性只有两种来源：
+所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request interval 固定引用 `start_at` 和 `expired_at`，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。关键属性只有两种来源：
 
 1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
 2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
 
-不要另写 `sourceAttributeRefs`。派生来源由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务／领域输入必须建模为 Entity Attribute（Evidence 或领域对象属性），不能藏在无来源的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`。
+不要另写 `sourceAttributeRefs`。派生来源由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务／领域输入必须建模为 Entity Attribute（Evidence 或领域对象属性），不能藏在无来源的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`，属性名为 snake_case，与 Entity 定义、CEL 访问、派生 target 和 Instance values 的直接键一致。
 
 规则 binding 默认 `cardinality: one`；集合必须显式声明：
 
@@ -88,7 +88,7 @@ type: evidence_instance
 id: instance.payment-request
 entityRef: request.payment
 values:
-  startedAt: '2026-09-01T09:01:00Z'
+  start_at: '2026-09-01T09:01:00Z'
 basedOn:
   - instance.sales-contract
 ```
@@ -97,7 +97,7 @@ basedOn:
 
 - 只能实例化 Evidence Entity；
 - 非派生的必填属性必须在单据形成时给出；
-- 派生必填属性可以先缺省，但场景结束前必须由 CEL evaluation 产生；
+- 派生必填属性（含 expired_at）可以在测试输入中先缺省，但场景结束前必须由已声明的 CEL evaluation 产生；无推导、结果为 null 或非 RFC 3339 时间戳均失败。这不允许省略源 Entity 的时间属性定义；
 - `basedOn` 只能指向更早可用的单据；
 - 更正、退款、冲正和补偿新增 Instance，不修改旧 Instance。
 

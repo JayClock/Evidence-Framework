@@ -7,8 +7,8 @@ rightHolderRoleRef: role.external-payment-customer
 obligorRoleRef: role.external-payment-provider
 requestRef: request.external-payment
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.external-payment
 completionPolicy:

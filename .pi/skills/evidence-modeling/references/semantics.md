@@ -75,7 +75,7 @@ Evidence kind：
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
 - `other_evidence`：位于产生它的业务或领域 Context。
 
-Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成或部分完成履约的时刻 Evidence。Request interval 必须引用 Request 上的 required、`keyData: true` timestamp 起点，以及固定截止点或经确认的无固定期限依据。
+Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成或部分完成履约的时刻 Evidence。所有凭证从类型定义起具有必备时间属性：rfp／proposal／fulfillment_request 为 `start_at`、`expired_at`；contract 为 `signed_at`；fulfillment_confirmation 为 `confirmed_at`；other_evidence 为 `created_at`。属性须在 Entity YAML 显式定义为 required、`keyData: true` 的 timestamp。Request interval 固定引用 `start_at`、`expired_at`。RFP／Proposal／Request 均须有确定的截止时间，不再允许 openEndedReason 或无期限；缺业务依据须回到发现，不编造日期。
 
 运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿必须创建新 Evidence 或 Fulfillment，不能修改旧凭证。此约束不等于全部领域 Participant 永不改变；领域状态和行为条件按已确认规则表达，不伪装成履约。
 

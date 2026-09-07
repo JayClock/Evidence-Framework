@@ -7,8 +7,8 @@ rightHolderRoleRef: role.platform-subscription
 obligorRoleRef: role.subscriber
 requestRef: request.content-payment
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.content-payment
 completionPolicy:

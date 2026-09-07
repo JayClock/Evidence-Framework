@@ -15,7 +15,9 @@ SKILL_DIR = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-from build_fm_business_patterns import render_business_patterns  # noqa: E402
+from build_fm_business_patterns import (  # pyright: ignore[reportMissingImports]  # noqa: E402
+    render_business_patterns,
+)
 from fm_model import (  # type: ignore[import-not-found]  # noqa: E402
     compiled_document,
     load_model,
@@ -284,7 +286,7 @@ class FulfillmentModelTests(unittest.TestCase):
             root = self.copied_fixture("valid-subscription", directory)
             path = root / "rules" / "rule--payment-deadline.yaml"
             rule = self.read_yaml(path)
-            rule["expression"] = 'expiresAt = self.startedAt + duration("30m")'
+            rule["expression"] = 'expired_at = self.start_at + duration("30m")'
             self.write_yaml(path, rule)
             errors = validate_model(load_model(root))
             self.assertTrue(
@@ -431,7 +433,7 @@ class FulfillmentModelTests(unittest.TestCase):
             started_at = next(
                 attribute
                 for attribute in request["attributes"]
-                if attribute["name"] == "startedAt"
+                if attribute["name"] == "start_at"
             )
             started_at["keyData"] = False
             self.write_yaml(request_path, request)
@@ -444,19 +446,22 @@ class FulfillmentModelTests(unittest.TestCase):
                 errors,
             )
 
-    def test_open_ended_request_interval_requires_explicit_reason(self) -> None:
+    def test_open_ended_request_interval_is_rejected_even_with_explicit_reason(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
             path = root / "fulfillments" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
             payment["requestInterval"] = {
-                "startAttribute": "startedAt",
+                "startAttribute": "start_at",
                 "openEndedReason": "合同约定持续履行，直到一方发出终止通知。",
             }
             self.write_yaml(path, payment)
-            self.assertEqual([], validate_model(load_model(root)))
+            errors = validate_model(load_model(root))
+            self.assertTrue(any("openEndedReason" in error for error in errors), errors)
 
-            payment["requestInterval"] = {"startAttribute": "startedAt"}
+            payment["requestInterval"] = {"startAttribute": "start_at"}
             self.write_yaml(path, payment)
             errors = validate_model(load_model(root))
             self.assertTrue(any("requestInterval" in error for error in errors), errors)

@@ -6,8 +6,9 @@ label: 收入分成支付确认
 contextRef: context.revenue-share-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
-  - name: confirmedAt
+  - name: confirmed_at
     label: 确认时间
     valueType: timestamp
     required: true
+    keyData: true
     meaning: 确定履约结果形成的时间

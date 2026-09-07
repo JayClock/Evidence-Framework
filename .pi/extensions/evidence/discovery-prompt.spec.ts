@@ -68,6 +68,21 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     expect(h.state).toEqual(before);
   });
 
+  it('loads mandatory evidence time knowledge on the first discovery turn', async () => {
+    const h = await setup();
+    const prompt = (await h.prompt()).replace(/[ \t]+/g, ' ');
+    for (const rule of [
+      '`rfp`、`proposal`、`fulfillment_request` | `start_at`、`expired_at`',
+      '`contract` | `signed_at`',
+      '`fulfillment_confirmation` | `confirmed_at`',
+      '`other_evidence` | `created_at`',
+      '不允许无期限或 `openEndedReason`',
+      '最终 `entities/*.yaml` 的 `attributes`',
+      '未知时间依据保持阻塞',
+    ])
+      expect(prompt).toContain(rule);
+  });
+
   it.each(['', '   \n'])(
     'fails closed on missing or empty guidance (%j)',
     async (content) => {

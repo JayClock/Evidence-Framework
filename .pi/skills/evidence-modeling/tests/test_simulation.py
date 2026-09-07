@@ -99,7 +99,7 @@ class SimulationTests(unittest.TestCase):
             for instance in suite.instances
             if instance["id"] == "instance.payment-confirmation"
         )
-        payment["values"]["paidMinorUnits"] = 19800
+        payment["values"]["paid_minor_units"] = 19800
         report, errors = simulate_validation_suite(model, suite)
         self.assertTrue(errors)
         self.assertTrue(report["machineValidated"])
@@ -163,7 +163,7 @@ class SimulationTests(unittest.TestCase):
                     "responsibleRoleRef": "role.subscriber",
                     "attributes": [
                         {
-                            "name": "recordedAt",
+                            "name": "created_at",
                             "label": "Recorded at",
                             "valueType": "timestamp",
                             "required": True,
@@ -178,7 +178,7 @@ class SimulationTests(unittest.TestCase):
                     "type": "evidence_instance",
                     "id": instance_ref,
                     "entityRef": entity_ref,
-                    "values": {"recordedAt": f"2026-09-01T09:{8 + sequence}:00Z"},
+                    "values": {"created_at": f"2026-09-01T09:{8 + sequence}:00Z"},
                     "basedOn": ["instance.payment-confirmation"],
                 }
             )
@@ -191,6 +191,7 @@ class SimulationTests(unittest.TestCase):
                 }
             )
         suite.scenarios.append(scenario)
+        self.assertEqual([], validate_model(model))
 
         report, errors = simulate_validation_suite(
             model, suite, ["scenario.append-only-adjustments"]

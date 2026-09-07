@@ -7,8 +7,8 @@ rightHolderRoleRef: role.platform-content-production
 obligorRoleRef: role.creator
 requestRef: request.manuscript-delivery
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.manuscript-delivery
 completionPolicy:

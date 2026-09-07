@@ -7,8 +7,8 @@ rightHolderRoleRef: role.creator
 obligorRoleRef: role.platform-content-production
 requestRef: request.advance-payment
 requestInterval:
-  startAttribute: startedAt
-  endAttribute: expiresAt
+  startAttribute: start_at
+  endAttribute: expired_at
 confirmationRefs:
   - confirmation.advance-payment
 completionPolicy:

@@ -8,8 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from celpy import Environment
-from celpy.adapter import json_to_cel
+# Dependencies are installed in Evidence's isolated Python runtime.
+from celpy import Environment  # pyright: ignore[reportMissingImports]
+from celpy.adapter import json_to_cel  # pyright: ignore[reportMissingImports]
 from context_samples import (
     channel_documents,
     domain_documents,
@@ -17,7 +18,7 @@ from context_samples import (
     write_model,
 )
 from jsonschema import Draft202012Validator
-from referencing import Registry, Resource
+from referencing import Registry, Resource  # pyright: ignore[reportMissingImports]
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
@@ -27,7 +28,9 @@ from fm_model import (  # type: ignore[import-not-found]  # noqa: E402
     load_model,
     validate_model,
 )
-from fm_traceability import analyze_traceability  # noqa: E402
+from fm_traceability import (  # pyright: ignore[reportMissingImports]  # noqa: E402
+    analyze_traceability,
+)
 
 
 class ContextScopeTests(unittest.TestCase):
@@ -96,8 +99,8 @@ class ContextScopeTests(unittest.TestCase):
             ),
             ("rule.profile-editable", {"profile": {"archived": False}}, True),
             ("rule.profile-editable", {"profile": {"archived": True}}, False),
-            ("rule.profile-identity", {"profile": {"profileId": "p1"}}, True),
-            ("rule.profile-identity", {"profile": {"profileId": ""}}, False),
+            ("rule.profile-identity", {"profile": {"profile_id": "p1"}}, True),
+            ("rule.profile-identity", {"profile": {"profile_id": ""}}, False),
         ]
         for rule_id, bindings, expected in cases:
             with self.subTest(rule=rule_id, bindings=bindings):

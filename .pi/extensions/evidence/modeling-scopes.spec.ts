@@ -82,6 +82,21 @@ describe('FM v3 scope validation', () => {
         );
         expect(compiled.fulfillments).toEqual([]);
         expect(compiled.model.schemaVersion).toBe('3.0');
+        for (const item of compiled.entities) {
+          if (item.category !== 'evidence') continue;
+          expect(item.attributes).toEqual(
+            expect.arrayContaining(
+              ['start_at', 'expired_at'].map((name) =>
+                expect.objectContaining({
+                  name,
+                  valueType: 'timestamp',
+                  required: true,
+                  keyData: true,
+                }),
+              ),
+            ),
+          );
+        }
         await expect(
           readFile(join(directory, 'generated/simulation.json')),
         ).rejects.toThrow();
@@ -89,6 +104,34 @@ describe('FM v3 scope validation', () => {
     },
     180_000,
   );
+
+  it('rejects a channel source missing expired_at without injecting it into YAML or compiling', async () => {
+    const files = channel.map((file) => {
+      if (file.path !== 'entities/proposal--quote.yaml') return file;
+      const document = JSON.parse(file.content);
+      document.attributes = document.attributes.filter(
+        (attribute: { name: string }) => attribute.name !== 'expired_at',
+      );
+      return source(file.path, document);
+    });
+    await withModel(files, async (directory, result) => {
+      expect(result.passed).toBe(false);
+      expect(result.machineValidated).toBe(false);
+      expect(JSON.stringify(result.items)).toContain('expired_at');
+      expect(
+        await readFile(
+          join(directory, 'entities/proposal--quote.yaml'),
+          'utf8',
+        ),
+      ).toBe(
+        files.find((file) => file.path === 'entities/proposal--quote.yaml')!
+          .content + '\n',
+      );
+      await expect(
+        readFile(join(directory, 'generated/model.json')),
+      ).rejects.toThrow();
+    });
+  }, 180_000);
 
   it('rejects v2 and an orphan Request even when the fulfillment collection is empty', async () => {
     for (const files of [

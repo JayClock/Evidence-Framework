@@ -6,12 +6,13 @@ label: 内容产品付款确认
 contextRef: context.content-payment-fulfillment
 responsibleRoleRef: role.subscriber
 attributes:
-  - name: confirmedAt
+  - name: confirmed_at
     label: 确认时间
     valueType: timestamp
     required: true
+    keyData: true
     meaning: 确定履约结果形成的时间
-  - name: paidMinorUnits
+  - name: paid_minor_units
     label: 实付最小货币单位金额
     valueType: int
     required: true

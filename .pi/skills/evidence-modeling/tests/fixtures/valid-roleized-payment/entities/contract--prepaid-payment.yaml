@@ -8,8 +8,9 @@ roleRefs:
   - role.prepaid-customer
   - role.prepaid-platform
 attributes:
-  - name: signedAt
+  - name: signed_at
     label: 签约时间
     valueType: timestamp
     required: true
+    keyData: true
     meaning: 双方合同成立时间

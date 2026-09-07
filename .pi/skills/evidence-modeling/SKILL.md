@@ -21,6 +21,8 @@ description: Evidence 唯一建模入口。Init 后从业务叙述主动识别�
 - 领域主线：候选领域上下文与对象 → 身份、属性与关系 → 变化条件、资格、不变条件与计算 → 反例；不为纯领域补造合同。
 - 渠道主线：真实邀请、报价或方案 → 请求与回应 → 协商规则 → 按需连接签约来源；RFP/Proposal 不伪装成履约。
 
+从首轮发现就按凭证类型核对必备时间：rfp／proposal／fulfillment_request 的 `start_at`、`expired_at`，contract 的 `signed_at`，fulfillment_confirmation 的 `confirmed_at`，other_evidence 的 `created_at`。必须有确定的截止时间，不允许无期限或 `openEndedReason`；时间依据未知保持阻塞，不编造值或默认期限。最终 Entity YAML 的 `attributes` 必须显式包含对应的 required、keyData timestamp 定义，不能只写在说明文字中；详见发现指南与 `references/format.md`。
+
 这些是可组合的发现主线，不是互斥模式或固定阶段。范围与排除项由 Agent 随发现整理，有影响结果的边界歧义才向人核实，不自行扩大或缩小目标。四色凭证/数据追溯与正常、边界、异常回放贯穿过程；缺口回到相应对象或责任，不重新启动问卷。材料已明确不重复问，依据不足不编造。
 
 ## 交互工具与证据
@@ -60,7 +62,7 @@ description: Evidence 唯一建模入口。Init 后从业务叙述主动识别�
 - Role 是上下文身份/能力插槽，不等于稳定玩家或系统组件。只有来源明确时建立 Participant→Role 的 plays_role。
 - Participant 的 Party/Place/Thing 并列；Party 在 Context 外，Place/Thing 属于 Domain Context。字段通常是属性。
 - Trigger 是自动动作机制，用 actsForRoleRef 指向所代表的合同 Role；系统、API、调度器不是业务 Party。
-- Request interval 起止引用 required、keyData timestamp；openEndedReason 必须有已确认依据，不代表材料没写期限。
+- Request interval 必须以 startAttribute／endAttribute 分别引用 `start_at`／`expired_at`；各凭证的类型级时间属性均为 required、keyData timestamp。废止 openEndedReason，源 YAML 缺字段、旧命名或无确定截止依据不能作为合格模型交付。
 - 使用稳定 ID、CEL、keyData 与 AST lineage。v3 不完整表达操作、状态机、关系基数或复杂算法，README 明确来源、所需行为、未验证部分和下游责任，不补造 Command DSL 或假履约。
 - FM Context 不等于 DDD Bounded Context、事务聚合或微服务。不变条件在模型定义，Architecture 决定如何保障。API、SQL、消息与部署不写回 FM。
 
@@ -75,7 +77,8 @@ description: Evidence 唯一建模入口。Init 后从业务叙述主动识别�
 - 按需 `fulfillments/`、`relationships/`、`rules/`、`business-patterns/` 的源 YAML。
 - 可选 `discovery/*.md|yaml` 是发现摘要而非第二份事实源；`validation/instances/`、`validation/scenarios/` 是测试数据。
 - 禁止提交 `generated/`、`02-business-patterns.md`、`status.md`；扩展校验成功后原子替换并确定性生成。
-- 每个 YAML 一个文档，文件名小写 ASCII kebab-case，分片名由 ID 中点替换为双连字符。无履约编译为 fulfillments: []，不能掩盖孤立 Request。
+- 每个 YAML 一个文档，两空格缩进、块式结构；文件名小写 ASCII kebab-case，分片名由 ID 中点替换为双连字符。无履约编译为 fulfillments: []，不能掩盖孤立 Request。
+- 所有 Entity 业务属性名统一小写 `snake_case`，同步 CEL、派生 target、实例 values 和追溯路径；`contextRef`、`valueType` 等协议键保持 Schema 原名。属性定义顺序为 name、label、valueType、required、keyData、meaning、derivedByRuleRef、notes，可选键按需省略。命名／引用硬校验，排版不改变语义；不由编译器自动改名。详见 `references/format.md`。
 
 凭证只追加：取消、退款、冲正、更正、补偿新增凭证；不代表所有领域对象不可修改。模型默认 draft / stakeholderReview pending，只有真实具名审核才能改变。机器校验、实际模拟、业务专家审核和 Modeling Gate 四者独立。
 

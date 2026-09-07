@@ -22,13 +22,14 @@ def entity(
 
 
 def attribute(
-    name: str, value_type: str, meaning: str, **fields: Any
+    name: str, value_type: str, meaning: str, *, keyData: bool = False, **fields: Any
 ) -> dict[str, Any]:
     return {
         "name": name,
         "label": meaning,
         "valueType": value_type,
         "required": True,
+        "keyData": keyData,
         "meaning": meaning,
         **fields,
     }
@@ -56,7 +57,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "客户档案",
             contextRef=context,
             attributes=[
-                attribute("profileId", "string", "在客户信息领域内区分档案的标识"),
+                attribute("profile_id", "string", "在客户信息领域内区分档案的标识"),
                 attribute("archived", "bool", "档案已归档"),
             ],
         ),
@@ -67,7 +68,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "有独立标识的联系方式",
             contextRef=context,
             attributes=[
-                attribute("contactId", "string", "联系方式标识"),
+                attribute("contact_id", "string", "联系方式标识"),
                 attribute("enabled", "bool", "联系方式已启用", keyData=True),
                 attribute("verified", "bool", "联系方式已核验", keyData=True),
                 attribute(
@@ -131,7 +132,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "label": "档案标识不为空",
             "contextRef": context,
             "bindings": {"profile": {"ref": "thing.customer-profile"}},
-            "expression": "profile.profileId.size() > 0",
+            "expression": "profile.profile_id.size() > 0",
             "resultType": "bool",
         },
     ]
@@ -152,7 +153,8 @@ def channel_documents() -> list[dict[str, Any]]:
             contextRef=context,
             responsibleRoleRef="role.prospect",
             attributes=[
-                attribute("requestedAt", "timestamp", "询价形成时间", keyData=True)
+                attribute("start_at", "timestamp", "询价形成时间", keyData=True),
+                attribute("expired_at", "timestamp", "询价回应截止时间", keyData=True),
             ],
         ),
         entity(
@@ -163,7 +165,10 @@ def channel_documents() -> list[dict[str, Any]]:
             contextRef=context,
             responsibleRoleRef="role.quote-provider",
             attributes=[
-                attribute("proposedAt", "timestamp", "报价形成时间", keyData=True)
+                attribute("start_at", "timestamp", "报价形成时间", keyData=True),
+                attribute(
+                    "expired_at", "timestamp", "报价有效期截止时间", keyData=True
+                ),
             ],
         ),
         {
@@ -186,7 +191,7 @@ def performance_fulfillment(
     result = (
         attribute("approved", "bool", "是否批准目标变更")
         if name == "target-change"
-        else attribute("actualCount", "int", "本周实际联系数量")
+        else attribute("actual_count", "int", "本周实际联系数量")
     )
     return [
         entity(
@@ -204,9 +209,9 @@ def performance_fulfillment(
             contextRef=context,
             responsibleRoleRef=right,
             attributes=[
-                attribute("startedAt", "timestamp", "请求开始时间", keyData=True),
+                attribute("start_at", "timestamp", "请求开始时间", keyData=True),
                 attribute(
-                    "dueAt", "timestamp", "请求中明确记录的截止时间", keyData=True
+                    "expired_at", "timestamp", "请求中明确记录的截止时间", keyData=True
                 ),
             ],
         ),
@@ -218,7 +223,9 @@ def performance_fulfillment(
             contextRef=context,
             responsibleRoleRef=obligor,
             attributes=[
-                attribute("confirmedAt", "timestamp", "结果确认形成时间", keyData=True),
+                attribute(
+                    "confirmed_at", "timestamp", "结果确认形成时间", keyData=True
+                ),
                 result,
             ],
         ),
@@ -231,7 +238,10 @@ def performance_fulfillment(
             "rightHolderRoleRef": right,
             "obligorRoleRef": obligor,
             "requestRef": request,
-            "requestInterval": {"startAttribute": "startedAt", "endAttribute": "dueAt"},
+            "requestInterval": {
+                "startAttribute": "start_at",
+                "endAttribute": "expired_at",
+            },
             "confirmationRefs": [confirmation],
             "completionPolicy": {"mode": "all"},
             "requestTrigger": {"kind": "manual", "actsForRoleRef": right},
@@ -266,7 +276,7 @@ def performance_fulfillment(
                 "results": {"ref": confirmation, "cardinality": "many"},
                 "now": {"type": "timestamp"},
             },
-            "expression": "now > request.dueAt && results.size() == 0",
+            "expression": "now > request.expired_at && results.size() == 0",
         },
     ]
 
@@ -295,7 +305,7 @@ def performance_documents(
             contextRef=context,
             roleRefs=["role.manager", "role.employee"],
             attributes=[
-                attribute("signedAt", "timestamp", "协议签署时间", keyData=True)
+                attribute("signed_at", "timestamp", "协议签署时间", keyData=True)
             ],
         ),
         *performance_fulfillment(
@@ -337,6 +347,14 @@ def performance_documents(
                     "目标方案邀请",
                     contextRef=channel,
                     responsibleRoleRef="role.goal-requester",
+                    attributes=[
+                        attribute(
+                            "start_at", "timestamp", "邀请发出时间", keyData=True
+                        ),
+                        attribute(
+                            "expired_at", "timestamp", "邀请回应截止时间", keyData=True
+                        ),
+                    ],
                 ),
                 entity(
                     "proposal.goals",
@@ -345,6 +363,17 @@ def performance_documents(
                     "目标方案",
                     contextRef=channel,
                     responsibleRoleRef="role.goal-proposer",
+                    attributes=[
+                        attribute(
+                            "start_at", "timestamp", "方案提出时间", keyData=True
+                        ),
+                        attribute(
+                            "expired_at",
+                            "timestamp",
+                            "方案有效期截止时间",
+                            keyData=True,
+                        ),
+                    ],
                 ),
                 {
                     "type": "relationship",

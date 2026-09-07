@@ -16,6 +16,10 @@ references、schemas、scripts、tests 和 evals 以该提交为基线，保留�
 4. 无适用单据场景不冒称模拟成功；领域运行时行为仍由下游 Q1/Q2 验证。人工状态以模型源文件为准，不由状态页复制或提升。
 5. evals 路径适配 `.pi/skills/evidence-modeling`，准备时把上游 `$modeling` 提示引用替换为 `$evidence-modeling`；保留原始场景要求作为独立建模基准，不将它当作 Evidence Gate 流程验收。runner 是独立开发工具，不在活跃产品任务中直接写生成工件。新增 `evals/discovery/` 是本地交互发现评测，不交给完整 FM 生成 grader，也不伪造人工答案。
 
+6. 本地收紧 Evidence 类型时间契约：rfp／proposal／fulfillment_request 必须显式声明 start_at、expired_at，contract 必须有 signed_at，fulfillment_confirmation 必须有 confirmed_at，other_evidence 必须有 created_at；全部 required/keyData timestamp。最终 Entity 源 YAML 与 compiled schema 均检查，不由加载器或编译器自动补齐。Request interval 固定引用 start_at／expired_at，废止 openEndedReason；无确定截止依据不得定稿。Schema 版本仍为 3.0，但旧 camelCase 时间模型与无期限写法不兼容，需人工核实后受控修订，工具升级不改既有业务工件。发现指南在首轮加载此知识，未知依据保持阻塞；普通合成 fixtures 同步更新，不改变原正常／异常预期。
+
+7. 业务属性名从允许任意 CEL 标识符收紧为小写 snake_case；Entity、Rule target、Instance values 直接键和 lineage Schema 一致，内存模型亦检查所有 Entity category。协议键、CEL 别名／内置函数与外部自由 map 数据不改名。源缺陷直接拒绝，不隐式改名；旧工件经受控迁移。`format.md` 统一两空格缩进及属性键顺序，但不把排版变成模型有效性条件。合成数据与 CEL／实例／预期引用同步更新；原始 eval 输入保留外部字段名以检查显式映射。
+
 ## 同步与验证
 
 后续升级需整体比较 Schema、加载器、CEL、模拟器、fixtures 和 compiled schema，重新应用本地适配并运行 `npm run evidence:verify`。不得只替换 SKILL.md 或只改 schemaVersion。

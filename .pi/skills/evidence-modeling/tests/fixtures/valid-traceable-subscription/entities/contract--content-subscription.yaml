@@ -8,13 +8,13 @@ roleRefs:
   - role.subscriber
   - role.platform-subscription
 attributes:
-  - name: signedAt
+  - name: signed_at
     label: 签约时间
     valueType: timestamp
     required: true
     keyData: true
     meaning: 双方合同成立时间
-  - name: priceMinorUnits
+  - name: price_minor_units
     label: 合同价格最小货币单位金额
     valueType: int
     required: true

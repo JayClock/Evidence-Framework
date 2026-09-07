@@ -5,3 +5,16 @@ kind: proposal
 label: 内容产品立项提案
 contextRef: context.content-production-precontract
 responsibleRoleRef: role.prospective-creator
+attributes:
+  - name: start_at
+    label: 发出时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 合成测试明确记录的发出时间
+  - name: expired_at
+    label: 有效期截止时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 合成测试明确记录的有效期截止时间
