@@ -75,7 +75,11 @@ Architecture → Planning → Coding（逐 US）→ Review → complete
 /evidence-answer Q-001
 ```
 
-选择问题，在编辑器中回答，再选择“事实或决定”“未知，仍需澄清”或“移出本次范围”，填写回答者姓名/业务角色。姓名是人工声明，不是认证身份。取消或空输入不会保存假回答。
+选择问题后，扩展通过 `gh api --hostname github.com user` 读取当前认证账号，在回答编辑器中显示，并自动将 `github.com/<login>` 记录为回答者，不再手动输入姓名或业务角色。然后填写回答，选择“事实或决定”“未知，仍需澄清”或“移出本次范围”。取消或空输入不会保存假回答。
+
+- 需要已安装 GitHub CLI 并运行 `gh auth login --hostname github.com`；读取失败（含网络失败或 10 秒超时）时不打开回答编辑器、不保存回答，修复后重试。
+- “当前账号”指本机 `gh` 对 github.com 生效的认证账号，包括 `GH_TOKEN` / `GITHUB_TOKEN` 的覆盖；不是 Git 提交者、仓库所有者或 Pi 模型登录账号。可用 `gh api --hostname github.com user --jq .login` 核对，已存储账号可用 `gh auth switch --hostname github.com --user <login>` 切换。
+- 每次回答或更正重新读取账号，历史回答者保持原样。仅保存账号标识，不保存 Token 或完整用户资料；账号归属不证明操作者实名、业务角色或批准权限，回答仍不等于模型批准。
 
 - 可部分回答，剩余问题继续等待；所有问题已有回答后回到 ready，运行 `/evidence-run` 消化回答。
 - “未知”是有效回答，但阻塞问题仍不能定稿；可继续核实或明确缩小范围。

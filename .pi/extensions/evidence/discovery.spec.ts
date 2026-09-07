@@ -32,6 +32,12 @@ const question = {
 };
 async function fresh() {
   const h = await qualityHarness(roots);
+  h.api.exec.mockResolvedValue({
+    code: 0,
+    killed: false,
+    stdout: '{"login":"test-reviewer"}\n',
+    stderr: '',
+  });
   const state = createInitialState('test', '作者结算争议');
   state.status = 'running';
   await saveState(h.root, state);
@@ -53,7 +59,6 @@ async function answer(
 ) {
   h.ui.editor.mockResolvedValue(text);
   h.ui.select.mockResolvedValue(mode);
-  h.ui.input.mockResolvedValue('业务负责人（测试声明）');
   await h.command('evidence-answer', 'Q-001');
 }
 
@@ -97,7 +102,7 @@ describe('interactive discovery state and provenance', () => {
     expect(snapshot.answers[0]).toMatchObject({
       id: 'A-001',
       text: '每月 10 日支付上月应付稿酬。',
-      respondent: '业务负责人（测试声明）',
+      respondent: 'github.com/test-reviewer',
       status: 'answered',
     });
     h.ui.editor.mockResolvedValue('财务与作者共同核对');

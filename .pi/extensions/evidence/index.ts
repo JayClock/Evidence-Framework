@@ -1593,7 +1593,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       if (!state) return;
       if (state.status === 'waiting_review') await reviewCurrentGate(pi, ctx);
       else if (state.status === 'waiting_answer')
-        await collectAnswer(ctx, refreshDiscovery);
+        await collectAnswer(pi, ctx, refreshDiscovery);
       else await startCurrentWork(pi, ctx);
     },
   });

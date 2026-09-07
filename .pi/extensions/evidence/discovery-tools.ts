@@ -62,7 +62,36 @@ function result(text: string, state: EvidenceState, terminate = false) {
   };
 }
 
+async function githubRespondent(
+  pi: ExtensionAPI,
+  cwd: string,
+): Promise<string | undefined> {
+  try {
+    const response = await pi.exec(
+      'gh',
+      ['api', '--hostname', 'github.com', 'user'],
+      { cwd, timeout: 10000 },
+    );
+    if (response.code !== 0 || response.killed) return;
+    const user: unknown = JSON.parse(response.stdout);
+    if (
+      user &&
+      typeof user === 'object' &&
+      'login' in user &&
+      typeof user.login === 'string' &&
+      /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(user.login)
+    ) {
+      return `github.com/${user.login}`;
+    }
+  } catch {
+    // Missing gh or invalid responses must not fall back to an invented identity.
+    // Do not expose raw CLI output, which may contain credential diagnostics.
+  }
+  return undefined;
+}
+
 export async function collectAnswer(
+  pi: ExtensionAPI,
   ctx: ExtensionCommandContext,
   refresh: Refresh,
   selectedId = '',
@@ -98,9 +127,17 @@ export async function collectAnswer(
     (q) => q.id === selected?.split(' ')[0],
   );
   if (!question) return;
+  const respondent = await githubRespondent(pi, ctx.cwd);
+  if (!respondent) {
+    ctx.ui.notify(
+      '无法读取当前 GitHub 账号，未保存回答。请确认已安装 gh、网络可用，并运行 gh auth login --hostname github.com 后重试。',
+      'warning',
+    );
+    return;
+  }
   const previous = latestAnswer(snapshot, question.id);
   const text = await ctx.ui.editor(
-    `${question.id} ${question.prompt}\n影响：${question.impact}`,
+    `${question.id} ${question.prompt}\n影响：${question.impact}\n回答者：${respondent}（自动记录）`,
     previous?.text ?? '',
   );
   if (text === undefined || !text.trim()) return;
@@ -110,11 +147,6 @@ export async function collectAnswer(
     '移出本次范围（回答中说明原因）',
   ]);
   if (!mode) return;
-  const respondent = await ctx.ui.input(
-    '回答者姓名／业务角色（人工声明，不是认证身份）',
-    previous?.respondent ?? '',
-  );
-  if (!respondent?.trim()) return;
   const status: DiscoveryAnswer['status'] =
     mode === '事实或决定'
       ? 'answered'
@@ -162,7 +194,7 @@ export function registerDiscoveryTools(
   pi.registerCommand('evidence-answer', {
     description:
       '回答当前发现问题；可传 Q-ID 更正历史回答，保留原文并使旧定稿失效',
-    handler: (args, ctx) => collectAnswer(ctx, refresh, args.trim()),
+    handler: (args, ctx) => collectAnswer(pi, ctx, refresh, args.trim()),
   });
   pi.registerTool({
     name: 'evidence_ask_questions',

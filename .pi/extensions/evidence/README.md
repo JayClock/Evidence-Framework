@@ -17,12 +17,12 @@ Init → Modeling（交互发现 ↔ 8X Flow ↔ 四色追溯 ↔ 回放）
 ## 职责与边界
 
 - 状态由扩展持有；按阶段和发现/定稿状态选择工具与模型。
-- 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；人类用 `/evidence-answer [Q-ID]` 回答或更正，取消不记录，未知可继续发现但不能解除业务阻塞。
+- 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；人类用 `/evidence-answer [Q-ID]` 回答或更正，自动记录 `gh` 当前认证的 github.com 账号，不再输入姓名；读取失败不保存。取消不记录，未知可继续发现但不能解除业务阻塞。
 - `evidence_save_discovery` 保存范围、原始来源摘要、候选和三类回放；所有写入绑定 expectedRevision 并串行化，历史快照不覆盖。
 - `evidence_check_model_draft` 复用 FM 管线进行隔离检查，不替换正式产物；`evidence_finalize_discovery` 检查声明就绪后启用正式提交，不自动批准。
 - 纯领域/纯渠道仍采用 FM，不强制合同；四色是凭证与数据发现方法，不是新的实体 DSL。
 - 统一语言、FM、软件需求共用 Gate。回答更正或重新发现使旧定稿失效；下游变更先人工回退。
-- 来源明确、用户回答、模型专家审核、机器验证、实际单据模拟和 Gate 是不同结论。人工身份是声明而非认证。
+- 来源明确、用户回答、模型专家审核、机器验证、实际单据模拟和 Gate 是不同结论。回答账号来自 GitHub API，但不证明操作者实名、业务角色或批准权限；不改变模型专家审核要求。
 - 模拟器只实例化 Evidence；纯领域操作、状态机等 gap 留给架构及 Q1/Q2，未模拟为 null。
 - 后续仍使用批准的 US/AC、TP、TASK/CHECK 契约及真实多循环 TDD、复用/验收验证。保留计划摘要、故事证据及质量命令保护。
 - 机器不能证明业务发现完整、来源解释正确、候选与 YAML 的语义一致，或命令覆盖每个断言；人工 Gate 不可被自评替代。
