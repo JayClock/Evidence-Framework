@@ -63,6 +63,49 @@ async function answer(
 }
 
 describe('interactive discovery state and provenance', () => {
+  it('shows discovery as the current subject until formalization, not the future language artifact', async () => {
+    const h = await fresh();
+    await h.command('evidence-status');
+    expect(h.api.sendMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('当前对象：业务上下文识别与发现'),
+      }),
+    );
+    expect(h.api.sendMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('从业务叙述识别上下文'),
+      }),
+    );
+    await saveContent(h);
+    await h.tool('evidence_finalize_discovery', { expectedRevision: 1 });
+    await h.command('evidence-status');
+    expect(h.api.sendMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining(
+          `当前对象：${getPhaseDefinition('modeling').artifacts[0].label}`,
+        ),
+      }),
+    );
+  });
+
+  it('shows question provenance and blockers consistently in the tool result and answer editor', async () => {
+    const h = await fresh();
+    const result = await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [question],
+    });
+    const context = '焦点：responsibilities\n依据：INPUT\n定稿阻塞：是';
+    expect(result).toMatchObject({
+      terminate: true,
+      content: [{ type: 'text', text: expect.stringContaining(context) }],
+    });
+    await answer(h);
+    expect(h.ui.editor).toHaveBeenCalledWith(
+      expect.stringContaining(context),
+      '',
+    );
+  });
+
   it('rejects premature formal submission and stage checks cannot bypass discovery', async () => {
     const h = await fresh();
     await expect(

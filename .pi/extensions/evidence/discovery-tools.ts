@@ -8,6 +8,7 @@ import {
   DiscoveryContentSchema,
   QuestionSchema,
   type DiscoveryAnswer,
+  type DiscoveryQuestion,
 } from './discovery-schema.ts';
 import {
   answerQuestion,
@@ -42,6 +43,10 @@ export const DISCOVERY_TOOL_NAMES = [
 ];
 
 type Refresh = (ctx: ExtensionContext, state: EvidenceState) => Promise<void>;
+
+function questionText(question: DiscoveryQuestion): string {
+  return `${question.id}：${question.prompt}\n焦点：${question.focus}\n依据：${question.sourceRefs.join('、') || '未引用材料，需澄清事实'}\n定稿阻塞：${question.blocking ? '是' : '否'}\n影响：${question.impact}`;
+}
 
 async function runningState(
   root: string,
@@ -137,7 +142,7 @@ export async function collectAnswer(
   }
   const previous = latestAnswer(snapshot, question.id);
   const text = await ctx.ui.editor(
-    `${question.id} ${question.prompt}\n影响：${question.impact}\n回答者：${respondent}（自动记录）`,
+    `${questionText(question)}\n回答者：${respondent}（自动记录）`,
     previous?.text ?? '',
   );
   if (text === undefined || !text.trim()) return;
@@ -200,7 +205,7 @@ export function registerDiscoveryTools(
     name: 'evidence_ask_questions',
     label: '业务发现提问',
     description:
-      'Ask 1–4 related business questions, persist them and stop in waiting_answer. Never answer on behalf of the human. Use only in Modeling.',
+      'Ask 1–4 concrete questions about a sourced candidate context or its current gap; include the basis and uncertainty in each prompt. Do not start with a scope questionnaire or require the human to choose a modeling mode. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
     parameters: Type.Object({
       expectedRevision: revision,
       questions: Type.Array(QuestionSchema, { minItems: 1, maxItems: 4 }),
@@ -212,7 +217,7 @@ export function registerDiscoveryTools(
         await refresh(ctx, state);
         ctx.ui.setEditorText('/evidence-answer');
         return result(
-          `${params.questions.map((q) => `${q.id}：${q.prompt}\n影响：${q.impact}`).join('\n\n')}\n\n请运行 /evidence-answer。`,
+          `${params.questions.map(questionText).join('\n\n')}\n\n请运行 /evidence-answer。`,
           state,
           true,
         );
@@ -223,7 +228,7 @@ export function registerDiscoveryTools(
     name: 'evidence_save_discovery',
     label: '保存业务发现',
     description:
-      'Save complete scope, four-color evidence/lineage and domain/replay notes. Source refs are INPUT, SRC-* or latest human A-* IDs. Candidates are not approved FM facts. Invalidates previous drafts and finalization.',
+      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Invalidates drafts and finalization; stopping after saving is valid.',
     parameters: Type.Object({
       expectedRevision: revision,
       content: DiscoveryContentSchema,

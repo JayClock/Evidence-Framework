@@ -7,6 +7,7 @@ import type {
 } from '@earendil-works/pi-coding-agent';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import evidenceExtension from './index.ts';
+import { DISCOVERY_GUIDE_PATH } from './discovery-prompt.ts';
 import { loadState, readText, writeTextAtomic } from './storage.ts';
 
 interface RegisteredCommand {
@@ -41,11 +42,8 @@ describe('evidence-init command', () => {
       '.pi/skills/evidence-modeling/SKILL.md',
       '# 需求分析方法',
     );
-    await writeTextAtomic(
-      root,
-      '.pi/extensions/evidence/templates/evidence-personas.md',
-      '# 用户画像',
-    );
+    const guide = await readText(process.cwd(), DISCOVERY_GUIDE_PATH);
+    await writeTextAtomic(root, DISCOVERY_GUIDE_PATH, guide);
     const commands = new Map<string, RegisteredCommand>();
     const setActiveTools = vi.fn();
     const registrationApi = {
@@ -122,6 +120,12 @@ describe('evidence-init command', () => {
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
     expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
       expect.stringContaining('Evidence 交互式业务发现与建模'),
+    );
+    expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
+      expect.stringContaining(guide.trim()),
+    );
+    expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
+      expect.stringContaining('当前焦点：识别业务上下文'),
     );
   });
 });

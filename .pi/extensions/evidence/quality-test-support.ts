@@ -10,8 +10,10 @@ import { vi } from 'vitest';
 import evidenceExtension from './index.ts';
 import { getPhaseDefinition } from './phases.ts';
 import { seedDiscovery } from './discovery-test-support.ts';
+import { DISCOVERY_GUIDE_PATH } from './discovery-prompt.ts';
 import {
   createInitialState,
+  readText,
   saveState,
   writeJsonAtomic,
   writeTextAtomic,
@@ -124,6 +126,11 @@ export async function qualityHarness(roots: string[], config = {}) {
       await writeTextAtomic(root, spec.output, validDocument(spec));
     }
   }
+  await writeTextAtomic(
+    root,
+    DISCOVERY_GUIDE_PATH,
+    await readText(process.cwd(), DISCOVERY_GUIDE_PATH),
+  );
   await seedDiscovery(root, state);
   await saveState(root, state);
   return {

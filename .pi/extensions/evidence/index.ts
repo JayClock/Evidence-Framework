@@ -156,6 +156,8 @@ function phaseLabel(state: EvidenceState): string {
 
 function subjectLabel(state: EvidenceState): string {
   if (state.phase === 'complete') return '全部流程';
+  if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
+    return '业务上下文识别与发现';
   if (state.phase === 'coding')
     return currentCodingStory(state) ?? '等待解析 Sprint Backlog';
   return (
@@ -203,7 +205,7 @@ function statusColor(
 function progressText(state: EvidenceState): string {
   if (state.phase === 'complete') return '5/5';
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
-    return `发现 v${state.discovery.revision} · ${state.discovery.path ?? '从问题与范围开始'}`;
+    return `发现 v${state.discovery.revision} · ${state.discovery.path ?? '从业务叙述识别上下文'}`;
   if (state.phase === 'coding') {
     const total = state.coding.storyIds.length;
     const current =

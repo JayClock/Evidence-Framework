@@ -2,17 +2,19 @@
 
 项目级 Pi 扩展，实现[本地 Evidence 工作流](../../../docs/evidence.md)。
 
-## v6：发现驱动的统一建模
+## v6：上下文识别驱动的交互建模
 
 ```text
-Init → Modeling（交互发现 ↔ 8X Flow ↔ 四色追溯 ↔ 回放）
+Init → Modeling（上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 四色追溯 ↔ 回放）
        → 统一语言 → FM → 软件范围/故事/验收 → 共同 Gate
      → Architecture → Planning → Coding → Review → complete
 ```
 
+Agent 先从业务叙述识别有依据的候选上下文，再引导合同双方与履约项、领域身份与规则或渠道协商凭证。三条主线可组合，不增加关键词分类器，不要求人先选择模式或填写范围问卷。范围随发现整理，具体边界有歧义才提问。
+
 没有前置 Requirements 阶段。需求收敛仍保存 personas/problem-statement/story-map，位于 Modeling 末尾，不让 FM 依赖未来故事。`01-requirements` 仅为存储目录。
 
-状态 v6 为破坏性升级，拒绝旧状态，不提供迁移或复用 Gate。删除配置中的 requirements 阶段键并核对 modeling，备份旧运行后 `/reload`、`/evidence-reset`、`/evidence-init`。配置/测试契约仍为 v1，FM 仍为 Schema v3。不要手改状态版本号。
+本次引导重构保持状态 v6、发现快照 v1 和 FM Schema v3，不改现有运行、工件或 Gate；已有 v6 只需 `/reload` 后按状态继续，无需 reset。v6 相对旧状态仍是破坏性升级，不提供迁移或复用旧 Gate：仅旧版本升级需删除配置中的 requirements 阶段键并核对 modeling，备份后 `/reload`、`/evidence-reset`、`/evidence-init`。配置/测试契约仍为 v1。不要手改状态版本号。
 
 ## 职责与边界
 
@@ -33,7 +35,8 @@ Init → Modeling（交互发现 ↔ 8X Flow ↔ 四色追溯 ↔ 回放）
 - `discovery-schema.ts`：问题、人工回答、来源、候选、回放及快照结构。
 - `discovery.ts`：发现版本、来源检查、追加快照、恢复和定稿就绪检查。
 - `discovery-tools.ts`：问答编辑器、发现保存、隔离草稿检查和定稿入口。
-- `phases.ts` / `prompts.ts`：确定性的阶段/工件定义及当前发现任务组装。
+- `phases.ts` / `prompts.ts`：确定性的阶段/工件定义、输入加载及发现/定稿检查点约束。
+- `discovery-prompt.ts`：只读组装发现焦点、未回答/仍未知问题与接续提示；完整注入 Skill 的 `references/discovery-workshop.md` 作为统一发现指南，不另维护业务问卷。指南缺失或为空时拒绝运行。
 - `storage.ts`：配置、状态解码和原子持久化。
 - `modeling.ts`：FM 路径保护、隔离 Python、Schema/CEL、lineage、适用模拟、业务模式派生、编译与正式原子替换。
 - `validation.ts` / `checks.ts`：文档、模型和真实命令检查。
@@ -51,4 +54,4 @@ Python 3.10+ 可通过 EVIDENCE_PYTHON 指定；依赖在 node_modules/.cache/ev
 npm run evidence:verify
 ```
 
-自动测试不调用语言模型；覆盖发现等待/恢复、更正、并发版本、来源失效、草稿隔离、共同 Gate、FM v3 和下游测试契约。合成回归不是实际业务验收，也不是人工 TUI 端到端质量评测。
+自动测试不调用语言模型；覆盖指南注入、首轮/恢复提示、提问与回答依据展示、发现等待/更正、并发版本、来源失效、草稿隔离、共同 Gate、FM v3 和下游测试契约。Skill 的 `evals/discovery/` 另提供八类交互输入及人工多轮评测方法；提示词契约测试不是 Agent 行为评测。合成回归不是实际业务验收，也不是人工 TUI 端到端质量评测。
