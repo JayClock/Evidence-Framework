@@ -370,7 +370,7 @@ export async function listFmModelFiles(root: string): Promise<string[]> {
 }
 
 export async function replaceFmModel(
-  options: RuntimeOptions & { files: FmModelFile[] },
+  options: RuntimeOptions & { files: FmModelFile[]; draftOnly?: boolean },
 ): Promise<FmValidationResult & { files: string[] }> {
   const files = normalizeFmModelFiles(options.files);
   const stagingParent = resolve(options.root, '.evidence', 'staging');
@@ -388,7 +388,8 @@ export async function replaceFmModel(
       await writeFile(output, file.content, 'utf8');
     }
     const validation = await validateFmModel({ ...options, modelDir: staging });
-    if (!validation.passed) return { ...validation, files: [] };
+    if (!validation.passed || options.draftOnly)
+      return { ...validation, files: [] };
 
     const target = resolve(options.root, FM_MODEL_ROOT);
     const backup = `${target}.backup`;

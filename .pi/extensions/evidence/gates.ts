@@ -1,4 +1,9 @@
 import { createHash } from 'node:crypto';
+import {
+  discoveryEvidencePaths,
+  loadDiscovery,
+  requireFinalizing,
+} from './discovery.ts';
 import { basename } from 'node:path';
 import { REQUIREMENTS_PATH } from './storage.ts';
 import { FM_STATUS_PATH } from './modeling.ts';
@@ -47,6 +52,7 @@ export function gateArtifactPaths(state: EvidenceState): string[] {
   }
   const artifactPaths = [
     REQUIREMENTS_PATH,
+    ...discoveryEvidencePaths(state),
     ...getPhaseDefinition(state.phase).artifacts.map(
       (artifact) => artifact.output,
     ),
@@ -73,10 +79,18 @@ export function gateArtifactPaths(state: EvidenceState): string[] {
     : [...new Set(artifactPaths)];
 }
 
-function gateEvidencePaths(state: EvidenceState, reportPath: string): string[] {
+async function gateEvidencePaths(
+  root: string,
+  state: EvidenceState,
+  reportPath: string,
+): Promise<string[]> {
+  const sources = state.discovery.path
+    ? Object.keys((await loadDiscovery(root, state)).sourceHashes)
+    : [];
   return [
     ...new Set([
       ...gateArtifactPaths(state),
+      ...sources,
       reportPath,
       reportPath.replace(/\.md$/, '.json'),
     ]),
@@ -172,9 +186,10 @@ export async function createGate(
 ): Promise<PendingGate> {
   if (state.phase === 'complete')
     throw new Error('Cannot create a gate for a completed workflow');
+  if (state.phase === 'modeling') await requireFinalizing(root, state);
   await bindPlanningInputs(root, state);
   const subject = gateSubject(state);
-  const artifactPaths = gateEvidencePaths(state, reportPath);
+  const artifactPaths = await gateEvidencePaths(root, state, reportPath);
   const artifactDigest = await hashArtifacts(root, artifactPaths);
   const createdAt = new Date().toISOString();
   const safeSubject = safeId(subject) || state.phase;
@@ -201,7 +216,7 @@ export async function refreshGate(
 ): Promise<PendingGate> {
   if (!state.pendingGate) throw new Error('No pending gate to refresh');
   await bindPlanningInputs(root, state);
-  const artifactPaths = gateEvidencePaths(state, reportPath);
+  const artifactPaths = await gateEvidencePaths(root, state, reportPath);
   const gate: PendingGate = {
     ...state.pendingGate,
     reportPath,

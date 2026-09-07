@@ -1,4 +1,8 @@
 import { randomUUID } from 'node:crypto';
+import {
+  initialDiscovery,
+  type DiscoveryProgress,
+} from './discovery-schema.ts';
 import { mkdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { withFileMutationQueue } from '@earendil-works/pi-coding-agent';
@@ -44,7 +48,6 @@ export const DEFAULT_CONFIG: EvidenceConfig = {
   qualityCommands: ['npm test', 'npm run lint', 'npm run build'],
   commandTimeoutMs: 600_000,
   models: {
-    requirements: { model: null, thinkingLevel: DEFAULT_THINKING },
     modeling: { model: null, thinkingLevel: DEFAULT_THINKING },
     architecture: { model: null, thinkingLevel: DEFAULT_THINKING },
     planning: { model: null, thinkingLevel: 'medium' },
@@ -52,7 +55,6 @@ export const DEFAULT_CONFIG: EvidenceConfig = {
     review: { model: null, thinkingLevel: DEFAULT_THINKING },
   },
   gates: {
-    requirements: 'review',
     modeling: 'review',
     architecture: 'review',
     planning: 'review',
@@ -165,6 +167,7 @@ const WORKFLOW_PHASES = [...ACTIVE_PHASES, 'complete'] as const;
 const WORKFLOW_STATUSES = [
   'ready',
   'running',
+  'waiting_answer',
   'waiting_review',
   'blocked',
   'complete',
@@ -291,6 +294,38 @@ function decodeModelingProgress(value: unknown): ModelingProgress {
   };
 }
 
+function decodeDiscovery(
+  value: unknown,
+  phase: string,
+  status: string,
+): DiscoveryProgress {
+  if (
+    !isRecord(value) ||
+    !isOneOf(value.stage, ['discovering', 'finalizing']) ||
+    !isNonNegativeInteger(value.revision)
+  )
+    return invalidState('invalid discovery progress');
+  const path = decodeNullableString(value.path, 'discovery.path');
+  const digest = decodeNullableString(value.digest, 'discovery.digest');
+  if (
+    value.revision === 0
+      ? path !== null || digest !== null || value.stage !== 'discovering'
+      : !path ||
+        !/^artifacts\/02-modeling\/discovery\/[a-f0-9-]{36}\/revision-\d+\.json$/.test(
+          path,
+        ) ||
+        !digest ||
+        !/^[a-f0-9]{64}$/.test(digest)
+  )
+    return invalidState('invalid discovery snapshot reference');
+  if (
+    status === 'waiting_answer' &&
+    (phase !== 'modeling' || value.stage !== 'discovering' || !path)
+  )
+    return invalidState('waiting_answer requires active discovery');
+  return { stage: value.stage, revision: value.revision, path, digest };
+}
+
 function decodeCodingBaseline(value: unknown): CodingBaseline | null {
   if (value === null || value === undefined) return null;
   if (
@@ -404,6 +439,11 @@ export async function loadConfig(root: string): Promise<EvidenceConfig> {
       `Invalid ${CONFIG_PATH}: domain 阶段已合并为 modeling；请将 models.domain / gates.domain 改为 modeling。`,
     );
   }
+  if ('requirements' in configuredModels || 'requirements' in configuredGates) {
+    throw new Error(
+      `Invalid ${CONFIG_PATH}: requirements 已并入 modeling；请移除 models.requirements / gates.requirements，核对 modeling 配置后 /reload。`,
+    );
+  }
   const models = structuredClone(DEFAULT_CONFIG.models);
   const gates = { ...DEFAULT_CONFIG.gates };
   for (const phase of ACTIVE_PHASES) {
@@ -469,8 +509,10 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
   const raw = await readJson<unknown>(root, STATE_PATH);
   if (raw === null) return null;
   if (!isRecord(raw)) return invalidState('expected a JSON object');
-  if (raw.version !== 5)
-    return invalidState(`unsupported version ${String(raw.version)}`);
+  if (raw.version !== 6)
+    return invalidState(
+      `unsupported version ${String(raw.version)}；交互建模需要 v6，请备份旧运行后 /evidence-reset、/evidence-init，不迁移旧 Gate`,
+    );
   if (typeof raw.runId !== 'string' || !/^[a-f0-9-]{36}$/.test(raw.runId))
     return invalidState('invalid runId');
   if (!isOneOf(raw.phase, WORKFLOW_PHASES))
@@ -536,7 +578,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     return invalidState('invalid story record references');
 
   return {
-    version: 5,
+    version: 6,
     runId: raw.runId,
     projectName: raw.projectName,
     goal: raw.goal,
@@ -550,6 +592,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     lastReport: decodeNullableString(raw.lastReport, 'lastReport'),
     lastError: decodeNullableString(raw.lastError, 'lastError'),
     modeling: decodeModelingProgress(raw.modeling),
+    discovery: decodeDiscovery(raw.discovery, raw.phase, raw.status),
     coding: {
       storyIds: coding.storyIds.flatMap((value) =>
         typeof value === 'string' ? [value] : [],
@@ -603,11 +646,11 @@ export function createInitialState(
 ): EvidenceState {
   const now = new Date().toISOString();
   const state: EvidenceState = {
-    version: 5,
+    version: 6,
     runId: randomUUID(),
     projectName,
     goal,
-    phase: 'requirements',
+    phase: 'modeling',
     status: 'ready',
     paused: false,
     round: 0,
@@ -616,6 +659,7 @@ export function createInitialState(
     feedback: null,
     lastReport: null,
     lastError: null,
+    discovery: initialDiscovery(),
     modeling: {
       applicable: null,
       rationale: null,

@@ -1,4 +1,9 @@
 import { createHash } from 'node:crypto';
+import {
+  discoveryEvidencePaths,
+  loadDiscovery,
+  requireFinalizing,
+} from './discovery.ts';
 import type { Static, TSchema } from 'typebox';
 import { Value } from 'typebox/value';
 import { getPhaseDefinition } from './phases.ts';
@@ -24,9 +29,7 @@ export const PROCEDURES_PATH = 'artifacts/03-architecture/test-procedures.md';
 export const BACKLOG_PATH = 'artifacts/04-planning/sprint-1-backlog.md';
 export const TEST_PLAN_INPUTS = [
   REQUIREMENTS_PATH,
-  ...(
-    ['requirements', 'modeling', 'architecture', 'planning'] as const
-  ).flatMap((phase) =>
+  ...(['modeling', 'architecture', 'planning'] as const).flatMap((phase) =>
     getPhaseDefinition(phase)
       .artifacts.filter((artifact) => artifact.kind !== 'fm-model')
       .map((artifact) => artifact.output),
@@ -226,6 +229,7 @@ export function testingEvidencePaths(state: EvidenceState): string[] {
       '.pi/evidence.json',
       'artifacts/02-modeling/fm-model/status.md',
       ...state.modeling.files,
+      ...discoveryEvidencePaths(state),
     ]),
   ];
 }
@@ -234,7 +238,12 @@ export async function testingInputDigest(
   state: EvidenceState,
 ): Promise<string> {
   const hash = createHash('sha256');
-  for (const path of testingEvidencePaths(state).sort()) {
+  const sourcePaths = state.discovery.path
+    ? Object.keys((await loadDiscovery(root, state)).sourceHashes)
+    : [];
+  for (const path of [
+    ...new Set([...testingEvidencePaths(state), ...sourcePaths]),
+  ].sort()) {
     const content = await readText(root, path);
     if (!content && path !== '.pi/evidence.json')
       throw new Error(`测试契约输入缺失：${path}`);
@@ -246,6 +255,7 @@ export async function assertTestingInputs(
   root: string,
   state: EvidenceState,
 ): Promise<TestPlan> {
+  await requireFinalizing(root, state);
   if (
     !state.coding.planDigest ||
     (await testingInputDigest(root, state)) !== state.coding.planDigest

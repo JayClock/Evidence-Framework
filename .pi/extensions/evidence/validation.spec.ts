@@ -53,7 +53,7 @@ describe('normalizeMarkdown', () => {
 });
 
 describe('artifact validation', () => {
-  const spec = PHASE_DEFINITIONS.requirements.artifacts[0];
+  const spec = PHASE_DEFINITIONS.modeling.artifacts[2];
 
   it('accepts a document that satisfies structural rules', () => {
     const result = validateArtifactContent(spec, minimalValidArtifact);
@@ -68,8 +68,6 @@ describe('artifact validation', () => {
       expect.arrayContaining([
         'minimum_length',
         'missing_section',
-        'minimum_table_rows',
-        'minimum_occurrences',
         'unresolved_placeholder',
       ]),
     );

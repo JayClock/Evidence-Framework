@@ -11,11 +11,15 @@ describe('phase definitions', () => {
   it('has one modeling entry with language and FM, not standalone DDD documents', () => {
     expect(PHASE_ORDER).toContain('modeling');
     expect(PHASE_ORDER).not.toContain('domain');
-    const definition = PHASE_DEFINITIONS[PHASE_ORDER[1]];
+    const definition = PHASE_DEFINITIONS.modeling;
+    expect(PHASE_ORDER).not.toContain('requirements');
     expect(definition.skillFile).toBe('.pi/skills/evidence-modeling/SKILL.md');
     expect(definition.artifacts.map((item) => item.key)).toEqual([
       'ubiquitous-language',
       'fulfillment-model',
+      'personas',
+      'problem-statement',
+      'story-map',
     ]);
     expect(definition.artifacts[1]).toMatchObject({
       kind: 'fm-model',
@@ -95,7 +99,6 @@ describe('phase definitions', () => {
       ]),
     );
     expect(PHASE_ORDER).toEqual([
-      'requirements',
       'modeling',
       'architecture',
       'planning',

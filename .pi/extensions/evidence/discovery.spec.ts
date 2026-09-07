@@ -1,0 +1,340 @@
+import { rm, symlink } from 'node:fs/promises';
+import { join } from 'node:path';
+import { afterEach, describe, expect, it } from 'vitest';
+import { qualityHarness, validDocument } from './quality-test-support.ts';
+import { discoveryContent } from './discovery-test-support.ts';
+import { assertDiscoveryReady, loadDiscovery } from './discovery.ts';
+import {
+  createInitialState,
+  loadState,
+  readText,
+  saveState,
+  writeTextAtomic,
+} from './storage.ts';
+import { getPhaseDefinition } from './phases.ts';
+import { hashArtifacts } from './gates.ts';
+import { domain } from './modeling-scope-test-support.ts';
+import { prepareFmSkill, executeProcess } from './modeling-test-support.ts';
+
+const roots: string[] = [];
+afterEach(async () => {
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true })),
+  );
+});
+const question = {
+  id: 'Q-001',
+  focus: 'responsibilities',
+  prompt: '平台向作者承诺何时支付？',
+  impact: '影响付款期限及违约规则',
+  blocking: true,
+  sourceRefs: ['INPUT'],
+};
+async function fresh() {
+  const h = await qualityHarness(roots);
+  const state = createInitialState('test', '作者结算争议');
+  state.status = 'running';
+  await saveState(h.root, state);
+  return { ...h, state };
+}
+async function revision(h: Awaited<ReturnType<typeof fresh>>) {
+  return (await loadState(h.root))!.discovery.revision;
+}
+async function saveContent(h: Awaited<ReturnType<typeof fresh>>) {
+  await h.tool('evidence_save_discovery', {
+    expectedRevision: await revision(h),
+    content: discoveryContent(),
+  });
+}
+async function answer(
+  h: Awaited<ReturnType<typeof fresh>>,
+  text = '每月 10 日支付上月应付稿酬。',
+  mode = '事实或决定',
+) {
+  h.ui.editor.mockResolvedValue(text);
+  h.ui.select.mockResolvedValue(mode);
+  h.ui.input.mockResolvedValue('业务负责人（测试声明）');
+  await h.command('evidence-answer', 'Q-001');
+}
+
+describe('interactive discovery state and provenance', () => {
+  it('rejects premature formal submission and stage checks cannot bypass discovery', async () => {
+    const h = await fresh();
+    await expect(
+      h.tool('evidence_submit_artifact', {
+        content: validDocument(getPhaseDefinition('modeling').artifacts[0]),
+      }),
+    ).rejects.toThrow('先完成交互发现');
+    await h.command('evidence-check');
+    expect(await loadState(h.root)).toMatchObject({
+      currentArtifactIndex: 0,
+      round: 0,
+      pendingGate: null,
+    });
+  });
+
+  it('persists questions across settled/reload and records partial human answers without a revision round', async () => {
+    const h = await fresh();
+    await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [
+        question,
+        { ...question, id: 'Q-002', prompt: '谁核对账单？' },
+      ],
+    });
+    await h.events.get('agent_settled')!({}, h.ctx);
+    await h.events.get('session_start')!({}, h.ctx);
+    await h.command('evidence-run');
+    expect(await loadState(h.root)).toMatchObject({
+      status: 'waiting_answer',
+      round: 0,
+    });
+    expect(h.api.sendUserMessage).not.toHaveBeenCalled();
+    await answer(h);
+    let state = (await loadState(h.root))!;
+    expect(state.status).toBe('waiting_answer');
+    const snapshot = await loadDiscovery(h.root, state);
+    expect(snapshot.answers[0]).toMatchObject({
+      id: 'A-001',
+      text: '每月 10 日支付上月应付稿酬。',
+      respondent: '业务负责人（测试声明）',
+      status: 'answered',
+    });
+    h.ui.editor.mockResolvedValue('财务与作者共同核对');
+    await h.command('evidence-answer', 'Q-002');
+    state = (await loadState(h.root))!;
+    expect(state).toMatchObject({
+      status: 'ready',
+      round: 0,
+      discovery: { revision: 3 },
+    });
+    await h.command('evidence-run');
+    expect(h.api.sendUserMessage).toHaveBeenCalledWith(
+      expect.stringContaining(state.discovery.path!),
+    );
+  });
+
+  it('cancellation does not fabricate an answer; unknown remains a business blocker', async () => {
+    const h = await fresh();
+    await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [question],
+    });
+    const before = await readText(h.root, '.evidence/state.json');
+    h.ui.editor.mockResolvedValue(undefined);
+    await h.command('evidence-answer', 'Q-001');
+    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+    await answer(h, '未确认期限，需要咨询业务方。', '未知，仍需澄清');
+    await h.command('evidence-run');
+    await saveContent(h);
+    await expect(
+      h.tool('evidence_finalize_discovery', {
+        expectedRevision: await revision(h),
+      }),
+    ).rejects.toThrow('阻塞问题未解决');
+    expect((await loadState(h.root))?.round).toBe(0);
+  });
+
+  it('rejects stale writes and source references instead of overwriting new answers', async () => {
+    const h = await fresh();
+    await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [question],
+    });
+    await answer(h);
+    await h.command('evidence-run');
+    await expect(
+      h.tool('evidence_save_discovery', {
+        expectedRevision: 1,
+        content: discoveryContent(),
+      }),
+    ).rejects.toThrow('版本已改变');
+    const content = discoveryContent();
+    content.candidates[0].sourceRefs = ['A-999'];
+    await expect(
+      h.tool('evidence_save_discovery', { expectedRevision: 2, content }),
+    ).rejects.toThrow('来源不存在');
+  });
+
+  it('serializes concurrent discovery mutations and rejects the stale sibling', async () => {
+    const h = await fresh();
+    const results = await Promise.allSettled([
+      h.tool('evidence_save_discovery', {
+        expectedRevision: 0,
+        content: discoveryContent(),
+      }),
+      h.tool('evidence_save_discovery', {
+        expectedRevision: 0,
+        content: discoveryContent(),
+      }),
+    ]);
+    expect(results.map((value) => value.status).sort()).toEqual([
+      'fulfilled',
+      'rejected',
+    ]);
+    expect(await revision(h)).toBe(1);
+  });
+
+  it('detects changed material and forbids generated artifacts as independent sources', async () => {
+    const h = await fresh();
+    const content = discoveryContent();
+    content.sources = [
+      { id: 'SRC-001', path: 'contract.md', locator: '第 2 条' },
+    ];
+    await writeTextAtomic(h.root, 'contract.md', '按确认账期结算');
+    await h.tool('evidence_save_discovery', { expectedRevision: 0, content });
+    await writeTextAtomic(h.root, 'contract.md', '改成提前结算');
+    await expect(
+      h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
+    ).rejects.toThrow('原始材料已变化');
+    content.sources[0].path = 'artifacts/02-modeling/fm-model/status.md';
+    await expect(
+      h.tool('evidence_save_discovery', { expectedRevision: 1, content }),
+    ).rejects.toThrow('而非模型或报告');
+  });
+
+  it('detects tampering in historical snapshots, not only the current pointer', async () => {
+    const h = await fresh();
+    await saveContent(h);
+    const original = (await loadState(h.root))!.discovery.path!;
+    await saveContent(h);
+    await writeTextAtomic(h.root, original, '{}');
+    await expect(
+      h.tool('evidence_finalize_discovery', { expectedRevision: 2 }),
+    ).rejects.toThrow('摘要不一致');
+  });
+
+  it('cannot hide a generated source behind a symlink', async () => {
+    const h = await fresh();
+    await symlink(
+      join(h.root, '.evidence/state.json'),
+      join(h.root, 'source.md'),
+    );
+    const content = discoveryContent();
+    content.sources = [{ id: 'SRC-001', path: 'source.md', locator: '引用' }];
+    await expect(
+      h.tool('evidence_save_discovery', { expectedRevision: 0, content }),
+    ).rejects.toThrow('受保护记录');
+    expect(await revision(h)).toBe(0);
+  });
+
+  it('rejects oversized human text before persistence and keeps saved discovery a valid checkpoint', async () => {
+    const h = await fresh();
+    await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [question],
+    });
+    await expect(answer(h, '字'.repeat(4001))).rejects.toThrow(
+      '超限或格式无效',
+    );
+    expect(await loadState(h.root)).toMatchObject({
+      status: 'waiting_answer',
+      discovery: { revision: 1 },
+    });
+    await answer(h);
+    await h.command('evidence-run');
+    await saveContent(h);
+    await h.events.get('agent_settled')!({}, h.ctx);
+    expect(await loadState(h.root)).toMatchObject({
+      status: 'ready',
+      lastError: null,
+      round: 0,
+    });
+  });
+
+  it('needs sourced cases for all three replay dimensions and never promotes inferred model facts', async () => {
+    const h = await fresh();
+    const content = discoveryContent();
+    content.cases.pop();
+    await h.tool('evidence_save_discovery', { expectedRevision: 0, content });
+    await expect(
+      h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
+    ).rejects.toThrow('exception');
+    const inferred = discoveryContent();
+    inferred.candidates[0].confidence = 'inferred';
+    inferred.candidates[0].modelRefs = ['rule.pay'];
+    await h.tool('evidence_save_discovery', {
+      expectedRevision: 1,
+      content: inferred,
+    });
+    await expect(
+      h.tool('evidence_finalize_discovery', { expectedRevision: 2 }),
+    ).rejects.toThrow('未确认候选');
+  });
+
+  it('correction preserves raw history, cancels a gate and makes referenced old answers unusable', async () => {
+    const h = await fresh();
+    await h.tool('evidence_ask_questions', {
+      expectedRevision: 0,
+      questions: [question],
+    });
+    await answer(h);
+    await h.command('evidence-run');
+    const content = discoveryContent();
+    content.candidates[0].sourceRefs = ['A-001'];
+    await h.tool('evidence_save_discovery', { expectedRevision: 2, content });
+    await h.tool('evidence_finalize_discovery', { expectedRevision: 3 });
+    await h.command('evidence-run');
+    for (const spec of getPhaseDefinition('modeling').artifacts) {
+      await h.tool(
+        spec.kind === 'fm-model'
+          ? 'evidence_submit_fm_model'
+          : 'evidence_submit_artifact',
+        spec.kind === 'fm-model'
+          ? {
+              applicable: false,
+              rationale:
+                '仅合成测试的简单集成胶水，无独立领域对象、渠道或履约语义；这里只测试状态接线，不声称业务建模完成。',
+              files: [],
+            }
+          : { content: validDocument(spec) },
+      );
+    }
+    const waiting = (await loadState(h.root))!;
+    expect(waiting.status).toBe('waiting_review');
+    const original = await readText(h.root, waiting.discovery.path!);
+    await answer(h, '更正：按双方确认后的账期支付。');
+    const current = (await loadState(h.root))!;
+    expect(current).toMatchObject({
+      status: 'ready',
+      currentArtifactIndex: 0,
+      pendingGate: null,
+      discovery: { stage: 'discovering' },
+      modeling: { applicable: null },
+    });
+    expect(await readText(h.root, waiting.discovery.path!)).toBe(original);
+    expect(await readText(h.root, waiting.pendingGate!.path)).toContain(
+      'decision: cancelled',
+    );
+    expect((await loadDiscovery(h.root, current)).answers).toHaveLength(2);
+    await expect(assertDiscoveryReady(h.root, current)).rejects.toThrow(
+      '回答已被更正',
+    );
+  });
+
+  it('checks real FM drafts in isolation and keeps formal bytes even on successful validation', async () => {
+    const h = await fresh();
+    await prepareFmSkill(h.root);
+    h.api.exec.mockImplementation(executeProcess);
+    await saveContent(h);
+    const path = 'artifacts/02-modeling/fm-model/model.yaml';
+    await writeTextAtomic(h.root, path, 'formal-model-must-not-change');
+    const before = await hashArtifacts(h.root, [path]);
+    const result = await h.tool('evidence_check_model_draft', {
+      expectedRevision: 1,
+      files: domain,
+    });
+    expect(result).toMatchObject({
+      details: { passed: true, simulationPassed: null, revision: 2 },
+    });
+    expect(await hashArtifacts(h.root, [path])).toBe(before);
+    expect(await loadState(h.root)).toMatchObject({
+      pendingGate: null,
+      modeling: { applicable: null, machineValidated: false },
+    });
+    await saveContent(h);
+    expect(
+      (await loadDiscovery(h.root, (await loadState(h.root))!)).draft,
+    ).toBeNull();
+  }, 180000);
+});

@@ -11,6 +11,7 @@ import {
 } from './storage.ts';
 import { validateDocumentPhase } from './validation.ts';
 import { seedCompletedStory } from './testing-test-support.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 
 vi.mock('./modeling.ts', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./modeling.ts')>()),
@@ -51,6 +52,7 @@ async function checkHarness(phase: 'modeling' | 'review') {
   roots.push(root);
   const state = createInitialState('test', 'goal');
   state.phase = phase;
+  await seedDiscovery(root, state);
   vi.mocked(validateDocumentPhase).mockResolvedValue({
     phase,
     subject: phase,

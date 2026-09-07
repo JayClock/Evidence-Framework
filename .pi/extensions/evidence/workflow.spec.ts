@@ -11,8 +11,8 @@ describe('workflow transitions', () => {
   it('advances document phases', () => {
     const state = createInitialState('test', 'goal');
     const result = advanceAfterApproval(state);
-    expect(result.nextPhase).toBe('modeling');
-    expect(state.phase).toBe('modeling');
+    expect(result.nextPhase).toBe('architecture');
+    expect(state.phase).toBe('architecture');
     expect(state.status).toBe('ready');
   });
 

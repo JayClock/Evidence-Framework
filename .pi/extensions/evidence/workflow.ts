@@ -1,5 +1,6 @@
 import { getNextPhase, getPreviousPhase } from './phases.ts';
 import { appendHistory } from './storage.ts';
+import { reopenDiscovery } from './discovery.ts';
 import type { ActivePhase, EvidenceState } from './types.ts';
 
 function resetTddCycle(state: EvidenceState): void {
@@ -12,11 +13,7 @@ function resetTddCycle(state: EvidenceState): void {
 
 // Changing business scope invalidates FM validation, not its historical files.
 function invalidateModelingDecision(state: EvidenceState): void {
-  if (state.phase !== 'requirements' && state.phase !== 'modeling') return;
-  state.modeling.applicable = null;
-  state.modeling.rationale = null;
-  state.modeling.machineValidated = false;
-  state.modeling.simulationPassed = null;
+  if (state.phase === 'modeling') reopenDiscovery(state);
 }
 
 export function currentCodingStory(state: EvidenceState): string | null {

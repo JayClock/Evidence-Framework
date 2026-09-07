@@ -1,4 +1,5 @@
 import { getPhaseDefinition } from './phases.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 import { qualityHarness, validDocument } from './quality-test-support.ts';
 import {
   createInitialState,
@@ -25,12 +26,7 @@ export async function writeTestingInputs(root: string): Promise<void> {
       'artifacts/00-input/requirements.md',
       '# 测试原始需求',
     );
-  for (const phase of [
-    'requirements',
-    'modeling',
-    'architecture',
-    'planning',
-  ] as const) {
+  for (const phase of ['modeling', 'architecture', 'planning'] as const) {
     for (const spec of getPhaseDefinition(phase).artifacts) {
       if (spec.kind === 'fm-model') continue;
       await writeTextAtomic(root, spec.output, validDocument(spec));
@@ -68,6 +64,7 @@ export async function codingHarness(roots: string[]) {
   state.modeling.rationale = '技术测试不涉及履约模型。';
   // Simulate the digest and ordered story IDs bound by a passed Planning Gate.
   state.coding.storyIds = ['US-001'];
+  await seedDiscovery(harness.root, state);
   state.coding.planDigest = await testingInputDigest(harness.root, state);
   await saveState(harness.root, state);
   harness.api.exec.mockResolvedValue({
@@ -92,6 +89,7 @@ export async function seedCompletedStory(
   state: EvidenceState,
 ): Promise<void> {
   await writeTestingInputs(root);
+  await seedDiscovery(root, state);
   state.coding.storyIds = ['US-001'];
   state.coding.planDigest = await testingInputDigest(root, state);
   const story = testingPlan.stories[0];

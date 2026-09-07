@@ -5,8 +5,9 @@ import type {
   StoryRecordReference,
 } from './testing-schema.ts';
 
+import type { DiscoveryProgress } from './discovery-schema.ts';
+
 export const ACTIVE_PHASES = [
-  'requirements',
   'modeling',
   'architecture',
   'planning',
@@ -20,6 +21,7 @@ export type GateMode = 'auto' | 'review' | 'review_if';
 export type WorkflowStatus =
   | 'ready'
   | 'running'
+  | 'waiting_answer'
   | 'waiting_review'
   | 'blocked'
   | 'complete';
@@ -116,7 +118,7 @@ export interface HistoryEntry {
 }
 
 export interface EvidenceState {
-  version: 5;
+  version: 6;
   runId: string;
   projectName: string;
   goal: string;
@@ -130,6 +132,7 @@ export interface EvidenceState {
   lastReport: string | null;
   lastError: string | null;
   modeling: ModelingProgress;
+  discovery: DiscoveryProgress;
   coding: CodingProgress;
   history: HistoryEntry[];
   createdAt: string;

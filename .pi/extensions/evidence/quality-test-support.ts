@@ -9,6 +9,7 @@ import type {
 import { vi } from 'vitest';
 import evidenceExtension from './index.ts';
 import { getPhaseDefinition } from './phases.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 import {
   createInitialState,
   saveState,
@@ -86,6 +87,7 @@ export async function qualityHarness(roots: string[], config = {}) {
   const ui = {
     select: vi.fn(),
     editor: vi.fn(),
+    input: vi.fn(),
     confirm: vi.fn(),
     notify: vi.fn(),
     setEditorText: vi.fn(),
@@ -106,21 +108,23 @@ export async function qualityHarness(roots: string[], config = {}) {
   });
   const state = createInitialState('test', '可审计的需求草稿');
   state.status = 'running';
-  state.currentArtifactIndex = 2;
+  state.currentArtifactIndex = 4;
+  state.modeling.applicable = false;
+  state.modeling.rationale = '合成测试中的简单工具胶水，不具备独立业务语义。';
   await writeTextAtomic(
     root,
     'artifacts/00-input/requirements.md',
     '# 原始需求\n可审计的需求草稿',
   );
-  for (const phase of ['requirements', 'modeling'] as const) {
+  for (const phase of ['modeling'] as const) {
     const definition = getPhaseDefinition(phase);
     await writeTextAtomic(root, definition.skillFile, '# 阶段方法');
     for (const spec of definition.artifacts) {
       await writeTextAtomic(root, spec.promptFile, '# 工件模板');
-      if (phase === 'requirements')
-        await writeTextAtomic(root, spec.output, validDocument(spec));
+      await writeTextAtomic(root, spec.output, validDocument(spec));
     }
   }
+  await seedDiscovery(root, state);
   await saveState(root, state);
   return {
     root,

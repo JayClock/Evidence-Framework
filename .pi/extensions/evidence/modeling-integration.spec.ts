@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { hashArtifacts } from './gates.ts';
 import { getPhaseDefinition } from './phases.ts';
 import { validDocument } from './quality-test-support.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 import { domain } from './modeling-scope-test-support.ts';
 import evidenceExtension from './index.ts';
 import { createInitialState } from './storage.ts';
@@ -20,7 +21,13 @@ import {
   listFmModelFiles,
   type FmModelFile,
 } from './modeling.ts';
-import { loadState, readText, saveState, writeTextAtomic } from './storage.ts';
+import {
+  loadState,
+  readText,
+  saveState,
+  writeTextAtomic,
+  writeJsonAtomic,
+} from './storage.ts';
 
 interface ToolContext {
   cwd: string;
@@ -36,7 +43,7 @@ interface RegisteredTool {
   name: string;
   execute: (
     toolCallId: string,
-    params: { applicable: boolean; rationale: string; files: FmModelFile[] },
+    params: unknown,
     signal: AbortSignal | undefined,
     onUpdate: undefined,
     context: ToolContext,
@@ -68,6 +75,10 @@ async function submissionHarness() {
   ]) {
     await writeTextAtomic(root, path, `# ${path}\n`);
   }
+  await seedDiscovery(root, state);
+  await writeJsonAtomic(root, '.pi/evidence.json', {
+    autoContinueArtifacts: false,
+  });
   const language = getPhaseDefinition('modeling').artifacts[0];
   await writeTextAtomic(root, language.output, validDocument(language));
   const tools = new Map<string, RegisteredTool>();
@@ -98,8 +109,8 @@ async function submissionHarness() {
   };
   const tool = tools.get('evidence_submit_fm_model');
   if (!tool) throw new Error('FM submission tool was not registered');
-  const submit = (applicable: boolean, files: FmModelFile[] = []) =>
-    tool.execute(
+  const submit = async (applicable: boolean, files: FmModelFile[] = []) => {
+    await tool.execute(
       'call-1',
       {
         applicable,
@@ -112,6 +123,22 @@ async function submissionHarness() {
       undefined,
       context,
     );
+    expect((await loadState(root))?.pendingGate).toBeNull();
+    for (const spec of getPhaseDefinition('modeling').artifacts.slice(2)) {
+      const current = (await loadState(root))!;
+      current.status = 'running';
+      await saveState(root, current);
+      await tools
+        .get('evidence_submit_artifact')!
+        .execute(
+          'scope',
+          { content: validDocument(spec) },
+          undefined,
+          undefined,
+          context,
+        );
+    }
+  };
   return { root, state, api, submit };
 }
 
@@ -125,7 +152,7 @@ describe('unified FM modeling submission', () => {
       machineValidated: false,
       simulationPassed: null,
     });
-    expect(updated?.currentArtifactIndex).toBe(2);
+    expect(updated?.currentArtifactIndex).toBe(5);
     expect(updated?.status).toBe('waiting_review');
     expect(updated?.pendingGate?.phase).toBe('modeling');
     expect(await readText(root, FM_STATUS_PATH)).toContain('结论：不适用');
@@ -145,7 +172,7 @@ describe('unified FM modeling submission', () => {
     ];
     await submit(true, files);
     const updated = (await loadState(root))!;
-    expect(updated.currentArtifactIndex).toBe(2);
+    expect(updated.currentArtifactIndex).toBe(5);
     expect(updated.modeling).toMatchObject({
       applicable: true,
       machineValidated: true,
@@ -190,7 +217,7 @@ describe('unified FM modeling submission', () => {
       machineValidated: true,
       simulationPassed: true,
     });
-    expect(updated.currentArtifactIndex).toBe(2);
+    expect(updated.currentArtifactIndex).toBe(5);
     expect(updated.modeling.files).toEqual(await listFmModelFiles(root));
     expect(updated.modeling.files).toEqual(
       expect.arrayContaining([

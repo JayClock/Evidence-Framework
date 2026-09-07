@@ -1,4 +1,5 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { requireFinalizing } from './discovery.ts';
 import {
   FM_MODEL_ROOT,
   listFmModelFiles,
@@ -159,6 +160,17 @@ async function runModelingCheckItems(
   options: ModelingCheckOptions,
 ): Promise<CheckItem[]> {
   const { modeling } = options.state;
+  try {
+    await requireFinalizing(options.root, options.state);
+  } catch (error) {
+    return [
+      {
+        name: '业务发现就绪与来源',
+        status: 'fail',
+        details: (error as Error).message,
+      },
+    ];
+  }
   if (modeling.applicable !== true) {
     return [
       {

@@ -151,10 +151,15 @@ describe('state decoding', () => {
     });
   });
 
-  it('round-trips a version 5 state without creating interview state or a snapshot', async () => {
+  it('round-trips a version 6 state with an empty discovery cursor', async () => {
     const root = await temporaryRoot();
     const state = createInitialState('project', 'goal');
-    expect(state.version).toBe(5);
+    expect(state.version).toBe(6);
+    expect(state.phase).toBe('modeling');
+    expect(state.discovery).toMatchObject({
+      stage: 'discovering',
+      revision: 0,
+    });
     expect(state.runId).toMatch(/^[a-f0-9-]{36}$/);
     expect(state).not.toHaveProperty('interviews');
     await saveState(root, state);
@@ -162,7 +167,7 @@ describe('state decoding', () => {
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
   });
 
-  it.each([1, 2, 3, 4])(
+  it.each([1, 2, 3, 4, 5])(
     'rejects version %s rather than migrating or fabricating evidence',
     async (version) => {
       const root = await temporaryRoot();
@@ -183,6 +188,16 @@ describe('state decoding', () => {
       phase: 'domain',
     });
     await expect(loadState(root)).rejects.toThrow('unknown phase');
+  });
+
+  it('rejects retired requirements configuration', async () => {
+    const root = await temporaryRoot();
+    await writeJsonAtomic(root, CONFIG_PATH, {
+      models: { requirements: { model: null } },
+    });
+    await expect(loadConfig(root)).rejects.toThrow(
+      'requirements 已并入 modeling',
+    );
   });
 
   it('rejects the retired waiting_input status', async () => {

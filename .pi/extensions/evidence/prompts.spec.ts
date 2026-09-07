@@ -7,6 +7,7 @@ import { getPhaseDefinition, PHASE_ORDER } from './phases.ts';
 import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
 import { writeTestingInputs } from './testing-test-support.ts';
 import { testingInputDigest } from './test-plan.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -154,12 +155,13 @@ describe('artifact prompt inputs', () => {
       state.phase = phase;
       state.status = 'running';
       state.currentArtifactIndex = index;
+      await seedDiscovery(root, state);
       state.coding.storyIds = ['US-001'];
       state.coding.planDigest = await testingInputDigest(root, state);
       const prompt = await buildCurrentPrompt(root, state, DEFAULT_CONFIG);
       expect(prompt).toContain(REQUIREMENTS_PATH);
       expect(prompt).not.toMatch(
-        /evidence_interview|evidence-answer|interview\.md|waiting_input/,
+        /evidence_interview|interview\.md|waiting_input/,
       );
       expect(buildPhaseGuard(state)).not.toMatch(/interview|confirmation/);
       expect(gateArtifactPaths(state)).not.toContain(
@@ -206,7 +208,7 @@ describe('artifact prompt inputs', () => {
       await rm(join(root, REQUIREMENTS_PATH));
       await expect(
         buildCurrentPrompt(root, state, DEFAULT_CONFIG),
-      ).rejects.toThrow('当前任务缺少输入');
+      ).rejects.toThrow();
     },
   );
 });

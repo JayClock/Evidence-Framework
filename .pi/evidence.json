@@ -7,7 +7,6 @@
   "qualityCommands": ["npm test", "npm run lint", "npm run build"],
   "commandTimeoutMs": 600000,
   "models": {
-    "requirements": { "model": null, "thinkingLevel": "high" },
     "modeling": { "model": null, "thinkingLevel": "high" },
     "architecture": { "model": null, "thinkingLevel": "high" },
     "planning": { "model": null, "thinkingLevel": "medium" },
@@ -15,7 +14,6 @@
     "review": { "model": null, "thinkingLevel": "high" }
   },
   "gates": {
-    "requirements": "review",
     "modeling": "review",
     "architecture": "review",
     "planning": "review",

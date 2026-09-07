@@ -68,6 +68,13 @@ import {
   requestRevision,
 } from './workflow.ts';
 
+import {
+  DISCOVERY_TOOL_NAMES,
+  collectAnswer,
+  registerDiscoveryTools,
+} from './discovery-tools.ts';
+import { requireFinalizing, withModelingLock } from './discovery.ts';
+
 const DOCUMENT_TOOLS = ['read', 'bash', 'evidence_submit_artifact'];
 const MODELING_TOOLS = ['read', 'bash', 'evidence_submit_fm_model'];
 const REVIEW_TOOLS = ['read', 'bash', 'evidence_submit_artifact'];
@@ -163,6 +170,7 @@ function statusIcon(status: EvidenceState['status']): string {
       return '○';
     case 'running':
       return '▶';
+    case 'waiting_answer':
     case 'waiting_review':
       return '⏸';
     case 'blocked':
@@ -182,6 +190,7 @@ function statusColor(
   switch (status) {
     case 'blocked':
       return 'error';
+    case 'waiting_answer':
     case 'waiting_review':
       return 'warning';
     case 'complete':
@@ -192,7 +201,9 @@ function statusColor(
 }
 
 function progressText(state: EvidenceState): string {
-  if (state.phase === 'complete') return '6/6';
+  if (state.phase === 'complete') return '5/5';
+  if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
+    return `发现 v${state.discovery.revision} · ${state.discovery.path ?? '从问题与范围开始'}`;
   if (state.phase === 'coding') {
     const total = state.coding.storyIds.length;
     const current =
@@ -221,6 +232,12 @@ function statusMarkdown(state: EvidenceState): string {
     `- 最近报告：${state.lastReport ? `\`${state.lastReport}\`` : '无'}`,
     `- 待审核 Gate：${state.pendingGate ? `\`${state.pendingGate.path}\`` : '无'}`,
   ];
+  if (state.phase === 'modeling')
+    lines.push(
+      `- 发现：${state.discovery.stage} / v${state.discovery.revision} / ${state.discovery.path ?? '尚无记录'}`,
+    );
+  if (state.status === 'waiting_answer')
+    lines.push('- 下一步：`/evidence-answer`');
   if (state.phase === 'coding')
     lines.push(`- TDD 检查点：\`${state.coding.tdd.stage}\``);
   if (state.lastError) lines.push(`- 最近错误：${state.lastError}`);
@@ -273,6 +290,22 @@ function configuredTools(state: EvidenceState): string[] {
   if (state.paused || state.phase === 'complete') return NORMAL_TOOLS;
   if (state.phase === 'coding') return CODING_TOOLS;
   if (state.phase === 'review') return REVIEW_TOOLS;
+  if (state.status === 'waiting_answer') return ['read', 'bash'];
+  if (state.phase === 'modeling') {
+    if (state.discovery.stage === 'discovering') return DISCOVERY_TOOL_NAMES;
+    const submission =
+      getExpectedArtifact(state.phase, state.currentArtifactIndex)?.kind ===
+      'fm-model'
+        ? MODELING_TOOLS
+        : DOCUMENT_TOOLS;
+    return [
+      ...new Set([
+        ...submission,
+        'evidence_ask_questions',
+        'evidence_save_discovery',
+      ]),
+    ];
+  }
   const artifact = getExpectedArtifact(state.phase, state.currentArtifactIndex);
   if (artifact?.kind === 'fm-model') return MODELING_TOOLS;
   return DOCUMENT_TOOLS;
@@ -503,13 +536,21 @@ async function startCurrentWork(
     ctx.ui.notify('Evidence 已完成。使用 /evidence-status 查看结果。', 'info');
     return;
   }
+  if (state.status === 'waiting_answer') {
+    ctx.ui.setEditorText('/evidence-answer');
+    ctx.ui.notify(
+      '当前等待业务回答，请运行 /evidence-answer；不会重复生成工件。',
+      'info',
+    );
+    return;
+  }
   if (state.status === 'waiting_review') {
     ctx.ui.notify('当前阶段等待人工审核，请运行 /evidence-review。', 'warning');
     return;
   }
   if (state.status === 'blocked') {
     ctx.ui.notify(
-      '已达到最大轮次。使用 /evidence-revise 提供人工反馈后继续。',
+      `当前被阻塞：${state.lastError ?? '需要人工修订'}。使用 /evidence-revise 提供反馈后继续。`,
       'error',
     );
     return;
@@ -848,9 +889,17 @@ async function reviewCurrentGate(
     const definition = getPhaseDefinition(state.phase);
     const selected = await ctx.ui.select(
       '选择要编辑的工件',
-      definition.artifacts.map((item) => item.output),
+      definition.artifacts
+        .filter((item) => item.kind !== 'fm-model')
+        .map((item) => item.output),
     );
-    if (!selected) return;
+    if (
+      !selected ||
+      !definition.artifacts.some(
+        (item) => item.kind !== 'fm-model' && item.output === selected,
+      )
+    )
+      return;
     const original = await readText(ctx.cwd, selected);
     const edited = await ctx.ui.editor(`编辑 ${selected}`, original);
     if (edited === undefined || edited === original) return;
@@ -865,6 +914,16 @@ async function reviewCurrentGate(
     return;
   }
 
+  const latest = await loadState(ctx.cwd);
+  if (
+    latest?.runId !== state.runId ||
+    latest.pendingGate?.id !== gate.id ||
+    latest.discovery.digest !== state.discovery.digest ||
+    (await hashArtifacts(ctx.cwd, gate.artifactPaths)) !== gate.artifactDigest
+  ) {
+    ctx.ui.notify('审核期间证据或状态已改变，请重新检查。', 'warning');
+    return;
+  }
   await recordGateDecision(ctx.cwd, gate, 'approved');
   const checkpointFiles = [
     ...gate.artifactPaths,
@@ -917,6 +976,14 @@ async function reviewCurrentGate(
 }
 
 export default function evidenceExtension(pi: ExtensionAPI): void {
+  const refreshDiscovery = async (
+    ctx: ExtensionContext,
+    state: EvidenceState,
+  ) => {
+    await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
+    updateUi(ctx, state);
+  };
+  registerDiscoveryTools(pi, refreshDiscovery);
   pi.registerTool({
     name: 'evidence_submit_artifact',
     label: 'Submit Evidence Artifact',
@@ -933,136 +1000,141 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       }),
     }),
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      const state = await loadState(ctx.cwd);
-      if (!state)
-        throw new Error('Evidence is not initialized. Run /evidence-init.');
-      if (state.status !== 'running')
-        throw new Error(
-          `Workflow status is ${state.status}, expected running.`,
+      return withModelingLock(ctx.cwd, async () => {
+        const state = await loadState(ctx.cwd);
+        if (!state)
+          throw new Error('Evidence is not initialized. Run /evidence-init.');
+        if (state.status !== 'running')
+          throw new Error(
+            `Workflow status is ${state.status}, expected running.`,
+          );
+        if (!isDocumentPhase(state.phase))
+          throw new Error(
+            `evidence_submit_artifact is unavailable in phase ${state.phase}.`,
+          );
+        const config = await loadConfig(ctx.cwd);
+        const artifact = getExpectedArtifact(
+          state.phase,
+          state.currentArtifactIndex,
         );
-      if (!isDocumentPhase(state.phase))
-        throw new Error(
-          `evidence_submit_artifact is unavailable in phase ${state.phase}.`,
-        );
-      const config = await loadConfig(ctx.cwd);
-      const artifact = getExpectedArtifact(
-        state.phase,
-        state.currentArtifactIndex,
-      );
-      if (!artifact)
-        throw new Error(
-          `No artifact expected at index ${state.currentArtifactIndex}.`,
-        );
-      if (artifact.kind === 'fm-model') {
-        throw new Error('统一 FM 模型必须通过 evidence_submit_fm_model 提交。');
-      }
+        if (!artifact)
+          throw new Error(
+            `No artifact expected at index ${state.currentArtifactIndex}.`,
+          );
+        if (artifact.kind === 'fm-model') {
+          throw new Error(
+            '统一 FM 模型必须通过 evidence_submit_fm_model 提交。',
+          );
+        }
 
-      if (state.paused) throw new Error('Evidence 已暂停。');
-      const content = normalizeMarkdown(params.content);
-      const validation = validateArtifactContent(artifact, content);
-      if (!validation.passed) {
-        throw new Error(
-          `工件校验失败：\n${validation.issues.map((issue) => `- ${issue.message}`).join('\n')}`,
+        if (state.paused) throw new Error('Evidence 已暂停。');
+        if (state.phase === 'modeling') await requireFinalizing(ctx.cwd, state);
+        const content = normalizeMarkdown(params.content);
+        const validation = validateArtifactContent(artifact, content);
+        if (!validation.passed) {
+          throw new Error(
+            `工件校验失败：\n${validation.issues.map((issue) => `- ${issue.message}`).join('\n')}`,
+          );
+        }
+
+        await validateTestingArtifact(ctx.cwd, artifact.key, content);
+        await writeTextAtomic(ctx.cwd, artifact.output, content);
+        state.currentArtifactIndex += 1;
+        state.lastError = null;
+        appendHistory(state, 'artifact_submitted', artifact.output);
+        onUpdate?.({
+          content: [{ type: 'text', text: `已写入 ${artifact.output}` }],
+          details: { path: artifact.output },
+        });
+
+        const nextArtifact = getExpectedArtifact(
+          state.phase,
+          state.currentArtifactIndex,
         );
-      }
-
-      await validateTestingArtifact(ctx.cwd, artifact.key, content);
-      await writeTextAtomic(ctx.cwd, artifact.output, content);
-      state.currentArtifactIndex += 1;
-      state.lastError = null;
-      appendHistory(state, 'artifact_submitted', artifact.output);
-      onUpdate?.({
-        content: [{ type: 'text', text: `已写入 ${artifact.output}` }],
-        details: { path: artifact.output },
-      });
-
-      const nextArtifact = getExpectedArtifact(
-        state.phase,
-        state.currentArtifactIndex,
-      );
-      if (nextArtifact) {
-        await applyPhaseProfile(pi, ctx, state, config);
-        if (config.autoContinueArtifacts) {
-          state.status = 'running';
+        if (nextArtifact) {
+          await applyPhaseProfile(pi, ctx, state, config);
+          if (config.autoContinueArtifacts) {
+            state.status = 'running';
+            await saveState(ctx.cwd, state);
+            updateUi(ctx, state);
+            const nextPrompt = await buildCurrentPrompt(ctx.cwd, state, config);
+            pi.sendUserMessage(nextPrompt, { deliverAs: 'followUp' });
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `已提交 ${artifact.output}；下一工件：${nextArtifact.output}`,
+                },
+              ],
+              details: { path: artifact.output, next: nextArtifact.output },
+              terminate: true,
+            };
+          }
+          state.status = 'ready';
           await saveState(ctx.cwd, state);
           updateUi(ctx, state);
-          const nextPrompt = await buildCurrentPrompt(ctx.cwd, state, config);
-          pi.sendUserMessage(nextPrompt, { deliverAs: 'followUp' });
           return {
             content: [
               {
                 type: 'text',
-                text: `已提交 ${artifact.output}；下一工件：${nextArtifact.output}`,
+                text: `已提交 ${artifact.output}。运行 /evidence-run 生成 ${nextArtifact.output}。`,
               },
             ],
             details: { path: artifact.output, next: nextArtifact.output },
             terminate: true,
           };
         }
-        state.status = 'ready';
-        await saveState(ctx.cwd, state);
-        updateUi(ctx, state);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `已提交 ${artifact.output}。运行 /evidence-run 生成 ${nextArtifact.output}。`,
-            },
-          ],
-          details: { path: artifact.output, next: nextArtifact.output },
-          terminate: true,
-        };
-      }
 
-      let checked: Awaited<ReturnType<typeof runDocumentChecks>>;
-      if (state.phase === 'review') {
-        checked = await runReviewChecks({
+        let checked: Awaited<ReturnType<typeof runDocumentChecks>>;
+        if (state.phase === 'review') {
+          checked = await runReviewChecks({
+            pi,
+            root: ctx.cwd,
+            state,
+            config,
+            signal,
+            timeoutMs: config.commandTimeoutMs,
+            onProgress: (progress) => {
+              onUpdate?.({
+                content: [{ type: 'text', text: progress }],
+                details: { path: artifact.output },
+              });
+            },
+          });
+        } else if (state.phase === 'modeling') {
+          checked = await runModelingChecks({
+            pi,
+            root: ctx.cwd,
+            state,
+            signal,
+            timeoutMs: config.commandTimeoutMs,
+            onProgress: (progress) => {
+              onUpdate?.({
+                content: [{ type: 'text', text: progress }],
+                details: { path: artifact.output },
+              });
+            },
+          });
+        } else {
+          checked = await runDocumentChecks(ctx.cwd, state);
+        }
+        const message = await finishPhaseSubmission(
           pi,
-          root: ctx.cwd,
+          ctx,
           state,
           config,
-          signal,
-          timeoutMs: config.commandTimeoutMs,
-          onProgress: (progress) => {
-            onUpdate?.({
-              content: [{ type: 'text', text: progress }],
-              details: { path: artifact.output },
-            });
+          checked,
+        );
+        return {
+          content: [{ type: 'text', text: message }],
+          details: {
+            path: artifact.output,
+            report: checked.markdownPath,
+            passed: checked.report.passed,
           },
-        });
-      } else if (state.phase === 'modeling') {
-        checked = await runModelingChecks({
-          pi,
-          root: ctx.cwd,
-          state,
-          signal,
-          timeoutMs: config.commandTimeoutMs,
-          onProgress: (progress) => {
-            onUpdate?.({
-              content: [{ type: 'text', text: progress }],
-              details: { path: artifact.output },
-            });
-          },
-        });
-      } else {
-        checked = await runDocumentChecks(ctx.cwd, state);
-      }
-      const message = await finishPhaseSubmission(
-        pi,
-        ctx,
-        state,
-        config,
-        checked,
-      );
-      return {
-        content: [{ type: 'text', text: message }],
-        details: {
-          path: artifact.output,
-          report: checked.markdownPath,
-          passed: checked.report.passed,
-        },
-        terminate: true,
-      };
+          terminate: true,
+        };
+      });
     },
   });
 
@@ -1102,122 +1174,121 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       ),
     }),
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      const state = await loadState(ctx.cwd);
-      if (!state || state.phase !== 'modeling' || state.status !== 'running') {
-        throw new Error('A running modeling FM task is required.');
-      }
-      const artifact = getExpectedArtifact(
-        state.phase,
-        state.currentArtifactIndex,
-      );
-      if (artifact?.kind !== 'fm-model') {
-        throw new Error('当前工件不是统一 FM 模型。');
-      }
-      if (state.paused) throw new Error('Evidence 已暂停。');
-      if (!params.applicable && params.files.length > 0) {
-        throw new Error('FM 不适用时不得提交模型文件。');
-      }
-      if (params.applicable && params.files.length === 0) {
-        throw new Error('FM 适用时必须提交模型文件。');
-      }
-
-      const config = await loadConfig(ctx.cwd);
-      let files: string[];
-      let machineValidated = false;
-      let simulationPassed: boolean | null = null;
-      if (params.applicable) {
-        const validation = await replaceFmModel({
-          pi,
-          root: ctx.cwd,
-          files: params.files,
-          timeoutMs: config.commandTimeoutMs,
-          signal,
-          onProgress: (progress) => {
-            onUpdate?.({
-              content: [{ type: 'text', text: progress }],
-              details: { path: FM_MODEL_ROOT },
-            });
-          },
-        });
-        if (!validation.passed) {
-          throw new Error(
-            `统一 FM 模型校验失败：\n${validation.items
-              .filter((item) => item.status === 'fail')
-              .map((item) => `- ${item.name}: ${item.details}`)
-              .join('\n')}`,
-          );
+      return withModelingLock(ctx.cwd, async () => {
+        const state = await loadState(ctx.cwd);
+        if (
+          !state ||
+          state.phase !== 'modeling' ||
+          state.status !== 'running'
+        ) {
+          throw new Error('A running modeling FM task is required.');
         }
-        files = validation.files;
-        machineValidated = validation.machineValidated;
-        simulationPassed = validation.simulationPassed;
-      } else {
-        await rm(projectPath(ctx.cwd, FM_MODEL_ROOT), {
-          recursive: true,
-          force: true,
-        });
-        files = [];
-      }
+        const artifact = getExpectedArtifact(
+          state.phase,
+          state.currentArtifactIndex,
+        );
+        if (artifact?.kind !== 'fm-model') {
+          throw new Error('当前工件不是统一 FM 模型。');
+        }
+        if (state.paused) throw new Error('Evidence 已暂停。');
+        await requireFinalizing(ctx.cwd, state);
+        if (!params.applicable && params.files.length > 0) {
+          throw new Error('FM 不适用时不得提交模型文件。');
+        }
+        if (params.applicable && params.files.length === 0) {
+          throw new Error('FM 适用时必须提交模型文件。');
+        }
 
-      await writeTextAtomic(
-        ctx.cwd,
-        FM_STATUS_PATH,
-        modelingStatusMarkdown({
+        const config = await loadConfig(ctx.cwd);
+        let files: string[];
+        let machineValidated = false;
+        let simulationPassed: boolean | null = null;
+        if (params.applicable) {
+          const validation = await replaceFmModel({
+            pi,
+            root: ctx.cwd,
+            files: params.files,
+            timeoutMs: config.commandTimeoutMs,
+            signal,
+            onProgress: (progress) => {
+              onUpdate?.({
+                content: [{ type: 'text', text: progress }],
+                details: { path: FM_MODEL_ROOT },
+              });
+            },
+          });
+          if (!validation.passed) {
+            throw new Error(
+              `统一 FM 模型校验失败：\n${validation.items
+                .filter((item) => item.status === 'fail')
+                .map((item) => `- ${item.name}: ${item.details}`)
+                .join('\n')}`,
+            );
+          }
+          files = validation.files;
+          machineValidated = validation.machineValidated;
+          simulationPassed = validation.simulationPassed;
+        } else {
+          await rm(projectPath(ctx.cwd, FM_MODEL_ROOT), {
+            recursive: true,
+            force: true,
+          });
+          files = [];
+        }
+
+        await writeTextAtomic(
+          ctx.cwd,
+          FM_STATUS_PATH,
+          modelingStatusMarkdown({
+            applicable: params.applicable,
+            rationale: params.rationale,
+            machineValidated,
+            simulationPassed,
+            files,
+          }),
+        );
+        files = await listFmModelFiles(ctx.cwd);
+        state.modeling = {
           applicable: params.applicable,
-          rationale: params.rationale,
+          rationale: params.rationale.trim(),
+          files,
           machineValidated,
           simulationPassed,
-          files,
-        }),
-      );
-      files = await listFmModelFiles(ctx.cwd);
-      state.modeling = {
-        applicable: params.applicable,
-        rationale: params.rationale.trim(),
-        files,
-        machineValidated,
-        simulationPassed,
-      };
-      state.currentArtifactIndex += 1;
-      state.lastError = null;
-      appendHistory(
-        state,
-        'fm_model_submitted',
-        params.applicable ? `${files.length} files` : 'not applicable',
-      );
+        };
+        state.currentArtifactIndex += 1;
+        state.lastError = null;
+        appendHistory(
+          state,
+          'fm_model_submitted',
+          params.applicable ? `${files.length} files` : 'not applicable',
+        );
 
-      // FM is the final modeling artifact. Recheck the complete phase before
-      // applying its gate policy; autoContinueArtifacts never skips this gate.
-      const checked = await runModelingChecks({
-        pi,
-        root: ctx.cwd,
-        state,
-        signal,
-        timeoutMs: config.commandTimeoutMs,
-        onProgress: (progress) => {
-          onUpdate?.({
-            content: [{ type: 'text', text: progress }],
-            details: { path: FM_MODEL_ROOT },
+        // FM is followed by software scope and acceptance, sharing one Modeling Gate.
+        state.status = config.autoContinueArtifacts ? 'running' : 'ready';
+        await saveState(ctx.cwd, state);
+        await applyPhaseProfile(pi, ctx, state, config);
+        updateUi(ctx, state);
+        if (config.autoContinueArtifacts)
+          pi.sendUserMessage(await buildCurrentPrompt(ctx.cwd, state, config), {
+            deliverAs: 'followUp',
           });
-        },
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'FM 已提交；接下来从模型收敛软件范围、故事和验收标准，尚未创建 Gate。',
+            },
+          ],
+          details: {
+            applicable: params.applicable,
+            files,
+            path: FM_STATUS_PATH,
+            next: getExpectedArtifact(state.phase, state.currentArtifactIndex)
+              ?.output,
+          },
+          terminate: true,
+        };
       });
-      const message = await finishPhaseSubmission(
-        pi,
-        ctx,
-        state,
-        config,
-        checked,
-      );
-      return {
-        content: [{ type: 'text', text: message }],
-        details: {
-          applicable: params.applicable,
-          files: state.modeling.files,
-          path: FM_STATUS_PATH,
-          report: checked.markdownPath,
-          passed: checked.report.passed,
-        },
-        terminate: true,
-      };
     },
   });
 
@@ -1448,7 +1519,10 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       await applyPhaseProfile(pi, ctx, state, config);
       pi.setSessionName(sessionName(state));
       updateUi(ctx, state);
-      ctx.ui.notify('Evidence 已初始化，即将生成用户画像与需求工件。', 'info');
+      ctx.ui.notify(
+        'Evidence 已初始化，直接开始问题定位与交互式建模。',
+        'info',
+      );
       await startCurrentWork(pi, ctx);
     },
   });
@@ -1478,6 +1552,18 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       await ctx.waitForIdle();
       const state = await loadRequiredState(ctx);
       if (!state || state.phase === 'complete') return;
+      if (
+        state.phase === 'modeling' &&
+        (state.discovery.stage !== 'finalizing' ||
+          state.currentArtifactIndex <
+            getPhaseDefinition('modeling').artifacts.length)
+      ) {
+        ctx.ui.notify(
+          '请先完成发现与全部正式工件；草稿使用 evidence_check_model_draft，不以阶段重查跳过发现。',
+          'warning',
+        );
+        return;
+      }
       const config = await loadConfig(ctx.cwd);
       try {
         await ensureCodingStories(ctx.cwd, state);
@@ -1506,6 +1592,8 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       const state = await loadRequiredState(ctx);
       if (!state) return;
       if (state.status === 'waiting_review') await reviewCurrentGate(pi, ctx);
+      else if (state.status === 'waiting_answer')
+        await collectAnswer(ctx, refreshDiscovery);
       else await startCurrentWork(pi, ctx);
     },
   });
@@ -1528,7 +1616,7 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
       const state = await loadRequiredState(ctx);
       if (!state) return;
       const previous =
-        state.phase === 'requirements'
+        state.phase === 'modeling'
           ? null
           : moveBackOnePhase(structuredClone(state));
       if (!previous) {
@@ -1653,15 +1741,23 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     if (!state) return;
     if (state.status === 'running') {
       state.status = 'ready';
-      state.lastError =
-        'Agent 已结束，但没有调用当前阶段要求的 evidence_* 提交工具。';
+      const discovering =
+        state.phase === 'modeling' && state.discovery.stage === 'discovering';
+      state.lastError = discovering
+        ? null
+        : 'Agent 已结束，但没有调用当前阶段要求的 evidence_* 提交工具。';
       appendHistory(
         state,
-        'agent_stopped_without_submission',
+        discovering ? 'discovery_paused' : 'agent_stopped_without_submission',
         subjectLabel(state),
       );
       await saveState(ctx.cwd, state);
-      ctx.ui.notify(`${state.lastError} 运行 /evidence-run 重试。`, 'warning');
+      ctx.ui.notify(
+        discovering
+          ? '发现进度已保留，可运行 /evidence-run 继续。'
+          : `${state.lastError} 运行 /evidence-run 重试。`,
+        discovering ? 'info' : 'warning',
+      );
     }
     updateUi(ctx, state);
   });

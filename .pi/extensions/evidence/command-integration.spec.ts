@@ -24,7 +24,7 @@ afterEach(async () => {
 });
 
 describe('evidence-init command', () => {
-  it('initializes real input and immediately starts the persona artifact', async () => {
+  it('initializes input and starts discovery without prewritten requirements', async () => {
     const root = await mkdtemp(join(tmpdir(), 'evidence-command-test-'));
     temporaryRoots.push(root);
     await writeFile(
@@ -38,7 +38,7 @@ describe('evidence-init command', () => {
     );
     await writeTextAtomic(
       root,
-      '.pi/skills/evidence-requirements/SKILL.md',
+      '.pi/skills/evidence-modeling/SKILL.md',
       '# 需求分析方法',
     );
     await writeTextAtomic(
@@ -57,7 +57,10 @@ describe('evidence-init command', () => {
       getAllTools: vi.fn(() => [
         { name: 'read' },
         { name: 'bash' },
-        { name: 'evidence_submit_artifact' },
+        { name: 'evidence_ask_questions' },
+        { name: 'evidence_save_discovery' },
+        { name: 'evidence_check_model_draft' },
+        { name: 'evidence_finalize_discovery' },
       ]),
       setActiveTools,
       setThinkingLevel: vi.fn(),
@@ -95,7 +98,8 @@ describe('evidence-init command', () => {
     expect(state).toMatchObject({
       projectName: 'integration-project',
       goal: 'A testable product goal',
-      phase: 'requirements',
+      phase: 'modeling',
+      discovery: { stage: 'discovering', revision: 0 },
       status: 'running',
     });
     expect(
@@ -104,7 +108,10 @@ describe('evidence-init command', () => {
     expect(setActiveTools).toHaveBeenCalledWith([
       'read',
       'bash',
-      'evidence_submit_artifact',
+      'evidence_ask_questions',
+      'evidence_save_discovery',
+      'evidence_check_model_draft',
+      'evidence_finalize_discovery',
     ]);
 
     await commands.get('evidence-run')?.handler('', commandContext);
@@ -114,9 +121,7 @@ describe('evidence-init command', () => {
     expect(state).not.toHaveProperty('interviews');
     expect(await readText(root, 'artifacts/00-input/interview.md')).toBe('');
     expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
-      expect.stringContaining(
-        '输出路径：`artifacts/01-requirements/personas.md`',
-      ),
+      expect.stringContaining('Evidence 交互式业务发现与建模'),
     );
   });
 });

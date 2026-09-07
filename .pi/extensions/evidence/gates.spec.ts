@@ -10,6 +10,7 @@ import {
   writeTextAtomic,
 } from './storage.ts';
 import type { CheckReport } from './types.ts';
+import { seedDiscovery } from './discovery-test-support.ts';
 
 const temporaryRoots: string[] = [];
 
@@ -70,6 +71,7 @@ describe('human gates', () => {
         writeJsonAtomic(root, reportPath.replace(/\.md$/, '.json'), report),
       ]);
 
+      await seedDiscovery(root, state);
       const gate = await createGate(root, state, report, reportPath);
       expect(gate.artifactPaths).toEqual(
         expect.arrayContaining([
@@ -95,7 +97,7 @@ describe('human gates', () => {
     const root = await temporaryRoot();
     const state = createInitialState('test', 'goal');
     const report: CheckReport = {
-      phase: 'requirements',
+      phase: 'modeling',
       subject: '需求分析',
       round: 0,
       passed: true,
@@ -114,6 +116,7 @@ describe('human gates', () => {
       writeJsonAtomic(root, reportPath.replace(/\.md$/, '.json'), report),
     ]);
 
+    await seedDiscovery(root, state);
     const gate = await createGate(root, state, report, reportPath);
     expect(gate.artifactPaths).toContain(reportPath);
     expect(gate.artifactPaths).toContain(reportPath.replace(/\.md$/, '.json'));

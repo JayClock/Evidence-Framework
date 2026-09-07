@@ -8,6 +8,7 @@ import { currentCodingStory } from './workflow.ts';
 import { assertTestingInputs } from './test-plan.ts';
 import { taskComplete } from './testing-evidence.ts';
 import type { EvidenceConfig, EvidenceState } from './types.ts';
+import { loadDiscovery, requireFinalizing } from './discovery.ts';
 
 function stripFrontmatter(markdown: string): string {
   return markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();
@@ -52,6 +53,31 @@ export async function buildCurrentPrompt(
   if (state.phase === 'complete') throw new Error('Workflow is complete');
   const definition = getPhaseDefinition(state.phase);
   const skill = await requireInstructions(root, definition.skillFile);
+
+  if (state.phase === 'modeling' && state.discovery.stage === 'discovering') {
+    const snapshot = await loadDiscovery(root, state);
+    await requireInputs(root, [REQUIREMENTS_PATH]);
+    return `# Evidence 交互式业务发现与建模
+
+- 当前阶段：modeling；发现版本：${state.discovery.revision}；修订轮次：${state.round}
+- 当前焦点：${snapshot.content?.focus ?? 'scope'}
+- 原始输入：\`${REQUIREMENTS_PATH}\`
+- 发现快照：${state.discovery.path ? `\`${state.discovery.path}\`` : '无；从用户的问题和材料开始'}
+- 状态：${state.status}。等待回答时不要重复提问或自行代答。
+
+${skill}
+
+读取原始输入、当前快照及所引用材料。先定位问题与探索范围，不增加 Requirements 前置阶段。
+按实际范围发现：纯领域从对象身份、关系和不变条件开始；纯渠道从真实协商凭证开始；业务运营从收入、支出、目标—实际识别合同/绩效权责。
+使用 8X Flow 组织权责，并在每个履约中用四色法寻找凭证、关键数据来源、公式、时间约束、角色及标的。异常产生的新责任继续展开。它是循环，不是必须补齐所有上下文的问卷。
+缺关键依据时用 evidence_ask_questions（1–4 个相关问题，稳定 Q-ID），停止等待 /evidence-answer。用户原文只有命令能保存；不能用 AI 分析伪造回答。
+用 evidence_save_discovery 保存完整候选记录；引用 INPUT、SRC-ID 或最新 A-ID。明确区分事实、推断、未知；来源明确也不等于专家批准。
+正常、边界、异常回放的预期必须有来源；不适用也须说明依据。纯领域回放不声称单据模拟已执行。有完整 FM 候选时可用 evidence_check_model_draft 隔离检查，不写正式目录、不创建 Gate。
+记录 v3 无法表达的操作、状态机、关系基数等 gap 及下游责任。证据充分时 evidence_finalize_discovery 转入定稿；不能直接提交统一语言或 FM 绕过发现。
+所有发现工具传当前 expectedRevision；每次保存后读取工具返回的新版本。一般问答不消耗 maxRounds。
+${feedbackSection(state)}`;
+  }
+  if (state.phase === 'modeling') await requireFinalizing(root, state);
 
   if (state.phase === 'coding') {
     const storyId = currentCodingStory(state);
@@ -123,9 +149,19 @@ ${inputList(inputs)}
   const artifact = getExpectedArtifact(state.phase, state.currentArtifactIndex);
   if (!artifact)
     throw new Error(`No pending artifact for phase ${state.phase}`);
-  const inputs = [...new Set([REQUIREMENTS_PATH, ...artifact.inputs])];
+  const inputs = [
+    ...new Set([
+      REQUIREMENTS_PATH,
+      ...artifact.inputs,
+      ...(state.phase === 'modeling' && state.discovery.path
+        ? [state.discovery.path]
+        : []),
+    ]),
+  ];
   await requireInputs(root, inputs);
-  const artifactPrompt = await requireInstructions(root, artifact.promptFile);
+  let artifactPrompt = await requireInstructions(root, artifact.promptFile);
+  if (state.phase === 'modeling')
+    artifactPrompt += `\n发现版本：${state.discovery.revision}。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_ask_questions 或 evidence_save_discovery 重新打开发现，旧定稿失效，不私改其他工件。`;
 
   if (artifact.kind === 'fm-model') {
     return `# Evidence 统一 FM 建模任务
@@ -196,10 +232,12 @@ ${artifactPrompt}
 export function buildPhaseGuard(state: EvidenceState): string {
   if (state.phase === 'complete' || state.status !== 'running') return '';
   const subject =
-    state.phase === 'coding'
-      ? (currentCodingStory(state) ?? 'unknown story')
-      : (getExpectedArtifact(state.phase, state.currentArtifactIndex)?.output ??
-        state.phase);
+    state.phase === 'modeling' && state.discovery.stage === 'discovering'
+      ? `interactive discovery revision ${state.discovery.revision}`
+      : state.phase === 'coding'
+        ? (currentCodingStory(state) ?? 'unknown story')
+        : (getExpectedArtifact(state.phase, state.currentArtifactIndex)
+            ?.output ?? state.phase);
   const tdd =
     state.phase === 'coding'
       ? `; TDD checkpoint: ${state.coding.tdd.stage}; completed cycles: ${state.coding.cycles.length}; active task/check: ${state.coding.tdd.binding ? `${state.coding.tdd.binding.taskId}/${state.coding.tdd.binding.checkId}` : 'none'}`

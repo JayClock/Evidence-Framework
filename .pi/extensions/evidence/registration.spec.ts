@@ -20,6 +20,10 @@ describe('extension registration', () => {
     evidenceExtension(registrationApi as unknown as ExtensionAPI);
 
     expect(tools).toEqual([
+      'evidence_ask_questions',
+      'evidence_save_discovery',
+      'evidence_check_model_draft',
+      'evidence_finalize_discovery',
       'evidence_submit_artifact',
       'evidence_submit_fm_model',
       'evidence_tdd_red',
@@ -29,6 +33,7 @@ describe('extension registration', () => {
       'evidence_complete_story',
     ]);
     expect(commands).toEqual([
+      'evidence-answer',
       'evidence-init',
       'evidence-run',
       'evidence-status',

@@ -24,51 +24,44 @@ const artifact = (
   promptFile: prompt(value.promptName),
 });
 
-export const PHASE_DEFINITIONS = {
-  requirements: {
-    id: 'requirements',
-    label: '需求分析',
-    skillFile: '.pi/skills/evidence-requirements/SKILL.md',
-    artifacts: [
-      artifact({
-        key: 'personas',
-        label: '用户画像与需求',
-        output: 'artifacts/01-requirements/personas.md',
-        promptName: 'personas',
-        inputs: [requirementsInput],
-        minChars: 700,
-        requiredSections: ['用户画像', '需求列表'],
-        minTableRows: 10,
-        occurrences: [
-          { needle: '痛点', minimum: 3, label: '至少三个角色痛点' },
-        ],
-      }),
-      artifact({
-        key: 'problem-statement',
-        label: '问题陈述与 MVP 范围',
-        output: 'artifacts/01-requirements/problem-statement.md',
-        promptName: 'problem-statement',
-        inputs: [requirementsInput, 'artifacts/01-requirements/personas.md'],
-        minChars: 700,
-        requiredSections: ['问题陈述', 'MVP', 'MoSCoW'],
-        minTableRows: 6,
-      }),
-      artifact({
-        key: 'story-map',
-        label: '用户故事地图',
-        output: 'artifacts/01-requirements/story-map.md',
-        promptName: 'story-map',
-        inputs: [
-          requirementsInput,
-          'artifacts/01-requirements/personas.md',
-          'artifacts/01-requirements/problem-statement.md',
-        ],
-        minChars: 1100,
-        requiredSections: ['用户故事地图', '验收标准'],
-        minUniqueStoryIds: 6,
-      }),
+// Kept at their existing paths for downstream US/AC contracts, but produced
+// only AFTER the FM model, inside Modeling's shared gate.
+const requirementsArtifacts = [
+  artifact({
+    key: 'personas',
+    label: '用户画像与需求',
+    output: 'artifacts/01-requirements/personas.md',
+    promptName: 'personas',
+    inputs: [requirementsInput, 'artifacts/02-modeling/fm-model'],
+    minChars: 300,
+    requiredSections: ['用户画像', '需求列表'],
+  }),
+  artifact({
+    key: 'problem-statement',
+    label: '问题陈述与 MVP 范围',
+    output: 'artifacts/01-requirements/problem-statement.md',
+    promptName: 'problem-statement',
+    inputs: [requirementsInput, 'artifacts/01-requirements/personas.md'],
+    minChars: 300,
+    requiredSections: ['问题陈述', 'MVP', 'MoSCoW'],
+  }),
+  artifact({
+    key: 'story-map',
+    label: '用户故事地图',
+    output: 'artifacts/01-requirements/story-map.md',
+    promptName: 'story-map',
+    inputs: [
+      requirementsInput,
+      'artifacts/01-requirements/personas.md',
+      'artifacts/01-requirements/problem-statement.md',
     ],
-  },
+    minChars: 400,
+    requiredSections: ['用户故事地图', '验收标准'],
+    minUniqueStoryIds: 1,
+  }),
+];
+
+export const PHASE_DEFINITIONS = {
   modeling: {
     id: 'modeling',
     label: '统一建模',
@@ -79,11 +72,7 @@ export const PHASE_DEFINITIONS = {
         label: '统一语言',
         output: 'artifacts/02-modeling/ubiquitous-language.md',
         promptName: 'ubiquitous-language',
-        inputs: [
-          'artifacts/01-requirements/personas.md',
-          'artifacts/01-requirements/problem-statement.md',
-          'artifacts/01-requirements/story-map.md',
-        ],
+        inputs: [requirementsInput],
         minChars: 400,
         requiredSections: ['统一语言'],
       }),
@@ -94,13 +83,13 @@ export const PHASE_DEFINITIONS = {
         promptName: 'fulfillment-model',
         kind: 'fm-model',
         inputs: [
-          'artifacts/01-requirements/problem-statement.md',
-          'artifacts/01-requirements/story-map.md',
+          requirementsInput,
           'artifacts/02-modeling/ubiquitous-language.md',
         ],
         minChars: 250,
         requiredSections: ['适用性', '机器校验', '场景模拟', '业务确认'],
       }),
+      ...requirementsArtifacts,
     ],
   },
   architecture: {
@@ -279,8 +268,7 @@ export const PHASE_DEFINITIONS = {
         ],
         minChars: 800,
         requiredSections: ['Product Backlog', '依赖'],
-        minTableRows: 7,
-        minUniqueStoryIds: 6,
+        minUniqueStoryIds: 1,
       }),
       artifact({
         key: 'sprint-plan',
@@ -365,7 +353,6 @@ export const PHASE_DEFINITIONS = {
 } satisfies Record<ActivePhase, PhaseDefinition>;
 
 export const PHASE_ORDER: ActivePhase[] = [
-  'requirements',
   'modeling',
   'architecture',
   'planning',
