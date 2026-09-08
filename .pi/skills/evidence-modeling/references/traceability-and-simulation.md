@@ -30,10 +30,14 @@ attributes:
     derivedByRuleRef: rule.requested-amount
 ```
 
-所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request interval 固定引用 `start_at` 和 `expired_at`，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。关键属性只有两种来源：
+所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request interval 固定引用 `start_at` 和 `expired_at`，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。机器 lineage 将关键属性表示为两种来源分类（不是业务来源充分性的判定）：
 
 1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
 2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
+
+业务发现统一按 `discovery-workshop.md` 第1节的四色循环：所有关键数据（包括非派生属性）都追溯其凭证／对象、提供角色、业务约定及适用版本，不等待疑似派生才开始。直接记录、引用已有值、规则派生、来源待明确是 candidate.description／notes 中的业务说明，不新增 lineage 枚举。没有 derivedByRuleRef 只说明未声明 CEL 派生，不能证明可自由输入或来源已明；引用已有值须保留原属性与适用关系，需计算时才用有依据的 CEL 表达。类型展开和机器 lineage 通过不能关闭真实业务来源缺口；材料充分就复用，缺口影响判断才逐问，不让 Architecture 自定规则。
+
+机器从已声明的 CEL AST 提取依赖并验证类型、引用与环，不会发现业务公式、核实 asserted 值的提供依据，或判断所有业务来源是否充分；这些由业务发现和人工审核承担。
 
 不要另写 `sourceAttributeRefs`。派生来源由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务／领域输入必须建模为 Entity Attribute（Evidence 或领域对象属性），不能藏在无来源的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`，属性名为 snake_case，与 Entity 定义、CEL 访问、派生 target 和 Instance values 的直接键一致。
 

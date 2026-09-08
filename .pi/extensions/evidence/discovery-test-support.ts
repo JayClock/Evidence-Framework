@@ -1,12 +1,15 @@
 import type {
   DiscoveryContent,
   DiscoveryQuestion,
+  DiscoveryRecord,
+  DiscoverySubmission,
+  DiscoverySnapshot,
 } from './discovery-schema.ts';
 import {
   finalizeDiscovery,
-  saveDiscoveryContent,
+  appendDiscoveryRecords,
   loadDiscovery,
-  persistDiscovery,
+  appendDiscoveryEvent,
 } from './discovery.ts';
 import {
   readText,
@@ -173,18 +176,123 @@ export function subscriptionContent(): DiscoveryContent {
   return content;
 }
 
+// Test-only builder: translate complete fixture expectations into explicit
+// append/correct/withdraw records. Production never accepts full content.
+export function fixtureSubmission(
+  content: DiscoveryContent,
+  snapshot: DiscoverySnapshot,
+): DiscoverySubmission {
+  const flatten = (value: DiscoveryContent): Map<string, DiscoveryRecord> => {
+    const records = new Map<string, DiscoveryRecord>();
+    records.set('scope', {
+      kind: 'scope',
+      supersedes: null,
+      value: { scope: value.scope, excludedScope: value.excludedScope },
+    });
+    records.set('position', {
+      kind: 'position',
+      supersedes: null,
+      value: { focus: value.focus, current: value.contractView.current },
+    });
+    const noteKey =
+      Object.keys(snapshot.recordHeads).find((key) =>
+        key.startsWith('note:'),
+      ) ?? 'note:fixture';
+    records.set(noteKey, {
+      kind: 'note',
+      supersedes: null,
+      value: value.notes,
+    });
+    for (const item of value.sources)
+      records.set(`source:${item.id}`, {
+        kind: 'source',
+        supersedes: null,
+        value: item,
+      });
+    for (const item of value.candidates)
+      records.set(`candidate:${item.id}`, {
+        kind: 'candidate',
+        supersedes: null,
+        value: item,
+      });
+    for (const item of value.cases)
+      records.set(`case:${item.id}`, {
+        kind: 'case',
+        supersedes: null,
+        value: item,
+      });
+    for (const { fulfillments, ...contract } of value.contractView.contracts) {
+      records.set(`contract:${contract.contextRef}`, {
+        kind: 'contract',
+        supersedes: null,
+        value: contract,
+      });
+      for (const item of fulfillments)
+        records.set(`fulfillment:${contract.contextRef}:${item.candidateRef}`, {
+          kind: 'fulfillment',
+          supersedes: null,
+          value: { contractRef: contract.contextRef, ...item },
+        });
+    }
+    return records;
+  };
+  const previous = snapshot.content
+    ? flatten(snapshot.content)
+    : new Map<string, DiscoveryRecord>();
+  const desired = flatten(content);
+  const records: DiscoveryRecord[] = [];
+  for (const [key, record] of desired) {
+    if (JSON.stringify(record) !== JSON.stringify(previous.get(key)))
+      records.push({
+        ...record,
+        supersedes: snapshot.recordHeads[key] ?? null,
+      } as DiscoveryRecord);
+  }
+  for (const key of previous.keys()) {
+    if (!desired.has(key))
+      records.push({ kind: 'withdraw', supersedes: snapshot.recordHeads[key] });
+  }
+  if (!records.length) {
+    const key = [...desired.keys()].find((key) => key.startsWith('note:'))!;
+    records.push({
+      kind: 'note',
+      supersedes: snapshot.recordHeads[key] ?? null,
+      value: content.notes,
+    });
+  }
+  return {
+    summary: '合成测试：按测试输入整理本轮候选、回放和未解决缺口。',
+    sourceRefs: ['INPUT'],
+    records,
+  };
+}
+
+export async function saveDiscoveryContent(
+  root: string,
+  state: EvidenceState,
+  content: DiscoveryContent,
+): Promise<void> {
+  await appendDiscoveryRecords(
+    root,
+    state,
+    fixtureSubmission(content, await loadDiscovery(root, state)),
+  );
+}
+
 // A current registry across multiple dialogue rounds, not a legacy snapshot.
 export async function seedQuestions(
   root: string,
   state: EvidenceState,
   questions: DiscoveryQuestion[],
 ): Promise<void> {
-  const snapshot = await loadDiscovery(root, state);
-  snapshot.questions.push(...questions);
-  snapshot.interaction.activeQuestionId = questions[0]?.id ?? null;
-  snapshot.interaction.needsConsolidation = false;
   state.status = 'waiting_answer';
-  await persistDiscovery(root, state, snapshot);
+  for (const question of questions)
+    await appendDiscoveryEvent(root, state, { kind: 'question', question });
+  if (questions.length > 1)
+    await appendDiscoveryEvent(root, state, {
+      kind: 'question',
+      question: questions[0],
+    });
 }
 
 // Explicit synthetic evidence for isolated tests, never used by runtime code.
@@ -199,7 +307,7 @@ export async function seedDiscovery(
       REQUIREMENTS_PATH,
       '# 合成测试输入\n明确正常、边界和异常预期。',
     );
-  const { phase, status, currentArtifactIndex } = state;
+  const { phase, status, currentArtifactIndex, execution } = state;
   const modeling = structuredClone(state.modeling);
   state.phase = 'modeling';
   state.status = 'running';
@@ -207,6 +315,7 @@ export async function seedDiscovery(
   await finalizeDiscovery(root, state);
   state.phase = phase;
   state.status = status;
+  state.execution = execution;
   state.currentArtifactIndex = currentArtifactIndex;
   state.modeling = modeling;
   await saveState(root, state);

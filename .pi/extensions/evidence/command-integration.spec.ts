@@ -71,6 +71,7 @@ describe('evidence-init command', () => {
 
     const context = {
       cwd: root,
+      sessionManager: { getSessionId: () => 'init-session' },
       hasUI: true,
       isIdle: vi.fn(() => true),
       waitForIdle: vi.fn().mockResolvedValue(undefined),
@@ -122,7 +123,7 @@ describe('evidence-init command', () => {
     expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
       expect.stringContaining('Evidence 交互式业务发现与建模'),
     );
-    expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(
+    expect(registrationApi.sendUserMessage).not.toHaveBeenCalledWith(
       expect.stringContaining(guide.trim()),
     );
     expect(registrationApi.sendUserMessage).toHaveBeenCalledWith(

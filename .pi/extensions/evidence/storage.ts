@@ -3,7 +3,15 @@ import {
   initialDiscovery,
   type DiscoveryProgress,
 } from './discovery-schema.ts';
-import { mkdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
+import {
+  link,
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { withFileMutationQueue } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
@@ -126,6 +134,30 @@ export async function writeTextAtomic(
     try {
       await writeFile(temporary, content, 'utf8');
       await rename(temporary, target);
+    } finally {
+      await rm(temporary, { force: true });
+    }
+  });
+}
+
+// Publish a fully written immutable entry; link fails atomically if the name
+// already exists, including interrupted commits and cross-process races.
+export async function appendTextAtomic(
+  root: string,
+  path: string,
+  content: string,
+): Promise<void> {
+  const target = projectPath(root, path);
+  await withFileMutationQueue(target, async () => {
+    await mkdir(dirname(target), { recursive: true });
+    const temporary = `${target}.${process.pid}.${randomUUID()}.tmp`;
+    try {
+      await writeFile(temporary, content, { encoding: 'utf8', flag: 'wx' });
+      await link(temporary, target);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'EEXIST')
+        throw new Error('发现记录已存在；不会覆盖历史，请人工检查中断记录');
+      throw error;
     } finally {
       await rm(temporary, { force: true });
     }
@@ -505,6 +537,30 @@ export async function loadConfig(root: string): Promise<EvidenceConfig> {
   };
 }
 
+function decodeExecution(value: unknown): EvidenceState['execution'] {
+  // Additive v6 field: absence is unknown ownership, never proof of interruption.
+  if (value === undefined || value === null) return null;
+  if (
+    !isRecord(value) ||
+    typeof value.id !== 'string' ||
+    !value.id.trim() ||
+    typeof value.sessionId !== 'string' ||
+    !value.sessionId.trim() ||
+    typeof value.hostname !== 'string' ||
+    !value.hostname.trim() ||
+    !Number.isSafeInteger(value.pid) ||
+    typeof value.pid !== 'number' ||
+    value.pid <= 0
+  )
+    return invalidState('invalid execution owner');
+  return {
+    id: value.id,
+    sessionId: value.sessionId,
+    hostname: value.hostname,
+    pid: value.pid,
+  };
+}
+
 export async function loadState(root: string): Promise<EvidenceState | null> {
   const raw = await readJson<unknown>(root, STATE_PATH);
   if (raw === null) return null;
@@ -584,6 +640,7 @@ export async function loadState(root: string): Promise<EvidenceState | null> {
     goal: raw.goal,
     phase: raw.phase,
     status: raw.status,
+    execution: decodeExecution(raw.execution),
     paused: raw.paused,
     round: raw.round,
     currentArtifactIndex: raw.currentArtifactIndex,
@@ -636,6 +693,7 @@ export async function saveState(
   root: string,
   state: EvidenceState,
 ): Promise<void> {
+  if (state.status !== 'running') state.execution = null;
   state.updatedAt = new Date().toISOString();
   await writeJsonAtomic(root, STATE_PATH, state);
 }
@@ -652,6 +710,7 @@ export function createInitialState(
     goal,
     phase: 'modeling',
     status: 'ready',
+    execution: null,
     paused: false,
     round: 0,
     currentArtifactIndex: 0,

@@ -3,6 +3,7 @@ import {
   candidateName,
   candidateDescriptionLines,
   fulfillmentInteractionLines,
+  questionResolutionLines,
 } from './discovery-contract-view.ts';
 import type { DiscoverySnapshot } from './discovery-schema.ts';
 import {
@@ -33,9 +34,15 @@ export function discoveryAnswerView(
     ? question.target
     : (snapshot.content?.contractView.current ?? null);
   const text = (value: string) => brief(value, Infinity);
+  const resolutionLines = question
+    ? questionResolutionLines(snapshot, question.id)
+    : [];
   const currentQuestion: AnswerSection = {
     title: question ? `当前问题 · ${question.id}` : '当前问题',
-    lines: [question ? text(question.prompt) : '暂无待答问题'],
+    lines: [
+      question ? text(question.prompt) : '暂无待答问题',
+      ...resolutionLines,
+    ],
   };
   try {
     assertDiscoveryContracts(snapshot);
@@ -46,7 +53,7 @@ export function discoveryAnswerView(
         { title: '业务上下文', lines: ['依据或引用已失效，待重新核对'] },
         currentQuestion,
       ],
-      details: [],
+      details: resolutionLines,
     };
   }
   if (!target) {

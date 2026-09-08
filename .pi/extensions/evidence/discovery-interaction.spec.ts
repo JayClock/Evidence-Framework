@@ -29,7 +29,7 @@ async function setup(blocking = true) {
   const state = createInitialState('test', '允许人工结束问答，不冒充业务确认');
   state.status = 'running';
   await saveState(h.root, state);
-  await h.tool('evidence_save_discovery', {
+  await h.saveDiscovery({
     expectedRevision: 0,
     content: discoveryContent(),
   });
@@ -78,7 +78,7 @@ describe('manual discovery interaction controls', () => {
     expect(h.api.sendUserMessage).toHaveBeenLastCalledWith(
       expect.stringContaining('暂缓问题：Q-001、Q-002'),
     );
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: (await current(h)).state.discovery.revision,
       content: discoveryContent(),
     });
@@ -181,7 +181,7 @@ describe('manual discovery interaction controls', () => {
         questions: [{ ...saved.snapshot.questions[1], id: 'Q-003' }],
       }),
     ).rejects.toThrow('人工已结束本轮问答');
-    const result = await h.tool('evidence_save_discovery', {
+    const result = await h.saveDiscovery({
       expectedRevision: saved.state.discovery.revision,
       content: discoveryContent(),
     });
@@ -215,7 +215,7 @@ describe('manual discovery interaction controls', () => {
     const h = await setup(false);
     await h.command('evidence-discovery', 'finish');
     const saved = await current(h);
-    const result = await h.tool('evidence_save_discovery', {
+    const result = await h.saveDiscovery({
       expectedRevision: saved.state.discovery.revision,
       content: discoveryContent(),
     });
@@ -243,7 +243,7 @@ describe('manual discovery interaction controls', () => {
     expect(
       (await current(h)).snapshot.interaction?.deferredQuestionIds,
     ).toEqual([]);
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: (await current(h)).state.discovery.revision,
       content: discoveryContent(),
     });
@@ -258,7 +258,7 @@ describe('manual discovery interaction controls', () => {
     await h.command('evidence-answer', 'Q-001');
     await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-answer', 'Q-002');
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: (await current(h)).state.discovery.revision,
       content: discoveryContent(),
     });
@@ -296,7 +296,7 @@ describe('manual discovery interaction controls', () => {
       activeQuestionId: 'Q-001',
       needsConsolidation: false,
     });
-    expect((await current(h)).state.discovery.revision).toBe(3);
+    expect((await current(h)).state.discovery.revision).toBe(5);
   });
 
   it('does not allow skipping to erase an existing answer', async () => {
@@ -343,7 +343,7 @@ describe('manual discovery interaction controls', () => {
       else {
         const content = discoveryContent();
         content.cases.pop();
-        await h.tool('evidence_save_discovery', {
+        await h.saveDiscovery({
           expectedRevision: (await current(h)).state.discovery.revision,
           content,
         });

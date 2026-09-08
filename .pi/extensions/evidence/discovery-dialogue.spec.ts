@@ -11,7 +11,7 @@ import {
 } from './storage.ts';
 import {
   loadDiscovery,
-  persistDiscovery,
+  appendDiscoveryEvent,
   pendingQuestions,
   unresolvedBlockingQuestions,
 } from './discovery.ts';
@@ -25,6 +25,7 @@ afterEach(async () => {
 });
 const question = {
   id: 'Q-001',
+  gapKey: 'input.share-basis',
   focus: 'lineage',
   target: null,
   prompt: '分成金额根据什么计算？',
@@ -37,7 +38,7 @@ async function setup() {
   const state = createInitialState('test', '逐问建模');
   state.status = 'running';
   await saveState(h.root, state);
-  await h.tool('evidence_save_discovery', {
+  await h.saveDiscovery({
     expectedRevision: 0,
     content: discoveryContent(),
   });
@@ -65,7 +66,7 @@ describe('adaptive one-question dialogue', () => {
     const h = await setup();
     await h.command('evidence-answer', 'Q-001');
     await h.command('evidence-run');
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 3,
       content: discoveryContent(),
     });
@@ -129,14 +130,19 @@ describe('adaptive one-question dialogue', () => {
           ],
         }),
       ).rejects.toThrow('先保存消化结果');
-      await h.tool('evidence_save_discovery', {
+      await h.saveDiscovery({
         expectedRevision: 3,
         content: discoveryContent(),
       });
       await h.tool('evidence_ask_questions', {
         expectedRevision: 4,
         questions: [
-          { ...question, id: 'Q-002', prompt: '退款是否从实收金额中扣除？' },
+          {
+            ...question,
+            id: 'Q-002',
+            gapKey: 'input.refund-deduction',
+            prompt: '退款是否从实收金额中扣除？',
+          },
         ],
       });
       expect((await current(h)).state.status).toBe('waiting_answer');
@@ -154,9 +160,13 @@ describe('adaptive one-question dialogue', () => {
     snapshot.questions.push({
       ...question,
       id: 'Q-002',
+      gapKey: 'input.refund-deduction',
       prompt: '退款如何扣减？',
     });
-    await persistDiscovery(h.root, state, snapshot);
+    await appendDiscoveryEvent(h.root, state, {
+      kind: 'question',
+      question: snapshot.questions[1],
+    });
     const original = await readText(h.root, state.discovery.path!);
     await h.command('evidence-answer', 'Q-001');
     let saved = await current(h);
@@ -168,7 +178,7 @@ describe('adaptive one-question dialogue', () => {
     ).toEqual(['Q-002']);
     expect(pendingQuestions(saved.snapshot)).toEqual([]);
     expect(await readText(h.root, state.discovery.path!)).toBe(original);
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 4,
       content: discoveryContent(),
     });
@@ -195,7 +205,7 @@ describe('adaptive one-question dialogue', () => {
       const h = await setup();
       h.ui.select.mockResolvedValue(mode);
       await h.command('evidence-answer', 'Q-001');
-      await h.tool('evidence_save_discovery', {
+      await h.saveDiscovery({
         expectedRevision: 3,
         content: discoveryContent(),
       });
@@ -287,7 +297,7 @@ describe('adaptive one-question dialogue', () => {
         questions: [{ ...question, id: 'Q-002' }],
       }),
     ).rejects.toThrow('先保存消化结果');
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 3,
       content: discoveryContent(),
     });
@@ -304,7 +314,7 @@ describe('adaptive one-question dialogue', () => {
     await h.command('evidence-discovery', 'resume');
     expect((await current(h)).state.status).toBe('ready');
     await h.command('evidence-run');
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 4,
       content: discoveryContent(),
     });
@@ -312,7 +322,12 @@ describe('adaptive one-question dialogue', () => {
     await h.tool('evidence_ask_questions', {
       expectedRevision: 5,
       questions: [
-        { ...question, id: 'Q-002', prompt: '有实际结算单可以核对吗？' },
+        {
+          ...question,
+          id: 'Q-002',
+          gapKey: 'input.settlement-example',
+          prompt: '有实际结算单可以核对吗？',
+        },
       ],
     });
     expect(

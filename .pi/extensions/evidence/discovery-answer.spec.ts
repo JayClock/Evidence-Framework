@@ -32,6 +32,7 @@ async function waiting() {
     questions: [
       {
         id: 'Q-001',
+        gapKey: 'input.scope',
         focus: 'scope',
         target: null,
         prompt: '本次范围是什么？',

@@ -17,7 +17,7 @@ python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/m
 - Contract 恰好两个 Party Role，Role 可在没有玩家时独立成立；
 - Fulfillment 必须位于父 Contract 的子 Fulfillment Context；
 - 所有 Evidence 的类型级时间属性显式定义：RFP／Proposal／Request 的 start_at、expired_at，Contract 的 signed_at，Confirmation 的 confirmed_at，Other Evidence 的 created_at；全部 required/keyData timestamp；
-- Request interval 固定引用 start_at／expired_at；拒绝 openEndedReason、缺失字段和无确定截止依据；
+- Request interval 固定引用 start_at／expired_at；拒绝 openEndedReason 和缺失字段，实例必备时间值仍校验；不要求类型的时间属性必须有派生公式；
 - Request、Confirmation、权利方、义务方和父 Contract Role 一致；
 - completion policy、trigger、违约后果、共享确认和 Evidence Role；
 - Place/Thing 必须属于 Domain Context；
@@ -69,8 +69,8 @@ python3 scripts/compile_fm_model.py <model-dir> --output <model-dir>/generated/m
 ## Request interval 与数据检查
 
 1. 每个 Evidence 源 YAML 的 attributes 是否唯一、显式包含其 kind 的必备时间属性，并为 required、`keyData: true` 的 timestamp？不能只存在于说明或编译结果。
-2. RFP／Proposal／Request 是否有确定的截止时间或有来源的确定性推导？是否已经去掉 openEndedReason？缺依据保持发现阻塞，不以 null、占位日期、无期限或编译默认值规避。
-3. 逾期、金额、数量、KPI、资格和赔偿是否可追溯到 Evidence 或 CEL？
+2. RFP／Proposal／Request 是否直接展开 start_at／expired_at 类型属性？非派生属性可以没有生成公式，但是否按四色循环核对业务来源，保留直接记录、引用或派生的依据及未知？是否避免用字段齐全或 asserted 标签关闭影响当前判断的来源／规则缺口？是否去掉 openEndedReason，实际实例是否提供确定时间值，而非 null、占位日期、无期限或编译默认值？
+3. 逾期、金额、数量、KPI、资格和赔偿是否按同一四色循环追溯到凭证、领域对象属性及适用约定／规则？是否保留提供角色、历史版本与当时可见性的已知依据，不把缺公式当作可自由输入或等到疑似派生才追溯？
 4. 是否至少用一个正常和一个异常／追责场景检查凭证链？
 5. 角色演练是否只暴露当时可见单据，而没有提前泄露答案？
 

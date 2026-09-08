@@ -51,6 +51,7 @@ describe('extension registration', () => {
       'session_shutdown',
       'session_start',
       'before_agent_start',
+      'context',
       'agent_settled',
       'tool_call',
     ]);

@@ -20,6 +20,7 @@ afterEach(async () => {
 });
 const question = {
   id: 'Q-001',
+  gapKey: 'c-005.payment-proof',
   focus: 'evidence',
   target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
   prompt: '什么凭证证明分成已支付？',
@@ -37,7 +38,7 @@ async function setup(
   await saveState(h.root, state);
   h.ctx.hasUI = hasUI;
   h.ctx.mode = mode;
-  await h.tool('evidence_save_discovery', {
+  await h.saveDiscovery({
     expectedRevision: 0,
     content: contractContent(),
   });
@@ -93,13 +94,20 @@ describe('automatic current-question entry', () => {
     expect(h.api.sendUserMessage).toHaveBeenCalledTimes(1);
 
     // Only a new saved question may offer a new menu; no mandatory history queue.
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 3,
       content: contractContent(),
     });
     await h.tool('evidence_ask_questions', {
       expectedRevision: 4,
-      questions: [{ ...question, id: 'Q-002', prompt: '回单由谁提供？' }],
+      questions: [
+        {
+          ...question,
+          id: 'Q-002',
+          gapKey: 'c-005.proof-provider',
+          prompt: '回单由谁提供？',
+        },
+      ],
     });
     h.ui.select.mockResolvedValue(undefined);
     await h.settled();
@@ -118,7 +126,7 @@ describe('automatic current-question entry', () => {
     expect((await snapshot(h)).answers).toEqual([]);
     expect((await snapshot(h)).interaction.stopped).toBe(true);
     expect(h.api.sendUserMessage).toHaveBeenCalledTimes(1);
-    const saved = await h.tool('evidence_save_discovery', {
+    const saved = await h.saveDiscovery({
       expectedRevision: 3,
       content: contractContent(),
     });

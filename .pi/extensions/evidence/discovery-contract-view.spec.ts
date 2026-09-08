@@ -23,7 +23,7 @@ async function setup(contract = true) {
   const state = createInitialState('test', '合同权责显示，不是业务验收');
   state.status = 'running';
   await saveState(h.root, state);
-  await h.tool('evidence_save_discovery', {
+  await h.saveDiscovery({
     expectedRevision: 0,
     content: contract ? contractContent() : discoveryContent(),
   });
@@ -32,6 +32,7 @@ async function setup(contract = true) {
     questions: [
       {
         id: 'Q-001',
+        gapKey: 'c-005.payment-proof',
         target: contract
           ? { contractRef: 'C-001', fulfillmentRef: 'C-005' }
           : null,
@@ -308,7 +309,7 @@ describe('contract-centered discovery messages', () => {
     const h = await setup();
     h.ui.select.mockResolvedValue('暂不确定／跳过此题');
     await h.command('evidence-answer', 'Q-001');
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 3,
       content: contractContent(),
     });
@@ -380,7 +381,7 @@ describe('contract-centered discovery messages', () => {
         content.contractView.current!.fulfillmentRef = 'C-999';
       const before = await readText(h.root, '.evidence/state.json');
       await expect(
-        h.tool('evidence_save_discovery', { expectedRevision: 2, content }),
+        h.saveDiscovery({ expectedRevision: 2, content }),
       ).rejects.toThrow();
       expect(await readText(h.root, '.evidence/state.json')).toBe(before);
     },

@@ -111,7 +111,7 @@ Agent 不得自行将状态提升为 reviewed／confirmed。
 
 每个字段必须在对应 Entity 源 YAML 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
 
-RFP、Proposal、Request 必须有确定的截止时间，不能用 null、无期限说明、占位日期或 `openEndedReason` 替代。可通过明确输入或有来源的 CEL 规则得到截止时刻；缺依据先回到发现。正式类型文件不填写虚构的运行时日期，实例的对应值才是带时区的 RFC 3339 时间戳。
+六种 Evidence 均区分类型定义、实例值与生成规则：RFP、Proposal、Request 定义自身的开始和截止时间；Contract 定义签约时间 signed_at；Confirmation 定义履约确认时间 confirmed_at；Other Evidence 定义凭证形成时间 created_at。所有这些时间属性都可为非派生输入，不要求 `derivedByRuleRef`，类型结构不因缺少实例日期或公式而不合法；但所有关键时间仍按 `discovery-workshop.md` 的四色循环追溯业务来源，来源缺口影响当前判断时回到发现，不能用非派生标签跳过。三类时刻凭证不套请求区间，也不要求过期时间；各自的必备时间不能互相替代。只有实际存在额外生成规则时才记录有来源的 CEL；已有规则的冲突不能用自由参数规避。每个实例必须提供确定的 RFC 3339 时间值，不能用 null、无期限说明、占位日期或 `openEndedReason` 替代。正式类型文件不填写虚构的运行时日期；合成实例的时间值不等于当前业务已确认某个固定时长。
 
 此本地约束收紧 FM v3：旧 `startedAt`／`expiresAt`／`confirmedAt`／`signedAt` 不替代上述必备属性，不自动改名或迁移既有业务工件。相关 CEL、interval 与测试实例须同步更新。
 
@@ -143,10 +143,12 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 双方合同成立时间
+    meaning: 该合同的签约时间
 ```
 
-Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。
+Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。上例只展开 signed_at 的类型含义，不推定签约等于下单或权益生效；哪种行为构成签约若有真实争议，仍须业务澄清。
+
+同理，Confirmation 的 confirmed_at 可写 meaning“该凭证的履约确认时间”，Other Evidence 的 created_at 可写 meaning“该凭证的形成时间”；它们均为 required/keyData timestamp，可不填 derivedByRuleRef。确认采信哪一业务事件、补录凭证与原事件的时间关系，只在有业务依据时另作属性／规则映射，不默认等于回调或入库时间，不补造已完成结果。
 
 ### Fulfillment Context
 
@@ -266,7 +268,7 @@ Request 的 interval 属性必须：
 - `required: true`；
 - `keyData: true`。
 
-`startAttribute` 固定为 `start_at`，`endAttribute` 固定为 `expired_at`，两者缺一不可。不再接受 `openEndedReason`；材料未明确截止时刻或计算依据时必须保持待确认，不得擅自填补。
+`startAttribute` 固定为 `start_at`，`endAttribute` 固定为 `expired_at`，两者缺一不可。不再接受 `openEndedReason`；允许以请求自身的非派生时间属性表达区间，不要求先确定截止生成公式。业务来源或规则缺口影响判断时按四色循环返回发现，不以 interval 已完整为来源充分的证明；实例值仍须完整，不得擅自填补业务约定。
 
 ### completionPolicy
 

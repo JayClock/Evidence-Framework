@@ -75,7 +75,7 @@ Evidence kind：
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
 - `other_evidence`：位于产生它的业务或领域 Context。
 
-Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成或部分完成履约的时刻 Evidence。所有凭证从类型定义起具有必备时间属性：rfp／proposal／fulfillment_request 为 `start_at`、`expired_at`；contract 为 `signed_at`；fulfillment_confirmation 为 `confirmed_at`；other_evidence 为 `created_at`。属性须在 Entity YAML 显式定义为 required、`keyData: true` 的 timestamp。Request interval 固定引用 `start_at`、`expired_at`。RFP／Proposal／Request 均须有确定的截止时间，不再允许 openEndedReason 或无期限；缺业务依据须回到发现，不编造日期。
+Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成或部分完成履约的时刻 Evidence。所有凭证从类型定义起具有必备时间属性：rfp／proposal／fulfillment_request 为 `start_at`、`expired_at`；contract 为 `signed_at`；fulfillment_confirmation 为 `confirmed_at`；other_evidence 为 `created_at`。属性须在 Entity YAML 显式定义为 required、`keyData: true` 的 timestamp。Request interval 固定引用 `start_at`、`expired_at`。六种 Evidence 识别后都直接展开自己的类型时间，非派生属性不要求先有实例日期、生成公式或字段记录人。RFP／Proposal／Request 的实例均须有确定截止时间，不允许 openEndedReason 或无期限；Contract／Confirmation／Other Evidence 的实例分别提供 signed_at／confirmed_at／created_at，不额外套请求区间。类型字段不能替代额外业务规则：签约不默认等于权益生效，确认不默认等于回调接收，凭证形成不默认等于所记载事件发生；六类时间都按 `discovery-workshop.md` 的统一四色循环追溯业务来源，不等待疑似派生；来源或规则缺口影响当前判断时回到发现，不为字段齐全编造日期或采信结论。
 
 运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿必须创建新 Evidence 或 Fulfillment，不能修改旧凭证。此约束不等于全部领域 Participant 永不改变；领域状态和行为条件按已确认规则表达，不伪装成履约。
 

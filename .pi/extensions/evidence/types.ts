@@ -117,6 +117,13 @@ export interface HistoryEntry {
   detail?: string;
 }
 
+export interface ExecutionOwner {
+  id: string;
+  sessionId: string;
+  pid: number;
+  hostname: string;
+}
+
 export interface EvidenceState {
   version: 6;
   runId: string;
@@ -124,6 +131,8 @@ export interface EvidenceState {
   goal: string;
   phase: WorkflowPhase;
   status: WorkflowStatus;
+  /** Null for legacy v6 states or when no task is running. */
+  execution: ExecutionOwner | null;
   paused: boolean;
   round: number;
   currentArtifactIndex: number;

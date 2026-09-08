@@ -3,13 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { Value } from 'typebox/value';
 import { qualityHarness } from './quality-test-support.ts';
 import { subscriptionContent } from './discovery-test-support.ts';
-import {
-  DiscoveryContentSchema,
-  DiscoverySnapshotSchema,
-} from './discovery-schema.ts';
-import { loadDiscovery, persistDiscovery } from './discovery.ts';
-import { discoveryAnswerView } from './discovery-answer-view.ts';
-import { contractViewLines } from './discovery-contract-view.ts';
+import { DiscoveryContentSchema } from './discovery-schema.ts';
+import { loadDiscovery } from './discovery.ts';
 import {
   createInitialState,
   loadState,
@@ -55,7 +50,7 @@ describe('discovery candidate naming contract', () => {
       expect(Value.Check(DiscoveryContentSchema, content)).toBe(false);
       const before = await readText(h.root, '.evidence/state.json');
       await expect(
-        h.tool('evidence_save_discovery', { expectedRevision: 0, content }),
+        h.saveDiscovery({ expectedRevision: 0, content }),
       ).rejects.toThrow('label');
       expect(await readText(h.root, '.evidence/state.json')).toBe(before);
       expect((await loadState(h.root))!.discovery.revision).toBe(0);
@@ -69,56 +64,41 @@ describe('discovery candidate naming contract', () => {
       const content = subscriptionContent();
       content.candidates[0].label = label;
       expect(Value.Check(DiscoveryContentSchema, content)).toBe(true);
-      await h.tool('evidence_save_discovery', { expectedRevision: 0, content });
+      await h.saveDiscovery({ expectedRevision: 0, content });
       const stored = await loadDiscovery(h.root, (await loadState(h.root))!);
       expect(stored.content).toEqual(content);
     },
   );
 
-  it('reads historical v3 names without migration, then appends required labels on a new save', async () => {
+  it('corrects a name by appending one candidate record and preserves the original bytes', async () => {
     const h = await setup();
-    const legacy = await loadDiscovery(h.root, h.state);
-    legacy.content = subscriptionContent();
-    for (const candidate of legacy.content.candidates) delete candidate.label;
-    // Simulate a pre-label snapshot through the storage boundary in an isolated root.
-    await persistDiscovery(h.root, h.state, legacy);
-    const oldPath = h.state.discovery.path!;
-    const oldDigest = h.state.discovery.digest;
-    const before = await readText(h.root, '.evidence/state.json');
+    await h.saveDiscovery({
+      expectedRevision: 0,
+      content: subscriptionContent(),
+    });
+    const state = (await loadState(h.root))!;
+    const oldPath = state.discovery.path!;
     const raw = await readText(h.root, oldPath);
-    const loaded = await loadDiscovery(h.root, h.state);
-    expect(Value.Check(DiscoverySnapshotSchema, loaded)).toBe(true);
-    expect(Value.Check(DiscoveryContentSchema, loaded.content)).toBe(false);
-    expect(loaded.content!.candidates[0].label).toBeUndefined();
-    const card = discoveryAnswerView(loaded);
-    expect(card.sections[0].lines[0]).toBe('C-001（名称待整理）');
-    expect(card.sections[1].lines).toContain(
-      '履约请求：C-003（名称待整理） → C-002（名称待整理）（权利方 → 义务方）',
-    );
-    const details = contractViewLines(loaded, { detailed: true }).join('\n');
-    for (const candidate of loaded.content!.candidates)
-      expect(details).toContain(candidate.description);
-    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
-    expect(await readText(h.root, oldPath)).toBe(raw);
-
-    const named = subscriptionContent();
+    const before = await loadDiscovery(h.root, state);
+    const candidate = {
+      ...before.content!.candidates[0],
+      label: '专栏阅读协议',
+    };
     await h.tool('evidence_save_discovery', {
       expectedRevision: 1,
-      content: named,
+      summary: '依据原始输入更正合同名称，其他说明和关系保持不变。',
+      sourceRefs: ['INPUT'],
+      records: [
+        {
+          kind: 'candidate',
+          supersedes: before.recordHeads['candidate:C-001'],
+          value: candidate,
+        },
+      ],
     });
     const current = await loadDiscovery(h.root, (await loadState(h.root))!);
-    expect(current).toMatchObject({
-      version: 3,
-      revision: 2,
-      previousDigest: oldDigest,
-      content: named,
-    });
-    expect(discoveryAnswerView(current).sections[0].lines[0]).toBe(
-      '专栏订阅合同',
-    );
-    expect(current.content!.candidates.map((c) => c.description)).toEqual(
-      loaded.content!.candidates.map((c) => c.description),
-    );
+    expect(current.content!.candidates[0]).toEqual(candidate);
+    expect(current.content!.contractView).toEqual(before.content!.contractView);
     expect(await readText(h.root, oldPath)).toBe(raw);
   });
 });

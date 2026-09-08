@@ -9,10 +9,14 @@ import type {
 import { vi } from 'vitest';
 import evidenceExtension from './index.ts';
 import { getPhaseDefinition } from './phases.ts';
-import { seedDiscovery } from './discovery-test-support.ts';
+import { fixtureSubmission, seedDiscovery } from './discovery-test-support.ts';
+import { loadDiscovery } from './discovery.ts';
+import type { DiscoveryContent } from './discovery-schema.ts';
 import { DISCOVERY_GUIDE_PATH } from './discovery-prompt.ts';
+import { createExecutionOwner } from './execution.ts';
 import {
   createInitialState,
+  loadState,
   readText,
   saveState,
   writeJsonAtomic,
@@ -100,6 +104,7 @@ export async function qualityHarness(roots: string[], config = {}) {
   // SAFETY: Tests disable session replacement and only exercise the mocked command/UI members.
   const ctx = {
     cwd: root,
+    sessionManager: { getSessionId: () => 'test-session' },
     hasUI: true,
     isIdle: vi.fn(() => true),
     waitForIdle: vi.fn(),
@@ -111,6 +116,7 @@ export async function qualityHarness(roots: string[], config = {}) {
   });
   const state = createInitialState('test', '可审计的需求草稿');
   state.status = 'running';
+  state.execution = createExecutionOwner(ctx);
   state.currentArtifactIndex = 4;
   state.modeling.applicable = false;
   state.modeling.rationale = '合成测试中的简单工具胶水，不具备独立业务语义。';
@@ -143,6 +149,26 @@ export async function qualityHarness(roots: string[], config = {}) {
     events,
     command: async (name: string, args = '') =>
       commands.get(name)!.handler(args, ctx),
+    // Explicit fixture convenience, separate from the raw tool protocol.
+    saveDiscovery: async (params: {
+      expectedRevision: number;
+      content: DiscoveryContent;
+    }) => {
+      const current = (await loadState(root))!;
+      const submission = fixtureSubmission(
+        params.content,
+        await loadDiscovery(root, current),
+      );
+      return tools
+        .get('evidence_save_discovery')!
+        .execute(
+          'call',
+          { expectedRevision: params.expectedRevision, ...submission },
+          undefined,
+          undefined,
+          ctx,
+        );
+    },
     tool: async (name: string, params: unknown, signal?: AbortSignal) =>
       tools.get(name)!.execute('call', params, signal, undefined, ctx),
   };

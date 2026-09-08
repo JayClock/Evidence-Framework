@@ -28,6 +28,7 @@ afterEach(async () => {
 });
 const question = {
   id: 'Q-001',
+  gapKey: 'input.payment-deadline',
   focus: 'responsibilities',
   target: null,
   prompt: '平台向作者承诺何时支付？',
@@ -52,7 +53,7 @@ async function revision(h: Awaited<ReturnType<typeof fresh>>) {
   return (await loadState(h.root))!.discovery.revision;
 }
 async function saveContent(h: Awaited<ReturnType<typeof fresh>>) {
-  await h.tool('evidence_save_discovery', {
+  await h.saveDiscovery({
     expectedRevision: await revision(h),
     content: discoveryContent(),
   });
@@ -70,10 +71,10 @@ async function answer(
 }
 
 describe('interactive discovery state and provenance', () => {
-  it('creates only v3 snapshots with explicit contract view and interaction state', async () => {
+  it('rebuilds v4 read models with explicit contract view and interaction state', async () => {
     const h = await fresh();
     expect(await loadDiscovery(h.root, h.state)).toMatchObject({
-      version: 3,
+      version: 4,
       content: null,
       interaction: {
         stopped: false,
@@ -86,7 +87,7 @@ describe('interactive discovery state and provenance', () => {
     expect(
       await loadDiscovery(h.root, (await loadState(h.root))!),
     ).toMatchObject({
-      version: 3,
+      version: 4,
       content: { contractView: { current: null, contracts: [] } },
       interaction: {
         stopped: false,
@@ -100,10 +101,10 @@ describe('interactive discovery state and provenance', () => {
   it.each([
     'v1',
     'v2',
-    'missing-contractView',
-    'missing-interaction',
-    'missing-activeQuestionId',
-    'missing-needsConsolidation',
+    'v3',
+    'missing-event',
+    'missing-records',
+    'missing-summary',
   ])(
     'rejects %s snapshots without migration or state changes',
     async (kind) => {
@@ -115,12 +116,10 @@ describe('interactive discovery state and provenance', () => {
       );
       if (kind === 'v1') snapshot.version = 1;
       if (kind === 'v2') snapshot.version = 2;
-      if (kind === 'missing-contractView') delete snapshot.content.contractView;
-      if (kind === 'missing-interaction') delete snapshot.interaction;
-      if (kind === 'missing-activeQuestionId')
-        delete snapshot.interaction.activeQuestionId;
-      if (kind === 'missing-needsConsolidation')
-        delete snapshot.interaction.needsConsolidation;
+      if (kind === 'v3') snapshot.version = 3;
+      if (kind === 'missing-event') delete snapshot.event;
+      if (kind === 'missing-records') delete snapshot.event.submission.records;
+      if (kind === 'missing-summary') delete snapshot.event.submission.summary;
       const raw = JSON.stringify(snapshot);
       await writeTextAtomic(h.root, state.discovery.path!, raw);
       state.discovery.digest = digestText(raw);
@@ -128,7 +127,7 @@ describe('interactive discovery state and provenance', () => {
       const before = await readText(h.root, '.evidence/state.json');
       await expect(loadDiscovery(h.root, state)).rejects.toThrow(
         kind.startsWith('v')
-          ? '仅支持发现快照 v3'
+          ? '仅支持发现记录 v4'
           : '发现记录结构或运行版本不一致',
       );
       expect(await readText(h.root, '.evidence/state.json')).toBe(before);
@@ -239,7 +238,7 @@ describe('interactive discovery state and provenance', () => {
     expect(state).toMatchObject({
       status: 'ready',
       round: 0,
-      discovery: { revision: 3 },
+      discovery: { revision: 5 },
     });
     await h.command('evidence-run');
     expect(h.api.sendUserMessage).toHaveBeenCalledWith(
@@ -277,7 +276,7 @@ describe('interactive discovery state and provenance', () => {
     await answer(h);
     await h.command('evidence-run');
     await expect(
-      h.tool('evidence_save_discovery', {
+      h.saveDiscovery({
         expectedRevision: 1,
         content: discoveryContent(),
       }),
@@ -285,18 +284,18 @@ describe('interactive discovery state and provenance', () => {
     const content = discoveryContent();
     content.candidates[0].sourceRefs = ['A-999'];
     await expect(
-      h.tool('evidence_save_discovery', { expectedRevision: 2, content }),
+      h.saveDiscovery({ expectedRevision: 2, content }),
     ).rejects.toThrow('来源不存在');
   });
 
   it('serializes concurrent discovery mutations and rejects the stale sibling', async () => {
     const h = await fresh();
     const results = await Promise.allSettled([
-      h.tool('evidence_save_discovery', {
+      h.saveDiscovery({
         expectedRevision: 0,
         content: discoveryContent(),
       }),
-      h.tool('evidence_save_discovery', {
+      h.saveDiscovery({
         expectedRevision: 0,
         content: discoveryContent(),
       }),
@@ -315,14 +314,14 @@ describe('interactive discovery state and provenance', () => {
       { id: 'SRC-001', path: 'contract.md', locator: '第 2 条' },
     ];
     await writeTextAtomic(h.root, 'contract.md', '按确认账期结算');
-    await h.tool('evidence_save_discovery', { expectedRevision: 0, content });
+    await h.saveDiscovery({ expectedRevision: 0, content });
     await writeTextAtomic(h.root, 'contract.md', '改成提前结算');
     await expect(
       h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
     ).rejects.toThrow('原始材料已变化');
     content.sources[0].path = 'artifacts/02-modeling/fm-model/status.md';
     await expect(
-      h.tool('evidence_save_discovery', { expectedRevision: 1, content }),
+      h.saveDiscovery({ expectedRevision: 1, content }),
     ).rejects.toThrow('而非模型或报告');
   });
 
@@ -346,7 +345,7 @@ describe('interactive discovery state and provenance', () => {
     const content = discoveryContent();
     content.sources = [{ id: 'SRC-001', path: 'source.md', locator: '引用' }];
     await expect(
-      h.tool('evidence_save_discovery', { expectedRevision: 0, content }),
+      h.saveDiscovery({ expectedRevision: 0, content }),
     ).rejects.toThrow('受保护记录');
     expect(await revision(h)).toBe(0);
   });
@@ -379,14 +378,14 @@ describe('interactive discovery state and provenance', () => {
     const h = await fresh();
     const content = discoveryContent();
     content.cases.pop();
-    await h.tool('evidence_save_discovery', { expectedRevision: 0, content });
+    await h.saveDiscovery({ expectedRevision: 0, content });
     await expect(
       h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
     ).rejects.toThrow('exception');
     const inferred = discoveryContent();
     inferred.candidates[0].confidence = 'inferred';
     inferred.candidates[0].modelRefs = ['rule.pay'];
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 1,
       content: inferred,
     });
@@ -405,7 +404,7 @@ describe('interactive discovery state and provenance', () => {
     await h.command('evidence-run');
     const content = discoveryContent();
     content.candidates[0].sourceRefs = ['A-001'];
-    await h.tool('evidence_save_discovery', { expectedRevision: 2, content });
+    await h.saveDiscovery({ expectedRevision: 2, content });
     await h.tool('evidence_finalize_discovery', { expectedRevision: 3 });
     await h.command('evidence-run');
     for (const spec of getPhaseDefinition('modeling').artifacts) {
@@ -445,7 +444,7 @@ describe('interactive discovery state and provenance', () => {
     );
     await h.command('evidence-run');
     await expect(
-      h.tool('evidence_save_discovery', {
+      h.saveDiscovery({
         expectedRevision: current.discovery.revision,
         content,
       }),

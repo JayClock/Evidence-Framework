@@ -10,7 +10,7 @@ import {
   selectDiscoveryView,
 } from './discovery-answer-ui.ts';
 import {
-  DiscoveryContentSchema,
+  DiscoverySubmissionSchema,
   QuestionSchema,
   type DiscoveryAnswer,
   type DiscoveryQuestion,
@@ -25,9 +25,11 @@ import {
   finalizeDiscovery,
   latestAnswer,
   loadDiscovery,
-  persistDiscovery,
-  saveDiscoveryContent,
+  appendDiscoveryEvent,
+  appendDiscoveryRecords,
+  discoveryViewPath,
   pendingQuestions,
+  unansweredQuestions,
   unresolvedBlockingQuestions,
   withModelingLock,
 } from './discovery.ts';
@@ -47,7 +49,7 @@ import {
 const revision = Type.Integer({
   minimum: 0,
   description:
-    'Exact revision from the current discovery snapshot; stale writes are rejected.',
+    'Exact revision from the current discovery read model; stale writes are rejected.',
 });
 export const DISCOVERY_TOOL_NAMES = [
   'read',
@@ -77,8 +79,17 @@ async function runningState(
 
 function result(text: string, state: EvidenceState, terminate = false) {
   return {
-    content: [{ type: 'text' as const, text }],
-    details: { revision: state.discovery.revision, path: state.discovery.path },
+    content: [
+      {
+        type: 'text' as const,
+        text: `${text}\n记录版本：${state.discovery.revision}；当前视图：${discoveryViewPath(state)}（按需 read，非业务来源）。`,
+      },
+    ],
+    details: {
+      revision: state.discovery.revision,
+      path: state.discovery.path,
+      viewPath: discoveryViewPath(state),
+    },
     terminate,
   };
 }
@@ -165,7 +176,10 @@ async function selectDiscoveryAction(
       title: '如何处理这个问题？',
       choices: [
         ...answerModes.keys(),
-        ...(discovering ? [SKIP_QUESTION] : []),
+        ...(discovering &&
+        unansweredQuestions(snapshot).some((q) => q.id === question.id)
+          ? [SKIP_QUESTION]
+          : []),
         back,
       ],
       signal,
@@ -398,7 +412,7 @@ export function registerDiscoveryTools(
     name: 'evidence_ask_questions',
     label: '业务发现提问',
     description:
-      'Ask exactly ONE core business question based on the latest saved understanding. First consume each human answer/skip and save the updated discovery. Before asking, show the sourced candidate structure and its gaps; for fulfillment use request (who asks whom for what) -> confirmation evidence (who provides what proof), not an assumed approval step. Briefly explain what changed and what remains unknown. Do not bundle subquestions, precompute a questionnaire, re-ask facts already provided, or repeat deferred gaps under a new ID. An unchanged historical unanswered question may be selected by its existing Q-ID. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
+      'Ask exactly ONE core business question based on the latest saved understanding. First consume each human answer/skip and save the updated discovery. Before asking, show the sourced candidate structure and its gaps; for fulfillment use request (who asks whom for what) -> confirmation evidence (who provides what proof), not an assumed approval step. Briefly explain what changed and what remains unknown. First reuse sourced facts and deterministic derivations across all discovery routes; technical mapping and FM representation are not business questions. Expand type times for all identified evidence: rfp/proposal/fulfillment_request use start_at/expired_at, contract uses signed_at, fulfillment_confirmation uses confirmed_at, other_evidence uses created_at. Use the guide’s single four-color provenance loop for ALL key data, including non-derived values and all evidence times; do not wait for suspected derivation. Type expansion is not provenance completion. Reuse sources, distinguish direct records, referenced values, derivations and unresolved origins, then save findings. If missing business provenance affects the current judgment, ask how the value is determined without presupposing a formula or free input. Known provenance needs no repeat question; physical fields and instance dates are not a checklist. Do not add request intervals to moment evidence, conflate signing with effectiveness or confirmation with callback arrival, or equate a record creation time with the original event. Preserve real conflicts in additional business rules. New questions require a stable object-and-fact gapKey; reuse the original gapKey/Q-ID for the same gap. Do not bundle subquestions, precompute a questionnaire, re-ask facts already provided, or repeat deferred gaps under a new ID. Existing facts that fully cover an unresolved historical question may be linked through a sourced resolution record instead of another answer. An unchanged historical unanswered and unresolved question may be selected by its existing Q-ID. Persist and stop in waiting_answer; never answer for the human. Modeling only.',
     parameters: Type.Object({
       expectedRevision: revision,
       questions: Type.Array(QuestionSchema, { minItems: 1, maxItems: 1 }),
@@ -428,17 +442,18 @@ export function registerDiscoveryTools(
   });
   pi.registerTool({
     name: 'evidence_save_discovery',
-    label: '保存业务发现',
+    label: '追加业务发现',
     description:
-      'Save the complete discovery checkpoint: candidate contexts and relationships, applicable obligations or domain rules, evidence/lineage, replay and gaps. Scope is an outcome, not an entry questionnaire; distinguish unexplored items from confirmed exclusions. Use INPUT, SRC-* or latest A-* sources. Candidates are not approved FM facts. Every candidate must have a short single-line label (1-40 characters, no surrounding whitespace) separate from its full description. Do not put duties, caveats or review markers in labels. Keep request/confirmation concise; preserve detailed reasoning and partial unknowns in description/notes without downgrading known facts. Old v3 snapshots without labels remain readable; supply sourced labels on the next normal save without rewriting history. Always provide contractView with current (null if unlocated) and sourced contract/role/fulfillment candidate references; unknown parties or request/deadline/confirmation remain null. Request describes the requirement and basis, with a representative only if sourced. Confirmation describes who provides or forms what evidence proving which outcome; preserve partial knowledge and mark remaining gaps, never infer an approver from either party. Do not invent contracts for domain/channel discovery. Invalidates drafts and finalization; stopping after saving is valid.',
+      'Append only this turn’s discovery records, never a full snapshot or CRUD patch. Provide summary and INPUT/SRC-*/latest A-* basis; D-* references identify prior agent records, not independent business facts. New objects use supersedes:null; corrections and withdrawals must reference the current D-ID from recordHeads in the extension-provided current view (read its file only when needed; check its revision). Old records cannot be edited or deleted. Record kinds: scope, position (focus/current), note, source, candidate, case, contract (two roles), fulfillment (one obligation), resolution (questionId, conclusion, reasoning, sourceRefs, citations with exact sourceRef/quote), withdraw. Resolutions link existing facts or deterministic deductions to unanswered/unknown questions, never create A-* answers, invent decisions, exclude scope or override human facts. Every cited source needs a verbatim quote from INPUT/SRC-*/latest answered A-*; D-* and unknown/excluded answers are not proof. Source or target-answer corrections invalidate old associations. Unmentioned objects remain unchanged; withdrawals cannot leave dangling relationships. Scope is an outcome, not an entry questionnaire. Candidates need label (1–40 single-line characters) and description; candidates are not approved FM facts. Keep request/confirmation concise and preserve partial known facts; genuinely unknown parties/evidence remain null. For an identified request, preserve its start_at/expired_at type meaning AND mark any unresolved deadline basis; a nonempty field does not resolve business provenance. All six evidence kinds allow non-derived type times; contract signed_at, fulfillment_confirmation confirmed_at and other_evidence created_at do not require a date/formula/recorder interview or a request interval. Save the type meanings in candidate.description/notes, not new discovery fields; concrete instances still require their own timestamps. Real signing, proof acceptance and original-event ambiguities remain distinct from type expansion. Retain additional sourced constraints and real ambiguities, without inventing default durations or who may set them. For ALL key data, record four-color business provenance in candidate.description/notes: known direct records, referenced values, derivation rules or unresolved origins, with sources and candidate reasoning. These are discovery explanations, not new schema fields. Do not treat absent formulas, asserted labels or machine lineage success as proof of provenance, or resolve a business-origin question merely because its type exists. Confirmation identifies who forms what proof of which result, not an assumed approver. Do not invent contracts for domain/channel discovery. Consume all new human answers/skips before the next question or checks; notes can explain unresolved gaps without inventing facts. Invalidates drafts and finalization; stopping after append is valid.',
     parameters: Type.Object({
       expectedRevision: revision,
-      content: DiscoveryContentSchema,
+      ...DiscoverySubmissionSchema.properties,
     }),
     async execute(_id, params, _signal, _update, ctx) {
       return withModelingLock(ctx.cwd, async () => {
         const state = await runningState(ctx.cwd, params.expectedRevision);
-        await saveDiscoveryContent(ctx.cwd, state, params.content);
+        const { expectedRevision: _revision, ...submission } = params;
+        await appendDiscoveryRecords(ctx.cwd, state, submission);
         await refresh(ctx, state);
         const snapshot = await loadDiscovery(ctx.cwd, state);
         if (snapshot.interaction.stopped) {
@@ -508,7 +523,10 @@ export function registerDiscoveryTools(
             .join('\n')
             .slice(0, 30000),
         };
-        await persistDiscovery(ctx.cwd, state, snapshot);
+        await appendDiscoveryEvent(ctx.cwd, state, {
+          kind: 'draft',
+          result: snapshot.draft,
+        });
         return {
           ...result(snapshot.draft.result, state),
           details: {

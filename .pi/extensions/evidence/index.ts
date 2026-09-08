@@ -41,7 +41,18 @@ import {
   getPhaseDefinition,
   isDocumentPhase,
 } from './phases.ts';
-import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
+import {
+  buildCurrentPrompt,
+  buildDiscoveryPolicy,
+  buildPhaseGuard,
+} from './prompts.ts';
+import {
+  clearQueuedDiscoveryPrompt,
+  DISCOVERY_CONTEXT_TYPE,
+  projectDiscoveryMessages,
+  sendWorkPrompt,
+  takeDiscoveryStamp,
+} from './discovery-session-context.ts';
 import {
   CONFIG_PATH,
   REQUIREMENTS_PATH,
@@ -74,6 +85,11 @@ import {
   registerDiscoveryTools,
 } from './discovery-tools.ts';
 import { requireFinalizing, withModelingLock } from './discovery.ts';
+import {
+  createExecutionOwner,
+  ownsExecution,
+  recoverInterruptedExecution,
+} from './execution.ts';
 
 const DOCUMENT_TOOLS = ['read', 'bash', 'evidence_submit_artifact'];
 const MODELING_TOOLS = ['read', 'bash', 'evidence_submit_fm_model'];
@@ -494,7 +510,43 @@ async function startCurrentWork(
   ctx: ExtensionCommandContext,
 ): Promise<void> {
   await ctx.waitForIdle();
-  await startIdleWork(pi, ctx);
+  const previous = await loadState(ctx.cwd);
+  const legacy = previous?.status === 'running' && !previous.execution;
+  if (
+    legacy &&
+    (!ctx.hasUI ||
+      !(await ctx.ui.confirm(
+        '恢复归属未知的旧任务？',
+        '旧版任务未记录执行会话。请先确认其他窗口／进程已停止执行本项目，再确认恢复；否则请取消。',
+      )))
+  )
+    return;
+  await withModelingLock(ctx.cwd, async () => {
+    const state = await loadState(ctx.cwd);
+    if (legacy) {
+      // The answer UI is outside the lock; never act on its stale snapshot.
+      if (
+        !ctx.isIdle() ||
+        !state ||
+        state.execution ||
+        state.status !== 'running' ||
+        state.runId !== previous.runId ||
+        state.updatedAt !== previous.updatedAt
+      )
+        return;
+      state.status = 'ready';
+      state.lastError = null;
+      appendHistory(
+        state,
+        'legacy_execution_recovered',
+        `evidence-run; session=${ctx.sessionManager.getSessionId()}; human-confirmed`,
+      );
+      await saveState(ctx.cwd, state);
+    } else if (state) {
+      await recoverInterruptedExecution(state, ctx, 'evidence-run');
+    }
+    await startIdleWork(pi, ctx);
+  });
 }
 
 async function startIdleWork(
@@ -547,11 +599,16 @@ async function startIdleWork(
     await applyPhaseProfile(pi, ctx, state, config);
     const prompt = await buildCurrentPrompt(ctx.cwd, state, config);
     state.status = 'running';
+    state.execution = createExecutionOwner(ctx);
     state.lastError = null;
-    appendHistory(state, 'work_started', subjectLabel(state));
+    appendHistory(
+      state,
+      'work_started',
+      `${subjectLabel(state)}; execution=${JSON.stringify(state.execution)}`,
+    );
     await saveState(ctx.cwd, state);
 
-    pi.sendUserMessage(prompt);
+    sendWorkPrompt(pi, state, prompt);
   } catch (error) {
     state.status = 'blocked';
     state.lastError = (error as Error).message;
@@ -1692,18 +1749,25 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     },
   });
 
-  pi.on('session_start', async (_event, ctx) => {
+  pi.on('session_start', async (event, ctx) => {
+    clearQueuedDiscoveryPrompt(pi);
     clearStatusDisplay(ctx);
-    const state = await loadState(ctx.cwd);
-    if (!state) return;
-    if (state.status === 'running') {
-      state.status = 'ready';
-      state.lastError =
-        '上一次执行在提交完成标记前中断，可以重新运行当前任务。';
-      appendHistory(state, 'interrupted_run_recovered');
-      await saveState(ctx.cwd, state);
-    }
-    await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
+    await withModelingLock(ctx.cwd, async () => {
+      const state = await loadState(ctx.cwd);
+      if (!state) return;
+      await recoverInterruptedExecution(
+        state,
+        ctx,
+        `session_start:${event.reason}`,
+      );
+      if (state.status === 'running' && !state.execution && !state.paused) {
+        ctx.ui.notify(
+          '旧任务执行归属未知，未自动重置。确认其他执行者已停止后，运行 /evidence-run 恢复。',
+          'warning',
+        );
+      }
+      await applyPhaseProfile(pi, ctx, state, await loadConfig(ctx.cwd));
+    });
   });
 
   pi.on('before_agent_start', async (event, ctx) => {
@@ -1711,32 +1775,59 @@ export default function evidenceExtension(pi: ExtensionAPI): void {
     if (!state || state.paused) return;
     const guard = buildPhaseGuard(state);
     if (!guard) return;
+    if (state.phase === 'modeling' && state.discovery.stage === 'discovering') {
+      const stamp = takeDiscoveryStamp(pi, state, event.prompt);
+      const content = stamp.promptDigest
+        ? '本轮发现上下文已载于相邻任务消息；旧建模轮次以已保存发现记录及本轮有界上下文承接，原始会话仍留存。'
+        : await buildCurrentPrompt(ctx.cwd, state, await loadConfig(ctx.cwd));
+      return {
+        systemPrompt:
+          event.systemPrompt + (await buildDiscoveryPolicy(ctx.cwd)) + guard,
+        message: {
+          customType: DISCOVERY_CONTEXT_TYPE,
+          content,
+          display: false,
+          details: stamp,
+        },
+      };
+    }
     return { systemPrompt: event.systemPrompt + guard };
   });
 
-  pi.on('agent_settled', async (_event, ctx) => {
+  pi.on('context', async (event, ctx) => {
     const state = await loadState(ctx.cwd);
     if (!state) return;
-    if (state.status === 'running') {
-      state.status = 'ready';
-      const discovering =
-        state.phase === 'modeling' && state.discovery.stage === 'discovering';
-      state.lastError = discovering
-        ? null
-        : 'Agent 已结束，但没有调用当前阶段要求的 evidence_* 提交工具。';
-      appendHistory(
-        state,
-        discovering ? 'discovery_paused' : 'agent_stopped_without_submission',
-        subjectLabel(state),
-      );
-      await saveState(ctx.cwd, state);
-      ctx.ui.notify(
-        discovering
-          ? '发现进度已保留，可运行 /evidence-run 继续。'
-          : `${state.lastError} 运行 /evidence-run 重试。`,
-        discovering ? 'info' : 'warning',
-      );
-    }
+    // Non-discovery messages are untouched, including later formal phases.
+    // Do not revive the old discovery transcript when the phase changes.
+    return { messages: projectDiscoveryMessages(event.messages, state.runId) };
+  });
+
+  pi.on('agent_settled', async (_event, ctx) => {
+    await withModelingLock(ctx.cwd, async () => {
+      const state = await loadState(ctx.cwd);
+      if (!state || state.paused || !ctx.isIdle()) return;
+      if (state.status === 'running' && ownsExecution(state, ctx)) {
+        state.status = 'ready';
+        const discovering =
+          state.phase === 'modeling' && state.discovery.stage === 'discovering';
+        state.lastError = discovering
+          ? null
+          : 'Agent 已结束，但没有调用当前阶段要求的 evidence_* 提交工具。';
+        appendHistory(
+          state,
+          discovering ? 'discovery_paused' : 'agent_stopped_without_submission',
+          subjectLabel(state),
+        );
+        await saveState(ctx.cwd, state);
+        ctx.ui.notify(
+          discovering
+            ? '发现进度已保留，可运行 /evidence-run 继续。'
+            : `${state.lastError} 运行 /evidence-run 重试。`,
+          discovering ? 'info' : 'warning',
+        );
+      }
+    });
+    // The answer UI may start work; do not hold the lifecycle lock across it.
     await discovery.offerQuestion(ctx);
   });
 

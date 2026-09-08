@@ -5,6 +5,11 @@ import { Value } from 'typebox/value';
 import {
   DiscoveryContentSchema,
   DiscoverySnapshotSchema,
+  DiscoveryEntrySchema,
+  DiscoverySubmissionSchema,
+  type DiscoveryEntry,
+  type DiscoveryEvent,
+  type DiscoverySubmission,
   type DiscussionTarget,
   type DiscoveryAnswer,
   type DiscoveryContent,
@@ -13,14 +18,35 @@ import {
 } from './discovery-schema.ts';
 import {
   appendHistory,
-  projectEntryExists,
+  appendTextAtomic,
   readText,
   relativeProjectPath,
   REQUIREMENTS_PATH,
   saveState,
-  writeTextAtomic,
+  writeJsonAtomic,
 } from './storage.ts';
+import { emptyDiscovery, projectDiscovery } from './discovery-ledger.ts';
 import type { EvidenceState } from './types.ts';
+import {
+  activeResolution,
+  duplicateQuestion,
+  latestAnswer,
+  pendingQuestions,
+  unansweredQuestions,
+  unresolvedBlockingQuestions,
+} from './discovery-questions.ts';
+import {
+  assertResolutionSelectionFresh,
+  markChangedResolutionSources,
+  validateResolutionRecords,
+} from './discovery-resolutions.ts';
+export {
+  activeResolution,
+  latestAnswer,
+  pendingQuestions,
+  unansweredQuestions,
+  unresolvedBlockingQuestions,
+} from './discovery-questions.ts';
 
 const locks = new Map<string, Promise<void>>();
 export async function withModelingLock<T>(
@@ -61,57 +87,82 @@ export function discoveryEvidencePaths(state: EvidenceState): string[] {
   );
 }
 
+export async function loadDiscoveryEntries(
+  root: string,
+  state: EvidenceState,
+): Promise<DiscoveryEntry[]> {
+  if (!state.discovery.path) {
+    if (state.discovery.revision !== 0 || state.discovery.digest !== null)
+      throw new Error('发现记录路径与当前运行不一致');
+    return [];
+  }
+  if (state.discovery.path !== discoveryPath(state))
+    throw new Error('发现记录路径与当前运行不一致');
+  const entries: DiscoveryEntry[] = [];
+  let digest = state.discovery.digest;
+  for (let revision = state.discovery.revision; revision > 0; revision--) {
+    const raw = await readText(root, discoveryPath(state, revision));
+    if (digestText(raw) !== digest)
+      throw new Error('发现记录摘要不一致，请恢复记录或重新初始化');
+    let entry: unknown;
+    try {
+      entry = JSON.parse(raw);
+    } catch {
+      throw new Error('发现记录不是有效 JSON');
+    }
+    if (
+      entry &&
+      typeof entry === 'object' &&
+      'version' in entry &&
+      entry.version !== 4
+    )
+      throw new Error('仅支持发现记录 v4，不迁移旧快照；请由人工重新初始化');
+    if (
+      !Value.Check(DiscoveryEntrySchema, entry) ||
+      entry.runId !== state.runId ||
+      entry.revision !== revision
+    )
+      throw new Error('发现记录结构或运行版本不一致');
+    entries.push(entry);
+    digest = entry.previousDigest;
+  }
+  if (digest !== null) throw new Error('发现历史链起点无效');
+  return entries.reverse();
+}
+
 export async function loadDiscovery(
   root: string,
   state: EvidenceState,
 ): Promise<DiscoverySnapshot> {
-  if (!state.discovery.path) {
-    return {
-      version: 3,
-      runId: state.runId,
-      revision: 0,
-      previousDigest: null,
-      content: null,
-      sourceHashes: {},
-      questions: [],
-      answers: [],
-      interaction: {
-        stopped: false,
-        deferredQuestionIds: [],
-        activeQuestionId: null,
-        needsConsolidation: false,
-      },
-      draft: null,
-      recordedAt: '',
-    };
-  }
-  if (state.discovery.path !== discoveryPath(state))
-    throw new Error('发现记录路径与当前运行不一致');
-  const raw = await readText(root, state.discovery.path);
-  if (digestText(raw) !== state.discovery.digest)
-    throw new Error('发现记录摘要不一致，请恢复记录或重新初始化');
-  let snapshot: unknown;
-  try {
-    snapshot = JSON.parse(raw);
-  } catch {
-    throw new Error('发现快照不是有效 JSON');
-  }
-  if (
-    snapshot &&
-    typeof snapshot === 'object' &&
-    'version' in snapshot &&
-    snapshot.version !== 3
-  )
-    throw new Error(
-      '仅支持发现快照 v3，不迁移旧快照；请先备份，再由人工 /evidence-reset 并 /evidence-init',
-    );
-  if (
-    !Value.Check(DiscoverySnapshotSchema, snapshot) ||
-    snapshot.runId !== state.runId ||
-    snapshot.revision !== state.discovery.revision
-  )
-    throw new Error('发现记录结构或运行版本不一致');
+  const entries = await loadDiscoveryEntries(root, state);
+  const snapshot = entries.length
+    ? projectDiscovery(state.runId, entries)
+    : emptyDiscovery(state.runId);
+  if (!Value.Check(DiscoverySnapshotSchema, snapshot))
+    throw new Error('发现投影超限或格式无效');
+  await markChangedResolutionSources(root, snapshot);
   return snapshot;
+}
+
+export function discoveryViewPath(state: EvidenceState): string {
+  return `.evidence/cache/discovery/${state.runId}/current.json`;
+}
+
+// One disposable read cache, never a business source or a Gate input. All
+// validation/recovery replays the journal, ignoring any cached bytes.
+export async function refreshDiscoveryView(
+  root: string,
+  state: EvidenceState,
+  snapshot?: DiscoverySnapshot,
+): Promise<DiscoverySnapshot> {
+  const view = snapshot ?? (await loadDiscovery(root, state));
+  await writeJsonAtomic(root, discoveryViewPath(state), {
+    kind: 'derived-discovery-view',
+    journalPath: state.discovery.path,
+    journalDigest: state.discovery.digest,
+    ...view,
+  });
+  return view;
 }
 
 export function assertDiscoveryRevision(
@@ -137,74 +188,51 @@ export function reopenDiscovery(state: EvidenceState): void {
   state.coding.planDigest = null;
 }
 
-export async function persistDiscovery(
+export function nextDiscoveryEntry(
+  state: EvidenceState,
+  event: DiscoveryEvent,
+): DiscoveryEntry {
+  return {
+    version: 4,
+    runId: state.runId,
+    revision: state.discovery.revision + 1,
+    previousDigest: state.discovery.digest,
+    recordedAt: new Date().toISOString(),
+    event,
+  };
+}
+
+export async function appendDiscoveryEvent(
   root: string,
   state: EvidenceState,
-  snapshot: DiscoverySnapshot,
+  event: DiscoveryEvent,
 ): Promise<void> {
-  const revision = state.discovery.revision + 1;
-  snapshot.revision = revision;
-  snapshot.previousDigest = state.discovery.digest;
-  snapshot.recordedAt = new Date().toISOString();
+  const entry = nextDiscoveryEntry(state, event);
+  if (!Value.Check(DiscoveryEntrySchema, entry))
+    throw new Error('发现记录超限或格式无效，未保存');
+  const snapshot = projectDiscovery(state.runId, [
+    ...(await loadDiscoveryEntries(root, state)),
+    entry,
+  ]);
   if (!Value.Check(DiscoverySnapshotSchema, snapshot))
-    throw new Error('发现内容超限或格式无效，未保存；请缩小文本/问题数量');
-  const text = `${JSON.stringify(snapshot, null, 2)}\n`;
-  const path = discoveryPath(state, revision);
-  // A crash after writing a snapshot but before the pointer must not overwrite history.
-  if (await projectEntryExists(root, path))
-    throw new Error('发现快照已存在，请人工检查中断记录；不会覆盖历史');
-  await writeTextAtomic(root, path, text);
+    throw new Error('发现投影超限或格式无效，未保存');
+  await markChangedResolutionSources(root, snapshot);
+  const text = `${JSON.stringify(entry, null, 2)}\n`;
+  const path = discoveryPath(state, entry.revision);
+  await appendTextAtomic(root, path, text);
   state.discovery = {
     ...state.discovery,
-    revision,
+    revision: entry.revision,
     path,
     digest: digestText(text),
   };
   appendHistory(
     state,
-    'discovery_saved',
-    `${revision}: ${snapshot.content?.focus ?? 'scope'}`,
+    'discovery_appended',
+    `${entry.revision}: ${event.kind}`,
   );
   await saveState(root, state);
-}
-
-export function latestAnswer(
-  snapshot: DiscoverySnapshot,
-  questionId: string,
-): DiscoveryAnswer | undefined {
-  return [...snapshot.answers]
-    .reverse()
-    .find((answer) => answer.questionId === questionId);
-}
-
-export function unansweredQuestions(
-  snapshot: DiscoverySnapshot,
-): DiscoveryQuestion[] {
-  return snapshot.questions.filter(
-    (question) => !latestAnswer(snapshot, question.id),
-  );
-}
-
-// Waiting for input and unresolved business knowledge are deliberately separate.
-export function pendingQuestions(
-  snapshot: DiscoverySnapshot,
-): DiscoveryQuestion[] {
-  if (snapshot.interaction.stopped || snapshot.interaction.needsConsolidation)
-    return [];
-  const active = snapshot.interaction.activeQuestionId;
-  const deferred = new Set(snapshot.interaction.deferredQuestionIds);
-  return unansweredQuestions(snapshot).filter(
-    (question) => !deferred.has(question.id) && active === question.id,
-  );
-}
-
-export function unresolvedBlockingQuestions(
-  snapshot: DiscoverySnapshot,
-): DiscoveryQuestion[] {
-  return snapshot.questions.filter((question) => {
-    const answer = latestAnswer(snapshot, question.id);
-    return question.blocking && (!answer || answer.status === 'unknown');
-  });
+  await refreshDiscoveryView(root, state, snapshot);
 }
 
 // Called only by manual commands, never exposed as an agent tool or an answer source.
@@ -223,6 +251,12 @@ export async function controlDiscoveryInteraction(
     throw new Error('请在未暂停且空闲的 Modeling 发现阶段操作');
   const snapshot = await loadDiscovery(root, state);
   const interaction = snapshot.interaction;
+  if (action === 'resume' || action === 'skip')
+    await assertResolutionSelectionFresh(
+      root,
+      snapshot,
+      action === 'skip' ? questionId : undefined,
+    );
   if (action === 'skip') {
     if (
       !questionId ||
@@ -253,7 +287,11 @@ export async function controlDiscoveryInteraction(
     'discovery_interaction',
     `manual:${action}${questionId ? `:${questionId}` : ''}`,
   );
-  await persistDiscovery(root, state, snapshot);
+  await appendDiscoveryEvent(root, state, {
+    kind: 'interaction',
+    action,
+    questionId: questionId ?? null,
+  });
 }
 
 export async function askQuestions(
@@ -274,12 +312,15 @@ export async function askQuestions(
   const question = questions[0];
   const existing = snapshot.questions.find((q) => q.id === question.id);
   if (existing) {
+    await assertResolutionSelectionFresh(root, snapshot, question.id);
     if (
       latestAnswer(snapshot, question.id) ||
+      activeResolution(snapshot, question.id) ||
       snapshot.interaction.deferredQuestionIds.includes(question.id)
     )
       throw new Error('已回答或暂缓的问题不能自动重问；请由人工补充或恢复问答');
     if (
+      existing.gapKey !== question.gapKey ||
       existing.focus !== question.focus ||
       existing.prompt !== question.prompt ||
       existing.impact !== question.impact ||
@@ -290,8 +331,18 @@ export async function askQuestions(
       existing.target?.fulfillmentRef !== question.target?.fulfillmentRef
     )
       throw new Error('重用历史未答问题必须保持原文；新的缺口使用新 Q-ID');
-  } else if (snapshot.questions.length >= 500)
-    throw new Error('单次发现最多 500 个问题');
+  } else {
+    assertDiscussionTarget(snapshot, question.target);
+    if (!question.gapKey)
+      throw new Error('新问题须提供稳定 gapKey；先核对已有事实和历史缺口');
+    const duplicate = duplicateQuestion(snapshot, question);
+    if (duplicate)
+      throw new Error(
+        `同一业务缺口不得换题号重问：${duplicate.id}；复用已有事实或原 Q-ID，暂缓仍遵守人工控制`,
+      );
+    if (snapshot.questions.length >= 500)
+      throw new Error('单次发现最多 500 个问题');
+  }
   validateRefs(snapshot, question.sourceRefs, false);
   assertDiscussionTarget(snapshot, question.target);
   if (!existing) snapshot.questions.push(question);
@@ -299,7 +350,7 @@ export async function askQuestions(
   snapshot.draft = null;
   reopenDiscovery(state);
   state.status = 'waiting_answer';
-  await persistDiscovery(root, state, snapshot);
+  await appendDiscoveryEvent(root, state, { kind: 'question', question });
 }
 
 export async function answerQuestion(
@@ -327,7 +378,16 @@ export async function answerQuestion(
   snapshot.interaction.needsConsolidation = true;
   reopenDiscovery(state);
   state.status = 'ready';
-  await persistDiscovery(root, state, snapshot);
+  const saved = snapshot.answers[snapshot.answers.length - 1];
+  const previous = snapshot.answers
+    .slice(0, -1)
+    .reverse()
+    .find((a) => a.questionId === answer.questionId);
+  await appendDiscoveryEvent(root, state, {
+    kind: 'answer',
+    answer: saved,
+    supersedes: previous?.id ?? null,
+  });
 }
 
 export function assertConsolidated(snapshot: DiscoverySnapshot): void {
@@ -376,6 +436,15 @@ export function assertDiscussionTarget(
 }
 
 export function assertDiscoveryContracts(snapshot: DiscoverySnapshot): void {
+  // Stale resolutions are inactive interpretations, not current business facts.
+  // Keep them visible for audit; their unresolved questions remain blockers.
+  const staleFacts = snapshot.staleRecordKeys.filter(
+    (key) => !key.startsWith('resolution:'),
+  );
+  if (staleFacts.length)
+    throw new Error(
+      `当前发现记录依据已失效（来源变化或回答已被更正）：${staleFacts.join('、')}`,
+    );
   const view = snapshot.content?.contractView;
   if (!view) return;
   const used = new Set<string>();
@@ -434,11 +503,11 @@ function allowedSourcePath(path: string): boolean {
 
 async function captureSources(
   root: string,
-  content: DiscoveryContent,
+  sources: DiscoveryContent['sources'],
 ): Promise<Record<string, string>> {
   const hashes: Record<string, string> = {};
   const ids = new Set<string>();
-  for (const source of content.sources) {
+  for (const source of sources) {
     if (ids.has(source.id)) throw new Error(`重复来源 ID：${source.id}`);
     ids.add(source.id);
     const path = relativeProjectPath(root, source.path);
@@ -463,17 +532,46 @@ async function captureSources(
   return hashes;
 }
 
-export async function saveDiscoveryContent(
+export async function appendDiscoveryRecords(
   root: string,
   state: EvidenceState,
-  content: DiscoveryContent,
+  submission: DiscoverySubmission,
 ): Promise<void> {
-  if (!Value.Check(DiscoveryContentSchema, content))
+  if (!Value.Check(DiscoverySubmissionSchema, submission))
     throw new Error(
-      '发现内容格式无效：新保存的每个候选必须有 label（1–40字符、单行、无首尾空白）及 description；未保存。',
+      '发现记录格式无效：提供 summary、sourceRefs 和本轮 records；候选 label 必填（1–40字符、单行、无首尾空白）；不接受完整 content 快照。',
     );
-  const snapshot = await loadDiscovery(root, state);
-  snapshot.content = content;
+  const entries = await loadDiscoveryEntries(root, state);
+  // Capture only explicitly asserted source versions, never silently refresh
+  // an unrelated source when appending a note or consolidating an answer.
+  const sources = submission.records.flatMap((record) =>
+    record.kind === 'source' ? [record.value] : [],
+  );
+  const event: DiscoveryEvent = {
+    kind: 'discovery',
+    submission,
+    sourceHashes: await captureSources(root, sources),
+  };
+  const previous = projectDiscovery(state.runId, entries);
+  if (previous.sourceHashes[REQUIREMENTS_PATH]) {
+    if (
+      event.sourceHashes[REQUIREMENTS_PATH] !==
+      previous.sourceHashes[REQUIREMENTS_PATH]
+    )
+      throw new Error(
+        '原始输入已变化；不能用无关追加记录重新确认 INPUT，请重新初始化',
+      );
+    delete event.sourceHashes[REQUIREMENTS_PATH];
+  }
+  const snapshot = projectDiscovery(state.runId, [
+    ...entries,
+    nextDiscoveryEntry(state, event),
+  ]);
+  const content = snapshot.content;
+  if (!content) throw new Error('追加记录未形成有效发现视图');
+  validateRefs(snapshot, submission.sourceRefs, false);
+  await validateResolutionRecords(root, snapshot, submission.records);
+  await markChangedResolutionSources(root, snapshot);
   for (const list of [content.candidates, content.cases]) {
     if (new Set(list.map((value) => value.id)).size !== list.length)
       throw new Error('候选或场景 ID 重复');
@@ -487,15 +585,12 @@ export async function saveDiscoveryContent(
   for (const scenario of content.cases)
     validateRefs(snapshot, scenario.sourceRefs, true);
   assertDiscoveryContracts(snapshot);
-  snapshot.sourceHashes = await captureSources(root, content);
-  snapshot.interaction.needsConsolidation = false;
-  snapshot.draft = null;
   reopenDiscovery(state);
   state.status =
     snapshot.interaction.stopped && unresolvedBlockingQuestions(snapshot).length
       ? 'ready'
       : 'running';
-  await persistDiscovery(root, state, snapshot);
+  await appendDiscoveryEvent(root, state, event);
 }
 
 export async function assertDiscoveryReady(
@@ -503,28 +598,13 @@ export async function assertDiscoveryReady(
   state: EvidenceState,
 ): Promise<DiscoverySnapshot> {
   const snapshot = await loadDiscovery(root, state);
-  let predecessor = snapshot.previousDigest;
-  for (
-    let revision = state.discovery.revision - 1;
-    revision > 0;
-    revision -= 1
-  ) {
-    const historical = await loadDiscovery(root, {
-      ...state,
-      discovery: {
-        ...state.discovery,
-        revision,
-        path: discoveryPath(state, revision),
-        digest: predecessor,
-      },
-    });
-    predecessor = historical.previousDigest;
-  }
-  if (predecessor !== null) throw new Error('发现历史链起点无效');
+
   if (!snapshot.content || !Object.keys(snapshot.sourceHashes).length)
     throw new Error('尚未保存范围、来源、候选及场景回放记录');
-  assertDiscoveryContracts(snapshot);
+  if (!Value.Check(DiscoveryContentSchema, snapshot.content))
+    throw new Error('范围、排除项或工作说明尚不完整，不能定稿');
   assertConsolidated(snapshot);
+  assertDiscoveryContracts(snapshot);
   const blockers = unresolvedBlockingQuestions(snapshot);
   if (blockers.length)
     throw new Error(`阻塞问题未解决：${blockers.map((q) => q.id).join('、')}`);

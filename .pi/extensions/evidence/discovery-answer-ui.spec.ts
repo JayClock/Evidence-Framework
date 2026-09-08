@@ -35,13 +35,17 @@ afterEach(async () => {
 
 function snapshot(): DiscoverySnapshot {
   return {
-    version: 3,
+    version: 4,
     runId: 'test',
     revision: 1,
     previousDigest: null,
     content: contractContent(),
     sourceHashes: {},
+    recordHeads: {},
+    withdrawnRecordKeys: [],
+    staleRecordKeys: [],
     answers: [],
+    questionResolutions: [],
     draft: null,
     recordedAt: '2026-01-01',
     interaction: {
@@ -53,6 +57,7 @@ function snapshot(): DiscoverySnapshot {
     questions: [
       {
         id: 'Q-001',
+        gapKey: 'c-005.payment-proof',
         target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
         focus: 'evidence',
         prompt: '什么凭证证明分成已支付？',
@@ -284,7 +289,7 @@ describe('discovery answer TUI', () => {
     const state = createInitialState('test', '合成问答界面回归');
     state.status = 'running';
     await saveState(h.root, state);
-    await h.tool('evidence_save_discovery', {
+    await h.saveDiscovery({
       expectedRevision: 0,
       content: contractContent(),
     });

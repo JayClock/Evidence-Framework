@@ -7,6 +7,7 @@ import type {
 import {
   assertDiscoveryContracts,
   assertDiscussionTarget,
+  activeResolution,
   loadDiscovery,
   pendingQuestions,
 } from './discovery.ts';
@@ -79,17 +80,43 @@ export function fulfillmentInteractionLines(
   ];
 }
 
+export function questionResolutionLines(
+  snapshot: DiscoverySnapshot,
+  questionId: string,
+): string[] {
+  const resolution = snapshot.questionResolutions.find(
+    (value) => value.questionId === questionId,
+  );
+  if (!resolution) return [];
+  return [
+    `${questionId} ${activeResolution(snapshot, questionId) ? '已关联解决依据（Agent 解释，非人工回答）' : '解决依据已失效'} · ${snapshot.recordHeads[`resolution:${questionId}`]}`,
+    `结论：${brief(resolution.conclusion, Infinity)}`,
+    `推理：${brief(resolution.reasoning, Infinity)}`,
+    ...resolution.citations.map(
+      (citation) => `${citation.sourceRef}：${brief(citation.quote, Infinity)}`,
+    ),
+  ];
+}
+
 export function questionLabel(
   snapshot: DiscoverySnapshot,
   questionId: string,
 ): string {
   const question = snapshot.questions.find((q) => q.id === questionId);
   if (!question) return questionId;
+  const resolution = snapshot.questionResolutions.find(
+    (value) => value.questionId === question.id,
+  );
+  let mark = '';
+  if (resolution)
+    mark = activeResolution(snapshot, question.id)
+      ? '[已关联依据] '
+      : '[依据失效] ';
   try {
     assertDiscoveryContracts(snapshot);
     assertDiscussionTarget(snapshot, question.target);
   } catch {
-    return `${question.id} [原合同待核对] ${brief(question.prompt)}`;
+    return `${question.id} ${mark}[原合同待核对] ${brief(question.prompt)}`;
   }
   let path = '';
   if (question.target) {
@@ -98,7 +125,7 @@ export function questionLabel(
       parts.push(candidateName(snapshot, question.target.fulfillmentRef));
     path = `${parts.join(' › ')} · `;
   }
-  return `${question.id} ${path}${brief(question.prompt)}`;
+  return `${question.id} ${mark}${path}${brief(question.prompt)}`;
 }
 
 // A business view, not workflow progress, a completion percentage or runtime fulfillment status.
@@ -118,11 +145,22 @@ export function contractViewLines(
   const target: DiscussionTarget = question
     ? question.target
     : (snapshot.content?.contractView.current ?? null);
+  let resolutionLines: string[] = [];
+  if (options.detailed)
+    resolutionLines = snapshot.questionResolutions.flatMap((value) =>
+      questionResolutionLines(snapshot, value.questionId),
+    );
+  else if (question)
+    resolutionLines = questionResolutionLines(snapshot, question.id);
   try {
     assertDiscoveryContracts(snapshot);
     assertDiscussionTarget(snapshot, target);
   } catch {
-    return ['合同关系：依据或引用已失效，待重新核对', questionLine];
+    return [
+      '合同关系：依据或引用已失效，待重新核对',
+      questionLine,
+      ...resolutionLines,
+    ];
   }
   if (target === null)
     return [
@@ -130,6 +168,7 @@ export function contractViewLines(
       '双方角色：待明确',
       '当前展开：未选择履约项',
       questionLine,
+      ...resolutionLines,
     ];
   const contract = snapshot.content!.contractView.contracts.find(
     (c) => c.contextRef === target.contractRef,
@@ -211,7 +250,7 @@ export function contractViewLines(
         ...contract.fulfillments.map((item) => item.candidateRef),
       ]),
     );
-  lines.push(questionLine);
+  lines.push(questionLine, ...resolutionLines);
   return lines;
 }
 

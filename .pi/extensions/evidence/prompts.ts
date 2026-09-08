@@ -8,11 +8,18 @@ import { currentCodingStory } from './workflow.ts';
 import { assertTestingInputs } from './test-plan.ts';
 import { taskComplete } from './testing-evidence.ts';
 import type { EvidenceConfig, EvidenceState } from './types.ts';
-import { loadDiscovery, requireFinalizing } from './discovery.ts';
+import {
+  discoveryViewPath,
+  loadDiscoveryEntries,
+  refreshDiscoveryView,
+  requireFinalizing,
+} from './discovery.ts';
 import {
   DISCOVERY_GUIDE_PATH,
   renderDiscoveryPrompt,
+  renderDiscoveryPolicy,
 } from './discovery-prompt.ts';
+import { prepareDiscoveryContext } from './discovery-context.ts';
 
 function stripFrontmatter(markdown: string): string {
   return markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();
@@ -49,6 +56,15 @@ async function requireInstructions(
   return stripFrontmatter(content);
 }
 
+export async function buildDiscoveryPolicy(root: string): Promise<string> {
+  const skill = await requireInstructions(
+    root,
+    getPhaseDefinition('modeling').skillFile,
+  );
+  const guide = await requireInstructions(root, DISCOVERY_GUIDE_PATH);
+  return renderDiscoveryPolicy(skill, guide);
+}
+
 export async function buildCurrentPrompt(
   root: string,
   state: EvidenceState,
@@ -59,16 +75,23 @@ export async function buildCurrentPrompt(
   const skill = await requireInstructions(root, definition.skillFile);
 
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering') {
-    const snapshot = await loadDiscovery(root, state);
+    const snapshot = await refreshDiscoveryView(root, state);
     await requireInputs(root, [REQUIREMENTS_PATH]);
-    const guide = await requireInstructions(root, DISCOVERY_GUIDE_PATH);
-    return renderDiscoveryPrompt(state, snapshot, {
-      skill,
-      guide,
-      feedback: feedbackSection(state),
-    });
+    // Validate required policy before starting work, but inject it through
+    // before_agent_start rather than duplicating it in every user message.
+    await requireInstructions(root, DISCOVERY_GUIDE_PATH);
+    const context = await prepareDiscoveryContext(
+      root,
+      state,
+      snapshot,
+      await loadDiscoveryEntries(root, state),
+    );
+    return renderDiscoveryPrompt(state, snapshot, context);
   }
-  if (state.phase === 'modeling') await requireFinalizing(root, state);
+  if (state.phase === 'modeling') {
+    await requireFinalizing(root, state);
+    await refreshDiscoveryView(root, state);
+  }
 
   if (state.phase === 'coding') {
     const storyId = currentCodingStory(state);
@@ -145,14 +168,14 @@ ${inputList(inputs)}
       REQUIREMENTS_PATH,
       ...artifact.inputs,
       ...(state.phase === 'modeling' && state.discovery.path
-        ? [state.discovery.path]
+        ? [discoveryViewPath(state)]
         : []),
     ]),
   ];
   await requireInputs(root, inputs);
   let artifactPrompt = await requireInstructions(root, artifact.promptFile);
   if (state.phase === 'modeling')
-    artifactPrompt += `\n发现版本：${state.discovery.revision}。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_ask_questions 或 evidence_save_discovery 重新打开发现，旧定稿失效，不私改其他工件。`;
+    artifactPrompt += `\n发现版本：${state.discovery.revision}。扩展已重建完整视图：${discoveryViewPath(state)}，使用现有 read 按需分页读取，核对 revision；历史依据位于 ${state.discovery.path} 所属记录链。单个 revision 文件仅为追加记录，不是完整快照。当前视图只是可重建缓存，不作为独立业务来源。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_ask_questions 或 evidence_save_discovery 重新打开发现，旧定稿失效，不私改其他工件。`;
 
   if (artifact.kind === 'fm-model') {
     return `# Evidence 统一 FM 建模任务
