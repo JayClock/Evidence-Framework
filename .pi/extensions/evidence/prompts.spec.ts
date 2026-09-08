@@ -5,9 +5,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { gateArtifactPaths } from './gates.ts';
 import { getPhaseDefinition, PHASE_ORDER } from './phases.ts';
 import { buildCurrentPrompt, buildPhaseGuard } from './prompts.ts';
-import { writeTestingInputs } from './testing-test-support.ts';
-import { testingInputDigest } from './test-plan.ts';
-import { seedDiscovery } from './discovery-test-support.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -15,6 +12,9 @@ import {
   REQUIREMENTS_PATH,
   writeTextAtomic,
 } from './storage.ts';
+import { testingInputDigest } from './test-plan.ts';
+import { seedDiscovery } from './tests/support/discovery-test-support.ts';
+import { writeTestingInputs } from './tests/support/testing-test-support.ts';
 
 const roots: string[] = [];
 afterEach(async () => {

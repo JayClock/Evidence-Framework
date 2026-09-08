@@ -1,8 +1,5 @@
+import { withFileMutationQueue } from '@earendil-works/pi-coding-agent';
 import { randomUUID } from 'node:crypto';
-import {
-  initialDiscovery,
-  type DiscoveryProgress,
-} from './discovery-schema.ts';
 import {
   link,
   mkdir,
@@ -13,14 +10,13 @@ import {
   writeFile,
 } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
-import { withFileMutationQueue } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
 import { Value } from 'typebox/value';
+import { CONFIG_PATH, STATE_PATH } from './contracts/paths.ts';
 import {
-  CommandEvidenceSchema,
-  CycleBindingSchema,
-  StoryRecordReferenceSchema,
-} from './testing-schema.ts';
+  initialDiscovery,
+  type DiscoveryProgress,
+} from './modeling/discovery/schema.ts';
 import {
   decodeCompletedCycles,
   decodeVerifications,
@@ -28,22 +24,28 @@ import {
   isRedEvidence,
 } from './testing-integrity.ts';
 import {
+  CommandEvidenceSchema,
+  CycleBindingSchema,
+  StoryRecordReferenceSchema,
+} from './testing-schema.ts';
+import {
   ACTIVE_PHASES,
   type ActivePhase,
   type CodingBaseline,
-  type HistoryEntry,
   type EvidenceConfig,
-  type ModelingProgress,
   type EvidenceState,
+  type HistoryEntry,
+  type ModelingProgress,
   type PendingGate,
   type TddCommandEvidence,
   type TddCycle,
   type ThinkingLevel,
 } from './types.ts';
-
-export const CONFIG_PATH = '.pi/evidence.json';
-export const STATE_PATH = '.evidence/state.json';
-export const REQUIREMENTS_PATH = 'artifacts/00-input/requirements.md';
+export {
+  CONFIG_PATH,
+  REQUIREMENTS_PATH,
+  STATE_PATH,
+} from './contracts/paths.ts';
 
 const DEFAULT_THINKING: ThinkingLevel = 'high';
 

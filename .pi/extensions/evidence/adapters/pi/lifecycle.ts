@@ -2,12 +2,12 @@ import {
   isToolCallEventType,
   type ExtensionAPI,
 } from '@earendil-works/pi-coding-agent';
-import { withModelingLock } from '../../discovery.ts';
 import {
   buildCurrentPrompt,
   buildDiscoveryPolicy,
   buildPhaseGuard,
 } from '../../prompts.ts';
+import { withModelingLock } from '../../state/discovery/index.ts';
 import {
   appendHistory,
   loadConfig,

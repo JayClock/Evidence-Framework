@@ -2,7 +2,7 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
-import { withModelingLock } from '../../discovery.ts';
+import { withModelingLock } from '../../state/discovery/index.ts';
 import { loadConfig, loadState } from '../../storage.ts';
 import type { EvidenceState } from '../../types.ts';
 import { registerCommands } from './commands.ts';

@@ -4,50 +4,49 @@ import type {
   ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
+import { recordGateDecision } from '../../../gates.ts';
+import { assertDiscoveryRevision } from '../../../modeling/discovery/progress.ts';
 import {
-  contractViewLines,
-  questionLabel,
-} from '../../../discovery-contract-view.ts';
-import {
-  editDiscoveryView,
-  selectDiscoveryView,
-} from '../ui/discovery-answer.ts';
+  latestAnswer,
+  pendingQuestions,
+  unansweredQuestions,
+  unresolvedBlockingQuestions,
+} from '../../../modeling/discovery/questions.ts';
 import {
   DiscoverySubmissionSchema,
   QuestionSchema,
   type DiscoveryAnswer,
   type DiscoveryQuestion,
   type DiscoverySnapshot,
-} from '../../../discovery-schema.ts';
+} from '../../../modeling/discovery/schema.ts';
+import {
+  contractViewLines,
+  questionLabel,
+} from '../../../modeling/discovery/view.ts';
 import {
   answerQuestion,
-  askQuestions,
-  assertConsolidated,
-  assertDiscoveryRevision,
-  digestText,
-  finalizeDiscovery,
-  latestAnswer,
-  loadDiscovery,
-  appendDiscoveryEvent,
   appendDiscoveryRecords,
+  askQuestions,
   discoveryViewPath,
-  pendingQuestions,
-  unansweredQuestions,
-  unresolvedBlockingQuestions,
+  finalizeDiscovery,
+  loadDiscovery,
   withModelingLock,
-} from '../../../discovery.ts';
+} from '../../../state/discovery/index.ts';
+import { checkModelDraft } from '../../../state/modeling.ts';
 import { loadConfig, loadState } from '../../../storage.ts';
-import { recordGateDecision } from '../../../gates.ts';
-import { normalizeFmModelFiles, replaceFmModel } from '../../../modeling.ts';
 import type { EvidenceState } from '../../../types.ts';
 import {
   changeDiscoveryInteraction,
-  finishDiscoveryInteraction,
   FINISH_DISCOVERY,
+  finishDiscoveryInteraction,
   SKIP_QUESTION,
-  type StartDiscoveryWork,
   type RefreshDiscovery as Refresh,
+  type StartDiscoveryWork,
 } from '../discovery-interaction.ts';
+import {
+  editDiscoveryView,
+  selectDiscoveryView,
+} from '../ui/discovery-answer.ts';
 
 const revision = Type.Integer({
   minimum: 0,
@@ -499,41 +498,19 @@ export function registerDiscoveryTools(
     async execute(_id, params, signal, onUpdate, ctx) {
       return withModelingLock(ctx.cwd, async () => {
         const state = await runningState(ctx.cwd, params.expectedRevision);
-        if (state.discovery.stage !== 'discovering')
-          throw new Error('请先保存新的发现版本以重新打开草稿');
-        const snapshot = await loadDiscovery(ctx.cwd, state);
-        if (!snapshot.content) throw new Error('先保存范围及场景依据');
-        assertConsolidated(snapshot);
         const config = await loadConfig(ctx.cwd);
-        const files = normalizeFmModelFiles(params.files);
-        const checked = await replaceFmModel({
-          pi,
+        const draft = await checkModelDraft(state, params.files, {
+          executor: pi,
           root: ctx.cwd,
-          files,
-          draftOnly: true,
           signal,
           timeoutMs: config.commandTimeoutMs,
           onProgress: (text) =>
             onUpdate?.({ content: [{ type: 'text', text }], details: {} }),
         });
-        snapshot.draft = {
-          filesDigest: digestText(JSON.stringify(files)),
-          passed: checked.passed,
-          machineValidated: checked.machineValidated,
-          simulationPassed: checked.simulationPassed,
-          result: checked.items
-            .map((item) => `${item.name}: ${item.status}\n${item.details}`)
-            .join('\n')
-            .slice(0, 30000),
-        };
-        await appendDiscoveryEvent(ctx.cwd, state, {
-          kind: 'draft',
-          result: snapshot.draft,
-        });
         return {
-          ...result(snapshot.draft.result, state),
+          ...result(draft.result, state),
           details: {
-            ...snapshot.draft,
+            ...draft,
             revision: state.discovery.revision,
             path: state.discovery.path,
           },

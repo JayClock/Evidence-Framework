@@ -1,6 +1,6 @@
+import { reopenDiscovery } from './modeling/discovery/progress.ts';
 import { getNextPhase, getPreviousPhase } from './phases.ts';
 import { appendHistory } from './storage.ts';
-import { reopenDiscovery } from './discovery.ts';
 import type { ActivePhase, EvidenceState } from './types.ts';
 
 function resetTddCycle(state: EvidenceState): void {

@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runReviewChecks } from './checks.ts';
 import { createGate, hashArtifacts } from './gates.ts';
 import { getPhaseDefinition } from './phases.ts';
-import { validDocument } from './quality-test-support.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
@@ -14,12 +13,13 @@ import {
 } from './storage.ts';
 import { testingInputDigest } from './test-plan.ts';
 import { loadStoryRecord, saveStoryRecord } from './testing-evidence.ts';
+import { validDocument } from './tests/support/quality-test-support.ts';
 import {
   acceptanceCatalog,
   manifest,
   seedCompletedStory,
   testingPlan,
-} from './testing-test-support.ts';
+} from './tests/support/testing-test-support.ts';
 
 const roots: string[] = [];
 afterEach(async () => {

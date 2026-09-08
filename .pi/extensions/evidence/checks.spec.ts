@@ -3,12 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCodingChecks, runCommand, runReviewChecks } from './checks.ts';
-import { seedCompletedStory } from './testing-test-support.ts';
 import {
   DEFAULT_CONFIG,
   createInitialState,
   writeTextAtomic,
 } from './storage.ts';
+import { seedCompletedStory } from './tests/support/testing-test-support.ts';
 
 const temporaryRoots: string[] = [];
 

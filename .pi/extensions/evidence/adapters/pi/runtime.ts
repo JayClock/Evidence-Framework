@@ -3,9 +3,9 @@ import {
   type ExtensionCommandContext,
   type ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
-import { withModelingLock } from '../../discovery.ts';
 import { captureCodingBaseline } from '../../git.ts';
 import { buildCurrentPrompt } from '../../prompts.ts';
+import { withModelingLock } from '../../state/discovery/index.ts';
 import {
   appendHistory,
   loadConfig,

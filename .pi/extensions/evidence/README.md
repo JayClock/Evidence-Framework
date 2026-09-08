@@ -53,7 +53,9 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 ## 模块
 
-R1 仅拆分 Pi 接入，保持工具／命令协议、注册顺序、阶段流程和持久化格式不变；尚未引入 ExecutionPlan 或 Plan 级 Session。所有模块仍由一个扩展实例装配，不创建第二个状态写入者。
+R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环境操作。保持工具／命令协议、注册顺序、阶段流程、日志格式和产物路径不变；尚未引入 ExecutionPlan、Plan 级 Session 或新的审批点。所有模块仍由一个扩展实例装配。
+
+### Pi 接入
 
 - `index.ts`：Pi 自动发现入口，仅导出 `adapters/pi/register.ts` 的装配函数。
 - `adapters/pi/commands.ts` / `lifecycle.ts`：人工命令和生命周期事件注册；不在加载时启动任务。
@@ -62,21 +64,38 @@ R1 仅拆分 Pi 接入，保持工具／命令协议、注册顺序、阶段流�
 - `adapters/pi/checks.ts`：现有检查与阶段收尾适配，保留审核和失败轮次语义。
 - `adapters/pi/ui/gates.ts` / `ui/status.ts`：人工审核、可选 Git 检查点和状态展示。
 - `adapters/pi/tools/documents.ts` / `fm.ts` / `story.ts`：原有文档、FM 和故事提交入口。
-- `discovery-schema.ts`：问题、人工回答、发现记录、事件、日志条目和派生视图结构。
-- `discovery-ledger.ts`：确定性重放、更正／撤回链、来源版本绑定及当前视图投影。
-- `discovery.ts`：整条日志摘要验证、仅追加持久化、来源检查、派生缓存和定稿就绪检查。
-- `discovery-questions.ts`：问题待答／解决／阻塞的统一判定及稳定缺口身份防重。
-- `discovery-resolutions.ts`：原始来源及逐字摘录验证、文件新鲜度检查，不负责语义蕴含判定。
 - `adapters/pi/tools/discovery.ts`：问答操作菜单、编辑器、发现保存、隔离草稿检查和定稿入口。
 - `adapters/pi/ui/discovery-answer-view.ts` / `ui/discovery-answer.ts`：只读分区投影、可展开／滚动的临时回答卡片和 RPC 回退；关闭或 Session 中止时释放界面监听。
 - `adapters/pi/discovery-interaction.ts`：人工暂缓、结束/恢复入口，串行化与版本保护，以及结束后的整理任务启动。
-- `phases.ts` / `prompts.ts`：确定性的阶段/工件定义、输入加载及发现/定稿检查点约束。
-- `discovery-contract-view.ts`：合同双方、履约请求与确认凭证、异常分支和当前问题的只读投影；共享履约展示函数供 TUI 和文本／RPC 使用。不显示工程进度。未明确信息留空，引用／来源失效不展示旧关系，不写状态或创建 Gate。展示于对话和问答操作中，原始证据不变；不渲染常驻 TUI 面板。
-- `discovery-prompt.ts`：分离固定系统方法与有界轮次任务；Skill／发现指南缺失或为空时拒绝运行，不另维护业务问卷。
-- `discovery-context.ts`：从已校验记录提取待消化输入及当前对象，生成有界摘要和 context-details.md 的精确读取行号；不依赖会话游标，不增加查询工具。
 - `adapters/pi/session-context.ts`：标记扩展任务、构造请求级消息投影；保持原始会话、真实用户消息及完整工具调用对。
-- `storage.ts`：配置、状态解码和原子持久化。
-- `modeling.ts`：FM 路径保护、隔离 Python、Schema/CEL、lineage、适用模拟、业务模式派生、编译与正式原子替换。
+
+### Modeling 核心
+
+- `modeling/index.ts`：无 Pi 的工厂和结果契约入口；不导出生产存储绑定。
+- `modeling/discovery/service.ts`：讨论控制、问题与人工回答、追加发现、消化检查、来源新鲜度、回放覆盖与定稿就绪规则。通过 `DiscoveryRepository` 注入读取及持久化能力，不直接访问文件、Pi、Gate 或阶段调度器。
+- `modeling/discovery/schema.ts` / `replay.ts`：原有 v4 记录结构、确定性重放、更正／撤回链、来源版本绑定及当前视图投影。缓存不是业务来源。
+- `modeling/discovery/questions.ts` / `rules.ts` / `progress.ts`：稳定缺口身份、待答／解决／阻塞判定、来源引用、合同与履约结构及发现失效规则。
+- `modeling/discovery/resolutions.ts`：注入原文读取能力，核对逐字摘录与新鲜度；不把摘录验证当作语义蕴含，不创造人工回答。
+- `modeling/discovery/view.ts`：合同双方、履约请求 → 确认凭证、异常分支和当前问题的只读投影。保留未知及失效提示，不推断审批人，不写状态。
+- `modeling/draft.ts`：隔离草稿校验和结果记录，不替换正式 FM 或创建 Gate。
+- `modeling/fm/files.ts` / `pipeline.ts`：源文件规则及 Schema/CEL → lineage → 适用模拟 → 业务模式投影 → 编译。运行时、命令执行和文件操作通过接口注入。
+- `modeling/fm/submission.ts` / `status.ts`：适用性约束、模型发布结果和状态页；返回机器证据，不推进后续工件或提升业务评审状态。
+
+`readFinalizedDiscovery` 返回当前 runId、revision、日志摘要及含 sourceHashes 的发现投影，并重新核对定稿就绪及材料新鲜度。这是现有记录的只读交接，不新增持久化协议，不等于业务批准。未来 Planning 仍须绑定正式工件摘要及人工 Gate，不能只凭该返回值推进。
+
+### 状态、环境与指令
+
+- `state/discovery/repository.ts` / `sources.ts`：日志摘要链、仅追加写入、派生缓存和源文件边界；`index.ts` 提供唯一生产服务绑定，`view.ts` 负责加载展示所需投影。
+- `state/fm/repository.ts`：暂存、原子替换、回滚、草稿清理及状态页持久化；`index.ts` 装配真实 FM 服务。`state/modeling.ts` 装配跨发现与 FM 的草稿服务。
+- `environment/python.ts` / `commands.ts` / `fm-files.ts`：隔离 Python 环境、超时／取消和实际文件操作。保留现有 Skill 脚本、Python 缓存与执行参数。
+- `contracts/paths.ts`：共享路径常量，无 I/O；`storage.ts` 仍负责现有配置、状态解码和原子持久化，生产仓储复用其文件变更队列。
+- `instructions/discovery-prompt.ts` / `discovery-context.ts`：固定方法与有界轮次任务、未消化输入、摘要及 context-details.md 精确读取范围。方法仍单一来源于 Skill／发现指南；此处不新增问卷或重写指令体系。
+- `phases.ts` / `prompts.ts`：确定性的阶段／工件定义、输入加载及发现／定稿检查点约束。
+
+调用方仍须用同一 `withModelingLock` 覆盖版本核对、加载、检查和追加；它是当前进程的工作区串行锁，不承诺跨进程互斥。建模定稿、FM 提交与人工批准保持不同事实。
+
+### 其他现有能力
+
 - `validation.ts` / `checks.ts`：文档、模型和真实命令检查。
 - `gates.ts`：来源、工件和报告摘要及人工决策。
 - `test-plan.ts` / `testing-*.ts` / `adapters/pi/tools/tdd.ts`：测试契约、多循环执行、恢复与故事证据。
@@ -91,5 +110,9 @@ Python 3.10+ 可通过 EVIDENCE_PYTHON 指定；依赖在 node_modules/.cache/ev
 ```bash
 npm run evidence:verify
 ```
+
+测试文件与对应实现同目录；跨模块回归也放在主要被测入口旁，例如 `adapters/pi/tools/fm.spec.ts`。`tests/support/` 仅保存共享夹具和替身，不集中存放测试。TypeScript、Vitest 和格式检查均递归覆盖子目录。
+
+`index.spec.ts` 检查 Modeling 的传递依赖边界；发现服务、草稿、FM 管线与发布服务有内存替身测试，不加载 Pi 或访问工作区。另保留真实 Python Schema v3、lineage、模拟与编译回归，以及真实临时目录中的日志、防篡改、来源失效和发布回滚测试。
 
 自动测试不调用语言模型；覆盖固定系统指南、首轮/恢复提示、1000轮历史投影、长输入遗漏提示与无损分页、提问与回答依据展示、发现等待/更正、并发版本、来源失效、草稿隔离、共同 Gate、FM v3 和下游测试契约。Skill 的 `evals/discovery/` 另提供多类交互输入及人工多轮评测方法，含无默认验收的交稿和外部回执确认；提示词契约测试不是 Agent 行为评测。合成回归不是实际业务验收，也不是人工 TUI 端到端质量评测。

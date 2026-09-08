@@ -1,25 +1,25 @@
+import { prepareDiscoveryContext } from './instructions/discovery-context.ts';
+import {
+  DISCOVERY_GUIDE_PATH,
+  renderDiscoveryPolicy,
+  renderDiscoveryPrompt,
+} from './instructions/discovery-prompt.ts';
 import {
   getExpectedArtifact,
   getPhaseDefinition,
   TESTING_CONTRACT_INPUTS,
 } from './phases.ts';
-import { projectEntryExists, readText, REQUIREMENTS_PATH } from './storage.ts';
-import { currentCodingStory } from './workflow.ts';
-import { assertTestingInputs } from './test-plan.ts';
-import { taskComplete } from './testing-evidence.ts';
-import type { EvidenceConfig, EvidenceState } from './types.ts';
 import {
   discoveryViewPath,
   loadDiscoveryEntries,
   refreshDiscoveryView,
   requireFinalizing,
-} from './discovery.ts';
-import {
-  DISCOVERY_GUIDE_PATH,
-  renderDiscoveryPrompt,
-  renderDiscoveryPolicy,
-} from './discovery-prompt.ts';
-import { prepareDiscoveryContext } from './discovery-context.ts';
+} from './state/discovery/index.ts';
+import { projectEntryExists, readText, REQUIREMENTS_PATH } from './storage.ts';
+import { assertTestingInputs } from './test-plan.ts';
+import { taskComplete } from './testing-evidence.ts';
+import type { EvidenceConfig, EvidenceState } from './types.ts';
+import { currentCodingStory } from './workflow.ts';
 
 function stripFrontmatter(markdown: string): string {
   return markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();

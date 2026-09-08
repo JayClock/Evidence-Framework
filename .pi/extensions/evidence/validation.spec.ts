@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PHASE_DEFINITIONS } from './phases.ts';
-import { validDocument } from './quality-test-support.ts';
+import { validDocument } from './tests/support/quality-test-support.ts';
 import {
   countMarkdownTableRows,
   normalizeMarkdown,

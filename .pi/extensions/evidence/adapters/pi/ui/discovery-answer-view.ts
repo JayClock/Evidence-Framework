@@ -1,16 +1,16 @@
-import {
-  brief,
-  candidateName,
-  candidateDescriptionLines,
-  fulfillmentInteractionLines,
-  questionResolutionLines,
-} from '../../../discovery-contract-view.ts';
-import type { DiscoverySnapshot } from '../../../discovery-schema.ts';
+import { pendingQuestions } from '../../../modeling/discovery/questions.ts';
 import {
   assertDiscoveryContracts,
   assertDiscussionTarget,
-  pendingQuestions,
-} from '../../../discovery.ts';
+} from '../../../modeling/discovery/rules.ts';
+import type { DiscoverySnapshot } from '../../../modeling/discovery/schema.ts';
+import {
+  brief,
+  candidateDescriptionLines,
+  candidateName,
+  fulfillmentInteractionLines,
+  questionResolutionLines,
+} from '../../../modeling/discovery/view.ts';
 
 export interface AnswerSection {
   title: string;

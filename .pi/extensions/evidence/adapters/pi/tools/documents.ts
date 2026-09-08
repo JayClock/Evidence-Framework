@@ -5,9 +5,12 @@ import {
   runModelingChecks,
   runReviewChecks,
 } from '../../../checks.ts';
-import { requireFinalizing, withModelingLock } from '../../../discovery.ts';
 import { getExpectedArtifact, isDocumentPhase } from '../../../phases.ts';
 import { buildCurrentPrompt } from '../../../prompts.ts';
+import {
+  requireFinalizing,
+  withModelingLock,
+} from '../../../state/discovery/index.ts';
 import {
   appendHistory,
   loadConfig,

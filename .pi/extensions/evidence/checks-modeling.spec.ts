@@ -3,18 +3,18 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runModelingChecks, runReviewChecks } from './checks.ts';
-import { listFmModelFiles, validateFmModel } from './modeling.ts';
+import { listFmModelFiles, validateFmModel } from './state/fm/index.ts';
 import {
   createInitialState,
   DEFAULT_CONFIG,
   writeTextAtomic,
 } from './storage.ts';
+import { seedDiscovery } from './tests/support/discovery-test-support.ts';
+import { seedCompletedStory } from './tests/support/testing-test-support.ts';
 import { validateDocumentPhase } from './validation.ts';
-import { seedCompletedStory } from './testing-test-support.ts';
-import { seedDiscovery } from './discovery-test-support.ts';
 
-vi.mock('./modeling.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./modeling.ts')>()),
+vi.mock('./state/fm/index.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./state/fm/index.ts')>()),
   validateFmModel: vi.fn(),
   listFmModelFiles: vi.fn(),
 }));

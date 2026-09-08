@@ -1,15 +1,13 @@
 import { createHash } from 'node:crypto';
+import { basename } from 'node:path';
+import { getPhaseDefinition, phaseNumber } from './phases.ts';
 import {
   discoveryEvidencePaths,
   loadDiscovery,
   requireFinalizing,
-} from './discovery.ts';
-import { basename } from 'node:path';
-import { REQUIREMENTS_PATH } from './storage.ts';
-import { FM_STATUS_PATH } from './modeling.ts';
-import { getPhaseDefinition, phaseNumber } from './phases.ts';
-import { readText, writeTextAtomic } from './storage.ts';
-import { currentCodingStory } from './workflow.ts';
+} from './state/discovery/index.ts';
+import { FM_STATUS_PATH } from './state/fm/paths.ts';
+import { readText, REQUIREMENTS_PATH, writeTextAtomic } from './storage.ts';
 import {
   loadTestPlan,
   testingEvidencePaths,
@@ -17,6 +15,7 @@ import {
 } from './test-plan.ts';
 import { storyRecordPath } from './testing-evidence.ts';
 import type { CheckReport, EvidenceState, PendingGate } from './types.ts';
+import { currentCodingStory } from './workflow.ts';
 
 function safeId(value: string): string {
   return value.replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');

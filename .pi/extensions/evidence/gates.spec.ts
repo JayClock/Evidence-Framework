@@ -9,8 +9,8 @@ import {
   writeJsonAtomic,
   writeTextAtomic,
 } from './storage.ts';
+import { seedDiscovery } from './tests/support/discovery-test-support.ts';
 import type { CheckReport } from './types.ts';
-import { seedDiscovery } from './discovery-test-support.ts';
 
 const temporaryRoots: string[] = [];
 

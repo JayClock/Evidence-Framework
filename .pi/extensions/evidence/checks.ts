@@ -1,10 +1,8 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
-import { requireFinalizing } from './discovery.ts';
-import {
-  FM_MODEL_ROOT,
-  listFmModelFiles,
-  validateFmModel,
-} from './modeling.ts';
+import { gateArtifactPaths, hashArtifacts } from './gates.ts';
+import { requireFinalizing } from './state/discovery/index.ts';
+import { listFmModelFiles, validateFmModel } from './state/fm/index.ts';
+import { FM_MODEL_ROOT } from './state/fm/paths.ts';
 import {
   projectEntryExists,
   projectPath,
@@ -12,6 +10,10 @@ import {
   writeJsonAtomic,
   writeTextAtomic,
 } from './storage.ts';
+import { hasInvalidTestOutput, testFileHashes } from './test-files.ts';
+import { assertTestingInputs } from './test-plan.ts';
+import { loadStoryRecord, validateStoryEvidence } from './testing-evidence.ts';
+import type { StoryRecord, TestStory } from './testing-schema.ts';
 import type {
   CheckItem,
   CheckReport,
@@ -19,11 +21,6 @@ import type {
   EvidenceState,
 } from './types.ts';
 import { formatCheckReport, validateDocumentPhase } from './validation.ts';
-import { assertTestingInputs } from './test-plan.ts';
-import { gateArtifactPaths, hashArtifacts } from './gates.ts';
-import { loadStoryRecord, validateStoryEvidence } from './testing-evidence.ts';
-import { hasInvalidTestOutput, testFileHashes } from './test-files.ts';
-import type { StoryRecord, TestStory } from './testing-schema.ts';
 
 const MAX_CAPTURED_OUTPUT = 12_000;
 
@@ -185,7 +182,7 @@ async function runModelingCheckItems(
     ];
   }
   const validation = await validateFmModel({
-    pi: options.pi,
+    executor: options.pi,
     root: options.root,
     modelDir: projectPath(options.root, FM_MODEL_ROOT),
     timeoutMs: options.timeoutMs,

@@ -1,11 +1,11 @@
 import type {
-  CycleBinding,
   CompletedTddCycle,
-  TaskVerification,
+  CycleBinding,
   StoryRecordReference,
+  TaskVerification,
 } from './testing-schema.ts';
 
-import type { DiscoveryProgress } from './discovery-schema.ts';
+import type { DiscoveryProgress } from './modeling/discovery/schema.ts';
 
 export const ACTIVE_PHASES = [
   'modeling',

@@ -1,12 +1,12 @@
 import { createHash } from 'node:crypto';
+import type { Static, TSchema } from 'typebox';
+import { Value } from 'typebox/value';
+import { getPhaseDefinition } from './phases.ts';
 import {
   discoveryEvidencePaths,
   loadDiscovery,
   requireFinalizing,
-} from './discovery.ts';
-import type { Static, TSchema } from 'typebox';
-import { Value } from 'typebox/value';
-import { getPhaseDefinition } from './phases.ts';
+} from './state/discovery/index.ts';
 import { readText, REQUIREMENTS_PATH } from './storage.ts';
 import {
   validateFocusedTestCommand,
