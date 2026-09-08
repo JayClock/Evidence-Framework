@@ -35,7 +35,7 @@ import {
 } from './storage.ts';
 import { buildCurrentPrompt } from './prompts.ts';
 import { discoveryDetailsPath } from './discovery-context.ts';
-import { discoveryAnswerView } from './discovery-answer-view.ts';
+import { discoveryAnswerView } from './adapters/pi/ui/discovery-answer-view.ts';
 import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
 
 const roots: string[] = [];

@@ -13,7 +13,7 @@ import { fixtureSubmission, seedDiscovery } from './discovery-test-support.ts';
 import { loadDiscovery } from './discovery.ts';
 import type { DiscoveryContent } from './discovery-schema.ts';
 import { DISCOVERY_GUIDE_PATH } from './discovery-prompt.ts';
-import { createExecutionOwner } from './execution.ts';
+import { createExecutionOwner } from './adapters/pi/execution-owner.ts';
 import {
   createInitialState,
   loadState,

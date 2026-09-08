@@ -10,7 +10,7 @@ import {
   readText,
   saveState,
 } from './storage.ts';
-import { FINISH_DISCOVERY } from './discovery-interaction.ts';
+import { FINISH_DISCOVERY } from './adapters/pi/discovery-interaction.ts';
 
 const roots: string[] = [];
 afterEach(async () => {

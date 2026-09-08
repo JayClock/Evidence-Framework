@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   DISCOVERY_CONTEXT_TYPE,
   projectDiscoveryMessages,
-} from './discovery-session-context.ts';
+} from './adapters/pi/session-context.ts';
 import { DISCOVERY_GUIDE_PATH } from './discovery-prompt.ts';
 import {
   DISCOVERY_PACKET_LIMIT,

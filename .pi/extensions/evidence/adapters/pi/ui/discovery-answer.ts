@@ -15,7 +15,7 @@ import {
   type Focusable,
   type TUI,
 } from '@earendil-works/pi-tui';
-import { contractViewLines } from './discovery-contract-view.ts';
+import { contractViewLines } from '../../../discovery-contract-view.ts';
 import {
   discoveryAnswerView,
   type DiscoveryAnswerView,
@@ -23,7 +23,7 @@ import {
 import type {
   DiscoveryQuestion,
   DiscoverySnapshot,
-} from './discovery-schema.ts';
+} from '../../../discovery-schema.ts';
 
 type Body = Component & Partial<Focusable>;
 type BodyFactory = (

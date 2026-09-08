@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { hostname } from 'node:os';
 import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
-import type { EvidenceState, ExecutionOwner } from './types.ts';
-import { appendHistory, saveState } from './storage.ts';
+import type { EvidenceState, ExecutionOwner } from '../../types.ts';
+import { appendHistory, saveState } from '../../storage.ts';
 
 export function createExecutionOwner(ctx: ExtensionContext): ExecutionOwner {
   return {

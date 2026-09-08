@@ -53,26 +53,33 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 ## 模块
 
-- `execution.ts`：任务归属、本地进程存活检查与保守中断恢复。
-- `index.ts`：注册、命令、工具白名单、事件、Session 和 Gate UI。
+R1 仅拆分 Pi 接入，保持工具／命令协议、注册顺序、阶段流程和持久化格式不变；尚未引入 ExecutionPlan 或 Plan 级 Session。所有模块仍由一个扩展实例装配，不创建第二个状态写入者。
+
+- `index.ts`：Pi 自动发现入口，仅导出 `adapters/pi/register.ts` 的装配函数。
+- `adapters/pi/commands.ts` / `lifecycle.ts`：人工命令和生命周期事件注册；不在加载时启动任务。
+- `adapters/pi/profile.ts` / `protection.ts`：模型／工具配置和受保护路径规则。
+- `adapters/pi/runtime.ts` / `execution-owner.ts`：当前任务启动、归属与保守中断恢复。
+- `adapters/pi/checks.ts`：现有检查与阶段收尾适配，保留审核和失败轮次语义。
+- `adapters/pi/ui/gates.ts` / `ui/status.ts`：人工审核、可选 Git 检查点和状态展示。
+- `adapters/pi/tools/documents.ts` / `fm.ts` / `story.ts`：原有文档、FM 和故事提交入口。
 - `discovery-schema.ts`：问题、人工回答、发现记录、事件、日志条目和派生视图结构。
 - `discovery-ledger.ts`：确定性重放、更正／撤回链、来源版本绑定及当前视图投影。
 - `discovery.ts`：整条日志摘要验证、仅追加持久化、来源检查、派生缓存和定稿就绪检查。
 - `discovery-questions.ts`：问题待答／解决／阻塞的统一判定及稳定缺口身份防重。
 - `discovery-resolutions.ts`：原始来源及逐字摘录验证、文件新鲜度检查，不负责语义蕴含判定。
-- `discovery-tools.ts`：问答操作菜单、编辑器、发现保存、隔离草稿检查和定稿入口。
-- `discovery-answer-view.ts` / `discovery-answer-ui.ts`：只读分区投影、可展开／滚动的临时回答卡片和 RPC 回退；关闭或 Session 中止时释放界面监听。
-- `discovery-interaction.ts`：人工暂缓、结束/恢复入口，串行化与版本保护，以及结束后的整理任务启动。
+- `adapters/pi/tools/discovery.ts`：问答操作菜单、编辑器、发现保存、隔离草稿检查和定稿入口。
+- `adapters/pi/ui/discovery-answer-view.ts` / `ui/discovery-answer.ts`：只读分区投影、可展开／滚动的临时回答卡片和 RPC 回退；关闭或 Session 中止时释放界面监听。
+- `adapters/pi/discovery-interaction.ts`：人工暂缓、结束/恢复入口，串行化与版本保护，以及结束后的整理任务启动。
 - `phases.ts` / `prompts.ts`：确定性的阶段/工件定义、输入加载及发现/定稿检查点约束。
 - `discovery-contract-view.ts`：合同双方、履约请求与确认凭证、异常分支和当前问题的只读投影；共享履约展示函数供 TUI 和文本／RPC 使用。不显示工程进度。未明确信息留空，引用／来源失效不展示旧关系，不写状态或创建 Gate。展示于对话和问答操作中，原始证据不变；不渲染常驻 TUI 面板。
 - `discovery-prompt.ts`：分离固定系统方法与有界轮次任务；Skill／发现指南缺失或为空时拒绝运行，不另维护业务问卷。
 - `discovery-context.ts`：从已校验记录提取待消化输入及当前对象，生成有界摘要和 context-details.md 的精确读取行号；不依赖会话游标，不增加查询工具。
-- `discovery-session-context.ts`：标记扩展任务、构造请求级消息投影；保持原始会话、真实用户消息及完整工具调用对。
+- `adapters/pi/session-context.ts`：标记扩展任务、构造请求级消息投影；保持原始会话、真实用户消息及完整工具调用对。
 - `storage.ts`：配置、状态解码和原子持久化。
 - `modeling.ts`：FM 路径保护、隔离 Python、Schema/CEL、lineage、适用模拟、业务模式派生、编译与正式原子替换。
 - `validation.ts` / `checks.ts`：文档、模型和真实命令检查。
 - `gates.ts`：来源、工件和报告摘要及人工决策。
-- `test-plan.ts` / `testing-*.ts` / `tdd-tools.ts`：测试契约、多循环执行、恢复与故事证据。
+- `test-plan.ts` / `testing-*.ts` / `adapters/pi/tools/tdd.ts`：测试契约、多循环执行、恢复与故事证据。
 - `workflow.ts` / `git.ts`：阶段/故事转换、决定失效、工作区基线及真实文件变更。
 
 发现日志位于 `artifacts/02-modeling/discovery/<runId>/revision-N.json`，每个文件只含本次事件、时间、版本和前序摘要，不重复全部候选或历史问答。人工回答更正显式引用前次 A-ID，Agent 解释通过 D-版本号-序号引用前次记录；两者不等于业务批准。状态只保存链尾指针。当前视图缓存为 `.evidence/cache/discovery/<runId>/current.json`，可丢弃重建，读时核对 revision；缓存损坏不能绕过日志校验。日志和缓存都可能含用户原文，只用获授权的脱敏材料。FM 自带 discovery 目录可保存引用这些依据的摘要，不另造正式事实。

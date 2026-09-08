@@ -4,21 +4,28 @@ import {
   type ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { runCommand } from './checks.ts';
+import { runCommand } from '../../../checks.ts';
 import {
   appendHistory,
   loadConfig,
   loadState,
   projectPath,
   saveState,
-} from './storage.ts';
-import { assertTestingInputs } from './test-plan.ts';
-import { testFileHashes } from './test-files.ts';
-import { isPassingEvidence, isRedEvidence } from './testing-integrity.ts';
-import { requireDependencies } from './testing-evidence.ts';
-import type { TestCheck, TestStory, TestTask } from './testing-schema.ts';
-import type { EvidenceState, TddCommandEvidence } from './types.ts';
-import { currentCodingStory } from './workflow.ts';
+} from '../../../storage.ts';
+import { assertTestingInputs } from '../../../test-plan.ts';
+import { testFileHashes } from '../../../test-files.ts';
+import {
+  isPassingEvidence,
+  isRedEvidence,
+} from '../../../testing-integrity.ts';
+import { requireDependencies } from '../../../testing-evidence.ts';
+import type {
+  TestCheck,
+  TestStory,
+  TestTask,
+} from '../../../testing-schema.ts';
+import type { EvidenceState, TddCommandEvidence } from '../../../types.ts';
+import { currentCodingStory } from '../../../workflow.ts';
 
 // Serialize the entire load/execute/save window. A separate queue key avoids nesting saveState's file queue.
 export function withCodingLock<T>(

@@ -3,7 +3,7 @@ import type {
   ContextEvent,
   ExtensionAPI,
 } from '@earendil-works/pi-coding-agent';
-import type { EvidenceState } from './types.ts';
+import type { EvidenceState } from '../../types.ts';
 
 export const DISCOVERY_CONTEXT_TYPE = 'evidence-discovery-context';
 type Message = ContextEvent['messages'][number];

@@ -19,12 +19,12 @@ import {
   subscriptionContent,
 } from './discovery-test-support.ts';
 import type { DiscoverySnapshot } from './discovery-schema.ts';
-import { discoveryAnswerView } from './discovery-answer-view.ts';
+import { discoveryAnswerView } from './adapters/pi/ui/discovery-answer-view.ts';
 import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
 import {
   editDiscoveryView,
   selectDiscoveryView,
-} from './discovery-answer-ui.ts';
+} from './adapters/pi/ui/discovery-answer.ts';
 
 const roots: string[] = [];
 afterEach(async () => {

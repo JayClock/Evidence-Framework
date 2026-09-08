@@ -4,13 +4,13 @@ import {
   candidateDescriptionLines,
   fulfillmentInteractionLines,
   questionResolutionLines,
-} from './discovery-contract-view.ts';
-import type { DiscoverySnapshot } from './discovery-schema.ts';
+} from '../../../discovery-contract-view.ts';
+import type { DiscoverySnapshot } from '../../../discovery-schema.ts';
 import {
   assertDiscoveryContracts,
   assertDiscussionTarget,
   pendingQuestions,
-} from './discovery.ts';
+} from '../../../discovery.ts';
 
 export interface AnswerSection {
   title: string;

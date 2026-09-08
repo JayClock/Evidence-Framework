@@ -4,18 +4,21 @@ import type {
   ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { contractViewLines, questionLabel } from './discovery-contract-view.ts';
+import {
+  contractViewLines,
+  questionLabel,
+} from '../../../discovery-contract-view.ts';
 import {
   editDiscoveryView,
   selectDiscoveryView,
-} from './discovery-answer-ui.ts';
+} from '../ui/discovery-answer.ts';
 import {
   DiscoverySubmissionSchema,
   QuestionSchema,
   type DiscoveryAnswer,
   type DiscoveryQuestion,
   type DiscoverySnapshot,
-} from './discovery-schema.ts';
+} from '../../../discovery-schema.ts';
 import {
   answerQuestion,
   askQuestions,
@@ -32,11 +35,11 @@ import {
   unansweredQuestions,
   unresolvedBlockingQuestions,
   withModelingLock,
-} from './discovery.ts';
-import { loadConfig, loadState } from './storage.ts';
-import { recordGateDecision } from './gates.ts';
-import { normalizeFmModelFiles, replaceFmModel } from './modeling.ts';
-import type { EvidenceState } from './types.ts';
+} from '../../../discovery.ts';
+import { loadConfig, loadState } from '../../../storage.ts';
+import { recordGateDecision } from '../../../gates.ts';
+import { normalizeFmModelFiles, replaceFmModel } from '../../../modeling.ts';
+import type { EvidenceState } from '../../../types.ts';
 import {
   changeDiscoveryInteraction,
   finishDiscoveryInteraction,
@@ -44,7 +47,7 @@ import {
   SKIP_QUESTION,
   type StartDiscoveryWork,
   type RefreshDiscovery as Refresh,
-} from './discovery-interaction.ts';
+} from '../discovery-interaction.ts';
 
 const revision = Type.Integer({
   minimum: 0,

@@ -1,11 +1,11 @@
 import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
-import type { EvidenceState } from './types.ts';
-import { loadState } from './storage.ts';
+import type { EvidenceState } from '../../types.ts';
+import { loadState } from '../../storage.ts';
 import {
   assertDiscoveryRevision,
   controlDiscoveryInteraction,
   withModelingLock,
-} from './discovery.ts';
+} from '../../discovery.ts';
 
 export type RefreshDiscovery = (
   ctx: ExtensionContext,
