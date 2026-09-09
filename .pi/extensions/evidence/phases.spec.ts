@@ -148,7 +148,7 @@ describe('phase definitions', () => {
 
   it('removes the duplicate domain skill and standalone DDD templates', async () => {
     for (const path of [
-      '.pi/skills/evidence-domain/SKILL.md',
+      '.agents/skills/evidence-domain/SKILL.md',
       ...[
         'bounded-contexts',
         'entities-and-value-objects',

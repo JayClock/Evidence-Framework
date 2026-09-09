@@ -36,7 +36,7 @@ async function setup() {
 }
 
 describe('Pi consumes canonical skills without maintaining copies', () => {
-  it('discovers all three skills natively without extensions or configured skill paths', async () => {
+  it('discovers all project skills natively without extensions or configured skill paths', async () => {
     const agentDir = await mkdtemp(join(tmpdir(), 'evidence-native-skills-'));
     roots.push(agentDir);
     const loader = new DefaultResourceLoader({
@@ -55,9 +55,13 @@ describe('Pi consumes canonical skills without maintaining copies', () => {
         skill.filePath.startsWith(join(process.cwd(), '.agents/skills') + '/'),
       );
       expect(local.map((skill) => skill.name).sort()).toEqual([
+        'evidence-architecture',
         'evidence-discovery',
         'evidence-fm',
+        'evidence-planning',
         'evidence-requirements',
+        'evidence-review',
+        'evidence-tdd',
       ]);
       expect(
         result.diagnostics.filter((item) =>

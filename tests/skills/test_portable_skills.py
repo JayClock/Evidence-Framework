@@ -15,7 +15,14 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT = REPO_ROOT / ".agents/skills"
-NAMES = ("evidence-discovery", "evidence-fm", "evidence-requirements")
+PORTABLE_NAMES = ("evidence-discovery", "evidence-fm", "evidence-requirements")
+WORKFLOW_NAMES = (
+    "evidence-architecture",
+    "evidence-planning",
+    "evidence-review",
+    "evidence-tdd",
+)
+ALL_NAMES = PORTABLE_NAMES + WORKFLOW_NAMES
 
 
 def file_hashes(root: Path) -> dict[str, str]:
@@ -28,7 +35,7 @@ def file_hashes(root: Path) -> dict[str, str]:
 
 class SkillPackageTests(unittest.TestCase):
     def test_each_skill_has_portable_frontmatter_and_bounded_entrypoint(self):
-        for name in NAMES:
+        for name in PORTABLE_NAMES:
             with self.subTest(skill=name):
                 entry = ROOT / name / "SKILL.md"
                 self.assertTrue(entry.is_file(), f"Missing standalone skill: {name}")
@@ -39,17 +46,18 @@ class SkillPackageTests(unittest.TestCase):
                 self.assertNotRegex(text, r"evidence_(?:ask|save|finalize|submit)_")
                 self.assertNotIn("/Users/", text)
 
-    def test_distribution_does_not_describe_plugins_or_host_workflows(self):
-        for document in ROOT.rglob("*.md"):
-            with self.subTest(document=str(document.relative_to(ROOT))):
-                self.assertNotRegex(
-                    document.read_text(encoding="utf-8"),
-                    r"插件|\bPi\b|\bGate\b|\.pi/|受控工作流|专用工具",
-                )
+    def test_portable_distribution_does_not_describe_plugins_or_host_workflows(self):
+        for name in PORTABLE_NAMES:
+            for document in (ROOT / name).rglob("*.md"):
+                with self.subTest(document=str(document.relative_to(ROOT))):
+                    self.assertNotRegex(
+                        document.read_text(encoding="utf-8"),
+                        r"插件|\bPi\b|\bGate\b|\.pi/|受控工作流|专用工具",
+                    )
 
     def test_links_resolve_inside_each_individually_copied_skill(self):
         with tempfile.TemporaryDirectory() as directory:
-            for name in NAMES:
+            for name in PORTABLE_NAMES:
                 source = ROOT / name
                 self.assertTrue(source.is_dir(), f"Missing standalone skill: {name}")
                 package = Path(directory).resolve() / name
@@ -65,10 +73,22 @@ class SkillPackageTests(unittest.TestCase):
                         self.assertTrue(target.exists(), (doc, link))
                 self.assertFalse(any(path.is_symlink() for path in package.rglob("*")))
 
+    def test_all_project_skills_use_canonical_root(self):
+        self.assertEqual(
+            set(ALL_NAMES),
+            {path.name for path in ROOT.iterdir() if path.is_dir()},
+        )
+        for name in WORKFLOW_NAMES:
+            entry = ROOT / name / "SKILL.md"
+            self.assertTrue(entry.is_file(), f"Missing workflow skill: {name}")
+            self.assertTrue(
+                entry.read_text(encoding="utf-8").startswith(f"---\nname: {name}\n")
+            )
+
     def test_skills_are_canonical_without_legacy_runtime_or_sync_infrastructure(self):
         for path in (
             REPO_ROOT / ".pi/skills/evidence-modeling",
-            REPO_ROOT / ".pi/skills/evidence-requirements",
+            REPO_ROOT / ".pi/skills",
             REPO_ROOT / "skills",
             ROOT / "evidence-modeling",
             ROOT / "evidence-fm/UPSTREAM.md",
@@ -99,9 +119,9 @@ class SkillPackageTests(unittest.TestCase):
         for case in cases:
             self.assertTrue(case["prompt"])
             self.assertTrue(case["expectations"])
-            self.assertIn(case["skill"], NAMES)
+            self.assertIn(case["skill"], PORTABLE_NAMES)
             for knowledge in case.get("knowledgeSkills", []):
-                self.assertIn(knowledge, NAMES)
+                self.assertIn(knowledge, PORTABLE_NAMES)
 
 
 class IsolatedFMTests(unittest.TestCase):

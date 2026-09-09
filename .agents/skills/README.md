@@ -1,12 +1,16 @@
 # Evidence Skills
 
-从业务事实出发，用可组合的 Skill 完成发现、正式建模和软件需求收敛。**Discovery 负责访谈，FM 负责建模知识与正式产物，Requirements 负责软件范围；由用户决定何时继续、停止或切换任务。**
+本仓库的 Evidence Skills 统一放在 `.agents/skills/`。业务技能从事实发现推进到正式建模和软件需求收敛；交付技能承接架构、计划、编码与审查阶段。
 
 | Skill                                                   | 用途               | 输入与输出                                                                 | 运行依赖                                          |
 | ------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------- |
 | [evidence-discovery](evidence-discovery/SKILL.md)       | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考 |
 | [evidence-fm](evidence-fm/SKILL.md)                     | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口 | 读取准则只需文本；执行校验需 Python 3.10+         |
 | [evidence-requirements](evidence-requirements/SKILL.md) | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                      | 对话与文本文件                                    |
+| [evidence-architecture](evidence-architecture/SKILL.md) | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                              | 项目仓库与 Evidence 工作流                        |
+| [evidence-planning](evidence-planning/SKILL.md)         | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                               | 项目仓库与 Evidence 工作流                        |
+| [evidence-tdd](evidence-tdd/SKILL.md)                   | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                             | 项目工具链与 Evidence 工作流                      |
+| [evidence-review](evidence-review/SKILL.md)             | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                  | 项目仓库与 Evidence 工作流                        |
 
 ## 安装
 

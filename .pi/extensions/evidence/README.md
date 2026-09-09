@@ -6,7 +6,7 @@
 
 `.agents/skills/evidence-discovery/`、`.agents/skills/evidence-fm/`、`.agents/skills/evidence-requirements/` 是建模方法、FM 引擎／schemas 和需求方法的唯一维护源，统一本地维护。项目受信任后 Pi 原生发现 `.agents/skills/`，不再通过 `resources_discover` 额外注册。发现组合 Discovery 访谈机制和 FM 只读专业准则；统一语言与模型生成读取 FM 入口，软件需求读取 Requirements。Python 管线直接运行 `.agents/skills/evidence-fm/scripts/`，不保留旧建模 Skill 或同步脚本。
 
-工具、日志、人工操作与提交路径差异只在 [执行适配](instructions/modeling-adapter.md) 和 [评估协议](instructions/incremental-assessment.md) 维护，不写回独立包。FM 回归与生成评测在 `.agents/skills/evidence-fm/` 内维护，各项业务行为评测随对应 Skill；跨 Skill 检查及 Pi 交互评测在 `tests/skills/`，升级不改运行状态、既有工件或 Gate。其他工程阶段的既有工序本次未迁移。
+工具、日志、人工操作与提交路径差异只在 [执行适配](instructions/modeling-adapter.md) 和 [评估协议](instructions/incremental-assessment.md) 维护，不写回独立包。FM 回归与生成评测在 `.agents/skills/evidence-fm/` 内维护，各项业务行为评测随对应 Skill；跨 Skill 检查及 Pi 交互评测在 `tests/skills/`，升级不改运行状态、既有工件或 Gate。Architecture、Planning、TDD 与 Review 工序也统一由 `.agents/skills/` 提供。
 
 ## v6：上下文识别驱动的交互建模
 

@@ -95,7 +95,7 @@ export const PHASE_DEFINITIONS = {
   architecture: {
     id: 'architecture',
     label: '架构设计',
-    skillFile: '.pi/skills/evidence-architecture/SKILL.md',
+    skillFile: '.agents/skills/evidence-architecture/SKILL.md',
     artifacts: [
       artifact({
         key: 'context-map',
@@ -253,7 +253,7 @@ export const PHASE_DEFINITIONS = {
   planning: {
     id: 'planning',
     label: '迭代计划',
-    skillFile: '.pi/skills/evidence-planning/SKILL.md',
+    skillFile: '.agents/skills/evidence-planning/SKILL.md',
     artifacts: [
       artifact({
         key: 'product-backlog',
@@ -318,13 +318,13 @@ export const PHASE_DEFINITIONS = {
   coding: {
     id: 'coding',
     label: '编码与 TDD',
-    skillFile: '.pi/skills/evidence-tdd/SKILL.md',
+    skillFile: '.agents/skills/evidence-tdd/SKILL.md',
     artifacts: [],
   },
   review: {
     id: 'review',
     label: '最终审查',
-    skillFile: '.pi/skills/evidence-review/SKILL.md',
+    skillFile: '.agents/skills/evidence-review/SKILL.md',
     artifacts: [
       artifact({
         key: 'final-review',

@@ -50,8 +50,8 @@ export async function writeTestingInputs(root: string): Promise<void> {
   await writeTextAtomic(root, 'README.md', '# 测试项目');
   await writeTextAtomic(
     root,
-    '.pi/skills/evidence-tdd/SKILL.md',
-    await readText(process.cwd(), '.pi/skills/evidence-tdd/SKILL.md'),
+    '.agents/skills/evidence-tdd/SKILL.md',
+    await readText(process.cwd(), '.agents/skills/evidence-tdd/SKILL.md'),
   );
 }
 export async function codingHarness(roots: string[]) {
