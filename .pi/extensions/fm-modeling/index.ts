@@ -79,6 +79,10 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     const store = new StateStore(ctx.cwd);
     const state = await store.loadState();
     if (!state?.execution) return;
+    if (state.stopRequested) {
+      await new ModelingController(pi, store).finalizeStop(ctx);
+      return;
+    }
     const settled = { ...state, execution: null };
     await store.saveState(settled);
     if (settled.activeQuestionId) {

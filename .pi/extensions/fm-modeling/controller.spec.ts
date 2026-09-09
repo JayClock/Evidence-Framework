@@ -57,6 +57,38 @@ describe('ModelingController first turn', () => {
     expect((await store.readEvent('FM-2026-001', 1)).event).toMatchObject({ text: '原需求' });
   });
 
+  it('stops immediately while waiting and reports that no model exists', async () => {
+    const { store, pi, ctx, notify } = await setup();
+    await store.createRun('FM-2026-001', '需求');
+    const controller = new ModelingController(pi as never, store);
+    await controller.handle('stop', ctx as never);
+
+    const state = await store.loadState();
+    expect(state?.stoppedAt).toBeTruthy();
+    expect(state?.activeQuestionId).toBeNull();
+    expect((await store.readEvent(state!.runId, state!.revision)).event.kind).toBe(
+      'interaction-stopped',
+    );
+    expect(notify).toHaveBeenCalledWith(expect.stringContaining('当前没有有效 FM 模型'), 'warning');
+  });
+
+  it('defers stop while an answer is being processed', async () => {
+    const { store, pi, ctx, notify } = await setup();
+    const state = await store.createRun('FM-2026-001', '需求');
+    await store.saveState({
+      ...state,
+      execution: {
+        id: 'EXEC-1',
+        sessionId: 'session-1',
+        inputRevision: 1,
+        startedAt: new Date().toISOString(),
+      },
+    });
+    await new ModelingController(pi as never, store).handle('stop', ctx as never);
+    expect((await store.loadState())?.stopRequested).toBe(true);
+    expect(notify).toHaveBeenCalledWith(expect.stringContaining('处理完成后'), 'info');
+  });
+
   it('refuses a foreign tool namespace conflict', async () => {
     const { store, pi, ctx, notify } = await setup();
     pi.getAllTools = () => [

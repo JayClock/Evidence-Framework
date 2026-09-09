@@ -33,6 +33,7 @@ export class QuestionInteraction {
     const state = await this.store.loadState();
     if (!state || state.runId !== params.runId) throw new Error('Run 不匹配');
     if (state.stoppedAt) throw new Error('Run 已停止');
+    if (state.stopRequested) throw new Error('Run 已请求停止，不能再提问');
     if (state.activeQuestionId) throw new Error(`已有未回答问题 ${state.activeQuestionId}`);
     if (state.revision !== params.expectedRevision) throw new Error('Revision 已过期');
     const events = await this.store.readEvents(state);

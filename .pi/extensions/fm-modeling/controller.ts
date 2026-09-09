@@ -1,6 +1,10 @@
 import { readdir } from 'node:fs/promises';
 
-import type { ExtensionAPI, ExtensionCommandContext } from '@earendil-works/pi-coding-agent';
+import type {
+  ExtensionAPI,
+  ExtensionCommandContext,
+  ExtensionContext,
+} from '@earendil-works/pi-coding-agent';
 
 import { fmPaths } from './paths.js';
 import { modelingPrompt } from './prompts.js';
@@ -55,7 +59,7 @@ export class ModelingController {
       return;
     }
     if (text === 'stop') {
-      ctx.ui.notify('停止流程将在问答功能启用后可用。', 'warning');
+      await this.stop(ctx);
       return;
     }
     await ctx.waitForIdle();
@@ -80,6 +84,60 @@ export class ModelingController {
     await this.store.saveState(running);
     this.pi.setActiveTools([...new Set([...this.pi.getActiveTools(), 'read', 'fm_model_submit'])]);
     this.pi.sendUserMessage(modelingPrompt(ctx.cwd, running));
+  }
+
+  async stop(ctx: ExtensionCommandContext): Promise<void> {
+    const state = await this.store.loadState();
+    if (!state) {
+      ctx.ui.notify('没有可停止的 FM Modeling Run。', 'info');
+      return;
+    }
+    if (state.stoppedAt) {
+      ctx.ui.notify(currentModelMessage(ctx.cwd, state), state.modelRevision > 0 ? 'info' : 'warning');
+      return;
+    }
+    if (state.execution) {
+      await this.store.saveState({ ...state, stopRequested: true });
+      ctx.ui.notify('已请求停止；当前回答处理完成后将返回最后有效模型。', 'info');
+      return;
+    }
+    await this.finalizeStop(ctx);
+  }
+
+  async finalizeStop(ctx: ExtensionContext): Promise<ModelState | null> {
+    const state = await this.store.loadState();
+    if (!state || state.stoppedAt) return state;
+    const events = await this.store.readEvents(state);
+    const unappliedRevisions = events
+      .filter(
+        (entry) =>
+          entry.revision > state.lastAppliedRevision &&
+          (entry.event.kind === 'input-recorded' || entry.event.kind === 'answer-recorded'),
+      )
+      .map((entry) => entry.revision);
+    const requestedAt = new Date().toISOString();
+    const result = await this.store.appendEvent(state.revision, {
+      kind: 'interaction-stopped',
+      requestedAt,
+      lastModelRevision: state.modelRevision,
+      lastAppliedRevision: state.lastAppliedRevision,
+      unappliedRevisions,
+    }, (current) => ({
+      ...current,
+      activeQuestionId: null,
+      execution: null,
+      stopRequested: false,
+      stoppedAt: requestedAt,
+    }));
+    const diagnostic = result.state.lastDiagnostic ? ` 最近诊断：${result.state.lastDiagnostic}` : '';
+    const unapplied = unappliedRevisions.length > 0
+      ? ` 尚未纳入的回答 revision：${unappliedRevisions.join(', ')}。`
+      : '';
+    ctx.ui.notify(
+      `${currentModelMessage(ctx.cwd, result.state)} lastAppliedRevision=${result.state.lastAppliedRevision}.${unapplied}${diagnostic}`,
+      result.state.modelRevision > 0 ? 'info' : 'warning',
+    );
+    return result.state;
   }
 
   async showCurrent(ctx: ExtensionCommandContext): Promise<void> {
