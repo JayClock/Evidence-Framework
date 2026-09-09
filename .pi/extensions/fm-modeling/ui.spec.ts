@@ -70,11 +70,12 @@ describe('QuestionInteraction', () => {
       impact: '影响逾期判断',
       sourceRefs: ['INPUT'],
     });
+    const select = vi.fn(async () => '回答');
     const ctx = {
       cwd: root,
       hasUI: true,
       ui: {
-        select: async () => '回答',
+        select,
         editor: async () => '以结算单截止日期为准',
         notify: vi.fn(),
       },
@@ -92,6 +93,10 @@ describe('QuestionInteraction', () => {
       questionId: 'Q-001',
       text: '以结算单截止日期为准',
     });
+    expect(select).toHaveBeenCalledWith(
+      'Q-001 · 付款期限依据什么确定？\n影响：影响逾期判断',
+      ['回答', '停止', '取消'],
+    );
     expect(pi.sendUserMessage).toHaveBeenCalledOnce();
   });
 

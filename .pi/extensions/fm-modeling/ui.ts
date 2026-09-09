@@ -91,7 +91,7 @@ export class QuestionInteraction {
       return;
     }
     const action = await ctx.ui.select(
-      `${question.questionId} · ${question.impact}`,
+      `${question.questionId} · ${question.prompt}\n影响：${question.impact}`,
       ['回答', '停止', '取消'],
     );
     if (action === '停止') {
