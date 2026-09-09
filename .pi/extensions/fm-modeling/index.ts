@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
 
+import { ModelingController } from './controller.js';
 import { ModelPublisher } from './model.js';
 import { EXTENSION_NAMESPACE, LEGACY_EVIDENCE_NAMESPACE, STORAGE_NAMESPACE } from './paths.js';
 import { StateStore } from './state.js';
@@ -46,9 +47,16 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
 
   pi.registerCommand('evidence-model', {
     description: '独立运行 FM 建模问答',
-    handler: async (_args, ctx) => {
-      ctx.ui.notify('独立 FM Modeling 插件尚未实现建模流程。', 'info');
+    handler: async (args, ctx) => {
+      await new ModelingController(pi, new StateStore(ctx.cwd)).handle(args, ctx);
     },
+  });
+
+  pi.on('agent_settled', async (_event, ctx) => {
+    const store = new StateStore(ctx.cwd);
+    const state = await store.loadState();
+    if (!state?.execution) return;
+    await store.saveState({ ...state, execution: null });
   });
 }
 

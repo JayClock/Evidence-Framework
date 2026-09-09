@@ -160,7 +160,8 @@ export class StateStore {
   async createRun(runId: string, text: string): Promise<ModelState> {
     return this.serial(async () => {
       if (!text.trim()) throw new Error('需求不能为空');
-      if (await this.loadState()) throw new Error('已有 FM Modeling Run');
+      const existing = await this.loadState();
+      if (existing && !existing.stoppedAt) throw new Error('已有 FM Modeling Run');
       const state: ModelState = {
         version: 1,
         runId,
