@@ -6,7 +6,8 @@
 
 ```text
 Init → Modeling（上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 四色追溯 ↔ 回放）
-       → 统一语言 → FM → 软件范围/故事/验收 → 共同 Gate
+       → 人工更新模型：统一语言 → FM → 停回发现（可重复）
+       → 人工进入需求收敛：软件范围/故事/验收 → 共同 Gate
      → Architecture → Planning → Coding → Review → complete
 ```
 
@@ -14,7 +15,15 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 没有前置 Requirements 阶段。需求收敛仍保存 personas/problem-statement/story-map，位于 Modeling 末尾，不让 FM 依赖未来故事。`01-requirements` 仅为存储目录。
 
-当前状态 v6、发现日志 v4、FM Schema v3，配置/测试契约仍为 v1。发现不再接受 v3 完整快照、不提供快照迁移。已有 v4 日志仍可重放；历史问题可无 gapKey，原文重用不改写，新题须提供稳定 gapKey。resolution 是新增的只追加记录，questionResolutions 是可重建投影，不是另一个人工回答表。升级代码不改现有运行、工件或 Gate，不自动重置；启用新版工具用 `/reload`，不要手改版本号。
+当前状态 v6、发现日志 **v5**、FM Schema v3，配置/测试契约仍为 v1。评估和覆盖仅支持 Context／事实级 v1 协议，问题必须有稳定 gapKey。拒绝旧日志、缺 assessment、候选 complete/dependencyRefs、候选级 coverage 和旧 finalizing 自动收敛路径；不迁移、不转换、不自动重置。`/reload` 只加载代码，不能继续旧协议的运行；旧运行由人工决定归档或重新初始化，现有数据、工件和 Gate 不作修改，也不能手改版本号。
+
+## 手动批次更新
+
+问答只积累发现记录；在当前问题菜单选择「更新模型（纳入已积累的发现）」或运行 `/evidence-discovery update-model` 才授权更新。Agent 先消化新增输入，再通过 `evidence_finalize_discovery` 提交全历史 Context assessment：本批次职责、具体已知／未知 facts、requiredFactRefs、structure/provenance/decision 事实依赖、回放与 remainingScope；每道阻塞题定位 affectedFactRefs。Domain、Channel、Contract、Fulfillment 按自身语义判断，跨 Context 只依赖实际需要的事实，不能要求所有条款、签约渠道或责任链完整。输出 ready（本批次就绪）、support（只纳入已知支撑）、pending（未纳入）与事实级阻塞路径，不把 Context 视作不可拆分的完整包。没有可纳入职责也保存评估，保留全部缺口。完整协议见 Skill 的 `references/incremental-assessment.md`。
+
+依次更新统一语言与 FM；`discovery/formalization.md` 以唯一 discovery-coverage v1 JSON 绑定当前 revision、全部 Context 的 status/modelRefs/retainedFactRefs/remainingScope，以及全部纳入 factRef 的 modelRefs。发布前在暂存编译结果核对 ID、Context 类型和纳入／保留范围；不能将支撑投影宣称为整体完成。校验失败不替换上一版 FM。成功追加 model-applied（发现版本、依据和文件摘要、Context 状态及纳入事实），停回 discovering，不自动生成需求或 Gate。`/evidence-discovery converge` 检查已发布模型、发现与文件仍一致，再进入需求收敛。
+
+`finish` 仅停止提问并整理，不授权更新；`resume` 恢复问答。新回答、追加发现只使当前就绪声明失效，不擦除上次已发布模型及机器证据。新事实需要再次手动更新，不能直接进入需求收敛。人工更新不是批准模型，也不是范围排除。无旧协议兼容分支；重载不迁移或修改旧数据。
 
 ## 职责与边界
 
@@ -28,15 +37,15 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 - 新问题用对象与事实维度组成稳定 gapKey；同一缺口沿用原 Q-ID，不因措辞、焦点或暂缓换标识。程序拦截同 gapKey 和部分文本重复，不保证任意改写的语义去重；实际提问质量仍须人工评测。
 - 每次仅允许提出一个核心问题，禁止批量问卷；回答／未知／排除／跳过后自动启动一次消化，先保存更新后的候选、案例与导航再决定下一问或执行草稿／定稿校验。提问质量、是否捆绑子问题及真正吸收语义仍需人工评测，不能由次数约束证明。历史问题用于回访，不是必做队列；人工停止后补答不自动启动。
 - 逐问控制 activeQuestionId／needsConsolidation 由问题、人工回答和控制事件重放到 interaction，不读取旧快照或猜测缺失字段；新运行的问题、回答、缺口与追加历史不删除。自动启动前重检运行、版本、阶段与暂停状态，不跨运行启动。
-- 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；Agent 完全空闲（agent_settled）时自动打开当前问题的“回答／结束本轮问答，整理已有信息”菜单。选择回答直接进入编辑器，以“事实或决定”保存，仍自动记录 `gh` 当前认证的 github.com 账号；读取失败不保存。Esc 只关闭界面，不写回答或停止标记，也不重复弹出同一问题。`/evidence-answer` 可手动重开；带 Q-ID 保留未知、排除、跳过及历史更正操作。未知不能解除业务阻塞。
-- 自动入口绑定当前运行及发现版本，打开及保存前重检阶段、暂停和空闲状态；自动与手动入口共享对话互斥，重载／Session 切换清除待弹出项并作废旧界面。重载不自动重开历史问题或清除人工停止标记，非交互模式只保留等待状态与命令提示。历史问题列表仍可通过带 Q-ID 的单题菜单“返回场景选择”访问，并保留结束本轮入口。`/evidence-discovery finish` 同样保存人工停止标记并启动整理；有阻塞项时保存草稿、列出 Q-ID 后停止，不强制定稿。`/evidence-discovery resume` 才恢复自动提问并重新排队暂缓问题；普通 run、暂停/恢复、重载均保留停止标记。
+- 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；Agent 完全空闲（agent_settled）时自动打开当前问题的“回答／更新模型／结束本轮问答，整理已有信息”菜单。选择回答直接进入编辑器，以“事实或决定”保存，仍自动记录 `gh` 当前认证的 github.com 账号；读取失败不保存。Esc 只关闭界面，不写回答或停止标记，也不重复弹出同一问题。`/evidence-answer` 可手动重开；带 Q-ID 保留未知、排除、跳过及历史更正操作。未知不能解除业务阻塞。
+- 自动入口绑定当前运行及发现版本，打开及保存前重检阶段、暂停和空闲状态；自动与手动入口共享对话互斥，重载／Session 切换清除待弹出项并作废旧界面。重载不自动重开历史问题或清除人工停止标记，非交互模式只保留等待状态与命令提示。历史问题列表仍可通过带 Q-ID 的单题菜单“返回场景选择”访问，并保留结束本轮入口。`/evidence-discovery finish` 同样保存人工停止标记并启动整理；无论是否还有阻塞项，都只积累发现并停止，不自动定稿。`/evidence-discovery resume` 才恢复自动提问并重新排队暂缓问题；普通 run、暂停/恢复、重载均保留停止标记。
 - 暂缓/结束不调用 GitHub、不生成业务回答、不排除范围、不解除定稿阻塞。控制决定作为独立事件追加并派生 `interaction`，不可充当 `A-*` 来源；新运行初始化为未停止且无暂缓项。非阻塞未答项可保留为缺口，不升级为明确事实。
 - 请求／确认各用简短业务说明，分析论证写 description／notes；不因局部未知抹去已明确事实。卡片的请求、期限、确认字段超过100字符时显式截短并提示查看原文，问题正文不截短；/evidence-status 保留当前合同各候选完整描述及请求／确认原文。
 - `evidence_save_discovery` 只追加本轮记录（summary、sourceRefs、records），不接受完整 content。scope／position／note／source／candidate／case／contract／fulfillment／resolution 逐项记录；新增 supersedes=null，更正引用当前 D-ID，withdraw 记录显式撤回。遗漏不是删除，撤回须处理悬空关系。扩展分配 D-ID，绑定 SRC 版本，校验来源、引用和 expectedRevision；临时文件写完后原子发布，拒绝覆盖历史及中断遗留条目。
 - resolution 以 questionId 关联历史未答／未知问题，包含 conclusion、reasoning、sourceRefs、citations（sourceRef、逐字 quote）；每个来源须有摘录且为 `INPUT`、有效 `SRC-*` 或最新 answered `A-*`。仅连接已有事实／确定性推导，不生成 A-\*、替代人工事实、作范围排除或掩盖矛盾。有效关联解除该题待答／阻塞；历史菜单、TUI／RPC、/evidence-status 与上下文明细显示解释、来源及失效状态，不预填为人工回答。来源文件／版本、引用回答或该题后续人工回答变化使关联失效；更正／撤回以 resolution:Q-ID 当前 D-ID 追加，不改原问题，不自动恢复问答。摘录检查不证明结论蕴含成立；真实冲突仍交人工。
 - 不增加独立查询工具。启动／续轮／恢复使用最多 14,000 字符的上下文包：待消化人工输入、当前讨论对象、相关缺口及明细行号。完整方法放在每次请求的固定系统上下文，不逐轮复制进任务历史。已消化回答不重复内嵌；超出预算的新输入明确提示补读，不能静默视为已消化。current.json 保留完整视图，context-details.md 提供逐对象明细和分页索引；两者都可丢弃重建，不纳入 Gate 或充当业务来源。
 - `context` 钩子仅在发给模型时收束本运行已标记的旧发现轮次，保留最新轮次及其工具调用／结果；原始 Pi 会话和发现日志不删除。真实用户消息、其他扩展、其他运行及压缩摘要不裁剪，不拆开工具调用对；后续阶段不复活旧发现轮次。固定系统方法仍占输入 token；本轮大量工具输出、未标记历史及其他对话仍可能触发 Pi 压缩，不能承诺整个模型上下文永不溢出。内部仍完整读取、校验及重放日志，未做增量重放。
-- `evidence_check_model_draft` 复用 FM 管线进行隔离检查，不替换正式产物；`evidence_finalize_discovery` 检查声明就绪后启用正式提交，不自动批准。
+- `evidence_check_model_draft` 复用 FM 管线进行隔离检查，不替换正式产物；`evidence_finalize_discovery` 只在人工授权更新后评估本批次并启用语言／FM，不自动批准。assessment 始终必填，包括无候选的简单胶水；不适用须有来源理由且无未解决阻塞题。
 - 纯领域/纯渠道仍采用 FM，不强制合同；四色是凭证与数据发现方法，不是新的实体 DSL。
 - 统一语言、FM、软件需求共用 Gate。回答更正或重新发现使旧定稿失效；下游变更先人工回退。
 - 来源明确、用户回答、模型专家审核、机器验证、实际单据模拟和 Gate 是不同结论。回答账号来自 GitHub API，但不证明操作者实名、业务角色或批准权限；不改变模型专家审核要求。
@@ -53,7 +62,7 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 ## 模块
 
-R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环境操作。保持工具／命令协议、注册顺序、阶段流程、日志格式和产物路径不变；尚未引入 ExecutionPlan、Plan 级 Session 或新的审批点。所有模块仍由一个扩展实例装配。
+R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环境操作。保留模块边界、注册方式与产物路径，本次采用无兼容的 Context 批次协议；尚未引入 ExecutionPlan、Plan 级 Session 或新的审批点。所有模块仍由一个扩展实例装配。
 
 ### Pi 接入
 
@@ -73,7 +82,9 @@ R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环
 
 - `modeling/index.ts`：无 Pi 的工厂和结果契约入口；不导出生产存储绑定。
 - `modeling/discovery/service.ts`：讨论控制、问题与人工回答、追加发现、消化检查、来源新鲜度、回放覆盖与定稿就绪规则。通过 `DiscoveryRepository` 注入读取及持久化能力，不直接访问文件、Pi、Gate 或阶段调度器。
-- `modeling/discovery/schema.ts` / `replay.ts`：原有 v4 记录结构、确定性重放、更正／撤回链、来源版本绑定及当前视图投影。缓存不是业务来源。
+- `modeling/discovery/schema.ts` / `replay.ts`：v5 记录结构、确定性重放、更正／撤回链、来源版本绑定及当前视图投影。缓存不是业务来源。
+- `modeling/discovery/formalization.ts`：全历史 Context 评估、具体事实依赖闭包和真实阻塞路径计算；依据摘要区分问答积累与已发布模型，不自动解释业务公式。
+- `modeling/fm/coverage.ts`：发布前校验本批次 discovery-coverage 及编译后的模型 ID；不声称机器验证了候选与模型的语义一致性。
 - `modeling/discovery/questions.ts` / `rules.ts` / `progress.ts`：稳定缺口身份、待答／解决／阻塞判定、来源引用、合同与履约结构及发现失效规则。
 - `modeling/discovery/resolutions.ts`：注入原文读取能力，核对逐字摘录与新鲜度；不把摘录验证当作语义蕴含，不创造人工回答。
 - `modeling/discovery/view.ts`：合同双方、履约请求 → 确认凭证、异常分支和当前问题的只读投影。保留未知及失效提示，不推断审批人，不写状态。
@@ -81,7 +92,7 @@ R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环
 - `modeling/fm/files.ts` / `pipeline.ts`：源文件规则及 Schema/CEL → lineage → 适用模拟 → 业务模式投影 → 编译。运行时、命令执行和文件操作通过接口注入。
 - `modeling/fm/submission.ts` / `status.ts`：适用性约束、模型发布结果和状态页；返回机器证据，不推进后续工件或提升业务评审状态。
 
-`readFinalizedDiscovery` 返回当前 runId、revision、日志摘要及含 sourceHashes 的发现投影，并重新核对定稿就绪及材料新鲜度。这是现有记录的只读交接，不新增持久化协议，不等于业务批准。未来 Planning 仍须绑定正式工件摘要及人工 Gate，不能只凭该返回值推进。
+`readFinalizedDiscovery` 返回当前 runId、revision、日志摘要及含 sourceHashes 的发现投影，并重新核对定稿就绪及材料新鲜度。这是已校验 Context 批次及发布记录的只读交接，不等于业务批准。未来 Planning 仍须绑定正式工件摘要及人工 Gate，不能只凭该返回值推进。
 
 ### 状态、环境与指令
 

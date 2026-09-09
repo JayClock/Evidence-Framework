@@ -35,7 +35,7 @@ afterEach(async () => {
 
 function snapshot(): DiscoverySnapshot {
   return {
-    version: 4,
+    version: 5,
     runId: 'test',
     revision: 1,
     previousDigest: null,
@@ -46,6 +46,9 @@ function snapshot(): DiscoverySnapshot {
     staleRecordKeys: [],
     answers: [],
     questionResolutions: [],
+    modelUpdateRequested: false,
+    formalization: null,
+    appliedModel: null,
     draft: null,
     recordedAt: '2026-01-01',
     interaction: {

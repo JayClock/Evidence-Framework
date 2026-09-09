@@ -123,7 +123,7 @@ describe('adaptive one-question dialogue', () => {
       ).rejects.toThrow('先保存消化结果');
       await expect(
         h.tool('evidence_finalize_discovery', { expectedRevision: 3 }),
-      ).rejects.toThrow('先保存消化结果');
+      ).rejects.toThrow('更新模型');
       await expect(
         h.tool('evidence_check_model_draft', {
           expectedRevision: 3,

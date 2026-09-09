@@ -1,4 +1,7 @@
 import { Type, type Static } from 'typebox';
+import { FormalizationSchema } from './assessment-schema.ts';
+export { FormalizationAssessmentSchema } from './assessment-schema.ts';
+export type { FormalizationAssessment } from './assessment-schema.ts';
 
 const text = (minLength = 1, maxLength = 4000) =>
   Type.String({ minLength, maxLength });
@@ -70,15 +73,13 @@ export const ContractViewSchema = Type.Object(
 export const QuestionSchema = Type.Object(
   {
     id: Type.String({ pattern: '^Q-[0-9]{3,}$' }),
-    gapKey: Type.Optional(
-      Type.String({
-        minLength: 3,
-        maxLength: 160,
-        pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$',
-        description:
-          '新题必填的稳定业务缺口标识，例如 c-004.payment-deadline、input.agreement。包含讨论对象和事实维度；同一缺口复用原标识和 Q-ID，不因措辞变化新建。历史无此字段的问题原文重用时可省略。',
-      }),
-    ),
+    gapKey: Type.String({
+      minLength: 3,
+      maxLength: 160,
+      pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$',
+      description:
+        '稳定业务缺口标识，例如 c-004.payment-deadline、input.agreement。同一缺口复用原标识和 Q-ID，不因措辞变化新建。',
+    }),
     focus: text(),
     target: DiscussionTargetSchema,
     prompt: text(),
@@ -206,9 +207,28 @@ const QuestionResolutionSchema = Type.Object(
   },
 );
 
+const AppliedModelSchema = Type.Object(
+  {
+    revision: Type.Integer({ minimum: 0 }),
+    basisDigest: text(),
+    fileHashes: Type.Record(Type.String(), Type.String()),
+    includedCandidateRefs: Type.Array(candidateRef(), {
+      maxItems: 200,
+      uniqueItems: true,
+    }),
+    pendingCandidateRefs: Type.Array(candidateRef(), {
+      maxItems: 200,
+      uniqueItems: true,
+    }),
+    includedFactRefs: FormalizationSchema.properties.includedFactRefs,
+    contexts: FormalizationSchema.properties.contexts,
+  },
+  { additionalProperties: false },
+);
+
 export const DiscoverySnapshotSchema = Type.Object(
   {
-    version: Type.Literal(4),
+    version: Type.Literal(5),
     runId: text(),
     revision: Type.Integer({ minimum: 0 }),
     previousDigest: Type.Union([text(), Type.Null()]),
@@ -222,6 +242,9 @@ export const DiscoverySnapshotSchema = Type.Object(
     questionResolutions: Type.Array(QuestionResolutionSchema, {
       maxItems: 500,
     }),
+    modelUpdateRequested: Type.Boolean(),
+    formalization: Type.Union([FormalizationSchema, Type.Null()]),
+    appliedModel: Type.Union([AppliedModelSchema, Type.Null()]),
     // Interaction decisions are required control state, not A-* facts.
     interaction: Type.Object(
       {
@@ -351,12 +374,20 @@ export const DiscoveryEventSchema = Type.Union([
   Type.Object(
     {
       kind: choice('interaction'),
-      action: choice('finish', 'resume', 'skip'),
+      action: choice('finish', 'resume', 'skip', 'update-model', 'converge'),
       questionId: Type.Union([
         Type.String({ pattern: '^Q-[0-9]{3,}$' }),
         Type.Null(),
       ]),
     },
+    { additionalProperties: false },
+  ),
+  Type.Object(
+    { kind: choice('formalization'), value: FormalizationSchema },
+    { additionalProperties: false },
+  ),
+  Type.Object(
+    { kind: choice('model-applied'), value: AppliedModelSchema },
     { additionalProperties: false },
   ),
   Type.Object(
@@ -367,7 +398,7 @@ export const DiscoveryEventSchema = Type.Union([
 
 export const DiscoveryEntrySchema = Type.Object(
   {
-    version: Type.Literal(4),
+    version: Type.Literal(5),
     runId: text(),
     revision: Type.Integer({ minimum: 1 }),
     previousDigest: Type.Union([text(), Type.Null()]),
@@ -389,6 +420,12 @@ export type DiscoveryQuestion = Static<typeof QuestionSchema>;
 export type DiscoveryAnswer = Static<typeof AnswerSchema>;
 export type QuestionResolution = Static<typeof QuestionResolutionSchema>;
 export type DiscoverySnapshot = Static<typeof DiscoverySnapshotSchema>;
+export type DiscoveryControlAction =
+  | 'finish'
+  | 'resume'
+  | 'skip'
+  | 'update-model'
+  | 'converge';
 
 export interface DiscoveryProgress {
   stage: 'discovering' | 'finalizing';

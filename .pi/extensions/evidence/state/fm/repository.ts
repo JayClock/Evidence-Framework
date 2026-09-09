@@ -2,6 +2,7 @@ import {
   mkdir,
   mkdtemp,
   readdir,
+  readFile,
   rename,
   rm,
   stat,
@@ -70,6 +71,12 @@ export function createFmRepository(
       if (!validation.passed || options.draftOnly)
         return { ...validation, files: [] };
 
+      if (options.validatePublication)
+        options.validatePublication(
+          JSON.parse(
+            await readFile(join(staging, 'generated/model.json'), 'utf8'),
+          ),
+        );
       const target = resolve(options.root, FM_MODEL_ROOT);
       const backup = `${target}.backup`;
       await mkdir(dirname(target), { recursive: true });

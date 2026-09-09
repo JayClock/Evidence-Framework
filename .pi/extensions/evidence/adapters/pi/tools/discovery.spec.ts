@@ -1,4 +1,5 @@
 import { rm, symlink } from 'node:fs/promises';
+import { glueAssessment } from '../../../tests/support/context-assessment.ts';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { hashArtifacts } from '../../../gates.ts';
@@ -19,6 +20,7 @@ import {
   discoveryContent,
   seedQuestions,
 } from '../../../tests/support/discovery-test-support.ts';
+import { domainAssessment } from '../../../tests/support/discovery-fixtures.ts';
 import { domain } from '../../../tests/support/modeling-scope-test-support.ts';
 import {
   executeProcess,
@@ -80,10 +82,10 @@ async function answer(
 }
 
 describe('interactive discovery state and provenance', () => {
-  it('rebuilds v4 read models with explicit contract view and interaction state', async () => {
+  it('rebuilds v5 read models with explicit contract view and interaction state', async () => {
     const h = await fresh();
     expect(await loadDiscovery(h.root, h.state)).toMatchObject({
-      version: 4,
+      version: 5,
       content: null,
       interaction: {
         stopped: false,
@@ -96,7 +98,7 @@ describe('interactive discovery state and provenance', () => {
     expect(
       await loadDiscovery(h.root, (await loadState(h.root))!),
     ).toMatchObject({
-      version: 4,
+      version: 5,
       content: { contractView: { current: null, contracts: [] } },
       interaction: {
         stopped: false,
@@ -111,6 +113,7 @@ describe('interactive discovery state and provenance', () => {
     'v1',
     'v2',
     'v3',
+    'v4',
     'missing-event',
     'missing-records',
     'missing-summary',
@@ -126,6 +129,7 @@ describe('interactive discovery state and provenance', () => {
       if (kind === 'v1') snapshot.version = 1;
       if (kind === 'v2') snapshot.version = 2;
       if (kind === 'v3') snapshot.version = 3;
+      if (kind === 'v4') snapshot.version = 4;
       if (kind === 'missing-event') delete snapshot.event;
       if (kind === 'missing-records') delete snapshot.event.submission.records;
       if (kind === 'missing-summary') delete snapshot.event.submission.summary;
@@ -136,7 +140,7 @@ describe('interactive discovery state and provenance', () => {
       const before = await readText(h.root, '.evidence/state.json');
       await expect(loadDiscovery(h.root, state)).rejects.toThrow(
         kind.startsWith('v')
-          ? '仅支持发现记录 v4'
+          ? '仅支持发现记录 v5'
           : '发现记录结构或运行版本不一致',
       );
       expect(await readText(h.root, '.evidence/state.json')).toBe(before);
@@ -169,7 +173,14 @@ describe('interactive discovery state and provenance', () => {
       }),
     );
     await saveContent(h);
-    await h.tool('evidence_finalize_discovery', { expectedRevision: 1 });
+    const idle = (await loadState(h.root))!;
+    idle.status = 'ready';
+    await saveState(h.root, idle);
+    await h.command('evidence-discovery', 'update-model');
+    await h.tool('evidence_finalize_discovery', {
+      expectedRevision: await revision(h),
+      assessment: domainAssessment(),
+    });
     await h.command('evidence-status');
     expect(h.api.sendMessage).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -272,7 +283,7 @@ describe('interactive discovery state and provenance', () => {
       h.tool('evidence_finalize_discovery', {
         expectedRevision: await revision(h),
       }),
-    ).rejects.toThrow('阻塞问题未解决');
+    ).rejects.toThrow('更新模型');
     expect((await loadState(h.root))?.round).toBe(0);
   });
 
@@ -326,7 +337,11 @@ describe('interactive discovery state and provenance', () => {
     await h.saveDiscovery({ expectedRevision: 0, content });
     await writeTextAtomic(h.root, 'contract.md', '改成提前结算');
     await expect(
-      h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
+      assertDiscoveryReady(
+        h.root,
+        (await loadState(h.root))!,
+        domainAssessment(),
+      ),
     ).rejects.toThrow('原始材料已变化');
     content.sources[0].path = 'artifacts/02-modeling/fm-model/status.md';
     await expect(
@@ -389,7 +404,15 @@ describe('interactive discovery state and provenance', () => {
     content.cases.pop();
     await h.saveDiscovery({ expectedRevision: 0, content });
     await expect(
-      h.tool('evidence_finalize_discovery', { expectedRevision: 1 }),
+      assertDiscoveryReady(
+        h.root,
+        (await loadState(h.root))!,
+        (() => {
+          const value = domainAssessment();
+          value.contexts[0].caseRefs.pop();
+          return value;
+        })(),
+      ),
     ).rejects.toThrow('exception');
     const inferred = discoveryContent();
     inferred.candidates[0].confidence = 'inferred';
@@ -399,11 +422,19 @@ describe('interactive discovery state and provenance', () => {
       content: inferred,
     });
     await expect(
-      h.tool('evidence_finalize_discovery', { expectedRevision: 2 }),
-    ).rejects.toThrow('未确认候选');
+      assertDiscoveryReady(
+        h.root,
+        (await loadState(h.root))!,
+        (() => {
+          const value = domainAssessment();
+          value.contexts[0].facts[0].sourceRefs = [];
+          return value;
+        })(),
+      ),
+    ).rejects.toThrow('明确事实和场景预期必须有来源');
   });
 
-  it('correction preserves raw history, cancels a gate and makes referenced old answers unusable', async () => {
+  it('correction after a manual update and convergence preserves raw history, cancels its gate and invalidates old answers', async () => {
     const h = await fresh();
     await h.tool('evidence_ask_questions', {
       expectedRevision: 0,
@@ -412,9 +443,15 @@ describe('interactive discovery state and provenance', () => {
     await answer(h);
     await h.command('evidence-run');
     const content = discoveryContent();
-    content.candidates[0].sourceRefs = ['A-001'];
+    content.candidates = [];
+    content.cases[0].sourceRefs = ['A-001'];
     await h.saveDiscovery({ expectedRevision: 2, content });
-    await h.tool('evidence_finalize_discovery', { expectedRevision: 3 });
+    await h.events.get('agent_settled')!({}, h.ctx);
+    await h.command('evidence-discovery', 'update-model');
+    await h.tool('evidence_finalize_discovery', {
+      expectedRevision: await revision(h),
+      assessment: glueAssessment(),
+    });
     await h.command('evidence-run');
     for (const spec of getPhaseDefinition('modeling').artifacts) {
       await h.tool(
@@ -430,6 +467,10 @@ describe('interactive discovery state and provenance', () => {
             }
           : { content: validDocument(spec) },
       );
+      if (spec.kind === 'fm-model') {
+        await h.command('evidence-discovery', 'converge');
+        await h.command('evidence-run');
+      }
     }
     const waiting = (await loadState(h.root))!;
     expect(waiting.status).toBe('waiting_review');
@@ -441,7 +482,7 @@ describe('interactive discovery state and provenance', () => {
       currentArtifactIndex: 0,
       pendingGate: null,
       discovery: { stage: 'discovering' },
-      modeling: { applicable: null },
+      modeling: { applicable: false },
     });
     expect(await readText(h.root, waiting.discovery.path!)).toBe(original);
     expect(await readText(h.root, waiting.pendingGate!.path)).toContain(

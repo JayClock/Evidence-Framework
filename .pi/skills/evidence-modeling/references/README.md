@@ -17,6 +17,7 @@ Schema v3 不接受 Schema v2 模型。统一表达合同履约、签约前渠�
 | 任务                                               | 必读                                              |
 | -------------------------------------------------- | ------------------------------------------------- |
 | 从业务叙述、领域问题、Epic、访谈发现范围与事实     | `discovery-workshop.md`                           |
+| 人工更新模型、Context 事实依赖评估与发布覆盖       | `incremental-assessment.md`                       |
 | 识别上下文、组合模型；有履约时按 Role-first 建主链 | `semantics.md`                                    |
 | 客户信息、商品、内容等纯领域或混合模型中的领域部分 | `domain-modeling.md`、`format.md`、`cel-rules.md` |
 | 创建或更新 YAML、Context 与 Participant→Role       | `format.md`、`semantics.md`                       |

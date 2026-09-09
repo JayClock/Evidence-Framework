@@ -13,6 +13,7 @@ import {
   discoveryViewPath,
   loadDiscoveryEntries,
   refreshDiscoveryView,
+  loadDiscovery,
   requireFinalizing,
 } from './state/discovery/index.ts';
 import { projectEntryExists, readText, REQUIREMENTS_PATH } from './storage.ts';
@@ -177,6 +178,15 @@ ${inputList(inputs)}
   if (state.phase === 'modeling')
     artifactPrompt += `\n发现版本：${state.discovery.revision}。扩展已重建完整视图：${discoveryViewPath(state)}，使用现有 read 按需分页读取，核对 revision；历史依据位于 ${state.discovery.path} 所属记录链。单个 revision 文件仅为追加记录，不是完整快照。当前视图只是可重建缓存，不作为独立业务来源。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_ask_questions 或 evidence_save_discovery 重新打开发现，旧定稿失效，不私改其他工件。`;
 
+  if (state.phase === 'modeling') {
+    const snapshot = await loadDiscovery(root, state);
+    if (snapshot.modelUpdateRequested)
+      artifactPrompt +=
+        '\n本次是人工触发的模型更新批次，不是结束 Modeling。先读取现有统一语言和 FM（若存在），保留稳定 ID；纳入已积累发现，更新成功后等待人工继续问答或进入需求收敛。不能要求先完成全部履约链。';
+    if (snapshot.formalization)
+      artifactPrompt += `\n本次 Context 评估：${snapshot.formalization.contexts.map((c) => `${c.contextRef}(${c.status})`).join('、') || '无独立业务 Context；不适用理由见 assessment.applicability'}。纳入事实：${snapshot.formalization.includedFactRefs.join('、') || '无'}。ready 仅表示本批次职责就绪；support 只表达已纳入的支撑事实，不声称关联 Context 全部完成。读取 formalization.assessment 核对职责、事实来源、具体依赖和 remainingScope；缺口不编成正式事实。适用 FM 必须提交 discovery/formalization.md 中唯一 JSON 块，结构为 version:1、kind:discovery-coverage、revision:${snapshot.revision}、contexts:[{contextRef,status,modelRefs,retainedFactRefs,remainingScope}]、facts:[{factRef,modelRefs}]。contexts 覆盖全部评估 Context，pending 的 modelRefs 为空，其他 Context 映射到同 kind 的实际 Context ID；retainedFactRefs 列该 Context 全部未纳入事实，remainingScope 保持评估原文。facts 精确映射全部 includedFactRefs 到存在的模型 ID。说明与上一批次相比的新增、修订、撤回与未纳入原因。不可用旧 candidates 覆盖协议。详情按需读 .pi/skills/evidence-modeling/references/incremental-assessment.md。需求文档只以已纳入的模型为依据。`;
+  }
+
   if (artifact.kind === 'fm-model') {
     return `# Evidence 统一 FM 建模任务
 
@@ -258,7 +268,7 @@ export function buildPhaseGuard(state: EvidenceState): string {
       ? `; TDD checkpoint: ${state.coding.tdd.stage}; completed cycles: ${state.coding.cycles.length}; active task/check: ${state.coding.tdd.binding ? `${state.coding.tdd.binding.taskId}/${state.coding.tdd.binding.checkId}` : 'none'}`
       : '';
   const checkpoint = discovering
-    ? 'Use evidence_ask_questions to persist questions and stop for human answers, or evidence_save_discovery to save a checkpoint. Only evidence_finalize_discovery enables formal submissions; do not require a formal artifact at the end of a discovery turn.'
+    ? 'Use evidence_ask_questions to persist questions and stop for human answers, or evidence_save_discovery to save a checkpoint. Q&A accumulates discovery only. evidence_finalize_discovery requires the human update-model action and assesses the current batch; finish alone does not authorize publication. FM update returns to discovery, and requirements convergence is a separate human action. Do not require a formal artifact at the end of a discovery turn.'
     : 'Finish through the designated evidence_* submission tool.';
   return `\n\n## Evidence active scope
 The deterministic local workflow is active. Current phase: ${state.phase}; current subject: ${subject}; round: ${state.round}${tdd}. Stay inside this scope. Do not advance workflow state yourself. ${checkpoint}`;

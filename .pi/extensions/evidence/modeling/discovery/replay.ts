@@ -13,7 +13,7 @@ import type {
 
 export function emptyDiscovery(runId: string): DiscoverySnapshot {
   return {
-    version: 4,
+    version: 5,
     runId,
     revision: 0,
     previousDigest: null,
@@ -26,6 +26,9 @@ export function emptyDiscovery(runId: string): DiscoverySnapshot {
     questions: [],
     answers: [],
     questionResolutions: [],
+    modelUpdateRequested: false,
+    formalization: null,
+    appliedModel: null,
     draft: null,
     interaction: {
       stopped: false,
@@ -174,7 +177,8 @@ function applyControl(
     interaction.needsConsolidation = true;
   } else {
     if (event.questionId !== null) throw new Error('结束或恢复不能携带问题 ID');
-    interaction.stopped = event.action === 'finish';
+    interaction.stopped = event.action !== 'resume';
+    snapshot.modelUpdateRequested = event.action === 'update-model';
     if (event.action === 'resume') {
       interaction.deferredQuestionIds = [];
       interaction.activeQuestionId = interaction.needsConsolidation
@@ -200,6 +204,7 @@ export function projectDiscovery(
     snapshot.draft = null;
     switch (event.kind) {
       case 'discovery': {
+        snapshot.formalization = null;
         const added = new Set<string>();
         event.submission.records.forEach((record, i) => {
           const ref = discoveryRecordId(entry.revision, i);
@@ -248,6 +253,8 @@ export function projectDiscovery(
         break;
       }
       case 'question': {
+        snapshot.formalization = null;
+        snapshot.modelUpdateRequested = false;
         const existing = snapshot.questions.find(
           (q) => q.id === event.question.id,
         );
@@ -258,6 +265,8 @@ export function projectDiscovery(
         break;
       }
       case 'answer': {
+        snapshot.formalization = null;
+        snapshot.modelUpdateRequested = false;
         const previous = [...snapshot.answers]
           .reverse()
           .find((a) => a.questionId === event.answer.questionId);
@@ -280,6 +289,24 @@ export function projectDiscovery(
       case 'interaction':
         materializeSnapshot(snapshot, heads, hashes);
         applyControl(snapshot, event);
+        break;
+      case 'formalization':
+        if (
+          !snapshot.modelUpdateRequested ||
+          snapshot.interaction.needsConsolidation ||
+          event.value.revision !== entry.revision - 1
+        )
+          throw new Error('模型更新评估缺少人工请求、尚有未消化输入或版本无效');
+        snapshot.formalization = event.value;
+        break;
+      case 'model-applied':
+        if (
+          !snapshot.modelUpdateRequested ||
+          event.value.revision !== entry.revision - 1
+        )
+          throw new Error('模型更新发布记录缺少人工请求或版本无效');
+        snapshot.appliedModel = event.value;
+        snapshot.modelUpdateRequested = false;
         break;
       case 'draft':
         snapshot.draft = event.result;

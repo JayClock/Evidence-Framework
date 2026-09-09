@@ -16,6 +16,7 @@ import {
   discoveryContent,
   seedQuestions,
 } from '../../tests/support/discovery-test-support.ts';
+import { domainAssessment } from '../../tests/support/discovery-fixtures.ts';
 import { qualityHarness } from '../../tests/support/quality-test-support.ts';
 
 const roots: string[] = [];
@@ -41,6 +42,7 @@ async function setup(blocking = true) {
     (await loadState(h.root))!,
     ['Q-001', 'Q-002'].map((id) => ({
       id,
+      gapKey: `input.${id.toLowerCase()}`,
       focus: 'domain',
       target: null,
       prompt: `${id} 如何识别重复客户？`,
@@ -63,6 +65,37 @@ async function current(h: Awaited<ReturnType<typeof setup>>) {
 }
 
 describe('manual discovery interaction controls', () => {
+  it('selects update-model without a business answer and continues through blockers to assessment', async () => {
+    const h = await setup();
+    h.ui.select.mockResolvedValue('更新模型（纳入已积累的发现）');
+    await h.command('evidence-answer');
+    expect(h.api.exec).not.toHaveBeenCalled();
+    expect((await current(h)).snapshot.answers).toEqual([]);
+    expect((await current(h)).snapshot.modelUpdateRequested).toBe(true);
+    expect(h.api.sendUserMessage).toHaveBeenLastCalledWith(
+      expect.stringContaining('人工已选择「更新模型」'),
+    );
+    const result = await h.saveDiscovery({
+      expectedRevision: (await current(h)).state.discovery.revision,
+      content: discoveryContent(),
+    });
+    expect(result).toMatchObject({ terminate: false });
+    expect((await current(h)).state.status).toBe('running');
+    expect((await current(h)).snapshot.modelUpdateRequested).toBe(true);
+    expect((await current(h)).state.discovery.stage).toBe('discovering');
+  });
+
+  it('does not enter requirements without an applied current model or through a noninteractive command', async () => {
+    const h = await setup(false);
+    const before = await readText(h.root, '.evidence/state.json');
+    await expect(h.command('evidence-discovery', 'converge')).rejects.toThrow(
+      '更新模型',
+    );
+    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+    h.ctx.hasUI = false;
+    await h.command('evidence-discovery', 'update-model');
+    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
+  });
   it('skips without text, GitHub lookup or fabricated answers, and permits continued discovery', async () => {
     const h = await setup();
     h.ui.select.mockResolvedValue(skip);
@@ -86,19 +119,23 @@ describe('manual discovery interaction controls', () => {
       content: discoveryContent(),
     });
     await expect(
-      assertDiscoveryReady(h.root, (await current(h)).state),
-    ).rejects.toThrow('阻塞问题未解决');
+      assertDiscoveryReady(
+        h.root,
+        (await current(h)).state,
+        domainAssessment(),
+      ),
+    ).rejects.toThrow('未解决阻塞题');
   });
 
   it.each(['evidence-answer', 'evidence-next'])(
-    'offers only answer or finish for the current question in %s',
+    'offers answer, manual model update and finish for the current question in %s',
     async (command) => {
       const h = await setup();
       h.ui.select.mockResolvedValue(finish);
       await h.command(command);
       expect(h.ui.select).toHaveBeenCalledExactlyOnceWith(
         expect.stringContaining('当前问题：Q-001'),
-        ['回答', finish],
+        ['回答', '更新模型（纳入已积累的发现）', finish],
         { signal: expect.any(AbortSignal) },
       );
       expect(h.ui.editor).not.toHaveBeenCalled();
@@ -206,7 +243,7 @@ describe('manual discovery interaction controls', () => {
       h.tool('evidence_finalize_discovery', {
         expectedRevision: saved.state.discovery.revision,
       }),
-    ).rejects.toThrow('阻塞问题未解决：Q-002');
+    ).rejects.toThrow('更新模型');
     await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-discovery', 'resume');
     expect((await current(h)).state.status).toBe('waiting_answer');
@@ -222,9 +259,11 @@ describe('manual discovery interaction controls', () => {
       expectedRevision: saved.state.discovery.revision,
       content: discoveryContent(),
     });
-    expect(result).toMatchObject({ terminate: false });
+    expect(result).toMatchObject({ terminate: true });
+    await h.command('evidence-discovery', 'update-model');
     await h.tool('evidence_finalize_discovery', {
       expectedRevision: (await current(h)).state.discovery.revision,
+      assessment: domainAssessment(),
     });
     expect((await current(h)).state.discovery.stage).toBe('finalizing');
     expect((await current(h)).snapshot.answers).toEqual([]);
@@ -251,7 +290,11 @@ describe('manual discovery interaction controls', () => {
       content: discoveryContent(),
     });
     await expect(
-      assertDiscoveryReady(h.root, (await current(h)).state),
+      assertDiscoveryReady(
+        h.root,
+        (await current(h)).state,
+        domainAssessment(),
+      ),
     ).resolves.toBeDefined();
   });
 
@@ -333,10 +376,10 @@ describe('manual discovery interaction controls', () => {
   );
 
   it.each(['sources', 'replay'])(
-    'finish does not bypass %s checks',
+    'manual update does not bypass %s checks',
     async (gap) => {
       const h = await setup(false);
-      await h.command('evidence-discovery', 'finish');
+      await h.command('evidence-discovery', 'update-model');
       if (gap === 'sources')
         await writeTextAtomic(
           h.root,
@@ -354,6 +397,11 @@ describe('manual discovery interaction controls', () => {
       await expect(
         h.tool('evidence_finalize_discovery', {
           expectedRevision: (await current(h)).state.discovery.revision,
+          assessment: (() => {
+            const value = domainAssessment();
+            if (gap === 'replay') value.contexts[0].caseRefs.pop();
+            return value;
+          })(),
         }),
       ).rejects.toThrow(gap === 'sources' ? '原始材料已变化' : 'exception');
       expect((await current(h)).state.discovery.stage).toBe('discovering');

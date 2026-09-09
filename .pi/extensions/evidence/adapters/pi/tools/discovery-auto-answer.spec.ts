@@ -77,7 +77,7 @@ describe('automatic current-question entry', () => {
     await h.settled();
     expect(h.ui.select).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining('当前问题：Q-001 什么凭证证明分成已支付？'),
-      ['回答', FINISH_DISCOVERY],
+      ['回答', '更新模型（纳入已积累的发现）', FINISH_DISCOVERY],
       { signal: expect.any(AbortSignal) },
     );
     expect(h.ui.editor).toHaveBeenCalledExactlyOnceWith(

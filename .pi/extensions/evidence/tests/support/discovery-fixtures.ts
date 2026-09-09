@@ -36,6 +36,8 @@ export function discoveryContent(): DiscoveryContent {
   };
 }
 
+export { contextAssessment as domainAssessment } from './context-assessment.ts';
+
 export function contractContent(): DiscoveryContent {
   const base = discoveryContent();
   const labels = [

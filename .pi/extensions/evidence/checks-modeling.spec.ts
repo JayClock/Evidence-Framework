@@ -52,7 +52,7 @@ async function checkHarness(phase: 'modeling' | 'review') {
   roots.push(root);
   const state = createInitialState('test', 'goal');
   state.phase = phase;
-  await seedDiscovery(root, state);
+  if (phase === 'modeling') await seedDiscovery(root, state);
   vi.mocked(validateDocumentPhase).mockResolvedValue({
     phase,
     subject: phase,

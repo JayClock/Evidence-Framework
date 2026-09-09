@@ -28,6 +28,7 @@ async function freshHarness(config = {}) {
   const harness = await qualityHarness(roots, config);
   const state = createInitialState('test', '交互发现后再定稿的范围');
   state.status = 'running';
+  state.modeling.applicable = false;
   await seedDiscovery(harness.root, state);
   await saveState(harness.root, state);
   return { ...harness, state };
@@ -55,9 +56,11 @@ async function submitModeling(h: Awaited<ReturnType<typeof freshHarness>>) {
     if (spec.key === 'fulfillment-model') {
       expect(await loadState(h.root)).toMatchObject({
         phase: 'modeling',
-        currentArtifactIndex: 2,
+        currentArtifactIndex: 0,
+        discovery: { stage: 'discovering' },
         pendingGate: null,
       });
+      await h.command('evidence-discovery', 'converge');
     }
   }
 }
@@ -108,24 +111,25 @@ describe('discovery-driven formal artifact workflow', () => {
       });
       await submitModeling(h);
       expect(await loadState(h.root)).toMatchObject({ phase, status });
-      expect(h.api.sendUserMessage).not.toHaveBeenCalled();
+      // Only the explicit converge command dispatches a task.
+      expect(h.api.sendUserMessage).toHaveBeenCalledTimes(1);
     },
   );
 
   it('rejects missing language at the final shared gate instead of accepting retained files', async () => {
     const h = await freshHarness();
-    h.state.currentArtifactIndex = 4;
-    h.state.modeling.applicable = false;
-    await saveState(h.root, h.state);
+    await submitModeling(h);
+    const published = (await loadState(h.root))!;
+    published.currentArtifactIndex = 4;
+    published.status = 'running';
+    published.pendingGate = null;
+    await saveState(h.root, published);
     await rm(join(h.root, 'artifacts/02-modeling/ubiquitous-language.md'));
     const spec = getPhaseDefinition('modeling').artifacts[4];
-    await h.tool('evidence_submit_artifact', { content: validDocument(spec) });
-    expect(await loadState(h.root)).toMatchObject({
-      status: 'ready',
-      round: 1,
-      currentArtifactIndex: 0,
-      pendingGate: null,
-    });
+    await expect(
+      h.tool('evidence_submit_artifact', { content: validDocument(spec) }),
+    ).rejects.toThrow('已发布模型文件已变化');
+    expect((await loadState(h.root))?.pendingGate).toBeNull();
   });
 
   it('allows reset of v5 but never reuses its discovery decisions', async () => {
@@ -156,7 +160,7 @@ describe('discovery-driven formal artifact workflow', () => {
     expect(await loadState(h.root)).toMatchObject({
       status: 'ready',
       discovery: { stage: 'discovering' },
-      modeling: { applicable: null },
+      modeling: { applicable: false },
     });
     await h.command('evidence-run');
     expect(h.api.sendUserMessage).toHaveBeenLastCalledWith(

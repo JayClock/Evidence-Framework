@@ -9,6 +9,7 @@ export const {
   appendDiscoveryRecords,
   assertDiscoveryReady,
   finalizeDiscovery,
+  completeModelUpdate,
   requireFinalizing,
   readFinalizedDiscovery,
 } = createDiscoveryService(fileDiscoveryRepository);

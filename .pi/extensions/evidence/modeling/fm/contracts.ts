@@ -32,6 +32,7 @@ export interface RuntimeOptions {
   timeoutMs: number;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
+  validatePublication?: (compiledModel: unknown) => void;
 }
 
 export interface ValidationOptions extends RuntimeOptions {

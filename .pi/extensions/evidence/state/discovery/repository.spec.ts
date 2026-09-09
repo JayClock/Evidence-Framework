@@ -1,4 +1,5 @@
 import { readdir, rm } from 'node:fs/promises';
+import { domainAssessment } from '../../tests/support/discovery-fixtures.ts';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { discoveryDetailsPath } from '../../instructions/discovery-context.ts';
@@ -274,6 +275,7 @@ describe('append-only discovery journal and rebuildable read model', () => {
       kind: 'question',
       question: {
         id: 'Q-001',
+        gapKey: 'input.identity',
         focus: 'evidence',
         target: null,
         prompt: '付款期限如何约定？',
@@ -353,9 +355,9 @@ describe('append-only discovery journal and rebuildable read model', () => {
     await append(h, [note]);
     const changed = await current(h);
     expect(changed.snapshot.sourceHashes['agreement.md']).toBe(hash);
-    await expect(assertDiscoveryReady(h.root, changed.state)).rejects.toThrow(
-      '原始材料已变化',
-    );
+    await expect(
+      assertDiscoveryReady(h.root, changed.state, domainAssessment()),
+    ).rejects.toThrow('原始材料已变化');
     const sourceRecord: DiscoveryRecord = {
       kind: 'source',
       supersedes: changed.snapshot.recordHeads['source:SRC-001'],
@@ -373,7 +375,7 @@ describe('append-only discovery journal and rebuildable read model', () => {
     const rebound = await current(h);
     expect(rebound.snapshot.sourceHashes['agreement.md']).not.toBe(hash);
     await expect(
-      assertDiscoveryReady(h.root, rebound.state),
+      assertDiscoveryReady(h.root, rebound.state, domainAssessment()),
     ).resolves.toBeDefined();
   });
 

@@ -70,7 +70,7 @@ export function pendingQuestions(
 
 // This is an identity guard, not an LLM semantic classifier. Stable keys handle
 // paraphrases declared as the same gap; text normalization catches trivial renames
-// in old journals. Different business objects may legitimately use the same wording.
+// with different keys. Different business objects may legitimately use the same wording.
 export function duplicateQuestion(
   snapshot: DiscoverySnapshot,
   question: DiscoveryQuestion,
@@ -83,13 +83,11 @@ export function duplicateQuestion(
   return snapshot.questions.find(
     (previous) =>
       previous.id !== question.id &&
-      ((question.gapKey !== undefined && previous.gapKey === question.gapKey) ||
+      (previous.gapKey === question.gapKey ||
         (previous.target?.contractRef === question.target?.contractRef &&
           previous.target?.fulfillmentRef === question.target?.fulfillmentRef &&
           // Distinct explicit subject keys distinguish domain/channel questions.
           (question.target !== null ||
-            !previous.gapKey ||
-            !question.gapKey ||
             previous.gapKey.split('.')[0] === question.gapKey.split('.')[0]) &&
           normalized(previous.prompt) === normalized(question.prompt))),
   );

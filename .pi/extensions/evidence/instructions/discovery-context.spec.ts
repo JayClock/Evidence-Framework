@@ -67,6 +67,7 @@ function answer(
   if (!snapshot.questions.some((q) => q.id === questionId))
     snapshot.questions.push({
       id: questionId,
+      gapKey: `input.${questionId.toLowerCase()}`,
       focus: 'evidence',
       target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
       prompt: `问题 ${questionId}`,
@@ -84,7 +85,7 @@ function answer(
   };
   snapshot.answers.push(value);
   return {
-    version: 4,
+    version: 5,
     runId: snapshot.runId,
     revision,
     previousDigest: null,

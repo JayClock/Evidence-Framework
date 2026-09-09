@@ -14,6 +14,7 @@ import {
 } from '../../../modeling/discovery/questions.ts';
 import {
   DiscoverySubmissionSchema,
+  FormalizationAssessmentSchema,
   QuestionSchema,
   type DiscoveryAnswer,
   type DiscoveryQuestion,
@@ -38,6 +39,8 @@ import type { EvidenceState } from '../../../types.ts';
 import {
   changeDiscoveryInteraction,
   FINISH_DISCOVERY,
+  UPDATE_MODEL,
+  CONVERGE_REQUIREMENTS,
   finishDiscoveryInteraction,
   SKIP_QUESTION,
   type RefreshDiscovery as Refresh,
@@ -131,7 +134,7 @@ async function selectDiscoveryAction(
   state: EvidenceState,
   signal: AbortSignal,
 ): Promise<
-  | { kind: 'finish' }
+  | { kind: 'finish' | 'update-model' | 'converge' }
   | { kind: 'question'; question: DiscoveryQuestion; mode: string }
   | undefined
 > {
@@ -141,10 +144,11 @@ async function selectDiscoveryAction(
     const action = await selectDiscoveryView(ctx, snapshot, {
       questionId: active.id,
       title: '业务建模 · 等待回答',
-      choices: ['回答', FINISH_DISCOVERY],
+      choices: ['回答', UPDATE_MODEL, FINISH_DISCOVERY],
       signal,
     });
     if (action === FINISH_DISCOVERY) return { kind: 'finish' };
+    if (action === UPDATE_MODEL) return { kind: 'update-model' };
     return action === '回答'
       ? { kind: 'question', question: active, mode: '事实或决定' }
       : undefined;
@@ -163,12 +167,22 @@ async function selectDiscoveryAction(
         title: '选择业务问题（历史问题可更正）',
         choices: [
           ...choices.map((q) => questionLabel(snapshot, q.id)),
-          ...(discovering ? [FINISH_DISCOVERY] : []),
+          ...(discovering
+            ? [
+                UPDATE_MODEL,
+                FINISH_DISCOVERY,
+                ...(snapshot.appliedModel ? [CONVERGE_REQUIREMENTS] : []),
+              ]
+            : []),
         ],
         signal,
       }));
     selectedId = '';
     if (discovering && selected === FINISH_DISCOVERY) return { kind: 'finish' };
+    if (discovering && selected === UPDATE_MODEL)
+      return { kind: 'update-model' };
+    if (discovering && selected === CONVERGE_REQUIREMENTS)
+      return { kind: 'converge' };
     const question = snapshot.questions.find(
       (q) => q.id === selected?.split(' ')[0],
     );
@@ -259,6 +273,15 @@ async function collectIdleAnswer(
   await assertCurrent();
   if (action.kind === 'finish') {
     await finishDiscoveryInteraction(ctx, refresh, startWork, state, signal);
+    return;
+  }
+  if (action.kind !== 'question') {
+    const saved = await changeDiscoveryInteraction(ctx, refresh, {
+      action: action.kind,
+      expected: state,
+      signal,
+    });
+    if (saved && !signal.aborted) await startWork(ctx, saved);
     return;
   }
   const { question, mode } = action;
@@ -396,16 +419,21 @@ export function registerDiscoveryTools(
   });
   pi.registerCommand('evidence-discovery', {
     description:
-      'finish：结束问答并整理已有信息；resume：恢复问答和暂缓问题（均不批准定稿）',
+      '问答与模型分离：update-model 手动更新模型；converge 进入需求收敛；finish 仅整理；resume 继续问答',
     handler: async (args, ctx) => {
       await ctx.waitForIdle();
       if (args.trim() === 'finish')
         await finishDiscoveryInteraction(ctx, refresh, startWork);
       else if (args.trim() === 'resume')
         await changeDiscoveryInteraction(ctx, refresh, { action: 'resume' });
-      else
+      else if (args.trim() === 'update-model' || args.trim() === 'converge') {
+        const saved = await changeDiscoveryInteraction(ctx, refresh, {
+          action: args.trim() as 'update-model' | 'converge',
+        });
+        if (saved) await startWork(ctx, saved);
+      } else
         ctx.ui.notify(
-          '用法：/evidence-discovery finish 或 /evidence-discovery resume',
+          '用法：/evidence-discovery update-model | converge | finish | resume；也可通过 /evidence-answer 菜单选择更新模型',
           'info',
         );
     },
@@ -458,6 +486,11 @@ export function registerDiscoveryTools(
         await appendDiscoveryRecords(ctx.cwd, state, submission);
         await refresh(ctx, state);
         const snapshot = await loadDiscovery(ctx.cwd, state);
+        if (snapshot.modelUpdateRequested)
+          return result(
+            '发现已积累；人工已选择更新模型。接下来必须评估全部历史候选及阻塞题实际影响，调用 evidence_finalize_discovery；不能仅因某个下游缺口停止整个更新。',
+            state,
+          );
         if (snapshot.interaction.stopped) {
           const blockers = unresolvedBlockingQuestions(snapshot);
           if (blockers.length) {
@@ -469,8 +502,9 @@ export function registerDiscoveryTools(
             );
           }
           return result(
-            '发现记录已保存；禁止自动追问。无问题阻塞，可继续原有来源、回放及定稿校验。',
+            '发现记录已保存；本轮整理结束，不更新正式模型。由人工选择「更新模型」或恢复问答。',
             state,
+            true,
           );
         }
         return result(
@@ -520,18 +554,33 @@ export function registerDiscoveryTools(
   });
   pi.registerTool({
     name: 'evidence_finalize_discovery',
-    label: '结束发现并开始定稿',
+    label: '评估本次模型更新',
     description:
-      'Check declared scope, source freshness, blockers and normal/boundary/exception replay coverage, then enable formal language/FM and software requirements artifacts. Does not approve the model or create a gate.',
-    parameters: Type.Object({ expectedRevision: revision }),
+      'Only after the human selects update-model. Consume all new answers first, then assess ALL discovered Contexts with their scoped responsibilities and ALL historical candidates. Use assessment version 1: applicability, contexts and questions. Domain assesses identity/structure and relevant rules, Channel real evidence/parties/validity and relevant response rules, Contract identity/parties/agreement, Fulfillment identity/parties/request/deadline/confirmation/rules. Each context declares facts (stable key, candidateRef, dimension, known/unknown statement and business source), requiredFactRefs, typed structure/provenance/decision dependencies connecting consumerFactRef to providerFactRef, caseRefs and remainingScope. Fact refs are C-context.key. Map EVERY unresolved blocking question to affectedFactRefs (null means global). Publication includes ready contexts and only the sourced support facts they consume from other contexts, NOT entire upstream contexts. Unknown signing channels, sibling obligations or optional domain rules do not automatically block known projections. Existing candidate confidence is not a substitute for fact-level provenance. Persist the assessment even when nothing is complete; never resolve questions, exclude scope or invent liability endpoints through it. Enable language/FM update only; publishing FM returns to discovery, not software requirements or a Gate. Ordinary answers and finish do not authorize publication.',
+    parameters: Type.Object({
+      expectedRevision: revision,
+      assessment: FormalizationAssessmentSchema,
+    }),
     async execute(_id, params, _signal, _update, ctx) {
       return withModelingLock(ctx.cwd, async () => {
         const state = await runningState(ctx.cwd, params.expectedRevision);
-        await finalizeDiscovery(ctx.cwd, state);
+        const ready = await finalizeDiscovery(
+          ctx.cwd,
+          state,
+          params.assessment,
+        );
         await refresh(ctx, state);
-        ctx.ui.setEditorText('/evidence-run');
+        ctx.ui.setEditorText(
+          ready ? '/evidence-run' : '/evidence-discovery resume',
+        );
+        const snapshot = await loadDiscovery(ctx.cwd, state);
+        const assessment = snapshot.formalization!;
+        const status = `Context：${assessment.contexts.map((c) => `${c.contextRef}(${c.status})`).join('、') || '不适用'}；纳入事实 ${assessment.includedFactRefs.length} 项。阻塞路径：${assessment.blockers.map((b) => `${b.factRef} ← ${b.reasons.join('、')}`).join('；') || '无'}。ready 仅表示本批次职责就绪，support 仅表示支撑投影；全部剩余职责与未纳入事实保留在评估中。`;
         return result(
-          '发现声明检查通过（不证明业务完整性）。运行 /evidence-run 依次定稿统一语言、FM 和软件需求，共用 Modeling Gate。',
+          (ready
+            ? '模型更新评估通过（不等于业务批准）。运行 /evidence-run 更新统一语言与 FM；成功后停回发现，不自动收敛需求。'
+            : '评估已保存，目前没有必要依赖齐备的本批次职责。原模型未改动；保留缺口，等待人工继续问答。') +
+            status,
           state,
           true,
         );

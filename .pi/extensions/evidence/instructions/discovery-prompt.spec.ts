@@ -56,6 +56,7 @@ async function setup() {
 
 const question = {
   id: 'Q-001',
+  gapKey: 'input.agreement',
   focus: 'responsibilities',
   target: null,
   prompt: '双方分别承诺什么？',
@@ -113,7 +114,23 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '逐项检查主要履约的违约情况',
         '对新增的补偿履约重复检查',
         '不因已有一项赔付就认为整个合同的异常已覆盖',
-        '直到有依据地确认只能诉诸法律',
+        '有依据时确认只能诉诸法律',
+        '不要求本轮全部找到终点',
+        '不是首版模型或独立主履约产出的全局准入条件',
+      ],
+    ],
+    [
+      'manually requested incremental model updates',
+      [
+        '问答只积累发现记录',
+        'finish` 仅停止提问并整理',
+        '/evidence-discovery update-model',
+        '覆盖全部历史有效候选的 Context assessment v1',
+        'requiredFactRefs',
+        'affectedFactRefs',
+        '只纳入被消费的已知支撑事实',
+        'FM 更新成功后停回发现',
+        '/evidence-discovery converge',
       ],
     ],
     [

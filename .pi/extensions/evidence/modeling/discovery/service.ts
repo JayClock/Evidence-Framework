@@ -4,13 +4,13 @@ import type { EvidenceState } from '../../types.ts';
 import { digestText } from '../digest.ts';
 import type { DiscoveryRepository } from './ports.ts';
 import { reopenDiscovery } from './progress.ts';
+import { assessFormalization, discoveryBasisDigest } from './formalization.ts';
 import {
   activeResolution,
   duplicateQuestion,
   latestAnswer,
   pendingQuestions,
   unansweredQuestions,
-  unresolvedBlockingQuestions,
 } from './questions.ts';
 import { projectDiscovery } from './replay.ts';
 import { createResolutionChecks } from './resolutions.ts';
@@ -29,6 +29,8 @@ import {
   type DiscoveryQuestion,
   type DiscoverySnapshot,
   type DiscoverySubmission,
+  type DiscoveryControlAction,
+  type FormalizationAssessment,
 } from './schema.ts';
 
 // The caller serializes load/validate/append. No UI, filesystem or Gate decision lives here.
@@ -52,18 +54,29 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
   async function controlDiscoveryInteraction(
     root: string,
     state: EvidenceState,
-    action: 'finish' | 'resume' | 'skip',
+    action: DiscoveryControlAction,
     questionId?: string,
   ): Promise<void> {
     if (
       state.phase !== 'modeling' ||
       state.paused ||
       state.status === 'running' ||
-      state.discovery.stage !== 'discovering'
+      (state.discovery.stage !== 'discovering' &&
+        !(
+          action === 'resume' &&
+          state.currentArtifactIndex < 2 &&
+          !state.pendingGate
+        ))
     )
       throw new Error('请在未暂停且空闲的 Modeling 发现阶段操作');
     const snapshot = await loadDiscovery(root, state);
+    if (
+      state.discovery.stage === 'finalizing' &&
+      !snapshot.modelUpdateRequested
+    )
+      throw new Error('当前不是模型更新批次；需求收敛须先通过人工修订重开发现');
     const interaction = snapshot.interaction;
+    if (action === 'converge') await assertAppliedModel(root, state, snapshot);
     if (action === 'resume' || action === 'skip')
       await assertResolutionSelectionFresh(
         root,
@@ -82,7 +95,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
       interaction.activeQuestionId = null;
       interaction.needsConsolidation = true;
     } else {
-      interaction.stopped = action === 'finish';
+      interaction.stopped = action !== 'resume';
       if (action === 'resume') {
         interaction.deferredQuestionIds = [];
         if (interaction.needsConsolidation) interaction.activeQuestionId = null;
@@ -97,6 +110,10 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
     state.status = pendingQuestions(snapshot).length
       ? 'waiting_answer'
       : 'ready';
+    if (action === 'converge') {
+      state.discovery.stage = 'finalizing';
+      state.currentArtifactIndex = 2;
+    }
     appendHistory(
       state,
       'discovery_interaction',
@@ -262,8 +279,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
     assertDiscoveryContracts(snapshot);
     reopenDiscovery(state);
     state.status =
-      snapshot.interaction.stopped &&
-      unresolvedBlockingQuestions(snapshot).length
+      snapshot.interaction.stopped && !snapshot.modelUpdateRequested
         ? 'ready'
         : 'running';
     await appendDiscoveryEvent(root, state, event);
@@ -272,52 +288,129 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
   async function assertDiscoveryReady(
     root: string,
     state: EvidenceState,
+    assessment?: FormalizationAssessment,
   ): Promise<DiscoverySnapshot> {
     const snapshot = await loadDiscovery(root, state);
 
     if (!snapshot.content || !Object.keys(snapshot.sourceHashes).length)
       throw new Error('尚未保存范围、来源、候选及场景回放记录');
-    if (!Value.Check(DiscoveryContentSchema, snapshot.content))
-      throw new Error('范围、排除项或工作说明尚不完整，不能定稿');
     assertConsolidated(snapshot);
     assertDiscoveryContracts(snapshot);
-    const blockers = unresolvedBlockingQuestions(snapshot);
-    if (blockers.length)
+    const currentAssessment = assessment ?? snapshot.formalization?.assessment;
+    if (!currentAssessment)
       throw new Error(
-        `阻塞问题未解决：${blockers.map((q) => q.id).join('、')}`,
+        '尚未提交 Context assessment；不能跳过评估或沿用旧定稿协议',
       );
+    const formalization = assessFormalization(snapshot, currentAssessment);
+    if (!assessment) formalization.revision = snapshot.formalization!.revision;
+    if (
+      (!formalization.assessment.applicability.applicable ||
+        formalization.includedFactRefs.length) &&
+      !Value.Check(DiscoveryContentSchema, snapshot.content)
+    )
+      throw new Error('范围、排除项或工作说明尚不完整，不能定稿');
+    snapshot.formalization = formalization;
     for (const [path, hash] of Object.entries(snapshot.sourceHashes)) {
       if (digestText(await readText(root, path)) !== hash)
         throw new Error(`原始材料已变化，需要重新发现：${path}`);
     }
-    for (const candidate of snapshot.content.candidates) {
-      validateRefs(
-        snapshot,
-        candidate.sourceRefs,
-        candidate.confidence === 'explicit',
-      );
-      if (candidate.confidence !== 'explicit' && candidate.modelRefs.length)
-        throw new Error(`未确认候选不能绑定正式模型：${candidate.id}`);
-    }
-    for (const kind of ['normal', 'boundary', 'exception']) {
-      if (!snapshot.content.cases.some((scenario) => scenario.kind === kind))
-        throw new Error(`缺少 ${kind} 回放或有依据的不适用说明`);
-    }
-    for (const scenario of snapshot.content.cases)
-      validateRefs(snapshot, scenario.sourceRefs, true);
     return snapshot;
   }
 
   async function finalizeDiscovery(
     root: string,
     state: EvidenceState,
-  ): Promise<void> {
-    await assertDiscoveryReady(root, state);
+    assessment: FormalizationAssessment,
+  ): Promise<boolean> {
+    if (!(await loadDiscovery(root, state)).modelUpdateRequested)
+      throw new Error(
+        '请由人工选择「更新模型」（/evidence-discovery update-model）；积累问答或结束本轮不授权定稿',
+      );
+    if (!assessment)
+      throw new Error(
+        '每次更新必须提交当前 Context assessment，不复用旧协议或默认完整范围',
+      );
+    const snapshot = await assertDiscoveryReady(root, state, assessment);
+    await appendDiscoveryEvent(root, state, {
+      kind: 'formalization',
+      value: snapshot.formalization!,
+    });
+    if (
+      assessment.applicability.applicable &&
+      !snapshot.formalization!.includedFactRefs.length
+    ) {
+      state.discovery.stage = 'discovering';
+      state.currentArtifactIndex = 0;
+      state.status = 'ready';
+      await saveState(root, state);
+      return false;
+    }
     state.discovery.stage = 'finalizing';
     state.status = 'ready';
     state.currentArtifactIndex = 0;
     appendHistory(state, 'discovery_finalizing', state.discovery.digest ?? '');
     await saveState(root, state);
+    return true;
+  }
+
+  async function completeModelUpdate(
+    root: string,
+    state: EvidenceState,
+  ): Promise<void> {
+    const snapshot = await assertDiscoveryReady(root, state);
+    if (
+      !snapshot.modelUpdateRequested ||
+      state.discovery.stage !== 'finalizing'
+    )
+      throw new Error('当前没有人工授权的模型更新');
+    const paths = [
+      'artifacts/02-modeling/ubiquitous-language.md',
+      ...state.modeling.files,
+    ];
+    const fileHashes: Record<string, string> = {};
+    for (const path of paths) {
+      const content = await readText(root, path);
+      if (!content) throw new Error(`模型更新产物缺失：${path}`);
+      fileHashes[path] = digestText(content);
+    }
+    state.discovery.stage = 'discovering';
+    state.currentArtifactIndex = 0;
+    state.status = 'ready';
+    await appendDiscoveryEvent(root, state, {
+      kind: 'model-applied',
+      value: {
+        revision: snapshot.revision,
+        basisDigest: discoveryBasisDigest(snapshot),
+        fileHashes,
+        includedCandidateRefs: snapshot.formalization!.includedCandidateRefs,
+        pendingCandidateRefs: snapshot.formalization!.pendingCandidateRefs,
+        includedFactRefs: snapshot.formalization!.includedFactRefs,
+        contexts: snapshot.formalization!.contexts,
+      },
+    });
+  }
+
+  async function assertAppliedModel(
+    root: string,
+    state: EvidenceState,
+    snapshot: DiscoverySnapshot,
+  ): Promise<void> {
+    assertConsolidated(snapshot);
+    if (
+      !snapshot.appliedModel ||
+      snapshot.modelUpdateRequested ||
+      snapshot.appliedModel.basisDigest !== discoveryBasisDigest(snapshot)
+    )
+      throw new Error(
+        '存在尚未更新进模型的发现，或尚无已发布模型；请先选择「更新模型」',
+      );
+    await assertDiscoveryReady(root, state);
+    for (const [path, hash] of Object.entries(
+      snapshot.appliedModel.fileHashes,
+    )) {
+      if (digestText(await readText(root, path)) !== hash)
+        throw new Error(`已发布模型文件已变化：${path}；请重新更新模型`);
+    }
   }
 
   async function readFinalizedDiscovery(
@@ -329,6 +422,12 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
         '先完成交互发现并调用 evidence_finalize_discovery；不能跳过发现提交工件',
       );
     const snapshot = await assertDiscoveryReady(root, state);
+    if (state.phase === 'modeling' && state.currentArtifactIndex < 2) {
+      if (!snapshot.modelUpdateRequested)
+        throw new Error('统一语言和 FM 提交必须属于人工授权的更新批次');
+    } else {
+      await assertAppliedModel(root, state, snapshot);
+    }
     return {
       runId: state.runId,
       revision: snapshot.revision,
@@ -350,6 +449,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
     appendDiscoveryRecords,
     assertDiscoveryReady,
     finalizeDiscovery,
+    completeModelUpdate,
     requireFinalizing,
     readFinalizedDiscovery,
   };

@@ -1,4 +1,5 @@
 import { rm } from 'node:fs/promises';
+import { domainAssessment } from '../../tests/support/discovery-fixtures.ts';
 import { afterEach, describe, expect, it } from 'vitest';
 import { discoveryAnswerView } from '../../adapters/pi/ui/discovery-answer-view.ts';
 import { discoveryDetailsPath } from '../../instructions/discovery-context.ts';
@@ -144,7 +145,9 @@ describe('sourced question resolutions, not agent-authored human answers', () =>
     expect(pendingQuestions(snapshot)).toEqual([]);
     expect(unresolvedBlockingQuestions(snapshot)).toEqual([]);
     expect(await readText(h.root, path)).toBe(original);
-    await expect(assertDiscoveryReady(h.root, h.state)).resolves.toBeDefined();
+    await expect(
+      assertDiscoveryReady(h.root, h.state, domainAssessment()),
+    ).resolves.toBeDefined();
     expect(h.state.pendingGate).toBeNull();
   });
 
@@ -254,9 +257,9 @@ describe('sourced question resolutions, not agent-authored human answers', () =>
     await append(h, [note]);
     snapshot = await loadDiscovery(h.root, h.state);
     expect(pendingQuestions(snapshot)).toEqual([]);
-    await expect(assertDiscoveryReady(h.root, h.state)).rejects.toThrow(
-      '阻塞问题未解决',
-    );
+    await expect(
+      assertDiscoveryReady(h.root, h.state, domainAssessment()),
+    ).rejects.toThrow('未解决阻塞题');
     await expect(
       resolve(
         h,
@@ -453,26 +456,15 @@ describe('sourced question resolutions, not agent-authored human answers', () =>
 });
 
 describe('stable business gap identity', () => {
-  it('requires a key for new questions while preserving old v4 questions verbatim', async () => {
+  it('rejects questions without a stable key without creating legacy entries', async () => {
     const h = await setup();
     await resolve(h);
     const { gapKey: _key, ...legacy } = settlement;
-    await expect(askQuestions(h.root, h.state, [legacy])).rejects.toThrow(
-      '稳定 gapKey',
-    );
-    await seedQuestions(h.root, h.state, [legacy]);
-    // Clear the active pointer through human input on another question, then consolidate.
-    await answerQuestion(h.root, h.state, {
-      questionId: 'Q-001',
-      text: '客户编号唯一。',
-      status: 'answered',
-      respondent: 'github.com/tester',
-    });
-    await append(h, [note]);
-    await askQuestions(h.root, h.state, [legacy]);
-    expect(pendingQuestions(await loadDiscovery(h.root, h.state))).toEqual([
-      legacy,
-    ]);
+    const before = await readText(h.root, '.evidence/state.json');
+    await expect(
+      askQuestions(h.root, h.state, [legacy as typeof settlement]),
+    ).rejects.toThrow('稳定 gapKey');
+    expect(await readText(h.root, '.evidence/state.json')).toBe(before);
   });
 
   it.each(['answered', 'deferred', 'resolved'] as const)(
@@ -504,7 +496,7 @@ describe('stable business gap identity', () => {
     },
   );
 
-  it('catches text-only renaming of a legacy gap but allows a distinct domain subject', async () => {
+  it('catches text-only renaming of an existing gap but allows a distinct domain subject', async () => {
     const h = await setup();
     await resolve(h);
     await expect(

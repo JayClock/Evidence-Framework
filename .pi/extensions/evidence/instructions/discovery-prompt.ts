@@ -35,8 +35,10 @@ export const DISCOVERY_GUIDE_PATH =
   '.pi/skills/evidence-modeling/references/discovery-workshop.md';
 
 function continuation(snapshot: DiscoverySnapshot, waiting: boolean): string {
+  if (snapshot.modelUpdateRequested)
+    return '人工已选择「更新模型」：先消化全部新增回答并保存发现，然后必须调用 evidence_finalize_discovery，提交覆盖全部历史候选的 Context assessment v1。按需读 .pi/skills/evidence-modeling/references/incremental-assessment.md：Domain、Channel、Contract、Fulfillment 按本批次职责评估具体 facts、requiredFactRefs、structure/provenance/decision 事实依赖及回放；阻塞题映射 affectedFactRefs。不要只看当前焦点，不要求关联 Context 整体完成；明确 ready、support、pending 和 remainingScope，没有可纳入职责也须提交实际评估。不得追问、代答、排除范围或捏造责任终点。';
   if (snapshot.interaction.stopped)
-    return '人工已结束本轮问答：禁止自动追问；先消化已有回答，整理当前候选、范围和全部缺口。不把暂缓或未回答当成事实或范围排除。存在阻塞项时保存发现草稿并停止；无阻塞项时仍须通过原有来源、回放及定稿校验。仅人工 /evidence-discovery resume 可恢复提问。';
+    return '人工已结束本轮问答：禁止自动追问；先消化已有回答，仅整理发现与缺口并停止，不更新正式模型，不调用 evidence_finalize_discovery。仅人工选择 /evidence-discovery update-model 才授权更新模型；/evidence-discovery resume 恢复提问。';
   if (snapshot.interaction.needsConsolidation)
     return '先保存消化结果，再决定下一问：读取最新回答及跳过记录，更新候选、案例、focus 与 contractView；简述本次明确了什么、还缺什么。不得直接弹出预排的下一题。';
   if (waiting) return '等待 /evidence-answer，不重复提问或代答。';
@@ -71,7 +73,7 @@ contractView 由记录派生，不由 Agent 全量提交：contract 记录用已
 问答开启时，每轮只问一个核心问题，通过 evidence_ask_questions 保存并停止等待；不在一个问题中捆绑多个子问题，不预排整套问卷。用户一次补充多项事实时全部消化，材料已明确的内容不重复问。
 每次人工回答、未知、排除或跳过后，先通过 evidence_save_discovery 追加本轮发现记录，再根据最新理解选一个必要缺口追问；简述“本次明确了什么、候选模型如何变化、还缺什么”，并将依据与变化记入 notes。跳过不提供业务事实，不换 Q-ID 重问同一缺口。没有必要问题时可在保存后停止，不强行凑题。
 历史问题是可回访的业务缺口，不是必做题队列；需要继续讨论时可按已有 Q-ID 重用原文未答且未暂缓的一题。已答问题只由人工更正；未答或未知问题可追加 resolution，将已有原始事实及逐字摘录关联到原 Q-ID，解释为什么足以解决，不生成 A-* 或默默删除旧题。仅技术映射未知不应制造业务阻塞；真实冲突、缺少约定或范围排除仍需人工决定。
-有完整 FM 候选时使用 evidence_check_model_draft 隔离检查。声明就绪后使用 evidence_finalize_discovery 开启定稿，不直接提交正式工件或创建 Gate。
+有完整 FM 候选时可使用 evidence_check_model_draft 隔离检查，但不改变正式模型。问答只积累发现，只有人工选择「更新模型」后才能调用 evidence_finalize_discovery；按 Context 评估全部历史成果、本批次所需事实及具体依赖，将每个阻塞题定位到 affectedFactRefs。已知支撑事实可独立引用，不要求关联 Context 或全部履约链闭合。更新成功后停回发现；人工另选 converge 才进入需求收敛。finish 仅整理，不授权更新模型。
 evidence_save_discovery 提交 summary、sourceRefs、records。records 类型为 scope、position、note、source、candidate、case、contract、fulfillment、resolution 或 withdraw；不重复提交无变化对象。新增对象 supersedes=null，更正和撤回引用 recordHeads 中该对象当前 D-ID，D-ID 由扩展分配。已有对象不能以新增方式覆盖；遗漏不是撤回。撤回须有依据，并同时处理悬空关系。source 记录绑定材料摘要，更新来源时须显式更正所有依赖旧来源版本的当前解释。notes 是有效 note 记录的组合；更正 note 也须引用 D-ID。D-ID 只追溯 Agent 解释，不是独立业务来源；人工事实只能来自 INPUT、SRC-* 或最新 A-*。所有发现工具传当前 expectedRevision，每次写入后使用返回的新版本；普通问答不消耗 maxRounds。
 `;
 }
@@ -120,6 +122,8 @@ export function renderDiscoveryPrompt(
 - 未解决的阻塞项：${list(blocking.map((q) => q.id))}
 - 阻塞且仍未知：${list(unknown.map((q) => q.id))}
 - 依据失效：${list(snapshot.staleRecordKeys)}
+- 上次成功更新模型：${snapshot.appliedModel ? `发现 v${snapshot.appliedModel.revision}；${snapshot.appliedModel.contexts.map((c) => `${c.contextRef}(${c.status})`).join('、') || 'FM 不适用'}；纳入事实 ${snapshot.appliedModel.includedFactRefs.length} 项；完整剩余职责见评估` : '尚无本运行的手动更新批次'}
+- 当前操作：${snapshot.modelUpdateRequested ? '人工授权更新模型，整理后执行全历史评估' : '仅积累问答，不更新正式模型'}
 
 ## 本轮人工输入
 
@@ -144,7 +148,7 @@ ${cases.join('\n') || '尚无回放记录'}
 ## 按需补读与本轮动作
 
 此包适用于启动、续轮及恢复；依据来自校验后的发现记录，不把候选当人工确认。对象／问题／回答／notes 明细索引：${readHint(context.catalog)}。明细缓存 revision 必须与本轮一致；写入后旧行号不用于下一版本。无需新增查询工具，不默认整份 read current.json。
-先消化全部新输入，以当前 D-ID 只追加本轮变化；保存后使用工具返回的新 revision。选定必要缺口后先展示有来源的候选结构、依据和未知，再通过 evidence_ask_questions 只问一个核心问题并停止等待；暂缓不得换 Q-ID 重问。停止状态仅整理或校验；不因摘要遗漏而宣布就绪。定稿仍核对全范围、全部来源／缺口及正常、边界、异常回放。
+先消化全部新输入，以当前 D-ID 只追加本轮变化；保存后使用工具返回的新 revision。选定必要缺口后先展示有来源的候选结构、依据和未知，再通过 evidence_ask_questions 只问一个核心问题并停止等待；暂缓不得换 Q-ID 重问。停止状态仅整理；人工已选择更新模型时，整理后执行全历史评估，不因当前焦点或摘要遗漏丢掉其他已完整成果。定稿按纳入单元核对业务来源、必要依赖和正常／边界／异常回放；未纳入项仍保留缺口，不等同排除。
 ${state.feedback ? `\n上一轮反馈（摘录）：${clipContext(state.feedback, 600)}\n完整反馈见 ${readHint(context.ranges.get('feedback'))}` : ''}`;
   // Field excerpts and list counts are bounded above. Reject pathological metadata
   // rather than silently cutting the safety footer or unconsumed-input notice.

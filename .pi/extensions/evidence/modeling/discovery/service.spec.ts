@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { REQUIREMENTS_PATH } from '../../contracts/paths.ts';
+import { domainAssessment } from '../../tests/support/discovery-fixtures.ts';
 import { memoryModeling } from '../../tests/support/memory-modeling.ts';
 import { projectDiscovery } from './replay.ts';
 import type { DiscoveryQuestion } from './schema.ts';
@@ -21,9 +22,9 @@ describe('headless discovery service', () => {
     await h.consolidate();
     await h.service.askQuestions(h.root, h.state, [question]);
     expect(h.state.status).toBe('waiting_answer');
-    await expect(h.service.finalizeDiscovery(h.root, h.state)).rejects.toThrow(
-      '阻塞问题',
-    );
+    await expect(
+      h.service.finalizeDiscovery(h.root, h.state, domainAssessment()),
+    ).rejects.toThrow('更新模型');
     await h.service.answerQuestion(h.root, h.state, {
       questionId: question.id,
       status: 'answered',
@@ -31,11 +32,17 @@ describe('headless discovery service', () => {
       respondent: '合成测试人员',
     });
     expect(h.state.status).toBe('ready');
-    await expect(h.service.finalizeDiscovery(h.root, h.state)).rejects.toThrow(
-      '先保存消化结果',
-    );
+    await expect(
+      h.service.assertDiscoveryReady(h.root, h.state, domainAssessment()),
+    ).rejects.toThrow('先保存消化结果');
     await h.consolidate();
-    await h.service.finalizeDiscovery(h.root, h.state);
+    h.state.status = 'ready';
+    await h.service.controlDiscoveryInteraction(
+      h.root,
+      h.state,
+      'update-model',
+    );
+    await h.service.finalizeDiscovery(h.root, h.state, domainAssessment());
     expect(h.state.discovery.stage).toBe('finalizing');
     expect(h.state.phase).toBe('modeling');
     expect(h.state.pendingGate).toBeNull();
@@ -58,7 +65,13 @@ describe('headless discovery service', () => {
     await expect(
       h.service.readFinalizedDiscovery(h.root, h.state),
     ).rejects.toThrow('先完成交互发现');
-    await h.service.finalizeDiscovery(h.root, h.state);
+    h.state.status = 'ready';
+    await h.service.controlDiscoveryInteraction(
+      h.root,
+      h.state,
+      'update-model',
+    );
+    await h.service.finalizeDiscovery(h.root, h.state, domainAssessment());
     const before = structuredClone(h.state);
     await h.service.readFinalizedDiscovery(h.root, h.state);
     expect(h.state).toEqual(before);
@@ -83,8 +96,23 @@ describe('headless discovery service', () => {
     await expect(
       h.service.askQuestions(h.root, h.state, [{ ...question, id: 'Q-002' }]),
     ).rejects.toThrow('同一业务缺口');
-    await expect(h.service.finalizeDiscovery(h.root, h.state)).rejects.toThrow(
-      '阻塞问题',
+    const assessment = domainAssessment();
+    assessment.questions = [
+      {
+        questionId: 'Q-001',
+        affectedFactRefs: ['C-001.identity'],
+        reasoning: '人工跳过未解决该对象的身份依据，不能正式纳入。',
+        sourceRefs: ['INPUT'],
+      },
+    ];
+    h.state.status = 'ready';
+    await h.service.controlDiscoveryInteraction(
+      h.root,
+      h.state,
+      'update-model',
+    );
+    expect(await h.service.finalizeDiscovery(h.root, h.state, assessment)).toBe(
+      false,
     );
     const snapshot = await h.repository.loadDiscovery(h.root, h.state);
     expect(snapshot.answers).toEqual([]);

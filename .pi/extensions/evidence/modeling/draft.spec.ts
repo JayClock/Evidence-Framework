@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { domainAssessment } from '../tests/support/discovery-fixtures.ts';
 import { memoryModeling } from '../tests/support/memory-modeling.ts';
 import { createDraftChecker } from './draft.ts';
 
@@ -33,7 +34,13 @@ describe('headless model draft service', () => {
     expect(h.state.modeling).toEqual(formal);
     expect(h.state.pendingGate).toBeNull();
     expect(h.state.phase).toBe('modeling');
-    await h.service.finalizeDiscovery(h.root, h.state);
+    h.state.status = 'ready';
+    await h.service.controlDiscoveryInteraction(
+      h.root,
+      h.state,
+      'update-model',
+    );
+    await h.service.finalizeDiscovery(h.root, h.state, domainAssessment());
     await expect(
       check(h.state, [{ path: 'model.yaml', content: 'source' }], options),
     ).rejects.toThrow('重新打开草稿');

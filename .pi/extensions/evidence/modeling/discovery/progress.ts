@@ -14,10 +14,8 @@ export function reopenDiscovery(state: EvidenceState): void {
   state.discovery.stage = 'discovering';
   state.currentArtifactIndex = 0;
   state.pendingGate = null;
-  state.modeling.applicable = null;
-  state.modeling.rationale = null;
-  state.modeling.machineValidated = false;
-  state.modeling.simulationPassed = null;
+  // Modeling evidence describes the last published batch, not the newest Q&A.
+  // Discovery changes invalidate readiness, but never erase that publication.
   state.lastError = null;
   state.lastReport = null;
   state.coding.planDigest = null;

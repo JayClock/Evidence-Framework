@@ -87,9 +87,9 @@ export async function loadDiscoveryEntries(
       entry &&
       typeof entry === 'object' &&
       'version' in entry &&
-      entry.version !== 4
+      entry.version !== 5
     )
-      throw new Error('仅支持发现记录 v4，不迁移旧快照；请由人工重新初始化');
+      throw new Error('仅支持发现记录 v5，不迁移旧日志；请由人工重新初始化');
     if (
       !Value.Check(DiscoveryEntrySchema, entry) ||
       entry.runId !== state.runId ||
@@ -143,7 +143,7 @@ export function nextDiscoveryEntry(
   event: DiscoveryEvent,
 ): DiscoveryEntry {
   return {
-    version: 4,
+    version: 5,
     runId: state.runId,
     revision: state.discovery.revision + 1,
     previousDigest: state.discovery.digest,

@@ -5,7 +5,9 @@ import type {
 import {
   appendDiscoveryEvent,
   appendDiscoveryRecords,
+  controlDiscoveryInteraction,
   finalizeDiscovery,
+  completeModelUpdate,
   loadDiscovery,
 } from '../../state/discovery/index.ts';
 import {
@@ -16,6 +18,7 @@ import {
 } from '../../storage.ts';
 import type { EvidenceState } from '../../types.ts';
 import { discoveryContent, fixtureSubmission } from './discovery-fixtures.ts';
+import { contextAssessment } from './context-assessment.ts';
 export {
   contractContent,
   discoveryContent,
@@ -67,8 +70,27 @@ export async function seedDiscovery(
   const modeling = structuredClone(state.modeling);
   state.phase = 'modeling';
   state.status = 'running';
-  await saveDiscoveryContent(root, state, discoveryContent());
-  await finalizeDiscovery(root, state);
+  const content = discoveryContent();
+  const assessment = contextAssessment();
+  if (modeling.applicable === false) {
+    content.candidates = [];
+    assessment.contexts = [];
+    assessment.applicability.applicable = false;
+    assessment.applicability.rationale =
+      '合成测试仅有简单胶水集成，没有独立对象身份、领域规则、渠道协商或合同履约语义；仍使用同一更新与收敛协议。';
+  }
+  await saveDiscoveryContent(root, state, content);
+  state.status = 'ready';
+  await controlDiscoveryInteraction(root, state, 'update-model');
+  await finalizeDiscovery(root, state, assessment);
+  if (phase !== 'modeling' || currentArtifactIndex >= 2) {
+    const language = 'artifacts/02-modeling/ubiquitous-language.md';
+    if (!(await readText(root, language)))
+      await writeTextAtomic(root, language, '# 合成测试统一语言');
+    state.modeling.files = []; // Downstream harnesses supply their own FM validator outputs.
+    await completeModelUpdate(root, state);
+    await controlDiscoveryInteraction(root, state, 'converge');
+  }
   state.phase = phase;
   state.status = status;
   state.execution = execution;
