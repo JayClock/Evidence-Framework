@@ -1,0 +1,10 @@
+type: rule
+id: rule.profile-editable
+kind: precondition
+label: 未归档档案可编辑
+contextRef: context.profiles
+bindings:
+  profile:
+    ref: thing.profile
+expression: '!profile.archived'
+resultType: bool

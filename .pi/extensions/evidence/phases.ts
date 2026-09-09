@@ -65,7 +65,7 @@ export const PHASE_DEFINITIONS = {
   modeling: {
     id: 'modeling',
     label: '统一建模',
-    skillFile: '.pi/skills/evidence-modeling/SKILL.md',
+    skillFile: '.agents/skills/evidence-discovery/SKILL.md',
     artifacts: [
       artifact({
         key: 'ubiquitous-language',

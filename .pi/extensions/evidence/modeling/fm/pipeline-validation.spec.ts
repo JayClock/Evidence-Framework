@@ -18,7 +18,7 @@ async function validatorHarness() {
   roots.push(root);
   await writeTextAtomic(
     root,
-    '.pi/skills/evidence-modeling/requirements.txt',
+    '.agents/skills/evidence-fm/requirements.txt',
     '# test runtime\n',
   );
   const modelDir = join(root, 'model');

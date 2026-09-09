@@ -1,0 +1,35 @@
+type: entity
+id: request.content-payment
+category: evidence
+kind: fulfillment_request
+label: 内容产品付款请求
+contextRef: context.content-payment-fulfillment
+responsibleRoleRef: role.platform-subscription
+attributes:
+  - name: start_at
+    label: 发起时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 付款履约时段开始时间
+  - name: expired_at
+    label: 截止时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 付款履约时段截止时间
+    derivedByRuleRef: rule.payment-deadline
+  - name: requested_minor_units
+    label: 请求支付最小货币单位金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 从合同价格派生的请求支付整数金额
+    derivedByRuleRef: rule.payment-request-amount
+  - name: currency
+    label: 币种
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 从合同派生的 ISO 4217 币种代码
+    derivedByRuleRef: rule.payment-request-currency

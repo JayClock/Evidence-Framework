@@ -36,7 +36,7 @@ export async function executeProcess(
 }
 
 export async function prepareFmSkill(root: string): Promise<void> {
-  const skillPath = '.pi/skills/evidence-modeling';
+  const skillPath = '.agents/skills/evidence-fm';
   await mkdir(join(root, skillPath), { recursive: true });
   for (const entry of ['requirements.txt', 'scripts', 'schemas']) {
     await cp(
@@ -53,7 +53,7 @@ export async function prepareFmSkill(root: string): Promise<void> {
 export async function readFmFixtureFiles(name: string): Promise<FmModelFile[]> {
   const fixture = join(
     process.cwd(),
-    '.pi/skills/evidence-modeling/tests/fixtures',
+    '.agents/skills/evidence-fm/tests/fixtures',
     name,
   );
   const paths = await readdir(fixture, { recursive: true });

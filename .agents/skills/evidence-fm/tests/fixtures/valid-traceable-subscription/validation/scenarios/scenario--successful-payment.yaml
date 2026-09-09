@@ -1,0 +1,59 @@
+type: fm_scenario
+id: scenario.successful-payment
+label: 合同价格可追溯的成功付款
+asOf: '2026-09-01T09:15:00Z'
+givenInstanceRefs:
+  - instance.subscription-contract
+steps:
+  - sequence: 1
+    actingRoleRef: role.platform-subscription
+    issueInstanceRef: instance.payment-request
+    availableInstanceRefs:
+      - instance.subscription-contract
+  - sequence: 2
+    actingRoleRef: role.subscriber
+    issueInstanceRef: instance.payment-confirmation
+    availableInstanceRefs:
+      - instance.payment-request
+evaluations:
+  - ruleRef: rule.payment-deadline
+    bindings:
+      self:
+        instanceRef: instance.payment-request
+    targetInstanceRef: instance.payment-request
+    expectedResult: '2026-09-01T09:31:00Z'
+  - ruleRef: rule.payment-request-amount
+    bindings:
+      contract:
+        instanceRef: instance.subscription-contract
+    targetInstanceRef: instance.payment-request
+    expectedResult: 19900
+  - ruleRef: rule.payment-request-currency
+    bindings:
+      contract:
+        instanceRef: instance.subscription-contract
+    targetInstanceRef: instance.payment-request
+    expectedResult: CNY
+  - ruleRef: rule.payment-matches-request
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      payment:
+        instanceRef: instance.payment-confirmation
+    expectedResult: true
+  - ruleRef: rule.payment-expired
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      paymentConfirmed:
+        value: true
+      now:
+        value: '2026-09-01T09:15:00Z'
+    expectedResult: false
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.content-payment
+      requestInstanceRef: instance.payment-request
+      status: completed
+stakeholderReview:
+  status: pending

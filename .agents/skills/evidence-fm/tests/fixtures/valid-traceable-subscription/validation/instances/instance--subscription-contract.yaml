@@ -1,0 +1,7 @@
+type: evidence_instance
+id: instance.subscription-contract
+entityRef: contract.content-subscription
+values:
+  signed_at: '2026-09-01T09:00:00Z'
+  price_minor_units: 19900
+  currency: CNY

@@ -1,11 +1,25 @@
 {
-  "include": [".pi/skills/evidence-modeling"],
+  "include": [".agents/skills", "tests/skills"],
   "exclude": ["**/__pycache__", "**/.ruff_cache"],
   "venvPath": "node_modules/.cache",
   "venv": "evidence-fm-runtime",
-  "extraPaths": [
-    ".pi/skills/evidence-modeling/scripts",
-    ".pi/skills/evidence-modeling/tests",
-    ".pi/skills/evidence-modeling/evals"
+  "executionEnvironments": [
+    {
+      "root": ".agents/skills/evidence-fm/tests",
+      "extraPaths": [
+        ".agents/skills/evidence-fm/scripts",
+        ".agents/skills/evidence-fm/tests",
+        ".agents/skills/evidence-fm/evals"
+      ]
+    },
+    {
+      "root": ".agents/skills/evidence-fm/evals",
+      "extraPaths": [".agents/skills/evidence-fm/scripts"]
+    },
+    {
+      "root": ".agents/skills/evidence-fm/scripts",
+      "extraPaths": [".agents/skills/evidence-fm/scripts"]
+    },
+    { "root": "tests/skills" }
   ]
 }

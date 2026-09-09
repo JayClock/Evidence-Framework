@@ -1,0 +1,7 @@
+type: entity
+id: context.profiles
+category: context
+kind: domain
+label: 客户档案
+rootRefs:
+  - thing.profile

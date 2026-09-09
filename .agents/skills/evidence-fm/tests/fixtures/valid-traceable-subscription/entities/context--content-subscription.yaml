@@ -1,0 +1,7 @@
+type: entity
+id: context.content-subscription
+category: context
+kind: contract
+label: 订阅者订阅合同上下文
+rootRefs:
+  - contract.content-subscription

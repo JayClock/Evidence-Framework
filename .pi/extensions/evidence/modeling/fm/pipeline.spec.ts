@@ -15,7 +15,7 @@ describe('FM model pipeline', () => {
     await cp(
       join(
         root,
-        '.pi/skills/evidence-modeling/tests/fixtures/valid-traceable-subscription',
+        '.agents/skills/evidence-fm/tests/fixtures/valid-traceable-subscription',
       ),
       modelDir,
       { recursive: true },
@@ -92,7 +92,7 @@ describe('FM model pipeline', () => {
           'unittest',
           'discover',
           '-s',
-          '.pi/skills/evidence-modeling/tests',
+          '.agents/skills/evidence-fm/tests',
           '-v',
         ],
         { cwd: root, timeout: 120_000 },

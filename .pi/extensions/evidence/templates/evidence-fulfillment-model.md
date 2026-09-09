@@ -11,7 +11,7 @@ description: 按当前范围生成统一 FM Schema v3 领域、渠道、履约�
 - 有履约时按 Role-first 建立父 Contract、两个 Party Role、子 Fulfillment Context、Request interval、确认、触发、完成和异常规则。内部 KPI 与对外合同共用机制。
 - v3 要求 Place/Thing 属于 Domain Context；Party 在 Context 外。玩家仅按来源明确建立，系统或调度器不是 Party。
 - 规则用 CEL 和 keyData/AST lineage；不自造 Command、状态迁移或关系基数字段，不用假 Fulfillment/Evidence 填表达缺口。
-- `README.md` 说明范围、来源、假设、待确认项及 gap；discovery 是发现记录而非正式事实。关键疑点通过 evidence_ask_questions 重新打开发现，或保存修订候选；先解决阻塞再定稿，不编造成功模型。按四色法明确凭证及关键数据来源、计算与时间约束。
+- `README.md` 说明范围、来源、假设、待确认项及 gap；discovery 是发现记录而非正式事实。关键疑点保存为具体缺口，由发现任务承接澄清，正式产物任务不直接提问；先解决阻塞再定稿，不编造成功模型。沿凭证、引用属性与派生输入追溯关键数据的业务依据，明确计算与时间约束。
 - 有金额、KPI、赔偿、审计或复杂完成策略的单据链，至少提供正常和异常/追责场景。纯领域记录正常、边界和反例及后续 Q1/Q2 验证需求，不能宣称单据模拟器已验证领域对象或状态机。
 - 有权责复用主张才提交 `business-patterns/*.yaml`。只提交源 YAML、必要说明和场景，不提交 `generated/`、`02-business-patterns.md` 或 `status.md`。
 - `modelStatus` 默认 draft，`stakeholderReview` 默认 pending；机器校验和 Modeling Gate 不代替具名业务/领域专家确认。

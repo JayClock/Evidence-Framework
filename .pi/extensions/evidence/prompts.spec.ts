@@ -15,6 +15,7 @@ import {
 import { testingInputDigest } from './test-plan.ts';
 import { seedDiscovery } from './tests/support/discovery-test-support.ts';
 import { writeTestingInputs } from './tests/support/testing-test-support.ts';
+import { prepareModelingInstructions } from './tests/support/skill-test-support.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -61,6 +62,7 @@ async function preparePromptRoot(): Promise<string> {
     }
   }
   await writeTestingInputs(root);
+  await prepareModelingInstructions(root);
   return root;
 }
 
@@ -190,8 +192,25 @@ describe('artifact prompt inputs', () => {
         }
       }
       expect(prompt).not.toMatch(/evidence-domain|artifacts\/02-domain/);
+      if (phase === 'modeling') {
+        const expectedSkill = [
+          'evidence-fm',
+          'evidence-fm',
+          'evidence-requirements',
+          'evidence-requirements',
+          'evidence-requirements',
+        ][index];
+        expect(prompt).toContain(
+          `已加载 Skill：\`.agents/skills/${expectedSkill}/SKILL.md\``,
+        );
+        expect(prompt.split('# Pi Modeling 执行适配')).toHaveLength(2);
+        expect(prompt).not.toContain(
+          '已加载 Skill：`.agents/skills/evidence-discovery/SKILL.md`',
+        );
+        expect(prompt).toContain('正式产物任务不直接发起访谈');
+      }
       if (kind === 'fm-model') {
-        expect(prompt.split('# 统一 FM / 8X Flow · Schema v3')).toHaveLength(2);
+        expect(prompt.split('# Evidence 正式 FM 建模')).toHaveLength(2);
         expect(prompt).toContain('Modeling Gate');
         expect(prompt).toContain('不再独立生成');
       }

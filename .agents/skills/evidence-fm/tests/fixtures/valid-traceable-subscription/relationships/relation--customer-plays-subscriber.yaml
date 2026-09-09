@@ -1,0 +1,6 @@
+type: relationship
+id: relation.customer-plays-subscriber
+kind: plays_role
+sourceRef: party.customer
+targetRef: role.subscriber
+label: 客户扮演订阅者

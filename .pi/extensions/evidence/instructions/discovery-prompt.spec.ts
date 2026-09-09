@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ContractViewSchema } from '../modeling/discovery/schema.ts';
-import { getPhaseDefinition } from '../phases.ts';
+import { prepareModelingInstructions } from '../tests/support/skill-test-support.ts';
 import {
   buildCurrentPrompt,
   buildDiscoveryPolicy,
@@ -24,8 +24,7 @@ import {
   seedQuestions,
 } from '../tests/support/discovery-test-support.ts';
 
-const guidePath =
-  '.pi/skills/evidence-modeling/references/discovery-workshop.md';
+const guidePath = '.agents/skills/evidence-fm/references/business-analysis.md';
 const roots: string[] = [];
 afterEach(async () => {
   await Promise.all(
@@ -38,9 +37,7 @@ async function setup() {
   roots.push(root);
   const state = createInitialState('test', '从业务叙述开始发现');
   state.status = 'running';
-  for (const path of [getPhaseDefinition('modeling').skillFile, guidePath]) {
-    await writeTextAtomic(root, path, await readText(process.cwd(), path));
-  }
+  await prepareModelingInstructions(root);
   await writeTextAtomic(
     root,
     REQUIREMENTS_PATH,
@@ -92,10 +89,10 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         'Confirmation 不默认是人工审批',
         '不从权责方推导确认人',
         '独立验收须有业务依据',
-        '先通过 evidence_save_discovery 追加本轮发现记录',
+        '先通过 evidence_save_discovery 追加消化结果',
         '全未知的文本为 null，部分已知保留原依据',
-        '没有约定依据时先问一件真实发生的事',
-        'label 不含职责、来源、缺口、候选标记或建模纪律',
+        '没有约定依据时先核对一件真实发生的事',
+        '职责、来源、缺口和候选状态写详细说明',
         '局部未知不抹去已知事实',
         '历史记录不可改写或删除',
         '详细分析放 description／notes',
@@ -125,11 +122,11 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '问答只积累发现记录',
         'finish` 仅停止提问并整理',
         '/evidence-discovery update-model',
-        '覆盖全部历史有效候选的 Context assessment v1',
+        '提交全历史 Context assessment v1',
         'requiredFactRefs',
         'affectedFactRefs',
         '只纳入被消费的已知支撑事实',
-        'FM 更新成功后停回发现',
+        '更新成功后停回发现',
         '/evidence-discovery converge',
       ],
     ],
@@ -172,6 +169,18 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     expect(schemaText).toContain('来源未知须标明，影响判断时澄清');
     expect(schemaText).toContain('字段非空不表示期限依据已解决');
     expect(schemaText).not.toContain('有来源的确定期限或计算依据；未知为 null');
+    const provenance = await readText(
+      process.cwd(),
+      '.agents/skills/evidence-fm/references/provenance.md',
+    );
+    expect(provenance).toContain('非派生');
+    expect(provenance).toContain('来源核对与映射结果');
+    expect(provenance).toContain('业务来源');
+    expect(provenance).toContain('当前职责的必要依赖');
+    expect(provenance).toContain('不以“Agent 觉得需要派生”为入口');
+    expect(provenance).toContain(
+      '类型字段、合成实例、机器 lineage 通过都不能替代缺失依据',
+    );
     for (const file of [
       'format.md',
       'semantics.md',
@@ -182,11 +191,10 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     ]) {
       const text = await readText(
         process.cwd(),
-        `.pi/skills/evidence-modeling/references/${file}`,
+        `.agents/skills/evidence-fm/references/${file}`,
       );
-      expect(text).toContain('非派生');
-      expect(text).toContain('四色');
-      expect(text).toContain('业务来源');
+      // Every entry reaches the local method without maintaining a prose copy.
+      expect(text).toMatch(/\]\((?:\.\/)?provenance\.md\)/);
       expect(text).not.toContain('缺依据保持发现阻塞');
       expect(text).not.toContain(
         '材料未明确截止时刻或计算依据时必须保持待确认',
@@ -268,21 +276,21 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '类型属性定义、实例时间值、额外生成规则是三个层次',
         '类型建模不要求先有实例值或生成公式',
         '只写“规定时间内付款”且已识别付款请求时',
-        '这类付款请求的截止时间依据什么约定确定？',
+        '将“付款请求截止时间的确定依据”作为具体缺口交给访谈',
         '已知类型语义不因未给时长退回 null',
         '类型模型的非派生时间属性无需 derivedByRuleRef',
         '实际实例缺 required 时间值仍校验失败',
         '这只表达类型含义，不证明期限来源已查明',
-        '不得用 resolution 关闭期限确定依据问题',
+        '不能用类型展开关闭真实的期限确定依据问题',
       ],
     ],
     [
       'reuse of sourced time semantics',
       [
-        '先补读和复用，只问影响当前业务判断的真实缺口',
+        '先补读和复用，按当前职责的必要依赖判定缺口影响',
         '按索引补读相关明细，不重新询问已经明确的事实',
         '凭证类型、时间业务含义及计算依据已明确时，直接复用对应属性',
-        '保存规则和 `INPUT`／`SRC-*`／最新 `A-*` 来源',
+        '保存规则、原始材料和最新有效回答的来源',
         '付款请求.expired_at = 付款请求.start_at + 72小时',
         '支付确认.confirmed_at ≤ 付款请求.expired_at',
         '不提供当前业务事实或默认72小时期限',
@@ -291,10 +299,10 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     [
       'business ambiguity rather than invented time gaps',
       [
-        '来源性质尚未确定时问“依据什么确定”',
+        '来源性质尚未确定时，将“依据什么确定”标为待澄清点',
         '不能仅凭 kind 推断时间起点与外部事件的对应关系',
         '不在材料之外臆造创建、发出、送达等竞争起点',
-        '说明具体歧义及影响，再只问一个核心问题',
+        '说明具体歧义及影响，交给访谈处理',
         '是否阻塞取决于业务依据缺口的影响，不取决于有没有公式',
       ],
     ],
@@ -314,6 +322,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     await saveDiscoveryContent(h.root, h.state, contractContent());
     for (const policy of [first, await h.policy()]) {
       for (const rule of rules) expect(policy).toContain(rule);
+      expect(policy).toContain('每轮只问一个核心问题并等待');
       expect(policy).not.toContain('面向业务核实“从哪一刻开始');
       expect(policy).not.toContain('对金额、数量、比例和时间追问：');
       expect(policy).not.toContain('未知时间依据保持阻塞');
@@ -324,19 +333,19 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
 
   it.each([
     [
-      'one four-color provenance loop for all key data',
+      'one business provenance loop for all key data',
       [
         '所有关键数据都先追溯业务来源，不以“Agent 觉得需要派生”为入口',
         '类型展开、直接输入和派生计算都在同一个循环内',
-        '粉色关注产生与承载数据的凭证',
-        '黄色核对提供、请求或确认数据的业务角色',
-        '绿色关联参与者、地点、标的或领域对象',
-        '蓝色追溯描述、约定、规则及适用版本',
+        '从关键值定位原凭证或对象属性及其版本',
+        '核对是谁提供、请求或确认、证明哪个业务结果',
+        '沿引用关系或派生输入追到有效约定和规则',
+        '关联涉及的参与者、地点或标的，检查先后关系及当时可见性',
         '公式可以没有，业务来源不能由字段存在代替',
         '不必等材料写“计算”或用户要求自动化',
         '将推断与已明确事实分开，不把推断写成已确认公式',
         '人工明确为非派生输入后应保留该事实',
-        '人工停止／暂缓时只记录待澄清内容',
+        '人工停止后只保存已知结论与缺口',
       ],
     ],
     [
@@ -354,7 +363,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
       'no resolution shortcut from types or machine lineage',
       [
         'asserted／derived 是表达分类，不是业务来源已查明的证明',
-        '类型字段、合成实例、机器 lineage 通过或 resolution 都不能替代缺失依据',
+        '类型字段、合成实例、机器 lineage 通过都不能替代缺失依据',
         '不能只引用“规定时间内付款”就宣称来源已解决',
         '只有已有业务事实充分覆盖原题才关联解决',
         '非阻塞未知仍如实保留，不声称追溯已完整',
@@ -375,14 +384,14 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     [
       'auditable gap resolutions',
       [
-        '新问题须提供稳定 `gapKey`',
+        '每个新问题带稳定 gapKey',
         '同一缺口沿用原 gapKey 与 Q-ID',
-        '通过 `resolution` 追加已有事实与原问题的关联',
-        '每个来源都须有摘录',
-        'resolution 是可撤回的 Agent 解释，不是人工回答',
+        '通过 resolution 关联而非造一条 `A-*`',
+        '每个来源均须逐字 quote',
+        'resolution 是 Agent 解释，不是人工回答',
         '不得替代已有人工事实或排除决定',
-        '不自动弹题或恢复人工停止／暂缓',
-        '摘录存在的机器检查不证明推理成立',
+        '失效不自动恢复停止／暂缓',
+        '摘录存在的检查不证明解释成立',
       ],
     ],
   ])(
@@ -399,7 +408,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         expect(policy).not.toContain(
           '仅有类型信息且没有其他派生需求线索时只展开类型',
         );
-        expect(policy.split('### 四色追溯的统一循环')).toHaveLength(2);
+        expect(policy.split('### 业务来源追溯的统一循环')).toHaveLength(2);
       }
     },
   );
@@ -488,7 +497,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
   });
 
   it('ships complementary routes and safeguards rather than a keyword classifier', async () => {
-    const guide = await readText(process.cwd(), guidePath);
+    const policy = await buildDiscoveryPolicy(process.cwd());
     for (const requirement of [
       '候选合同上下文 → 双方角色与约定 → 履约项',
       '候选领域上下文与对象 → 身份 → 属性与关系',
@@ -498,9 +507,9 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
       '不把每个流程步骤都当成履约项',
       '范围是发现成果，不是前置问卷',
       '不补造 RFP',
-      '仅在当前可见凭证下',
-      '不因用户没有纠正就升级为明确事实',
+      '固定 asOf 和每步可见凭证',
+      '不因用户未纠正就升级为已确认事实',
     ])
-      expect(guide).toContain(requirement);
+      expect(policy).toContain(requirement);
   });
 });

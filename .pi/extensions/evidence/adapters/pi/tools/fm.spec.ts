@@ -370,7 +370,7 @@ describe('unified FM modeling submission', () => {
     expect(await readdir(join(root, '.evidence/staging'))).toEqual([]);
     expect(api.sendUserMessage).not.toHaveBeenCalled();
     expect(
-      await readdir(join(root, '.pi/skills/evidence-modeling/scripts')),
+      await readdir(join(root, '.agents/skills/evidence-fm/scripts')),
     ).not.toContain('__pycache__');
 
     await writeTextAtomic(

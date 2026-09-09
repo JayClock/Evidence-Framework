@@ -16,7 +16,10 @@
     "evidence:test": "vitest run --config .pi/extensions/evidence/evidence.vitest.config.mts",
     "evidence:format": "prettier --write '.pi/extensions/evidence/**/*.{ts,mts,json,md}' '.pi/skills/*/SKILL.md' .pi/evidence.json AGENTS.md docs/evidence.md",
     "evidence:format:check": "prettier --check '.pi/extensions/evidence/**/*.{ts,mts,json,md}' '.pi/skills/*/SKILL.md' .pi/evidence.json AGENTS.md docs/evidence.md",
-    "evidence:verify": "npm run evidence:typecheck && npm run evidence:test && npm run evidence:format:check"
+    "evidence:verify": "npm run evidence:typecheck && npm run evidence:test && npm run evidence:format:check",
+    "skills:test": "python3 -m unittest discover -s tests/skills -v",
+    "skills:verify": "npm run skills:test && npm run skills:test:fm",
+    "skills:test:fm": "python3 -m unittest discover -s .agents/skills/evidence-fm/tests -v"
   },
   "private": true,
   "dependencies": {

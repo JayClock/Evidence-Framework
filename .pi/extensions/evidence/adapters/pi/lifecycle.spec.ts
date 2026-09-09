@@ -12,6 +12,13 @@ afterEach(async () => {
   );
 });
 
+describe('canonical skill discovery', () => {
+  it('leaves native .agents/skills discovery to Pi instead of registering a second path', async () => {
+    const h = await qualityHarness(roots);
+    expect(h.events.has('resources_discover')).toBe(false);
+  });
+});
+
 describe('Evidence leaves session naming to Pi and the user', () => {
   it.each(['startup', 'reload', 'new', 'resume', 'fork'])(
     'does not rename sessions on %s with active, paused or completed workflow state',

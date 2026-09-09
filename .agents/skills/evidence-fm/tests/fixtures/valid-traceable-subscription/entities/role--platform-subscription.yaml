@@ -1,0 +1,6 @@
+type: entity
+id: role.platform-subscription
+category: role
+kind: party
+label: 内容平台
+contextRef: context.content-subscription

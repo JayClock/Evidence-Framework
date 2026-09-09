@@ -1,0 +1,183 @@
+{
+  "skill_name": "evidence-fm",
+  "schema_version": "3.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "vip-membership-agreement",
+      "prompt": "使用 $modeling 为星云视频 VIP 会员服务协议建立 FM Schema v3 模型并编译 JSON：用户购买会员卡后，平台开通会员权益；用户在法定条件下可申请原路退款；权益由会员权益计算能力依据会员卡、账号、等级和有效期计算。先建立合同中的两个 Role；只有材料明确稳定 Participant 时才建立 plays_role。不要建模播放器、推荐、页面、API 或数据库。",
+      "expected_output": "生成有效 v3 模型；VIP 协议通过两个 Role 建模；购买/开通/退款是显式 Fulfillment；权益计算是 Domain Role；不强制为每个 Role 创建 Party；规则使用 CEL；校验与编译通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "payment-channel-evidence-role",
+      "prompt": "使用 $modeling 建模订单销售合同。付款可由微信、支付宝或预付余额完成，退款也可走不同渠道；销售合同只依赖确定的付款/退款结果，不展开支付合同内部流程。用开放 Evidence Role 表达变化点，不在 Role 中枚举渠道，不为未知供应商补造 Party。输出 FM Schema v3、变化点说明并编译 JSON。",
+      "expected_output": "支付渠道通过 Evidence Role 和跨上下文时刻 Evidence 的 plays_role 表达；Evidence Role 没有 sourceEvidenceRefs；销售 Contract 不直连支付 Contract；未知供应商不被补造成 Party；付款、发货、退款履约完整；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "precontract-channels",
+      "prompt": "使用 $modeling 建模装修服务的三种签约来源：询价后唯一提案、固定套餐直接签约、公开招标后多个提案择一。签约后有开工和验收履约。保留需要追溯的 RFP/Proposal，渠道上下文与合同上下文分离，合同直接引用两个参与 Role，输出 v3 模型。",
+      "expected_output": "Pre-contract/Channel Context 分离；Proposal 通过 precedes 指向最终 Contract；Contract 使用两个 Role 而不是 partyAssignments；开工和验收各有 Fulfillment；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "internal-kpi",
+      "prompt": "使用 $modeling 建模无现金往来的 CRM 电话销售绩效协议：每月联系 100 个线索，电话不少于 60、邮件不少于 40，周会检查进度，连续两周低于计划触发辅导改进。主管与电话销售首先是合同 Role；只在材料明确稳定实体时建立 Party。所有计算和违约判断直接使用 CEL。",
+      "expected_output": "以目标—实际为脊梁；绩效协议有两个 Contract Role；周检查和辅导是显式 Fulfillment；联系/KPI 证据可追溯；没有虚构支付流或强制 Party；CEL 校验通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "missing-confirmation-repair",
+      "prompt": "使用 $modeling 修复输入中的 FM Schema v3 模型。付款 Request 所引用的 Confirmation 实体缺失；在不改变既有 Role、权责和触发语义的前提下补齐，运行校验并编译 JSON。",
+      "expected_output": "补充付款 Confirmation，责任 Role 为义务方，保持 Fulfillment 与 confirmationTrigger 一致，不引入 partyAssignments，校验和编译通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": ["fixtures/missing-confirmation-model"]
+    },
+    {
+      "id": 5,
+      "name": "immutable-reversal",
+      "prompt": "使用 $modeling 建模电商取消、退货和退款：原付款及发货凭证不可覆盖；发货前取消产生取消与退款履约；发货后退货产生退货申请、收货确认和退款。合同与履约责任使用 Role，输出 v3 模型并说明为什么必须新增凭证。",
+      "expected_output": "原 Evidence 保留；取消、退货、退款分别形成新的 Fulfillment；异常条件是 CEL breach/eligibility 规则；没有 update/delete/status overwrite 业务实体；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "simple-tool-no-model",
+      "prompt": "判断一个电脑控制座机拨号、挂断和重拨的小工具是否需要建模。范围明确只是调用既有协议的胶水代码，不包含独立的号码规则、排队策略、重拨资格或状态约束，也不涉及合同履约。不要生成 fm-model，只输出 analysis.md；不必要求我补合同。",
+      "expected_output": "说明当前是简单集成、无独立领域语义，不需建模并正常结束；不生成假 Contract/Role/Request/Confirmation，不反复索要权责材料；不把所有拨号工具或所有无合同领域问题一律排除。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "repeated-partial-confirmations",
+      "prompt": "使用 $modeling 建模一次采购交付请求对应任意多个分批到货确认，累计到货数量达到采购数量才完成；逾期未足量触发赔偿履约。不要为每一批复制 Confirmation 类型，使用 completionPolicy 和 CEL，合同直接引用买方与卖方 Role。",
+      "expected_output": "一个 Confirmation 类型配合 count/amount completionPolicy；累计完成规则为 CEL；赔偿是新的 Fulfillment；权利方和义务方 Role 显式；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "system-trigger-acts-for-role",
+      "prompt": "使用 $modeling 建模编辑绩效协议：每周一 9 点自动生成周进度检查请求，月末自动汇总 KPI；连续两周未达标自动触发辅导义务。主管和编辑是合同 Role；系统和调度器不能成为 Role 或 Participant，自动动作必须表示它代表哪个业务 Role。",
+      "expected_output": "schedule/rule trigger 明确 actsForRoleRef；Contract 使用主管与编辑 Role；系统/调度器不是 Party；周检查与辅导 Fulfillment 完整；CEL 规则有效；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "cel-only-rules",
+      "prompt": "使用 $modeling 建模订阅合同：付款期限是签约后 30 分钟，实付金额必须等于合同价格，过期未确认则终止合同。合同由两个 Role 构成。所有派生、前置条件和违约判断必须直接使用 CEL，不得出现 calculationRule、自定义赋值 DSL 或自然语言表达式。",
+      "expected_output": "Rule 文件为 CEL 纯表达式；derivation target 独立声明；bindings 完整；bool/resultType 和目标属性类型正确；校验与编译通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "explicit-participant-role-binding",
+      "prompt": "建立两个合同上下文：内容订阅合同的双方 Role 是订阅方与内容平台；外部支付协议的双方 Role 是支付账户持有人与支付服务提供方。材料明确同一个 Customer 实体扮演订阅方和支付账户持有人，但只给出了支付服务提供方 Role，没有提供其上层 Party。外部支付确认应扮演订阅上下文中的合格付款确认 Evidence Role。不得创建 party.subscriber、party.content-platform 或 party.payment-provider。输出并验证 FM Schema v3。",
+      "expected_output": "存在 Customer Party 及其到 Subscriber、Payment Account Holder Role 的 plays_role；支付服务提供方仅为 Role；两个 Contract 各有两个 roleRefs；外部支付确认跨上下文扮演合格付款确认 Evidence Role；不存在占位 Party；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "multi-contract-content-platform",
+      "prompt": "为一个内容平台建立通用多合同 FM 模型：内容订阅、内容生产、运营绩效三个合同上下文；主要履约分别为付款/内容访问/服务中断补偿，预付款/收入分成/内容交付/违约金，目标设定/周进度检查，共九项。加入内容生产签约前的选题/立项凭证和内容目录的 Collection/Content Item Thing。材料明确 Customer 扮演 Subscriber；不要凭角色名称为 Creator、Operator 或 Platform 补 Party，也不要发明材料未给出的金额公式。输出、校验并编译 Schema v3；将“付费内容运营”提取为 Business Pattern；因为只有一个内容领域案例，reuseStatus 必须保持 candidate，并生成 02-business-patterns.md。",
+      "expected_output": "三个 Contract、九个 Fulfillment、签约前 Context 和内容 Domain Context 完整；Customer→Subscriber 明确；不存在由 Subscriber/Creator/Operator/Platform 名称推导的占位 Party；规则和金额不超出来源；校验和确定性编译通过；九项履约各自位于子 Fulfillment Context；所有 Request 有 interval；付费内容运营模式保持 candidate。",
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "attribute-lineage-and-document-simulation",
+      "prompt": "使用 $modeling 建模一个销售合同的付款履约：合同明确价格为 19900 最小货币单位、币种 CNY；付款请求从合同派生金额和币种，截止时间是请求发起后 30 分钟；付款确认的实付金额和币种必须匹配请求。把金额、币种和业务时间标为关键数据，生成属性追溯报告。再建立一个成功付款场景和一个逾期未付款场景，使用追加式 Evidence Instance、固定 asOf 和正确 acting Role，运行模拟并保持 stakeholder review 为 pending。输出并编译 FM Schema v3。",
+      "expected_output": "关键属性使用 keyData；CEL AST 可形成合同→请求的金额/币种和请求开始→截止时间 lineage；validation/ 包含正常与异常场景；机器模拟分别得到 completed 与 breached；没有覆盖旧凭证，也没有把机器通过写成 stakeholder confirmed；所有校验和确定性输出通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "files": []
+    },
+    {
+      "id": 13,
+      "name": "ambiguous-narrative-input-gaps",
+      "prompt": "我们准备做一个“智能结算平台”：用户提交订单，系统自动结算，未来支持很多渠道。请使用 $modeling 开始处理。当前材料没有说明谁与谁签约、谁有收款权、谁负付款义务、什么凭证算结算完成、履约期限和违约责任。不要替业务方猜答案；先在 discovery/open-questions.md 中记录必要业务缺口及其影响，交给后续访谈处理，不自行发起问答。如果建立任何 FM 模型，只能是明确标记为 draft/pending 的已知部分。",
+      "expected_output": "输出 discovery/evidence-inventory、timeline 或 open-questions；明确缺少合同双方、权责、确认凭证、时限和违约事实；不伪造 confirmed 模型或 stakeholder review。",
+      "files": [],
+      "assertions": [
+        "至少生成 discovery/evidence-inventory、timeline 或 open-questions 产物。",
+        "缺口覆盖合同双方、权利义务、完成凭证、履约时限和违约后果；不自行发起访谈。",
+        "不生成模型，或只生成 modelStatus=draft 且 stakeholderReview.status=pending 的有效 v3 模型。"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "cross-domain-business-pattern",
+      "prompt": "使用 $modeling 同时建模两个已确认案例：内容会员合同和健身课程会员合同。两个案例都是服务方要求会员在签约后 30 分钟内付款，付款确认后在有效期内提供访问；内容与健身分别属于独立 Domain Context，双方合同、付款和访问凭证均可审计。提取“付款后提供期限权益”Business Pattern。它有两个 Contract Context 和两个 Domain Context，所以可以标为 supported，但没有具名业务审核者，不能标为 confirmed。生成 02-business-patterns.md、校验并编译 Schema v3。",
+      "expected_output": "两个 Contract Context、至少四个子 Fulfillment Context、两个 Domain Context和一个 supported Business Pattern；模式引用真实业务脊梁和变化点；stakeholderReview pending；派生 Markdown 与编译 JSON 包含该模式。",
+      "files": [],
+      "assertions": [
+        "Schema v3 校验与确定性编译通过。",
+        "每个 Fulfillment 使用父合同下的子 Fulfillment Context，且 Request interval 完整。",
+        "至少两个 Contract Context 和两个 Domain Context 支撑一个 reuseStatus=supported 的 Business Pattern。",
+        "没有具名审核人时，模式 stakeholderReview 保持 pending，且生成 02-business-patterns.md。"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "customer-domain-only",
+      "prompt": "用 $modeling 建模客户信息领域，不涉及合同或绩效。已知客户本人是有稳定身份的个人或组织；客户档案有 profileId 和 archived，已归档不可编辑，标识不能为空。档案引用具有独立 contactId 的联系方式；联系方式只有 enabled 与 verified 都为 true 才 usable。请用同一 FM v3 的 Entity、Relationship、CEL Rule 表达身份、属性、关系、前置条件和派生值，输出范围说明、校验、lineage 和编译 JSON，不补合同或履约，不把客户本人和客户档案混为 Thing，不把领域校验声称为状态机模拟。",
+      "expected_output": "纯领域 FM v3 有 Domain Context、Party、档案与联系方式 Thing、身份和档案联系关系、领域前置条件与派生 Rule；无 Contract 和 Fulfillment；编译 fulfillments=[]；lineage 反映可用性来源；如实报告无领域实例模拟。",
+      "files": [],
+      "assertions": [
+        "纯领域使用同一 FM v3，结构与确定性编译通过，不生成合同或履约。",
+        "同时包含对象属性、同域关系、领域 CEL 规则，而非 Thing 清单。",
+        "客户 Party 与档案 Thing 分开，派生可用性具有 Entity 属性 lineage。",
+        "生成的属性与 CEL 使用 profile_id、contact_id；原输入 profileId、contactId 的映射有说明，contextRef 等协议键不改名。"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "channel-only-no-contract",
+      "prompt": "用 $modeling 只建模客户询价和供应方报价，双方尚未签约。询价方发出带 requestedAt 的询价，报价方回应带 proposedAt 的报价；本次没有合同或后续履约事实。用 FM v3 表达 Channel Context、双方 Role、RFP/Proposal 和回应关系，校验并编译，不为了目录要求虚构合同、履约或截止时间。",
+      "expected_output": "纯渠道保留真实角色、RFP/Proposal 与回应关系；没有 Contract 或 Fulfillment。缺少未来合同不是 blocker，但当前未给询价与报价截止依据，必须保持阻塞并核实，不宣称完整模型校验或编译通过。",
+      "files": [],
+      "assertions": [
+        "纯渠道不补 Contract/Fulfillment；指出凭证截止依据缺失，不编造 expired_at 或声称无期限模型通过校验。",
+        "RFP/Proposal 具有正确责任 Role 和同渠道回应关系。"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "kpi-negotiated-before-agreement",
+      "prompt": "用 $modeling 建模绩效协议。双方是管理方与电话销售。季度开始前电话销售提出目标方案，管理方确认后双方签署协议；这个季度目标固定，不允许执行中变更。履约只有每周进度检查：管理方每周一请求检查，电话销售在周五 18 点前提交确认的联系数量，缺交只记录违约，协议明确无需赔偿。目标磋商留在签约前，不要额外创建目标设定履约；无现金流，不虚构 Party 玩家、金额或公式。使用同一 FM v3 输出校验与编译结果。",
+      "expected_output": "KPI 使用普通 Contract/Fulfillment 结构；签约前 RFP/Proposal 追溯协议；只有周进度检查履约，不建立目标设定或变更履约；权责、interval、record_only 依据明确。",
+      "files": [],
+      "assertions": [
+        "绩效协议使用普通 FM Contract，没有 KPI 专用内核。",
+        "签约前目标协商通过 Proposal 追溯 Contract，没有目标设定履约。",
+        "周进度检查具有管理方到电话销售的正确权责方向。"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "kpi-target-change-role-direction",
+      "prompt": "用 $modeling 建模允许执行中调整目标的绩效协议。电话销售有权提交目标变更请求，管理方负有在两个工作日内给出同意或拒绝决定的责任；响应截止点由请求明确记录，不需发明工作日历算法。本项责任是按时答复，不保证同意；决定凭证包含 approved 标志，拒绝也完成答复但不改变旧目标。同时管理方每周一发起进度检查，电话销售周五前确认结果；两项逾期均按协议只记录异常。请使用普通 FM v3 的两项履约与 CEL／属性表达，不能让全部履约方向随目标变更一起反转。",
+      "expected_output": "目标变更请求的权利方是电话销售，义务方是管理方；进度检查方向相反；两者均用普通 Fulfillment 与 interval；批准和答复语义区分，保留旧约定，不引入绩效专用类型。",
+      "files": [],
+      "assertions": [
+        "目标变更履约为执行方请求、管理方决定；进度检查保留相反权责方向。",
+        "决定包含批准与拒绝区别，不将答复完成等同于目标获批。",
+        "使用普通 Contract/Fulfillment，Schema v3 校验及编译通过。"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "crm-domain-fulfillment-composition",
+      "prompt": "用 $modeling 建模一个局部 CRM：客户信息领域管理 profileId 标识的客户档案与独立 contactId 的联系方式，档案引用联系方式，联系方式已启用且已核验才可使用。绩效协议双方为管理方与电话销售，履约是每周进度检查：管理方周一发起，电话销售周五前用结果确认提交联系数；确认关联本次检查请求与涉及的客户档案，迟交只按协议记录异常。客户本人身份尚未提供，不要补 Party。拨号只是工具调用，不纳入模型。用同一 FM v3 表达领域规则和履约，明确客户信息是标的／领域输入而不是完成凭证，输出校验、lineage 和编译 JSON。",
+      "expected_output": "Domain Context 有对象、关系和 CEL Rule，普通绩效 Contract 下有严格子履约上下文；履约通过 subjectRefs 引用客户档案，结果凭证而不是 Thing 关闭责任；不存在拨号工具角色或假客户 Party。",
+      "files": [],
+      "assertions": [
+        "领域与绩效使用同一 FM，领域有关系与规则而不是占位。",
+        "履约引用领域 Participant，完成证明仍为 Confirmation 或 Evidence Role。",
+        "领域输入没有放松履约请求、期限与确认的校验。",
+        "所有 Entity 业务属性与引用采用 snake_case，协议键仍使用 Schema 原名。"
+      ]
+    }
+  ]
+}

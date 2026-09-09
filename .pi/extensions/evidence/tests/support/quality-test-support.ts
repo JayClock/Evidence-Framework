@@ -9,14 +9,13 @@ import { join } from 'node:path';
 import { vi } from 'vitest';
 import { createExecutionOwner } from '../../adapters/pi/execution-owner.ts';
 import evidenceExtension from '../../index.ts';
-import { DISCOVERY_GUIDE_PATH } from '../../instructions/discovery-prompt.ts';
+import { prepareModelingInstructions } from './skill-test-support.ts';
 import type { DiscoveryContent } from '../../modeling/discovery/schema.ts';
 import { getPhaseDefinition } from '../../phases.ts';
 import { loadDiscovery } from '../../state/discovery/index.ts';
 import {
   createInitialState,
   loadState,
-  readText,
   saveState,
   writeJsonAtomic,
   writeTextAtomic,
@@ -133,11 +132,7 @@ export async function qualityHarness(roots: string[], config = {}) {
       await writeTextAtomic(root, spec.output, validDocument(spec));
     }
   }
-  await writeTextAtomic(
-    root,
-    DISCOVERY_GUIDE_PATH,
-    await readText(process.cwd(), DISCOVERY_GUIDE_PATH),
-  );
+  await prepareModelingInstructions(root);
   await seedDiscovery(root, state);
   await saveState(root, state);
   return {

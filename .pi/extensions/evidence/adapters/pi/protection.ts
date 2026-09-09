@@ -4,6 +4,7 @@ export const PROTECTED_PATHS = [
   '.evidence/',
   '.pi/extensions/evidence/',
   '.pi/skills/',
+  '.agents/skills/',
   '.pi/evidence.json',
   'artifacts/',
   'reports/',

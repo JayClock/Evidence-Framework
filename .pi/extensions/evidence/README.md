@@ -2,10 +2,16 @@
 
 项目级 Pi 扩展，实现[本地 Evidence 工作流](../../../docs/evidence.md)。
 
+## 单向使用 Skills
+
+`.agents/skills/evidence-discovery/`、`.agents/skills/evidence-fm/`、`.agents/skills/evidence-requirements/` 是建模方法、FM 引擎／schemas 和需求方法的唯一维护源，统一本地维护。项目受信任后 Pi 原生发现 `.agents/skills/`，不再通过 `resources_discover` 额外注册。发现组合 Discovery 访谈机制和 FM 只读专业准则；统一语言与模型生成读取 FM 入口，软件需求读取 Requirements。Python 管线直接运行 `.agents/skills/evidence-fm/scripts/`，不保留旧建模 Skill 或同步脚本。
+
+工具、日志、人工操作与提交路径差异只在 [执行适配](instructions/modeling-adapter.md) 和 [评估协议](instructions/incremental-assessment.md) 维护，不写回独立包。FM 回归与生成评测在 `.agents/skills/evidence-fm/` 内维护，各项业务行为评测随对应 Skill；跨 Skill 检查及 Pi 交互评测在 `tests/skills/`，升级不改运行状态、既有工件或 Gate。其他工程阶段的既有工序本次未迁移。
+
 ## v6：上下文识别驱动的交互建模
 
 ```text
-Init → Modeling（上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 四色追溯 ↔ 回放）
+Init → Modeling（上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 业务来源追溯 ↔ 回放）
        → 人工更新模型：统一语言 → FM → 停回发现（可重复）
        → 人工进入需求收敛：软件范围/故事/验收 → 共同 Gate
      → Architecture → Planning → Coding → Review → complete
@@ -19,7 +25,7 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 ## 手动批次更新
 
-问答只积累发现记录；在当前问题菜单选择「更新模型（纳入已积累的发现）」或运行 `/evidence-discovery update-model` 才授权更新。Agent 先消化新增输入，再通过 `evidence_finalize_discovery` 提交全历史 Context assessment：本批次职责、具体已知／未知 facts、requiredFactRefs、structure/provenance/decision 事实依赖、回放与 remainingScope；每道阻塞题定位 affectedFactRefs。Domain、Channel、Contract、Fulfillment 按自身语义判断，跨 Context 只依赖实际需要的事实，不能要求所有条款、签约渠道或责任链完整。输出 ready（本批次就绪）、support（只纳入已知支撑）、pending（未纳入）与事实级阻塞路径，不把 Context 视作不可拆分的完整包。没有可纳入职责也保存评估，保留全部缺口。完整协议见 Skill 的 `references/incremental-assessment.md`。
+问答只积累发现记录；在当前问题菜单选择「更新模型（纳入已积累的发现）」或运行 `/evidence-discovery update-model` 才授权更新。Agent 先消化新增输入，再通过 `evidence_finalize_discovery` 提交全历史 Context assessment：本批次职责、具体已知／未知 facts、requiredFactRefs、structure/provenance/decision 事实依赖、回放与 remainingScope；每道阻塞题定位 affectedFactRefs。Domain、Channel、Contract、Fulfillment 按自身语义判断，跨 Context 只依赖实际需要的事实，不能要求所有条款、签约渠道或责任链完整。输出 ready（本批次就绪）、support（只纳入已知支撑）、pending（未纳入）与事实级阻塞路径，不把 Context 视作不可拆分的完整包。没有可纳入职责也保存评估，保留全部缺口。完整协议见 [增量评估适配](instructions/incremental-assessment.md)。
 
 依次更新统一语言与 FM；`discovery/formalization.md` 以唯一 discovery-coverage v1 JSON 绑定当前 revision、全部 Context 的 status/modelRefs/retainedFactRefs/remainingScope，以及全部纳入 factRef 的 modelRefs。发布前在暂存编译结果核对 ID、Context 类型和纳入／保留范围；不能将支撑投影宣称为整体完成。校验失败不替换上一版 FM。成功追加 model-applied（发现版本、依据和文件摘要、Context 状态及纳入事实），停回 discovering，不自动生成需求或 Gate。`/evidence-discovery converge` 检查已发布模型、发现与文件仍一致，再进入需求收敛。
 
@@ -33,7 +39,7 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 - TUI 问答使用临时分区卡片：业务上下文、当前履约项、完整问题与操作独立展示，不再把整段状态塞进菜单／编辑器标题。F2 仅展开／收起当前候选详细说明、来源及前序触发依据，并提示 `/evidence-status` 查看完整结构，不再复述整棵履约树；Ctrl+↑↓ 滚动上下文；窄屏自动换行，空间不足时优先定位当前问题，操作／输入区保持可见。无合同时只展示业务范围，不堆叠合同空字段。复用 Pi 原生编辑器，保留中文 IME、换行和外部编辑器；RPC 保留普通 select/editor 对话。仅改变展示，不写工作流状态或证据。
 - 所有主线共用事实覆盖检查：先复用已有事实，再保存确定性推导，仅问影响业务结果的真实知识缺口／冲突。技术映射交 Architecture，FM 表达缺口由 Agent 整理，不把清单变为问卷；确认凭证、金额、身份、渠道、异常终点和合成回放均适用。
 - 已识别凭证直接展开类型时间：RFP／Proposal／Request 的 start_at／expired_at、Contract 的 signed_at、Confirmation 的 confirmed_at、Other Evidence 的 created_at 都不要求先有实例日期、生成公式或字段记录人。时刻凭证不套请求区间，各 kind 的必备时间不互换；不默认签约等于生效、确认等于回调、凭证形成等于原事件发生。类型含义记在候选说明／notes，deadline 保留已知语义并标明未明的确定依据。实例仍须确定时间值，不放松 Schema／实例校验，也不自动给任何人设定期限的权限。
-- 所有关键数据都按发现指南的同一个四色循环追溯业务来源，不等待疑似派生。直接记录、引用已有值、规则派生、来源待明确只是发现说明中的区分，不新增 Schema。先复用，再记录依据与缺口，必要时逐问；不能用非派生标签、类型展开或机器 lineage 通过关闭真实来源问题。resolution 仍须已有业务事实充分覆盖原题，不能只引用“规定时间”就解除期限问题。升级不自动改历史题、撤回旧关联或恢复停止／暂缓。
+- 所有关键数据都按发现指南的同一过程追溯业务来源，不等待疑似派生。直接记录、引用已有值、规则派生、来源待明确只是发现说明中的区分，不新增 Schema。先复用，再记录依据与缺口，必要时逐问；不能用非派生标签、类型展开或机器 lineage 通过关闭真实来源问题。resolution 仍须已有业务事实充分覆盖原题，不能只引用“规定时间”就解除期限问题。升级不自动改历史题、撤回旧关联或恢复停止／暂缓。
 - 新问题用对象与事实维度组成稳定 gapKey；同一缺口沿用原 Q-ID，不因措辞、焦点或暂缓换标识。程序拦截同 gapKey 和部分文本重复，不保证任意改写的语义去重；实际提问质量仍须人工评测。
 - 每次仅允许提出一个核心问题，禁止批量问卷；回答／未知／排除／跳过后自动启动一次消化，先保存更新后的候选、案例与导航再决定下一问或执行草稿／定稿校验。提问质量、是否捆绑子问题及真正吸收语义仍需人工评测，不能由次数约束证明。历史问题用于回访，不是必做队列；人工停止后补答不自动启动。
 - 逐问控制 activeQuestionId／needsConsolidation 由问题、人工回答和控制事件重放到 interaction，不读取旧快照或猜测缺失字段；新运行的问题、回答、缺口与追加历史不删除。自动启动前重检运行、版本、阶段与暂停状态，不跨运行启动。
@@ -46,7 +52,7 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 - 不增加独立查询工具。启动／续轮／恢复使用最多 14,000 字符的上下文包：待消化人工输入、当前讨论对象、相关缺口及明细行号。完整方法放在每次请求的固定系统上下文，不逐轮复制进任务历史。已消化回答不重复内嵌；超出预算的新输入明确提示补读，不能静默视为已消化。current.json 保留完整视图，context-details.md 提供逐对象明细和分页索引；两者都可丢弃重建，不纳入 Gate 或充当业务来源。
 - `context` 钩子仅在发给模型时收束本运行已标记的旧发现轮次，保留最新轮次及其工具调用／结果；原始 Pi 会话和发现日志不删除。真实用户消息、其他扩展、其他运行及压缩摘要不裁剪，不拆开工具调用对；后续阶段不复活旧发现轮次。固定系统方法仍占输入 token；本轮大量工具输出、未标记历史及其他对话仍可能触发 Pi 压缩，不能承诺整个模型上下文永不溢出。内部仍完整读取、校验及重放日志，未做增量重放。
 - `evidence_check_model_draft` 复用 FM 管线进行隔离检查，不替换正式产物；`evidence_finalize_discovery` 只在人工授权更新后评估本批次并启用语言／FM，不自动批准。assessment 始终必填，包括无候选的简单胶水；不适用须有来源理由且无未解决阻塞题。
-- 纯领域/纯渠道仍采用 FM，不强制合同；四色是凭证与数据发现方法，不是新的实体 DSL。
+- 纯领域/纯渠道仍采用 FM，不强制合同；来源追溯沿现有对象、凭证与规则展开，不增加实体 DSL。
 - 统一语言、FM、软件需求共用 Gate。回答更正或重新发现使旧定稿失效；下游变更先人工回退。
 - 来源明确、用户回答、模型专家审核、机器验证、实际单据模拟和 Gate 是不同结论。回答账号来自 GitHub API，但不证明操作者实名、业务角色或批准权限；不改变模型专家审核要求。
 - 模拟器只实例化 Evidence；纯领域操作、状态机等 gap 留给架构及 Q1/Q2，未模拟为 null。

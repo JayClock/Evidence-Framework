@@ -13,7 +13,9 @@ describe('phase definitions', () => {
     expect(PHASE_ORDER).not.toContain('domain');
     const definition = PHASE_DEFINITIONS.modeling;
     expect(PHASE_ORDER).not.toContain('requirements');
-    expect(definition.skillFile).toBe('.pi/skills/evidence-modeling/SKILL.md');
+    expect(definition.skillFile).toBe(
+      '.agents/skills/evidence-discovery/SKILL.md',
+    );
     expect(definition.artifacts.map((item) => item.key)).toEqual([
       'ubiquitous-language',
       'fulfillment-model',

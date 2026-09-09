@@ -1,0 +1,13 @@
+type: rule
+id: rule.payment-request-currency
+kind: derivation
+label: 从合同派生请求支付币种
+contextRef: context.content-payment-fulfillment
+bindings:
+  contract:
+    ref: contract.content-subscription
+expression: contract.currency
+resultType: string
+target:
+  entityRef: request.content-payment
+  attribute: currency

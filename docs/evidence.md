@@ -44,7 +44,7 @@ npx pi
 ```text
 Init
   ↓
-Modeling：上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 四色追溯 ↔ 案例回放
+Modeling：上下文识别 ↔ 合同履约/领域对象/渠道协商 ↔ 业务来源追溯 ↔ 案例回放
           → 手动更新模型：统一语言 → FM → 停回发现（可重复）
           → 手动进入需求收敛：软件需求 → Modeling Gate
   ↓
@@ -55,7 +55,7 @@ Architecture → Planning → Coding（逐 US）→ Review → complete
 
 ### 3.1 Agent 识别上下文，再引导具体事实
 
-发现方法统一维护在 `.pi/skills/evidence-modeling/references/discovery-workshop.md`，发现阶段由扩展直接加载，不再在 TypeScript 中维护另一份业务问卷。代码负责状态、恢复与工具约束，Agent 负责根据材料识别语义，不增加关键词分类器或互斥建模模式。
+建模方法与运行资源以 `.agents/skills/` 为唯一维护源。发现阶段组合 `.agents/skills/evidence-discovery/SKILL.md` 与其 interview 访谈机制，以及 `.agents/skills/evidence-fm/references/` 下 business-analysis、provenance、scenario-validation 专业准则，不加载模型生成流程。统一语言和正式 FM 使用 evidence-fm；需求使用 evidence-requirements。项目受信任后 Pi 原生发现 `.agents/skills/`，启动与重载都无需扩展注册、复制或同步。交互、追加日志与提交差异只放在 `.pi/extensions/evidence/instructions/modeling-adapter.md`，不写入独立包。代码负责状态、恢复与工具约束，Agent 负责根据材料识别语义，不增加关键词分类器或互斥建模模式。
 
 | 实际语义       | Agent 的引导主线                                                                   |
 | :------------- | :--------------------------------------------------------------------------------- |
@@ -141,7 +141,7 @@ Agent 先消化全部新回答，再按 Context 组织全历史候选，声明�
 /evidence-discovery converge
 ```
 
-有新发现尚未更新、未消化回答、原始材料或已发布模型文件变化时，不能直接收敛。手动更新与收敛均不代替 Modeling Gate。所有批次共用同一新协议，无旧 finalizing 兼容分支。协议细节见 `.pi/skills/evidence-modeling/references/incremental-assessment.md`。
+有新发现尚未更新、未消化回答、原始材料或已发布模型文件变化时，不能直接收敛。手动更新与收敛均不代替 Modeling Gate。所有批次共用同一新协议，无旧 finalizing 兼容分支。协议细节见 `.pi/extensions/evidence/instructions/incremental-assessment.md`。
 
 ### 3.3 发现记录、来源和草稿
 
@@ -157,7 +157,7 @@ Agent 先消化全部新回答，再按 Context 组织全历史候选，声明�
 
 所有主线先核对已有材料、候选与最新有效回答：已知事实直接复用，确定性结果保存推导，技术映射交 Architecture，FM 表达缺口由 Agent 补模或记录；只有仍影响业务结果的真实知识缺口／冲突才问。类型必填字段、角色槽位、追溯和回放清单不是用户必答题，不能反过来编造业务事实。
 
-发现方法统一在 `.pi/skills/evidence-modeling/references/discovery-workshop.md` 的“四色追溯的统一循环”：展开对象／凭证类型 → 复用已有事实 → 追溯关键数据的业务来源 → 区分直接记录、引用已有值、规则派生或来源待明确 → 保存依据／缺口 → 必要时逐问并回放。所有关键金额、数量、比例、时间及领域结论都适用，不等 Agent 觉得需要派生才开始。四色是凭证、角色、参与者／标的、描述与规则的发现视角，不增加新实体类型或来源字段。
+来源追溯统一在 `.agents/skills/evidence-fm/references/provenance.md` 的“业务来源追溯的统一循环”：展开对象／凭证类型 → 复用已有事实 → 追溯关键数据的业务来源 → 区分直接记录、引用已有值、规则派生或来源待明确 → 保存依据／缺口 → 必要时逐问并回放。所有关键金额、数量、比例、时间及领域结论都适用，不等 Agent 觉得需要派生才开始。从关键值定位凭证或对象属性，沿引用与派生输入核对提供角色、业务事件、适用约定和规则版本；不增加实体类型或来源字段。
 
 公式可以没有，业务来源不能由字段存在代替。直接记录须保留提供来源与业务依据的已知部分；引用值保留原属性、版本和当时可见性；派生值追溯输入与规则，已有则推导、缺必要口径则问。来源性质未知先问“依据什么确定”，不预设公式或自由输入，不让人写 CEL。所有追溯先复用材料，不是逐字段问卷；未知按业务影响保留，仍服从停止／暂缓及历史缺口防重。
 
@@ -357,4 +357,4 @@ npm run lint
 npm run build
 ```
 
-扩展验证包含类型、Vitest、格式及隔离 FM Python 测试，不调用语言模型。回归覆盖问答等待/恢复、部分回答、无文本暂缓、人工结束/恢复、阻塞保护、取消、更正、来源/快照篡改、草稿隔离、共同 Gate、Schema/lineage/适用模拟和下游测试契约。这些是合成自动化证据，不是具名业务验收或真实 TUI/Agent 生成质量评测。发现引导另有 `.pi/skills/evidence-modeling/evals/discovery/evals.json` 及操作说明，覆盖合同、领域、混合、渠道、低信息、已有明确材料、绩效及简单胶水；需实际运行 Agent 并由人工评价，不能把提示词字符串测试当成交互质量通过。
+扩展验证包含类型、Vitest、格式及隔离 FM Python 测试，不调用语言模型。回归覆盖问答等待/恢复、部分回答、无文本暂缓、人工结束/恢复、阻塞保护、取消、更正、来源/快照篡改、草稿隔离、共同 Gate、Schema/lineage/适用模拟和下游测试契约。这些是合成自动化证据，不是具名业务验收或真实 TUI/Agent 生成质量评测。发现引导另有 `tests/skills/pi-discovery/evals.json` 及操作说明，覆盖合同、领域、混合、渠道、低信息、已有明确材料、绩效及简单胶水；需实际运行 Agent 并由人工评价，不能把提示词字符串测试当成交互质量通过。

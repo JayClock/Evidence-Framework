@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import evidenceExtension from '../../index.ts';
-import { DISCOVERY_GUIDE_PATH } from '../../instructions/discovery-prompt.ts';
+import { prepareModelingInstructions } from '../../tests/support/skill-test-support.ts';
 import { loadState, readText, writeTextAtomic } from '../../storage.ts';
 
 interface RegisteredCommand {
@@ -37,13 +37,11 @@ describe('evidence-init command', () => {
       'artifacts/00-input/requirements.md',
       '# 原始需求\n\n运行 Pi 后使用 `/evidence-init` 输入项目目标和原始需求；扩展会更新本文件。\n',
     );
-    await writeTextAtomic(
+    await prepareModelingInstructions(root);
+    const guide = await readText(
       root,
-      '.pi/skills/evidence-modeling/SKILL.md',
-      '# 需求分析方法',
+      '.agents/skills/evidence-fm/references/business-analysis.md',
     );
-    const guide = await readText(process.cwd(), DISCOVERY_GUIDE_PATH);
-    await writeTextAtomic(root, DISCOVERY_GUIDE_PATH, guide);
     const commands = new Map<string, RegisteredCommand>();
     const setActiveTools = vi.fn();
     const registrationApi = {

@@ -1,0 +1,19 @@
+type: entity
+id: thing.profile
+category: participant
+kind: thing
+label: 客户档案
+contextRef: context.profiles
+attributes:
+  - name: profile_id
+    label: 档案编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 合成示例约定由档案登记方形成、在本领域内区分档案的编号；不是生产业务事实
+  - name: archived
+    label: 已归档
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 合成示例中由档案管理方记录的归档事实

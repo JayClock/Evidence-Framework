@@ -1,6 +1,11 @@
+import {
+  FM_SKILL_ROOT,
+  MODELING_ADAPTER_PATH,
+  REQUIREMENTS_SKILL_ROOT,
+} from './contracts/paths.ts';
 import { prepareDiscoveryContext } from './instructions/discovery-context.ts';
 import {
-  DISCOVERY_GUIDE_PATH,
+  DISCOVERY_POLICY_PATHS,
   renderDiscoveryPolicy,
   renderDiscoveryPrompt,
 } from './instructions/discovery-prompt.ts';
@@ -58,12 +63,13 @@ async function requireInstructions(
 }
 
 export async function buildDiscoveryPolicy(root: string): Promise<string> {
-  const skill = await requireInstructions(
-    root,
-    getPhaseDefinition('modeling').skillFile,
+  const resources = await Promise.all(
+    DISCOVERY_POLICY_PATHS.map(async (path) => ({
+      path,
+      content: await requireInstructions(root, path),
+    })),
   );
-  const guide = await requireInstructions(root, DISCOVERY_GUIDE_PATH);
-  return renderDiscoveryPolicy(skill, guide);
+  return renderDiscoveryPolicy(resources);
 }
 
 export async function buildCurrentPrompt(
@@ -73,14 +79,24 @@ export async function buildCurrentPrompt(
 ): Promise<string> {
   if (state.phase === 'complete') throw new Error('Workflow is complete');
   const definition = getPhaseDefinition(state.phase);
-  const skill = await requireInstructions(root, definition.skillFile);
-
+  const artifactKind = getExpectedArtifact(
+    state.phase,
+    state.currentArtifactIndex,
+  )?.kind;
+  const skillFile =
+    state.phase !== 'modeling' || state.discovery.stage === 'discovering'
+      ? definition.skillFile
+      : artifactKind === 'fm-model'
+        ? `${FM_SKILL_ROOT}/SKILL.md`
+        : state.currentArtifactIndex >= 2
+          ? `${REQUIREMENTS_SKILL_ROOT}/SKILL.md`
+          : `${FM_SKILL_ROOT}/SKILL.md`;
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering') {
     const snapshot = await refreshDiscoveryView(root, state);
     await requireInputs(root, [REQUIREMENTS_PATH]);
     // Validate required policy before starting work, but inject it through
     // before_agent_start rather than duplicating it in every user message.
-    await requireInstructions(root, DISCOVERY_GUIDE_PATH);
+    await buildDiscoveryPolicy(root);
     const context = await prepareDiscoveryContext(
       root,
       state,
@@ -89,9 +105,11 @@ export async function buildCurrentPrompt(
     );
     return renderDiscoveryPrompt(state, snapshot, context);
   }
+  let skill = `## 已加载 Skill：\`${skillFile}\`\n\n${await requireInstructions(root, skillFile)}`;
   if (state.phase === 'modeling') {
     await requireFinalizing(root, state);
     await refreshDiscoveryView(root, state);
+    skill += `\n\n## 执行适配：\`${MODELING_ADAPTER_PATH}\`\n\n${await requireInstructions(root, MODELING_ADAPTER_PATH)}`;
   }
 
   if (state.phase === 'coding') {
@@ -176,7 +194,7 @@ ${inputList(inputs)}
   await requireInputs(root, inputs);
   let artifactPrompt = await requireInstructions(root, artifact.promptFile);
   if (state.phase === 'modeling')
-    artifactPrompt += `\n发现版本：${state.discovery.revision}。扩展已重建完整视图：${discoveryViewPath(state)}，使用现有 read 按需分页读取，核对 revision；历史依据位于 ${state.discovery.path} 所属记录链。单个 revision 文件仅为追加记录，不是完整快照。当前视图只是可重建缓存，不作为独立业务来源。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_ask_questions 或 evidence_save_discovery 重新打开发现，旧定稿失效，不私改其他工件。`;
+    artifactPrompt += `\n发现版本：${state.discovery.revision}。扩展已重建完整视图：${discoveryViewPath(state)}，使用现有 read 按需分页读取，核对 revision；历史依据位于 ${state.discovery.path} 所属记录链。单个 revision 文件仅为追加记录，不是完整快照。当前视图只是可重建缓存，不作为独立业务来源。术语和 FM 依据发现记录；不依赖后生成的故事。FM 之后生成的软件范围与 US/AC 只选择本次实现部分，不把全部业务活动自动变成功能。发现冲突时用 evidence_save_discovery 保存具体缺口并使旧定稿失效；由发现任务承接必要澄清，遵守已有停止／暂缓状态。正式产物任务不直接发起访谈，不私改其他工件。`;
 
   if (state.phase === 'modeling') {
     const snapshot = await loadDiscovery(root, state);
@@ -184,7 +202,7 @@ ${inputList(inputs)}
       artifactPrompt +=
         '\n本次是人工触发的模型更新批次，不是结束 Modeling。先读取现有统一语言和 FM（若存在），保留稳定 ID；纳入已积累发现，更新成功后等待人工继续问答或进入需求收敛。不能要求先完成全部履约链。';
     if (snapshot.formalization)
-      artifactPrompt += `\n本次 Context 评估：${snapshot.formalization.contexts.map((c) => `${c.contextRef}(${c.status})`).join('、') || '无独立业务 Context；不适用理由见 assessment.applicability'}。纳入事实：${snapshot.formalization.includedFactRefs.join('、') || '无'}。ready 仅表示本批次职责就绪；support 只表达已纳入的支撑事实，不声称关联 Context 全部完成。读取 formalization.assessment 核对职责、事实来源、具体依赖和 remainingScope；缺口不编成正式事实。适用 FM 必须提交 discovery/formalization.md 中唯一 JSON 块，结构为 version:1、kind:discovery-coverage、revision:${snapshot.revision}、contexts:[{contextRef,status,modelRefs,retainedFactRefs,remainingScope}]、facts:[{factRef,modelRefs}]。contexts 覆盖全部评估 Context，pending 的 modelRefs 为空，其他 Context 映射到同 kind 的实际 Context ID；retainedFactRefs 列该 Context 全部未纳入事实，remainingScope 保持评估原文。facts 精确映射全部 includedFactRefs 到存在的模型 ID。说明与上一批次相比的新增、修订、撤回与未纳入原因。不可用旧 candidates 覆盖协议。详情按需读 .pi/skills/evidence-modeling/references/incremental-assessment.md。需求文档只以已纳入的模型为依据。`;
+      artifactPrompt += `\n本次 Context 评估：${snapshot.formalization.contexts.map((c) => `${c.contextRef}(${c.status})`).join('、') || '无独立业务 Context；不适用理由见 assessment.applicability'}。纳入事实：${snapshot.formalization.includedFactRefs.join('、') || '无'}。ready 仅表示本批次职责就绪；support 只表达已纳入的支撑事实，不声称关联 Context 全部完成。读取 formalization.assessment 核对职责、事实来源、具体依赖和 remainingScope；缺口不编成正式事实。适用 FM 必须提交 discovery/formalization.md 中唯一 JSON 块，结构为 version:1、kind:discovery-coverage、revision:${snapshot.revision}、contexts:[{contextRef,status,modelRefs,retainedFactRefs,remainingScope}]、facts:[{factRef,modelRefs}]。contexts 覆盖全部评估 Context，pending 的 modelRefs 为空，其他 Context 映射到同 kind 的实际 Context ID；retainedFactRefs 列该 Context 全部未纳入事实，remainingScope 保持评估原文。facts 精确映射全部 includedFactRefs 到存在的模型 ID。说明与上一批次相比的新增、修订、撤回与未纳入原因。不可用旧 candidates 覆盖协议。详情按需读 .pi/extensions/evidence/instructions/incremental-assessment.md。需求文档只以已纳入的模型为依据。`;
   }
 
   if (artifact.kind === 'fm-model') {
@@ -213,7 +231,7 @@ ${artifactPrompt}
 ## 提交约束
 
 - 先判断当前范围是否有独立业务/领域语义；纯领域、纯渠道仍用同一 FM v3，不因没有合同而跳过。不适用仅限简单胶水等无独立语义范围，必须给出具体理由。
-- 适用时读取所需的 \`.pi/skills/evidence-modeling/references/\` 文件，构造完整的分片 YAML 和可选验证场景。
+- 适用时读取所需的 \`.agents/skills/evidence-fm/references/\` 文件，构造完整的分片 YAML 和可选验证场景。
 - 不要提交 \`generated/\`、\`02-business-patterns.md\` 或 \`status.md\`，它们由扩展确定性生成。
 - 不要使用 \`write\` 或 \`edit\` 写入模型目录。
 - 最后调用 \`evidence_submit_fm_model\`，传入适用性、理由以及全部模型文件；该工具必须是最后一个动作。${feedbackSection(state)}

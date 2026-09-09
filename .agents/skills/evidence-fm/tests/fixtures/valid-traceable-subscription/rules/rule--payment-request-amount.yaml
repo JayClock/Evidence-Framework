@@ -1,0 +1,13 @@
+type: rule
+id: rule.payment-request-amount
+kind: derivation
+label: 从合同派生请求支付金额
+contextRef: context.content-payment-fulfillment
+bindings:
+  contract:
+    ref: contract.content-subscription
+expression: contract.price_minor_units
+resultType: int
+target:
+  entityRef: request.content-payment
+  attribute: requested_minor_units

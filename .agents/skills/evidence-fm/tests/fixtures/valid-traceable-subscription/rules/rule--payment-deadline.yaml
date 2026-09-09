@@ -1,0 +1,13 @@
+type: rule
+id: rule.payment-deadline
+kind: derivation
+label: 付款截止时间
+contextRef: context.content-payment-fulfillment
+bindings:
+  self:
+    ref: request.content-payment
+expression: self.start_at + duration("30m")
+resultType: timestamp
+target:
+  entityRef: request.content-payment
+  attribute: expired_at
