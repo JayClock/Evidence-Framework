@@ -5,6 +5,7 @@ import type { ExtensionAPI, ExtensionCommandContext } from '@earendil-works/pi-c
 import { fmPaths } from './paths.js';
 import { modelingPrompt } from './prompts.js';
 import { StateStore, type ModelState } from './state.js';
+import { currentModelMessage, QuestionInteraction } from './ui.js';
 
 async function nextRunId(root: string, now = new Date()): Promise<string> {
   const prefix = `FM-${now.getUTCFullYear()}-`;
@@ -91,13 +92,10 @@ export class ModelingController {
       ctx.ui.notify(`Run ${state.runId} 正在处理 revision ${state.execution.inputRevision}，请等待。`, 'info');
       return;
     }
-    if (state.modelRevision > 0) {
-      ctx.ui.notify(
-        `当前模型：${fmPaths(ctx.cwd).model}（modelRevision ${state.modelRevision}）`,
-        'info',
-      );
+    if (state.activeQuestionId) {
+      await new QuestionInteraction(this.pi, this.store).open(ctx);
       return;
     }
-    ctx.ui.notify(`Run ${state.runId} 当前没有有效 FM 模型。`, 'warning');
+    ctx.ui.notify(currentModelMessage(ctx.cwd, state), state.modelRevision > 0 ? 'info' : 'warning');
   }
 }

@@ -11,8 +11,9 @@ export function modelingPrompt(root: string, state: ModelState): string {
     state.modelRevision > 0
       ? `读取当前完整模型 ${paths.model}，保留未受影响的已知事实。`
       : '当前尚无正式模型；基于已有来源形成可校验的最小完整模型，不补造业务事实。',
-    '必须使用 fm_model_submit 提交完整源 YAML 集合；不得直接写插件状态、staging 或正式模型目录。',
-    '不得生成需求、架构、计划、代码、审核工件、Gate 或其他 Evidence 工作流状态。',
-    '提交处理结果后结束本轮。',
+    '必须先使用 fm_model_submit 提交完整源 YAML 集合；不得直接写插件状态、staging 或正式模型目录。',
+    '提交得到 publish、no-op 或真实 failure 后，如仍有影响业务判断的缺口，只使用 fm_model_ask 提出一个问题；同轮不得提出多个问题。',
+    '不得替用户回答，不得生成需求、架构、计划、代码、审核工件、Gate 或其他 Evidence 工作流状态。',
+    '提问后或确认无需继续提问时结束本轮。',
   ].join('\n');
 }

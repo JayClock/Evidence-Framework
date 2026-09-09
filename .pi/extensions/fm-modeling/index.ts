@@ -5,6 +5,7 @@ import { ModelingController } from './controller.js';
 import { ModelPublisher } from './model.js';
 import { EXTENSION_NAMESPACE, LEGACY_EVIDENCE_NAMESPACE, STORAGE_NAMESPACE } from './paths.js';
 import { StateStore } from './state.js';
+import { QuestionInteraction } from './ui.js';
 
 export default function fmModelingExtension(pi: ExtensionAPI) {
   pi.on('session_start', async (_event, ctx) => {
@@ -45,6 +46,28 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     },
   });
 
+  pi.registerTool({
+    name: 'fm_model_ask',
+    label: 'Ask FM Question',
+    description: '在当前输入已有模型处理结果后，保存一个影响业务判断的问题。',
+    parameters: Type.Object({
+      runId: Type.String(),
+      expectedRevision: Type.Integer({ minimum: 1 }),
+      gapKey: Type.String({ minLength: 3, pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$' }),
+      prompt: Type.String({ minLength: 1 }),
+      impact: Type.String({ minLength: 1 }),
+      sourceRefs: Type.Array(Type.String(), { minItems: 1 }),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const state = await new QuestionInteraction(pi, new StateStore(ctx.cwd)).ask(params);
+      return {
+        content: [{ type: 'text', text: `已保存问题 ${state.activeQuestionId}，等待人工回答。` }],
+        details: { state },
+        terminate: true,
+      };
+    },
+  });
+
   pi.registerCommand('evidence-model', {
     description: '独立运行 FM 建模问答',
     handler: async (args, ctx) => {
@@ -56,7 +79,11 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     const store = new StateStore(ctx.cwd);
     const state = await store.loadState();
     if (!state?.execution) return;
-    await store.saveState({ ...state, execution: null });
+    const settled = { ...state, execution: null };
+    await store.saveState(settled);
+    if (settled.activeQuestionId) {
+      await new QuestionInteraction(pi, store).open(ctx);
+    }
   });
 }
 
