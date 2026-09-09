@@ -21,7 +21,7 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 没有前置 Requirements 阶段。需求收敛仍保存 personas/problem-statement/story-map，位于 Modeling 末尾，不让 FM 依赖未来故事。`01-requirements` 仅为存储目录。
 
-当前状态 v6、发现日志 **v5**、FM Schema v3，配置/测试契约仍为 v1。评估和覆盖仅支持 Context／事实级 v1 协议，问题必须有稳定 gapKey。拒绝旧日志、缺 assessment、候选 complete/dependencyRefs、候选级 coverage 和旧 finalizing 自动收敛路径；不迁移、不转换、不自动重置。`/reload` 只加载代码，不能继续旧协议的运行；旧运行由人工决定归档或重新初始化，现有数据、工件和 Gate 不作修改，也不能手改版本号。
+当前状态 v6、发现日志 **v6**、FM Schema v3，配置/测试契约仍为 v1。评估和覆盖仅支持 Context／事实级 v1 协议，问题必须有稳定 gapKey。拒绝旧日志、缺 assessment、候选 complete/dependencyRefs、候选级 coverage 和旧 finalizing 自动收敛路径；不迁移、不转换、不自动重置。`/reload` 只加载代码，不能继续旧协议的运行；旧运行由人工决定归档或重新初始化，现有数据、工件和 Gate 不作修改，也不能手改版本号。
 
 ## 手动批次更新
 
@@ -35,8 +35,8 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 
 - 状态由扩展持有；按阶段和发现/定稿状态选择工具与模型。
 - 候选短名称 label 与完整说明 description 分开：新保存时 label 必填、1–40字符、单行且无首尾空白，不放职责、依据、缺口或候选标记。标题、角色箭头与问题菜单只显示短名称，不从长文本猜名称。名称更正同样追加记录并引用前次 D-ID；新旧记录都保留完整分析，不提供缺 label 的旧快照兼容。
-- 不再提供底部固定面板或 Evidence 状态栏；状态通过对话消息展示，`/reload` 清除旧版残留显示，不改动运行数据。TUI 以问答卡片展示请求—确认凭证视图：合同上下文、双方角色、当前候选履约的请求端（权利方 → 义务方）、要求／依据、期限、确认凭证及当前问题。TUI 提问工具结果只提示问题已保存及重开／查看命令，不再重复问题正文与履约结构；完整履约树、其他履约与异常责任仅通过 `/evidence-status` 按需查看。RPC 及无界面的文本模式保留原有问题与上下文输出，不依赖 TUI 卡片。移除工程阶段、版本、Gate、焦点与答题统计；工程状态和详细来源仅按需 `/evidence-status` 查看。只读 `content.contractView` 由 contract、fulfillment、position 记录派生，用已有候选 C-ID 表达有来源的合同关系，问题 `target` 明确指向讨论项；未知为 null，不为领域／签约前讨论补造合同。不推测业务已履约，不提升候选批准状态。
-- TUI 问答使用临时分区卡片：业务上下文、当前履约项、完整问题与操作独立展示，不再把整段状态塞进菜单／编辑器标题。F2 仅展开／收起当前候选详细说明、来源及前序触发依据，并提示 `/evidence-status` 查看完整结构，不再复述整棵履约树；Ctrl+↑↓ 滚动上下文；窄屏自动换行，空间不足时优先定位当前问题，操作／输入区保持可见。无合同时只展示业务范围，不堆叠合同空字段。复用 Pi 原生编辑器，保留中文 IME、换行和外部编辑器；RPC 保留普通 select/editor 对话。仅改变展示，不写工作流状态或证据。
+- 不再提供底部固定面板或 Evidence 状态栏；状态通过对话消息展示，`/reload` 清除旧版残留显示，不改动运行数据。TUI 以问答卡片展示请求—确认凭证视图：业务主线／上下文／当前对象、上下文角色、参与人、标的物、相关凭证、当前履约权责及结构化请求／确认凭证、事实覆盖和当前问题。TUI 提问工具结果只提示问题已保存及重开／查看命令，不再重复问题正文与履约结构；完整履约树、其他履约与异常责任仅通过 `/evidence-status` 按需查看。RPC 及无界面的文本模式保留原有问题与上下文输出，不依赖 TUI 卡片。移除工程阶段、版本、Gate、焦点与答题统计；工程状态和详细来源仅按需 `/evidence-status` 查看。只读 `content.businessView` 由 context、fulfillment、position 记录派生，用已有候选 C-ID 表达有来源的 channel／contract／domain 上下文、履约、凭证、参与者和标的物，问题 `target` 明确指向讨论项；未知为 null，不为领域／签约前讨论补造合同。不推测业务已履约，不提升候选批准状态。
+- TUI 问答使用临时分区卡片：业务位置、当前履约切片、事实覆盖、完整问题与操作独立展示，不再把整段状态塞进菜单／编辑器标题。F2 仅展开／收起当前候选详细说明、来源及前序触发依据，并提示 `/evidence-status` 查看完整结构，不再复述整棵履约树；Ctrl+↑↓ 滚动上下文；窄屏自动换行，空间不足时优先定位当前问题，操作／输入区保持可见。无合同时只展示业务范围，不堆叠合同空字段。复用 Pi 原生编辑器，保留中文 IME、换行和外部编辑器；RPC 保留普通 select/editor 对话。仅改变展示，不写工作流状态或证据。
 - 所有主线共用事实覆盖检查：先复用已有事实，再保存确定性推导，仅问影响业务结果的真实知识缺口／冲突。技术映射交 Architecture，FM 表达缺口由 Agent 整理，不把清单变为问卷；确认凭证、金额、身份、渠道、异常终点和合成回放均适用。
 - 已识别凭证直接展开类型时间：RFP／Proposal／Request 的 start_at／expired_at、Contract 的 signed_at、Confirmation 的 confirmed_at、Other Evidence 的 created_at 都不要求先有实例日期、生成公式或字段记录人。时刻凭证不套请求区间，各 kind 的必备时间不互换；不默认签约等于生效、确认等于回调、凭证形成等于原事件发生。类型含义记在候选说明／notes，deadline 保留已知语义并标明未明的确定依据。实例仍须确定时间值，不放松 Schema／实例校验，也不自动给任何人设定期限的权限。
 - 所有关键数据都按发现指南的同一过程追溯业务来源，不等待疑似派生。直接记录、引用已有值、规则派生、来源待明确只是发现说明中的区分，不新增 Schema。先复用，再记录依据与缺口，必要时逐问；不能用非派生标签、类型展开或机器 lineage 通过关闭真实来源问题。resolution 仍须已有业务事实充分覆盖原题，不能只引用“规定时间”就解除期限问题。升级不自动改历史题、撤回旧关联或恢复停止／暂缓。
@@ -46,8 +46,8 @@ Agent 先从业务叙述识别有依据的候选上下文。有约定依据时�
 - 问题通过 `evidence_ask_questions` 持久化后进入 waiting_answer；Agent 完全空闲（agent_settled）时自动打开当前问题的“回答／更新模型／结束本轮问答，整理已有信息”菜单。选择回答直接进入编辑器，以“事实或决定”保存，仍自动记录 `gh` 当前认证的 github.com 账号；读取失败不保存。Esc 只关闭界面，不写回答或停止标记，也不重复弹出同一问题。`/evidence-answer` 可手动重开；带 Q-ID 保留未知、排除、跳过及历史更正操作。未知不能解除业务阻塞。
 - 自动入口绑定当前运行及发现版本，打开及保存前重检阶段、暂停和空闲状态；自动与手动入口共享对话互斥，重载／Session 切换清除待弹出项并作废旧界面。重载不自动重开历史问题或清除人工停止标记，非交互模式只保留等待状态与命令提示。历史问题列表仍可通过带 Q-ID 的单题菜单“返回场景选择”访问，并保留结束本轮入口。`/evidence-discovery finish` 同样保存人工停止标记并启动整理；无论是否还有阻塞项，都只积累发现并停止，不自动定稿。`/evidence-discovery resume` 才恢复自动提问并重新排队暂缓问题；普通 run、暂停/恢复、重载均保留停止标记。
 - 暂缓/结束不调用 GitHub、不生成业务回答、不排除范围、不解除定稿阻塞。控制决定作为独立事件追加并派生 `interaction`，不可充当 `A-*` 来源；新运行初始化为未停止且无暂缓项。非阻塞未答项可保留为缺口，不升级为明确事实。
-- 请求／确认各用简短业务说明，分析论证写 description／notes；不因局部未知抹去已明确事实。卡片的请求、期限、确认字段超过100字符时显式截短并提示查看原文，问题正文不截短；/evidence-status 保留当前合同各候选完整描述及请求／确认原文。
-- `evidence_save_discovery` 只追加本轮记录（summary、sourceRefs、records），不接受完整 content。scope／position／note／source／candidate／case／contract／fulfillment／resolution 逐项记录；新增 supersedes=null，更正引用当前 D-ID，withdraw 记录显式撤回。遗漏不是删除，撤回须处理悬空关系。扩展分配 D-ID，绑定 SRC 版本，校验来源、引用和 expectedRevision；临时文件写完后原子发布，拒绝覆盖历史及中断遗留条目。
+- 请求／确认使用结构化凭证引用及简短业务说明，分析论证写 description／notes；不因局部未知抹去已明确事实。卡片的请求、期限、确认字段超过100字符时显式截短并提示查看原文，问题正文不截短；/evidence-status 保留当前合同各候选完整描述及请求／确认原文。
+- `evidence_save_discovery` 只追加本轮记录（summary、sourceRefs、records），不接受完整 content。scope／position／note／source／candidate／case／context／fulfillment／resolution 逐项记录；新增 supersedes=null，更正引用当前 D-ID，withdraw 记录显式撤回。遗漏不是删除，撤回须处理悬空关系。扩展分配 D-ID，绑定 SRC 版本，校验来源、引用和 expectedRevision；临时文件写完后原子发布，拒绝覆盖历史及中断遗留条目。
 - resolution 以 questionId 关联历史未答／未知问题，包含 conclusion、reasoning、sourceRefs、citations（sourceRef、逐字 quote）；每个来源须有摘录且为 `INPUT`、有效 `SRC-*` 或最新 answered `A-*`。仅连接已有事实／确定性推导，不生成 A-\*、替代人工事实、作范围排除或掩盖矛盾。有效关联解除该题待答／阻塞；历史菜单、TUI／RPC、/evidence-status 与上下文明细显示解释、来源及失效状态，不预填为人工回答。来源文件／版本、引用回答或该题后续人工回答变化使关联失效；更正／撤回以 resolution:Q-ID 当前 D-ID 追加，不改原问题，不自动恢复问答。摘录检查不证明结论蕴含成立；真实冲突仍交人工。
 - 不增加独立查询工具。启动／续轮／恢复使用最多 14,000 字符的上下文包：待消化人工输入、当前讨论对象、相关缺口及明细行号。完整方法放在每次请求的固定系统上下文，不逐轮复制进任务历史。已消化回答不重复内嵌；超出预算的新输入明确提示补读，不能静默视为已消化。current.json 保留完整视图，context-details.md 提供逐对象明细和分页索引；两者都可丢弃重建，不纳入 Gate 或充当业务来源。
 - `context` 钩子仅在发给模型时收束本运行已标记的旧发现轮次，保留最新轮次及其工具调用／结果；原始 Pi 会话和发现日志不删除。真实用户消息、其他扩展、其他运行及压缩摘要不裁剪，不拆开工具调用对；后续阶段不复活旧发现轮次。固定系统方法仍占输入 token；本轮大量工具输出、未标记历史及其他对话仍可能触发 Pi 压缩，不能承诺整个模型上下文永不溢出。内部仍完整读取、校验及重放日志，未做增量重放。
@@ -88,12 +88,12 @@ R1 拆分 Pi 接入；R2 提取完整 Modeling 能力并隔离所需存储与环
 
 - `modeling/index.ts`：无 Pi 的工厂和结果契约入口；不导出生产存储绑定。
 - `modeling/discovery/service.ts`：讨论控制、问题与人工回答、追加发现、消化检查、来源新鲜度、回放覆盖与定稿就绪规则。通过 `DiscoveryRepository` 注入读取及持久化能力，不直接访问文件、Pi、Gate 或阶段调度器。
-- `modeling/discovery/schema.ts` / `replay.ts`：v5 记录结构、确定性重放、更正／撤回链、来源版本绑定及当前视图投影。缓存不是业务来源。
+- `modeling/discovery/schema.ts` / `replay.ts`：v6 记录结构、确定性重放、更正／撤回链、来源版本绑定及当前视图投影。缓存不是业务来源。
 - `modeling/discovery/formalization.ts`：全历史 Context 评估、具体事实依赖闭包和真实阻塞路径计算；依据摘要区分问答积累与已发布模型，不自动解释业务公式。
 - `modeling/fm/coverage.ts`：发布前校验本批次 discovery-coverage 及编译后的模型 ID；不声称机器验证了候选与模型的语义一致性。
-- `modeling/discovery/questions.ts` / `rules.ts` / `progress.ts`：稳定缺口身份、待答／解决／阻塞判定、来源引用、合同与履约结构及发现失效规则。
+- `modeling/discovery/questions.ts` / `rules.ts` / `progress.ts`：稳定缺口身份、待答／解决／阻塞判定、来源引用、业务上下文／凭证／参与者／标的物与履约结构及发现失效规则。
 - `modeling/discovery/resolutions.ts`：注入原文读取能力，核对逐字摘录与新鲜度；不把摘录验证当作语义蕴含，不创造人工回答。
-- `modeling/discovery/view.ts`：合同双方、履约请求 → 确认凭证、异常分支和当前问题的只读投影。保留未知及失效提示，不推断审批人，不写状态。
+- `modeling/discovery/view.ts`：业务位置、上下文角色、参与者／代表／标的物、履约请求 → 确认凭证、事实覆盖、异常分支和当前问题的只读投影。保留未知及失效提示，不推断审批人，不写状态。
 - `modeling/draft.ts`：隔离草稿校验和结果记录，不替换正式 FM 或创建 Gate。
 - `modeling/fm/files.ts` / `pipeline.ts`：源文件规则及 Schema/CEL → lineage → 适用模拟 → 业务模式投影 → 编译。运行时、命令执行和文件操作通过接口注入。
 - `modeling/fm/submission.ts` / `status.ts`：适用性约束、模型发布结果和状态页；返回机器证据，不推进后续工件或提升业务评审状态。
