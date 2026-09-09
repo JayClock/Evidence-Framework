@@ -42,9 +42,12 @@ function foreignNamespaceConflict(pi: ExtensionAPI): string | null {
     .find(
       (command) =>
         command.name.startsWith('evidence-model:') ||
-        (command.name === 'evidence-model' && !command.sourceInfo.path.includes('/fm-modeling/')),
+        (command.name === 'evidence-model' &&
+          !command.sourceInfo.path.includes('/fm-modeling/')),
     );
-  return conflictingCommand ? `命令 /${conflictingCommand.name} 存在命名空间冲突` : null;
+  return conflictingCommand
+    ? `命令 /${conflictingCommand.name} 存在命名空间冲突`
+    : null;
 }
 
 export class ModelingController {
@@ -72,7 +75,10 @@ export class ModelingController {
     }
     const existing = await this.store.loadState();
     if (existing && !existing.stoppedAt) {
-      ctx.ui.notify(`已有活动 Run ${existing.runId}；请继续或先停止，未覆盖现有输入。`, 'warning');
+      ctx.ui.notify(
+        `已有活动 Run ${existing.runId}；请继续或先停止，未覆盖现有输入。`,
+        'warning',
+      );
       return;
     }
     if (existing?.modelDigest) {
@@ -102,12 +108,18 @@ export class ModelingController {
       return;
     }
     if (state.stoppedAt) {
-      ctx.ui.notify(currentModelMessage(ctx.cwd, state), state.modelRevision > 0 ? 'info' : 'warning');
+      ctx.ui.notify(
+        currentModelMessage(ctx.cwd, state),
+        state.modelRevision > 0 ? 'info' : 'warning',
+      );
       return;
     }
     if (state.execution) {
       await this.store.saveState({ ...state, stopRequested: true });
-      ctx.ui.notify('已请求停止；当前回答处理完成后将返回最后有效模型。', 'info');
+      ctx.ui.notify(
+        '已请求停止；当前回答处理完成后将返回最后有效模型。',
+        'info',
+      );
       return;
     }
     await this.finalizeStop(ctx);
@@ -117,31 +129,38 @@ export class ModelingController {
     const state = await this.store.loadState();
     if (!state || state.stoppedAt) return state;
     const events = await this.store.readEvents(state);
-    const unappliedRevisions = events
-      .filter(
-        (entry) =>
-          entry.revision > state.lastAppliedRevision &&
-          (entry.event.kind === 'input-recorded' || entry.event.kind === 'answer-recorded'),
-      )
-      .map((entry) => entry.revision);
+    const unappliedRevisions = events.flatMap((entry) =>
+      entry.revision > state.lastAppliedRevision &&
+      (entry.event.kind === 'input-recorded' ||
+        entry.event.kind === 'answer-recorded')
+        ? [entry.revision]
+        : [],
+    );
     const requestedAt = new Date().toISOString();
-    const result = await this.store.appendEvent(state.revision, {
-      kind: 'interaction-stopped',
-      requestedAt,
-      lastModelRevision: state.modelRevision,
-      lastAppliedRevision: state.lastAppliedRevision,
-      unappliedRevisions,
-    }, (current) => ({
-      ...current,
-      activeQuestionId: null,
-      execution: null,
-      stopRequested: false,
-      stoppedAt: requestedAt,
-    }));
-    const diagnostic = result.state.lastDiagnostic ? ` 最近诊断：${result.state.lastDiagnostic}` : '';
-    const unapplied = unappliedRevisions.length > 0
-      ? ` 尚未纳入的回答 revision：${unappliedRevisions.join(', ')}。`
+    const result = await this.store.appendEvent(
+      state.revision,
+      {
+        kind: 'interaction-stopped',
+        requestedAt,
+        lastModelRevision: state.modelRevision,
+        lastAppliedRevision: state.lastAppliedRevision,
+        unappliedRevisions,
+      },
+      (current) => ({
+        ...current,
+        activeQuestionId: null,
+        execution: null,
+        stopRequested: false,
+        stoppedAt: requestedAt,
+      }),
+    );
+    const diagnostic = result.state.lastDiagnostic
+      ? ` 最近诊断：${result.state.lastDiagnostic}`
       : '';
+    const unapplied =
+      unappliedRevisions.length > 0
+        ? ` 尚未纳入的回答 revision：${unappliedRevisions.join(', ')}。`
+        : '';
     ctx.ui.notify(
       `${currentModelMessage(ctx.cwd, result.state)} lastAppliedRevision=${result.state.lastAppliedRevision}.${unapplied}${diagnostic}`,
       result.state.modelRevision > 0 ? 'info' : 'warning',
@@ -156,13 +175,19 @@ export class ModelingController {
       return;
     }
     if (state.execution) {
-      ctx.ui.notify(`Run ${state.runId} 正在处理 revision ${state.execution.inputRevision}，请等待。`, 'info');
+      ctx.ui.notify(
+        `Run ${state.runId} 正在处理 revision ${state.execution.inputRevision}，请等待。`,
+        'info',
+      );
       return;
     }
     if (state.activeQuestionId) {
       await new QuestionInteraction(this.pi, this.store, this.tools).open(ctx);
       return;
     }
-    ctx.ui.notify(currentModelMessage(ctx.cwd, state), state.modelRevision > 0 ? 'info' : 'warning');
+    ctx.ui.notify(
+      currentModelMessage(ctx.cwd, state),
+      state.modelRevision > 0 ? 'info' : 'warning',
+    );
   }
 }

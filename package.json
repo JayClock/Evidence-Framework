@@ -17,6 +17,11 @@
     "evidence:format": "prettier --write '.pi/extensions/evidence/**/*.{ts,mts,json,md}' '.agents/skills/*/SKILL.md' .pi/evidence.json AGENTS.md docs/evidence.md",
     "evidence:format:check": "prettier --check '.pi/extensions/evidence/**/*.{ts,mts,json,md}' '.agents/skills/*/SKILL.md' .pi/evidence.json AGENTS.md docs/evidence.md",
     "evidence:verify": "npm run evidence:typecheck && npm run evidence:test && npm run evidence:format:check",
+    "fm-modeling:typecheck": "tsc -p .pi/extensions/fm-modeling/tsconfig.json",
+    "fm-modeling:test": "vitest run --config .pi/extensions/fm-modeling/fm-modeling.vitest.config.mts",
+    "fm-modeling:format": "prettier --write '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}'",
+    "fm-modeling:format:check": "prettier --check '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}'",
+    "fm-modeling:verify": "npm run fm-modeling:typecheck && npm run fm-modeling:test && npm run fm-modeling:format:check",
     "skills:test": "python3 -m unittest discover -s tests/skills -v",
     "skills:verify": "npm run skills:test && npm run skills:test:fm",
     "skills:test:fm": "python3 -m unittest discover -s .agents/skills/evidence-fm/tests -v"

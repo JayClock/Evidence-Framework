@@ -27,9 +27,19 @@ async function project() {
   });
   return { root, store, state };
 }
-afterEach(async () => Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))));
+afterEach(async () =>
+  Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))),
+);
 
 describe('workspace recovery', () => {
+  it('refuses a model directory that has no plugin state', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'fm-modeling-external-'));
+    roots.push(root);
+    await mkdir(fmPaths(root).model, { recursive: true });
+    await writeFile(join(fmPaths(root).model, 'model.yaml'), 'external\n');
+    await expect(recoverWorkspace(root)).rejects.toThrow('没有对应状态');
+  });
+
   it('restores the last valid backup when target rename was interrupted', async () => {
     const { root } = await project();
     const paths = fmPaths(root);
@@ -37,8 +47,12 @@ describe('workspace recovery', () => {
     await mkdir(join(paths.staging, 'orphan'), { recursive: true });
     await writeFile(join(paths.staging, 'orphan/model.yaml'), 'bad');
 
-    await expect(recoverWorkspace(root)).resolves.toMatchObject({ modelRevision: 1 });
-    await expect(recoverWorkspace(root)).resolves.toMatchObject({ modelRevision: 1 });
+    await expect(recoverWorkspace(root)).resolves.toMatchObject({
+      modelRevision: 1,
+    });
+    await expect(recoverWorkspace(root)).resolves.toMatchObject({
+      modelRevision: 1,
+    });
   });
 
   it('clears a stale execution without restarting the agent', async () => {
@@ -57,7 +71,10 @@ describe('workspace recovery', () => {
 
   it('reports an externally modified model instead of replacing it', async () => {
     const { root } = await project();
-    await writeFile(join(fmPaths(root).model, 'model.yaml'), 'externally changed\n');
+    await writeFile(
+      join(fmPaths(root).model, 'model.yaml'),
+      'externally changed\n',
+    );
     await expect(recoverWorkspace(root)).rejects.toThrow('外部修改');
   });
 });

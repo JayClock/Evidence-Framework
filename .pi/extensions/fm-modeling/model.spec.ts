@@ -1,4 +1,11 @@
-import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -15,7 +22,9 @@ async function setup() {
   const state = await store.createRun('FM-2026-001', '客户档案');
   return { root, store, state };
 }
-afterEach(async () => Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))));
+afterEach(async () =>
+  Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))),
+);
 
 const bundle = (label = 'one'): BundleFile[] => [
   { path: 'model.yaml', content: `schemaVersion: 3\nname: ${label}\n` },
@@ -39,7 +48,9 @@ describe('ModelPublisher', () => {
 
     expect(published.modelRevision).toBe(1);
     expect(published.lastAppliedRevision).toBe(1);
-    expect(await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8')).toContain('one');
+    expect(
+      await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8'),
+    ).toContain('one');
     expect((await store.readEvent(state.runId, 2)).event).toMatchObject({
       kind: 'model-published',
       changedFiles: ['README.md', 'model.yaml'],
@@ -69,7 +80,9 @@ describe('ModelPublisher', () => {
     });
 
     expect(second.modelRevision).toBe(1);
-    expect((await store.readEvent(state.runId, second.revision)).event.kind).toBe('model-noop');
+    expect(
+      (await store.readEvent(state.runId, second.revision)).event.kind,
+    ).toBe('model-noop');
   });
 
   it('keeps the previous model after validation or rename failure', async () => {
@@ -86,7 +99,11 @@ describe('ModelPublisher', () => {
       files: bundle('stable'),
     });
     const invalid = new ModelPublisher(root, store, {
-      validate: async () => ({ valid: false, simulationPassed: null, errors: ['bad'] }),
+      validate: async () => ({
+        valid: false,
+        simulationPassed: null,
+        errors: ['bad'],
+      }),
     });
     const failed = await invalid.submit({
       runId: state.runId,
@@ -97,28 +114,40 @@ describe('ModelPublisher', () => {
       files: bundle('invalid'),
     });
     expect(failed.modelRevision).toBe(1);
-    expect(await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8')).toContain('stable');
+    expect(
+      await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8'),
+    ).toContain('stable');
 
     const rollback = new ModelPublisher(root, store, {
       validate: async () => ({ valid: true, simulationPassed: null }),
       renameDirectory: async (from, to) => {
-        if (basename(String(from)).startsWith(state.runId) && basename(String(to)) === 'model') {
+        if (
+          basename(String(from)).startsWith(state.runId) &&
+          basename(String(to)) === 'model'
+        ) {
           throw new Error('simulated rename failure');
         }
         await rename(from, to);
       },
     });
-    await expect(
-      rollback.submit({
-        runId: state.runId,
-        expectedRevision: failed.revision,
-        expectedModelRevision: failed.modelRevision,
-        summary: '回滚',
-        sourceRefs: ['INPUT'],
-        files: bundle('replacement'),
-      }),
-    ).rejects.toThrow('simulated rename failure');
-    expect(await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8')).toContain('stable');
+    const rolledBack = await rollback.submit({
+      runId: state.runId,
+      expectedRevision: failed.revision,
+      expectedModelRevision: failed.modelRevision,
+      summary: '回滚',
+      sourceRefs: ['INPUT'],
+      files: bundle('replacement'),
+    });
+    expect(rolledBack.modelRevision).toBe(1);
+    expect(
+      (await store.readEvent(state.runId, rolledBack.revision)).event,
+    ).toMatchObject({
+      kind: 'model-publication-failed',
+      stage: 'publish',
+    });
+    expect(
+      await readFile(join(fmPaths(root).model, 'model.yaml'), 'utf8'),
+    ).toContain('stable');
   });
 
   it('rejects unsafe, duplicate, generated, and incomplete paths', async () => {
@@ -133,9 +162,21 @@ describe('ModelPublisher', () => {
       summary: 'bad',
       sourceRefs: ['INPUT'],
     };
-    await expect(publisher.submit({ ...base, files: [{ path: '../x.yaml', content: '' }] })).rejects.toThrow();
-    await expect(publisher.submit({ ...base, files: [{ path: 'generated/x.yaml', content: '' }] })).rejects.toThrow();
-    await expect(publisher.submit({ ...base, files: bundle().concat(bundle()[0]!) })).rejects.toThrow('重复');
+    await expect(
+      publisher.submit({
+        ...base,
+        files: [{ path: '../x.yaml', content: '' }],
+      }),
+    ).rejects.toThrow();
+    await expect(
+      publisher.submit({
+        ...base,
+        files: [{ path: 'generated/x.yaml', content: '' }],
+      }),
+    ).rejects.toThrow();
+    await expect(
+      publisher.submit({ ...base, files: bundle().concat(bundle()[0]!) }),
+    ).rejects.toThrow('重复');
   });
 });
 

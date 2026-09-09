@@ -3,7 +3,13 @@ import { Type } from 'typebox';
 
 import { ModelingController } from './controller.js';
 import { ModelPublisher } from './model.js';
-import { fmPaths, isWithin, EXTENSION_NAMESPACE, LEGACY_EVIDENCE_NAMESPACE, STORAGE_NAMESPACE } from './paths.js';
+import {
+  fmPaths,
+  isWithin,
+  EXTENSION_NAMESPACE,
+  LEGACY_EVIDENCE_NAMESPACE,
+  STORAGE_NAMESPACE,
+} from './paths.js';
 import { recoverWorkspace } from './recovery.js';
 import { ToolLease } from './runtime.js';
 import { StateStore } from './state.js';
@@ -31,13 +37,22 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
       summary: Type.String({ minLength: 1 }),
       sourceRefs: Type.Array(Type.String(), { minItems: 1 }),
       files: Type.Array(
-        Type.Object({ path: Type.String({ minLength: 1 }), content: Type.String() }),
+        Type.Object({
+          path: Type.String({ minLength: 1 }),
+          content: Type.String(),
+        }),
         { minItems: 1 },
       ),
     }),
     async execute(_toolCallId, params, _signal, onUpdate, ctx) {
-      onUpdate?.({ content: [{ type: 'text', text: '正在校验 FM bundle…' }], details: {} });
-      const state = await new ModelPublisher(ctx.cwd, new StateStore(ctx.cwd)).submit(params);
+      onUpdate?.({
+        content: [{ type: 'text', text: '正在校验 FM bundle…' }],
+        details: {},
+      });
+      const state = await new ModelPublisher(
+        ctx.cwd,
+        new StateStore(ctx.cwd),
+      ).submit(params);
       return {
         content: [
           {
@@ -57,15 +72,27 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     parameters: Type.Object({
       runId: Type.String(),
       expectedRevision: Type.Integer({ minimum: 1 }),
-      gapKey: Type.String({ minLength: 3, pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$' }),
+      gapKey: Type.String({
+        minLength: 3,
+        pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$',
+      }),
       prompt: Type.String({ minLength: 1 }),
       impact: Type.String({ minLength: 1 }),
       sourceRefs: Type.Array(Type.String(), { minItems: 1 }),
     }),
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const state = await new QuestionInteraction(pi, new StateStore(ctx.cwd), tools).ask(params);
+      const state = await new QuestionInteraction(
+        pi,
+        new StateStore(ctx.cwd),
+        tools,
+      ).ask(params);
       return {
-        content: [{ type: 'text', text: `已保存问题 ${state.activeQuestionId}，等待人工回答。` }],
+        content: [
+          {
+            type: 'text',
+            text: `已保存问题 ${state.activeQuestionId}，等待人工回答。`,
+          },
+        ],
         details: { state },
         terminate: true,
       };
@@ -75,7 +102,10 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
   pi.registerCommand('evidence-model', {
     description: '独立运行 FM 建模问答',
     handler: async (args, ctx) => {
-      await new ModelingController(pi, new StateStore(ctx.cwd), tools).handle(args, ctx);
+      await new ModelingController(pi, new StateStore(ctx.cwd), tools).handle(
+        args,
+        ctx,
+      );
     },
   });
 
@@ -107,14 +137,30 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     const protectedRoots = [paths.root, paths.extension, paths.skill];
     if (event.toolName === 'write' || event.toolName === 'edit') {
       const path = String((event.input as { path?: unknown }).path ?? '');
-      if (protectedRoots.some((root) => isWithin(root, path.startsWith('/') ? path : `${ctx.cwd}/${path}`))) {
-        return { block: true, reason: `FM Modeling 执行期间禁止 Agent 直接写入受保护路径：${path}` };
+      if (
+        protectedRoots.some((root) =>
+          isWithin(root, path.startsWith('/') ? path : `${ctx.cwd}/${path}`),
+        )
+      ) {
+        return {
+          block: true,
+          reason: `FM Modeling 执行期间禁止 Agent 直接写入受保护路径：${path}`,
+        };
       }
     }
     if (event.toolName === 'bash') {
-      const command = String((event.input as { command?: unknown }).command ?? '');
-      if ([STORAGE_NAMESPACE, EXTENSION_NAMESPACE, '.agents/skills'].some((path) => command.includes(path))) {
-        return { block: true, reason: 'FM Modeling 执行期间禁止通过 bash 修改受保护路径' };
+      const command = String(
+        (event.input as { command?: unknown }).command ?? '',
+      );
+      if (
+        [STORAGE_NAMESPACE, EXTENSION_NAMESPACE, '.agents/skills'].some(
+          (path) => command.includes(path),
+        )
+      ) {
+        return {
+          block: true,
+          reason: 'FM Modeling 执行期间禁止通过 bash 修改受保护路径',
+        };
       }
     }
     return undefined;

@@ -15,7 +15,9 @@ export class ToolLease {
 
   release(): void {
     if (this.added.size === 0) return;
-    this.pi.setActiveTools(this.pi.getActiveTools().filter((name) => !this.added.has(name)));
+    this.pi.setActiveTools(
+      this.pi.getActiveTools().filter((name) => !this.added.has(name)),
+    );
     this.added.clear();
   }
 }

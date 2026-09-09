@@ -12,12 +12,16 @@ async function root() {
   roots.push(value);
   return value;
 }
-afterEach(async () => Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))));
+afterEach(async () =>
+  Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))),
+);
 
 describe('StateStore', () => {
   it('stores the original input only in the first immutable event', async () => {
     const project = await root();
-    const store = new StateStore(project, { now: () => new Date('2026-04-01T10:00:00Z') });
+    const store = new StateStore(project, {
+      now: () => new Date('2026-04-01T10:00:00Z'),
+    });
     const state = await store.createRun('FM-2026-001', '作者结算争议');
 
     const stateJson = await readFile(fmPaths(project).state, 'utf8');
@@ -57,10 +61,19 @@ describe('StateStore', () => {
       'events',
       'revision-000001.json',
     );
-    await writeFile(path, (await readFile(path, 'utf8')).replace('需求', '篡改'), 'utf8');
+    await writeFile(
+      path,
+      (await readFile(path, 'utf8')).replace('需求', '篡改'),
+      'utf8',
+    );
     await expect(store.recover()).rejects.toThrow('digest mismatch');
 
-    await writeFile(fmPaths(project).state, JSON.stringify({ version: 2, runId: 'x', revision: 1 }));
-    await expect(store.loadState()).rejects.toThrow('Unsupported FM state version');
+    await writeFile(
+      fmPaths(project).state,
+      JSON.stringify({ version: 2, runId: 'x', revision: 1 }),
+    );
+    await expect(store.loadState()).rejects.toThrow(
+      'Unsupported FM state version',
+    );
   });
 });

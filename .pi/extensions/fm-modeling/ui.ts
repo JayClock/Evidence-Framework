@@ -1,15 +1,23 @@
-import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+} from '@earendil-works/pi-coding-agent';
 
 import { fmPaths } from './paths.js';
 import { modelingPrompt } from './prompts.js';
 import { ToolLease } from './runtime.js';
 import { type EventEnvelope, type ModelState, StateStore } from './state.js';
 
-export function nextQuestionId(events: EventEnvelope[], gapKey: string): string {
+export function nextQuestionId(
+  events: EventEnvelope[],
+  gapKey: string,
+): string {
   const previous = events.find(
-    (entry) => entry.event.kind === 'question-asked' && entry.event.gapKey === gapKey,
+    (entry) =>
+      entry.event.kind === 'question-asked' && entry.event.gapKey === gapKey,
   );
-  if (previous?.event.kind === 'question-asked') return previous.event.questionId;
+  if (previous?.event.kind === 'question-asked')
+    return previous.event.questionId;
   const highest = events.reduce((max, entry) => {
     if (entry.event.kind !== 'question-asked') return max;
     return Math.max(max, Number(entry.event.questionId.slice(2)) || 0);
@@ -36,22 +44,32 @@ export class QuestionInteraction {
     if (!state || state.runId !== params.runId) throw new Error('Run 不匹配');
     if (state.stoppedAt) throw new Error('Run 已停止');
     if (state.stopRequested) throw new Error('Run 已请求停止，不能再提问');
-    if (state.activeQuestionId) throw new Error(`已有未回答问题 ${state.activeQuestionId}`);
-    if (state.revision !== params.expectedRevision) throw new Error('Revision 已过期');
+    if (state.activeQuestionId)
+      throw new Error(`已有未回答问题 ${state.activeQuestionId}`);
+    if (state.revision !== params.expectedRevision)
+      throw new Error('Revision 已过期');
     const events = await this.store.readEvents(state);
     const latest = events.at(-1)?.event.kind;
-    if (!['model-published', 'model-noop', 'model-publication-failed'].includes(latest ?? '')) {
+    if (
+      !['model-published', 'model-noop', 'model-publication-failed'].includes(
+        latest ?? '',
+      )
+    ) {
       throw new Error('当前输入尚无 publish、no-op 或 failure 结果，不能提问');
     }
     const questionId = nextQuestionId(events, params.gapKey);
-    const result = await this.store.appendEvent(params.expectedRevision, {
-      kind: 'question-asked',
-      questionId,
-      gapKey: params.gapKey,
-      prompt: params.prompt,
-      impact: params.impact,
-      sourceRefs: params.sourceRefs,
-    }, (current) => ({ ...current, activeQuestionId: questionId }));
+    const result = await this.store.appendEvent(
+      params.expectedRevision,
+      {
+        kind: 'question-asked',
+        questionId,
+        gapKey: params.gapKey,
+        prompt: params.prompt,
+        impact: params.impact,
+        sourceRefs: params.sourceRefs,
+      },
+      (current) => ({ ...current, activeQuestionId: questionId }),
+    );
     return result.state;
   }
 
@@ -62,18 +80,20 @@ export class QuestionInteraction {
     const question = events
       .map((entry) => entry.event)
       .find(
-        (event) => event.kind === 'question-asked' && event.questionId === state.activeQuestionId,
+        (event) =>
+          event.kind === 'question-asked' &&
+          event.questionId === state.activeQuestionId,
       );
-    if (!question || question.kind !== 'question-asked') throw new Error('活动问题事件不存在');
+    if (!question || question.kind !== 'question-asked')
+      throw new Error('活动问题事件不存在');
     if (!ctx.hasUI) {
       ctx.ui.notify(`${question.questionId}：${question.prompt}`, 'info');
       return;
     }
-    const action = await ctx.ui.select(`${question.questionId} · ${question.impact}`, [
-      '回答',
-      '停止',
-      '取消',
-    ]);
+    const action = await ctx.ui.select(
+      `${question.questionId} · ${question.impact}`,
+      ['回答', '停止', '取消'],
+    );
     if (action === '停止') {
       ctx.ui.notify('可执行 /evidence-model stop 停止当前 Run。', 'info');
       return;
@@ -98,12 +118,16 @@ export class QuestionInteraction {
       inputRevision,
       startedAt: new Date().toISOString(),
     };
-    const result = await this.store.appendEvent(state.revision, {
-      kind: 'answer-recorded',
-      answerId,
-      questionId,
-      text: answer,
-    }, (current) => ({ ...current, activeQuestionId: null, execution }));
+    const result = await this.store.appendEvent(
+      state.revision,
+      {
+        kind: 'answer-recorded',
+        answerId,
+        questionId,
+        text: answer,
+      },
+      (current) => ({ ...current, activeQuestionId: null, execution }),
+    );
     this.tools.activate(['read', 'fm_model_submit', 'fm_model_ask']);
     this.pi.sendUserMessage(modelingPrompt(ctx.cwd, result.state));
   }

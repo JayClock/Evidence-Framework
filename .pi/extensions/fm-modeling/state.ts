@@ -35,7 +35,12 @@ export type ModelEvent =
       impact: string;
       sourceRefs: string[];
     }
-  | { kind: 'answer-recorded'; answerId: string; questionId: string; text: string }
+  | {
+      kind: 'answer-recorded';
+      answerId: string;
+      questionId: string;
+      text: string;
+    }
   | {
       kind: 'model-published';
       modelRevision: number;
@@ -51,7 +56,12 @@ export type ModelEvent =
       diagnostic: string;
       unappliedRevisions: number[];
     }
-  | { kind: 'model-noop'; appliedThroughRevision: number; modelDigest: string; sourceRefs: string[] }
+  | {
+      kind: 'model-noop';
+      appliedThroughRevision: number;
+      modelDigest: string;
+      sourceRefs: string[];
+    }
   | {
       kind: 'interaction-stopped';
       requestedAt: string;
@@ -88,7 +98,11 @@ function eventPath(root: string, runId: string, revision: number): string {
   );
 }
 
-async function atomicWrite(path: string, content: string, renameFile: typeof rename): Promise<void> {
+async function atomicWrite(
+  path: string,
+  content: string,
+  renameFile: typeof rename,
+): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${process.pid}.${randomUUID()}.tmp`;
   try {
@@ -111,9 +125,11 @@ async function immutableWrite(path: string, content: string): Promise<void> {
 }
 
 function assertState(value: unknown): asserts value is ModelState {
-  if (!value || typeof value !== 'object') throw new Error('FM state is not an object');
+  if (!value || typeof value !== 'object')
+    throw new Error('FM state is not an object');
   const state = value as Partial<ModelState>;
-  if (state.version !== 1) throw new Error(`Unsupported FM state version: ${String(state.version)}`);
+  if (state.version !== 1)
+    throw new Error(`Unsupported FM state version: ${String(state.version)}`);
   if (typeof state.runId !== 'string' || !Number.isInteger(state.revision)) {
     throw new Error('Invalid FM state');
   }
@@ -140,7 +156,9 @@ export class StateStore {
 
   async loadState(): Promise<ModelState | null> {
     try {
-      const parsed: unknown = JSON.parse(await readFile(fmPaths(this.root).state, 'utf8'));
+      const parsed: unknown = JSON.parse(
+        await readFile(fmPaths(this.root).state, 'utf8'),
+      );
       assertState(parsed);
       return parsed;
     } catch (error) {
@@ -161,7 +179,8 @@ export class StateStore {
     return this.serial(async () => {
       if (!text.trim()) throw new Error('需求不能为空');
       const existing = await this.loadState();
-      if (existing && !existing.stoppedAt) throw new Error('已有 FM Modeling Run');
+      if (existing && !existing.stoppedAt)
+        throw new Error('已有 FM Modeling Run');
       const state: ModelState = {
         version: 1,
         runId,
@@ -203,9 +222,14 @@ export class StateStore {
     update: (state: ModelState) => ModelState = (state) => state,
   ): Promise<{ state: ModelState; envelope: EventEnvelope }> {
     if (current.revision !== expectedRevision) {
-      throw new Error(`Revision conflict: expected ${expectedRevision}, current ${current.revision}`);
+      throw new Error(
+        `Revision conflict: expected ${expectedRevision}, current ${current.revision}`,
+      );
     }
-    const previous = expectedRevision === 0 ? null : await this.readEvent(current.runId, expectedRevision);
+    const previous =
+      expectedRevision === 0
+        ? null
+        : await this.readEvent(current.runId, expectedRevision);
     const unsigned = {
       version: 1 as const,
       runId: current.runId,
@@ -225,18 +249,28 @@ export class StateStore {
   }
 
   async readEvent(runId: string, revision: number): Promise<EventEnvelope> {
-    const source = await readFile(eventPath(this.root, runId, revision), 'utf8');
+    const source = await readFile(
+      eventPath(this.root, runId, revision),
+      'utf8',
+    );
     let parsed: EventEnvelope;
     try {
       parsed = JSON.parse(source) as EventEnvelope;
     } catch (error) {
-      throw new Error(`Invalid event JSON at revision ${revision}`, { cause: error });
+      throw new Error(`Invalid event JSON at revision ${revision}`, {
+        cause: error,
+      });
     }
-    if (parsed.version !== 1 || parsed.runId !== runId || parsed.revision !== revision) {
+    if (
+      parsed.version !== 1 ||
+      parsed.runId !== runId ||
+      parsed.revision !== revision
+    ) {
       throw new Error(`Invalid event envelope at revision ${revision}`);
     }
     const { digest: actual, ...unsigned } = parsed;
-    if (digest(unsigned) !== actual) throw new Error(`Event digest mismatch at revision ${revision}`);
+    if (digest(unsigned) !== actual)
+      throw new Error(`Event digest mismatch at revision ${revision}`);
     return parsed;
   }
 
@@ -254,7 +288,10 @@ export class StateStore {
     return events;
   }
 
-  async recover(): Promise<{ state: ModelState | null; events: EventEnvelope[] }> {
+  async recover(): Promise<{
+    state: ModelState | null;
+    events: EventEnvelope[];
+  }> {
     const state = await this.loadState();
     if (!state) return { state: null, events: [] };
     return { state, events: await this.readEvents(state) };

@@ -21,5 +21,8 @@ export function fmPaths(root: string) {
 
 export function isWithin(parent: string, candidate: string): boolean {
   const value = relative(resolve(parent), resolve(candidate));
-  return value === '' || (!value.startsWith(`..${sep}`) && value !== '..' && !isAbsolute(value));
+  return (
+    value === '' ||
+    (!value.startsWith(`..${sep}`) && value !== '..' && !isAbsolute(value))
+  );
 }

@@ -13,13 +13,18 @@ async function directoryExists(path: string): Promise<boolean> {
   }
 }
 
-export async function verifyCurrentModel(root: string, state: ModelState): Promise<void> {
+export async function verifyCurrentModel(
+  root: string,
+  state: ModelState,
+): Promise<void> {
   if (!state.modelDigest) return;
   const model = fmPaths(root).model;
   if (!(await directoryExists(model))) throw new Error('正式 FM 模型目录缺失');
   const actual = await digestDirectory(model);
   if (actual !== state.modelDigest) {
-    throw new Error(`正式 FM 模型被外部修改：expected ${state.modelDigest}, actual ${actual}`);
+    throw new Error(
+      `正式 FM 模型被外部修改：expected ${state.modelDigest}, actual ${actual}`,
+    );
   }
 }
 
@@ -28,18 +33,28 @@ export async function recoverWorkspace(
   store = new StateStore(root),
 ): Promise<ModelState | null> {
   const recovered = await store.recover();
-  if (!recovered.state) return null;
-  let state = recovered.state;
   const paths = fmPaths(root);
+  if (!recovered.state) {
+    if (await directoryExists(paths.model)) {
+      throw new Error('发现没有对应状态的外部 FM 模型，拒绝导入或覆盖');
+    }
+    return null;
+  }
+  let state = recovered.state;
   const modelExists = await directoryExists(paths.model);
   const backupExists = await directoryExists(paths.backup);
 
   if (state.modelDigest) {
-    if (!modelExists && backupExists && (await digestDirectory(paths.backup)) === state.modelDigest) {
+    if (
+      !modelExists &&
+      backupExists &&
+      (await digestDirectory(paths.backup)) === state.modelDigest
+    ) {
       await rename(paths.backup, paths.model);
     } else {
       await verifyCurrentModel(root, state);
-      if (backupExists) await rm(paths.backup, { recursive: true, force: true });
+      if (backupExists)
+        await rm(paths.backup, { recursive: true, force: true });
     }
   } else if (modelExists) {
     throw new Error('发现不属于当前 Run 的外部 FM 模型，拒绝导入或覆盖');

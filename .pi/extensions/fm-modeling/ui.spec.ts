@@ -23,10 +23,16 @@ async function published() {
     sourceRefs: ['INPUT'],
     files: [{ path: 'model.yaml', content: 'schemaVersion: 3\n' }],
   });
-  const pi = { getActiveTools: () => ['read'], setActiveTools: vi.fn(), sendUserMessage: vi.fn() };
+  const pi = {
+    getActiveTools: () => ['read'],
+    setActiveTools: vi.fn(),
+    sendUserMessage: vi.fn(),
+  };
   return { root, store, state, pi };
 }
-afterEach(async () => Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))));
+afterEach(async () =>
+  Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true }))),
+);
 
 describe('QuestionInteraction', () => {
   it('asks only after a model outcome and keeps one active question', async () => {
@@ -67,14 +73,20 @@ describe('QuestionInteraction', () => {
     const ctx = {
       cwd: root,
       hasUI: true,
-      ui: { select: async () => '回答', editor: async () => '以结算单截止日期为准', notify: vi.fn() },
+      ui: {
+        select: async () => '回答',
+        editor: async () => '以结算单截止日期为准',
+        notify: vi.fn(),
+      },
       sessionManager: { getSessionId: () => 'session-1' },
     };
     await interaction.open(ctx as never);
 
     const current = await store.loadState();
     expect(current?.execution?.inputRevision).toBe(current?.revision);
-    expect((await store.readEvent(state.runId, current!.revision)).event).toEqual({
+    expect(
+      (await store.readEvent(state.runId, current!.revision)).event,
+    ).toEqual({
       kind: 'answer-recorded',
       answerId: 'A-001',
       questionId: 'Q-001',
@@ -88,7 +100,11 @@ describe('QuestionInteraction', () => {
       nextQuestionId(
         [
           {
-            event: { kind: 'question-asked', questionId: 'Q-003', gapKey: 'payment.deadline' },
+            event: {
+              kind: 'question-asked',
+              questionId: 'Q-003',
+              gapKey: 'payment.deadline',
+            },
           },
         ] as never,
         'payment.deadline',

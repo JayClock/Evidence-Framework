@@ -12,7 +12,9 @@ async function sourceFiles(path: string): Promise<string[]> {
     entries.map((entry) =>
       entry.isDirectory()
         ? sourceFiles(join(path, entry.name))
-        : Promise.resolve(entry.name.endsWith('.ts') ? [join(path, entry.name)] : []),
+        : Promise.resolve(
+            entry.name.endsWith('.ts') ? [join(path, entry.name)] : [],
+          ),
     ),
   );
   return nested.flat();
@@ -21,12 +23,19 @@ async function sourceFiles(path: string): Promise<string[]> {
 describe('fm-modeling extension boundary', () => {
   it('registers one independent command', async () => {
     const registerCommand = vi.fn();
-    fmModelingExtension({ registerCommand, registerTool: vi.fn(), on: vi.fn() } as never);
+    fmModelingExtension({
+      registerCommand,
+      registerTool: vi.fn(),
+      on: vi.fn(),
+    } as never);
 
     expect(registerCommand).toHaveBeenCalledOnce();
     expect(registerCommand).toHaveBeenCalledWith(
       'evidence-model',
-      expect.objectContaining({ description: expect.any(String), handler: expect.any(Function) }),
+      expect.objectContaining({
+        description: expect.any(String),
+        handler: expect.any(Function),
+      }),
     );
     expect(boundaries.storage).toBe('.evidence/fm-modeling');
   });
@@ -35,7 +44,9 @@ describe('fm-modeling extension boundary', () => {
     for (const path of await sourceFiles(directory)) {
       const source = await readFile(path, 'utf8');
       expect(source).not.toMatch(/from\s+['"][^'"]*\/evidence\//);
-      expect(source).not.toContain(["import('", '.pi/extensions/evidence'].join(''));
+      expect(source).not.toContain(
+        ["import('", '.pi/extensions/evidence'].join(''),
+      );
     }
   });
 });
