@@ -2,7 +2,7 @@
 
 访谈机制由 evidence-discovery 维护；业务判断、来源追溯、凭证时间与模型案例由 evidence-fm 维护。发现阶段组合 Discovery 入口及 interview 与 FM 的 business-analysis、provenance、scenario-validation，只读使用知识，不加载 FM 生成入口。本文件只规定当前受控任务的交互、存储与提交契约，不维护第二份业务方法。
 
-本项目提供两包，因此专业发现缺任一必需指令时拒绝启动；不会退化为没有建模准则的猜测访谈。这不同于单独安装 Discovery 的通用访谈能力。发现日志中的 candidate／contract／fulfillment 仍是工作理解，不是需要与正式 FM 同步的副本。
+本项目提供两包，因此专业发现缺任一必需指令时拒绝启动；不会退化为没有建模准则的猜测访谈。这不同于单独安装 Discovery 的通用访谈能力。发现日志中的 candidate／context／fulfillment 仍是工作理解，不是需要与正式 FM 同步的副本。
 
 ## 与通用 Skill 的执行差异
 
@@ -22,7 +22,7 @@
 
 `evidence_save_discovery` 接收 expectedRevision、summary、sourceRefs、records：
 
-- 只追加本轮新增或变化，不提交 content 全量快照。记录类型为 scope、position、note、source、candidate、case、contract、fulfillment、resolution、withdraw。
+- 只追加本轮新增或变化，不提交 content 全量快照。记录类型为 scope、position、note、source、candidate、case、context、fulfillment、resolution、withdraw。
 - 新对象 supersedes=null；更正／撤回引用 recordHeads 中该对象当前 D-ID，D-ID 由扩展分配。未提及不是撤回，撤回须处理悬空引用。
 - candidate 的 label 为 1–40 字符的单行短名称，description 保存完整说明；业务事实、来源解释和局部缺口按 Skill 方法记录，不为技术字段重问用户。
 - 六类凭证的类型时间与所有关键数据的业务来源写入 candidate.description／notes，实例时间留给各自实例；不新增发现字段或另一套 DSL。
@@ -30,16 +30,16 @@
 - 每次回答、未知、排除或跳过后，先通过 evidence_save_discovery 追加消化结果，再决定下一问；在 summary／notes 说明本次变化、依据及剩余缺口。
 - 所有发现工具传当前 expectedRevision，每次保存后采用返回的新版本。普通问答不消耗 maxRounds。
 
-## 合同视图投影
+## 业务位置与切片投影
 
-contractView 由 contract、fulfillment、position 记录派生，不由 Agent 全量提交，也不是正式 FM。按 Skill 已识别的关系映射，不从技术槽位推断业务事实。
+businessView 由 context、fulfillment、position 记录派生，不由 Agent 全量提交，也不是正式 FM。按 Skill 已识别的关系映射，不从技术槽位推断业务事实。
 
-- contract：contextRef 引用已有合同候选 C-ID，roleRefs 恰好两个位置，未知位置为 null。
-- fulfillment：candidateRef、contractRef、rightHolderRef、obligorRef、request、deadline、confirmation、来源。请求和确认用简短业务说明，详细分析放 description／notes；全未知的文本为 null，部分已知保留原依据。
+- context：明确 channel／contract／domain；contextRef 引用上下文候选。合同 roleRefs 恰好两个位置；participantRefs、thingRefs、evidenceRefs 分别记录实际参与人／组织、标的物和凭证。
+- fulfillment：candidateRef、contextRef、rightHolderRef、obligorRef，以及结构化 requestEvidence、confirmationEvidence、supportingEvidenceRefs、participantRefs、thingRefs 和来源。请求／确认分别表达凭证、形成或提供者、证明作用与类型时间；全未知字段为 null，部分已知保留原依据。
 - deadline 保留已识别请求的 start_at／expired_at 类型语义，同时写明尚未明确的确定依据；字段非空不表示来源已解决。
 - 后续履约用同一合同内的 parentFulfillmentRef 与 trigger 连接直接前序，不能循环。
-- position.current 指向当前合同及可选履约；无合同依据时 contracts 为空，current 为 null。
-- 问题 target 指向已有合同及可选履约，尚未定位为 null。界面用 label 展示，F2 与 `/evidence-status` 按需展示说明与来源；不提升候选审核状态。
+- position.current 指向当前 channel／contract／domain 上下文及可选履约／对象；尚无业务位置时 contexts 为空或 current 为 null。
+- 问题 target 指向已有上下文及可选履约／对象，尚未定位为 null。界面用 label 展示，F2 与 `/evidence-status` 按需展示说明与来源；不提升候选审核状态。
 
 ## 问题身份与解决依据
 

@@ -5,25 +5,77 @@ import type {
   DiscoverySubmission,
 } from '../../modeling/discovery/schema.ts';
 
+const candidate = (
+  id: string,
+  label: string,
+  archetype:
+    | 'context'
+    | 'fulfillment'
+    | 'evidence'
+    | 'role'
+    | 'participant'
+    | 'thing'
+    | 'description',
+  description = label,
+  confidence: 'explicit' | 'inferred' | 'unknown' = 'explicit',
+) => ({
+  id,
+  archetype,
+  evidenceKind: null,
+  label,
+  description,
+  confidence,
+  sourceRefs: ['INPUT'],
+  modelRefs: [],
+});
+
+const requestEvidence = (
+  requirement: string | null,
+  startAt: string | null = null,
+  expiredAt: string | null = null,
+  issuerRef: string | null = null,
+  recipientRef: string | null = null,
+) => ({
+  evidenceRef: null,
+  issuerRef,
+  recipientRef,
+  requirement,
+  startAt,
+  expiredAt,
+});
+
+const confirmationEvidence = (proves: string | null) => ({
+  evidenceRef: null,
+  providerRef: null,
+  proves,
+  confirmedAt: proves ? '以本次履约确认的 confirmed_at 为准' : null,
+});
+
 export function discoveryContent(): DiscoveryContent {
   return {
     scope: '测试夹具：仅验证本次局部业务的身份、规则和可追溯性。',
     excludedScope: '不展开其他组织的内部运营。',
     focus: 'replay',
-    contractView: { current: null, contracts: [] },
+    businessView: {
+      current: { kind: 'domain', contextRef: 'C-001', objectRef: null },
+      contexts: [
+        {
+          kind: 'domain',
+          contextRef: 'C-001',
+          roleRefs: [],
+          participantRefs: [],
+          thingRefs: [],
+          evidenceRefs: [],
+          agreementEvidence: null,
+          sourceRefs: ['INPUT'],
+          fulfillments: [],
+        },
+      ],
+    },
     notes:
       '这是合成测试材料，不是业务验收记录。范围已限定，凭证及关键数据依据来自原始输入；纯领域对象按身份与规则发现。正常、边界和异常案例的预期均由测试输入明确给出。表达缺口由下游 Q1/Q2 验证，不声称单据模拟器验证了领域操作。',
     sources: [],
-    candidates: [
-      {
-        id: 'C-001',
-        label: '测试对象规则',
-        description: '测试对象规则',
-        confidence: 'explicit',
-        sourceRefs: ['INPUT'],
-        modelRefs: [],
-      },
-    ],
+    candidates: [candidate('C-001', '测试对象规则', 'context')],
     cases: (['normal', 'boundary', 'exception'] as const).map((kind, i) => ({
       id: `CASE-00${i + 1}`,
       kind,
@@ -40,57 +92,77 @@ export { contextAssessment as domainAssessment } from './context-assessment.ts';
 
 export function contractContent(): DiscoveryContent {
   const base = discoveryContent();
-  const labels = [
-    '作者合作协议',
-    '平台',
-    '作者',
-    '交付稿件',
-    '支付分成',
-    '逾期补偿',
+  base.candidates = [
+    candidate('C-001', '作者合作协议', 'context'),
+    candidate('C-002', '平台', 'role'),
+    candidate('C-003', '作者', 'role'),
+    candidate('C-004', '交付稿件', 'fulfillment'),
+    candidate('C-005', '支付分成', 'fulfillment'),
+    candidate('C-006', '逾期补偿', 'fulfillment', '逾期补偿', 'inferred'),
   ];
-  base.candidates = labels.map((label, i) => ({
-    id: `C-00${i + 1}`,
-    label,
-    description: label,
-    confidence: i === 5 ? 'inferred' : 'explicit',
-    sourceRefs: ['INPUT'],
-    modelRefs: [],
-  }));
-  const item = {
-    request: '合作协议、结算单',
-    deadline: null,
-    confirmation: null,
+  const baseItem = {
+    requestEvidence: requestEvidence(null),
+    confirmationEvidence: confirmationEvidence(null),
+    supportingEvidenceRefs: [],
+    participantRefs: [],
+    thingRefs: [],
     parentFulfillmentRef: null,
     trigger: null,
     sourceRefs: ['INPUT'],
   };
-  base.contractView = {
-    current: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
-    contracts: [
+  base.businessView = {
+    current: { kind: 'contract', contextRef: 'C-001', fulfillmentRef: 'C-005' },
+    contexts: [
       {
+        kind: 'contract',
         contextRef: 'C-001',
         roleRefs: ['C-002', 'C-003'],
+        participantRefs: [],
+        thingRefs: [],
+        evidenceRefs: [],
+        agreementEvidence: { evidenceRef: null, signedAt: null },
         sourceRefs: ['INPUT'],
         fulfillments: [
           {
-            ...item,
+            ...baseItem,
             candidateRef: 'C-004',
             rightHolderRef: 'C-002',
             obligorRef: 'C-003',
-            request: '合作协议约定的稿件',
-            confirmation: '稿件验收单',
+            requestEvidence: requestEvidence(
+              '合作协议约定的稿件',
+              null,
+              null,
+              'C-002',
+              'C-003',
+            ),
+            confirmationEvidence:
+              confirmationEvidence('稿件验收单证明交稿完成'),
           },
           {
-            ...item,
+            ...baseItem,
             candidateRef: 'C-005',
             rightHolderRef: 'C-003',
             obligorRef: 'C-002',
+            requestEvidence: requestEvidence(
+              '合作协议、结算单',
+              null,
+              null,
+              'C-003',
+              'C-002',
+            ),
           },
           {
-            ...item,
+            ...baseItem,
             candidateRef: 'C-006',
             rightHolderRef: 'C-003',
             obligorRef: 'C-002',
+            requestEvidence: requestEvidence(
+              '按逾期责任支付补偿',
+              null,
+              null,
+              'C-003',
+              'C-002',
+            ),
             parentFulfillmentRef: 'C-005',
             trigger: '逾期未支付',
           },
@@ -108,51 +180,65 @@ export function subscriptionContent(): DiscoveryContent {
   content.scope = '仅梳理专栏订阅上下文的付款确认、阅读权益及超时处理。';
   content.focus = 'evidence';
   content.candidates = [
-    {
-      id: 'C-001',
-      label: '专栏订阅合同',
-      description:
-        '读者与平台的专栏订阅合同上下文：订阅费用交换对应专栏付费内容访问权，未按规定时间支付则合同自动作废。合同形成依据、签署时刻待明确。',
-    },
-    {
-      id: 'C-002',
-      label: '读者',
-      description:
-        '订阅合同中的读者角色：支付订阅费用，获得对应专栏阅读权益，并在断更补偿及重新上架场景保留原读者关联。',
-    },
-    {
-      id: 'C-003',
-      label: '平台',
-      description:
-        '订阅合同中的平台角色：提供对应专栏付费内容访问权，断更时应下架并退款。外部系统或执行能力不等同于合同一方。',
-    },
-    {
-      id: 'C-004',
-      label: '支付订阅费',
-      description:
-        '支付订阅费履约：读者支付费用和平台提供阅读权益的交换已明确；以外部付款确认为支付完成依据。具体请求机制、支付期限、凭证提供方待明确。平台请求读者付款的结构为候选映射，不因这些局部缺口将支付义务整体视为未知。超时合同作废且读者无额外责任。',
-    },
-  ].map((candidate) => ({
-    ...candidate,
-    confidence: candidate.id === 'C-004' ? 'inferred' : 'explicit',
-    sourceRefs: ['INPUT'],
-    modelRefs: [],
-  }));
-  content.contractView = {
-    current: { contractRef: 'C-001', fulfillmentRef: 'C-004' },
-    contracts: [
+    candidate(
+      'C-001',
+      '专栏订阅合同',
+      'context',
+      '读者与平台的专栏订阅合同上下文：订阅费用交换对应专栏付费内容访问权，未按规定时间支付则合同自动作废。合同形成依据、签署时刻待明确。',
+    ),
+    candidate(
+      'C-002',
+      '读者',
+      'role',
+      '订阅合同中的读者角色：支付订阅费用，获得对应专栏阅读权益，并在断更补偿及重新上架场景保留原读者关联。',
+    ),
+    candidate(
+      'C-003',
+      '平台',
+      'role',
+      '订阅合同中的平台角色：提供对应专栏付费内容访问权，断更时应下架并退款。外部系统或执行能力不等同于合同一方。',
+    ),
+    candidate(
+      'C-004',
+      '支付订阅费',
+      'fulfillment',
+      '支付订阅费履约：读者支付费用和平台提供阅读权益的交换已明确；以外部付款确认为支付完成依据。具体请求机制、支付期限、凭证提供方待明确。平台请求读者付款的结构为候选映射，不因这些局部缺口将支付义务整体视为未知。超时合同作废且读者无额外责任。',
+      'inferred',
+    ),
+  ];
+  content.businessView = {
+    current: { kind: 'contract', contextRef: 'C-001', fulfillmentRef: 'C-004' },
+    contexts: [
       {
+        kind: 'contract',
         contextRef: 'C-001',
         roleRefs: ['C-002', 'C-003'],
+        participantRefs: [],
+        thingRefs: [],
+        evidenceRefs: [],
+        agreementEvidence: { evidenceRef: null, signedAt: null },
         sourceRefs: ['INPUT'],
         fulfillments: [
           {
             candidateRef: 'C-004',
             rightHolderRef: 'C-003',
             obligorRef: 'C-002',
-            request: '按订阅约定支付对应专栏费用（业务背景、核心需求4）',
-            deadline: null,
-            confirmation: '外部付款确认；提供方及具体凭证待明确',
+            requestEvidence: requestEvidence(
+              '按订阅约定支付对应专栏费用（业务背景、核心需求4）',
+              '以本次付款请求的 start_at 为准；形成依据待明确',
+              '以本次付款请求的 expired_at 为准；确定依据待明确',
+              'C-003',
+              'C-002',
+            ),
+            confirmationEvidence: {
+              evidenceRef: null,
+              providerRef: null,
+              proves: '外部付款确认，具体凭证及提供方待明确',
+              confirmedAt: '以付款确认的 confirmed_at 判断是否按时履约',
+            },
+            supportingEvidenceRefs: [],
+            participantRefs: [],
+            thingRefs: [],
             parentFulfillmentRef: null,
             trigger: null,
             sourceRefs: ['INPUT'],
@@ -180,7 +266,7 @@ export function fixtureSubmission(
     records.set('position', {
       kind: 'position',
       supersedes: null,
-      value: { focus: value.focus, current: value.contractView.current },
+      value: { focus: value.focus, current: value.businessView.current },
     });
     const noteKey =
       Object.keys(snapshot.recordHeads).find((key) =>
@@ -209,17 +295,17 @@ export function fixtureSubmission(
         supersedes: null,
         value: item,
       });
-    for (const { fulfillments, ...contract } of value.contractView.contracts) {
-      records.set(`contract:${contract.contextRef}`, {
-        kind: 'contract',
+    for (const { fulfillments, ...context } of value.businessView.contexts) {
+      records.set(`context:${context.contextRef}`, {
+        kind: 'context',
         supersedes: null,
-        value: contract,
+        value: context,
       });
       for (const item of fulfillments)
-        records.set(`fulfillment:${contract.contextRef}:${item.candidateRef}`, {
+        records.set(`fulfillment:${context.contextRef}:${item.candidateRef}`, {
           kind: 'fulfillment',
           supersedes: null,
-          value: { contractRef: contract.contextRef, ...item },
+          value: { contextRef: context.contextRef, ...item },
         });
     }
     return records;

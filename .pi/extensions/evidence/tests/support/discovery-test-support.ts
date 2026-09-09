@@ -74,6 +74,7 @@ export async function seedDiscovery(
   const assessment = contextAssessment();
   if (modeling.applicable === false) {
     content.candidates = [];
+    content.businessView = { current: null, contexts: [] };
     assessment.contexts = [];
     assessment.applicability.applicable = false;
     assessment.applicability.rationale =

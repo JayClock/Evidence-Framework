@@ -1,13 +1,13 @@
 import { stripVTControlCharacters } from 'node:util';
 import { activeResolution, pendingQuestions } from './questions.ts';
-import { assertDiscoveryContracts, assertDiscussionTarget } from './rules.ts';
+import { assertBusinessView, assertDiscussionTarget } from './rules.ts';
 import type {
-  ContractView,
+  BusinessView,
   DiscoverySnapshot,
   DiscussionTarget,
 } from './schema.ts';
+import { discussionTargetObjectRef } from './schema.ts';
 
-// Display bounds only; source text and business evidence are never rewritten.
 export function brief(text: string, limit = 100): string {
   const chars = Array.from(
     stripVTControlCharacters(text)
@@ -24,54 +24,140 @@ export function candidateName(
   ref: string | null,
 ): string {
   if (ref === null) return '待明确';
-  const candidate = snapshot.content?.candidates.find((c) => c.id === ref);
+  const candidate = snapshot.content?.candidates.find(
+    (value) => value.id === ref,
+  );
   if (!candidate) return '待重新核对';
   const mark = { inferred: '（候选）', unknown: '（待明确）', explicit: '' }[
     candidate.confidence
   ];
-  const label = candidate.label
-    ? brief(candidate.label, 40)
-    : `${ref}（名称待整理）`;
-  return `${label}${mark}`;
+  return `${brief(candidate.label, 40)}${mark}`;
 }
 
-// Full explanations belong to on-demand views, never to names or arrow ends.
 export function candidateDescriptionLines(
   snapshot: DiscoverySnapshot,
   refs: Array<string | null>,
 ): string[] {
   return [...new Set(refs)].flatMap((ref) => {
-    const candidate = snapshot.content?.candidates.find((c) => c.id === ref);
+    const candidate = snapshot.content?.candidates.find(
+      (value) => value.id === ref,
+    );
     if (!candidate) return [];
     return [
-      `${candidate.id} ${candidateName(snapshot, candidate.id)}：${brief(candidate.description, Infinity)}`,
+      `${candidate.id} [${candidate.archetype}${candidate.evidenceKind ? `/${candidate.evidenceKind}` : ''}] ${candidateName(snapshot, candidate.id)}：${brief(candidate.description, Infinity)}`,
       `  来源：${candidate.sourceRefs.map((source) => brief(source, Infinity)).join('、')}`,
     ];
   });
 }
 
-// Shared by TUI cards and text/RPC views. A confirmation is evidence, not an
-// inferred approver or a runtime completion status. Legacy text stays verbatim.
+type Context = BusinessView['contexts'][number];
+type Fulfillment = Context['fulfillments'][number];
+
+export function contextKindLabel(kind: Context['kind']): string {
+  return {
+    channel: '渠道上下文',
+    contract: '合同上下文',
+    domain: '领域上下文',
+  }[kind];
+}
+
+function names(snapshot: DiscoverySnapshot, refs: string[]): string {
+  return refs.length
+    ? refs.map((ref) => candidateName(snapshot, ref)).join('、')
+    : '待明确';
+}
+
+function field(value: string | null, fullText: boolean): string {
+  return value === null ? '待明确' : brief(value, fullText ? Infinity : 100);
+}
+
+function refsForParticipants(
+  snapshot: DiscoverySnapshot,
+  context: Context | undefined,
+  item?: Fulfillment,
+): string[] {
+  const refs = [
+    ...(context?.participantRefs ?? []),
+    ...(item?.participantRefs ?? []),
+    item?.requestEvidence.issuerRef,
+    item?.requestEvidence.recipientRef,
+    item?.confirmationEvidence.providerRef,
+  ].filter((ref): ref is string => ref !== null && ref !== undefined);
+  return [...new Set(refs)].filter(
+    (ref) =>
+      snapshot.content?.candidates.find((candidate) => candidate.id === ref)
+        ?.archetype === 'participant',
+  );
+}
+
+function evidenceRefs(context: Context, item?: Fulfillment): string[] {
+  return [
+    ...context.evidenceRefs,
+    context.agreementEvidence?.evidenceRef,
+    item?.requestEvidence.evidenceRef,
+    item?.confirmationEvidence.evidenceRef,
+    ...(item?.supportingEvidenceRefs ?? []),
+  ].filter((ref): ref is string => ref !== null && ref !== undefined);
+}
+
 export function fulfillmentInteractionLines(
   snapshot: DiscoverySnapshot,
-  item: ContractView['contracts'][number]['fulfillments'][number],
+  item: Fulfillment,
   fullText = false,
 ): string[] {
   const name = (ref: string | null) => candidateName(snapshot, ref);
-  const field = (value: string | null) =>
-    value === null ? '待明确' : brief(value, fullText ? Infinity : 100);
+  const request = item.requestEvidence;
+  const confirmation = item.confirmationEvidence;
+  const values = [
+    request.requirement,
+    request.startAt,
+    request.expiredAt,
+    confirmation.proves,
+    confirmation.confirmedAt,
+  ];
   return [
-    `履约请求：${name(item.rightHolderRef)} → ${name(item.obligorRef)}（权利方 → 义务方）`,
-    `要求／依据：${field(item.request)}`,
-    `履约期限：${field(item.deadline)}`,
-    `履约确认凭证：${field(item.confirmation)}`,
+    `权责：${name(item.rightHolderRef)} → ${name(item.obligorRef)}（权利方 → 义务方）`,
+    `履约请求凭证：${name(request.evidenceRef)}`,
+    `发起／接收：${name(request.issuerRef)} → ${name(request.recipientRef)}`,
+    `要求：${field(request.requirement, fullText)}`,
+    `请求时间：start_at=${field(request.startAt, fullText)}；expired_at=${field(request.expiredAt, fullText)}`,
+    `履约确认凭证：${name(confirmation.evidenceRef)}`,
+    `提供方：${name(confirmation.providerRef)}`,
+    `证明：${field(confirmation.proves, fullText)}`,
+    `确认时间：confirmed_at=${field(confirmation.confirmedAt, fullText)}`,
+    `支撑凭证：${names(snapshot, item.supportingEvidenceRefs)}`,
+    `参与人／组织：${names(snapshot, refsForParticipants(snapshot, undefined, item))}`,
+    `标的物：${names(snapshot, item.thingRefs)}`,
     ...(!fullText &&
-    [item.request, item.deadline, item.confirmation].some(
+    values.some(
       (value) => value !== null && brief(value) !== brief(value, Infinity),
     )
       ? ['说明已截短，完整原文见 /evidence-status']
       : []),
   ];
+}
+
+function fulfillmentCoverage(item: Fulfillment): string {
+  const mark = (known: number, total: number) =>
+    known === total ? '✓' : known === 0 ? '?' : '△';
+  const request = [
+    item.requestEvidence.evidenceRef,
+    item.requestEvidence.requirement,
+    item.requestEvidence.startAt,
+    item.requestEvidence.expiredAt,
+  ];
+  const confirmation = [
+    item.confirmationEvidence.evidenceRef,
+    item.confirmationEvidence.providerRef,
+    item.confirmationEvidence.proves,
+    item.confirmationEvidence.confirmedAt,
+  ];
+  return [
+    `权责 ${mark([item.rightHolderRef, item.obligorRef].filter(Boolean).length, 2)}`,
+    `请求 ${mark(request.filter(Boolean).length, request.length)}`,
+    `确认 ${mark(confirmation.filter(Boolean).length, confirmation.length)}`,
+    `参与人／物 ${mark(item.participantRefs.length + item.thingRefs.length, 1)}`,
+  ].join(' · ');
 }
 
 export function questionResolutionLines(
@@ -96,154 +182,200 @@ export function questionLabel(
   snapshot: DiscoverySnapshot,
   questionId: string,
 ): string {
-  const question = snapshot.questions.find((q) => q.id === questionId);
+  const question = snapshot.questions.find((value) => value.id === questionId);
   if (!question) return questionId;
   const resolution = snapshot.questionResolutions.find(
     (value) => value.questionId === question.id,
   );
-  let mark = '';
-  if (resolution)
-    mark = activeResolution(snapshot, question.id)
+  const mark = resolution
+    ? activeResolution(snapshot, question.id)
       ? '[已关联依据] '
-      : '[依据失效] ';
+      : '[依据失效] '
+    : '';
   try {
-    assertDiscoveryContracts(snapshot);
+    assertBusinessView(snapshot);
     assertDiscussionTarget(snapshot, question.target);
   } catch {
-    return `${question.id} ${mark}[原合同待核对] ${brief(question.prompt)}`;
+    return `${question.id} ${mark}[原业务位置待核对] ${brief(question.prompt)}`;
   }
-  let path = '';
-  if (question.target) {
-    const parts = [candidateName(snapshot, question.target.contractRef)];
-    if (question.target.fulfillmentRef)
-      parts.push(candidateName(snapshot, question.target.fulfillmentRef));
-    path = `${parts.join(' › ')} · `;
-  }
+  const path = question.target
+    ? [
+        candidateName(snapshot, question.target.contextRef),
+        ...(discussionTargetObjectRef(question.target)
+          ? [
+              candidateName(
+                snapshot,
+                discussionTargetObjectRef(question.target),
+              ),
+            ]
+          : []),
+      ].join(' › ') + ' · '
+    : '';
   return `${question.id} ${mark}${path}${brief(question.prompt)}`;
 }
 
-// A business view, not workflow progress, a completion percentage or runtime fulfillment status.
-export function contractViewLines(
+function questionLines(
+  snapshot: DiscoverySnapshot,
+  question: DiscoverySnapshot['questions'][number] | undefined,
+  detailed: boolean,
+): string[] {
+  let line = '当前问题：暂无待答问题';
+  if (snapshot.interaction.needsConsolidation)
+    line = '当前问题：正在整理本次输入';
+  if (snapshot.interaction.stopped) line = '当前问题：本轮已结束';
+  if (question)
+    line = `当前问题：${question.id} ${brief(question.prompt, 180)}`;
+  const resolutions = detailed
+    ? snapshot.questionResolutions.flatMap((value) =>
+        questionResolutionLines(snapshot, value.questionId),
+      )
+    : question
+      ? questionResolutionLines(snapshot, question.id)
+      : [];
+  return [line, ...resolutions];
+}
+
+// Business position and fact coverage are the primary discovery progress. The
+// journal revision remains audit metadata in /evidence-status.
+export function businessViewLines(
   snapshot: DiscoverySnapshot,
   options: { questionId?: string; detailed?: boolean } = {},
 ): string[] {
+  const detailed = options.detailed ?? false;
   const question = options.questionId
-    ? snapshot.questions.find((q) => q.id === options.questionId)
+    ? snapshot.questions.find((value) => value.id === options.questionId)
     : pendingQuestions(snapshot)[0];
-  let questionLine = '当前问题：暂无待答问题';
-  if (snapshot.interaction.needsConsolidation)
-    questionLine = '当前问题：正在整理本次输入';
-  if (snapshot.interaction.stopped) questionLine = '当前问题：本轮已结束';
-  if (question)
-    questionLine = `当前问题：${question.id} ${brief(question.prompt, 180)}`;
   const target: DiscussionTarget = question
     ? question.target
-    : (snapshot.content?.contractView.current ?? null);
-  let resolutionLines: string[] = [];
-  if (options.detailed)
-    resolutionLines = snapshot.questionResolutions.flatMap((value) =>
-      questionResolutionLines(snapshot, value.questionId),
-    );
-  else if (question)
-    resolutionLines = questionResolutionLines(snapshot, question.id);
+    : (snapshot.content?.businessView.current ?? null);
+  const trailing = questionLines(snapshot, question, detailed);
   try {
-    assertDiscoveryContracts(snapshot);
+    assertBusinessView(snapshot);
     assertDiscussionTarget(snapshot, target);
   } catch {
-    return [
-      '合同关系：依据或引用已失效，待重新核对',
-      questionLine,
-      ...resolutionLines,
-    ];
+    return ['当前建模位置：依据或引用已失效，待重新核对', ...trailing];
   }
-  if (target === null)
-    return [
-      '合同上下文：待明确（不为领域或签约前讨论补造合同）',
-      '双方角色：待明确',
-      '当前展开：未选择履约项',
-      questionLine,
-      ...resolutionLines,
-    ];
-  const contract = snapshot.content!.contractView.contracts.find(
-    (c) => c.contextRef === target.contractRef,
+  if (target === null) return ['当前建模位置：尚未定位业务上下文', ...trailing];
+  const context = snapshot.content!.businessView.contexts.find(
+    (value) => value.contextRef === target.contextRef,
   )!;
-  const current = contract.fulfillments.find(
-    (f) => f.candidateRef === target.fulfillmentRef,
-  );
+  const targetRef = discussionTargetObjectRef(target);
+  const current =
+    target.kind === 'contract'
+      ? context.fulfillments.find((item) => item.candidateRef === targetRef)
+      : undefined;
   const name = (ref: string | null) => candidateName(snapshot, ref);
-  const lines = [
-    `合同上下文：${name(contract.contextRef)}`,
-    `双方角色：${contract.roleRefs.map(name).join(' ↔ ')}`,
-    '候选履约（请求 → 确认凭证）：',
+  const position = [
+    contextKindLabel(context.kind),
+    name(context.contextRef),
+    ...(targetRef ? [name(targetRef)] : []),
+  ].join(' › ');
+  const participants = refsForParticipants(snapshot, context, current);
+  const things = [
+    ...new Set([...context.thingRefs, ...(current?.thingRefs ?? [])]),
   ];
-  const ordered: Array<{
-    item: (typeof contract.fulfillments)[number];
-    depth: number;
-  }> = [];
-  const visit = (parent: string | null, depth: number) => {
-    for (const item of contract.fulfillments.filter(
-      (f) => f.parentFulfillmentRef === parent,
-    )) {
-      ordered.push({ item, depth });
-      visit(item.candidateRef, depth + 1);
-    }
-  };
-  visit(null, 0);
-  // Keep the selected item visible even when the contract has many obligations.
-  const visible = options.detailed ? ordered : ordered.slice(0, 5);
-  if (current && !visible.some((entry) => entry.item === current)) {
-    if (visible.length === 5) visible.pop();
-    visible.push(ordered.find((entry) => entry.item === current)!);
-  }
-  if (!visible.length) lines.push('  尚未明确履约项');
-  for (const { item, depth } of visible) {
-    const marker = item === current ? '▶' : ' ';
-    const branch = depth ? `${'  '.repeat(Math.min(depth, 3))}↳ ` : '';
+  const lines = [
+    `当前建模位置：${position}`,
+    `上下文角色：${context.roleRefs.length ? context.roleRefs.map(name).join(' ↔ ') : '不适用或待明确'}`,
+    `参与人／组织：${names(snapshot, participants)}`,
+    `标的物：${names(snapshot, things)}`,
+    `相关凭证：${names(snapshot, [...new Set(evidenceRefs(context, current))])}`,
+  ];
+  if (context.agreementEvidence)
     lines.push(
-      `${marker} ${branch}${name(item.candidateRef)}`,
-      ...fulfillmentInteractionLines(snapshot, item, options.detailed).map(
-        (line) => `    ${line}`,
-      ),
+      `合同凭证：${name(context.agreementEvidence.evidenceRef)}；signed_at=${field(context.agreementEvidence.signedAt, detailed)}`,
     );
-    if (options.detailed && item.parentFulfillmentRef)
+  if (context.kind === 'contract') {
+    lines.push('候选履约（请求 → 确认凭证）：');
+    const ordered: Array<{ item: Fulfillment; depth: number }> = [];
+    const visit = (parent: string | null, depth: number) => {
+      for (const item of context.fulfillments.filter(
+        (value) => value.parentFulfillmentRef === parent,
+      )) {
+        ordered.push({ item, depth });
+        visit(item.candidateRef, depth + 1);
+      }
+    };
+    visit(null, 0);
+    const visible = detailed ? ordered : ordered.slice(0, 5);
+    if (current && !visible.some((entry) => entry.item === current)) {
+      if (visible.length === 5) visible.pop();
+      visible.push(ordered.find((entry) => entry.item === current)!);
+    }
+    if (!visible.length) lines.push('  尚未明确履约项');
+    for (const { item, depth } of visible) {
+      const marker = item === current ? '▶' : ' ';
+      const branch = depth ? `${'  '.repeat(Math.min(depth, 3))}↳ ` : '';
+      lines.push(`${marker} ${branch}${name(item.candidateRef)}`);
+      if (detailed || item === current)
+        lines.push(
+          ...fulfillmentInteractionLines(snapshot, item, detailed).map(
+            (line) => `    ${line}`,
+          ),
+        );
+      if (detailed && item.parentFulfillmentRef)
+        lines.push(
+          `    前序：${name(item.parentFulfillmentRef)}；触发：${brief(item.trigger!)}`,
+        );
+    }
+    if (ordered.length > visible.length)
       lines.push(
-        `    前序：${name(item.parentFulfillmentRef)}；触发：${brief(item.trigger!)}`,
+        `  另 ${ordered.length - visible.length} 项见 /evidence-status`,
       );
   }
-  if (ordered.length > visible.length)
-    lines.push(`  另 ${ordered.length - visible.length} 项见 /evidence-status`);
+  const participantCoverage =
+    participants.length || things.length ? '部分明确' : '待明确';
   lines.push(
-    `当前展开：${current ? name(current.candidateRef) : '未选择履约项'}`,
+    `事实覆盖：${
+      current
+        ? fulfillmentCoverage(current)
+        : context.kind === 'contract'
+          ? '上下文已知 · 当前履约待明确'
+          : `${context.kind === 'channel' ? '协商凭证' : '领域对象'} ${targetRef ? '已知' : '待明确'} · 参与人／标的物 ${participantCoverage}`
+    }`,
   );
   if (current) {
     if (current.parentFulfillmentRef)
       lines.push(
-        `  前序／触发：${name(current.parentFulfillmentRef)} · ${brief(current.trigger!)}`,
+        `前序／触发：${name(current.parentFulfillmentRef)} · ${brief(current.trigger!)}`,
       );
-    const consequences = contract.fulfillments.filter(
-      (f) => f.parentFulfillmentRef === current.candidateRef,
+    const consequences = context.fulfillments.filter(
+      (item) => item.parentFulfillmentRef === current.candidateRef,
     );
     lines.push(
-      `  异常责任：${
+      `异常责任：${
         consequences.length
           ? consequences
               .slice(0, 3)
-              .map((f) => `${brief(f.trigger!, 40)} → ${name(f.candidateRef)}`)
+              .map(
+                (item) =>
+                  `${brief(item.trigger!, 40)} → ${name(item.candidateRef)}`,
+              )
               .join('；')
           : '尚未记录（不表示不存在）'
       }`,
     );
   }
-  if (options.detailed)
+  if (detailed)
     lines.push(
-      `来源引用：${[...new Set([...contract.sourceRefs, ...(current?.sourceRefs ?? [])])].join('、')}（发现依据，不是业务批准；材料新鲜度由定稿检查核对）`,
+      `来源引用：${[...new Set([...context.sourceRefs, ...(current?.sourceRefs ?? [])])].join('、')}（发现依据，不是业务批准）`,
       '候选详细说明：',
       ...candidateDescriptionLines(snapshot, [
-        contract.contextRef,
-        ...contract.roleRefs,
-        ...contract.fulfillments.map((item) => item.candidateRef),
+        context.contextRef,
+        ...context.roleRefs,
+        ...(context?.participantRefs ?? []),
+        ...context.thingRefs,
+        ...context.evidenceRefs,
+        ...context.fulfillments.flatMap((item) => [
+          item.candidateRef,
+          item.requestEvidence.evidenceRef,
+          item.confirmationEvidence.evidenceRef,
+          ...item.supportingEvidenceRefs,
+          ...item.participantRefs,
+          ...item.thingRefs,
+        ]),
       ]),
     );
-  lines.push(questionLine, ...resolutionLines);
+  lines.push(...trailing);
   return lines;
 }

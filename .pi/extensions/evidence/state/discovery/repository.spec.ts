@@ -85,11 +85,14 @@ describe('append-only discovery journal and rebuildable read model', () => {
     const h = await setup(true);
     const { state, snapshot } = await current(h);
     const original = await readText(h.root, state.discovery.path!);
-    const contract = snapshot.content!.contractView.contracts[0];
+    const contract = snapshot.content!.businessView.contexts[0];
     const value = {
-      contractRef: contract.contextRef,
+      contextRef: contract.contextRef,
       ...contract.fulfillments[1],
-      deadline: '按协议在结算后15日内付款',
+      requestEvidence: {
+        ...contract.fulfillments[1].requestEvidence,
+        expiredAt: '按协议在结算后15日内付款',
+      },
     };
     await append(h, [
       {
@@ -109,15 +112,15 @@ describe('append-only discovery journal and rebuildable read model', () => {
       snapshot.recordHeads['fulfillment:C-001:C-005'],
     );
     expect(
-      after.snapshot.content!.contractView.contracts[0].fulfillments[1]
-        .deadline,
-    ).toBe(value.deadline);
+      after.snapshot.content!.businessView.contexts[0].fulfillments[1]
+        .requestEvidence.expiredAt,
+    ).toBe(value.requestEvidence.expiredAt);
     expect(after.snapshot.content!.candidates).toEqual(
       snapshot.content!.candidates,
     );
     expect(after.snapshot.content!.cases).toEqual(snapshot.content!.cases);
     expect(
-      after.snapshot.content!.contractView.contracts[0].fulfillments[0],
+      after.snapshot.content!.businessView.contexts[0].fulfillments[0],
     ).toEqual(contract.fulfillments[0]);
     expect(await readText(h.root, state.discovery.path!)).toBe(original);
     expect(after.snapshot.recordHeads['fulfillment:C-001:C-005']).toBe(
@@ -182,6 +185,15 @@ describe('append-only discovery journal and rebuildable read model', () => {
         kind: 'withdraw',
         supersedes: before.snapshot.recordHeads['candidate:C-001'],
       },
+      {
+        kind: 'withdraw',
+        supersedes: before.snapshot.recordHeads['context:C-001'],
+      },
+      {
+        kind: 'position',
+        supersedes: before.snapshot.recordHeads.position,
+        value: { focus: 'domain', current: null },
+      },
     ]);
     const withdrawn = await current(h);
     expect(withdrawn.snapshot.content!.candidates).toEqual([]);
@@ -196,7 +208,7 @@ describe('append-only discovery journal and rebuildable read model', () => {
     await append(h, [{ kind: 'candidate', supersedes: ref, value: candidate }]);
     const restored = await current(h);
     expect(restored.snapshot.content!.candidates).toEqual([candidate]);
-    expect(restored.snapshot.withdrawnRecordKeys).toEqual([]);
+    expect(restored.snapshot.withdrawnRecordKeys).toEqual(['context:C-001']);
     expect(
       (await loadDiscoveryEntries(h.root, restored.state)).map(
         (entry) => entry.revision,
@@ -210,7 +222,7 @@ describe('append-only discovery journal and rebuildable read model', () => {
   it('does not permit withdrawing a contract or role while relationships still depend on it', async () => {
     const h = await setup(true);
     const { state, snapshot } = await current(h);
-    for (const key of ['contract:C-001', 'candidate:C-002']) {
+    for (const key of ['context:C-001', 'candidate:C-002']) {
       await expect(
         append(h, [
           { kind: 'withdraw', supersedes: snapshot.recordHeads[key] },
@@ -219,7 +231,7 @@ describe('append-only discovery journal and rebuildable read model', () => {
       expect((await current(h)).state.discovery).toEqual(state.discovery);
     }
     const keys = Object.keys(snapshot.recordHeads).filter(
-      (key) => key === 'contract:C-001' || key.startsWith('fulfillment:'),
+      (key) => key === 'context:C-001' || key.startsWith('fulfillment:'),
     );
     await append(h, [
       ...keys.map(
@@ -234,9 +246,9 @@ describe('append-only discovery journal and rebuildable read model', () => {
         value: { focus: 'domain', current: null },
       },
     ]);
-    expect((await current(h)).snapshot.content!.contractView).toEqual({
+    expect((await current(h)).snapshot.content!.businessView).toEqual({
       current: null,
-      contracts: [],
+      contexts: [],
     });
   });
 

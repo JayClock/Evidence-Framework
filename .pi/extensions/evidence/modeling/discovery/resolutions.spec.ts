@@ -39,7 +39,7 @@ import type {
   DiscoveryRecord,
   QuestionResolution,
 } from './schema.ts';
-import { contractViewLines, questionLabel } from './view.ts';
+import { businessViewLines, questionLabel } from './view.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -163,7 +163,7 @@ describe('sourced question resolutions, not agent-authored human answers', () =>
       '非人工回答',
     );
     expect(
-      contractViewLines(snapshot, { detailed: true }).join('\n'),
+      businessViewLines(snapshot, { detailed: true }).join('\n'),
     ).toContain('客户编号在本企业唯一');
     const prompt = await buildCurrentPrompt(h.root, h.state, DEFAULT_CONFIG);
     expect(prompt).toContain('已关联解决依据（Agent 解释）：Q-001');
@@ -180,10 +180,10 @@ describe('sourced question resolutions, not agent-authored human answers', () =>
     const snapshot = await loadDiscovery(h.root, h.state);
     snapshot.staleRecordKeys.push('candidate:C-001', 'resolution:Q-001');
     expect(questionLabel(snapshot, 'Q-001')).toContain(
-      '[依据失效] [原合同待核对]',
+      '[依据失效] [原业务位置待核对]',
     );
     for (const options of [{ detailed: true }, { questionId: 'Q-001' }]) {
-      const lines = contractViewLines(snapshot, options).join('\n');
+      const lines = businessViewLines(snapshot, options).join('\n');
       expect(lines).toContain('解决依据已失效');
       expect(lines).toContain('客户编号在本企业唯一。');
     }

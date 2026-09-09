@@ -2,8 +2,9 @@ import {
   latestAnswer,
   unresolvedBlockingQuestions,
 } from '../modeling/discovery/questions.ts';
-import type {
-  DiscoveryEntry,
+import {
+  discussionTargetObjectRef,
+  type DiscoveryEntry,
   DiscoverySnapshot,
   DiscussionTarget,
 } from '../modeling/discovery/schema.ts';
@@ -76,23 +77,30 @@ function selectContext(
       .filter((id) => id !== null)
       .at(-1) ?? snapshot.interaction.activeQuestionId;
   const question = snapshot.questions.find((q) => q.id === questionId);
-  // A null question target is meaningful: do not reuse a different contract cursor.
+  // A null question target is meaningful: do not reuse a different business cursor.
   const target = question
     ? question.target
-    : (snapshot.content?.contractView.current ?? null);
-  const contract = snapshot.content?.contractView.contracts.find(
-    (c) => c.contextRef === target?.contractRef,
+    : (snapshot.content?.businessView.current ?? null);
+  const businessContext = snapshot.content?.businessView.contexts.find(
+    (c) => c.contextRef === target?.contextRef,
   );
-  if (contract) {
-    const item = contract.fulfillments.find(
-      (f) => f.candidateRef === target?.fulfillmentRef,
+  if (businessContext) {
+    const item = businessContext.fulfillments.find(
+      (f) =>
+        target?.kind === 'contract' && f.candidateRef === target.fulfillmentRef,
     );
     return {
       target,
       candidateIds: [
         ...new Set([
-          contract.contextRef,
-          ...contract.roleRefs.filter((ref) => ref !== null),
+          businessContext.contextRef,
+          ...businessContext.roleRefs.filter((ref) => ref !== null),
+          ...businessContext.participantRefs,
+          ...businessContext.thingRefs,
+          ...businessContext.evidenceRefs,
+          ...(discussionTargetObjectRef(target)
+            ? [discussionTargetObjectRef(target)!]
+            : []),
           ...(item
             ? [
                 item.candidateRef,
@@ -105,7 +113,7 @@ function selectContext(
       ],
     };
   }
-  // Domain/channel have no contract target. Prefer candidates affected by pending
+  // Before a business position exists, prefer candidates affected by pending
   // answer sources, then recently asserted candidates. No name/keyword guessing.
   const answerRefs = new Set(
     pending.flatMap((entry) =>
@@ -164,7 +172,7 @@ function detailItems(
   items.push(
     versioned('position', {
       focus: content?.focus ?? 'scope',
-      current: content?.contractView.current ?? null,
+      current: content?.businessView.current ?? null,
     }),
   );
   items.push({ key: 'feedback', value: chunkedText(state.feedback ?? '') });
@@ -172,20 +180,23 @@ function detailItems(
     items.push(
       versioned(`candidate:${candidate.id}`, candidate, candidate.label),
     );
-  for (const contract of content?.contractView.contracts ?? []) {
-    const { fulfillments, ...header } = contract;
+  for (const businessContext of content?.businessView.contexts ?? []) {
+    const { fulfillments, ...header } = businessContext;
     items.push(
-      versioned(`contract:${contract.contextRef}`, {
+      versioned(`context:${businessContext.contextRef}`, {
         ...header,
         fulfillmentIds: fulfillments.map((f) => f.candidateRef),
       }),
     );
     for (const item of fulfillments)
       items.push(
-        versioned(`fulfillment:${contract.contextRef}:${item.candidateRef}`, {
-          contractRef: contract.contextRef,
-          ...item,
-        }),
+        versioned(
+          `fulfillment:${businessContext.contextRef}:${item.candidateRef}`,
+          {
+            contextRef: businessContext.contextRef,
+            ...item,
+          },
+        ),
       );
   }
   for (const scenario of content?.cases ?? [])
@@ -355,20 +366,45 @@ export function candidateContextLines(
       `${id} ${candidate.label} [${candidate.confidence}${snapshot.staleRecordKeys.includes(key) ? '；依据失效' : ''}] ${snapshot.recordHeads[key]}\n${clipContext(candidate.description, 420)}\n来源：${clipContext(candidate.sourceRefs.join('、'), 200)}\n${readHint(context.ranges.get(key))}`,
     );
   }
-  if (context.target?.fulfillmentRef) {
-    const key = `fulfillment:${context.target.contractRef}:${context.target.fulfillmentRef}`;
-    const contract = snapshot.content?.contractView.contracts.find(
-      (c) => c.contextRef === context.target?.contractRef,
+  const label = (id: string | null) =>
+    snapshot.content?.candidates.find((candidate) => candidate.id === id)
+      ?.label ?? '待明确';
+  const businessContext = snapshot.content?.businessView.contexts.find(
+    (candidate) => candidate.contextRef === context.target?.contextRef,
+  );
+  const item = businessContext?.fulfillments.find(
+    (candidate) =>
+      context.target?.kind === 'contract' &&
+      candidate.candidateRef === context.target.fulfillmentRef,
+  );
+  const kindLabel = {
+    channel: '渠道',
+    contract: '合同',
+    domain: '领域',
+  } as const;
+  rows.unshift(
+    businessContext
+      ? `当前建模位置：${kindLabel[businessContext.kind]}上下文 › ${label(businessContext.contextRef)}${item ? ` › ${label(item.candidateRef)}` : ''}`
+      : '当前建模位置：尚未定位业务上下文',
+  );
+  if (item && context.target) {
+    const key = `fulfillment:${context.target.contextRef}:${item.candidateRef}`;
+    rows.splice(
+      1,
+      0,
+      `${key} ${snapshot.recordHeads[key]}${snapshot.staleRecordKeys.includes(key) ? '；依据失效' : ''}
+权责：${label(item.rightHolderRef)} → ${label(item.obligorRef)}
+请求凭证：${label(item.requestEvidence.evidenceRef)}；发起／接收：${label(item.requestEvidence.issuerRef)} → ${label(item.requestEvidence.recipientRef)}
+要求：${clipContext(item.requestEvidence.requirement ?? '待明确', 420)}
+请求时间：start_at=${clipContext(item.requestEvidence.startAt ?? '待明确', 180)}；expired_at=${clipContext(item.requestEvidence.expiredAt ?? '待明确', 180)}
+确认凭证：${label(item.confirmationEvidence.evidenceRef)}；提供方：${label(item.confirmationEvidence.providerRef)}
+证明：${clipContext(item.confirmationEvidence.proves ?? '待明确', 420)}
+确认时间：confirmed_at=${clipContext(item.confirmationEvidence.confirmedAt ?? '待明确', 180)}
+参与人：${item.participantRefs.map(label).join('、') || '待明确'}；标的物：${item.thingRefs.map(label).join('、') || '待明确'}
+前序：${item.parentFulfillmentRef ?? '无'}；触发：${clipContext(item.trigger ?? '无', 200)}
+来源：${clipContext(item.sourceRefs.join('、'), 200)}
+${readHint(context.ranges.get(key))}`,
     );
-    const item = contract?.fulfillments.find(
-      (f) => f.candidateRef === context.target?.fulfillmentRef,
-    );
-    const label = (id: string | null) =>
-      snapshot.content?.candidates.find((c) => c.id === id)?.label ?? '待明确';
-    if (item)
-      rows.unshift(
-        `${key} ${snapshot.recordHeads[key]}${snapshot.staleRecordKeys.includes(key) ? '；依据失效' : ''}\n当前展开：${label(item.candidateRef)}\n履约请求：${label(item.rightHolderRef)} → ${label(item.obligorRef)}\n要求／依据：${clipContext(item.request ?? '待明确', 420)}\n期限：${clipContext(item.deadline ?? '待明确', 260)}\n履约确认凭证：${clipContext(item.confirmation ?? '待明确', 420)}\n前序：${item.parentFulfillmentRef ?? '无'}；触发：${clipContext(item.trigger ?? '无', 200)}\n来源：${clipContext(item.sourceRefs.join('、'), 200)}\n${readHint(context.ranges.get(key))}`,
-      );
   }
   return (
     boundedContextRows(rows, 3600) ||

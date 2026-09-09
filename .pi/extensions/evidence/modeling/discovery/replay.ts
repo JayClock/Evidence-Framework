@@ -13,7 +13,7 @@ import type {
 
 export function emptyDiscovery(runId: string): DiscoverySnapshot {
   return {
-    version: 5,
+    version: 6,
     runId,
     revision: 0,
     previousDigest: null,
@@ -60,10 +60,10 @@ function recordKey(record: Head['record'], ref: string): string {
       return `${record.kind}:${record.value.id}`;
     case 'resolution':
       return `resolution:${record.value.questionId}`;
-    case 'contract':
-      return `contract:${record.value.contextRef}`;
+    case 'context':
+      return `context:${record.value.contextRef}`;
     case 'fulfillment':
-      return `fulfillment:${record.value.contractRef}:${record.value.candidateRef}`;
+      return `fulfillment:${record.value.contextRef}:${record.value.candidateRef}`;
     case 'note':
       return `note:${ref}`;
     default:
@@ -110,7 +110,7 @@ function materializeContent(heads: Map<string, Head>): DiscoveryContent {
     sources: [],
     candidates: [],
     cases: [],
-    contractView: { current: null, contracts: [] },
+    businessView: { current: null, contexts: [] },
   };
   const active = [...heads.values()]
     .filter((head) => !head.withdrawn)
@@ -122,7 +122,7 @@ function materializeContent(heads: Map<string, Head>): DiscoveryContent {
         break;
       case 'position':
         content.focus = record.value.focus;
-        content.contractView.current = record.value.current;
+        content.businessView.current = record.value.current;
         break;
       case 'note':
         content.notes += `${content.notes ? '\n\n' : ''}${record.value}`;
@@ -136,8 +136,8 @@ function materializeContent(heads: Map<string, Head>): DiscoveryContent {
       case 'case':
         content.cases.push(record.value);
         break;
-      case 'contract':
-        content.contractView.contracts.push({
+      case 'context':
+        content.businessView.contexts.push({
           ...record.value,
           fulfillments: [],
         });
@@ -146,15 +146,15 @@ function materializeContent(heads: Map<string, Head>): DiscoveryContent {
   }
   for (const record of active) {
     if (record.kind !== 'fulfillment') continue;
-    const { contractRef, ...fulfillment } = record.value;
-    const contract = content.contractView.contracts.find(
-      (value) => value.contextRef === contractRef,
+    const { contextRef, ...fulfillment } = record.value;
+    const context = content.businessView.contexts.find(
+      (value) => value.contextRef === contextRef,
     );
-    if (!contract)
+    if (!context || context.kind !== 'contract')
       throw new Error(
-        `履约引用的合同不存在，撤回合同须同时撤回其履约：${contractRef}`,
+        `履约引用的合同上下文不存在，撤回上下文须同时撤回其履约：${contextRef}`,
       );
-    contract.fulfillments.push(fulfillment);
+    context.fulfillments.push(fulfillment);
   }
   return content;
 }

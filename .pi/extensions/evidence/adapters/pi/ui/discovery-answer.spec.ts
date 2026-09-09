@@ -7,7 +7,7 @@ import { stripVTControlCharacters } from 'node:util';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DiscoverySnapshot } from '../../../modeling/discovery/schema.ts';
 import {
-  contractViewLines,
+  businessViewLines,
   questionLabel,
 } from '../../../modeling/discovery/view.ts';
 import { loadDiscovery } from '../../../state/discovery/index.ts';
@@ -35,7 +35,7 @@ afterEach(async () => {
 
 function snapshot(): DiscoverySnapshot {
   return {
-    version: 5,
+    version: 6,
     runId: 'test',
     revision: 1,
     previousDigest: null,
@@ -61,7 +61,11 @@ function snapshot(): DiscoverySnapshot {
       {
         id: 'Q-001',
         gapKey: 'c-005.payment-proof',
-        target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
+        target: {
+          kind: 'contract',
+          contextRef: 'C-001',
+          fulfillmentRef: 'C-005',
+        },
         focus: 'evidence',
         prompt: '什么凭证证明分成已支付？',
         impact: '确定完成依据',
@@ -127,15 +131,15 @@ describe('structured discovery answer view', () => {
     const view = discoveryAnswerView(value);
     const summary = JSON.stringify(view.sections);
     expect(summary).toContain('作者合作协议');
-    expect(summary).toContain('履约请求：作者 → 平台（权利方 → 义务方）');
-    expect(summary).toContain('要求／依据：合作协议、结算单');
-    expect(summary).toContain('履约期限：待明确');
+    expect(summary).toContain('权责：作者 → 平台（权利方 → 义务方）');
+    expect(summary).toContain('要求：合作协议、结算单');
+    expect(summary).toContain('请求时间：start_at=待明确；expired_at=待明确');
     expect(summary).toContain('履约确认凭证：待明确');
     expect(summary).toContain('当前问题 · Q-001');
     expect(summary).not.toContain('逾期补偿');
     expect(view.details.join('\n')).not.toMatch(/逾期补偿|交付稿件|履约请求：/);
     expect(view.details.join('\n')).toContain('来源引用：INPUT');
-    expect(view.details.join('\n')).toContain('完整履约结构：/evidence-status');
+    expect(view.details.join('\n')).toContain('完整业务结构：/evidence-status');
     expect(value).toEqual(before);
   });
 
@@ -148,13 +152,13 @@ describe('structured discovery answer view', () => {
     'shares request and confirmation semantics with the text view (%j)',
     (confirmation) => {
       const value = snapshot();
-      value.content!.contractView.contracts[0].fulfillments[1].confirmation =
+      value.content!.businessView.contexts[0].fulfillments[1].confirmationEvidence.proves =
         confirmation;
       const before = structuredClone(value);
       const lines = discoveryAnswerView(value).sections[1].lines;
-      const text = contractViewLines(value).join('\n');
+      const text = businessViewLines(value).join('\n');
       for (const line of lines) expect(text).toContain(line);
-      expect(lines).toContain(`履约确认凭证：${confirmation ?? '待明确'}`);
+      expect(lines).toContain(`证明：${confirmation ?? '待明确'}`);
       expect(lines.join('\n')).not.toMatch(/确认人：|审批人：/);
       expect(value).toEqual(before);
     },
@@ -162,14 +166,18 @@ describe('structured discovery answer view', () => {
 
   it('shows sourced representatives and uncertain candidates without deriving the confirmation provider', () => {
     const value = snapshot();
-    const item = value.content!.contractView.contracts[0].fulfillments[0];
-    value.questions[0].target!.fulfillmentRef = item.candidateRef;
+    const item = value.content!.businessView.contexts[0].fulfillments[0];
+    value.questions[0].target = {
+      kind: 'contract',
+      contextRef: 'C-001',
+      fulfillmentRef: item.candidateRef,
+    };
     value.content!.candidates[3].confidence = 'inferred';
-    item.request = '平台由编辑代表向作者提出按约交稿要求';
-    item.confirmation = null;
+    item.requestEvidence.requirement = '平台由编辑代表向作者提出按约交稿要求';
+    item.confirmationEvidence.proves = null;
     const lines = discoveryAnswerView(value).sections[1].lines;
     expect(lines).toContain('交付稿件（候选）');
-    expect(lines).toContain(`要求／依据：${item.request}`);
+    expect(lines).toContain(`要求：${item.requestEvidence.requirement}`);
     expect(lines).toContain('履约确认凭证：待明确');
     expect(lines.join('\n')).not.toContain('编辑验收');
     expect(lines.join('\n')).not.toContain('确认人');
@@ -177,7 +185,11 @@ describe('structured discovery answer view', () => {
 
   it('keeps only the selected exception predecessor and sources in details', () => {
     const value = snapshot();
-    value.questions[0].target!.fulfillmentRef = 'C-006';
+    value.questions[0].target = {
+      kind: 'contract',
+      contextRef: 'C-001',
+      fulfillmentRef: 'C-006',
+    };
     const before = structuredClone(value);
     const view = discoveryAnswerView(value);
     expect(view.sections[1].lines[0]).toBe('逾期补偿（候选）');
@@ -192,14 +204,18 @@ describe('structured discovery answer view', () => {
     value.questions.push({
       ...value.questions[0],
       id: 'Q-002',
-      target: { contractRef: 'C-001', fulfillmentRef: 'C-004' },
+      target: {
+        kind: 'contract',
+        contextRef: 'C-001',
+        fulfillmentRef: 'C-004',
+      },
     });
     expect(
       JSON.stringify(discoveryAnswerView(value, 'Q-002').sections),
     ).toContain('交付稿件');
     value.questions[1].target = null;
     const text = JSON.stringify(discoveryAnswerView(value, 'Q-002').sections);
-    expect(text).toContain('业务上下文');
+    expect(text).toContain('当前建模位置');
     expect(text).not.toContain('作者合作协议');
     expect(text).not.toContain('双方角色：待明确');
   });
@@ -213,7 +229,8 @@ describe('structured discovery answer view', () => {
     );
     value.content = contractContent();
     value.questions[0].target = {
-      contractRef: 'C-001',
+      kind: 'contract',
+      contextRef: 'C-001',
       fulfillmentRef: 'C-005',
     };
     value.content.candidates[1].sourceRefs = ['A-999'];
@@ -222,23 +239,62 @@ describe('structured discovery answer view', () => {
     expect(view).not.toContain('作者合作协议');
   });
 
+  it('shows the selected domain object instead of a fake fulfillment slice', () => {
+    const value = snapshot();
+    value.content = discoveryContent();
+    value.content.candidates.push({
+      id: 'C-002',
+      archetype: 'thing',
+      evidenceKind: null,
+      label: '专栏',
+      description: '当前讨论的领域标的物。',
+      confidence: 'explicit',
+      sourceRefs: ['INPUT'],
+      modelRefs: [],
+    });
+    value.content.businessView.contexts[0].thingRefs = ['C-002'];
+    value.questions[0].target = {
+      kind: 'domain',
+      contextRef: 'C-001',
+      objectRef: 'C-002',
+    };
+    const view = discoveryAnswerView(value);
+    expect(view.sections[0].lines[0]).toBe('领域上下文 › 测试对象规则 › 专栏');
+    expect(view.sections[1]).toEqual({
+      title: '当前对象切片',
+      lines: ['专栏'],
+    });
+    expect(JSON.stringify(view.sections)).not.toContain('履约');
+  });
+
   it('uses short subscription names instead of repeating long analyses on cards and arrows', () => {
     const value = snapshot();
     value.content = subscriptionContent();
-    value.questions[0].target = value.content.contractView.current;
+    value.questions[0].target = value.content.businessView.current;
     value.questions[0].prompt = '一笔专栏订阅的支付截止时间按什么规则确定？';
     const before = structuredClone(value);
     const view = discoveryAnswerView(value);
     expect(view.sections[0].lines).toEqual([
-      '专栏订阅合同',
-      '双方角色：读者 ↔ 平台',
+      '合同上下文 › 专栏订阅合同 › 支付订阅费（候选）',
+      '角色：读者 ↔ 平台',
+      '参与人／组织：待明确',
+      '标的物：待明确',
+      '相关凭证：待明确',
     ]);
     expect(view.sections[1].lines).toEqual([
       '支付订阅费（候选）',
-      '履约请求：平台 → 读者（权利方 → 义务方）',
-      '要求／依据：按订阅约定支付对应专栏费用（业务背景、核心需求4）',
-      '履约期限：待明确',
-      '履约确认凭证：外部付款确认；提供方及具体凭证待明确',
+      '权责：平台 → 读者（权利方 → 义务方）',
+      '履约请求凭证：待明确',
+      '发起／接收：平台 → 读者',
+      '要求：按订阅约定支付对应专栏费用（业务背景、核心需求4）',
+      '请求时间：start_at=以本次付款请求的 start_at 为准；形成依据待明确；expired_at=以本次付款请求的 expired_at 为准；确定依据待明确',
+      '履约确认凭证：待明确',
+      '提供方：待明确',
+      '证明：外部付款确认，具体凭证及提供方待明确',
+      '确认时间：confirmed_at=以付款确认的 confirmed_at 判断是否按时履约',
+      '支撑凭证：待明确',
+      '参与人／组织：待明确',
+      '标的物：待明确',
     ]);
     const summary = JSON.stringify(view.sections);
     for (const candidate of value.content.candidates)
@@ -246,7 +302,7 @@ describe('structured discovery answer view', () => {
     expect(view.details.join('\n')).toContain(
       value.content.candidates[3].description,
     );
-    const status = contractViewLines(value, { detailed: true }).join('\n');
+    const status = businessViewLines(value, { detailed: true }).join('\n');
     for (const candidate of value.content.candidates)
       expect(status).toContain(candidate.description);
     expect(questionLabel(value, 'Q-001')).toBe(
@@ -257,17 +313,17 @@ describe('structured discovery answer view', () => {
 
   it('bounds long request details explicitly while keeping original text in the detailed view', () => {
     const value = snapshot();
-    const item = value.content!.contractView.contracts[0].fulfillments[1];
-    item.request = `作者向平台请求分成；${'完整业务依据。'.repeat(40)}请求末尾`;
-    item.confirmation = `外部支付回执；${'提供方尚待核实。'.repeat(40)}确认末尾`;
+    const item = value.content!.businessView.contexts[0].fulfillments[1];
+    item.requestEvidence.requirement = `作者向平台请求分成；${'完整业务依据。'.repeat(40)}请求末尾`;
+    item.confirmationEvidence.proves = `外部支付回执；${'提供方尚待核实。'.repeat(40)}确认末尾`;
     const before = structuredClone(value);
     const lines = discoveryAnswerView(value).sections[1].lines;
     expect(lines).toContain('说明已截短，完整原文见 /evidence-status');
     expect(lines.join('\n')).not.toMatch(/请求末尾|确认末尾/);
     expect(lines.every((line) => Array.from(line).length < 120)).toBe(true);
-    const detailed = contractViewLines(value, { detailed: true }).join('\n');
-    expect(detailed).toContain(item.request);
-    expect(detailed).toContain(item.confirmation);
+    const detailed = businessViewLines(value, { detailed: true }).join('\n');
+    expect(detailed).toContain(item.requestEvidence.requirement);
+    expect(detailed).toContain(item.confirmationEvidence.proves);
     expect(value).toEqual(before);
   });
 
@@ -319,7 +375,7 @@ describe('discovery answer TUI', () => {
     const cancelled = h.events.get('agent_settled')!({}, h.ctx);
     await vi.waitFor(() => expect(tui.ui.custom).toHaveBeenCalledTimes(1));
     const card = tui.render().join('\n');
-    expect(card).toContain('履约请求：作者 → 平台');
+    expect(card).toContain('权责：作者 → 平台');
     expect(card).toContain('履约确认凭证：待明确');
     expect(card).toContain(snapshot().questions[0].prompt);
     tui.input('\u001b');
@@ -369,7 +425,7 @@ describe('discovery answer TUI', () => {
     const h = uiHarness();
     const result = select(h);
     let text = h.render().join('\n');
-    expect(text).toContain('当前履约项');
+    expect(text).toContain('当前履约切片');
     expect(text).toContain('当前问题 · Q-001');
     expect(text).toContain('操作');
     expect(text).not.toContain('逾期补偿');
@@ -379,7 +435,7 @@ describe('discovery answer TUI', () => {
     expect(text).toContain('详情 · 当前依据');
     expect(text).not.toMatch(/逾期补偿|交付稿件/);
     expect(text).toContain('来源引用：INPUT');
-    expect(text).toContain('完整履约结构：/evidence-status');
+    expect(text).toContain('完整业务结构：/evidence-status');
     h.input('\u001b[B');
     h.input('\r');
     expect(await result).toBe('结束本轮');
@@ -390,12 +446,12 @@ describe('discovery answer TUI', () => {
     const h = uiHarness(40),
       value = snapshot();
     value.content = subscriptionContent();
-    value.questions[0].target = value.content.contractView.current;
+    value.questions[0].target = value.content.businessView.current;
     value.questions[0].prompt = '一笔专栏订阅的支付截止时间按什么规则确定？';
     const result = select(h, value);
     const text = h.render(80).join('\n');
-    expect(text).toContain('双方角色：读者 ↔ 平台');
-    expect(text).toContain('履约请求：平台 → 读者');
+    expect(text).toContain('角色：读者 ↔ 平台');
+    expect(text).toContain('权责：平台 → 读者');
     expect(text).toContain(value.questions[0].prompt);
     expect(text).not.toContain('外部系统或执行能力不等同于合同一方');
     expect(text).not.toContain('合同形成依据、签署时刻待明确');
@@ -491,8 +547,10 @@ describe('discovery answer TUI', () => {
     h.ctx.mode = 'rpc';
     h.ui.select.mockResolvedValue('回答');
     expect(await select(h)).toBe('回答');
-    expect(h.ui.select.mock.lastCall![0]).toContain('合同上下文：作者合作协议');
-    expect(h.ui.select.mock.lastCall![0]).toContain('履约请求：作者 → 平台');
+    expect(h.ui.select.mock.lastCall![0]).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+    );
+    expect(h.ui.select.mock.lastCall![0]).toContain('权责：作者 → 平台');
     expect(h.ui.select.mock.lastCall![0]).toContain('履约确认凭证：待明确');
     const value = snapshot();
     h.ui.editor.mockResolvedValue('答复');

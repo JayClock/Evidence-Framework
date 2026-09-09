@@ -69,7 +69,11 @@ describe('conversation-only Evidence status', () => {
         {
           id: 'Q-001',
           gapKey: 'c-005.payment-proof',
-          target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
+          target: {
+            kind: 'contract',
+            contextRef: 'C-001',
+            fulfillmentRef: 'C-005',
+          },
           focus: 'evidence',
           prompt: '什么凭证证明分成已支付？',
           impact: '确定完成依据',
@@ -80,7 +84,13 @@ describe('conversation-only Evidence status', () => {
     });
     expect(question).toMatchObject({
       terminate: true,
-      content: [{ text: expect.stringContaining('合同上下文：作者合作协议') }],
+      content: [
+        {
+          text: expect.stringContaining(
+            '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+          ),
+        },
+      ],
     });
     h.ui.select.mockResolvedValue('事实或决定');
     h.ui.editor.mockResolvedValue('根据银行回单确认。');
@@ -91,16 +101,19 @@ describe('conversation-only Evidence status', () => {
       stderr: '',
     });
     await h.command('evidence-answer', 'Q-001');
-    expect(h.ui.editor.mock.lastCall![0]).toContain('当前展开：支付分成');
+    expect(h.ui.editor.mock.lastCall![0]).toContain('▶ 支付分成');
     expect(h.api.sendUserMessage).toHaveBeenCalledTimes(1);
     expect((await loadState(h.root))!.status).toBe('running');
     await h.events.get('agent_settled')!({}, h.ctx);
     await h.command('evidence-pause');
     await h.command('evidence-resume');
     await h.command('evidence-status');
-    expect(h.api.sendMessage.mock.lastCall![0].content).toContain(
-      '合同上下文：作者合作协议',
+    const status = h.api.sendMessage.mock.lastCall![0].content;
+    expect(status).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
     );
+    expect(status).toContain('进度：合同上下文 › 作者合作协议 › 支付分成');
+    expect(status).not.toContain('进度：发现 v');
     expectNoStatusDisplay(h);
   });
 });

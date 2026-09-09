@@ -242,7 +242,9 @@ describe('discovery context hook integration', () => {
     const resumed = await before(h, '继续核对');
     expect(resumed.systemPrompt).toBe(first.systemPrompt);
     expect(resumed.message.details.promptDigest).toBeNull();
-    expect(resumed.message.content).toContain('当前展开：支付分成');
+    expect(resumed.message.content).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+    );
     expect(resumed.message.content.length).toBeLessThanOrEqual(
       DISCOVERY_PACKET_LIMIT,
     );
@@ -278,7 +280,9 @@ describe('discovery context hook integration', () => {
     const recoveredState = await readText(h.root, '.evidence/state.json');
     const recovered = await before(h, '压缩之后继续');
     expect(recovered.message.details.promptDigest).toBeNull();
-    expect(recovered.message.content).toContain('当前展开：支付分成');
+    expect(recovered.message.content).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+    );
     expect(recovered.message.content).not.toContain('fake approved cache');
     expect(recovered.systemPrompt).toContain('Confirmation 不默认是人工审批');
     expect(await readText(h.root, '.evidence/state.json')).toBe(recoveredState);

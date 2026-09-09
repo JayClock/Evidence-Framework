@@ -2,7 +2,7 @@ import { type ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { basename } from 'node:path';
 import { recordGateDecision } from '../../gates.ts';
 import { getPhaseDefinition } from '../../phases.ts';
-import { loadContractView } from '../../state/discovery/view.ts';
+import { loadBusinessView } from '../../state/discovery/view.ts';
 import {
   appendHistory,
   createInitialState,
@@ -107,7 +107,7 @@ export function registerCommands(
         customType: 'evidence-status',
         content: statusMarkdown(
           state,
-          await loadContractView(ctx.cwd, state, true),
+          await loadBusinessView(ctx.cwd, state, true),
         ),
         display: true,
       });

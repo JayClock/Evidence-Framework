@@ -149,7 +149,9 @@ export function assessFormalization(
   // Fulfillment is structurally within a contract. Only its agreement and party
   // facts are prerequisites; signing-channel and sibling obligations are NOT.
   const registered = new Set<string>();
-  for (const contract of snapshot.content?.contractView.contracts ?? []) {
+  for (const contract of (snapshot.content?.businessView.contexts ?? []).filter(
+    (context) => context.kind === 'contract',
+  )) {
     const parent = contexts.get(contract.contextRef);
     if (parent?.kind !== 'contract')
       throw new Error(`已发现合同须按 Contract 评估：${contract.contextRef}`);
@@ -177,9 +179,12 @@ export function assessFormalization(
         );
       registered.add(item.candidateRef);
       for (const [dimension, value] of [
-        ['request', item.request],
-        ['deadline', item.deadline],
-        ['confirmation', item.confirmation],
+        ['request', item.requestEvidence.requirement],
+        [
+          'deadline',
+          item.requestEvidence.startAt && item.requestEvidence.expiredAt,
+        ],
+        ['confirmation', item.confirmationEvidence.proves],
         ['parties', item.rightHolderRef && item.obligorRef],
       ] as const) {
         if (!value)

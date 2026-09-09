@@ -17,7 +17,7 @@ import { createResolutionChecks } from './resolutions.ts';
 import type { FinalizedDiscovery } from './result.ts';
 import {
   assertConsolidated,
-  assertDiscoveryContracts,
+  assertBusinessView,
   assertDiscussionTarget,
   validateRefs,
 } from './rules.ts';
@@ -29,6 +29,7 @@ import {
   type DiscoveryQuestion,
   type DiscoverySnapshot,
   type DiscoverySubmission,
+  sameDiscussionTarget,
   type DiscoveryControlAction,
   type FormalizationAssessment,
 } from './schema.ts';
@@ -161,8 +162,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
         existing.blocking !== question.blocking ||
         JSON.stringify(existing.sourceRefs) !==
           JSON.stringify(question.sourceRefs) ||
-        existing.target?.contractRef !== question.target?.contractRef ||
-        existing.target?.fulfillmentRef !== question.target?.fulfillmentRef
+        !sameDiscussionTarget(existing.target, question.target)
       )
         throw new Error('重用历史未答问题必须保持原文；新的缺口使用新 Q-ID');
     } else {
@@ -276,7 +276,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
       );
     for (const scenario of content.cases)
       validateRefs(snapshot, scenario.sourceRefs, true);
-    assertDiscoveryContracts(snapshot);
+    assertBusinessView(snapshot);
     reopenDiscovery(state);
     state.status =
       snapshot.interaction.stopped && !snapshot.modelUpdateRequested
@@ -295,7 +295,7 @@ export function createDiscoveryService(repository: DiscoveryRepository) {
     if (!snapshot.content || !Object.keys(snapshot.sourceHashes).length)
       throw new Error('尚未保存范围、来源、候选及场景回放记录');
     assertConsolidated(snapshot);
-    assertDiscoveryContracts(snapshot);
+    assertBusinessView(snapshot);
     const currentAssessment = assessment ?? snapshot.formalization?.assessment;
     if (!currentAssessment)
       throw new Error(

@@ -19,7 +19,7 @@ import type {
   DiscoveryQuestion,
   DiscoverySnapshot,
 } from '../../../modeling/discovery/schema.ts';
-import { contractViewLines } from '../../../modeling/discovery/view.ts';
+import { businessViewLines } from '../../../modeling/discovery/view.ts';
 import {
   discoveryAnswerView,
   type DiscoveryAnswerView,
@@ -189,7 +189,7 @@ export async function selectDiscoveryView(
   if (options.signal.aborted) return;
   if (ctx.mode !== 'tui') {
     return ctx.ui.select(
-      `${options.title}\n${contractViewLines(snapshot, { questionId: options.questionId }).join('\n')}`,
+      `${options.title}\n${businessViewLines(snapshot, { questionId: options.questionId }).join('\n')}`,
       options.choices,
       { signal: options.signal },
     );
@@ -248,7 +248,7 @@ export async function editDiscoveryView(
   if (signal.aborted) return;
   if (ctx.mode !== 'tui') {
     return ctx.ui.editor(
-      `${contractViewLines(snapshot, { questionId: question.id }).join('\n')}\n回答者：${respondent}（自动记录）`,
+      `${businessViewLines(snapshot, { questionId: question.id }).join('\n')}\n回答者：${respondent}（自动记录）`,
       prefill,
     );
   }

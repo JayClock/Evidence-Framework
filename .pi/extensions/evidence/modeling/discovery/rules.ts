@@ -33,22 +33,28 @@ export function assertDiscussionTarget(
   target: DiscussionTarget,
 ): void {
   if (target === null) return;
-  const contract = snapshot.content?.contractView.contracts.find(
-    (c) => c.contextRef === target.contractRef,
+  const context = snapshot.content?.businessView.contexts.find(
+    (value) => value.contextRef === target.contextRef,
   );
+  if (!context || context.kind !== target.kind)
+    throw new Error('讨论目标必须匹配已记录的业务上下文类型');
   if (
-    !contract ||
-    (target.fulfillmentRef !== null &&
-      !contract.fulfillments.some(
-        (f) => f.candidateRef === target.fulfillmentRef,
-      ))
+    (target.kind === 'contract' &&
+      target.fulfillmentRef !== null &&
+      !context.fulfillments.some(
+        (item) => item.candidateRef === target.fulfillmentRef,
+      )) ||
+    (target.kind === 'channel' &&
+      target.exchangeRef !== null &&
+      !context.evidenceRefs.includes(target.exchangeRef)) ||
+    (target.kind === 'domain' &&
+      target.objectRef !== null &&
+      !context.thingRefs.includes(target.objectRef))
   )
-    throw new Error('讨论目标必须属于已记录的合同及其履约项');
+    throw new Error('讨论目标必须属于当前上下文的履约、协商凭证或领域对象');
 }
 
-export function assertDiscoveryContracts(snapshot: DiscoverySnapshot): void {
-  // Stale resolutions are inactive interpretations, not current business facts.
-  // Keep them visible for audit; their unresolved questions remain blockers.
+export function assertBusinessView(snapshot: DiscoverySnapshot): void {
   const staleFacts = snapshot.staleRecordKeys.filter(
     (key) => !key.startsWith('resolution:'),
   );
@@ -56,37 +62,102 @@ export function assertDiscoveryContracts(snapshot: DiscoverySnapshot): void {
     throw new Error(
       `当前发现记录依据已失效（来源变化或回答已被更正）：${staleFacts.join('、')}`,
     );
-  const view = snapshot.content?.contractView;
-  if (!view) return;
-  const used = new Set<string>();
-  const candidate = (ref: string) => {
-    if (used.has(ref)) throw new Error(`合同、角色或履约候选重复占用：${ref}`);
-    used.add(ref);
-    const value = snapshot.content?.candidates.find((c) => c.id === ref);
-    if (!value) throw new Error(`合同视图引用的候选不存在：${ref}`);
+  const content = snapshot.content;
+  if (!content) return;
+  const view = content.businessView;
+  const candidates = new Map(
+    content.candidates.map((value) => [value.id, value]),
+  );
+  for (const value of candidates.values()) {
     validateRefs(snapshot, value.sourceRefs, value.confidence === 'explicit');
+    if ((value.archetype === 'evidence') !== (value.evidenceKind !== null))
+      throw new Error(`只有凭证候选可以声明 evidenceKind：${value.id}`);
+  }
+  const valueOf = (
+    ref: string,
+    archetypes: Array<
+      'context' | 'fulfillment' | 'evidence' | 'role' | 'participant' | 'thing'
+    >,
+  ) => {
+    const value = candidates.get(ref);
+    if (
+      !value ||
+      !archetypes.includes(value.archetype as (typeof archetypes)[number])
+    )
+      throw new Error(
+        `业务视图引用 ${ref} 必须是 ${archetypes.join('/')} 候选`,
+      );
     return value;
   };
-  for (const contract of view.contracts) {
-    const context = candidate(contract.contextRef);
+  const identities = new Set<string>();
+  const ownIdentity = (ref: string, archetype: 'context' | 'fulfillment') => {
+    if (identities.has(ref)) throw new Error(`上下文或履约身份重复：${ref}`);
+    identities.add(ref);
+    return valueOf(ref, [archetype]);
+  };
+  const participant = (ref: string | null) => {
+    if (ref !== null) valueOf(ref, ['role', 'participant']);
+  };
+  const evidence = (
+    ref: string | null,
+    expected?: 'contract' | 'fulfillment_request' | 'fulfillment_confirmation',
+  ) => {
+    if (ref === null) return;
+    const value = valueOf(ref, ['evidence']);
+    if (expected && value.evidenceKind !== expected)
+      throw new Error(`凭证 ${ref} 必须是 ${expected}`);
+  };
+
+  for (const context of view.contexts) {
+    const identity = ownIdentity(context.contextRef, 'context');
     validateRefs(
       snapshot,
-      contract.sourceRefs,
-      context.confidence === 'explicit',
+      context.sourceRefs,
+      identity.confidence === 'explicit',
     );
-    for (const role of contract.roleRefs) if (role !== null) candidate(role);
+    if (context.kind === 'contract' && context.roleRefs.length !== 2)
+      throw new Error('合同上下文必须保留双方角色位置，未知位置使用 null');
+    if (context.kind !== 'contract' && context.fulfillments.length)
+      throw new Error('只有合同上下文可以直接包含履约项');
+    if (context.kind !== 'contract' && context.agreementEvidence !== null)
+      throw new Error('渠道或领域上下文不能伪造合同凭证');
+    for (const ref of context.roleRefs)
+      if (ref !== null) valueOf(ref, ['role']);
+    for (const ref of context.participantRefs) valueOf(ref, ['participant']);
+    for (const ref of context.thingRefs) valueOf(ref, ['thing']);
+    for (const ref of context.evidenceRefs) evidence(ref);
+    if (context.agreementEvidence)
+      evidence(context.agreementEvidence.evidenceRef, 'contract');
+
     const items = new Map(
-      contract.fulfillments.map((f) => [f.candidateRef, f]),
+      context.fulfillments.map((item) => [item.candidateRef, item]),
     );
-    for (const item of contract.fulfillments) {
-      const value = candidate(item.candidateRef);
-      validateRefs(snapshot, item.sourceRefs, value.confidence === 'explicit');
-      const { rightHolderRef, obligorRef } = item;
-      if (rightHolderRef !== null && rightHolderRef === obligorRef)
+    for (const item of context.fulfillments) {
+      const identity = ownIdentity(item.candidateRef, 'fulfillment');
+      validateRefs(
+        snapshot,
+        item.sourceRefs,
+        identity.confidence === 'explicit',
+      );
+      if (
+        item.rightHolderRef !== null &&
+        item.rightHolderRef === item.obligorRef
+      )
         throw new Error('履约权利方和义务方不能相同');
-      for (const role of [rightHolderRef, obligorRef])
-        if (role !== null && !contract.roleRefs.includes(role))
+      for (const role of [item.rightHolderRef, item.obligorRef])
+        if (role !== null && !context.roleRefs.includes(role))
           throw new Error('履约权责方必须属于当前合同双方');
+      participant(item.requestEvidence.issuerRef);
+      participant(item.requestEvidence.recipientRef);
+      participant(item.confirmationEvidence.providerRef);
+      evidence(item.requestEvidence.evidenceRef, 'fulfillment_request');
+      evidence(
+        item.confirmationEvidence.evidenceRef,
+        'fulfillment_confirmation',
+      );
+      for (const ref of item.supportingEvidenceRefs) evidence(ref);
+      for (const ref of item.participantRefs) valueOf(ref, ['participant']);
+      for (const ref of item.thingRefs) valueOf(ref, ['thing']);
       if ((item.parentFulfillmentRef === null) !== (item.trigger === null))
         throw new Error('异常履约必须同时记录前序履约与触发条件');
       const visited = new Set([item.candidateRef]);

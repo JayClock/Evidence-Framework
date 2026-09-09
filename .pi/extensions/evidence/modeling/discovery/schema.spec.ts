@@ -98,7 +98,7 @@ describe('discovery candidate naming contract', () => {
     });
     const current = await loadDiscovery(h.root, (await loadState(h.root))!);
     expect(current.content!.candidates[0]).toEqual(candidate);
-    expect(current.content!.contractView).toEqual(before.content!.contractView);
+    expect(current.content!.businessView).toEqual(before.content!.businessView);
     expect(await readText(h.root, oldPath)).toBe(raw);
   });
 });

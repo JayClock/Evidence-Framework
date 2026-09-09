@@ -26,13 +26,16 @@ function subscription() {
   });
   content.candidates[0].confidence = 'unknown';
   const [payment, rights, cancellation] =
-    content.contractView.contracts[0].fulfillments;
-  payment.request = '平台按已确定的订单金额要求读者支付订阅费。';
-  payment.deadline = '付款请求开始后 72 小时';
-  payment.confirmation = '支付服务商的成功付款凭证';
-  rights.request = null;
+    content.businessView.contexts[0].fulfillments;
+  payment.requestEvidence.requirement =
+    '平台按已确定的订单金额要求读者支付订阅费。';
+  payment.requestEvidence.startAt = '平台发起付款请求时';
+  payment.requestEvidence.expiredAt = '付款请求开始后 72 小时';
+  payment.confirmationEvidence.proves = '支付服务商的成功付款凭证';
+  rights.requestEvidence.requirement = null;
   cancellation.parentFulfillmentRef = 'C-004';
-  cancellation.request = '按 A-004 核查并关闭订单，形成取消确认后解除合同。';
+  cancellation.requestEvidence.requirement =
+    '按 A-004 核查并关闭订单，形成取消确认后解除合同。';
   cancellation.sourceRefs = ['A-004'];
   snapshot.questions = [
     {
@@ -60,7 +63,7 @@ function subscription() {
     {
       id: 'A-004',
       questionId: 'Q-004',
-      text: cancellation.request,
+      text: cancellation.requestEvidence.requirement!,
       status: 'answered',
       respondent: '合成测试人员',
       recordedAt: '2026-01-01T00:00:00.000Z',

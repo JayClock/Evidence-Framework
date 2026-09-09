@@ -1,8 +1,8 @@
-import { brief, contractViewLines } from '../../modeling/discovery/view.ts';
+import { brief, businessViewLines } from '../../modeling/discovery/view.ts';
 import type { EvidenceState } from '../../types.ts';
 import { loadDiscovery } from './repository.ts';
 
-export async function loadContractView(
+export async function loadBusinessView(
   root: string,
   state: EvidenceState,
   detailed = false,
@@ -31,11 +31,11 @@ export async function loadContractView(
             '手动操作：/evidence-discovery update-model 更新模型；converge 进入需求收敛；resume 继续问答；finish 仅整理。',
           ]
         : []),
-      ...contractViewLines(snapshot, { detailed }),
+      ...businessViewLines(snapshot, { detailed }),
     ];
   } catch (error) {
     return [
-      `合同视图不可用：${brief(error instanceof Error ? error.message : String(error))}`,
+      `业务视图不可用：${brief(error instanceof Error ? error.message : String(error))}`,
     ];
   }
 }

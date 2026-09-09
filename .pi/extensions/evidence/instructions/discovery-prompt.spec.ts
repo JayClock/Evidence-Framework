@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { ContractViewSchema } from '../modeling/discovery/schema.ts';
+import { BusinessViewSchema } from '../modeling/discovery/schema.ts';
 import { prepareModelingInstructions } from '../tests/support/skill-test-support.ts';
 import {
   buildCurrentPrompt,
@@ -90,18 +90,20 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '不从权责方推导确认人',
         '独立验收须有业务依据',
         '先通过 evidence_save_discovery 追加消化结果',
-        '全未知的文本为 null，部分已知保留原依据',
+        '全未知字段为 null，部分已知保留原依据',
         '没有约定依据时先核对一件真实发生的事',
         '职责、来源、缺口和候选状态写详细说明',
         '局部未知不抹去已知事实',
         '历史记录不可改写或删除',
-        '详细分析放 description／notes',
+        '业务事实、来源解释和局部缺口按 Skill 方法记录',
       ])
         expect(prompt).toContain(rule);
     }
-    expect(resumed).toContain('履约请求：作者 → 平台');
-    expect(resumed).toContain('履约确认凭证：待明确');
-    expect(resumed).toContain('当前展开：支付分成');
+    expect(resumed).toContain('权责：作者 → 平台');
+    expect(resumed).toContain('确认凭证：待明确；提供方：待明确');
+    expect(resumed).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+    );
   });
 
   it.each([
@@ -164,7 +166,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
   });
 
   it('keeps tool schema and formalization guidance aligned with non-derived type times', async () => {
-    const schemaText = JSON.stringify(ContractViewSchema);
+    const schemaText = JSON.stringify(BusinessViewSchema);
     expect(schemaText).toContain('不因缺公式清空已知结构');
     expect(schemaText).toContain('来源未知须标明，影响判断时澄清');
     expect(schemaText).toContain('字段非空不表示期限依据已解决');

@@ -2,6 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { discussionTargetObjectRef } from '../modeling/discovery/schema.ts';
 import { emptyDiscovery } from '../modeling/discovery/replay.ts';
 import type {
   DiscoveryEntry,
@@ -69,7 +70,11 @@ function answer(
       id: questionId,
       gapKey: `input.${questionId.toLowerCase()}`,
       focus: 'evidence',
-      target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
+      target: {
+        kind: 'contract',
+        contextRef: 'C-001',
+        fulfillmentRef: 'C-005',
+      },
       prompt: `问题 ${questionId}`,
       impact: '证明付款',
       blocking: true,
@@ -85,7 +90,7 @@ function answer(
   };
   snapshot.answers.push(value);
   return {
-    version: 5,
+    version: 6,
     runId: snapshot.runId,
     revision,
     previousDigest: null,
@@ -188,10 +193,14 @@ describe('bounded discovery data packets (not an LLM behavior evaluation)', () =
       id: `CASE-${String(i + 1).padStart(3, '0')}`,
       gap: '未解决的回放缺口'.repeat(600).slice(0, 4000),
     }));
-    for (const item of content.contractView.contracts[0].fulfillments) {
-      item.request = '请求依据'.repeat(1000);
-      item.confirmation = '仅知凭证，提供方待核实'.repeat(400).slice(0, 4000);
-      item.deadline = '未知期限依据'.repeat(600).slice(0, 4000);
+    for (const item of content.businessView.contexts[0].fulfillments) {
+      item.requestEvidence.requirement = '请求依据'.repeat(1000);
+      item.confirmationEvidence.proves = '仅知凭证，提供方待核实'
+        .repeat(400)
+        .slice(0, 4000);
+      item.requestEvidence.expiredAt = '未知期限依据'
+        .repeat(600)
+        .slice(0, 4000);
     }
     const entries = Array.from({ length: 300 }, (_, i) =>
       answer(
@@ -229,25 +238,33 @@ describe('bounded discovery data packets (not an LLM behavior evaluation)', () =
 
   it('uses the answered question target instead of an unrelated saved cursor, including null domain targets', async () => {
     const h = await setup();
-    h.snapshot.content!.contractView.current!.fulfillmentRef = 'C-004';
+    h.snapshot.content!.businessView.current = {
+      kind: 'contract',
+      contextRef: 'C-001',
+      fulfillmentRef: 'C-004',
+    };
     const input = answer(h.snapshot, 2, 'Q-001', '已支付，提供方仍待核实');
     const focused = await h.packet([input]);
-    expect(focused.context.target?.fulfillmentRef).toBe('C-005');
-    expect(focused.prompt).toContain('当前展开：支付分成');
-    expect(focused.prompt).not.toContain('当前展开：交付稿件');
+    expect(discussionTargetObjectRef(focused.context.target)).toBe('C-005');
+    expect(focused.prompt).toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+    );
+    expect(focused.prompt).not.toContain(
+      '当前建模位置：合同上下文 › 作者合作协议 › 交付稿件',
+    );
     h.snapshot.questions[0].target = null;
     const domain = await h.packet([input]);
     expect(domain.context.target).toBeNull();
     expect(domain.prompt).not.toContain('履约请求：');
-    expect(h.snapshot.content!.contractView.current!.fulfillmentRef).toBe(
-      'C-004',
-    );
+    expect(
+      discussionTargetObjectRef(h.snapshot.content!.businessView.current),
+    ).toBe('C-004');
   });
 
   it('preserves partial confirmation, stale references and skip/finish controls without inventing approval', async () => {
     const h = await setup();
-    const item = h.snapshot.content!.contractView.contracts[0].fulfillments[1];
-    item.confirmation = '银行回单；提供方待明确';
+    const item = h.snapshot.content!.businessView.contexts[0].fulfillments[1];
+    item.confirmationEvidence.proves = '银行回单；提供方待明确';
     h.snapshot.staleRecordKeys = ['fulfillment:C-001:C-005'];
     const input = answer(h.snapshot, 2, 'Q-001', 'unused');
     h.snapshot.answers = [];

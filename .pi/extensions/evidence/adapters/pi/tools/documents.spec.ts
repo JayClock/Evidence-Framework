@@ -132,7 +132,7 @@ describe('discovery-driven formal artifact workflow', () => {
     expect((await loadState(h.root))?.pendingGate).toBeNull();
   });
 
-  it('allows reset of v5 but never reuses its discovery decisions', async () => {
+  it('allows reset of unsupported state v5 but never reuses its discovery decisions', async () => {
     const h = await freshHarness();
     await writeJsonAtomic(h.root, '.evidence/state.json', {
       ...h.state,

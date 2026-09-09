@@ -25,7 +25,7 @@ const question = {
   id: 'Q-001',
   gapKey: 'c-005.payment-proof',
   focus: 'evidence',
-  target: { contractRef: 'C-001', fulfillmentRef: 'C-005' },
+  target: { kind: 'contract', contextRef: 'C-001', fulfillmentRef: 'C-005' },
   prompt: '什么凭证证明分成已支付？',
   impact: '确定完成依据',
   blocking: true,
@@ -81,7 +81,7 @@ describe('automatic current-question entry', () => {
       { signal: expect.any(AbortSignal) },
     );
     expect(h.ui.editor).toHaveBeenCalledExactlyOnceWith(
-      expect.stringContaining('当前展开：支付分成'),
+      expect.stringContaining('▶ 支付分成'),
       '',
     );
     expect(h.ctx.waitForIdle).not.toHaveBeenCalled();
@@ -173,8 +173,10 @@ describe('automatic current-question entry', () => {
     async (mode) => {
       const h = await setup(mode === 'rpc', mode);
       const text = JSON.stringify(h.result.content);
-      expect(text).toContain('合同上下文：作者合作协议');
-      expect(text).toContain('履约请求：作者 → 平台');
+      expect(text).toContain(
+        '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
+      );
+      expect(text).toContain('权责：作者 → 平台');
       expect(text).toContain('履约确认凭证：待明确');
       expect(text).toContain(question.prompt);
       expect(text).toContain('/evidence-answer');

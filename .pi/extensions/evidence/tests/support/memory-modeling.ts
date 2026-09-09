@@ -72,7 +72,7 @@ export function memoryModeling() {
       return snapshot;
     },
     nextDiscoveryEntry: (current, event) => ({
-      version: 5,
+      version: 6,
       runId: current.runId,
       revision: current.discovery.revision + 1,
       previousDigest: current.discovery.digest,

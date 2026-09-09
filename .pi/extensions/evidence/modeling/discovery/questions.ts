@@ -1,5 +1,6 @@
-import type {
-  DiscoveryAnswer,
+import {
+  sameDiscussionTarget,
+  type DiscoveryAnswer,
   DiscoveryQuestion,
   DiscoverySnapshot,
   QuestionResolution,
@@ -84,8 +85,7 @@ export function duplicateQuestion(
     (previous) =>
       previous.id !== question.id &&
       (previous.gapKey === question.gapKey ||
-        (previous.target?.contractRef === question.target?.contractRef &&
-          previous.target?.fulfillmentRef === question.target?.fulfillmentRef &&
+        (sameDiscussionTarget(previous.target, question.target) &&
           // Distinct explicit subject keys distinguish domain/channel questions.
           (question.target !== null ||
             previous.gapKey.split('.')[0] === question.gapKey.split('.')[0]) &&

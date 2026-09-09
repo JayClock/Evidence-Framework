@@ -1,13 +1,17 @@
 import { pendingQuestions } from '../../../modeling/discovery/questions.ts';
 import {
-  assertDiscoveryContracts,
+  assertBusinessView,
   assertDiscussionTarget,
 } from '../../../modeling/discovery/rules.ts';
-import type { DiscoverySnapshot } from '../../../modeling/discovery/schema.ts';
+import {
+  discussionTargetObjectRef,
+  type DiscoverySnapshot,
+} from '../../../modeling/discovery/schema.ts';
 import {
   brief,
   candidateDescriptionLines,
   candidateName,
+  contextKindLabel,
   fulfillmentInteractionLines,
   questionResolutionLines,
 } from '../../../modeling/discovery/view.ts';
@@ -22,17 +26,16 @@ export interface DiscoveryAnswerView {
   details: string[];
 }
 
-// Display-only projection. Do not truncate the question or reinterpret missing facts.
 export function discoveryAnswerView(
   snapshot: DiscoverySnapshot,
   questionId?: string,
 ): DiscoveryAnswerView {
   const question = questionId
-    ? snapshot.questions.find((q) => q.id === questionId)
+    ? snapshot.questions.find((value) => value.id === questionId)
     : pendingQuestions(snapshot)[0];
   const target = question
     ? question.target
-    : (snapshot.content?.contractView.current ?? null);
+    : (snapshot.content?.businessView.current ?? null);
   const text = (value: string) => brief(value, Infinity);
   const resolutionLines = question
     ? questionResolutionLines(snapshot, question.id)
@@ -45,12 +48,12 @@ export function discoveryAnswerView(
     ],
   };
   try {
-    assertDiscoveryContracts(snapshot);
+    assertBusinessView(snapshot);
     assertDiscussionTarget(snapshot, target);
   } catch {
     return {
       sections: [
-        { title: '业务上下文', lines: ['依据或引用已失效，待重新核对'] },
+        { title: '当前建模位置', lines: ['依据或引用已失效，待重新核对'] },
         currentQuestion,
       ],
       details: resolutionLines,
@@ -60,7 +63,7 @@ export function discoveryAnswerView(
     return {
       sections: [
         {
-          title: '业务上下文',
+          title: '当前建模位置',
           lines: [
             snapshot.content
               ? text(snapshot.content.scope)
@@ -69,48 +72,81 @@ export function discoveryAnswerView(
         },
         currentQuestion,
       ],
-      details: ['当前未定位合同；不为领域或签约前讨论补造合同。'],
+      details: ['当前尚未定位业务上下文。'],
     };
   }
   const content = snapshot.content!;
   const name = (ref: string | null) => candidateName(snapshot, ref);
-  const contract = content.contractView.contracts.find(
-    (c) => c.contextRef === target.contractRef,
+  const context = content.businessView.contexts.find(
+    (value) => value.contextRef === target.contextRef,
   )!;
-  const item = contract.fulfillments.find(
-    (f) => f.candidateRef === target.fulfillmentRef,
-  );
+  const targetRef = discussionTargetObjectRef(target);
+  const item =
+    target.kind === 'contract'
+      ? context.fulfillments.find(
+          (value) => value.candidateRef === target.fulfillmentRef,
+        )
+      : undefined;
+  const participantRefs = [
+    ...context.participantRefs,
+    ...(item?.participantRefs ?? []),
+  ];
+  const thingRefs = [...context.thingRefs, ...(item?.thingRefs ?? [])];
+  const evidenceRefs = [
+    ...context.evidenceRefs,
+    context.agreementEvidence?.evidenceRef,
+    item?.requestEvidence.evidenceRef,
+    item?.confirmationEvidence.evidenceRef,
+    ...(item?.supportingEvidenceRefs ?? []),
+  ].filter((ref): ref is string => ref !== null && ref !== undefined);
   return {
     sections: [
       {
-        title: '合同上下文',
+        title: '当前建模位置',
         lines: [
-          name(contract.contextRef),
-          `双方角色：${contract.roleRefs.map(name).join(' ↔ ')}`,
+          [
+            contextKindLabel(context.kind),
+            name(context.contextRef),
+            ...(targetRef ? [name(targetRef)] : []),
+          ].join(' › '),
+          `角色：${context.roleRefs.length ? context.roleRefs.map(name).join(' ↔ ') : '不适用或待明确'}`,
+          `参与人／组织：${participantRefs.length ? [...new Set(participantRefs)].map(name).join('、') : '待明确'}`,
+          `标的物：${thingRefs.length ? [...new Set(thingRefs)].map(name).join('、') : '待明确'}`,
+          `相关凭证：${evidenceRefs.length ? [...new Set(evidenceRefs)].map(name).join('、') : '待明确'}`,
         ],
       },
       {
-        title: '当前履约项（候选结构）',
+        title: context.kind === 'contract' ? '当前履约切片' : '当前对象切片',
         lines: item
           ? [
               name(item.candidateRef),
               ...fulfillmentInteractionLines(snapshot, item),
             ]
-          : ['尚未选择履约项'],
+          : [
+              targetRef
+                ? name(targetRef)
+                : context.kind === 'contract'
+                  ? '尚未选择履约项'
+                  : '尚未选择协商凭证或领域对象',
+            ],
       },
       currentQuestion,
     ],
-    // Keep the card focused. The complete relationship tree is available only
-    // on demand via /evidence-status, not repeated inside the answer dialog.
     details: [
-      ...candidateDescriptionLines(snapshot, [item?.candidateRef ?? null]),
+      ...candidateDescriptionLines(snapshot, [
+        context.contextRef,
+        item?.candidateRef ?? null,
+        ...participantRefs,
+        ...thingRefs,
+        ...evidenceRefs,
+      ]),
       ...(item?.parentFulfillmentRef && item.trigger !== null
         ? [
             `前序／触发：${name(item.parentFulfillmentRef)} · ${text(item.trigger)}`,
           ]
         : []),
-      `来源引用：${[...new Set([...contract.sourceRefs, ...(item?.sourceRefs ?? [])])].map(text).join('、')}（发现依据，不是业务批准；材料新鲜度由定稿检查核对）`,
-      '完整履约结构：/evidence-status',
+      `来源引用：${[...new Set([...context.sourceRefs, ...(item?.sourceRefs ?? [])])].map(text).join('、')}（发现依据，不是业务批准）`,
+      '完整业务结构：/evidence-status',
     ],
   };
 }

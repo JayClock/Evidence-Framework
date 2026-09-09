@@ -10,9 +10,10 @@ import {
   unansweredQuestions,
   unresolvedBlockingQuestions,
 } from '../modeling/discovery/questions.ts';
-import type {
-  DiscoveryContent,
-  DiscoverySnapshot,
+import {
+  sameDiscussionTarget,
+  type DiscoveryContent,
+  type DiscoverySnapshot,
 } from '../modeling/discovery/schema.ts';
 import { REQUIREMENTS_PATH } from '../storage.ts';
 import type { EvidenceState } from '../types.ts';
@@ -52,7 +53,7 @@ function continuation(snapshot: DiscoverySnapshot, waiting: boolean): string {
   if (snapshot.interaction.stopped)
     return '人工已结束本轮问答：禁止自动追问；先消化已有回答，仅整理发现与缺口并停止，不更新正式模型，不调用 evidence_finalize_discovery。仅人工选择 /evidence-discovery update-model 才授权更新模型；/evidence-discovery resume 恢复提问。';
   if (snapshot.interaction.needsConsolidation)
-    return '先保存消化结果，再决定下一问：读取最新回答及跳过记录，更新候选、案例、focus 与 contractView；简述本次明确了什么、还缺什么。不得直接弹出预排的下一题。';
+    return '先保存消化结果，再决定下一问：读取最新回答及跳过记录，更新候选、案例、focus 与 businessView；简述本次明确了什么、还缺什么。不得直接弹出预排的下一题。';
   if (waiting) return '等待 /evidence-answer，不重复提问或代答。';
   if (snapshot.answers.length)
     return '此前人工回答已归入当前理解，承接当前候选与回放缺口；不要重新开始范围问卷或逐项重读历史回答。';
@@ -88,8 +89,7 @@ export function renderDiscoveryPrompt(
     (state.status === 'waiting_answer' ||
       pendingQuestions(snapshot).length > 0);
   const related = (target: typeof context.target) =>
-    target?.contractRef === context.target?.contractRef &&
-    target?.fulfillmentRef === context.target?.fulfillmentRef;
+    sameDiscussionTarget(target, context.target);
   const gaps = blocking
     .filter((q) => related(q.target))
     .slice(0, 3)

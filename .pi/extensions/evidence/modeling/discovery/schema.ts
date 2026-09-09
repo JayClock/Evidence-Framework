@@ -22,50 +22,115 @@ const sourcedRefs = Type.Array(text(), {
 
 export const DiscussionTargetSchema = Type.Union([
   Type.Object(
-    { contractRef: candidateRef(), fulfillmentRef: nullableRef() },
+    {
+      kind: choice('channel'),
+      contextRef: candidateRef(),
+      exchangeRef: nullableRef(),
+    },
+    { additionalProperties: false },
+  ),
+  Type.Object(
+    {
+      kind: choice('contract'),
+      contextRef: candidateRef(),
+      fulfillmentRef: nullableRef(),
+    },
+    { additionalProperties: false },
+  ),
+  Type.Object(
+    {
+      kind: choice('domain'),
+      contextRef: candidateRef(),
+      objectRef: nullableRef(),
+    },
     { additionalProperties: false },
   ),
   Type.Null(),
 ]);
 
-// A sourced projection of discovery candidates, not a second formal FM model.
-export const ContractViewSchema = Type.Object(
+const candidateRefs = (maxItems = 100) =>
+  Type.Array(candidateRef(), { maxItems, uniqueItems: true });
+
+const RequestEvidenceSchema = Type.Object(
   {
-    current: DiscussionTargetSchema,
-    contracts: Type.Array(
+    evidenceRef: nullableRef(),
+    issuerRef: nullableRef(),
+    recipientRef: nullableRef(),
+    requirement: knownText(
+      '权利方要求义务方完成什么；只保留有来源的已知部分。',
+    ),
+    startAt: knownText(
+      '履约请求 start_at 的业务含义及来源；来源未知须标明，影响判断时澄清；不因缺公式清空已知结构；未知为 null，不编造实例日期。',
+    ),
+    expiredAt: knownText(
+      '履约请求 expired_at 的业务含义及确定依据；字段非空不表示期限依据已解决；未知为 null，不编造期限。',
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const ConfirmationEvidenceSchema = Type.Object(
+  {
+    evidenceRef: nullableRef(),
+    providerRef: nullableRef(),
+    proves: knownText('该凭证证明哪个履约结果；不是默认人工审批或运行状态。'),
+    confirmedAt: knownText(
+      '履约确认 confirmed_at 的业务含义及采信依据；未知为 null。',
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const FulfillmentViewSchema = Type.Object(
+  {
+    candidateRef: candidateRef(),
+    rightHolderRef: nullableRef(),
+    obligorRef: nullableRef(),
+    requestEvidence: RequestEvidenceSchema,
+    confirmationEvidence: ConfirmationEvidenceSchema,
+    supportingEvidenceRefs: candidateRefs(),
+    participantRefs: candidateRefs(),
+    thingRefs: candidateRefs(),
+    parentFulfillmentRef: nullableRef(),
+    trigger: knownText(),
+    sourceRefs: sourcedRefs,
+  },
+  { additionalProperties: false },
+);
+
+const ContextViewSchema = Type.Object(
+  {
+    kind: choice('channel', 'contract', 'domain'),
+    contextRef: candidateRef(),
+    roleRefs: Type.Array(nullableRef(), { maxItems: 20 }),
+    participantRefs: candidateRefs(),
+    thingRefs: candidateRefs(),
+    evidenceRefs: candidateRefs(),
+    agreementEvidence: Type.Union([
       Type.Object(
         {
-          contextRef: candidateRef(),
-          roleRefs: Type.Array(nullableRef(), { minItems: 2, maxItems: 2 }),
-          sourceRefs: sourcedRefs,
-          fulfillments: Type.Array(
-            Type.Object(
-              {
-                candidateRef: candidateRef(),
-                rightHolderRef: nullableRef(),
-                obligorRef: nullableRef(),
-                request: knownText(
-                  '履约请求的要求及依据；有来源时说明谁代表权利方向谁发起、要求完成什么。未知为 null，不猜测具体经办人。',
-                ),
-                deadline: knownText(
-                  '保留已识别请求的类型语义，如“以本次付款请求的截止时间（expired_at）为准；确定依据待明确”。追溯业务来源：已知直接约定、引用或派生规则就保留；来源未知须标明，影响判断时澄清，不默认输入或公式。字段非空不表示期限依据已解决；仅全未知为 null，不因缺公式清空已知结构。不编造时长、实例日期、无期限或设定权限。',
-                ),
-                confirmation: knownText(
-                  '谁提供或形成什么凭证、证明什么履约结果；只记录有来源的部分，其余标待明确，全未知为 null。Confirmation 不默认是人工审批，不从权利方或义务方推导确认人；独立验收须有业务依据。',
-                ),
-                parentFulfillmentRef: nullableRef(),
-                trigger: knownText(),
-                sourceRefs: sourcedRefs,
-              },
-              { additionalProperties: false },
-            ),
-            { maxItems: 100 },
+          evidenceRef: nullableRef(),
+          signedAt: knownText(
+            '合同 signed_at 的业务含义及签署依据；未知为 null。',
           ),
         },
         { additionalProperties: false },
       ),
-      { maxItems: 50 },
-    ),
+      Type.Null(),
+    ]),
+    sourceRefs: sourcedRefs,
+    fulfillments: Type.Array(FulfillmentViewSchema, { maxItems: 100 }),
+  },
+  { additionalProperties: false },
+);
+
+// A sourced projection of the current business modeling position, not a second
+// formal FM model. Channel/domain contexts remain first-class and never need a
+// fabricated contract merely to appear in the discovery UI.
+export const BusinessViewSchema = Type.Object(
+  {
+    current: DiscussionTargetSchema,
+    contexts: Type.Array(ContextViewSchema, { maxItems: 50 }),
   },
   { additionalProperties: false },
 );
@@ -90,24 +155,45 @@ export const QuestionSchema = Type.Object(
   { additionalProperties: false },
 );
 
-// A short business name is not an analysis paragraph or a review status.
+// Short labels drive the card; archetypes make participants, things and
+// evidence renderable without parsing prose. A candidate is still provisional.
 const candidateLabel = Type.String({
   minLength: 1,
   maxLength: 40,
   pattern:
     '^[^\\s\\x00-\\x1f\\x7f](?:[^\\x00-\\x1f\\x7f\\u2028\\u2029]*[^\\s\\x00-\\x1f\\x7f])?$',
   description:
-    '简短业务名称，最多40字符、单行且无首尾空白，如“平台”“读者”“支付订阅费”。不包含职责、依据、缺口、候选标记或建模约束；详细分析写 description。',
+    '简短业务名称，最多40字符、单行且无首尾空白；详细分析写 description。',
 });
 const CandidateSchema = Type.Object(
   {
     id: Type.String({ pattern: '^C-[0-9]{3,}$' }),
+    archetype: choice(
+      'context',
+      'fulfillment',
+      'evidence',
+      'role',
+      'participant',
+      'thing',
+      'description',
+    ),
+    evidenceKind: Type.Union([
+      choice(
+        'rfp',
+        'proposal',
+        'contract',
+        'fulfillment_request',
+        'fulfillment_confirmation',
+        'other_evidence',
+      ),
+      Type.Null(),
+    ]),
     label: candidateLabel,
     description: Type.String({
       minLength: 1,
       maxLength: 4000,
       description:
-        '完整业务说明，区分已明确事实、推断理由和剩余缺口，并关联来源；不是界面名称。不因局部未知将已有明确事实整体降为未知。',
+        '完整业务说明，区分已明确事实、推断理由和剩余缺口，并关联来源。',
     }),
     confidence: choice('explicit', 'inferred', 'unknown'),
     sourceRefs: refs,
@@ -129,7 +215,7 @@ export const DiscoveryContentSchema = Type.Object(
       'domain',
       'replay',
     ),
-    contractView: ContractViewSchema,
+    businessView: BusinessViewSchema,
     notes: text(100, 1000000),
     sources: Type.Array(
       Type.Object(
@@ -142,7 +228,7 @@ export const DiscoveryContentSchema = Type.Object(
       ),
       { maxItems: 100 },
     ),
-    candidates: Type.Array(CandidateSchema, { maxItems: 200 }),
+    candidates: Type.Array(CandidateSchema, { maxItems: 300 }),
     cases: Type.Array(
       Type.Object(
         {
@@ -228,7 +314,7 @@ const AppliedModelSchema = Type.Object(
 
 export const DiscoverySnapshotSchema = Type.Object(
   {
-    version: Type.Literal(5),
+    version: Type.Literal(6),
     runId: text(),
     revision: Type.Integer({ minimum: 0 }),
     previousDigest: Type.Union([text(), Type.Null()]),
@@ -284,8 +370,8 @@ const supersedes = Type.Union([recordRef, Type.Null()], {
   description:
     '新对象为 null；更正须引用 recordHeads 中该对象当前的 D-ID（包括撤回记录）。不覆盖旧记录。',
 });
-const contractSchema = ContractViewSchema.properties.contracts.items;
-const fulfillmentSchema = contractSchema.properties.fulfillments.items;
+const contextSchema = BusinessViewSchema.properties.contexts.items;
+const fulfillmentSchema = contextSchema.properties.fulfillments.items;
 const record = <K extends string, S extends import('typebox').TSchema>(
   kind: K,
   value: S,
@@ -321,12 +407,12 @@ export const DiscoveryRecordSchema = Type.Union([
   record('source', DiscoveryContentSchema.properties.sources.items),
   record('candidate', CandidateSchema),
   record('case', DiscoveryContentSchema.properties.cases.items),
-  record('contract', Type.Omit(contractSchema, ['fulfillments'])),
+  record('context', Type.Omit(contextSchema, ['fulfillments'])),
   record(
     'fulfillment',
     Type.Object(
       {
-        contractRef: candidateRef(),
+        contextRef: candidateRef(),
         ...fulfillmentSchema.properties,
       },
       { additionalProperties: false },
@@ -398,7 +484,7 @@ export const DiscoveryEventSchema = Type.Union([
 
 export const DiscoveryEntrySchema = Type.Object(
   {
-    version: Type.Literal(5),
+    version: Type.Literal(6),
     runId: text(),
     revision: Type.Integer({ minimum: 1 }),
     previousDigest: Type.Union([text(), Type.Null()]),
@@ -414,7 +500,32 @@ export type DiscoveryEvent = Static<typeof DiscoveryEventSchema>;
 export type DiscoveryEntry = Static<typeof DiscoveryEntrySchema>;
 
 export type DiscussionTarget = Static<typeof DiscussionTargetSchema>;
-export type ContractView = Static<typeof ContractViewSchema>;
+
+export function discussionTargetObjectRef(
+  target: DiscussionTarget,
+): string | null {
+  if (target === null) return null;
+  switch (target.kind) {
+    case 'channel':
+      return target.exchangeRef;
+    case 'contract':
+      return target.fulfillmentRef;
+    case 'domain':
+      return target.objectRef;
+  }
+}
+
+export function sameDiscussionTarget(
+  left: DiscussionTarget,
+  right: DiscussionTarget,
+): boolean {
+  return (
+    left?.kind === right?.kind &&
+    left?.contextRef === right?.contextRef &&
+    discussionTargetObjectRef(left) === discussionTargetObjectRef(right)
+  );
+}
+export type BusinessView = Static<typeof BusinessViewSchema>;
 export type DiscoveryContent = Static<typeof DiscoveryContentSchema>;
 export type DiscoveryQuestion = Static<typeof QuestionSchema>;
 export type DiscoveryAnswer = Static<typeof AnswerSchema>;

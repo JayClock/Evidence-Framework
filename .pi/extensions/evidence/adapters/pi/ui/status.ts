@@ -11,7 +11,7 @@ export function phaseLabel(state: EvidenceState): string {
 export function subjectLabel(state: EvidenceState): string {
   if (state.phase === 'complete') return '全部流程';
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
-    return '业务上下文识别与发现';
+    return '当前业务建模切片';
   if (state.phase === 'coding')
     return currentCodingStory(state) ?? '等待解析 Sprint Backlog';
   return (
@@ -40,10 +40,15 @@ export function statusIcon(status: EvidenceState['status']): string {
   }
 }
 
-export function progressText(state: EvidenceState): string {
+export function progressText(
+  state: EvidenceState,
+  businessPosition?: string,
+): string {
   if (state.phase === 'complete') return '5/5';
   if (state.phase === 'modeling' && state.discovery.stage === 'discovering')
-    return `发现 v${state.discovery.revision} · ${state.discovery.path ?? '从业务叙述识别上下文'}`;
+    return (
+      businessPosition?.replace(/^当前建模位置：/, '') ?? '从业务叙述识别上下文'
+    );
   if (state.phase === 'coding') {
     const total = state.coding.storyIds.length;
     const current =
@@ -60,7 +65,7 @@ export function progressText(state: EvidenceState): string {
 
 export function statusMarkdown(
   state: EvidenceState,
-  contractView: string[] = [],
+  businessView: string[] = [],
 ): string {
   const lines = [
     '# Evidence 状态',
@@ -71,13 +76,16 @@ export function statusMarkdown(
     `- 当前对象：${subjectLabel(state)}`,
     `- 状态：${statusIcon(state.status)} \`${state.status}\`${state.paused ? '（已暂停）' : ''}`,
     `- 轮次：${state.round}`,
-    `- 进度：${progressText(state)}`,
+    `- 进度：${progressText(
+      state,
+      businessView.find((line) => line.startsWith('当前建模位置：')),
+    )}`,
     `- 最近报告：${state.lastReport ? `\`${state.lastReport}\`` : '无'}`,
     `- 待审核 Gate：${state.pendingGate ? `\`${state.pendingGate.path}\`` : '无'}`,
   ];
   if (state.phase === 'modeling')
     lines.push(
-      `- 发现：${state.discovery.stage} / v${state.discovery.revision} / ${state.discovery.path ?? '尚无记录'}`,
+      `- 发现记录：${state.discovery.stage} / v${state.discovery.revision} / ${state.discovery.path ?? '尚无记录'}`,
     );
   if (state.status === 'waiting_answer')
     lines.push(
@@ -87,12 +95,12 @@ export function statusMarkdown(
     lines.push(`- TDD 检查点：\`${state.coding.tdd.stage}\``);
   if (state.lastError) lines.push(`- 最近错误：${state.lastError}`);
   if (state.feedback) lines.push('', '## 当前反馈', '', state.feedback);
-  if (contractView.length)
+  if (businessView.length)
     lines.push(
       '',
-      '## 合同履约权责',
+      '## 当前业务切片',
       '',
-      ...contractView.map((line) => `- ${line}`),
+      ...businessView.map((line) => `- ${line}`),
     );
   return `${lines.join('\n')}\n`;
 }

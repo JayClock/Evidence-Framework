@@ -82,10 +82,10 @@ async function answer(
 }
 
 describe('interactive discovery state and provenance', () => {
-  it('rebuilds v5 read models with explicit contract view and interaction state', async () => {
+  it('rebuilds v6 read models with explicit business position and interaction state', async () => {
     const h = await fresh();
     expect(await loadDiscovery(h.root, h.state)).toMatchObject({
-      version: 5,
+      version: 6,
       content: null,
       interaction: {
         stopped: false,
@@ -98,8 +98,19 @@ describe('interactive discovery state and provenance', () => {
     expect(
       await loadDiscovery(h.root, (await loadState(h.root))!),
     ).toMatchObject({
-      version: 5,
-      content: { contractView: { current: null, contracts: [] } },
+      version: 6,
+      content: {
+        businessView: {
+          current: {
+            kind: 'domain',
+            contextRef: 'C-001',
+            objectRef: null,
+          },
+          contexts: [
+            expect.objectContaining({ kind: 'domain', contextRef: 'C-001' }),
+          ],
+        },
+      },
       interaction: {
         stopped: false,
         deferredQuestionIds: [],
@@ -140,7 +151,7 @@ describe('interactive discovery state and provenance', () => {
       const before = await readText(h.root, '.evidence/state.json');
       await expect(loadDiscovery(h.root, state)).rejects.toThrow(
         kind.startsWith('v')
-          ? '仅支持发现记录 v5'
+          ? '仅支持发现记录 v6'
           : '发现记录结构或运行版本不一致',
       );
       expect(await readText(h.root, '.evidence/state.json')).toBe(before);
@@ -148,10 +159,10 @@ describe('interactive discovery state and provenance', () => {
     },
   );
 
-  it('requires contractView in new submissions and rejects the old position shape', async () => {
+  it('requires businessView in new submissions and rejects the old position shape', async () => {
     const h = await fresh();
     const content: Record<string, unknown> = { ...discoveryContent() };
-    delete content.contractView;
+    delete content.businessView;
     content.position = null;
     await expect(
       h.tool('evidence_save_discovery', { expectedRevision: 0, content }),
@@ -164,12 +175,12 @@ describe('interactive discovery state and provenance', () => {
     await h.command('evidence-status');
     expect(h.api.sendMessage).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        content: expect.stringContaining('当前对象：业务上下文识别与发现'),
+        content: expect.stringContaining('当前对象：当前业务建模切片'),
       }),
     );
     expect(h.api.sendMessage).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        content: expect.stringContaining('从业务叙述识别上下文'),
+        content: expect.stringContaining('进度：尚未定位业务上下文'),
       }),
     );
     await saveContent(h);
@@ -444,6 +455,7 @@ describe('interactive discovery state and provenance', () => {
     await h.command('evidence-run');
     const content = discoveryContent();
     content.candidates = [];
+    content.businessView = { current: null, contexts: [] };
     content.cases[0].sourceRefs = ['A-001'];
     await h.saveDiscovery({ expectedRevision: 2, content });
     await h.events.get('agent_settled')!({}, h.ctx);
