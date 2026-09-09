@@ -21,7 +21,7 @@ async function sourceFiles(path: string): Promise<string[]> {
 describe('fm-modeling extension boundary', () => {
   it('registers one independent command', async () => {
     const registerCommand = vi.fn();
-    fmModelingExtension({ registerCommand, on: vi.fn() } as never);
+    fmModelingExtension({ registerCommand, registerTool: vi.fn(), on: vi.fn() } as never);
 
     expect(registerCommand).toHaveBeenCalledOnce();
     expect(registerCommand).toHaveBeenCalledWith(

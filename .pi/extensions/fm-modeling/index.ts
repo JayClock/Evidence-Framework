@@ -1,5 +1,7 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { Type } from 'typebox';
 
+import { ModelPublisher } from './model.js';
 import { EXTENSION_NAMESPACE, LEGACY_EVIDENCE_NAMESPACE, STORAGE_NAMESPACE } from './paths.js';
 import { StateStore } from './state.js';
 
@@ -10,6 +12,36 @@ export default function fmModelingExtension(pi: ExtensionAPI) {
     } catch (error) {
       ctx.ui.notify(`FM Modeling 恢复检查失败：${String(error)}`, 'error');
     }
+  });
+
+  pi.registerTool({
+    name: 'fm_model_submit',
+    label: 'Submit FM Model',
+    description: '校验并原子发布当前 Run 的完整 FM Schema v3 YAML bundle。',
+    parameters: Type.Object({
+      runId: Type.String(),
+      expectedRevision: Type.Integer({ minimum: 1 }),
+      expectedModelRevision: Type.Integer({ minimum: 0 }),
+      summary: Type.String({ minLength: 1 }),
+      sourceRefs: Type.Array(Type.String(), { minItems: 1 }),
+      files: Type.Array(
+        Type.Object({ path: Type.String({ minLength: 1 }), content: Type.String() }),
+        { minItems: 1 },
+      ),
+    }),
+    async execute(_toolCallId, params, _signal, onUpdate, ctx) {
+      onUpdate?.({ content: [{ type: 'text', text: '正在校验 FM bundle…' }], details: {} });
+      const state = await new ModelPublisher(ctx.cwd, new StateStore(ctx.cwd)).submit(params);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `FM bundle 已处理：modelRevision=${state.modelRevision}, revision=${state.revision}`,
+          },
+        ],
+        details: { state, summary: params.summary },
+      };
+    },
   });
 
   pi.registerCommand('evidence-model', {
