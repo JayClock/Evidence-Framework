@@ -129,6 +129,12 @@ export class ModelPublisher {
     if (state.stoppedAt) throw new Error('Run 已停止');
     if (state.revision !== input.expectedRevision) throw new Error('Revision 已过期');
     if (state.modelRevision !== input.expectedModelRevision) throw new Error('Model revision 已过期');
+    if (state.modelDigest) {
+      const currentDigest = await digestDirectory(fmPaths(this.root).model);
+      if (currentDigest !== state.modelDigest) {
+        throw new Error('正式 FM 模型被外部修改，拒绝覆盖');
+      }
+    }
     if (!input.files.some((file) => file.path === 'model.yaml')) throw new Error('bundle 缺少 model.yaml');
     const unique = new Set<string>();
     for (const file of input.files) {

@@ -2,6 +2,7 @@ import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-a
 
 import { fmPaths } from './paths.js';
 import { modelingPrompt } from './prompts.js';
+import { ToolLease } from './runtime.js';
 import { type EventEnvelope, type ModelState, StateStore } from './state.js';
 
 export function nextQuestionId(events: EventEnvelope[], gapKey: string): string {
@@ -20,6 +21,7 @@ export class QuestionInteraction {
   constructor(
     private readonly pi: ExtensionAPI,
     private readonly store: StateStore,
+    private readonly tools = new ToolLease(pi),
   ) {}
 
   async ask(params: {
@@ -102,9 +104,7 @@ export class QuestionInteraction {
       questionId,
       text: answer,
     }, (current) => ({ ...current, activeQuestionId: null, execution }));
-    this.pi.setActiveTools([
-      ...new Set([...this.pi.getActiveTools(), 'read', 'fm_model_submit', 'fm_model_ask']),
-    ]);
+    this.tools.activate(['read', 'fm_model_submit', 'fm_model_ask']);
     this.pi.sendUserMessage(modelingPrompt(ctx.cwd, result.state));
   }
 }

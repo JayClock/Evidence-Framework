@@ -8,6 +8,7 @@ import type {
 
 import { fmPaths } from './paths.js';
 import { modelingPrompt } from './prompts.js';
+import { ToolLease } from './runtime.js';
 import { StateStore, type ModelState } from './state.js';
 import { currentModelMessage, QuestionInteraction } from './ui.js';
 
@@ -50,6 +51,7 @@ export class ModelingController {
   constructor(
     private readonly pi: ExtensionAPI,
     private readonly store: StateStore,
+    private readonly tools = new ToolLease(pi),
   ) {}
 
   async handle(args: string, ctx: ExtensionCommandContext): Promise<void> {
@@ -73,6 +75,13 @@ export class ModelingController {
       ctx.ui.notify(`已有活动 Run ${existing.runId}；请继续或先停止，未覆盖现有输入。`, 'warning');
       return;
     }
+    if (existing?.modelDigest) {
+      const includeModel = await ctx.ui.confirm(
+        '创建新的 FM Modeling Run？',
+        `已停止的 ${existing.runId} 留有 modelRevision ${existing.modelRevision}。仅确认后才把当前模型作为新 Run 的显式输入来源。`,
+      );
+      if (!includeModel) return;
+    }
     const state = await this.store.createRun(await nextRunId(ctx.cwd), args);
     const execution = {
       id: `EXEC-${state.runId}-${state.revision}`,
@@ -82,7 +91,7 @@ export class ModelingController {
     };
     const running: ModelState = { ...state, execution };
     await this.store.saveState(running);
-    this.pi.setActiveTools([...new Set([...this.pi.getActiveTools(), 'read', 'fm_model_submit'])]);
+    this.tools.activate(['read', 'fm_model_submit', 'fm_model_ask']);
     this.pi.sendUserMessage(modelingPrompt(ctx.cwd, running));
   }
 
@@ -151,7 +160,7 @@ export class ModelingController {
       return;
     }
     if (state.activeQuestionId) {
-      await new QuestionInteraction(this.pi, this.store).open(ctx);
+      await new QuestionInteraction(this.pi, this.store, this.tools).open(ctx);
       return;
     }
     ctx.ui.notify(currentModelMessage(ctx.cwd, state), state.modelRevision > 0 ? 'info' : 'warning');
