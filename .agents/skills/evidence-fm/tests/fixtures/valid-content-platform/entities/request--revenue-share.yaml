@@ -3,7 +3,7 @@ id: request.revenue-share
 category: evidence
 kind: fulfillment_request
 label: 收入分成支付请求
-contextRef: context.revenue-share-fulfillment
+contextRef: fulfillment.revenue-share
 responsibleRoleRef: role.creator
 attributes:
   - name: started_at

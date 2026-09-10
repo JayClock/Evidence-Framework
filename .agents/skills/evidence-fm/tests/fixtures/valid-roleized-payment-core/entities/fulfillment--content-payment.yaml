@@ -1,25 +1,31 @@
-type: fulfillment
+type: entity
 id: fulfillment.content-payment
+category: context
+kind: fulfillment
 label: 支付内容产品费用
-contextRef: context.content-payment-fulfillment
+parentContextRef: context.content-subscription
 contractRef: contract.content-subscription
 requestRef: request.content-payment
 requestInterval:
   startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
-  - confirmation.content-payment
+  - role.content-payment-confirmation
 completionPolicy:
-  mode: all
+  mode: any
 requestTrigger:
   kind: domain_event
-  eventType: ContentPaymentRequested
+  eventType: SubscriptionContractSigned
   actsForRoleRef: role.platform-subscription
 confirmationTriggers:
-  - confirmationRef: confirmation.content-payment
+  - confirmationRef: role.content-payment-confirmation
     trigger:
-      kind: domain_event
-      eventType: ContentPaymentConfirmed
+      kind: integration_event
+      eventType: QualifiedPaymentConfirmed
       actsForRoleRef: role.subscriber
 subjectRefs:
   - thing.content
+breaches:
+  - conditionRuleRef: rule.payment-expired
+    outcome:
+      kind: terminate_contract

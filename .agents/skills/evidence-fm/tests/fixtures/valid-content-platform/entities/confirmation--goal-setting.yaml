@@ -3,7 +3,7 @@ id: confirmation.goal-setting
 category: evidence
 kind: fulfillment_confirmation
 label: 目标设定确认
-contextRef: context.goal-setting-fulfillment
+contextRef: fulfillment.goal-setting
 responsibleRoleRef: role.platform-performance
 attributes:
   - name: confirmed_at

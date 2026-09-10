@@ -1,6 +1,0 @@
-type: entity
-id: context.prepaid-payment-fulfillment
-category: context
-kind: fulfillment
-label: 完成预付费抵扣履约上下文
-parentContextRef: context.prepaid-payment

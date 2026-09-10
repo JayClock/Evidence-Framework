@@ -3,7 +3,7 @@ id: request.external-payment
 category: evidence
 kind: fulfillment_request
 label: 外部付款请求
-contextRef: context.external-payment-fulfillment
+contextRef: fulfillment.external-payment
 responsibleRoleRef: role.external-payment-customer
 attributes:
   - name: started_at

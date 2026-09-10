@@ -10,8 +10,7 @@ fm-model/
 ├── 01-glossary.md
 ├── 02-business-patterns.md       # 派生文档
 ├── discovery/                    # 可选，非正式事实
-├── entities/                     # 必需
-├── fulfillments/                 # 有履约时使用；可省略或为空
+├── entities/                     # 必需；Fulfillment 也在此目录
 ├── relationships/                # 可省略
 ├── rules/                        # 可省略
 ├── business-patterns/            # 可省略
@@ -26,7 +25,7 @@ fm-model/
 
 `model.yaml` 与分片 YAML 是模型事实源；`discovery/` 保存候选和问题；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。
 
-同一目录格式支持纯领域、纯渠道和混合范围；不新增领域模型类型或绩效 profile。无履约可省略 `fulfillments/`，编译为 `fulfillments: []`；已有履约文档仍按全部 v3 约束校验。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+同一目录格式支持纯领域、纯渠道和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `entities/` 中 `category: context`、`kind: fulfillment` 的 Entity，不存在独立履约目录或第二个履约对象。无履约时只是不出现该类 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
 ## 2. 稳定 ID 与文件名
 
@@ -34,7 +33,7 @@ ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显�
 
 ```text
 role.subscriber                    → entities/role--subscriber.yaml
-fulfillment.subscription-payment  → fulfillments/fulfillment--subscription-payment.yaml
+fulfillment.subscription-payment  → entities/fulfillment--subscription-payment.yaml
 pattern.multi-channel-payment     → business-patterns/pattern--multi-channel-payment.yaml
 ```
 
@@ -150,20 +149,39 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 
 同理，Confirmation 的 confirmed_at 可写 meaning“该凭证的履约确认时间”，Other Evidence 的 created_at 可写 meaning“该凭证的形成时间”；它们均为 required/keyData timestamp，可不填 derivedByRuleRef。确认采信哪一业务事件、补录凭证与原事件的时间关系，只在有业务依据时另作属性／规则映射，不默认等于回调或入库时间，不补造已完成结果。
 
-### Fulfillment Context
+### Fulfillment
 
-每项 Fulfillment 必须位于 Contract 的子 Context：
+每项 Fulfillment 自身就是 Contract 的子 Context；责任和边界在同一个 Entity 文件中定义：
 
 ```yaml
 type: entity
-id: context.subscription-payment-fulfillment
+id: fulfillment.subscription-payment
 category: context
 kind: fulfillment
-label: 订阅付款履约上下文
+label: 支付订阅费用
 parentContextRef: context.subscription
+contractRef: contract.subscription
+requestRef: request.subscription-payment
+requestInterval:
+  startAttribute: started_at
+  endAttribute: expired_at
+confirmationRefs:
+  - role.qualified-payment-confirmation
+completionPolicy:
+  mode: any
+requestTrigger:
+  kind: domain_event
+  eventType: SubscriptionContractSigned
+  actsForRoleRef: role.service-provider
+confirmationTriggers:
+  - confirmationRef: role.qualified-payment-confirmation
+    trigger:
+      kind: integration_event
+      eventType: QualifiedPaymentConfirmed
+      actsForRoleRef: role.subscriber
 ```
 
-Contract Context 是业务聚合／服务边界；Fulfillment Context 是弹性边界。不得把 Fulfillment、Request、Confirmation 或履约 Rule 直接放入 Contract Context。
+Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID，不得放入 Contract Context。
 
 ### Domain Context 与 Thing
 
@@ -196,10 +214,10 @@ id: role.external-service-provider
 category: role
 kind: third_party
 label: 外部服务提供方
-contextRef: context.subscription-payment-fulfillment
+contextRef: fulfillment.subscription-payment
 ```
 
-不要添加占位 Party 或 `playerRef`。Contract Party Role 保持在 Contract Context，不复制到 Fulfillment Context。
+不要添加占位 Party 或 `playerRef`。Contract Party Role 保持在 Contract Context，不复制到 Fulfillment。
 
 ### 已知 Participant 扮演 Role
 
@@ -222,42 +240,16 @@ id: role.qualified-payment-confirmation
 category: role
 kind: evidence
 label: 合格付款确认
-contextRef: context.subscription-payment-fulfillment
+contextRef: fulfillment.subscription-payment
 ```
 
 具体玩家只出现在独立 `plays_role` Relationship 中。
 
 ## 5. Fulfillment 与 Request interval
 
-```yaml
-type: fulfillment
-id: fulfillment.subscription-payment
-label: 支付订阅费用
-contextRef: context.subscription-payment-fulfillment
-contractRef: contract.subscription
-requestRef: request.subscription-payment
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - role.qualified-payment-confirmation
-subjectRefs:
-  - thing.subscription-content
-completionPolicy:
-  mode: any
-requestTrigger:
-  kind: domain_event
-  eventType: SubscriptionContractSigned
-  actsForRoleRef: role.service-provider
-confirmationTriggers:
-  - confirmationRef: role.qualified-payment-confirmation
-    trigger:
-      kind: integration_event
-      eventType: QualifiedPaymentConfirmed
-      actsForRoleRef: role.subscriber
-```
+Fulfillment 的完整结构见上一节。可选 `subjectRefs` 引用履约标的 Participant；可选 `breaches` 记录违约条件及后果。
 
-Request 与具体 Confirmation 都属于该 Fulfillment Context；它们各自的 `responsibleRoleRef` 指向父 Contract Context 中对该凭证负责的 Party Role。履约方向由 Request → Confirmation 的结构表达，不在 Fulfillment 上重复声明角色位置。
+Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 直接指向 Fulfillment ID；它们各自的 `responsibleRoleRef` 指向父 Contract Context 中对该凭证负责的 Party Role。履约方向由 Request → Confirmation 的结构表达，不重复声明角色位置。
 
 Request 的 interval 属性必须：
 
@@ -276,7 +268,7 @@ Request 的 interval 属性必须：
 - `amount`：由 bool completion CEL Rule 判断累计金额；
 - `manual`：由人工业务确认或指定最终确认判断。
 
-Confirmation 被多个 Fulfillment 共用时，每个使用者都要填写 `sharedConfirmationRationale`。
+具体 Confirmation 只属于一个 Fulfillment。跨履约复用确定结果时，使用外部时刻 Evidence、Evidence Role 或合法跨 Context 引用，不把同一个 Confirmation 节点塞入多个 Fulfillment。
 
 ### Trigger 与 Breach
 
@@ -321,4 +313,4 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 金额、数量、业务时间、KPI 或审计结论使用 `keyData: true`。派生属性用 `derivedByRuleRef` 指向唯一 CEL derivation Rule；来源从 CEL AST 自动提取。
 
-编译结果包含按 ID 排序的 `entities`、`fulfillments`、`relationships`、`rules` 和 `businessPatterns`。`generated/model.json`、`traceability.json`、`simulation.json` 与 `02-business-patterns.md` 均可删除重建。
+编译结果包含按 ID 排序的 `entities`、`relationships`、`rules` 和 `businessPatterns`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json` 与 `02-business-patterns.md` 均可删除重建。

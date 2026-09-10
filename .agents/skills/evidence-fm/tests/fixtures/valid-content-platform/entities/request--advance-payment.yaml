@@ -3,7 +3,7 @@ id: request.advance-payment
 category: evidence
 kind: fulfillment_request
 label: 支付预付款请求
-contextRef: context.advance-payment-fulfillment
+contextRef: fulfillment.advance-payment
 responsibleRoleRef: role.creator
 attributes:
   - name: started_at

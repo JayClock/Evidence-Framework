@@ -2,7 +2,7 @@ type: rule
 id: rule.payment-expired
 kind: breach
 label: 付款逾期
-contextRef: context.content-payment-fulfillment
+contextRef: fulfillment.content-payment
 bindings:
   request:
     ref: request.content-payment

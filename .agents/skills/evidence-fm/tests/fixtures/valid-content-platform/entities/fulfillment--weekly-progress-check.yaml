@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.weekly-progress-check
+category: context
+kind: fulfillment
 label: 完成周进度检查
-contextRef: context.weekly-progress-check-fulfillment
+parentContextRef: context.operations-performance
 contractRef: contract.operations-performance
 requestRef: request.weekly-progress-check
 requestInterval:

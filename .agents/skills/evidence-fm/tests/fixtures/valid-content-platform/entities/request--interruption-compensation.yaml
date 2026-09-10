@@ -3,7 +3,7 @@ id: request.interruption-compensation
 category: evidence
 kind: fulfillment_request
 label: 断更补偿请求
-contextRef: context.interruption-compensation-fulfillment
+contextRef: fulfillment.interruption-compensation
 responsibleRoleRef: role.subscriber
 attributes:
   - name: started_at

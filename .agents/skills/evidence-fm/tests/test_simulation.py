@@ -270,7 +270,7 @@ class SimulationTests(unittest.TestCase):
                 "values": {},
             }
         }
-        fulfillment = model.fulfillments_by_id["fulfillment.content-payment"]
+        fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
         fulfillment["completionPolicy"] = {
             "mode": "amount",
             "completionRuleRef": "rule.payment-matches-request",
@@ -308,7 +308,7 @@ class SimulationTests(unittest.TestCase):
 
     def test_count_policy_uses_repeated_instances_without_duplicate_types(self) -> None:
         model = load_model(self.fixture("valid-subscription"))
-        fulfillment = model.fulfillments_by_id["fulfillment.content-payment"]
+        fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
         fulfillment["completionPolicy"] = {"mode": "count", "minimumConfirmations": 2}
         instances = {
             "instance.request": {

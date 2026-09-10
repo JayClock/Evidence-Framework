@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.advance-payment
+category: context
+kind: fulfillment
 label: 支付创作者预付款
-contextRef: context.advance-payment-fulfillment
+parentContextRef: context.content-production
 contractRef: contract.content-production
 requestRef: request.advance-payment
 requestInterval:

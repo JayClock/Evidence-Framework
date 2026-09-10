@@ -2,7 +2,7 @@ type: rule
 id: rule.payment-matches-request
 kind: invariant
 label: 实付金额和币种必须匹配付款请求
-contextRef: context.content-payment-fulfillment
+contextRef: fulfillment.content-payment
 bindings:
   request:
     ref: request.content-payment

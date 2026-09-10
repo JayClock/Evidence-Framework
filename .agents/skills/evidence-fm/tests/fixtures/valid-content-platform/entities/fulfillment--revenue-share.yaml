@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.revenue-share
+category: context
+kind: fulfillment
 label: 支付创作者收入分成
-contextRef: context.revenue-share-fulfillment
+parentContextRef: context.content-production
 contractRef: contract.content-production
 requestRef: request.revenue-share
 requestInterval:

@@ -3,7 +3,7 @@ id: request.prepaid-payment
 category: evidence
 kind: fulfillment_request
 label: 预付费付款请求
-contextRef: context.prepaid-payment-fulfillment
+contextRef: fulfillment.prepaid-payment
 responsibleRoleRef: role.prepaid-customer
 attributes:
   - name: started_at

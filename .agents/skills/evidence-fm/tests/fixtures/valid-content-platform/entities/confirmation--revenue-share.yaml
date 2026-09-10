@@ -3,7 +3,7 @@ id: confirmation.revenue-share
 category: evidence
 kind: fulfillment_confirmation
 label: 收入分成支付确认
-contextRef: context.revenue-share-fulfillment
+contextRef: fulfillment.revenue-share
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: confirmed_at

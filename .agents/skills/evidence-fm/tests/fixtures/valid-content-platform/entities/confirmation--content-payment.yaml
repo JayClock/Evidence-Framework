@@ -3,7 +3,7 @@ id: confirmation.content-payment
 category: evidence
 kind: fulfillment_confirmation
 label: 内容产品付款确认
-contextRef: context.content-payment-fulfillment
+contextRef: fulfillment.content-payment
 responsibleRoleRef: role.subscriber
 attributes:
   - name: confirmed_at

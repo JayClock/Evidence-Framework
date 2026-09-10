@@ -42,7 +42,7 @@ requestInterval:
 
 ## 4. 多个 Fulfillment 共用确定结果
 
-季度与年度 KPI 可以共享 Confirmation 类型，但每个 Fulfillment 都必须通过 `sharedConfirmationRationale` 说明同一不可变凭证为什么足以证明该责任。共享履约应明确位于同一 Fulfillment Context；弹性诉求不同则不要共享。
+季度与年度 KPI 若消费同一确定结果，应让外部时刻 Evidence 分别通过 Evidence Role 或合法跨 Context 引用进入各自 Fulfillment。具体 Confirmation 只属于一个 Fulfillment；不要通过复制或多重归属制造共享。
 
 ## 5. 自动动作代表业务 Role
 
@@ -75,7 +75,7 @@ Channel C Confirmation ─┘
 
 ## 7. 未展开的外部协作者
 
-只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及子 Fulfillment Context。
+只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及作为子 Context 的 Fulfillment。
 
 ## 8. 合约前与渠道变化
 

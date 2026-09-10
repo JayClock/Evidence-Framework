@@ -2,7 +2,7 @@ type: rule
 id: rule.payment-request-amount
 kind: derivation
 label: 从合同派生请求支付金额
-contextRef: context.content-payment-fulfillment
+contextRef: fulfillment.content-payment
 bindings:
   contract:
     ref: contract.content-subscription

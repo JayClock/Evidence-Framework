@@ -81,7 +81,7 @@ attributes:
 
 这些是模型定义，不是已确认业务事实或生产实例。示例不自动确立当前项目的身份规则。
 
-纯领域可省略 `fulfillments/`，编译 JSON 保留空 `fulfillments` 数组；`entryContextRefs` 直接指向领域上下文。`README.md` 说明当前范围、不展开部分、来源和表达 gap，不添加格式外字段。
+纯领域模型不包含 `kind: fulfillment` 的 Context；`entryContextRefs` 直接指向领域上下文。`README.md` 说明当前范围、不展开部分、来源和表达 gap，不添加格式外字段。
 
 ## 4. 关系与身份
 

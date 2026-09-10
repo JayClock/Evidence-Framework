@@ -3,7 +3,7 @@ id: confirmation.weekly-progress-check
 category: evidence
 kind: fulfillment_confirmation
 label: 周进度检查确认
-contextRef: context.weekly-progress-check-fulfillment
+contextRef: fulfillment.weekly-progress-check
 responsibleRoleRef: role.operator
 attributes:
   - name: confirmed_at

@@ -3,7 +3,7 @@ id: confirmation.content-access
 category: evidence
 kind: fulfillment_confirmation
 label: 付费内容访问确认
-contextRef: context.content-access-fulfillment
+contextRef: fulfillment.content-access
 responsibleRoleRef: role.platform-subscription
 attributes:
   - name: confirmed_at

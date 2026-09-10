@@ -9,7 +9,7 @@ type: rule
 id: rule.payment-deadline
 kind: derivation
 label: 付款截止时间
-contextRef: context.payment-fulfillment
+contextRef: fulfillment.payment
 bindings:
   self:
     ref: request.payment
@@ -20,7 +20,7 @@ target:
   attribute: expired_at
 ```
 
-CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request、Confirmation 一样位于对应 Fulfillment Context；领域规则则位于 Domain Context，不需要虚构合同或 Request。
+CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request、Confirmation 一样直接属于对应 Fulfillment；领域规则则位于 Domain Context，不需要虚构合同或 Request。
 
 ## 2. Rule kind
 

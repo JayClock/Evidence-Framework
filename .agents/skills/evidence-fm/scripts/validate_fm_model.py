@@ -55,7 +55,7 @@ def main() -> int:
         else None,
         "counts": {
             "entities": len(model.entities),
-            "fulfillments": len(model.fulfillments),
+            "fulfillmentCount": len(model.fulfillment_contexts_by_id),
             "relationships": len(model.relationships),
             "rules": len(model.rules),
             "businessPatterns": len(model.business_patterns),
@@ -83,7 +83,7 @@ def main() -> int:
         )
         print(
             "FM Schema v3 validation passed "
-            f"(entities={counts['entities']}, fulfillments={counts['fulfillments']}, "
+            f"(entities={counts['entities']}, fulfillments={counts['fulfillmentCount']}, "
             f"relationships={counts['relationships']}, rules={counts['rules']}, "
             f"businessPatterns={counts['businessPatterns']}"
             f"{scenario_summary})."

@@ -3,7 +3,7 @@ id: request.goal-setting
 category: evidence
 kind: fulfillment_request
 label: 目标设定请求
-contextRef: context.goal-setting-fulfillment
+contextRef: fulfillment.goal-setting
 responsibleRoleRef: role.operator
 attributes:
   - name: started_at

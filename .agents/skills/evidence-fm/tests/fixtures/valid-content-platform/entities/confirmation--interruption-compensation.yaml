@@ -3,7 +3,7 @@ id: confirmation.interruption-compensation
 category: evidence
 kind: fulfillment_confirmation
 label: 断更补偿确认
-contextRef: context.interruption-compensation-fulfillment
+contextRef: fulfillment.interruption-compensation
 responsibleRoleRef: role.platform-subscription
 attributes:
   - name: confirmed_at

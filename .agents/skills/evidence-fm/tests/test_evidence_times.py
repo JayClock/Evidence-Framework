@@ -264,15 +264,14 @@ class EvidenceTimeTests(unittest.TestCase):
 
     def test_request_interval_requires_canonical_fixed_end(self):
         path = (
-            FIXTURES
-            / "valid-subscription/fulfillments/fulfillment--content-payment.yaml"
+            FIXTURES / "valid-subscription/entities/fulfillment--content-payment.yaml"
         )
         doc = yaml.safe_load(path.read_text())
         doc["requestInterval"] = {
             "startAttribute": "started_at",
             "endAttribute": "expired_at",
         }
-        self.assertEqual([], schema_errors(doc, "fulfillment.schema.json"))
+        self.assertEqual([], schema_errors(doc, "entity.schema.json"))
         for interval in (
             {"startAttribute": "started_at"},
             {"startAttribute": "started_at", "openEndedReason": "持续履行"},
@@ -285,7 +284,7 @@ class EvidenceTimeTests(unittest.TestCase):
         ):
             with self.subTest(interval=interval):
                 doc["requestInterval"] = interval
-                self.assertTrue(schema_errors(doc, "fulfillment.schema.json"))
+                self.assertTrue(schema_errors(doc, "entity.schema.json"))
 
     def test_instances_require_concrete_rfc3339_values_for_all_time_fields(self):
         for kind, names in TIMES.items():

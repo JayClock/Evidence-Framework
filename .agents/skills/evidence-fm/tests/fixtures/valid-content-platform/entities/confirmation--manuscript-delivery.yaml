@@ -3,7 +3,7 @@ id: confirmation.manuscript-delivery
 category: evidence
 kind: fulfillment_confirmation
 label: 交稿确认
-contextRef: context.manuscript-delivery-fulfillment
+contextRef: fulfillment.manuscript-delivery
 responsibleRoleRef: role.creator
 attributes:
   - name: confirmed_at

@@ -3,7 +3,7 @@ id: request.weekly-progress-check
 category: evidence
 kind: fulfillment_request
 label: 周进度检查请求
-contextRef: context.weekly-progress-check-fulfillment
+contextRef: fulfillment.weekly-progress-check
 responsibleRoleRef: role.platform-performance
 attributes:
   - name: started_at

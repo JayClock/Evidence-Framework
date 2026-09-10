@@ -107,7 +107,10 @@ class ScopeEvalTests(unittest.TestCase):
                     result["total"], result["passed"], result["expectations"]
                 )
                 fulfillments = [
-                    item for item in documents if item["type"] == "fulfillment"
+                    item
+                    for item in documents
+                    if (item.get("category"), item.get("kind"))
+                    == ("context", "fulfillment")
                 ]
                 self.assertEqual(2 if change else 1, len(fulfillments))
 
@@ -127,7 +130,7 @@ class ScopeEvalTests(unittest.TestCase):
                 )
                 model = load_model(root)
                 self.assertEqual([], validate_model(model))
-                target = model.fulfillments_by_id["fulfillment.target-change"]
+                target = model.fulfillment_contexts_by_id["fulfillment.target-change"]
                 request = model.entities_by_id[target["requestRef"]]
                 confirmation = model.entities_by_id[target["confirmationRefs"][0]]
                 self.assertEqual(
@@ -138,7 +141,9 @@ class ScopeEvalTests(unittest.TestCase):
                     "role.manager" if employee_initiates else "role.employee",
                     confirmation["responsibleRoleRef"],
                 )
-                reviews.append(model.fulfillments_by_id["fulfillment.progress-review"])
+                reviews.append(
+                    model.fulfillment_contexts_by_id["fulfillment.progress-review"]
+                )
         self.assertEqual(reviews[0], reviews[1])
 
     def test_target_initiation_eval_rejects_wrong_but_structurally_valid_direction(

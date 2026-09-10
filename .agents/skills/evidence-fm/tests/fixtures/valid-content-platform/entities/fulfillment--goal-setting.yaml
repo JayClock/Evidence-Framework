@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.goal-setting
+category: context
+kind: fulfillment
 label: 确认内容运营绩效目标
-contextRef: context.goal-setting-fulfillment
+parentContextRef: context.operations-performance
 contractRef: contract.operations-performance
 requestRef: request.goal-setting
 requestInterval:

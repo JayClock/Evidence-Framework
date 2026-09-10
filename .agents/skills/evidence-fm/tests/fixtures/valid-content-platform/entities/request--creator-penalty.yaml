@@ -3,7 +3,7 @@ id: request.creator-penalty
 category: evidence
 kind: fulfillment_request
 label: 违约金支付请求
-contextRef: context.creator-penalty-fulfillment
+contextRef: fulfillment.creator-penalty
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: started_at

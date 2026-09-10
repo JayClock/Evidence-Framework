@@ -12,7 +12,7 @@ FM / 8X Flow 用同一格式表达合同履约、签约前渠道和领域部分�
 → 验证实际存在的结构，按需提取 Business Pattern
 ```
 
-有履约时继续 Role-first：两个合同 Role → 主履约与凭证 → 子 Fulfillment Context 与 interval → 违约后果及变化点。对外交易与内部绩效共用此机制，只有协议内容不同。领域部分按 `domain-modeling.md`，不先索要合同。
+有履约时继续 Role-first：两个合同 Role → 作为 Context 的 Fulfillment 及其请求、确认与 interval → 违约后果及变化点。对外交易与内部绩效共用此机制，只有协议内容不同。领域部分按 `domain-modeling.md`，不先索要合同。
 
 输入有歧义或来源变更时执行 [输入复核](input-review.md)，按当前必要事实处理，不重做完整访谈；候选解释保持为候选。
 
@@ -21,12 +21,12 @@ FM / 8X Flow 用同一格式表达合同履约、签约前渠道和领域部分�
 业务逻辑源自运营，关注收入、成本、KPI、合规和风险；领域逻辑源自问题域，关注算法、计划、统计、优化及领域能力。二者必须分开：
 
 - `contract` Context：两个合同 Role 之间全部业务交互的聚合，也是服务／业务边界；
-- `fulfillment` Context：Contract 的子 Context，承载一项或一组明确共享弹性诉求的履约，是业务弹性边界；
+- `fulfillment` Context：Contract 的子 Context；它本身就是一项 Fulfillment，同时承载该项责任的请求、确认与规则，是业务弹性边界；
 - `domain` Context：承载 Thing 与领域能力，是领域弹性边界；
 - `pre_contract`／`channel` Context：合同形成前的渠道与协商边界；
 - `external` Context：当前模型不展开的外部边界。
 
-Contract Context 本身不是单一弹性边界。每个 Fulfillment 必须指向 Fulfillment Context，后者必须以 `parentContextRef` 指向该 Contract Context。Thing 必须属于 Domain Context；Party 保持在 Context 外。
+Contract Context 本身不是单一弹性边界。每项 Fulfillment 都是唯一的 `kind: fulfillment` Context，并以 `parentContextRef` 指向所属 Contract Context；不存在与它分离的 Fulfillment 对象。Thing 必须属于 Domain Context；Party 保持在 Context 外。
 
 上述上下文可单独建模或组合，`entryContextRefs` 可直接指向 Domain 或 Channel。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的合同、Request、Fulfillment 或引用的约束。
 
@@ -50,7 +50,7 @@ Role kind：
 - `context`：由其它 Context 扮演的上下文插槽；
 - `evidence`：由其它 Context 的确定性时刻 Evidence 扮演的确认插槽。
 
-Contract Party Role 位于 Contract Context，不复制进子 Fulfillment Context。Request 和 Confirmation 虽位于 Fulfillment Context，其责任仍指向父 Contract 的 Party Role。
+Contract Party Role 位于 Contract Context，不复制进 Fulfillment。Request 和 Confirmation 位于该 Fulfillment，其责任仍指向父 Contract 的 Party Role。
 
 Participant：
 
@@ -74,9 +74,9 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 
 ## 6. Fulfillment
 
-`fulfillment` 是第一等多元语义关系，必须指定：
+`fulfillment` Context 是第一等多元语义节点，同时表达一项责任及其弹性边界，必须指定：
 
-- 子 Fulfillment Context 与父 Contract；
+- 父 Contract Context 与具体 Contract；
 - Request 与 Confirmation 各自的责任 Role；
 - 一个 Fulfillment Request 及其 interval；
 - 一个或多个具体 Confirmation 或 Evidence Role；
@@ -88,10 +88,10 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 
 - Request 与具体 Confirmation 的 `responsibleRoleRef` 必须引用所属 Contract 的 Party Role；
 - Trigger 的 `actsForRoleRef` 必须与其产生的具体 Evidence 的 `responsibleRoleRef` 一致；开放 Evidence Role 的 Trigger 仍须代表所属 Contract 的 Party Role；
-- Request、Confirmation、Evidence Role 与 Fulfillment 必须同属子 Fulfillment Context；
+- Request、Confirmation、Evidence Role 与 Rule 必须直接属于该 Fulfillment；
 - 一个 Request 恰好属于一个 Fulfillment；
-- 多次同类运行时确认用 completion policy，不复制类型节点；
-- 共享 Confirmation 时，每个履约都要给出等价证明理由。
+- 一个具体 Confirmation 只能属于一个 Fulfillment；跨履约复用结果必须通过外部时刻 Evidence、Evidence Role 或合法跨 Context 引用表达；
+- 多次同类运行时确认用 completion policy，不复制类型节点。
 
 在 Request 形成而合格 Confirmation 尚未形成时，履约状态是业务上的 `pending`，不是同步调用中的临时技术状态。
 
@@ -114,7 +114,7 @@ Evidence Role 是开放注册点：可以没有玩家或有多个玩家；新增
 
 这不排除上述 Participant／Context 的 Role 扮演、能力引用和 Fulfillment 的 `subjectRefs`。后者表达身份或领域输入，不自动构成完成证明；同一领域内的对象关系使用合法的 `references` 等关系，详见 `domain-modeling.md`。
 
-这类 Role、Channel／Pre-contract Context 和 Fulfillment Context 是候选业务变化点。
+这类 Role、Channel／Pre-contract Context 和 Fulfillment 是候选业务变化点。
 
 ## 8. 合同前与渠道
 

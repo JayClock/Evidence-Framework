@@ -3,7 +3,7 @@ id: request.manuscript-delivery
 category: evidence
 kind: fulfillment_request
 label: 交稿请求
-contextRef: context.manuscript-delivery-fulfillment
+contextRef: fulfillment.manuscript-delivery
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: started_at

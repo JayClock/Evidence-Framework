@@ -3,7 +3,7 @@ id: confirmation.advance-payment
 category: evidence
 kind: fulfillment_confirmation
 label: 支付预付款确认
-contextRef: context.advance-payment-fulfillment
+contextRef: fulfillment.advance-payment
 responsibleRoleRef: role.platform-content-production
 attributes:
   - name: confirmed_at

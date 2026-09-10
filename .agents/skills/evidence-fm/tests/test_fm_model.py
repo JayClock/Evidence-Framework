@@ -99,7 +99,7 @@ class FulfillmentModelTests(unittest.TestCase):
         model = load_model(self.fixture("valid-roleized-payment-core"))
         self.assertEqual([], validate_model(model))
         role_id = "role.content-payment-confirmation"
-        fulfillment = model.fulfillments_by_id["fulfillment.content-payment"]
+        fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
         self.assertEqual([role_id], fulfillment["confirmationRefs"])
         incoming = [
             relation
@@ -142,9 +142,9 @@ class FulfillmentModelTests(unittest.TestCase):
         self.assertEqual([], validate_model(extended))
         for object_id, document in core.entities_by_id.items():
             self.assertEqual(document, extended.entities_by_id[object_id], object_id)
-        for object_id, document in core.fulfillments_by_id.items():
+        for object_id, document in core.fulfillment_contexts_by_id.items():
             self.assertEqual(
-                document, extended.fulfillments_by_id[object_id], object_id
+                document, extended.fulfillment_contexts_by_id[object_id], object_id
             )
         for object_id, document in core.relationships_by_id.items():
             self.assertEqual(
@@ -164,7 +164,7 @@ class FulfillmentModelTests(unittest.TestCase):
             if (entity.get("category"), entity.get("kind")) == ("evidence", "contract")
         ]
         self.assertEqual(3, len(contracts))
-        self.assertEqual(9, len(model.fulfillments))
+        self.assertEqual(9, len(model.fulfillment_contexts_by_id))
         fulfillment_contexts = [
             entity
             for entity in model.entities
@@ -218,7 +218,7 @@ class FulfillmentModelTests(unittest.TestCase):
                     "category": "evidence",
                     "kind": "fulfillment_confirmation",
                     "label": "本上下文付款确认",
-                    "contextRef": "context.content-payment-fulfillment",
+                    "contextRef": "fulfillment.content-payment",
                     "responsibleRoleRef": "role.subscriber",
                 },
             )
@@ -265,7 +265,7 @@ class FulfillmentModelTests(unittest.TestCase):
                     "contextRef": "context.cms",
                 },
             )
-            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            path = root / "entities" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
             payment["subjectRefs"] = ["thing.reading-site"]
             self.write_yaml(path, payment)
@@ -296,7 +296,7 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_automatic_trigger_must_act_for_expected_business_role(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            path = root / "entities" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
             payment["requestTrigger"]["actsForRoleRef"] = "role.subscriber"
             self.write_yaml(path, payment)
@@ -306,13 +306,14 @@ class FulfillmentModelTests(unittest.TestCase):
                 errors,
             )
 
-    def test_shared_confirmation_requires_rationale_on_every_owner(self) -> None:
+    def test_concrete_confirmation_cannot_belong_to_two_fulfillments(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
             request_path = root / "entities" / "request--content-payment.yaml"
             second_request = copy.deepcopy(self.read_yaml(request_path))
             second_request["id"] = "request.content-payment-audit"
             second_request["label"] = "内容产品付款审计请求"
+            second_request["contextRef"] = "fulfillment.content-payment-audit"
             for item in second_request.get("attributes", []):
                 item.pop("derivedByRuleRef", None)
             self.write_yaml(
@@ -320,42 +321,32 @@ class FulfillmentModelTests(unittest.TestCase):
                 second_request,
             )
 
-            fulfillment_path = (
-                root / "fulfillments" / "fulfillment--content-payment.yaml"
+            first = self.read_yaml(
+                root / "entities" / "fulfillment--content-payment.yaml"
             )
-            first = self.read_yaml(fulfillment_path)
             second = copy.deepcopy(first)
             second["id"] = "fulfillment.content-payment-audit"
             second["label"] = "内容产品付款审计履约"
             second["requestRef"] = "request.content-payment-audit"
+            second.pop("breaches", None)
             self.write_yaml(
-                root / "fulfillments" / "fulfillment--content-payment-audit.yaml",
+                root / "entities" / "fulfillment--content-payment-audit.yaml",
                 second,
             )
 
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any(
-                    "requires sharedConfirmationRationale" in error for error in errors
+                    "Confirmation target" in error and "must belong" in error
+                    for error in errors
                 ),
                 errors,
             )
-            rationale = "同一不可变付款凭证等价证明付款和付款审计责任。"
-            first["sharedConfirmationRationale"] = rationale
-            second["sharedConfirmationRationale"] = rationale
-            self.write_yaml(fulfillment_path, first)
-            self.write_yaml(
-                root / "fulfillments" / "fulfillment--content-payment-audit.yaml",
-                second,
-            )
-            self.assertEqual([], validate_model(load_model(root)))
 
     def test_count_completion_accepts_repeated_confirmation_instances(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            fulfillment_path = (
-                root / "fulfillments" / "fulfillment--content-payment.yaml"
-            )
+            fulfillment_path = root / "entities" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(fulfillment_path)
             payment["completionPolicy"] = {
                 "mode": "count",
@@ -371,7 +362,7 @@ class FulfillmentModelTests(unittest.TestCase):
                     "id": "rule.three-payment-confirmations",
                     "kind": "completion",
                     "label": "三次付款确认完成履约",
-                    "contextRef": "context.content-payment-fulfillment",
+                    "contextRef": "fulfillment.content-payment",
                     "expression": "confirmations.filter(c, c.accepted).size() >= 3",
                     "resultType": "bool",
                     "bindings": {"confirmations": {"type": "list"}},
@@ -386,19 +377,16 @@ class FulfillmentModelTests(unittest.TestCase):
                 any("identifiers ['c']" in error for error in errors), errors
             )
 
-    def test_fulfillment_requires_child_context(self) -> None:
+    def test_fulfillment_parent_must_match_contract_context(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            path = root / "entities" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
-            payment["contextRef"] = "context.content-subscription"
+            payment["parentContextRef"] = "context.cms"
             self.write_yaml(path, payment)
             errors = validate_model(load_model(root))
             self.assertTrue(
-                any(
-                    "contextRef must reference a Fulfillment Context" in error
-                    for error in errors
-                ),
+                any("parentContextRef must match" in error for error in errors),
                 errors,
             )
 
@@ -451,7 +439,7 @@ class FulfillmentModelTests(unittest.TestCase):
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "fulfillments" / "fulfillment--content-payment.yaml"
+            path = root / "entities" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
             payment["requestInterval"] = {
                 "startAttribute": "started_at",
@@ -562,9 +550,7 @@ class FulfillmentModelTests(unittest.TestCase):
             for attribute in request["attributes"]:
                 attribute.pop("derivedByRuleRef", None)
             self.write_yaml(request_path, request)
-            fulfillment_path = (
-                root / "fulfillments" / "fulfillment--content-payment.yaml"
-            )
+            fulfillment_path = root / "entities" / "fulfillment--content-payment.yaml"
             fulfillment = self.read_yaml(fulfillment_path)
             fulfillment.pop("breaches", None)
             self.write_yaml(fulfillment_path, fulfillment)

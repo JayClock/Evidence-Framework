@@ -273,7 +273,7 @@ def grade_context_scope(
         add(
             expectations,
             "Local scope does not invent Contracts or Fulfillments.",
-            not contracts and not model.fulfillments,
+            not contracts and not model.fulfillment_contexts_by_id,
             str([item.get("id") for item in contracts]),
         )
     if eval_id in {15, 19}:
@@ -340,12 +340,12 @@ def grade_context_scope(
     if eval_id in {17, 18}:
         targets = [
             item
-            for item in model.fulfillments
+            for item in model.fulfillment_contexts_by_id.values()
             if re.search(r"目标|target", identity_text_of(item), re.IGNORECASE)
         ]
         reviews = [
             item
-            for item in model.fulfillments
+            for item in model.fulfillment_contexts_by_id.values()
             if re.search(
                 r"检查|进度|review|progress", identity_text_of(item), re.IGNORECASE
             )
@@ -417,7 +417,9 @@ def grade_context_scope(
             )
     if eval_id == 19:
         subjects = {
-            ref for item in model.fulfillments for ref in item.get("subjectRefs") or []
+            ref
+            for item in model.fulfillment_contexts_by_id.values()
+            for ref in item.get("subjectRefs") or []
         }
         add(
             expectations,
@@ -576,14 +578,18 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     )
 
     entities = model.entities
-    fulfillments = model.fulfillments
+    fulfillments = list(model.fulfillment_contexts_by_id.values())
     relationships = model.relationships
     rules = model.rules
     business_patterns = model.business_patterns
     entities_by_id = model.entities_by_id
     strict_boundaries = all(
-        (entities_by_id.get(str(fulfillment.get("contextRef"))) or {}).get("kind")
-        == "fulfillment"
+        fulfillment.get("category") == "context"
+        and fulfillment.get("kind") == "fulfillment"
+        and (entities_by_id.get(str(fulfillment.get("parentContextRef"))) or {}).get(
+            "kind"
+        )
+        == "contract"
         for fulfillment in fulfillments
     )
     explicit_intervals = all(
@@ -592,9 +598,9 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     )
     add(
         expectations,
-        "Every Fulfillment uses a child Fulfillment Context.",
+        "Every Fulfillment is a child Context of its Contract Context.",
         strict_boundaries,
-        str([item.get("contextRef") for item in fulfillments]),
+        str([item.get("parentContextRef") for item in fulfillments]),
     )
     add(
         expectations,

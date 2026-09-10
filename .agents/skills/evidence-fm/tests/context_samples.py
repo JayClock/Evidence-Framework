@@ -185,7 +185,7 @@ def channel_documents() -> list[dict[str, Any]]:
 def performance_fulfillment(
     name: str, label: str, request_role: str, confirmation_role: str
 ) -> list[dict[str, Any]]:
-    context = f"context.{name}"
+    fulfillment = f"fulfillment.{name}"
     request = f"request.{name}"
     confirmation = f"confirmation.{name}"
     result = (
@@ -195,18 +195,50 @@ def performance_fulfillment(
     )
     return [
         entity(
-            context,
+            fulfillment,
             "context",
             "fulfillment",
             label,
             parentContextRef="context.performance",
+            contractRef="contract.performance",
+            requestRef=request,
+            requestInterval={
+                "startAttribute": "started_at",
+                "endAttribute": "expired_at",
+            },
+            confirmationRefs=[confirmation],
+            completionPolicy={"mode": "all"},
+            requestTrigger={"kind": "manual", "actsForRoleRef": request_role},
+            confirmationTriggers=[
+                {
+                    "confirmationRef": confirmation,
+                    "trigger": {
+                        "kind": "manual",
+                        "actsForRoleRef": confirmation_role,
+                    },
+                }
+            ],
+            breaches=[
+                {
+                    "conditionRuleRef": f"rule.{name}-overdue",
+                    "outcome": {
+                        "kind": "record_only",
+                        "notes": "测试协议明确约定逾期仅记录异常",
+                    },
+                }
+            ],
+            notes=(
+                "目标变更责任仅要求按时答复，approved=false 不改变旧目标。"
+                if name == "target-change"
+                else "管理方要求执行方提交周进度结果。"
+            ),
         ),
         entity(
             request,
             "evidence",
             "fulfillment_request",
             label + "请求",
-            contextRef=context,
+            contextRef=fulfillment,
             responsibleRoleRef=request_role,
             attributes=[
                 attribute("started_at", "timestamp", "请求开始时间", keyData=True),
@@ -220,7 +252,7 @@ def performance_fulfillment(
             "evidence",
             "fulfillment_confirmation",
             label + "结果确认",
-            contextRef=context,
+            contextRef=fulfillment,
             responsibleRoleRef=confirmation_role,
             attributes=[
                 attribute(
@@ -230,50 +262,11 @@ def performance_fulfillment(
             ],
         ),
         {
-            "type": "fulfillment",
-            "id": f"fulfillment.{name}",
-            "label": label,
-            "contextRef": context,
-            "contractRef": "contract.performance",
-            "requestRef": request,
-            "requestInterval": {
-                "startAttribute": "started_at",
-                "endAttribute": "expired_at",
-            },
-            "confirmationRefs": [confirmation],
-            "completionPolicy": {"mode": "all"},
-            "requestTrigger": {
-                "kind": "manual",
-                "actsForRoleRef": request_role,
-            },
-            "confirmationTriggers": [
-                {
-                    "confirmationRef": confirmation,
-                    "trigger": {
-                        "kind": "manual",
-                        "actsForRoleRef": confirmation_role,
-                    },
-                }
-            ],
-            "breaches": [
-                {
-                    "conditionRuleRef": f"rule.{name}-overdue",
-                    "outcome": {
-                        "kind": "record_only",
-                        "notes": "测试协议明确约定逾期仅记录异常",
-                    },
-                }
-            ],
-            "notes": "目标变更责任仅要求按时答复，approved=false 不改变旧目标。"
-            if name == "target-change"
-            else "管理方要求执行方提交周进度结果。",
-        },
-        {
             "type": "rule",
             "id": f"rule.{name}-overdue",
             "kind": "breach",
             "label": label + "逾期未答复",
-            "contextRef": context,
+            "contextRef": fulfillment,
             "resultType": "bool",
             "bindings": {
                 "request": {"ref": request},
@@ -417,7 +410,6 @@ def write_documents(root: Path, documents: list[dict[str, Any]]) -> None:
         "entity": "entities",
         "relationship": "relationships",
         "rule": "rules",
-        "fulfillment": "fulfillments",
     }
     for document in documents:
         filename = document["id"].replace(".", "--") + ".yaml"

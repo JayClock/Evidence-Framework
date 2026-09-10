@@ -3,7 +3,7 @@ id: request.content-payment
 category: evidence
 kind: fulfillment_request
 label: 内容产品付款请求
-contextRef: context.content-payment-fulfillment
+contextRef: fulfillment.content-payment
 responsibleRoleRef: role.platform-subscription
 attributes:
   - name: started_at

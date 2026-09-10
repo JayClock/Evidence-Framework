@@ -124,7 +124,7 @@ def load_validation_suite(model_root: Path) -> ValidationSuite:
 def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> list[str]:
     errors = list(suite.errors)
     entities = model.entities_by_id
-    fulfillments = model.fulfillments_by_id
+    fulfillment_contexts = model.fulfillment_contexts_by_id
     rules = model.rules_by_id
     instances = suite.instances_by_id
 
@@ -308,7 +308,7 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                 fulfillment.get("requestRef") == instance.get("entityRef")
                 and isinstance(fulfillment.get("completionPolicy"), dict)
                 and fulfillment["completionPolicy"].get("mode") == "manual"
-                for fulfillment in model.fulfillments
+                for fulfillment in model.fulfillment_contexts_by_id.values()
             ):
                 errors.append(
                     f"{scenario_id}: manual completion '{instance_ref}' must identify a Request "
@@ -450,7 +450,7 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                 continue
             fulfillment_ref = normalize(expectation.get("fulfillmentRef"))
             request_instance_ref = normalize(expectation.get("requestInstanceRef"))
-            fulfillment = fulfillments.get(fulfillment_ref or "")
+            fulfillment = fulfillment_contexts.get(fulfillment_ref or "")
             if fulfillment is None:
                 errors.append(f"{scenario_id}: unknown Fulfillment '{fulfillment_ref}'")
                 continue
@@ -848,7 +848,7 @@ def fulfillment_status(
     rule_results: dict[str, list[dict[str, Any]]],
     manual_completions: set[str],
 ) -> str:
-    fulfillment = model.fulfillments_by_id.get(fulfillment_ref)
+    fulfillment = model.fulfillment_contexts_by_id.get(fulfillment_ref)
     request_instance = instances.get(request_instance_ref)
     if (
         fulfillment is None

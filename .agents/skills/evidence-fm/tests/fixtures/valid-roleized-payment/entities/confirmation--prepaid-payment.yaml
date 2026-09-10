@@ -3,7 +3,7 @@ id: confirmation.prepaid-payment
 category: evidence
 kind: fulfillment_confirmation
 label: 预付费付款确认
-contextRef: context.prepaid-payment-fulfillment
+contextRef: fulfillment.prepaid-payment
 responsibleRoleRef: role.prepaid-platform
 attributes:
   - name: confirmed_at

@@ -1,6 +1,0 @@
-type: entity
-id: context.external-payment-fulfillment
-category: context
-kind: fulfillment
-label: 完成外部支付履约上下文
-parentContextRef: context.external-payment

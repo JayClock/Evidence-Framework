@@ -50,21 +50,20 @@ class ContextScopeTests(unittest.TestCase):
             list(Draft202012Validator(schema, registry=registry).iter_errors(document)),
         )
 
-    def test_domain_only_validates_compiles_and_traces_without_fulfillments(
+    def test_domain_only_validates_compiles_and_traces_without_fulfillment_contexts(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = write_model(
                 Path(directory), domain_documents(), "context.customer-information"
             )
-            self.assertFalse((root / "fulfillments").exists())
             model = load_model(root)
             self.assertEqual([], validate_model(model))
             self.assertFalse(
                 any(item["category"] == "evidence" for item in model.entities)
             )
             document = compiled_document(model)
-            self.assertEqual([], document["fulfillments"])
+            self.assertEqual({}, model.fulfillment_contexts_by_id)
             self.assert_compiled_schema(document)
             lineage, errors = analyze_traceability(model)
             self.assertEqual([], errors)
@@ -135,7 +134,7 @@ class ContextScopeTests(unittest.TestCase):
                     if item["category"] == "evidence"
                 },
             )
-            self.assertEqual([], model.fulfillments)
+            self.assertEqual({}, model.fulfillment_contexts_by_id)
             self.assert_compiled_schema(compiled_document(model))
 
     def test_empty_optional_directories_do_not_change_compilation(self) -> None:
@@ -144,7 +143,6 @@ class ContextScopeTests(unittest.TestCase):
                 Path(directory), domain_documents(), "context.customer-information"
             )
             before = compiled_document(load_model(root))
-            (root / "fulfillments").mkdir()
             (root / "business-patterns").mkdir()
             model = load_model(root)
             self.assertEqual([], validate_model(model))
@@ -155,9 +153,10 @@ class ContextScopeTests(unittest.TestCase):
             root = write_model(
                 Path(directory), domain_documents(), "context.customer-information"
             )
-            (root / "fulfillments").write_text("not a directory", encoding="utf-8")
+            (root / "retired-objects").mkdir()
             self.assertIn(
-                "fulfillments/ must be a directory", validate_model(load_model(root))
+                "unexpected model directory: retired-objects/",
+                validate_model(load_model(root)),
             )
 
     def test_domain_still_rejects_invalid_identity_boundary_and_cel(self) -> None:
@@ -266,7 +265,10 @@ class ContextScopeTests(unittest.TestCase):
             )
             model = load_model(root)
             self.assertEqual([], validate_model(model))
-            self.assertEqual(before.fulfillments, model.fulfillments)
+            self.assertEqual(
+                before.fulfillment_contexts_by_id,
+                model.fulfillment_contexts_by_id,
+            )
             for item in domain_documents():
                 collection = {
                     "entity": model.entities_by_id,
@@ -285,13 +287,13 @@ class ContextScopeTests(unittest.TestCase):
                 errors,
             )
 
-    def test_absent_fulfillments_cannot_hide_an_orphan_request(self) -> None:
+    def test_absent_fulfillment_context_cannot_hide_an_orphan_request(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
-            shutil.rmtree(root / "fulfillments")
+            (root / "entities" / "fulfillment--content-payment.yaml").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any("exactly one Fulfillment; found 0" in error for error in errors),

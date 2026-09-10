@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.manuscript-delivery
+category: context
+kind: fulfillment
 label: 按期交稿
-contextRef: context.manuscript-delivery-fulfillment
+parentContextRef: context.content-production
 contractRef: contract.content-production
 requestRef: request.manuscript-delivery
 requestInterval:

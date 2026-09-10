@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.content-access
+category: context
+kind: fulfillment
 label: 提供付费内容访问
-contextRef: context.content-access-fulfillment
+parentContextRef: context.content-subscription
 contractRef: contract.content-subscription
 requestRef: request.content-access
 requestInterval:

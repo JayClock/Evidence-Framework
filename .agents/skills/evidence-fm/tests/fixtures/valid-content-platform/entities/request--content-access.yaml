@@ -3,7 +3,7 @@ id: request.content-access
 category: evidence
 kind: fulfillment_request
 label: 付费内容访问请求
-contextRef: context.content-access-fulfillment
+contextRef: fulfillment.content-access
 responsibleRoleRef: role.subscriber
 attributes:
   - name: started_at

@@ -1,6 +1,0 @@
-type: entity
-id: context.goal-setting-fulfillment
-category: context
-kind: fulfillment
-label: 确认内容运营绩效目标履约上下文
-parentContextRef: context.operations-performance

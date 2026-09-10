@@ -1,7 +1,9 @@
-type: fulfillment
+type: entity
 id: fulfillment.prepaid-payment
+category: context
+kind: fulfillment
 label: 完成预付费抵扣
-contextRef: context.prepaid-payment-fulfillment
+parentContextRef: context.prepaid-payment
 contractRef: contract.prepaid-payment
 requestRef: request.prepaid-payment
 requestInterval:

@@ -1,6 +1,0 @@
-type: entity
-id: context.manuscript-delivery-fulfillment
-category: context
-kind: fulfillment
-label: 按期交稿履约上下文
-parentContextRef: context.content-production

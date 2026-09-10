@@ -3,7 +3,7 @@ id: confirmation.creator-penalty
 category: evidence
 kind: fulfillment_confirmation
 label: 违约金支付确认
-contextRef: context.creator-penalty-fulfillment
+contextRef: fulfillment.creator-penalty
 responsibleRoleRef: role.creator
 attributes:
   - name: confirmed_at

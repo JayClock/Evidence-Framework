@@ -31,7 +31,6 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
 SCHEMA_VERSION = "3.0"
 DOCUMENT_DIRS = {
     "entity": "entities",
-    "fulfillment": "fulfillments",
     "relationship": "relationships",
     "rule": "rules",
     "business_pattern": "business-patterns",
@@ -90,7 +89,6 @@ class LoadedModel:
     root: Path
     manifest: dict[str, Any] | None = None
     entities: list[dict[str, Any]] = field(default_factory=list)
-    fulfillments: list[dict[str, Any]] = field(default_factory=list)
     relationships: list[dict[str, Any]] = field(default_factory=list)
     rules: list[dict[str, Any]] = field(default_factory=list)
     business_patterns: list[dict[str, Any]] = field(default_factory=list)
@@ -106,11 +104,13 @@ class LoadedModel:
         }
 
     @property
-    def fulfillments_by_id(self) -> dict[str, dict[str, Any]]:
+    def fulfillment_contexts_by_id(self) -> dict[str, dict[str, Any]]:
         return {
             str(item["id"]): item
-            for item in self.fulfillments
-            if isinstance(item.get("id"), str)
+            for item in self.entities
+            if item.get("category") == "context"
+            and item.get("kind") == "fulfillment"
+            and isinstance(item.get("id"), str)
         }
 
     @property
@@ -230,16 +230,28 @@ def load_model(root: Path) -> LoadedModel:
                 manifest, "model.schema.json", "model.yaml", model.errors
             )
 
+    allowed_directories = {
+        *DOCUMENT_DIRS.values(),
+        "discovery",
+        "generated",
+        "validation",
+    }
+    for child in root.iterdir():
+        if (
+            child.is_dir()
+            and not child.name.startswith(".")
+            and child.name not in allowed_directories
+        ):
+            model.errors.append(f"unexpected model directory: {child.name}/")
+
     collections: dict[str, list[dict[str, Any]]] = {
         "entity": model.entities,
-        "fulfillment": model.fulfillments,
         "relationship": model.relationships,
         "rule": model.rules,
         "business_pattern": model.business_patterns,
     }
     schemas = {
         "entity": "entity.schema.json",
-        "fulfillment": "fulfillment.schema.json",
         "relationship": "relationship.schema.json",
         "rule": "rule.schema.json",
         "business_pattern": "business-pattern.schema.json",
@@ -339,19 +351,19 @@ def validate_model(model: LoadedModel) -> list[str]:
         return dedupe(errors)
 
     entities = model.entities_by_id
-    fulfillments = model.fulfillments_by_id
+    fulfillment_contexts = model.fulfillment_contexts_by_id
     relationships = model.relationships_by_id
     rules = model.rules_by_id
 
     validate_manifest(model.manifest, entities, errors)
     validate_entities(model.entities, entities, rules, errors)
-    validate_fulfillments(model.fulfillments, entities, fulfillments, rules, errors)
-    validate_relationships(model.relationships, entities, fulfillments, rules, errors)
-    validate_rules(model.rules, entities, fulfillments, rules, errors)
+    validate_fulfillment_contexts(fulfillment_contexts, entities, rules, errors)
+    validate_relationships(model.relationships, entities, rules, errors)
+    validate_rules(model.rules, entities, rules, errors)
     validate_business_patterns(
         model.business_patterns,
         entities,
-        fulfillments,
+        fulfillment_contexts,
         relationships,
         rules,
         errors,
@@ -679,27 +691,15 @@ def validate_request_interval(
             )
 
 
-def validate_fulfillments(
-    fulfillment_list: list[dict[str, Any]],
+def validate_fulfillment_contexts(
+    fulfillment_contexts: dict[str, dict[str, Any]],
     entities: dict[str, dict[str, Any]],
-    fulfillments: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
     request_counts: Counter[str] = Counter()
-    confirmation_counts: Counter[str] = Counter()
 
-    for fulfillment in fulfillment_list:
-        fulfillment_id = normalize(fulfillment.get("id"))
-        if fulfillment_id is None:
-            continue
-        context_ref = normalize(fulfillment.get("contextRef"))
-        context = entities.get(context_ref or "")
-        if entity_signature(context) != ("context", "fulfillment"):
-            errors.append(
-                f"{fulfillment_id}: contextRef must reference a Fulfillment Context"
-            )
-
+    for fulfillment_id, fulfillment in fulfillment_contexts.items():
         contract_ref = normalize(fulfillment.get("contractRef"))
         contract = entities.get(contract_ref or "")
         if entity_signature(contract) != ("evidence", "contract"):
@@ -709,12 +709,10 @@ def validate_fulfillments(
             assert isinstance(contract, dict)
             contract_roles = {str(ref) for ref in contract.get("roleRefs") or []}
             contract_context = contract_context_ref(contract)
-            if entity_signature(context) == ("context", "fulfillment"):
-                assert isinstance(context, dict)
-                if context.get("parentContextRef") != contract_context:
-                    errors.append(
-                        f"{fulfillment_id}: Fulfillment Context must be a child of the Contract Context"
-                    )
+            if fulfillment.get("parentContextRef") != contract_context:
+                errors.append(
+                    f"{fulfillment_id}: parentContextRef must match the Contract Context"
+                )
 
         request_ref = normalize(fulfillment.get("requestRef"))
         request = entities.get(request_ref or "")
@@ -726,9 +724,9 @@ def validate_fulfillments(
             )
         else:
             assert isinstance(request, dict)
-            if object_context_ref(request) != context_ref:
+            if object_context_ref(request) != fulfillment_id:
                 errors.append(
-                    f"{fulfillment_id}: Request must belong to the Fulfillment contextRef"
+                    f"{fulfillment_id}: Request must belong to this Fulfillment"
                 )
             request_role_ref = normalize(request.get("responsibleRoleRef"))
             if request_role_ref not in contract_roles:
@@ -743,7 +741,6 @@ def validate_fulfillments(
             str(ref) for ref in fulfillment.get("confirmationRefs") or []
         ]
         for confirmation_ref in confirmation_refs:
-            confirmation_counts[confirmation_ref] += 1
             confirmation = entities.get(confirmation_ref)
             signature = entity_signature(confirmation)
             if signature not in {
@@ -756,10 +753,10 @@ def validate_fulfillments(
                 )
                 continue
             assert isinstance(confirmation, dict)
-            if object_context_ref(confirmation) != context_ref:
+            if object_context_ref(confirmation) != fulfillment_id:
                 errors.append(
                     f"{fulfillment_id}: Confirmation target '{confirmation_ref}' must belong "
-                    "to the Fulfillment contextRef"
+                    "to this Fulfillment"
                 )
             if signature == ("evidence", "fulfillment_confirmation"):
                 confirmation_role_ref = normalize(
@@ -787,7 +784,7 @@ def validate_fulfillments(
                 if isinstance(request, dict)
                 else None,
                 contract_roles,
-                context_ref,
+                fulfillment_id,
                 entities,
                 rules,
                 errors,
@@ -820,7 +817,7 @@ def validate_fulfillments(
                     trigger,
                     expected_role_ref,
                     contract_roles,
-                    context_ref,
+                    fulfillment_id,
                     entities,
                     rules,
                     errors,
@@ -842,9 +839,9 @@ def validate_fulfillments(
                 errors.append(
                     f"{fulfillment_id}: completionRuleRef must reference bool completion Rule"
                 )
-            elif object_context_ref(rule) != context_ref:
+            elif object_context_ref(rule) != fulfillment_id:
                 errors.append(
-                    f"{fulfillment_id}: completion Rule must belong to the Fulfillment Context"
+                    f"{fulfillment_id}: completion Rule must belong to the Fulfillment"
                 )
 
         for index, breach in enumerate(fulfillment.get("breaches") or []):
@@ -860,14 +857,14 @@ def validate_fulfillments(
                 errors.append(
                     f"{fulfillment_id}.breaches[{index}]: conditionRuleRef must reference bool breach Rule"
                 )
-            elif object_context_ref(rule) != context_ref:
+            elif object_context_ref(rule) != fulfillment_id:
                 errors.append(
-                    f"{fulfillment_id}.breaches[{index}]: breach Rule must belong to the Fulfillment Context"
+                    f"{fulfillment_id}.breaches[{index}]: breach Rule must belong to the Fulfillment"
                 )
             outcome = breach.get("outcome") or {}
             if outcome.get("kind") == "fulfillment":
                 next_ref = normalize(outcome.get("fulfillmentRef"))
-                if next_ref not in fulfillments:
+                if next_ref not in fulfillment_contexts:
                     errors.append(
                         f"{fulfillment_id}.breaches[{index}]: unknown fulfillmentRef '{next_ref}'"
                     )
@@ -889,18 +886,6 @@ def validate_fulfillments(
             errors.append(
                 f"{entity_id}: Fulfillment Request must belong to exactly one Fulfillment; found {request_counts[entity_id]}"
             )
-    for confirmation_ref, count in confirmation_counts.items():
-        if count > 1:
-            owners = [
-                item
-                for item in fulfillment_list
-                if confirmation_ref in (item.get("confirmationRefs") or [])
-            ]
-            for owner in owners:
-                if not normalize(owner.get("sharedConfirmationRationale")):
-                    errors.append(
-                        f"{owner.get('id')}: shared Confirmation '{confirmation_ref}' requires sharedConfirmationRationale"
-                    )
 
 
 def validate_trigger(
@@ -951,11 +936,10 @@ def validate_trigger(
 def validate_relationships(
     relationship_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
-    fulfillments: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
-    objects: dict[str, dict[str, Any]] = {**entities, **fulfillments, **rules}
+    objects: dict[str, dict[str, Any]] = {**entities, **rules}
     for relationship in relationship_list:
         relationship_id = normalize(relationship.get("id"))
         if relationship_id is None:
@@ -1045,10 +1029,8 @@ def validate_relationships(
                 errors.append(
                     f"{relationship_id}: uses_role target must be a non-Party Role"
                 )
-            if source.get("type") not in {"entity", "fulfillment"}:
-                errors.append(
-                    f"{relationship_id}: uses_role source must be Entity or Fulfillment"
-                )
+            if source.get("type") != "entity":
+                errors.append(f"{relationship_id}: uses_role source must be an Entity")
             continue
 
         if kind in {"references", "evidences", "precedes", "derived_from"}:
@@ -1076,11 +1058,10 @@ def validate_relationships(
 def validate_rules(
     rule_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
-    fulfillments: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
-    objects = {**entities, **fulfillments}
+    objects = entities
     dependency_reported = False
     for rule in rule_list:
         rule_id = normalize(rule.get("id"))
@@ -1169,12 +1150,12 @@ def validate_rules(
 def validate_business_patterns(
     pattern_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
-    fulfillments: dict[str, dict[str, Any]],
+    fulfillment_contexts: dict[str, dict[str, Any]],
     relationships: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
-    objects = {**entities, **fulfillments, **relationships, **rules}
+    objects = {**entities, **relationships, **rules}
     allowed_variation_roles = {"domain", "third_party", "context", "evidence"}
     allowed_variation_contexts = {"pre_contract", "channel", "fulfillment", "domain"}
 
@@ -1185,7 +1166,7 @@ def validate_business_patterns(
 
         spine_contract_contexts: set[str] = set()
         for ref in pattern.get("businessSpineRefs") or []:
-            fulfillment = fulfillments.get(ref)
+            fulfillment = fulfillment_contexts.get(ref)
             if fulfillment is None:
                 errors.append(
                     f"{pattern_id}: businessSpineRef '{ref}' must reference Fulfillment"
@@ -1440,9 +1421,6 @@ def compiled_document(model: LoadedModel) -> dict[str, Any]:
         "schemaVersion": SCHEMA_VERSION,
         "model": model.manifest,
         "entities": sorted(model.entities, key=lambda item: str(item.get("id", ""))),
-        "fulfillments": sorted(
-            model.fulfillments, key=lambda item: str(item.get("id", ""))
-        ),
         "relationships": sorted(
             model.relationships, key=lambda item: str(item.get("id", ""))
         ),

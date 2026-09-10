@@ -3,7 +3,7 @@ id: confirmation.external-payment
 category: evidence
 kind: fulfillment_confirmation
 label: 外部支付确认
-contextRef: context.external-payment-fulfillment
+contextRef: fulfillment.external-payment
 responsibleRoleRef: role.external-payment-provider
 attributes:
   - name: confirmed_at
