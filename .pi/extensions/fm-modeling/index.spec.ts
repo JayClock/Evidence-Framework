@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
-import fmModelingExtension, { boundaries } from './index.js';
+import fmModelingExtension from './index.js';
 
 const directory = join(import.meta.dirname);
 
@@ -13,40 +13,40 @@ async function sourceFiles(path: string): Promise<string[]> {
       entry.isDirectory()
         ? sourceFiles(join(path, entry.name))
         : Promise.resolve(
-            entry.name.endsWith('.ts') ? [join(path, entry.name)] : [],
+            entry.name.endsWith('.ts') && !entry.name.endsWith('.spec.ts')
+              ? [join(path, entry.name)]
+              : [],
           ),
     ),
   );
   return nested.flat();
 }
 
-describe('fm-modeling extension boundary', () => {
-  it('registers one independent command', async () => {
+describe('fm-modeling UI adapter boundary', () => {
+  it('registers the skill command and question UI only', () => {
     const registerCommand = vi.fn();
-    fmModelingExtension({
-      registerCommand,
-      registerTool: vi.fn(),
-      on: vi.fn(),
-    } as never);
+    const registerTool = vi.fn();
+    const on = vi.fn();
+
+    fmModelingExtension({ registerCommand, registerTool, on } as never);
 
     expect(registerCommand).toHaveBeenCalledOnce();
-    expect(registerCommand).toHaveBeenCalledWith(
-      'evidence-model',
-      expect.objectContaining({
-        description: expect.any(String),
-        handler: expect.any(Function),
-      }),
-    );
-    expect(boundaries.storage).toBe('.evidence/fm-modeling');
+    expect(registerCommand.mock.calls[0]?.[0]).toBe('evidence-model');
+    expect(registerTool).toHaveBeenCalledOnce();
+    expect(registerTool.mock.calls[0]?.[0].name).toBe('fm_ui_question');
+    expect(on).not.toHaveBeenCalled();
   });
 
-  it('does not import the legacy Evidence extension', async () => {
-    for (const path of await sourceFiles(directory)) {
-      const source = await readFile(path, 'utf8');
-      expect(source).not.toMatch(/from\s+['"][^'"]*\/evidence\//);
-      expect(source).not.toContain(
-        ["import('", '.pi/extensions/evidence'].join(''),
-      );
-    }
+  it('contains no run state, publication tool, path interception, or auto-advance hook', async () => {
+    const source = (
+      await Promise.all(
+        (await sourceFiles(directory)).map((path) => readFile(path, 'utf8')),
+      )
+    ).join('\n');
+
+    expect(source).not.toMatch(/fm_model_(?:submit|ask)/);
+    expect(source).not.toMatch(/agent_settled|tool_call|ToolLease|StateStore/);
+    expect(source).not.toContain('.evidence/fm-modeling');
+    expect(source).not.toMatch(/from\s+['"][^'"]*\/evidence\//);
   });
 });
