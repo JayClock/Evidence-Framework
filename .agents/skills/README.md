@@ -4,6 +4,7 @@
 
 | Skill                                                   | 用途               | 输入与输出                                                                 | 运行依赖                                          |
 | ------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------- |
+| [fm-modeling](fm-modeling/SKILL.md)                     | 显式组合建模入口   | 目标／已有记录 → 澄清、候选、检查、授权保存与最小交接                      | 组合 Discovery 与 FM；界面扩展可选                |
 | [evidence-discovery](evidence-discovery/SKILL.md)       | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考 |
 | [evidence-fm](evidence-fm/SKILL.md)                     | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口 | 读取准则只需文本；执行校验需 Python 3.10+         |
 | [evidence-requirements](evidence-requirements/SKILL.md) | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                      | 对话与文本文件                                    |
@@ -20,7 +21,7 @@
 npx skills@latest add ./.agents/skills --skill evidence-discovery
 ```
 
-按需另选 `evidence-fm` 或 `evidence-requirements`，无需全部安装。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
+完整组合流程可选 `fm-modeling`，并同时安装 `evidence-discovery` 与 `evidence-fm`；也可按需只安装单项或 `evidence-requirements`。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
 
 也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references、assets，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
@@ -30,11 +31,14 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 ## 使用示例
 
+`fm-modeling` 设置为仅用户显式调用；支持的宿主可使用 `/skill:fm-modeling <目标>`。它只负责编排，通过资源发现定位专业 Skill，不假设兄弟目录，也不依赖界面扩展。
+
 ```text
 用 evidence-discovery 梳理业务：客户手机号不是唯一身份，导入时经常误合。
 今天先停止问答，只整理已有信息。
 继续讨论，但先保留之前暂缓的期限问题。
-用 evidence-fm 根据这份材料生成本批次模型，保留未知责任。
+用 evidence-fm 根据这份材料生成本批次候选，保留未知责任。
+/skill:fm-modeling 根据现有发现形成候选，先展示差异，不要直接保存。
 用 evidence-requirements 收敛这份说明的软件范围，不需要先建 FM。
 ```
 
@@ -43,12 +47,12 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 ```text
 业务材料 → Discovery 访谈 ← 只读 FM 建模准则
                     ↓ 用户明确要求生成／更新
-充分材料 ─────────→ FM 正式产物 → 软件需求
+充分材料 ─────────→ FM 完整候选 → prepare → 人工授权 → apply
                     ↓ 必要业务依据仍缺失
                  返回具体缺口，由访谈承接
 ```
 
-不自动串联三个 Skill。生成／更新正式 FM 是单独的用户意图；普通回答或“停止”不授权更新，模型更新也不自动进入需求或开发。
+专业 Skill 不自动串联；只有用户显式调用 `fm-modeling` 时才按当前意图组合。生成候选与保存正式 FM 是不同权限；普通回答或“停止”不授权保存，模型保存也不自动进入需求或开发。
 
 ## 文件交接
 

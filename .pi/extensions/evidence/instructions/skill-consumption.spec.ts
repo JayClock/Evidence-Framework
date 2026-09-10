@@ -62,6 +62,7 @@ describe('Pi consumes canonical skills without maintaining copies', () => {
         'evidence-requirements',
         'evidence-review',
         'evidence-tdd',
+        'fm-modeling',
       ]);
       expect(
         result.diagnostics.filter((item) =>

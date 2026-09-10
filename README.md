@@ -8,9 +8,9 @@ Evidence 是一个运行在本地 Pi TUI 中的 AI 软件工程工作流原型�
 
 ## 只想使用建模方法？
 
-[Evidence Skills](.agents/skills/README.md) 提供可单独安装的 `evidence-discovery`、`evidence-fm`、`evidence-requirements`，用普通对话与项目文件完成业务发现、正式 FM 和软件需求收敛。
+[Evidence Skills](.agents/skills/README.md) 提供用户显式调用的 `fm-modeling` 组合入口，以及可单独安装的 `evidence-discovery`、`evidence-fm`、`evidence-requirements`。普通对话、项目文件和独立 CLI 即可完成业务发现、候选建模、校验、安全保存和软件需求收敛。
 
-这三项建模能力以 `.agents/skills/` 为唯一维护源。项目受信任后 Pi 原生发现并加载，无需扩展注册或同步副本；工具、日志与提交协议留在扩展适配层。仓库维护与验证说明见 [Skills 测试指南](tests/skills/README.md)。
+这些建模能力以 `.agents/skills/` 为唯一维护源。项目受信任后 Pi 原生发现并加载，无需扩展注册或同步副本。`.pi/extensions/fm-modeling/` 仅提供可选问答与差异界面，不保存 Run、不发布模型；禁用扩展只损失交互便利。使用方法见 [FM Modeling 指南](docs/fm-modeling.md)，仓库维护与验证说明见 [Skills 测试指南](tests/skills/README.md)。
 
 ## 为什么需要 Evidence
 
@@ -218,9 +218,10 @@ npm run dev
 
 ```text
 .pi/
-├── extensions/evidence/  # 状态机、提示词、工具、校验与 Gate
-└── evidence.json         # 模型、Gate、轮次和质量命令配置
-.agents/skills/           # 全部阶段的方法、工序、运行资源及测试／评测
+├── extensions/evidence/     # Evidence Delivery 状态机、工具与 Gate
+├── extensions/fm-modeling/  # 可选 FM 问答与候选查看 UI
+└── evidence.json            # Delivery 模型、Gate、轮次和质量命令配置
+.agents/skills/              # 全部阶段的方法、FM CLI、测试与评测
 tests/skills/             # 跨 Skill 检查及宿主交互评测
 apps/
 ├── frontend/             # React + TypeScript + Vite
@@ -229,7 +230,8 @@ apps/
 artifacts/                # 阶段交付物与 Gate 记录
 reports/                  # 校验及实际命令报告
 AGENTS.md                 # 项目级 Agent 约束
-docs/evidence.md          # 完整工作流指南
+docs/evidence.md          # 完整 Delivery 工作流指南
+docs/fm-modeling.md       # 可脱离插件运行的 FM Modeling 指南
 ```
 
 技术基础：Nx 23、React 19、TypeScript、Vite、Java 17、Spring Boot 4、Gradle；测试使用 Vitest 与 JUnit。
@@ -241,7 +243,9 @@ npm test                  # 应用测试 + Evidence 扩展测试
 npm run lint              # 前端代码检查
 npm run build             # 应用构建 + Evidence 扩展类型检查
 npm run graph             # Nx 项目依赖图
-npm run evidence:verify   # 扩展类型检查、测试及格式检查
+npm run evidence:verify   # Delivery 扩展类型检查、测试及格式检查
+npm run fm-modeling:verify # FM UI 适配器类型、测试和格式检查
+npm run skills:verify     # 独立 Skills、FM 校验和发布 CLI 回归
 ```
 
 扩展自测不调用语言模型；首次执行可能下载 FM Python 依赖。自动回归验证确定性机制，不等同于真实人工端到端验收或模型生成质量评测。
@@ -249,4 +253,5 @@ npm run evidence:verify   # 扩展类型检查、测试及格式检查
 ## 项目文档
 
 - [Evidence 工作流指南](docs/evidence.md)：详细操作、模型配置、Gate、测试契约和升级说明。
+- [FM Modeling 指南](docs/fm-modeling.md)：无插件建模、候选准备、安全保存和恢复。
 - [项目 Agent 约束](AGENTS.md)。

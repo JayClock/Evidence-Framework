@@ -50,3 +50,6 @@ vitest.config.*.timestamp*
 # Python bytecode
 **/__pycache__/
 *.pyc
+
+# FM modeling candidates and frozen publication receipts
+**/.fm-work/

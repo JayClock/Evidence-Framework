@@ -3,10 +3,7 @@ import { resolve } from 'node:path';
 
 import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 
-import {
-  PanelMutex,
-  type ReviewResult,
-} from './ui-contracts.js';
+import { PanelMutex, type ReviewResult } from './ui-contracts.js';
 
 interface PreparedReceipt {
   preparationId: string;
@@ -38,7 +35,9 @@ function parseReceipt(text: string): PreparedReceipt {
   try {
     value = JSON.parse(text) as Partial<PreparedReceipt>;
   } catch (error) {
-    throw new Error(`准备结果不是有效 JSON：${String(error)}`, { cause: error });
+    throw new Error(`准备结果不是有效 JSON：${String(error)}`, {
+      cause: error,
+    });
   }
   if (
     !value.preparationId ||
@@ -82,7 +81,10 @@ function summary(receipt: PreparedReceipt): string {
 export class ReviewUI {
   constructor(private readonly panels = new PanelMutex()) {}
 
-  async open(receiptPath: string, ctx: ExtensionContext): Promise<ReviewResult> {
+  async open(
+    receiptPath: string,
+    ctx: ExtensionContext,
+  ): Promise<ReviewResult> {
     if (!ctx.hasUI || !this.panels.acquire()) return { status: 'unavailable' };
     try {
       const receipt = parseReceipt(

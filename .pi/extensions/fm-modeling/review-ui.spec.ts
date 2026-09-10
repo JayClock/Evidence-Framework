@@ -49,9 +49,9 @@ function context(actions: Array<string | undefined>, hasUI = true) {
 
 afterEach(async () => {
   await Promise.all(
-    temporaryDirectories.splice(0).map((directory) =>
-      rm(directory, { recursive: true, force: true }),
-    ),
+    temporaryDirectories
+      .splice(0)
+      .map((directory) => rm(directory, { recursive: true, force: true })),
   );
 });
 
@@ -73,7 +73,9 @@ describe('ReviewUI', () => {
 
   it('shows the complete long diff before returning for modification', async () => {
     const path = await receipt();
-    const value = JSON.parse(await (await import('node:fs/promises')).readFile(path, 'utf8'));
+    const value = JSON.parse(
+      await (await import('node:fs/promises')).readFile(path, 'utf8'),
+    );
     const ctx = context(['查看完整差异', '返回修改']);
 
     const result = await new ReviewUI().open(path, ctx as never);

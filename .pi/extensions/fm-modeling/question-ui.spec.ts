@@ -11,7 +11,11 @@ const input = {
   sourceRefs: ['docs/business/discovery.md#Q-017'],
 };
 
-function context(options: { action?: string; answer?: string; hasUI?: boolean }) {
+function context(options: {
+  action?: string;
+  answer?: string;
+  hasUI?: boolean;
+}) {
   return {
     hasUI: options.hasUI ?? true,
     ui: {

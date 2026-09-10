@@ -6,12 +6,7 @@ import {
   type QuestionResult,
 } from './ui-contracts.js';
 
-const ACTIONS = [
-  '回答',
-  '暂缓此问题',
-  '结束本次讨论',
-  '关闭面板',
-] as const;
+const ACTIONS = ['回答', '暂缓此问题', '结束本次讨论', '关闭面板'] as const;
 
 export class QuestionUI {
   constructor(private readonly panels = new PanelMutex()) {}
