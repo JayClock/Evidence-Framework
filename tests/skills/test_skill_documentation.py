@@ -5,7 +5,12 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2] / ".agents/skills"
-NAMES = ("evidence-discovery", "evidence-fm", "evidence-requirements")
+NAMES = (
+    "evidence-discovery",
+    "evidence-fm",
+    "evidence-requirements",
+    "fm-modeling",
+)
 
 
 class SkillDocumentationTests(unittest.TestCase):

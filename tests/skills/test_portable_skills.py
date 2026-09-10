@@ -15,7 +15,12 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT = REPO_ROOT / ".agents/skills"
-PORTABLE_NAMES = ("evidence-discovery", "evidence-fm", "evidence-requirements")
+PORTABLE_NAMES = (
+    "evidence-discovery",
+    "evidence-fm",
+    "evidence-requirements",
+    "fm-modeling",
+)
 WORKFLOW_NAMES = (
     "evidence-architecture",
     "evidence-planning",
@@ -72,6 +77,18 @@ class SkillPackageTests(unittest.TestCase):
                         self.assertTrue(target.is_relative_to(package), (doc, link))
                         self.assertTrue(target.exists(), (doc, link))
                 self.assertFalse(any(path.is_symlink() for path in package.rglob("*")))
+
+    def test_fm_modeling_is_an_explicit_composition_entrypoint(self):
+        entry = (ROOT / "fm-modeling/SKILL.md").read_text(encoding="utf-8")
+        self.assertRegex(entry, r"(?m)^disable-model-invocation: true$")
+        self.assertIn("evidence-discovery", entry)
+        self.assertIn("evidence-fm", entry)
+        self.assertNotRegex(entry, r"fm_model_(?:submit|ask)|evidence_(?:ask|save|finalize|submit)_")
+        evaluations = json.loads(
+            (ROOT / "fm-modeling/evals/evals.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("fm-modeling", evaluations["skill_name"])
+        self.assertGreaterEqual(len(evaluations["evals"]), 4)
 
     def test_all_project_skills_use_canonical_root(self):
         self.assertEqual(
