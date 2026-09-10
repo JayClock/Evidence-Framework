@@ -251,23 +251,23 @@ class FulfillmentModelTests(unittest.TestCase):
                 any("sourceEvidenceRefs" in error for error in errors), errors
             )
 
-    def test_participant_place_can_be_a_fulfillment_subject(self) -> None:
+    def test_participant_thing_can_be_a_fulfillment_subject(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
             self.write_yaml(
-                root / "entities" / "place--reading-site.yaml",
+                root / "entities" / "thing--reading-site.yaml",
                 {
                     "type": "entity",
-                    "id": "place.reading-site",
+                    "id": "thing.reading-site",
                     "category": "participant",
-                    "kind": "place",
+                    "kind": "thing",
                     "label": "阅读场所",
                     "contextRef": "context.cms",
                 },
             )
             path = root / "fulfillments" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
-            payment["subjectRefs"] = ["place.reading-site"]
+            payment["subjectRefs"] = ["thing.reading-site"]
             self.write_yaml(path, payment)
             self.assertEqual([], validate_model(load_model(root)))
 

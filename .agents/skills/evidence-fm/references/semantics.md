@@ -22,11 +22,11 @@ FM / 8X Flow 用同一格式表达合同履约、签约前渠道和领域部分�
 
 - `contract` Context：两个合同 Role 之间全部业务交互的聚合，也是服务／业务边界；
 - `fulfillment` Context：Contract 的子 Context，承载一项或一组明确共享弹性诉求的履约，是业务弹性边界；
-- `domain` Context：承载 Place、Thing 与领域能力，是领域弹性边界；
+- `domain` Context：承载 Thing 与领域能力，是领域弹性边界；
 - `pre_contract`／`channel` Context：合同形成前的渠道与协商边界；
 - `external` Context：当前模型不展开的外部边界。
 
-Contract Context 本身不是单一弹性边界。每个 Fulfillment 必须指向 Fulfillment Context，后者必须以 `parentContextRef` 指向该 Contract Context。Place 和 Thing 必须属于 Domain Context；Party 保持在 Context 外。
+Contract Context 本身不是单一弹性边界。每个 Fulfillment 必须指向 Fulfillment Context，后者必须以 `parentContextRef` 指向该 Contract Context。Thing 必须属于 Domain Context；Party 保持在 Context 外。
 
 上述上下文可单独建模或组合，`entryContextRefs` 可直接指向 Domain 或 Channel。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的合同、Request、Fulfillment 或引用的约束。
 
@@ -55,7 +55,7 @@ Contract Party Role 位于 Contract Context，不复制进子 Fulfillment Contex
 Participant：
 
 - `party`：跨上下文保持身份的个人、组织或法人；保持在 Context 外；
-- `place`／`thing`：具有领域身份的地点或标的物；必须属于 Domain Context。
+- `thing`：具有领域身份的地点、标的物或其他事物；必须属于 Domain Context。
 
 只有来源明确稳定玩家或跨上下文同一性时才建立 `plays_role`。
 
@@ -100,7 +100,7 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 允许的 `plays_role`：
 
 - Participant Party → Party／Third-party Role；
-- Participant Place/Thing → Domain Role；
+- Participant Thing → Domain Role；
 - Context → Context／Third-party Role；
 - Fulfillment Confirmation／Other Evidence → Evidence Role。
 

@@ -7,7 +7,7 @@
 1. **找业务脊梁**：从收入、支出、KPI、合规或风险链中选出能够解释业务价值的 Fulfillment。
 2. **找运营不变量**：说明跨案例保持不变的权利、义务、完成证明和违约后果。
 3. **找变化点**：优先选择 Evidence Role、Domain Role、Third-party Role、Context Role、Channel／Pre-contract Context 或 Fulfillment Context。
-4. **隔离领域输入**：列出被业务模式消费的 Domain Context、Thing、Place 或 Domain Role，不把具体领域对象误写成业务不变量。
+4. **隔离领域输入**：列出被业务模式消费的 Domain Context、Thing 或 Domain Role，不把具体领域对象误写成业务不变量。
 5. **提出领域中立主张**：说明替换领域输入后，为什么履约责任脊梁仍可能成立。
 6. **分级复用证据**：一个领域案例只能产生候选；至少两个合同上下文和两个领域上下文才能支持复用；具名业务方确认后才能标为 confirmed。
 

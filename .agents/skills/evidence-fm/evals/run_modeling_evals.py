@@ -609,22 +609,21 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             bool(fulfillments),
             str(len(fulfillments)),
         )
-    place_thing_entities = [
+    thing_entities = [
         entity
         for entity in entities
-        if (entity.get("category"), entity.get("kind"))
-        in {("participant", "place"), ("participant", "thing")}
+        if (entity.get("category"), entity.get("kind")) == ("participant", "thing")
     ]
     domain_inputs_are_bounded = all(
         (entities_by_id.get(str(entity.get("contextRef"))) or {}).get("kind")
         == "domain"
-        for entity in place_thing_entities
+        for entity in thing_entities
     )
     add(
         expectations,
-        "Every Place and Thing belongs to a Domain Context.",
+        "Every Thing belongs to a Domain Context.",
         domain_inputs_are_bounded,
-        str([entity.get("id") for entity in place_thing_entities]),
+        str([entity.get("id") for entity in thing_entities]),
     )
 
     if eval_id in {15, 16, 17, 18, 19}:

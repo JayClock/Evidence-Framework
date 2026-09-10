@@ -511,7 +511,7 @@ def validate_entities(
 
         context: dict[str, Any] | None = None
         if category in {"evidence", "role"} or (
-            category == "participant" and kind in {"place", "thing"}
+            category == "participant" and kind == "thing"
         ):
             context = require_ref(
                 errors, entity_id, "contextRef", context_ref, entities
@@ -532,12 +532,12 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: Participant Party looks like an implementation actor {hits}; use trigger.actsForRoleRef"
                 )
-        if (category, kind) in {
-            ("participant", "place"),
-            ("participant", "thing"),
-        } and entity_signature(context) != ("context", "domain"):
+        if (category, kind) == (
+            "participant",
+            "thing",
+        ) and entity_signature(context) != ("context", "domain"):
             errors.append(
-                f"{entity_id}: Participant {str(kind).title()} must belong to a Domain Context"
+                f"{entity_id}: Participant Thing must belong to a Domain Context"
             )
         if (category, kind) == ("role", "party") and entity_signature(context) == (
             "context",
@@ -997,7 +997,7 @@ def validate_relationships(
                 source_sig == ("participant", "party")
                 and target_sig in {("role", "party"), ("role", "third_party")}
             ) or (
-                source_sig in {("participant", "place"), ("participant", "thing")}
+                source_sig == ("participant", "thing")
                 and target_sig == ("role", "domain")
             )
             context_plays_role = (
@@ -1218,7 +1218,6 @@ def validate_business_patterns(
             target = entities.get(ref)
             signature = entity_signature(target)
             if signature not in {
-                ("participant", "place"),
                 ("participant", "thing"),
                 ("role", "domain"),
                 ("context", "domain"),
@@ -1259,7 +1258,7 @@ def validate_business_patterns(
             if signature == ("context", "domain"):
                 domain_input_contexts.add(ref)
                 continue
-            if signature in {("participant", "place"), ("participant", "thing")}:
+            if signature == ("participant", "thing"):
                 input_context_ref = object_context_ref(target)
                 if input_context_ref is not None:
                     domain_input_contexts.add(input_context_ref)

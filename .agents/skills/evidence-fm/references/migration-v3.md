@@ -8,7 +8,7 @@ Schema v3 不提供兼容 profile，也不在加载时猜测旧模型语义。�
 2. 为每个 Fulfillment 建立 `kind: fulfillment` 的 Context，以 `parentContextRef` 指向它的 Contract Context。
 3. 将该 Fulfillment 的 Request、具体 Confirmation、Evidence Role 和 Rule 移入子 Fulfillment Context；Contract 的两个 Party Role 仍留在父 Contract Context。
 4. 为每个 Fulfillment 补 `requestInterval`，固定引用 Request 的 `started_at` 和 `expired_at`；两者必须显式为 required、`keyData: true` 的 timestamp。不再支持 `openEndedReason`；类型属性可为非派生输入，不要求每个时间有公式；仍按 [来源映射](./provenance.md) 核对业务来源，来源／规则缺口影响判断时回到发现，不能以结构合法代替来源充分。所有其它 Evidence 也按 `format.md` 的类型表补齐时间定义，不能只改 interval。
-5. 将所有 Place／Thing 移入 Domain Context。Party 保持在 Context 外，不要为了迁移补造 Participant。
+5. 将所有 Thing 移入 Domain Context。Party 保持在 Context 外，不要为了迁移补造 Participant。
 6. 删除 `elasticityBoundaryCandidate`。v3 的 Context kind 已直接表达边界语义。
 7. 只有存在复用主张时才创建 `business-patterns/*.yaml`；单一领域从 `candidate` 开始。
 8. `entities/` 必需；`fulfillments/`、`relationships/`、`rules/` 和 `business-patterns/` 无文档时可省略。纯领域／纯渠道允许没有合同与履约，不能为迁移补造它们；已有履约仍必须满足全部 v3 约束。

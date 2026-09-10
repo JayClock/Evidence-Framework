@@ -96,7 +96,7 @@ Agent 不得自行将状态提升为 reviewed／confirmed。
 | category      | kind                                                                                               |
 | ------------- | -------------------------------------------------------------------------------------------------- |
 | `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
-| `participant` | `party`、`place`、`thing`                                                                          |
+| `participant` | `party`、`thing`                                                                                   |
 | `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
 | `context`     | `contract`、`fulfillment`、`pre_contract`、`channel`、`domain`、`external`                         |
 
@@ -165,7 +165,7 @@ parentContextRef: context.subscription
 
 Contract Context 是业务聚合／服务边界；Fulfillment Context 是弹性边界。不得把 Fulfillment、Request、Confirmation 或履约 Rule 直接放入 Contract Context。
 
-### Domain Context、Place 与 Thing
+### Domain Context 与 Thing
 
 ```yaml
 type: entity
@@ -186,7 +186,7 @@ label: 订阅内容
 contextRef: context.content
 ```
 
-Place 和 Thing 必须属于 Domain Context。Party 保持在 Context 外，通过 `plays_role` 进入上下文；Domain 内也可有 Party Role 表达参与身份。Party/Place/Thing 是并列 kind，不存在 `party.thing`。领域属性、关系与 CEL Rule 都是同格式模型的一部分，详见 `domain-modeling.md`。
+Thing 必须属于 Domain Context，可表示具有领域身份的地点、标的物或其他事物。Party 保持在 Context 外，通过 `plays_role` 进入上下文；Domain 内也可有 Party Role 表达参与身份。Party/Thing 是并列 kind，不存在 `party.thing`。领域属性、关系与 CEL Rule 都是同格式模型的一部分，详见 `domain-modeling.md`。
 
 ### Role 可以独立存在
 

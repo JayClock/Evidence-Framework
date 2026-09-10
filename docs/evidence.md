@@ -270,7 +270,7 @@ Markdown 用 `evidence_submit_artifact`，FM 用 `evidence_submit_fm_model`。�
 
 FM 源文件包括 model.yaml、说明、entities、按需 fulfillments/relationships/rules/business-patterns，以及可选 discovery 摘要与 validation 实例/场景。只接受白名单路径、单文档 YAML、稳定 ID；Agent 不提交 generated、02-business-patterns.md 或 status.md。工具校验成功后原子替换并派生结果。
 
-- Domain Context 可独立建模；Party 在 Context 外，Place/Thing 属于 Domain Context。
+- Domain Context 可独立建模；Party 在 Context 外，Thing 属于 Domain Context。
 - 履约位于父 Contract 的子 Fulfillment Context；合同双方 Role 留在父上下文。
 - Request interval 使用 required、keyData timestamp；类型属性可为非派生输入，无固定时长不等于无截止时间。实例须提供确定时间值，不用 openEndedReason，也不强制生成公式。
 - 关键数据派生用 CEL/AST lineage，不另写第二份依赖 DSL。

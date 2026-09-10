@@ -17,17 +17,16 @@
 
 ## 2. 对象不是全部归为 Thing
 
-| 语义                             | 当前 FM 表达                                                     |
-| -------------------------------- | ---------------------------------------------------------------- |
-| 稳定的人或组织                   | `participant / party`，保持 Context 外                           |
-| 地点                             | `participant / place`，属于 Domain Context                       |
-| 有独立身份的资料、产品或其他事物 | `participant / thing`，属于 Domain Context                       |
-| 对象的局部数据                   | Entity `attributes`，不按每个字段创建 Thing                      |
-| 上下文中的参与身份               | `role / party`；Domain Context 也可有 Party Role，不等于合同角色 |
-| 领域能力插槽                     | `role / domain`；声明依赖不等于能力内部逻辑已被建模              |
-| 领域边界                         | `context / domain`，`rootRefs` 指向上下文内部根对象              |
+| 语义                                   | 当前 FM 表达                                                     |
+| -------------------------------------- | ---------------------------------------------------------------- |
+| 稳定的人或组织                         | `participant / party`，保持 Context 外                           |
+| 有独立身份的地点、资料、产品或其他事物 | `participant / thing`，属于 Domain Context                       |
+| 对象的局部数据                         | Entity `attributes`，不按每个字段创建 Thing                      |
+| 上下文中的参与身份                     | `role / party`；Domain Context 也可有 Party Role，不等于合同角色 |
+| 领域能力插槽                           | `role / domain`；声明依赖不等于能力内部逻辑已被建模              |
+| 领域边界                               | `context / domain`，`rootRefs` 指向上下文内部根对象              |
 
-Party、Place、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。标的物是对象在当前业务中的用途，不是新的 Entity category。
+Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。地点和标的物是 Thing 在当前业务中的用途，不是新的 Entity category。
 
 候选示例：客户本人是 Party；有独立身份的客户档案是 Thing；手机号通常是属性。只有来源说明联系方式有独立生命周期时，才进一步建为 Thing。真实数据记录是实例，不为每个客户生成一个类型文件。
 
@@ -131,7 +130,7 @@ resultType: bool
 
 1. 领域入口、根对象和 Context 引用正确。
 2. 对象身份有来源；Party 与档案等信息对象没有混淆。
-3. Place/Thing 在 Domain Context，Party 在 Context 外，角色与玩家分开。
+3. Thing 在 Domain Context，Party 在 Context 外，角色与玩家分开。
 4. 关系端点与方向合法，CEL 属性存在、派生目标一致、依赖无环。
 5. 领域专家能解释规则的正常、边界及反例；未覆盖内容不因结构通过而消失。
 6. 没有为通过校验补造 Contract、Fulfillment、期限或合同 Role。

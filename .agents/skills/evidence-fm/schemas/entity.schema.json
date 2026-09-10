@@ -204,14 +204,14 @@
         "required": ["category"]
       },
       "then": {
-        "properties": { "kind": { "enum": ["party", "place", "thing"] } }
+        "properties": { "kind": { "enum": ["party", "thing"] } }
       }
     },
     {
       "if": {
         "properties": {
           "category": { "const": "participant" },
-          "kind": { "enum": ["place", "thing"] }
+          "kind": { "const": "thing" }
         },
         "required": ["category", "kind"]
       },
