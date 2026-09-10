@@ -227,6 +227,22 @@ class PublicationPreparationTests(unittest.TestCase):
         self.assertEqual(0, recovered.returncode)
         self.assertEqual("completed_replacement", recovery["recoveryAction"])
 
+    def test_publication_does_not_touch_other_workflow_data(self):
+        protected = {}
+        for relative in (".evidence/state.json", "artifacts/scope.md", "reports/review.json"):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"protected:{relative}", encoding="utf-8")
+            protected[relative] = path.read_bytes()
+        receipt = self.prepare_success()
+
+        result, output = self.run_apply(receipt)
+
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertEqual("applied", output["status"])
+        for relative, expected in protected.items():
+            self.assertEqual(expected, (self.root / relative).read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()

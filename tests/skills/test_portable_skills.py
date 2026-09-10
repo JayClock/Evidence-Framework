@@ -149,7 +149,7 @@ class IsolatedFMTests(unittest.TestCase):
         )
         self.directory = tempfile.TemporaryDirectory(prefix="portable fm ")
         self.addCleanup(self.directory.cleanup)
-        self.workspace = Path(self.directory.name)
+        self.workspace = Path(self.directory.name).resolve()
         self.skill = self.workspace / "installed skill"
         shutil.copytree(
             source, self.skill, ignore=shutil.ignore_patterns("__pycache__")
@@ -313,6 +313,45 @@ class IsolatedFMTests(unittest.TestCase):
         report = self.check(1)
         self.assertFalse(report["valid"])
         self.assertTrue(report["errors"])
+
+    def test_standalone_skill_prepares_and_applies_without_any_extension(self):
+        for name in ("tests", "evals"):
+            shutil.rmtree(self.skill / name)
+        self.example("domain")
+        source = self.workspace / "discovery.md"
+        source.write_text("已确认的领域来源\n", encoding="utf-8")
+        target = self.workspace / "formal fm"
+        work = self.workspace / ".fm-work"
+        reports = self.workspace / "fm-checks"
+        prepare = self.run_python(
+            str(self.skill / "scripts/publish_fm.py"),
+            "prepare",
+            "--candidate",
+            str(self.model),
+            "--target",
+            str(target),
+            "--source",
+            str(source),
+            "--work-dir",
+            str(work),
+        )
+        self.assertEqual(0, prepare.returncode, prepare.stdout + prepare.stderr)
+        receipt = json.loads(prepare.stdout)["receiptPath"]
+
+        apply = self.run_python(
+            str(self.skill / "scripts/publish_fm.py"),
+            "apply",
+            "--receipt",
+            receipt,
+            "--report-dir",
+            str(reports),
+        )
+
+        self.assertEqual(0, apply.returncode, apply.stdout + apply.stderr)
+        result = json.loads(apply.stdout)
+        self.assertEqual("applied", result["status"])
+        self.assertEqual(file_hashes(self.model), file_hashes(target))
+        self.assertTrue(Path(result["reportPath"]).is_file())
 
 
 if __name__ == "__main__":

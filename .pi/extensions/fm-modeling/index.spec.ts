@@ -50,6 +50,7 @@ describe('fm-modeling UI adapter boundary', () => {
     expect(source).not.toMatch(/fm_model_(?:submit|ask)/);
     expect(source).not.toMatch(/agent_settled|tool_call|ToolLease|StateStore/);
     expect(source).not.toContain('.evidence/fm-modeling');
+    expect(source).not.toMatch(/writeFile|appendEntry|\bapply_candidate\b|pi\.exec/);
     expect(source).not.toMatch(/from\s+['"][^'"]*\/evidence\//);
   });
 });
