@@ -131,7 +131,7 @@ describe('structured discovery answer view', () => {
     const view = discoveryAnswerView(value);
     const summary = JSON.stringify(view.sections);
     expect(summary).toContain('作者合作协议');
-    expect(summary).toContain('权责：作者 → 平台（权利方 → 义务方）');
+    expect(summary).toContain('发起／接收：作者 → 平台');
     expect(summary).toContain('要求：合作协议、结算单');
     expect(summary).toContain('请求时间：start_at=待明确；expired_at=待明确');
     expect(summary).toContain('履约确认凭证：待明确');
@@ -283,7 +283,6 @@ describe('structured discovery answer view', () => {
     ]);
     expect(view.sections[1].lines).toEqual([
       '支付订阅费（候选）',
-      '权责：平台 → 读者（权利方 → 义务方）',
       '履约请求凭证：待明确',
       '发起／接收：平台 → 读者',
       '要求：按订阅约定支付对应专栏费用（业务背景、核心需求4）',
@@ -375,7 +374,7 @@ describe('discovery answer TUI', () => {
     const cancelled = h.events.get('agent_settled')!({}, h.ctx);
     await vi.waitFor(() => expect(tui.ui.custom).toHaveBeenCalledTimes(1));
     const card = tui.render().join('\n');
-    expect(card).toContain('权责：作者 → 平台');
+    expect(card).toContain('发起／接收：作者 → 平台');
     expect(card).toContain('履约确认凭证：待明确');
     expect(card).toContain(snapshot().questions[0].prompt);
     tui.input('\u001b');
@@ -451,7 +450,7 @@ describe('discovery answer TUI', () => {
     const result = select(h, value);
     const text = h.render(80).join('\n');
     expect(text).toContain('角色：读者 ↔ 平台');
-    expect(text).toContain('权责：平台 → 读者');
+    expect(text).toContain('发起／接收：平台 → 读者');
     expect(text).toContain(value.questions[0].prompt);
     expect(text).not.toContain('外部系统或执行能力不等同于合同一方');
     expect(text).not.toContain('合同形成依据、签署时刻待明确');
@@ -550,7 +549,7 @@ describe('discovery answer TUI', () => {
     expect(h.ui.select.mock.lastCall![0]).toContain(
       '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
     );
-    expect(h.ui.select.mock.lastCall![0]).toContain('权责：作者 → 平台');
+    expect(h.ui.select.mock.lastCall![0]).toContain('发起／接收：作者 → 平台');
     expect(h.ui.select.mock.lastCall![0]).toContain('履约确认凭证：待明确');
     const value = snapshot();
     h.ui.editor.mockResolvedValue('答复');

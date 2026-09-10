@@ -115,8 +115,15 @@ export function assertBusinessView(snapshot: DiscoverySnapshot): void {
       context.sourceRefs,
       identity.confidence === 'explicit',
     );
-    if (context.kind === 'contract' && context.roleRefs.length !== 2)
-      throw new Error('合同上下文必须保留双方角色位置，未知位置使用 null');
+    if (
+      context.kind === 'contract' &&
+      (context.roleRefs.length !== 2 ||
+        (context.roleRefs[0] !== null &&
+          context.roleRefs[0] === context.roleRefs[1]))
+    )
+      throw new Error(
+        '合同上下文必须保留两个不同的角色位置，未知位置使用 null',
+      );
     if (context.kind !== 'contract' && context.fulfillments.length)
       throw new Error('只有合同上下文可以直接包含履约项');
     if (context.kind !== 'contract' && context.agreementEvidence !== null)
@@ -139,14 +146,6 @@ export function assertBusinessView(snapshot: DiscoverySnapshot): void {
         item.sourceRefs,
         identity.confidence === 'explicit',
       );
-      if (
-        item.rightHolderRef !== null &&
-        item.rightHolderRef === item.obligorRef
-      )
-        throw new Error('履约权利方和义务方不能相同');
-      for (const role of [item.rightHolderRef, item.obligorRef])
-        if (role !== null && !context.roleRefs.includes(role))
-          throw new Error('履约权责方必须属于当前合同双方');
       participant(item.requestEvidence.issuerRef);
       participant(item.requestEvidence.recipientRef);
       participant(item.confirmationEvidence.providerRef);

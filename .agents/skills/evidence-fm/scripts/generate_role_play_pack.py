@@ -114,7 +114,7 @@ def role_sheet(
                 "",
                 "Questions before issuing:",
                 "",
-                "- Why is this Role entitled or obliged to act?",
+                "- Why is this Role responsible for issuing this Evidence?",
                 "- Are all required values available from the listed evidence?",
                 "- Which key values are asserted, and which are derived?",
                 "- What would prevent this document from being accepted as proof?",
@@ -213,8 +213,8 @@ def audit_checklist() -> str:
     return """# Audit and dispute checklist
 
 - Can the reviewer prove that the Contract or agreement existed?
-- Which Role held the right, and which Role bore the obligation?
-- Was the Request validly issued and available to the obligor?
+- Which Role was responsible for each Evidence?
+- Was the Request validly issued and available to its recipient?
 - What business deadline applied, and where did it come from?
 - Does the Confirmation prove full, partial, or no completion?
 - Can every critical amount, quantity, time, and KPI be traced to source evidence?
@@ -227,7 +227,7 @@ def audit_checklist() -> str:
 - Missing evidence:
 - Missing key data:
 - Hidden oral knowledge:
-- Ambiguous right or obligation:
+- Ambiguous Evidence responsibility:
 - Proposed model correction:
 - Stakeholder decision:
 """

@@ -57,7 +57,7 @@ const RequestEvidenceSchema = Type.Object(
     issuerRef: nullableRef(),
     recipientRef: nullableRef(),
     requirement: knownText(
-      '权利方要求义务方完成什么；只保留有来源的已知部分。',
+      '请求凭证要求接收方完成什么；只保留有来源的已知部分。',
     ),
     startAt: knownText(
       '履约请求 start_at 的业务含义及来源；来源未知须标明，影响判断时澄清；不因缺公式清空已知结构；未知为 null，不编造实例日期。',
@@ -84,8 +84,6 @@ const ConfirmationEvidenceSchema = Type.Object(
 const FulfillmentViewSchema = Type.Object(
   {
     candidateRef: candidateRef(),
-    rightHolderRef: nullableRef(),
-    obligorRef: nullableRef(),
     requestEvidence: RequestEvidenceSchema,
     confirmationEvidence: ConfirmationEvidenceSchema,
     supportingEvidenceRefs: candidateRefs(),

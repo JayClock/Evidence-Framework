@@ -116,7 +116,6 @@ export function fulfillmentInteractionLines(
     confirmation.confirmedAt,
   ];
   return [
-    `权责：${name(item.rightHolderRef)} → ${name(item.obligorRef)}（权利方 → 义务方）`,
     `履约请求凭证：${name(request.evidenceRef)}`,
     `发起／接收：${name(request.issuerRef)} → ${name(request.recipientRef)}`,
     `要求：${field(request.requirement, fullText)}`,
@@ -153,7 +152,6 @@ function fulfillmentCoverage(item: Fulfillment): string {
     item.confirmationEvidence.confirmedAt,
   ];
   return [
-    `权责 ${mark([item.rightHolderRef, item.obligorRef].filter(Boolean).length, 2)}`,
     `请求 ${mark(request.filter(Boolean).length, request.length)}`,
     `确认 ${mark(confirmation.filter(Boolean).length, confirmation.length)}`,
     `参与人／物 ${mark(item.participantRefs.length + item.thingRefs.length, 1)}`,

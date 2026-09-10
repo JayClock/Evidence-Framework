@@ -3,8 +3,6 @@ id: fulfillment.weekly-progress-check
 label: 完成周进度检查
 contextRef: context.weekly-progress-check-fulfillment
 contractRef: contract.operations-performance
-rightHolderRoleRef: role.platform-performance
-obligorRoleRef: role.operator
 requestRef: request.weekly-progress-check
 requestInterval:
   startAttribute: start_at

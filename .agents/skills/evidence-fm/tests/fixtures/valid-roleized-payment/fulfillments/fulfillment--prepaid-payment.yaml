@@ -3,8 +3,6 @@ id: fulfillment.prepaid-payment
 label: 完成预付费抵扣
 contextRef: context.prepaid-payment-fulfillment
 contractRef: contract.prepaid-payment
-rightHolderRoleRef: role.prepaid-customer
-obligorRoleRef: role.prepaid-platform
 requestRef: request.prepaid-payment
 requestInterval:
   startAttribute: start_at

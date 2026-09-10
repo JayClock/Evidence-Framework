@@ -3,8 +3,6 @@ id: fulfillment.external-payment
 label: 完成外部支付
 contextRef: context.external-payment-fulfillment
 contractRef: contract.external-payment
-rightHolderRoleRef: role.external-payment-customer
-obligorRoleRef: role.external-payment-provider
 requestRef: request.external-payment
 requestInterval:
   startAttribute: start_at

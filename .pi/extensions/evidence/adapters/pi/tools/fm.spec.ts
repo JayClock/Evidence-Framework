@@ -133,7 +133,7 @@ async function submissionHarness(applicable = true) {
       {
         applicable,
         rationale: applicable
-          ? '当前包含独立领域规则或合同权责，需要建立统一 FM 并如实记录校验和单据模拟适用性；机器结果不代替业务确认。'
+          ? '当前包含独立领域规则或合同履约责任，需要建立统一 FM 并如实记录校验和单据模拟适用性；机器结果不代替业务确认。'
           : '当前范围只有简单的本地工具胶水集成，无独立对象身份、领域关系、规则、渠道协商或合同履约语义，不需建模。',
         files: [...files, ...coverage],
       },

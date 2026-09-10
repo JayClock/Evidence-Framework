@@ -9,8 +9,6 @@
     "label",
     "contextRef",
     "contractRef",
-    "rightHolderRoleRef",
-    "obligorRoleRef",
     "requestRef",
     "requestInterval",
     "confirmationRefs",
@@ -24,8 +22,6 @@
     "label": { "type": "string", "minLength": 1 },
     "contextRef": { "$ref": "#/$defs/id" },
     "contractRef": { "$ref": "#/$defs/id" },
-    "rightHolderRoleRef": { "$ref": "#/$defs/id" },
-    "obligorRoleRef": { "$ref": "#/$defs/id" },
     "requestRef": { "$ref": "#/$defs/id" },
     "requestInterval": { "$ref": "#/$defs/requestInterval" },
     "confirmationRefs": {

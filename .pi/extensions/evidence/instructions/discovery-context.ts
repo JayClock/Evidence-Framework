@@ -393,7 +393,6 @@ export function candidateContextLines(
       1,
       0,
       `${key} ${snapshot.recordHeads[key]}${snapshot.staleRecordKeys.includes(key) ? '；依据失效' : ''}
-权责：${label(item.rightHolderRef)} → ${label(item.obligorRef)}
 请求凭证：${label(item.requestEvidence.evidenceRef)}；发起／接收：${label(item.requestEvidence.issuerRef)} → ${label(item.requestEvidence.recipientRef)}
 要求：${clipContext(item.requestEvidence.requirement ?? '待明确', 420)}
 请求时间：start_at=${clipContext(item.requestEvidence.startAt ?? '待明确', 180)}；expired_at=${clipContext(item.requestEvidence.expiredAt ?? '待明确', 180)}

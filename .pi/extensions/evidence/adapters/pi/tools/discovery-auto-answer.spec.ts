@@ -176,7 +176,7 @@ describe('automatic current-question entry', () => {
       expect(text).toContain(
         '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
       );
-      expect(text).toContain('权责：作者 → 平台');
+      expect(text).toContain('发起／接收：作者 → 平台');
       expect(text).toContain('履约确认凭证：待明确');
       expect(text).toContain(question.prompt);
       expect(text).toContain('/evidence-answer');

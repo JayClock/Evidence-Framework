@@ -353,19 +353,26 @@ def grade_context_scope(
         employee = r"电话销售|执行方|编辑|employee|operator|salesperson"
         manager = r"管理方|主管|主编|manager|supervisor"
 
-        def directed(items: list[dict[str, Any]], right: str, obligor: str) -> bool:
+        def directed(
+            items: list[dict[str, Any]], request_role: str, confirmation_role: str
+        ) -> bool:
+            def responsible_role(entity_ref: object) -> dict[str, Any]:
+                evidence = entities.get(str(entity_ref), {})
+                return entities.get(str(evidence.get("responsibleRoleRef")), {})
+
             return bool(items) and all(
                 re.search(
-                    right,
-                    identity_text_of(
-                        entities.get(str(item.get("rightHolderRoleRef")), {})
-                    ),
+                    request_role,
+                    identity_text_of(responsible_role(item.get("requestRef"))),
                     re.IGNORECASE,
                 )
-                and re.search(
-                    obligor,
-                    identity_text_of(entities.get(str(item.get("obligorRoleRef")), {})),
-                    re.IGNORECASE,
+                and any(
+                    re.search(
+                        confirmation_role,
+                        identity_text_of(responsible_role(ref)),
+                        re.IGNORECASE,
+                    )
+                    for ref in item.get("confirmationRefs") or []
                 )
                 for item in items
             )
@@ -386,7 +393,7 @@ def grade_context_scope(
         else:
             add(
                 expectations,
-                "Target change reverses only its own obligation direction.",
+                "Target change reverses only its own Evidence responsibility direction.",
                 directed(targets, employee, manager),
                 str(targets),
             )
@@ -480,10 +487,10 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         )
         add(
             expectations,
-            "Discovery asks about contract Roles, obligations, confirmation, interval, and breach.",
+            "Discovery asks about contract Roles, Evidence responsibility, confirmation, interval, and breach.",
             bool(
                 re.search(r"合同|签约", discovery_text, re.IGNORECASE)
-                and re.search(r"权利|义务|权责", discovery_text, re.IGNORECASE)
+                and re.search(r"角色|责任", discovery_text, re.IGNORECASE)
                 and re.search(r"确认|凭证|证明", discovery_text, re.IGNORECASE)
                 and re.search(r"时限|期限|interval", discovery_text, re.IGNORECASE)
                 and re.search(r"违约|异常|补偿", discovery_text, re.IGNORECASE)

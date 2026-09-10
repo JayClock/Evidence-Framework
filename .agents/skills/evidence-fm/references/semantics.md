@@ -38,7 +38,7 @@ Contract 是签约时刻 Evidence，也是 Contract Context 的 root。它必须
 - 不要求这两个 Role 已有 Participant 玩家；
 - 不直接连接另一个 Contract。
 
-合同、权利方、义务方和 Evidence 责任首先用 Role 表达。多个上下文中标签相似的 Role，不能据此推断为同一 Participant。
+合同双方和 Evidence 责任首先用 Role 表达。Role 只表示对所连接凭证负责的业务身份；多个上下文中标签相似的 Role，不能据此推断为同一 Participant。
 
 ## 4. Role 与 Participant
 
@@ -68,7 +68,7 @@ Evidence kind：
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
 - `other_evidence`：位于产生它的业务或领域 Context。
 
-Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成或部分完成履约的时刻 Evidence。创建六类凭证时均先按 [格式](format.md) 的必备时间表展开类型；属性约束、请求区间与实例要求在该处维护。再按 [来源映射](./provenance.md) 核对各时间证明的业务事件与形成依据，区分签约与生效、确认与回调、凭证形成与原事件；类型齐全不代表依据已查明。
+Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约完成或部分完成的时刻 Evidence。两者各自通过 `responsibleRoleRef` 连接对该凭证负责的 Role，Request → Confirmation 的履约结构表达要求与结果的方向。创建六类凭证时均先按 [格式](format.md) 的必备时间表展开类型；属性约束、请求区间与实例要求在该处维护。再按 [来源映射](./provenance.md) 核对各时间证明的业务事件与形成依据，区分签约与生效、确认与回调、凭证形成与原事件；类型齐全不代表依据已查明。
 
 运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿必须创建新 Evidence 或 Fulfillment，不能修改旧凭证。此约束不等于全部领域 Participant 永不改变；领域状态和行为条件按已确认规则表达，不伪装成履约。
 
@@ -77,7 +77,7 @@ Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成�
 `fulfillment` 是第一等多元语义关系，必须指定：
 
 - 子 Fulfillment Context 与父 Contract；
-- 权利方和义务方 Party Role；
+- Request 与 Confirmation 各自的责任 Role；
 - 一个 Fulfillment Request 及其 interval；
 - 一个或多个具体 Confirmation 或 Evidence Role；
 - 完成策略和双方业务触发；
@@ -86,9 +86,8 @@ Request 是权利方发起的时段 Evidence；Confirmation 是义务方完成�
 
 约束：
 
-- 权利方、义务方不同，且来自 Contract 的两个 Party Role；
-- Request 的 `responsibleRoleRef` 等于权利方；
-- 具体 Confirmation 的 `responsibleRoleRef` 等于义务方；
+- Request 与具体 Confirmation 的 `responsibleRoleRef` 必须引用所属 Contract 的 Party Role；
+- Trigger 的 `actsForRoleRef` 必须与其产生的具体 Evidence 的 `responsibleRoleRef` 一致；开放 Evidence Role 的 Trigger 仍须代表所属 Contract 的 Party Role；
 - Request、Confirmation、Evidence Role 与 Fulfillment 必须同属子 Fulfillment Context；
 - 一个 Request 恰好属于一个 Fulfillment；
 - 多次同类运行时确认用 completion policy，不复制类型节点；
@@ -125,9 +124,9 @@ Evidence Role 是开放注册点：可以没有玩家或有多个玩家；新增
 
 ## 9. Business Pattern
 
-Business Pattern 表达运营特定、领域中立的权责结构。它必须引用真实 Fulfillment 业务脊梁、运营不变量、业务变化点、Domain 输入、Contract 案例和 Domain 案例。
+Business Pattern 表达运营特定、领域中立的履约责任结构。它必须引用真实 Fulfillment 业务脊梁、运营不变量、业务变化点、Domain 输入、Contract 案例和 Domain 案例。
 
-一个 Domain 只能形成 `candidate`；至少两个 Contract Context 与两个 Domain Context 才能成为 `supported`；`confirmed` 还需要具名业务方确认。机器验证不能证明领域中立或复用价值。纯领域模型不为领域能力复用补造权责脊梁；没有 Business Pattern 不影响领域模型成立。
+一个 Domain 只能形成 `candidate`；至少两个 Contract Context 与两个 Domain Context 才能成为 `supported`；`confirmed` 还需要具名业务方确认。机器验证不能证明领域中立或复用价值。纯领域模型不为领域能力复用补造履约责任脊梁；没有 Business Pattern 不影响领域模型成立。
 
 ## 10. Trigger 与实现边界
 

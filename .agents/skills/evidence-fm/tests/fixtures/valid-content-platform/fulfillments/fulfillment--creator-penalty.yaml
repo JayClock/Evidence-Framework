@@ -3,8 +3,6 @@ id: fulfillment.creator-penalty
 label: 支付断更违约金
 contextRef: context.creator-penalty-fulfillment
 contractRef: contract.content-production
-rightHolderRoleRef: role.platform-content-production
-obligorRoleRef: role.creator
 requestRef: request.creator-penalty
 requestInterval:
   startAttribute: start_at

@@ -716,25 +716,6 @@ def validate_fulfillments(
                         f"{fulfillment_id}: Fulfillment Context must be a child of the Contract Context"
                     )
 
-        right_ref = normalize(fulfillment.get("rightHolderRoleRef"))
-        obligor_ref = normalize(fulfillment.get("obligorRoleRef"))
-        if right_ref == obligor_ref and right_ref is not None:
-            errors.append(
-                f"{fulfillment_id}: rightHolderRoleRef and obligorRoleRef must be different"
-            )
-        for field_name, ref in (
-            ("rightHolderRoleRef", right_ref),
-            ("obligorRoleRef", obligor_ref),
-        ):
-            if entity_signature(entities.get(ref or "")) != ("role", "party"):
-                errors.append(
-                    f"{fulfillment_id}: {field_name} must reference a Party Role"
-                )
-            elif ref not in contract_roles:
-                errors.append(
-                    f"{fulfillment_id}: {field_name} '{ref}' is not a party role of the Contract"
-                )
-
         request_ref = normalize(fulfillment.get("requestRef"))
         request = entities.get(request_ref or "")
         if request_ref:
@@ -749,9 +730,10 @@ def validate_fulfillments(
                 errors.append(
                     f"{fulfillment_id}: Request must belong to the Fulfillment contextRef"
                 )
-            if request.get("responsibleRoleRef") != right_ref:
+            request_role_ref = normalize(request.get("responsibleRoleRef"))
+            if request_role_ref not in contract_roles:
                 errors.append(
-                    f"{fulfillment_id}: Request responsibleRoleRef must equal rightHolderRoleRef"
+                    f"{fulfillment_id}: Request responsibleRoleRef must be a Party Role of the Contract"
                 )
             interval = fulfillment.get("requestInterval")
             if isinstance(interval, dict):
@@ -779,14 +761,15 @@ def validate_fulfillments(
                     f"{fulfillment_id}: Confirmation target '{confirmation_ref}' must belong "
                     "to the Fulfillment contextRef"
                 )
-            if (
-                signature == ("evidence", "fulfillment_confirmation")
-                and confirmation.get("responsibleRoleRef") != obligor_ref
-            ):
-                errors.append(
-                    f"{fulfillment_id}: Confirmation '{confirmation_ref}' responsibleRoleRef "
-                    "must equal obligorRoleRef"
+            if signature == ("evidence", "fulfillment_confirmation"):
+                confirmation_role_ref = normalize(
+                    confirmation.get("responsibleRoleRef")
                 )
+                if confirmation_role_ref not in contract_roles:
+                    errors.append(
+                        f"{fulfillment_id}: Confirmation '{confirmation_ref}' responsibleRoleRef "
+                        "must be a Party Role of the Contract"
+                    )
 
         for subject_ref in fulfillment.get("subjectRefs") or []:
             if entity_signature(entities.get(subject_ref))[0] != "participant":
@@ -800,7 +783,10 @@ def validate_fulfillments(
                 fulfillment_id,
                 "requestTrigger",
                 request_trigger,
-                right_ref,
+                normalize(request.get("responsibleRoleRef"))
+                if isinstance(request, dict)
+                else None,
+                contract_roles,
                 context_ref,
                 entities,
                 rules,
@@ -820,11 +806,20 @@ def validate_fulfillments(
                 )
             trigger = item.get("trigger")
             if isinstance(trigger, dict):
+                confirmation = entities.get(confirmation_ref)
+                expected_role_ref = (
+                    normalize(confirmation.get("responsibleRoleRef"))
+                    if entity_signature(confirmation)
+                    == ("evidence", "fulfillment_confirmation")
+                    and isinstance(confirmation, dict)
+                    else None
+                )
                 validate_trigger(
                     fulfillment_id,
                     f"confirmationTriggers[{index}].trigger",
                     trigger,
-                    obligor_ref,
+                    expected_role_ref,
+                    contract_roles,
                     context_ref,
                     entities,
                     rules,
@@ -913,19 +908,24 @@ def validate_trigger(
     field_name: str,
     trigger: dict[str, Any],
     expected_role_ref: str | None,
+    contract_role_refs: set[str],
     expected_context_ref: str | None,
     entities: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
     role_ref = normalize(trigger.get("actsForRoleRef"))
-    if role_ref != expected_role_ref:
+    if expected_role_ref is not None and role_ref != expected_role_ref:
         errors.append(
-            f"{owner_id}.{field_name}.actsForRoleRef must be '{expected_role_ref}'"
+            f"{owner_id}.{field_name}.actsForRoleRef must match the Evidence responsibleRoleRef '{expected_role_ref}'"
         )
     if entity_signature(entities.get(role_ref or "")) != ("role", "party"):
         errors.append(
             f"{owner_id}.{field_name}.actsForRoleRef must reference Party Role"
+        )
+    elif role_ref not in contract_role_refs:
+        errors.append(
+            f"{owner_id}.{field_name}.actsForRoleRef must be a Party Role of the Contract"
         )
     source_context_ref = normalize(trigger.get("sourceContextRef"))
     if (

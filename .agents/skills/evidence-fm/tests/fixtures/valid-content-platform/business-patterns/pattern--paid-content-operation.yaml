@@ -6,7 +6,7 @@ businessGoals:
   - kpi
   - risk
 operationInvariant: 平台通过内容生产、订阅访问和运营绩效三组合同履约，将内容领域能力转化为收入并约束持续交付。
-domainNeutralClaim: 该权责脊梁可能复用于其它按内容付费的领域，但当前只有一个领域案例，尚不能确认复用。
+domainNeutralClaim: 该履约责任脊梁可能复用于其它按内容付费的领域，但当前只有一个领域案例，尚不能确认复用。
 businessSpineRefs:
   - fulfillment.content-payment
   - fulfillment.content-access

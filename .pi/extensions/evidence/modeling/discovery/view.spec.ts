@@ -24,7 +24,7 @@ afterEach(async () => {
 });
 async function setup(contract = true) {
   const h = await qualityHarness(roots);
-  const state = createInitialState('test', '合同权责显示，不是业务验收');
+  const state = createInitialState('test', '合同履约显示，不是业务验收');
   state.status = 'running';
   await saveState(h.root, state);
   await h.saveDiscovery({
@@ -64,7 +64,7 @@ async function snapshot(h: Awaited<ReturnType<typeof setup>>) {
 const noise =
   /工程阶段|分析活动|业务位置|round|waiting_answer|Gate|暂缓 \d|未解决阻塞|当前工件|发现 v\d|revision-\d/;
 describe('contract-centered discovery messages', () => {
-  it('shows two-way rights/obligations, the selected fulfillment and evidence gaps, without workflow navigation', async () => {
+  it('shows the selected fulfillment and evidence gaps without workflow navigation', async () => {
     const h = await setup();
     const state = (await loadState(h.root))!;
     const before = await readText(h.root, '.evidence/state.json');
@@ -74,8 +74,6 @@ describe('contract-centered discovery messages', () => {
       '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',
       '上下文角色：平台 ↔ 作者',
       '候选履约（请求 → 确认凭证）',
-      '▶ 支付分成',
-      '权责：作者 → 平台（权利方 → 义务方）',
       '▶ 支付分成',
       '要求：合作协议、结算单',
       '请求时间：start_at=待明确；expired_at=待明确',
@@ -114,7 +112,7 @@ describe('contract-centered discovery messages', () => {
     await h.command('evidence-answer', 'Q-001');
     const heading = h.ui.editor.mock.lastCall![0];
     expect(heading).toContain('▶ 支付分成');
-    expect(heading).toContain('权责：作者 → 平台');
+    expect(heading).toContain('发起／接收：作者 → 平台');
     expect(heading).toContain('履约确认凭证：待明确');
     expect(heading).toContain('github.com/tester');
     expect(heading).not.toMatch(noise);
@@ -124,7 +122,7 @@ describe('contract-centered discovery messages', () => {
     );
   });
 
-  it('does not fabricate contracts, parties or obligations for unlocated/domain discovery', async () => {
+  it('does not fabricate contracts, parties or fulfillments for unlocated/domain discovery', async () => {
     const h = await setup(false);
     const text = (await view(h)).join('\n');
     expect(text).toContain('当前建模位置：尚未定位业务上下文');
@@ -193,12 +191,14 @@ describe('contract-centered discovery messages', () => {
     const value = await snapshot(h);
     value.content!.businessView.contexts[0].roleRefs[1] = null;
     for (const item of value.content!.businessView.contexts[0].fulfillments) {
-      if (item.rightHolderRef === 'C-003') item.rightHolderRef = null;
-      if (item.obligorRef === 'C-003') item.obligorRef = null;
+      if (item.requestEvidence.issuerRef === 'C-003')
+        item.requestEvidence.issuerRef = null;
+      if (item.requestEvidence.recipientRef === 'C-003')
+        item.requestEvidence.recipientRef = null;
     }
     const text = businessViewLines(value).join('\n');
     expect(text).toContain('上下文角色：平台 ↔ 待明确');
-    expect(text).toContain('权责：待明确 → 平台');
+    expect(text).toContain('发起／接收：待明确 → 平台');
   });
 
   it('preserves partial and cross-contract confirmation evidence without inventing an approver', async () => {
@@ -348,7 +348,7 @@ describe('contract-centered discovery messages', () => {
     }
     const lines = businessViewLines(value);
     expect(lines.join('\n')).toContain('▶ 支付分成');
-    expect(lines.join('\n')).toContain('权责：作者 → 平台');
+    expect(lines.join('\n')).toContain('发起／接收：作者 → 平台');
     expect(lines.join('\n')).toContain('项见 /evidence-status');
   });
 
@@ -416,8 +416,6 @@ describe('contract-centered discovery messages', () => {
     other.fulfillments = other.fulfillments.map((f) => ({
       ...f,
       candidateRef: ref(f.candidateRef)!,
-      rightHolderRef: ref(f.rightHolderRef),
-      obligorRef: ref(f.obligorRef),
       parentFulfillmentRef: ref(f.parentFulfillmentRef),
     }));
     value.content!.businessView.contexts.push(other);
@@ -503,8 +501,6 @@ describe('contract-centered discovery messages', () => {
   it.each([
     'missing-candidate',
     'duplicate-role',
-    'same-party',
-    'foreign-party',
     'cycle',
     'foreign-parent',
     'missing-trigger',
@@ -525,8 +521,6 @@ describe('contract-centered discovery messages', () => {
       if (kind === 'missing-candidate') contract.contextRef = 'C-999';
       if (kind === 'duplicate-role')
         contract.roleRefs[1] = contract.roleRefs[0];
-      if (kind === 'same-party') item.obligorRef = item.rightHolderRef;
-      if (kind === 'foreign-party') item.obligorRef = 'C-999';
       if (kind === 'cycle') {
         item.parentFulfillmentRef = 'C-006';
         item.trigger = '循环';

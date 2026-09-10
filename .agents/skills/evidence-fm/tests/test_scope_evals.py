@@ -128,13 +128,15 @@ class ScopeEvalTests(unittest.TestCase):
                 model = load_model(root)
                 self.assertEqual([], validate_model(model))
                 target = model.fulfillments_by_id["fulfillment.target-change"]
+                request = model.entities_by_id[target["requestRef"]]
+                confirmation = model.entities_by_id[target["confirmationRefs"][0]]
                 self.assertEqual(
                     "role.employee" if employee_initiates else "role.manager",
-                    target["rightHolderRoleRef"],
+                    request["responsibleRoleRef"],
                 )
                 self.assertEqual(
                     "role.manager" if employee_initiates else "role.employee",
-                    target["obligorRoleRef"],
+                    confirmation["responsibleRoleRef"],
                 )
                 reviews.append(model.fulfillments_by_id["fulfillment.progress-review"])
         self.assertEqual(reviews[0], reviews[1])

@@ -3,8 +3,6 @@ id: fulfillment.interruption-compensation
 label: 提供断更补偿
 contextRef: context.interruption-compensation-fulfillment
 contractRef: contract.content-subscription
-rightHolderRoleRef: role.subscriber
-obligorRoleRef: role.platform-subscription
 requestRef: request.interruption-compensation
 requestInterval:
   startAttribute: start_at

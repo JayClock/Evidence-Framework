@@ -36,7 +36,7 @@ async function freshHarness(config = {}) {
 const notApplicable = {
   applicable: false,
   rationale:
-    '当前仅提供简单工具胶水，没有独立对象身份、领域规则、协商过程或合同权责语义，因此不需要构造 FM 定义。',
+    '当前仅提供简单工具胶水，没有独立对象身份、领域规则、协商过程或合同履约语义，因此不需要构造 FM 定义。',
   files: [],
 };
 

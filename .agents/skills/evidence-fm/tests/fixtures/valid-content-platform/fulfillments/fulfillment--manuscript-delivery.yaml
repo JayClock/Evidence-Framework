@@ -3,8 +3,6 @@ id: fulfillment.manuscript-delivery
 label: 按期交稿
 contextRef: context.manuscript-delivery-fulfillment
 contractRef: contract.content-production
-rightHolderRoleRef: role.platform-content-production
-obligorRoleRef: role.creator
 requestRef: request.manuscript-delivery
 requestInterval:
   startAttribute: start_at

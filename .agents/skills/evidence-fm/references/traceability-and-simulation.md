@@ -3,7 +3,7 @@
 ## 1. 两类不同的检查
 
 - 属性追溯回答：关键金额、数量、时间、KPI 或领域结论从哪一个已建模 Entity 属性产生？
-- 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建权责与结果？
+- 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建凭证责任与结果？
 
 结构合法不等于业务已验证。模型、机器与人工状态必须区分：
 
@@ -187,7 +187,7 @@ python3 <skill-dir>/scripts/generate_role_play_pack.py \
 - `source-documents/`：开始时已成立、可发给参与者的凭证；
 - `blank-documents/`：由各 Role 在演练中填写的单据；
 - `role--*.md`：每个 Role 的步骤、可见凭证和当时可用的 CEL 政策表达式，不含预期值或后续答案；
-- `audit-checklist.md`：权责、时限、关键数据、异常和口头知识检查；
+- `audit-checklist.md`：凭证责任、时限、关键数据、异常和口头知识检查；
 - `manifest.json`：场景、机器模拟和 stakeholder review 状态。
 
 角色扮演至少检查一个正常场景和一个异常／追责场景。任何必须依赖“大家都知道”的口头事实都记录为模型 gap。人工确认必须由业务方显式写入 `stakeholderReview`，不能由 Agent 推断。

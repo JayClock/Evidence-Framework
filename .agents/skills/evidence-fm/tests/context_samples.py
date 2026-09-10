@@ -183,7 +183,7 @@ def channel_documents() -> list[dict[str, Any]]:
 
 
 def performance_fulfillment(
-    name: str, label: str, right: str, obligor: str
+    name: str, label: str, request_role: str, confirmation_role: str
 ) -> list[dict[str, Any]]:
     context = f"context.{name}"
     request = f"request.{name}"
@@ -207,7 +207,7 @@ def performance_fulfillment(
             "fulfillment_request",
             label + "请求",
             contextRef=context,
-            responsibleRoleRef=right,
+            responsibleRoleRef=request_role,
             attributes=[
                 attribute("start_at", "timestamp", "请求开始时间", keyData=True),
                 attribute(
@@ -221,7 +221,7 @@ def performance_fulfillment(
             "fulfillment_confirmation",
             label + "结果确认",
             contextRef=context,
-            responsibleRoleRef=obligor,
+            responsibleRoleRef=confirmation_role,
             attributes=[
                 attribute(
                     "confirmed_at", "timestamp", "结果确认形成时间", keyData=True
@@ -235,8 +235,6 @@ def performance_fulfillment(
             "label": label,
             "contextRef": context,
             "contractRef": "contract.performance",
-            "rightHolderRoleRef": right,
-            "obligorRoleRef": obligor,
             "requestRef": request,
             "requestInterval": {
                 "startAttribute": "start_at",
@@ -244,11 +242,17 @@ def performance_fulfillment(
             },
             "confirmationRefs": [confirmation],
             "completionPolicy": {"mode": "all"},
-            "requestTrigger": {"kind": "manual", "actsForRoleRef": right},
+            "requestTrigger": {
+                "kind": "manual",
+                "actsForRoleRef": request_role,
+            },
             "confirmationTriggers": [
                 {
                     "confirmationRef": confirmation,
-                    "trigger": {"kind": "manual", "actsForRoleRef": obligor},
+                    "trigger": {
+                        "kind": "manual",
+                        "actsForRoleRef": confirmation_role,
+                    },
                 }
             ],
             "breaches": [
@@ -313,13 +317,18 @@ def performance_documents(
         ),
     ]
     if target_change:
-        right, obligor = (
+        request_role, confirmation_role = (
             ("role.employee", "role.manager")
             if employee_initiates
             else ("role.manager", "role.employee")
         )
         documents.extend(
-            performance_fulfillment("target-change", "目标变更答复", right, obligor)
+            performance_fulfillment(
+                "target-change",
+                "目标变更答复",
+                request_role,
+                confirmation_role,
+            )
         )
     elif negotiate_before_signing:
         channel = "context.goal-negotiation"

@@ -33,8 +33,8 @@
     {
       "id": 4,
       "name": "missing-confirmation-repair",
-      "prompt": "使用 $modeling 修复输入中的 FM Schema v3 模型。付款 Request 所引用的 Confirmation 实体缺失；在不改变既有 Role、权责和触发语义的前提下补齐，运行校验并编译 JSON。",
-      "expected_output": "补充付款 Confirmation，责任 Role 为义务方，保持 Fulfillment 与 confirmationTrigger 一致，不引入 partyAssignments，校验和编译通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "prompt": "使用 $modeling 修复输入中的 FM Schema v3 模型。付款 Request 所引用的 Confirmation 实体缺失；在不改变既有 Role、凭证责任和触发语义的前提下补齐，运行校验并编译 JSON。",
+      "expected_output": "补充付款 Confirmation，明确该凭证的责任 Role，保持 Fulfillment 与 confirmationTrigger 一致，不引入 partyAssignments，校验和编译通过；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
       "files": ["fixtures/missing-confirmation-model"]
     },
     {
@@ -48,14 +48,14 @@
       "id": 6,
       "name": "simple-tool-no-model",
       "prompt": "判断一个电脑控制座机拨号、挂断和重拨的小工具是否需要建模。范围明确只是调用既有协议的胶水代码，不包含独立的号码规则、排队策略、重拨资格或状态约束，也不涉及合同履约。不要生成 fm-model，只输出 analysis.md；不必要求我补合同。",
-      "expected_output": "说明当前是简单集成、无独立领域语义，不需建模并正常结束；不生成假 Contract/Role/Request/Confirmation，不反复索要权责材料；不把所有拨号工具或所有无合同领域问题一律排除。",
+      "expected_output": "说明当前是简单集成、无独立领域语义，不需建模并正常结束；不生成假 Contract/Role/Request/Confirmation，不反复索要履约责任材料；不把所有拨号工具或所有无合同领域问题一律排除。",
       "files": []
     },
     {
       "id": 7,
       "name": "repeated-partial-confirmations",
       "prompt": "使用 $modeling 建模一次采购交付请求对应任意多个分批到货确认，累计到货数量达到采购数量才完成；逾期未足量触发赔偿履约。不要为每一批复制 Confirmation 类型，使用 completionPolicy 和 CEL，合同直接引用买方与卖方 Role。",
-      "expected_output": "一个 Confirmation 类型配合 count/amount completionPolicy；累计完成规则为 CEL；赔偿是新的 Fulfillment；权利方和义务方 Role 显式；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
+      "expected_output": "一个 Confirmation 类型配合 count/amount completionPolicy；累计完成规则为 CEL；赔偿是新的 Fulfillment；Request 与 Confirmation 的责任 Role 显式；每个 Fulfillment 使用父合同下的 Fulfillment Context，所有 Request 有明确 interval。",
       "files": []
     },
     {
@@ -97,7 +97,7 @@
       "id": 13,
       "name": "ambiguous-narrative-input-gaps",
       "prompt": "我们准备做一个“智能结算平台”：用户提交订单，系统自动结算，未来支持很多渠道。请使用 $modeling 开始处理。当前材料没有说明谁与谁签约、谁有收款权、谁负付款义务、什么凭证算结算完成、履约期限和违约责任。不要替业务方猜答案；先在 discovery/open-questions.md 中记录必要业务缺口及其影响，交给后续访谈处理，不自行发起问答。如果建立任何 FM 模型，只能是明确标记为 draft/pending 的已知部分。",
-      "expected_output": "输出 discovery/evidence-inventory、timeline 或 open-questions；明确缺少合同双方、权责、确认凭证、时限和违约事实；不伪造 confirmed 模型或 stakeholder review。",
+      "expected_output": "输出 discovery/evidence-inventory、timeline 或 open-questions；明确缺少合同双方、凭证责任、确认凭证、时限和违约事实；不伪造 confirmed 模型或 stakeholder review。",
       "files": [],
       "assertions": [
         "至少生成 discovery/evidence-inventory、timeline 或 open-questions 产物。",
@@ -146,22 +146,22 @@
       "id": 17,
       "name": "kpi-negotiated-before-agreement",
       "prompt": "用 $modeling 建模绩效协议。双方是管理方与电话销售。季度开始前电话销售提出目标方案，管理方确认后双方签署协议；这个季度目标固定，不允许执行中变更。履约只有每周进度检查：管理方每周一请求检查，电话销售在周五 18 点前提交确认的联系数量，缺交只记录违约，协议明确无需赔偿。目标磋商留在签约前，不要额外创建目标设定履约；无现金流，不虚构 Party 玩家、金额或公式。使用同一 FM v3 输出校验与编译结果。",
-      "expected_output": "KPI 使用普通 Contract/Fulfillment 结构；签约前 RFP/Proposal 追溯协议；只有周进度检查履约，不建立目标设定或变更履约；权责、interval、record_only 依据明确。",
+      "expected_output": "KPI 使用普通 Contract/Fulfillment 结构；签约前 RFP/Proposal 追溯协议；只有周进度检查履约，不建立目标设定或变更履约；凭证责任、interval、record_only 依据明确。",
       "files": [],
       "assertions": [
         "绩效协议使用普通 FM Contract，没有 KPI 专用内核。",
         "签约前目标协商通过 Proposal 追溯 Contract，没有目标设定履约。",
-        "周进度检查具有管理方到电话销售的正确权责方向。"
+        "周进度检查的 Request 由管理方负责、Confirmation 由电话销售负责。"
       ]
     },
     {
       "id": 18,
       "name": "kpi-target-change-role-direction",
-      "prompt": "用 $modeling 建模允许执行中调整目标的绩效协议。电话销售有权提交目标变更请求，管理方负有在两个工作日内给出同意或拒绝决定的责任；响应截止点由请求明确记录，不需发明工作日历算法。本项责任是按时答复，不保证同意；决定凭证包含 approved 标志，拒绝也完成答复但不改变旧目标。同时管理方每周一发起进度检查，电话销售周五前确认结果；两项逾期均按协议只记录异常。请使用普通 FM v3 的两项履约与 CEL／属性表达，不能让全部履约方向随目标变更一起反转。",
-      "expected_output": "目标变更请求的权利方是电话销售，义务方是管理方；进度检查方向相反；两者均用普通 Fulfillment 与 interval；批准和答复语义区分，保留旧约定，不引入绩效专用类型。",
+      "prompt": "用 $modeling 建模允许执行中调整目标的绩效协议。电话销售提交目标变更请求，管理方负责在两个工作日内给出同意或拒绝决定；响应截止点由请求明确记录，不需发明工作日历算法。本项责任是按时答复，不保证同意；决定凭证包含 approved 标志，拒绝也完成答复但不改变旧目标。同时管理方每周一发起进度检查，电话销售周五前确认结果；两项逾期均按协议只记录异常。请使用普通 FM v3 的两项履约与 CEL／属性表达，不能让全部履约方向随目标变更一起反转。",
+      "expected_output": "目标变更 Request 由电话销售负责，Confirmation 由管理方负责；进度检查的凭证责任方向相反；两者均用普通 Fulfillment 与 interval；批准和答复语义区分，保留旧约定，不引入绩效专用类型。",
       "files": [],
       "assertions": [
-        "目标变更履约为执行方请求、管理方决定；进度检查保留相反权责方向。",
+        "目标变更履约为执行方负责 Request、管理方负责决定 Confirmation；进度检查保留相反的凭证责任方向。",
         "决定包含批准与拒绝区别，不将答复完成等同于目标获批。",
         "使用普通 Contract/Fulfillment，Schema v3 校验及编译通过。"
       ]

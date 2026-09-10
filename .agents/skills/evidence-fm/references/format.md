@@ -237,8 +237,6 @@ id: fulfillment.subscription-payment
 label: 支付订阅费用
 contextRef: context.subscription-payment-fulfillment
 contractRef: contract.subscription
-rightHolderRoleRef: role.service-provider
-obligorRoleRef: role.subscriber
 requestRef: request.subscription-payment
 requestInterval:
   startAttribute: start_at
@@ -261,7 +259,7 @@ confirmationTriggers:
       actsForRoleRef: role.subscriber
 ```
 
-Request 与具体 Confirmation 都属于该 Fulfillment Context；它们的 `responsibleRoleRef` 分别指向父 Contract Context 中的权利方和义务方。
+Request 与具体 Confirmation 都属于该 Fulfillment Context；它们各自的 `responsibleRoleRef` 指向父 Contract Context 中对该凭证负责的 Party Role。履约方向由 Request → Confirmation 的结构表达，不在 Fulfillment 上重复声明角色位置。
 
 Request 的 interval 属性必须：
 

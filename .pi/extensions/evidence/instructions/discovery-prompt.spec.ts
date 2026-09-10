@@ -87,7 +87,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '提问前先展示有来源的候选结构、依据与不确定点',
         '履约请求 → 确认凭证',
         'Confirmation 不默认是人工审批',
-        '不从权责方推导确认人',
+        '不从请求凭证责任角色推导确认人',
         '独立验收须有业务依据',
         '先通过 evidence_save_discovery 追加消化结果',
         '全未知字段为 null，部分已知保留原依据',
@@ -99,7 +99,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
       ])
         expect(prompt).toContain(rule);
     }
-    expect(resumed).toContain('权责：作者 → 平台');
+    expect(resumed).toContain('发起／接收：作者 → 平台');
     expect(resumed).toContain('确认凭证：待明确；提供方：待明确');
     expect(resumed).toContain(
       '当前建模位置：合同上下文 › 作者合作协议 › 支付分成',

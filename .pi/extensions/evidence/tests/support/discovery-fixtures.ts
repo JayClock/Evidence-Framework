@@ -126,8 +126,6 @@ export function contractContent(): DiscoveryContent {
           {
             ...baseItem,
             candidateRef: 'C-004',
-            rightHolderRef: 'C-002',
-            obligorRef: 'C-003',
             requestEvidence: requestEvidence(
               '合作协议约定的稿件',
               null,
@@ -141,8 +139,6 @@ export function contractContent(): DiscoveryContent {
           {
             ...baseItem,
             candidateRef: 'C-005',
-            rightHolderRef: 'C-003',
-            obligorRef: 'C-002',
             requestEvidence: requestEvidence(
               '合作协议、结算单',
               null,
@@ -154,8 +150,6 @@ export function contractContent(): DiscoveryContent {
           {
             ...baseItem,
             candidateRef: 'C-006',
-            rightHolderRef: 'C-003',
-            obligorRef: 'C-002',
             requestEvidence: requestEvidence(
               '按逾期责任支付补偿',
               null,
@@ -221,8 +215,6 @@ export function subscriptionContent(): DiscoveryContent {
         fulfillments: [
           {
             candidateRef: 'C-004',
-            rightHolderRef: 'C-003',
-            obligorRef: 'C-002',
             requestEvidence: requestEvidence(
               '按订阅约定支付对应专栏费用（业务背景、核心需求4）',
               '以本次付款请求的 start_at 为准；形成依据待明确',
