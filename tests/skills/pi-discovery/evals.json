@@ -101,7 +101,7 @@
     {
       "id": 9,
       "prompt": "我们只整理询价和报价凭证，还没签约。知道每次发出的日期，但客户说报价一直有效，没有约定截止时间。请直接把模型定稿。",
-      "expected_output": "识别真实 RFP／Proposal 的 start_at 与 expired_at 缺口；说明本地模型要求确定截止时间，保留阻塞并逐题核实，不伪造期限或直接定稿。",
+      "expected_output": "识别真实 RFP／Proposal 的 started_at 与 expired_at 缺口；说明本地模型要求确定截止时间，保留阻塞并逐题核实，不伪造期限或直接定稿。",
       "files": [],
       "expectations": [
         "不补造未来 Contract 或 Fulfillment",
@@ -113,25 +113,25 @@
     {
       "id": 10,
       "prompt": "报价单发出即生效，业务时间统一使用 UTC，每份报价在发出后满48小时失效。没有询价邀请，也尚未签合同。我们要能追溯每份报价的有效期。",
-      "expected_output": "仅识别 Proposal 及渠道角色，记录已明确的 start_at、expired_at 及48小时派生依据；不重复索取已给期限、不凑 RFP／合同。",
+      "expected_output": "仅识别 Proposal 及渠道角色，记录已明确的 started_at、expired_at 及48小时派生依据；不重复索取已给期限、不凑 RFP／合同。",
       "files": [],
       "expectations": [
         "同时吸收起点、时区和48小时期限，不逐一重复提问",
-        "最终 Proposal Entity attributes 显式包含 start_at、expired_at，均为 required/keyData timestamp",
-        "若产出 CEL 则 expired_at 从 start_at 加48小时派生，不使用机器当前时间",
+        "最终 Proposal Entity attributes 显式包含 started_at、expired_at，均为 required/keyData timestamp",
+        "若产出 CEL 则 expired_at 从 started_at 加48小时派生，不使用机器当前时间",
         "只保存类型与规则，不能把合成运行时日期当作当前业务事实"
       ]
     },
     {
       "id": 11,
       "prompt": "模型中有已签采购合同、付款请求、银行付款确认和更正记录。时间来源都由这些原始凭证记录。生成最终 FM 时，能不能只在 README 写这些时间含义，不给实体加字段？",
-      "expected_output": "明确拒绝仅写说明，按 kind 在 Entity 源 YAML 显式定义 signed_at、start_at／expired_at、confirmed_at、created_at；直接展开类型时间并复用已给的凭证来源，不强求截止生成公式；结构通过不等于所有业务来源已充分。",
+      "expected_output": "明确拒绝仅写说明，按 kind 在 Entity 源 YAML 显式定义 signed_at、started_at／expired_at、confirmed_at、created_at；直接展开类型时间并复用已给的凭证来源，不强求截止生成公式；结构通过不等于所有业务来源已充分。",
       "files": [],
       "expectations": [
         "区分合同 signed_at、请求起止、确认 confirmed_at、更正凭证 created_at",
         "不以 README、notes 或编译器默认注入替代 attributes 定义",
         "确认实际凭证的业务语义，不因名称中有银行就任意指定 kind 或责任角色",
-        "付款请求以自身 start_at／expired_at 表达期限，不强索固定时长、生成公式或实例日期；真实额外约束冲突仍保留"
+        "付款请求以自身 started_at／expired_at 表达期限，不强索固定时长、生成公式或实例日期；真实额外约束冲突仍保留"
       ]
     },
     {
@@ -168,7 +168,7 @@
       "expectations": [
         "每个候选都有单行短 label 与独立 description；角色名称为读者、平台等业务短语，不含职责或建模纪律",
         "候选详细说明分别保留已知事实、推断理由和剩余缺口，不以局部未知否定明确的支付义务及外部付款确认",
-        "若选择支付履约，箭头用平台 → 读者，先展开 start_at／expired_at 并保留期限依据待明确；沿凭证或对象属性追溯必要来源，不以字段已存在关闭期限缺口，不自行套用15分钟或预设必须有公式",
+        "若选择支付履约，箭头用平台 → 读者，先展开 started_at／expired_at 并保留期限依据待明确；沿凭证或对象属性追溯必要来源，不以字段已存在关闭期限缺口，不自行套用15分钟或预设必须有公式",
         "request／confirmation 用简短业务说明，不重复角色长职责、通用免责声明或全部异常规则",
         "一个核心问题，不重问输入已明确的范围和付款确认用途，不把分页查看等操作变成假履约",
         "保存及展示不代表业务批准；真实 Agent 输出需另行人工评价，不由字符串测试宣称语义通过"
@@ -180,7 +180,7 @@
       "expected_output": "保存付款请求起止与支付确认时间的已知语义及72小时计算、含等号的按时判断；仅对迟到回执等真实业务缺口提问，不索取物理记录映射。",
       "files": [],
       "expectations": [
-        "直接复用付款请求 start_at，expired_at 从它加72小时派生，并保留支付机构确认扣款成功为 confirmed_at 的依据",
+        "直接复用付款请求 started_at，expired_at 从它加72小时派生，并保留支付机构确认扣款成功为 confirmed_at 的依据",
         "保留 confirmed_at 小于或等于 expired_at 的按时判断，不改成回调时间或严格小于",
         "不再问平台发起付款以哪条记录为准、谁记录开始字段或数据库及接口字段是什么",
         "不因底层实现尚未设计把时间依据标为阻塞，不生成当前时间或未来业务实例",
@@ -193,7 +193,7 @@
       "expected_output": "保留已有凭证与72小时规则，指出两份材料的业务起点冲突及超期判断影响，针对起算事件只问一个问题，不以字段齐全为由自行选择。",
       "files": [],
       "expectations": [
-        "不把存在 start_at、expired_at 字段当作时间业务含义已明确",
+        "不把存在 started_at、expired_at 字段当作时间业务含义已明确",
         "引用输入中下单与发出请求的真实冲突，说明会改变截止时刻或超期判断",
         "仅核实72小时采用哪个起算事件，不捆绑数据库、接口和记录人问题",
         "在人工明确前保留时间依据阻塞，不默认新版有效或两个事件相同"
@@ -289,7 +289,7 @@
       "expected_output": "识别请求并展开开始与截止属性，追溯业务来源并保留期限确定依据的缺口；类型存在不证明逾期依据已明，澄清时不预设必须有固定时长公式。",
       "files": [],
       "expectations": [
-        "直接展开 start_at／expired_at，同时核对期限来自何种业务约定，不等待疑似派生才追溯",
+        "直接展开 started_at／expired_at，同时核对期限来自何种业务约定，不等待疑似派生才追溯",
         "deadline 保留类型语义并标明确定依据待明确，不清空已知结构，也不宣称期限已解决",
         "来源缺口影响逾期判断，保留相应阻塞；若选择期限问题则问依据什么约定确定，不预设起算事件加固定时长，也不把没有公式本身当作阻塞",
         "不编造72小时、下单即开始、某人可任意设定期限、等号边界或生产日期",
@@ -317,7 +317,7 @@
       "expectations": [
         "直接在合同候选说明中展开 signed_at，不因未给具体日期列为阻塞或追问哪个系统记录",
         "正式属性为 required/keyData timestamp，可为非派生输入；不要求 derivedByRuleRef 或当前时间",
-        "不为 Contract 添加 start_at／expired_at，不把签约默认等同于下单或权益生效",
+        "不为 Contract 添加 started_at／expired_at，不把签约默认等同于下单或权益生效",
         "没有真实签约争议时不臆造签署方式选择题，也不补未来履约或声称合同模型已获批准"
       ]
     },
@@ -364,7 +364,7 @@
         "直接展开 created_at 为更正凭证形成时间，正式属性为 required/keyData timestamp，可不含派生公式",
         "不要求哪个系统或谁记录形成时间，不把缺少实例日期作为发现阻塞",
         "不将 created_at 等同原联系发生时间，不把更正冒充原事件重发生或履约确认",
-        "不为该时刻凭证补 start_at／expired_at，不虚构合同或删除原凭证"
+        "不为该时刻凭证补 started_at／expired_at，不虚构合同或删除原凭证"
       ]
     },
     {

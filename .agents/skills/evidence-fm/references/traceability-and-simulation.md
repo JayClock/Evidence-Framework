@@ -30,7 +30,7 @@ attributes:
     derivedByRuleRef: rule.requested-amount
 ```
 
-所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request interval 固定引用 `start_at` 和 `expired_at`，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。机器 lineage 将关键属性表示为两种来源分类（不是业务来源充分性的判定）：
+所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request interval 固定引用 `started_at` 和 `expired_at`，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。机器 lineage 将关键属性表示为两种来源分类（不是业务来源充分性的判定）：
 
 1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
 2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
@@ -92,7 +92,7 @@ type: evidence_instance
 id: instance.payment-request
 entityRef: request.payment
 values:
-  start_at: '2026-09-01T09:01:00Z'
+  started_at: '2026-09-01T09:01:00Z'
 basedOn:
   - instance.sales-contract
 ```

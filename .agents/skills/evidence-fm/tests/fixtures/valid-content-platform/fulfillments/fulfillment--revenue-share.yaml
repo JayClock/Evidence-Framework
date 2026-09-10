@@ -5,7 +5,7 @@ contextRef: context.revenue-share-fulfillment
 contractRef: contract.content-production
 requestRef: request.revenue-share
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
   - confirmation.revenue-share

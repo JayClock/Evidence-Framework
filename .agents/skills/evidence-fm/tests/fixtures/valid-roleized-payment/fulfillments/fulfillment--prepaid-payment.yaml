@@ -5,7 +5,7 @@ contextRef: context.prepaid-payment-fulfillment
 contractRef: contract.prepaid-payment
 requestRef: request.prepaid-payment
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
   - confirmation.prepaid-payment

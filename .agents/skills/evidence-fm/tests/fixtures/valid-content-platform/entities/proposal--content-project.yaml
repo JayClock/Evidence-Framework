@@ -6,7 +6,7 @@ label: 内容产品立项提案
 contextRef: context.content-production-precontract
 responsibleRoleRef: role.prospective-creator
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发出时间
     valueType: timestamp
     required: true

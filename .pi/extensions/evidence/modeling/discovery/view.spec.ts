@@ -76,7 +76,7 @@ describe('contract-centered discovery messages', () => {
       '候选履约（请求 → 确认凭证）',
       '▶ 支付分成',
       '要求：合作协议、结算单',
-      '请求时间：start_at=待明确；expired_at=待明确',
+      '请求时间：started_at=待明确；expired_at=待明确',
       '履约确认凭证：待明确',
       '逾期未支付 → 逾期补偿（候选）',
       'Q-001 什么凭证证明分成已支付？',

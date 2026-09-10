@@ -36,7 +36,7 @@ businessView 由 context、fulfillment、position 记录派生，不由 Agent �
 
 - context：明确 channel／contract／domain；contextRef 引用上下文候选。合同 roleRefs 恰好两个位置；participantRefs、thingRefs、evidenceRefs 分别记录实际参与人／组织、标的物和凭证。
 - fulfillment：candidateRef、contextRef，以及结构化 requestEvidence、confirmationEvidence、supportingEvidenceRefs、participantRefs、thingRefs 和来源。请求／确认分别连接对凭证负责的角色，并表达凭证、形成或提供者、证明作用与类型时间；全未知字段为 null，部分已知保留原依据。
-- deadline 保留已识别请求的 start_at／expired_at 类型语义，同时写明尚未明确的确定依据；字段非空不表示来源已解决。
+- deadline 保留已识别请求的 started_at／expired_at 类型语义，同时写明尚未明确的确定依据；字段非空不表示来源已解决。
 - 后续履约用同一合同内的 parentFulfillmentRef 与 trigger 连接直接前序，不能循环。
 - position.current 指向当前 channel／contract／domain 上下文及可选履约／对象；尚无业务位置时 contexts 为空或 current 为 null。
 - 问题 target 指向已有上下文及可选履约／对象，尚未定位为 null。界面用 label 展示，F2 与 `/evidence-status` 按需展示说明与来源；不提升候选审核状态。

@@ -6,7 +6,7 @@ label: 周进度检查请求
 contextRef: context.weekly-progress-check-fulfillment
 responsibleRoleRef: role.platform-performance
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

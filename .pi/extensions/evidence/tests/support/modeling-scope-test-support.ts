@@ -58,13 +58,13 @@ export const domain = [
   }),
 ];
 // Synthetic channel facts, not runtime defaults or inferred business deadlines.
-const channelTimes = ['start_at', 'expired_at'].map((name) => ({
+const channelTimes = ['started_at', 'expired_at'].map((name) => ({
   name,
   label: name,
   valueType: 'timestamp',
   required: true,
   keyData: true,
-  meaning: name === 'start_at' ? '凭证发出时间' : '明确约定的有效期截止时间',
+  meaning: name === 'started_at' ? '凭证发出时间' : '明确约定的有效期截止时间',
 }));
 export const channel = [
   source('model.yaml', manifest),

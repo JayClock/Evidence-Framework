@@ -6,7 +6,7 @@ contextRef: context.content-payment-fulfillment
 bindings:
   self:
     ref: request.content-payment
-expression: self.start_at + duration("30m")
+expression: self.started_at + duration("30m")
 resultType: timestamp
 target:
   entityRef: request.content-payment

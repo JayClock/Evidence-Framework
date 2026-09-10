@@ -83,7 +83,9 @@ class SkillPackageTests(unittest.TestCase):
         self.assertRegex(entry, r"(?m)^disable-model-invocation: true$")
         self.assertIn("evidence-discovery", entry)
         self.assertIn("evidence-fm", entry)
-        self.assertNotRegex(entry, r"fm_model_(?:submit|ask)|evidence_(?:ask|save|finalize|submit)_")
+        self.assertNotRegex(
+            entry, r"fm_model_(?:submit|ask)|evidence_(?:ask|save|finalize|submit)_"
+        )
         evaluations = json.loads(
             (ROOT / "fm-modeling/evals/evals.json").read_text(encoding="utf-8")
         )
@@ -275,9 +277,9 @@ class IsolatedFMTests(unittest.TestCase):
         # Intentionally break a type definition, not a command or dependency.
         request = next((self.model / "entities").glob("request--*.yaml"))
         text = request.read_text(encoding="utf-8")
-        self.assertIn("name: start_at", text)
+        self.assertIn("name: started_at", text)
         request.write_text(
-            text.replace("name: start_at", "name: old_start"), encoding="utf-8"
+            text.replace("name: started_at", "name: old_start"), encoding="utf-8"
         )
         report = self.check(1)
         self.assertFalse(report["valid"])

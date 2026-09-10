@@ -6,7 +6,7 @@ label: 收入分成支付请求
 contextRef: context.revenue-share-fulfillment
 responsibleRoleRef: role.creator
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

@@ -71,7 +71,7 @@
       "type": "object",
       "required": ["startAttribute", "endAttribute"],
       "properties": {
-        "startAttribute": { "const": "start_at" },
+        "startAttribute": { "const": "started_at" },
         "endAttribute": { "const": "expired_at" }
       },
       "additionalProperties": false

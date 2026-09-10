@@ -85,7 +85,7 @@ class TraceabilityTests(unittest.TestCase):
         )
         self.assertIn(
             (
-                "request.content-payment#start_at",
+                "request.content-payment#started_at",
                 "request.content-payment#expired_at",
                 "rule.payment-deadline",
             ),
@@ -167,7 +167,7 @@ class TraceabilityTests(unittest.TestCase):
             started_at = next(
                 attribute
                 for attribute in request["attributes"]
-                if attribute["name"] == "start_at"
+                if attribute["name"] == "started_at"
             )
             started_at["derivedByRuleRef"] = "rule.payment-start"
             self.write_yaml(request_path, request)
@@ -184,7 +184,7 @@ class TraceabilityTests(unittest.TestCase):
                     "resultType": "timestamp",
                     "target": {
                         "entityRef": "request.content-payment",
-                        "attribute": "start_at",
+                        "attribute": "started_at",
                     },
                 },
             )

@@ -104,7 +104,7 @@ Agent 不得自行将状态提升为 reviewed／confirmed。
 
 | kind                                     | `attributes[].name` 必须包含 |
 | ---------------------------------------- | ---------------------------- |
-| `rfp`、`proposal`、`fulfillment_request` | `start_at`、`expired_at`     |
+| `rfp`、`proposal`、`fulfillment_request` | `started_at`、`expired_at`   |
 | `contract`                               | `signed_at`                  |
 | `fulfillment_confirmation`               | `confirmed_at`               |
 | `other_evidence`                         | `created_at`                 |
@@ -114,8 +114,6 @@ Agent 不得自行将状态提升为 reviewed／confirmed。
 表中的类型属性、具体实例值和生成规则分开：所有必备时间都允许非派生输入，类型结构不要求实例日期或 `derivedByRuleRef`；有来源的生成规则存在时才定义 CEL。三类时刻凭证不套请求区间或过期时间，各类型的必备时间不能互换。
 
 所有关键时间仍须执行 [来源映射](./provenance.md)，真实口径冲突不能用自由 timestamp 参数规避。每个实例必须具有确定的 RFC 3339 时间值，非派生必填值在形成时给出，派生值按 [实例执行规则](traceability-and-simulation.md) 在场景结束前产生。null、无期限说明、占位日期或 `openEndedReason` 均不能代替有效时间。正式类型文件不填写虚构的实例日期，合成实例也不证明业务已约定某个固定时长。
-
-此本地约束收紧 FM v3：旧 `startedAt`／`expiresAt`／`confirmedAt`／`signedAt` 不替代上述必备属性，不自动改名或迁移既有业务工件。相关 CEL、interval 与测试实例须同步更新。
 
 ### Contract Context 和两个 Role
 
@@ -239,7 +237,7 @@ contextRef: context.subscription-payment-fulfillment
 contractRef: contract.subscription
 requestRef: request.subscription-payment
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
   - role.qualified-payment-confirmation
@@ -268,7 +266,7 @@ Request 的 interval 属性必须：
 - `required: true`；
 - `keyData: true`。
 
-`startAttribute` 固定为 `start_at`，`endAttribute` 固定为 `expired_at`，两者缺一不可。不再接受 `openEndedReason`；允许以请求自身的非派生时间属性表达区间，不要求先确定截止生成公式。业务来源或规则缺口影响判断时按来源追溯过程返回发现，不以 interval 已完整为来源充分的证明；实例值仍须完整，不得擅自填补业务约定。
+`startAttribute` 固定为 `started_at`，`endAttribute` 固定为 `expired_at`，两者缺一不可。不再接受 `openEndedReason`；允许以请求自身的非派生时间属性表达区间，不要求先确定截止生成公式。业务来源或规则缺口影响判断时按来源追溯过程返回发现，不以 interval 已完整为来源充分的证明；实例值仍须完整，不得擅自填补业务约定。
 
 ### completionPolicy
 
@@ -299,7 +297,7 @@ RFP／Proposal 必须位于 `pre_contract` 或 `channel` Context，不得放入 
 RFP → Proposal → Contract
 ```
 
-Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保留签约来源。合同前协商和合同履约仍是不同边界，但 RFP／Proposal 均须显式定义 `start_at`、`expired_at`，不因尚未签约而省略时间。
+Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保留签约来源。合同前协商和合同履约仍是不同边界，但 RFP／Proposal 均须显式定义 `started_at`、`expired_at`，不因尚未签约而省略时间。
 
 ## 7. Relationship
 

@@ -60,7 +60,7 @@ const RequestEvidenceSchema = Type.Object(
       '请求凭证要求接收方完成什么；只保留有来源的已知部分。',
     ),
     startAt: knownText(
-      '履约请求 start_at 的业务含义及来源；来源未知须标明，影响判断时澄清；不因缺公式清空已知结构；未知为 null，不编造实例日期。',
+      '履约请求 started_at 的业务含义及来源；来源未知须标明，影响判断时澄清；不因缺公式清空已知结构；未知为 null，不编造实例日期。',
     ),
     expiredAt: knownText(
       '履约请求 expired_at 的业务含义及确定依据；字段非空不表示期限依据已解决；未知为 null，不编造期限。',

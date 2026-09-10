@@ -286,7 +286,7 @@ class FulfillmentModelTests(unittest.TestCase):
             root = self.copied_fixture("valid-subscription", directory)
             path = root / "rules" / "rule--payment-deadline.yaml"
             rule = self.read_yaml(path)
-            rule["expression"] = 'expired_at = self.start_at + duration("30m")'
+            rule["expression"] = 'expired_at = self.started_at + duration("30m")'
             self.write_yaml(path, rule)
             errors = validate_model(load_model(root))
             self.assertTrue(
@@ -433,7 +433,7 @@ class FulfillmentModelTests(unittest.TestCase):
             started_at = next(
                 attribute
                 for attribute in request["attributes"]
-                if attribute["name"] == "start_at"
+                if attribute["name"] == "started_at"
             )
             started_at["keyData"] = False
             self.write_yaml(request_path, request)
@@ -454,14 +454,14 @@ class FulfillmentModelTests(unittest.TestCase):
             path = root / "fulfillments" / "fulfillment--content-payment.yaml"
             payment = self.read_yaml(path)
             payment["requestInterval"] = {
-                "startAttribute": "start_at",
+                "startAttribute": "started_at",
                 "openEndedReason": "合同约定持续履行，直到一方发出终止通知。",
             }
             self.write_yaml(path, payment)
             errors = validate_model(load_model(root))
             self.assertTrue(any("openEndedReason" in error for error in errors), errors)
 
-            payment["requestInterval"] = {"startAttribute": "start_at"}
+            payment["requestInterval"] = {"startAttribute": "started_at"}
             self.write_yaml(path, payment)
             errors = validate_model(load_model(root))
             self.assertTrue(any("requestInterval" in error for error in errors), errors)

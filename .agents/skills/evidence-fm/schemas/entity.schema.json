@@ -56,7 +56,7 @@
                 "contains": {
                   "allOf": [
                     { "$ref": "#/$defs/evidenceTime" },
-                    { "properties": { "name": { "const": "start_at" } } }
+                    { "properties": { "name": { "const": "started_at" } } }
                   ]
                 },
                 "minContains": 1,

@@ -119,7 +119,7 @@ export function fulfillmentInteractionLines(
     `履约请求凭证：${name(request.evidenceRef)}`,
     `发起／接收：${name(request.issuerRef)} → ${name(request.recipientRef)}`,
     `要求：${field(request.requirement, fullText)}`,
-    `请求时间：start_at=${field(request.startAt, fullText)}；expired_at=${field(request.expiredAt, fullText)}`,
+    `请求时间：started_at=${field(request.startAt, fullText)}；expired_at=${field(request.expiredAt, fullText)}`,
     `履约确认凭证：${name(confirmation.evidenceRef)}`,
     `提供方：${name(confirmation.providerRef)}`,
     `证明：${field(confirmation.proves, fullText)}`,

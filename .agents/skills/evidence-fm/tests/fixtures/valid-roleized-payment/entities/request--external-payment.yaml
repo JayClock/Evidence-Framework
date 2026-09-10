@@ -6,7 +6,7 @@ label: 外部付款请求
 contextRef: context.external-payment-fulfillment
 responsibleRoleRef: role.external-payment-customer
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

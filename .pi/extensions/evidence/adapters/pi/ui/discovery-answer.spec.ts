@@ -133,7 +133,7 @@ describe('structured discovery answer view', () => {
     expect(summary).toContain('作者合作协议');
     expect(summary).toContain('发起／接收：作者 → 平台');
     expect(summary).toContain('要求：合作协议、结算单');
-    expect(summary).toContain('请求时间：start_at=待明确；expired_at=待明确');
+    expect(summary).toContain('请求时间：started_at=待明确；expired_at=待明确');
     expect(summary).toContain('履约确认凭证：待明确');
     expect(summary).toContain('当前问题 · Q-001');
     expect(summary).not.toContain('逾期补偿');
@@ -286,7 +286,7 @@ describe('structured discovery answer view', () => {
       '履约请求凭证：待明确',
       '发起／接收：平台 → 读者',
       '要求：按订阅约定支付对应专栏费用（业务背景、核心需求4）',
-      '请求时间：start_at=以本次付款请求的 start_at 为准；形成依据待明确；expired_at=以本次付款请求的 expired_at 为准；确定依据待明确',
+      '请求时间：started_at=以本次付款请求的 started_at 为准；形成依据待明确；expired_at=以本次付款请求的 expired_at 为准；确定依据待明确',
       '履约确认凭证：待明确',
       '提供方：待明确',
       '证明：外部付款确认，具体凭证及提供方待明确',

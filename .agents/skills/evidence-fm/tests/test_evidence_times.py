@@ -41,9 +41,9 @@ from fm_traceability import (  # pyright: ignore[reportMissingImports]  # noqa: 
 
 # Independent acceptance table, not imported from the implementation.
 TIMES = {
-    "rfp": ("start_at", "expired_at"),
-    "proposal": ("start_at", "expired_at"),
-    "fulfillment_request": ("start_at", "expired_at"),
+    "rfp": ("started_at", "expired_at"),
+    "proposal": ("started_at", "expired_at"),
+    "fulfillment_request": ("started_at", "expired_at"),
     "contract": ("signed_at",),
     "fulfillment_confirmation": ("confirmed_at",),
     "other_evidence": ("created_at",),
@@ -157,7 +157,7 @@ class EvidenceTimeTests(unittest.TestCase):
                         "fulfillment_confirmation",
                         "other_evidence",
                     ):
-                        self.assertNotIn("start_at", attributes)
+                        self.assertNotIn("started_at", attributes)
                         self.assertNotIn("expired_at", attributes)
             self.assertEqual(before, {p: p.read_bytes() for p in root.rglob("*.yaml")})
 
@@ -226,7 +226,7 @@ class EvidenceTimeTests(unittest.TestCase):
             compiled = compiled_document(model)
             request = next(e for e in compiled["entities"] if e["id"] == doc["id"])
             attributes = {a["name"]: a for a in request["attributes"]}
-            for name in ("start_at", "expired_at"):
+            for name in ("started_at", "expired_at"):
                 self.assertNotIn("derivedByRuleRef", attributes[name])
                 self.assertEqual("timestamp", attributes[name]["valueType"])
                 self.assertTrue(attributes[name]["required"])
@@ -269,20 +269,19 @@ class EvidenceTimeTests(unittest.TestCase):
         )
         doc = yaml.safe_load(path.read_text())
         doc["requestInterval"] = {
-            "startAttribute": "start_at",
+            "startAttribute": "started_at",
             "endAttribute": "expired_at",
         }
         self.assertEqual([], schema_errors(doc, "fulfillment.schema.json"))
         for interval in (
-            {"startAttribute": "start_at"},
-            {"startAttribute": "start_at", "openEndedReason": "持续履行"},
-            {"startAttribute": "start_at", "endAttribute": None},
+            {"startAttribute": "started_at"},
+            {"startAttribute": "started_at", "openEndedReason": "持续履行"},
+            {"startAttribute": "started_at", "endAttribute": None},
             {
-                "startAttribute": "start_at",
+                "startAttribute": "started_at",
                 "endAttribute": "expired_at",
                 "openEndedReason": "持续履行",
             },
-            {"startAttribute": "startedAt", "endAttribute": "expiresAt"},
         ):
             with self.subTest(interval=interval):
                 doc["requestInterval"] = interval

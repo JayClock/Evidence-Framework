@@ -32,7 +32,7 @@ Customer Party
 
 ```yaml
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 ```
 
@@ -84,7 +84,7 @@ Channel C Confirmation ─┘
 - 招标：一个 RFP 对多个 Proposal，最终 Contract 追溯被接受 Proposal；
 - 拼团、赠送、活动和谈判位于独立 Channel／Pre-contract Context。
 
-RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`start_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯渠道可没有 Contract 和 Fulfillment，不补造未来履约。
+RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯渠道可没有 Contract 和 Fulfillment，不补造未来履约。
 
 ## 9. KPI／目标—实际
 

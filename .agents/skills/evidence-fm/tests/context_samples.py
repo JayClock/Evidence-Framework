@@ -153,7 +153,7 @@ def channel_documents() -> list[dict[str, Any]]:
             contextRef=context,
             responsibleRoleRef="role.prospect",
             attributes=[
-                attribute("start_at", "timestamp", "询价形成时间", keyData=True),
+                attribute("started_at", "timestamp", "询价形成时间", keyData=True),
                 attribute("expired_at", "timestamp", "询价回应截止时间", keyData=True),
             ],
         ),
@@ -165,7 +165,7 @@ def channel_documents() -> list[dict[str, Any]]:
             contextRef=context,
             responsibleRoleRef="role.quote-provider",
             attributes=[
-                attribute("start_at", "timestamp", "报价形成时间", keyData=True),
+                attribute("started_at", "timestamp", "报价形成时间", keyData=True),
                 attribute(
                     "expired_at", "timestamp", "报价有效期截止时间", keyData=True
                 ),
@@ -209,7 +209,7 @@ def performance_fulfillment(
             contextRef=context,
             responsibleRoleRef=request_role,
             attributes=[
-                attribute("start_at", "timestamp", "请求开始时间", keyData=True),
+                attribute("started_at", "timestamp", "请求开始时间", keyData=True),
                 attribute(
                     "expired_at", "timestamp", "请求中明确记录的截止时间", keyData=True
                 ),
@@ -237,7 +237,7 @@ def performance_fulfillment(
             "contractRef": "contract.performance",
             "requestRef": request,
             "requestInterval": {
-                "startAttribute": "start_at",
+                "startAttribute": "started_at",
                 "endAttribute": "expired_at",
             },
             "confirmationRefs": [confirmation],
@@ -358,7 +358,7 @@ def performance_documents(
                     responsibleRoleRef="role.goal-requester",
                     attributes=[
                         attribute(
-                            "start_at", "timestamp", "邀请发出时间", keyData=True
+                            "started_at", "timestamp", "邀请发出时间", keyData=True
                         ),
                         attribute(
                             "expired_at", "timestamp", "邀请回应截止时间", keyData=True
@@ -374,7 +374,7 @@ def performance_documents(
                     responsibleRoleRef="role.goal-proposer",
                     attributes=[
                         attribute(
-                            "start_at", "timestamp", "方案提出时间", keyData=True
+                            "started_at", "timestamp", "方案提出时间", keyData=True
                         ),
                         attribute(
                             "expired_at",

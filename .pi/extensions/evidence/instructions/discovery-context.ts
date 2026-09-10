@@ -395,7 +395,7 @@ export function candidateContextLines(
       `${key} ${snapshot.recordHeads[key]}${snapshot.staleRecordKeys.includes(key) ? '；依据失效' : ''}
 请求凭证：${label(item.requestEvidence.evidenceRef)}；发起／接收：${label(item.requestEvidence.issuerRef)} → ${label(item.requestEvidence.recipientRef)}
 要求：${clipContext(item.requestEvidence.requirement ?? '待明确', 420)}
-请求时间：start_at=${clipContext(item.requestEvidence.startAt ?? '待明确', 180)}；expired_at=${clipContext(item.requestEvidence.expiredAt ?? '待明确', 180)}
+请求时间：started_at=${clipContext(item.requestEvidence.startAt ?? '待明确', 180)}；expired_at=${clipContext(item.requestEvidence.expiredAt ?? '待明确', 180)}
 确认凭证：${label(item.confirmationEvidence.evidenceRef)}；提供方：${label(item.confirmationEvidence.providerRef)}
 证明：${clipContext(item.confirmationEvidence.proves ?? '待明确', 420)}
 确认时间：confirmed_at=${clipContext(item.confirmationEvidence.confirmedAt ?? '待明确', 180)}

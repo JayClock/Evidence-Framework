@@ -49,7 +49,7 @@ class SkillDocumentationTests(unittest.TestCase):
         for path in runtime_docs:
             self.assertIsNone(
                 re.search(
-                    r"fulfillment_request|fulfillment_confirmation|start_at|expired_at|signed_at|confirmed_at|created_at|derivedByRuleRef|valueType",
+                    r"fulfillment_request|fulfillment_confirmation|started_at|expired_at|signed_at|confirmed_at|created_at|derivedByRuleRef|valueType",
                     path.read_text(),
                 ),
                 str(path),
@@ -71,9 +71,7 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_discovery_handoff_and_fm_publication_keep_authorization_separate(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
-        handoff = (
-            ROOT / "evidence-discovery/assets/discovery-template.md"
-        ).read_text()
+        handoff = (ROOT / "evidence-discovery/assets/discovery-template.md").read_text()
         publication = (ROOT / "evidence-fm/references/publication.md").read_text()
         self.assertIn("形成候选", fm_entry)
         self.assertIn("明确授权保存该已展示候选", fm_entry)

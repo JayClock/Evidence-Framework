@@ -5,7 +5,7 @@ contextRef: context.advance-payment-fulfillment
 contractRef: contract.content-production
 requestRef: request.advance-payment
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
   - confirmation.advance-payment

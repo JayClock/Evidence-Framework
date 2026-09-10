@@ -6,7 +6,7 @@ label: 支付预付款请求
 contextRef: context.advance-payment-fulfillment
 responsibleRoleRef: role.creator
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

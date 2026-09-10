@@ -6,7 +6,7 @@ label: 内容产品付款请求
 contextRef: context.content-payment-fulfillment
 responsibleRoleRef: role.platform-subscription
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

@@ -6,7 +6,7 @@ label: 违约金支付请求
 contextRef: context.creator-penalty-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

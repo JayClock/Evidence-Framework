@@ -6,7 +6,7 @@ label: 目标设定请求
 contextRef: context.goal-setting-fulfillment
 responsibleRoleRef: role.operator
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

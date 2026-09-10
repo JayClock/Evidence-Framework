@@ -6,7 +6,7 @@ label: 交稿请求
 contextRef: context.manuscript-delivery-fulfillment
 responsibleRoleRef: role.platform-content-production
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

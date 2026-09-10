@@ -163,7 +163,7 @@ Agent 先消化全部新回答，再按 Context 组织全历史候选，声明�
 
 例如 deadline 可保留“以本次付款请求的截止时间（expired_at）为准；确定依据待明确”。若来源缺口影响逾期作废判断，就需澄清；不能只引用“规定时间内付款”、类型已展开、asserted 标签或合成模拟通过便用 resolution 关闭问题。只有已有业务事实充分覆盖原题才关联解决。升级不自动改历史题、撤回旧关联或解除阻塞，已有记录须受控整理。
 
-这对六类凭证统一适用：RFP／Proposal 同样直接展开 start_at／expired_at；Contract 的 signed_at 表达签约时间，Confirmation 的 confirmed_at 表达履约确认时间，Other Evidence 的 created_at 表达凭证形成时间。后三类不补请求区间、不索取实例日期或记录字段。不能据此推定签约等于权益生效、确认等于回调到达、补录凭证形成等于原事件发生；相关事实有真实争议才向业务方澄清。六类都保留 required/keyData timestamp，实际实例不得缺失或互换各自的必备属性。
+这对六类凭证统一适用：RFP／Proposal 同样直接展开 started_at／expired_at；Contract 的 signed_at 表达签约时间，Confirmation 的 confirmed_at 表达履约确认时间，Other Evidence 的 created_at 表达凭证形成时间。后三类不补请求区间、不索取实例日期或记录字段。不能据此推定签约等于权益生效、确认等于回调到达、补录凭证形成等于原事件发生；相关事实有真实争议才向业务方澄清。六类都保留 required/keyData timestamp，实际实例不得缺失或互换各自的必备属性。
 
 新问题的 gapKey 如 `c-004.payment-deadline`、`input.agreement`，同一缺口保持标识和 Q-ID。程序拦截同标识及部分文本重题，不保证识别所有语义改写；不同对象不能因问法相同而混为一题。v5 问题必须包含 gapKey，不补写或转换旧日志。
 

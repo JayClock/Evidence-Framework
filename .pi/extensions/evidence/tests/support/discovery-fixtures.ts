@@ -217,7 +217,7 @@ export function subscriptionContent(): DiscoveryContent {
             candidateRef: 'C-004',
             requestEvidence: requestEvidence(
               '按订阅约定支付对应专栏费用（业务背景、核心需求4）',
-              '以本次付款请求的 start_at 为准；形成依据待明确',
+              '以本次付款请求的 started_at 为准；形成依据待明确',
               '以本次付款请求的 expired_at 为准；确定依据待明确',
               'C-003',
               'C-002',

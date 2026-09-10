@@ -211,7 +211,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
     const h = await setup();
     const prompt = (await h.policy()).replace(/[ \t]+/g, ' ');
     for (const rule of [
-      '`rfp`、`proposal`、`fulfillment_request` | `start_at`、`expired_at`',
+      '`rfp`、`proposal`、`fulfillment_request` | `started_at`、`expired_at`',
       '`contract` | `signed_at`',
       '`fulfillment_confirmation` | `confirmed_at`',
       '`other_evidence` | `created_at`',
@@ -225,17 +225,17 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
   it.each([
     [
       'rfp',
-      '邀请的开始时间 start_at、回应截止时间 expired_at',
+      '邀请的开始时间 started_at、回应截止时间 expired_at',
       '不默认开始等于编辑、发送或送达时刻',
     ],
     [
       'proposal',
-      '方案的有效开始时间 start_at、有效截止时间 expired_at',
+      '方案的有效开始时间 started_at、有效截止时间 expired_at',
       '接受不自动等于签约',
     ],
     [
       'fulfillment_request',
-      '本次请求的开始时间 start_at、截止时间 expired_at',
+      '本次请求的开始时间 started_at、截止时间 expired_at',
       '不赋予任意设定期限的权限',
     ],
     ['contract', '该合同的签约时间 signed_at', '不认定哪种行为构成签约'],
@@ -293,7 +293,7 @@ describe('context-led discovery prompt contract (not an LLM behavior evaluation)
         '按索引补读相关明细，不重新询问已经明确的事实',
         '凭证类型、时间业务含义及计算依据已明确时，直接复用对应属性',
         '保存规则、原始材料和最新有效回答的来源',
-        '付款请求.expired_at = 付款请求.start_at + 72小时',
+        '付款请求.expired_at = 付款请求.started_at + 72小时',
         '支付确认.confirmed_at ≤ 付款请求.expired_at',
         '不提供当前业务事实或默认72小时期限',
       ],

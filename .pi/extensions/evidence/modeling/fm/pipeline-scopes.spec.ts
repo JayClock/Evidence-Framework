@@ -84,7 +84,7 @@ describe('FM v3 scope validation', () => {
           if (item.category !== 'evidence') continue;
           expect(item.attributes).toEqual(
             expect.arrayContaining(
-              ['start_at', 'expired_at'].map((name) =>
+              ['started_at', 'expired_at'].map((name) =>
                 expect.objectContaining({
                   name,
                   valueType: 'timestamp',

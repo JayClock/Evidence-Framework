@@ -5,7 +5,7 @@ contextRef: context.external-payment-fulfillment
 contractRef: contract.external-payment
 requestRef: request.external-payment
 requestInterval:
-  startAttribute: start_at
+  startAttribute: started_at
   endAttribute: expired_at
 confirmationRefs:
   - confirmation.external-payment

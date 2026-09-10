@@ -6,7 +6,7 @@ label: 预付费付款请求
 contextRef: context.prepaid-payment-fulfillment
 responsibleRoleRef: role.prepaid-customer
 attributes:
-  - name: start_at
+  - name: started_at
     label: 发起时间
     valueType: timestamp
     required: true

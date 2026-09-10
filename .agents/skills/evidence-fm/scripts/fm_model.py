@@ -414,9 +414,9 @@ def validate_manifest(
 
 
 EVIDENCE_TIME_ATTRIBUTES = {
-    "rfp": ("start_at", "expired_at"),
-    "proposal": ("start_at", "expired_at"),
-    "fulfillment_request": ("start_at", "expired_at"),
+    "rfp": ("started_at", "expired_at"),
+    "proposal": ("started_at", "expired_at"),
+    "fulfillment_request": ("started_at", "expired_at"),
     "contract": ("signed_at",),
     "fulfillment_confirmation": ("confirmed_at",),
     "other_evidence": ("created_at",),
@@ -635,7 +635,7 @@ def validate_request_interval(
         if isinstance(attribute, dict)
     }
     for field_name, expected in (
-        ("startAttribute", "start_at"),
+        ("startAttribute", "started_at"),
         ("endAttribute", "expired_at"),
     ):
         if interval.get(field_name) != expected:
