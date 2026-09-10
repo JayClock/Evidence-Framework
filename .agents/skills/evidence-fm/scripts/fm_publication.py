@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import difflib
+import fcntl
 import hashlib
 import json
 import os
@@ -13,6 +14,7 @@ import subprocess
 import sys
 import uuid
 from collections.abc import Iterable
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -189,7 +191,7 @@ def run_checker(skill_dir: Path, model_dir: Path) -> dict[str, Any]:
     return report
 
 
-def _receipt_digest(receipt: dict[str, Any]) -> str:
+def receipt_digest(receipt: dict[str, Any]) -> str:
     unsigned = {key: value for key, value in receipt.items() if key != "receiptDigest"}
     return sha256_bytes(canonical_json(unsigned))
 
@@ -237,10 +239,229 @@ def prepare_candidate(
         "validation": validation,
         "difference": directory_diff(target, frozen),
     }
-    receipt["receiptDigest"] = _receipt_digest(receipt)
+    receipt["receiptDigest"] = receipt_digest(receipt)
     receipt_path = prepared_dir / "receipt.json"
     receipt_path.write_text(
         json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
     )
     return receipt, receipt_path
+
+
+def load_receipt(receipt_path: Path) -> dict[str, Any]:
+    receipt_path = _assert_plain_path(receipt_path, allow_missing=False)
+    if not receipt_path.is_file():
+        raise PublicationError("missing_path", f"Receipt is not a file: {receipt_path}")
+    receipt = json.JSONDecoder().decode(receipt_path.read_text(encoding="utf-8"))
+    if not isinstance(receipt, dict) or receipt.get("receiptVersion") != RECEIPT_VERSION:
+        raise PublicationError("conflict", "Unsupported or malformed preparation receipt")
+    if receipt.get("receiptDigest") != receipt_digest(receipt):
+        raise PublicationError("conflict", "Preparation receipt was modified")
+    if receipt.get("status") != "prepared" or not receipt.get("validation", {}).get("valid"):
+        raise PublicationError("validation_failed", "Preparation did not pass validation")
+    return receipt
+
+
+def _transaction_paths(target: Path, preparation_id: str) -> dict[str, Path]:
+    stem = f".{target.name}.fm-{preparation_id}"
+    return {
+        "lock": target.parent / f".{target.name}.fm.lock",
+        "journal": target.parent / f".{target.name}.fm-transaction.json",
+        "backup": target.parent / f"{stem}.backup",
+        "staging": target.parent / f"{stem}.staging",
+    }
+
+
+@contextmanager
+def target_lock(path: Path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = path.open("a+", encoding="utf-8")
+    try:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise PublicationError("conflict", f"Another publication holds the target lock: {path}") from error
+        yield
+    finally:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        handle.close()
+
+
+def _write_json(path: Path, value: dict[str, Any]) -> None:
+    temporary = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+    temporary.write_text(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
+def _verify_sources(entries: list[dict[str, str]]) -> None:
+    for expected in entries:
+        current = digest_source(Path(expected["path"]))
+        if current != expected:
+            raise PublicationError("conflict", f"Declared source changed: {expected['path']}")
+
+
+def _failpoint(name: str) -> None:
+    if os.environ.get("FM_PUBLICATION_FAILPOINT") == name:
+        os._exit(97)
+
+
+def _cleanup_path(path: Path) -> None:
+    try:
+        if path.is_dir():
+            shutil.rmtree(path)
+        elif path.exists():
+            path.unlink()
+    except OSError as error:
+        raise PublicationError("recovery_required", f"Could not clean transaction path {path}: {error}") from error
+
+
+def _rename_for_transaction(source: Path, destination: Path) -> None:
+    try:
+        source.rename(destination)
+    except OSError as error:
+        raise PublicationError(
+            "recovery_required", f"Could not rename {source} to {destination}: {error}"
+        ) from error
+
+
+def apply_candidate(
+    *, skill_dir: Path, receipt_path: Path, report_dir: Path
+) -> dict[str, Any]:
+    receipt = load_receipt(receipt_path)
+    candidate = assert_directory_tree(Path(receipt["candidate"]["path"]))
+    target = _assert_plain_path(Path(receipt["target"]["path"]), allow_missing=True)
+    report_dir = _assert_plain_path(report_dir, allow_missing=True)
+    assert_separate_paths([candidate, target, report_dir])
+    if digest_directory(candidate) != receipt["candidate"]["digest"]:
+        raise PublicationError("conflict", "Frozen candidate changed after preparation")
+    _verify_sources(receipt["sources"])
+
+    paths = _transaction_paths(target, receipt["preparationId"])
+    with target_lock(paths["lock"]):
+        if paths["journal"].exists():
+            raise PublicationError("recovery_required", f"Recover the pending transaction for {target}")
+        current_digest = digest_directory(target)
+        if current_digest == receipt["candidate"]["digest"]:
+            validation = run_checker(skill_dir, candidate)
+            if not validation["valid"]:
+                raise PublicationError("validation_failed", "Current target matches an invalid candidate")
+            return {
+                "status": "noop",
+                "target": str(target),
+                "candidateDigest": receipt["candidate"]["digest"],
+                "validation": validation,
+            }
+        if current_digest != receipt["target"]["digest"]:
+            raise PublicationError("conflict", "Target changed after preparation")
+        if digest_directory(candidate) != receipt["candidate"]["digest"]:
+            raise PublicationError("conflict", "Frozen candidate changed while waiting for the lock")
+        _verify_sources(receipt["sources"])
+
+        _cleanup_path(paths["staging"])
+        _cleanup_path(paths["backup"])
+        shutil.copytree(candidate, paths["staging"], copy_function=shutil.copy2)
+        validation = run_checker(skill_dir, paths["staging"])
+        if not validation["valid"]:
+            _cleanup_path(paths["staging"])
+            raise PublicationError("validation_failed", "Candidate failed validation immediately before apply")
+
+        journal: dict[str, Any] = {
+            "transactionVersion": 1,
+            "target": str(target),
+            "candidate": str(candidate),
+            "backup": str(paths["backup"]),
+            "staging": str(paths["staging"]),
+            "targetDigest": current_digest,
+            "candidateDigest": receipt["candidate"]["digest"],
+            "checkpoint": "staged",
+        }
+        _write_json(paths["journal"], journal)
+        if target.exists():
+            _rename_for_transaction(target, paths["backup"])
+        journal["checkpoint"] = "target_backed_up"
+        _write_json(paths["journal"], journal)
+        _failpoint("after_target_backup")
+        _rename_for_transaction(paths["staging"], target)
+        journal["checkpoint"] = "target_replaced"
+        _write_json(paths["journal"], journal)
+        _failpoint("after_candidate_move")
+
+        report = {
+            "status": "applied",
+            "preparationId": receipt["preparationId"],
+            "target": str(target),
+            "targetDigest": digest_directory(target),
+            "previousTargetDigest": receipt["target"]["digest"],
+            "candidateDigest": receipt["candidate"]["digest"],
+            "sourceDigests": receipt["sources"],
+            "difference": receipt["difference"],
+            "validation": validation,
+        }
+        try:
+            _failpoint("before_report")
+            report_dir.mkdir(parents=True, exist_ok=True)
+            report_path = report_dir / f"publication-{receipt['preparationId']}.json"
+            _write_json(report_path, report)
+        except OSError as error:
+            return {
+                "status": "recovery_required",
+                "target": str(target),
+                "targetChanged": True,
+                "message": f"Target was replaced but the report could not be completed: {error}",
+                "journalPath": str(paths["journal"]),
+            }
+
+        _cleanup_path(paths["backup"])
+        paths["journal"].unlink(missing_ok=True)
+        report["reportPath"] = str(report_path)
+        return report
+
+
+def recover_target(target: Path) -> dict[str, Any]:
+    target = _assert_plain_path(target, allow_missing=True)
+    probe = _transaction_paths(target, "unused")
+    with target_lock(probe["lock"]):
+        journal_path = probe["journal"]
+        if not journal_path.exists():
+            return {"status": "noop", "target": str(target), "message": "No pending transaction"}
+        journal = json.JSONDecoder().decode(journal_path.read_text(encoding="utf-8"))
+        if not isinstance(journal, dict) or journal.get("target") != str(target):
+            raise PublicationError("recovery_required", "Transaction journal is malformed")
+        backup = _assert_plain_path(Path(journal["backup"]), allow_missing=True)
+        staging = _assert_plain_path(Path(journal["staging"]), allow_missing=True)
+        candidate_digest = journal["candidateDigest"]
+        previous_digest = journal["targetDigest"]
+
+        current_digest = digest_directory(target)
+        if current_digest == candidate_digest:
+            _cleanup_path(backup)
+            _cleanup_path(staging)
+            journal_path.unlink()
+            return {
+                "status": "applied",
+                "target": str(target),
+                "recoveryAction": "completed_replacement",
+            }
+        if current_digest == ABSENT_DIGEST and digest_directory(backup) == previous_digest:
+            backup.rename(target)
+            _cleanup_path(staging)
+            journal_path.unlink()
+            return {
+                "status": "applied",
+                "target": str(target),
+                "recoveryAction": "restored_previous_target",
+            }
+        if current_digest == ABSENT_DIGEST and previous_digest == ABSENT_DIGEST:
+            _cleanup_path(staging)
+            journal_path.unlink()
+            return {
+                "status": "applied",
+                "target": str(target),
+                "recoveryAction": "restored_absent_target",
+            }
+        raise PublicationError(
+            "recovery_required", "Target or backup no longer matches the transaction journal"
+        )

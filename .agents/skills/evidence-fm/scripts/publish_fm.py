@@ -8,7 +8,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from fm_publication import PublicationError, prepare_candidate
+from fm_publication import (
+    PublicationError,
+    apply_candidate,
+    prepare_candidate,
+    recover_target,
+)
 
 EXIT_CODES = {
     "prepared": 0,
@@ -39,6 +44,11 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument("--target", required=True, type=Path)
     prepare.add_argument("--source", action="append", default=[], type=Path)
     prepare.add_argument("--work-dir", required=True, type=Path)
+    apply = commands.add_parser("apply", help="validate and replace the prepared target")
+    apply.add_argument("--receipt", required=True, type=Path)
+    apply.add_argument("--report-dir", required=True, type=Path)
+    recover = commands.add_parser("recover", help="recover an interrupted target replacement")
+    recover.add_argument("--target", required=True, type=Path)
     return parser
 
 
@@ -62,6 +72,16 @@ def main() -> int:
                     "difference": receipt["difference"],
                 }
             )
+        if args.command == "apply":
+            return emit(
+                apply_candidate(
+                    skill_dir=Path(__file__).resolve().parents[1],
+                    receipt_path=args.receipt,
+                    report_dir=args.report_dir,
+                )
+            )
+        if args.command == "recover":
+            return emit(recover_target(args.target))
         return emit({"status": "unsupported_command", "message": args.command})
     except PublicationError as error:
         return emit({"status": error.code, "message": str(error)})
