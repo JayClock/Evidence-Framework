@@ -59,10 +59,24 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_fm_exposes_model_review_branches_not_a_second_discovery_workshop(self):
         references = ROOT / "evidence-fm/references"
-        for name in ("input-review.md", "scenario-validation.md"):
+        for name in ("input-review.md", "scenario-validation.md", "publication.md"):
             self.assertTrue((references / name).is_file(), name)
         for name in ("discovery-workshop.md", "scenario-replay.md"):
             self.assertFalse((references / name).exists(), name)
+
+    def test_discovery_handoff_and_fm_publication_keep_authorization_separate(self):
+        fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
+        handoff = (
+            ROOT / "evidence-discovery/assets/discovery-template.md"
+        ).read_text()
+        publication = (ROOT / "evidence-fm/references/publication.md").read_text()
+        self.assertIn("形成候选", fm_entry)
+        self.assertIn("明确授权保存该已展示候选", fm_entry)
+        self.assertIn("当前实际问题", handoff)
+        self.assertIn("普通回答与停止不是授权", handoff)
+        self.assertIn("publish_fm.py", publication)
+        for text in (fm_entry, handoff, publication):
+            self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
     def test_business_document_links_do_not_pull_in_maintenance_material(self):
         for name in NAMES:
