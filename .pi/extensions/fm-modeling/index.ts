@@ -3,9 +3,13 @@ import { Type } from 'typebox';
 
 import { registerModelingCommand } from './commands.js';
 import { QuestionUI } from './question-ui.js';
+import { ReviewUI } from './review-ui.js';
+import { PanelMutex } from './ui-contracts.js';
 
 export default function fmModelingExtension(pi: ExtensionAPI): void {
-  const questions = new QuestionUI();
+  const panels = new PanelMutex();
+  const questions = new QuestionUI(panels);
+  const reviews = new ReviewUI(panels);
 
   registerModelingCommand(pi);
   pi.registerTool({
@@ -26,6 +30,22 @@ export default function fmModelingExtension(pi: ExtensionAPI): void {
     }),
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const result = await questions.open(params, ctx);
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result) }],
+        details: result,
+      };
+    },
+  });
+  pi.registerTool({
+    name: 'fm_ui_review',
+    label: 'FM Candidate Review UI',
+    description:
+      '只读展示 publish_fm.py 的准备结果并返回人工选择；不执行模型发布或业务审核。',
+    parameters: Type.Object({
+      receiptPath: Type.String({ minLength: 1 }),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const result = await reviews.open(params.receiptPath, ctx);
       return {
         content: [{ type: 'text', text: JSON.stringify(result) }],
         details: result,

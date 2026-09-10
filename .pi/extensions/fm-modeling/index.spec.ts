@@ -32,8 +32,11 @@ describe('fm-modeling UI adapter boundary', () => {
 
     expect(registerCommand).toHaveBeenCalledOnce();
     expect(registerCommand.mock.calls[0]?.[0]).toBe('evidence-model');
-    expect(registerTool).toHaveBeenCalledOnce();
-    expect(registerTool.mock.calls[0]?.[0].name).toBe('fm_ui_question');
+    expect(registerTool).toHaveBeenCalledTimes(2);
+    expect(registerTool.mock.calls.map((call) => call[0].name)).toEqual([
+      'fm_ui_question',
+      'fm_ui_review',
+    ]);
     expect(on).not.toHaveBeenCalled();
   });
 
