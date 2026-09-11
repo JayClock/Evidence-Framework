@@ -44,6 +44,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。
 - 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向；每份辅助凭证通过 `evidences` 指出被证明的具体 Evidence。Fulfillment 不得成为 Evidence 关系端点或时间线节点。
 - Completion 与 Breach 使用有来源的 Evidence 属性、明确 bindings 和 CEL；any、all、count、amount 及具名人工确认都不使用 Fulfillment 内嵌策略。
+- 有来源的关系基数用 Relationship 两端的 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明。静态通过不代表当前模拟器已验证运行实例数量，也不能替代履约 completion Rule。
 - 有履约用“请求 → 确认凭证”，不默认人工审批，不从责任 Role 推断实际证明提供方。
 - 业务未知、FM 表达缺口和技术实现事项分开。不能用假凭证／履约表达状态机，API、数据库与部署不写入 FM。
 - 用 [变更记录模板](assets/change-summary-template.md) 记录实际模型 ID、变更与来源／案例指针；已有评估和事实引用原记录，仅补充尚未保存的依据。

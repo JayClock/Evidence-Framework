@@ -252,6 +252,25 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为业务 Evidence→Thing，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为外部时刻 Evidence→Evidence Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。允许有业务依据的 Proposal→Contract、父 Contract→子 Request 以及 Evidence→Thing 跨 Context 关系；Relationship 标签不能替代来源。
 
+关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
+
+```yaml
+type: relationship
+id: relation.inquiry-to-quotes
+kind: precedes
+sourceRef: rfp.product-inquiry
+targetRef: proposal.product-quote
+label: 一份询价可产生一至多份报价
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: many
+```
+
+省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
+
 ## 8. Business Pattern
 
 有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.yaml`。必填内容包括业务目标、运营不变量、领域中立主张、业务脊梁、变化点、合同案例、领域案例、复用状态和人工评审。

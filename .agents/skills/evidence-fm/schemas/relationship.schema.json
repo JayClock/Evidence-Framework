@@ -27,6 +27,12 @@
     "targetRef": {
       "$ref": "#/$defs/id"
     },
+    "sourceCardinality": {
+      "$ref": "#/$defs/cardinality"
+    },
+    "targetCardinality": {
+      "$ref": "#/$defs/cardinality"
+    },
     "label": {
       "type": "string",
       "minLength": 1
@@ -38,6 +44,28 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "cardinality": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "const": "many"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"

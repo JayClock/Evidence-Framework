@@ -158,6 +158,54 @@ class FulfillmentModelTests(unittest.TestCase):
         self.assertEqual("request.content-payment", relation["sourceRef"])
         self.assertEqual("thing.content", relation["targetRef"])
 
+    def test_relationship_endpoint_cardinalities_are_preserved(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.copied_fixture("valid-subscription", directory)
+            path = (
+                root
+                / "relationships/relation--content-payment-precedes-content-payment-confirmation.yaml"
+            )
+            relationship = self.read_yaml(path)
+            relationship["sourceCardinality"] = {"min": 1, "max": 1}
+            relationship["targetCardinality"] = {"min": 1, "max": "many"}
+            self.write_yaml(path, relationship)
+
+            model = load_model(root)
+            self.assertEqual([], validate_model(model))
+            compiled = compiled_document(model)
+            actual = next(
+                item
+                for item in compiled["relationships"]
+                if item["id"] == relationship["id"]
+            )
+            self.assertEqual({"min": 1, "max": 1}, actual["sourceCardinality"])
+            self.assertEqual({"min": 1, "max": "many"}, actual["targetCardinality"])
+
+    def test_relationship_cardinality_rejects_invalid_bounds(self) -> None:
+        invalid_cardinalities = (
+            ({"min": 2, "max": 1}, "max must be greater than or equal to min"),
+            ({"min": 1}, "max"),
+            ({"min": 0, "max": 0}, "max"),
+        )
+        for cardinality, expected_error in invalid_cardinalities:
+            with (
+                self.subTest(cardinality=cardinality),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                root = self.copied_fixture("valid-subscription", directory)
+                path = (
+                    root
+                    / "relationships/relation--content-payment-precedes-content-payment-confirmation.yaml"
+                )
+                relationship = self.read_yaml(path)
+                relationship["targetCardinality"] = cardinality
+                self.write_yaml(path, relationship)
+
+                errors = validate_model(load_model(root))
+                self.assertTrue(
+                    any(expected_error in error for error in errors), errors
+                )
+
     def test_contract_requires_exactly_two_party_roles(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)

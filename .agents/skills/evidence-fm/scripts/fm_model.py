@@ -780,6 +780,29 @@ def validate_trigger(
             )
 
 
+def validate_relationship_cardinality(
+    relationship_id: str,
+    endpoint: str,
+    cardinality: Any,
+    errors: list[str],
+) -> None:
+    """Validate bounds JSON Schema cannot compare with each other."""
+    if not isinstance(cardinality, dict):
+        return
+    minimum = cardinality.get("min")
+    maximum = cardinality.get("max")
+    if (
+        isinstance(minimum, int)
+        and not isinstance(minimum, bool)
+        and isinstance(maximum, int)
+        and not isinstance(maximum, bool)
+        and maximum < minimum
+    ):
+        errors.append(
+            f"{relationship_id}: {endpoint}Cardinality.max must be greater than or equal to min"
+        )
+
+
 def validate_relationships(
     relationship_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
@@ -791,6 +814,13 @@ def validate_relationships(
         relationship_id = normalize(relationship.get("id"))
         if relationship_id is None:
             continue
+        for endpoint in ("source", "target"):
+            validate_relationship_cardinality(
+                relationship_id,
+                endpoint,
+                relationship.get(f"{endpoint}Cardinality"),
+                errors,
+            )
         source_ref = normalize(relationship.get("sourceRef"))
         target_ref = normalize(relationship.get("targetRef"))
         source = objects.get(source_ref or "")

@@ -34,6 +34,8 @@ docs/business/
 
 Fulfillment 只作为责任边界 Context 和时间线泳道。它不保存 Request、Confirmation、Thing、策略或违约成员索引，也不能成为 `precedes`、`references`、`evidences` 或 `derived_from` 的端点。纯领域或纯渠道模型不补造 Contract 或 Fulfillment。
 
+已确认的关系基数可用 `sourceCardinality`／`targetCardinality` 声明，每端包含 `min` 与整数或 `many` 上界。省略表示基数未声明，而非默认无限。当前检查器验证声明结构及上下界，编译结果保留声明；由于尚无通用 Relationship Instance，单据模拟不验证运行实例数量。履约完成数量继续由 Evidence 集合 binding 和 CEL Rule 判断。
+
 不得从文件名、ID、文件创建顺序或实现回调推断业务时间。`created_at` 不替代原事件时间，`signed_at` 不替代生效时间，`confirmed_at` 不等同于回调到达。依据不足的相对顺序保留为未决。
 
 ## 只读校验与时间线

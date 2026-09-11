@@ -93,7 +93,7 @@ attributes:
 - 连接履约时由实际涉及领域对象的 Request 或其他业务 Evidence 使用 `references` 指向 Thing；领域对象本身不是履约完成凭证。
 - 跨上下文的业务结果使用外部时刻 Evidence→Evidence Role；辅助凭证使用 `evidences` 指向具体业务 Evidence，不补造任意跨域关系。
 
-`references` 不自动表达组合、拥有权、基数或级联删除。当前 Schema 没有这些专用字段；必要语义先明确记录，不能把一条带标签的线声称为已验证的完整关联约束。
+`references` 的 kind 本身不自动表达组合、拥有权、基数或级联删除。已确认的关系基数可在 Relationship 两端用 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明，不表示无限。组合、拥有权和级联删除仍没有专用字段，且当前模拟器没有通用 Relationship Instance，不能把一条带标签的线或通过静态校验的基数声明声称为已经验证的运行实例约束。
 
 ## 5. 规则、行为条件与状态
 
@@ -122,7 +122,7 @@ resultType: bool
 
 规则可以引用已建模 Entity 属性，或用显式 typed binding 表达运行时输入；关键派生数据不能隐藏在无来源变量中。数据流使用 `derivedByRuleRef` 与 CEL AST 追溯，不另写第二份依赖表。
 
-**表达边界**：当前 v3 没有第一等 Command／Operation／状态迁移实体。属性和 CEL 可表达状态、允许条件和结果约束，但不会自动建立操作调度、状态机或证明条件已被运行时执行。未能机器表达的迁移、关系基数或复杂算法要列为 gap，不能用假 Fulfillment、任意扩展字段或脚本 DSL 填洞。需要扩展时先确认具体缺口，再改 Schema／校验／投影，不能称本轮已实现完整领域执行引擎。
+**表达边界**：当前 v3 没有第一等 Command／Operation／状态迁移实体。属性和 CEL 可表达状态、允许条件和结果约束，但不会自动建立操作调度、状态机或证明条件已被运行时执行。关系基数可以声明并静态校验，但没有通用 Relationship Instance，不能运行验证实例数量。未能机器执行的迁移、关系基数或复杂算法要列为验证 gap，不能用假 Fulfillment、任意扩展字段或脚本 DSL 填洞。需要扩展时先确认具体缺口，再改 Schema／校验／投影，不能称本轮已实现完整领域执行引擎。
 
 ## 6. 验收
 
