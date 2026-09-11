@@ -112,9 +112,9 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 - Context → Context／Third-party Role；
 - Fulfillment Confirmation／Other Evidence → Evidence Role。
 
-Evidence Role 是开放注册点：可以没有玩家或有多个玩家；新增渠道只新增外部 Evidence 和 Relationship，不修改核心 Role。玩家必须来自另一个 Context 的确定性时刻 Evidence；Request、Contract、RFP 和 Proposal 不能证明确定结果。
+Evidence Role 是开放证明插槽：可以没有玩家或有多个玩家；新增渠道只新增外部 Evidence 和 Relationship，不修改核心 Role。Role 没有责任人，不设置 `responsibleRoleRef`／`roleRefs`，没有自身凭证时间或可签发实例；可声明消费者要求的玩家属性。消费方以 `uses_role` 使用它，玩家必须来自另一个 Context 的确定性时刻 Evidence，以 `plays_role` 连接。玩家保留其自身上下文及责任角色，不归入消费方合同责任。Request、Contract、RFP 和 Proposal 不能证明确定结果。规则绑定 Evidence Role 时必须解析显式玩家实例，不接受角色实例或仅字段相同的无关凭证。
 
-跨上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。Thing 必须由实际涉及它的业务 Evidence 引用；辅助凭证必须通过 `evidences` 指向被证明的业务 Evidence。Fulfillment 不参与这些关系。
+跨上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。Thing 必须由实际涉及它的业务 Evidence 引用；本上下文的辅助凭证通过 `evidences` 指向被证明的业务 Evidence；外部结果走 Evidence Role，不用 `evidences` 穿透上下文。Fulfillment 不参与这些关系。
 
 这类 Role、Channel／Pre-contract Context 和 Fulfillment 是候选业务变化点。
 

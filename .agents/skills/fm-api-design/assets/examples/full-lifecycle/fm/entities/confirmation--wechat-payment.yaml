@@ -1,0 +1,33 @@
+type: entity
+id: confirmation.wechat-payment
+category: evidence
+kind: fulfillment_confirmation
+label: 微信支付确认
+contextRef: fulfillment.wechat-payment
+responsibleRoleRef: role.wechat-provider
+attributes:
+  - name: payment_number
+    label: 支付结果编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 实际支付结果的业务编号
+  - name: request_number
+    label: 采购支付申请编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 引用实际结果关联的采购支付申请编号
+  - name: paid_minor_units
+    label: 支付金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 实际支付的最小货币单位整数金额
+  - name: confirmed_at
+    label: 玩家确认时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 实际凭证玩家的履约确认时间，不是角色形成时间
+notes: 腾讯形成的外部履约确认，通过plays_role扮演采购支付凭证；不归属采购合同客户。

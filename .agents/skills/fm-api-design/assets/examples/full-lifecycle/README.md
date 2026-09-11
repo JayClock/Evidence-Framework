@@ -1,50 +1,55 @@
 # 商品采购协议完整 FM 与 API 示例
 
-这是基于 PDF“商品采购协议”案例整理的可执行示例。模型覆盖合同前、合同、三个履约项、参与方和商品领域对象：
+这是基于 PDF“商品采购协议”案例整理的可执行示例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
 
 ```text
 商品询价 RFP → 商品报价 Proposal → 商品采购协议 Contract
-                                      ├→ 支付申请 → 支付凭证 → 支付确认
+                                      ├→ 支付申请 → 支付确认 ─uses_role→ 支付凭证 Role
                                       ├→ 开票申请 → 发票 → 开票确认
                                       └→ 发货申请 → 发货单 → 发货确认
+
+微信支付服务协议 → 微信支付申请 → 微信支付确认 ─plays_role→ 支付凭证 Role
 ```
 
 为形成可执行 FM 场景，示例补充了标识、数量、金额、期限、凭证号和完成规则等合成字段；这些字段不代表生产业务批准。按示例约束，`design.yaml` 使用 `sources: []`，FM 与 API 文件不包含 `sourceRefs`、原文摘录或来源摘要。
 
 ## 节点覆盖
 
-| 节点类型                  | 示例节点                                            |
-| ------------------------- | --------------------------------------------------- |
-| Context                   | 商品采购协商、商品采购协议、商品目录                |
-| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议                    |
-| Fulfillment               | 支付、开票、发货                                    |
-| Request                   | 支付申请、开票申请、发货申请                        |
-| Confirmation              | 支付确认、开票确认、发货确认                        |
-| Other Evidence            | 支付凭证、发票、发货单                              |
-| Role                      | 客户、供应商（合同绑定的两个角色）                  |
-| Participant               | 甲方采购员、乙方销售                                |
-| Thing                     | 商品                                                |
-| Rule                      | 支付、开票、发货的证据前提与履约完成规则            |
-| Relationship              | `plays_role`、`references`、`precedes`、`evidences` |
+| 节点类型                  | 示例节点                                                         |
+| ------------------------- | ---------------------------------------------------------------- |
+| Context                   | 商品采购协商、商品采购协议、商品目录、微信支付服务               |
+| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议、微信支付服务协议               |
+| Fulfillment               | 采购支付、开票、发货、微信支付                                   |
+| Request                   | 采购支付申请、开票申请、发货申请、微信支付申请                   |
+| Confirmation              | 采购支付确认、开票确认、发货确认、微信支付确认                   |
+| Other Evidence            | 发票、发货单                                                     |
+| Party Role                | 采购合同：客户、供应商；微信支付合同：微信用户、腾讯             |
+| Evidence Role             | 支付凭证（无责任人，由外部微信支付确认扮演）                     |
+| Participant               | 甲方采购员、乙方销售                                             |
+| Thing                     | 商品                                                             |
+| Rule                      | 采购三项的证据前提与完成规则、微信支付完成规则                   |
+| Relationship              | `plays_role`、`uses_role`、`references`、`precedes`、`evidences` |
 
 ## 业务角色与经办主体
 
-本示例只有甲方采购员和乙方销售两个 Party，分别扮演客户 `role.buyer` 与供应商 `role.seller`。采购协议的 `roleRefs` 绑定这两个角色，从 RFP、Proposal 到 Request、Confirmation、Other Evidence 的责任角色全部来自此绑定，不新增阶段角色。
+本示例只有甲方采购员和乙方销售两个 Party，分别扮演客户 `role.buyer` 与供应商 `role.seller`。采购协议的 `roleRefs` 绑定这两个角色，其责任范围内的具体凭证复用此绑定，不新增阶段角色。外部微信支付服务协议单独绑定微信用户和腾讯，未补造其 Participant 玩家。支付凭证是 Evidence Role，不属于任何责任人；实际微信支付确认由外部合同中的腾讯角色负责。
 
 询报价 Context 通过 `parentContextRef` 显式关联采购协议责任上下文，并保持自己的 URI 根。该关联不表示合同已在询价时签署；Contract 仍在实际签约时形成。
 
 | 业务角色 | Participant 经办主体 | 本示例涉及的经办活动                               |
 | -------- | -------------------- | -------------------------------------------------- |
-| 客户     | 甲方采购员           | 办理询价、相关申请、提供支付凭证及形成支付确认     |
+| 客户     | 甲方采购员           | 办理询价、相关申请及基于外部结果形成支付确认       |
 | 供应商   | 乙方销售             | 办理报价、支付申请、提供发票和发货单及形成相关确认 |
 
 Participant Party 保持在 Context 外，`plays_role` 表达示例中的角色扮演。它不授予某个经办主体该角色的全部操作权限；真实代理范围及访问控制必须另有依据。本示例不包含人员资料管理能力，不为这些主体生成查询接口。
 
-## 必需补充证据
+## 证明角色与具体证据
 
-支付凭证、发票和发货单分别补充证明支付确认、开票确认和发货确认。它们必须先存在，才能形成依赖它们的确认：`evidences` 表达证明对象，`precedes` 表达形成前提，确认实例的 `basedOn` 引用申请与已有证据。
+支付确认通过 `uses_role` 使用 `role.payment-proof`。外部微信支付确认通过 `plays_role` 扮演此角色；规则绑定角色，场景提供实际确认实例。角色没有责任字段、自己的业务时间或可签发实例；其属性表达对玩家数据的要求。实际玩家的 `confirmed_at` 不等于采购支付确认时间。
 
-本示例每份补充证据通过 `request_number` 归属申请，确认引用同一申请编号及证据业务编号。形成确认前检查证据已存在、当前可见且记录值符合申请；完成规则同时检查编号、记录值和证据形成时间。`created_at` 是凭证形成时间，`confirmed_at` 是基于证据形成确认的时间。
+发票和发货单是具体 Other Evidence，通过 `evidences` 证明各自确认，以 `precedes` 表达形成前提。它们的 `created_at` 是自身形成时间。
+
+三项采购确认的 `basedOn` 均引用本申请和实际证据实例，形成前校验已存在、可见、申请归属及金额／记录值，完成规则核对编号及业务时间。微信支付合同链仅作为外部玩家验证，不扩充采购侧 API。
 
 API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结果；这不代表已实现服务端校验。实例归属和证据访问权限仍须由服务端按声明执行。
 
@@ -54,7 +59,8 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 - 商品采购协议：`/product-procurements`
 - 商品目录：`/products`
 - 报价属于询价；支付、开票和发货履约沿采购协议根展开
-- 补充证据与确认分别位于已有申请之下；先提交证据，再在确认中引用证据，无循环创建依赖
+- 发票、发货单与各自确认分别位于已有申请之下，无循环创建依赖
+- 支付凭证 Role 不生成资源或提交 API；采购确认引用外部微信支付确认，外部三步映射为 `external`，不猜测回调或接入接口
 - 报价到采购协议的跨 Context 跳转通过超媒体链接表达，不形成跨 Context 父子 URI
 
 ## API 候选
@@ -65,7 +71,6 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 | 供应商 | `/product-inquiries/{inquiryId}/quotations`                                                  | POST   | 提交商品报价        |
 | 客户   | `/product-procurements`                                                                      | POST   | 登记商品采购协议    |
 | 供应商 | `/product-procurements/{procurementId}/payment-requests`                                     | POST   | 申请支付货款        |
-| 客户   | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/vouchers`         | POST   | 提交支付凭证        |
 | 客户   | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/confirmations`    | POST   | 确认支付货款        |
 | 客户   | `/product-procurements/{procurementId}/invoice-requests`                                     | POST   | 申请开具发票        |
 | 供应商 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/invoices`         | POST   | 提交发票            |
@@ -85,7 +90,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   "$API_SKILL_DIR/assets/examples/full-lifecycle/fm"
 ```
 
-预期 FM 有效，1 个采购全生命周期场景实际执行并通过。
+预期 FM 有效，1 个场景实际执行并通过：包含 14 个具体凭证实例，采购支付、开票、发货及外部微信支付均完成。
 
 ## 校验 API 设计
 
@@ -98,7 +103,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --require-complete
 ```
 
-预期产生 14 个角色×接口候选，`complete: true`，且无缺口。
+预期产生 13 个角色×接口候选，`complete: true`，且无缺口。
 
 ## 生成投影
 

@@ -1,0 +1,32 @@
+type: entity
+id: role.payment-proof
+category: role
+kind: evidence
+label: 支付凭证
+contextRef: fulfillment.payment
+attributes:
+  - name: payment_number
+    label: 支付结果编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 实际支付结果的业务编号
+  - name: request_number
+    label: 采购支付申请编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 引用实际结果关联的采购支付申请编号
+  - name: paid_minor_units
+    label: 支付金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 实际支付的最小货币单位整数金额
+  - name: confirmed_at
+    label: 玩家确认时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 实际凭证玩家的履约确认时间，不是角色形成时间
+notes: 支付确认所需的外部证明插槽，无责任人，不签发角色实例；按plays_role读取已存在的实际凭证玩家。

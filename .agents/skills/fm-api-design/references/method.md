@@ -28,7 +28,7 @@
 
 探索只在选中责任范围有依据的 Party Role、资源、collection/item 与五种方法间进行。显式关联同一合同责任的合同前、合同及履约凭证，统一使用该 Contract 的 `roleRefs` 绑定角色；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。Proposal 已连接 Contract 却未声明同一责任归属时，输入模型无效，不通过新增渠道角色继续投影。没有合同关系的独立渠道使用自身角色。已声明且具有场景、依据和实例约束的组合才是 candidate；缺信息是 unresolved；明确语义冲突是 rejected；没有场景支持是 unselected，不等于禁止。
 
-调用者必须是有业务依据的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按业务角色列出能力，经办主体作为办理该能力的业务说明保留；实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽；`responsibleRoleRef` 只是职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
+调用者必须是有业务依据的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按业务角色列出能力，经办主体作为办理该能力的业务说明保留；实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽，没有责任人，也不代表可签发单据；不生成角色的提交或 CRUD 接口。消费能力引用实际玩家并校验归属、可见性和业务规则；外部活动可回映为 `external`，没有接口依据不猜测接入 API。实际玩家的 `responsibleRoleRef` 只是其自身上下文的职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
 
 GET 对应 read。Evidence 写入只能用 POST + append_evidence。PUT/PATCH/DELETE 覆盖 Evidence 会被拒绝；更正与撤销必须先有业务表达，再设计追加证据。
 

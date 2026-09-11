@@ -1,0 +1,16 @@
+type: rule
+id: rule.wechat-payment-completed
+kind: completion
+label: 微信支付完成判断
+contextRef: fulfillment.wechat-payment
+bindings:
+  request:
+    ref: request.wechat-payment
+  confirmations:
+    ref: confirmation.wechat-payment
+    cardinality: many
+expression: confirmations.exists(c, c.request_number == request.request_number
+  && c.paid_minor_units == request.requested_minor_units && c.confirmed_at
+  >= request.started_at && c.confirmed_at <= request.expired_at)
+resultType: bool
+notes: 合成验证场景检查外部申请与确认匹配；不代表完整支付服务条款。

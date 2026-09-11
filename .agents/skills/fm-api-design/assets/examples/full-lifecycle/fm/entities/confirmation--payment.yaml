@@ -24,10 +24,10 @@ attributes:
     required: true
     keyData: true
     meaning: 本次支付申请的业务标识；补充证据与确认引用同一申请编号
-  - name: voucher_number
-    label: 支付凭证号
+  - name: payment_number
+    label: 支付结果编号
     valueType: string
     required: true
     keyData: true
-    meaning: 引用本次确认所依据的补充证据业务编号
-notes: 基于已存在且与申请匹配的补充证据形成；voucher_number引用证据业务编号，request_number引用申请编号。
+    meaning: 引用扮演支付凭证角色的实际外部支付结果编号
+notes: 客户基于已存在且匹配本申请的外部支付结果形成确认；支付凭证角色无责任人。

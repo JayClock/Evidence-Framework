@@ -213,7 +213,7 @@ label: 客户扮演订阅方
 
 只有来源明确同一稳定对象时才建立。
 
-### Evidence Role 是开放确认插槽
+### Evidence Role 是开放证明插槽
 
 ```yaml
 type: entity
@@ -228,7 +228,7 @@ contextRef: fulfillment.subscription-payment
 
 ## 5. Fulfillment、Evidence 与 Rule
 
-Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 指向 Fulfillment；Evidence 的 `responsibleRoleRef` 指向父 Contract Context 中负责形成该凭证的 Party Role。
+Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 指向 Fulfillment；本责任范围内具体 Evidence 的 `responsibleRoleRef` 指向父 Contract Context 的 Party Role。Role 不声明 `responsibleRoleRef` 或 `roleRefs`，不签发实例，也不自动展开六类 Evidence 的时间字段。Role 的属性是玩家数据契约；外部具体玩家保留其自身 Context、凭证时间及责任角色。
 
 Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 

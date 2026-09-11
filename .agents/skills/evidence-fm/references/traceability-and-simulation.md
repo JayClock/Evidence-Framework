@@ -174,7 +174,7 @@ python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> \
 7. 按 Request Instance 及其 `basedOn` 后继限定 completion／breach 结果，计算违约状态；
 8. 对比期望并输出确定性 JSON。
 
-同一请求的 breach 条件为真时，`breached` 优先于 `completed`，避免迟到的 Confirmation 抹去已经发生的违约。Roleized Confirmation 由模型中的 Evidence→Evidence Role `plays_role` 解析。具体跨 Context Confirmation Instance 仍须通过 `basedOn` 关联当前 Request Instance，避免把无关凭证误当成履约证明。
+同一请求的 breach 条件为真时，`breached` 优先于 `completed`，避免迟到的 Confirmation 抹去已经发生的违约。Evidence Role 的规则 binding 由模型中的 Evidence→Evidence Role `plays_role` 解析；绑定角色时提供实际玩家实例，不能签发角色实例或用没有扮演关系的凭证替代。角色属性表达对玩家字段的要求，不是角色自己的业务时间或责任。具体跨 Context Confirmation Instance 仍须通过 `basedOn` 关联当前 Request Instance，避免把无关凭证误当成履约证明。
 
 ## 6. 人工角色扮演包
 

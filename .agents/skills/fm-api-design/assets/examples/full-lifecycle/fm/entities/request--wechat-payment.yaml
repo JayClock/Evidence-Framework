@@ -1,0 +1,32 @@
+type: entity
+id: request.wechat-payment
+category: evidence
+kind: fulfillment_request
+label: 微信支付申请
+contextRef: fulfillment.wechat-payment
+responsibleRoleRef: role.wechat-user
+attributes:
+  - name: started_at
+    label: 申请开始时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 微信支付申请开始时间
+  - name: expired_at
+    label: 申请截止时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 微信支付申请明确的截止时间；实例日期为合成验证数据，不是默认期限
+  - name: request_number
+    label: 采购支付申请编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 引用实际结果关联的采购支付申请编号
+  - name: requested_minor_units
+    label: 申请金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 引用本次采购支付申请金额

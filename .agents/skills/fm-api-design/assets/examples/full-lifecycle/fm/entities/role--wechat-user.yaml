@@ -1,0 +1,6 @@
+type: entity
+id: role.wechat-user
+category: role
+kind: party
+label: 微信用户
+contextRef: context.wechat-payment

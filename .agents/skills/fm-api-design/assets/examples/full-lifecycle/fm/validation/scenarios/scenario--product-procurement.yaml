@@ -6,6 +6,7 @@ steps:
   - sequence: 1
     actingRoleRef: role.buyer
     issueInstanceRef: instance.product-inquiry
+    availableInstanceRefs: []
   - sequence: 2
     actingRoleRef: role.seller
     issueInstanceRef: instance.product-quotation
@@ -21,47 +22,56 @@ steps:
     issueInstanceRef: instance.payment-request
     availableInstanceRefs:
       - instance.product-procurement
-  - sequence: 5
-    actingRoleRef: role.buyer
-    issueInstanceRef: instance.payment-voucher
+  - actingRoleRef: role.wechat-user
+    issueInstanceRef: instance.wechat-payment-contract
+    sequence: 5
+  - actingRoleRef: role.wechat-user
+    issueInstanceRef: instance.wechat-payment-request
     availableInstanceRefs:
+      - instance.wechat-payment-contract
       - instance.payment-request
-    notes: 甲方采购员经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
-  - sequence: 6
+    sequence: 6
+  - actingRoleRef: role.wechat-provider
+    issueInstanceRef: instance.wechat-payment-confirmation
+    availableInstanceRefs:
+      - instance.wechat-payment-request
+    notes: 外部微信支付确认扮演支付凭证角色，不生成采购侧写入API。
+    sequence: 7
+  - sequence: 8
     actingRoleRef: role.buyer
     issueInstanceRef: instance.payment-confirmation
     availableInstanceRefs:
       - instance.payment-request
-      - instance.payment-voucher
-  - sequence: 7
+      - instance.wechat-payment-confirmation
+  - sequence: 9
     actingRoleRef: role.buyer
     issueInstanceRef: instance.invoice-request
     availableInstanceRefs:
       - instance.product-procurement
-  - sequence: 8
+  - sequence: 10
     actingRoleRef: role.seller
     issueInstanceRef: instance.invoice
     availableInstanceRefs:
       - instance.invoice-request
     notes: 乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
-  - sequence: 9
+  - sequence: 11
     actingRoleRef: role.seller
     issueInstanceRef: instance.invoice-confirmation
     availableInstanceRefs:
       - instance.invoice-request
       - instance.invoice
-  - sequence: 10
+  - sequence: 12
     actingRoleRef: role.buyer
     issueInstanceRef: instance.delivery-request
     availableInstanceRefs:
       - instance.product-procurement
-  - sequence: 11
+  - sequence: 13
     actingRoleRef: role.seller
     issueInstanceRef: instance.delivery-note
     availableInstanceRefs:
       - instance.delivery-request
     notes: 乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
-  - sequence: 12
+  - sequence: 14
     actingRoleRef: role.seller
     issueInstanceRef: instance.delivery-confirmation
     availableInstanceRefs:
@@ -77,7 +87,7 @@ evaluations:
           - instance.payment-confirmation
       proofs:
         instanceRefs:
-          - instance.payment-voucher
+          - instance.wechat-payment-confirmation
     expectedResult: true
   - ruleRef: rule.invoice-completed
     bindings:
@@ -107,7 +117,7 @@ evaluations:
         instanceRef: instance.payment-request
       proofs:
         instanceRefs:
-          - instance.payment-voucher
+          - instance.wechat-payment-confirmation
     expectedResult: true
   - ruleRef: rule.invoice-evidence-ready
     bindings:
@@ -125,6 +135,14 @@ evaluations:
         instanceRefs:
           - instance.delivery-note
     expectedResult: true
+  - ruleRef: rule.wechat-payment-completed
+    bindings:
+      request:
+        instanceRef: instance.wechat-payment-request
+      confirmations:
+        instanceRefs:
+          - instance.wechat-payment-confirmation
+    expectedResult: true
 expectations:
   fulfillmentStatuses:
     - fulfillmentRef: fulfillment.payment
@@ -136,6 +154,9 @@ expectations:
     - fulfillmentRef: fulfillment.delivery
       requestInstanceRef: instance.delivery-request
       status: completed
+    - fulfillmentRef: fulfillment.wechat-payment
+      requestInstanceRef: instance.wechat-payment-request
+      status: completed
 stakeholderReview:
   status: pending
-notes: 三项履约均先形成申请，再提供必需补充证据，最后引用证据形成确认；规则校验申请归属、业务记录值和证据时间。
+notes: 支付通过外部凭证玩家满足支付凭证角色后形成客户确认；开票、发货各使用具体补充证据。采购三项与微信支付履约均验证完成。

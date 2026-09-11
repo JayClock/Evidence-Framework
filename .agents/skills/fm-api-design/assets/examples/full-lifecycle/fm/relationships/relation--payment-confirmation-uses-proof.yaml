@@ -1,0 +1,6 @@
+type: relationship
+id: relation.payment-confirmation-uses-proof
+kind: uses_role
+sourceRef: confirmation.payment
+targetRef: role.payment-proof
+label: 支付确认使用支付凭证角色

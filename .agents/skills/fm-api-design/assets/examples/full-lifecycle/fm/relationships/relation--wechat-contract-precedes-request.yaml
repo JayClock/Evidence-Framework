@@ -1,0 +1,6 @@
+type: relationship
+id: relation.wechat-contract-precedes-request
+label: 微信支付协议先于申请
+kind: precedes
+sourceRef: contract.wechat-payment
+targetRef: request.wechat-payment

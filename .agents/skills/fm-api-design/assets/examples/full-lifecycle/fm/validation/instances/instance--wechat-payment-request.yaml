@@ -1,0 +1,11 @@
+type: evidence_instance
+id: instance.wechat-payment-request
+entityRef: request.wechat-payment
+values:
+  started_at: '2026-11-04T09:50:00Z'
+  expired_at: '2026-11-04T10:30:00Z'
+  request_number: PAYMENT-REQ-001
+  requested_minor_units: 250000
+basedOn:
+  - instance.wechat-payment-contract
+  - instance.payment-request

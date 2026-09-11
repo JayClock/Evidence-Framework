@@ -48,7 +48,7 @@ class FullLifecycleExampleTest(unittest.TestCase):
         self.assertEqual(api_check.returncode, 0, api_check.stderr)
         report = json.loads(api_check.stdout)
         self.assertTrue(report["complete"])
-        self.assertEqual(report["candidateCount"], 14)
+        self.assertEqual(report["candidateCount"], 13)
         self.assertEqual(report["projection"]["inputDigests"]["sources"], {})
         uris = {
             item["id"]: item["uri"] for item in report["projection"]["capabilities"]
@@ -69,11 +69,6 @@ class FullLifecycleExampleTest(unittest.TestCase):
             "{deliveryRequestId}/delivery-notes",
         )
         self.assertEqual(
-            uris["capability.create-payment-evidence"],
-            "/product-procurements/{procurementId}/payment-requests/"
-            "{paymentRequestId}/vouchers",
-        )
-        self.assertEqual(
             uris["capability.create-invoice-evidence"],
             "/product-procurements/{procurementId}/invoice-requests/"
             "{invoiceRequestId}/invoices",
@@ -90,7 +85,6 @@ class FullLifecycleExampleTest(unittest.TestCase):
                 "contract.product-procurement",
                 "request.payment",
                 "confirmation.payment",
-                "evidence.payment-voucher",
                 "request.invoice",
                 "confirmation.invoice",
                 "evidence.invoice",

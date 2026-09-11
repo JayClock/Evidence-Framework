@@ -1,0 +1,6 @@
+type: relationship
+id: relation.wechat-confirmation-plays-payment-proof
+kind: plays_role
+sourceRef: confirmation.wechat-payment
+targetRef: role.payment-proof
+label: 微信支付确认扮演支付凭证

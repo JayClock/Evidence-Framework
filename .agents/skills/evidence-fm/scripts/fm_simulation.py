@@ -352,6 +352,7 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                             instances,
                             issued,
                             errors,
+                            model,
                         )
                     elif "instanceRefs" in source:
                         validate_instance_binding(
@@ -364,6 +365,7 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                             instances,
                             issued,
                             errors,
+                            model,
                         )
                     elif "value" in source:
                         if variable in implicit_as_of and source.get("value") != as_of:
@@ -463,6 +465,7 @@ def validate_instance_binding(
     instances: dict[str, dict[str, Any]],
     issued: set[str],
     errors: list[str],
+    model: LoadedModel,
 ) -> None:
     expected_cardinality = str(binding.get("cardinality", "one"))
     if "ref" not in binding:
@@ -475,6 +478,16 @@ def validate_instance_binding(
             f"{scenario_id}.evaluations[{evaluation_index}]: binding '{variable}' expects "
             f"cardinality '{expected_cardinality}', found '{supplied_cardinality}'"
         )
+    target_ref = str(binding.get("ref"))
+    target = model.entities_by_id.get(target_ref)
+    accepted_types = {target_ref}
+    if entity_signature(target) == ("role", "evidence"):
+        accepted_types = {
+            str(relation.get("sourceRef"))
+            for relation in model.relationships
+            if relation.get("kind") == "plays_role"
+            and relation.get("targetRef") == target_ref
+        }
     for instance_ref in instance_refs:
         instance = instances.get(str(instance_ref))
         if instance is None or instance_ref not in issued:
@@ -482,10 +495,10 @@ def validate_instance_binding(
                 f"{scenario_id}.evaluations[{evaluation_index}]: binding '{variable}' references "
                 f"unknown or unissued instance '{instance_ref}'"
             )
-        elif instance.get("entityRef") != binding.get("ref"):
+        elif instance.get("entityRef") not in accepted_types:
             errors.append(
                 f"{scenario_id}.evaluations[{evaluation_index}]: instance '{instance_ref}' must "
-                f"instantiate '{binding.get('ref')}'"
+                f"match binding '{binding.get('ref')}' via its Evidence type or explicit plays_role"
             )
 
 

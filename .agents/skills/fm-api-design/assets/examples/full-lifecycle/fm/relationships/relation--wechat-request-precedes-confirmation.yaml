@@ -1,0 +1,6 @@
+type: relationship
+id: relation.wechat-request-precedes-confirmation
+label: 微信支付申请先于确认
+kind: precedes
+sourceRef: request.wechat-payment
+targetRef: confirmation.wechat-payment

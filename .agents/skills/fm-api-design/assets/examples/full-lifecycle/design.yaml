@@ -66,21 +66,6 @@ resources:
         - request.payment
         - contract.product-procurement
       reasoning: payment申请属于指定采购协议
-  - id: resource.payment-evidence
-    entityRef: evidence.payment-voucher
-    segment: vouchers
-    parentRef: resource.payment-request
-    parentBindingRef: binding.payment-evidence-request
-    identity:
-      kind: api_resource_id
-      parameter: voucherId
-      decisionRef: decision.api-identities
-    basis:
-      fmRefs:
-        - evidence.payment-voucher
-        - request.payment
-        - relation.payment-request-precedes-evidence
-      reasoning: 支付补充证据以request_number归属已有申请，创建时不需要确认ID；证据证明后续形成的确认
   - id: resource.payment-confirmation
     entityRef: confirmation.payment
     segment: confirmations
@@ -268,16 +253,6 @@ bindings:
         - request.payment
         - confirmation.payment
       reasoning: payment确认关联指定申请
-  - id: binding.payment-evidence-request
-    kind: parent_child
-    parentResourceRef: resource.payment-request
-    childResourceRef: resource.payment-evidence
-    basis:
-      fmRefs:
-        - evidence.payment-voucher
-        - request.payment
-        - relation.payment-request-precedes-evidence
-      reasoning: 支付补充证据以request_number归属已有申请，创建时不需要确认ID；证据证明后续形成的确认
   - id: binding.invoice-request-procurement
     kind: parent_child
     parentResourceRef: resource.product-procurement
@@ -343,7 +318,7 @@ scenarios:
         - proposal.product-quotation
         - contract.product-procurement
         - request.payment
-        - evidence.payment-voucher
+        - role.payment-proof
         - confirmation.payment
         - request.invoice
         - evidence.invoice
@@ -423,25 +398,6 @@ capabilities:
       fmRefs:
         - request.payment
       reasoning: 针对指定采购协议追加申请支付货款凭证
-  - id: capability.create-payment-evidence
-    actorRoleRef: role.buyer
-    resourceRef: resource.payment-evidence
-    view: collection
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: evidence.payment-voucher
-    businessCapability: 提交支付凭证
-    scenarioRefs:
-      - scenario.api-product-procurement
-    bindingRefs:
-      - binding.caller-buyer
-      - binding.payment-evidence-request
-    basis:
-      fmRefs:
-        - evidence.payment-voucher
-        - request.payment
-      reasoning: 针对已有支付申请追加补充证据；校验request_number与路径申请一致；甲方采购员经办本项，调用角色表达合同责任
   - id: capability.create-payment-confirmation
     actorRoleRef: role.buyer
     resourceRef: resource.payment-confirmation
@@ -464,10 +420,10 @@ capabilities:
     basis:
       fmRefs:
         - confirmation.payment
-        - evidence.payment-voucher
-        - relation.payment-evidence-precedes-confirmation
+        - role.payment-proof
+        - relation.payment-confirmation-uses-proof
         - rule.payment-completed
-      reasoning: 引用已有支付凭证号与申请编号，检查证据属于路径申请且当前可见；满足前提才形成确认
+      reasoning: 引用已扮演支付凭证角色的外部结果；核对申请、金额、结果编号及时间，角色无责任人且不提供写入接口
   - id: capability.create-invoice-request
     actorRoleRef: role.buyer
     resourceRef: resource.invoice-request
@@ -652,7 +608,7 @@ journeys:
   - id: journey.product-procurement
     scenarioRef: scenario.api-product-procurement
     steps:
-      - id: journey.step-1
+      - id: step.procurement-1
         sourceStepSequence: 1
         description: 甲方采购员发起商品询价
         mapping: capability
@@ -661,7 +617,7 @@ journeys:
           fmRefs:
             - rfp.product-inquiry
           reasoning: 映射步骤：甲方采购员发起商品询价
-      - id: journey.step-2
+      - id: step.procurement-2
         sourceStepSequence: 2
         description: 乙方销售提交商品报价
         mapping: capability
@@ -670,7 +626,7 @@ journeys:
           fmRefs:
             - proposal.product-quotation
           reasoning: 映射步骤：乙方销售提交商品报价
-      - id: journey.step-3
+      - id: step.procurement-3
         sourceStepSequence: 3
         description: 甲方采购员登记采购协议
         mapping: capability
@@ -679,7 +635,7 @@ journeys:
           fmRefs:
             - contract.product-procurement
           reasoning: 映射步骤：甲方采购员登记采购协议
-      - id: journey.step-4
+      - id: step.procurement-4
         sourceStepSequence: 4
         description: 乙方销售申请支付
         mapping: capability
@@ -688,17 +644,32 @@ journeys:
           fmRefs:
             - request.payment
           reasoning: 映射步骤：乙方销售申请支付
-      - id: journey.step-5
+      - id: step.procurement-5
         sourceStepSequence: 5
-        description: 甲方采购员提交支付凭证
-        mapping: capability
-        capabilityRef: capability.create-payment-evidence
+        mapping: external
+        description: 外部签署微信支付服务协议
         basis:
           fmRefs:
-            - evidence.payment-voucher
-          reasoning: 映射步骤：甲方采购员提交支付凭证
-      - id: journey.step-6
+            - contract.wechat-payment
+          reasoning: 微信支付合同内的业务活动，不声明采购API或外部接入方式
+      - id: step.procurement-6
         sourceStepSequence: 6
+        mapping: external
+        description: 外部发起微信支付申请
+        basis:
+          fmRefs:
+            - request.wechat-payment
+          reasoning: 微信支付合同内的业务活动，不声明采购API或外部接入方式
+      - id: step.procurement-7
+        sourceStepSequence: 7
+        mapping: external
+        description: 外部形成微信支付确认并扮演支付凭证
+        basis:
+          fmRefs:
+            - confirmation.wechat-payment
+          reasoning: 微信支付合同内的业务活动，不声明采购API或外部接入方式
+      - id: step.procurement-8
+        sourceStepSequence: 8
         description: 甲方采购员确认支付
         mapping: capability
         capabilityRef: capability.create-payment-confirmation
@@ -706,8 +677,8 @@ journeys:
           fmRefs:
             - confirmation.payment
           reasoning: 映射步骤：甲方采购员确认支付
-      - id: journey.step-7
-        sourceStepSequence: 7
+      - id: step.procurement-9
+        sourceStepSequence: 9
         description: 甲方采购员申请开票
         mapping: capability
         capabilityRef: capability.create-invoice-request
@@ -715,8 +686,8 @@ journeys:
           fmRefs:
             - request.invoice
           reasoning: 映射步骤：甲方采购员申请开票
-      - id: journey.step-8
-        sourceStepSequence: 8
+      - id: step.procurement-10
+        sourceStepSequence: 10
         description: 乙方销售提交发票
         mapping: capability
         capabilityRef: capability.create-invoice-evidence
@@ -724,8 +695,8 @@ journeys:
           fmRefs:
             - evidence.invoice
           reasoning: 映射步骤：乙方销售提交发票
-      - id: journey.step-9
-        sourceStepSequence: 9
+      - id: step.procurement-11
+        sourceStepSequence: 11
         description: 乙方销售确认开票
         mapping: capability
         capabilityRef: capability.create-invoice-confirmation
@@ -733,8 +704,8 @@ journeys:
           fmRefs:
             - confirmation.invoice
           reasoning: 映射步骤：乙方销售确认开票
-      - id: journey.step-10
-        sourceStepSequence: 10
+      - id: step.procurement-12
+        sourceStepSequence: 12
         description: 甲方采购员申请发货
         mapping: capability
         capabilityRef: capability.create-delivery-request
@@ -742,8 +713,8 @@ journeys:
           fmRefs:
             - request.delivery
           reasoning: 映射步骤：甲方采购员申请发货
-      - id: journey.step-11
-        sourceStepSequence: 11
+      - id: step.procurement-13
+        sourceStepSequence: 13
         description: 乙方销售提交发货单
         mapping: capability
         capabilityRef: capability.create-delivery-evidence
@@ -751,8 +722,8 @@ journeys:
           fmRefs:
             - evidence.delivery-note
           reasoning: 映射步骤：乙方销售提交发货单
-      - id: journey.step-12
-        sourceStepSequence: 12
+      - id: step.procurement-14
+        sourceStepSequence: 14
         description: 乙方销售确认发货
         mapping: capability
         capabilityRef: capability.create-delivery-confirmation

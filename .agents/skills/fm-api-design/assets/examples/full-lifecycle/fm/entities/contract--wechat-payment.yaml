@@ -1,0 +1,16 @@
+type: entity
+id: contract.wechat-payment
+category: evidence
+kind: contract
+label: 微信支付服务协议
+contextRef: context.wechat-payment
+roleRefs:
+  - role.wechat-user
+  - role.wechat-provider
+attributes:
+  - name: signed_at
+    label: 签署时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 微信支付服务协议签署时间，不推定为采购协议签署时间

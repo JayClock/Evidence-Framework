@@ -1,0 +1,8 @@
+type: entity
+id: context.wechat-payment
+category: context
+kind: contract
+label: 微信支付服务
+rootRefs:
+  - contract.wechat-payment
+notes: 独立于商品采购协议的外部支付服务合同边界；不合并责任角色或API根。

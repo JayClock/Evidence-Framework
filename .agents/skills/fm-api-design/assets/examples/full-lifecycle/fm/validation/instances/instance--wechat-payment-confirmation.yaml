@@ -1,0 +1,10 @@
+type: evidence_instance
+id: instance.wechat-payment-confirmation
+entityRef: confirmation.wechat-payment
+values:
+  confirmed_at: '2026-11-04T10:00:00Z'
+  payment_number: WX-001
+  request_number: PAYMENT-REQ-001
+  paid_minor_units: 250000
+basedOn:
+  - instance.wechat-payment-request

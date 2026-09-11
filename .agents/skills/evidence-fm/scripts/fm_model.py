@@ -625,6 +625,12 @@ def validate_entities(
             errors.append(
                 f"{entity_id}: Participant Thing must belong to a Domain Context"
             )
+        if category == "role" and (
+            "responsibleRoleRef" in entity or "roleRefs" in entity
+        ):
+            errors.append(
+                f"{entity_id}: Role must not declare Evidence responsibility fields"
+            )
         if (category, kind) == ("role", "party"):
             validate_party_role_owner(entity, context, entities, errors)
 
