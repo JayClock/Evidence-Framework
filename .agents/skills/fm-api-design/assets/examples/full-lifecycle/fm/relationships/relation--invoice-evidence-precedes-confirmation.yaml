@@ -1,0 +1,6 @@
+type: relationship
+id: relation.invoice-evidence-precedes-confirmation
+kind: precedes
+sourceRef: evidence.invoice
+targetRef: confirmation.invoice
+label: 已有开票补充证据是形成确认的必要前提

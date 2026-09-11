@@ -20,6 +20,10 @@
 
 诊断包含稳定 `code/severity/targetRef/location/relatedRefs/message`；gap 另有 `gapKey/category`。不要根据措辞或数组位置重建 gapKey。
 
+## 凭证依赖复核
+
+设计复核检查必要补充证据的形成前提、实例引用、访问范围及创建路径。必需证据先存在，才可形成被证明凭证；证据创建不得依赖该尚未形成的目标。FM 的 `basedOn`、时间线和 CEL 场景可验证已声明的依赖；API 的 `ruleBindings` 只表达检查契约，不执行服务端前置校验。工具未覆盖的依赖判断必须由 Agent 复核并保留真实 gap，不把 `complete` 当作业务正确性证明。
+
 ## 文件纪律
 
 所有 CLI 路径参数使用绝对路径。设计中的来源路径相对 project root，默认不得越界。FM、validation、设计和来源均只读；运行前后摘要变化时失败。

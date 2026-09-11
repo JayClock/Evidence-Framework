@@ -66,9 +66,13 @@ Evidence kind：
 - `rfp`、`proposal`：位于 Pre-contract／Channel Context；
 - `contract`：位于 Contract Context；
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
-- `other_evidence`：位于产生它的业务或领域 Context。
+- `other_evidence`：对其他凭证提供补充证明的凭证，位于产生它的业务或领域 Context；不是固定流程阶段。
 
-Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约完成或部分完成的时刻 Evidence。两者各自通过 `responsibleRoleRef` 连接对该凭证负责的 Role，Request → Confirmation 的履约结构表达要求与结果的方向。创建六类凭证时均先按 [格式](format.md) 的必备时间表展开类型；属性约束、请求区间与实例要求在该处维护。再按 [来源映射](./provenance.md) 核对各时间证明的业务事件与形成依据，区分签约与生效、确认与回调、凭证形成与原事件；类型齐全不代表依据已查明。
+需要补充证明时，先明确被证明凭证及具体证明内容。必需的 `other_evidence` 必须已经存在，才能形成依赖它的凭证；用 `evidences` 从补充证据指向被证明凭证，并用 `precedes` 明确必要的形成先后。实例中由被证明凭证的 `basedOn` 引用已存在的补充证据，场景在形成目标前提供这些证据。补充证据可以支持 RFP、Proposal、Contract、Request、Confirmation 或其他补充证据，不局限于履约确认。不为没有此需求的凭证强加补充证据。
+
+`created_at` 记录补充凭证自身形成时间，不等于上传时间或其记录的原事件时间；目标凭证的相应业务时间不得早于其必需证据的形成时间。是否分开录入不改变业务依赖，不从图上位置推导接口调用方式。
+
+Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约完成或部分完成的时刻 Evidence。两者各自通过 `responsibleRoleRef` 连接对该凭证负责的 Role，Request → Confirmation 的履约结构表达要求与结果的方向。创建六类凭证时均先按 [格式](./format.md) 的必备时间表展开类型；属性约束、请求区间与实例要求在该处维护。再按 [来源映射](./provenance.md) 核对各时间证明的业务事件与形成依据，区分签约与生效、确认与回调、凭证形成与原事件；类型齐全不代表依据已查明。
 
 运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿必须创建新 Evidence 或 Fulfillment，不能修改旧凭证。此约束不等于全部领域 Participant 永不改变；领域状态和行为条件按已确认规则表达，不伪装成履约。
 

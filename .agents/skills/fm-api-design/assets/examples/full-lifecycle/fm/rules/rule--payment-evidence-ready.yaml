@@ -1,0 +1,17 @@
+type: rule
+id: rule.payment-evidence-ready
+kind: precondition
+label: 支付确认的证据前提
+contextRef: fulfillment.payment
+bindings:
+  request:
+    ref: request.payment
+  proofs:
+    ref: evidence.payment-voucher
+    cardinality: many
+  now:
+    type: timestamp
+expression: proofs.exists(p, p.request_number == request.request_number
+  && p.created_at <= now && p.paid_minor_units == request.requested_minor_units)
+resultType: bool
+notes: 形成目标前核对已存在、当前可见且属于本申请的补充证据；now是判断时刻，不用于生成凭证时间。

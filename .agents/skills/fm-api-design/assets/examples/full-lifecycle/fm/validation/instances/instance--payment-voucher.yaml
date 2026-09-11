@@ -2,7 +2,9 @@ type: evidence_instance
 id: instance.payment-voucher
 entityRef: evidence.payment-voucher
 values:
-  created_at: '2026-11-04T10:05:00Z'
+  created_at: '2026-11-04T10:00:00Z'
   voucher_number: PAY-001
+  request_number: PAYMENT-REQ-001
+  paid_minor_units: 250000
 basedOn:
-  - instance.payment-confirmation
+  - instance.payment-request

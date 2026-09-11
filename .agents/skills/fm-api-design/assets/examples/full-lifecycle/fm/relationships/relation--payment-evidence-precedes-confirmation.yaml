@@ -1,0 +1,6 @@
+type: relationship
+id: relation.payment-evidence-precedes-confirmation
+kind: precedes
+sourceRef: evidence.payment-voucher
+targetRef: confirmation.payment
+label: 已有支付补充证据是形成确认的必要前提

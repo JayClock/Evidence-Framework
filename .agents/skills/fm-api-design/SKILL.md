@@ -25,7 +25,7 @@ API 设计中的新业务规则必须返回 FM 建模／发现任务处理。技
 1. 定位项目根、FM 根、`evidence-fm` Skill 绝对目录、已有业务场景和 API 设计。
 2. 阅读 [方法](references/method.md)；写配置时再读 [格式](references/format.md)，运行前读 [校验与保存纪律](references/validation.md)。
 3. 用 Python 3.10+ 运行 `inspect`。保留真实 FM 检查摘要、模型审核状态、角色、资源线索和场景。
-4. 只把有来源且影响当前范围的对象映射为资源。Context 默认是边界，不自动成为 CRUD 资源；`precedes`、一般 `references` 或单独基数不证明聚合。
+4. 先核对凭证形成依赖：必需的 `other_evidence` 已存在才能形成被证明凭证，目标能力须说明证据引用及可用性检查；依据不足返回 FM 缺口。只把有来源且影响当前范围的对象映射为资源。Context 默认是边界，不自动成为 CRUD 资源；`precedes`、一般 `references` 或单独基数不证明聚合。
 5. 为每个能力说明调用 Party Role、资源视图、方法、效果、场景、实例约束和依据。Evidence Role 不是调用者；`responsibleRoleRef` 不是全局授权。
 6. 运行 `check`，修复技术错误；业务、设计、表达和覆盖缺口保持为 gap，不扩大权限或削弱预期来消除诊断。
 7. 用户明确要求生成时，使用一个不存在的新目录运行 `project`。展示四列表、来源、实例约束、流程覆盖和未决项后停止。
@@ -51,7 +51,7 @@ API 设计中的新业务规则必须返回 FM 建模／发现任务处理。技
 
 ## 完整示例
 
-需要查看 RFP → Proposal → Contract，以及支付、开票、发货三组 Request → Confirmation → Other Evidence 全链路时，使用 [商品采购协议完整示例](assets/examples/full-lifecycle/README.md)。示例补齐 Context、Role、Participant、Thing、Rule、Relationship、可执行 FM 场景和 API 候选。
+使用 [商品采购协议完整示例](assets/examples/full-lifecycle/README.md) 查看询价、报价、协议及支付、开票、发货的凭证依赖：申请后提供补充证据，再基于已有证据形成确认。示例包含 Context、Role、Participant、Thing、Rule、Relationship、可执行 FM 场景和 API 候选。
 
 ## 不可越过的边界
 

@@ -2,7 +2,9 @@ type: evidence_instance
 id: instance.invoice-confirmation
 entityRef: confirmation.invoice
 values:
-  confirmed_at: '2026-11-05T09:00:00Z'
+  confirmed_at: '2026-11-05T09:05:00Z'
   invoice_number: INV-001
+  request_number: INVOICE-REQ-001
 basedOn:
   - instance.invoice-request
+  - instance.invoice

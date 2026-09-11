@@ -14,6 +14,16 @@
 
 `precedes`、一般引用和基数不会自动转成父子拥有关系。技术导航可以记录为决定，但不能宣称业务拥有权。CLI 会以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 拒绝跨合同前、合同或领域 Context 的父子 URI；所属父合同相同的 Fulfillment 资源不视为跨根。
 
+## 补充证据与形成前提
+
+`other_evidence` 是其他凭证的补充证据。生成能力前检查 FM 的 `evidences`、必要 `precedes`、实例 `basedOn`、规则及场景：谁提供什么证据，哪份凭证必须依赖它，目标形成前是否已经存在且可被使用。必需证据缺失时不得形成目标；不能用一个接口的成功响应代替业务证据。
+
+目标能力的 `basis.fmRefs` 引用必要证据、依赖关系及规则，`reasoning` 说明同一业务实例关联、证据引用与可用性检查。已建模的形成条件通过 `ruleBindings` 的 `precondition` 绑定；表达不了的检查保留 gap，不把自然语言说明称为运行时强制校验。
+
+补充证据的创建 URI 不依赖尚未形成的目标凭证 ID，避免形成循环。可在有明确归属的已有申请或合同下追加证据，也可使用独立资源；`evidences` 本身不证明父子归属。目标通过已有证据的引用形成，证据仍证明目标，而非因 URI 嵌套而改变证明对象。
+
+已有证据可以先登记，也可以在一次交互内先登记证据再形成目标；这不是把多个节点强制拆成多个 HTTP 请求。独立接口需要对应调用场景及角色授权。凭证业务形成时间与上传时间分别处理，但必需证据必须先于目标存在。
+
 ## 角色与能力
 
 探索只在选中 Context 的 Party Role、资源、collection/item 与五种方法间进行。已声明且具有场景、依据和实例约束的组合才是 candidate；缺信息是 unresolved；明确语义冲突是 rejected；没有场景支持是 unselected，不等于禁止。
@@ -34,4 +44,4 @@ GET 对应 read。Evidence 写入只能用 POST + append_evidence。PUT/PATCH/DE
 
 按 FM scenario 的 step sequence，把每步映射为 candidate capability、internal、external 或 gap。internal/external 也要来源。没有选择 journey 时状态是 `not_evaluated`；静态映射只写 `mapped/gap/not_evaluated`，不写 `passed`。
 
-业务顺序、HTTP 交互顺序与 Evidence 业务时间是不同概念，不用 `precedes` 推导同步调用链。
+业务依赖、HTTP 交互粒度与 Evidence 业务时间分别表达。业务依赖必须满足，接口可分次或同次登记；同次登记也须先使必需证据可用，再形成目标。流程回映检查必要证据先于消费者可用，不把静态步骤覆盖等同于依赖已验证。

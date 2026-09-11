@@ -1,7 +1,7 @@
 type: rule
 id: rule.invoice-completed
 kind: completion
-label: invoice履约完成判断
+label: 开票履约完成判断
 contextRef: fulfillment.invoice
 bindings:
   request:
@@ -9,7 +9,13 @@ bindings:
   confirmations:
     ref: confirmation.invoice
     cardinality: many
-expression:
-  confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at
-  <= request.expired_at)
+  proofs:
+    ref: evidence.invoice
+    cardinality: many
+expression: confirmations.exists(c, c.request_number == request.request_number
+  && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at
+  && proofs.exists(p, p.request_number == request.request_number &&
+  p.invoice_number == c.invoice_number && p.created_at <= c.confirmed_at
+  && p.invoice_title == request.invoice_title))
 resultType: bool
+notes: 仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。

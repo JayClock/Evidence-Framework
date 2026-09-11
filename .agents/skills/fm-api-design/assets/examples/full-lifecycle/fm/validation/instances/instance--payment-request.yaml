@@ -5,5 +5,6 @@ values:
   started_at: '2026-11-03T09:00:00Z'
   expired_at: '2026-11-10T09:00:00Z'
   requested_minor_units: 250000
+  request_number: PAYMENT-REQ-001
 basedOn:
   - instance.product-procurement

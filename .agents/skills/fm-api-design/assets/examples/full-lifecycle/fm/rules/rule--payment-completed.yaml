@@ -1,7 +1,7 @@
 type: rule
 id: rule.payment-completed
 kind: completion
-label: payment履约完成判断
+label: 支付履约完成判断
 contextRef: fulfillment.payment
 bindings:
   request:
@@ -9,7 +9,14 @@ bindings:
   confirmations:
     ref: confirmation.payment
     cardinality: many
-expression:
-  confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at
-  <= request.expired_at)
+  proofs:
+    ref: evidence.payment-voucher
+    cardinality: many
+expression: confirmations.exists(c, c.request_number == request.request_number
+  && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at
+  && proofs.exists(p, p.request_number == request.request_number &&
+  p.voucher_number == c.voucher_number && p.created_at <= c.confirmed_at
+  && p.paid_minor_units == request.requested_minor_units && c.paid_minor_units
+  == p.paid_minor_units))
 resultType: bool
+notes: 仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。

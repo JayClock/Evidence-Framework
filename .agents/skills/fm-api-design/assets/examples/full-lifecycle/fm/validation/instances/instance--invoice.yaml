@@ -2,7 +2,9 @@ type: evidence_instance
 id: instance.invoice
 entityRef: evidence.invoice
 values:
-  created_at: '2026-11-05T09:05:00Z'
+  created_at: '2026-11-05T09:00:00Z'
   invoice_number: INV-001
+  request_number: INVOICE-REQ-001
+  invoice_title: 甲方公司
 basedOn:
-  - instance.invoice-confirmation
+  - instance.invoice-request

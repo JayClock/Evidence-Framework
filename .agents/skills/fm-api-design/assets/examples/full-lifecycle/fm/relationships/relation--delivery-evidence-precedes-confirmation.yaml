@@ -1,0 +1,6 @@
+type: relationship
+id: relation.delivery-evidence-precedes-confirmation
+kind: precedes
+sourceRef: evidence.delivery-note
+targetRef: confirmation.delivery
+label: 已有发货补充证据是形成确认的必要前提

@@ -22,45 +22,48 @@ steps:
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 5
+    actingRoleRef: role.buyer-finance
+    issueInstanceRef: instance.payment-voucher
+    availableInstanceRefs:
+      - instance.payment-request
+  - sequence: 6
     actingRoleRef: role.buyer
     issueInstanceRef: instance.payment-confirmation
     availableInstanceRefs:
       - instance.payment-request
-  - sequence: 6
-    actingRoleRef: role.buyer-finance
-    issueInstanceRef: instance.payment-voucher
-    availableInstanceRefs:
-      - instance.payment-confirmation
+      - instance.payment-voucher
   - sequence: 7
     actingRoleRef: role.buyer
     issueInstanceRef: instance.invoice-request
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 8
+    actingRoleRef: role.seller-finance
+    issueInstanceRef: instance.invoice
+    availableInstanceRefs:
+      - instance.invoice-request
+  - sequence: 9
     actingRoleRef: role.seller
     issueInstanceRef: instance.invoice-confirmation
     availableInstanceRefs:
       - instance.invoice-request
-  - sequence: 9
-    actingRoleRef: role.seller-finance
-    issueInstanceRef: instance.invoice
-    availableInstanceRefs:
-      - instance.invoice-confirmation
+      - instance.invoice
   - sequence: 10
     actingRoleRef: role.buyer
     issueInstanceRef: instance.delivery-request
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 11
+    actingRoleRef: role.seller-warehouse
+    issueInstanceRef: instance.delivery-note
+    availableInstanceRefs:
+      - instance.delivery-request
+  - sequence: 12
     actingRoleRef: role.seller
     issueInstanceRef: instance.delivery-confirmation
     availableInstanceRefs:
       - instance.delivery-request
-  - sequence: 12
-    actingRoleRef: role.seller-warehouse
-    issueInstanceRef: instance.delivery-note
-    availableInstanceRefs:
-      - instance.delivery-confirmation
+      - instance.delivery-note
 evaluations:
   - ruleRef: rule.payment-completed
     bindings:
@@ -69,6 +72,9 @@ evaluations:
       confirmations:
         instanceRefs:
           - instance.payment-confirmation
+      proofs:
+        instanceRefs:
+          - instance.payment-voucher
     expectedResult: true
   - ruleRef: rule.invoice-completed
     bindings:
@@ -77,6 +83,9 @@ evaluations:
       confirmations:
         instanceRefs:
           - instance.invoice-confirmation
+      proofs:
+        instanceRefs:
+          - instance.invoice
     expectedResult: true
   - ruleRef: rule.delivery-completed
     bindings:
@@ -85,6 +94,33 @@ evaluations:
       confirmations:
         instanceRefs:
           - instance.delivery-confirmation
+      proofs:
+        instanceRefs:
+          - instance.delivery-note
+    expectedResult: true
+  - ruleRef: rule.payment-evidence-ready
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      proofs:
+        instanceRefs:
+          - instance.payment-voucher
+    expectedResult: true
+  - ruleRef: rule.invoice-evidence-ready
+    bindings:
+      request:
+        instanceRef: instance.invoice-request
+      proofs:
+        instanceRefs:
+          - instance.invoice
+    expectedResult: true
+  - ruleRef: rule.delivery-evidence-ready
+    bindings:
+      request:
+        instanceRef: instance.delivery-request
+      proofs:
+        instanceRefs:
+          - instance.delivery-note
     expectedResult: true
 expectations:
   fulfillmentStatuses:
@@ -99,4 +135,4 @@ expectations:
       status: completed
 stakeholderReview:
   status: pending
-notes: 完整示例补充了业务字段和实例数据。
+notes: 三项履约均先形成申请，再提供必需补充证据，最后引用证据形成确认；规则校验申请归属、业务记录值和证据时间。

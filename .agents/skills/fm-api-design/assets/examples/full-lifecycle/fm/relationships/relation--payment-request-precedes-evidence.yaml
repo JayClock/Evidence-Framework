@@ -1,0 +1,6 @@
+type: relationship
+id: relation.payment-request-precedes-evidence
+kind: precedes
+sourceRef: request.payment
+targetRef: evidence.payment-voucher
+label: 针对已有支付申请形成补充证据

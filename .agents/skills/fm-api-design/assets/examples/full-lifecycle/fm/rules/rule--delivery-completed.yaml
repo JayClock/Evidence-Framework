@@ -1,7 +1,7 @@
 type: rule
 id: rule.delivery-completed
 kind: completion
-label: delivery履约完成判断
+label: 发货履约完成判断
 contextRef: fulfillment.delivery
 bindings:
   request:
@@ -9,7 +9,13 @@ bindings:
   confirmations:
     ref: confirmation.delivery
     cardinality: many
-expression:
-  confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at
-  <= request.expired_at)
+  proofs:
+    ref: evidence.delivery-note
+    cardinality: many
+expression: confirmations.exists(c, c.request_number == request.request_number
+  && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at
+  && proofs.exists(p, p.request_number == request.request_number &&
+  p.delivery_note_number == c.delivery_note_number && p.created_at
+  <= c.confirmed_at && p.delivery_address == request.delivery_address))
 resultType: bool
+notes: 仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。

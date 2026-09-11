@@ -1,0 +1,17 @@
+type: rule
+id: rule.invoice-evidence-ready
+kind: precondition
+label: 开票确认的证据前提
+contextRef: fulfillment.invoice
+bindings:
+  request:
+    ref: request.invoice
+  proofs:
+    ref: evidence.invoice
+    cardinality: many
+  now:
+    type: timestamp
+expression: proofs.exists(p, p.request_number == request.request_number
+  && p.created_at <= now && p.invoice_title == request.invoice_title)
+resultType: bool
+notes: 形成目标前核对已存在、当前可见且属于本申请的补充证据；now是判断时刻，不用于生成凭证时间。

@@ -24,3 +24,9 @@ attributes:
     required: true
     keyData: true
     meaning: 采购方要求使用的发票抬头
+  - name: request_number
+    label: 开票申请编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 本次开票申请的业务标识；补充证据与确认引用同一申请编号

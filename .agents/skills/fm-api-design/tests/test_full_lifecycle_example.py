@@ -66,8 +66,19 @@ class FullLifecycleExampleTest(unittest.TestCase):
         self.assertEqual(
             uris["capability.create-delivery-evidence"],
             "/product-procurements/{procurementId}/delivery-requests/"
-            "{deliveryRequestId}/confirmations/{deliveryConfirmationId}/delivery-notes",
+            "{deliveryRequestId}/delivery-notes",
         )
+        self.assertEqual(
+            uris["capability.create-payment-evidence"],
+            "/product-procurements/{procurementId}/payment-requests/"
+            "{paymentRequestId}/vouchers",
+        )
+        self.assertEqual(
+            uris["capability.create-invoice-evidence"],
+            "/product-procurements/{procurementId}/invoice-requests/"
+            "{invoiceRequestId}/invoices",
+        )
+        self.assertEqual(fm_report["timelineSummary"]["unresolvedOrderCount"], 0)
         kinds = {
             item["effect"]["targetRef"] for item in report["projection"]["capabilities"]
         }

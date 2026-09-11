@@ -42,7 +42,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
 - 先识别 Context、双方 Role 与责任边界，再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Confirmation、Evidence Role 和 Rule 通过 `contextRef` 归属它。
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。
-- 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向；每份辅助凭证通过 `evidences` 指出被证明的具体 Evidence。Fulfillment 不得成为 Evidence 关系端点或时间线节点。
+- 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向。`other_evidence` 补充证明其他凭证：明确证明内容，以 `evidences` 指向被证明的具体 Evidence；必需补充证据先存在，目标凭证才能形成，以 `precedes`、实例 `basedOn` 和场景可见性落实依赖。先核对证据，再形成结果，不把补充证据当固定流程阶段。Fulfillment 不得成为 Evidence 关系端点或时间线节点。
 - Completion 与 Breach 使用有来源的 Evidence 属性、明确 bindings 和 CEL；any、all、count、amount 及具名人工确认都不使用 Fulfillment 内嵌策略。
 - 有来源的关系基数用 Relationship 两端的 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明。静态通过不代表当前模拟器已验证运行实例数量，也不能替代履约 completion Rule。
 - 有履约用“请求 → 确认凭证”，不默认人工审批，不从责任 Role 推断实际证明提供方。

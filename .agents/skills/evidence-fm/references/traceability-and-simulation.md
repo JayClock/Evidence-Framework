@@ -102,7 +102,7 @@ basedOn:
 - 只能实例化 Evidence Entity；
 - 非派生的必填属性必须在单据形成时给出；
 - 派生必填属性（含 expired_at）可以在测试输入中先缺省，但场景结束前必须由已声明的 CEL evaluation 产生；无推导、结果为 null 或非 RFC 3339 时间戳均失败。这不允许省略源 Entity 的时间属性定义；
-- `basedOn` 只能指向更早可用的单据；
+- `basedOn` 只能指向更早可用的单据；需要 `other_evidence` 才能形成的凭证，必须在 `basedOn` 中引用这些补充证据，且其形成时间不得早于必需证据；
 - 更正、退款、冲正和补偿新增 Instance，不修改旧 Instance。
 
 ### Scenario
@@ -141,6 +141,8 @@ expectations:
 stakeholderReview:
   status: pending
 ```
+
+补充证据先存在，再形成依赖它的凭证：在目标步骤之前签发补充证据，或将已经存在的证据放入 `givenInstanceRefs`；目标步骤的可见凭证必须覆盖必要证据。需要同次登记时仍按证据依赖拓扑执行。为必要证据缺失、编号不匹配、时间晚于目标及不可见建立失败验证；未声明补充证据需求的凭证不强加此条件。
 
 `asOf` 必须固定；禁止使用执行机器当前时间。`availableInstanceRefs` 决定角色扮演时该 Role 可以看到什么；省略时只默认包含新单据的 `basedOn`，显式空数组表示没有可见凭证。不能把后续凭证或 facilitator 答案提前暴露。
 
