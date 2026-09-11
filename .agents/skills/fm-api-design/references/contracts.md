@@ -14,7 +14,7 @@
   --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```
 
-`projection.json.http` 保存 HTTP 设计结果，`api-contracts.md`、`representation-examples.json`、`http-journeys.json` 从它渲染。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝，输出只创建新目录。
+`projection.json.http` 保存 HTTP 设计结果，`api-contracts.md`、`representation-examples.json`、`http-journeys.json` 和 `openapi.yaml` 从它渲染。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝，输出只创建新目录。
 
 ## 输入结构
 
@@ -120,8 +120,14 @@ EXAMPLE="$API_SKILL_DIR/assets/examples/full-lifecycle"
 
 预期产生 13 个业务候选，本次仅细化其中 2 个读取契约。没有选择的其他 11 个契约不宣称已完成。示例是合成协议选择，不代表生产数据、缓存策略或业务批准。
 
+## OpenAPI 交付投影
+
+`openapi.yaml` 使用 OpenAPI 3.1 表达路径、方法、路径参数、请求体、响应、Header 和表示 Schema。HAL 示例保留真实 `_links`；表示中的链接另投影为响应 Link Object，以 `operationId` 和运行时表达式连接已选操作。`whenRuleRef` 仅作为条件元数据，不能证明链接在某次响应中可用。
+
+OpenAPI 每个 Path＋Method 只能有一个 Operation。同一路由的角色候选合并，并通过 `x-fm-capability-refs`、`x-actor-role-refs`、`x-binding-refs` 和 `x-fm-operation-variants` 保留来源；不会据此生成 security 配置。存在不一致变体时，原有静态检查仍保留 gap，OpenAPI 不消除冲突。API 文件未声明发布版本，因此 `info.version` 明确为 `generated`，不发明业务版本。
+
 ## 当前限制
 
-这是可运行的资源／HTTP 消费设计检查，不是运行时服务、鉴权引擎或通用流程执行器。动态可用性、真实证据访问及 CEL 前置条件继续依赖业务和实现验证。条件链接不自动放行。
+这是可运行的资源／HTTP 消费设计检查及 OpenAPI 交付投影，不是运行时服务、鉴权引擎或通用流程执行器。动态可用性、真实证据访问及 CEL 前置条件继续依赖业务和实现验证。条件链接不自动放行。
 
-尚不提供 OpenAPI／Controller 导出、认证协议生成、任意嵌套流程表达式或外部接口抓取；OpenAPI 可作为后续显式投影，不是本阶段完成与否的替代标准。未建模的读取权限、关键数据来源或接口行为必须返回缺口，不能通过填写技术 decision 消除。
+尚不提供 Controller、认证协议、Arazzo、任意嵌套流程表达式或外部接口抓取。OpenAPI 不是本阶段完成与否的替代标准；journey 继续保留在独立静态流程结果中。未建模的读取权限、关键数据来源或接口行为必须返回缺口，不能通过填写技术 decision 消除。

@@ -1,6 +1,6 @@
 ---
 name: fm-api-design
-description: 基于 FM Schema v3 和有来源场景维护统一 api.yaml，设计角色×URI×HTTP 方法×业务能力候选、资源表示、超媒体、缓存分页及消费者流程契约。用户提到 FM 到 REST API、API 契约、HAL、幂等或校验 api.yaml 时使用；不用于修改 FM、生成 Controller/OpenAPI 或补造权限。
+description: 基于 FM Schema v3 和有来源场景维护统一 api.yaml，设计角色×URI×HTTP 方法×业务能力候选、资源表示、超媒体、缓存分页及消费者流程契约。用户提到 FM 到 REST API、API 契约、HAL、幂等、校验 api.yaml 或生成 OpenAPI 3.1 时使用；不用于修改 FM、生成 Controller 或补造权限。
 compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evidence-fm Skill。
 ---
 
@@ -59,7 +59,7 @@ API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决
 
 要求本次声明范围无 gap 时增加 `--require-complete`；它不表示完整 REST、业务批准或运行验证。
 
-`projection.json` 是唯一机器中间结果，所有 Markdown 和样例均从它渲染。输出固定包含投影、四列表、设计报告、HTTP 契约、表示样例、HTTP 流程和 manifest。没有 HTTP 范围时明确报告未选择，不声称完成了契约。
+`projection.json` 是唯一机器中间结果，所有 Markdown、样例和 `openapi.yaml` 均从它渲染。输出固定包含投影、四列表、设计报告、HTTP 契约、OpenAPI 3.1、表示样例、HTTP 流程和 manifest。OpenAPI 是交付投影，不回写 API 设计，也不把角色直接解释为认证配置。没有 HTTP 范围时生成空 paths 并标记 unselected，不声称完成了契约。
 
 ## 示例
 

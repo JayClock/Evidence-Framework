@@ -7,39 +7,71 @@ import json
 import os
 import shutil
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any
 
 from . import __version__
 
 http_report = importlib.import_module("fm_api_core.http_report")
+openapi_module = importlib.import_module("fm_api_core.openapi")
 
 
 def canonical_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
 
 
-def capabilities_markdown(projection: dict[str, Any]) -> str:
-    lines = [
-        "# API 能力候选",
-        "",
-        "| Role | URI | Method | Business Capability |",
-        "| --- | --- | --- | --- |",
+def _display_width(value: str) -> int:
+    return sum(
+        0
+        if unicodedata.combining(character)
+        else 2
+        if unicodedata.east_asian_width(character) in {"F", "W"}
+        else 1
+        for character in value
+    )
+
+
+def _markdown_table(rows: list[list[str]]) -> list[str]:
+    widths = [max(_display_width(row[index]) for row in rows) for index in range(4)]
+
+    def line(row: list[str]) -> str:
+        cells = [
+            value + " " * (width - _display_width(value))
+            for value, width in zip(row, widths, strict=True)
+        ]
+        return "| " + " | ".join(cells) + " |"
+
+    return [
+        line(rows[0]),
+        line(["-" * width for width in widths]),
+        *map(line, rows[1:]),
     ]
-    for item in projection["capabilities"]:
-        lines.append(
-            f"| {item['roleLabel']} | `{item['uri']}` | {item['method']} | {item['businessCapability']} |"
-        )
-    if not projection["capabilities"]:
-        lines.append("| — | — | — | 当前没有满足依据与约束的候选 |")
-    lines.extend(
+
+
+def capabilities_markdown(projection: dict[str, Any]) -> str:
+    rows = [["Role", "URI", "Method", "Business Capability"]]
+    rows.extend(
         [
+            item["roleLabel"],
+            f"`{item['uri']}`",
+            item["method"],
+            item["businessCapability"],
+        ]
+        for item in projection["capabilities"]
+    )
+    if not projection["capabilities"]:
+        rows.append(["—", "—", "—", "当前没有满足依据与约束的候选"])
+    return "\n".join(
+        [
+            "# API 能力候选",
+            "",
+            *_markdown_table(rows),
             "",
             "> 本表是有来源的 API 候选，不是业务批准、完整 REST 契约或运行时授权配置。",
             "",
         ]
     )
-    return "\n".join(lines)
 
 
 def design_report(projection: dict[str, Any]) -> str:
@@ -128,6 +160,7 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         if http is not None
         else {}
     )
+    outputs["openapi.yaml"] = openapi_module.render_openapi(projection)
     dependencies: dict[str, str] = {}
     for package in ("jsonschema", "PyYAML"):
         try:

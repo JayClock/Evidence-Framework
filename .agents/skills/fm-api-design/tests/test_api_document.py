@@ -60,7 +60,11 @@ class ApiDocumentTest(unittest.TestCase):
             self.assertEqual(
                 generated.returncode, 0, generated.stdout + generated.stderr
             )
-            self.assertEqual(len(list(out.iterdir())), 7)
+            self.assertEqual(len(list(out.iterdir())), 8)
+            openapi = yaml.safe_load((out / "openapi.yaml").read_text())
+            self.assertEqual(openapi["openapi"], "3.1.0")
+            self.assertEqual(openapi["paths"], {})
+            self.assertEqual(openapi["x-fm-http-scope"], "unselected")
             self.assertIn("未选择", (out / "api-contracts.md").read_text())
             self.assertEqual(path.read_bytes(), before)
 

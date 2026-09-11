@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: api.product-procurement
+  version: generated
+paths:
+  /products/{productId}:
+    get:
+      operationId: get_products__productId_
+      summary: 客户查看商品 / 供应商查看商品
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-None-Match
+          in: header
+          required: false
+          schema:
+            type: string
+          description: 缓存条件读取；省略时执行普通读取。
+      responses:
+        '200':
+          description: 返回当前角色可读取的商品表示
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: private, max-age=0
+            ETag:
+              schema:
+                type: string
+              example: '"product-v1"'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/representation_product-http'
+              example:
+                _links:
+                  self:
+                    href: /products/product-1
+                name: 示例商品
+                productCode: product-1
+        '304':
+          description: 条件读取命中当前表示版本，没有响应 body
+          headers:
+            ETag:
+              schema:
+                type: string
+              example: '"product-v1"'
+        '403':
+          description: 调用者不满足该商品的业务实例访问范围
+      x-fm-capability-refs:
+        - capability.read-product-as-buyer
+        - capability.read-product-as-seller
+      x-actor-role-refs:
+        - role.buyer
+        - role.seller
+      x-binding-refs:
+        - binding.buyer-product-read
+        - binding.seller-product-read
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-product-as-buyer
+          actorRoleRef: role.buyer
+        - capabilityRef: capability.read-product-as-seller
+          actorRoleRef: role.seller
+components:
+  schemas:
+    representation_product-http:
+      type: object
+      properties:
+        productCode:
+          type: string
+        name:
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - productCode
+        - name
+        - _links
+x-generated-from: fm-api-design projection.json
+x-fm-api-design-schema-version: '3.0'
+x-runtime-validated: false
+x-fm-http-scope: selected

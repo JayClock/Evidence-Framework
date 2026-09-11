@@ -40,6 +40,22 @@ class HttpCliTest(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertTrue((output / "api-contracts.md").is_file())
+                openapi = yaml.safe_load((output / "openapi.yaml").read_text())
+                operation = openapi["paths"][
+                    "/subscriptions/{subscriptionId}/payments"
+                ]["post"]
+                self.assertEqual(
+                    operation["x-fm-capability-refs"],
+                    ["capability.request-payment"],
+                )
+                self.assertIn(
+                    "application/hal+json",
+                    operation["responses"]["201"]["content"],
+                )
+                self.assertEqual(
+                    {item["name"] for item in operation["parameters"]},
+                    {"subscriptionId", "Idempotency-Key"},
+                )
                 manifest = json.loads((output / "manifest.json").read_text())
                 self.assertEqual(set(manifest["inputs"]), {"fm", "api", "sources"})
                 for name, info in manifest["outputs"].items():

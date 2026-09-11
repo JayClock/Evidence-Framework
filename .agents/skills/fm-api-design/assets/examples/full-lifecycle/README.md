@@ -109,7 +109,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --require-complete
 ```
 
-预期产生 13 个角色×接口候选，`complete: true`，且无缺口。
+预期产生 13 个角色×接口候选，`complete: true`，且无缺口。[API 候选清单](api-capabilities.md) 是由当前 `api.yaml` 和 FM 确定性生成的人工审阅快照，不是另一份设计输入。
 
 ## 生成投影
 
@@ -131,6 +131,6 @@ mkdir -p "$PROJECT_ROOT/docs/api/.work"
 
 [api.yaml](api.yaml) 的 `http` 部分细化客户、供应商商品读取能力，包含 HAL 表示、私有缓存、ETag 和条件读取流程；不增加查询权限，不声称其他 11 个候选已具备 HTTP 契约。
 
-上面的命令会同时检查候选与 HTTP 范围，生成固定七份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。示例的 `complete` 是静态样例检查，`runtimeValidated` 始终为 false。
+上面的命令会同时检查候选与 HTTP 范围，生成固定八份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。示例的 `complete` 是静态样例检查，`runtimeValidated` 始终为 false。
 
 字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/contracts.md)。

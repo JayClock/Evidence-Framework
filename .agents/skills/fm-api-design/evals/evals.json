@@ -42,6 +42,12 @@
       "prompt": "只校验已有 api.yaml，检查响应字段能否提供下一步参数，不输出文件或调用真实 HTTP 服务。",
       "expected_output": "只调用 check --api，检查前序响应取值、角色、URI 参数及成功路径，保留循环和缺失输入为 gap；不 project，不联网，不声称运行验收通过。",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "把已有 api.yaml 投影成 OpenAPI，并表达 HAL 响应中的下一步能力。不要再维护一份 OpenAPI 输入。",
+      "expected_output": "先 check，再向新目录 project；openapi.yaml 从 projection.json 确定性生成，以响应 links 连接已有 operationId，保留角色、实例约束和条件规则扩展；不发明 security、业务 API 版本或新接口。",
+      "files": ["assets/examples/full-lifecycle/api.yaml"]
     }
   ]
 }

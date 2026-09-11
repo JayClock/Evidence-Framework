@@ -93,10 +93,13 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 - `api-contracts.md`：HTTP 请求响应、表示及消费流程。
 - `representation-examples.json`：HTTP 表示合成样例。
 - `http-journeys.json`：静态 HTTP 流程结果，runtimeValidated 为 false。
+- `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
 `http: null` 对应投影中的 `http: null`，HTTP 报告明确未选择，流程为 not_evaluated，样例为空；不将未选择解释为已完成契约。`--require-complete` 只检查本次声明范围。
 
 资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。
+
+OpenAPI 的 `info.version` 使用 `generated`，避免在没有来源时发明业务 API 版本；设计格式版本保存于 `x-fm-api-design-schema-version`。共享 Method＋URI 的角色变体合并为一个 OpenAPI Operation，同时以 `x-fm-capability-refs`、`x-actor-role-refs` 和 `x-fm-operation-variants` 保留来源，不生成认证方案。HAL 运行时链接同时投影为响应 `links`；条件规则通过扩展保留，但 OpenAPI 不执行规则。journey 不伪装成 OpenAPI Operation。
 
 输出不含墙钟、随机 ID、临时路径或安装绝对路径。同一输入、工具及依赖版本产生相同字节；生成结果不手工维护。
