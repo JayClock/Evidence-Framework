@@ -3,14 +3,7 @@
   "$id": "https://jayclock.dev/fm/v3/scenario.schema.json",
   "title": "FM deterministic evidence simulation scenario",
   "type": "object",
-  "required": [
-    "type",
-    "id",
-    "label",
-    "asOf",
-    "steps",
-    "expectations"
-  ],
+  "required": ["type", "id", "label", "asOf", "steps", "expectations"],
   "properties": {
     "type": {
       "const": "fm_scenario"
@@ -65,11 +58,7 @@
     },
     "step": {
       "type": "object",
-      "required": [
-        "sequence",
-        "actingRoleRef",
-        "issueInstanceRef"
-      ],
+      "required": ["sequence", "actingRoleRef", "issueInstanceRef"],
       "properties": {
         "sequence": {
           "type": "integer",
@@ -99,9 +88,7 @@
       "type": "object",
       "oneOf": [
         {
-          "required": [
-            "instanceRef"
-          ],
+          "required": ["instanceRef"],
           "properties": {
             "instanceRef": {
               "$ref": "#/$defs/id"
@@ -110,9 +97,7 @@
           "additionalProperties": false
         },
         {
-          "required": [
-            "instanceRefs"
-          ],
+          "required": ["instanceRefs"],
           "properties": {
             "instanceRefs": {
               "type": "array",
@@ -126,9 +111,7 @@
           "additionalProperties": false
         },
         {
-          "required": [
-            "value"
-          ],
+          "required": ["value"],
           "properties": {
             "value": {}
           },
@@ -138,11 +121,7 @@
     },
     "evaluation": {
       "type": "object",
-      "required": [
-        "ruleRef",
-        "bindings",
-        "expectedResult"
-      ],
+      "required": ["ruleRef", "bindings", "expectedResult"],
       "properties": {
         "ruleRef": {
           "$ref": "#/$defs/id"
@@ -166,11 +145,7 @@
     },
     "fulfillmentStatus": {
       "type": "object",
-      "required": [
-        "fulfillmentRef",
-        "requestInstanceRef",
-        "status"
-      ],
+      "required": ["fulfillmentRef", "requestInstanceRef", "status"],
       "properties": {
         "fulfillmentRef": {
           "$ref": "#/$defs/id"
@@ -179,21 +154,14 @@
           "$ref": "#/$defs/id"
         },
         "status": {
-          "enum": [
-            "not_requested",
-            "pending",
-            "completed",
-            "breached"
-          ]
+          "enum": ["not_requested", "pending", "completed", "breached"]
         }
       },
       "additionalProperties": false
     },
     "expectations": {
       "type": "object",
-      "required": [
-        "fulfillmentStatuses"
-      ],
+      "required": ["fulfillmentStatuses"],
       "properties": {
         "fulfillmentStatuses": {
           "type": "array",
@@ -207,16 +175,10 @@
     },
     "stakeholderReview": {
       "type": "object",
-      "required": [
-        "status"
-      ],
+      "required": ["status"],
       "properties": {
         "status": {
-          "enum": [
-            "pending",
-            "confirmed",
-            "rejected"
-          ]
+          "enum": ["pending", "confirmed", "rejected"]
         },
         "reviewer": {
           "type": "string",
@@ -236,21 +198,13 @@
           "if": {
             "properties": {
               "status": {
-                "enum": [
-                  "confirmed",
-                  "rejected"
-                ]
+                "enum": ["confirmed", "rejected"]
               }
             },
-            "required": [
-              "status"
-            ]
+            "required": ["status"]
           },
           "then": {
-            "required": [
-              "reviewer",
-              "reviewedAt"
-            ]
+            "required": ["reviewer", "reviewedAt"]
           }
         }
       ],

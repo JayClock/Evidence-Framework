@@ -5,8 +5,8 @@
 ## 命令
 
 ```text
-/evidence-model <目标>  # 通过原生 /skill:fm-modeling 展开目标
-/evidence-model         # 选择开始、继续、只校验或返回
+/fm-model <目标>  # 通过原生 /skill:fm-modeling 展开目标
+/fm-model         # 选择开始、继续、只校验或返回
 ```
 
 扩展会确认 `fm-modeling` Skill 已被宿主发现，再使用 `expandPromptTemplates: true` 发送原生 Skill 命令。资源缺失只提示安装问题，不生成业务问题。
@@ -27,7 +27,7 @@ Agent 提供 `questionId`、`gapKey`、问题、影响、当前理解和来源�
 
 ### `fm_ui_review`
 
-输入 `publish_fm.py prepare` 产生的 `receiptPath`。面板展示目标、候选摘要、增改删数量、真实检查与场景执行情况，并允许查看完整差异。返回：保存当前候选、返回修改、暂不保存、取消或不可用，以及绑定的准备结果标识和摘要。
+输入 `publish_fm.py prepare` 产生的 `receiptPath`。面板展示目标与 preparation ID、来源／候选／目标摘要、增改删数量、Schema／CEL／lineage／simulation／timeline 检查、Evidence 时间线及未决顺序，并允许查看完整差异。返回：保存当前候选、返回修改、暂不保存、取消或不可用，以及绑定的准备结果标识和摘要。
 
 扩展不调用 `apply`，也不把“保存”解释成具名业务审核。Agent 仅可对同一已展示准备结果调用独立发布 CLI；内容变化后需要重新准备和确认。
 
@@ -48,4 +48,4 @@ npm run fm-modeling:format:check
 npm run fm-modeling:verify
 ```
 
-自动测试覆盖原生 Skill 转发、资源缺失、问答结果分支、无 UI 降级、候选绑定、长差异和空场景显示。真人仍需检查中文输入法、窄终端、主题切换、RPC 客户端、取消／暂缓／继续和发布中断体验。
+自动测试覆盖唯一 `/fm-model` 的原生 Skill 转发、资源缺失、问答结果分支、无 UI 降级、候选绑定、完整差异、Evidence 时间线和空场景显示。真人仍需检查中文输入法、窄终端、主题切换、RPC 客户端、取消／暂缓／继续和发布中断体验。

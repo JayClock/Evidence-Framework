@@ -3,14 +3,7 @@
   "$id": "https://jayclock.dev/fm/v3/relationship.schema.json",
   "title": "Fulfillment Modeling relationship",
   "type": "object",
-  "required": [
-    "type",
-    "id",
-    "kind",
-    "sourceRef",
-    "targetRef",
-    "label"
-  ],
+  "required": ["type", "id", "kind", "sourceRef", "targetRef", "label"],
   "properties": {
     "type": {
       "const": "relationship"

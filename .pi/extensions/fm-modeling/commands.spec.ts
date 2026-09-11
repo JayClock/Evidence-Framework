@@ -36,7 +36,7 @@ function context(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('/evidence-model', () => {
+describe('/fm-model', () => {
   it('forwards arguments through native skill expansion', async () => {
     const { handler, sendUserMessage } = setup([skill]);
 

@@ -31,7 +31,7 @@ async function chooseIntent(
 }
 
 export function registerModelingCommand(pi: ExtensionAPI): void {
-  pi.registerCommand('evidence-model', {
+  pi.registerCommand('fm-model', {
     description: '通过 fm-modeling Skill 开始或继续业务建模',
     handler: async (args, ctx) => {
       if (!skillAvailable(pi)) {

@@ -3,13 +3,7 @@
   "$id": "https://jayclock.dev/fm/v3/entity.schema.json",
   "title": "Fulfillment Modeling entity",
   "type": "object",
-  "required": [
-    "type",
-    "id",
-    "category",
-    "kind",
-    "label"
-  ],
+  "required": ["type", "id", "category", "kind", "label"],
   "properties": {
     "type": {
       "const": "entity"
@@ -18,12 +12,7 @@
       "$ref": "#/$defs/id"
     },
     "category": {
-      "enum": [
-        "evidence",
-        "participant",
-        "role",
-        "context"
-      ]
+      "enum": ["evidence", "participant", "role", "context"]
     },
     "kind": {
       "type": "string",
@@ -87,22 +76,13 @@
             "const": "evidence"
           },
           "kind": {
-            "enum": [
-              "rfp",
-              "proposal",
-              "fulfillment_request"
-            ]
+            "enum": ["rfp", "proposal", "fulfillment_request"]
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "attributes"
-        ],
+        "required": ["attributes"],
         "properties": {
           "attributes": {
             "allOf": [
@@ -157,15 +137,10 @@
             "const": "contract"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "attributes"
-        ],
+        "required": ["attributes"],
         "properties": {
           "attributes": {
             "contains": {
@@ -198,15 +173,10 @@
             "const": "fulfillment_confirmation"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "attributes"
-        ],
+        "required": ["attributes"],
         "properties": {
           "attributes": {
             "contains": {
@@ -239,15 +209,10 @@
             "const": "other_evidence"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "attributes"
-        ],
+        "required": ["attributes"],
         "properties": {
           "attributes": {
             "contains": {
@@ -277,9 +242,7 @@
             "const": "evidence"
           }
         },
-        "required": [
-          "category"
-        ]
+        "required": ["category"]
       },
       "then": {
         "properties": {
@@ -294,9 +257,7 @@
             ]
           }
         },
-        "required": [
-          "contextRef"
-        ]
+        "required": ["contextRef"]
       }
     },
     {
@@ -315,15 +276,10 @@
             ]
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "responsibleRoleRef"
-        ]
+        "required": ["responsibleRoleRef"]
       }
     },
     {
@@ -336,15 +292,10 @@
             "const": "contract"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "roleRefs"
-        ]
+        "required": ["roleRefs"]
       }
     },
     {
@@ -354,17 +305,12 @@
             "const": "participant"
           }
         },
-        "required": [
-          "category"
-        ]
+        "required": ["category"]
       },
       "then": {
         "properties": {
           "kind": {
-            "enum": [
-              "party",
-              "thing"
-            ]
+            "enum": ["party", "thing"]
           }
         }
       }
@@ -379,15 +325,10 @@
             "const": "thing"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "contextRef"
-        ]
+        "required": ["contextRef"]
       }
     },
     {
@@ -397,25 +338,15 @@
             "const": "role"
           }
         },
-        "required": [
-          "category"
-        ]
+        "required": ["category"]
       },
       "then": {
         "properties": {
           "kind": {
-            "enum": [
-              "party",
-              "domain",
-              "third_party",
-              "context",
-              "evidence"
-            ]
+            "enum": ["party", "domain", "third_party", "context", "evidence"]
           }
         },
-        "required": [
-          "contextRef"
-        ]
+        "required": ["contextRef"]
       }
     },
     {
@@ -425,9 +356,7 @@
             "const": "context"
           }
         },
-        "required": [
-          "category"
-        ]
+        "required": ["category"]
       },
       "then": {
         "properties": {
@@ -454,41 +383,26 @@
             "const": "fulfillment"
           }
         },
-        "required": [
-          "category",
-          "kind"
-        ]
+        "required": ["category", "kind"]
       },
       "then": {
-        "required": [
-          "parentContextRef"
-        ],
+        "required": ["parentContextRef"],
         "not": {
           "anyOf": [
             {
-              "required": [
-                "contextRef"
-              ]
+              "required": ["contextRef"]
             },
             {
-              "required": [
-                "rootRefs"
-              ]
+              "required": ["rootRefs"]
             },
             {
-              "required": [
-                "attributes"
-              ]
+              "required": ["attributes"]
             },
             {
-              "required": [
-                "responsibleRoleRef"
-              ]
+              "required": ["responsibleRoleRef"]
             },
             {
-              "required": [
-                "roleRefs"
-              ]
+              "required": ["roleRefs"]
             }
           ]
         }
@@ -499,12 +413,7 @@
   "$defs": {
     "evidenceTime": {
       "type": "object",
-      "required": [
-        "name",
-        "valueType",
-        "required",
-        "keyData"
-      ],
+      "required": ["name", "valueType", "required", "keyData"],
       "properties": {
         "valueType": {
           "const": "timestamp"
@@ -523,13 +432,7 @@
     },
     "attribute": {
       "type": "object",
-      "required": [
-        "name",
-        "label",
-        "valueType",
-        "required",
-        "meaning"
-      ],
+      "required": ["name", "label", "valueType", "required", "meaning"],
       "properties": {
         "name": {
           "type": "string",

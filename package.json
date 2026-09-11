@@ -19,12 +19,12 @@
     "evidence:verify": "npm run evidence:typecheck && npm run evidence:test && npm run evidence:format:check",
     "fm-modeling:typecheck": "tsc -p .pi/extensions/fm-modeling/tsconfig.json",
     "fm-modeling:test": "vitest run --config .pi/extensions/fm-modeling/fm-modeling.vitest.config.mts",
-    "fm-modeling:format": "prettier --write '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}' '.agents/skills/fm-modeling/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/publication.md}' '.agents/skills/evidence-discovery/assets/discovery-template.md' docs/fm-modeling.md",
-    "fm-modeling:format:check": "prettier --check '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}' '.agents/skills/fm-modeling/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/publication.md}' '.agents/skills/evidence-discovery/assets/discovery-template.md' docs/fm-modeling.md",
+    "fm-modeling:format": "prettier --write '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}' '.agents/skills/fm-modeling/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/*.md,evals/*.json,schemas/*.json}' docs/fm-modeling.md",
+    "fm-modeling:format:check": "prettier --check '.pi/extensions/fm-modeling/**/*.{ts,mts,json,md}' '.agents/skills/fm-modeling/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/*.md,evals/*.json,schemas/*.json}' docs/fm-modeling.md",
     "fm-modeling:verify": "npm run fm-modeling:typecheck && npm run fm-modeling:test && npm run fm-modeling:format:check",
     "skills:test": "python3 -m unittest discover -s tests/skills -v",
     "skills:verify": "npm run skills:test && npm run skills:test:fm",
-    "skills:test:fm": "python3 -m unittest discover -s .agents/skills/evidence-fm/tests -v"
+    "skills:test:fm": "/opt/miniconda3/bin/python3.12 -m unittest discover -s .agents/skills/evidence-fm/tests -v"
   },
   "private": true,
   "dependencies": {

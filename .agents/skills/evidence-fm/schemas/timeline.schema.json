@@ -28,7 +28,12 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["entityRef", "contextRef", "evidenceKind", "timeAttributes"],
+        "required": [
+          "entityRef",
+          "contextRef",
+          "evidenceKind",
+          "timeAttributes"
+        ],
         "properties": {
           "entityRef": { "$ref": "#/$defs/id" },
           "contextRef": { "$ref": "#/$defs/id" },
@@ -46,7 +51,15 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["instanceRef", "entityRef", "contextRef", "evidenceKind", "time", "basedOn", "values"],
+        "required": [
+          "instanceRef",
+          "entityRef",
+          "contextRef",
+          "evidenceKind",
+          "time",
+          "basedOn",
+          "values"
+        ],
         "properties": {
           "instanceRef": { "$ref": "#/$defs/id" },
           "entityRef": { "$ref": "#/$defs/id" },

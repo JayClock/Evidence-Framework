@@ -17,8 +17,17 @@ async function receipt(overrides: Record<string, unknown> = {}) {
       preparationId: 'prepared-abc',
       receiptDigest: 'sha256:receipt',
       status: 'prepared',
-      candidate: { digest: 'sha256:candidate' },
+      candidate: {
+        path: '/project/docs/business/.fm-work/prepared-abc/candidate',
+        digest: 'sha256:candidate',
+      },
       target: { path: '/project/docs/business/fm', digest: 'absent' },
+      sources: [
+        {
+          path: '/project/docs/business/discovery.md',
+          digest: 'sha256:source',
+        },
+      ],
       difference: {
         added: ['model.yaml'],
         modified: [],
@@ -29,6 +38,15 @@ async function receipt(overrides: Record<string, unknown> = {}) {
         valid: true,
         executedScenarioCount: 0,
         simulationPassed: null,
+        modelValidated: true,
+        timelineSummary: {
+          laneCount: 2,
+          evidenceTypeCount: 3,
+          instanceCount: 3,
+          precedesCount: 2,
+          unresolvedOrderCount: 1,
+          sha256: 'sha256:timeline',
+        },
       },
       ...overrides,
     }),
@@ -86,6 +104,18 @@ describe('ReviewUI', () => {
     );
     expect(result.status).toBe('revise');
     expect(ctx.ui.select).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows checks, sources, timeline, and unresolved order', async () => {
+    const ctx = context(['暂不保存']);
+
+    await new ReviewUI().open(await receipt(), ctx as never);
+
+    const displayed = ctx.ui.select.mock.calls[0]?.[0];
+    expect(displayed).toContain('discovery.md');
+    expect(displayed).toContain('Schema/CEL/lineage');
+    expect(displayed).toContain('1 未决');
+    expect(displayed).toContain('sha256:timeline');
   });
 
   it('does not describe an empty scenario suite as simulation success', async () => {
