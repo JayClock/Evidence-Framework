@@ -195,7 +195,7 @@ def build_projection(
         key=lambda item: (item.severity, item.code, item.targetRef or "", item.message),
     )
     return {
-        "schemaVersion": "1.0",
+        "schemaVersion": "2.0",
         "designId": design["id"],
         "inputDigests": {
             "fm": index.files,

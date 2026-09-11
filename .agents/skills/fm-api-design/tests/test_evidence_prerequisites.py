@@ -119,8 +119,11 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 self.assertEqual(confirmation["basedOn"], [request_id, proof_id])
                 if name != "payment":
                     self.assertEqual(
-                        resources[f"resource.{name}-evidence"]["parentRef"],
-                        f"resource.{name}-request",
+                        resources[{
+                            "invoice": "resource.invoice",
+                            "delivery": "resource.delivery-note",
+                        }[name]]["parentRef"],
+                        {"invoice": "resource.invoicing", "delivery": "resource.delivery"}[name],
                     )
                 else:
                     self.assertEqual(
@@ -130,7 +133,11 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                         "role.payment-proof",
                         {resource["entityRef"] for resource in resources.values()},
                     )
-                cap = caps[f"capability.create-{name}-confirmation"]
+                cap = caps[{
+                    "payment": "capability.confirm-payment",
+                    "invoice": "capability.confirm-invoicing",
+                    "delivery": "capability.confirm-delivery",
+                }[name]]
                 self.assertIn(
                     {
                         "ruleRef": f"rule.{name}-evidence-ready",

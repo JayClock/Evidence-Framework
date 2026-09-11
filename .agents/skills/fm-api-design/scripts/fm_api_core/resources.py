@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from fm_api_core.diagnostics import Diagnostic, error, gap
+from .cardinality import validate_cardinality  # pyright: ignore[reportMissingImports]
+from .diagnostics import Diagnostic, error, gap
 
 
 def build_resources(
@@ -57,6 +58,8 @@ def build_resources(
                 )
             )
         identity = resource["identity"]
+        if (resource["shape"] == "singleton") != (identity["kind"] == "parent_scoped"):
+            diagnostics.append(error("RESOURCE_IDENTITY_CONFLICT", "单例由父实例定位，集合实例须有自身定位参数", resource_id))
         if identity["kind"] == "fm_attribute":
             entity_ref, attribute_name = identity["attributeRef"].split("#", 1)
             attribute_entity = index.entities.get(entity_ref)
@@ -79,7 +82,7 @@ def build_resources(
                         resource_id,
                     )
                 )
-        else:
+        elif identity["kind"] == "api_resource_id":
             decision = next(
                 (
                     item
@@ -149,24 +152,23 @@ def build_resources(
                             (parent["id"],),
                         )
                     )
-        parameter = identity["parameter"]
-        if parameter in parameters:
-            diagnostics.append(
-                error(
-                    "URI_PARAMETER_DUPLICATE", f"URI 参数重复: {parameter}", resource_id
-                )
-            )
-        parameters.append(parameter)
-        collection_uri = (
-            (parent["itemUri"] if parent else "") + "/" + resource["segment"]
-        )
-        item_uri = collection_uri + "/{" + parameter + "}"
-        projected = {
-            **resource,
-            "collectionUri": collection_uri,
-            "itemUri": item_uri,
-            "parameters": parameters,
-        }
+        diagnostics.extend(validate_cardinality(resource, parent, design, index))
+        parent_uri = ""
+        if parent:
+            parent_uri = parent["uris"].get("singleton", parent["uris"].get("item", ""))
+        base_uri = parent_uri + "/" + resource["segment"]
+        if resource["shape"] == "singleton":
+            uris = {"singleton": base_uri}
+        else:
+            parameter = identity.get("parameter")
+            if not parameter:
+                visiting.remove(resource_id)
+                return None
+            if parameter in parameters:
+                diagnostics.append(error("URI_PARAMETER_DUPLICATE", f"URI 参数重复: {parameter}", resource_id))
+            parameters.append(parameter)
+            uris = {"collection": base_uri, "item": base_uri + "/{" + parameter + "}"}
+        projected = {**resource, "uris": uris, "parameters": parameters}
         result[resource_id] = projected
         visiting.remove(resource_id)
         return projected

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v1/api-design.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v2/api-design.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -16,28 +16,70 @@
     "journeys"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0" },
-    "id": { "$ref": "#/$defs/id" },
+    "schemaVersion": {
+      "const": "2.0"
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
     "scope": {
       "type": "object",
       "required": ["contextRefs"],
-      "properties": { "contextRefs": { "$ref": "#/$defs/ids" } },
+      "properties": {
+        "contextRefs": {
+          "$ref": "#/$defs/ids"
+        }
+      },
       "additionalProperties": false
     },
-    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
-    "decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
-    "resources": { "type": "array", "items": { "$ref": "#/$defs/resource" } },
-    "bindings": { "type": "array", "items": { "$ref": "#/$defs/binding" } },
-    "scenarios": { "type": "array", "items": { "$ref": "#/$defs/scenario" } },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/resource"
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    },
     "capabilities": {
       "type": "array",
-      "items": { "$ref": "#/$defs/capability" }
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
     },
     "representations": {
       "type": "array",
-      "items": { "$ref": "#/$defs/representation" }
+      "items": {
+        "$ref": "#/$defs/representation"
+      }
     },
-    "journeys": { "type": "array", "items": { "$ref": "#/$defs/journey" } }
+    "journeys": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/journey"
+      }
+    }
   },
   "additionalProperties": false,
   "$defs": {
@@ -47,17 +89,28 @@
     },
     "ids": {
       "type": "array",
-      "items": { "$ref": "#/$defs/id" },
+      "items": {
+        "$ref": "#/$defs/id"
+      },
       "uniqueItems": true
     },
     "basis": {
       "type": "object",
       "required": ["reasoning"],
       "properties": {
-        "fmRefs": { "$ref": "#/$defs/ids" },
-        "sourceRefs": { "$ref": "#/$defs/ids" },
-        "decisionRefs": { "$ref": "#/$defs/ids" },
-        "reasoning": { "type": "string", "minLength": 1 }
+        "fmRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "sourceRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "decisionRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
@@ -65,10 +118,21 @@
       "type": "object",
       "required": ["id", "path", "locator", "quote"],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "path": { "type": "string", "minLength": 1 },
-        "locator": { "type": "string", "minLength": 1 },
-        "quote": { "type": "string", "minLength": 1 }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
@@ -76,7 +140,9 @@
       "type": "object",
       "required": ["id", "category", "statement", "reasoning"],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
         "category": {
           "enum": [
             "resource",
@@ -87,9 +153,17 @@
             "other"
           ]
         },
-        "statement": { "type": "string", "minLength": 1 },
-        "reasoning": { "type": "string", "minLength": 1 },
-        "sourceRefs": { "$ref": "#/$defs/ids" }
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRefs": {
+          "$ref": "#/$defs/ids"
+        }
       },
       "additionalProperties": false
     },
@@ -99,7 +173,9 @@
           "type": "object",
           "required": ["kind", "parameter", "attributeRef"],
           "properties": {
-            "kind": { "const": "fm_attribute" },
+            "kind": {
+              "const": "fm_attribute"
+            },
             "parameter": {
               "type": "string",
               "pattern": "^[A-Za-z][A-Za-z0-9]*$"
@@ -115,12 +191,26 @@
           "type": "object",
           "required": ["kind", "parameter", "decisionRef"],
           "properties": {
-            "kind": { "const": "api_resource_id" },
+            "kind": {
+              "const": "api_resource_id"
+            },
             "parameter": {
               "type": "string",
               "pattern": "^[A-Za-z][A-Za-z0-9]*$"
             },
-            "decisionRef": { "$ref": "#/$defs/id" }
+            "decisionRef": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "const": "parent_scoped"
+            }
           },
           "additionalProperties": false
         }
@@ -128,20 +218,85 @@
     },
     "resource": {
       "type": "object",
-      "required": ["id", "entityRef", "segment", "identity", "basis"],
+      "required": [
+        "id",
+        "entityRef",
+        "segment",
+        "identity",
+        "basis",
+        "businessName",
+        "shape"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "entityRef": { "$ref": "#/$defs/id" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "entityRef": {
+          "$ref": "#/$defs/id"
+        },
         "segment": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
         },
-        "identity": { "$ref": "#/$defs/identity" },
-        "parentRef": { "$ref": "#/$defs/id" },
-        "parentBindingRef": { "$ref": "#/$defs/id" },
-        "basis": { "$ref": "#/$defs/basis" }
+        "identity": {
+          "$ref": "#/$defs/identity"
+        },
+        "parentRef": {
+          "$ref": "#/$defs/id"
+        },
+        "parentBindingRef": {
+          "$ref": "#/$defs/id"
+        },
+        "basis": {
+          "$ref": "#/$defs/basis"
+        },
+        "businessName": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "shape": {
+          "enum": ["singleton", "collection"]
+        },
+        "cardinality": {
+          "$ref": "#/$defs/cardinality"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "singleton"
+              }
+            }
+          },
+          "then": {
+            "required": ["parentRef"],
+            "properties": {
+              "identity": {
+                "properties": {
+                  "kind": {
+                    "const": "parent_scoped"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "identity": {
+                "properties": {
+                  "kind": {
+                    "enum": ["fm_attribute", "api_resource_id"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "binding": {
       "oneOf": [
@@ -149,11 +304,21 @@
           "type": "object",
           "required": ["id", "kind", "roleRef", "scopeResourceRef", "basis"],
           "properties": {
-            "id": { "$ref": "#/$defs/id" },
-            "kind": { "const": "caller_role" },
-            "roleRef": { "$ref": "#/$defs/id" },
-            "scopeResourceRef": { "$ref": "#/$defs/id" },
-            "basis": { "$ref": "#/$defs/basis" }
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "kind": {
+              "const": "caller_role"
+            },
+            "roleRef": {
+              "$ref": "#/$defs/id"
+            },
+            "scopeResourceRef": {
+              "$ref": "#/$defs/id"
+            },
+            "basis": {
+              "$ref": "#/$defs/basis"
+            }
           },
           "additionalProperties": false
         },
@@ -167,11 +332,21 @@
             "basis"
           ],
           "properties": {
-            "id": { "$ref": "#/$defs/id" },
-            "kind": { "const": "parent_child" },
-            "parentResourceRef": { "$ref": "#/$defs/id" },
-            "childResourceRef": { "$ref": "#/$defs/id" },
-            "basis": { "$ref": "#/$defs/basis" }
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "kind": {
+              "const": "parent_child"
+            },
+            "parentResourceRef": {
+              "$ref": "#/$defs/id"
+            },
+            "childResourceRef": {
+              "$ref": "#/$defs/id"
+            },
+            "basis": {
+              "$ref": "#/$defs/basis"
+            }
           },
           "additionalProperties": false
         }
@@ -181,9 +356,15 @@
       "type": "object",
       "required": ["id", "sourceScenarioRef", "basis"],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "sourceScenarioRef": { "$ref": "#/$defs/id" },
-        "basis": { "$ref": "#/$defs/basis" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceScenarioRef": {
+          "$ref": "#/$defs/id"
+        },
+        "basis": {
+          "$ref": "#/$defs/basis"
+        }
       },
       "additionalProperties": false
     },
@@ -191,8 +372,12 @@
       "type": "object",
       "required": ["ruleRef", "purpose"],
       "properties": {
-        "ruleRef": { "$ref": "#/$defs/id" },
-        "purpose": { "enum": ["precondition", "derivation", "result"] }
+        "ruleRef": {
+          "$ref": "#/$defs/id"
+        },
+        "purpose": {
+          "enum": ["precondition", "derivation", "result"]
+        }
       },
       "additionalProperties": false
     },
@@ -209,7 +394,9 @@
             "remove_domain_object"
           ]
         },
-        "targetRef": { "$ref": "#/$defs/id" }
+        "targetRef": {
+          "$ref": "#/$defs/id"
+        }
       },
       "additionalProperties": false
     },
@@ -228,20 +415,43 @@
         "basis"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "actorRoleRef": { "$ref": "#/$defs/id" },
-        "resourceRef": { "$ref": "#/$defs/id" },
-        "view": { "enum": ["collection", "item"] },
-        "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
-        "effect": { "$ref": "#/$defs/effect" },
-        "businessCapability": { "type": "string", "minLength": 1 },
-        "scenarioRefs": { "$ref": "#/$defs/ids" },
-        "bindingRefs": { "$ref": "#/$defs/ids" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "actorRoleRef": {
+          "$ref": "#/$defs/id"
+        },
+        "resourceRef": {
+          "$ref": "#/$defs/id"
+        },
+        "view": {
+          "enum": ["singleton", "collection", "item"]
+        },
+        "method": {
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+        },
+        "effect": {
+          "$ref": "#/$defs/effect"
+        },
+        "businessCapability": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scenarioRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "bindingRefs": {
+          "$ref": "#/$defs/ids"
+        },
         "ruleBindings": {
           "type": "array",
-          "items": { "$ref": "#/$defs/ruleBinding" }
+          "items": {
+            "$ref": "#/$defs/ruleBinding"
+          }
         },
-        "basis": { "$ref": "#/$defs/basis" }
+        "basis": {
+          "$ref": "#/$defs/basis"
+        }
       },
       "additionalProperties": false
     },
@@ -249,8 +459,14 @@
       "type": "object",
       "required": ["name", "fmAttributeRef"],
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "fmAttributeRef": { "type": "string", "minLength": 3 }
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fmAttributeRef": {
+          "type": "string",
+          "minLength": 3
+        }
       },
       "additionalProperties": false
     },
@@ -258,8 +474,14 @@
       "type": "object",
       "required": ["parameter", "fromParameter"],
       "properties": {
-        "parameter": { "type": "string", "minLength": 1 },
-        "fromParameter": { "type": "string", "minLength": 1 }
+        "parameter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fromParameter": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
@@ -272,16 +494,32 @@
         "parameterBindings"
       ],
       "properties": {
-        "rel": { "type": "string", "minLength": 1 },
-        "targetResourceRef": { "$ref": "#/$defs/id" },
-        "targetView": { "enum": ["collection", "item"] },
+        "rel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targetResourceRef": {
+          "$ref": "#/$defs/id"
+        },
+        "targetView": {
+          "enum": ["singleton", "collection", "item"]
+        },
         "parameterBindings": {
           "type": "array",
-          "items": { "$ref": "#/$defs/parameterBinding" }
+          "items": {
+            "$ref": "#/$defs/parameterBinding"
+          }
         },
-        "visibleToRoleRefs": { "$ref": "#/$defs/ids" },
-        "capabilityRef": { "$ref": "#/$defs/id" },
-        "externalHref": { "type": "string", "minLength": 1 }
+        "visibleToRoleRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/id"
+        },
+        "externalHref": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
@@ -297,13 +535,33 @@
         "basis"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "resourceRef": { "$ref": "#/$defs/id" },
-        "view": { "enum": ["collection", "item"] },
-        "format": { "enum": ["json", "hal"] },
-        "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } },
-        "links": { "type": "array", "items": { "$ref": "#/$defs/link" } },
-        "basis": { "$ref": "#/$defs/basis" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "resourceRef": {
+          "$ref": "#/$defs/id"
+        },
+        "view": {
+          "enum": ["singleton", "collection", "item"]
+        },
+        "format": {
+          "enum": ["json", "hal"]
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field"
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/link"
+          }
+        },
+        "basis": {
+          "$ref": "#/$defs/basis"
+        }
       },
       "additionalProperties": false
     },
@@ -317,12 +575,26 @@
         "basis"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "sourceStepSequence": { "type": "integer", "minimum": 1 },
-        "description": { "type": "string", "minLength": 1 },
-        "mapping": { "enum": ["capability", "internal", "external", "gap"] },
-        "capabilityRef": { "$ref": "#/$defs/id" },
-        "basis": { "$ref": "#/$defs/basis" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceStepSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mapping": {
+          "enum": ["capability", "internal", "external", "gap"]
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/id"
+        },
+        "basis": {
+          "$ref": "#/$defs/basis"
+        }
       },
       "additionalProperties": false
     },
@@ -330,11 +602,64 @@
       "type": "object",
       "required": ["id", "scenarioRef", "steps"],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "scenarioRef": { "$ref": "#/$defs/id" },
-        "steps": { "type": "array", "items": { "$ref": "#/$defs/journeyStep" } }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "scenarioRef": {
+          "$ref": "#/$defs/id"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/journeyStep"
+          }
+        }
       },
       "additionalProperties": false
+    },
+    "cardinality": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["relationshipRef"],
+          "properties": {
+            "relationshipRef": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["max", "sourceRefs", "reasoning"],
+          "properties": {
+            "max": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "const": "many"
+                }
+              ]
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "reasoning": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

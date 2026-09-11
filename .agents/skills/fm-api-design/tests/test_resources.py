@@ -13,19 +13,19 @@ class ResourcesTest(unittest.TestCase):
         resources, diagnostics = resources_module.build_resources(design(), index())
         self.assertFalse([item for item in diagnostics if item.severity == "error"])
         payment = next(
-            item for item in resources if item["id"] == "resource.payment-request"
+            item for item in resources if item["id"] == "resource.payment"
         )
         self.assertEqual(
-            payment["collectionUri"], "/subscriptions/{subscriptionId}/payment-requests"
+            payment["uris"]["collection"], "/subscriptions/{subscriptionId}/payments"
         )
         self.assertEqual(
-            payment["itemUri"],
-            "/subscriptions/{subscriptionId}/payment-requests/{paymentRequestId}",
+            payment["uris"]["item"],
+            "/subscriptions/{subscriptionId}/payments/{paymentId}",
         )
 
     def test_parent_cycle_is_rejected(self) -> None:
         value = design()
-        value["resources"][0]["parentRef"] = "resource.payment-request"
+        value["resources"][0]["parentRef"] = "resource.payment"
         value["resources"][0]["parentBindingRef"] = "binding.request-subscription"
         _, diagnostics = resources_module.build_resources(value, index())
         self.assertIn("RESOURCE_CYCLE", {item.code for item in diagnostics})

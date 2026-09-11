@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "2.0.0"
 
 
 def canonical_json(value: Any) -> str:
@@ -53,7 +53,9 @@ def design_report(projection: dict[str, Any]) -> str:
     ]
     for resource in projection["resources"]:
         lines.append(
-            f"- `{resource['id']}`：`{resource['collectionUri']}` / `{resource['itemUri']}` → `{resource['entityRef']}`"
+            f"- {resource['businessName']}（{resource['shape']}）："
+            + " / ".join(f"`{uri}`" for uri in resource["uris"].values())
+            + f" → `{resource['entityRef']}`"
         )
     lines.extend(["", "## HTTP 操作", ""])
     for operation in projection["operations"]:
@@ -120,7 +122,7 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         for name in ("api-design.schema.json", "api-projection.schema.json")
     }
     manifest = {
-        "schemaVersion": "1.0",
+        "schemaVersion": "2.0",
         "designId": projection["designId"],
         "tool": {
             "name": "fm-api-design",

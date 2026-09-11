@@ -63,23 +63,29 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 - 支付凭证 Role 不生成资源或提交 API；采购确认引用外部微信支付确认，外部三步映射为 `external`，不猜测回调或接入接口
 - 报价到采购协议的跨 Context 跳转通过超媒体链接表达，不形成跨 Context 父子 URI
 
+## 业务数量与命名
+
+资源使用业务称谓，不按 FM 类型拼接路径。示例已有的采购协议到支付、开票、发货申请，以及申请到确认均声明一对一；申请与具体发票／发货单的数量由相应两组一对一关系确定。因此这些资源采用 `singleton`，在父实例路径下直接定位。报价也以询价下的单例表示。
+
+询价、采购协议及商品是独立根集合。`confirmation` 表示业务中的支付确认、开票确认或发货确认，不是所有结果的默认名字。单例仅省略冗余路径 ID，实际凭证保留自身标识、责任及追加语义；静态基数校验不等于实现了运行时唯一性或重复提交策略。
+
 ## API 候选
 
-| Role   | URI                                                                                          | Method | Business Capability |
-| ------ | -------------------------------------------------------------------------------------------- | ------ | ------------------- |
-| 客户   | `/product-inquiries`                                                                         | POST   | 发起商品询价        |
-| 供应商 | `/product-inquiries/{inquiryId}/quotations`                                                  | POST   | 提交商品报价        |
-| 客户   | `/product-procurements`                                                                      | POST   | 登记商品采购协议    |
-| 供应商 | `/product-procurements/{procurementId}/payment-requests`                                     | POST   | 申请支付货款        |
-| 客户   | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/confirmations`    | POST   | 确认支付货款        |
-| 客户   | `/product-procurements/{procurementId}/invoice-requests`                                     | POST   | 申请开具发票        |
-| 供应商 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/invoices`         | POST   | 提交发票            |
-| 供应商 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/confirmations`    | POST   | 确认开具发票        |
-| 客户   | `/product-procurements/{procurementId}/delivery-requests`                                    | POST   | 申请商品发货        |
-| 供应商 | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/delivery-notes` | POST   | 提交发货单          |
-| 供应商 | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/confirmations`  | POST   | 确认商品发货        |
-| 客户   | `/products/{productId}`                                                                      | GET    | 客户查看商品        |
-| 供应商 | `/products/{productId}`                                                                      | GET    | 供应商查看商品      |
+| Role | URI | Method | Business Capability |
+| --- | --- | --- | --- |
+| 客户 | `/product-inquiries` | POST | 发起商品询价 |
+| 供应商 | `/product-inquiries/{inquiryId}/quotation` | POST | 提交商品报价 |
+| 客户 | `/product-procurements` | POST | 登记商品采购协议 |
+| 供应商 | `/product-procurements/{procurementId}/payment` | POST | 申请支付货款 |
+| 客户 | `/product-procurements/{procurementId}/payment/confirmation` | POST | 确认支付货款 |
+| 客户 | `/product-procurements/{procurementId}/invoicing` | POST | 申请开具发票 |
+| 供应商 | `/product-procurements/{procurementId}/invoicing/invoice` | POST | 提交发票 |
+| 供应商 | `/product-procurements/{procurementId}/invoicing/confirmation` | POST | 确认开具发票 |
+| 客户 | `/product-procurements/{procurementId}/delivery` | POST | 申请商品发货 |
+| 供应商 | `/product-procurements/{procurementId}/delivery/delivery-note` | POST | 提交发货单 |
+| 供应商 | `/product-procurements/{procurementId}/delivery/confirmation` | POST | 确认商品发货 |
+| 客户 | `/products/{productId}` | GET | 客户查看商品 |
+| 供应商 | `/products/{productId}` | GET | 供应商查看商品 |
 
 Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不机械生成 CRUD API。
 
@@ -117,6 +123,6 @@ mkdir -p "$PROJECT_ROOT/docs/api/.work"
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
   --design "$API_SKILL_DIR/assets/examples/full-lifecycle/design.yaml" \
-  --out "$PROJECT_ROOT/docs/api/.work/product-procurement-v1" \
+  --out "$PROJECT_ROOT/docs/api/.work/product-procurement" \
   --require-complete
 ```

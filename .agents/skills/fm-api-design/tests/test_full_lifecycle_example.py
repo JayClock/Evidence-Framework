@@ -53,25 +53,23 @@ class FullLifecycleExampleTest(unittest.TestCase):
         uris = {
             item["id"]: item["uri"] for item in report["projection"]["capabilities"]
         }
-        self.assertEqual(uris["capability.create-inquiry"], "/product-inquiries")
+        self.assertEqual(uris["capability.inquire-products"], "/product-inquiries")
         self.assertEqual(
-            uris["capability.create-quotation"],
-            "/product-inquiries/{inquiryId}/quotations",
+            uris["capability.quote-products"],
+            "/product-inquiries/{inquiryId}/quotation",
         )
-        self.assertEqual(uris["capability.create-procurement"], "/product-procurements")
+        self.assertEqual(uris["capability.register-procurement"], "/product-procurements")
         self.assertEqual(
-            uris["capability.create-payment-request"],
-            "/product-procurements/{procurementId}/payment-requests",
-        )
-        self.assertEqual(
-            uris["capability.create-delivery-evidence"],
-            "/product-procurements/{procurementId}/delivery-requests/"
-            "{deliveryRequestId}/delivery-notes",
+            uris["capability.request-payment"],
+            "/product-procurements/{procurementId}/payment",
         )
         self.assertEqual(
-            uris["capability.create-invoice-evidence"],
-            "/product-procurements/{procurementId}/invoice-requests/"
-            "{invoiceRequestId}/invoices",
+            uris["capability.record-delivery-note"],
+            "/product-procurements/{procurementId}/delivery/delivery-note",
+        )
+        self.assertEqual(
+            uris["capability.issue-invoice"],
+            "/product-procurements/{procurementId}/invoicing/invoice",
         )
         self.assertEqual(fm_report["timelineSummary"]["unresolvedOrderCount"], 0)
         kinds = {

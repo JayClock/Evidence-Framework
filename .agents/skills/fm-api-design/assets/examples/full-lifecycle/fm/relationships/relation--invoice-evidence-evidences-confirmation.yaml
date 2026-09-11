@@ -4,3 +4,9 @@ kind: evidences
 sourceRef: evidence.invoice
 targetRef: confirmation.invoice
 label: 开票凭证证明开票确认
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: 1

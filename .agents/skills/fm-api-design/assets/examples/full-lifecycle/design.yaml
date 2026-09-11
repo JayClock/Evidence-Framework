@@ -1,4 +1,4 @@
-schemaVersion: '1.0'
+schemaVersion: '2.0'
 id: api.product-procurement
 scope:
   contextRefs:
@@ -9,8 +9,8 @@ sources: []
 decisions:
   - id: decision.api-identities
     category: identity
-    statement: API 为资源分配稳定定位 ID
-    reasoning: ID 只用于 URI 定位，不回写 FM
+    statement: 集合业务实例使用独立定位ID，父实例下唯一的业务对象使用单例路径
+    reasoning: 路径不重复编码可由业务父实例唯一确定的身份；具体凭证仍保留自身实例标识
   - id: decision.context-roots
     category: navigation
     statement: 合同前、合同和领域 Context 使用独立 URI 根
@@ -27,20 +27,24 @@ resources:
       fmRefs:
         - rfp.product-inquiry
       reasoning: 商品询价是合同前 Context 的根资源
+    businessName: 商品询价
+    shape: collection
   - id: resource.product-quotation
     entityRef: proposal.product-quotation
-    segment: quotations
+    segment: quotation
     parentRef: resource.product-inquiry
     parentBindingRef: binding.quotation-inquiry
     identity:
-      kind: api_resource_id
-      parameter: quotationId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - proposal.product-quotation
         - rfp.product-inquiry
       reasoning: 商品报价属于指定询价
+    businessName: 商品报价
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.inquiry-precedes-quotation
   - id: resource.product-procurement
     entityRef: contract.product-procurement
     segment: product-procurements
@@ -52,120 +56,138 @@ resources:
       fmRefs:
         - contract.product-procurement
       reasoning: 商品采购协议使用独立合同 Context URI 根
-  - id: resource.payment-request
+    businessName: 商品采购协议
+    shape: collection
+  - id: resource.payment
     entityRef: request.payment
-    segment: payment-requests
+    segment: payment
     parentRef: resource.product-procurement
-    parentBindingRef: binding.payment-request-procurement
+    parentBindingRef: binding.payment-procurement
     identity:
-      kind: api_resource_id
-      parameter: paymentRequestId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - request.payment
         - contract.product-procurement
       reasoning: payment申请属于指定采购协议
+    businessName: 货款支付申请
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.contract-precedes-payment-request
   - id: resource.payment-confirmation
     entityRef: confirmation.payment
-    segment: confirmations
-    parentRef: resource.payment-request
-    parentBindingRef: binding.payment-confirmation-request
+    segment: confirmation
+    parentRef: resource.payment
+    parentBindingRef: binding.payment-result
     identity:
-      kind: api_resource_id
-      parameter: paymentConfirmationId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - confirmation.payment
         - request.payment
       reasoning: payment确认对应指定申请
-  - id: resource.invoice-request
+    businessName: 货款支付确认
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.payment-request-precedes-confirmation
+  - id: resource.invoicing
     entityRef: request.invoice
-    segment: invoice-requests
+    segment: invoicing
     parentRef: resource.product-procurement
-    parentBindingRef: binding.invoice-request-procurement
+    parentBindingRef: binding.invoicing-procurement
     identity:
-      kind: api_resource_id
-      parameter: invoiceRequestId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - request.invoice
         - contract.product-procurement
       reasoning: invoice申请属于指定采购协议
-  - id: resource.invoice-evidence
+    businessName: 发票开具申请
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.contract-precedes-invoice-request
+  - id: resource.invoice
     entityRef: evidence.invoice
-    segment: invoices
-    parentRef: resource.invoice-request
-    parentBindingRef: binding.invoice-evidence-request
+    segment: invoice
+    parentRef: resource.invoicing
+    parentBindingRef: binding.invoice-invoicing
     identity:
-      kind: api_resource_id
-      parameter: invoiceId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - evidence.invoice
         - request.invoice
         - relation.invoice-request-precedes-evidence
       reasoning: 开票补充证据以request_number归属已有申请，创建时不需要确认ID；证据证明后续形成的确认
+    businessName: 发票
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.invoice-request-precedes-evidence
   - id: resource.invoice-confirmation
     entityRef: confirmation.invoice
-    segment: confirmations
-    parentRef: resource.invoice-request
-    parentBindingRef: binding.invoice-confirmation-request
+    segment: confirmation
+    parentRef: resource.invoicing
+    parentBindingRef: binding.invoicing-result
     identity:
-      kind: api_resource_id
-      parameter: invoiceConfirmationId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - confirmation.invoice
         - request.invoice
       reasoning: invoice确认对应指定申请
-  - id: resource.delivery-request
+    businessName: 发票开具确认
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.invoice-request-precedes-confirmation
+  - id: resource.delivery
     entityRef: request.delivery
-    segment: delivery-requests
+    segment: delivery
     parentRef: resource.product-procurement
-    parentBindingRef: binding.delivery-request-procurement
+    parentBindingRef: binding.delivery-procurement
     identity:
-      kind: api_resource_id
-      parameter: deliveryRequestId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - request.delivery
         - contract.product-procurement
       reasoning: delivery申请属于指定采购协议
-  - id: resource.delivery-evidence
+    businessName: 商品发货申请
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.contract-precedes-delivery-request
+  - id: resource.delivery-note
     entityRef: evidence.delivery-note
-    segment: delivery-notes
-    parentRef: resource.delivery-request
-    parentBindingRef: binding.delivery-evidence-request
+    segment: delivery-note
+    parentRef: resource.delivery
+    parentBindingRef: binding.note-delivery
     identity:
-      kind: api_resource_id
-      parameter: deliveryNoteId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - evidence.delivery-note
         - request.delivery
         - relation.delivery-request-precedes-evidence
       reasoning: 发货补充证据以request_number归属已有申请，创建时不需要确认ID；证据证明后续形成的确认
+    businessName: 发货单
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.delivery-request-precedes-evidence
   - id: resource.delivery-confirmation
     entityRef: confirmation.delivery
-    segment: confirmations
-    parentRef: resource.delivery-request
-    parentBindingRef: binding.delivery-confirmation-request
+    segment: confirmation
+    parentRef: resource.delivery
+    parentBindingRef: binding.delivery-result
     identity:
-      kind: api_resource_id
-      parameter: deliveryConfirmationId
-      decisionRef: decision.api-identities
+      kind: parent_scoped
     basis:
       fmRefs:
         - confirmation.delivery
         - request.delivery
       reasoning: delivery确认对应指定申请
+    businessName: 商品发货确认
+    shape: singleton
+    cardinality:
+      relationshipRef: relation.delivery-request-precedes-confirmation
   - id: resource.product
     entityRef: thing.product
     segment: products
@@ -177,6 +199,8 @@ resources:
       fmRefs:
         - thing.product
       reasoning: 商品目录使用独立领域 Context URI 根
+    businessName: 商品
+    shape: collection
 bindings:
   - id: binding.caller-sourcing-customer
     kind: caller_role
@@ -235,74 +259,74 @@ bindings:
         - rfp.product-inquiry
         - proposal.product-quotation
       reasoning: 报价关联指定询价
-  - id: binding.payment-request-procurement
+  - id: binding.payment-procurement
     kind: parent_child
     parentResourceRef: resource.product-procurement
-    childResourceRef: resource.payment-request
+    childResourceRef: resource.payment
     basis:
       fmRefs:
         - contract.product-procurement
         - request.payment
       reasoning: payment申请关联指定采购协议
-  - id: binding.payment-confirmation-request
+  - id: binding.payment-result
     kind: parent_child
-    parentResourceRef: resource.payment-request
+    parentResourceRef: resource.payment
     childResourceRef: resource.payment-confirmation
     basis:
       fmRefs:
         - request.payment
         - confirmation.payment
       reasoning: payment确认关联指定申请
-  - id: binding.invoice-request-procurement
+  - id: binding.invoicing-procurement
     kind: parent_child
     parentResourceRef: resource.product-procurement
-    childResourceRef: resource.invoice-request
+    childResourceRef: resource.invoicing
     basis:
       fmRefs:
         - contract.product-procurement
         - request.invoice
       reasoning: invoice申请关联指定采购协议
-  - id: binding.invoice-confirmation-request
+  - id: binding.invoicing-result
     kind: parent_child
-    parentResourceRef: resource.invoice-request
+    parentResourceRef: resource.invoicing
     childResourceRef: resource.invoice-confirmation
     basis:
       fmRefs:
         - request.invoice
         - confirmation.invoice
       reasoning: invoice确认关联指定申请
-  - id: binding.invoice-evidence-request
+  - id: binding.invoice-invoicing
     kind: parent_child
-    parentResourceRef: resource.invoice-request
-    childResourceRef: resource.invoice-evidence
+    parentResourceRef: resource.invoicing
+    childResourceRef: resource.invoice
     basis:
       fmRefs:
         - evidence.invoice
         - request.invoice
         - relation.invoice-request-precedes-evidence
       reasoning: 开票补充证据以request_number归属已有申请，创建时不需要确认ID；证据证明后续形成的确认
-  - id: binding.delivery-request-procurement
+  - id: binding.delivery-procurement
     kind: parent_child
     parentResourceRef: resource.product-procurement
-    childResourceRef: resource.delivery-request
+    childResourceRef: resource.delivery
     basis:
       fmRefs:
         - contract.product-procurement
         - request.delivery
       reasoning: delivery申请关联指定采购协议
-  - id: binding.delivery-confirmation-request
+  - id: binding.delivery-result
     kind: parent_child
-    parentResourceRef: resource.delivery-request
+    parentResourceRef: resource.delivery
     childResourceRef: resource.delivery-confirmation
     basis:
       fmRefs:
         - request.delivery
         - confirmation.delivery
       reasoning: delivery确认关联指定申请
-  - id: binding.delivery-evidence-request
+  - id: binding.note-delivery
     kind: parent_child
-    parentResourceRef: resource.delivery-request
-    childResourceRef: resource.delivery-evidence
+    parentResourceRef: resource.delivery
+    childResourceRef: resource.delivery-note
     basis:
       fmRefs:
         - evidence.delivery-note
@@ -328,7 +352,7 @@ scenarios:
         - confirmation.delivery
       reasoning: 使用完整商品采购场景验证 API 映射
 capabilities:
-  - id: capability.create-inquiry
+  - id: capability.inquire-products
     actorRoleRef: role.buyer
     resourceRef: resource.product-inquiry
     view: collection
@@ -345,10 +369,10 @@ capabilities:
       fmRefs:
         - rfp.product-inquiry
       reasoning: 客户追加商品询价凭证
-  - id: capability.create-quotation
+  - id: capability.quote-products
     actorRoleRef: role.seller
     resourceRef: resource.product-quotation
-    view: collection
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -363,7 +387,7 @@ capabilities:
       fmRefs:
         - proposal.product-quotation
       reasoning: 供应商针对指定询价追加报价凭证
-  - id: capability.create-procurement
+  - id: capability.register-procurement
     actorRoleRef: role.buyer
     resourceRef: resource.product-procurement
     view: collection
@@ -380,10 +404,10 @@ capabilities:
       fmRefs:
         - contract.product-procurement
       reasoning: 客户登记已经形成的商品采购协议
-  - id: capability.create-payment-request
+  - id: capability.request-payment
     actorRoleRef: role.seller
-    resourceRef: resource.payment-request
-    view: collection
+    resourceRef: resource.payment
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -393,15 +417,15 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-seller
-      - binding.payment-request-procurement
+      - binding.payment-procurement
     basis:
       fmRefs:
         - request.payment
       reasoning: 针对指定采购协议追加申请支付货款凭证
-  - id: capability.create-payment-confirmation
+  - id: capability.confirm-payment
     actorRoleRef: role.buyer
     resourceRef: resource.payment-confirmation
-    view: collection
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -411,7 +435,7 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-buyer
-      - binding.payment-confirmation-request
+      - binding.payment-result
     ruleBindings:
       - ruleRef: rule.payment-evidence-ready
         purpose: precondition
@@ -424,10 +448,10 @@ capabilities:
         - relation.payment-confirmation-uses-proof
         - rule.payment-completed
       reasoning: 引用已扮演支付凭证角色的外部结果；核对申请、金额、结果编号及时间，角色无责任人且不提供写入接口
-  - id: capability.create-invoice-request
+  - id: capability.request-invoice
     actorRoleRef: role.buyer
-    resourceRef: resource.invoice-request
-    view: collection
+    resourceRef: resource.invoicing
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -437,15 +461,15 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-buyer
-      - binding.invoice-request-procurement
+      - binding.invoicing-procurement
     basis:
       fmRefs:
         - request.invoice
       reasoning: 针对指定采购协议追加申请开具发票凭证
-  - id: capability.create-invoice-evidence
+  - id: capability.issue-invoice
     actorRoleRef: role.seller
-    resourceRef: resource.invoice-evidence
-    view: collection
+    resourceRef: resource.invoice
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -455,16 +479,16 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-seller
-      - binding.invoice-evidence-request
+      - binding.invoice-invoicing
     basis:
       fmRefs:
         - evidence.invoice
         - request.invoice
       reasoning: 针对已有开票申请追加补充证据；校验request_number与路径申请一致；乙方销售经办本项，调用角色表达合同责任
-  - id: capability.create-invoice-confirmation
+  - id: capability.confirm-invoicing
     actorRoleRef: role.seller
     resourceRef: resource.invoice-confirmation
-    view: collection
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -474,7 +498,7 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-seller
-      - binding.invoice-confirmation-request
+      - binding.invoicing-result
     ruleBindings:
       - ruleRef: rule.invoice-evidence-ready
         purpose: precondition
@@ -487,10 +511,10 @@ capabilities:
         - relation.invoice-evidence-precedes-confirmation
         - rule.invoice-completed
       reasoning: 引用已有发票号码与申请编号，检查证据属于路径申请且当前可见；满足前提才形成确认
-  - id: capability.create-delivery-request
+  - id: capability.request-delivery
     actorRoleRef: role.buyer
-    resourceRef: resource.delivery-request
-    view: collection
+    resourceRef: resource.delivery
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -500,15 +524,15 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-buyer
-      - binding.delivery-request-procurement
+      - binding.delivery-procurement
     basis:
       fmRefs:
         - request.delivery
       reasoning: 针对指定采购协议追加申请商品发货凭证
-  - id: capability.create-delivery-evidence
+  - id: capability.record-delivery-note
     actorRoleRef: role.seller
-    resourceRef: resource.delivery-evidence
-    view: collection
+    resourceRef: resource.delivery-note
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -518,16 +542,16 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-seller
-      - binding.delivery-evidence-request
+      - binding.note-delivery
     basis:
       fmRefs:
         - evidence.delivery-note
         - request.delivery
       reasoning: 针对已有发货申请追加补充证据；校验request_number与路径申请一致；乙方销售经办本项，调用角色表达合同责任
-  - id: capability.create-delivery-confirmation
+  - id: capability.confirm-delivery
     actorRoleRef: role.seller
     resourceRef: resource.delivery-confirmation
-    view: collection
+    view: singleton
     method: POST
     effect:
       kind: append_evidence
@@ -537,7 +561,7 @@ capabilities:
       - scenario.api-product-procurement
     bindingRefs:
       - binding.caller-seller
-      - binding.delivery-confirmation-request
+      - binding.delivery-result
     ruleBindings:
       - ruleRef: rule.delivery-evidence-ready
         purpose: precondition
@@ -587,7 +611,7 @@ capabilities:
 representations:
   - id: representation.product-quotation
     resourceRef: resource.product-quotation
-    view: item
+    view: singleton
     format: hal
     fields:
       - name: unitPriceMinorUnits
@@ -599,7 +623,7 @@ representations:
         parameterBindings: []
         visibleToRoleRefs:
           - role.buyer
-        capabilityRef: capability.create-procurement
+        capabilityRef: capability.register-procurement
     basis:
       fmRefs:
         - proposal.product-quotation
@@ -612,7 +636,7 @@ journeys:
         sourceStepSequence: 1
         description: 甲方采购员发起商品询价
         mapping: capability
-        capabilityRef: capability.create-inquiry
+        capabilityRef: capability.inquire-products
         basis:
           fmRefs:
             - rfp.product-inquiry
@@ -621,7 +645,7 @@ journeys:
         sourceStepSequence: 2
         description: 乙方销售提交商品报价
         mapping: capability
-        capabilityRef: capability.create-quotation
+        capabilityRef: capability.quote-products
         basis:
           fmRefs:
             - proposal.product-quotation
@@ -630,7 +654,7 @@ journeys:
         sourceStepSequence: 3
         description: 甲方采购员登记采购协议
         mapping: capability
-        capabilityRef: capability.create-procurement
+        capabilityRef: capability.register-procurement
         basis:
           fmRefs:
             - contract.product-procurement
@@ -639,7 +663,7 @@ journeys:
         sourceStepSequence: 4
         description: 乙方销售申请支付
         mapping: capability
-        capabilityRef: capability.create-payment-request
+        capabilityRef: capability.request-payment
         basis:
           fmRefs:
             - request.payment
@@ -672,7 +696,7 @@ journeys:
         sourceStepSequence: 8
         description: 甲方采购员确认支付
         mapping: capability
-        capabilityRef: capability.create-payment-confirmation
+        capabilityRef: capability.confirm-payment
         basis:
           fmRefs:
             - confirmation.payment
@@ -681,7 +705,7 @@ journeys:
         sourceStepSequence: 9
         description: 甲方采购员申请开票
         mapping: capability
-        capabilityRef: capability.create-invoice-request
+        capabilityRef: capability.request-invoice
         basis:
           fmRefs:
             - request.invoice
@@ -690,7 +714,7 @@ journeys:
         sourceStepSequence: 10
         description: 乙方销售提交发票
         mapping: capability
-        capabilityRef: capability.create-invoice-evidence
+        capabilityRef: capability.issue-invoice
         basis:
           fmRefs:
             - evidence.invoice
@@ -699,7 +723,7 @@ journeys:
         sourceStepSequence: 11
         description: 乙方销售确认开票
         mapping: capability
-        capabilityRef: capability.create-invoice-confirmation
+        capabilityRef: capability.confirm-invoicing
         basis:
           fmRefs:
             - confirmation.invoice
@@ -708,7 +732,7 @@ journeys:
         sourceStepSequence: 12
         description: 甲方采购员申请发货
         mapping: capability
-        capabilityRef: capability.create-delivery-request
+        capabilityRef: capability.request-delivery
         basis:
           fmRefs:
             - request.delivery
@@ -717,7 +741,7 @@ journeys:
         sourceStepSequence: 13
         description: 乙方销售提交发货单
         mapping: capability
-        capabilityRef: capability.create-delivery-evidence
+        capabilityRef: capability.record-delivery-note
         basis:
           fmRefs:
             - evidence.delivery-note
@@ -726,7 +750,7 @@ journeys:
         sourceStepSequence: 14
         description: 乙方销售确认发货
         mapping: capability
-        capabilityRef: capability.create-delivery-confirmation
+        capabilityRef: capability.confirm-delivery
         basis:
           fmRefs:
             - confirmation.delivery

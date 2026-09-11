@@ -20,6 +20,18 @@
 
 诊断包含稳定 `code/severity/targetRef/location/relatedRefs/message`；gap 另有 `gapKey/category`。不要根据措辞或数组位置重建 gapKey。
 
+## 业务命名、数量与寻址复核
+
+先复核名称是否来自业务对象与办理行为，而非 FM 分类的机械拼接。机器只检查 `businessName` 非空、segment 格式、显式数量及视图一致性，不声称理解或批准业务词汇。
+
+- `RESOURCE_CARDINALITY_UNRESOLVED`：没有可追溯的父子数量上限，或被引用关系未声明该端点基数。
+- `CARDINALITY_SCOPE_INVALID`：数量关系端点不对应当前父子业务对象，或单例缺少父实例范围。
+- `RESOURCE_CARDINALITY_CONFLICT`：数量上限与单例／集合寻址不一致，或来源说明与已有 FM 数量冲突。
+- `RESOURCE_IDENTITY_CONFLICT`：单例错误声明子定位参数，或集合实例缺少独立身份。
+- `RESOURCE_VIEW_INVALID`：能力、表示或链接选择了资源不存在的视图。
+
+有业务数量不等于有实例归属；Context 根与 `parent_child` 仍独立检查。单例只缩短确定性定位，不允许覆盖 Evidence，不宣称实现了幂等、重复提交处理或运行时唯一性。
+
 ## 凭证依赖复核
 
 设计复核检查必要补充证据的形成前提、实例引用、访问范围及创建路径。必需证据先存在，才可形成被证明凭证；证据创建不得依赖该尚未形成的目标。FM 的 `basedOn`、时间线和 CEL 场景可验证已声明的依赖；API 的 `ruleBindings` 只表达检查契约，不执行服务端前置校验。工具未覆盖的依赖判断必须由 Agent 复核并保留真实 gap，不把 `complete` 当作业务正确性证明。

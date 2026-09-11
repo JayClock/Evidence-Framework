@@ -1,12 +1,17 @@
-schemaVersion: '1.0'
+schemaVersion: '2.0'
 id: api.subscription
 scope:
-  contextRefs: [context.content-subscription]
+  contextRefs:
+    - context.content-subscription
 sources:
   - id: source.successful-payment
     path: .agents/skills/fm-api-design/tests/fixtures/source.md
     locator: scenario.successful-payment
     quote: 合同价格可追溯的成功付款
+  - id: source.payment-multiplicity
+    path: .agents/skills/fm-api-design/tests/fixtures/source.md
+    locator: 支付申请数量
+    quote: 一份订阅合同允许多份支付申请，各申请单独定位。
 decisions:
   - id: decision.resource-identity
     category: identity
@@ -25,64 +30,93 @@ resources:
       parameter: subscriptionId
       decisionRef: decision.resource-identity
     basis:
-      fmRefs: [context.content-subscription, contract.content-subscription]
-      decisionRefs: [decision.resource-hierarchy]
+      fmRefs:
+        - context.content-subscription
+        - contract.content-subscription
+      decisionRefs:
+        - decision.resource-hierarchy
       reasoning: 以合同 Evidence 作为订阅资源
-  - id: resource.payment-request
+    shape: collection
+    businessName: 内容订阅
+  - id: resource.payment
     entityRef: request.content-payment
-    segment: payment-requests
+    segment: payments
     parentRef: resource.subscription
     parentBindingRef: binding.request-subscription
     identity:
       kind: api_resource_id
-      parameter: paymentRequestId
+      parameter: paymentId
       decisionRef: decision.resource-identity
     basis:
-      fmRefs: [fulfillment.content-payment, request.content-payment]
-      sourceRefs: [source.successful-payment]
+      fmRefs:
+        - fulfillment.content-payment
+        - request.content-payment
+      sourceRefs:
+        - source.successful-payment
       reasoning: 付款请求履行指定订阅合同的付款责任
+    shape: collection
+    businessName: 订阅费用支付申请
+    cardinality:
+      max: many
+      sourceRefs:
+        - source.payment-multiplicity
+      reasoning: 测试业务允许同一订阅下分次申请支付，每次申请单独定位
 bindings:
   - id: binding.caller-platform
     kind: caller_role
     roleRef: role.platform-subscription
     scopeResourceRef: resource.subscription
     basis:
-      fmRefs: [role.platform-subscription, contract.content-subscription]
-      sourceRefs: [source.successful-payment]
+      fmRefs:
+        - role.platform-subscription
+        - contract.content-subscription
+      sourceRefs:
+        - source.successful-payment
       reasoning: 场景由平台订阅方签发该合同的付款请求
   - id: binding.request-subscription
     kind: parent_child
     parentResourceRef: resource.subscription
-    childResourceRef: resource.payment-request
+    childResourceRef: resource.payment
     basis:
-      fmRefs: [fulfillment.content-payment, request.content-payment]
-      sourceRefs: [source.successful-payment]
+      fmRefs:
+        - fulfillment.content-payment
+        - request.content-payment
+      sourceRefs:
+        - source.successful-payment
       reasoning: 请求须关联 URI 中已解析的订阅合同实例
 scenarios:
   - id: scenario.api-payment
     sourceScenarioRef: scenario.successful-payment
     basis:
-      sourceRefs: [source.successful-payment]
-      fmRefs: [request.content-payment]
+      sourceRefs:
+        - source.successful-payment
+      fmRefs:
+        - request.content-payment
       reasoning: 复用已校验的成功付款场景
 capabilities:
   - id: capability.request-payment
     actorRoleRef: role.platform-subscription
-    resourceRef: resource.payment-request
+    resourceRef: resource.payment
     view: collection
     method: POST
     effect:
       kind: append_evidence
       targetRef: request.content-payment
     businessCapability: 请求支付订阅费用
-    scenarioRefs: [scenario.api-payment]
-    bindingRefs: [binding.caller-platform, binding.request-subscription]
+    scenarioRefs:
+      - scenario.api-payment
+    bindingRefs:
+      - binding.caller-platform
+      - binding.request-subscription
     ruleBindings:
       - ruleRef: rule.payment-request-amount
         purpose: derivation
     basis:
-      fmRefs: [request.content-payment, rule.payment-request-amount]
-      sourceRefs: [source.successful-payment]
+      fmRefs:
+        - request.content-payment
+        - rule.payment-request-amount
+      sourceRefs:
+        - source.successful-payment
       reasoning: 平台依据合同派生金额并追加付款请求凭证
 representations: []
 journeys:
@@ -95,22 +129,28 @@ journeys:
         mapping: capability
         capabilityRef: capability.request-payment
         basis:
-          fmRefs: [request.content-payment]
-          sourceRefs: [source.successful-payment]
+          fmRefs:
+            - request.content-payment
+          sourceRefs:
+            - source.successful-payment
           reasoning: 对应付款请求追加能力
       - id: journey.step-receipt
         sourceStepSequence: 2
         description: 支付网关形成线下付款收据
         mapping: external
         basis:
-          fmRefs: [evidence.gateway-payment-receipt]
-          sourceRefs: [source.successful-payment]
+          fmRefs:
+            - evidence.gateway-payment-receipt
+          sourceRefs:
+            - source.successful-payment
           reasoning: 当前 API 范围不包含支付网关活动
       - id: journey.step-confirmation
         sourceStepSequence: 3
         description: 订阅者形成付款确认
         mapping: internal
         basis:
-          fmRefs: [confirmation.content-payment]
-          sourceRefs: [source.successful-payment]
+          fmRefs:
+            - confirmation.content-payment
+          sourceRefs:
+            - source.successful-payment
           reasoning: 当前设计未选择确认提交接口，保留为内部范围

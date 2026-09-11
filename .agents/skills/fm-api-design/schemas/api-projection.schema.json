@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v1/api-projection.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v2/api-projection.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -17,17 +17,166 @@
     "diagnostics"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0" },
-    "designId": { "type": "string" },
-    "inputDigests": { "type": "object" },
-    "fmCheckSummary": { "type": "object" },
-    "fmReviewState": { "type": "object" },
-    "resources": { "type": "array" },
-    "exploration": { "type": "array" },
-    "capabilities": { "type": "array" },
-    "operations": { "type": "array" },
-    "representations": { "type": "array" },
-    "coverage": { "type": "array" },
+    "schemaVersion": {
+      "const": "2.0"
+    },
+    "designId": {
+      "type": "string"
+    },
+    "inputDigests": {
+      "type": "object"
+    },
+    "fmCheckSummary": {
+      "type": "object"
+    },
+    "fmReviewState": {
+      "type": "object"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "entityRef",
+          "businessName",
+          "shape",
+          "uris",
+          "parameters",
+          "segment",
+          "identity",
+          "basis"
+        ],
+        "properties": {
+          "shape": {
+            "enum": ["singleton", "collection"]
+          },
+          "uris": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["singleton"],
+                "properties": {
+                  "singleton": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": ["collection", "item"],
+                "properties": {
+                  "collection": {
+                    "type": "string"
+                  },
+                  "item": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entityRef": {
+            "type": "string",
+            "minLength": 1
+          },
+          "businessName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "segment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parentRef": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parentBindingRef": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity": {
+            "type": "object"
+          },
+          "basis": {
+            "type": "object"
+          },
+          "cardinality": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "shape": {
+                  "const": "singleton"
+                }
+              }
+            },
+            "then": {
+              "required": ["parentRef"],
+              "properties": {
+                "uris": {
+                  "required": ["singleton"]
+                },
+                "identity": {
+                  "properties": {
+                    "kind": {
+                      "const": "parent_scoped"
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "uris": {
+                  "required": ["collection", "item"]
+                },
+                "identity": {
+                  "properties": {
+                    "kind": {
+                      "enum": ["api_resource_id", "fm_attribute"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "exploration": {
+      "type": "array"
+    },
+    "capabilities": {
+      "type": "array"
+    },
+    "operations": {
+      "type": "array"
+    },
+    "representations": {
+      "type": "array"
+    },
+    "coverage": {
+      "type": "array"
+    },
     "diagnostics": {
       "type": "array",
       "items": {
@@ -41,13 +190,27 @@
           "message"
         ],
         "properties": {
-          "code": { "type": "string" },
-          "severity": { "enum": ["error", "gap", "warning"] },
-          "targetRef": { "type": ["string", "null"] },
-          "location": { "type": ["string", "null"] },
-          "relatedRefs": { "type": "array" },
-          "message": { "type": "string" },
-          "gapKey": { "type": "string" },
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": ["error", "gap", "warning"]
+          },
+          "targetRef": {
+            "type": ["string", "null"]
+          },
+          "location": {
+            "type": ["string", "null"]
+          },
+          "relatedRefs": {
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          },
+          "gapKey": {
+            "type": "string"
+          },
           "category": {
             "enum": ["business", "design", "expression", "coverage"]
           }

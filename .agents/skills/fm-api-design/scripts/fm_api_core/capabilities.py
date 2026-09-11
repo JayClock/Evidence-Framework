@@ -7,7 +7,6 @@ from typing import Any
 from fm_api_core.diagnostics import Diagnostic, error, gap
 
 _METHODS = ("DELETE", "GET", "PATCH", "POST", "PUT")
-_VIEWS = ("collection", "item")
 
 
 def _has_basis(item: dict[str, Any]) -> bool:
@@ -88,6 +87,9 @@ def project_capabilities(
                     related=(capability["resourceRef"],),
                 )
             )
+            local_errors = True
+        if resource and capability["view"] not in resource["uris"]:
+            diagnostics.append(error("RESOURCE_VIEW_INVALID", "能力视图不属于该业务资源的寻址形态", capability["id"]))
             local_errors = True
         if target is None:
             diagnostics.append(
@@ -248,11 +250,7 @@ def project_capabilities(
             continue
         if key in unresolved_keys:
             continue
-        uri = (
-            resource["collectionUri"]
-            if capability["view"] == "collection"
-            else resource["itemUri"]
-        )
+        uri = resource["uris"][capability["view"]]
         projected.append(
             {
                 **capability,
@@ -263,8 +261,10 @@ def project_capabilities(
         )
 
     exploration: list[dict[str, Any]] = []
-    for role_ref, resource_id, view, method in product(
-        roles, sorted(resources_by_id), _VIEWS, _METHODS
+    resource_views = [(ref, view) for ref in sorted(resources_by_id)
+                      for view in resources_by_id[ref]["uris"]]
+    for role_ref, (resource_id, view), method in product(
+        roles, resource_views, _METHODS
     ):
         key = (role_ref, resource_id, view, method)
         state = (

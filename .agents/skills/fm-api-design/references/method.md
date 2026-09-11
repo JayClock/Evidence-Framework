@@ -2,7 +2,7 @@
 
 ## 资源
 
-只映射具有明确交互场景的实际 Evidence 或有来源的 Participant。Participant 的身份或经办记录只能说明主体存在，不能代替读取、维护资料等独立业务场景；不为覆盖节点类型而生成接口。Context 用于限定责任范围；除非另有业务对象依据，不把它当作可 CRUD 资源。显式配置规范 segment 和 identity，不从 label 猜英文、复数或聚合。
+只映射具有明确交互场景的实际 Evidence 或有来源的 Participant。Participant 的身份或经办记录只能说明主体存在，不能代替读取、维护资料等独立业务场景；不为覆盖节点类型而生成接口。Context 用于限定责任范围；除非另有业务对象依据，不把它当作可 CRUD 资源。资源必须声明 `businessName`，用业务对象或行为的名称显式配置 `segment`；不从 FM 的 category、kind 或 ID 拼接路径，也不从 label 猜英文、复数或聚合。能力名称描述业务办理目的，不把“创建 Request”或“追加 Evidence”当成业务能力。只有业务确实称其为确认时，才使用相应的确认名称。
 
 以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 根。Fulfillment 资源通常沿所属父合同 Context 的根继续导航；只有确需独立弹性边界时才拆服务，但服务拆分不改变稳定 URI。跨 Context 的 Proposal → Contract 或合同 → Domain 关系使用超媒体链接，不将整条业务流程嵌入一条 URL。
 
@@ -13,6 +13,19 @@
 3. FM 结构或业务来源，以及为何它表达实例归属的 reasoning。
 
 `precedes`、一般引用和基数不会自动转成父子拥有关系。技术导航可以记录为决定，但不能宣称业务拥有权。CLI 会以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 拒绝跨合同前、合同或领域 Context 的父子 URI；所属父合同相同的 Fulfillment 资源不视为跨根。
+
+## 业务数量与寻址
+
+先确认实例归属，再分别核对每一层的业务数量，不从申请与结果的一对一推定合同下只能有一份申请。
+
+- 每个父实例下至多一个业务对象：`shape: singleton`，用 `identity.kind: parent_scoped` 定位，只提供 `singleton` 视图，不增加子 ID。
+- 每个父实例下可有多个业务对象：`shape: collection`，集合提供 `collection` 视图，具体实例提供带自身 ID 的 `item` 视图。
+- `cardinality.relationshipRef` 优先引用对应父子对象的 FM Relationship。正向读取 `targetCardinality`，反向读取 `sourceCardinality`；不能拿无关关系或另一层数量作为依据。
+- FM 尚未表达但业务来源已明确数量时，可用 `cardinality.max/sourceRefs/reasoning` 保留直接业务依据；技术决定不能充当数量来源，也不能覆盖已有 FM 冲突。
+- 缺少数量上限时保留 `RESOURCE_CARDINALITY_UNRESOLVED`，不把省略解释为多份，也不为缩短路径修改 FM。
+- 数量上限为 1 时采用单例，`min` 说明业务存在条件；单例可以尚未形成。它不取消凭证实例 ID、责任或审计记录，不自动变成 PUT/PATCH 覆盖更新。重复提交、幂等、更正另需业务及接口契约。
+
+例如业务允许合同下分次支付、每次只有一份支付确认，可用 `/…/{id}/payments/{paymentId}/confirmation`；若合同下仅有一次支付，则可用 `/…/{id}/payment/confirmation`。单复数命名须符合业务用语，不按英文词尾做机器推断。单例和集合都不能突破 Context 根或替代 `parent_child` 约束。
 
 ## 补充证据与形成前提
 
@@ -26,7 +39,7 @@
 
 ## 角色与能力
 
-探索只在选中责任范围有依据的 Party Role、资源、collection/item 与五种方法间进行。显式关联同一合同责任的合同前、合同及履约凭证，统一使用该 Contract 的 `roleRefs` 绑定角色；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。Proposal 已连接 Contract 却未声明同一责任归属时，输入模型无效，不通过新增渠道角色继续投影。没有合同关系的独立渠道使用自身角色。已声明且具有场景、依据和实例约束的组合才是 candidate；缺信息是 unresolved；明确语义冲突是 rejected；没有场景支持是 unselected，不等于禁止。
+探索只在选中责任范围有依据的 Party Role、资源实际支持的 singleton 或 collection/item 视图与五种方法间进行。显式关联同一合同责任的合同前、合同及履约凭证，统一使用该 Contract 的 `roleRefs` 绑定角色；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。Proposal 已连接 Contract 却未声明同一责任归属时，输入模型无效，不通过新增渠道角色继续投影。没有合同关系的独立渠道使用自身角色。已声明且具有场景、依据和实例约束的组合才是 candidate；缺信息是 unresolved；明确语义冲突是 rejected；没有场景支持是 unselected，不等于禁止。
 
 调用者必须是有业务依据的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按业务角色列出能力，经办主体作为办理该能力的业务说明保留；实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽，没有责任人，也不代表可签发单据；不生成角色的提交或 CRUD 接口。消费能力引用实际玩家并校验归属、可见性和业务规则；外部活动可回映为 `external`，没有接口依据不猜测接入 API。实际玩家的 `responsibleRoleRef` 只是其自身上下文的职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
 

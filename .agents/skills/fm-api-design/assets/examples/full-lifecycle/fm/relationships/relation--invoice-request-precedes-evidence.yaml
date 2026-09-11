@@ -4,3 +4,10 @@ kind: precedes
 sourceRef: request.invoice
 targetRef: evidence.invoice
 label: 针对已有开票申请形成补充证据
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: 1
+notes: 由申请与确认、确认与具体补充凭证的两组一对一关系确定，每份申请关联一份该业务凭证。

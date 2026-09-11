@@ -26,7 +26,7 @@ API 设计中的新业务规则必须返回 FM 建模／发现任务处理。技
 2. 阅读 [方法](references/method.md)；写配置时再读 [格式](references/format.md)，运行前读 [校验与保存纪律](references/validation.md)。
 3. 用 Python 3.10+ 运行 `inspect`。保留真实 FM 检查摘要、模型审核状态、角色、资源线索和场景。
 4. 先核对凭证形成依赖：必需的 `other_evidence` 已存在才能形成被证明凭证，目标能力须说明证据引用及可用性检查；依据不足返回 FM 缺口。只把有来源且影响当前范围的对象映射为资源。Context 默认是边界，不自动成为 CRUD 资源；`precedes`、一般 `references` 或单独基数不证明聚合。
-5. 为每个能力说明调用 Party Role、资源视图、方法、效果、场景、实例约束和依据。岗位或经办 Participant 不自动成为 API 角色，Participant 存在不自动产生查询或 CRUD 能力。属于同一合同责任范围的凭证能力只使用 Contract 绑定角色，包括显式关联合同的 RFP／Proposal 及 Other Evidence，不新增阶段角色。Evidence Role 没有责任人，既不是调用者，也不是可签发的具体凭证；不从角色生成提交／CRUD 能力。通过角色消费外部凭证时只描述引用、匹配和可见性检查，外部活动可映射为 `external`，不猜测回调或渠道 API。`responsibleRoleRef` 和 `plays_role` 都不是全局授权。
+5. 按业务用语声明资源 `businessName`、路径 `segment` 和能力名称，不把 FM 类型名机械暴露为接口。先确认实例归属，再逐层依据业务基数选择 `singleton` 或 `collection`，未知数量保留 gap；单例不增加子定位 ID，不等于取消凭证身份或允许覆盖。为每个能力说明调用 Party Role、实际支持的资源视图、方法、效果、场景、实例约束和依据。岗位或经办 Participant 不自动成为 API 角色，Participant 存在不自动产生查询或 CRUD 能力。属于同一合同责任范围的凭证能力只使用 Contract 绑定角色，包括显式关联合同的 RFP／Proposal 及 Other Evidence，不新增阶段角色。Evidence Role 没有责任人，既不是调用者，也不是可签发的具体凭证；不从角色生成提交／CRUD 能力。通过角色消费外部凭证时只描述引用、匹配和可见性检查，外部活动可映射为 `external`，不猜测回调或渠道 API。`responsibleRoleRef` 和 `plays_role` 都不是全局授权。
 6. 运行 `check`，修复技术错误；业务、设计、表达和覆盖缺口保持为 gap，不扩大权限或削弱预期来消除诊断。
 7. 用户明确要求生成时，使用一个不存在的新目录运行 `project`。展示四列表、来源、实例约束、流程覆盖和未决项后停止。
 

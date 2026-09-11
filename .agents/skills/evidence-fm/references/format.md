@@ -29,7 +29,7 @@ fm-model/
 
 ## 2. 稳定 ID 与文件名
 
-ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`。文件名把 ID 中的 `.` 替换为 `--`：
+ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。文件名把 ID 中的 `.` 替换为 `--`：
 
 ```text
 role.subscriber                    → entities/role--subscriber.yaml
@@ -269,7 +269,7 @@ targetCardinality:
   max: many
 ```
 
-省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
+每层关系分别核对数量；申请与确认一对一，不代表合同与申请也一对一。关系 notes 说明数量适用的实例范围和业务阶段；履约尚未形成结果，不等于已经违反完成结构的一对一。是否允许分次、补发或更正须有独立业务依据，不从基数猜测。省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
 
 ## 8. Business Pattern
 

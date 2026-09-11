@@ -55,11 +55,10 @@ def validate_representations(
                         representation["id"],
                     )
                 )
-        source_uri = (
-            resource["collectionUri"]
-            if representation["view"] == "collection"
-            else resource["itemUri"]
-        )
+        source_uri = resource["uris"].get(representation["view"])
+        if source_uri is None:
+            diagnostics.append(error("RESOURCE_VIEW_INVALID", "表示视图不属于该业务资源", representation["id"]))
+            continue
         available_parameters = set(re.findall(r"\{([^{}]+)\}", source_uri))
         for link in representation.get("links", []):
             target = resources_by_id.get(link["targetResourceRef"])
@@ -73,11 +72,10 @@ def validate_representations(
                     )
                 )
                 continue
-            target_uri = (
-                target["collectionUri"]
-                if link["targetView"] == "collection"
-                else target["itemUri"]
-            )
+            target_uri = target["uris"].get(link["targetView"])
+            if target_uri is None:
+                diagnostics.append(error("RESOURCE_VIEW_INVALID", "链接目标视图不属于该业务资源", representation["id"]))
+                continue
             required_parameters = set(re.findall(r"\{([^{}]+)\}", target_uri))
             bindings = {
                 item["parameter"]: item["fromParameter"]
