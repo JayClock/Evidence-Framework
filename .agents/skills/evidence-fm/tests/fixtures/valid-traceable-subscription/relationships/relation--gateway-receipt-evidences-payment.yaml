@@ -1,0 +1,6 @@
+type: relationship
+id: relation.gateway-receipt-evidences-payment
+kind: evidences
+sourceRef: evidence.gateway-payment-receipt
+targetRef: confirmation.content-payment
+label: 支付渠道回执证明付款确认

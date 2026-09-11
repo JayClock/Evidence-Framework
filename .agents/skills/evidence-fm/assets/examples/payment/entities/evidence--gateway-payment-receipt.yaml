@@ -1,0 +1,14 @@
+type: entity
+id: evidence.gateway-payment-receipt
+category: evidence
+kind: other_evidence
+label: 支付渠道回执
+contextRef: fulfillment.content-payment
+responsibleRoleRef: role.subscriber
+attributes:
+  - name: created_at
+    label: 回执形成时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 支付渠道形成该回执的业务时刻

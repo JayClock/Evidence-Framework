@@ -7,3 +7,4 @@ values:
   currency: CNY
 basedOn:
   - instance.payment-request
+  - instance.gateway-payment-receipt

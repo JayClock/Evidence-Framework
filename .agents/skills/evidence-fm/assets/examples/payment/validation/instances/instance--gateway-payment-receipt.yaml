@@ -1,0 +1,7 @@
+type: evidence_instance
+id: instance.gateway-payment-receipt
+entityRef: evidence.gateway-payment-receipt
+values:
+  created_at: '2026-09-01T09:09:00Z'
+basedOn:
+  - instance.payment-request

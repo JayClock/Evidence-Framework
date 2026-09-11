@@ -157,7 +157,7 @@ class SimulationTests(unittest.TestCase):
             suite.instances_by_id["instance.payment-confirmation"]["values"]
         )
         for sequence, adjustment in enumerate(
-            ["refund", "reversal", "correction", "compensation"], start=3
+            ["refund", "reversal", "correction", "compensation"], start=4
         ):
             entity_ref = f"evidence.payment-{adjustment}"
             instance_ref = f"instance.payment-{adjustment}"

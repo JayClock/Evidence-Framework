@@ -541,7 +541,7 @@ def validate_entities(
             )
             if hits:
                 errors.append(
-                    f"{entity_id}: Participant Party looks like an implementation actor {hits}; use trigger.actsForRoleRef"
+                    f"{entity_id}: Participant Party looks like an implementation actor {hits}; keep the Evidence responsibleRoleRef business-facing"
                 )
         if (category, kind) == (
             "participant",
@@ -628,66 +628,6 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: {kind} must belong to a Pre-contract or Channel Context"
                 )
-
-
-def contract_context_ref(contract: dict[str, Any]) -> str | None:
-    return normalize(contract.get("contextRef"))
-
-
-def validate_request_interval(
-    fulfillment_id: str,
-    interval: dict[str, Any],
-    request: dict[str, Any],
-    errors: list[str],
-) -> None:
-    attributes = {
-        normalize(attribute.get("name")): attribute
-        for attribute in request.get("attributes") or []
-        if isinstance(attribute, dict)
-    }
-    for field_name, expected in (
-        ("startAttribute", "started_at"),
-        ("endAttribute", "expired_at"),
-    ):
-        if interval.get(field_name) != expected:
-            errors.append(
-                f"{fulfillment_id}.requestInterval.{field_name} must reference '{expected}'"
-            )
-    if "openEndedReason" in interval:
-        errors.append(
-            f"{fulfillment_id}.requestInterval: openEndedReason is not supported; a definite deadline is required"
-        )
-    names = [
-        normalize(interval.get("startAttribute")),
-        normalize(interval.get("endAttribute")),
-    ]
-    if len(names) == 2 and names[0] == names[1]:
-        errors.append(
-            f"{fulfillment_id}: request interval start and end attributes must differ"
-        )
-
-    for field_name, attribute_name in zip(
-        ("startAttribute", "endAttribute"), names, strict=False
-    ):
-        attribute = attributes.get(attribute_name)
-        if attribute is None:
-            errors.append(
-                f"{fulfillment_id}.requestInterval.{field_name} references missing Request "
-                f"attribute '{attribute_name}'"
-            )
-            continue
-        if attribute.get("valueType") != "timestamp":
-            errors.append(
-                f"{fulfillment_id}.requestInterval.{field_name} must reference a timestamp attribute"
-            )
-        if not isinstance(attribute.get("required"), bool) or not attribute["required"]:
-            errors.append(
-                f"{fulfillment_id}.requestInterval.{field_name} must reference a required attribute"
-            )
-        if not isinstance(attribute.get("keyData"), bool) or not attribute["keyData"]:
-            errors.append(
-                f"{fulfillment_id}.requestInterval.{field_name} must reference keyData"
-            )
 
 
 def fulfillment_members(

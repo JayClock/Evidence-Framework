@@ -12,9 +12,15 @@ steps:
       - instance.subscription-contract
   - sequence: 2
     actingRoleRef: role.subscriber
+    issueInstanceRef: instance.gateway-payment-receipt
+    availableInstanceRefs:
+      - instance.payment-request
+  - sequence: 3
+    actingRoleRef: role.subscriber
     issueInstanceRef: instance.payment-confirmation
     availableInstanceRefs:
       - instance.payment-request
+      - instance.gateway-payment-receipt
 evaluations:
   - ruleRef: rule.payment-deadline
     bindings:

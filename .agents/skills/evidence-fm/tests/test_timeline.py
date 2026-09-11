@@ -33,7 +33,7 @@ class TimelineTests(unittest.TestCase):
         suite = load_validation_suite(self.fixture())
         timeline, errors = build_timeline(model, suite)
         self.assertEqual([], errors)
-        self.assertEqual(3, len(timeline["instances"]))
+        self.assertEqual(4, len(timeline["instances"]))
         self.assertNotIn("fulfillment.content-payment", {
             item["entityRef"] for item in timeline["instances"]
         })

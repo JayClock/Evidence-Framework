@@ -1,0 +1,6 @@
+type: relationship
+id: relation.payment-request-precedes-gateway-receipt
+kind: precedes
+sourceRef: request.content-payment
+targetRef: evidence.gateway-payment-receipt
+label: 付款请求先于支付渠道回执
