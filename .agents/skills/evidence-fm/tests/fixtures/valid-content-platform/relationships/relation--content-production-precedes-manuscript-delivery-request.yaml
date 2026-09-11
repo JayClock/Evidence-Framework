@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-production-precedes-manuscript-delivery-request
+kind: precedes
+sourceRef: contract.content-production
+targetRef: request.manuscript-delivery
+label: 合同签署后形成履约请求

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.creator-penalty-precedes-creator-penalty-confirmation
+kind: precedes
+sourceRef: request.creator-penalty
+targetRef: confirmation.creator-penalty
+label: 履约请求先于履约确认

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.prepaid-payment-precedes-prepaid-payment-request
+kind: precedes
+sourceRef: contract.prepaid-payment
+targetRef: request.prepaid-payment
+label: 合同签署后形成履约请求

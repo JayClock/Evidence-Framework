@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 按期交稿
 parentContextRef: context.content-production
-contractRef: contract.content-production
-requestRef: request.manuscript-delivery
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.manuscript-delivery
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: ManuscriptDeliveryRequested
-  actsForRoleRef: role.platform-content-production
-confirmationTriggers:
-  - confirmationRef: confirmation.manuscript-delivery
-    trigger:
-      kind: domain_event
-      eventType: ManuscriptDeliveryConfirmed
-      actsForRoleRef: role.creator
-subjectRefs:
-  - thing.article

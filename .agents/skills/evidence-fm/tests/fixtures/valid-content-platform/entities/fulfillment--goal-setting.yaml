@@ -4,22 +4,3 @@ category: context
 kind: fulfillment
 label: 确认内容运营绩效目标
 parentContextRef: context.operations-performance
-contractRef: contract.operations-performance
-requestRef: request.goal-setting
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.goal-setting
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: GoalSettingRequested
-  actsForRoleRef: role.operator
-confirmationTriggers:
-  - confirmationRef: confirmation.goal-setting
-    trigger:
-      kind: domain_event
-      eventType: GoalSettingConfirmed
-      actsForRoleRef: role.platform-performance

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.goal-setting-precedes-goal-setting-confirmation
+kind: precedes
+sourceRef: request.goal-setting
+targetRef: confirmation.goal-setting
+label: 履约请求先于履约确认

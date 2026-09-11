@@ -1,0 +1,6 @@
+type: relationship
+id: relation.operations-performance-precedes-weekly-progress-check-request
+kind: precedes
+sourceRef: contract.operations-performance
+targetRef: request.weekly-progress-check
+label: 合同签署后形成履约请求

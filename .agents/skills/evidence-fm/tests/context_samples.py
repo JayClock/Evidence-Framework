@@ -200,33 +200,6 @@ def performance_fulfillment(
             "fulfillment",
             label,
             parentContextRef="context.performance",
-            contractRef="contract.performance",
-            requestRef=request,
-            requestInterval={
-                "startAttribute": "started_at",
-                "endAttribute": "expired_at",
-            },
-            confirmationRefs=[confirmation],
-            completionPolicy={"mode": "all"},
-            requestTrigger={"kind": "manual", "actsForRoleRef": request_role},
-            confirmationTriggers=[
-                {
-                    "confirmationRef": confirmation,
-                    "trigger": {
-                        "kind": "manual",
-                        "actsForRoleRef": confirmation_role,
-                    },
-                }
-            ],
-            breaches=[
-                {
-                    "conditionRuleRef": f"rule.{name}-overdue",
-                    "outcome": {
-                        "kind": "record_only",
-                        "notes": "测试协议明确约定逾期仅记录异常",
-                    },
-                }
-            ],
             notes=(
                 "目标变更责任仅要求按时答复，approved=false 不改变旧目标。"
                 if name == "target-change"

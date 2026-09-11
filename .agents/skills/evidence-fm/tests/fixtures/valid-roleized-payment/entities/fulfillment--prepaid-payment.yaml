@@ -4,22 +4,3 @@ category: context
 kind: fulfillment
 label: 完成预付费抵扣
 parentContextRef: context.prepaid-payment
-contractRef: contract.prepaid-payment
-requestRef: request.prepaid-payment
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.prepaid-payment
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: PrepaidPaymentRequested
-  actsForRoleRef: role.prepaid-customer
-confirmationTriggers:
-  - confirmationRef: confirmation.prepaid-payment
-    trigger:
-      kind: domain_event
-      eventType: PrepaidPaymentConfirmed
-      actsForRoleRef: role.prepaid-platform

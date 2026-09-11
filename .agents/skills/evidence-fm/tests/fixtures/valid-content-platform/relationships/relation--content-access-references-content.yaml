@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-access-references-content
+kind: references
+sourceRef: request.content-access
+targetRef: thing.content
+label: 履约请求涉及该业务对象

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.prepaid-payment-precedes-prepaid-payment-confirmation
+kind: precedes
+sourceRef: request.prepaid-payment
+targetRef: confirmation.prepaid-payment
+label: 履约请求先于履约确认

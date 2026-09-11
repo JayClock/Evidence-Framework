@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 提供断更补偿
 parentContextRef: context.content-subscription
-contractRef: contract.content-subscription
-requestRef: request.interruption-compensation
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.interruption-compensation
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: InterruptionCompensationRequested
-  actsForRoleRef: role.subscriber
-confirmationTriggers:
-  - confirmationRef: confirmation.interruption-compensation
-    trigger:
-      kind: domain_event
-      eventType: InterruptionCompensationConfirmed
-      actsForRoleRef: role.platform-subscription
-subjectRefs:
-  - thing.content

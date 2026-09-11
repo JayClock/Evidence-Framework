@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-production-precedes-revenue-share-request
+kind: precedes
+sourceRef: contract.content-production
+targetRef: request.revenue-share
+label: 合同签署后形成履约请求

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.manuscript-delivery-precedes-manuscript-delivery-confirmation
+kind: precedes
+sourceRef: request.manuscript-delivery
+targetRef: confirmation.manuscript-delivery
+label: 履约请求先于履约确认

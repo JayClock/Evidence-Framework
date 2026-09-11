@@ -1,0 +1,6 @@
+type: relationship
+id: relation.external-payment-precedes-external-payment-confirmation
+kind: precedes
+sourceRef: request.external-payment
+targetRef: confirmation.external-payment
+label: 履约请求先于履约确认

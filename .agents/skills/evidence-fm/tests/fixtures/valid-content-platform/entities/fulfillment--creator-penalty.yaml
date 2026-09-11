@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 支付断更违约金
 parentContextRef: context.content-production
-contractRef: contract.content-production
-requestRef: request.creator-penalty
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.creator-penalty
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: CreatorPenaltyRequested
-  actsForRoleRef: role.platform-content-production
-confirmationTriggers:
-  - confirmationRef: confirmation.creator-penalty
-    trigger:
-      kind: domain_event
-      eventType: CreatorPenaltyConfirmed
-      actsForRoleRef: role.creator
-subjectRefs:
-  - thing.content

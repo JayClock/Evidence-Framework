@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 提供付费内容访问
 parentContextRef: context.content-subscription
-contractRef: contract.content-subscription
-requestRef: request.content-access
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.content-access
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: ContentAccessRequested
-  actsForRoleRef: role.subscriber
-confirmationTriggers:
-  - confirmationRef: confirmation.content-access
-    trigger:
-      kind: domain_event
-      eventType: ContentAccessConfirmed
-      actsForRoleRef: role.platform-subscription
-subjectRefs:
-  - thing.content

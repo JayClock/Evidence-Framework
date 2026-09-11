@@ -1,0 +1,6 @@
+type: relationship
+id: relation.revenue-share-precedes-revenue-share-confirmation
+kind: precedes
+sourceRef: request.revenue-share
+targetRef: confirmation.revenue-share
+label: 履约请求先于履约确认

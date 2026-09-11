@@ -1,0 +1,6 @@
+type: relationship
+id: relation.manuscript-delivery-references-article
+kind: references
+sourceRef: request.manuscript-delivery
+targetRef: thing.article
+label: 履约请求涉及该业务对象

@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 支付内容产品费用
 parentContextRef: context.content-subscription
-contractRef: contract.content-subscription
-requestRef: request.content-payment
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.content-payment
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: ContentPaymentRequested
-  actsForRoleRef: role.platform-subscription
-confirmationTriggers:
-  - confirmationRef: confirmation.content-payment
-    trigger:
-      kind: domain_event
-      eventType: ContentPaymentConfirmed
-      actsForRoleRef: role.subscriber
-subjectRefs:
-  - thing.content

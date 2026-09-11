@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-subscription-precedes-content-payment-request
+kind: precedes
+sourceRef: contract.content-subscription
+targetRef: request.content-payment
+label: 合同签署后形成履约请求

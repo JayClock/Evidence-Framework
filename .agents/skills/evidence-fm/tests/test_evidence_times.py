@@ -262,29 +262,28 @@ class EvidenceTimeTests(unittest.TestCase):
                     any(name in error for error in errors), (kind, name, errors)
                 )
 
-    def test_request_interval_requires_canonical_fixed_end(self):
-        path = (
-            FIXTURES / "valid-subscription/entities/fulfillment--content-payment.yaml"
-        )
+    def test_request_interval_is_owned_by_request_evidence(self):
+        path = FIXTURES / "valid-subscription/entities/request--content-payment.yaml"
         doc = yaml.safe_load(path.read_text())
-        doc["requestInterval"] = {
+        self.assertEqual([], schema_errors(doc, "entity.schema.json"))
+        attributes = {item["name"]: item for item in doc["attributes"]}
+        self.assertEqual({"started_at", "expired_at"}, set(attributes))
+        for name in ("started_at", "expired_at"):
+            self.assertEqual("timestamp", attributes[name]["valueType"])
+            self.assertTrue(attributes[name]["required"])
+            self.assertTrue(attributes[name]["keyData"])
+
+        fulfillment = yaml.safe_load(
+            (
+                FIXTURES
+                / "valid-subscription/entities/fulfillment--content-payment.yaml"
+            ).read_text()
+        )
+        fulfillment["requestInterval"] = {
             "startAttribute": "started_at",
             "endAttribute": "expired_at",
         }
-        self.assertEqual([], schema_errors(doc, "entity.schema.json"))
-        for interval in (
-            {"startAttribute": "started_at"},
-            {"startAttribute": "started_at", "openEndedReason": "持续履行"},
-            {"startAttribute": "started_at", "endAttribute": None},
-            {
-                "startAttribute": "started_at",
-                "endAttribute": "expired_at",
-                "openEndedReason": "持续履行",
-            },
-        ):
-            with self.subTest(interval=interval):
-                doc["requestInterval"] = interval
-                self.assertTrue(schema_errors(doc, "entity.schema.json"))
+        self.assertTrue(schema_errors(fulfillment, "entity.schema.json"))
 
     def test_instances_require_concrete_rfc3339_values_for_all_time_fields(self):
         for kind, names in TIMES.items():

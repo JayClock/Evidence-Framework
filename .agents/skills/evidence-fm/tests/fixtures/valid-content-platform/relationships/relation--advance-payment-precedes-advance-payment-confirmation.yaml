@@ -1,0 +1,6 @@
+type: relationship
+id: relation.advance-payment-precedes-advance-payment-confirmation
+kind: precedes
+sourceRef: request.advance-payment
+targetRef: confirmation.advance-payment
+label: 履约请求先于履约确认

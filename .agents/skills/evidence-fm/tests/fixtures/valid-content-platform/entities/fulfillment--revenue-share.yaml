@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 支付创作者收入分成
 parentContextRef: context.content-production
-contractRef: contract.content-production
-requestRef: request.revenue-share
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.revenue-share
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: RevenueShareRequested
-  actsForRoleRef: role.creator
-confirmationTriggers:
-  - confirmationRef: confirmation.revenue-share
-    trigger:
-      kind: domain_event
-      eventType: RevenueShareConfirmed
-      actsForRoleRef: role.platform-content-production
-subjectRefs:
-  - thing.content

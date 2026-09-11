@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-production-precedes-creator-penalty-request
+kind: precedes
+sourceRef: contract.content-production
+targetRef: request.creator-penalty
+label: 合同签署后形成履约请求

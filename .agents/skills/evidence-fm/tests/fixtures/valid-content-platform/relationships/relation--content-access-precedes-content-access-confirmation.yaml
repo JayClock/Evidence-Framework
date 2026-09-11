@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-access-precedes-content-access-confirmation
+kind: precedes
+sourceRef: request.content-access
+targetRef: confirmation.content-access
+label: 履约请求先于履约确认

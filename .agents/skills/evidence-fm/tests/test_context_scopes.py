@@ -228,13 +228,13 @@ class ContextScopeTests(unittest.TestCase):
                         {
                             "type": "relationship",
                             "id": "relation.invalid-bridge",
-                            "kind": "cross_context_reference",
+                            "kind": "evidences",
                             "sourceRef": "proposal.customer-quote",
                             "targetRef": "thing.customer-profile",
                             "label": "错误的跨域证明",
                         }
                     )
-                    expected = "requires Evidence endpoints"
+                    expected = "requires Other Evidence -> Evidence"
                 root = write_model(Path(directory), documents, "context.sales-channel")
                 self.assertTrue(
                     any(expected in error for error in validate_model(load_model(root)))
@@ -281,7 +281,7 @@ class ContextScopeTests(unittest.TestCase):
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any(
-                    "must reference Fulfillment Confirmation or Evidence Role" in error
+                    "must contain a Fulfillment Confirmation or Evidence Role" in error
                     for error in errors
                 ),
                 errors,
@@ -296,7 +296,7 @@ class ContextScopeTests(unittest.TestCase):
             (root / "entities" / "fulfillment--content-payment.yaml").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
-                any("exactly one Fulfillment; found 0" in error for error in errors),
+                any("existing Fulfillment Context" in error for error in errors),
                 errors,
             )
 

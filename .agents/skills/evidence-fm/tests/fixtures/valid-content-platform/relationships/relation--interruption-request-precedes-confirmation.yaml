@@ -1,0 +1,6 @@
+type: relationship
+id: relation.interruption-request-precedes-confirmation
+kind: precedes
+sourceRef: request.interruption-compensation
+targetRef: confirmation.interruption-compensation
+label: 履约请求先于履约确认

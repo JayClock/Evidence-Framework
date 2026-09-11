@@ -4,24 +4,3 @@ category: context
 kind: fulfillment
 label: 支付创作者预付款
 parentContextRef: context.content-production
-contractRef: contract.content-production
-requestRef: request.advance-payment
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - confirmation.advance-payment
-completionPolicy:
-  mode: all
-requestTrigger:
-  kind: domain_event
-  eventType: AdvancePaymentRequested
-  actsForRoleRef: role.creator
-confirmationTriggers:
-  - confirmationRef: confirmation.advance-payment
-    trigger:
-      kind: domain_event
-      eventType: AdvancePaymentConfirmed
-      actsForRoleRef: role.platform-content-production
-subjectRefs:
-  - thing.content

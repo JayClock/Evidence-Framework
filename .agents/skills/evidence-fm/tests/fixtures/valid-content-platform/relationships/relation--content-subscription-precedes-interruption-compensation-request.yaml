@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-subscription-precedes-interruption-compensation-request
+kind: precedes
+sourceRef: contract.content-subscription
+targetRef: request.interruption-compensation
+label: 合同签署后形成履约请求

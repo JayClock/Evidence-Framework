@@ -1,0 +1,6 @@
+type: relationship
+id: relation.content-payment-precedes-content-payment-confirmation
+kind: precedes
+sourceRef: request.content-payment
+targetRef: confirmation.content-payment
+label: 履约请求先于履约确认
