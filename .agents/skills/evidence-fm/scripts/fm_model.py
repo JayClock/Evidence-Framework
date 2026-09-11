@@ -762,9 +762,19 @@ def validate_fulfillment_contexts(
                     f"{member['id']}: responsibleRoleRef must be a Party Role of the parent Contract"
                 )
 
-        for rule in rules.values():
-            if object_context_ref(rule) != fulfillment_id:
-                continue
+        context_rules = [
+            rule
+            for rule in rules.values()
+            if object_context_ref(rule) == fulfillment_id
+        ]
+        completion_rules = [
+            rule for rule in context_rules if rule.get("kind") == "completion"
+        ]
+        if len(completion_rules) != 1:
+            errors.append(
+                f"{fulfillment_id}: must define exactly one completion Rule; found {len(completion_rules)}"
+            )
+        for rule in context_rules:
             if rule.get("kind") in {"completion", "breach"} and rule.get(
                 "resultType"
             ) != "bool":

@@ -1,0 +1,13 @@
+type: rule
+id: rule.creator-penalty-completed
+kind: completion
+label: 支付断更违约金完成判断
+contextRef: fulfillment.creator-penalty
+bindings:
+  request:
+    ref: request.creator-penalty
+  confirmations:
+    ref: confirmation.creator-penalty
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

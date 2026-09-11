@@ -356,23 +356,35 @@ def grade_context_scope(
         def directed(
             items: list[dict[str, Any]], request_role: str, confirmation_role: str
         ) -> bool:
-            def responsible_role(entity_ref: object) -> dict[str, Any]:
-                evidence = entities.get(str(entity_ref), {})
+            def members(context_ref: object, kind: str) -> list[dict[str, Any]]:
+                return [
+                    entity
+                    for entity in entities.values()
+                    if entity.get("contextRef") == context_ref
+                    and entity.get("kind") == kind
+                ]
+
+            def responsible_role(evidence: dict[str, Any]) -> dict[str, Any]:
                 return entities.get(str(evidence.get("responsibleRoleRef")), {})
 
             return bool(items) and all(
-                re.search(
-                    request_role,
-                    identity_text_of(responsible_role(item.get("requestRef"))),
-                    re.IGNORECASE,
+                any(
+                    re.search(
+                        request_role,
+                        identity_text_of(responsible_role(evidence)),
+                        re.IGNORECASE,
+                    )
+                    for evidence in members(item.get("id"), "fulfillment_request")
                 )
                 and any(
                     re.search(
                         confirmation_role,
-                        identity_text_of(responsible_role(ref)),
+                        identity_text_of(responsible_role(evidence)),
                         re.IGNORECASE,
                     )
-                    for ref in item.get("confirmationRefs") or []
+                    for evidence in members(
+                        item.get("id"), "fulfillment_confirmation"
+                    )
                 )
                 for item in items
             )
@@ -398,9 +410,11 @@ def grade_context_scope(
                 str(targets),
             )
             decisions = [
-                entities.get(str(ref), {})
+                entity
                 for item in targets
-                for ref in item.get("confirmationRefs") or []
+                for entity in entities.values()
+                if entity.get("contextRef") == item.get("id")
+                and entity.get("kind") == "fulfillment_confirmation"
             ]
             explicit_decision = any(
                 re.search(
@@ -417,9 +431,11 @@ def grade_context_scope(
             )
     if eval_id == 19:
         subjects = {
-            ref
-            for item in model.fulfillment_contexts_by_id.values()
-            for ref in item.get("subjectRefs") or []
+            relation.get("targetRef")
+            for relation in model.relationships
+            if relation.get("kind") == "references"
+            and (entities.get(str(relation.get("sourceRef"))) or {}).get("kind")
+            == "fulfillment_request"
         }
         add(
             expectations,
@@ -592,10 +608,16 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         == "contract"
         for fulfillment in fulfillments
     )
+    request_entities = [
+        entity
+        for entity in entities
+        if entity.get("kind") == "fulfillment_request"
+    ]
     explicit_intervals = all(
-        isinstance(fulfillment.get("requestInterval"), dict)
-        for fulfillment in fulfillments
-    )
+        {attribute.get("name") for attribute in request.get("attributes") or []}
+        >= {"started_at", "expired_at"}
+        for request in request_entities
+    ) and len(request_entities) == len(fulfillments)
     add(
         expectations,
         "Every Fulfillment is a child Context of its Contract Context.",
@@ -604,9 +626,9 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     )
     add(
         expectations,
-        "Every Fulfillment declares a Request interval.",
+        "Every Fulfillment Request declares its evidence interval.",
         explicit_intervals,
-        str([item.get("requestInterval") for item in fulfillments]),
+        str([item.get("id") for item in request_entities]),
     )
     if eval_id not in {15, 16}:
         add(

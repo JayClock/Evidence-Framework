@@ -1,0 +1,13 @@
+type: rule
+id: rule.content-access-completed
+kind: completion
+label: 提供付费内容访问完成判断
+contextRef: fulfillment.content-access
+bindings:
+  request:
+    ref: request.content-access
+  confirmations:
+    ref: confirmation.content-access
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

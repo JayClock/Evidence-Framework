@@ -1,0 +1,13 @@
+type: rule
+id: rule.weekly-progress-check-completed
+kind: completion
+label: 完成周进度检查完成判断
+contextRef: fulfillment.weekly-progress-check
+bindings:
+  request:
+    ref: request.weekly-progress-check
+  confirmations:
+    ref: confirmation.weekly-progress-check
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

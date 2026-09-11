@@ -236,6 +236,22 @@ def performance_fulfillment(
         ),
         {
             "type": "rule",
+            "id": f"rule.{name}-completed",
+            "kind": "completion",
+            "label": label + "按期完成",
+            "contextRef": fulfillment,
+            "resultType": "bool",
+            "bindings": {
+                "request": {"ref": request},
+                "results": {"ref": confirmation, "cardinality": "many"},
+            },
+            "expression": (
+                "results.exists(r, r.confirmed_at >= request.started_at && "
+                "r.confirmed_at <= request.expired_at)"
+            ),
+        },
+        {
+            "type": "rule",
             "id": f"rule.{name}-overdue",
             "kind": "breach",
             "label": label + "逾期未答复",

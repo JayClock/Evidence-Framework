@@ -1,0 +1,13 @@
+type: rule
+id: rule.goal-setting-completed
+kind: completion
+label: 确认内容运营绩效目标完成判断
+contextRef: fulfillment.goal-setting
+bindings:
+  request:
+    ref: request.goal-setting
+  confirmations:
+    ref: confirmation.goal-setting
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

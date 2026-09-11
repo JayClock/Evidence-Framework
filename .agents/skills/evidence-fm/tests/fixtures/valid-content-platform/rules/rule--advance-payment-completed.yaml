@@ -1,0 +1,13 @@
+type: rule
+id: rule.advance-payment-completed
+kind: completion
+label: 支付创作者预付款完成判断
+contextRef: fulfillment.advance-payment
+bindings:
+  request:
+    ref: request.advance-payment
+  confirmations:
+    ref: confirmation.advance-payment
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

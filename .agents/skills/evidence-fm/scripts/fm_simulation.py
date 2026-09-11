@@ -25,6 +25,7 @@ from fm_model import (
     LoadedModel,
     entity_signature,
     expected_filename,
+    fulfillment_members,
     load_single_yaml,
     normalize,
     validate_against_schema,
@@ -297,24 +298,6 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
             visibility_by_instance[str(instance_ref)] = visible
             issued.add(str(instance_ref))
 
-        manual_refs = set(scenario.get("manualCompletionRequestRefs") or [])
-        for instance_ref in sorted(manual_refs):
-            instance = instances.get(str(instance_ref))
-            if instance_ref not in issued:
-                errors.append(
-                    f"{scenario_id}: manual completion references unissued instance '{instance_ref}'"
-                )
-            elif instance is None or not any(
-                fulfillment.get("requestRef") == instance.get("entityRef")
-                and isinstance(fulfillment.get("completionPolicy"), dict)
-                and fulfillment["completionPolicy"].get("mode") == "manual"
-                for fulfillment in model.fulfillment_contexts_by_id.values()
-            ):
-                errors.append(
-                    f"{scenario_id}: manual completion '{instance_ref}' must identify a Request "
-                    "for a manual-completion Fulfillment"
-                )
-
         for index, evaluation in enumerate(scenario.get("evaluations") or []):
             if not isinstance(evaluation, dict):
                 continue
@@ -455,14 +438,16 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                 errors.append(f"{scenario_id}: unknown Fulfillment '{fulfillment_ref}'")
                 continue
             request_instance = instances.get(request_instance_ref or "")
+            request_types, _, _ = fulfillment_members(fulfillment_ref or "", entities)
+            expected_request_refs = {str(item["id"]) for item in request_types}
             if request_instance is None:
                 errors.append(
                     f"{scenario_id}: unknown request instance '{request_instance_ref}'"
                 )
-            elif request_instance.get("entityRef") != fulfillment.get("requestRef"):
+            elif request_instance.get("entityRef") not in expected_request_refs:
                 errors.append(
                     f"{scenario_id}: request instance '{request_instance_ref}' does not instantiate "
-                    f"'{fulfillment.get('requestRef')}'"
+                    f"the Request in '{fulfillment_ref}'"
                 )
 
     return dedupe(errors)
@@ -846,84 +831,64 @@ def fulfillment_status(
     fulfillment_ref: str,
     request_instance_ref: str,
     rule_results: dict[str, list[dict[str, Any]]],
-    manual_completions: set[str],
+    manual_completions: set[str] | None = None,
 ) -> str:
+    """Evaluate one request only from rules and evidence available in the graph."""
     fulfillment = model.fulfillment_contexts_by_id.get(fulfillment_ref)
     request_instance = instances.get(request_instance_ref)
+    requests, confirmations, evidence_roles = fulfillment_members(
+        fulfillment_ref, model.entities_by_id
+    )
+    request_types = {str(item["id"]) for item in requests}
     if (
         fulfillment is None
         or request_instance is None
         or request_instance_ref not in issued
+        or request_instance.get("entityRef") not in request_types
     ):
         return "not_requested"
 
-    confirmation_types: dict[str, set[str]] = {}
-    for target_ref in fulfillment.get("confirmationRefs") or []:
-        target = model.entities_by_id.get(str(target_ref))
-        if entity_signature(target) == ("role", "evidence"):
-            players = {
-                str(relation.get("sourceRef"))
-                for relation in model.relationships
-                if relation.get("kind") == "plays_role"
-                and relation.get("targetRef") == target_ref
-            }
-            confirmation_types[str(target_ref)] = players
-        else:
-            confirmation_types[str(target_ref)] = {str(target_ref)}
-
-    matching_by_target: dict[str, list[str]] = {
-        target: [] for target in confirmation_types
+    confirmation_types = {str(item["id"]) for item in confirmations}
+    for role in evidence_roles:
+        confirmation_types.update(
+            str(relation.get("sourceRef"))
+            for relation in model.relationships
+            if relation.get("kind") == "plays_role"
+            and relation.get("targetRef") == role.get("id")
+        )
+    related_confirmations = {
+        instance_ref
+        for instance_ref in issued
+        if instances.get(instance_ref, {}).get("entityRef") in confirmation_types
+        and instance_descends_from(instance_ref, request_instance_ref, instances)
     }
-    for instance_ref in sorted(issued):
-        instance = instances.get(instance_ref)
-        if instance is None or request_instance_ref not in set(
-            instance.get("basedOn") or []
-        ):
+
+    rules = [
+        rule
+        for rule in model.rules
+        if rule.get("contextRef") == fulfillment_ref
+        and rule.get("kind") in {"completion", "breach"}
+    ]
+    for rule in rules:
+        if rule.get("kind") != "breach":
             continue
-        entity_ref = str(instance.get("entityRef"))
-        for target_ref, types in confirmation_types.items():
-            if entity_ref in types:
-                matching_by_target[target_ref].append(instance_ref)
-
-    policy = fulfillment.get("completionPolicy") or {}
-    mode = policy.get("mode")
-    completed = False
-    if mode == "all":
-        completed = all(matching_by_target.values())
-    elif mode == "any":
-        completed = any(matching_by_target.values())
-    elif mode == "count":
-        unique_confirmations = {
-            instance_ref
-            for values in matching_by_target.values()
-            for instance_ref in values
-        }
-        completed = len(unique_confirmations) >= integer_value(
-            policy.get("minimumConfirmations", 1)
-        )
-    elif mode == "amount":
-        completion_rule_ref = str(policy.get("completionRuleRef"))
-        completed = any(
-            bool(result)
-            for result in scoped_rule_results(
-                rule_results.get(completion_rule_ref, []),
-                request_instance_ref,
-                instances,
-            )
-        )
-    elif mode == "manual":
-        completed = request_instance_ref in manual_completions
-
-    for breach in fulfillment.get("breaches") or []:
-        breach_results = scoped_rule_results(
-            rule_results.get(str(breach.get("conditionRuleRef")), []),
+        results = scoped_rule_results(
+            rule_results.get(str(rule.get("id")), []),
             request_instance_ref,
             instances,
         )
-        if any(bool(result) for result in breach_results):
+        if any(bool(result) for result in results):
             return "breached"
-    if completed:
-        return "completed"
+
+    completion_rules = [rule for rule in rules if rule.get("kind") == "completion"]
+    for rule in completion_rules:
+        results = scoped_rule_results(
+            rule_results.get(str(rule.get("id")), []),
+            request_instance_ref,
+            instances,
+        )
+        if related_confirmations and any(bool(result) for result in results):
+            return "completed"
     return "pending"
 
 

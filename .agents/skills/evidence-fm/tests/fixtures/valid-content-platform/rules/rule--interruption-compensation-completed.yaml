@@ -1,0 +1,13 @@
+type: rule
+id: rule.interruption-compensation-completed
+kind: completion
+label: 提供断更补偿完成判断
+contextRef: fulfillment.interruption-compensation
+bindings:
+  request:
+    ref: request.interruption-compensation
+  confirmations:
+    ref: confirmation.interruption-compensation
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

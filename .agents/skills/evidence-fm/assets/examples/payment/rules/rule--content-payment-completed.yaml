@@ -1,0 +1,16 @@
+type: rule
+id: rule.content-payment-completed
+kind: completion
+label: 支付内容产品费用完成判断
+contextRef: fulfillment.content-payment
+bindings:
+  request:
+    ref: request.content-payment
+  confirmations:
+    ref: confirmation.content-payment
+    cardinality: many
+expression: >-
+  confirmations.exists(c,
+    c.confirmed_at >= request.started_at &&
+    c.confirmed_at <= request.expired_at)
+resultType: bool

@@ -1,0 +1,13 @@
+type: rule
+id: rule.revenue-share-completed
+kind: completion
+label: 支付创作者收入分成完成判断
+contextRef: fulfillment.revenue-share
+bindings:
+  request:
+    ref: request.revenue-share
+  confirmations:
+    ref: confirmation.revenue-share
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

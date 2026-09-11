@@ -131,8 +131,19 @@ class ScopeEvalTests(unittest.TestCase):
                 model = load_model(root)
                 self.assertEqual([], validate_model(model))
                 target = model.fulfillment_contexts_by_id["fulfillment.target-change"]
-                request = model.entities_by_id[target["requestRef"]]
-                confirmation = model.entities_by_id[target["confirmationRefs"][0]]
+                members = [
+                    item
+                    for item in model.entities
+                    if item.get("contextRef") == target["id"]
+                ]
+                request = next(
+                    item for item in members if item["kind"] == "fulfillment_request"
+                )
+                confirmation = next(
+                    item
+                    for item in members
+                    if item["kind"] == "fulfillment_confirmation"
+                )
                 self.assertEqual(
                     "role.employee" if employee_initiates else "role.manager",
                     request["responsibleRoleRef"],
@@ -170,10 +181,16 @@ class ScopeEvalTests(unittest.TestCase):
             if item["id"] not in {"party.customer", "relation.customer-owns-profile"}
         ]
         documents.extend(performance_documents(False, negotiate_before_signing=False))
-        review = next(
-            item for item in documents if item["id"] == "fulfillment.progress-review"
+        documents.append(
+            {
+                "type": "relationship",
+                "id": "relation.progress-review-references-profile",
+                "kind": "references",
+                "sourceRef": "request.progress-review",
+                "targetRef": "thing.customer-profile",
+                "label": "进度检查请求涉及客户档案",
+            }
         )
-        review["subjectRefs"] = ["thing.customer-profile"]
         with tempfile.TemporaryDirectory() as directory:
             result = self.grade_sample(
                 Path(directory), 19, documents, "context.performance"

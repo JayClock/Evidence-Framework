@@ -1,0 +1,13 @@
+type: rule
+id: rule.prepaid-payment-completed
+kind: completion
+label: 完成预付费抵扣完成判断
+contextRef: fulfillment.prepaid-payment
+bindings:
+  request:
+    ref: request.prepaid-payment
+  confirmations:
+    ref: confirmation.prepaid-payment
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

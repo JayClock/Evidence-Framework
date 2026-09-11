@@ -1,0 +1,13 @@
+type: rule
+id: rule.manuscript-delivery-completed
+kind: completion
+label: 按期交稿完成判断
+contextRef: fulfillment.manuscript-delivery
+bindings:
+  request:
+    ref: request.manuscript-delivery
+  confirmations:
+    ref: confirmation.manuscript-delivery
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool

@@ -133,8 +133,17 @@ class SimulationTests(unittest.TestCase):
             set(instances),
             "fulfillment.content-payment",
             "instance.request",
-            {},
-            set(),
+            {
+                "rule.content-payment-completed": [
+                    {
+                        "result": True,
+                        "instanceRefs": {
+                            "instance.request",
+                            "instance.external-confirmation",
+                        },
+                    }
+                ]
+            },
         )
         self.assertEqual("completed", status)
 
@@ -261,23 +270,27 @@ class SimulationTests(unittest.TestCase):
             ),
         )
 
-    def test_amount_and_manual_completion_use_explicit_scenario_results(self) -> None:
+    def test_completion_uses_explicit_cel_rule_results(self) -> None:
         model = load_model(self.fixture("valid-traceable-subscription"))
         instances = {
             "instance.request": {
                 "id": "instance.request",
                 "entityRef": "request.content-payment",
                 "values": {},
-            }
-        }
-        fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
-        fulfillment["completionPolicy"] = {
-            "mode": "amount",
-            "completionRuleRef": "rule.payment-matches-request",
+            },
+            "instance.confirmation": {
+                "id": "instance.confirmation",
+                "entityRef": "confirmation.content-payment",
+                "values": {},
+                "basedOn": ["instance.request"],
+            },
         }
         results = {
-            "rule.payment-matches-request": [
-                {"result": True, "instanceRefs": {"instance.request"}}
+            "rule.content-payment-completed": [
+                {
+                    "result": True,
+                    "instanceRefs": {"instance.request", "instance.confirmation"},
+                }
             ]
         }
         self.assertEqual(
@@ -285,31 +298,26 @@ class SimulationTests(unittest.TestCase):
             fulfillment_status(
                 model,
                 instances,
-                {"instance.request"},
+                set(instances),
                 "fulfillment.content-payment",
                 "instance.request",
                 results,
-                set(),
             ),
         )
-        fulfillment["completionPolicy"] = {"mode": "manual"}
         self.assertEqual(
-            "completed",
+            "pending",
             fulfillment_status(
                 model,
                 instances,
-                {"instance.request"},
+                set(instances),
                 "fulfillment.content-payment",
                 "instance.request",
                 {},
-                {"instance.request"},
             ),
         )
 
-    def test_count_policy_uses_repeated_instances_without_duplicate_types(self) -> None:
+    def test_count_completion_is_expressed_by_one_rule_and_repeated_instances(self) -> None:
         model = load_model(self.fixture("valid-subscription"))
-        fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
-        fulfillment["completionPolicy"] = {"mode": "count", "minimumConfirmations": 2}
         instances = {
             "instance.request": {
                 "id": "instance.request",
@@ -337,8 +345,17 @@ class SimulationTests(unittest.TestCase):
                 {"instance.request", "instance.payment-1"},
                 "fulfillment.content-payment",
                 "instance.request",
-                {},
-                set(),
+                {
+                    "rule.content-payment-completed": [
+                        {
+                            "result": False,
+                            "instanceRefs": {
+                                "instance.request",
+                                "instance.payment-1",
+                            },
+                        }
+                    ]
+                },
             ),
         )
         self.assertEqual(
@@ -349,8 +366,14 @@ class SimulationTests(unittest.TestCase):
                 set(instances),
                 "fulfillment.content-payment",
                 "instance.request",
-                {},
-                set(),
+                {
+                    "rule.content-payment-completed": [
+                        {
+                            "result": True,
+                            "instanceRefs": set(instances),
+                        }
+                    ]
+                },
             ),
         )
 

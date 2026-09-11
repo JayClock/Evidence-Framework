@@ -1,0 +1,13 @@
+type: rule
+id: rule.external-payment-completed
+kind: completion
+label: 完成外部支付完成判断
+contextRef: fulfillment.external-payment
+bindings:
+  request:
+    ref: request.external-payment
+  confirmations:
+    ref: confirmation.external-payment
+    cardinality: many
+expression: confirmations.size() > 0
+resultType: bool
