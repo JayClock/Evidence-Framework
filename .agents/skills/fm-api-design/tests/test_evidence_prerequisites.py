@@ -74,7 +74,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 and evidence["contextRef"] != "fulfillment.wechat-payment"
             ):
                 self.assertIn(evidence["responsibleRoleRef"], contract["roleRefs"])
-        design = load(EXAMPLE / "design.yaml")
+        design = load(EXAMPLE / "api.yaml")
         for cap in design["capabilities"]:
             self.assertIn(cap["actorRoleRef"], contract["roleRefs"])
         self.assertFalse(
@@ -95,7 +95,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
 
     def test_dependencies_and_api_steps_match_for_each_responsibility(self) -> None:
         scenario = load(self.root / SCENARIO)
-        design = load(EXAMPLE / "design.yaml")
+        design = load(EXAMPLE / "api.yaml")
         steps = {s["issueInstanceRef"]: s for s in scenario["steps"]}
         journey = design["journeys"][0]["steps"]
         caps = {c["id"]: c for c in design["capabilities"]}
@@ -119,11 +119,16 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 self.assertEqual(confirmation["basedOn"], [request_id, proof_id])
                 if name != "payment":
                     self.assertEqual(
-                        resources[{
-                            "invoice": "resource.invoice",
-                            "delivery": "resource.delivery-note",
-                        }[name]]["parentRef"],
-                        {"invoice": "resource.invoicing", "delivery": "resource.delivery"}[name],
+                        resources[
+                            {
+                                "invoice": "resource.invoice",
+                                "delivery": "resource.delivery-note",
+                            }[name]
+                        ]["parentRef"],
+                        {
+                            "invoice": "resource.invoicing",
+                            "delivery": "resource.delivery",
+                        }[name],
                     )
                 else:
                     self.assertEqual(
@@ -133,11 +138,13 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                         "role.payment-proof",
                         {resource["entityRef"] for resource in resources.values()},
                     )
-                cap = caps[{
-                    "payment": "capability.confirm-payment",
-                    "invoice": "capability.confirm-invoicing",
-                    "delivery": "capability.confirm-delivery",
-                }[name]]
+                cap = caps[
+                    {
+                        "payment": "capability.confirm-payment",
+                        "invoice": "capability.confirm-invoicing",
+                        "delivery": "capability.confirm-delivery",
+                    }[name]
+                ]
                 self.assertIn(
                     {
                         "ruleRef": f"rule.{name}-evidence-ready",

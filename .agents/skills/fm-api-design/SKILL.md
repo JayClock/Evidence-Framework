@@ -1,34 +1,44 @@
 ---
 name: fm-api-design
-description: 基于已生成的 FM Schema v3 YAML 模型和有来源业务场景，设计、校验并投影角色×URI×HTTP 方法×业务能力候选，同时检查资源层次、实例范围、Evidence 追加语义、超媒体链接和流程覆盖。用户提到从 FM 设计 REST API、生成 API 候选四列表、检查 docs/api/design.yaml 或 FM 到接口映射时使用；不用于修改 FM、生成 Controller/OpenAPI 或补造业务权限。
+description: 基于 FM Schema v3 和有来源场景维护统一 api.yaml，设计角色×URI×HTTP 方法×业务能力候选、资源表示、超媒体、缓存分页及消费者流程契约。用户提到 FM 到 REST API、API 契约、HAL、幂等或校验 api.yaml 时使用；不用于修改 FM、生成 Controller/OpenAPI 或补造权限。
 compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evidence-fm Skill。
 ---
 
 # FM → API 设计
 
-将 FM 与已有业务场景转换为**可审查的 API 候选**。Skill 负责有依据的设计判断；CLI 只做确定性校验和投影，不批准业务事实。
+以 FM 为业务依据，以项目中的一份 `api.yaml` 保存 API 设计选择。Skill 负责有依据的判断，CLI 负责确定性校验和静态投影，不批准业务事实，不执行服务端授权。
 
-## 先判断请求类型
+## 执行边界
 
-区分以下意图后再行动：
+- 讨论：只说明方法和缺口，不写文件。
+- 生成设计：先 inspect，再形成新的 `api.yaml` 草稿；没有明确目标不覆盖已有文件。
+- 只校验：只运行 check，不修改 FM、API 或输出。
+- 投影：用户明确指定新目录后运行 project。
+- 修改设计：展示拟修改内容和依据，按明确授权修改指定 `api.yaml`。
 
-- **讨论**：只说明方法和缺口，不写文件。
-- **生成候选**：先 inspect，再形成新的设计草稿；没有明确目标时不要覆盖已有设计。
-- **只校验**：只运行 check，不修改 FM、设计或输出。
-- **投影**：用户明确指定新输出目录后运行 project。
-- **修改已有设计**：先展示拟修改内容和依据，取得明确授权后才改指定文件。
-
-API 设计中的新业务规则必须返回 FM 建模／发现任务处理。技术决定可以记录在 `decisions`，但不能代替角色权限、期限、实例归属或业务来源。
+API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决定不能代替角色权限、期限、实例归属或关键数据来源。
 
 ## 工作流
 
-1. 定位项目根、FM 根、`evidence-fm` Skill 绝对目录、已有业务场景和 API 设计。
-2. 阅读 [方法](references/method.md)；写配置时再读 [格式](references/format.md)，运行前读 [校验与保存纪律](references/validation.md)。
-3. 用 Python 3.10+ 运行 `inspect`。保留真实 FM 检查摘要、模型审核状态、角色、资源线索和场景。
-4. 先核对凭证形成依赖：必需的 `other_evidence` 已存在才能形成被证明凭证，目标能力须说明证据引用及可用性检查；依据不足返回 FM 缺口。只把有来源且影响当前范围的对象映射为资源。Context 默认是边界，不自动成为 CRUD 资源；`precedes`、一般 `references` 或单独基数不证明聚合。
-5. 按业务用语声明资源 `businessName`、路径 `segment` 和能力名称，不把 FM 类型名机械暴露为接口。先确认实例归属，再逐层依据业务基数选择 `singleton` 或 `collection`，未知数量保留 gap；单例不增加子定位 ID，不等于取消凭证身份或允许覆盖。为每个能力说明调用 Party Role、实际支持的资源视图、方法、效果、场景、实例约束和依据。岗位或经办 Participant 不自动成为 API 角色，Participant 存在不自动产生查询或 CRUD 能力。属于同一合同责任范围的凭证能力只使用 Contract 绑定角色，包括显式关联合同的 RFP／Proposal 及 Other Evidence，不新增阶段角色。Evidence Role 没有责任人，既不是调用者，也不是可签发的具体凭证；不从角色生成提交／CRUD 能力。通过角色消费外部凭证时只描述引用、匹配和可见性检查，外部活动可映射为 `external`，不猜测回调或渠道 API。`responsibleRoleRef` 和 `plays_role` 都不是全局授权。
-6. 运行 `check`，修复技术错误；业务、设计、表达和覆盖缺口保持为 gap，不扩大权限或削弱预期来消除诊断。
-7. 用户明确要求生成时，使用一个不存在的新目录运行 `project`。展示四列表、来源、实例约束、流程覆盖和未决项后停止。
+1. 定位项目根、FM 根、`evidence-fm` Skill 绝对目录、已有业务场景和 `api.yaml`。API 文件在 FM 根目录之外。
+2. 阅读 [方法](references/method.md)；写配置时读 [格式](references/format.md)，运行前读 [校验纪律](references/validation.md)。
+3. 运行 `inspect`，保留真实 FM 检查摘要、审核状态、角色、资源线索和场景。
+4. 检查凭证形成依赖：谁提供什么补充证据，目标凭证形成前是否已存在、可见并属于本业务实例。依据不足返回缺口，不用接口成功响应代替业务证据。
+5. 声明有来源的资源名称、路径、实例归属和业务数量；逐层选择 singleton 或 collection。Context 是边界，不自动成为 CRUD 资源；一般引用、precedes 或单独基数不证明聚合。
+6. 为能力说明调用 Party Role、视图、方法、效果、场景、实例约束和依据。Participant、岗位、经办人和 Evidence Role 不自动成为调用角色。同一合同责任范围内的凭证使用 Contract 绑定角色，角色复用不合并不同 Context 的 URI 根。
+7. 顶层 `representations` 记录有来源的字段与导航草图，`journeys` 回映 FM 场景。涉及完整 HTTP 交互时填写同一文件的 `http`，遵循 [HTTP 契约](references/contracts.md)。本次未选择 HTTP 设计范围时显式写 `http: null`。
+8. 运行 `check`，修复技术错误；业务、设计、表达和覆盖缺口保持 gap，不扩大权限或削弱预期来消除诊断。
+9. 用户要求生成时，在指定的新目录 `project`，展示候选、契约、来源、实例约束、覆盖和未决项后停止。
+
+## HTTP 设计
+
+`api.yaml.http` 用 `scopeCapabilityRefs` 指向本文件的已选能力，不重复声明 API 身份、格式版本、URI 或 Method。
+
+- 字段采用白名单，保留 FM 来源及 client/reference/server/derived 口径。required 不等于客户端输入。
+- 链接与动作具有明确的参数来源、角色和条件。未求值的条件保留 gap，不假定可执行。
+- 明确成功／失败响应、201／202 定位、幂等并发、缓存分页，不套固定 TTL 或业务期限。
+- HTTP journey 描述入口、前序响应字段／头和链接导航；它不是 FM 签发步骤的复制，不为读取伪造 Evidence。
+- `runtimeValidated` 恒为 false。静态样例检查不替代真实业务、授权、前置条件或接口执行验证。
 
 ## 命令
 
@@ -40,25 +50,27 @@ API 设计中的新业务规则必须返回 FM 建模／发现任务处理。技
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --design "$DESIGN_FILE"
+  --api "$API_FILE"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --design "$DESIGN_FILE" --out "$NEW_OUTPUT_DIR"
+  --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```
 
-只有要求本次设计范围无 gap 时增加 `--require-complete`。它不代表完整 REST、业务批准或运行验证。
+要求本次声明范围无 gap 时增加 `--require-complete`；它不表示完整 REST、业务批准或运行验证。
 
-## 完整示例
+`projection.json` 是唯一机器中间结果，所有 Markdown 和样例均从它渲染。输出固定包含投影、四列表、设计报告、HTTP 契约、表示样例、HTTP 流程和 manifest。没有 HTTP 范围时明确报告未选择，不声称完成了契约。
 
-使用 [商品采购协议完整示例](assets/examples/full-lifecycle/README.md) 查看询价、报价、协议及支付、开票、发货的凭证依赖：申请后提供补充证据，再基于已有证据形成确认。支付通过 Evidence Role 使用外部微信支付确认，发票和发货单则是具体补充证据。示例包含 Context、Role、Participant、Thing、Rule、Relationship、可执行 FM 场景和 API 候选。
+## 示例
 
-## 不可越过的边界
+[商品采购协议示例](assets/examples/full-lifecycle/README.md) 以一份 [api.yaml](assets/examples/full-lifecycle/api.yaml) 声明询价、报价、采购协议及支付、开票、发货能力，并细化商品读取的 HTTP 契约。合成字段和协议选择不是生产业务批准。
 
-- 不修改 FM，不把 URI、Method、DTO 或部署信息写入 FM。
-- 不自动生成 CRUD、调用角色、GET 链接或“审批”端点。
-- GET 只读；Evidence 只能读取或通过 POST 追加。登记合同不等于签署，提交 Confirmation 不等于 Completion Rule 已满足。
-- 保持 `started_at`、`expired_at`、`signed_at`、`confirmed_at`、`created_at` 的 FM 业务含义；required 不等于客户端自由输入。
-- 路径嵌套不证明实例归属。调用者范围和每层 parent-child 约束必须明确。
-- `projection.json` 是唯一机器中间结果；Markdown 只能渲染它。静态 coverage 不写成 passed。
-- project 只创建新目录；不使用 `--force`，不提交 Git，不修改宿主扩展或项目工作流状态。
+## 业务语义与文件纪律
+
+- FM 只读，不把 URI、Method、DTO 或部署信息写入业务模型。
+- GET 只读；Evidence 通过 POST 追加，不覆盖。单例省略冗余定位参数，不取消凭证身份和审计记录。
+- 登记合同不等于签署，提交 Confirmation 不等于 Completion Rule 已满足。
+- 保留六类 Evidence 的时间含义；形成、签署、确认不等于入库或回调到达。
+- 每层 parent-child 关系和调用者实例范围必须明确；`responsibleRoleRef` 与 `plays_role` 不授予全局权限。
+- Evidence Role 是证据玩家插槽，不生成提交接口；外部活动保持 external，不猜回调或接入 API。
+- project 只创建新目录，不覆盖、不提交 Git、不修改扩展或项目工作流状态。

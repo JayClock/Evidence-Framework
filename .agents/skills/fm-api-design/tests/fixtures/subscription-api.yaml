@@ -1,4 +1,4 @@
-schemaVersion: '2.0'
+schemaVersion: '3.0'
 id: api.subscription
 scope:
   contextRefs:
@@ -154,3 +154,5 @@ journeys:
           sourceRefs:
             - source.successful-payment
           reasoning: 当前设计未选择确认提交接口，保留为内部范围
+
+http: null

@@ -11,6 +11,7 @@ coverage_module = importlib.import_module("fm_api_core.coverage")
 fm_adapter_module = importlib.import_module("fm_api_core.fm_adapter")
 hypermedia_module = importlib.import_module("fm_api_core.hypermedia")
 resources_module = importlib.import_module("fm_api_core.resources")
+contracts_module = importlib.import_module("fm_api_core.contracts")
 FMIndex = Any
 
 
@@ -170,7 +171,7 @@ def _validate_bindings(
 
 
 def build_projection(
-    design: dict[str, Any], index: FMIndex, project_root: Path, design_digest: str
+    design: dict[str, Any], index: FMIndex, project_root: Path, api_digest: str
 ) -> dict[str, Any]:
     source_digests, diagnostics = _validate_references(design, index, project_root)
     resources, resource_diagnostics = resources_module.build_resources(design, index)
@@ -194,12 +195,12 @@ def build_projection(
         set(diagnostics),
         key=lambda item: (item.severity, item.code, item.targetRef or "", item.message),
     )
-    return {
-        "schemaVersion": "2.0",
-        "designId": design["id"],
+    projection = {
+        "schemaVersion": "3.0",
+        "apiId": design["id"],
         "inputDigests": {
             "fm": index.files,
-            "design": design_digest,
+            "api": api_digest,
             "sources": source_digests,
         },
         "fmCheckSummary": index.check,
@@ -215,5 +216,12 @@ def build_projection(
         "operations": operations,
         "representations": representations,
         "coverage": coverage,
+        "http": None,
         "diagnostics": [item.to_dict() for item in diagnostics],
     }
+    if design["http"] is not None:
+        projection["http"] = contracts_module.build_http(
+            design["http"], projection, index
+        )
+        projection["diagnostics"].extend(projection["http"]["diagnostics"])
+    return projection

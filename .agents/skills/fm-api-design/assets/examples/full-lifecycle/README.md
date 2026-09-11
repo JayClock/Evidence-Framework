@@ -1,6 +1,6 @@
 # 商品采购协议完整 FM 与 API 示例
 
-这是基于 PDF“商品采购协议”案例整理的可执行示例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
+这是商品采购协议的可执行示例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
 
 ```text
 商品询价 RFP → 商品报价 Proposal → 商品采购协议 Contract
@@ -11,7 +11,7 @@
 微信支付服务协议 → 微信支付申请 → 微信支付确认 ─plays_role→ 支付凭证 Role
 ```
 
-为形成可执行 FM 场景，示例补充了标识、数量、金额、期限、凭证号和完成规则等合成字段；这些字段不代表生产业务批准。按示例约束，`design.yaml` 使用 `sources: []`，FM 与 API 文件不包含 `sourceRefs`、原文摘录或来源摘要。
+为形成可执行 FM 场景，示例补充了标识、数量、金额、期限、凭证号和完成规则等合成字段；这些字段不代表生产业务批准。按示例约束，`api.yaml` 使用 `sources: []`，FM 与 API 文件不包含 `sourceRefs`、原文摘录或来源摘要。
 
 ## 节点覆盖
 
@@ -71,21 +71,21 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 
 ## API 候选
 
-| Role | URI | Method | Business Capability |
-| --- | --- | --- | --- |
-| 客户 | `/product-inquiries` | POST | 发起商品询价 |
-| 供应商 | `/product-inquiries/{inquiryId}/quotation` | POST | 提交商品报价 |
-| 客户 | `/product-procurements` | POST | 登记商品采购协议 |
-| 供应商 | `/product-procurements/{procurementId}/payment` | POST | 申请支付货款 |
-| 客户 | `/product-procurements/{procurementId}/payment/confirmation` | POST | 确认支付货款 |
-| 客户 | `/product-procurements/{procurementId}/invoicing` | POST | 申请开具发票 |
-| 供应商 | `/product-procurements/{procurementId}/invoicing/invoice` | POST | 提交发票 |
-| 供应商 | `/product-procurements/{procurementId}/invoicing/confirmation` | POST | 确认开具发票 |
-| 客户 | `/product-procurements/{procurementId}/delivery` | POST | 申请商品发货 |
-| 供应商 | `/product-procurements/{procurementId}/delivery/delivery-note` | POST | 提交发货单 |
-| 供应商 | `/product-procurements/{procurementId}/delivery/confirmation` | POST | 确认商品发货 |
-| 客户 | `/products/{productId}` | GET | 客户查看商品 |
-| 供应商 | `/products/{productId}` | GET | 供应商查看商品 |
+| Role   | URI                                                            | Method | Business Capability |
+| ------ | -------------------------------------------------------------- | ------ | ------------------- |
+| 客户   | `/product-inquiries`                                           | POST   | 发起商品询价        |
+| 供应商 | `/product-inquiries/{inquiryId}/quotation`                     | POST   | 提交商品报价        |
+| 客户   | `/product-procurements`                                        | POST   | 登记商品采购协议    |
+| 供应商 | `/product-procurements/{procurementId}/payment`                | POST   | 申请支付货款        |
+| 客户   | `/product-procurements/{procurementId}/payment/confirmation`   | POST   | 确认支付货款        |
+| 客户   | `/product-procurements/{procurementId}/invoicing`              | POST   | 申请开具发票        |
+| 供应商 | `/product-procurements/{procurementId}/invoicing/invoice`      | POST   | 提交发票            |
+| 供应商 | `/product-procurements/{procurementId}/invoicing/confirmation` | POST   | 确认开具发票        |
+| 客户   | `/product-procurements/{procurementId}/delivery`               | POST   | 申请商品发货        |
+| 供应商 | `/product-procurements/{procurementId}/delivery/delivery-note` | POST   | 提交发货单          |
+| 供应商 | `/product-procurements/{procurementId}/delivery/confirmation`  | POST   | 确认商品发货        |
+| 客户   | `/products/{productId}`                                        | GET    | 客户查看商品        |
+| 供应商 | `/products/{productId}`                                        | GET    | 供应商查看商品      |
 
 Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不机械生成 CRUD API。
 
@@ -105,7 +105,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --design "$API_SKILL_DIR/assets/examples/full-lifecycle/design.yaml" \
+  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
   --require-complete
 ```
 
@@ -122,7 +122,15 @@ mkdir -p "$PROJECT_ROOT/docs/api/.work"
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --design "$API_SKILL_DIR/assets/examples/full-lifecycle/design.yaml" \
+  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
   --out "$PROJECT_ROOT/docs/api/.work/product-procurement" \
   --require-complete
 ```
+
+## HTTP 契约
+
+[api.yaml](api.yaml) 的 `http` 部分细化客户、供应商商品读取能力，包含 HAL 表示、私有缓存、ETag 和条件读取流程；不增加查询权限，不声称其他 11 个候选已具备 HTTP 契约。
+
+上面的命令会同时检查候选与 HTTP 范围，生成固定七份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。示例的 `complete` 是静态样例检查，`runtimeValidated` 始终为 false。
+
+字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/contracts.md)。

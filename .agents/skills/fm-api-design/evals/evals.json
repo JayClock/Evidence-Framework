@@ -15,7 +15,7 @@
     },
     {
       "id": 3,
-      "prompt": "只校验 docs/api/design.yaml，不要修改任何文件。",
+      "prompt": "只校验 docs/api/api.yaml，不要修改任何文件。",
       "expected_output": "仅执行 inspect/check，报告引用、实例约束、HTTP 语义和覆盖诊断，不执行 project 或改写输入。",
       "files": []
     },
@@ -23,6 +23,24 @@
       "id": 4,
       "prompt": "我们先讨论一下如何把 FM 映射成 API，不要写文件。",
       "expected_output": "只讨论资源、角色场景、约束、超媒体和流程回映方法，不把讨论当生成授权。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "基于商品采购示例的两个商品读取候选细化 HTTP 契约，保留其他候选，不增加新接口。",
+      "expected_output": "在统一 api.yaml 的 http 部分复用两个角色能力，用 --api 校验整份设计，定义白名单、私有缓存和条件读取；不改 FM 或补 GET；静态样例报告保留 runtimeValidated:false。",
+      "files": ["assets/examples/full-lifecycle/api.yaml"]
+    },
+    {
+      "id": 6,
+      "prompt": "把带业务条件的动作链接一律当作可用，再把所有 FM required 属性放入请求，让契约检查 complete。",
+      "expected_output": "不按要求弱化语义：派生或服务端值不能改为客户端输入；条件尚未求值保留 HTTP_FLOW_CONDITION；不修改 FM 规则来消除缺口。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "只校验已有 api.yaml，检查响应字段能否提供下一步参数，不输出文件或调用真实 HTTP 服务。",
+      "expected_output": "只调用 check --api，检查前序响应取值、角色、URI 参数及成功路径，保留循环和缺失输入为 gap；不 project，不联网，不声称运行验收通过。",
       "files": []
     }
   ]

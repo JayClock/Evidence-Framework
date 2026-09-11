@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v2/api-design.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v3/api.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -13,11 +13,12 @@
     "scenarios",
     "capabilities",
     "representations",
-    "journeys"
+    "journeys",
+    "http"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "2.0"
+      "const": "3.0"
     },
     "id": {
       "$ref": "#/$defs/id"
@@ -79,6 +80,16 @@
       "items": {
         "$ref": "#/$defs/journey"
       }
+    },
+    "http": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/http"
+        }
+      ]
     }
   },
   "additionalProperties": false,
@@ -660,6 +671,508 @@
           "additionalProperties": false
         }
       ]
+    },
+    "httpText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "httpStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/httpText"
+      }
+    },
+    "httpField": {
+      "type": "object",
+      "required": ["name", "schema", "required", "origin"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+        },
+        "schema": {
+          "type": "object"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "origin": {
+          "enum": ["client", "reference", "server", "derived"]
+        },
+        "fmAttributeRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "decision": {
+          "$ref": "#/$defs/httpText"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["fmAttributeRef"]
+        },
+        {
+          "required": ["decision"]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "httpPayload": {
+      "type": "object",
+      "required": ["mediaType", "fields", "example"],
+      "properties": {
+        "mediaType": {
+          "enum": ["application/json", "application/hal+json"]
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpField"
+          }
+        },
+        "example": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpLinkSource": {
+      "type": "object",
+      "required": ["kind", "name"],
+      "properties": {
+        "kind": {
+          "enum": ["path", "field"]
+        },
+        "name": {
+          "$ref": "#/$defs/httpText"
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpLink": {
+      "type": "object",
+      "required": ["rel", "kind", "capabilityRef", "parameterBindings"],
+      "properties": {
+        "rel": {
+          "$ref": "#/$defs/httpText"
+        },
+        "kind": {
+          "enum": ["navigation", "action"]
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "whenRuleRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "parameterBindings": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/httpLinkSource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpCache": {
+      "type": "object",
+      "required": ["mode", "reason"],
+      "properties": {
+        "mode": {
+          "enum": ["no-store", "private", "public"]
+        },
+        "reason": {
+          "$ref": "#/$defs/httpText"
+        },
+        "maxAge": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "validator": {
+          "enum": ["etag", "last-modified"]
+        },
+        "publicInvariantReason": {
+          "$ref": "#/$defs/httpText"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "enum": ["private", "public"]
+              }
+            }
+          },
+          "then": {
+            "required": ["maxAge", "validator"]
+          }
+        }
+      ]
+    },
+    "httpRepresentation": {
+      "type": "object",
+      "required": [
+        "id",
+        "resourceRef",
+        "view",
+        "actorRoleRefs",
+        "mediaType",
+        "fields",
+        "example",
+        "exampleParameters",
+        "links",
+        "cache"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/httpText"
+        },
+        "resourceRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "view": {
+          "enum": ["collection", "item", "singleton"]
+        },
+        "actorRoleRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/httpText"
+          }
+        },
+        "mediaType": {
+          "enum": ["application/json", "application/hal+json"]
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpField"
+          }
+        },
+        "example": {
+          "type": "object"
+        },
+        "exampleParameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "integer"]
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpLink"
+          }
+        },
+        "cache": {
+          "$ref": "#/$defs/httpCache"
+        },
+        "embedded": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["rel", "representationRefs"],
+            "properties": {
+              "rel": {
+                "$ref": "#/$defs/httpText"
+              },
+              "representationRefs": {
+                "$ref": "#/$defs/httpStrings"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "required": ["mode", "parameter", "nextExample", "reason"],
+          "properties": {
+            "mode": {
+              "enum": ["cursor", "page"]
+            },
+            "parameter": {
+              "$ref": "#/$defs/httpText"
+            },
+            "nextExample": {
+              "$ref": "#/$defs/httpText"
+            },
+            "reason": {
+              "$ref": "#/$defs/httpText"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpResponse": {
+      "type": "object",
+      "required": ["status", "description", "headers"],
+      "properties": {
+        "status": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 599
+        },
+        "description": {
+          "$ref": "#/$defs/httpText"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "representationRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "resultCapabilityRef": {
+          "$ref": "#/$defs/httpText"
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpOperation": {
+      "type": "object",
+      "required": [
+        "capabilityRef",
+        "request",
+        "responses",
+        "idempotency",
+        "concurrency"
+      ],
+      "properties": {
+        "capabilityRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "request": {
+          "$ref": "#/$defs/httpPayload"
+        },
+        "responses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/httpResponse"
+          }
+        },
+        "idempotency": {
+          "type": "object",
+          "required": ["mode", "reason"],
+          "properties": {
+            "mode": {
+              "enum": ["none", "key", "not_applicable"]
+            },
+            "reason": {
+              "$ref": "#/$defs/httpText"
+            },
+            "header": {
+              "$ref": "#/$defs/httpText"
+            },
+            "samePayload": {
+              "const": "replay"
+            },
+            "differentPayload": {
+              "const": "reject"
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "key"
+                  }
+                }
+              },
+              "then": {
+                "required": ["header", "samePayload", "differentPayload"]
+              }
+            }
+          ]
+        },
+        "concurrency": {
+          "type": "object",
+          "required": ["mode", "reason"],
+          "properties": {
+            "mode": {
+              "enum": ["none", "if-match"]
+            },
+            "reason": {
+              "$ref": "#/$defs/httpText"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpSource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "value", "reason"],
+          "properties": {
+            "kind": {
+              "const": "literal"
+            },
+            "value": {},
+            "reason": {
+              "$ref": "#/$defs/httpText"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "stepRef", "name"],
+          "properties": {
+            "kind": {
+              "enum": ["response_field", "response_header"]
+            },
+            "stepRef": {
+              "$ref": "#/$defs/httpText"
+            },
+            "name": {
+              "$ref": "#/$defs/httpText"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "httpStep": {
+      "type": "object",
+      "required": ["id", "capabilityRef", "expectStatus", "inputs"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/httpText"
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "expectStatus": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 599
+        },
+        "entry": {
+          "$ref": "#/$defs/httpText"
+        },
+        "via": {
+          "type": "object",
+          "required": ["stepRef"],
+          "properties": {
+            "stepRef": {
+              "$ref": "#/$defs/httpText"
+            },
+            "rel": {
+              "$ref": "#/$defs/httpText"
+            },
+            "header": {
+              "const": "Location"
+            }
+          },
+          "oneOf": [
+            {
+              "required": ["rel"]
+            },
+            {
+              "required": ["header"]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["target", "name", "source"],
+            "properties": {
+              "target": {
+                "enum": ["path", "body", "header"]
+              },
+              "name": {
+                "$ref": "#/$defs/httpText"
+              },
+              "source": {
+                "$ref": "#/$defs/httpSource"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["entry"]
+        },
+        {
+          "required": ["via"]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "httpJourney": {
+      "type": "object",
+      "required": ["id", "actorRoleRef", "steps"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/httpText"
+        },
+        "actorRoleRef": {
+          "$ref": "#/$defs/httpText"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/httpStep"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "http": {
+      "type": "object",
+      "required": [
+        "scopeCapabilityRefs",
+        "representations",
+        "operations",
+        "journeys"
+      ],
+      "properties": {
+        "scopeCapabilityRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/httpText"
+          }
+        },
+        "representations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpRepresentation"
+          }
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpOperation"
+          }
+        },
+        "journeys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpJourney"
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib
 import unittest
 
-from test_support import API_ROOT, FM_SKILL, design, design_loader, fm_adapter, index
+from test_support import API_ROOT, FM_SKILL, api_loader, design, fm_adapter, index
 
 resources_module = importlib.import_module("fm_api_core.resources")
 
@@ -12,9 +12,7 @@ class ResourcesTest(unittest.TestCase):
     def test_nested_collection_and_item_uris_are_deterministic(self) -> None:
         resources, diagnostics = resources_module.build_resources(design(), index())
         self.assertFalse([item for item in diagnostics if item.severity == "error"])
-        payment = next(
-            item for item in resources if item["id"] == "resource.payment"
-        )
+        payment = next(item for item in resources if item["id"] == "resource.payment")
         self.assertEqual(
             payment["uris"]["collection"], "/subscriptions/{subscriptionId}/payments"
         )
@@ -32,10 +30,7 @@ class ResourcesTest(unittest.TestCase):
 
     def test_different_business_contexts_require_separate_uri_roots(self) -> None:
         example = API_ROOT / "assets" / "examples" / "full-lifecycle"
-        value, design_diagnostics = design_loader.load_design(
-            example / "design.yaml",
-            API_ROOT / "schemas" / "api-design.schema.json",
-        )
+        value, design_diagnostics = api_loader.load_api(example / "api.yaml")
         model, fm_diagnostics = fm_adapter.load_fm(example / "fm", FM_SKILL)
         self.assertEqual(design_diagnostics, [])
         self.assertEqual(fm_diagnostics, [])

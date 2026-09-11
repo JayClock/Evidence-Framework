@@ -1,4 +1,4 @@
-schemaVersion: '2.0'
+schemaVersion: '3.0'
 id: api.product-procurement
 scope:
   contextRefs:
@@ -755,3 +755,135 @@ journeys:
           fmRefs:
             - confirmation.delivery
           reasoning: 映射步骤：乙方销售确认发货
+
+http:
+  scopeCapabilityRefs:
+    - capability.read-product-as-buyer
+    - capability.read-product-as-seller
+  representations:
+    - id: representation.product-http
+      resourceRef: resource.product
+      view: item
+      actorRoleRefs:
+        - role.buyer
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: productCode
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: thing.product#product_code
+        - name: name
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: thing.product#name
+      example:
+        productCode: product-1
+        name: 示例商品
+      exampleParameters:
+        productId: product-1
+      links: []
+      cache:
+        mode: private
+        maxAge: 0
+        validator: etag
+        reason: 示例采用私有缓存并每次复验；不声明跨客户共享缓存或生产 TTL
+  operations:
+    - capabilityRef: capability.read-product-as-buyer
+      request:
+        mediaType: application/json
+        fields: []
+        example: {}
+      responses:
+        - status: 200
+          description: 返回当前角色可读取的商品表示
+          representationRef: representation.product-http
+          headers:
+            ETag: '"product-v1"'
+        - status: 304
+          description: 条件读取命中当前表示版本，没有响应 body
+          headers:
+            ETag: '"product-v1"'
+        - status: 403
+          description: 调用者不满足该商品的业务实例访问范围
+          headers: {}
+      idempotency:
+        mode: not_applicable
+        reason: 读取不追加凭证
+      concurrency:
+        mode: none
+        reason: 条件读取使用 If-None-Match，而非修改前置条件 If-Match
+    - capabilityRef: capability.read-product-as-seller
+      request:
+        mediaType: application/json
+        fields: []
+        example: {}
+      responses:
+        - status: 200
+          description: 返回当前角色可读取的商品表示
+          representationRef: representation.product-http
+          headers:
+            ETag: '"product-v1"'
+        - status: 304
+          description: 条件读取命中当前表示版本，没有响应 body
+          headers:
+            ETag: '"product-v1"'
+        - status: 403
+          description: 调用者不满足该商品的业务实例访问范围
+          headers: {}
+      idempotency:
+        mode: not_applicable
+        reason: 读取不追加凭证
+      concurrency:
+        mode: none
+        reason: 条件读取使用 If-None-Match，而非修改前置条件 If-Match
+  journeys:
+    - id: http.buyer-product
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.buyer-read
+          capabilityRef: capability.read-product-as-buyer
+          expectStatus: 200
+          entry: 从已有采购业务交接取得商品标识；本例不推导新的列表接口
+          inputs:
+            - target: path
+              name: productId
+              source:
+                kind: literal
+                value: product-1
+                reason: 明确给出的合成入口参数
+        - id: http.buyer-revalidate
+          capabilityRef: capability.read-product-as-buyer
+          expectStatus: 304
+          entry: 对同一入口执行条件读取，沿用前次表示的缓存验证标识
+          inputs:
+            - target: path
+              name: productId
+              source:
+                kind: literal
+                value: product-1
+                reason: 同一合成入口参数
+            - target: header
+              name: If-None-Match
+              source:
+                kind: response_header
+                stepRef: http.buyer-read
+                name: ETag
+    - id: http.seller-product
+      actorRoleRef: role.seller
+      steps:
+        - id: http.seller-read
+          capabilityRef: capability.read-product-as-seller
+          expectStatus: 200
+          entry: 供应商从已有业务交接取得商品标识；不是通过客户身份委托
+          inputs:
+            - target: path
+              name: productId
+              source:
+                kind: literal
+                value: product-1
+                reason: 明确给出的合成入口参数

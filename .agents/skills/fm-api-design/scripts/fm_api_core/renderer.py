@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import importlib.metadata
 import json
 import os
@@ -9,7 +10,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-TOOL_VERSION = "2.0.0"
+from . import __version__
+
+http_report = importlib.import_module("fm_api_core.http_report")
 
 
 def canonical_json(value: Any) -> str:
@@ -43,7 +46,7 @@ def design_report(projection: dict[str, Any]) -> str:
     lines = [
         "# FM → API 设计报告",
         "",
-        f"- 设计：`{projection['designId']}`",
+        f"- 设计：`{projection['apiId']}`",
         f"- FM 状态：`{projection['fmReviewState'].get('modelStatus')}`",
         f"- 候选数：{len(projection['capabilities'])}",
         f"- 探索项：{len(projection['exploration'])}",
@@ -110,6 +113,21 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         "api-capabilities.md": capabilities_markdown(projection),
         "design-report.md": design_report(projection),
     }
+    http = projection["http"]
+    outputs["api-contracts.md"] = http_report.http_markdown(http)
+    outputs["http-journeys.json"] = canonical_json(
+        {
+            "runtimeValidated": False,
+            "journeys": http["journeys"]
+            if http is not None
+            else [{"status": "not_evaluated", "reason": "未选择 HTTP 设计范围"}],
+        }
+    )
+    outputs["representation-examples.json"] = canonical_json(
+        {item["id"]: item["example"] for item in http["representations"]}
+        if http is not None
+        else {}
+    )
     dependencies: dict[str, str] = {}
     for package in ("jsonschema", "PyYAML"):
         try:
@@ -119,14 +137,14 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
     schema_root = Path(__file__).resolve().parents[2] / "schemas"
     schema_digests = {
         name: _sha((schema_root / name).read_text(encoding="utf-8"))
-        for name in ("api-design.schema.json", "api-projection.schema.json")
+        for name in ("api.schema.json", "api-projection.schema.json")
     }
     manifest = {
-        "schemaVersion": "2.0",
-        "designId": projection["designId"],
+        "schemaVersion": "3.0",
+        "apiId": projection["apiId"],
         "tool": {
             "name": "fm-api-design",
-            "version": TOOL_VERSION,
+            "version": __version__,
             "schemas": schema_digests,
         },
         "runtime": {
@@ -149,12 +167,9 @@ def write_new_output(out: Path, outputs: dict[str, str]) -> None:
     except FileExistsError as exc:
         raise FileExistsError(f"OUTPUT_EXISTS: {out}") from exc
     try:
-        for name in (
-            "projection.json",
-            "api-capabilities.md",
-            "design-report.md",
-            "manifest.json",
-        ):
+        for name in [*sorted(set(outputs) - {"manifest.json"}), "manifest.json"]:
+            if Path(name).name != name or name in (".", ".."):
+                raise ValueError("OUTPUT_NAME_INVALID: 输出只允许直接文件名")
             temporary = out / f".{name}.tmp"
             with temporary.open("x", encoding="utf-8", newline="\n") as stream:
                 stream.write(outputs[name])

@@ -12,7 +12,7 @@ from test_support import API_ROOT, design
 
 class DesignSchemaTest(unittest.TestCase):
     def test_business_resource_shape_is_required(self) -> None:
-        schema = json.loads((API_ROOT / "schemas/api-design.schema.json").read_text())
+        schema = json.loads((API_ROOT / "schemas/api.schema.json").read_text())
         validator = Draft202012Validator(schema)
         for field in ("businessName", "shape"):
             value = design()
@@ -23,7 +23,7 @@ class DesignSchemaTest(unittest.TestCase):
         self.assertTrue(list(validator.iter_errors(value)))
 
     def test_identity_must_match_singleton_or_collection(self) -> None:
-        schema = json.loads((API_ROOT / "schemas/api-design.schema.json").read_text())
+        schema = json.loads((API_ROOT / "schemas/api.schema.json").read_text())
         validator = Draft202012Validator(schema)
         value = design()
         child = value["resources"][1]
@@ -57,16 +57,14 @@ class DesignSchemaTest(unittest.TestCase):
         self.assertTrue(list(validator.iter_errors(resource)))
 
     def test_duplicate_yaml_key_is_rejected(self) -> None:
-        from test_support import design_loader
+        from test_support import api_loader
 
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "design.yaml"
+            path = Path(directory) / "api.yaml"
             path.write_text(
-                "schemaVersion: '2.0'\nschemaVersion: '2.0'\n", encoding="utf-8"
+                "schemaVersion: '3.0'\nschemaVersion: '3.0'\n", encoding="utf-8"
             )
-            value, diagnostics = design_loader.load_design(
-                path, API_ROOT / "schemas" / "api-design.schema.json"
-            )
+            value, diagnostics = api_loader.load_api(path)
         self.assertIsNone(value)
         self.assertEqual(diagnostics[0].code, "DESIGN_INVALID")
 

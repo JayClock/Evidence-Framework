@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from test_support import API_ROOT, DESIGN_PATH, FM_ROOT, FM_SKILL, REPO_ROOT
+from test_support import API_PATH, API_ROOT, FM_ROOT, FM_SKILL, REPO_ROOT
 
 CLI = API_ROOT / "scripts" / "fm_api.py"
 
@@ -42,7 +42,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue(payload["fmCheckSummary"]["valid"])
 
     def test_check_and_project_are_deterministic(self) -> None:
-        checked = self.command("check", "--design", str(DESIGN_PATH))
+        checked = self.command("check", "--api", str(API_PATH))
         self.assertEqual(checked.returncode, 0, checked.stderr)
         self.assertEqual(json.loads(checked.stdout)["candidateCount"], 1)
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
@@ -51,7 +51,7 @@ class CliTest(unittest.TestCase):
             second = parent / "two"
             for output in (first, second):
                 projected = self.command(
-                    "project", "--design", str(DESIGN_PATH), "--out", str(output)
+                    "project", "--api", str(API_PATH), "--out", str(output)
                 )
                 self.assertEqual(projected.returncode, 0, projected.stderr)
             for name in (
@@ -65,7 +65,7 @@ class CliTest(unittest.TestCase):
                     hashlib.sha256((second / name).read_bytes()).digest(),
                 )
             repeated = self.command(
-                "project", "--design", str(DESIGN_PATH), "--out", str(first)
+                "project", "--api", str(API_PATH), "--out", str(first)
             )
             self.assertEqual(repeated.returncode, 1)
             self.assertIn("OUTPUT_EXISTS", repeated.stderr)

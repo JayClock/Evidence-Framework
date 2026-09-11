@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v2/api-projection.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v3/api-projection.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
-    "designId",
+    "apiId",
     "inputDigests",
     "fmCheckSummary",
     "fmReviewState",
@@ -14,17 +14,34 @@
     "operations",
     "representations",
     "coverage",
-    "diagnostics"
+    "diagnostics",
+    "http"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "2.0"
-    },
-    "designId": {
-      "type": "string"
+      "const": "3.0"
     },
     "inputDigests": {
-      "type": "object"
+      "type": "object",
+      "required": ["fm", "api", "sources"],
+      "properties": {
+        "fm": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "api": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "fmCheckSummary": {
       "type": "object"
@@ -217,6 +234,67 @@
         },
         "additionalProperties": false
       }
+    },
+    "apiId": {
+      "type": "string"
+    },
+    "http": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "scopeCapabilityRefs",
+            "complete",
+            "runtimeValidated",
+            "representations",
+            "operations",
+            "journeys",
+            "diagnostics"
+          ],
+          "properties": {
+            "scopeCapabilityRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "runtimeValidated": {
+              "const": false
+            },
+            "representations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "operations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "journeys": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "diagnostics": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "additionalProperties": false

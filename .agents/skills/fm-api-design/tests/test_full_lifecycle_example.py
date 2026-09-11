@@ -36,8 +36,8 @@ class FullLifecycleExampleTest(unittest.TestCase):
                 str(example / "fm"),
                 "--fm-skill",
                 str(FM_SKILL),
-                "--design",
-                str(example / "design.yaml"),
+                "--api",
+                str(example / "api.yaml"),
                 "--require-complete",
             ],
             check=False,
@@ -58,7 +58,9 @@ class FullLifecycleExampleTest(unittest.TestCase):
             uris["capability.quote-products"],
             "/product-inquiries/{inquiryId}/quotation",
         )
-        self.assertEqual(uris["capability.register-procurement"], "/product-procurements")
+        self.assertEqual(
+            uris["capability.register-procurement"], "/product-procurements"
+        )
         self.assertEqual(
             uris["capability.request-payment"],
             "/product-procurements/{procurementId}/payment",

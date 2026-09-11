@@ -12,11 +12,11 @@ REPO_ROOT = TESTS.parents[3]
 SCRIPTS = API_ROOT / "scripts"
 FM_SKILL = REPO_ROOT / ".agents" / "skills" / "evidence-fm"
 FM_ROOT = FM_SKILL / "tests" / "fixtures" / "valid-traceable-subscription"
-DESIGN_PATH = TESTS / "fixtures" / "subscription-design.yaml"
+API_PATH = TESTS / "fixtures" / "subscription-api.yaml"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-design_loader = importlib.import_module("fm_api_core.design_loader")
+api_loader = importlib.import_module("fm_api_core.api_loader")
 fm_adapter = importlib.import_module("fm_api_core.fm_adapter")
 
 
@@ -29,9 +29,7 @@ def index():
 
 
 def design():
-    value, diagnostics = design_loader.load_design(
-        DESIGN_PATH, API_ROOT / "schemas" / "api-design.schema.json"
-    )
+    value, diagnostics = api_loader.load_api(API_PATH)
     if diagnostics or value is None:
         raise AssertionError(diagnostics)
     return copy.deepcopy(value)

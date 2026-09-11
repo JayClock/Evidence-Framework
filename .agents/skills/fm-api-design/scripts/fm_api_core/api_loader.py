@@ -33,20 +33,34 @@ UniqueKeyLoader.add_constructor(
 )
 
 
-def load_design(
-    path: Path, schema_path: Path
+def load_api(
+    path: Path, *, content: bytes | None = None
 ) -> tuple[dict[str, Any] | None, list[Diagnostic]]:
+    schema_path = Path(__file__).resolve().parents[2] / "schemas" / "api.schema.json"
     try:
-        documents = list(
-            yaml.load_all(path.read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
+        text = (
+            content.decode("utf-8")
+            if content is not None
+            else path.read_text(encoding="utf-8")
         )
-    except (OSError, TypeError, yaml.YAMLError) as exc:
+        documents = list(yaml.load_all(text, Loader=UniqueKeyLoader))
+    except (OSError, UnicodeError, TypeError, ValueError, yaml.YAMLError) as exc:
         return None, [error("DESIGN_INVALID", str(exc), location=str(path))]
     if len(documents) != 1 or not isinstance(documents[0], dict):
         return None, [
             error("DESIGN_INVALID", "设计必须是单个 YAML 对象", location=str(path))
         ]
     design = documents[0]
+    try:
+        json.dumps(design, allow_nan=False)
+    except (TypeError, ValueError, RecursionError) as exc:
+        return None, [
+            error(
+                "DESIGN_INVALID",
+                f"设计包含非 JSON 值或循环结构: {exc}",
+                location=str(path),
+            )
+        ]
     try:
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -69,6 +83,8 @@ def load_design(
             key=lambda value: tuple(map(str, value.absolute_path)),
         )
     ]
+    if diagnostics:
+        return design, diagnostics
     for section in (
         "sources",
         "decisions",
