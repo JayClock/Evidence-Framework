@@ -15,7 +15,7 @@
     },
     {
       "id": 3,
-      "prompt": "只校验 docs/api/api.yaml，不要修改任何文件。",
+      "prompt": "只校验 .evidence/api/api.yaml，不要修改任何文件。",
       "expected_output": "仅执行 inspect/check，报告引用、实例约束、HTTP 语义和覆盖诊断，不执行 project 或改写输入。",
       "files": []
     },

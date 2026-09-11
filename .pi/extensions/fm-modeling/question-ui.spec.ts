@@ -8,7 +8,7 @@ const input = {
   prompt: '什么凭证证明付款完成？',
   impact: '影响付款履约判断',
   contextSummary: '平台请求读者付款，确认凭证待明确',
-  sourceRefs: ['docs/business/discovery.md#Q-017'],
+  sourceRefs: ['.evidence/discovery.md#Q-017'],
 };
 
 function context(options: {

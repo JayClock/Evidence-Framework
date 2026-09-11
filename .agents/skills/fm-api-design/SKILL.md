@@ -18,6 +18,17 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决定不能代替角色权限、期限、实例归属或关键数据来源。
 
+## 项目产物位置
+
+新产物默认统一放在项目根的 `.evidence/`：
+
+- FM 输入：`.evidence/fm/`，始终只读。
+- API 设计源：`.evidence/api/api.yaml`，位于 FM 根目录之外。
+- 需留存的 inspect/check 结果：`.evidence/api/checks/<批次>/`；仅在请求保存检查记录时写入，只校验不落盘。
+- API 投影：`.evidence/api/generated/<批次>/`，包含 projection、报告、HTTP 契约、OpenAPI、样例与 manifest；每次选择尚不存在的新目录。
+
+沿用已有文件与用户显式指定路径，不自动迁移，不因默认目录存在而覆盖内容。投影前展示并确认具体的新输出目录；默认路径不是执行授权。`.evidence/` 不授予宿主状态写权限，不改宿主拥有的 `state.json`、审批或运行记录；项目文件权限与提交要求仍优先。
+
 ## 工作流
 
 1. 定位项目根、FM 根、`evidence-fm` Skill 绝对目录、已有业务场景和 `api.yaml`。API 文件在 FM 根目录之外。
@@ -42,9 +53,13 @@ API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决
 
 ## 命令
 
-设置绝对路径：
+设置绝对路径；新项目采用以下默认值，`BATCH` 为已确认的本次输出目录名。按需创建输出父目录，不预先创建 `NEW_OUTPUT_DIR`：
 
 ```bash
+FM_ROOT="$PROJECT_ROOT/.evidence/fm"
+API_FILE="$PROJECT_ROOT/.evidence/api/api.yaml"
+NEW_OUTPUT_DIR="$PROJECT_ROOT/.evidence/api/generated/$BATCH"
+
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" inspect \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR"
 

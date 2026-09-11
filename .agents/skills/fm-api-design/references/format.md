@@ -2,7 +2,7 @@
 
 ## 唯一设计输入
 
-项目使用一份 `api.yaml`，格式为 `schemaVersion: '3.0'`。完整约束见 `schemas/api.schema.json`；对象拒绝未知字段、重复 ID、重复 YAML key、多文档、非 JSON 值和循环结构。
+项目使用一份 `api.yaml`，默认位于项目根的 `.evidence/api/api.yaml`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: '3.0'`。完整约束见 `schemas/api.schema.json`；对象拒绝未知字段、重复 ID、重复 YAML key、多文档、非 JSON 值和循环结构。
 
 | 字段                   | 职责                                        |
 | ---------------------- | ------------------------------------------- |
@@ -85,7 +85,7 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 
 ## 输出
 
-`project --out <新目录>` 固定生成：
+`project --out <新目录>` 默认使用 `.evidence/api/generated/<批次>/`（相对项目根；命令传绝对路径），向已确认且尚不存在的目录固定生成：
 
 - `projection.json`：唯一机器中间结果，包含 `apiId`、资源、候选、HTTP 设计及全部诊断。
 - `api-capabilities.md`：四列表。

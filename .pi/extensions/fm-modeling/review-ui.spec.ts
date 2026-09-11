@@ -18,13 +18,13 @@ async function receipt(overrides: Record<string, unknown> = {}) {
       receiptDigest: 'sha256:receipt',
       status: 'prepared',
       candidate: {
-        path: '/project/docs/business/.fm-work/prepared-abc/candidate',
+        path: '/project/.evidence/.fm-work/prepared-abc/candidate',
         digest: 'sha256:candidate',
       },
-      target: { path: '/project/docs/business/fm', digest: 'absent' },
+      target: { path: '/project/.evidence/fm', digest: 'absent' },
       sources: [
         {
-          path: '/project/docs/business/discovery.md',
+          path: '/project/.evidence/discovery.md',
           digest: 'sha256:source',
         },
       ],
@@ -84,9 +84,7 @@ describe('ReviewUI', () => {
       preparationId: 'prepared-abc',
       receiptDigest: 'sha256:receipt',
     });
-    expect(ctx.ui.select.mock.calls[0]?.[0]).toContain(
-      '/project/docs/business/fm',
-    );
+    expect(ctx.ui.select.mock.calls[0]?.[0]).toContain('/project/.evidence/fm');
   });
 
   it('shows the complete long diff before returning for modification', async () => {

@@ -14,7 +14,7 @@
     },
     {
       "id": 2,
-      "prompt": "只校验 docs/business/fm，告诉我真实检查结果，不要改任何模型或场景。",
+      "prompt": "只校验 .evidence/fm，告诉我真实检查结果，不要改任何模型或场景。",
       "expected_output": "运行 evidence-fm 的只读检查，报告 Schema、CEL、lineage、simulation 与 timeline 的真实结果，不修改源文件。",
       "files": [],
       "assertions": [

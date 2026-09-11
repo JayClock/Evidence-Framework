@@ -24,12 +24,23 @@
 
 候选、目标和工作目录不能相同或互相包含；路径树不得经过符号链接或特殊文件。Skill 安装目录不能作为工作目录。默认项目位置为：
 
-- 正式模型：`docs/business/fm/`
-- 发现记录：`docs/business/discovery.md`
-- 工作目录：`docs/business/.fm-work/`
-- 检查记录：`docs/business/fm-checks/`
+- 正式模型：`.evidence/fm/`
+- 发现记录：`.evidence/discovery.md`
+- 编辑候选：`.evidence/fm-candidates/<批次>/`
+- 发布工作目录：`.evidence/.fm-work/`
+- 检查与发布记录：`.evidence/fm-checks/`
 
-项目已有约定优先，默认目录按需创建，不预建空模板。
+上述路径均相对项目根；已有文件与用户显式指定路径优先，不自动迁移。默认目录按需创建，不预建空模板。编辑候选不能放进发布工作目录；后者只由 CLI 存放冻结副本和 receipt。例如：
+
+```bash
+TARGET="$PROJECT_ROOT/.evidence/fm"
+DISCOVERY="$PROJECT_ROOT/.evidence/discovery.md"
+CANDIDATE="$PROJECT_ROOT/.evidence/fm-candidates/$BATCH"
+WORK_DIR="$PROJECT_ROOT/.evidence/.fm-work"
+REPORT_DIR="$PROJECT_ROOT/.evidence/fm-checks"
+```
+
+`PROJECT_ROOT` 必须是项目绝对路径，`BATCH` 为本次候选目录名，不复用旧准备结果的授权。
 
 ## 应用候选
 

@@ -2,12 +2,15 @@
 
 ## 文件恢复
 
-优先沿用项目布局；没有约定时告知以下默认位置并按需创建：
+新产物统一默认放在项目根的 `.evidence/`，告知以下位置并按需创建；已有文件与用户显式指定路径优先，不自动迁移：
 
-- `docs/business/discovery.md`：来源、回答、工作理解、实际问题、暂缓与停止状态。
-- `docs/business/fm/`：正式 FM 源模型与说明。
-- `docs/business/.fm-work/`：候选和冻结的准备结果。
-- `docs/business/fm-checks/`：已引用的检查与发布记录。
+- `.evidence/discovery.md`：来源、回答、工作理解、实际问题、暂缓与停止状态；需要独立问题文件时用 `.evidence/questions.md`。
+- `.evidence/fm/`：正式 FM 源模型与说明，含术语、验证场景及可重建的 generated 输出。
+- `.evidence/fm-candidates/<批次>/`：编辑中的完整候选。
+- `.evidence/.fm-work/`：发布 CLI 冻结的候选和准备结果。
+- `.evidence/fm-checks/`：已引用的检查与发布记录。
+
+候选、正式模型和发布工作目录保持分离，不能相同或互相包含。另行使用 `fm-api-design` 时，API 设计放在 `.evidence/api/api.yaml`，投影放在 `.evidence/api/generated/<批次>/`；本入口不自动执行 API 设计。
 
 恢复时读取文件而不是猜测旧会话。`discovery.md` 至少应指出当前业务对象、已消化来源、实际问题、暂缓、明确停止、正式模型／候选／检查记录位置及下一步选择。它不复制正式模型正文，也不维护第二套状态仓库。
 

@@ -116,14 +116,14 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 输出目录必须尚不存在：
 
 ```bash
-mkdir -p "$PROJECT_ROOT/docs/api/.work"
+mkdir -p "$PROJECT_ROOT/.evidence/api/generated"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
   --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
-  --out "$PROJECT_ROOT/docs/api/.work/product-procurement" \
+  --out "$PROJECT_ROOT/.evidence/api/generated/product-procurement" \
   --require-complete
 ```
 

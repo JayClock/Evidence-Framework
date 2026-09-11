@@ -38,6 +38,8 @@
 
 ## 文件纪律
 
+默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.yaml`，投影输出为 `.evidence/api/generated/<批次>/`；已有文件和用户显式指定路径优先，不自动迁移。需要留存 inspect/check 结果时，经授权写入 `.evidence/api/checks/<批次>/`；只校验仍只报告结果，不写文件。
+
 所有 CLI 路径参数使用绝对路径。`--api` 指向一份统一 API 文件，必须位于 FM 根目录之外；其中来源路径相对 project root，不得越界。FM、validation、API 和来源均只读；运行前后摘要变化时失败。
 
 project 的 out 必须位于项目根内、父目录已存在且目标尚不存在，并且不能与 FM、设计或来源重叠。CLI 不提供覆盖参数。先在内存形成全部内容，再排他创建目录；manifest 最后原子替换。失败会清理本次新目录，不会覆盖已有输出。

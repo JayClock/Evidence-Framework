@@ -320,12 +320,17 @@ class IsolatedFMTests(unittest.TestCase):
     def test_standalone_skill_prepares_and_applies_without_any_extension(self):
         for name in ("tests", "evals"):
             shutil.rmtree(self.skill / name)
+        evidence = self.workspace / ".evidence"
+        self.model = evidence / "fm-candidates" / "batch-001"
         self.example("domain")
-        source = self.workspace / "discovery.md"
+        source = evidence / "discovery.md"
         source.write_text("已确认的领域来源\n", encoding="utf-8")
-        target = self.workspace / "formal fm"
-        work = self.workspace / ".fm-work"
-        reports = self.workspace / "fm-checks"
+        state = evidence / "state.json"
+        state.write_text('{"owner": "extension"}\n', encoding="utf-8")
+        state_before = state.read_bytes()
+        target = evidence / "fm"
+        work = evidence / ".fm-work"
+        reports = evidence / "fm-checks"
         prepare = self.run_python(
             str(self.skill / "scripts/publish_fm.py"),
             "prepare",
@@ -355,6 +360,9 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertEqual("applied", result["status"])
         self.assertEqual(file_hashes(self.model), file_hashes(target))
         self.assertTrue(Path(result["reportPath"]).is_file())
+        self.assertTrue(Path(receipt).is_relative_to(work))
+        self.assertTrue(Path(result["reportPath"]).is_relative_to(reports))
+        self.assertEqual(state_before, state.read_bytes())
 
 
 if __name__ == "__main__":

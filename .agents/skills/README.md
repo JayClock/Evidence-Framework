@@ -56,21 +56,23 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 ## 文件交接
 
-优先采用项目已有布局，否则告知并按需创建：
+`fm-modeling`、`evidence-discovery`、`evidence-fm` 和 `fm-api-design` 的新产物默认统一放在项目根的 `.evidence/`。沿用已有文件与用户显式指定位置，不自动迁移；告知默认路径并按需创建：
 
 ```text
-docs/
-├── business/
-│   ├── discovery.md       # 来源、原话、工作理解与恢复点
-│   ├── questions.md       # 已提问题、回答、暂缓与解决依据
-│   └── fm/                # 明确请求正式产物时由 FM 创建
-│       ├── glossary.md    # 正式业务术语，不与访谈另维护同步副本
-│       ├── model.yaml     # 源类型模型及其他 YAML 分片
-│       └── validation/    # 正式验证场景与实例
-└── requirements/
-    ├── scope.md           # 软件职责与范围建议／决定
-    └── stories.md         # 稳定 US／AC 与业务追溯
+.evidence/
+├── discovery.md          # 来源、原话、工作理解、问题与恢复点
+├── questions.md          # 可选：需拆分时保存已提问题及回答
+├── fm/                   # 正式模型、术语、说明、validation 与 generated
+├── fm-candidates/        # 按批次编辑的完整候选
+├── .fm-work/             # CLI 冻结候选与准备结果，与编辑候选分离
+├── fm-checks/            # FM 检查与发布记录
+└── api/
+    ├── api.yaml          # 唯一 API 设计源，位于 FM 根之外
+    ├── checks/           # 按需授权保存的 inspect/check 结果
+    └── generated/        # 每批新目录：投影、OpenAPI、契约、样例、manifest
 ```
+
+该布局不授权修改扩展拥有的 `state.json`、Gate 或运行记录；活动工作流仍使用其规定的提交方式。本次目录约定不改变其他 Skill 的输出位置，例如 `evidence-requirements` 的默认 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。
 
 已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。工作术语、关系与讨论案例在访谈中只是材料，正式内容由对应任务消费来源形成。
 

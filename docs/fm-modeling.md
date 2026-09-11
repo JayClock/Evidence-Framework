@@ -14,14 +14,22 @@ FM Modeling 由可移植 Skills、项目业务文件和独立 Python CLI 组成�
 ## 默认项目布局
 
 ```text
-docs/business/
-├── discovery.md
-├── fm/
-├── fm-checks/
-└── .fm-work/
+.evidence/
+├── discovery.md          # 访谈、来源、问题与交接
+├── questions.md          # 可选的独立问题记录
+├── fm/                   # 正式模型、术语、场景及派生输出
+├── fm-candidates/        # 按批次编辑的候选
+├── .fm-work/             # CLI 冻结候选与准备结果
+├── fm-checks/            # FM 检查、发布报告
+└── api/
+    ├── api.yaml          # fm-api-design 的唯一设计源
+    ├── checks/           # 按需保存的 API 检查记录
+    └── generated/        # 每批新目录：投影、OpenAPI、契约、样例、manifest
 ```
 
-项目已有约定优先。`discovery.md` 保存来源、工作理解、稳定问题标识、暂缓／停止及文件指针，不复制正式模型，也不保存宿主运行状态。
+这四个 Skill 的新产物默认统一使用项目根的 `.evidence/`；已有文件与用户显式指定路径优先，不自动迁移。`discovery.md` 保存来源、工作理解、稳定问题标识、暂缓／停止及文件指针，不复制正式模型，也不保存宿主运行状态。共享目录不授予 `state.json`、Gate 或扩展运行记录的写权限，活动工作流的提交要求仍优先。
+
+编辑候选使用 `.evidence/fm-candidates/<批次>/`，与正式目标及 `.evidence/.fm-work/` 互不包含。API 设计由用户另行调用 `fm-api-design`，不会自动串联；其源文件位于 FM 根之外，投影使用经确认且尚不存在的 `.evidence/api/generated/<批次>/`。
 
 ## 规范建模顺序
 
@@ -51,7 +59,15 @@ Fulfillment 只作为责任边界 Context 和时间线泳道。它不保存 Requ
 
 ## 准备与查看候选
 
+设置 `PROJECT_ROOT` 为项目绝对路径、`BATCH` 为本次候选目录名：
+
 ```bash
+TARGET="$PROJECT_ROOT/.evidence/fm"
+DISCOVERY="$PROJECT_ROOT/.evidence/discovery.md"
+CANDIDATE="$PROJECT_ROOT/.evidence/fm-candidates/$BATCH"
+WORK_DIR="$PROJECT_ROOT/.evidence/.fm-work"
+REPORT_DIR="$PROJECT_ROOT/.evidence/fm-checks"
+
 "$PYTHON" "$SKILL_DIR/scripts/publish_fm.py" prepare \
   --candidate "$CANDIDATE" \
   --target "$TARGET" \

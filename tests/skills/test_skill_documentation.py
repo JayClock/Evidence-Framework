@@ -105,6 +105,83 @@ class SkillDocumentationTests(unittest.TestCase):
                     if target.suffix == ".md":
                         pending.append(target)
 
+    def test_modeling_and_api_default_outputs_share_evidence_root(self):
+        expected_paths = {
+            "fm-modeling/SKILL.md": (".evidence/",),
+            "fm-modeling/references/workflow.md": (
+                ".evidence/discovery.md",
+                ".evidence/fm/",
+                ".evidence/fm-candidates/",
+                ".evidence/.fm-work/",
+                ".evidence/fm-checks/",
+            ),
+            "evidence-discovery/SKILL.md": (".evidence/discovery.md",),
+            "evidence-discovery/assets/discovery-template.md": (
+                ".evidence/discovery.md",
+                ".evidence/questions.md",
+            ),
+            "evidence-fm/SKILL.md": (
+                ".evidence/fm/",
+                ".evidence/fm-candidates/",
+                ".evidence/.fm-work/",
+                ".evidence/fm-checks/",
+            ),
+            "evidence-fm/references/publication.md": (
+                ".evidence/discovery.md",
+                ".evidence/fm/",
+                ".evidence/fm-candidates/",
+                ".evidence/.fm-work/",
+                ".evidence/fm-checks/",
+            ),
+            "fm-api-design/SKILL.md": (
+                ".evidence/fm/",
+                ".evidence/api/api.yaml",
+                ".evidence/api/generated/",
+                ".evidence/api/checks/",
+            ),
+            "fm-api-design/references/validation.md": (
+                ".evidence/api/api.yaml",
+                ".evidence/api/generated/",
+            ),
+        }
+        for relative, paths in expected_paths.items():
+            text = (ROOT / relative).read_text()
+            for path in paths:
+                with self.subTest(document=relative, path=path):
+                    self.assertIn(path, text)
+
+    def test_modeling_and_api_guidance_has_no_retired_output_defaults(self):
+        documents = [ROOT / "README.md", ROOT.parents[1] / "docs/fm-modeling.md"]
+        for name in (
+            "fm-modeling",
+            "evidence-discovery",
+            "evidence-fm",
+            "fm-api-design",
+        ):
+            package = ROOT / name
+            documents.extend(package.rglob("*.md"))
+            documents.extend((package / "evals").glob("*.json"))
+        for document in documents:
+            with self.subTest(document=str(document)):
+                self.assertNotRegex(document.read_text(), r"docs/(?:business|api)/")
+
+    def test_default_layout_preserves_workflow_state_and_file_isolation(self):
+        for name in (
+            "fm-modeling",
+            "evidence-discovery",
+            "evidence-fm",
+            "fm-api-design",
+        ):
+            with self.subTest(skill=name):
+                text = (ROOT / name / "SKILL.md").read_text()
+                self.assertIn("state.json", text)
+                self.assertIn("不自动迁移", text)
+        publication = (ROOT / "evidence-fm/references/publication.md").read_text()
+        self.assertIn("不能相同或互相包含", publication)
+        api = (ROOT / "fm-api-design/references/validation.md").read_text()
+        self.assertIn("目标尚不存在", api)
+        self.assertIn("FM 根目录之外", api)
+
     def test_discovery_and_fm_do_not_copy_methods_or_long_paragraphs(self):
         def passages(skill: str) -> set[str]:
             result = set()

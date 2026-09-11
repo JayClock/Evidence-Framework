@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -40,6 +41,67 @@ class CliTest(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertEqual(payload["schemaVersion"], "3.0")
         self.assertTrue(payload["fmCheckSummary"]["valid"])
+
+    def test_evidence_layout_keeps_inputs_and_workflow_state_unchanged(self) -> None:
+        example = API_ROOT / "assets/examples/full-lifecycle"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            evidence = root / ".evidence"
+            fm = evidence / "fm"
+            api = evidence / "api/api.yaml"
+            output = evidence / "api/generated/batch-001"
+            shutil.copytree(example / "fm", fm)
+            output.parent.mkdir(parents=True)
+            shutil.copyfile(example / "api.yaml", api)
+            state = evidence / "state.json"
+            state.write_text('{"owner": "extension"}\n', encoding="utf-8")
+            inputs = {
+                path: path.read_bytes()
+                for path in evidence.rglob("*")
+                if path.is_file()
+            }
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(CLI),
+                    "project",
+                    "--project-root",
+                    str(root),
+                    "--fm",
+                    str(fm),
+                    "--fm-skill",
+                    str(FM_SKILL),
+                    "--api",
+                    str(api),
+                    "--out",
+                    str(output),
+                    "--require-complete",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertEqual(str(output), json.loads(result.stdout)["out"])
+            self.assertEqual(
+                {
+                    "projection.json",
+                    "api-capabilities.md",
+                    "design-report.md",
+                    "api-contracts.md",
+                    "openapi.yaml",
+                    "representation-examples.json",
+                    "http-journeys.json",
+                    "manifest.json",
+                },
+                {path.name for path in output.iterdir()},
+            )
+            self.assertEqual(inputs, {path: path.read_bytes() for path in inputs})
+            new_files = {
+                path for path in evidence.rglob("*") if path.is_file()
+            } - inputs.keys()
+            self.assertTrue(all(path.is_relative_to(output) for path in new_files))
 
     def test_check_and_project_are_deterministic(self) -> None:
         checked = self.command("check", "--api", str(API_PATH))
