@@ -1,4 +1,4 @@
-# API 能力候选
+# API 接口清单
 
 | Role   | URI                                                            | Method | Business Capability |
 | ------ | -------------------------------------------------------------- | ------ | ------------------- |
@@ -16,4 +16,4 @@
 | 客户   | `/product-procurements/{procurementId}/invoicing`              | POST   | 申请开具发票        |
 | 供应商 | `/product-procurements/{procurementId}/payment`                | POST   | 申请支付货款        |
 
-> 本表是有来源的 API 候选，不是业务批准、完整 REST 契约或运行时授权配置。
+> 本表是整体 FM 的接口索引；完整 HTTP 契约见 api-contracts.md 与 openapi.yaml，运行时授权仍由服务端执行。

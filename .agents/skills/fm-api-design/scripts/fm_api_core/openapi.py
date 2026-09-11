@@ -21,6 +21,18 @@ class _IndentedSafeDumper(yaml.SafeDumper):
         return super().increase_indent(flow, False)
 
 
+def _represent_text(dumper: yaml.SafeDumper, value: str) -> yaml.ScalarNode:
+    # Fold long scalar values without changing URI/reference bytes on YAML load.
+    return dumper.represent_scalar(
+        "tag:yaml.org,2002:str",
+        value,
+        style=">" if len(value) > 40 and "\n" not in value else None,
+    )
+
+
+_IndentedSafeDumper.add_representer(str, _represent_text)
+
+
 def _component_name(identifier: str) -> str:
     return _COMPONENT_CHARACTER.sub("_", identifier.replace(".", "_"))
 
@@ -290,10 +302,6 @@ def build_openapi(projection: dict[str, Any]) -> dict[str, Any]:
         "x-runtime-validated": False,
     }
     http = projection["http"]
-    if http is None:
-        document["x-fm-http-scope"] = "unselected"
-        return document
-    document["x-fm-http-scope"] = "selected"
     document["x-runtime-validated"] = http["runtimeValidated"]
     representations = {item["id"]: item for item in http["representations"]}
     document["components"]["schemas"] = {
@@ -319,4 +327,5 @@ def render_openapi(projection: dict[str, Any]) -> str:
         allow_unicode=True,
         sort_keys=False,
         default_flow_style=False,
+        width=70,
     )

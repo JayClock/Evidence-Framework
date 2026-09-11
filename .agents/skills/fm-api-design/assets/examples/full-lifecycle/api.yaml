@@ -1,10 +1,5 @@
-schemaVersion: '3.0'
+schemaVersion: '4.0'
 id: api.product-procurement
-scope:
-  contextRefs:
-    - context.product-sourcing
-    - context.product-procurement
-    - context.product-catalog
 sources: []
 decisions:
   - id: decision.api-identities
@@ -755,11 +750,7 @@ journeys:
           fmRefs:
             - confirmation.delivery
           reasoning: 映射步骤：乙方销售确认发货
-
 http:
-  scopeCapabilityRefs:
-    - capability.read-product-as-buyer
-    - capability.read-product-as-seller
   representations:
     - id: representation.product-http
       resourceRef: resource.product
@@ -792,6 +783,569 @@ http:
         maxAge: 0
         validator: etag
         reason: 示例采用私有缓存并每次复验；不声明跨客户共享缓存或生产 TTL
+    - id: representation.http-product-inquiry
+      resourceRef: resource.product-inquiry
+      view: item
+      actorRoleRefs:
+        - role.buyer
+      mediaType: application/hal+json
+      fields:
+        - name: started_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: rfp.product-inquiry#started_at
+        - name: expired_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: rfp.product-inquiry#expired_at
+        - name: quantity
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: rfp.product-inquiry#quantity
+      example:
+        started_at: '2026-11-01T09:00:00Z'
+        expired_at: '2026-11-03T09:00:00Z'
+        quantity: 100
+      exampleParameters:
+        inquiryId: inquiry-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-product-quotation
+      resourceRef: resource.product-quotation
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: started_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: proposal.product-quotation#started_at
+        - name: expired_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: proposal.product-quotation#expired_at
+        - name: unit_price_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: proposal.product-quotation#unit_price_minor_units
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        started_at: '2026-11-01T12:00:00Z'
+        expired_at: '2026-11-02T18:00:00Z'
+        unit_price_minor_units: 2500
+        evidenceRefs:
+          - instance.product-inquiry
+      exampleParameters:
+        inquiryId: inquiry-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-product-procurement
+      resourceRef: resource.product-procurement
+      view: item
+      actorRoleRefs:
+        - role.buyer
+      mediaType: application/hal+json
+      fields:
+        - name: signed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: contract.product-procurement#signed_at
+        - name: quantity
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.product-procurement#quantity
+        - name: total_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.product-procurement#total_minor_units
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        signed_at: '2026-11-02T10:00:00Z'
+        quantity: 100
+        total_minor_units: 250000
+        evidenceRefs:
+          - instance.product-quotation
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-payment
+      resourceRef: resource.payment
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: started_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.payment#started_at
+        - name: expired_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.payment#expired_at
+        - name: requested_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: request.payment#requested_minor_units
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: request.payment#request_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        started_at: '2026-11-03T09:00:00Z'
+        expired_at: '2026-11-10T09:00:00Z'
+        requested_minor_units: 250000
+        request_number: PAYMENT-REQ-001
+        evidenceRefs:
+          - instance.product-procurement
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-payment-confirmation
+      resourceRef: resource.payment-confirmation
+      view: singleton
+      actorRoleRefs:
+        - role.buyer
+      mediaType: application/hal+json
+      fields:
+        - name: confirmed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.payment#confirmed_at
+        - name: paid_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.payment#paid_minor_units
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.payment#request_number
+        - name: payment_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.payment#payment_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        confirmed_at: '2026-11-04T10:05:00Z'
+        paid_minor_units: 250000
+        request_number: PAYMENT-REQ-001
+        payment_number: WX-001
+        evidenceRefs:
+          - instance.payment-request
+          - instance.wechat-payment-confirmation
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-invoicing
+      resourceRef: resource.invoicing
+      view: singleton
+      actorRoleRefs:
+        - role.buyer
+      mediaType: application/hal+json
+      fields:
+        - name: started_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.invoice#started_at
+        - name: expired_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.invoice#expired_at
+        - name: invoice_title
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: request.invoice#invoice_title
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: request.invoice#request_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        started_at: '2026-11-04T11:00:00Z'
+        expired_at: '2026-11-11T11:00:00Z'
+        invoice_title: 甲方公司
+        request_number: INVOICE-REQ-001
+        evidenceRefs:
+          - instance.product-procurement
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-invoice
+      resourceRef: resource.invoice
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: created_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.invoice#created_at
+        - name: invoice_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.invoice#invoice_number
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.invoice#request_number
+        - name: invoice_title
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.invoice#invoice_title
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        created_at: '2026-11-05T09:00:00Z'
+        invoice_number: INV-001
+        request_number: INVOICE-REQ-001
+        invoice_title: 甲方公司
+        evidenceRefs:
+          - instance.invoice-request
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-invoice-confirmation
+      resourceRef: resource.invoice-confirmation
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: confirmed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.invoice#confirmed_at
+        - name: invoice_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.invoice#invoice_number
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.invoice#request_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        confirmed_at: '2026-11-05T09:05:00Z'
+        invoice_number: INV-001
+        request_number: INVOICE-REQ-001
+        evidenceRefs:
+          - instance.invoice-request
+          - instance.invoice
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-delivery
+      resourceRef: resource.delivery
+      view: singleton
+      actorRoleRefs:
+        - role.buyer
+      mediaType: application/hal+json
+      fields:
+        - name: started_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.delivery#started_at
+        - name: expired_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: request.delivery#expired_at
+        - name: delivery_address
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: request.delivery#delivery_address
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: request.delivery#request_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        started_at: '2026-11-05T10:00:00Z'
+        expired_at: '2026-11-12T10:00:00Z'
+        delivery_address: 甲方仓库
+        request_number: DELIVERY-REQ-001
+        evidenceRefs:
+          - instance.product-procurement
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-delivery-note
+      resourceRef: resource.delivery-note
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: created_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.delivery-note#created_at
+        - name: delivery_note_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.delivery-note#delivery_note_number
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.delivery-note#request_number
+        - name: delivery_address
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: evidence.delivery-note#delivery_address
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        created_at: '2026-11-06T09:00:00Z'
+        delivery_note_number: DN-001
+        request_number: DELIVERY-REQ-001
+        delivery_address: 甲方仓库
+        evidenceRefs:
+          - instance.delivery-request
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
+    - id: representation.http-delivery-confirmation
+      resourceRef: resource.delivery-confirmation
+      view: singleton
+      actorRoleRefs:
+        - role.seller
+      mediaType: application/hal+json
+      fields:
+        - name: confirmed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.delivery#confirmed_at
+        - name: tracking_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.delivery#tracking_number
+        - name: request_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.delivery#request_number
+        - name: delivery_note_number
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.delivery#delivery_note_number
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+      example:
+        confirmed_at: '2026-11-06T09:05:00Z'
+        tracking_number: TRACK-001
+        request_number: DELIVERY-REQ-001
+        delivery_note_number: DN-001
+        evidenceRefs:
+          - instance.delivery-request
+          - instance.delivery-note
+      exampleParameters:
+        procurementId: procurement-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 本合成登记响应不缓存，避免复用包含业务操作结果的私人凭证表示。
   operations:
     - capabilityRef: capability.read-product-as-buyer
       request:
@@ -841,6 +1395,734 @@ http:
       concurrency:
         mode: none
         reason: 条件读取使用 If-None-Match，而非修改前置条件 If-Match
+    - capabilityRef: capability.inquire-products
+      request:
+        mediaType: application/json
+        fields:
+          - name: started_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: rfp.product-inquiry#started_at
+          - name: expired_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: rfp.product-inquiry#expired_at
+          - name: quantity
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: rfp.product-inquiry#quantity
+        example:
+          started_at: '2026-11-01T09:00:00Z'
+          expired_at: '2026-11-03T09:00:00Z'
+          quantity: 100
+      responses:
+        - status: 201
+          description: 登记商品询价，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-product-inquiry
+          headers:
+            Location: /product-inquiries/inquiry-1
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.quote-products
+      request:
+        mediaType: application/json
+        fields:
+          - name: started_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: proposal.product-quotation#started_at
+          - name: expired_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: proposal.product-quotation#expired_at
+          - name: unit_price_minor_units
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: proposal.product-quotation#unit_price_minor_units
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          started_at: '2026-11-01T12:00:00Z'
+          expired_at: '2026-11-02T18:00:00Z'
+          unit_price_minor_units: 2500
+          evidenceRefs: &id001
+            - instance.product-inquiry
+      responses:
+        - status: 201
+          description: 登记商品报价，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-product-quotation
+          headers:
+            Location: /product-inquiries/inquiry-1/quotation
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.register-procurement
+      request:
+        mediaType: application/json
+        fields:
+          - name: signed_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: contract.product-procurement#signed_at
+          - name: quantity
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: contract.product-procurement#quantity
+          - name: total_minor_units
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: contract.product-procurement#total_minor_units
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          signed_at: '2026-11-02T10:00:00Z'
+          quantity: 100
+          total_minor_units: 250000
+          evidenceRefs: &id002
+            - instance.product-quotation
+      responses:
+        - status: 201
+          description: 登记商品采购协议，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-product-procurement
+          headers:
+            Location: /product-procurements/procurement-1
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.request-payment
+      request:
+        mediaType: application/json
+        fields:
+          - name: started_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.payment#started_at
+          - name: expired_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.payment#expired_at
+          - name: requested_minor_units
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: request.payment#requested_minor_units
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: request.payment#request_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          started_at: '2026-11-03T09:00:00Z'
+          expired_at: '2026-11-10T09:00:00Z'
+          requested_minor_units: 250000
+          request_number: PAYMENT-REQ-001
+          evidenceRefs: &id003
+            - instance.product-procurement
+      responses:
+        - status: 201
+          description: 登记货款支付申请，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-payment
+          headers:
+            Location: /product-procurements/procurement-1/payment
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.confirm-payment
+      request:
+        mediaType: application/json
+        fields:
+          - name: confirmed_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.payment#confirmed_at
+          - name: paid_minor_units
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.payment#paid_minor_units
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.payment#request_number
+          - name: payment_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.payment#payment_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          confirmed_at: '2026-11-04T10:05:00Z'
+          paid_minor_units: 250000
+          request_number: PAYMENT-REQ-001
+          payment_number: WX-001
+          evidenceRefs: &id004
+            - instance.payment-request
+            - instance.wechat-payment-confirmation
+      responses:
+        - status: 201
+          description: 登记货款支付确认，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-payment-confirmation
+          headers:
+            Location: /product-procurements/procurement-1/payment/confirmation
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.request-invoice
+      request:
+        mediaType: application/json
+        fields:
+          - name: started_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.invoice#started_at
+          - name: expired_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.invoice#expired_at
+          - name: invoice_title
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: request.invoice#invoice_title
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: request.invoice#request_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          started_at: '2026-11-04T11:00:00Z'
+          expired_at: '2026-11-11T11:00:00Z'
+          invoice_title: 甲方公司
+          request_number: INVOICE-REQ-001
+          evidenceRefs: &id005
+            - instance.product-procurement
+      responses:
+        - status: 201
+          description: 登记发票开具申请，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-invoicing
+          headers:
+            Location: /product-procurements/procurement-1/invoicing
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.issue-invoice
+      request:
+        mediaType: application/json
+        fields:
+          - name: created_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.invoice#created_at
+          - name: invoice_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.invoice#invoice_number
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.invoice#request_number
+          - name: invoice_title
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.invoice#invoice_title
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          created_at: '2026-11-05T09:00:00Z'
+          invoice_number: INV-001
+          request_number: INVOICE-REQ-001
+          invoice_title: 甲方公司
+          evidenceRefs: &id006
+            - instance.invoice-request
+      responses:
+        - status: 201
+          description: 登记发票，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-invoice
+          headers:
+            Location: /product-procurements/procurement-1/invoicing/invoice
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.confirm-invoicing
+      request:
+        mediaType: application/json
+        fields:
+          - name: confirmed_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.invoice#confirmed_at
+          - name: invoice_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.invoice#invoice_number
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.invoice#request_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          confirmed_at: '2026-11-05T09:05:00Z'
+          invoice_number: INV-001
+          request_number: INVOICE-REQ-001
+          evidenceRefs: &id007
+            - instance.invoice-request
+            - instance.invoice
+      responses:
+        - status: 201
+          description: 登记发票开具确认，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-invoice-confirmation
+          headers:
+            Location: /product-procurements/procurement-1/invoicing/confirmation
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.request-delivery
+      request:
+        mediaType: application/json
+        fields:
+          - name: started_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.delivery#started_at
+          - name: expired_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: request.delivery#expired_at
+          - name: delivery_address
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: request.delivery#delivery_address
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: request.delivery#request_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          started_at: '2026-11-05T10:00:00Z'
+          expired_at: '2026-11-12T10:00:00Z'
+          delivery_address: 甲方仓库
+          request_number: DELIVERY-REQ-001
+          evidenceRefs: &id008
+            - instance.product-procurement
+      responses:
+        - status: 201
+          description: 登记商品发货申请，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-delivery
+          headers:
+            Location: /product-procurements/procurement-1/delivery
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.record-delivery-note
+      request:
+        mediaType: application/json
+        fields:
+          - name: created_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.delivery-note#created_at
+          - name: delivery_note_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.delivery-note#delivery_note_number
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.delivery-note#request_number
+          - name: delivery_address
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: evidence.delivery-note#delivery_address
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          created_at: '2026-11-06T09:00:00Z'
+          delivery_note_number: DN-001
+          request_number: DELIVERY-REQ-001
+          delivery_address: 甲方仓库
+          evidenceRefs: &id009
+            - instance.delivery-request
+      responses:
+        - status: 201
+          description: 登记发货单，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-delivery-note
+          headers:
+            Location: /product-procurements/procurement-1/delivery/delivery-note
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
+    - capabilityRef: capability.confirm-delivery
+      request:
+        mediaType: application/json
+        fields:
+          - name: confirmed_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.delivery#confirmed_at
+          - name: tracking_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.delivery#tracking_number
+          - name: request_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.delivery#request_number
+          - name: delivery_note_number
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.delivery#delivery_note_number
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 凭证关联使用已存在实例的定位引用；服务端核对其归属、可见性及 FM 形成前提，不接受未来凭证。
+        example:
+          confirmed_at: '2026-11-06T09:05:00Z'
+          tracking_number: TRACK-001
+          request_number: DELIVERY-REQ-001
+          delivery_note_number: DN-001
+          evidenceRefs: &id010
+            - instance.delivery-request
+            - instance.delivery-note
+      responses:
+        - status: 201
+          description: 登记商品发货确认，不替代签署行为或履约完成规则判断
+          representationRef: representation.http-delivery-confirmation
+          headers:
+            Location: /product-procurements/procurement-1/delivery/confirmation
+        - status: 403
+          description: 调用者不具备该业务实例的角色或证据访问权限
+          headers: {}
+        - status: 409
+          description: 幂等键内容冲突或现有单例凭证冲突
+          headers: {}
+        - status: 422
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+          headers: {}
+      idempotency:
+        mode: key
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+        reason: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      concurrency:
+        mode: none
+        reason: 凭证只追加，不使用原地覆盖的版本更新语义。
   journeys:
     - id: http.buyer-product
       actorRoleRef: role.buyer
@@ -887,3 +2169,545 @@ http:
                 kind: literal
                 value: product-1
                 reason: 明确给出的合成入口参数
+    - id: http.inquire-products
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.step-inquire-products
+          capabilityRef: capability.inquire-products
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: body
+              name: started_at
+              source:
+                kind: literal
+                value: '2026-11-01T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: expired_at
+              source:
+                kind: literal
+                value: '2026-11-03T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: quantity
+              source:
+                kind: literal
+                value: 100
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.inquire-products
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.quote-products
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-quote-products
+          capabilityRef: capability.quote-products
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: inquiryId
+              source:
+                kind: literal
+                value: inquiry-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: started_at
+              source:
+                kind: literal
+                value: '2026-11-01T12:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: expired_at
+              source:
+                kind: literal
+                value: '2026-11-02T18:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: unit_price_minor_units
+              source:
+                kind: literal
+                value: 2500
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.quote-products
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.register-procurement
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.step-register-procurement
+          capabilityRef: capability.register-procurement
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: body
+              name: signed_at
+              source:
+                kind: literal
+                value: '2026-11-02T10:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: quantity
+              source:
+                kind: literal
+                value: 100
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: total_minor_units
+              source:
+                kind: literal
+                value: 250000
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id002
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.register-procurement
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.request-payment
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-request-payment
+          capabilityRef: capability.request-payment
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: started_at
+              source:
+                kind: literal
+                value: '2026-11-03T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: expired_at
+              source:
+                kind: literal
+                value: '2026-11-10T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: requested_minor_units
+              source:
+                kind: literal
+                value: 250000
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: PAYMENT-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id003
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.request-payment
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.confirm-payment
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.step-confirm-payment
+          capabilityRef: capability.confirm-payment
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: confirmed_at
+              source:
+                kind: literal
+                value: '2026-11-04T10:05:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: paid_minor_units
+              source:
+                kind: literal
+                value: 250000
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: PAYMENT-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: payment_number
+              source:
+                kind: literal
+                value: WX-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id004
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.confirm-payment
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.request-invoice
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.step-request-invoice
+          capabilityRef: capability.request-invoice
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: started_at
+              source:
+                kind: literal
+                value: '2026-11-04T11:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: expired_at
+              source:
+                kind: literal
+                value: '2026-11-11T11:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: invoice_title
+              source:
+                kind: literal
+                value: 甲方公司
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: INVOICE-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id005
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.request-invoice
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.issue-invoice
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-issue-invoice
+          capabilityRef: capability.issue-invoice
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: created_at
+              source:
+                kind: literal
+                value: '2026-11-05T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: invoice_number
+              source:
+                kind: literal
+                value: INV-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: INVOICE-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: invoice_title
+              source:
+                kind: literal
+                value: 甲方公司
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id006
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.issue-invoice
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.confirm-invoicing
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-confirm-invoicing
+          capabilityRef: capability.confirm-invoicing
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: confirmed_at
+              source:
+                kind: literal
+                value: '2026-11-05T09:05:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: invoice_number
+              source:
+                kind: literal
+                value: INV-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: INVOICE-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id007
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.confirm-invoicing
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.request-delivery
+      actorRoleRef: role.buyer
+      steps:
+        - id: http.step-request-delivery
+          capabilityRef: capability.request-delivery
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: started_at
+              source:
+                kind: literal
+                value: '2026-11-05T10:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: expired_at
+              source:
+                kind: literal
+                value: '2026-11-12T10:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: delivery_address
+              source:
+                kind: literal
+                value: 甲方仓库
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: DELIVERY-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id008
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.request-delivery
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.record-delivery-note
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-record-delivery-note
+          capabilityRef: capability.record-delivery-note
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: created_at
+              source:
+                kind: literal
+                value: '2026-11-06T09:00:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: delivery_note_number
+              source:
+                kind: literal
+                value: DN-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: DELIVERY-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: delivery_address
+              source:
+                kind: literal
+                value: 甲方仓库
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id009
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.record-delivery-note
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+    - id: http.confirm-delivery
+      actorRoleRef: role.seller
+      steps:
+        - id: http.step-confirm-delivery
+          capabilityRef: capability.confirm-delivery
+          expectStatus: 201
+          entry: 该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。
+          inputs:
+            - target: path
+              name: procurementId
+              source:
+                kind: literal
+                value: procurement-1
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: confirmed_at
+              source:
+                kind: literal
+                value: '2026-11-06T09:05:00Z'
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: tracking_number
+              source:
+                kind: literal
+                value: TRACK-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: request_number
+              source:
+                kind: literal
+                value: DELIVERY-REQ-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: delivery_note_number
+              source:
+                kind: literal
+                value: DN-001
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id010
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: key-capability.confirm-delivery
+                reason: 来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。
+nonApiActivities:
+  - entityRef: contract.wechat-payment
+    handling: external
+    basis:
+      fmRefs:
+        - contract.wechat-payment
+        - context.wechat-payment
+      reasoning: 微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。
+  - entityRef: request.wechat-payment
+    handling: external
+    basis:
+      fmRefs:
+        - request.wechat-payment
+        - context.wechat-payment
+      reasoning: 微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。
+  - entityRef: confirmation.wechat-payment
+    handling: external
+    basis:
+      fmRefs:
+        - confirmation.wechat-payment
+        - context.wechat-payment
+      reasoning: 微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。
+  - entityRef: party.buyer-agent
+    handling: internal
+    basis:
+      fmRefs:
+        - party.buyer-agent
+      reasoning: 采购经办主体身份作为角色扮演依据；模型未定义独立人员资料办理能力，不生成主体管理接口。
+  - entityRef: party.seller-sales
+    handling: internal
+    basis:
+      fmRefs:
+        - party.seller-sales
+      reasoning: 采购经办主体身份作为角色扮演依据；模型未定义独立人员资料办理能力，不生成主体管理接口。

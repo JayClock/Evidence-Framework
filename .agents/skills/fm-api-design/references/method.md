@@ -1,4 +1,6 @@
-# 设计方法
+# 整体模型到接口的设计方法
+
+读取已确认的整体 FM，不设置 Context 子集、不重复业务审核。遍历模型中的全部业务对象与全部场景，直接设计完整接口及 HTTP 契约；技术校验发现真实缺口时报告，不靠局部输出宣称完成。
 
 ## 资源
 
@@ -39,22 +41,24 @@
 
 ## 角色与能力
 
-探索只在选中责任范围有依据的 Party Role、资源实际支持的 singleton 或 collection/item 视图与五种方法间进行。显式关联同一合同责任的合同前、合同及履约凭证，统一使用该 Contract 的 `roleRefs` 绑定角色；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。Proposal 已连接 Contract 却未声明同一责任归属时，输入模型无效，不通过新增渠道角色继续投影。没有合同关系的独立渠道使用自身角色。已声明且具有场景、依据和实例约束的组合才是 candidate；缺信息是 unresolved；明确语义冲突是 rejected；没有场景支持是 unselected，不等于禁止。
+对整体模型中的每项真实业务交互，直接定义 Party Role、资源视图、HTTP 方法、效果及实例约束，不生成角色×视图×方法的笛卡尔探索表。显式关联同一合同责任的合同前、合同及履约凭证统一使用该 Contract 的 `roleRefs`；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。没有合同关系的独立渠道使用自身角色。输入结构无效时停止并报告，不通过新增角色绕过错误。
 
 调用者必须是有业务依据的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按业务角色列出能力，经办主体作为办理该能力的业务说明保留；实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽，没有责任人，也不代表可签发单据；不生成角色的提交或 CRUD 接口。消费能力引用实际玩家并校验归属、可见性和业务规则；外部活动可回映为 `external`，没有接口依据不猜测接入 API。实际玩家的 `responsibleRoleRef` 只是其自身上下文的职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
 
 GET 对应 read。Evidence 写入只能用 POST + append_evidence。PUT/PATCH/DELETE 覆盖 Evidence 会被拒绝；更正与撤销必须先有业务表达，再设计追加证据。
 
-共享 Method + URI 可以保留多个角色候选。按参数形状归一化路由，参数改名不能隐藏冲突；不同效果变体无法证明兼容时保留 gap。
+共享 Method + URI 保留各角色的完整接口契约。按参数形状归一化路由，参数改名不能隐藏冲突；不同效果变体无法证明兼容时保留 gap。
 
 ## 表示与超媒体
 
 字段使用白名单并回到 `entity#attribute`。不要默认公开所有 FM 属性；业务时间、关联值、服务端记录值和派生值不能因 required 而变成客户端输入。
 
-链接目标和 URI 参数必须闭合。导航链接需要相应角色的已选 GET；动作链接引用能力。HAL `_links` 不定义 method、body 或写入契约，也不自动创建 GET。
+链接目标和 URI 参数必须闭合。导航链接需要相应角色的 GET 接口；动作链接引用能力。HAL `_links` 不定义 method、body 或写入契约，也不自动创建 GET。
 
 ## 流程回映
 
-按 FM scenario 的 step sequence，把每步映射为 candidate capability、internal、external 或 gap。internal/external 也要来源。没有选择 journey 时状态是 `not_evaluated`；静态映射只写 `mapped/gap/not_evaluated`，不写 `passed`。
+遍历所有 FM scenario 的 step sequence，将每步回映到实际接口、internal、external 或真实 gap。接口必须匹配该步骤的角色、凭证效果和场景依据；内部／外部步骤必须匹配整体 `nonApiActivities` 声明。遗漏整个场景也产生 gap；没有上游场景时报告空回映，不制造模拟成功。静态映射只写 mapped/gap，不写 passed。
+
+`modelCoverage` 自动列出整体 FM 的具体 Evidence、Thing 与 Participant。每项须有接口或有业务依据的 `nonApiActivities` 处理方式；有接口又声明整体内部／外部处理是冲突。凭证仅有 GET 不算覆盖形成能力。Context、Party Role、Evidence Role 不因覆盖要求产生 CRUD。内部／外部处理说明用于表达真实责任，不是实施范围开关；不能用“暂不实现”或技术 decision 把缺失接口排除。
 
 业务依赖、HTTP 交互粒度与 Evidence 业务时间分别表达。业务依赖必须满足，接口可分次或同次登记；同次登记也须先使必需证据可用，再形成目标。流程回映检查必要证据先于消费者可用，不把静态步骤覆盖等同于依赖已验证。

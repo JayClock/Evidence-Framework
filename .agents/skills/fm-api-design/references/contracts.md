@@ -1,13 +1,13 @@
 # HTTP 资源与消费契约
 
-`api.yaml.http` 细化本文件中有来源的候选，覆盖资源表示、超媒体、缓存、流程回映和异步结果发现。不修改 FM，不自动增加查询、调用角色或外部接入 API。
+`api.yaml.http` 为整体 FM 的每个业务接口提供完整 HTTP 契约，覆盖资源表示、超媒体、缓存、流程回映和异步结果发现。不修改 FM，不自动增加查询、调用角色或外部接入 API。
 
 ## 调用
 
 ```bash
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_FILE" --require-complete
+  --api "$API_FILE"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR" \
@@ -18,20 +18,16 @@
 
 ## 输入结构
 
-统一格式由 `schemas/api.schema.json` 定义，API 文件的 schemaVersion 为 3.0。以下为其中的 HTTP 部分：
+统一格式由 `schemas/api.schema.json` 定义，API 文件的 schemaVersion 为 4.0。以下为其中的 HTTP 部分：
 
 ```yaml
 http:
-  scopeCapabilityRefs:
-    - capability.read-product-as-buyer
   representations: []
   operations: []
   journeys: []
 ```
 
-这是待填写的 HTTP 范围，空操作和空流程产生 gap。范围只选择本文件的 candidate；不声称范围外能力已有 HTTP 契约，不以 HTTP 配置绕过业务与角色约束。HTTP 部分不重复文件身份或版本。
-
-`http: null` 表示本次未选择 HTTP 设计范围。投影同样保存 null，报告明确未选择，流程 not_evaluated；不将它当作契约已完成。
+这是 HTTP 对象结构示意。HTTP 部分不重复文件身份、版本或业务接口范围；所有顶层 capability 自动要求对应契约和成功消费步骤。存在接口时不能留下空操作或空流程；HTTP 不允许为 null。缺口使 check/project 默认返回非零，project 不写局部交付。
 
 ## 表示、字段与来源
 
@@ -50,7 +46,7 @@ HAL 集合可用 `embedded: [{rel, representationRefs}]` 显式嵌入同资源�
 
 ## 超媒体和动作
 
-链接引用 scope 中的 `capabilityRef`；navigation 必须对应 GET，action 对应写操作。一个含动作链接的表示须明确对应其调用角色，不能把多个角色的动作无条件合并展示。
+链接引用本文件的 `capabilityRef`；navigation 必须对应 GET，action 对应写操作。一个含动作链接的表示须明确对应其调用角色，不能把多个角色的动作无条件合并展示。
 
 ```yaml
 links:
@@ -68,12 +64,12 @@ links:
 
 ## 请求、响应、幂等与缓存
 
-operation 使用 `capabilityRef/request/responses/idempotency/concurrency`；URI、Method、角色、实例 bindings 和 Rule 用途从候选继承，不另写一套覆盖配置。
+operation 使用 `capabilityRef/request/responses/idempotency/concurrency`；URI、Method、角色、实例 bindings 和 Rule 用途从业务接口定义继承，不另写一套覆盖配置。
 
 - 请求字段同样声明来源、类型和样例；当前不支持 GET body。
 - responses 显式声明状态、说明、头和可选 `representationRef`；至少说明成功与失败表现。
 - 201 的 Location 须定位该能力创建的资源实例；GET 不能创建资源。单例仍可用 POST 追加一次，不变为覆盖原凭证。
-- 202 需显式 `resultCapabilityRef`，引用范围内同角色的结果 GET，并给出匹配的 Location；没有结果读取依据时保留 gap，不创造任务接口。
+- 202 需显式 `resultCapabilityRef`，引用本文件中同角色的结果 GET，并给出匹配的 Location；没有结果读取依据时保留 gap，不创造任务接口。
 - 创建 Confirmation 与 Completion Rule 满足是两件事；登记合同也不等于签约。
 - idempotency 选择 `key/none/not_applicable` 并说明原因。key 必须声明头名称、同键同输入 replay、同键不同输入 reject。这是重试契约，工具不实现去重存储。
 - concurrency 选择 `none/if-match` 并说明原因；流程使用 if-match 或幂等键策略时必须提供相应头。
@@ -104,27 +100,26 @@ inputs 的 target 为 `path/body/header`，source 为：
 
 不支持任意 JSONPath、脚本或远程调用。未映射步骤不产生可消费输出；未来步骤、悬空链接、无权角色、缺少路径／必填 body／幂等头、覆盖链接提供的参数都会被报告。响应 Location 也不能改变当前请求的父实例范围；同资源的响应表示样例须与请求和 Location 的实例参数一致，不能拿另一实例的样例证明流程可达。304 步骤须为带 If-None-Match 或 If-Modified-Since 的 GET 条件请求。
 
-HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链接导航和一次交互中的多份业务证据，不为读取伪造 Evidence。它使用合成响应样例检查数据能否接续，不实际执行服务。`runtimeValidated` 恒为 false；没有旅程返回 `not_evaluated`。每个所选能力至少需有一个 mapped 的 2xx 消费步骤；403 等失败分支及仅 304 回放可以单独映射，但不能代替成功路径覆盖。complete 仅指当前受支持方言和声明范围无检测到的错误或缺口。
+HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链接导航和一次交互中的多份业务证据，不为读取伪造 Evidence。它使用合成响应样例检查数据能否接续，不实际执行服务。`runtimeValidated` 恒为 false；没有旅程返回 `not_evaluated`。每个接口至少需有一个 mapped 的 2xx 消费步骤；403 等失败分支及仅 304 回放可以单独映射，但不能代替成功路径覆盖。complete 表示整体模型覆盖及所有接口契约在当前方言下无检测到的错误或缺口，不是运行时验收。
 
 ## 可运行示例
 
-[商品采购 API 示例](../assets/examples/full-lifecycle/api.yaml) 的 http 部分细化客户、供应商两个商品读取能力：角色不合并，字段来自商品模型，私有缓存复验，客户通过前一步 ETag 做条件读取。不添加报价 GET、采购协议 GET 或外部支付回调。
+[商品采购 API 示例](../assets/examples/full-lifecycle/api.yaml) 提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
 
 ```bash
 EXAMPLE="$API_SKILL_DIR/assets/examples/full-lifecycle"
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" --fm "$EXAMPLE/fm" --fm-skill "$FM_SKILL_DIR" \
-  --api "$EXAMPLE/api.yaml" \
-  --require-complete
+  --api "$EXAMPLE/api.yaml"
 ```
 
-预期产生 13 个业务候选，本次仅细化其中 2 个读取契约。没有选择的其他 11 个契约不宣称已完成。示例是合成协议选择，不代表生产数据、缓存策略或业务批准。
+预期 13 个角色接口全部有 HTTP 契约与成功消费步骤，合并同路由的两个商品读取角色后得到 12 个 OpenAPI Path＋Method 操作。示例是合成数据及协议选择，不代表生产默认值。
 
 ## OpenAPI 交付投影
 
-`openapi.yaml` 使用 OpenAPI 3.1 表达路径、方法、路径参数、请求体、响应、Header 和表示 Schema。HAL 示例保留真实 `_links`；表示中的链接另投影为响应 Link Object，以 `operationId` 和运行时表达式连接已选操作。`whenRuleRef` 仅作为条件元数据，不能证明链接在某次响应中可用。
+`openapi.yaml` 使用 OpenAPI 3.1 表达路径、方法、路径参数、请求体、响应、Header 和表示 Schema。HAL 示例保留真实 `_links`；表示中的链接另投影为响应 Link Object，以 `operationId` 和运行时表达式连接已有接口。`whenRuleRef` 仅作为条件元数据，不能证明链接在某次响应中可用。
 
-OpenAPI 每个 Path＋Method 只能有一个 Operation。同一路由的角色候选合并，并通过 `x-fm-capability-refs`、`x-actor-role-refs`、`x-binding-refs` 和 `x-fm-operation-variants` 保留来源；不会据此生成 security 配置。存在不一致变体时，原有静态检查仍保留 gap，OpenAPI 不消除冲突。API 文件未声明发布版本，因此 `info.version` 明确为 `generated`，不发明业务版本。
+OpenAPI 每个 Path＋Method 只能有一个 Operation。同一路由的角色接口合并，并通过 `x-fm-capability-refs`、`x-actor-role-refs`、`x-binding-refs` 和 `x-fm-operation-variants` 保留来源；不会据此生成 security 配置。存在不一致变体时，原有静态检查仍保留 gap，OpenAPI 不消除冲突。API 文件未声明发布版本，因此 `info.version` 明确为 `generated`，不发明业务版本。
 
 ## 当前限制
 

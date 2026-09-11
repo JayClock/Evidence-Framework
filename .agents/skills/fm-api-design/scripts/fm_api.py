@@ -29,7 +29,6 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--fm-skill", required=True, type=Path)
         if name != "inspect":
             command.add_argument("--api", required=True, type=Path)
-            command.add_argument("--require-complete", action="store_true")
         if name == "project":
             command.add_argument("--out", required=True, type=Path)
     return value
@@ -102,18 +101,17 @@ def _finish(args: argparse.Namespace, projection: dict) -> int:
     has_errors = any(item["severity"] == "error" for item in diagnostics)
     has_gaps = any(item["severity"] == "gap" for item in diagnostics)
     complete = not has_errors and not has_gaps
-    if projection["http"] is not None:
-        projection["http"]["complete"] = complete
+    projection["http"]["complete"] = complete
     report = {
         "valid": not has_errors,
         "complete": complete,
-        "candidateCount": len(projection["capabilities"]),
+        "interfaceCount": len(projection["capabilities"]),
         "gapCount": sum(item["severity"] == "gap" for item in diagnostics),
         "diagnostics": diagnostics,
     }
     if args.command == "check":
         _print({**report, "projection": projection})
-    elif has_errors or (args.require_complete and has_gaps):
+    elif not complete:
         _print(report)
     else:
         try:
@@ -126,7 +124,7 @@ def _finish(args: argparse.Namespace, projection: dict) -> int:
         _print({**report, "out": str(args.out.resolve())})
     if has_errors:
         return 1
-    return 3 if args.require_complete and has_gaps else 0
+    return 3 if has_gaps else 0
 
 
 def run(argv: list[str] | None = None) -> int:

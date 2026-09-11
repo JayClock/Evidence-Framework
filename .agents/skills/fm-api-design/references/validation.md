@@ -12,13 +12,27 @@
 
 ## 退出码
 
-- `0`：命令有效；普通模式可包含清楚标出的 gap。
+- `0`：inspect 完成，或 check/project 的整体覆盖和全部契约没有检测到错误或 gap。
 - `1`：FM/设计无效、悬空引用、确定冲突、输入变化或输出冲突。
 - `2`：argparse 参数错误。
-- `3`：`--require-complete` 下仍有范围内 gap。
+- `3`：存在整体覆盖、接口设计或 HTTP 消费流程 gap；project 不生成输出。
 - `4`：FM 工具缺失、调用失败或超时等环境故障。
 
 诊断包含稳定 `code/severity/targetRef/location/relatedRefs/message`；gap 另有 `gapKey/category`。不要根据措辞或数组位置重建 gapKey。
+
+## 整体覆盖
+
+输入 API 格式为 4.0，上游为已确认 FM v3；校验不重复业务确认。完整性检查始终执行，不可通过省略 Context、整个场景或某接口的 HTTP 契约得到通过。
+
+- `MODEL_ENTITY_UNCOVERED`：整体 FM 的业务对象未对应接口或真实非接口活动。
+- `MODEL_EVIDENCE_WRITE_MISSING`：仅有读取，未覆盖凭证形成。
+- `MODEL_HANDLING_CONFLICT`：非接口活动重复或与已有接口冲突。
+- `MODEL_HANDLING_BASIS`：内部／外部处理缺少对应 FM 对象或业务来源。
+- `SCENARIO_UNCOVERED`：整个 FM 场景或具体步骤遗漏。
+- `SCENARIO_CAPABILITY_MISMATCH`：步骤角色、凭证效果或场景依据与接口不一致。
+- `SCENARIO_HANDLING_MISMATCH`：步骤内部／外部处理与整体说明不一致。
+- `CONTRACT_OPERATION_MISSING`：业务接口缺少 HTTP 契约。
+- `HTTP_FLOW_UNCOVERED`：接口没有成功消费步骤。
 
 ## 业务命名、数量与寻址复核
 
@@ -44,4 +58,4 @@
 
 project 的 out 必须位于项目根内、父目录已存在且目标尚不存在，并且不能与 FM、设计或来源重叠。CLI 不提供覆盖参数。先在内存形成全部内容，再排他创建目录；manifest 最后原子替换。失败会清理本次新目录，不会覆盖已有输出。
 
-机器通过不是业务批准、运行授权或接口测试。`--require-complete` 只检查声明范围，不要求 unselected 的所有组合都有场景。
+上游业务确认沿用输入依据；机器检查不充当新的审核步骤，也不代表运行授权或接口验收。接口清单是交付索引，技术缺口不通过人工点击“通过”解除。

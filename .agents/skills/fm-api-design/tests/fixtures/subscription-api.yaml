@@ -1,8 +1,5 @@
-schemaVersion: '3.0'
+schemaVersion: '4.0'
 id: api.subscription
-scope:
-  contextRefs:
-    - context.content-subscription
 sources:
   - id: source.successful-payment
     path: .agents/skills/fm-api-design/tests/fixtures/source.md
@@ -61,6 +58,19 @@ resources:
       sourceRefs:
         - source.payment-multiplicity
       reasoning: 测试业务允许同一订阅下分次申请支付，每次申请单独定位
+  - id: resource.confirmation
+    entityRef: confirmation.content-payment
+    businessName: 订阅付款确认
+    shape: collection
+    segment: payment-confirmations
+    identity:
+      kind: api_resource_id
+      parameter: confirmationId
+      decisionRef: decision.resource-identity
+    basis:
+      fmRefs:
+        - confirmation.content-payment
+      reasoning: 确认独立定位并在请求中关联现有付款申请，URI 不假定未经声明的父子基数。
 bindings:
   - id: binding.caller-platform
     kind: caller_role
@@ -84,6 +94,15 @@ bindings:
       sourceRefs:
         - source.successful-payment
       reasoning: 请求须关联 URI 中已解析的订阅合同实例
+  - id: binding.caller-subscriber
+    kind: caller_role
+    roleRef: role.subscriber
+    scopeResourceRef: resource.confirmation
+    basis:
+      fmRefs:
+        - role.subscriber
+        - confirmation.content-payment
+      reasoning: 订阅者只可登记其本人订阅合同付款请求的确认，按请求关联校验实例归属。
 scenarios:
   - id: scenario.api-payment
     sourceScenarioRef: scenario.successful-payment
@@ -93,6 +112,12 @@ scenarios:
       fmRefs:
         - request.content-payment
       reasoning: 复用已校验的成功付款场景
+  - id: scenario.api-overdue
+    sourceScenarioRef: scenario.overdue-payment
+    basis:
+      fmRefs:
+        - request.content-payment
+      reasoning: 回映上游已确认的逾期场景，接口发起请求不代表付款完成。
 capabilities:
   - id: capability.request-payment
     actorRoleRef: role.platform-subscription
@@ -105,6 +130,7 @@ capabilities:
     businessCapability: 请求支付订阅费用
     scenarioRefs:
       - scenario.api-payment
+      - scenario.api-overdue
     bindingRefs:
       - binding.caller-platform
       - binding.request-subscription
@@ -118,6 +144,24 @@ capabilities:
       sourceRefs:
         - source.successful-payment
       reasoning: 平台依据合同派生金额并追加付款请求凭证
+  - id: capability.submit-confirmation
+    actorRoleRef: role.subscriber
+    resourceRef: resource.confirmation
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: confirmation.content-payment
+    businessCapability: 登记订阅付款确认
+    scenarioRefs:
+      - scenario.api-payment
+    bindingRefs:
+      - binding.caller-subscriber
+    basis:
+      fmRefs:
+        - confirmation.content-payment
+        - evidence.gateway-payment-receipt
+      reasoning: 订阅者登记支付确认并引用匹配的现有支付收据与申请。
 representations: []
 journeys:
   - id: journey.successful-payment
@@ -143,16 +187,273 @@ journeys:
             - evidence.gateway-payment-receipt
           sourceRefs:
             - source.successful-payment
-          reasoning: 当前 API 范围不包含支付网关活动
+          reasoning: 支付网关活动在本服务外部发生；引用既有收据。
       - id: journey.step-confirmation
         sourceStepSequence: 3
         description: 订阅者形成付款确认
-        mapping: internal
+        mapping: capability
         basis:
           fmRefs:
             - confirmation.content-payment
           sourceRefs:
             - source.successful-payment
-          reasoning: 当前设计未选择确认提交接口，保留为内部范围
-
-http: null
+          reasoning: 订阅者通过接口登记实际支付确认，引用已存在的付款请求和收据。
+        capabilityRef: capability.submit-confirmation
+  - id: journey.overdue-payment
+    scenarioRef: scenario.api-overdue
+    steps:
+      - id: journey.overdue-request
+        sourceStepSequence: 1
+        description: 平台发出付款请求
+        mapping: capability
+        capabilityRef: capability.request-payment
+        basis:
+          fmRefs:
+            - request.content-payment
+          sourceRefs:
+            - source.successful-payment
+          reasoning: 对应付款请求追加能力
+http:
+  representations:
+    - id: representation.payment
+      resourceRef: resource.payment
+      view: item
+      actorRoleRefs:
+        - role.platform-subscription
+      mediaType: application/hal+json
+      fields:
+        - name: id
+          schema:
+            type: string
+          required: true
+          origin: server
+          decision: Synthetic API identity, not a business attribute
+        - name: amount
+          schema:
+            type: integer
+          required: true
+          origin: derived
+          fmAttributeRef: request.content-payment#requested_minor_units
+      example:
+        id: pay-1
+        amount: 100
+      exampleParameters:
+        subscriptionId: sub-1
+        paymentId: pay-1
+      links: []
+      cache:
+        mode: no-store
+        reason: Synthetic private payment representation
+    - id: representation.confirmation
+      resourceRef: resource.confirmation
+      view: item
+      actorRoleRefs:
+        - role.subscriber
+      mediaType: application/hal+json
+      fields:
+        - name: confirmed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.content-payment#confirmed_at
+        - name: paid_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.content-payment#paid_minor_units
+        - name: currency
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: confirmation.content-payment#currency
+        - name: evidenceRefs
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          required: true
+          origin: reference
+          decision: 关联已有请求与收据实例，服务端检查归属及可见性。
+      example:
+        confirmed_at: '2026-09-01T09:10:00Z'
+        paid_minor_units: 19900
+        currency: CNY
+        evidenceRefs:
+          - instance.payment-request
+          - instance.gateway-payment-receipt
+      exampleParameters:
+        confirmationId: confirm-1
+      links: []
+      cache:
+        mode: no-store
+        reason: 合成私人确认表示不缓存
+  operations:
+    - capabilityRef: capability.request-payment
+      request:
+        mediaType: application/json
+        fields: []
+        example: {}
+      responses:
+        - status: 201
+          description: Request resource created, fulfillment still pending
+          representationRef: representation.payment
+          headers:
+            Location: /subscriptions/sub-1/payments/pay-1
+        - status: 403
+          description: Caller outside subscription scope
+          headers: {}
+      idempotency:
+        mode: key
+        reason: Retry must not append a second request
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+      concurrency:
+        mode: none
+        reason: No mutable evidence replacement
+    - capabilityRef: capability.submit-confirmation
+      request:
+        mediaType: application/json
+        fields:
+          - name: confirmed_at
+            schema:
+              type: string
+              format: date-time
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.content-payment#confirmed_at
+          - name: paid_minor_units
+            schema:
+              type: integer
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.content-payment#paid_minor_units
+          - name: currency
+            schema:
+              type: string
+            required: true
+            origin: reference
+            fmAttributeRef: confirmation.content-payment#currency
+          - name: evidenceRefs
+            schema:
+              type: array
+              items:
+                type: string
+              minItems: 1
+            required: true
+            origin: reference
+            decision: 关联已有请求与收据实例，服务端检查归属及可见性。
+        example:
+          confirmed_at: '2026-09-01T09:10:00Z'
+          paid_minor_units: 19900
+          currency: CNY
+          evidenceRefs: &id001
+            - instance.payment-request
+            - instance.gateway-payment-receipt
+      responses:
+        - status: 201
+          description: 确认记录已登记；完成状态由 FM 规则判断
+          representationRef: representation.confirmation
+          headers:
+            Location: /payment-confirmations/confirm-1
+        - status: 403
+          description: Caller outside subscription scope
+          headers: {}
+      idempotency:
+        mode: key
+        reason: Retry must not append a second request
+        header: Idempotency-Key
+        samePayload: replay
+        differentPayload: reject
+      concurrency:
+        mode: none
+        reason: No mutable evidence replacement
+  journeys:
+    - id: http.request-payment
+      actorRoleRef: role.platform-subscription
+      steps:
+        - id: http.create
+          capabilityRef: capability.request-payment
+          expectStatus: 201
+          entry: 从已确认订阅业务交接取得入口和现有合同标识
+          inputs:
+            - target: path
+              name: subscriptionId
+              source:
+                kind: literal
+                value: sub-1
+                reason: Synthetic entry input
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: retry-1
+                reason: Synthetic retry key
+    - id: http.submit-confirmation
+      actorRoleRef: role.subscriber
+      steps:
+        - id: http.confirm
+          capabilityRef: capability.submit-confirmation
+          expectStatus: 201
+          entry: 订阅者从现有订阅交接取得付款申请和网关收据后登记确认。
+          inputs:
+            - target: body
+              name: confirmed_at
+              source:
+                kind: literal
+                value: '2026-09-01T09:10:00Z'
+                reason: 合成 FM 既有证据
+            - target: body
+              name: paid_minor_units
+              source:
+                kind: literal
+                value: 19900
+                reason: 合成 FM 既有证据
+            - target: body
+              name: currency
+              source:
+                kind: literal
+                value: CNY
+                reason: 合成 FM 既有证据
+            - target: body
+              name: evidenceRefs
+              source:
+                kind: literal
+                value: *id001
+                reason: 合成 FM 既有证据
+            - target: header
+              name: Idempotency-Key
+              source:
+                kind: literal
+                value: confirm-key
+                reason: 合成重试键
+nonApiActivities:
+  - entityRef: contract.content-subscription
+    handling: internal
+    basis:
+      fmRefs:
+        - contract.content-subscription
+      reasoning: FM 场景以已签署合同为初始输入，订立流程内部持有此记录，不由支付接口重复签署。
+  - entityRef: evidence.gateway-payment-receipt
+    handling: external
+    basis:
+      fmRefs:
+        - evidence.gateway-payment-receipt
+      reasoning: 支付网关形成的外部收据作为凭证输入，不虚构网关接口。
+  - entityRef: party.customer
+    handling: internal
+    basis:
+      fmRefs:
+        - party.customer
+      reasoning: 客户主体身份是合同角色依据，FM 未定义客户资料办理活动。
+  - entityRef: thing.content
+    handling: internal
+    basis:
+      fmRefs:
+        - thing.content
+      reasoning: 内容标的是付款业务的引用输入；本 FM 未定义独立内容读取或维护活动。

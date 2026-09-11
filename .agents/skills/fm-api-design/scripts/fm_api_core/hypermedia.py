@@ -15,7 +15,7 @@ def validate_representations(
     diagnostics: list[Diagnostic] = []
     resources_by_id = {item["id"]: item for item in resources}
     capabilities_by_id = {item["id"]: item for item in capabilities}
-    candidate_keys = {
+    interface_keys = {
         (item["resourceRef"], item["view"], item["method"], item["actorRoleRef"])
         for item in capabilities
     }
@@ -57,7 +57,13 @@ def validate_representations(
                 )
         source_uri = resource["uris"].get(representation["view"])
         if source_uri is None:
-            diagnostics.append(error("RESOURCE_VIEW_INVALID", "表示视图不属于该业务资源", representation["id"]))
+            diagnostics.append(
+                error(
+                    "RESOURCE_VIEW_INVALID",
+                    "表示视图不属于该业务资源",
+                    representation["id"],
+                )
+            )
             continue
         available_parameters = set(re.findall(r"\{([^{}]+)\}", source_uri))
         for link in representation.get("links", []):
@@ -74,7 +80,13 @@ def validate_representations(
                 continue
             target_uri = target["uris"].get(link["targetView"])
             if target_uri is None:
-                diagnostics.append(error("RESOURCE_VIEW_INVALID", "链接目标视图不属于该业务资源", representation["id"]))
+                diagnostics.append(
+                    error(
+                        "RESOURCE_VIEW_INVALID",
+                        "链接目标视图不属于该业务资源",
+                        representation["id"],
+                    )
+                )
                 continue
             required_parameters = set(re.findall(r"\{([^{}]+)\}", target_uri))
             bindings = {
@@ -103,7 +115,7 @@ def validate_representations(
                     diagnostics.append(
                         error(
                             "LINK_CAPABILITY_UNRESOLVED",
-                            "链接引用的候选能力与目标不匹配",
+                            "链接引用的接口与目标不匹配",
                             representation["id"],
                             related=(capability_ref,),
                         )
@@ -124,15 +136,15 @@ def validate_representations(
                 visible_roles = link.get("visibleToRoleRefs", [])
                 if not visible_roles or not all(
                     (link["targetResourceRef"], link["targetView"], "GET", role_ref)
-                    in candidate_keys
+                    in interface_keys
                     for role_ref in visible_roles
                 ):
                     diagnostics.append(
                         gap(
-                            "LINK_GET_UNSELECTED",
+                            "LINK_GET_MISSING",
                             f"{representation['id']}.{link['rel']}.get",
                             "design",
-                            "导航链接没有对应的已选 GET 能力；CLI 不会自动新增 GET",
+                            "导航链接缺少对应的 GET 接口，不得据此虚构读取权限",
                             representation["id"],
                             (link["targetResourceRef"],),
                         )

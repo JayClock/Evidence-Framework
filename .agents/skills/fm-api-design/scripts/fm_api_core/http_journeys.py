@@ -170,7 +170,7 @@ def _step(
     operation = operations.get(step["capabilityRef"])
     if not capability or not operation or capability["actorRoleRef"] != role:
         return None, [
-            _issue("HTTP_FLOW_ROLE", step, "流程角色没有匹配的已选能力及契约")
+            _issue("HTTP_FLOW_ROLE", step, "流程角色没有匹配的业务接口及契约")
         ]
     response = next(
         (

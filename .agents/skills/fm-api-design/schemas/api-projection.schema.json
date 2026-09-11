@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v3/api-projection.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v4/api-projection.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -9,17 +9,18 @@
     "fmCheckSummary",
     "fmReviewState",
     "resources",
-    "exploration",
     "capabilities",
     "operations",
     "representations",
     "coverage",
     "diagnostics",
-    "http"
+    "http",
+    "modelCoverage",
+    "contextRefs"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "3.0"
+      "const": "4.0"
     },
     "inputDigests": {
       "type": "object",
@@ -179,9 +180,6 @@
         ]
       }
     },
-    "exploration": {
-      "type": "array"
-    },
     "capabilities": {
       "type": "array"
     },
@@ -239,62 +237,58 @@
       "type": "string"
     },
     "http": {
-      "oneOf": [
-        {
-          "type": "null"
+      "type": "object",
+      "required": [
+        "complete",
+        "runtimeValidated",
+        "representations",
+        "operations",
+        "journeys",
+        "diagnostics"
+      ],
+      "properties": {
+        "complete": {
+          "type": "boolean"
         },
-        {
-          "type": "object",
-          "required": [
-            "scopeCapabilityRefs",
-            "complete",
-            "runtimeValidated",
-            "representations",
-            "operations",
-            "journeys",
-            "diagnostics"
-          ],
-          "properties": {
-            "scopeCapabilityRefs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "complete": {
-              "type": "boolean"
-            },
-            "runtimeValidated": {
-              "const": false
-            },
-            "representations": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            "operations": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            "journeys": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            "diagnostics": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            }
-          },
-          "additionalProperties": false
+        "runtimeValidated": {
+          "const": false
+        },
+        "representations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "journeys": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         }
-      ]
+      },
+      "additionalProperties": false
+    },
+    "modelCoverage": {
+      "type": "array"
+    },
+    "contextRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
     }
   },
   "additionalProperties": false

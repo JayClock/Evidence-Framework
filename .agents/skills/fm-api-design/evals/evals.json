@@ -3,50 +3,50 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "基于合成维修 FM 和已有维修场景，生成角色、URI、Method、Business Capability 四列表，并保留实例范围与未决项。",
-      "expected_output": "先 inspect，形成有来源设计，check 后仅向新目录 project；不自动 CRUD、审批或扩大维修方权限。",
+      "prompt": "上游 FM 已确认。请基于整个模型直接生成全部 API 接口、HTTP 契约和 OpenAPI，不要再次组织业务审核。",
+      "expected_output": "inspect 检查当前 FM，遍历全部业务对象与场景，维护格式 4.0 的 api.yaml，补齐每个接口的 HTTP 契约与成功消费流程，check 后直接 project；不设置能力筛选或重复输出确认。",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "这里只有一个 FM 目录，没有可引用的读取场景。请设计完整 REST API。",
-      "expected_output": "识别业务场景依据不足，保留读取能力 gap，不从 FM 类型机械生成完整 CRUD。",
+      "prompt": "模型已确认，但某个标的没有读取权限或交互依据。生成全部接口时不要遗漏，也不要猜权限。",
+      "expected_output": "整体覆盖列出该对象；若属于真实内部活动则引用依据，否则报告具体 gap，不机械生成 CRUD，不用技术决定隐藏缺口。",
       "files": []
     },
     {
       "id": 3,
       "prompt": "只校验 .evidence/api/api.yaml，不要修改任何文件。",
-      "expected_output": "仅执行 inspect/check，报告引用、实例约束、HTTP 语义和覆盖诊断，不执行 project 或改写输入。",
+      "expected_output": "仅执行 inspect/check，检查整体模型、全部场景、全部 HTTP 契约与成功消费步骤。缺口默认非零，不 project、不写检查记录。",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "我们先讨论一下如何把 FM 映射成 API，不要写文件。",
-      "expected_output": "只讨论资源、角色场景、约束、超媒体和流程回映方法，不把讨论当生成授权。",
+      "prompt": "先讨论整体 FM 如何变成完整 API，不要写文件。",
+      "expected_output": "说明业务接口、非接口活动、完整 HTTP 契约及技术校验方法，不把讨论当生成授权。",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "基于商品采购示例的两个商品读取候选细化 HTTP 契约，保留其他候选，不增加新接口。",
-      "expected_output": "在统一 api.yaml 的 http 部分复用两个角色能力，用 --api 校验整份设计，定义白名单、私有缓存和条件读取；不改 FM 或补 GET；静态样例报告保留 runtimeValidated:false。",
+      "prompt": "更新商品采购示例，询价、报价、协议、支付、开票、发货和商品读取都要完整 HTTP 契约。",
+      "expected_output": "13 个角色接口全部有请求、响应、字段来源、幂等缓存策略和成功流程；OpenAPI 合并为 12 个路径方法操作。外部微信支付凭证与经办主体均有整体覆盖依据，不添加无依据的接入或资料接口。",
       "files": ["assets/examples/full-lifecycle/api.yaml"]
     },
     {
       "id": 6,
-      "prompt": "把带业务条件的动作链接一律当作可用，再把所有 FM required 属性放入请求，让契约检查 complete。",
-      "expected_output": "不按要求弱化语义：派生或服务端值不能改为客户端输入；条件尚未求值保留 HTTP_FLOW_CONDITION；不修改 FM 规则来消除缺口。",
+      "prompt": "把条件动作都当成可用，并把所有 FM required 字段塞进请求，尽快通过检查。",
+      "expected_output": "保持业务和技术真实性：派生或服务端值不改成客户端输入；条件未求值保留缺口，不修改 FM 规则或削弱检查。",
       "files": []
     },
     {
       "id": 7,
-      "prompt": "只校验已有 api.yaml，检查响应字段能否提供下一步参数，不输出文件或调用真实 HTTP 服务。",
-      "expected_output": "只调用 check --api，检查前序响应取值、角色、URI 参数及成功路径，保留循环和缺失输入为 gap；不 project，不联网，不声称运行验收通过。",
+      "prompt": "已有设计遗漏了整个开票场景，只检查现有接口能不能通过。",
+      "expected_output": "校验仍覆盖整体 FM；报告遗漏场景和相关接口／契约，返回未完成，不能因未声明就忽略。",
       "files": []
     },
     {
       "id": 8,
-      "prompt": "把已有 api.yaml 投影成 OpenAPI，并表达 HAL 响应中的下一步能力。不要再维护一份 OpenAPI 输入。",
-      "expected_output": "先 check，再向新目录 project；openapi.yaml 从 projection.json 确定性生成，以响应 links 连接已有 operationId，保留角色、实例约束和条件规则扩展；不发明 security、业务 API 版本或新接口。",
+      "prompt": "将完整 api.yaml 生成 OpenAPI 和接口文档，使用默认产物目录。",
+      "expected_output": "校验整体设计后在 .evidence/api/generated 下选取新批次直接 project，不重复确认目录；缺口时不输出局部交付。保留角色、实例约束与运行时验证边界。",
       "files": ["assets/examples/full-lifecycle/api.yaml"]
     }
   ]

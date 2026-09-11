@@ -3,6 +3,1048 @@ info:
   title: api.product-procurement
   version: generated
 paths:
+  /product-inquiries:
+    post:
+      operationId: capability.inquire-products
+      summary: 发起商品询价
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记商品询价，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /product-inquiries/inquiry-1
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-product-inquiry
+              example:
+                _links:
+                  self:
+                    href: /product-inquiries/inquiry-1
+                expired_at: '2026-11-03T09:00:00Z'
+                quantity: 100
+                started_at: '2026-11-01T09:00:00Z'
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.inquire-products
+      x-actor-role-refs:
+        - role.buyer
+      x-binding-refs:
+        - binding.caller-sourcing-customer
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.inquire-products
+          actorRoleRef: role.buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                quantity:
+                  type: integer
+              additionalProperties: false
+              required:
+                - started_at
+                - expired_at
+                - quantity
+            example:
+              expired_at: '2026-11-03T09:00:00Z'
+              quantity: 100
+              started_at: '2026-11-01T09:00:00Z'
+  /product-inquiries/{inquiryId}/quotation:
+    post:
+      operationId: capability.quote-products
+      summary: 提交商品报价
+      parameters:
+        - name: inquiryId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记商品报价，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /product-inquiries/inquiry-1/quotation
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-product-quotation
+              example:
+                _links:
+                  self:
+                    href: /product-inquiries/inquiry-1/quotation
+                evidenceRefs:
+                  - instance.product-inquiry
+                expired_at: '2026-11-02T18:00:00Z'
+                started_at: '2026-11-01T12:00:00Z'
+                unit_price_minor_units: 2500
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.quote-products
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-sourcing-supplier
+        - binding.quotation-inquiry
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.quote-products
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                unit_price_minor_units:
+                  type: integer
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - started_at
+                - expired_at
+                - unit_price_minor_units
+                - evidenceRefs
+            example:
+              evidenceRefs:
+                - instance.product-inquiry
+              expired_at: '2026-11-02T18:00:00Z'
+              started_at: '2026-11-01T12:00:00Z'
+              unit_price_minor_units: 2500
+  /product-procurements:
+    post:
+      operationId: capability.register-procurement
+      summary: 登记商品采购协议
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记商品采购协议，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /product-procurements/procurement-1
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-product-procurement
+              example:
+                _links:
+                  self:
+                    href: /product-procurements/procurement-1
+                evidenceRefs:
+                  - instance.product-quotation
+                quantity: 100
+                signed_at: '2026-11-02T10:00:00Z'
+                total_minor_units: 250000
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.register-procurement
+      x-actor-role-refs:
+        - role.buyer
+      x-binding-refs:
+        - binding.caller-buyer
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-procurement
+          actorRoleRef: role.buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signed_at:
+                  format: date-time
+                  type: string
+                quantity:
+                  type: integer
+                total_minor_units:
+                  type: integer
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - signed_at
+                - quantity
+                - total_minor_units
+                - evidenceRefs
+            example:
+              evidenceRefs:
+                - instance.product-quotation
+              quantity: 100
+              signed_at: '2026-11-02T10:00:00Z'
+              total_minor_units: 250000
+  '/product-procurements/{procurementId}/delivery':
+    post:
+      operationId: capability.request-delivery
+      summary: 申请商品发货
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记商品发货申请，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/delivery
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-delivery
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/delivery
+                delivery_address: 甲方仓库
+                evidenceRefs:
+                  - instance.product-procurement
+                expired_at: '2026-11-12T10:00:00Z'
+                request_number: DELIVERY-REQ-001
+                started_at: '2026-11-05T10:00:00Z'
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.request-delivery
+      x-actor-role-refs:
+        - role.buyer
+      x-binding-refs:
+        - binding.caller-buyer
+        - binding.delivery-procurement
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.request-delivery
+          actorRoleRef: role.buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                delivery_address:
+                  type: string
+                request_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - started_at
+                - expired_at
+                - delivery_address
+                - request_number
+                - evidenceRefs
+            example:
+              delivery_address: 甲方仓库
+              evidenceRefs:
+                - instance.product-procurement
+              expired_at: '2026-11-12T10:00:00Z'
+              request_number: DELIVERY-REQ-001
+              started_at: '2026-11-05T10:00:00Z'
+  '/product-procurements/{procurementId}/delivery/confirmation':
+    post:
+      operationId: capability.confirm-delivery
+      summary: 确认商品发货
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记商品发货确认，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/delivery/confirmation
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-delivery-confirmation
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/delivery/confirmation
+                confirmed_at: '2026-11-06T09:05:00Z'
+                delivery_note_number: DN-001
+                evidenceRefs:
+                  - instance.delivery-request
+                  - instance.delivery-note
+                request_number: DELIVERY-REQ-001
+                tracking_number: TRACK-001
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.confirm-delivery
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-seller
+        - binding.delivery-result
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.delivery-evidence-ready
+        - purpose: result
+          ruleRef: rule.delivery-completed
+      x-fm-operation-variants:
+        - capabilityRef: capability.confirm-delivery
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                confirmed_at:
+                  format: date-time
+                  type: string
+                tracking_number:
+                  type: string
+                request_number:
+                  type: string
+                delivery_note_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - confirmed_at
+                - tracking_number
+                - request_number
+                - delivery_note_number
+                - evidenceRefs
+            example:
+              confirmed_at: '2026-11-06T09:05:00Z'
+              delivery_note_number: DN-001
+              evidenceRefs:
+                - instance.delivery-request
+                - instance.delivery-note
+              request_number: DELIVERY-REQ-001
+              tracking_number: TRACK-001
+  '/product-procurements/{procurementId}/delivery/delivery-note':
+    post:
+      operationId: capability.record-delivery-note
+      summary: 提交发货单
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记发货单，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/delivery/delivery-note
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-delivery-note
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/delivery/delivery-note
+                created_at: '2026-11-06T09:00:00Z'
+                delivery_address: 甲方仓库
+                delivery_note_number: DN-001
+                evidenceRefs:
+                  - instance.delivery-request
+                request_number: DELIVERY-REQ-001
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.record-delivery-note
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-seller
+        - binding.note-delivery
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.record-delivery-note
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                created_at:
+                  format: date-time
+                  type: string
+                delivery_note_number:
+                  type: string
+                request_number:
+                  type: string
+                delivery_address:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - created_at
+                - delivery_note_number
+                - request_number
+                - delivery_address
+                - evidenceRefs
+            example:
+              created_at: '2026-11-06T09:00:00Z'
+              delivery_address: 甲方仓库
+              delivery_note_number: DN-001
+              evidenceRefs:
+                - instance.delivery-request
+              request_number: DELIVERY-REQ-001
+  '/product-procurements/{procurementId}/invoicing':
+    post:
+      operationId: capability.request-invoice
+      summary: 申请开具发票
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记发票开具申请，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/invoicing
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-invoicing
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/invoicing
+                evidenceRefs:
+                  - instance.product-procurement
+                expired_at: '2026-11-11T11:00:00Z'
+                invoice_title: 甲方公司
+                request_number: INVOICE-REQ-001
+                started_at: '2026-11-04T11:00:00Z'
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.request-invoice
+      x-actor-role-refs:
+        - role.buyer
+      x-binding-refs:
+        - binding.caller-buyer
+        - binding.invoicing-procurement
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.request-invoice
+          actorRoleRef: role.buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                invoice_title:
+                  type: string
+                request_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - started_at
+                - expired_at
+                - invoice_title
+                - request_number
+                - evidenceRefs
+            example:
+              evidenceRefs:
+                - instance.product-procurement
+              expired_at: '2026-11-11T11:00:00Z'
+              invoice_title: 甲方公司
+              request_number: INVOICE-REQ-001
+              started_at: '2026-11-04T11:00:00Z'
+  '/product-procurements/{procurementId}/invoicing/confirmation':
+    post:
+      operationId: capability.confirm-invoicing
+      summary: 确认开具发票
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记发票开具确认，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/invoicing/confirmation
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-invoice-confirmation
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/invoicing/confirmation
+                confirmed_at: '2026-11-05T09:05:00Z'
+                evidenceRefs:
+                  - instance.invoice-request
+                  - instance.invoice
+                invoice_number: INV-001
+                request_number: INVOICE-REQ-001
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.confirm-invoicing
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-seller
+        - binding.invoicing-result
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.invoice-evidence-ready
+        - purpose: result
+          ruleRef: rule.invoice-completed
+      x-fm-operation-variants:
+        - capabilityRef: capability.confirm-invoicing
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                confirmed_at:
+                  format: date-time
+                  type: string
+                invoice_number:
+                  type: string
+                request_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - confirmed_at
+                - invoice_number
+                - request_number
+                - evidenceRefs
+            example:
+              confirmed_at: '2026-11-05T09:05:00Z'
+              evidenceRefs:
+                - instance.invoice-request
+                - instance.invoice
+              invoice_number: INV-001
+              request_number: INVOICE-REQ-001
+  '/product-procurements/{procurementId}/invoicing/invoice':
+    post:
+      operationId: capability.issue-invoice
+      summary: 提交发票
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记发票，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/invoicing/invoice
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-invoice
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/invoicing/invoice
+                created_at: '2026-11-05T09:00:00Z'
+                evidenceRefs:
+                  - instance.invoice-request
+                invoice_number: INV-001
+                invoice_title: 甲方公司
+                request_number: INVOICE-REQ-001
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.issue-invoice
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-seller
+        - binding.invoice-invoicing
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.issue-invoice
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                created_at:
+                  format: date-time
+                  type: string
+                invoice_number:
+                  type: string
+                request_number:
+                  type: string
+                invoice_title:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - created_at
+                - invoice_number
+                - request_number
+                - invoice_title
+                - evidenceRefs
+            example:
+              created_at: '2026-11-05T09:00:00Z'
+              evidenceRefs:
+                - instance.invoice-request
+              invoice_number: INV-001
+              invoice_title: 甲方公司
+              request_number: INVOICE-REQ-001
+  '/product-procurements/{procurementId}/payment':
+    post:
+      operationId: capability.request-payment
+      summary: 申请支付货款
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记货款支付申请，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/payment
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-payment
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/payment
+                evidenceRefs:
+                  - instance.product-procurement
+                expired_at: '2026-11-10T09:00:00Z'
+                request_number: PAYMENT-REQ-001
+                requested_minor_units: 250000
+                started_at: '2026-11-03T09:00:00Z'
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.request-payment
+      x-actor-role-refs:
+        - role.seller
+      x-binding-refs:
+        - binding.caller-seller
+        - binding.payment-procurement
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.request-payment
+          actorRoleRef: role.seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                requested_minor_units:
+                  type: integer
+                request_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - started_at
+                - expired_at
+                - requested_minor_units
+                - request_number
+                - evidenceRefs
+            example:
+              evidenceRefs:
+                - instance.product-procurement
+              expired_at: '2026-11-10T09:00:00Z'
+              request_number: PAYMENT-REQ-001
+              requested_minor_units: 250000
+              started_at: '2026-11-03T09:00:00Z'
+  '/product-procurements/{procurementId}/payment/confirmation':
+    post:
+      operationId: capability.confirm-payment
+      summary: 确认支付货款
+      parameters:
+        - name: procurementId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原登记结果，避免网络重试重复追加凭证。
+      responses:
+        '201':
+          description: 登记货款支付确认，不替代签署行为或履约完成规则判断
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /product-procurements/procurement-1/payment/confirmation
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_http-payment-confirmation
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /product-procurements/procurement-1/payment/confirmation
+                confirmed_at: '2026-11-04T10:05:00Z'
+                evidenceRefs:
+                  - instance.payment-request
+                  - instance.wechat-payment-confirmation
+                paid_minor_units: 250000
+                payment_number: WX-001
+                request_number: PAYMENT-REQ-001
+        '403':
+          description: 调用者不具备该业务实例的角色或证据访问权限
+        '409':
+          description: 幂等键内容冲突或现有单例凭证冲突
+        '422':
+          description: 凭证字段、引用、实例归属或业务形成前提不满足
+      x-fm-capability-refs:
+        - capability.confirm-payment
+      x-actor-role-refs:
+        - role.buyer
+      x-binding-refs:
+        - binding.caller-buyer
+        - binding.payment-result
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.payment-evidence-ready
+        - purpose: result
+          ruleRef: rule.payment-completed
+      x-fm-operation-variants:
+        - capabilityRef: capability.confirm-payment
+          actorRoleRef: role.buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                confirmed_at:
+                  format: date-time
+                  type: string
+                paid_minor_units:
+                  type: integer
+                request_number:
+                  type: string
+                payment_number:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - confirmed_at
+                - paid_minor_units
+                - request_number
+                - payment_number
+                - evidenceRefs
+            example:
+              confirmed_at: '2026-11-04T10:05:00Z'
+              evidenceRefs:
+                - instance.payment-request
+                - instance.wechat-payment-confirmation
+              paid_minor_units: 250000
+              payment_number: WX-001
+              request_number: PAYMENT-REQ-001
   /products/{productId}:
     get:
       operationId: get_products__productId_
@@ -34,7 +1076,8 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/representation_product-http'
+                $ref: >-
+                  #/components/schemas/representation_product-http
               example:
                 _links:
                   self:
@@ -67,6 +1110,433 @@ paths:
           actorRoleRef: role.seller
 components:
   schemas:
+    representation_http-delivery:
+      type: object
+      properties:
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        delivery_address:
+          type: string
+        request_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - started_at
+        - expired_at
+        - delivery_address
+        - request_number
+        - evidenceRefs
+        - _links
+    'representation_http-delivery-confirmation':
+      type: object
+      properties:
+        confirmed_at:
+          format: date-time
+          type: string
+        tracking_number:
+          type: string
+        request_number:
+          type: string
+        delivery_note_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - confirmed_at
+        - tracking_number
+        - request_number
+        - delivery_note_number
+        - evidenceRefs
+        - _links
+    representation_http-delivery-note:
+      type: object
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        delivery_note_number:
+          type: string
+        request_number:
+          type: string
+        delivery_address:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - created_at
+        - delivery_note_number
+        - request_number
+        - delivery_address
+        - evidenceRefs
+        - _links
+    representation_http-invoice:
+      type: object
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        invoice_number:
+          type: string
+        request_number:
+          type: string
+        invoice_title:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - created_at
+        - invoice_number
+        - request_number
+        - invoice_title
+        - evidenceRefs
+        - _links
+    representation_http-invoice-confirmation:
+      type: object
+      properties:
+        confirmed_at:
+          format: date-time
+          type: string
+        invoice_number:
+          type: string
+        request_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - confirmed_at
+        - invoice_number
+        - request_number
+        - evidenceRefs
+        - _links
+    representation_http-invoicing:
+      type: object
+      properties:
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        invoice_title:
+          type: string
+        request_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - started_at
+        - expired_at
+        - invoice_title
+        - request_number
+        - evidenceRefs
+        - _links
+    representation_http-payment:
+      type: object
+      properties:
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        requested_minor_units:
+          type: integer
+        request_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - started_at
+        - expired_at
+        - requested_minor_units
+        - request_number
+        - evidenceRefs
+        - _links
+    representation_http-payment-confirmation:
+      type: object
+      properties:
+        confirmed_at:
+          format: date-time
+          type: string
+        paid_minor_units:
+          type: integer
+        request_number:
+          type: string
+        payment_number:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - confirmed_at
+        - paid_minor_units
+        - request_number
+        - payment_number
+        - evidenceRefs
+        - _links
+    representation_http-product-inquiry:
+      type: object
+      properties:
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        quantity:
+          type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - started_at
+        - expired_at
+        - quantity
+        - _links
+    representation_http-product-procurement:
+      type: object
+      properties:
+        signed_at:
+          format: date-time
+          type: string
+        quantity:
+          type: integer
+        total_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - signed_at
+        - quantity
+        - total_minor_units
+        - evidenceRefs
+        - _links
+    representation_http-product-quotation:
+      type: object
+      properties:
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        unit_price_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - started_at
+        - expired_at
+        - unit_price_minor_units
+        - evidenceRefs
+        - _links
     representation_product-http:
       type: object
       properties:
@@ -95,6 +1565,5 @@ components:
         - name
         - _links
 x-generated-from: fm-api-design projection.json
-x-fm-api-design-schema-version: '3.0'
+x-fm-api-design-schema-version: '4.0'
 x-runtime-validated: false
-x-fm-http-scope: selected

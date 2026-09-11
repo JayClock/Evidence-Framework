@@ -15,9 +15,7 @@ cli_tests = importlib.import_module("test_cli")
 
 
 def api_fixture():
-    api = design()
-    api["http"] = fixture()[1]
-    return api
+    return design()
 
 
 class HttpCliTest(unittest.TestCase):
@@ -29,7 +27,7 @@ class HttpCliTest(unittest.TestCase):
             path = parent / "api.yaml"
             path.write_text(yaml.safe_dump(api_fixture(), allow_unicode=True))
             before = path.read_bytes()
-            checked = self.command("check", "--api", str(path), "--require-complete")
+            checked = self.command("check", "--api", str(path))
             self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
             self.assertTrue(
                 json.loads(checked.stdout)["projection"]["http"]["complete"]
@@ -100,7 +98,7 @@ class HttpCliTest(unittest.TestCase):
             self.assertIn("OUTPUT_INPUT_CONFLICT", result.stderr)
             self.assertEqual(path.read_bytes(), before)
 
-    def test_invalid_document_and_incomplete_scope_have_distinct_exit_codes(self):
+    def test_invalid_document_and_incomplete_contracts_have_distinct_exit_codes(self):
         api = api_fixture()
         api["http"]["journeys"] = []
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
@@ -113,11 +111,10 @@ class HttpCliTest(unittest.TestCase):
                 str(path),
                 "--out",
                 str(output),
-                "--require-complete",
             )
             self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
             self.assertFalse(output.exists())
-            path.write_text("schemaVersion: '3.0'\nhttp: {operations: [null]}\n")
+            path.write_text("schemaVersion: '4.0'\nhttp: {operations: [null]}\n")
             result = self.command("check", "--api", str(path))
             self.assertEqual(result.returncode, 1)
             self.assertNotIn("Traceback", result.stderr)

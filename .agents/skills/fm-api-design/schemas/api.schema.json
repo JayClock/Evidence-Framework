@@ -1,11 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/fm-api-design/v3/api.schema.json",
+  "$id": "https://evidence.local/fm-api-design/v4/api.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
     "id",
-    "scope",
     "sources",
     "decisions",
     "resources",
@@ -14,24 +13,15 @@
     "capabilities",
     "representations",
     "journeys",
-    "http"
+    "http",
+    "nonApiActivities"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "3.0"
+      "const": "4.0"
     },
     "id": {
       "$ref": "#/$defs/id"
-    },
-    "scope": {
-      "type": "object",
-      "required": ["contextRefs"],
-      "properties": {
-        "contextRefs": {
-          "$ref": "#/$defs/ids"
-        }
-      },
-      "additionalProperties": false
     },
     "sources": {
       "type": "array",
@@ -82,14 +72,26 @@
       }
     },
     "http": {
-      "oneOf": [
-        {
-          "type": "null"
+      "$ref": "#/$defs/http"
+    },
+    "nonApiActivities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entityRef", "handling", "basis"],
+        "properties": {
+          "entityRef": {
+            "$ref": "#/$defs/id"
+          },
+          "handling": {
+            "enum": ["internal", "external"]
+          },
+          "basis": {
+            "$ref": "#/$defs/basis"
+          }
         },
-        {
-          "$ref": "#/$defs/http"
-        }
-      ]
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false,
@@ -1138,21 +1140,8 @@
     },
     "http": {
       "type": "object",
-      "required": [
-        "scopeCapabilityRefs",
-        "representations",
-        "operations",
-        "journeys"
-      ],
+      "required": ["representations", "operations", "journeys"],
       "properties": {
-        "scopeCapabilityRefs": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/httpText"
-          }
-        },
         "representations": {
           "type": "array",
           "items": {

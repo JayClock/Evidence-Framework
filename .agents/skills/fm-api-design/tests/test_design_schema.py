@@ -62,7 +62,7 @@ class DesignSchemaTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "api.yaml"
             path.write_text(
-                "schemaVersion: '3.0'\nschemaVersion: '3.0'\n", encoding="utf-8"
+                "schemaVersion: '4.0'\nschemaVersion: '4.0'\n", encoding="utf-8"
             )
             value, diagnostics = api_loader.load_api(path)
         self.assertIsNone(value)

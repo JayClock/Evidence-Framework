@@ -52,9 +52,7 @@ class HypermediaTest(unittest.TestCase):
                 _, diagnostics = hypermedia_module.validate_representations(
                         value, index(), resources, []
                 )
-                self.assertIn(
-                        "LINK_GET_UNSELECTED", {item.code for item in diagnostics}
-                )
+                self.assertIn("LINK_GET_MISSING", {item.code for item in diagnostics})
 
 
 if __name__ == "__main__":

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import re
-from itertools import product
 from typing import Any
 
 from fm_api_core.diagnostics import Diagnostic, error, gap
-
-_METHODS = ("DELETE", "GET", "PATCH", "POST", "PUT")
 
 
 def _has_basis(item: dict[str, Any]) -> bool:
@@ -20,39 +17,14 @@ def _has_basis(item: dict[str, Any]) -> bool:
 
 def project_capabilities(
     design: dict[str, Any], index: Any, resources: list[dict[str, Any]]
-) -> tuple[
-    list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[Diagnostic]
-]:
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[Diagnostic]]:
     diagnostics: list[Diagnostic] = []
     resources_by_id = {item["id"]: item for item in resources}
     bindings = {item["id"]: item for item in design.get("bindings", [])}
     scenario_design = {item["id"]: item for item in design.get("scenarios", [])}
     decisions = {item["id"] for item in design.get("decisions", [])}
-    selected_contexts = set(design.get("scope", {}).get("contextRefs", []))
-    for context_ref in sorted(selected_contexts):
-        entity = index.entities.get(context_ref)
-        if not entity or entity.get("category") != "context":
-            diagnostics.append(
-                error(
-                    "FM_REF_NOT_FOUND",
-                    f"范围 Context 不存在: {context_ref}",
-                    context_ref,
-                )
-            )
-    roles = sorted(
-        entity["id"]
-        for entity in index.entities.values()
-        if entity.get("category") == "role"
-        and (
-            entity.get("contextRef") in selected_contexts
-            or index.fulfillment_parent.get(entity.get("contextRef", ""))
-            in selected_contexts
-        )
-    )
-    declared: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    declared: set[tuple[str, str, str, str]] = set()
     projected: list[dict[str, Any]] = []
-    rejected_keys: set[tuple[str, str, str, str]] = set()
-    unresolved_keys: set[tuple[str, str, str, str]] = set()
 
     for capability in sorted(
         design.get("capabilities", []), key=lambda item: item["id"]
@@ -63,8 +35,18 @@ def project_capabilities(
             capability["view"],
             capability["method"],
         )
-        declared[key] = capability
+        if key in declared:
+            diagnostics.append(
+                error(
+                    "CAPABILITY_DUPLICATE",
+                    "同角色、资源、视图和方法重复声明",
+                    capability["id"],
+                )
+            )
+            continue
+        declared.add(key)
         local_errors = False
+        unresolved = False
         role = index.entities.get(capability["actorRoleRef"])
         resource = resources_by_id.get(capability["resourceRef"])
         target = index.entities.get(capability["effect"]["targetRef"])
@@ -89,7 +71,13 @@ def project_capabilities(
             )
             local_errors = True
         if resource and capability["view"] not in resource["uris"]:
-            diagnostics.append(error("RESOURCE_VIEW_INVALID", "能力视图不属于该业务资源的寻址形态", capability["id"]))
+            diagnostics.append(
+                error(
+                    "RESOURCE_VIEW_INVALID",
+                    "能力视图不属于该业务资源的寻址形态",
+                    capability["id"],
+                )
+            )
             local_errors = True
         if target is None:
             diagnostics.append(
@@ -207,7 +195,7 @@ def project_capabilities(
                     (capability["actorRoleRef"],),
                 )
             )
-            unresolved_keys.add(key)
+            unresolved = True
         if (
             resource
             and resource.get("parentBindingRef")
@@ -223,7 +211,7 @@ def project_capabilities(
                     (resource["parentBindingRef"],),
                 )
             )
-            unresolved_keys.add(key)
+            unresolved = True
         if resource and target and target["id"] != resource["entityRef"]:
             diagnostics.append(
                 error(
@@ -244,11 +232,10 @@ def project_capabilities(
                     capability["id"],
                 )
             )
-            unresolved_keys.add(key)
+            unresolved = True
         if local_errors or resource is None or role is None:
-            rejected_keys.add(key)
             continue
-        if key in unresolved_keys:
+        if unresolved:
             continue
         uri = resource["uris"][capability["view"]]
         projected.append(
@@ -256,34 +243,6 @@ def project_capabilities(
                 **capability,
                 "roleLabel": role.get("label", role["id"]),
                 "uri": uri,
-                "status": "candidate",
-            }
-        )
-
-    exploration: list[dict[str, Any]] = []
-    resource_views = [(ref, view) for ref in sorted(resources_by_id)
-                      for view in resources_by_id[ref]["uris"]]
-    for role_ref, (resource_id, view), method in product(
-        roles, resource_views, _METHODS
-    ):
-        key = (role_ref, resource_id, view, method)
-        state = (
-            "rejected"
-            if key in rejected_keys
-            else "unresolved"
-            if key in unresolved_keys
-            else "candidate"
-            if key in declared
-            else "unselected"
-        )
-        exploration.append(
-            {
-                "actorRoleRef": role_ref,
-                "resourceRef": resource_id,
-                "view": view,
-                "method": method,
-                "status": state,
-                "capabilityRef": declared.get(key, {}).get("id"),
             }
         )
 
@@ -337,4 +296,4 @@ def project_capabilities(
                 ],
             }
         )
-    return projected, exploration, operations, diagnostics
+    return projected, operations, diagnostics

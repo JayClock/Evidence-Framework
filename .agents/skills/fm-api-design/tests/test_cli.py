@@ -75,7 +75,6 @@ class CliTest(unittest.TestCase):
                     str(api),
                     "--out",
                     str(output),
-                    "--require-complete",
                 ],
                 check=False,
                 capture_output=True,
@@ -106,7 +105,7 @@ class CliTest(unittest.TestCase):
     def test_check_and_project_are_deterministic(self) -> None:
         checked = self.command("check", "--api", str(API_PATH))
         self.assertEqual(checked.returncode, 0, checked.stderr)
-        self.assertEqual(json.loads(checked.stdout)["candidateCount"], 1)
+        self.assertEqual(json.loads(checked.stdout)["interfaceCount"], 2)
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
             parent = Path(directory)
             first = parent / "one"

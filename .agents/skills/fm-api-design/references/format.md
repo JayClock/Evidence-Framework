@@ -2,22 +2,35 @@
 
 ## 唯一设计输入
 
-项目使用一份 `api.yaml`，默认位于项目根的 `.evidence/api/api.yaml`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: '3.0'`。完整约束见 `schemas/api.schema.json`；对象拒绝未知字段、重复 ID、重复 YAML key、多文档、非 JSON 值和循环结构。
+项目使用一份 `api.yaml`，默认位于项目根的 `.evidence/api/api.yaml`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: '4.0'`。完整约束见 `schemas/api.schema.json`；对象拒绝未知字段、重复 ID、重复 YAML key、多文档、非 JSON 值和循环结构。
 
-| 字段                   | 职责                                        |
-| ---------------------- | ------------------------------------------- |
-| `schemaVersion`、`id`  | 文件格式与稳定 API 设计身份                 |
-| `scope.contextRefs`    | 本次选择的业务责任范围                      |
-| `sources`、`decisions` | 已有来源与明确技术选择                      |
-| `resources`            | 业务名称、FM 对象、路径、身份和数量         |
-| `bindings`             | caller_role、parent_child 实例约束          |
-| `scenarios`            | API 场景到 FM validation scenario 的引用    |
-| `capabilities`         | 角色、视图、方法、效果、场景、规则与依据    |
-| `representations`      | 资源字段和导航草图                          |
-| `journeys`             | FM 场景步骤回映                             |
-| `http`                 | 具体 HTTP 设计范围；未选择时必须显式为 null |
+| 字段                   | 职责                                     |
+| ---------------------- | ---------------------------------------- |
+| `schemaVersion`、`id`  | 文件格式与稳定 API 设计身份              |
+| `nonApiActivities`     | 整体 FM 中真实的内部或外部活动及其依据   |
+| `sources`、`decisions` | 已有来源与明确技术选择                   |
+| `resources`            | 业务名称、FM 对象、路径、身份和数量      |
+| `bindings`             | caller_role、parent_child 实例约束       |
+| `scenarios`            | API 场景到 FM validation scenario 的引用 |
+| `capabilities`         | 角色、视图、方法、效果、场景、规则与依据 |
+| `representations`      | 资源字段和导航草图                       |
+| `journeys`             | FM 场景步骤回映                          |
+| `http`                 | 所有接口的完整 HTTP 契约，必须为对象     |
 
-`http` 为对象时包含 `scopeCapabilityRefs/representations/operations/journeys`。它没有独立的文件身份或版本，引用本文件的候选。详见 [HTTP 契约](contracts.md)。草图描述资源关系，HTTP 表示描述实际请求响应，不把未展开的草图假定为完整协议。
+`http` 包含 `representations/operations/journeys`，没有独立身份、版本或范围选择。每个顶层 capability 都必须有 operation 和成功 HTTP 消费步骤。详见 [HTTP 契约](contracts.md)。顶层表示图只辅助解释资源关系，不能代替完整 HTTP 契约。
+
+全模型覆盖由 CLI 从当前 FM 推导，不接受 Context 子集。`nonApiActivities` 的每项包含 `entityRef`、`handling: internal|external`、`basis`，用于说明实际非接口活动，不用于排除尚未设计的接口。对象已有接口时不能同时声明为非接口活动；Basis 必须引用该 FM 对象或真实业务来源。
+
+```yaml
+nonApiActivities:
+  - entityRef: confirmation.wechat-payment
+    handling: external
+    basis:
+      fmRefs: [confirmation.wechat-payment, context.wechat-payment]
+      reasoning: 外部支付主体提供既有结果，本服务使用该证据而不代替其提供接口
+```
+
+上游确认状态只作为来源元数据保留，不在此设置再次审核流程。
 
 每个业务判断项使用 basis：
 
@@ -85,9 +98,9 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 
 ## 输出
 
-`project --out <新目录>` 默认使用 `.evidence/api/generated/<批次>/`（相对项目根；命令传绝对路径），向已确认且尚不存在的目录固定生成：
+`project --out <新目录>` 默认使用 `.evidence/api/generated/<批次>/`（相对项目根；命令传绝对路径），按生成请求向尚不存在的批次目录固定生成，不另设目录确认步骤：
 
-- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、候选、HTTP 设计及全部诊断。
+- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、全部接口、整体 `contextRefs`／`modelCoverage`、HTTP 契约及诊断。
 - `api-capabilities.md`：四列表。
 - `design-report.md`：资源、操作、草图和业务步骤覆盖。
 - `api-contracts.md`：HTTP 请求响应、表示及消费流程。
@@ -96,7 +109,7 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 - `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
-`http: null` 对应投影中的 `http: null`，HTTP 报告明确未选择，流程为 not_evaluated，样例为空；不将未选择解释为已完成契约。`--require-complete` 只检查本次声明范围。
+HTTP 文档必须存在。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。
 
 资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。
 

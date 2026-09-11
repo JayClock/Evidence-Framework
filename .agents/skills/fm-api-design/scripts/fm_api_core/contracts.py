@@ -1,4 +1,4 @@
-"""Contract refinement of existing candidates. No endpoint discovery or FM writes."""
+"""Complete HTTP contracts for every declared interface; FM stays read-only."""
 
 from __future__ import annotations
 
@@ -199,19 +199,16 @@ def _operations(
         if ref in seen:
             diagnostics.append(error("CONTRACT_DUPLICATE", "能力契约重复", ref))
         seen.add(ref)
-        if not capability or ref not in contract["scopeCapabilityRefs"]:
+        if not capability:
             diagnostics.append(
-                error("CONTRACT_CAPABILITY_REF", "契约不能新增能力或越过显式范围", ref)
+                error("CONTRACT_CAPABILITY_REF", "契约引用的接口不存在或无效", ref)
             )
             continue
         diagnostics.extend(_cache_headers(operation, by_id))
-        scoped = {
-            key: value
-            for key, value in capabilities.items()
-            if key in contract["scopeCapabilityRefs"]
-        }
         diagnostics.extend(
-            _operation_checks(operation, capability, by_id, scoped, resources, index)
+            _operation_checks(
+                operation, capability, by_id, capabilities, resources, index
+            )
         )
         result.append(
             {
@@ -223,13 +220,13 @@ def _operations(
                 "ruleBindings": capability.get("ruleBindings", []),
             }
         )
-    for ref in sorted(set(contract["scopeCapabilityRefs"]) - seen):
+    for ref in sorted(set(capabilities) - seen):
         diagnostics.append(
             gap(
                 "CONTRACT_OPERATION_MISSING",
                 f"{ref}.http-contract",
                 "design",
-                "选定能力尚无 HTTP 契约",
+                "业务接口尚无 HTTP 契约",
                 ref,
             )
         )
@@ -259,11 +256,6 @@ def _operations(
 def build_http(contract: dict, projection: dict, index) -> dict:
     diagnostics = []
     capabilities = {item["id"]: item for item in projection["capabilities"]}
-    for ref in contract["scopeCapabilityRefs"]:
-        if ref not in capabilities:
-            diagnostics.append(
-                error("CONTRACT_CAPABILITY_REF", "范围引用不是有效 API 候选", ref)
-            )
     for section in ("representations", "journeys"):
         seen = set()
         for item in contract[section]:
@@ -280,13 +272,8 @@ def build_http(contract: dict, projection: dict, index) -> dict:
         contract, projection, representations, index
     )
     diagnostics.extend(operation_diagnostics)
-    scoped = {
-        ref: capabilities[ref]
-        for ref in contract["scopeCapabilityRefs"]
-        if ref in capabilities
-    }
     journeys, journey_diagnostics = journeys_module.check_journeys(
-        contract, scoped, operations, representations
+        contract, capabilities, operations, representations
     )
     diagnostics.extend(journey_diagnostics)
     covered = {
@@ -295,13 +282,13 @@ def build_http(contract: dict, projection: dict, index) -> dict:
         for step in journey.get("steps", [])
         if step["status"] == "mapped" and 200 <= step["expectStatus"] < 300
     }
-    for ref in sorted(set(scoped) - covered):
+    for ref in sorted(set(capabilities) - covered):
         diagnostics.append(
             gap(
                 "HTTP_FLOW_UNCOVERED",
                 f"{ref}.consumer-flow",
                 "coverage",
-                "所选能力尚无可静态映射的成功消费步骤；失败或仅 304 回放不替代成功路径",
+                "接口尚无可静态映射的成功消费步骤；失败或仅 304 回放不替代成功路径",
                 ref,
             )
         )
@@ -310,7 +297,6 @@ def build_http(contract: dict, projection: dict, index) -> dict:
         key=lambda item: (item.severity, item.code, item.targetRef or "", item.message),
     )
     return {
-        "scopeCapabilityRefs": sorted(contract["scopeCapabilityRefs"]),
         "complete": not diagnostics and not projection["diagnostics"],
         "runtimeValidated": False,
         "representations": representations,

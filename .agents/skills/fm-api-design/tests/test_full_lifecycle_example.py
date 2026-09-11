@@ -39,7 +39,6 @@ class FullLifecycleExampleTest(unittest.TestCase):
                 str(FM_SKILL),
                 "--api",
                 str(example / "api.yaml"),
-                "--require-complete",
             ],
             check=False,
             capture_output=True,
@@ -49,7 +48,7 @@ class FullLifecycleExampleTest(unittest.TestCase):
         self.assertEqual(api_check.returncode, 0, api_check.stderr)
         report = json.loads(api_check.stdout)
         self.assertTrue(report["complete"])
-        self.assertEqual(report["candidateCount"], 13)
+        self.assertEqual(report["interfaceCount"], 13)
         self.assertEqual(report["projection"]["inputDigests"]["sources"], {})
         openapi = importlib.import_module("fm_api_core.openapi")
         renderer = importlib.import_module("fm_api_core.renderer")

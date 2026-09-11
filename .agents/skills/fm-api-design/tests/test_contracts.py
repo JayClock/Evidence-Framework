@@ -14,8 +14,13 @@ projector = importlib.import_module("fm_api_core.projector")
 
 def fixture():
     projection = projector.build_projection(design(), index(), REPO_ROOT, "fixture")
+    # HTTP component fixture; whole-model coverage is exercised separately.
+    projection["capabilities"] = [
+        item
+        for item in projection["capabilities"]
+        if item["id"] == "capability.request-payment"
+    ]
     contract = {
-        "scopeCapabilityRefs": ["capability.request-payment"],
         "representations": [
             {
                 "id": "representation.payment",
@@ -157,7 +162,7 @@ class ContractTest(unittest.TestCase):
         }
         self.assertIn("CONTRACT_SCHEMA_UNSUPPORTED", self.codes(self.build(contract)))
 
-    def test_wrong_model_field_and_unknown_candidate_fail(self):
+    def test_wrong_model_field_and_unknown_interface_fail(self):
         _, contract = fixture()
         contract["representations"][0]["fields"][1]["fmAttributeRef"] = (
             "request.content-payment#missing"
@@ -235,7 +240,6 @@ class ContractTest(unittest.TestCase):
             effect={"kind": "read", "targetRef": "request.content-payment"},
         )
         projection["capabilities"].append(read)
-        contract["scopeCapabilityRefs"].append(read["id"])
         operation = copy.deepcopy(contract["operations"][0])
         operation.update(
             capabilityRef=read["id"],
@@ -363,7 +367,11 @@ class ContractTest(unittest.TestCase):
                 "after=a%2Bb"
             )
         )
-        contract["scopeCapabilityRefs"].remove("capability.read-payment")
+        projection["capabilities"] = [
+            item
+            for item in projection["capabilities"]
+            if item["id"] != "capability.read-payment"
+        ]
         self.assertIn(
             "CONTRACT_PAGINATION", self.codes(self.build(contract, projection))
         )

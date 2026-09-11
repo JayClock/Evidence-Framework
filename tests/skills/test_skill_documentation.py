@@ -201,6 +201,21 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertIn("目标尚不存在", api)
         self.assertIn("FM 根目录之外", api)
 
+    def test_api_design_delivers_whole_model_without_selection_pipeline(self):
+        skill = ROOT / "fm-api-design"
+        retired = re.compile(
+            r"候选|candidate|exploration|unselected|scopeCapabilityRefs|require-complete|scope\.contextRefs",
+            re.I,
+        )
+        for folder in ("scripts", "references", "schemas", "assets", "evals"):
+            for path in (skill / folder).rglob("*"):
+                if path.suffix in {".py", ".md", ".yaml", ".json"}:
+                    self.assertNotRegex(path.read_text(), retired, str(path))
+        entry = (skill / "SKILL.md").read_text()
+        self.assertIn("已确认的整体 FM", entry)
+        self.assertIn("每个接口都必须有契约", entry)
+        self.assertIn("不重新组织业务确认", entry)
+
     def test_discovery_and_fm_do_not_copy_methods_or_long_paragraphs(self):
         def passages(skill: str) -> set[str]:
             result = set()

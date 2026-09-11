@@ -69,7 +69,7 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 
 询价、采购协议及商品是独立根集合。`confirmation` 表示业务中的支付确认、开票确认或发货确认，不是所有结果的默认名字。单例仅省略冗余路径 ID，实际凭证保留自身标识、责任及追加语义；静态基数校验不等于实现了运行时唯一性或重复提交策略。
 
-## API 候选
+## API 接口清单
 
 | Role   | URI                                                            | Method | Business Capability |
 | ------ | -------------------------------------------------------------- | ------ | ------------------- |
@@ -105,11 +105,12 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
-  --require-complete
+  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml"
 ```
 
-预期产生 13 个角色×接口候选，`complete: true`，且无缺口。[API 候选清单](api-capabilities.md) 是由当前 `api.yaml` 和 FM 确定性生成的人工审阅快照，不是另一份设计输入。
+API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。[接口清单](api-capabilities.md) 是当前完整设计的索引，不需要另行筛选或审核后才能生成接口。
+
+整体覆盖包含采购和微信支付的所有上下文：11 份采购业务凭证对应登记接口；商品对应两个角色读取接口；3 份微信支付凭证由外部主体形成；两个经办主体是角色身份依据，不生成无业务根据的人员管理接口。内部／外部处理在 `nonApiActivities` 中引用模型依据；不是省略接口的实施范围开关。
 
 ## 生成投影
 
@@ -123,14 +124,20 @@ mkdir -p "$PROJECT_ROOT/.evidence/api/generated"
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
   --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
-  --out "$PROJECT_ROOT/.evidence/api/generated/product-procurement" \
-  --require-complete
+  --out "$PROJECT_ROOT/.evidence/api/generated/product-procurement"
 ```
 
 ## HTTP 契约
 
-[api.yaml](api.yaml) 的 `http` 部分细化客户、供应商商品读取能力，包含 HAL 表示、私有缓存、ETag 和条件读取流程；不增加查询权限，不声称其他 11 个候选已具备 HTTP 契约。
+[api.yaml](api.yaml) 的 `http` 部分完整覆盖所有 13 个接口：
 
-上面的命令会同时检查候选与 HTTP 范围，生成固定八份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。示例的 `complete` 是静态样例检查，`runtimeValidated` 始终为 false。
+- 11 个登记接口提供请求字段、响应表示、201 Location、403／409／422 错误响应、幂等键、并发策略和成功消费流程。
+- 登记字段引用合成 FM 原始凭证记录；已有凭证通过 `evidenceRefs` 关联，服务端须核对实例归属、可见性及规则前提。业务时间不使用入库或回调时间替代。
+- 两个商品读取接口提供 HAL 表示、私有缓存、ETag；客户流程含基于前次响应头的 304 条件读取。失败或仅 304 不替代 2xx 成功覆盖。
+- HTTP 流程按角色描述入口及证据交接，FM 14 个签发步骤全部回映。微信支付活动仍是外部证据来源，不生成伪造的本地支付回调。
+
+缺少任一接口契约、成功消费步骤或整体对象／场景映射时，默认返回非零且不生成交付目录。
+
+上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定八份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
 
 字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/contracts.md)。

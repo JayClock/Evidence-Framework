@@ -87,7 +87,7 @@ def _links(
         capability = capabilities.get(link["capabilityRef"])
         if not capability:
             diagnostics.append(
-                error("CONTRACT_LINK_TARGET", "链接不指向当前范围内已选候选", target)
+                error("CONTRACT_LINK_TARGET", "链接未指向有效业务接口", target)
             )
             continue
         if set(representation["actorRoleRefs"]) != {capability["actorRoleRef"]}:
@@ -189,11 +189,7 @@ def _embed(representations: list) -> list:
 
 
 def build_representations(contract: dict, projection: dict, index) -> tuple[list, list]:
-    capabilities = {
-        item["id"]: item
-        for item in projection["capabilities"]
-        if item["id"] in contract["scopeCapabilityRefs"]
-    }
+    capabilities = {item["id"]: item for item in projection["capabilities"]}
     resources = {item["id"]: item for item in projection["resources"]}
     result, diagnostics = [], []
     for representation in sorted(
@@ -218,7 +214,7 @@ def build_representations(contract: dict, projection: dict, index) -> tuple[list
                 diagnostics.append(
                     error(
                         "CONTRACT_REPRESENTATION_ROLE",
-                        "表示角色不在该资源的已选能力范围内",
+                        "表示角色没有该资源的业务接口",
                         target,
                     )
                 )

@@ -1,4 +1,4 @@
-"""One API document owns candidate and HTTP declarations."""
+"""One API document owns the complete interface and HTTP design."""
 
 from __future__ import annotations
 
@@ -40,47 +40,33 @@ class ApiDocumentTest(unittest.TestCase):
             timeout=120,
         )
 
-    def test_single_document_without_http_has_explicit_unselected_scope(self):
+    def test_missing_http_is_rejected_without_writing_output(self):
         api = design()
-        api["schemaVersion"] = "3.0"
         api["http"] = None
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
             path = Path(directory) / "api.yaml"
             path.write_text(yaml.safe_dump(api, allow_unicode=True))
             before = path.read_bytes()
             checked = self.command("check", path)
-            self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
-            projection = json.loads(checked.stdout)["projection"]
-            self.assertEqual(projection["apiId"], api["id"])
-            self.assertEqual(projection["schemaVersion"], "3.0")
-            self.assertIsNone(projection["http"])
-            self.assertEqual(set(projection["inputDigests"]), {"fm", "api", "sources"})
+            self.assertEqual(checked.returncode, 1, checked.stdout + checked.stderr)
+            self.assertIn("DESIGN_INVALID", checked.stdout)
             out = Path(directory) / "out"
             generated = self.command("project", path, FM_ROOT, "--out", str(out))
-            self.assertEqual(
-                generated.returncode, 0, generated.stdout + generated.stderr
-            )
-            self.assertEqual(len(list(out.iterdir())), 8)
-            openapi = yaml.safe_load((out / "openapi.yaml").read_text())
-            self.assertEqual(openapi["openapi"], "3.1.0")
-            self.assertEqual(openapi["paths"], {})
-            self.assertEqual(openapi["x-fm-http-scope"], "unselected")
-            self.assertIn("未选择", (out / "api-contracts.md").read_text())
+            self.assertEqual(generated.returncode, 1)
+            self.assertFalse(out.exists())
             self.assertEqual(path.read_bytes(), before)
 
     def test_packaged_document_includes_http_without_another_input(self):
         example = API_ROOT / "assets/examples/full-lifecycle"
-        result = self.command(
-            "check", example / "api.yaml", example / "fm", "--require-complete"
-        )
+        result = self.command("check", example / "api.yaml", example / "fm")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report["candidateCount"], 13)
+        self.assertEqual(report["interfaceCount"], 13)
         self.assertTrue(report["complete"])
-        self.assertEqual(len(report["projection"]["http"]["operations"]), 2)
+        self.assertEqual(len(report["projection"]["http"]["operations"]), 13)
         self.assertFalse(report["projection"]["http"]["runtimeValidated"])
 
-    def test_http_scope_is_required_and_has_no_independent_identity(self):
+    def test_http_is_required_and_has_no_independent_identity(self):
         loader = importlib.import_module("fm_api_core.api_loader")
         api = design()
         api.pop("http", None)
@@ -92,7 +78,7 @@ class ApiDocumentTest(unittest.TestCase):
             api["http"] = importlib.import_module("test_contracts").fixture()[1]
             path.write_text(yaml.safe_dump(api))
             self.assertEqual(loader.load_api(path)[1], [])
-            for field, value in (("schemaVersion", "3.0"), ("id", "nested")):
+            for field, value in (("schemaVersion", "4.0"), ("id", "nested")):
                 api["http"][field] = value
                 path.write_text(yaml.safe_dump(api))
                 self.assertTrue(loader.load_api(path)[1])
@@ -105,7 +91,6 @@ class ApiDocumentTest(unittest.TestCase):
             "--fm",
             "--fm-skill",
             "--api",
-            "--require-complete",
         }
         for action in ("check", "project"):
             result = self.command(action, REPO_ROOT / "api.yaml", FM_ROOT, "--help")

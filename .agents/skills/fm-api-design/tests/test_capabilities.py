@@ -14,20 +14,23 @@ class CapabilitiesTest(unittest.TestCase):
         resources, _ = resources_module.build_resources(value, index())
         return capabilities_module.project_capabilities(value, index(), resources)
 
-    def test_supported_append_is_a_candidate(self) -> None:
-        candidates, exploration, operations, diagnostics = self.project(design())
+    def test_supported_append_is_an_interface(self) -> None:
+        interfaces, operations, diagnostics = self.project(design())
         self.assertEqual(
-            [item["id"] for item in candidates], ["capability.request-payment"]
+            [item["id"] for item in interfaces],
+            ["capability.request-payment", "capability.submit-confirmation"],
         )
         self.assertEqual(operations[0]["method"], "POST")
-        self.assertIn("candidate", {item["status"] for item in exploration})
+        self.assertTrue(all("status" not in item for item in interfaces))
         self.assertFalse([item for item in diagnostics if item.severity == "error"])
 
     def test_evidence_put_is_rejected(self) -> None:
         value = design()
         value["capabilities"][0]["method"] = "PUT"
-        candidates, _, _, diagnostics = self.project(value)
-        self.assertEqual(candidates, [])
+        interfaces, _, diagnostics = self.project(value)
+        self.assertNotIn(
+            "capability.request-payment", {item["id"] for item in interfaces}
+        )
         self.assertIn(
             "EVIDENCE_MUTATION_FORBIDDEN", {item.code for item in diagnostics}
         )
@@ -35,8 +38,10 @@ class CapabilitiesTest(unittest.TestCase):
     def test_missing_actor_scope_remains_a_gap(self) -> None:
         value = design()
         value["capabilities"][0]["bindingRefs"] = ["binding.request-subscription"]
-        candidates, _, _, diagnostics = self.project(value)
-        self.assertEqual(candidates, [])
+        interfaces, _, diagnostics = self.project(value)
+        self.assertNotIn(
+            "capability.request-payment", {item["id"] for item in interfaces}
+        )
         self.assertIn("ACTOR_SCOPE_UNRESOLVED", {item.code for item in diagnostics})
 
 

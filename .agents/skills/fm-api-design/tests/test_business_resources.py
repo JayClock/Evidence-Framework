@@ -14,10 +14,15 @@ hypermedia = importlib.import_module("fm_api_core.hypermedia")
 def singleton_case():
     value, model = design(), copy.deepcopy(index())
     child = value["resources"][1]
-    child.update(shape="singleton", segment="payment", identity={"kind": "parent_scoped"},
-                 cardinality={"relationshipRef": "relation.subscription-payment"})
+    child.update(
+        shape="singleton",
+        segment="payment",
+        identity={"kind": "parent_scoped"},
+        cardinality={"relationshipRef": "relation.subscription-payment"},
+    )
     model.relationships["relation.subscription-payment"] = {
-        "sourceRef": value["resources"][0]["entityRef"], "targetRef": child["entityRef"],
+        "sourceRef": value["resources"][0]["entityRef"],
+        "targetRef": child["entityRef"],
         "sourceCardinality": {"min": 1, "max": 1},
         "targetCardinality": {"min": 0, "max": 1},
     }
@@ -34,21 +39,32 @@ class BusinessResourcesTest(unittest.TestCase):
         projected, diagnostics = resources.build_resources(value, model)
         self.assertEqual(diagnostics, [])
         payment = next(r for r in projected if r["id"] == "resource.payment")
-        self.assertEqual(payment["uris"], {"singleton": "/subscriptions/{subscriptionId}/payment"})
+        self.assertEqual(
+            payment["uris"], {"singleton": "/subscriptions/{subscriptionId}/payment"}
+        )
         self.assertEqual(payment["parameters"], ["subscriptionId"])
-        selected, exploration, _, diagnostics = capabilities.project_capabilities(value, model, projected)
+        interfaces, operations, diagnostics = capabilities.project_capabilities(
+            value, model, projected
+        )
         self.assertEqual(diagnostics, [])
-        self.assertEqual(selected[0]["uri"], payment["uris"]["singleton"])
-        self.assertEqual({e["view"] for e in exploration if e["resourceRef"] == "resource.payment"}, {"singleton"})
+        self.assertEqual(interfaces[0]["uri"], payment["uris"]["singleton"])
+        self.assertEqual(
+            {e["view"] for e in operations if e["resourceRef"] == "resource.payment"},
+            {"singleton"},
+        )
 
     def test_one_to_one_is_not_a_collection(self):
         value, model = singleton_case()
-        value["resources"][1].update(shape="collection", identity=design()["resources"][1]["identity"])
+        value["resources"][1].update(
+            shape="collection", identity=design()["resources"][1]["identity"]
+        )
         self.assertIn("RESOURCE_CARDINALITY_CONFLICT", self.codes(value, model))
 
     def test_many_children_cannot_be_collapsed_to_singleton(self):
         value, model = singleton_case()
-        model.relationships["relation.subscription-payment"]["targetCardinality"]["max"] = "many"
+        model.relationships["relation.subscription-payment"]["targetCardinality"][
+            "max"
+        ] = "many"
         self.assertIn("RESOURCE_CARDINALITY_CONFLICT", self.codes(value, model))
 
     def test_quantity_is_directional(self):
@@ -56,8 +72,14 @@ class BusinessResourcesTest(unittest.TestCase):
         relation = model.relationships["relation.subscription-payment"]
         relation["sourceCardinality"]["max"] = "many"
         self.assertEqual(self.codes(value, model), set())
-        relation["sourceRef"], relation["targetRef"] = relation["targetRef"], relation["sourceRef"]
-        relation["sourceCardinality"], relation["targetCardinality"] = relation["targetCardinality"], relation["sourceCardinality"]
+        relation["sourceRef"], relation["targetRef"] = (
+            relation["targetRef"],
+            relation["sourceRef"],
+        )
+        relation["sourceCardinality"], relation["targetCardinality"] = (
+            relation["targetCardinality"],
+            relation["sourceCardinality"],
+        )
         self.assertEqual(self.codes(value, model), set())
 
     def test_missing_quantity_remains_a_gap(self):
@@ -69,7 +91,9 @@ class BusinessResourcesTest(unittest.TestCase):
 
     def test_unrelated_or_unknown_quantity_reference_is_rejected(self):
         value, model = singleton_case()
-        model.relationships["relation.subscription-payment"]["sourceRef"] = "request.unrelated"
+        model.relationships["relation.subscription-payment"]["sourceRef"] = (
+            "request.unrelated"
+        )
         self.assertIn("CARDINALITY_SCOPE_INVALID", self.codes(value, model))
         model.relationships.pop("relation.subscription-payment")
         self.assertIn("FM_REF_NOT_FOUND", self.codes(value, model))
@@ -81,7 +105,11 @@ class BusinessResourcesTest(unittest.TestCase):
 
     def test_unknown_business_source_is_rejected(self):
         value, model = singleton_case()
-        value["resources"][1]["cardinality"] = {"max": 1, "sourceRefs": ["source.unknown"], "reasoning": "明确数量"}
+        value["resources"][1]["cardinality"] = {
+            "max": 1,
+            "sourceRefs": ["source.unknown"],
+            "reasoning": "明确数量",
+        }
         self.assertIn("SOURCE_REF_NOT_FOUND", self.codes(value, model))
 
     def test_singleton_requires_parent_scope_and_no_child_parameter(self):
@@ -97,43 +125,77 @@ class BusinessResourcesTest(unittest.TestCase):
         value["resources"][1]["segment"] = "fee-settlement"
         result, diagnostics = resources.build_resources(value, model)
         self.assertEqual(diagnostics, [])
-        self.assertTrue(next(r for r in result if r["id"] == "resource.payment")["uris"]["singleton"].endswith("/fee-settlement"))
+        self.assertTrue(
+            next(r for r in result if r["id"] == "resource.payment")["uris"][
+                "singleton"
+            ].endswith("/fee-settlement")
+        )
 
     def test_collection_view_on_singleton_is_rejected(self):
         value, model = singleton_case()
         value["capabilities"][0]["view"] = "collection"
         projected, _ = resources.build_resources(value, model)
-        selected, _, _, diagnostics = capabilities.project_capabilities(value, model, projected)
-        self.assertEqual(selected, [])
+        interfaces, _, diagnostics = capabilities.project_capabilities(
+            value, model, projected
+        )
+        self.assertNotIn(
+            "capability.request-payment", {item["id"] for item in interfaces}
+        )
         self.assertIn("RESOURCE_VIEW_INVALID", {d.code for d in diagnostics})
 
     def test_singleton_does_not_allow_overwriting_evidence(self):
         value, model = singleton_case()
         value["capabilities"][0]["method"] = "PUT"
         projected, _ = resources.build_resources(value, model)
-        selected, _, _, diagnostics = capabilities.project_capabilities(value, model, projected)
-        self.assertEqual(selected, [])
+        interfaces, _, diagnostics = capabilities.project_capabilities(
+            value, model, projected
+        )
+        self.assertNotIn(
+            "capability.request-payment", {item["id"] for item in interfaces}
+        )
         self.assertIn("EVIDENCE_MUTATION_FORBIDDEN", {d.code for d in diagnostics})
 
     def test_hypermedia_can_target_singleton_without_inventing_get(self):
         value, model = singleton_case()
-        value["representations"] = [{
-            "id": "representation.subscription", "resourceRef": "resource.subscription",
-            "view": "item", "format": "hal", "fields": [],
-            "links": [{"rel": "payment", "targetResourceRef": "resource.payment",
-                       "targetView": "singleton", "capabilityRef": value["capabilities"][0]["id"],
-                       "parameterBindings": [{"parameter": "subscriptionId", "fromParameter": "subscriptionId"}]}],
-        }]
+        value["representations"] = [
+            {
+                "id": "representation.subscription",
+                "resourceRef": "resource.subscription",
+                "view": "item",
+                "format": "hal",
+                "fields": [],
+                "links": [
+                    {
+                        "rel": "payment",
+                        "targetResourceRef": "resource.payment",
+                        "targetView": "singleton",
+                        "capabilityRef": value["capabilities"][0]["id"],
+                        "parameterBindings": [
+                            {
+                                "parameter": "subscriptionId",
+                                "fromParameter": "subscriptionId",
+                            }
+                        ],
+                    }
+                ],
+            }
+        ]
         projected, _ = resources.build_resources(value, model)
-        selected, _, _, _ = capabilities.project_capabilities(value, model, projected)
-        result, diagnostics = hypermedia.validate_representations(value, model, projected, selected)
+        interfaces, _, _ = capabilities.project_capabilities(value, model, projected)
+        result, diagnostics = hypermedia.validate_representations(
+            value, model, projected, interfaces
+        )
         self.assertEqual(diagnostics, [])
         self.assertEqual(len(result), 1)
         value["representations"][0]["links"][0]["targetView"] = "item"
-        _, diagnostics = hypermedia.validate_representations(value, model, projected, selected)
+        _, diagnostics = hypermedia.validate_representations(
+            value, model, projected, interfaces
+        )
         self.assertIn("RESOURCE_VIEW_INVALID", {d.code for d in diagnostics})
         value["representations"][0]["view"] = "singleton"
-        _, diagnostics = hypermedia.validate_representations(value, model, projected, selected)
+        _, diagnostics = hypermedia.validate_representations(
+            value, model, projected, interfaces
+        )
         self.assertIn("RESOURCE_VIEW_INVALID", {d.code for d in diagnostics})
 
 

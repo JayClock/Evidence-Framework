@@ -11,28 +11,32 @@ class OpenApiProjectionTest(unittest.TestCase):
         self.assertTrue(API_ROOT.is_dir())
         return importlib.import_module("fm_api_core.openapi")
 
-    def test_unselected_http_scope_is_an_explicit_empty_contract(self):
+    def test_model_without_interfaces_has_an_explicit_empty_contract(self):
         document = self.module().build_openapi(
             {
                 "apiId": "api.subscription",
-                "schemaVersion": "3.0",
+                "schemaVersion": "4.0",
                 "capabilities": [],
-                "http": None,
+                "http": {
+                    "operations": [],
+                    "representations": [],
+                    "runtimeValidated": False,
+                },
             }
         )
         self.assertEqual(document["openapi"], "3.1.0")
         self.assertEqual(
             document["info"], {"title": "api.subscription", "version": "generated"}
         )
-        self.assertEqual(document["x-fm-api-design-schema-version"], "3.0")
+        self.assertEqual(document["x-fm-api-design-schema-version"], "4.0")
         self.assertEqual(document["paths"], {})
         self.assertEqual(document["components"]["schemas"], {})
-        self.assertEqual(document["x-fm-http-scope"], "unselected")
+        self.assertFalse(document["x-runtime-validated"])
 
     def test_shared_route_preserves_role_variants_and_http_contract(self):
         projection = {
             "apiId": "api.products",
-            "schemaVersion": "3.0",
+            "schemaVersion": "4.0",
             "capabilities": [
                 {"id": "capability.read-buyer", "businessCapability": "买方查看商品"},
                 {"id": "capability.read-seller", "businessCapability": "卖方查看商品"},
@@ -146,7 +150,7 @@ class OpenApiProjectionTest(unittest.TestCase):
         }
         projection = {
             "apiId": "api.procurement",
-            "schemaVersion": "3.0",
+            "schemaVersion": "4.0",
             "capabilities": [
                 {"id": "capability.read-quote", "businessCapability": "查看报价"},
                 {

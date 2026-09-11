@@ -61,14 +61,14 @@ def capabilities_markdown(projection: dict[str, Any]) -> str:
         for item in projection["capabilities"]
     )
     if not projection["capabilities"]:
-        rows.append(["—", "—", "—", "当前没有满足依据与约束的候选"])
+        rows.append(["—", "—", "—", "当前模型没有对外业务接口"])
     return "\n".join(
         [
-            "# API 能力候选",
+            "# API 接口清单",
             "",
             *_markdown_table(rows),
             "",
-            "> 本表是有来源的 API 候选，不是业务批准、完整 REST 契约或运行时授权配置。",
+            "> 本表是整体 FM 的接口索引；完整 HTTP 契约见 api-contracts.md 与 openapi.yaml，运行时授权仍由服务端执行。",
             "",
         ]
     )
@@ -80,8 +80,8 @@ def design_report(projection: dict[str, Any]) -> str:
         "",
         f"- 设计：`{projection['apiId']}`",
         f"- FM 状态：`{projection['fmReviewState'].get('modelStatus')}`",
-        f"- 候选数：{len(projection['capabilities'])}",
-        f"- 探索项：{len(projection['exploration'])}",
+        f"- 接口数（含角色变体）：{len(projection['capabilities'])}",
+        f"- 整体 Context 数：{len(projection['contextRefs'])}",
         "",
         "## 资源",
         "",
@@ -92,6 +92,13 @@ def design_report(projection: dict[str, Any]) -> str:
             + " / ".join(f"`{uri}`" for uri in resource["uris"].values())
             + f" → `{resource['entityRef']}`"
         )
+    lines.extend(["", "## 整体模型覆盖", ""])
+    for item in projection["modelCoverage"]:
+        lines.append(
+            f"- `{item['entityRef']}`：{item['handling']}；接口：{', '.join(item['capabilityRefs']) or '—'}"
+        )
+        if item.get("basis"):
+            lines.append(f"  - 依据：{item['basis']['reasoning']}")
     lines.extend(["", "## HTTP 操作", ""])
     for operation in projection["operations"]:
         lines.append(
@@ -121,7 +128,7 @@ def design_report(projection: dict[str, Any]) -> str:
             )
     else:
         lines.append(
-            "- 本次静态投影未发现错误或范围内缺口；这不表示运行验证或业务批准已经完成。"
+            "- 整体模型与接口静态检查未发现错误或缺口；不代表服务端实现或运行验收已经完成。"
         )
     lines.extend(
         [
@@ -150,15 +157,11 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
     outputs["http-journeys.json"] = canonical_json(
         {
             "runtimeValidated": False,
-            "journeys": http["journeys"]
-            if http is not None
-            else [{"status": "not_evaluated", "reason": "未选择 HTTP 设计范围"}],
+            "journeys": http["journeys"],
         }
     )
     outputs["representation-examples.json"] = canonical_json(
         {item["id"]: item["example"] for item in http["representations"]}
-        if http is not None
-        else {}
     )
     outputs["openapi.yaml"] = openapi_module.render_openapi(projection)
     dependencies: dict[str, str] = {}
@@ -173,7 +176,7 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         for name in ("api.schema.json", "api-projection.schema.json")
     }
     manifest = {
-        "schemaVersion": "3.0",
+        "schemaVersion": "4.0",
         "apiId": projection["apiId"],
         "tool": {
             "name": "fm-api-design",
