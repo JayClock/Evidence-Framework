@@ -1,0 +1,29 @@
+{
+  "skill_name": "fm-api-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "基于合成维修 FM 和已有维修场景，生成角色、URI、Method、Business Capability 四列表，并保留实例范围与未决项。",
+      "expected_output": "先 inspect，形成有来源设计，check 后仅向新目录 project；不自动 CRUD、审批或扩大维修方权限。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这里只有一个 FM 目录，没有可引用的读取场景。请设计完整 REST API。",
+      "expected_output": "识别业务场景依据不足，保留读取能力 gap，不从 FM 类型机械生成完整 CRUD。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "只校验 docs/api/design.yaml，不要修改任何文件。",
+      "expected_output": "仅执行 inspect/check，报告引用、实例约束、HTTP 语义和覆盖诊断，不执行 project 或改写输入。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "我们先讨论一下如何把 FM 映射成 API，不要写文件。",
+      "expected_output": "只讨论资源、角色场景、约束、超媒体和流程回映方法，不把讨论当生成授权。",
+      "files": []
+    }
+  ]
+}

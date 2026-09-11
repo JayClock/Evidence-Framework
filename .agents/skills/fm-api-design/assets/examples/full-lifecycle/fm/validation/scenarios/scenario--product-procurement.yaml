@@ -1,0 +1,102 @@
+type: fm_scenario
+id: scenario.product-procurement
+label: 商品采购协议完整履约
+asOf: '2026-11-06T10:00:00Z'
+steps:
+  - sequence: 1
+    actingRoleRef: role.sourcing-customer
+    issueInstanceRef: instance.product-inquiry
+  - sequence: 2
+    actingRoleRef: role.sourcing-supplier
+    issueInstanceRef: instance.product-quotation
+    availableInstanceRefs:
+      - instance.product-inquiry
+  - sequence: 3
+    actingRoleRef: role.buyer
+    issueInstanceRef: instance.product-procurement
+    availableInstanceRefs:
+      - instance.product-quotation
+  - sequence: 4
+    actingRoleRef: role.seller
+    issueInstanceRef: instance.payment-request
+    availableInstanceRefs:
+      - instance.product-procurement
+  - sequence: 5
+    actingRoleRef: role.buyer
+    issueInstanceRef: instance.payment-confirmation
+    availableInstanceRefs:
+      - instance.payment-request
+  - sequence: 6
+    actingRoleRef: role.buyer-finance
+    issueInstanceRef: instance.payment-voucher
+    availableInstanceRefs:
+      - instance.payment-confirmation
+  - sequence: 7
+    actingRoleRef: role.buyer
+    issueInstanceRef: instance.invoice-request
+    availableInstanceRefs:
+      - instance.product-procurement
+  - sequence: 8
+    actingRoleRef: role.seller
+    issueInstanceRef: instance.invoice-confirmation
+    availableInstanceRefs:
+      - instance.invoice-request
+  - sequence: 9
+    actingRoleRef: role.seller-finance
+    issueInstanceRef: instance.invoice
+    availableInstanceRefs:
+      - instance.invoice-confirmation
+  - sequence: 10
+    actingRoleRef: role.buyer
+    issueInstanceRef: instance.delivery-request
+    availableInstanceRefs:
+      - instance.product-procurement
+  - sequence: 11
+    actingRoleRef: role.seller
+    issueInstanceRef: instance.delivery-confirmation
+    availableInstanceRefs:
+      - instance.delivery-request
+  - sequence: 12
+    actingRoleRef: role.seller-warehouse
+    issueInstanceRef: instance.delivery-note
+    availableInstanceRefs:
+      - instance.delivery-confirmation
+evaluations:
+  - ruleRef: rule.payment-completed
+    bindings:
+      request:
+        instanceRef: instance.payment-request
+      confirmations:
+        instanceRefs:
+          - instance.payment-confirmation
+    expectedResult: true
+  - ruleRef: rule.invoice-completed
+    bindings:
+      request:
+        instanceRef: instance.invoice-request
+      confirmations:
+        instanceRefs:
+          - instance.invoice-confirmation
+    expectedResult: true
+  - ruleRef: rule.delivery-completed
+    bindings:
+      request:
+        instanceRef: instance.delivery-request
+      confirmations:
+        instanceRefs:
+          - instance.delivery-confirmation
+    expectedResult: true
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.payment
+      requestInstanceRef: instance.payment-request
+      status: completed
+    - fulfillmentRef: fulfillment.invoice
+      requestInstanceRef: instance.invoice-request
+      status: completed
+    - fulfillmentRef: fulfillment.delivery
+      requestInstanceRef: instance.delivery-request
+      status: completed
+stakeholderReview:
+  status: pending
+notes: 完整示例补充了业务字段和实例数据。

@@ -1,0 +1,8 @@
+type: evidence_instance
+id: instance.invoice
+entityRef: evidence.invoice
+values:
+  created_at: '2026-11-05T09:05:00Z'
+  invoice_number: INV-001
+basedOn:
+  - instance.invoice-confirmation

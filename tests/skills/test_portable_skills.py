@@ -19,6 +19,7 @@ PORTABLE_NAMES = (
     "evidence-discovery",
     "evidence-fm",
     "evidence-requirements",
+    "fm-api-design",
     "fm-modeling",
 )
 WORKFLOW_NAMES = (

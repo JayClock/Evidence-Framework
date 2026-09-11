@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evidence.local/fm-api-design/v1/api-projection.schema.json",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "designId",
+    "inputDigests",
+    "fmCheckSummary",
+    "fmReviewState",
+    "resources",
+    "exploration",
+    "capabilities",
+    "operations",
+    "representations",
+    "coverage",
+    "diagnostics"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "designId": { "type": "string" },
+    "inputDigests": { "type": "object" },
+    "fmCheckSummary": { "type": "object" },
+    "fmReviewState": { "type": "object" },
+    "resources": { "type": "array" },
+    "exploration": { "type": "array" },
+    "capabilities": { "type": "array" },
+    "operations": { "type": "array" },
+    "representations": { "type": "array" },
+    "coverage": { "type": "array" },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "targetRef",
+          "location",
+          "relatedRefs",
+          "message"
+        ],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "enum": ["error", "gap", "warning"] },
+          "targetRef": { "type": ["string", "null"] },
+          "location": { "type": ["string", "null"] },
+          "relatedRefs": { "type": "array" },
+          "message": { "type": "string" },
+          "gapKey": { "type": "string" },
+          "category": {
+            "enum": ["business", "design", "expression", "coverage"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

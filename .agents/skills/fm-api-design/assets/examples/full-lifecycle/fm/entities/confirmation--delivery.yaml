@@ -1,0 +1,20 @@
+type: entity
+id: confirmation.delivery
+category: evidence
+kind: fulfillment_confirmation
+label: 发货确认
+contextRef: fulfillment.delivery
+responsibleRoleRef: role.seller
+attributes:
+  - name: confirmed_at
+    label: 发货确认时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 供应方形成发货确认结果的业务时间
+  - name: tracking_number
+    label: 物流单号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 供应方确认的物流单号

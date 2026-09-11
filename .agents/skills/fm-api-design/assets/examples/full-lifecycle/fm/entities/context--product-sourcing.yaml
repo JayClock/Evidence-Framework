@@ -1,0 +1,7 @@
+type: entity
+id: context.product-sourcing
+category: context
+kind: pre_contract
+label: 商品询报价上下文
+rootRefs:
+  - rfp.product-inquiry

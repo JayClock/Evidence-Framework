@@ -1,0 +1,6 @@
+type: relationship
+id: relation.buyer-agent-plays-sourcing-customer
+kind: plays_role
+sourceRef: party.buyer-agent
+targetRef: role.sourcing-customer
+label: 甲方采购员扮演询价客户

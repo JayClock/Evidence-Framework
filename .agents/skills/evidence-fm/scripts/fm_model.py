@@ -659,12 +659,16 @@ def fulfillment_contract(
 ) -> dict[str, Any] | None:
     """Resolve the single contract rooted in the parent Contract Context."""
     parent = entities.get(str(fulfillment.get("parentContextRef")))
-    contracts = [
-        entities[ref]
-        for ref in parent.get("rootRefs", [])
-        if ref in entities
-        and entity_signature(entities[ref]) == ("evidence", "contract")
-    ] if isinstance(parent, dict) else []
+    contracts = (
+        [
+            entities[ref]
+            for ref in parent.get("rootRefs", [])
+            if ref in entities
+            and entity_signature(entities[ref]) == ("evidence", "contract")
+        ]
+        if isinstance(parent, dict)
+        else []
+    )
     return contracts[0] if len(contracts) == 1 else None
 
 
@@ -715,9 +719,10 @@ def validate_fulfillment_contexts(
                 f"{fulfillment_id}: must define exactly one completion Rule; found {len(completion_rules)}"
             )
         for rule in context_rules:
-            if rule.get("kind") in {"completion", "breach"} and rule.get(
-                "resultType"
-            ) != "bool":
+            if (
+                rule.get("kind") in {"completion", "breach"}
+                and rule.get("resultType") != "bool"
+            ):
                 errors.append(
                     f"{rule['id']}: {rule['kind']} Rule resultType must be bool"
                 )
@@ -916,9 +921,9 @@ def validate_relationships(
                 and entities.get(target_context, {}).get("parentContextRef")
                 == source_context
             )
-            evidence_to_thing = (
-                source_sig[0] == "evidence"
-                and target_sig == ("participant", "thing")
+            evidence_to_thing = source_sig[0] == "evidence" and target_sig == (
+                "participant",
+                "thing",
             )
             if source_context != target_context and not (
                 (kind == "precedes" and (proposal_to_contract or contract_to_request))
@@ -941,7 +946,11 @@ def validate_relationships(
                 errors.append(
                     f"{relationship_id}: evidences requires Other Evidence -> Evidence"
                 )
-            elif kind == "references" and source_sig[0] == "evidence" and not evidence_to_thing:
+            elif (
+                kind == "references"
+                and source_sig[0] == "evidence"
+                and not evidence_to_thing
+            ):
                 errors.append(
                     f"{relationship_id}: Evidence references must target a Thing"
                 )

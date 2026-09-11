@@ -1,0 +1,9 @@
+type: evidence_instance
+id: instance.invoice-request
+entityRef: request.invoice
+values:
+  started_at: '2026-11-04T11:00:00Z'
+  expired_at: '2026-11-11T11:00:00Z'
+  invoice_title: 甲方公司
+basedOn:
+  - instance.product-procurement

@@ -1,0 +1,26 @@
+type: entity
+id: request.payment
+category: evidence
+kind: fulfillment_request
+label: 支付申请
+contextRef: fulfillment.payment
+responsibleRoleRef: role.seller
+attributes:
+  - name: started_at
+    label: 支付申请时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 供应方提出支付申请的业务时间
+  - name: expired_at
+    label: 支付截止时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 采购方完成支付的业务截止时间
+  - name: requested_minor_units
+    label: 申请支付金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 申请支付的最小货币单位整数金额

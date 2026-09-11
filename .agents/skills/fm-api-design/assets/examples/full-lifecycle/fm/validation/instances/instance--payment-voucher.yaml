@@ -1,0 +1,8 @@
+type: evidence_instance
+id: instance.payment-voucher
+entityRef: evidence.payment-voucher
+values:
+  created_at: '2026-11-04T10:05:00Z'
+  voucher_number: PAY-001
+basedOn:
+  - instance.payment-confirmation

@@ -1,0 +1,8 @@
+type: evidence_instance
+id: instance.payment-confirmation
+entityRef: confirmation.payment
+values:
+  confirmed_at: '2026-11-04T10:00:00Z'
+  paid_minor_units: 250000
+basedOn:
+  - instance.payment-request

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.rfp-product-inquiry-references-product
+kind: references
+sourceRef: rfp.product-inquiry
+targetRef: thing.product
+label: rfp.product-inquiry涉及采购商品

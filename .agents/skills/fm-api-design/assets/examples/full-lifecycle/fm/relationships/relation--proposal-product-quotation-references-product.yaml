@@ -1,0 +1,6 @@
+type: relationship
+id: relation.proposal-product-quotation-references-product
+kind: references
+sourceRef: proposal.product-quotation
+targetRef: thing.product
+label: proposal.product-quotation涉及采购商品

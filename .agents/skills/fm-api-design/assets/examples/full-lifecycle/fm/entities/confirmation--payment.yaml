@@ -1,0 +1,20 @@
+type: entity
+id: confirmation.payment
+category: evidence
+kind: fulfillment_confirmation
+label: 支付确认
+contextRef: fulfillment.payment
+responsibleRoleRef: role.buyer
+attributes:
+  - name: confirmed_at
+    label: 支付确认时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 采购方形成支付确认结果的业务时间
+  - name: paid_minor_units
+    label: 确认支付金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 采购方确认支付的最小货币单位整数金额

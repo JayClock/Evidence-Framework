@@ -1,0 +1,6 @@
+type: relationship
+id: relation.contract-product-procurement-references-product
+kind: references
+sourceRef: contract.product-procurement
+targetRef: thing.product
+label: contract.product-procurement涉及采购商品

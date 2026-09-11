@@ -1,0 +1,6 @@
+type: relationship
+id: relation.seller-finance-plays-seller-finance
+kind: plays_role
+sourceRef: party.seller-finance
+targetRef: role.seller-finance
+label: 乙方财务扮演供应方财务

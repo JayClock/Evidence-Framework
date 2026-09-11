@@ -1,0 +1,6 @@
+type: relationship
+id: relation.delivery-evidence-evidences-confirmation
+kind: evidences
+sourceRef: evidence.delivery-note
+targetRef: confirmation.delivery
+label: 发货凭证证明发货确认

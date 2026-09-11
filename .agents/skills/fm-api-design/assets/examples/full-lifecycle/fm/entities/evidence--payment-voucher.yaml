@@ -1,0 +1,20 @@
+type: entity
+id: evidence.payment-voucher
+category: evidence
+kind: other_evidence
+label: 支付凭证
+contextRef: fulfillment.payment
+responsibleRoleRef: role.buyer-finance
+attributes:
+  - name: created_at
+    label: 支付凭证形成时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 采购方财务形成支付凭证的业务时间
+  - name: voucher_number
+    label: 支付凭证号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 支付凭证的业务编号

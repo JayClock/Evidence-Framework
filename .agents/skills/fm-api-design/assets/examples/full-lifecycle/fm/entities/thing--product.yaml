@@ -1,0 +1,19 @@
+type: entity
+id: thing.product
+category: participant
+kind: thing
+label: 商品
+contextRef: context.product-catalog
+attributes:
+  - name: product_code
+    label: 商品编码
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 在商品目录中区分商品的编码
+  - name: name
+    label: 商品名称
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 商品的业务名称

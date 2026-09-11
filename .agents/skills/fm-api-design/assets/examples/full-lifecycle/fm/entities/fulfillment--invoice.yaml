@@ -1,0 +1,6 @@
+type: entity
+id: fulfillment.invoice
+category: context
+kind: fulfillment
+label: 开具发票
+parentContextRef: context.product-procurement

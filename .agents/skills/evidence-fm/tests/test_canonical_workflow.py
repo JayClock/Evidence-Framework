@@ -48,8 +48,7 @@ class CanonicalWorkflowGateTests(unittest.TestCase):
         fulfillments = [
             (path, value)
             for path, value in self.yaml_documents()
-            if (value.get("category"), value.get("kind"))
-            == ("context", "fulfillment")
+            if (value.get("category"), value.get("kind")) == ("context", "fulfillment")
         ]
         self.assertTrue(fulfillments)
         for path, fulfillment in fulfillments:
@@ -77,9 +76,7 @@ class CanonicalWorkflowGateTests(unittest.TestCase):
     def test_evidence_relationships_use_canonical_directions(self) -> None:
         documents = [value for _, value in self.yaml_documents()]
         entities = {
-            value["id"]: value
-            for value in documents
-            if value.get("type") == "entity"
+            value["id"]: value for value in documents if value.get("type") == "entity"
         }
         for relation in [d for d in documents if d.get("type") == "relationship"]:
             source = entities.get(relation.get("sourceRef"), {})

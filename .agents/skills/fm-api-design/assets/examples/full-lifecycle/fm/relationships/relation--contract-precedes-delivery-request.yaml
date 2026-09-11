@@ -1,0 +1,12 @@
+type: relationship
+id: relation.contract-precedes-delivery-request
+kind: precedes
+sourceRef: contract.product-procurement
+targetRef: request.delivery
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: 1
+label: 采购协议成立后可发起发货申请

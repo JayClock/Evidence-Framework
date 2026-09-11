@@ -1,0 +1,7 @@
+type: entity
+id: context.product-procurement
+category: context
+kind: contract
+label: 商品采购协议上下文
+rootRefs:
+  - contract.product-procurement

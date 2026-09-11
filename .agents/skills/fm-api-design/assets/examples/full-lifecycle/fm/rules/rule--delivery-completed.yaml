@@ -1,0 +1,15 @@
+type: rule
+id: rule.delivery-completed
+kind: completion
+label: delivery履约完成判断
+contextRef: fulfillment.delivery
+bindings:
+  request:
+    ref: request.delivery
+  confirmations:
+    ref: confirmation.delivery
+    cardinality: many
+expression:
+  confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at
+  <= request.expired_at)
+resultType: bool

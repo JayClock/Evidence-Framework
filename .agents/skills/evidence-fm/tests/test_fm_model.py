@@ -43,7 +43,9 @@ class FulfillmentModelTests(unittest.TestCase):
             encoding="utf-8",
         )
 
-    def test_valid_subscription_builds_fulfillment_members_from_context_refs(self) -> None:
+    def test_valid_subscription_builds_fulfillment_members_from_context_refs(
+        self,
+    ) -> None:
         model = load_model(self.fixture("valid-subscription"))
         self.assertEqual([], validate_model(model))
         fulfillment = model.fulfillment_contexts_by_id["fulfillment.content-payment"]
@@ -101,8 +103,12 @@ class FulfillmentModelTests(unittest.TestCase):
             self.write_yaml(path, fulfillment)
 
     def test_missing_confirmation_fails(self) -> None:
-        errors = validate_model(load_model(self.fixture("invalid-missing-confirmation")))
-        self.assertTrue(any("must contain a Fulfillment Confirmation" in e for e in errors))
+        errors = validate_model(
+            load_model(self.fixture("invalid-missing-confirmation"))
+        )
+        self.assertTrue(
+            any("must contain a Fulfillment Confirmation" in e for e in errors)
+        )
 
     def test_orphan_request_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -154,7 +160,9 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_cross_context_evidence_to_thing_reference_is_valid(self) -> None:
         model = load_model(self.fixture("valid-subscription"))
         self.assertEqual([], validate_model(model))
-        relation = model.relationships_by_id["relation.content-payment-references-content"]
+        relation = model.relationships_by_id[
+            "relation.content-payment-references-content"
+        ]
         self.assertEqual("request.content-payment", relation["sourceRef"])
         self.assertEqual("thing.content", relation["targetRef"])
 
@@ -213,20 +221,28 @@ class FulfillmentModelTests(unittest.TestCase):
             contract = self.read_yaml(path)
             contract["roleRefs"] = ["role.subscriber"]
             self.write_yaml(path, contract)
-            self.assertTrue(any("roleRefs" in e for e in validate_model(load_model(root))))
+            self.assertTrue(
+                any("roleRefs" in e for e in validate_model(load_model(root)))
+            )
 
     def test_request_interval_is_defined_by_required_key_time_attributes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
             path = root / "entities/request--content-payment.yaml"
             request = self.read_yaml(path)
-            started = next(a for a in request["attributes"] if a["name"] == "started_at")
+            started = next(
+                a for a in request["attributes"] if a["name"] == "started_at"
+            )
             started["keyData"] = False
             self.write_yaml(path, request)
             errors = validate_model(load_model(root))
-            self.assertTrue(any("required keyData timestamp" in e for e in errors), errors)
+            self.assertTrue(
+                any("required keyData timestamp" in e for e in errors), errors
+            )
 
-    def test_multi_contract_fixture_compiles_fulfillments_only_as_entities(self) -> None:
+    def test_multi_contract_fixture_compiles_fulfillments_only_as_entities(
+        self,
+    ) -> None:
         model = load_model(self.fixture("valid-content-platform"))
         self.assertEqual([], validate_model(model))
         document = compiled_document(model)
@@ -241,9 +257,13 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_business_pattern_and_compilation_are_deterministic(self) -> None:
         model = load_model(self.fixture("valid-content-platform"))
         self.assertEqual([], validate_model(model))
-        self.assertEqual(render_business_patterns(model), render_business_patterns(model))
+        self.assertEqual(
+            render_business_patterns(model), render_business_patterns(model)
+        )
         first = json.dumps(compiled_document(model), ensure_ascii=False, sort_keys=True)
-        second = json.dumps(compiled_document(model), ensure_ascii=False, sort_keys=True)
+        second = json.dumps(
+            compiled_document(model), ensure_ascii=False, sort_keys=True
+        )
         self.assertEqual(first, second)
 
 

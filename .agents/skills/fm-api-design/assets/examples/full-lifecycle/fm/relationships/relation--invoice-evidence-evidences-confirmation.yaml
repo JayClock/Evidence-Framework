@@ -1,0 +1,6 @@
+type: relationship
+id: relation.invoice-evidence-evidences-confirmation
+kind: evidences
+sourceRef: evidence.invoice
+targetRef: confirmation.invoice
+label: 开票凭证证明开票确认

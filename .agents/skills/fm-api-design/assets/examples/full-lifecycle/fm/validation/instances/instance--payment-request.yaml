@@ -1,0 +1,9 @@
+type: evidence_instance
+id: instance.payment-request
+entityRef: request.payment
+values:
+  started_at: '2026-11-03T09:00:00Z'
+  expired_at: '2026-11-10T09:00:00Z'
+  requested_minor_units: 250000
+basedOn:
+  - instance.product-procurement

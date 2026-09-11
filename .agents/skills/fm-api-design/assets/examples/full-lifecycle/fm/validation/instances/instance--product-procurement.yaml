@@ -1,0 +1,9 @@
+type: evidence_instance
+id: instance.product-procurement
+entityRef: contract.product-procurement
+values:
+  signed_at: '2026-11-02T10:00:00Z'
+  quantity: 100
+  total_minor_units: 250000
+basedOn:
+  - instance.product-quotation

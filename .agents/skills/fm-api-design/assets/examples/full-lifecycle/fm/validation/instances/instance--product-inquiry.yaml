@@ -1,0 +1,7 @@
+type: evidence_instance
+id: instance.product-inquiry
+entityRef: rfp.product-inquiry
+values:
+  started_at: '2026-11-01T09:00:00Z'
+  expired_at: '2026-11-03T09:00:00Z'
+  quantity: 100

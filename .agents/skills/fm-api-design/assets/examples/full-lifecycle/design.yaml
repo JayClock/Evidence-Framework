@@ -1,0 +1,942 @@
+schemaVersion: '1.0'
+id: api.product-procurement
+scope:
+  contextRefs:
+    - context.product-sourcing
+    - context.product-procurement
+    - context.product-catalog
+sources: []
+decisions:
+  - id: decision.api-identities
+    category: identity
+    statement: API 为资源分配稳定定位 ID
+    reasoning: ID 只用于 URI 定位，不回写 FM
+  - id: decision.context-roots
+    category: navigation
+    statement: 合同前、合同和领域 Context 使用独立 URI 根
+    reasoning: 跨 Context 使用超媒体链接，三个履约项沿采购协议根导航
+resources:
+  - id: resource.product
+    entityRef: thing.product
+    segment: products
+    identity:
+      kind: api_resource_id
+      parameter: productId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - thing.product
+      reasoning: 商品目录使用独立领域 Context URI 根
+  - id: resource.product-inquiry
+    entityRef: rfp.product-inquiry
+    segment: product-inquiries
+    identity:
+      kind: api_resource_id
+      parameter: inquiryId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - rfp.product-inquiry
+      reasoning: 商品询价是合同前 Context 的根资源
+  - id: resource.product-quotation
+    entityRef: proposal.product-quotation
+    segment: quotations
+    parentRef: resource.product-inquiry
+    parentBindingRef: binding.quotation-inquiry
+    identity:
+      kind: api_resource_id
+      parameter: quotationId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - proposal.product-quotation
+        - rfp.product-inquiry
+      reasoning: 商品报价属于指定询价
+  - id: resource.product-procurement
+    entityRef: contract.product-procurement
+    segment: product-procurements
+    identity:
+      kind: api_resource_id
+      parameter: procurementId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - contract.product-procurement
+      reasoning: 商品采购协议使用独立合同 Context URI 根
+  - id: resource.buyer-agent
+    entityRef: party.buyer-agent
+    segment: procurement-agents
+    identity:
+      kind: api_resource_id
+      parameter: agentId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - party.buyer-agent
+      reasoning: 甲方采购员作为可定位参与方
+  - id: resource.buyer-finance
+    entityRef: party.buyer-finance
+    segment: buyer-finance-members
+    identity:
+      kind: api_resource_id
+      parameter: financeMemberId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - party.buyer-finance
+      reasoning: 甲方财务作为可定位参与方
+  - id: resource.seller-sales
+    entityRef: party.seller-sales
+    segment: sales-representatives
+    identity:
+      kind: api_resource_id
+      parameter: salesRepresentativeId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - party.seller-sales
+      reasoning: 乙方销售作为可定位参与方
+  - id: resource.seller-finance
+    entityRef: party.seller-finance
+    segment: seller-finance-members
+    identity:
+      kind: api_resource_id
+      parameter: financeMemberId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - party.seller-finance
+      reasoning: 乙方财务作为可定位参与方
+  - id: resource.seller-warehouse
+    entityRef: party.seller-warehouse
+    segment: warehouse-operators
+    identity:
+      kind: api_resource_id
+      parameter: operatorId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - party.seller-warehouse
+      reasoning: 乙方库管作为可定位参与方
+  - id: resource.payment-request
+    entityRef: request.payment
+    segment: payment-requests
+    parentRef: resource.product-procurement
+    parentBindingRef: binding.payment-request-procurement
+    identity:
+      kind: api_resource_id
+      parameter: paymentRequestId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - request.payment
+        - contract.product-procurement
+      reasoning: payment申请属于指定采购协议
+  - id: resource.payment-confirmation
+    entityRef: confirmation.payment
+    segment: confirmations
+    parentRef: resource.payment-request
+    parentBindingRef: binding.payment-confirmation-request
+    identity:
+      kind: api_resource_id
+      parameter: paymentConfirmationId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - confirmation.payment
+        - request.payment
+      reasoning: payment确认对应指定申请
+  - id: resource.invoice-request
+    entityRef: request.invoice
+    segment: invoice-requests
+    parentRef: resource.product-procurement
+    parentBindingRef: binding.invoice-request-procurement
+    identity:
+      kind: api_resource_id
+      parameter: invoiceRequestId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - request.invoice
+        - contract.product-procurement
+      reasoning: invoice申请属于指定采购协议
+  - id: resource.invoice-confirmation
+    entityRef: confirmation.invoice
+    segment: confirmations
+    parentRef: resource.invoice-request
+    parentBindingRef: binding.invoice-confirmation-request
+    identity:
+      kind: api_resource_id
+      parameter: invoiceConfirmationId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - confirmation.invoice
+        - request.invoice
+      reasoning: invoice确认对应指定申请
+  - id: resource.delivery-request
+    entityRef: request.delivery
+    segment: delivery-requests
+    parentRef: resource.product-procurement
+    parentBindingRef: binding.delivery-request-procurement
+    identity:
+      kind: api_resource_id
+      parameter: deliveryRequestId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - request.delivery
+        - contract.product-procurement
+      reasoning: delivery申请属于指定采购协议
+  - id: resource.delivery-confirmation
+    entityRef: confirmation.delivery
+    segment: confirmations
+    parentRef: resource.delivery-request
+    parentBindingRef: binding.delivery-confirmation-request
+    identity:
+      kind: api_resource_id
+      parameter: deliveryConfirmationId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - confirmation.delivery
+        - request.delivery
+      reasoning: delivery确认对应指定申请
+  - id: resource.payment-evidence
+    entityRef: evidence.payment-voucher
+    segment: vouchers
+    parentRef: resource.payment-confirmation
+    parentBindingRef: binding.payment-evidence-confirmation
+    identity:
+      kind: api_resource_id
+      parameter: voucherId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - evidence.payment-voucher
+        - confirmation.payment
+      reasoning: payment凭证证明指定确认
+  - id: resource.invoice-evidence
+    entityRef: evidence.invoice
+    segment: invoices
+    parentRef: resource.invoice-confirmation
+    parentBindingRef: binding.invoice-evidence-confirmation
+    identity:
+      kind: api_resource_id
+      parameter: invoiceId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - evidence.invoice
+        - confirmation.invoice
+      reasoning: invoice凭证证明指定确认
+  - id: resource.delivery-evidence
+    entityRef: evidence.delivery-note
+    segment: delivery-notes
+    parentRef: resource.delivery-confirmation
+    parentBindingRef: binding.delivery-evidence-confirmation
+    identity:
+      kind: api_resource_id
+      parameter: deliveryNoteId
+      decisionRef: decision.api-identities
+    basis:
+      fmRefs:
+        - evidence.delivery-note
+        - confirmation.delivery
+      reasoning: delivery凭证证明指定确认
+bindings:
+  - id: binding.caller-sourcing-customer
+    kind: caller_role
+    roleRef: role.sourcing-customer
+    scopeResourceRef: resource.product-inquiry
+    basis:
+      fmRefs:
+        - role.sourcing-customer
+      reasoning: 客户只发起自己参与的商品询价
+  - id: binding.caller-sourcing-supplier
+    kind: caller_role
+    roleRef: role.sourcing-supplier
+    scopeResourceRef: resource.product-inquiry
+    basis:
+      fmRefs:
+        - role.sourcing-supplier
+      reasoning: 供应商只对指定询价报价
+  - id: binding.caller-buyer
+    kind: caller_role
+    roleRef: role.buyer
+    scopeResourceRef: resource.product-procurement
+    basis:
+      fmRefs:
+        - role.buyer
+      reasoning: 采购方只操作自己参与的采购协议
+  - id: binding.caller-seller
+    kind: caller_role
+    roleRef: role.seller
+    scopeResourceRef: resource.product-procurement
+    basis:
+      fmRefs:
+        - role.seller
+      reasoning: 供应方只操作自己参与的采购协议
+  - id: binding.caller-buyer-finance
+    kind: caller_role
+    roleRef: role.buyer-finance
+    scopeResourceRef: resource.product-procurement
+    basis:
+      fmRefs:
+        - role.buyer-finance
+      reasoning: 采购方财务只为指定采购协议形成支付凭证
+  - id: binding.caller-seller-finance
+    kind: caller_role
+    roleRef: role.seller-finance
+    scopeResourceRef: resource.product-procurement
+    basis:
+      fmRefs:
+        - role.seller-finance
+      reasoning: 供应方财务只为指定采购协议开具发票
+  - id: binding.caller-seller-warehouse
+    kind: caller_role
+    roleRef: role.seller-warehouse
+    scopeResourceRef: resource.product-procurement
+    basis:
+      fmRefs:
+        - role.seller-warehouse
+      reasoning: 供应方库管只为指定采购协议形成发货单
+  - id: binding.buyer-product-read
+    kind: caller_role
+    roleRef: role.buyer
+    scopeResourceRef: resource.product
+    basis:
+      fmRefs:
+        - role.buyer
+      reasoning: 采购方读取指定商品
+  - id: binding.seller-product-read
+    kind: caller_role
+    roleRef: role.seller
+    scopeResourceRef: resource.product
+    basis:
+      fmRefs:
+        - role.seller
+      reasoning: 供应方读取指定商品
+  - id: binding.buyer-agent-self
+    kind: caller_role
+    roleRef: role.buyer
+    scopeResourceRef: resource.buyer-agent
+    basis:
+      fmRefs:
+        - role.buyer
+      reasoning: 采购方查看自己的采购员资料
+  - id: binding.buyer-finance-self
+    kind: caller_role
+    roleRef: role.buyer-finance
+    scopeResourceRef: resource.buyer-finance
+    basis:
+      fmRefs:
+        - role.buyer-finance
+      reasoning: 采购方财务查看自己的参与方资料
+  - id: binding.seller-sales-self
+    kind: caller_role
+    roleRef: role.seller
+    scopeResourceRef: resource.seller-sales
+    basis:
+      fmRefs:
+        - role.seller
+      reasoning: 供应方查看自己的销售资料
+  - id: binding.seller-finance-self
+    kind: caller_role
+    roleRef: role.seller-finance
+    scopeResourceRef: resource.seller-finance
+    basis:
+      fmRefs:
+        - role.seller-finance
+      reasoning: 供应方财务查看自己的参与方资料
+  - id: binding.seller-warehouse-self
+    kind: caller_role
+    roleRef: role.seller-warehouse
+    scopeResourceRef: resource.seller-warehouse
+    basis:
+      fmRefs:
+        - role.seller-warehouse
+      reasoning: 供应方库管查看自己的参与方资料
+  - id: binding.quotation-inquiry
+    kind: parent_child
+    parentResourceRef: resource.product-inquiry
+    childResourceRef: resource.product-quotation
+    basis:
+      fmRefs:
+        - rfp.product-inquiry
+        - proposal.product-quotation
+      reasoning: 报价关联指定询价
+  - id: binding.payment-request-procurement
+    kind: parent_child
+    parentResourceRef: resource.product-procurement
+    childResourceRef: resource.payment-request
+    basis:
+      fmRefs:
+        - contract.product-procurement
+        - request.payment
+      reasoning: payment申请关联指定采购协议
+  - id: binding.payment-confirmation-request
+    kind: parent_child
+    parentResourceRef: resource.payment-request
+    childResourceRef: resource.payment-confirmation
+    basis:
+      fmRefs:
+        - request.payment
+        - confirmation.payment
+      reasoning: payment确认关联指定申请
+  - id: binding.payment-evidence-confirmation
+    kind: parent_child
+    parentResourceRef: resource.payment-confirmation
+    childResourceRef: resource.payment-evidence
+    basis:
+      fmRefs:
+        - confirmation.payment
+        - evidence.payment-voucher
+      reasoning: payment凭证关联指定确认
+  - id: binding.invoice-request-procurement
+    kind: parent_child
+    parentResourceRef: resource.product-procurement
+    childResourceRef: resource.invoice-request
+    basis:
+      fmRefs:
+        - contract.product-procurement
+        - request.invoice
+      reasoning: invoice申请关联指定采购协议
+  - id: binding.invoice-confirmation-request
+    kind: parent_child
+    parentResourceRef: resource.invoice-request
+    childResourceRef: resource.invoice-confirmation
+    basis:
+      fmRefs:
+        - request.invoice
+        - confirmation.invoice
+      reasoning: invoice确认关联指定申请
+  - id: binding.invoice-evidence-confirmation
+    kind: parent_child
+    parentResourceRef: resource.invoice-confirmation
+    childResourceRef: resource.invoice-evidence
+    basis:
+      fmRefs:
+        - confirmation.invoice
+        - evidence.invoice
+      reasoning: invoice凭证关联指定确认
+  - id: binding.delivery-request-procurement
+    kind: parent_child
+    parentResourceRef: resource.product-procurement
+    childResourceRef: resource.delivery-request
+    basis:
+      fmRefs:
+        - contract.product-procurement
+        - request.delivery
+      reasoning: delivery申请关联指定采购协议
+  - id: binding.delivery-confirmation-request
+    kind: parent_child
+    parentResourceRef: resource.delivery-request
+    childResourceRef: resource.delivery-confirmation
+    basis:
+      fmRefs:
+        - request.delivery
+        - confirmation.delivery
+      reasoning: delivery确认关联指定申请
+  - id: binding.delivery-evidence-confirmation
+    kind: parent_child
+    parentResourceRef: resource.delivery-confirmation
+    childResourceRef: resource.delivery-evidence
+    basis:
+      fmRefs:
+        - confirmation.delivery
+        - evidence.delivery-note
+      reasoning: delivery凭证关联指定确认
+scenarios:
+  - id: scenario.api-product-procurement
+    sourceScenarioRef: scenario.product-procurement
+    basis:
+      fmRefs:
+        - rfp.product-inquiry
+        - proposal.product-quotation
+        - contract.product-procurement
+        - request.payment
+        - confirmation.payment
+        - evidence.payment-voucher
+        - request.invoice
+        - confirmation.invoice
+        - evidence.invoice
+        - request.delivery
+        - confirmation.delivery
+        - evidence.delivery-note
+      reasoning: 使用完整商品采购场景验证 API 映射
+capabilities:
+  - id: capability.read-product-as-buyer
+    actorRoleRef: role.buyer
+    resourceRef: resource.product
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: thing.product
+    businessCapability: 采购方查看商品
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.buyer-product-read
+    basis:
+      fmRefs:
+        - thing.product
+      reasoning: 采购方查看采购协议涉及的商品
+  - id: capability.read-product-as-seller
+    actorRoleRef: role.seller
+    resourceRef: resource.product
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: thing.product
+    businessCapability: 供应方查看商品
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.seller-product-read
+    basis:
+      fmRefs:
+        - thing.product
+      reasoning: 供应方查看采购协议涉及的商品
+  - id: capability.read-buyer-agent
+    actorRoleRef: role.buyer
+    resourceRef: resource.buyer-agent
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: party.buyer-agent
+    businessCapability: 查看甲方采购员
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.buyer-agent-self
+    basis:
+      fmRefs:
+        - party.buyer-agent
+      reasoning: 采购方查看参与采购协议的甲方采购员
+  - id: capability.read-buyer-finance
+    actorRoleRef: role.buyer-finance
+    resourceRef: resource.buyer-finance
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: party.buyer-finance
+    businessCapability: 查看甲方财务
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.buyer-finance-self
+    basis:
+      fmRefs:
+        - party.buyer-finance
+      reasoning: 采购方财务查看自己的参与方资料
+  - id: capability.read-seller-sales
+    actorRoleRef: role.seller
+    resourceRef: resource.seller-sales
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: party.seller-sales
+    businessCapability: 查看乙方销售
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.seller-sales-self
+    basis:
+      fmRefs:
+        - party.seller-sales
+      reasoning: 供应方查看参与采购协议的乙方销售
+  - id: capability.read-seller-finance
+    actorRoleRef: role.seller-finance
+    resourceRef: resource.seller-finance
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: party.seller-finance
+    businessCapability: 查看乙方财务
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.seller-finance-self
+    basis:
+      fmRefs:
+        - party.seller-finance
+      reasoning: 供应方财务查看自己的参与方资料
+  - id: capability.read-seller-warehouse
+    actorRoleRef: role.seller-warehouse
+    resourceRef: resource.seller-warehouse
+    view: item
+    method: GET
+    effect:
+      kind: read
+      targetRef: party.seller-warehouse
+    businessCapability: 查看乙方库管
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.seller-warehouse-self
+    basis:
+      fmRefs:
+        - party.seller-warehouse
+      reasoning: 供应方库管查看自己的参与方资料
+  - id: capability.create-inquiry
+    actorRoleRef: role.sourcing-customer
+    resourceRef: resource.product-inquiry
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: rfp.product-inquiry
+    businessCapability: 发起商品询价
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-sourcing-customer
+    basis:
+      fmRefs:
+        - rfp.product-inquiry
+      reasoning: 客户追加商品询价凭证
+  - id: capability.create-quotation
+    actorRoleRef: role.sourcing-supplier
+    resourceRef: resource.product-quotation
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: proposal.product-quotation
+    businessCapability: 提交商品报价
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-sourcing-supplier
+      - binding.quotation-inquiry
+    basis:
+      fmRefs:
+        - proposal.product-quotation
+      reasoning: 供应商针对指定询价追加报价凭证
+  - id: capability.create-procurement
+    actorRoleRef: role.buyer
+    resourceRef: resource.product-procurement
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: contract.product-procurement
+    businessCapability: 登记商品采购协议
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-buyer
+    basis:
+      fmRefs:
+        - contract.product-procurement
+      reasoning: 采购方登记已经形成的商品采购协议
+  - id: capability.create-payment-request
+    actorRoleRef: role.seller
+    resourceRef: resource.payment-request
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: request.payment
+    businessCapability: 申请支付货款
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-seller
+      - binding.payment-request-procurement
+    basis:
+      fmRefs:
+        - request.payment
+      reasoning: 针对指定采购协议追加申请支付货款凭证
+  - id: capability.create-payment-confirmation
+    actorRoleRef: role.buyer
+    resourceRef: resource.payment-confirmation
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: confirmation.payment
+    businessCapability: 确认支付货款
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-buyer
+      - binding.payment-confirmation-request
+    ruleBindings:
+      - ruleRef: rule.payment-completed
+        purpose: result
+    basis:
+      fmRefs:
+        - confirmation.payment
+      reasoning: 针对指定申请追加确认支付货款凭证
+  - id: capability.create-payment-evidence
+    actorRoleRef: role.buyer-finance
+    resourceRef: resource.payment-evidence
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: evidence.payment-voucher
+    businessCapability: 提交支付凭证
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-buyer-finance
+      - binding.payment-evidence-confirmation
+    basis:
+      fmRefs:
+        - evidence.payment-voucher
+      reasoning: 针对指定确认追加提交支付凭证
+  - id: capability.create-invoice-request
+    actorRoleRef: role.buyer
+    resourceRef: resource.invoice-request
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: request.invoice
+    businessCapability: 申请开具发票
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-buyer
+      - binding.invoice-request-procurement
+    basis:
+      fmRefs:
+        - request.invoice
+      reasoning: 针对指定采购协议追加申请开具发票凭证
+  - id: capability.create-invoice-confirmation
+    actorRoleRef: role.seller
+    resourceRef: resource.invoice-confirmation
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: confirmation.invoice
+    businessCapability: 确认开具发票
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-seller
+      - binding.invoice-confirmation-request
+    ruleBindings:
+      - ruleRef: rule.invoice-completed
+        purpose: result
+    basis:
+      fmRefs:
+        - confirmation.invoice
+      reasoning: 针对指定申请追加确认开具发票凭证
+  - id: capability.create-invoice-evidence
+    actorRoleRef: role.seller-finance
+    resourceRef: resource.invoice-evidence
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: evidence.invoice
+    businessCapability: 提交发票
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-seller-finance
+      - binding.invoice-evidence-confirmation
+    basis:
+      fmRefs:
+        - evidence.invoice
+      reasoning: 针对指定确认追加提交发票
+  - id: capability.create-delivery-request
+    actorRoleRef: role.buyer
+    resourceRef: resource.delivery-request
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: request.delivery
+    businessCapability: 申请商品发货
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-buyer
+      - binding.delivery-request-procurement
+    basis:
+      fmRefs:
+        - request.delivery
+      reasoning: 针对指定采购协议追加申请商品发货凭证
+  - id: capability.create-delivery-confirmation
+    actorRoleRef: role.seller
+    resourceRef: resource.delivery-confirmation
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: confirmation.delivery
+    businessCapability: 确认商品发货
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-seller
+      - binding.delivery-confirmation-request
+    ruleBindings:
+      - ruleRef: rule.delivery-completed
+        purpose: result
+    basis:
+      fmRefs:
+        - confirmation.delivery
+      reasoning: 针对指定申请追加确认商品发货凭证
+  - id: capability.create-delivery-evidence
+    actorRoleRef: role.seller-warehouse
+    resourceRef: resource.delivery-evidence
+    view: collection
+    method: POST
+    effect:
+      kind: append_evidence
+      targetRef: evidence.delivery-note
+    businessCapability: 提交发货单
+    scenarioRefs:
+      - scenario.api-product-procurement
+    bindingRefs:
+      - binding.caller-seller-warehouse
+      - binding.delivery-evidence-confirmation
+    basis:
+      fmRefs:
+        - evidence.delivery-note
+      reasoning: 针对指定确认追加提交发货单
+representations:
+  - id: representation.product-quotation
+    resourceRef: resource.product-quotation
+    view: item
+    format: hal
+    fields:
+      - name: unitPriceMinorUnits
+        fmAttributeRef: proposal.product-quotation#unit_price_minor_units
+    links:
+      - rel: create-procurement
+        targetResourceRef: resource.product-procurement
+        targetView: collection
+        parameterBindings: []
+        visibleToRoleRefs:
+          - role.buyer
+        capabilityRef: capability.create-procurement
+    basis:
+      fmRefs:
+        - proposal.product-quotation
+      reasoning: 报价通过超媒体链接进入采购协议 Context 根
+journeys:
+  - id: journey.product-procurement
+    scenarioRef: scenario.api-product-procurement
+    steps:
+      - id: journey.step-1
+        sourceStepSequence: 1
+        description: 甲方采购员发起商品询价
+        mapping: capability
+        capabilityRef: capability.create-inquiry
+        basis:
+          fmRefs:
+            - rfp.product-inquiry
+          reasoning: 映射步骤：甲方采购员发起商品询价
+      - id: journey.step-2
+        sourceStepSequence: 2
+        description: 乙方销售提交商品报价
+        mapping: capability
+        capabilityRef: capability.create-quotation
+        basis:
+          fmRefs:
+            - proposal.product-quotation
+          reasoning: 映射步骤：乙方销售提交商品报价
+      - id: journey.step-3
+        sourceStepSequence: 3
+        description: 甲方采购员登记采购协议
+        mapping: capability
+        capabilityRef: capability.create-procurement
+        basis:
+          fmRefs:
+            - contract.product-procurement
+          reasoning: 映射步骤：甲方采购员登记采购协议
+      - id: journey.step-4
+        sourceStepSequence: 4
+        description: 乙方销售申请支付
+        mapping: capability
+        capabilityRef: capability.create-payment-request
+        basis:
+          fmRefs:
+            - request.payment
+          reasoning: 映射步骤：乙方销售申请支付
+      - id: journey.step-5
+        sourceStepSequence: 5
+        description: 甲方采购员确认支付
+        mapping: capability
+        capabilityRef: capability.create-payment-confirmation
+        basis:
+          fmRefs:
+            - confirmation.payment
+          reasoning: 映射步骤：甲方采购员确认支付
+      - id: journey.step-6
+        sourceStepSequence: 6
+        description: 甲方财务提交支付凭证
+        mapping: capability
+        capabilityRef: capability.create-payment-evidence
+        basis:
+          fmRefs:
+            - evidence.payment-voucher
+          reasoning: 映射步骤：甲方财务提交支付凭证
+      - id: journey.step-7
+        sourceStepSequence: 7
+        description: 甲方采购员申请开票
+        mapping: capability
+        capabilityRef: capability.create-invoice-request
+        basis:
+          fmRefs:
+            - request.invoice
+          reasoning: 映射步骤：甲方采购员申请开票
+      - id: journey.step-8
+        sourceStepSequence: 8
+        description: 乙方销售确认开票
+        mapping: capability
+        capabilityRef: capability.create-invoice-confirmation
+        basis:
+          fmRefs:
+            - confirmation.invoice
+          reasoning: 映射步骤：乙方销售确认开票
+      - id: journey.step-9
+        sourceStepSequence: 9
+        description: 乙方财务提交发票
+        mapping: capability
+        capabilityRef: capability.create-invoice-evidence
+        basis:
+          fmRefs:
+            - evidence.invoice
+          reasoning: 映射步骤：乙方财务提交发票
+      - id: journey.step-10
+        sourceStepSequence: 10
+        description: 甲方采购员申请发货
+        mapping: capability
+        capabilityRef: capability.create-delivery-request
+        basis:
+          fmRefs:
+            - request.delivery
+          reasoning: 映射步骤：甲方采购员申请发货
+      - id: journey.step-11
+        sourceStepSequence: 11
+        description: 乙方销售确认发货
+        mapping: capability
+        capabilityRef: capability.create-delivery-confirmation
+        basis:
+          fmRefs:
+            - confirmation.delivery
+          reasoning: 映射步骤：乙方销售确认发货
+      - id: journey.step-12
+        sourceStepSequence: 12
+        description: 乙方库管提交发货单
+        mapping: capability
+        capabilityRef: capability.create-delivery-evidence
+        basis:
+          fmRefs:
+            - evidence.delivery-note
+          reasoning: 映射步骤：乙方库管提交发货单

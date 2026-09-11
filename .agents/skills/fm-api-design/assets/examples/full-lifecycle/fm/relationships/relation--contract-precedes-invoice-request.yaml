@@ -1,0 +1,12 @@
+type: relationship
+id: relation.contract-precedes-invoice-request
+kind: precedes
+sourceRef: contract.product-procurement
+targetRef: request.invoice
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: 1
+label: 采购协议成立后可发起开票申请

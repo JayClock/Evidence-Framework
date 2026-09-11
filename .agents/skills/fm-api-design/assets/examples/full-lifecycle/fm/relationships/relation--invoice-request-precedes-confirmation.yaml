@@ -1,0 +1,12 @@
+type: relationship
+id: relation.invoice-request-precedes-confirmation
+kind: precedes
+sourceRef: request.invoice
+targetRef: confirmation.invoice
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 1
+  max: 1
+label: 开票申请先于开票确认

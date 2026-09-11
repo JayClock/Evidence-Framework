@@ -1,0 +1,5 @@
+type: entity
+id: party.seller-warehouse
+category: participant
+kind: party
+label: 乙方库管

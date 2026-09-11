@@ -1,0 +1,6 @@
+type: relationship
+id: relation.seller-warehouse-plays-seller-warehouse
+kind: plays_role
+sourceRef: party.seller-warehouse
+targetRef: role.seller-warehouse
+label: 乙方库管扮演供应方库管

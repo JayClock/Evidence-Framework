@@ -1,0 +1,20 @@
+type: entity
+id: evidence.delivery-note
+category: evidence
+kind: other_evidence
+label: 发货单
+contextRef: fulfillment.delivery
+responsibleRoleRef: role.seller-warehouse
+attributes:
+  - name: created_at
+    label: 发货单形成时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 供应方库管形成发货单的业务时间
+  - name: delivery_note_number
+    label: 发货单号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 发货单的业务编号

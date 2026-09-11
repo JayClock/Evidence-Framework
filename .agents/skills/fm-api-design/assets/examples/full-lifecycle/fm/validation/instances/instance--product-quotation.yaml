@@ -1,0 +1,9 @@
+type: evidence_instance
+id: instance.product-quotation
+entityRef: proposal.product-quotation
+values:
+  started_at: '2026-11-01T12:00:00Z'
+  expired_at: '2026-11-02T18:00:00Z'
+  unit_price_minor_units: 2500
+basedOn:
+  - instance.product-inquiry

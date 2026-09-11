@@ -1,0 +1,6 @@
+type: entity
+id: role.seller-finance
+category: role
+kind: party
+label: 供应方财务
+contextRef: context.product-procurement

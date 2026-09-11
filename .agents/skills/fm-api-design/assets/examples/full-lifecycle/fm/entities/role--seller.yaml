@@ -1,0 +1,6 @@
+type: entity
+id: role.seller
+category: role
+kind: party
+label: 供应方
+contextRef: context.product-procurement

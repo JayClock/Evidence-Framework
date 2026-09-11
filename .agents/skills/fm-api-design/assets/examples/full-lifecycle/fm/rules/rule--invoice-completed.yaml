@@ -1,0 +1,15 @@
+type: rule
+id: rule.invoice-completed
+kind: completion
+label: invoice履约完成判断
+contextRef: fulfillment.invoice
+bindings:
+  request:
+    ref: request.invoice
+  confirmations:
+    ref: confirmation.invoice
+    cardinality: many
+expression:
+  confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at
+  <= request.expired_at)
+resultType: bool

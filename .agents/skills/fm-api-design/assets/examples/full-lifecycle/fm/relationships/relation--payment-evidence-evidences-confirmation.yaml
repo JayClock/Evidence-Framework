@@ -1,0 +1,6 @@
+type: relationship
+id: relation.payment-evidence-evidences-confirmation
+kind: evidences
+sourceRef: evidence.payment-voucher
+targetRef: confirmation.payment
+label: 支付凭证证明支付确认

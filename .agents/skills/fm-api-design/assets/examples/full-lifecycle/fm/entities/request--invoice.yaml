@@ -1,0 +1,26 @@
+type: entity
+id: request.invoice
+category: evidence
+kind: fulfillment_request
+label: 发票开具申请
+contextRef: fulfillment.invoice
+responsibleRoleRef: role.buyer
+attributes:
+  - name: started_at
+    label: 开票申请时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 采购方提出开票申请的业务时间
+  - name: expired_at
+    label: 开票截止时间
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 供应方完成开票的业务截止时间
+  - name: invoice_title
+    label: 发票抬头
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 采购方要求使用的发票抬头

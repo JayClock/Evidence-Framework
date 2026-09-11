@@ -1,0 +1,7 @@
+type: entity
+id: context.product-catalog
+category: context
+kind: domain
+label: 商品目录上下文
+rootRefs:
+  - thing.product
