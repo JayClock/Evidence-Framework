@@ -1,15 +1,11 @@
 import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 
-import {
-  PanelMutex,
-  type QuestionInput,
-  type QuestionResult,
-} from './ui-contracts.js';
+import type { QuestionInput, QuestionResult } from './ui-contracts.js';
 
 const ACTIONS = ['回答', '暂缓此问题', '结束本次讨论', '关闭面板'] as const;
 
 export class QuestionUI {
-  constructor(private readonly panels = new PanelMutex()) {}
+  private active = false;
 
   async open(
     input: QuestionInput,
@@ -19,10 +15,11 @@ export class QuestionUI {
       questionId: input.questionId,
       gapKey: input.gapKey,
     };
-    if (!ctx.hasUI || !this.panels.acquire()) {
+    if (!ctx.hasUI || this.active) {
       return { ...base, status: 'unavailable' };
     }
 
+    this.active = true;
     try {
       const title = [
         `${input.questionId} · ${input.prompt}`,
@@ -41,7 +38,7 @@ export class QuestionUI {
       if (!answer?.trim()) return { ...base, status: 'cancelled' };
       return { ...base, status: 'answered', answer };
     } finally {
-      this.panels.release();
+      this.active = false;
     }
   }
 }

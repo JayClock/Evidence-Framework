@@ -10,6 +10,7 @@ NAMES = (
     "evidence-fm",
     "evidence-requirements",
     "fm-modeling",
+    "fm-api-design",
 )
 
 
@@ -64,22 +65,49 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_fm_exposes_model_review_branches_not_a_second_discovery_workshop(self):
         references = ROOT / "evidence-fm/references"
-        for name in ("input-review.md", "scenario-validation.md", "publication.md"):
+        for name in ("input-review.md", "scenario-validation.md", "validation.md"):
             self.assertTrue((references / name).is_file(), name)
         for name in ("discovery-workshop.md", "scenario-replay.md"):
             self.assertFalse((references / name).exists(), name)
 
-    def test_discovery_handoff_and_fm_publication_keep_authorization_separate(self):
+    def test_direct_edit_authorization_is_separate_from_discussion_and_approval(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
         handoff = (ROOT / "evidence-discovery/assets/discovery-template.md").read_text()
-        publication = (ROOT / "evidence-fm/references/publication.md").read_text()
-        self.assertIn("形成候选", fm_entry)
-        self.assertIn("明确授权保存该已展示候选", fm_entry)
+        validation = (ROOT / "evidence-fm/references/validation.md").read_text()
+        self.assertIn("直接编辑当前模型", fm_entry)
+        self.assertIn("编辑授权不是业务批准", fm_entry)
         self.assertIn("当前实际问题", handoff)
-        self.assertIn("普通回答与停止不是授权", handoff)
-        self.assertIn("publish_fm.py", publication)
-        for text in (fm_entry, handoff, publication):
+        self.assertIn("普通回答与停止不是修改授权", handoff)
+        self.assertIn("modelDigest", validation)
+        self.assertIn("只校验请求不写任何项目文件", validation)
+        self.assertIn("不自动回滚", fm_entry)
+        for text in (fm_entry, handoff, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
+
+    def test_direct_workflow_has_no_publication_runtime_or_compatibility_entry(self):
+        for path in (
+            ROOT / "evidence-fm/scripts/publish_fm.py",
+            ROOT / "evidence-fm/scripts/fm_publication.py",
+            ROOT / "evidence-fm/references/publication.md",
+            ROOT / "evidence-fm/tests/test_publication.py",
+            ROOT.parents[1] / ".pi/extensions/fm-modeling/review-ui.ts",
+            ROOT.parents[1] / ".pi/extensions/fm-modeling/review-ui.spec.ts",
+        ):
+            self.assertFalse(path.exists(), path)
+        retired = re.compile(
+            r"publish_fm|fm_publication|fm_ui_review|receiptPath|"
+            r"fm-candidates|fm-checks|\.fm-work|\.evidence/api/checks|"
+            r"保存已展示候选|冻结候选|发布前核对"
+        )
+        for name in (
+            "fm-modeling",
+            "evidence-discovery",
+            "evidence-fm",
+            "fm-api-design",
+        ):
+            for path in (ROOT / name).rglob("*"):
+                if path.suffix in {".py", ".md", ".json"}:
+                    self.assertNotRegex(path.read_text(), retired, str(path))
 
     def test_business_document_links_do_not_pull_in_maintenance_material(self):
         for name in NAMES:
@@ -111,33 +139,24 @@ class SkillDocumentationTests(unittest.TestCase):
             "fm-modeling/references/workflow.md": (
                 ".evidence/discovery.md",
                 ".evidence/fm/",
-                ".evidence/fm-candidates/",
-                ".evidence/.fm-work/",
-                ".evidence/fm-checks/",
+                ".evidence/checks/fm/",
+                ".evidence/checks/api/",
             ),
             "evidence-discovery/SKILL.md": (".evidence/discovery.md",),
             "evidence-discovery/assets/discovery-template.md": (
                 ".evidence/discovery.md",
                 ".evidence/questions.md",
             ),
-            "evidence-fm/SKILL.md": (
+            "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
+            "evidence-fm/references/validation.md": (
                 ".evidence/fm/",
-                ".evidence/fm-candidates/",
-                ".evidence/.fm-work/",
-                ".evidence/fm-checks/",
-            ),
-            "evidence-fm/references/publication.md": (
-                ".evidence/discovery.md",
-                ".evidence/fm/",
-                ".evidence/fm-candidates/",
-                ".evidence/.fm-work/",
-                ".evidence/fm-checks/",
+                ".evidence/checks/fm/",
             ),
             "fm-api-design/SKILL.md": (
                 ".evidence/fm/",
                 ".evidence/api/api.yaml",
                 ".evidence/api/generated/",
-                ".evidence/api/checks/",
+                ".evidence/checks/api/",
             ),
             "fm-api-design/references/validation.md": (
                 ".evidence/api/api.yaml",
@@ -176,8 +195,8 @@ class SkillDocumentationTests(unittest.TestCase):
                 text = (ROOT / name / "SKILL.md").read_text()
                 self.assertIn("state.json", text)
                 self.assertIn("不自动迁移", text)
-        publication = (ROOT / "evidence-fm/references/publication.md").read_text()
-        self.assertIn("不能相同或互相包含", publication)
+        validation = (ROOT / "evidence-fm/references/validation.md").read_text()
+        self.assertIn("报告位于模型目录之外", validation)
         api = (ROOT / "fm-api-design/references/validation.md").read_text()
         self.assertIn("目标尚不存在", api)
         self.assertIn("FM 根目录之外", api)

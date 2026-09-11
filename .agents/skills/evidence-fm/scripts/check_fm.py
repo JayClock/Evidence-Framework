@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,23 @@ from fm_simulation import (
 )
 
 
+def model_digest(root: Path) -> str:
+    """Hash source paths and bytes, independent of location and generated output."""
+    files = {}
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root)
+        if relative.parts[0] == "generated" or "__pycache__" in relative.parts:
+            continue
+        if path.is_file():
+            files[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    content = json.dumps(
+        files, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    return "sha256:" + hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
 def check_model(root: Path) -> dict[str, Any]:
+    digest = model_digest(root)
     model = load_model(root)
     model_errors = validate_model(model)
     suite = load_validation_suite(root)
@@ -35,9 +52,14 @@ def check_model(root: Path) -> dict[str, Any]:
         if executed:
             simulation_passed = bool(simulation["simulationPassed"])
         errors = list(dict.fromkeys([*errors, *simulation_errors]))
+    input_changed = digest != model_digest(root)
+    if input_changed:
+        errors.append("Model inputs changed during validation")
     manifest = model.manifest or {}
     return {
         "valid": not errors,
+        "modelDigest": digest,
+        "inputChanged": input_changed,
         "modelValidated": not model_errors,
         "modelStatus": manifest.get("modelStatus"),
         "stakeholderReview": manifest.get("stakeholderReview"),

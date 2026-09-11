@@ -24,7 +24,7 @@ API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决
 
 - FM 输入：`.evidence/fm/`，始终只读。
 - API 设计源：`.evidence/api/api.yaml`，位于 FM 根目录之外。
-- 需留存的 inspect/check 结果：`.evidence/api/checks/<批次>/`；仅在请求保存检查记录时写入，只校验不落盘。
+- 需留存的 inspect/check 结果：`.evidence/checks/api/<批次>/`；仅在请求保存检查记录时写入，只校验不落盘。
 - API 投影：`.evidence/api/generated/<批次>/`，包含 projection、报告、HTTP 契约、OpenAPI、样例与 manifest；每次选择尚不存在的新目录。
 
 沿用已有文件与用户显式指定路径，不自动迁移，不因默认目录存在而覆盖内容。投影前展示并确认具体的新输出目录；默认路径不是执行授权。`.evidence/` 不授予宿主状态写权限，不改宿主拥有的 `state.json`、审批或运行记录；项目文件权限与提交要求仍优先。
@@ -33,7 +33,7 @@ API 设计中的新业务规则返回 FM 建模／发现任务处理。技术决
 
 1. 定位项目根、FM 根、`evidence-fm` Skill 绝对目录、已有业务场景和 `api.yaml`。API 文件在 FM 根目录之外。
 2. 阅读 [方法](references/method.md)；写配置时读 [格式](references/format.md)，运行前读 [校验纪律](references/validation.md)。
-3. 运行 `inspect`，保留真实 FM 检查摘要、审核状态、角色、资源线索和场景。
+3. 每次消费当前 FM 都运行 `inspect`，保留真实 FM 检查摘要、审核状态、角色、资源线索和场景；不能凭目录存在或旧报告判断当前模型有效。FM 无效或输入变化时停止设计／投影，不修改 FM 来绕过错误。
 4. 检查凭证形成依赖：谁提供什么补充证据，目标凭证形成前是否已存在、可见并属于本业务实例。依据不足返回缺口，不用接口成功响应代替业务证据。
 5. 声明有来源的资源名称、路径、实例归属和业务数量；逐层选择 singleton 或 collection。Context 是边界，不自动成为 CRUD 资源；一般引用、precedes 或单独基数不证明聚合。
 6. 为能力说明调用 Party Role、视图、方法、效果、场景、实例约束和依据。Participant、岗位、经办人和 Evidence Role 不自动成为调用角色。同一合同责任范围内的凭证使用 Contract 绑定角色，角色复用不合并不同 Context 的 URI 根。

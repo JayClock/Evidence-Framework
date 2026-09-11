@@ -74,6 +74,20 @@ describe('QuestionUI', () => {
     expect(ctx.ui.select).not.toHaveBeenCalled();
   });
 
+  it('releases the question panel when the host throws', async () => {
+    const ctx = context({});
+    ctx.ui.select.mockRejectedValue(new Error('UI interrupted'));
+    const ui = new QuestionUI();
+    await expect(ui.open(input, ctx as never)).rejects.toThrow(
+      'UI interrupted',
+    );
+    const next = await ui.open(
+      input,
+      context({ action: '暂缓此问题' }) as never,
+    );
+    expect(next.status).toBe('deferred');
+  });
+
   it('allows only one panel at a time', async () => {
     let release: ((value: string) => void) | undefined;
     const firstContext = context({});

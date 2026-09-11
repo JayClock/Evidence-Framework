@@ -61,6 +61,38 @@ describe('/fm-model', () => {
     );
   });
 
+  it.each([
+    ['讨论业务', '讨论业务：付款证明，只整理发现记录，不修改模型'],
+    ['生成或修改模型', '生成或修改模型：付款证明，直接编辑当前 FM 并校验'],
+  ])('routes %s with an explicit editing boundary', async (action, intent) => {
+    const ctx = context();
+    ctx.ui.select.mockResolvedValue(action);
+    ctx.ui.editor.mockResolvedValue('付款证明');
+    const { handler, sendUserMessage } = setup([skill]);
+
+    await handler('', ctx);
+
+    expect(ctx.ui.select).toHaveBeenCalledWith('FM Modeling', [
+      '讨论业务',
+      '生成或修改模型',
+      '只校验模型',
+      '返回',
+    ]);
+    expect(sendUserMessage).toHaveBeenCalledWith(
+      `/skill:fm-modeling ${intent}`,
+      { expandPromptTemplates: true },
+    );
+  });
+
+  it('does not authorize an edit after a blank goal', async () => {
+    const ctx = context();
+    ctx.ui.select.mockResolvedValue('生成或修改模型');
+    ctx.ui.editor.mockResolvedValue('  \n');
+    const { handler, sendUserMessage } = setup([skill]);
+    await handler('', ctx);
+    expect(sendUserMessage).not.toHaveBeenCalled();
+  });
+
   it('returns without sending when the panel is closed', async () => {
     const ctx = context();
     ctx.ui.select.mockResolvedValue(undefined);

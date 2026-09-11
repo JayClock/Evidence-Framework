@@ -96,7 +96,11 @@ class SkillPackageTests(unittest.TestCase):
     def test_all_project_skills_use_canonical_root(self):
         self.assertEqual(
             set(ALL_NAMES),
-            {path.name for path in ROOT.iterdir() if path.is_dir()},
+            {
+                path.name
+                for path in ROOT.iterdir()
+                if path.is_dir() and not path.name.startswith(".")
+            },
         )
         for name in WORKFLOW_NAMES:
             entry = ROOT / name / "SKILL.md"
@@ -248,7 +252,13 @@ class IsolatedFMTests(unittest.TestCase):
         result = self.run_script("compile_fm_model.py", "--output", str(output))
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         compiled = json.loads(output.read_text(encoding="utf-8"))
-        self.assertEqual([], compiled["fulfillments"])
+        self.assertNotIn("fulfillments", compiled)
+        self.assertFalse(
+            any(
+                entity.get("kind") in {"contract", "fulfillment"}
+                for entity in compiled["entities"]
+            )
+        )
         first = output.read_bytes()
         self.assertEqual(
             0,
@@ -317,51 +327,31 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertFalse(report["valid"])
         self.assertTrue(report["errors"])
 
-    def test_standalone_skill_prepares_and_applies_without_any_extension(self):
+    def test_direct_edit_and_check_work_without_any_extension(self):
         for name in ("tests", "evals"):
             shutil.rmtree(self.skill / name)
         evidence = self.workspace / ".evidence"
-        self.model = evidence / "fm-candidates" / "batch-001"
+        self.model = evidence / "fm"
         self.example("domain")
-        source = evidence / "discovery.md"
-        source.write_text("已确认的领域来源\n", encoding="utf-8")
         state = evidence / "state.json"
-        state.write_text('{"owner": "extension"}\n', encoding="utf-8")
+        state.write_text('{"owner": "host"}\n', encoding="utf-8")
         state_before = state.read_bytes()
-        target = evidence / "fm"
-        work = evidence / ".fm-work"
-        reports = evidence / "fm-checks"
-        prepare = self.run_python(
-            str(self.skill / "scripts/publish_fm.py"),
-            "prepare",
-            "--candidate",
-            str(self.model),
-            "--target",
-            str(target),
-            "--source",
-            str(source),
-            "--work-dir",
-            str(work),
+        first = self.check(0)
+        manifest = self.model / "model.yaml"
+        manifest.write_text(
+            manifest.read_text() + "\n# direct edit\n", encoding="utf-8"
         )
-        self.assertEqual(0, prepare.returncode, prepare.stdout + prepare.stderr)
-        receipt = json.loads(prepare.stdout)["receiptPath"]
-
-        apply = self.run_python(
-            str(self.skill / "scripts/publish_fm.py"),
-            "apply",
-            "--receipt",
-            receipt,
-            "--report-dir",
-            str(reports),
-        )
-
-        self.assertEqual(0, apply.returncode, apply.stdout + apply.stderr)
-        result = json.loads(apply.stdout)
-        self.assertEqual("applied", result["status"])
-        self.assertEqual(file_hashes(self.model), file_hashes(target))
-        self.assertTrue(Path(result["reportPath"]).is_file())
-        self.assertTrue(Path(receipt).is_relative_to(work))
-        self.assertTrue(Path(result["reportPath"]).is_relative_to(reports))
+        result = self.run_script("check_fm.py")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        current = json.loads(result.stdout)
+        self.assertNotEqual(first["modelDigest"], current["modelDigest"])
+        self.assertFalse(current["inputChanged"])
+        self.assertEqual({"fm", "state.json"}, {p.name for p in evidence.iterdir()})
+        report = evidence / "checks/fm/run-001.json"
+        report.parent.mkdir(parents=True)
+        report.write_text(result.stdout, encoding="utf-8")
+        self.assertEqual(current, json.loads(report.read_text()))
+        self.assertEqual(current["modelDigest"], self.check(0)["modelDigest"])
         self.assertEqual(state_before, state.read_bytes())
 
 

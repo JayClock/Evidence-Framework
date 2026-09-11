@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import json
 import unittest
 from pathlib import Path
 
 import yaml
 
-REPOSITORY = Path(__file__).resolve().parents[4]
-SKILL = REPOSITORY / ".agents/skills/evidence-fm"
+SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
     SKILL / "assets/examples",
     SKILL / "tests/fixtures",
@@ -26,7 +24,7 @@ LEGACY_TERMS = {
 }
 
 
-class CanonicalWorkflowGateTests(unittest.TestCase):
+class CanonicalModelTests(unittest.TestCase):
     def yaml_documents(self):
         for root in MODEL_ROOTS:
             for path in root.rglob("*.yaml"):
@@ -64,10 +62,6 @@ class CanonicalWorkflowGateTests(unittest.TestCase):
             SKILL / "SKILL.md",
             *sorted((SKILL / "references").glob("*.md")),
             *sorted((SKILL / "evals").glob("*.json")),
-            REPOSITORY / ".agents/skills/fm-modeling/SKILL.md",
-            REPOSITORY / ".agents/skills/fm-modeling/references/workflow.md",
-            REPOSITORY / ".agents/skills/fm-modeling/evals/evals.json",
-            REPOSITORY / "docs/fm-modeling.md",
         ]
         text = "\n".join(path.read_text(encoding="utf-8") for path in paths)
         for term in LEGACY_TERMS:
@@ -92,27 +86,6 @@ class CanonicalWorkflowGateTests(unittest.TestCase):
                 self.assertEqual("evidence", target.get("category"), relation)
             elif kind == "references" and source.get("category") == "evidence":
                 self.assertEqual("thing", target.get("kind"), relation)
-
-    def test_extension_registers_one_command_without_evidence_dependency(self) -> None:
-        extension = REPOSITORY / ".pi/extensions/fm-modeling"
-        commands = (extension / "commands.ts").read_text(encoding="utf-8")
-        sources = "\n".join(
-            path.read_text(encoding="utf-8")
-            for path in extension.glob("*.ts")
-            if not path.name.endswith(".spec.ts")
-        )
-        self.assertEqual(1, commands.count("registerCommand("))
-        self.assertIn("registerCommand('fm-model'", commands)
-        self.assertNotIn("evidence-model", sources)
-        self.assertNotIn("/evidence/", sources)
-        self.assertNotIn(".evidence/state", sources)
-
-    def test_package_verification_covers_portable_fm_tests(self) -> None:
-        package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
-        scripts = package["scripts"]
-        self.assertIn("fm-modeling:verify", scripts)
-        self.assertIn("/opt/miniconda3/bin/python3.12", scripts["skills:test:fm"])
-        self.assertIn("schemas/*.json", scripts["fm-modeling:format:check"])
 
 
 if __name__ == "__main__":

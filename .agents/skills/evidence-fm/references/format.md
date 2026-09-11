@@ -3,13 +3,12 @@
 ## 1. 目录与事实源
 
 ```text
-fm-model/
+.evidence/fm/
 ├── model.yaml
 ├── README.md
 ├── 00-overview.md
 ├── 01-glossary.md
 ├── 02-business-patterns.md       # 派生文档
-├── discovery/                    # 可选，非正式事实
 ├── entities/                     # 必需；Fulfillment 也在此目录
 ├── relationships/                # 可省略
 ├── rules/                        # 可省略
@@ -23,7 +22,7 @@ fm-model/
     └── simulation.json
 ```
 
-`model.yaml` 与分片 YAML 是模型事实源；`discovery/` 保存候选和问题；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。
+`model.yaml` 与分片 YAML 是模型事实源；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。发现与问题保存在模型目录之外的 `.evidence/discovery.md`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
 同一目录格式支持纯领域、纯渠道和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `entities/` 中 `category: context`、`kind: fulfillment` 的 Entity，不存在独立履约目录或第二个履约对象。无履约时只是不出现该类 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
