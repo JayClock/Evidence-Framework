@@ -11,13 +11,13 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 采购方形成支付确认结果的业务时间
+    meaning: 客户形成支付确认结果的业务时间
   - name: paid_minor_units
     label: 确认支付金额
     valueType: int
     required: true
     keyData: true
-    meaning: 采购方确认支付的最小货币单位整数金额
+    meaning: 客户确认支付的最小货币单位整数金额
   - name: request_number
     label: 支付申请编号
     valueType: string

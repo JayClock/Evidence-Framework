@@ -3,4 +3,4 @@ id: relation.buyer-agent-plays-buyer
 kind: plays_role
 sourceRef: party.buyer-agent
 targetRef: role.buyer
-label: 甲方采购员扮演采购方
+label: 甲方采购员扮演客户

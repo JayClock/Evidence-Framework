@@ -1,6 +1,0 @@
-type: entity
-id: role.sourcing-customer
-category: role
-kind: party
-label: 客户
-contextRef: context.product-sourcing

@@ -13,7 +13,7 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 采购方与供应方形成采购协议的业务时间
+    meaning: 客户与供应商形成采购协议的业务时间
   - name: quantity
     label: 采购数量
     valueType: int

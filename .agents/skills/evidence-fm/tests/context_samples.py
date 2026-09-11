@@ -316,20 +316,12 @@ def performance_documents(
         channel = "context.goal-negotiation"
         documents.extend(
             [
-                entity(channel, "context", "pre_contract", "绩效目标签约前协商"),
                 entity(
-                    "role.goal-requester",
-                    "role",
-                    "party",
-                    "管理方邀请目标方案",
-                    contextRef=channel,
-                ),
-                entity(
-                    "role.goal-proposer",
-                    "role",
-                    "party",
-                    "电话销售提出目标方案",
-                    contextRef=channel,
+                    channel,
+                    "context",
+                    "pre_contract",
+                    "绩效目标签约前协商",
+                    parentContextRef=context,
                 ),
                 entity(
                     "rfp.goal-invitation",
@@ -337,7 +329,7 @@ def performance_documents(
                     "rfp",
                     "目标方案邀请",
                     contextRef=channel,
-                    responsibleRoleRef="role.goal-requester",
+                    responsibleRoleRef="role.manager",
                     attributes=[
                         attribute(
                             "started_at", "timestamp", "邀请发出时间", keyData=True
@@ -353,7 +345,7 @@ def performance_documents(
                     "proposal",
                     "目标方案",
                     contextRef=channel,
-                    responsibleRoleRef="role.goal-proposer",
+                    responsibleRoleRef="role.employee",
                     attributes=[
                         attribute(
                             "started_at", "timestamp", "方案提出时间", keyData=True

@@ -474,6 +474,81 @@ def validate_evidence_times(entity: dict[str, Any], errors: list[str]) -> None:
             )
 
 
+def validate_evidence_responsibility(
+    entity: dict[str, Any],
+    context: dict[str, Any] | None,
+    entities: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    """Use the explicitly bound contract parties, or a standalone context role."""
+    entity_id = entity["id"]
+    role_ref = normalize(entity.get("responsibleRoleRef"))
+    role = entities.get(role_ref or "")
+    if entity_signature(role) != ("role", "party"):
+        errors.append(f"{entity_id}: responsibleRoleRef must reference a Party Role")
+        return
+
+    context = context or {}
+    owner = context
+    parent = entities.get(str(context.get("parentContextRef")))
+    if (
+        context.get("kind") in {"fulfillment", "pre_contract", "channel"}
+        and parent is not None
+        and entity_signature(parent) == ("context", "contract")
+    ):
+        owner = parent
+    if entity_signature(owner) == ("context", "contract"):
+        contracts = [
+            entities[ref]
+            for ref in owner.get("rootRefs", [])
+            if ref in entities
+            and entity_signature(entities[ref]) == ("evidence", "contract")
+        ]
+        if len(contracts) != 1:
+            errors.append(
+                f"{entity_id}: responsibility requires exactly one root Contract"
+            )
+        elif role_ref not in contracts[0].get("roleRefs", []):
+            errors.append(
+                f"{entity_id}: responsibleRoleRef must be a Party Role bound by "
+                f"Contract '{contracts[0]['id']}'"
+            )
+    expected_context = owner.get("id")
+    if object_context_ref(role) != expected_context:
+        errors.append(
+            f"{entity_id}: responsible Party Role must belong to Context "
+            f"'{expected_context}'"
+        )
+
+
+def validate_party_role_owner(
+    role: dict[str, Any],
+    context: dict[str, Any] | None,
+    entities: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    context = context or {}
+    parent = entities.get(str(context.get("parentContextRef")))
+    if context.get("kind") == "fulfillment" or (
+        context.get("kind") in {"pre_contract", "channel"}
+        and entity_signature(parent) == ("context", "contract")
+    ):
+        errors.append(
+            f"{role['id']}: Party Role must stay in the parent Contract Context; "
+            "responsibility stages cannot define additional Party Roles"
+        )
+    if entity_signature(context) == ("context", "contract"):
+        bound_roles = {
+            ref
+            for root in context.get("rootRefs", [])
+            for ref in entities.get(root, {}).get("roleRefs", [])
+        }
+        if role["id"] not in bound_roles:
+            errors.append(
+                f"{role['id']}: Party Role must be bound by the root Contract"
+            )
+
+
 def validate_entities(
     entity_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
@@ -550,13 +625,8 @@ def validate_entities(
             errors.append(
                 f"{entity_id}: Participant Thing must belong to a Domain Context"
             )
-        if (category, kind) == ("role", "party") and entity_signature(context) == (
-            "context",
-            "fulfillment",
-        ):
-            errors.append(
-                f"{entity_id}: Party Role must stay in the parent Contract Context, not a Fulfillment Context"
-            )
+        if (category, kind) == ("role", "party"):
+            validate_party_role_owner(entity, context, entities, errors)
 
         attribute_names: set[str] = set()
         for attribute in entity.get("attributes") or []:
@@ -597,22 +667,8 @@ def validate_entities(
                         f"{entity_id}: Party Role '{role_ref}' must belong to the Contract Context"
                     )
         elif category == "evidence":
-            role_ref = normalize(entity.get("responsibleRoleRef"))
-            role = entities.get(role_ref or "")
-            if entity_signature(role) != ("role", "party"):
-                errors.append(
-                    f"{entity_id}: responsibleRoleRef must reference a Party Role"
-                )
-                continue
-
+            validate_evidence_responsibility(entity, context, entities, errors)
             context_kind = entity_signature(context)[1]
-            expected_role_context = context_ref
-            if context_kind == "fulfillment" and context is not None:
-                expected_role_context = normalize(context.get("parentContextRef"))
-            if object_context_ref(role) != expected_role_context:
-                errors.append(
-                    f"{entity_id}: responsible Party Role must belong to Context '{expected_role_context}'"
-                )
 
             if (
                 kind in {"fulfillment_request", "fulfillment_confirmation"}
@@ -914,6 +970,13 @@ def validate_relationships(
                 "evidence",
                 "proposal",
             ) and target_sig == ("evidence", "contract")
+            if kind == "precedes" and proposal_to_contract:
+                channel = entities.get(source_context or "", {})
+                if channel.get("parentContextRef") != target_context:
+                    errors.append(
+                        f"{relationship_id}: Proposal Context must bind its "
+                        "parentContextRef to the target Contract Context"
+                    )
             contract_to_request = (
                 source_sig == ("evidence", "contract")
                 and target_sig == ("evidence", "fulfillment_request")

@@ -4,7 +4,7 @@ category: evidence
 kind: proposal
 label: 商品报价
 contextRef: context.product-sourcing
-responsibleRoleRef: role.sourcing-supplier
+responsibleRoleRef: role.seller
 attributes:
   - name: started_at
     label: 报价开始时间

@@ -4,14 +4,14 @@ category: evidence
 kind: other_evidence
 label: 发票
 contextRef: fulfillment.invoice
-responsibleRoleRef: role.seller-finance
+responsibleRoleRef: role.seller
 attributes:
   - name: created_at
     label: 发票形成时间
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 供应方财务形成发票的业务时间
+    meaning: 乙方销售形成发票的业务时间
   - name: invoice_number
     label: 发票号码
     valueType: string

@@ -1,6 +1,0 @@
-type: relationship
-id: relation.seller-sales-plays-sourcing-supplier
-kind: plays_role
-sourceRef: party.seller-sales
-targetRef: role.sourcing-supplier
-label: 乙方销售扮演报价供应商

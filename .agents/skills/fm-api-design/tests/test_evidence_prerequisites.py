@@ -46,6 +46,44 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         self.root = Path(self.temp.name) / "fm"
         shutil.copytree(EXAMPLE / "fm", self.root)
 
+    def test_all_evidence_and_api_actors_use_the_two_contract_roles(self) -> None:
+        entities = [load(p) for p in (self.root / "entities").glob("*.yaml")]
+        parties = {
+            e["label"]
+            for e in entities
+            if e["category"] == "participant" and e["kind"] == "party"
+        }
+        self.assertEqual(parties, {"甲方采购员", "乙方销售"})
+        roles = {e["id"]: e["label"] for e in entities if e["category"] == "role"}
+        self.assertEqual(roles, {"role.buyer": "客户", "role.seller": "供应商"})
+        contract = next(
+            e
+            for e in entities
+            if e["kind"] == "contract" and e["category"] == "evidence"
+        )
+        self.assertEqual(set(contract["roleRefs"]), set(roles))
+        for evidence in entities:
+            if evidence["category"] == "evidence" and evidence["kind"] != "contract":
+                self.assertIn(evidence["responsibleRoleRef"], contract["roleRefs"])
+        design = load(EXAMPLE / "design.yaml")
+        for cap in design["capabilities"]:
+            self.assertIn(cap["actorRoleRef"], contract["roleRefs"])
+        self.assertFalse(
+            any(r["entityRef"].startswith("party.") for r in design["resources"])
+        )
+        plays = [load(p) for p in (self.root / "relationships").glob("*.yaml")]
+        self.assertEqual(
+            {
+                (r["sourceRef"], r["targetRef"])
+                for r in plays
+                if r["kind"] == "plays_role"
+            },
+            {
+                ("party.buyer-agent", "role.buyer"),
+                ("party.seller-sales", "role.seller"),
+            },
+        )
+
     def test_dependencies_and_api_steps_match_for_each_responsibility(self) -> None:
         scenario = load(self.root / SCENARIO)
         design = load(EXAMPLE / "design.yaml")

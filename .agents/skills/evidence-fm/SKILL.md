@@ -40,7 +40,8 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 采用唯一 FM v3；纯领域／渠道仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
 - 正式类型源是 `model.yaml` 及各类 YAML 分片；正式术语与说明写 README、overview、glossary，验证场景写 validation。它们由 FM 从有效来源生成，访谈中的工作术语、结构与案例只作为输入，不另维护同步的正式副本。具体要求见格式指南。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
-- 先识别 Context、双方 Role 与责任边界，再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Confirmation、Evidence Role 和 Rule 通过 `contextRef` 归属它。
+- 先识别 Context、双方 Role 与责任边界；经办人、岗位和部门不自动成为新的业务 Role，有明确主体依据时保留 Participant，有明确扮演依据才连接 `plays_role`，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Confirmation、Evidence Role 和 Rule 通过 `contextRef` 归属它。
+- 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立渠道／领域不补造合同。
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。
 - 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向。`other_evidence` 补充证明其他凭证：明确证明内容，以 `evidences` 指向被证明的具体 Evidence；必需补充证据先存在，目标凭证才能形成，以 `precedes`、实例 `basedOn` 和场景可见性落实依赖。先核对证据，再形成结果，不把补充证据当固定流程阶段。Fulfillment 不得成为 Evidence 关系端点或时间线节点。
 - Completion 与 Breach 使用有来源的 Evidence 属性、明确 bindings 和 CEL；any、all、count、amount 及具名人工确认都不使用 Fulfillment 内嵌策略。

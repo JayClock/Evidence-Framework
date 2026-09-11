@@ -11,13 +11,13 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 供应方提出支付申请的业务时间
+    meaning: 供应商提出支付申请的业务时间
   - name: expired_at
     label: 支付截止时间
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 采购方完成支付的业务截止时间
+    meaning: 客户完成支付的业务截止时间
   - name: requested_minor_units
     label: 申请支付金额
     valueType: int

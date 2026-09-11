@@ -5,3 +5,5 @@ kind: pre_contract
 label: 商品询报价上下文
 rootRefs:
   - rfp.product-inquiry
+parentContextRef: context.product-procurement
+notes: 显式关联采购协议的责任上下文；询报价凭证复用该协议绑定的客户、供应商角色，不表示协议在询价时已签署。

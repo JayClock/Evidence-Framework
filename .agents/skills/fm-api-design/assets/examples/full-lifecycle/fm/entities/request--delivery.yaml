@@ -11,13 +11,13 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 采购方提出发货申请的业务时间
+    meaning: 客户提出发货申请的业务时间
   - name: expired_at
     label: 发货截止时间
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 供应方完成发货的业务截止时间
+    meaning: 供应商完成发货的业务截止时间
   - name: delivery_address
     label: 收货地址
     valueType: string

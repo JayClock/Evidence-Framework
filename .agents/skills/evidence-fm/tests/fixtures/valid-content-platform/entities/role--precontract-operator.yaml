@@ -1,6 +1,0 @@
-type: entity
-id: role.precontract-operator
-category: role
-kind: party
-label: 内容运营
-contextRef: context.content-production-precontract

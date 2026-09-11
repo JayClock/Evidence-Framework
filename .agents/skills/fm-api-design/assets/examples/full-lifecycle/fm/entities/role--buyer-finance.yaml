@@ -1,6 +1,0 @@
-type: entity
-id: role.buyer-finance
-category: role
-kind: party
-label: 采购方财务
-contextRef: context.product-procurement

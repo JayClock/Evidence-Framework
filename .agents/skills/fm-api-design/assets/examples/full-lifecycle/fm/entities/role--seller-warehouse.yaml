@@ -1,6 +1,0 @@
-type: entity
-id: role.seller-warehouse
-category: role
-kind: party
-label: 供应方库管
-contextRef: context.product-procurement

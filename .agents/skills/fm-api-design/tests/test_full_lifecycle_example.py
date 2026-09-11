@@ -48,7 +48,7 @@ class FullLifecycleExampleTest(unittest.TestCase):
         self.assertEqual(api_check.returncode, 0, api_check.stderr)
         report = json.loads(api_check.stdout)
         self.assertTrue(report["complete"])
-        self.assertEqual(report["candidateCount"], 19)
+        self.assertEqual(report["candidateCount"], 14)
         self.assertEqual(report["projection"]["inputDigests"]["sources"], {})
         uris = {
             item["id"]: item["uri"] for item in report["projection"]["capabilities"]
@@ -82,7 +82,8 @@ class FullLifecycleExampleTest(unittest.TestCase):
         kinds = {
             item["effect"]["targetRef"] for item in report["projection"]["capabilities"]
         }
-        self.assertTrue(
+        self.assertEqual(
+            kinds,
             {
                 "rfp.product-inquiry",
                 "proposal.product-quotation",
@@ -97,12 +98,7 @@ class FullLifecycleExampleTest(unittest.TestCase):
                 "confirmation.delivery",
                 "evidence.delivery-note",
                 "thing.product",
-                "party.buyer-agent",
-                "party.buyer-finance",
-                "party.seller-sales",
-                "party.seller-finance",
-                "party.seller-warehouse",
-            }.issubset(kinds)
+            },
         )
 
 

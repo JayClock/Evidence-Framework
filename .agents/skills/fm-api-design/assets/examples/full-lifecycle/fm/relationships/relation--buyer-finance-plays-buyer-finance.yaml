@@ -1,6 +1,0 @@
-type: relationship
-id: relation.buyer-finance-plays-buyer-finance
-kind: plays_role
-sourceRef: party.buyer-finance
-targetRef: role.buyer-finance
-label: 甲方财务扮演采购方财务

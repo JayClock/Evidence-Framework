@@ -4,10 +4,10 @@ label: 商品采购协议完整履约
 asOf: '2026-11-06T10:00:00Z'
 steps:
   - sequence: 1
-    actingRoleRef: role.sourcing-customer
+    actingRoleRef: role.buyer
     issueInstanceRef: instance.product-inquiry
   - sequence: 2
-    actingRoleRef: role.sourcing-supplier
+    actingRoleRef: role.seller
     issueInstanceRef: instance.product-quotation
     availableInstanceRefs:
       - instance.product-inquiry
@@ -22,10 +22,11 @@ steps:
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 5
-    actingRoleRef: role.buyer-finance
+    actingRoleRef: role.buyer
     issueInstanceRef: instance.payment-voucher
     availableInstanceRefs:
       - instance.payment-request
+    notes: 甲方采购员经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
   - sequence: 6
     actingRoleRef: role.buyer
     issueInstanceRef: instance.payment-confirmation
@@ -38,10 +39,11 @@ steps:
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 8
-    actingRoleRef: role.seller-finance
+    actingRoleRef: role.seller
     issueInstanceRef: instance.invoice
     availableInstanceRefs:
       - instance.invoice-request
+    notes: 乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
   - sequence: 9
     actingRoleRef: role.seller
     issueInstanceRef: instance.invoice-confirmation
@@ -54,10 +56,11 @@ steps:
     availableInstanceRefs:
       - instance.product-procurement
   - sequence: 11
-    actingRoleRef: role.seller-warehouse
+    actingRoleRef: role.seller
     issueInstanceRef: instance.delivery-note
     availableInstanceRefs:
       - instance.delivery-request
+    notes: 乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。
   - sequence: 12
     actingRoleRef: role.seller
     issueInstanceRef: instance.delivery-confirmation

@@ -3,5 +3,6 @@ id: context.content-production-precontract
 category: context
 kind: pre_contract
 label: 创作合同签约前上下文
+parentContextRef: context.content-production
 rootRefs:
   - rfp.content-topic

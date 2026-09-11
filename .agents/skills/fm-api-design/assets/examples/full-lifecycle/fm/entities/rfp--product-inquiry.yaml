@@ -4,7 +4,7 @@ category: evidence
 kind: rfp
 label: 商品询价
 contextRef: context.product-sourcing
-responsibleRoleRef: role.sourcing-customer
+responsibleRoleRef: role.buyer
 attributes:
   - name: started_at
     label: 询价开始时间

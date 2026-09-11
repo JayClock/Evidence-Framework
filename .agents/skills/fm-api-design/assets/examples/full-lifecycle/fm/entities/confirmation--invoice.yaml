@@ -11,13 +11,13 @@ attributes:
     valueType: timestamp
     required: true
     keyData: true
-    meaning: 供应方形成开票确认结果的业务时间
+    meaning: 供应商形成开票确认结果的业务时间
   - name: invoice_number
     label: 发票号码
     valueType: string
     required: true
     keyData: true
-    meaning: 供应方确认开具的发票号码
+    meaning: 供应商确认开具的发票号码
   - name: request_number
     label: 开票申请编号
     valueType: string

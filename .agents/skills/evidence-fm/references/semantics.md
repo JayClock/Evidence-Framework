@@ -50,14 +50,18 @@ Role kind：
 - `context`：由其它 Context 扮演的上下文插槽；
 - `evidence`：由其它 Context 的确定性时刻 Evidence 扮演的确认插槽。
 
-Contract Party Role 位于 Contract Context，不复制进 Fulfillment。Request 和 Confirmation 位于该 Fulfillment，其责任仍指向父 Contract 的 Party Role。
+Contract Party Role 位于 Contract Context。属于该合同责任范围的所有 Evidence 均使用 Contract 的 `roleRefs` 所绑定角色，不为凭证种类或阶段复制角色。Contract 由这两个角色共同绑定；其余 Evidence 的 `responsibleRoleRef` 必须是其中之一，包括 RFP、Proposal、Request、Confirmation 与 Other Evidence。
+
+Fulfillment 通过 `parentContextRef` 归属合同。明确共享该合同责任的 Pre-contract／Channel Context 也用 `parentContextRef` 指向 Contract Context，复用同一组角色；这是类型模型的责任关联，不表示询报价时合同实例已经签署，也不改变凭证各自的 Context 或独立 URI 根。Proposal 通过 `precedes` 连接 Contract 时，该责任关联必须显式给出并与目标合同上下文一致；缺失或不一致直接拒绝，不接受渠道局部角色作为替代。合同责任阶段不定义额外 Party Role，Contract Context 中的 Party Role 必须被根 Contract 绑定。不从相同标签推断责任。独立渠道尚无合同责任关联时使用本 Context 的角色，不虚构合同。
 
 Participant：
 
 - `party`：跨上下文保持身份的个人、组织或法人；保持在 Context 外；
 - `thing`：具有领域身份的地点、标的物或其他事物；必须属于 Domain Context。
 
-只有来源明确稳定玩家或跨上下文同一性时才建立 `plays_role`。
+只有来源明确稳定玩家或跨上下文同一性时才建立 `plays_role`。区分合同责任身份与经办主体：财务、销售、库管等岗位名称本身不构成新增业务 Role 的依据；实际主体可作为 Participant 或凭证经办说明保留。不能为了覆盖节点种类，为每个经办主体复制一套 Role。
+
+角色扮演关系不等于完整操作授权。同一业务角色可以有不同经办主体，但某主体办理一份凭证的依据，不能扩展为它可执行该角色的所有操作。角色复用以明确的合同责任归属为依据；同名本身既不证明复用，也不是复制角色的理由。
 
 ## 5. Evidence
 
@@ -116,7 +120,7 @@ Evidence Role 是开放注册点：可以没有玩家或有多个玩家；新增
 
 ## 8. 合同前与渠道
 
-合同前的 RFP／Proposal 与合同履约具有不同的法律和弹性边界。它们保留自己的责任 Role、凭证时间线和审计关联；合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。
+合同前的 RFP／Proposal 与合同履约具有不同的法律和弹性边界，保留各自的凭证时间线和审计关联。责任归属显式关联同一合同时，复用该合同绑定的两个 Role；独立渠道使用本 Context 的角色。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。
 
 固定套餐可以 Proposal→Contract 或直接 Contract；询价与招标可由一个 RFP 对多个 Proposal，再由被接受 Proposal 指向 Contract。不得强迫所有渠道归并成一条流程。只展开签约前范围时，RFP／Proposal 可以独立存在，不虚构未来 Contract 或 Fulfillment。
 

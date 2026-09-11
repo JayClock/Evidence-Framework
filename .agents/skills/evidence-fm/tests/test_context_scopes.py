@@ -249,7 +249,15 @@ class ContextScopeTests(unittest.TestCase):
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
             before = load_model(root)
-            write_documents(root, domain_documents() + channel_documents())
+            channel = [d for d in channel_documents() if d.get("category") != "role"]
+            for document in channel:
+                if document["id"] == "context.sales-channel":
+                    document["parentContextRef"] = "context.content-subscription"
+                elif document.get("kind") == "rfp":
+                    document["responsibleRoleRef"] = "role.subscriber"
+                elif document.get("kind") == "proposal":
+                    document["responsibleRoleRef"] = "role.platform-subscription"
+            write_documents(root, domain_documents() + channel)
             write_documents(
                 root,
                 [

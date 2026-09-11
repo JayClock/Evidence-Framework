@@ -3,4 +3,4 @@ id: relation.seller-sales-plays-seller
 kind: plays_role
 sourceRef: party.seller-sales
 targetRef: role.seller
-label: 乙方销售扮演供应方
+label: 乙方销售扮演供应商

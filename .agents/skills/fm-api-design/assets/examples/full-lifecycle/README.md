@@ -13,21 +13,32 @@
 
 ## 节点覆盖
 
-| 节点类型                  | 示例节点                                                         |
-| ------------------------- | ---------------------------------------------------------------- |
-| Context                   | 商品采购协商、商品采购协议、商品目录                             |
-| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议                                 |
-| Fulfillment               | 支付、开票、发货                                                 |
-| Request                   | 支付申请、开票申请、发货申请                                     |
-| Confirmation              | 支付确认、开票确认、发货确认                                     |
-| Other Evidence            | 支付凭证、发票、发货单                                           |
-| Role                      | 客户、供应商、采购方、供应方、采购方财务、供应方财务、供应方库管 |
-| Participant               | 甲方采购员、甲方财务、乙方销售、乙方财务、乙方库管               |
-| Thing                     | 商品                                                             |
-| Rule                      | 支付、开票、发货的证据前提与履约完成规则                         |
-| Relationship              | `plays_role`、`references`、`precedes`、`evidences`              |
+| 节点类型                  | 示例节点                                            |
+| ------------------------- | --------------------------------------------------- |
+| Context                   | 商品采购协商、商品采购协议、商品目录                |
+| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议                    |
+| Fulfillment               | 支付、开票、发货                                    |
+| Request                   | 支付申请、开票申请、发货申请                        |
+| Confirmation              | 支付确认、开票确认、发货确认                        |
+| Other Evidence            | 支付凭证、发票、发货单                              |
+| Role                      | 客户、供应商（合同绑定的两个角色）                  |
+| Participant               | 甲方采购员、乙方销售                                |
+| Thing                     | 商品                                                |
+| Rule                      | 支付、开票、发货的证据前提与履约完成规则            |
+| Relationship              | `plays_role`、`references`、`precedes`、`evidences` |
 
-同一现实参与方通过 `plays_role` 连接不同 Context 中的 Role，例如甲方采购员同时扮演合同前的“客户”和合同中的“采购方”。Participant Party 按 FM v3 约束保持在所有 Context 之外。
+## 业务角色与经办主体
+
+本示例只有甲方采购员和乙方销售两个 Party，分别扮演客户 `role.buyer` 与供应商 `role.seller`。采购协议的 `roleRefs` 绑定这两个角色，从 RFP、Proposal 到 Request、Confirmation、Other Evidence 的责任角色全部来自此绑定，不新增阶段角色。
+
+询报价 Context 通过 `parentContextRef` 显式关联采购协议责任上下文，并保持自己的 URI 根。该关联不表示合同已在询价时签署；Contract 仍在实际签约时形成。
+
+| 业务角色 | Participant 经办主体 | 本示例涉及的经办活动                               |
+| -------- | -------------------- | -------------------------------------------------- |
+| 客户     | 甲方采购员           | 办理询价、相关申请、提供支付凭证及形成支付确认     |
+| 供应商   | 乙方销售             | 办理报价、支付申请、提供发票和发货单及形成相关确认 |
+
+Participant Party 保持在 Context 外，`plays_role` 表达示例中的角色扮演。它不授予某个经办主体该角色的全部操作权限；真实代理范围及访问控制必须另有依据。本示例不包含人员资料管理能力，不为这些主体生成查询接口。
 
 ## 必需补充证据
 
@@ -42,34 +53,28 @@ API 声明了证据前提规则，FM 场景实际验证凭证依赖与规则结�
 - 商品询价协商：`/product-inquiries`
 - 商品采购协议：`/product-procurements`
 - 商品目录：`/products`
-- Participant：使用独立可定位根，不嵌入合同前或合同 Context
 - 报价属于询价；支付、开票和发货履约沿采购协议根展开
 - 补充证据与确认分别位于已有申请之下；先提交证据，再在确认中引用证据，无循环创建依赖
 - 报价到采购协议的跨 Context 跳转通过超媒体链接表达，不形成跨 Context 父子 URI
 
 ## API 候选
 
-| Role       | URI                                                                                          | Method | Business Capability |
-| ---------- | -------------------------------------------------------------------------------------------- | ------ | ------------------- |
-| 客户       | `/product-inquiries`                                                                         | POST   | 发起商品询价        |
-| 供应商     | `/product-inquiries/{inquiryId}/quotations`                                                  | POST   | 提交商品报价        |
-| 采购方     | `/product-procurements`                                                                      | POST   | 登记商品采购协议    |
-| 供应方     | `/product-procurements/{procurementId}/payment-requests`                                     | POST   | 申请支付货款        |
-| 采购方财务 | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/vouchers`         | POST   | 提交支付凭证        |
-| 采购方     | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/confirmations`    | POST   | 确认支付货款        |
-| 采购方     | `/product-procurements/{procurementId}/invoice-requests`                                     | POST   | 申请开具发票        |
-| 供应方财务 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/invoices`         | POST   | 提交发票            |
-| 供应方     | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/confirmations`    | POST   | 确认开具发票        |
-| 采购方     | `/product-procurements/{procurementId}/delivery-requests`                                    | POST   | 申请商品发货        |
-| 供应方库管 | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/delivery-notes` | POST   | 提交发货单          |
-| 供应方     | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/confirmations`  | POST   | 确认商品发货        |
-| 采购方     | `/products/{productId}`                                                                      | GET    | 采购方查看商品      |
-| 供应方     | `/products/{productId}`                                                                      | GET    | 供应方查看商品      |
-| 采购方     | `/procurement-agents/{agentId}`                                                              | GET    | 查看甲方采购员      |
-| 采购方财务 | `/buyer-finance-members/{financeMemberId}`                                                   | GET    | 查看甲方财务        |
-| 供应方     | `/sales-representatives/{salesRepresentativeId}`                                             | GET    | 查看乙方销售        |
-| 供应方财务 | `/seller-finance-members/{financeMemberId}`                                                  | GET    | 查看乙方财务        |
-| 供应方库管 | `/warehouse-operators/{operatorId}`                                                          | GET    | 查看乙方库管        |
+| Role   | URI                                                                                          | Method | Business Capability |
+| ------ | -------------------------------------------------------------------------------------------- | ------ | ------------------- |
+| 客户   | `/product-inquiries`                                                                         | POST   | 发起商品询价        |
+| 供应商 | `/product-inquiries/{inquiryId}/quotations`                                                  | POST   | 提交商品报价        |
+| 客户   | `/product-procurements`                                                                      | POST   | 登记商品采购协议    |
+| 供应商 | `/product-procurements/{procurementId}/payment-requests`                                     | POST   | 申请支付货款        |
+| 客户   | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/vouchers`         | POST   | 提交支付凭证        |
+| 客户   | `/product-procurements/{procurementId}/payment-requests/{paymentRequestId}/confirmations`    | POST   | 确认支付货款        |
+| 客户   | `/product-procurements/{procurementId}/invoice-requests`                                     | POST   | 申请开具发票        |
+| 供应商 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/invoices`         | POST   | 提交发票            |
+| 供应商 | `/product-procurements/{procurementId}/invoice-requests/{invoiceRequestId}/confirmations`    | POST   | 确认开具发票        |
+| 客户   | `/product-procurements/{procurementId}/delivery-requests`                                    | POST   | 申请商品发货        |
+| 供应商 | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/delivery-notes` | POST   | 提交发货单          |
+| 供应商 | `/product-procurements/{procurementId}/delivery-requests/{deliveryRequestId}/confirmations`  | POST   | 确认商品发货        |
+| 客户   | `/products/{productId}`                                                                      | GET    | 客户查看商品        |
+| 供应商 | `/products/{productId}`                                                                      | GET    | 供应商查看商品      |
 
 Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不机械生成 CRUD API。
 
@@ -93,7 +98,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --require-complete
 ```
 
-预期产生 19 个候选，`complete: true`，且无缺口。
+预期产生 14 个角色×接口候选，`complete: true`，且无缺口。
 
 ## 生成投影
 
