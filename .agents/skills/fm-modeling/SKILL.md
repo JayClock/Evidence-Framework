@@ -26,8 +26,8 @@ compatibility: 对话、文件读写与命令执行；建模与发布需要可�
 读取 [工作流程](references/workflow.md)，只执行与当前意图有关的分支：
 
 1. 消化全部新增输入；需要澄清时遵循 `evidence-discovery`，新回答必须先保存再重新判断。
-2. 需要专业判断、候选或验证时遵循 `evidence-fm`；材料足够时不为模板制造问题。
-3. 生成请求止于完整候选、真实检查和差异展示。普通回答、停止、机器通过都不是保存授权。
+2. 需要专业判断、候选或验证时遵循 `evidence-fm`；材料足够时不为模板制造问题。候选按 Context／Role／责任边界、Evidence 主线与时间、Evidence→Thing、Other Evidence→Evidence、CEL Rule、Evidence Instance／`basedOn` 的顺序形成。
+3. 生成请求止于完整候选、Evidence 图与时间线、真实检查和差异展示。无来源的相对顺序保持未决；普通回答、停止、机器通过都不是保存授权。
 4. 用户明确授权保存已展示的准备结果后，才按 `evidence-fm` 的发布方法调用独立 CLI。
 5. 保存最小交接并停止，不自动进入需求、架构、开发、审核或其他交付流程。
 

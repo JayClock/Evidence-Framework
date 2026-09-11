@@ -34,7 +34,7 @@
       "id": 4,
       "name": "missing-confirmation-repair",
       "prompt": "使用 $modeling 修复输入中的 FM Schema v3 模型。付款 Request 所引用的 Confirmation 实体缺失；在不改变既有 Role、凭证责任和触发语义的前提下补齐，运行校验并编译 JSON。",
-      "expected_output": "补充付款 Confirmation，明确该凭证的责任 Role，保持 Fulfillment 与 confirmationTrigger 一致，不引入 partyAssignments，校验和编译通过；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
+      "expected_output": "补充付款 Confirmation，明确该凭证的责任 Role，保持 Confirmation 通过 contextRef 归属 Fulfillment，不引入 partyAssignments，校验和编译通过；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
       "files": ["fixtures/missing-confirmation-model"]
     },
     {
@@ -54,15 +54,15 @@
     {
       "id": 7,
       "name": "repeated-partial-confirmations",
-      "prompt": "使用 $modeling 建模一次采购交付请求对应任意多个分批到货确认，累计到货数量达到采购数量才完成；逾期未足量触发赔偿履约。不要为每一批复制 Confirmation 类型，使用 completionPolicy 和 CEL，合同直接引用买方与卖方 Role。",
-      "expected_output": "一个 Confirmation 类型配合 count/amount completionPolicy；累计完成规则为 CEL；赔偿是新的 Fulfillment；Request 与 Confirmation 的责任 Role 显式；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
+      "prompt": "使用 $modeling 建模一次采购交付请求对应任意多个分批到货确认，累计到货数量达到采购数量才完成；逾期未足量触发赔偿履约。不要为每一批复制 Confirmation 类型，使用带明确 Evidence bindings 的 CEL completion Rule，合同直接引用买方与卖方 Role。",
+      "expected_output": "一个 Confirmation 类型配合多个 Evidence Instance；累计完成规则为 CEL；赔偿是新的 Fulfillment；Request 与 Confirmation 的责任 Role 显式；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
       "files": []
     },
     {
       "id": 8,
       "name": "system-trigger-acts-for-role",
       "prompt": "使用 $modeling 建模编辑绩效协议：每周一 9 点自动生成周进度检查请求，月末自动汇总 KPI；连续两周未达标自动触发辅导义务。主管和编辑是合同 Role；系统和调度器不能成为 Role 或 Participant，自动动作必须表示它代表哪个业务 Role。",
-      "expected_output": "schedule/rule trigger 明确 actsForRoleRef；Contract 使用主管与编辑 Role；系统/调度器不是 Party；周检查与辅导 Fulfillment 完整；CEL 规则有效；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
+      "expected_output": "自动形成的 Request 仍明确 responsibleRoleRef 和业务时间来源；Contract 使用主管与编辑 Role；系统/调度器不是 Party；周检查与辅导 Fulfillment 完整；CEL 规则有效；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
       "files": []
     },
     {
@@ -170,7 +170,7 @@
       "id": 19,
       "name": "crm-domain-fulfillment-composition",
       "prompt": "用 $modeling 建模一个局部 CRM：客户信息领域管理 profileId 标识的客户档案与独立 contactId 的联系方式，档案引用联系方式，联系方式已启用且已核验才可使用。绩效协议双方为管理方与电话销售，履约是每周进度检查：管理方周一发起，电话销售周五前用结果确认提交联系数；确认关联本次检查请求与涉及的客户档案，迟交只按协议记录异常。客户本人身份尚未提供，不要补 Party。拨号只是工具调用，不纳入模型。用同一 FM v3 表达领域规则和履约，明确客户信息是标的／领域输入而不是完成凭证，输出校验、lineage 和编译 JSON。",
-      "expected_output": "Domain Context 有对象、关系和 CEL Rule，普通绩效 Contract 下有作为子 Context 的 Fulfillment；履约通过 subjectRefs 引用客户档案，结果凭证而不是 Thing 关闭责任；不存在拨号工具角色或假客户 Party。",
+      "expected_output": "Domain Context 有对象、关系和 CEL Rule，普通绩效 Contract 下有作为子 Context 的 Fulfillment；履约 Request 通过 references 指向客户档案，结果凭证而不是 Thing 关闭责任；不存在拨号工具角色或假客户 Party。",
       "files": [],
       "assertions": [
         "领域与绩效使用同一 FM，领域有关系与规则而不是占位。",

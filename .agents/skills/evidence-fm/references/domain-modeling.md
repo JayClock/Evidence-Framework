@@ -90,8 +90,8 @@ attributes:
 - 同一 Domain Context 的对象、角色间用 `references` 表达引用，`label`／`notes` 解释具体含义；派生关系可用 `derived_from`，属性派生的唯一依赖事实仍由 CEL AST 生成。
 - Context 外的稳定 Party 通过 `plays_role` 扮演上下文内的 Party Role；档案可 `references` 该本地 Role，不直接把跨 Context 的 Party 引用伪装为局部关系。
 - 能力依赖用 `uses_role` 指向非 Party Role；对象扮演能力用允许的 `plays_role`。Role 不因为存在而要求补造玩家。
-- 连接履约时用 `subjectRefs` 引用真实 Participant，或使用适当的 Role 插槽；领域对象本身不是履约完成凭证。
-- 跨上下文的业务结果依现有 Evidence bridge／Evidence Role 规则；不得为了方便把任意跨域对象引用改成 `cross_context_reference`。
+- 连接履约时由实际涉及领域对象的 Request 或其他业务 Evidence 使用 `references` 指向 Thing；领域对象本身不是履约完成凭证。
+- 跨上下文的业务结果使用外部时刻 Evidence→Evidence Role；辅助凭证使用 `evidences` 指向具体业务 Evidence，不补造任意跨域关系。
 
 `references` 不自动表达组合、拥有权、基数或级联删除。当前 Schema 没有这些专用字段；必要语义先明确记录，不能把一条带标签的线声称为已验证的完整关联约束。
 

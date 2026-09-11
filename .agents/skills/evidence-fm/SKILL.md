@@ -40,6 +40,10 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 采用唯一 FM v3；纯领域／渠道仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
 - 正式类型源是 `model.yaml` 及各类 YAML 分片；正式术语与说明写 README、overview、glossary，验证场景写 validation。它们由 FM 从有效来源生成，访谈中的工作术语、结构与案例只作为输入，不另维护同步的正式副本。具体要求见格式指南。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
+- 先识别 Context、双方 Role 与责任边界，再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Confirmation、Evidence Role 和 Rule 通过 `contextRef` 归属它。
+- 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。
+- 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向；每份辅助凭证通过 `evidences` 指出被证明的具体 Evidence。Fulfillment 不得成为 Evidence 关系端点或时间线节点。
+- Completion 与 Breach 使用有来源的 Evidence 属性、明确 bindings 和 CEL；any、all、count、amount 及具名人工确认都不使用 Fulfillment 内嵌策略。
 - 有履约用“请求 → 确认凭证”，不默认人工审批，不从责任 Role 推断实际证明提供方。
 - 业务未知、FM 表达缺口和技术实现事项分开。不能用假凭证／履约表达状态机，API、数据库与部署不写入 FM。
 - 用 [变更记录模板](assets/change-summary-template.md) 记录实际模型 ID、变更与来源／案例指针；已有评估和事实引用原记录，仅补充尚未保存的依据。
@@ -51,7 +55,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 只校验时运行只读 `check_fm.py`。需要准备候选时调用 `publish_fm.py prepare`，由 CLI 冻结完整候选、运行同一真实检查器、计算来源与目标摘要并生成差异；不能提交自行构造的检查成功标记。`check_fm.py` 执行已有适用场景，没有实际执行场景时 `simulationPassed` 为 null。无法运行 Python时说明“未校验”，不能保存成已验证模型。
 
-按 [场景校验](references/scenario-validation.md) 将业务案例映射到实际可执行覆盖；派生输出命令与 [最小验证记录](references/validation.md#最小验证记录) 按需使用，不为每轮任务生成全套报告。向用户展示准备结果绑定的保存目标、候选摘要、完整增改删、检查结果、实际场景执行情况和剩余缺口。
+按 [场景校验](references/scenario-validation.md) 将业务案例映射到实际可执行覆盖；派生输出命令与 [最小验证记录](references/validation.md#最小验证记录) 按需使用，不为每轮任务生成全套报告。向用户展示准备结果绑定的保存目标、候选摘要、完整增改删、Schema／CEL／lineage／simulation／timeline 检查、Evidence 时间线摘要、未决顺序、实际场景执行情况和剩余缺口。
 
 仅在用户明确授权保存该已展示候选后调用 `publish_fm.py apply`。候选、来源或目标变化会使授权失效，需重新评估和准备；冲突不能静默覆盖。失败时按结构化状态报告，`recovery_required` 使用同一 CLI 的 `recover` 处理文件操作，不恢复访谈。
 

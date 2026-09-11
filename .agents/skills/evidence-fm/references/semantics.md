@@ -87,11 +87,11 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 约束：
 
 - Request 与具体 Confirmation 的 `responsibleRoleRef` 必须引用所属 Contract 的 Party Role；
-- Trigger 的 `actsForRoleRef` 必须与其产生的具体 Evidence 的 `responsibleRoleRef` 一致；开放 Evidence Role 的 Trigger 仍须代表所属 Contract 的 Party Role；
-- Request、Confirmation、Evidence Role 与 Rule 必须直接属于该 Fulfillment；
+- Request、Confirmation、Evidence Role 与 Rule 必须以 `contextRef` 直接属于该 Fulfillment；
 - 一个 Request 恰好属于一个 Fulfillment；
-- 一个具体 Confirmation 只能属于一个 Fulfillment；跨履约复用结果必须通过外部时刻 Evidence、Evidence Role 或合法跨 Context 引用表达；
-- 多次同类运行时确认用 completion policy，不复制类型节点。
+- 一个具体 Confirmation 只能属于一个 Fulfillment；跨履约复用结果通过外部时刻 Evidence 和 Evidence Role 表达；
+- 多次同类运行时确认用多个 Evidence Instance 和 completion CEL Rule，不复制类型节点；
+- Fulfillment 本身不持有成员、标的、触发、完成或违约索引。
 
 在 Request 形成而合格 Confirmation 尚未形成时，履约状态是业务上的 `pending`，不是同步调用中的临时技术状态。
 
@@ -106,13 +106,7 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 
 Evidence Role 是开放注册点：可以没有玩家或有多个玩家；新增渠道只新增外部 Evidence 和 Relationship，不修改核心 Role。玩家必须来自另一个 Context 的确定性时刻 Evidence；Request、Contract、RFP 和 Proposal 不能证明确定结果。
 
-跨上下文的 Evidence 协作只允许：
-
-1. Proposal → Contract 的签约来源；
-2. 时刻 Evidence 间的 `cross_context_reference`；
-3. 时刻 Evidence → Evidence Role 的 `plays_role`。
-
-这不排除上述 Participant／Context 的 Role 扮演、能力引用和 Fulfillment 的 `subjectRefs`。后者表达身份或领域输入，不自动构成完成证明；同一领域内的对象关系使用合法的 `references` 等关系，详见 `domain-modeling.md`。
+跨上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。Thing 必须由实际涉及它的业务 Evidence 引用；辅助凭证必须通过 `evidences` 指向被证明的业务 Evidence。Fulfillment 不参与这些关系。
 
 这类 Role、Channel／Pre-contract Context 和 Fulfillment 是候选业务变化点。
 

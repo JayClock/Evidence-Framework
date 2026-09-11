@@ -28,32 +28,17 @@ Customer Party
 
 ## 3. Request interval、单次与多次确认
 
-固定期限：
+Request Entity 直接用 required/keyData timestamp 的 `started_at` 与 `expired_at` 表达区间。每个请求必须有确定截止时间；若来源只说明持续合作，继续核实每次请求的具体期限或确定依据，不自行补造。
 
-```yaml
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-```
-
-每个请求必须有确定的截止时间；不支持无期限或 `openEndedReason`。若来源只说明持续合作，继续核实每次请求的具体期限或确定性计算规则，不自行补造。
-
-一次确认使用 `all`／`any`。分批履约仍只建一个 Confirmation 类型，使用 `count`；累计金额使用 `amount` 和 CEL completion Rule。不要复制类型节点模拟运行时实例。
+一次、任一、全部、分批数量和累计金额都使用明确 Evidence bindings 与 CEL completion Rule。分批履约仍只建一个 Confirmation 类型，以多个 Evidence Instance 表达各批次，不复制类型节点。
 
 ## 4. 多个 Fulfillment 共用确定结果
 
-季度与年度 KPI 若消费同一确定结果，应让外部时刻 Evidence 分别通过 Evidence Role 或合法跨 Context 引用进入各自 Fulfillment。具体 Confirmation 只属于一个 Fulfillment；不要通过复制或多重归属制造共享。
+季度与年度 KPI 若消费同一确定结果，应让外部时刻 Evidence 分别通过 Evidence Role 进入各自 Fulfillment。具体 Confirmation 只属于一个 Fulfillment；不要通过复制或多重归属制造共享。
 
-## 5. 自动动作代表业务 Role
+## 5. 自动动作不成为业务凭证
 
-```yaml
-requestTrigger:
-  kind: schedule
-  schedule: '0 9 * * MON'
-  actsForRoleRef: role.manager
-```
-
-调度器不是 Participant。支付回调同样只是 trigger mechanism。
+调度器、回调和系统任务不是 Participant 或业务时间来源。若自动动作代表某业务 Role 形成 Evidence，该 Evidence 仍使用 `responsibleRoleRef`；调度时刻或回调到达不能替代 Evidence 自身业务时间。
 
 ## 6. 多支付渠道：凭证角色化
 
@@ -126,7 +111,7 @@ Compensation Request → Compensation Confirmation
 
 领域部分本来就在 8X Flow 内，用同一 FM 的 Entity、Relationship、CEL Rule 表达。商品、内容、客户档案、场所等 Thing 位于 Domain Context；稳定 Party 保持外部身份，通过 Role 扮演进入上下文。
 
-独立领域任务不要求 Contract 或 Fulfillment；混合模型才按事实通过 `subjectRefs`、领域 Role 及合法凭证协作组合。领域对象不是完成凭证，能力插槽不是已经展开的领域逻辑。详细过程与表达边界见 `domain-modeling.md`。
+独立领域任务不要求 Contract 或 Fulfillment；混合模型按事实由具体 Evidence 通过 `references` 指向 Thing，并以领域 Role 及合法凭证协作组合。领域对象不是完成凭证，能力插槽不是已经展开的领域逻辑。详细过程与表达边界见 `domain-modeling.md`。
 
 ## 12. 工具集成与无需建模
 

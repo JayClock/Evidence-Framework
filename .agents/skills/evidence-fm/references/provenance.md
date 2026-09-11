@@ -83,7 +83,7 @@
 
 **是否阻塞取决于业务依据缺口的影响，不取决于有没有公式。** 已知类型语义不因未给时长退回 null；来源未知仍须保留，不能用类型展开关闭真实的期限确定依据问题。类型模型的非派生时间属性无需 derivedByRuleRef，实际实例缺 required 时间值仍校验失败。
 
-最终 `entities/*.yaml` 的 `attributes` 须显式定义各类型的对应名称，统一 `valueType: timestamp`、`required: true`、`keyData: true`，说明 meaning 与来源／派生规则。业务属性用 snake_case；不能仅写在说明里或让编译器补齐。requestInterval 固定引用 started_at／expired_at；实例提供确定的 RFC 3339 时间值。类型必备属性不互换，领域对象不套 Evidence 时间表。
+最终 `entities/*.yaml` 的 `attributes` 须显式定义各类型的对应名称，统一 `valueType: timestamp`、`required: true`、`keyData: true`，说明 meaning 与来源／派生规则。业务属性用 snake_case；不能仅写在说明里或让编译器补齐。Request 本身的 started_at／expired_at 构成区间；实例提供确定的 RFC 3339 时间值。类型必备属性不互换，领域对象不套 Evidence 时间表。
 
 ## 映射到正式模型
 

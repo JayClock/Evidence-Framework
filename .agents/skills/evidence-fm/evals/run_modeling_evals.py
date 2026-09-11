@@ -788,15 +788,20 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             "Reverse Fulfillment lookup",
         )
     elif eval_id == 7:
-        policy_ok = any(
-            (item.get("completionPolicy") or {}).get("mode") in {"count", "amount"}
-            for item in fulfillments
+        completion_rules = [rule for rule in rules if rule.get("kind") == "completion"]
+        repeated_bindings = any(
+            any(
+                binding.get("cardinality") == "many"
+                for binding in (rule.get("bindings") or {}).values()
+                if isinstance(binding, dict)
+            )
+            for rule in completion_rules
         )
         add(
             expectations,
-            "Partial confirmations use count/amount completion policy.",
-            policy_ok,
-            "completionPolicy lookup",
+            "Partial confirmations use repeated instances and a CEL completion rule.",
+            repeated_bindings,
+            str([rule.get("id") for rule in completion_rules]),
         )
         add(
             expectations,
@@ -811,15 +816,21 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             "Fulfillment lookup",
         )
     elif eval_id == 8:
-        triggers = [item.get("requestTrigger") or {} for item in fulfillments]
+        scheduled_requests = [
+            entity
+            for entity in entities
+            if entity.get("kind") == "fulfillment_request"
+            and entity.get("responsibleRoleRef")
+            and any(
+                re.search(r"周一|月末|schedule|weekly|monthly", str(attribute), re.I)
+                for attribute in entity.get("attributes") or []
+            )
+        ]
         add(
             expectations,
-            "Scheduled trigger acts for a business Role.",
-            any(
-                trigger.get("kind") == "schedule" and trigger.get("actsForRoleRef")
-                for trigger in triggers
-            ),
-            str(triggers),
+            "Scheduled requests retain a responsible business Role and time meaning.",
+            bool(scheduled_requests),
+            str([item.get("id") for item in scheduled_requests]),
         )
         system_participants = [
             entity.get("id")

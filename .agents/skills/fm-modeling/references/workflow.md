@@ -21,13 +21,14 @@
 
 定位 `evidence-fm`。只校验时对用户指定模型运行其只读检查器，报告真实退出状态、场景执行数和 `simulationPassed`；不修改预期来取得通过。
 
-生成模型时先按 FM 方法评估 ready、support 与 pending，再在工作目录形成保留现有有效内容的完整候选。调用 FM 包内发布 CLI 的 `prepare`，展示：
+生成模型时先按 FM 方法评估 ready、support 与 pending，再按 Context／Role／责任边界、Evidence 主线与类型时间、Evidence→Thing、Other Evidence→Evidence、CEL Rule、Evidence Instance／`basedOn` 的顺序，在工作目录形成保留现有有效内容的完整候选。Fulfillment 仅作为 Context；无业务依据的 Evidence 顺序列为未决，不自动排序。调用 FM 包内发布 CLI 的 `prepare`，展示：
 
 1. 正式目标和准备结果标识；
 2. 候选、目标及声明来源摘要；
 3. 全部增加、修改和删除文件及完整差异；
-4. 真实检查结果和实际执行场景；
-5. 尚未纳入或仍阻塞的业务缺口。
+4. Schema、CEL、lineage、simulation 与 timeline 的真实检查结果和实际执行场景；
+5. Evidence 时间线摘要、来源时间和未决顺序；
+6. 尚未纳入或仍阻塞的业务缺口。
 
 没有可纳入职责时只保存评估和缺口。纯领域或渠道仍可建模；没有场景时不宣称模拟通过。
 

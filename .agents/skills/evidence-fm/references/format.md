@@ -151,7 +151,7 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 
 ### Fulfillment
 
-每项 Fulfillment 自身就是 Contract 的子 Context；责任和边界在同一个 Entity 文件中定义：
+每项 Fulfillment 自身就是 Contract 的子 Context，只定义责任边界：
 
 ```yaml
 type: entity
@@ -160,28 +160,9 @@ category: context
 kind: fulfillment
 label: 支付订阅费用
 parentContextRef: context.subscription
-contractRef: contract.subscription
-requestRef: request.subscription-payment
-requestInterval:
-  startAttribute: started_at
-  endAttribute: expired_at
-confirmationRefs:
-  - role.qualified-payment-confirmation
-completionPolicy:
-  mode: any
-requestTrigger:
-  kind: domain_event
-  eventType: SubscriptionContractSigned
-  actsForRoleRef: role.service-provider
-confirmationTriggers:
-  - confirmationRef: role.qualified-payment-confirmation
-    trigger:
-      kind: integration_event
-      eventType: QualifiedPaymentConfirmed
-      actsForRoleRef: role.subscriber
 ```
 
-Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID，不得放入 Contract Context。
+Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID，不得放入 Contract Context。相关 Contract 从父 Contract Context 的根 Evidence 确定，成员索引从各对象的 `contextRef` 构建。
 
 ### Domain Context 与 Thing
 
@@ -245,41 +226,15 @@ contextRef: fulfillment.subscription-payment
 
 具体玩家只出现在独立 `plays_role` Relationship 中。
 
-## 5. Fulfillment 与 Request interval
+## 5. Fulfillment、Evidence 与 Rule
 
-Fulfillment 的完整结构见上一节。可选 `subjectRefs` 引用履约标的 Participant；可选 `breaches` 记录违约条件及后果。
+Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 指向 Fulfillment；Evidence 的 `responsibleRoleRef` 指向父 Contract Context 中负责形成该凭证的 Party Role。
 
-Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 直接指向 Fulfillment ID；它们各自的 `responsibleRoleRef` 指向父 Contract Context 中对该凭证负责的 Party Role。履约方向由 Request → Confirmation 的结构表达，不重复声明角色位置。
+Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 
-Request 的 interval 属性必须：
+每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。具体 Confirmation 只属于一个 Fulfillment；重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
 
-- 位于 Request Entity；
-- `valueType: timestamp`；
-- `required: true`；
-- `keyData: true`。
-
-`startAttribute` 固定为 `started_at`，`endAttribute` 固定为 `expired_at`，两者缺一不可。不再接受 `openEndedReason`；允许以请求自身的非派生时间属性表达区间，不要求先确定截止生成公式。业务来源或规则缺口影响判断时按来源追溯过程返回发现，不以 interval 已完整为来源充分的证明；实例值仍须完整，不得擅自填补业务约定。
-
-### completionPolicy
-
-- `any`：任一合格确认完成；
-- `all`：全部确认目标完成；
-- `count`：同类运行时确认达到 `minimumConfirmations`；
-- `amount`：由 bool completion CEL Rule 判断累计金额；
-- `manual`：由人工业务确认或指定最终确认判断。
-
-具体 Confirmation 只属于一个 Fulfillment。跨履约复用确定结果时，使用外部时刻 Evidence、Evidence Role 或合法跨 Context 引用，不把同一个 Confirmation 节点塞入多个 Fulfillment。
-
-### Trigger 与 Breach
-
-Trigger kind：`manual`、`schedule`、`domain_event`、`integration_event`、`rule`。所有 trigger 都要有 `actsForRoleRef`；系统名称只能作为机制描述。
-
-Breach outcome：
-
-- `fulfillment`：启动新履约；
-- `terminate_contract`：按合同终止；
-- `external_dispute`：进入模型外争议；
-- `record_only`：只记录，必须说明合同依据。
+Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。
 
 ## 6. 合同前与渠道
 
@@ -293,11 +248,9 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 ## 7. Relationship
 
-允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`、`cross_context_reference`、`uses_role`。
+允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`、`uses_role`。
 
-方向固定为玩家→Role、前序→后序、证明材料→被证明对象、来源→派生对象。同 Context 的领域对象可用 `references` 等合法关系；Relationship 标签不能替代未实现的基数／状态机约束。
-
-跨 Context 的 Evidence 协作限于签约来源、时刻凭证或时刻 Evidence→Evidence Role；Participant／Context 的合法 Role 扮演、能力引用及 Fulfillment.subjectRefs 另按各自类型规则检查，不等于履约证明。
+方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为业务 Evidence→Thing，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为外部时刻 Evidence→Evidence Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。允许有业务依据的 Proposal→Contract、父 Contract→子 Request 以及 Evidence→Thing 跨 Context 关系；Relationship 标签不能替代来源。
 
 ## 8. Business Pattern
 
@@ -313,4 +266,4 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 金额、数量、业务时间、KPI 或审计结论使用 `keyData: true`。派生属性用 `derivedByRuleRef` 指向唯一 CEL derivation Rule；来源从 CEL AST 自动提取。
 
-编译结果包含按 ID 排序的 `entities`、`relationships`、`rules` 和 `businessPatterns`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json` 与 `02-business-patterns.md` 均可删除重建。
+编译结果包含按 ID 排序的 `entities`、`relationships`、`rules` 和 `businessPatterns`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json`、`timeline.json` 与 `02-business-patterns.md` 均可删除重建。时间线只包含 Evidence Instance；Context 是泳道，Thing 仅是引用目标。

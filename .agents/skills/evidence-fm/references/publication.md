@@ -14,11 +14,11 @@
   --work-dir "$WORK_DIR"
 ```
 
-`--source` 可重复。CLI 将候选冻结到工作目录，调用同包 `check_fm.py` 执行真实检查，计算候选、目标和声明来源摘要，并生成完整文件清单差异和 unified diff。`prepare` 不修改正式目标。
+`--source` 可重复。CLI 将候选冻结到工作目录，调用同包 `check_fm.py` 执行 Schema、CEL、lineage、simulation 与 canonical timeline 检查，计算候选、目标和声明来源摘要，并生成完整文件清单差异和 unified diff。`prepare` 不修改正式目标。
 
 标准输出是 JSON。`status: prepared` 且退出码为 0 才表示准备成功；`validation_failed`、`checker_unavailable` 和路径错误均使用非零退出码。没有执行适用场景时保留 `simulationPassed: null`，不能改写成模拟通过。
 
-`receiptPath` 指向准备结果。展示保存目标、候选摘要、全部增改删、检查结果、实际场景执行数及未决业务缺口后，才可请求保存授权。授权绑定该准备结果；候选、来源或目标变化后必须重新准备。
+`receiptPath` 指向准备结果。展示保存目标、来源／候选／目标摘要、全部增改删、检查结果、Evidence 时间线摘要与哈希、未决顺序、实际场景执行数及未决业务缺口后，才可请求保存授权。授权绑定该准备结果；候选、来源、目标或时间线摘要变化后必须重新准备。
 
 ## 文件边界
 
@@ -41,7 +41,7 @@
   --report-dir "$REPORT_DIR"
 ```
 
-`apply` 获取目标级本地排他锁，复核 receipt、冻结候选、声明来源和目标摘要，再把即将写入的同盘 staging 交给真实检查器。只有复核及校验都通过才替换完整目标目录；候选中删除的文件不会残留。目标已经等于同一候选时，在重新校验后返回 `noop`。
+`apply` 获取目标级本地排他锁，复核 receipt、冻结候选、声明来源和目标摘要，再把即将写入的同盘 staging 交给真实检查器，并核对 canonical timeline 摘要与 prepare 完全一致。只有复核及校验都通过才替换完整目标目录；候选中删除的文件不会残留。目标已经等于同一候选时，在重新校验后返回 `noop`。
 
 以下变化返回 `conflict`，不会静默覆盖：
 

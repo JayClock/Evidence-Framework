@@ -1,55 +1,51 @@
 # FM Modeling 使用指南
 
-FM Modeling 由可移植 Skills、普通项目文件和独立 Python CLI 组成。Pi 扩展只是可选界面；禁用全部扩展后仍可讨论、形成候选、校验和保存。
+FM Modeling 由可移植 Skills、项目业务文件和独立 Python CLI 组成，不依赖 Evidence 扩展的阶段、状态、Gate 或发布能力。Pi 扩展只提供可选入口与界面；禁用其他扩展后仍可讨论、生成候选、校验和保存。
 
 ## 入口与意图
 
-Pi 中显式调用：
-
 ```text
 /skill:fm-modeling <本次目标>
+/fm-model <本次目标>        # 安装可选适配器时
 ```
 
-安装了可选适配器时也可用：
+`/fm-model` 只转发原生 Skill。入口支持讨论／澄清、生成候选、只校验、保存已展示候选和暂停／结束。生成候选、普通回答和机器检查通过都不是保存授权。
 
-```text
-/evidence-model <本次目标>
-```
-
-入口支持五类意图：讨论／澄清、生成候选、只校验、保存已展示候选、暂停／结束。生成候选不等于保存；普通业务回答、停止和机器检查通过都不是保存授权。
-
-## 默认文件布局
-
-项目已有约定优先。没有约定时按需使用：
+## 默认项目布局
 
 ```text
 docs/business/
-├── discovery.md       # 来源、原话、工作理解、问题与恢复点
-├── fm/                # 正式 FM 源 YAML、说明和验证场景
-├── fm-checks/         # 已引用的检查与发布记录
-└── .fm-work/          # 候选及冻结准备结果（忽略提交）
+├── discovery.md
+├── fm/
+├── fm-checks/
+└── .fm-work/
 ```
 
-`discovery.md` 应能让新 Agent 找到当前业务对象、已消化来源、实际问题、暂缓／停止状态、正式模型、候选、检查记录和下一步选择。它不复制正式模型正文，也不保存宿主运行状态。
+项目已有约定优先。`discovery.md` 保存来源、工作理解、稳定问题标识、暂缓／停止及文件指针，不复制正式模型，也不保存宿主运行状态。
 
-## 讨论和候选
+## 规范建模顺序
 
-`fm-modeling` 通过资源发现组合：
+1. 识别 Context、双方 Role 与责任边界。
+2. 建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。
+3. 展开 Evidence 时间：RFP、Proposal、Request 使用 `started_at`／`expired_at`；Contract 使用 `signed_at`；Confirmation 使用 `confirmed_at`；Other Evidence 使用 `created_at`。
+4. 由具体 Evidence 通过 `references` 指向 Thing；由 Other Evidence 通过 `evidences` 指向它证明的业务 Evidence。
+5. 用明确 Evidence bindings 和 CEL 建立 completion、breach 与 derivation Rule。
+6. 用 Evidence Instance 和只指向既有凭证的 `basedOn` 建立回放场景。
 
-- `evidence-discovery`：一次一个核心业务问题，保留原话、来源、更正、稳定 Q-ID／gapKey、暂缓和停止。
-- `evidence-fm`：来源追溯、业务判断、ready／support／pending 评估、完整候选、验证场景和发布规则。
+Fulfillment 只作为责任边界 Context 和时间线泳道。它不保存 Request、Confirmation、Thing、策略或违约成员索引，也不能成为 `precedes`、`references`、`evidences` 或 `derived_from` 的端点。纯领域或纯渠道模型不补造 Contract 或 Fulfillment。
 
-没有首份模型也可以先澄清。回答返回后先写发现记录，再重新判断；写入失败必须停止。材料充分时直接形成候选，不为模板凑问题。未知事实保持 pending，不补造合同、期限、确认提供者或实例时间。
+不得从文件名、ID、文件创建顺序或实现回调推断业务时间。`created_at` 不替代原事件时间，`signed_at` 不替代生效时间，`confirmed_at` 不等同于回调到达。依据不足的相对顺序保留为未决。
 
-## 只读校验
-
-准备满足 `evidence-fm/requirements.txt` 的 Python 3.10+ 环境，设置绝对路径：
+## 只读校验与时间线
 
 ```bash
 "$PYTHON" "$SKILL_DIR/scripts/check_fm.py" "$MODEL_DIR"
+"$PYTHON" "$SKILL_DIR/scripts/build_fm_timeline.py" "$MODEL_DIR"
 ```
 
-命令只读模型并输出 JSON。没有实际执行场景时 `simulationPassed` 为 `null`；检查失败不能通过修改业务预期掩盖。
+`check_fm.py` 输出 Schema、CEL、lineage、simulation 和 timeline 的一致检查摘要。没有实际执行场景时 `simulationPassed` 为 `null`。`build_fm_timeline.py` 生成可重建的 `generated/timeline.json`；该文件不是源模型，不得手改或作为正式输入。
+
+时间线只包含 Evidence Instance，按 Context 分泳道，保留 moment／interval、`precedes`、`basedOn`、来源值和未决顺序。循环、未来依赖及确定性时间冲突导致检查失败。
 
 ## 准备与查看候选
 
@@ -61,13 +57,13 @@ docs/business/
   --work-dir "$WORK_DIR"
 ```
 
-`--source` 可重复。成功结果中的 `receiptPath` 绑定冻结候选、目标与声明来源摘要、完整差异、真实校验和场景执行结果。保存前展示目标、摘要、全部增改删、完整差异、检查结果和剩余缺口。
+`receiptPath` 绑定冻结候选、目标、来源摘要、完整增改删、真实检查、实际场景及 canonical 时间线摘要与哈希。保存前必须展示 preparation ID、目标、来源／候选／目标摘要、完整差异、Schema／CEL／lineage／simulation／timeline 结果、未决顺序和业务缺口。
 
-Pi 适配器的 `fm_ui_review` 可提供查看与确认界面；没有界面时在普通对话中展示相同信息。取消、返回修改和暂不保存都不是保存许可。
+`fm_ui_review` 可展示相同信息；无界面时用普通对话完整展示。取消、返回修改和暂不保存都不是保存许可。
 
-## 保存和冲突
+## 保存、冲突与恢复
 
-用户明确授权保存当前已展示准备结果后运行：
+用户明确授权保存当前已展示准备结果后才运行：
 
 ```bash
 "$PYTHON" "$SKILL_DIR/scripts/publish_fm.py" apply \
@@ -75,34 +71,21 @@ Pi 适配器的 `fm_ui_review` 可提供查看与确认界面；没有界面时�
   --report-dir "$REPORT_DIR"
 ```
 
-CLI 在目标锁内重新核对 receipt、候选、来源和目标，重新校验同盘 staging，再替换完整目录。结果包括：
-
-- `applied`：替换并写入真实报告；
-- `noop`：目标已等于同一候选，重新校验后无需替换；
-- `validation_failed`：实际检查失败，目标不变；
-- `conflict`：候选、来源、目标或锁发生冲突；
-- `recovery_required`：文件操作或报告需要恢复／诊断。
-
-任何摘要变化都使旧确认失效。保存结果不是具名业务审核，也不会自动启动需求或软件交付流程。
-
-## 中断恢复
+`apply` 在目标锁内重新核对 receipt、候选、来源和目标，并重跑同一 canonical 时间线检查。候选、来源、目标或时间线摘要变化后必须重新 `prepare` 和确认。`applied`／`noop` 是文件结果，不是业务审核。
 
 ```bash
 "$PYTHON" "$SKILL_DIR/scripts/publish_fm.py" recover --target "$TARGET"
 ```
 
-恢复只处理目标旁的最小文件事务：完成已就位候选的清理，或在新候选尚未就位时恢复旧目标。无法与摘要匹配时保留材料并返回 `recovery_required`。它不恢复访谈或调用 Agent。
+恢复只处理目标旁的文件事务，不恢复访谈或调用其他工作流。
 
-目录替换使用本地目标锁、同盘 staging 和可恢复备份，不承诺跨主机事务，也不保证非协作读者在两次 rename 之间始终看得到目标目录。
-
-## 验证与人工检查
+## 验证
 
 ```bash
-npm run skills:verify
 npm run fm-modeling:verify
 npm test
 npm run lint
 npm run build
 ```
 
-自动测试证明 CLI、Skill 结构和 UI 适配器的程序行为。行为评测用于观察 Agent 是否遵守来源、逐问、停止和授权边界；中文输入、窄终端、主题、RPC、取消、暂缓、继续、保存确认和发布中断仍需真人体验。
+自动检查不能替代业务审核。模型默认保持 `draft`／`stakeholderReview: pending`，只有具名真实依据才能提升。

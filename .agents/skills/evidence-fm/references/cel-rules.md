@@ -80,7 +80,7 @@ actual.call_count >= target.call_count && actual.email_count >= target.email_cou
 
 ## 5. 属性派生
 
-实体属性使用 `derivedByRuleRef` 指向唯一 derivation Rule。所有 Evidence 的必备时间属性均为 required、`keyData: true` 的 timestamp，Request interval 固定引用 `started_at`、`expired_at`。RFP／Proposal 的截止时间也可按真实来源用 CEL 派生，但不能缺少属性定义或使用无期限。示例中的 30 分钟不是默认期限，必须有业务依据：
+实体属性使用 `derivedByRuleRef` 指向唯一 derivation Rule。所有 Evidence 的必备时间属性均为 required、`keyData: true` 的 timestamp，Request 直接以 `started_at`、`expired_at` 表达 interval。RFP／Proposal 的截止时间也可按真实来源用 CEL 派生，但不能缺少属性定义或使用无期限。示例中的 30 分钟不是默认期限，必须有业务依据：
 
 ```yaml
 attributes:
