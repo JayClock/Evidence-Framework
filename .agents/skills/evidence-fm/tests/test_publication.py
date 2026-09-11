@@ -98,6 +98,9 @@ class PublicationPreparationTests(unittest.TestCase):
         self.assertTrue(output["validation"]["valid"])
         self.assertIsNone(output["validation"]["simulationPassed"])
         self.assertEqual(0, output["validation"]["executedScenarioCount"])
+        timeline = output["validation"]["timelineSummary"]
+        self.assertEqual(0, timeline["instanceCount"])
+        self.assertTrue(timeline["sha256"].startswith("sha256:"))
         self.assertIn("obsolete.yaml", output["difference"]["deleted"])
         receipt = json.loads(Path(output["receiptPath"]).read_text(encoding="utf-8"))
         self.assertTrue(Path(receipt["candidate"]["path"]).is_dir())

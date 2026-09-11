@@ -8,6 +8,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from build_fm_timeline import (  # pyright: ignore[reportMissingImports]
+    build_timeline,
+    timeline_summary,
+)
 from fm_model import load_model, validate_model
 from fm_simulation import (
     load_validation_suite,
@@ -21,7 +25,8 @@ def check_model(root: Path) -> dict[str, Any]:
     model_errors = validate_model(model)
     suite = load_validation_suite(root)
     suite_errors = validate_validation_suite(model, suite)
-    errors = list(dict.fromkeys([*model_errors, *suite_errors]))
+    timeline, timeline_errors = build_timeline(model, suite)
+    errors = list(dict.fromkeys([*model_errors, *suite_errors, *timeline_errors]))
     simulation_passed: bool | None = None
     executed = 0
     if not errors and suite.scenarios:
@@ -39,6 +44,7 @@ def check_model(root: Path) -> dict[str, Any]:
         "scenarioCount": len(suite.scenarios),
         "executedScenarioCount": executed,
         "simulationPassed": simulation_passed,
+        "timelineSummary": timeline_summary(timeline),
         "errors": errors,
     }
 

@@ -191,6 +191,17 @@ def run_checker(skill_dir: Path, model_dir: Path) -> dict[str, Any]:
     return report
 
 
+def verify_prepared_timeline(
+    prepared_validation: dict[str, Any], current_validation: dict[str, Any]
+) -> None:
+    if current_validation.get("timelineSummary") != prepared_validation.get(
+        "timelineSummary"
+    ):
+        raise PublicationError(
+            "conflict", "Canonical Evidence timeline changed after preparation"
+        )
+
+
 def receipt_digest(receipt: dict[str, Any]) -> str:
     unsigned = {key: value for key, value in receipt.items() if key != "receiptDigest"}
     return sha256_bytes(canonical_json(unsigned))
@@ -348,6 +359,7 @@ def apply_candidate(
             validation = run_checker(skill_dir, candidate)
             if not validation["valid"]:
                 raise PublicationError("validation_failed", "Current target matches an invalid candidate")
+            verify_prepared_timeline(receipt["validation"], validation)
             return {
                 "status": "noop",
                 "target": str(target),
@@ -367,6 +379,7 @@ def apply_candidate(
         if not validation["valid"]:
             _cleanup_path(paths["staging"])
             raise PublicationError("validation_failed", "Candidate failed validation immediately before apply")
+        verify_prepared_timeline(receipt["validation"], validation)
 
         journal: dict[str, Any] = {
             "transactionVersion": 1,

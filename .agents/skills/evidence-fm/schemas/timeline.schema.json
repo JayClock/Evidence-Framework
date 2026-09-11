@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/fm/v3/timeline.schema.json",
+  "title": "FM deterministic Evidence timeline",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "modelId",
+    "lanes",
+    "evidenceTypes",
+    "instances",
+    "precedes",
+    "unresolvedOrder"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "3.0" },
+    "modelId": { "$ref": "#/$defs/id" },
+    "lanes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["contextRef"],
+        "properties": { "contextRef": { "$ref": "#/$defs/id" } },
+        "additionalProperties": false
+      }
+    },
+    "evidenceTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entityRef", "contextRef", "evidenceKind", "timeAttributes"],
+        "properties": {
+          "entityRef": { "$ref": "#/$defs/id" },
+          "contextRef": { "$ref": "#/$defs/id" },
+          "evidenceKind": { "type": "string", "minLength": 1 },
+          "timeAttributes": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "instances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["instanceRef", "entityRef", "contextRef", "evidenceKind", "time", "basedOn", "values"],
+        "properties": {
+          "instanceRef": { "$ref": "#/$defs/id" },
+          "entityRef": { "$ref": "#/$defs/id" },
+          "contextRef": { "$ref": "#/$defs/id" },
+          "evidenceKind": { "type": "string", "minLength": 1 },
+          "time": {
+            "oneOf": [
+              { "type": "null" },
+              { "$ref": "#/$defs/moment" },
+              { "$ref": "#/$defs/interval" }
+            ]
+          },
+          "basedOn": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/id" },
+            "uniqueItems": true
+          },
+          "values": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "precedes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/precedes" }
+    },
+    "unresolvedOrder": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unresolved" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "moment": {
+      "type": "object",
+      "required": ["kind", "attribute", "at"],
+      "properties": {
+        "kind": { "const": "moment" },
+        "attribute": { "type": "string", "minLength": 1 },
+        "at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "interval": {
+      "type": "object",
+      "required": ["kind", "startedAt", "expiredAt"],
+      "properties": {
+        "kind": { "const": "interval" },
+        "startedAt": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "expiredAt": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "precedes": {
+      "type": "object",
+      "required": ["relationshipRef", "sourceRef", "targetRef"],
+      "properties": {
+        "relationshipRef": { "$ref": "#/$defs/id" },
+        "sourceRef": { "$ref": "#/$defs/id" },
+        "targetRef": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "unresolved": {
+      "type": "object",
+      "required": ["leftRef", "rightRef", "reason"],
+      "properties": {
+        "leftRef": { "$ref": "#/$defs/id" },
+        "rightRef": { "$ref": "#/$defs/id" },
+        "reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}
