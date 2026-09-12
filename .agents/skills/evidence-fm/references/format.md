@@ -9,9 +9,27 @@
 ├── 00-overview.md
 ├── 01-glossary.md
 ├── 02-business-patterns.md       # 派生文档
-├── entities/                     # 必需；Fulfillment 也在此目录
-├── relationships/                # 可省略
-├── rules/                        # 可省略
+├── participants/                 # 跨上下文 Party
+│   └── user.yaml
+├── contexts/                     # 按业务上下文组织，不按对象类型分根目录
+│   ├── subscription/
+│   │   ├── context.yaml
+│   │   ├── contract.yaml
+│   │   ├── roles/
+│   │   ├── relationships/        # 合同内关系
+│   │   └── fulfillments/
+│   │       └── payment/
+│   │           ├── context.yaml
+│   │           ├── request.yaml
+│   │           ├── confirmation.yaml  # 有实际确认类型时才存在
+│   │           ├── evidence/
+│   │           ├── roles/
+│   │           ├── relationships/
+│   │           └── rules/
+│   └── content/
+│       ├── context.yaml
+│       └── things/
+├── relationships/                # 跨独立上下文、主体扮演关系，仅定义一次
 ├── business-patterns/            # 可省略
 ├── validation/                   # 可选测试输入
 │   ├── instances/
@@ -24,20 +42,26 @@
 
 `model.yaml` 与分片 YAML 是模型事实源；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。发现与问题保存在模型目录之外的 `.evidence/discovery.md`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
-同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `entities/` 中 `category: context`、`kind: fulfillment` 的 Entity，不存在独立履约目录或第二个履约对象。无履约时只是不出现该类 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 仍是 `category: context`、`kind: fulfillment` 的 Entity；`fulfillments/<业务名>/context.yaml` 只是它的存放位置，不新增第二个履约对象。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+
+加载器递归读取模型根下的 `.yaml`，按文档的 `type` 分发到 Entity、Relationship、Rule、Business Pattern Schema，不再按目录或文件名决定类型。根 `model.yaml` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 YAML 文件不参与类型加载；`.yml` 文件报错，避免漏读模型。未知文档类型、重复 ID、坏 YAML 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
+
+目录是阅读组织，不是业务事实：归属仍由 `contextRef`／`parentContextRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
 
 ## 2. 稳定 ID 与文件名
 
 ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。
 
-Entity 文件名统一为 `<category>-<kind>--<id-suffix>.yaml`：`category` 与 `kind` 使用 Schema 原值并将下划线规范为连字符；`id-suffix` 取 ID 第一个 `.` 后的部分，并把其余 `.` 替换为 `--`。这样文件名直接暴露实体分类，同时由稳定 ID 后缀保证同类实体可并存。其他分片仍把完整 ID 中的 `.` 替换为 `--`：
+源 YAML 使用上下文内的短文件名：`context.yaml`、`contract.yaml`、`request.yaml`、`confirmation.yaml`；角色、主体、标的、规则和关系使用业务名或 ID 后缀。同一目录有多个同类凭证时使用不同业务文件名，不覆盖；不同目录可以重用短文件名。源文件名不再是硬校验，稳定身份只取文档 `id`。
 
 ```text
-role.subscriber                    → entities/role-party--subscriber.yaml
-fulfillment.subscription-payment  → entities/context-fulfillment--subscription-payment.yaml
-request.subscription-payment      → entities/evidence-fulfillment-request--subscription-payment.yaml
-pattern.multi-channel-payment     → business-patterns/pattern--multi-channel-payment.yaml
+role.subscriber                    → contexts/subscription/roles/subscriber.yaml
+fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/context.yaml
+request.subscription-payment      → contexts/subscription/fulfillments/payment/request.yaml
+pattern.multi-channel-payment     → business-patterns/multi-channel-payment.yaml
 ```
+
+`validation/instances/`、`validation/scenarios/` 仍保留单层目录和原有文件名约定（完整 ID 的 `.` 替换为 `--`，后缀 `.yaml`），由场景加载器独立处理。
 
 改变标签不改变 ID；替换业务概念时创建新 ID，并删除旧对象及引用。
 

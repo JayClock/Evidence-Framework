@@ -1,6 +1,6 @@
 # 同一 FM 格式中的领域建模
 
-履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.yaml`、`entities/`、`relationships/`、`rules/`，不另建领域 DSL，也不为通过校验补造合同。
+履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.yaml` 及按上下文组织的 Entity、Relationship、Rule 源 YAML（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
 
 ## 1. 范围与发现顺序
 
@@ -48,7 +48,7 @@ entryContextRefs:
 ```
 
 ```yaml
-# entities/context-domain--customer-information.yaml
+# contexts/customer-information/context.yaml
 type: entity
 id: context.customer-information
 category: context
@@ -59,7 +59,7 @@ rootRefs:
 ```
 
 ```yaml
-# entities/participant-thing--customer-profile.yaml
+# contexts/customer-information/things/customer-profile.yaml
 type: entity
 id: thing.customer-profile
 category: participant
@@ -97,7 +97,7 @@ attributes:
 
 ## 5. 规则、行为条件与状态
 
-同一 `rules/` 中的 Rule 以 `contextRef` 指向 Domain Context：
+领域目录 `contexts/<领域名>/rules/` 中的 Rule 以 `contextRef` 指向 Domain Context：
 
 - `derivation`：属性计算；target 必须在该 Rule 的上下文。
 - `invariant`：对象或关系的一致性约束，不仅限于凭证。

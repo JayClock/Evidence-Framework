@@ -28,13 +28,8 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
 
 
 SCHEMA_VERSION = "3.0"
-DOCUMENT_DIRS = {
-    "entity": "entities",
-    "relationship": "relationships",
-    "rule": "rules",
-    "business_pattern": "business-patterns",
-}
-REQUIRED_DOCUMENT_TYPES = {"entity"}
+# These trees are inputs/outputs of other readers, not FM type definitions.
+NON_SOURCE_TREES = {"discovery", "generated", "validation"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
 BOOL_RULE_KINDS = {"precondition", "invariant", "eligibility", "completion", "breach"}
 RFC3339_TIMESTAMP_RE = re.compile(
@@ -235,20 +230,6 @@ def load_model(root: Path) -> LoadedModel:
                 manifest, "model.schema.json", "model.yaml", model.errors
             )
 
-    allowed_directories = {
-        *DOCUMENT_DIRS.values(),
-        "discovery",
-        "generated",
-        "validation",
-    }
-    for child in root.iterdir():
-        if (
-            child.is_dir()
-            and not child.name.startswith(".")
-            and child.name not in allowed_directories
-        ):
-            model.errors.append(f"unexpected model directory: {child.name}/")
-
     collections: dict[str, list[dict[str, Any]]] = {
         "entity": model.entities,
         "relationship": model.relationships,
@@ -262,54 +243,52 @@ def load_model(root: Path) -> LoadedModel:
         "business_pattern": "business-pattern.schema.json",
     }
 
-    for expected_type, directory_name in DOCUMENT_DIRS.items():
-        directory = root / directory_name
-        if not directory.is_dir():
-            if directory.exists():
-                model.errors.append(f"{directory_name}/ must be a directory")
-            elif expected_type in REQUIRED_DOCUMENT_TYPES:
-                model.errors.append(f"{directory_name}/ directory is required")
-            continue
-        for path in sorted(directory.iterdir()):
-            if path.is_dir():
-                model.errors.append(
-                    f"{path.relative_to(root)}: nested directories are not allowed"
-                )
-                continue
-            if path.suffix != ".yaml":
-                model.errors.append(
-                    f"{path.relative_to(root)}: only .yaml files are allowed"
-                )
-                continue
-            document = load_single_yaml(path, model.errors)
-            if document is None:
-                continue
-            rel_path = path.relative_to(root).as_posix()
-            if document.get("type") != expected_type:
-                model.errors.append(
-                    f"{rel_path}: type must be '{expected_type}', found {document.get('type')!r}"
-                )
-            validate_against_schema(
-                document, schemas[expected_type], rel_path, model.errors
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root)
+        if (
+            path == manifest_path
+            or relative.parts[0] in NON_SOURCE_TREES
+            or any(
+                part.startswith(".") or part == "__pycache__" for part in relative.parts
             )
-            object_id = document.get("id")
-            if isinstance(object_id, str) and ID_RE.fullmatch(object_id):
-                expected = expected_filename(document)
-                if path.name != expected:
-                    model.errors.append(
-                        f"{rel_path}: filename must be '{expected}' for id '{object_id}'"
-                    )
-                previous = model.files_by_id.get(object_id)
-                if previous is not None:
-                    model.errors.append(
-                        f"duplicate id '{object_id}' in {previous.relative_to(root)} and {rel_path}"
-                    )
-                else:
-                    model.files_by_id[object_id] = path
-            collections[expected_type].append(document)
+        ):
+            continue
+        rel_path = relative.as_posix()
+        if path.is_symlink():
+            model.errors.append(f"{rel_path}: model sources must not be symbolic links")
+            continue
+        if not path.is_file():
+            continue
+        if path.suffix == ".yml":
+            model.errors.append(f"{rel_path}: model sources must use .yaml")
+            continue
+        if path.suffix != ".yaml":
+            continue
+        document = load_single_yaml(path, model.errors)
+        if document is None:
+            continue
+        document_type = document.get("type")
+        if not isinstance(document_type, str) or document_type not in schemas:
+            model.errors.append(
+                f"{rel_path}: unsupported document type {document_type!r}"
+            )
+            continue
+        validate_against_schema(
+            document, schemas[document_type], rel_path, model.errors
+        )
+        object_id = document.get("id")
+        if isinstance(object_id, str) and ID_RE.fullmatch(object_id):
+            previous = model.files_by_id.get(object_id)
+            if previous is not None:
+                model.errors.append(
+                    f"duplicate id '{object_id}' in {previous.relative_to(root)} and {rel_path}"
+                )
+            else:
+                model.files_by_id[object_id] = path
+        collections[document_type].append(document)
 
     if not model.entities:
-        model.errors.append("entities/ must contain at least one entity")
+        model.errors.append("model must contain at least one entity")
     return model
 
 

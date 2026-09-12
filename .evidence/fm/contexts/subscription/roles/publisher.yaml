@@ -2,5 +2,5 @@ type: entity
 id: role.publisher
 category: role
 kind: party
-label: 专栏运营方
+label: 专栏平台
 contextRef: context.subscription

@@ -2,5 +2,5 @@ type: entity
 id: role.account-provider
 category: role
 kind: party
-label: 账户服务方
+label: 专栏平台
 contextRef: context.prepaid

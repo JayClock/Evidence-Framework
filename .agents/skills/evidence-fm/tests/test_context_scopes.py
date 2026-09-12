@@ -154,8 +154,9 @@ class ContextScopeTests(unittest.TestCase):
                 Path(directory), domain_documents(), "context.customer-information"
             )
             (root / "retired-objects").mkdir()
+            (root / "retired-objects/unknown.yaml").write_text("type: retired\n")
             self.assertIn(
-                "unexpected model directory: retired-objects/",
+                "retired-objects/unknown.yaml: unsupported document type 'retired'",
                 validate_model(load_model(root)),
             )
 
@@ -328,7 +329,7 @@ class ContextScopeTests(unittest.TestCase):
             shutil.rmtree(root / "entities")
             (root / "entities").mkdir()
             self.assertIn(
-                "entities/ must contain at least one entity",
+                "model must contain at least one entity",
                 validate_model(load_model(root)),
             )
 

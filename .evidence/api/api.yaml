@@ -31,12 +31,12 @@ nonApiActivities:
         - request.mobile
       reasoning: >-
         移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-  - entityRef: party.reader
+  - entityRef: party.user
     handling: internal
     basis:
       fmRefs:
-        - party.reader
-      reasoning: 主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
+        - party.user
+      reasoning: 用户用于跨合同身份绑定，分别扮演各上下文的角色；不提供用户档案管理接口。
   - entityRef: contract.mobile
     handling: external
     basis:
