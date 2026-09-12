@@ -154,6 +154,8 @@ variableB: { instanceRefs: [instance.a, instance.b] }
 now: { value: '2026-09-01T09:15:00Z' }
 ```
 
+集合 binding 可以显式使用 `instanceRefs: []`，表示该场景当时没有可用的匹配凭证；不能用占位确认代替空集合。空集合仍须匹配 Rule 的 `cardinality: many`，不是缺省 binding。
+
 Derivation evaluation 还必须给出 `targetInstanceRef`。Rule 中名为 `now` 或 `asOf` 的 `timestamp` binding 可以省略，模拟器会注入 Scenario 的固定 `asOf`；若显式提供，值必须与 `asOf` 完全相同。其它时间输入不得读取机器当前时间。如果单据预填值与计算结果冲突，模拟失败，不静默覆盖。
 
 ## 5. 确定性模拟
