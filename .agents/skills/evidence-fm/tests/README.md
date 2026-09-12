@@ -6,7 +6,10 @@
 
 ```bash
 "$PYTHON" -B -m unittest discover -s "$SKILL_DIR/tests" -v
+"$PYTHON" -B -m unittest discover -s "$SKILL_DIR/tests/portability" -v
 ```
+
+`portability/` 单独验证复制安装、只读检查和评测准备；不设 `__init__.py`，复制后的顶层回归不递归执行安装测试。两套命令均需运行，仓库聚合命令也覆盖二者。
 
 覆盖业务属性命名、六类凭证时间、领域／合同前／混合上下文、CEL、追溯、编译、单据模拟及评分器正反例。context_samples.py 和 fixtures 都是合成数据，不提供真实业务默认值。测试使用临时模型，不覆盖业务源文件。
 

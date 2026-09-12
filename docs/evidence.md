@@ -357,4 +357,4 @@ npm run lint
 npm run build
 ```
 
-扩展验证包含类型、Vitest、格式及隔离 FM Python 测试，不调用语言模型。回归覆盖问答等待/恢复、部分回答、无文本暂缓、人工结束/恢复、阻塞保护、取消、更正、来源/快照篡改、草稿隔离、共同 Gate、Schema/lineage/适用模拟和下游测试契约。这些是合成自动化证据，不是具名业务验收或真实 TUI/Agent 生成质量评测。发现引导另有 `tests/skills/pi-discovery/evals.json` 及操作说明，覆盖合同、领域、混合、渠道、低信息、已有明确材料、绩效及简单胶水；需实际运行 Agent 并由人工评价，不能把提示词字符串测试当成交互质量通过。
+扩展验证包含类型、Vitest、格式及隔离 FM Python 测试，不调用语言模型。回归覆盖问答等待/恢复、部分回答、无文本暂缓、人工结束/恢复、阻塞保护、取消、更正、来源/快照篡改、草稿隔离、共同 Gate、Schema/lineage/适用模拟和下游测试契约。这些是合成自动化证据，不是具名业务验收或真实 TUI/Agent 生成质量评测。发现引导另有 `.agents/skills/evidence-discovery/evals/pi-discovery/evals.json` 及操作说明，覆盖合同、领域、混合、渠道、低信息、已有明确材料、绩效及简单胶水；需实际运行 Agent 并由人工评价，不能把提示词字符串测试当成交互质量通过。

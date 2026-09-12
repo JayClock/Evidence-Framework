@@ -1,10 +1,10 @@
-"""Repository integration checks stay outside the independently installed FM skill."""
+"""Composition and optional host integration checks owned by fm-modeling."""
 
 import json
 import unittest
 from pathlib import Path
 
-REPOSITORY = Path(__file__).resolve().parents[2]
+REPOSITORY = Path(__file__).resolve().parents[4]
 
 
 class FMIntegrationTests(unittest.TestCase):
@@ -27,6 +27,11 @@ class FMIntegrationTests(unittest.TestCase):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
         scripts = package["scripts"]
         self.assertIn("fm-modeling:verify", scripts)
+        self.assertEqual(
+            "python3 .agents/skills/fm-modeling/tests/run_skill_tests.py",
+            scripts["skills:test"],
+        )
+        self.assertEqual("npm run skills:test", scripts["skills:verify"])
         self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
         self.assertIn("schemas/*.json", scripts["fm-modeling:format:check"])
 

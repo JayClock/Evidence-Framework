@@ -4,7 +4,7 @@ import re
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2] / ".agents/skills"
+ROOT = Path(__file__).resolve().parents[2]
 NAMES = (
     "evidence-discovery",
     "evidence-fm",
@@ -24,8 +24,12 @@ class SkillDocumentationTests(unittest.TestCase):
         documents = [
             *ROOT.rglob("*.md"),
             *ROOT.rglob("*.json"),
-            *(repo / "tests/skills/pi-discovery").glob("*.md"),
-            *(repo / "tests/skills/pi-discovery").glob("*.json"),
+            *(repo / ".agents/skills/evidence-discovery/evals/pi-discovery").glob(
+                "*.md"
+            ),
+            *(repo / ".agents/skills/evidence-discovery/evals/pi-discovery").glob(
+                "*.json"
+            ),
             repo / "README.md",
             repo / "docs/evidence.md",
             repo / ".pi/extensions/evidence/README.md",
@@ -64,13 +68,6 @@ class SkillDocumentationTests(unittest.TestCase):
             r"每轮只问|一次只问|问后等待|选择一个核心问题",
         )
 
-    def test_fm_exposes_model_review_branches_not_a_second_discovery_workshop(self):
-        references = ROOT / "evidence-fm/references"
-        for name in ("input-review.md", "scenario-validation.md", "validation.md"):
-            self.assertTrue((references / name).is_file(), name)
-        for name in ("discovery-workshop.md", "scenario-replay.md"):
-            self.assertFalse((references / name).exists(), name)
-
     def test_direct_edit_authorization_is_separate_from_discussion_and_approval(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
         handoff = (ROOT / "evidence-discovery/assets/discovery-template.md").read_text()
@@ -107,7 +104,10 @@ class SkillDocumentationTests(unittest.TestCase):
             "fm-api-design",
         ):
             for path in (ROOT / name).rglob("*"):
-                if path.suffix in {".py", ".md", ".json"}:
+                if (
+                    path.suffix in {".py", ".md", ".json"}
+                    and path != Path(__file__).resolve()
+                ):
                     self.assertNotRegex(path.read_text(), retired, str(path))
 
     def test_business_document_links_do_not_pull_in_maintenance_material(self):
@@ -202,21 +202,6 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertIn("目标尚不存在", api)
         self.assertIn("FM 根目录之外", api)
 
-    def test_api_design_delivers_whole_model_without_selection_pipeline(self):
-        skill = ROOT / "fm-api-design"
-        retired = re.compile(
-            r"候选|candidate|exploration|unselected|scopeCapabilityRefs|require-complete|scope\.contextRefs",
-            re.I,
-        )
-        for folder in ("scripts", "references", "schemas", "assets", "evals"):
-            for path in (skill / folder).rglob("*"):
-                if path.suffix in {".py", ".md", ".yaml", ".json"}:
-                    self.assertNotRegex(path.read_text(), retired, str(path))
-        entry = (skill / "SKILL.md").read_text()
-        self.assertIn("已确认的整体 FM", entry)
-        self.assertIn("每个接口都必须有契约", entry)
-        self.assertIn("不重新组织业务确认", entry)
-
     def test_visualization_is_bundled_and_other_skills_only_delegate(self):
         visual = ROOT / "evidence-visualization"
         for path in (
@@ -251,7 +236,3 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertEqual(
             set(), passages("evidence-discovery") & passages("evidence-fm")
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

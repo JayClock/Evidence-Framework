@@ -1,5 +1,5 @@
 {
-  "include": [".agents/skills", "tests/skills"],
+  "include": [".agents/skills"],
   "exclude": ["**/__pycache__", "**/.ruff_cache"],
   "venvPath": "node_modules/.cache",
   "venv": "evidence-fm-runtime",
@@ -20,6 +20,9 @@
       "root": ".agents/skills/evidence-fm/scripts",
       "extraPaths": [".agents/skills/evidence-fm/scripts"]
     },
-    { "root": "tests/skills" }
+    {
+      "root": ".agents/skills/fm-modeling/tests",
+      "extraPaths": [".agents/skills/fm-modeling/tests"]
+    }
   ]
 }

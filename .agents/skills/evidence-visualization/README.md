@@ -36,6 +36,6 @@ VISUAL_SKILL_DIR="$PWD/.agents/skills/evidence-visualization"
 node "$VISUAL_SKILL_DIR/tests/review-browser.mjs" "$PROJECT_ROOT/.evidence/views/index.html"
 ```
 
-单元测试可从任意工作目录运行，不依赖仓库外的文件。浏览器测试适应实际输入的范围；环境要求、截图位置与错误处理见运行说明。迁移到独立安装位置后的生成验证由仓库 `tests/skills/test_portable_skills.py` 维护。
+单元测试可从任意工作目录运行，不依赖仓库外的文件。浏览器测试适应实际输入的范围；环境要求、截图位置与错误处理见运行说明。独立安装生成验证在本包 `tests/portability/`，单独执行 `"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests/portability" -v`。可用 `EVIDENCE_FM_SKILL` 指定测试依赖的 FM 包绝对路径；未设置时使用本仓库的相邻 FM 包。该套件复制安装包后仅运行顶层单元测试，避免递归复制自身。
 
 图形库为 Cytoscape.js 3.33.1，保留 [MIT 许可证](assets/vendor/LICENSE.cytoscape) 及 [版本信息](assets/vendor/README.md)。第三方压缩资源不手改。

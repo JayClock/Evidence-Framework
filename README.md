@@ -10,7 +10,7 @@ Evidence 是一个运行在本地 Pi TUI 中的 AI 软件工程工作流原型�
 
 [Evidence Skills](.agents/skills/README.md) 提供用户显式调用的 `fm-modeling` 组合入口，以及可单独安装的 `evidence-discovery`、`evidence-fm`、`evidence-requirements`。普通对话、项目文件和独立 CLI 即可完成业务发现、候选建模、校验、安全保存和软件需求收敛。
 
-这些建模能力以 `.agents/skills/` 为唯一维护源。项目受信任后 Pi 原生发现并加载，无需扩展注册或同步副本。`.pi/extensions/fm-modeling/` 仅提供可选问答与差异界面，不保存 Run、不发布模型；禁用扩展只损失交互便利。使用方法见 [FM Modeling 指南](docs/fm-modeling.md)，仓库维护与验证说明见 [Skills 测试指南](tests/skills/README.md)。
+这些建模能力以 `.agents/skills/` 为唯一维护源。项目受信任后 Pi 原生发现并加载，无需扩展注册或同步副本。`.pi/extensions/fm-modeling/` 仅提供可选问答与差异界面，不保存 Run、不发布模型；禁用扩展只损失交互便利。使用方法见 [FM Modeling 指南](docs/fm-modeling.md)，仓库维护与验证说明见 [Skills 测试指南](.agents/skills/fm-modeling/tests/README.md)。
 
 ## 为什么需要 Evidence
 
@@ -222,7 +222,6 @@ npm run dev
 ├── extensions/fm-modeling/  # 可选 FM 问答与候选查看 UI
 └── evidence.json            # Delivery 模型、Gate、轮次和质量命令配置
 .agents/skills/              # 全部阶段的方法、FM CLI、测试与评测
-tests/skills/             # 跨 Skill 检查及宿主交互评测
 apps/
 ├── frontend/             # React + TypeScript + Vite
 └── backend/              # Java + Spring Boot + Gradle
