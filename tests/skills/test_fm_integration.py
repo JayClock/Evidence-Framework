@@ -53,6 +53,38 @@ class FMIntegrationTests(unittest.TestCase):
             for term in retired:
                 self.assertNotIn(term, text, relative)
 
+    def test_composition_exposes_fulfillment_analysis_before_schema_mapping(self):
+        entry = (REPOSITORY / ".agents/skills/fm-modeling/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        workflow = (
+            REPOSITORY / ".agents/skills/fm-modeling/references/workflow.md"
+        ).read_text(encoding="utf-8")
+        evals = json.loads(
+            (REPOSITORY / ".agents/skills/fm-modeling/evals/evals.json").read_text(
+                encoding="utf-8"
+            )
+        )["evals"]
+
+        for phrase in (
+            "业务逻辑",
+            "领域逻辑",
+            "工具／胶水",
+            "识别业务变化",
+            "旧图例或简化分析不能覆盖现行约束",
+        ):
+            self.assertIn(phrase, entry)
+        for phrase in (
+            "找主要履约",
+            "找未履约后果",
+            "递归追踪责任",
+            "合同前渠道",
+            "简化视图必须附来源",
+            "Evidence Role",
+        ):
+            self.assertIn(phrase, workflow)
+        self.assertTrue({9, 10, 11, 12}.issubset({case["id"] for case in evals}))
+
 
 if __name__ == "__main__":
     unittest.main()

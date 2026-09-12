@@ -1,6 +1,6 @@
 # 同一 FM 格式中的领域建模
 
-8X Flow 本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.yaml`、`entities/`、`relationships/`、`rules/`，不另建领域 DSL，也不为通过校验补造合同。
+履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.yaml`、`entities/`、`relationships/`、`rules/`，不另建领域 DSL，也不为通过校验补造合同。
 
 ## 1. 范围与发现顺序
 

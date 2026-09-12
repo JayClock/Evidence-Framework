@@ -109,7 +109,7 @@ Compensation Request → Compensation Confirmation
 
 ## 11. 领域模型与业务输入
 
-领域部分本来就在 8X Flow 内，用同一 FM 的 Entity、Relationship、CEL Rule 表达。商品、内容、客户档案、场所等 Thing 位于 Domain Context；稳定 Party 保持外部身份，通过 Role 扮演进入上下文。
+领域部分本来就在履约建模内，用同一 FM 的 Entity、Relationship、CEL Rule 表达。商品、内容、客户档案、场所等 Thing 位于 Domain Context；稳定 Party 保持外部身份，通过 Role 扮演进入上下文。
 
 独立领域任务不要求 Contract 或 Fulfillment；混合模型按事实由具体 Evidence 通过 `references` 指向 Thing，并以领域 Role 及合法凭证协作组合。领域对象不是完成凭证，能力插槽不是已经展开的领域逻辑。详细过程与表达边界见 `domain-modeling.md`。
 
