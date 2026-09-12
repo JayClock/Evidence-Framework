@@ -10,6 +10,7 @@
 - `.evidence/api/api.yaml`：另行使用 `fm-api-design` 时维护的 API 设计源。
 - `.evidence/api/generated/<批次>/`：API 投影的新输出目录。
 - `.evidence/checks/api/`：获授权保存的 API 检查记录。
+- `.evidence/views/index.html`：用户要求时生成的自包含离线只读审核页，方法与工具归属可定位的 `evidence-visualization` Skill。修改 YAML 后重新生成，不以页面存在代表当前校验通过。
 
 恢复时读取项目文件，不猜测旧会话。发现记录只保存当前焦点、来源、实际问题及状态、模型和检查指针，不复制模型正文。模型可能处于编辑中或校验失败状态，不能仅凭文件存在判定可用；下游消费前重新校验。
 

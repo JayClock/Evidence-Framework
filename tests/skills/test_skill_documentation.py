@@ -11,6 +11,7 @@ NAMES = (
     "evidence-requirements",
     "fm-modeling",
     "fm-api-design",
+    "evidence-visualization",
 )
 
 
@@ -215,6 +216,26 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertIn("已确认的整体 FM", entry)
         self.assertIn("每个接口都必须有契约", entry)
         self.assertIn("不重新组织业务确认", entry)
+
+    def test_visualization_is_bundled_and_other_skills_only_delegate(self):
+        visual = ROOT / "evidence-visualization"
+        for path in (
+            "scripts/generate.py",
+            "assets/page.html",
+            "assets/review.js",
+            "assets/style.css",
+            "assets/vendor/cytoscape.min.js",
+            "tests/review-browser.mjs",
+            "requirements.txt",
+        ):
+            self.assertTrue((visual / path).is_file(), path)
+        for name in ("fm-modeling", "fm-api-design"):
+            entry = (ROOT / name / "SKILL.md").read_text()
+            self.assertIn("evidence-visualization", entry)
+        self.assertFalse((ROOT / "fm-modeling/references/visual-review.md").exists())
+        self.assertFalse((ROOT.parents[1] / "tools/evidence_review").exists())
+        for document in visual.rglob("*.md"):
+            self.assertNotIn("tools/evidence_review", document.read_text())
 
     def test_discovery_and_fm_do_not_copy_methods_or_long_paragraphs(self):
         def passages(skill: str) -> set[str]:

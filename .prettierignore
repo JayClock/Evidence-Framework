@@ -4,3 +4,6 @@
 /.nx/cache
 /.nx/workspace-data
 package-lock.json
+# Offline snapshots contain CSP-hashed inline scripts; regenerate, never format.
+/.evidence/views/
+/.agents/skills/evidence-visualization/assets/vendor/

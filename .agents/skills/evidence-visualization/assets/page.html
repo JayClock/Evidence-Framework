@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="@@CSP@@" />
+    <title>Evidence · 业务模型审核</title>
+    <style>
+      @@STYLE@@;
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">E<span>VIDENCE</span><small>业务模型审核</small></div>
+      <div id="model-title"></div>
+      <span class="pill">离线 · 只读快照</span>
+    </header>
+    <div class="notice" id="notice" role="status">
+      正在加载离线视图。若一直没有节点，请用浏览器直接打开此文件，或重新生成页面；请勿格式化生成的
+      HTML。
+    </div>
+    <div class="shell">
+      <nav aria-label="审核视图">
+        <button data-view="graph" class="active">
+          01 <span>业务总览</span>
+        </button>
+        <button data-view="obligations">02 <span>合同与履约</span></button>
+        <button data-view="timeline">03 <span>场景回放</span></button>
+        <button data-view="rules">04 <span>规则与数据</span></button>
+        <button data-view="api">05 <span>接口矩阵</span></button>
+        <button data-view="files">06 <span>全部 YAML</span></button>
+        <div class="nav-foot">
+          模型不是一张巨图。<br />从边界进入，沿凭证审核。
+        </div>
+      </nav>
+      <div class="workspace">
+        <div id="stats" class="stats"></div>
+        <div class="toolbar">
+          <label class="search"
+            >搜索
+            <input
+              id="search"
+              type="search"
+              placeholder="名称、ID、路径、规则或字段"
+              autocomplete="off" /></label
+          ><label
+            >边界
+            <select id="scope">
+              <option value="">全部上下文</option>
+            </select></label
+          ><button id="reset">重置筛选</button>
+        </div>
+        <main>
+          <section id="graph-panel" class="panel">
+            <div class="panel-head">
+              <div>
+                <h1>业务总览</h1>
+                <p>从简化凭证链进入，再按标准图或上下文地图核对完整语义。</p>
+              </div>
+              <select id="graph-mode" aria-label="结构图层级">
+                <option value="simplified" selected>简化业务图</option>
+                <option value="standard">标准建模图</option>
+                <option value="contexts">上下文地图</option>
+                <option value="all">完整对象图</option></select
+              ><button id="fit">适应画布</button>
+            </div>
+            <div class="legend" aria-label="履约建模图例">
+              <span class="dot evidence">凭证 Evidence</span
+              ><span class="dot participant">参与元素 Participant</span
+              ><span class="dot role">角色 Role</span
+              ><span class="context-key">虚线框：上下文 Context</span
+              ><span id="graph-count"></span>
+            </div>
+            <div id="graph" aria-label="业务模型交互关系图"></div>
+            <div
+              id="graph-list"
+              class="graph-list"
+              aria-label="图中对象列表"
+            ></div>
+          </section>
+          <section id="obligations-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>合同与履约</h1>
+                <p>按合同展开责任；请求表达时段，确认表达实际结果时刻。</p>
+              </div>
+            </div>
+            <div id="obligations"></div>
+            <section class="pattern-section">
+              <h2>变化点与核心业务模式</h2>
+              <div id="patterns"></div>
+            </section>
+          </section>
+          <section id="timeline-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>场景回放</h1>
+                <p>按场景隔离凭证；区间代表请求，菱形代表实际时刻。</p>
+              </div>
+            </div>
+            <div class="controls">
+              <select id="scenario" aria-label="回放场景"></select
+              ><label
+                ><input type="checkbox" id="equal-time" />
+                等距事件轴（非真实时长）</label
+              ><label
+                ><input type="checkbox" id="dependencies" /> 显示 basedOn
+                依赖</label
+              >
+            </div>
+            <div id="scenario-meta"></div>
+            <div id="timeline" class="scroll"></div>
+            <div id="scenario-tables"></div>
+          </section>
+          <section id="rules-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>规则与数据追溯</h1>
+                <p>
+                  业务字段 → 计算规则 → 结果字段。CEL 展示不在浏览器中执行。
+                </p>
+              </div>
+              <select id="rule-kind" aria-label="规则类别">
+                <option value="">全部规则</option>
+                <option value="derivation">派生</option>
+                <option value="precondition">前置条件</option>
+                <option value="completion">完成</option>
+                <option value="breach">违约</option>
+                <option value="invariant">不变量</option>
+              </select>
+            </div>
+            <div id="rules"></div>
+            <h2>关键字段索引</h2>
+            <div id="attributes" class="attribute-list"></div>
+          </section>
+          <section id="api-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>接口矩阵</h1>
+                <p>
+                  按角色列出业务接口；点击查看字段、约束、响应和静态消费流程。
+                </p>
+              </div>
+              <select id="api-role" aria-label="调用角色">
+                <option value="">全部角色</option></select
+              ><button id="openapi">查看当前 OpenAPI</button>
+            </div>
+            <div id="api-summary"></div>
+            <div id="apis" class="scroll"></div>
+          </section>
+          <section id="files-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>全部 YAML</h1>
+                <p>
+                  包含原文与 SHA-256；历史派生文件仅供对照，不作为当前校验依据。
+                </p>
+              </div>
+              <select id="file-kind" aria-label="文件类别">
+                <option value="">全部文件</option>
+                <option value="entities/">业务对象</option>
+                <option value="relationships/">关系</option>
+                <option value="rules/">规则</option>
+                <option value="validation/">实例与场景</option>
+                <option value="api/">API</option>
+              </select>
+            </div>
+            <div id="files"></div>
+          </section>
+        </main>
+      </div>
+      <aside id="detail" aria-label="对象及 YAML 详情">
+        <div class="detail-head">
+          <h2 id="detail-title">审核起点</h2>
+          <button id="clear-detail" aria-label="清空详情">×</button>
+        </div>
+        <div id="detail-body">
+          <p>选择图中节点、场景单据、规则、接口或文件。</p>
+          <p>这里会显示业务定义、关联内容和对应 YAML 原文。</p>
+        </div>
+      </aside>
+    </div>
+    <noscript
+      >此离线审核页需要开启
+      JavaScript。所有数据已嵌入本文件，不访问网络。</noscript
+    >
+    <!-- prettier-ignore -->
+    <script type="application/json" id="review-data">
+      @@DATA@@
+    </script>
+    <!-- prettier-ignore -->
+    <script>
+      @@VENDOR@@
+    </script>
+    <!-- prettier-ignore -->
+    <script>
+      @@APP@@
+    </script>
+  </body>
+</html>

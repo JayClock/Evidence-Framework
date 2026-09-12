@@ -2,16 +2,17 @@
 
 本仓库的 Evidence Skills 统一放在 `.agents/skills/`。业务技能从事实发现推进到正式建模和软件需求收敛；交付技能承接架构、计划、编码与审查阶段。
 
-| Skill                                                   | 用途               | 输入与输出                                                                 | 运行依赖                                          |
-| ------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- | ------------------------------------------------- |
-| [fm-modeling](fm-modeling/SKILL.md)                     | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                    | 组合 Discovery 与 FM；界面扩展可选                |
-| [evidence-discovery](evidence-discovery/SKILL.md)       | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考 |
-| [evidence-fm](evidence-fm/SKILL.md)                     | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口 | 读取准则只需文本；执行校验需 Python 3.10+         |
-| [evidence-requirements](evidence-requirements/SKILL.md) | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                      | 对话与文本文件                                    |
-| [evidence-architecture](evidence-architecture/SKILL.md) | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                              | 项目仓库与 Evidence 工作流                        |
-| [evidence-planning](evidence-planning/SKILL.md)         | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                               | 项目仓库与 Evidence 工作流                        |
-| [evidence-tdd](evidence-tdd/SKILL.md)                   | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                             | 项目工具链与 Evidence 工作流                      |
-| [evidence-review](evidence-review/SKILL.md)             | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                  | 项目仓库与 Evidence 工作流                        |
+| Skill                                                     | 用途               | 输入与输出                                                                 | 运行依赖                                                       |
+| --------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [fm-modeling](fm-modeling/SKILL.md)                       | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                    | 组合 Discovery 与 FM；界面扩展可选                             |
+| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
+| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口 | 读取准则只需文本；执行校验需 Python 3.10+                      |
+| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 YAML 原文         | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
+| [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                      | 对话与文本文件                                                 |
+| [evidence-architecture](evidence-architecture/SKILL.md)   | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                              | 项目仓库与 Evidence 工作流                                     |
+| [evidence-planning](evidence-planning/SKILL.md)           | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                               | 项目仓库与 Evidence 工作流                                     |
+| [evidence-tdd](evidence-tdd/SKILL.md)                     | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                             | 项目工具链与 Evidence 工作流                                   |
+| [evidence-review](evidence-review/SKILL.md)               | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                  | 项目仓库与 Evidence 工作流                                     |
 
 ## 安装
 
@@ -21,7 +22,7 @@
 npx skills@latest add ./.agents/skills --skill evidence-discovery
 ```
 
-完整组合流程可选 `fm-modeling`，并同时安装 `evidence-discovery` 与 `evidence-fm`；也可按需只安装单项或 `evidence-requirements`。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
+完整组合流程可选 `fm-modeling`，并同时安装 `evidence-discovery` 与 `evidence-fm`；也可按需只安装单项或 `evidence-requirements`。需要离线审核页时安装 `evidence-visualization`，已有 API 时同时提供 `fm-api-design`；保留生成器、assets 和浏览器测试，不需要向业务项目复制工具。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
 
 也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references、assets，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
@@ -40,6 +41,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 用 evidence-fm 根据这份材料直接生成当前模型并校验，保留未知责任。
 /skill:fm-modeling 根据现有发现修改 .evidence/fm/，校验后展示实际差异。
 用 evidence-requirements 收敛这份说明的软件范围，不需要先建 FM。
+用 evidence-visualization 为当前 FM 和已有 API 生成离线审核页，不修改模型。
 ```
 
 可以顺序组合，也可以从已有成果直接进入某一步：
@@ -56,13 +58,14 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 ## 文件交接
 
-`fm-modeling`、`evidence-discovery`、`evidence-fm` 和 `fm-api-design` 的新产物默认统一放在项目根的 `.evidence/`。沿用已有文件与用户显式指定位置，不自动迁移；告知默认路径并按需创建：
+`fm-modeling`、`evidence-discovery`、`evidence-fm`、`fm-api-design` 和 `evidence-visualization` 的新产物默认统一放在项目根的 `.evidence/`。沿用已有文件与用户显式指定位置，不自动迁移；告知默认路径并按需创建：
 
 ```text
 .evidence/
 ├── discovery.md          # 来源、原话、工作理解、问题与恢复点
 ├── questions.md          # 可选：需拆分时保存已提问题及回答
 ├── fm/                   # 当前模型、术语、说明、validation 与 generated
+├── views/index.html      # 用户要求时生成的自包含离线只读审核页
 ├── api/
 │   ├── api.yaml          # 唯一 API 设计源，位于 FM 根之外
 │   └── generated/        # 每批新目录：投影、OpenAPI、契约、样例、manifest
