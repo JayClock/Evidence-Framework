@@ -1,0 +1,143 @@
+{
+  "python": "/opt/miniconda3/bin/python3.12",
+  "pythonVersion": "3.12.3",
+  "dependencies": {
+    "PyYAML": "6.0.2",
+    "jsonschema": "4.25.1",
+    "cel-python": "0.5.0"
+  },
+  "toolDigests": {
+    "fm": "sha256:be8f74b13bf595c6c4d6ad17af2e997b06cb2d9ae094e31bdd76649f953b23cf",
+    "api": "sha256:7197f0bdb989d9cb757b88d6376612a54bf0a74c08fd242dce244d0ae62d8c4c"
+  },
+  "commands": [
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/check_fm.py",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:43.932653+00:00",
+      "finishedAt": "2026-09-11T17:03:45.136713+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/fm/v1.json"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/compile_fm_model.py",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--output",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm/generated/model.json"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:45.137099+00:00",
+      "finishedAt": "2026-09-11T17:03:45.842819+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/fm/v1-compile_fm_model.log"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/build_fm_lineage.py",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--output",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm/generated/traceability.json"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:45.843223+00:00",
+      "finishedAt": "2026-09-11T17:03:46.531638+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/fm/v1-build_fm_lineage.log"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/simulate_fm_model.py",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--output",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm/generated/simulation.json"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:46.532030+00:00",
+      "finishedAt": "2026-09-11T17:03:47.777415+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/fm/v1-simulate_fm_model.log"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/build_fm_timeline.py",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--output",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm/generated/timeline.json"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:47.777795+00:00",
+      "finishedAt": "2026-09-11T17:03:48.709388+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/fm/v1-build_fm_timeline.log"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/fm-api-design/scripts/fm_api.py",
+        "inspect",
+        "--project-root",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+        "--fm",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--fm-skill",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:48.709968+00:00",
+      "finishedAt": "2026-09-11T17:03:50.510643+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/api/v1/inspect.json"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/fm-api-design/scripts/fm_api.py",
+        "check",
+        "--project-root",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+        "--fm",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--fm-skill",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm",
+        "--api",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/api/api.yaml"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:50.511168+00:00",
+      "finishedAt": "2026-09-11T17:03:53.171459+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/api/v1/check.json"
+    },
+    {
+      "command": [
+        "/opt/miniconda3/bin/python3.12",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/fm-api-design/scripts/fm_api.py",
+        "project",
+        "--project-root",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+        "--fm",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/fm",
+        "--fm-skill",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.agents/skills/evidence-fm",
+        "--api",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/api/api.yaml",
+        "--out",
+        "/Users/zhongjie/Downloads/Github/Evidence-Framework/.evidence/api/generated/v1"
+      ],
+      "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+      "startedAt": "2026-09-11T17:03:53.171866+00:00",
+      "finishedAt": "2026-09-11T17:03:55.496805+00:00",
+      "exitCode": 0,
+      "output": ".evidence/checks/api/v1/project.json"
+    }
+  ]
+}

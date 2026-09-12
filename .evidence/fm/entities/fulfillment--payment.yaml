@@ -1,0 +1,6 @@
+type: entity
+id: fulfillment.payment
+category: context
+kind: fulfillment
+label: 订阅费支付
+parentContextRef: context.subscription

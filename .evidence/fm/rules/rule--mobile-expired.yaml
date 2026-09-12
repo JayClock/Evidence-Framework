@@ -1,0 +1,23 @@
+type: rule
+id: rule.mobile-expired
+kind: breach
+label: 本次扣款未在期限内完成
+contextRef: fulfillment.mobile
+bindings:
+  request:
+    ref: request.mobile
+  confirmations:
+    ref: confirmation.mobile
+    cardinality: many
+  now:
+    type: timestamp
+expression: |-
+  now > request.expired_at && !(confirmations.filter(c, c.request_id
+  == request.request_id && c.subscription_id ==
+  request.subscription_id && c.reader_id == request.reader_id &&
+  c.column_id == request.column_id && c.confirmed_at >=
+  request.started_at && c.confirmed_at <= request.expired_at &&
+  c.payment_request_id == request.payment_request_id &&
+  c.amount_minor_units == request.amount_minor_units && c.currency ==
+  request.currency && c.success).size() == 1)
+resultType: bool

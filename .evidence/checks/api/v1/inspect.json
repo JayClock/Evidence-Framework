@@ -1,0 +1,515 @@
+{
+  "contexts": [
+    "context.content",
+    "context.mobile",
+    "context.prepaid",
+    "context.subscription",
+    "fulfillment.access",
+    "fulfillment.mobile",
+    "fulfillment.payment",
+    "fulfillment.prepaid",
+    "fulfillment.refund",
+    "fulfillment.restore"
+  ],
+  "fmCheckSummary": {
+    "errors": [],
+    "executedScenarioCount": 18,
+    "inputChanged": false,
+    "modelDigest": "sha256:dff35f9b8111a7211086c805fb269833bf143a479083d08d7416e0202ed3a502",
+    "modelStatus": "draft",
+    "modelValidated": true,
+    "scenarioCount": 18,
+    "simulationPassed": true,
+    "stakeholderReview": {
+      "status": "pending"
+    },
+    "timelineSummary": {
+      "evidenceTypeCount": 16,
+      "instanceCount": 27,
+      "laneCount": 9,
+      "precedesCount": 13,
+      "sha256": "sha256:6addf92d6c67d8f6266e41aa4abb4209b3a9417be594bd78bbc0d005a2433f11",
+      "unresolvedOrderCount": 0
+    },
+    "valid": true
+  },
+  "inputFiles": {
+    "00-overview.md": "11590d14eb4f23237cec5dd9afaed21d6bfa915653541e61a3c66d855b6da844",
+    "01-glossary.md": "152cc82ebd26d937bc56ec7718b93e35c4f6f9cba923fb2cdbd0f9a06a0193d1",
+    "README.md": "8a0bc3793f04fe9521d137541fdd72a1650d4eb5ae71c636dbd4dc08719fb207",
+    "entities/confirmation--access.yaml": "9a33e97ed2ef8b015148c01000950b4d8ca435a2d49c5766c3f88c08f64b6f43",
+    "entities/confirmation--mobile.yaml": "b4b2de82d4b1a1d990892e8fc17f503514e4b8b0ad78dfbb0720ba51a6f70ac4",
+    "entities/confirmation--prepaid.yaml": "68f07bbb8bca6b14229d77146e2ec7a242badc50d6fe6f90800b2ad7754f4e41",
+    "entities/confirmation--refund.yaml": "8e78457e78173bb5cc1e4293eaa76385a897ac202b973fa90f0eaf2cc172db32",
+    "entities/confirmation--restore.yaml": "797018f1620d49e30ebafab2208c258967d6d1b98c9753472034e9fa1610a6dd",
+    "entities/context--content.yaml": "f7c3fb544e9fb97cac706db55783800d163d552f25173c5c3587ab30ebd35dc8",
+    "entities/context--mobile.yaml": "a46f15928116f6b83ebe0d69eb637b0ae50258c6af54524752f56064503b12fe",
+    "entities/context--prepaid.yaml": "d8085ef406773cec9d95364f3a205ee93f6f6c21a437a37232f8e4611c4d8386",
+    "entities/context--subscription.yaml": "1a795d59e59b4f7e8a51a715571bc115bf6c63453ac290a37d7c307ee92f8c6b",
+    "entities/contract--mobile.yaml": "d90ad9ec49384fcc7f3b488767d00d4378a4278e86a21e6169293c6c73b59af4",
+    "entities/contract--prepaid.yaml": "612727ce1568880e008ef03a1d3712357e51bf400b1a1e8d7fb95288de174d1b",
+    "entities/contract--subscription.yaml": "f0fab404ec6e97481afc0c5fac9ee4aeea130aee574abb7923374a512af46de0",
+    "entities/evidence--discontinuation.yaml": "28f4f65f8fd489dda3dd26d8284b178c9bfb54602e89a612f06bc12fd6efbda5",
+    "entities/evidence--relaunch.yaml": "cd262df74827d19737991353eb5b59664089b3aaf73719f959f5bb38fe3e9e16",
+    "entities/fulfillment--access.yaml": "eb6ecefacb95c6fe68faf66c0f3ef7a249d9e271bd7c7f8d9d0dbdc452df438f",
+    "entities/fulfillment--mobile.yaml": "f46430879d09d0c018ef735beb6da92dd177a406011f7234dd6191d0ba173f61",
+    "entities/fulfillment--payment.yaml": "35e80723bd7b046ba1e5b4ddcb24cbb206520efb77709d3a2d8799421a90718d",
+    "entities/fulfillment--prepaid.yaml": "42f38dcfa72215a7c350c1645c15b8153b6e37c7fde962ecfc3c6dc849088a70",
+    "entities/fulfillment--refund.yaml": "71db4fe8c7d0283e3b7b7d4ebeaed38747e7f146b7977607aa1103f3c274befa",
+    "entities/fulfillment--restore.yaml": "3b4fd1ef9f76853ab59fc99394ec65dc44b8286636a3545f4cdc9e32b9ff3a3e",
+    "entities/party--mobile-provider.yaml": "b94e99c52107015243cbe9b7ecbc683bdbd00e17e8db721f454f3b0e7c06d00d",
+    "entities/party--publisher.yaml": "f76c93f5f27e95c23f04769af4fd98af3cc6e0bd348ae81318cf3ad1777579c0",
+    "entities/party--reader.yaml": "2e309d32e92d71650c6c65fe0009b242c21a7704589d85a25565593e22c779be",
+    "entities/request--access.yaml": "2a01e8a5aa7f326458ca8092a8b1b9fb81e4c652d14e74131b53e9c7a1c1e9d0",
+    "entities/request--mobile.yaml": "c19d15e3457964ab7e3c92fa59a52c9f9964f2589bfcb96640389e9dcba2a953",
+    "entities/request--payment.yaml": "cccceeefff9402cccca9a482fb903ca1d0f457472e50b509416758dbb9a20a69",
+    "entities/request--prepaid.yaml": "8355df286cdd62f6f57083a15385db0bac4e1327eebce79aa70691a6388c7a1a",
+    "entities/request--refund.yaml": "4fbdcd825939f189f4c9365b5c95db8ed42eab4f0acb77b805205bb9520352b4",
+    "entities/request--restore.yaml": "b20869a259e4d13db95be4203ba345ac0b4101b4d7433f23b7742e06e4feb787",
+    "entities/role--access-payment.yaml": "b322b38bb7cf10e07ba0cd9f4dc6ca7dc76592b2b846b88b093c0c710793f00c",
+    "entities/role--access-refund.yaml": "bbb2ea39c49afc9504dc27d9dfa4e183e3bc187aafd8d59de5a5d25ca81d53c5",
+    "entities/role--access-restored.yaml": "4c66c3c47a9c9d4517aaa61be1ae4ddcd98ca6c1dde09e28c9a477d25d64f22a",
+    "entities/role--account-provider.yaml": "5e7514c310a1bb1ffdfaa693217693108c8eaa0c78af86c479470e9c28da9c86",
+    "entities/role--account-user.yaml": "fb0f2f7efe488176b9c6f3f0021470ac6947e73f1155fde02d365351f6e87939",
+    "entities/role--mobile-provider.yaml": "3e90ee268a263491fa9701f2ade1de1f219bc44924cec29e7ea17b72a6e3705e",
+    "entities/role--mobile-user.yaml": "6a20775216fbcd34f37a0be598e306481675b24a5006dceba452a80a5433f6a8",
+    "entities/role--payment-proof.yaml": "dbf8d6970a00305921910ac3a4d5bc19bcf5f7aa647091f9ca38afb128f4b2e4",
+    "entities/role--publisher.yaml": "86aeea885651a56401c8a5095610de8df300bc539f1c0b8d0592cbb51071a93c",
+    "entities/role--reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
+    "entities/role--refund-payment.yaml": "74be2527542ad938a55a85051b2e1af861e18c732d33458644191edb15ea4cc9",
+    "entities/role--restore-refund.yaml": "1cd6ce66a278c30d26407821add503015d41fa686e5d4bc739820f96cd41a53a",
+    "entities/thing--chapter.yaml": "abced14265fdca6245d360d2e6910e9c1db7e5f1827ad64d474ba3a801cabd00",
+    "entities/thing--column.yaml": "8f12a3719314793e1710d73fa85110a6a10e9f7857530913a5fbfed05072854e",
+    "model.yaml": "8c31f643482aab2c50cc504c8f0279cbdd0d1a0f3518ce28aab4b169bc7bfe61",
+    "relationships/relation--access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
+    "relationships/relation--access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
+    "relationships/relation--access-payment-used.yaml": "ba94f471bf756fa91e2f70adb4fdbfc30dabf6671925a8541bd73653a53be07d",
+    "relationships/relation--access-refund-used.yaml": "fa7c8ba698eff47c53257bde9667df54bcdd7b472748019319d8ddd3e474fbe1",
+    "relationships/relation--access-restored-used.yaml": "960bc77313055f8a962ef14f7b346dd50f7252cb2eeed74c4283124ab539f55a",
+    "relationships/relation--access-result.yaml": "d29b6511e20e519845bd8ef19cc1d949d5c6e67181c9b3348e7a93d8033e9253",
+    "relationships/relation--contract-access.yaml": "b4a05d78f252e794aad63f4d2d8d19fecbc86bc77469df49b78ac218a7e24eba",
+    "relationships/relation--contract-mobile.yaml": "ff9fe4990f4777fc6a5604b75945b789c353d794167a6d0d1e053d3fbcfb9711",
+    "relationships/relation--contract-payment.yaml": "86cefb798424d88063d23ffb8aa983aca5363acbf238505a62d8ee5024d784c8",
+    "relationships/relation--contract-prepaid.yaml": "4c5b74b3bbe0a76aef8fcb46ca5daf239ee89bae6548980861fe7f81650b749d",
+    "relationships/relation--contract-refund.yaml": "a85d010680bcbc02f4c9868952f3e2f96beb7b00ae41d10c336f487ff2728d7a",
+    "relationships/relation--contract-restore.yaml": "0cf5ce8b72390d917893cd289a6d3c9fa062411d243d2ed658483719eca819d6",
+    "relationships/relation--mobile-as-access-payment.yaml": "f74baf63aac668d7fe8ab0b6743ec43568f6cf19975cbf858ec125856576398e",
+    "relationships/relation--mobile-as-payment-proof.yaml": "be9f3f395996d45441313b325f4a7977e243b094a28291d19f4f58ddf0fd2c23",
+    "relationships/relation--mobile-as-refund-payment.yaml": "4ed6377e03d2aed254198dea40eae4611d9463507c6a04794bae983451c38976",
+    "relationships/relation--mobile-column.yaml": "bca78b287b5745d2c7ae975a945f0615c525d7b12edd01c28e1253b138908755",
+    "relationships/relation--mobile-provider-as-mobile-provider.yaml": "78c3d4b0d65c61fb4b5637b51262dbb89a3c90aa771fd1bb89d5e768df5b030d",
+    "relationships/relation--mobile-result.yaml": "35880e9b1c8f7a25bafe6b48fe9a9ce6b7b02c28e822abbf01f102e7e1d49d07",
+    "relationships/relation--payment-column.yaml": "0cb1d60397f6d9b76341a4d14bfa48955a3db63a13fe8810b8b32928a64333a7",
+    "relationships/relation--payment-proof-used.yaml": "8b7ddfb7fab5cb4332f3b80e1f6c7683e056251967e27374b082b8cbc1f8a035",
+    "relationships/relation--prepaid-as-access-payment.yaml": "581bbf7497979598364d431cd74b8165d69c8d3d4c8c2113ef382a1a1fdc1ee4",
+    "relationships/relation--prepaid-as-payment-proof.yaml": "2460e96647d0e6b4ae1e5f43df6775639b3a57a3eec68988f3d31b875d34e8b6",
+    "relationships/relation--prepaid-as-refund-payment.yaml": "4fbedcf32bd1f044c9aeb62372c1680a7f40e7d3e7c359812b1ef1bd11c6358d",
+    "relationships/relation--prepaid-column.yaml": "653791a3b358051f0950a2e91f3f155aacaef794f77cbc1c7332de4887aafc04",
+    "relationships/relation--prepaid-result.yaml": "9e901e8d75ab55342ffb09fd18024b7e65237962c6ad3c7e4a9b815fc9f0c780",
+    "relationships/relation--publisher-as-account-provider.yaml": "3df6ebfac7cacf5c8501df26d200e636bf00d6360f21e6c56dba324a010cab21",
+    "relationships/relation--publisher-as-publisher.yaml": "5abed48b24a586e23f85002667b1e4e686d2c87822b0024d8ffdb29179f0425d",
+    "relationships/relation--reader-as-account-user.yaml": "9ce017b4508c83cf6bbd76f842f4795c4304f37783ecd42474d71dfc08647c1d",
+    "relationships/relation--reader-as-mobile-user.yaml": "16bb666e32aff0cf5fe941dc1667aa283fecd700eec922c693baf33d51c69e95",
+    "relationships/relation--reader-as-reader.yaml": "ed4f8b20ec332f75a83797afc6be1354add4e2cd7a7a071e61f12bd3079b3904",
+    "relationships/relation--refund-as-access-refund.yaml": "75158adb66b07590dec7152c97badec701e2235899e4bb2a3b2ee6cd7b12d6fd",
+    "relationships/relation--refund-as-restore-refund.yaml": "95fbac866f471b4492a645778d3f56194cf99dd08aa84efe2d38cba114b25d2c",
+    "relationships/relation--refund-basis-first.yaml": "83e30085c806f84183dcc79a4c26bf8f649f402372a42bca11515ed555df3576",
+    "relationships/relation--refund-basis.yaml": "16172139ba5d0872ef0814668ce2279afd474492d93ba6128a5d878124b6db39",
+    "relationships/relation--refund-column.yaml": "e4c834c29b2563dd4d7cfda0257a7c9981124d54e52df40d20cda05dd14cfae4",
+    "relationships/relation--refund-payment-used.yaml": "3e5386c0f4a2ac1930865b2cd95fd1c5a9edeaa57c2115627ba898ddb5f808ab",
+    "relationships/relation--refund-result.yaml": "bf53031ca9e91536d88983f926765298d15f8cbd2c07e9a2a1ab745a7a8c361c",
+    "relationships/relation--restore-as-access-restored.yaml": "704af72b8c4d75505c14d3de6055ae1b10d2652fda270134c351c3898e6dd56b",
+    "relationships/relation--restore-basis-first.yaml": "2a1b4a0a3611762b0bde1c9d9d9d292eab02f976bbbda6c5a751f704fec05367",
+    "relationships/relation--restore-basis.yaml": "474b559f77829e530f7958cb3ae7bc877e02abc95569e57afa9d1c35fb6d9f2d",
+    "relationships/relation--restore-column.yaml": "3e8416ed715b8b7b25bb180de75992bc9224600e15ff77280ee05321f5abfca9",
+    "relationships/relation--restore-refund-used.yaml": "b109c871524c514246a5c3d9419718e4edea7ed1a86b8fd2b657cfafc9da3ab8",
+    "relationships/relation--restore-result.yaml": "e6ad30ab0594c2e3b83b4f47611fcf163a0ebdaa028e000cbae715ad21f58356",
+    "relationships/relation--subscription-column.yaml": "4017b4ff87fa49b5090470794292325c359348aa69fd23d133175bc583f30bd8",
+    "rules/rule--access-completed.yaml": "3fb71c127c83b8d28ac7562f1a051f04757a761627cb74148fe50bfd601557ce",
+    "rules/rule--access-deadline.yaml": "8aab30d881c0ba523734734bd7a2fb933c8a5341f63b5f964f5c95c0688b1c49",
+    "rules/rule--access-eligible.yaml": "1ad0a0aa732eac573eb06dcdd29fc0f77f634aff5b910be9225e8b1b32db91e3",
+    "rules/rule--access-expired.yaml": "067210104f100de0fd07f5032bed2e7bb5578c2cc1528eeae3d6b2c04fab7fde",
+    "rules/rule--content-readable.yaml": "c5c33840598ec535c06f3fafc3cc0eea16380ee3e9aa6bd705b27f93caa156f7",
+    "rules/rule--mobile-completed.yaml": "3a25710a4ae8fe0f76f8a415bad412ebc14ec95ff73a1d02456383bf3543e6fa",
+    "rules/rule--mobile-expired.yaml": "64379bde3655f906d9cbfd826ee18d7b1352514c3bc85f1fb839d9c403be9d7c",
+    "rules/rule--payment-amount.yaml": "0b4e30b94cd11a5b58326dea6f70dca3cdb57635b79051afe6ae69d5d0cf4fb6",
+    "rules/rule--payment-completed.yaml": "27755dbf426be743f33b0fd3daf3d80cb847eaf39a827113084b6f21cf159624",
+    "rules/rule--payment-deadline.yaml": "0a73d6398577d101664d0cd6388fc8a2a1ec7b42bb32e5a3a2874f68be951654",
+    "rules/rule--payment-expired.yaml": "48fda2ad5214c1e6ab8c6a555ad0af68a929b3a603a82e207027ff128929bea5",
+    "rules/rule--payment-start.yaml": "f33d7bfbb5c7aad474731a689e2469531c3d51ee028bacbe421305c465cd32c8",
+    "rules/rule--prepaid-balance.yaml": "c886c1b274e6df98d17fdaaad69c9f5912a46f49ad599a73da312ad013aa7d4b",
+    "rules/rule--prepaid-completed.yaml": "c76226f32171176c969bce8e47e8de3a2c395d5eaa8e2fa40e14e5a4e2d284c4",
+    "rules/rule--prepaid-expired.yaml": "6ea073e0365b066460f1a1a2330b361431fa9faf34308508b41dcdb84fff9e46",
+    "rules/rule--prepaid-funded.yaml": "6978b594115b4342913c6b17789ccd13e278d27f1d362b6b9b3af917314ac3c0",
+    "rules/rule--refund-amount.yaml": "49cf5189639f7237a01c43ea4c06b542ebbffbd548ff02a96b8b46900ba0e221",
+    "rules/rule--refund-completed.yaml": "4d1944e22a06794999393a5533c8fbd960a805ac5afa327bc44374b631e6672c",
+    "rules/rule--refund-deadline.yaml": "b65dee46a32a84eb5c3a4b3bf3810e1ddf2eb1e4106113b5081641eea88e664d",
+    "rules/rule--refund-eligible.yaml": "76ca7a0e9ef88d4104b12f81062f1fd24b64535e0407207b56a1aee360c31548",
+    "rules/rule--refund-expired.yaml": "0ddd1a9dccda3325b33a2a08760cc25e22e25db710b0d3a073770e7e0ec29a83",
+    "rules/rule--restore-completed.yaml": "7e052957c39437cde3bbd6ae2dcc8a23e1c1e4ca25d42575a3b2d22f4c5308a2",
+    "rules/rule--restore-deadline.yaml": "68fb04d0fe312af5b89ae9e24703662f753c0315ff2196c902acf77d103e4a88",
+    "rules/rule--restore-eligible.yaml": "066c2b1c03c0e9f13eb01d4ed28408e8342eac37865e192bcb4717ac93c1a1d9",
+    "rules/rule--restore-expired.yaml": "baabc9cc9c30b2b04f28daebfe9be1dd79d64b586e265cae6fc391b2648d7d8c",
+    "validation/instances/instance--access-mobile.yaml": "e10c1921d2c194f4c70cdf2d98227557496ce3df7a622967b0ae1afadbcdcfd3",
+    "validation/instances/instance--access-prepaid.yaml": "47fd8d8e476d13449d9a325ed20b93a7676a1b7836d177c3bcf9d8884ccdc1e2",
+    "validation/instances/instance--access-restored.yaml": "4b3ae54267d76e36417819197b107fdf67482af59ebf01b090ac00559bba93e0",
+    "validation/instances/instance--content-mobile.yaml": "86dbad9a9a4f7b994d43afdd0c60fb471465eae4f12c8c79408fd6d93cef1e50",
+    "validation/instances/instance--content-prepaid.yaml": "e42cfa72d99f9d6d84ce03bdeea0f5c6cc2aa10524932170fe411fa0a8fc8bf3",
+    "validation/instances/instance--content-restored.yaml": "c62c4b4723d56f2857f7b0b5d539d6c49b1ac77f4a4a7c4395d7057be095cb51",
+    "validation/instances/instance--discontinuation.yaml": "0af2e392477565a4921a2181c202712e568ea480fc2edb4180d139d08b52a077",
+    "validation/instances/instance--mobile-agreement.yaml": "800e1dbc327a45505b528794a49a708910e959b01076973c121c4991bf1c06a3",
+    "validation/instances/instance--mobile-cutoff.yaml": "bfe72ed38e62997b37fa796d4e73919700504b501f71f8b975c17a3c1aef7c82",
+    "validation/instances/instance--mobile-late.yaml": "4273120ac15d5641d609925dd6cbefe1b57ee9c2ef6e49bf24fbe646631343ca",
+    "validation/instances/instance--mobile-request.yaml": "1d2dd415987edad38b875563b5a8eb044be3f2b95f1a00baaeadbec11fee762a",
+    "validation/instances/instance--mobile-result.yaml": "655a9e35671e5da537aa3706adad900390f2322ebbb5b704ec779b56d20f33f6",
+    "validation/instances/instance--mobile-short.yaml": "2df3ead037b9015c6208d8735410c37f566f40da8554cc113b67945b8d0206a5",
+    "validation/instances/instance--mobile-wrong-reader.yaml": "68548bd59e14d6b1aa88d2447db07b62084d7c75590636e5cb8b97efbc9ae559",
+    "validation/instances/instance--payment.yaml": "3d927ce994720c4cc49593ecd53628243b2f01af7ce9c2f40b522c70ac5416d7",
+    "validation/instances/instance--prepaid-agreement.yaml": "f155197f44fc1d5faea7f7687260b08f0093fc51176e326bcfa8cc775d4107a8",
+    "validation/instances/instance--prepaid-insufficient.yaml": "7a112b52c4d5278150f34328e2eec75ca111cb2a9d3d6cbe5e3bb4d495df3bc3",
+    "validation/instances/instance--prepaid-request.yaml": "cbcfeb70b727aea7e89225786e0a10cc3ed367c47471700995139c6c8b47b2d7",
+    "validation/instances/instance--prepaid-result.yaml": "de9143481366308d7d9264f4746f48521952b02f721707ac2a8e47ca5e72e82b",
+    "validation/instances/instance--refund-late.yaml": "65aa3e153f26457ab39f59e083a0e9fd78e228b88b51c9ff59e8d488a937262a",
+    "validation/instances/instance--refund.yaml": "f71bd652a1dacdfdb476a8aac3d1d7f82dff692f058c9e0e5f65b5bf001b203b",
+    "validation/instances/instance--refunded.yaml": "18bac1ef2c092dbc37f55549611821e28fd47ed68297561e217dd09b8670ef21",
+    "validation/instances/instance--relaunch.yaml": "2c02aa0fecd72a7149872287201a9f1c82e20eee357bd0a3d0bb121840aed84d",
+    "validation/instances/instance--restore-charged.yaml": "e87670e8ec7def898bcefe8db0c9318ec02e2c8491d2eb35944dc9a53c670858",
+    "validation/instances/instance--restore.yaml": "fceefa76d9f42debce0eaf62388a27df3f6dc908823537bfc9b290dcf31e261e",
+    "validation/instances/instance--restored.yaml": "12f7cfce4ce6a3ce8b3a884b95a640efd63da49e82c6283bdf4681eb2ad8fb51",
+    "validation/instances/instance--subscription.yaml": "1f24ef73a77ef6246b055c97a85c1f2da2dfe4c767a87cc4c56164afb65074cb",
+    "validation/scenarios/scenario--access-after-refund.yaml": "5fc603d2a471eb1b38775ddbd5efb8b7b170260f26e0d29b7b16497ca6927db4",
+    "validation/scenarios/scenario--access-expired.yaml": "ef17900f9f65de384f931828c8224dc55e1795cbbeec75e6d908760e1ac8758c",
+    "validation/scenarios/scenario--cutoff-paid.yaml": "7d4ab99f3e7852353cc09a961c24ed0be2fb344b4a10558a0a3efc51edae6272",
+    "validation/scenarios/scenario--cutoff-pending.yaml": "366e2eab37cdb87392b64544295971eb5002962d4e40ed4ac5a3d8ae37c49cee",
+    "validation/scenarios/scenario--discontinuation-refund.yaml": "574f47063c33a3d10c799a9f76880173dcfaed3359b1d089430867280626f123",
+    "validation/scenarios/scenario--free-restoration.yaml": "d842a930cb24713e5e6db93dbb400f0f9dc4ca0d02f017614a18f8044a1c6cdc",
+    "validation/scenarios/scenario--insufficient-balance.yaml": "fc278d6806f65fd903a75ff53933262a116731642ab604045d42792669d8777a",
+    "validation/scenarios/scenario--late-paid.yaml": "525e6b4b53d7c2b470f9b28b8cbb3b6dbe06d18b374397b29bfd5dbaf05d0268",
+    "validation/scenarios/scenario--mobile-subscription.yaml": "f87b854180e298046a7f7b48c8b3d1013cf7830ef9380b331e5c11b85dc0653f",
+    "validation/scenarios/scenario--payment-expired.yaml": "823eef0027e2a45c9e2adfb2750fc46d6e55ea2f8d9067429fafa0ed9b31a139",
+    "validation/scenarios/scenario--payment-pending.yaml": "838f15a29d99d790fe5f247349d56bce15b4bd1670c84e3dd7f19e4047028487",
+    "validation/scenarios/scenario--prepaid-subscription.yaml": "cd68ab9ca9937a03bcf3bfdec01f57dd5064ba1317c9b9fd016d26fabfbca6fb",
+    "validation/scenarios/scenario--refund-expired.yaml": "45a9fac8ce9f6ac51a88735523145c4d87af1de4586c46840c8968c8101a623a",
+    "validation/scenarios/scenario--refund-late.yaml": "ff0a70ffcfa39928badba7c2205c3ef63db0df8f487eb8b86db1648f4aa4ece9",
+    "validation/scenarios/scenario--restore-charged.yaml": "a9cfc8bf18b2ed8ef459f8b784bdc427565c202665faf4e939783382b029ea5a",
+    "validation/scenarios/scenario--restore-expired.yaml": "c086c0359d1714dd64fabbae12880431e1e5a5103446b9c02c1a70e4dadf01db",
+    "validation/scenarios/scenario--short-paid.yaml": "5d81b1f4b9f2aff25c4b3a66ea09d99ae3a60cdd1c18aa861560df6b3e3b7db0",
+    "validation/scenarios/scenario--wrong-reader.yaml": "414a794273455bdbd4796adda2627db38d557d0232d3a36bcb55b2dde5f6b04b"
+  },
+  "model": {
+    "entryContextRefs": [
+      "context.subscription",
+      "context.mobile",
+      "context.prepaid",
+      "context.content"
+    ],
+    "id": "column-subscription",
+    "modelStatus": "draft",
+    "name": "专栏订阅业务",
+    "ruleLanguage": "CEL",
+    "schemaVersion": "3.0",
+    "stakeholderReview": {
+      "status": "pending"
+    },
+    "type": "fm_model",
+    "version": "1.0.0"
+  },
+  "resourceClues": [
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.access",
+      "id": "confirmation.access",
+      "kind": "fulfillment_confirmation",
+      "label": "内容提供凭证"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.mobile",
+      "id": "confirmation.mobile",
+      "kind": "fulfillment_confirmation",
+      "label": "移动支付成功凭证"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.prepaid",
+      "id": "confirmation.prepaid",
+      "kind": "fulfillment_confirmation",
+      "label": "预付费抵扣凭证"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "confirmation.refund",
+      "kind": "fulfillment_confirmation",
+      "label": "退款到账凭证"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "confirmation.restore",
+      "kind": "fulfillment_confirmation",
+      "label": "免费恢复凭证"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "context.mobile",
+      "id": "contract.mobile",
+      "kind": "contract",
+      "label": "移动支付协议"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "context.prepaid",
+      "id": "contract.prepaid",
+      "kind": "contract",
+      "label": "预付费账户协议"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "context.subscription",
+      "id": "contract.subscription",
+      "kind": "contract",
+      "label": "专栏订阅合同"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "evidence.discontinuation",
+      "kind": "other_evidence",
+      "label": "断更下架记录"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "evidence.relaunch",
+      "kind": "other_evidence",
+      "label": "重新上架记录"
+    },
+    {
+      "category": "participant",
+      "contextRef": null,
+      "id": "party.mobile-provider",
+      "kind": "party",
+      "label": "移动支付机构"
+    },
+    {
+      "category": "participant",
+      "contextRef": null,
+      "id": "party.publisher",
+      "kind": "party",
+      "label": "专栏运营企业"
+    },
+    {
+      "category": "participant",
+      "contextRef": null,
+      "id": "party.reader",
+      "kind": "party",
+      "label": "订阅读者"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.access",
+      "id": "request.access",
+      "kind": "fulfillment_request",
+      "label": "付费内容访问请求"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.mobile",
+      "id": "request.mobile",
+      "kind": "fulfillment_request",
+      "label": "移动支付扣款请求"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.payment",
+      "id": "request.payment",
+      "kind": "fulfillment_request",
+      "label": "订阅费支付请求"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.prepaid",
+      "id": "request.prepaid",
+      "kind": "fulfillment_request",
+      "label": "账户余额抵扣请求"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "request.refund",
+      "kind": "fulfillment_request",
+      "label": "断更退款请求"
+    },
+    {
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "request.restore",
+      "kind": "fulfillment_request",
+      "label": "免费恢复请求"
+    },
+    {
+      "category": "participant",
+      "contextRef": "context.content",
+      "id": "thing.chapter",
+      "kind": "thing",
+      "label": "章节内容"
+    },
+    {
+      "category": "participant",
+      "contextRef": "context.content",
+      "id": "thing.column",
+      "kind": "thing",
+      "label": "专栏"
+    }
+  ],
+  "roles": [
+    {
+      "contextRef": "fulfillment.access",
+      "id": "role.access-payment",
+      "kind": "evidence",
+      "label": "访问所需付款证明"
+    },
+    {
+      "contextRef": "fulfillment.access",
+      "id": "role.access-refund",
+      "kind": "evidence",
+      "label": "已退款证明"
+    },
+    {
+      "contextRef": "fulfillment.access",
+      "id": "role.access-restored",
+      "kind": "evidence",
+      "label": "免费恢复资格证明"
+    },
+    {
+      "contextRef": "context.prepaid",
+      "id": "role.account-provider",
+      "kind": "party",
+      "label": "账户服务方"
+    },
+    {
+      "contextRef": "context.prepaid",
+      "id": "role.account-user",
+      "kind": "party",
+      "label": "账户使用方"
+    },
+    {
+      "contextRef": "context.mobile",
+      "id": "role.mobile-provider",
+      "kind": "party",
+      "label": "支付机构"
+    },
+    {
+      "contextRef": "context.mobile",
+      "id": "role.mobile-user",
+      "kind": "party",
+      "label": "支付用户"
+    },
+    {
+      "contextRef": "fulfillment.payment",
+      "id": "role.payment-proof",
+      "kind": "evidence",
+      "label": "合格付款证明"
+    },
+    {
+      "contextRef": "context.subscription",
+      "id": "role.publisher",
+      "kind": "party",
+      "label": "专栏运营方"
+    },
+    {
+      "contextRef": "context.subscription",
+      "id": "role.reader",
+      "kind": "party",
+      "label": "读者"
+    },
+    {
+      "contextRef": "fulfillment.refund",
+      "id": "role.refund-payment",
+      "kind": "evidence",
+      "label": "退款所需付款证明"
+    },
+    {
+      "contextRef": "fulfillment.restore",
+      "id": "role.restore-refund",
+      "kind": "evidence",
+      "label": "恢复所需退款证明"
+    }
+  ],
+  "scenarios": [
+    [
+      "scenario.access-after-refund",
+      "退款后旧版访问资格失效但历史提供记录不改写"
+    ],
+    [
+      "scenario.access-expired",
+      "访问超时不伪造内容提供凭证"
+    ],
+    [
+      "scenario.cutoff-paid",
+      "恰到截止完成扣款仍有效"
+    ],
+    [
+      "scenario.cutoff-pending",
+      "恰到截止仍无证明保持待定"
+    ],
+    [
+      "scenario.discontinuation-refund",
+      "断更下架后全额退款"
+    ],
+    [
+      "scenario.free-restoration",
+      "同专栏重新上架免费恢复并访问新版本"
+    ],
+    [
+      "scenario.insufficient-balance",
+      "余额不足不得扣款或开通订阅"
+    ],
+    [
+      "scenario.late-paid",
+      "晚一秒的扣款不能恢复合同"
+    ],
+    [
+      "scenario.mobile-subscription",
+      "移动支付后访问内容"
+    ],
+    [
+      "scenario.payment-expired",
+      "超过截止无证明合同失效"
+    ],
+    [
+      "scenario.payment-pending",
+      "截止前无证明保持待定"
+    ],
+    [
+      "scenario.prepaid-subscription",
+      "预付费抵扣后访问内容"
+    ],
+    [
+      "scenario.refund-expired",
+      "退款期限届满仍未到账"
+    ],
+    [
+      "scenario.refund-late",
+      "迟到到账不抹去退款违约"
+    ],
+    [
+      "scenario.restore-charged",
+      "额外收费不构成免费恢复"
+    ],
+    [
+      "scenario.restore-expired",
+      "免费恢复逾期仍承担责任"
+    ],
+    [
+      "scenario.short-paid",
+      "少付一元不能完成付款"
+    ],
+    [
+      "scenario.wrong-reader",
+      "他人付款凭证不能用于本人订阅"
+    ]
+  ],
+  "schemaVersion": "3.0"
+}

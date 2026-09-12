@@ -1,0 +1,14 @@
+type: evidence_instance
+id: instance.restored
+entityRef: confirmation.restore
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: RESTORE-001
+  edition_id: ED-2
+  confirmed_at: '2026-11-01T12:02:00Z'
+  charged_minor_units: 0
+  restored: true
+basedOn:
+  - instance.restore

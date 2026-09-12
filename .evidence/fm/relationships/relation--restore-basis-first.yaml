@@ -1,0 +1,6 @@
+type: relationship
+id: relation.restore-basis-first
+kind: precedes
+sourceRef: evidence.relaunch
+targetRef: request.restore
+label: 必需证明先形成，才能提出本次主张

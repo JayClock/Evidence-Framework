@@ -1,0 +1,57 @@
+type: entity
+id: evidence.discontinuation
+category: evidence
+kind: other_evidence
+label: 断更下架记录
+contextRef: fulfillment.refund
+attributes:
+  - name: subscription_id
+    label: 订阅编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 双方订阅合同的稳定编号；后续凭证引用原合同
+  - name: reader_id
+    label: 读者编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 本人合同绑定的稳定读者身份
+  - name: column_id
+    label: 专栏编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 合同约定的专栏稳定编号；跨上架版本不变
+  - name: created_at
+    label: 核验记录形成时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 平台完成断更核验并形成记录的时刻
+  - name: missed_due_at
+    label: 约定更新时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 从已接受的更新计划引用本应交付内容的时刻
+  - name: missing_content
+    label: 承诺内容仍缺失
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 运营方根据发布记录核验的结果
+  - name: rescheduled
+    label: 已协商改期
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 双方是否已接受新的交付约定
+  - name: delisted
+    label: 已经下架
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 运营方核验当前已完成下架
+notes: 核验发布事实并补充证明本次退款主张；记录形成时刻不覆盖约定更新时刻。
+responsibleRoleRef: role.publisher

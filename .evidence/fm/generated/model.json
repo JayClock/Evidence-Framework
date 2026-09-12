@@ -1,0 +1,3087 @@
+{
+  "businessPatterns": [],
+  "entities": [
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "对应请求编号",
+          "meaning": "对应请求编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "履约确认时刻",
+          "meaning": "平台已提供该版本可检索内容的实际时刻",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "已提供章节编号",
+          "meaning": "已提供章节编号",
+          "name": "chapter_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "已提供版本",
+          "meaning": "已提供版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "内容已提供",
+          "meaning": "指定内容已向本读者提供并可检索，不声明读者已经阅读",
+          "name": "delivered",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.access",
+      "id": "confirmation.access",
+      "kind": "fulfillment_confirmation",
+      "label": "内容提供凭证",
+      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "对应请求编号",
+          "meaning": "对应请求编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "履约确认时刻",
+          "meaning": "支付机构确认实际扣款成功的业务时刻，不是回调到达时刻",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "订阅付款请求编号",
+          "meaning": "订阅付款请求编号",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "实扣金额",
+          "meaning": "资金服务方实际完成的扣款金额，单位为分",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "实扣币种",
+          "meaning": "实扣币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "资金结果编号",
+          "meaning": "该资金服务方内可追溯且唯一的扣款结果编号",
+          "name": "payment_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "扣款成功",
+          "meaning": "资金服务方证明扣款已经完成",
+          "name": "success",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.mobile",
+      "id": "confirmation.mobile",
+      "kind": "fulfillment_confirmation",
+      "label": "移动支付成功凭证",
+      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "responsibleRoleRef": "role.mobile-provider",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "对应请求编号",
+          "meaning": "对应请求编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "履约确认时刻",
+          "meaning": "账户服务方实际完成原子扣减的业务时刻",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "订阅付款请求编号",
+          "meaning": "订阅付款请求编号",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "实扣金额",
+          "meaning": "资金服务方实际完成的扣款金额，单位为分",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "实扣币种",
+          "meaning": "实扣币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "资金结果编号",
+          "meaning": "该资金服务方内可追溯且唯一的扣款结果编号",
+          "name": "payment_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "扣款成功",
+          "meaning": "资金服务方证明扣款已经完成",
+          "name": "success",
+          "required": true,
+          "valueType": "bool"
+        },
+        {
+          "derivedByRuleRef": "rule.prepaid-balance",
+          "keyData": true,
+          "label": "扣后余额",
+          "meaning": "扣前可用余额减实际扣款",
+          "name": "balance_after_minor_units",
+          "required": true,
+          "valueType": "int"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.prepaid",
+      "id": "confirmation.prepaid",
+      "kind": "fulfillment_confirmation",
+      "label": "预付费抵扣凭证",
+      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "responsibleRoleRef": "role.account-provider",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "对应请求编号",
+          "meaning": "对应请求编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "履约确认时刻",
+          "meaning": "原资金渠道确认退款到账的实际时刻，不是发起退款时间",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "实退金额",
+          "meaning": "原渠道实际到账的退款金额",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "实退币种",
+          "meaning": "实退币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "到账回执编号",
+          "meaning": "原资金渠道可核验的到账回执",
+          "name": "receipt_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "退款已到账",
+          "meaning": "原资金渠道证实收款方已经收到退款",
+          "name": "settled",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "confirmation.refund",
+      "kind": "fulfillment_confirmation",
+      "label": "退款到账凭证",
+      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "对应请求编号",
+          "meaning": "对应请求编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "履约确认时刻",
+          "meaning": "平台实际完成免费恢复访问资格的时刻",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "已恢复版本",
+          "meaning": "已恢复版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "实收金额",
+          "meaning": "恢复办理的实际收取金额，免费条款要求为0",
+          "name": "charged_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "资格已恢复",
+          "meaning": "平台已经恢复该读者对指定专栏新版本的访问资格",
+          "name": "restored",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "confirmation.restore",
+      "kind": "fulfillment_confirmation",
+      "label": "免费恢复凭证",
+      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "context.content",
+      "kind": "domain",
+      "label": "专栏内容",
+      "rootRefs": ["thing.column", "thing.chapter"],
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "context.mobile",
+      "kind": "contract",
+      "label": "移动支付协议",
+      "rootRefs": ["contract.mobile"],
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "context.prepaid",
+      "kind": "contract",
+      "label": "预付费账户协议",
+      "rootRefs": ["contract.prepaid"],
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "context.subscription",
+      "kind": "contract",
+      "label": "专栏订阅",
+      "rootRefs": ["contract.subscription"],
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "协议编号",
+          "meaning": "协议编号",
+          "name": "agreement_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "使用方编号",
+          "meaning": "使用方编号",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "签约时刻",
+          "meaning": "用户和服务提供方完成协议接受的时刻",
+          "name": "signed_at",
+          "required": true,
+          "valueType": "timestamp"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "context.mobile",
+      "id": "contract.mobile",
+      "kind": "contract",
+      "label": "移动支付协议",
+      "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
+      "roleRefs": ["role.mobile-user", "role.mobile-provider"],
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "协议编号",
+          "meaning": "协议编号",
+          "name": "agreement_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "使用方编号",
+          "meaning": "使用方编号",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "签约时刻",
+          "meaning": "用户和服务提供方完成协议接受的时刻",
+          "name": "signed_at",
+          "required": true,
+          "valueType": "timestamp"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "context.prepaid",
+      "id": "contract.prepaid",
+      "kind": "contract",
+      "label": "预付费账户协议",
+      "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
+      "roleRefs": ["role.account-user", "role.account-provider"],
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅版本",
+          "meaning": "订阅版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "成交金额",
+          "meaning": "双方接受并冻结的订阅成交金额，单位为分",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "结算币种",
+          "meaning": "双方约定CNY，不转换汇率",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "签约时刻",
+          "meaning": "双方完成条款接受的业务时刻",
+          "name": "signed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "付款期限秒数",
+          "meaning": "双方接受的付款条款：900秒",
+          "name": "payment_seconds",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "内容提供期限秒数",
+          "meaning": "双方接受的逐次内容提供期限：60秒",
+          "name": "access_seconds",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "退款期限秒数",
+          "meaning": "双方接受的退款期限：604800秒",
+          "name": "refund_seconds",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "恢复期限秒数",
+          "meaning": "双方接受的免费恢复期限：86400秒",
+          "name": "restore_seconds",
+          "required": true,
+          "valueType": "int"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "context.subscription",
+      "id": "contract.subscription",
+      "kind": "contract",
+      "label": "专栏订阅合同",
+      "notes": "一份合同绑定一个读者、一个专栏版本和一次全额付款要求。",
+      "roleRefs": ["role.reader", "role.publisher"],
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "核验记录形成时刻",
+          "meaning": "平台完成断更核验并形成记录的时刻",
+          "name": "created_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "约定更新时刻",
+          "meaning": "从已接受的更新计划引用本应交付内容的时刻",
+          "name": "missed_due_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "承诺内容仍缺失",
+          "meaning": "运营方根据发布记录核验的结果",
+          "name": "missing_content",
+          "required": true,
+          "valueType": "bool"
+        },
+        {
+          "keyData": true,
+          "label": "已协商改期",
+          "meaning": "双方是否已接受新的交付约定",
+          "name": "rescheduled",
+          "required": true,
+          "valueType": "bool"
+        },
+        {
+          "keyData": true,
+          "label": "已经下架",
+          "meaning": "运营方核验当前已完成下架",
+          "name": "delisted",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "evidence.discontinuation",
+      "kind": "other_evidence",
+      "label": "断更下架记录",
+      "notes": "核验发布事实并补充证明本次退款主张；记录形成时刻不覆盖约定更新时刻。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "原订阅编号",
+          "meaning": "原订阅编号",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "原读者编号",
+          "meaning": "原读者编号",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "同一专栏编号",
+          "meaning": "同一专栏编号",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "重新上架版本",
+          "meaning": "重新上架版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "记录形成时刻",
+          "meaning": "平台形成本次重新上架记录的时刻",
+          "name": "created_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "实际重新上架时刻",
+          "meaning": "运营方发布记录中的原事件时刻",
+          "name": "relaunched_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "已重新上架",
+          "meaning": "指定专栏版本确已可提供",
+          "name": "listed",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "evidence.relaunch",
+      "kind": "other_evidence",
+      "label": "重新上架记录",
+      "notes": "向原订阅关联可采信的重新上架事件，证明免费恢复请求的触发条件。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.access",
+      "kind": "fulfillment",
+      "label": "付费内容访问",
+      "parentContextRef": "context.subscription",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.mobile",
+      "kind": "fulfillment",
+      "label": "移动支付扣款",
+      "parentContextRef": "context.mobile",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.payment",
+      "kind": "fulfillment",
+      "label": "订阅费支付",
+      "parentContextRef": "context.subscription",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.prepaid",
+      "kind": "fulfillment",
+      "label": "账户余额抵扣",
+      "parentContextRef": "context.prepaid",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.refund",
+      "kind": "fulfillment",
+      "label": "断更退款",
+      "parentContextRef": "context.subscription",
+      "type": "entity"
+    },
+    {
+      "category": "context",
+      "id": "fulfillment.restore",
+      "kind": "fulfillment",
+      "label": "免费恢复",
+      "parentContextRef": "context.subscription",
+      "type": "entity"
+    },
+    {
+      "category": "participant",
+      "id": "party.mobile-provider",
+      "kind": "party",
+      "label": "移动支付机构",
+      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
+      "type": "entity"
+    },
+    {
+      "category": "participant",
+      "id": "party.publisher",
+      "kind": "party",
+      "label": "专栏运营企业",
+      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
+      "type": "entity"
+    },
+    {
+      "category": "participant",
+      "id": "party.reader",
+      "kind": "party",
+      "label": "订阅读者",
+      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求开始时刻",
+          "meaning": "权利方实际提出本次履约主张的时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.access-deadline",
+          "keyData": true,
+          "label": "履约截止时刻",
+          "meaning": "请求开始加合同约定的本项秒数",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "请求章节编号",
+          "meaning": "请求章节编号",
+          "name": "chapter_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求内容版本",
+          "meaning": "请求内容版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.access",
+      "id": "request.access",
+      "kind": "fulfillment_request",
+      "label": "付费内容访问请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.reader",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求开始时刻",
+          "meaning": "权利方实际提出本次履约主张的时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "扣款截止时刻",
+          "meaning": "引用订阅付款请求的截止，不得由支付接入延长",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "订阅付款请求编号",
+          "meaning": "引用订阅合同内的付款请求",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "扣款金额",
+          "meaning": "引用原订阅付款请求金额",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "扣款币种",
+          "meaning": "引用原订阅付款请求币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "支付协议编号",
+          "meaning": "引用本人签署的资金服务协议",
+          "name": "agreement_id",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.mobile",
+      "id": "request.mobile",
+      "kind": "fulfillment_request",
+      "label": "移动支付扣款请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.mobile-user",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "derivedByRuleRef": "rule.payment-start",
+          "keyData": true,
+          "label": "付款开始时刻",
+          "meaning": "引用合同签约时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.payment-deadline",
+          "keyData": true,
+          "label": "付款截止时刻",
+          "meaning": "付款开始加合同约定秒数",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.payment-amount",
+          "keyData": true,
+          "label": "应付金额",
+          "meaning": "引用冻结的合同成交金额",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "付款币种",
+          "meaning": "引用合同币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.payment",
+      "id": "request.payment",
+      "kind": "fulfillment_request",
+      "label": "订阅费支付请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.publisher",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求开始时刻",
+          "meaning": "权利方实际提出本次履约主张的时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "扣款截止时刻",
+          "meaning": "引用订阅付款请求的截止，不得由支付接入延长",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "订阅付款请求编号",
+          "meaning": "引用订阅合同内的付款请求",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "扣款金额",
+          "meaning": "引用原订阅付款请求金额",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "扣款币种",
+          "meaning": "引用原订阅付款请求币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "支付协议编号",
+          "meaning": "引用本人签署的资金服务协议",
+          "name": "agreement_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "扣前可用余额",
+          "meaning": "账户服务方从本人账本取得的本次核验快照，不接受用户自报余额",
+          "name": "balance_before_minor_units",
+          "required": true,
+          "valueType": "int"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.prepaid",
+      "id": "request.prepaid",
+      "kind": "fulfillment_request",
+      "label": "账户余额抵扣请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.account-user",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求开始时刻",
+          "meaning": "权利方实际提出本次履约主张的时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.refund-deadline",
+          "keyData": true,
+          "label": "履约截止时刻",
+          "meaning": "请求开始加合同约定的本项秒数",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.refund-amount",
+          "keyData": true,
+          "label": "应退金额",
+          "meaning": "原合同成交金额且须等于原全额实付",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "退款币种",
+          "meaning": "与原合同和实付币种相同",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.refund",
+      "id": "request.refund",
+      "kind": "fulfillment_request",
+      "label": "断更退款请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.reader",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "请求编号",
+          "meaning": "本次责任请求的唯一编号",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "订阅编号",
+          "meaning": "双方订阅合同的稳定编号；后续凭证引用原合同",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "读者编号",
+          "meaning": "本人合同绑定的稳定读者身份",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "合同约定的专栏稳定编号；跨上架版本不变",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "请求开始时刻",
+          "meaning": "权利方实际提出本次履约主张的时刻",
+          "name": "started_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "derivedByRuleRef": "rule.restore-deadline",
+          "keyData": true,
+          "label": "履约截止时刻",
+          "meaning": "请求开始加合同约定的本项秒数",
+          "name": "expired_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": true,
+          "label": "恢复版本",
+          "meaning": "引用本次重新上架记录中的新版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "evidence",
+      "contextRef": "fulfillment.restore",
+      "id": "request.restore",
+      "kind": "fulfillment_request",
+      "label": "免费恢复请求",
+      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "responsibleRoleRef": "role.reader",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "订阅付款请求编号",
+          "meaning": "具体玩家应提供的订阅付款请求编号，不是角色自身的记录",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "实扣金额",
+          "meaning": "具体玩家应提供的实扣金额，不是角色自身的记录",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "实扣币种",
+          "meaning": "具体玩家应提供的实扣币种，不是角色自身的记录",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "资金结果编号",
+          "meaning": "具体玩家应提供的资金结果编号，不是角色自身的记录",
+          "name": "payment_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "扣款成功",
+          "meaning": "具体玩家应提供的扣款成功，不是角色自身的记录",
+          "name": "success",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.access",
+      "id": "role.access-payment",
+      "kind": "evidence",
+      "label": "访问所需付款证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "实退金额",
+          "meaning": "具体玩家应提供的实退金额，不是角色自身的记录",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "实退币种",
+          "meaning": "具体玩家应提供的实退币种，不是角色自身的记录",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "到账回执编号",
+          "meaning": "具体玩家应提供的到账回执编号，不是角色自身的记录",
+          "name": "receipt_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "退款已到账",
+          "meaning": "具体玩家应提供的退款已到账，不是角色自身的记录",
+          "name": "settled",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.access",
+      "id": "role.access-refund",
+      "kind": "evidence",
+      "label": "已退款证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "已恢复版本",
+          "meaning": "具体玩家应提供的已恢复版本，不是角色自身的记录",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "实收金额",
+          "meaning": "具体玩家应提供的实收金额，不是角色自身的记录",
+          "name": "charged_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "资格已恢复",
+          "meaning": "具体玩家应提供的资格已恢复，不是角色自身的记录",
+          "name": "restored",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.access",
+      "id": "role.access-restored",
+      "kind": "evidence",
+      "label": "免费恢复资格证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.prepaid",
+      "id": "role.account-provider",
+      "kind": "party",
+      "label": "账户服务方",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.prepaid",
+      "id": "role.account-user",
+      "kind": "party",
+      "label": "账户使用方",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.mobile",
+      "id": "role.mobile-provider",
+      "kind": "party",
+      "label": "支付机构",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.mobile",
+      "id": "role.mobile-user",
+      "kind": "party",
+      "label": "支付用户",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "订阅付款请求编号",
+          "meaning": "具体玩家应提供的订阅付款请求编号，不是角色自身的记录",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "实扣金额",
+          "meaning": "具体玩家应提供的实扣金额，不是角色自身的记录",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "实扣币种",
+          "meaning": "具体玩家应提供的实扣币种，不是角色自身的记录",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "资金结果编号",
+          "meaning": "具体玩家应提供的资金结果编号，不是角色自身的记录",
+          "name": "payment_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "扣款成功",
+          "meaning": "具体玩家应提供的扣款成功，不是角色自身的记录",
+          "name": "success",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.payment",
+      "id": "role.payment-proof",
+      "kind": "evidence",
+      "label": "合格付款证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.subscription",
+      "id": "role.publisher",
+      "kind": "party",
+      "label": "专栏运营方",
+      "type": "entity"
+    },
+    {
+      "category": "role",
+      "contextRef": "context.subscription",
+      "id": "role.reader",
+      "kind": "party",
+      "label": "读者",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "订阅付款请求编号",
+          "meaning": "具体玩家应提供的订阅付款请求编号，不是角色自身的记录",
+          "name": "payment_request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "实扣金额",
+          "meaning": "具体玩家应提供的实扣金额，不是角色自身的记录",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "实扣币种",
+          "meaning": "具体玩家应提供的实扣币种，不是角色自身的记录",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "资金结果编号",
+          "meaning": "具体玩家应提供的资金结果编号，不是角色自身的记录",
+          "name": "payment_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "扣款成功",
+          "meaning": "具体玩家应提供的扣款成功，不是角色自身的记录",
+          "name": "success",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.refund",
+      "id": "role.refund-payment",
+      "kind": "evidence",
+      "label": "退款所需付款证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": false,
+          "label": "对应请求编号",
+          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
+          "name": "request_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "订阅编号",
+          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
+          "name": "subscription_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "读者编号",
+          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
+          "name": "reader_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "专栏编号",
+          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "履约确认时刻",
+          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
+          "name": "confirmed_at",
+          "required": true,
+          "valueType": "timestamp"
+        },
+        {
+          "keyData": false,
+          "label": "实退金额",
+          "meaning": "具体玩家应提供的实退金额，不是角色自身的记录",
+          "name": "amount_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": false,
+          "label": "实退币种",
+          "meaning": "具体玩家应提供的实退币种，不是角色自身的记录",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "到账回执编号",
+          "meaning": "具体玩家应提供的到账回执编号，不是角色自身的记录",
+          "name": "receipt_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": false,
+          "label": "退款已到账",
+          "meaning": "具体玩家应提供的退款已到账，不是角色自身的记录",
+          "name": "settled",
+          "required": true,
+          "valueType": "bool"
+        }
+      ],
+      "category": "role",
+      "contextRef": "fulfillment.restore",
+      "id": "role.restore-refund",
+      "kind": "evidence",
+      "label": "恢复所需退款证明",
+      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "章节编号",
+          "meaning": "章节编号",
+          "name": "chapter_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "所属专栏",
+          "meaning": "所属专栏",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "所属版本",
+          "meaning": "所属版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "章节标题",
+          "meaning": "章节标题",
+          "name": "title",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "章节正文",
+          "meaning": "发布的指定版本正文；仅向该章节有访问资格的读者提供",
+          "name": "body",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "participant",
+      "contextRef": "context.content",
+      "id": "thing.chapter",
+      "kind": "thing",
+      "label": "章节内容",
+      "type": "entity"
+    },
+    {
+      "attributes": [
+        {
+          "keyData": true,
+          "label": "专栏编号",
+          "meaning": "专栏编号",
+          "name": "column_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "专栏名称",
+          "meaning": "专栏名称",
+          "name": "title",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "上架版本",
+          "meaning": "上架版本",
+          "name": "edition_id",
+          "required": true,
+          "valueType": "string"
+        },
+        {
+          "keyData": true,
+          "label": "目录价格",
+          "meaning": "运营方当前发布的标价，单位为分；不覆盖合同成交价格",
+          "name": "price_minor_units",
+          "required": true,
+          "valueType": "int"
+        },
+        {
+          "keyData": true,
+          "label": "标价币种",
+          "meaning": "标价币种",
+          "name": "currency",
+          "required": true,
+          "valueType": "string"
+        }
+      ],
+      "category": "participant",
+      "contextRef": "context.content",
+      "id": "thing.column",
+      "kind": "thing",
+      "label": "专栏",
+      "type": "entity"
+    }
+  ],
+  "model": {
+    "entryContextRefs": [
+      "context.subscription",
+      "context.mobile",
+      "context.prepaid",
+      "context.content"
+    ],
+    "id": "column-subscription",
+    "modelStatus": "draft",
+    "name": "专栏订阅业务",
+    "ruleLanguage": "CEL",
+    "schemaVersion": "3.0",
+    "stakeholderReview": {
+      "status": "pending"
+    },
+    "type": "fm_model",
+    "version": "1.0.0"
+  },
+  "relationships": [
+    {
+      "id": "relation.access-chapter",
+      "kind": "references",
+      "label": "本次访问的指定章节",
+      "sourceRef": "request.access",
+      "targetRef": "thing.chapter",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.access-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.access",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.access-payment-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.access",
+      "targetRef": "role.access-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.access-refund-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.access",
+      "targetRef": "role.access-refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.access-restored-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.access",
+      "targetRef": "role.access-restored",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.access-result",
+      "kind": "precedes",
+      "label": "先有本次请求，再形成对应结果",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "request.access",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "confirmation.access",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-access",
+      "kind": "precedes",
+      "label": "依据双方协议提出付费内容访问",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.subscription",
+      "targetCardinality": {
+        "max": "many",
+        "min": 0
+      },
+      "targetRef": "request.access",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-mobile",
+      "kind": "precedes",
+      "label": "依据双方协议提出移动支付扣款",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.mobile",
+      "targetCardinality": {
+        "max": "many",
+        "min": 0
+      },
+      "targetRef": "request.mobile",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-payment",
+      "kind": "precedes",
+      "label": "依据双方协议提出订阅费支付",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.subscription",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "request.payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-prepaid",
+      "kind": "precedes",
+      "label": "依据双方协议提出账户余额抵扣",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.prepaid",
+      "targetCardinality": {
+        "max": "many",
+        "min": 0
+      },
+      "targetRef": "request.prepaid",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-refund",
+      "kind": "precedes",
+      "label": "依据双方协议提出断更退款",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.subscription",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "request.refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.contract-restore",
+      "kind": "precedes",
+      "label": "依据双方协议提出免费恢复",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "contract.subscription",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "request.restore",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-as-access-payment",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.mobile",
+      "targetRef": "role.access-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-as-payment-proof",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.mobile",
+      "targetRef": "role.payment-proof",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-as-refund-payment",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.mobile",
+      "targetRef": "role.refund-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.mobile",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-provider-as-mobile-provider",
+      "kind": "plays_role",
+      "label": "同一主体承担支付机构责任",
+      "sourceRef": "party.mobile-provider",
+      "targetRef": "role.mobile-provider",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.mobile-result",
+      "kind": "precedes",
+      "label": "先有本次请求，再形成对应结果",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "request.mobile",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "confirmation.mobile",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.payment-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.payment",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.payment-proof-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.payment",
+      "targetRef": "role.payment-proof",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.prepaid-as-access-payment",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.prepaid",
+      "targetRef": "role.access-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.prepaid-as-payment-proof",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.prepaid",
+      "targetRef": "role.payment-proof",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.prepaid-as-refund-payment",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.prepaid",
+      "targetRef": "role.refund-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.prepaid-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.prepaid",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.prepaid-result",
+      "kind": "precedes",
+      "label": "先有本次请求，再形成对应结果",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "request.prepaid",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "confirmation.prepaid",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.publisher-as-account-provider",
+      "kind": "plays_role",
+      "label": "同一主体承担账户服务方责任",
+      "sourceRef": "party.publisher",
+      "targetRef": "role.account-provider",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.publisher-as-publisher",
+      "kind": "plays_role",
+      "label": "同一主体承担专栏运营方责任",
+      "sourceRef": "party.publisher",
+      "targetRef": "role.publisher",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.reader-as-account-user",
+      "kind": "plays_role",
+      "label": "同一主体承担账户使用方责任",
+      "sourceRef": "party.reader",
+      "targetRef": "role.account-user",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.reader-as-mobile-user",
+      "kind": "plays_role",
+      "label": "同一主体承担支付用户责任",
+      "sourceRef": "party.reader",
+      "targetRef": "role.mobile-user",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.reader-as-reader",
+      "kind": "plays_role",
+      "label": "同一主体承担读者责任",
+      "sourceRef": "party.reader",
+      "targetRef": "role.reader",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-as-access-refund",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.refund",
+      "targetRef": "role.access-refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-as-restore-refund",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.refund",
+      "targetRef": "role.restore-refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-basis",
+      "kind": "evidences",
+      "label": "补充证明本次请求的发生条件",
+      "sourceRef": "evidence.discontinuation",
+      "targetRef": "request.refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-basis-first",
+      "kind": "precedes",
+      "label": "必需证明先形成，才能提出本次主张",
+      "sourceRef": "evidence.discontinuation",
+      "targetRef": "request.refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.refund",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-payment-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.refund",
+      "targetRef": "role.refund-payment",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.refund-result",
+      "kind": "precedes",
+      "label": "先有本次请求，再形成对应结果",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "request.refund",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "confirmation.refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-as-access-restored",
+      "kind": "plays_role",
+      "label": "实际结果扮演证明角色",
+      "sourceRef": "confirmation.restore",
+      "targetRef": "role.access-restored",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-basis",
+      "kind": "evidences",
+      "label": "补充证明本次请求的发生条件",
+      "sourceRef": "evidence.relaunch",
+      "targetRef": "request.restore",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-basis-first",
+      "kind": "precedes",
+      "label": "必需证明先形成，才能提出本次主张",
+      "sourceRef": "evidence.relaunch",
+      "targetRef": "request.restore",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-column",
+      "kind": "references",
+      "label": "明确本请求涉及的专栏",
+      "sourceRef": "request.restore",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-refund-used",
+      "kind": "uses_role",
+      "label": "本请求使用已有外部结果判断资格",
+      "sourceRef": "request.restore",
+      "targetRef": "role.restore-refund",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.restore-result",
+      "kind": "precedes",
+      "label": "先有本次请求，再形成对应结果",
+      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
+      "sourceRef": "request.restore",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
+      "targetRef": "confirmation.restore",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.subscription-column",
+      "kind": "references",
+      "label": "合同订阅标的",
+      "sourceRef": "contract.subscription",
+      "targetRef": "thing.column",
+      "type": "relationship"
+    }
+  ],
+  "rules": [
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.access"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.access-payment"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.access-refund"
+        },
+        "request": {
+          "ref": "request.access"
+        },
+        "restorations": {
+          "cardinality": "many",
+          "ref": "role.access-restored"
+        }
+      },
+      "contextRef": "fulfillment.access",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
+      "id": "rule.access-completed",
+      "kind": "completion",
+      "label": "指定章节已按时向读者提供",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "request": {
+          "ref": "request.access"
+        }
+      },
+      "contextRef": "fulfillment.access",
+      "expression": "request.started_at + duration(string(agreement.access_seconds) +\n\"s\")",
+      "id": "rule.access-deadline",
+      "kind": "derivation",
+      "label": "计算付费内容访问请求截止",
+      "resultType": "timestamp",
+      "target": {
+        "attribute": "expired_at",
+        "entityRef": "request.access"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.access-payment"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.access-refund"
+        },
+        "request": {
+          "ref": "request.access"
+        },
+        "restorations": {
+          "cardinality": "many",
+          "ref": "role.access-restored"
+        }
+      },
+      "contextRef": "fulfillment.access",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at))",
+      "id": "rule.access-eligible",
+      "kind": "precondition",
+      "label": "本读者对本版本具备访问资格",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.access"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.access-payment"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.access-refund"
+        },
+        "request": {
+          "ref": "request.access"
+        },
+        "restorations": {
+          "cardinality": "many",
+          "ref": "role.access-restored"
+        }
+      },
+      "contextRef": "fulfillment.access",
+      "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\n((payments.exists(p, p.subscription_id == agreement.subscription_id\n&& p.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1)",
+      "id": "rule.access-expired",
+      "kind": "breach",
+      "label": "本次内容未按时提供",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.access"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.access-payment"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.access-refund"
+        },
+        "request": {
+          "ref": "request.access"
+        },
+        "restorations": {
+          "cardinality": "many",
+          "ref": "role.access-restored"
+        }
+      },
+      "contextRef": "fulfillment.access",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= now)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
+      "id": "rule.content-readable",
+      "kind": "precondition",
+      "label": "按查询时刻检索仍有资格的本人章节",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.mobile"
+        },
+        "request": {
+          "ref": "request.mobile"
+        }
+      },
+      "contextRef": "fulfillment.mobile",
+      "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success).size() == 1",
+      "id": "rule.mobile-completed",
+      "kind": "completion",
+      "label": "本次扣款全额按时完成",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.mobile"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "request": {
+          "ref": "request.mobile"
+        }
+      },
+      "contextRef": "fulfillment.mobile",
+      "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success).size() == 1)",
+      "id": "rule.mobile-expired",
+      "kind": "breach",
+      "label": "本次扣款未在期限内完成",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        }
+      },
+      "contextRef": "fulfillment.payment",
+      "expression": "agreement.amount_minor_units",
+      "id": "rule.payment-amount",
+      "kind": "derivation",
+      "label": "计算订阅费支付请求amount_minor_units",
+      "resultType": "int",
+      "target": {
+        "attribute": "amount_minor_units",
+        "entityRef": "request.payment"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "proofs": {
+          "cardinality": "many",
+          "ref": "role.payment-proof"
+        },
+        "request": {
+          "ref": "request.payment"
+        }
+      },
+      "contextRef": "fulfillment.payment",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && request.currency == agreement.currency &&\nrequest.amount_minor_units == agreement.amount_minor_units &&\nrequest.amount_minor_units > 0 && proofs.filter(p, p.subscription_id\n== request.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.payment_request_id ==\nrequest.request_id && p.amount_minor_units ==\nrequest.amount_minor_units && p.currency == request.currency &&\np.success && p.confirmed_at >= request.started_at && p.confirmed_at\n<= request.expired_at).size() == 1",
+      "id": "rule.payment-completed",
+      "kind": "completion",
+      "label": "收到唯一全额按时付款证明",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "request": {
+          "ref": "request.payment"
+        }
+      },
+      "contextRef": "fulfillment.payment",
+      "expression": "request.started_at + duration(string(agreement.payment_seconds) +\n\"s\")",
+      "id": "rule.payment-deadline",
+      "kind": "derivation",
+      "label": "计算订阅费支付请求expired_at",
+      "resultType": "timestamp",
+      "target": {
+        "attribute": "expired_at",
+        "entityRef": "request.payment"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "proofs": {
+          "cardinality": "many",
+          "ref": "role.payment-proof"
+        },
+        "request": {
+          "ref": "request.payment"
+        }
+      },
+      "contextRef": "fulfillment.payment",
+      "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrequest.currency == agreement.currency && request.amount_minor_units\n== agreement.amount_minor_units && request.amount_minor_units > 0 &&\nproofs.filter(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.payment_request_id == request.request_id &&\np.amount_minor_units == request.amount_minor_units && p.currency ==\nrequest.currency && p.success && p.confirmed_at >=\nrequest.started_at && p.confirmed_at <= request.expired_at).size()\n== 1)",
+      "id": "rule.payment-expired",
+      "kind": "breach",
+      "label": "付款逾期使合同失效",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        }
+      },
+      "contextRef": "fulfillment.payment",
+      "expression": "agreement.signed_at",
+      "id": "rule.payment-start",
+      "kind": "derivation",
+      "label": "计算订阅费支付请求started_at",
+      "resultType": "timestamp",
+      "target": {
+        "attribute": "started_at",
+        "entityRef": "request.payment"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "confirmation": {
+          "ref": "confirmation.prepaid"
+        },
+        "request": {
+          "ref": "request.prepaid"
+        }
+      },
+      "contextRef": "fulfillment.prepaid",
+      "expression": "request.balance_before_minor_units - confirmation.amount_minor_units",
+      "id": "rule.prepaid-balance",
+      "kind": "derivation",
+      "label": "计算抵扣后余额",
+      "resultType": "int",
+      "target": {
+        "attribute": "balance_after_minor_units",
+        "entityRef": "confirmation.prepaid"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.prepaid"
+        },
+        "request": {
+          "ref": "request.prepaid"
+        }
+      },
+      "contextRef": "fulfillment.prepaid",
+      "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success && request.balance_before_minor_units >=\nrequest.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1",
+      "id": "rule.prepaid-completed",
+      "kind": "completion",
+      "label": "本次扣款全额按时完成",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.prepaid"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "request": {
+          "ref": "request.prepaid"
+        }
+      },
+      "contextRef": "fulfillment.prepaid",
+      "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success && request.balance_before_minor_units\n>= request.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1)",
+      "id": "rule.prepaid-expired",
+      "kind": "breach",
+      "label": "本次扣款未在期限内完成",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "request": {
+          "ref": "request.prepaid"
+        }
+      },
+      "contextRef": "fulfillment.prepaid",
+      "expression": "request.amount_minor_units > 0 && request.balance_before_minor_units\n>= request.amount_minor_units",
+      "id": "rule.prepaid-funded",
+      "kind": "precondition",
+      "label": "账户可用余额足够",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        }
+      },
+      "contextRef": "fulfillment.refund",
+      "expression": "agreement.amount_minor_units",
+      "id": "rule.refund-amount",
+      "kind": "derivation",
+      "label": "引用原合同退款金额",
+      "resultType": "int",
+      "target": {
+        "attribute": "amount_minor_units",
+        "entityRef": "request.refund"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.refund"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.discontinuation"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.refund-payment"
+        },
+        "request": {
+          "ref": "request.refund"
+        }
+      },
+      "contextRef": "fulfillment.refund",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1",
+      "id": "rule.refund-completed",
+      "kind": "completion",
+      "label": "全部订阅费已按时到账",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "request": {
+          "ref": "request.refund"
+        }
+      },
+      "contextRef": "fulfillment.refund",
+      "expression": "request.started_at + duration(string(agreement.refund_seconds) +\n\"s\")",
+      "id": "rule.refund-deadline",
+      "kind": "derivation",
+      "label": "计算断更退款请求截止",
+      "resultType": "timestamp",
+      "target": {
+        "attribute": "expired_at",
+        "entityRef": "request.refund"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.discontinuation"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.refund-payment"
+        },
+        "request": {
+          "ref": "request.refund"
+        }
+      },
+      "contextRef": "fulfillment.refund",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency",
+      "id": "rule.refund-eligible",
+      "kind": "precondition",
+      "label": "断更下架且原订阅已经付款",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.refund"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.discontinuation"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "payments": {
+          "cardinality": "many",
+          "ref": "role.refund-payment"
+        },
+        "request": {
+          "ref": "request.refund"
+        }
+      },
+      "contextRef": "fulfillment.refund",
+      "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\npayments.exists(p, p.subscription_id == agreement.subscription_id &&\np.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1)",
+      "id": "rule.refund-expired",
+      "kind": "breach",
+      "label": "退款逾期保留追责权利",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.restore"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.relaunch"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.restore-refund"
+        },
+        "request": {
+          "ref": "request.restore"
+        }
+      },
+      "contextRef": "fulfillment.restore",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at) &&\nconfirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.edition_id == request.edition_id &&\nc.charged_minor_units == 0 && c.restored).size() == 1",
+      "id": "rule.restore-completed",
+      "kind": "completion",
+      "label": "已按时免费恢复新版本",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "request": {
+          "ref": "request.restore"
+        }
+      },
+      "contextRef": "fulfillment.restore",
+      "expression": "request.started_at + duration(string(agreement.restore_seconds) +\n\"s\")",
+      "id": "rule.restore-deadline",
+      "kind": "derivation",
+      "label": "计算免费恢复请求截止",
+      "resultType": "timestamp",
+      "target": {
+        "attribute": "expired_at",
+        "entityRef": "request.restore"
+      },
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.relaunch"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.restore-refund"
+        },
+        "request": {
+          "ref": "request.restore"
+        }
+      },
+      "contextRef": "fulfillment.restore",
+      "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at)",
+      "id": "rule.restore-eligible",
+      "kind": "precondition",
+      "label": "原退款读者申请同专栏恢复",
+      "resultType": "bool",
+      "type": "rule"
+    },
+    {
+      "bindings": {
+        "agreement": {
+          "ref": "contract.subscription"
+        },
+        "confirmations": {
+          "cardinality": "many",
+          "ref": "confirmation.restore"
+        },
+        "notices": {
+          "cardinality": "many",
+          "ref": "evidence.relaunch"
+        },
+        "now": {
+          "type": "timestamp"
+        },
+        "refunds": {
+          "cardinality": "many",
+          "ref": "role.restore-refund"
+        },
+        "request": {
+          "ref": "request.restore"
+        }
+      },
+      "contextRef": "fulfillment.restore",
+      "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrefunds.exists(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.settled && p.amount_minor_units == agreement.amount_minor_units\n&& p.currency == agreement.currency && p.confirmed_at <=\nrequest.started_at) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.edition_id ==\nrequest.edition_id && n.listed && n.relaunched_at <= n.created_at &&\nn.created_at <= request.started_at) && confirmations.filter(c,\nc.request_id == request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.edition_id == request.edition_id && c.charged_minor_units == 0 &&\nc.restored).size() == 1)",
+      "id": "rule.restore-expired",
+      "kind": "breach",
+      "label": "免费恢复逾期保留追责权利",
+      "resultType": "bool",
+      "type": "rule"
+    }
+  ],
+  "schemaVersion": "3.0"
+}

@@ -1,0 +1,17 @@
+type: rule
+id: rule.refund-deadline
+kind: derivation
+label: 计算断更退款请求截止
+contextRef: fulfillment.refund
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.refund
+expression: |-
+  request.started_at + duration(string(agreement.refund_seconds) +
+  "s")
+resultType: timestamp
+target:
+  entityRef: request.refund
+  attribute: expired_at

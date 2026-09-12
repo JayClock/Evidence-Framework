@@ -1,0 +1,7 @@
+type: entity
+id: context.prepaid
+category: context
+kind: contract
+label: 预付费账户协议
+rootRefs:
+  - contract.prepaid

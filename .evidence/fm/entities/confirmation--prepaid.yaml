@@ -1,0 +1,76 @@
+type: entity
+id: confirmation.prepaid
+category: evidence
+kind: fulfillment_confirmation
+label: 预付费抵扣凭证
+contextRef: fulfillment.prepaid
+attributes:
+  - name: request_id
+    label: 对应请求编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 对应请求编号
+  - name: subscription_id
+    label: 订阅编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 双方订阅合同的稳定编号；后续凭证引用原合同
+  - name: reader_id
+    label: 读者编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 本人合同绑定的稳定读者身份
+  - name: column_id
+    label: 专栏编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 合同约定的专栏稳定编号；跨上架版本不变
+  - name: confirmed_at
+    label: 履约确认时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 账户服务方实际完成原子扣减的业务时刻
+  - name: payment_request_id
+    label: 订阅付款请求编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 订阅付款请求编号
+  - name: amount_minor_units
+    label: 实扣金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 资金服务方实际完成的扣款金额，单位为分
+  - name: currency
+    label: 实扣币种
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 实扣币种
+  - name: payment_id
+    label: 资金结果编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 该资金服务方内可追溯且唯一的扣款结果编号
+  - name: success
+    label: 扣款成功
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 资金服务方证明扣款已经完成
+  - name: balance_after_minor_units
+    label: 扣后余额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 扣前可用余额减实际扣款
+    derivedByRuleRef: rule.prepaid-balance
+notes: 保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。
+responsibleRoleRef: role.account-provider

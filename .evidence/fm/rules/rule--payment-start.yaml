@@ -1,0 +1,13 @@
+type: rule
+id: rule.payment-start
+kind: derivation
+label: 计算订阅费支付请求started_at
+contextRef: fulfillment.payment
+bindings:
+  agreement:
+    ref: contract.subscription
+expression: agreement.signed_at
+resultType: timestamp
+target:
+  entityRef: request.payment
+  attribute: started_at

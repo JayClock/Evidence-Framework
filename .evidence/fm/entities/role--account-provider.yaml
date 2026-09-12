@@ -1,0 +1,6 @@
+type: entity
+id: role.account-provider
+category: role
+kind: party
+label: 账户服务方
+contextRef: context.prepaid

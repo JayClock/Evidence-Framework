@@ -1,0 +1,6 @@
+type: entity
+id: role.mobile-provider
+category: role
+kind: party
+label: 支付机构
+contextRef: context.mobile

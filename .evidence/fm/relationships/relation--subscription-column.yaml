@@ -1,0 +1,6 @@
+type: relationship
+id: relation.subscription-column
+kind: references
+sourceRef: contract.subscription
+targetRef: thing.column
+label: 合同订阅标的

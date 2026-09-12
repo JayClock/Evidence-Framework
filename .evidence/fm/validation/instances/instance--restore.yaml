@@ -1,0 +1,15 @@
+type: evidence_instance
+id: instance.restore
+entityRef: request.restore
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: RESTORE-001
+  edition_id: ED-2
+  started_at: '2026-11-01T12:01:00Z'
+  expired_at: '2026-11-02T12:01:00Z'
+basedOn:
+  - instance.subscription
+  - instance.relaunch
+  - instance.refunded

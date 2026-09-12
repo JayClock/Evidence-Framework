@@ -1,0 +1,16 @@
+type: evidence_instance
+id: instance.refund
+entityRef: request.refund
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: REFUND-001
+  started_at: '2026-10-16T10:01:00Z'
+  expired_at: '2026-10-23T10:01:00Z'
+  amount_minor_units: 9900
+  currency: CNY
+basedOn:
+  - instance.subscription
+  - instance.discontinuation
+  - instance.mobile-result

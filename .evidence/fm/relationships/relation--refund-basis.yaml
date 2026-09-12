@@ -1,0 +1,6 @@
+type: relationship
+id: relation.refund-basis
+kind: evidences
+sourceRef: evidence.discontinuation
+targetRef: request.refund
+label: 补充证明本次请求的发生条件

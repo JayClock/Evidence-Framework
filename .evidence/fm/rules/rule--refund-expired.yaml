@@ -1,0 +1,46 @@
+type: rule
+id: rule.refund-expired
+kind: breach
+label: 退款逾期保留追责权利
+contextRef: fulfillment.refund
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.refund
+  payments:
+    ref: role.refund-payment
+    cardinality: many
+  notices:
+    ref: evidence.discontinuation
+    cardinality: many
+  confirmations:
+    ref: confirmation.refund
+    cardinality: many
+  now:
+    type: timestamp
+expression: |-
+  now > request.expired_at && !(request.subscription_id ==
+  agreement.subscription_id && request.reader_id ==
+  agreement.reader_id && request.column_id == agreement.column_id &&
+  payments.exists(p, p.subscription_id == agreement.subscription_id &&
+  p.reader_id == agreement.reader_id && p.column_id ==
+  agreement.column_id && p.amount_minor_units ==
+  agreement.amount_minor_units && p.currency == agreement.currency &&
+  p.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at
+  <= agreement.signed_at + duration(string(agreement.payment_seconds)
+  + "s")) && notices.exists(n, n.subscription_id ==
+  request.subscription_id && n.reader_id == request.reader_id &&
+  n.column_id == request.column_id && n.created_at <=
+  request.started_at && n.created_at > n.missed_due_at +
+  duration("604800s") && n.missing_content && !n.rescheduled &&
+  n.delisted) && request.amount_minor_units ==
+  agreement.amount_minor_units && request.currency ==
+  agreement.currency && confirmations.filter(c, c.request_id ==
+  request.request_id && c.subscription_id == request.subscription_id
+  && c.reader_id == request.reader_id && c.column_id ==
+  request.column_id && c.confirmed_at >= request.started_at &&
+  c.confirmed_at <= request.expired_at && c.settled &&
+  c.amount_minor_units == request.amount_minor_units && c.currency ==
+  request.currency).size() == 1)
+resultType: bool

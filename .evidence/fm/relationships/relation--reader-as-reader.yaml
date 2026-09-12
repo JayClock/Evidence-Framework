@@ -1,0 +1,6 @@
+type: relationship
+id: relation.reader-as-reader
+kind: plays_role
+sourceRef: party.reader
+targetRef: role.reader
+label: 同一主体承担读者责任

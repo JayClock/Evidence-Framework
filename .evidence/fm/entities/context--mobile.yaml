@@ -1,0 +1,7 @@
+type: entity
+id: context.mobile
+category: context
+kind: contract
+label: 移动支付协议
+rootRefs:
+  - contract.mobile

@@ -1,0 +1,14 @@
+type: relationship
+id: relation.restore-result
+kind: precedes
+sourceRef: request.restore
+targetRef: confirmation.restore
+label: 先有本次请求，再形成对应结果
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 0
+  max: 1
+notes: >-
+  数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。

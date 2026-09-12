@@ -1,0 +1,15 @@
+type: evidence_instance
+id: instance.refund-late
+entityRef: confirmation.refund
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: REFUND-001
+  confirmed_at: '2026-10-23T10:01:01Z'
+  amount_minor_units: 9900
+  currency: CNY
+  receipt_id: REFUND-RECEIPT-001
+  settled: true
+basedOn:
+  - instance.refund

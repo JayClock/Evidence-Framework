@@ -1,0 +1,29 @@
+type: rule
+id: rule.restore-eligible
+kind: precondition
+label: 原退款读者申请同专栏恢复
+contextRef: fulfillment.restore
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.restore
+  refunds:
+    ref: role.restore-refund
+    cardinality: many
+  notices:
+    ref: evidence.relaunch
+    cardinality: many
+expression: |-
+  request.subscription_id == agreement.subscription_id &&
+  request.reader_id == agreement.reader_id && request.column_id ==
+  agreement.column_id && refunds.exists(p, p.subscription_id ==
+  request.subscription_id && p.reader_id == request.reader_id &&
+  p.column_id == request.column_id && p.settled &&
+  p.amount_minor_units == agreement.amount_minor_units && p.currency
+  == agreement.currency && p.confirmed_at <= request.started_at) &&
+  notices.exists(n, n.subscription_id == request.subscription_id &&
+  n.reader_id == request.reader_id && n.column_id == request.column_id
+  && n.edition_id == request.edition_id && n.listed && n.relaunched_at
+  <= n.created_at && n.created_at <= request.started_at)
+resultType: bool

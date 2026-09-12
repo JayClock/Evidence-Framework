@@ -1,0 +1,37 @@
+type: entity
+id: thing.chapter
+category: participant
+kind: thing
+label: 章节内容
+contextRef: context.content
+attributes:
+  - name: chapter_id
+    label: 章节编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 章节编号
+  - name: column_id
+    label: 所属专栏
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 所属专栏
+  - name: edition_id
+    label: 所属版本
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 所属版本
+  - name: title
+    label: 章节标题
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 章节标题
+  - name: body
+    label: 章节正文
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 发布的指定版本正文；仅向该章节有访问资格的读者提供

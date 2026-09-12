@@ -1,0 +1,17 @@
+type: rule
+id: rule.restore-deadline
+kind: derivation
+label: 计算免费恢复请求截止
+contextRef: fulfillment.restore
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.restore
+expression: |-
+  request.started_at + duration(string(agreement.restore_seconds) +
+  "s")
+resultType: timestamp
+target:
+  entityRef: request.restore
+  attribute: expired_at

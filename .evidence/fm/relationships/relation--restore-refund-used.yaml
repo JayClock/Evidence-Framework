@@ -1,0 +1,6 @@
+type: relationship
+id: relation.restore-refund-used
+kind: uses_role
+sourceRef: request.restore
+targetRef: role.restore-refund
+label: 本请求使用已有外部结果判断资格

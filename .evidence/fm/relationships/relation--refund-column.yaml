@@ -1,0 +1,6 @@
+type: relationship
+id: relation.refund-column
+kind: references
+sourceRef: request.refund
+targetRef: thing.column
+label: 明确本请求涉及的专栏

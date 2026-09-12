@@ -1,0 +1,6 @@
+type: entity
+id: party.reader
+category: participant
+kind: party
+label: 订阅读者
+notes: 跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。

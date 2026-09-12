@@ -1,0 +1,13 @@
+type: rule
+id: rule.payment-amount
+kind: derivation
+label: 计算订阅费支付请求amount_minor_units
+contextRef: fulfillment.payment
+bindings:
+  agreement:
+    ref: contract.subscription
+expression: agreement.amount_minor_units
+resultType: int
+target:
+  entityRef: request.payment
+  attribute: amount_minor_units

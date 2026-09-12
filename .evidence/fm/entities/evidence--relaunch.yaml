@@ -1,0 +1,51 @@
+type: entity
+id: evidence.relaunch
+category: evidence
+kind: other_evidence
+label: 重新上架记录
+contextRef: fulfillment.restore
+attributes:
+  - name: subscription_id
+    label: 原订阅编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 原订阅编号
+  - name: reader_id
+    label: 原读者编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 原读者编号
+  - name: column_id
+    label: 同一专栏编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 同一专栏编号
+  - name: edition_id
+    label: 重新上架版本
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 重新上架版本
+  - name: created_at
+    label: 记录形成时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 平台形成本次重新上架记录的时刻
+  - name: relaunched_at
+    label: 实际重新上架时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 运营方发布记录中的原事件时刻
+  - name: listed
+    label: 已重新上架
+    valueType: bool
+    required: true
+    keyData: true
+    meaning: 指定专栏版本确已可提供
+notes: 向原订阅关联可采信的重新上架事件，证明免费恢复请求的触发条件。
+responsibleRoleRef: role.publisher

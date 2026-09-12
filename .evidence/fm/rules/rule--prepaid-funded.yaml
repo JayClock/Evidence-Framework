@@ -1,0 +1,12 @@
+type: rule
+id: rule.prepaid-funded
+kind: precondition
+label: 账户可用余额足够
+contextRef: fulfillment.prepaid
+bindings:
+  request:
+    ref: request.prepaid
+expression: |-
+  request.amount_minor_units > 0 && request.balance_before_minor_units
+  >= request.amount_minor_units
+resultType: bool

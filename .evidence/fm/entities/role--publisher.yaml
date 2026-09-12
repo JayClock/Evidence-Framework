@@ -1,0 +1,6 @@
+type: entity
+id: role.publisher
+category: role
+kind: party
+label: 专栏运营方
+contextRef: context.subscription

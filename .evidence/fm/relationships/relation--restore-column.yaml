@@ -1,0 +1,6 @@
+type: relationship
+id: relation.restore-column
+kind: references
+sourceRef: request.restore
+targetRef: thing.column
+label: 明确本请求涉及的专栏

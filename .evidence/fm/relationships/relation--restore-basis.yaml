@@ -1,0 +1,6 @@
+type: relationship
+id: relation.restore-basis
+kind: evidences
+sourceRef: evidence.relaunch
+targetRef: request.restore
+label: 补充证明本次请求的发生条件

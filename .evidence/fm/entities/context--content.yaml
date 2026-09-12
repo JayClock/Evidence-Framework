@@ -1,0 +1,8 @@
+type: entity
+id: context.content
+category: context
+kind: domain
+label: 专栏内容
+rootRefs:
+  - thing.column
+  - thing.chapter

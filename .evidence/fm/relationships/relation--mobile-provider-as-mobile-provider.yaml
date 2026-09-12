@@ -1,0 +1,7 @@
+type: relationship
+id: >-
+  relation.mobile-provider-as-mobile-provider
+kind: plays_role
+sourceRef: party.mobile-provider
+targetRef: role.mobile-provider
+label: 同一主体承担支付机构责任

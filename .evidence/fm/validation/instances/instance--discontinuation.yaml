@@ -1,0 +1,14 @@
+type: evidence_instance
+id: instance.discontinuation
+entityRef: evidence.discontinuation
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  created_at: '2026-10-16T10:00:00Z'
+  missed_due_at: '2026-10-08T10:00:00Z'
+  missing_content: true
+  rescheduled: false
+  delisted: true
+basedOn:
+  - instance.subscription

@@ -1,0 +1,51 @@
+type: rule
+id: rule.content-readable
+kind: precondition
+label: 按查询时刻检索仍有资格的本人章节
+contextRef: fulfillment.access
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.access
+  payments:
+    ref: role.access-payment
+    cardinality: many
+  refunds:
+    ref: role.access-refund
+    cardinality: many
+  restorations:
+    ref: role.access-restored
+    cardinality: many
+  confirmations:
+    ref: confirmation.access
+    cardinality: many
+  now:
+    type: timestamp
+expression: |-
+  request.subscription_id == agreement.subscription_id &&
+  request.reader_id == agreement.reader_id && request.column_id ==
+  agreement.column_id && ((payments.exists(p, p.subscription_id ==
+  agreement.subscription_id && p.reader_id == agreement.reader_id &&
+  p.column_id == agreement.column_id && p.amount_minor_units ==
+  agreement.amount_minor_units && p.currency == agreement.currency &&
+  p.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at
+  <= agreement.signed_at + duration(string(agreement.payment_seconds)
+  + "s")) && !(refunds.exists(p, p.subscription_id ==
+  request.subscription_id && p.reader_id == request.reader_id &&
+  p.column_id == request.column_id && p.settled &&
+  p.amount_minor_units == agreement.amount_minor_units && p.currency
+  == agreement.currency && p.confirmed_at <= now)) &&
+  request.edition_id == agreement.edition_id) ||
+  restorations.exists(p, p.subscription_id == request.subscription_id
+  && p.reader_id == request.reader_id && p.column_id ==
+  request.column_id && p.edition_id == request.edition_id &&
+  p.charged_minor_units == 0 && p.restored && p.confirmed_at <=
+  request.started_at)) && confirmations.filter(c, c.request_id ==
+  request.request_id && c.subscription_id == request.subscription_id
+  && c.reader_id == request.reader_id && c.column_id ==
+  request.column_id && c.confirmed_at >= request.started_at &&
+  c.confirmed_at <= request.expired_at && c.chapter_id ==
+  request.chapter_id && c.edition_id == request.edition_id &&
+  c.delivered).size() == 1
+resultType: bool

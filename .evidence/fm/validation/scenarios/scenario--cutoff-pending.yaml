@@ -1,0 +1,59 @@
+type: fm_scenario
+id: scenario.cutoff-pending
+label: 恰到截止仍无证明保持待定
+asOf: '2026-10-01T09:15:00Z'
+givenInstanceRefs:
+  - instance.subscription
+steps:
+  - sequence: 1
+    actingRoleRef: role.publisher
+    issueInstanceRef: instance.payment
+    availableInstanceRefs:
+      - instance.subscription
+evaluations:
+  - ruleRef: rule.payment-start
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+    targetInstanceRef: instance.payment
+    expectedResult: '2026-10-01T09:00:00Z'
+  - ruleRef: rule.payment-amount
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+    targetInstanceRef: instance.payment
+    expectedResult: 9900
+  - ruleRef: rule.payment-deadline
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.payment
+    targetInstanceRef: instance.payment
+    expectedResult: '2026-10-01T09:15:00Z'
+  - ruleRef: rule.payment-completed
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.payment
+      proofs:
+        instanceRefs: []
+    expectedResult: false
+  - ruleRef: rule.payment-expired
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.payment
+      proofs:
+        instanceRefs: []
+    expectedResult: false
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.payment
+      requestInstanceRef: instance.payment
+      status: pending
+stakeholderReview:
+  status: pending
+notes: 以固定业务时刻和独立凭证回放；仅使用当步已有且可见的证据。

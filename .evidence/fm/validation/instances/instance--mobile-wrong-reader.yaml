@@ -1,0 +1,17 @@
+type: evidence_instance
+id: instance.mobile-wrong-reader
+entityRef: confirmation.mobile
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-002
+  column_id: COL-BM
+  request_id: MOBILE-REQ-001
+  payment_request_id: PAY-001
+  payment_id: MOBILE-TX-001
+  confirmed_at: '2026-10-01T09:05:00Z'
+  amount_minor_units: 9900
+  currency: CNY
+  success: true
+basedOn:
+  - instance.mobile-request
+  - instance.payment

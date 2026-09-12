@@ -1,0 +1,13 @@
+type: rule
+id: rule.refund-amount
+kind: derivation
+label: 引用原合同退款金额
+contextRef: fulfillment.refund
+bindings:
+  agreement:
+    ref: contract.subscription
+expression: agreement.amount_minor_units
+resultType: int
+target:
+  entityRef: request.refund
+  attribute: amount_minor_units

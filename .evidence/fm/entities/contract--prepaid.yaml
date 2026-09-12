@@ -1,0 +1,29 @@
+type: entity
+id: contract.prepaid
+category: evidence
+kind: contract
+label: 预付费账户协议
+contextRef: context.prepaid
+attributes:
+  - name: agreement_id
+    label: 协议编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 协议编号
+  - name: reader_id
+    label: 使用方编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 使用方编号
+  - name: signed_at
+    label: 签约时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 用户和服务提供方完成协议接受的时刻
+notes: 服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。
+roleRefs:
+  - role.account-user
+  - role.account-provider

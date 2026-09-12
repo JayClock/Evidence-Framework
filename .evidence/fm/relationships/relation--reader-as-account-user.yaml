@@ -1,0 +1,6 @@
+type: relationship
+id: relation.reader-as-account-user
+kind: plays_role
+sourceRef: party.reader
+targetRef: role.account-user
+label: 同一主体承担账户使用方责任

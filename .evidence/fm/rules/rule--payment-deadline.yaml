@@ -1,0 +1,17 @@
+type: rule
+id: rule.payment-deadline
+kind: derivation
+label: 计算订阅费支付请求expired_at
+contextRef: fulfillment.payment
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.payment
+expression: |-
+  request.started_at + duration(string(agreement.payment_seconds) +
+  "s")
+resultType: timestamp
+target:
+  entityRef: request.payment
+  attribute: expired_at

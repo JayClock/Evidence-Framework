@@ -1,0 +1,6 @@
+type: relationship
+id: relation.publisher-as-publisher
+kind: plays_role
+sourceRef: party.publisher
+targetRef: role.publisher
+label: 同一主体承担专栏运营方责任

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.refund-as-access-refund
+kind: plays_role
+sourceRef: confirmation.refund
+targetRef: role.access-refund
+label: 实际结果扮演证明角色

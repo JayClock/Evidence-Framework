@@ -1,0 +1,68 @@
+type: entity
+id: role.access-payment
+category: role
+kind: evidence
+label: 访问所需付款证明
+contextRef: fulfillment.access
+attributes:
+  - name: request_id
+    label: 对应请求编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的对应请求编号，不是角色自身的记录
+  - name: subscription_id
+    label: 订阅编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的订阅编号，不是角色自身的记录
+  - name: reader_id
+    label: 读者编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的读者编号，不是角色自身的记录
+  - name: column_id
+    label: 专栏编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的专栏编号，不是角色自身的记录
+  - name: confirmed_at
+    label: 履约确认时刻
+    valueType: timestamp
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的履约确认时刻，不是角色自身的记录
+  - name: payment_request_id
+    label: 订阅付款请求编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的订阅付款请求编号，不是角色自身的记录
+  - name: amount_minor_units
+    label: 实扣金额
+    valueType: int
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的实扣金额，不是角色自身的记录
+  - name: currency
+    label: 实扣币种
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的实扣币种，不是角色自身的记录
+  - name: payment_id
+    label: 资金结果编号
+    valueType: string
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的资金结果编号，不是角色自身的记录
+  - name: success
+    label: 扣款成功
+    valueType: bool
+    required: true
+    keyData: false
+    meaning: 具体玩家应提供的扣款成功，不是角色自身的记录
+notes: 消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。

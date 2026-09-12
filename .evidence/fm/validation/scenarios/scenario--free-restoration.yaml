@@ -1,0 +1,251 @@
+type: fm_scenario
+id: scenario.free-restoration
+label: 同专栏重新上架免费恢复并访问新版本
+asOf: '2026-11-01T12:05:00Z'
+givenInstanceRefs:
+  - instance.subscription
+  - instance.mobile-agreement
+  - instance.payment
+  - instance.mobile-request
+  - instance.mobile-result
+  - instance.discontinuation
+  - instance.refund
+  - instance.refunded
+steps:
+  - sequence: 1
+    actingRoleRef: role.publisher
+    issueInstanceRef: instance.relaunch
+    availableInstanceRefs:
+      - instance.subscription
+      - instance.mobile-agreement
+      - instance.payment
+      - instance.mobile-request
+      - instance.mobile-result
+      - instance.discontinuation
+      - instance.refund
+      - instance.refunded
+  - sequence: 2
+    actingRoleRef: role.reader
+    issueInstanceRef: instance.restore
+    availableInstanceRefs:
+      - instance.subscription
+      - instance.mobile-agreement
+      - instance.payment
+      - instance.mobile-request
+      - instance.mobile-result
+      - instance.discontinuation
+      - instance.refund
+      - instance.refunded
+      - instance.relaunch
+  - sequence: 3
+    actingRoleRef: role.publisher
+    issueInstanceRef: instance.restored
+    availableInstanceRefs:
+      - instance.subscription
+      - instance.mobile-agreement
+      - instance.payment
+      - instance.mobile-request
+      - instance.mobile-result
+      - instance.discontinuation
+      - instance.refund
+      - instance.refunded
+      - instance.relaunch
+      - instance.restore
+  - sequence: 4
+    actingRoleRef: role.reader
+    issueInstanceRef: instance.access-restored
+    availableInstanceRefs:
+      - instance.subscription
+      - instance.mobile-agreement
+      - instance.payment
+      - instance.mobile-request
+      - instance.mobile-result
+      - instance.discontinuation
+      - instance.refund
+      - instance.refunded
+      - instance.relaunch
+      - instance.restore
+      - instance.restored
+  - sequence: 5
+    actingRoleRef: role.publisher
+    issueInstanceRef: instance.content-restored
+    availableInstanceRefs:
+      - instance.subscription
+      - instance.mobile-agreement
+      - instance.payment
+      - instance.mobile-request
+      - instance.mobile-result
+      - instance.discontinuation
+      - instance.refund
+      - instance.refunded
+      - instance.relaunch
+      - instance.restore
+      - instance.restored
+      - instance.access-restored
+evaluations:
+  - ruleRef: rule.payment-start
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+    targetInstanceRef: instance.payment
+    expectedResult: '2026-10-01T09:00:00Z'
+  - ruleRef: rule.payment-amount
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+    targetInstanceRef: instance.payment
+    expectedResult: 9900
+  - ruleRef: rule.payment-deadline
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.payment
+    targetInstanceRef: instance.payment
+    expectedResult: '2026-10-01T09:15:00Z'
+  - ruleRef: rule.refund-deadline
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.refund
+    targetInstanceRef: instance.refund
+    expectedResult: '2026-10-23T10:01:00Z'
+  - ruleRef: rule.refund-amount
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+    targetInstanceRef: instance.refund
+    expectedResult: 9900
+  - ruleRef: rule.restore-deadline
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.restore
+    targetInstanceRef: instance.restore
+    expectedResult: '2026-11-02T12:01:00Z'
+  - ruleRef: rule.access-deadline
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.access-restored
+    targetInstanceRef: instance.access-restored
+    expectedResult: '2026-11-01T12:04:00Z'
+  - ruleRef: rule.restore-completed
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.restore
+      refunds:
+        instanceRefs:
+          - instance.refunded
+      notices:
+        instanceRefs:
+          - instance.relaunch
+      confirmations:
+        instanceRefs:
+          - instance.restored
+    expectedResult: true
+  - ruleRef: rule.restore-expired
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.restore
+      refunds:
+        instanceRefs:
+          - instance.refunded
+      notices:
+        instanceRefs:
+          - instance.relaunch
+      confirmations:
+        instanceRefs:
+          - instance.restored
+    expectedResult: false
+  - ruleRef: rule.access-completed
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.access-restored
+      payments:
+        instanceRefs:
+          - instance.mobile-result
+      refunds:
+        instanceRefs:
+          - instance.refunded
+      restorations:
+        instanceRefs:
+          - instance.restored
+      confirmations:
+        instanceRefs:
+          - instance.content-restored
+    expectedResult: true
+  - ruleRef: rule.access-expired
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.access-restored
+      payments:
+        instanceRefs:
+          - instance.mobile-result
+      refunds:
+        instanceRefs:
+          - instance.refunded
+      restorations:
+        instanceRefs:
+          - instance.restored
+      confirmations:
+        instanceRefs:
+          - instance.content-restored
+    expectedResult: false
+  - ruleRef: rule.refund-completed
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.refund
+      payments:
+        instanceRefs:
+          - instance.mobile-result
+      notices:
+        instanceRefs:
+          - instance.discontinuation
+      confirmations:
+        instanceRefs:
+          - instance.refunded
+    expectedResult: true
+  - ruleRef: rule.refund-expired
+    bindings:
+      agreement:
+        instanceRef: instance.subscription
+      request:
+        instanceRef: instance.refund
+      payments:
+        instanceRefs:
+          - instance.mobile-result
+      notices:
+        instanceRefs:
+          - instance.discontinuation
+      confirmations:
+        instanceRefs:
+          - instance.refunded
+    expectedResult: false
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.restore
+      requestInstanceRef: instance.restore
+      status: completed
+    - fulfillmentRef: fulfillment.access
+      requestInstanceRef: instance.access-restored
+      status: completed
+    - fulfillmentRef: fulfillment.refund
+      requestInstanceRef: instance.refund
+      status: completed
+stakeholderReview:
+  status: pending
+notes: 以固定业务时刻和独立凭证回放；仅使用当步已有且可见的证据。

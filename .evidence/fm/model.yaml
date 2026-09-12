@@ -1,0 +1,14 @@
+type: fm_model
+schemaVersion: '3.0'
+id: column-subscription
+name: 专栏订阅业务
+version: 1.0.0
+ruleLanguage: CEL
+modelStatus: draft
+stakeholderReview:
+  status: pending
+entryContextRefs:
+  - context.subscription
+  - context.mobile
+  - context.prepaid
+  - context.content

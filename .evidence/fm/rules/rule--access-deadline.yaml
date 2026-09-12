@@ -1,0 +1,17 @@
+type: rule
+id: rule.access-deadline
+kind: derivation
+label: 计算付费内容访问请求截止
+contextRef: fulfillment.access
+bindings:
+  agreement:
+    ref: contract.subscription
+  request:
+    ref: request.access
+expression: |-
+  request.started_at + duration(string(agreement.access_seconds) +
+  "s")
+resultType: timestamp
+target:
+  entityRef: request.access
+  attribute: expired_at

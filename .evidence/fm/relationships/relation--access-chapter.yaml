@@ -1,0 +1,6 @@
+type: relationship
+id: relation.access-chapter
+kind: references
+sourceRef: request.access
+targetRef: thing.chapter
+label: 本次访问的指定章节

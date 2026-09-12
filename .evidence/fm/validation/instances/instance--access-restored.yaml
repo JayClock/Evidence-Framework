@@ -1,0 +1,16 @@
+type: evidence_instance
+id: instance.access-restored
+entityRef: request.access
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: ACCESS-RESTORED
+  chapter_id: CH-02
+  edition_id: ED-2
+  started_at: '2026-11-01T12:03:00Z'
+  expired_at: '2026-11-01T12:04:00Z'
+basedOn:
+  - instance.subscription
+  - instance.refunded
+  - instance.restored

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.access-column
+kind: references
+sourceRef: request.access
+targetRef: thing.column
+label: 明确本请求涉及的专栏

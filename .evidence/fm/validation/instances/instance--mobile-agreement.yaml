@@ -1,0 +1,8 @@
+type: evidence_instance
+id: instance.mobile-agreement
+entityRef: contract.mobile
+values:
+  agreement_id: MOBILE-001
+  reader_id: READER-001
+  signed_at: '2026-10-01T08:00:00Z'
+basedOn: []

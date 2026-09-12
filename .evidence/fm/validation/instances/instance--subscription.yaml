@@ -1,0 +1,16 @@
+type: evidence_instance
+id: instance.subscription
+entityRef: contract.subscription
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  edition_id: ED-1
+  amount_minor_units: 9900
+  currency: CNY
+  signed_at: '2026-10-01T09:00:00Z'
+  payment_seconds: 900
+  access_seconds: 60
+  refund_seconds: 604800
+  restore_seconds: 86400
+basedOn: []

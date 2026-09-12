@@ -1,0 +1,6 @@
+type: relationship
+id: relation.mobile-column
+kind: references
+sourceRef: request.mobile
+targetRef: thing.column
+label: 明确本请求涉及的专栏

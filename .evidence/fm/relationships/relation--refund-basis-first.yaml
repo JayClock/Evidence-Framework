@@ -1,0 +1,6 @@
+type: relationship
+id: relation.refund-basis-first
+kind: precedes
+sourceRef: evidence.discontinuation
+targetRef: request.refund
+label: 必需证明先形成，才能提出本次主张

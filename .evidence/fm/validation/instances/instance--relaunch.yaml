@@ -1,0 +1,13 @@
+type: evidence_instance
+id: instance.relaunch
+entityRef: evidence.relaunch
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  edition_id: ED-2
+  created_at: '2026-11-01T12:00:00Z'
+  relaunched_at: '2026-11-01T11:59:00Z'
+  listed: true
+basedOn:
+  - instance.subscription

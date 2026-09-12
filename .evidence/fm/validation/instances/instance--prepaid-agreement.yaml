@@ -1,0 +1,8 @@
+type: evidence_instance
+id: instance.prepaid-agreement
+entityRef: contract.prepaid
+values:
+  agreement_id: PREPAID-001
+  reader_id: READER-001
+  signed_at: '2026-10-01T08:00:00Z'
+basedOn: []

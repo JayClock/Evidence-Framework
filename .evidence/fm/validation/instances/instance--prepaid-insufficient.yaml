@@ -1,0 +1,18 @@
+type: evidence_instance
+id: instance.prepaid-insufficient
+entityRef: request.prepaid
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: PREPAID-REQ-001
+  payment_request_id: PAY-001
+  agreement_id: PREPAID-001
+  started_at: '2026-10-01T09:02:00Z'
+  expired_at: '2026-10-01T09:15:00Z'
+  amount_minor_units: 9900
+  currency: CNY
+  balance_before_minor_units: 9800
+basedOn:
+  - instance.prepaid-agreement
+  - instance.payment

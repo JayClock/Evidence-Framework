@@ -1,0 +1,6 @@
+type: relationship
+id: relation.reader-as-mobile-user
+kind: plays_role
+sourceRef: party.reader
+targetRef: role.mobile-user
+label: 同一主体承担支付用户责任

@@ -1,0 +1,37 @@
+type: entity
+id: thing.column
+category: participant
+kind: thing
+label: 专栏
+contextRef: context.content
+attributes:
+  - name: column_id
+    label: 专栏编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 专栏编号
+  - name: title
+    label: 专栏名称
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 专栏名称
+  - name: edition_id
+    label: 上架版本
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 上架版本
+  - name: price_minor_units
+    label: 目录价格
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 运营方当前发布的标价，单位为分；不覆盖合同成交价格
+  - name: currency
+    label: 标价币种
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 标价币种

@@ -1,0 +1,6 @@
+type: relationship
+id: relation.publisher-as-account-provider
+kind: plays_role
+sourceRef: party.publisher
+targetRef: role.account-provider
+label: 同一主体承担账户服务方责任

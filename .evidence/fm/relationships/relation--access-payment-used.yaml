@@ -1,0 +1,6 @@
+type: relationship
+id: relation.access-payment-used
+kind: uses_role
+sourceRef: request.access
+targetRef: role.access-payment
+label: 本请求使用已有外部结果判断资格

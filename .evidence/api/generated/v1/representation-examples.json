@@ -1,0 +1,806 @@
+{
+  "representation.read-access-publisher": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-01T09:07:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "started_at": "2026-10-01T09:06:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-access-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-01T09:07:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "started_at": "2026-10-01T09:06:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-access-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:06:02Z",
+    "delivered": true,
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-access-result-reader": {
+    "_links": {
+      "content": {
+        "href": "/chapters/CH-01"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:06:02Z",
+    "delivered": true,
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-account-account-provider": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "reader_id": "READER-001",
+    "signed_at": "2026-10-01T08:00:00Z"
+  },
+  "representation.read-account-account-user": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "reader_id": "READER-001",
+    "signed_at": "2026-10-01T08:00:00Z"
+  },
+  "representation.read-chapter-reader": {
+    "_links": {
+      "self": {
+        "href": "/chapters/CH-01"
+      }
+    },
+    "body": "一项履约始于权利方的请求，完成由实际结果凭证证明。",
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "edition_id": "ED-1",
+    "title": "从请求与证明理解业务"
+  },
+  "representation.read-column-publisher": {
+    "_links": {
+      "self": {
+        "href": "/columns/COL-BM"
+      }
+    },
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "price_minor_units": 9900,
+    "title": "业务建模实战"
+  },
+  "representation.read-column-reader": {
+    "_links": {
+      "self": {
+        "href": "/columns/COL-BM"
+      }
+    },
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "price_minor_units": 9900,
+    "title": "业务建模实战"
+  },
+  "representation.read-debit-account-provider": {
+    "_links": {
+      "result": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      },
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "amount_minor_units": 9900,
+    "balance_before_minor_units": 10000,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "completed",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "started_at": "2026-10-01T09:02:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-debit-account-user": {
+    "_links": {
+      "result": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      },
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "amount_minor_units": 9900,
+    "balance_before_minor_units": 10000,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "completed",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "started_at": "2026-10-01T09:02:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-debit-result-account-provider": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "balance_after_minor_units": 100,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:05:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
+    "payment_id": "PREPAID-TX-001",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "subscription_id": "SUB-20261001-001",
+    "success": true
+  },
+  "representation.read-debit-result-account-user": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "balance_after_minor_units": 100,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:05:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
+    "payment_id": "PREPAID-TX-001",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "subscription_id": "SUB-20261001-001",
+    "success": true
+  },
+  "representation.read-discontinuation-publisher": {
+    "_links": {
+      "self": {
+        "href": "/discontinuations/DISCONTINUATION-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-10-16T10:00:00Z",
+    "delisted": true,
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "missed_due_at": "2026-10-08T10:00:00Z",
+    "missing_content": true,
+    "reader_id": "READER-001",
+    "rescheduled": false,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-discontinuation-reader": {
+    "_links": {
+      "self": {
+        "href": "/discontinuations/DISCONTINUATION-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-10-16T10:00:00Z",
+    "delisted": true,
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "missed_due_at": "2026-10-08T10:00:00Z",
+    "missing_content": true,
+    "reader_id": "READER-001",
+    "rescheduled": false,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-payment-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/payment"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "PAY-001",
+    "started_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-payment-reader": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/payment"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "PAY-001",
+    "started_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-refund-publisher": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-23T10:01:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "REFUND-001",
+    "started_at": "2026-10-16T10:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-refund-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-23T10:01:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "REFUND-001",
+    "started_at": "2026-10-16T10:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-refund-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-18T10:00:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.refund"
+    ],
+    "reader_id": "READER-001",
+    "receipt_id": "REFUND-RECEIPT-001",
+    "request_id": "REFUND-001",
+    "settled": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-refund-result-reader": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-18T10:00:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.refund"
+    ],
+    "reader_id": "READER-001",
+    "receipt_id": "REFUND-RECEIPT-001",
+    "request_id": "REFUND-001",
+    "settled": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-relaunch-publisher": {
+    "_links": {
+      "self": {
+        "href": "/relaunches/RELAUNCH-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-11-01T12:00:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "listed": true,
+    "reader_id": "READER-001",
+    "relaunched_at": "2026-11-01T11:59:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-relaunch-reader": {
+    "_links": {
+      "self": {
+        "href": "/relaunches/RELAUNCH-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-11-01T12:00:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "listed": true,
+    "reader_id": "READER-001",
+    "relaunched_at": "2026-11-01T11:59:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-restore-publisher": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration"
+      }
+    },
+    "column_id": "COL-BM",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
+    "expired_at": "2026-11-02T12:01:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "started_at": "2026-11-01T12:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-restore-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration"
+      }
+    },
+    "column_id": "COL-BM",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
+    "expired_at": "2026-11-02T12:01:00Z",
+    "fulfillmentStatus": "completed",
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "started_at": "2026-11-01T12:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-restore-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      }
+    },
+    "charged_minor_units": 0,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-11-01T12:02:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.restore"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "restored": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-restore-result-reader": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      }
+    },
+    "charged_minor_units": 0,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-11-01T12:02:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.restore"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "restored": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-subscription-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001"
+      }
+    },
+    "access_seconds": 60,
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "payment_seconds": 900,
+    "reader_id": "READER-001",
+    "refund_seconds": 604800,
+    "restore_seconds": 86400,
+    "signed_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.read-subscription-reader": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001"
+      }
+    },
+    "access_seconds": 60,
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "payment_seconds": 900,
+    "reader_id": "READER-001",
+    "refund_seconds": 604800,
+    "restore_seconds": 86400,
+    "signed_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-access-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-01T09:07:00Z",
+    "fulfillmentStatus": "pending",
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "started_at": "2026-10-01T09:06:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-access-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+      }
+    },
+    "chapter_id": "CH-01",
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:06:02Z",
+    "delivered": true,
+    "edition_id": "ED-1",
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "ACCESS-MOBILE",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-account-account-user": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "reader_id": "READER-001",
+    "signed_at": "2026-10-01T08:00:00Z"
+  },
+  "representation.register-debit-account-user": {
+    "_links": {
+      "result": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      },
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "amount_minor_units": 9900,
+    "balance_before_minor_units": 10000,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "pending",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "started_at": "2026-10-01T09:02:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-debit-result-account-provider": {
+    "_links": {
+      "self": {
+        "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "balance_after_minor_units": 100,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-01T09:05:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
+    "payment_id": "PREPAID-TX-001",
+    "payment_request_id": "PAY-001",
+    "reader_id": "READER-001",
+    "request_id": "PREPAID-REQ-001",
+    "subscription_id": "SUB-20261001-001",
+    "success": true
+  },
+  "representation.register-discontinuation-publisher": {
+    "_links": {
+      "self": {
+        "href": "/discontinuations/DISCONTINUATION-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-10-16T10:00:00Z",
+    "delisted": true,
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "missed_due_at": "2026-10-08T10:00:00Z",
+    "missing_content": true,
+    "reader_id": "READER-001",
+    "rescheduled": false,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-payment-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/payment"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "expired_at": "2026-10-01T09:15:00Z",
+    "fulfillmentStatus": "pending",
+    "reader_id": "READER-001",
+    "request_id": "PAY-001",
+    "started_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-refund-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
+    "expired_at": "2026-10-23T10:01:00Z",
+    "fulfillmentStatus": "pending",
+    "reader_id": "READER-001",
+    "request_id": "REFUND-001",
+    "started_at": "2026-10-16T10:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-refund-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/refund/result"
+      }
+    },
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-10-18T10:00:00Z",
+    "currency": "CNY",
+    "evidenceRefs": [
+      "instance.refund"
+    ],
+    "reader_id": "READER-001",
+    "receipt_id": "REFUND-RECEIPT-001",
+    "request_id": "REFUND-001",
+    "settled": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-relaunch-publisher": {
+    "_links": {
+      "self": {
+        "href": "/relaunches/RELAUNCH-001"
+      }
+    },
+    "column_id": "COL-BM",
+    "created_at": "2026-11-01T12:00:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
+    "listed": true,
+    "reader_id": "READER-001",
+    "relaunched_at": "2026-11-01T11:59:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-restore-reader": {
+    "_links": {
+      "result": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      },
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration"
+      }
+    },
+    "column_id": "COL-BM",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
+    "expired_at": "2026-11-02T12:01:00Z",
+    "fulfillmentStatus": "pending",
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "started_at": "2026-11-01T12:01:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-restore-result-publisher": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+      }
+    },
+    "charged_minor_units": 0,
+    "column_id": "COL-BM",
+    "confirmed_at": "2026-11-01T12:02:00Z",
+    "edition_id": "ED-2",
+    "evidenceRefs": [
+      "instance.restore"
+    ],
+    "reader_id": "READER-001",
+    "request_id": "RESTORE-001",
+    "restored": true,
+    "subscription_id": "SUB-20261001-001"
+  },
+  "representation.register-subscription-reader": {
+    "_links": {
+      "self": {
+        "href": "/subscriptions/SUB-20261001-001"
+      }
+    },
+    "access_seconds": 60,
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "payment_seconds": 900,
+    "reader_id": "READER-001",
+    "refund_seconds": 604800,
+    "restore_seconds": 86400,
+    "signed_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  }
+}

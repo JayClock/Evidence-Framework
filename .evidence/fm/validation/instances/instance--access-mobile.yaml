@@ -1,0 +1,15 @@
+type: evidence_instance
+id: instance.access-mobile
+entityRef: request.access
+values:
+  subscription_id: SUB-20261001-001
+  reader_id: READER-001
+  column_id: COL-BM
+  request_id: ACCESS-MOBILE
+  chapter_id: CH-01
+  edition_id: ED-1
+  started_at: '2026-10-01T09:06:00Z'
+  expired_at: '2026-10-01T09:07:00Z'
+basedOn:
+  - instance.subscription
+  - instance.mobile-result

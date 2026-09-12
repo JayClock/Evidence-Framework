@@ -1,0 +1,60 @@
+type: entity
+id: request.payment
+category: evidence
+kind: fulfillment_request
+label: 订阅费支付请求
+contextRef: fulfillment.payment
+attributes:
+  - name: request_id
+    label: 请求编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 本次责任请求的唯一编号
+  - name: subscription_id
+    label: 订阅编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 双方订阅合同的稳定编号；后续凭证引用原合同
+  - name: reader_id
+    label: 读者编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 本人合同绑定的稳定读者身份
+  - name: column_id
+    label: 专栏编号
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 合同约定的专栏稳定编号；跨上架版本不变
+  - name: started_at
+    label: 付款开始时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 引用合同签约时刻
+    derivedByRuleRef: rule.payment-start
+  - name: expired_at
+    label: 付款截止时刻
+    valueType: timestamp
+    required: true
+    keyData: true
+    meaning: 付款开始加合同约定秒数
+    derivedByRuleRef: rule.payment-deadline
+  - name: amount_minor_units
+    label: 应付金额
+    valueType: int
+    required: true
+    keyData: true
+    meaning: 引用冻结的合同成交金额
+    derivedByRuleRef: rule.payment-amount
+  - name: currency
+    label: 付款币种
+    valueType: string
+    required: true
+    keyData: true
+    meaning: 引用合同币种
+notes: 一项独立责任的起止区间；原请求不因超时或重试而被覆盖。
+responsibleRoleRef: role.publisher

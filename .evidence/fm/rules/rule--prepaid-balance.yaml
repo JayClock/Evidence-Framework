@@ -1,0 +1,16 @@
+type: rule
+id: rule.prepaid-balance
+kind: derivation
+label: 计算抵扣后余额
+contextRef: fulfillment.prepaid
+bindings:
+  request:
+    ref: request.prepaid
+  confirmation:
+    ref: confirmation.prepaid
+expression: >-
+  request.balance_before_minor_units - confirmation.amount_minor_units
+resultType: int
+target:
+  entityRef: confirmation.prepaid
+  attribute: balance_after_minor_units
