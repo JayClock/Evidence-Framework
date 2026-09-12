@@ -138,11 +138,11 @@ def domain_documents() -> list[dict[str, Any]]:
     ]
 
 
-def channel_documents() -> list[dict[str, Any]]:
+def precontract_documents() -> list[dict[str, Any]]:
     """An inquiry and proposal exist, but no agreement has been signed."""
-    context = "context.sales-channel"
+    context = "context.sales-inquiry"
     return [
-        entity(context, "context", "channel", "询价渠道"),
+        entity(context, "context", "pre_contract", "销售询价合同前上下文"),
         entity("role.prospect", "role", "party", "询价方", contextRef=context),
         entity("role.quote-provider", "role", "party", "报价方", contextRef=context),
         entity(
@@ -313,11 +313,11 @@ def performance_documents(
             )
         )
     elif negotiate_before_signing:
-        channel = "context.goal-negotiation"
+        precontract = "context.goal-negotiation"
         documents.extend(
             [
                 entity(
-                    channel,
+                    precontract,
                     "context",
                     "pre_contract",
                     "绩效目标签约前协商",
@@ -328,7 +328,7 @@ def performance_documents(
                     "evidence",
                     "rfp",
                     "目标方案邀请",
-                    contextRef=channel,
+                    contextRef=precontract,
                     responsibleRoleRef="role.manager",
                     attributes=[
                         attribute(
@@ -344,7 +344,7 @@ def performance_documents(
                     "evidence",
                     "proposal",
                     "目标方案",
-                    contextRef=channel,
+                    contextRef=precontract,
                     responsibleRoleRef="role.employee",
                     attributes=[
                         attribute(

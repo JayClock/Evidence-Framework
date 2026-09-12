@@ -333,7 +333,7 @@ def grade_context_scope(
         )
         add(
             expectations,
-            "Channel evidence and its in-scope traceability are present.",
+            "Pre-contract evidence and its in-scope traceability are present.",
             bool(rfp_ids) and bool(proposal_ids) and linked,
             f"rfp={rfp_ids}; proposals={proposal_ids}; linked={linked}",
         )
@@ -382,9 +382,7 @@ def grade_context_scope(
                         identity_text_of(responsible_role(evidence)),
                         re.IGNORECASE,
                     )
-                    for evidence in members(
-                        item.get("id"), "fulfillment_confirmation"
-                    )
+                    for evidence in members(item.get("id"), "fulfillment_confirmation")
                 )
                 for item in items
             )
@@ -609,9 +607,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         for fulfillment in fulfillments
     )
     request_entities = [
-        entity
-        for entity in entities
-        if entity.get("kind") == "fulfillment_request"
+        entity for entity in entities if entity.get("kind") == "fulfillment_request"
     ]
     explicit_intervals = all(
         {attribute.get("name") for attribute in request.get("attributes") or []}
@@ -725,10 +721,10 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     elif eval_id == 2:
         add(
             expectations,
-            "Pre-contract/channel Context exists.",
+            "Pre-contract Context exists.",
             any(
                 entity.get("category") == "context"
-                and entity.get("kind") in {"pre_contract", "channel"}
+                and entity.get("kind") == "pre_contract"
                 for entity in entities
             ),
             "Context lookup",

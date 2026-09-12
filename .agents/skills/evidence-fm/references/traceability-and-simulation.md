@@ -73,7 +73,7 @@ python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> \
 
 ## 4. Validation Suite
 
-当前模拟器只实例化 Evidence，不实例化 Party／Thing。纯领域可以通过结构校验、CEL 编译和 lineage，但不能据此声称领域实例或状态机模拟通过；不要把 Thing 改称 Evidence 来绕过限制。纯渠道有适用单据场景时可模拟，不需要补造履约。
+当前模拟器只实例化 Evidence，不实例化 Party／Thing。纯领域可以通过结构校验、CEL 编译和 lineage，但不能据此声称领域实例或状态机模拟通过；不要把 Thing 改称 Evidence 来绕过限制。纯合同前有适用单据场景时可模拟，不需要补造履约。
 
 场景输入与核心 FM 类型模型分离：
 

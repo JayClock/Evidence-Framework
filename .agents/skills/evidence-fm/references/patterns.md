@@ -62,20 +62,20 @@ Channel C Confirmation ─┘
 
 只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及作为子 Context 的 Fulfillment。
 
-## 8. 合约前与渠道变化
+## 8. 合同前变化
 
 - 询价：RFP → Proposal → Contract；
 - 固定套餐：Proposal → Contract 或直接 Contract；
 - 招标：一个 RFP 对多个 Proposal，最终 Contract 追溯被接受 Proposal；
-- 拼团、赠送、活动和谈判位于独立 Channel／Pre-contract Context。
+- 拼团、赠送、活动和谈判位于独立 Pre-contract Context。
 
-RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯渠道可没有 Contract 和 Fulfillment，不补造未来履约。
+RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯合同前 Context 可没有 Contract 和 Fulfillment，不补造未来履约。
 
 ## 9. KPI／目标—实际
 
 绩效协议与对外合同使用同一套履约机制，不另设 KPI 模式或内核，也不虚构支付流。先确认目标是在何时、由谁、按什么权限形成的。
 
-- **签约前谈妥目标**：目标磋商属于 Pre-contract／Channel 的 RFP／Proposal；签约后按约定检查履约，不默认再创建“目标设定履约”。
+- **签约前谈妥目标**：目标磋商属于 Pre-contract 的 RFP／Proposal；签约后按约定检查履约，不默认再创建“目标设定履约”。
 - **执行中可变更目标**：协议明确变更机制时，目标请求与确认可成为合同下的变更履约；必须保留旧约定及新变更凭证。
 - **主管指派目标**：在这一事实分支中，管理方负责形成目标请求，执行方负责形成回应凭证。
 - **执行方自报目标、主管审核**：目标请求和回应凭证的责任 Role 对调；进度检查的凭证责任仍单独确认，不随之全局对调。

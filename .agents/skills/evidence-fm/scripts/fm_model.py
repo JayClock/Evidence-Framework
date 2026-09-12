@@ -492,7 +492,7 @@ def validate_evidence_responsibility(
     owner = context
     parent = entities.get(str(context.get("parentContextRef")))
     if (
-        context.get("kind") in {"fulfillment", "pre_contract", "channel"}
+        context.get("kind") in {"fulfillment", "pre_contract"}
         and parent is not None
         and entity_signature(parent) == ("context", "contract")
     ):
@@ -530,7 +530,7 @@ def validate_party_role_owner(
     context = context or {}
     parent = entities.get(str(context.get("parentContextRef")))
     if context.get("kind") == "fulfillment" or (
-        context.get("kind") in {"pre_contract", "channel"}
+        context.get("kind") == "pre_contract"
         and entity_signature(parent) == ("context", "contract")
     ):
         errors.append(
@@ -683,12 +683,9 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: {kind} must belong to a Fulfillment Context"
                 )
-            if kind in {"rfp", "proposal"} and context_kind not in {
-                "pre_contract",
-                "channel",
-            }:
+            if kind in {"rfp", "proposal"} and context_kind != "pre_contract":
                 errors.append(
-                    f"{entity_id}: {kind} must belong to a Pre-contract or Channel Context"
+                    f"{entity_id}: {kind} must belong to a Pre-contract Context"
                 )
 
 
@@ -977,8 +974,8 @@ def validate_relationships(
                 "proposal",
             ) and target_sig == ("evidence", "contract")
             if kind == "precedes" and proposal_to_contract:
-                channel = entities.get(source_context or "", {})
-                if channel.get("parentContextRef") != target_context:
+                proposal_context = entities.get(source_context or "", {})
+                if proposal_context.get("parentContextRef") != target_context:
                     errors.append(
                         f"{relationship_id}: Proposal Context must bind its "
                         "parentContextRef to the target Contract Context"
@@ -1133,7 +1130,7 @@ def validate_business_patterns(
 ) -> None:
     objects = {**entities, **relationships, **rules}
     allowed_variation_roles = {"domain", "third_party", "context", "evidence"}
-    allowed_variation_contexts = {"pre_contract", "channel", "fulfillment", "domain"}
+    allowed_variation_contexts = {"pre_contract", "fulfillment", "domain"}
 
     for pattern in pattern_list:
         pattern_id = normalize(pattern.get("id"))
@@ -1167,7 +1164,7 @@ def validate_business_patterns(
             if not (is_variation_role or is_variation_context):
                 errors.append(
                     f"{pattern_id}: variationPointRef '{ref}' must reference a variation Role "
-                    "or Pre-contract, Channel, Fulfillment, or Domain Context"
+                    "or Pre-contract, Fulfillment, or Domain Context"
                 )
 
         for ref in pattern.get("domainInputRefs") or []:

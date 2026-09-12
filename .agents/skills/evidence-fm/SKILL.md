@@ -37,11 +37,11 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 先说明本次范围、来源、稳定 ID、拟增改／撤回与未决项，读取当前文件及已有 Git 差异后直接编辑 `.evidence/fm/`。保留未受影响事实和用户已有改动，必要支撑引用保持闭合；未知事实不通过模板默认值补齐。修改即落盘，不保证编辑中的目录始终有效。删除或撤回必须属于本次授权范围，并同步清理失效引用。
 
-- 采用唯一 FM v3；纯领域／渠道仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
+- 采用唯一 FM v3；纯领域／合同前仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
 - 正式类型源是 `model.yaml` 及各类 YAML 分片；正式术语与说明写 README、overview、glossary，验证场景写 validation。它们由 FM 从有效来源生成，访谈中的工作术语、结构与案例只作为输入，不另维护同步的正式副本。具体要求见格式指南。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
 - 先识别 Context、双方 Role 与责任边界；经办人、岗位和部门不自动成为新的业务 Role，有明确主体依据时保留 Participant，有明确扮演依据才连接 `plays_role`，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Confirmation、Evidence Role 和 Rule 通过 `contextRef` 归属它。
-- 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立渠道／领域不补造合同。
+- 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立合同前／领域不补造合同。
 - 区分具体凭证与 Evidence Role：后者是 `category: role / kind: evidence` 的证明插槽，没有责任人、自己的凭证时间或可签发实例，不设置 `responsibleRoleRef`／`roleRefs`。消费方以 `uses_role` 使用角色，外部具体时刻凭证以 `plays_role` 扮演；玩家保留其所属上下文的责任归属，不强加消费合同的双方角色。规则可绑定角色，场景必须提供显式玩家的真实实例；不得复制成消费合同内的新单据。
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。
 - 每个 Thing 由实际涉及它的 Evidence 通过 `references` 指向。本上下文的 `other_evidence` 补充证明其他凭证：明确证明内容，以 `evidences` 指向被证明的具体 Evidence；跨上下文的确定结果使用 Evidence Role，不以直接 `evidences` 穿透边界；必需补充证据先存在，目标凭证才能形成，以 `precedes`、实例 `basedOn` 和场景可见性落实依赖。先核对证据，再形成结果，不把补充证据当固定流程阶段。Fulfillment 不得成为 Evidence 关系端点或时间线节点。

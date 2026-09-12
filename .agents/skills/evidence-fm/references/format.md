@@ -24,7 +24,7 @@
 
 `model.yaml` 与分片 YAML 是模型事实源；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。发现与问题保存在模型目录之外的 `.evidence/discovery.md`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
-同一目录格式支持纯领域、纯渠道和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `entities/` 中 `category: context`、`kind: fulfillment` 的 Entity，不存在独立履约目录或第二个履约对象。无履约时只是不出现该类 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `entities/` 中 `category: context`、`kind: fulfillment` 的 Entity，不存在独立履约目录或第二个履约对象。无履约时只是不出现该类 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
 ## 2. 稳定 ID 与文件名
 
@@ -78,7 +78,7 @@ entryContextRefs:
   - context.subscription
 ```
 
-`entryContextRefs` 可以直接引用 Domain、Pre-contract 或 Channel Context，不要求包含 Contract。示例见 `domain-modeling.md`。
+`entryContextRefs` 可以直接引用 Domain 或 Pre-contract Context，不要求包含 Contract。示例见 `domain-modeling.md`。
 
 状态：
 
@@ -96,7 +96,7 @@ Agent 不得自行将状态提升为 reviewed／confirmed。
 | `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
 | `participant` | `party`、`thing`                                                                                   |
 | `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
-| `context`     | `contract`、`fulfillment`、`pre_contract`、`channel`、`domain`、`external`                         |
+| `context`     | `contract`、`fulfillment`、`pre_contract`、`domain`、`external`                                    |
 
 ### Evidence 必备时间属性（本地硬约束）
 
@@ -235,9 +235,9 @@ Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required
 
 Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。
 
-## 6. 合同前与渠道
+## 6. 合同前协商与渠道来源
 
-RFP／Proposal 必须位于 `pre_contract` 或 `channel` Context，不得放入 Contract Context：
+RFP／Proposal 必须位于 `pre_contract` Context，不得放入 Contract Context：
 
 ```text
 RFP → Proposal → Contract

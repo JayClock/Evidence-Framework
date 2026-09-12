@@ -12,8 +12,8 @@ from pathlib import Path
 from celpy import Environment  # pyright: ignore[reportMissingImports]
 from celpy.adapter import json_to_cel  # pyright: ignore[reportMissingImports]
 from context_samples import (
-    channel_documents,
     domain_documents,
+    precontract_documents,
     write_documents,
     write_model,
 )
@@ -117,12 +117,12 @@ class ContextScopeTests(unittest.TestCase):
                     ),
                 )
 
-    def test_channel_only_has_responsible_evidence_but_no_contract_or_fulfillment(
+    def test_precontract_only_has_responsible_evidence_but_no_contract_or_fulfillment(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = write_model(
-                Path(directory), channel_documents(), "context.sales-channel"
+                Path(directory), precontract_documents(), "context.sales-inquiry"
             )
             model = load_model(root)
             self.assertEqual([], validate_model(model))
@@ -202,13 +202,15 @@ class ContextScopeTests(unittest.TestCase):
                     any(expected in error for error in validate_model(load_model(root)))
                 )
 
-    def test_channel_does_not_relax_evidence_or_relationship_constraints(self) -> None:
+    def test_precontract_does_not_relax_evidence_or_relationship_constraints(
+        self,
+    ) -> None:
         for broken in ("responsibility", "context", "cross-context"):
             with (
                 self.subTest(broken=broken),
                 tempfile.TemporaryDirectory() as directory,
             ):
-                documents = channel_documents()
+                documents = precontract_documents()
                 proposal = next(
                     item
                     for item in documents
@@ -221,7 +223,7 @@ class ContextScopeTests(unittest.TestCase):
                     documents.extend(domain_documents())
                     proposal["contextRef"] = "context.customer-information"
                     proposal["responsibleRoleRef"] = "role.profile-owner"
-                    expected = "must belong to a Pre-contract or Channel Context"
+                    expected = "must belong to a Pre-contract Context"
                 else:
                     documents.extend(domain_documents())
                     documents.append(
@@ -235,7 +237,7 @@ class ContextScopeTests(unittest.TestCase):
                         }
                     )
                     expected = "requires Other Evidence -> Evidence"
-                root = write_model(Path(directory), documents, "context.sales-channel")
+                root = write_model(Path(directory), documents, "context.sales-inquiry")
                 self.assertTrue(
                     any(expected in error for error in validate_model(load_model(root)))
                 )
@@ -249,15 +251,17 @@ class ContextScopeTests(unittest.TestCase):
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
             before = load_model(root)
-            channel = [d for d in channel_documents() if d.get("category") != "role"]
-            for document in channel:
-                if document["id"] == "context.sales-channel":
+            precontract = [
+                d for d in precontract_documents() if d.get("category") != "role"
+            ]
+            for document in precontract:
+                if document["id"] == "context.sales-inquiry":
                     document["parentContextRef"] = "context.content-subscription"
                 elif document.get("kind") == "rfp":
                     document["responsibleRoleRef"] = "role.subscriber"
                 elif document.get("kind") == "proposal":
                     document["responsibleRoleRef"] = "role.platform-subscription"
-            write_documents(root, domain_documents() + channel)
+            write_documents(root, domain_documents() + precontract)
             write_documents(
                 root,
                 [
@@ -324,12 +328,12 @@ class ContextScopeTests(unittest.TestCase):
                 validate_model(load_model(root)),
             )
 
-    def test_cli_supports_pure_domain_and_channel_scopes_deterministically(
+    def test_cli_supports_pure_domain_and_precontract_scopes_deterministically(
         self,
     ) -> None:
         for documents, entry in (
             (domain_documents(), "context.customer-information"),
-            (channel_documents(), "context.sales-channel"),
+            (precontract_documents(), "context.sales-inquiry"),
         ):
             with self.subTest(entry=entry), tempfile.TemporaryDirectory() as directory:
                 root = write_model(Path(directory), documents, entry)

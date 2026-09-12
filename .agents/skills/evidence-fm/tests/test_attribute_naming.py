@@ -8,7 +8,11 @@ import unittest
 from pathlib import Path
 
 import yaml
-from context_samples import channel_documents, domain_documents, performance_documents
+from context_samples import (
+    domain_documents,
+    performance_documents,
+    precontract_documents,
+)
 
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
@@ -149,7 +153,7 @@ class AttributeNamingTests(unittest.TestCase):
             "notes",
         ]
         documents = (
-            domain_documents() + channel_documents() + performance_documents(True)
+            domain_documents() + precontract_documents() + performance_documents(True)
         )
         for path in (Path(__file__).resolve().parent / "fixtures").glob(
             "valid-*/entities/*.yaml"

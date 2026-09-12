@@ -18,9 +18,9 @@
     },
     {
       "id": 2,
-      "name": "precontract-channels",
-      "prompt": "使用 $modeling 建模装修服务的三种签约来源：询价后唯一提案、固定套餐直接签约、公开招标后多个提案择一。签约后有开工和验收履约。保留需要追溯的 RFP/Proposal，渠道上下文与合同上下文分离，合同直接引用两个参与 Role，输出 v3 模型。",
-      "expected_output": "Pre-contract/Channel Context 分离；Proposal 通过 precedes 指向最终 Contract；Contract 使用两个 Role 而不是 partyAssignments；开工和验收各有 Fulfillment；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
+      "name": "precontract-signing-sources",
+      "prompt": "使用 $modeling 建模装修服务的三种签约来源：询价后唯一提案、固定套餐直接签约、公开招标后多个提案择一。签约后有开工和验收履约。保留需要追溯的 RFP/Proposal，合同前上下文与合同上下文分离，合同直接引用两个参与 Role，输出 v3 模型。",
+      "expected_output": "Pre-contract Context 与 Contract Context 分离；Proposal 通过 precedes 指向最终 Contract；Contract 使用两个 Role 而不是 partyAssignments；开工和验收各有 Fulfillment；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
       "files": []
     },
     {
@@ -133,13 +133,13 @@
     },
     {
       "id": 16,
-      "name": "channel-only-no-contract",
-      "prompt": "用 $modeling 只建模客户询价和供应方报价，双方尚未签约。询价方发出带 requestedAt 的询价，报价方回应带 proposedAt 的报价；本次没有合同或后续履约事实。用 FM v3 表达 Channel Context、双方 Role、RFP/Proposal 和回应关系，校验并编译，不为了目录要求虚构合同、履约或截止时间。",
-      "expected_output": "纯渠道保留真实角色、RFP/Proposal 与回应关系；没有 Contract 或 Fulfillment。缺少未来合同不是 blocker，但当前未给询价与报价截止依据，必须保持阻塞并核实，不宣称完整模型校验或编译通过。",
+      "name": "precontract-only-no-contract",
+      "prompt": "用 $modeling 只建模客户询价和供应方报价，双方尚未签约。询价方发出带 requestedAt 的询价，报价方回应带 proposedAt 的报价；本次没有合同或后续履约事实。用 FM v3 表达 Pre-contract Context、双方 Role、RFP/Proposal 和回应关系，校验并编译，不为了目录要求虚构合同、履约或截止时间。",
+      "expected_output": "纯合同前保留真实角色、RFP/Proposal 与回应关系；没有 Contract 或 Fulfillment。缺少未来合同不是 blocker，但当前未给询价与报价截止依据，必须保持阻塞并核实，不宣称完整模型校验或编译通过。",
       "files": [],
       "assertions": [
-        "纯渠道不补 Contract/Fulfillment；指出凭证截止依据缺失，不编造 expired_at 或声称无期限模型通过校验。",
-        "RFP/Proposal 具有正确责任 Role 和同渠道回应关系。"
+        "纯合同前不补 Contract/Fulfillment；指出凭证截止依据缺失，不编造 expired_at 或声称无期限模型通过校验。",
+        "RFP/Proposal 具有正确责任 Role 和同合同前上下文回应关系。"
       ]
     },
     {

@@ -6,7 +6,7 @@ FM / 8X Flow 用同一格式表达合同履约、签约前渠道和领域部分�
 
 ```text
 当前问题、范围与来源事实
-→ 识别 Contract／Fulfillment、Pre-contract／Channel、Domain 上下文
+→ 识别 Contract／Fulfillment、Pre-contract、Domain 上下文
 → 按当前已知事实局部展开，可从任一上下文进入
 → 区分领域输入、履约标的、完成证据与实现机制并按需组合
 → 验证实际存在的结构，按需提取 Business Pattern
@@ -23,12 +23,12 @@ FM / 8X Flow 用同一格式表达合同履约、签约前渠道和领域部分�
 - `contract` Context：两个合同 Role 之间全部业务交互的聚合，也是服务／业务边界；
 - `fulfillment` Context：Contract 的子 Context；它本身就是一项 Fulfillment，同时承载该项责任的请求、确认与规则，是业务弹性边界；
 - `domain` Context：承载 Thing 与领域能力，是领域弹性边界；
-- `pre_contract`／`channel` Context：合同形成前的渠道与协商边界；
+- `pre_contract` Context：合同形成前的协商与渠道边界；
 - `external` Context：当前模型不展开的外部边界。
 
 Contract Context 本身不是单一弹性边界。每项 Fulfillment 都是唯一的 `kind: fulfillment` Context，并以 `parentContextRef` 指向所属 Contract Context；不存在与它分离的 Fulfillment 对象。Thing 必须属于 Domain Context；Party 保持在 Context 外。
 
-上述上下文可单独建模或组合，`entryContextRefs` 可直接指向 Domain 或 Channel。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的合同、Request、Fulfillment 或引用的约束。
+上述上下文可单独建模或组合，`entryContextRefs` 可直接指向 Domain 或 Pre-contract。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的合同、Request、Fulfillment 或引用的约束。
 
 ## 3. Contract 与 Party Role
 
@@ -52,7 +52,7 @@ Role kind：
 
 Contract Party Role 位于 Contract Context。属于该合同责任范围的所有 Evidence 均使用 Contract 的 `roleRefs` 所绑定角色，不为凭证种类或阶段复制角色。Contract 由这两个角色共同绑定；其余 Evidence 的 `responsibleRoleRef` 必须是其中之一，包括 RFP、Proposal、Request、Confirmation 与 Other Evidence。
 
-Fulfillment 通过 `parentContextRef` 归属合同。明确共享该合同责任的 Pre-contract／Channel Context 也用 `parentContextRef` 指向 Contract Context，复用同一组角色；这是类型模型的责任关联，不表示询报价时合同实例已经签署，也不改变凭证各自的 Context 或独立 URI 根。Proposal 通过 `precedes` 连接 Contract 时，该责任关联必须显式给出并与目标合同上下文一致；缺失或不一致直接拒绝，不接受渠道局部角色作为替代。合同责任阶段不定义额外 Party Role，Contract Context 中的 Party Role 必须被根 Contract 绑定。不从相同标签推断责任。独立渠道尚无合同责任关联时使用本 Context 的角色，不虚构合同。
+Fulfillment 通过 `parentContextRef` 归属合同。明确共享该合同责任的 Pre-contract Context 也用 `parentContextRef` 指向 Contract Context，复用同一组角色；这是类型模型的责任关联，不表示询报价时合同实例已经签署，也不改变凭证各自的 Context 或独立 URI 根。Proposal 通过 `precedes` 连接 Contract 时，该责任关联必须显式给出并与目标合同上下文一致；缺失或不一致直接拒绝，不接受渠道局部角色作为替代。合同责任阶段不定义额外 Party Role，Contract Context 中的 Party Role 必须被根 Contract 绑定。不从相同标签推断责任。独立合同前 Context 尚无合同责任关联时使用本 Context 的角色，不虚构合同。
 
 Participant：
 
@@ -67,7 +67,7 @@ Participant：
 
 Evidence kind：
 
-- `rfp`、`proposal`：位于 Pre-contract／Channel Context；
+- `rfp`、`proposal`：位于 Pre-contract Context；
 - `contract`：位于 Contract Context；
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
 - `other_evidence`：对其他凭证提供补充证明的凭证，位于产生它的业务或领域 Context；不是固定流程阶段。
@@ -116,13 +116,13 @@ Evidence Role 是开放证明插槽：可以没有玩家或有多个玩家；新
 
 跨上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。Thing 必须由实际涉及它的业务 Evidence 引用；本上下文的辅助凭证通过 `evidences` 指向被证明的业务 Evidence；外部结果走 Evidence Role，不用 `evidences` 穿透上下文。Fulfillment 不参与这些关系。
 
-这类 Role、Channel／Pre-contract Context 和 Fulfillment 是候选业务变化点。
+这类 Role、Pre-contract Context 和 Fulfillment 是候选业务变化点。
 
-## 8. 合同前与渠道
+## 8. 合同前协商与渠道来源
 
-合同前的 RFP／Proposal 与合同履约具有不同的法律和弹性边界，保留各自的凭证时间线和审计关联。责任归属显式关联同一合同时，复用该合同绑定的两个 Role；独立渠道使用本 Context 的角色。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。
+合同前的 RFP／Proposal 与合同履约具有不同的法律和弹性边界，保留各自的凭证时间线和审计关联。责任归属显式关联同一合同时，复用该合同绑定的两个 Role；独立的合同前 Context 使用本 Context 的角色。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。
 
-固定套餐可以 Proposal→Contract 或直接 Contract；询价与招标可由一个 RFP 对多个 Proposal，再由被接受 Proposal 指向 Contract。不得强迫所有渠道归并成一条流程。只展开签约前范围时，RFP／Proposal 可以独立存在，不虚构未来 Contract 或 Fulfillment。
+固定套餐可以 Proposal→Contract 或直接 Contract；询价与招标可由一个 RFP 对多个 Proposal，再由被接受 Proposal 指向 Contract。不得强迫所有签约来源归并成一条流程。只展开签约前范围时，RFP／Proposal 可以独立存在，不虚构未来 Contract 或 Fulfillment。
 
 ## 9. Business Pattern
 

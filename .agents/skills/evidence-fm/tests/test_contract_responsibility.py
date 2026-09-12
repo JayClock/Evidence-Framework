@@ -55,7 +55,6 @@ class ContractResponsibilityTests(unittest.TestCase):
         for context_kind, evidence_kind in (
             ("pre_contract", "rfp"),
             ("pre_contract", "proposal"),
-            ("channel", "rfp"),
             ("fulfillment", "fulfillment_request"),
             ("fulfillment", "fulfillment_confirmation"),
             ("fulfillment", "other_evidence"),
@@ -85,8 +84,12 @@ class ContractResponsibilityTests(unittest.TestCase):
         }
         self.assertTrue(self.errors(context, kind="rfp"))
 
-    def test_standalone_channel_does_not_require_a_contract(self) -> None:
-        context = {"id": "context.inquiry", "category": "context", "kind": "channel"}
+    def test_standalone_precontract_does_not_require_a_contract(self) -> None:
+        context = {
+            "id": "context.inquiry",
+            "category": "context",
+            "kind": "pre_contract",
+        }
         self.entities["role.inquirer"] = {
             "id": "role.inquirer",
             "category": "role",
@@ -95,11 +98,11 @@ class ContractResponsibilityTests(unittest.TestCase):
         }
         self.assertEqual([], self.errors(context, "role.inquirer", "rfp"))
 
-    def test_bound_channel_cannot_use_local_unbound_role(self) -> None:
+    def test_bound_precontract_cannot_use_local_unbound_role(self) -> None:
         context = {
             "id": "context.inquiry",
             "category": "context",
-            "kind": "channel",
+            "kind": "pre_contract",
             "parentContextRef": "context.purchase",
         }
         self.entities["role.inquirer"] = {
@@ -142,14 +145,18 @@ class ContractResponsibilityTests(unittest.TestCase):
         self.assertTrue(any("must be bound by the root Contract" in e for e in errors))
 
     def test_proposal_contract_link_requires_explicit_owner(self) -> None:
-        channel = {"id": "context.channel", "category": "context", "kind": "channel"}
+        precontract = {
+            "id": "context.precontract",
+            "category": "context",
+            "kind": "pre_contract",
+        }
         proposal = {
             "id": "proposal.offer",
             "category": "evidence",
             "kind": "proposal",
-            "contextRef": "context.channel",
+            "contextRef": "context.precontract",
         }
-        self.entities.update({channel["id"]: channel, proposal["id"]: proposal})
+        self.entities.update({precontract["id"]: precontract, proposal["id"]: proposal})
         for entity in self.entities.values():
             entity["type"] = "entity"
         relationship = {
@@ -161,7 +168,7 @@ class ContractResponsibilityTests(unittest.TestCase):
         errors = []
         validate_relationships([relationship], self.entities, {}, errors)
         self.assertTrue(any("Proposal Context must bind" in e for e in errors), errors)
-        channel["parentContextRef"] = "context.purchase"
+        precontract["parentContextRef"] = "context.purchase"
         errors = []
         validate_relationships([relationship], self.entities, {}, errors)
         self.assertEqual([], errors)

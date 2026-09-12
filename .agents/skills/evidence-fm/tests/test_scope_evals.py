@@ -7,9 +7,9 @@ import unittest
 from pathlib import Path
 
 from context_samples import (
-    channel_documents,
     domain_documents,
     performance_documents,
+    precontract_documents,
     write_model,
 )
 
@@ -53,7 +53,7 @@ class ScopeEvalTests(unittest.TestCase):
     ) -> None:
         for eval_id, documents, entry in [
             (15, domain_documents(), "context.customer-information"),
-            (16, channel_documents(), "context.sales-channel"),
+            (16, precontract_documents(), "context.sales-inquiry"),
         ]:
             with (
                 self.subTest(eval_id=eval_id),
@@ -67,7 +67,7 @@ class ScopeEvalTests(unittest.TestCase):
     def test_fulfillment_scenario_still_requires_actual_fulfillment(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             result = self.grade_sample(
-                Path(directory), 17, channel_documents(), "context.sales-channel"
+                Path(directory), 17, precontract_documents(), "context.sales-inquiry"
             )
             presence = next(
                 item

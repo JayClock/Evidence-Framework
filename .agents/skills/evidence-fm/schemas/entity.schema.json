@@ -371,7 +371,6 @@
               "contract",
               "fulfillment",
               "pre_contract",
-              "channel",
               "domain",
               "external"
             ]
