@@ -28,11 +28,14 @@
 
 ## 2. 稳定 ID 与文件名
 
-ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。文件名把 ID 中的 `.` 替换为 `--`：
+ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。
+
+Entity 文件名统一为 `<category>-<kind>--<id-suffix>.yaml`：`category` 与 `kind` 使用 Schema 原值并将下划线规范为连字符；`id-suffix` 取 ID 第一个 `.` 后的部分，并把其余 `.` 替换为 `--`。这样文件名直接暴露实体分类，同时由稳定 ID 后缀保证同类实体可并存。其他分片仍把完整 ID 中的 `.` 替换为 `--`：
 
 ```text
-role.subscriber                    → entities/role--subscriber.yaml
-fulfillment.subscription-payment  → entities/fulfillment--subscription-payment.yaml
+role.subscriber                    → entities/role-party--subscriber.yaml
+fulfillment.subscription-payment  → entities/context-fulfillment--subscription-payment.yaml
+request.subscription-payment      → entities/evidence-fulfillment-request--subscription-payment.yaml
 pattern.multi-channel-payment     → business-patterns/pattern--multi-channel-payment.yaml
 ```
 

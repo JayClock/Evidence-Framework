@@ -1,0 +1,4867 @@
+openapi: 3.1.0
+info:
+  title: api.column-subscription
+  version: generated
+paths:
+  /chapters/{chapterId}:
+    get:
+      operationId: capability.read-chapter-reader
+      summary: 读取章节内容
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-chapter-reader
+              example:
+                _links:
+                  self:
+                    href: /chapters/CH-01
+                body: 一项履约始于权利方的请求，完成由实际结果凭证证明。
+                chapter_id: CH-01
+                column_id: COL-BM
+                edition_id: ED-1
+                title: 从请求与证明理解业务
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-chapter-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - binding.caller-chapter-reader
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.content-readable
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-chapter-reader
+          actorRoleRef: role.reader
+  /columns/{columnId}:
+    get:
+      operationId: get_columns__columnId_
+      summary: 读取专栏 / 读取专栏
+      parameters:
+        - name: columnId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-column-publisher
+              example:
+                _links:
+                  self:
+                    href: /columns/COL-BM
+                column_id: COL-BM
+                currency: CNY
+                edition_id: ED-1
+                price_minor_units: 9900
+                title: 业务建模实战
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-column-publisher
+        - capability.read-column-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-column-publisher
+        - binding.caller-column-reader
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-column-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-column-reader
+          actorRoleRef: role.reader
+  /discontinuations:
+    post:
+      operationId: >-
+        capability.register-discontinuation-publisher
+      summary: 记录断更下架事实
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的断更下架记录；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /discontinuations/DISCONTINUATION-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-discontinuation-publisher
+              example:
+                _links:
+                  self:
+                    href: /discontinuations/DISCONTINUATION-001
+                column_id: COL-BM
+                created_at: '2026-10-16T10:00:00Z'
+                delisted: true
+                evidenceRefs:
+                  - instance.subscription
+                missed_due_at: '2026-10-08T10:00:00Z'
+                missing_content: true
+                reader_id: READER-001
+                rescheduled: false
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - >-
+          capability.register-discontinuation-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-discontinuation-publisher
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.register-discontinuation-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                created_at:
+                  format: date-time
+                  type: string
+                missed_due_at:
+                  format: date-time
+                  type: string
+                missing_content:
+                  type: boolean
+                rescheduled:
+                  type: boolean
+                delisted:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - subscription_id
+                - reader_id
+                - column_id
+                - created_at
+                - missed_due_at
+                - missing_content
+                - rescheduled
+                - delisted
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              created_at: '2026-10-16T10:00:00Z'
+              delisted: true
+              evidenceRefs:
+                - instance.subscription
+              missed_due_at: '2026-10-08T10:00:00Z'
+              missing_content: true
+              reader_id: READER-001
+              rescheduled: false
+              subscription_id: SUB-20261001-001
+  /discontinuations/{discontinuationId}:
+    get:
+      operationId: get_discontinuations__discontinuationId_
+      summary: 读取断更下架记录 / 读取断更下架记录
+      parameters:
+        - name: discontinuationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-discontinuation-publisher
+              example:
+                _links:
+                  self:
+                    href: /discontinuations/DISCONTINUATION-001
+                column_id: COL-BM
+                created_at: '2026-10-16T10:00:00Z'
+                delisted: true
+                evidenceRefs:
+                  - instance.subscription
+                missed_due_at: '2026-10-08T10:00:00Z'
+                missing_content: true
+                reader_id: READER-001
+                rescheduled: false
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - >-
+          capability.read-discontinuation-publisher
+        - capability.read-discontinuation-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-discontinuation-publisher
+        - binding.caller-discontinuation-reader
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.read-discontinuation-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-discontinuation-reader
+          actorRoleRef: role.reader
+  /prepaid-accounts:
+    post:
+      operationId: capability.register-account-account-user
+      summary: 登记预付费账户协议
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的预付费账户协议；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /prepaid-accounts/PREPAID-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-account-account-user
+              example:
+                _links:
+                  self:
+                    href: /prepaid-accounts/PREPAID-001
+                agreement_id: PREPAID-001
+                reader_id: READER-001
+                signed_at: '2026-10-01T08:00:00Z'
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-account-account-user
+      x-actor-role-refs:
+        - role.account-user
+      x-binding-refs:
+        - binding.caller-account-account-user
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-account-account-user
+          actorRoleRef: role.account-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agreement_id:
+                  type: string
+                reader_id:
+                  type: string
+                signed_at:
+                  format: date-time
+                  type: string
+              additionalProperties: false
+              required:
+                - agreement_id
+                - reader_id
+                - signed_at
+            example:
+              agreement_id: PREPAID-001
+              reader_id: READER-001
+              signed_at: '2026-10-01T08:00:00Z'
+  /prepaid-accounts/{accountId}:
+    get:
+      operationId: get_prepaid-accounts__accountId_
+      summary: 读取预付费账户协议 / 读取预付费账户协议
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-account-account-provider
+              example:
+                _links:
+                  self:
+                    href: /prepaid-accounts/PREPAID-001
+                agreement_id: PREPAID-001
+                reader_id: READER-001
+                signed_at: '2026-10-01T08:00:00Z'
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-account-account-provider
+        - capability.read-account-account-user
+      x-actor-role-refs:
+        - role.account-provider
+        - role.account-user
+      x-binding-refs:
+        - binding.caller-account-account-provider
+        - binding.caller-account-account-user
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-account-account-provider
+          actorRoleRef: role.account-provider
+        - capabilityRef: capability.read-account-account-user
+          actorRoleRef: role.account-user
+  /prepaid-accounts/{accountId}/debits:
+    post:
+      operationId: capability.register-debit-account-user
+      summary: 申请余额抵扣
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的账户余额抵扣请求；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-debit-account-user
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
+                  self:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001
+                agreement_id: PREPAID-001
+                amount_minor_units: 9900
+                balance_before_minor_units: 10000
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.prepaid-agreement
+                  - instance.payment
+                expired_at: '2026-10-01T09:15:00Z'
+                fulfillmentStatus: pending
+                payment_request_id: PAY-001
+                reader_id: READER-001
+                request_id: PREPAID-REQ-001
+                started_at: '2026-10-01T09:02:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_prepaid-accounts__accountId__debits__debitId__result
+              parameters:
+                accountId: $request.path.accountId
+                debitId: $request.path.debitId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-debit-account-user
+      x-actor-role-refs:
+        - role.account-user
+      x-binding-refs:
+        - binding.caller-debit-account-user
+        - binding.parent-debit
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-debit-account-user
+          actorRoleRef: role.account-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                started_at:
+                  format: date-time
+                  type: string
+                expired_at:
+                  format: date-time
+                  type: string
+                payment_request_id:
+                  type: string
+                amount_minor_units:
+                  type: integer
+                currency:
+                  type: string
+                agreement_id:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - started_at
+                - expired_at
+                - payment_request_id
+                - amount_minor_units
+                - currency
+                - agreement_id
+                - evidenceRefs
+            example:
+              agreement_id: PREPAID-001
+              amount_minor_units: 9900
+              column_id: COL-BM
+              currency: CNY
+              evidenceRefs:
+                - instance.prepaid-agreement
+                - instance.payment
+              expired_at: '2026-10-01T09:15:00Z'
+              payment_request_id: PAY-001
+              reader_id: READER-001
+              request_id: PREPAID-REQ-001
+              started_at: '2026-10-01T09:02:00Z'
+              subscription_id: SUB-20261001-001
+  '/prepaid-accounts/{accountId}/debits/{debitId}':
+    get:
+      operationId: >-
+        get_prepaid-accounts__accountId__debits__debitId_
+      summary: 读取账户余额抵扣请求 / 读取账户余额抵扣请求
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: debitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-debit-account-provider
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
+                  self:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001
+                agreement_id: PREPAID-001
+                amount_minor_units: 9900
+                balance_before_minor_units: 10000
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.prepaid-agreement
+                  - instance.payment
+                expired_at: '2026-10-01T09:15:00Z'
+                fulfillmentStatus: completed
+                payment_request_id: PAY-001
+                reader_id: READER-001
+                request_id: PREPAID-REQ-001
+                started_at: '2026-10-01T09:02:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_prepaid-accounts__accountId__debits__debitId__result
+              parameters:
+                accountId: $request.path.accountId
+                debitId: $request.path.debitId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-debit-account-provider
+        - capability.read-debit-account-user
+      x-actor-role-refs:
+        - role.account-provider
+        - role.account-user
+      x-binding-refs:
+        - binding.caller-debit-account-provider
+        - binding.caller-debit-account-user
+        - binding.parent-debit
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-debit-account-provider
+          actorRoleRef: role.account-provider
+        - capabilityRef: capability.read-debit-account-user
+          actorRoleRef: role.account-user
+  '/prepaid-accounts/{accountId}/debits/{debitId}/result':
+    get:
+      operationId: >-
+        get_prepaid-accounts__accountId__debits__debitId__result
+      summary: 读取预付费抵扣凭证 / 读取预付费抵扣凭证
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: debitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-debit-result-account-provider
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
+                amount_minor_units: 9900
+                balance_after_minor_units: 100
+                column_id: COL-BM
+                confirmed_at: '2026-10-01T09:05:00Z'
+                currency: CNY
+                evidenceRefs:
+                  - instance.prepaid-request
+                  - instance.payment
+                payment_id: PREPAID-TX-001
+                payment_request_id: PAY-001
+                reader_id: READER-001
+                request_id: PREPAID-REQ-001
+                subscription_id: SUB-20261001-001
+                success: true
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - >-
+          capability.read-debit-result-account-provider
+        - >-
+          capability.read-debit-result-account-user
+      x-actor-role-refs:
+        - role.account-provider
+        - role.account-user
+      x-binding-refs:
+        - >-
+          binding.caller-debit-result-account-provider
+        - binding.caller-debit-result-account-user
+        - binding.parent-debit-result
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.read-debit-result-account-provider
+          actorRoleRef: role.account-provider
+        - capabilityRef: >-
+            capability.read-debit-result-account-user
+          actorRoleRef: role.account-user
+    post:
+      operationId: >-
+        capability.register-debit-result-account-provider
+      summary: 确认账户抵扣完成
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: debitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的预付费抵扣凭证；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-debit-result-account-provider
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
+                amount_minor_units: 9900
+                balance_after_minor_units: 100
+                column_id: COL-BM
+                confirmed_at: '2026-10-01T09:05:00Z'
+                currency: CNY
+                evidenceRefs:
+                  - instance.prepaid-request
+                  - instance.payment
+                payment_id: PREPAID-TX-001
+                payment_request_id: PAY-001
+                reader_id: READER-001
+                request_id: PREPAID-REQ-001
+                subscription_id: SUB-20261001-001
+                success: true
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - >-
+          capability.register-debit-result-account-provider
+      x-actor-role-refs:
+        - role.account-provider
+      x-binding-refs:
+        - >-
+          binding.caller-debit-result-account-provider
+        - binding.parent-debit-result
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.prepaid-funded
+        - purpose: result
+          ruleRef: rule.prepaid-completed
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.register-debit-result-account-provider
+          actorRoleRef: role.account-provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                confirmed_at:
+                  format: date-time
+                  type: string
+                payment_request_id:
+                  type: string
+                amount_minor_units:
+                  type: integer
+                currency:
+                  type: string
+                payment_id:
+                  type: string
+                success:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - confirmed_at
+                - payment_request_id
+                - amount_minor_units
+                - currency
+                - payment_id
+                - success
+                - evidenceRefs
+            example:
+              amount_minor_units: 9900
+              column_id: COL-BM
+              confirmed_at: '2026-10-01T09:05:00Z'
+              currency: CNY
+              evidenceRefs:
+                - instance.prepaid-request
+                - instance.payment
+              payment_id: PREPAID-TX-001
+              payment_request_id: PAY-001
+              reader_id: READER-001
+              request_id: PREPAID-REQ-001
+              subscription_id: SUB-20261001-001
+              success: true
+  /relaunches:
+    post:
+      operationId: capability.register-relaunch-publisher
+      summary: 记录同专栏重新上架
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的重新上架记录；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /relaunches/RELAUNCH-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-relaunch-publisher
+              example:
+                _links:
+                  self:
+                    href: /relaunches/RELAUNCH-001
+                column_id: COL-BM
+                created_at: '2026-11-01T12:00:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                listed: true
+                reader_id: READER-001
+                relaunched_at: '2026-11-01T11:59:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-relaunch-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-relaunch-publisher
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-relaunch-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                edition_id:
+                  type: string
+                created_at:
+                  format: date-time
+                  type: string
+                relaunched_at:
+                  format: date-time
+                  type: string
+                listed:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - subscription_id
+                - reader_id
+                - column_id
+                - edition_id
+                - created_at
+                - relaunched_at
+                - listed
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              created_at: '2026-11-01T12:00:00Z'
+              edition_id: ED-2
+              evidenceRefs:
+                - instance.subscription
+              listed: true
+              reader_id: READER-001
+              relaunched_at: '2026-11-01T11:59:00Z'
+              subscription_id: SUB-20261001-001
+  /relaunches/{relaunchId}:
+    get:
+      operationId: get_relaunches__relaunchId_
+      summary: 读取重新上架记录 / 读取重新上架记录
+      parameters:
+        - name: relaunchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-relaunch-publisher
+              example:
+                _links:
+                  self:
+                    href: /relaunches/RELAUNCH-001
+                column_id: COL-BM
+                created_at: '2026-11-01T12:00:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                listed: true
+                reader_id: READER-001
+                relaunched_at: '2026-11-01T11:59:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-relaunch-publisher
+        - capability.read-relaunch-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-relaunch-publisher
+        - binding.caller-relaunch-reader
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-relaunch-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-relaunch-reader
+          actorRoleRef: role.reader
+  /subscriptions:
+    post:
+      operationId: capability.register-subscription-reader
+      summary: 登记专栏订阅合同
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的专栏订阅合同；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /subscriptions/SUB-20261001-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-subscription-reader
+              example:
+                _links:
+                  self:
+                    href: /subscriptions/SUB-20261001-001
+                access_seconds: 60
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                edition_id: ED-1
+                payment_seconds: 900
+                reader_id: READER-001
+                refund_seconds: 604800
+                restore_seconds: 86400
+                signed_at: '2026-10-01T09:00:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-subscription-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - binding.caller-subscription-reader
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-subscription-reader
+          actorRoleRef: role.reader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                edition_id:
+                  type: string
+                amount_minor_units:
+                  type: integer
+                currency:
+                  type: string
+                signed_at:
+                  format: date-time
+                  type: string
+                payment_seconds:
+                  type: integer
+                access_seconds:
+                  type: integer
+                refund_seconds:
+                  type: integer
+                restore_seconds:
+                  type: integer
+              additionalProperties: false
+              required:
+                - subscription_id
+                - reader_id
+                - column_id
+                - edition_id
+                - amount_minor_units
+                - currency
+                - signed_at
+                - payment_seconds
+                - access_seconds
+                - refund_seconds
+                - restore_seconds
+            example:
+              access_seconds: 60
+              amount_minor_units: 9900
+              column_id: COL-BM
+              currency: CNY
+              edition_id: ED-1
+              payment_seconds: 900
+              reader_id: READER-001
+              refund_seconds: 604800
+              restore_seconds: 86400
+              signed_at: '2026-10-01T09:00:00Z'
+              subscription_id: SUB-20261001-001
+  /subscriptions/{subscriptionId}:
+    get:
+      operationId: get_subscriptions__subscriptionId_
+      summary: 读取专栏订阅合同 / 读取专栏订阅合同
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-subscription-publisher
+              example:
+                _links:
+                  self:
+                    href: /subscriptions/SUB-20261001-001
+                access_seconds: 60
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                edition_id: ED-1
+                payment_seconds: 900
+                reader_id: READER-001
+                refund_seconds: 604800
+                restore_seconds: 86400
+                signed_at: '2026-10-01T09:00:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-subscription-publisher
+        - capability.read-subscription-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-subscription-publisher
+        - binding.caller-subscription-reader
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-subscription-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-subscription-reader
+          actorRoleRef: role.reader
+  /subscriptions/{subscriptionId}/accesses:
+    post:
+      operationId: capability.register-access-reader
+      summary: 申请访问付费章节
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的付费内容访问请求；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-access-reader
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE
+                chapter_id: CH-01
+                column_id: COL-BM
+                edition_id: ED-1
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.mobile-result
+                expired_at: '2026-10-01T09:07:00Z'
+                fulfillmentStatus: pending
+                reader_id: READER-001
+                request_id: ACCESS-MOBILE
+                started_at: '2026-10-01T09:06:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__accesses__accessId__result
+              parameters:
+                accessId: $request.path.accessId
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-access-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - binding.caller-access-reader
+        - binding.parent-access
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.access-eligible
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-access-reader
+          actorRoleRef: role.reader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                started_at:
+                  format: date-time
+                  type: string
+                chapter_id:
+                  type: string
+                edition_id:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - started_at
+                - chapter_id
+                - edition_id
+                - evidenceRefs
+            example:
+              chapter_id: CH-01
+              column_id: COL-BM
+              edition_id: ED-1
+              evidenceRefs:
+                - instance.subscription
+                - instance.mobile-result
+              reader_id: READER-001
+              request_id: ACCESS-MOBILE
+              started_at: '2026-10-01T09:06:00Z'
+              subscription_id: SUB-20261001-001
+  '/subscriptions/{subscriptionId}/accesses/{accessId}':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__accesses__accessId_
+      summary: 读取付费内容访问请求 / 读取付费内容访问请求
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: accessId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-access-publisher
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE
+                chapter_id: CH-01
+                column_id: COL-BM
+                edition_id: ED-1
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.mobile-result
+                expired_at: '2026-10-01T09:07:00Z'
+                fulfillmentStatus: completed
+                reader_id: READER-001
+                request_id: ACCESS-MOBILE
+                started_at: '2026-10-01T09:06:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__accesses__accessId__result
+              parameters:
+                accessId: $request.path.accessId
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-access-publisher
+        - capability.read-access-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-access-publisher
+        - binding.caller-access-reader
+        - binding.parent-access
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-access-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-access-reader
+          actorRoleRef: role.reader
+  '/subscriptions/{subscriptionId}/accesses/{accessId}/result':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__accesses__accessId__result
+      summary: 读取内容提供凭证 / 读取内容提供凭证
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: accessId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-access-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
+                chapter_id: CH-01
+                column_id: COL-BM
+                confirmed_at: '2026-10-01T09:06:02Z'
+                delivered: true
+                edition_id: ED-1
+                evidenceRefs:
+                  - instance.access-mobile
+                reader_id: READER-001
+                request_id: ACCESS-MOBILE
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-access-result-publisher
+        - capability.read-access-result-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-access-result-publisher
+        - binding.caller-access-result-reader
+        - binding.parent-access-result
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-access-result-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-access-result-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: >-
+        capability.register-access-result-publisher
+      summary: 提供指定章节内容
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: accessId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的内容提供凭证；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-access-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
+                chapter_id: CH-01
+                column_id: COL-BM
+                confirmed_at: '2026-10-01T09:06:02Z'
+                delivered: true
+                edition_id: ED-1
+                evidenceRefs:
+                  - instance.access-mobile
+                reader_id: READER-001
+                request_id: ACCESS-MOBILE
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - >-
+          capability.register-access-result-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-access-result-publisher
+        - binding.parent-access-result
+      x-fm-rule-bindings:
+        - purpose: result
+          ruleRef: rule.access-completed
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.register-access-result-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                confirmed_at:
+                  format: date-time
+                  type: string
+                chapter_id:
+                  type: string
+                edition_id:
+                  type: string
+                delivered:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - confirmed_at
+                - chapter_id
+                - edition_id
+                - delivered
+                - evidenceRefs
+            example:
+              chapter_id: CH-01
+              column_id: COL-BM
+              confirmed_at: '2026-10-01T09:06:02Z'
+              delivered: true
+              edition_id: ED-1
+              evidenceRefs:
+                - instance.access-mobile
+              reader_id: READER-001
+              request_id: ACCESS-MOBILE
+              subscription_id: SUB-20261001-001
+  /subscriptions/{subscriptionId}/payment:
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__payment
+      summary: 读取订阅费支付请求 / 读取订阅费支付请求
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-payment-publisher
+              example:
+                _links:
+                  self:
+                    href: /subscriptions/SUB-20261001-001/payment
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.subscription
+                expired_at: '2026-10-01T09:15:00Z'
+                fulfillmentStatus: completed
+                reader_id: READER-001
+                request_id: PAY-001
+                started_at: '2026-10-01T09:00:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-payment-publisher
+        - capability.read-payment-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-payment-publisher
+        - binding.caller-payment-reader
+        - binding.parent-payment
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-payment-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-payment-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: capability.register-payment-publisher
+      summary: 发起订阅费付款要求
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的订阅费支付请求；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /subscriptions/SUB-20261001-001/payment
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-payment-publisher
+              example:
+                _links:
+                  self:
+                    href: /subscriptions/SUB-20261001-001/payment
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.subscription
+                expired_at: '2026-10-01T09:15:00Z'
+                fulfillmentStatus: pending
+                reader_id: READER-001
+                request_id: PAY-001
+                started_at: '2026-10-01T09:00:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-payment-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-payment-publisher
+        - binding.parent-payment
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-payment-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                currency:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - currency
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              currency: CNY
+              evidenceRefs:
+                - instance.subscription
+              reader_id: READER-001
+              request_id: PAY-001
+              subscription_id: SUB-20261001-001
+  /subscriptions/{subscriptionId}/refund:
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__refund
+      summary: 读取断更退款请求 / 读取断更退款请求
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-refund-publisher
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/refund/result
+                  self:
+                    href: /subscriptions/SUB-20261001-001/refund
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.discontinuation
+                  - instance.mobile-result
+                expired_at: '2026-10-23T10:01:00Z'
+                fulfillmentStatus: completed
+                reader_id: READER-001
+                request_id: REFUND-001
+                started_at: '2026-10-16T10:01:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__refund_result
+              parameters:
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-refund-publisher
+        - capability.read-refund-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-refund-publisher
+        - binding.caller-refund-reader
+        - binding.parent-refund
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-refund-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-refund-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: capability.register-refund-reader
+      summary: 申请断更退款
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的断更退款请求；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: /subscriptions/SUB-20261001-001/refund
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-refund-reader
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/refund/result
+                  self:
+                    href: /subscriptions/SUB-20261001-001/refund
+                amount_minor_units: 9900
+                column_id: COL-BM
+                currency: CNY
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.discontinuation
+                  - instance.mobile-result
+                expired_at: '2026-10-23T10:01:00Z'
+                fulfillmentStatus: pending
+                reader_id: READER-001
+                request_id: REFUND-001
+                started_at: '2026-10-16T10:01:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__refund_result
+              parameters:
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-refund-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - binding.caller-refund-reader
+        - binding.parent-refund
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.refund-eligible
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-refund-reader
+          actorRoleRef: role.reader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                started_at:
+                  format: date-time
+                  type: string
+                currency:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - started_at
+                - currency
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              currency: CNY
+              evidenceRefs:
+                - instance.subscription
+                - instance.discontinuation
+                - instance.mobile-result
+              reader_id: READER-001
+              request_id: REFUND-001
+              started_at: '2026-10-16T10:01:00Z'
+              subscription_id: SUB-20261001-001
+  '/subscriptions/{subscriptionId}/refund/result':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__refund_result
+      summary: 读取退款到账凭证 / 读取退款到账凭证
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-refund-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/refund/result
+                amount_minor_units: 9900
+                column_id: COL-BM
+                confirmed_at: '2026-10-18T10:00:00Z'
+                currency: CNY
+                evidenceRefs:
+                  - instance.refund
+                reader_id: READER-001
+                receipt_id: REFUND-RECEIPT-001
+                request_id: REFUND-001
+                settled: true
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-refund-result-publisher
+        - capability.read-refund-result-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-refund-result-publisher
+        - binding.caller-refund-result-reader
+        - binding.parent-refund-result
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-refund-result-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-refund-result-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: >-
+        capability.register-refund-result-publisher
+      summary: 登记退款到账
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的退款到账凭证；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/refund/result
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-refund-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/refund/result
+                amount_minor_units: 9900
+                column_id: COL-BM
+                confirmed_at: '2026-10-18T10:00:00Z'
+                currency: CNY
+                evidenceRefs:
+                  - instance.refund
+                reader_id: READER-001
+                receipt_id: REFUND-RECEIPT-001
+                request_id: REFUND-001
+                settled: true
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - >-
+          capability.register-refund-result-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-refund-result-publisher
+        - binding.parent-refund-result
+      x-fm-rule-bindings:
+        - purpose: result
+          ruleRef: rule.refund-completed
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.register-refund-result-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                confirmed_at:
+                  format: date-time
+                  type: string
+                amount_minor_units:
+                  type: integer
+                currency:
+                  type: string
+                receipt_id:
+                  type: string
+                settled:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - confirmed_at
+                - amount_minor_units
+                - currency
+                - receipt_id
+                - settled
+                - evidenceRefs
+            example:
+              amount_minor_units: 9900
+              column_id: COL-BM
+              confirmed_at: '2026-10-18T10:00:00Z'
+              currency: CNY
+              evidenceRefs:
+                - instance.refund
+              reader_id: READER-001
+              receipt_id: REFUND-RECEIPT-001
+              request_id: REFUND-001
+              settled: true
+              subscription_id: SUB-20261001-001
+  '/subscriptions/{subscriptionId}/restoration':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__restoration
+      summary: 读取免费恢复请求 / 读取免费恢复请求
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-restore-publisher
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration/result
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration
+                column_id: COL-BM
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.relaunch
+                  - instance.refunded
+                expired_at: '2026-11-02T12:01:00Z'
+                fulfillmentStatus: completed
+                reader_id: READER-001
+                request_id: RESTORE-001
+                started_at: '2026-11-01T12:01:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__restoration_result
+              parameters:
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-restore-publisher
+        - capability.read-restore-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-restore-publisher
+        - binding.caller-restore-reader
+        - binding.parent-restore
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-restore-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-restore-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: capability.register-restore-reader
+      summary: 申请免费恢复
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的免费恢复请求；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/restoration
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-restore-reader
+              example:
+                _links:
+                  result:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration/result
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration
+                column_id: COL-BM
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                  - instance.relaunch
+                  - instance.refunded
+                expired_at: '2026-11-02T12:01:00Z'
+                fulfillmentStatus: pending
+                reader_id: READER-001
+                request_id: RESTORE-001
+                started_at: '2026-11-01T12:01:00Z'
+                subscription_id: SUB-20261001-001
+          links:
+            result:
+              operationId: >-
+                get_subscriptions__subscriptionId__restoration_result
+              parameters:
+                subscriptionId: $request.path.subscriptionId
+              x-fm-link-kind: navigation
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-restore-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - binding.caller-restore-reader
+        - binding.parent-restore
+      x-fm-rule-bindings:
+        - purpose: precondition
+          ruleRef: rule.restore-eligible
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-restore-reader
+          actorRoleRef: role.reader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                started_at:
+                  format: date-time
+                  type: string
+                edition_id:
+                  type: string
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - started_at
+                - edition_id
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              edition_id: ED-2
+              evidenceRefs:
+                - instance.subscription
+                - instance.relaunch
+                - instance.refunded
+              reader_id: READER-001
+              request_id: RESTORE-001
+              started_at: '2026-11-01T12:01:00Z'
+              subscription_id: SUB-20261001-001
+  '/subscriptions/{subscriptionId}/restoration/result':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__restoration_result
+      summary: 读取免费恢复凭证 / 读取免费恢复凭证
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-restore-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration/result
+                charged_minor_units: 0
+                column_id: COL-BM
+                confirmed_at: '2026-11-01T12:02:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.restore
+                reader_id: READER-001
+                request_id: RESTORE-001
+                restored: true
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-restore-result-publisher
+        - capability.read-restore-result-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-restore-result-publisher
+        - binding.caller-restore-result-reader
+        - binding.parent-restore-result
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-restore-result-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-restore-result-reader
+          actorRoleRef: role.reader
+    post:
+      operationId: >-
+        capability.register-restore-result-publisher
+      summary: 恢复免费访问资格
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的免费恢复凭证；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/restoration/result
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-restore-result-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/restoration/result
+                charged_minor_units: 0
+                column_id: COL-BM
+                confirmed_at: '2026-11-01T12:02:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.restore
+                reader_id: READER-001
+                request_id: RESTORE-001
+                restored: true
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - >-
+          capability.register-restore-result-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-restore-result-publisher
+        - binding.parent-restore-result
+      x-fm-rule-bindings:
+        - purpose: result
+          ruleRef: rule.restore-completed
+      x-fm-operation-variants:
+        - capabilityRef: >-
+            capability.register-restore-result-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: string
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                confirmed_at:
+                  format: date-time
+                  type: string
+                edition_id:
+                  type: string
+                charged_minor_units:
+                  type: integer
+                restored:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - request_id
+                - subscription_id
+                - reader_id
+                - column_id
+                - confirmed_at
+                - edition_id
+                - charged_minor_units
+                - restored
+                - evidenceRefs
+            example:
+              charged_minor_units: 0
+              column_id: COL-BM
+              confirmed_at: '2026-11-01T12:02:00Z'
+              edition_id: ED-2
+              evidenceRefs:
+                - instance.restore
+              reader_id: READER-001
+              request_id: RESTORE-001
+              restored: true
+              subscription_id: SUB-20261001-001
+components:
+  schemas:
+    representation_read-access-publisher:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - chapter_id
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-access-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - chapter_id
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_read-access-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        delivered:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - chapter_id
+        - edition_id
+        - delivered
+        - evidenceRefs
+        - _links
+    representation_read-access-result-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        delivered:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            content:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - content
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - chapter_id
+        - edition_id
+        - delivered
+        - evidenceRefs
+        - _links
+    'representation_read-account-account-provider':
+      type: object
+      properties:
+        agreement_id:
+          type: string
+        reader_id:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - agreement_id
+        - reader_id
+        - signed_at
+        - _links
+    representation_read-account-account-user:
+      type: object
+      properties:
+        agreement_id:
+          type: string
+        reader_id:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - agreement_id
+        - reader_id
+        - signed_at
+        - _links
+    representation_read-chapter-reader:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - chapter_id
+        - column_id
+        - edition_id
+        - title
+        - body
+        - _links
+    representation_read-column-publisher:
+      type: object
+      properties:
+        column_id:
+          type: string
+        title:
+          type: string
+        edition_id:
+          type: string
+        price_minor_units:
+          type: integer
+        currency:
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - column_id
+        - title
+        - edition_id
+        - price_minor_units
+        - currency
+        - _links
+    representation_read-column-reader:
+      type: object
+      properties:
+        column_id:
+          type: string
+        title:
+          type: string
+        edition_id:
+          type: string
+        price_minor_units:
+          type: integer
+        currency:
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - column_id
+        - title
+        - edition_id
+        - price_minor_units
+        - currency
+        - _links
+    'representation_read-debit-account-provider':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        agreement_id:
+          type: string
+        balance_before_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - agreement_id
+        - balance_before_minor_units
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-debit-account-user:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        agreement_id:
+          type: string
+        balance_before_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - agreement_id
+        - balance_before_minor_units
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_read-debit-result-account-provider':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        payment_id:
+          type: string
+        success:
+          type: boolean
+        balance_after_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - payment_id
+        - success
+        - balance_after_minor_units
+        - evidenceRefs
+        - _links
+    'representation_read-debit-result-account-user':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        payment_id:
+          type: string
+        success:
+          type: boolean
+        balance_after_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - payment_id
+        - success
+        - balance_after_minor_units
+        - evidenceRefs
+        - _links
+    'representation_read-discontinuation-publisher':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        missed_due_at:
+          format: date-time
+          type: string
+        missing_content:
+          type: boolean
+        rescheduled:
+          type: boolean
+        delisted:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - created_at
+        - missed_due_at
+        - missing_content
+        - rescheduled
+        - delisted
+        - evidenceRefs
+        - _links
+    'representation_read-discontinuation-reader':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        missed_due_at:
+          format: date-time
+          type: string
+        missing_content:
+          type: boolean
+        rescheduled:
+          type: boolean
+        delisted:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - created_at
+        - missed_due_at
+        - missing_content
+        - rescheduled
+        - delisted
+        - evidenceRefs
+        - _links
+    representation_read-payment-publisher:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-payment-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-refund-publisher:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-refund-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_read-refund-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        receipt_id:
+          type: string
+        settled:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - amount_minor_units
+        - currency
+        - receipt_id
+        - settled
+        - evidenceRefs
+        - _links
+    representation_read-refund-result-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        receipt_id:
+          type: string
+        settled:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - amount_minor_units
+        - currency
+        - receipt_id
+        - settled
+        - evidenceRefs
+        - _links
+    representation_read-relaunch-publisher:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        relaunched_at:
+          format: date-time
+          type: string
+        listed:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - created_at
+        - relaunched_at
+        - listed
+        - evidenceRefs
+        - _links
+    representation_read-relaunch-reader:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        relaunched_at:
+          format: date-time
+          type: string
+        listed:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - created_at
+        - relaunched_at
+        - listed
+        - evidenceRefs
+        - _links
+    representation_read-restore-publisher:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_read-restore-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_read-restore-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        charged_minor_units:
+          type: integer
+        restored:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - edition_id
+        - charged_minor_units
+        - restored
+        - evidenceRefs
+        - _links
+    'representation_read-restore-result-reader':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        charged_minor_units:
+          type: integer
+        restored:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - edition_id
+        - charged_minor_units
+        - restored
+        - evidenceRefs
+        - _links
+    'representation_read-subscription-publisher':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        payment_seconds:
+          type: integer
+        access_seconds:
+          type: integer
+        refund_seconds:
+          type: integer
+        restore_seconds:
+          type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - amount_minor_units
+        - currency
+        - signed_at
+        - payment_seconds
+        - access_seconds
+        - refund_seconds
+        - restore_seconds
+        - _links
+    representation_read-subscription-reader:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        payment_seconds:
+          type: integer
+        access_seconds:
+          type: integer
+        refund_seconds:
+          type: integer
+        restore_seconds:
+          type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - amount_minor_units
+        - currency
+        - signed_at
+        - payment_seconds
+        - access_seconds
+        - refund_seconds
+        - restore_seconds
+        - _links
+    representation_register-access-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - chapter_id
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_register-access-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        chapter_id:
+          type: string
+        edition_id:
+          type: string
+        delivered:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - chapter_id
+        - edition_id
+        - delivered
+        - evidenceRefs
+        - _links
+    'representation_register-account-account-user':
+      type: object
+      properties:
+        agreement_id:
+          type: string
+        reader_id:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - agreement_id
+        - reader_id
+        - signed_at
+        - _links
+    'representation_register-debit-account-user':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        agreement_id:
+          type: string
+        balance_before_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - agreement_id
+        - balance_before_minor_units
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_register-debit-result-account-provider':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        payment_request_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        payment_id:
+          type: string
+        success:
+          type: boolean
+        balance_after_minor_units:
+          type: integer
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - payment_request_id
+        - amount_minor_units
+        - currency
+        - payment_id
+        - success
+        - balance_after_minor_units
+        - evidenceRefs
+        - _links
+    'representation_register-discontinuation-publisher':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        missed_due_at:
+          format: date-time
+          type: string
+        missing_content:
+          type: boolean
+        rescheduled:
+          type: boolean
+        delisted:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - created_at
+        - missed_due_at
+        - missing_content
+        - rescheduled
+        - delisted
+        - evidenceRefs
+        - _links
+    'representation_register-payment-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    representation_register-refund-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - amount_minor_units
+        - currency
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_register-refund-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        receipt_id:
+          type: string
+        settled:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - amount_minor_units
+        - currency
+        - receipt_id
+        - settled
+        - evidenceRefs
+        - _links
+    'representation_register-relaunch-publisher':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        relaunched_at:
+          format: date-time
+          type: string
+        listed:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - created_at
+        - relaunched_at
+        - listed
+        - evidenceRefs
+        - _links
+    representation_register-restore-reader:
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        started_at:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        fulfillmentStatus:
+          enum:
+            - pending
+            - completed
+            - breached
+          type: string
+        _links:
+          type: object
+          properties:
+            result:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - result
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - started_at
+        - expired_at
+        - edition_id
+        - evidenceRefs
+        - fulfillmentStatus
+        - _links
+    'representation_register-restore-result-publisher':
+      type: object
+      properties:
+        request_id:
+          type: string
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        confirmed_at:
+          format: date-time
+          type: string
+        edition_id:
+          type: string
+        charged_minor_units:
+          type: integer
+        restored:
+          type: boolean
+        evidenceRefs:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - request_id
+        - subscription_id
+        - reader_id
+        - column_id
+        - confirmed_at
+        - edition_id
+        - charged_minor_units
+        - restored
+        - evidenceRefs
+        - _links
+    'representation_register-subscription-reader':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        payment_seconds:
+          type: integer
+        access_seconds:
+          type: integer
+        refund_seconds:
+          type: integer
+        restore_seconds:
+          type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - amount_minor_units
+        - currency
+        - signed_at
+        - payment_seconds
+        - access_seconds
+        - refund_seconds
+        - restore_seconds
+        - _links
+x-generated-from: fm-api-design projection.json
+x-fm-api-design-schema-version: '4.0'
+x-runtime-validated: false

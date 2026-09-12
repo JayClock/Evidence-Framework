@@ -589,7 +589,10 @@
           }
         }
       ],
-      "issuedInstanceRefs": ["instance.subscription", "instance.payment"],
+      "issuedInstanceRefs": [
+        "instance.subscription",
+        "instance.payment"
+      ],
       "machineValidated": true,
       "scenarioId": "scenario.cutoff-pending",
       "simulationPassed": true,
@@ -1625,7 +1628,10 @@
           }
         }
       ],
-      "issuedInstanceRefs": ["instance.subscription", "instance.payment"],
+      "issuedInstanceRefs": [
+        "instance.subscription",
+        "instance.payment"
+      ],
       "machineValidated": true,
       "scenarioId": "scenario.payment-expired",
       "simulationPassed": true,
@@ -1705,7 +1711,10 @@
           }
         }
       ],
-      "issuedInstanceRefs": ["instance.subscription", "instance.payment"],
+      "issuedInstanceRefs": [
+        "instance.subscription",
+        "instance.payment"
+      ],
       "machineValidated": true,
       "scenarioId": "scenario.payment-pending",
       "simulationPassed": true,

@@ -71,6 +71,7 @@ class FMIntegrationTests(unittest.TestCase):
             "领域逻辑",
             "工具／胶水",
             "识别业务变化",
+            "<category>-<kind>--<id-suffix>.yaml",
             "旧图例或简化分析不能覆盖现行约束",
         ):
             self.assertIn(phrase, entry)

@@ -48,7 +48,7 @@ entryContextRefs:
 ```
 
 ```yaml
-# entities/context--customer-information.yaml
+# entities/context-domain--customer-information.yaml
 type: entity
 id: context.customer-information
 category: context
@@ -59,7 +59,7 @@ rootRefs:
 ```
 
 ```yaml
-# entities/thing--customer-profile.yaml
+# entities/participant-thing--customer-profile.yaml
 type: entity
 id: thing.customer-profile
 category: participant

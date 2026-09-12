@@ -1,0 +1,654 @@
+{
+  "journeys": [
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.register-subscription-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-subscription-reader",
+          "expectStatus": 201,
+          "id": "http.register-subscription-reader",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-subscription-reader",
+          "expectStatus": 200,
+          "id": "http.register-subscription-reader-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-subscription-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-subscription-reader",
+          "expectStatus": 200,
+          "id": "http.read-subscription-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-subscription-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-subscription-publisher",
+          "expectStatus": 200,
+          "id": "http.read-subscription-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.register-account-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-account-account-user",
+          "expectStatus": 201,
+          "id": "http.register-account-account-user",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-account-account-user",
+          "expectStatus": 200,
+          "id": "http.register-account-account-user-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.read-account-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-account-account-user",
+          "expectStatus": 200,
+          "id": "http.read-account-account-user",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-provider",
+      "id": "http-journey.read-account-account-provider",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-account-account-provider",
+          "expectStatus": 200,
+          "id": "http.read-account-account-provider",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-payment-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-payment-publisher",
+          "expectStatus": 201,
+          "id": "http.register-payment-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-payment-publisher",
+          "expectStatus": 200,
+          "id": "http.register-payment-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-payment-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-payment-reader",
+          "expectStatus": 200,
+          "id": "http.read-payment-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-payment-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-payment-publisher",
+          "expectStatus": 200,
+          "id": "http.read-payment-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.register-access-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-reader",
+          "expectStatus": 201,
+          "id": "http.register-access-reader",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-access-reader",
+          "expectStatus": 200,
+          "id": "http.register-access-reader-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-access-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-reader",
+          "expectStatus": 200,
+          "id": "http.read-access-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-access-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-publisher",
+          "expectStatus": 200,
+          "id": "http.read-access-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.register-refund-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-reader",
+          "expectStatus": 201,
+          "id": "http.register-refund-reader",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-refund-reader",
+          "expectStatus": 200,
+          "id": "http.register-refund-reader-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-refund-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-reader",
+          "expectStatus": 200,
+          "id": "http.read-refund-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-refund-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-publisher",
+          "expectStatus": 200,
+          "id": "http.read-refund-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.register-restore-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-restore-reader",
+          "expectStatus": 201,
+          "id": "http.register-restore-reader",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-restore-reader",
+          "expectStatus": 200,
+          "id": "http.register-restore-reader-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-restore-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-reader",
+          "expectStatus": 200,
+          "id": "http.read-restore-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-restore-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-publisher",
+          "expectStatus": 200,
+          "id": "http.read-restore-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.register-debit-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-debit-account-user",
+          "expectStatus": 201,
+          "id": "http.register-debit-account-user",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-debit-account-user",
+          "expectStatus": 200,
+          "id": "http.register-debit-account-user-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.read-debit-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-account-user",
+          "expectStatus": 200,
+          "id": "http.read-debit-account-user",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-provider",
+      "id": "http-journey.read-debit-account-provider",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-account-provider",
+          "expectStatus": 200,
+          "id": "http.read-debit-account-provider",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-access-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-result-publisher",
+          "expectStatus": 201,
+          "id": "http.register-access-result-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-access-result-publisher",
+          "expectStatus": 200,
+          "id": "http.register-access-result-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-access-result-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-result-reader",
+          "expectStatus": 200,
+          "id": "http.read-access-result-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-access-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-result-publisher",
+          "expectStatus": 200,
+          "id": "http.read-access-result-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-refund-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-result-publisher",
+          "expectStatus": 201,
+          "id": "http.register-refund-result-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-refund-result-publisher",
+          "expectStatus": 200,
+          "id": "http.register-refund-result-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-refund-result-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-result-reader",
+          "expectStatus": 200,
+          "id": "http.read-refund-result-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-refund-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-result-publisher",
+          "expectStatus": 200,
+          "id": "http.read-refund-result-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-restore-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-restore-result-publisher",
+          "expectStatus": 201,
+          "id": "http.register-restore-result-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-restore-result-publisher",
+          "expectStatus": 200,
+          "id": "http.register-restore-result-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-restore-result-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-result-reader",
+          "expectStatus": 200,
+          "id": "http.read-restore-result-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-restore-result-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-result-publisher",
+          "expectStatus": 200,
+          "id": "http.read-restore-result-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-provider",
+      "id": "http-journey.register-debit-result-account-provider",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-debit-result-account-provider",
+          "expectStatus": 201,
+          "id": "http.register-debit-result-account-provider",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-debit-result-account-provider",
+          "expectStatus": 200,
+          "id": "http.register-debit-result-account-provider-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.read-debit-result-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-result-account-user",
+          "expectStatus": 200,
+          "id": "http.read-debit-result-account-user",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-provider",
+      "id": "http-journey.read-debit-result-account-provider",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-result-account-provider",
+          "expectStatus": 200,
+          "id": "http.read-debit-result-account-provider",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-discontinuation-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-discontinuation-publisher",
+          "expectStatus": 201,
+          "id": "http.register-discontinuation-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-discontinuation-publisher",
+          "expectStatus": 200,
+          "id": "http.register-discontinuation-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-discontinuation-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-discontinuation-reader",
+          "expectStatus": 200,
+          "id": "http.read-discontinuation-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-discontinuation-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-discontinuation-publisher",
+          "expectStatus": 200,
+          "id": "http.read-discontinuation-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.register-relaunch-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-relaunch-publisher",
+          "expectStatus": 201,
+          "id": "http.register-relaunch-publisher",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-relaunch-publisher",
+          "expectStatus": 200,
+          "id": "http.register-relaunch-publisher-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-relaunch-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-relaunch-reader",
+          "expectStatus": 200,
+          "id": "http.read-relaunch-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-relaunch-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-relaunch-publisher",
+          "expectStatus": 200,
+          "id": "http.read-relaunch-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-column-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-column-reader",
+          "expectStatus": 200,
+          "id": "http.read-column-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.publisher",
+      "id": "http-journey.read-column-publisher",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-column-publisher",
+          "expectStatus": 200,
+          "id": "http.read-column-publisher",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.read-chapter-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-chapter-reader",
+          "expectStatus": 200,
+          "id": "http.read-chapter-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "http-journey.reader-content",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-reader",
+          "expectStatus": 200,
+          "id": "http.content-request",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-access-result-reader",
+          "expectStatus": 200,
+          "id": "http.content-result",
+          "status": "mapped"
+        },
+        {
+          "capabilityRef": "capability.read-chapter-reader",
+          "expectStatus": 200,
+          "id": "http.content-body",
+          "status": "mapped"
+        }
+      ]
+    }
+  ],
+  "runtimeValidated": false
+}

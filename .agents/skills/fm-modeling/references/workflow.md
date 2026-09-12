@@ -89,7 +89,7 @@
 
 简化视图必须附来源、推断和缺口，并写入发现记录；它不是第二套长期模型，不与 YAML 双轨维护，也不是 FM Schema v3 事实源。普通讨论、简化视图和用户回答不构成正式模型编辑授权。
 
-正式建模时才依据 `evidence-fm` 映射为稳定 ID、Context、Role、Participant、Evidence 类型时间、Relationship、CEL Rule、实例 `basedOn` 和 validation。历史图例只帮助理解业务；若它与当前 Schema 的归属、基数或跨上下文约束不同，以当前 `evidence-fm` 为准，不把旧表示直接翻译成 YAML。
+正式建模时才依据 `evidence-fm` 映射为稳定 ID、Context、Role、Participant、Evidence 类型时间、Relationship、CEL Rule、实例 `basedOn` 和 validation。`entities/` 中的文件统一命名为 `<category>-<kind>--<id-suffix>.yaml`，其中下划线转为连字符；其他分片继续遵循 `evidence-fm` 的稳定 ID 文件名规则。历史图例只帮助理解业务；若它与当前 Schema 的归属、基数或跨上下文约束不同，以当前 `evidence-fm` 为准，不把旧表示直接翻译成 YAML。
 
 ## 讨论与澄清
 

@@ -393,7 +393,13 @@ def write_documents(root: Path, documents: list[dict[str, Any]]) -> None:
         "rule": "rules",
     }
     for document in documents:
-        filename = document["id"].replace(".", "--") + ".yaml"
+        if document["type"] == "entity":
+            category = document["category"].replace("_", "-")
+            kind = document["kind"].replace("_", "-")
+            suffix = document["id"].split(".", 1)[-1].replace(".", "--")
+            filename = f"{category}-{kind}--{suffix}.yaml"
+        else:
+            filename = document["id"].replace(".", "--") + ".yaml"
         write_document(root / directories[document["type"]] / filename, document)
 
 

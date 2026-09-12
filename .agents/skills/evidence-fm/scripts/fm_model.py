@@ -148,7 +148,13 @@ def load_json(path: Path) -> dict[str, Any]:
         raise ValueError(f"cannot load JSON from {path}: {error}") from error
 
 
-def expected_filename(object_id: str) -> str:
+def expected_filename(document: dict[str, Any]) -> str:
+    object_id = str(document["id"])
+    if document.get("type") == "entity":
+        category = str(document["category"]).replace("_", "-")
+        kind = str(document["kind"]).replace("_", "-")
+        object_suffix = object_id.split(".", 1)[-1].replace(".", "--")
+        return f"{category}-{kind}--{object_suffix}.yaml"
     return object_id.replace(".", "--") + ".yaml"
 
 
@@ -288,7 +294,7 @@ def load_model(root: Path) -> LoadedModel:
             )
             object_id = document.get("id")
             if isinstance(object_id, str) and ID_RE.fullmatch(object_id):
-                expected = expected_filename(object_id)
+                expected = expected_filename(document)
                 if path.name != expected:
                     model.errors.append(
                         f"{rel_path}: filename must be '{expected}' for id '{object_id}'"

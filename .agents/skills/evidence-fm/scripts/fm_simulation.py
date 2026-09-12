@@ -99,7 +99,7 @@ def load_validation_suite(model_root: Path) -> ValidationSuite:
             validate_against_schema(document, schema_name, rel_path, suite.errors)
             object_id = document.get("id")
             if isinstance(object_id, str) and ID_RE.fullmatch(object_id):
-                expected = expected_filename(object_id)
+                expected = expected_filename(document)
                 if path.name != expected:
                     suite.errors.append(
                         f"{rel_path}: filename must be '{expected}' for id '{object_id}'"

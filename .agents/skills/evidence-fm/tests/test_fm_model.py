@@ -83,7 +83,7 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_fulfillment_rejects_legacy_member_indexes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/fulfillment--content-payment.yaml"
+            path = root / "entities/context-fulfillment--content-payment.yaml"
             fulfillment = self.read_yaml(path)
             for field in (
                 "contractRef",
@@ -113,7 +113,7 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_orphan_request_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            (root / "entities/fulfillment--content-payment.yaml").unlink()
+            (root / "entities/context-fulfillment--content-payment.yaml").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(any("existing Fulfillment Context" in e for e in errors))
 
@@ -217,7 +217,7 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_contract_requires_exactly_two_party_roles(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/contract--content-subscription.yaml"
+            path = root / "entities/evidence-contract--content-subscription.yaml"
             contract = self.read_yaml(path)
             contract["roleRefs"] = ["role.subscriber"]
             self.write_yaml(path, contract)
@@ -228,7 +228,7 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_request_interval_is_defined_by_required_key_time_attributes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/request--content-payment.yaml"
+            path = root / "entities/evidence-fulfillment-request--content-payment.yaml"
             request = self.read_yaml(path)
             started = next(
                 a for a in request["attributes"] if a["name"] == "started_at"

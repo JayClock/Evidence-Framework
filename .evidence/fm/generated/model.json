@@ -435,7 +435,10 @@
       "id": "context.content",
       "kind": "domain",
       "label": "专栏内容",
-      "rootRefs": ["thing.column", "thing.chapter"],
+      "rootRefs": [
+        "thing.column",
+        "thing.chapter"
+      ],
       "type": "entity"
     },
     {
@@ -443,7 +446,9 @@
       "id": "context.mobile",
       "kind": "contract",
       "label": "移动支付协议",
-      "rootRefs": ["contract.mobile"],
+      "rootRefs": [
+        "contract.mobile"
+      ],
       "type": "entity"
     },
     {
@@ -451,7 +456,9 @@
       "id": "context.prepaid",
       "kind": "contract",
       "label": "预付费账户协议",
-      "rootRefs": ["contract.prepaid"],
+      "rootRefs": [
+        "contract.prepaid"
+      ],
       "type": "entity"
     },
     {
@@ -459,7 +466,9 @@
       "id": "context.subscription",
       "kind": "contract",
       "label": "专栏订阅",
-      "rootRefs": ["contract.subscription"],
+      "rootRefs": [
+        "contract.subscription"
+      ],
       "type": "entity"
     },
     {
@@ -495,7 +504,10 @@
       "kind": "contract",
       "label": "移动支付协议",
       "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
-      "roleRefs": ["role.mobile-user", "role.mobile-provider"],
+      "roleRefs": [
+        "role.mobile-user",
+        "role.mobile-provider"
+      ],
       "type": "entity"
     },
     {
@@ -531,7 +543,10 @@
       "kind": "contract",
       "label": "预付费账户协议",
       "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
-      "roleRefs": ["role.account-user", "role.account-provider"],
+      "roleRefs": [
+        "role.account-user",
+        "role.account-provider"
+      ],
       "type": "entity"
     },
     {
@@ -631,7 +646,10 @@
       "kind": "contract",
       "label": "专栏订阅合同",
       "notes": "一份合同绑定一个读者、一个专栏版本和一次全额付款要求。",
-      "roleRefs": ["role.reader", "role.publisher"],
+      "roleRefs": [
+        "role.reader",
+        "role.publisher"
+      ],
       "type": "entity"
     },
     {

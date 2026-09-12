@@ -289,7 +289,11 @@ class ContextScopeTests(unittest.TestCase):
                 }[item["type"]]
                 self.assertEqual(item, collection[item["id"]])
             self.assert_compiled_schema(compiled_document(model))
-            (root / "entities" / "confirmation--content-payment.yaml").unlink()
+            (
+                root
+                / "entities"
+                / "evidence-fulfillment-confirmation--content-payment.yaml"
+            ).unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any(
@@ -305,7 +309,7 @@ class ContextScopeTests(unittest.TestCase):
             shutil.copytree(
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
-            (root / "entities" / "fulfillment--content-payment.yaml").unlink()
+            (root / "entities" / "context-fulfillment--content-payment.yaml").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any("existing Fulfillment Context" in error for error in errors),

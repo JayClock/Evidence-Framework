@@ -206,7 +206,7 @@ class EvidenceTimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(FIXTURES / "valid-traceable-subscription", root)
-            path = root / "entities/request--content-payment.yaml"
+            path = root / "entities/evidence-fulfillment-request--content-payment.yaml"
             doc = yaml.safe_load(path.read_text())
             deadline = next(a for a in doc["attributes"] if a["name"] == "expired_at")
             del deadline["derivedByRuleRef"]
@@ -263,7 +263,10 @@ class EvidenceTimeTests(unittest.TestCase):
                 )
 
     def test_request_interval_is_owned_by_request_evidence(self):
-        path = FIXTURES / "valid-subscription/entities/request--content-payment.yaml"
+        path = (
+            FIXTURES
+            / "valid-subscription/entities/evidence-fulfillment-request--content-payment.yaml"
+        )
         doc = yaml.safe_load(path.read_text())
         self.assertEqual([], schema_errors(doc, "entity.schema.json"))
         attributes = {item["name"]: item for item in doc["attributes"]}
@@ -276,7 +279,7 @@ class EvidenceTimeTests(unittest.TestCase):
         fulfillment = yaml.safe_load(
             (
                 FIXTURES
-                / "valid-subscription/entities/fulfillment--content-payment.yaml"
+                / "valid-subscription/entities/context-fulfillment--content-payment.yaml"
             ).read_text()
         )
         fulfillment["requestInterval"] = {
@@ -363,7 +366,10 @@ class EvidenceTimeTests(unittest.TestCase):
                     attributes = {a["name"]: a for a in entity["attributes"]}
                     for name in TIMES[entity["kind"]]:
                         self.assertIn(name, attributes)
-            path = root / "entities/confirmation--content-payment.yaml"
+            path = (
+                root
+                / "entities/evidence-fulfillment-confirmation--content-payment.yaml"
+            )
             doc = yaml.safe_load(path.read_text())
             doc["attributes"] = [
                 a for a in doc["attributes"] if a["name"] != "confirmed_at"

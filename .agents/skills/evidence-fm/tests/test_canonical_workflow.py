@@ -32,6 +32,19 @@ class CanonicalModelTests(unittest.TestCase):
                 if isinstance(value, dict):
                     yield path, value
 
+    def test_entity_filenames_start_with_category_and_kind(self) -> None:
+        for path, entity in self.yaml_documents():
+            if entity.get("type") != "entity":
+                continue
+            category = entity["category"].replace("_", "-")
+            kind = entity["kind"].replace("_", "-")
+            object_suffix = entity["id"].split(".", 1)[-1].replace(".", "--")
+            self.assertEqual(
+                f"{category}-{kind}--{object_suffix}.yaml",
+                path.name,
+                path,
+            )
+
     def test_fulfillment_is_only_a_context_boundary(self) -> None:
         allowed = {
             "type",

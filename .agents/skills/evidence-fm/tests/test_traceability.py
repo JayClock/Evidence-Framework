@@ -162,7 +162,9 @@ class TraceabilityTests(unittest.TestCase):
     def test_attribute_lineage_cycle_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture(directory)
-            request_path = root / "entities" / "request--content-payment.yaml"
+            request_path = (
+                root / "entities" / "evidence-fulfillment-request--content-payment.yaml"
+            )
             request = self.read_yaml(request_path)
             started_at = next(
                 attribute

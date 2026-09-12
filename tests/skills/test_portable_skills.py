@@ -359,7 +359,9 @@ class IsolatedFMTests(unittest.TestCase):
     def test_missing_required_evidence_time_is_rejected_without_repair(self):
         self.example("payment")
         # Intentionally break a type definition, not a command or dependency.
-        request = next((self.model / "entities").glob("request--*.yaml"))
+        request = next(
+            (self.model / "entities").glob("evidence-fulfillment-request--*.yaml")
+        )
         text = request.read_text(encoding="utf-8")
         self.assertIn("name: started_at", text)
         request.write_text(
