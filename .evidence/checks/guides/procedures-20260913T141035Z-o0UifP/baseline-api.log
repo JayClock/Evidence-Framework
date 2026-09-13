@@ -1,0 +1,15 @@
+test_product_procurement_lifecycle_is_valid_and_complete (test_full_lifecycle_example.FullLifecycleExampleTest.test_product_procurement_lifecycle_is_valid_and_complete) ... FAIL
+
+======================================================================
+FAIL: test_product_procurement_lifecycle_is_valid_and_complete (test_full_lifecycle_example.FullLifecycleExampleTest.test_product_procurement_lifecycle_is_valid_and_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/evidence-procedures-baseline-ucCs4H/.agents/skills/evidence-api-design/tests/test_full_lifecycle_example.py", line 55, in test_product_procurement_lifecycle_is_valid_and_complete
+    self.assertEqual(
+AssertionError: 'open[8046 chars]0\n  \'/product-procurements/{procurementId}/d[39516 chars]se\n' != 'open[8046 chars]0\n  "/product-procurements/{procurementId}/de[39498 chars]se\n'
+Diff is 50621 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 1.995s
+
+FAILED (failures=1)

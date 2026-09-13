@@ -12,6 +12,7 @@
 - 业务来源：{{相关 FM/API/规则/场景的真实路径、源 ID、版本与审核状态}}
 - 工程基线：{{本任务相关架构/模块/质量属性/术语的路径、章节与版本，不复制全文}}
 - 工程做法：{{规范、howto、真实源码/测试范例的引用、加载顺序与适用限制；对应 procedureRefs}}
+- 工序实例：{{所选工序的路径/章节、触发条件与输入、合并与拆分理由、测试边界及产物；退出条件连接本任务 CHECK，不复制通用指南，不与 mode 混用}}
 - 前置产物：{{只读本任务需要的契约和就绪证据，不重做共享工作}}
 
 开始、恢复或纠偏后按项目前馈协议检查授权/目标、来源/审核、前置新鲜度、设计边界、做法/环境及 CHECK/停止条件。工程指南和代码变化也会使旧证据失效，不能只比较 FM/API 摘要。文件存在不代表完成，结构通过不代表语义就绪。
@@ -45,7 +46,7 @@ ruleRefs: []
 scenarioRefs: []
 storyRefs: [] # 只引用已有 US/AC/TP 等上游标识
 acceptanceRefs: []
-procedureRefs: [] # 本任务消费的规范/howto/范例路径（项目根相对）；章节、版本及用途在 Guides 中说明
+procedureRefs: [] # 本任务消费的工序/规范/howto/范例文件路径（项目根相对）；章节、版本、触发理由及用途在 Guides 中说明，不填工序标签
 dependencyUsage: [] # 只解释如何消费 compiled.dependsOn
 # - taskRef: <前置 taskKey>
 #   consumes: <产物/接口及定位>
@@ -54,7 +55,7 @@ files:
   create: [] # 项目根相对路径
   modify: []
   reuse: []
-steps: [] # 根据索引 mode 写普通实现、复验、设计、环境准备或人工操作
+steps: [] # 按所选工序实例化输入、产物和操作；根据索引 mode 写实现、复验、设计、环境准备或人工操作
 checks: []
 # - id: CHECK-<全计划唯一标识>
 #   purpose: <规则/风险及判断目的>
@@ -70,7 +71,7 @@ checks: []
 #   preparationTaskRefs: [<已在执行依赖中的 taskKey>]
 #   gapRefs: [<缺口标识>]
 #   evidenceRequired: <实际执行时需要保存的结果>
-completionCriteria: [] # 每项对应具体 CHECK，不以“文档存在”或自评替代验收
+completionCriteria: [] # 工序退出条件逐项对应具体 CHECK；不以通用工序、文档存在或自评替代本任务验收
 observedEvidence: [] # 规划时为空，只记录真实观察
 ```
 

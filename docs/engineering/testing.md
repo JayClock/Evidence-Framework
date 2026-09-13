@@ -17,6 +17,8 @@
 
 ## 按任务选择检查
 
+先按[测试工序](procedures.md)从业务变化确定测试边界、任务粒度和退出条件，再从下表选择命令并落实到具体 CHECK。工序不等于技术层清单；每个场景不必生成所有层的任务，领域、独立 HTTP、SQL 与真实装配证据不能互相冒充。
+
 | 层 / 工作  | 命令                                                                                | 关键依赖与预期                                                                 |
 | ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | domain     | `./gradlew :backend-domain:test`                                                    | 纯领域行为与固定边界；不证明 HTTP/SQL                                          |
@@ -24,9 +26,11 @@
 | persistent | `./gradlew :backend-persistent:test`                                                | 真实 H2/MyBatis/XML/Flyway、行数与事务回滚                                     |
 | app        | `./gradlew :backend:test`                                                           | 真实 HTTP + SQL、配置、profile 隔离及架构检查                                  |
 | frontend   | `npx nx test @evidence-poc/frontend`                                                | Vitest/jsdom/Testing Library；真实浏览器另行检查                               |
-| planning   | `python3 -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v` | 确定性身份、切片、依赖、覆盖与前馈模板契约                                     |
+| planning   | `python3 -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v` | 确定性身份、切片、依赖、覆盖、工序分支/汇合与前馈模板契约                      |
 | delivery   | `python3 -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查及执行/恢复前馈协议                                                |
-| Guides     | `npm run guides:test`                                                               | 本地链接检查器的正常、缺失、模板、扫描范围与只读回归                           |
+| Guides     | `npm run guides:test`                                                               | 本地链接检查器的正常、缺失、模板、扫描范围、只读回归与项目工序路由/说明结构    |
+
+工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
 
 ## CHECK 的最低证据
 

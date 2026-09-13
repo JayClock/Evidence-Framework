@@ -368,6 +368,98 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown unit"):
             compiler.compile_tasks(inv, mapping)
 
+    def test_procedure_fanout_owns_rules_once_and_joins_at_acceptance(self):
+        """Explicit procedure slicing, not automatic procedure inference."""
+        api = self.root / "api.yaml"
+        api.write_text(
+            yaml.safe_dump(
+                {
+                    "schemaVersion": "4.0",
+                    "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
+                    "capabilities": [
+                        {
+                            "id": "api.book.read",
+                            "resourceRef": "resource.book",
+                            "method": "GET",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        inv = compiler.inventory(self.fm, api)
+        platform_units = [u["key"] for u in inv["units"] if u["kind"] == "platform"]
+        api_units = [u["key"] for u in inv["units"] if u["kind"].startswith("api-")]
+        domain_units = [
+            u["key"] for u in inv["units"] if u["key"] not in platform_units + api_units
+        ]
+        refs = {
+            "platform": ("platform", "context.content", "profile.backend-modules"),
+            "domain": ("domain", "thing.book", "rule.title"),
+            "sql": ("mybatis", "thing.book", "design.book.storage"),
+            "http": ("api", "thing.book", "api.book.read"),
+            "acceptance": ("acceptance", "thing.book", "design.book.acceptance"),
+        }
+        keys = {name: compiler.key(*ref) for name, ref in refs.items()}
+
+        def group(name, units, dependencies):
+            concern, owner, operation = refs[name]
+            return {
+                "concern": concern,
+                "ownerRef": owner,
+                "operationRef": operation,
+                "fileName": f"book-{name}.md",
+                "unitKeys": units,
+                "dependsOn": [keys[dependency] for dependency in dependencies],
+            }
+
+        mapping = {
+            "designItems": [
+                {
+                    "id": "design.book.storage",
+                    "sourceRefs": ["thing.book"],
+                    "reason": "Map the book contract with XML without re-owning its rule.",
+                },
+                {
+                    "id": "design.book.acceptance",
+                    "sourceRefs": ["api.book.read"],
+                    "reason": "Verify the actual HTTP and SQL composition.",
+                },
+            ],
+            "groups": [
+                group("platform", platform_units, []),
+                group("domain", domain_units, ["platform"]),
+                group(
+                    "sql", [compiler.key("design", "design.book.storage")], ["domain"]
+                ),
+                group("http", api_units, ["domain"]),
+                group(
+                    "acceptance",
+                    [compiler.key("design", "design.book.acceptance")],
+                    ["sql", "http"],
+                ),
+            ],
+        }
+        plan = compiler.compile_tasks(inv, mapping)
+        self.assertTrue(plan["coverageComplete"])
+        tasks = {task["taskKey"]: task for task in plan["tasks"]}
+        self.assertEqual(tasks[keys["sql"]]["dependsOn"], [keys["domain"]])
+        self.assertEqual(tasks[keys["http"]]["dependsOn"], [keys["domain"]])
+        rule = compiler.key("rule", "rule.title")
+        self.assertEqual(
+            [task["taskKey"] for task in plan["tasks"] if rule in task["unitKeys"]],
+            [keys["domain"]],
+        )
+        self.assertEqual(plan["executionOrder"][-1], keys["acceptance"])
+        coverage = plan["apiCoverage"][0]
+        self.assertEqual(coverage["deliveryTaskRef"], keys["http"])
+        self.assertIn(keys["domain"], coverage["supportingTaskRefs"])
+        self.assertNotIn(keys["sql"], coverage["supportingTaskRefs"])
+        self.assertNotIn(keys["acceptance"], coverage["supportingTaskRefs"])
+        reversed_mapping = copy.deepcopy(mapping)
+        reversed_mapping["groups"].reverse()
+        self.assertEqual(plan, compiler.compile_tasks(inv, reversed_mapping))
+
     def test_api_role_variants_share_delivery_not_domain_duplicates(self):
         api = self.root / "api.yaml"
         body = {

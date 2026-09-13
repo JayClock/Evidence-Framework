@@ -50,6 +50,44 @@ class GuidesContractTests(unittest.TestCase):
             self.assertIn(concept, guides)
         self.assertLess(task.index("Guides"), task.index("## 3."))
 
+    def test_procedure_selection_precedes_grouping_without_extending_schema(self):
+        entry = self.document("SKILL.md")
+        selection = entry.index("按测试工序展开候选任务")
+        self.assertLess(selection, entry.index("concern: domain"))
+        protocol = self.document("references/guides.md")
+        for concept in (
+            "触发条件",
+            "测试边界",
+            "合并与拆分",
+            "退出条件",
+            "procedureRefs",
+            "不新增",
+            "工序不等于 mode",
+        ):
+            self.assertIn(concept, protocol)
+        index = self.document("assets/plan-index-template.md")
+        task = self.document("assets/task-plan-template.md")
+        self.assertIn("工序选择", index)
+        self.assertIn("工序实例", task)
+        self.assertIn("触发条件", task)
+        self.assertIn("测试边界", task)
+        for template in (index, task):
+            data = yaml.safe_load(re.findall(r"```yaml\n(.*?)\n```", template, re.S)[0])
+            self.assertNotIn("procedureId", data)
+            self.assertNotIn("procedureStatus", data)
+
+    def test_procedure_protocol_preserves_independent_test_boundaries(self):
+        protocol = self.document("references/guides.md")
+        for concept in (
+            "API 不因层次顺序依赖持久化",
+            "唯一拥有",
+            "design.*",
+            "checks",
+            "completionCriteria",
+            "coverageComplete",
+        ):
+            self.assertIn(concept, protocol)
+
     def test_protocol_is_required_and_keeps_consumer_project_independent(self):
         entry = self.document("SKILL.md")
         self.assertIn("[任务前馈装配协议](references/guides.md)", entry)

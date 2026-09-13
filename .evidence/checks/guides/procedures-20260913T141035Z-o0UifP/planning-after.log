@@ -1,0 +1,46 @@
+test_procedure_protocol_preserves_independent_test_boundaries (test_guides_contract.GuidesContractTests) ... ok
+test_procedure_selection_precedes_grouping_without_extending_schema (test_guides_contract.GuidesContractTests) ... ok
+test_protocol_is_required_and_keeps_consumer_project_independent (test_guides_contract.GuidesContractTests) ... ok
+test_task_has_business_and_engineering_guides_before_action (test_guides_contract.GuidesContractTests) ... ok
+test_templates_preserve_single_yaml_and_state_ownership (test_guides_contract.GuidesContractTests) ... ok
+test_actor_and_proof_roles_are_distinct_units (test_task_compiler.CompilerTests) ... ok
+test_api_role_variants_share_delivery_not_domain_duplicates (test_task_compiler.CompilerTests) ... ok
+test_architecture_override_is_rejected (test_task_compiler.CompilerTests) ... ok
+test_cli_compiles_readable_paths_without_writing_plan_files (test_task_compiler.CompilerTests) ... ok
+test_cli_emits_json_without_writing_plan (test_task_compiler.CompilerTests) ... ok
+test_cli_reads_index_slicing_and_fails_incomplete_coverage (test_task_compiler.CompilerTests) ... ok
+test_design_item_requires_known_sources (test_task_compiler.CompilerTests) ... ok
+test_deterministic_dag_and_cycle_rejection (test_task_compiler.CompilerTests) ... ok
+test_duplicate_group_and_unit_ownership_rejected (test_task_compiler.CompilerTests) ... ok
+test_duplicate_yaml_key_and_duplicate_id_rejected (test_task_compiler.CompilerTests) ... ok
+test_external_disposition_needs_reason_and_does_not_erase_unit (test_task_compiler.CompilerTests) ... ok
+test_file_move_and_label_change_keep_keys (test_task_compiler.CompilerTests) ... ok
+test_file_name_is_required_and_has_no_automatic_fallback (test_task_compiler.CompilerTests) ... ok
+test_file_name_rejects_unsafe_or_nonportable_values (test_task_compiler.CompilerTests) ... ok
+test_file_names_are_unique_across_tasks_and_portable_equivalents (test_task_compiler.CompilerTests) ... ok
+test_free_task_key_cannot_override_computed_identity (test_task_compiler.CompilerTests) ... ok
+test_generated_files_are_not_sources (test_task_compiler.CompilerTests) ... ok
+test_generic_backend_organization_is_mandatory_platform_work (test_task_compiler.CompilerTests) ... ok
+test_generic_second_domain_without_contracts (test_task_compiler.CompilerTests) ... ok
+test_group_schema_rejects_unrecognized_fields (test_task_compiler.CompilerTests) ... ok
+test_inventory_stable_and_read_only (test_task_compiler.CompilerTests) ... ok
+test_key_encoding_unambiguous (test_task_compiler.CompilerTests) ... ok
+test_keys_and_paths_do_not_depend_on_members_order (test_task_compiler.CompilerTests) ... ok
+test_missing_fm_reference_rejected (test_task_compiler.CompilerTests) ... ok
+test_modular_architecture_work_cannot_be_excluded (test_task_compiler.CompilerTests) ... ok
+test_modular_monolith_profile_and_platform_are_consistent (test_task_compiler.CompilerTests) ... ok
+test_multiple_contexts_do_not_create_deployment_or_remote_units (test_task_compiler.CompilerTests) ... ok
+test_partial_mapping_reports_gaps_not_completion (test_task_compiler.CompilerTests) ... ok
+test_procedure_fanout_owns_rules_once_and_joins_at_acceptance (test_task_compiler.CompilerTests)
+Explicit procedure slicing, not automatic procedure inference. ... ok
+test_profile_override_and_unknown_units_rejected (test_task_compiler.CompilerTests) ... ok
+test_profile_work_cannot_be_disposed (test_task_compiler.CompilerTests) ... ok
+test_readable_file_names_and_exact_byte_limit_are_accepted (test_task_compiler.CompilerTests) ... ok
+test_renaming_files_preserves_dependency_and_api_identity (test_task_compiler.CompilerTests) ... ok
+test_safe_yaml_rejects_python_tags (test_task_compiler.CompilerTests) ... ok
+test_source_cycles_are_not_execution_cycles (test_task_compiler.CompilerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 1.029s
+
+OK

@@ -12,6 +12,51 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { checkDocuments, collectDocuments } from './check.mjs';
 
+test('project procedures are routed into planning and reference existing checks', () => {
+  const document = (path) =>
+    readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
+  const guide = document('docs/engineering/procedures.md');
+  const routes = document('docs/guides/index.md');
+  const planning = routes
+    .split('\n')
+    .find((line) => /^\| 任务规划\s*\|/.test(line));
+  assert.ok(planning?.includes('../engineering/procedures.md'));
+  assert.ok(
+    document('docs/engineering/testing.md').includes('(procedures.md)'),
+  );
+  for (const section of [
+    '边界与契约设计',
+    '领域行为',
+    '持久化适配',
+    'HTTP 契约',
+    '应用装配与模块协作',
+    '前端交互',
+    '业务旅程验收',
+  ]) {
+    const heading = `### ${section}\n`;
+    assert.ok(guide.includes(heading), `missing procedure: ${section}`);
+    const body = guide.split(heading)[1].split(/\n##/)[0];
+    for (const field of [
+      '触发与输入',
+      '粒度与产物',
+      '测试边界与退出',
+      '前置与转向',
+    ]) {
+      assert.ok(body.includes(field), `${section}: missing ${field}`);
+    }
+  }
+  for (const reference of [
+    '(testing.md)',
+    '(examples.md)',
+    '../architecture/modules.md',
+  ]) {
+    assert.ok(
+      guide.includes(reference),
+      `missing authority link: ${reference}`,
+    );
+  }
+});
+
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), 'evidence-guides-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));

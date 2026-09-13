@@ -70,7 +70,9 @@ python3 "$SKILL_DIR/scripts/task_compiler.py" inventory --fm "$PROJECT_ROOT/.evi
 
 ### 3. 明确切片、归属与文件名
 
-先选可验收业务结果，再识别最小共享基础与实现工作。每组明确：
+先选可验收业务结果，再按测试工序展开候选任务：从项目 Guides 定位工序指南或等价测试策略，按[前馈协议](references/guides.md)明确触发条件、测试边界、合并与拆分、退出条件和前置契约。工序由 Agent 应用于具体场景，编译器不自动推断；不按实体或场景复制整套技术层任务。
+
+识别最小共享基础与实现工作，将工序实例写入任务 Guides，将来源与做法引用放入 procedureRefs，将验证要求落实到 checks/completionCriteria。工序不等于 mode 或 concern，不增加计划字段或第二套状态。每组明确：
 
 ```yaml
 concern: domain
