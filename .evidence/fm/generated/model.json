@@ -435,10 +435,7 @@
       "id": "context.content",
       "kind": "domain",
       "label": "专栏内容",
-      "rootRefs": [
-        "thing.column",
-        "thing.chapter"
-      ],
+      "rootRefs": ["thing.column", "thing.chapter"],
       "type": "entity"
     },
     {
@@ -446,9 +443,7 @@
       "id": "context.mobile",
       "kind": "contract",
       "label": "移动支付协议",
-      "rootRefs": [
-        "contract.mobile"
-      ],
+      "rootRefs": ["contract.mobile"],
       "type": "entity"
     },
     {
@@ -456,9 +451,7 @@
       "id": "context.prepaid",
       "kind": "contract",
       "label": "预付费账户协议",
-      "rootRefs": [
-        "contract.prepaid"
-      ],
+      "rootRefs": ["contract.prepaid"],
       "type": "entity"
     },
     {
@@ -466,9 +459,7 @@
       "id": "context.subscription",
       "kind": "contract",
       "label": "专栏订阅",
-      "rootRefs": [
-        "contract.subscription"
-      ],
+      "rootRefs": ["contract.subscription"],
       "type": "entity"
     },
     {
@@ -504,10 +495,7 @@
       "kind": "contract",
       "label": "移动支付协议",
       "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
-      "roleRefs": [
-        "role.mobile-user",
-        "role.mobile-provider"
-      ],
+      "roleRefs": ["role.mobile-user", "role.mobile-provider"],
       "type": "entity"
     },
     {
@@ -543,10 +531,7 @@
       "kind": "contract",
       "label": "预付费账户协议",
       "notes": "服务协议可支持多次独立支付请求；资金服务与专栏订阅的责任分别承担。",
-      "roleRefs": [
-        "role.account-user",
-        "role.account-provider"
-      ],
+      "roleRefs": ["role.account-user", "role.account-provider"],
       "type": "entity"
     },
     {
@@ -646,10 +631,7 @@
       "kind": "contract",
       "label": "专栏订阅合同",
       "notes": "一份合同绑定一个读者、一个专栏版本和一次全额付款要求。",
-      "roleRefs": [
-        "role.reader",
-        "role.publisher"
-      ],
+      "roleRefs": ["role.reader", "role.publisher"],
       "type": "entity"
     },
     {
@@ -846,26 +828,10 @@
     },
     {
       "category": "participant",
-      "id": "party.mobile-provider",
+      "id": "party.user",
       "kind": "party",
-      "label": "移动支付机构",
-      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
-      "type": "entity"
-    },
-    {
-      "category": "participant",
-      "id": "party.publisher",
-      "kind": "party",
-      "label": "专栏运营企业",
-      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
-      "type": "entity"
-    },
-    {
-      "category": "participant",
-      "id": "party.reader",
-      "kind": "party",
-      "label": "订阅读者",
-      "notes": "跨合同保持主体身份；角色扮演不自动扩大经办和访问权限。",
+      "label": "用户",
+      "notes": "同一用户跨合同保持主体身份，分别扮演读者、支付用户和账户使用方；角色扮演不自动扩大经办和访问权限。",
       "type": "entity"
     },
     {
@@ -1617,7 +1583,7 @@
       "contextRef": "context.prepaid",
       "id": "role.account-provider",
       "kind": "party",
-      "label": "账户服务方",
+      "label": "专栏平台",
       "type": "entity"
     },
     {
@@ -1740,7 +1706,7 @@
       "contextRef": "context.subscription",
       "id": "role.publisher",
       "kind": "party",
-      "label": "专栏运营方",
+      "label": "专栏平台",
       "type": "entity"
     },
     {
@@ -2191,14 +2157,14 @@
       "id": "relation.contract-restore",
       "kind": "precedes",
       "label": "依据双方协议提出免费恢复",
-      "notes": "数量约束作用于同一父业务实例；结果尚未形成时允许零份，重复通知不得形成第二份有效结果。",
+      "notes": "数量约束作用于同一原订阅合同；同一合同可经历多次重新上架活动，每次活动的恢复唯一性由重新上架记录与恢复请求之间的关系约束。",
       "sourceCardinality": {
         "max": 1,
         "min": 1
       },
       "sourceRef": "contract.subscription",
       "targetCardinality": {
-        "max": 1,
+        "max": "many",
         "min": 0
       },
       "targetRef": "request.restore",
@@ -2234,14 +2200,6 @@
       "label": "明确本请求涉及的专栏",
       "sourceRef": "request.mobile",
       "targetRef": "thing.column",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.mobile-provider-as-mobile-provider",
-      "kind": "plays_role",
-      "label": "同一主体承担支付机构责任",
-      "sourceRef": "party.mobile-provider",
-      "targetRef": "role.mobile-provider",
       "type": "relationship"
     },
     {
@@ -2324,46 +2282,6 @@
         "min": 0
       },
       "targetRef": "confirmation.prepaid",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.publisher-as-account-provider",
-      "kind": "plays_role",
-      "label": "同一主体承担账户服务方责任",
-      "sourceRef": "party.publisher",
-      "targetRef": "role.account-provider",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.publisher-as-publisher",
-      "kind": "plays_role",
-      "label": "同一主体承担专栏运营方责任",
-      "sourceRef": "party.publisher",
-      "targetRef": "role.publisher",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.reader-as-account-user",
-      "kind": "plays_role",
-      "label": "同一主体承担账户使用方责任",
-      "sourceRef": "party.reader",
-      "targetRef": "role.account-user",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.reader-as-mobile-user",
-      "kind": "plays_role",
-      "label": "同一主体承担支付用户责任",
-      "sourceRef": "party.reader",
-      "targetRef": "role.mobile-user",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.reader-as-reader",
-      "kind": "plays_role",
-      "label": "同一主体承担读者责任",
-      "sourceRef": "party.reader",
-      "targetRef": "role.reader",
       "type": "relationship"
     },
     {
@@ -2451,7 +2369,16 @@
       "id": "relation.restore-basis-first",
       "kind": "precedes",
       "label": "必需证明先形成，才能提出本次主张",
+      "notes": "每份恢复请求只对应一次重新上架活动；同一次活动下至多形成一份有效恢复请求。",
+      "sourceCardinality": {
+        "max": 1,
+        "min": 1
+      },
       "sourceRef": "evidence.relaunch",
+      "targetCardinality": {
+        "max": 1,
+        "min": 0
+      },
       "targetRef": "request.restore",
       "type": "relationship"
     },
@@ -2494,6 +2421,30 @@
       "label": "合同订阅标的",
       "sourceRef": "contract.subscription",
       "targetRef": "thing.column",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.user-as-account-user",
+      "kind": "plays_role",
+      "label": "同一用户在账户上下文中扮演账户使用方",
+      "sourceRef": "party.user",
+      "targetRef": "role.account-user",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.user-as-mobile-user",
+      "kind": "plays_role",
+      "label": "同一用户在移动支付上下文中扮演支付用户",
+      "sourceRef": "party.user",
+      "targetRef": "role.mobile-user",
+      "type": "relationship"
+    },
+    {
+      "id": "relation.user-as-reader",
+      "kind": "plays_role",
+      "label": "用户在订阅上下文中扮演读者",
+      "sourceRef": "party.user",
+      "targetRef": "role.reader",
       "type": "relationship"
     }
   ],

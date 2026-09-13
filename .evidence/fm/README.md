@@ -30,7 +30,7 @@ fm/
 - [订阅合同](contexts/subscription/contract.yaml)、[移动支付协议](contexts/mobile/contract.yaml)、[预付费账户协议](contexts/prepaid/contract.yaml)及[内容领域](contexts/content/context.yaml)分别保留业务边界。
 - `contexts/` 与 `participants/` 共含 41 个业务对象；两处“专栏平台”角色仍使用各自 ID 和合同归属。
 - 各履约目录以 `context.yaml` 表达责任边界，`request.yaml`、实际存在的 `confirmation.yaml`、`evidence/`、`roles/` 和 `rules/` 表达该履约的凭证与规则。订阅付款通过证明角色判断结果，不补造本地确认类型。
-- 共 41 条关系：24 条放在两端最近的共同上下文的 `relationships/`，17 条跨独立上下文或主体扮演关系放在根 `relationships/`，不复制定义。
+- 共 41 条关系：24 条放在两端最近的共同上下文的 `relationships/`，17 条跨独立上下文或主体扮演关系放在根 `relationships/`，不复制定义。免费恢复按两层基数表达：一份原订阅可对应多次恢复请求，但同一次重新上架活动至多对应一份有效恢复请求。
 - 共 25 条 CEL 规则，就近放在所属履约的 `rules/` 中，包含关键值计算、访问资格、履约完成和违约判断。
 - `validation/instances/`：27 份回放单据。
 - `validation/scenarios/`：18 个正常、边界和异常场景。
@@ -46,7 +46,7 @@ fm/
 
 按本次用户决定，不展开专栏运营企业和移动支付机构的 Party 节点：删除 `party.publisher`、`party.mobile-provider` 及其三条 `plays_role` 关系，保留 `role.publisher`、`role.account-provider`、`role.mobile-provider` 及原有合同权责。省略扮演者不表示现实中没有责任主体。方法依据为《使用履约建模法实施面向业务设计（中篇直播版）》第 55 页：在不影响分析和理解的前提下，可以选择性标注扮演者。
 
-现有 `generated/` 和 API 生成批次尚未重建；后续消费应使用当前源文件重新校验并按需生成。
+`generated/` 是从当前源 YAML 和 validation 重建的派生产物；后续消费仍应重新校验当前源文件。
 
 ## 校验
 

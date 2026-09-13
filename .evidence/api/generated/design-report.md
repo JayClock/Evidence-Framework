@@ -18,9 +18,9 @@
 - 订阅费支付请求（singleton）：`/subscriptions/{subscriptionId}/payment` → `request.payment`
 - 断更退款请求（singleton）：`/subscriptions/{subscriptionId}/refund` → `request.refund`
 - 退款到账凭证（singleton）：`/subscriptions/{subscriptionId}/refund/result` → `confirmation.refund`
-- 重新上架记录（collection）：`/relaunches` / `/relaunches/{relaunchId}` → `evidence.relaunch`
-- 免费恢复请求（singleton）：`/subscriptions/{subscriptionId}/restoration` → `request.restore`
-- 免费恢复凭证（singleton）：`/subscriptions/{subscriptionId}/restoration/result` → `confirmation.restore`
+- 重新上架记录（collection）：`/subscriptions/{subscriptionId}/relaunches` / `/subscriptions/{subscriptionId}/relaunches/{relaunchId}` → `evidence.relaunch`
+- 免费恢复请求（singleton）：`/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration` → `request.restore`
+- 免费恢复凭证（singleton）：`/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result` → `confirmation.restore`
 - 专栏订阅合同（collection）：`/subscriptions` / `/subscriptions/{subscriptionId}` → `contract.subscription`
 
 ## 整体模型覆盖
@@ -37,12 +37,8 @@
 - `contract.subscription`：api；接口：capability.read-subscription-publisher, capability.read-subscription-reader, capability.register-subscription-reader
 - `evidence.discontinuation`：api；接口：capability.read-discontinuation-publisher, capability.read-discontinuation-reader, capability.register-discontinuation-publisher
 - `evidence.relaunch`：api；接口：capability.read-relaunch-publisher, capability.read-relaunch-reader, capability.register-relaunch-publisher
-- `party.mobile-provider`：internal；接口：—
-  - 依据：主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
-- `party.publisher`：internal；接口：—
-  - 依据：主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
-- `party.reader`：internal；接口：—
-  - 依据：主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
+- `party.user`：internal；接口：—
+  - 依据：用户用于跨合同身份绑定，分别扮演各上下文的角色；不提供用户档案管理接口。
 - `request.access`：api；接口：capability.read-access-publisher, capability.read-access-reader, capability.register-access-reader
 - `request.mobile`：external；接口：—
   - 依据：移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
@@ -75,12 +71,12 @@
 - `POST /subscriptions/{subscriptionId}/refund`：capability.register-refund-reader
 - `GET /subscriptions/{subscriptionId}/refund/result`：capability.read-refund-result-publisher, capability.read-refund-result-reader
 - `POST /subscriptions/{subscriptionId}/refund/result`：capability.register-refund-result-publisher
-- `POST /relaunches`：capability.register-relaunch-publisher
-- `GET /relaunches/{relaunchId}`：capability.read-relaunch-publisher, capability.read-relaunch-reader
-- `GET /subscriptions/{subscriptionId}/restoration`：capability.read-restore-publisher, capability.read-restore-reader
-- `POST /subscriptions/{subscriptionId}/restoration`：capability.register-restore-reader
-- `GET /subscriptions/{subscriptionId}/restoration/result`：capability.read-restore-result-publisher, capability.read-restore-result-reader
-- `POST /subscriptions/{subscriptionId}/restoration/result`：capability.register-restore-result-publisher
+- `POST /subscriptions/{subscriptionId}/relaunches`：capability.register-relaunch-publisher
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}`：capability.read-relaunch-publisher, capability.read-relaunch-reader
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration`：capability.read-restore-publisher, capability.read-restore-reader
+- `POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration`：capability.register-restore-reader
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result`：capability.read-restore-result-publisher, capability.read-restore-result-reader
+- `POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result`：capability.register-restore-result-publisher
 - `POST /subscriptions`：capability.register-subscription-reader
 - `GET /subscriptions/{subscriptionId}`：capability.read-subscription-publisher, capability.read-subscription-reader
 

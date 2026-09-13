@@ -11,10 +11,7 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.subscription",
-      "instance.mobile-result"
-    ],
+    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -34,10 +31,7 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.subscription",
-      "instance.mobile-result"
-    ],
+    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -56,9 +50,7 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.access-mobile"
-    ],
+    "evidenceRefs": ["instance.access-mobile"],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -77,9 +69,7 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.access-mobile"
-    ],
+    "evidenceRefs": ["instance.access-mobile"],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -154,10 +144,7 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-agreement",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "payment_request_id": "PAY-001",
@@ -180,10 +167,7 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-agreement",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "payment_request_id": "PAY-001",
@@ -203,10 +187,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-request",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -225,10 +206,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-request",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -245,9 +223,7 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -263,9 +239,7 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -281,9 +255,7 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -300,9 +272,7 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -368,9 +338,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.refund"
-    ],
+    "evidenceRefs": ["instance.refund"],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -387,9 +355,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.refund"
-    ],
+    "evidenceRefs": ["instance.refund"],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -399,15 +365,13 @@
   "representation.read-relaunch-publisher": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -416,15 +380,13 @@
   "representation.read-relaunch-reader": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -433,10 +395,10 @@
   "representation.read-restore-publisher": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -456,10 +418,10 @@
   "representation.read-restore-reader": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -479,16 +441,14 @@
   "representation.read-restore-result-publisher": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.restore"
-    ],
+    "evidenceRefs": ["instance.restore"],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -497,16 +457,14 @@
   "representation.read-restore-result-reader": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.restore"
-    ],
+    "evidenceRefs": ["instance.restore"],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -560,10 +518,7 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.subscription",
-      "instance.mobile-result"
-    ],
+    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -582,9 +537,7 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": [
-      "instance.access-mobile"
-    ],
+    "evidenceRefs": ["instance.access-mobile"],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -613,10 +566,7 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-agreement",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "pending",
     "payment_request_id": "PAY-001",
@@ -636,10 +586,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.prepaid-request",
-      "instance.payment"
-    ],
+    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -656,9 +603,7 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -674,9 +619,7 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -718,9 +661,7 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": [
-      "instance.refund"
-    ],
+    "evidenceRefs": ["instance.refund"],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -730,15 +671,13 @@
   "representation.register-relaunch-publisher": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.subscription"
-    ],
+    "evidenceRefs": ["instance.subscription"],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -747,10 +686,10 @@
   "representation.register-restore-reader": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -770,16 +709,14 @@
   "representation.register-restore-result-publisher": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": [
-      "instance.restore"
-    ],
+    "evidenceRefs": ["instance.restore"],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,

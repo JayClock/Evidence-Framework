@@ -4,3 +4,10 @@ kind: precedes
 sourceRef: evidence.relaunch
 targetRef: request.restore
 label: 必需证明先形成，才能提出本次主张
+sourceCardinality:
+  min: 1
+  max: 1
+targetCardinality:
+  min: 0
+  max: 1
+notes: 每份恢复请求只对应一次重新上架活动；同一次活动下至多形成一份有效恢复请求。

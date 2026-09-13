@@ -1,6 +1,11 @@
 schemaVersion: '4.0'
 id: api.column-subscription
-sources: []
+sources:
+  - id: source.restore-per-relaunch
+    path: .evidence/discovery.md
+    locator: B07｜实例归属和办理权限
+    quote: >-
+      同一订阅允许保存多份断更核验及重新上架记录以保留历史，各次形成均有独立身份，但全额退款和同次活动恢复不可重复。
 decisions:
   - id: decision.identities
     category: identity
@@ -8,8 +13,8 @@ decisions:
     reasoning: 凭证始终有自己的身份；单例路径不授权覆盖或删除旧证据。
   - id: decision.navigation
     category: navigation
-    statement: 订阅、预付费账户、专栏和章节保留独立根，跨边界通过链接发现
-    reasoning: 请求沿合同根归属；证明角色不成为独立写入资源。
+    statement: 订阅、预付费账户、专栏和章节保留独立根；重新上架活动及免费恢复沿原订阅定位
+    reasoning: 恢复按原订阅中的重新上架活动确定实例；证明角色不成为独立写入资源。
 nonApiActivities:
   - entityRef: confirmation.mobile
     handling: external
@@ -18,12 +23,6 @@ nonApiActivities:
         - confirmation.mobile
       reasoning: >-
         移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-  - entityRef: party.publisher
-    handling: internal
-    basis:
-      fmRefs:
-        - party.publisher
-      reasoning: 主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
   - entityRef: request.mobile
     handling: external
     basis:
@@ -44,12 +43,6 @@ nonApiActivities:
         - contract.mobile
       reasoning: >-
         移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-  - entityRef: party.mobile-provider
-    handling: internal
-    basis:
-      fmRefs:
-        - party.mobile-provider
-      reasoning: 主体用于跨合同身份绑定，不提供人员或机构档案管理接口。
 resources:
   - id: resource.subscription
     businessName: 专栏订阅合同
@@ -135,12 +128,13 @@ resources:
     basis:
       fmRefs:
         - request.restore
-        - contract.subscription
-      reasoning: 以业务编号和本人参与的合同确定实例；业务凭证仅追加。
-    parentRef: resource.subscription
+        - evidence.relaunch
+        - relation.restore-basis-first
+      reasoning: 同一次重新上架活动下至多一份有效恢复请求；不同活动分别定位。
+    parentRef: resource.relaunch
     parentBindingRef: binding.parent-restore
     cardinality:
-      relationshipRef: relation.contract-restore
+      relationshipRef: relation.restore-basis-first
     identity:
       kind: parent_scoped
   - id: resource.debit
@@ -246,7 +240,17 @@ resources:
     basis:
       fmRefs:
         - evidence.relaunch
-      reasoning: 以业务编号和本人参与的合同确定实例；业务凭证仅追加。
+        - contract.subscription
+      reasoning: 同一原订阅可有多次重新上架活动，每次活动以独立编号定位。
+      sourceRefs:
+        - source.restore-per-relaunch
+    parentRef: resource.subscription
+    parentBindingRef: binding.parent-relaunch
+    cardinality:
+      max: many
+      sourceRefs:
+        - source.restore-per-relaunch
+      reasoning: 同一原订阅允许保存多份重新上架记录，各次形成均有独立身份。
     identity:
       kind: api_resource_id
       parameter: relaunchId
@@ -408,16 +412,27 @@ bindings:
         - role.publisher
       reasoning: >-
         调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.parent-restore
+  - id: binding.parent-relaunch
     kind: parent_child
     parentResourceRef: resource.subscription
+    childResourceRef: resource.relaunch
+    basis:
+      fmRefs:
+        - contract.subscription
+        - evidence.relaunch
+      reasoning: 用重新上架记录中的原订阅、读者和专栏编号核验活动归属，不仅凭 URI 认定。
+      sourceRefs:
+        - source.restore-per-relaunch
+  - id: binding.parent-restore
+    kind: parent_child
+    parentResourceRef: resource.relaunch
     childResourceRef: resource.restore
     basis:
       fmRefs:
+        - evidence.relaunch
         - request.restore
-        - contract.subscription
-        - relation.contract-restore
-      reasoning: 用相同合同、读者及请求编号与既有证据引用核验父子归属，不仅凭URI认定。
+        - relation.restore-basis-first
+      reasoning: 用同一原订阅、读者、专栏及重新上架版本核验活动与恢复请求的归属。
   - id: binding.caller-restore-reader
     kind: caller_role
     roleRef: role.reader
@@ -1723,11 +1738,14 @@ capabilities:
       - scenario.api-restore-charged
     bindingRefs:
       - binding.caller-relaunch-publisher
+      - binding.parent-relaunch
     basis:
       fmRefs:
         - evidence.relaunch
         - role.publisher
       reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
+      sourceRefs:
+        - source.restore-per-relaunch
   - id: capability.read-relaunch-reader
     actorRoleRef: role.reader
     resourceRef: resource.relaunch
@@ -1743,11 +1761,14 @@ capabilities:
       - scenario.api-restore-charged
     bindingRefs:
       - binding.caller-relaunch-reader
+      - binding.parent-relaunch
     basis:
       fmRefs:
         - evidence.relaunch
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
+      sourceRefs:
+        - source.restore-per-relaunch
   - id: capability.read-relaunch-publisher
     actorRoleRef: role.publisher
     resourceRef: resource.relaunch
@@ -1763,11 +1784,14 @@ capabilities:
       - scenario.api-restore-charged
     bindingRefs:
       - binding.caller-relaunch-publisher
+      - binding.parent-relaunch
     basis:
       fmRefs:
         - evidence.relaunch
         - role.publisher
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
+      sourceRefs:
+        - source.restore-per-relaunch
   - id: capability.read-column-reader
     actorRoleRef: role.reader
     resourceRef: resource.column
@@ -3751,6 +3775,7 @@ http:
         fulfillmentStatus: pending
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links:
         - rel: result
           kind: navigation
@@ -3759,6 +3784,9 @@ http:
             subscriptionId:
               kind: path
               name: subscriptionId
+            relaunchId:
+              kind: path
+              name: relaunchId
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
@@ -3848,6 +3876,7 @@ http:
         fulfillmentStatus: completed
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links:
         - rel: result
           kind: navigation
@@ -3856,6 +3885,9 @@ http:
             subscriptionId:
               kind: path
               name: subscriptionId
+            relaunchId:
+              kind: path
+              name: relaunchId
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
@@ -3945,6 +3977,7 @@ http:
         fulfillmentStatus: completed
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links:
         - rel: result
           kind: navigation
@@ -3953,6 +3986,9 @@ http:
             subscriptionId:
               kind: path
               name: subscriptionId
+            relaunchId:
+              kind: path
+              name: relaunchId
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
@@ -4954,6 +4990,7 @@ http:
           - instance.restore
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links: []
       cache:
         mode: no-store
@@ -5037,6 +5074,7 @@ http:
           - instance.restore
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links: []
       cache:
         mode: no-store
@@ -5120,6 +5158,7 @@ http:
           - instance.restore
       exampleParameters:
         subscriptionId: SUB-20261001-001
+        relaunchId: RELAUNCH-001
       links: []
       cache:
         mode: no-store
@@ -5769,6 +5808,7 @@ http:
         evidenceRefs:
           - instance.subscription
       exampleParameters:
+        subscriptionId: SUB-20261001-001
         relaunchId: RELAUNCH-001
       links: []
       cache:
@@ -5845,6 +5885,7 @@ http:
         evidenceRefs:
           - instance.subscription
       exampleParameters:
+        subscriptionId: SUB-20261001-001
         relaunchId: RELAUNCH-001
       links: []
       cache:
@@ -5921,6 +5962,7 @@ http:
         evidenceRefs:
           - instance.subscription
       exampleParameters:
+        subscriptionId: SUB-20261001-001
         relaunchId: RELAUNCH-001
       links: []
       cache:
@@ -6776,7 +6818,7 @@ http:
           representationRef: representation.register-restore-reader
           headers:
             Location: >-
-              /subscriptions/SUB-20261001-001/restoration
+              /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -7377,7 +7419,7 @@ http:
             representation.register-restore-result-publisher
           headers:
             Location: >-
-              /subscriptions/SUB-20261001-001/restoration/result
+              /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -7825,7 +7867,7 @@ http:
           representationRef: >-
             representation.register-relaunch-publisher
           headers:
-            Location: /relaunches/RELAUNCH-001
+            Location: /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -8458,6 +8500,12 @@ http:
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
             - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
+            - target: path
               name: subscriptionId
               source:
                 kind: literal
@@ -8530,6 +8578,12 @@ http:
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
             - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
+            - target: path
               name: subscriptionId
               source:
                 kind: literal
@@ -8543,6 +8597,12 @@ http:
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
+            - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
             - target: path
               name: subscriptionId
               source:
@@ -8947,6 +9007,12 @@ http:
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
             - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
+            - target: path
               name: subscriptionId
               source:
                 kind: literal
@@ -9030,6 +9096,12 @@ http:
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
             - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
+            - target: path
               name: subscriptionId
               source:
                 kind: literal
@@ -9044,6 +9116,12 @@ http:
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
+            - target: path
+              name: relaunchId
+              source:
+                kind: literal
+                value: RELAUNCH-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
             - target: path
               name: subscriptionId
               source:
@@ -9320,6 +9398,12 @@ http:
           expectStatus: 201
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
+            - target: path
+              name: subscriptionId
+              source:
+                kind: literal
+                value: SUB-20261001-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
             - target: body
               name: subscription_id
               source:
@@ -9391,6 +9475,12 @@ http:
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
             - target: path
+              name: subscriptionId
+              source:
+                kind: literal
+                value: SUB-20261001-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
+            - target: path
               name: relaunchId
               source:
                 kind: literal
@@ -9404,6 +9494,12 @@ http:
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
+            - target: path
+              name: subscriptionId
+              source:
+                kind: literal
+                value: SUB-20261001-001
+                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
             - target: path
               name: relaunchId
               source:

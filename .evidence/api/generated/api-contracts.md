@@ -863,10 +863,10 @@
 ]
 ```
 
-## GET /relaunches/{relaunchId}
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}
 
 - 能力：`capability.read-relaunch-publisher`；角色：`role.publisher`
-- 实例约束：`binding.caller-relaunch-publisher`
+- 实例约束：`binding.caller-relaunch-publisher, binding.parent-relaunch`
 - 幂等：`not_applicable`；并发：`none`
 
 ### 请求
@@ -904,10 +904,10 @@
 ]
 ```
 
-## GET /relaunches/{relaunchId}
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}
 
 - 能力：`capability.read-relaunch-reader`；角色：`role.reader`
-- 实例约束：`binding.caller-relaunch-reader`
+- 实例约束：`binding.caller-relaunch-reader, binding.parent-relaunch`
 - 幂等：`not_applicable`；并发：`none`
 
 ### 请求
@@ -945,7 +945,7 @@
 ]
 ```
 
-## GET /subscriptions/{subscriptionId}/restoration
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration
 
 - 能力：`capability.read-restore-publisher`；角色：`role.publisher`
 - 实例约束：`binding.caller-restore-publisher, binding.parent-restore`
@@ -986,7 +986,7 @@
 ]
 ```
 
-## GET /subscriptions/{subscriptionId}/restoration
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration
 
 - 能力：`capability.read-restore-reader`；角色：`role.reader`
 - 实例约束：`binding.caller-restore-reader, binding.parent-restore`
@@ -1027,7 +1027,7 @@
 ]
 ```
 
-## GET /subscriptions/{subscriptionId}/restoration/result
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result
 
 - 能力：`capability.read-restore-result-publisher`；角色：`role.publisher`
 - 实例约束：`binding.caller-restore-result-publisher, binding.parent-restore-result`
@@ -1068,7 +1068,7 @@
 ]
 ```
 
-## GET /subscriptions/{subscriptionId}/restoration/result
+## GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result
 
 - 能力：`capability.read-restore-result-reader`；角色：`role.reader`
 - 实例约束：`binding.caller-restore-result-reader, binding.parent-restore-result`
@@ -2414,10 +2414,10 @@
 ]
 ```
 
-## POST /relaunches
+## POST /subscriptions/{subscriptionId}/relaunches
 
 - 能力：`capability.register-relaunch-publisher`；角色：`role.publisher`
-- 实例约束：`binding.caller-relaunch-publisher`
+- 实例约束：`binding.caller-relaunch-publisher, binding.parent-relaunch`
 - 幂等：`key`；并发：`none`
 
 ### 请求
@@ -2526,7 +2526,7 @@
     "description": "记录已形成的重新上架记录；履约完成另按规则判断。",
     "headers": {
       "Cache-Control": "no-store",
-      "Location": "/relaunches/RELAUNCH-001"
+      "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
     },
     "representationRef": "representation.register-relaunch-publisher",
     "status": 201
@@ -2549,7 +2549,7 @@
 ]
 ```
 
-## POST /subscriptions/{subscriptionId}/restoration
+## POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration
 
 - 能力：`capability.register-restore-reader`；角色：`role.reader`
 - 实例约束：`binding.caller-restore-reader, binding.parent-restore`
@@ -2650,7 +2650,7 @@
     "description": "记录已形成的免费恢复请求；履约完成另按规则判断。",
     "headers": {
       "Cache-Control": "no-store",
-      "Location": "/subscriptions/SUB-20261001-001/restoration"
+      "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
     },
     "representationRef": "representation.register-restore-reader",
     "status": 201
@@ -2673,7 +2673,7 @@
 ]
 ```
 
-## POST /subscriptions/{subscriptionId}/restoration/result
+## POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result
 
 - 能力：`capability.register-restore-result-publisher`；角色：`role.publisher`
 - 实例约束：`binding.caller-restore-result-publisher, binding.parent-restore-result`
@@ -2794,7 +2794,7 @@
     "description": "记录已形成的免费恢复凭证；履约完成另按规则判断。",
     "headers": {
       "Cache-Control": "no-store",
-      "Location": "/subscriptions/SUB-20261001-001/restoration/result"
+      "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
     },
     "representationRef": "representation.register-restore-result-publisher",
     "status": 201
@@ -5742,7 +5742,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
@@ -5755,7 +5755,8 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
-    "relaunchId": "RELAUNCH-001"
+    "relaunchId": "RELAUNCH-001",
+    "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
     {
@@ -5841,7 +5842,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.relaunch",
-  "uri": "/relaunches/{relaunchId}",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
   "view": "item"
 }
 ```
@@ -5859,7 +5860,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
@@ -5872,7 +5873,8 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
-    "relaunchId": "RELAUNCH-001"
+    "relaunchId": "RELAUNCH-001",
+    "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
     {
@@ -5958,7 +5960,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.relaunch",
-  "uri": "/relaunches/{relaunchId}",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
   "view": "item"
 }
 ```
@@ -5976,10 +5978,10 @@
   "example": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -5993,6 +5995,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -6091,6 +6094,10 @@
       "capabilityRef": "capability.read-restore-result-publisher",
       "kind": "navigation",
       "parameterBindings": {
+        "relaunchId": {
+          "kind": "path",
+          "name": "relaunchId"
+        },
         "subscriptionId": {
           "kind": "path",
           "name": "subscriptionId"
@@ -6101,7 +6108,7 @@
   ],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore",
-  "uri": "/subscriptions/{subscriptionId}/restoration",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
   "view": "singleton"
 }
 ```
@@ -6119,10 +6126,10 @@
   "example": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -6136,6 +6143,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -6234,6 +6242,10 @@
       "capabilityRef": "capability.read-restore-result-reader",
       "kind": "navigation",
       "parameterBindings": {
+        "relaunchId": {
+          "kind": "path",
+          "name": "relaunchId"
+        },
         "subscriptionId": {
           "kind": "path",
           "name": "subscriptionId"
@@ -6244,7 +6256,7 @@
   ],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore",
-  "uri": "/subscriptions/{subscriptionId}/restoration",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
   "view": "singleton"
 }
 ```
@@ -6262,7 +6274,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
@@ -6276,6 +6288,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -6370,7 +6383,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore-result",
-  "uri": "/subscriptions/{subscriptionId}/restoration/result",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
   "view": "singleton"
 }
 ```
@@ -6388,7 +6401,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
@@ -6402,6 +6415,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -6496,7 +6510,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore-result",
-  "uri": "/subscriptions/{subscriptionId}/restoration/result",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
   "view": "singleton"
 }
 ```
@@ -8044,7 +8058,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/relaunches/RELAUNCH-001"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
       }
     },
     "column_id": "COL-BM",
@@ -8057,7 +8071,8 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
-    "relaunchId": "RELAUNCH-001"
+    "relaunchId": "RELAUNCH-001",
+    "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
     {
@@ -8143,7 +8158,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.relaunch",
-  "uri": "/relaunches/{relaunchId}",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
   "view": "item"
 }
 ```
@@ -8161,10 +8176,10 @@
   "example": {
     "_links": {
       "result": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       },
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
       }
     },
     "column_id": "COL-BM",
@@ -8178,6 +8193,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -8276,6 +8292,10 @@
       "capabilityRef": "capability.read-restore-result-reader",
       "kind": "navigation",
       "parameterBindings": {
+        "relaunchId": {
+          "kind": "path",
+          "name": "relaunchId"
+        },
         "subscriptionId": {
           "kind": "path",
           "name": "subscriptionId"
@@ -8286,7 +8306,7 @@
   ],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore",
-  "uri": "/subscriptions/{subscriptionId}/restoration",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
   "view": "singleton"
 }
 ```
@@ -8304,7 +8324,7 @@
   "example": {
     "_links": {
       "self": {
-        "href": "/subscriptions/SUB-20261001-001/restoration/result"
+        "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
       }
     },
     "charged_minor_units": 0,
@@ -8318,6 +8338,7 @@
     "subscription_id": "SUB-20261001-001"
   },
   "exampleParameters": {
+    "relaunchId": "RELAUNCH-001",
     "subscriptionId": "SUB-20261001-001"
   },
   "fields": [
@@ -8412,7 +8433,7 @@
   "links": [],
   "mediaType": "application/hal+json",
   "resourceRef": "resource.restore-result",
-  "uri": "/subscriptions/{subscriptionId}/restoration/result",
+  "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
   "view": "singleton"
 }
 ```

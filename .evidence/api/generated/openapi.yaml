@@ -539,7 +539,7 @@ paths:
               request_id: PREPAID-REQ-001
               started_at: '2026-10-01T09:02:00Z'
               subscription_id: SUB-20261001-001
-  "/prepaid-accounts/{accountId}/debits/{debitId}":
+  '/prepaid-accounts/{accountId}/debits/{debitId}':
     get:
       operationId: >-
         get_prepaid-accounts__accountId__debits__debitId_
@@ -619,7 +619,7 @@ paths:
           actorRoleRef: role.account-provider
         - capabilityRef: capability.read-debit-account-user
           actorRoleRef: role.account-user
-  "/prepaid-accounts/{accountId}/debits/{debitId}/result":
+  '/prepaid-accounts/{accountId}/debits/{debitId}/result':
     get:
       operationId: >-
         get_prepaid-accounts__accountId__debits__debitId__result
@@ -834,166 +834,6 @@ paths:
               request_id: PREPAID-REQ-001
               subscription_id: SUB-20261001-001
               success: true
-  /relaunches:
-    post:
-      operationId: capability.register-relaunch-publisher
-      summary: 记录同专栏重新上架
-      parameters:
-        - name: Idempotency-Key
-          in: header
-          required: true
-          schema:
-            type: string
-          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
-      responses:
-        '201':
-          description: 记录已形成的重新上架记录；履约完成另按规则判断。
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: no-store
-            Location:
-              schema:
-                type: string
-              example: /relaunches/RELAUNCH-001
-          content:
-            application/hal+json:
-              schema:
-                $ref: >-
-                  #/components/schemas/representation_register-relaunch-publisher
-              example:
-                _links:
-                  self:
-                    href: /relaunches/RELAUNCH-001
-                column_id: COL-BM
-                created_at: '2026-11-01T12:00:00Z'
-                edition_id: ED-2
-                evidenceRefs:
-                  - instance.subscription
-                listed: true
-                reader_id: READER-001
-                relaunched_at: '2026-11-01T11:59:00Z'
-                subscription_id: SUB-20261001-001
-        '403':
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-        '409':
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-        '422':
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-      x-fm-capability-refs:
-        - capability.register-relaunch-publisher
-      x-actor-role-refs:
-        - role.publisher
-      x-binding-refs:
-        - binding.caller-relaunch-publisher
-      x-fm-rule-bindings: []
-      x-fm-operation-variants:
-        - capabilityRef: capability.register-relaunch-publisher
-          actorRoleRef: role.publisher
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                subscription_id:
-                  type: string
-                reader_id:
-                  type: string
-                column_id:
-                  type: string
-                edition_id:
-                  type: string
-                created_at:
-                  format: date-time
-                  type: string
-                relaunched_at:
-                  format: date-time
-                  type: string
-                listed:
-                  type: boolean
-                evidenceRefs:
-                  items:
-                    type: string
-                  minItems: 1
-                  type: array
-              additionalProperties: false
-              required:
-                - subscription_id
-                - reader_id
-                - column_id
-                - edition_id
-                - created_at
-                - relaunched_at
-                - listed
-                - evidenceRefs
-            example:
-              column_id: COL-BM
-              created_at: '2026-11-01T12:00:00Z'
-              edition_id: ED-2
-              evidenceRefs:
-                - instance.subscription
-              listed: true
-              reader_id: READER-001
-              relaunched_at: '2026-11-01T11:59:00Z'
-              subscription_id: SUB-20261001-001
-  /relaunches/{relaunchId}:
-    get:
-      operationId: get_relaunches__relaunchId_
-      summary: 读取重新上架记录 / 读取重新上架记录
-      parameters:
-        - name: relaunchId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 返回本实例当前可读取的业务表示。
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: no-store
-          content:
-            application/hal+json:
-              schema:
-                $ref: >-
-                  #/components/schemas/representation_read-relaunch-publisher
-              example:
-                _links:
-                  self:
-                    href: /relaunches/RELAUNCH-001
-                column_id: COL-BM
-                created_at: '2026-11-01T12:00:00Z'
-                edition_id: ED-2
-                evidenceRefs:
-                  - instance.subscription
-                listed: true
-                reader_id: READER-001
-                relaunched_at: '2026-11-01T11:59:00Z'
-                subscription_id: SUB-20261001-001
-        '403':
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-        '404':
-          description: 指定实例或其履约结果尚未形成。
-      x-fm-capability-refs:
-        - capability.read-relaunch-publisher
-        - capability.read-relaunch-reader
-      x-actor-role-refs:
-        - role.publisher
-        - role.reader
-      x-binding-refs:
-        - binding.caller-relaunch-publisher
-        - binding.caller-relaunch-reader
-      x-fm-rule-bindings: []
-      x-fm-operation-variants:
-        - capabilityRef: capability.read-relaunch-publisher
-          actorRoleRef: role.publisher
-        - capabilityRef: capability.read-relaunch-reader
-          actorRoleRef: role.reader
   /subscriptions:
     post:
       operationId: capability.register-subscription-reader
@@ -1294,7 +1134,7 @@ paths:
               request_id: ACCESS-MOBILE
               started_at: '2026-10-01T09:06:00Z'
               subscription_id: SUB-20261001-001
-  "/subscriptions/{subscriptionId}/accesses/{accessId}":
+  '/subscriptions/{subscriptionId}/accesses/{accessId}':
     get:
       operationId: >-
         get_subscriptions__subscriptionId__accesses__accessId_
@@ -1371,7 +1211,7 @@ paths:
           actorRoleRef: role.publisher
         - capabilityRef: capability.read-access-reader
           actorRoleRef: role.reader
-  "/subscriptions/{subscriptionId}/accesses/{accessId}/result":
+  '/subscriptions/{subscriptionId}/accesses/{accessId}/result':
     get:
       operationId: >-
         get_subscriptions__subscriptionId__accesses__accessId__result
@@ -1916,7 +1756,7 @@ paths:
               request_id: REFUND-001
               started_at: '2026-10-16T10:01:00Z'
               subscription_id: SUB-20261001-001
-  "/subscriptions/{subscriptionId}/refund/result":
+  '/subscriptions/{subscriptionId}/refund/result':
     get:
       operationId: >-
         get_subscriptions__subscriptionId__refund_result
@@ -2102,13 +1942,194 @@ paths:
               request_id: REFUND-001
               settled: true
               subscription_id: SUB-20261001-001
-  "/subscriptions/{subscriptionId}/restoration":
+  '/subscriptions/{subscriptionId}/relaunches':
+    post:
+      operationId: capability.register-relaunch-publisher
+      summary: 记录同专栏重新上架
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
+      responses:
+        '201':
+          description: 记录已形成的重新上架记录；履约完成另按规则判断。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+            Location:
+              schema:
+                type: string
+              example: >-
+                /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_register-relaunch-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001
+                column_id: COL-BM
+                created_at: '2026-11-01T12:00:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                listed: true
+                reader_id: READER-001
+                relaunched_at: '2026-11-01T11:59:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '409':
+          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
+        '422':
+          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
+      x-fm-capability-refs:
+        - capability.register-relaunch-publisher
+      x-actor-role-refs:
+        - role.publisher
+      x-binding-refs:
+        - binding.caller-relaunch-publisher
+        - binding.parent-relaunch
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.register-relaunch-publisher
+          actorRoleRef: role.publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription_id:
+                  type: string
+                reader_id:
+                  type: string
+                column_id:
+                  type: string
+                edition_id:
+                  type: string
+                created_at:
+                  format: date-time
+                  type: string
+                relaunched_at:
+                  format: date-time
+                  type: string
+                listed:
+                  type: boolean
+                evidenceRefs:
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
+              additionalProperties: false
+              required:
+                - subscription_id
+                - reader_id
+                - column_id
+                - edition_id
+                - created_at
+                - relaunched_at
+                - listed
+                - evidenceRefs
+            example:
+              column_id: COL-BM
+              created_at: '2026-11-01T12:00:00Z'
+              edition_id: ED-2
+              evidenceRefs:
+                - instance.subscription
+              listed: true
+              reader_id: READER-001
+              relaunched_at: '2026-11-01T11:59:00Z'
+              subscription_id: SUB-20261001-001
+  '/subscriptions/{subscriptionId}/relaunches/{relaunchId}':
     get:
       operationId: >-
-        get_subscriptions__subscriptionId__restoration
+        get_subscriptions__subscriptionId__relaunches__relaunchId_
+      summary: 读取重新上架记录 / 读取重新上架记录
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: relaunchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回本实例当前可读取的业务表示。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_read-relaunch-publisher
+              example:
+                _links:
+                  self:
+                    href: >-
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001
+                column_id: COL-BM
+                created_at: '2026-11-01T12:00:00Z'
+                edition_id: ED-2
+                evidenceRefs:
+                  - instance.subscription
+                listed: true
+                reader_id: READER-001
+                relaunched_at: '2026-11-01T11:59:00Z'
+                subscription_id: SUB-20261001-001
+        '403':
+          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
+        '404':
+          description: 指定实例或其履约结果尚未形成。
+      x-fm-capability-refs:
+        - capability.read-relaunch-publisher
+        - capability.read-relaunch-reader
+      x-actor-role-refs:
+        - role.publisher
+        - role.reader
+      x-binding-refs:
+        - binding.caller-relaunch-publisher
+        - binding.caller-relaunch-reader
+        - binding.parent-relaunch
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.read-relaunch-publisher
+          actorRoleRef: role.publisher
+        - capabilityRef: capability.read-relaunch-reader
+          actorRoleRef: role.reader
+  '/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration':
+    get:
+      operationId: >-
+        get_subscriptions__subscriptionId__relaunches__relaunchId__restoration
       summary: 读取免费恢复请求 / 读取免费恢复请求
       parameters:
         - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: relaunchId
           in: path
           required: true
           schema:
@@ -2130,10 +2151,10 @@ paths:
                 _links:
                   result:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration/result
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
                   self:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
                 column_id: COL-BM
                 edition_id: ED-2
                 evidenceRefs:
@@ -2149,8 +2170,9 @@ paths:
           links:
             result:
               operationId: >-
-                get_subscriptions__subscriptionId__restoration_result
+                get_subscriptions__subscriptionId__relaunches__relaunchId__restoration_result
               parameters:
+                relaunchId: $request.path.relaunchId
                 subscriptionId: $request.path.subscriptionId
               x-fm-link-kind: navigation
         '403':
@@ -2182,6 +2204,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: relaunchId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: Idempotency-Key
           in: header
           required: true
@@ -2200,7 +2227,7 @@ paths:
               schema:
                 type: string
               example: >-
-                /subscriptions/SUB-20261001-001/restoration
+                /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
           content:
             application/hal+json:
               schema:
@@ -2210,10 +2237,10 @@ paths:
                 _links:
                   result:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration/result
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
                   self:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
                 column_id: COL-BM
                 edition_id: ED-2
                 evidenceRefs:
@@ -2229,8 +2256,9 @@ paths:
           links:
             result:
               operationId: >-
-                get_subscriptions__subscriptionId__restoration_result
+                get_subscriptions__subscriptionId__relaunches__relaunchId__restoration_result
               parameters:
+                relaunchId: $request.path.relaunchId
                 subscriptionId: $request.path.subscriptionId
               x-fm-link-kind: navigation
         '403':
@@ -2297,13 +2325,18 @@ paths:
               request_id: RESTORE-001
               started_at: '2026-11-01T12:01:00Z'
               subscription_id: SUB-20261001-001
-  "/subscriptions/{subscriptionId}/restoration/result":
+  '/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result':
     get:
       operationId: >-
-        get_subscriptions__subscriptionId__restoration_result
+        get_subscriptions__subscriptionId__relaunches__relaunchId__restoration_result
       summary: 读取免费恢复凭证 / 读取免费恢复凭证
       parameters:
         - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: relaunchId
           in: path
           required: true
           schema:
@@ -2325,7 +2358,7 @@ paths:
                 _links:
                   self:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration/result
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
                 charged_minor_units: 0
                 column_id: COL-BM
                 confirmed_at: '2026-11-01T12:02:00Z'
@@ -2366,6 +2399,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: relaunchId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: Idempotency-Key
           in: header
           required: true
@@ -2384,7 +2422,7 @@ paths:
               schema:
                 type: string
               example: >-
-                /subscriptions/SUB-20261001-001/restoration/result
+                /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
           content:
             application/hal+json:
               schema:
@@ -2394,7 +2432,7 @@ paths:
                 _links:
                   self:
                     href: >-
-                      /subscriptions/SUB-20261001-001/restoration/result
+                      /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
                 charged_minor_units: 0
                 column_id: COL-BM
                 confirmed_at: '2026-11-01T12:02:00Z'
@@ -2619,7 +2657,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_read-access-result-publisher":
+    'representation_read-access-result-publisher':
       type: object
       properties:
         request_id:
@@ -2733,7 +2771,7 @@ components:
         - delivered
         - evidenceRefs
         - _links
-    "representation_read-account-account-provider":
+    'representation_read-account-account-provider':
       type: object
       properties:
         agreement_id:
@@ -2903,7 +2941,7 @@ components:
         - price_minor_units
         - currency
         - _links
-    "representation_read-debit-account-provider":
+    'representation_read-debit-account-provider':
       type: object
       properties:
         request_id:
@@ -3061,7 +3099,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_read-debit-result-account-provider":
+    'representation_read-debit-result-account-provider':
       type: object
       properties:
         request_id:
@@ -3122,7 +3160,7 @@ components:
         - balance_after_minor_units
         - evidenceRefs
         - _links
-    "representation_read-debit-result-account-user":
+    'representation_read-debit-result-account-user':
       type: object
       properties:
         request_id:
@@ -3183,7 +3221,7 @@ components:
         - balance_after_minor_units
         - evidenceRefs
         - _links
-    "representation_read-discontinuation-publisher":
+    'representation_read-discontinuation-publisher':
       type: object
       properties:
         subscription_id:
@@ -3236,7 +3274,7 @@ components:
         - delisted
         - evidenceRefs
         - _links
-    "representation_read-discontinuation-reader":
+    'representation_read-discontinuation-reader':
       type: object
       properties:
         subscription_id:
@@ -3549,7 +3587,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_read-refund-result-publisher":
+    'representation_read-refund-result-publisher':
       type: object
       properties:
         request_id:
@@ -3893,7 +3931,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_read-restore-result-publisher":
+    'representation_read-restore-result-publisher':
       type: object
       properties:
         request_id:
@@ -3945,7 +3983,7 @@ components:
         - restored
         - evidenceRefs
         - _links
-    "representation_read-restore-result-reader":
+    'representation_read-restore-result-reader':
       type: object
       properties:
         request_id:
@@ -3997,7 +4035,7 @@ components:
         - restored
         - evidenceRefs
         - _links
-    "representation_read-subscription-publisher":
+    'representation_read-subscription-publisher':
       type: object
       properties:
         subscription_id:
@@ -4177,7 +4215,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_register-access-result-publisher":
+    'representation_register-access-result-publisher':
       type: object
       properties:
         request_id:
@@ -4229,7 +4267,7 @@ components:
         - delivered
         - evidenceRefs
         - _links
-    "representation_register-account-account-user":
+    'representation_register-account-account-user':
       type: object
       properties:
         agreement_id:
@@ -4260,7 +4298,7 @@ components:
         - reader_id
         - signed_at
         - _links
-    "representation_register-debit-account-user":
+    'representation_register-debit-account-user':
       type: object
       properties:
         request_id:
@@ -4339,7 +4377,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_register-debit-result-account-provider":
+    'representation_register-debit-result-account-provider':
       type: object
       properties:
         request_id:
@@ -4400,7 +4438,7 @@ components:
         - balance_after_minor_units
         - evidenceRefs
         - _links
-    "representation_register-discontinuation-publisher":
+    'representation_register-discontinuation-publisher':
       type: object
       properties:
         subscription_id:
@@ -4453,7 +4491,7 @@ components:
         - delisted
         - evidenceRefs
         - _links
-    "representation_register-payment-publisher":
+    'representation_register-payment-publisher':
       type: object
       properties:
         request_id:
@@ -4583,7 +4621,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_register-refund-result-publisher":
+    'representation_register-refund-result-publisher':
       type: object
       properties:
         request_id:
@@ -4638,7 +4676,7 @@ components:
         - settled
         - evidenceRefs
         - _links
-    "representation_register-relaunch-publisher":
+    'representation_register-relaunch-publisher':
       type: object
       properties:
         subscription_id:
@@ -4755,7 +4793,7 @@ components:
         - evidenceRefs
         - fulfillmentStatus
         - _links
-    "representation_register-restore-result-publisher":
+    'representation_register-restore-result-publisher':
       type: object
       properties:
         request_id:
@@ -4807,7 +4845,7 @@ components:
         - restored
         - evidenceRefs
         - _links
-    "representation_register-subscription-reader":
+    'representation_register-subscription-reader':
       type: object
       properties:
         subscription_id:

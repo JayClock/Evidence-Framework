@@ -13,14 +13,14 @@
 | 内容访问申请   | `/subscriptions/{subscriptionId}/accesses`、`/subscriptions/{subscriptionId}/accesses/{accessId}`       |
 | 内容提供结果   | `/subscriptions/{subscriptionId}/accesses/{accessId}/result`                                            |
 | 断更退款       | `/subscriptions/{subscriptionId}/refund` 及其 `/result`                                                 |
-| 免费恢复       | `/subscriptions/{subscriptionId}/restoration` 及其 `/result`                                            |
+| 免费恢复       | `/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration` 及其 `/result`                    |
 | 断更下架记录   | `/discontinuations`、`/discontinuations/{discontinuationId}`                                            |
-| 重新上架记录   | `/relaunches`、`/relaunches/{relaunchId}`                                                               |
+| 重新上架记录   | `/subscriptions/{subscriptionId}/relaunches` 及其 `/{relaunchId}`                                       |
 | 账户协议       | `/prepaid-accounts`、`/prepaid-accounts/{accountId}`                                                    |
 | 余额抵扣       | `/prepaid-accounts/{accountId}/debits`、`/prepaid-accounts/{accountId}/debits/{debitId}` 及其 `/result` |
 | 专栏与内容     | `/columns/{columnId}`、`/chapters/{chapterId}`                                                          |
 
-13 个 POST 只追加实际业务凭证；其余接口读取本人合同内的数据或有资格访问的内容。移动支付机构的三个凭证对象按外部活动处理，不虚构机构接口；三个实际主体不生成档案 CRUD。
+13 个 POST 只追加实际业务凭证；其余接口读取本人合同内的数据或有资格访问的内容。移动支付机构的三个凭证对象按外部活动处理，不虚构机构接口；主体不生成档案 CRUD。免费恢复以重新上架活动为实例范围：同一原订阅可有多次活动，每次活动至多一份有效恢复请求。
 
 ## 契约要点
 
@@ -34,7 +34,7 @@
 
 ## 交付文件
 
-[generated/v1](generated/v1/) 包含接口清单、HTTP 契约、OpenAPI、表示样例、HTTP 流程和机器投影。源文件修改后重新检查，交付目录使用新的批次，不手改生成文件。
+[generated](generated/) 是当前 API 的唯一可重建交付目录，包含接口清单、HTTP 契约、OpenAPI、表示样例、HTTP 流程和机器投影。本地 Git 保存历史；源文件修改后删除并通过投影脚本整体重建，不手改生成文件。
 
 检查命令：
 

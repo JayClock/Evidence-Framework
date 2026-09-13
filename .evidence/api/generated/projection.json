@@ -19,7 +19,7 @@
       "id": "capability.read-access-publisher",
       "method": "GET",
       "resourceRef": "resource.access",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-mobile-subscription",
@@ -74,7 +74,7 @@
       "id": "capability.read-access-result-publisher",
       "method": "GET",
       "resourceRef": "resource.access-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-mobile-subscription",
@@ -127,7 +127,7 @@
       "id": "capability.read-account-account-provider",
       "method": "GET",
       "resourceRef": "resource.account",
-      "roleLabel": "账户服务方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-prepaid-subscription",
         "scenario.api-insufficient-balance"
@@ -202,7 +202,7 @@
       "id": "capability.read-column-publisher",
       "method": "GET",
       "resourceRef": "resource.column",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-mobile-subscription",
         "scenario.api-free-restoration"
@@ -251,7 +251,7 @@
       "id": "capability.read-debit-account-provider",
       "method": "GET",
       "resourceRef": "resource.debit",
-      "roleLabel": "账户服务方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-prepaid-subscription",
         "scenario.api-insufficient-balance"
@@ -303,7 +303,7 @@
       "id": "capability.read-debit-result-account-provider",
       "method": "GET",
       "resourceRef": "resource.debit-result",
-      "roleLabel": "账户服务方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": ["scenario.api-prepaid-subscription"],
       "uri": "/prepaid-accounts/{accountId}/debits/{debitId}/result",
       "view": "singleton"
@@ -346,7 +346,7 @@
       "id": "capability.read-discontinuation-publisher",
       "method": "GET",
       "resourceRef": "resource.discontinuation",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -405,7 +405,7 @@
       "id": "capability.read-payment-publisher",
       "method": "GET",
       "resourceRef": "resource.payment",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -489,7 +489,7 @@
       "id": "capability.read-refund-publisher",
       "method": "GET",
       "resourceRef": "resource.refund",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -548,7 +548,7 @@
       "id": "capability.read-refund-result-publisher",
       "method": "GET",
       "resourceRef": "resource.refund-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -594,9 +594,13 @@
       "actorRoleRef": "role.publisher",
       "basis": {
         "fmRefs": ["evidence.relaunch", "role.publisher"],
-        "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
+        "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。",
+        "sourceRefs": ["source.restore-per-relaunch"]
       },
-      "bindingRefs": ["binding.caller-relaunch-publisher"],
+      "bindingRefs": [
+        "binding.caller-relaunch-publisher",
+        "binding.parent-relaunch"
+      ],
       "businessCapability": "读取重新上架记录",
       "effect": {
         "kind": "read",
@@ -605,22 +609,26 @@
       "id": "capability.read-relaunch-publisher",
       "method": "GET",
       "resourceRef": "resource.relaunch",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/relaunches/{relaunchId}",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
       "view": "item"
     },
     {
       "actorRoleRef": "role.reader",
       "basis": {
         "fmRefs": ["evidence.relaunch", "role.reader"],
-        "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
+        "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。",
+        "sourceRefs": ["source.restore-per-relaunch"]
       },
-      "bindingRefs": ["binding.caller-relaunch-reader"],
+      "bindingRefs": [
+        "binding.caller-relaunch-reader",
+        "binding.parent-relaunch"
+      ],
       "businessCapability": "读取重新上架记录",
       "effect": {
         "kind": "read",
@@ -635,7 +643,7 @@
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/relaunches/{relaunchId}",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
       "view": "item"
     },
     {
@@ -656,13 +664,13 @@
       "id": "capability.read-restore-publisher",
       "method": "GET",
       "resourceRef": "resource.restore",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
       "view": "singleton"
     },
     {
@@ -689,7 +697,7 @@
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
       "view": "singleton"
     },
     {
@@ -710,12 +718,12 @@
       "id": "capability.read-restore-result-publisher",
       "method": "GET",
       "resourceRef": "resource.restore-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration/result",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
       "view": "singleton"
     },
     {
@@ -741,7 +749,7 @@
         "scenario.api-free-restoration",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration/result",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
       "view": "singleton"
     },
     {
@@ -759,7 +767,7 @@
       "id": "capability.read-subscription-publisher",
       "method": "GET",
       "resourceRef": "resource.subscription",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -876,7 +884,7 @@
       "id": "capability.register-access-result-publisher",
       "method": "POST",
       "resourceRef": "resource.access-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "ruleBindings": [
         {
           "purpose": "result",
@@ -964,7 +972,7 @@
       "id": "capability.register-debit-result-account-provider",
       "method": "POST",
       "resourceRef": "resource.debit-result",
-      "roleLabel": "账户服务方",
+      "roleLabel": "专栏平台",
       "ruleBindings": [
         {
           "purpose": "precondition",
@@ -994,7 +1002,7 @@
       "id": "capability.register-discontinuation-publisher",
       "method": "POST",
       "resourceRef": "resource.discontinuation",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -1025,7 +1033,7 @@
       "id": "capability.register-payment-publisher",
       "method": "POST",
       "resourceRef": "resource.payment",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
@@ -1105,7 +1113,7 @@
       "id": "capability.register-refund-result-publisher",
       "method": "POST",
       "resourceRef": "resource.refund-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "ruleBindings": [
         {
           "purpose": "result",
@@ -1127,9 +1135,13 @@
       "actorRoleRef": "role.publisher",
       "basis": {
         "fmRefs": ["evidence.relaunch", "role.publisher"],
-        "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
+        "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。",
+        "sourceRefs": ["source.restore-per-relaunch"]
       },
-      "bindingRefs": ["binding.caller-relaunch-publisher"],
+      "bindingRefs": [
+        "binding.caller-relaunch-publisher",
+        "binding.parent-relaunch"
+      ],
       "businessCapability": "记录同专栏重新上架",
       "effect": {
         "kind": "append_evidence",
@@ -1138,13 +1150,13 @@
       "id": "capability.register-relaunch-publisher",
       "method": "POST",
       "resourceRef": "resource.relaunch",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "scenarioRefs": [
         "scenario.api-free-restoration",
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/relaunches",
+      "uri": "/subscriptions/{subscriptionId}/relaunches",
       "view": "collection"
     },
     {
@@ -1177,7 +1189,7 @@
         "scenario.api-restore-expired",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
       "view": "singleton"
     },
     {
@@ -1202,7 +1214,7 @@
       "id": "capability.register-restore-result-publisher",
       "method": "POST",
       "resourceRef": "resource.restore-result",
-      "roleLabel": "专栏运营方",
+      "roleLabel": "专栏平台",
       "ruleBindings": [
         {
           "purpose": "result",
@@ -1213,7 +1225,7 @@
         "scenario.api-free-restoration",
         "scenario.api-restore-charged"
       ],
-      "uri": "/subscriptions/{subscriptionId}/restoration/result",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
       "view": "singleton"
     },
     {
@@ -1783,7 +1795,7 @@
     "errors": [],
     "executedScenarioCount": 18,
     "inputChanged": false,
-    "modelDigest": "sha256:b43663d20027bb9e492eccdbe84ca6e43ba03e9b63128eb4bb4ecca0717ba14b",
+    "modelDigest": "sha256:699bf10c4f71d031fb543dbbdc433a875ec2bb7ae59f20397df622608b76fcc9",
     "modelStatus": "draft",
     "modelValidated": true,
     "scenarioCount": 18,
@@ -3372,7 +3384,10 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-relaunch-publisher"],
+        "bindingRefs": [
+          "binding.caller-relaunch-publisher",
+          "binding.parent-relaunch"
+        ],
         "capabilityRef": "capability.read-relaunch-publisher",
         "concurrency": {
           "mode": "none",
@@ -3409,11 +3424,14 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/relaunches/{relaunchId}"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}"
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-relaunch-reader"],
+        "bindingRefs": [
+          "binding.caller-relaunch-reader",
+          "binding.parent-relaunch"
+        ],
         "capabilityRef": "capability.read-relaunch-reader",
         "concurrency": {
           "mode": "none",
@@ -3450,7 +3468,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/relaunches/{relaunchId}"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}"
       },
       {
         "actorRoleRef": "role.publisher",
@@ -3494,7 +3512,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/subscriptions/{subscriptionId}/restoration"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
       },
       {
         "actorRoleRef": "role.reader",
@@ -3538,7 +3556,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/subscriptions/{subscriptionId}/restoration"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
       },
       {
         "actorRoleRef": "role.publisher",
@@ -3582,7 +3600,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/subscriptions/{subscriptionId}/restoration/result"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
       },
       {
         "actorRoleRef": "role.reader",
@@ -3626,7 +3644,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/subscriptions/{subscriptionId}/restoration/result"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
       },
       {
         "actorRoleRef": "role.publisher",
@@ -5016,7 +5034,10 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-relaunch-publisher"],
+        "bindingRefs": [
+          "binding.caller-relaunch-publisher",
+          "binding.parent-relaunch"
+        ],
         "capabilityRef": "capability.register-relaunch-publisher",
         "concurrency": {
           "mode": "none",
@@ -5128,7 +5149,7 @@
             "description": "记录已形成的重新上架记录；履约完成另按规则判断。",
             "headers": {
               "Cache-Control": "no-store",
-              "Location": "/relaunches/RELAUNCH-001"
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
             },
             "representationRef": "representation.register-relaunch-publisher",
             "status": 201
@@ -5150,7 +5171,7 @@
           }
         ],
         "ruleBindings": [],
-        "uri": "/relaunches"
+        "uri": "/subscriptions/{subscriptionId}/relaunches"
       },
       {
         "actorRoleRef": "role.reader",
@@ -5262,7 +5283,7 @@
             "description": "记录已形成的免费恢复请求；履约完成另按规则判断。",
             "headers": {
               "Cache-Control": "no-store",
-              "Location": "/subscriptions/SUB-20261001-001/restoration"
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
             },
             "representationRef": "representation.register-restore-reader",
             "status": 201
@@ -5289,7 +5310,7 @@
             "ruleRef": "rule.restore-eligible"
           }
         ],
-        "uri": "/subscriptions/{subscriptionId}/restoration"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
       },
       {
         "actorRoleRef": "role.publisher",
@@ -5417,7 +5438,7 @@
             "description": "记录已形成的免费恢复凭证；履约完成另按规则判断。",
             "headers": {
               "Cache-Control": "no-store",
-              "Location": "/subscriptions/SUB-20261001-001/restoration/result"
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             },
             "representationRef": "representation.register-restore-result-publisher",
             "status": 201
@@ -5444,7 +5465,7 @@
             "ruleRef": "rule.restore-completed"
           }
         ],
-        "uri": "/subscriptions/{subscriptionId}/restoration/result"
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
       },
       {
         "actorRoleRef": "role.reader",
@@ -8274,7 +8295,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/relaunches/RELAUNCH-001"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
             }
           },
           "column_id": "COL-BM",
@@ -8287,7 +8308,8 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
-          "relaunchId": "RELAUNCH-001"
+          "relaunchId": "RELAUNCH-001",
+          "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
           {
@@ -8373,7 +8395,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.relaunch",
-        "uri": "/relaunches/{relaunchId}",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
         "view": "item"
       },
       {
@@ -8386,7 +8408,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/relaunches/RELAUNCH-001"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
             }
           },
           "column_id": "COL-BM",
@@ -8399,7 +8421,8 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
-          "relaunchId": "RELAUNCH-001"
+          "relaunchId": "RELAUNCH-001",
+          "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
           {
@@ -8485,7 +8508,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.relaunch",
-        "uri": "/relaunches/{relaunchId}",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
         "view": "item"
       },
       {
@@ -8498,10 +8521,10 @@
         "example": {
           "_links": {
             "result": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             },
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
             }
           },
           "column_id": "COL-BM",
@@ -8519,6 +8542,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -8617,6 +8641,10 @@
             "capabilityRef": "capability.read-restore-result-publisher",
             "kind": "navigation",
             "parameterBindings": {
+              "relaunchId": {
+                "kind": "path",
+                "name": "relaunchId"
+              },
               "subscriptionId": {
                 "kind": "path",
                 "name": "subscriptionId"
@@ -8627,7 +8655,7 @@
         ],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore",
-        "uri": "/subscriptions/{subscriptionId}/restoration",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
         "view": "singleton"
       },
       {
@@ -8640,10 +8668,10 @@
         "example": {
           "_links": {
             "result": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             },
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
             }
           },
           "column_id": "COL-BM",
@@ -8661,6 +8689,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -8759,6 +8788,10 @@
             "capabilityRef": "capability.read-restore-result-reader",
             "kind": "navigation",
             "parameterBindings": {
+              "relaunchId": {
+                "kind": "path",
+                "name": "relaunchId"
+              },
               "subscriptionId": {
                 "kind": "path",
                 "name": "subscriptionId"
@@ -8769,7 +8802,7 @@
         ],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore",
-        "uri": "/subscriptions/{subscriptionId}/restoration",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
         "view": "singleton"
       },
       {
@@ -8782,7 +8815,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             }
           },
           "charged_minor_units": 0,
@@ -8796,6 +8829,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -8890,7 +8924,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore-result",
-        "uri": "/subscriptions/{subscriptionId}/restoration/result",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
         "view": "singleton"
       },
       {
@@ -8903,7 +8937,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             }
           },
           "charged_minor_units": 0,
@@ -8917,6 +8951,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -9011,7 +9046,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore-result",
-        "uri": "/subscriptions/{subscriptionId}/restoration/result",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
         "view": "singleton"
       },
       {
@@ -10503,7 +10538,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/relaunches/RELAUNCH-001"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
             }
           },
           "column_id": "COL-BM",
@@ -10516,7 +10551,8 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
-          "relaunchId": "RELAUNCH-001"
+          "relaunchId": "RELAUNCH-001",
+          "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
           {
@@ -10602,7 +10638,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.relaunch",
-        "uri": "/relaunches/{relaunchId}",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
         "view": "item"
       },
       {
@@ -10615,10 +10651,10 @@
         "example": {
           "_links": {
             "result": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             },
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
             }
           },
           "column_id": "COL-BM",
@@ -10636,6 +10672,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -10734,6 +10771,10 @@
             "capabilityRef": "capability.read-restore-result-reader",
             "kind": "navigation",
             "parameterBindings": {
+              "relaunchId": {
+                "kind": "path",
+                "name": "relaunchId"
+              },
               "subscriptionId": {
                 "kind": "path",
                 "name": "subscriptionId"
@@ -10744,7 +10785,7 @@
         ],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore",
-        "uri": "/subscriptions/{subscriptionId}/restoration",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
         "view": "singleton"
       },
       {
@@ -10757,7 +10798,7 @@
         "example": {
           "_links": {
             "self": {
-              "href": "/subscriptions/SUB-20261001-001/restoration/result"
+              "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
             }
           },
           "charged_minor_units": 0,
@@ -10771,6 +10812,7 @@
           "subscription_id": "SUB-20261001-001"
         },
         "exampleParameters": {
+          "relaunchId": "RELAUNCH-001",
           "subscriptionId": "SUB-20261001-001"
         },
         "fields": [
@@ -10865,7 +10907,7 @@
         "links": [],
         "mediaType": "application/hal+json",
         "resourceRef": "resource.restore-result",
-        "uri": "/subscriptions/{subscriptionId}/restoration/result",
+        "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
         "view": "singleton"
       },
       {
@@ -11009,124 +11051,119 @@
     "runtimeValidated": false
   },
   "inputDigests": {
-    "api": "e9b8ff85756f1c5527db9f9e2f2ebffeb7ce8ef53350d26ea9e2f49df03fdf42",
+    "api": "7e86567005d8bd9153120bbd5e095104ba5fe78427e57c2b8fc9407391450043",
     "fm": {
-      "00-overview.md": "11590d14eb4f23237cec5dd9afaed21d6bfa915653541e61a3c66d855b6da844",
-      "01-glossary.md": "152cc82ebd26d937bc56ec7718b93e35c4f6f9cba923fb2cdbd0f9a06a0193d1",
-      "README.md": "8a0bc3793f04fe9521d137541fdd72a1650d4eb5ae71c636dbd4dc08719fb207",
-      "entities/context-contract--mobile.yaml": "a46f15928116f6b83ebe0d69eb637b0ae50258c6af54524752f56064503b12fe",
-      "entities/context-contract--prepaid.yaml": "d8085ef406773cec9d95364f3a205ee93f6f6c21a437a37232f8e4611c4d8386",
-      "entities/context-contract--subscription.yaml": "1a795d59e59b4f7e8a51a715571bc115bf6c63453ac290a37d7c307ee92f8c6b",
-      "entities/context-domain--content.yaml": "f7c3fb544e9fb97cac706db55783800d163d552f25173c5c3587ab30ebd35dc8",
-      "entities/context-fulfillment--access.yaml": "eb6ecefacb95c6fe68faf66c0f3ef7a249d9e271bd7c7f8d9d0dbdc452df438f",
-      "entities/context-fulfillment--mobile.yaml": "f46430879d09d0c018ef735beb6da92dd177a406011f7234dd6191d0ba173f61",
-      "entities/context-fulfillment--payment.yaml": "35e80723bd7b046ba1e5b4ddcb24cbb206520efb77709d3a2d8799421a90718d",
-      "entities/context-fulfillment--prepaid.yaml": "42f38dcfa72215a7c350c1645c15b8153b6e37c7fde962ecfc3c6dc849088a70",
-      "entities/context-fulfillment--refund.yaml": "71db4fe8c7d0283e3b7b7d4ebeaed38747e7f146b7977607aa1103f3c274befa",
-      "entities/context-fulfillment--restore.yaml": "3b4fd1ef9f76853ab59fc99394ec65dc44b8286636a3545f4cdc9e32b9ff3a3e",
-      "entities/evidence-contract--mobile.yaml": "d90ad9ec49384fcc7f3b488767d00d4378a4278e86a21e6169293c6c73b59af4",
-      "entities/evidence-contract--prepaid.yaml": "612727ce1568880e008ef03a1d3712357e51bf400b1a1e8d7fb95288de174d1b",
-      "entities/evidence-contract--subscription.yaml": "f0fab404ec6e97481afc0c5fac9ee4aeea130aee574abb7923374a512af46de0",
-      "entities/evidence-fulfillment-confirmation--access.yaml": "9a33e97ed2ef8b015148c01000950b4d8ca435a2d49c5766c3f88c08f64b6f43",
-      "entities/evidence-fulfillment-confirmation--mobile.yaml": "b4b2de82d4b1a1d990892e8fc17f503514e4b8b0ad78dfbb0720ba51a6f70ac4",
-      "entities/evidence-fulfillment-confirmation--prepaid.yaml": "68f07bbb8bca6b14229d77146e2ec7a242badc50d6fe6f90800b2ad7754f4e41",
-      "entities/evidence-fulfillment-confirmation--refund.yaml": "8e78457e78173bb5cc1e4293eaa76385a897ac202b973fa90f0eaf2cc172db32",
-      "entities/evidence-fulfillment-confirmation--restore.yaml": "797018f1620d49e30ebafab2208c258967d6d1b98c9753472034e9fa1610a6dd",
-      "entities/evidence-fulfillment-request--access.yaml": "2a01e8a5aa7f326458ca8092a8b1b9fb81e4c652d14e74131b53e9c7a1c1e9d0",
-      "entities/evidence-fulfillment-request--mobile.yaml": "c19d15e3457964ab7e3c92fa59a52c9f9964f2589bfcb96640389e9dcba2a953",
-      "entities/evidence-fulfillment-request--payment.yaml": "cccceeefff9402cccca9a482fb903ca1d0f457472e50b509416758dbb9a20a69",
-      "entities/evidence-fulfillment-request--prepaid.yaml": "8355df286cdd62f6f57083a15385db0bac4e1327eebce79aa70691a6388c7a1a",
-      "entities/evidence-fulfillment-request--refund.yaml": "4fbdcd825939f189f4c9365b5c95db8ed42eab4f0acb77b805205bb9520352b4",
-      "entities/evidence-fulfillment-request--restore.yaml": "b20869a259e4d13db95be4203ba345ac0b4101b4d7433f23b7742e06e4feb787",
-      "entities/evidence-other-evidence--discontinuation.yaml": "28f4f65f8fd489dda3dd26d8284b178c9bfb54602e89a612f06bc12fd6efbda5",
-      "entities/evidence-other-evidence--relaunch.yaml": "cd262df74827d19737991353eb5b59664089b3aaf73719f959f5bb38fe3e9e16",
-      "entities/participant-party--mobile-provider.yaml": "b94e99c52107015243cbe9b7ecbc683bdbd00e17e8db721f454f3b0e7c06d00d",
-      "entities/participant-party--publisher.yaml": "f76c93f5f27e95c23f04769af4fd98af3cc6e0bd348ae81318cf3ad1777579c0",
-      "entities/participant-party--reader.yaml": "2e309d32e92d71650c6c65fe0009b242c21a7704589d85a25565593e22c779be",
-      "entities/participant-thing--chapter.yaml": "abced14265fdca6245d360d2e6910e9c1db7e5f1827ad64d474ba3a801cabd00",
-      "entities/participant-thing--column.yaml": "8f12a3719314793e1710d73fa85110a6a10e9f7857530913a5fbfed05072854e",
-      "entities/role-evidence--access-payment.yaml": "b322b38bb7cf10e07ba0cd9f4dc6ca7dc76592b2b846b88b093c0c710793f00c",
-      "entities/role-evidence--access-refund.yaml": "bbb2ea39c49afc9504dc27d9dfa4e183e3bc187aafd8d59de5a5d25ca81d53c5",
-      "entities/role-evidence--access-restored.yaml": "4c66c3c47a9c9d4517aaa61be1ae4ddcd98ca6c1dde09e28c9a477d25d64f22a",
-      "entities/role-evidence--payment-proof.yaml": "dbf8d6970a00305921910ac3a4d5bc19bcf5f7aa647091f9ca38afb128f4b2e4",
-      "entities/role-evidence--refund-payment.yaml": "74be2527542ad938a55a85051b2e1af861e18c732d33458644191edb15ea4cc9",
-      "entities/role-evidence--restore-refund.yaml": "1cd6ce66a278c30d26407821add503015d41fa686e5d4bc739820f96cd41a53a",
-      "entities/role-party--account-provider.yaml": "5e7514c310a1bb1ffdfaa693217693108c8eaa0c78af86c479470e9c28da9c86",
-      "entities/role-party--account-user.yaml": "fb0f2f7efe488176b9c6f3f0021470ac6947e73f1155fde02d365351f6e87939",
-      "entities/role-party--mobile-provider.yaml": "3e90ee268a263491fa9701f2ade1de1f219bc44924cec29e7ea17b72a6e3705e",
-      "entities/role-party--mobile-user.yaml": "6a20775216fbcd34f37a0be598e306481675b24a5006dceba452a80a5433f6a8",
-      "entities/role-party--publisher.yaml": "86aeea885651a56401c8a5095610de8df300bc539f1c0b8d0592cbb51071a93c",
-      "entities/role-party--reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
+      "00-overview.md": "4c198440c28164360b78888f1f3b9470932883215b5a26121e37987b8857ed31",
+      "01-glossary.md": "29f5fd0a454972dc2ba1d95e0a91c512ed192adfef5aa85cccd76b25753d852f",
+      "README.md": "03e9d0f0a208441c2cf907af3b5438eb923ad2a8082c322f12f29f19d16a8cd3",
+      "contexts/content/context.yaml": "f7c3fb544e9fb97cac706db55783800d163d552f25173c5c3587ab30ebd35dc8",
+      "contexts/content/things/chapter.yaml": "abced14265fdca6245d360d2e6910e9c1db7e5f1827ad64d474ba3a801cabd00",
+      "contexts/content/things/column.yaml": "8f12a3719314793e1710d73fa85110a6a10e9f7857530913a5fbfed05072854e",
+      "contexts/mobile/context.yaml": "a46f15928116f6b83ebe0d69eb637b0ae50258c6af54524752f56064503b12fe",
+      "contexts/mobile/contract.yaml": "d90ad9ec49384fcc7f3b488767d00d4378a4278e86a21e6169293c6c73b59af4",
+      "contexts/mobile/fulfillments/mobile/confirmation.yaml": "b4b2de82d4b1a1d990892e8fc17f503514e4b8b0ad78dfbb0720ba51a6f70ac4",
+      "contexts/mobile/fulfillments/mobile/context.yaml": "f46430879d09d0c018ef735beb6da92dd177a406011f7234dd6191d0ba173f61",
+      "contexts/mobile/fulfillments/mobile/relationships/mobile-result.yaml": "35880e9b1c8f7a25bafe6b48fe9a9ce6b7b02c28e822abbf01f102e7e1d49d07",
+      "contexts/mobile/fulfillments/mobile/request.yaml": "c19d15e3457964ab7e3c92fa59a52c9f9964f2589bfcb96640389e9dcba2a953",
+      "contexts/mobile/fulfillments/mobile/rules/mobile-completed.yaml": "3a25710a4ae8fe0f76f8a415bad412ebc14ec95ff73a1d02456383bf3543e6fa",
+      "contexts/mobile/fulfillments/mobile/rules/mobile-expired.yaml": "64379bde3655f906d9cbfd826ee18d7b1352514c3bc85f1fb839d9c403be9d7c",
+      "contexts/mobile/relationships/contract-mobile.yaml": "ff9fe4990f4777fc6a5604b75945b789c353d794167a6d0d1e053d3fbcfb9711",
+      "contexts/mobile/roles/mobile-provider.yaml": "3e90ee268a263491fa9701f2ade1de1f219bc44924cec29e7ea17b72a6e3705e",
+      "contexts/mobile/roles/mobile-user.yaml": "6a20775216fbcd34f37a0be598e306481675b24a5006dceba452a80a5433f6a8",
+      "contexts/prepaid/context.yaml": "d8085ef406773cec9d95364f3a205ee93f6f6c21a437a37232f8e4611c4d8386",
+      "contexts/prepaid/contract.yaml": "612727ce1568880e008ef03a1d3712357e51bf400b1a1e8d7fb95288de174d1b",
+      "contexts/prepaid/fulfillments/prepaid/confirmation.yaml": "68f07bbb8bca6b14229d77146e2ec7a242badc50d6fe6f90800b2ad7754f4e41",
+      "contexts/prepaid/fulfillments/prepaid/context.yaml": "42f38dcfa72215a7c350c1645c15b8153b6e37c7fde962ecfc3c6dc849088a70",
+      "contexts/prepaid/fulfillments/prepaid/relationships/prepaid-result.yaml": "9e901e8d75ab55342ffb09fd18024b7e65237962c6ad3c7e4a9b815fc9f0c780",
+      "contexts/prepaid/fulfillments/prepaid/request.yaml": "8355df286cdd62f6f57083a15385db0bac4e1327eebce79aa70691a6388c7a1a",
+      "contexts/prepaid/fulfillments/prepaid/rules/prepaid-balance.yaml": "c886c1b274e6df98d17fdaaad69c9f5912a46f49ad599a73da312ad013aa7d4b",
+      "contexts/prepaid/fulfillments/prepaid/rules/prepaid-completed.yaml": "c76226f32171176c969bce8e47e8de3a2c395d5eaa8e2fa40e14e5a4e2d284c4",
+      "contexts/prepaid/fulfillments/prepaid/rules/prepaid-expired.yaml": "6ea073e0365b066460f1a1a2330b361431fa9faf34308508b41dcdb84fff9e46",
+      "contexts/prepaid/fulfillments/prepaid/rules/prepaid-funded.yaml": "6978b594115b4342913c6b17789ccd13e278d27f1d362b6b9b3af917314ac3c0",
+      "contexts/prepaid/relationships/contract-prepaid.yaml": "4c5b74b3bbe0a76aef8fcb46ca5daf239ee89bae6548980861fe7f81650b749d",
+      "contexts/prepaid/roles/account-provider.yaml": "a64f1e95566887490baf5fc02b4da4ae2bc8fca26d5f8a0146bae62b148746c3",
+      "contexts/prepaid/roles/account-user.yaml": "fb0f2f7efe488176b9c6f3f0021470ac6947e73f1155fde02d365351f6e87939",
+      "contexts/subscription/context.yaml": "1a795d59e59b4f7e8a51a715571bc115bf6c63453ac290a37d7c307ee92f8c6b",
+      "contexts/subscription/contract.yaml": "f0fab404ec6e97481afc0c5fac9ee4aeea130aee574abb7923374a512af46de0",
+      "contexts/subscription/fulfillments/access/confirmation.yaml": "9a33e97ed2ef8b015148c01000950b4d8ca435a2d49c5766c3f88c08f64b6f43",
+      "contexts/subscription/fulfillments/access/context.yaml": "eb6ecefacb95c6fe68faf66c0f3ef7a249d9e271bd7c7f8d9d0dbdc452df438f",
+      "contexts/subscription/fulfillments/access/relationships/access-payment-used.yaml": "ba94f471bf756fa91e2f70adb4fdbfc30dabf6671925a8541bd73653a53be07d",
+      "contexts/subscription/fulfillments/access/relationships/access-refund-used.yaml": "fa7c8ba698eff47c53257bde9667df54bcdd7b472748019319d8ddd3e474fbe1",
+      "contexts/subscription/fulfillments/access/relationships/access-restored-used.yaml": "960bc77313055f8a962ef14f7b346dd50f7252cb2eeed74c4283124ab539f55a",
+      "contexts/subscription/fulfillments/access/relationships/access-result.yaml": "d29b6511e20e519845bd8ef19cc1d949d5c6e67181c9b3348e7a93d8033e9253",
+      "contexts/subscription/fulfillments/access/request.yaml": "2a01e8a5aa7f326458ca8092a8b1b9fb81e4c652d14e74131b53e9c7a1c1e9d0",
+      "contexts/subscription/fulfillments/access/roles/access-payment.yaml": "b322b38bb7cf10e07ba0cd9f4dc6ca7dc76592b2b846b88b093c0c710793f00c",
+      "contexts/subscription/fulfillments/access/roles/access-refund.yaml": "bbb2ea39c49afc9504dc27d9dfa4e183e3bc187aafd8d59de5a5d25ca81d53c5",
+      "contexts/subscription/fulfillments/access/roles/access-restored.yaml": "4c66c3c47a9c9d4517aaa61be1ae4ddcd98ca6c1dde09e28c9a477d25d64f22a",
+      "contexts/subscription/fulfillments/access/rules/access-completed.yaml": "3fb71c127c83b8d28ac7562f1a051f04757a761627cb74148fe50bfd601557ce",
+      "contexts/subscription/fulfillments/access/rules/access-deadline.yaml": "8aab30d881c0ba523734734bd7a2fb933c8a5341f63b5f964f5c95c0688b1c49",
+      "contexts/subscription/fulfillments/access/rules/access-eligible.yaml": "1ad0a0aa732eac573eb06dcdd29fc0f77f634aff5b910be9225e8b1b32db91e3",
+      "contexts/subscription/fulfillments/access/rules/access-expired.yaml": "067210104f100de0fd07f5032bed2e7bb5578c2cc1528eeae3d6b2c04fab7fde",
+      "contexts/subscription/fulfillments/access/rules/content-readable.yaml": "c5c33840598ec535c06f3fafc3cc0eea16380ee3e9aa6bd705b27f93caa156f7",
+      "contexts/subscription/fulfillments/payment/context.yaml": "35e80723bd7b046ba1e5b4ddcb24cbb206520efb77709d3a2d8799421a90718d",
+      "contexts/subscription/fulfillments/payment/relationships/payment-proof-used.yaml": "8b7ddfb7fab5cb4332f3b80e1f6c7683e056251967e27374b082b8cbc1f8a035",
+      "contexts/subscription/fulfillments/payment/request.yaml": "cccceeefff9402cccca9a482fb903ca1d0f457472e50b509416758dbb9a20a69",
+      "contexts/subscription/fulfillments/payment/roles/payment-proof.yaml": "dbf8d6970a00305921910ac3a4d5bc19bcf5f7aa647091f9ca38afb128f4b2e4",
+      "contexts/subscription/fulfillments/payment/rules/payment-amount.yaml": "0b4e30b94cd11a5b58326dea6f70dca3cdb57635b79051afe6ae69d5d0cf4fb6",
+      "contexts/subscription/fulfillments/payment/rules/payment-completed.yaml": "27755dbf426be743f33b0fd3daf3d80cb847eaf39a827113084b6f21cf159624",
+      "contexts/subscription/fulfillments/payment/rules/payment-deadline.yaml": "0a73d6398577d101664d0cd6388fc8a2a1ec7b42bb32e5a3a2874f68be951654",
+      "contexts/subscription/fulfillments/payment/rules/payment-expired.yaml": "48fda2ad5214c1e6ab8c6a555ad0af68a929b3a603a82e207027ff128929bea5",
+      "contexts/subscription/fulfillments/payment/rules/payment-start.yaml": "f33d7bfbb5c7aad474731a689e2469531c3d51ee028bacbe421305c465cd32c8",
+      "contexts/subscription/fulfillments/refund/confirmation.yaml": "8e78457e78173bb5cc1e4293eaa76385a897ac202b973fa90f0eaf2cc172db32",
+      "contexts/subscription/fulfillments/refund/context.yaml": "71db4fe8c7d0283e3b7b7d4ebeaed38747e7f146b7977607aa1103f3c274befa",
+      "contexts/subscription/fulfillments/refund/evidence/discontinuation.yaml": "28f4f65f8fd489dda3dd26d8284b178c9bfb54602e89a612f06bc12fd6efbda5",
+      "contexts/subscription/fulfillments/refund/relationships/refund-basis-first.yaml": "83e30085c806f84183dcc79a4c26bf8f649f402372a42bca11515ed555df3576",
+      "contexts/subscription/fulfillments/refund/relationships/refund-basis.yaml": "16172139ba5d0872ef0814668ce2279afd474492d93ba6128a5d878124b6db39",
+      "contexts/subscription/fulfillments/refund/relationships/refund-payment-used.yaml": "3e5386c0f4a2ac1930865b2cd95fd1c5a9edeaa57c2115627ba898ddb5f808ab",
+      "contexts/subscription/fulfillments/refund/relationships/refund-result.yaml": "bf53031ca9e91536d88983f926765298d15f8cbd2c07e9a2a1ab745a7a8c361c",
+      "contexts/subscription/fulfillments/refund/request.yaml": "4fbdcd825939f189f4c9365b5c95db8ed42eab4f0acb77b805205bb9520352b4",
+      "contexts/subscription/fulfillments/refund/roles/refund-payment.yaml": "74be2527542ad938a55a85051b2e1af861e18c732d33458644191edb15ea4cc9",
+      "contexts/subscription/fulfillments/refund/rules/refund-amount.yaml": "49cf5189639f7237a01c43ea4c06b542ebbffbd548ff02a96b8b46900ba0e221",
+      "contexts/subscription/fulfillments/refund/rules/refund-completed.yaml": "4d1944e22a06794999393a5533c8fbd960a805ac5afa327bc44374b631e6672c",
+      "contexts/subscription/fulfillments/refund/rules/refund-deadline.yaml": "b65dee46a32a84eb5c3a4b3bf3810e1ddf2eb1e4106113b5081641eea88e664d",
+      "contexts/subscription/fulfillments/refund/rules/refund-eligible.yaml": "76ca7a0e9ef88d4104b12f81062f1fd24b64535e0407207b56a1aee360c31548",
+      "contexts/subscription/fulfillments/refund/rules/refund-expired.yaml": "0ddd1a9dccda3325b33a2a08760cc25e22e25db710b0d3a073770e7e0ec29a83",
+      "contexts/subscription/fulfillments/restore/confirmation.yaml": "797018f1620d49e30ebafab2208c258967d6d1b98c9753472034e9fa1610a6dd",
+      "contexts/subscription/fulfillments/restore/context.yaml": "3b4fd1ef9f76853ab59fc99394ec65dc44b8286636a3545f4cdc9e32b9ff3a3e",
+      "contexts/subscription/fulfillments/restore/evidence/relaunch.yaml": "cd262df74827d19737991353eb5b59664089b3aaf73719f959f5bb38fe3e9e16",
+      "contexts/subscription/fulfillments/restore/relationships/restore-basis-first.yaml": "983272751927f13325e58ebab569f56ecdb85cfd491471f7d92d4bfaa409cc57",
+      "contexts/subscription/fulfillments/restore/relationships/restore-basis.yaml": "474b559f77829e530f7958cb3ae7bc877e02abc95569e57afa9d1c35fb6d9f2d",
+      "contexts/subscription/fulfillments/restore/relationships/restore-refund-used.yaml": "b109c871524c514246a5c3d9419718e4edea7ed1a86b8fd2b657cfafc9da3ab8",
+      "contexts/subscription/fulfillments/restore/relationships/restore-result.yaml": "e6ad30ab0594c2e3b83b4f47611fcf163a0ebdaa028e000cbae715ad21f58356",
+      "contexts/subscription/fulfillments/restore/request.yaml": "b20869a259e4d13db95be4203ba345ac0b4101b4d7433f23b7742e06e4feb787",
+      "contexts/subscription/fulfillments/restore/roles/restore-refund.yaml": "1cd6ce66a278c30d26407821add503015d41fa686e5d4bc739820f96cd41a53a",
+      "contexts/subscription/fulfillments/restore/rules/restore-completed.yaml": "7e052957c39437cde3bbd6ae2dcc8a23e1c1e4ca25d42575a3b2d22f4c5308a2",
+      "contexts/subscription/fulfillments/restore/rules/restore-deadline.yaml": "68fb04d0fe312af5b89ae9e24703662f753c0315ff2196c902acf77d103e4a88",
+      "contexts/subscription/fulfillments/restore/rules/restore-eligible.yaml": "066c2b1c03c0e9f13eb01d4ed28408e8342eac37865e192bcb4717ac93c1a1d9",
+      "contexts/subscription/fulfillments/restore/rules/restore-expired.yaml": "baabc9cc9c30b2b04f28daebfe9be1dd79d64b586e265cae6fc391b2648d7d8c",
+      "contexts/subscription/relationships/contract-access.yaml": "b4a05d78f252e794aad63f4d2d8d19fecbc86bc77469df49b78ac218a7e24eba",
+      "contexts/subscription/relationships/contract-payment.yaml": "86cefb798424d88063d23ffb8aa983aca5363acbf238505a62d8ee5024d784c8",
+      "contexts/subscription/relationships/contract-refund.yaml": "a85d010680bcbc02f4c9868952f3e2f96beb7b00ae41d10c336f487ff2728d7a",
+      "contexts/subscription/relationships/contract-restore.yaml": "ecccabfb89e8c05bb84feb4a3668dbb34716cb8505c51e1af6e3643300be4784",
+      "contexts/subscription/relationships/refund-as-access-refund.yaml": "75158adb66b07590dec7152c97badec701e2235899e4bb2a3b2ee6cd7b12d6fd",
+      "contexts/subscription/relationships/refund-as-restore-refund.yaml": "95fbac866f471b4492a645778d3f56194cf99dd08aa84efe2d38cba114b25d2c",
+      "contexts/subscription/relationships/restore-as-access-restored.yaml": "704af72b8c4d75505c14d3de6055ae1b10d2652fda270134c351c3898e6dd56b",
+      "contexts/subscription/roles/publisher.yaml": "bef6e3a2fa3f1f9252fa4816d66588819d842bc3aaee1ccd0f72393b638a909d",
+      "contexts/subscription/roles/reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
       "model.yaml": "8c31f643482aab2c50cc504c8f0279cbdd0d1a0f3518ce28aab4b169bc7bfe61",
-      "relationships/relation--access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
-      "relationships/relation--access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
-      "relationships/relation--access-payment-used.yaml": "ba94f471bf756fa91e2f70adb4fdbfc30dabf6671925a8541bd73653a53be07d",
-      "relationships/relation--access-refund-used.yaml": "fa7c8ba698eff47c53257bde9667df54bcdd7b472748019319d8ddd3e474fbe1",
-      "relationships/relation--access-restored-used.yaml": "960bc77313055f8a962ef14f7b346dd50f7252cb2eeed74c4283124ab539f55a",
-      "relationships/relation--access-result.yaml": "d29b6511e20e519845bd8ef19cc1d949d5c6e67181c9b3348e7a93d8033e9253",
-      "relationships/relation--contract-access.yaml": "b4a05d78f252e794aad63f4d2d8d19fecbc86bc77469df49b78ac218a7e24eba",
-      "relationships/relation--contract-mobile.yaml": "ff9fe4990f4777fc6a5604b75945b789c353d794167a6d0d1e053d3fbcfb9711",
-      "relationships/relation--contract-payment.yaml": "86cefb798424d88063d23ffb8aa983aca5363acbf238505a62d8ee5024d784c8",
-      "relationships/relation--contract-prepaid.yaml": "4c5b74b3bbe0a76aef8fcb46ca5daf239ee89bae6548980861fe7f81650b749d",
-      "relationships/relation--contract-refund.yaml": "a85d010680bcbc02f4c9868952f3e2f96beb7b00ae41d10c336f487ff2728d7a",
-      "relationships/relation--contract-restore.yaml": "0cf5ce8b72390d917893cd289a6d3c9fa062411d243d2ed658483719eca819d6",
-      "relationships/relation--mobile-as-access-payment.yaml": "f74baf63aac668d7fe8ab0b6743ec43568f6cf19975cbf858ec125856576398e",
-      "relationships/relation--mobile-as-payment-proof.yaml": "be9f3f395996d45441313b325f4a7977e243b094a28291d19f4f58ddf0fd2c23",
-      "relationships/relation--mobile-as-refund-payment.yaml": "4ed6377e03d2aed254198dea40eae4611d9463507c6a04794bae983451c38976",
-      "relationships/relation--mobile-column.yaml": "bca78b287b5745d2c7ae975a945f0615c525d7b12edd01c28e1253b138908755",
-      "relationships/relation--mobile-provider-as-mobile-provider.yaml": "78c3d4b0d65c61fb4b5637b51262dbb89a3c90aa771fd1bb89d5e768df5b030d",
-      "relationships/relation--mobile-result.yaml": "35880e9b1c8f7a25bafe6b48fe9a9ce6b7b02c28e822abbf01f102e7e1d49d07",
-      "relationships/relation--payment-column.yaml": "0cb1d60397f6d9b76341a4d14bfa48955a3db63a13fe8810b8b32928a64333a7",
-      "relationships/relation--payment-proof-used.yaml": "8b7ddfb7fab5cb4332f3b80e1f6c7683e056251967e27374b082b8cbc1f8a035",
-      "relationships/relation--prepaid-as-access-payment.yaml": "581bbf7497979598364d431cd74b8165d69c8d3d4c8c2113ef382a1a1fdc1ee4",
-      "relationships/relation--prepaid-as-payment-proof.yaml": "2460e96647d0e6b4ae1e5f43df6775639b3a57a3eec68988f3d31b875d34e8b6",
-      "relationships/relation--prepaid-as-refund-payment.yaml": "4fbedcf32bd1f044c9aeb62372c1680a7f40e7d3e7c359812b1ef1bd11c6358d",
-      "relationships/relation--prepaid-column.yaml": "653791a3b358051f0950a2e91f3f155aacaef794f77cbc1c7332de4887aafc04",
-      "relationships/relation--prepaid-result.yaml": "9e901e8d75ab55342ffb09fd18024b7e65237962c6ad3c7e4a9b815fc9f0c780",
-      "relationships/relation--publisher-as-account-provider.yaml": "3df6ebfac7cacf5c8501df26d200e636bf00d6360f21e6c56dba324a010cab21",
-      "relationships/relation--publisher-as-publisher.yaml": "5abed48b24a586e23f85002667b1e4e686d2c87822b0024d8ffdb29179f0425d",
-      "relationships/relation--reader-as-account-user.yaml": "9ce017b4508c83cf6bbd76f842f4795c4304f37783ecd42474d71dfc08647c1d",
-      "relationships/relation--reader-as-mobile-user.yaml": "16bb666e32aff0cf5fe941dc1667aa283fecd700eec922c693baf33d51c69e95",
-      "relationships/relation--reader-as-reader.yaml": "ed4f8b20ec332f75a83797afc6be1354add4e2cd7a7a071e61f12bd3079b3904",
-      "relationships/relation--refund-as-access-refund.yaml": "75158adb66b07590dec7152c97badec701e2235899e4bb2a3b2ee6cd7b12d6fd",
-      "relationships/relation--refund-as-restore-refund.yaml": "95fbac866f471b4492a645778d3f56194cf99dd08aa84efe2d38cba114b25d2c",
-      "relationships/relation--refund-basis-first.yaml": "83e30085c806f84183dcc79a4c26bf8f649f402372a42bca11515ed555df3576",
-      "relationships/relation--refund-basis.yaml": "16172139ba5d0872ef0814668ce2279afd474492d93ba6128a5d878124b6db39",
-      "relationships/relation--refund-column.yaml": "e4c834c29b2563dd4d7cfda0257a7c9981124d54e52df40d20cda05dd14cfae4",
-      "relationships/relation--refund-payment-used.yaml": "3e5386c0f4a2ac1930865b2cd95fd1c5a9edeaa57c2115627ba898ddb5f808ab",
-      "relationships/relation--refund-result.yaml": "bf53031ca9e91536d88983f926765298d15f8cbd2c07e9a2a1ab745a7a8c361c",
-      "relationships/relation--restore-as-access-restored.yaml": "704af72b8c4d75505c14d3de6055ae1b10d2652fda270134c351c3898e6dd56b",
-      "relationships/relation--restore-basis-first.yaml": "2a1b4a0a3611762b0bde1c9d9d9d292eab02f976bbbda6c5a751f704fec05367",
-      "relationships/relation--restore-basis.yaml": "474b559f77829e530f7958cb3ae7bc877e02abc95569e57afa9d1c35fb6d9f2d",
-      "relationships/relation--restore-column.yaml": "3e8416ed715b8b7b25bb180de75992bc9224600e15ff77280ee05321f5abfca9",
-      "relationships/relation--restore-refund-used.yaml": "b109c871524c514246a5c3d9419718e4edea7ed1a86b8fd2b657cfafc9da3ab8",
-      "relationships/relation--restore-result.yaml": "e6ad30ab0594c2e3b83b4f47611fcf163a0ebdaa028e000cbae715ad21f58356",
-      "relationships/relation--subscription-column.yaml": "4017b4ff87fa49b5090470794292325c359348aa69fd23d133175bc583f30bd8",
-      "rules/rule--access-completed.yaml": "3fb71c127c83b8d28ac7562f1a051f04757a761627cb74148fe50bfd601557ce",
-      "rules/rule--access-deadline.yaml": "8aab30d881c0ba523734734bd7a2fb933c8a5341f63b5f964f5c95c0688b1c49",
-      "rules/rule--access-eligible.yaml": "1ad0a0aa732eac573eb06dcdd29fc0f77f634aff5b910be9225e8b1b32db91e3",
-      "rules/rule--access-expired.yaml": "067210104f100de0fd07f5032bed2e7bb5578c2cc1528eeae3d6b2c04fab7fde",
-      "rules/rule--content-readable.yaml": "c5c33840598ec535c06f3fafc3cc0eea16380ee3e9aa6bd705b27f93caa156f7",
-      "rules/rule--mobile-completed.yaml": "3a25710a4ae8fe0f76f8a415bad412ebc14ec95ff73a1d02456383bf3543e6fa",
-      "rules/rule--mobile-expired.yaml": "64379bde3655f906d9cbfd826ee18d7b1352514c3bc85f1fb839d9c403be9d7c",
-      "rules/rule--payment-amount.yaml": "0b4e30b94cd11a5b58326dea6f70dca3cdb57635b79051afe6ae69d5d0cf4fb6",
-      "rules/rule--payment-completed.yaml": "27755dbf426be743f33b0fd3daf3d80cb847eaf39a827113084b6f21cf159624",
-      "rules/rule--payment-deadline.yaml": "0a73d6398577d101664d0cd6388fc8a2a1ec7b42bb32e5a3a2874f68be951654",
-      "rules/rule--payment-expired.yaml": "48fda2ad5214c1e6ab8c6a555ad0af68a929b3a603a82e207027ff128929bea5",
-      "rules/rule--payment-start.yaml": "f33d7bfbb5c7aad474731a689e2469531c3d51ee028bacbe421305c465cd32c8",
-      "rules/rule--prepaid-balance.yaml": "c886c1b274e6df98d17fdaaad69c9f5912a46f49ad599a73da312ad013aa7d4b",
-      "rules/rule--prepaid-completed.yaml": "c76226f32171176c969bce8e47e8de3a2c395d5eaa8e2fa40e14e5a4e2d284c4",
-      "rules/rule--prepaid-expired.yaml": "6ea073e0365b066460f1a1a2330b361431fa9faf34308508b41dcdb84fff9e46",
-      "rules/rule--prepaid-funded.yaml": "6978b594115b4342913c6b17789ccd13e278d27f1d362b6b9b3af917314ac3c0",
-      "rules/rule--refund-amount.yaml": "49cf5189639f7237a01c43ea4c06b542ebbffbd548ff02a96b8b46900ba0e221",
-      "rules/rule--refund-completed.yaml": "4d1944e22a06794999393a5533c8fbd960a805ac5afa327bc44374b631e6672c",
-      "rules/rule--refund-deadline.yaml": "b65dee46a32a84eb5c3a4b3bf3810e1ddf2eb1e4106113b5081641eea88e664d",
-      "rules/rule--refund-eligible.yaml": "76ca7a0e9ef88d4104b12f81062f1fd24b64535e0407207b56a1aee360c31548",
-      "rules/rule--refund-expired.yaml": "0ddd1a9dccda3325b33a2a08760cc25e22e25db710b0d3a073770e7e0ec29a83",
-      "rules/rule--restore-completed.yaml": "7e052957c39437cde3bbd6ae2dcc8a23e1c1e4ca25d42575a3b2d22f4c5308a2",
-      "rules/rule--restore-deadline.yaml": "68fb04d0fe312af5b89ae9e24703662f753c0315ff2196c902acf77d103e4a88",
-      "rules/rule--restore-eligible.yaml": "066c2b1c03c0e9f13eb01d4ed28408e8342eac37865e192bcb4717ac93c1a1d9",
-      "rules/rule--restore-expired.yaml": "baabc9cc9c30b2b04f28daebfe9be1dd79d64b586e265cae6fc391b2648d7d8c",
+      "participants/user.yaml": "c141bbf0952f460862719a185cf003eb783f4d0587be6f638a8d113cd66a3ecd",
+      "relationships/access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
+      "relationships/access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
+      "relationships/mobile-as-access-payment.yaml": "f74baf63aac668d7fe8ab0b6743ec43568f6cf19975cbf858ec125856576398e",
+      "relationships/mobile-as-payment-proof.yaml": "be9f3f395996d45441313b325f4a7977e243b094a28291d19f4f58ddf0fd2c23",
+      "relationships/mobile-as-refund-payment.yaml": "4ed6377e03d2aed254198dea40eae4611d9463507c6a04794bae983451c38976",
+      "relationships/mobile-column.yaml": "bca78b287b5745d2c7ae975a945f0615c525d7b12edd01c28e1253b138908755",
+      "relationships/payment-column.yaml": "0cb1d60397f6d9b76341a4d14bfa48955a3db63a13fe8810b8b32928a64333a7",
+      "relationships/prepaid-as-access-payment.yaml": "581bbf7497979598364d431cd74b8165d69c8d3d4c8c2113ef382a1a1fdc1ee4",
+      "relationships/prepaid-as-payment-proof.yaml": "2460e96647d0e6b4ae1e5f43df6775639b3a57a3eec68988f3d31b875d34e8b6",
+      "relationships/prepaid-as-refund-payment.yaml": "4fbedcf32bd1f044c9aeb62372c1680a7f40e7d3e7c359812b1ef1bd11c6358d",
+      "relationships/prepaid-column.yaml": "653791a3b358051f0950a2e91f3f155aacaef794f77cbc1c7332de4887aafc04",
+      "relationships/refund-column.yaml": "e4c834c29b2563dd4d7cfda0257a7c9981124d54e52df40d20cda05dd14cfae4",
+      "relationships/restore-column.yaml": "3e8416ed715b8b7b25bb180de75992bc9224600e15ff77280ee05321f5abfca9",
+      "relationships/subscription-column.yaml": "4017b4ff87fa49b5090470794292325c359348aa69fd23d133175bc583f30bd8",
+      "relationships/user-as-account-user.yaml": "9b94f78b12272a635d942a2b1c575595e39443a7dcaccc671d318c27314e0c63",
+      "relationships/user-as-mobile-user.yaml": "15620bddee4b79c6218a36e25d94905dfcf6b453ab8d1c6073a25ed414e4df91",
+      "relationships/user-as-reader.yaml": "b1c5b7617c0fe1510572e462c60c1551fe2c1e8698f4b9e5cd3c5cf28277f940",
       "validation/instances/instance--access-mobile.yaml": "e10c1921d2c194f4c70cdf2d98227557496ce3df7a622967b0ae1afadbcdcfd3",
       "validation/instances/instance--access-prepaid.yaml": "47fd8d8e476d13449d9a325ed20b93a7676a1b7836d177c3bcf9d8884ccdc1e2",
       "validation/instances/instance--access-restored.yaml": "4b3ae54267d76e36417819197b107fdf67482af59ebf01b090ac00559bba93e0",
@@ -11173,7 +11210,9 @@
       "validation/scenarios/scenario--short-paid.yaml": "5d81b1f4b9f2aff25c4b3a66ea09d99ae3a60cdd1c18aa861560df6b3e3b7db0",
       "validation/scenarios/scenario--wrong-reader.yaml": "414a794273455bdbd4796adda2627db38d557d0232d3a36bcb55b2dde5f6b04b"
     },
-    "sources": {}
+    "sources": {
+      ".evidence/discovery.md": "0d7f22fe65060e7479530992af60229b0362e2213ce4b3358f506c3d33cfb69e"
+    }
   },
   "modelCoverage": [
     {
@@ -11286,32 +11325,12 @@
     },
     {
       "basis": {
-        "fmRefs": ["party.mobile-provider"],
-        "reasoning": "主体用于跨合同身份绑定，不提供人员或机构档案管理接口。"
+        "fmRefs": ["party.user"],
+        "reasoning": "用户用于跨合同身份绑定，分别扮演各上下文的角色；不提供用户档案管理接口。"
       },
       "capabilityRefs": [],
       "contextRef": null,
-      "entityRef": "party.mobile-provider",
-      "handling": "internal"
-    },
-    {
-      "basis": {
-        "fmRefs": ["party.publisher"],
-        "reasoning": "主体用于跨合同身份绑定，不提供人员或机构档案管理接口。"
-      },
-      "capabilityRefs": [],
-      "contextRef": null,
-      "entityRef": "party.publisher",
-      "handling": "internal"
-    },
-    {
-      "basis": {
-        "fmRefs": ["party.reader"],
-        "reasoning": "主体用于跨合同身份绑定，不提供人员或机构档案管理接口。"
-      },
-      "capabilityRefs": [],
-      "contextRef": null,
-      "entityRef": "party.reader",
+      "entityRef": "party.user",
       "handling": "internal"
     },
     {
@@ -11740,7 +11759,7 @@
       "id": "operation.relaunch.collection.post",
       "method": "POST",
       "resourceRef": "resource.relaunch",
-      "uri": "/relaunches",
+      "uri": "/subscriptions/{subscriptionId}/relaunches",
       "view": "collection"
     },
     {
@@ -11758,7 +11777,7 @@
       "id": "operation.relaunch.item.get",
       "method": "GET",
       "resourceRef": "resource.relaunch",
-      "uri": "/relaunches/{relaunchId}",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}",
       "view": "item"
     },
     {
@@ -11776,7 +11795,7 @@
       "id": "operation.restore.singleton.get",
       "method": "GET",
       "resourceRef": "resource.restore",
-      "uri": "/subscriptions/{subscriptionId}/restoration",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
       "view": "singleton"
     },
     {
@@ -11791,7 +11810,7 @@
       "id": "operation.restore.singleton.post",
       "method": "POST",
       "resourceRef": "resource.restore",
-      "uri": "/subscriptions/{subscriptionId}/restoration",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration",
       "view": "singleton"
     },
     {
@@ -11809,7 +11828,7 @@
       "id": "operation.restore-result.singleton.get",
       "method": "GET",
       "resourceRef": "resource.restore-result",
-      "uri": "/subscriptions/{subscriptionId}/restoration/result",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
       "view": "singleton"
     },
     {
@@ -11824,7 +11843,7 @@
       "id": "operation.restore-result.singleton.post",
       "method": "POST",
       "resourceRef": "resource.restore-result",
-      "uri": "/subscriptions/{subscriptionId}/restoration/result",
+      "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result",
       "view": "singleton"
     },
     {
@@ -12116,10 +12135,16 @@
     },
     {
       "basis": {
-        "fmRefs": ["evidence.relaunch"],
-        "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
+        "fmRefs": ["evidence.relaunch", "contract.subscription"],
+        "reasoning": "同一原订阅可有多次重新上架活动，每次活动以独立编号定位。",
+        "sourceRefs": ["source.restore-per-relaunch"]
       },
       "businessName": "重新上架记录",
+      "cardinality": {
+        "max": "many",
+        "reasoning": "同一原订阅允许保存多份重新上架记录，各次形成均有独立身份。",
+        "sourceRefs": ["source.restore-per-relaunch"]
+      },
       "entityRef": "evidence.relaunch",
       "id": "resource.relaunch",
       "identity": {
@@ -12127,35 +12152,41 @@
         "kind": "api_resource_id",
         "parameter": "relaunchId"
       },
-      "parameters": ["relaunchId"],
+      "parameters": ["subscriptionId", "relaunchId"],
+      "parentBindingRef": "binding.parent-relaunch",
+      "parentRef": "resource.subscription",
       "segment": "relaunches",
       "shape": "collection",
       "uris": {
-        "collection": "/relaunches",
-        "item": "/relaunches/{relaunchId}"
+        "collection": "/subscriptions/{subscriptionId}/relaunches",
+        "item": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}"
       }
     },
     {
       "basis": {
-        "fmRefs": ["request.restore", "contract.subscription"],
-        "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
+        "fmRefs": [
+          "request.restore",
+          "evidence.relaunch",
+          "relation.restore-basis-first"
+        ],
+        "reasoning": "同一次重新上架活动下至多一份有效恢复请求；不同活动分别定位。"
       },
       "businessName": "免费恢复请求",
       "cardinality": {
-        "relationshipRef": "relation.contract-restore"
+        "relationshipRef": "relation.restore-basis-first"
       },
       "entityRef": "request.restore",
       "id": "resource.restore",
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": ["subscriptionId", "relaunchId"],
       "parentBindingRef": "binding.parent-restore",
-      "parentRef": "resource.subscription",
+      "parentRef": "resource.relaunch",
       "segment": "restoration",
       "shape": "singleton",
       "uris": {
-        "singleton": "/subscriptions/{subscriptionId}/restoration"
+        "singleton": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
       }
     },
     {
@@ -12172,13 +12203,13 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": ["subscriptionId", "relaunchId"],
       "parentBindingRef": "binding.parent-restore-result",
       "parentRef": "resource.restore",
       "segment": "result",
       "shape": "singleton",
       "uris": {
-        "singleton": "/subscriptions/{subscriptionId}/restoration/result"
+        "singleton": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
       }
     },
     {
