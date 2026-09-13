@@ -24,18 +24,9 @@ class SkillDocumentationTests(unittest.TestCase):
         documents = [
             *ROOT.rglob("*.md"),
             *ROOT.rglob("*.json"),
-            *(repo / ".agents/skills/evidence-discovery/evals/pi-discovery").glob(
-                "*.md"
-            ),
-            *(repo / ".agents/skills/evidence-discovery/evals/pi-discovery").glob(
-                "*.json"
-            ),
             repo / "README.md",
-            repo / "docs/evidence.md",
-            repo / ".pi/extensions/evidence/README.md",
-            repo / ".pi/extensions/evidence/templates/evidence-fulfillment-model.md",
-            repo / ".pi/extensions/evidence/modeling/discovery/schema.ts",
-            repo / ".pi/extensions/evidence/adapters/pi/tools/discovery.ts",
+            repo / "docs/fm-modeling.md",
+            repo / ".pi/extensions/fm-modeling/README.md",
         ]
         for document in documents:
             with self.subTest(document=str(document)):
@@ -185,7 +176,7 @@ class SkillDocumentationTests(unittest.TestCase):
             with self.subTest(document=str(document)):
                 self.assertNotRegex(document.read_text(), r"docs/(?:business|api)/")
 
-    def test_default_layout_preserves_workflow_state_and_file_isolation(self):
+    def test_default_layout_preserves_authorization_and_file_isolation(self):
         for name in (
             "fm-modeling",
             "evidence-discovery",
@@ -194,7 +185,7 @@ class SkillDocumentationTests(unittest.TestCase):
         ):
             with self.subTest(skill=name):
                 text = (ROOT / name / "SKILL.md").read_text()
-                self.assertIn("state.json", text)
+                self.assertIn("只修改本次授权的文件", text)
                 self.assertIn("不自动迁移", text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("报告位于模型目录之外", validation)

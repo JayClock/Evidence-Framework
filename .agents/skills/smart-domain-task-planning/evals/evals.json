@@ -32,8 +32,8 @@
     {
       "id": 5,
       "name": "generic-backend-modules-and-ordinary-implementation",
-      "prompt": "读取 backend-layout 指南，以隔离的纯领域 FM 夹具 context.catalog 和 thing.asset 规划最小实体修改切片。已有项目把所有 Java 代码放在 app 内，只有一个 Gradle 应用；数据库未确定。用户选择普通实现与回归，不使用 TDD Skill。参考消费者含额外身份系统、PostgreSQL、旧版依赖与 Service，要求只借鉴后端形式。生成计划而不是产品代码。",
-      "expected_output": "平台模块工作单元恰好一份且不可排除；计划明确组合根与 domain/api/persistent 构建模块、依赖方向、XML/resultMap/对象工厂直接领域映射，以及 Root→集合→实体子资源和独立 representation/URI 模板。保留真实页号/字段契约，检查空集合、上下文注入、可解析链接和 HAL-FORMS 可编辑输入。API 模块有独立测试应用，以真实 HTTP + mock 领域根集合验证协议和失败不调用写入，不依赖 app/persistent/数据库；app 的真实集成测试仍保留，不能把两类证据混为一谈。采用 implementation 并要求普通回归，不调用 TDD Skill 或伪造 Red；不复制参考产品业务、身份、数据库、Service 或降级依赖，明确统一部署的模块化单体目标，区分业务模块与技术库，不把目录或 Gradle 项目数量等同于业务边界已经封装。",
+      "prompt": "读取 backend-layout 指南，以隔离的纯领域 FM 夹具 context.catalog 和 thing.asset 规划最小实体修改切片。已有项目把所有 Java 代码放在 app 内，只有一个 Gradle 应用；数据库未确定。用户选择普通实现与回归。参考消费者含额外身份系统、PostgreSQL、旧版依赖与 Service，要求只借鉴后端形式。生成计划而不是产品代码。",
+      "expected_output": "平台模块工作单元恰好一份且不可排除；计划明确组合根与 domain/api/persistent 构建模块、依赖方向、XML/resultMap/对象工厂直接领域映射，以及 Root→集合→实体子资源和独立 representation/URI 模板。保留真实页号/字段契约，检查空集合、上下文注入、可解析链接和 HAL-FORMS 可编辑输入。API 模块有独立测试应用，以真实 HTTP + mock 领域根集合验证协议和失败不调用写入，不依赖 app/persistent/数据库；app 的真实集成测试仍保留，不能把两类证据混为一谈。采用 implementation 并要求普通回归，不伪造执行结果；不复制参考产品业务、身份、数据库、Service 或降级依赖，明确统一部署的模块化单体目标，区分业务模块与技术库，不把目录或 Gradle 项目数量等同于业务边界已经封装。",
       "files": []
     },
     {

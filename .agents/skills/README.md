@@ -1,6 +1,6 @@
 # Evidence Skills
 
-本仓库的 Evidence Skills 统一放在 `.agents/skills/`。业务技能从事实发现推进到正式建模和软件需求收敛；交付技能承接架构、计划、编码与审查阶段。
+本仓库的 Evidence Skills 统一放在 `.agents/skills/`。业务技能负责发现、建模和软件需求收敛；交付技能围绕任务规划与实施检查形成双层循环。
 
 | Skill                                                             | 用途               | 输入与输出                                                                               | 运行依赖                                                       |
 | ----------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -9,11 +9,8 @@
 | [evidence-fm](evidence-fm/SKILL.md)                               | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口               | 读取准则只需文本；执行校验需 Python 3.10+                      |
 | [evidence-visualization](evidence-visualization/SKILL.md)         | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 YAML 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
 | [evidence-requirements](evidence-requirements/SKILL.md)           | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
-| [evidence-architecture](evidence-architecture/SKILL.md)           | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                                            | 项目仓库与 Evidence 工作流                                     |
-| [evidence-planning](evidence-planning/SKILL.md)                   | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                                             | 项目仓库与 Evidence 工作流                                     |
 | [smart-domain-task-planning](smart-domain-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |
-| [evidence-tdd](evidence-tdd/SKILL.md)                             | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                                           | 项目工具链与 Evidence 工作流                                   |
-| [evidence-review](evidence-review/SKILL.md)                       | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                                | 项目仓库与 Evidence 工作流                                     |
+| [smart-domain-delivery](smart-domain-delivery/SKILL.md)           | 双层循环交付       | 任务 DAG → 当前任务实施、检查证据与转向                                                  | Python 3.10+、PyYAML、项目工具链                               |
 
 ## 安装
 
@@ -76,7 +73,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
     └── api/              # 按需授权保存的 inspect/check 结果
 ```
 
-该布局不授权修改扩展拥有的 `state.json`、Gate 或运行记录；活动工作流仍使用其规定的提交方式。本次目录约定不改变其他 Skill 的输出位置，例如 `evidence-requirements` 的默认 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`smart-domain-task-planning` 独立使用时默认输出 `docs/plans/smart-domain/index.md` 和 `docs/plans/smart-domain/tasks/<具体交付结果>.md`：总索引维护显式切片、可读 fileName、程序计算的稳定 taskKey/依赖/API 覆盖及执行状态；独立文件以 taskKey/planRef 绑定索引并维护任务详情。文件名不参与任务身份或执行排序。实体和规则从任意输入 FM 提取，不包含项目专用业务案例。活动工作流则辅助当前 Planning 工件，不绕过宿主另建平行计划。
+各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`smart-domain-task-planning` 独立使用时默认输出 `docs/plans/smart-domain/index.md` 和 `docs/plans/smart-domain/tasks/<具体交付结果>.md`：总索引维护显式切片、可读 fileName、程序计算的稳定 taskKey/依赖/API 覆盖及执行状态；独立文件以 taskKey/planRef 绑定索引并维护任务详情。文件名不参与任务身份或执行排序。实体和规则从任意输入 FM 提取，不包含项目专用业务案例。`smart-domain-delivery` 消费同一任务索引，通过 `observedEvidence` 反馈执行结果，状态只在 `taskNotes` 维护。任务支持 implementation、verify、design、setup、manual，按实际检查命令记录结果。
 
 已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。工作术语、关系与讨论案例在访谈中只是材料，正式内容由对应任务消费来源形成。
 

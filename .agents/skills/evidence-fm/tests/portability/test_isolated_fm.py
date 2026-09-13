@@ -211,9 +211,9 @@ class IsolatedFMTests(unittest.TestCase):
         evidence = self.workspace / ".evidence"
         self.model = evidence / "fm"
         self.example("domain")
-        state = evidence / "state.json"
-        state.write_text('{"owner": "host"}\n', encoding="utf-8")
-        state_before = state.read_bytes()
+        notes = evidence / "discovery.md"
+        notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
+        notes_before = notes.read_bytes()
         first = self.check(0)
         manifest = self.model / "model.yaml"
         manifest.write_text(
@@ -224,10 +224,10 @@ class IsolatedFMTests(unittest.TestCase):
         current = json.loads(result.stdout)
         self.assertNotEqual(first["modelDigest"], current["modelDigest"])
         self.assertFalse(current["inputChanged"])
-        self.assertEqual({"fm", "state.json"}, {p.name for p in evidence.iterdir()})
+        self.assertEqual({"fm", "discovery.md"}, {p.name for p in evidence.iterdir()})
         report = evidence / "checks/fm/run-001.json"
         report.parent.mkdir(parents=True)
         report.write_text(result.stdout, encoding="utf-8")
         self.assertEqual(current, json.loads(report.read_text()))
         self.assertEqual(current["modelDigest"], self.check(0)["modelDigest"])
-        self.assertEqual(state_before, state.read_bytes())
+        self.assertEqual(notes_before, notes.read_bytes())

@@ -13,7 +13,7 @@ from typing import Any
 import yaml
 
 STATUSES = {"planned", "blocked", "in-progress", "done"}
-MODES = {"design", "setup", "implementation", "tdd", "verify", "manual"}
+MODES = {"design", "setup", "implementation", "verify", "manual"}
 
 
 class UniqueLoader(yaml.SafeLoader):

@@ -18,13 +18,13 @@ compatibility: Python 3.10+，PyYAML；消费 FM Schema v3，可选 API Schema 4
 - `apps/<应用>` 为组合根，`libs/<后端>/{domain,api,persistent}` 为真实构建模块；业务边界在这些库中按包/接口表达，必要时有依据地细化构建模块，名称沿用项目。用可见性、依赖约束与架构测试验证封装，不靠目录命名宣称隔离。
 - 领域行为归实体、Description、ContextRole 和拥有者关联，不增加业务 Service 编排贫血实体。MyBatis XML 直接映射领域对象，不无故增加 Row/PO 转换层。
 - Jersey 从 Root API 导航到根集合和绑定实体的子资源。复用 smart-domain `Pagination`，默认直接返回其结果；不另造分页算法、独立集合模型、Page DTO 或仅包装链接方法的公共表示基类。
-- API 模块有自己的真实 HTTP + mock 领域测试；app 的真实持久化与装配测试另行保留。普通实现不强制 TDD Skill，活动工作流的工序要求优先。
+- API 模块有自己的真实 HTTP + mock 领域测试；app 的真实持久化与装配测试另行保留。执行模式以当前任务计划为准，实施需保留回归检查。
 
 ## 输入、权限与输出
 
 默认读取 `.evidence/fm/`，可接受其他 FM 根；可选读取 `.evidence/api/api.yaml`、业务说明、架构、测试契约与现有代码。纯领域模型同样适用，不补造合同、履约或 API。
 
-只在用户要求生成或更新计划时写计划文件。讨论只解释，维护 Skill 不等于生成实际业务任务。FM、API、产品代码、依赖、宿主状态和 Gate 只读；遵守活动流程阶段与提交工具，不建立平行审批流程。
+只在用户要求生成或更新计划时写计划文件。讨论只解释，维护 Skill 不等于生成实际业务任务。FM、API、产品代码、依赖和审核记录只读；只维护本次授权的计划文件。
 
 ```text
 docs/plans/smart-domain/
@@ -116,7 +116,7 @@ path    = tasks/ + fileName
 
 ### 6. 检查与停止
 
-模式按用户和活动流程选择：`implementation` 普通实现与回归、`tdd` 完整 Red/Green/Refactor、`verify` 定位并复跑已有行为；其他设计、配置、人工任务如实标注。规划阶段不执行产品任务，不伪造结果。
+模式按用户授权和任务目标选择：`implementation` 普通实现与回归、`verify` 定位并复跑已有行为、`design` 设计、`setup` 环境准备、`manual` 人工任务。规划阶段不执行产品任务，不伪造结果。
 
 检查列出目的/Q1–Q4、被测行为、真实依赖或 Fake、固定事实和业务时间、正常/边界/反例、失败不变性、测试文件、cwd、命令、准备依赖及证据要求。未知命令填 null 并关联缺口。
 
@@ -124,4 +124,4 @@ path    = tasks/ + fileName
 
 最终核对 taskKey、文件、taskNotes 一一对应，所有任务引用均可解析；共享工作不重复，未决事实不隐藏。`coverageComplete` 仅表示已登记单元的结构覆盖，不表示业务批准、实现完成或测试通过；命名含义、详情语义和实际证据仍需审查。
 
-输出计划后停止，不自动实现或审批。用户另行要求按计划实施、恢复进度或检查下一任务时，交给 `smart-domain-delivery`；它读取本 Skill 生成的 index/task files，不在扩展中建立私有状态。活动流程的正式 Planning 工件仍使用宿主模板与提交机制。
+输出计划后停止，不自动实现或审批。用户另行要求按计划实施、恢复进度或检查下一任务时，交给 `smart-domain-delivery`；它读取本 Skill 生成的 index/task files，不在扩展中建立私有状态。复用同一任务索引和详情，不重复维护计划。

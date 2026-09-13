@@ -42,7 +42,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(payload["schemaVersion"], "3.0")
         self.assertTrue(payload["fmCheckSummary"]["valid"])
 
-    def test_evidence_layout_keeps_inputs_and_workflow_state_unchanged(self) -> None:
+    def test_evidence_layout_keeps_inputs_and_discovery_unchanged(self) -> None:
         example = API_ROOT / "assets/examples/full-lifecycle"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
@@ -53,8 +53,8 @@ class CliTest(unittest.TestCase):
             shutil.copytree(example / "fm", fm)
             output.parent.mkdir(parents=True)
             shutil.copyfile(example / "api.yaml", api)
-            state = evidence / "state.json"
-            state.write_text('{"owner": "extension"}\n', encoding="utf-8")
+            notes = evidence / "discovery.md"
+            notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
             inputs = {
                 path: path.read_bytes()
                 for path in evidence.rglob("*")

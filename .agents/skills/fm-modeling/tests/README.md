@@ -17,8 +17,8 @@
 | `.agents/skills/evidence-fm/tests/portability/`                | FM 独立安装、真实只读检查及包内回归                                  |
 | `.agents/skills/evidence-visualization/tests/portability/`     | 可视化独立安装及生成验证                                             |
 | `.agents/skills/fm-api-design/tests/test_api_documentation.py` | API 专属文档契约                                                     |
-| `.agents/skills/evidence-fm/evals/host-controls/`              | 宿主写入限制案例（原 ID 7），不混入独立业务方法                      |
-| `.agents/skills/evidence-discovery/evals/pi-discovery/`        | 38 个 Pi 交互发现案例和人工执行说明                                  |
+| `.agents/skills/smart-domain-task-planning/tests/`             | 工作单元提取、切片、任务身份和 DAG 校验                              |
+| `.agents/skills/smart-domain-delivery/tests/`                  | 任务状态、依赖、文件绑定和只读任务选择                               |
 
 业务输入、原有案例 ID、FM 评分预期及测试夹具保留。独立行为案例中的特定宿主名称改为通用工具约束，含义不变。FM 生成案例与独立行为案例是不同编号空间，不合并评分。
 
@@ -44,11 +44,11 @@ python3 .agents/skills/fm-modeling/tests/run_skill_tests.py
 python3 -m unittest discover -s .agents/skills/fm-modeling/tests -v
 ```
 
-聚合入口自动发现各 Skill 的 `tests/` 及 `tests/portability/`，逐套件使用独立子进程，任何失败都返回非零，避免同名测试模块串包。安装测试子目录不设 `__init__.py`：复制后的包内顶层回归不会递归执行安装测试；聚合入口显式运行安装测试，不能因此漏跑。宿主规则只放在维护评测中，业务入口仍不得链接或加载这些材料。
+聚合入口自动发现各 Skill 的 `tests/` 及 `tests/portability/`，逐套件使用独立子进程，任何失败都返回非零，避免同名测试模块串包。安装测试子目录不设 `__init__.py`：复制后的包内顶层回归不会递归执行安装测试；聚合入口显式运行安装测试，不能因此漏跑。业务入口不加载测试或评测材料。
 
 独立安装检查把整个 FM 包复制到无仓库依赖的含空格路径，实际运行包内回归与评测输入准备，并核对源文件未改写。还会移除复制包中的 tests/、evals/，验证纯领域检查与付款模拟不依赖维护材料；文档检查从各 SKILL.md 沿相对链接检查包内闭合及加载边界。也覆盖坏 YAML、时间缺失、错误预期、空套件、实际模拟和确定性编译；不能为迁移削弱业务预期。
 
-修改 Pi 接入时另运行 `npm run fm-modeling:verify`；修改 Delivery 工作流才运行 `npm run evidence:typecheck` 与 `npm run evidence:test`。资源加载测试应在禁用 FM 适配器时仍能发现并显式调用组合入口。Pi 受信任项目原生发现 `.agents/skills/`，只单向使用，不复制或反向维护。
+修改 Pi 接入时另运行 `npm run fm-modeling:verify`；修改任务规划或交付规则时复跑对应 Skill 的测试。资源加载测试应在禁用 FM 适配器时仍能发现并显式调用组合入口。Pi 受信任项目原生发现 `.agents/skills/`，只单向使用，不复制或反向维护。
 
 ## 人工行为评测
 
@@ -56,6 +56,6 @@ python3 -m unittest discover -s .agents/skills/fm-modeling/tests -v
 
 独立行为案例 3、4、5 检查精简交接、保留唯一依据与验证版本；案例 2 只读加载 FM 知识，案例 8、9 分别检查缺少 FM 知识与缺少访谈包的边界。组合案例两组提供相同专业知识版本，避免混淆知识与访谈机制效果。完整生成案例 13 保留五类结算事实缺口与 draft／pending 要求，改为返回缺口而非执行访谈。只更新案例说明不等于已完成行为评测。
 
-`evidence-fm/evals/host-controls/evals.json` 在具有相应写入限制的临时项目中执行；`evidence-discovery/evals/pi-discovery/README.md` 按其专门步骤执行，不交给完整 FM 评分器。不要改真实业务运行、工件或审核状态。
+在隔离的临时项目中执行行为评测，不改真实业务文件或审核状态。
 
 自动测试不调用语言模型，输入准备不代表生成评测通过。未执行的行为案例保持未执行；机器结果不等于访谈质量、语义完整、具名审核或 UAT。

@@ -20,8 +20,22 @@ class FMIntegrationTests(unittest.TestCase):
         self.assertIn("registerCommand('fm-model'", commands)
         self.assertEqual(1, sources.count("registerTool("))
         self.assertIn("name: 'fm_ui_question'", sources)
-        self.assertNotIn("/evidence/", sources)
-        self.assertNotIn(".evidence/state", sources)
+
+    def test_project_extension_and_script_entrypoints_exist(self):
+        extensions = REPOSITORY / ".pi/extensions"
+        self.assertEqual(
+            {"fm-modeling"},
+            {path.name for path in extensions.iterdir() if path.is_dir()},
+        )
+        package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
+        scripts = package["scripts"]
+        for command in scripts.values():
+            import re
+
+            for target in re.findall(r"npm run ([a-zA-Z0-9:_-]+)", command):
+                self.assertIn(target, scripts, command)
+            for target in re.findall(r"(?<![\\w/])([.]pi/[\\w./-]+)", command):
+                self.assertTrue((REPOSITORY / target).exists(), target)
 
     def test_package_verification_covers_portable_fm_tests(self):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))

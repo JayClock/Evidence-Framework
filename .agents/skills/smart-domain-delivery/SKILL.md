@@ -46,7 +46,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 
 从结果中选择一个任务。只加载该任务、直接前置产物和引用的 FM/API/规则/场景，避免把完整计划塞入当前上下文。开始真实实施后才把对应 `taskNotes.status` 改为 `in-progress`。
 
-按 `taskNotes.mode` 执行：`implementation` 普通实现与回归；`tdd` 遵守当前 TDD 工序；`verify` 只定位和复跑已有行为；`design/setup/manual` 按任务说明执行。不得把计划阶段或环境失败伪装成行为 Red。
+按 `taskNotes.mode` 执行：`implementation` 普通实现与回归；`verify` 只定位和复跑已有行为；`design/setup/manual` 按任务说明执行。环境失败如实记录为阻塞，不当作业务测试结果。
 
 ### Check
 

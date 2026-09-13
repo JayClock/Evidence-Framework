@@ -12,7 +12,7 @@
 - 技术实况：{{构建、版本、已有实现与测试，不从模板猜测}}
 - 业务模块映射：{{FM Context 到业务模块的来源与设计依据，不要求一一对应}}
 - 技术库映射：{{业务模块在组合根/domain/api/persistent 中的实际代码、构建依赖、XML 与子资源落点}}
-- 工序：{{用户与活动流程约定，普通实现不强制 TDD}}
+- 工序：{{用户与任务计划约定的执行模式及检查}}
 - 未决事实/设计：{{数据库、模块公开契约、数据所有权、本地事务、认证等局部缺口}}
 - 外部集成：{{仅列已确认的外部系统/独立部署需求；没有则不要求远程协议或拓扑}}
 
@@ -55,7 +55,7 @@ compiled: null
 
 taskNotes: [] # 每个 taskKey 恰好一条，状态只在这里维护
 # - taskRef: <taskKey>
-#   mode: implementation # design | setup | implementation | tdd | verify | manual
+#   mode: implementation # design | setup | implementation | verify | manual
 #   status: planned      # planned | blocked | in-progress | done
 #   sourceRefs: [<源 ID 或设计条目>]
 #   sliceRefs: [<已有场景/切片 ID>]
@@ -105,4 +105,4 @@ gaps: []
 
 {{实际 inventory/compile 命令、退出码、已检查范围和未执行项；没有执行证据不标 done/passed。}}
 
-生成或更新计划后停止，不自动实施任务，不修改 FM、API、业务代码、依赖或宿主状态。
+生成或更新计划后停止，不自动实施任务，不修改 FM、API、业务代码、依赖或业务审核记录。

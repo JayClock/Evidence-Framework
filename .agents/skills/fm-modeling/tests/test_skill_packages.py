@@ -20,10 +20,6 @@ PORTABLE_NAMES = (
     "evidence-visualization",
 )
 WORKFLOW_NAMES = (
-    "evidence-architecture",
-    "evidence-planning",
-    "evidence-review",
-    "evidence-tdd",
     "smart-domain-task-planning",
     "smart-domain-delivery",
 )
@@ -40,19 +36,13 @@ class SkillPackageTests(unittest.TestCase):
                 self.assertTrue(text.startswith(f"---\nname: {name}\n"))
                 self.assertRegex(text, r"(?m)^description: .+")
                 self.assertLess(len(text.splitlines()), 180)
-                self.assertNotRegex(text, r"evidence_(?:ask|save|finalize|submit)_")
                 self.assertNotIn("/Users/", text)
 
     def test_portable_distribution_does_not_describe_plugins_or_host_workflows(self):
         for name in PORTABLE_NAMES:
             for document in (ROOT / name).rglob("*.md"):
-                # Only relocated host-maintenance guides may name the host.
-                if (
-                    document.is_relative_to(
-                        ROOT / "evidence-discovery/evals/pi-discovery"
-                    )
-                    or document == ROOT / "fm-modeling/tests/README.md"
-                ):
+                # Integration test instructions describe the optional UI adapter.
+                if document == ROOT / "fm-modeling/tests/README.md":
                     continue
                 with self.subTest(document=str(document.relative_to(ROOT))):
                     self.assertNotRegex(
@@ -83,9 +73,7 @@ class SkillPackageTests(unittest.TestCase):
         self.assertRegex(entry, r"(?m)^disable-model-invocation: true$")
         self.assertIn("evidence-discovery", entry)
         self.assertIn("evidence-fm", entry)
-        self.assertNotRegex(
-            entry, r"fm_model_(?:submit|ask)|evidence_(?:ask|save|finalize|submit)_"
-        )
+        self.assertNotRegex(entry, r"fm_model_(?:submit|ask)")
         evaluations = json.loads(
             (ROOT / "fm-modeling/evals/evals.json").read_text(encoding="utf-8")
         )
@@ -127,11 +115,10 @@ class SkillPackageTests(unittest.TestCase):
             ROOT / "evidence-discovery/evals/evals.json",
             ROOT / "evidence-fm/evals/behavior.json",
             ROOT / "evidence-requirements/evals/evals.json",
-            ROOT / "evidence-fm/evals/host-controls/evals.json",
         ):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
-        self.assertEqual(set(range(1, 10)), {case["id"] for case in cases})
+        self.assertEqual({1, 2, 3, 4, 5, 6, 8, 9}, {case["id"] for case in cases})
         ids = [case["id"] for case in cases]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue(

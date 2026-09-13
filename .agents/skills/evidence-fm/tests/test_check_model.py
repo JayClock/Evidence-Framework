@@ -84,9 +84,9 @@ class CheckModelTests(unittest.TestCase):
         self.assertTrue(report["inputChanged"])
         self.assertIn("Model inputs changed during validation", report["errors"])
 
-    def test_cli_prints_report_without_writing_model_or_workflow_files(self):
-        state = self.project / ".evidence/state.json"
-        state.write_text('{"owner":"host"}')
+    def test_cli_prints_report_without_writing_model_or_other_files(self):
+        notes = self.project / ".evidence/discovery.md"
+        notes.write_text("# Discovery\nKeep existing business notes.\n")
         before = {p: p.read_bytes() for p in self.project.rglob("*") if p.is_file()}
         result = subprocess.run(
             [sys.executable, "-B", str(SKILL / "scripts/check_fm.py"), str(self.model)],

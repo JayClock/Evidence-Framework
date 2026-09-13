@@ -127,6 +127,25 @@ class PlanStateTests(unittest.TestCase):
             [self.second], [task["taskKey"] for task in result["runnable"]]
         )
 
+    def test_supported_execution_modes_are_explicit(self):
+        modes = {"design", "setup", "implementation", "verify", "manual"}
+        self.assertEqual(modes, plan_state.MODES)
+        for mode in sorted(modes):
+            with self.subTest(mode=mode):
+                self.data["taskNotes"][0]["mode"] = mode
+                self.write_index(self.data)
+                result = plan_state.inspect_plan(self.index)
+                self.assertTrue(result["valid"], result["diagnostics"])
+                self.assertEqual(mode, result["runnable"][0]["mode"])
+
+    def test_unknown_mode_is_rejected_without_task_selection(self):
+        self.data["taskNotes"][0]["mode"] = "unsupported"
+        self.write_index(self.data)
+        result = plan_state.inspect_plan(self.index)
+        self.assertFalse(result["valid"])
+        self.assertEqual([], result["runnable"])
+        self.assertTrue(any("mode is invalid" in x for x in result["diagnostics"]))
+
     def test_active_task_requires_completed_dependencies(self):
         self.data["taskNotes"][1]["status"] = "in-progress"
         self.write_index(self.data)
