@@ -2,17 +2,18 @@
 
 本仓库的 Evidence Skills 统一放在 `.agents/skills/`。业务技能从事实发现推进到正式建模和软件需求收敛；交付技能承接架构、计划、编码与审查阶段。
 
-| Skill                                                     | 用途               | 输入与输出                                                                 | 运行依赖                                                       |
-| --------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [fm-modeling](fm-modeling/SKILL.md)                       | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                    | 组合 Discovery 与 FM；界面扩展可选                             |
-| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
-| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口 | 读取准则只需文本；执行校验需 Python 3.10+                      |
-| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 YAML 原文         | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
-| [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                      | 对话与文本文件                                                 |
-| [evidence-architecture](evidence-architecture/SKILL.md)   | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                              | 项目仓库与 Evidence 工作流                                     |
-| [evidence-planning](evidence-planning/SKILL.md)           | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                               | 项目仓库与 Evidence 工作流                                     |
-| [evidence-tdd](evidence-tdd/SKILL.md)                     | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                             | 项目工具链与 Evidence 工作流                                   |
-| [evidence-review](evidence-review/SKILL.md)               | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                  | 项目仓库与 Evidence 工作流                                     |
+| Skill                                                             | 用途               | 输入与输出                                                                               | 运行依赖                                                       |
+| ----------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [fm-modeling](fm-modeling/SKILL.md)                               | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                                  | 组合 Discovery 与 FM；界面扩展可选                             |
+| [evidence-discovery](evidence-discovery/SKILL.md)                 | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                                    | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
+| [evidence-fm](evidence-fm/SKILL.md)                               | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口               | 读取准则只需文本；执行校验需 Python 3.10+                      |
+| [evidence-visualization](evidence-visualization/SKILL.md)         | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 YAML 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
+| [evidence-requirements](evidence-requirements/SKILL.md)           | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
+| [evidence-architecture](evidence-architecture/SKILL.md)           | 架构与测试策略     | 批准的模型和需求 → 架构、接口、数据与测试契约                                            | 项目仓库与 Evidence 工作流                                     |
+| [evidence-planning](evidence-planning/SKILL.md)                   | Sprint 计划        | 批准的故事和架构 → Backlog、任务、检查与 DoD                                             | 项目仓库与 Evidence 工作流                                     |
+| [smart-domain-task-planning](smart-domain-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |
+| [evidence-tdd](evidence-tdd/SKILL.md)                             | TDD 实现           | 已批准任务 → Red-Green-Refactor 实现与验证证据                                           | 项目工具链与 Evidence 工作流                                   |
+| [evidence-review](evidence-review/SKILL.md)                       | 独立交付审查       | 工件、代码和验证记录 → 只读审查结论与风险                                                | 项目仓库与 Evidence 工作流                                     |
 
 ## 安装
 
@@ -42,6 +43,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 /skill:fm-modeling 根据现有发现修改 .evidence/fm/，校验后展示实际差异。
 用 evidence-requirements 收敛这份说明的软件范围，不需要先建 FM。
 用 evidence-visualization 为当前 FM 和已有 API 生成离线审核页，不修改模型。
+用 smart-domain-task-planning 根据 .evidence/fm/ 生成模块化单体 + MyBatis 的总索引和可读任务文件；有 API 时一并读取。明确业务模块公开接口、数据所有权和本地事务，通过程序计算工作单元、taskKey 和覆盖，不修改模型和业务代码。
 ```
 
 可以顺序组合，也可以从已有成果直接进入某一步：
@@ -74,7 +76,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
     └── api/              # 按需授权保存的 inspect/check 结果
 ```
 
-该布局不授权修改扩展拥有的 `state.json`、Gate 或运行记录；活动工作流仍使用其规定的提交方式。本次目录约定不改变其他 Skill 的输出位置，例如 `evidence-requirements` 的默认 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。
+该布局不授权修改扩展拥有的 `state.json`、Gate 或运行记录；活动工作流仍使用其规定的提交方式。本次目录约定不改变其他 Skill 的输出位置，例如 `evidence-requirements` 的默认 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`smart-domain-task-planning` 独立使用时默认输出 `docs/plans/smart-domain/index.md` 和 `docs/plans/smart-domain/tasks/<具体交付结果>.md`：总索引维护显式切片、可读 fileName、程序计算的稳定 taskKey/依赖/API 覆盖及执行状态；独立文件以 taskKey/planRef 绑定索引并维护任务详情。文件名不参与任务身份或执行排序。实体和规则从任意输入 FM 提取，不包含项目专用业务案例。活动工作流则辅助当前 Planning 工件，不绕过宿主另建平行计划。
 
 已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。工作术语、关系与讨论案例在访谈中只是材料，正式内容由对应任务消费来源形成。
 
@@ -109,6 +111,6 @@ python3 -m venv "$VENV_DIR"
 
 ## 测试与评测
 
-各 Skill 的评测与自身方法一起维护：[业务发现](evidence-discovery/evals/README.md)、[正式 FM](evidence-fm/evals/README.md)、[软件需求](evidence-requirements/evals/README.md)。FM 同时包含[功能回归](evidence-fm/tests/README.md)与夹具，完整复制后仍可独立运行。
+各 Skill 的评测与自身方法一起维护：[业务发现](evidence-discovery/evals/README.md)、[正式 FM](evidence-fm/evals/README.md)、[软件需求](evidence-requirements/evals/README.md)、[smart-domain 任务规划](smart-domain-task-planning/evals/README.md)。FM 同时包含[功能回归](evidence-fm/tests/README.md)与夹具，完整复制后仍可独立运行。
 
 这些目录只在开发验证时按需使用，不是普通业务任务的必读材料。自动回归与人工行为评价分开，没有执行的评测不能记为通过。
