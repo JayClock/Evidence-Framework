@@ -13,7 +13,7 @@ evidence-visualization/
 └── evals/                  # 行为评测用例；不是已执行结论
 ```
 
-完整复制或安装此目录即可复用，不需要业务项目中的工具实现。定位 `evidence-fm`，有 API 时还需 `fm-api-design`，通过绝对路径传入，不要求兄弟目录。业务 YAML 与输出留在目标项目，不写 Skill 安装目录。
+完整复制或安装此目录即可复用，不需要业务项目中的工具实现。定位 `evidence-fm`，有 API 时还需 `evidence-api-design`，通过绝对路径传入，不要求兄弟目录。业务 YAML 与输出留在目标项目，不写 Skill 安装目录。
 
 ## 本仓库生成示例
 
@@ -24,7 +24,7 @@ VISUAL_SKILL_DIR="$PWD/.agents/skills/evidence-visualization"
 "$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
   --project-root "$PWD" \
   --fm-skill "$PWD/.agents/skills/evidence-fm" \
-  --api-skill "$PWD/.agents/skills/fm-api-design"
+  --api-skill "$PWD/.agents/skills/evidence-api-design"
 ```
 
 然后用浏览器打开 `.evidence/views/index.html`。不手改或格式化输出；修改资源后重新生成。

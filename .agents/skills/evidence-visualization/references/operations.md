@@ -4,7 +4,7 @@
 
 完整安装本 Skill，保留 `scripts/`、`assets/`、`references/` 和 `requirements.txt`；浏览器回归还需要 `tests/`。图形库已内置，不在生成或页面运行时下载。
 
-生成器需要 Python 3.10+、PyYAML，以及实际调用的 `evidence-fm`／`fm-api-design` 各自声明的依赖。复用已经满足依赖的环境；若需要新环境，先说明安装需求，按项目授权创建 venv，不全局安装或修改用户环境。
+生成器需要 Python 3.10+、PyYAML，以及实际调用的 `evidence-fm`／`evidence-api-design` 各自声明的依赖。复用已经满足依赖的环境；若需要新环境，先说明安装需求，按项目授权创建 venv，不全局安装或修改用户环境。
 
 本 Skill 的依赖文件只声明自身导入项，不复制下游 Skill 的依赖清单。通过资源发现定位真实安装目录；资源缺失时报告路径和错误。无需创建新的业务项目工具目录。
 

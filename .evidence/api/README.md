@@ -39,7 +39,7 @@
 检查命令：
 
 ```bash
-python3 .agents/skills/fm-api-design/scripts/fm_api.py check \
+python3 .agents/skills/evidence-api-design/scripts/fm_api.py check \
   --project-root "$PWD" \
   --fm "$PWD/.evidence/fm" \
   --fm-skill "$PWD/.agents/skills/evidence-fm" \

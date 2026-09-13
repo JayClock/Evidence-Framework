@@ -6,14 +6,15 @@
 - Use the repository's existing frameworks and conventions; do not replace the stack without an approved architecture decision.
 - Primary verification commands are `npm test`, `npm run lint`, and `npm run build`.
 
-## Local FM modeling workflow
+## Evidence Harness workflows
 
-- Use `.pi/extensions/fm-modeling/` for the modeling command and question UI.
-- Start explicit modeling work with `/fm-model`, which delegates to the `fm-modeling` skill.
+- Use `.pi/extensions/evidence-modeling/` for the modeling command and question UI.
+- Start explicit modeling work with `/evidence-model`, which delegates to the `evidence-modeling` skill.
 - The extension provides interaction only. Business records and FM files remain under `.evidence/` and are maintained directly according to the modeling skills.
 - Distinguish discussion, model editing, and read-only validation. Do not edit the formal model unless the user authorizes generation or modification.
-- Use `fm_ui_question` only for one business question at a time. Save any answer or control state before continuing.
+- Use `evidence_ui_question` only for one business question at a time. Save any answer or control state before continuing.
 - Validate actual model changes and report real results; do not treat a successful write or machine check as business approval.
+- Use `evidence-task-planning` for implementation planning and `evidence-delivery` for the delivery workflow, with outer PDCA and an inner Guides → Action → Sensors → Steer loop.
 - Maintain task progress in the authorized plan files and record actual evidence; do not change approvals or Git history automatically.
 
 ## Coding conventions

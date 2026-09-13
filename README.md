@@ -63,17 +63,17 @@ Agent 显式 slicing
 
 对应组件：
 
-- `fm-modeling`：组合业务澄清、FM 编辑和校验；
+- `evidence-modeling`：组合业务澄清、FM 编辑和校验；
 - `evidence-discovery`：保存业务材料、回答、问题和交接；
 - `evidence-fm`：维护 FM Schema v3、规则、场景和校验；
-- `fm-api-design`：从已确认 FM 设计整体 API；
-- `smart-domain-task-planning`：提取工作单元，由 Agent 设计切片，再由程序计算稳定 `taskKey`、依赖、执行顺序和覆盖。
+- `evidence-api-design`：从已确认 FM 设计整体 API；
+- `evidence-task-planning`：提取工作单元，由 Agent 设计切片，再由程序计算稳定 `taskKey`、依赖、执行顺序和覆盖。
 
 语义切片交给 Agent，确定性身份和图校验交给代码。`task_compiler.py` 不替 Agent 判断业务边界，也不把结构覆盖冒充业务批准。
 
 ### Do：一次执行一个就绪任务
 
-`smart-domain-delivery` 从 `compiled.executionOrder` 中选择满足以下条件的任务：
+`evidence-delivery` 从 `compiled.executionOrder` 中选择满足以下条件的任务：
 
 - 状态为 `planned`；
 - 所有 `dependsOn` 已经 `done`；
@@ -93,10 +93,10 @@ Agent 显式 slicing
 只读状态检查：
 
 ```bash
-python3 .agents/skills/smart-domain-delivery/scripts/plan_state.py verify \
+python3 .agents/skills/evidence-delivery/scripts/plan_state.py verify \
   --index docs/plans/smart-domain/index.md
 
-python3 .agents/skills/smart-domain-delivery/scripts/plan_state.py next \
+python3 .agents/skills/evidence-delivery/scripts/plan_state.py next \
   --index docs/plans/smart-domain/index.md
 ```
 
@@ -237,14 +237,14 @@ FM/API source ID
 
 Skill 是可复用的操控循环，工具负责确定、重复的计算：
 
-| 能力                         | 责任                                   |
-| ---------------------------- | -------------------------------------- |
-| `fm-modeling`                | 串联业务澄清、模型编辑、校验和停止条件 |
-| `smart-domain-task-planning` | 提取工作单元、设计任务切片并编译 DAG   |
-| `smart-domain-delivery`      | 选择就绪任务并驱动外层 PDCA 与内层纠偏 |
-| `task_compiler.py`           | 计算稳定身份、依赖顺序和结构覆盖       |
-| `plan_state.py`              | 检查计划状态并只读计算可执行任务       |
-| 测试与校验器                 | 产生编译、规则、场景和行为反馈         |
+| 能力                     | 责任                                   |
+| ------------------------ | -------------------------------------- |
+| `evidence-modeling`      | 串联业务澄清、模型编辑、校验和停止条件 |
+| `evidence-task-planning` | 提取工作单元、设计任务切片并编译 DAG   |
+| `evidence-delivery`      | 选择就绪任务并驱动外层 PDCA 与内层纠偏 |
+| `task_compiler.py`       | 计算稳定身份、依赖顺序和结构覆盖       |
+| `plan_state.py`          | 检查计划状态并只读计算可执行任务       |
+| 测试与校验器             | 产生编译、规则、场景和行为反馈         |
 
 确定性逻辑不交给大模型估算；需要业务语义理解的切片、判断和转向不硬编码成脆弱规则。
 
@@ -285,27 +285,29 @@ Tools & Skills ──在 Environment 中执行──> Action / Sensors
                               └─ 外层 Act：完成、阻塞或重规划
 ```
 
-`.pi/extensions/fm-modeling/` 只是交互适配器：它提供 `/fm-model` 和单问题 UI，但不读写模型、不持有状态、不注册自动推进、不发布模型，也不操作 Git。
+`.pi/extensions/evidence-modeling/` 只是交互适配器：它提供 `/evidence-model` 和单问题 UI，但不读写模型、不持有状态、不注册自动推进、不发布模型，也不操作 Git。
 
 最终分工是：扩展负责交互，Skill 负责流程，脚本负责确定性检查，环境保证反馈可复现，仓库文件负责状态。
 
 ## 6. 从建模到交付的完整路径
 
+Evidence Harness 包含两个可独立进入的工作流：**建模工作流**由 `evidence-modeling` 组合专业能力；**交付工作流**由 `evidence-task-planning` 与 `evidence-delivery` 协作。工作流是职责分组，双层循环指交付中的外层 PDCA 与单任务内层操控循环。
+
 ```text
-1. /fm-model 讨论业务
+1. /evidence-model 讨论业务
    └─ 保存业务材料、理解、问题和回答
 
-2. /fm-model 生成或修改 FM
+2. /evidence-model 生成或修改 FM
    └─ 编辑 .evidence/fm/，执行 Schema/CEL/lineage/simulation/timeline
 
-3. 可选：使用 fm-api-design
+3. 可选：使用 evidence-api-design
    └─ 生成并校验 .evidence/api/api.yaml
 
-4. 使用 smart-domain-task-planning
+4. 使用 evidence-task-planning
    └─ inventory → slicing → compile
    └─ 生成 docs/plans/smart-domain/index.md 与 tasks/*.md
 
-5. 使用 smart-domain-delivery
+5. 使用 evidence-delivery
    └─ verify → next → 执行一个任务的内层操控循环
    └─ 记录真实证据并停止
 
@@ -327,9 +329,9 @@ npx pi
 信任项目扩展与 Skills 并重启 Pi，然后显式启动 FM 工作：
 
 ```text
-/fm-model 讨论订阅退款业务并整理发现记录
-/fm-model 根据现有发现生成或修改 FM，并执行完整校验
-/fm-model 只读校验当前 FM，不修改文件
+/evidence-model 讨论订阅退款业务并整理发现记录
+/evidence-model 根据现有发现生成或修改 FM，并执行完整校验
+/evidence-model 只读校验当前 FM，不修改文件
 ```
 
 讨论、模型编辑和只读校验是不同授权。普通业务回答不等于允许修改正式模型；模型写入、机器校验通过和业务批准也是三个不同结论。
@@ -337,23 +339,22 @@ npx pi
 建模完成后，在对话中明确要求：
 
 ```text
-根据当前 FM 和 API 生成 smart-domain 实施计划
-按 smart-domain 计划检查下一项并继续实施
-恢复 smart-domain 双层循环交付进度
+用 evidence-task-planning 根据当前 FM 和 API 生成实施计划
+用 evidence-delivery 检查下一项并继续实施
+用 evidence-delivery 恢复交付进度
 ```
 
 ## 8. Harness 项目结构
 
 ```text
-.pi/extensions/fm-modeling/          # 建模命令与单问题 UI
-.agents/skills/fm-modeling/          # FM 组合入口
-.agents/skills/smart-domain-task-planning/
-                                      # 外层 Plan：工作单元、切片和 DAG
-.agents/skills/smart-domain-delivery/ # 外层 PDCA 与单任务操控循环
+.pi/extensions/evidence-modeling/      # 建模命令与单问题 UI
+.agents/skills/evidence-modeling/      # 建模工作流组合入口
+.agents/skills/evidence-task-planning/ # 外层 Plan：工作单元、切片和 DAG
+.agents/skills/evidence-delivery/      # 外层 PDCA 与单任务操控循环
 .evidence/                            # 业务事实和检查记录
-docs/plans/smart-domain/              # 任务 DAG、状态和任务详情
+docs/plans/smart-domain/               # 任务 DAG、状态和任务详情
 AGENTS.md                             # 项目级边界和工作约束
-docs/fm-modeling.md                   # FM Modeling 使用指南
+docs/evidence-modeling.md              # 建模工作流使用指南
 ```
 
 README 只描述 Harness、模型与交付循环。尚未成为已确认任务产物的应用代码、模块和接口不在这里声明；具体代码范围、技术选择与检查命令应来自当前任务计划及其真实证据。
@@ -361,15 +362,15 @@ README 只描述 Harness、模型与交付循环。尚未成为已确认任务�
 ## 9. Harness 维护验证
 
 ```bash
-npm run fm-modeling:verify
+npm run evidence-modeling:verify
 
 python3 -m unittest discover \
-  -s .agents/skills/smart-domain-task-planning/tests -v
+  -s .agents/skills/evidence-task-planning/tests -v
 
 python3 -m unittest discover \
-  -s .agents/skills/smart-domain-delivery/tests -v
+  -s .agents/skills/evidence-delivery/tests -v
 ```
 
-详细建模说明见 [FM Modeling 指南](docs/fm-modeling.md)，Skills 测试入口见 [测试指南](.agents/skills/fm-modeling/tests/README.md)。
+详细建模说明见 [Evidence Modeling 指南](docs/evidence-modeling.md)，Skills 测试入口见 [测试指南](.agents/skills/evidence-modeling/tests/README.md)。
 
 自动化检查是 Sensors，不是最终裁判。结构校验、场景模拟和命令成功不能替代业务核对、设计判断或人工批准。

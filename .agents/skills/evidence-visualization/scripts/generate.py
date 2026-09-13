@@ -257,7 +257,9 @@ def main() -> int:
     args = parser.parse_args()
     root = args.project_root.resolve()
     fm_skill = (args.fm_skill or root / ".agents/skills/evidence-fm").resolve()
-    api_skill = (args.api_skill or root / ".agents/skills/fm-api-design").resolve()
+    api_skill = (
+        args.api_skill or root / ".agents/skills/evidence-api-design"
+    ).resolve()
     views = root / ".evidence/views"
     if views.is_symlink() or not views.resolve().is_relative_to(root):
         parser.error("视图目录必须位于当前项目内，且不能是符号链接")

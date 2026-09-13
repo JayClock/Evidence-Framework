@@ -1,9 +1,0 @@
-{
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "tsBuildInfoFile": "../../../tmp/fm-modeling.tsbuildinfo",
-    "types": ["node", "vitest/globals"]
-  },
-  "include": ["**/*.ts", "**/*.mts"]
-}
