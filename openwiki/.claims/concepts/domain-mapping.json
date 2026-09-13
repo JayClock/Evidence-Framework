@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6dd16b5c1bc4d2a768c5038f40f80975c2cbfa1d2f9715a2768f8d14a96d0d2b",
+  "claims": [
+    {
+      "id": "claim_07524ee7b8164b0e99a6e032c9e5430f",
+      "statement": "业务含义唯一维护在 FM 源（model.yaml、00-overview.md、01-glossary.md），本页只规定实现映射；代码、HTTP 与 SQL 名称是映射结果，不构成新的业务身份。",
+      "evidence": [
+        {
+          "resource": "repo://.evidence/fm/00-overview.md",
+          "version": "repo-file-v1:sha256:4c198440c28164360b78888f1f3b9470932883215b5a26121e37987b8857ed31"
+        },
+        {
+          "resource": "repo://.evidence/fm/01-glossary.md",
+          "version": "repo-file-v1:sha256:29f5fd0a454972dc2ba1d95e0a91c512ed192adfef5aa85cccd76b25753d852f"
+        },
+        {
+          "resource": "repo://docs/architecture/domain-mapping.md#L1-L18",
+          "version": "repo-lines-v1:sha256:73d8d7350ee31bccebc8f96ba2ad78baf493ce2fd927622034fc8b23bca55bed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5NDcxMjgxMzg3NWZhYzBlNzgyMjE0M2MyNmZkZTJhZDExZDU2MGMxOWJmZjAxYmUwOWY5ZTVkNGE5YjEzYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3NmFjNDViZTE1N2U3MTY2ZmQ2YjQyYTQwMmY1NmMwZmExNjE0Nzc4ODcyOGNhYmVjYzI3YzI3ZjkyMDllM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0MjA2OTIxZjBjNzQxZmE0MzQxNWY3YTc0MGJmYjg0OWI3MjI0Yzg0NThkN2UzN2Q4YzQ4NTA0ZmJlODExYTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aeefbbf283fc46c4a2bce56713f9d79b",
+      "statement": "FM 的 Entity/Thing/Party 按业务身份、属性与生命周期选择 Entity<Identity, Description>、强类型 ID/Ref 或不可变值对象；FM 声明的 ID 是模型类型身份，不自动等于领域实例主键，也不机械地为每个节点建表。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/backend-layout.md#L29-L33",
+          "version": "repo-lines-v1:sha256:f6d677dd79c3d6087744bfd155a681bdb4feef75306f85cbde9a4417d039550b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjgxNzg2ZmRjZjFlM2M4MDZhOWI5ZDgyOTQyYTg1Nzc5OWQzZDA3Mjk5NWNhZmZhOGZkNmUxY2E2MmJmMTMwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjE1OWZmNzM4NjgwYWI4ZjUyOTY0MjEwNmZmN2M0YzVkOWY4ZjM2ZGExM2YxMDEyNDdmNzIwNTcyMDdjNTViYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTFlMDRiZTY1NzdkYmM5M2Y2ZjI5NWZkNDA1ODBiMDZlZmQ3ODlkMTQzMWU2OWRlYWIwODBjMDU1ZmUxMzliNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDYwZjU5YzFjMTI2N2ExN2QzMjdhZTAzYzMxN2JhYzRkNjgyZGE1NjdhYjc4MDkyZjllZGJjZDU2NjJiYTQwZiJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L25-L28",
+          "version": "repo-lines-v1:sha256:aac9df51c33dff10790024f5955121f1efdef6120cc75ad414ff79fa30fa36f5:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWMzMzEwNTBkZGUwZTViYTA2MTNhYmNkY2JjY2FiMjY5ZTI4NjJiZmY5MThlOGI1ZTBkMWZkNzY3NTgzNjk4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDIzN2E3NjRjOGI3OThhMWM2NjM0YzZjZDU1NmRlZTliMWNiYzhlMjVhYzM5MGRkMWM1YWVlYzkzNTUwNTBiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDI3YjEyZjE0NGM4N2FlOWQ4MDQ1NTM1MTA4ZDk3ZjFmZjUxMjNjMTA4M2ViZjRjNjA1M2Y4Y2ZiNGM3NTdhMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9b72a5e0f191497d8bb80c52b91a67ce",
+      "statement": "Context.rootRefs 映射为根集合入口（如 HasMany/HasOne），根集合负责定位与有依据的登记/创建，不是普通 List 或万能 Repository/Service；成员拥有身份、不可变描述与业务行为。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L31-L36",
+          "version": "repo-lines-v1:sha256:37c3525e0776841d5bc14f23101c9c5c1b2c81d52cd49d4af4751cdf2536cb7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODBmMmE2NWZlOGZiNWE2MWZhNGFiODM1MmU3YTg1NjgyOTlkYmIxZGI5MGQyMTg5NjhiMTY2YTIzMTJlOTljMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTg5NWNiZGFhNjc2ZmRiZjEyMzBkNTY4YjJhOTk2NjRiYjVkY2I3NGUxYmZmNjEyNzdjMGQ4ZjBiODI3YmNjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWEwMTNhZjIzNmIyNzYwM2QzMTk2NjJhMjhiMDEwMDY0MzFjMjZlNTY1N2Q4MTk4YWI0NmE1ODYyY2IyYTJlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWU1OTE4NGNlODYyNzg5ZDUzZTc0N2ExMWYwYWM0YTBhNmU2MGFhODA5NzliODYyYjk4ZDJkMGE3NjU2YmI0ZiJ9"
+        },
+        {
+          "resource": "repo://docs/architecture/modules.md#L17-L27",
+          "version": "repo-lines-v1:sha256:a5ee48e093ef2844325a4653d81750463c42f389423451c31fe20520c74c9fd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTkxYmM3OGQ5NTdjNTY0ZDJmMTZjOTA0OTJiN2MzYWE3ZTg0ZTVkY2Q5YjIwZjUyYmRjMDVjOGY0N2E5YWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViNzUyYTc4YTA1YzQ4NzZjNmI1Y2ZjMTM3M2Q0NDkwZjZlMTNkMjRiM2U1NzRmYmUyMDg4MDI4YjEyODhiMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhY2MzNjQ2NDE1ZjM0ZGVlOTMzN2E3MjA2YzZmZTU0Mzk3NDI3ZGIwNmUwNTNiMmM0MWJiMmFmMjcyZThjNGUifQ"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Users.java",
+          "version": "repo-file-v1:sha256:c2378f6ce2d1a88d51e269403c0d5fcccd097d0059c7b4175761607eab2457ce"
+        }
+      ]
+    },
+    {
+      "id": "claim_7134591a8bb8477e9d9d4c40b2bb3785",
+      "statement": "主体角色映射为 ContextRole<Actor, Context> / ContextSwitcher，核验可信 Actor、实例归属与代表权限；角色名不是认证证据。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L65-L70",
+          "version": "repo-lines-v1:sha256:1f8aadd175b2fa655ee4c077101648642ad318968f2a48f651c80f75ff5a642b:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2YyY2JlNzE2Yzg2Mjc4ZjdhNjUzNGZiN2Y5ZjE5Yzk4OTQxMjBlMjI1Njg0NGVkZmI1YmFhYWJkYzdmYjUxMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDkxMjk3Y2Y2ZWFiYjgwNWM0MGMwNWZkMTM1MTYzODk3ODg3YjYxYTY0MjdmNTQ4ZTNjZWIwMGNkNmM0OWU1ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWM2YmE1OGJiNWEyOGQ5Mjk2OGFhZjY5MWM3NDc1Y2Y5OTFhMGYxNzJjYmZjMDc1ZTliZTJlMTIyMDUxYTEwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTI5YzBhMGU2MTEzNGI4ZDVlMTZlOWNmNTE1ODBmNWQwYmU2ZTdiMTJhOTg3ZWRiOWRmNzBkNjczMTdiMTRiNCJ9"
+        },
+        {
+          "resource": "repo://.evidence/fm/contexts/subscription/roles/reader.yaml",
+          "version": "repo-file-v1:sha256:cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb"
+        }
+      ]
+    },
+    {
+      "id": "claim_a224d32e99214e64a04e2b93d73f1570",
+      "statement": "证明角色（如 role.payment-proof）映射为消费方能力接口或原凭证包装视图，不生成新凭证、独立签发时刻或用户权限；实现证明接口不表示证明合格，匹配、数量、时间、来源与可见性由源规则判断。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L68-L69",
+          "version": "repo-lines-v1:sha256:e9f4cb5637e8fea4b71d930bc2b3470e63634645ec183fe4da530c2dc5408902:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwNGVjYzlmOTMxYTgwZWQ2YjcxOTQ4MjQzZjFlNjVkNTBjZWM4YzM5NmY1ODhmOTEzZTkwYmEyODlmNzBkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2QwM2Y5OGZiYzI3OGNlNjQzMmM1YjU5OGI1YzNhZTJjNjkwYzA3ODllOGFiN2MwYTM2MTdkYTRhYzAxNzM2NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAxZTNhMzM4MTJmMDJjOWJkMDE4ZDFjMjExYjBkOTNkZGUzYWMxNTcwZjg2MDU1YzMyNjQzMTY0MzUyMGNjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzg3NzM0ODI3YmZiNmY5MzEzZjk2Y2U0MGQ3YmIyMjViMGE2MDY3ZDkyNGI0YzYwMGVkMDhhYjZmZGFiODZjYiJ9"
+        },
+        {
+          "resource": "repo://.evidence/fm/contexts/subscription/fulfillments/payment/roles/payment-proof.yaml",
+          "version": "repo-file-v1:sha256:dbf8d6970a00305921910ac3a4d5bc19bcf5f7aa647091f9ca38afb128f4b2e4"
+        },
+        {
+          "resource": "repo://.evidence/fm/relationships/mobile-as-payment-proof.yaml",
+          "version": "repo-file-v1:sha256:be9f3f395996d45441313b325f4a7977e243b094a28291d19f4f58ddf0fd2c23"
+        }
+      ]
+    },
+    {
+      "id": "claim_e6048e36091c44e59e47807a9ef5af02",
+      "statement": "Request/RFP/Proposal 保留 started_at/expired_at，Contract 用 signed_at，Confirmation 用 confirmed_at，补充凭证用 created_at；请求受理不等于履约完成，凭证按业务约束追加而不以状态覆盖抹去迟到、冲正或历史违约。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L72-L80",
+          "version": "repo-lines-v1:sha256:153ce0000c72425c7dff1d27962d74886521ca475746f6306dfa53ad004d8ff0:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBhYWYwYWI1M2E1MWY0M2JmOTA3OTgxYzgzMTk2NDFhODQzYTMyZDdmODg3YjNiNDJiMTg5OGNkMWVmNTUyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2FkYTcwOWQzZTZlNWZlM2YzM2IzODJlY2JiM2JkMTM5ZWE0NTk1NDQ2MDllMGFjYzEyMWI1NDNjMDQ1NzU0NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzczZTU5MzhjOGNhMTA2MDQ3ZGUyYzhjODhkNGMwZDRhNTRkMWQwZDRhZTJmZTIzYWExNGZlNjRjYTZlNmMwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWIyZTE2OWFlMjU5NmZmNWQ3ZWU1ZDQ2NmNmMGEzZmM1MzBlM2Y2NmZmNTA2NzQ4NWJmNDU4NTU4MGUwZGViYiJ9"
+        },
+        {
+          "resource": "repo://.evidence/fm/contexts/subscription/fulfillments/access/confirmation.yaml",
+          "version": "repo-file-v1:sha256:9a33e97ed2ef8b015148c01000950b4d8ca435a2d49c5766c3f88c08f64b6f43"
+        },
+        {
+          "resource": "repo://.evidence/fm/contexts/subscription/fulfillments/payment/request.yaml",
+          "version": "repo-file-v1:sha256:cccceeefff9402cccca9a482fb903ca1d0f457472e50b509416758dbb9a20a69"
+        }
+      ]
+    },
+    {
+      "id": "claim_8eca3ef130d04c7dabca9a241c354852",
+      "statement": "业务 Rule 映射为实体、Description、ContextRole 及拥有者关联的行为，不能进入 Jersey Resource、Mapper、技术事务包装器或拼接 Repository 的 Service；运行时路径为 Resource → 根集合 → 实体/绑定实例的 ContextRole → 拥有者关联契约 → MyBatis 或必要外部适配器。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L55-L66",
+          "version": "repo-lines-v1:sha256:058b4c862985653306e506cb0de4ea221186f49dfedf5cded645f40bf119b468:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyODVlYjhkNDg0M2Y0MzE2YzM4MmZiNzRiOGQ4NTI3OGM1ZTRhYjYzMGZhYTUzODFmNGJiMzFiMTE1NjYyNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZjI2NDRmNjJlMjFjZDNlODViNzZkY2Y2YTM1NGU5YWJiMjRhMWUzMDY4MmMzMmNhYWQ2MWZiYjBlZmVkNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3OGQxMjZkMDQzYWFhZjg3N2JkMTI4OTViMjZjNjc3OTg0ODZjOTA1MzIzOGE1OGUzN2ExNGRhM2U2NDhlYTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b489a25347a646118a3e8ed0c9342697",
+      "statement": "当前唯一落地切片把 party.user 映射为 Users 根契约（HasMany<String,User>）、User 叶子实体、UserDescription 记录值对象、persistent Users 适配器、UsersMapper XML 与 V1 app_users 表；displayName 是本地软件字段，不冒充 FM 属性，Java displayName 对应 API displayName 与 SQL display_name。",
+      "evidence": [
+        {
+          "resource": "repo://.evidence/fm/participants/user.yaml",
+          "version": "repo-file-v1:sha256:c141bbf0952f460862719a185cf003eb783f4d0587be6f638a8d113cd66a3ecd"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/description/UserDescription.java",
+          "version": "repo-file-v1:sha256:80fb006fa915106d0dfe2cb71714c2377b299ee1983d3415b910126bede254a3"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Users.java",
+          "version": "repo-file-v1:sha256:c2378f6ce2d1a88d51e269403c0d5fcccd097d0059c7b4175761607eab2457ce"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/db/migration/V1__create_users.sql",
+          "version": "repo-file-v1:sha256:aacdef2ad3776cea01d1f76a50e3621a678c953d9dc59c51bbf702e42cac8de5"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/mybatis.mappers/UsersMapper.xml",
+          "version": "repo-file-v1:sha256:7c6b1b274dc5f8c779d1934383233f332a90f1ff91d960180aac1a99a141504c"
+        }
+      ]
+    },
+    {
+      "id": "claim_c7ef133d18e04af7accb7261067e5cd2",
+      "statement": "新增实体/属性需记录中文、英文代码名、源 ID、API 字段与 SQL 列名；Java 用 camelCase、SQL 用 snake_case，column_id/edition_id 等身份粒度不同不可互换，signed_at/confirmed_at/created_at 等不统称 createdAt。",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture/domain-mapping.md#L20-L34",
+          "version": "repo-lines-v1:sha256:f7e2ddb29e0beddeb30ffd93b3444bde5380d65fbc5f14d63dfc81bab75b160d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4NDM1ZGFhYzhhZTgyZWUzZDViNTNlZTIzYTI0NThhY2I3MzQwMGQ0ZGY2NGFjNzM3ZTNkOTVjNzhkYjE2MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1MDgxMWRmY2I5YzI4ZTE5Y2Y0Yzk1ZjJiMWRiMmM4NjdiMzllY2QzY2RmNGExZjcxYWE1MTJkNjczZTc2NGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1YmVjZWUzYTcxNDY3YmVkZWYwM2Q0ZjdjZjA2MjZmZmJkMDI1ZDY2YjA1ZDMxZDFmNWQwZTE0ZDY5Y2JhZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlZWQyODMzNDJlYzdjN2IzYmI0NzcyZmI2YmU5ODRmZjk5MzE1ZTAyYzkxNzkwYjRiNTY3MWEwMmVkNjEwYTMifQ"
+        },
+        {
+          "resource": "repo://docs/engineering/conventions.md#L5-L9",
+          "version": "repo-lines-v1:sha256:4c606088b0c58b4ffb795175fa3a5c3c0c018c7c30d1d2998cc1df72c8d4f4de:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWVkZmZlOGY0MTE5MGEzZDRiMTFlZmNhMzE2NjZkYWQxYTcyOTdmNmM0Y2MwZTdlNzVhYWM4Mzg2ZjQ0N2RjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzFiMDY0NGUzOTdhNTRmMjVkNTA0ODA2YTUyYTk0NGRjNWJkNzQ4YTI3NTJkNTZlM2M2ZWRhNTBmZWI0NWY2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmZhZTAyOGFjNjNiZDRkNmVjYzg0ZWEyMWZiNzkzMmRhYjFlN2UzMjRjMDY1YjZlMDJhNDU5NjZiYzFjNWE2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzcxZmM3M2NmMWM4OTdmMjU0MWQ3MWM2NDA1NGY5YmI4N2YwZGFmY2M1MzY5NWRiMDg0MzQzMzIxODJhMDA5NCJ9"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/mybatis.mappers/UsersMapper.xml",
+          "version": "repo-file-v1:sha256:7c6b1b274dc5f8c779d1934383233f332a90f1ff91d960180aac1a99a141504c"
+        }
+      ]
+    },
+    {
+      "id": "claim_7b99dc8ca24c4ae08ff36f1762eec25f",
+      "statement": "FM 的 subscription/mobile/prepaid/content 上下文不自动成为业务模块清单；业务模块按行为内聚性、数据所有权与变更原因确定，通过 designItems 登记拥有者、公开契约、数据所有权、依赖方向与本地事务；evidence-task-planning 以源 ID 生成工作单元与 taskKey，任务必须引用其消费的源 ID。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/design-rules.md#L5-L19",
+          "version": "repo-lines-v1:sha256:3013e2fdb77829b5981695709141e0044b9c2db5d449fdf6c668f8977a1fa32c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NTMyYzk3MDFhNmEwNDA2NjBjNWQ1NzExNWFiZWFmMzE0ODlkOGQ4OTVhYWY2YWM3M2ZiZDIxMmQ0OGYyZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNGVhZDIwNTQ5MDcxM2ZkODFmOTZlY2YwNjJmMTQ3NmFlMzQzMzdkNjYxOTRmYmFlZWRjZTViODIxMDc0MmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmNmUxNjZmYjQ0MGZkNTQ0ZWQyMzU2N2VhNGFiYjQ3NWRmYTUwOWI0MTU5M2M5YjMyZDM2NzIzMTA2OTYwNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2YTE5MzY4MjlkMGNkOWIzZjdmYTYyMGIxMDc4ODFmNDE0ODMyMzRhN2Q0YzIwZjgzN2EwMGM1YWJkZjkxYjUifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/slicing-policy.md#L13-L31",
+          "version": "repo-lines-v1:sha256:5dabbbbd65f0e7b18e70970c636f4448fe7f95fb58a4ad189b5f5f71bea1cd48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjYmM4NGNhMzA5ZDJlNGI3YmExM2QwMTRkZWIwYWEwNmZlOTIyNTM0ZmMzMjBkMGFiN2ZiYzMwZjNhYWQ1ZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NzQzOGVjMDg3MDk3Yzk0N2YwYWY3NjQ5NGUxMjFmY2Q2NGNmMzFmODI0YTA0MTgwNWQ5NWNmNzFlOGQ1MDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0MDExNDA1YzcxNmI4ODA5ODA3MDFiNTRiYjhjNjFlNjNiNzQ5OWUxYTI1NGNiZDRiMjg5ODU0MGRkYWI0MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OTE1Zjc2ODY5NjVlNmRhM2YyNDNhYTE3ODQ2ODZkMTkxMDZjYzQzMTM2ZDg3ODk5YTg0NDUzNmViZDcwOWYifQ"
+        },
+        {
+          "resource": "repo://docs/architecture/modules.md#L30-L40",
+          "version": "repo-lines-v1:sha256:5af927c58288aed0a4104c48d004c3b436ccd755e51ba3048d798ac20034e802:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1NDljNGI5OWJkM2M1ODA3NWRkN2UxNzI3ZWQ1ZDAzYWZjNmI0NmJiYjUxNGM4M2MxZTlmMDM2MzJiZDhiNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4NmZhYzQ2YzUyMDIyNGM1NzRjYzFiZTNhMjQwNGFkMjI4NmQ4ZDJhNGZhNTI4N2Y4M2U0OTViNzM3MzIwNjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YjE3OTMwMzRmYzQ5ZDAzZjM0NTk3OTIyOTg2ZGM3NGMzMzQ5YmFjYWViYTY4NDAxYTNkZDMwNTc4ZTBmMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmZWVlYTIxMjFjNzlhYWNjYWUxZjBkYTQ5NWJiODM0MWI5YmI5YjI3NzU2ZTQ3ZGY2YmEzODc5NjBjMzEwZWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ee5826ebfecc472a996ed55c51344d7e",
+      "statement": "domain 测试证明业务判断，api 测试证明协议与调用边界，persistent 测试证明 SQL/回滚，app 测试证明真实装配；业务期望不得从当前实现输出反推，真实数据库并发与原子变更需要真实数据库验证。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/backend-layout.md#L89-L95",
+          "version": "repo-lines-v1:sha256:6725f48edd657c80fd818f7fc5998138ba5621dfef9e1df746b0d0db8263fd15:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWVhMjgwYjFiNDhiMjY3ZTExYjU4MTY2OTFmNzYxY2ViYWFjNzViZGM3MmU3ZTUyODBhMTdhZWY2OTMzMGJhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTk5MWZmOWY0YWU1MDNjYzg1ZWUwOGYyNzcwMTU2NzI3MzFlNzc2ZTcwZjE2M2RkNGFkMmFhYjAyZGFiYWU5NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTcyMjNiYzQ3YThmYzI4NmZjYzg3MmRhOTRkNDA5NDRjNDkwNGU5Mzg1Y2I5ZTRhODgyNjlmOGU0Njg4ZTgyOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNmMDFhMzk3MGY5OTZmNWMwZDIyMDVkZjRiZGVkZWU2N2M0NDQ3ODQ1MThkY2ExOGJlMmI4OTcwODUxODhlNiJ9"
+        },
+        {
+          "resource": "repo://docs/architecture/domain-mapping.md#L36-L40",
+          "version": "repo-lines-v1:sha256:e88a60e32681eb9b0d9f3c5b2428c7fc5174f2882231439c8b9d7cb0d43bcbc6:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRlMzQ5YTM5NTRjMTFjYTA2M2UwZDU2NGY4N2YwM2VjZDBhODM2MGMzODE5MTA3YWVhZGJjMGQzYjE4OGRiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjMwZGI0ZTU1YmU2N2IzOGQ4ZGY3NjllYjJiOGI5MzU0YzBiMDJmYjA0MDAzYjkxZjhkZDYxNjE2NWU2YjgyNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTY1NzYyYjFhNTliMmVhMmE1ODE2NmEzMTcxZGNkOGEzODdkM2IzYzBmMmU0NDkyNzRmMThhYjVjNTk3NjIzZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://docs/engineering/examples.md#L5-L13",
+          "version": "repo-lines-v1:sha256:5aaec0f830b16036565a63eb977175a13958331b8537324d6abfa79edd7cb062:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjVlMDUxNjMxNmUyNTVlYTBmMzcxMjZhNmIwOTgzYzUzNTFmNzQ3YzMwYWUwY2Y1YTczOGNkZDlkYTI1YTBmZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFiNGU0ZDMyZDJjYWMxNmFlNzYzYzYxOGExYTMyNTgzNDZlYTZhNTQ0MWRlZDc5MjU0ODYxNGMyZDA1OWE5NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjMxOGNlNGYzZGFiZWQyZjRhYzE1NTg5NDZkZjMxNTAzZDEwYWUzY2IxYzg4ZWQ0OTQ3ZTZhMjAwY2EyNWVmMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzRmMzBiMTViOGNjNDg0ZmY4ZjRlODg1YWUwMTc1OGE3Nzc3ZWQzZmIzNWE3ZTgxNGM4YWIxNDY3Yjg2MDc0NCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

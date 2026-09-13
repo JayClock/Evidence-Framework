@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:754391529848c4cdec949309b52ac91fc118daf27c419cf40e0be25aa26209d6",
+  "claims": [
+    {
+      "id": "claim_a996fabd75d14bdabcde6d4a9c74793d",
+      "statement": "后端默认激活 local profile（spring.profiles.default=local），Jersey 应用路径为 /api，Jackson 默认拒绝未知属性，且 H2 Web Console 默认关闭。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/resources/application.properties",
+          "version": "repo-file-v1:sha256:b8550c4ac819ce53f2d1254e1537fd4e40d47e007f54595680df51dbd5b9547b"
+        }
+      ]
+    },
+    {
+      "id": "claim_727e925df4b3475d9d3141ec01637d5d",
+      "statement": "local profile 将后端绑定到回环地址 127.0.0.1，并使用文件型 H2 数据库 jdbc:h2:file:./.data/users;DB_CLOSE_ON_EXIT=FALSE，用户 sa、空密码；这是本地示例配置而非生产数据库。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/resources/application-local.properties",
+          "version": "repo-file-v1:sha256:a54a200e127d98dd942fc4c3d1623eb4d272af283d4c86c7cb794c7e69fb7533"
+        }
+      ]
+    },
+    {
+      "id": "claim_34d32fde983d41e98c08dc2fb3a91f89",
+      "statement": "JerseyConfiguration 仅在 active profiles 匹配 local 或 test 时注册 RootApi 与用户异常映射器，因此用户 CRUD 是 local/test 专属开发能力，production profile 不注册该资源。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/java/com/evidencepoc/backend/config/JerseyConfiguration.java",
+          "version": "repo-file-v1:sha256:4f0c3a0cb492235935ecfad9e426b624758817c1d272399a9930a53a3312a441"
+        }
+      ]
+    },
+    {
+      "id": "claim_d98cffd723ff4045b9ebc4a0d033639b",
+      "statement": "根 package.json 通过 Nx 编排本地启动：npm run dev 并行运行 frontend 与 backend 的 serve 目标，npm run dev:backend 等价于 nx serve backend，npm run dev:frontend 等价于 nx serve @evidence-poc/frontend。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L5-L8",
+          "version": "repo-lines-v1:sha256:dd8d64fb3148fc5bd541ae74887b4d06522cf7df8bc3b0c5065fc0bc2237b863:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQzODI1ZTk2YzhiNjMwNWE1YmJlNjY3MTUyZGY3ZmMzZjkxNDQ2YzEwZDhiYmZlNTdkZjZhMDBkYzExNGQ0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTQzZDJkMmExMGJjNDJlOTkyZDM2MGJiMzcwMWE5OTRjM2EyNjIxMmY0ZTc0ODU4ZDJlMGNlM2Q4Y2IwN2Y4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjQ1NTYyODRlNzU0MmU2ZmZiZjg3ZDBjZmU0Y2JlZjY3NzExZDJiOGRmZTMwYWM3MGMzNzcyY2M5MDgyNjllMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1159eaabaa5d4502a0206d1da6c56614",
+      "statement": "backend 的 Nx serve 目标是持续运行的 ./gradlew :backend:bootRun --console=plain，因此 npm run dev:backend 与根 Wrapper 的 ./gradlew :backend:bootRun 等价。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/project.json#L26-L32",
+          "version": "repo-lines-v1:sha256:740245f09d6dab487c57f4d84660f39a505ba06b5dcc7c69477045d742298b81:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EyZWZkMWU2MTk2Y2ExMWZjN2ZlMmU5NjAxYmU3ZTI1MzFmMzk4M2E3YjNhMTA3OWZiYmM4NjYyYTNkNDE3NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2NhNTExNzUzYTg5ZGIzNTEzNzQ5NzZmZTVjNWI4YzI0OTJhMTE1Zjk2ZTE4YzU5MDNhY2I4MThlYjI0NmJjZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQ2MWU4MWViNDNkNzA0OGRhMDE2ZmJlZjdmMGZiNmMxYzIxZGY5ZDA1ZDA3OGYwYzQyYjMwY2YyM2I2NjU1ZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_393b4ea5f6104350b1c86ba4923da798",
+      "statement": "Vite 开发服务器监听 localhost:4200，并把 /api 前缀代理到 http://localhost:8080（changeOrigin: true）；preview 端口 4300 未配置相同代理，代理是开发期便利而非生产反向代理。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/vite.config.mts#L8-L21",
+          "version": "repo-lines-v1:sha256:ea4afb7116d0e647fc079ccaebd3ed53173df3ede526608953d5f4127a2af986:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwZTY2YWZlMzEwMjMxZDJlNjA5MWE1ZDg5YTYzZTc0OTg1ZmM3YzAyMzY0YTg5OWI0Y2FjZjdmNTI3Mjk2NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzNTc4ZDM4YzYwNmE1ZGRjMzIzMTkwNDkzZjk1ODMyNzE5NWIzYWFiYjAyYzMyOTg0OGI0MGI1NzdlNTQ4ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5ODZmMDNmNmY1YTYzZjQ5YTNiNTE1MDBjOGJhOTIwMWZhMWY1Y2E3MTJlMGY0ODUwMTEyZTUwMjZiZmY5ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_72644ed0bbf544b89951d066507d67d5",
+      "statement": "由于 bootRun 工作目录为 apps/backend，local 配置的相对路径 ./.data/users 通常落在 apps/backend/.data/users.mv.db，DB_CLOSE_ON_EXIT=FALSE 使正常重启保留本地数据。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/resources/application-local.properties",
+          "version": "repo-file-v1:sha256:a54a200e127d98dd942fc4c3d1623eb4d272af283d4c86c7cb794c7e69fb7533"
+        },
+        {
+          "resource": "repo://docs/howtos/database.md",
+          "version": "repo-file-v1:sha256:2ecafc201a1656e4045f1bbedec2a1a246c715cb8e99f6e32ba4bb3be01799a6"
+        },
+        {
+          "resource": "repo://docs/howtos/local-development.md",
+          "version": "repo-file-v1:sha256:fb0495669e79f71892e4f38615c7e34693971b70a01d981a7c15921b9b97ca33"
+        }
+      ]
+    },
+    {
+      "id": "claim_79c6684743d74447b93630a6337b3fdd",
+      "statement": "后端首次启动由 Flyway 执行 V1__create_users.sql 创建 app_users 表（id VARCHAR(36) 主键，display_name VARCHAR(100) 非空且去除空白后非空）。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/db/migration/V1__create_users.sql",
+          "version": "repo-file-v1:sha256:aacdef2ad3776cea01d1f76a50e3621a678c953d9dc59c51bbf702e42cac8de5"
+        }
+      ]
+    },
+    {
+      "id": "claim_31ecc0c785be4842a9547122e86c50ca",
+      "statement": "后端测试使用内存库 jdbc:h2:mem:users-${random.uuid};DB_CLOSE_DELAY=-1 并绑定 127.0.0.1，与本地文件库隔离，不连接 apps/backend/.data 下的文件。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/resources/application-test.properties",
+          "version": "repo-file-v1:sha256:545a697bc0e30be79d2cd2b8aa355ff04b16538660f9e4cff29c949d628051ac"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/test/resources/application-test.properties",
+          "version": "repo-file-v1:sha256:545a697bc0e30be79d2cd2b8aa355ff04b16538660f9e4cff29c949d628051ac"
+        }
+      ]
+    },
+    {
+      "id": "claim_48eb1b5566984bedbbbe3162bf9359a3",
+      "statement": "本地契约提供 GET /api/ Root 表示、/api/users 的创建/分页列表（page≥0、size 1..100）/单条查询/覆盖更新/删除，并暴露 /actuator/health，支持 application/json、application/hal+json 与 application/prs.hal-forms+json。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/README.md",
+          "version": "repo-file-v1:sha256:c4454b8af58a10372f8ee26d77db990b20441658ad305a320ca863189dce9c92"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9589ad90c5b4312a79d52a8e5a5a96d",
+      "statement": "H2 是嵌入式文件库，只读 JDBC 检查需先停止占用进程、使用匹配版本的驱动并以绝对路径 IFEXISTS=TRUE;ACCESS_MODE_DATA=r 连接；不得启用 H2 控制台或 TCP 服务绕过文件锁，也不得通过直接 SQL 写入绕过领域契约。",
+      "evidence": [
+        {
+          "resource": "repo://docs/howtos/database.md",
+          "version": "repo-file-v1:sha256:2ecafc201a1656e4045f1bbedec2a1a246c715cb8e99f6e32ba4bb3be01799a6"
+        }
+      ]
+    },
+    {
+      "id": "claim_e000916427204911adf09bc0b6f81204",
+      "statement": "local profile、127.0.0.1 回环监听与 H2 均属非生产配置，用户 CRUD 只在 local/test 注册，不得通过代理、隧道或监听地址变更将其暴露公网。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/README.md",
+          "version": "repo-file-v1:sha256:c4454b8af58a10372f8ee26d77db990b20441658ad305a320ca863189dce9c92"
+        },
+        {
+          "resource": "repo://apps/backend/src/main/java/com/evidencepoc/backend/config/JerseyConfiguration.java",
+          "version": "repo-file-v1:sha256:4f0c3a0cb492235935ecfad9e426b624758817c1d272399a9930a53a3312a441"
+        },
+        {
+          "resource": "repo://apps/backend/src/main/resources/application-local.properties",
+          "version": "repo-file-v1:sha256:a54a200e127d98dd942fc4c3d1623eb4d272af283d4c86c7cb794c7e69fb7533"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

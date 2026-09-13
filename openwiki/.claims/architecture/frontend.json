@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e6fc7caf18e1c5d2b05de95944afce85c10fac0dce5df0d10c1c00ff54b30684",
+  "claims": [
+    {
+      "id": "claim_8eceea8a10bf477f9216ea32213729c0",
+      "statement": "前端入口链为 index.html → src/main.tsx → App；App 只定义一条 path=\"*\" 通配路由，任意路径都渲染同一个 Home 导航卡片，当前前端只有单页导航视图。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/index.html",
+          "version": "repo-file-v1:sha256:1d2ded5633d7d056119207e9c952e134b6f2a4c5a4bfc1a56127c7567be309b8"
+        },
+        {
+          "resource": "repo://apps/frontend/src/app/app.tsx",
+          "version": "repo-file-v1:sha256:842b47975198d663d2b21bff21bb3d28b5bb1ea30e133000c8d6fe1dd3952ce1"
+        },
+        {
+          "resource": "repo://apps/frontend/src/main.tsx",
+          "version": "repo-file-v1:sha256:756df6cde9838968c8fd68e100b8e28825bd87ee16245ad0192778c44ccfd7bc"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1d16a04009041deb6d6cdca4dda21a7",
+      "statement": "Home 卡片通过普通 <a href=\"/api/users\"> 链接暴露用户 API 入口，不发起 fetch、也不渲染 HAL-FORMS 交互界面；点击后由浏览器整页导航，请求交给 Vite 开发服务器处理。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/src/app/app.spec.tsx",
+          "version": "repo-file-v1:sha256:e0553b672d43d8f1106054fec4be99e5e27036a1f237b04b8d1a8f5fd8afe299"
+        },
+        {
+          "resource": "repo://apps/frontend/src/app/app.tsx",
+          "version": "repo-file-v1:sha256:842b47975198d663d2b21bff21bb3d28b5bb1ea30e133000c8d6fe1dd3952ce1"
+        }
+      ]
+    },
+    {
+      "id": "claim_807884e3af56454abdd89458b9101307",
+      "statement": "Vite 开发服务器监听 localhost:4200 并把 /api 前缀代理到 http://localhost:8080（changeOrigin: true）；preview 端口 4300 没有配置等价的 /api 代理，/api 代理只是开发期便利而非生产反向代理。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/vite.config.mts",
+          "version": "repo-file-v1:sha256:97d7979b0624c94c22b090e692f14c6095b7692c9156da52dc16e64302a92449"
+        },
+        {
+          "resource": "repo://docs/howtos/browser-debugging.md",
+          "version": "repo-file-v1:sha256:f0812678cc3652514f0e9fe48540d7d07ae794d5ce208e8f1d002553d3cc2dcd"
+        }
+      ]
+    },
+    {
+      "id": "claim_8d8fde8aef71489bb8eb5e7b5fbbfe96",
+      "statement": "前端是 Nx 工作区中与 Java 后端分离的应用，依赖仅为 react、react-dom、react-router-dom；它只消费后端已约定的 HTTP 契约，不导入后端 Java 内部对象、不共享领域模型。",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture/overview.md",
+          "version": "repo-file-v1:sha256:6115dc1d28c3e2f4fc5d3e27dda6e593c7772568843af290c8c1f90c1d992e0c"
+        },
+        {
+          "resource": "repo://docs/engineering/frontend.md",
+          "version": "repo-file-v1:sha256:fbf6d584b83dc198c84c0cfadc62c2087fbf95f9d2479db1f48797b5c2c08400"
+        },
+        {
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:9888d3d414439a14b8787d10a2480a16d64e731e2d09751f6c5e33d8a7f975d1"
+        }
+      ]
+    },
+    {
+      "id": "claim_06bddf0f88134cb7864d5df259c6a324",
+      "statement": "前端行为测试运行在 Vitest + jsdom + Testing Library 上；当前 App spec 只断言应用能渲染以及「查看用户 API」链接解析到 /api/users，不证明后端授权、业务规则、SQL 或数据库。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/src/app/app.spec.tsx",
+          "version": "repo-file-v1:sha256:e0553b672d43d8f1106054fec4be99e5e27036a1f237b04b8d1a8f5fd8afe299"
+        },
+        {
+          "resource": "repo://apps/frontend/vite.config.mts",
+          "version": "repo-file-v1:sha256:97d7979b0624c94c22b090e692f14c6095b7692c9156da52dc16e64302a92449"
+        },
+        {
+          "resource": "repo://docs/engineering/frontend.md",
+          "version": "repo-file-v1:sha256:fbf6d584b83dc198c84c0cfadc62c2087fbf95f9d2479db1f48797b5c2c08400"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

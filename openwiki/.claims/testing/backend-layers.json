@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:140b023bd237cc97ed5839a53dfda40480fa458da57d0b0d6f1137f18fb26727",
+  "claims": [
+    {
+      "id": "claim_ebe38d5b5b4f4af497750bbafd78ca17",
+      "statement": "领域层测试 `UserTests` 只构造真实的 `User` 与 `UserDescription` 并用 JUnit 直接断言：拒绝 null/空白/长度超过 100 的显示名称、100 字符边界内原样保留输入、`renameTo` 返回保持身份的新实例且不改已加载快照、身份或描述缺失时构造失败；该层不启动 HTTP 或数据库，不证明协议或 SQL 行为。",
+      "evidence": [
+        {
+          "resource": "repo://docs/engineering/testing.md#L24-L24",
+          "version": "repo-lines-v1:sha256:822aa61a8fc826529dcf69956eea302bed368ff13698f3fdcbdc1462db508bf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODIyYWE2MWE4ZmM4MjY1MjlkY2Y2OTk1NmVlYTMwMmJlZDM2OGZmMTM2OThmM2ZkY2JkYzE0NjJkYjUwOGJmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODIyYWE2MWE4ZmM4MjY1MjlkY2Y2OTk1NmVlYTMwMmJlZDM2OGZmMTM2OThmM2ZkY2JkYzE0NjJkYjUwOGJmNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDIzNjkzYTU1YmNlY2Q4NjNmY2Y1YTk4MDgwY2M4YzUzYmI0NmFjYjA0OTA4MDAxODE0ZTY3OTk3ZTgxMmRmMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzAzMmVhNjc5YjQ0MTE4NTMwNzZmMzZiM2U1NDdlMGJjYmViY2Q3NzFkZjE4OWE1ZGJiNDE3YjEwYTc4ZDdiZiJ9"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/UserTests.java#L12-L40",
+          "version": "repo-lines-v1:sha256:3fcdead74c7d398b7c608448b3360f99876cba7a999c9c9e61e51d2c0c974caa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2YzkzZmEyNWNiNDc0MDNmZmU1MjVhMDA5ZGVlZTMyYzY0MWVmNGVlNmU4YjM2NGE0ODgwOWNiYWIwOWM5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2M2E2YjMzOWIxNTVjYWMxZTBlZjc0MTVlMTYxYjEyN2I1ZmI0NTM4ODZiNzQ4YTk4MjQ3NWE0YzllMTVlZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2484009e84b247f09385e620d9127164",
+      "statement": "API 层测试通过 `ApiTest` 基类启动真实 Spring Boot RANDOM_PORT Jersey 容器，`ApiTestApplication` 只导入 `RootApi` 与异常映射器且不引入 app/persistent；唯一被 mock 的是领域根集合 `Users`（`@MockitoBean`），`UserApiTests` 与 `UsersApiTests` 断言真实状态码、媒体协商、HAL/HAL-FORMS 链接与模板、分页边界及 Mockito 交互，`RootApiTests.apiCompositionDoesNotStartPersistence` 断言上下文无 `DataSource` Bean 与 `sqlSessionFactory`，证明 API 层不依赖也不启动持久化。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTest.java#L14-L37",
+          "version": "repo-lines-v1:sha256:39eeb7d9d9bbb75d6c98946b011a66f94ea99214b276fd0c0a637f30e220fe01:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0NWExZDcwOTIxOTRmMTRlMWRhY2ZjYWU1NTU0MzcwZmE2YmRlNTkzYmNlNzIzM2Y4YzRiNmZjOWIzMDg4ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzM2E3NzBjNWRkOWNhMzVjYzZkN2MwOGU3MmY0M2RkYWI0NzY2M2QwNTk0ZTMzZDJlNjIyYWE1MTcxYTk5NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/RootApiTests.java#L32-L36",
+          "version": "repo-lines-v1:sha256:9080e9de722b34b2474018e238672ca8f8c77fd075dd229d90bb910b58c8ca80:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmMwODE1OGY0YTBlYzNhYTJiNzc5NWYxYzg5MGI4ZmJiOTlkZjFhMzVjNjcxMzhmMTJiMTM3NjIyOGFkN2ExZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDhlMWRmMGI0ODgzNTZlZDRlYjg4MTg5Yzc5Y2RkNDA0MGEwMmI3OGMwZjYyY2JkMWEwNzUyMjZkMTBjNTlhYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/UserApiTests.java#L21-L118",
+          "version": "repo-lines-v1:sha256:5ffff0390bd5d3bf415398b31c3b58cbd182c2b1433a37eb5502326bf59cb20f:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5MjljOGEyNDAyYzM1N2I0NDEzNDI5MTVjN2U5ZWM0NTBiNjNlODJkOTc0OGYzNmFiNmVjMmZlYjBkYzNmYjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwYjJhYTAzOTgwNDJlM2EwNjEzNWU4OTIyYzBhZWQxMjlhNmJlODAzYjJlMzQwZjhjMTM3MDBkMjMyYmIwZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/UsersApiTests.java#L20-L150",
+          "version": "repo-lines-v1:sha256:6c0ff2575f697cd91a74952c90bf0d0453b1b54d32c6b066ee1615925e7ce8ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1NzEyYjdkNTdjZTg1ZDQwZDdjZmRmYWFhNDNjNGQyYmI1MWEwNzgzZmNmYTE3ZTAyYzM3NTU1ZmM5NmYyNjg2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MGIyYWEwMzk4MDQyZTNhMDYxMzVlODkyMmMwYWVkMTI5YTZiZTgwM2IyZTM0MGY4YzEzNzAwZDIzMmJiMGUxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/config/ApiTestApplication.java#L11-L23",
+          "version": "repo-lines-v1:sha256:8188748b2a8d7931e8fd4752e2665e3340e09e0e076e2961abc6398d5d0c36f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzNDBmNTg3NjljMGQ2NWYzNjJiYTgzZjc1Y2Q1OWNhYTlkMzk1MDEyNWFlZjYzYzVmMGI3Nzg3OTdkNzIzNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjOWRlODcyYTU0ZWZiYTA3YTkzNmM5MjEzMWU5NGUxZGE4MWZjYmE5MzY4OTAxNTgyY2NmNGNlZjJjODQ4MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fae7f3519fcf49cd8facdea7f1052aa0",
+      "statement": "API 层不 mock 被测的 Resource、序列化器或分页：`UsersApiTests.paginationUsesManySlicesAndItsLinksAreFollowable` 用 spy 的 `TestMany` 实现真实 `Many` 切片语义，断言 `subCollection(0,2)` 与 `subCollection(2,3)` 被调用且 `iterator()` 从未被调用；`ApiTemplatesTests` 单独验证 URI 生成保留 servlet 前缀、编码身份并让相对链接保留编码且去掉 fragment。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTemplatesTests.java#L19-L47",
+          "version": "repo-lines-v1:sha256:1f018030c91c9895e1d1f2f347f8e94555ac117177ae6da230fe602545a95c29:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMDgxNThmNGEwZWMzYWEyYjc3OTVmMWM4OTBiOGZiYjk5ZGYxYTM1YzY3MTM4ZjEyYjEzNzYyMjhhZDdhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwYzMzM2NjNjRjMTU2MGRiNjFkYTkwM2JhNGYyMmRmYjljMjA0NzY5NDEzZjYwMDRkMzQ2OWE3ZDlmMzkxZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/TestMany.java#L9-L27",
+          "version": "repo-lines-v1:sha256:4bcf65720237941e315e3ac5e3095e4fc58731c27a436b86a5b51914723268fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNjcxY2FjYzE2NmEzZjM2Nzg0Y2UxMmZmZjMyNWU5YWQ4MjNjZGM4ZjE1ZGJlMmMxODg2ZjExZjNiZGU1ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTQyNWRhZjY5ZjEwNzFkNDc3N2Q5YzU1YWZjNzhlNWFjZDAyYzgxNGQxODQ3OWI0ZDY1YTZjNDU5YmVlYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/UsersApiTests.java#L44-L73",
+          "version": "repo-lines-v1:sha256:7d6c3132446d355e19c631d5c5bd4c0806208e5b96da947dd357813d4b1ad9ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMDgxNThmNGEwZWMzYWEyYjc3OTVmMWM4OTBiOGZiYjk5ZGYxYTM1YzY3MTM4ZjEyYjEzNzYyMjhhZDdhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2NTJlOGU5MjVmZjM0M2E4MTU5Nzk4ODhiZjU1YThhZjljNDQxMmM0YzhhMzc3NDg3NGFiZDUyMDBkODJjMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwMmU2ODc4ZTcwZWZiYjFmMDBjZjQzN2RiN2VkZTg0ZjQ0MjhhYjI4MTBjYTM3MzBkMTU5YjAxNWMzMzBkMGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_07bb7c7f88ad46b3ae3d5f2786b6bc2e",
+      "statement": "持久化层测试 `MyBatisUsersTests` 以 `@SpringBootTest(webEnvironment=NONE)` 启动 persistent 模块测试应用并接入真实 H2 内存库、MyBatis XML、Flyway V1 与 `InjectableObjectFactory`：验证真实 SQL 往返保持 UUID 身份且同名不合并、按 id 稳定分页与越界空页、缺失 update/delete 不创建行、SQL 参数绑定、所有写方法参与本地事务并在异常后整体回滚，以及 starter 与 Flyway 版本 1 已实际加载。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java#L45-L149",
+          "version": "repo-lines-v1:sha256:369b5bbbea5e3810e55993b9f31077d043fe146e6e539ab23c4c2b36caed1c29:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiYzA4MTU4ZjRhMGVjM2FhMmI3Nzk1ZjFjODkwYjhmYmI5OWRmMWEzNWM2NzEzOGYxMmIxMzc2MjI4YWQ3YTFkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNDkyMmJiNjVjMjcwMGU1ZGM3NTkwMjA3ZTVjYzY1ZmMyNDkyZTE2MzRmNTg0MGZiNTY1MTBlNmJmYzYyYjE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/test/resources/application-test.properties#L1-L4",
+          "version": "repo-lines-v1:sha256:545a697bc0e30be79d2cd2b8aa355ff04b16538660f9e4cff29c949d628051ac:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY4NzQzMDhkMTYxNzRjZjQyNzE5ODRiN2FlOWI0NzdmOTUzYjc5NjI3YTdkY2M4OThlOTE2MjljMmYzYmUwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjRjZDg0YWZmYjRlZmE4NzVmZmI5Y2E1NDkwZTQ2ZDA3ODBmYjI4M2YwYTk0OGRlMjVmMmNmZDRhOGQzNmVkNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a20b4a3d4034c59a3946030bf5fd9ba",
+      "statement": "应用层测试在 test profile 下装配完整组合根并从真实 HTTP 进入真实 SQL：`UserApiTests` 用 `TestRestTemplate` 覆盖创建→读取→修改→删除→再读 404 的 CRUD、Location、媒体协商、分页导航、非法创建/更新不写库、actuator 健康检查与 root 导航；`BackendApplicationTests` 断言跨模块 starter 在组合根真实装配；`UserExposureTests` 断言 production profile 不注册 `RootApi` 且其 Bean 数量为 0。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/BackendApplicationTests.java#L16-L21",
+          "version": "repo-lines-v1:sha256:1684cc5fd6fc60879435b28d667c82e51954821ac93759cdc204e218ec37b857:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmMwODE1OGY0YTBlYzNhYTJiNzc5NWYxYzg5MGI4ZmJiOTlkZjFhMzVjNjcxMzhmMTJiMTM3NjIyOGFkN2ExZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjRmZDIzNzZmYTRlNTM0OGJkMjE4NTdhYWRjNGQwZDA4ODM0MjY0MGJmOGNkYWQ3NjliY2M3YzdlYjU4ZTljOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/user/UserApiTests.java#L38-L235",
+          "version": "repo-lines-v1:sha256:0f77f5a06dd02fad6b6365d8d0f18c8b27505d5070c26634e85b7fe331a1e10a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiYzA4MTU4ZjRhMGVjM2FhMmI3Nzk1ZjFjODkwYjhmYmI5OWRmMWEzNWM2NzEzOGYxMmIxMzc2MjI4YWQ3YTFkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNDkyMmJiNjVjMjcwMGU1ZGM3NTkwMjA3ZTVjYzY1ZmMyNDkyZTE2MzRmNTg0MGZiNTY1MTBlNmJmYzYyYjE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkMWM4NmZhMjU2Y2RhNmMyNTZiMDA1ZDM2NDRkZDYzNDcyOTZlNTc4YmIxZjg0NGQ2OWM4NWMwYzZiZDI5NGVkIn0"
+        },
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/user/UserExposureTests.java#L11-L24",
+          "version": "repo-lines-v1:sha256:2f49974be0c21aae6f1a5e3259e0a3a3bf1dfdbf56baa5f06db977442f4c6829:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2Y2M2YTc2ZGNhMmE3ODIwZmY3MjZmMWVmMDk0Yjk3MTUyZjE3ZjRjODRhNGMxMjMwOWE4MDI3Mzc1NDI0MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMDk2NzQ0ODQ0ZjNmMGU5NjAzMmIwMmE3ZGE1NmFmZDE3NmE2OTkxNDBjMDBlNjQ3MmNlOWE3NDg0Y2NhNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6fdd73a0371b4b9ebe2e6e6ba425bc98",
+      "statement": "`BackendArchitectureTests` 用 ArchUnit 把编译期依赖隔离固化为测试：domain 不得依赖 api/persistent/config/Spring/MyBatis/JAX-RS/Jackson/smartdomain-mybatis，api 不得触达 persistent/config/MyBatis/JDBC，persistent 不得触达 api/config/JAX-RS；它只证明包依赖被隔离，不证明业务语义正确。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java#L14-L56",
+          "version": "repo-lines-v1:sha256:5869a1f4c4d5de8df66416332b1e29921d0291ff77e6810c239166e13d620c95:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NTQ0YjA4NmM1OTlhOGM3ODMyZjdlMWJjYzQ1MGJkOGY3ODcwMDNjNDdkYmZhY2RiODc0MDg3ZDk4ZGY0NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4ZDkzMGNiM2EzODcwMWFjZjAxZjM5ZWYwZjY5MmMwMzhkMDVhNThmZmViZjQ1NDg2YWE4YTJlOTZlZGI4NzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMGQyMTFmOTg0ODVmOGJkNmQ5YjgyOGI2MjZhMDQxZjM4NzIwZGUxOTc1NWUzMmRjMDcwYTI1YmNjZTI5YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a26786703d88472eb214f1697268341b",
+      "statement": "前端测试 `app.spec.tsx` 在 Vitest 配置的 jsdom 环境下用 Testing Library 渲染真实 `App` 组件，断言渲染成功、`用户资料` 标题存在且 `查看用户 API` 链接的 `href` 指向 `/api/users`；它只证明当前导航页的用户可观察行为，不证明后端授权，真实浏览器行为另行检查。",
+      "evidence": [
+        {
+          "resource": "repo://apps/frontend/src/app/app.spec.tsx#L16-L31",
+          "version": "repo-lines-v1:sha256:88e0da607b0621f4d6d4e95c3d90e7280dd06fbbd8f3cfc61989267ca0ffb84d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyNmFiOTBlN2M3MGUxM2UwNTBjMTFlOWNjNmNmZTEwYTdkOGFkNTRlYjVhY2ZiODE1ZGYwODI0ZmQxMDk5NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/frontend/vite.config.mts#L35-L46",
+          "version": "repo-lines-v1:sha256:42553bca9bacc01e004b0d9fc0e9cc85ea291b642d557b5d5520cb38cb94cc8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MzZkZjdhNWEzYWFmMTgwY2ZmZDFkNjVjNjQ2ZWY2YWVhMzUyY2MyNzc3NDY4NjE5OWNkOGZiM2U4OTljN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1MThhZDdlMThkM2ZkY2QwN2UxMTg0YjVkZGU3Y2FiNjE5NGZlMDMyM2IxOGVlMDJlZmY3MjJmMDkzOTZkYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViNzQxZDJjMDhlNmY1MTBiN2U5YTI2NGYzNzhmOWNlMDA0OWE1MDRlMGU3ZWY1ZDY3Y2QzZWE4MTNmODU0NzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0665ffa138c24be8aae41adc811048fd",
+      "statement": "分层测试入口由命令固定：domain 用 `./gradlew :backend-domain:test`，api 用 `./gradlew :backend-api:test`，persistent 用 `./gradlew :backend-persistent:test`，app 用 `./gradlew :backend:test`，前端用 `npx nx test @evidence-poc/frontend`；各层证据不能互相冒充——API 的 mock 通过不等于 SQL 通过，H2 证据不证明生产方言、隔离级别或生产并发安全。",
+      "evidence": [
+        {
+          "resource": "repo://docs/engineering/procedures.md#L48-L56",
+          "version": "repo-lines-v1:sha256:48dacddd917c6471263afa2b20a69be7251c1369d5ce5d6993377ac4c92281aa:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RlYmQ5NDc3YzgwZTZmMjA1YjRmN2RmZDlmMDY5MTBkMDEyYjJlN2ZiNTViMTRjNjBlODE3OTFkYmRmODE5OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQzMDEwMjNlNWY3MTUyMDQ3MzBlMmUzMzhjMzdkOTAzOWI4NDlmNTEyYTAxZTBhMGM1MmFjYWI2MzA1Mjg0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg3ZDA0N2MxY2NmY2U1NjEzNDljMDQ2YmYxZWFiOWIzZDZjZDc3ZDJkNzg4NDlkZWRjZjhkM2EzNGUyMDJhNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDA1ZjQxMmMzMTNkZjcwMDRlYjczZmU2ZjVkNWU0YmNhY2Q1OTY5Zjc2M2QxYzRiZmM5MmNjOTQ2MWMzY2JkMiJ9"
+        },
+        {
+          "resource": "repo://docs/engineering/testing.md#L22-L29",
+          "version": "repo-lines-v1:sha256:743e587e3e6e340e9b4bdc4ee8a2ca66f28ffa396db63ef3c26b30eef57e9b59:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNmNDgxNjU4MDBmYWZlNmVlZWI0ZjY4ZDhjYmJhYTQyNjYyNjlkNzg0ZGU0NmFmYjA4ZjNkZjJjNTI5MjlhMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI2NThhNzFlN2Y1MmNiNTI2Y2NlZjgyNDU4MGY4NDZkMDhiYzcwYjQ2NTM5ZDJiM2Y4YmY4MGRhZjVmZDY4YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjMxZjIyODQ3MjlmMjcwYzUxZTM1NDc0NjNjNzRlMWY4OTE2Y2U3YjlhOTQ0N2I3OTJjOTVkZmI3N2VhMmQ4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjc0MzVkYWUxZTIwMTJhYzA1OTljNmUyODE5ZDM1ZTgwYzdhNmE3ZGQwNDY5NDg3OGZmNzUxNzdjMWNjNmRjYSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

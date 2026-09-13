@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:10f9ab71815aa2b0ef30c7342b3bb17a9c0ef079407d25df0c93cf590d5aa865",
+  "claims": [
+    {
+      "id": "claim_babcdc2f699a4b1c87ce4b9df567554f",
+      "statement": "后端是模块化单体：apps/backend 是统一构建发布的 Spring Boot 组合根，libs/backend/domain、libs/backend/api、libs/backend/persistent 是同一应用内的技术构建库而非业务模块或远程服务，settings.gradle 定义这些真实 Gradle 项目。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/build.gradle#L1-L15",
+          "version": "repo-lines-v1:sha256:696d6f7650543a2eecd17bd0bfd4fae802666a0c9b70c9f12e90fb53333cc204:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4M2ZjYzUwNzY3ZGY1MGQxMzNkNzk2MGQ5NDUyMzEzNGJkOTI2MTJmYTJhYmRhYjVhMjgzNDFmZjA1YWY2MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://docs/architecture/overview.md#L5-L7",
+          "version": "repo-lines-v1:sha256:9738d77de47238a7873dbbfe746173da74f0779493e974d53f23323d51c9f3e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGYxOGE5MjRjZGFkNjhiYTYxYTcyMzA2MDEyNTdmZTNhODM4NjkzMDlmZDFjNGJiNzc3YzI4NWM1NWNlMTQyYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQwNmQ2NzkwNTE2ZDg5NmMwYmY5MGU3NWM4NGI4NWQzY2JkYTM0Y2M3MmY2NGUwNzc0OTcyZDk4MTliYmUyMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTM4NmU2Y2ViOTAyMmY1ZjIwNGU1ZmVmMzEyMGQ4MWM0M2Y4ODE2Y2M3NmI4ZDMxYTRlNzYxOGUyZDlmMThjZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjg3Y2VhNWI4ZDAyZDMzNWQ0YmQ5YzU0M2IzZTlhYTgyMTA4ZjNiZGUzYzc2NjNmMzg2MzJjOTFmOWNhMDJjNiJ9"
+        },
+        {
+          "resource": "repo://settings.gradle#L1-L7",
+          "version": "repo-lines-v1:sha256:ac99692f1aa599c283bbefbf59f220d119b5f6030aab4ce10ad33fd5297360cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIzZjQ1MzQxMzdiZTQ1NTk0ZGQ4ZjA4N2IwYmY0MmQ3Yzg3ZTg3MmM1MWFhZTlkMDJiNDVkNjExMDI5YzI0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODI2Y2E3N2U0ZDQ4ZjZmM2JmYmUzOGFlOWI1YjQwNDA4ZmMwNjc1MDhkODM3NTM3NzM3MTIzMjE2NDlhOGYwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8f18491605b48649174a3780b27078e",
+      "statement": "ArchUnit 规则强制技术库边界：domain 不依赖 api/persistent/config/Spring/MyBatis/Jackson/Jersey，api 不触及 persistent/jdbc/ibatis，persistent 不触及 api/config/Jersey。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java#L13-L57",
+          "version": "repo-lines-v1:sha256:a829844c76ce0dcfb276c40371b84076ef406465cbd33bd256607f83ee1de881:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMDdkMjY5Y2UxYmQyY2VjY2EzMDJkZTFjMTQ1OGQ1NjljNmY0OTg5ZWJhOTA3ZGE5MzQ2YWEwYzA3OWM1MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMzZlZWRmM2ZiNzc4OWI1OWM2ZmM3OWY0ZWI1ZDQ1YTJkOWQyMjExMDZjYmUyZDIzODM5OWU2NGQ3ZWY0NWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://docs/architecture/modules.md#L3-L13",
+          "version": "repo-lines-v1:sha256:d640a64eda3e4fd1b808227a2761d12d2b2b76cdde3c72c57f4696cb4a05fece:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NTlhZTgxMWRiOTIwZWQxOTZhYmVjMjdjZmUyNTg2N2Y5NDkxYmI5MTFiOTYxMjYxZDRlNDRhNWU4ODk1NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhM2I5MjFkMmUzOGZhZTk3ZDM2NzZlNDI3MjBjYjRlNzk5NWY0ODFlMTY3OTNlNzFiZWNiNWFiZmJmZDBkZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxYTgyYWNhOTBlODU2NGYwN2NiNDg0MzJmNGZhZTI1NzQ0ZmE4MWZjMGJlM2NmNmYxZGY5YjNhNGMyMDk1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViNzUyYTc4YTA1YzQ4NzZjNmI1Y2ZjMTM3M2Q0NDkwZjZlMTNkMjRiM2U1NzRmYmUyMDg4MDI4YjEyODhiMjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8bba936cfae40c889cd813bf8cfdfa1",
+      "statement": "JerseyConfiguration 仅在 local 与 test profile 注册 RootApi 和异常映射器，production profile 不注册用户 CRUD 也不创建其资源 Bean。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/java/com/evidencepoc/backend/config/JerseyConfiguration.java#L9-L19",
+          "version": "repo-lines-v1:sha256:635ba8113b687e6acf76728b932854972c657d858a93b458c16cac535560ea2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YjkyNWM5NDJmMDJkMzI5ZTljYWQwOTQyYzNiNzg3ZDkwNDA2YjgzZDNlOWU2MWU2ZGIyNTExNWNhNzRmNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyNzc4MzJhMWUxNTM0ZjExZmVmODcwMTVhMGQ2Y2VjNDA3ZTk2MTIxNTlhNWU0YjEzNzRlOTFmOWQ4ZTIxOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/user/UserExposureTests.java#L12-L24",
+          "version": "repo-lines-v1:sha256:8f1772ebe344a72969e5e539486d782f530da9347844707cc8ec6bb0ac308885:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMDgxNThmNGEwZWMzYWEyYjc3OTVmMWM4OTBiOGZiYjk5ZGYxYTM1YzY3MTM4ZjEyYjEzNzYyMjhhZDdhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5NjllYzFkNGM5NWVhNDI1ZTRhY2M3ZmVkMTg4NzM5ZDk5Yzk2NzgwZTlkNzhlZjE5YmZmMjM5NGE4ODAzY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c511cd8657d4fd9be2d6c7aedc2bc3e",
+      "statement": "集合列表端到端路径为 HTTP → Jersey RootApi 子资源 UsersApi → 领域关联 Users.findAll → persistent Users 适配器的 EntityList → UsersMapper.findPage → MyBatis XML → H2，页大小与整数溢出在 HTTP 层校验。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/RootApi.java#L14-L34",
+          "version": "repo-lines-v1:sha256:d86bef67baf49380ba941043e13907f4fc55b972bb3cd3d1a07ecfde9eb0af53:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4ZmExZTlmNDQ5NDlmYTg5YTNiNDJiMDQ5MmRkYmRmZmEyZWI3NjQ4NDhkMzU3NzhjOWZiNTNjMjA3ZWJkYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTRhZjgyMDgwYmNiMDVmZmMyYTY4YmYzNjI3Y2Y2OTE2YzY0MmUxNTEwZGZjYWYwOTY5NjRkNDljM2JkZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/UsersApi.java#L35-L58",
+          "version": "repo-lines-v1:sha256:aca99518c10db13c64b912660a8451abbc86b703a29abb1c43279765b30bb067:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZWU4MmU3MTIyOTUwYTdjYzViZDc3MjI2ZDk0YmNhM2E3OGFiMmMxNzg3YzIwMDYzOGQ0ZTVmNGE0Mzk2YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwMGIxNDVkMTA2MWNiN2FiZGUxYWRjODlhYjIwNmE5NDg5ZTE0NzU1MzliYWRmMzgxMGU5Njg0NjkxMTA2YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkNGI2MDYyMzllYThmZTcwNDFiZWE3MDQyYTlhNzZlMjI5ZjI3YmU3ZjQ1MTQ4ODdmZTFkYTVjOTNmOWUwMDIifQ"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/Users.java#L28-L31",
+          "version": "repo-lines-v1:sha256:4a944ad1d16ede1e34ad93b253ed98bf65cfe826cbf275a7539326dbf9463ecc:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBkMDNlZmJjMjUzMDcwZmRhMWVkNDI0Y2U5YzkwODFjM2FiMzJiODQ0Yzc5NDIwMzRiYzRlN2MxYTMwMzQ3NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGJjOTliZDBlMzg3OGIzZjU0MTFhMzU1NzEyYzEzNDJhZjhlM2QxOTc1ZTgxNDliNDcxZjgyOWJmNGEzOTg3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFmZWRiNmY1NWFjODQzZGJhMzQ5N2M2OTZkMGVjNTE5ZTRhYjY2NGU4YjYzOTljZWI0MmU4ODJhYTYzMWNmOSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/mybatis.mappers/UsersMapper.xml#L15-L17",
+          "version": "repo-lines-v1:sha256:f8896fe59e37deb7fe11bc5764251c2711af0d63b4d25ee0b94fcaacecec86b9:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTZhM2FkMjQxZjk2ZmI5MGZjNWVhNmE1MTJiNDhmMTViZTE5ODU3NDQ2ODliNDIxOWE0OWE2OTUzN2YxNDY3ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Q3MTA5YjYwNWE4NWY1OTA0YjJhYjM4OTdiOGEwNjgwZjY3ZDk4ZGQ5NTZhNDg3YTE5NGI0ZWM5MjgxOTQzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTI5ZmQ2Mjk5MDlkOWU3ODMwNjE2NDUxNzNmNjRiM2QwYWRiOThkYWU0ODI4MmI5OWMwNWI4ZmNiOWI1MWMxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGUxZDU1NjRhMjY4MmRhZjg3OTcwMWFlY2Q4MzczOGJhOWEwNjAwZDJkOTNiNGNlYTQyNDlhZTkwODYwNDdlZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ce04f14ad3245cbb30949d3483360d4",
+      "statement": "成员路径通过 UsersApi.findById 用 users.findByIdentity 定位实体后经 ResourceContext 初始化 UserApi 子资源，UserApi 的 GET/PUT/DELETE 委托 Users 的 update/delete，缺失成员抛 UserNotFoundException。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/UserApi.java#L25-L40",
+          "version": "repo-lines-v1:sha256:56278c7849d076905feea9dfc6dc182a3189a245ac33e38fe04ca2f0c9008c1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZWU4MmU3MTIyOTUwYTdjYzViZDc3MjI2ZDk0YmNhM2E3OGFiMmMxNzg3YzIwMDYzOGQ0ZTVmNGE0Mzk2YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwMGIxNDVkMTA2MWNiN2FiZGUxYWRjODlhYjIwNmE5NDg5ZTE0NzU1MzliYWRmMzgxMGU5Njg0NjkxMTA2YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/UsersApi.java#L79-L83",
+          "version": "repo-lines-v1:sha256:084a12b71c18a1d149a79fa2b2e19103a1cd46114f9a5957b9a407ba82881e8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk0NWY3NzJjMjdjYTBhOTFmMGE0YzhhZWZiMTViY2YzYTZkNjA0MTk4YzBjNGI1ZGIxYjQ4Mzk3MmMwMjQ1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDQ4MTYzNTBhMTJlMGUwODlkODhmZGYzMzZjMmNkOWMwNTY5ODhjYmZlYzZlYTA5MmFlZmE5MmY0MzNjNDJiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b6a5a227c0764a14ac9808e6737c4929",
+      "statement": "领域层：Users 是根集合契约 HasMany，User 是无关联叶子实体，身份稳定且 renameTo 返回新实例，UserDescription 是校验非空白且 UTF-16 长度不超过 100 的不可变值对象。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/description/UserDescription.java#L5-L14",
+          "version": "repo-lines-v1:sha256:197baca7fac8a3fdec85f83d6ff26e7b2f2d347fd45d924bb8bfbbf5c4a27d8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzlmY2EwNThiZmQ1MDMzMDliY2IwMGVhYWIwNjUxMWI1OTc4MzI2ZWRkMDYyMjE1ZTcxZDA0OGE3YTM4YzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmMTE4NTFmZGJhMjgzOWYxYTUyMzE5ZDIzNDQyZGNhZmEwM2RiM2U5NDgxNDBkZjQ4MzJiZmZjMmZhMWMwMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/User.java#L7-L34",
+          "version": "repo-lines-v1:sha256:3c7dde25d0f5537f74b1e57e063c3493161823958b89654d414c56e6c0a05be9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NjViZjY1NTU2YzVjMzUwM2U3ODBlMTczN2QzMTM4OWJkNzljOTY5M2U3N2ZjZjM2OWM5MWNiODVmODY5MDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwOGNjMjZmODQ4MDA5Y2Q3NTYwNzBhY2YxMGViYWE1NDgwYWIyODQzNDRkMGQxYWE3ZDQyNmJiOTliZDdhZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Users.java#L6-L13",
+          "version": "repo-lines-v1:sha256:d794fa8a29b919e6d67e02862d4cb2bc11467dc2fc811096291ad67ef9d1f806:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGU3MzRkOGNjOWM5Zjk3ZjkxMDAwOGJmOTkxNDVkOTI4N2QxZTIzZmFhNTZiNTJiN2I2MjVmODViMmZjZjM4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTViNDRlNmZmYjA5YjE1MzllNzM3YWI3NmZjYThkZGFiYTJhZjk2YzM3ZTYzNjk4NjRjYzRhNmZhOWViMmJlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ed63cd1f3f164fc4bd1841d6398af752",
+      "statement": "persistent 的 Users 适配器实现领域 Users 接口：create 生成 UUID 身份并检查 insert 行数，update/delete 检查影响行数否则抛 UserNotFoundException，写方法 @Transactional 参与 Spring 本地事务；UserCollection 扩展 EntityList 做惰性分页而非 AOP Bean。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/Users.java#L15-L87",
+          "version": "repo-lines-v1:sha256:85e9c76491624179564b1944b0cd3d76aa9ad0d8fc9f22c03a9cddaf09386194:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNjQ0ZDNhN2YxMDE1ZTA4YTZmZjkxZDRiYjYwYjlhNTIwNjM0ZDFkY2FjOGE2ZGI3MDVmMzI2YTM2ODc4OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYmFkNmRjZTM2NjdmMjEwNWFmMjk2NWMxMjJhYzEwOTUwZTk0N2UwYmVmMmE1M2M3YmQyNWQ4MjAxOGI4ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e00520478f6c4917b12e9ce99f12c8c1",
+      "statement": "MyBatis 用 UsersMapper.xml resultMap 直接水合 User 与 UserDescription，不建 Row/PO 转换层，SQL 全部参数绑定且分页按 id 稳定排序；mybatis-config.xml 关闭缓存并挂载 InjectableObjectFactory。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/backend-persistence.properties#L1-L3",
+          "version": "repo-lines-v1:sha256:4508e6a4cfc7c5084ab73fefe60bc5e142f7e305e2b15ecb91ab06e05a721177:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjgxZDM2NGM1MmViMzc0Nzg2Mjg5YzhjYjYzOGFkYzQ3MWRmOTViZjQzYWE2ODNjODhmNDQwYjcyMGZiOTQxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjEyNmY4ZjUzZWM0Y2QxNjU1YWI4YzE2MmVmOTVhMjFhNmUzNWEzMDk3Nzg0ODQwODZiYzEyMjdiOGIzY2FmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/mybatis-config.xml#L3-L8",
+          "version": "repo-lines-v1:sha256:6f9fa9c03b4e0800d756a361e150517b6ca1ae5c13bb0004eb1b87e9b1293c31:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhkMWIwNzc3ODM5OTE4Mjg5YWRkNDUwN2JkMjQyYjBlOGMxZWY3NjkzYjUzOGY3MDI3OGJlNzRhNmMyNzg2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTE5ZWJhMTc3Y2RkNjEyMzI2MjE1YjI5ZjM4ZTY0MDIzNWNkYTM0MTQzYzE2MjNiOGMzNmI3YmJkYWRhYjFhMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGIyZDQzMDIxYzFjZDFhNjJjOTM0Y2QwNjBlOGQ5NTRhNjMxM2Y2YTA2ZDEzN2U2NTY4ODNkMTkzOTI3MzdiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/mybatis.mappers/UsersMapper.xml#L3-L30",
+          "version": "repo-lines-v1:sha256:de55484e4a51cfab4d0733b97f2ed1fbebd49934efd25ee3dbae4218068a3842:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMzc0MWU5ZWM4YTM3MTVhNGM2YTBhNWIyMzY2OWI4MzdlMzFhMWI5ZTVkM2JjYmVjMzhkYmIxYTc0YTc4YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0MDQ5Yzg1YTUyMjk2Yzk1NjJkYTNiM2JmMGM0YTkzYTNkNzFjMTVjNjRhYzNkYmRiMjgyM2ZkMWIyOTRkMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1Y2U0NzlhZDkzYTIzMmM3ZjQzNzgxNzY1YzU3ZjcyMTczOTRkZjI5ZTRmNWYxNDEyMjM2NjdjZmUzZmEzNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2ca2eda230a34844b9ed069fab387595",
+      "statement": "Flyway 首次启动执行 V1__create_users.sql 建表 app_users（id VARCHAR(36) 主键、display_name VARCHAR(100) 非空且带非空白 CHECK），正常重启保留数据。",
+      "evidence": [
+        {
+          "resource": "repo://libs/backend/persistent/src/main/resources/db/migration/V1__create_users.sql#L1-L7",
+          "version": "repo-lines-v1:sha256:aacdef2ad3776cea01d1f76a50e3621a678c953d9dc59c51bbf702e42cac8de5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGRkOGJhZTE0MmJjOGI2M2Y0YzVlMTJlM2RlY2UxNmFmY2ExNmRkNWJhMDgzZTU4MjU0YzgzNTkzZGFjMTc4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NjdlYzFlZDM4MzZmOGViMTdhZmYxNzJiNWJmZWY3ZGU2MDQ4NWE0MzljNmNhMTFjNTkxZTE3NTU3MzlhZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java#L130-L149",
+          "version": "repo-lines-v1:sha256:2ba25adf5be62c147d768f8931668ea14f35d652e3fb0b4242158a6813893126:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMDgxNThmNGEwZWMzYWEyYjc3OTVmMWM4OTBiOGZiYjk5ZGYxYTM1YzY3MTM4ZjEyYjEzNzYyMjhhZDdhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhMGQ0ODY1YTgxMWJlOWRlOWU0YzkyOWNmMjZkYTM5MTQ5YmMzZWZhYTZlYTE3YzJjZDQ0YWY0ZjM2NGM5ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5203864c6e8c460381ae0728442fd34a",
+      "statement": "local profile 绑定 127.0.0.1 并使用 H2 文件库 jdbc:h2:file:./.data/users，测试 profile 使用随机 UUID 的 H2 内存库，H2 Web Console 默认禁用，生产数据库未选型。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/resources/application-local.properties#L1-L5",
+          "version": "repo-lines-v1:sha256:a54a200e127d98dd942fc4c3d1623eb4d272af283d4c86c7cb794c7e69fb7533:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2MzZGUzNjk2ODk3YWNiMjZhYmJmZTYyZTg5MTAwZjQ0ZDUzM2I2MzZkOWMwMTEyYmNlZDZmMzkxMzY0OTNjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxZTdhYjI5MzY3N2FlMGQ1OTY2ZTJkMmYyYjAwMDJkN2Q4OGM2ODg5OGYzMzY3MzJjYzRiODk5MGJlMmY4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/backend/src/main/resources/application.properties#L1-L5",
+          "version": "repo-lines-v1:sha256:b8550c4ac819ce53f2d1254e1537fd4e40d47e007f54595680df51dbd5b9547b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MwZWZkZWM5YzQzYWRmNmU3ZjRiMzJkMWVhOThhNGNlYmNlZGFlMzFlOWE4MmE0NzVlYmZjYWI0MGNiN2Q4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFkYTEzZDg2MWUwZDVmODM1ZTU3YzdiMjhiM2RlOTBmNDVjYjAxNTNhMjExNTI1OTM3NTIzMTZmNzRjN2Q3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/backend/src/test/resources/application-test.properties#L1-L4",
+          "version": "repo-lines-v1:sha256:545a697bc0e30be79d2cd2b8aa355ff04b16538660f9e4cff29c949d628051ac:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY4NzQzMDhkMTYxNzRjZjQyNzE5ODRiN2FlOWI0NzdmOTUzYjc5NjI3YTdkY2M4OThlOTE2MjljMmYzYmUwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjRjZDg0YWZmYjRlZmE4NzVmZmI5Y2E1NDkwZTQ2ZDA3ODBmYjI4M2YwYTk0OGRlMjVmMmNmZDRhOGQzNmVkNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5a0aab9669d4e819b87c9b8b11978b0",
+      "statement": "HTTP 表示支持 application/json、application/hal+json 与 application/prs.hal-forms+json，UserModel 通过 Affordances 提供成员 update/default 与 delete 模板，集合提供 create/default 模板；Jackson 配置拒绝尾随 token、未知属性与数字/布尔到文本的强制转换。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/main/java/com/evidencepoc/backend/config/JacksonConfiguration.java#L14-L24",
+          "version": "repo-lines-v1:sha256:369caabdc927deb5b4d0869d950a15765766accf1bedab7010dc1989f5b19ec7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1ZDIzNTdlZTZiOGY0YjAyNTYzY2UxMTUyYWIxYWQ5MTY2OTZhZTM0NTkzMGZiNmFkOTk2MTVlY2I5ZTFhNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkOTllN2M0OTcxM2MzMzc2Njc3MTI5MWRiY2NjMzc2NGM0OTk1N2U5N2U0NjgyN2U3ODIxMzliM2FiZjk5NDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1NTljYWY2YjMzZDg4YWI5YWE0NTM0YmM4ZjMzMTZmODlhYjY2NDFkMWY0ODcxNzk5ODA3NGZjN2I1NjA0Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/representation/RootModel.java#L8-L12",
+          "version": "repo-lines-v1:sha256:00ab56426f7c04de6b3ec2c1dbf5c82a22be3c27d1b958b02715c0322dc99d83:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWM5MGQxYTZiMjA0ZDkwYmQzYzJmNjc2NzkyOTY0MWNjOWFlZjcwYzgwZDdlOWMzNzZkZmQ0MTljYTRhNDA2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg0NDQ0MDM3Mzk2ZWYzOWZjZGMxMjU0MDg1M2IxOTQwYjU2ZjMzM2QyZDQ3YmQwZTA1ODFlY2VjMGI2MDY4NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/representation/UserModel.java#L17-L35",
+          "version": "repo-lines-v1:sha256:0e877b94e346cea7aa278ac37b6b4f5ce23fb9e5040cb22bd5455ee3f05d9d4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyNjUwMmU1MTA2OGFkYTA4YWNiYjZjOWNmMWQ0MzFjYzg3OGVhODJmYjQ2OTkxYTcyMzUzZTc1ZTQwMjdjMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkNjBkMWI4YjRiMmMyMjUxZGIzOTJmNWIyN2FhY2UwOGRlNWQ4MTZhYzAwNGMxMmI1ZTk3ZTA1N2JmMDQwZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a18a2740e2949d9ac68a2d530415cd9",
+      "statement": "UserExceptionMappers 将 UserNotFoundException 映射为 404 USER_NOT_FOUND、InvalidUserDescriptionException 映射为 400 INVALID_DISPLAY_NAME、BadRequestException 映射为 400 BAD_REQUEST，非法请求不修改数据。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/user/UserApiTests.java#L143-L186",
+          "version": "repo-lines-v1:sha256:6c9e8cb9a9519c1b647d742341d3292b98161f0a9e345c6c5ce0de41e895f7c8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjMGM1YTk3MzcyNTg5MTEyNTI1OTNkMjI0ZTJhNzJlODRkNzUwZTk2YTVlMDkwMGU1Nzg1YjFiODNkMmZkYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjYWEyZTVlZWMxZjc5ZTUxYjVmOTMxYWU2YzE1MGY3NTc1MzA5ZjEyODgxMTU3NTM2ODRkMWFiNTJmZGE4MDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NTJlZTU1MDAzZThmZGFmMjI0YTFiODE3MWVjNTU5NzJjMTA4YjYxNmQzMWEyNzk2ZjY0NjNmMDQ3YWJiYmUifQ"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/main/java/com/evidencepoc/backend/api/UserExceptionMappers.java#L23-L46",
+          "version": "repo-lines-v1:sha256:adc26094b8483af109798039d15a7a66c49ba31d038120b5a396ffa09d13ae29:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkODI0N2Q3YTU5MjEzMzJhMmI4ZTJjZGJhYmFmNDBmOTVlNmNlMzZmMGViNzY2OGU5MGYxYzgzOTkwNzFlNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ODE2MzUwYTEyZTBlMDg5ZDg4ZmRmMzM2YzJjZDljMDU2OTg4Y2JmZWM2ZWEwOTJhZWZhOTJmNDMzYzQyYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0fbbb65134774b3ca7c3f0e5e6c48fec",
+      "statement": "四层测试各证其责：domain 证明纯领域行为，api 用真实随机端口 HTTP 加 mock 领域且不启动数据库，persistent 用真实 H2/MyBatis/XML/Flyway 证明 SQL 与回滚，app 用真实 HTTP 加 SQL 加 ArchUnit 证明装配与 profile 隔离。",
+      "evidence": [
+        {
+          "resource": "repo://docs/engineering/testing.md#L22-L27",
+          "version": "repo-lines-v1:sha256:5dee033948937757c3e868f3982c00e4e02590a60adbbba81db1314aa4ea1d5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNmNDgxNjU4MDBmYWZlNmVlZWI0ZjY4ZDhjYmJhYTQyNjYyNjlkNzg0ZGU0NmFmYjA4ZjNkZjJjNTI5MjlhMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjBjYjVmMWM0OWI1ZTFhMjJlOTk5ODA5ZTJhNmM2ODg2YjhiYWM1OThjOGMwNzRlZjU3ZWJhNjczZmVkZWVmZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjMxZjIyODQ3MjlmMjcwYzUxZTM1NDc0NjNjNzRlMWY4OTE2Y2U3YjlhOTQ0N2I3OTJjOTVkZmI3N2VhMmQ4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTg3ZTE3Mjc2Njc2ZDZjOGM5MDczMjZiYzFlMGE2ODVlMzg1NjAzY2RhODhhNTI4OTY0ZjRiNTI2MDY4MzI5NiJ9"
+        },
+        {
+          "resource": "repo://libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTest.java#L14-L37",
+          "version": "repo-lines-v1:sha256:39eeb7d9d9bbb75d6c98946b011a66f94ea99214b276fd0c0a637f30e220fe01:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0NWExZDcwOTIxOTRmMTRlMWRhY2ZjYWU1NTU0MzcwZmE2YmRlNTkzYmNlNzIzM2Y4YzRiNmZjOWIzMDg4ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzM2E3NzBjNWRkOWNhMzVjYzZkN2MwOGU3MmY0M2RkYWI0NzY2M2QwNTk0ZTMzZDJlNjIyYWE1MTcxYTk5NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java#L110-L128",
+          "version": "repo-lines-v1:sha256:b9e1edb1b59e81eb638d8527b555b113b0717c4dda6443f34683168e90c054af:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMDgxNThmNGEwZWMzYWEyYjc3OTVmMWM4OTBiOGZiYjk5ZGYxYTM1YzY3MTM4ZjEyYjEzNzYyMjhhZDdhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlMmUyNDQwNThmODg2ZTQ4ZjBkNGQxY2E2M2VhZTdjYjk0YWEzYjFlMGNmODJiMjMxYzZjN2NjMjhmNDk4ODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2ODljNjQ2MTQ2MmM1ZTUwY2Q4M2MzN2QwN2JhZDg5ZmU4M2RmYzA4YmZkNjFiYzYxNWYzZTI2NzNiMmY1ODIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

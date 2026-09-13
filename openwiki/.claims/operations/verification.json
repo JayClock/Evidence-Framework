@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:055d682e902d640d5f8edb72bc0eac680f7a45d64e06e50e06101df1a16965ca",
+  "claims": [
+    {
+      "id": "claim_480864112d57486d9f97bb59b5f95a86",
+      "statement": "仓库的验证底线要求在仓库根运行 `npm test`、`npm run lint`、`npm run build`；涉及 Java 还需 `./gradlew check`，前馈文档与路由需 `npm run guides:verify`。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L24-L26",
+          "version": "repo-lines-v1:sha256:1a0c98f7d6c6d59b026f55871a14e9ea4f0b5fb7af7d407ad49d8d2d3ef03c0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzY2ODJjN2RkYzdhNDk4MTM1NzQwODA4YzBhZjkxYTQ4OWQzNWFjZjI2Y2VmZWFjZjY0NTgxYzUwNWM0MzFlZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk0YzE2YzQ4Mjc3NDY4MmU2NjA5YmMzOTE1NjFkMzc4ZGRkZmI4NzU1OGM1ZWNmYTkxYTAzODhhNWVkNDgyNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQ0MGRhZWU4YTQwNTY1ZDAwYjc0NmJkOGJmMmY2ZTdjZjlmMmFlZTU4NWFmNTVmNzFiZTM2YWMwOTcyZmFhYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWIxYmM1YmM0YTIzN2Y1NzhlNmFmNGE0MTVkMDY0N2Y5OTEwYjAzYjM2NGUxZTI3YzFmMWRiYWE3NDNkMDNiYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a2c88f9799a441bbb9ffbe437ab558ba",
+      "statement": "只有相关 CHECK 和项目质量检查的本次实际结果通过才能声称完成；环境失败、历史结果、缓存命中与业务批准必须分别说明，历史通过不能当作当前证明。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L14-L14",
+          "version": "repo-lines-v1:sha256:2994cefb5e27e78c167858d592bcad70c2905c18620dca32628adbe2c6d0aa45:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk5NGNlZmI1ZTI3ZTc4YzE2Nzg1OGQ1OTJiY2FkNzBjMjkwNWMxODYyMGRjYTMyNjI4YWRiZTJjNmQwYWE0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk5NGNlZmI1ZTI3ZTc4YzE2Nzg1OGQ1OTJiY2FkNzBjMjkwNWMxODYyMGRjYTMyNjI4YWRiZTJjNmQwYWE0NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjYzZGNiZjgzZGJjNzg2MzkzMjRlZWVkYjI2ODBhYzc2MWYxMjZlZWQ5MDBjOWU3ZTMxZjNkZTY2OGZiNDFiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmI3NzYwZjBiOWNkMDdjMTQzYTIzNTI1MzM5YWMzZTFlNWU5NDI1ZGEzZjgzNzFhM2YwODNjMjkyMzU1MzM1YyJ9"
+        },
+        {
+          "resource": "repo://docs/engineering/testing.md#L43-L44",
+          "version": "repo-lines-v1:sha256:4425735a6647a32e9695206bd871732e80c900bea5e4bcb33d2544ba0cebd8b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjUwMjdiNmJiMjZmOTgyNmZhZmJjOWRiYjRkNzViMTlmNTMzOTllZTI3NmNkZmU2OWRhZjliZWExODc1MmUwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjI1OGY5YzY3NTQ1YWI2MGNiNGEzMDUwNDVlMzdhYWYyNjZmY2IxYWJhZTQ1MWE2YzRiYjNjMzJiODAzM2FmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTNmY2Q4OGY5MzhiNTMwZjMzMDk3ZjI0OGI2NjJiYWNkZjlmNmZkOWZhMDIzYTk4MGZkZDAxOGI2YWQ0NzIwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY3OGEzNzRjYTI5MGFlMDYyOThiNDEwNWJjNDM5NTQxZWZiMjRkNDdlMTczZTAzMDI3ZDFkMTkwYjczY2NmOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d9783606774442eba40acaa2d444506b",
+      "statement": "`npm test` 是 `test:apps`、`evidence-modeling:test`、`skills:test`、`guides:test` 四个子检查的串联，任何一个非零退出都会让整体失败。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L11-L14",
+          "version": "repo-lines-v1:sha256:84eb60ee597a7b7a1ff211e1778e4a080d2a7d38e0d1492a03af27420c3b1252:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDc2OGUyMzYxZDI5OTFmZWM5ZDQwMGZjMTQyNGY5NThmZWRjYzQ3MDk4ZGUxODNhZWZmNGRmM2M1ZGM3M2YxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjM5Njg2ZTlmZGNjN2E4NjM2MWYyZTg3MWJlNTM0ODJlZTk5NDg1MDJlYjM3ZGZhZWQ5NWY0MGU5MDkxOWU5NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTIzOWJlNmNjMWIzOTFhZDdlMjljM2IzMDNlMTk1Njg2YTIyMzgyZGFjZTU5MDgwN2U3NGI1NjczZjRjMThiNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWU2Y2JjOGIwZTBjYmE4MjA3YjU4MTZkZDNjZGFkYmE4ZWYwYjA4MmNiYzg4OThhZDMyNDhlMTMyYTgyZjhkMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a78a8069113b4df9afb5908e4df05c45",
+      "statement": "`test:apps` 即 `nx run-many --target=test --all`，通过 @nx/vitest 与 @nx/gradle 插件运行前端 Vitest 测试以及 backend、backend-domain、backend-api、backend-persistent 四个 Gradle 模块的 test 任务。",
+      "evidence": [
+        {
+          "resource": "repo://nx.json#L51-L66",
+          "version": "repo-lines-v1:sha256:c2889ff486ef91f42a95ce04d74846d9b7e35f8f34976b897e308593f99bf7b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ZjkwOWVjMzU4MzQzZGQ0YjU5ODVlYmYyOGI4ODQ0MDkzMWRjY2E5ZDM4N2MyYWFkNTNmODBhYzg0ZDk4YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZWEyZWQ2MGE5ZDIzNGJmYTk4OTdiOWM1MGUxNmFiMTliNmQ3NWVkMjZlMzBhYWNhOTRjNmRhYTFhZGQ0NTAifQ"
+        },
+        {
+          "resource": "repo://package.json#L12-L12",
+          "version": "repo-lines-v1:sha256:01e92a52139dcdcc508baec62f340479e94989a5c87c00f8f3abc6d6101bac65:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFlOTJhNTIxMzlkY2RjYzUwOGJhZWM2MmYzNDA0NzllOTQ5ODlhNWM4N2MwMGY4ZjNhYmM2ZDYxMDFiYWM2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFlOTJhNTIxMzlkY2RjYzUwOGJhZWM2MmYzNDA0NzllOTQ5ODlhNWM4N2MwMGY4ZjNhYmM2ZDYxMDFiYWM2NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQ1NTYyODRlNzU0MmU2ZmZiZjg3ZDBjZmU0Y2JlZjY3NzExZDJiOGRmZTMwYWM3MGMzNzcyY2M5MDgyNjllMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTJhYWIxZWU5MGY0ZTI2MjFlODMxNDAyZWI5ZDM3Mzk5MmI0MDQ2N2I2N2JlZmMxZWEwNTVhNWU5NjZkOGVjYSJ9"
+        },
+        {
+          "resource": "repo://settings.gradle#L3-L7",
+          "version": "repo-lines-v1:sha256:d3faeac4093e6658c06cd7f3010b8d04510ea33d34ff27ba4076d23a97052bd3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZkMDEzNDlkMGE4NTZjYzQ4ZTE5ZjIzYzA1MDE5OTc3YjE0NGU0Mzg4Mzg1MDQwMWI2MDA3MzM1NDY4NzU2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODI2Y2E3N2U0ZDQ4ZjZmM2JmYmUzOGFlOWI1YjQwNDA4ZmMwNjc1MDhkODM3NTM3NzM3MTIzMjE2NDlhOGYwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmUxZjcxMjk3MjA0ZjIwNzViNjljM2IzZGZhNWM3YjU0MTMzY2RiYmE2MTE0YjIzZTVlODE0MTZhOTM4M2ExZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a2b3da579a3e4472ba14a1b3f19fcfdd",
+      "statement": "`npm run lint` = `nx lint @evidence-poc/frontend && npm run guides:check`，只对前端运行 ESLint，再运行 Guides 链接/架构检查器与指定文件的 prettier 检查；Java 代码不在此关卡被 lint。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L13-L15",
+          "version": "repo-lines-v1:sha256:52aab1ee90f4e2621e831402eb9d373992b40467b67befc1ea055a5e966d8eca:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRkZTIwOGM4YjY3M2JlNWE2NzE0N2IzZGZkZDYxYmE0ZjI3M2ZlM2Y1N2VkYzIwMGE3Mjc0NDFhN2EwYzAyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjllNDkwZjBhM2VlNmM1NTVlNTZmMmMxOWFkZjdkY2I4YTcwMmU0YzFmMTUzYzVmYzBlNzFiOTc3NzBlOWEwNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNhMGUwNThkMjhlY2MzOGIyNjhkNzljZjg2NWUwYzQ5YjhmNDY2YjQ1MzdiMzZhNWMzNzhlZDIyZWJhYTIzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjExNTI4YzhkNmJlNTgyMDg4Mjg4MTIwOTczODVhMTE0MWY5OGE4NGU2MmZhNzFhZmZmNzljNDE0Nzk5NmQ2NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b4f73c7e2a9d4936a9f7dc6168e52335",
+      "statement": "`npm run build` = `nx run-many --target=build --all && npm run evidence-modeling:typecheck`，其中 build:apps 构建全部 Nx 项目，evidence-modeling:typecheck 用 tsc 对建模扩展做 noEmit 类型检查。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L9-L10",
+          "version": "repo-lines-v1:sha256:735b13819f6ef5fa4e03bb818fedc9331778bed9c7eca43d4a383a6f70961d06:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTBmMDIyYWMxZDA4YmYwNDAxOWIwZmIwZmVjZTVlYzdlNjY4OWZiNjJmZDBjYjVhYjAyYzJkNjU3MzRjYzUwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjM3MDQ4ZmVmNGZiYTgwMmI4NDk4NWE3YTRhNjIyMWM5N2JjZTBjODgyZTQ3NGEyYjM1NDM3NDAyODZkNmI2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI3ZjE3NDE1MmZmMjg5YmUyOTgxMzQyYmI4MWMyYWI0Mjc4YjRjZjQ5MzA4NWQ1MGQyZTQxZjhlMDRlYzYwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQwYmYwYTFjNmI5NjVkMTk1NzZiMzc0NWI4ZjM3MzYwNTEwOTk3MDhjOGNiZjQ1MDkzNzJkYTIyMDExMDgxYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_913b85b777324a629f7c6b84ff4e83dc",
+      "statement": "根 `./gradlew check` 会对 settings.gradle 注册的 backend、backend-domain、backend-api、backend-persistent 四个子项目执行 Java test 与 spotlessCheck，因为根 build.gradle 对所有子项目应用 Spotless 并让每个子项目的 check 依赖 spotlessCheck。",
+      "evidence": [
+        {
+          "resource": "repo://build.gradle#L8-L41",
+          "version": "repo-lines-v1:sha256:96ca85cd5a9d3f7ef363e658e105b2a94dd6c5eb278f20909a8d6c6224d421ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0N2ZiMTU0Nzg0NmRmNjM4ZDllZTk5OTkxYWFkNDY3OGE4MmZhZDc0MjJkNzg0ZmM5MzVmOTg3YTBkY2UyYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNjEyMDAyOGIwODQyYWMxZGJjZGZjYjQzNTcwMTA0NThmYmEzZjNiZDZhNjUwZDBiYmJiYjc4OWI4Y2ViMGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZTFhZGRmZTZlMDAxY2U2NTkxYzg5NWI3M2U2ZDEyZDEwYTZiY2JjYmVmODE4MjRhMTdkZDM4MGM0ZmNhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://settings.gradle#L3-L7",
+          "version": "repo-lines-v1:sha256:d3faeac4093e6658c06cd7f3010b8d04510ea33d34ff27ba4076d23a97052bd3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZkMDEzNDlkMGE4NTZjYzQ4ZTE5ZjIzYzA1MDE5OTc3YjE0NGU0Mzg4Mzg1MDQwMWI2MDA3MzM1NDY4NzU2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODI2Y2E3N2U0ZDQ4ZjZmM2JmYmUzOGFlOWI1YjQwNDA4ZmMwNjc1MDhkODM3NTM3NzM3MTIzMjE2NDlhOGYwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmUxZjcxMjk3MjA0ZjIwNzViNjljM2IzZGZhNWM3YjU0MTMzY2RiYmE2MTE0YjIzZTVlODE0MTZhOTM4M2ExZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f336d81b39d427095c0b0e4083e1ef1",
+      "statement": "`guides:check` 运行 tools/guides/check.mjs，扫描 requiredDocuments 加 docs 全树与 planning/delivery 的 references/assets，报告必读文档缺失、过期表述「分布式单体/distributed monolith」以及缺失/逃出项目根/编码非法的本地内联链接，同时跳过代码围栏、远程 scheme、锚点与模板变量。",
+      "evidence": [
+        {
+          "resource": "repo://tools/guides/check.mjs#L11-L27",
+          "version": "repo-lines-v1:sha256:b842ac2a337c15521921ae36cd9786b7b67b290411f4dc23a15e80b4a9e6de62:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3OGFhMTY2NmZhYWVhMjVmODU0ZjI0ODk2ZDQ3N2ExODgzYTE0ZWQyNjBjNWIzZTgyN2I3YjFmMGJjMjcyNTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5YzVkNmExNTBiYTNmZTQ4ZWVmMGNmZjRlNzg0ZmY5ZTFlNjVjMzdiMzU4YzcyOTFiNjA0MTQ1OGFjMWNmODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxYTI0NzE2NTVlOTY4YjJmOGMzY2EyYWY0NWE1NjMyNTkyYTMxODdkMGIyYmUxYzliOThhMWM4NTEzMjU5NzkifQ"
+        },
+        {
+          "resource": "repo://tools/guides/check.mjs#L79-L128",
+          "version": "repo-lines-v1:sha256:8a9a98b993917c63e6e82a41cfd86e7206870b04699cc7f2855e97e2c57f73d9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMGVkNjg4MmU3ZjYxMjc4MTQyM2I1ZmViNTAzMWE4NmEwMzBjZDJjZjc0MGU4NGQ1YzZkYTdhNjkyMjYwM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MWNmYjBiY2FmNzNkMDdhY2Y5NTJiMWE1ZGYxODk1NGUxOWE0ZTdhMWY5YmFhMzNhYzQ1MGM0MWE2MDE2YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNDFmMzNlYTZhNTk1NTdkNGI1Yzc1YTU0MGY5NTJmMzk3MmE2MTMyYjlmOWE1Y2UwZWZkZjQwNWI4ZmY4MWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d042f4efd01f4a59aa922712b19439a4",
+      "statement": "`npm run evidence-modeling:verify` = typecheck + vitest test + prettier format check，覆盖建模扩展及其关联的 skill markdown/json 材料。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L22-L22",
+          "version": "repo-lines-v1:sha256:887e6610f192e1a5bbb9d200db6c07183126c0e3d2f798eff41d972f610c7185:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODg3ZTY2MTBmMTkyZTFhNWJiYjlkMjAwZGI2YzA3MTgzMTI2YzBlM2QyZjc5OGVmZjQxZDk3MmY2MTBjNzE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODg3ZTY2MTBmMTkyZTFhNWJiYjlkMjAwZGI2YzA3MTgzMTI2YzBlM2QyZjc5OGVmZjQxZDk3MmY2MTBjNzE4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTY2NTcyYmUxMWZlZTVlYzk1MDZhNzBhZmMyOTY2NjExNGY3MDg5ODk3ZWQzMjAzYjBjNzI0OWIzZDlkMzI4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmYxMTRhOGJhMDI5ZTVjYjEzY2VlOGNhYTM5YjU1NjBiNzJkODg1MzIwZjg4OGNhNGViMDkxZGVmZTJjMzA2YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_29df767d3bb0424e99d9e8327268a4ee",
+      "statement": "`npm run skills:verify` 即 `npm run skills:test`，运行 run_skill_tests.py，该入口发现 .agents/skills 下每个 */tests 与可选的 */tests/portability，用独立子进程逐套件运行 unittest discover，任何套件非零退出都使整体失败；这些自动测试不调用语言模型。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-modeling/tests/run_skill_tests.py#L12-L45",
+          "version": "repo-lines-v1:sha256:b2b0abd7c76f5e2bca7a322a9b159f5adf20c4b149fd239fb334675f9367f644:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkNWIxYjQwZDAxZmRjMTUxMDQ3MDhjYTg2OWNjOTM0MGE2ZTI0MmMxYjFhNmE1NDA5NDA4Y2I0Nzk0ODRmODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYmUyNzI5YTcwNmVlZjA3YzFjZDRhYjNmNTA5MDhhMzI4NWMzNDZmNDdjYjU4MGJlOTc1YTU2NDRmZTI4MjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxYzI4NzMwM2RmMjJiNmRiZTEwMTAyYjExMmRjZGFhNDFlMGEwMWE4YzMwZTNmNjU2NWU4ZmJjM2EzZTYzZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkNDEzNDBjYzIzOWExNTljZTliNjAyMmU5ZjYzMjI4MzJlMmVhZDc2Y2FlOWU0NzU0ZDIxMGViOGZiNmQ1ZTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8ee68beaffb9479e9a4d129fcbf859c3",
+      "statement": "Nx 与 Gradle 都启用缓存（gradle.properties 设置 org.gradle.caching=true），因此运行可能命中缓存或标记 UP-TO-DATE；这类命中不是新执行，必须与实际执行分开记录，复验需用 `npx nx ... --skip-nx-cache` 或 `./gradlew ... --rerun-tasks`。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/project.json#L11-L11",
+          "version": "repo-lines-v1:sha256:9b7201572b86a1b1e58645793fe8f2c8b8d5ce8cca6a390b239c4224aa2618f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI3MjAxNTcyYjg2YTFiMWU1ODY0NTc5M2ZlOGYyYzhiOGQ1Y2U4Y2NhNmEzOTBiMjM5YzQyMjRhYTI2MThmOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI3MjAxNTcyYjg2YTFiMWU1ODY0NTc5M2ZlOGYyYzhiOGQ1Y2U4Y2NhNmEzOTBiMjM5YzQyMjRhYTI2MThmOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzM1MTMxMjBhNDNhNzlhOGNjZjExNzg4MGE0ZDgwNDg3MmU0ODVhNjYxMzUxNTA4OTIyNjQzYzllYTM5NjA5MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTFjMjczZmE1NjZlY2E1OThiZjQ1ODc0MjZhZmViZTVmOTIzNWRmYzgzOGNjZGU4NDk1MGViM2ZhYmViN2FkOCJ9"
+        },
+        {
+          "resource": "repo://docs/engineering/testing.md#L43-L43",
+          "version": "repo-lines-v1:sha256:b5027b6bb26f9826fafbc9dbb4d75b19f53399ee276cdfe69daf9bea18752e0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjUwMjdiNmJiMjZmOTgyNmZhZmJjOWRiYjRkNzViMTlmNTMzOTllZTI3NmNkZmU2OWRhZjliZWExODc1MmUwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjUwMjdiNmJiMjZmOTgyNmZhZmJjOWRiYjRkNzViMTlmNTMzOTllZTI3NmNkZmU2OWRhZjliZWExODc1MmUwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTNmY2Q4OGY5MzhiNTMwZjMzMDk3ZjI0OGI2NjJiYWNkZjlmNmZkOWZhMDIzYTk4MGZkZDAxOGI2YWQ0NzIwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjI1MGM0MGZmMWVkYTFhNTZhNzBmMzNmNGQ4NmI5OGY5NDFmMDMwOTExYWRhYjA2OGMwNzM3ZjM5ZjhhZjQ5ZSJ9"
+        },
+        {
+          "resource": "repo://gradle.properties#L2-L2",
+          "version": "repo-lines-v1:sha256:b7ce5547a70c204834a79bd104fa43769cca3229ab127f99d4cc65c340348fac:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjdjZTU1NDdhNzBjMjA0ODM0YTc5YmQxMDRmYTQzNzY5Y2NhMzIyOWFiMTI3Zjk5ZDRjYzY1YzM0MDM0OGZhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjdjZTU1NDdhNzBjMjA0ODM0YTc5YmQxMDRmYTQzNzY5Y2NhMzIyOWFiMTI3Zjk5ZDRjYzY1YzM0MDM0OGZhYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTg1YmY2ZTA1NTExMmRiYTc4NjM3ZjE2MTI0NDJlNmIxZjk0YzM0MjU5NGFjOWNhYzkwNjUzODliMWQ0MzRhNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4492971dbdf45ba8018a245001ea5d4",
+      "statement": "`:backend:test` 包含 BackendArchitectureTests 的 ArchUnit 规则：domain 不得依赖 api/persistent/config/Spring/MyBatis/JAX-RS/Jackson/smartdomain-mybatis，api 不得触达 persistent/config/MyBatis/JDBC，persistent 不得触达 api/config/JAX-RS。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java#L14-L57",
+          "version": "repo-lines-v1:sha256:990c65a56da922634b020a8a84edb07679134a21251779c1d3f060b9264f2b20:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NTQ0YjA4NmM1OTlhOGM3ODMyZjdlMWJjYzQ1MGJkOGY3ODcwMDNjNDdkYmZhY2RiODc0MDg3ZDk4ZGY0NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMGQyMTFmOTg0ODVmOGJkNmQ5YjgyOGI2MjZhMDQxZjM4NzIwZGUxOTc1NWUzMmRjMDcwYTI1YmNjZTI5YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0277629419c3464bafa8ab9f8c385510",
+      "statement": "任务 CHECK 必须明确目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令、环境准备与完成条件（命令未知填 null 并关联 gap）；结果写入详情 observedEvidence，状态只更新索引 taskNotes，较长输出留在获授权的 .evidence/checks/ 目录。",
+      "evidence": [
+        {
+          "resource": "repo://docs/engineering/testing.md#L35-L46",
+          "version": "repo-lines-v1:sha256:206515bb9dcfafc6a47fe0e409b06c49f3d73ba5f4b3e8284c4e5239f6cac866:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzZTI1ZGM0YmUwOGUzNzk3NmIxZTc1NmQwYzVjOWY1Zjc5ZjlkZGFkYWQ2NzkxNTE0NjA2NDg1MGQ0ZmYyMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxMDA0YjI4NmYwMzg1YjQ4NjBkMzcwYWM5ZTI4YmQ1ZmZiOGZlM2Q4ZjMzMTI2MThkOTM5YzIwMmMwOTg3ZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlM2M3YWQzMDIxMDA5MDlkZjNjZDQ4MWQxNDcxY2M0NjAyNTdkN2FjNmViZWE5ZDMyNTdhZmExNmM3ZmVmMzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2N2Q1YjFkMGM5ZDIwMTQ5MzlmYzBkM2MwYmRjNmMzNDU1ZDZmZTVlZDFiOGNkMTU3MjhjYTg4MTIwMDkzNWYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:478347724210c8316ce90e37d1db2c0c6cbe2d83a60bc53fdb1bb8bda3edf1e2",
+  "claims": [
+    {
+      "id": "claim_5dd0ca96b1cd43b4bd136201cdee281c",
+      "statement": "Evidence 是一个 Nx 单仓库，内部同时存在两个并行系统：React/TypeScript + Spring Boot/Java 应用切片与 Evidence 交付 Harness；业务来源、实现依据、任务状态与真实检查结果都保存在仓库文件中，新会话可以恢复同一项工作。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:e46f71797a6055926af5f7fac1d0fb18ef10e50d4b80e917f6d5645046e14097"
+        },
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:25807aacd0b692103cfd1077d6c1223b5087a5d38866c41319a54779ad8912a2"
+        }
+      ]
+    },
+    {
+      "id": "claim_e4c5154535ad45459eca65681041674a",
+      "statement": "应用切片由模块化单体后端（apps/backend 组合根聚合 libs/backend 的 domain/api/persistent 技术库）与 React/Vite 导航前端（apps/frontend）构成；当前实现的软件范围只是本地用户 id + displayName 的 CRUD 切片，不是生产身份、数据库或资金集成。",
+      "evidence": [
+        {
+          "resource": "repo://apps/backend/README.md",
+          "version": "repo-file-v1:sha256:c4454b8af58a10372f8ee26d77db990b20441658ad305a320ca863189dce9c92"
+        },
+        {
+          "resource": "repo://docs/architecture/overview.md",
+          "version": "repo-file-v1:sha256:6115dc1d28c3e2f4fc5d3e27dda6e593c7772568843af290c8c1f90c1d992e0c"
+        }
+      ]
+    },
+    {
+      "id": "claim_bca07fe4eb274dcda41aedab6ecfcadc",
+      "statement": "Evidence 交付 Harness 由 .agents/skills 下的 evidence-* Skill 集、.pi/extensions/evidence-modeling 建模扩展、tools/guides/check.mjs 链接检查器和 docs/guides/index.md 四层前馈装配而成；Skill 保存可移植方法，项目文档保存本仓库实际范围与工程决定，二者不互相复制。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/README.md",
+          "version": "repo-file-v1:sha256:a318f3645b166eec856622f56e97e2b6c5214a6d32824de1b8dafa445e883213"
+        },
+        {
+          "resource": "repo://docs/architecture/overview.md",
+          "version": "repo-file-v1:sha256:6115dc1d28c3e2f4fc5d3e27dda6e593c7772568843af290c8c1f90c1d992e0c"
+        },
+        {
+          "resource": "repo://docs/guides/index.md",
+          "version": "repo-file-v1:sha256:000b3a130223d2b8b3a54c729509a816bf05ecda847861c67df2f41cd96e5abf"
+        }
+      ]
+    },
+    {
+      "id": "claim_eccb30bf45474b3ea36a43c679c0cf4e",
+      "statement": "交付沿 discovery → FM 建模 → requirements → API 设计 → task planning → delivery 推进，由外层 PDCA 循环与内层 Guides → Action → Sensors → Steer 循环共同治理；每次只执行一个获授权且就绪的任务，完成后停止，不在阶段间自动推进。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:e46f71797a6055926af5f7fac1d0fb18ef10e50d4b80e917f6d5645046e14097"
+        },
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:25807aacd0b692103cfd1077d6c1223b5087a5d38866c41319a54779ad8912a2"
+        }
+      ]
+    },
+    {
+      "id": "claim_f90b575bec2244e1adeae89b60306ebe",
+      "statement": "在仓库根用 npm ci 安装依赖后，npm run dev 同时启动前端与后端（也可分别 npm run dev:backend / npm run dev:frontend），前端入口为 localhost:4200，后端 Root 为 127.0.0.1:8080/api/；local profile 绑定回环地址，CRUD 仅在 local/test profile 注册。",
+      "evidence": [
+        {
+          "resource": "repo://docs/howtos/local-development.md",
+          "version": "repo-file-v1:sha256:fb0495669e79f71892e4f38615c7e34693971b70a01d981a7c15921b9b97ca33"
+        },
+        {
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:9888d3d414439a14b8787d10a2480a16d64e731e2d09751f6c5e33d8a7f975d1"
+        }
+      ]
+    },
+    {
+      "id": "claim_49a76af30e6c4a91a43dd849fe5959e1",
+      "statement": "仓库验证入口命令为 npm test、npm run lint、npm run build、npm run guides:verify，涉及 Java 还需 ./gradlew check；每条命令只证明各自的覆盖范围，命令成功与结构自洽不能替代业务批准或本次重验。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:e46f71797a6055926af5f7fac1d0fb18ef10e50d4b80e917f6d5645046e14097"
+        },
+        {
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:9888d3d414439a14b8787d10a2480a16d64e731e2d09751f6c5e33d8a7f975d1"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

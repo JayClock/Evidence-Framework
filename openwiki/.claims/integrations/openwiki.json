@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:dbeaea5b61f4f8b7d7c0120333ce6773ba4c5fb90470262e4ea09e787d60af11",
+  "claims": [
+    {
+      "id": "claim_7952fdfc0e3544d482030a663c411c52",
+      "statement": "OpenWiki 更新工作流 `.github/workflows/openwiki-update.yml` 每天按 cron `0 8 * * *`（UTC 08:00）运行，并可通过 `workflow_dispatch` 手动触发。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L3-L6",
+          "version": "repo-lines-v1:sha256:6e6136a1d96075c1f3ad44e33cc14220492b2d6f13cfbc1326d28862b2a2054d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk2ZGM0ODE0OWY1YTgzZDFlZDZkYmIzOWJiYzdlMmI5MDJhYTNkMzRkNmJkNWFlNGIyOTFiNjhkZjBjYTc5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMzRjNGIwM2Y2MTRkYTYxOGRiOWEwOGQ0MGQzNWI5ZWNmMjRhNzVlM2VjZWUzNTlkYmM3ZjYwNTcwMGRjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzViMWYyNGU2MTgwNWVlMWE5YmM3ODA0N2UxZTRiM2Q4NjE1N2Q2ZTM3ZDhhYzBiY2JlYmQ1ZTY1ZTVlZjFhYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzk0NjJkNWYyYzIwN2U2YjRmODI4NDNkOTE1NGZmMGJiYWQwMzQzOTI0YjJjM2M0YmFiZDk5Yjg3Y2NkNGI4MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7303f5a6bdcf44e29c368275b831a101",
+      "statement": "该工作流请求 `contents: write` 与 `pull-requests: write` 权限，用于提交 openwiki/ 产物并创建拉取请求。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L8-L10",
+          "version": "repo-lines-v1:sha256:dcc4bb79f6ebc8555975f87c1bbfadb4481f70b03c1a7b0c9ccb4ee3dac77d61:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzUyNjI0N2VkZTAwNmU5YmRhYjljNjg1MDcyODQyNWQxYjQxNjZjYWY1Y2FjNTBjZjA5NTVjNDRkMjRjMWE4ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0M2EyYTJmYjgyZWFlZDI0ODhlMjg2NGQ0MjNiZWI1MDA2MWRkNDIzZDgwYjg3MjFkM2JhZTVhNjQ3YTdmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDJiOTc4ODM0OGI3MzFlNDAzYjI0ZDc4ZDIwOWVkMmQzMDhjOTIwYWM2NTNhODBjOWEyN2E1NTM1YmYyYTNiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2JhNWFmZmQ4MjMxYzBlODFiYmNkNDIxNTRhMWNjOTBlODZlZmY2NjM1NWMwNDhjZTU1YjMyMzdiZGFjM2ExZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8e1f30a086349cf833c865146a2b1f3",
+      "statement": "Checkout 步骤使用 `fetch-depth: 0` 拉取全量历史，使 `openwiki code --update` 能把 HEAD 与上次记录的 commit 做 diff；浅克隆会隐藏该 commit 并导致空变更摘要。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L16-L22",
+          "version": "repo-lines-v1:sha256:5f513af748b362994b00e41cc2ab8ac7880f4f9a4ac3fb63f49be6f3f2680e8b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDVkNmNmN2Q0MjhjYTgxMTVmYzRiYWJiNjgwNzM5MDIzMzI3YTdhOWQ5MTYzZjcwNmEyNzY4N2RkNTE2ZjM5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTMwOTc1YzdlMjBlYmE4ODU3ZWZkMzFlNjJiNjY1Zjc4N2U1MTY0MTk1MWE2NjA3ODlmYmE5MzNhNjM0NzIxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWM1YTg5Mjc3MGFlNGY1MzMzZmQ3YzllMTJlMGE2YmM0NWIyNmI1YmI3NzUzZTAzOWRmOGVkNDljOTdiOTYwNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2VmMTZlM2M4YjU0ZTJiMjA0ODE5NmFiYjRjZDgwZDIyYTUwOGVjZDYwNzQ2MTI0YTJlYTJkY2MzNDE3OTlkMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1cb16004661744c89ea8dd10f010c6d0",
+      "statement": "工作流全局安装 `openwiki@0.5.0`，并附上可选的 `mermaid@11.16.0` 与 `jsdom@29.1.1` 用于 Mermaid 图校验，然后以 `continue-on-error: true` 执行 `openwiki code --update --print`。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L29-L37",
+          "version": "repo-lines-v1:sha256:3c31dbe873161239e4bd26198aa44eed183c348d7f45b6f30ad87a37db47f7e6:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODZjZTBiMGQzYjM4MTIyYmMyNzUxNWE4ZDk2OTYxNWQ5ZTEwZTI4MDY0NGY3NjEyMjFkMDQ0NzlhZDI1MzkzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQxYzYwZDgzNTk3Yzc2Y2NhNjk2YWFjNzRkZmI3YWM1ZGMzMzYyZmU2NTFmOGNhYjVhMzA0OTk2MzAxN2Q0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWE2M2Q5YzNhZmI1NTU0MjFhMjE3MmZlYTJlNmRjMjZmMWU4YWFkYTc1NmM5YmQ5YjhjMGY0NWQ0ZjIyNjBkMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmY3ZTQ2ODM3NDgxNGViZTgxZmFjOTBlMDY2NWNhOTBkMzg3MTliNTE0ZmMyZjFlYTEzOWM2MjkwZjA1N2M4NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_92c3edcbc6f74e5987012111d5361392",
+      "statement": "更新步骤通过环境变量配置提供方与追踪：`OPENWIKI_PROVIDER: openai-compatible`、`OPENAI_COMPATIBLE_API_KEY`、`OPENAI_COMPATIBLE_BASE_URL`、`OPENWIKI_MODEL_ID: deepseek-v4-pro`、`OPENWIKI_LANGSMITH_API_KEY`（LangSmith 连接器 code 模式拉取所需），以及可选的 LangSmith 追踪变量。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L38-L50",
+          "version": "repo-lines-v1:sha256:a3360938653ff34deb2ca67738bbfa2e950568f8ee119967e65ca946463da464:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMDc4NDhhNDM2NjY1NmIyYmE2MTk3YmUwMmI5MjA4MTQ1NDZmOWQ5YWQwYjUzMzllNGMyNmEyYzk0NjUxMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNTc0YjBiM2M0Njg2MWM5MTE0ZTgwYmI2ZjU4NDRjZjkxMDg5OTVhYjk1NTg3YjM5ZjJmNmUzNjZmYzU3MzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzZDAyZTgzYmQzMGM2MDg2NWI1ZGQxMmRlMTFhNmIyZGMwZjczZTI4ZWYwNzQzMjk4ZDA2NjcwOTQxMTg1NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0ZTc5NGRkZjMyYTNlMmRhYWFkODgyNjMxM2MyNGY0ZTRjZGE2ZjYxYWJmNDE3ZTQ4OWJlMzlkNWI5OGE1NTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c0b65275257944288a703977e52158f4",
+      "statement": "OpenWiki 步骤结束后，工作流在未取消时删除瞬态文件 `openwiki/.run.json`，并在分支 `openwiki/update` 上创建 PR，`add-paths` 限定为 `openwiki`、`AGENTS.md`、`CLAUDE.md` 与工作流文件本身。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L52-L67",
+          "version": "repo-lines-v1:sha256:2ac14c6e14f5eb294b607a70487c8d1744c4096670089f1ddc44895b4b10ae6f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3OWM4ODBmNjJkNDIyNTM4YmNhODRjYjU1ZWNlOGZlMTBlOTY1OGIwNjExMTVjM2ZhYmNkYzdiM2JlY2Y0NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxNjNiMWQ4NzlhMTQ5YTE4MTA2MjM5ODJlZWRiOWYxODdjZmFkZDJjMGRlNjEyMDE3YjUxZGEzZDA2YzE3MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhZmE3MTQ4NTkzM2VmNjc0YWU2MWQ2NzVhOTQxZTAyM2RkODA5NTQwMzdmZDQ0YjZhMWI5OTIxZTU1MjBkMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4MjdjMTU3N2M2NTcwZDlmYTg2OTcwYzFhZTNmMmYzZmFiNGEwYzYzN2YxYTNmZDZiNTU5OGJkMjQ4NDNmMWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0d21421fb0dd4f2aa30b55dec61ca476",
+      "statement": "PR body 记录 `OpenWiki result`，并说明当结果为 `failure` 时 PR 有意只保留失败前完成的页面；最后一步仅在 OpenWiki 步骤失败时 `exit 1` 以把工作流标记为失败。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L70-L81",
+          "version": "repo-lines-v1:sha256:f585499d7457d8ef3dc2a489c267ef05a25507e785a28c537d61ca3fb3e67a0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1OTQxNTViZGFlYjgwMGFlMTczNGFjMDVkZGE2MTQyYTI0MGEwNGYxZWQ5MTNjMmU2ZTk5YzBiMTRmYzlmZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NzE4ZjA2N2I1ZTVjMWYwOTkxYTZlNzQ3MjZmZTJhMjNkMjY0MzQ1ZTA4ZTRlYWQwNGZhZjczYzI3ZWQ0NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiM2I1OTkwZTAyYmJlYTdiNjFkOGY4YjcwNTcyMWFiYWFkOGJmNzBlN2E5NjU4NmI3NGMyYTNlODVmMWYwZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_019ec4851f834c86be1b44aab189b28d",
+      "statement": "`.openwikiignore` 排除构建产物、缓存、临时输出与二进制资产（`node_modules/`、`.nx/`、`.gradle/`、`tmp/`、`dist/`、`build/`、`out-tsc/`、`.cache/` 以及 `*.pdf/png/jpg/jpeg/gif/webp/zip/jar/class`），因为它们没有文档价值且上下文成本高。",
+      "evidence": [
+        {
+          "resource": "repo://.openwikiignore#L1-L21",
+          "version": "repo-lines-v1:sha256:2ccbe9f059f94e6c67429439b2146dc6e940be5985e2ab84f2436255381fa90d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5ZjAwNDcwNWQxNzYwYWFhMWM3NzY2ZGJjYTQ0MjRlMjQ1YTJlZTNhMGFjMjA4MjFkZGQ0ZjRjNjc4YzRjNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2YzAxYzY5MzQ5MTRjY2U5M2MwZTA0OGU4YmVhZjE4NGRjOWY2N2Q2NmE0NWUwZjViOTU4MzM5YmVkMjBhMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_788b1d29be304ea5a642d49d47b30e66",
+      "statement": "`openwiki/` 目录同时容纳生成页面与 OpenWiki 自有的运行状态：`.run.json` 是运行期间存在的瞬态计划，工作流每次运行后用 `rm -f -- openwiki/.run.json` 删除它；整个 `openwiki/` 目录通过 PR 的 `add-paths` 随更新一起提交，使页面与状态基线随每次合并向前推进。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L52-L54",
+          "version": "repo-lines-v1:sha256:9a839067f47beb1ca08c710b71e598b0402cc1fd184fbaffb0641be925ef8a7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzc5Yzg4MGY2MmQ0MjI1MzhiY2E4NGNiNTVlY2U4ZmUxMGU5NjU4YjA2MTExNWMzZmFiY2RjN2IzYmVjZjQ0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzg2ZTgzZTdmOTYxYjVhN2NhZDhlZWZmZDZhM2Y0MWY4NTczZjBiZWRhODQxZGQyM2YyOTZjNTc5NGVhNGJjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmYTcxNDg1OTMzZWY2NzRhZTYxZDY3NWE5NDFlMDIzZGQ4MDk1NDAzN2ZkNDRiNmExYjk5MjFlNTUyMGQwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDFhZjRmNTQ5YzA3YTA1M2FlNzkzYjk4ZWIxMTMwYjU5NzFkMWFkYmFlYWMxOGIxMzkyNTYyNjU5OGE1MDlkZiJ9"
+        },
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L62-L63",
+          "version": "repo-lines-v1:sha256:a7f5446537c849401415ea5f003dc16fa3abf990b5d6500e8b02ebb7c1af777b:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE5NjJlN2U5YjhhZjcxZDU0OGM5NmFkMjY1NmZlYTg1YzQ0ODUyNDYwOWU1NTBhZjVjZWIwOWVkOTJkYWZhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMwMDg5NDQ4N2MzZmQ2OTlmODQ2N2Y3OWZjOGYyMGIwMDM0OGY5MjllMjNhMzRkYjJjNGI4MTk5ODAwNDBmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmEwNjQzOTBiNDE4MDkxYWVjMThjODI5MjAyZWE3NGEwOTg4ZWE1MzM5YmJjOWQxZThkNGQ2NWRjZDQ5YzQ5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDg0YjRmN2IyN2E3NzAyZWMzZDMxZTJmMzA3OGY3ZTVmMzJmYTQyY2YwMWI0MTdjZGZlZTc5MDVkZDI0MDliNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_647f1f14a7a74485ae5afb0f9129afed",
+      "statement": "源码与文档是权威来源，生成的 OpenWiki 页面除非被明确要求否则不得手改，应更新源码/文档让 OpenWiki 重新生成；该规则由 OpenWiki 注入到 `AGENTS.md` 与 `CLAUDE.md` 的 `<!-- OPENWIKI:START -->`/`<!-- OPENWIKI:END -->` 标记块中。",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L28-L39",
+          "version": "repo-lines-v1:sha256:e196ae5aef70399b7f4cd655c0440c5c589dbecac5863d6178aa1c195d5a4325:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMTgwZjljMTI2OTAzYmNjMzMxYWE5NTQ1NmU0OTQ0NGE3ZDRkMDExZThhMmE4M2Y1ZGM4NzAyMzkxODEyZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5Zjc4NzE0ODkzYWE3Nzk0MmNlYTFjNGEyZTAyMzFkYmI3ZmEyYTQxYTcwYzgxNDYwYTNjNjc1NjJkYTNhYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkMzQ1MTZhOWI2NjE4ZjRhMTQ2ZDM1ZWFkZWNkZDgwODcwMWRlOTA2ODNhZjkxOGI1ZWQ5ZDk1MzljZDg1ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://CLAUDE.md#L1-L7",
+          "version": "repo-lines-v1:sha256:31060379798cd019458c941e0c10846d7b7ad856616f025414ea67f326bfe1d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWYxODBmOWMxMjY5MDNiY2MzMzFhYTk1NDU2ZTQ5NDQ0YTdkNGQwMTFlOGEyYTgzZjVkYzg3MDIzOTE4MTJkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDlmNzg3MTQ4OTNhYTc3OTQyY2VhMWM0YTJlMDIzMWRiYjdmYTJhNDFhNzBjODE0NjBhM2M2NzU2MmRhM2FhYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

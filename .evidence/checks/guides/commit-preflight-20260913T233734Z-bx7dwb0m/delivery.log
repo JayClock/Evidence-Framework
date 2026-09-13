@@ -1,0 +1,17 @@
+test_guides_gate_action_and_preserve_single_state (test_guides_contract.DeliveryGuidesContractTests.test_guides_gate_action_and_preserve_single_state) ... ok
+test_resume_reloads_engineering_sources_and_checks_before_action (test_guides_contract.DeliveryGuidesContractTests.test_resume_reloads_engineering_sources_and_checks_before_action) ... ok
+test_active_task_requires_completed_dependencies (test_plan_state.PlanStateTests.test_active_task_requires_completed_dependencies) ... ok
+test_blocked_task_and_empty_command_require_known_gap (test_plan_state.PlanStateTests.test_blocked_task_and_empty_command_require_known_gap) ... ok
+test_cli_next_reports_json_and_nonzero_for_invalid_plan (test_plan_state.PlanStateTests.test_cli_next_reports_json_and_nonzero_for_invalid_plan) ... ok
+test_done_dependency_makes_next_task_runnable (test_plan_state.PlanStateTests.test_done_dependency_makes_next_task_runnable) ... ok
+test_done_requires_completion_criteria_and_observed_evidence (test_plan_state.PlanStateTests.test_done_requires_completion_criteria_and_observed_evidence) ... ok
+test_execution_order_must_follow_dependencies (test_plan_state.PlanStateTests.test_execution_order_must_follow_dependencies) ... ok
+test_first_planned_task_is_runnable_and_tool_is_read_only (test_plan_state.PlanStateTests.test_first_planned_task_is_runnable_and_tool_is_read_only) ... ok
+test_supported_execution_modes_are_explicit (test_plan_state.PlanStateTests.test_supported_execution_modes_are_explicit) ... ok
+test_task_notes_files_and_check_ids_are_one_to_one (test_plan_state.PlanStateTests.test_task_notes_files_and_check_ids_are_one_to_one) ... ok
+test_unknown_mode_is_rejected_without_task_selection (test_plan_state.PlanStateTests.test_unknown_mode_is_rejected_without_task_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.107s
+
+OK

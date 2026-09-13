@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3644dc5d73e7f74dad799ac18833adb887bde66008087ab0673253fb9e6b2a6e",
+  "claims": [
+    {
+      "id": "claim_9205e2b573db48f8afec5b98fdc341a9",
+      "statement": "evidence-delivery 是 smart-domain 交付工作流的执行入口：它消费 evidence-task-planning 生成的 schemaVersion 2.0 计划（index.md 与 tasks/*.md），选择并执行一个就绪任务；不修改 FM/API 业务事实，不自动审批、提交 Git 或建立私有推进状态。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L3-L4",
+          "version": "repo-lines-v1:sha256:4da807ea50cc69096a64a928fdfd3dc8d874551eb018a78ef58b480fcb6335c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmEzMmIzNjc1ZmM4ZTc2YmFkZWViZTZmYTMyOTkwZTMxYzkzYjBiZGM3ZWQxN2YyZmY2NTZjZjc2M2VkZmFjYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjgzMmQyMWMzYWQyOWE5ODg5ODQ4YWU0MzZhMTA4NWQxMGY1ZjA3YTk2YWJlNzhmYzUyZWVlY2MxMzNiMjU2MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzdkMDcyNTA4NmYxZTM2MDRjNTZmYWFjNzFiNzEyNWRhYzgwZDRhOWM4MDQ5MTg1MmVhMmRjNzc3YTQyZTI5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg1YWYzZmU5YWQ1NDZiYWUzNjdkNGRmMGU3MzRhMTNhODc5ZGU0NDg3NjZhZmE2M2ExMDYxNTIzNmE5MDYzOCJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L7-L21",
+          "version": "repo-lines-v1:sha256:03c9d47baa7c5a7de4f81979ddc78b5c9127125da74e3a85629bc14e9b456092:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxNmIzYjY5OTdjMjdjMjNjY2JjODczYzMzZTYwNmE3NThiYmVlNjRkMDcyMGQ0NTI2MDM0M2QwMWUyYzk3NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYzE0NTRlODBiMjZhMDVkY2Q1MDU2N2IwNjE2YTY2NzVkN2U2ODI5N2JhOGNiYjkwMDU3YWNjNzEyNTdlOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0ODhlNzZiZWY1OGM2N2QzMWU4OTQ0MDM3Yzg1MWQzZjQxZmJkOTcxM2ZiOTM3MjVmNWJhZTU0OGNkYzZhZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3ZmU1OGIyMGJkMDAzNWRlOWE2Zjg4MTNhNDBmZmFhYWY0NDZlMzVhZDdkMWNlODc3ZDg2Y2QyMzQzOTY4YmMifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/SKILL.md#L130-L132",
+          "version": "repo-lines-v1:sha256:ec25316a593752445591577de7ffeabc4ef7fc4aea8d503ff63e92a8c39cb2f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGNlMTZlZWU0ODZkZWFmZDA2NDk4MTE5NWI1NWJlMGY1M2FlZjE2MmJmM2M3NzYxYTUzM2E1NmVlMWRiZTE1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M0NjdiYTQ3ZDRmYmRiYTE4OWE2NWE4YmMwZDk4YmY4MDJiZWMxNmYyNmRjOWQwMmEyZmIwNGVhMDE2Mzg4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc5NzczZTZkOGM2Y2Y1ZTc1YjdlZWFiZDNjN2EwMzQ5ZDg5ZDUwYWYxOWM2NDM4ZThmYTg3ZDg0OGNhZTY4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_602e0bba87dd4a6da60902eecdf954f7",
+      "statement": "交付由外层 PDCA 与内层 Guides→Action→Sensors→Steer 两层循环组成：外层管理任务选择、依赖、进度与重规划，内层保证当前任务的执行质量；两层通过仓库文件（index.md 与 task 详情）交换状态，不依赖聊天记忆。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L25-L64",
+          "version": "repo-lines-v1:sha256:b166428b39f93914820abe17289654dad5df147b5f992466d0c944cf0758483f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNjc2YzE2MDZhMjlkNWI2M2IwZjNkZjE2MTUwYzUwZTc1ZWU1NmMxNjBlNWFlMzY4OWUxM2Q3MzIxNjA2MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3ZmU1OGIyMGJkMDAzNWRlOWE2Zjg4MTNhNDBmZmFhYWY0NDZlMzVhZDdkMWNlODc3ZDg2Y2QyMzQzOTY4YmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjYTQxODk4NGMxMjJjNGJmNmIxNjM3MmFkZDY1NTBkNGYzMjRkMDM2YjJmYzU0NGVmODJjYjY3NmQ4ZDg3OTgifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/references/lifecycle.md#L3-L19",
+          "version": "repo-lines-v1:sha256:0e211b23ecd7e28d1f00fcc9226304b0e36ae7ad44ad29880e977a999bdabd7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxNDIzYTQ5YjA4ODE1MGIzYzA1ZWZlYTYyNTIyOTEwMzdlN2M5YTE4MzhhMzViODI4ZTZhZGZlYTcyMWNiZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5ODIyZGFhODlkMGViYWFkYjdiNzQ3M2NiNjU0NGQyODlmNDBkMTczYTkyYmEzMDEzZTYyYWYxNjJkN2UzMDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiNTMxMTM0MmFhOTI4MTA4MjNjYzFkMmQxNmI1NzQyNTM5YWQ3MjUxOWIzYTE5YjU1ZTk4OGM4YzVjNGExY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiNjA5MDM2NmY4NzRmY2U0ZjU5MmVjMWUzODI1NmYwNTkzZDEyOGYyN2NhMmJhNmZmYzIyZWRkN2RhZDAxODgifQ"
+        },
+        {
+          "resource": "repo://AGENTS.md#L21-L22",
+          "version": "repo-lines-v1:sha256:614956e4b730aa82da95134463550a87dc68c7929627e139bb7f75666da04dca:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU3MTdkMzI2ZjAwMmU2N2UyZTQyMmZkMDg0MTA0ZDc2OTI0ODNiYjczOTMyZDljMWU5ZTI5ZTcyOWU5Y2UwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDIxMmE2Y2ZjNDA3OTc5NzA3MDAwMzEwMmYyMjlhMzlhMDZhODg2MDYzYmQwMWYxMjEzOGFiNTk5MWVkZWY4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTk4YTYxNjNmNDQ1NjRkOTljZDFhODBkNjQzNjM3OGM1MmRiM2VmMmE5MWMyOTU2YzJjYzkwODQxOWYxYjYwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzdlODU0ZmI4NWI2NTNhNjUyNzg3YjMyOGE5ZjllMmZjM2M5MzU5NTNlOTA0YjIwYWIxZjViZjlmOTAxYjMzMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4447baf54d444f7c982ece45cca2919b",
+      "statement": "任务状态只有 planned、blocked、in-progress、done 四种，taskNotes 是任务状态唯一位置；详情文件通过 taskKey 与 planRef 绑定索引，不复制状态或依赖图。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L94-L99",
+          "version": "repo-lines-v1:sha256:a638e8696455f7d92acba4f6850f6f1dc3bb7ba768b8271c6021ccfc917336c1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzMxZTM1ZmM0Y2ViZDEzYzI5NzU3M2JlNTYyNDljMWRjNzIwNDAxNjA2MTI5ODQyN2RmMDlmYzY3ZmI3YTIyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDA5ZTQ4YWNkOTNmN2RlZmQ4OWU4ZmFmYTE0YmFiNjMxNGZkMDEyOWNkYWY0MTI2MmY3NmM5YTEwNDQ4NjBjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmVkNmYwMWJmN2VhYmM3M2JhMjY1OTY4MDZlMGRmYjIyYTdlM2UzYWQ0ODc1YWE3ZjExMDc2YjEzNGFlM2FjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjk0NDM4OTEwOGE2OTBlOGIwZWYwZDkyZjgyNTRiODVjYjdhYjAxZTJmNzM2MjgxYzA4NDg1MjE2YmM4MTZkNyJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/references/lifecycle.md#L23-L37",
+          "version": "repo-lines-v1:sha256:adaf8004f261e6e4802f0a85755216801d4f526342acc0ed751218fb6c9bdd85:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2NDk0ZGFkYmZhMmM3Y2YxYTNhZjZiYTIyMzc1ZGUxNjQxZjllZDNhZmZlZTdmM2NmMDQxZDgwNjU3ZmYyMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzc5N2NmYTQ5ZTgzMjJkZDlmZjQ0NjZiNzkwOTQyNzMxNzc1ZTg0ZDFmMzRlYTYzZTc2MmE3ZGFhYTliMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiNjA5MDM2NmY4NzRmY2U0ZjU5MmVjMWUzODI1NmYwNTkzZDEyOGYyN2NhMmJhNmZmYzIyZWRkN2RhZDAxODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViYmZmN2MzNzIzYmQ0Yzk5NTE4ZTRmOGU4ODZhYWFiOWJlNjU3ODUzMDVkYjUzNjVlMjVmM2IwODE3YzE3NjUifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/scripts/plan_state.py#L15-L16",
+          "version": "repo-lines-v1:sha256:ad14cffc110aa90a8f267dd72f5f721f9d3875f2c0977102e41691a08c4e139e:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmFlYjMzNWY5NjkzZTk0Y2IyMDBjNmZlYzM3NTJlZGIzNDBlODJlNDljNzE5YjM0ZjBmMDZlN2M3YjA2N2U5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJiYTRlNGUwMTc4OGJiMzI1MzM1ZTcxY2YwYjZhMWFiNmE1YTA4MWI4NzE5MjVkOTFkNjgwNTJmNGRjMTFhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGJkMmU2MGQwMWJjNjAwMzU5NDVmMGRkMjE5ZDg5NjAwMGRkNDllYjlkNGM0ZjRhMTI0N2M0NGM1YmQ0ZjcxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGZkMWY1NmYzODExMmVmNDg5Yjg2MTVmYmRlN2ZjYmYzZWZjNjI2ZDBiZDNlMzMzOGEzYzZhMmMyOTgwMGViNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e9d5d44a2a434500a5060d8d7c8eb3af",
+      "statement": "plan_state.py 是只读的确定性状态检查器：verify 校验索引结构、taskNotes 与任务文件一一对应、CHECK 与 gap 引用、done 证据非空及 executionOrder 依赖顺序；next 只在结构合法时返回 planned 且依赖全 done 的候选任务，不代替语义就绪判断。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L33-L49",
+          "version": "repo-lines-v1:sha256:7eea78e059a5b641efe05d79a5d570deff98018add2ae1519a95ebebbe369d36:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkZTJmNTMyOGVlNmU4MDUwZThhYWZkOGRjODY5YTA2OWNkOTU4NGVkYWFmNTRmZTU4OWQ3M2MzYjdkY2Q3OTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDMyZWYzNTBkMTU5ODg5ODAxY2M3MTEzZWVjMjZlMThkMjQzM2M5NTg5NzVhZmFjYjcwN2FmMjFkMGM0ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5ZjA5YjE0MjZhOGYyMjNiNGM0OTJmMjU3NGJmZDY3NDFiMmUxZmRmZTNjMmU2YWQyOWM0NGFiNWNlMGEwMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjZDgxMzM1ZGQ2ODlmYjc5ZjZjZjA0NzBlMGNkOWE2M2YxY2VkZjhmODBlZDdjMjBhOGExNDMzOWFjNWYyMDMifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/scripts/plan_state.py#L62-L328",
+          "version": "repo-lines-v1:sha256:462d4036560c8cd7d4dc161882588ee5c2044ce50e03d912c4f55ce6741b5d09:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjc0NTI2YWY0MjNiNjNkY2RlMWMxNDZlNDBmYTA1OWQxM2UwZWU3ZGJhMTZkMTk4N2Y2ZDM2OGNjNGI3ZDMzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiOWVlMTkzMjg0ZTgyZmI3NmFmNGY0ZjU4M2U0M2YwNTA3YjVmMTMyYjE2NGU2ZDM1MjNiYWZiOTRjMGM3YjFlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjNDE1Nzc2YTk5ZjE0MTU2NTlkZTI2ZWI0ZGIyNjE4NjNmYTEyMTk2NjYwYzk1Nzg1M2E2MzEzMTliZmQ5Yjg2In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9202a35765b4354a9f3cefb56a2ca0f",
+      "statement": "compiled 是计算投影，只由当前 FM/API 输入与显式 slicing 映射重新编译得到；taskKey = encode(concern)::encode(ownerRef)::encode(operationRef)，文件名与展示顺序不参与任务身份。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/SKILL.md#L104-L111",
+          "version": "repo-lines-v1:sha256:598721103578df618f068b245615029631c6ae50d6967fb1f7ba4e004636ced9:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDZmMWZhN2I1NzMzN2FmYmI2Njc1NGYyZWQxZTdlYjdjMWFmYjgzMGU5ZWZlZjUwYjMzODEwNWJmOTQ4YmFjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWI1OGU1ZDFhZDFhN2RmNWRmZDVmN2M5MTlmNGVkMGIxOGE2OTE5YzRjNjkwMjY0NGExZTFjN2FjZGJmMTUyZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTU5NDRiOTg1OTRjZmQxMDMzYTU2YWY0NDVmYzA3MTdlOTA1M2EzOTcyMjhlZDIzMDFhMjQ2ZTg3Mjk2YjU3NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNjZmNhM2M3NTQ2NjZlODhlYjk5OGJiNDQ3ZjNkNmRiN2QxZDRiYjBlNDY3Yjc0ZDU0MDQ4ZWZhN2Q5MWQ3NyJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/scripts/task_compiler.py#L31-L41",
+          "version": "repo-lines-v1:sha256:8aba701d05feb92527bde08819ceb17e5e42d233ff4954bd0c278be41eaec787:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZmY2M2NlMDQyOTY1ZmRiYzE0ZjdkMWY4ZjI2MGZmZTZlMTBlYzFmZTk3YjQ5MmZiMmJlMzhlYjMwNjFkMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZmJhMDUyN2MzOTUzYzRiNmUwZTViNTczOWJhODM2MTJmODA1M2JjZGM5NDY2NzMwMTkzY2QxZDU5MGI0MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhN2Y3MDMxMDllZjExMjYyMmNkMTcxOTRlYTdjZjMwZjgzZDIyYzg5MTQyNjEyYzk5NGQzOTkyM2ZkMGZmNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMWNjZDNkOGY1ZDBiMTI2ZTUzYmFlNDkwZmI1Mzc0YzdkZmM4OWEzZGQzYjE2OWUwYmJlN2ZhZWMzMDM4OTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68ea970337324bddbcbafbd8b382fd49",
+      "statement": "进入 Action 前必须通过 Guides 语义就绪检查（授权/目标、来源与审核、直接前置与证据新鲜度、设计边界、做法/环境、CHECK 与停止条件）；plan_state.py next 只提供结构候选，结构自洽与文件存在不等于语义就绪或业务批准。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L67-L78",
+          "version": "repo-lines-v1:sha256:bce9ac5cda9ec1d1b1fcd85dd7b4a221c34d6ee3a8b80b1d4576b111d556aee8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMDg4MDE2ZmQ3YzU1ZGVlMTZmYTRjODBhNzQ4YmM4MTNlNjg5MmFjOGJjYmUyNjhhZTYxZDg2YTJhMWQ0YmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwZjM4OTFlYTYxY2YxYzZmZTI4NmJhOTkxN2RjZTNjMDJiMmZiMTc2Mjc2OTdjZTY2OTYzMjA0NzZjNTY4ZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyMDgyY2I1NDkyOTZiNDQ1ZTg2NjZlZDBkNDFkNzQyNmRkNjVjOWY0NzEzYjgxN2IwZTMyZDZhMWU4OGM1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExN2U0NWNkMjQ5NDJhOWYxMjY2OTFlZDZiOWMwYWU1OWQ1MDVjNDI4YzlmNTUxZjM0N2QxZmY1N2JhOGVlZjIifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/references/guides.md#L32-L37",
+          "version": "repo-lines-v1:sha256:9f30b9cdc01590015dbe8d1df384e0e7158fc658a106cf366a2d1227e19b1d19:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNmNjYwOGMxNzI4NTg3NDRhYTJkNTZiN2E2ODIzY2UyOGMwOGJmN2RlZjM2NmM1NzhhYmQ1N2NiNmZjODQ0MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzk2ZDlmOThlYWViZjYzYTUzODg2Y2Y1Yzg3NTFmYWY0OTRiMzdlNTBhZDU4ZjFhZTViMmZlMzQ2Njg0MmY0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWY3MTExOGExMGQ5YTdiNGExYTRlMTdiYzMxYzYzMjZjMjA0OTc0Y2IyNzZmMDY2ZDYwZmE4NzNkNDZkZjgyZSJ9"
+        },
+        {
+          "resource": "repo://docs/guides/index.md#L49-L60",
+          "version": "repo-lines-v1:sha256:e8d1a4e3fedd9f418dd141b221dc446510c531ff5c862f6ac9c1262a260b87be:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMWRmOTBiZDJkMTUyNWQ1YmUzYjNkZDgwMzRmZDkyNWM3YmQ5MmQwNjRhYWM2NGViNjgzYTY1NGEyMGNjNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMzljOWFhY2NjOGQyZmRmNWE3Yzg2MGMxNTAwYjU3YjEyY2ZjM2Q0MjAyZWIwNTExN2UxYzM0OTFkYTg0YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MjUzMTU0ZjEzNzc1MTQxYjAzODZkMjhlNGE4MzUyN2Y3MmYzZjliY2ZhMTBjZmMwODY5Zjk1MTQxNzZhODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyNTgwMGZkYTk4MzUxZmQzYmVhODFiMWIxZGM2MDc2NGQ4Y2NhZmE4YTNlYTI5MmVjODRjYWNiZDMyMjZlYjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afffa38f8e884e93a3d39ea01505553d",
+      "statement": "observedEvidence 只记录真实执行观察（命令、退出码、输出摘要），计划生成时为空；失败与未知保留在索引 gaps 中，只阻塞受影响任务，不通过改上游、删测试或扩范围制造通过。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L92-L99",
+          "version": "repo-lines-v1:sha256:593049f7aaed9e8253e0e35d1be8a612629448ed2f461cd711239d55fa191196:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGZmZDBkYWI2NWYxNGJlODNhM2IyYzVhYWNlNjUwMDIzODNkZDgwMDAyNmRlYTUyMjZkYzYxZjA1YmRkNDRlOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDA5ZTQ4YWNkOTNmN2RlZmQ4OWU4ZmFmYTE0YmFiNjMxNGZkMDEyOWNkYWY0MTI2MmY3NmM5YTEwNDQ4NjBjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWZlZjk3Nzg4YTFhODFmNGExNjRhZGIzODdhODI0Y2E3Mzg0MGYxNDM1MWJkYjZlMTFiZTgyNjJkODkwNDlhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjk0NDM4OTEwOGE2OTBlOGIwZWYwZDkyZjgyNTRiODVjYjdhYjAxZTJmNzM2MjgxYzA4NDg1MjE2YmM4MTZkNyJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-task-planning/assets/task-plan-template.md#L59-L76",
+          "version": "repo-lines-v1:sha256:d18941b008e6d3c1f7da6fe36c9268d5214fa005f6e0e88d42a9fabe1c6c07ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1M2Q0NGY3ODI4MmEwODE3OWEwNTc2YWMyY2E3MTE4ZmRhY2VjMDZjMDk2NjUwNDI2OTc4ZDI4NGJmMzZmYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0MGEwODE3Zjk0NDEyMGY5NGRkN2JjZmFkYjNlNDJkZGY4N2I0ZTAyZTE5YzEwZjQ5NTdhYTExNmRjMDRhMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjYTJkNjFhYzMwY2YzODZiMjJlNDhmNjhmMzRlYWUwNDI0ZjA0NDI2ZTQ3OWY5NDA3MmFkMjY1ODYyMTIxZmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_647c6c57840f44718b9055e33165b874",
+      "statement": "转向由观察决定：编译/测试/静态检查失败在当前文件范围修复并重跑；CHECK 不能证明 FM 预期则修订测试设计；重复或缺失工作单元修订 slicing 并重新 compile；FM/API 来源变化返回 Plan 重算投影；缺业务事实记录 gap 交回 FM 澄清；环境不可用记录环境阻塞并置 blocked；全部通过才写证据并置 done。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/references/lifecycle.md#L62-L73",
+          "version": "repo-lines-v1:sha256:e6922b396fb12fd1832981392e1b55dff7f77202427d9570ed1bab5fd24c1766:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MDA1ODYzNDEwYWZhMGZiMzFlOGVjNTNiY2U1ZDk4M2U5OWNlYmY3NmUxMWFmNGI4OWQzYTAzNTQwZTUxNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NmQzN2FkM2U4NWE4OGNkY2Q2MjBlNzA4MDEzMjcwYmM5OWExYTFlNmY1NDMyYmEyMDAwMmFmNmUwOGIzZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2OTk5OWViN2YyMmJlMTU3ZWUwYTg3NTgwN2Q0ZDRlYTgyMWJlYjQyNWU2NWVjNGNhMDZiYmNmYjNmYTNhZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlZjQyNTEwYzYyMTJlMjhiNjVmZmFhYzA0YjQ3MjQ5MDgyMTJmODk4MzA2ZTgzMmEwODQ4YTFlYjEwMDViOTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8fbcaf27eec3426b94601e2ab5c08501",
+      "statement": "状态转换有硬约束：依赖任务未 done 时当前任务不能进入 in-progress 或 done；blocked 任务必须引用已知 gap；done 任务必须有非空 completionCriteria 与 observedEvidence；CHECK 命令为 null 或空必须关联 gap。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/references/lifecycle.md#L23-L37",
+          "version": "repo-lines-v1:sha256:adaf8004f261e6e4802f0a85755216801d4f526342acc0ed751218fb6c9bdd85:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2NDk0ZGFkYmZhMmM3Y2YxYTNhZjZiYTIyMzc1ZGUxNjQxZjllZDNhZmZlZTdmM2NmMDQxZDgwNjU3ZmYyMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzc5N2NmYTQ5ZTgzMjJkZDlmZjQ0NjZiNzkwOTQyNzMxNzc1ZTg0ZDFmMzRlYTYzZTc2MmE3ZGFhYTliMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiNjA5MDM2NmY4NzRmY2U0ZjU5MmVjMWUzODI1NmYwNTkzZDEyOGYyN2NhMmJhNmZmYzIyZWRkN2RhZDAxODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViYmZmN2MzNzIzYmQ0Yzk5NTE4ZTRmOGU4ODZhYWFiOWJlNjU3ODUzMDVkYjUzNjVlMjVmM2IwODE3YzE3NjUifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/scripts/plan_state.py#L134-L135",
+          "version": "repo-lines-v1:sha256:00bbc941602a96e7bdc8e6c31b124b06cdbea5fc9fccd267ba7044f5ac737e4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYxOWE4ODM4OTkzNjVkZGRmMTIwNmU4NWYwNmRjNTJjZmZkMTM5Y2YwYjQxZWM0MDZhMmVkNGY0NzI3M2NlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjg3NTZhZjI0ZWM3ZWM1YmIzODMxYzk0MzE4NDJiZGY1ZmMyMTg0YWIyMTk4YjFjMDY1MDU4ZTJiYTFlYzRlZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGEzY2Q1MmU3YmVjODg3MThjZWM3ODI3YzJmYjAwNmU3MDAwYTgzODVkY2IzNmIwMGYyOTAyYWFkOTA5ZmRlMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzAyZTE4ZjUyM2FiOWNlZDA4YjE2YjViNDZjODBhMDRkMDViNDFjMGZiM2RlNzcyMzVkNzcwYjU0NDVlNTRiMSJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/scripts/plan_state.py#L237-L269",
+          "version": "repo-lines-v1:sha256:559e458cd8de14af5f1138bec33624d0eb5f7931529d36cbc3279ece93271ea0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmNTMwZmMwZThhYjYzMjU0M2U5MjRmZjkzNjkyZTk1YmE2NWQ3YTg4NDBkNWU1MzZlY2VlZjU2YmQ0YTY5MWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYTFhZThkMGU2ZmM2ZWM3ZDE1YmFkNmM2MTE3M2I2NjQwOTIxZDk1ZjQ1ODY2OWQ2NDM0YWYzYmNlNzIyNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiNzk4ZGJhYmRlMDdiYzM5NWQ1MjEwNjM2Y2IxYTgxNDczOGIyNzg2MmM0OTA2MWUyNmZkMTdjMGVkMjViNzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c12a10e22a924b5f81951fcd3f200fdc",
+      "statement": "执行模式由 taskNotes.mode 指定为 implementation、verify、design、setup、manual；环境失败记录为环境阻塞，不作为业务测试结果；verify 模式只定位并复跑已有行为。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L51-L51",
+          "version": "repo-lines-v1:sha256:4d03c6a20de10aa9dee36f94e6a6a87b31720b528d9822bb61da62d78374ee9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQwM2M2YTIwZGUxMGFhOWRlZTM2Zjk0ZTZhNmE4N2IzMTcyMGI1MjhkOTgyMmJiNjFkYTYyZDc4Mzc0ZWU5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQwM2M2YTIwZGUxMGFhOWRlZTM2Zjk0ZTZhNmE4N2IzMTcyMGI1MjhkOTgyMmJiNjFkYTYyZDc4Mzc0ZWU5ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjFlODA5N2YyY2Y5N2ViOWQ1NzkyODJhYTMyZWZmNTkyMDg4YzE3NjA5YWU4YzBhNDFmYTU0ODJmMzViMmRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjA1Njc5Y2ZmZGEzMjFjODVjYzNjNTc4NGYwMjliMmMyMjFmOWQ0OTk3ZjdiZDQ2NmIyM2JlZmVjYWZkNmQ4NiJ9"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/scripts/plan_state.py#L16-L16",
+          "version": "repo-lines-v1:sha256:c2ba4e4e01788bb325335e71cf0b6a1ab6a5a081b871925d91d68052f4dc11a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJiYTRlNGUwMTc4OGJiMzI1MzM1ZTcxY2YwYjZhMWFiNmE1YTA4MWI4NzE5MjVkOTFkNjgwNTJmNGRjMTFhOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJiYTRlNGUwMTc4OGJiMzI1MzM1ZTcxY2YwYjZhMWFiNmE1YTA4MWI4NzE5MjVkOTFkNjgwNTJmNGRjMTFhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGRmYTNhODVkOWNjYzAwNDhmYWVmZmNhODllYTk4M2I5MjI1OGJhMTc2ZWE1MTFlOTZhMWY4OGY4ZDk2YmVlOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGZkMWY1NmYzODExMmVmNDg5Yjg2MTVmYmRlN2ZjYmYzZWZjNjI2ZDBiZDNlMzMzOGEzYzZhMmMyOTgwMGViNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_819a94a0230c4b65a153672aaf03aafb",
+      "statement": "每次只执行一个获授权且就绪的任务，当前任务结束后停止；下一任务需要新的明确继续动作，跨阶段也不自动推进。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/SKILL.md#L63-L63",
+          "version": "repo-lines-v1:sha256:99152a3d3cc6f7d87c9c907e86d8bf32d863a8d359db9e9be41f19e6f6d9ef0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkxNTJhM2QzY2M2ZjdkODdjOWM5MDdlODZkOGJmMzJkODYzYThkMzU5ZGI5ZTliZTQxZjE5ZTZmNmQ5ZWYwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkxNTJhM2QzY2M2ZjdkODdjOWM5MDdlODZkOGJmMzJkODYzYThkMzU5ZGI5ZTliZTQxZjE5ZTZmNmQ5ZWYwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTVlYmI4NzJhZWYyOWFiODY3MzYzNGY0ZDQ3YTEyZmEyMmQ3OTA0YWIwYWYyMzMyNTQ0NjlmOTdmNmQ2NzNmMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDIwODJjYjU0OTI5NmI0NDVlODY2NmVkMGQ0MWQ3NDI2ZGQ2NWM5ZjQ3MTNiODE3YjBlMzJkNmExZTg4YzU0ZiJ9"
+        },
+        {
+          "resource": "repo://AGENTS.md#L21-L22",
+          "version": "repo-lines-v1:sha256:614956e4b730aa82da95134463550a87dc68c7929627e139bb7f75666da04dca:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU3MTdkMzI2ZjAwMmU2N2UyZTQyMmZkMDg0MTA0ZDc2OTI0ODNiYjczOTMyZDljMWU5ZTI5ZTcyOWU5Y2UwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDIxMmE2Y2ZjNDA3OTc5NzA3MDAwMzEwMmYyMjlhMzlhMDZhODg2MDYzYmQwMWYxMjEzOGFiNTk5MWVkZWY4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTk4YTYxNjNmNDQ1NjRkOTljZDFhODBkNjQzNjM3OGM1MmRiM2VmMmE5MWMyOTU2YzJjYzkwODQxOWYxYjYwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzdlODU0ZmI4NWI2NTNhNjUyNzg3YjMyOGE5ZjllMmZjM2M5MzU5NTNlOTA0YjIwYWIxZjViZjlmOTAxYjMzMSJ9"
+        },
+        {
+          "resource": "repo://README.md#L75-L84",
+          "version": "repo-lines-v1:sha256:a0ec5adea909956303b113456b5fe387fff3689fe58483665c81d243113981a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkOGExNTJjNWM3OTk0NGQ3YjdjMTZlMjc2ODI1M2I4NTg0ZGVhNjhlODA3Y2QyMTI4M2JhNTUxM2UxYmFiZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZjU0MjQ3ZTcyMTMzMjM3N2EyZjViMDkwMWIwMDI4ZjFlMWU5ZTAwNzc2MTg3YTcxY2QyOGI0Y2EyNDFkNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllZWZhNThhNTg1ZWNjMDQyYmY3NjRmNGNjMThhMWRhMjFjOGU1NjRhMjljMTg5NWY2NTI4MDBmZDdhMjI3ZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_33c2d48396a74673932096a27d80b8b0",
+      "statement": "恢复会话按固定顺序进行：读项目宪法、Guides 导航与 Git 差异，核对 FM/API 与计划输入，运行 plan_state.py verify 与 next，读任务 Guides 与前置/工程来源，完成六项检查后通过才开始；索引不存在、compiled 为空、源摘要过期或结构无效时停在 Plan。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/references/lifecycle.md#L77-L87",
+          "version": "repo-lines-v1:sha256:bdb9343615416b449aed45e044d7f8d56d24548f042d768f6d787d6063e94381:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmJkMjQyMDI0MjlkOTQ0ZDY1ZjBiZmRkMzhkZTU4NGMzNDU4Y2IwMjEyZTg5YzkwYjRkYmFiNTY3Y2VhYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0NDYzZGJmZWUzYTE3NzkzYmMyNTRmZjI0MzA4Y2Q1ZTQ4ZjE5NGUwOWUzOGYyMzU0Y2U4NWU3ZDc1YjM4NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZjQyNTEwYzYyMTJlMjhiNjVmZmFhYzA0YjQ3MjQ5MDgyMTJmODk4MzA2ZTgzMmEwODQ4YTFlYjEwMDViOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ee5dca9689114377a6d64614f13633c2",
+      "statement": "交付套件 test_plan_state.py 断言 plan_state 只读（检查前后文件字节不变）、候选选择、模式校验、依赖完成约束、gap/证据一致性及 CLI 的 JSON 与非零退出；test_guides_contract.py 回归 Guides 门位于 Action 之前、单一 taskNotes 状态与恢复会话重载工程来源。",
+      "evidence": [
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/tests/test_guides_contract.py#L10-L35",
+          "version": "repo-lines-v1:sha256:e27d0acf07579014149e2e8df74f6b26c02eadcc19a565c7a4c46e7e732c917b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMGE3YWQ0NGFlZGMzMGY1MmQ5ZTZmYWI3YzdmNGFjYzc5MTZiN2Y1NzdhOTY1MWEwZmM4ZDRkZjA0MDVkNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlMDcwNjYwNTFjMjFhYjhiZDNhYTVkOGU5NDgxMDYxNTA2YzMzOTI4MjI2MDE0YzcwOWQ2ZjIxZjBhNTU0MzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzZjdkM2NiOWVhMjM2Y2YyMzMyNzEwZTJkOTM0NzcwYTg0NWIyZWMyZDZmYjA0ZTQ5M2FlMWEzZTdjYWVkOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://.agents/skills/evidence-delivery/tests/test_plan_state.py#L103-L233",
+          "version": "repo-lines-v1:sha256:ca4bd5f851ce2b41ef165ed280fc28c5d7cd8e96d26bc1be265ea362bb8a89c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NmQ5MWZkNjIxNTQzNjE5YTE0MzM2NjIzMWVlMTA4ZmY0MWQ0NTNmNWIxZTE2MDIwNTBjMzc0NDlhYjQwZmEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4Mjk1ZGUxZjJlZTZlYTc2ZTQ1ZDY4NTY3M2JkYzE5MTQ0ZWFjZjZhMTFmYWJiMDI3YTJjYzc0NDZjMzA1ZTRhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0YWIxZTE3MmI2YWY1OTBiNDBjZjNkNGFjNDM0MWUxMzhjYmQwMjhiMDFiZTA1ZDk5MjVkMDRkMmU5OTg1Njk0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzZDQxMzQwY2MyMzlhMTU5Y2U5YjYwMjJlOWY2MzIyODMyZTJlYWQ3NmNhZTllNDc1NGQyMTBlYjhmYjZkNWU4In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-13T15:01:55.008Z"
+  }
+}

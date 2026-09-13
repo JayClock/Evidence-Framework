@@ -1,0 +1,21 @@
+# Paths the OpenWiki doc agent must not read.
+# Build output, caches and binaries: no documentation value, large context cost.
+
+node_modules/
+.nx/
+.gradle/
+tmp/
+dist/
+build/
+out-tsc/
+.cache/
+
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.zip
+*.jar
+*.class
