@@ -7,6 +7,9 @@
 - 项目根：{{实际定位方式}}
 - FM 根及审核状态：{{路径、modelStatus、stakeholderReview，不提升状态}}
 - API：{{源文件或明确未提供}}
+- 软件范围与验收：{{实际需求路径、已有故事/验收 ID、确认状态与非目标；不从完整 FM 推导已批准 MVP}}
+- 项目前馈入口：{{项目指令指向的 Guides 导航或等价来源；只维护引用，不复制知识库}}
+- 工程基线：{{相关架构、质量属性、术语、规范、howto 与真实范例的路径/章节/版本；缺项及影响}}
 - 业务目标：{{真实源场景、软件范围与可验收结果}}
 - 约束依据：{{模块化单体、统一后端应用、进程内模块契约、MyBatis 与完整 smart-domain 集成}}
 - 技术实况：{{构建、版本、已有实现与测试，不从模板猜测}}
@@ -42,7 +45,7 @@ kind: task-index
 inputRoots:
   fm: .evidence/fm
   api: null
-sourceManifest: [] # 本次源 ID、路径、摘要/版本与业务定位
+sourceManifest: [] # 业务与工程来源的路径、实际源 ID（如有）、摘要/版本和适用章节；工程文件路径不虚构成 FM ID
 slicing:
   designItems: [] # id、sourceRefs、reason
   groups: [] # concern、ownerRef、operationRef、fileName、unitKeys、dependsOn(taskKey)
@@ -87,8 +90,11 @@ gaps: []
 - 可并行工作：{{依据已满足依赖与文件边界}}
 - 局部阻塞：{{缺口与受影响任务}}
 
-## 5. 一致性与交接检查
+## 5. 前馈与交接检查
 
+- 项目宪法、基线、工程指南与每个任务的 Guides 可定位；软件范围/授权与源审核状态分别核对，不冒充批准。
+- 规范、howto、范例与 CHECK 的真实环境对应；指南/架构/代码变化需要重验，不仅比较 FM/API 摘要。
+- 必要来源或命令缺失关联局部 gap；任务不设第二份前馈状态，结构检查不能替代语义就绪。
 - 输入摘要对应当前 FM/API；计算字段未手改。
 - 每个 taskKey 恰好对应一个可读文件和一条 taskNotes，所有任务引用均可解析。
 - fileName 唯一、安全、准确描述交付结果，位于 tasks/；任务文件 taskKey/planRef 与索引一致。

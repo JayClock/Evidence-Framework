@@ -1,0 +1,69 @@
+{
+  "scope": "feedforward documentation, workflow guides and structural regression checks",
+  "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3",
+    "NX_DAEMON": "false",
+    "NX_SKIP_NX_CACHE": "true",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "nodeVersion": "v26.8.1",
+    "npmVersion": "11.19.0",
+    "pythonVersion": "Python 3.12.3",
+    "javaVersion": "openjdk version \"17\" 2021-09-14\nOpenJDK Runtime Environment Temurin-17+35 (build 17+35)\nOpenJDK 64-Bit Server VM Temurin-17+35 (build 17+35, mixed mode)"
+  },
+  "checks": [
+    {
+      "command": ["npm", "run", "guides:verify"],
+      "startedAt": "2026-09-13T10:58:01.205974+00:00",
+      "durationSeconds": 1.453,
+      "exitCode": 0,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/guides.log",
+      "logSha256": "e6c4d5bf4c03b6853d9691d359335bda3131cf1e2ba790e8752eab7fcbb30c1b"
+    },
+    {
+      "command": ["npm", "test"],
+      "startedAt": "2026-09-13T10:58:02.659748+00:00",
+      "durationSeconds": 70.199,
+      "exitCode": 1,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/test.log",
+      "logSha256": "ee05e304a841b72c7b223d19b8c5bcb6caf37c094b8d977394b6bc99be62f946"
+    },
+    {
+      "command": ["npm", "run", "lint"],
+      "startedAt": "2026-09-13T10:59:12.860132+00:00",
+      "durationSeconds": 4.314,
+      "exitCode": 0,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/lint.log",
+      "logSha256": "5a834b2b8c996de705c6626de34acc47d643af4a76895ad52aa1923013aa7adf"
+    },
+    {
+      "command": ["npm", "run", "build"],
+      "startedAt": "2026-09-13T10:59:17.174603+00:00",
+      "durationSeconds": 15.905,
+      "exitCode": 0,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/build.log",
+      "logSha256": "7af80f569b3aa014ba3c40d2b6e1e7d7e863334edebf1dc94182e2cc8c967f73"
+    },
+    {
+      "command": ["./gradlew", "check"],
+      "startedAt": "2026-09-13T10:59:33.081057+00:00",
+      "durationSeconds": 7.869,
+      "exitCode": 0,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/java-check.log",
+      "logSha256": "f33dc402e78cee3ddd93a06e0149e0d58ae1a7135c0659ca45e5c2062f4f1e3e"
+    },
+    {
+      "command": ["npm", "run", "evidence-modeling:verify"],
+      "startedAt": "2026-09-13T10:59:40.951100+00:00",
+      "durationSeconds": 3.303,
+      "exitCode": 0,
+      "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/modeling-verify.log",
+      "logSha256": "2616e7c3c8f5e3936dc95e12437280f643c4a8fa4b2eb41b157ddf88f1c0bdcc"
+    }
+  ],
+  "limitations": [
+    "No independent LLM behavior evaluation was executed.",
+    "No business approval or FM/API source changes.",
+    "Gradle may reuse UP-TO-DATE or build-cache results; inspect logs."
+  ]
+}

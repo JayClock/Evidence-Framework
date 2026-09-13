@@ -1,0 +1,19 @@
+baselineCommit: b7d079e33756347a41b4f93c3894478e35b54859
+cwd: isolated git archive
+command: python3 -B -m unittest discover -s .agents/skills/evidence-api-design/tests -p test_full_lifecycle_example.py -v
+
+test_product_procurement_lifecycle_is_valid_and_complete (test_full_lifecycle_example.FullLifecycleExampleTest.test_product_procurement_lifecycle_is_valid_and_complete) ... FAIL
+
+======================================================================
+FAIL: test_product_procurement_lifecycle_is_valid_and_complete (test_full_lifecycle_example.FullLifecycleExampleTest.test_product_procurement_lifecycle_is_valid_and_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-guides-baseline-wo0443uj/.agents/skills/evidence-api-design/tests/test_full_lifecycle_example.py", line 55, in test_product_procurement_lifecycle_is_valid_and_complete
+    self.assertEqual(
+AssertionError: 'open[8046 chars]0\n  \'/product-procurements/{procurementId}/d[39516 chars]se\n' != 'open[8046 chars]0\n  "/product-procurements/{procurementId}/de[39498 chars]se\n'
+Diff is 50621 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 2.179s
+
+FAILED (failures=1)

@@ -2,6 +2,20 @@
   "skill_name": "evidence-task-planning",
   "evals": [
     {
+      "id": 8,
+      "name": "assemble-project-guides-without-copying-facts",
+      "prompt": "在隔离项目中用合成 FM 规划一个资产查询切片。AGENTS.md 指向项目导航，导航引用已确认范围、架构、命名规范、数据库 howto 和带测试的范例。范例包含不属于本次资产模型的显示名称、删除接口与本地 H2。请生成计划和可恢复任务文件，不改产品代码，不将范例业务复制进 FM。",
+      "expected_output": "任务的 Guides 分别引用项目宪法、项目基线、工程做法与业务来源；procedureRefs 定位实际规范/howto/范例，说明用途、范围和限制。索引 sourceManifest 定位工程来源而不虚构 FM ID。局部设计、文件范围、CHECK、前置新鲜度与停止条件足够恢复；不复制全套文档、不新增 guides-ready 状态、不预填执行证据。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "missing-navigation-is-not-missing-business-authority",
+      "prompt": "隔离的消费项目没有 docs/guides/index.md，但有根项目指令、软件职责、源码、构建和测试。规划只涉及纯领域的合成图书标题规则；生产数据库和身份尚未确定。请按实际依据规划，不新建项目知识库，不采用当前 Skill 仓库的业务字段或路径。",
+      "expected_output": "定位实际等价前馈，不为缺少固定导航文件阻塞纯领域任务，不补造生产数据库/权限。仍明确来源与审核、局部设计、真实命令和前置证据；必要未知仅局部登记 gap。计划保留单一状态与原有 taskKey/planRef 绑定，结构检查不冒充业务批准。",
+      "files": []
+    },
+    {
       "id": 1,
       "name": "generic-domain-foundations",
       "prompt": "在隔离目录构造一个最小 FM v3 合成夹具：context.library 的 rootRefs 为 thing.document、thing.author；两者有稳定身份，文档可暂缺作者。没有合同、履约和 API。用本 Skill 生成模块化单体、MyBatis 的总索引与可读任务文件，运行工作单元提取及切片编译。按统一后端应用、进程内模块契约规划，但不要给每个 Context 自动建 Gradle 模块，不从单应用推导单数据源或大事务。不要添加档案管理产品、付款或合同。数据库引擎未提供，没有远程调用需求。",

@@ -1,35 +1,24 @@
-# 专栏订阅业务
+# 业务来源与检查导航
 
-读者订阅“业务建模实战”专栏，支付 99 元后访问内容；断更下架时全额退款，再次上架后免费恢复原读者的访问资格。付款可使用移动支付或预付费余额抵扣。
+本目录保存专栏订阅业务的来源、当前 FM/API 与获授权检查记录；不等于已部署业务系统。软件职责与实现状态见 [范围](../docs/requirements/scope.md)，项目阅读路由见 [Guides](../docs/guides/index.md)。
 
-## 文件导航
+| 内容                         | 位置                                                     |
+| ---------------------------- | -------------------------------------------------------- |
+| 业务材料与发现               | [discovery.md](discovery.md)                             |
+| FM 使用入口                  | [fm/README.md](fm/README.md)                             |
+| 合同、责任、变化点与场景概览 | [fm/00-overview.md](fm/00-overview.md)                   |
+| 正式业务术语                 | [fm/01-glossary.md](fm/01-glossary.md)                   |
+| 模型及审核状态               | [fm/model.yaml](fm/model.yaml)                           |
+| API 设计说明                 | [api/README.md](api/README.md)                           |
+| API 唯一设计源               | [api/api.yaml](api/api.yaml)                             |
+| 现有接口清单                 | [api-capabilities.md](api/generated/api-capabilities.md) |
+| 现有 HTTP 契约               | [api-contracts.md](api/generated/api-contracts.md)       |
+| 现有 OpenAPI 3.1             | [openapi.yaml](api/generated/openapi.yaml)               |
+| 已留存 FM 检查               | [checks/fm/](checks/fm/)                                 |
+| 已留存 API 检查              | [checks/api/](checks/api/)                               |
 
-| 内容               | 文件                                                        |
-| ------------------ | ----------------------------------------------------------- |
-| 完整业务规则       | [discovery.md](discovery.md)                                |
-| 模型入口           | [fm/README.md](fm/README.md)                                |
-| 合同、责任与变化点 | [fm/00-overview.md](fm/00-overview.md)                      |
-| 统一术语           | [fm/01-glossary.md](fm/01-glossary.md)                      |
-| FM 模型            | [fm/model.yaml](fm/model.yaml)                              |
-| API 设计入口       | [api/README.md](api/README.md)                              |
-| 完整 API 定义      | [api/api.yaml](api/api.yaml)                                |
-| 接口清单           | [api-capabilities.md](api/generated/v1/api-capabilities.md) |
-| HTTP 契约          | [api-contracts.md](api/generated/v1/api-contracts.md)       |
-| OpenAPI 3.1        | [openapi.yaml](api/generated/v1/openapi.yaml)               |
-| FM 校验            | [checks/fm/v1.json](checks/fm/v1.json)                      |
-| API 校验           | [checks/api/v1/check.json](checks/api/v1/check.json)        |
+先读业务来源与概览，再读当前任务引用的源 YAML、规则及场景。API 清单用于定位能力，生成投影不覆盖源文件。消费时核对源摘要、审核状态和实际检查版本，不把目录中有报告视为本次通过。
 
-## 业务结构
+业务模型区分稳定主体及上下文角色、请求与完成证明、业务事件时间与记录时间。具体业务事实只在 FM/发现记录维护，不在导航重复金额、期限、接口或场景计数。
 
-- 3 个合同：专栏订阅、移动支付、预付费账户。
-- 6 项履约：订阅费支付、内容访问、断更退款、免费恢复、移动扣款、余额抵扣。
-- 内容领域包含专栏和章节，跨重新上架保留专栏身份。
-- 移动支付与抵扣凭证扮演同一付款证明角色，新增支付方式不修改订阅付款规则。
-- 18 个业务回放场景覆盖正常流程、截止边界、错误金额、错配读者、余额不足和违约补偿。
-- 42 个角色接口，合并同路由的角色变体后为 28 个 OpenAPI 操作。
-
-## 阅读顺序
-
-先读业务规则和模型概览，再看具体凭证、CEL 规则及场景；接口清单用于总览，HTTP 契约和 OpenAPI 用于后续实现。
-
-校验记录包含真实执行结果。HTTP 消费流程是静态契约检查，不是已部署服务；付款机构接入、实际到账核实、实时授权和并发扣减还需运行时验收。
+付款机构接入、到账核实、实时授权、并发扣减与生产运维必须由实际实现验收；静态 HTTP 消费流程不是已部署服务或生产保证。

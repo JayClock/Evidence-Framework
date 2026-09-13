@@ -1,0 +1,66 @@
+cwd: /Users/zhongjie/Downloads/Github/Evidence-Framework
+command: ./gradlew check --rerun-tasks --no-daemon
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :spotlessInternalRegisterDependencies
+> Task :backend:spotlessJava
+> Task :backend:spotlessJavaCheck
+> Task :backend:spotlessCheck
+> Task :backend-domain:compileJava
+> Task :backend-api:compileJava
+> Task :backend-persistent:compileJava
+> Task :backend:compileJava
+> Task :backend:processResources
+> Task :backend:classes
+> Task :backend:compileTestJava
+> Task :backend:processTestResources
+> Task :backend:testClasses
+> Task :backend-api:processResources NO-SOURCE
+> Task :backend-api:classes
+> Task :backend-api:jar
+> Task :backend-domain:processResources NO-SOURCE
+> Task :backend-domain:classes
+> Task :backend-domain:jar
+> Task :backend-persistent:processResources
+> Task :backend-persistent:classes
+> Task :backend-persistent:jar
+2026-09-13T21:48:56.064+08:00  INFO 96005 --- [backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-13T21:48:56.066+08:00  INFO 96005 --- [backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-13T21:48:56.067+08:00  INFO 96005 --- [backend] [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-13T21:48:56.069+08:00  INFO 96005 --- [backend] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-09-13T21:48:56.071+08:00  INFO 96005 --- [backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-09-13T21:48:56.072+08:00  INFO 96005 --- [backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+> Task :backend:test
+> Task :backend:check
+> Task :backend-api:spotlessJava
+> Task :backend-api:spotlessJavaCheck
+> Task :backend-api:spotlessCheck
+> Task :backend-api:compileTestJava
+> Task :backend-api:processTestResources NO-SOURCE
+> Task :backend-api:testClasses
+2026-09-13T21:49:02.351+08:00  INFO 96148 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-13T21:49:02.352+08:00  INFO 96148 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+> Task :backend-api:test
+> Task :backend-api:check
+> Task :backend-domain:spotlessJava
+> Task :backend-domain:spotlessJavaCheck
+> Task :backend-domain:spotlessCheck
+> Task :backend-domain:compileTestJava
+> Task :backend-domain:processTestResources NO-SOURCE
+> Task :backend-domain:testClasses
+> Task :backend-domain:test
+> Task :backend-domain:check
+> Task :backend-persistent:spotlessJava
+> Task :backend-persistent:spotlessJavaCheck
+> Task :backend-persistent:spotlessCheck
+> Task :backend-persistent:compileTestJava
+> Task :backend-persistent:processTestResources
+> Task :backend-persistent:testClasses
+2026-09-13T21:49:06.462+08:00  INFO 96297 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-13T21:49:06.464+08:00  INFO 96297 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+> Task :backend-persistent:test
+> Task :backend-persistent:check
+
+BUILD SUCCESSFUL in 29s
+28 actionable tasks: 28 executed

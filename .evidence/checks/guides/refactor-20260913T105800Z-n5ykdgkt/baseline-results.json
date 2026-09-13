@@ -1,0 +1,20 @@
+{
+  "baselineCommit": "b7d079e33756347a41b4f93c3894478e35b54859",
+  "source": "git archive HEAD .agents/skills in temporary directory; original worktree unchanged",
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    ".agents/skills/evidence-api-design/tests",
+    "-p",
+    "test_full_lifecycle_example.py",
+    "-v"
+  ],
+  "exitCode": 1,
+  "log": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/baseline-api-example.log",
+  "logSha256": "38b7924d4746ea06a671c9645677eb93d778b29df31571dafc9b84831091fddf",
+  "recordedAt": "2026-09-13T11:01:20.077670+00:00"
+}

@@ -1,0 +1,52 @@
+cwd: /Users/zhongjie/Downloads/Github/Evidence-Framework
+command: npm run evidence-modeling:verify
+startedAt: 2026-09-13T10:59:40.951100+00:00
+
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 evidence-modeling:verify
+> npm run evidence-modeling:typecheck && npm run evidence-modeling:test && npm run evidence-modeling:format:check
+
+npm warn Unknown env config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 evidence-modeling:typecheck
+> tsc -p .pi/extensions/evidence-modeling/tsconfig.json
+
+npm warn Unknown env config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 evidence-modeling:test
+> vitest run --config .pi/extensions/evidence-modeling/evidence-modeling.vitest.config.mts
+
+
+ RUN  v4.1.11 /Users/zhongjie/Downloads/Github/Evidence-Framework
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  18:59:43
+   Duration  264ms (transform 72ms, setup 0ms, import 229ms, tests 14ms, environment 0ms)
+
+npm warn Unknown env config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 evidence-modeling:format:check
+> prettier --check '.pi/extensions/evidence-modeling/**/*.{ts,mts,json,md}' '.agents/skills/{evidence-modeling,evidence-task-planning,evidence-delivery}/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/*.md,evals/*.json,schemas/*.json}' docs/evidence-modeling.md README.md
+
+Checking formatting...
+All matched files use Prettier code style!

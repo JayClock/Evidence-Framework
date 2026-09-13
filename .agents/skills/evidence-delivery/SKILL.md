@@ -10,7 +10,9 @@ compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 s
 
 ## 输入与边界
 
-默认读取：
+先从消费项目指令定位 Guides 导航，按任务加载项目基线与工程指南；本仓库入口为 `docs/guides/index.md`，其他项目使用实际等价来源。前馈方法由 `evidence-task-planning` 的 [任务前馈协议](../evidence-task-planning/references/guides.md)维护，独立安装时先定位该 Skill 的实际目录，不假定兄弟路径可用。无真实必要来源时登记局部缺口，不复制当前仓库业务或要求空白目录。
+
+随后读取：
 
 - `.evidence/fm/` 与可选 `.evidence/api/api.yaml`：业务和接口事实；
 - `docs/plans/smart-domain/index.md`：切片、编译 DAG、任务状态与缺口；
@@ -24,7 +26,7 @@ compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 s
 
 ### Plan
 
-1. 读取当前 FM、API、索引和 Git 差异，确认路径及授权范围。
+1. 从项目宪法和 Guides 路由进入，读取当前 FM/API、软件范围、相关架构/质量要求、索引和 Git 差异，确认授权与来源冲突。
 2. 使用 `evidence-task-planning` 的 inventory/compile 命令重算当前投影；源摘要或 slicing 改变时更新索引，不信任旧 compiled。
 3. 运行本 Skill 的只读状态检查：
 
@@ -44,7 +46,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
   --index "$PROJECT_ROOT/docs/plans/smart-domain/index.md"
 ```
 
-从结果中选择一个任务。只加载该任务、直接前置产物和引用的 FM/API/规则/场景，避免把完整计划塞入当前上下文。开始真实实施后才把对应 `taskNotes.status` 改为 `in-progress`。
+从结果中选择一个候选任务。加载其 Guides、直接前置产物和所引用的业务/工程来源，不把完整知识库或任务图塞进上下文。按下面 Guides 检查语义就绪；`next` 只判断结构候选，不代替开工判断。通过且开始真实实施后才把对应 `taskNotes.status` 改为 `in-progress`。
 
 按 `taskNotes.mode` 执行：`implementation` 普通实现与回归；`verify` 只定位和复跑已有行为；`design/setup/manual` 按任务说明执行。环境失败如实记录为阻塞，不当作业务测试结果。
 
@@ -64,7 +66,16 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 
 ### Guides
 
-读取 taskKey、来源、规则、场景、局部设计、依赖用法、文件范围、检查与完成条件。确认所有前置任务为 `done`，且证据仍对应当前来源。
+每次开始、恢复、纠偏或相关来源变化后，重新核对：
+
+1. 当前 taskKey、mode、交付结果、非目标、授权及真实文件范围。
+2. 软件需求/验收、FM/API/规则/场景的可定位来源与审核状态；架构、模块、质量属性与术语是否一致。
+3. 直接前置均为 done，证据仍对应当前源、代码与 CHECK 环境；FM/API 摘要不覆盖工程指南，规范/howto/架构变化需显式评估重验。
+4. 行为与数据拥有者、公开契约、事务入口、必要外部边界及依赖用法。
+5. procedureRefs 指向的真实规范、howto、范例及其适用限制，命令/cwd/依赖可用。
+6. 每个完成条件对应 CHECK、预期、失败不变性与停止/转向规则。
+
+必要项缺失不进入 Action，按权限报告或关联索引 gap；只阻塞受影响任务。结构自洽、文件存在和范例曾通过不是语义就绪或业务批准。前馈不新增状态文件，仍使用原索引/详情职责。
 
 ### Action
 
@@ -80,6 +91,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 
 ## 状态纪律
 
+- 项目宪法 → 项目基线 → 工程指南 → 任务 Guides 按需加载，不保存 guides-ready 私有状态或重复知识副本。
 - `compiled` 是计算投影；只由当前输入重新编译得到。
 - `taskNotes` 是任务状态唯一位置；任务详情不复制状态或依赖图。
 - `observedEvidence` 只记录真实观察；计划生成时保持为空。

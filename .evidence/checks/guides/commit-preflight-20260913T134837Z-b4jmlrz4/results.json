@@ -1,0 +1,86 @@
+{
+  "purpose": "Pre-commit verification for two authorized commits",
+  "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3",
+    "NX_DAEMON": "false",
+    "NX_SKIP_NX_CACHE": "true",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "checks": [
+    {
+      "command": [
+        "./gradlew",
+        "check",
+        "--rerun-tasks",
+        "--no-daemon"
+      ],
+      "startedAt": "2026-09-13T13:48:37.369201+00:00",
+      "log": ".evidence/checks/guides/commit-preflight-20260913T134837Z-b4jmlrz4/java-check.log",
+      "exitCode": 0,
+      "durationSeconds": 29.279,
+      "logSha256": "bcdfbc0b75e95ef8ce49b5271b989ab87418afc5374256658f4329203ab2ccae"
+    },
+    {
+      "command": [
+        "npx",
+        "nx",
+        "test",
+        "@evidence-poc/frontend",
+        "--skip-nx-cache"
+      ],
+      "startedAt": "2026-09-13T13:49:06.651184+00:00",
+      "log": ".evidence/checks/guides/commit-preflight-20260913T134837Z-b4jmlrz4/frontend-test.log",
+      "exitCode": 0,
+      "durationSeconds": 3.756,
+      "logSha256": "3a6a4fbbd1f4fc9e96a4b69d19e80157a937dd370444012bfcbb5000b24a4701"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "guides:verify"
+      ],
+      "startedAt": "2026-09-13T13:49:10.408219+00:00",
+      "log": ".evidence/checks/guides/commit-preflight-20260913T134837Z-b4jmlrz4/guides.log",
+      "exitCode": 0,
+      "durationSeconds": 1.376,
+      "logSha256": "65a4919ab59af4b8ddccc58553a898ba6b700d9198b871a123884d45e7d0c1d2"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".agents/skills/evidence-task-planning/tests",
+        "-v"
+      ],
+      "startedAt": "2026-09-13T13:49:11.785293+00:00",
+      "log": ".evidence/checks/guides/commit-preflight-20260913T134837Z-b4jmlrz4/planning.log",
+      "exitCode": 0,
+      "durationSeconds": 0.901,
+      "logSha256": "2509355cdee30a859076f20c9b434c326fed815123517fd4d6db4cf0bdb2273c"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".agents/skills/evidence-delivery/tests",
+        "-v"
+      ],
+      "startedAt": "2026-09-13T13:49:12.687084+00:00",
+      "log": ".evidence/checks/guides/commit-preflight-20260913T134837Z-b4jmlrz4/delivery.log",
+      "exitCode": 0,
+      "durationSeconds": 0.29,
+      "logSha256": "aeaf1f4a46207d6586a82dee7fd01a027340c15fe6ac9f6e2a2c9c5898c133ab"
+    }
+  ],
+  "knownFullSuiteFailure": ".evidence/checks/guides/refactor-20260913T105800Z-n5ykdgkt/baseline-results.json"
+}

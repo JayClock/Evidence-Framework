@@ -1,0 +1,31 @@
+cwd: /Users/zhongjie/Downloads/Github/Evidence-Framework
+command: npx nx test @evidence-poc/frontend --skip-nx-cache
+
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> nx run @evidence-poc/frontend:test
+
+> vitest
+
+
+ RUN  v4.1.11 /Users/zhongjie/Downloads/Github/Evidence-Framework/apps/frontend
+
+ ✓ |@evidence-poc/frontend| src/app/app.spec.tsx (2 tests) 98ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  21:49:09
+   Duration  849ms (transform 62ms, setup 0ms, import 176ms, tests 98ms, environment 477ms)
+
+
+
+
+ NX   Successfully ran target test for project @evidence-poc/frontend
+
+
+  Run duration:      1.1s
+  Cache:             Skipped (--skip-nx-cache)
+  Critical path:     1.1s (1 task)
+  Recoverable time:  <1ms

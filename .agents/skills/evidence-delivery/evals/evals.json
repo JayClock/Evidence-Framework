@@ -2,6 +2,20 @@
   "skill_name": "evidence-delivery",
   "evals": [
     {
+      "id": 4,
+      "name": "guides-change-invalidates-evidence-with-stable-fm",
+      "prompt": "隔离项目中 FM/API 摘要和 taskKey 未变，verify/next 显示一个结构就绪任务。但项目事务规范已修改、CHECK 使用的数据库环境也变了，前置证据来自修改之前。请恢复这个任务，不要因摘要相同直接开工。",
+      "expected_output": "从项目导航读取当前规范、任务 procedureRefs 与前置证据，识别业务摘要不覆盖工程来源变化。评估并要求相应重验；必要依据不足时不进入 Action，按授权关联局部 gap 而不新增前馈状态，不删除旧证据或提升业务批准。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "read-only-guides-conflict",
+      "prompt": "只读检查前馈：当前任务引用了不存在的数据库 howto，项目架构与任务的远程调用设计冲突。不要修改任何文件，告诉我能否开始。",
+      "expected_output": "报告具体缺失引用、冲突、受影响行动和所需拥有者决定；结构候选不等于语义就绪，不开始实施，不写 blocked/gaps 或模型，不根据读取顺序裁决，不自动执行后续任务。",
+      "files": []
+    },
+    {
       "id": 1,
       "name": "resume-first-runnable-task",
       "prompt": "仓库已有完整的 smart-domain index.md 和三个任务文件。第一个任务 done 且有真实证据，第二个 planned 并依赖第一个，第三个也 planned 但依赖第二个。请恢复进度并继续当前可执行任务，不自动进入后续任务。",
