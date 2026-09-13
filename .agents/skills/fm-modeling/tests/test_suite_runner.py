@@ -22,6 +22,8 @@ class SuiteRunnerTests(unittest.TestCase):
                 "evidence-visualization/tests/portability",
                 "fm-api-design/tests",
                 "fm-modeling/tests",
+                "smart-domain-delivery/tests",
+                "smart-domain-task-planning/tests",
             },
             {path.relative_to(runner.SKILLS).as_posix() for path in suites},
         )

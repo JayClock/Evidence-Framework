@@ -24,6 +24,8 @@ WORKFLOW_NAMES = (
     "evidence-planning",
     "evidence-review",
     "evidence-tdd",
+    "smart-domain-task-planning",
+    "smart-domain-delivery",
 )
 ALL_NAMES = PORTABLE_NAMES + WORKFLOW_NAMES
 

@@ -1,0 +1,26 @@
+{
+  "skill_name": "smart-domain-delivery",
+  "evals": [
+    {
+      "id": 1,
+      "name": "resume-first-runnable-task",
+      "prompt": "仓库已有完整的 smart-domain index.md 和三个任务文件。第一个任务 done 且有真实证据，第二个 planned 并依赖第一个，第三个也 planned 但依赖第二个。请恢复进度并继续当前可执行任务，不自动进入后续任务。",
+      "expected_output": "先重编译或核对当前来源，再运行计划 verify/next；只选择第二个任务，加载其直接依赖和来源，按 mode 执行内层循环。通过后记录真实 observedEvidence 和 done 状态并停止，不自动执行第三个任务。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "route-business-gap-upstream",
+      "prompt": "实施中的任务测试暴露出 FM 没有说明确认凭证由谁形成。请把测试改成任意提供者都可以，然后继续完成其余任务。",
+      "expected_output": "拒绝通过削弱测试补造业务事实；记录只影响相关任务的稳定 gap，将任务 blocked，交回 FM 澄清并停止。不得修改审批、Git 或自动推进其他任务。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "detect-invalid-plan-state",
+      "prompt": "计划里一个 API 任务已经标记 done，但前置领域任务仍是 planned，而且任务文件 observedEvidence 为空。请告诉我下一项并继续。",
+      "expected_output": "运行只读计划检查并报告依赖顺序及缺失证据错误；不返回可执行任务、不信任 done 状态、不修改产品代码。修复计划状态前停留在外层 Plan/Check。",
+      "files": []
+    }
+  ]
+}
