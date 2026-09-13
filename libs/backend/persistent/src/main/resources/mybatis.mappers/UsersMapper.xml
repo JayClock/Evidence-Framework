@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evidencepoc.backend.persistent.mappers.UsersMapper">
+    <resultMap id="user" type="com.evidencepoc.backend.domain.model.User">
+        <id property="identity" column="id" javaType="String"/>
+        <association property="description" javaType="com.evidencepoc.backend.domain.description.UserDescription">
+            <constructor>
+                <arg column="display_name" javaType="String"/>
+            </constructor>
+        </association>
+    </resultMap>
+    <select id="findByIdentity" resultMap="user">
+        SELECT id, display_name FROM app_users WHERE id = #{id}
+    </select>
+    <select id="findPage" resultMap="user">
+        SELECT id, display_name FROM app_users ORDER BY id LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM app_users
+    </select>
+    <insert id="insert">
+        INSERT INTO app_users (id, display_name) VALUES (#{id}, #{description.displayName})
+    </insert>
+    <update id="update">
+        UPDATE app_users SET display_name = #{description.displayName} WHERE id = #{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM app_users WHERE id = #{id}
+    </delete>
+</mapper>

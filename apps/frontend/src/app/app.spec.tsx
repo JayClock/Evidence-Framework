@@ -14,26 +14,19 @@ function renderApp() {
 }
 
 describe('App', () => {
-  beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => new Promise<Response>(() => undefined)),
-    );
-  });
-
-  afterEach(() => vi.unstubAllGlobals());
-
   it('should render successfully', () => {
     const { baseElement } = renderApp();
 
     expect(baseElement).toBeTruthy();
   });
 
-  it('should describe the monorepo stack', () => {
+  it('should expose the user API entry', () => {
     const { getByRole } = renderApp();
 
-    expect(
-      getByRole('heading', { name: 'React + Java Monorepo' }),
-    ).toBeTruthy();
+    expect(getByRole('heading', { name: '用户资料' })).toBeTruthy();
+    expect(getByRole('link', { name: '查看用户 API' })).toHaveProperty(
+      'href',
+      new URL('/api/users', window.location.href).href,
+    );
   });
 });

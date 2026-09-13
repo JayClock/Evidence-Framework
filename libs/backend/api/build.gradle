@@ -1,0 +1,15 @@
+plugins { id 'java-library' }
+
+dependencies {
+    implementation project(':backend-domain')
+    implementation 'io.github.jayclock:smart-domain-api-hateoas'
+    implementation 'org.springframework.hateoas:spring-hateoas'
+    implementation 'org.springframework:spring-context'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api'
+    implementation 'org.hibernate.validator:hibernate-validator'
+
+    testImplementation 'io.github.jayclock:smart-domain-api-spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.rest-assured:rest-assured'
+}

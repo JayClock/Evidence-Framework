@@ -1,0 +1,11 @@
+plugins { id 'java-library' }
+
+dependencies {
+    implementation project(':backend-domain')
+    implementation 'io.github.jayclock:smart-domain-mybatis'
+    implementation 'io.github.jayclock:smart-domain-mybatis-spring-boot-starter'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+    implementation 'org.flywaydb:flyway-core'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'com.h2database:h2'
+}

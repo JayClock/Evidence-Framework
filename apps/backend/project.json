@@ -4,12 +4,30 @@
   "projectType": "application",
   "sourceRoot": "apps/backend/src",
   "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "parallelism": false,
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/build.gradle",
+        "{workspaceRoot}/settings.gradle",
+        "{workspaceRoot}/gradle.properties",
+        "{workspaceRoot}/gradle/**/*",
+        "{workspaceRoot}/gradlew"
+      ],
+      "outputs": ["{projectRoot}/build"],
+      "options": {
+        "command": "./gradlew :backend:build --console=plain"
+      }
+    },
     "serve": {
-      "executor": "@nx/gradle:gradle",
+      "executor": "nx:run-commands",
       "continuous": true,
       "options": {
-        "taskName": ":bootRun",
-        "continuous": true
+        "command": "./gradlew :backend:bootRun --console=plain"
       }
     }
   },

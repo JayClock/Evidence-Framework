@@ -11,7 +11,8 @@
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
     ],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["es2022", "dom"]
   },
   "include": [
     "vite.config.ts",
