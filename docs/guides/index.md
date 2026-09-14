@@ -30,19 +30,19 @@
 
 先读本页和宪法，再按当前任务合并下列必要条目；同一来源只加载一次，长文件只读相关章节与实际源码符号。
 
-| 工作                   | 必要前馈                                                                                                                                                                                           |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 业务澄清 / FM          | [建模指南](../evidence-modeling.md)、[业务概览](../../.evidence/fm/00-overview.md)、相关源 YAML、对应 Skill                                                                                        |
-| 软件需求               | [范围](../requirements/scope.md)、[故事](../requirements/stories.md)、[质量属性](../requirements/quality-attributes.md)、[requirements Skill](../../.agents/skills/evidence-requirements/SKILL.md) |
-| 任务规划               | 范围与相关 FM/API、架构三篇、[planning Skill](../../.agents/skills/evidence-task-planning/SKILL.md)、[测试工序](../engineering/procedures.md)、[测试指南](../engineering/testing.md)               |
-| 恢复 / 执行任务        | [delivery Skill](../../.agents/skills/evidence-delivery/SKILL.md)、有效索引、当前任务、直接前置产物与本次来源                                                                                      |
-| 后端领域               | [模块边界](../architecture/modules.md)、[领域映射](../architecture/domain-mapping.md)、[后端规范](../engineering/backend.md)、相关规则/场景                                                        |
-| 持久化                 | 模块的数据归属与事务设计、后端规范、[数据库 howto](../howtos/database.md)、真实 SQL/XML 范例                                                                                                       |
-| API                    | 对应 api.yaml 能力、[API 规范](../engineering/api.md)、[安全规范](../engineering/security.md)、独立 HTTP 测试边界                                                                                  |
-| 前端                   | 对应故事/消费者流程、[前端规范](../engineering/frontend.md)、[浏览器调试](../howtos/browser-debugging.md)                                                                                          |
-| 环境准备               | [本地开发](../howtos/local-development.md)、相关 howto、实际构建/运行配置                                                                                                                          |
-| 鉴权 / 集成 / 质量属性 | [质量属性及缺口](../requirements/quality-attributes.md)、[安全规范](../engineering/security.md)、受影响模块和已有契约                                                                              |
-| 前馈 / Harness 维护    | 本页、受影响 Skill/模板、[测试工序](../engineering/procedures.md)、[范例索引](../engineering/examples.md)、[测试指南](../engineering/testing.md)                                                   |
+| 工作                   | 必要前馈                                                                                                                                                                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 业务澄清 / FM          | [建模指南](../evidence-modeling.md)、[业务概览](../../.evidence/fm/00-overview.md)、相关源 YAML、对应 Skill                                                                                                                             |
+| 软件需求               | [范围](../requirements/scope.md)、[故事](../requirements/stories.md)、[质量属性](../requirements/quality-attributes.md)、[requirements Skill](../../.agents/skills/evidence-requirements/SKILL.md)                                      |
+| 任务规划               | 范围与相关 FM/API、架构三篇、[planning Skill](../../.agents/skills/evidence-task-planning/SKILL.md)、[测试工序](../engineering/procedures.md)、[测试指南](../engineering/testing.md)、[质量属性](../requirements/quality-attributes.md) |
+| 恢复 / 执行任务        | [delivery Skill](../../.agents/skills/evidence-delivery/SKILL.md)、有效索引、当前任务、直接前置产物与本次来源                                                                                                                           |
+| 后端领域               | [模块边界](../architecture/modules.md)、[领域映射](../architecture/domain-mapping.md)、[后端规范](../engineering/backend.md)、相关规则/场景                                                                                             |
+| 持久化                 | 模块的数据归属与事务设计、后端规范、[数据库 howto](../howtos/database.md)、真实 SQL/XML 范例                                                                                                                                            |
+| API                    | 对应 api.yaml 能力、[API 规范](../engineering/api.md)、[安全规范](../engineering/security.md)、独立 HTTP 测试边界                                                                                                                       |
+| 前端                   | 对应故事/消费者流程、[前端规范](../engineering/frontend.md)、[浏览器调试](../howtos/browser-debugging.md)                                                                                                                               |
+| 环境准备               | [本地开发](../howtos/local-development.md)、相关 howto、实际构建/运行配置                                                                                                                                                               |
+| 鉴权 / 集成 / 质量属性 | [质量属性及缺口](../requirements/quality-attributes.md)、[安全规范](../engineering/security.md)、受影响模块和已有契约                                                                                                                   |
+| 前馈 / Harness 维护    | 本页、受影响 Skill/模板、[测试工序](../engineering/procedures.md)、[范例索引](../engineering/examples.md)、[测试指南](../engineering/testing.md)                                                                                        |
 
 鉴权、审计、多语言、集成的专项方案仅在有明确需求及设计授权时建立，并加入本路由。没有方案不意味可以使用 JWT、RBAC、某个数据库或远程协议作为默认答案。
 
