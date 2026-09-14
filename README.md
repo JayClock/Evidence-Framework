@@ -101,3 +101,6 @@ npm run build
 
 - [需求模糊：Agent 不知道“好”长什么样](<docs/adoption/需求模糊：Agent 不知道“好”长什么样.md>)
 - [隐式约定：规则只存在于人的脑子里](docs/adoption/隐式约定：规则只存在于人的脑子里.md)
+- [信息散落：知识来源不唯一且更新不及时](docs/adoption/信息散落：知识来源不唯一且更新不及时.md)
+- [虚假胜利：Agent 以为自己做完了，其实没有](<docs/adoption/虚假胜利：Agent 以为自己做完了，其实没有.md>)
+- [指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了](<docs/adoption/指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了.md>)
