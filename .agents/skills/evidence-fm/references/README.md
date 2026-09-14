@@ -19,6 +19,6 @@
 
 访谈可只读本索引中的专业参考，不启动模型生成。问题选择、回答等待和控制状态由访谈任务管理，本包输入复核只输出具体缺口。
 
-每项规则在本包按职责维护：结构判断看 business-analysis，业务来源看 provenance，时间与 YAML 结构看 format，运行实例与 CEL 依赖看 traceability-and-simulation，执行结果记录看 validation。类型与机器结果不替代业务来源或具名审核。Schema v3 的实际格式限制以 format 为准。
+每项规则在本包按职责维护：结构判断看 business-analysis，业务来源看 provenance，时间与 YAML 结构看 format，运行实例与 CEL 依赖看 traceability-and-simulation，执行结果记录看 validation。类型与机器结果不替代业务来源或业务确认依据。Schema v3 的实际格式限制以 format 为准。
 
 只沿当前任务分支加载，不顺序读取整张索引。tests/、evals/ 是 Skill 开发验证材料，不是业务输入，也不从业务入口链接加载；它们的操作说明留在各自目录。

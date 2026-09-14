@@ -25,7 +25,7 @@
 
 ### 真实证据：命令、环境与哈希
 
-[测试指南](../engineering/testing.md)要求记录命令、cwd、退出码、真实输出或日志路径、断言覆盖与未执行项；Nx/Gradle 的缓存命中、UP-TO-DATE 与实际执行分别说明；环境失败与实现失败区分；历史检查只在输入、环境和依赖仍有效时作为有限前置证据。`.evidence/checks/*/results.json` 保存每命令的 `startedAt`、`exitCode`、时长、`logSha256` 与运行环境；[.evidence/checks/v1-execution.json](../../.evidence/checks/v1-execution.json)保存 Python/依赖版本与 FM/API `toolDigests`。
+[测试指南](../engineering/testing.md)要求记录命令、cwd、退出码、真实输出或日志路径、断言覆盖与未执行项；Nx/Gradle 的缓存命中、UP-TO-DATE 与实际执行分别说明；环境失败与实现失败区分；历史检查只在输入、环境和依赖仍有效时作为有限前置证据。获授权留存的运行目录只保存每命令的 `startedAt`、`exitCode`、时长、`logSha256` 与运行环境，以及 Python/依赖版本与 FM/API 输入摘要；不复制完整输出。
 
 ### 失败保留与反作弊
 

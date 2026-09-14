@@ -4,9 +4,6 @@ id: content-platform-panorama
 name: 内容平台多合同履约模型
 version: 3.0.0
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.content-subscription
   - context.content-production

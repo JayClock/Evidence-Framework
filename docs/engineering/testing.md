@@ -43,7 +43,7 @@
 - Nx/Gradle 的缓存命中、UP-TO-DATE、实际执行分别说明。需要复验时使用 `npx nx ... --skip-nx-cache` 或 `./gradlew ... --rerun-tasks`，不能把缓存描述为新运行。
 - 环境失败与实现失败区分；历史检查只有输入、环境和依赖仍有效时才能作为有限的前置证据。
 
-任务结果写入详情 `observedEvidence`，状态只更新索引 `taskNotes`；较长输出留在获授权的 `.evidence/checks/` 运行目录。Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造业务任务 done 或审核通过。
+任务结果写入详情 `observedEvidence`，状态只更新索引 `taskNotes`；获授权的 `.evidence/checks/` 运行目录只保存紧凑运行清单（命令、退出码、环境、输入摘要、日志 `sha256` 与指针），不复制完整输出。Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造业务任务 done 或审核通过。
 
 ## 反馈转向
 

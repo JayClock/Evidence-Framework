@@ -4,8 +4,5 @@ id: platform-subscription
 name: 内容订阅履约模型
 version: 3.0.0
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.content-subscription

@@ -168,7 +168,6 @@ def facilitator_sheet(scenario: dict[str, Any], report: dict[str, Any]) -> str:
         f"- Fixed as-of time: `{scenario.get('asOf')}`",
         f"- Machine validation: `{'passed' if report.get('machineValidated') else 'failed'}`",
         f"- Scenario simulation: `{'passed' if report.get('simulationPassed') else 'failed'}`",
-        f"- Stakeholder review: `{(scenario.get('stakeholderReview') or {}).get('status', 'pending')}`",
         "",
         "## Evidence sequence",
         "",
@@ -313,7 +312,6 @@ def main() -> int:
         "asOf": result.get("asOf"),
         "machineValidated": bool(result.get("machineValidated")),
         "simulationPassed": bool(result.get("simulationPassed")),
-        "stakeholderReview": scenario.get("stakeholderReview") or {"status": "pending"},
         "files": sorted(
             [
                 *(

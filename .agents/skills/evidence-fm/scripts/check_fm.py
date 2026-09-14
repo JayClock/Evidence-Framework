@@ -55,14 +55,11 @@ def check_model(root: Path) -> dict[str, Any]:
     input_changed = digest != model_digest(root)
     if input_changed:
         errors.append("Model inputs changed during validation")
-    manifest = model.manifest or {}
     return {
         "valid": not errors,
         "modelDigest": digest,
         "inputChanged": input_changed,
         "modelValidated": not model_errors,
-        "modelStatus": manifest.get("modelStatus"),
-        "stakeholderReview": manifest.get("stakeholderReview"),
         "scenarioCount": len(suite.scenarios),
         "executedScenarioCount": executed,
         "simulationPassed": simulation_passed,

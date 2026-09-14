@@ -4,7 +4,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["request.access", "role.publisher"],
+        "fmRefs": [
+          "request.access",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -33,10 +36,16 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.access", "role.reader"],
+        "fmRefs": [
+          "request.access",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-access-reader", "binding.parent-access"],
+      "bindingRefs": [
+        "binding.caller-access-reader",
+        "binding.parent-access"
+      ],
       "businessCapability": "读取付费内容访问请求",
       "effect": {
         "kind": "read",
@@ -59,7 +68,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["confirmation.access", "role.publisher"],
+        "fmRefs": [
+          "confirmation.access",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -87,7 +99,10 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["confirmation.access", "role.reader"],
+        "fmRefs": [
+          "confirmation.access",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -115,10 +130,15 @@
     {
       "actorRoleRef": "role.account-provider",
       "basis": {
-        "fmRefs": ["contract.prepaid", "role.account-provider"],
+        "fmRefs": [
+          "contract.prepaid",
+          "role.account-provider"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-account-account-provider"],
+      "bindingRefs": [
+        "binding.caller-account-account-provider"
+      ],
       "businessCapability": "读取预付费账户协议",
       "effect": {
         "kind": "read",
@@ -138,10 +158,15 @@
     {
       "actorRoleRef": "role.account-user",
       "basis": {
-        "fmRefs": ["contract.prepaid", "role.account-user"],
+        "fmRefs": [
+          "contract.prepaid",
+          "role.account-user"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-account-account-user"],
+      "bindingRefs": [
+        "binding.caller-account-account-user"
+      ],
       "businessCapability": "读取预付费账户协议",
       "effect": {
         "kind": "read",
@@ -161,10 +186,16 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["thing.chapter", "role.reader", "rule.content-readable"],
+        "fmRefs": [
+          "thing.chapter",
+          "role.reader",
+          "rule.content-readable"
+        ],
         "reasoning": "服务端用路径chapterId定位章节，绑定同一读者、章节及版本的访问请求和实际提供凭证，并在查询时刻检查退款状态；不得借用其他章节的有效请求。"
       },
-      "bindingRefs": ["binding.caller-chapter-reader"],
+      "bindingRefs": [
+        "binding.caller-chapter-reader"
+      ],
       "businessCapability": "读取章节内容",
       "effect": {
         "kind": "read",
@@ -190,10 +221,15 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["thing.column", "role.publisher"],
+        "fmRefs": [
+          "thing.column",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-column-publisher"],
+      "bindingRefs": [
+        "binding.caller-column-publisher"
+      ],
       "businessCapability": "读取专栏",
       "effect": {
         "kind": "read",
@@ -213,10 +249,15 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["thing.column", "role.reader"],
+        "fmRefs": [
+          "thing.column",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-column-reader"],
+      "bindingRefs": [
+        "binding.caller-column-reader"
+      ],
       "businessCapability": "读取专栏",
       "effect": {
         "kind": "read",
@@ -236,7 +277,10 @@
     {
       "actorRoleRef": "role.account-provider",
       "basis": {
-        "fmRefs": ["request.prepaid", "role.account-provider"],
+        "fmRefs": [
+          "request.prepaid",
+          "role.account-provider"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -262,7 +306,10 @@
     {
       "actorRoleRef": "role.account-user",
       "basis": {
-        "fmRefs": ["request.prepaid", "role.account-user"],
+        "fmRefs": [
+          "request.prepaid",
+          "role.account-user"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -288,7 +335,10 @@
     {
       "actorRoleRef": "role.account-provider",
       "basis": {
-        "fmRefs": ["confirmation.prepaid", "role.account-provider"],
+        "fmRefs": [
+          "confirmation.prepaid",
+          "role.account-provider"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -304,14 +354,19 @@
       "method": "GET",
       "resourceRef": "resource.debit-result",
       "roleLabel": "专栏平台",
-      "scenarioRefs": ["scenario.api-prepaid-subscription"],
+      "scenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
       "uri": "/prepaid-accounts/{accountId}/debits/{debitId}/result",
       "view": "singleton"
     },
     {
       "actorRoleRef": "role.account-user",
       "basis": {
-        "fmRefs": ["confirmation.prepaid", "role.account-user"],
+        "fmRefs": [
+          "confirmation.prepaid",
+          "role.account-user"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -327,17 +382,24 @@
       "method": "GET",
       "resourceRef": "resource.debit-result",
       "roleLabel": "账户使用方",
-      "scenarioRefs": ["scenario.api-prepaid-subscription"],
+      "scenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
       "uri": "/prepaid-accounts/{accountId}/debits/{debitId}/result",
       "view": "singleton"
     },
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["evidence.discontinuation", "role.publisher"],
+        "fmRefs": [
+          "evidence.discontinuation",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-discontinuation-publisher"],
+      "bindingRefs": [
+        "binding.caller-discontinuation-publisher"
+      ],
       "businessCapability": "读取断更下架记录",
       "effect": {
         "kind": "read",
@@ -362,10 +424,15 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["evidence.discontinuation", "role.reader"],
+        "fmRefs": [
+          "evidence.discontinuation",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-discontinuation-reader"],
+      "bindingRefs": [
+        "binding.caller-discontinuation-reader"
+      ],
       "businessCapability": "读取断更下架记录",
       "effect": {
         "kind": "read",
@@ -390,7 +457,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["request.payment", "role.publisher"],
+        "fmRefs": [
+          "request.payment",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -432,7 +502,10 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.payment", "role.reader"],
+        "fmRefs": [
+          "request.payment",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -474,7 +547,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["request.refund", "role.publisher"],
+        "fmRefs": [
+          "request.refund",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -505,10 +581,16 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.refund", "role.reader"],
+        "fmRefs": [
+          "request.refund",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-refund-reader", "binding.parent-refund"],
+      "bindingRefs": [
+        "binding.caller-refund-reader",
+        "binding.parent-refund"
+      ],
       "businessCapability": "读取断更退款请求",
       "effect": {
         "kind": "read",
@@ -533,7 +615,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["confirmation.refund", "role.publisher"],
+        "fmRefs": [
+          "confirmation.refund",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -563,7 +648,10 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["confirmation.refund", "role.reader"],
+        "fmRefs": [
+          "confirmation.refund",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -593,9 +681,14 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["evidence.relaunch", "role.publisher"],
+        "fmRefs": [
+          "evidence.relaunch",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。",
-        "sourceRefs": ["source.restore-per-relaunch"]
+        "sourceRefs": [
+          "source.restore-per-relaunch"
+        ]
       },
       "bindingRefs": [
         "binding.caller-relaunch-publisher",
@@ -621,9 +714,14 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["evidence.relaunch", "role.reader"],
+        "fmRefs": [
+          "evidence.relaunch",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。",
-        "sourceRefs": ["source.restore-per-relaunch"]
+        "sourceRefs": [
+          "source.restore-per-relaunch"
+        ]
       },
       "bindingRefs": [
         "binding.caller-relaunch-reader",
@@ -649,7 +747,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["request.restore", "role.publisher"],
+        "fmRefs": [
+          "request.restore",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -676,7 +777,10 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.restore", "role.reader"],
+        "fmRefs": [
+          "request.restore",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -703,7 +807,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["confirmation.restore", "role.publisher"],
+        "fmRefs": [
+          "confirmation.restore",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -729,7 +836,10 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["confirmation.restore", "role.reader"],
+        "fmRefs": [
+          "confirmation.restore",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
       "bindingRefs": [
@@ -755,10 +865,15 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["contract.subscription", "role.publisher"],
+        "fmRefs": [
+          "contract.subscription",
+          "role.publisher"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-subscription-publisher"],
+      "bindingRefs": [
+        "binding.caller-subscription-publisher"
+      ],
       "businessCapability": "读取专栏订阅合同",
       "effect": {
         "kind": "read",
@@ -794,10 +909,15 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["contract.subscription", "role.reader"],
+        "fmRefs": [
+          "contract.subscription",
+          "role.reader"
+        ],
         "reasoning": "读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。"
       },
-      "bindingRefs": ["binding.caller-subscription-reader"],
+      "bindingRefs": [
+        "binding.caller-subscription-reader"
+      ],
       "businessCapability": "读取专栏订阅合同",
       "effect": {
         "kind": "read",
@@ -833,10 +953,17 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.access", "role.reader", "rule.access-eligible"],
+        "fmRefs": [
+          "request.access",
+          "role.reader",
+          "rule.access-eligible"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
-      "bindingRefs": ["binding.caller-access-reader", "binding.parent-access"],
+      "bindingRefs": [
+        "binding.caller-access-reader",
+        "binding.parent-access"
+      ],
       "businessCapability": "申请访问付费章节",
       "effect": {
         "kind": "append_evidence",
@@ -903,10 +1030,15 @@
     {
       "actorRoleRef": "role.account-user",
       "basis": {
-        "fmRefs": ["contract.prepaid", "role.account-user"],
+        "fmRefs": [
+          "contract.prepaid",
+          "role.account-user"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
-      "bindingRefs": ["binding.caller-account-account-user"],
+      "bindingRefs": [
+        "binding.caller-account-account-user"
+      ],
       "businessCapability": "登记预付费账户协议",
       "effect": {
         "kind": "append_evidence",
@@ -926,7 +1058,10 @@
     {
       "actorRoleRef": "role.account-user",
       "basis": {
-        "fmRefs": ["request.prepaid", "role.account-user"],
+        "fmRefs": [
+          "request.prepaid",
+          "role.account-user"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
       "bindingRefs": [
@@ -983,17 +1118,24 @@
           "ruleRef": "rule.prepaid-completed"
         }
       ],
-      "scenarioRefs": ["scenario.api-prepaid-subscription"],
+      "scenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
       "uri": "/prepaid-accounts/{accountId}/debits/{debitId}/result",
       "view": "singleton"
     },
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["evidence.discontinuation", "role.publisher"],
+        "fmRefs": [
+          "evidence.discontinuation",
+          "role.publisher"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
-      "bindingRefs": ["binding.caller-discontinuation-publisher"],
+      "bindingRefs": [
+        "binding.caller-discontinuation-publisher"
+      ],
       "businessCapability": "记录断更下架事实",
       "effect": {
         "kind": "append_evidence",
@@ -1018,7 +1160,10 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["request.payment", "role.publisher"],
+        "fmRefs": [
+          "request.payment",
+          "role.publisher"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
       "bindingRefs": [
@@ -1060,10 +1205,17 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.refund", "role.reader", "rule.refund-eligible"],
+        "fmRefs": [
+          "request.refund",
+          "role.reader",
+          "rule.refund-eligible"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
-      "bindingRefs": ["binding.caller-refund-reader", "binding.parent-refund"],
+      "bindingRefs": [
+        "binding.caller-refund-reader",
+        "binding.parent-refund"
+      ],
       "businessCapability": "申请断更退款",
       "effect": {
         "kind": "append_evidence",
@@ -1134,9 +1286,14 @@
     {
       "actorRoleRef": "role.publisher",
       "basis": {
-        "fmRefs": ["evidence.relaunch", "role.publisher"],
+        "fmRefs": [
+          "evidence.relaunch",
+          "role.publisher"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。",
-        "sourceRefs": ["source.restore-per-relaunch"]
+        "sourceRefs": [
+          "source.restore-per-relaunch"
+        ]
       },
       "bindingRefs": [
         "binding.caller-relaunch-publisher",
@@ -1162,7 +1319,11 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["request.restore", "role.reader", "rule.restore-eligible"],
+        "fmRefs": [
+          "request.restore",
+          "role.reader",
+          "rule.restore-eligible"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
       "bindingRefs": [
@@ -1231,10 +1392,15 @@
     {
       "actorRoleRef": "role.reader",
       "basis": {
-        "fmRefs": ["contract.subscription", "role.reader"],
+        "fmRefs": [
+          "contract.subscription",
+          "role.reader"
+        ],
         "reasoning": "追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。"
       },
-      "bindingRefs": ["binding.caller-subscription-reader"],
+      "bindingRefs": [
+        "binding.caller-subscription-reader"
+      ],
       "businessCapability": "登记专栏订阅合同",
       "effect": {
         "kind": "append_evidence",
@@ -1795,14 +1961,10 @@
     "errors": [],
     "executedScenarioCount": 18,
     "inputChanged": false,
-    "modelDigest": "sha256:699bf10c4f71d031fb543dbbdc433a875ec2bb7ae59f20397df622608b76fcc9",
-    "modelStatus": "draft",
+    "modelDigest": "sha256:dbe7af267850e96b7fdf1f8d5733cd3e5a3a728c6cc0fa0e2aa264cbe6f25215",
     "modelValidated": true,
     "scenarioCount": 18,
     "simulationPassed": true,
-    "stakeholderReview": {
-      "status": "pending"
-    },
     "timelineSummary": {
       "evidenceTypeCount": 16,
       "instanceCount": 27,
@@ -1812,12 +1974,6 @@
       "unresolvedOrderCount": 0
     },
     "valid": true
-  },
-  "fmReviewState": {
-    "modelStatus": "draft",
-    "stakeholderReview": {
-      "status": "pending"
-    }
   },
   "http": {
     "complete": true,
@@ -2652,7 +2808,9 @@
       },
       {
         "actorRoleRef": "role.account-provider",
-        "bindingRefs": ["binding.caller-account-account-provider"],
+        "bindingRefs": [
+          "binding.caller-account-account-provider"
+        ],
         "capabilityRef": "capability.read-account-account-provider",
         "concurrency": {
           "mode": "none",
@@ -2693,7 +2851,9 @@
       },
       {
         "actorRoleRef": "role.account-user",
-        "bindingRefs": ["binding.caller-account-account-user"],
+        "bindingRefs": [
+          "binding.caller-account-account-user"
+        ],
         "capabilityRef": "capability.read-account-account-user",
         "concurrency": {
           "mode": "none",
@@ -2734,7 +2894,9 @@
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-chapter-reader"],
+        "bindingRefs": [
+          "binding.caller-chapter-reader"
+        ],
         "capabilityRef": "capability.read-chapter-reader",
         "concurrency": {
           "mode": "none",
@@ -2780,7 +2942,9 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-column-publisher"],
+        "bindingRefs": [
+          "binding.caller-column-publisher"
+        ],
         "capabilityRef": "capability.read-column-publisher",
         "concurrency": {
           "mode": "none",
@@ -2821,7 +2985,9 @@
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-column-reader"],
+        "bindingRefs": [
+          "binding.caller-column-reader"
+        ],
         "capabilityRef": "capability.read-column-reader",
         "concurrency": {
           "mode": "none",
@@ -3038,7 +3204,9 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-discontinuation-publisher"],
+        "bindingRefs": [
+          "binding.caller-discontinuation-publisher"
+        ],
         "capabilityRef": "capability.read-discontinuation-publisher",
         "concurrency": {
           "mode": "none",
@@ -3079,7 +3247,9 @@
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-discontinuation-reader"],
+        "bindingRefs": [
+          "binding.caller-discontinuation-reader"
+        ],
         "capabilityRef": "capability.read-discontinuation-reader",
         "concurrency": {
           "mode": "none",
@@ -3648,7 +3818,9 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-subscription-publisher"],
+        "bindingRefs": [
+          "binding.caller-subscription-publisher"
+        ],
         "capabilityRef": "capability.read-subscription-publisher",
         "concurrency": {
           "mode": "none",
@@ -3689,7 +3861,9 @@
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-subscription-reader"],
+        "bindingRefs": [
+          "binding.caller-subscription-reader"
+        ],
         "capabilityRef": "capability.read-subscription-reader",
         "concurrency": {
           "mode": "none",
@@ -3752,7 +3926,10 @@
             "chapter_id": "CH-01",
             "column_id": "COL-BM",
             "edition_id": "ED-1",
-            "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+            "evidenceRefs": [
+              "instance.subscription",
+              "instance.mobile-result"
+            ],
             "reader_id": "READER-001",
             "request_id": "ACCESS-MOBILE",
             "started_at": "2026-10-01T09:06:00Z",
@@ -3899,7 +4076,9 @@
             "confirmed_at": "2026-10-01T09:06:02Z",
             "delivered": true,
             "edition_id": "ED-1",
-            "evidenceRefs": ["instance.access-mobile"],
+            "evidenceRefs": [
+              "instance.access-mobile"
+            ],
             "reader_id": "READER-001",
             "request_id": "ACCESS-MOBILE",
             "subscription_id": "SUB-20261001-001"
@@ -4030,7 +4209,9 @@
       },
       {
         "actorRoleRef": "role.account-user",
-        "bindingRefs": ["binding.caller-account-account-user"],
+        "bindingRefs": [
+          "binding.caller-account-account-user"
+        ],
         "capabilityRef": "capability.register-account-account-user",
         "concurrency": {
           "mode": "none",
@@ -4136,7 +4317,10 @@
             "amount_minor_units": 9900,
             "column_id": "COL-BM",
             "currency": "CNY",
-            "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+            "evidenceRefs": [
+              "instance.prepaid-agreement",
+              "instance.payment"
+            ],
             "expired_at": "2026-10-01T09:15:00Z",
             "payment_request_id": "PAY-001",
             "reader_id": "READER-001",
@@ -4307,7 +4491,10 @@
             "column_id": "COL-BM",
             "confirmed_at": "2026-10-01T09:05:00Z",
             "currency": "CNY",
-            "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+            "evidenceRefs": [
+              "instance.prepaid-request",
+              "instance.payment"
+            ],
             "payment_id": "PREPAID-TX-001",
             "payment_request_id": "PAY-001",
             "reader_id": "READER-001",
@@ -4463,7 +4650,9 @@
       },
       {
         "actorRoleRef": "role.publisher",
-        "bindingRefs": ["binding.caller-discontinuation-publisher"],
+        "bindingRefs": [
+          "binding.caller-discontinuation-publisher"
+        ],
         "capabilityRef": "capability.register-discontinuation-publisher",
         "concurrency": {
           "mode": "none",
@@ -4482,7 +4671,9 @@
             "column_id": "COL-BM",
             "created_at": "2026-10-16T10:00:00Z",
             "delisted": true,
-            "evidenceRefs": ["instance.subscription"],
+            "evidenceRefs": [
+              "instance.subscription"
+            ],
             "missed_due_at": "2026-10-08T10:00:00Z",
             "missing_content": true,
             "reader_id": "READER-001",
@@ -4632,7 +4823,9 @@
           "example": {
             "column_id": "COL-BM",
             "currency": "CNY",
-            "evidenceRefs": ["instance.subscription"],
+            "evidenceRefs": [
+              "instance.subscription"
+            ],
             "reader_id": "READER-001",
             "request_id": "PAY-001",
             "subscription_id": "SUB-20261001-001"
@@ -4892,7 +5085,9 @@
             "column_id": "COL-BM",
             "confirmed_at": "2026-10-18T10:00:00Z",
             "currency": "CNY",
-            "evidenceRefs": ["instance.refund"],
+            "evidenceRefs": [
+              "instance.refund"
+            ],
             "reader_id": "READER-001",
             "receipt_id": "REFUND-RECEIPT-001",
             "request_id": "REFUND-001",
@@ -5056,7 +5251,9 @@
             "column_id": "COL-BM",
             "created_at": "2026-11-01T12:00:00Z",
             "edition_id": "ED-2",
-            "evidenceRefs": ["instance.subscription"],
+            "evidenceRefs": [
+              "instance.subscription"
+            ],
             "listed": true,
             "reader_id": "READER-001",
             "relaunched_at": "2026-11-01T11:59:00Z",
@@ -5337,7 +5534,9 @@
             "column_id": "COL-BM",
             "confirmed_at": "2026-11-01T12:02:00Z",
             "edition_id": "ED-2",
-            "evidenceRefs": ["instance.restore"],
+            "evidenceRefs": [
+              "instance.restore"
+            ],
             "reader_id": "READER-001",
             "request_id": "RESTORE-001",
             "restored": true,
@@ -5469,7 +5668,9 @@
       },
       {
         "actorRoleRef": "role.reader",
-        "bindingRefs": ["binding.caller-subscription-reader"],
+        "bindingRefs": [
+          "binding.caller-subscription-reader"
+        ],
         "capabilityRef": "capability.register-subscription-reader",
         "concurrency": {
           "mode": "none",
@@ -5633,7 +5834,9 @@
     ],
     "representations": [
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -5651,7 +5854,10 @@
           "chapter_id": "CH-01",
           "column_id": "COL-BM",
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+          "evidenceRefs": [
+            "instance.subscription",
+            "instance.mobile-result"
+          ],
           "expired_at": "2026-10-01T09:07:00Z",
           "fulfillmentStatus": "completed",
           "reader_id": "READER-001",
@@ -5757,7 +5963,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -5786,7 +5996,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -5804,7 +6016,10 @@
           "chapter_id": "CH-01",
           "column_id": "COL-BM",
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+          "evidenceRefs": [
+            "instance.subscription",
+            "instance.mobile-result"
+          ],
           "expired_at": "2026-10-01T09:07:00Z",
           "fulfillmentStatus": "completed",
           "reader_id": "READER-001",
@@ -5910,7 +6125,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -5939,7 +6158,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -5956,7 +6177,9 @@
           "confirmed_at": "2026-10-01T09:06:02Z",
           "delivered": true,
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.access-mobile"],
+          "evidenceRefs": [
+            "instance.access-mobile"
+          ],
           "reader_id": "READER-001",
           "request_id": "ACCESS-MOBILE",
           "subscription_id": "SUB-20261001-001"
@@ -6061,7 +6284,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6081,7 +6306,9 @@
           "confirmed_at": "2026-10-01T09:06:02Z",
           "delivered": true,
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.access-mobile"],
+          "evidenceRefs": [
+            "instance.access-mobile"
+          ],
           "reader_id": "READER-001",
           "request_id": "ACCESS-MOBILE",
           "subscription_id": "SUB-20261001-001"
@@ -6198,7 +6425,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.account-provider"],
+        "actorRoleRefs": [
+          "role.account-provider"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6255,7 +6484,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-user"],
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6312,7 +6543,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6388,7 +6621,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6464,7 +6699,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6540,7 +6777,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-provider"],
+        "actorRoleRefs": [
+          "role.account-provider"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6560,7 +6799,10 @@
           "balance_before_minor_units": 10000,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-agreement",
+            "instance.payment"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "completed",
           "payment_request_id": "PAY-001",
@@ -6694,7 +6936,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -6723,7 +6969,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-user"],
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6743,7 +6991,10 @@
           "balance_before_minor_units": 10000,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-agreement",
+            "instance.payment"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "completed",
           "payment_request_id": "PAY-001",
@@ -6877,7 +7128,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -6906,7 +7161,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-provider"],
+        "actorRoleRefs": [
+          "role.account-provider"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -6923,7 +7180,10 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-01T09:05:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-request",
+            "instance.payment"
+          ],
           "payment_id": "PREPAID-TX-001",
           "payment_request_id": "PAY-001",
           "reader_id": "READER-001",
@@ -7058,7 +7318,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.account-user"],
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7075,7 +7337,10 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-01T09:05:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-request",
+            "instance.payment"
+          ],
           "payment_id": "PREPAID-TX-001",
           "payment_request_id": "PAY-001",
           "reader_id": "READER-001",
@@ -7210,7 +7475,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7225,7 +7492,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-10-16T10:00:00Z",
           "delisted": true,
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "missed_due_at": "2026-10-08T10:00:00Z",
           "missing_content": true,
           "reader_id": "READER-001",
@@ -7332,7 +7601,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7347,7 +7618,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-10-16T10:00:00Z",
           "delisted": true,
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "missed_due_at": "2026-10-08T10:00:00Z",
           "missing_content": true,
           "reader_id": "READER-001",
@@ -7454,7 +7727,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7469,7 +7744,9 @@
           "amount_minor_units": 9900,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "completed",
           "reader_id": "READER-001",
@@ -7574,7 +7851,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -7587,7 +7868,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7602,7 +7885,9 @@
           "amount_minor_units": 9900,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "completed",
           "reader_id": "READER-001",
@@ -7707,7 +7992,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -7720,7 +8009,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7847,7 +8138,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -7872,7 +8167,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -7999,7 +8296,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -8024,7 +8325,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8040,7 +8343,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-18T10:00:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.refund"],
+          "evidenceRefs": [
+            "instance.refund"
+          ],
           "reader_id": "READER-001",
           "receipt_id": "REFUND-RECEIPT-001",
           "request_id": "REFUND-001",
@@ -8155,7 +8460,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8171,7 +8478,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-18T10:00:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.refund"],
+          "evidenceRefs": [
+            "instance.refund"
+          ],
           "reader_id": "READER-001",
           "receipt_id": "REFUND-RECEIPT-001",
           "request_id": "REFUND-001",
@@ -8286,7 +8595,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8301,7 +8612,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-11-01T12:00:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "listed": true,
           "reader_id": "READER-001",
           "relaunched_at": "2026-11-01T11:59:00Z",
@@ -8399,7 +8712,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8414,7 +8729,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-11-01T12:00:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "listed": true,
           "reader_id": "READER-001",
           "relaunched_at": "2026-11-01T11:59:00Z",
@@ -8512,7 +8829,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8630,7 +8949,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -8659,7 +8982,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8777,7 +9102,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -8806,7 +9135,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8822,7 +9153,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-11-01T12:02:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.restore"],
+          "evidenceRefs": [
+            "instance.restore"
+          ],
           "reader_id": "READER-001",
           "request_id": "RESTORE-001",
           "restored": true,
@@ -8928,7 +9261,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -8944,7 +9279,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-11-01T12:02:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.restore"],
+          "evidenceRefs": [
+            "instance.restore"
+          ],
           "reader_id": "READER-001",
           "request_id": "RESTORE-001",
           "restored": true,
@@ -9050,7 +9387,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9187,7 +9526,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9324,7 +9665,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9342,7 +9685,10 @@
           "chapter_id": "CH-01",
           "column_id": "COL-BM",
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+          "evidenceRefs": [
+            "instance.subscription",
+            "instance.mobile-result"
+          ],
           "expired_at": "2026-10-01T09:07:00Z",
           "fulfillmentStatus": "pending",
           "reader_id": "READER-001",
@@ -9448,7 +9794,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -9477,7 +9827,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9494,7 +9846,9 @@
           "confirmed_at": "2026-10-01T09:06:02Z",
           "delivered": true,
           "edition_id": "ED-1",
-          "evidenceRefs": ["instance.access-mobile"],
+          "evidenceRefs": [
+            "instance.access-mobile"
+          ],
           "reader_id": "READER-001",
           "request_id": "ACCESS-MOBILE",
           "subscription_id": "SUB-20261001-001"
@@ -9599,7 +9953,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.account-user"],
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9656,7 +10012,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-user"],
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9676,7 +10034,10 @@
           "balance_before_minor_units": 10000,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-agreement",
+            "instance.payment"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "pending",
           "payment_request_id": "PAY-001",
@@ -9810,7 +10171,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -9839,7 +10204,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.account-provider"],
+        "actorRoleRefs": [
+          "role.account-provider"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -9856,7 +10223,10 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-01T09:05:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+          "evidenceRefs": [
+            "instance.prepaid-request",
+            "instance.payment"
+          ],
           "payment_id": "PREPAID-TX-001",
           "payment_request_id": "PAY-001",
           "reader_id": "READER-001",
@@ -9991,7 +10361,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10006,7 +10378,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-10-16T10:00:00Z",
           "delisted": true,
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "missed_due_at": "2026-10-08T10:00:00Z",
           "missing_content": true,
           "reader_id": "READER-001",
@@ -10113,7 +10487,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10128,7 +10504,9 @@
           "amount_minor_units": 9900,
           "column_id": "COL-BM",
           "currency": "CNY",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "expired_at": "2026-10-01T09:15:00Z",
           "fulfillmentStatus": "pending",
           "reader_id": "READER-001",
@@ -10233,7 +10611,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -10246,7 +10628,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10373,7 +10757,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -10398,7 +10786,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10414,7 +10804,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-10-18T10:00:00Z",
           "currency": "CNY",
-          "evidenceRefs": ["instance.refund"],
+          "evidenceRefs": [
+            "instance.refund"
+          ],
           "reader_id": "READER-001",
           "receipt_id": "REFUND-RECEIPT-001",
           "request_id": "REFUND-001",
@@ -10529,7 +10921,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10544,7 +10938,9 @@
           "column_id": "COL-BM",
           "created_at": "2026-11-01T12:00:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.subscription"],
+          "evidenceRefs": [
+            "instance.subscription"
+          ],
           "listed": true,
           "reader_id": "READER-001",
           "relaunched_at": "2026-11-01T11:59:00Z",
@@ -10642,7 +11038,9 @@
         "view": "item"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10760,7 +11158,11 @@
             "origin": "derived",
             "required": true,
             "schema": {
-              "enum": ["pending", "completed", "breached"],
+              "enum": [
+                "pending",
+                "completed",
+                "breached"
+              ],
               "type": "string"
             }
           }
@@ -10789,7 +11191,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.publisher"],
+        "actorRoleRefs": [
+          "role.publisher"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -10805,7 +11209,9 @@
           "column_id": "COL-BM",
           "confirmed_at": "2026-11-01T12:02:00Z",
           "edition_id": "ED-2",
-          "evidenceRefs": ["instance.restore"],
+          "evidenceRefs": [
+            "instance.restore"
+          ],
           "reader_id": "READER-001",
           "request_id": "RESTORE-001",
           "restored": true,
@@ -10911,7 +11317,9 @@
         "view": "singleton"
       },
       {
-        "actorRoleRefs": ["role.reader"],
+        "actorRoleRefs": [
+          "role.reader"
+        ],
         "availability": "not_evaluated",
         "cache": {
           "mode": "no-store",
@@ -11145,7 +11553,7 @@
       "contexts/subscription/relationships/restore-as-access-restored.yaml": "704af72b8c4d75505c14d3de6055ae1b10d2652fda270134c351c3898e6dd56b",
       "contexts/subscription/roles/publisher.yaml": "bef6e3a2fa3f1f9252fa4816d66588819d842bc3aaee1ccd0f72393b638a909d",
       "contexts/subscription/roles/reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
-      "model.yaml": "8c31f643482aab2c50cc504c8f0279cbdd0d1a0f3518ce28aab4b169bc7bfe61",
+      "model.yaml": "73b1f02ac0c296da6713be085a79b156d8aa11047304199b2402267bad13da1a",
       "participants/user.yaml": "c141bbf0952f460862719a185cf003eb783f4d0587be6f638a8d113cd66a3ecd",
       "relationships/access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
       "relationships/access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
@@ -11191,24 +11599,24 @@
       "validation/instances/instance--restore.yaml": "fceefa76d9f42debce0eaf62388a27df3f6dc908823537bfc9b290dcf31e261e",
       "validation/instances/instance--restored.yaml": "12f7cfce4ce6a3ce8b3a884b95a640efd63da49e82c6283bdf4681eb2ad8fb51",
       "validation/instances/instance--subscription.yaml": "1f24ef73a77ef6246b055c97a85c1f2da2dfe4c767a87cc4c56164afb65074cb",
-      "validation/scenarios/scenario--access-after-refund.yaml": "5fc603d2a471eb1b38775ddbd5efb8b7b170260f26e0d29b7b16497ca6927db4",
-      "validation/scenarios/scenario--access-expired.yaml": "ef17900f9f65de384f931828c8224dc55e1795cbbeec75e6d908760e1ac8758c",
-      "validation/scenarios/scenario--cutoff-paid.yaml": "7d4ab99f3e7852353cc09a961c24ed0be2fb344b4a10558a0a3efc51edae6272",
-      "validation/scenarios/scenario--cutoff-pending.yaml": "366e2eab37cdb87392b64544295971eb5002962d4e40ed4ac5a3d8ae37c49cee",
-      "validation/scenarios/scenario--discontinuation-refund.yaml": "574f47063c33a3d10c799a9f76880173dcfaed3359b1d089430867280626f123",
-      "validation/scenarios/scenario--free-restoration.yaml": "d842a930cb24713e5e6db93dbb400f0f9dc4ca0d02f017614a18f8044a1c6cdc",
-      "validation/scenarios/scenario--insufficient-balance.yaml": "fc278d6806f65fd903a75ff53933262a116731642ab604045d42792669d8777a",
-      "validation/scenarios/scenario--late-paid.yaml": "525e6b4b53d7c2b470f9b28b8cbb3b6dbe06d18b374397b29bfd5dbaf05d0268",
-      "validation/scenarios/scenario--mobile-subscription.yaml": "f87b854180e298046a7f7b48c8b3d1013cf7830ef9380b331e5c11b85dc0653f",
-      "validation/scenarios/scenario--payment-expired.yaml": "823eef0027e2a45c9e2adfb2750fc46d6e55ea2f8d9067429fafa0ed9b31a139",
-      "validation/scenarios/scenario--payment-pending.yaml": "838f15a29d99d790fe5f247349d56bce15b4bd1670c84e3dd7f19e4047028487",
-      "validation/scenarios/scenario--prepaid-subscription.yaml": "cd68ab9ca9937a03bcf3bfdec01f57dd5064ba1317c9b9fd016d26fabfbca6fb",
-      "validation/scenarios/scenario--refund-expired.yaml": "45a9fac8ce9f6ac51a88735523145c4d87af1de4586c46840c8968c8101a623a",
-      "validation/scenarios/scenario--refund-late.yaml": "ff0a70ffcfa39928badba7c2205c3ef63db0df8f487eb8b86db1648f4aa4ece9",
-      "validation/scenarios/scenario--restore-charged.yaml": "a9cfc8bf18b2ed8ef459f8b784bdc427565c202665faf4e939783382b029ea5a",
-      "validation/scenarios/scenario--restore-expired.yaml": "c086c0359d1714dd64fabbae12880431e1e5a5103446b9c02c1a70e4dadf01db",
-      "validation/scenarios/scenario--short-paid.yaml": "5d81b1f4b9f2aff25c4b3a66ea09d99ae3a60cdd1c18aa861560df6b3e3b7db0",
-      "validation/scenarios/scenario--wrong-reader.yaml": "414a794273455bdbd4796adda2627db38d557d0232d3a36bcb55b2dde5f6b04b"
+      "validation/scenarios/scenario--access-after-refund.yaml": "3183ec8cc8e94b030db6049ea78890c3fdfca32b2267e41dfb88708dffbcca63",
+      "validation/scenarios/scenario--access-expired.yaml": "52bcf34b71ce63ab9f1d362f3e9ae7344875150828be8a7eb76d695da5425c6f",
+      "validation/scenarios/scenario--cutoff-paid.yaml": "d055e8c8b137ddb91aabf4a300ca34b4e3eadc8786ae02b9e44ae066f6f9b112",
+      "validation/scenarios/scenario--cutoff-pending.yaml": "938cb247c3cf10e8904fdae4d3fbf69f1311955451c39bbbc355d67db6ece11d",
+      "validation/scenarios/scenario--discontinuation-refund.yaml": "c8df846238aea9196e74b4c135056c32d11c3ab734f45b45621f6bb3e511951d",
+      "validation/scenarios/scenario--free-restoration.yaml": "cd59a6156e39de0905e807585c81562261fe2f2dfd4ac2dcccd0e762c61a981d",
+      "validation/scenarios/scenario--insufficient-balance.yaml": "13081e46b3f3c5a6f8b5fb14de1facbb205add925cb4f129d22fc6ed33e688c1",
+      "validation/scenarios/scenario--late-paid.yaml": "7c965bf1d5f2996848cbba98537800f3015db4d317891545f25aa8b573f4c540",
+      "validation/scenarios/scenario--mobile-subscription.yaml": "2d0780aea37c1fbdb9286c8b0030d7ebeb682315f4af87673e6c5ba1235dd33e",
+      "validation/scenarios/scenario--payment-expired.yaml": "dbcec77fc0bd722ed9ce08e94c205b93fc460bf7d48465a4c62ddeca9b5ec5a1",
+      "validation/scenarios/scenario--payment-pending.yaml": "840e5a54931e0b1675c4adbc209f8d6122a562a1f7bdd5d22105ad70c9faaf74",
+      "validation/scenarios/scenario--prepaid-subscription.yaml": "6652a6e3a0f553849b1ecd37e842f64ae706766ad2017382f98c5ba237fa98f5",
+      "validation/scenarios/scenario--refund-expired.yaml": "b371265c57608398c623b79fb2d5bc4bf6fa0c37c536cd2dcdc60de407cf969f",
+      "validation/scenarios/scenario--refund-late.yaml": "401ebdcd937e492b60279979f7b1dc0ca737c68505b1f1b75285fd68474a3712",
+      "validation/scenarios/scenario--restore-charged.yaml": "c39118340fbed427f3d82ca7ba1fa5e497376f7062394b8f654d26142770a378",
+      "validation/scenarios/scenario--restore-expired.yaml": "27269ec5b503e4d12411251c33980c2760d0990d9c697445823f4f5462b3e1a7",
+      "validation/scenarios/scenario--short-paid.yaml": "b3da637b711dcb45e404af77dc0c92469d9d8c063707fc5c56baff338676fc64",
+      "validation/scenarios/scenario--wrong-reader.yaml": "fd84fe8f59412771113c665555a6f5cdbf18af9d1bce671bbd1f29382c09e98d"
     },
     "sources": {
       ".evidence/discovery.md": "0d7f22fe65060e7479530992af60229b0362e2213ce4b3358f506c3d33cfb69e"
@@ -11228,7 +11636,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["confirmation.mobile"],
+        "fmRefs": [
+          "confirmation.mobile"
+        ],
         "reasoning": "移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。"
       },
       "capabilityRefs": [],
@@ -11271,7 +11681,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["contract.mobile"],
+        "fmRefs": [
+          "contract.mobile"
+        ],
         "reasoning": "移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。"
       },
       "capabilityRefs": [],
@@ -11325,7 +11737,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["party.user"],
+        "fmRefs": [
+          "party.user"
+        ],
         "reasoning": "用户用于跨合同身份绑定，分别扮演各上下文的角色；不提供用户档案管理接口。"
       },
       "capabilityRefs": [],
@@ -11346,7 +11760,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["request.mobile"],
+        "fmRefs": [
+          "request.mobile"
+        ],
         "reasoning": "移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。"
       },
       "capabilityRefs": [],
@@ -11400,7 +11816,9 @@
     },
     {
       "basis": null,
-      "capabilityRefs": ["capability.read-chapter-reader"],
+      "capabilityRefs": [
+        "capability.read-chapter-reader"
+      ],
       "contextRef": "context.content",
       "entityRef": "thing.chapter",
       "handling": "api"
@@ -11418,8 +11836,12 @@
   ],
   "operations": [
     {
-      "actorRoleRefs": ["role.reader"],
-      "capabilityRefs": ["capability.register-access-reader"],
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.register-access-reader"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11433,7 +11855,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-access-publisher",
         "capability.read-access-reader"
@@ -11451,7 +11876,10 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-access-result-publisher",
         "capability.read-access-result-reader"
@@ -11469,8 +11897,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-access-result-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-access-result-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11484,8 +11916,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.account-user"],
-      "capabilityRefs": ["capability.register-account-account-user"],
+      "actorRoleRefs": [
+        "role.account-user"
+      ],
+      "capabilityRefs": [
+        "capability.register-account-account-user"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11499,7 +11935,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.account-provider", "role.account-user"],
+      "actorRoleRefs": [
+        "role.account-provider",
+        "role.account-user"
+      ],
       "capabilityRefs": [
         "capability.read-account-account-provider",
         "capability.read-account-account-user"
@@ -11517,8 +11956,12 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.reader"],
-      "capabilityRefs": ["capability.read-chapter-reader"],
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.read-chapter-reader"
+      ],
       "effects": [
         {
           "kind": "read",
@@ -11532,7 +11975,10 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-column-publisher",
         "capability.read-column-reader"
@@ -11550,8 +11996,12 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.account-user"],
-      "capabilityRefs": ["capability.register-debit-account-user"],
+      "actorRoleRefs": [
+        "role.account-user"
+      ],
+      "capabilityRefs": [
+        "capability.register-debit-account-user"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11565,7 +12015,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.account-provider", "role.account-user"],
+      "actorRoleRefs": [
+        "role.account-provider",
+        "role.account-user"
+      ],
       "capabilityRefs": [
         "capability.read-debit-account-provider",
         "capability.read-debit-account-user"
@@ -11583,7 +12036,10 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.account-provider", "role.account-user"],
+      "actorRoleRefs": [
+        "role.account-provider",
+        "role.account-user"
+      ],
       "capabilityRefs": [
         "capability.read-debit-result-account-provider",
         "capability.read-debit-result-account-user"
@@ -11601,8 +12057,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.account-provider"],
-      "capabilityRefs": ["capability.register-debit-result-account-provider"],
+      "actorRoleRefs": [
+        "role.account-provider"
+      ],
+      "capabilityRefs": [
+        "capability.register-debit-result-account-provider"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11616,8 +12076,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-discontinuation-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-discontinuation-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11631,7 +12095,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-discontinuation-publisher",
         "capability.read-discontinuation-reader"
@@ -11649,7 +12116,10 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-payment-publisher",
         "capability.read-payment-reader"
@@ -11667,8 +12137,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-payment-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-payment-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11682,7 +12156,10 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-refund-publisher",
         "capability.read-refund-reader"
@@ -11700,8 +12177,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.reader"],
-      "capabilityRefs": ["capability.register-refund-reader"],
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.register-refund-reader"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11715,7 +12196,10 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-refund-result-publisher",
         "capability.read-refund-result-reader"
@@ -11733,8 +12217,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-refund-result-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-refund-result-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11748,8 +12236,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-relaunch-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-relaunch-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11763,7 +12255,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-relaunch-publisher",
         "capability.read-relaunch-reader"
@@ -11781,7 +12276,10 @@
       "view": "item"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-restore-publisher",
         "capability.read-restore-reader"
@@ -11799,8 +12297,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.reader"],
-      "capabilityRefs": ["capability.register-restore-reader"],
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.register-restore-reader"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11814,7 +12316,10 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-restore-result-publisher",
         "capability.read-restore-result-reader"
@@ -11832,8 +12337,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.publisher"],
-      "capabilityRefs": ["capability.register-restore-result-publisher"],
+      "actorRoleRefs": [
+        "role.publisher"
+      ],
+      "capabilityRefs": [
+        "capability.register-restore-result-publisher"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11847,8 +12356,12 @@
       "view": "singleton"
     },
     {
-      "actorRoleRefs": ["role.reader"],
-      "capabilityRefs": ["capability.register-subscription-reader"],
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.register-subscription-reader"
+      ],
       "effects": [
         {
           "kind": "append_evidence",
@@ -11862,7 +12375,10 @@
       "view": "collection"
     },
     {
-      "actorRoleRefs": ["role.publisher", "role.reader"],
+      "actorRoleRefs": [
+        "role.publisher",
+        "role.reader"
+      ],
       "capabilityRefs": [
         "capability.read-subscription-publisher",
         "capability.read-subscription-reader"
@@ -11884,7 +12400,10 @@
   "resources": [
     {
       "basis": {
-        "fmRefs": ["request.access", "contract.subscription"],
+        "fmRefs": [
+          "request.access",
+          "contract.subscription"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "付费内容访问请求",
@@ -11898,7 +12417,10 @@
         "kind": "fm_attribute",
         "parameter": "accessId"
       },
-      "parameters": ["subscriptionId", "accessId"],
+      "parameters": [
+        "subscriptionId",
+        "accessId"
+      ],
       "parentBindingRef": "binding.parent-access",
       "parentRef": "resource.subscription",
       "segment": "accesses",
@@ -11910,7 +12432,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["confirmation.access", "request.access"],
+        "fmRefs": [
+          "confirmation.access",
+          "request.access"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "内容提供凭证",
@@ -11922,7 +12447,10 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId", "accessId"],
+      "parameters": [
+        "subscriptionId",
+        "accessId"
+      ],
       "parentBindingRef": "binding.parent-access-result",
       "parentRef": "resource.access",
       "segment": "result",
@@ -11933,7 +12461,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["contract.prepaid"],
+        "fmRefs": [
+          "contract.prepaid"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "预付费账户协议",
@@ -11944,7 +12474,9 @@
         "kind": "fm_attribute",
         "parameter": "accountId"
       },
-      "parameters": ["accountId"],
+      "parameters": [
+        "accountId"
+      ],
       "segment": "prepaid-accounts",
       "shape": "collection",
       "uris": {
@@ -11954,7 +12486,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["thing.chapter"],
+        "fmRefs": [
+          "thing.chapter"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "章节内容",
@@ -11965,7 +12499,9 @@
         "kind": "fm_attribute",
         "parameter": "chapterId"
       },
-      "parameters": ["chapterId"],
+      "parameters": [
+        "chapterId"
+      ],
       "segment": "chapters",
       "shape": "collection",
       "uris": {
@@ -11975,7 +12511,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["thing.column"],
+        "fmRefs": [
+          "thing.column"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "专栏",
@@ -11986,7 +12524,9 @@
         "kind": "fm_attribute",
         "parameter": "columnId"
       },
-      "parameters": ["columnId"],
+      "parameters": [
+        "columnId"
+      ],
       "segment": "columns",
       "shape": "collection",
       "uris": {
@@ -11996,7 +12536,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["request.prepaid", "contract.prepaid"],
+        "fmRefs": [
+          "request.prepaid",
+          "contract.prepaid"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "账户余额抵扣请求",
@@ -12010,7 +12553,10 @@
         "kind": "fm_attribute",
         "parameter": "debitId"
       },
-      "parameters": ["accountId", "debitId"],
+      "parameters": [
+        "accountId",
+        "debitId"
+      ],
       "parentBindingRef": "binding.parent-debit",
       "parentRef": "resource.account",
       "segment": "debits",
@@ -12022,7 +12568,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["confirmation.prepaid", "request.prepaid"],
+        "fmRefs": [
+          "confirmation.prepaid",
+          "request.prepaid"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "预付费抵扣凭证",
@@ -12034,7 +12583,10 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["accountId", "debitId"],
+      "parameters": [
+        "accountId",
+        "debitId"
+      ],
       "parentBindingRef": "binding.parent-debit-result",
       "parentRef": "resource.debit",
       "segment": "result",
@@ -12045,7 +12597,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["evidence.discontinuation"],
+        "fmRefs": [
+          "evidence.discontinuation"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "断更下架记录",
@@ -12056,7 +12610,9 @@
         "kind": "api_resource_id",
         "parameter": "discontinuationId"
       },
-      "parameters": ["discontinuationId"],
+      "parameters": [
+        "discontinuationId"
+      ],
       "segment": "discontinuations",
       "shape": "collection",
       "uris": {
@@ -12066,7 +12622,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["request.payment", "contract.subscription"],
+        "fmRefs": [
+          "request.payment",
+          "contract.subscription"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "订阅费支付请求",
@@ -12078,7 +12637,9 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": [
+        "subscriptionId"
+      ],
       "parentBindingRef": "binding.parent-payment",
       "parentRef": "resource.subscription",
       "segment": "payment",
@@ -12089,7 +12650,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["request.refund", "contract.subscription"],
+        "fmRefs": [
+          "request.refund",
+          "contract.subscription"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "断更退款请求",
@@ -12101,7 +12665,9 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": [
+        "subscriptionId"
+      ],
       "parentBindingRef": "binding.parent-refund",
       "parentRef": "resource.subscription",
       "segment": "refund",
@@ -12112,7 +12678,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["confirmation.refund", "request.refund"],
+        "fmRefs": [
+          "confirmation.refund",
+          "request.refund"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "退款到账凭证",
@@ -12124,7 +12693,9 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": [
+        "subscriptionId"
+      ],
       "parentBindingRef": "binding.parent-refund-result",
       "parentRef": "resource.refund",
       "segment": "result",
@@ -12135,15 +12706,22 @@
     },
     {
       "basis": {
-        "fmRefs": ["evidence.relaunch", "contract.subscription"],
+        "fmRefs": [
+          "evidence.relaunch",
+          "contract.subscription"
+        ],
         "reasoning": "同一原订阅可有多次重新上架活动，每次活动以独立编号定位。",
-        "sourceRefs": ["source.restore-per-relaunch"]
+        "sourceRefs": [
+          "source.restore-per-relaunch"
+        ]
       },
       "businessName": "重新上架记录",
       "cardinality": {
         "max": "many",
         "reasoning": "同一原订阅允许保存多份重新上架记录，各次形成均有独立身份。",
-        "sourceRefs": ["source.restore-per-relaunch"]
+        "sourceRefs": [
+          "source.restore-per-relaunch"
+        ]
       },
       "entityRef": "evidence.relaunch",
       "id": "resource.relaunch",
@@ -12152,7 +12730,10 @@
         "kind": "api_resource_id",
         "parameter": "relaunchId"
       },
-      "parameters": ["subscriptionId", "relaunchId"],
+      "parameters": [
+        "subscriptionId",
+        "relaunchId"
+      ],
       "parentBindingRef": "binding.parent-relaunch",
       "parentRef": "resource.subscription",
       "segment": "relaunches",
@@ -12180,7 +12761,10 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId", "relaunchId"],
+      "parameters": [
+        "subscriptionId",
+        "relaunchId"
+      ],
       "parentBindingRef": "binding.parent-restore",
       "parentRef": "resource.relaunch",
       "segment": "restoration",
@@ -12191,7 +12775,10 @@
     },
     {
       "basis": {
-        "fmRefs": ["confirmation.restore", "request.restore"],
+        "fmRefs": [
+          "confirmation.restore",
+          "request.restore"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "免费恢复凭证",
@@ -12203,7 +12790,10 @@
       "identity": {
         "kind": "parent_scoped"
       },
-      "parameters": ["subscriptionId", "relaunchId"],
+      "parameters": [
+        "subscriptionId",
+        "relaunchId"
+      ],
       "parentBindingRef": "binding.parent-restore-result",
       "parentRef": "resource.restore",
       "segment": "result",
@@ -12214,7 +12804,9 @@
     },
     {
       "basis": {
-        "fmRefs": ["contract.subscription"],
+        "fmRefs": [
+          "contract.subscription"
+        ],
         "reasoning": "以业务编号和本人参与的合同确定实例；业务凭证仅追加。"
       },
       "businessName": "专栏订阅合同",
@@ -12225,7 +12817,9 @@
         "kind": "fm_attribute",
         "parameter": "subscriptionId"
       },
-      "parameters": ["subscriptionId"],
+      "parameters": [
+        "subscriptionId"
+      ],
       "segment": "subscriptions",
       "shape": "collection",
       "uris": {

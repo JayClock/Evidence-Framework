@@ -289,8 +289,6 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
         "policyVersion": POLICY_VERSION,
         "profile": dict(PROFILE),
         "modelId": model["id"],
-        "modelStatus": model.get("modelStatus"),
-        "stakeholderReview": model.get("stakeholderReview"),
         "inputDigest": digest(
             {
                 "sources": [(r, sources[r]["digest"]) for r in sorted(sources)],
@@ -452,8 +450,6 @@ def compile_tasks(inv: dict[str, Any], mapping: dict[str, Any]) -> dict[str, Any
         "profile": dict(PROFILE),
         "inputDigest": inv["inputDigest"],
         "modelId": inv["modelId"],
-        "modelStatus": inv["modelStatus"],
-        "stakeholderReview": inv.get("stakeholderReview"),
         "tasks": tasks,
         "executionOrder": order,
         "apiCoverage": api_coverage,

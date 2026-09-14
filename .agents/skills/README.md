@@ -103,7 +103,7 @@ python3 -m venv "$VENV_DIR"
 - 没有 validation 套件的纯领域模型可以通过，`simulationPassed: null`。
 - 声明了但为空／损坏的套件会失败，不当作不适用。
 - 有适用场景时实际执行并比较既有预期，不能倒改预期取得成功。
-- 机器结果不提升 `modelStatus` 或 `stakeholderReview`。
+- 机器结果不提升也不推断业务确认。
 
 可对 [合成示例](evidence-fm/assets/examples/README.md) 直接只读检查。需要修改或生成输出时，先复制到用户允许的工作目录；不要把示例金额、时长和角色当作业务默认值。
 

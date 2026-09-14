@@ -5,7 +5,7 @@
 本页区分业务来源、已有实现和待决定的软件范围，不批准业务模型，也不把存在的代码追认为完整产品交付。
 
 - [发现记录](../../.evidence/discovery.md)与 [FM 概览](../../.evidence/fm/00-overview.md)：专栏订阅、支付、内容访问、断更退款与免费恢复。
-- [模型入口](../../.evidence/fm/model.yaml)：当前 `modelStatus: draft`、`stakeholderReview.status: pending`；执行前核对实际源。
+- [模型入口](../../.evidence/fm/model.yaml)：模型文件不保存审核状态；执行前核对实际源。
 - [API 设计](../../.evidence/api/api.yaml)：业务接口契约，不是已部署接口清单。
 - [用户切片说明](../../apps/backend/README.md)及其源码/测试：本地基础工程行为；其显示名称等软件字段不假称来自 FM。
 

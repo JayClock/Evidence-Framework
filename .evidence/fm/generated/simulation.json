@@ -238,10 +238,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.access-after-refund",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:07:01Z",
@@ -385,10 +382,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.access-expired",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:15:00Z",
@@ -512,10 +506,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.cutoff-paid",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:15:00Z",
@@ -595,10 +586,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.cutoff-pending",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-18T10:01:00Z",
@@ -795,10 +783,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.discontinuation-refund",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-11-01T12:05:00Z",
@@ -1095,10 +1080,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.free-restoration",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:16:00Z",
@@ -1228,10 +1210,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.insufficient-balance",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:16:00Z",
@@ -1355,10 +1334,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.late-paid",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:10:00Z",
@@ -1551,10 +1527,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.mobile-subscription",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:15:01Z",
@@ -1634,10 +1607,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.payment-expired",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:14:59Z",
@@ -1717,10 +1687,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.payment-pending",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:10:00Z",
@@ -1920,10 +1887,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.prepaid-subscription",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-23T10:01:01Z",
@@ -2087,10 +2051,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.refund-expired",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-23T10:02:00Z",
@@ -2270,10 +2231,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.refund-late",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-11-02T12:01:01Z",
@@ -2501,10 +2459,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.restore-charged",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-11-02T12:01:01Z",
@@ -2717,10 +2672,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.restore-expired",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:16:00Z",
@@ -2844,10 +2796,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.short-paid",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     },
     {
       "asOf": "2026-10-01T09:16:00Z",
@@ -2971,10 +2920,7 @@
       ],
       "machineValidated": true,
       "scenarioId": "scenario.wrong-reader",
-      "simulationPassed": true,
-      "stakeholderReview": {
-        "status": "pending"
-      }
+      "simulationPassed": true
     }
   ],
   "schemaVersion": "3.0",

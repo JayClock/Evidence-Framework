@@ -42,9 +42,6 @@
     "expectations": {
       "$ref": "#/$defs/expectations"
     },
-    "stakeholderReview": {
-      "$ref": "#/$defs/stakeholderReview"
-    },
     "notes": {
       "type": "string",
       "minLength": 1
@@ -171,43 +168,6 @@
           }
         }
       },
-      "additionalProperties": false
-    },
-    "stakeholderReview": {
-      "type": "object",
-      "required": ["status"],
-      "properties": {
-        "status": {
-          "enum": ["pending", "confirmed", "rejected"]
-        },
-        "reviewer": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reviewedAt": {
-          "type": "string",
-          "minLength": 1
-        },
-        "notes": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "status": {
-                "enum": ["confirmed", "rejected"]
-              }
-            },
-            "required": ["status"]
-          },
-          "then": {
-            "required": ["reviewer", "reviewedAt"]
-          }
-        }
-      ],
       "additionalProperties": false
     }
   }

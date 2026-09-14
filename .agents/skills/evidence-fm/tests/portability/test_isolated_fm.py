@@ -123,7 +123,6 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertTrue(report["valid"])
         self.assertIsNone(report["simulationPassed"])
         self.assertEqual(0, report["scenarioCount"])
-        self.assertEqual("pending", report["stakeholderReview"]["status"])
         output = self.workspace / "compiled.json"
         result = self.run_script("compile_fm_model.py", "--output", str(output))
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
@@ -156,8 +155,6 @@ class IsolatedFMTests(unittest.TestCase):
         report = self.check(0)
         self.assertTrue(report["simulationPassed"])
         self.assertGreater(report["scenarioCount"], 0)
-        self.assertEqual("draft", report["modelStatus"])
-        self.assertEqual("pending", report["stakeholderReview"]["status"])
 
     def test_missing_required_evidence_time_is_rejected_without_repair(self):
         self.example("payment")

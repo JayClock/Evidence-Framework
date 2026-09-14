@@ -413,8 +413,6 @@ def write_model(root: Path, documents: list[dict[str, Any]], entry: str) -> Path
             "name": "上下文范围测试模型",
             "version": "1.0.0",
             "ruleLanguage": "CEL",
-            "modelStatus": "draft",
-            "stakeholderReview": {"status": "pending"},
             "entryContextRefs": [entry],
         },
     )

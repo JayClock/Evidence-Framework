@@ -16,7 +16,7 @@ compatibility: Python 3.10+ 与 requirements.txt；需要可定位的 evidence-f
 - 通过宿主资源发现或用户提供的绝对路径定位本 Skill、`evidence-fm` 和需要时的 `evidence-api-design`，不假设它们互为兄弟目录。项目根与安装目录分别传入。
 - 资源或依赖缺失时说明执行限制，不把环境问题改写成业务问题，不自动安装软件。FM 不通过时报告真实错误，不修改事实、规则或场景预期来取得成功。
 - 没有 API 时只生成 FM 视图，不创建接口、合同或确认凭证；纯领域模型不补造履约场景。
-- 不修改 FM／API 源 YAML、历史 generated／checks 或业务审核状态；只修改本次授权的文件。页面含原始业务数据，不上传或对外部署。
+- 不修改 FM／API 源 YAML、历史 generated／checks 或业务确认记录；只修改本次授权的文件。页面含原始业务数据，不上传或对外部署。
 
 ## 生成
 

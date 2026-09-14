@@ -5,7 +5,7 @@
 ## 1. 输入与范围
 
 - 项目根：{{实际定位方式}}
-- FM 根及审核状态：{{路径、modelStatus、stakeholderReview，不提升状态}}
+- FM 根与输入摘要：{{路径、当前源摘要；模型文件不保存审核状态}}
 - API：{{源文件或明确未提供}}
 - 软件范围与验收：{{实际需求路径、已有故事/验收 ID、确认状态与非目标；不从完整 FM 推导已批准 MVP}}
 - 项目前馈入口：{{项目指令指向的 Guides 导航或等价来源；只维护引用，不复制知识库}}
@@ -53,7 +53,7 @@ slicing:
   dispositions: [] # unitKey、kind、sourceRefs、reason
 
 # 原样嵌入 compile 结果，不手填计算字段。
-# 包含 policyVersion/profile/inputDigest/modelId/modelStatus/stakeholderReview、
+# 包含 policyVersion/profile/inputDigest/modelId、
 # tasks、executionOrder、apiCoverage、dispositions、unassignedUnitKeys、diagnostics、coverageComplete。
 compiled: null
 

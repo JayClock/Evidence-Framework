@@ -82,40 +82,40 @@
     {
       "id": 11,
       "name": "multi-contract-content-platform",
-      "prompt": "为一个内容平台建立通用多合同 FM 模型：内容订阅、内容生产、运营绩效三个合同上下文；主要履约分别为付款/内容访问/服务中断补偿，预付款/收入分成/内容交付/违约金，目标设定/周进度检查，共九项。加入内容生产签约前的选题/立项凭证和内容目录的 Collection/Content Item Thing。材料明确 Customer 扮演 Subscriber；不要凭角色名称为 Creator、Operator 或 Platform 补 Party，也不要发明材料未给出的金额公式。输出、校验并编译 Schema v3；将“付费内容运营”提取为 Business Pattern；因为只有一个内容领域案例，reuseStatus 必须保持 candidate，并生成 02-business-patterns.md。",
-      "expected_output": "三个 Contract、九个 Fulfillment、签约前 Context 和内容 Domain Context 完整；Customer→Subscriber 明确；不存在由 Subscriber/Creator/Operator/Platform 名称推导的占位 Party；规则和金额不超出来源；校验和确定性编译通过；九项 Fulfillment 各自作为子 Context；所有 Request 有 interval；付费内容运营模式保持 candidate。",
+      "prompt": "为一个内容平台建立通用多合同 FM 模型：内容订阅、内容生产、运营绩效三个合同上下文；主要履约分别为付款/内容访问/服务中断补偿，预付款/收入分成/内容交付/违约金，目标设定/周进度检查，共九项。加入内容生产签约前的选题/立项凭证和内容目录的 Collection/Content Item Thing。材料明确 Customer 扮演 Subscriber；不要凭角色名称为 Creator、Operator 或 Platform 补 Party，也不要发明材料未给出的金额公式。输出、校验并编译 Schema v3；将“付费内容运营”提取为 Business Pattern；因为只有一个内容领域案例，不得声称可跨领域复用，并生成 02-business-patterns.md。",
+      "expected_output": "三个 Contract、九个 Fulfillment、签约前 Context 和内容 Domain Context 完整；Customer→Subscriber 明确；不存在由 Subscriber/Creator/Operator/Platform 名称推导的占位 Party；规则和金额不超出来源；校验和确定性编译通过；九项 Fulfillment 各自作为子 Context；所有 Request 有 interval；付费内容运营模式只引用一个领域案例，不声称跨领域复用。",
       "files": []
     },
     {
       "id": 12,
       "name": "attribute-lineage-and-document-simulation",
-      "prompt": "使用 $modeling 建模一个销售合同的付款履约：合同明确价格为 19900 最小货币单位、币种 CNY；付款请求从合同派生金额和币种，截止时间是请求发起后 30 分钟；付款确认的实付金额和币种必须匹配请求。把金额、币种和业务时间标为关键数据，生成属性追溯报告。再建立一个成功付款场景和一个逾期未付款场景，使用追加式 Evidence Instance、固定 asOf 和正确 acting Role，运行模拟并保持 stakeholder review 为 pending。输出并编译 FM Schema v3。",
-      "expected_output": "关键属性使用 keyData；CEL AST 可形成合同→请求的金额/币种和请求开始→截止时间 lineage；validation/ 包含正常与异常场景；机器模拟分别得到 completed 与 breached；没有覆盖旧凭证，也没有把机器通过写成 stakeholder confirmed；所有校验和确定性输出通过；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
+      "prompt": "使用 $modeling 建模一个销售合同的付款履约：合同明确价格为 19900 最小货币单位、币种 CNY；付款请求从合同派生金额和币种，截止时间是请求发起后 30 分钟；付款确认的实付金额和币种必须匹配请求。把金额、币种和业务时间标为关键数据，生成属性追溯报告。再建立一个成功付款场景和一个逾期未付款场景，使用追加式 Evidence Instance、固定 asOf 和正确 acting Role，运行模拟并报告机器结果。输出并编译 FM Schema v3。",
+      "expected_output": "关键属性使用 keyData；CEL AST 可形成合同→请求的金额/币种和请求开始→截止时间 lineage；validation/ 包含正常与异常场景；机器模拟分别得到 completed 与 breached；没有覆盖旧凭证，也没有把机器通过写成业务确认；所有校验和确定性输出通过；每个 Fulfillment 自身是父合同下的子 Context，所有 Request 有明确 interval。",
       "files": []
     },
     {
       "id": 13,
       "name": "ambiguous-narrative-input-gaps",
-      "prompt": "我们准备做一个“智能结算平台”：用户提交订单，系统自动结算，未来支持很多渠道。请使用 $modeling 开始处理。当前材料没有说明谁与谁签约、谁有收款权、谁负付款义务、什么凭证算结算完成、履约期限和违约责任。不要替业务方猜答案；先在 discovery/open-questions.md 中记录必要业务缺口及其影响，交给后续访谈处理，不自行发起问答。如果建立任何 FM 模型，只能是明确标记为 draft/pending 的已知部分。",
-      "expected_output": "输出 discovery/evidence-inventory、timeline 或 open-questions；明确缺少合同双方、凭证责任、确认凭证、时限和违约事实；不伪造 confirmed 模型或 stakeholder review。",
+      "prompt": "我们准备做一个“智能结算平台”：用户提交订单，系统自动结算，未来支持很多渠道。请使用 $modeling 开始处理。当前材料没有说明谁与谁签约、谁有收款权、谁负付款义务、什么凭证算结算完成、履约期限和违约责任。不要替业务方猜答案；先在 discovery/open-questions.md 中记录必要业务缺口及其影响，交给后续访谈处理，不自行发起问答。如果建立任何 FM 模型，只能是明确标注已知部分且不含审核状态字段的模型。",
+      "expected_output": "输出 discovery/evidence-inventory、timeline 或 open-questions；明确缺少合同双方、凭证责任、确认凭证、时限和违约事实；不伪造业务确认。",
       "files": [],
       "assertions": [
         "至少生成 discovery/evidence-inventory、timeline 或 open-questions 产物。",
         "缺口覆盖合同双方、权利义务、完成凭证、履约时限和违约后果；不自行发起访谈。",
-        "不生成模型，或只生成 modelStatus=draft 且 stakeholderReview.status=pending 的有效 v3 模型。"
+        "不生成模型，或只生成不含审核状态字段的有效 v3 模型。"
       ]
     },
     {
       "id": 14,
       "name": "cross-domain-business-pattern",
-      "prompt": "使用 $modeling 同时建模两个已确认案例：内容会员合同和健身课程会员合同。两个案例都是服务方要求会员在签约后 30 分钟内付款，付款确认后在有效期内提供访问；内容与健身分别属于独立 Domain Context，双方合同、付款和访问凭证均可审计。提取“付款后提供期限权益”Business Pattern。它有两个 Contract Context 和两个 Domain Context，所以可以标为 supported，但没有具名业务审核者，不能标为 confirmed。生成 02-business-patterns.md、校验并编译 Schema v3。",
-      "expected_output": "两个 Contract Context、至少四个作为子 Context 的 Fulfillment、两个 Domain Context和一个 supported Business Pattern；模式引用真实业务脊梁和变化点；stakeholderReview pending；派生 Markdown 与编译 JSON 包含该模式。",
+      "prompt": "使用 $modeling 同时建模两个已确认案例：内容会员合同和健身课程会员合同。两个案例都是服务方要求会员在签约后 30 分钟内付款，付款确认后在有效期内提供访问；内容与健身分别属于独立 Domain Context，双方合同、付款和访问凭证均可审计。提取“付款后提供期限权益”Business Pattern。它有两个 Contract Context 和两个 Domain Context，按两案例的复用证据说明，但不做额外状态标注。生成 02-business-patterns.md、校验并编译 Schema v3。",
+      "expected_output": "两个 Contract Context、至少四个作为子 Context 的 Fulfillment、两个 Domain Context和一个 Business Pattern；模式引用真实业务脊梁和变化点；派生 Markdown 与编译 JSON 包含该模式。",
       "files": [],
       "assertions": [
         "Schema v3 校验与确定性编译通过。",
         "每个 Fulfillment 自身是父合同下的子 Context，且 Request interval 完整。",
-        "至少两个 Contract Context 和两个 Domain Context 支撑一个 reuseStatus=supported 的 Business Pattern。",
-        "没有具名审核人时，模式 stakeholderReview 保持 pending，且生成 02-business-patterns.md。"
+        "至少两个 Contract Context 和两个 Domain Context 支撑一个 Business Pattern。",
+        "模式不携带审核状态字段，且生成 02-business-patterns.md。"
       ]
     },
     {

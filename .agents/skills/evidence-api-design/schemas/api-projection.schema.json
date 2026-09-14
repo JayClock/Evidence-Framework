@@ -7,7 +7,6 @@
     "apiId",
     "inputDigests",
     "fmCheckSummary",
-    "fmReviewState",
     "resources",
     "capabilities",
     "operations",
@@ -45,9 +44,6 @@
       "additionalProperties": false
     },
     "fmCheckSummary": {
-      "type": "object"
-    },
-    "fmReviewState": {
       "type": "object"
     },
     "resources": {

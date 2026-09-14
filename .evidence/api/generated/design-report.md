@@ -1,7 +1,6 @@
 # FM → API 设计报告
 
 - 设计：`api.column-subscription`
-- FM 状态：`draft`
 - 接口数（含角色变体）：42
 - 整体 Context 数：10
 

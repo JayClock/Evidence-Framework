@@ -75,26 +75,6 @@
       },
       "additionalProperties": false
     },
-    "stakeholderReview": {
-      "type": "object",
-      "required": ["status"],
-      "properties": {
-        "status": { "enum": ["pending", "confirmed", "rejected"] },
-        "reviewer": { "type": "string", "minLength": 1 },
-        "reviewedAt": { "type": "string", "minLength": 1 },
-        "notes": { "type": "string", "minLength": 1 }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": { "status": { "enum": ["confirmed", "rejected"] } },
-            "required": ["status"]
-          },
-          "then": { "required": ["reviewer", "reviewedAt"] }
-        }
-      ],
-      "additionalProperties": false
-    },
     "scenarioResult": {
       "type": "object",
       "required": [
@@ -102,7 +82,6 @@
         "asOf",
         "machineValidated",
         "simulationPassed",
-        "stakeholderReview",
         "issuedInstanceRefs",
         "instanceValues",
         "evaluations",
@@ -114,7 +93,6 @@
         "asOf": { "type": "string", "minLength": 1 },
         "machineValidated": { "type": "boolean" },
         "simulationPassed": { "type": "boolean" },
-        "stakeholderReview": { "$ref": "#/$defs/stakeholderReview" },
         "issuedInstanceRefs": {
           "type": "array",
           "items": { "$ref": "#/$defs/id" },

@@ -95,7 +95,7 @@
       "contexts/subscription/relationships/restore-as-access-restored.yaml": "704af72b8c4d75505c14d3de6055ae1b10d2652fda270134c351c3898e6dd56b",
       "contexts/subscription/roles/publisher.yaml": "bef6e3a2fa3f1f9252fa4816d66588819d842bc3aaee1ccd0f72393b638a909d",
       "contexts/subscription/roles/reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
-      "model.yaml": "8c31f643482aab2c50cc504c8f0279cbdd0d1a0f3518ce28aab4b169bc7bfe61",
+      "model.yaml": "73b1f02ac0c296da6713be085a79b156d8aa11047304199b2402267bad13da1a",
       "participants/user.yaml": "c141bbf0952f460862719a185cf003eb783f4d0587be6f638a8d113cd66a3ecd",
       "relationships/access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
       "relationships/access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
@@ -141,24 +141,24 @@
       "validation/instances/instance--restore.yaml": "fceefa76d9f42debce0eaf62388a27df3f6dc908823537bfc9b290dcf31e261e",
       "validation/instances/instance--restored.yaml": "12f7cfce4ce6a3ce8b3a884b95a640efd63da49e82c6283bdf4681eb2ad8fb51",
       "validation/instances/instance--subscription.yaml": "1f24ef73a77ef6246b055c97a85c1f2da2dfe4c767a87cc4c56164afb65074cb",
-      "validation/scenarios/scenario--access-after-refund.yaml": "5fc603d2a471eb1b38775ddbd5efb8b7b170260f26e0d29b7b16497ca6927db4",
-      "validation/scenarios/scenario--access-expired.yaml": "ef17900f9f65de384f931828c8224dc55e1795cbbeec75e6d908760e1ac8758c",
-      "validation/scenarios/scenario--cutoff-paid.yaml": "7d4ab99f3e7852353cc09a961c24ed0be2fb344b4a10558a0a3efc51edae6272",
-      "validation/scenarios/scenario--cutoff-pending.yaml": "366e2eab37cdb87392b64544295971eb5002962d4e40ed4ac5a3d8ae37c49cee",
-      "validation/scenarios/scenario--discontinuation-refund.yaml": "574f47063c33a3d10c799a9f76880173dcfaed3359b1d089430867280626f123",
-      "validation/scenarios/scenario--free-restoration.yaml": "d842a930cb24713e5e6db93dbb400f0f9dc4ca0d02f017614a18f8044a1c6cdc",
-      "validation/scenarios/scenario--insufficient-balance.yaml": "fc278d6806f65fd903a75ff53933262a116731642ab604045d42792669d8777a",
-      "validation/scenarios/scenario--late-paid.yaml": "525e6b4b53d7c2b470f9b28b8cbb3b6dbe06d18b374397b29bfd5dbaf05d0268",
-      "validation/scenarios/scenario--mobile-subscription.yaml": "f87b854180e298046a7f7b48c8b3d1013cf7830ef9380b331e5c11b85dc0653f",
-      "validation/scenarios/scenario--payment-expired.yaml": "823eef0027e2a45c9e2adfb2750fc46d6e55ea2f8d9067429fafa0ed9b31a139",
-      "validation/scenarios/scenario--payment-pending.yaml": "838f15a29d99d790fe5f247349d56bce15b4bd1670c84e3dd7f19e4047028487",
-      "validation/scenarios/scenario--prepaid-subscription.yaml": "cd68ab9ca9937a03bcf3bfdec01f57dd5064ba1317c9b9fd016d26fabfbca6fb",
-      "validation/scenarios/scenario--refund-expired.yaml": "45a9fac8ce9f6ac51a88735523145c4d87af1de4586c46840c8968c8101a623a",
-      "validation/scenarios/scenario--refund-late.yaml": "ff0a70ffcfa39928badba7c2205c3ef63db0df8f487eb8b86db1648f4aa4ece9",
-      "validation/scenarios/scenario--restore-charged.yaml": "a9cfc8bf18b2ed8ef459f8b784bdc427565c202665faf4e939783382b029ea5a",
-      "validation/scenarios/scenario--restore-expired.yaml": "c086c0359d1714dd64fabbae12880431e1e5a5103446b9c02c1a70e4dadf01db",
-      "validation/scenarios/scenario--short-paid.yaml": "5d81b1f4b9f2aff25c4b3a66ea09d99ae3a60cdd1c18aa861560df6b3e3b7db0",
-      "validation/scenarios/scenario--wrong-reader.yaml": "414a794273455bdbd4796adda2627db38d557d0232d3a36bcb55b2dde5f6b04b"
+      "validation/scenarios/scenario--access-after-refund.yaml": "3183ec8cc8e94b030db6049ea78890c3fdfca32b2267e41dfb88708dffbcca63",
+      "validation/scenarios/scenario--access-expired.yaml": "52bcf34b71ce63ab9f1d362f3e9ae7344875150828be8a7eb76d695da5425c6f",
+      "validation/scenarios/scenario--cutoff-paid.yaml": "d055e8c8b137ddb91aabf4a300ca34b4e3eadc8786ae02b9e44ae066f6f9b112",
+      "validation/scenarios/scenario--cutoff-pending.yaml": "938cb247c3cf10e8904fdae4d3fbf69f1311955451c39bbbc355d67db6ece11d",
+      "validation/scenarios/scenario--discontinuation-refund.yaml": "c8df846238aea9196e74b4c135056c32d11c3ab734f45b45621f6bb3e511951d",
+      "validation/scenarios/scenario--free-restoration.yaml": "cd59a6156e39de0905e807585c81562261fe2f2dfd4ac2dcccd0e762c61a981d",
+      "validation/scenarios/scenario--insufficient-balance.yaml": "13081e46b3f3c5a6f8b5fb14de1facbb205add925cb4f129d22fc6ed33e688c1",
+      "validation/scenarios/scenario--late-paid.yaml": "7c965bf1d5f2996848cbba98537800f3015db4d317891545f25aa8b573f4c540",
+      "validation/scenarios/scenario--mobile-subscription.yaml": "2d0780aea37c1fbdb9286c8b0030d7ebeb682315f4af87673e6c5ba1235dd33e",
+      "validation/scenarios/scenario--payment-expired.yaml": "dbcec77fc0bd722ed9ce08e94c205b93fc460bf7d48465a4c62ddeca9b5ec5a1",
+      "validation/scenarios/scenario--payment-pending.yaml": "840e5a54931e0b1675c4adbc209f8d6122a562a1f7bdd5d22105ad70c9faaf74",
+      "validation/scenarios/scenario--prepaid-subscription.yaml": "6652a6e3a0f553849b1ecd37e842f64ae706766ad2017382f98c5ba237fa98f5",
+      "validation/scenarios/scenario--refund-expired.yaml": "b371265c57608398c623b79fb2d5bc4bf6fa0c37c536cd2dcdc60de407cf969f",
+      "validation/scenarios/scenario--refund-late.yaml": "401ebdcd937e492b60279979f7b1dc0ca737c68505b1f1b75285fd68474a3712",
+      "validation/scenarios/scenario--restore-charged.yaml": "c39118340fbed427f3d82ca7ba1fa5e497376f7062394b8f654d26142770a378",
+      "validation/scenarios/scenario--restore-expired.yaml": "27269ec5b503e4d12411251c33980c2760d0990d9c697445823f4f5462b3e1a7",
+      "validation/scenarios/scenario--short-paid.yaml": "b3da637b711dcb45e404af77dc0c92469d9d8c063707fc5c56baff338676fc64",
+      "validation/scenarios/scenario--wrong-reader.yaml": "fd84fe8f59412771113c665555a6f5cdbf18af9d1bce671bbd1f29382c09e98d"
     },
     "sources": {
       ".evidence/discovery.md": "0d7f22fe65060e7479530992af60229b0362e2213ce4b3358f506c3d33cfb69e"
@@ -174,20 +174,20 @@
       "sha256": "5111709ed45f13909e121abec301190dbcf61c271988a8ae231d03ddc32c6a0a"
     },
     "design-report.md": {
-      "bytes": 9712,
-      "sha256": "0fcf6186df6f99b18cac2b6da9d644e9b6ad146c38c2f2907b6d22ba6940f70e"
+      "bytes": 9690,
+      "sha256": "3fe3548a0176e5086bfad30787f87d1d68581369a1d0761dde21f2e011e0c261"
     },
     "http-journeys.json": {
       "bytes": 18393,
       "sha256": "c8b0a25b5033f7de56cf6349a1b837449951c0860e670161900f87cd4fa7dadc"
     },
     "openapi.yaml": {
-      "bytes": 145129,
-      "sha256": "35d40a7243dfe0c118774a09b9824ff9c25f6ae25061f8561f2df14372f68e80"
+      "bytes": 145141,
+      "sha256": "5ccb0cf24337424d192083521e528ca8a3eef961fd1e78a7fcfd431b24adb668"
     },
     "projection.json": {
-      "bytes": 413179,
-      "sha256": "3858fa4aedcf04cbfe23b19f62c88984ddec0494cb9b4f57049e38dee4175281"
+      "bytes": 412978,
+      "sha256": "4caaf6441b91d63bb1a3818badeb1b72dd3196e21b080f4ab9eff76886d07e16"
     },
     "representation-examples.json": {
       "bytes": 22589,
@@ -203,10 +203,10 @@
   },
   "schemaVersion": "4.0",
   "tool": {
-    "name": "fm-api-design",
+    "name": "evidence-api-design",
     "schemas": {
-      "api-projection.schema.json": "b62e76d47932d3ab4069f3665e2dd6dfa5b93aaf903b1038b4cd020bc09f4f64",
-      "api.schema.json": "73ee904f7e84df3172e8f93c099700c5b7c48d8a4ee4ee48c86dbc69a62d47b7"
+      "api-projection.schema.json": "cf4ebf1dbf4eff5f2936f6b54ac4f38312d6887e43f2cf40ec0baf3e0b14e13d",
+      "api.schema.json": "4ccf7449acbc78e4cf11fbf9874f3c2e32526ba1b4abbab52b892340e3fb4adb"
     },
     "version": "4.0.0"
   }

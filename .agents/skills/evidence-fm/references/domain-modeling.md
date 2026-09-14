@@ -40,9 +40,6 @@ id: customer-information
 name: 客户信息领域模型
 version: '1.0.0'
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.customer-information
 ```

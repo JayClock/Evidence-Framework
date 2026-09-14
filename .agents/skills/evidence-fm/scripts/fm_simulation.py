@@ -177,16 +177,6 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
         if parse_timestamp(scenario.get("asOf")) is None:
             errors.append(f"{scenario_id}: asOf must be an RFC 3339 timestamp")
         as_of = scenario.get("asOf")
-        review = scenario.get("stakeholderReview") or {}
-        if not isinstance(review, dict):
-            review = {}
-        if (
-            review.get("status") in {"confirmed", "rejected"}
-            and parse_timestamp(review.get("reviewedAt")) is None
-        ):
-            errors.append(
-                f"{scenario_id}: stakeholderReview.reviewedAt must be an RFC 3339 timestamp"
-            )
 
         given = list(scenario.get("givenInstanceRefs") or [])
         given_set = set(given)
@@ -638,13 +628,11 @@ def simulate_scenario(
             }
         )
 
-    stakeholder_review = scenario.get("stakeholderReview") or {"status": "pending"}
     return {
         "scenarioId": scenario_id,
         "asOf": normalize_json_value(scenario.get("asOf")),
         "machineValidated": True,
         "simulationPassed": not errors,
-        "stakeholderReview": stakeholder_review,
         "issuedInstanceRefs": issued_order,
         "instanceValues": [
             {

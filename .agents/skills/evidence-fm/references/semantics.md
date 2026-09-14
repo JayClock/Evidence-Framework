@@ -136,12 +136,10 @@ Business Pattern 表达运营特定、领域中立的履约责任结构。它必
 
 ## 11. 状态与验证
 
-必须区分：
+必须区分机器结论与业务确认：
 
 ```text
-modelStatus / stakeholderReview
 machineValidated → simulationPassed
-businessPattern.reuseStatus / stakeholderReview
 ```
 
-`draft` 模型可以通过结构校验，但不能被称为业务已确认。场景仅根据当时已形成、对 acting Role 可见的凭证执行 CEL；模拟值不是生产事实，不得回写模型条款。
+机器校验通过不能被称为业务已确认；确认依据随项目发现记录与 PDCA 计划／任务记录维护。场景仅根据当时已形成、对 acting Role 可见的凭证执行 CEL；模拟值不是生产事实，不得回写模型条款。

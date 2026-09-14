@@ -7,3 +7,9 @@ package-lock.json
 # Offline snapshots contain CSP-hashed inline scripts; regenerate, never format.
 /.evidence/views/
 /.agents/skills/evidence-visualization/assets/vendor/
+# 派生交付按权威字节核对 manifest 摘要；regenerate, never format.
+/.evidence/api/generated/
+/.evidence/fm/generated/
+# 示例交付与渲染器逐字节比对；regenerate, never format.
+/.agents/skills/evidence-api-design/assets/examples/full-lifecycle/openapi.yaml
+/.agents/skills/evidence-api-design/assets/examples/full-lifecycle/api-capabilities.md

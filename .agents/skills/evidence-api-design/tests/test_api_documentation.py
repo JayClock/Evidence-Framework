@@ -19,6 +19,6 @@ class DocumentationTests(unittest.TestCase):
                 if path.suffix in {".py", ".md", ".yaml", ".json"}:
                     self.assertNotRegex(path.read_text(), retired, str(path))
         entry = (skill / "SKILL.md").read_text()
-        self.assertIn("已确认的整体 FM", entry)
+        self.assertIn("上游是整体 FM", entry)
         self.assertIn("每个接口都必须有契约", entry)
-        self.assertIn("不重新组织业务确认", entry)
+        self.assertIn("不重复业务确认", entry)

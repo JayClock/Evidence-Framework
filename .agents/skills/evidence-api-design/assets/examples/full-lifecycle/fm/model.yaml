@@ -4,9 +4,6 @@ id: product-procurement-full-lifecycle
 name: 商品采购协议完整履约模型
 version: 1.0.0
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.product-sourcing
   - context.product-procurement

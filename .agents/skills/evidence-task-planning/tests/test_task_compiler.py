@@ -31,7 +31,6 @@ class CompilerTests(unittest.TestCase):
                 "type": "fm_model",
                 "schemaVersion": "3.0",
                 "id": "sample",
-                "modelStatus": "draft",
                 "entryContextRefs": ["context.content"],
             },
         )
@@ -219,7 +218,6 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(a["profile"]["architecture"], "modular-monolith")
         self.assertEqual(a["profile"]["persistence"], "mybatis")
         self.assertIsNone(a["profile"]["databaseEngine"])
-        self.assertEqual(a["modelStatus"], "draft")
         self.assertIn(
             "root-collection::context.content::thing.book",
             {u["key"] for u in a["units"]},

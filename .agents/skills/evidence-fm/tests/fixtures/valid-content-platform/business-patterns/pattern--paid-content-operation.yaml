@@ -32,6 +32,3 @@ supportedByContractContextRefs:
   - context.operations-performance
 domainExampleContextRefs:
   - context.cms
-reuseStatus: candidate
-stakeholderReview:
-  status: pending

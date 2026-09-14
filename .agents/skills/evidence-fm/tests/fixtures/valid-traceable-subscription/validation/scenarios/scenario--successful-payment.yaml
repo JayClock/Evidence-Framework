@@ -69,5 +69,3 @@ expectations:
     - fulfillmentRef: fulfillment.content-payment
       requestInstanceRef: instance.payment-request
       status: completed
-stakeholderReview:
-  status: pending

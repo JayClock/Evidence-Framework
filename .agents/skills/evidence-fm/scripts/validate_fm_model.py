@@ -49,10 +49,6 @@ def main() -> int:
         "schemaVersion": model.manifest.get("schemaVersion")
         if model.manifest
         else None,
-        "modelStatus": model.manifest.get("modelStatus") if model.manifest else None,
-        "stakeholderReview": model.manifest.get("stakeholderReview")
-        if model.manifest
-        else None,
         "counts": {
             "entities": len(model.entities),
             "fulfillmentCount": len(model.fulfillment_contexts_by_id),

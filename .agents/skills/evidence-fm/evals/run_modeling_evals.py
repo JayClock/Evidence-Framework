@@ -520,15 +520,12 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             draft_only = bool(
                 not discovery_errors
                 and discovery_model.manifest
-                and discovery_model.manifest.get("modelStatus") == "draft"
-                and (discovery_model.manifest.get("stakeholderReview") or {}).get(
-                    "status"
-                )
-                == "pending"
+                and "modelStatus" not in discovery_model.manifest
+                and "stakeholderReview" not in discovery_model.manifest
             )
         add(
             expectations,
-            "No confirmed model or stakeholder review is fabricated.",
+            "The model file carries no lifecycle or review status.",
             draft_only,
             str(model_dir),
         )
@@ -1011,11 +1008,11 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         candidate_patterns = [
             pattern
             for pattern in business_patterns
-            if pattern.get("reuseStatus") == "candidate"
+            if len(set(pattern.get("domainExampleContextRefs") or [])) < 2
         ]
         add(
             expectations,
-            "Single-domain content operation remains a candidate Business Pattern.",
+            "Single-domain content operation is not claimed as cross-domain reusable.",
             bool(candidate_patterns),
             str(candidate_patterns),
         )
@@ -1051,13 +1048,13 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             "\n".join(simulation_errors) or str(sorted(statuses)),
         )
         reviews = [
-            (result.get("stakeholderReview") or {}).get("status")
+            "stakeholderReview" in result
             for result in simulation.get("scenarioResults") or []
         ]
         add(
             expectations,
-            "Machine simulation does not claim stakeholder confirmation.",
-            bool(reviews) and all(status == "pending" for status in reviews),
+            "Machine simulation report carries no review status.",
+            bool(reviews) and not any(reviews),
             str(reviews),
         )
         generated_lineage = model_dir / "generated" / "traceability.json"
@@ -1085,10 +1082,8 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         supported_patterns = [
             pattern
             for pattern in business_patterns
-            if pattern.get("reuseStatus") == "supported"
-            and len(pattern.get("supportedByContractContextRefs") or []) >= 2
+            if len(pattern.get("supportedByContractContextRefs") or []) >= 2
             and len(pattern.get("domainExampleContextRefs") or []) >= 2
-            and (pattern.get("stakeholderReview") or {}).get("status") == "pending"
         ]
         add(
             expectations,
@@ -1098,7 +1093,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         )
         add(
             expectations,
-            "Business Pattern is supported by two contracts and two domains but not confirmed.",
+            "Business Pattern cites two contract and two domain examples.",
             bool(supported_patterns),
             str(supported_patterns),
         )

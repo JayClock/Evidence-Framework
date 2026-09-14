@@ -39,16 +39,12 @@ supportedByContractContextRefs:
 domainExampleContextRefs:
   - context.catalog
   - context.content
-reuseStatus: supported
-stakeholderReview:
-  status: pending
 ```
 
-## 复用状态
+## 复用证据
 
-- `candidate`：至少一个真实案例，但领域中立仍是假设。
-- `supported`：至少两个 Contract Context 和两个 Domain Context 提供证据；仍未等于业务方确认。
-- `confirmed`：满足 supported，并由具名业务审核者确认。
+- 至少一个真实案例，否则领域中立仍是假设。
+- 声称可跨领域复用时，用至少两个 Contract Context 与两个 Domain Context 的既有案例说明。
 
 不要为了达到数量门槛复制 Context，也不要把支付 SDK、数据库表、消息 Topic 或微服务名称当作复用证据。
 
@@ -69,4 +65,4 @@ python3 scripts/build_fm_business_patterns.py <model-dir> \
 - 所谓不变量是否只是当前产品功能？
 - 变化点是否来自业务结构，而不是当前技术方案？
 - 替换领域输入后，合同履约责任和凭证链是否仍成立？
-- `reuseStatus` 是否超出了现有案例与人工确认？
+- 模式主张的复用范围是否超出既有跨案例证据？

@@ -6,10 +6,10 @@
 
 - `.evidence/discovery.md`：来源、回答、工作理解、简化业务视图、问题、暂缓／停止状态与交接；需拆分时用 `.evidence/questions.md`。
 - `.evidence/fm/`：唯一当前正式模型，包含源 YAML、术语、说明、validation 与 generated。
-- `.evidence/checks/fm/`：获授权保存的真实检查记录，绑定模型内容摘要。
+- `.evidence/checks/fm/`：获授权保存的紧凑运行清单，绑定模型内容摘要。
 - `.evidence/api/api.yaml`：另行使用 `evidence-api-design` 时维护的 API 设计源。
 - `.evidence/api/generated/<批次>/`：API 投影的新输出目录。
-- `.evidence/checks/api/`：获授权保存的 API 检查记录。
+- `.evidence/checks/api/`：获授权保存的 API 紧凑运行清单。
 - `.evidence/views/index.html`：用户要求时生成的自包含离线只读审核页，方法与工具归属可定位的 `evidence-visualization` Skill。修改 YAML 后重新生成，不以页面存在代表当前校验通过。
 
 恢复时读取项目文件，不猜测旧会话。发现记录只保存当前焦点、来源、实际问题、简化理解、状态、模型和检查指针，不复制正式模型正文。模型可能处于编辑中或校验失败状态；下游消费前必须重新校验，不能仅凭文件或旧报告存在判定可用。
@@ -139,7 +139,7 @@
 
 只校验时运行 FM 包内 `check_fm.py`，报告真实退出状态；不写任何项目文件。没有实际执行场景时 `simulationPassed` 为 null，不宣称模拟通过。
 
-用户要求留存结果时，将真实输出保存到 `.evidence/checks/fm/<运行标识>.json`，并按 FM 校验方法保留命令、环境与来源版本指针。不覆盖已引用的检查记录，不将报告放进模型目录。来源、模型、场景或校验器变化后重跑；旧结果只证明旧版本。
+用户要求留存结果时，将紧凑运行清单保存到 `.evidence/checks/fm/<运行标识>.json`，并按 FM 校验方法保留命令、环境、来源摘要与日志指针；不复制完整输出。不覆盖已引用的检查记录，不将报告放进模型目录。来源、模型、场景或校验器变化后重跑；旧结果只证明旧版本。
 
 ## 结束与界面降级
 

@@ -1210,7 +1210,7 @@ function initialize() {
   $('model-title').textContent = DATA.model.model.name;
   $('notice').title = `模型摘要 ${DATA.meta.modelDigest}`;
   $('notice').textContent =
-    `生成时校验：FM ${DATA.check.valid ? '通过' : '未通过'} · 模拟 ${DATA.check.simulationPassed === null ? '未执行' : DATA.check.simulationPassed ? '通过' : '失败'} · 业务审核 ${DATA.check.stakeholderReview?.status || '未声明'}。快照生成于 ${DATA.meta.generatedAt.slice(0, 19)} UTC；离线页面不会自动检测后续文件变化，请重新生成。`;
+    `生成时校验：FM ${DATA.check.valid ? '通过' : '未通过'} · 模拟 ${DATA.check.simulationPassed === null ? '未执行' : DATA.check.simulationPassed ? '通过' : '失败'}。快照生成于 ${DATA.meta.generatedAt.slice(0, 19)} UTC；离线页面不会自动检测后续文件变化，请重新生成。`;
   for (const [number, name] of [
     [DATA.files.length, '份 YAML · 可回到原文'],
     [DATA.model.entities.length, '个业务对象'],

@@ -157,6 +157,4 @@ expectations:
     - fulfillmentRef: fulfillment.wechat-payment
       requestInstanceRef: instance.wechat-payment-request
       status: completed
-stakeholderReview:
-  status: pending
 notes: 支付通过外部凭证玩家满足支付凭证角色后形成客户确认；开票、发货各使用具体补充证据。采购三项与微信支付履约均验证完成。

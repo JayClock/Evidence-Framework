@@ -79,7 +79,6 @@ def design_report(projection: dict[str, Any]) -> str:
         "# FM → API 设计报告",
         "",
         f"- 设计：`{projection['apiId']}`",
-        f"- FM 状态：`{projection['fmReviewState'].get('modelStatus')}`",
         f"- 接口数（含角色变体）：{len(projection['capabilities'])}",
         f"- 整体 Context 数：{len(projection['contextRefs'])}",
         "",

@@ -210,12 +210,6 @@ def build_projection(
             "sources": source_digests,
         },
         "fmCheckSummary": index.check,
-        "fmReviewState": {
-            "modelStatus": index.compiled.get("model", {}).get("modelStatus"),
-            "stakeholderReview": index.compiled.get("model", {}).get(
-                "stakeholderReview"
-            ),
-        },
         "resources": resources,
         "modelCoverage": model_coverage,
         "contextRefs": sorted(

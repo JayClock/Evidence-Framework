@@ -89,7 +89,7 @@ attributes:
 
 命名、类型和引用一致性是硬校验；键顺序与缩进是 Agent 生成／维护规范，不改变 YAML 映射语义，不作为模型业务有效性的拒绝条件。只有有对应业务依据时才使用上述金额和派生示例。
 
-## 3. Manifest 与人工状态
+## 3. Manifest
 
 ```yaml
 type: fm_model
@@ -98,23 +98,13 @@ id: subscription-service
 name: 订阅服务履约模型
 version: '3.0.0'
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.subscription
 ```
 
 `entryContextRefs` 可以直接引用 Domain 或 Pre-contract Context，不要求包含 Contract。示例见 `domain-modeling.md`。
 
-状态：
-
-- `draft`：仍有待确认事实；review 必须不是 confirmed；
-- `reviewed`：具名业务方已经检查，review 必须为 reviewed；
-- `confirmed`：具名业务方明确确认，review 必须为 confirmed，并提供 `reviewer`、`reviewedAt`；
-- review 为 `rejected` 时模型保持 `draft`，并保留具名审核人与时间。
-
-Agent 不得自行将状态提升为 reviewed／confirmed。
+模型文件不保存审核或生命周期状态。变更由项目 PDCA 触发，确认依据随发现记录与计划索引／任务记录维护；脚本不写入、不推断，机器校验通过也不当作业务确认。
 
 ## 4. Entity 种类
 

@@ -1205,7 +1205,10 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "started_at": "2026-10-01T09:06:00Z",
@@ -1341,7 +1344,9 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.access-mobile"],
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -1564,7 +1569,10 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -1729,7 +1737,10 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -1892,7 +1903,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -2036,7 +2049,9 @@
   "example": {
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "reader_id": "READER-001",
     "request_id": "PAY-001",
     "subscription_id": "SUB-20261001-001"
@@ -2149,7 +2164,11 @@
   "example": {
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription", "instance.discontinuation", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
     "reader_id": "READER-001",
     "request_id": "REFUND-001",
     "started_at": "2026-10-16T10:01:00Z",
@@ -2275,7 +2294,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.refund"],
+    "evidenceRefs": [
+      "instance.refund"
+    ],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -2428,7 +2449,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -2562,7 +2585,11 @@
   "example": {
     "column_id": "COL-BM",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription", "instance.relaunch", "instance.refunded"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "started_at": "2026-11-01T12:01:00Z",
@@ -2688,7 +2715,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.restore"],
+    "evidenceRefs": [
+      "instance.restore"
+    ],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -2983,7 +3012,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3001,7 +3032,10 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -3107,7 +3141,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -3141,7 +3179,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3159,7 +3199,10 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -3265,7 +3308,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -3299,7 +3346,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3316,7 +3365,9 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.access-mobile"],
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -3426,7 +3477,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3446,7 +3499,9 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.access-mobile"],
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -3568,7 +3623,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-provider"],
+  "actorRoleRefs": [
+    "role.account-provider"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3630,7 +3687,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-user"],
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3692,7 +3751,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3773,7 +3834,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3854,7 +3917,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3935,7 +4000,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-provider"],
+  "actorRoleRefs": [
+    "role.account-provider"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -3955,7 +4022,10 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "payment_request_id": "PAY-001",
@@ -4089,7 +4159,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -4123,7 +4197,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-user"],
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4143,7 +4219,10 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "payment_request_id": "PAY-001",
@@ -4277,7 +4356,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -4311,7 +4394,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-provider"],
+  "actorRoleRefs": [
+    "role.account-provider"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4328,7 +4413,10 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -4468,7 +4556,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-user"],
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4485,7 +4575,10 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -4625,7 +4718,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4640,7 +4735,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -4752,7 +4849,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4767,7 +4866,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -4879,7 +4980,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -4894,7 +4997,9 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -4999,7 +5104,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -5017,7 +5126,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5032,7 +5143,9 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -5137,7 +5250,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -5155,7 +5272,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5173,7 +5292,11 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription", "instance.discontinuation", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-23T10:01:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -5278,7 +5401,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -5308,7 +5435,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5326,7 +5455,11 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription", "instance.discontinuation", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-23T10:01:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -5431,7 +5564,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -5461,7 +5598,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5477,7 +5616,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.refund"],
+    "evidenceRefs": [
+      "instance.refund"
+    ],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -5597,7 +5738,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5613,7 +5756,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.refund"],
+    "evidenceRefs": [
+      "instance.refund"
+    ],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -5733,7 +5878,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5748,7 +5895,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -5851,7 +6000,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5866,7 +6017,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -5969,7 +6122,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -5986,7 +6141,11 @@
     },
     "column_id": "COL-BM",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription", "instance.relaunch", "instance.refunded"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
     "expired_at": "2026-11-02T12:01:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -6083,7 +6242,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -6117,7 +6280,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6134,7 +6299,11 @@
     },
     "column_id": "COL-BM",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription", "instance.relaunch", "instance.refunded"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
     "expired_at": "2026-11-02T12:01:00Z",
     "fulfillmentStatus": "completed",
     "reader_id": "READER-001",
@@ -6231,7 +6400,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -6265,7 +6438,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6281,7 +6456,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.restore"],
+    "evidenceRefs": [
+      "instance.restore"
+    ],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -6392,7 +6569,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6408,7 +6587,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.restore"],
+    "evidenceRefs": [
+      "instance.restore"
+    ],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -6519,7 +6700,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6661,7 +6844,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6803,7 +6988,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6821,7 +7008,10 @@
     "chapter_id": "CH-01",
     "column_id": "COL-BM",
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.subscription", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-01T09:07:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -6927,7 +7117,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -6961,7 +7155,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -6978,7 +7174,9 @@
     "confirmed_at": "2026-10-01T09:06:02Z",
     "delivered": true,
     "edition_id": "ED-1",
-    "evidenceRefs": ["instance.access-mobile"],
+    "evidenceRefs": [
+      "instance.access-mobile"
+    ],
     "reader_id": "READER-001",
     "request_id": "ACCESS-MOBILE",
     "subscription_id": "SUB-20261001-001"
@@ -7088,7 +7286,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-user"],
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7150,7 +7350,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-user"],
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7170,7 +7372,10 @@
     "balance_before_minor_units": 10000,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-agreement", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-agreement",
+      "instance.payment"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "pending",
     "payment_request_id": "PAY-001",
@@ -7304,7 +7509,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -7338,7 +7547,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.account-provider"],
+  "actorRoleRefs": [
+    "role.account-provider"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7355,7 +7566,10 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-01T09:05:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.prepaid-request", "instance.payment"],
+    "evidenceRefs": [
+      "instance.prepaid-request",
+      "instance.payment"
+    ],
     "payment_id": "PREPAID-TX-001",
     "payment_request_id": "PAY-001",
     "reader_id": "READER-001",
@@ -7495,7 +7709,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7510,7 +7726,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-10-16T10:00:00Z",
     "delisted": true,
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "missed_due_at": "2026-10-08T10:00:00Z",
     "missing_content": true,
     "reader_id": "READER-001",
@@ -7622,7 +7840,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7637,7 +7857,9 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "expired_at": "2026-10-01T09:15:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -7742,7 +7964,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -7760,7 +7986,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7778,7 +8006,11 @@
     "amount_minor_units": 9900,
     "column_id": "COL-BM",
     "currency": "CNY",
-    "evidenceRefs": ["instance.subscription", "instance.discontinuation", "instance.mobile-result"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.discontinuation",
+      "instance.mobile-result"
+    ],
     "expired_at": "2026-10-23T10:01:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -7883,7 +8115,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -7913,7 +8149,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -7929,7 +8167,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-10-18T10:00:00Z",
     "currency": "CNY",
-    "evidenceRefs": ["instance.refund"],
+    "evidenceRefs": [
+      "instance.refund"
+    ],
     "reader_id": "READER-001",
     "receipt_id": "REFUND-RECEIPT-001",
     "request_id": "REFUND-001",
@@ -8049,7 +8289,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -8064,7 +8306,9 @@
     "column_id": "COL-BM",
     "created_at": "2026-11-01T12:00:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription"],
+    "evidenceRefs": [
+      "instance.subscription"
+    ],
     "listed": true,
     "reader_id": "READER-001",
     "relaunched_at": "2026-11-01T11:59:00Z",
@@ -8167,7 +8411,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -8184,7 +8430,11 @@
     },
     "column_id": "COL-BM",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.subscription", "instance.relaunch", "instance.refunded"],
+    "evidenceRefs": [
+      "instance.subscription",
+      "instance.relaunch",
+      "instance.refunded"
+    ],
     "expired_at": "2026-11-02T12:01:00Z",
     "fulfillmentStatus": "pending",
     "reader_id": "READER-001",
@@ -8281,7 +8531,11 @@
       "origin": "derived",
       "required": true,
       "schema": {
-        "enum": ["pending", "completed", "breached"],
+        "enum": [
+          "pending",
+          "completed",
+          "breached"
+        ],
         "type": "string"
       }
     }
@@ -8315,7 +8569,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.publisher"],
+  "actorRoleRefs": [
+    "role.publisher"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",
@@ -8331,7 +8587,9 @@
     "column_id": "COL-BM",
     "confirmed_at": "2026-11-01T12:02:00Z",
     "edition_id": "ED-2",
-    "evidenceRefs": ["instance.restore"],
+    "evidenceRefs": [
+      "instance.restore"
+    ],
     "reader_id": "READER-001",
     "request_id": "RESTORE-001",
     "restored": true,
@@ -8442,7 +8700,9 @@
 
 ```json
 {
-  "actorRoleRefs": ["role.reader"],
+  "actorRoleRefs": [
+    "role.reader"
+  ],
   "availability": "not_evaluated",
   "cache": {
     "mode": "no-store",

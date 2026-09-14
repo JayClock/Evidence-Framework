@@ -41,5 +41,3 @@ expectations:
     - fulfillmentRef: fulfillment.content-payment
       requestInstanceRef: instance.payment-request
       status: breached
-stakeholderReview:
-  status: pending

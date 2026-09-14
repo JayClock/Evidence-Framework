@@ -45,12 +45,10 @@ def render_business_patterns(model: LoadedModel) -> str:
         return "\n".join(lines)
 
     for pattern in patterns:
-        review = pattern.get("stakeholderReview") or {}
         lines.extend(
             [
                 f"## {pattern.get('label')} (`{pattern.get('id')}`)",
                 "",
-                f"- 复用状态：`{pattern.get('reuseStatus')}`",
                 "- 业务目标："
                 + ", ".join(f"`{goal}`" for goal in pattern.get("businessGoals") or []),
                 f"- 运营不变量：{pattern.get('operationInvariant')}",
@@ -70,10 +68,7 @@ def render_business_patterns(model: LoadedModel) -> str:
         lines.extend(
             bullet_refs("领域案例", pattern.get("domainExampleContextRefs") or [])
         )
-        review_line = f"- 业务方评审：`{review.get('status', 'pending')}`"
-        if review.get("reviewer"):
-            review_line += f"，{review.get('reviewer')} @ {review.get('reviewedAt')}"
-        lines.extend([review_line, ""])
+        lines.append("")
         if pattern.get("notes"):
             lines.extend([str(pattern["notes"]), ""])
     return "\n".join(lines)

@@ -53,7 +53,7 @@ Evidence 是 Nx 单仓库中的业务建模与交付 Harness，配有 React/Type
 | `docs/engineering/`、`docs/howtos/`  | 按工作类型加载的规范、范例与操作说明                 |
 | `docs/plans/smart-domain/index.md`   | 生成计划后保存 slicing、compiled、taskNotes、gaps    |
 | `docs/plans/smart-domain/tasks/*.md` | 生成计划后保存局部 Guides、CHECK 和 observedEvidence |
-| `.evidence/checks/`                  | 获授权留存的实际检查记录                             |
+| `.evidence/checks/`                  | 获授权留存的紧凑运行清单与日志指针                   |
 
 计划路径是工作流输出约定，不表示仓库已经有可执行计划。没有有效索引时先规划，不根据代码存在或聊天记忆跳到实施。
 

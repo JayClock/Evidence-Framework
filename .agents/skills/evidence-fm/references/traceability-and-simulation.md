@@ -5,15 +5,13 @@
 - 属性追溯回答：关键金额、数量、时间、KPI 或领域结论从哪一个已建模 Entity 属性产生？
 - 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建凭证责任与结果？
 
-结构合法不等于业务已验证。模型、机器与人工状态必须区分：
+结构合法不等于业务已验证：
 
 ```text
-modelStatus / model.stakeholderReview
 machineValidated → simulationPassed
-businessPattern.reuseStatus / businessPattern.stakeholderReview
 ```
 
-脚本只能自动产生机器校验与模拟结果；没有具名审核人与审核时间时，不得声称业务方已确认。
+脚本只能自动产生机器校验与模拟结果，不能据此声称业务方已确认；确认依据随项目发现记录与 PDCA 计划／任务记录维护。
 
 ## 2. 关键数据项
 
@@ -138,8 +136,6 @@ expectations:
     - fulfillmentRef: fulfillment.payment
       requestInstanceRef: instance.payment-request
       status: completed
-stakeholderReview:
-  status: pending
 ```
 
 补充证据先存在，再形成依赖它的凭证：在目标步骤之前签发补充证据，或将已经存在的证据放入 `givenInstanceRefs`；目标步骤的可见凭证必须覆盖必要证据。需要同次登记时仍按证据依赖拓扑执行。为必要证据缺失、编号不匹配、时间晚于目标及不可见建立失败验证；未声明补充证据需求的凭证不强加此条件。
@@ -192,6 +188,6 @@ python3 <skill-dir>/scripts/generate_role_play_pack.py \
 - `blank-documents/`：由各 Role 在演练中填写的单据；
 - `role--*.md`：每个 Role 的步骤、可见凭证和当时可用的 CEL 政策表达式，不含预期值或后续答案；
 - `audit-checklist.md`：凭证责任、时限、关键数据、异常和口头知识检查；
-- `manifest.json`：场景、机器模拟和 stakeholder review 状态。
+- `manifest.json`：场景与机器模拟结果。
 
-角色扮演至少检查一个正常场景和一个异常／追责场景。任何必须依赖“大家都知道”的口头事实都记录为模型 gap。人工确认必须由业务方显式写入 `stakeholderReview`，不能由 Agent 推断。
+角色扮演至少检查一个正常场景和一个异常／追责场景。任何必须依赖“大家都知道”的口头事实都记录为模型 gap。人工确认依据必须由业务方显式保存在项目侧的发现记录或 PDCA 计划／任务记录中，不能由 Agent 推断。

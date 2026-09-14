@@ -4,9 +4,6 @@ id: column-subscription
 name: 专栏订阅业务
 version: 1.0.0
 ruleLanguage: CEL
-modelStatus: draft
-stakeholderReview:
-  status: pending
 entryContextRefs:
   - context.subscription
   - context.mobile

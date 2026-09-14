@@ -7,7 +7,6 @@ import json
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,9 +31,6 @@ SCHEMA_VERSION = "3.0"
 NON_SOURCE_TREES = {"discovery", "generated", "validation"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
 BOOL_RULE_KINDS = {"precondition", "invariant", "eligibility", "completion", "breach"}
-RFC3339_TIMESTAMP_RE = re.compile(
-    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
-)
 IMPLEMENTATION_PARTY_TERMS = {
     "system",
     "scheduler",
@@ -362,17 +358,6 @@ def validate_model(model: LoadedModel) -> list[str]:
     return dedupe(errors)
 
 
-def is_rfc3339_timestamp(value: Any) -> bool:
-    if not isinstance(value, str) or RFC3339_TIMESTAMP_RE.fullmatch(value) is None:
-        return False
-    normalized = f"{value[:-1]}+00:00" if value.endswith("Z") else value
-    try:
-        parsed = datetime.fromisoformat(normalized)
-    except ValueError:
-        return False
-    return parsed.tzinfo is not None
-
-
 def validate_manifest(
     manifest: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str]
 ) -> None:
@@ -382,31 +367,6 @@ def validate_manifest(
             errors.append(
                 f"model.entryContextRefs contains non-Context or unknown id '{ref}'"
             )
-
-    model_status = manifest.get("modelStatus")
-    raw_review = manifest.get("stakeholderReview")
-    review = raw_review if isinstance(raw_review, dict) else {}
-    review_status = review.get("status")
-    if review_status in {
-        "reviewed",
-        "confirmed",
-        "rejected",
-    } and not is_rfc3339_timestamp(review.get("reviewedAt")):
-        errors.append(
-            "model: stakeholderReview.reviewedAt must be an RFC 3339 timestamp"
-        )
-    if model_status == "confirmed" and review_status != "confirmed":
-        errors.append(
-            "model: confirmed status requires stakeholderReview.status 'confirmed'"
-        )
-    if model_status == "reviewed" and review_status != "reviewed":
-        errors.append(
-            "model: reviewed status requires stakeholderReview.status 'reviewed'"
-        )
-    if model_status == "draft" and review_status in {"reviewed", "confirmed"}:
-        errors.append(
-            f"model: stakeholderReview.status '{review_status}' is inconsistent with modelStatus 'draft'"
-        )
 
 
 EVIDENCE_TIME_ATTRIBUTES = {
@@ -1232,37 +1192,6 @@ def validate_business_patterns(
             errors.append(
                 f"{pattern_id}: Domain examples lack referenced Domain inputs "
                 f"{sorted(empty_domain_examples)}"
-            )
-
-        reuse_status = pattern.get("reuseStatus")
-        if reuse_status in {"supported", "confirmed"}:
-            if len(set(contract_context_refs)) < 2:
-                errors.append(
-                    f"{pattern_id}: reuseStatus '{reuse_status}' requires at least two Contract Context examples"
-                )
-            if len(set(domain_context_refs)) < 2:
-                errors.append(
-                    f"{pattern_id}: reuseStatus '{reuse_status}' requires at least two Domain Context examples"
-                )
-
-        raw_review = pattern.get("stakeholderReview")
-        review = raw_review if isinstance(raw_review, dict) else {}
-        review_status = review.get("status")
-        if review_status in {
-            "reviewed",
-            "confirmed",
-            "rejected",
-        } and not is_rfc3339_timestamp(review.get("reviewedAt")):
-            errors.append(
-                f"{pattern_id}: stakeholderReview.reviewedAt must be an RFC 3339 timestamp"
-            )
-        if reuse_status == "confirmed" and review_status != "confirmed":
-            errors.append(
-                f"{pattern_id}: confirmed reuse requires stakeholderReview.status 'confirmed'"
-            )
-        if reuse_status != "confirmed" and review_status == "confirmed":
-            errors.append(
-                f"{pattern_id}: confirmed stakeholder review requires reuseStatus 'confirmed'"
             )
 
 

@@ -4900,6 +4900,6 @@ components:
         - refund_seconds
         - restore_seconds
         - _links
-x-generated-from: fm-api-design projection.json
-x-fm-api-design-schema-version: '4.0'
+x-generated-from: evidence-api-design projection.json
+x-evidence-api-design-schema-version: '4.0'
 x-runtime-validated: false

@@ -50,7 +50,6 @@ class SimulationTests(unittest.TestCase):
             if item["scenarioId"] == "scenario.overdue-payment"
         )
         self.assertTrue(result["simulationPassed"])
-        self.assertEqual("pending", result["stakeholderReview"]["status"])
         self.assertEqual("completed", result["fulfillmentStatuses"][0]["status"])
         self.assertEqual("breached", overdue["fulfillmentStatuses"][0]["status"])
 
@@ -316,7 +315,9 @@ class SimulationTests(unittest.TestCase):
             ),
         )
 
-    def test_count_completion_is_expressed_by_one_rule_and_repeated_instances(self) -> None:
+    def test_count_completion_is_expressed_by_one_rule_and_repeated_instances(
+        self,
+    ) -> None:
         model = load_model(self.fixture("valid-subscription"))
         instances = {
             "instance.request": {
@@ -377,7 +378,7 @@ class SimulationTests(unittest.TestCase):
             ),
         )
 
-    def test_role_play_pack_hides_future_values_and_marks_review_pending(self) -> None:
+    def test_role_play_pack_hides_future_values_and_is_deterministic(self) -> None:
         root = self.fixture("valid-traceable-subscription")
         script = SKILL_DIR / "scripts" / "generate_role_play_pack.py"
         with tempfile.TemporaryDirectory() as directory:
@@ -434,7 +435,6 @@ class SimulationTests(unittest.TestCase):
             self.assertEqual("2026-09-01T09:15:00Z", manifest["asOf"])
             self.assertTrue(manifest["machineValidated"])
             self.assertTrue(manifest["simulationPassed"])
-            self.assertEqual("pending", manifest["stakeholderReview"]["status"])
             self.assertTrue((output / "role--subscriber.md").is_file())
             first_files = {
                 path.relative_to(output): path.read_bytes()
