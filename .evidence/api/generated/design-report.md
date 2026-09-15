@@ -1,7 +1,7 @@
 # FM → API 设计报告
 
 - 设计：`api.column-subscription`
-- 接口数（含角色变体）：42
+- 接口数（含角色变体）：21
 - 整体 Context 数：10
 
 ## 资源
@@ -24,60 +24,60 @@
 
 ## 整体模型覆盖
 
-- `confirmation.access`：api；接口：capability.read-access-result-publisher, capability.read-access-result-reader, capability.register-access-result-publisher
+- `confirmation.access`：api；接口：capability.read-access-result-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 - `confirmation.mobile`：external；接口：—
   - 依据：移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-- `confirmation.prepaid`：api；接口：capability.read-debit-result-account-provider, capability.read-debit-result-account-user, capability.register-debit-result-account-provider
-- `confirmation.refund`：api；接口：capability.read-refund-result-publisher, capability.read-refund-result-reader, capability.register-refund-result-publisher
-- `confirmation.restore`：api；接口：capability.read-restore-result-publisher, capability.read-restore-result-reader, capability.register-restore-result-publisher
+- `confirmation.prepaid`：api；接口：capability.read-debit-result-account-user
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+- `confirmation.refund`：api；接口：capability.read-refund-result-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+- `confirmation.restore`：api；接口：capability.read-restore-result-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 - `contract.mobile`：external；接口：—
   - 依据：移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-- `contract.prepaid`：api；接口：capability.read-account-account-provider, capability.read-account-account-user, capability.register-account-account-user
-- `contract.subscription`：api；接口：capability.read-subscription-publisher, capability.read-subscription-reader, capability.register-subscription-reader
-- `evidence.discontinuation`：api；接口：capability.read-discontinuation-publisher, capability.read-discontinuation-reader, capability.register-discontinuation-publisher
-- `evidence.relaunch`：api；接口：capability.read-relaunch-publisher, capability.read-relaunch-reader, capability.register-relaunch-publisher
+- `contract.prepaid`：api；接口：capability.read-account-account-user, capability.register-account-account-user
+- `contract.subscription`：api；接口：capability.read-subscription-reader, capability.register-subscription-reader
+- `evidence.discontinuation`：api；接口：capability.read-discontinuation-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+- `evidence.relaunch`：api；接口：capability.read-relaunch-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 - `party.user`：internal；接口：—
   - 依据：用户用于跨合同身份绑定，分别扮演各上下文的角色；不提供用户档案管理接口。
-- `request.access`：api；接口：capability.read-access-publisher, capability.read-access-reader, capability.register-access-reader
+- `request.access`：api；接口：capability.read-access-reader, capability.register-access-reader
 - `request.mobile`：external；接口：—
   - 依据：移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-- `request.payment`：api；接口：capability.read-payment-publisher, capability.read-payment-reader, capability.register-payment-publisher
-- `request.prepaid`：api；接口：capability.read-debit-account-provider, capability.read-debit-account-user, capability.register-debit-account-user
-- `request.refund`：api；接口：capability.read-refund-publisher, capability.read-refund-reader, capability.register-refund-reader
-- `request.restore`：api；接口：capability.read-restore-publisher, capability.read-restore-reader, capability.register-restore-reader
+- `request.payment`：api；接口：capability.read-payment-reader
+  - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+- `request.prepaid`：api；接口：capability.read-debit-account-user, capability.register-debit-account-user
+- `request.refund`：api；接口：capability.read-refund-reader, capability.register-refund-reader
+- `request.restore`：api；接口：capability.read-restore-reader, capability.register-restore-reader
 - `thing.chapter`：api；接口：capability.read-chapter-reader
-- `thing.column`：api；接口：capability.read-column-publisher, capability.read-column-reader
+- `thing.column`：api；接口：capability.read-column-reader
 
 ## HTTP 操作
 
 - `POST /subscriptions/{subscriptionId}/accesses`：capability.register-access-reader
-- `GET /subscriptions/{subscriptionId}/accesses/{accessId}`：capability.read-access-publisher, capability.read-access-reader
-- `GET /subscriptions/{subscriptionId}/accesses/{accessId}/result`：capability.read-access-result-publisher, capability.read-access-result-reader
-- `POST /subscriptions/{subscriptionId}/accesses/{accessId}/result`：capability.register-access-result-publisher
+- `GET /subscriptions/{subscriptionId}/accesses/{accessId}`：capability.read-access-reader
+- `GET /subscriptions/{subscriptionId}/accesses/{accessId}/result`：capability.read-access-result-reader
 - `POST /prepaid-accounts`：capability.register-account-account-user
-- `GET /prepaid-accounts/{accountId}`：capability.read-account-account-provider, capability.read-account-account-user
+- `GET /prepaid-accounts/{accountId}`：capability.read-account-account-user
 - `GET /chapters/{chapterId}`：capability.read-chapter-reader
-- `GET /columns/{columnId}`：capability.read-column-publisher, capability.read-column-reader
+- `GET /columns/{columnId}`：capability.read-column-reader
 - `POST /prepaid-accounts/{accountId}/debits`：capability.register-debit-account-user
-- `GET /prepaid-accounts/{accountId}/debits/{debitId}`：capability.read-debit-account-provider, capability.read-debit-account-user
-- `GET /prepaid-accounts/{accountId}/debits/{debitId}/result`：capability.read-debit-result-account-provider, capability.read-debit-result-account-user
-- `POST /prepaid-accounts/{accountId}/debits/{debitId}/result`：capability.register-debit-result-account-provider
-- `POST /discontinuations`：capability.register-discontinuation-publisher
-- `GET /discontinuations/{discontinuationId}`：capability.read-discontinuation-publisher, capability.read-discontinuation-reader
-- `GET /subscriptions/{subscriptionId}/payment`：capability.read-payment-publisher, capability.read-payment-reader
-- `POST /subscriptions/{subscriptionId}/payment`：capability.register-payment-publisher
-- `GET /subscriptions/{subscriptionId}/refund`：capability.read-refund-publisher, capability.read-refund-reader
+- `GET /prepaid-accounts/{accountId}/debits/{debitId}`：capability.read-debit-account-user
+- `GET /prepaid-accounts/{accountId}/debits/{debitId}/result`：capability.read-debit-result-account-user
+- `GET /discontinuations/{discontinuationId}`：capability.read-discontinuation-reader
+- `GET /subscriptions/{subscriptionId}/payment`：capability.read-payment-reader
+- `GET /subscriptions/{subscriptionId}/refund`：capability.read-refund-reader
 - `POST /subscriptions/{subscriptionId}/refund`：capability.register-refund-reader
-- `GET /subscriptions/{subscriptionId}/refund/result`：capability.read-refund-result-publisher, capability.read-refund-result-reader
-- `POST /subscriptions/{subscriptionId}/refund/result`：capability.register-refund-result-publisher
-- `POST /subscriptions/{subscriptionId}/relaunches`：capability.register-relaunch-publisher
-- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}`：capability.read-relaunch-publisher, capability.read-relaunch-reader
-- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration`：capability.read-restore-publisher, capability.read-restore-reader
+- `GET /subscriptions/{subscriptionId}/refund/result`：capability.read-refund-result-reader
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}`：capability.read-relaunch-reader
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration`：capability.read-restore-reader
 - `POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration`：capability.register-restore-reader
-- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result`：capability.read-restore-result-publisher, capability.read-restore-result-reader
-- `POST /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result`：capability.register-restore-result-publisher
+- `GET /subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result`：capability.read-restore-result-reader
 - `POST /subscriptions`：capability.register-subscription-reader
-- `GET /subscriptions/{subscriptionId}`：capability.read-subscription-publisher, capability.read-subscription-reader
+- `GET /subscriptions/{subscriptionId}`：capability.read-subscription-reader
 
 ## 表示与链接
 

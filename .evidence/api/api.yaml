@@ -4,8 +4,7 @@ sources:
   - id: source.restore-per-relaunch
     path: .evidence/discovery.md
     locator: B07｜实例归属和办理权限
-    quote: >-
-      同一订阅允许保存多份断更核验及重新上架记录以保留历史，各次形成均有独立身份，但全额退款和同次活动恢复不可重复。
+    quote: 同一订阅允许保存多份断更核验及重新上架记录以保留历史，各次形成均有独立身份，但全额退款和同次活动恢复不可重复。
 decisions:
   - id: decision.identities
     category: identity
@@ -21,15 +20,13 @@ nonApiActivities:
     basis:
       fmRefs:
         - confirmation.mobile
-      reasoning: >-
-        移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
+      reasoning: 移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
   - entityRef: request.mobile
     handling: external
     basis:
       fmRefs:
         - request.mobile
-      reasoning: >-
-        移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
+      reasoning: 移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
   - entityRef: party.user
     handling: internal
     basis:
@@ -41,8 +38,56 @@ nonApiActivities:
     basis:
       fmRefs:
         - contract.mobile
-      reasoning: >-
-        移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
+      reasoning: 移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
+  - entityRef: confirmation.access
+    handling: internal
+    basis:
+      fmRefs:
+        - confirmation.access
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: confirmation.prepaid
+    handling: internal
+    basis:
+      fmRefs:
+        - confirmation.prepaid
+        - role.account-provider
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: confirmation.refund
+    handling: internal
+    basis:
+      fmRefs:
+        - confirmation.refund
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: confirmation.restore
+    handling: internal
+    basis:
+      fmRefs:
+        - confirmation.restore
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: evidence.discontinuation
+    handling: internal
+    basis:
+      fmRefs:
+        - evidence.discontinuation
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: evidence.relaunch
+    handling: internal
+    basis:
+      fmRefs:
+        - evidence.relaunch
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
+  - entityRef: request.payment
+    handling: internal
+    basis:
+      fmRefs:
+        - request.payment
+        - role.publisher
+      reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 resources:
   - id: resource.subscription
     businessName: 专栏订阅合同
@@ -290,18 +335,7 @@ bindings:
       fmRefs:
         - contract.subscription
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-subscription-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.subscription
-    basis:
-      fmRefs:
-        - contract.subscription
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.caller-account-account-user
     kind: caller_role
     roleRef: role.account-user
@@ -310,18 +344,7 @@ bindings:
       fmRefs:
         - contract.prepaid
         - role.account-user
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-account-account-provider
-    kind: caller_role
-    roleRef: role.account-provider
-    scopeResourceRef: resource.account
-    basis:
-      fmRefs:
-        - contract.prepaid
-        - role.account-provider
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-payment
     kind: parent_child
     parentResourceRef: resource.subscription
@@ -340,18 +363,7 @@ bindings:
       fmRefs:
         - request.payment
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-payment-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.payment
-    basis:
-      fmRefs:
-        - request.payment
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-access
     kind: parent_child
     parentResourceRef: resource.subscription
@@ -370,18 +382,7 @@ bindings:
       fmRefs:
         - request.access
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-access-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.access
-    basis:
-      fmRefs:
-        - request.access
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-refund
     kind: parent_child
     parentResourceRef: resource.subscription
@@ -400,18 +401,7 @@ bindings:
       fmRefs:
         - request.refund
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-refund-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.refund
-    basis:
-      fmRefs:
-        - request.refund
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-relaunch
     kind: parent_child
     parentResourceRef: resource.subscription
@@ -441,18 +431,7 @@ bindings:
       fmRefs:
         - request.restore
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-restore-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.restore
-    basis:
-      fmRefs:
-        - request.restore
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-debit
     kind: parent_child
     parentResourceRef: resource.account
@@ -471,18 +450,7 @@ bindings:
       fmRefs:
         - request.prepaid
         - role.account-user
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-debit-account-provider
-    kind: caller_role
-    roleRef: role.account-provider
-    scopeResourceRef: resource.debit
-    basis:
-      fmRefs:
-        - request.prepaid
-        - role.account-provider
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-access-result
     kind: parent_child
     parentResourceRef: resource.access
@@ -501,18 +469,7 @@ bindings:
       fmRefs:
         - confirmation.access
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-access-result-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.access-result
-    basis:
-      fmRefs:
-        - confirmation.access
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-refund-result
     kind: parent_child
     parentResourceRef: resource.refund
@@ -531,18 +488,7 @@ bindings:
       fmRefs:
         - confirmation.refund
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-refund-result-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.refund-result
-    basis:
-      fmRefs:
-        - confirmation.refund
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-restore-result
     kind: parent_child
     parentResourceRef: resource.restore
@@ -561,18 +507,7 @@ bindings:
       fmRefs:
         - confirmation.restore
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-restore-result-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.restore-result
-    basis:
-      fmRefs:
-        - confirmation.restore
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.parent-debit-result
     kind: parent_child
     parentResourceRef: resource.debit
@@ -591,19 +526,7 @@ bindings:
       fmRefs:
         - confirmation.prepaid
         - role.account-user
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: >-
-      binding.caller-debit-result-account-provider
-    kind: caller_role
-    roleRef: role.account-provider
-    scopeResourceRef: resource.debit-result
-    basis:
-      fmRefs:
-        - confirmation.prepaid
-        - role.account-provider
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.caller-discontinuation-reader
     kind: caller_role
     roleRef: role.reader
@@ -612,18 +535,7 @@ bindings:
       fmRefs:
         - evidence.discontinuation
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-discontinuation-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.discontinuation
-    basis:
-      fmRefs:
-        - evidence.discontinuation
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.caller-relaunch-reader
     kind: caller_role
     roleRef: role.reader
@@ -632,18 +544,7 @@ bindings:
       fmRefs:
         - evidence.relaunch
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-relaunch-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.relaunch
-    basis:
-      fmRefs:
-        - evidence.relaunch
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.caller-column-reader
     kind: caller_role
     roleRef: role.reader
@@ -652,18 +553,7 @@ bindings:
       fmRefs:
         - thing.column
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
-  - id: binding.caller-column-publisher
-    kind: caller_role
-    roleRef: role.publisher
-    scopeResourceRef: resource.column
-    basis:
-      fmRefs:
-        - thing.column
-        - role.publisher
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
   - id: binding.caller-chapter-reader
     kind: caller_role
     roleRef: role.reader
@@ -672,8 +562,7 @@ bindings:
       fmRefs:
         - thing.chapter
         - role.reader
-      reasoning: >-
-        调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+      reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
 scenarios:
   - id: scenario.api-free-restoration
     sourceScenarioRef: scenario.free-restoration
@@ -888,41 +777,6 @@ capabilities:
         - contract.subscription
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-subscription-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.subscription
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: contract.subscription
-    businessCapability: 读取专栏订阅合同
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-late-paid
-      - scenario.api-cutoff-paid
-      - scenario.api-mobile-subscription
-      - scenario.api-wrong-reader
-      - scenario.api-payment-expired
-      - scenario.api-prepaid-subscription
-      - scenario.api-payment-pending
-      - scenario.api-short-paid
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-insufficient-balance
-      - scenario.api-restore-charged
-      - scenario.api-access-expired
-      - scenario.api-refund-expired
-      - scenario.api-cutoff-pending
-    bindingRefs:
-      - binding.caller-subscription-publisher
-    basis:
-      fmRefs:
-        - contract.subscription
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.register-account-account-user
     actorRoleRef: role.account-user
     resourceRef: resource.account
@@ -961,61 +815,6 @@ capabilities:
         - contract.prepaid
         - role.account-user
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-account-account-provider
-    actorRoleRef: role.account-provider
-    resourceRef: resource.account
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: contract.prepaid
-    businessCapability: 读取预付费账户协议
-    scenarioRefs:
-      - scenario.api-prepaid-subscription
-      - scenario.api-insufficient-balance
-    bindingRefs:
-      - binding.caller-account-account-provider
-    basis:
-      fmRefs:
-        - contract.prepaid
-        - role.account-provider
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.register-payment-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.payment
-    view: singleton
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: request.payment
-    businessCapability: 发起订阅费付款要求
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-late-paid
-      - scenario.api-cutoff-paid
-      - scenario.api-mobile-subscription
-      - scenario.api-wrong-reader
-      - scenario.api-payment-expired
-      - scenario.api-prepaid-subscription
-      - scenario.api-payment-pending
-      - scenario.api-short-paid
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-insufficient-balance
-      - scenario.api-restore-charged
-      - scenario.api-access-expired
-      - scenario.api-refund-expired
-      - scenario.api-cutoff-pending
-    bindingRefs:
-      - binding.caller-payment-publisher
-      - binding.parent-payment
-    basis:
-      fmRefs:
-        - request.payment
-        - role.publisher
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
   - id: capability.read-payment-reader
     actorRoleRef: role.reader
     resourceRef: resource.payment
@@ -1051,42 +850,6 @@ capabilities:
       fmRefs:
         - request.payment
         - role.reader
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-payment-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.payment
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: request.payment
-    businessCapability: 读取订阅费支付请求
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-late-paid
-      - scenario.api-cutoff-paid
-      - scenario.api-mobile-subscription
-      - scenario.api-wrong-reader
-      - scenario.api-payment-expired
-      - scenario.api-prepaid-subscription
-      - scenario.api-payment-pending
-      - scenario.api-short-paid
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-insufficient-balance
-      - scenario.api-restore-charged
-      - scenario.api-access-expired
-      - scenario.api-refund-expired
-      - scenario.api-cutoff-pending
-    bindingRefs:
-      - binding.caller-payment-publisher
-      - binding.parent-payment
-    basis:
-      fmRefs:
-        - request.payment
-        - role.publisher
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.register-access-reader
     actorRoleRef: role.reader
@@ -1137,29 +900,6 @@ capabilities:
       fmRefs:
         - request.access
         - role.reader
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-access-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.access
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: request.access
-    businessCapability: 读取付费内容访问请求
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-mobile-subscription
-      - scenario.api-prepaid-subscription
-      - scenario.api-access-after-refund
-      - scenario.api-access-expired
-    bindingRefs:
-      - binding.caller-access-publisher
-      - binding.parent-access
-    basis:
-      fmRefs:
-        - request.access
-        - role.publisher
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.register-refund-reader
     actorRoleRef: role.reader
@@ -1215,31 +955,6 @@ capabilities:
         - request.refund
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-refund-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.refund
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: request.refund
-    businessCapability: 读取断更退款请求
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-restore-charged
-      - scenario.api-refund-expired
-    bindingRefs:
-      - binding.caller-refund-publisher
-      - binding.parent-refund
-    basis:
-      fmRefs:
-        - request.refund
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.register-restore-reader
     actorRoleRef: role.reader
     resourceRef: resource.restore
@@ -1286,27 +1001,6 @@ capabilities:
         - request.restore
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-restore-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.restore
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: request.restore
-    businessCapability: 读取免费恢复请求
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-restore-publisher
-      - binding.parent-restore
-    basis:
-      fmRefs:
-        - request.restore
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.register-debit-account-user
     actorRoleRef: role.account-user
     resourceRef: resource.debit
@@ -1347,53 +1041,6 @@ capabilities:
         - request.prepaid
         - role.account-user
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-debit-account-provider
-    actorRoleRef: role.account-provider
-    resourceRef: resource.debit
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: request.prepaid
-    businessCapability: 读取账户余额抵扣请求
-    scenarioRefs:
-      - scenario.api-prepaid-subscription
-      - scenario.api-insufficient-balance
-    bindingRefs:
-      - binding.caller-debit-account-provider
-      - binding.parent-debit
-    basis:
-      fmRefs:
-        - request.prepaid
-        - role.account-provider
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.register-access-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.access-result
-    view: singleton
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: confirmation.access
-    businessCapability: 提供指定章节内容
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-mobile-subscription
-      - scenario.api-prepaid-subscription
-      - scenario.api-access-after-refund
-    bindingRefs:
-      - binding.caller-access-result-publisher
-      - binding.parent-access-result
-    basis:
-      fmRefs:
-        - confirmation.access
-        - role.publisher
-        - rule.access-completed
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
-    ruleBindings:
-      - ruleRef: rule.access-completed
-        purpose: result
   - id: capability.read-access-result-reader
     actorRoleRef: role.reader
     resourceRef: resource.access-result
@@ -1416,57 +1063,6 @@ capabilities:
         - confirmation.access
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-access-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.access-result
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: confirmation.access
-    businessCapability: 读取内容提供凭证
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-mobile-subscription
-      - scenario.api-prepaid-subscription
-      - scenario.api-access-after-refund
-    bindingRefs:
-      - binding.caller-access-result-publisher
-      - binding.parent-access-result
-    basis:
-      fmRefs:
-        - confirmation.access
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.register-refund-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.refund-result
-    view: singleton
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: confirmation.refund
-    businessCapability: 登记退款到账
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-refund-result-publisher
-      - binding.parent-refund-result
-    basis:
-      fmRefs:
-        - confirmation.refund
-        - role.publisher
-        - rule.refund-completed
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
-    ruleBindings:
-      - ruleRef: rule.refund-completed
-        purpose: result
   - id: capability.read-refund-result-reader
     actorRoleRef: role.reader
     resourceRef: resource.refund-result
@@ -1491,55 +1087,6 @@ capabilities:
         - confirmation.refund
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-refund-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.refund-result
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: confirmation.refund
-    businessCapability: 读取退款到账凭证
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-refund-result-publisher
-      - binding.parent-refund-result
-    basis:
-      fmRefs:
-        - confirmation.refund
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.register-restore-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.restore-result
-    view: singleton
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: confirmation.restore
-    businessCapability: 恢复免费访问资格
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-restore-result-publisher
-      - binding.parent-restore-result
-    basis:
-      fmRefs:
-        - confirmation.restore
-        - role.publisher
-        - rule.restore-completed
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
-    ruleBindings:
-      - ruleRef: rule.restore-completed
-        purpose: result
   - id: capability.read-restore-result-reader
     actorRoleRef: role.reader
     resourceRef: resource.restore-result
@@ -1560,56 +1107,7 @@ capabilities:
         - confirmation.restore
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-restore-result-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.restore-result
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: confirmation.restore
-    businessCapability: 读取免费恢复凭证
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-restore-result-publisher
-      - binding.parent-restore-result
-    basis:
-      fmRefs:
-        - confirmation.restore
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.register-debit-result-account-provider
-    actorRoleRef: role.account-provider
-    resourceRef: resource.debit-result
-    view: singleton
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: confirmation.prepaid
-    businessCapability: 确认账户抵扣完成
-    scenarioRefs:
-      - scenario.api-prepaid-subscription
-    bindingRefs:
-      - >-
-        binding.caller-debit-result-account-provider
-      - binding.parent-debit-result
-    basis:
-      fmRefs:
-        - confirmation.prepaid
-        - role.account-provider
-        - rule.prepaid-funded
-        - rule.prepaid-completed
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
-    ruleBindings:
-      - ruleRef: rule.prepaid-funded
-        purpose: precondition
-      - ruleRef: rule.prepaid-completed
-        purpose: result
-  - id: >-
-      capability.read-debit-result-account-user
+  - id: capability.read-debit-result-account-user
     actorRoleRef: role.account-user
     resourceRef: resource.debit-result
     view: singleton
@@ -1628,52 +1126,6 @@ capabilities:
         - confirmation.prepaid
         - role.account-user
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.read-debit-result-account-provider
-    actorRoleRef: role.account-provider
-    resourceRef: resource.debit-result
-    view: singleton
-    method: GET
-    effect:
-      kind: read
-      targetRef: confirmation.prepaid
-    businessCapability: 读取预付费抵扣凭证
-    scenarioRefs:
-      - scenario.api-prepaid-subscription
-    bindingRefs:
-      - >-
-        binding.caller-debit-result-account-provider
-      - binding.parent-debit-result
-    basis:
-      fmRefs:
-        - confirmation.prepaid
-        - role.account-provider
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.register-discontinuation-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.discontinuation
-    view: collection
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: evidence.discontinuation
-    businessCapability: 记录断更下架事实
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-restore-charged
-      - scenario.api-refund-expired
-    bindingRefs:
-      - binding.caller-discontinuation-publisher
-    basis:
-      fmRefs:
-        - evidence.discontinuation
-        - role.publisher
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
   - id: capability.read-discontinuation-reader
     actorRoleRef: role.reader
     resourceRef: resource.discontinuation
@@ -1698,54 +1150,6 @@ capabilities:
         - evidence.discontinuation
         - role.reader
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: >-
-      capability.read-discontinuation-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.discontinuation
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: evidence.discontinuation
-    businessCapability: 读取断更下架记录
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-refund-late
-      - scenario.api-discontinuation-refund
-      - scenario.api-access-after-refund
-      - scenario.api-restore-charged
-      - scenario.api-refund-expired
-    bindingRefs:
-      - binding.caller-discontinuation-publisher
-    basis:
-      fmRefs:
-        - evidence.discontinuation
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.register-relaunch-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.relaunch
-    view: collection
-    method: POST
-    effect:
-      kind: append_evidence
-      targetRef: evidence.relaunch
-    businessCapability: 记录同专栏重新上架
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-relaunch-publisher
-      - binding.parent-relaunch
-    basis:
-      fmRefs:
-        - evidence.relaunch
-        - role.publisher
-      reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
-      sourceRefs:
-        - source.restore-per-relaunch
   - id: capability.read-relaunch-reader
     actorRoleRef: role.reader
     resourceRef: resource.relaunch
@@ -1769,29 +1173,6 @@ capabilities:
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
       sourceRefs:
         - source.restore-per-relaunch
-  - id: capability.read-relaunch-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.relaunch
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: evidence.relaunch
-    businessCapability: 读取重新上架记录
-    scenarioRefs:
-      - scenario.api-free-restoration
-      - scenario.api-restore-expired
-      - scenario.api-restore-charged
-    bindingRefs:
-      - binding.caller-relaunch-publisher
-      - binding.parent-relaunch
-    basis:
-      fmRefs:
-        - evidence.relaunch
-        - role.publisher
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-      sourceRefs:
-        - source.restore-per-relaunch
   - id: capability.read-column-reader
     actorRoleRef: role.reader
     resourceRef: resource.column
@@ -1810,25 +1191,6 @@ capabilities:
       fmRefs:
         - thing.column
         - role.reader
-      reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
-  - id: capability.read-column-publisher
-    actorRoleRef: role.publisher
-    resourceRef: resource.column
-    view: item
-    method: GET
-    effect:
-      kind: read
-      targetRef: thing.column
-    businessCapability: 读取专栏
-    scenarioRefs:
-      - scenario.api-mobile-subscription
-      - scenario.api-free-restoration
-    bindingRefs:
-      - binding.caller-column-publisher
-    basis:
-      fmRefs:
-        - thing.column
-        - role.publisher
       reasoning: 读取本人的明确业务实例；结果尚未形成返回404，响应存在不替代完成规则。
   - id: capability.read-chapter-reader
     actorRoleRef: role.reader
@@ -1849,8 +1211,7 @@ capabilities:
         - thing.chapter
         - role.reader
         - rule.content-readable
-      reasoning: >-
-        服务端用路径chapterId定位章节，绑定同一读者、章节及版本的访问请求和实际提供凭证，并在查询时刻检查退款状态；不得借用其他章节的有效请求。
+      reasoning: 服务端用路径chapterId定位章节，绑定同一读者、章节及版本的访问请求和实际提供凭证，并在查询时刻检查退款状态；不得借用其他章节的有效请求。
     ruleBindings:
       - ruleRef: rule.content-readable
         purpose: precondition
@@ -1862,12 +1223,12 @@ journeys:
       - id: step.free-restoration-1
         sourceStepSequence: 1
         description: 重新上架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.relaunch
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-relaunch-publisher
       - id: step.free-restoration-2
         sourceStepSequence: 2
         description: 免费恢复请求
@@ -1880,13 +1241,12 @@ journeys:
       - id: step.free-restoration-3
         sourceStepSequence: 3
         description: 免费恢复凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.restore
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-restore-result-publisher
       - id: step.free-restoration-4
         sourceStepSequence: 4
         description: 付费内容访问请求
@@ -1899,25 +1259,24 @@ journeys:
       - id: step.free-restoration-5
         sourceStepSequence: 5
         description: 内容提供凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.access
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-access-result-publisher
   - id: journey.restore-expired
     scenarioRef: scenario.api-restore-expired
     steps:
       - id: step.restore-expired-1
         sourceStepSequence: 1
         description: 重新上架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.relaunch
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-relaunch-publisher
       - id: step.restore-expired-2
         sourceStepSequence: 2
         description: 免费恢复请求
@@ -1933,12 +1292,12 @@ journeys:
       - id: step.late-paid-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.late-paid-2
         sourceStepSequence: 2
         description: 移动支付扣款请求
@@ -1961,12 +1320,12 @@ journeys:
       - id: step.cutoff-paid-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.cutoff-paid-2
         sourceStepSequence: 2
         description: 移动支付扣款请求
@@ -2006,12 +1365,12 @@ journeys:
       - id: step.mobile-subscription-3
         sourceStepSequence: 3
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.mobile-subscription-4
         sourceStepSequence: 4
         description: 移动支付扣款请求
@@ -2040,25 +1399,24 @@ journeys:
       - id: step.mobile-subscription-7
         sourceStepSequence: 7
         description: 内容提供凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.access
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-access-result-publisher
   - id: journey.wrong-reader
     scenarioRef: scenario.api-wrong-reader
     steps:
       - id: step.wrong-reader-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.wrong-reader-2
         sourceStepSequence: 2
         description: 移动支付扣款请求
@@ -2081,12 +1439,12 @@ journeys:
       - id: step.payment-expired-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
   - id: journey.prepaid-subscription
     scenarioRef: scenario.api-prepaid-subscription
     steps:
@@ -2111,12 +1469,12 @@ journeys:
       - id: step.prepaid-subscription-3
         sourceStepSequence: 3
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.prepaid-subscription-4
         sourceStepSequence: 4
         description: 账户余额抵扣请求
@@ -2129,13 +1487,12 @@ journeys:
       - id: step.prepaid-subscription-5
         sourceStepSequence: 5
         description: 预付费抵扣凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.prepaid
+            - role.account-provider
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-debit-result-account-provider
       - id: step.prepaid-subscription-6
         sourceStepSequence: 6
         description: 付费内容访问请求
@@ -2148,37 +1505,36 @@ journeys:
       - id: step.prepaid-subscription-7
         sourceStepSequence: 7
         description: 内容提供凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.access
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-access-result-publisher
   - id: journey.payment-pending
     scenarioRef: scenario.api-payment-pending
     steps:
       - id: step.payment-pending-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
   - id: journey.short-paid
     scenarioRef: scenario.api-short-paid
     steps:
       - id: step.short-paid-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
       - id: step.short-paid-2
         sourceStepSequence: 2
         description: 移动支付扣款请求
@@ -2201,13 +1557,12 @@ journeys:
       - id: step.refund-late-1
         sourceStepSequence: 1
         description: 断更下架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.discontinuation
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-discontinuation-publisher
       - id: step.refund-late-2
         sourceStepSequence: 2
         description: 断更退款请求
@@ -2220,26 +1575,24 @@ journeys:
       - id: step.refund-late-3
         sourceStepSequence: 3
         description: 退款到账凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.refund
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-refund-result-publisher
   - id: journey.discontinuation-refund
     scenarioRef: scenario.api-discontinuation-refund
     steps:
       - id: step.discontinuation-refund-1
         sourceStepSequence: 1
         description: 断更下架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.discontinuation
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-discontinuation-publisher
       - id: step.discontinuation-refund-2
         sourceStepSequence: 2
         description: 断更退款请求
@@ -2252,26 +1605,24 @@ journeys:
       - id: step.discontinuation-refund-3
         sourceStepSequence: 3
         description: 退款到账凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.refund
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-refund-result-publisher
   - id: journey.access-after-refund
     scenarioRef: scenario.api-access-after-refund
     steps:
       - id: step.access-after-refund-1
         sourceStepSequence: 1
         description: 断更下架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.discontinuation
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-discontinuation-publisher
       - id: step.access-after-refund-2
         sourceStepSequence: 2
         description: 断更退款请求
@@ -2284,13 +1635,12 @@ journeys:
       - id: step.access-after-refund-3
         sourceStepSequence: 3
         description: 退款到账凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.refund
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-refund-result-publisher
   - id: journey.insufficient-balance
     scenarioRef: scenario.api-insufficient-balance
     steps:
@@ -2309,12 +1659,12 @@ journeys:
       - id: step.restore-charged-1
         sourceStepSequence: 1
         description: 重新上架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.relaunch
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-relaunch-publisher
       - id: step.restore-charged-2
         sourceStepSequence: 2
         description: 免费恢复请求
@@ -2327,13 +1677,12 @@ journeys:
       - id: step.restore-charged-3
         sourceStepSequence: 3
         description: 免费恢复凭证
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - confirmation.restore
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-restore-result-publisher
   - id: journey.access-expired
     scenarioRef: scenario.api-access-expired
     steps:
@@ -2352,13 +1701,12 @@ journeys:
       - id: step.refund-expired-1
         sourceStepSequence: 1
         description: 断更下架记录
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - evidence.discontinuation
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: >-
-          capability.register-discontinuation-publisher
       - id: step.refund-expired-2
         sourceStepSequence: 2
         description: 断更退款请求
@@ -2374,16 +1722,15 @@ journeys:
       - id: step.cutoff-pending-1
         sourceStepSequence: 1
         description: 订阅费支付请求
-        mapping: capability
+        mapping: internal
         basis:
           fmRefs:
             - request.payment
+            - role.publisher
           reasoning: 保存当步实际凭证，核验已经存在且可见的前提。
-        capabilityRef: capability.register-payment-publisher
 http:
   representations:
-    - id: >-
-        representation.register-subscription-reader
+    - id: representation.register-subscription-reader
       resourceRef: resource.subscription
       view: item
       actorRoleRefs:
@@ -2567,101 +1914,7 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-subscription-publisher
-      resourceRef: resource.subscription
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#column_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#edition_id
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#currency
-        - name: signed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#signed_at
-        - name: payment_seconds
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#payment_seconds
-        - name: access_seconds
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#access_seconds
-        - name: refund_seconds
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#refund_seconds
-        - name: restore_seconds
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: contract.subscription#restore_seconds
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        edition_id: ED-1
-        amount_minor_units: 9900
-        currency: CNY
-        signed_at: '2026-10-01T09:00:00Z'
-        payment_seconds: 900
-        access_seconds: 60
-        refund_seconds: 604800
-        restore_seconds: 86400
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-account-account-user
+    - id: representation.register-account-account-user
       resourceRef: resource.account
       view: item
       actorRoleRefs:
@@ -2729,139 +1982,6 @@ http:
         signed_at: '2026-10-01T08:00:00Z'
       exampleParameters:
         accountId: PREPAID-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-account-account-provider
-      resourceRef: resource.account
-      view: item
-      actorRoleRefs:
-        - role.account-provider
-      mediaType: application/hal+json
-      fields:
-        - name: agreement_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.prepaid#agreement_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: contract.prepaid#reader_id
-        - name: signed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: contract.prepaid#signed_at
-      example:
-        agreement_id: PREPAID-001
-        reader_id: READER-001
-        signed_at: '2026-10-01T08:00:00Z'
-      exampleParameters:
-        accountId: PREPAID-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-payment-publisher
-      resourceRef: resource.payment
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#expired_at
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#currency
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: PAY-001
-        started_at: '2026-10-01T09:00:00Z'
-        expired_at: '2026-10-01T09:15:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        evidenceRefs:
-          - instance.subscription
-        fulfillmentStatus: pending
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
       links: []
       cache:
         mode: no-store
@@ -2941,103 +2061,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: PAY-001
-        started_at: '2026-10-01T09:00:00Z'
-        expired_at: '2026-10-01T09:15:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        evidenceRefs:
-          - instance.subscription
-        fulfillmentStatus: completed
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-payment-publisher
-      resourceRef: resource.payment
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#expired_at
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: derived
-          fmAttributeRef: request.payment#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.payment#currency
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3131,8 +2155,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3238,8 +2261,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3260,113 +2282,6 @@ http:
         - rel: result
           kind: navigation
           capabilityRef: capability.read-access-result-reader
-          parameterBindings:
-            subscriptionId:
-              kind: path
-              name: subscriptionId
-            accessId:
-              kind: path
-              name: accessId
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-access-publisher
-      resourceRef: resource.access
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.access#expired_at
-        - name: chapter_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#chapter_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.access#edition_id
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: ACCESS-MOBILE
-        chapter_id: CH-01
-        edition_id: ED-1
-        started_at: '2026-10-01T09:06:00Z'
-        expired_at: '2026-10-01T09:07:00Z'
-        evidenceRefs:
-          - instance.subscription
-          - instance.mobile-result
-        fulfillmentStatus: completed
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        accessId: ACCESS-MOBILE
-      links:
-        - rel: result
-          kind: navigation
-          capabilityRef: capability.read-access-result-publisher
           parameterBindings:
             subscriptionId:
               kind: path
@@ -3452,8 +2367,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3556,8 +2470,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3578,110 +2491,6 @@ http:
         - rel: result
           kind: navigation
           capabilityRef: capability.read-refund-result-reader
-          parameterBindings:
-            subscriptionId:
-              kind: path
-              name: subscriptionId
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-refund-publisher
-      resourceRef: resource.refund
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.refund#expired_at
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: derived
-          fmAttributeRef: request.refund#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.refund#currency
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: REFUND-001
-        started_at: '2026-10-16T10:01:00Z'
-        expired_at: '2026-10-23T10:01:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        evidenceRefs:
-          - instance.subscription
-          - instance.discontinuation
-          - instance.mobile-result
-        fulfillmentStatus: completed
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-      links:
-        - rel: result
-          kind: navigation
-          capabilityRef: capability.read-refund-result-publisher
           parameterBindings:
             subscriptionId:
               kind: path
@@ -3758,8 +2567,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3859,8 +2667,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -3891,109 +2698,7 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-restore-publisher
-      resourceRef: resource.restore
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: derived
-          fmAttributeRef: request.restore#expired_at
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.restore#edition_id
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: RESTORE-001
-        edition_id: ED-2
-        started_at: '2026-11-01T12:01:00Z'
-        expired_at: '2026-11-02T12:01:00Z'
-        evidenceRefs:
-          - instance.subscription
-          - instance.relaunch
-          - instance.refunded
-        fulfillmentStatus: completed
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        relaunchId: RELAUNCH-001
-      links:
-        - rel: result
-          kind: navigation
-          capabilityRef: capability.read-restore-result-publisher
-          parameterBindings:
-            subscriptionId:
-              kind: path
-              name: subscriptionId
-            relaunchId:
-              kind: path
-              name: relaunchId
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-debit-account-user
+    - id: representation.register-debit-account-user
       resourceRef: resource.debit
       view: item
       actorRoleRefs:
@@ -4067,8 +2772,7 @@ http:
             type: integer
           required: true
           origin: server
-          fmAttributeRef: >-
-            request.prepaid#balance_before_minor_units
+          fmAttributeRef: request.prepaid#balance_before_minor_units
         - name: evidenceRefs
           schema:
             type: array
@@ -4087,8 +2791,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -4111,8 +2814,7 @@ http:
       links:
         - rel: result
           kind: navigation
-          capabilityRef: >-
-            capability.read-debit-result-account-user
+          capabilityRef: capability.read-debit-result-account-user
           parameterBindings:
             accountId:
               kind: path
@@ -4197,8 +2899,7 @@ http:
             type: integer
           required: true
           origin: server
-          fmAttributeRef: >-
-            request.prepaid#balance_before_minor_units
+          fmAttributeRef: request.prepaid#balance_before_minor_units
         - name: evidenceRefs
           schema:
             type: array
@@ -4217,8 +2918,7 @@ http:
               - breached
           required: true
           origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
+          decision: 根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
       example:
         subscription_id: SUB-20261001-001
         reader_id: READER-001
@@ -4241,8 +2941,7 @@ http:
       links:
         - rel: result
           kind: navigation
-          capabilityRef: >-
-            capability.read-debit-result-account-user
+          capabilityRef: capability.read-debit-result-account-user
           parameterBindings:
             accountId:
               kind: path
@@ -4250,221 +2949,6 @@ http:
             debitId:
               kind: path
               name: debitId
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-debit-account-provider
-      resourceRef: resource.debit
-      view: item
-      actorRoleRefs:
-        - role.account-provider
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#column_id
-        - name: started_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#started_at
-        - name: expired_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#expired_at
-        - name: payment_request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#payment_request_id
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#currency
-        - name: agreement_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: request.prepaid#agreement_id
-        - name: balance_before_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: server
-          fmAttributeRef: >-
-            request.prepaid#balance_before_minor_units
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        - name: fulfillmentStatus
-          schema:
-            type: string
-            enum:
-              - pending
-              - completed
-              - breached
-          required: true
-          origin: derived
-          decision: >-
-            根据本请求当前可见证据及completion、breach规则计算；HTTP201只表示请求已登记。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: PREPAID-REQ-001
-        payment_request_id: PAY-001
-        agreement_id: PREPAID-001
-        started_at: '2026-10-01T09:02:00Z'
-        expired_at: '2026-10-01T09:15:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        balance_before_minor_units: 10000
-        evidenceRefs:
-          - instance.prepaid-agreement
-          - instance.payment
-        fulfillmentStatus: completed
-      exampleParameters:
-        accountId: PREPAID-001
-        debitId: PREPAID-REQ-001
-      links:
-        - rel: result
-          kind: navigation
-          capabilityRef: >-
-            capability.read-debit-result-account-provider
-          parameterBindings:
-            accountId:
-              kind: path
-              name: accountId
-            debitId:
-              kind: path
-              name: debitId
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-access-result-publisher
-      resourceRef: resource.access-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#confirmed_at
-        - name: chapter_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#chapter_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#edition_id
-        - name: delivered
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#delivered
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: ACCESS-MOBILE
-        chapter_id: CH-01
-        edition_id: ED-1
-        confirmed_at: '2026-10-01T09:06:02Z'
-        delivered: true
-        evidenceRefs:
-          - instance.access-mobile
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        accessId: ACCESS-MOBILE
-      links: []
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
@@ -4558,180 +3042,6 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-access-result-publisher
-      resourceRef: resource.access-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#confirmed_at
-        - name: chapter_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#chapter_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#edition_id
-        - name: delivered
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.access#delivered
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: ACCESS-MOBILE
-        chapter_id: CH-01
-        edition_id: ED-1
-        confirmed_at: '2026-10-01T09:06:02Z'
-        delivered: true
-        evidenceRefs:
-          - instance.access-mobile
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        accessId: ACCESS-MOBILE
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-refund-result-publisher
-      resourceRef: resource.refund-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#confirmed_at
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#currency
-        - name: receipt_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#receipt_id
-        - name: settled
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#settled
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: REFUND-001
-        confirmed_at: '2026-10-18T10:00:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        receipt_id: REFUND-RECEIPT-001
-        settled: true
-        evidenceRefs:
-          - instance.refund
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
     - id: representation.read-refund-result-reader
       resourceRef: resource.refund-result
       view: singleton
@@ -4821,182 +3131,7 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-refund-result-publisher
-      resourceRef: resource.refund-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#confirmed_at
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#currency
-        - name: receipt_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#receipt_id
-        - name: settled
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.refund#settled
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: REFUND-001
-        confirmed_at: '2026-10-18T10:00:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        receipt_id: REFUND-RECEIPT-001
-        settled: true
-        evidenceRefs:
-          - instance.refund
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-restore-result-publisher
-      resourceRef: resource.restore-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#confirmed_at
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#edition_id
-        - name: charged_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#charged_minor_units
-        - name: restored
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#restored
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: RESTORE-001
-        edition_id: ED-2
-        confirmed_at: '2026-11-01T12:02:00Z'
-        charged_minor_units: 0
-        restored: true
-        evidenceRefs:
-          - instance.restore
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        relaunchId: RELAUNCH-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-restore-result-reader
+    - id: representation.read-restore-result-reader
       resourceRef: resource.restore-result
       view: singleton
       actorRoleRefs:
@@ -5079,199 +3214,7 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-restore-result-publisher
-      resourceRef: resource.restore-result
-      view: singleton
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#confirmed_at
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#edition_id
-        - name: charged_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#charged_minor_units
-        - name: restored
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.restore#restored
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: RESTORE-001
-        edition_id: ED-2
-        confirmed_at: '2026-11-01T12:02:00Z'
-        charged_minor_units: 0
-        restored: true
-        evidenceRefs:
-          - instance.restore
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        relaunchId: RELAUNCH-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-debit-result-account-provider
-      resourceRef: resource.debit-result
-      view: singleton
-      actorRoleRefs:
-        - role.account-provider
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#confirmed_at
-        - name: payment_request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#payment_request_id
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#currency
-        - name: payment_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#payment_id
-        - name: success
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#success
-        - name: balance_after_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: derived
-          fmAttributeRef: >-
-            confirmation.prepaid#balance_after_minor_units
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: PREPAID-REQ-001
-        payment_request_id: PAY-001
-        payment_id: PREPAID-TX-001
-        confirmed_at: '2026-10-01T09:05:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        success: true
-        balance_after_minor_units: 100
-        evidenceRefs:
-          - instance.prepaid-request
-          - instance.payment
-      exampleParameters:
-        accountId: PREPAID-001
-        debitId: PREPAID-REQ-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-debit-result-account-user
+    - id: representation.read-debit-result-account-user
       resourceRef: resource.debit-result
       view: singleton
       actorRoleRefs:
@@ -5344,8 +3287,7 @@ http:
             type: integer
           required: true
           origin: derived
-          fmAttributeRef: >-
-            confirmation.prepaid#balance_after_minor_units
+          fmAttributeRef: confirmation.prepaid#balance_after_minor_units
         - name: evidenceRefs
           schema:
             type: array
@@ -5377,199 +3319,7 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-debit-result-account-provider
-      resourceRef: resource.debit-result
-      view: singleton
-      actorRoleRefs:
-        - role.account-provider
-      mediaType: application/hal+json
-      fields:
-        - name: request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#request_id
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#column_id
-        - name: confirmed_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#confirmed_at
-        - name: payment_request_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#payment_request_id
-        - name: amount_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#amount_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#currency
-        - name: payment_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#payment_id
-        - name: success
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: confirmation.prepaid#success
-        - name: balance_after_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: derived
-          fmAttributeRef: >-
-            confirmation.prepaid#balance_after_minor_units
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        request_id: PREPAID-REQ-001
-        payment_request_id: PAY-001
-        payment_id: PREPAID-TX-001
-        confirmed_at: '2026-10-01T09:05:00Z'
-        amount_minor_units: 9900
-        currency: CNY
-        success: true
-        balance_after_minor_units: 100
-        evidenceRefs:
-          - instance.prepaid-request
-          - instance.payment
-      exampleParameters:
-        accountId: PREPAID-001
-        debitId: PREPAID-REQ-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-discontinuation-publisher
-      resourceRef: resource.discontinuation
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#column_id
-        - name: created_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#created_at
-        - name: missed_due_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#missed_due_at
-        - name: missing_content
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#missing_content
-        - name: rescheduled
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#rescheduled
-        - name: delisted
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#delisted
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        created_at: '2026-10-16T10:00:00Z'
-        missed_due_at: '2026-10-08T10:00:00Z'
-        missing_content: true
-        rescheduled: false
-        delisted: true
-        evidenceRefs:
-          - instance.subscription
-      exampleParameters:
-        discontinuationId: DISCONTINUATION-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-discontinuation-reader
+    - id: representation.read-discontinuation-reader
       resourceRef: resource.discontinuation
       view: item
       actorRoleRefs:
@@ -5648,168 +3398,6 @@ http:
           - instance.subscription
       exampleParameters:
         discontinuationId: DISCONTINUATION-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.read-discontinuation-publisher
-      resourceRef: resource.discontinuation
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#column_id
-        - name: created_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#created_at
-        - name: missed_due_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#missed_due_at
-        - name: missing_content
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#missing_content
-        - name: rescheduled
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#rescheduled
-        - name: delisted
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.discontinuation#delisted
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        created_at: '2026-10-16T10:00:00Z'
-        missed_due_at: '2026-10-08T10:00:00Z'
-        missing_content: true
-        rescheduled: false
-        delisted: true
-        evidenceRefs:
-          - instance.subscription
-      exampleParameters:
-        discontinuationId: DISCONTINUATION-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: >-
-        representation.register-relaunch-publisher
-      resourceRef: resource.relaunch
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#column_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#edition_id
-        - name: created_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#created_at
-        - name: relaunched_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#relaunched_at
-        - name: listed
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#listed
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        edition_id: ED-2
-        created_at: '2026-11-01T12:00:00Z'
-        relaunched_at: '2026-11-01T11:59:00Z'
-        listed: true
-        evidenceRefs:
-          - instance.subscription
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        relaunchId: RELAUNCH-001
       links: []
       cache:
         mode: no-store
@@ -5891,137 +3479,11 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-relaunch-publisher
-      resourceRef: resource.relaunch
-      view: item
-      actorRoleRefs:
-        - role.publisher
-      mediaType: application/hal+json
-      fields:
-        - name: subscription_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#subscription_id
-        - name: reader_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#reader_id
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#column_id
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#edition_id
-        - name: created_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#created_at
-        - name: relaunched_at
-          schema:
-            type: string
-            format: date-time
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#relaunched_at
-        - name: listed
-          schema:
-            type: boolean
-          required: true
-          origin: reference
-          fmAttributeRef: evidence.relaunch#listed
-        - name: evidenceRefs
-          schema:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          required: true
-          origin: reference
-          decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-      example:
-        subscription_id: SUB-20261001-001
-        reader_id: READER-001
-        column_id: COL-BM
-        edition_id: ED-2
-        created_at: '2026-11-01T12:00:00Z'
-        relaunched_at: '2026-11-01T11:59:00Z'
-        listed: true
-        evidenceRefs:
-          - instance.subscription
-      exampleParameters:
-        subscriptionId: SUB-20261001-001
-        relaunchId: RELAUNCH-001
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
     - id: representation.read-column-reader
       resourceRef: resource.column
       view: item
       actorRoleRefs:
         - role.reader
-      mediaType: application/hal+json
-      fields:
-        - name: column_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: thing.column#column_id
-        - name: title
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: thing.column#title
-        - name: edition_id
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: thing.column#edition_id
-        - name: price_minor_units
-          schema:
-            type: integer
-          required: true
-          origin: reference
-          fmAttributeRef: thing.column#price_minor_units
-        - name: currency
-          schema:
-            type: string
-          required: true
-          origin: reference
-          fmAttributeRef: thing.column#currency
-      example:
-        column_id: COL-BM
-        title: 业务建模实战
-        edition_id: ED-1
-        price_minor_units: 9900
-        currency: CNY
-      exampleParameters:
-        columnId: COL-BM
-      links: []
-      cache:
-        mode: no-store
-        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
-    - id: representation.read-column-publisher
-      resourceRef: resource.column
-      view: item
-      actorRoleRefs:
-        - role.publisher
       mediaType: application/hal+json
       fields:
         - name: column_id
@@ -6202,8 +3664,7 @@ http:
       responses:
         - status: 201
           description: 记录已形成的专栏订阅合同；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-subscription-reader
+          representationRef: representation.register-subscription-reader
           headers:
             Location: /subscriptions/SUB-20261001-001
         - status: 403
@@ -6233,29 +3694,6 @@ http:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
           representationRef: representation.read-subscription-reader
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-subscription-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-subscription-publisher
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -6299,8 +3737,7 @@ http:
       responses:
         - status: 201
           description: 记录已形成的预付费账户协议；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-account-account-user
+          representationRef: representation.register-account-account-user
           headers:
             Location: /prepaid-accounts/PREPAID-001
         - status: 403
@@ -6343,105 +3780,6 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-account-account-provider
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-account-account-provider
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.register-payment-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: request.payment#request_id
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: request.payment#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: request.payment#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: request.payment#column_id
-          - name: currency
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: request.payment#currency
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          request_id: PAY-001
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          currency: CNY
-          evidenceRefs:
-            - instance.subscription
-      responses:
-        - status: 201
-          description: 记录已形成的订阅费支付请求；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-payment-publisher
-          headers:
-            Location: /subscriptions/SUB-20261001-001/payment
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
     - capabilityRef: capability.read-payment-reader
       request:
         mediaType: application/json
@@ -6451,28 +3789,6 @@ http:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
           representationRef: representation.read-payment-reader
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-payment-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-payment-publisher
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -6558,8 +3874,7 @@ http:
           description: 记录已形成的付费内容访问请求；履约完成另按规则判断。
           representationRef: representation.register-access-reader
           headers:
-            Location: >-
-              /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE
+            Location: /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -6587,28 +3902,6 @@ http:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
           representationRef: representation.read-access-reader
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-access-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-access-publisher
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -6729,28 +4022,6 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-refund-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-refund-publisher
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
     - capabilityRef: capability.register-restore-reader
       request:
         mediaType: application/json
@@ -6817,8 +4088,7 @@ http:
           description: 记录已形成的免费恢复请求；履约完成另按规则判断。
           representationRef: representation.register-restore-reader
           headers:
-            Location: >-
-              /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
+            Location: /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -6846,28 +4116,6 @@ http:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
           representationRef: representation.read-restore-reader
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-restore-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-restore-publisher
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -6973,11 +4221,9 @@ http:
       responses:
         - status: 201
           description: 记录已形成的账户余额抵扣请求；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-debit-account-user
+          representationRef: representation.register-debit-account-user
           headers:
-            Location: >-
-              /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001
+            Location: /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -7018,129 +4264,6 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-debit-account-provider
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-debit-account-provider
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.register-access-result-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#request_id
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#column_id
-          - name: confirmed_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#confirmed_at
-          - name: chapter_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#chapter_id
-          - name: edition_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#edition_id
-          - name: delivered
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.access#delivered
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          request_id: ACCESS-MOBILE
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          confirmed_at: '2026-10-01T09:06:02Z'
-          chapter_id: CH-01
-          edition_id: ED-1
-          delivered: true
-          evidenceRefs:
-            - instance.access-mobile
-      responses:
-        - status: 201
-          description: 记录已形成的内容提供凭证；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-access-result-publisher
-          headers:
-            Location: >-
-              /subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
     - capabilityRef: capability.read-access-result-reader
       request:
         mediaType: application/json
@@ -7160,136 +4283,6 @@ http:
       idempotency:
         mode: not_applicable
         reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-access-result-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-access-result-publisher
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.register-refund-result-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#request_id
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#column_id
-          - name: confirmed_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#confirmed_at
-          - name: amount_minor_units
-            schema:
-              type: integer
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#amount_minor_units
-          - name: currency
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#currency
-          - name: receipt_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#receipt_id
-          - name: settled
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.refund#settled
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          request_id: REFUND-001
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          confirmed_at: '2026-10-18T10:00:00Z'
-          amount_minor_units: 9900
-          currency: CNY
-          receipt_id: REFUND-RECEIPT-001
-          settled: true
-          evidenceRefs:
-            - instance.refund
-      responses:
-        - status: 201
-          description: 记录已形成的退款到账凭证；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-refund-result-publisher
-          headers:
-            Location: >-
-              /subscriptions/SUB-20261001-001/refund/result
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
@@ -7315,129 +4308,6 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-refund-result-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-refund-result-publisher
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.register-restore-result-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#request_id
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#column_id
-          - name: confirmed_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#confirmed_at
-          - name: edition_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#edition_id
-          - name: charged_minor_units
-            schema:
-              type: integer
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#charged_minor_units
-          - name: restored
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.restore#restored
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          request_id: RESTORE-001
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          confirmed_at: '2026-11-01T12:02:00Z'
-          edition_id: ED-2
-          charged_minor_units: 0
-          restored: true
-          evidenceRefs:
-            - instance.restore
-      responses:
-        - status: 201
-          description: 记录已形成的免费恢复凭证；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-restore-result-publisher
-          headers:
-            Location: >-
-              /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
     - capabilityRef: capability.read-restore-result-reader
       request:
         mediaType: application/json
@@ -7446,8 +4316,7 @@ http:
       responses:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-restore-result-reader
+          representationRef: representation.read-restore-result-reader
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -7461,7 +4330,7 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-restore-result-publisher
+    - capabilityRef: capability.read-debit-result-account-user
       request:
         mediaType: application/json
         fields: []
@@ -7469,8 +4338,7 @@ http:
       responses:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-restore-result-publisher
+          representationRef: representation.read-debit-result-account-user
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -7481,269 +4349,6 @@ http:
       idempotency:
         mode: not_applicable
         reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.register-debit-result-account-provider
-      request:
-        mediaType: application/json
-        fields:
-          - name: request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#request_id
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#column_id
-          - name: confirmed_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#confirmed_at
-          - name: payment_request_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#payment_request_id
-          - name: amount_minor_units
-            schema:
-              type: integer
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#amount_minor_units
-          - name: currency
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#currency
-          - name: payment_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#payment_id
-          - name: success
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: confirmation.prepaid#success
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          request_id: PREPAID-REQ-001
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          confirmed_at: '2026-10-01T09:05:00Z'
-          payment_request_id: PAY-001
-          amount_minor_units: 9900
-          currency: CNY
-          payment_id: PREPAID-TX-001
-          success: true
-          evidenceRefs:
-            - instance.prepaid-request
-            - instance.payment
-      responses:
-        - status: 201
-          description: 记录已形成的预付费抵扣凭证；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-debit-result-account-provider
-          headers:
-            Location: >-
-              /prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.read-debit-result-account-user
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-debit-result-account-user
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.read-debit-result-account-provider
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-debit-result-account-provider
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.register-discontinuation-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#column_id
-          - name: created_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#created_at
-          - name: missed_due_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#missed_due_at
-          - name: missing_content
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#missing_content
-          - name: rescheduled
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#rescheduled
-          - name: delisted
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.discontinuation#delisted
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          created_at: '2026-10-16T10:00:00Z'
-          missed_due_at: '2026-10-08T10:00:00Z'
-          missing_content: true
-          rescheduled: false
-          delisted: true
-          evidenceRefs:
-            - instance.subscription
-      responses:
-        - status: 201
-          description: 记录已形成的断更下架记录；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-discontinuation-publisher
-          headers:
-            Location: /discontinuations/DISCONTINUATION-001
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
@@ -7755,8 +4360,7 @@ http:
       responses:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-discontinuation-reader
+          representationRef: representation.read-discontinuation-reader
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -7767,122 +4371,6 @@ http:
       idempotency:
         mode: not_applicable
         reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: >-
-        capability.read-discontinuation-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: >-
-            representation.read-discontinuation-publisher
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.register-relaunch-publisher
-      request:
-        mediaType: application/json
-        fields:
-          - name: subscription_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#subscription_id
-          - name: reader_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#reader_id
-          - name: column_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#column_id
-          - name: edition_id
-            schema:
-              type: string
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#edition_id
-          - name: created_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#created_at
-          - name: relaunched_at
-            schema:
-              type: string
-              format: date-time
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#relaunched_at
-          - name: listed
-            schema:
-              type: boolean
-            required: true
-            origin: reference
-            fmAttributeRef: evidence.relaunch#listed
-          - name: evidenceRefs
-            schema:
-              type: array
-              items:
-                type: string
-              minItems: 1
-            required: true
-            origin: reference
-            decision: 既有凭证的定位引用；服务端核验实际玩家、本人实例及可见性，不接受未来或无关证明。
-        example:
-          subscription_id: SUB-20261001-001
-          reader_id: READER-001
-          column_id: COL-BM
-          edition_id: ED-2
-          created_at: '2026-11-01T12:00:00Z'
-          relaunched_at: '2026-11-01T11:59:00Z'
-          listed: true
-          evidenceRefs:
-            - instance.subscription
-      responses:
-        - status: 201
-          description: 记录已形成的重新上架记录；履约完成另按规则判断。
-          representationRef: >-
-            representation.register-relaunch-publisher
-          headers:
-            Location: /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 409
-          description: 同一幂等键对应不同输入，或同一请求已经有有效结果。
-          headers: {}
-        - status: 422
-          description: 业务字段、证据实际玩家、时间、金额或实例归属不满足规则。
-          headers: {}
-      idempotency:
-        mode: key
-        header: Idempotency-Key
-        samePayload: replay
-        differentPayload: reject
-        reason: 同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
@@ -7908,28 +4396,6 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-relaunch-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-relaunch-publisher
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
     - capabilityRef: capability.read-column-reader
       request:
         mediaType: application/json
@@ -7939,28 +4405,6 @@ http:
         - status: 200
           description: 返回本实例当前可读取的业务表示。
           representationRef: representation.read-column-reader
-          headers: {}
-        - status: 403
-          description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
-          headers: {}
-        - status: 404
-          description: 指定实例或其履约结果尚未形成。
-          headers: {}
-      idempotency:
-        mode: not_applicable
-        reason: 读取不改变业务证据。
-      concurrency:
-        mode: none
-        reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
-    - capabilityRef: capability.read-column-publisher
-      request:
-        mediaType: application/json
-        fields: []
-        example: {}
-      responses:
-        - status: 200
-          description: 返回本实例当前可读取的业务表示。
-          representationRef: representation.read-column-publisher
           headers: {}
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
@@ -7997,8 +4441,7 @@ http:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
   journeys:
-    - id: >-
-        http-journey.register-subscription-reader
+    - id: http-journey.register-subscription-reader
       actorRoleRef: role.reader
       steps:
         - id: http.register-subscription-reader
@@ -8099,22 +4542,7 @@ http:
                 kind: literal
                 value: SUB-20261001-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-subscription-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-subscription-publisher
-          capabilityRef: capability.read-subscription-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-account-account-user
+    - id: http-journey.register-account-account-user
       actorRoleRef: role.account-user
       steps:
         - id: http.register-account-account-user
@@ -8167,104 +4595,11 @@ http:
                 kind: literal
                 value: PREPAID-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-account-account-provider
-      actorRoleRef: role.account-provider
-      steps:
-        - id: http.read-account-account-provider
-          capabilityRef: capability.read-account-account-provider
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: accountId
-              source:
-                kind: literal
-                value: PREPAID-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.register-payment-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-payment-publisher
-          capabilityRef: capability.register-payment-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: request_id
-              source:
-                kind: literal
-                value: PAY-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: currency
-              source:
-                kind: literal
-                value: CNY
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.subscription
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-payment-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: http.register-payment-publisher-read
-          capabilityRef: capability.read-payment-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-payment-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-payment-reader
       actorRoleRef: role.reader
       steps:
         - id: http.read-payment-reader
           capabilityRef: capability.read-payment-reader
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-payment-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-payment-publisher
-          capabilityRef: capability.read-payment-publisher
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
@@ -8371,26 +4706,6 @@ http:
                 kind: literal
                 value: ACCESS-MOBILE
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-access-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-access-publisher
-          capabilityRef: capability.read-access-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: accessId
-              source:
-                kind: literal
-                value: ACCESS-MOBILE
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
     - id: http-journey.register-refund-reader
       actorRoleRef: role.reader
       steps:
@@ -8468,20 +4783,6 @@ http:
       steps:
         - id: http.read-refund-reader
           capabilityRef: capability.read-refund-reader
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-refund-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-refund-publisher
-          capabilityRef: capability.read-refund-publisher
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
@@ -8574,26 +4875,6 @@ http:
       steps:
         - id: http.read-restore-reader
           capabilityRef: capability.read-restore-reader
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: relaunchId
-              source:
-                kind: literal
-                value: RELAUNCH-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-restore-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-restore-publisher
-          capabilityRef: capability.read-restore-publisher
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
@@ -8724,117 +5005,6 @@ http:
                 kind: literal
                 value: PREPAID-REQ-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-debit-account-provider
-      actorRoleRef: role.account-provider
-      steps:
-        - id: http.read-debit-account-provider
-          capabilityRef: capability.read-debit-account-provider
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: accountId
-              source:
-                kind: literal
-                value: PREPAID-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: debitId
-              source:
-                kind: literal
-                value: PREPAID-REQ-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-access-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-access-result-publisher
-          capabilityRef: >-
-            capability.register-access-result-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: accessId
-              source:
-                kind: literal
-                value: ACCESS-MOBILE
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: request_id
-              source:
-                kind: literal
-                value: ACCESS-MOBILE
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: confirmed_at
-              source:
-                kind: literal
-                value: '2026-10-01T09:06:02Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: chapter_id
-              source:
-                kind: literal
-                value: CH-01
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: edition_id
-              source:
-                kind: literal
-                value: ED-1
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: delivered
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.access-mobile
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-access-result-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: >-
-            http.register-access-result-publisher-read
-          capabilityRef: capability.read-access-result-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-access-result-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-access-result-reader
       actorRoleRef: role.reader
       steps:
@@ -8855,118 +5025,6 @@ http:
                 kind: literal
                 value: ACCESS-MOBILE
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-access-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-access-result-publisher
-          capabilityRef: capability.read-access-result-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: accessId
-              source:
-                kind: literal
-                value: ACCESS-MOBILE
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-refund-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-refund-result-publisher
-          capabilityRef: >-
-            capability.register-refund-result-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: request_id
-              source:
-                kind: literal
-                value: REFUND-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: confirmed_at
-              source:
-                kind: literal
-                value: '2026-10-18T10:00:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: amount_minor_units
-              source:
-                kind: literal
-                value: 9900
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: currency
-              source:
-                kind: literal
-                value: CNY
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: receipt_id
-              source:
-                kind: literal
-                value: REFUND-RECEIPT-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: settled
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.refund
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-refund-result-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: >-
-            http.register-refund-result-publisher-read
-          capabilityRef: capability.read-refund-result-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-refund-result-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-refund-result-reader
       actorRoleRef: role.reader
       steps:
@@ -8981,112 +5039,6 @@ http:
                 kind: literal
                 value: SUB-20261001-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-refund-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-refund-result-publisher
-          capabilityRef: capability.read-refund-result-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-restore-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-restore-result-publisher
-          capabilityRef: >-
-            capability.register-restore-result-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: relaunchId
-              source:
-                kind: literal
-                value: RELAUNCH-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: request_id
-              source:
-                kind: literal
-                value: RESTORE-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: confirmed_at
-              source:
-                kind: literal
-                value: '2026-11-01T12:02:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: edition_id
-              source:
-                kind: literal
-                value: ED-2
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: charged_minor_units
-              source:
-                kind: literal
-                value: 0
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: restored
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.restore
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-restore-result-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: >-
-            http.register-restore-result-publisher-read
-          capabilityRef: capability.read-restore-result-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-restore-result-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-restore-result-reader
       actorRoleRef: role.reader
       steps:
@@ -9107,142 +5059,11 @@ http:
                 kind: literal
                 value: SUB-20261001-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-restore-result-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-restore-result-publisher
-          capabilityRef: capability.read-restore-result-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: relaunchId
-              source:
-                kind: literal
-                value: RELAUNCH-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-debit-result-account-provider
-      actorRoleRef: role.account-provider
-      steps:
-        - id: >-
-            http.register-debit-result-account-provider
-          capabilityRef: >-
-            capability.register-debit-result-account-provider
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: accountId
-              source:
-                kind: literal
-                value: PREPAID-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: debitId
-              source:
-                kind: literal
-                value: PREPAID-REQ-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: request_id
-              source:
-                kind: literal
-                value: PREPAID-REQ-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: confirmed_at
-              source:
-                kind: literal
-                value: '2026-10-01T09:05:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: payment_request_id
-              source:
-                kind: literal
-                value: PAY-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: amount_minor_units
-              source:
-                kind: literal
-                value: 9900
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: currency
-              source:
-                kind: literal
-                value: CNY
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: payment_id
-              source:
-                kind: literal
-                value: PREPAID-TX-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: success
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.prepaid-request
-                  - instance.payment
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: >-
-                  idem-register-debit-result-account-provider
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: >-
-            http.register-debit-result-account-provider-read
-          capabilityRef: >-
-            capability.read-debit-result-account-provider
-          expectStatus: 200
-          via:
-            stepRef: >-
-              http.register-debit-result-account-provider
-            header: Location
-          inputs: []
-    - id: >-
-        http-journey.read-debit-result-account-user
+    - id: http-journey.read-debit-result-account-user
       actorRoleRef: role.account-user
       steps:
         - id: http.read-debit-result-account-user
-          capabilityRef: >-
-            capability.read-debit-result-account-user
+          capabilityRef: capability.read-debit-result-account-user
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:
@@ -9258,108 +5079,6 @@ http:
                 kind: literal
                 value: PREPAID-REQ-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-debit-result-account-provider
-      actorRoleRef: role.account-provider
-      steps:
-        - id: http.read-debit-result-account-provider
-          capabilityRef: >-
-            capability.read-debit-result-account-provider
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: accountId
-              source:
-                kind: literal
-                value: PREPAID-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: debitId
-              source:
-                kind: literal
-                value: PREPAID-REQ-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.register-discontinuation-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-discontinuation-publisher
-          capabilityRef: >-
-            capability.register-discontinuation-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: created_at
-              source:
-                kind: literal
-                value: '2026-10-16T10:00:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: missed_due_at
-              source:
-                kind: literal
-                value: '2026-10-08T10:00:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: missing_content
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: rescheduled
-              source:
-                kind: literal
-                value: false
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: delisted
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.subscription
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-discontinuation-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: >-
-            http.register-discontinuation-publisher-read
-          capabilityRef: >-
-            capability.read-discontinuation-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-discontinuation-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-discontinuation-reader
       actorRoleRef: role.reader
       steps:
@@ -9374,98 +5093,6 @@ http:
                 kind: literal
                 value: DISCONTINUATION-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: >-
-        http-journey.read-discontinuation-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-discontinuation-publisher
-          capabilityRef: >-
-            capability.read-discontinuation-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: discontinuationId
-              source:
-                kind: literal
-                value: DISCONTINUATION-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.register-relaunch-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.register-relaunch-publisher
-          capabilityRef: capability.register-relaunch-publisher
-          expectStatus: 201
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: subscription_id
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: reader_id
-              source:
-                kind: literal
-                value: READER-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: column_id
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: edition_id
-              source:
-                kind: literal
-                value: ED-2
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: created_at
-              source:
-                kind: literal
-                value: '2026-11-01T12:00:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: relaunched_at
-              source:
-                kind: literal
-                value: '2026-11-01T11:59:00Z'
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: listed
-              source:
-                kind: literal
-                value: true
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: body
-              name: evidenceRefs
-              source:
-                kind: literal
-                value:
-                  - instance.subscription
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: header
-              name: Idempotency-Key
-              source:
-                kind: literal
-                value: idem-register-relaunch-publisher
-                reason: 同一次逻辑办理在重试中沿用此键。
-        - id: http.register-relaunch-publisher-read
-          capabilityRef: capability.read-relaunch-publisher
-          expectStatus: 200
-          via:
-            stepRef: http.register-relaunch-publisher
-            header: Location
-          inputs: []
     - id: http-journey.read-relaunch-reader
       actorRoleRef: role.reader
       steps:
@@ -9486,45 +5113,11 @@ http:
                 kind: literal
                 value: RELAUNCH-001
                 reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-relaunch-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-relaunch-publisher
-          capabilityRef: capability.read-relaunch-publisher
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: subscriptionId
-              source:
-                kind: literal
-                value: SUB-20261001-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-            - target: path
-              name: relaunchId
-              source:
-                kind: literal
-                value: RELAUNCH-001
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
     - id: http-journey.read-column-reader
       actorRoleRef: role.reader
       steps:
         - id: http.read-column-reader
           capabilityRef: capability.read-column-reader
-          expectStatus: 200
-          entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
-          inputs:
-            - target: path
-              name: columnId
-              source:
-                kind: literal
-                value: COL-BM
-                reason: 入口已确定的本人业务实例和原始业务记录；不是权限证明。
-    - id: http-journey.read-column-publisher
-      actorRoleRef: role.publisher
-      steps:
-        - id: http.read-column-publisher
-          capabilityRef: capability.read-column-publisher
           expectStatus: 200
           entry: 调用者通过本人工作台或已取得的单据定位进入此业务接口。
           inputs:

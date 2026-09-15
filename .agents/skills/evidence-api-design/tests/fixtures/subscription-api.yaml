@@ -451,6 +451,12 @@ nonApiActivities:
       fmRefs:
         - party.customer
       reasoning: 客户主体身份是合同角色依据，FM 未定义客户资料办理活动。
+  - entityRef: party.platform
+    handling: internal
+    basis:
+      fmRefs:
+        - party.platform
+      reasoning: 内容平台运营方仅作为平台角色玩家依据，FM 未定义独立主体资料办理活动。
   - entityRef: thing.content
     handling: internal
     basis:

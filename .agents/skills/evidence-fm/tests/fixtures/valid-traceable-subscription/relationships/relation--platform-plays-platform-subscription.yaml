@@ -1,0 +1,6 @@
+type: relationship
+id: relation.platform-plays-platform-subscription
+kind: plays_role
+sourceRef: party.platform
+targetRef: role.platform-subscription
+label: 内容平台运营方扮演内容平台

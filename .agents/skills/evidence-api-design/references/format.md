@@ -17,9 +17,9 @@
 | `journeys`             | FM 场景步骤回映                          |
 | `http`                 | 所有接口的完整 HTTP 契约，必须为对象     |
 
-`http` 包含 `representations/operations/journeys`，没有独立身份、版本或范围选择。每个顶层 capability 都必须有 operation 和成功 HTTP 消费步骤。详见 [HTTP 契约](contracts.md)。顶层表示图只辅助解释资源关系，不能代替完整 HTTP 契约。
+`http` 包含 `representations/operations/journeys`，没有独立身份、版本或范围选择。每个顶层 capability 都必须有 operation 和成功 HTTP 消费步骤。详见 [HTTP 契约](contracts.md)。顶层表示图只辅助解释资源关系，不能代替完整 HTTP 契约。`caller_role` 和 capability 的调用角色必须是当前 FM 中被 `participant.party` 通过 `plays_role` 明确扮演的 `role.party`；未被扮演的 Party Role 不产生 HTTP 契约。
 
-全模型覆盖由 CLI 从当前 FM 推导，不接受 Context 子集。`nonApiActivities` 的每项包含 `entityRef`、`handling: internal|external`、`basis`，用于说明实际非接口活动，不用于排除尚未设计的接口。对象已有接口时不能同时声明为非接口活动；Basis 必须引用该 FM 对象或真实业务来源。
+全模型覆盖由 CLI 从当前 FM 推导，不接受 Context 子集。`nonApiActivities` 的每项包含 `entityRef`、`handling: internal|external`、`basis`，用于说明实际非接口活动。对象已有写入接口时不能同时声明为非接口活动；对象只有读取接口且形成责任角色没有 `participant.party` 玩家时，可以用它说明该凭证由内部／外部形成。Basis 必须引用该 FM 对象或真实业务来源。
 
 ```yaml
 nonApiActivities:
@@ -109,7 +109,7 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 - `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
-HTTP 文档必须存在。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。
+HTTP 文档必须存在。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。未被 Participant Party 扮演的 Party Role 不是可调用角色；其步骤应以有依据的 internal/external/gap 回映，而不是保留空契约。
 
 资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。
 

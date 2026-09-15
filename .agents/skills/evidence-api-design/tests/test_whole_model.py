@@ -17,6 +17,7 @@ from test_support import API_ROOT, FM_SKILL, REPO_ROOT
 adapter = importlib.import_module("fm_api_core.fm_adapter")
 projector = importlib.import_module("fm_api_core.projector")
 loader = importlib.import_module("fm_api_core.api_loader")
+model_coverage = importlib.import_module("fm_api_core.model_coverage")
 EXAMPLE = API_ROOT / "assets/examples/full-lifecycle"
 
 
@@ -133,6 +134,29 @@ class WholeModelTest(unittest.TestCase):
         capability["method"] = "GET"
         capability["effect"]["kind"] = "read"
         self.assertIn("MODEL_EVIDENCE_WRITE_MISSING", self.codes(self.project(value)))
+
+    def test_non_api_formation_can_coexist_with_read_for_unplayed_role(self):
+        rows, diagnostics = model_coverage.project_model_coverage(
+            self.design,
+            self.index,
+            [
+                {
+                    "id": "capability.read-wechat-confirmation",
+                    "effect": {
+                        "kind": "read",
+                        "targetRef": "confirmation.wechat-payment",
+                    },
+                }
+            ],
+        )
+        wechat = next(
+            item for item in rows if item["entityRef"] == "confirmation.wechat-payment"
+        )
+        self.assertEqual("api", wechat["handling"])
+        self.assertNotIn("MODEL_HANDLING_CONFLICT", {item.code for item in diagnostics})
+        self.assertNotIn(
+            "MODEL_EVIDENCE_WRITE_MISSING", {item.code for item in diagnostics}
+        )
 
     def test_context_accounting_includes_external_and_fulfillment_contexts(self):
         result = self.project()

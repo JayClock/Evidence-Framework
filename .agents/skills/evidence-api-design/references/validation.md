@@ -26,11 +26,12 @@
 
 - `MODEL_ENTITY_UNCOVERED`：整体 FM 的业务对象未对应接口或真实非接口活动。
 - `MODEL_EVIDENCE_WRITE_MISSING`：仅有读取，未覆盖凭证形成。
-- `MODEL_HANDLING_CONFLICT`：非接口活动重复或与已有接口冲突。
+- `MODEL_HANDLING_CONFLICT`：非接口活动重复，或与同对象写入接口冲突；未扮演责任角色导致的非 API 形成可与读取接口共存。
 - `MODEL_HANDLING_BASIS`：内部／外部处理缺少对应 FM 对象或业务来源。
 - `SCENARIO_UNCOVERED`：整个 FM 场景或具体步骤遗漏。
 - `SCENARIO_CAPABILITY_MISMATCH`：步骤角色、凭证效果或场景依据与接口不一致。
 - `SCENARIO_HANDLING_MISMATCH`：步骤内部／外部处理与整体说明不一致。
+- `ACTOR_PARTY_PLAYER_MISSING`：`caller_role` 或 capability 的 Party Role 没有 `participant.party -> plays_role` 玩家；该角色不生成接口。
 - `CONTRACT_OPERATION_MISSING`：业务接口缺少 HTTP 契约。
 - `HTTP_FLOW_UNCOVERED`：接口没有成功消费步骤。
 
@@ -43,12 +44,13 @@
 - `RESOURCE_CARDINALITY_CONFLICT`：数量上限与单例／集合寻址不一致，或来源说明与已有 FM 数量冲突。
 - `RESOURCE_IDENTITY_CONFLICT`：单例错误声明子定位参数，或集合实例缺少独立身份。
 - `RESOURCE_VIEW_INVALID`：能力、表示或链接选择了资源不存在的视图。
+- `ACTOR_PARTY_PLAYER_MISSING`：调用者角色虽是 FM Party Role，但没有 Participant Party 通过 `plays_role` 扮演；校验器不会为该角色投影接口或 HTTP 契约。
 
 有业务数量不等于有实例归属；Context 根与 `parent_child` 仍独立检查。单例只缩短确定性定位，不允许覆盖 Evidence，不宣称实现了幂等、重复提交处理或运行时唯一性。
 
 ## 凭证依赖复核
 
-设计复核检查必要补充证据的形成前提、实例引用、访问范围及创建路径。必需证据先存在，才可形成被证明凭证；证据创建不得依赖该尚未形成的目标。FM 的 `basedOn`、时间线和 CEL 场景可验证已声明的依赖；API 的 `ruleBindings` 只表达检查契约，不执行服务端前置校验。工具未覆盖的依赖判断必须由 Agent 复核并保留真实 gap，不把 `complete` 当作业务正确性证明。
+设计复核检查必要补充证据的形成前提、实例引用、访问范围及创建路径。必需证据先存在，才可形成被证明凭证；证据创建不得依赖该尚未形成的目标。若凭证形成责任属于未被 Participant Party 扮演的 Party Role，设计必须用 `nonApiActivities` 回映该形成步骤，不能生成对应调用接口；已有读取接口仍需遵守实例和可见性约束。FM 的 `basedOn`、时间线和 CEL 场景可验证已声明的依赖；API 的 `ruleBindings` 只表达检查契约，不执行服务端前置校验。工具未覆盖的依赖判断必须由 Agent 复核并保留真实 gap，不把 `complete` 当作业务正确性证明。
 
 ## 文件纪律
 

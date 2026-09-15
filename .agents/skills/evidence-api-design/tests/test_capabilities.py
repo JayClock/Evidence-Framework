@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import importlib
 import unittest
 
@@ -43,6 +44,23 @@ class CapabilitiesTest(unittest.TestCase):
             "capability.request-payment", {item["id"] for item in interfaces}
         )
         self.assertIn("ACTOR_SCOPE_UNRESOLVED", {item.code for item in diagnostics})
+
+    def test_unplayed_party_role_is_not_projected(self) -> None:
+        value = design()
+        model = copy.deepcopy(index())
+        model.relationships = {
+            key: item
+            for key, item in model.relationships.items()
+            if item.get("targetRef") != "role.platform-subscription"
+        }
+        resources, _ = resources_module.build_resources(value, model)
+        interfaces, _, diagnostics = capabilities_module.project_capabilities(
+            value, model, resources
+        )
+        self.assertNotIn(
+            "capability.request-payment", {item["id"] for item in interfaces}
+        )
+        self.assertIn("ACTOR_PARTY_PLAYER_MISSING", {item.code for item in diagnostics})
 
 
 if __name__ == "__main__":

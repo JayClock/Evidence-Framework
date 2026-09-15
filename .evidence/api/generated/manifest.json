@@ -1,7 +1,7 @@
 {
   "apiId": "api.column-subscription",
   "inputs": {
-    "api": "7e86567005d8bd9153120bbd5e095104ba5fe78427e57c2b8fc9407391450043",
+    "api": "35a0dcfff873141b7a8c3e46f2c09409c183abd2599ce8e3966dfb01639b9608",
     "fm": {
       "00-overview.md": "4c198440c28164360b78888f1f3b9470932883215b5a26121e37987b8857ed31",
       "01-glossary.md": "29f5fd0a454972dc2ba1d95e0a91c512ed192adfef5aa85cccd76b25753d852f",
@@ -166,32 +166,32 @@
   },
   "outputs": {
     "api-capabilities.md": {
-      "bytes": 6178,
-      "sha256": "b94f64c0865867128ad1d3209f2f062e2bdb595d2a5a0326fdc4260f2c4fd335"
+      "bytes": 3277,
+      "sha256": "45695b354427314894914368379eed9569ac82ee84408202f64efb4e051e91cf"
     },
     "api-contracts.md": {
-      "bytes": 225023,
-      "sha256": "5111709ed45f13909e121abec301190dbcf61c271988a8ae231d03ddc32c6a0a"
+      "bytes": 110183,
+      "sha256": "f4b0414f227aea3aca7332794bd4218ddfead0a74756878ae785a247bc1e5121"
     },
     "design-report.md": {
-      "bytes": 9690,
-      "sha256": "3fe3548a0176e5086bfad30787f87d1d68581369a1d0761dde21f2e011e0c261"
+      "bytes": 8481,
+      "sha256": "39bbd35821435a3013e03db38cba5708e6c6c78c9945ffe47a0827d796e607bf"
     },
     "http-journeys.json": {
-      "bytes": 18393,
-      "sha256": "c8b0a25b5033f7de56cf6349a1b837449951c0860e670161900f87cd4fa7dadc"
+      "bytes": 9246,
+      "sha256": "45f9ce4eaf6411cf35c8fcb68d7d4b9cb97e14a5367d3c50606ab9621212797b"
     },
     "openapi.yaml": {
-      "bytes": 145141,
-      "sha256": "5ccb0cf24337424d192083521e528ca8a3eef961fd1e78a7fcfd431b24adb668"
+      "bytes": 84275,
+      "sha256": "9c531b089373ad5c5859b78c7bdbca250b6683542fa00d8ca1265cd0cf48e906"
     },
     "projection.json": {
-      "bytes": 412978,
-      "sha256": "4caaf6441b91d63bb1a3818badeb1b72dd3196e21b080f4ab9eff76886d07e16"
+      "bytes": 232997,
+      "sha256": "182767e122ed5a2ed2fb2c5fdf79f4365a5938cd8abdadb7a48b6e883d72a650"
     },
     "representation-examples.json": {
-      "bytes": 22589,
-      "sha256": "dffd2a0d1508b772afd7414c896d5d9dfe31c894f24b422b0cd949151e08ea6d"
+      "bytes": 11445,
+      "sha256": "79d7283a57422f9051d890fc7fc3fffb040e534eb0e376b11ee694f740c13936"
     }
   },
   "runtime": {

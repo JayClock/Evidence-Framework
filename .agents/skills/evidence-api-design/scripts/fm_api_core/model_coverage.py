@@ -3,14 +3,34 @@
 from __future__ import annotations
 
 from .diagnostics import error, gap
+from .fm_adapter import party_roles_played_by_participants
 
 RESOURCE_CATEGORIES = {"evidence", "thing", "participant"}
+
+
+def _has_write_interface(interfaces: list[dict]) -> bool:
+    return any(item["effect"]["kind"] == "append_evidence" for item in interfaces)
+
+
+def _formation_role_without_participant_player(
+    entity: dict, index, played_party_roles: set[str]
+) -> bool:
+    role_ref = entity.get("responsibleRoleRef")
+    role = index.entities.get(role_ref or "")
+    return bool(
+        role_ref
+        and role
+        and role.get("category") == "role"
+        and role.get("kind") == "party"
+        and role_ref not in played_party_roles
+    )
 
 
 def project_model_coverage(
     design: dict, index, capabilities: list
 ) -> tuple[list, list]:
     diagnostics, result = [], []
+    played_party_roles = party_roles_played_by_participants(index)
     objects = {
         ref: entity
         for ref, entity in index.entities.items()
@@ -34,13 +54,24 @@ def project_model_coverage(
         interfaces = [
             item for item in capabilities if item["effect"]["targetRef"] == ref
         ]
+        write_interface_exists = _has_write_interface(interfaces)
         activity = activities.get(ref)
+        formation_role_unplayed = _formation_role_without_participant_player(
+            entity, index, played_party_roles
+        )
+        non_api_formation_with_api_reads = bool(
+            activity
+            and interfaces
+            and entity.get("category") == "evidence"
+            and not write_interface_exists
+            and formation_role_unplayed
+        )
         handling = "api" if interfaces else activity["handling"] if activity else "gap"
-        if interfaces and activity:
+        if interfaces and activity and not non_api_formation_with_api_reads:
             diagnostics.append(
                 error(
                     "MODEL_HANDLING_CONFLICT",
-                    "对象已有接口，不能同时声明整体由内部或外部处理",
+                    "对象已有写入接口，或非接口活动没有限定为未扮演责任角色的凭证形成，不能同时声明整体内部／外部处理",
                     ref,
                 )
             )
@@ -73,16 +104,15 @@ def project_model_coverage(
         if (
             entity.get("category") == "evidence"
             and interfaces
-            and not any(
-                item["effect"]["kind"] == "append_evidence" for item in interfaces
-            )
+            and not write_interface_exists
+            and not non_api_formation_with_api_reads
         ):
             diagnostics.append(
                 gap(
                     "MODEL_EVIDENCE_WRITE_MISSING",
                     f"{ref}.formation",
                     "coverage",
-                    "仅有读取不能覆盖凭证形成能力",
+                    "仅有读取不能覆盖凭证形成能力；除非其责任 Party Role 未被 participant.party 扮演且已声明非接口形成",
                     ref,
                 )
             )

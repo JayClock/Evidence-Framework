@@ -61,6 +61,31 @@ def _load_yaml_objects(root: Path, pattern: str) -> dict[str, dict[str, Any]]:
     return objects
 
 
+def party_roles_played_by_participants(index: FMIndex) -> set[str]:
+    """Party Roles that have an explicit Participant Party player.
+
+    FM allows Party Roles without concrete Participant Party nodes. API design is
+    stricter: only Party Roles connected from participant.party by plays_role can
+    become callable API actors.
+    """
+    result: set[str] = set()
+    for relationship in index.relationships.values():
+        if relationship.get("kind") != "plays_role":
+            continue
+        source = index.entities.get(str(relationship.get("sourceRef", "")))
+        target = index.entities.get(str(relationship.get("targetRef", "")))
+        if (
+            source
+            and source.get("category") == "participant"
+            and source.get("kind") == "party"
+            and target
+            and target.get("category") == "role"
+            and target.get("kind") == "party"
+        ):
+            result.add(target["id"])
+    return result
+
+
 def load_fm(fm_root: Path, fm_skill: Path) -> tuple[FMIndex | None, list[Diagnostic]]:
     diagnostics: list[Diagnostic] = []
     fm_root = fm_root.resolve()
@@ -162,6 +187,7 @@ def load_fm(fm_root: Path, fm_skill: Path) -> tuple[FMIndex | None, list[Diagnos
 
 def inspect_summary(index: FMIndex) -> dict[str, Any]:
     entities = index.entities.values()
+    played_party_roles = party_roles_played_by_participants(index)
     return {
         "schemaVersion": index.compiled.get("schemaVersion"),
         "model": index.compiled.get("model", {}),
@@ -178,6 +204,14 @@ def inspect_summary(index: FMIndex) -> dict[str, Any]:
                 if value.get("category") == "role"
             ),
             key=lambda item: item["id"],
+        ),
+        "playedPartyRoles": sorted(played_party_roles),
+        "unplayedPartyRoles": sorted(
+            value["id"]
+            for value in entities
+            if value.get("category") == "role"
+            and value.get("kind") == "party"
+            and value["id"] not in played_party_roles
         ),
         "resourceClues": sorted(
             (

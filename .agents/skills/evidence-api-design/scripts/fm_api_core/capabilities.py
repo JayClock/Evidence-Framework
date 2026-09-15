@@ -4,6 +4,7 @@ import re
 from typing import Any
 
 from fm_api_core.diagnostics import Diagnostic, error, gap
+from fm_api_core.fm_adapter import party_roles_played_by_participants
 
 
 def _has_basis(item: dict[str, Any]) -> bool:
@@ -25,6 +26,7 @@ def project_capabilities(
     decisions = {item["id"] for item in design.get("decisions", [])}
     declared: set[tuple[str, str, str, str]] = set()
     projected: list[dict[str, Any]] = []
+    played_party_roles = party_roles_played_by_participants(index)
 
     for capability in sorted(
         design.get("capabilities", []), key=lambda item: item["id"]
@@ -60,6 +62,18 @@ def project_capabilities(
                 )
             )
             local_errors = True
+        elif capability["actorRoleRef"] not in played_party_roles:
+            diagnostics.append(
+                gap(
+                    "ACTOR_PARTY_PLAYER_MISSING",
+                    f"{capability['id']}.party-player",
+                    "business",
+                    "调用者 Party Role 没有 participant.party 的 plays_role 扮演，不生成相关 API 接口",
+                    capability["id"],
+                    (capability["actorRoleRef"],),
+                )
+            )
+            unresolved = True
         if resource is None:
             diagnostics.append(
                 error(

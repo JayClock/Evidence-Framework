@@ -4,7 +4,7 @@ import importlib
 from pathlib import Path
 from typing import Any
 
-from .diagnostics import Diagnostic, error
+from .diagnostics import Diagnostic, error, gap
 
 capabilities_module = importlib.import_module("fm_api_core.capabilities")
 coverage_module = importlib.import_module("fm_api_core.coverage")
@@ -138,6 +138,7 @@ def _validate_bindings(
 ) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     resource_ids = {item["id"] for item in resources}
+    played_party_roles = fm_adapter_module.party_roles_played_by_participants(index)
     for binding in design.get("bindings", []):
         if binding["kind"] == "caller_role":
             role = index.entities.get(binding["roleRef"])
@@ -151,6 +152,17 @@ def _validate_bindings(
                         "ACTOR_ROLE_INVALID",
                         "caller_role 必须引用 FM Party Role",
                         binding["id"],
+                    )
+                )
+            elif binding["roleRef"] not in played_party_roles:
+                diagnostics.append(
+                    gap(
+                        "ACTOR_PARTY_PLAYER_MISSING",
+                        f"{binding['id']}.party-player",
+                        "business",
+                        "caller_role 引用的 Party Role 没有 participant.party 的 plays_role 扮演，不生成相关接口",
+                        binding["id"],
+                        (binding["roleRef"],),
                     )
                 )
             if binding["scopeResourceRef"] not in resource_ids:
