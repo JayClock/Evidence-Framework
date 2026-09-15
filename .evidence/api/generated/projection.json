@@ -2,6 +2,76 @@
   "apiId": "api.column-subscription",
   "capabilities": [
     {
+      "actorRoleRef": "role.account-user",
+      "basis": {
+        "decisionRefs": [
+          "decision.contract-list-party-root"
+        ],
+        "fmRefs": [
+          "party.user",
+          "relation.user-as-account-user",
+          "contract.prepaid"
+        ],
+        "reasoning": "合同列表读取先以用户主体为 URL 根，再返回该主体作为账户使用方参加的账户协议集合。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "bindingRefs": [
+        "binding.caller-party-accounts-account-user",
+        "binding.party-accounts"
+      ],
+      "businessCapability": "列出本人预付费账户协议",
+      "effect": {
+        "kind": "read",
+        "targetRef": "contract.prepaid"
+      },
+      "id": "capability.list-accounts-account-user",
+      "method": "GET",
+      "resourceRef": "resource.party-accounts",
+      "roleLabel": "账户使用方",
+      "scenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "uri": "/users/{userId}/prepaid-accounts",
+      "view": "collection"
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "basis": {
+        "decisionRefs": [
+          "decision.contract-list-party-root"
+        ],
+        "fmRefs": [
+          "party.user",
+          "relation.user-as-reader",
+          "contract.subscription"
+        ],
+        "reasoning": "合同列表读取先以用户主体为 URL 根，再返回该主体作为读者参加的订阅合同集合。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "bindingRefs": [
+        "binding.caller-party-subscriptions-reader",
+        "binding.party-subscriptions"
+      ],
+      "businessCapability": "列出本人专栏订阅合同",
+      "effect": {
+        "kind": "read",
+        "targetRef": "contract.subscription"
+      },
+      "id": "capability.list-subscriptions-reader",
+      "method": "GET",
+      "resourceRef": "resource.party-subscriptions",
+      "roleLabel": "读者",
+      "scenarioRefs": [
+        "scenario.api-mobile-subscription"
+      ],
+      "uri": "/users/{userId}/subscriptions",
+      "view": "collection"
+    },
+    {
       "actorRoleRef": "role.reader",
       "basis": {
         "fmRefs": [
@@ -1278,6 +1348,19 @@
       },
       {
         "actorRoleRef": "role.reader",
+        "id": "http-journey.list-subscriptions-reader",
+        "status": "mapped",
+        "steps": [
+          {
+            "capabilityRef": "capability.list-subscriptions-reader",
+            "expectStatus": 200,
+            "id": "http.list-subscriptions-reader",
+            "status": "mapped"
+          }
+        ]
+      },
+      {
+        "actorRoleRef": "role.reader",
         "id": "http-journey.read-subscription-reader",
         "status": "mapped",
         "steps": [
@@ -1304,6 +1387,19 @@
             "capabilityRef": "capability.read-account-account-user",
             "expectStatus": 200,
             "id": "http.register-account-account-user-read",
+            "status": "mapped"
+          }
+        ]
+      },
+      {
+        "actorRoleRef": "role.account-user",
+        "id": "http-journey.list-accounts-account-user",
+        "status": "mapped",
+        "steps": [
+          {
+            "capabilityRef": "capability.list-accounts-account-user",
+            "expectStatus": 200,
+            "id": "http.list-accounts-account-user",
             "status": "mapped"
           }
         ]
@@ -1593,6 +1689,84 @@
       }
     ],
     "operations": [
+      {
+        "actorRoleRef": "role.account-user",
+        "bindingRefs": [
+          "binding.caller-party-accounts-account-user",
+          "binding.party-accounts"
+        ],
+        "capabilityRef": "capability.list-accounts-account-user",
+        "concurrency": {
+          "mode": "none",
+          "reason": "读取不修改资源；列表一致性由服务端查询边界处理。"
+        },
+        "idempotency": {
+          "mode": "not_applicable",
+          "reason": "读取不改变业务证据。"
+        },
+        "method": "GET",
+        "request": {
+          "example": {},
+          "fields": [],
+          "mediaType": "application/json"
+        },
+        "responses": [
+          {
+            "description": "返回该主体参与的预付费账户协议列表。",
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-accounts-account-user",
+            "status": 200
+          },
+          {
+            "description": "调用者不能读取该主体范围内的账户协议列表。",
+            "headers": {},
+            "status": 403
+          }
+        ],
+        "ruleBindings": [],
+        "uri": "/users/{userId}/prepaid-accounts"
+      },
+      {
+        "actorRoleRef": "role.reader",
+        "bindingRefs": [
+          "binding.caller-party-subscriptions-reader",
+          "binding.party-subscriptions"
+        ],
+        "capabilityRef": "capability.list-subscriptions-reader",
+        "concurrency": {
+          "mode": "none",
+          "reason": "读取不修改资源；列表一致性由服务端查询边界处理。"
+        },
+        "idempotency": {
+          "mode": "not_applicable",
+          "reason": "读取不改变业务证据。"
+        },
+        "method": "GET",
+        "request": {
+          "example": {},
+          "fields": [],
+          "mediaType": "application/json"
+        },
+        "responses": [
+          {
+            "description": "返回该主体参与的专栏订阅合同列表。",
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-subscriptions-reader",
+            "status": 200
+          },
+          {
+            "description": "调用者不能读取该主体范围内的合同列表。",
+            "headers": {},
+            "status": 403
+          }
+        ],
+        "ruleBindings": [],
+        "uri": "/users/{userId}/subscriptions"
+      },
       {
         "actorRoleRef": "role.reader",
         "bindingRefs": [
@@ -3105,6 +3279,330 @@
       }
     ],
     "representations": [
+      {
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "账户协议列表按本人主体过滤，不跨主体缓存。"
+        },
+        "embedded": [
+          {
+            "rel": "items",
+            "representationRefs": [
+              "representation.list-accounts-account-user-item"
+            ]
+          }
+        ],
+        "example": {
+          "_embedded": {
+            "items": [
+              {
+                "_links": {
+                  "self": {
+                    "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+                  }
+                },
+                "agreement_id": "PREPAID-001",
+                "reader_id": "READER-001",
+                "signed_at": "2026-10-01T08:00:00Z"
+              }
+            ]
+          },
+          "_links": {
+            "next": {
+              "href": "/users/USER-001/prepaid-accounts?cursor=next-accounts"
+            },
+            "self": {
+              "href": "/users/USER-001/prepaid-accounts"
+            }
+          }
+        },
+        "exampleParameters": {
+          "userId": "USER-001"
+        },
+        "fields": [],
+        "id": "representation.list-accounts-account-user",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "pagination": {
+          "mode": "cursor",
+          "nextExample": "next-accounts",
+          "parameter": "cursor",
+          "reason": "合同列表可能跨页返回。"
+        },
+        "resourceRef": "resource.party-accounts",
+        "uri": "/users/{userId}/prepaid-accounts",
+        "view": "collection"
+      },
+      {
+        "actorRoleRefs": [
+          "role.account-user"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。"
+        },
+        "example": {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+            }
+          },
+          "agreement_id": "PREPAID-001",
+          "reader_id": "READER-001",
+          "signed_at": "2026-10-01T08:00:00Z"
+        },
+        "exampleParameters": {
+          "accountId": "PREPAID-001",
+          "userId": "USER-001"
+        },
+        "fields": [
+          {
+            "fmAttributeRef": "contract.prepaid#agreement_id",
+            "name": "agreement_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.prepaid#reader_id",
+            "name": "reader_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.prepaid#signed_at",
+            "name": "signed_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "id": "representation.list-accounts-account-user-item",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "resourceRef": "resource.party-accounts",
+        "uri": "/users/{userId}/prepaid-accounts/{accountId}",
+        "view": "item"
+      },
+      {
+        "actorRoleRefs": [
+          "role.reader"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "合同列表按本人主体和当前资格过滤，不跨主体缓存。"
+        },
+        "embedded": [
+          {
+            "rel": "items",
+            "representationRefs": [
+              "representation.list-subscriptions-reader-item"
+            ]
+          }
+        ],
+        "example": {
+          "_embedded": {
+            "items": [
+              {
+                "_links": {
+                  "self": {
+                    "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+                  }
+                },
+                "access_seconds": 60,
+                "amount_minor_units": 9900,
+                "column_id": "COL-BM",
+                "currency": "CNY",
+                "edition_id": "ED-1",
+                "payment_seconds": 900,
+                "reader_id": "READER-001",
+                "refund_seconds": 604800,
+                "restore_seconds": 86400,
+                "signed_at": "2026-10-01T09:00:00Z",
+                "subscription_id": "SUB-20261001-001"
+              }
+            ]
+          },
+          "_links": {
+            "next": {
+              "href": "/users/USER-001/subscriptions?cursor=next-subscriptions"
+            },
+            "self": {
+              "href": "/users/USER-001/subscriptions"
+            }
+          }
+        },
+        "exampleParameters": {
+          "userId": "USER-001"
+        },
+        "fields": [],
+        "id": "representation.list-subscriptions-reader",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "pagination": {
+          "mode": "cursor",
+          "nextExample": "next-subscriptions",
+          "parameter": "cursor",
+          "reason": "合同列表可能跨页返回。"
+        },
+        "resourceRef": "resource.party-subscriptions",
+        "uri": "/users/{userId}/subscriptions",
+        "view": "collection"
+      },
+      {
+        "actorRoleRefs": [
+          "role.reader"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。"
+        },
+        "example": {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+            }
+          },
+          "access_seconds": 60,
+          "amount_minor_units": 9900,
+          "column_id": "COL-BM",
+          "currency": "CNY",
+          "edition_id": "ED-1",
+          "payment_seconds": 900,
+          "reader_id": "READER-001",
+          "refund_seconds": 604800,
+          "restore_seconds": 86400,
+          "signed_at": "2026-10-01T09:00:00Z",
+          "subscription_id": "SUB-20261001-001"
+        },
+        "exampleParameters": {
+          "subscriptionId": "SUB-20261001-001",
+          "userId": "USER-001"
+        },
+        "fields": [
+          {
+            "fmAttributeRef": "contract.subscription#subscription_id",
+            "name": "subscription_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#reader_id",
+            "name": "reader_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#column_id",
+            "name": "column_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#edition_id",
+            "name": "edition_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#amount_minor_units",
+            "name": "amount_minor_units",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#currency",
+            "name": "currency",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#signed_at",
+            "name": "signed_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#payment_seconds",
+            "name": "payment_seconds",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#access_seconds",
+            "name": "access_seconds",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#refund_seconds",
+            "name": "refund_seconds",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.subscription#restore_seconds",
+            "name": "restore_seconds",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "id": "representation.list-subscriptions-reader-item",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "resourceRef": "resource.party-subscriptions",
+        "uri": "/users/{userId}/subscriptions/{subscriptionId}",
+        "view": "item"
+      },
       {
         "actorRoleRefs": [
           "role.reader"
@@ -5934,7 +6432,7 @@
     "runtimeValidated": false
   },
   "inputDigests": {
-    "api": "35a0dcfff873141b7a8c3e46f2c09409c183abd2599ce8e3966dfb01639b9608",
+    "api": "d8869e69826123b195e70e48cac21e3d55b13a7177de05e55270e51d4b2eccd1",
     "fm": {
       "00-overview.md": "4c198440c28164360b78888f1f3b9470932883215b5a26121e37987b8857ed31",
       "01-glossary.md": "29f5fd0a454972dc2ba1d95e0a91c512ed192adfef5aa85cccd76b25753d852f",
@@ -6185,6 +6683,7 @@
     {
       "basis": null,
       "capabilityRefs": [
+        "capability.list-accounts-account-user",
         "capability.read-account-account-user",
         "capability.register-account-account-user"
       ],
@@ -6195,6 +6694,7 @@
     {
       "basis": null,
       "capabilityRefs": [
+        "capability.list-subscriptions-reader",
         "capability.read-subscription-reader",
         "capability.register-subscription-reader"
       ],
@@ -6539,6 +7039,44 @@
       "resourceRef": "resource.discontinuation",
       "uri": "/discontinuations/{discontinuationId}",
       "view": "item"
+    },
+    {
+      "actorRoleRefs": [
+        "role.account-user"
+      ],
+      "capabilityRefs": [
+        "capability.list-accounts-account-user"
+      ],
+      "effects": [
+        {
+          "kind": "read",
+          "targetRef": "contract.prepaid"
+        }
+      ],
+      "id": "operation.party-accounts.collection.get",
+      "method": "GET",
+      "resourceRef": "resource.party-accounts",
+      "uri": "/users/{userId}/prepaid-accounts",
+      "view": "collection"
+    },
+    {
+      "actorRoleRefs": [
+        "role.reader"
+      ],
+      "capabilityRefs": [
+        "capability.list-subscriptions-reader"
+      ],
+      "effects": [
+        {
+          "kind": "read",
+          "targetRef": "contract.subscription"
+        }
+      ],
+      "id": "operation.party-subscriptions.collection.get",
+      "method": "GET",
+      "resourceRef": "resource.party-subscriptions",
+      "uri": "/users/{userId}/subscriptions",
+      "view": "collection"
     },
     {
       "actorRoleRefs": [
@@ -6953,6 +7491,125 @@
       "uris": {
         "collection": "/discontinuations",
         "item": "/discontinuations/{discontinuationId}"
+      }
+    },
+    {
+      "basis": {
+        "decisionRefs": [
+          "decision.contract-list-party-root"
+        ],
+        "fmRefs": [
+          "party.user",
+          "relation.user-as-account-user",
+          "contract.prepaid"
+        ],
+        "reasoning": "按用户主体收敛其作为账户使用方参加的预付费账户协议列表。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "businessName": "用户预付费账户协议列表",
+      "cardinality": {
+        "max": "many",
+        "reasoning": "列表返回该用户作为账户使用方参加的预付费账户协议集合。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "entityRef": "contract.prepaid",
+      "id": "resource.party-accounts",
+      "identity": {
+        "attributeRef": "contract.prepaid#agreement_id",
+        "kind": "fm_attribute",
+        "parameter": "accountId"
+      },
+      "parameters": [
+        "userId",
+        "accountId"
+      ],
+      "parentBindingRef": "binding.party-accounts",
+      "parentRef": "resource.party-user",
+      "segment": "prepaid-accounts",
+      "shape": "collection",
+      "uris": {
+        "collection": "/users/{userId}/prepaid-accounts",
+        "item": "/users/{userId}/prepaid-accounts/{accountId}"
+      }
+    },
+    {
+      "basis": {
+        "decisionRefs": [
+          "decision.contract-list-party-root"
+        ],
+        "fmRefs": [
+          "party.user",
+          "relation.user-as-reader",
+          "contract.subscription"
+        ],
+        "reasoning": "按用户主体收敛其作为读者参加的订阅合同列表。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "businessName": "用户专栏订阅合同列表",
+      "cardinality": {
+        "max": "many",
+        "reasoning": "列表返回该用户作为读者参加的订阅合同集合。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "entityRef": "contract.subscription",
+      "id": "resource.party-subscriptions",
+      "identity": {
+        "attributeRef": "contract.subscription#subscription_id",
+        "kind": "fm_attribute",
+        "parameter": "subscriptionId"
+      },
+      "parameters": [
+        "userId",
+        "subscriptionId"
+      ],
+      "parentBindingRef": "binding.party-subscriptions",
+      "parentRef": "resource.party-user",
+      "segment": "subscriptions",
+      "shape": "collection",
+      "uris": {
+        "collection": "/users/{userId}/subscriptions",
+        "item": "/users/{userId}/subscriptions/{subscriptionId}"
+      }
+    },
+    {
+      "basis": {
+        "decisionRefs": [
+          "decision.contract-list-party-root"
+        ],
+        "fmRefs": [
+          "party.user",
+          "relation.user-as-reader",
+          "relation.user-as-account-user"
+        ],
+        "reasoning": "用户主体是订阅合同和预付费账户合同列表的参与方作用域根。",
+        "sourceRefs": [
+          "source.party-contract-list"
+        ]
+      },
+      "businessName": "用户主体",
+      "entityRef": "party.user",
+      "id": "resource.party-user",
+      "identity": {
+        "decisionRef": "decision.identities",
+        "kind": "api_resource_id",
+        "parameter": "userId"
+      },
+      "parameters": [
+        "userId"
+      ],
+      "segment": "users",
+      "shape": "collection",
+      "uris": {
+        "collection": "/users",
+        "item": "/users/{userId}"
       }
     },
     {

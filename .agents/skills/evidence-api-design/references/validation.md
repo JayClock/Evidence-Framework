@@ -32,6 +32,7 @@
 - `SCENARIO_CAPABILITY_MISMATCH`：步骤角色、凭证效果或场景依据与接口不一致。
 - `SCENARIO_HANDLING_MISMATCH`：步骤内部／外部处理与整体说明不一致。
 - `ACTOR_PARTY_PLAYER_MISSING`：`caller_role` 或 capability 的 Party Role 没有 `participant.party -> plays_role` 玩家；该角色不生成接口。
+- `CONTRACT_LIST_PARTY_SCOPE_MISSING`：Contract 的 GET collection 读取未挂在具体 Participant Party 类型资源根下，或仍使用 `/parties`、`partyId` 这类统称作用域，无法区分合同双方角色对应的不同主体。
 - `CONTRACT_OPERATION_MISSING`：业务接口缺少 HTTP 契约。
 - `HTTP_FLOW_UNCOVERED`：接口没有成功消费步骤。
 
@@ -44,6 +45,7 @@
 - `RESOURCE_CARDINALITY_CONFLICT`：数量上限与单例／集合寻址不一致，或来源说明与已有 FM 数量冲突。
 - `RESOURCE_IDENTITY_CONFLICT`：单例错误声明子定位参数，或集合实例缺少独立身份。
 - `RESOURCE_VIEW_INVALID`：能力、表示或链接选择了资源不存在的视图。
+- `CONTRACT_LIST_PARTY_SCOPE_MISSING`：Contract 列表读取必须使用具体 Participant Party 类型作为 URL 根；Contract 自身根集合或统称 `/parties` 只适合非列表入口。
 - `ACTOR_PARTY_PLAYER_MISSING`：调用者角色虽是 FM Party Role，但没有 Participant Party 通过 `plays_role` 扮演；校验器不会为该角色投影接口或 HTTP 契约。
 
 有业务数量不等于有实例归属；Context 根与 `parent_child` 仍独立检查。单例只缩短确定性定位，不允许覆盖 Evidence，不宣称实现了幂等、重复提交处理或运行时唯一性。

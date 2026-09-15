@@ -42,7 +42,7 @@ http:
 - `example` 只填写字段数据；`exampleParameters` 填写这一个合成表示的 URI 参数。工具生成 `_links.self`，不根据该链接自动开放 GET。
 - 字段来源和技术说明存在不等于业务来源已获批准。特别是没有派生公式时，Agent 仍须核对值究竟是直接记录、引用还是其他来源。
 
-HAL 集合可用 `embedded: [{rel, representationRefs}]` 显式嵌入同资源的 item 表示；成员保留自己的 self，校验角色与父实例范围。当前不支持递归嵌入，不自动公开完整对象图。集合摘要和详情可定义为不同表示，各自保留字段白名单。
+HAL 集合可用 `embedded: [{rel, representationRefs}]` 显式嵌入同资源的 item 表示；成员保留自己的 self，校验角色与父实例范围。Contract 的 collection GET 表示必须来自具体 Participant Party 类型根下的资源，例如用户下的订阅列表，而不是合同自身根的全局列表，也不是统称 `/parties`。当前不支持递归嵌入，不自动公开完整对象图。集合摘要和详情可定义为不同表示，各自保留字段白名单。
 
 ## 超媒体和动作
 

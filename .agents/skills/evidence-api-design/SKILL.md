@@ -33,7 +33,7 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 1. 定位项目根、完整 FM 根、`evidence-fm` Skill 绝对目录、场景及现有 API 文件；读取 [设计方法](references/method.md)、[格式](references/format.md) 和 [校验纪律](references/validation.md)。
 2. 每次消费当前 FM 都运行 `inspect`，检查结构、规则、证据与时间线一致性，保留输入摘要及上游状态元数据。这是技术完整性检查，不是再次确认业务；不得仅凭旧报告判断当前输入有效。
-3. 遍历全部 Context、具体 Evidence、Thing、Participant、责任角色及全部 FM 场景。为整体模型支持且调用角色已由 `participant.party` 扮演的每项业务交互设计接口；不是按节点类型生成 CRUD。Context 和角色本身不自动成为业务资源，未被 Participant Party 扮演的 Party Role 不产生 API capability。
+3. 遍历全部 Context、具体 Evidence、Thing、Participant、责任角色及全部 FM 场景。为整体模型支持且调用角色已由 `participant.party` 扮演的每项业务交互设计接口；不是按节点类型生成 CRUD。Context 和角色本身不自动成为业务资源，未被 Participant Party 扮演的 Party Role 不产生 API capability。Contract 的 GET 列表接口必须以具体 Participant Party 类型为 URL 根，不能暴露无主体范围的全局合同集合或统称 `/parties` 集合。
 4. 直接声明资源、业务名称、URI、实例归属与数量，以及所有接口的角色、方法、效果、场景、实例约束和规则。无玩家 Party Role 负责形成的对象，用有 FM／业务依据的 `nonApiActivities` 回映其形成步骤；内部及外部活动不以技术决定或“暂不实现”隐藏遗漏。
 5. 为每个接口填写同一文件 `http` 中的请求、响应、字段来源、表示、超媒体、幂等、并发、缓存及成功消费流程，遵循 [HTTP 契约](references/contracts.md)。每个接口都必须有契约；不能用空 HTTP 文档代替交付。
 6. 回映全部 FM 场景及其每一步，检查角色、凭证效果、实例关联、证据先后和非接口活动。整体对象遗漏、整个场景遗漏、错配接口均为诊断。
@@ -46,7 +46,7 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 - 字段白名单保留 client/reference/server/derived 口径；required 不等于客户端输入。模型业务时间不替换成服务器当前时间、入库或回调到达时间。
 - Evidence 通过 POST 追加，不覆盖删除。登记合同不等于签署，形成 Confirmation 不等于履约完成。
 - 必需补充证据必须先存在、可见且属于本业务实例。外部玩家结果仍属于其外部责任；不虚构支付回调或第三方接口。
-- 角色及访问范围沿用上游；只有存在 `participant.party -> plays_role -> role.party` 的 Party Role 才生成调用接口。岗位、经办主体和 Evidence Role 不自动成为调用角色或获得额外权限。
+- 角色及访问范围沿用上游；只有存在 `participant.party -> plays_role -> role.party` 的 Party Role 才生成调用接口。Contract 列表读取按具体 Participant Party 类型根过滤，例如 `/users/{userId}` 或 `/customers/{customerId}`，避免把同一合同的两方角色混成全局列表或统称 `/parties`。岗位、经办主体和 Evidence Role 不自动成为调用角色或获得额外权限。
 - HAL 链接引用实际接口；条件未求值不等于可用。静态消费流程不执行真实服务，`runtimeValidated` 恒为 false。
 
 ## 命令

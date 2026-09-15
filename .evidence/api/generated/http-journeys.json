@@ -21,6 +21,19 @@
     },
     {
       "actorRoleRef": "role.reader",
+      "id": "http-journey.list-subscriptions-reader",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.list-subscriptions-reader",
+          "expectStatus": 200,
+          "id": "http.list-subscriptions-reader",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
       "id": "http-journey.read-subscription-reader",
       "status": "mapped",
       "steps": [
@@ -47,6 +60,19 @@
           "capabilityRef": "capability.read-account-account-user",
           "expectStatus": 200,
           "id": "http.register-account-account-user-read",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "http-journey.list-accounts-account-user",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.list-accounts-account-user",
+          "expectStatus": 200,
+          "id": "http.list-accounts-account-user",
           "status": "mapped"
         }
       ]

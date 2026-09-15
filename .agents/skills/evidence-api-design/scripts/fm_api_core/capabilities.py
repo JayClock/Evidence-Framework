@@ -6,6 +6,9 @@ from typing import Any
 from fm_api_core.diagnostics import Diagnostic, error, gap
 from fm_api_core.fm_adapter import party_roles_played_by_participants
 
+GENERIC_PARTY_SEGMENTS = {"parties", "party", "participants", "participant"}
+GENERIC_PARTY_PARAMETERS = {"partyId", "participantId"}
+
 
 def _has_basis(item: dict[str, Any]) -> bool:
     basis = item.get("basis", {})
@@ -13,6 +16,41 @@ def _has_basis(item: dict[str, Any]) -> bool:
         item.get("scenarioRefs")
         and basis.get("reasoning")
         and (basis.get("fmRefs") or basis.get("sourceRefs"))
+    )
+
+
+def _is_party_scoped_contract_collection(
+    resource: dict[str, Any] | None,
+    resources_by_id: dict[str, dict[str, Any]],
+    index: Any,
+    actor_role_ref: str,
+) -> bool:
+    if not resource or resource.get("shape") != "collection":
+        return False
+    target = index.entities.get(resource.get("entityRef", ""))
+    parent = resources_by_id.get(resource.get("parentRef", ""))
+    parent_entity_ref = parent.get("entityRef", "") if parent else ""
+    parent_entity = index.entities.get(parent_entity_ref) if parent else None
+    if not (
+        target
+        and target.get("category") == "evidence"
+        and target.get("kind") == "contract"
+        and parent
+        and parent_entity
+        and parent_entity.get("category") == "participant"
+        and parent_entity.get("kind") == "party"
+    ):
+        return False
+    if (
+        parent.get("segment") in GENERIC_PARTY_SEGMENTS
+        or parent.get("identity", {}).get("parameter") in GENERIC_PARTY_PARAMETERS
+    ):
+        return False
+    return any(
+        rel.get("kind") == "plays_role"
+        and rel.get("sourceRef") == parent_entity_ref
+        and rel.get("targetRef") == actor_role_ref
+        for rel in index.relationships.values()
     )
 
 
@@ -161,6 +199,27 @@ def project_capabilities(
                 )
             )
             local_errors = True
+        if (
+            method == "GET"
+            and capability["view"] == "collection"
+            and target
+            and target.get("category") == "evidence"
+            and target.get("kind") == "contract"
+            and not _is_party_scoped_contract_collection(
+                resource, resources_by_id, index, capability["actorRoleRef"]
+            )
+        ):
+            diagnostics.append(
+                gap(
+                    "CONTRACT_LIST_PARTY_SCOPE_MISSING",
+                    f"{capability['id']}.party-scope",
+                    "design",
+                    "Contract 列表读取必须以具体 participant.party 类型资源为 URL 根，避免用 /parties 混淆合同双方角色对应的不同主体",
+                    capability["id"],
+                    (capability["resourceRef"], capability["effect"]["targetRef"]),
+                )
+            )
+            unresolved = True
         if (
             target
             and target.get("category") == "evidence"

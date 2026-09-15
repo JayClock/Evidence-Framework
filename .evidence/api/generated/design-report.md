@@ -1,7 +1,7 @@
 # FM → API 设计报告
 
 - 设计：`api.column-subscription`
-- 接口数（含角色变体）：21
+- 接口数（含角色变体）：23
 - 整体 Context 数：10
 
 ## 资源
@@ -14,6 +14,9 @@
 - 账户余额抵扣请求（collection）：`/prepaid-accounts/{accountId}/debits` / `/prepaid-accounts/{accountId}/debits/{debitId}` → `request.prepaid`
 - 预付费抵扣凭证（singleton）：`/prepaid-accounts/{accountId}/debits/{debitId}/result` → `confirmation.prepaid`
 - 断更下架记录（collection）：`/discontinuations` / `/discontinuations/{discontinuationId}` → `evidence.discontinuation`
+- 用户预付费账户协议列表（collection）：`/users/{userId}/prepaid-accounts` / `/users/{userId}/prepaid-accounts/{accountId}` → `contract.prepaid`
+- 用户专栏订阅合同列表（collection）：`/users/{userId}/subscriptions` / `/users/{userId}/subscriptions/{subscriptionId}` → `contract.subscription`
+- 用户主体（collection）：`/users` / `/users/{userId}` → `party.user`
 - 订阅费支付请求（singleton）：`/subscriptions/{subscriptionId}/payment` → `request.payment`
 - 断更退款请求（singleton）：`/subscriptions/{subscriptionId}/refund` → `request.refund`
 - 退款到账凭证（singleton）：`/subscriptions/{subscriptionId}/refund/result` → `confirmation.refund`
@@ -36,8 +39,8 @@
   - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 - `contract.mobile`：external；接口：—
   - 依据：移动支付机构交付并负责其协议、扣款请求和实际扣款证明；本平台核验既有凭证，不代替机构提供接口。
-- `contract.prepaid`：api；接口：capability.read-account-account-user, capability.register-account-account-user
-- `contract.subscription`：api；接口：capability.read-subscription-reader, capability.register-subscription-reader
+- `contract.prepaid`：api；接口：capability.list-accounts-account-user, capability.read-account-account-user, capability.register-account-account-user
+- `contract.subscription`：api；接口：capability.list-subscriptions-reader, capability.read-subscription-reader, capability.register-subscription-reader
 - `evidence.discontinuation`：api；接口：capability.read-discontinuation-reader
   - 依据：无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 - `evidence.relaunch`：api；接口：capability.read-relaunch-reader
@@ -68,6 +71,8 @@
 - `GET /prepaid-accounts/{accountId}/debits/{debitId}`：capability.read-debit-account-user
 - `GET /prepaid-accounts/{accountId}/debits/{debitId}/result`：capability.read-debit-result-account-user
 - `GET /discontinuations/{discontinuationId}`：capability.read-discontinuation-reader
+- `GET /users/{userId}/prepaid-accounts`：capability.list-accounts-account-user
+- `GET /users/{userId}/subscriptions`：capability.list-subscriptions-reader
 - `GET /subscriptions/{subscriptionId}/payment`：capability.read-payment-reader
 - `GET /subscriptions/{subscriptionId}/refund`：capability.read-refund-reader
 - `POST /subscriptions/{subscriptionId}/refund`：capability.register-refund-reader

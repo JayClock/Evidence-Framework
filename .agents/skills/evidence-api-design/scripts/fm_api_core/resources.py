@@ -15,6 +15,21 @@ def build_resources(
     result: dict[str, dict[str, Any]] = {}
     visiting: set[str] = set()
 
+    def party_scoped_contract_collection(
+        parent_entity: dict[str, Any] | None,
+        child_entity: dict[str, Any] | None,
+        child_resource: dict[str, Any],
+    ) -> bool:
+        return bool(
+            parent_entity
+            and parent_entity.get("category") == "participant"
+            and parent_entity.get("kind") == "party"
+            and child_entity
+            and child_entity.get("category") == "evidence"
+            and child_entity.get("kind") == "contract"
+            and child_resource.get("shape") == "collection"
+        )
+
     def root_context(entity_value: dict[str, Any] | None) -> str | None:
         if entity_value is None:
             return None
@@ -59,7 +74,13 @@ def build_resources(
             )
         identity = resource["identity"]
         if (resource["shape"] == "singleton") != (identity["kind"] == "parent_scoped"):
-            diagnostics.append(error("RESOURCE_IDENTITY_CONFLICT", "单例由父实例定位，集合实例须有自身定位参数", resource_id))
+            diagnostics.append(
+                error(
+                    "RESOURCE_IDENTITY_CONFLICT",
+                    "单例由父实例定位，集合实例须有自身定位参数",
+                    resource_id,
+                )
+            )
         if identity["kind"] == "fm_attribute":
             entity_ref, attribute_name = identity["attributeRef"].split("#", 1)
             attribute_entity = index.entities.get(entity_ref)
@@ -116,11 +137,13 @@ def build_resources(
                 parent_entity = index.entities.get(parent["entityRef"])
                 child_root = root_context(entity)
                 parent_root = root_context(parent_entity)
-                if child_root != parent_root:
+                if child_root != parent_root and not party_scoped_contract_collection(
+                    parent_entity, entity, resource
+                ):
                     diagnostics.append(
                         error(
                             "RESOURCE_CONTEXT_ROOT_MISMATCH",
-                            "不同合同前、合同或领域 Context 必须使用独立 URI 根；跨 Context 关系应使用超媒体链接",
+                            "不同合同前、合同或领域 Context 必须使用独立 URI 根；只有 Contract 列表可按 Participant Party 作用域挂载",
                             resource_id,
                             related=(parent["id"], child_root or "", parent_root or ""),
                         )
@@ -165,7 +188,13 @@ def build_resources(
                 visiting.remove(resource_id)
                 return None
             if parameter in parameters:
-                diagnostics.append(error("URI_PARAMETER_DUPLICATE", f"URI 参数重复: {parameter}", resource_id))
+                diagnostics.append(
+                    error(
+                        "URI_PARAMETER_DUPLICATE",
+                        f"URI 参数重复: {parameter}",
+                        resource_id,
+                    )
+                )
             parameters.append(parameter)
             uris = {"collection": base_uri, "item": base_uri + "/{" + parameter + "}"}
         projected = {**resource, "uris": uris, "parameters": parameters}

@@ -1,4 +1,88 @@
 {
+  "representation.list-accounts-account-user": {
+    "_embedded": {
+      "items": [
+        {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+            }
+          },
+          "agreement_id": "PREPAID-001",
+          "reader_id": "READER-001",
+          "signed_at": "2026-10-01T08:00:00Z"
+        }
+      ]
+    },
+    "_links": {
+      "next": {
+        "href": "/users/USER-001/prepaid-accounts?cursor=next-accounts"
+      },
+      "self": {
+        "href": "/users/USER-001/prepaid-accounts"
+      }
+    }
+  },
+  "representation.list-accounts-account-user-item": {
+    "_links": {
+      "self": {
+        "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "reader_id": "READER-001",
+    "signed_at": "2026-10-01T08:00:00Z"
+  },
+  "representation.list-subscriptions-reader": {
+    "_embedded": {
+      "items": [
+        {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+            }
+          },
+          "access_seconds": 60,
+          "amount_minor_units": 9900,
+          "column_id": "COL-BM",
+          "currency": "CNY",
+          "edition_id": "ED-1",
+          "payment_seconds": 900,
+          "reader_id": "READER-001",
+          "refund_seconds": 604800,
+          "restore_seconds": 86400,
+          "signed_at": "2026-10-01T09:00:00Z",
+          "subscription_id": "SUB-20261001-001"
+        }
+      ]
+    },
+    "_links": {
+      "next": {
+        "href": "/users/USER-001/subscriptions?cursor=next-subscriptions"
+      },
+      "self": {
+        "href": "/users/USER-001/subscriptions"
+      }
+    }
+  },
+  "representation.list-subscriptions-reader-item": {
+    "_links": {
+      "self": {
+        "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+      }
+    },
+    "access_seconds": 60,
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "payment_seconds": 900,
+    "reader_id": "READER-001",
+    "refund_seconds": 604800,
+    "restore_seconds": 86400,
+    "signed_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
   "representation.read-access-reader": {
     "_links": {
       "result": {

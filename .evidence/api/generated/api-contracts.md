@@ -2,6 +2,78 @@
 
 > 合成样例与静态消费流程检查，不是运行时授权或端到端验收。
 
+## GET /users/{userId}/prepaid-accounts
+
+- 能力：`capability.list-accounts-account-user`；角色：`role.account-user`
+- 实例约束：`binding.caller-party-accounts-account-user, binding.party-accounts`
+- 幂等：`not_applicable`；并发：`none`
+
+### 请求
+
+```json
+{
+  "example": {},
+  "fields": [],
+  "mediaType": "application/json"
+}
+```
+
+### 响应
+
+```json
+[
+  {
+    "description": "返回该主体参与的预付费账户协议列表。",
+    "headers": {
+      "Cache-Control": "no-store"
+    },
+    "representationRef": "representation.list-accounts-account-user",
+    "status": 200
+  },
+  {
+    "description": "调用者不能读取该主体范围内的账户协议列表。",
+    "headers": {},
+    "status": 403
+  }
+]
+```
+
+## GET /users/{userId}/subscriptions
+
+- 能力：`capability.list-subscriptions-reader`；角色：`role.reader`
+- 实例约束：`binding.caller-party-subscriptions-reader, binding.party-subscriptions`
+- 幂等：`not_applicable`；并发：`none`
+
+### 请求
+
+```json
+{
+  "example": {},
+  "fields": [],
+  "mediaType": "application/json"
+}
+```
+
+### 响应
+
+```json
+[
+  {
+    "description": "返回该主体参与的专栏订阅合同列表。",
+    "headers": {
+      "Cache-Control": "no-store"
+    },
+    "representationRef": "representation.list-subscriptions-reader",
+    "status": 200
+  },
+  {
+    "description": "调用者不能读取该主体范围内的合同列表。",
+    "headers": {},
+    "status": 403
+  }
+]
+```
+
 ## GET /subscriptions/{subscriptionId}/accesses/{accessId}
 
 - 能力：`capability.read-access-reader`；角色：`role.reader`
@@ -1419,6 +1491,350 @@
 ```
 
 ## 表示与超媒体
+
+### representation.list-accounts-account-user
+
+```json
+{
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
+  "availability": "not_evaluated",
+  "cache": {
+    "mode": "no-store",
+    "reason": "账户协议列表按本人主体过滤，不跨主体缓存。"
+  },
+  "embedded": [
+    {
+      "rel": "items",
+      "representationRefs": [
+        "representation.list-accounts-account-user-item"
+      ]
+    }
+  ],
+  "example": {
+    "_embedded": {
+      "items": [
+        {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+            }
+          },
+          "agreement_id": "PREPAID-001",
+          "reader_id": "READER-001",
+          "signed_at": "2026-10-01T08:00:00Z"
+        }
+      ]
+    },
+    "_links": {
+      "next": {
+        "href": "/users/USER-001/prepaid-accounts?cursor=next-accounts"
+      },
+      "self": {
+        "href": "/users/USER-001/prepaid-accounts"
+      }
+    }
+  },
+  "exampleParameters": {
+    "userId": "USER-001"
+  },
+  "fields": [],
+  "id": "representation.list-accounts-account-user",
+  "links": [],
+  "mediaType": "application/hal+json",
+  "pagination": {
+    "mode": "cursor",
+    "nextExample": "next-accounts",
+    "parameter": "cursor",
+    "reason": "合同列表可能跨页返回。"
+  },
+  "resourceRef": "resource.party-accounts",
+  "uri": "/users/{userId}/prepaid-accounts",
+  "view": "collection"
+}
+```
+
+### representation.list-accounts-account-user-item
+
+```json
+{
+  "actorRoleRefs": [
+    "role.account-user"
+  ],
+  "availability": "not_evaluated",
+  "cache": {
+    "mode": "no-store",
+    "reason": "单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。"
+  },
+  "example": {
+    "_links": {
+      "self": {
+        "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+      }
+    },
+    "agreement_id": "PREPAID-001",
+    "reader_id": "READER-001",
+    "signed_at": "2026-10-01T08:00:00Z"
+  },
+  "exampleParameters": {
+    "accountId": "PREPAID-001",
+    "userId": "USER-001"
+  },
+  "fields": [
+    {
+      "fmAttributeRef": "contract.prepaid#agreement_id",
+      "name": "agreement_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.prepaid#reader_id",
+      "name": "reader_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.prepaid#signed_at",
+      "name": "signed_at",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "format": "date-time",
+        "type": "string"
+      }
+    }
+  ],
+  "id": "representation.list-accounts-account-user-item",
+  "links": [],
+  "mediaType": "application/hal+json",
+  "resourceRef": "resource.party-accounts",
+  "uri": "/users/{userId}/prepaid-accounts/{accountId}",
+  "view": "item"
+}
+```
+
+### representation.list-subscriptions-reader
+
+```json
+{
+  "actorRoleRefs": [
+    "role.reader"
+  ],
+  "availability": "not_evaluated",
+  "cache": {
+    "mode": "no-store",
+    "reason": "合同列表按本人主体和当前资格过滤，不跨主体缓存。"
+  },
+  "embedded": [
+    {
+      "rel": "items",
+      "representationRefs": [
+        "representation.list-subscriptions-reader-item"
+      ]
+    }
+  ],
+  "example": {
+    "_embedded": {
+      "items": [
+        {
+          "_links": {
+            "self": {
+              "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+            }
+          },
+          "access_seconds": 60,
+          "amount_minor_units": 9900,
+          "column_id": "COL-BM",
+          "currency": "CNY",
+          "edition_id": "ED-1",
+          "payment_seconds": 900,
+          "reader_id": "READER-001",
+          "refund_seconds": 604800,
+          "restore_seconds": 86400,
+          "signed_at": "2026-10-01T09:00:00Z",
+          "subscription_id": "SUB-20261001-001"
+        }
+      ]
+    },
+    "_links": {
+      "next": {
+        "href": "/users/USER-001/subscriptions?cursor=next-subscriptions"
+      },
+      "self": {
+        "href": "/users/USER-001/subscriptions"
+      }
+    }
+  },
+  "exampleParameters": {
+    "userId": "USER-001"
+  },
+  "fields": [],
+  "id": "representation.list-subscriptions-reader",
+  "links": [],
+  "mediaType": "application/hal+json",
+  "pagination": {
+    "mode": "cursor",
+    "nextExample": "next-subscriptions",
+    "parameter": "cursor",
+    "reason": "合同列表可能跨页返回。"
+  },
+  "resourceRef": "resource.party-subscriptions",
+  "uri": "/users/{userId}/subscriptions",
+  "view": "collection"
+}
+```
+
+### representation.list-subscriptions-reader-item
+
+```json
+{
+  "actorRoleRefs": [
+    "role.reader"
+  ],
+  "availability": "not_evaluated",
+  "cache": {
+    "mode": "no-store",
+    "reason": "单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。"
+  },
+  "example": {
+    "_links": {
+      "self": {
+        "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+      }
+    },
+    "access_seconds": 60,
+    "amount_minor_units": 9900,
+    "column_id": "COL-BM",
+    "currency": "CNY",
+    "edition_id": "ED-1",
+    "payment_seconds": 900,
+    "reader_id": "READER-001",
+    "refund_seconds": 604800,
+    "restore_seconds": 86400,
+    "signed_at": "2026-10-01T09:00:00Z",
+    "subscription_id": "SUB-20261001-001"
+  },
+  "exampleParameters": {
+    "subscriptionId": "SUB-20261001-001",
+    "userId": "USER-001"
+  },
+  "fields": [
+    {
+      "fmAttributeRef": "contract.subscription#subscription_id",
+      "name": "subscription_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#reader_id",
+      "name": "reader_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#column_id",
+      "name": "column_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#edition_id",
+      "name": "edition_id",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#amount_minor_units",
+      "name": "amount_minor_units",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#currency",
+      "name": "currency",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#signed_at",
+      "name": "signed_at",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "format": "date-time",
+        "type": "string"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#payment_seconds",
+      "name": "payment_seconds",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#access_seconds",
+      "name": "access_seconds",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#refund_seconds",
+      "name": "refund_seconds",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    },
+    {
+      "fmAttributeRef": "contract.subscription#restore_seconds",
+      "name": "restore_seconds",
+      "origin": "reference",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    }
+  ],
+  "id": "representation.list-subscriptions-reader-item",
+  "links": [],
+  "mediaType": "application/hal+json",
+  "resourceRef": "resource.party-subscriptions",
+  "uri": "/users/{userId}/subscriptions/{subscriptionId}",
+  "view": "item"
+}
+```
 
 ### representation.read-access-reader
 
@@ -4375,6 +4791,19 @@
   },
   {
     "actorRoleRef": "role.reader",
+    "id": "http-journey.list-subscriptions-reader",
+    "status": "mapped",
+    "steps": [
+      {
+        "capabilityRef": "capability.list-subscriptions-reader",
+        "expectStatus": 200,
+        "id": "http.list-subscriptions-reader",
+        "status": "mapped"
+      }
+    ]
+  },
+  {
+    "actorRoleRef": "role.reader",
     "id": "http-journey.read-subscription-reader",
     "status": "mapped",
     "steps": [
@@ -4401,6 +4830,19 @@
         "capabilityRef": "capability.read-account-account-user",
         "expectStatus": 200,
         "id": "http.register-account-account-user-read",
+        "status": "mapped"
+      }
+    ]
+  },
+  {
+    "actorRoleRef": "role.account-user",
+    "id": "http-journey.list-accounts-account-user",
+    "status": "mapped",
+    "steps": [
+      {
+        "capabilityRef": "capability.list-accounts-account-user",
+        "expectStatus": 200,
+        "id": "http.list-accounts-account-user",
         "status": "mapped"
       }
     ]

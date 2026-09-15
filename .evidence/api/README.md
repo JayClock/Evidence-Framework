@@ -4,11 +4,11 @@
 
 ## 接口范围
 
-共 15 个资源、21 个角色接口，合并角色变体后为 21 个 OpenAPI 操作。
+共 18 个资源、23 个角色接口，合并角色变体后为 23 个 OpenAPI 操作。
 
 | 业务           | URI                                                                                                     |
 | -------------- | ------------------------------------------------------------------------------------------------------- |
-| 订阅合同       | `/subscriptions`、`/subscriptions/{subscriptionId}`                                                     |
+| 订阅合同       | `/subscriptions`、`/subscriptions/{subscriptionId}`、`/users/{userId}/subscriptions`                    |
 | 付款要求及状态 | `/subscriptions/{subscriptionId}/payment`                                                               |
 | 内容访问申请   | `/subscriptions/{subscriptionId}/accesses`、`/subscriptions/{subscriptionId}/accesses/{accessId}`       |
 | 内容提供结果   | `/subscriptions/{subscriptionId}/accesses/{accessId}/result`                                            |
@@ -16,11 +16,11 @@
 | 免费恢复       | `/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration` 及其 `/result`                    |
 | 断更下架记录   | `/discontinuations`、`/discontinuations/{discontinuationId}`                                            |
 | 重新上架记录   | `/subscriptions/{subscriptionId}/relaunches` 及其 `/{relaunchId}`                                       |
-| 账户协议       | `/prepaid-accounts`、`/prepaid-accounts/{accountId}`                                                    |
+| 账户协议       | `/prepaid-accounts`、`/prepaid-accounts/{accountId}`、`/users/{userId}/prepaid-accounts`                |
 | 余额抵扣       | `/prepaid-accounts/{accountId}/debits`、`/prepaid-accounts/{accountId}/debits/{debitId}` 及其 `/result` |
 | 专栏与内容     | `/columns/{columnId}`、`/chapters/{chapterId}`                                                          |
 
-6 个 POST 只追加由已建模 Participant Party 扮演角色发起的业务凭证；其余接口读取本人合同内的数据或有资格访问的内容。`role.publisher`、`role.account-provider` 没有对应的 `participant.party -> plays_role` 玩家，因此不再生成调用接口；其负责形成的付款、内容结果、退款、恢复、抵扣结果及上下架记录按内部非 API 活动回映。移动支付机构的三个凭证对象按外部活动处理，不虚构机构接口；主体不生成档案 CRUD。免费恢复以重新上架活动为实例范围：同一原订阅可有多次活动，每次活动至多一份有效恢复请求。
+6 个 POST 只追加由已建模 Participant Party 扮演角色发起的业务凭证；其余接口读取本人合同内的数据、有资格访问的内容，或从 `/users/{userId}` 根列出本人参加的合同。`role.publisher`、`role.account-provider` 没有对应的 `participant.party -> plays_role` 玩家，因此不再生成调用接口；其负责形成的付款、内容结果、退款、恢复、抵扣结果及上下架记录按内部非 API 活动回映。移动支付机构的三个凭证对象按外部活动处理，不虚构机构接口；主体不生成档案 CRUD。免费恢复以重新上架活动为实例范围：同一原订阅可有多次活动，每次活动至多一份有效恢复请求。
 
 ## 契约要点
 

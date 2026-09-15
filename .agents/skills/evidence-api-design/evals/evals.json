@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "上游 FM 为整体模型。请基于整个模型直接生成全部 API 接口、HTTP 契约和 OpenAPI，不要再次组织业务确认。",
-      "expected_output": "inspect 检查当前 FM，遍历全部业务对象与场景，维护格式 4.0 的 api.yaml；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，补齐每个保留接口的 HTTP 契约与成功消费流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
+      "expected_output": "inspect 检查当前 FM，遍历全部业务对象与场景，维护格式 4.0 的 api.yaml；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，Contract 列表 GET 使用具体 Participant Party 类型 URL 根，补齐每个保留接口的 HTTP 契约与成功消费流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
       "files": []
     },
     {

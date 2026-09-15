@@ -1585,8 +1585,278 @@ paths:
       x-fm-operation-variants:
         - capabilityRef: capability.read-restore-result-reader
           actorRoleRef: role.reader
+  /users/{userId}/prepaid-accounts:
+    get:
+      operationId: capability.list-accounts-account-user
+      summary: 列出本人预付费账户协议
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回该主体参与的预付费账户协议列表。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_list-accounts-account-user
+              example:
+                _embedded:
+                  items:
+                    - _links:
+                        self:
+                          href: >-
+                            /users/USER-001/prepaid-accounts/PREPAID-001
+                      agreement_id: PREPAID-001
+                      reader_id: READER-001
+                      signed_at: '2026-10-01T08:00:00Z'
+                _links:
+                  next:
+                    href: >-
+                      /users/USER-001/prepaid-accounts?cursor=next-accounts
+                  self:
+                    href: /users/USER-001/prepaid-accounts
+        '403':
+          description: 调用者不能读取该主体范围内的账户协议列表。
+      x-fm-capability-refs:
+        - capability.list-accounts-account-user
+      x-actor-role-refs:
+        - role.account-user
+      x-binding-refs:
+        - >-
+          binding.caller-party-accounts-account-user
+        - binding.party-accounts
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.list-accounts-account-user
+          actorRoleRef: role.account-user
+  /users/{userId}/subscriptions:
+    get:
+      operationId: capability.list-subscriptions-reader
+      summary: 列出本人专栏订阅合同
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 返回该主体参与的专栏订阅合同列表。
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              example: no-store
+          content:
+            application/hal+json:
+              schema:
+                $ref: >-
+                  #/components/schemas/representation_list-subscriptions-reader
+              example:
+                _embedded:
+                  items:
+                    - _links:
+                        self:
+                          href: >-
+                            /users/USER-001/subscriptions/SUB-20261001-001
+                      access_seconds: 60
+                      amount_minor_units: 9900
+                      column_id: COL-BM
+                      currency: CNY
+                      edition_id: ED-1
+                      payment_seconds: 900
+                      reader_id: READER-001
+                      refund_seconds: 604800
+                      restore_seconds: 86400
+                      signed_at: '2026-10-01T09:00:00Z'
+                      subscription_id: SUB-20261001-001
+                _links:
+                  next:
+                    href: >-
+                      /users/USER-001/subscriptions?cursor=next-subscriptions
+                  self:
+                    href: /users/USER-001/subscriptions
+        '403':
+          description: 调用者不能读取该主体范围内的合同列表。
+      x-fm-capability-refs:
+        - capability.list-subscriptions-reader
+      x-actor-role-refs:
+        - role.reader
+      x-binding-refs:
+        - >-
+          binding.caller-party-subscriptions-reader
+        - binding.party-subscriptions
+      x-fm-rule-bindings: []
+      x-fm-operation-variants:
+        - capabilityRef: capability.list-subscriptions-reader
+          actorRoleRef: role.reader
 components:
   schemas:
+    'representation_list-accounts-account-user':
+      type: object
+      properties:
+        _links:
+          type: object
+          properties:
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - next
+            - self
+          additionalProperties: true
+        _embedded:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - _links
+        - _embedded
+    'representation_list-accounts-account-user-item':
+      type: object
+      properties:
+        agreement_id:
+          type: string
+        reader_id:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - agreement_id
+        - reader_id
+        - signed_at
+        - _links
+    representation_list-subscriptions-reader:
+      type: object
+      properties:
+        _links:
+          type: object
+          properties:
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - next
+            - self
+          additionalProperties: true
+        _embedded:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - _links
+        - _embedded
+    'representation_list-subscriptions-reader-item':
+      type: object
+      properties:
+        subscription_id:
+          type: string
+        reader_id:
+          type: string
+        column_id:
+          type: string
+        edition_id:
+          type: string
+        amount_minor_units:
+          type: integer
+        currency:
+          type: string
+        signed_at:
+          format: date-time
+          type: string
+        payment_seconds:
+          type: integer
+        access_seconds:
+          type: integer
+        refund_seconds:
+          type: integer
+        restore_seconds:
+          type: integer
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri-reference
+              required:
+                - href
+              additionalProperties: true
+          required:
+            - self
+          additionalProperties: true
+      additionalProperties: false
+      required:
+        - subscription_id
+        - reader_id
+        - column_id
+        - edition_id
+        - amount_minor_units
+        - currency
+        - signed_at
+        - payment_seconds
+        - access_seconds
+        - refund_seconds
+        - restore_seconds
+        - _links
     representation_read-access-reader:
       type: object
       properties:

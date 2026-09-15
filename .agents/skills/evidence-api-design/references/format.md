@@ -46,7 +46,7 @@ basis:
 
 ## 资源与寻址
 
-`businessName` 使用业务称谓，`segment` 显式选定业务路径名称。每一层先确认归属，再确认数量。
+`businessName` 使用业务称谓，`segment` 显式选定业务路径名称。每一层先确认归属，再确认数量。Contract 的列表读取不是全局合同仓库查询；必须把实际 Participant Party 的具体类型作为 URL 根并按其扮演的角色过滤，例如 `/users/{userId}/subscriptions` 或 `/customers/{customerId}/subscriptions`，不能用统称 `/parties/{partyId}`。Contract 的 POST collection 与按业务 ID 读取单个实例可以继续使用合同资源根；列表 view 需单独声明 party-scoped 资源、`parent_child` binding 和 caller scope。
 
 父实例下唯一对象采用 singleton：
 

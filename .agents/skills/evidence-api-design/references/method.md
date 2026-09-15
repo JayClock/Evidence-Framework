@@ -6,15 +6,15 @@
 
 只映射具有明确交互场景的实际 Evidence 或有来源的 Participant。Participant 的身份或经办记录只能说明主体存在，不能代替读取、维护资料等独立业务场景；不为覆盖节点类型而生成接口。Context 用于限定责任范围；除非另有业务对象依据，不把它当作可 CRUD 资源。资源必须声明 `businessName`，用业务对象或行为的名称显式配置 `segment`；不从 FM 的 category、kind 或 ID 拼接路径，也不从 label 猜英文、复数或聚合。能力名称描述业务办理目的，不把“创建 Request”或“追加 Evidence”当成业务能力。只有业务确实称其为确认时，才使用相应的确认名称。
 
-以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 根。Fulfillment 资源通常沿所属父合同 Context 的根继续导航；只有确需独立弹性边界时才拆服务，但服务拆分不改变稳定 URI。跨 Context 的 Proposal → Contract 或合同 → Domain 关系使用超媒体链接，不将整条业务流程嵌入一条 URL。
+以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 根。Fulfillment 资源通常沿所属父合同 Context 的根继续导航；只有确需独立弹性边界时才拆服务，但服务拆分不改变稳定 URI。Contract 的实例读取可用自身业务 ID 定位；Contract 的 GET 列表必须按实际 `participant.party` 具体类型作用域挂载，例如 `/users/{userId}/subscriptions` 或 `/customers/{customerId}/subscriptions`，不能使用统称 `/parties/{partyId}`，因为同一 Contract 同时绑定两方角色，而两方角色可对应不同主体。跨 Context 的 Proposal → Contract 或合同 → Domain 关系使用超媒体链接，不将整条业务流程嵌入一条 URL。
 
 嵌套 URI 同时需要：
 
 1. 资源图中的 `parentRef`；
 2. 匹配的 `parent_child` binding；
-3. FM 结构或业务来源，以及为何它表达实例归属的 reasoning。
+3. FM 结构或业务来源，以及为何它表达实例归属或列表作用域的 reasoning。
 
-`precedes`、一般引用和基数不会自动转成父子拥有关系。技术导航可以记录为决定，但不能宣称业务拥有权。CLI 会以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 拒绝跨合同前、合同或领域 Context 的父子 URI；所属父合同相同的 Fulfillment 资源不视为跨根。
+`precedes`、一般引用和基数不会自动转成父子拥有关系。技术导航可以记录为决定，但不能宣称业务拥有权。CLI 会以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 拒绝跨合同前、合同或领域 Context 的父子 URI；所属父合同相同的 Fulfillment 资源不视为跨根。唯一例外是 Contract 列表读取可挂在具体 Participant Party 类型根下，此时路径表达参与主体过滤，不表达该主体拥有合同。
 
 ## 业务数量与寻址
 

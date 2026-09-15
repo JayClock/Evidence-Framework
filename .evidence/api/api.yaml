@@ -5,6 +5,11 @@ sources:
     path: .evidence/discovery.md
     locator: B07｜实例归属和办理权限
     quote: 同一订阅允许保存多份断更核验及重新上架记录以保留历史，各次形成均有独立身份，但全额退款和同次活动恢复不可重复。
+  - id: source.party-contract-list
+    path: .evidence/discovery.md
+    locator: B07｜实例归属和办理权限
+    quote: >-
+      读者仅办理和查询自己参加的订阅、自己的预付费账户及扣款请求；平台仅办理自己为责任方的合同、内容提供、断更核验、退款到账和免费恢复。
 decisions:
   - id: decision.identities
     category: identity
@@ -14,6 +19,12 @@ decisions:
     category: navigation
     statement: 订阅、预付费账户、专栏和章节保留独立根；重新上架活动及免费恢复沿原订阅定位
     reasoning: 恢复按原订阅中的重新上架活动确定实例；证明角色不成为独立写入资源。
+  - id: decision.contract-list-party-root
+    category: navigation
+    statement: Contract 列表读取以具体 Participant Party 类型为 URL 根
+    reasoning: 一份 Contract 绑定双方角色，列表必须先按具体主体收敛，避免把不同主体的合同混入全局集合。
+    sourceRefs:
+      - source.party-contract-list
 nonApiActivities:
   - entityRef: confirmation.mobile
     handling: external
@@ -89,6 +100,25 @@ nonApiActivities:
         - role.publisher
       reasoning: 无 participant.party 扮演该责任角色，当前 API 不暴露其写入；形成步骤以非 API 活动回映。
 resources:
+  - id: resource.party-user
+    businessName: 用户主体
+    entityRef: party.user
+    segment: users
+    shape: collection
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-reader
+        - relation.user-as-account-user
+      sourceRefs:
+        - source.party-contract-list
+      decisionRefs:
+        - decision.contract-list-party-root
+      reasoning: 用户主体是订阅合同和预付费账户合同列表的参与方作用域根。
+    identity:
+      kind: api_resource_id
+      parameter: userId
+      decisionRef: decision.identities
   - id: resource.subscription
     businessName: 专栏订阅合同
     entityRef: contract.subscription
@@ -102,6 +132,32 @@ resources:
       kind: fm_attribute
       parameter: subscriptionId
       attributeRef: contract.subscription#subscription_id
+  - id: resource.party-subscriptions
+    businessName: 用户专栏订阅合同列表
+    entityRef: contract.subscription
+    segment: subscriptions
+    shape: collection
+    parentRef: resource.party-user
+    parentBindingRef: binding.party-subscriptions
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-reader
+        - contract.subscription
+      sourceRefs:
+        - source.party-contract-list
+      decisionRefs:
+        - decision.contract-list-party-root
+      reasoning: 按用户主体收敛其作为读者参加的订阅合同列表。
+    identity:
+      kind: fm_attribute
+      parameter: subscriptionId
+      attributeRef: contract.subscription#subscription_id
+    cardinality:
+      max: many
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 列表返回该用户作为读者参加的订阅合同集合。
   - id: resource.account
     businessName: 预付费账户协议
     entityRef: contract.prepaid
@@ -115,6 +171,32 @@ resources:
       kind: fm_attribute
       parameter: accountId
       attributeRef: contract.prepaid#agreement_id
+  - id: resource.party-accounts
+    businessName: 用户预付费账户协议列表
+    entityRef: contract.prepaid
+    segment: prepaid-accounts
+    shape: collection
+    parentRef: resource.party-user
+    parentBindingRef: binding.party-accounts
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-account-user
+        - contract.prepaid
+      sourceRefs:
+        - source.party-contract-list
+      decisionRefs:
+        - decision.contract-list-party-root
+      reasoning: 按用户主体收敛其作为账户使用方参加的预付费账户协议列表。
+    identity:
+      kind: fm_attribute
+      parameter: accountId
+      attributeRef: contract.prepaid#agreement_id
+    cardinality:
+      max: many
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 列表返回该用户作为账户使用方参加的预付费账户协议集合。
   - id: resource.payment
     businessName: 订阅费支付请求
     entityRef: request.payment
@@ -563,6 +645,54 @@ bindings:
         - thing.chapter
         - role.reader
       reasoning: 调用者必须是本实例的合同参与方；读者只读本人单据，服务方只处理本机构责任。章节还须核验本人的指定版本访问资格。
+  - id: binding.party-subscriptions
+    kind: parent_child
+    parentResourceRef: resource.party-user
+    childResourceRef: resource.party-subscriptions
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-reader
+        - contract.subscription
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 订阅合同列表由用户主体和其读者角色共同限定。
+  - id: binding.party-accounts
+    kind: parent_child
+    parentResourceRef: resource.party-user
+    childResourceRef: resource.party-accounts
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-account-user
+        - contract.prepaid
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 预付费账户协议列表由用户主体和其账户使用方角色共同限定。
+  - id: binding.caller-party-subscriptions-reader
+    kind: caller_role
+    roleRef: role.reader
+    scopeResourceRef: resource.party-user
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-reader
+        - role.reader
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 读者只查询自身用户主体范围内参加的订阅合同。
+  - id: binding.caller-party-accounts-account-user
+    kind: caller_role
+    roleRef: role.account-user
+    scopeResourceRef: resource.party-user
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-account-user
+        - role.account-user
+      sourceRefs:
+        - source.party-contract-list
+      reasoning: 账户使用方只查询自身用户主体范围内参加的预付费账户协议。
 scenarios:
   - id: scenario.api-free-restoration
     sourceScenarioRef: scenario.free-restoration
@@ -742,6 +872,30 @@ capabilities:
         - contract.subscription
         - role.reader
       reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
+  - id: capability.list-subscriptions-reader
+    actorRoleRef: role.reader
+    resourceRef: resource.party-subscriptions
+    view: collection
+    method: GET
+    effect:
+      kind: read
+      targetRef: contract.subscription
+    businessCapability: 列出本人专栏订阅合同
+    scenarioRefs:
+      - scenario.api-mobile-subscription
+    bindingRefs:
+      - binding.caller-party-subscriptions-reader
+      - binding.party-subscriptions
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-reader
+        - contract.subscription
+      sourceRefs:
+        - source.party-contract-list
+      decisionRefs:
+        - decision.contract-list-party-root
+      reasoning: 合同列表读取先以用户主体为 URL 根，再返回该主体作为读者参加的订阅合同集合。
   - id: capability.read-subscription-reader
     actorRoleRef: role.reader
     resourceRef: resource.subscription
@@ -796,6 +950,30 @@ capabilities:
         - contract.prepaid
         - role.account-user
       reasoning: 追加实际发生的业务记录并核验身份、证据可见性和单据关联，返回登记结果。
+  - id: capability.list-accounts-account-user
+    actorRoleRef: role.account-user
+    resourceRef: resource.party-accounts
+    view: collection
+    method: GET
+    effect:
+      kind: read
+      targetRef: contract.prepaid
+    businessCapability: 列出本人预付费账户协议
+    scenarioRefs:
+      - scenario.api-prepaid-subscription
+    bindingRefs:
+      - binding.caller-party-accounts-account-user
+      - binding.party-accounts
+    basis:
+      fmRefs:
+        - party.user
+        - relation.user-as-account-user
+        - contract.prepaid
+      sourceRefs:
+        - source.party-contract-list
+      decisionRefs:
+        - decision.contract-list-party-root
+      reasoning: 合同列表读取先以用户主体为 URL 根，再返回该主体作为账户使用方参加的账户协议集合。
   - id: capability.read-account-account-user
     actorRoleRef: role.account-user
     resourceRef: resource.account
@@ -1211,7 +1389,8 @@ capabilities:
         - thing.chapter
         - role.reader
         - rule.content-readable
-      reasoning: 服务端用路径chapterId定位章节，绑定同一读者、章节及版本的访问请求和实际提供凭证，并在查询时刻检查退款状态；不得借用其他章节的有效请求。
+      reasoning: >-
+        服务端用路径chapterId定位章节，绑定同一读者、章节及版本的访问请求和实际提供凭证，并在查询时刻检查退款状态；不得借用其他章节的有效请求。
     ruleBindings:
       - ruleRef: rule.content-readable
         purpose: precondition
@@ -1822,6 +2001,122 @@ http:
       cache:
         mode: no-store
         reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
+    - id: representation.list-subscriptions-reader
+      resourceRef: resource.party-subscriptions
+      view: collection
+      actorRoleRefs:
+        - role.reader
+      mediaType: application/hal+json
+      fields: []
+      example: {}
+      exampleParameters:
+        userId: USER-001
+      links: []
+      embedded:
+        - rel: items
+          representationRefs:
+            - representation.list-subscriptions-reader-item
+      pagination:
+        mode: cursor
+        parameter: cursor
+        nextExample: next-subscriptions
+        reason: 合同列表可能跨页返回。
+      cache:
+        mode: no-store
+        reason: 合同列表按本人主体和当前资格过滤，不跨主体缓存。
+    - id: representation.list-subscriptions-reader-item
+      resourceRef: resource.party-subscriptions
+      view: item
+      actorRoleRefs:
+        - role.reader
+      mediaType: application/hal+json
+      fields:
+        - name: subscription_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#subscription_id
+        - name: reader_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#reader_id
+        - name: column_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#column_id
+        - name: edition_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#edition_id
+        - name: amount_minor_units
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#amount_minor_units
+        - name: currency
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#currency
+        - name: signed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#signed_at
+        - name: payment_seconds
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#payment_seconds
+        - name: access_seconds
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#access_seconds
+        - name: refund_seconds
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#refund_seconds
+        - name: restore_seconds
+          schema:
+            type: integer
+          required: true
+          origin: reference
+          fmAttributeRef: contract.subscription#restore_seconds
+      example:
+        subscription_id: SUB-20261001-001
+        reader_id: READER-001
+        column_id: COL-BM
+        edition_id: ED-1
+        amount_minor_units: 9900
+        currency: CNY
+        signed_at: '2026-10-01T09:00:00Z'
+        payment_seconds: 900
+        access_seconds: 60
+        refund_seconds: 604800
+        restore_seconds: 86400
+      exampleParameters:
+        userId: USER-001
+        subscriptionId: SUB-20261001-001
+      links: []
+      cache:
+        mode: no-store
+        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
     - id: representation.read-subscription-reader
       resourceRef: resource.subscription
       view: item
@@ -1945,6 +2240,66 @@ http:
         reader_id: READER-001
         signed_at: '2026-10-01T08:00:00Z'
       exampleParameters:
+        accountId: PREPAID-001
+      links: []
+      cache:
+        mode: no-store
+        reason: 单据和内容按本人资格提供，避免复用过时权益或跨读者泄露。
+    - id: representation.list-accounts-account-user
+      resourceRef: resource.party-accounts
+      view: collection
+      actorRoleRefs:
+        - role.account-user
+      mediaType: application/hal+json
+      fields: []
+      example: {}
+      exampleParameters:
+        userId: USER-001
+      links: []
+      embedded:
+        - rel: items
+          representationRefs:
+            - representation.list-accounts-account-user-item
+      pagination:
+        mode: cursor
+        parameter: cursor
+        nextExample: next-accounts
+        reason: 合同列表可能跨页返回。
+      cache:
+        mode: no-store
+        reason: 账户协议列表按本人主体过滤，不跨主体缓存。
+    - id: representation.list-accounts-account-user-item
+      resourceRef: resource.party-accounts
+      view: item
+      actorRoleRefs:
+        - role.account-user
+      mediaType: application/hal+json
+      fields:
+        - name: agreement_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.prepaid#agreement_id
+        - name: reader_id
+          schema:
+            type: string
+          required: true
+          origin: reference
+          fmAttributeRef: contract.prepaid#reader_id
+        - name: signed_at
+          schema:
+            type: string
+            format: date-time
+          required: true
+          origin: reference
+          fmAttributeRef: contract.prepaid#signed_at
+      example:
+        agreement_id: PREPAID-001
+        reader_id: READER-001
+        signed_at: '2026-10-01T08:00:00Z'
+      exampleParameters:
+        userId: USER-001
         accountId: PREPAID-001
       links: []
       cache:
@@ -3685,6 +4040,25 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
+    - capabilityRef: capability.list-subscriptions-reader
+      request:
+        mediaType: application/json
+        fields: []
+        example: {}
+      responses:
+        - status: 200
+          description: 返回该主体参与的专栏订阅合同列表。
+          representationRef: representation.list-subscriptions-reader
+          headers: {}
+        - status: 403
+          description: 调用者不能读取该主体范围内的合同列表。
+          headers: {}
+      idempotency:
+        mode: not_applicable
+        reason: 读取不改变业务证据。
+      concurrency:
+        mode: none
+        reason: 读取不修改资源；列表一致性由服务端查询边界处理。
     - capabilityRef: capability.read-subscription-reader
       request:
         mediaType: application/json
@@ -3758,6 +4132,25 @@ http:
       concurrency:
         mode: none
         reason: 凭证只追加，不覆盖已有记录；账户扣减和唯一结果须由服务端原子约束。
+    - capabilityRef: capability.list-accounts-account-user
+      request:
+        mediaType: application/json
+        fields: []
+        example: {}
+      responses:
+        - status: 200
+          description: 返回该主体参与的预付费账户协议列表。
+          representationRef: representation.list-accounts-account-user
+          headers: {}
+        - status: 403
+          description: 调用者不能读取该主体范围内的账户协议列表。
+          headers: {}
+      idempotency:
+        mode: not_applicable
+        reason: 读取不改变业务证据。
+      concurrency:
+        mode: none
+        reason: 读取不修改资源；列表一致性由服务端查询边界处理。
     - capabilityRef: capability.read-account-account-user
       request:
         mediaType: application/json
@@ -4088,7 +4481,8 @@ http:
           description: 记录已形成的免费恢复请求；履约完成另按规则判断。
           representationRef: representation.register-restore-reader
           headers:
-            Location: /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
+            Location: >-
+              /subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration
         - status: 403
           description: 非本实例参与方、无代理资格或不具备指定章节访问资格。
           headers: {}
@@ -4528,6 +4922,20 @@ http:
             stepRef: http.register-subscription-reader
             header: Location
           inputs: []
+    - id: http-journey.list-subscriptions-reader
+      actorRoleRef: role.reader
+      steps:
+        - id: http.list-subscriptions-reader
+          capabilityRef: capability.list-subscriptions-reader
+          expectStatus: 200
+          entry: 调用者从本人用户入口查询其作为读者参加的合同列表。
+          inputs:
+            - target: path
+              name: userId
+              source:
+                kind: literal
+                value: USER-001
+                reason: 入口已确定的本人用户主体；服务端仍需核验角色扮演和访问范围。
     - id: http-journey.read-subscription-reader
       actorRoleRef: role.reader
       steps:
@@ -4581,6 +4989,20 @@ http:
             stepRef: http.register-account-account-user
             header: Location
           inputs: []
+    - id: http-journey.list-accounts-account-user
+      actorRoleRef: role.account-user
+      steps:
+        - id: http.list-accounts-account-user
+          capabilityRef: capability.list-accounts-account-user
+          expectStatus: 200
+          entry: 调用者从本人用户入口查询其作为账户使用方参加的合同列表。
+          inputs:
+            - target: path
+              name: userId
+              source:
+                kind: literal
+                value: USER-001
+                reason: 入口已确定的本人用户主体；服务端仍需核验角色扮演和访问范围。
     - id: http-journey.read-account-account-user
       actorRoleRef: role.account-user
       steps:
