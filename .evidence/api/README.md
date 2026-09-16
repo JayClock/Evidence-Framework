@@ -34,7 +34,7 @@
 
 ## 交付文件
 
-现有交付文件位于 [generated](generated/)，包含接口清单、HTTP 契约、OpenAPI、表示样例、HTTP 流程和机器投影。它们是 API 源的派生结果，不是已部署接口或本次校验结果。生成文件按权威字节交付，不应再被格式化，否则 manifest 摘要失效。
+现有历史交付文件位于 [generated](generated/)，本次包含合成 E2E 测试向量的完整批次位于 [e2e-vectors-001](generated/e2e-vectors-001/)。批次包含接口清单、HTTP 契约、OpenAPI、表示样例、HTTP 流程、合成 E2E 向量和机器投影。它们是 API 源的派生结果，不是已部署接口或本次运行验收结果。生成文件按权威字节交付，不应再被格式化，否则 manifest 摘要失效。
 
 生成规则以 [API Skill](../../.agents/skills/evidence-api-design/SKILL.md)为准：获授权后先检查当前源，再投影到尚不存在的输出批次；不覆盖或删除已有输出，不手改生成文件。更新导航指向实际交付位置，不预填不存在的批次路径。源或校验器变化后重验，不用已留存报告替代当前检查。
 
@@ -48,4 +48,4 @@ python3 .agents/skills/evidence-api-design/scripts/fm_api.py check \
   --api "$PWD/.evidence/api/api.yaml"
 ```
 
-HTTP 流程只验证契约与数据衔接，`runtimeValidated` 为 false。认证、机构验签、幂等存储、原子扣减和业务前置规则仍需由实际服务执行并验收。
+HTTP 流程和 `e2e-test-vectors.json` 只验证契约与数据衔接，`runtimeValidated` 为 false。合成向量不决定数据库装载、认证身份或外部系统 Stub。认证、机构验签、幂等存储、原子扣减和业务前置规则仍需由实际服务执行并验收。

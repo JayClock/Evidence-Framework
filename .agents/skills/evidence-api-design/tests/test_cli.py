@@ -92,6 +92,7 @@ class CliTest(unittest.TestCase):
                     "openapi.yaml",
                     "representation-examples.json",
                     "http-journeys.json",
+                    "e2e-test-vectors.json",
                     "manifest.json",
                 },
                 {path.name for path in output.iterdir()},
@@ -101,6 +102,56 @@ class CliTest(unittest.TestCase):
                 path for path in evidence.rglob("*") if path.is_file()
             } - inputs.keys()
             self.assertTrue(all(path.is_relative_to(output) for path in new_files))
+            vectors = json.loads((output / "e2e-test-vectors.json").read_text())
+            self.assertEqual("synthetic", vectors["dataClassification"])
+            self.assertFalse(vectors["runtimeValidated"])
+            self.assertTrue(vectors["vectors"])
+            self.assertTrue(
+                all(
+                    item["provisioning"] == "unresolved"
+                    for vector in vectors["vectors"]
+                    for item in vector["setup"]
+                )
+            )
+
+    def test_e2e_vectors_preserve_contract_examples_and_idempotency(self) -> None:
+        example = API_ROOT / "assets/examples/full-lifecycle"
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
+            output = Path(directory) / "projected"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(CLI),
+                    "project",
+                    "--project-root",
+                    str(REPO_ROOT),
+                    "--fm",
+                    str(example / "fm"),
+                    "--fm-skill",
+                    str(FM_SKILL),
+                    "--api",
+                    str(example / "api.yaml"),
+                    "--out",
+                    str(output),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            document = json.loads((output / "e2e-test-vectors.json").read_text())
+            vector = next(
+                item
+                for item in document["vectors"]
+                if item["journeyRef"] == "http.quote-products"
+            )
+            create = vector["steps"][0]
+            self.assertEqual("POST", create["request"]["method"])
+            self.assertEqual(201, create["expect"]["status"])
+            self.assertIn("Idempotency-Key", create["request"]["headers"])
+            self.assertTrue(create["request"]["body"])
+            self.assertIn("Location", create["expect"]["headers"])
 
     def test_check_and_project_are_deterministic(self) -> None:
         checked = self.command("check", "--api", str(API_PATH))
@@ -119,6 +170,7 @@ class CliTest(unittest.TestCase):
                 "projection.json",
                 "api-capabilities.md",
                 "design-report.md",
+                "e2e-test-vectors.json",
                 "manifest.json",
             ):
                 self.assertEqual(

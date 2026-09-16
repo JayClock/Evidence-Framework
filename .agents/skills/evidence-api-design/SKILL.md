@@ -24,7 +24,7 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 - FM 输入：`.evidence/fm/`，始终只读。
 - 唯一 API 设计源：`.evidence/api/api.yaml`，采用 API 格式 `4.0`，位于 FM 根目录之外；上游仍为 FM v3。
-- API 交付：`.evidence/api/generated/<批次>/`，包含投影、接口清单、完整 HTTP 契约、OpenAPI、样例、流程和 manifest。
+- API 交付：`.evidence/api/generated/<批次>/`，包含投影、接口清单、完整 HTTP 契约、OpenAPI、样例、合成 E2E 测试向量、流程和 manifest。
 - 按需保存的检查记录（紧凑运行清单，不复制投影或契约全文）：`.evidence/checks/api/<批次>/`；只校验请求不落盘。
 
 沿用已有文件与用户显式指定路径，不自动迁移。没有指定输出目录时，在 generated 下选取尚不存在的批次目录并告知，不为路径再设确认步骤。只创建父目录，不预建批次目录，不覆盖旧输出。只修改本次授权的文件；`.evidence/` 不授予其他文件或业务确认记录的修改权限。
@@ -72,7 +72,7 @@ NEW_OUTPUT_DIR="$PROJECT_ROOT/.evidence/api/generated/$BATCH"
 
 完整性检查始终执行；存在 gap 时 check/project 返回非零，project 不写交付目录。结果中的 `interfaceCount` 按角色能力计数；同路由角色变体在 OpenAPI 合并，因此不等于 Path＋Method 数量。
 
-`projection.json` 是唯一机器中间结果，其余七份交付文件从它生成，不回写 API 设计，不手改生成文件。检查通过不替代运行时授权和接口验收。
+`projection.json` 是唯一机器中间结果，其余八份交付文件从它生成，不回写 API 设计，不手改生成文件。检查通过不替代运行时授权和接口验收。`e2e-test-vectors.json` 只提供确定性的合成请求、预期响应与来源场景；数据库装载、认证身份和外部系统 Stub 仍由实现及验收任务决定。
 
 ## 示例
 

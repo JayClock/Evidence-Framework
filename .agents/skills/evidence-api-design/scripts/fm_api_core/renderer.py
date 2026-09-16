@@ -15,6 +15,7 @@ from . import __version__
 
 http_report = importlib.import_module("fm_api_core.http_report")
 openapi_module = importlib.import_module("fm_api_core.openapi")
+e2e_vectors_module = importlib.import_module("fm_api_core.e2e_vectors")
 
 
 def canonical_json(value: Any) -> str:
@@ -161,6 +162,9 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
     )
     outputs["representation-examples.json"] = canonical_json(
         {item["id"]: item["example"] for item in http["representations"]}
+    )
+    outputs["e2e-test-vectors.json"] = canonical_json(
+        e2e_vectors_module.build_vectors(projection)
     )
     outputs["openapi.yaml"] = openapi_module.render_openapi(projection)
     dependencies: dict[str, str] = {}

@@ -106,6 +106,7 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 - `api-contracts.md`：HTTP 请求响应、表示及消费流程。
 - `representation-examples.json`：HTTP 表示合成样例。
 - `http-journeys.json`：静态 HTTP 流程结果，runtimeValidated 为 false。
+- `e2e-test-vectors.json`：从已校验 HTTP 流程、请求/响应样例和契约派生的确定性合成 E2E 向量；包含来源场景、请求、预期响应和未决环境准备，不包含数据库快照、认证凭据或可执行装载器。
 - `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
