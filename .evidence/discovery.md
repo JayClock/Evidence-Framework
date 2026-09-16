@@ -47,3 +47,23 @@
 读者可读取专栏目录、本人订阅和本人各次请求及其结果；账户使用方可读取本人扣款结果。平台可读取本人作为责任方的单据，不跨商户；本案例以具体办理接口及读者的结果发现为主，不扩展人员档案管理接口。尚未形成的结果读取返回 404；已经形成但不满足完成规则的结果仍保留，不把 HTTP 201 或存在结果自动解释成履约完成。业务状态由规则和凭证计算。
 
 移动支付证明由机构交付并经平台验证，在读者提交访问或退款请求时使用已经登记且可见的证明引用；本案例不猜测回调 URL、签名算法或认证协议。第三方实际协议接入、退款银行到账核实、领域内容可读性、原子余额扣减及实时授权须在实现阶段验证。
+
+## B09｜移动支付订阅实施澄清
+
+当前业务位置：合同履约 → 专栏订阅与移动支付上下文 → 合同登记后自动发起付款要求并调用 local/test 支付端口。
+
+来源为本轮用户回答。用户原话依次为：“1. 11 个”“2. 自动触发”“3. 系统固定值”；对 `Q-MOBILE-FIXED-VALUES-001` 的回答为“自行补充”。据此确认：
+
+- 订阅合同登记使用 `contract.subscription` 和 API 已列出的全部 11 个必填字段；先前需求只列 8 个属于遗漏，不改变 FM/API。
+- 合同登记成功后由系统自动形成 `request.payment`，随后进入 local/test 移动扣款调用；付款请求在 API 旅程中仍是 internal，不新增对外 HTTP capability。
+- local/test 固定事实复用现有 FM 实例：`request.payment.request_id=PAY-001`、`contract.mobile.agreement_id=MOBILE-001`、`request.mobile.request_id=MOBILE-REQ-001`、`request.mobile.started_at=2026-10-01T09:02:00Z`。付款请求 `started_at` 仍按 `rule.payment-start` 取合同 `signed_at=2026-10-01T09:00:00Z`，两种时间不可混用。
+- 上述固定标识和业务时间只作为本切片 local/test 场景夹具，不构成生产标识生成、服务器当前时间、支付协议或远程失败处理规则。
+
+### Q-MOBILE-FIXED-VALUES-001
+
+- 对象与事实维度：`mobile.fixed-values`。
+- 已知依据与判断缺口：FM 实例已有 `PAY-001`、`MOBILE-001`、`MOBILE-REQ-001` 和 `09:02`，但原计划未获授权把它们作为 local/test 系统固定夹具。
+- 状态：已解决。
+- 回答：用户先回答“系统固定值”，在追问具体规则后回答“自行补充”。
+- 解决依据：用户授权补充后，复用 `.evidence/fm/validation/instances/instance--payment.yaml`、`instance--mobile-agreement.yaml` 和 `instance--mobile-request.yaml` 的既有场景事实；不修改正式 FM。
+- 下游：`docs/requirements/scope.md`、`docs/requirements/stories.md` 和 `docs/plans/smart-domain/` 可消费本记录；仍未决定生产身份、生产数据库和真实支付接入。

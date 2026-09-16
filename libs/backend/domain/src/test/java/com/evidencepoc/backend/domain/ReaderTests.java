@@ -29,7 +29,8 @@ class ReaderTests {
   void refusesMissingUserReferenceWithoutMintingAReaderRole() {
     Users users = new InMemoryUsers();
 
-    assertThrows(IllegalArgumentException.class, () -> users.inSubscriptionContext().asReader(null));
+    assertThrows(
+        IllegalArgumentException.class, () -> users.inSubscriptionContext().asReader(null));
   }
 
   @Test
