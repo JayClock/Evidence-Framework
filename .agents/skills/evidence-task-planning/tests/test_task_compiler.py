@@ -79,7 +79,6 @@ class CompilerTests(unittest.TestCase):
             "groups": [
                 {
                     "concern": "domain",
-                    "fileName": "图书标题规则.md",
                     "ownerRef": "thing.book",
                     "operationRef": "rule.title",
                     "unitKeys": [u["key"] for u in inventory["units"]],
@@ -279,19 +278,18 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(len(plan["executionOrder"]), 1)
         self.assertTrue(inv["sourceEdges"])
 
-    def test_keys_and_paths_do_not_depend_on_members_order(self):
+    def test_keys_do_not_depend_on_members_order(self):
         inv = compiler.inventory(self.fm)
         mapping = self.mapping(inv)
         a = compiler.compile_tasks(inv, mapping)
         mapping["groups"][0]["unitKeys"].reverse()
         b = compiler.compile_tasks(inv, mapping)
         self.assertEqual(a, b)
-        t = a["tasks"][0]
-        self.assertEqual(t["taskKey"], "domain::thing.book::rule.title")
-        self.assertEqual(t["fileName"], "图书标题规则.md")
-        self.assertEqual(t["path"], "tasks/图书标题规则.md")
-        self.assertNotIn("id", t)
-        self.assertNotIn("status", t)  # Execution state is not a computed fact.
+        task = a["tasks"][0]
+        self.assertEqual(task["taskKey"], "domain::thing.book::rule.title")
+        self.assertNotIn("path", task)
+        self.assertNotIn("title", task)
+        self.assertNotIn("status", task)
 
     def test_key_encoding_unambiguous(self):
         self.assertNotEqual(
@@ -305,7 +303,6 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicate task key"):
             compiler.compile_tasks(inv, mapping)
         mapping["groups"][1]["concern"] = "api"
-        mapping["groups"][1]["fileName"] = "图书接口.md"
         with self.assertRaisesRegex(ValueError, "unit already assigned"):
             compiler.compile_tasks(inv, mapping)
 
@@ -331,7 +328,6 @@ class CompilerTests(unittest.TestCase):
         keys = [u["key"] for u in inv["units"]]
         first = {
             "concern": "foundation",
-            "fileName": "图书基础模型.md",
             "ownerRef": "thing.book",
             "operationRef": "thing.book",
             "unitKeys": keys[:1],
@@ -339,7 +335,6 @@ class CompilerTests(unittest.TestCase):
         }
         second = {
             "concern": "mybatis",
-            "fileName": "图书持久化.md",
             "ownerRef": "thing.book",
             "operationRef": "thing.book",
             "unitKeys": keys[1:],
@@ -406,7 +401,6 @@ class CompilerTests(unittest.TestCase):
                 "concern": concern,
                 "ownerRef": owner,
                 "operationRef": operation,
-                "fileName": f"book-{name}.md",
                 "unitKeys": units,
                 "dependsOn": [keys[dependency] for dependency in dependencies],
             }
@@ -578,84 +572,18 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown group fields"):
             compiler.compile_tasks(inv, mapping)
 
-    def test_file_name_is_required_and_has_no_automatic_fallback(self):
+    def test_compiler_rejects_presentation_fields(self):
         inv = compiler.inventory(self.fm)
-        mapping = self.mapping(inv)
-        del mapping["groups"][0]["fileName"]
-        with self.assertRaisesRegex(ValueError, "fileName"):
-            compiler.compile_tasks(inv, mapping)
+        for field in ["fileName", "title", "path"]:
+            mapping = self.mapping(inv)
+            mapping["groups"][0][field] = "presentation belongs in plan.tasks"
+            with (
+                self.subTest(field=field),
+                self.assertRaisesRegex(ValueError, "unknown group fields"),
+            ):
+                compiler.compile_tasks(inv, mapping)
 
-    def test_file_name_rejects_unsafe_or_nonportable_values(self):
-        inv = compiler.inventory(self.fm)
-        invalid = [
-            None,
-            42,
-            "",
-            ".md",
-            "../任务.md",
-            "/任务.md",
-            "a/b.md",
-            "a\\b.md",
-            "C:任务.md",
-            "任务?.md",
-            "任务#.md",
-            "a%2fb.md",
-            " 任务.md",
-            "任务 .md",
-            "任务..md",
-            "任务.MD",
-            "任务.txt",
-            ".隐藏.md",
-            "任务\n名称.md",
-            "任务\u202e名称.md",
-            "任务\u200b名称.md",
-            "任务\x00.md",
-            "CON.md",
-            "con.any.md",
-            "LPT1.md",
-            "COM¹.md",
-            "ＣＯＮ.md",
-            "e\u0301.md",
-            "长" * 67 + ".md",
-        ]
-        for name in invalid:
-            with self.subTest(name=name):
-                mapping = self.mapping(inv)
-                mapping["groups"][0]["fileName"] = name
-                with self.assertRaisesRegex(ValueError, "fileName"):
-                    compiler.compile_tasks(inv, mapping)
-
-    def test_readable_file_names_and_exact_byte_limit_are_accepted(self):
-        for name in [
-            "图书查询接口与测试.md",
-            "图书 API 实现.md",
-            "Café.md",
-            "a" * 197 + ".md",
-        ]:
-            with self.subTest(name=name):
-                self.assertEqual(compiler.file_name(name), name)
-        with self.assertRaisesRegex(ValueError, "fileName"):
-            compiler.file_name("a" * 198 + ".md")
-        with self.assertRaisesRegex(ValueError, "fileName"):
-            compiler.file_name(r"a\b.md")
-
-    def test_file_names_are_unique_across_tasks_and_portable_equivalents(self):
-        inv = compiler.inventory(self.fm)
-        for first, second in [
-            ("图书模型.md", "图书模型.md"),
-            ("API.md", "api.md"),
-            ("API.md", "ＡＰＩ.md"),
-            ("Café.md", "CAFÉ.md"),
-        ]:
-            with self.subTest(first=first, second=second):
-                mapping = self.mapping(inv)
-                group = mapping["groups"][0]
-                group["fileName"] = first
-                mapping["groups"].append(dict(group, concern="api", fileName=second))
-                with self.assertRaisesRegex(ValueError, "duplicate fileName"):
-                    compiler.compile_tasks(inv, mapping)
-
-    def test_renaming_files_preserves_dependency_and_api_identity(self):
+    def test_task_identity_and_api_coverage_are_presentation_independent(self):
         api = self.root / "api.yaml"
         api.write_text(
             yaml.safe_dump(
@@ -684,7 +612,6 @@ class CompilerTests(unittest.TestCase):
                 "concern": "api",
                 "ownerRef": "thing.book",
                 "operationRef": "api.read",
-                "fileName": "图书查询接口.md",
                 "unitKeys": [cap],
                 "dependsOn": [domain_key],
             }
@@ -703,29 +630,16 @@ class CompilerTests(unittest.TestCase):
         )
         api_task = next(t for t in a["tasks"] if t["taskKey"] == api_key)
         self.assertEqual(api_task["dependsOn"], [domain_key])
-        domain["fileName"] = "内容域-图书标题规则.md"
         mapping["groups"].reverse()
         b = compiler.compile_tasks(inv, mapping)
-        self.assertEqual(a["executionOrder"], b["executionOrder"])
-        self.assertEqual(a["apiCoverage"], b["apiCoverage"])
-        self.assertEqual(a["inputDigest"], b["inputDigest"])
-        self.assertEqual(len(a["tasks"]), len(b["tasks"]))
-        for index, before in enumerate(a["tasks"]):
-            after = b["tasks"][index]
-            self.assertEqual(
-                {k: v for k, v in before.items() if k not in {"fileName", "path"}},
-                {k: v for k, v in after.items() if k not in {"fileName", "path"}},
-            )
-        self.assertIn("tasks/内容域-图书标题规则.md", [t["path"] for t in b["tasks"]])
-        # Neither compilation creates plan files nor mutates the input mapping.
+        self.assertEqual(a, b)
         snapshot = copy.deepcopy(mapping)
         self.assertEqual(b, compiler.compile_tasks(inv, mapping))
         self.assertEqual(snapshot, mapping)
-        self.assertFalse((self.root / "tasks").exists())
 
     def test_group_schema_rejects_unrecognized_fields(self):
         inv = compiler.inventory(self.fm)
-        for field in ["id", "path", "apiRefs", "taskKey", "filename"]:
+        for field in ["id", "path", "apiRefs", "taskKey", "filename", "fileName"]:
             mapping = self.mapping(inv)
             mapping["groups"][0][field] = "arbitrary"
             with (
@@ -734,10 +648,13 @@ class CompilerTests(unittest.TestCase):
             ):
                 compiler.compile_tasks(inv, mapping)
 
-    def test_cli_reads_index_slicing_and_fails_incomplete_coverage(self):
-        index = self.root / "index.md"
-        index.write_text(
-            "# Index\n\n```yaml\nslicing:\n  groups: []\ncompiled:\n  coverageComplete: true\n```\n"
+    def test_cli_reads_yaml_slicing_and_fails_incomplete_coverage(self):
+        plan = self.root / "plan.yaml"
+        plan.write_text(
+            yaml.safe_dump(
+                {"slicing": {"groups": []}, "compiled": {"coverageComplete": True}}
+            ),
+            encoding="utf-8",
         )
         result = subprocess.run(
             [
@@ -747,7 +664,7 @@ class CompilerTests(unittest.TestCase):
                 "--fm",
                 str(self.fm),
                 "--mapping",
-                str(index),
+                str(plan),
                 "--require-complete",
             ],
             capture_output=True,
@@ -758,19 +675,17 @@ class CompilerTests(unittest.TestCase):
         output = json.loads(result.stdout)
         self.assertFalse(output["coverageComplete"])
         self.assertTrue(output["unassignedUnitKeys"])
-        index.write_text(index.read_text() + "\n```yaml\nother: value\n```\n")
-        with self.assertRaisesRegex(ValueError, "exactly one YAML"):
-            compiler.load(index)
+        markdown = self.root / "index.md"
+        markdown.write_text("```yaml\nslicing: {}\n```\n", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "YAML file"):
+            compiler.load(markdown)
 
-    def test_cli_compiles_readable_paths_without_writing_plan_files(self):
+    def test_cli_compiles_machine_plan_without_writing_outputs(self):
         inv = compiler.inventory(self.fm)
         mapping = self.mapping(inv)
-        mapping["groups"][0]["fileName"] = "图书 API 实现.md"
-        index = self.root / "index.md"
-        index.write_text(
-            "# Index\n\n```yaml\n"
-            + yaml.safe_dump({"slicing": mapping}, allow_unicode=True)
-            + "```\n",
+        plan = self.root / "plan.yaml"
+        plan.write_text(
+            yaml.safe_dump({"slicing": mapping}, allow_unicode=True),
             encoding="utf-8",
         )
         before = {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
@@ -782,7 +697,7 @@ class CompilerTests(unittest.TestCase):
                 "--fm",
                 str(self.fm),
                 "--mapping",
-                str(index),
+                str(plan),
                 "--require-complete",
             ],
             capture_output=True,
@@ -792,7 +707,8 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         output = json.loads(result.stdout)
         task = output["tasks"][0]
-        self.assertEqual(task["path"], "tasks/图书 API 实现.md")
+        self.assertNotIn("path", task)
+        self.assertNotIn("title", task)
         self.assertEqual(output["executionOrder"], [task["taskKey"]])
         self.assertTrue(output["coverageComplete"])
         self.assertEqual(

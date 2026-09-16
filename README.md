@@ -43,19 +43,19 @@ Evidence 是 Nx 单仓库中的业务建模与交付 Harness，配有 React/Type
 
 ## 仓库中的唯一职责
 
-| 位置                                 | 职责                                                 |
-| ------------------------------------ | ---------------------------------------------------- |
-| `.evidence/discovery.md`             | 业务材料、回答与控制状态                             |
-| `.evidence/fm/`                      | 当前 FM、正式业务术语、规则与回放场景                |
-| `.evidence/api/api.yaml`             | 当前 API 设计源                                      |
-| `docs/requirements/`                 | 软件职责、故事验收与质量属性                         |
-| `docs/architecture/`                 | 项目技术基线、模块/数据边界与领域映射                |
-| `docs/engineering/`、`docs/howtos/`  | 按工作类型加载的规范、范例与操作说明                 |
-| `docs/plans/smart-domain/index.md`   | 生成计划后保存 slicing、compiled、taskNotes、gaps    |
-| `docs/plans/smart-domain/tasks/*.md` | 生成计划后保存局部 Guides、CHECK 和 observedEvidence |
-| `.evidence/checks/`                  | 获授权留存的紧凑运行清单与日志指针                   |
+| 位置                                  | 职责                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| `.evidence/discovery.md`              | 业务材料、回答与控制状态                                                 |
+| `.evidence/fm/`                       | 当前 FM、正式业务术语、规则与回放场景                                    |
+| `.evidence/api/api.yaml`              | 当前 API 设计源                                                          |
+| `docs/requirements/`                  | 软件职责、故事验收与质量属性                                             |
+| `docs/architecture/`                  | 项目技术基线、模块/数据边界与领域映射                                    |
+| `docs/engineering/`、`docs/howtos/`   | 按工作类型加载的规范、范例与操作说明                                     |
+| `docs/plans/smart-domain/plan.yaml`   | 机器可读的 slicing、compiled、任务 Guides/设计、状态、CHECK、证据与 gaps |
+| `docs/plans/smart-domain/review.html` | 从 plan.yaml 重建的离线只读审核投影                                      |
+| `.evidence/checks/`                   | 获授权留存的紧凑运行清单与日志指针                                       |
 
-计划路径是工作流输出约定，不表示仓库已经有可执行计划。没有有效索引时先规划，不根据代码存在或聊天记忆跳到实施。
+计划路径是工作流输出约定，不表示仓库已经有可执行计划。没有有效 `plan.yaml` 时先规划，不根据代码存在、审核页或聊天记忆跳到实施。
 
 ## 当前范围与边界
 

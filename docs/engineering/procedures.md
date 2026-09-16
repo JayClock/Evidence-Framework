@@ -78,7 +78,7 @@
 
 ## 切片测试策略实例化
 
-工序由项目预置，切片策略不预置。进入分组前先为当前切片实例化测试策略，把结果写进索引的工序选择与后续任务 Guides，不新增计划字段、工序状态或第二份进度表：
+工序由项目预置，切片策略不预置。进入分组前先为当前切片实例化测试策略，把结果写进 `plan.yaml.strategy` 和后续任务记录的 `guides`，不建立工序状态或第二份进度表：
 
 1. **工序与理由**：本切片触发哪些工序、未触发哪些及依据；章节引用本页与[测试指南](testing.md)的真实命令。
 2. **Q2 → Q1 支撑**：每项可观察验收结果对应哪些组件测试，该结果失败时必须同时失败的 Q1 是哪些。写不出对应 Q1，说明切片或功能上下文还不成立，先补设计再分组。
@@ -97,18 +97,17 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 5. 依赖来自消费的真实产物，不来自工序编号、技术层顺序或 FM 引用图。相同文件的并行编辑需协调文件边界；不能为解决调度冲突虚构业务依赖。
 6. 按现有 schema 写 groups、详情步骤和 CHECK，再 compile。结构通过后仍人工核对工序是否适用、场景/能力是否有证据去向；API capability 不能通过不选工序或 disposition 绕过交付清单。
 
-| 工序实例信息                   | 现有字段或位置                                                                        |
-| ------------------------------ | ------------------------------------------------------------------------------------- |
-| 工程来源与版本/适用章节        | 索引 `sourceManifest`；任务 Guides                                                    |
-| 拥有者、数据和事务决定         | `slicing.designItems`；任务局部设计                                                   |
-| 唯一拥有的单元、身份成分、前置 | `slicing.groups` 的六个既有字段                                                       |
-| 工序/规范/howto/范例文件       | 详情 `procedureRefs`，项目根相对路径；章节和用途写入 Guides，不把工序标签冒充文件路径 |
-| 前置消费方式                   | `dependencyUsage`，不再次定义依赖图                                                   |
-| 实现、复验或设计方式           | 索引 `taskNotes.mode`                                                                 |
-| 行动、反馈与退出               | 详情 `steps`、`checks`、`completionCriteria`                                          |
-| 实际结果与状态                 | 详情 `observedEvidence`；索引 `taskNotes`                                             |
+| 工序实例信息                   | 机器计划位置                                            |
+| ------------------------------ | ------------------------------------------------------- |
+| 工程来源与版本/适用章节        | `sourceManifest` 与任务 `guides`                        |
+| 拥有者、数据和事务决定         | `slicing.designItems` 与任务 `design`                   |
+| 唯一拥有的单元、身份成分、前置 | `slicing.groups` 的五个字段                             |
+| 工序/规范/howto/范例文件       | 任务 `procedureRefs`；章节和用途写入 `guides.procedure` |
+| 前置消费方式                   | 任务 `dependencyUsage`；依赖图只在 `compiled`           |
+| 实现、复验或设计方式           | 任务 `mode`                                             |
+| 实际结果与状态                 | 任务 `observedEvidence` 与 `status`                     |
 
-工序名称不是新增 schema 枚举。本页不增加 `procedureId`、工序状态或第二份进度表。`groups` 仍只允许 `concern/ownerRef/operationRef/fileName/unitKeys/dependsOn`。前端 HTTP 消费适配可用现有 `integration` concern 和有依据的设计单元，旅程验收用 `acceptance`；不新增 `frontend` concern，也不把前端任务设为后端 API 能力的主交付者。若实际工作无法准确表达，登记规划能力缺口，单独授权扩展编译器及回归，不假装字段已支持。
+工序名称不是新增 schema 枚举。本页不增加 `procedureId`、工序状态或第二份进度表。`groups` 只允许 `concern/ownerRef/operationRef/unitKeys/dependsOn`。前端 HTTP 消费适配可用现有 `integration` concern 和有依据的设计单元，旅程验收用 `acceptance`；不新增 `frontend` concern，也不把前端任务设为后端 API 能力的主交付者。若实际工作无法准确表达，登记规划能力缺口，单独授权扩展编译器及回归，不假装字段已支持。
 
 常见依赖形态是“实现子任务（最小领域契约、领域行为、持久化适配、集成装配）→ API capability 主任务 → 旅程验收”。这不是固定顺序：已经独立交付的契约可以被并行消费，前端组件可先针对已确定 HTTP 契约验证。API 子任务闭包不包含下游验收任务，所以 `apiDeliveries` 不证明完整旅程已验收。
 
@@ -124,14 +123,15 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 | 装配与验收 | [应用测试目录](../../apps/backend/src/test/java/com/evidencepoc/backend/)：按具体测试核对真实链路与配置                                                                                                               | profile 隔离等于生产认证完成                        |
 | 前端交互   | [App 测试](../../apps/frontend/src/app/app.spec.tsx)：当前导航页                                                                                                                                                      | 自动生成完整用户管理或订阅表单                      |
 
-例如对“重命名保持身份且不改变原快照”的复验任务：`files.reuse` 定位 UserTests；`steps` 先核对切片契约和实现，再运行其中 `renameKeepsStableIdentityWithoutMutatingLoadedSnapshot`；CHECK 明确真实 User/Description、固定新旧名称、身份不变和原快照不变的预期。使用领域测试入口并指定该测试，`completionCriteria` 引用此 CHECK；`observedEvidence` 在执行前为空。它不证明 HTTP 更新已写入数据库，后者需要持久化和装配工序各自提供证据。
+例如对“重命名保持身份且不改变原快照”的复验任务：`files.reuse` 定位 UserTests；`steps` 先核对切片契约和实现，再运行其中 `renameKeepsStableIdentityWithoutMutatingLoadedSnapshot`；CHECK 明确真实 User/Description、固定新旧名称、身份不变和原快照不变的预期。使用领域测试入口并指定该测试，`completionCriteria` 引用此 CHECK；`observedEvidence` 在执行前为空。它不证明 HTTP 更新已写入数据库，后者需要持久化和装配工序各自提供证据。人通过 `review.html` 审核这些字段，修改仍回到 `plan.yaml`。
 
 ## 工序维护的检查与退出
 
 维护本页或生成规则时，同步 Guides 路由、planning 前馈与任务模板，并运行[项目质量检查](testing.md)。现有回归的职责为：
 
 - [Guides 测试](../../tools/guides/check.spec.mjs)：本页路由、七类工序的说明结构及既有权威链接；链接检查器另外检查维护范围内文件链接。
-- [模板契约测试](../../.agents/skills/evidence-task-planning/tests/test_guides_contract.py)：选工序先于分组、任务模板保留工序实例说明和单一状态归属，不扩展 schema。
-- [编译测试](../../.agents/skills/evidence-task-planning/tests/test_task_compiler.py)：合成图书案例的 API-first 显式切片，规则唯一归属、API 主任务、实现子任务、验收汇合及确定性；不证明 Agent 会自动选对工序。
+- [机器计划契约测试](../../.agents/skills/evidence-task-planning/tests/test_guides_contract.py)：选工序先于分组、单一状态归属和计划模板结构。
+- [编译测试](../../.agents/skills/evidence-task-planning/tests/test_task_compiler.py)：合成图书案例的 API-first 显式切片、唯一归属、DAG 与确定性。
+- [投影测试](../../.agents/skills/evidence-task-planning/tests/test_render_plan.py)：离线 CSP、数据转义、状态校验和原子发布。
 
 人工复核至少覆盖：同一操作多场景不重复实现；只改变 HTTP 表示不强制新建 SQL 任务；外部证明渠道未知只阻塞对应接入；前端仅在软件范围要求时生成。测试通过不代替这些语义判断。工序落地后停止，不自动生成业务计划、执行产品任务或提升审核状态。

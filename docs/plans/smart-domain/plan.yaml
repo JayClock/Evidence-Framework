@@ -1,0 +1,2925 @@
+# yamllint disable rule:line-length
+schemaVersion: '3.0'
+kind: smart-domain-plan
+metadata:
+  project: 移动支付订阅主链
+  goal: 交付并验收 US-001 至 US-003 的 local/test 移动支付订阅主链。
+  authorizationRefs:
+    - docs/requirements/scope.md
+    - docs/requirements/stories.md
+    - .evidence/discovery.md
+  requirementRefs:
+    - AC-001-01
+    - AC-001-02
+    - AC-002-01
+    - AC-002-02
+    - AC-002-03
+    - AC-002-04
+    - AC-003-01
+    - AC-003-02
+    - AC-003-03
+    - US-001
+    - US-002
+    - US-003
+  nonGoals:
+    - 内容访问、退款、恢复、预付费和异常履约
+    - 前端
+    - 生产身份、生产数据库和真实支付协议
+inputRoots:
+  fm: .evidence/fm
+  api: docs/plans/smart-domain/api-planning-input.yaml
+sourceManifest:
+  - path: .evidence/fm/model.yaml
+    digest: 73b1f02ac0c296da6713be085a79b156d8aa11047304199b2402267bad13da1a
+    sourceRefs:
+      - context.subscription
+      - fulfillment.payment
+      - context.mobile
+      - fulfillment.mobile
+      - contract.subscription
+      - request.payment
+      - request.mobile
+      - confirmation.mobile
+      - role.reader
+      - role.publisher
+      - role.payment-proof
+      - rule.payment-start
+      - rule.payment-amount
+      - rule.payment-deadline
+      - rule.payment-completed
+      - rule.mobile-completed
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+      - scenario.cutoff-paid
+  - path: .evidence/api/api.yaml
+    digest: d8869e69826123b195e70e48cac21e3d55b13a7177de05e55270e51d4b2eccd1
+    sourceRefs:
+      - resource.party-user
+      - resource.subscription
+      - resource.party-subscriptions
+      - resource.payment
+      - capability.register-subscription-reader
+      - capability.list-subscriptions-reader
+      - capability.read-subscription-reader
+      - capability.read-payment-reader
+  - path: docs/plans/smart-domain/api-planning-input.yaml
+    digest: 1122d6b7f4bb466deb1d54b826ce4753f828d641e27cab94e5be6c0466cdfcd7
+    sourceRefs:
+      - resource.party-user
+      - resource.subscription
+      - resource.party-subscriptions
+      - resource.payment
+      - capability.register-subscription-reader
+      - capability.list-subscriptions-reader
+      - capability.read-subscription-reader
+      - capability.read-payment-reader
+  - path: docs/requirements/scope.md
+    digest: b188cfb67953bdca780c7a26290fe0a9c86c25defef7b8494b811ff30e3e1be2
+    sourceRefs:
+      - SCOPE-MVP
+      - SCOPE-USER
+      - SCOPE-PAY-ABNORMAL
+  - path: docs/requirements/stories.md
+    digest: f26deb020a67d539a8d4024d962453cda6ef14dd4cddd88708848591b8ed47cf
+    sourceRefs:
+      - US-001
+      - US-002
+      - US-003
+      - AC-001-01
+      - AC-001-02
+      - AC-002-01
+      - AC-002-02
+      - AC-002-03
+      - AC-002-04
+      - AC-002-05
+      - AC-003-01
+      - AC-003-02
+      - AC-003-03
+  - path: .evidence/discovery.md
+    digest: b152595e0d079d2f928675399e2161531794f9fe864f4e849adb0e0bea7f6e0c
+    sourceRefs:
+      - Q-MOBILE-FIXED-VALUES-001
+  - path: docs/architecture/overview.md
+    digest: 6115dc1d28c3e2f4fc5d3e27dda6e593c7772568843af290c8c1f90c1d992e0c
+  - path: docs/architecture/modules.md
+    digest: a393f5894ed705926af8542b2165b6154557d20d106ffdb47b03a086369943a9
+  - path: docs/architecture/domain-mapping.md
+    digest: b66c066968633bab069533e3a91304edc5eb337b599db7c656b5ca10f742ca54
+  - path: docs/requirements/quality-attributes.md
+    digest: 2b611fc76c7593547897e984399573b87c9958f4d28004917a976df8bc6285e5
+  - path: docs/engineering/procedures.md
+    digest: 995acbf1bdb6414fd21ac6a832c97c4dd0cbe7f85d0d76ec6cea89d5a21691d1
+  - path: docs/engineering/testing.md
+    digest: d0e1683ad27d209d28f628f344fbb20a1479e94359254a6773f1197340ef51be
+strategy:
+  procedures:
+    - 边界与契约设计
+    - 领域行为
+    - 持久化适配
+    - HTTP 契约
+    - 应用装配与模块协作
+    - 业务旅程验收
+  observableOutcomes:
+    - 登记完整订阅合同且失败不写入
+    - 从合同确定性派生付款请求
+    - 以唯一匹配证明判断 completed/pending
+    - 通过约定 HTTP 能力读取合同和付款状态
+    - 从真实 HTTP、SQL 和 local/test 支付端口验收主链
+  q2ToQ1: []
+  functionalContexts: []
+  unresolvedDecisions:
+    - GAP-IDENTITY
+    - GAP-DATABASE
+  archiveRef: archive/schema-2/index.md
+slicing:
+  designItems:
+    - id: design.reader-context-foundation
+      sourceRefs:
+        - party.user
+        - role.reader
+        - relation.user-as-reader
+        - context.subscription
+      reason: >-
+        复用并复验现有 User -> SubscriptionContext -> Reader 入口和固定技术平台，不重新读取主体、不把角色当认证凭证。
+    - id: design.subscription-domain-contracts
+      sourceRefs:
+        - context.subscription
+        - contract.subscription
+        - request.payment
+        - role.reader
+        - role.publisher
+        - role.payment-proof
+        - relation.contract-payment
+        - rule.payment-completed
+      reason: 订阅模块公开合同根集合、Reader 行为和 PaymentProof 窄能力；合同与付款规则由领域拥有者实现，不泄漏 Mapper。
+    - id: design.mobile-domain-contracts
+      sourceRefs:
+        - context.mobile
+        - request.mobile
+        - confirmation.mobile
+        - relation.mobile-as-payment-proof
+        - rule.mobile-completed
+      reason: 移动支付模块保留协议、请求和机构结果事实，并以 confirmation.mobile 适配 PaymentProof，不复制证明。
+    - id: design.subscription-payment-storage
+      sourceRefs:
+        - contract.subscription
+        - request.payment
+        - request.mobile
+        - confirmation.mobile
+        - relation.contract-payment
+        - relation.mobile-result
+      reason: MyBatis/Flyway 适配器分别拥有订阅与移动支付表、幂等和唯一结果约束；H2 只验证 local/test 行为。
+    - id: design.local-mobile-payment-adapter
+      sourceRefs:
+        - request.mobile
+        - confirmation.mobile
+        - rule.mobile-completed
+        - scenario.mobile-subscription
+      reason: >-
+        local/test 固定使用 PAY-001、MOBILE-001、MOBILE-REQ-001 和 2026-10-01T09:02:00Z 调用确定性支付端口；不扩成生产协议、标识生成、验签、超时、重试或补偿规则。
+    - id: design.subscription-http-contract
+      sourceRefs:
+        - resource.party-user
+        - resource.subscription
+        - resource.party-subscriptions
+        - resource.payment
+        - capability.register-subscription-reader
+        - capability.list-subscriptions-reader
+        - capability.read-subscription-reader
+        - capability.read-payment-reader
+      reason: >-
+        一个从用户主体到订阅列表、并从合同到付款的 Jersey 子资源链交付合同登记/读取/列表和付款读取，独立 HTTP 测试 mock 领域公开契约。
+    - id: design.subscription-payment-orchestration
+      sourceRefs:
+        - contract.subscription
+        - request.payment
+        - request.mobile
+        - confirmation.mobile
+        - scenario.mobile-subscription
+      reason: >-
+        合同登记成功后通过进程内契约自动形成付款请求并调用 local/test 支付端口，结果独立登记；不建立业务 Service 或调用自身 HTTP。
+    - id: design.mobile-subscription-journey
+      sourceRefs:
+        - scenario.mobile-subscription
+        - scenario.payment-pending
+        - scenario.cutoff-paid
+        - capability.register-subscription-reader
+        - capability.read-subscription-reader
+        - capability.read-payment-reader
+      reason: >-
+        以真实 HTTP、H2/MyBatis 和 local/test 支付适配器验证 completed、pending、截止边界、404 与失败不变性。
+  groups:
+    - concern: foundation
+      ownerRef: context.subscription
+      operationRef: role.reader
+      unitKeys:
+        - platform::profile.backend-modules
+        - platform::profile.jersey
+        - platform::profile.modular-monolith
+        - platform::profile.mybatis
+        - platform::profile.smart-domain
+        - entity::party.user
+        - context-design::context.subscription
+        - actor-role::role.reader
+        - association::relation.user-as-reader
+        - design::design.reader-context-foundation
+      dependsOn: []
+    - concern: domain
+      ownerRef: context.subscription
+      operationRef: request.payment
+      unitKeys:
+        - root-collection::context.subscription::contract.subscription
+        - context-design::fulfillment.payment
+        - evidence::contract.subscription
+        - evidence::request.payment
+        - actor-role::role.publisher
+        - proof-role::role.payment-proof
+        - association::relation.contract-payment
+        - association::relation.subscription-column
+        - association::relation.payment-column
+        - association::relation.payment-proof-used
+        - rule::rule.payment-start
+        - rule::rule.payment-amount
+        - rule::rule.payment-deadline
+        - rule::rule.payment-completed
+        - design::design.subscription-domain-contracts
+      dependsOn:
+        - foundation::context.subscription::role.reader
+    - concern: domain
+      ownerRef: context.mobile
+      operationRef: request.mobile
+      unitKeys:
+        - context-design::context.mobile
+        - context-design::fulfillment.mobile
+        - root-collection::context.mobile::contract.mobile
+        - evidence::contract.mobile
+        - evidence::request.mobile
+        - evidence::confirmation.mobile
+        - actor-role::role.mobile-user
+        - actor-role::role.mobile-provider
+        - association::relation.user-as-mobile-user
+        - association::relation.contract-mobile
+        - association::relation.mobile-column
+        - association::relation.mobile-result
+        - association::relation.mobile-as-payment-proof
+        - rule::rule.mobile-completed
+        - design::design.mobile-domain-contracts
+      dependsOn:
+        - domain::context.subscription::request.payment
+    - concern: mybatis
+      ownerRef: context.subscription
+      operationRef: design.subscription-payment-storage
+      unitKeys:
+        - design::design.subscription-payment-storage
+      dependsOn:
+        - domain::context.subscription::request.payment
+        - domain::context.mobile::request.mobile
+    - concern: integration
+      ownerRef: context.mobile
+      operationRef: design.local-mobile-payment-adapter
+      unitKeys:
+        - design::design.local-mobile-payment-adapter
+      dependsOn:
+        - domain::context.mobile::request.mobile
+    - concern: api
+      ownerRef: context.subscription
+      operationRef: capability.register-subscription-reader
+      unitKeys:
+        - api-resource::resource.party-user
+        - api-resource::resource.subscription
+        - api-resource::resource.party-subscriptions
+        - api-resource::resource.payment
+        - api-capability::capability.register-subscription-reader
+        - api-capability::capability.list-subscriptions-reader
+        - api-capability::capability.read-subscription-reader
+        - api-capability::capability.read-payment-reader
+        - design::design.subscription-http-contract
+      dependsOn:
+        - foundation::context.subscription::role.reader
+        - domain::context.subscription::request.payment
+    - concern: integration
+      ownerRef: context.subscription
+      operationRef: design.subscription-payment-orchestration
+      unitKeys:
+        - design::design.subscription-payment-orchestration
+      dependsOn:
+        - mybatis::context.subscription::design.subscription-payment-storage
+        - integration::context.mobile::design.local-mobile-payment-adapter
+        - api::context.subscription::capability.register-subscription-reader
+    - concern: acceptance
+      ownerRef: scenario.mobile-subscription
+      operationRef: design.mobile-subscription-journey
+      unitKeys:
+        - scenario::scenario.mobile-subscription
+        - scenario::scenario.payment-pending
+        - scenario::scenario.cutoff-paid
+        - design::design.mobile-subscription-journey
+      dependsOn:
+        - >-
+          integration::context.subscription::design.subscription-payment-orchestration
+  dispositions:
+    - unitKey: actor-role::role.account-provider
+      kind: not-applicable
+      sourceRefs:
+        - role.account-provider
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: actor-role::role.account-user
+      kind: not-applicable
+      sourceRefs:
+        - role.account-user
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-chapter
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-chapter
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-payment-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-payment-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-refund-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-refund-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-restored-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-restored-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-access
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-prepaid
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-restore
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.mobile-as-access-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.mobile-as-access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.mobile-as-refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.mobile-as-refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-access-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-payment-proof
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-payment-proof
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-as-access-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-as-access-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-as-restore-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-as-restore-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-basis
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-basis
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-basis-first
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-basis-first
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-payment-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-payment-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-as-access-restored
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-as-access-restored
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-basis
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-basis
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-basis-first
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-basis-first
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-refund-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-refund-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.user-as-account-user
+      kind: not-applicable
+      sourceRefs:
+        - relation.user-as-account-user
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::context.content
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::context.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - context.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.access
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.refund
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.restore
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: entity::thing.chapter
+      kind: not-applicable
+      sourceRefs:
+        - thing.chapter
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: entity::thing.column
+      kind: not-applicable
+      sourceRefs:
+        - thing.column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.access
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.refund
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.restore
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::contract.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - contract.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::evidence.discontinuation
+      kind: not-applicable
+      sourceRefs:
+        - evidence.discontinuation
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::evidence.relaunch
+      kind: not-applicable
+      sourceRefs:
+        - evidence.relaunch
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.access
+      kind: not-applicable
+      sourceRefs:
+        - request.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - request.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.refund
+      kind: not-applicable
+      sourceRefs:
+        - request.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.restore
+      kind: not-applicable
+      sourceRefs:
+        - request.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-payment
+      kind: not-applicable
+      sourceRefs:
+        - role.access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-refund
+      kind: not-applicable
+      sourceRefs:
+        - role.access-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-restored
+      kind: not-applicable
+      sourceRefs:
+        - role.access-restored
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - role.refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.restore-refund
+      kind: not-applicable
+      sourceRefs:
+        - role.restore-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.content::thing.chapter
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.content::thing.column
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.prepaid::contract.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - context.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.content-readable
+      kind: not-applicable
+      sourceRefs:
+        - rule.content-readable
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.mobile-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.mobile-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.payment-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.payment-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-balance
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-balance
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-funded
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-funded
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-amount
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-amount
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.access-after-refund
+      kind: not-applicable
+      sourceRefs:
+        - scenario.access-after-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.access-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.access-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.cutoff-pending
+      kind: not-applicable
+      sourceRefs:
+        - scenario.cutoff-pending
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.discontinuation-refund
+      kind: not-applicable
+      sourceRefs:
+        - scenario.discontinuation-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.free-restoration
+      kind: not-applicable
+      sourceRefs:
+        - scenario.free-restoration
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.insufficient-balance
+      kind: not-applicable
+      sourceRefs:
+        - scenario.insufficient-balance
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.late-paid
+      kind: not-applicable
+      sourceRefs:
+        - scenario.late-paid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.payment-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.payment-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.prepaid-subscription
+      kind: not-applicable
+      sourceRefs:
+        - scenario.prepaid-subscription
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.refund-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.refund-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.refund-late
+      kind: not-applicable
+      sourceRefs:
+        - scenario.refund-late
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.restore-charged
+      kind: not-applicable
+      sourceRefs:
+        - scenario.restore-charged
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.restore-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.restore-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.short-paid
+      kind: not-applicable
+      sourceRefs:
+        - scenario.short-paid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.wrong-reader
+      kind: not-applicable
+      sourceRefs:
+        - scenario.wrong-reader
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+compiled:
+  policyVersion: sd-modular-monolith-mybatis-1
+  profile:
+    architecture: modular-monolith
+    deploymentUnit: single-backend-application
+    moduleInteraction: in-process-contracts
+    persistence: mybatis
+    http: jersey-hal-forms
+    springBoot: 3.5.x
+    codeOrganization: composition-root-and-libraries
+    mybatisMapping: xml-domain-resultmap
+    resourceNavigation: jersey-subresources
+    databaseEngine: null
+  inputDigest: 182f29a8eb4fbe3dfa7a44b895ebd509a56e22b8979ac282f1adeba9263f09e9
+  modelId: column-subscription
+  tasks:
+    - taskKey: >-
+        acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+      concern: acceptance
+      ownerRef: scenario.mobile-subscription
+      operationRef: design.mobile-subscription-journey
+      unitKeys:
+        - design::design.mobile-subscription-journey
+        - scenario::scenario.cutoff-paid
+        - scenario::scenario.mobile-subscription
+        - scenario::scenario.payment-pending
+      dependsOn:
+        - >-
+          integration::context.subscription::design.subscription-payment-orchestration
+      apiRefs: []
+    - taskKey: api::context.subscription::capability.register-subscription-reader
+      concern: api
+      ownerRef: context.subscription
+      operationRef: capability.register-subscription-reader
+      unitKeys:
+        - api-capability::capability.list-subscriptions-reader
+        - api-capability::capability.read-payment-reader
+        - api-capability::capability.read-subscription-reader
+        - api-capability::capability.register-subscription-reader
+        - api-resource::resource.party-subscriptions
+        - api-resource::resource.party-user
+        - api-resource::resource.payment
+        - api-resource::resource.subscription
+        - design::design.subscription-http-contract
+      dependsOn:
+        - domain::context.subscription::request.payment
+        - foundation::context.subscription::role.reader
+      apiRefs:
+        - capability.list-subscriptions-reader
+        - capability.read-payment-reader
+        - capability.read-subscription-reader
+        - capability.register-subscription-reader
+    - taskKey: domain::context.mobile::request.mobile
+      concern: domain
+      ownerRef: context.mobile
+      operationRef: request.mobile
+      unitKeys:
+        - actor-role::role.mobile-provider
+        - actor-role::role.mobile-user
+        - association::relation.contract-mobile
+        - association::relation.mobile-as-payment-proof
+        - association::relation.mobile-column
+        - association::relation.mobile-result
+        - association::relation.user-as-mobile-user
+        - context-design::context.mobile
+        - context-design::fulfillment.mobile
+        - design::design.mobile-domain-contracts
+        - evidence::confirmation.mobile
+        - evidence::contract.mobile
+        - evidence::request.mobile
+        - root-collection::context.mobile::contract.mobile
+        - rule::rule.mobile-completed
+      dependsOn:
+        - domain::context.subscription::request.payment
+      apiRefs: []
+    - taskKey: domain::context.subscription::request.payment
+      concern: domain
+      ownerRef: context.subscription
+      operationRef: request.payment
+      unitKeys:
+        - actor-role::role.publisher
+        - association::relation.contract-payment
+        - association::relation.payment-column
+        - association::relation.payment-proof-used
+        - association::relation.subscription-column
+        - context-design::fulfillment.payment
+        - design::design.subscription-domain-contracts
+        - evidence::contract.subscription
+        - evidence::request.payment
+        - proof-role::role.payment-proof
+        - root-collection::context.subscription::contract.subscription
+        - rule::rule.payment-amount
+        - rule::rule.payment-completed
+        - rule::rule.payment-deadline
+        - rule::rule.payment-start
+      dependsOn:
+        - foundation::context.subscription::role.reader
+      apiRefs:
+        - capability.list-subscriptions-reader
+        - capability.read-payment-reader
+        - capability.read-subscription-reader
+        - capability.register-subscription-reader
+    - taskKey: foundation::context.subscription::role.reader
+      concern: foundation
+      ownerRef: context.subscription
+      operationRef: role.reader
+      unitKeys:
+        - actor-role::role.reader
+        - association::relation.user-as-reader
+        - context-design::context.subscription
+        - design::design.reader-context-foundation
+        - entity::party.user
+        - platform::profile.backend-modules
+        - platform::profile.jersey
+        - platform::profile.modular-monolith
+        - platform::profile.mybatis
+        - platform::profile.smart-domain
+      dependsOn: []
+      apiRefs:
+        - capability.list-subscriptions-reader
+        - capability.read-payment-reader
+        - capability.read-subscription-reader
+        - capability.register-subscription-reader
+    - taskKey: integration::context.mobile::design.local-mobile-payment-adapter
+      concern: integration
+      ownerRef: context.mobile
+      operationRef: design.local-mobile-payment-adapter
+      unitKeys:
+        - design::design.local-mobile-payment-adapter
+      dependsOn:
+        - domain::context.mobile::request.mobile
+      apiRefs: []
+    - taskKey: >-
+        integration::context.subscription::design.subscription-payment-orchestration
+      concern: integration
+      ownerRef: context.subscription
+      operationRef: design.subscription-payment-orchestration
+      unitKeys:
+        - design::design.subscription-payment-orchestration
+      dependsOn:
+        - api::context.subscription::capability.register-subscription-reader
+        - integration::context.mobile::design.local-mobile-payment-adapter
+        - mybatis::context.subscription::design.subscription-payment-storage
+      apiRefs: []
+    - taskKey: mybatis::context.subscription::design.subscription-payment-storage
+      concern: mybatis
+      ownerRef: context.subscription
+      operationRef: design.subscription-payment-storage
+      unitKeys:
+        - design::design.subscription-payment-storage
+      dependsOn:
+        - domain::context.mobile::request.mobile
+        - domain::context.subscription::request.payment
+      apiRefs: []
+  executionOrder:
+    - foundation::context.subscription::role.reader
+    - domain::context.subscription::request.payment
+    - domain::context.mobile::request.mobile
+    - mybatis::context.subscription::design.subscription-payment-storage
+    - integration::context.mobile::design.local-mobile-payment-adapter
+    - api::context.subscription::capability.register-subscription-reader
+    - >-
+      integration::context.subscription::design.subscription-payment-orchestration
+    - >-
+      acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+  apiCoverage:
+    - apiRef: capability.list-subscriptions-reader
+      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+      supportingTaskRefs:
+        - domain::context.subscription::request.payment
+        - foundation::context.subscription::role.reader
+    - apiRef: capability.read-payment-reader
+      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+      supportingTaskRefs:
+        - domain::context.subscription::request.payment
+        - foundation::context.subscription::role.reader
+    - apiRef: capability.read-subscription-reader
+      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+      supportingTaskRefs:
+        - domain::context.subscription::request.payment
+        - foundation::context.subscription::role.reader
+    - apiRef: capability.register-subscription-reader
+      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+      supportingTaskRefs:
+        - domain::context.subscription::request.payment
+        - foundation::context.subscription::role.reader
+  dispositions:
+    - unitKey: actor-role::role.account-provider
+      kind: not-applicable
+      sourceRefs:
+        - role.account-provider
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: actor-role::role.account-user
+      kind: not-applicable
+      sourceRefs:
+        - role.account-user
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-chapter
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-chapter
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-payment-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-payment-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-refund-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-refund-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-restored-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-restored-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.access-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.access-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-access
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-prepaid
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.contract-restore
+      kind: not-applicable
+      sourceRefs:
+        - relation.contract-restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.mobile-as-access-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.mobile-as-access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.mobile-as-refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.mobile-as-refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-access-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-payment-proof
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-payment-proof
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-as-refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-as-refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.prepaid-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.prepaid-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-as-access-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-as-access-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-as-restore-refund
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-as-restore-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-basis
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-basis
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-basis-first
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-basis-first
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-payment-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-payment-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.refund-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.refund-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-as-access-restored
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-as-access-restored
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-basis
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-basis
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-basis-first
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-basis-first
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-column
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-refund-used
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-refund-used
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.restore-result
+      kind: not-applicable
+      sourceRefs:
+        - relation.restore-result
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: association::relation.user-as-account-user
+      kind: not-applicable
+      sourceRefs:
+        - relation.user-as-account-user
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::context.content
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::context.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - context.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.access
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.refund
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: context-design::fulfillment.restore
+      kind: not-applicable
+      sourceRefs:
+        - fulfillment.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: entity::thing.chapter
+      kind: not-applicable
+      sourceRefs:
+        - thing.chapter
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: entity::thing.column
+      kind: not-applicable
+      sourceRefs:
+        - thing.column
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.access
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.refund
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::confirmation.restore
+      kind: not-applicable
+      sourceRefs:
+        - confirmation.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::contract.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - contract.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::evidence.discontinuation
+      kind: not-applicable
+      sourceRefs:
+        - evidence.discontinuation
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::evidence.relaunch
+      kind: not-applicable
+      sourceRefs:
+        - evidence.relaunch
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.access
+      kind: not-applicable
+      sourceRefs:
+        - request.access
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - request.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.refund
+      kind: not-applicable
+      sourceRefs:
+        - request.refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: evidence::request.restore
+      kind: not-applicable
+      sourceRefs:
+        - request.restore
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-payment
+      kind: not-applicable
+      sourceRefs:
+        - role.access-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-refund
+      kind: not-applicable
+      sourceRefs:
+        - role.access-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.access-restored
+      kind: not-applicable
+      sourceRefs:
+        - role.access-restored
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.refund-payment
+      kind: not-applicable
+      sourceRefs:
+        - role.refund-payment
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: proof-role::role.restore-refund
+      kind: not-applicable
+      sourceRefs:
+        - role.restore-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.content::thing.chapter
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.content::thing.column
+      kind: not-applicable
+      sourceRefs:
+        - context.content
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: root-collection::context.prepaid::contract.prepaid
+      kind: not-applicable
+      sourceRefs:
+        - context.prepaid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.access-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.access-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.content-readable
+      kind: not-applicable
+      sourceRefs:
+        - rule.content-readable
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.mobile-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.mobile-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.payment-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.payment-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-balance
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-balance
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.prepaid-funded
+      kind: not-applicable
+      sourceRefs:
+        - rule.prepaid-funded
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-amount
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-amount
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.refund-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.refund-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-completed
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-completed
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-deadline
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-deadline
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-eligible
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-eligible
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: rule::rule.restore-expired
+      kind: not-applicable
+      sourceRefs:
+        - rule.restore-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.access-after-refund
+      kind: not-applicable
+      sourceRefs:
+        - scenario.access-after-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.access-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.access-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.cutoff-pending
+      kind: not-applicable
+      sourceRefs:
+        - scenario.cutoff-pending
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.discontinuation-refund
+      kind: not-applicable
+      sourceRefs:
+        - scenario.discontinuation-refund
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.free-restoration
+      kind: not-applicable
+      sourceRefs:
+        - scenario.free-restoration
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.insufficient-balance
+      kind: not-applicable
+      sourceRefs:
+        - scenario.insufficient-balance
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.late-paid
+      kind: not-applicable
+      sourceRefs:
+        - scenario.late-paid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.payment-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.payment-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.prepaid-subscription
+      kind: not-applicable
+      sourceRefs:
+        - scenario.prepaid-subscription
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.refund-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.refund-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.refund-late
+      kind: not-applicable
+      sourceRefs:
+        - scenario.refund-late
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.restore-charged
+      kind: not-applicable
+      sourceRefs:
+        - scenario.restore-charged
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.restore-expired
+      kind: not-applicable
+      sourceRefs:
+        - scenario.restore-expired
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.short-paid
+      kind: not-applicable
+      sourceRefs:
+        - scenario.short-paid
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    - unitKey: scenario::scenario.wrong-reader
+      kind: not-applicable
+      sourceRefs:
+        - scenario.wrong-reader
+      reason: >-
+        当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+  unassignedUnitKeys: []
+  diagnostics: []
+  coverageComplete: true
+tasks:
+  foundation::context.subscription::role.reader:
+    title: 后端平台与 Reader 上下文基础复验
+    mode: implementation
+    status: done
+    outcome: 复验平台、技术分层和现有 Reader Context，形成后续任务可复用的当前证据。
+    sourceRefs:
+      - party.user
+      - context.subscription
+      - role.reader
+      - relation.user-as-reader
+      - design.reader-context-foundation
+    ruleRefs: []
+    scenarioRefs: []
+    storyRefs:
+      - US-001
+    acceptanceRefs: []
+    sliceRefs:
+      - US-001
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/后端平台与Reader上下文基础复验.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：确认 Java 17/Boot 3.5.9/smart-domain 0.3.0、技术库依赖方向以及 `Users.inSubscriptionContext().asReader(user)`
+          的现有行为可被后续任务复用。
+        - 非目标：不实现合同、付款、认证或新数据库结构；不把 `role.reader` 当作登录权限。
+        - >-
+          业务来源：`party.user`、`role.reader`、`relation.user-as-reader`、`context.subscription`。
+        - >-
+          工程基线：`docs/architecture/{overview,modules,domain-mapping}.md`、`docs/engineering/{backend,testing,examples}.md`。
+        - >-
+          工序实例：采用共享基础复验和领域行为工序；真实 `User`/`Reader`，内存 Users Fake 仅证明角色切换不重读主体；persistent 测试证明 Spring 注入，ArchUnit
+          证明技术分层。
+        - 前置产物：无。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/后端平台与Reader上下文基础复验.md
+      decisions:
+        - '`User` 是唯一稳定主体；`Reader` 直接装饰调用方已加载快照。'
+        - domain 只声明 `SubscriptionContext`；persistent 独立实现并注入 `Users` 适配器。
+        - 后续订阅关联可由 Context 注入 Reader，但本任务不预先创建合同集合。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/backend.md
+      - docs/engineering/examples.md
+    dependencyUsage: []
+    files:
+      create: []
+      modify:
+        - >-
+          libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/ReaderTests.java
+      reuse:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Users.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/context/SubscriptionContext.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/Reader.java
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/Users.java
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/context/SubscriptionContext.java
+        - >-
+          libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java
+    steps:
+      - 按当前 Google Java Format 修复 ReaderTests 的现有换行违规，不改变断言、输入或行为。
+      - 核对构建版本、四个 Gradle 项目和 domain/api/persistent 依赖方向与当前基线一致。
+      - 定位 Reader 角色切换及其测试，确认 asReader 直接装饰传入 User、拒绝 null 且不重新读取主体。
+      - 运行领域、持久化注入和架构定向检查；若现有行为不满足来源，停止并返回设计，不在 verify 任务扩展功能。
+    checks:
+      - id: CHECK-FND-001
+        purpose: 复验 Reader 角色切换的身份与快照语义。
+        quadrant: Q1
+        subject: Users -> SubscriptionContext -> Reader 领域入口
+        dependencies: 真实 User/Reader；内存 Users Fake 明确禁止重读主体。
+        inputs: reader-1、固定显示名称、null 反例。
+        expected: roleId=role.reader、readerId 保持主体身份、actor 为同一快照；null 被拒绝。
+        testFiles:
+          - >-
+            libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/ReaderTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.ReaderTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs: []
+        gapRefs: []
+        evidenceRequired: 命令、退出码、实际执行而非 UP-TO-DATE 的测试摘要。
+      - id: CHECK-FND-002
+        purpose: 复验 SubscriptionContext 由适配层注入且不在根集合中构造。
+        quadrant: Q1
+        subject: persistent Users 与 SubscriptionContext 装配
+        dependencies: 真实 Spring、H2/MyBatis 测试上下文；不证明合同存储。
+        inputs: 已持久化 User 与一个过期显示名称快照。
+        expected: 返回注入的同一 Context，并直接装饰给定快照。
+        testFiles:
+          - >-
+            libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisUsersTests.subscriptionContextIsInjectedAndDecoratesTheGivenUser
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs: []
+        gapRefs: []
+        evidenceRequired: 命令、退出码和目标测试结果。
+      - id: CHECK-FND-003
+        purpose: 复验固定技术库依赖方向。
+        quadrant: Q4
+        subject: domain 独立、api 不访问 persistent、persistent 不访问 HTTP
+        dependencies: ArchUnit 扫描生产类。
+        inputs: 当前 backend classpath。
+        expected: 三条禁止依赖规则通过。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs: []
+        gapRefs: []
+        evidenceRequired: 命令、退出码和 ArchUnit 规则摘要。
+    completionCriteria:
+      - CHECK-FND-001 证明角色切换的身份、快照和拒绝语义。
+      - CHECK-FND-002 证明适配层 Context 注入可复用。
+      - CHECK-FND-003 证明固定技术分层未被破坏。
+    observedEvidence:
+      - checkId: CHECK-FND-001
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.ReaderTests --rerun-tasks
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；3 个 ReaderTests 测试全部通过，3 个 Gradle task 均实际执行，证明 roleId、readerId、同一快照及 null
+          拒绝语义。
+      - checkId: CHECK-FND-002
+        command: >-
+          ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisUsersTests.subscriptionContextIsInjectedAndDecoratesTheGivenUser
+          --rerun-tasks
+        exitCode: 0
+        observed: >-
+          串行重跑 BUILD SUCCESSFUL；7 个 Gradle task 均实际执行，目标测试证明 Spring 注入同一 SubscriptionContext 并直接装饰给定 User
+          快照。
+      - checkId: CHECK-FND-003
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        observed: 串行重跑 BUILD SUCCESSFUL；12 个 Gradle task 均实际执行，3 条 ArchUnit 禁止依赖规则全部通过。
+      - checkId: PROJECT-QUALITY-JAVA
+        command: ./gradlew check
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；28 个 Gradle task 中 3 个实际执行、3 个 from-cache、22 个 up-to-date；backend-domain Spotless
+          与测试均通过。
+      - checkId: PROJECT-QUALITY-NPM-TEST
+        command: PATH=/opt/miniconda3/bin:$PATH npm test
+        exitCode: 0
+        observed: >-
+          系统 Python 3.9.6 的首次执行因不满足仓库声明的 Python 3.10+ 与依赖要求失败；改用已有 Python 3.12.3 及 requirements 依赖后，同一
+          npm test 全部通过，包括应用/Nx、建模扩展、Skills 和 Guides 测试。
+      - checkId: PROJECT-QUALITY-LINT
+        command: npm run lint
+        exitCode: 0
+        observed: 前端 lint 从 Nx cache 命中；Guides 检查确认 49 份文档、352 个本地链接和 Prettier 均通过。
+      - checkId: PROJECT-QUALITY-BUILD
+        command: npm run build
+        exitCode: 0
+        observed: >-
+          Nx 的 35 个成功任务均命中缓存；随后 evidence-modeling TypeScript typecheck 实际通过。Nx 同时报告既有 Gradle spotlessJava
+          dependsOn 配置警告，但未导致失败。
+      - checkId: PROJECT-QUALITY-GUIDES
+        command: npm run guides:verify
+        exitCode: 0
+        observed: Guides 测试 8 项通过，49 份文档的 352 个本地链接无错误，Prettier 检查通过。
+    executionDiscipline:
+      - >-
+        本任务因用户授权解决 `GAP-FND-READER-TEST-FORMAT` 而转为窄范围 `implementation`：只允许修复 `ReaderTests.java` 的格式并复验既有行为。任何业务或产品代码变化仍须返回计划；通过也不证明生产认证或订阅功能已实现。
+  domain::context.subscription::request.payment:
+    title: 订阅合同与付款状态领域行为
+    mode: implementation
+    status: done
+    outcome: 交付包含 11 个必填字段且不可改写的合同、付款请求派生、PaymentProof 契约和 pending/completed 领域判断。
+    sourceRefs:
+      - context.subscription
+      - fulfillment.payment
+      - contract.subscription
+      - request.payment
+      - role.reader
+      - role.publisher
+      - role.payment-proof
+      - relation.contract-payment
+      - relation.subscription-column
+      - relation.payment-column
+      - relation.payment-proof-used
+      - design.subscription-domain-contracts
+    ruleRefs:
+      - rule.payment-start
+      - rule.payment-amount
+      - rule.payment-deadline
+      - rule.payment-completed
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+      - scenario.cutoff-paid
+    storyRefs:
+      - US-001
+      - US-002
+      - US-003
+    acceptanceRefs:
+      - AC-001-01
+      - AC-001-02
+      - AC-002-01
+      - AC-002-02
+      - AC-002-03
+      - AC-002-04
+      - AC-003-01
+      - AC-003-02
+    sliceRefs:
+      - US-001
+      - US-002
+      - US-003
+      - scenario.payment-pending
+      - scenario.cutoff-paid
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/订阅合同与付款状态领域行为.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：落实 `US-001`、`US-002`、`US-003` 的纯领域部分；合同事实不可改写，付款请求由合同确定性派生，付款完成只消费合格 `PaymentProof`。
+        - 非目标：不实现 SQL、HTTP、真实支付、身份认证、逾期违约/退款/恢复/内容访问。
+        - >-
+          业务来源：`context.subscription`、`fulfillment.payment`、`contract.subscription`、`request.payment`、`role.publisher`、`role.payment-proof`、`relation.contract-payment`、`rule.payment-start/amount/deadline/completed`。
+        - >-
+          工程基线：`docs/architecture/domain-mapping.md`、`docs/engineering/{procedures,backend,testing}.md`。
+        - >-
+          工序实例：领域行为；真实 Description/实体/Reader/拥有者关联，小型内存关联 Fake 仅保存本次测试事实。Q1 直接支撑合同登记和付款状态 Q2。
+        - >-
+          前置产物：复用 `foundation::context.subscription::role.reader` 的 Reader Context 契约及实际复验证据。
+        - 已确认输入：合同按 FM/API 使用全部 11 个必填字段；自动触发由应用装配任务消费，不改变本任务的纯规则边界。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/订阅合同与付款状态领域行为.md
+      decisions:
+        - >-
+          `SubscriptionDescription` 保存 FM 合同的冻结字段；`Subscription` 有稳定 `subscriptionId`。
+        - Reader 通过拥有者关联登记/定位合同；同 ID 不覆盖既有合同事实。
+        - >-
+          每份合同最多一个 `PaymentRequest`；`startedAt=signedAt`、金额/币种引用合同、`expiredAt=startedAt+paymentSeconds`。
+        - '`PaymentProof` 是只读能力；完成判断要求恰好一份全字段匹配、成功且 `confirmedAt` 位于闭区间的证明。'
+        - 截止前无合格证明为 `pending`；本任务不实现 `rule.payment-expired` 或 breached 后续行为。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/backend.md
+      - docs/architecture/domain-mapping.md
+    dependencyUsage:
+      - taskRef: foundation::context.subscription::role.reader
+        consumes: User/Reader/SubscriptionContext 角色入口，不复制用户主体。
+        readinessEvidence: CHECK-FND-001 与 CHECK-FND-002 的当前源实际结果。
+    files:
+      create:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/description/SubscriptionDescription.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Subscription.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Subscriptions.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/PaymentRequest.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/PaymentProof.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/PaymentRequestNotFoundException.java
+        - >-
+          libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/SubscriptionTests.java
+        - >-
+          libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/PaymentStatusTests.java
+      modify:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/context/SubscriptionContext.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/Reader.java
+      reuse:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/User.java
+        - >-
+          libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/ReaderTests.java
+    steps:
+      - 将 FM 的 11 个必填字段映射到不可变 Description/实体，加入空值、非正金额/期限和重复 ID 的失败不变性。
+      - >-
+        让 SubscriptionContext 为 Reader 提供拥有者关联；行为留在 Reader、Subscription 或关联，不增加 Service。
+      - 从合同派生唯一 PaymentRequest，保留原业务时间和引用字段。
+      - 用 PaymentProof 集合实现精确数量、身份/标的/请求/金额/币种/成功/闭区间匹配和 pending 判断。
+      - 运行领域定向测试和模块回归。
+    checks:
+      - id: CHECK-DOM-SUB-001
+        purpose: 证明合同登记保留完整冻结事实且失败不改变集合。
+        quadrant: Q1
+        subject: Reader 拥有的订阅合同登记与定位
+        dependencies: 真实领域对象和内存 Subscriptions Fake；不启动 Spring/SQL。
+        inputs: >-
+          SUB-20261001-001、READER-001、COL-BM、ED-1、9900 CNY、固定 signedAt、payment/access/refund/restore 四个期限；逐一缺少
+          11 个字段、非正金额、重复 ID 反例。
+        expected: 首次形成可定位合同；原快照不变；非法或冲突登记被拒绝且集合大小/既有事实不变。
+        testFiles:
+          - >-
+            libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/SubscriptionTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.SubscriptionTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - foundation::context.subscription::role.reader
+        gapRefs: []
+        evidenceRequired: 命令、退出码、正常与失败不变性断言摘要。
+      - id: CHECK-DOM-PAY-001
+        purpose: 证明付款派生和完成规则保持金额、时间及精确匹配语义。
+        quadrant: Q1
+        subject: PaymentRequest 派生与 PaymentStatus 判断
+        dependencies: 真实合同/请求；PaymentProof 小型 Fake 只提供源字段。
+        inputs: >-
+          signedAt 2026-10-01T09:00:00Z、9900 CNY、900 秒；空证明、截止时证明、重复/少付/错读者/晚一秒/失败证明。
+        expected: >-
+          startedAt=09:00、expiredAt=09:15；截止时唯一合格证明 completed；09:14:59 空证明 pending；其余反例不 completed，且不改写请求或证明。
+        testFiles:
+          - >-
+            libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/PaymentStatusTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.PaymentStatusTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - foundation::context.subscription::role.reader
+        gapRefs: []
+        evidenceRequired: 命令、退出码和每个边界/反例断言摘要。
+    completionCriteria:
+      - CHECK-DOM-SUB-001 通过并证明 11 个必填字段完整性。
+      - CHECK-DOM-PAY-001 通过并覆盖闭合截止、空证明、重复和字段错配。
+      - >-
+        `./gradlew :backend-domain:test --rerun-tasks` 实际通过且领域无 Spring/MyBatis/Jackson/HTTP 依赖。
+    observedEvidence:
+      - checkId: CHECK-DOM-SUB-001
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.SubscriptionTests --rerun-tasks
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；SubscriptionTests 4 项通过，3 个 Gradle task 均实际执行；覆盖 11 个必填字段、Reader 拥有者关联、重复编号/读者错配拒绝及失败后集合与原合同事实不变。
+      - checkId: CHECK-DOM-PAY-001
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.PaymentStatusTests --rerun-tasks
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；PaymentStatusTests 5 项通过，3 个 Gradle task 均实际执行；证明 startedAt/amount/expiredAt
+          派生、每合同单一请求、闭合起止边界、截止前 pending、唯一合格证明 completed，以及重复、少付、错身份/标的/请求/币种、失败和迟到证明均不完成。
+      - checkId: DOMAIN-REGRESSION
+        command: ./gradlew :backend-domain:test --rerun-tasks
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；领域模块 20 项测试通过，3 个 Gradle task 均实际执行；既有 User/Reader 回归与新增订阅/付款行为共同通过。
+      - checkId: PROJECT-QUALITY-JAVA
+        command: ./gradlew check
+        exitCode: 0
+        observed: >-
+          BUILD SUCCESSFUL；28 个 Gradle task 中 13 个实际执行、15 个 up-to-date；Java 测试、Spotless 与现有架构检查通过。
+      - checkId: PROJECT-QUALITY-NPM-TEST
+        command: PATH=/opt/miniconda3/bin:$PATH npm test
+        exitCode: 0
+        observed: >-
+          仓库配置的应用、FM/API、Skills 与 Guides 测试套件全部通过；使用已有 Python 3.12 环境满足项目 Python 3.10+ 要求。
+      - checkId: PROJECT-QUALITY-LINT
+        command: npm run lint
+        exitCode: 0
+        observed: 前端 lint 的 1 个 Nx 任务命中缓存；Guides 检查实际确认 49 份文档、352 个本地链接及 Prettier 均通过。
+      - checkId: PROJECT-QUALITY-BUILD
+        command: npm run build
+        exitCode: 0
+        observed: >-
+          Nx 35 个成功任务中 34 个命中缓存，backend build 实际执行；evidence-modeling TypeScript typecheck 实际通过。Nx 报告既有
+          spotlessJava dependsOn 配置警告，但未导致失败。
+      - checkId: PROJECT-QUALITY-GUIDES
+        command: npm run guides:verify
+        exitCode: 0
+        observed: Guides 测试 8 项通过，49 份文档的 352 个本地链接无错误，Prettier 检查通过。
+    executionDiscipline:
+      - 若合同字段、付款触发或状态集合改变，先回来源/Plan；不得删反例或把规则移入 Resource/Mapper 以取得通过。
+  domain::context.mobile::request.mobile:
+    title: 移动扣款与付款证明领域契约
+    mode: implementation
+    status: planned
+    outcome: 交付使用 local/test 固定协议、标识和业务时间的移动扣款请求/机构结果及 PaymentProof 适配契约。
+    sourceRefs:
+      - context.mobile
+      - fulfillment.mobile
+      - contract.mobile
+      - request.mobile
+      - confirmation.mobile
+      - role.mobile-user
+      - role.mobile-provider
+      - relation.user-as-mobile-user
+      - relation.contract-mobile
+      - relation.mobile-column
+      - relation.mobile-result
+      - relation.mobile-as-payment-proof
+      - design.mobile-domain-contracts
+    ruleRefs:
+      - rule.mobile-completed
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.cutoff-paid
+    storyRefs:
+      - US-002
+    acceptanceRefs:
+      - AC-002-02
+      - AC-002-04
+    sliceRefs:
+      - US-002
+      - scenario.mobile-subscription
+      - scenario.cutoff-paid
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/移动扣款与付款证明领域契约.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：保留 `contract.mobile`、`request.mobile`、`confirmation.mobile` 的原始责任和时间，证明唯一合格机构结果可扮演 `role.payment-proof`。
+        - 非目标：无移动支付 HTTP API、真实 SDK、验签、超时/重试/补偿；不实现 `rule.mobile-expired`。
+        - >-
+          业务来源：移动支付 Context、协议、扣款请求/结果、`relation.mobile-as-payment-proof`、`rule.mobile-completed`。
+        - 工序实例：领域行为和模块公开契约；真实移动领域对象，Fake 结果集合只证明规则，不证明协议或 SQL。
+        - 前置产物：消费订阅任务的 `PaymentRequest` 和 `PaymentProof` 窄契约，不访问订阅内部关联。
+        - >-
+          已确认输入：local/test 固定使用 `PAY-001`、`MOBILE-001`、`MOBILE-REQ-001` 和移动请求业务开始时间 `2026-10-01T09:02:00Z`；付款请求开始时间仍为合同
+          `signed_at=09:00`。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/移动扣款与付款证明领域契约.md
+      decisions:
+        - 移动支付模块拥有协议、扣款请求、机构结果；订阅模块只看 `PaymentProof` 接口。
+        - '`MobileConfirmation` 直接实现或提供不可变 `PaymentProof` 视图，不复制凭证、签发时间或责任方。'
+        - 一次移动请求最多一个有效结果；重复同一结果交由持久化幂等处理，两个不同结果不能合并。
+        - 请求截止引用订阅付款截止，不因接入动作延长。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/backend.md
+      - docs/architecture/domain-mapping.md
+    dependencyUsage:
+      - taskRef: domain::context.subscription::request.payment
+        consumes: PaymentRequest 的订阅/读者/专栏/金额/币种/起止时间和 PaymentProof 公共接口。
+        readinessEvidence: CHECK-DOM-PAY-001 的当前源实际结果。
+    files:
+      create:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/context/MobileContext.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/description/MobileAgreementDescription.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/MobileAgreement.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/MobileDebitRequest.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/MobileDebitConfirmation.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/MobileUser.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/MobileProvider.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/integration/MobilePaymentPort.java
+        - >-
+          libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/MobilePaymentTests.java
+      modify: []
+      reuse:
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/role/PaymentProof.java
+        - >-
+          libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/PaymentRequest.java
+    steps:
+      - 定义移动协议、请求、结果和支付端口的最小公开契约，并将固定值限制在 local/test 夹具。
+      - 从 PaymentRequest 与明确的协议/业务开始时间形成 MobileDebitRequest，禁止延长截止或改变金额币种。
+      - >-
+        让原始 MobileDebitConfirmation 扮演 PaymentProof，并按 rule.mobile-completed 判断唯一全额按时结果。
+      - 以正常、截止时、错配、失败和重复结果运行纯领域测试。
+    checks:
+      - id: CHECK-DOM-MOBILE-001
+        purpose: 证明移动请求保留订阅付款边界且原结果直接提供付款证明能力。
+        quadrant: Q1
+        subject: MobileDebitRequest、MobileDebitConfirmation、PaymentProof 适配
+        dependencies: 真实领域对象；结果集合 Fake，不包含网络或数据库。
+        inputs: >-
+          付款请求 PAY-001、移动协议 MOBILE-001、移动请求 MOBILE-REQ-001、业务开始 09:02、截止 09:15、9900 CNY；截止时成功、失败、错配和两个合格结果。
+        expected: 请求不改变付款字段/截止；唯一匹配结果 completed；失败、错配或两个合格结果不 completed；原凭证字段保持不变。
+        testFiles:
+          - >-
+            libs/backend/domain/src/test/java/com/evidencepoc/backend/domain/MobilePaymentTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.MobilePaymentTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - domain::context.subscription::request.payment
+        gapRefs: []
+        evidenceRequired: 命令、退出码以及请求引用和每类结果断言摘要。
+    completionCriteria:
+      - CHECK-DOM-MOBILE-001 通过，并证明 local/test 固定协议和业务时间不会覆盖付款请求的 09:00 开始时间。
+      - '`./gradlew :backend-domain:test --rerun-tasks` 实际通过。'
+    observedEvidence: []
+    executionDiscipline:
+      - 真实支付接入另行授权。不得从“外部机构”推导网络协议，也不得把机构结果重建成订阅模块的新凭证。
+  mybatis::context.subscription::design.subscription-payment-storage:
+    title: 订阅与移动支付 MyBatis 持久化
+    mode: implementation
+    status: planned
+    outcome: 交付 H2/MyBatis/Flyway 往返、幂等、唯一结果和本地事务回滚。
+    sourceRefs:
+      - contract.subscription
+      - request.payment
+      - request.mobile
+      - confirmation.mobile
+      - relation.contract-payment
+      - relation.mobile-result
+      - design.subscription-payment-storage
+    ruleRefs: []
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+    storyRefs:
+      - US-001
+      - US-002
+      - US-003
+    acceptanceRefs:
+      - AC-001-01
+      - AC-001-02
+      - AC-002-02
+      - AC-003-02
+    sliceRefs:
+      - US-001
+      - US-002
+      - US-003
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/订阅与移动支付MyBatis持久化.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - 交付目标：为已确认领域契约提供真实 H2/MyBatis 写入、读取、唯一性、幂等和回滚证据。
+        - 非目标：不决定生产数据库/隔离级别，不在 Mapper 实现业务完成规则，不跨模块直接写私有表。
+        - >-
+          工程来源：`docs/architecture/modules.md`、`docs/engineering/{procedures,backend,testing,examples}.md`、`docs/howtos/database.md`。
+        - 工序实例：持久化适配；真实 H2、Flyway、MyBatis XML、领域对象和事务，禁止 Row/PO 复制层。Q1 支撑真实装配 Q2。
+        - 前置产物：订阅与移动支付领域类型、根/关联契约和唯一结果语义。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/订阅与移动支付MyBatis持久化.md
+      decisions:
+        - 订阅包拥有合同、付款请求和订阅幂等记录；移动支付包拥有协议、扣款请求和机构结果。
+        - Flyway 追加 `V2`，不修改 V1；外键和唯一约束只表达已确认身份/基数。
+        - 合同登记、付款请求形成、移动请求登记、移动结果登记分别有明确事务入口；失败不留部分行。
+        - 同幂等键同 payload 重放原结果，不同 payload 冲突；同一请求不得形成第二份有效结果。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/backend.md
+      - docs/howtos/database.md
+      - docs/engineering/examples.md
+    dependencyUsage:
+      - taskRef: domain::context.subscription::request.payment
+        consumes: 合同/付款请求实体、根集合与关联契约；不复制规则。
+        readinessEvidence: 领域模块当前测试和公开接口。
+      - taskRef: domain::context.mobile::request.mobile
+        consumes: 移动协议/请求/结果及 PaymentProof 适配契约。
+        readinessEvidence: CHECK-DOM-MOBILE-001 的当前源实际结果。
+    files:
+      create:
+        - >-
+          libs/backend/persistent/src/main/resources/db/migration/V2__create_subscription_payment_tables.sql
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/mappers/SubscriptionsMapper.java
+        - >-
+          libs/backend/persistent/src/main/resources/mybatis.mappers/SubscriptionsMapper.xml
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/mappers/MobilePaymentsMapper.java
+        - >-
+          libs/backend/persistent/src/main/resources/mybatis.mappers/MobilePaymentsMapper.xml
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/Subscriptions.java
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/MobilePayments.java
+        - >-
+          libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisSubscriptionsTests.java
+        - >-
+          libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisMobilePaymentsTests.java
+      modify:
+        - libs/backend/persistent/src/main/resources/mybatis-config.xml
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/PersistenceConfiguration.java
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/context/SubscriptionContext.java
+      reuse:
+        - >-
+          libs/backend/persistent/src/main/resources/db/migration/V1__create_users.sql
+        - >-
+          libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisUsersTests.java
+    steps:
+      - 追加 V2 迁移，明确表/列/唯一键/外键归属，不修改 V1。
+      - 用 Mapper/XML resultMap 直接装配不可变领域对象及关联适配器。
+      - 为各写入口声明事务、检查影响行数，并实现幂等 payload 判定和唯一结果约束。
+      - 验证写后重读、列表稳定顺序、缺失付款、重复通知、冲突幂等和强制回滚。
+    checks:
+      - id: CHECK-SQL-SUB-001
+        purpose: 证明合同和付款请求通过真实 SQL/XML 往返并在失败时回滚。
+        quadrant: Q1
+        subject: SubscriptionsMapper/XML、迁移和本地事务
+        dependencies: 真实 H2、Flyway、MyBatis、领域对象；不证明生产方言。
+        inputs: 完整合同、派生付款请求、重复 subscriptionId、缺字段和事务内强制异常。
+        expected: 写后重读字段一致；每合同最多一请求；冲突/异常不留下合同、请求或幂等残行；列表稳定按约定排序。
+        testFiles:
+          - >-
+            libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisSubscriptionsTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisSubscriptionsTests
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - domain::context.subscription::request.payment
+          - domain::context.mobile::request.mobile
+        gapRefs:
+          - GAP-DATABASE
+        evidenceRequired: 命令、退出码、Flyway 版本、往返/唯一/回滚断言摘要和 H2 限制。
+      - id: CHECK-SQL-MOBILE-001
+        purpose: 证明移动请求/结果追加、幂等重放和唯一结果约束。
+        quadrant: Q1
+        subject: MobilePaymentsMapper/XML 与结果登记事务
+        dependencies: 真实 H2/MyBatis；不调用支付端口。
+        inputs: >-
+          固定 MOBILE-001/PAY-001/MOBILE-REQ-001/09:02 夹具；同键同 payload、同键不同 payload、同请求重复相同结果、同请求第二个不同结果和强制回滚。
+        expected: 同 payload 返回原事实；不同 payload 冲突；不形成第二份有效结果；异常不留部分行。
+        testFiles:
+          - >-
+            libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisMobilePaymentsTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisMobilePaymentsTests
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - domain::context.subscription::request.payment
+          - domain::context.mobile::request.mobile
+        gapRefs:
+          - GAP-DATABASE
+        evidenceRequired: 命令、退出码、唯一/幂等/回滚断言摘要和 H2 限制。
+    completionCriteria:
+      - CHECK-SQL-SUB-001 与 CHECK-SQL-MOBILE-001 通过。
+      - Mapper/XML 直接返回领域对象，业务完成判断未进入 SQL/Mapper。
+      - '`./gradlew :backend-persistent:test --rerun-tasks` 实际通过；明确不声称生产数据库已验证。'
+    observedEvidence: []
+    executionDiscipline:
+      - 生产数据库未选只阻塞生产 SQL/并发保证；H2 任务仍须验证当前 local/test 事务。表或事务归属变化必须返回 Plan。
+  integration::context.mobile::design.local-mobile-payment-adapter:
+    title: 本地移动支付端口模拟器
+    mode: implementation
+    status: planned
+    outcome: 交付仅 local/test 注册且使用固定场景夹具的确定性支付端口 Stub。
+    sourceRefs:
+      - request.mobile
+      - confirmation.mobile
+      - rule.mobile-completed
+      - scenario.mobile-subscription
+      - design.local-mobile-payment-adapter
+    ruleRefs:
+      - rule.mobile-completed
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.cutoff-paid
+    storyRefs:
+      - US-002
+    acceptanceRefs:
+      - AC-002-02
+      - AC-002-04
+    sliceRefs:
+      - US-002
+      - scenario.mobile-subscription
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/本地移动支付端口模拟器.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：接收明确的 `MobileDebitRequest`，返回可配置的固定 `MobileDebitConfirmation`，供应用装配验证正常、截止和失败结果。
+        - 非目标：不联网、不验签、不重试、不自动补偿、不选择生产凭证信任机制。
+        - >-
+          工程来源：`docs/requirements/scope.md`、`docs/requirements/quality-attributes.md` 的 `QA-INTEGRATION`、`docs/engineering/{procedures,security,testing}.md`。
+        - 工序实例：集成适配；真实端口契约与 local/test Stub，固定时钟/结果。Stub 只证明调用边界，不证明机构行为。
+        - 前置产物：移动支付领域任务的端口、请求和结果契约。
+        - >-
+          已确认输入：local/test 固定协议 `MOBILE-001`、付款请求 `PAY-001`、移动请求 `MOBILE-REQ-001` 和请求业务开始时间 `2026-10-01T09:02:00Z`。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/本地移动支付端口模拟器.md
+      decisions:
+        - 实现放在 `apps/backend` 的 local/test 配置，不进入 domain，也不在默认生产 profile 注册。
+        - 输入输出完整保留请求编号、订阅、读者、专栏、付款请求、金额、币种和业务确认时间。
+        - 测试可选择 success/failure 和 confirmedAt；模拟器不自行读取服务器当前时间。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/security.md
+      - docs/requirements/quality-attributes.md
+    dependencyUsage:
+      - taskRef: domain::context.mobile::request.mobile
+        consumes: MobilePaymentPort、MobileDebitRequest、MobileDebitConfirmation。
+        readinessEvidence: CHECK-DOM-MOBILE-001 的当前源实际结果。
+    files:
+      create:
+        - >-
+          apps/backend/src/main/java/com/evidencepoc/backend/payment/LocalMobilePaymentAdapter.java
+        - >-
+          apps/backend/src/main/java/com/evidencepoc/backend/payment/LocalMobilePaymentConfiguration.java
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/payment/LocalMobilePaymentAdapterTests.java
+      modify:
+        - apps/backend/src/main/resources/application-local.properties
+        - apps/backend/src/test/resources/application-test.properties
+      reuse:
+        - >-
+          apps/backend/src/main/java/com/evidencepoc/backend/BackendApplication.java
+    steps:
+      - 配置 local/test 固定协议、请求标识、业务开始时间、结果 ID、success 和 confirmedAt；不把这些夹具扩成生产规则。
+      - 实现 MobilePaymentPort Stub，逐字段从请求形成原始机构结果，不做业务完成判断。
+      - 验证 profile 隔离、固定成功/失败/截止结果和输入不被修改。
+    checks:
+      - id: CHECK-LOCALPAY-001
+        purpose: 证明 local/test 支付 Stub 确定、保真且不混入领域规则。
+        quadrant: Q1
+        subject: LocalMobilePaymentAdapter
+        dependencies: 真实端口契约；本地 Stub，无网络/SQL。
+        inputs: >-
+          MOBILE-001、PAY-001、MOBILE-REQ-001、startedAt=2026-10-01T09:02:00Z；固定移动请求；success=true/false；confirmedAt=expiredAt；明确
+          paymentId。
+        expected: 输出逐字段匹配请求和配置业务时间；相同输入配置产生相同结果；输入不变；默认非 local/test profile 不注册 Stub。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/payment/LocalMobilePaymentAdapterTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.payment.LocalMobilePaymentAdapterTests
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - domain::context.mobile::request.mobile
+        gapRefs: []
+        evidenceRequired: 命令、退出码、profile 与字段保真断言摘要；明确未发生网络调用。
+    completionCriteria:
+      - CHECK-LOCALPAY-001 通过，且固定夹具与适配器只在 local/test 注册。
+      - 文档与结果不声称真实支付协议、可靠性或信任边界已验证。
+    observedEvidence: []
+    executionDiscipline:
+      - 若用户要求真实支付，另建有协议来源的任务；不得把此 Stub 扩展成隐式生产实现。
+  api::context.subscription::capability.register-subscription-reader:
+    title: 订阅合同与付款查询 HTTP 接口
+    mode: implementation
+    status: planned
+    outcome: 交付 11 字段合同登记/读取/列表和付款状态读取的独立 HTTP 契约。
+    sourceRefs:
+      - resource.party-user
+      - resource.subscription
+      - resource.party-subscriptions
+      - resource.payment
+      - capability.register-subscription-reader
+      - capability.list-subscriptions-reader
+      - capability.read-subscription-reader
+      - capability.read-payment-reader
+      - design.subscription-http-contract
+    ruleRefs: []
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+    storyRefs:
+      - US-001
+      - US-003
+    acceptanceRefs:
+      - AC-001-01
+      - AC-001-02
+      - AC-003-01
+      - AC-003-02
+      - AC-003-03
+    sliceRefs:
+      - US-001
+      - US-003
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/订阅合同与付款查询HTTP接口.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：实现 `POST /subscriptions`、`GET /subscriptions/{subscriptionId}`、`GET /users/{userId}/subscriptions`、`GET
+          /subscriptions/{subscriptionId}/payment`。
+        - 非目标：不实现支付请求公开 POST、真实认证、内容/退款/恢复/预付费接口，不依赖 persistent/app/数据库。
+        - >-
+          业务/API 来源：`.evidence/api/api.yaml` 及 `docs/plans/smart-domain/api-planning-input.yaml` 中 4 个
+          capability、4 个 resource；权威 API 的 representation/operation/journey 和 FM 合同、付款字段用于追溯。
+        - >-
+          工程基线：`docs/engineering/{procedures,api,security,testing,examples}.md` 和 Jersey 子资源约束。
+        - >-
+          工序实例：HTTP 契约；真实随机端口、Jersey、Jackson、HAL/HAL-FORMS 和 Pagination，mock 领域根/关联，不 mock Resource/序列化器。
+        - 前置产物：Reader Context、合同根集合、付款查询和领域异常。
+        - >-
+          已确认输入：POST schema 使用全部 11 个必填字段；`GAP-IDENTITY` 允许 local/test 协议测试继续，但 403 不计为完成证据。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/订阅合同与付款查询HTTP接口.md
+      decisions:
+        - >-
+          Root → subscriptions 集合 → 已绑定 Subscription → payment singleton；Users 子资源导航到本人合同集合。
+        - 请求使用可写 Bean，领域 Description 保持不可变；未知字段/非法 JSON/类型错误严格拒绝。
+        - >-
+          POST 要求 `Idempotency-Key`，返回 201、Location 和 self；同键冲突映射 409，业务字段失败映射 422。
+        - '读取返回 `Cache-Control: no-store`；付款请求不存在映射 404；状态来自领域，不以资源存在代替完成。'
+        - 列表复用 smart-domain Pagination，空集合/边界/可跟随链接按实际 0.3.0 行为测试。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/api.md
+      - docs/engineering/security.md
+      - docs/engineering/examples.md
+    dependencyUsage:
+      - taskRef: foundation::context.subscription::role.reader
+        consumes: User/Reader Context 入口及主体身份语义。
+        readinessEvidence: CHECK-FND-001 和 CHECK-FND-002。
+      - taskRef: domain::context.subscription::request.payment
+        consumes: 合同根集合、Reader 行为、付款查询、状态和领域异常。
+        readinessEvidence: CHECK-DOM-SUB-001 与 CHECK-DOM-PAY-001。
+    files:
+      create:
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/SubscriptionsApi.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/SubscriptionApi.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/PaymentApi.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/SubscriptionRequest.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/representation/SubscriptionModel.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/representation/PaymentModel.java
+        - >-
+          libs/backend/api/src/test/java/com/evidencepoc/backend/api/SubscriptionsApiTests.java
+        - >-
+          libs/backend/api/src/test/java/com/evidencepoc/backend/api/PaymentApiTests.java
+      modify:
+        - libs/backend/api/src/main/java/com/evidencepoc/backend/api/RootApi.java
+        - libs/backend/api/src/main/java/com/evidencepoc/backend/api/UsersApi.java
+        - libs/backend/api/src/main/java/com/evidencepoc/backend/api/UserApi.java
+        - >-
+          libs/backend/api/src/main/java/com/evidencepoc/backend/api/ApiTemplates.java
+        - >-
+          libs/backend/api/src/test/java/com/evidencepoc/backend/api/config/ApiTestApplication.java
+      reuse:
+        - libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTest.java
+        - >-
+          libs/backend/api/src/test/java/com/evidencepoc/backend/api/UsersApiTests.java
+    steps:
+      - 建立包含 11 个必填字段的严格请求 Bean、领域转换和错误映射。
+      - >-
+        实现 subscriptions 集合/成员/payment 子资源及 Users 到合同列表导航，所有手工子资源经 ResourceContext 初始化。
+      - 构造 HAL 表示、Location/self、no-store、分页和可编辑模板；不写业务规则。
+      - 用 mock 领域边界运行真实 HTTP 正常、非法、缺失、冲突、空列表和链接跟随测试。
+    checks:
+      - id: CHECK-API-SUB-001
+        purpose: 证明合同登记/读取/列表的 HTTP 输入、调用、错误和导航契约。
+        quadrant: Q1
+        subject: SubscriptionsApi、SubscriptionApi 和用户合同列表子资源
+        dependencies: 真实随机端口/Jersey/Jackson/HAL/Pagination；mock 领域根集合。
+        inputs: 包含 11 个字段的完整合同、Idempotency-Key；逐一缺字段、未知字段、非法 JSON、同键冲突；空/首尾/越界列表。
+        expected: 201+Location/self、200 读取/列表、409/422/400 按契约；拒绝时不调用写行为；链接可跟随且 no-store。
+        testFiles:
+          - >-
+            libs/backend/api/src/test/java/com/evidencepoc/backend/api/SubscriptionsApiTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-api:test --tests com.evidencepoc.backend.api.SubscriptionsApiTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - foundation::context.subscription::role.reader
+          - domain::context.subscription::request.payment
+        gapRefs:
+          - GAP-IDENTITY
+        evidenceRequired: 命令、退出码、实际 HTTP 状态/媒体类型/链接和 mock 调用摘要。
+      - id: CHECK-API-PAY-001
+        purpose: 证明付款表示区分资源存在与业务状态，缺失请求为 404。
+        quadrant: Q1
+        subject: PaymentApi
+        dependencies: 真实 HTTP/序列化；mock 付款查询返回 completed、pending 或缺失。
+        inputs: SUB-20261001-001 的 completed、pending、未形成付款三种领域结果。
+        expected: completed/pending 均返回 200 且状态来自领域；未形成返回 404；self 可跟随、no-store。
+        testFiles:
+          - >-
+            libs/backend/api/src/test/java/com/evidencepoc/backend/api/PaymentApiTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend-api:test --tests com.evidencepoc.backend.api.PaymentApiTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - domain::context.subscription::request.payment
+        gapRefs:
+          - GAP-IDENTITY
+        evidenceRequired: 命令、退出码和三种实际 HTTP 响应摘要。
+    completionCriteria:
+      - CHECK-API-SUB-001 与 CHECK-API-PAY-001 通过，并证明 11 字段 POST schema。
+      - >-
+        `./gradlew :backend-api:test --rerun-tasks` 实际通过，api 不依赖 persistent/app/数据库。
+      - QA-IDENTITY 未解决时只声明 local/test 能力，不声称 403 或生产授权完成。
+    observedEvidence: []
+    executionDiscipline:
+      - 不得根据已有 User CRUD 推导生产主体权限；隐藏链接不等于授权。API 契约差异必须返回 API/需求拥有者，不静默改字段或状态码。
+  'integration::context.subscription::design.subscription-payment-orchestration':
+    title: 订阅支付应用装配与模块协作
+    mode: implementation
+    status: planned
+    outcome: 交付合同登记成功后自动触发付款的真实适配器装配、模块协作和分段事务证据。
+    sourceRefs:
+      - contract.subscription
+      - request.payment
+      - request.mobile
+      - confirmation.mobile
+      - scenario.mobile-subscription
+      - design.subscription-payment-orchestration
+    ruleRefs:
+      - rule.payment-completed
+      - rule.mobile-completed
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+    storyRefs:
+      - US-001
+      - US-002
+      - US-003
+    acceptanceRefs:
+      - AC-002-01
+      - AC-002-02
+      - AC-002-03
+      - AC-003-01
+      - AC-003-02
+    sliceRefs:
+      - US-001
+      - US-002
+      - US-003
+      - scenario.mobile-subscription
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/订阅支付应用装配与模块协作.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - 交付目标：让真实 Resource、领域公开契约、持久化适配器和 local/test 支付端口在 app 中可用；明确付款触发与事务分段。
+        - 非目标：组合根不实现业务 Service，不直接访问 Mapper/表，不把外部调用放入数据库事务，不接真实支付。
+        - >-
+          工程来源：`docs/architecture/{overview,modules}.md`、`docs/engineering/{procedures,backend,security,testing,examples}.md`。
+        - >-
+          工序实例：应用装配与模块协作；真实领域、persistent 和 HTTP；local/test Stub 替代外部机构。Q1 装配/架构检查支撑主链 Q2。
+        - 前置产物：真实订阅/移动持久化、local 支付端口和订阅 API。
+        - >-
+          已确认输入：合同登记成功后自动形成付款请求并进入 local/test 扣款调用；固定使用 `PAY-001`、`MOBILE-001`、`MOBILE-REQ-001` 和移动请求业务开始时间
+          `09:02`。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/订阅支付应用装配与模块协作.md
+      decisions:
+        - app 只扫描/配置 Bean；实际业务流程由 Reader/合同拥有者关联和 Context 注入的公开端口表达。
+        - 合同 11 字段和付款请求在合同登记事务中形成；合同登记成功后自动调用支付端口，结果在独立事务中幂等登记。本地事务不声称回滚支付端口副作用。
+        - 模块协作走 Java 契约，禁止订阅包访问移动支付 Mapper 或反向访问订阅私有表。
+        - local/test profile 注册模拟器；正式 profile 在无真实端口时启动/能力暴露策略须按当前范围保持隔离。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/engineering/backend.md
+      - docs/engineering/security.md
+      - docs/engineering/examples.md
+    dependencyUsage:
+      - taskRef: mybatis::context.subscription::design.subscription-payment-storage
+        consumes: 真实合同、请求、结果关联适配器和事务入口。
+        readinessEvidence: CHECK-SQL-SUB-001、CHECK-SQL-MOBILE-001。
+      - taskRef: integration::context.mobile::design.local-mobile-payment-adapter
+        consumes: local/test MobilePaymentPort Stub。
+        readinessEvidence: CHECK-LOCALPAY-001。
+      - taskRef: api::context.subscription::capability.register-subscription-reader
+        consumes: 已确定的 Jersey Resource、表示和领域调用边界。
+        readinessEvidence: CHECK-API-SUB-001、CHECK-API-PAY-001。
+    files:
+      create:
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/subscription/SubscriptionAssemblyTests.java
+      modify:
+        - >-
+          apps/backend/src/main/java/com/evidencepoc/backend/BackendApplication.java
+        - >-
+          apps/backend/src/main/java/com/evidencepoc/backend/config/JerseyConfiguration.java
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java
+        - apps/backend/src/test/resources/application-test.properties
+      reuse:
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/user/UserApiTests.java
+        - >-
+          libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/context/SubscriptionContext.java
+    steps:
+      - 把公开领域契约、适配器、Resource 和 local/test 端口接入组合根，在合同登记成功路径自动形成付款请求并调用支付端口。
+      - 明确并测试合同/请求事务、端口调用、结果登记事务的顺序和失败边界。
+      - 扩展架构测试，禁止业务模块访问彼此 Mapper/内部包及 app 承接业务规则。
+      - 通过真实 HTTP + SQL 验证 Bean 接线、profile 隔离和失败后的数据状态。
+    checks:
+      - id: CHECK-APP-WIRE-001
+        purpose: 证明统一应用通过公开契约完成真实装配与分段事务。
+        quadrant: Q1
+        subject: Jersey -> Reader/Subscriptions -> MyBatis -> MobilePaymentPort -> 结果登记
+        dependencies: 真实 Spring/Jersey/H2/MyBatis；local/test 支付 Stub，无网络。
+        inputs: >-
+          包含 11 字段的固定合同；系统自动形成 PAY-001，并以 MOBILE-001/MOBILE-REQ-001/09:02 调用固定成功结果；端口抛错和结果登记抛错两种故障。
+        expected: 正常链路可经 HTTP/SQL观察；端口失败不伪造结果；结果登记失败不产生部分结果；外部调用不位于数据库事务回滚承诺内。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/subscription/SubscriptionAssemblyTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.subscription.SubscriptionAssemblyTests
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - mybatis::context.subscription::design.subscription-payment-storage
+          - integration::context.mobile::design.local-mobile-payment-adapter
+          - api::context.subscription::capability.register-subscription-reader
+        gapRefs: []
+        evidenceRequired: 命令、退出码、真实 HTTP/SQL、Stub 调用和故障后数据摘要。
+      - id: CHECK-APP-ARCH-001
+        purpose: 证明新增业务模块只通过公开契约协作。
+        quadrant: Q4
+        subject: 技术分层、业务包和数据所有权依赖规则
+        dependencies: ArchUnit 扫描生产类。
+        inputs: 当前 backend classpath 和新增订阅/移动支付包。
+        expected: domain 无技术依赖；api 不访问 persistent；订阅/移动支付互不访问对方 Mapper/内部包；app 无业务规则类。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/BackendArchitectureTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - mybatis::context.subscription::design.subscription-payment-storage
+          - integration::context.mobile::design.local-mobile-payment-adapter
+          - api::context.subscription::capability.register-subscription-reader
+        gapRefs: []
+        evidenceRequired: 命令、退出码和新增架构规则摘要。
+    completionCriteria:
+      - CHECK-APP-WIRE-001、CHECK-APP-ARCH-001 通过，且正常路径证明合同登记后的自动触发。
+      - >-
+        `./gradlew :backend:test --rerun-tasks` 实际通过，且 local/test Stub 未在不允许的 profile 暴露。
+    observedEvidence: []
+    executionDiscipline:
+      - 若事务参与者或触发点变化，返回 Plan；不得在组合根新增业务 Service 来绕过领域拥有者。
+  'acceptance::scenario.mobile-subscription::design.mobile-subscription-journey':
+    title: 移动支付订阅主链验收
+    mode: implementation
+    status: planned
+    outcome: >-
+      以真实 HTTP、SQL 和 local/test 固定支付 Stub 消费当前 API 合成测试向量，验收自动触发、completed、pending、截止和 404。
+    sourceRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+      - scenario.cutoff-paid
+      - capability.register-subscription-reader
+      - capability.read-subscription-reader
+      - capability.read-payment-reader
+      - design.mobile-subscription-journey
+    ruleRefs:
+      - rule.payment-start
+      - rule.payment-amount
+      - rule.payment-deadline
+      - rule.payment-completed
+      - rule.mobile-completed
+    scenarioRefs:
+      - scenario.mobile-subscription
+      - scenario.payment-pending
+      - scenario.cutoff-paid
+    storyRefs:
+      - US-001
+      - US-002
+      - US-003
+    acceptanceRefs:
+      - AC-001-01
+      - AC-001-02
+      - AC-002-01
+      - AC-002-02
+      - AC-002-03
+      - AC-002-04
+      - AC-003-01
+      - AC-003-02
+    sliceRefs:
+      - US-001
+      - US-002
+      - US-003
+    gapRefs: []
+    guides:
+      archiveRef: archive/schema-2/tasks/移动支付订阅主链验收.md
+      items:
+        - >-
+          项目入口：`AGENTS.md`、`docs/guides/index.md`；总索引：[`../index.md`](../index.md)。
+        - >-
+          交付目标：从真实 HTTP 登记合同，按已确认触发形成付款请求，调用 local/test 支付端口并登记结果，读取 completed/pending；付款请求未形成返回 404。
+        - 非目标：不验收前端、真实身份/403、生产数据库、真实支付协议、逾期违约、退款/恢复/内容访问/预付费。
+        - >-
+          业务来源：`scenario.mobile-subscription`、`scenario.payment-pending`、`scenario.cutoff-paid` 和 `AC-001`～`AC-003`。
+        - >-
+          工序实例：业务旅程验收；真实随机端口 HTTP、Jersey、领域、H2/MyBatis/Flyway，外部机构由 local/test Stub 替代。Q2 失败必须定位到前置 Q1，不修改业务预期。
+        - 前置产物：应用装配任务及其真实 HTTP/SQL、架构和故障证据。
+        - >-
+          已确认输入：合同采用 11 个字段；登记成功后自动触发；local/test 固定使用 `PAY-001`、`MOBILE-001`、`MOBILE-REQ-001` 和移动请求业务开始时间
+          `09:02`。API 合成向量来自 `.evidence/api/generated/e2e-test-vectors.json`，只作为确定性请求/预期模板；QA-IDENTITY
+          仅阻塞 403/生产授权验收。
+      freshnessRisks:
+        - 迁移保留的是历史任务前馈；执行前仍须按当前 Guides 重新核对来源、代码与环境。
+    design:
+      archiveRef: archive/schema-2/tasks/移动支付订阅主链验收.md
+      decisions:
+        - 测试固定业务时间，不依赖服务器当前时间；每例隔离数据并验证失败不变性。
+        - completed：唯一全额匹配证明在 `[startedAt, expiredAt]`；cutoff 取 `expiredAt` 本身。
+        - pending：`asOf=2026-10-01T09:14:59Z` 且无证明；未形成付款请求则 404。
+        - 合同登记成功不等于付款完成；所有状态从领域规则计算。
+    procedureRefs:
+      - docs/engineering/procedures.md
+      - docs/engineering/testing.md
+      - docs/requirements/stories.md
+      - docs/requirements/quality-attributes.md
+    dependencyUsage:
+      - taskRef: >-
+          integration::context.subscription::design.subscription-payment-orchestration
+        consumes: 已装配的真实 HTTP + SQL 主链、local/test 支付端口和模块边界。
+        readinessEvidence: CHECK-APP-WIRE-001 与 CHECK-APP-ARCH-001 的当前源实际结果。
+    files:
+      create:
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/subscription/SubscriptionJourneyTests.java
+      modify: []
+      reuse:
+        - .evidence/api/generated/e2e-test-vectors.json
+        - .evidence/api/generated/manifest.json
+        - >-
+          apps/backend/src/test/java/com/evidencepoc/backend/user/UserApiTests.java
+        - apps/backend/src/test/resources/application-test.properties
+    steps:
+      - ? >-
+          从 `e2e-test-vectors.json` 选择 register-subscription、list-subscriptions、read-subscription 和 read-payment
+          向量，核对 manifest 输入摘要与当前 API；只复用请求、路径、幂等键及响应预期，不把 `runtimeValidated
+        : false` 当作运行证据。
+      - 将向量中 `setup.provisioning: >-
+          unresolved` 实例化为当前 local/test 的 Reader 入口、隔离 H2 数据和支付 Stub；不得由向量推导生产认证、数据库或外部协议。
+      - 用固定合同和支付配置建立 completed、截止时 completed、pending、缺付款和非法合同测试夹具。
+      - 从真实 HTTP 执行约定旅程，并从响应与 SQL 两个边界核对原始事实和状态。
+      - 对失败输入验证无合同/请求/结果残留；对重复办理验证不产生第二份有效事实。
+      - 运行完整 app 定向验收，再执行项目要求的相关模块和总质量检查；保存真实输出证据。
+    checks:
+      - id: CHECK-ACC-MOBILE-001
+        purpose: 验收移动支付后订阅付款 completed 主链和截止闭合边界。
+        quadrant: Q2
+        subject: US-001 -> US-002 -> US-003 的真实 HTTP/SQL 旅程
+        dependencies: 真实 app/Jersey/H2/MyBatis/Flyway；local/test MobilePaymentPort Stub。
+        inputs: >-
+          `vector.http-journey.register-subscription-reader`、`vector.http-journey.read-subscription-reader`、`vector.http-journey.read-payment-reader`
+          的 SUB-20261001-001/9900 CNY/09:00/900 秒请求与预期；自动 PAY-001 与 MOBILE-001/MOBILE-REQ-001/09:02；确认时间
+          09:10 与 09:15；重复同一幂等键。
+        expected: >-
+          合同/请求/唯一结果保留原字段；startedAt 09:00、expiredAt 09:15；两种确认均 completed；重复不产生第二结果；读取返回 no-store 和可跟随链接。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/subscription/SubscriptionJourneyTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.subscription.SubscriptionJourneyTests.mobilePaymentCompletesSubscriptionAtNormalAndCutoffTimes
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - >-
+            integration::context.subscription::design.subscription-payment-orchestration
+        gapRefs:
+          - GAP-IDENTITY
+          - GAP-DATABASE
+        evidenceRequired: 命令、退出码、实际 HTTP 响应、SQL 行数/关键字段、Stub 调用和限制说明。
+      - id: CHECK-ACC-PENDING-001
+        purpose: 验收截止前无证明 pending、付款未形成 404 和非法合同失败不写入。
+        quadrant: Q2
+        subject: pending/404/失败不变性旅程
+        dependencies: 真实 app/HTTP/SQL；Stub 配置为不返回结果或不触发。
+        inputs: asOf 09:14:59 空证明；无付款请求合同；缺 signed_at 或 restore_seconds 等任一必填字段。
+        expected: 已有请求为 pending；无请求为 404；非法登记按已确认契约拒绝，合同/请求/结果表均无新增。
+        testFiles:
+          - >-
+            apps/backend/src/test/java/com/evidencepoc/backend/subscription/SubscriptionJourneyTests.java
+        cwd: .
+        command: >-
+          ./gradlew :backend:test --tests com.evidencepoc.backend.subscription.SubscriptionJourneyTests.pendingMissingPaymentAndInvalidContractRemainDistinct
+          --rerun-tasks
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - >-
+            integration::context.subscription::design.subscription-payment-orchestration
+        gapRefs:
+          - GAP-IDENTITY
+          - GAP-DATABASE
+        evidenceRequired: 命令、退出码、三类 HTTP 响应及失败后 SQL 行数。
+    completionCriteria:
+      - >-
+        API 合成向量的 manifest 输入摘要与当前 `.evidence/api/api.yaml` 一致；所消费向量仍标记 `dataClassification: synthetic`、`runtimeValidated:
+        false`，运行通过只记录在本任务 `observedEvidence`。
+      - local/test 固定夹具已由发现记录和需求确定；QA-IDENTITY/QA-DATABASE 仍未决时明确只验收 local/test。
+      - CHECK-ACC-MOBILE-001 与 CHECK-ACC-PENDING-001 实际通过。
+      - >-
+        `./gradlew check`、`npm test`、`npm run lint`、`npm run build` 实际通过；缓存、UP-TO-DATE 与真实执行分别说明。
+      - 验收后再按真实结果更新实现映射文档；不反向修改 FM/API/验收预期。
+    observedEvidence: []
+    executionDiscipline:
+      - 该任务完成只证明当前 local/test 移动支付订阅主链；不得声称生产身份、支付、数据库或其余 FM 旅程完成。
+gaps:
+  - id: GAP-IDENTITY
+    sourceRefs:
+      - QA-IDENTITY
+      - role.reader
+      - binding.caller-subscription-reader
+    statement: 可信身份、主体映射、代表权限和实例归属尚未决定。
+    affectedTaskRefs:
+      - api::context.subscription::capability.register-subscription-reader
+      - >-
+        acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+    impact: 不阻塞纯领域及隔离 local/test 主链，但阻塞 403、他人实例拒绝和生产受保护接口验收。
+    nextAction: 另行确认身份专题方案；本计划不得复制 JWT/OIDC/RBAC 默认实现。
+  - id: GAP-DATABASE
+    sourceRefs:
+      - QA-DATABASE
+      - design.subscription-payment-storage
+    statement: 生产数据库引擎、版本、隔离级别和并发策略未确定。
+    affectedTaskRefs:
+      - mybatis::context.subscription::design.subscription-payment-storage
+      - >-
+        acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+    impact: 不阻塞 H2 local/test SQL 与回滚，但阻塞生产方言、隔离和并发保证。
+    nextAction: 生产化前形成数据库专题依据并增加对应验证。
+migration:
+  fromSchemaVersion: '2.0'
+  archiveRef: archive/schema-2/index.md
+  preservedTaskDocuments:
+    - archive/schema-2/tasks/后端平台与Reader上下文基础复验.md
+    - archive/schema-2/tasks/订阅合同与付款状态领域行为.md
+    - archive/schema-2/tasks/移动扣款与付款证明领域契约.md
+    - archive/schema-2/tasks/订阅与移动支付MyBatis持久化.md
+    - archive/schema-2/tasks/本地移动支付端口模拟器.md
+    - archive/schema-2/tasks/订阅合同与付款查询HTTP接口.md
+    - archive/schema-2/tasks/订阅支付应用装配与模块协作.md
+    - archive/schema-2/tasks/移动支付订阅主链验收.md

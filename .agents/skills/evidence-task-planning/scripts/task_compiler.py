@@ -6,8 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
-import unicodedata
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -68,14 +66,9 @@ UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _ma
 
 def load(path: Path) -> dict[str, Any]:
     # SafeLoader constructors only; additionally reject duplicate mapping keys.
+    if path.suffix.lower() not in {".yaml", ".yml"}:
+        raise ValueError("mapping must be a YAML file")
     content = path.read_text(encoding="utf-8")
-    if path.suffix.lower() == ".md":
-        blocks = re.findall(
-            r"^```yaml\n(.*?)^```\s*$", content, re.MULTILINE | re.DOTALL
-        )
-        if len(blocks) != 1:
-            raise ValueError("Markdown requires exactly one YAML block")
-        content = blocks[0]
     loader = UniqueLoader(content)
     try:
         value = loader.get_single_data()
@@ -104,33 +97,6 @@ def text(value: Any, label: str) -> str:
 
 def key(*parts: str) -> str:
     return "::".join(quote(text(p, "key component"), safe="._-") for p in parts)
-
-
-def file_name(value: Any) -> str:
-    """A portable, readable Markdown basename; never a caller-provided path."""
-    name = text(value, "fileName")
-    if name != unicodedata.normalize("NFC", name) or not name.endswith(".md"):
-        raise ValueError("fileName must be NFC text ending in .md")
-    stem = name[:-3]
-    if (
-        not stem
-        or not stem[0].isalnum()
-        or stem[-1] in " ."
-        or len(name.encode("utf-8")) > 200
-        or any(
-            c not in " ._-" and unicodedata.category(c)[0] not in "LNM" for c in stem
-        )
-    ):
-        raise ValueError(
-            "fileName must be a safe readable basename (at most 200 UTF-8 bytes)"
-        )
-    portable = unicodedata.normalize("NFKC", stem).casefold()
-    device = portable.split(".", 1)[0].rstrip(" ")
-    if device in {"con", "prn", "aux", "nul"} or re.fullmatch(
-        r"(?:com|lpt)[1-9]", device
-    ):
-        raise ValueError("fileName must not use a reserved device name")
-    return name
 
 
 def _refs(value: Any, location: str = "") -> Iterator[tuple[str, str]]:
@@ -331,14 +297,12 @@ def compile_tasks(inv: dict[str, Any], mapping: dict[str, Any]) -> dict[str, Any
     if len({item["id"] for item in designs}) != len(designs):
         raise ValueError("duplicate design ID")
     groups = {}
-    names = {}
     ownership = {}
     for group in mapping.get("groups", []):
         unknown = group.keys() - {
             "concern",
             "ownerRef",
             "operationRef",
-            "fileName",
             "unitKeys",
             "dependsOn",
         }
@@ -353,11 +317,6 @@ def compile_tasks(inv: dict[str, Any], mapping: dict[str, Any]) -> dict[str, Any
         k = key(concern, owner, operation)
         if k in groups:
             raise ValueError(f"duplicate task key: {k}")
-        name = file_name(group.get("fileName"))
-        portable = unicodedata.normalize("NFKC", name).casefold()
-        if portable in names:
-            raise ValueError(f"duplicate fileName: {names[portable]} / {name}")
-        names[portable] = name
         groups[k] = group
     for k, group in groups.items():
         if not group.get("unitKeys"):
@@ -434,8 +393,6 @@ def compile_tasks(inv: dict[str, Any], mapping: dict[str, Any]) -> dict[str, Any
         tasks.append(
             {
                 "taskKey": k,
-                "fileName": g["fileName"],
-                "path": f"tasks/{g['fileName']}",
                 "concern": g["concern"],
                 "ownerRef": g["ownerRef"],
                 "operationRef": g["operationRef"],

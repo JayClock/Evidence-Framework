@@ -21,7 +21,7 @@
 | 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)          | 目录名、参考产品或模板默认业务   |
 | 业务术语             | [正式术语](../../.evidence/fm/01-glossary.md)                                            | 另写一份业务词典                 |
 | 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md) | 用同义词制造新业务对象           |
-| 执行顺序与状态       | 计划索引的 compiled / taskNotes                                                          | 文件名编号、聊天记忆、README     |
+| 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                      | 文件名、审核页、聊天记忆、README |
 | 当前是否验证         | 任务 CHECK 的本次实际结果                                                                | 文件存在、上次通过或模板中的预期 |
 
 来源冲突时，先说明各自管辖范围及差异，停止受影响行动，交由相应拥有者确认；不能按读取先后、修改时间或“代码已经这样写了”裁决。实现证据与业务批准分开记录。
@@ -62,7 +62,7 @@
 ## 缺口与转向
 
 - 只读讨论/验证：报告缺口，不擅自写计划状态。
-- 获授权实施：缺口关联索引 `gaps` 和受影响 `taskNotes`；阻塞时不进入 Action。
+- 获授权实施：缺口关联 `plan.yaml.gaps` 和受影响任务的 `gapRefs`；阻塞时不进入 Action。
 - 源业务未知：交回发现/FM/API/需求拥有者，不在代码中猜测。
 - 任务局部设计不充分：修订详情；单元归属或依赖变化：返回 Plan 重编译。
 - 环境不可用：记为环境阻塞，不伪装成业务失败。

@@ -1,0 +1,108 @@
+schemaVersion: '3.0'
+kind: smart-domain-plan
+metadata:
+  project: '{{项目名}}'
+  goal: '{{本计划可验收业务结果}}'
+  authorizationRefs: []
+  requirementRefs: []
+  nonGoals: []
+inputRoots:
+  fm: .evidence/fm
+  api: null
+sourceManifest: []
+# - path: <项目根相对路径>
+#   sourceRefs: [<已有稳定 ID>]
+#   digest: <实际摘要或版本>
+#   sections: [<适用章节>]
+#   purpose: <该来源支持的判断>
+strategy:
+  procedures: []
+  observableOutcomes: []
+  q2ToQ1: []
+  functionalContexts: []
+  unresolvedDecisions: []
+slicing:
+  designItems: []
+  # - id: design.<稳定标识>
+  #   sourceRefs: [<inventory 中的源 ID>]
+  #   reason: <有来源的设计理由>
+  groups: []
+  # - concern: domain
+  #   ownerRef: <拥有者源 ID>
+  #   operationRef: <操作源 ID>
+  #   unitKeys: [<本任务唯一拥有的工作单元>]
+  #   dependsOn: [<前置 taskKey>]
+  dispositions: []
+  # - unitKey: <工作单元 key>
+  #   kind: external | not-applicable
+  #   sourceRefs: [<源 ID>]
+  #   reason: <有来源的理由>
+compiled: null
+# 原样嵌入 task_compiler.py compile 的 JSON/YAML 结果，不手改。
+tasks: {}
+# '<compiled taskKey>':
+#   title: <供审核视图显示的交付结果>
+#   mode: implementation # design | setup | implementation | verify | manual
+#   status: planned # planned | blocked | in-progress | done
+#   outcome: <可观察交付结果>
+#   sourceRefs: []
+#   ruleRefs: []
+#   scenarioRefs: []
+#   storyRefs: []
+#   acceptanceRefs: []
+#   gapRefs: []
+#   guides:
+#     projectEntryRefs: []
+#     businessRefs: []
+#     engineeringRefs: []
+#     procedure:
+#       trigger: <本任务为何触发该工序>
+#       sectionRefs: []
+#       testBoundary: <功能上下文、真实对象和替身限制>
+#       q2Support: []
+#       exitCondition: <如何连接 CHECK>
+#     prerequisiteEvidence: []
+#     freshnessRisks: []
+#     stopConditions: []
+#   design:
+#     behaviorOwner: <源 ID 或 design.*>
+#     businessModule: <模块、公开契约和允许依赖>
+#     technicalLibraries: []
+#     dataOwnership: <表、迁移和写入口的唯一拥有者>
+#     associations: []
+#     http: <Root/集合/实体子资源与表示；不适用时明确说明>
+#     rolesAndRules: []
+#     localTransaction: <入口、参与者、事务管理器与回滚范围>
+#     externalIntegration: <仅记录已确认远程依赖>
+#     nonGoals: []
+#   procedureRefs: []
+#   dependencyUsage: []
+#   files:
+#     create: []
+#     modify: []
+#     reuse: []
+#   steps: []
+#   checks: []
+#   - id: CHECK-<全计划唯一标识>
+#     purpose: <规则或风险及判断目的>
+#     quadrant: Q1
+#     subject: <真实被测行为>
+#     dependencies: <真实依赖或替身及限制>
+#     inputs: <固定事实、身份、业务时间及反例>
+#     expected: <结果与失败不变性>
+#     testFiles: []
+#     cwd: <项目根相对目录>
+#     command: null
+#     procedure: null
+#     preparationTaskRefs: []
+#     gapRefs: []
+#     evidenceRequired: <执行时保存的结果>
+#   completionCriteria: []
+#   observedEvidence: []
+gaps: []
+# - id: GAP-<稳定标识>
+#   sourceRefs: []
+#   statement: <缺少的事实或设计>
+#   affectedTaskRefs: []
+#   impact: <局部影响>
+#   nextAction: <所需依据或行动>

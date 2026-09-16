@@ -1,6 +1,6 @@
 # 通用 Skill 评估与程序回归
 
-所有模型输入使用合成夹具，不依赖当前项目的业务对象、金额、时限或流程。评估目标是通用 FM 提取、固定技术约束、显式切片、确定性身份和多文件任务交接。
+所有模型输入使用合成夹具，不依赖当前项目的业务对象、金额、时限或流程。评估目标是通用 FM 提取、固定技术约束、显式切片、确定性身份、单一机器计划和只读审核投影。
 
 ## 程序回归
 
@@ -16,16 +16,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$SKILL_DIR/tests" -v
 - 固定模块化单体/MyBatis，profile 中统一后端应用、进程内契约、组合根/实现库、XML 和 Jersey 一致；数据库引擎保持未知。
 - 架构与技术模块平台各一份且不可排除；多个 Context 不自动增加部署或远程单元，编译结果沿用同一 profile。
 - 目录/标签/成员顺序/URI变化下的稳定工作单元和 taskKey。
-- fileName 必填，可读中文名称生成 tasks/ 下路径；路径穿越、设备名、超长、控制字符、非规范 Unicode、大小写/兼容字符重名被拒绝。
-- 改名仅改变 fileName/path，依赖、执行顺序与 API 主交付/支持任务继续引用相同 taskKey。
+- 展示字段 `title/path/fileName` 被拒绝进入 slicing，任务标题只在 `tasks[taskKey]` 维护且不影响 DAG。
+- `plan.yaml` 的 compiled 与 tasks 一一对应；状态、CHECK 和证据集中，依赖只来自 compiled。
 - 重复YAML键、重复ID、未知FM引用与不安全YAML标签拒绝。
 - 主体角色与证明角色分开，原始凭证实例不作为业务代码模板。
 - 源引用环不当成执行环；显式依赖排序稳定，执行环被拒绝。
 - 重复任务key、重复单元归属、未知单元和任意key覆盖被拒绝。
 - 未分配单元可见，固定平台单元不能借disposition移除。
-- 角色API共用任务且保留能力覆盖；编译读取索引slicing，不信任手填compiled。
-- CLI只输出JSON，不写业务模型或计划文件；计算结果不伪造执行状态。
-- 前馈模板保持唯一 YAML、taskKey/planRef、procedureRefs 与空 observedEvidence，不复制状态/依赖图；前馈协议区分业务与工程来源。
+- 角色 API 共用任务且保留能力覆盖；编译只读取 YAML 中的 slicing，不信任手填 compiled。
+- CLI 只输出 JSON，不写业务模型或计划文件；计算结果不伪造执行状态。
+- 机器计划模板保留 guides、design、procedureRefs、CHECK 与空 observedEvidence；投影测试覆盖 CSP、业务文本转义、状态校验和原子发布。
 
 这些测试验证程序的结构和确定性，不证明Agent分组合理、Java实现合规、SQL正确或业务验收通过。
 
@@ -50,9 +50,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$SKILL_DIR/tests" -v
 - 是否用不同design ID复制同义工作，或把所有工作塞进一个大任务只求覆盖通过。
 - 是否正确区分业务引用、实现依赖、加载与事务边界。
 - 是否保留规则的业务时间、原事实、角色权限和实际失败结果。
-- 是否按“显式slicing输入 → 程序compiled投影 → 任务详情”保持单一维护位置。
-- 每个可读文件是否通过 taskKey/planRef 一一绑定索引；改名是否移动同一文件并更新链接，不产生重复任务。
-- 文件名是否准确描述交付结果、必要时带上下文，不以执行编号定义身份；来源和检查是否完整，不依赖聊天记忆。
+- 是否按“显式 slicing 输入 → 程序 compiled 投影 → `tasks[taskKey]` 任务记录”保持单一机器计划。
+- `review.html` 是否从 plan.yaml 重建、完整展示状态/依赖/Guides/设计/CHECK/缺口/原始 YAML，且不成为状态或批准来源。
+- 任务标题是否准确描述交付结果且不参与身份；来源和检查是否完整，不依赖聊天记忆。
 - 未分配、未确定命令、未执行测试、未批准模型是否都如实保留。
 
 语义评估和程序回归分别记录，不用结构通过替代业务判断。
