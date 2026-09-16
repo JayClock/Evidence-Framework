@@ -34,9 +34,9 @@
 
 ## 交付文件
 
-现有历史交付文件位于 [generated](generated/)，本次包含合成 E2E 测试向量的完整批次位于 [e2e-vectors-001](generated/e2e-vectors-001/)。批次包含接口清单、HTTP 契约、OpenAPI、表示样例、HTTP 流程、合成 E2E 向量和机器投影。它们是 API 源的派生结果，不是已部署接口或本次运行验收结果。生成文件按权威字节交付，不应再被格式化，否则 manifest 摘要失效。
+当前交付文件固定保存在 [generated](generated/)；目录只保存机器消费的投影、OpenAPI、表示样例、HTTP 流程、合成 E2E 向量和 manifest。接口清单、覆盖与 HTTP 契约统一在 [可视化审核页](../views/index.html) 中阅读，不再维护重复 Markdown。它们是 API 源的派生结果，不是已部署接口或本次运行验收结果。生成文件按权威字节交付，不应再被格式化，否则 manifest 摘要失效。
 
-生成规则以 [API Skill](../../.agents/skills/evidence-api-design/SKILL.md)为准：获授权后先检查当前源，再投影到尚不存在的输出批次；不覆盖或删除已有输出，不手改生成文件。更新导航指向实际交付位置，不预填不存在的批次路径。源或校验器变化后重验，不用已留存报告替代当前检查。
+生成规则以 [API Skill](../../.agents/skills/evidence-api-design/SKILL.md)为准：获授权后先检查当前源，再整体更新固定输出目录；失败保留原目录，成功后由 Git 展示和保存版本差异。源或校验器变化后重验，不用已留存报告替代当前检查。
 
 检查命令：
 

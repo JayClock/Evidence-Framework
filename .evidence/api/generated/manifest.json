@@ -161,21 +161,13 @@
       "validation/scenarios/scenario--wrong-reader.yaml": "fd84fe8f59412771113c665555a6f5cdbf18af9d1bce671bbd1f29382c09e98d"
     },
     "sources": {
-      ".evidence/discovery.md": "0d7f22fe65060e7479530992af60229b0362e2213ce4b3358f506c3d33cfb69e"
+      ".evidence/discovery.md": "b152595e0d079d2f928675399e2161531794f9fe864f4e849adb0e0bea7f6e0c"
     }
   },
   "outputs": {
-    "api-capabilities.md": {
-      "bytes": 3607,
-      "sha256": "dbf21f98067a203c15ffed6541f2da62aadc923e986c8b3a53a020b046f26f02"
-    },
-    "api-contracts.md": {
-      "bytes": 120389,
-      "sha256": "abe1c99be8115e24b97b3777507299e64672c474a23effc12e0bfac370e5bd23"
-    },
-    "design-report.md": {
-      "bytes": 9118,
-      "sha256": "d999a9624c51c495549f3000a1c222a3d445fbbb44e22393f687eb2ce075c60f"
+    "e2e-test-vectors.json": {
+      "bytes": 69423,
+      "sha256": "d5a27c8fea53f85866b20dfe6f9d071875dd1eb88b9ff93f1f63bdb003079569"
     },
     "http-journeys.json": {
       "bytes": 9959,
@@ -187,7 +179,7 @@
     },
     "projection.json": {
       "bytes": 252800,
-      "sha256": "e8fb6299bbd38772f008cf62b88dd64b7e72e1c87c63762a3602c0ab604e36d7"
+      "sha256": "719b6b256f9f6f30b8dfb03e1d59396d43dd138a33cb5a65b133ddc74fe7fc76"
     },
     "representation-examples.json": {
       "bytes": 13670,

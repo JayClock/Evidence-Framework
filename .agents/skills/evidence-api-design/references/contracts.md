@@ -14,7 +14,7 @@
   --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```
 
-`projection.json.http` 保存 HTTP 设计结果，`api-contracts.md`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.yaml` 从它渲染。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝，输出只创建新目录。
+`projection.json.http` 保存 HTTP 设计结果，`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.yaml` 从它渲染；人工审核页由 `evidence-visualization` 直接消费投影，不维护重复的 Markdown 契约。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝；输出通过同级临时目录整体更新，历史由 Git 管理。
 
 ## 输入结构
 

@@ -37,7 +37,7 @@ class HttpCliTest(unittest.TestCase):
                     "project", "--api", str(path), "--out", str(output)
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-                self.assertTrue((output / "api-contracts.md").is_file())
+                self.assertTrue((output / "projection.json").is_file())
                 openapi = yaml.safe_load((output / "openapi.yaml").read_text())
                 operation = openapi["paths"][
                     "/subscriptions/{subscriptionId}/payments"

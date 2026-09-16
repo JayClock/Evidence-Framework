@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from test_support import API_PATH, API_ROOT, FM_ROOT, FM_SKILL, REPO_ROOT
 
@@ -49,7 +50,7 @@ class CliTest(unittest.TestCase):
             evidence = root / ".evidence"
             fm = evidence / "fm"
             api = evidence / "api/api.yaml"
-            output = evidence / "api/generated/batch-001"
+            output = evidence / "api/generated"
             shutil.copytree(example / "fm", fm)
             output.parent.mkdir(parents=True)
             shutil.copyfile(example / "api.yaml", api)
@@ -73,8 +74,6 @@ class CliTest(unittest.TestCase):
                     str(FM_SKILL),
                     "--api",
                     str(api),
-                    "--out",
-                    str(output),
                 ],
                 check=False,
                 capture_output=True,
@@ -86,9 +85,6 @@ class CliTest(unittest.TestCase):
             self.assertEqual(
                 {
                     "projection.json",
-                    "api-capabilities.md",
-                    "design-report.md",
-                    "api-contracts.md",
                     "openapi.yaml",
                     "representation-examples.json",
                     "http-journeys.json",
@@ -153,6 +149,33 @@ class CliTest(unittest.TestCase):
             self.assertTrue(create["request"]["body"])
             self.assertIn("Location", create["expect"]["headers"])
 
+    def test_failed_directory_swap_restores_previous_output(self) -> None:
+        renderer = __import__("fm_api_core.renderer", fromlist=["renderer"])
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
+            out = Path(directory) / "generated"
+            out.mkdir()
+            (out / "previous.txt").write_text("previous")
+            replace = renderer.os.replace
+            calls = 0
+
+            def fail_new_directory(source, target):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise OSError("simulated swap failure")
+                return replace(source, target)
+
+            with (
+                patch.object(renderer.os, "replace", side_effect=fail_new_directory),
+                self.assertRaisesRegex(OSError, "simulated swap failure"),
+            ):
+                renderer.write_output(
+                    out,
+                    {"projection.json": "new", "manifest.json": "manifest"},
+                )
+            self.assertEqual("previous", (out / "previous.txt").read_text())
+            self.assertEqual(["previous.txt"], [path.name for path in out.iterdir()])
+
     def test_check_and_project_are_deterministic(self) -> None:
         checked = self.command("check", "--api", str(API_PATH))
         self.assertEqual(checked.returncode, 0, checked.stderr)
@@ -168,8 +191,9 @@ class CliTest(unittest.TestCase):
                 self.assertEqual(projected.returncode, 0, projected.stderr)
             for name in (
                 "projection.json",
-                "api-capabilities.md",
-                "design-report.md",
+                "openapi.yaml",
+                "representation-examples.json",
+                "http-journeys.json",
                 "e2e-test-vectors.json",
                 "manifest.json",
             ):
@@ -177,11 +201,23 @@ class CliTest(unittest.TestCase):
                     hashlib.sha256((first / name).read_bytes()).digest(),
                     hashlib.sha256((second / name).read_bytes()).digest(),
                 )
+            (first / "stale.txt").write_text("remove on refresh")
             repeated = self.command(
                 "project", "--api", str(API_PATH), "--out", str(first)
             )
-            self.assertEqual(repeated.returncode, 1)
-            self.assertIn("OUTPUT_EXISTS", repeated.stderr)
+            self.assertEqual(repeated.returncode, 0, repeated.stderr)
+            self.assertFalse((first / "stale.txt").exists())
+            self.assertEqual(
+                {path.name for path in first.iterdir()},
+                {
+                    "projection.json",
+                    "openapi.yaml",
+                    "representation-examples.json",
+                    "http-journeys.json",
+                    "e2e-test-vectors.json",
+                    "manifest.json",
+                },
+            )
 
 
 if __name__ == "__main__":

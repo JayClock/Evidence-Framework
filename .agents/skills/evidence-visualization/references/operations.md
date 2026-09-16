@@ -16,7 +16,7 @@
   --api-skill "$API_SKILL_DIR"
 ```
 
-输入位置为项目 `.evidence/fm/` 和可选 `.evidence/api/api.yaml`。产物为 `.evidence/views/index.html`；执行日志与输入摘要嵌入页面数据。校验和投影使用临时目录，不重写历史交付批次。
+输入位置为项目 `.evidence/fm/` 和可选 `.evidence/api/api.yaml`。产物为 `.evidence/views/index.html`；执行日志与输入摘要嵌入页面数据。校验和投影使用临时目录，不改写项目当前的 `.evidence/api/generated/`。
 
 直接用浏览器打开输出文件，无需服务端或网络。离线页面是快照，修改输入后重新运行命令。它不能自行观察文件系统变化，也不会自动更新业务确认记录。
 

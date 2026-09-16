@@ -108,23 +108,20 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml"
 ```
 
-API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。[接口清单](api-capabilities.md) 是当前完整设计的索引，不需要另行筛选或审核后才能生成接口。
+API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
 
 整体覆盖包含采购和微信支付的所有上下文：11 份采购业务凭证对应登记接口；商品对应两个角色读取接口；3 份微信支付凭证由外部主体形成；两个经办主体是角色身份依据，不生成无业务根据的人员管理接口。内部／外部处理在 `nonApiActivities` 中引用模型依据；不是省略接口的实施范围开关。
 
 ## 生成投影
 
-输出目录必须尚不存在：
+固定输出目录由命令直接更新，无需预创建：
 
 ```bash
-mkdir -p "$PROJECT_ROOT/.evidence/api/generated"
-
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml" \
-  --out "$PROJECT_ROOT/.evidence/api/generated/product-procurement"
+  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml"
 ```
 
 ## HTTP 契约
@@ -136,8 +133,8 @@ mkdir -p "$PROJECT_ROOT/.evidence/api/generated"
 - 两个商品读取接口提供 HAL 表示、私有缓存、ETag；客户流程含基于前次响应头的 304 条件读取。失败或仅 304 不替代 2xx 成功覆盖。
 - HTTP 流程按角色描述入口及证据交接，FM 14 个签发步骤全部回映。微信支付活动仍是外部证据来源，不生成伪造的本地支付回调。
 
-缺少任一接口契约、成功消费步骤或整体对象／场景映射时，默认返回非零且不生成交付目录。
+缺少任一接口契约、成功消费步骤或整体对象／场景映射时，默认返回非零且不修改现有交付目录。
 
-上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定八份文件：`projection.json`、`api-capabilities.md`、`design-report.md`、`api-contracts.md`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
+上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定六份文件：`projection.json`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
 
 字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/contracts.md)。

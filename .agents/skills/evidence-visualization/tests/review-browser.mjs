@@ -133,6 +133,29 @@ try {
   const captureDirectory = await mkdtemp(
     path.join(tmpdir(), 'evidence-review-capture-'),
   );
+  assert.equal(
+    await evaluate('document.querySelector("nav button.active")?.dataset.view'),
+    'dashboard',
+  );
+  assert.equal(
+    await evaluate(
+      'document.querySelectorAll("#review-status .status-item").length',
+    ),
+    4,
+  );
+  assert.match(
+    await evaluate('document.getElementById("review-status").textContent'),
+    /运行时验证/,
+  );
+  const dashboardScreenshotPath = path.join(captureDirectory, 'dashboard.png');
+  const dashboardScreenshot = await call('Page.captureScreenshot', {
+    format: 'png',
+  });
+  await writeFile(
+    dashboardScreenshotPath,
+    Buffer.from(dashboardScreenshot.data, 'base64'),
+  );
+  await evaluate('selectView("graph")');
   assert.ok(await evaluate('graph.nodes().length > 0'));
   assert.equal(
     await evaluate('document.getElementById("graph-mode").value'),
@@ -262,6 +285,26 @@ try {
       ),
     );
   } else notApplicable.push('attributes: none declared');
+  await evaluate('selectView("journeys")');
+  const journeyCount = await evaluate('DATA.api?.http?.journeys.length || 0');
+  assert.equal(
+    await evaluate('document.querySelectorAll(".journey-flow").length'),
+    journeyCount,
+  );
+  await evaluate('selectView("coverage")');
+  const modelCoverageCount = await evaluate(
+    'DATA.api?.modelCoverage.length || 0',
+  );
+  assert.equal(
+    await evaluate('document.querySelectorAll("#coverage tbody tr").length'),
+    modelCoverageCount,
+  );
+  await evaluate('selectView("changes")');
+  assert.ok(
+    await evaluate(
+      'document.getElementById("change-summary").textContent.length > 10',
+    ),
+  );
   await evaluate('selectView("api")');
   const apiCount = await evaluate('capabilities.length');
   for (let i = 0; i < apiCount; i++)
@@ -319,6 +362,7 @@ try {
       externalRequests: network.length,
       notApplicable,
       screenshot: screenshotPath,
+      dashboardScreenshot: dashboardScreenshotPath,
       obligationScreenshot: obligationScreenshotPath,
     }),
   );

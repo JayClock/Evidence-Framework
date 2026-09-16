@@ -7,7 +7,7 @@
 - 项目根：Git 工作树 `/Users/zhongjie/Downloads/Github/Evidence-Framework`，当前基线提交 `448b0a39e1a34d55ef10d7fa8ada0f63ed58aafe`；生成计划时保留工作树中无关的未跟踪资料。
 - FM 根与输入摘要：`.evidence/fm`，模型 `column-subscription`；业务事实取 `contract.subscription`、`request.payment`、`request.mobile`、`confirmation.mobile`、相关角色/关系/规则和场景。
 - API：权威契约仍为 `.evidence/api/api.yaml`；本计划的正式输入边界为 `docs/plans/smart-domain/api-planning-input.yaml`，仅投影 `capability.register-subscription-reader`、`capability.list-subscriptions-reader`、`capability.read-subscription-reader`、`capability.read-payment-reader` 及其 4 个支撑资源。未投影能力不从权威 API 删除。
-- API 合成测试向量：`.evidence/api/generated/e2e-vectors-001/e2e-test-vectors.json` 从当前完整 API 契约确定性生成，供任务 8 选择相关向量实例化运行测试；它是派生产物，`runtimeValidated: false`，不替代权威 API、需求验收或运行结果。
+- API 合成测试向量：`.evidence/api/generated/e2e-test-vectors.json` 从当前完整 API 契约确定性生成，供任务 8 选择相关向量实例化运行测试；它是派生产物，`runtimeValidated: false`，不替代权威 API、需求验收或运行结果。
 - 软件范围与验收：`docs/requirements/scope.md`、`docs/requirements/stories.md` 和 `.evidence/discovery.md` 的本轮实施澄清；覆盖 `US-001`～`US-003`、`AC-001-01`～`AC-003-03`。内容访问、退款、恢复、预付费、异常履约、前端和真实支付协议不在本计划。
 - 项目前馈入口：`AGENTS.md`、`docs/guides/index.md`。
 - 工程基线：`docs/architecture/{overview,modules,domain-mapping}.md`、`docs/requirements/quality-attributes.md`、`docs/engineering/{procedures,testing,backend,api,security,examples}.md`、`docs/howtos/database.md`；smart-domain 固定版本为 `0.3.0`。

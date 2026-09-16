@@ -19,6 +19,10 @@ import yaml
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 MARKER = "<!-- evidence-review-generated:v1 -->"
+DATA_PATTERN = re.compile(
+    r'<script type="application/json" id="review-data">\s*(.*?)\s*</script>',
+    re.DOTALL,
+)
 
 
 def sha(data: bytes) -> str:
@@ -31,6 +35,125 @@ def embedded_json(value: object) -> str:
     for char in ("<", ">", "&", "\u2028", "\u2029"):
         text = text.replace(char, f"\\u{ord(char):04x}")
     return text
+
+
+def review_snapshot(data: dict) -> dict:
+    """Keep only stable review objects needed for the next semantic comparison."""
+    model = data.get("model") or {}
+    api = data.get("api") or {}
+    groups = {
+        "business object": model.get("entities", []),
+        "relationship": model.get("relationships", []),
+        "rule": model.get("rules", []),
+        "scenario": data.get("scenarios", []),
+        "API resource": api.get("resources", []),
+        "API capability": api.get("capabilities", []),
+        "HTTP operation": (api.get("http") or {}).get("operations", []),
+    }
+    items = {}
+    for kind, values in groups.items():
+        for value in values:
+            item_id = value.get("id")
+            if item_id:
+                items[f"{kind}:{item_id}"] = {
+                    "id": item_id,
+                    "kind": kind,
+                    "label": value.get("label")
+                    or value.get("businessCapability")
+                    or value.get("businessName")
+                    or item_id,
+                    "value": value,
+                }
+    meta = data.get("meta") or {}
+    return {
+        "generatedAt": meta.get("generatedAt"),
+        "modelDigest": meta.get("modelDigest"),
+        "apiDigest": ((data.get("apiManifest") or {}).get("inputs") or {}).get("api"),
+        "items": items,
+    }
+
+
+def snapshot_from_page(text: str) -> dict | None:
+    if not text.startswith(MARKER):
+        return None
+    match = DATA_PATTERN.search(text)
+    if not match:
+        return None
+    try:
+        return review_snapshot(parse_json(match.group(1)))
+    except ValueError:
+        return None
+
+
+def load_previous_snapshot(page: Path) -> dict | None:
+    if not page.is_file() or page.is_symlink():
+        return None
+    return snapshot_from_page(page.read_text(encoding="utf-8"))
+
+
+def load_git_snapshot(root: Path, page: Path) -> dict | None:
+    relative = page.relative_to(root).as_posix()
+    result = subprocess.run(
+        ["git", "-C", str(root), "show", f"HEAD:{relative}"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    return snapshot_from_page(result.stdout) if result.returncode == 0 else None
+
+
+def semantic_changes(
+    previous: dict | None, current: dict, source: str = "previous-review"
+) -> dict:
+    now = review_snapshot(current)
+    if previous is None:
+        return {"available": False, "baseline": None, "items": []}
+    before, after = previous["items"], now["items"]
+    changes = []
+    for key in sorted(set(before) | set(after)):
+        old, new = before.get(key), after.get(key)
+        if old is None:
+            change = "added"
+            item = new
+        elif new is None:
+            change = "removed"
+            item = old
+        elif json.dumps(old["value"], ensure_ascii=False, sort_keys=True) != json.dumps(
+            new["value"], ensure_ascii=False, sort_keys=True
+        ):
+            change = "changed"
+            item = new
+        else:
+            continue
+        needle = item["id"]
+        impacts = []
+        for scenario in current.get("scenarios", []):
+            if needle in json.dumps(scenario, ensure_ascii=False):
+                impacts.append(scenario["id"])
+        for capability in (current.get("api") or {}).get("capabilities", []):
+            if needle != capability.get("id") and needle in json.dumps(
+                capability, ensure_ascii=False
+            ):
+                impacts.append(capability["id"])
+        changes.append(
+            {
+                "change": change,
+                "id": item["id"],
+                "kind": item["kind"],
+                "label": item["label"],
+                "impactRefs": sorted(set(impacts)),
+            }
+        )
+    return {
+        "available": True,
+        "baseline": {
+            "source": source,
+            "generatedAt": previous.get("generatedAt"),
+            "modelDigest": previous.get("modelDigest"),
+            "apiDigest": previous.get("apiDigest"),
+        },
+        "items": changes,
+    }
 
 
 def yaml_files(root: Path) -> list[dict]:
@@ -265,12 +388,19 @@ def main() -> int:
         parser.error("视图目录必须位于当前项目内，且不能是符号链接")
     try:
         views.mkdir(parents=True, exist_ok=True)
+        output = views / "index.html"
+        previous = load_git_snapshot(root, output)
+        baseline_source = "git-head"
+        if previous is None:
+            previous = load_previous_snapshot(output)
+            baseline_source = "previous-review"
         with tempfile.TemporaryDirectory(prefix=".review-", dir=views) as directory:
             data = collect(root, fm_skill, api_skill, Path(directory))
+            data["changes"] = semantic_changes(previous, data, baseline_source)
             html = render(data)
             if data["meta"]["inputFiles"] != file_signature(yaml_files(root)):
                 raise ValueError("渲染期间输入变化，未覆盖原视图")
-            publish(views / "index.html", html)
+            publish(output, html)
         print(
             json.dumps(
                 {

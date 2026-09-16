@@ -30,7 +30,7 @@ def parser() -> argparse.ArgumentParser:
         if name != "inspect":
             command.add_argument("--api", required=True, type=Path)
         if name == "project":
-            command.add_argument("--out", required=True, type=Path)
+            command.add_argument("--out", type=Path)
     return value
 
 
@@ -68,8 +68,10 @@ def _validate_paths(args: argparse.Namespace, api: dict | None = None) -> str | 
         )
     if any(_within(out, path) or _within(path, out) for path in protected):
         return "OUTPUT_INPUT_CONFLICT: 输出不能与 FM、API 输入或来源重叠"
-    if out.exists():
-        return f"OUTPUT_EXISTS: {out}"
+    if out.is_symlink():
+        return "OUTPUT_INVALID: 输出目录不能是符号链接"
+    if out.exists() and not out.is_dir():
+        return "OUTPUT_INVALID: 输出必须是目录"
     if not out.parent.is_dir():
         return "OUTPUT_PARENT_INVALID: 输出父目录必须已存在"
     return None
@@ -115,7 +117,7 @@ def _finish(args: argparse.Namespace, projection: dict) -> int:
         _print(report)
     else:
         try:
-            renderer.write_new_output(
+            renderer.write_output(
                 args.out.resolve(), renderer.render_outputs(projection)
             )
         except (OSError, ValueError, KeyError) as exc:
@@ -129,6 +131,8 @@ def _finish(args: argparse.Namespace, projection: dict) -> int:
 
 def run(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
+    if args.command == "project" and args.out is None:
+        args.out = args.project_root / ".evidence/api/generated"
     path_error = _validate_paths(args)
     if path_error:
         print(path_error, file=sys.stderr)

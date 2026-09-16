@@ -190,7 +190,8 @@ class SkillDocumentationTests(unittest.TestCase):
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("报告位于模型目录之外", validation)
         api = (ROOT / "evidence-api-design/references/validation.md").read_text()
-        self.assertIn("目标尚不存在", api)
+        self.assertIn("投影输出固定更新", api)
+        self.assertIn("切换失败时恢复", api)
         self.assertIn("FM 根目录之外", api)
 
     def test_visualization_is_bundled_and_other_skills_only_delegate(self):

@@ -98,22 +98,19 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 
 ## 输出
 
-`project --out <新目录>` 默认使用 `.evidence/api/generated/<批次>/`（相对项目根；命令传绝对路径），按生成请求向尚不存在的批次目录固定生成，不另设目录确认步骤：
+`project` 默认直接更新项目根的 `.evidence/api/generated/`；`--out` 仅用于隔离测试或显式的其他项目布局：
 
-- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、全部接口、整体 `contextRefs`／`modelCoverage`、HTTP 契约及诊断。
-- `api-capabilities.md`：四列表。
-- `design-report.md`：资源、操作、草图和业务步骤覆盖。
-- `api-contracts.md`：HTTP 请求响应、表示及消费流程。
+- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、全部接口、整体 `contextRefs`／`modelCoverage`、HTTP 契约及诊断；人工审核由 `evidence-visualization` 直接消费该投影，不生成重复 Markdown。
 - `representation-examples.json`：HTTP 表示合成样例。
 - `http-journeys.json`：静态 HTTP 流程结果，runtimeValidated 为 false。
 - `e2e-test-vectors.json`：从已校验 HTTP 流程、请求/响应样例和契约派生的确定性合成 E2E 向量；包含来源场景、请求、预期响应和未决环境准备，不包含数据库快照、认证凭据或可执行装载器。
 - `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
-HTTP 文档必须存在。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。未被 Participant Party 扮演的 Party Role 不是可调用角色；其步骤应以有依据的 internal/external/gap 回映，而不是保留空契约。
+完整 HTTP 契约必须存在于投影中。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。未被 Participant Party 扮演的 Party Role 不是可调用角色；其步骤应以有依据的 internal/external/gap 回映，而不是保留空契约。
 
 资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。
 
 OpenAPI 的 `info.version` 使用 `generated`，避免在没有来源时发明业务 API 版本；设计格式版本保存于 `x-evidence-api-design-schema-version`。共享 Method＋URI 的角色变体合并为一个 OpenAPI Operation，同时以 `x-fm-capability-refs`、`x-actor-role-refs` 和 `x-fm-operation-variants` 保留来源，不生成认证方案。HAL 运行时链接同时投影为响应 `links`；条件规则通过扩展保留，但 OpenAPI 不执行规则。journey 不伪装成 OpenAPI Operation。
 
-输出不含墙钟、随机 ID、临时路径或安装绝对路径。同一输入、工具及依赖版本产生相同字节；生成结果不手工维护。
+输出不含墙钟、随机 ID、临时路径或安装绝对路径。同一输入、工具及依赖版本产生相同字节；生成结果不手工维护。更新时先在同一父目录写出完整临时目录，再整体替换现有输出，过期文件随旧目录删除；切换失败恢复原目录。历史差异和版本回退由 Git 提供，不在 `generated/` 下累积批次。

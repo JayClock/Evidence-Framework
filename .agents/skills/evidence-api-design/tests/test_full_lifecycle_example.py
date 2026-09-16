@@ -51,14 +51,9 @@ class FullLifecycleExampleTest(unittest.TestCase):
         self.assertEqual(report["interfaceCount"], 13)
         self.assertEqual(report["projection"]["inputDigests"]["sources"], {})
         openapi = importlib.import_module("fm_api_core.openapi")
-        renderer = importlib.import_module("fm_api_core.renderer")
         self.assertEqual(
             (example / "openapi.yaml").read_text(),
             openapi.render_openapi(report["projection"]),
-        )
-        self.assertEqual(
-            (example / "api-capabilities.md").read_text(),
-            renderer.capabilities_markdown(report["projection"]),
         )
         uris = {
             item["id"]: item["uri"] for item in report["projection"]["capabilities"]

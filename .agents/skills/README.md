@@ -70,7 +70,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 ├── views/index.html      # 用户要求时生成的自包含离线只读审核页
 ├── api/
 │   ├── api.yaml          # 唯一 API 设计源，位于 FM 根之外
-│   └── generated/        # 每批新目录：投影、OpenAPI、契约、样例、manifest
+│   └── generated/        # 当前投影、OpenAPI、样例、流程与 manifest；Git 管理历史
 └── checks/
     ├── fm/               # 按需授权保存的 FM 检查记录
     └── api/              # 按需授权保存的 inspect/check 结果

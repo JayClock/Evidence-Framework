@@ -6592,7 +6592,7 @@
       "validation/scenarios/scenario--wrong-reader.yaml": "fd84fe8f59412771113c665555a6f5cdbf18af9d1bce671bbd1f29382c09e98d"
     },
     "sources": {
-      ".evidence/discovery.md": "0d7f22fe65060e7479530992af60229b0362e2213ce4b3358f506c3d33cfb69e"
+      ".evidence/discovery.md": "b152595e0d079d2f928675399e2161531794f9fe864f4e849adb0e0bea7f6e0c"
     }
   },
   "modelCoverage": [

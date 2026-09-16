@@ -21,14 +21,18 @@
     </div>
     <div class="shell">
       <nav aria-label="审核视图">
-        <button data-view="graph" class="active">
-          01 <span>业务总览</span>
+        <button data-view="dashboard" class="active">
+          01 <span>审核概览</span>
         </button>
-        <button data-view="obligations">02 <span>合同与履约</span></button>
-        <button data-view="timeline">03 <span>场景回放</span></button>
-        <button data-view="rules">04 <span>规则与数据</span></button>
-        <button data-view="api">05 <span>接口矩阵</span></button>
-        <button data-view="files">06 <span>全部 YAML</span></button>
+        <button data-view="graph">02 <span>业务边界</span></button>
+        <button data-view="obligations">03 <span>责任与履约</span></button>
+        <button data-view="timeline">04 <span>场景验证</span></button>
+        <button data-view="rules">05 <span>规则追溯</span></button>
+        <button data-view="journeys">06 <span>消费者旅程</span></button>
+        <button data-view="coverage">07 <span>FM/API 覆盖</span></button>
+        <button data-view="api">08 <span>HTTP 契约</span></button>
+        <button data-view="changes">09 <span>变更影响</span></button>
+        <button data-view="files">10 <span>来源原文</span></button>
         <div class="nav-foot">
           模型不是一张巨图。<br />从边界进入，沿凭证审核。
         </div>
@@ -51,7 +55,28 @@
           ><button id="reset">重置筛选</button>
         </div>
         <main>
-          <section id="graph-panel" class="panel">
+          <section id="dashboard-panel" class="panel">
+            <div class="panel-head">
+              <div>
+                <h1>审核概览</h1>
+                <p>集中核对机器检查、业务边界、覆盖缺口和运行验证边界。</p>
+              </div>
+            </div>
+            <div id="review-status" class="review-status"></div>
+            <div class="dashboard-grid">
+              <section>
+                <h2>范围摘要</h2>
+                <div id="scope-summary"></div>
+              </section>
+              <section>
+                <h2>诊断与未决项</h2>
+                <div id="review-diagnostics"></div>
+              </section>
+            </div>
+            <h2>建议审核路径</h2>
+            <div id="review-paths" class="review-paths"></div>
+          </section>
+          <section id="graph-panel" class="panel" hidden>
             <div class="panel-head">
               <div>
                 <h1>业务总览</h1>
@@ -133,6 +158,43 @@
             <h2>关键字段索引</h2>
             <div id="attributes" class="attribute-list"></div>
           </section>
+          <section id="journeys-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>消费者旅程</h1>
+                <p>
+                  按调用角色组织业务目标和 HTTP
+                  步骤；静态流程不代表服务已经运行。
+                </p>
+              </div>
+              <select id="journey-role" aria-label="旅程调用角色">
+                <option value="">全部角色</option>
+              </select>
+            </div>
+            <div id="journey-summary"></div>
+            <div id="journeys"></div>
+          </section>
+          <section id="coverage-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>FM/API 覆盖</h1>
+                <p>
+                  逐项说明业务对象由
+                  API、内部活动或外部责任处理，以及场景步骤如何回映。
+                </p>
+              </div>
+              <select id="coverage-handling" aria-label="覆盖处理方式">
+                <option value="">全部处理方式</option>
+                <option value="api">API</option>
+                <option value="internal">内部</option>
+                <option value="external">外部</option>
+              </select>
+            </div>
+            <div id="coverage-summary"></div>
+            <div id="coverage" class="scroll"></div>
+            <h2>场景步骤回映</h2>
+            <div id="scenario-coverage" class="scroll"></div>
+          </section>
           <section id="api-panel" class="panel" hidden>
             <div class="panel-head">
               <div>
@@ -148,10 +210,29 @@
             <div id="api-summary"></div>
             <div id="apis" class="scroll"></div>
           </section>
+          <section id="changes-panel" class="panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h1>变更影响</h1>
+                <p>
+                  优先与 Git HEAD 中的审核快照按稳定 ID 比较；无 Git
+                  基线时退回上一次本地快照。
+                </p>
+              </div>
+              <select id="change-kind" aria-label="变更类型">
+                <option value="">全部变更</option>
+                <option value="added">新增</option>
+                <option value="changed">修改</option>
+                <option value="removed">删除</option>
+              </select>
+            </div>
+            <div id="change-summary"></div>
+            <div id="changes"></div>
+          </section>
           <section id="files-panel" class="panel" hidden>
             <div class="panel-head">
               <div>
-                <h1>全部 YAML</h1>
+                <h1>来源原文</h1>
                 <p>
                   包含原文与 SHA-256；历史派生文件仅供对照，不作为当前校验依据。
                 </p>

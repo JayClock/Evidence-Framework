@@ -37,12 +37,15 @@ compatibility: Python 3.10+ 与 requirements.txt；需要可定位的 evidence-f
 
 页面首先服务于业务沟通，再逐层展开模型细节：
 
+- 审核概览集中显示 FM 静态检查、场景模拟、API 完整性、诊断和 `runtimeValidated: false`；机器通过、业务批准和运行验收必须分开。
 - 默认使用简化业务图，沿 Evidence 责任链阅读，并保留当前责任直接关联的 Party、Thing 与 Role；标准建模图展开全局 Participant、Role、类型时间和关系基数，完整对象图只用于排查。简化不等于删除三类核心元素。
 - 使用固定的 FM 图例：Evidence、Participant、Role 分别采用 `#ef5b78`、`#70a17b`、`#d58a00` 的视觉强调，Context 使用虚线边界。色彩必须同时配合名称、类型和形状，不能成为模型分类依据或唯一语义。
 - Evidence 卡片显示业务名称、`<rfp|proposal|contract|request|confirmation|evidence>` 以及相应时间类型；不把签署、确认和回调到达混成同一个时刻。
 - 合同与履约视图按 Contract → Fulfillment → Request／Confirmation 展开，显示责任角色、完成／违约规则和未声明项；缺少确认用空位表达，不创建假凭证。
 - 上下文地图按角色扮演、证明依赖、业务对象引用和凭证先后保留跨边界语义，不只显示无意义的连线总数。
 - 变化点只展示模型已经声明的 `businessPatterns`；没有模式时明确“尚未提取”，不由页面自动推导或提升状态。
+- 接口先按调用角色展示消费者旅程，再用 FM/API 覆盖矩阵逐项说明 api、internal 或 external 处理及场景步骤回映；HTTP 契约详情保留请求响应、幂等、实例约束和静态消费流程，`runtimeValidated: false` 不得提升。
+- 变更影响优先使用 Git `HEAD` 中的审核页作为基线，按稳定 ID 比较业务对象、关系、规则、场景、API 资源、能力和 HTTP 操作，并列出当前场景／接口的直接引用；无 Git 基线时退回上一次成功生成的本地审核快照。首次生成明确无基线，不用文件时间推断版本。
 
 ## 验证与交接
 

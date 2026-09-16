@@ -22,7 +22,7 @@ for (const item of [
   ...capabilities,
 ])
   objects.set(item.id, item);
-let activeView = 'graph';
+let activeView = 'dashboard';
 let graph = null;
 const $ = (id) => document.getElementById(id);
 const text = (tag, value = '', cls = '') => {
@@ -320,6 +320,11 @@ function cardinalityLabel(relation) {
   const target = rangeLabel(relation.targetCardinality);
   return source || target ? `${source || '?'} → ${target || '?'}` : '';
 }
+function relationshipGraphLabel(relation, detailed) {
+  const base = relation.label || relation.kind;
+  const cardinality = cardinalityLabel(relation);
+  return detailed && cardinality ? `${base} · ${cardinality}` : base;
+}
 function graphElements() {
   const mode = $('graph-mode').value,
     scope = $('scope').value;
@@ -381,10 +386,10 @@ function graphElements() {
           id: r.id,
           source: r.sourceRef,
           target: r.targetRef,
-          label:
-            mode === 'standard' || mode === 'all'
-              ? `${r.label || r.kind}${cardinalityLabel(r) ? ` · ${cardinalityLabel(r)}` : ''}`
-              : r.label || r.kind,
+          label: relationshipGraphLabel(
+            r,
+            mode === 'standard' || mode === 'all',
+          ),
           kind: r.kind,
         },
       });
@@ -1087,6 +1092,258 @@ function renderRules() {
   ))
     $('attributes').append(button(a.path, () => showAttribute(a.path), ''));
 }
+function statusItem(title, value, detail, state = '') {
+  const item = text('div', '', `status-item ${state}`);
+  item.append(text('small', title), text('strong', value), text('p', detail));
+  return item;
+}
+function renderDashboard() {
+  clear($('review-status'));
+  clear($('scope-summary'));
+  clear($('review-diagnostics'));
+  clear($('review-paths'));
+  const simulation = DATA.check.simulationPassed;
+  const apiDiagnostics = [
+    ...(DATA.api?.diagnostics || []),
+    ...(DATA.api?.http?.diagnostics || []),
+  ];
+  let simulationValue = '未执行';
+  let simulationState = 'warn';
+  if (simulation === true) {
+    simulationValue = '通过';
+    simulationState = 'good';
+  } else if (simulation === false) {
+    simulationValue = '失败';
+    simulationState = 'bad';
+  }
+  let apiValue = '不适用';
+  let apiDetail = '当前没有 API 设计文件';
+  let apiState = 'warn';
+  if (DATA.api) {
+    apiValue = DATA.api.http.complete ? '完整' : '存在缺口';
+    apiDetail = `${capabilities.length} 个角色接口，${apiDiagnostics.length} 条诊断`;
+    apiState = DATA.api.http.complete ? 'good' : 'bad';
+  }
+  const scenarioFailures = DATA.simulation.scenarioResults.filter(
+    (result) => !result.simulationPassed,
+  );
+  $('review-status').append(
+    statusItem(
+      'FM 静态检查',
+      DATA.check.valid ? '通过' : '未通过',
+      DATA.check.inputChanged ? '检查期间输入发生变化' : '绑定当前模型摘要',
+      DATA.check.valid && !DATA.check.inputChanged ? 'good' : 'bad',
+    ),
+    statusItem(
+      '场景模拟',
+      simulationValue,
+      `${DATA.simulation.scenarioResults.length} 个场景，${scenarioFailures.length} 个失败`,
+      simulationState,
+    ),
+    statusItem('API 静态设计', apiValue, apiDetail, apiState),
+    statusItem(
+      '运行时验证',
+      '未验证',
+      '静态投影不证明接口实现、授权或真实服务行为',
+      'warn',
+    ),
+  );
+  const contexts = DATA.model.entities.filter((e) => e.category === 'context');
+  const contracts = DATA.model.entities.filter((e) => e.kind === 'contract');
+  $('scope-summary').append(
+    table(
+      ['内容', '数量'],
+      [
+        ['业务 Context', contexts.length],
+        ['合同边界', contracts.length],
+        ['履约规则', DATA.model.rules.length],
+        ['验证场景', DATA.scenarios.length],
+        ['API 资源', DATA.api?.resources.length || 0],
+      ],
+    ),
+    text('p', `FM 摘要：${DATA.meta.modelDigest}`),
+  );
+  const diagnostics = [
+    ...(DATA.check.errors || []).map((message) => ({
+      severity: 'error',
+      message,
+    })),
+    ...apiDiagnostics,
+  ];
+  if (!diagnostics.length)
+    $('review-diagnostics').append(
+      text(
+        'p',
+        '当前静态检查未发现错误或缺口。这不构成业务批准或运行验收。',
+        'empty',
+      ),
+    );
+  for (const diagnostic of diagnostics) {
+    const row = text('div', '', 'diagnostic-row');
+    row.append(
+      badge(
+        diagnostic.severity || 'diagnostic',
+        diagnostic.severity === 'error' ? 'bad' : 'warn',
+      ),
+      text('strong', diagnostic.code || diagnostic.targetRef || '检查结果'),
+      text('p', diagnostic.message || pretty(diagnostic)),
+    );
+    $('review-diagnostics').append(row);
+  }
+  for (const [name, description, view] of [
+    ['业务审核', '业务边界 → 责任与履约 → 场景验证', 'graph'],
+    ['API 审核', '消费者旅程 → FM/API 覆盖 → HTTP 契约', 'journeys'],
+    ['变更审核', '变更影响 → 受影响场景与接口 → 来源原文', 'changes'],
+  ]) {
+    const path = text('div', '', 'review-path');
+    path.append(
+      text('strong', name),
+      text('p', description),
+      button('开始', () => selectView(view)),
+    );
+    $('review-paths').append(path);
+  }
+}
+function renderJourneys() {
+  clear($('journeys'));
+  const journeys = DATA.api?.http?.journeys || [];
+  const selected = journeys.filter(
+    (journey) =>
+      (!$('journey-role').value ||
+        journey.actorRoleRef === $('journey-role').value) &&
+      matches(journey),
+  );
+  $('journey-summary').textContent = DATA.api
+    ? `${selected.length} / ${journeys.length} 条静态消费旅程 · runtimeValidated: false`
+    : '当前项目没有 API 设计文件。';
+  const byRole = new Map();
+  for (const journey of selected) {
+    if (!byRole.has(journey.actorRoleRef)) byRole.set(journey.actorRoleRef, []);
+    byRole.get(journey.actorRoleRef).push(journey);
+  }
+  for (const [role, roleJourneys] of byRole) {
+    const lane = text('section', '', 'journey-lane');
+    lane.append(
+      text('h2', label(role)),
+      text('small', `${roleJourneys.length} 条旅程`),
+    );
+    for (const journey of roleJourneys) {
+      const flow = text('div', '', 'journey-flow');
+      flow.append(text('strong', journey.id));
+      for (const step of journey.steps || []) {
+        const cap = capabilities.find((item) => item.id === step.capabilityRef);
+        flow.append(text('span', '→', 'journey-arrow'));
+        if (cap)
+          flow.append(
+            button(
+              `${cap.method} ${cap.businessCapability} · ${step.expectStatus}`,
+              () => showApi(cap),
+              'journey-step',
+            ),
+          );
+        else flow.append(badge(step.status || '非接口步骤', 'warn'));
+      }
+      lane.append(flow);
+    }
+    $('journeys').append(lane);
+  }
+  if (!selected.length)
+    $('journeys').append(text('p', '没有匹配的消费者旅程。', 'empty'));
+}
+function renderCoverage() {
+  clear($('coverage'));
+  clear($('scenario-coverage'));
+  const coverage = DATA.api?.modelCoverage || [];
+  const selected = coverage.filter(
+    (item) =>
+      (!$('coverage-handling').value ||
+        item.handling === $('coverage-handling').value) &&
+      matches(item),
+  );
+  $('coverage-summary').textContent = DATA.api
+    ? `${selected.length} / ${coverage.length} 个业务对象已分类；无接口不等于遗漏，须核对处理理由。`
+    : '当前项目没有 API 设计文件。';
+  $('coverage').append(
+    table(
+      ['FM 对象', '处理方式', '业务接口', '依据'],
+      selected.map((item) => {
+        const interfaceNames = item.capabilityRefs?.length
+          ? item.capabilityRefs.map((ref) => label(ref)).join('；')
+          : '—';
+        return [
+          button(label(item.entityRef), () => showDetail(item.entityRef)),
+          badge(item.handling, item.handling === 'api' ? 'good' : 'warn'),
+          interfaceNames,
+          item.basis?.reasoning || '未声明',
+        ];
+      }),
+    ),
+  );
+  const rows = (DATA.api?.coverage || []).flatMap((journey) =>
+    (journey.steps || []).map((step) => {
+      const cap = capabilities.find((item) => item.id === step.capabilityRef);
+      const mapping = cap
+        ? button(cap.businessCapability, () => showApi(cap))
+        : step.mapping;
+      return [
+        journey.sourceScenarioRef || journey.scenarioRef,
+        step.sequence,
+        label(step.actingRoleRef),
+        mapping,
+        step.status,
+      ];
+    }),
+  );
+  $('scenario-coverage').append(
+    table(['场景', '步骤', '角色', '回映', '状态'], rows),
+  );
+}
+function changePresentation(change) {
+  if (change === 'added') return { label: '新增', state: 'good' };
+  if (change === 'removed') return { label: '删除', state: 'bad' };
+  return { label: '修改', state: 'warn' };
+}
+function renderChanges() {
+  clear($('changes'));
+  const changes = DATA.changes || { available: false, items: [] };
+  if (!changes.available) {
+    $('change-summary').textContent =
+      '首次生成没有可比较基线；本次快照将成为下次审核的基线。';
+    $('changes').append(text('p', '无基线，不推断新增或修改。', 'empty'));
+    return;
+  }
+  const selected = changes.items.filter(
+    (item) =>
+      (!$('change-kind').value || item.change === $('change-kind').value) &&
+      matches(item),
+  );
+  const baselineTime = changes.baseline.generatedAt?.slice(0, 19) || '未知时间';
+  const baselineSource =
+    changes.baseline.source === 'git-head' ? 'Git HEAD' : '上一次本地快照';
+  $('change-summary').textContent =
+    `${selected.length} / ${changes.items.length} 项语义变更 · 基线 ${baselineSource} · ${baselineTime} UTC · ${changes.baseline.modelDigest || '无 FM 摘要'}`;
+  $('changes').append(
+    table(
+      ['变化', '类型', '对象', '影响场景／接口'],
+      selected.map((item) => {
+        const presentation = changePresentation(item.change);
+        const objectLink =
+          objects.has(item.id) || instances.has(item.id)
+            ? button(item.label, () => showDetail(item.id))
+            : `${item.label} · ${item.id}`;
+        const impacts = item.impactRefs.length
+          ? item.impactRefs.map((ref) => label(ref)).join('；')
+          : '未发现直接引用';
+        return [
+          badge(presentation.label, presentation.state),
+          item.kind,
+          objectLink,
+          impacts,
+        ];
+      }),
+    ),
+  );
+}
 function showApi(cap) {
   const box = detailStart(cap.businessCapability, cap.id);
   box.append(
@@ -1183,21 +1440,29 @@ function renderFiles() {
   }
 }
 function refresh() {
+  if (activeView === 'dashboard') renderDashboard();
   if (activeView === 'graph') renderGraph();
   if (activeView === 'obligations') renderObligations();
   if (activeView === 'timeline') renderTimeline();
   if (activeView === 'rules') renderRules();
+  if (activeView === 'journeys') renderJourneys();
+  if (activeView === 'coverage') renderCoverage();
   if (activeView === 'api') renderApi();
+  if (activeView === 'changes') renderChanges();
   if (activeView === 'files') renderFiles();
 }
 function selectView(view) {
   activeView = view;
   for (const name of [
+    'dashboard',
     'graph',
     'obligations',
     'timeline',
     'rules',
+    'journeys',
+    'coverage',
     'api',
+    'changes',
     'files',
   ])
     $(name + '-panel').hidden = name !== view;
@@ -1209,8 +1474,11 @@ function selectView(view) {
 function initialize() {
   $('model-title').textContent = DATA.model.model.name;
   $('notice').title = `模型摘要 ${DATA.meta.modelDigest}`;
+  let simulationLabel = '未执行';
+  if (DATA.check.simulationPassed === true) simulationLabel = '通过';
+  else if (DATA.check.simulationPassed === false) simulationLabel = '失败';
   $('notice').textContent =
-    `生成时校验：FM ${DATA.check.valid ? '通过' : '未通过'} · 模拟 ${DATA.check.simulationPassed === null ? '未执行' : DATA.check.simulationPassed ? '通过' : '失败'}。快照生成于 ${DATA.meta.generatedAt.slice(0, 19)} UTC；离线页面不会自动检测后续文件变化，请重新生成。`;
+    `生成时校验：FM ${DATA.check.valid ? '通过' : '未通过'} · 模拟 ${simulationLabel}。快照生成于 ${DATA.meta.generatedAt.slice(0, 19)} UTC；离线页面不会自动检测后续文件变化，请重新生成。`;
   for (const [number, name] of [
     [DATA.files.length, '份 YAML · 可回到原文'],
     [DATA.model.entities.length, '个业务对象'],
@@ -1262,9 +1530,11 @@ function initialize() {
     $('scenario').append(o);
   }
   for (const role of [...new Set(capabilities.map((c) => c.actorRoleRef))]) {
-    const o = text('option', label(role));
-    o.value = role;
-    $('api-role').append(o);
+    for (const id of ['api-role', 'journey-role']) {
+      const o = text('option', label(role));
+      o.value = role;
+      $(id).append(o);
+    }
   }
   document
     .querySelectorAll('nav button')
@@ -1278,7 +1548,10 @@ function initialize() {
     'equal-time',
     'dependencies',
     'rule-kind',
+    'journey-role',
+    'coverage-handling',
     'api-role',
+    'change-kind',
     'file-kind',
   ])
     $(id).addEventListener('change', refresh);
@@ -1290,7 +1563,10 @@ function initialize() {
     $('search').value = '';
     $('scope').value = $('scope').dataset.defaultFocus || '';
     $('rule-kind').value = '';
+    $('journey-role').value = '';
+    $('coverage-handling').value = '';
     $('api-role').value = '';
+    $('change-kind').value = '';
     $('file-kind').value = '';
     refresh();
   });
@@ -1303,7 +1579,7 @@ function initialize() {
       text('pre', DATA.openapi, 'raw'),
     );
   });
-  renderGraph();
+  renderDashboard();
   document.body.dataset.ready = 'true';
 }
 try {

@@ -27,6 +27,71 @@ class ReviewGeneratorTest(unittest.TestCase):
         self.assertNotIn("<", encoded)
         self.assertEqual(payload, json.loads(encoded))
 
+    def test_semantic_changes_compare_stable_ids_and_report_impacts(self):
+        before = {
+            "model": {
+                "entities": [{"id": "request.pay", "label": "付款请求"}],
+                "relationships": [],
+                "rules": [],
+            },
+            "scenarios": [],
+            "api": {"resources": [], "capabilities": [], "http": {"operations": []}},
+            "meta": {"modelDigest": "before", "generatedAt": "2026-01-01T00:00:00Z"},
+        }
+        current = {
+            "model": {
+                "entities": [
+                    {"id": "request.pay", "label": "付款申请"},
+                    {"id": "confirmation.pay", "label": "付款凭证"},
+                ],
+                "relationships": [],
+                "rules": [],
+            },
+            "scenarios": [
+                {"id": "scenario.pay", "issuedInstanceRefs": ["request.pay"]}
+            ],
+            "api": {
+                "resources": [],
+                "capabilities": [
+                    {
+                        "id": "capability.pay",
+                        "businessCapability": "申请付款",
+                        "effect": {"targetRef": "request.pay"},
+                    }
+                ],
+                "http": {"operations": []},
+            },
+            "meta": {"modelDigest": "after", "generatedAt": "2026-01-02T00:00:00Z"},
+        }
+        changes = review.semantic_changes(review.review_snapshot(before), current)
+        self.assertTrue(changes["available"])
+        request_change = next(
+            item for item in changes["items"] if item["id"] == "request.pay"
+        )
+        self.assertEqual("changed", request_change["change"])
+        self.assertEqual(
+            ["capability.pay", "scenario.pay"], request_change["impactRefs"]
+        )
+        self.assertTrue(
+            any(
+                item["id"] == "confirmation.pay" and item["change"] == "added"
+                for item in changes["items"]
+            )
+        )
+
+    def test_first_review_has_no_invented_change_baseline(self):
+        changes = review.semantic_changes(
+            None,
+            {
+                "model": {"entities": [], "relationships": [], "rules": []},
+                "scenarios": [],
+                "api": None,
+                "meta": {},
+            },
+        )
+        self.assertFalse(changes["available"])
+        self.assertEqual([], changes["items"])
+
     def test_recursive_index_links_interfaces_and_rules_to_yaml(self):
         files = [
             {
@@ -165,9 +230,28 @@ class ReviewGeneratorTest(unittest.TestCase):
         template = (ROOT / "assets/page.html").read_text()
         app = (ROOT / "assets/review.js").read_text()
         style = (ROOT / "assets/style.css").read_text()
-        for phrase in ["合同与履约", "简化业务图", "标准建模图", "上下文地图"]:
+        for phrase in [
+            "审核概览",
+            "业务边界",
+            "责任与履约",
+            "消费者旅程",
+            "FM/API 覆盖",
+            "变更影响",
+            "来源原文",
+            "简化业务图",
+            "标准建模图",
+            "上下文地图",
+        ]:
             self.assertIn(phrase, template)
-        for token in ["renderObligations", "evidenceGraphLabel", "cardinalityLabel"]:
+        for token in [
+            "renderDashboard",
+            "renderJourneys",
+            "renderCoverage",
+            "renderChanges",
+            "renderObligations",
+            "evidenceGraphLabel",
+            "cardinalityLabel",
+        ]:
             self.assertIn(token, app)
         for token in ["--evidence", "--participant", "--role", "border: 2px dashed"]:
             self.assertIn(token, style)

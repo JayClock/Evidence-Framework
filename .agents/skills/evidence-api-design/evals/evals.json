@@ -46,7 +46,7 @@
     {
       "id": 8,
       "prompt": "将完整 api.yaml 生成 OpenAPI 和接口文档，使用默认产物目录。",
-      "expected_output": "校验整体设计后在 .evidence/api/generated 下选取新批次直接 project，不重复确认目录；缺口时不输出局部交付。保留角色、实例约束与运行时验证边界。",
+      "expected_output": "校验整体设计后直接更新 .evidence/api/generated，使用 Git 管理历史且不重复确认目录；缺口时保留现有交付不变。保留角色、实例约束与运行时验证边界。",
       "files": ["assets/examples/full-lifecycle/api.yaml"]
     }
   ]

@@ -638,6 +638,115 @@ summary {
 .method.post {
   color: #b77913;
 }
+.review-status {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.status-item {
+  min-width: 0;
+  padding: 16px;
+  border-right: 1px solid var(--line);
+  background: #fff;
+}
+.status-item:last-child {
+  border-right: 0;
+}
+.status-item.good {
+  border-top: 3px solid #16865a;
+}
+.status-item.warn {
+  border-top: 3px solid #d58a00;
+}
+.status-item.bad {
+  border-top: 3px solid #bc354d;
+}
+.status-item small,
+.status-item strong {
+  display: block;
+}
+.status-item strong {
+  margin: 7px 0;
+  font-size: 18px;
+  color: #22324c;
+}
+.status-item p {
+  margin: 0;
+  font-size: 11px;
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+}
+.review-paths {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.review-path {
+  padding: 14px;
+  background: #fff;
+}
+.review-path p {
+  min-height: 44px;
+  font-size: 12px;
+}
+.diagnostic-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.diagnostic-row strong {
+  margin-left: 8px;
+}
+.diagnostic-row p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+.journey-lane {
+  padding: 6px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.journey-lane > h2 {
+  display: inline-block;
+  margin-right: 8px;
+}
+.journey-lane > small {
+  color: var(--muted);
+}
+.journey-flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+.journey-flow > strong {
+  width: 210px;
+  flex: 0 0 210px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.journey-step {
+  white-space: nowrap;
+  background: #f7f9ff;
+}
+.journey-arrow {
+  color: var(--muted);
+}
+#journey-summary,
+#coverage-summary,
+#change-summary {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
 #api-summary {
   font-size: 12px;
   margin-bottom: 12px;
@@ -661,6 +770,23 @@ summary {
   }
 }
 @media (max-width: 900px) {
+  .review-status {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .status-item:nth-child(2) {
+    border-right: 0;
+  }
+  .status-item:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .dashboard-grid,
+  .review-paths {
+    grid-template-columns: 1fr;
+  }
+  .journey-flow > strong {
+    width: 150px;
+    flex-basis: 150px;
+  }
   .shell {
     grid-template-columns: 1fr;
   }

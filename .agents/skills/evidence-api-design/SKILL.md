@@ -24,10 +24,10 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 - FM 输入：`.evidence/fm/`，始终只读。
 - 唯一 API 设计源：`.evidence/api/api.yaml`，采用 API 格式 `4.0`，位于 FM 根目录之外；上游仍为 FM v3。
-- API 交付：`.evidence/api/generated/<批次>/`，包含投影、接口清单、完整 HTTP 契约、OpenAPI、样例、合成 E2E 测试向量、流程和 manifest。
+- API 交付：`.evidence/api/generated/`，包含机器投影、OpenAPI、表示样例、合成 E2E 测试向量、流程和 manifest；每次完整校验后直接更新，历史由 Git 管理。人工审核统一使用 `evidence-visualization` 生成的页面，不再生成重复的 Markdown 报告。
 - 按需保存的检查记录（紧凑运行清单，不复制投影或契约全文）：`.evidence/checks/api/<批次>/`；只校验请求不落盘。
 
-沿用已有文件与用户显式指定路径，不自动迁移。没有指定输出目录时，在 generated 下选取尚不存在的批次目录并告知，不为路径再设确认步骤。只创建父目录，不预建批次目录，不覆盖旧输出。只修改本次授权的文件；`.evidence/` 不授予其他文件或业务确认记录的修改权限。
+沿用已有文件与用户显式指定路径，不自动迁移其他布局。默认直接更新 `generated/`：先在同一父目录生成完整临时结果，再切换整个目录并删除过期产物；失败恢复原目录。Git 保存版本历史，不按生成批次累积目录。只修改本次授权的文件；`.evidence/` 不授予其他文件或业务确认记录的修改权限。
 
 ## 工作流
 
@@ -51,12 +51,11 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 ## 命令
 
-设置实际绝对路径；`BATCH` 为尚不存在的输出批次名：
+设置实际绝对路径；默认输出固定为项目的 `.evidence/api/generated/`：
 
 ```bash
 FM_ROOT="$PROJECT_ROOT/.evidence/fm"
 API_FILE="$PROJECT_ROOT/.evidence/api/api.yaml"
-NEW_OUTPUT_DIR="$PROJECT_ROOT/.evidence/api/generated/$BATCH"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" inspect \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR"
@@ -67,12 +66,12 @@ NEW_OUTPUT_DIR="$PROJECT_ROOT/.evidence/api/generated/$BATCH"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
+  --api "$API_FILE"
 ```
 
-完整性检查始终执行；存在 gap 时 check/project 返回非零，project 不写交付目录。结果中的 `interfaceCount` 按角色能力计数；同路由角色变体在 OpenAPI 合并，因此不等于 Path＋Method 数量。
+完整性检查始终执行；存在 gap 时 check/project 返回非零且不改现有交付目录。结果中的 `interfaceCount` 按角色能力计数；同路由角色变体在 OpenAPI 合并，因此不等于 Path＋Method 数量。
 
-`projection.json` 是唯一机器中间结果，其余八份交付文件从它生成，不回写 API 设计，不手改生成文件。检查通过不替代运行时授权和接口验收。`e2e-test-vectors.json` 只提供确定性的合成请求、预期响应与来源场景；数据库装载、认证身份和外部系统 Stub 仍由实现及验收任务决定。
+`projection.json` 是唯一机器中间结果，OpenAPI、表示样例、流程、E2E 测试向量和 manifest 从它生成，不回写 API 设计，不手改生成文件。接口清单、覆盖和 HTTP 契约由 `evidence-visualization` 直接消费当前投影展示，不再维护派生 Markdown。检查通过不替代运行时授权和接口验收。`e2e-test-vectors.json` 只提供确定性的合成请求、预期响应与来源场景；数据库装载、认证身份和外部系统 Stub 仍由实现及验收任务决定。
 
 ## 示例
 
