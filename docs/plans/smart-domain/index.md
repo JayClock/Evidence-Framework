@@ -338,7 +338,7 @@ taskNotes:
     gapRefs: []
   - taskRef: domain::context.subscription::request.payment
     mode: implementation
-    status: planned
+    status: done
     sourceRefs: [contract.subscription, request.payment, rule.payment-completed, design.subscription-domain-contracts]
     sliceRefs: [US-001, US-002, US-003, scenario.payment-pending, scenario.cutoff-paid]
     outcome: 交付包含 11 个必填字段且不可改写的合同、付款请求派生、PaymentProof 契约和 pending/completed 领域判断。
@@ -405,7 +405,7 @@ gaps:
 | 执行顺序 | 任务文件                                                                    | taskKey                                                                        | 模式/状态                | 直接前置                      |
 | -------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------ | ----------------------------- |
 | 1        | [后端平台与 Reader 上下文基础复验](tasks/后端平台与Reader上下文基础复验.md) | `foundation::context.subscription::role.reader`                                | implementation / done    | 无                            |
-| 2        | [订阅合同与付款状态领域行为](tasks/订阅合同与付款状态领域行为.md)           | `domain::context.subscription::request.payment`                                | implementation / planned | Reader 基础复验               |
+| 2        | [订阅合同与付款状态领域行为](tasks/订阅合同与付款状态领域行为.md)           | `domain::context.subscription::request.payment`                                | implementation / done    | Reader 基础复验               |
 | 3        | [移动扣款与付款证明领域契约](tasks/移动扣款与付款证明领域契约.md)           | `domain::context.mobile::request.mobile`                                       | implementation / planned | 订阅领域行为                  |
 | 4        | [订阅与移动支付 MyBatis 持久化](tasks/订阅与移动支付MyBatis持久化.md)       | `mybatis::context.subscription::design.subscription-payment-storage`           | implementation / planned | 两个领域任务                  |
 | 5        | [本地移动支付端口模拟器](tasks/本地移动支付端口模拟器.md)                   | `integration::context.mobile::design.local-mobile-payment-adapter`             | implementation / planned | 移动支付领域契约              |
@@ -431,7 +431,7 @@ gaps:
 - `inventory --fm .evidence/fm --api docs/plans/smart-domain/api-planning-input.yaml`：退出码 0；143 个工作单元、4 个 API capability。
 - `compile --fm .evidence/fm --api docs/plans/smart-domain/api-planning-input.yaml --mapping docs/plans/smart-domain/index.md --require-complete`：退出码 0；8 个任务、4 个 API capability、95 个有依据的范围处置、0 个未分配单元、0 个编译诊断，`coverageComplete=true`。
 - API 规划投影新鲜度检查：4 个 capability 和 4 个支撑 resource 的编译字段与 `.evidence/api/api.yaml` 一致，投影记录的权威 API SHA-256 匹配当前文件。
-- `plan_state.py verify`：规划结构有效；用户授权的窄范围格式修复已闭环，任务 1 已完成。
+- `plan_state.py verify`：规划结构有效；任务 1、任务 2 已完成。
 - `CHECK-FND-001`：退出码 0；ReaderTests 3 项通过，3 个 Gradle task 实际执行。
 - `CHECK-FND-002`：退出码 0；目标 Spring/H2/MyBatis 注入测试通过，7 个 Gradle task 实际执行。
 - `CHECK-FND-003`：退出码 0；BackendArchitectureTests 3 条 ArchUnit 规则通过，12 个 Gradle task 实际执行。
@@ -442,3 +442,9 @@ gaps:
 - `python3 -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v`：退出码 0，40 项通过。
 - `npm run guides:verify`：退出码 0；Guides 测试 8 项通过，49 份文档的 352 个本地链接无错误，Prettier 检查通过。
 - `git diff --check`：退出码 0。任务 1 已满足 completionCriteria；按单任务停止纪律，不在本轮启动任务 2。
+- `CHECK-DOM-SUB-001`：退出码 0；SubscriptionTests 4 项通过，3 个 Gradle task 均实际执行，覆盖 11 个必填字段、读者绑定、重复编号拒绝和失败后集合不变。
+- `CHECK-DOM-PAY-001`：退出码 0；PaymentStatusTests 5 项通过，3 个 Gradle task 均实际执行，覆盖付款派生、单请求约束、闭合时间边界、pending/completed、重复证明及字段错配。
+- `./gradlew :backend-domain:test --rerun-tasks`：退出码 0；领域模块 20 项测试通过，3 个 Gradle task 均实际执行。
+- 本轮 `./gradlew check`：退出码 0；28 个 task 中 13 个实际执行、15 个 up-to-date；Java 测试、Spotless 和分层回归通过。
+- 本轮 `PATH=/opt/miniconda3/bin:$PATH npm test`、`npm run lint`、`npm run build`、`npm run guides:verify`：退出码均为 0；lint 的前端任务命中 Nx cache，build 的 35 个成功任务中 34 个命中缓存，后端打包与 TypeScript typecheck 实际执行，Guides 8 项测试及 49 份文档的 352 个本地链接通过。
+- 本轮 `git diff --check`：退出码 0。任务 2 已满足 completionCriteria；按单任务停止纪律，不在本轮启动任务 3。
