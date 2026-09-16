@@ -3,9 +3,11 @@ package com.evidencepoc.backend.persistent;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.evidencepoc.backend.domain.UserNotFoundException;
+import com.evidencepoc.backend.domain.context.SubscriptionContext;
 import com.evidencepoc.backend.domain.description.UserDescription;
 import com.evidencepoc.backend.domain.model.User;
 import com.evidencepoc.backend.domain.model.Users;
+import com.evidencepoc.backend.domain.role.Reader;
 import java.util.List;
 import java.util.UUID;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -33,6 +35,7 @@ class MyBatisUsersTests {
   static class TestApplication {}
 
   @Autowired Users users;
+  @Autowired SubscriptionContext subscriptionContext;
   @Autowired JdbcTemplate jdbc;
   @Autowired PlatformTransactionManager transactionManager;
   @Autowired ApplicationContext context;
@@ -125,6 +128,21 @@ class MyBatisUsersTests {
     assertEquals(
         "original",
         users.findByIdentity(existing.getIdentity()).orElseThrow().getDescription().displayName());
+  }
+
+  @Test
+  void subscriptionContextIsInjectedAndDecoratesTheGivenUser() {
+    User created = users.create(new UserDescription("小明"));
+    SubscriptionContext subscription = users.inSubscriptionContext();
+    assertSame(subscriptionContext, subscription);
+
+    User snapshot = new User(created.getIdentity(), new UserDescription("过期快照"));
+    Reader reader = subscription.asReader(snapshot);
+
+    assertEquals(created.getIdentity(), reader.readerId());
+    assertSame(snapshot, reader.actor());
+    assertEquals("过期快照", reader.actor().getDescription().displayName());
+    assertThrows(IllegalArgumentException.class, () -> subscription.asReader(null));
   }
 
   @Test

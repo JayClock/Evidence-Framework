@@ -57,14 +57,17 @@ Context 表达边界；`rootRefs` 指向入口集合的成员类型；根集合�
 ```text
 Jersey Resource
   → 根集合
-  → 实体 / 绑定实际实例的 ContextRole
+  → Context 接口入口 / 实体 / 具体角色对象
   → 拥有者内部的关联契约
   → MyBatis 或必要的外部协议适配器
 ```
 
 业务规则不能进入 Resource、Mapper、技术事务包装器或负责拼接 Repository 的 Service/Handler。bootstrap 装配；领域不依赖 Spring、Jersey、Jackson、MyBatis。
 
-- 主体角色使用 `ContextRole<Actor, Context>` / `ContextSwitcher`，核验可信 Actor、实例归属与代表权限。角色名不是认证证据。
+- 主体角色按 Context Object + Role Object 落地：Context 在 domain 只声明接口，角色是具体类，根集合接口暴露 `inXContext()` 入口。
+- Context 实现放在适配层独立文件中，通过依赖注入进入根集合适配器；不要在 domain default 方法或根集合适配器里 `new` 具体上下文实现。
+- `asRole(actor)` 默认直接装饰传入的已加载 Actor，不为了“切换角色”重新读取主体；只有角色需要的关联/集合由 Context 实现按上下文加载。
+- 不使用 smart-domain 内置角色切换接口替代上述显式模型，除非用户明确要求接入这些框架接口。角色名不是认证证据，可信 Actor、实例归属与代表权限仍需明确的身份边界或显式校验。
 - 证明角色是消费方能力接口或原凭证包装视图；不生成新凭证、独立签发时刻或用户权限。不把一种具体资金/其他结果的责任转移给消费者。
 - 实现了证明接口不表示证明合格；匹配、数量、时间、来源与可见性由源规则判断。
 - 按变化点定义消费契约，集成适配层连接玩家，消费领域不直接依赖每个外部实现包。

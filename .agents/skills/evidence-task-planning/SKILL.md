@@ -16,7 +16,7 @@ compatibility: Python 3.10+，PyYAML；消费 FM Schema v3，可选 API Schema 4
 - 生产持久化固定 MyBatis；数据库引擎、方言、数据源和隔离级别仍需依据。
 - 完整采用 smart-domain BOM、Core、官方 MyBatis Starter 和 Jersey/HATEOAS/HAL-FORMS 集成，Boot 目标 3.5.x。固定上游源码版本并核对实际依赖，不把安装成功当作兼容验证。
 - `apps/<应用>` 为组合根，`libs/<后端>/{domain,api,persistent}` 为真实构建模块；业务边界在这些库中按包/接口表达，必要时有依据地细化构建模块，名称沿用项目。用可见性、依赖约束与架构测试验证封装，不靠目录命名宣称隔离。
-- 领域行为归实体、Description、ContextRole 和拥有者关联，不增加业务 Service 编排贫血实体。MyBatis XML 直接映射领域对象，不无故增加 Row/PO 转换层。
+- 领域行为归实体、Description、Context 接口暴露的具体角色对象和拥有者关联，不增加业务 Service 编排贫血实体。Context 实现在适配层独立文件中通过依赖注入提供；MyBatis XML 直接映射领域对象，不无故增加 Row/PO 转换层。
 - Jersey 从 Root API 导航到根集合和绑定实体的子资源。复用 smart-domain `Pagination`，默认直接返回其结果；不另造分页算法、独立集合模型、Page DTO 或仅包装链接方法的公共表示基类。
 - API 模块有自己的真实 HTTP + mock 领域测试；app 的真实持久化与装配测试另行保留。执行模式以当前任务计划为准，实施需保留回归检查。
 

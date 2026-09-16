@@ -7,7 +7,7 @@
 ```text
 apps/<现有后端应用>/           启动入口、运行配置、依赖装配、跨模块集成测试
 libs/<后端实现>/
-├── domain/                  model、description、关联契约、规则和领域测试
+├── domain/                  model、description、Context 接口、角色对象、关联契约、规则和领域测试
 ├── api/                     Root API、子资源、请求/表示/链接模板及独立 HTTP 测试
 └── persistent/              associations、mappers、XML、Flyway 和适配器测试
 ```
@@ -28,7 +28,7 @@ libs/<后端实现>/
 
 - 实体实现 `Entity<Identity, Description>`；稳定身份与不可变描述分开，描述属性从本次已确认 FM/软件需求取得。
 - 根集合接口放在 domain，适配器放在 persistent.associations。根集合承担定位和有依据的生命周期操作，不把所有对象都变成全局 CRUD 入口。
-- 规则位于 Description/实体/ContextRole；适配器只做映射、加载、存储、并发机制和本地事务。
+- 规则位于 Description/实体/具体角色对象及拥有者关联。Context 在 domain 只定义接口，具体实现放在 persistent/context 或相应适配层独立文件中，并通过依赖注入进入根集合适配器；适配器只做映射、加载、存储、并发机制和本地事务。
 - 叶子实体不补造关联。拥有真实关联时遵循 `Owner.field → Owner.WideInterface → OwnerField → Mapper`，公开读取保持最窄契约。
 - 生命周期、加载策略、DTO 与数据库表是不同选择，不机械复制参考仓库的实例字段、自动开通规则、关系和删除语义。
 

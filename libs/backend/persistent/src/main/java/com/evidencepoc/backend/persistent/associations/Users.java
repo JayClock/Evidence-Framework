@@ -1,6 +1,7 @@
 package com.evidencepoc.backend.persistent.associations;
 
 import com.evidencepoc.backend.domain.UserNotFoundException;
+import com.evidencepoc.backend.domain.context.SubscriptionContext;
 import com.evidencepoc.backend.domain.description.UserDescription;
 import com.evidencepoc.backend.domain.model.User;
 import com.evidencepoc.backend.persistent.mappers.UsersMapper;
@@ -15,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class Users implements com.evidencepoc.backend.domain.model.Users {
   private final UsersMapper mapper;
+  private final SubscriptionContext subscriptionContext;
 
-  public Users(UsersMapper mapper) {
+  public Users(UsersMapper mapper, SubscriptionContext subscriptionContext) {
     this.mapper = mapper;
+    this.subscriptionContext = subscriptionContext;
   }
 
   @Override
@@ -28,6 +31,11 @@ public class Users implements com.evidencepoc.backend.domain.model.Users {
   @Override
   public Many<User> findAll() {
     return new UserCollection(mapper);
+  }
+
+  @Override
+  public SubscriptionContext inSubscriptionContext() {
+    return subscriptionContext;
   }
 
   @Override

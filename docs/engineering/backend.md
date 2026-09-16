@@ -5,7 +5,7 @@
 ## 设计与代码
 
 - Java 17、Boot 与 smart-domain 版本以 [构建](../../build.gradle)和 [版本配置](../../gradle.properties)为准。使用根 Wrapper，不在 app 内再维护构建根。
-- 领域只消费 Core 与必要纯 Java 类型。实体、Description、ContextRole 拥有行为；没有实际责任不建 application/security/common 空模块。
+- 领域只消费 Core 与必要纯 Java 类型。Context 在 domain 只声明接口，具体实现放在适配层独立文件并通过依赖注入进入根集合适配器；实体、Description、具体角色对象和拥有者关联拥有行为。没有实际责任不建 application/security/common 空模块。
 - 根集合定位成员并承担有依据的生命周期操作；成员行为不移交给万能 Repository/Service。叶子实体不补造关联。
 - 可变关联按拥有者、窄/宽接口和持久化适配器设计。读取暴露窄接口，写能力保留在拥有者内部。
 - 使用具名领域异常描述失败；API 负责协议转换。不要吞异常、伪造写入成功或返回内部栈。
