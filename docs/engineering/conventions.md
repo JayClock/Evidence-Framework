@@ -24,7 +24,7 @@
 | 根集合     | Root Collection     | 有业务依据的定位及生命周期入口                     |
 | 公开契约   | Public Contract     | 允许其他模块消费的窄能力                           |
 | 失败不变性 | Failure Invariance  | 拒绝/失败后不应变化的数据与事实仍不变              |
-| 完成条件   | Completion Criteria | 预期要求；不能替代 observedEvidence                |
+| 验收数据   | Acceptance Criteria | 引用 CHECK 的有类型断言；不能替代 observedEvidence |
 
 业务英文翻译需要与源语义核对；同一个 User 在不同上下文扮演角色不代表多个主体。技术词不能代替业务拥有者。
 

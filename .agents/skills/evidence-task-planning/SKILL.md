@@ -67,7 +67,7 @@ python3 "$SKILL_DIR/scripts/task_compiler.py" inventory \
 
 ### 4. 明确切片和归属
 
-从可验收业务结果出发，按项目工序展开候选任务。识别最小共享基础与实现工作，将来源和做法放入任务记录的 `guides`、`procedureRefs`、`checks` 和 `completionCriteria`。每组只含机器编译所需字段：
+从可验收业务结果出发，按项目工序展开候选任务。识别最小共享基础与实现工作，将来源和做法放入任务记录的 `guides`、`procedureRefs`、`checks` 和 `acceptanceCriteria`。每组只含机器编译所需字段：
 
 ```yaml
 concern: domain
@@ -109,7 +109,7 @@ taskKey = encode(concern) :: encode(ownerRef) :: encode(operationRef)
 - `title/mode/status/outcome`：展示、执行模式与唯一状态；
 - `guides/design`：当前任务的来源、新鲜度、工序实例和局部设计；
 - `procedureRefs/dependencyUsage/files/steps`：实施输入与动作；
-- `checks/completionCriteria`：可执行验证与退出条件；
+- `checks/acceptanceCriteria`：可执行验证，以及以稳定路径、操作符和有类型 `expected` 表达的具体验收数据；
 - `observedEvidence`：只记录真实观察，规划时为空。
 
 `compiled` 是计算投影，`tasks[*].status` 是状态唯一位置，`observedEvidence` 是结果唯一位置。不要复制依赖图到任务记录；依赖只从 `compiled.tasks[*].dependsOn` 读取。
@@ -136,7 +136,7 @@ python3 "$SKILL_DIR/scripts/render_plan.py" \
 
 ### 8. 检查与停止
 
-检查需列明目的/Q1–Q4、被测行为、真实依赖或 Fake、固定事实和业务时间、正常/边界/反例、失败不变性、测试文件、cwd、命令、准备依赖及证据要求。未知命令填 `null` 并关联 gap。
+检查需列明目的/Q1–Q4、被测行为、真实依赖或 Fake、固定事实和业务时间、正常/边界/反例、失败不变性、测试文件、cwd、命令、准备依赖及证据要求。未知命令填 `null` 并关联 gap。每条 `acceptanceCriteria` 必须引用本任务 CHECK，并用 `assertions[{path, operator, expected}]` 保存具体、保留类型的预期数据；不得用“测试通过”“符合要求”等句子代替。
 
 最终核对来源、授权、依赖新鲜度、局部设计、CHECK 与停止条件；所有编译任务都有且只有一条任务记录，CHECK ID 全局唯一，引用可解析，未决事实未隐藏。`coverageComplete` 只表示工作单元结构覆盖，不表示业务批准、实现完成或测试通过。
 

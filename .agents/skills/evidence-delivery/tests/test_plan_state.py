@@ -58,7 +58,19 @@ class PlanStateTests(unittest.TestCase):
             "checks": [
                 {"id": check_id, "command": "python -m unittest", "gapRefs": []}
             ],
-            "completionCriteria": ["检查通过"],
+            "acceptanceCriteria": [
+                {
+                    "id": f"AC-{check_id}",
+                    "checkRefs": [check_id],
+                    "assertions": [
+                        {
+                            "path": "command.exitCode",
+                            "operator": "equals",
+                            "expected": 0,
+                        }
+                    ],
+                }
+            ],
             "observedEvidence": [],
         }
 
@@ -149,17 +161,47 @@ class PlanStateTests(unittest.TestCase):
             any("duplicate CHECK id" in item for item in result["diagnostics"])
         )
 
-    def test_done_requires_completion_criteria_and_observed_evidence(self):
+    def test_done_requires_acceptance_criteria_and_observed_evidence(self):
         self.data["compiled"]["tasks"] = [self.data["compiled"]["tasks"][0]]
         self.data["compiled"]["executionOrder"] = [self.first]
         self.data["tasks"] = {self.first: self.data["tasks"][self.first]}
         self.data["tasks"][self.first]["status"] = "done"
+        del self.data["tasks"][self.first]["acceptanceCriteria"]
         self.write_plan(self.data)
         result = plan_state.inspect_plan(self.plan_path)
         self.assertFalse(result["valid"])
         self.assertTrue(
+            any("acceptanceCriteria" in item for item in result["diagnostics"])
+        )
+        self.assertTrue(
             any("no observed evidence" in item for item in result["diagnostics"])
         )
+
+    def test_acceptance_criteria_require_local_checks_and_typed_assertions(self):
+        criterion = self.data["tasks"][self.first]["acceptanceCriteria"][0]
+        criterion["checkRefs"] = ["CHECK-API", "CHECK-API"]
+        criterion["assertions"] = [
+            {"path": "result.count", "operator": "approximately", "value": 1},
+            {
+                "path": "result.payload",
+                "operator": "equals",
+                "expected": {1: "non-string key"},
+            },
+        ]
+        self.data["tasks"][self.second]["acceptanceCriteria"][0]["id"] = criterion["id"]
+        self.data["tasks"][self.second]["completionCriteria"] = ["legacy text"]
+        self.write_plan(self.data)
+        result = plan_state.inspect_plan(self.plan_path)
+        self.assertFalse(result["valid"])
+        diagnostics = "\n".join(result["diagnostics"])
+        self.assertIn("references checks outside its task", diagnostics)
+        self.assertIn("checkRefs contains duplicates", diagnostics)
+        self.assertIn("checks are not referenced", diagnostics)
+        self.assertIn("operator is invalid", diagnostics)
+        self.assertIn("expected is required", diagnostics)
+        self.assertIn("expected must be JSON-compatible data", diagnostics)
+        self.assertIn("duplicate acceptance criterion id", diagnostics)
+        self.assertIn("completionCriteria is obsolete", diagnostics)
 
     def test_execution_order_must_follow_dependencies(self):
         self.data["compiled"]["executionOrder"] = [self.second, self.first]

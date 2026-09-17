@@ -69,7 +69,19 @@ class RenderPlanTests(unittest.TestCase):
                     "checks": [
                         {"id": "CHECK-TITLE", "command": "pytest", "gapRefs": []}
                     ],
-                    "completionCriteria": ["CHECK-TITLE 通过"],
+                    "acceptanceCriteria": [
+                        {
+                            "id": "AC-TITLE",
+                            "checkRefs": ["CHECK-TITLE"],
+                            "assertions": [
+                                {
+                                    "path": "title.empty.rejected",
+                                    "operator": "equals",
+                                    "expected": True,
+                                }
+                            ],
+                        }
+                    ],
                     "observedEvidence": [],
                 }
             },
@@ -94,6 +106,8 @@ class RenderPlanTests(unittest.TestCase):
         self.assertIn("marker-end", page)
         self.assertIn("event.key === 'Enter' || event.key === ' '", page)
         self.assertIn("Raw YAML", page)
+        self.assertIn("Acceptance data", page)
+        self.assertIn("title.empty.rejected", page)
         self.assertIn("图书标题规则", page)
         self.assertNotIn("拒绝空标题 </script>", page)
         self.assertIn("\\u003c/script\\u003e", page)

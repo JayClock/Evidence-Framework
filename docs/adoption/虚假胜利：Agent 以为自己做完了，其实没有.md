@@ -8,11 +8,11 @@
 
 ## Solution
 
-项目把“是否完成”从生成者手里拿走：完成条件可验证、进度记原始数据、验证由只读脚本执行、失败保留不隐藏。
+项目把“是否完成”从生成者手里拿走：验收条件写成具体数据、进度记原始数据、验证由只读脚本执行、失败保留不隐藏。
 
-### 完成条件可验证：CHECK 与 completionCriteria
+### 验收数据可比较：CHECK 与 acceptanceCriteria
 
-[机器计划模板](../../.agents/skills/evidence-task-planning/assets/plan-template.yaml)的 `checks` 逐项要求目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令与 `evidenceRequired`；`completionCriteria` 注释规定工序退出条件要逐项对应具体 CHECK，不能以通用工序、文件存在或自评替代任务验收。[测试指南](../engineering/testing.md)补充：命令未知时填 `null` 并关联局部 gap，不写“运行相关测试”冒充可执行。
+[机器计划模板](../../.agents/skills/evidence-task-planning/assets/plan-template.yaml)的 `checks` 逐项要求目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令与 `evidenceRequired`；`acceptanceCriteria` 必须引用本任务 CHECK，并以 `assertions[{path, operator, expected}]` 保存具体且保留类型的期望数据，不能用“测试通过”“符合要求”或文件存在替代任务验收。[测试指南](../engineering/testing.md)补充：命令未知时填 `null` 并关联局部 gap，不写“运行相关测试”冒充可执行。
 
 ### 记录原始进度：status 与 observedEvidence
 
@@ -20,8 +20,8 @@
 
 ### 独立验证者：只读状态机与项目命令
 
-- `plan_state.py verify/next` 只读、确定性：done 必须有 `completionCriteria` 和非空 `observedEvidence`；`in-progress`/`done` 的前置必须先完成；`blocked` 必须关联 gap；compiled task、机器任务记录与 CHECK 一一对应。
-- 回归测试固定这些边界：`test_done_requires_completion_criteria_and_observed_evidence`、`test_active_task_requires_completed_dependencies`、`test_task_records_and_check_ids_are_one_to_one`、`test_blocked_task_and_empty_command_require_known_gap`。
+- `plan_state.py verify/next` 只读、确定性：每个任务必须有引用本任务 CHECK 的 `acceptanceCriteria` 和结构化断言；done 还必须有非空 `observedEvidence`；`in-progress`/`done` 的前置必须先完成；`blocked` 必须关联 gap；compiled task、机器任务记录与 CHECK 一一对应。
+- 回归测试固定这些边界：`test_done_requires_acceptance_criteria_and_observed_evidence`、`test_acceptance_criteria_require_local_checks_and_typed_assertions`、`test_active_task_requires_completed_dependencies`、`test_task_records_and_check_ids_are_one_to_one`、`test_blocked_task_and_empty_command_require_known_gap`。
 - 它在 Plan 与 Check 两个阶段各运行一次，只报告，不替 Agent 修改状态。
 - 项目质量命令充当脚本裁判：`npm test`、`npm run lint`、`npm run build`、`./gradlew check`、`npm run guides:verify`；[测试指南](../engineering/testing.md)为每条写明“实际覆盖”和“不证明什么”。
 
@@ -38,7 +38,7 @@
 
 ### 实际闭环：计划任务与证据
 
-当前计划编译出 8 个任务，执行顺序由依赖决定，其中两个已完成，都满足“完成条件加真实证据”：
+当前计划编译出 8 个任务，执行顺序由依赖决定，其中两个已完成，都满足“具体验收数据加真实证据”：
 
 - `foundation::context.subscription::role.reader` 与 `domain::context.subscription::request.payment` 在当前计划记录中为 `done`，`observedEvidence` 非空。计划从索引与任务 Markdown 迁移到 `plan.yaml` 时必须原样保留这些证据，不可凭审核投影重新推断；
 - 领域 CHECK 记录 `SubscriptionTests 4 项`、`PaymentStatusTests 5 项` 与领域回归 `20 项`，并注明“均实际执行”；

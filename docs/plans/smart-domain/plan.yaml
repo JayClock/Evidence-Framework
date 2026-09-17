@@ -1777,10 +1777,40 @@ tasks:
         preparationTaskRefs: []
         gapRefs: []
         evidenceRequired: 命令、退出码和 ArchUnit 规则摘要。
-    completionCriteria:
-      - CHECK-FND-001 证明角色切换的身份、快照和拒绝语义。
-      - CHECK-FND-002 证明适配层 Context 注入可复用。
-      - CHECK-FND-003 证明固定技术分层未被破坏。
+    acceptanceCriteria:
+      - id: TASK-AC-FND-001
+        checkRefs: [CHECK-FND-001]
+        assertions:
+          - path: reader.roleId
+            operator: equals
+            expected: role.reader
+          - path: reader.readerId
+            operator: equals
+            expected: reader-1
+          - path: reader.actor.sameSnapshot
+            operator: equals
+            expected: true
+          - path: nullUser.rejected
+            operator: equals
+            expected: true
+      - id: TASK-AC-FND-002
+        checkRefs: [CHECK-FND-002]
+        assertions:
+          - path: subscriptionContext.sameInjectedInstance
+            operator: equals
+            expected: true
+          - path: decoratedUser.snapshotPreserved
+            operator: equals
+            expected: true
+      - id: TASK-AC-FND-003
+        checkRefs: [CHECK-FND-003]
+        assertions:
+          - path: architecture.forbiddenDependencyViolations
+            operator: equals
+            expected: []
+          - path: command.exitCode
+            operator: equals
+            expected: 0
     observedEvidence:
       - checkId: CHECK-FND-001
         command: >-
@@ -1992,11 +2022,46 @@ tasks:
           - foundation::context.subscription::role.reader
         gapRefs: []
         evidenceRequired: 命令、退出码和每个边界/反例断言摘要。
-    completionCriteria:
-      - CHECK-DOM-SUB-001 通过并证明 11 个必填字段完整性。
-      - CHECK-DOM-PAY-001 通过并覆盖闭合截止、空证明、重复和字段错配。
-      - >-
-        `./gradlew :backend-domain:test --rerun-tasks` 实际通过且领域无 Spring/MyBatis/Jackson/HTTP 依赖。
+    acceptanceCriteria:
+      - id: TASK-AC-DOM-SUB-001
+        checkRefs: [CHECK-DOM-SUB-001]
+        assertions:
+          - path: subscription.requiredFieldCount
+            operator: equals
+            expected: 11
+          - path: subscription.subscriptionId
+            operator: equals
+            expected: SUB-20261001-001
+          - path: subscription.amount.minorUnits
+            operator: equals
+            expected: 9900
+          - path: subscription.amount.currency
+            operator: equals
+            expected: CNY
+          - path: invalidRegistration.persistedRecordDelta
+            operator: equals
+            expected: 0
+      - id: TASK-AC-DOM-PAY-001
+        checkRefs: [CHECK-DOM-PAY-001]
+        assertions:
+          - path: payment.startedAt
+            operator: equals
+            expected: '2026-10-01T09:00:00Z'
+          - path: payment.expiredAt
+            operator: equals
+            expected: '2026-10-01T09:15:00Z'
+          - path: payment.status.at.2026-10-01T09:14:59Z
+            operator: equals
+            expected: pending
+          - path: payment.status.at.2026-10-01T09:15:00Z
+            operator: equals
+            expected: completed
+          - path: invalidProof.completed
+            operator: equals
+            expected: false
+          - path: command.exitCode
+            operator: equals
+            expected: 0
     observedEvidence:
       - checkId: CHECK-DOM-SUB-001
         command: >-
@@ -2161,9 +2226,31 @@ tasks:
           - domain::context.subscription::request.payment
         gapRefs: []
         evidenceRequired: 命令、退出码以及请求引用和每类结果断言摘要。
-    completionCriteria:
-      - CHECK-DOM-MOBILE-001 通过，并证明 local/test 固定协议和业务时间不会覆盖付款请求的 09:00 开始时间。
-      - '`./gradlew :backend-domain:test --rerun-tasks` 实际通过。'
+    acceptanceCriteria:
+      - id: TASK-AC-DOM-MOBILE-001
+        checkRefs: [CHECK-DOM-MOBILE-001]
+        assertions:
+          - path: mobilePayment.protocolId
+            operator: equals
+            expected: MOBILE-001
+          - path: mobilePayment.requestId
+            operator: equals
+            expected: MOBILE-REQ-001
+          - path: mobilePayment.paymentId
+            operator: equals
+            expected: PAY-001
+          - path: mobilePayment.startedAt
+            operator: equals
+            expected: '2026-10-01T09:02:00Z'
+          - path: payment.startedAt
+            operator: equals
+            expected: '2026-10-01T09:00:00Z'
+          - path: matchingResultCountForCompleted
+            operator: equals
+            expected: 1
+          - path: command.exitCode
+            operator: equals
+            expected: 0
     observedEvidence: []
     executionDiscipline:
       - 真实支付接入另行授权。不得从“外部机构”推导网络协议，也不得把机构结果重建成订阅模块的新凭证。
@@ -2311,10 +2398,40 @@ tasks:
         gapRefs:
           - GAP-DATABASE
         evidenceRequired: 命令、退出码、唯一/幂等/回滚断言摘要和 H2 限制。
-    completionCriteria:
-      - CHECK-SQL-SUB-001 与 CHECK-SQL-MOBILE-001 通过。
-      - Mapper/XML 直接返回领域对象，业务完成判断未进入 SQL/Mapper。
-      - '`./gradlew :backend-persistent:test --rerun-tasks` 实际通过；明确不声称生产数据库已验证。'
+    acceptanceCriteria:
+      - id: TASK-AC-SQL-SUB-001
+        checkRefs: [CHECK-SQL-SUB-001]
+        assertions:
+          - path: subscription.roundTrip.fieldMismatches
+            operator: equals
+            expected: []
+          - path: paymentRequest.countPerSubscription
+            operator: equals
+            expected: 1
+          - path: failedTransaction.persistedRowDelta
+            operator: equals
+            expected: 0
+          - path: mapper.businessCompletionRules
+            operator: equals
+            expected: []
+      - id: TASK-AC-SQL-MOBILE-001
+        checkRefs: [CHECK-SQL-MOBILE-001]
+        assertions:
+          - path: idempotency.sameKeySamePayload.factCount
+            operator: equals
+            expected: 1
+          - path: idempotency.sameKeyDifferentPayload.rejected
+            operator: equals
+            expected: true
+          - path: mobileResult.countPerRequest
+            operator: equals
+            expected: 1
+          - path: failedTransaction.persistedRowDelta
+            operator: equals
+            expected: 0
+          - path: productionDatabase.validated
+            operator: equals
+            expected: false
     observedEvidence: []
     executionDiscipline:
       - 生产数据库未选只阻塞生产 SQL/并发保证；H2 任务仍须验证当前 local/test 事务。表或事务归属变化必须返回 Plan。
@@ -2414,9 +2531,34 @@ tasks:
           - domain::context.mobile::request.mobile
         gapRefs: []
         evidenceRequired: 命令、退出码、profile 与字段保真断言摘要；明确未发生网络调用。
-    completionCriteria:
-      - CHECK-LOCALPAY-001 通过，且固定夹具与适配器只在 local/test 注册。
-      - 文档与结果不声称真实支付协议、可靠性或信任边界已验证。
+    acceptanceCriteria:
+      - id: TASK-AC-LOCALPAY-001
+        checkRefs: [CHECK-LOCALPAY-001]
+        assertions:
+          - path: result.protocolId
+            operator: equals
+            expected: MOBILE-001
+          - path: result.paymentId
+            operator: equals
+            expected: PAY-001
+          - path: result.requestId
+            operator: equals
+            expected: MOBILE-REQ-001
+          - path: result.confirmedAt
+            operator: equals
+            expected: '2026-10-01T09:15:00Z'
+          - path: repeatedInput.sameResult
+            operator: equals
+            expected: true
+          - path: profiles.local.stubBeanCount
+            operator: equals
+            expected: 1
+          - path: profiles.default.stubBeanCount
+            operator: equals
+            expected: 0
+          - path: networkCall.count
+            operator: equals
+            expected: 0
     observedEvidence: []
     executionDiscipline:
       - 若用户要求真实支付，另建有协议来源的任务；不得把此 Stub 扩展成隐式生产实现。
@@ -2572,11 +2714,49 @@ tasks:
         gapRefs:
           - GAP-IDENTITY
         evidenceRequired: 命令、退出码和三种实际 HTTP 响应摘要。
-    completionCriteria:
-      - CHECK-API-SUB-001 与 CHECK-API-PAY-001 通过，并证明 11 字段 POST schema。
-      - >-
-        `./gradlew :backend-api:test --rerun-tasks` 实际通过，api 不依赖 persistent/app/数据库。
-      - QA-IDENTITY 未解决时只声明 local/test 能力，不声称 403 或生产授权完成。
+    acceptanceCriteria:
+      - id: TASK-AC-API-SUB-001
+        checkRefs: [CHECK-API-SUB-001]
+        assertions:
+          - path: postSubscription.requiredFieldCount
+            operator: equals
+            expected: 11
+          - path: postSubscription.success.status
+            operator: equals
+            expected: 201
+          - path: getSubscription.success.status
+            operator: equals
+            expected: 200
+          - path: invalidJson.status
+            operator: equals
+            expected: 400
+          - path: idempotencyConflict.status
+            operator: equals
+            expected: 409
+          - path: rejectedRequest.domainWriteCallCount
+            operator: equals
+            expected: 0
+          - path: response.cacheControl
+            operator: contains
+            expected: no-store
+      - id: TASK-AC-API-PAY-001
+        checkRefs: [CHECK-API-PAY-001]
+        assertions:
+          - path: completedPayment.status
+            operator: equals
+            expected: 200
+          - path: pendingPayment.status
+            operator: equals
+            expected: 200
+          - path: missingPayment.status
+            operator: equals
+            expected: 404
+          - path: api.runtimeDependencies
+            operator: not-contains
+            expected: backend-persistent
+          - path: productionAuthorization.validated
+            operator: equals
+            expected: false
     observedEvidence: []
     executionDiscipline:
       - 不得根据已有 User CRUD 推导生产主体权限；隐藏链接不等于授权。API 契约差异必须返回 API/需求拥有者，不静默改字段或状态码。
@@ -2719,10 +2899,43 @@ tasks:
           - api::context.subscription::capability.register-subscription-reader
         gapRefs: []
         evidenceRequired: 命令、退出码和新增架构规则摘要。
-    completionCriteria:
-      - CHECK-APP-WIRE-001、CHECK-APP-ARCH-001 通过，且正常路径证明合同登记后的自动触发。
-      - >-
-        `./gradlew :backend:test --rerun-tasks` 实际通过，且 local/test Stub 未在不允许的 profile 暴露。
+    acceptanceCriteria:
+      - id: TASK-AC-APP-WIRE-001
+        checkRefs: [CHECK-APP-WIRE-001]
+        assertions:
+          - path: registeredSubscription.paymentRequestId
+            operator: equals
+            expected: PAY-001
+          - path: paymentPort.protocolId
+            operator: equals
+            expected: MOBILE-001
+          - path: paymentPort.requestId
+            operator: equals
+            expected: MOBILE-REQ-001
+          - path: paymentPort.startedAt
+            operator: equals
+            expected: '2026-10-01T09:02:00Z'
+          - path: portFailure.fabricatedResultCount
+            operator: equals
+            expected: 0
+          - path: resultRegistrationFailure.partialResultCount
+            operator: equals
+            expected: 0
+      - id: TASK-AC-APP-ARCH-001
+        checkRefs: [CHECK-APP-ARCH-001]
+        assertions:
+          - path: architecture.domainTechnicalDependencyViolations
+            operator: equals
+            expected: []
+          - path: architecture.apiPersistentAccessViolations
+            operator: equals
+            expected: []
+          - path: architecture.crossModuleMapperAccessViolations
+            operator: equals
+            expected: []
+          - path: profiles.default.localPaymentStubBeanCount
+            operator: equals
+            expected: 0
     observedEvidence: []
     executionDiscipline:
       - 若事务参与者或触发点变化，返回 Plan；不得在组合根新增业务 Service 来绕过领域拥有者。
@@ -2875,15 +3088,105 @@ tasks:
           - GAP-IDENTITY
           - GAP-DATABASE
         evidenceRequired: 命令、退出码、三类 HTTP 响应及失败后 SQL 行数。
-    completionCriteria:
-      - >-
-        API 合成向量的 manifest 输入摘要与当前 `.evidence/api/api.yaml` 一致；所消费向量仍标记 `dataClassification: synthetic`、`runtimeValidated:
-        false`，运行通过只记录在本任务 `observedEvidence`。
-      - local/test 固定夹具已由发现记录和需求确定；QA-IDENTITY/QA-DATABASE 仍未决时明确只验收 local/test。
-      - CHECK-ACC-MOBILE-001 与 CHECK-ACC-PENDING-001 实际通过。
-      - >-
-        `./gradlew check`、`npm test`、`npm run lint`、`npm run build` 实际通过；缓存、UP-TO-DATE 与真实执行分别说明。
-      - 验收后再按真实结果更新实现映射文档；不反向修改 FM/API/验收预期。
+      - id: CHECK-ACC-QUALITY-001
+        purpose: 验证验收后的仓库级 Java、测试、静态检查和构建基线。
+        quadrant: Q1
+        subject: 项目质量命令
+        dependencies: 仓库声明的 Gradle、Node、Python 与本地工具链；逐项区分实际执行、缓存和环境失败。
+        inputs:
+          commands:
+            - ./gradlew check
+            - npm test
+            - npm run lint
+            - npm run build
+        expected:
+          exitCodes:
+            ./gradlew check: 0
+            npm test: 0
+            npm run lint: 0
+            npm run build: 0
+        testFiles: []
+        cwd: .
+        command: ./gradlew check && npm test && npm run lint && npm run build
+        procedure: docs/engineering/testing.md
+        preparationTaskRefs:
+          - >-
+            integration::context.subscription::design.subscription-payment-orchestration
+        gapRefs: []
+        evidenceRequired: 四条命令各自的退出码、实际执行/缓存说明和完整失败摘要。
+    acceptanceCriteria:
+      - id: TASK-AC-ACC-MOBILE-001
+        checkRefs: [CHECK-ACC-MOBILE-001]
+        assertions:
+          - path: testVector.dataClassification
+            operator: equals
+            expected: synthetic
+          - path: testVector.runtimeValidated
+            operator: equals
+            expected: false
+          - path: subscription.subscriptionId
+            operator: equals
+            expected: SUB-20261001-001
+          - path: payment.amount.minorUnits
+            operator: equals
+            expected: 9900
+          - path: payment.amount.currency
+            operator: equals
+            expected: CNY
+          - path: payment.startedAt
+            operator: equals
+            expected: '2026-10-01T09:00:00Z'
+          - path: payment.expiredAt
+            operator: equals
+            expected: '2026-10-01T09:15:00Z'
+          - path: confirmations.completedAtCutoff
+            operator: equals
+            expected: true
+          - path: duplicateRequest.resultCount
+            operator: equals
+            expected: 1
+      - id: TASK-AC-ACC-PENDING-001
+        checkRefs: [CHECK-ACC-PENDING-001]
+        assertions:
+          - path: payment.status.at.2026-10-01T09:14:59Z
+            operator: equals
+            expected: pending
+          - path: missingPayment.httpStatus
+            operator: equals
+            expected: 404
+          - path: invalidRegistration.subscriptionRowDelta
+            operator: equals
+            expected: 0
+          - path: invalidRegistration.paymentRequestRowDelta
+            operator: equals
+            expected: 0
+          - path: invalidRegistration.mobileResultRowDelta
+            operator: equals
+            expected: 0
+          - path: validationScope
+            operator: equals
+            expected: local/test
+          - path: productionIdentity.validated
+            operator: equals
+            expected: false
+          - path: productionDatabase.validated
+            operator: equals
+            expected: false
+      - id: TASK-AC-ACC-QUALITY-001
+        checkRefs: [CHECK-ACC-QUALITY-001]
+        assertions:
+          - path: quality.gradleCheck.exitCode
+            operator: equals
+            expected: 0
+          - path: quality.npmTest.exitCode
+            operator: equals
+            expected: 0
+          - path: quality.npmLint.exitCode
+            operator: equals
+            expected: 0
+          - path: quality.npmBuild.exitCode
+            operator: equals
+            expected: 0
     observedEvidence: []
     executionDiscipline:
       - 该任务完成只证明当前 local/test 移动支付订阅主链；不得声称生产身份、支付、数据库或其余 FM 旅程完成。

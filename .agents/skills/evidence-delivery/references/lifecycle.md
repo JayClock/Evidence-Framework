@@ -30,7 +30,7 @@ planned ──前置完成且无局部阻塞──> in-progress
 blocked ──缺口有依据地解决──────────> planned
                                       │
 in-progress ──检查失败可局部修复────> in-progress
-in-progress ──完成条件和证据满足────> done
+in-progress ──具体验收数据和证据满足────> done
 in-progress ──发现上游变化──────────> blocked → 重新 Plan
 ```
 
@@ -44,7 +44,7 @@ in-progress ──发现上游变化──────────> blocked → 
 - `compiled.tasks` 与 `tasks` 一一对应；
 - CHECK 和 gap 标识唯一；
 - blocked、空命令和 gap 的结构关联；
-- done 的完成条件和真实证据非空；
+- done 的 `acceptanceCriteria` 均为引用本任务 CHECK 的结构化断言，且真实证据非空；
 - 当前可执行任务集合；
 - 从同一 `plan.yaml` 重建离线审核页。
 

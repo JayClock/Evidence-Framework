@@ -123,7 +123,7 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 | 装配与验收 | [应用测试目录](../../apps/backend/src/test/java/com/evidencepoc/backend/)：按具体测试核对真实链路与配置                                                                                                               | profile 隔离等于生产认证完成                        |
 | 前端交互   | [App 测试](../../apps/frontend/src/app/app.spec.tsx)：当前导航页                                                                                                                                                      | 自动生成完整用户管理或订阅表单                      |
 
-例如对“重命名保持身份且不改变原快照”的复验任务：`files.reuse` 定位 UserTests；`steps` 先核对切片契约和实现，再运行其中 `renameKeepsStableIdentityWithoutMutatingLoadedSnapshot`；CHECK 明确真实 User/Description、固定新旧名称、身份不变和原快照不变的预期。使用领域测试入口并指定该测试，`completionCriteria` 引用此 CHECK；`observedEvidence` 在执行前为空。它不证明 HTTP 更新已写入数据库，后者需要持久化和装配工序各自提供证据。人通过 `review.html` 审核这些字段，修改仍回到 `plan.yaml`。
+例如对“重命名保持身份且不改变原快照”的复验任务：`files.reuse` 定位 UserTests；`steps` 先核对切片契约和实现，再运行其中 `renameKeepsStableIdentityWithoutMutatingLoadedSnapshot`；CHECK 明确真实 User/Description、固定新旧名称、身份不变和原快照不变的预期。使用领域测试入口并指定该测试；`acceptanceCriteria` 引用该 CHECK，并分别以身份路径等于原 ID、原快照名称等于旧值的有类型断言表达验收数据；`observedEvidence` 在执行前为空。它不证明 HTTP 更新已写入数据库，后者需要持久化和装配工序各自提供证据。人通过 `review.html` 审核这些字段，修改仍回到 `plan.yaml`。
 
 ## 工序维护的检查与退出
 

@@ -13,6 +13,16 @@ import yaml
 
 STATUSES = {"planned", "blocked", "in-progress", "done"}
 MODES = {"design", "setup", "implementation", "verify", "manual"}
+ASSERTION_OPERATORS = {
+    "equals",
+    "not-equals",
+    "contains",
+    "not-contains",
+    "exists",
+    "absent",
+    "matches",
+    "count-equals",
+}
 
 
 class UniqueLoader(yaml.SafeLoader):
@@ -50,6 +60,18 @@ def _strings(value: Any, location: str, diagnostics: list[str]) -> list[str]:
         diagnostics.append(f"{location} must be an array of strings")
         return []
     return value
+
+
+def _is_data(value: Any) -> bool:
+    if value is None or isinstance(value, (str, bool, int, float)):
+        return True
+    if isinstance(value, list):
+        return all(_is_data(item) for item in value)
+    if isinstance(value, dict):
+        return all(
+            isinstance(key, str) and _is_data(item) for key, item in value.items()
+        )
+    return False
 
 
 def inspect_plan(plan_path: Path) -> dict[str, Any]:
@@ -93,6 +115,7 @@ def inspect_plan(plan_path: Path) -> dict[str, Any]:
     tasks: dict[str, dict[str, Any]] = {}
     gap_references: list[tuple[str, str]] = []
     check_owners: dict[str, str] = {}
+    acceptance_owners: dict[str, str] = {}
     for task_key, task in tasks_value.items():
         location = f"tasks[{task_key!r}]"
         if not isinstance(task_key, str) or not task_key:
@@ -119,6 +142,7 @@ def inspect_plan(plan_path: Path) -> dict[str, Any]:
         if not isinstance(checks, list):
             diagnostics.append(f"{location}.checks must be an array")
             checks = []
+        task_check_ids: set[str] = set()
         for position, check in enumerate(checks):
             check_location = f"{location}.checks[{position}]"
             if not isinstance(check, dict):
@@ -133,6 +157,7 @@ def inspect_plan(plan_path: Path) -> dict[str, Any]:
                 )
             else:
                 check_owners[check_id] = task_key
+                task_check_ids.add(check_id)
             check_gaps = _strings(
                 check.get("gapRefs", []), f"{check_location}.gapRefs", diagnostics
             )
@@ -146,11 +171,86 @@ def inspect_plan(plan_path: Path) -> dict[str, Any]:
                 )
             if command is None and not check_gaps:
                 diagnostics.append(f"{check_location} has no command and no gap")
+
+        if "completionCriteria" in task:
+            diagnostics.append(
+                f"{location}.completionCriteria is obsolete; use acceptanceCriteria"
+            )
+        criteria = task.get("acceptanceCriteria", [])
+        if not isinstance(criteria, list) or not criteria:
+            diagnostics.append(
+                f"{location}.acceptanceCriteria must be a nonempty array"
+            )
+            criteria = []
+        referenced_check_ids: set[str] = set()
+        for position, criterion in enumerate(criteria):
+            criterion_location = f"{location}.acceptanceCriteria[{position}]"
+            if not isinstance(criterion, dict):
+                diagnostics.append(f"{criterion_location} must be a mapping")
+                continue
+            criterion_id = criterion.get("id")
+            if not isinstance(criterion_id, str) or not criterion_id.strip():
+                diagnostics.append(f"{criterion_location}.id must be nonempty")
+            elif criterion_id in acceptance_owners:
+                diagnostics.append(
+                    f"duplicate acceptance criterion id {criterion_id}: "
+                    f"{acceptance_owners[criterion_id]} and {task_key}"
+                )
+            else:
+                acceptance_owners[criterion_id] = task_key
+            check_refs = _strings(
+                criterion.get("checkRefs", []),
+                f"{criterion_location}.checkRefs",
+                diagnostics,
+            )
+            if not check_refs:
+                diagnostics.append(f"{criterion_location}.checkRefs must not be empty")
+            if len(check_refs) != len(set(check_refs)):
+                diagnostics.append(
+                    f"{criterion_location}.checkRefs contains duplicates"
+                )
+            referenced_check_ids.update(check_refs)
+            unknown_checks = sorted(set(check_refs) - task_check_ids)
+            if unknown_checks:
+                diagnostics.append(
+                    f"{criterion_location} references checks outside its task: "
+                    f"{unknown_checks}"
+                )
+            assertions = criterion.get("assertions", [])
+            if not isinstance(assertions, list) or not assertions:
+                diagnostics.append(
+                    f"{criterion_location}.assertions must be a nonempty array"
+                )
+                continue
+            for assertion_position, assertion in enumerate(assertions):
+                assertion_location = (
+                    f"{criterion_location}.assertions[{assertion_position}]"
+                )
+                if not isinstance(assertion, dict):
+                    diagnostics.append(f"{assertion_location} must be a mapping")
+                    continue
+                path = assertion.get("path")
+                if not isinstance(path, str) or not path.strip():
+                    diagnostics.append(f"{assertion_location}.path must be nonempty")
+                operator = assertion.get("operator")
+                if operator not in ASSERTION_OPERATORS:
+                    diagnostics.append(
+                        f"{assertion_location}.operator is invalid: {operator}"
+                    )
+                if "expected" not in assertion:
+                    diagnostics.append(f"{assertion_location}.expected is required")
+                elif not _is_data(assertion["expected"]):
+                    diagnostics.append(
+                        f"{assertion_location}.expected must be JSON-compatible data"
+                    )
+        unreferenced_checks = sorted(task_check_ids - referenced_check_ids)
+        if unreferenced_checks:
+            diagnostics.append(
+                f"{location}.checks are not referenced by acceptanceCriteria: "
+                f"{unreferenced_checks}"
+            )
         if status == "done":
-            criteria = task.get("completionCriteria", [])
             evidence = task.get("observedEvidence", [])
-            if not isinstance(criteria, list) or not criteria:
-                diagnostics.append(f"done task has no completion criteria: {task_key}")
             if not isinstance(evidence, list) or not evidence:
                 diagnostics.append(f"done task has no observed evidence: {task_key}")
         tasks[task_key] = task

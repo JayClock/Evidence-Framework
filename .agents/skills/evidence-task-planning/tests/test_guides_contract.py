@@ -29,7 +29,7 @@ class GuidesContractTests(unittest.TestCase):
             "procedureRefs",
             "dependencyUsage",
             "checks:",
-            "completionCriteria",
+            "acceptanceCriteria",
             "observedEvidence",
             "status:",
         ):

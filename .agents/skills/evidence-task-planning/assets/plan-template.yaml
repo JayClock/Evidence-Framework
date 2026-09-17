@@ -97,7 +97,15 @@ tasks: {}
 #     preparationTaskRefs: []
 #     gapRefs: []
 #     evidenceRequired: <执行时保存的结果>
-#   completionCriteria: []
+#   acceptanceCriteria: []
+#   - id: AC-<全计划唯一标识>
+#     checkRefs: [CHECK-<本任务 CHECK ID>]
+#     assertions:
+#       - path: <可观察结果的稳定路径>
+#         operator: equals
+#         # 还支持 not-equals/contains/not-contains/exists/absent/
+#         # matches/count-equals。
+#         expected: <保留字符串、数字、布尔、null、数组或对象类型的具体期望值>
 #   observedEvidence: []
 gaps: []
 # - id: GAP-<稳定标识>

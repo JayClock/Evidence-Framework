@@ -57,7 +57,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 - 当前实现错误：留在同一任务内修复并重跑；
 - 前置、环境或来源缺失：记录稳定 gap，将该任务标为 `blocked`；
 - FM/API 或业务边界变化：停止实施，返回 Plan，更新上游和 slicing 后重编译；
-- 完成条件及检查满足：先写 `observedEvidence`，再将任务标为 `done`；
+- 具体验收数据及检查满足：每条 `acceptanceCriteria` 引用本任务 CHECK，并以 `path/operator/expected` 保存可比较预期；满足后先写 `observedEvidence`，再将任务标为 `done`；
 - 更新 `plan.yaml` 后重新生成 `review.html`；当前任务结束后停止。
 
 ## 单任务内层操控循环
@@ -71,7 +71,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 3. 直接前置均为 done，证据仍对应当前源、代码和环境；FM/API 摘要不覆盖工程指南，规范/howto/架构变化需评估重验。
 4. 行为与数据拥有者、公开契约、事务入口、必要外部边界及依赖用法。
 5. `procedureRefs` 指向真实规范/howto/范例，命令、cwd 和依赖可用。
-6. 每个完成条件对应 CHECK、预期、失败不变性与停止路径。
+6. 每条 `acceptanceCriteria` 引用本任务 CHECK，包含稳定路径、受限操作符、保留类型的具体 `expected`，且 CHECK 覆盖失败不变性与停止路径。
 
 必要项缺失不进入 Action，只阻塞受影响任务，不新增状态文件。结构自洽、文件存在和范例曾通过不是语义就绪或批准。
 

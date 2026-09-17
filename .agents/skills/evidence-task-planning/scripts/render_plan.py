@@ -169,7 +169,7 @@ function taskCard(key) {
   addField(list, 'Design', task.design || {}, true);
   addField(list, 'Steps', task.steps || [], true);
   addField(list, 'Checks', task.checks || [], true);
-  addField(list, 'Completion', task.completionCriteria || [], true);
+  addField(list, 'Acceptance data', task.acceptanceCriteria || [], true);
   addField(list, 'Observed evidence', task.observedEvidence || [], true);
   details.append(list);
   article.append(details);
