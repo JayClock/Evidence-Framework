@@ -7,7 +7,6 @@ import yaml
 
 SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
-    SKILL / "assets/examples",
     SKILL / "tests/fixtures",
     SKILL / "evals/fixtures",
 ]

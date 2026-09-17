@@ -25,7 +25,7 @@ npx skills@latest add ./.agents/skills --skill evidence-discovery
 
 完整组合流程可选 `evidence-modeling`，并同时安装 `evidence-discovery` 与 `evidence-fm`；也可按需只安装单项或 `evidence-requirements`。需要离线审核页时安装 `evidence-visualization`，已有 API 时同时提供 `evidence-api-design`；保留生成器、assets 和浏览器测试，不需要向业务项目复制工具。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
 
-也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references、assets，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
+也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
 使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；专业 FM 访谈通过已安装的 FM 包或用户提供的路径只读获取准则，不假设兄弟目录，也不自动启动模型生成。缺少准则时说明限制，不能宣称完整专业审查。
 
@@ -105,7 +105,7 @@ python3 -m venv "$VENV_DIR"
 - 有适用场景时实际执行并比较既有预期，不能倒改预期取得成功。
 - 机器结果不提升也不推断业务确认。
 
-可对 [合成示例](evidence-fm/assets/examples/README.md) 直接只读检查。需要修改或生成输出时，先复制到用户允许的工作目录；不要把示例金额、时长和角色当作业务默认值。
+可对 [测试夹具](evidence-fm/tests/fixtures/README.md) 直接只读检查。需要修改或生成输出时，先复制到用户允许的工作目录；不要把夹具中的金额、时长和角色当作业务默认值。
 
 更多模型规则和命令见 [FM 指南](evidence-fm/references/README.md)。
 

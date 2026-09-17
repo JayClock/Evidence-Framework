@@ -58,14 +58,14 @@ class IsolatedVisualizationTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertEqual(before, file_hashes(self.skill))
 
-    def test_generation_uses_installed_assets_and_keeps_project_inputs_unchanged(self):
+    def test_generation_uses_installed_fm_and_keeps_project_inputs_unchanged(self):
         fm_skill = self.workspace / "separate dependencies" / "formal model"
         shutil.copytree(
             FM_SKILL, fm_skill, ignore=shutil.ignore_patterns("__pycache__")
         )
         project = self.workspace / "business project"
         model = project / ".evidence/fm"
-        shutil.copytree(fm_skill / "assets/examples/domain", model)
+        shutil.copytree(fm_skill / "tests/fixtures/domain", model)
         for name in ("tests", "evals"):
             shutil.rmtree(self.skill / name)
         before_model, before_skill = file_hashes(model), file_hashes(self.skill)

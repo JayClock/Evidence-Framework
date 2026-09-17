@@ -39,8 +39,17 @@ class IsolatedFMTests(unittest.TestCase):
         )
         self.model = self.workspace / "business model"
 
+        self.samples = self.workspace / "prepared models"
+        for name in ("domain", "payment"):
+            source = (
+                self.skill / "tests/fixtures/domain"
+                if name == "domain"
+                else self.skill / "tests/fixtures/valid-traceable-subscription"
+            )
+            shutil.copytree(source, self.samples / name)
+
     def example(self, name: str):
-        shutil.copytree(self.skill / "assets/examples" / name, self.model)
+        shutil.copytree(self.samples / name, self.model)
 
     def run_script(self, script: str, *args: str) -> subprocess.CompletedProcess[str]:
         return self.run_python(

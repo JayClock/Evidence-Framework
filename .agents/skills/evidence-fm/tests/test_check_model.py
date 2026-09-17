@@ -13,7 +13,7 @@ from unittest.mock import patch
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
 
-import check_fm  # noqa: E402
+import check_fm  # type: ignore[import-not-found]  # noqa: E402
 
 
 class CheckModelTests(unittest.TestCase):
@@ -22,7 +22,7 @@ class CheckModelTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.project = Path(self.temp.name).resolve()
         self.model = self.project / ".evidence/fm"
-        shutil.copytree(SKILL / "assets/examples/domain", self.model)
+        shutil.copytree(SKILL / "tests/fixtures/domain", self.model)
 
     def test_read_only_report_binds_exact_source_bytes_and_is_location_independent(
         self,
