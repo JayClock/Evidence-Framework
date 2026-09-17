@@ -73,6 +73,6 @@ API_FILE="$PROJECT_ROOT/.evidence/api/api.yaml"
 
 `projection.json` 是唯一机器中间结果，OpenAPI、表示样例、流程、E2E 测试向量和 manifest 从它生成，不回写 API 设计，不手改生成文件。接口清单、覆盖和 HTTP 契约由 `evidence-visualization` 直接消费当前投影展示，不再维护派生 Markdown。检查通过不替代运行时授权和接口验收。`e2e-test-vectors.json` 只提供确定性的合成请求、预期响应与来源场景；数据库装载、认证身份和外部系统 Stub 仍由实现及验收任务决定。
 
-## 示例
+## 测试案例
 
 [商品采购协议完整生命周期测试案例](tests/fixtures/full-lifecycle/README.md) 覆盖整体 FM：询价、报价、采购协议、支付、开票、发货及商品读取，共 13 个角色接口与完整 HTTP 契约；微信支付与经办主体均在整体覆盖中说明其处理方式。案例字段、时间、请求响应和协议策略是合成数据，不是生产业务默认值。
