@@ -9,9 +9,9 @@ import unittest
 from test_support import API_ROOT, FM_SKILL, REPO_ROOT
 
 
-class FullLifecycleExampleTest(unittest.TestCase):
+class FullLifecycleFixtureTest(unittest.TestCase):
     def test_product_procurement_lifecycle_is_valid_and_complete(self) -> None:
-        example = API_ROOT / "assets" / "examples" / "full-lifecycle"
+        example = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
         fm_check = subprocess.run(
             [
                 sys.executable,

@@ -29,7 +29,7 @@ class ResourcesTest(unittest.TestCase):
         self.assertIn("RESOURCE_CYCLE", {item.code for item in diagnostics})
 
     def test_different_business_contexts_require_separate_uri_roots(self) -> None:
-        example = API_ROOT / "assets" / "examples" / "full-lifecycle"
+        example = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
         value, design_diagnostics = api_loader.load_api(example / "api.yaml")
         model, fm_diagnostics = fm_adapter.load_fm(example / "fm", FM_SKILL)
         self.assertEqual(design_diagnostics, [])

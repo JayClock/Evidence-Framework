@@ -1,6 +1,6 @@
-# 商品采购协议完整 FM 与 API 示例
+# 商品采购协议完整 FM 与 API 测试案例
 
-这是商品采购协议的可执行示例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
+这是商品采购协议的可执行测试案例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
 
 ```text
 商品询价 RFP → 商品报价 Proposal → 商品采购协议 Contract
@@ -93,7 +93,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 
 ```bash
 "$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$API_SKILL_DIR/assets/examples/full-lifecycle/fm"
+  "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm"
 ```
 
 预期 FM 有效，1 个场景实际执行并通过：包含 14 个具体凭证实例，采购支付、开票、发货及外部微信支付均完成。
@@ -103,9 +103,9 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ```bash
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" \
-  --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
+  --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.yaml"
 ```
 
 API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
@@ -119,9 +119,9 @@ API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角�
 ```bash
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" \
-  --fm "$API_SKILL_DIR/assets/examples/full-lifecycle/fm" \
+  --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/assets/examples/full-lifecycle/api.yaml"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.yaml"
 ```
 
 ## HTTP 契约

@@ -11,7 +11,7 @@ from pathlib import Path
 import yaml
 from test_support import API_ROOT, FM_SKILL
 
-EXAMPLE = API_ROOT / "assets" / "examples" / "full-lifecycle"
+EXAMPLE = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
 SCENARIO = "validation/scenarios/scenario--product-procurement.yaml"
 PROOFS = {
     "payment": ("wechat-payment-confirmation", "payment_number"),

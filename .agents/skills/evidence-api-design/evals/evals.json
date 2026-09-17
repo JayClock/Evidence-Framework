@@ -29,7 +29,7 @@
       "id": 5,
       "prompt": "更新商品采购示例，询价、报价、协议、支付、开票、发货和商品读取都要完整 HTTP 契约。",
       "expected_output": "13 个角色接口全部有请求、响应、字段来源、幂等缓存策略和成功流程；OpenAPI 合并为 12 个路径方法操作。外部微信支付凭证与经办主体均有整体覆盖依据，不添加无依据的接入或资料接口。",
-      "files": ["assets/examples/full-lifecycle/api.yaml"]
+      "files": ["tests/fixtures/full-lifecycle/api.yaml"]
     },
     {
       "id": 6,
@@ -47,7 +47,7 @@
       "id": 8,
       "prompt": "将完整 api.yaml 生成 OpenAPI 和接口文档，使用默认产物目录。",
       "expected_output": "校验整体设计后直接更新 .evidence/api/generated，使用 Git 管理历史且不重复确认目录；缺口时保留现有交付不变。保留角色、实例约束与运行时验证边界。",
-      "files": ["assets/examples/full-lifecycle/api.yaml"]
+      "files": ["tests/fixtures/full-lifecycle/api.yaml"]
     }
   ]
 }
