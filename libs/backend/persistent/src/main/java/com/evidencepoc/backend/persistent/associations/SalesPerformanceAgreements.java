@@ -1,5 +1,7 @@
 package com.evidencepoc.backend.persistent.associations;
 
+import com.evidencepoc.backend.domain.IdempotencyKeyReuseException;
+import com.evidencepoc.backend.domain.IdempotencyLedger;
 import com.evidencepoc.backend.domain.description.SalesPerformanceAgreementDescription;
 import com.evidencepoc.backend.domain.model.SalesPerformanceAgreement;
 import com.evidencepoc.backend.persistent.mappers.SalesPerformanceAgreementsMapper;
@@ -13,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Root association adapter; owns the sales performance write entries and idempotency ledger. */
 @Repository
 public class SalesPerformanceAgreements
-    implements com.evidencepoc.backend.domain.model.SalesPerformanceAgreements {
+    implements com.evidencepoc.backend.domain.model.SalesPerformanceAgreements, IdempotencyLedger {
   private final SalesPerformanceAgreementsMapper mapper;
 
   public SalesPerformanceAgreements(SalesPerformanceAgreementsMapper mapper) {
@@ -45,6 +47,7 @@ public class SalesPerformanceAgreements
    * were already processed. An empty result means the key is unused; a different digest for a used
    * key is a conflict.
    */
+  @Override
   public Optional<String> replayedResourceId(
       String capability, String idempotencyKey, String requestDigest) {
     String recordedDigest = mapper.findIdempotencyDigest(capability, idempotencyKey);
@@ -52,12 +55,12 @@ public class SalesPerformanceAgreements
       return Optional.empty();
     }
     if (!recordedDigest.equals(requestDigest)) {
-      throw new IllegalStateException(
-          "Idempotency key was already used with a different payload: " + idempotencyKey);
+      throw new IdempotencyKeyReuseException(idempotencyKey);
     }
     return Optional.ofNullable(mapper.findIdempotencyResourceId(capability, idempotencyKey));
   }
 
+  @Override
   @Transactional
   public void rememberResult(
       String capability, String idempotencyKey, String requestDigest, String resourceId) {

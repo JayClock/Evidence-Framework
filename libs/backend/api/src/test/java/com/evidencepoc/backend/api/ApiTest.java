@@ -1,7 +1,9 @@
 package com.evidencepoc.backend.api;
 
 import com.evidencepoc.backend.api.config.ApiTestApplication;
+import com.evidencepoc.backend.domain.IdempotencyLedger;
 import com.evidencepoc.backend.domain.description.UserDescription;
+import com.evidencepoc.backend.domain.model.SalesPerformanceAgreements;
 import com.evidencepoc.backend.domain.model.User;
 import com.evidencepoc.backend.domain.model.Users;
 import io.restassured.RestAssured;
@@ -23,6 +25,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 abstract class ApiTest {
   @LocalServerPort private int port;
   @MockitoBean protected Users users;
+  @MockitoBean protected SalesPerformanceAgreements salesPerformanceAgreements;
+  @MockitoBean protected IdempotencyLedger idempotencyLedger;
 
   protected RequestSpecification api() {
     // Per-request settings, not RestAssured's mutable global port/basePath.

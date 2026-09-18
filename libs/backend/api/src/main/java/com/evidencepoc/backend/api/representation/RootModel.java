@@ -9,5 +9,9 @@ public final class RootModel extends RepresentationModel<RootModel> {
   public RootModel(UriInfo uriInfo) {
     add(Link.of(ApiTemplates.relative(ApiTemplates.root(uriInfo))).withSelfRel());
     add(Link.of(ApiTemplates.relative(ApiTemplates.users(uriInfo)), "users"));
+    add(
+        Link.of(
+            ApiTemplates.relative(ApiTemplates.salesPerformanceAgreements(uriInfo)),
+            "sales-performance-agreements"));
   }
 }

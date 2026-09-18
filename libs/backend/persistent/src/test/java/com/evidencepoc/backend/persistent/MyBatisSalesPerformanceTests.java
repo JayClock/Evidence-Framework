@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.evidencepoc.backend.domain.IdempotencyKeyReuseException;
 import com.evidencepoc.backend.domain.context.SalesPerformanceContext;
 import com.evidencepoc.backend.domain.description.CustomerContactRecordDescription;
 import com.evidencepoc.backend.domain.description.MonthlyCustomerContactTargetDescription;
@@ -119,7 +120,7 @@ class MyBatisSalesPerformanceTests {
         Optional.of("CONTACT-REC-001-playback"),
         agreements.replayedResourceId(capability, "idem-contact-rec-001", "digest-001"));
     assertThrows(
-        IllegalStateException.class,
+        IdempotencyKeyReuseException.class,
         () -> agreements.replayedResourceId(capability, "idem-contact-rec-001", "digest-002"));
     assertEquals(
         Optional.empty(), agreements.replayedResourceId(capability, "idem-unused", "digest-any"));

@@ -1,6 +1,8 @@
 package com.evidencepoc.backend.api;
 
 import com.evidencepoc.backend.api.representation.RootModel;
+import com.evidencepoc.backend.domain.IdempotencyLedger;
+import com.evidencepoc.backend.domain.model.SalesPerformanceAgreements;
 import com.evidencepoc.backend.domain.model.Users;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -16,10 +18,15 @@ import org.springframework.stereotype.Component;
 @Path("/")
 public class RootApi {
   private final Users users;
+  private final SalesPerformanceAgreements agreements;
+  private final IdempotencyLedger idempotencyLedger;
   @Context private ResourceContext resourceContext;
 
-  public RootApi(Users users) {
+  public RootApi(
+      Users users, SalesPerformanceAgreements agreements, IdempotencyLedger idempotencyLedger) {
     this.users = users;
+    this.agreements = agreements;
+    this.idempotencyLedger = idempotencyLedger;
   }
 
   @GET
@@ -31,5 +38,11 @@ public class RootApi {
   @Path("users")
   public UsersApi users() {
     return resourceContext.initResource(new UsersApi(users));
+  }
+
+  @Path("sales-performance-agreements")
+  public SalesPerformanceAgreementsApi salesPerformanceAgreements() {
+    return resourceContext.initResource(
+        new SalesPerformanceAgreementsApi(agreements, idempotencyLedger));
   }
 }

@@ -1290,7 +1290,7 @@ tasks:
   api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales:
     title: 电话销售绩效协议 HTTP 接口
     mode: implementation
-    status: planned
+    status: done
     outcome: 交付三个追加能力（协议、月度目标、联系记录）的 Jersey 子资源、请求/表示、幂等与错误契约。
     sourceRefs:
       - resource.sales-performance-agreement
@@ -1338,6 +1338,7 @@ tasks:
       http: POST 返回 201、Location 与 self；同键同输入重放原结果，同键不同输入与已存在业务编号返回 409；字段/关联无效返回 422，非法 JSON/未知字段/类型错误返回 400；响应 no-store。
       rolesAndRules: 角色绑定与参与方核验在本地无身份来源时不可执行；Resource 按领域公开契约追加凭证，403 保持缺口，不以角色名猜测调用者。
       localTransaction: 不适用；写入事务归 persistent 适配器。
+      idempotency: api 依赖 domain 的 IdempotencyLedger 端口；persistent 根适配器实现并保存能力、键、摘要与结果标识；同键异摘要抛 IdempotencyKeyReuseException，同键同摘要重放已记录资源。
       externalIntegration: 无。
       nonGoals:
         - 读取/列表能力
@@ -1377,10 +1378,17 @@ tasks:
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/SalesPerformanceAgreementsApiTests.java
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/MonthlyCustomerContactTargetsApiTests.java
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/CustomerContactRecordsApiTests.java
+        - libs/backend/api/src/test/java/com/evidencepoc/backend/api/SalesPerformanceApiFixtures.java
+        - libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/IdempotencyLedger.java
+        - libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/IdempotencyKeyReuseException.java
       modify:
         - libs/backend/api/src/main/java/com/evidencepoc/backend/api/RootApi.java
         - libs/backend/api/src/main/java/com/evidencepoc/backend/api/ApiTemplates.java
+        - libs/backend/api/src/main/java/com/evidencepoc/backend/api/representation/RootModel.java
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/config/ApiTestApplication.java
+        - libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTest.java
+        - libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/SalesPerformanceAgreements.java
+        - libs/backend/persistent/src/test/java/com/evidencepoc/backend/persistent/MyBatisSalesPerformanceTests.java
       reuse:
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/ApiTest.java
         - libs/backend/api/src/test/java/com/evidencepoc/backend/api/TestMany.java
@@ -1528,9 +1536,29 @@ tasks:
           - path: productionAuthorization.validated
             operator: equals
             expected: false
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend-api:test --tests com.evidencepoc.backend.api.SalesPerformanceAgreementsApiTests --rerun-tasks
+        exitCode: 0
+        result: POST 201 + Location /api/sales-performance-agreements/PERF-2026-Q4-001 + self 与 no-store；缺 agreement_id/signed_at 与空白编号返回 422；非法 JSON、null 与未知字段返回 400；重复编号与同键异摘要返回 409；重放不调用 register；拒绝路径未调用领域写与台账写。
+      - command: ./gradlew :backend-api:test --tests com.evidencepoc.backend.api.MonthlyCustomerContactTargetsApiTests --rerun-tasks
+        exitCode: 0
+        result: POST 201 + Location + 全字段与 no-store；负目标数、周期反转与外来协议返回 422；空 evidenceRefs 返回 400；父协议缺失返回 404；重复目标返回 409；拒绝路径夹具目标数保持 0/1 不变。
+      - command: ./gradlew :backend-api:test --tests com.evidencepoc.backend.api.CustomerContactRecordsApiTests --rerun-tasks
+        exitCode: 0
+        result: POST 201 + Location + 全字段（channel=phone）与 no-store；未知渠道、周期不匹配与缺 confirmed_at 返回 422；空 evidenceRefs 返回 400；父目标缺失返回 404；重复记录返回 409；重放不新增记录。
+      - command: ./gradlew :backend-api:check
+        exitCode: 0
+        result: 全部 api 测试（含既有 Users/Root 测试）与 Spotless 格式检查通过。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: domain/api/persistent 分层规则回归通过。
+      - command: ./gradlew check
+        exitCode: 0
+        result: 仓库级 Java 门禁通过；首次执行曾因 domain Spotless 与 persistent 旧异常断言失败，修正后重跑通过。
     executionDiscipline:
       - 403 与本人实例拒绝受 GAP-IDENTITY/GAP-CRM-PARTICIPATION 阻塞，不得用本地 mock 推断生产授权。
+      - 幂等冲突改为抛领域异常 IdempotencyKeyReuseException，persistent 旧断言已同步更新为该类型。
+      - Location/self 使用应用实际挂载路径（含 /api）；`.evidence/api/generated` 向量是省略 base path 的模板。
       - evidenceRefs 只做必需性与父级绑定校验，不解析全局凭证引用；契约冲突交回 API/需求拥有者。
   acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey:
     title: 月度客户联系目标主链验收
