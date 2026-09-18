@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evidencepoc.backend.persistent.mappers.SalesPerformanceAgreementsMapper">
+    <resultMap id="agreement" type="com.evidencepoc.backend.domain.model.SalesPerformanceAgreement">
+        <constructor>
+            <idArg column="agreement_id" javaType="String"/>
+            <arg resultMap="agreementDescription"
+                 javaType="com.evidencepoc.backend.domain.description.SalesPerformanceAgreementDescription"/>
+            <arg resultMap="agreementTargets"
+                 javaType="com.evidencepoc.backend.domain.model.SalesPerformanceAgreement$Targets"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="agreementDescription"
+               type="com.evidencepoc.backend.domain.description.SalesPerformanceAgreementDescription">
+        <constructor>
+            <arg column="agreement_id" javaType="String"/>
+            <arg column="signed_at" javaType="java.time.Instant"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="agreementTargets"
+               type="com.evidencepoc.backend.persistent.associations.MonthlyCustomerContactTargets">
+        <result column="agreement_id" property="agreementId" javaType="String"/>
+    </resultMap>
+
+    <select id="findByIdentity" resultMap="agreement">
+        SELECT agreement_id, signed_at
+        FROM sales_performance_agreements
+        WHERE agreement_id = #{agreementId}
+    </select>
+
+    <select id="findPage" resultMap="agreement">
+        SELECT agreement_id, signed_at
+        FROM sales_performance_agreements
+        ORDER BY agreement_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM sales_performance_agreements
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sales_performance_agreements (agreement_id, signed_at)
+        VALUES (#{description.agreementId}, #{description.signedAt})
+    </insert>
+
+    <select id="findIdempotencyDigest" resultType="string">
+        SELECT request_digest
+        FROM sales_performance_idempotency
+        WHERE capability = #{capability} AND idempotency_key = #{idempotencyKey}
+    </select>
+
+    <select id="findIdempotencyResourceId" resultType="string">
+        SELECT resource_id
+        FROM sales_performance_idempotency
+        WHERE capability = #{capability} AND idempotency_key = #{idempotencyKey}
+    </select>
+
+    <insert id="insertIdempotency">
+        INSERT INTO sales_performance_idempotency
+            (capability, idempotency_key, request_digest, resource_id)
+        VALUES (#{capability}, #{idempotencyKey}, #{requestDigest}, #{resourceId})
+    </insert>
+
+    <select id="countIdempotency" resultType="int">
+        SELECT COUNT(*) FROM sales_performance_idempotency
+    </select>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evidencepoc.backend.persistent.mappers.MonthlyCustomerContactTargetsMapper">
+    <resultMap id="target"
+               type="com.evidencepoc.backend.domain.model.MonthlyCustomerContactTarget">
+        <constructor>
+            <idArg column="request_id" javaType="String"/>
+            <arg resultMap="targetDescription"
+                 javaType="com.evidencepoc.backend.domain.description.MonthlyCustomerContactTargetDescription"/>
+            <arg resultMap="targetRecords"
+                 javaType="com.evidencepoc.backend.domain.model.MonthlyCustomerContactTarget$Records"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="targetDescription"
+               type="com.evidencepoc.backend.domain.description.MonthlyCustomerContactTargetDescription">
+        <constructor>
+            <arg column="request_id" javaType="String"/>
+            <arg column="agreement_id" javaType="String"/>
+            <arg column="period_id" javaType="String"/>
+            <arg column="started_at" javaType="java.time.Instant"/>
+            <arg column="expired_at" javaType="java.time.Instant"/>
+            <arg column="target_contact_count" javaType="_int"/>
+            <arg column="target_phone_count" javaType="_int"/>
+            <arg column="target_email_count" javaType="_int"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="targetRecords"
+               type="com.evidencepoc.backend.persistent.associations.CustomerContactRecords">
+        <result column="request_id" property="requestId" javaType="String"/>
+    </resultMap>
+
+    <resultMap id="record" type="com.evidencepoc.backend.domain.model.CustomerContactRecord">
+        <constructor>
+            <idArg column="record_id" javaType="String"/>
+            <arg resultMap="recordDescription"
+                 javaType="com.evidencepoc.backend.domain.description.CustomerContactRecordDescription"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="recordDescription"
+               type="com.evidencepoc.backend.domain.description.CustomerContactRecordDescription">
+        <constructor>
+            <arg column="record_id" javaType="String"/>
+            <arg column="request_id" javaType="String"/>
+            <arg column="agreement_id" javaType="String"/>
+            <arg column="period_id" javaType="String"/>
+            <arg column="customer_profile_id" javaType="String"/>
+            <arg column="channel" javaType="com.evidencepoc.backend.domain.model.ContactChannel"/>
+            <arg column="confirmed_at" javaType="java.time.Instant"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findByIdentity" resultMap="target">
+        SELECT request_id, agreement_id, period_id, started_at, expired_at,
+               target_contact_count, target_phone_count, target_email_count
+        FROM monthly_customer_contact_targets
+        WHERE request_id = #{requestId}
+    </select>
+
+    <select id="findByIdentityInAgreement" resultMap="target">
+        SELECT request_id, agreement_id, period_id, started_at, expired_at,
+               target_contact_count, target_phone_count, target_email_count
+        FROM monthly_customer_contact_targets
+        WHERE request_id = #{requestId} AND agreement_id = #{agreementId}
+    </select>
+
+    <select id="findByAgreementId" resultMap="target">
+        SELECT request_id, agreement_id, period_id, started_at, expired_at,
+               target_contact_count, target_phone_count, target_email_count
+        FROM monthly_customer_contact_targets
+        WHERE agreement_id = #{agreementId}
+        ORDER BY period_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByAgreementId" resultType="int">
+        SELECT COUNT(*) FROM monthly_customer_contact_targets WHERE agreement_id = #{agreementId}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO monthly_customer_contact_targets
+            (request_id, agreement_id, period_id, started_at, expired_at,
+             target_contact_count, target_phone_count, target_email_count)
+        VALUES
+            (#{description.requestId}, #{agreementId}, #{description.periodId},
+             #{description.startedAt}, #{description.expiredAt},
+             #{description.targetContactCount}, #{description.targetPhoneCount},
+             #{description.targetEmailCount})
+    </insert>
+
+    <select id="findRecordByIdentity" resultMap="record">
+        SELECT record_id, request_id, agreement_id, period_id, customer_profile_id,
+               channel, confirmed_at
+        FROM customer_contact_records
+        WHERE record_id = #{recordId}
+    </select>
+
+    <select id="findRecordByIdentityInTarget" resultMap="record">
+        SELECT record_id, request_id, agreement_id, period_id, customer_profile_id,
+               channel, confirmed_at
+        FROM customer_contact_records
+        WHERE record_id = #{recordId} AND request_id = #{requestId}
+    </select>
+
+    <select id="findRecordsByTarget" resultMap="record">
+        SELECT record_id, request_id, agreement_id, period_id, customer_profile_id,
+               channel, confirmed_at
+        FROM customer_contact_records
+        WHERE request_id = #{requestId}
+        ORDER BY confirmed_at, record_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countRecordsByTarget" resultType="int">
+        SELECT COUNT(*) FROM customer_contact_records WHERE request_id = #{requestId}
+    </select>
+
+    <insert id="insertRecord">
+        INSERT INTO customer_contact_records
+            (record_id, request_id, agreement_id, period_id, customer_profile_id,
+             channel, confirmed_at)
+        VALUES
+            (#{description.recordId}, #{description.requestId}, #{description.agreementId},
+             #{description.periodId}, #{description.customerProfileId},
+             #{description.channel}, #{description.confirmedAt})
+    </insert>
+</mapper>

@@ -1088,7 +1088,7 @@ tasks:
   mybatis::context.sales-performance::design.sales-performance-storage:
     title: 电话销售绩效协议 MyBatis 持久化
     mode: implementation
-    status: planned
+    status: done
     outcome: 交付绩效协议、月度目标、联系记录和幂等记录的 H2/MyBatis/Flyway 往返、关联装配、唯一约束与回滚证据。
     sourceRefs:
       - contract.sales-performance
@@ -1266,9 +1266,26 @@ tasks:
           - path: productionDatabase.validated
             operator: equals
             expected: false
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisSalesPerformanceTests.roundTripsAgreementsTargetsAndRecords --rerun-tasks
+        exitCode: 0
+        result: 真实 H2/Flyway/MyBatis 往返保持协议编号与签署时刻；协议重读后装出 2 个周期目标，目标重读后装出 3 条记录（phone/email/phone）且完成规则为 true；行数 1/2/3；缺失编号返回空。
+      - command: ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisSalesPerformanceTests.enforcesUniquenessIdempotencyAndRollback --rerun-tasks
+        exitCode: 0
+        result: 重复 agreement_id/request_id/record_id 由唯一约束拒绝；同键同摘要重放返回 CONTACT-REC-001-playback，异摘要抛冲突；父目标不存在时写入被外键拒绝；显式事务回滚后四张表行数不变。
+      - command: ./gradlew :backend-persistent:check
+        exitCode: 0
+        result: 全部 persistent 测试与 Spotless 格式检查通过。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: domain/api/persistent 分层规则回归通过。
+      - command: ./gradlew check
+        exitCode: 0
+        result: 仓库级 Java 门禁通过（实际执行 1 个任务，其余 up-to-date/缓存命中）。
     executionDiscipline:
       - V1 已由 Users 迁移占用，V2 尚未分配；本任务固定使用 V2。
+      - H2 通过不证明生产隔离级别、并发与方言；生产化前按 GAP-DATABASE 另行设计。
+      - 根适配器写入自带本地事务；目标与记录适配器是 EntityList 视图（非 AOP Bean），其写入事务由调用层组合，本次以显式 TransactionTemplate 验证回滚不保留部分事实。
       - H2 通过不证明生产隔离级别、并发与方言；生产化前按 GAP-DATABASE 另行设计。
   api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales:
     title: 电话销售绩效协议 HTTP 接口
