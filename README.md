@@ -327,3 +327,7 @@ npm run build
 - [指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了](<docs/adoption/指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了.md>)
 - [前馈痴迷：Agent 做完就交，从来没人检查](<docs/adoption/前馈痴迷：Agent 做完就交，从来没人检查.md>)
 - [反馈过载：Sensors 太多，Agent 不知道哪个信号重要？](<docs/adoption/反馈过载：Sensors 太多，Agent 不知道哪个信号重要？.md>)
+
+## 许可
+
+本项目以 [MIT License](LICENSE) 开源。使用、修改、分发和商用请保留版权与许可声明。
