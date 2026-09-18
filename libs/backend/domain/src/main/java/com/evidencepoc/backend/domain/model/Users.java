@@ -1,5 +1,6 @@
 package com.evidencepoc.backend.domain.model;
 
+import com.evidencepoc.backend.domain.context.SalesPerformanceContext;
 import com.evidencepoc.backend.domain.context.SubscriptionContext;
 import com.evidencepoc.backend.domain.description.UserDescription;
 import io.github.jayclock.smartdomain.core.HasMany;
@@ -11,6 +12,9 @@ public interface Users extends HasMany<String, User> {
   User update(String identity, UserDescription description);
 
   void delete(String identity);
+
+  /** Enters context.sales-performance before a User can play sales roles. */
+  SalesPerformanceContext inSalesPerformanceContext();
 
   /** Enters context.subscription before a User can play role.reader. */
   SubscriptionContext inSubscriptionContext();

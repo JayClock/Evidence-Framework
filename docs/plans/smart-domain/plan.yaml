@@ -542,7 +542,7 @@ tasks:
   foundation::context.sales-performance::role.tele-sales:
     title: 绩效协议上下文、角色与后端平台基础
     mode: implementation
-    status: planned
+    status: done
     outcome: 复验后端平台与技术分层，并交付 SalesPerformanceContext 入口、绩效管理者/电话销售角色对象及 Users 根集合的进程内注入证据。
     sourceRefs:
       - party.user
@@ -695,9 +695,17 @@ tasks:
           - path: productionAuthorization.validated
             operator: equals
             expected: false
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.SalesPerformanceRoleTests --tests com.evidencepoc.backend.domain.ReaderTests --rerun-tasks
+        exitCode: 0
+        result: SalesPerformanceRoleTests 与 ReaderTests 通过，角色切换复用同一 User 快照且不重读主体。
+      - command: ./gradlew :backend-persistent:test --tests com.evidencepoc.backend.persistent.MyBatisUsersTests.salesPerformanceContextIsInjectedAndDecoratesTheGivenUser --rerun-tasks
+        exitCode: 0
+        result: Spring/H2/MyBatis 注入与角色装饰测试通过。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: domain/api/persistent 分层规则通过。
     executionDiscipline:
-      - 本任务只交付上下文与角色骨架；认证、403 和实例参与不因角色类存在而成立，相关验收保持缺口。
       - 角色对象上的业务方法由后续领域任务添加，不在本任务顺手实现协议或联系记录行为。
   domain::context.sales-performance::contract.sales-performance:
     title: 绩效协议与月度客户联系目标领域行为

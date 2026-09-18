@@ -3,6 +3,7 @@ package com.evidencepoc.backend.persistent;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.evidencepoc.backend.domain.UserNotFoundException;
+import com.evidencepoc.backend.domain.context.SalesPerformanceContext;
 import com.evidencepoc.backend.domain.context.SubscriptionContext;
 import com.evidencepoc.backend.domain.description.UserDescription;
 import com.evidencepoc.backend.domain.model.User;
@@ -36,6 +37,7 @@ class MyBatisUsersTests {
 
   @Autowired Users users;
   @Autowired SubscriptionContext subscriptionContext;
+  @Autowired SalesPerformanceContext salesPerformanceContext;
   @Autowired JdbcTemplate jdbc;
   @Autowired PlatformTransactionManager transactionManager;
   @Autowired ApplicationContext context;
@@ -128,6 +130,20 @@ class MyBatisUsersTests {
     assertEquals(
         "original",
         users.findByIdentity(existing.getIdentity()).orElseThrow().getDescription().displayName());
+  }
+
+  @Test
+  void salesPerformanceContextIsInjectedAndDecoratesTheGivenUser() {
+    User created = users.create(new UserDescription("小明"));
+    SalesPerformanceContext sales = users.inSalesPerformanceContext();
+    assertSame(salesPerformanceContext, sales);
+
+    User snapshot = new User(created.getIdentity(), new UserDescription("过期快照"));
+    assertEquals(
+        created.getIdentity(), sales.asTeleSales(snapshot).teleSalesId());
+    assertSame(snapshot, sales.asPerformanceManager(snapshot).actor());
+    assertEquals("过期快照", sales.asTeleSales(snapshot).actor().getDescription().displayName());
+    assertThrows(IllegalArgumentException.class, () -> sales.asTeleSales(null));
   }
 
   @Test

@@ -2,6 +2,7 @@ package com.evidencepoc.backend.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.evidencepoc.backend.domain.context.SalesPerformanceContext;
 import com.evidencepoc.backend.domain.context.SubscriptionContext;
 import com.evidencepoc.backend.domain.description.UserDescription;
 import com.evidencepoc.backend.domain.model.User;
@@ -57,6 +58,11 @@ class ReaderTests {
     @Override
     public Optional<User> findByIdentity(String identifier) {
       throw new AssertionError("asReader must not re-read the user");
+    }
+
+    @Override
+    public SalesPerformanceContext inSalesPerformanceContext() {
+      throw new UnsupportedOperationException("not needed by reader role tests");
     }
 
     @Override
