@@ -1,6 +1,7 @@
 package com.evidencepoc.backend.config;
 
 import com.evidencepoc.backend.api.RootApi;
+import com.evidencepoc.backend.api.SalesPerformanceExceptionMappers;
 import com.evidencepoc.backend.api.UserExceptionMappers;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,10 @@ public class JerseyConfiguration extends ResourceConfig {
       register(UserExceptionMappers.NotFound.class);
       register(UserExceptionMappers.InvalidDescription.class);
       register(UserExceptionMappers.BadRequest.class);
+      register(SalesPerformanceExceptionMappers.AgreementNotFound.class);
+      register(SalesPerformanceExceptionMappers.InvalidInput.class);
+      register(SalesPerformanceExceptionMappers.Conflict.class);
+      register(SalesPerformanceExceptionMappers.IdempotencyReuse.class);
     }
   }
 }

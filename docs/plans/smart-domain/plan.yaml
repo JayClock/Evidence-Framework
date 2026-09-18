@@ -1563,7 +1563,7 @@ tasks:
   acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey:
     title: 月度客户联系目标主链验收
     mode: implementation
-    status: planned
+    status: done
     outcome: 以真实 HTTP、H2/MyBatis 和领域完成规则验收达标、不足、周期边界、幂等与失败不变性。
     sourceRefs:
       - scenario.monthly-customer-contact-completed
@@ -1830,10 +1830,33 @@ tasks:
           - path: quality.npmBuild.exitCode
             operator: equals
             expected: 0
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.salesperformance.MonthlyCustomerContactJourneyTests.completedJourneyReachesAllThreeTargets --rerun-tasks
+        exitCode: 0
+        result: 协议/目标/三条记录均 201 + Location/self + no-store；SQL 重读保留编号、渠道（PHONE/EMAIL/PHONE）与 2026-10-03T02:00:00Z 业务时刻；领域规则 true，重读记录数 3、phone=2、email=1。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.salesperformance.MonthlyCustomerContactJourneyTests.insufficientJourneyStaysPendingAndBoundariesAreInclusive --rerun-tasks
+        exitCode: 0
+        result: 不足集合规则 false 且表示中无 breach 字段；恰好 2026-10-31T23:59:59Z 的目标完成（计入），2026-09-30T23:59:59Z 与 2026-11-01T00:00:00Z 的目标保持未完成（不计入）；period/request 不匹配的追加返回 422 且记录行数保持 5。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.salesperformance.MonthlyCustomerContactJourneyTests.idempotencyAndRejectedRequestsKeepStoredFacts --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: 同键同载荷重放 201 且协议与幂等行数不变；同键异载荷与重复编号 409；非法渠道与缺字段 422 且记录/目标行数不变；架构规则（含 IdempotencyLedger 实现必须在 persistent）通过。
+      - command: ./gradlew check
+        exitCode: 0
+        result: 仓库级 Java 门禁通过（首次失败于 app Spotless，格式化后重跑通过）。
+      - command: npm test
+        exitCode: 0
+        result: apps、建模扩展、Skills 与 Guides 回归全部通过；PATH 前置 /opt/miniconda3（Python 3.12）执行。
+      - command: npm run lint
+        exitCode: 0
+        result: 前端 ESLint、Guides 检查（40 文档、360 本地链接、0 错误）与 Prettier 通过。
+      - command: npm run build
+        exitCode: 0
+        result: Nx build 与建模扩展 TypeScript 检查通过。
     executionDiscipline:
       - 未达标只证明完成条件为假，不推断违约、处分或绩效后果。
       - 生产身份、生产数据库与档案引用一致性不因本任务通过而成立；相关缺口保持。
+      - 周期边界用三个独立目标（各 1/1/0）观察：恰好 expired_at 的目标完成，区间外目标保持未完成为“不计入”提供可观察预期。
+      - 环境缺陷：默认 /usr/bin/python3 为 3.9.6（低于 howto 要求的 3.10+）且缺 jsonschema，首次 npm test 因此失败；改用项目自带的 /opt/miniconda3 Python 3.12 后同一命令通过，未修改仓库脚本。
 gaps:
   - id: GAP-IDENTITY
     sourceRefs:

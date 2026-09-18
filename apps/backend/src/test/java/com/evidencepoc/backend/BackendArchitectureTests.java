@@ -1,7 +1,9 @@
 package com.evidencepoc.backend;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+import com.evidencepoc.backend.domain.IdempotencyLedger;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -42,6 +44,14 @@ class BackendArchitectureTests {
               "org.apache.ibatis..",
               "org.mybatis..",
               "org.springframework.jdbc..");
+
+  @ArchTest
+  static final ArchRule idempotencyLedgerIsImplementedInPersistence =
+      classes()
+          .that()
+          .implement(IdempotencyLedger.class)
+          .should()
+          .resideInAPackage("..persistent..");
 
   @ArchTest
   static final ArchRule persistenceDoesNotReachHttp =
