@@ -905,7 +905,7 @@ tasks:
   domain::context.sales-performance::confirmation.customer-contact-record:
     title: 客户联系记录与月度完成规则领域行为
     mode: implementation
-    status: planned
+    status: done
     outcome: 交付联系记录追加、渠道与关联校验，以及三项计数与周期边界的完成规则证据。
     sourceRefs:
       - request.monthly-customer-contact
@@ -1066,7 +1066,22 @@ tasks:
           - path: rule.unmatchedPeriodRecord.counted
             operator: equals
             expected: false
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.CustomerContactRecordTests --rerun-tasks
+        exitCode: 0
+        result: 三条 FM 联系记录按目标/协议/周期追加成功（集合计数 1→3）；周期外匹配记录允许保存（计数 4）；错误 request/agreement/period、空白编号、缺失渠道或 confirmed_at、未知渠道值与身份不一致全部拒绝后计数仍为 4。
+      - command: ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.MonthlyCustomerContactCompletionTests --rerun-tasks
+        exitCode: 0
+        result: 达标集合 true、不足集合 false；2026-10-01T00:00:00Z 与 2026-10-31T23:59:59Z 计入而 2026-09-30T23:59:59Z、2026-11-01T00:00:00Z 不计入；跨 request/agreement/period 的存储记录不计入；总数达标但电话数不足仍为 false。
+      - command: ./gradlew :backend-domain:check
+        exitCode: 0
+        result: 全部 domain 测试与 Spotless 格式检查通过。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: domain/api/persistent 分层规则回归通过。
+      - command: ./gradlew check
+        exitCode: 0
+        result: 仓库级 Java 门禁通过（全部模块测试与 Spotless）。
     executionDiscipline:
       - 完成条件为假不等于违约；来源未定义未达标后果，本任务不生成 breach。
       - 客户档案只保存标识；不得为通过检查补造档案表或外部导入。

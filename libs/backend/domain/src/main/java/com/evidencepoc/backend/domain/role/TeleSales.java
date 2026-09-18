@@ -1,6 +1,9 @@
 package com.evidencepoc.backend.domain.role;
 
+import com.evidencepoc.backend.domain.description.CustomerContactRecordDescription;
 import com.evidencepoc.backend.domain.description.SalesPerformanceAgreementDescription;
+import com.evidencepoc.backend.domain.model.CustomerContactRecord;
+import com.evidencepoc.backend.domain.model.MonthlyCustomerContactTarget;
 import com.evidencepoc.backend.domain.model.SalesPerformanceAgreement;
 import com.evidencepoc.backend.domain.model.SalesPerformanceAgreements;
 import com.evidencepoc.backend.domain.model.User;
@@ -38,6 +41,13 @@ public final class TeleSales {
       SalesPerformanceAgreementDescription description) {
     Objects.requireNonNull(description, "description");
     return agreements().register(description);
+  }
+
+  public CustomerContactRecord registerContactRecord(
+      MonthlyCustomerContactTarget target, CustomerContactRecordDescription description) {
+    Objects.requireNonNull(target, "target");
+    Objects.requireNonNull(description, "description");
+    return target.registerContactRecord(description);
   }
 
   private SalesPerformanceAgreements agreements() {

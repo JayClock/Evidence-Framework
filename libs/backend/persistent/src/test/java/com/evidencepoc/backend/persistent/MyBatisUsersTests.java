@@ -139,8 +139,7 @@ class MyBatisUsersTests {
     assertSame(salesPerformanceContext, sales);
 
     User snapshot = new User(created.getIdentity(), new UserDescription("过期快照"));
-    assertEquals(
-        created.getIdentity(), sales.asTeleSales(snapshot).teleSalesId());
+    assertEquals(created.getIdentity(), sales.asTeleSales(snapshot).teleSalesId());
     assertSame(snapshot, sales.asPerformanceManager(snapshot).actor());
     assertEquals("过期快照", sales.asTeleSales(snapshot).actor().getDescription().displayName());
     assertThrows(IllegalArgumentException.class, () -> sales.asTeleSales(null));
