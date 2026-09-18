@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.mobile
-category: context
-kind: fulfillment
-label: 移动支付扣款
-parentContextRef: context.mobile

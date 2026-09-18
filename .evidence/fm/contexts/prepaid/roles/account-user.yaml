@@ -1,6 +1,0 @@
-type: entity
-id: role.account-user
-category: role
-kind: party
-label: 账户使用方
-contextRef: context.prepaid

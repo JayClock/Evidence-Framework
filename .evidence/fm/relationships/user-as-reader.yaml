@@ -1,6 +1,0 @@
-type: relationship
-id: relation.user-as-reader
-kind: plays_role
-sourceRef: party.user
-targetRef: role.reader
-label: 用户在订阅上下文中扮演读者

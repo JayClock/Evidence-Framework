@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.restore
-category: context
-kind: fulfillment
-label: 免费恢复
-parentContextRef: context.subscription

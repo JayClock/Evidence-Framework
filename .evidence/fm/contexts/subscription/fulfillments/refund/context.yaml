@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.refund
-category: context
-kind: fulfillment
-label: 断更退款
-parentContextRef: context.subscription

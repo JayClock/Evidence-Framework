@@ -1,6 +1,0 @@
-type: entity
-id: role.reader
-category: role
-kind: party
-label: 读者
-contextRef: context.subscription
