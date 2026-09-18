@@ -3,7 +3,7 @@ id: evidence.invoice
 category: evidence
 kind: other_evidence
 label: 发票
-contextRef: fulfillment.invoice
+contextRef: context.product-procurement
 responsibleRoleRef: role.seller
 attributes:
   - name: created_at

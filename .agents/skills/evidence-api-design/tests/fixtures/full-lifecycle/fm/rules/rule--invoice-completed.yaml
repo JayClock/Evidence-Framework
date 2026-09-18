@@ -2,6 +2,7 @@ type: rule
 id: rule.invoice-completed
 kind: completion
 label: 开票履约完成判断
+description: 同一开票申请存在有效期内的开票确认，且已有发票与申请、确认的编号、抬头和形成时间一致时，开票履约完成。
 contextRef: fulfillment.invoice
 bindings:
   request:
@@ -13,7 +14,8 @@ bindings:
     ref: evidence.invoice
     cardinality: many
 expression: confirmations.exists(c, c.request_number == request.request_number
-  && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at
+  && c.confirmed_at >= request.started_at
+  && c.confirmed_at <= request.expired_at
   && proofs.exists(p, p.request_number == request.request_number &&
   p.invoice_number == c.invoice_number && p.created_at <= c.confirmed_at
   && p.invoice_title == request.invoice_title))

@@ -628,6 +628,15 @@ def validate_entities(
                 errors.append(
                     f"{entity_id}: {kind} must belong to a Fulfillment Context"
                 )
+            if kind == "other_evidence" and context_kind not in {
+                "contract",
+                "pre_contract",
+                "domain",
+            }:
+                errors.append(
+                    f"{entity_id}: other_evidence must belong to its owning Contract, "
+                    "Pre-contract, or Domain Context, not a Fulfillment Context"
+                )
             if kind in {"rfp", "proposal"} and context_kind != "pre_contract":
                 errors.append(
                     f"{entity_id}: {kind} must belong to a Pre-contract Context"
@@ -936,9 +945,43 @@ def validate_relationships(
                 "participant",
                 "thing",
             )
+            source_context_entity = entities.get(source_context or "", {})
+            target_context_entity = entities.get(target_context or "", {})
+            direct_contract_fulfillment_pair = (
+                entity_signature(source_context_entity) == ("context", "contract")
+                and entity_signature(target_context_entity)
+                == ("context", "fulfillment")
+                and target_context_entity.get("parentContextRef") == source_context
+            ) or (
+                entity_signature(target_context_entity) == ("context", "contract")
+                and entity_signature(source_context_entity)
+                == ("context", "fulfillment")
+                and source_context_entity.get("parentContextRef") == target_context
+            )
+            contract_fulfillment_other_evidence_link = (
+                direct_contract_fulfillment_pair
+                and (
+                    source_sig == ("evidence", "other_evidence")
+                    and target_sig
+                    in {
+                        ("evidence", "fulfillment_request"),
+                        ("evidence", "fulfillment_confirmation"),
+                    }
+                    or target_sig == ("evidence", "other_evidence")
+                    and source_sig
+                    in {
+                        ("evidence", "fulfillment_request"),
+                        ("evidence", "fulfillment_confirmation"),
+                    }
+                )
+            )
             if source_context != target_context and not (
                 (kind == "precedes" and (proposal_to_contract or contract_to_request))
                 or (kind == "references" and evidence_to_thing)
+                or (
+                    kind in {"evidences", "precedes"}
+                    and contract_fulfillment_other_evidence_link
+                )
             ):
                 errors.append(
                     f"{relationship_id}: unsupported cross-context {kind} relationship"

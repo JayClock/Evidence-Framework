@@ -3,7 +3,7 @@ id: evidence.relaunch
 category: evidence
 kind: other_evidence
 label: 重新上架记录
-contextRef: fulfillment.restore
+contextRef: context.subscription
 attributes:
   - name: subscription_id
     label: 原订阅编号

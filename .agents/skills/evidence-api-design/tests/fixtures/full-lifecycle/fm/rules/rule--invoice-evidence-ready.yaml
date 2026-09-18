@@ -2,6 +2,7 @@ type: rule
 id: rule.invoice-evidence-ready
 kind: precondition
 label: 开票确认的证据前提
+description: 当前时刻前已形成与开票申请编号和抬头一致的发票时，允许形成开票确认。
 contextRef: fulfillment.invoice
 bindings:
   request:

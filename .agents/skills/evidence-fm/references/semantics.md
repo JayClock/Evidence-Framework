@@ -70,9 +70,9 @@ Evidence kind：
 - `rfp`、`proposal`：位于 Pre-contract Context；
 - `contract`：位于 Contract Context；
 - `fulfillment_request`、`fulfillment_confirmation`：位于 Fulfillment Context；
-- `other_evidence`：对其他凭证提供补充证明的凭证，位于产生它的业务或领域 Context；不是固定流程阶段。
+- `other_evidence`：对其他凭证提供补充证明的凭证，位于形成并管理它的 Contract、Pre-contract 或 Domain Context；不得直接属于 Fulfillment，也不是固定流程阶段。合同履行期间由本合同形成的补充凭证直接属于父 Contract Context，即使它只证明某一项子履约。
 
-需要补充证明时，先明确被证明凭证及具体证明内容。必需的 `other_evidence` 必须已经存在，才能形成依赖它的凭证；用 `evidences` 从补充证据指向被证明凭证，并用 `precedes` 明确必要的形成先后。实例中由被证明凭证的 `basedOn` 引用已存在的补充证据，场景在形成目标前提供这些证据。补充证据可以支持 RFP、Proposal、Contract、Request、Confirmation 或其他补充证据，不局限于履约确认。不为没有此需求的凭证强加补充证据。
+需要补充证明时，先明确凭证自身的形成上下文、被证明凭证及具体证明内容。必需的 `other_evidence` 必须已经存在，才能形成依赖它的凭证；用 `evidences` 从补充证据指向被证明凭证，并用 `precedes` 明确必要的形成先后。实例中由被证明凭证的 `basedOn` 引用已存在的补充证据，场景在形成目标前提供这些证据。补充证据可以支持 RFP、Proposal、Contract、Request、Confirmation 或其他补充证据，不局限于履约确认。不为没有此需求的凭证强加补充证据，也不因它服务于某项履约而改变其上下文归属。
 
 `created_at` 记录补充凭证自身形成时间，不等于上传时间或其记录的原事件时间；目标凭证的相应业务时间不得早于其必需证据的形成时间。是否分开录入不改变业务依赖，不从图上位置推导接口调用方式。
 
@@ -95,7 +95,7 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 约束：
 
 - Request 与具体 Confirmation 的 `responsibleRoleRef` 必须引用所属 Contract 的 Party Role；
-- Request、Confirmation、Evidence Role 与 Rule 必须以 `contextRef` 直接属于该 Fulfillment；
+- Request、Confirmation、Evidence Role 与履约 Rule 必须以 `contextRef` 直接属于该 Fulfillment；Other Evidence 不得直接属于 Fulfillment，合同内补充凭证属于父 Contract Context；
 - 一个 Request 恰好属于一个 Fulfillment；
 - 一个具体 Confirmation 只能属于一个 Fulfillment；跨履约复用结果通过外部时刻 Evidence 和 Evidence Role 表达；
 - 多次同类运行时确认用多个 Evidence Instance 和 completion CEL Rule，不复制类型节点；
@@ -114,7 +114,7 @@ Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约�
 
 Evidence Role 是开放证明插槽：可以没有玩家或有多个玩家；新增渠道只新增外部 Evidence 和 Relationship，不修改核心 Role。Role 没有责任人，不设置 `responsibleRoleRef`／`roleRefs`，没有自身凭证时间或可签发实例；可声明消费者要求的玩家属性。消费方以 `uses_role` 使用它，玩家必须来自另一个 Context 的确定性时刻 Evidence，以 `plays_role` 连接。玩家保留其自身上下文及责任角色，不归入消费方合同责任。Request、Contract、RFP 和 Proposal 不能证明确定结果。规则绑定 Evidence Role 时必须解析显式玩家实例，不接受角色实例或仅字段相同的无关凭证。
 
-跨上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。Thing 必须由实际涉及它的业务 Evidence 引用；本上下文的辅助凭证通过 `evidences` 指向被证明的业务 Evidence；外部结果走 Evidence Role，不用 `evidences` 穿透上下文。Fulfillment 不参与这些关系。
+跨独立上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。父 Contract Context 中的 `other_evidence` 与其直接子 Fulfillment 的 Request／Confirmation 可通过 `evidences` 和有依据的 `precedes` 关联；这是同一合同责任边界内的父子关联，不开放到兄弟履约、其他合同或任意 Context。Thing 必须由实际涉及它的业务 Evidence 引用；同一非履约 Context 的辅助凭证通过 `evidences` 指向被证明的业务 Evidence；真正的外部结果走 Evidence Role，不用 `evidences` 穿透独立边界。Fulfillment 本身不参与这些关系。
 
 这类 Role、Pre-contract Context 和 Fulfillment 是候选业务变化点。
 

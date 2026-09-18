@@ -720,7 +720,7 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "id": "evidence.discontinuation",
       "kind": "other_evidence",
       "label": "断更下架记录",
@@ -788,7 +788,7 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.restore",
+      "contextRef": "context.subscription",
       "id": "evidence.relaunch",
       "kind": "other_evidence",
       "label": "重新上架记录",
@@ -2489,6 +2489,7 @@
         }
       },
       "contextRef": "fulfillment.access",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，读者凭访问所需付款证明（role.access-payment）或免费恢复资格证明（role.access-restored）具备版本资格，并在期限内恰有一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
       "id": "rule.access-completed",
       "kind": "completion",
@@ -2506,6 +2507,7 @@
         }
       },
       "contextRef": "fulfillment.access",
+      "description": "以内容访问请求（request.access）的开始时间为基准增加订阅合同（contract.subscription）约定的访问响应秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.access_seconds) +\n\"s\")",
       "id": "rule.access-deadline",
       "kind": "derivation",
@@ -2539,6 +2541,7 @@
         }
       },
       "contextRef": "fulfillment.access",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，且读者持有未在请求开始前退款的访问所需付款证明（role.access-payment），或持有请求开始前已生效的免费恢复资格证明（role.access-restored）时，判定具备访问资格。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at))",
       "id": "rule.access-eligible",
       "kind": "precondition",
@@ -2575,6 +2578,7 @@
         }
       },
       "contextRef": "fulfillment.access",
+      "description": "当前时间超过内容访问请求（request.access）的截止时间，且请求不具备访问所需付款证明（role.access-payment）或免费恢复资格证明（role.access-restored），或期限内没有恰好一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\n((payments.exists(p, p.subscription_id == agreement.subscription_id\n&& p.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1)",
       "id": "rule.access-expired",
       "kind": "breach",
@@ -2611,6 +2615,7 @@
         }
       },
       "contextRef": "fulfillment.access",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，当前查询时刻访问所需付款证明（role.access-payment）尚未退款或请求前已有免费恢复资格证明（role.access-restored），且该请求曾按时形成内容提供凭证（confirmation.access）时，允许检索指定章节。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= now)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
       "id": "rule.content-readable",
       "kind": "precondition",
@@ -2629,6 +2634,7 @@
         }
       },
       "contextRef": "fulfillment.mobile",
+      "description": "移动支付扣款请求（request.mobile）在期限内恰有一份与订阅、读者、专栏、父付款请求、金额和币种匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）完成。",
       "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success).size() == 1",
       "id": "rule.mobile-completed",
       "kind": "completion",
@@ -2650,6 +2656,7 @@
         }
       },
       "contextRef": "fulfillment.mobile",
+      "description": "当前时间超过移动支付扣款请求（request.mobile）的截止时间，且期限内没有恰好一份匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）逾期。",
       "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success).size() == 1)",
       "id": "rule.mobile-expired",
       "kind": "breach",
@@ -2664,6 +2671,7 @@
         }
       },
       "contextRef": "fulfillment.payment",
+      "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为订阅费支付请求（request.payment）的金额。",
       "expression": "agreement.amount_minor_units",
       "id": "rule.payment-amount",
       "kind": "derivation",
@@ -2689,6 +2697,7 @@
         }
       },
       "contextRef": "fulfillment.payment",
+      "description": "订阅费支付请求（request.payment）与订阅合同（contract.subscription）的订阅、读者、专栏、正数金额和币种一致，且期限内恰有一份同一请求的合格付款证明（role.payment-proof）时，判定订阅费支付履约（fulfillment.payment）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && request.currency == agreement.currency &&\nrequest.amount_minor_units == agreement.amount_minor_units &&\nrequest.amount_minor_units > 0 && proofs.filter(p, p.subscription_id\n== request.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.payment_request_id ==\nrequest.request_id && p.amount_minor_units ==\nrequest.amount_minor_units && p.currency == request.currency &&\np.success && p.confirmed_at >= request.started_at && p.confirmed_at\n<= request.expired_at).size() == 1",
       "id": "rule.payment-completed",
       "kind": "completion",
@@ -2706,6 +2715,7 @@
         }
       },
       "contextRef": "fulfillment.payment",
+      "description": "以订阅费支付请求（request.payment）的开始时间为基准增加订阅合同（contract.subscription）约定的付款秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.payment_seconds) +\n\"s\")",
       "id": "rule.payment-deadline",
       "kind": "derivation",
@@ -2734,6 +2744,7 @@
         }
       },
       "contextRef": "fulfillment.payment",
+      "description": "当前时间超过订阅费支付请求（request.payment）的截止时间，且请求与订阅合同（contract.subscription）不一致或期限内没有恰好一份匹配的合格付款证明（role.payment-proof）时，判定订阅费支付履约（fulfillment.payment）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrequest.currency == agreement.currency && request.amount_minor_units\n== agreement.amount_minor_units && request.amount_minor_units > 0 &&\nproofs.filter(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.payment_request_id == request.request_id &&\np.amount_minor_units == request.amount_minor_units && p.currency ==\nrequest.currency && p.success && p.confirmed_at >=\nrequest.started_at && p.confirmed_at <= request.expired_at).size()\n== 1)",
       "id": "rule.payment-expired",
       "kind": "breach",
@@ -2748,6 +2759,7 @@
         }
       },
       "contextRef": "fulfillment.payment",
+      "description": "以订阅合同（contract.subscription）的签署时间作为订阅费支付请求（request.payment）的开始时间。",
       "expression": "agreement.signed_at",
       "id": "rule.payment-start",
       "kind": "derivation",
@@ -2769,6 +2781,7 @@
         }
       },
       "contextRef": "fulfillment.prepaid",
+      "description": "从余额抵扣请求（request.prepaid）的抵扣前可用余额中减去抵扣结果（confirmation.prepaid）的实际金额，得到抵扣后的账户余额。",
       "expression": "request.balance_before_minor_units - confirmation.amount_minor_units",
       "id": "rule.prepaid-balance",
       "kind": "derivation",
@@ -2791,6 +2804,7 @@
         }
       },
       "contextRef": "fulfillment.prepaid",
+      "description": "账户余额足够时，余额抵扣请求（request.prepaid）在期限内恰有一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）完成。",
       "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success && request.balance_before_minor_units >=\nrequest.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1",
       "id": "rule.prepaid-completed",
       "kind": "completion",
@@ -2812,6 +2826,7 @@
         }
       },
       "contextRef": "fulfillment.prepaid",
+      "description": "当前时间超过余额抵扣请求（request.prepaid）的截止时间，且期限内没有恰好一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）逾期。",
       "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success && request.balance_before_minor_units\n>= request.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1)",
       "id": "rule.prepaid-expired",
       "kind": "breach",
@@ -2826,6 +2841,7 @@
         }
       },
       "contextRef": "fulfillment.prepaid",
+      "description": "余额抵扣请求（request.prepaid）的金额大于零且抵扣前可用余额不少于该金额时，允许执行本次余额抵扣。",
       "expression": "request.amount_minor_units > 0 && request.balance_before_minor_units\n>= request.amount_minor_units",
       "id": "rule.prepaid-funded",
       "kind": "precondition",
@@ -2840,6 +2856,7 @@
         }
       },
       "contextRef": "fulfillment.refund",
+      "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为断更退款请求（request.refund）的全额退款金额。",
       "expression": "agreement.amount_minor_units",
       "id": "rule.refund-amount",
       "kind": "derivation",
@@ -2873,6 +2890,7 @@
         }
       },
       "contextRef": "fulfillment.refund",
+      "description": "断更退款请求（request.refund）与订阅合同（contract.subscription）和退款所需付款证明（role.refund-payment）匹配，存在请求前形成的断更下架记录（evidence.discontinuation），并在期限内恰有一份全额退款到账凭证（confirmation.refund）时，判定断更退款履约（fulfillment.refund）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1",
       "id": "rule.refund-completed",
       "kind": "completion",
@@ -2890,6 +2908,7 @@
         }
       },
       "contextRef": "fulfillment.refund",
+      "description": "以断更退款请求（request.refund）的开始时间为基准增加订阅合同（contract.subscription）约定的退款秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.refund_seconds) +\n\"s\")",
       "id": "rule.refund-deadline",
       "kind": "derivation",
@@ -2919,6 +2938,7 @@
         }
       },
       "contextRef": "fulfillment.refund",
+      "description": "断更退款请求（request.refund）与订阅合同（contract.subscription）的读者、专栏、全额金额和币种一致，原订阅已有退款所需付款证明（role.refund-payment），且请求前已有断更超过七天、未改期并已下架的断更下架记录（evidence.discontinuation）时，允许提出全额退款。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency",
       "id": "rule.refund-eligible",
       "kind": "precondition",
@@ -2951,6 +2971,7 @@
         }
       },
       "contextRef": "fulfillment.refund",
+      "description": "当前时间超过断更退款请求（request.refund）的截止时间，且符合订阅合同（contract.subscription）已付款和断更下架条件的请求尚无恰好一份期限内全额退款到账凭证（confirmation.refund）时，判定断更退款履约（fulfillment.refund）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\npayments.exists(p, p.subscription_id == agreement.subscription_id &&\np.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1)",
       "id": "rule.refund-expired",
       "kind": "breach",
@@ -2980,6 +3001,7 @@
         }
       },
       "contextRef": "fulfillment.restore",
+      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）匹配，恢复所需退款证明（role.restore-refund）与重新上架记录（evidence.relaunch）均在请求前有效，且期限内恰有一份收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at) &&\nconfirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.edition_id == request.edition_id &&\nc.charged_minor_units == 0 && c.restored).size() == 1",
       "id": "rule.restore-completed",
       "kind": "completion",
@@ -2997,6 +3019,7 @@
         }
       },
       "contextRef": "fulfillment.restore",
+      "description": "以免费恢复请求（request.restore）的开始时间为基准增加订阅合同（contract.subscription）约定的恢复秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.restore_seconds) +\n\"s\")",
       "id": "rule.restore-deadline",
       "kind": "derivation",
@@ -3026,6 +3049,7 @@
         }
       },
       "contextRef": "fulfillment.restore",
+      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）的读者和专栏一致，存在请求前已到账的恢复所需退款证明（role.restore-refund），并存在请求前形成的同版本重新上架记录（evidence.relaunch）时，允许申请免费恢复。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at)",
       "id": "rule.restore-eligible",
       "kind": "precondition",
@@ -3058,6 +3082,7 @@
         }
       },
       "contextRef": "fulfillment.restore",
+      "description": "当前时间超过免费恢复请求（request.restore）的截止时间，且具备恢复所需退款证明（role.restore-refund）和同版本重新上架记录（evidence.relaunch）的请求尚无恰好一份期限内收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrefunds.exists(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.settled && p.amount_minor_units == agreement.amount_minor_units\n&& p.currency == agreement.currency && p.confirmed_at <=\nrequest.started_at) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.edition_id ==\nrequest.edition_id && n.listed && n.relaunched_at <= n.created_at &&\nn.created_at <= request.started_at) && confirmations.filter(c,\nc.request_id == request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.edition_id == request.edition_id && c.charged_minor_units == 0 &&\nc.restored).size() == 1)",
       "id": "rule.restore-expired",
       "kind": "breach",

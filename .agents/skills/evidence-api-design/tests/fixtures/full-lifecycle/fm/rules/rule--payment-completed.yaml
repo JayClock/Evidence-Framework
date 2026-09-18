@@ -2,6 +2,7 @@ type: rule
 id: rule.payment-completed
 kind: completion
 label: 支付履约完成判断
+description: 同一支付申请存在有效期内的支付确认，且外部支付凭证与申请、确认的编号、金额和时间一致时，支付履约完成。
 contextRef: fulfillment.payment
 bindings:
   request:

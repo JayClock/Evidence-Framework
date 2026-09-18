@@ -2,6 +2,7 @@ type: rule
 id: rule.payment-evidence-ready
 kind: precondition
 label: 支付确认的证据前提
+description: 当前时刻前已有与支付申请编号和请求金额一致的外部支付凭证时，允许形成支付确认。
 contextRef: fulfillment.payment
 bindings:
   request:

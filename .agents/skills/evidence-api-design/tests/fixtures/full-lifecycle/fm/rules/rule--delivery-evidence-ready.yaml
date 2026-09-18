@@ -2,6 +2,7 @@ type: rule
 id: rule.delivery-evidence-ready
 kind: precondition
 label: 发货确认的证据前提
+description: 当前时刻前已形成与发货申请编号和地址一致的发货单时，允许形成发货确认。
 contextRef: fulfillment.delivery
 bindings:
   request:

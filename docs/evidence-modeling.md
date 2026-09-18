@@ -66,7 +66,7 @@ Git 用于查看差异和按用户要求恢复版本，不自动暂存、提交�
 1. 识别 Context、双方 Role 与责任边界。
 2. 建立适用的 RFP → Proposal → Contract → Request → Confirmation 证据主线；纯领域／合同前不补造合同或履约。
 3. 展开 Evidence 时间：RFP、Proposal、Request 为 `started_at`／`expired_at`；Contract 为 `signed_at`；Confirmation 为 `confirmed_at`；Other Evidence 为 `created_at`。
-4. Evidence 通过 `references` 指向 Thing；Other Evidence 通过 `evidences` 指向它证明的业务 Evidence。
+4. Evidence 通过 `references` 指向 Thing；Other Evidence 归属形成并管理它的非履约 Context，并通过 `evidences` 指向它证明的业务 Evidence。
 5. 用有来源的 Evidence bindings 与 CEL 建立 completion、breach、derivation Rule。
 6. 用 Evidence Instance 和只引用既有凭证的 `basedOn` 建立回放场景。
 

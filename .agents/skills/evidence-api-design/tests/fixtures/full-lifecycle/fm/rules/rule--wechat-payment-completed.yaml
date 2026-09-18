@@ -2,6 +2,7 @@ type: rule
 id: rule.wechat-payment-completed
 kind: completion
 label: 微信支付完成判断
+description: 同一微信支付申请存在有效期内且实付金额与请求金额一致的微信支付确认时，微信支付履约完成。
 contextRef: fulfillment.wechat-payment
 bindings:
   request:

@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
+    validate_entities,
     validate_evidence_responsibility,
     validate_party_role_owner,
     validate_relationships,
@@ -57,7 +58,6 @@ class ContractResponsibilityTests(unittest.TestCase):
             ("pre_contract", "proposal"),
             ("fulfillment", "fulfillment_request"),
             ("fulfillment", "fulfillment_confirmation"),
-            ("fulfillment", "other_evidence"),
             ("pre_contract", "other_evidence"),
         ):
             with self.subTest(context=context_kind, evidence=evidence_kind):
@@ -75,6 +75,146 @@ class ContractResponsibilityTests(unittest.TestCase):
     def test_contract_context_other_evidence_requires_bound_role(self) -> None:
         self.assertEqual([], self.errors(self.owner))
         self.assertTrue(self.errors(self.owner, "role.unbound"))
+
+    def test_other_evidence_cannot_belong_to_fulfillment(self) -> None:
+        fulfillment = {
+            "id": "fulfillment.purchase",
+            "category": "context",
+            "kind": "fulfillment",
+            "parentContextRef": "context.purchase",
+        }
+        evidence = {
+            "id": "evidence.purchase-note",
+            "category": "evidence",
+            "kind": "other_evidence",
+            "contextRef": "fulfillment.purchase",
+            "responsibleRoleRef": "role.customer",
+            "attributes": [
+                {
+                    "name": "created_at",
+                    "label": "形成时间",
+                    "valueType": "timestamp",
+                    "required": True,
+                    "keyData": True,
+                    "meaning": "补充凭证形成时间",
+                }
+            ],
+        }
+        self.entities.update({fulfillment["id"]: fulfillment, evidence["id"]: evidence})
+        errors: list[str] = []
+        validate_entities(list(self.entities.values()), self.entities, {}, errors)
+        self.assertTrue(
+            any(
+                "other_evidence must belong to its owning Contract" in e for e in errors
+            ),
+            errors,
+        )
+
+    def test_contract_evidence_can_link_to_direct_child_fulfillment(self) -> None:
+        fulfillment = {
+            "id": "fulfillment.purchase",
+            "type": "entity",
+            "category": "context",
+            "kind": "fulfillment",
+            "parentContextRef": "context.purchase",
+        }
+        note = {
+            "id": "evidence.purchase-note",
+            "type": "entity",
+            "category": "evidence",
+            "kind": "other_evidence",
+            "contextRef": "context.purchase",
+        }
+        request = {
+            "id": "request.purchase",
+            "type": "entity",
+            "category": "evidence",
+            "kind": "fulfillment_request",
+            "contextRef": "fulfillment.purchase",
+        }
+        self.entities.update(
+            {fulfillment["id"]: fulfillment, note["id"]: note, request["id"]: request}
+        )
+        for entity in self.entities.values():
+            entity["type"] = "entity"
+
+        for kind, source_ref, target_ref in (
+            ("evidences", "evidence.purchase-note", "request.purchase"),
+            ("precedes", "evidence.purchase-note", "request.purchase"),
+            ("precedes", "request.purchase", "evidence.purchase-note"),
+        ):
+            with self.subTest(kind=kind, source=source_ref, target=target_ref):
+                errors: list[str] = []
+                validate_relationships(
+                    [
+                        {
+                            "id": f"relation.{kind}-{source_ref}-{target_ref}",
+                            "kind": kind,
+                            "sourceRef": source_ref,
+                            "targetRef": target_ref,
+                        }
+                    ],
+                    self.entities,
+                    {},
+                    errors,
+                )
+                self.assertEqual([], errors)
+
+    def test_contract_evidence_cannot_link_to_another_contract_fulfillment(
+        self,
+    ) -> None:
+        other_contract = {
+            "id": "context.other",
+            "type": "entity",
+            "category": "context",
+            "kind": "contract",
+        }
+        fulfillment = {
+            "id": "fulfillment.other",
+            "type": "entity",
+            "category": "context",
+            "kind": "fulfillment",
+            "parentContextRef": "context.other",
+        }
+        note = {
+            "id": "evidence.purchase-note",
+            "type": "entity",
+            "category": "evidence",
+            "kind": "other_evidence",
+            "contextRef": "context.purchase",
+        }
+        request = {
+            "id": "request.other",
+            "type": "entity",
+            "category": "evidence",
+            "kind": "fulfillment_request",
+            "contextRef": "fulfillment.other",
+        }
+        self.entities.update(
+            {
+                other_contract["id"]: other_contract,
+                fulfillment["id"]: fulfillment,
+                note["id"]: note,
+                request["id"]: request,
+            }
+        )
+        for entity in self.entities.values():
+            entity["type"] = "entity"
+        errors: list[str] = []
+        validate_relationships(
+            [
+                {
+                    "id": "relation.invalid-contract-bridge",
+                    "kind": "evidences",
+                    "sourceRef": "evidence.purchase-note",
+                    "targetRef": "request.other",
+                }
+            ],
+            self.entities,
+            {},
+            errors,
+        )
+        self.assertTrue(any("unsupported cross-context" in e for e in errors), errors)
 
     def test_cross_context_role_requires_explicit_responsibility_owner(self) -> None:
         context = {

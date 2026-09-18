@@ -3,7 +3,7 @@ id: evidence.gateway-payment-receipt
 category: evidence
 kind: other_evidence
 label: 支付渠道回执
-contextRef: fulfillment.content-payment
+contextRef: context.content-subscription
 responsibleRoleRef: role.subscriber
 attributes:
   - name: created_at

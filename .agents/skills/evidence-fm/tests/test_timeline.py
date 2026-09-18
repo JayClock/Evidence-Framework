@@ -34,15 +34,18 @@ class TimelineTests(unittest.TestCase):
         timeline, errors = build_timeline(model, suite)
         self.assertEqual([], errors)
         self.assertEqual(4, len(timeline["instances"]))
-        self.assertNotIn("fulfillment.content-payment", {
-            item["entityRef"] for item in timeline["instances"]
-        })
+        self.assertNotIn(
+            "fulfillment.content-payment",
+            {item["entityRef"] for item in timeline["instances"]},
+        )
         request = next(
-            item for item in timeline["instances"]
+            item
+            for item in timeline["instances"]
             if item["entityRef"] == "request.content-payment"
         )
         confirmation = next(
-            item for item in timeline["instances"]
+            item
+            for item in timeline["instances"]
             if item["entityRef"] == "confirmation.content-payment"
         )
         self.assertEqual("interval", request["time"]["kind"])
@@ -74,7 +77,9 @@ class TimelineTests(unittest.TestCase):
             first = subprocess.run(command, capture_output=True, text=True, check=False)
             self.assertEqual(0, first.returncode, first.stdout + first.stderr)
             content = output.read_bytes()
-            second = subprocess.run(command, capture_output=True, text=True, check=False)
+            second = subprocess.run(
+                command, capture_output=True, text=True, check=False
+            )
             self.assertEqual(0, second.returncode, second.stdout + second.stderr)
             self.assertEqual(content, output.read_bytes())
 
@@ -104,7 +109,7 @@ class TimelineTests(unittest.TestCase):
                 "category": "evidence",
                 "kind": "other_evidence",
                 "label": "审计记录",
-                "contextRef": "fulfillment.content-payment",
+                "contextRef": "context.content-subscription",
                 "responsibleRoleRef": "role.subscriber",
                 "attributes": [
                     {
@@ -121,7 +126,10 @@ class TimelineTests(unittest.TestCase):
         timeline, errors = build_timeline(model, suite)
         self.assertEqual([], errors)
         self.assertTrue(
-            any("evidence.audit-note" in pair.values() for pair in timeline["unresolvedOrder"])
+            any(
+                "evidence.audit-note" in pair.values()
+                for pair in timeline["unresolvedOrder"]
+            )
         )
 
 

@@ -3,7 +3,7 @@ id: evidence.delivery-note
 category: evidence
 kind: other_evidence
 label: 发货单
-contextRef: fulfillment.delivery
+contextRef: context.product-procurement
 responsibleRoleRef: role.seller
 attributes:
   - name: created_at

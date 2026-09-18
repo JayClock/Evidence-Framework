@@ -3,7 +3,7 @@ id: evidence.discontinuation
 category: evidence
 kind: other_evidence
 label: 断更下架记录
-contextRef: fulfillment.refund
+contextRef: context.subscription
 attributes:
   - name: subscription_id
     label: 订阅编号
