@@ -109,6 +109,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "id": "rule.contact-usable",
             "kind": "derivation",
             "label": "联系方式可用性计算",
+            "description": "联系方式（thing.contact-method）同时处于启用和已验证状态时，将其派生为可用。",
             "contextRef": context,
             "bindings": {"contact": {"ref": "thing.contact-method"}},
             "expression": "contact.enabled && contact.verified",
@@ -120,6 +121,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "id": "rule.profile-editable",
             "kind": "precondition",
             "label": "归档档案不可编辑",
+            "description": "客户档案（thing.customer-profile）尚未归档时允许编辑；已经归档时拒绝编辑。",
             "contextRef": context,
             "bindings": {"profile": {"ref": "thing.customer-profile"}},
             "expression": "!profile.archived",
@@ -130,6 +132,7 @@ def domain_documents() -> list[dict[str, Any]]:
             "id": "rule.profile-identity",
             "kind": "invariant",
             "label": "档案标识不为空",
+            "description": "客户档案（thing.customer-profile）的业务标识必须至少包含一个字符。",
             "contextRef": context,
             "bindings": {"profile": {"ref": "thing.customer-profile"}},
             "expression": "profile.profile_id.size() > 0",
@@ -239,6 +242,10 @@ def performance_fulfillment(
             "id": f"rule.{name}-completed",
             "kind": "completion",
             "label": label + "按期完成",
+            "description": (
+                f"结果确认（{confirmation}）在请求（{request}）有效期内形成时，"
+                f"判定履约（{fulfillment}）按期完成。"
+            ),
             "contextRef": fulfillment,
             "resultType": "bool",
             "bindings": {
@@ -255,6 +262,10 @@ def performance_fulfillment(
             "id": f"rule.{name}-overdue",
             "kind": "breach",
             "label": label + "逾期未答复",
+            "description": (
+                f"当前时间超过请求（{request}）截止时间且没有结果确认（{confirmation}）时，"
+                f"判定履约（{fulfillment}）逾期。"
+            ),
             "contextRef": fulfillment,
             "resultType": "bool",
             "bindings": {

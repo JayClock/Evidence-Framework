@@ -2,6 +2,9 @@ type: rule
 id: rule.payment-expired
 kind: breach
 label: 付款逾期使合同失效
+description: "当前时间超过订阅费支付请求（request.payment）的截止时间，\
+  且请求与订阅合同（contract.subscription）不一致或期限内没有恰好一份匹配的合格付款证明（role.payme\
+  nt-proof）时，判定订阅费支付履约（fulfillment.payment）逾期。"
 contextRef: fulfillment.payment
 bindings:
   agreement:

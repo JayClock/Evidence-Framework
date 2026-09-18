@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -17,6 +18,7 @@ from context_samples import (
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
+    load_model,
     validate_against_schema,
     validate_entities,
 )
@@ -92,6 +94,7 @@ class AttributeNamingTests(unittest.TestCase):
             "id": "rule.amount",
             "kind": "derivation",
             "label": "计算金额",
+            "description": "读取金额来源（thing.sample）的已付金额，并将其作为合成测试对象的总金额。",
             "contextRef": "context.sample",
             "bindings": {"amountSource": {"ref": "thing.sample"}},
             "expression": "amountSource.paid_minor_units",
@@ -101,6 +104,44 @@ class AttributeNamingTests(unittest.TestCase):
         self.assertEqual([], errors_for(rule, "rule"))
         rule["target"]["attribute"] = "totalAmount"
         self.assertTrue(errors_for(rule, "rule"))
+
+    def test_rule_description_is_required(self):
+        rule = {
+            "type": "rule",
+            "id": "rule.editable",
+            "kind": "precondition",
+            "label": "未归档对象可编辑",
+            "description": "对象（thing.sample）尚未归档时允许编辑；已经归档时拒绝编辑。",
+            "contextRef": "context.sample",
+            "bindings": {"item": {"ref": "thing.sample"}},
+            "expression": "!item.archived",
+            "resultType": "bool",
+        }
+        self.assertEqual([], errors_for(rule, "rule"))
+        del rule["description"]
+        self.assertTrue(errors_for(rule, "rule"))
+
+    def test_bundled_rule_descriptions_reference_concrete_entities(self):
+        fixture_roots = [
+            Path(__file__).resolve().parent / "fixtures",
+            SKILL / "evals" / "fixtures",
+        ]
+        for fixtures in fixture_roots:
+            for manifest in fixtures.glob("*/model.yaml"):
+                model = load_model(manifest.parent)
+                entity_ids = {entity["id"] for entity in model.entities}
+                for rule in model.rules:
+                    with self.subTest(model=manifest.parent.name, rule=rule["id"]):
+                        description = rule["description"]
+                        self.assertNotRegex(
+                            description,
+                            r"（(?:Request|Confirmation|Contract|Fulfillment|Evidence Role)）",
+                        )
+                        refs = re.findall(r"（([a-z][a-z0-9.-]+)）", description)
+                        self.assertTrue(refs, description)
+                        self.assertTrue(
+                            set(refs) <= entity_ids, (description, entity_ids)
+                        )
 
     def test_instance_keys_are_snake_case_but_free_map_payload_is_unchanged(self):
         instance = {

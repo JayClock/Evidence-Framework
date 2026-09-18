@@ -2,6 +2,7 @@ type: rule
 id: rule.prepaid-funded
 kind: precondition
 label: 账户可用余额足够
+description: 余额抵扣请求（request.prepaid）的金额大于零且抵扣前可用余额不少于该金额时，允许执行本次余额抵扣。
 contextRef: fulfillment.prepaid
 bindings:
   request:

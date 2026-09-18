@@ -2,6 +2,11 @@ type: rule
 id: rule.access-completed
 kind: completion
 label: 指定章节已按时向读者提供
+description:
+  "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，\
+  读者凭访问所需付款证明（role.access-payment）或免费恢复资格证明（role.access-restored）\
+  具备版本资格，并在期限内恰有一份匹配的内容提供凭证（confirmation.access）时，\
+  判定内容访问履约（fulfillment.access）完成。"
 contextRef: fulfillment.access
 bindings:
   agreement:

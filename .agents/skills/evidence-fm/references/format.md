@@ -75,6 +75,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.ya
 - 原始材料／外部 API 的旧字段名可在 `notes` 或词汇表记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
 - YAML 使用两空格缩进、无 tab、块式结构，列表项缩进到父键下；一个文件一个文档。实际时间戳用引号保持 RFC 3339 字符串，不让 YAML 将其转换为日期对象。
 - 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
+- Rule 按 `type → id → kind → label → description → contextRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用“中文名称（具体 Entity ID）”，不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 省略不适用的 `target`、`notes`。
 
 ```yaml
 attributes:

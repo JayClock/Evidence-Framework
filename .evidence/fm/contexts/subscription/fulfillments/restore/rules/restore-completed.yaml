@@ -2,6 +2,11 @@ type: rule
 id: rule.restore-completed
 kind: completion
 label: 已按时免费恢复新版本
+description:
+  "免费恢复请求（request.restore）与订阅合同（contract.subscription）匹配，\
+  恢复所需退款证明（role.restore-refund）与重新上架记录（evidence.relaunch）均在请求前有效，\
+  且期限内恰有一份收费为零的免费恢复凭证（confirmation.restore）时，\
+  判定免费恢复履约（fulfillment.restore）完成。"
 contextRef: fulfillment.restore
 bindings:
   agreement:

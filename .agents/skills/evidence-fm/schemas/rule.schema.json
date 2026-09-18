@@ -8,6 +8,7 @@
     "id",
     "kind",
     "label",
+    "description",
     "contextRef",
     "bindings",
     "expression",
@@ -27,6 +28,11 @@
       ]
     },
     "label": { "type": "string", "minLength": 1 },
+    "description": {
+      "description": "Business-language explanation. Model terms use the Chinese name followed by the concrete Entity ID, for example 付款请求（request.payment）.",
+      "type": "string",
+      "minLength": 1
+    },
     "contextRef": { "$ref": "#/$defs/id" },
     "bindings": {
       "type": "object",

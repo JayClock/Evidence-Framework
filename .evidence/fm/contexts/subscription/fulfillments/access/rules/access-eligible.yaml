@@ -2,6 +2,10 @@ type: rule
 id: rule.access-eligible
 kind: precondition
 label: 本读者对本版本具备访问资格
+description:
+  "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，\
+  且读者持有未在请求开始前退款的访问所需付款证明（role.access-payment），\
+  或持有请求开始前已生效的免费恢复资格证明（role.access-restored）时，判定具备访问资格。"
 contextRef: fulfillment.access
 bindings:
   agreement:

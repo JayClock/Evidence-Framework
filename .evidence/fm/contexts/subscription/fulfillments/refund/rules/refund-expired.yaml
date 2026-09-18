@@ -2,6 +2,10 @@ type: rule
 id: rule.refund-expired
 kind: breach
 label: 退款逾期保留追责权利
+description:
+  "当前时间超过断更退款请求（request.refund）的截止时间，且符合订阅合同（contract.subscription）\
+  已付款和断更下架条件的请求尚无恰好一份期限内全额退款到账凭证（confirmation.refund）时，\
+  判定断更退款履约（fulfillment.refund）逾期。"
 contextRef: fulfillment.refund
 bindings:
   agreement:

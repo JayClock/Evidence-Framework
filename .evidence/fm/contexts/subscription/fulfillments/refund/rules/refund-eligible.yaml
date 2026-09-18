@@ -2,6 +2,9 @@ type: rule
 id: rule.refund-eligible
 kind: precondition
 label: 断更下架且原订阅已经付款
+description: "断更退款请求（request.refund）与订阅合同（contract.subscription）\
+  的读者、专栏、全额金额和币种一致，原订阅已有退款所需付款证明（role.refund-payment），\
+  且请求前已有断更超过七天、未改期并已下架的断更下架记录（evidence.discontinuation）时，允许提出全额退款。"
 contextRef: fulfillment.refund
 bindings:
   agreement:

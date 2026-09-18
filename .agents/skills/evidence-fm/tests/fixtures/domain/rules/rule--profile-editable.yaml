@@ -2,6 +2,7 @@ type: rule
 id: rule.profile-editable
 kind: precondition
 label: 未归档档案可编辑
+description: 客户档案（thing.profile）尚未归档时允许编辑；已经归档时拒绝编辑。
 contextRef: context.profiles
 bindings:
   profile:

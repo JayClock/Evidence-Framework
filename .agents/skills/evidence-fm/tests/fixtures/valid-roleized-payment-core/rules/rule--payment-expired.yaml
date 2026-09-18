@@ -2,6 +2,7 @@ type: rule
 id: rule.payment-expired
 kind: breach
 label: 付款逾期
+description: 当前时间超过付款请求（request.content-payment）的截止时间且尚无付款确认时，判定该请求逾期。
 contextRef: fulfillment.content-payment
 bindings:
   request:

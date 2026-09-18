@@ -2,6 +2,9 @@ type: rule
 id: rule.mobile-completed
 kind: completion
 label: 本次扣款全额按时完成
+description:
+  "移动支付扣款请求（request.mobile）在期限内恰有一份与订阅、读者、专栏、父付款请求、金额和币种匹配的成功结果（con\
+  firmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）完成。"
 contextRef: fulfillment.mobile
 bindings:
   request:

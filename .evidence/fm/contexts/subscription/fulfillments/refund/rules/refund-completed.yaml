@@ -2,6 +2,10 @@ type: rule
 id: rule.refund-completed
 kind: completion
 label: 全部订阅费已按时到账
+description: "断更退款请求（request.refund）与订阅合同（contract.subscription）\
+  和退款所需付款证明（role.refund-payment）匹配，存在请求前形成的断更下架记录（evidence.discont\
+  inuation），并在期限内恰有一份全额退款到账凭证（confirmation.refund）时，\
+  判定断更退款履约（fulfillment.refund）完成。"
 contextRef: fulfillment.refund
 bindings:
   agreement:

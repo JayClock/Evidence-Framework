@@ -9,6 +9,7 @@ type: rule
 id: rule.payment-deadline
 kind: derivation
 label: 付款截止时间
+description: 以付款请求（request.payment）的开始时间为基准增加约定的 30 分钟付款期限，得到该请求的失效时间。
 contextRef: fulfillment.payment
 bindings:
   self:
@@ -19,6 +20,8 @@ target:
   entityRef: request.payment
   attribute: expired_at
 ```
+
+`description` 是 Rule 文件内必填的业务解释。说明该规则读取的业务事实、判断或派生方式，以及结果为 true／false 或派生值时代表的业务含义；内容应让不阅读 CEL 的审核者也能理解。涉及模型统一术语时使用“中文名称（具体 Entity ID）”，如“付款请求（request.payment）”“订阅合同（contract.subscription）”“合格付款证明（role.payment-proof）”；引用哪个对象就写哪个实际 ID，不以 Request、Confirmation、Evidence Role 等泛型英文替代具体对象。同一说明中的同一概念保持一致。它不能只复述 `label`、逐字翻译表达式，也不能写 Controller、数据库或定时任务等实现方案。解释中的条件、期限、比例和例外必须有业务来源，不能为了说明完整而补造。
 
 CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request、Confirmation 一样直接属于对应 Fulfillment；领域规则则位于 Domain Context，不需要虚构合同或 Request。
 

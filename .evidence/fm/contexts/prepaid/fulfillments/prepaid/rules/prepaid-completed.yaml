@@ -2,6 +2,9 @@ type: rule
 id: rule.prepaid-completed
 kind: completion
 label: 本次扣款全额按时完成
+description:
+  "账户余额足够时，余额抵扣请求（request.prepaid）在期限内恰有一份身份、金额、币种和扣后余额均匹配的成功结果（con\
+  firmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）完成。"
 contextRef: fulfillment.prepaid
 bindings:
   request:

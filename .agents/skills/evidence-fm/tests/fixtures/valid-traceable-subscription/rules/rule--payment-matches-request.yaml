@@ -2,6 +2,9 @@ type: rule
 id: rule.payment-matches-request
 kind: invariant
 label: 实付金额和币种必须匹配付款请求
+description:
+  "付款确认（confirmation.content-payment）的实付金额与币种分别等于付款请求（request.conte\
+  nt-payment）中的金额与币种时，判定付款结果与请求一致。"
 contextRef: fulfillment.content-payment
 bindings:
   request:

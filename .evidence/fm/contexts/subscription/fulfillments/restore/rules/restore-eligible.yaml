@@ -2,6 +2,10 @@ type: rule
 id: rule.restore-eligible
 kind: precondition
 label: 原退款读者申请同专栏恢复
+description:
+  "免费恢复请求（request.restore）与订阅合同（contract.subscription）的读者和专栏一致，\
+  存在请求前已到账的恢复所需退款证明（role.restore-refund），\
+  并存在请求前形成的同版本重新上架记录（evidence.relaunch）时，允许申请免费恢复。"
 contextRef: fulfillment.restore
 bindings:
   agreement:

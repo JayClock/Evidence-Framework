@@ -2,6 +2,9 @@ type: rule
 id: rule.prepaid-expired
 kind: breach
 label: 本次扣款未在期限内完成
+description: "当前时间超过余额抵扣请求（request.prepaid）的截止时间，\
+  且期限内没有恰好一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，\
+  判定余额抵扣履约（fulfillment.prepaid）逾期。"
 contextRef: fulfillment.prepaid
 bindings:
   request:

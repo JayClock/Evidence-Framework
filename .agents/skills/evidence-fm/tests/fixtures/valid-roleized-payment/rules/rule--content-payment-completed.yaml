@@ -2,6 +2,9 @@ type: rule
 id: rule.content-payment-completed
 kind: completion
 label: 支付内容产品费用完成判断
+description:
+  "存在至少一份与请求（request.content-payment）关联的确认凭证（role.content-payment-c\
+  onfirmation）时，判定履约（fulfillment.content-payment）完成。"
 contextRef: fulfillment.content-payment
 bindings:
   request:

@@ -2,6 +2,11 @@ type: rule
 id: rule.content-readable
 kind: precondition
 label: 按查询时刻检索仍有资格的本人章节
+description:
+  "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，\
+  当前查询时刻访问所需付款证明（role.access-payment）\
+  尚未退款或请求前已有免费恢复资格证明（role.access-restored），\
+  且该请求曾按时形成内容提供凭证（confirmation.access）时，允许检索指定章节。"
 contextRef: fulfillment.access
 bindings:
   agreement:

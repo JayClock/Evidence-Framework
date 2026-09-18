@@ -2,6 +2,9 @@ type: rule
 id: rule.goal-setting-completed
 kind: completion
 label: 确认内容运营绩效目标完成判断
+description:
+  "存在至少一份与请求（request.goal-setting）关联的确认凭证（confirmation.goal-setting\
+  ）时，判定履约（fulfillment.goal-setting）完成。"
 contextRef: fulfillment.goal-setting
 bindings:
   request:

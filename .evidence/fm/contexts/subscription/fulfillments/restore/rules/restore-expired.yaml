@@ -2,6 +2,10 @@ type: rule
 id: rule.restore-expired
 kind: breach
 label: 免费恢复逾期保留追责权利
+description: "当前时间超过免费恢复请求（request.restore）的截止时间，\
+  且具备恢复所需退款证明（role.restore-refund）和同版本重新上架记录（evidence.relaunch）\
+  的请求尚无恰好一份期限内收费为零的免费恢复凭证（confirmation.restore）时，\
+  判定免费恢复履约（fulfillment.restore）逾期。"
 contextRef: fulfillment.restore
 bindings:
   agreement:

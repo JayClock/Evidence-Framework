@@ -2,6 +2,9 @@ type: rule
 id: rule.access-deadline
 kind: derivation
 label: 计算付费内容访问请求截止
+description:
+  "以内容访问请求（request.access）的开始时间为基准增加订阅合同（contract.subscription）\
+  约定的访问响应秒数，得到该请求的截止时间。"
 contextRef: fulfillment.access
 bindings:
   agreement:

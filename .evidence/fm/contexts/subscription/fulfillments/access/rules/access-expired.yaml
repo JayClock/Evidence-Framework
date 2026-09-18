@@ -2,6 +2,11 @@ type: rule
 id: rule.access-expired
 kind: breach
 label: 本次内容未按时提供
+description:
+  "当前时间超过内容访问请求（request.access）的截止时间，且请求不具备访问所需付款证明（role.access-pay\
+  ment）或免费恢复资格证明（role.access-restored），\
+  或期限内没有恰好一份匹配的内容提供凭证（confirmation.access）时，\
+  判定内容访问履约（fulfillment.access）逾期。"
 contextRef: fulfillment.access
 bindings:
   agreement:

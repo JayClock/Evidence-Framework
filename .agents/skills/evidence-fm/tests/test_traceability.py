@@ -180,6 +180,7 @@ class TraceabilityTests(unittest.TestCase):
                     "id": "rule.payment-start",
                     "kind": "derivation",
                     "label": "从截止时间反推开始时间",
+                    "description": "从付款请求（request.content-payment）的截止时间减去约定期限，反推出该请求的开始时间。",
                     "contextRef": "context.content-subscription",
                     "bindings": {"request": {"ref": "request.content-payment"}},
                     "expression": 'request.expired_at - duration("30m")',

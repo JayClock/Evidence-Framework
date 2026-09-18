@@ -2,6 +2,10 @@ type: rule
 id: rule.payment-completed
 kind: completion
 label: 收到唯一全额按时付款证明
+description:
+  "订阅费支付请求（request.payment）与订阅合同（contract.subscription）\
+  的订阅、读者、专栏、正数金额和币种一致，且期限内恰有一份同一请求的合格付款证明（role.payment-proof）时，\
+  判定订阅费支付履约（fulfillment.payment）完成。"
 contextRef: fulfillment.payment
 bindings:
   agreement:
