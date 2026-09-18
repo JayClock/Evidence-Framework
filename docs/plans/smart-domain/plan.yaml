@@ -710,7 +710,7 @@ tasks:
   domain::context.sales-performance::contract.sales-performance:
     title: 绩效协议与月度客户联系目标领域行为
     mode: implementation
-    status: planned
+    status: done
     outcome: 交付绩效协议根集合、协议登记、月度目标追加与关联校验的领域行为及反例证据。
     sourceRefs:
       - context.sales-performance
@@ -886,7 +886,19 @@ tasks:
           - path: target.countDeltaAfterRejections
             operator: equals
             expected: 0
-    observedEvidence: []
+    observedEvidence:
+      - command: ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.SalesPerformanceAgreementTests --tests com.evidencepoc.backend.domain.MonthlyCustomerContactTargetTests --rerun-tasks
+        exitCode: 0
+        result: 协议按 identity 登记并由角色委托返回同一实例；目标保存 agreement_id/period_id 与 3/2/1，同一协议两个周期目标计数为 2。
+      - command: ./gradlew :backend-domain:test --tests com.evidencepoc.backend.domain.MonthlyCustomerContactTargetTests.rejectsInvalidTargetsWithoutChangingRegisteredFacts --rerun-tasks
+        exitCode: 0
+        result: 空白编号、缺失 signed_at、负目标数、周期反转、外来协议与重复登记均被拒绝；拒绝后协议数 1、目标数 0。
+      - command: ./gradlew :backend-domain:check
+        exitCode: 0
+        result: 全部 domain 测试与 Spotless 格式检查通过。
+      - command: ./gradlew :backend:test --tests com.evidencepoc.backend.BackendArchitectureTests --rerun-tasks
+        exitCode: 0
+        result: domain/api/persistent 分层规则回归通过。
     executionDiscipline:
       - 目标值是实例约定，不因合成场景的 3/2/1 生成默认值或统一公式。
       - 未达标后果、参与方与权限不在本任务补造；行为拥有者保持实体/角色对象，不迁入 Service。

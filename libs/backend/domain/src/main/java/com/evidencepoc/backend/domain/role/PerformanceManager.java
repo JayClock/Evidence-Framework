@@ -1,5 +1,8 @@
 package com.evidencepoc.backend.domain.role;
 
+import com.evidencepoc.backend.domain.description.MonthlyCustomerContactTargetDescription;
+import com.evidencepoc.backend.domain.model.MonthlyCustomerContactTarget;
+import com.evidencepoc.backend.domain.model.SalesPerformanceAgreement;
 import com.evidencepoc.backend.domain.model.User;
 import java.util.Objects;
 
@@ -23,5 +26,12 @@ public final class PerformanceManager {
 
   public String managerId() {
     return actor.getIdentity();
+  }
+
+  public MonthlyCustomerContactTarget proposeMonthlyTarget(
+      SalesPerformanceAgreement agreement, MonthlyCustomerContactTargetDescription description) {
+    Objects.requireNonNull(agreement, "agreement");
+    Objects.requireNonNull(description, "description");
+    return agreement.proposeTarget(description);
   }
 }

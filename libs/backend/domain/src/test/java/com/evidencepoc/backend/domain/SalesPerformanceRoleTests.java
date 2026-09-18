@@ -8,7 +8,6 @@ import com.evidencepoc.backend.domain.description.UserDescription;
 import com.evidencepoc.backend.domain.model.User;
 import com.evidencepoc.backend.domain.model.Users;
 import com.evidencepoc.backend.domain.role.PerformanceManager;
-import com.evidencepoc.backend.domain.role.Reader;
 import com.evidencepoc.backend.domain.role.TeleSales;
 import io.github.jayclock.smartdomain.core.Many;
 import java.util.Optional;
@@ -95,8 +94,7 @@ class SalesPerformanceRoleTests {
     }
   }
 
-  private static final class InMemorySalesPerformanceContext
-      implements SalesPerformanceContext {
+  private static final class InMemorySalesPerformanceContext implements SalesPerformanceContext {
     @Override
     public PerformanceManager asPerformanceManager(User user) {
       if (user == null) {
