@@ -88,7 +88,7 @@ attributes:
 - Context 外的稳定 Party 通过 `plays_role` 扮演上下文内的 Party Role；档案可 `references` 该本地 Role，不直接把跨 Context 的 Party 引用伪装为局部关系。
 - 能力依赖用 `uses_role` 指向非 Party Role；对象扮演能力用允许的 `plays_role`。Role 不因为存在而要求补造玩家。
 - 连接履约时由实际涉及领域对象的 Request 或其他业务 Evidence 使用 `references` 指向 Thing；领域对象本身不是履约完成凭证。
-- 跨上下文的业务结果使用外部时刻 Evidence→Evidence Role；辅助凭证归属形成并管理它的非履约 Context，并使用 `evidences` 指向具体业务 Evidence。父 Contract Context 与直接子 Fulfillment 之间的补充证明按合同父子例外处理，其它独立边界不补造任意跨域关系。
+- 跨独立上下文的业务结果使用外部时刻 Evidence→Evidence Role；同一 Contract Context 内多个履约共同采信一个 Confirmation 时，按合同责任用各 Request→Confirmation `precedes` Relationship 直接关联。辅助凭证归属形成并管理它的非履约 Context，并使用 `evidences` 指向具体业务 Evidence。父 Contract Context 与直接子 Fulfillment 之间的补充证明按合同父子例外处理，其它独立边界不补造任意跨域关系。
 
 `references` 的 kind 本身不自动表达组合、拥有权、基数或级联删除。已确认的关系基数可在 Relationship 两端用 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明，不表示无限。组合、拥有权和级联删除仍没有专用字段，且当前模拟器没有通用 Relationship Instance，不能把一条带标签的线或通过静态校验的基数声明声称为已经验证的运行实例约束。
 

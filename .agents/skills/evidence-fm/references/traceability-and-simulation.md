@@ -100,7 +100,7 @@ basedOn:
 - 只能实例化 Evidence Entity；
 - 非派生的必填属性必须在单据形成时给出；
 - 派生必填属性（含 expired_at）可以在测试输入中先缺省，但场景结束前必须由已声明的 CEL evaluation 产生；无推导、结果为 null 或非 RFC 3339 时间戳均失败。这不允许省略源 Entity 的时间属性定义；
-- `basedOn` 只能指向更早可用的单据；需要 `other_evidence` 才能形成的凭证，必须在 `basedOn` 中引用这些补充证据，且其形成时间不得早于必需证据；
+- `basedOn` 只能指向更早可用的单据；需要 `other_evidence` 才能形成的凭证，必须在 `basedOn` 中引用这些补充证据，且其形成时间不得早于必需证据；同一合同内一个 Confirmation 实例共同完成多个 Request 时，`basedOn` 必须列出每个被完成的 Request Instance，各 Fulfillment 仍分别执行自己的 completion Rule；
 - 更正、退款、冲正和补偿新增 Instance，不修改旧 Instance。
 
 ### Scenario
@@ -172,7 +172,7 @@ python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> \
 7. 按 Request Instance 及其 `basedOn` 后继限定 completion／breach 结果，计算违约状态；
 8. 对比期望并输出确定性 JSON。
 
-同一请求的 breach 条件为真时，`breached` 优先于 `completed`，避免迟到的 Confirmation 抹去已经发生的违约。Evidence Role 的规则 binding 由模型中的 Evidence→Evidence Role `plays_role` 解析；绑定角色时提供实际玩家实例，不能签发角色实例或用没有扮演关系的凭证替代。角色属性表达对玩家字段的要求，不是角色自己的业务时间或责任。具体跨 Context Confirmation Instance 仍须通过 `basedOn` 关联当前 Request Instance，避免把无关凭证误当成履约证明。
+同一请求的 breach 条件为真时，`breached` 优先于 `completed`，避免迟到的 Confirmation 抹去已经发生的违约。同一合同内的共同 Confirmation 只有在类型模型存在相应 Request→Confirmation `precedes` Relationship、实例 `basedOn` 包含当前 Request 且该 Fulfillment 的 completion Rule 为真时，才完成该请求；关联另一个 Request 不会自动传播完成状态。Evidence Role 的规则 binding 由模型中的 Evidence→Evidence Role `plays_role` 解析；绑定角色时提供实际玩家实例，不能签发角色实例或用没有扮演关系的凭证替代。角色属性表达对玩家字段的要求，不是角色自己的业务时间或责任。具体跨独立 Context Confirmation Instance 仍须通过 `basedOn` 关联当前 Request Instance，避免把无关凭证误当成履约证明。
 
 ## 6. 人工角色扮演包
 

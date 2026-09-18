@@ -23,7 +23,7 @@ target:
 
 `description` 是 Rule 文件内必填的业务解释。说明该规则读取的业务事实、判断或派生方式，以及结果为 true／false 或派生值时代表的业务含义；内容应让不阅读 CEL 的审核者也能理解。涉及模型统一术语时使用“中文名称（具体 Entity ID）”，如“付款请求（request.payment）”“订阅合同（contract.subscription）”“合格付款证明（role.payment-proof）”；引用哪个对象就写哪个实际 ID，不以 Request、Confirmation、Evidence Role 等泛型英文替代具体对象。同一说明中的同一概念保持一致。它不能只复述 `label`、逐字翻译表达式，也不能写 Controller、数据库或定时任务等实现方案。解释中的条件、期限、比例和例外必须有业务来源，不能为了说明完整而补造。
 
-CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request、Confirmation 一样直接属于对应 Fulfillment；领域规则则位于 Domain Context，不需要虚构合同或 Request。
+CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 必须与 Request 一样直接属于对应 Fulfillment；Rule 可以绑定本履约专有 Confirmation，也可以绑定同一 Contract Context 下通过 Request→Confirmation `precedes` Relationship 关联的共同 Confirmation。领域规则则位于 Domain Context，不需要虚构合同或 Request。
 
 ## 2. Rule kind
 

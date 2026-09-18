@@ -15,7 +15,7 @@
 │   ├── subscription/
 │   │   ├── context.yaml
 │   │   ├── contract.yaml
-│   │   ├── evidence/              # 合同形成并管理的其它凭证
+│   │   ├── evidence/              # 合同形成的补充凭证或同合同多履约共用的 Confirmation
 │   │   ├── roles/
 │   │   ├── relationships/        # 合同内关系
 │   │   └── fulfillments/
@@ -179,7 +179,7 @@ label: 支付订阅费用
 parentContextRef: context.subscription
 ```
 
-Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID，不得放入 Contract Context。相关 Contract 从父 Contract Context 的根 Evidence 确定，成员索引从各对象的 `contextRef` 构建。
+Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID。本履约专有 Confirmation 可以同样归属该 Fulfillment；同一合同下由多个履约共同采信的 Confirmation 保留一个形成 Context，可放在父 Contract Context 或其中一个子 Fulfillment，再由各 Request 的 `precedes` Relationship 关联。相关 Contract 从父 Contract Context 的根 Evidence 确定，成员索引同时读取 `contextRef` 和 Request→Confirmation 关系。
 
 ### Domain Context 与 Thing
 
@@ -245,11 +245,11 @@ contextRef: fulfillment.subscription-payment
 
 ## 5. Fulfillment、Evidence 与 Rule
 
-Request、具体 Confirmation、Evidence Role 和履约 Rule 都以 `contextRef` 指向 Fulfillment；Other Evidence 不得以 `contextRef` 指向 Fulfillment。合同履行期间由本合同形成的补充凭证属于父 Contract Context，可通过受限的 `evidences`／`precedes` 关联直接子履约的 Request 或 Confirmation。本责任范围内具体 Evidence 的 `responsibleRoleRef` 指向父 Contract Context 的 Party Role。Role 不声明 `responsibleRoleRef` 或 `roleRefs`，不签发实例，也不自动展开六类 Evidence 的时间字段。Role 的属性是玩家数据契约；外部具体玩家保留其自身 Context、凭证时间及责任角色。
+Request、本履约专有 Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 指向 Fulfillment；同一合同内的共同 Confirmation 保留一个形成 Context，并由一个或多个 Request→Confirmation `precedes` Relationship 纳入相应 Fulfillment。Other Evidence 不得以 `contextRef` 指向 Fulfillment。合同履行期间由本合同形成的补充凭证属于父 Contract Context，可通过受限的 `evidences`／`precedes` 关联直接子履约的 Request 或 Confirmation。本责任范围内具体 Evidence 的 `responsibleRoleRef` 指向父 Contract Context 的 Party Role。Role 不声明 `responsibleRoleRef` 或 `roleRefs`，不签发实例，也不自动展开六类 Evidence 的时间字段。Role 的属性是玩家数据契约；外部具体玩家保留其自身 Context、凭证时间及责任角色。
 
 Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 
-每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。具体 Confirmation 只属于一个 Fulfillment；重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
+每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。同一个 Confirmation 类型或实例可以在有合同依据时被同一 Contract Context 下多个 Request 关联；每个关联仍按各自请求区间和 completion Rule 独立判断。重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
 
 Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。服务于某项履约的辅助凭证仍按形成责任归属父 Contract、Pre-contract 或 Domain Context，不因此成为 Fulfillment 成员。
 
@@ -267,7 +267,7 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`、`uses_role`。
 
-方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为业务 Evidence→Thing，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为外部时刻 Evidence→Evidence Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。允许有业务依据的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing 跨 Context 关系；还允许父 Contract Context 的 Other Evidence 与其直接子 Fulfillment 的 Request／Confirmation 之间使用 `evidences` 及有依据的 `precedes`。后一例外不延伸到兄弟履约、其他合同或独立 Context；Relationship 标签不能替代来源。
+方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为业务 Evidence→Thing，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为外部时刻 Evidence→Evidence Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。允许有业务依据的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing 跨 Context 关系；同一 Contract Context 下还允许多个子 Fulfillment 的 Request 通过 `precedes` 指向同一个共同 Confirmation。父 Contract Context 的 Other Evidence 与其直接子 Fulfillment 的 Request／Confirmation 之间也可使用 `evidences` 及有依据的 `precedes`。这些例外不延伸到其他合同或任意 Context；Relationship 标签不能替代来源。
 
 关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
 

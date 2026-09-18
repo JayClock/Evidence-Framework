@@ -430,7 +430,9 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                 errors.append(f"{scenario_id}: unknown Fulfillment '{fulfillment_ref}'")
                 continue
             request_instance = instances.get(request_instance_ref or "")
-            request_types, _, _ = fulfillment_members(fulfillment_ref or "", entities)
+            request_types, _, _ = fulfillment_members(
+                fulfillment_ref or "", entities, model.relationships
+            )
             expected_request_refs = {str(item["id"]) for item in request_types}
             if request_instance is None:
                 errors.append(
@@ -838,7 +840,7 @@ def fulfillment_status(
     fulfillment = model.fulfillment_contexts_by_id.get(fulfillment_ref)
     request_instance = instances.get(request_instance_ref)
     requests, confirmations, evidence_roles = fulfillment_members(
-        fulfillment_ref, model.entities_by_id
+        fulfillment_ref, model.entities_by_id, model.relationships
     )
     request_types = {str(item["id"]) for item in requests}
     if (

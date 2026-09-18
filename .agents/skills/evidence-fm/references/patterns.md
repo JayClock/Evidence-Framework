@@ -32,9 +32,17 @@ Request Entity 直接用 required/keyData timestamp 的 `started_at` 与 `expire
 
 一次、任一、全部、分批数量和累计金额都使用明确 Evidence bindings 与 CEL completion Rule。分批履约仍只建一个 Confirmation 类型，以多个 Evidence Instance 表达各批次，不复制类型节点。
 
-## 4. 多个 Fulfillment 共用确定结果
+## 4. 多个 Fulfillment 共用 Confirmation
 
-季度与年度 KPI 若消费同一确定结果，应让外部时刻 Evidence 分别通过 Evidence Role 进入各自 Fulfillment。具体 Confirmation 只属于一个 Fulfillment；不要通过复制或多重归属制造共享。
+同一合同中的季度与年度 KPI 若由同一收入确认履约，可以让两个 Request 通过 `precedes` 直接关联同一个 Confirmation。该 Confirmation 只保留一个形成 Context、责任 Role 和类型定义；各 Fulfillment 的 completion Rule 分别读取自己的 Request 与共同 Confirmation，按各自区间和条件判断。实例同时完成多个请求时，其 `basedOn` 明确列出这些已经形成的 Request Instance。
+
+```text
+Quarterly Request ─┐
+                   ├─precedes→ Income Confirmation
+Annual Request ────┘
+```
+
+这种共享只适用于同一 Contract Context 内有明确权责等价依据的履约。来自另一个合同、领域或外部渠道的确定结果仍通过 Evidence Role 进入各自 Fulfillment；不能用共同 Confirmation 穿透独立责任边界。
 
 ## 5. 自动动作不成为业务凭证
 
