@@ -16,7 +16,7 @@
 
 ### 记录原始进度：status 与 observedEvidence
 
-`plan.yaml.tasks[taskKey].status` 是任务状态唯一位置；同一任务记录的 `observedEvidence` 只保存真实观察，计划生成时为空。每条证据写明 `checkId`、`command`、`exitCode` 与 `observed`，例如“SubscriptionTests 4 项通过，3 个 Gradle task 均实际执行；覆盖 11 个必填字段、重复编号拒绝及失败后集合不变”，而不是“已完成”。`review.html` 只投影这些原始记录，不能反向成为状态或批准来源。较长输出留在获授权的检查目录并引用；Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造任务 done 或审核通过。
+`plan.yaml.tasks[taskKey].status` 是任务状态唯一位置；同一任务记录的 `observedEvidence` 只保存真实观察，计划生成时为空。每条证据写明 `checkId`、`command`、`exitCode` 与 `observed`，例如“`MonthlyCustomerContactCompletionTests` 全部通过，命令实际执行；覆盖达标、不足、恰在周期闭合时刻、区间外、跨周期与任一单项不足六类输入”，而不是“已完成”。`review.html` 只投影这些原始记录，不能反向成为状态或批准来源。较长输出留在获授权的检查目录并引用；Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造任务 done 或审核通过。
 
 ### 独立验证者：只读状态机与项目命令
 
@@ -38,12 +38,12 @@
 
 ### 实际闭环：计划任务与证据
 
-当前计划编译出 8 个任务，执行顺序由依赖决定，其中两个已完成，都满足“具体验收数据加真实证据”：
+当前计划编译出 6 个任务，执行顺序由依赖决定，当前全部为 `done`，每个都满足“具体验收数据加真实证据”：
 
-- `foundation::context.subscription::role.reader` 与 `domain::context.subscription::request.payment` 在当前计划记录中为 `done`，`observedEvidence` 非空。计划从索引与任务 Markdown 迁移到 `plan.yaml` 时必须原样保留这些证据，不可凭审核投影重新推断；
-- 领域 CHECK 记录 `SubscriptionTests 4 项`、`PaymentStatusTests 5 项` 与领域回归 `20 项`，并注明“均实际执行”；
-- 项目质量记录区分了 Gradle 的“13 个实际执行、15 个 up-to-date”和 Nx 的“34 个命中缓存、1 个实际执行”；
-- 需要复验时使用 `--rerun-tasks`，不把缓存命中描述为新运行。
+- 任务状态、检查项与证据在 `plan.yaml` 中一一对应，`observedEvidence` 非空；迁移或重构计划时必须原样保留这些证据，不可凭审核投影重新推断；
+- 领域检查记录写明实际执行的测试项与逐例结果，而不是“已完成”；
+- 项目质量记录区分构建工具报告的“实际执行”“up-to-date”与“命中缓存”：只有强制重跑（`--rerun-tasks`）得到的结果才是本次结果，默认运行命中缓存属于信息级；
+- 只读状态脚本每次核对：任务与 CHECK 一一对应、完成必须有非空证据、前置必须先完成、阻塞必须关联已知缺口。
 
 结构校验与语义判断分得很开：`plan_state.py verify` 通过只说明计划结构有效，是否“切片合理、CHECK 证明业务结果”仍由 Agent 对照业务来源判断；`guides:verify` 的 0 errors 只说明文档链接与格式，不说明指南正确。
 
