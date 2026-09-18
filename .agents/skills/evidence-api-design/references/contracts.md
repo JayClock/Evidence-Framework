@@ -104,7 +104,7 @@ HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链�
 
 ## 可运行测试案例
 
-[商品采购 API 测试案例](../tests/fixtures/full-lifecycle/api.yaml) 提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
+商品采购 API 测试案例（Skill 维护材料 `tests/fixtures/full-lifecycle/api.yaml`）提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
 
 ```bash
 EXAMPLE="$API_SKILL_DIR/tests/fixtures/full-lifecycle"
