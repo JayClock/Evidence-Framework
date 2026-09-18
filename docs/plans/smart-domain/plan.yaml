@@ -6,7 +6,9 @@ metadata:
   goal: 交付电话销售绩效协议登记（绩效协议、月度目标、联系记录）三个能力与月度客户联系完成规则的 local/test 实现，并按完成与不足旅程验收。
   authorizationRefs:
     - .evidence/fm/crm-assessment.md
-  requirementRefs: []
+  requirementRefs:
+    - docs/requirements/scope.md
+    - docs/requirements/stories.md
   nonGoals:
     - 前端
     - 生产身份与生产数据库
@@ -33,9 +35,9 @@ sourceManifest:
       - capability.register-customer-contact-record-tele-sales
     purpose: 绩效协议切片的 API 设计来源；能力与 HTTP 契约经设计校验，不构成业务范围批准。
   - path: docs/requirements/scope.md
-    digest: b188cfb67953bdca780c7a26290fe0a9c86c25defef7b8494b811ff30e3e1be2
+    digest: 5deac1c9ba2a6208e20bb7c7ef03f5c26bbe27cb25645584953ad30ac54d3b3f
   - path: docs/requirements/stories.md
-    digest: f26deb020a67d539a8d4024d962453cda6ef14dd4cddd88708848591b8ed47cf
+    digest: 610be79973c1d6c675b32d6699f8504d5ece74dae58329300425a59fc0b8f78e
   - path: docs/requirements/quality-attributes.md
     digest: 2b611fc76c7593547897e984399573b87c9958f4d28004917a976df8bc6285e5
   - path: docs/architecture/overview.md
@@ -193,7 +195,7 @@ strategy:
     - HTTP 契约
     - 业务旅程验收
   observableOutcomes:
-    - 从真实 HTTP、SQL 和 local/test 支付端口验收主链
+    - 从真实 HTTP、SQL 与领域规则验收绩效协议主链
     - 登记绩效协议与月度目标请求且失败不写入
     - 登记电话/邮件联系记录并计入正确目标与周期
     - 月度目标按总数、电话数和邮件数三项分别判断完成
@@ -725,7 +727,9 @@ tasks:
     scenarioRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
-    storyRefs: []
+    storyRefs:
+      - US-004
+      - US-005
     acceptanceRefs: []
     sliceRefs:
       - scenario.monthly-customer-contact-completed
@@ -921,8 +925,15 @@ tasks:
     scenarioRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
-    storyRefs: []
-    acceptanceRefs: []
+    storyRefs:
+      - US-006
+      - US-007
+    acceptanceRefs:
+      - AC-006-05
+      - AC-007-01
+      - AC-007-02
+      - AC-007-03
+      - AC-007-04
     sliceRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
@@ -1101,7 +1112,11 @@ tasks:
     scenarioRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
-    storyRefs: []
+    storyRefs:
+      - US-004
+      - US-005
+      - US-006
+      - US-007
     acceptanceRefs: []
     sliceRefs:
       - scenario.monthly-customer-contact-completed
@@ -1304,8 +1319,20 @@ tasks:
     scenarioRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
-    storyRefs: []
-    acceptanceRefs: []
+    storyRefs:
+      - US-004
+      - US-005
+      - US-006
+    acceptanceRefs:
+      - AC-004-01
+      - AC-004-02
+      - AC-004-03
+      - AC-005-01
+      - AC-005-02
+      - AC-005-03
+      - AC-006-01
+      - AC-006-02
+      - AC-006-03
     sliceRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
@@ -1578,8 +1605,23 @@ tasks:
     scenarioRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
-    storyRefs: []
-    acceptanceRefs: []
+    storyRefs:
+      - US-004
+      - US-005
+      - US-006
+      - US-007
+    acceptanceRefs:
+      - AC-004-01
+      - AC-004-04
+      - AC-005-01
+      - AC-006-01
+      - AC-006-04
+      - AC-006-05
+      - AC-007-01
+      - AC-007-02
+      - AC-007-03
+      - AC-007-04
+      - AC-007-05
     sliceRefs:
       - scenario.monthly-customer-contact-completed
       - scenario.monthly-customer-contact-insufficient
@@ -1888,7 +1930,8 @@ gaps:
       - .evidence/fm/crm-assessment.md
       - context.sales-performance
       - capability.register-sales-performance-agreement-tele-sales
-    statement: 电话销售绩效协议切片由用户本次规划指令授权，docs/requirements 的软件范围与故事验收尚未收敛该切片，尚无正式 US/AC 编号。
+      - docs/requirements/stories.md
+    statement: 电话销售绩效协议切片的需求已在 docs/requirements 收敛为软件范围与 US-004 至 US-007（AC-004-01 至 AC-007-05）；软件范围、MVP 取舍与可验收结果仍待需求拥有者确认。
     affectedTaskRefs:
       - foundation::context.sales-performance::role.tele-sales
       - domain::context.sales-performance::contract.sales-performance
@@ -1896,8 +1939,8 @@ gaps:
       - mybatis::context.sales-performance::design.sales-performance-storage
       - api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
       - acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey
-    impact: 不阻塞本计划的候选任务设计与结构校验，但执行前须由需求拥有者确认软件职责、MVP 取舍和可验收结果，不能把 FM 活动或 API 能力清单当成已批准产品范围。
-    nextAction: 使用 evidence-requirements 在 docs/requirements/scope.md 与 stories.md 收敛该切片的故事与验收标准；本计划的 CHECK 与断言届时按稳定 US/AC 重新引用。
+    impact: 不阻塞已交付任务的 local/test 证据与结构校验；需求拥有者确认前，本计划不构成产品批准，也不据此扩大软件范围。
+    nextAction: 由需求拥有者确认 docs/requirements/scope.md 的软件职责、MVP 与非目标，并按稳定 US/AC 复核任务覆盖；确认后更新本缺口。
   - id: GAP-CRM-PARTICIPATION
     sourceRefs:
       - contract.sales-performance

@@ -2,7 +2,7 @@
 
 ## 范围
 
-当前切片以跨上下文稳定主体 [party.user](../../.evidence/fm/participants/user.yaml)为定位，提供 `id + displayName` 的本地 CRUD。显示名称是软件资料字段，不假称 FM 已定义该属性；正式订阅 API 与本切片分开，不由代码反向改写 FM/API。
+当前切片以跨上下文稳定主体 [party.user](../../.evidence/fm/participants/user.yaml)为定位，提供 `id + displayName` 的本地 CRUD。显示名称是软件资料字段，不假称 FM 已定义该属性；正式业务 API 与本切片分开，不由代码反向改写 FM/API。
 
 这是本地开发接口，不是生产用户管理、认证或合同授权系统。默认 local profile 绑定 `127.0.0.1`，Root CRUD 只在 local/test 注册。不得用代理或监听地址变更暴露公网；生产数据库、可信身份及权限需要独立依据。
 
