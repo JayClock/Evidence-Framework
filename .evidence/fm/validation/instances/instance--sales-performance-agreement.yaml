@@ -1,0 +1,7 @@
+type: evidence_instance
+id: instance.sales-performance-agreement
+entityRef: contract.sales-performance
+values:
+  agreement_id: PERF-2026-Q4-001
+  signed_at: '2026-09-25T09:00:00Z'
+basedOn: []

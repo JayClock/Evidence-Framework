@@ -1,0 +1,58 @@
+{
+  "runId": "20260918T025540Z-crm-user-role-players",
+  "recordedAt": "2026-09-18T02:55:40Z",
+  "modelPath": ".evidence/fm",
+  "modelDigest": "sha256:40d7265eeaae2d23a98f976a15a890f02f09992630bff8dddcfd7778e856b7c4",
+  "sourceSummary": {
+    "kind": "direct-user-requirements",
+    "scope": "CRM 电话销售模型及 party.user 对两个绩效角色的扮演关系"
+  },
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3 3.12.3",
+    "validator": ".agents/skills/evidence-fm/scripts/check_fm.py",
+    "validatorSha256": "91e58f5efa1adcfa9ce2987aa1dfc0e7ab9b24f22bc742ed2bc00f5f78795a61"
+  },
+  "execution": {
+    "cwd": "/Users/zhongjie/Downloads/Github/Evidence-Framework",
+    "command": "/opt/miniconda3/bin/python3 .agents/skills/evidence-fm/scripts/check_fm.py $PWD/.evidence/fm",
+    "exitCode": 0
+  },
+  "result": {
+    "valid": true,
+    "modelValidated": true,
+    "simulationPassed": true,
+    "scenarioCount": 20,
+    "executedScenarioCount": 20,
+    "inputChanged": false,
+    "errors": [],
+    "timelineSummary": {
+      "evidenceTypeCount": 19,
+      "instanceCount": 32,
+      "laneCount": 11,
+      "precedesCount": 15,
+      "unresolvedOrderCount": 3,
+      "sha256": "sha256:32e539cda42a77ecd87be5e4e139d8842ba9ecd6ee28ef39aad4b568cac94e2d"
+    }
+  },
+  "coverage": {
+    "checked": [
+      "FM Schema v3",
+      "semantic references",
+      "CEL compilation and bindings",
+      "attribute lineage",
+      "validation suite simulation",
+      "timeline consistency"
+    ],
+    "notCovered": [
+      "同一协议实例双方的 Participant 实例差异约束",
+      "角色扮演产生的操作授权",
+      "客户档案 Thing 实例级引用一致性",
+      "周度进度检查责任归属",
+      "目标设定权责与变更方式",
+      "未达标后果和业务方批准",
+      "generated 派生产物刷新",
+      "下游 API 与任务计划重编译"
+    ]
+  },
+  "rawResult": "not saved; summary retained in this record"
+}

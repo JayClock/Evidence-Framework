@@ -1,0 +1,56 @@
+type: fm_scenario
+id: scenario.monthly-customer-contact-completed
+label: 月度客户联系各项目标均已达到
+asOf: '2026-11-01T00:00:00Z'
+givenInstanceRefs: []
+steps:
+  - sequence: 1
+    actingRoleRef: role.tele-sales
+    issueInstanceRef: instance.sales-performance-agreement
+    availableInstanceRefs: []
+  - sequence: 2
+    actingRoleRef: role.performance-manager
+    issueInstanceRef: instance.monthly-customer-contact-request
+    availableInstanceRefs:
+      - instance.sales-performance-agreement
+  - sequence: 3
+    actingRoleRef: role.tele-sales
+    issueInstanceRef: instance.customer-contact-phone-1
+    availableInstanceRefs:
+      - instance.sales-performance-agreement
+      - instance.monthly-customer-contact-request
+  - sequence: 4
+    actingRoleRef: role.tele-sales
+    issueInstanceRef: instance.customer-contact-email-1
+    availableInstanceRefs:
+      - instance.sales-performance-agreement
+      - instance.monthly-customer-contact-request
+      - instance.customer-contact-phone-1
+  - sequence: 5
+    actingRoleRef: role.tele-sales
+    issueInstanceRef: instance.customer-contact-phone-2
+    availableInstanceRefs:
+      - instance.sales-performance-agreement
+      - instance.monthly-customer-contact-request
+      - instance.customer-contact-phone-1
+      - instance.customer-contact-email-1
+evaluations:
+  - ruleRef: rule.monthly-customer-contact-completed
+    bindings:
+      agreement:
+        instanceRef: instance.sales-performance-agreement
+      request:
+        instanceRef: instance.monthly-customer-contact-request
+      records:
+        instanceRefs:
+          - instance.customer-contact-phone-1
+          - instance.customer-contact-email-1
+          - instance.customer-contact-phone-2
+    expectedResult: true
+expectations:
+  fulfillmentStatuses:
+    - fulfillmentRef: fulfillment.monthly-customer-contact
+      requestInstanceRef: instance.monthly-customer-contact-request
+      status: completed
+notes: >-
+  合成验证数据；目标数用于覆盖文章明确的总数、电话数和邮件数三项判断，不代表真实企业指标。

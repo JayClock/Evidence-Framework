@@ -1,4 +1,4 @@
-# 专栏订阅 FM
+# 专栏订阅与 CRM 电话销售 FM
 
 ## 结构
 
@@ -21,32 +21,42 @@ fm/
 │   │       └── restore/
 │   ├── mobile/fulfillments/mobile/
 │   ├── prepaid/fulfillments/prepaid/
-│   └── content/things/
+│   ├── content/things/
+│   ├── sales-performance/
+│   │   ├── contract.yaml
+│   │   ├── roles/
+│   │   └── fulfillments/monthly-customer-contact/
+│   └── customer-information/things/
 ├── relationships/
 ├── validation/
 └── generated/
 ```
 
-- [订阅合同](contexts/subscription/contract.yaml)、[移动支付协议](contexts/mobile/contract.yaml)、[预付费账户协议](contexts/prepaid/contract.yaml)及[内容领域](contexts/content/context.yaml)分别保留业务边界。
-- `contexts/` 与 `participants/` 共含 41 个业务对象；两处“专栏平台”角色仍使用各自 ID 和合同归属。
+- [订阅合同](contexts/subscription/contract.yaml)、[移动支付协议](contexts/mobile/contract.yaml)、[预付费账户协议](contexts/prepaid/contract.yaml)及[内容领域](contexts/content/context.yaml)分别保留原有业务边界。
+- [电话销售绩效协议](contexts/sales-performance/contract.yaml)与[客户信息领域](contexts/customer-information/context.yaml)是新增且相互分离的边界：前者表达内部绩效履约，后者只提供客户档案标的物。
+- `contexts/` 与 `participants/` 共含 50 个业务对象；两处“专栏平台”角色仍使用各自 ID 和合同归属。
 - 各履约目录以 `context.yaml` 表达责任边界，`request.yaml`、实际存在的 `confirmation.yaml`、`evidence/`、`roles/` 和 `rules/` 表达该履约的凭证与规则。订阅付款通过证明角色判断结果，不补造本地确认类型。
-- 共 41 条关系：24 条放在两端最近的共同上下文的 `relationships/`，17 条跨独立上下文或主体扮演关系放在根 `relationships/`，不复制定义。免费恢复按两层基数表达：一份原订阅可对应多次恢复请求，但同一次重新上架活动至多对应一份有效恢复请求。
-- 共 25 条 CEL 规则，就近放在所属履约的 `rules/` 中，包含关键值计算、访问资格、履约完成和违约判断。
-- `validation/instances/`：27 份回放单据。
-- `validation/scenarios/`：18 个正常、边界和异常场景。
-- `generated/`：编译模型、属性追溯、模拟结果和业务时间线。
+- 共 46 条关系；CRM 中的客户联系记录通过跨上下文 `references` 关系指向客户档案，`party.user` 分别扮演绩效管理者和电话销售角色。
+- 共 26 条 CEL 规则；新增规则分别核对月度联系总数、电话数和邮件数。
+- `validation/instances/`：32 份回放单据。
+- `validation/scenarios/`：20 个正常、边界和异常场景，其中 2 个覆盖 CRM 月度目标完成与不足。
+- `generated/`：当前保留上次重建结果，本批次未请求刷新；消费前应从当前源 YAML 和 validation 重建。
 
-模型概览见 [00-overview.md](00-overview.md)，术语见 [01-glossary.md](01-glossary.md)，完整条款见 [业务规则](../discovery.md)。
+模型概览见 [00-overview.md](00-overview.md)，术语见 [01-glossary.md](01-glossary.md)，CRM 本批次来源、纳入判断与缺口见 [crm-assessment.md](crm-assessment.md)，原订阅业务条款见 [业务规则](../discovery.md)。
 
-本次目录重构按用户指定直接替换原扁平组织，迁移 107 份源 YAML（41 对象、41 关系、25 规则），原文件内容及稳定 ID 不变；不保留旧目录副本、软链接或路径映射。加载器按 YAML 的 `type` 递归识别源对象，目录不决定业务归属。测试实例、场景和本次迁移前已有的生成文件不改写。
+原目录重构保留原有订阅模型稳定 ID；本批次新增 CRM 上下文时同样按 YAML 的 `type` 递归识别源对象，目录不决定业务归属。CRM 不与专栏订阅建立业务关系，只作为同一模型中的独立入口。
 
 ## 主体与角色
 
-用户（`party.user`）是跨合同保持身份的主体，分别在订阅、移动支付和预付费账户上下文中扮演读者（`role.reader`）、支付用户（`role.mobile-user`）和账户使用方（`role.account-user`）。凭证中的 `reader_id` 表示对应读者的主体编号，角色扮演不自动扩大办理权限。
+用户（`party.user`）是跨合同保持身份的主体，分别在订阅、移动支付、预付费账户和电话销售绩效上下文中扮演读者（`role.reader`）、支付用户（`role.mobile-user`）、账户使用方（`role.account-user`）、绩效管理者（`role.performance-manager`）或电话销售（`role.tele-sales`）。同一 Participant 类型连接绩效协议双方，表示用户主体可承担任一角色，不证明同一协议实例由同一自然人同时承担双方。角色扮演不自动扩大办理权限。
 
-按本次用户决定，不展开专栏运营企业和移动支付机构的 Party 节点：删除 `party.publisher`、`party.mobile-provider` 及其三条 `plays_role` 关系，保留 `role.publisher`、`role.account-provider`、`role.mobile-provider` 及原有合同权责。省略扮演者不表示现实中没有责任主体。方法依据为《使用履约建模法实施面向业务设计（中篇直播版）》第 55 页：在不影响分析和理解的前提下，可以选择性标注扮演者。
+按已有业务决定，不展开专栏运营企业和移动支付机构的 Party 节点：保留 `role.publisher`、`role.account-provider`、`role.mobile-provider` 及原有合同权责，但不建立对应 Party 与 `plays_role` 关系。省略扮演者不表示现实中没有责任主体。
 
-`generated/` 是从当前源 YAML 和 validation 重建的派生产物；后续消费仍应重新校验当前源文件。
+## CRM 范围
+
+绩效管理者（`role.performance-manager`）和电话销售（`role.tele-sales`）通过绩效协议形成内部权责边界。管理者提出带周期和三项目标数的月度联系请求；电话销售每次联系客户后形成一份记录，记录必须指向客户档案并注明电话或邮件渠道。完成规则只在总数、电话数和邮件数均达到本次约定值时成立。
+
+周度检查记录的责任方、目标设定方式和未达标后果缺少来源，当前不编成 Confirmation、breach 或补偿履约。具体判断见 [CRM 建模评估](crm-assessment.md)。
 
 ## 校验
 
@@ -60,4 +70,4 @@ Python 环境需满足 `evidence-fm/requirements.txt`。命令只读取当前输
 
 ## 验证边界
 
-场景执行固定时刻下的凭证追加、可见性、属性计算、资格及责任状态判断，不执行真实支付、内容服务、数据库事务或认证流程。关系基数被静态校验；运行时唯一退款、幂等扣减和主体隔离应由实现测试验证。
+场景执行固定时刻下的凭证追加、可见性、属性计算、资格及责任状态判断，不执行真实支付、内容服务、客户档案实例、数据库事务或认证流程。关系基数被静态校验；运行时唯一退款、幂等扣减、主体隔离和客户档案实例引用应由实现测试验证。

@@ -1,11 +1,13 @@
 type: fm_model
 schemaVersion: '3.0'
 id: column-subscription
-name: 专栏订阅业务
-version: 1.0.0
+name: 专栏订阅与 CRM 业务示例
+version: 1.2.0
 ruleLanguage: CEL
 entryContextRefs:
   - context.subscription
   - context.mobile
   - context.prepaid
   - context.content
+  - context.sales-performance
+  - context.customer-information

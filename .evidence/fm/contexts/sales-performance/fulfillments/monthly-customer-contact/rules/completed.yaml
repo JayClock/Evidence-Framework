@@ -1,0 +1,39 @@
+type: rule
+id: rule.monthly-customer-contact-completed
+kind: completion
+label: 月度客户联系目标已完成
+description: >-
+  月度客户联系目标请求（request.monthly-customer-contact）与电话销售绩效协议
+  （contract.sales-performance）匹配，并且目标周期内匹配的客户联系记录
+  （confirmation.customer-contact-record）总数、电话数和邮件数分别达到本次约定目标时，
+  判定月度客户联系目标履约（fulfillment.monthly-customer-contact）完成。
+contextRef: fulfillment.monthly-customer-contact
+bindings:
+  agreement:
+    ref: contract.sales-performance
+  request:
+    ref: request.monthly-customer-contact
+  records:
+    ref: confirmation.customer-contact-record
+    cardinality: many
+expression: |-
+  request.agreement_id == agreement.agreement_id &&
+  request.target_contact_count >= 0 && request.target_phone_count >= 0 &&
+  request.target_email_count >= 0 &&
+  records.filter(r, r.request_id == request.request_id &&
+  r.agreement_id == request.agreement_id && r.period_id == request.period_id &&
+  r.confirmed_at >= request.started_at &&
+  r.confirmed_at <= request.expired_at &&
+  (r.channel == "phone" || r.channel == "email")).size() >=
+  request.target_contact_count &&
+  records.filter(r, r.request_id == request.request_id &&
+  r.agreement_id == request.agreement_id && r.period_id == request.period_id &&
+  r.confirmed_at >= request.started_at &&
+  r.confirmed_at <= request.expired_at &&
+  r.channel == "phone").size() >= request.target_phone_count &&
+  records.filter(r, r.request_id == request.request_id &&
+  r.agreement_id == request.agreement_id && r.period_id == request.period_id &&
+  r.confirmed_at >= request.started_at &&
+  r.confirmed_at <= request.expired_at &&
+  r.channel == "email").size() >= request.target_email_count
+resultType: bool

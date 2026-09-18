@@ -1,0 +1,14 @@
+type: evidence_instance
+id: instance.monthly-customer-contact-request
+entityRef: request.monthly-customer-contact
+values:
+  request_id: CONTACT-2026-10
+  agreement_id: PERF-2026-Q4-001
+  period_id: '2026-10'
+  started_at: '2026-10-01T00:00:00Z'
+  expired_at: '2026-10-31T23:59:59Z'
+  target_contact_count: 3
+  target_phone_count: 2
+  target_email_count: 1
+basedOn:
+  - instance.sales-performance-agreement

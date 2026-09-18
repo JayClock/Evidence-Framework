@@ -1,0 +1,13 @@
+type: evidence_instance
+id: instance.customer-contact-phone-1
+entityRef: confirmation.customer-contact-record
+values:
+  record_id: CONTACT-REC-001
+  request_id: CONTACT-2026-10
+  agreement_id: PERF-2026-Q4-001
+  period_id: '2026-10'
+  customer_profile_id: CUSTOMER-001
+  channel: phone
+  confirmed_at: '2026-10-03T02:00:00Z'
+basedOn:
+  - instance.monthly-customer-contact-request
