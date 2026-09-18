@@ -5,6 +5,210 @@
   "schemaVersion": "1.0",
   "vectors": [
     {
+      "actorRoleRef": "role.tele-sales",
+      "id": "vector.http-journey.register-sales-performance-agreement",
+      "journeyRef": "http-journey.register-sales-performance-agreement",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001"
+            },
+            "representationRef": "representation.sales-performance-agreement",
+            "status": 201
+          },
+          "id": "http.register-sales-performance-agreement",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Idempotency-Key": "e2e-http-journey.register-sales-performance-agreement-1"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "uriTemplate": "/sales-performance-agreements"
+          }
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.performance-manager",
+      "id": "vector.http-journey.register-monthly-customer-contact-target",
+      "journeyRef": "http-journey.register-monthly-customer-contact-target",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+            },
+            "representationRef": "representation.monthly-customer-contact-target",
+            "status": 201
+          },
+          "id": "http.register-monthly-customer-contact-target",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "evidenceRefs": [
+                "instance.sales-performance-agreement"
+              ],
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Idempotency-Key": "e2e-http-journey.register-monthly-customer-contact-target-1"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001"
+            },
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets"
+          }
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "vector.http-journey.register-customer-contact-record",
+      "journeyRef": "http-journey.register-customer-contact-record",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          "id": "http.register-customer-contact-record",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "e2e-http-journey.register-customer-contact-record-1"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          }
+        }
+      ]
+    },
+    {
       "actorRoleRef": "role.reader",
       "id": "vector.http-journey.register-subscription-reader",
       "journeyRef": "http-journey.register-subscription-reader",

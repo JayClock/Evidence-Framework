@@ -1,6 +1,45 @@
 {
   "journeys": [
     {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.register-sales-performance-agreement",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "expectStatus": 201,
+          "id": "http.register-sales-performance-agreement",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.performance-manager",
+      "id": "http-journey.register-monthly-customer-contact-target",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "expectStatus": 201,
+          "id": "http.register-monthly-customer-contact-target",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.register-customer-contact-record",
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "expectStatus": 201,
+          "id": "http.register-customer-contact-record",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
       "actorRoleRef": "role.reader",
       "id": "http-journey.register-subscription-reader",
       "status": "mapped",

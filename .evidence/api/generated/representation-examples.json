@@ -1,4 +1,18 @@
 {
+  "representation.customer-contact-record": {
+    "_links": {
+      "self": {
+        "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+      }
+    },
+    "agreement_id": "PERF-2026-Q4-001",
+    "channel": "phone",
+    "confirmed_at": "2026-10-03T02:00:00Z",
+    "customer_profile_id": "CUSTOMER-001",
+    "period_id": "2026-10",
+    "record_id": "CONTACT-REC-001",
+    "request_id": "CONTACT-2026-10"
+  },
   "representation.list-accounts-account-user": {
     "_embedded": {
       "items": [
@@ -82,6 +96,21 @@
     "restore_seconds": 86400,
     "signed_at": "2026-10-01T09:00:00Z",
     "subscription_id": "SUB-20261001-001"
+  },
+  "representation.monthly-customer-contact-target": {
+    "_links": {
+      "self": {
+        "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+      }
+    },
+    "agreement_id": "PERF-2026-Q4-001",
+    "expired_at": "2026-10-31T23:59:59Z",
+    "period_id": "2026-10",
+    "request_id": "CONTACT-2026-10",
+    "started_at": "2026-10-01T00:00:00Z",
+    "target_contact_count": 3,
+    "target_email_count": 1,
+    "target_phone_count": 2
   },
   "representation.read-access-reader": {
     "_links": {
@@ -488,5 +517,14 @@
     "restore_seconds": 86400,
     "signed_at": "2026-10-01T09:00:00Z",
     "subscription_id": "SUB-20261001-001"
+  },
+  "representation.sales-performance-agreement": {
+    "_links": {
+      "self": {
+        "href": "/sales-performance-agreements/PERF-2026-Q4-001"
+      }
+    },
+    "agreement_id": "PERF-2026-Q4-001",
+    "signed_at": "2026-09-25T09:00:00Z"
   }
 }

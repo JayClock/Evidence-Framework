@@ -631,6 +631,38 @@
       "view": "collection"
     },
     {
+      "actorRoleRef": "role.tele-sales",
+      "basis": {
+        "fmRefs": [
+          "request.monthly-customer-contact",
+          "confirmation.customer-contact-record",
+          "thing.customer-profile",
+          "relation.monthly-contact-to-record",
+          "relation.customer-contact-references-profile"
+        ],
+        "reasoning": "追加一次实际客户联系记录，核验其目标、协议、周期和客户档案引用；是否完成月度目标由完成规则另行判断。"
+      },
+      "bindingRefs": [
+        "binding.parent-customer-contact-record",
+        "binding.caller-customer-contact-record-tele-sales"
+      ],
+      "businessCapability": "登记客户联系记录",
+      "effect": {
+        "kind": "append_evidence",
+        "targetRef": "confirmation.customer-contact-record"
+      },
+      "id": "capability.register-customer-contact-record-tele-sales",
+      "method": "POST",
+      "resourceRef": "resource.customer-contact-record",
+      "roleLabel": "电话销售",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records",
+      "view": "collection"
+    },
+    {
       "actorRoleRef": "role.account-user",
       "basis": {
         "fmRefs": [
@@ -657,6 +689,37 @@
         "scenario.api-insufficient-balance"
       ],
       "uri": "/prepaid-accounts/{accountId}/debits",
+      "view": "collection"
+    },
+    {
+      "actorRoleRef": "role.performance-manager",
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "request.monthly-customer-contact",
+          "role.performance-manager",
+          "relation.sales-performance-to-monthly-contact"
+        ],
+        "reasoning": "在既有绩效协议下追加本业务周期的目标请求，并核验协议实例、周期和目标值关联。"
+      },
+      "bindingRefs": [
+        "binding.parent-monthly-customer-contact-target",
+        "binding.caller-monthly-customer-contact-target-manager"
+      ],
+      "businessCapability": "提出月度客户联系目标",
+      "effect": {
+        "kind": "append_evidence",
+        "targetRef": "request.monthly-customer-contact"
+      },
+      "id": "capability.register-monthly-customer-contact-target-manager",
+      "method": "POST",
+      "resourceRef": "resource.monthly-customer-contact-target",
+      "roleLabel": "绩效管理者",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets",
       "view": "collection"
     },
     {
@@ -738,6 +801,34 @@
       "view": "singleton"
     },
     {
+      "actorRoleRef": "role.tele-sales",
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "role.tele-sales"
+        ],
+        "reasoning": "登记双方已经达成的绩效协议，保留协议业务编号与达成时刻；接口调用不替代协议达成事实。"
+      },
+      "bindingRefs": [
+        "binding.caller-sales-performance-agreement-tele-sales"
+      ],
+      "businessCapability": "登记电话销售绩效协议",
+      "effect": {
+        "kind": "append_evidence",
+        "targetRef": "contract.sales-performance"
+      },
+      "id": "capability.register-sales-performance-agreement-tele-sales",
+      "method": "POST",
+      "resourceRef": "resource.sales-performance-agreement",
+      "roleLabel": "电话销售",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "uri": "/sales-performance-agreements",
+      "view": "collection"
+    },
+    {
       "actorRoleRef": "role.reader",
       "basis": {
         "fmRefs": [
@@ -784,11 +875,14 @@
   ],
   "contextRefs": [
     "context.content",
+    "context.customer-information",
     "context.mobile",
     "context.prepaid",
+    "context.sales-performance",
     "context.subscription",
     "fulfillment.access",
     "fulfillment.mobile",
+    "fulfillment.monthly-customer-contact",
     "fulfillment.payment",
     "fulfillment.prepaid",
     "fulfillment.refund",
@@ -1057,6 +1151,85 @@
       ]
     },
     {
+      "journeyId": "journey.monthly-customer-contact-completed",
+      "scenarioRef": "scenario.api-monthly-customer-contact-completed",
+      "sourceScenarioRef": "scenario.monthly-customer-contact-completed",
+      "status": "mapped",
+      "steps": [
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "mapping": "capability",
+          "sequence": 1,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.performance-manager",
+          "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "mapping": "capability",
+          "sequence": 2,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "mapping": "capability",
+          "sequence": 3,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "mapping": "capability",
+          "sequence": 4,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "mapping": "capability",
+          "sequence": 5,
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "journeyId": "journey.monthly-customer-contact-insufficient",
+      "scenarioRef": "scenario.api-monthly-customer-contact-insufficient",
+      "sourceScenarioRef": "scenario.monthly-customer-contact-insufficient",
+      "status": "mapped",
+      "steps": [
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "mapping": "capability",
+          "sequence": 1,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.performance-manager",
+          "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "mapping": "capability",
+          "sequence": 2,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "mapping": "capability",
+          "sequence": 3,
+          "status": "mapped"
+        },
+        {
+          "actingRoleRef": "role.tele-sales",
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "mapping": "capability",
+          "sequence": 4,
+          "status": "mapped"
+        }
+      ]
+    },
+    {
       "journeyId": "journey.payment-expired",
       "scenarioRef": "scenario.api-payment-expired",
       "sourceScenarioRef": "scenario.payment-expired",
@@ -1307,18 +1480,18 @@
   "diagnostics": [],
   "fmCheckSummary": {
     "errors": [],
-    "executedScenarioCount": 18,
+    "executedScenarioCount": 20,
     "inputChanged": false,
-    "modelDigest": "sha256:24079c92c110931256457de2ade0c569c5e013c7f4a4a7a786091a304894f968",
+    "modelDigest": "sha256:763a98e4ba620aac94a6ddeadacbd4e419a5306fbac08e7bb975218f5ccf19b6",
     "modelValidated": true,
-    "scenarioCount": 18,
+    "scenarioCount": 20,
     "simulationPassed": true,
     "timelineSummary": {
-      "evidenceTypeCount": 16,
-      "instanceCount": 27,
-      "laneCount": 9,
-      "precedesCount": 13,
-      "sha256": "sha256:6806536403d7f1956c1284d484ab605190e8139fee97a358c1b6c2106154f7ee",
+      "evidenceTypeCount": 19,
+      "instanceCount": 32,
+      "laneCount": 11,
+      "precedesCount": 15,
+      "sha256": "sha256:32e539cda42a77ecd87be5e4e139d8842ba9ecd6ee28ef39aad4b568cac94e2d",
       "unresolvedOrderCount": 3
     },
     "valid": true
@@ -1327,6 +1500,45 @@
     "complete": true,
     "diagnostics": [],
     "journeys": [
+      {
+        "actorRoleRef": "role.tele-sales",
+        "id": "http-journey.register-sales-performance-agreement",
+        "status": "mapped",
+        "steps": [
+          {
+            "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+            "expectStatus": 201,
+            "id": "http.register-sales-performance-agreement",
+            "status": "mapped"
+          }
+        ]
+      },
+      {
+        "actorRoleRef": "role.performance-manager",
+        "id": "http-journey.register-monthly-customer-contact-target",
+        "status": "mapped",
+        "steps": [
+          {
+            "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+            "expectStatus": 201,
+            "id": "http.register-monthly-customer-contact-target",
+            "status": "mapped"
+          }
+        ]
+      },
+      {
+        "actorRoleRef": "role.tele-sales",
+        "id": "http-journey.register-customer-contact-record",
+        "status": "mapped",
+        "steps": [
+          {
+            "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+            "expectStatus": 201,
+            "id": "http.register-customer-contact-record",
+            "status": "mapped"
+          }
+        ]
+      },
       {
         "actorRoleRef": "role.reader",
         "id": "http-journey.register-subscription-reader",
@@ -2661,6 +2873,152 @@
         "uri": "/prepaid-accounts"
       },
       {
+        "actorRoleRef": "role.tele-sales",
+        "bindingRefs": [
+          "binding.parent-customer-contact-record",
+          "binding.caller-customer-contact-record-tele-sales"
+        ],
+        "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+        "concurrency": {
+          "mode": "none",
+          "reason": "联系记录凭证只追加不覆盖；重复记录编号由服务端原子约束。"
+        },
+        "idempotency": {
+          "differentPayload": "reject",
+          "header": "Idempotency-Key",
+          "mode": "key",
+          "reason": "同一次联系记录登记重试沿用幂等键，避免重复计入目标。",
+          "samePayload": "replay"
+        },
+        "method": "POST",
+        "request": {
+          "example": {
+            "agreement_id": "PERF-2026-Q4-001",
+            "channel": "phone",
+            "confirmed_at": "2026-10-03T02:00:00Z",
+            "customer_profile_id": "CUSTOMER-001",
+            "evidenceRefs": [
+              "instance.monthly-customer-contact-request"
+            ],
+            "period_id": "2026-10",
+            "record_id": "CONTACT-REC-001",
+            "request_id": "CONTACT-2026-10"
+          },
+          "fields": [
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#record_id",
+              "name": "record_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#request_id",
+              "name": "request_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#agreement_id",
+              "name": "agreement_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#period_id",
+              "name": "period_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#customer_profile_id",
+              "name": "customer_profile_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#channel",
+              "name": "channel",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "enum": [
+                  "phone",
+                  "email"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "confirmation.customer-contact-record#confirmed_at",
+              "name": "confirmed_at",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            {
+              "decision": "既有月度目标请求凭证引用；服务端核验协议、周期和目标实例。",
+              "name": "evidenceRefs",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            }
+          ],
+          "mediaType": "application/json"
+        },
+        "responses": [
+          {
+            "description": "客户联系记录已形成；月度目标是否完成由全部匹配记录汇总判断。",
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          {
+            "description": "调用者不是本协议实例的电话销售参与方或无代表资格。",
+            "headers": {},
+            "status": 403
+          },
+          {
+            "description": "同一幂等键对应不同输入，或相同联系记录已经存在。",
+            "headers": {},
+            "status": 409
+          },
+          {
+            "description": "目标、周期、渠道、客户档案引用或实例归属无效。",
+            "headers": {},
+            "status": 422
+          }
+        ],
+        "ruleBindings": [],
+        "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+      },
+      {
         "actorRoleRef": "role.account-user",
         "bindingRefs": [
           "binding.caller-debit-account-user",
@@ -2833,6 +3191,162 @@
         ],
         "ruleBindings": [],
         "uri": "/prepaid-accounts/{accountId}/debits"
+      },
+      {
+        "actorRoleRef": "role.performance-manager",
+        "bindingRefs": [
+          "binding.parent-monthly-customer-contact-target",
+          "binding.caller-monthly-customer-contact-target-manager"
+        ],
+        "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+        "concurrency": {
+          "mode": "none",
+          "reason": "目标请求凭证只追加不覆盖；重复请求编号由服务端原子约束。"
+        },
+        "idempotency": {
+          "differentPayload": "reject",
+          "header": "Idempotency-Key",
+          "mode": "key",
+          "reason": "同一次目标提出重试沿用幂等键，避免重复形成请求凭证。",
+          "samePayload": "replay"
+        },
+        "method": "POST",
+        "request": {
+          "example": {
+            "agreement_id": "PERF-2026-Q4-001",
+            "evidenceRefs": [
+              "instance.sales-performance-agreement"
+            ],
+            "expired_at": "2026-10-31T23:59:59Z",
+            "period_id": "2026-10",
+            "request_id": "CONTACT-2026-10",
+            "started_at": "2026-10-01T00:00:00Z",
+            "target_contact_count": 3,
+            "target_email_count": 1,
+            "target_phone_count": 2
+          },
+          "fields": [
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#request_id",
+              "name": "request_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#agreement_id",
+              "name": "agreement_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#period_id",
+              "name": "period_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#started_at",
+              "name": "started_at",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#expired_at",
+              "name": "expired_at",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#target_contact_count",
+              "name": "target_contact_count",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#target_phone_count",
+              "name": "target_phone_count",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            {
+              "fmAttributeRef": "request.monthly-customer-contact#target_email_count",
+              "name": "target_email_count",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            {
+              "decision": "既有绩效协议凭证引用；服务端核验协议实例、参与方和可见性。",
+              "name": "evidenceRefs",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            }
+          ],
+          "mediaType": "application/json"
+        },
+        "responses": [
+          {
+            "description": "月度客户联系目标请求已形成；完成状态由联系记录和规则判断。",
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+            },
+            "representationRef": "representation.monthly-customer-contact-target",
+            "status": 201
+          },
+          {
+            "description": "调用者不是本协议实例的绩效管理者或无代表资格。",
+            "headers": {},
+            "status": 403
+          },
+          {
+            "description": "同一幂等键对应不同输入，或相同目标请求已经存在。",
+            "headers": {},
+            "status": 409
+          },
+          {
+            "description": "协议引用、周期区间、目标值或实例归属不满足业务约束。",
+            "headers": {},
+            "status": 422
+          }
+        ],
+        "ruleBindings": [],
+        "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets"
       },
       {
         "actorRoleRef": "role.reader",
@@ -3113,6 +3627,81 @@
         "uri": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
       },
       {
+        "actorRoleRef": "role.tele-sales",
+        "bindingRefs": [
+          "binding.caller-sales-performance-agreement-tele-sales"
+        ],
+        "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+        "concurrency": {
+          "mode": "none",
+          "reason": "协议凭证只追加不覆盖；重复业务编号由服务端原子约束。"
+        },
+        "idempotency": {
+          "differentPayload": "reject",
+          "header": "Idempotency-Key",
+          "mode": "key",
+          "reason": "同一次协议登记重试沿用幂等键，避免重复形成协议凭证。",
+          "samePayload": "replay"
+        },
+        "method": "POST",
+        "request": {
+          "example": {
+            "agreement_id": "PERF-2026-Q4-001",
+            "signed_at": "2026-09-25T09:00:00Z"
+          },
+          "fields": [
+            {
+              "fmAttributeRef": "contract.sales-performance#agreement_id",
+              "name": "agreement_id",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "fmAttributeRef": "contract.sales-performance#signed_at",
+              "name": "signed_at",
+              "origin": "reference",
+              "required": true,
+              "schema": {
+                "format": "date-time",
+                "type": "string"
+              }
+            }
+          ],
+          "mediaType": "application/json"
+        },
+        "responses": [
+          {
+            "description": "记录已达成的电话销售绩效协议；登记动作不替代双方协议事实。",
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001"
+            },
+            "representationRef": "representation.sales-performance-agreement",
+            "status": 201
+          },
+          {
+            "description": "调用者不是本协议实例的电话销售参与方或无代表资格。",
+            "headers": {},
+            "status": 403
+          },
+          {
+            "description": "同一幂等键对应不同输入，或该协议凭证已经存在。",
+            "headers": {},
+            "status": 409
+          },
+          {
+            "description": "协议编号、业务达成时刻或参与方实例关联无效。",
+            "headers": {},
+            "status": 422
+          }
+        ],
+        "ruleBindings": [],
+        "uri": "/sales-performance-agreements"
+      },
+      {
         "actorRoleRef": "role.reader",
         "bindingRefs": [
           "binding.caller-subscription-reader"
@@ -3279,6 +3868,111 @@
       }
     ],
     "representations": [
+      {
+        "actorRoleRefs": [
+          "role.tele-sales"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "客户联系记录包含具体客户引用，按协议参与方隔离且不跨用户缓存。"
+        },
+        "example": {
+          "_links": {
+            "self": {
+              "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            }
+          },
+          "agreement_id": "PERF-2026-Q4-001",
+          "channel": "phone",
+          "confirmed_at": "2026-10-03T02:00:00Z",
+          "customer_profile_id": "CUSTOMER-001",
+          "period_id": "2026-10",
+          "record_id": "CONTACT-REC-001",
+          "request_id": "CONTACT-2026-10"
+        },
+        "exampleParameters": {
+          "agreementId": "PERF-2026-Q4-001",
+          "recordId": "CONTACT-REC-001",
+          "targetId": "CONTACT-2026-10"
+        },
+        "fields": [
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#record_id",
+            "name": "record_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#request_id",
+            "name": "request_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#agreement_id",
+            "name": "agreement_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#period_id",
+            "name": "period_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#customer_profile_id",
+            "name": "customer_profile_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#channel",
+            "name": "channel",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "enum": [
+                "phone",
+                "email"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "confirmation.customer-contact-record#confirmed_at",
+            "name": "confirmed_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "id": "representation.customer-contact-record",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "resourceRef": "resource.customer-contact-record",
+        "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records/{recordId}",
+        "view": "item"
+      },
       {
         "actorRoleRefs": [
           "role.account-user"
@@ -3601,6 +4295,120 @@
         "mediaType": "application/hal+json",
         "resourceRef": "resource.party-subscriptions",
         "uri": "/users/{userId}/subscriptions/{subscriptionId}",
+        "view": "item"
+      },
+      {
+        "actorRoleRefs": [
+          "role.performance-manager"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "月度绩效目标按具体协议和参与方隔离，不跨用户缓存。"
+        },
+        "example": {
+          "_links": {
+            "self": {
+              "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+            }
+          },
+          "agreement_id": "PERF-2026-Q4-001",
+          "expired_at": "2026-10-31T23:59:59Z",
+          "period_id": "2026-10",
+          "request_id": "CONTACT-2026-10",
+          "started_at": "2026-10-01T00:00:00Z",
+          "target_contact_count": 3,
+          "target_email_count": 1,
+          "target_phone_count": 2
+        },
+        "exampleParameters": {
+          "agreementId": "PERF-2026-Q4-001",
+          "targetId": "CONTACT-2026-10"
+        },
+        "fields": [
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#request_id",
+            "name": "request_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#agreement_id",
+            "name": "agreement_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#period_id",
+            "name": "period_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#started_at",
+            "name": "started_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#expired_at",
+            "name": "expired_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#target_contact_count",
+            "name": "target_contact_count",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#target_phone_count",
+            "name": "target_phone_count",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "fmAttributeRef": "request.monthly-customer-contact#target_email_count",
+            "name": "target_email_count",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "id": "representation.monthly-customer-contact-target",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "resourceRef": "resource.monthly-customer-contact-target",
+        "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}",
         "view": "item"
       },
       {
@@ -6427,19 +7235,70 @@
         "resourceRef": "resource.subscription",
         "uri": "/subscriptions/{subscriptionId}",
         "view": "item"
+      },
+      {
+        "actorRoleRefs": [
+          "role.tele-sales"
+        ],
+        "availability": "not_evaluated",
+        "cache": {
+          "mode": "no-store",
+          "reason": "绩效协议按具体参与方实例隔离，不跨用户缓存。"
+        },
+        "example": {
+          "_links": {
+            "self": {
+              "href": "/sales-performance-agreements/PERF-2026-Q4-001"
+            }
+          },
+          "agreement_id": "PERF-2026-Q4-001",
+          "signed_at": "2026-09-25T09:00:00Z"
+        },
+        "exampleParameters": {
+          "agreementId": "PERF-2026-Q4-001"
+        },
+        "fields": [
+          {
+            "fmAttributeRef": "contract.sales-performance#agreement_id",
+            "name": "agreement_id",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "fmAttributeRef": "contract.sales-performance#signed_at",
+            "name": "signed_at",
+            "origin": "reference",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "id": "representation.sales-performance-agreement",
+        "links": [],
+        "mediaType": "application/hal+json",
+        "resourceRef": "resource.sales-performance-agreement",
+        "uri": "/sales-performance-agreements/{agreementId}",
+        "view": "item"
       }
     ],
     "runtimeValidated": false
   },
   "inputDigests": {
-    "api": "d8869e69826123b195e70e48cac21e3d55b13a7177de05e55270e51d4b2eccd1",
+    "api": "6e153207908bff6688a59bbe010e301562152887f1d4d2c90341b5803e7c8686",
     "fm": {
-      "00-overview.md": "29b61abdfdaef735340ef236904e64fc2facfbd4afd6a87ed32eaaaa255f3fe6",
-      "01-glossary.md": "29f5fd0a454972dc2ba1d95e0a91c512ed192adfef5aa85cccd76b25753d852f",
-      "README.md": "03e9d0f0a208441c2cf907af3b5438eb923ad2a8082c322f12f29f19d16a8cd3",
+      "00-overview.md": "a022337efcf68fcc93514f659e587b97469ed304518d37b3038819ee5cbda51e",
+      "01-glossary.md": "3e098613a59c48586e0f755309a72136d8e4f9d2e7c9c4d2071d1aa4e1f4da40",
+      "README.md": "b8c9bf768b36287636b95e708bde6493f8717fc9c4487e9f0e4fcef8ef248dee",
       "contexts/content/context.yaml": "f7c3fb544e9fb97cac706db55783800d163d552f25173c5c3587ab30ebd35dc8",
       "contexts/content/things/chapter.yaml": "abced14265fdca6245d360d2e6910e9c1db7e5f1827ad64d474ba3a801cabd00",
       "contexts/content/things/column.yaml": "8f12a3719314793e1710d73fa85110a6a10e9f7857530913a5fbfed05072854e",
+      "contexts/customer-information/context.yaml": "040caea8e4dcaed26def339b0c1b83d215a99db2eec12e9780d91cf510e38368",
+      "contexts/customer-information/things/customer-profile.yaml": "ae56f8548bcf137876d71290c926f3cc4e22428a6b5a624e309fb7194c7e35e7",
       "contexts/mobile/context.yaml": "a46f15928116f6b83ebe0d69eb637b0ae50258c6af54524752f56064503b12fe",
       "contexts/mobile/contract.yaml": "d90ad9ec49384fcc7f3b488767d00d4378a4278e86a21e6169293c6c73b59af4",
       "contexts/mobile/fulfillments/mobile/confirmation.yaml": "b4b2de82d4b1a1d990892e8fc17f503514e4b8b0ad78dfbb0720ba51a6f70ac4",
@@ -6464,6 +7323,16 @@
       "contexts/prepaid/relationships/contract-prepaid.yaml": "4c5b74b3bbe0a76aef8fcb46ca5daf239ee89bae6548980861fe7f81650b749d",
       "contexts/prepaid/roles/account-provider.yaml": "a64f1e95566887490baf5fc02b4da4ae2bc8fca26d5f8a0146bae62b148746c3",
       "contexts/prepaid/roles/account-user.yaml": "fb0f2f7efe488176b9c6f3f0021470ac6947e73f1155fde02d365351f6e87939",
+      "contexts/sales-performance/context.yaml": "569335028f000e917548a381dc2f42e53a959178350a057cbdb53ea70e2077ea",
+      "contexts/sales-performance/contract.yaml": "7520b5edbb5c59cbc741f6faba438ad869881a8e528ebc0d638d650d01a7269a",
+      "contexts/sales-performance/fulfillments/monthly-customer-contact/confirmation.yaml": "71db7c5c7f8a3dbd0cc21b29a67450ad50a5fce681ec96a276c3591d81ee8341",
+      "contexts/sales-performance/fulfillments/monthly-customer-contact/context.yaml": "179ee5abd3823bb2a0469324405e23e62da89f07a9a15a4d15e552ec0e095f9b",
+      "contexts/sales-performance/fulfillments/monthly-customer-contact/relationships/request-contact-record.yaml": "45ee81872350caa7e08a2810cc2e274a929cdc4515049c56861e813c6ef8926d",
+      "contexts/sales-performance/fulfillments/monthly-customer-contact/request.yaml": "8b8a5f346ec950f685f51ad6f665a75e94e59a2b22e6edd3763432b1a819eca4",
+      "contexts/sales-performance/fulfillments/monthly-customer-contact/rules/completed.yaml": "4904b51bc880ee193a426e7b927854d03779d11e86606e72127445c80d3c414a",
+      "contexts/sales-performance/relationships/contract-monthly-customer-contact.yaml": "cbc9e0b6cda1b02cd2ace9b9afd6e93162d44866384134bbf654b1f489923648",
+      "contexts/sales-performance/roles/performance-manager.yaml": "9724ba39e3f303e5cac1acfe97a8711843fe525f83be60918f0c54ba80ec4828",
+      "contexts/sales-performance/roles/tele-sales.yaml": "584241bf7424ad9eee190fce6e316eb62d70254673b64e9f10f2c1e5b334d0fb",
       "contexts/subscription/context.yaml": "1a795d59e59b4f7e8a51a715571bc115bf6c63453ac290a37d7c307ee92f8c6b",
       "contexts/subscription/contract.yaml": "f0fab404ec6e97481afc0c5fac9ee4aeea130aee574abb7923374a512af46de0",
       "contexts/subscription/evidence/discontinuation.yaml": "caa29f40c7f2ecb5ec7fc34788bb73582c495d7f02e3714901f4a54b1ad07283",
@@ -6526,10 +7395,12 @@
       "contexts/subscription/relationships/restore-basis.yaml": "474b559f77829e530f7958cb3ae7bc877e02abc95569e57afa9d1c35fb6d9f2d",
       "contexts/subscription/roles/publisher.yaml": "bef6e3a2fa3f1f9252fa4816d66588819d842bc3aaee1ccd0f72393b638a909d",
       "contexts/subscription/roles/reader.yaml": "cb70f00f186be35c6e7031f069dce6be7c5aff7b7e917002eda2445f93975ffb",
-      "model.yaml": "73b1f02ac0c296da6713be085a79b156d8aa11047304199b2402267bad13da1a",
-      "participants/user.yaml": "c141bbf0952f460862719a185cf003eb783f4d0587be6f638a8d113cd66a3ecd",
+      "crm-assessment.md": "10a581c0f11673273827e9fbb0f8c7254f38bea85cef7e01d8ed6b1d7d439323",
+      "model.yaml": "6a3a69bf966dec6e8cb73c8bc9a6c25cbde60edfac8642a372898a6f5b2e7603",
+      "participants/user.yaml": "f059c6b8c883846d2bf4825ba1a51488b2c6d9a77955ff84e99072bb78ba2df9",
       "relationships/access-chapter.yaml": "7e753667254b3114895b23a962e86fa08b664600e3ade16e7cdb3b74aa3e6944",
       "relationships/access-column.yaml": "df7ca99227002c14d6809e242a57cd17ac91e2efb8d8460df17e6b89cc4f2ac6",
+      "relationships/customer-contact-profile.yaml": "b8bebcfc7bf90746aa4bf99441ee6a7ec64f876fffe9a8064074066bd6124f97",
       "relationships/mobile-as-access-payment.yaml": "f74baf63aac668d7fe8ab0b6743ec43568f6cf19975cbf858ec125856576398e",
       "relationships/mobile-as-payment-proof.yaml": "be9f3f395996d45441313b325f4a7977e243b094a28291d19f4f58ddf0fd2c23",
       "relationships/mobile-as-refund-payment.yaml": "4ed6377e03d2aed254198dea40eae4611d9463507c6a04794bae983451c38976",
@@ -6544,13 +7415,18 @@
       "relationships/subscription-column.yaml": "4017b4ff87fa49b5090470794292325c359348aa69fd23d133175bc583f30bd8",
       "relationships/user-as-account-user.yaml": "9b94f78b12272a635d942a2b1c575595e39443a7dcaccc671d318c27314e0c63",
       "relationships/user-as-mobile-user.yaml": "15620bddee4b79c6218a36e25d94905dfcf6b453ab8d1c6073a25ed414e4df91",
+      "relationships/user-as-performance-manager.yaml": "8ab368bb958e9c00a786b4e06487a88b3056409a715038bd2d674b0c2d77c9ac",
       "relationships/user-as-reader.yaml": "b1c5b7617c0fe1510572e462c60c1551fe2c1e8698f4b9e5cd3c5cf28277f940",
+      "relationships/user-as-tele-sales.yaml": "112d58e883d05cdec2a263cf1a8778a7ed436a99c7f3c3245d04e25cf62d3cd0",
       "validation/instances/instance--access-mobile.yaml": "e10c1921d2c194f4c70cdf2d98227557496ce3df7a622967b0ae1afadbcdcfd3",
       "validation/instances/instance--access-prepaid.yaml": "47fd8d8e476d13449d9a325ed20b93a7676a1b7836d177c3bcf9d8884ccdc1e2",
       "validation/instances/instance--access-restored.yaml": "4b3ae54267d76e36417819197b107fdf67482af59ebf01b090ac00559bba93e0",
       "validation/instances/instance--content-mobile.yaml": "86dbad9a9a4f7b994d43afdd0c60fb471465eae4f12c8c79408fd6d93cef1e50",
       "validation/instances/instance--content-prepaid.yaml": "e42cfa72d99f9d6d84ce03bdeea0f5c6cc2aa10524932170fe411fa0a8fc8bf3",
       "validation/instances/instance--content-restored.yaml": "c62c4b4723d56f2857f7b0b5d539d6c49b1ac77f4a4a7c4395d7057be095cb51",
+      "validation/instances/instance--customer-contact-email-1.yaml": "448c3e4ba53fb9b0e8ccecc0a65d2d9ae80613ff68048810ce2913b53336cdad",
+      "validation/instances/instance--customer-contact-phone-1.yaml": "f7803c9fe3e9533fbdee14f3dd7966ab1e802320df18dec442993aee5f733b68",
+      "validation/instances/instance--customer-contact-phone-2.yaml": "d0f348a3c1987e9b104861376d0ae30e0eb61359d8d31aa7b4c31a172c7436d3",
       "validation/instances/instance--discontinuation.yaml": "0af2e392477565a4921a2181c202712e568ea480fc2edb4180d139d08b52a077",
       "validation/instances/instance--mobile-agreement.yaml": "800e1dbc327a45505b528794a49a708910e959b01076973c121c4991bf1c06a3",
       "validation/instances/instance--mobile-cutoff.yaml": "bfe72ed38e62997b37fa796d4e73919700504b501f71f8b975c17a3c1aef7c82",
@@ -6559,6 +7435,7 @@
       "validation/instances/instance--mobile-result.yaml": "655a9e35671e5da537aa3706adad900390f2322ebbb5b704ec779b56d20f33f6",
       "validation/instances/instance--mobile-short.yaml": "2df3ead037b9015c6208d8735410c37f566f40da8554cc113b67945b8d0206a5",
       "validation/instances/instance--mobile-wrong-reader.yaml": "68548bd59e14d6b1aa88d2447db07b62084d7c75590636e5cb8b97efbc9ae559",
+      "validation/instances/instance--monthly-customer-contact-request.yaml": "cdb27adf031f6b98c5af0fa647319b11a20d862602e9106959a247ecfd9205f8",
       "validation/instances/instance--payment.yaml": "3d927ce994720c4cc49593ecd53628243b2f01af7ce9c2f40b522c70ac5416d7",
       "validation/instances/instance--prepaid-agreement.yaml": "f155197f44fc1d5faea7f7687260b08f0093fc51176e326bcfa8cc775d4107a8",
       "validation/instances/instance--prepaid-insufficient.yaml": "7a112b52c4d5278150f34328e2eec75ca111cb2a9d3d6cbe5e3bb4d495df3bc3",
@@ -6571,6 +7448,7 @@
       "validation/instances/instance--restore-charged.yaml": "e87670e8ec7def898bcefe8db0c9318ec02e2c8491d2eb35944dc9a53c670858",
       "validation/instances/instance--restore.yaml": "fceefa76d9f42debce0eaf62388a27df3f6dc908823537bfc9b290dcf31e261e",
       "validation/instances/instance--restored.yaml": "12f7cfce4ce6a3ce8b3a884b95a640efd63da49e82c6283bdf4681eb2ad8fb51",
+      "validation/instances/instance--sales-performance-agreement.yaml": "88740468c2cd5d19f747871ac7b5e8247e6bd022cbeb2bac3bd3c31d4139429d",
       "validation/instances/instance--subscription.yaml": "1f24ef73a77ef6246b055c97a85c1f2da2dfe4c767a87cc4c56164afb65074cb",
       "validation/scenarios/scenario--access-after-refund.yaml": "3183ec8cc8e94b030db6049ea78890c3fdfca32b2267e41dfb88708dffbcca63",
       "validation/scenarios/scenario--access-expired.yaml": "52bcf34b71ce63ab9f1d362f3e9ae7344875150828be8a7eb76d695da5425c6f",
@@ -6581,6 +7459,8 @@
       "validation/scenarios/scenario--insufficient-balance.yaml": "13081e46b3f3c5a6f8b5fb14de1facbb205add925cb4f129d22fc6ed33e688c1",
       "validation/scenarios/scenario--late-paid.yaml": "7c965bf1d5f2996848cbba98537800f3015db4d317891545f25aa8b573f4c540",
       "validation/scenarios/scenario--mobile-subscription.yaml": "2d0780aea37c1fbdb9286c8b0030d7ebeb682315f4af87673e6c5ba1235dd33e",
+      "validation/scenarios/scenario--monthly-customer-contact-completed.yaml": "af1eec47d939751db7fea7a51cd909e874dcd5b5db72d6d2906756deb60232d3",
+      "validation/scenarios/scenario--monthly-customer-contact-insufficient.yaml": "38b457d815d2538fd992a2b47c02eebbc7b563f16900f50c788369eac24bd7e4",
       "validation/scenarios/scenario--payment-expired.yaml": "dbcec77fc0bd722ed9ce08e94c205b93fc460bf7d48465a4c62ddeca9b5ec5a1",
       "validation/scenarios/scenario--payment-pending.yaml": "840e5a54931e0b1675c4adbc209f8d6122a562a1f7bdd5d22105ad70c9faaf74",
       "validation/scenarios/scenario--prepaid-subscription.yaml": "6652a6e3a0f553849b1ecd37e842f64ae706766ad2017382f98c5ba237fa98f5",
@@ -6609,6 +7489,15 @@
       ],
       "contextRef": "fulfillment.access",
       "entityRef": "confirmation.access",
+      "handling": "api"
+    },
+    {
+      "basis": null,
+      "capabilityRefs": [
+        "capability.register-customer-contact-record-tele-sales"
+      ],
+      "contextRef": "fulfillment.monthly-customer-contact",
+      "entityRef": "confirmation.customer-contact-record",
       "handling": "api"
     },
     {
@@ -6694,6 +7583,15 @@
     {
       "basis": null,
       "capabilityRefs": [
+        "capability.register-sales-performance-agreement-tele-sales"
+      ],
+      "contextRef": "context.sales-performance",
+      "entityRef": "contract.sales-performance",
+      "handling": "api"
+    },
+    {
+      "basis": null,
+      "capabilityRefs": [
         "capability.list-subscriptions-reader",
         "capability.read-subscription-reader",
         "capability.register-subscription-reader"
@@ -6767,6 +7665,15 @@
       "handling": "external"
     },
     {
+      "basis": null,
+      "capabilityRefs": [
+        "capability.register-monthly-customer-contact-target-manager"
+      ],
+      "contextRef": "fulfillment.monthly-customer-contact",
+      "entityRef": "request.monthly-customer-contact",
+      "handling": "api"
+    },
+    {
       "basis": {
         "fmRefs": [
           "request.payment",
@@ -6828,6 +7735,19 @@
       "contextRef": "context.content",
       "entityRef": "thing.column",
       "handling": "api"
+    },
+    {
+      "basis": {
+        "fmRefs": [
+          "thing.customer-profile",
+          "relation.customer-contact-references-profile"
+        ],
+        "reasoning": "客户档案作为客户联系记录引用的既有业务标的；当前 FM 未定义档案读取或维护交互，不据此生成档案 CRUD。"
+      },
+      "capabilityRefs": [],
+      "contextRef": "context.customer-information",
+      "entityRef": "thing.customer-profile",
+      "handling": "internal"
     }
   ],
   "operations": [
@@ -6966,6 +7886,25 @@
     },
     {
       "actorRoleRefs": [
+        "role.tele-sales"
+      ],
+      "capabilityRefs": [
+        "capability.register-customer-contact-record-tele-sales"
+      ],
+      "effects": [
+        {
+          "kind": "append_evidence",
+          "targetRef": "confirmation.customer-contact-record"
+        }
+      ],
+      "id": "operation.customer-contact-record.collection.post",
+      "method": "POST",
+      "resourceRef": "resource.customer-contact-record",
+      "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records",
+      "view": "collection"
+    },
+    {
+      "actorRoleRefs": [
         "role.account-user"
       ],
       "capabilityRefs": [
@@ -7039,6 +7978,25 @@
       "resourceRef": "resource.discontinuation",
       "uri": "/discontinuations/{discontinuationId}",
       "view": "item"
+    },
+    {
+      "actorRoleRefs": [
+        "role.performance-manager"
+      ],
+      "capabilityRefs": [
+        "capability.register-monthly-customer-contact-target-manager"
+      ],
+      "effects": [
+        {
+          "kind": "append_evidence",
+          "targetRef": "request.monthly-customer-contact"
+        }
+      ],
+      "id": "operation.monthly-customer-contact-target.collection.post",
+      "method": "POST",
+      "resourceRef": "resource.monthly-customer-contact-target",
+      "uri": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets",
+      "view": "collection"
     },
     {
       "actorRoleRefs": [
@@ -7232,6 +8190,25 @@
     },
     {
       "actorRoleRefs": [
+        "role.tele-sales"
+      ],
+      "capabilityRefs": [
+        "capability.register-sales-performance-agreement-tele-sales"
+      ],
+      "effects": [
+        {
+          "kind": "append_evidence",
+          "targetRef": "contract.sales-performance"
+        }
+      ],
+      "id": "operation.sales-performance-agreement.collection.post",
+      "method": "POST",
+      "resourceRef": "resource.sales-performance-agreement",
+      "uri": "/sales-performance-agreements",
+      "view": "collection"
+    },
+    {
+      "actorRoleRefs": [
         "role.reader"
       ],
       "capabilityRefs": [
@@ -7410,6 +8387,41 @@
     {
       "basis": {
         "fmRefs": [
+          "request.monthly-customer-contact",
+          "confirmation.customer-contact-record",
+          "relation.monthly-contact-to-record",
+          "relation.customer-contact-references-profile"
+        ],
+        "reasoning": "每份月度目标可形成多份实际联系记录，记录以自身编号定位并引用既有客户档案。"
+      },
+      "businessName": "客户联系记录",
+      "cardinality": {
+        "relationshipRef": "relation.monthly-contact-to-record"
+      },
+      "entityRef": "confirmation.customer-contact-record",
+      "id": "resource.customer-contact-record",
+      "identity": {
+        "attributeRef": "confirmation.customer-contact-record#record_id",
+        "kind": "fm_attribute",
+        "parameter": "recordId"
+      },
+      "parameters": [
+        "agreementId",
+        "targetId",
+        "recordId"
+      ],
+      "parentBindingRef": "binding.parent-customer-contact-record",
+      "parentRef": "resource.monthly-customer-contact-target",
+      "segment": "contact-records",
+      "shape": "collection",
+      "uris": {
+        "collection": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records",
+        "item": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records/{recordId}"
+      }
+    },
+    {
+      "basis": {
+        "fmRefs": [
           "request.prepaid",
           "contract.prepaid"
         ],
@@ -7491,6 +8503,39 @@
       "uris": {
         "collection": "/discontinuations",
         "item": "/discontinuations/{discontinuationId}"
+      }
+    },
+    {
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "request.monthly-customer-contact",
+          "relation.sales-performance-to-monthly-contact"
+        ],
+        "reasoning": "同一绩效协议可在多个业务周期形成目标请求，每份请求以自身编号定位。"
+      },
+      "businessName": "月度客户联系目标请求",
+      "cardinality": {
+        "relationshipRef": "relation.sales-performance-to-monthly-contact"
+      },
+      "entityRef": "request.monthly-customer-contact",
+      "id": "resource.monthly-customer-contact-target",
+      "identity": {
+        "attributeRef": "request.monthly-customer-contact#request_id",
+        "kind": "fm_attribute",
+        "parameter": "targetId"
+      },
+      "parameters": [
+        "agreementId",
+        "targetId"
+      ],
+      "parentBindingRef": "binding.parent-monthly-customer-contact-target",
+      "parentRef": "resource.sales-performance-agreement",
+      "segment": "monthly-customer-contact-targets",
+      "shape": "collection",
+      "uris": {
+        "collection": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets",
+        "item": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}"
       }
     },
     {
@@ -7792,6 +8837,32 @@
       "shape": "singleton",
       "uris": {
         "singleton": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
+      }
+    },
+    {
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "role.tele-sales"
+        ],
+        "reasoning": "电话销售按场景登记双方已经达成的绩效协议；登记不替代双方达成协议的业务事实。"
+      },
+      "businessName": "电话销售绩效协议",
+      "entityRef": "contract.sales-performance",
+      "id": "resource.sales-performance-agreement",
+      "identity": {
+        "attributeRef": "contract.sales-performance#agreement_id",
+        "kind": "fm_attribute",
+        "parameter": "agreementId"
+      },
+      "parameters": [
+        "agreementId"
+      ],
+      "segment": "sales-performance-agreements",
+      "shape": "collection",
+      "uris": {
+        "collection": "/sales-performance-agreements",
+        "item": "/sales-performance-agreements/{agreementId}"
       }
     },
     {
