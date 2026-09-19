@@ -223,7 +223,7 @@ public MonthlyCustomerContactTargetsApi targets() {
 
 | 层       | 位置                                                                                                                                                                                                                                                                    | 这一层负责什么                                                                |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| 业务事实 | [contract.yaml](.evidence/fm/contexts/sales-performance/contract.yaml)                                                                                                                                                                                                  | 协议凭证的编号与达成时刻，以及“协议先于月度目标请求”的关系                    |
+| 业务事实 | [contract.json](.evidence/fm/contexts/sales-performance/contract.json)                                                                                                                                                                                                  | 协议凭证的编号与达成时刻，以及“协议先于月度目标请求”的关系                    |
 | API 设计 | [api.yaml](.evidence/api/api.yaml) 的 `capability.register-sales-performance-agreement-tele-sales`                                                                                                                                                                      | 调用者绑定、请求字段、`201`/`403`/`409`/`422` 与 `Idempotency-Key` 的幂等语义 |
 | 领域     | [SalesPerformanceAgreement.java](libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/SalesPerformanceAgreement.java)                                                                                                                                 | 拥有协议身份、描述与所属目标集合；`proposeTarget` 校验目标归属                |
 | 持久化   | [SalesPerformanceAgreements.java](libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/SalesPerformanceAgreements.java)、[Mapper XML](libs/backend/persistent/src/main/resources/mybatis.mappers/SalesPerformanceAgreementsMapper.xml) | 装配领域图、写入与唯一约束、幂等台账回放                                      |
@@ -276,7 +276,7 @@ Idempotency-Key: <同一次登记的重试沿用同一键>
 
 ## 当前范围与边界
 
-[FM 源](.evidence/fm/model.yaml) 不保存审核状态；业务确认依据由发现记录与需求/计划记录承载。当前 FM 与 API 描述的是电话销售绩效协议及其客户信息依赖，不等于已上线业务系统。
+[FM 源](.evidence/fm/model.json) 不保存审核状态；业务确认依据由发现记录与需求/计划记录承载。当前 FM 与 API 描述的是电话销售绩效协议及其客户信息依赖，不等于已上线业务系统。
 
 现有 [用户基础切片](apps/backend/README.md) 只提供本地用户 ID 与显示名称接口；前端是导航页，不是完整业务 UI。生产身份权限与生产数据库尚需依据。
 

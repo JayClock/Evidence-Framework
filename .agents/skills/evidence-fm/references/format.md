@@ -4,30 +4,30 @@
 
 ```text
 .evidence/fm/
-├── model.yaml
+├── model.json
 ├── README.md
 ├── 00-overview.md
 ├── 01-glossary.md
 ├── 02-business-patterns.md       # 派生文档
 ├── participants/                 # 跨上下文 Party
-│   └── user.yaml
+│   └── user.json
 ├── contexts/                     # 按业务上下文组织，不按对象类型分根目录
 │   ├── subscription/
-│   │   ├── context.yaml
-│   │   ├── contract.yaml
+│   │   ├── context.json
+│   │   ├── contract.json
 │   │   ├── evidence/              # 合同形成的补充凭证或同合同多履约共用的 Confirmation
 │   │   ├── roles/
 │   │   ├── relationships/        # 合同内关系
 │   │   └── fulfillments/
 │   │       └── payment/
-│   │           ├── context.yaml
-│   │           ├── request.yaml
-│   │           ├── confirmation.yaml  # 有实际确认类型时才存在
+│   │           ├── context.json
+│   │           ├── request.json
+│   │           ├── confirmation.json  # 有实际确认类型时才存在
 │   │           ├── roles/
 │   │           ├── relationships/
 │   │           └── rules/
 │   └── content/
-│       ├── context.yaml
+│       ├── context.json
 │       └── things/
 ├── relationships/                # 跨独立上下文、主体扮演关系，仅定义一次
 ├── business-patterns/            # 可省略
@@ -40,11 +40,11 @@
     └── simulation.json
 ```
 
-`model.yaml` 与分片 YAML 是模型事实源；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 YAML 文件只包含一个文档。发现与问题保存在模型目录之外的 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
+`model.json` 与分片 JSON 是模型事实源；`validation/` 是测试输入；Markdown 与 `generated/` 是说明或派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。发现与问题保存在模型目录之外的 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
-同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 仍是 `category: context`、`kind: fulfillment` 的 Entity；`fulfillments/<业务名>/context.yaml` 只是它的存放位置，不新增第二个履约对象。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 仍是 `category: context`、`kind: fulfillment` 的 Entity；`fulfillments/<业务名>/context.json` 只是它的存放位置，不新增第二个履约对象。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
-加载器递归读取模型根下的 `.yaml`，按文档的 `type` 分发到 Entity、Relationship、Rule、Business Pattern Schema，不再按目录或文件名决定类型。根 `model.yaml` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 YAML 文件不参与类型加载；`.yml` 文件报错，避免漏读模型。未知文档类型、重复 ID、坏 YAML 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
+加载器递归读取模型根下的 `.json`，按对象的 `type` 分发到 Entity、Relationship、Rule、Business Pattern Schema，不再按目录或文件名决定类型。根 `model.json` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 JSON 文件不参与类型加载；根下或 validation 目录内的 `.yaml`／`.yml` 文件报错，避免混合格式、漏读模型。文件必须是严格 JSON：拒绝注释、尾随逗号、多个顶层值、重复键和非标准常量（`NaN`／`Infinity`）；未知对象类型、重复 ID、坏 JSON 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
 
 目录是阅读组织，不是业务事实：归属仍由 `contextRef`／`parentContextRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
 
@@ -52,20 +52,20 @@
 
 ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。
 
-源 YAML 使用上下文内的短文件名：`context.yaml`、`contract.yaml`、`request.yaml`、`confirmation.yaml`；角色、主体、标的、规则和关系使用业务名或 ID 后缀。同一目录有多个同类凭证时使用不同业务文件名，不覆盖；不同目录可以重用短文件名。源文件名不再是硬校验，稳定身份只取文档 `id`。
+源 JSON 使用上下文内的短文件名：`context.json`、`contract.json`、`request.json`、`confirmation.json`；角色、主体、标的、规则和关系使用业务名或 ID 后缀。同一目录有多个同类凭证时使用不同业务文件名，不覆盖；不同目录可以重用短文件名。源文件名不再是硬校验，稳定身份只取对象 `id`。
 
 ```text
-role.subscriber                    → contexts/subscription/roles/subscriber.yaml
-fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/context.yaml
-request.subscription-payment      → contexts/subscription/fulfillments/payment/request.yaml
-pattern.multi-channel-payment     → business-patterns/multi-channel-payment.yaml
+role.subscriber                    → contexts/subscription/roles/subscriber.json
+fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/context.json
+request.subscription-payment      → contexts/subscription/fulfillments/payment/request.json
+pattern.multi-channel-payment     → business-patterns/multi-channel-payment.json
 ```
 
-`validation/instances/`、`validation/scenarios/` 仍保留单层目录和原有文件名约定（完整 ID 的 `.` 替换为 `--`，后缀 `.yaml`），由场景加载器独立处理。
+`validation/instances/`、`validation/scenarios/` 仍保留单层目录和原有文件名约定（完整 ID 的 `.` 替换为 `--`，后缀 `.json`），由场景加载器独立处理。
 
 改变标签不改变 ID；替换业务概念时创建新 ID，并删除旧对象及引用。
 
-### 业务属性命名与 YAML 排版（本地统一约定）
+### 业务属性命名与 JSON 排版（本地统一约定）
 
 区分协议字段和业务属性，避免把一次属性改名变成另一套 FM 格式：
 
@@ -73,34 +73,40 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.ya
 - 所有 Entity category 的 `attributes[].name` 统一小写 ASCII `snake_case`：以字母开头，后续为小写字母、数字或分隔单词的单个下划线；不允许首尾下划线、连续下划线或大写字母。示例：`profile_id`、`requested_minor_units`、`address_line_2`。
 - Rule `target.attribute`、CEL 点访问和静态索引、Instance `values` 的直接键、lineage 的 `#属性名` 与定义逐字一致；禁止只改定义、不改引用。CEL binding 别名、内置函数（如 `startsWith`）、事件类型和自由 map 内的外部原始键不属于 Entity 属性名，不做全局字符串替换。
 - 原始材料／外部 API 的旧字段名可在 `notes` 或词汇表记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
-- YAML 使用两空格缩进、无 tab、块式结构，列表项缩进到父键下；一个文件一个文档。实际时间戳用引号保持 RFC 3339 字符串，不让 YAML 将其转换为日期对象。
+- JSON 使用两空格缩进（`ensure_ascii=false` 保留中文），UTF-8 编码，文件末尾单个换行，不带注释、尾随逗号或重复键；一个文件一个顶层对象。字符串中的时间戳保持 RFC 3339 字面量，JSON 没有原生日期类型，不写 YAML 风格的无引号时间。
 - 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
 - Rule 按 `type → id → kind → label → description → contextRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用“中文名称（具体 Entity ID）”，不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 省略不适用的 `target`、`notes`。
 
-```yaml
-attributes:
-  - name: requested_minor_units
-    label: 请求支付金额
-    valueType: int
-    required: true
-    keyData: true
-    meaning: 请求支付的最小货币单位整数金额
-    derivedByRuleRef: rule.payment-request-amount
+```json
+{
+  "attributes": [
+    {
+      "name": "requested_minor_units",
+      "label": "请求支付金额",
+      "valueType": "int",
+      "required": true,
+      "keyData": true,
+      "meaning": "请求支付的最小货币单位整数金额",
+      "derivedByRuleRef": "rule.payment-request-amount"
+    }
+  ]
+}
 ```
 
-命名、类型和引用一致性是硬校验；键顺序与缩进是 Agent 生成／维护规范，不改变 YAML 映射语义，不作为模型业务有效性的拒绝条件。只有有对应业务依据时才使用上述金额和派生示例。
+命名、类型和引用一致性是硬校验；键顺序与缩进是 Agent 生成／维护规范，JSON 对象键不承载顺序语义，不作为模型业务有效性的拒绝条件。只有有对应业务依据时才使用上述金额和派生示例。
 
 ## 3. Manifest
 
-```yaml
-type: fm_model
-schemaVersion: '3.0'
-id: subscription-service
-name: 订阅服务履约模型
-version: '3.0.0'
-ruleLanguage: CEL
-entryContextRefs:
-  - context.subscription
+```json
+{
+  "type": "fm_model",
+  "schemaVersion": "3.0",
+  "id": "subscription-service",
+  "name": "订阅服务履约模型",
+  "version": "3.0.0",
+  "ruleLanguage": "CEL",
+  "entryContextRefs": ["context.subscription"]
+}
 ```
 
 `entryContextRefs` 可以直接引用 Domain 或 Pre-contract Context，不要求包含 Contract。示例见 `domain-modeling.md`。
@@ -125,7 +131,7 @@ entryContextRefs:
 | `fulfillment_confirmation`               | `confirmed_at`               |
 | `other_evidence`                         | `created_at`                 |
 
-每个字段必须在对应 Entity 源 YAML 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
+每个字段必须在对应 Entity 源 JSON 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
 
 表中的类型属性、具体实例值和生成规则分开：所有必备时间都允许非派生输入，类型结构不要求实例日期或 `derivedByRuleRef`；有来源的生成规则存在时才定义 CEL。三类时刻凭证不套请求区间或过期时间，各类型的必备时间不能互换。
 
@@ -133,33 +139,37 @@ entryContextRefs:
 
 ### Contract Context 和两个 Role
 
-```yaml
-type: entity
-id: context.subscription
-category: context
-kind: contract
-label: 订阅合同上下文
-rootRefs:
-  - contract.subscription
+```json
+{
+  "type": "entity",
+  "id": "context.subscription",
+  "category": "context",
+  "kind": "contract",
+  "label": "订阅合同上下文",
+  "rootRefs": ["contract.subscription"]
+}
 ```
 
-```yaml
-type: entity
-id: contract.subscription
-category: evidence
-kind: contract
-label: 订阅服务合同
-contextRef: context.subscription
-roleRefs:
-  - role.subscriber
-  - role.service-provider
-attributes:
-  - name: signed_at
-    label: 签约时间
-    valueType: timestamp
-    required: true
-    keyData: true
-    meaning: 该合同的签约时间
+```json
+{
+  "type": "entity",
+  "id": "contract.subscription",
+  "category": "evidence",
+  "kind": "contract",
+  "label": "订阅服务合同",
+  "contextRef": "context.subscription",
+  "roleRefs": ["role.subscriber", "role.service-provider"],
+  "attributes": [
+    {
+      "name": "signed_at",
+      "label": "签约时间",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "该合同的签约时间"
+    }
+  ]
+}
 ```
 
 Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。上例只展开 signed_at 的类型含义，不推定签约等于下单或权益生效；哪种行为构成签约若有真实争议，仍须业务澄清。
@@ -170,75 +180,86 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 
 每项 Fulfillment 自身就是 Contract 的子 Context，只定义责任边界：
 
-```yaml
-type: entity
-id: fulfillment.subscription-payment
-category: context
-kind: fulfillment
-label: 支付订阅费用
-parentContextRef: context.subscription
+```json
+{
+  "type": "entity",
+  "id": "fulfillment.subscription-payment",
+  "category": "context",
+  "kind": "fulfillment",
+  "label": "支付订阅费用",
+  "parentContextRef": "context.subscription"
+}
 ```
 
 Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID。本履约专有 Confirmation 可以同样归属该 Fulfillment；同一合同下由多个履约共同采信的 Confirmation 保留一个形成 Context，可放在父 Contract Context 或其中一个子 Fulfillment，再由各 Request 的 `precedes` Relationship 关联。相关 Contract 从父 Contract Context 的根 Evidence 确定，成员索引同时读取 `contextRef` 和 Request→Confirmation 关系。
 
 ### Domain Context 与 Thing
 
-```yaml
-type: entity
-id: context.content
-category: context
-kind: domain
-label: 内容领域上下文
-rootRefs:
-  - thing.subscription-content
+```json
+{
+  "type": "entity",
+  "id": "context.content",
+  "category": "context",
+  "kind": "domain",
+  "label": "内容领域上下文",
+  "rootRefs": ["thing.subscription-content"]
+}
 ```
 
-```yaml
-type: entity
-id: thing.subscription-content
-category: participant
-kind: thing
-label: 订阅内容
-contextRef: context.content
+```json
+{
+  "type": "entity",
+  "id": "thing.subscription-content",
+  "category": "participant",
+  "kind": "thing",
+  "label": "订阅内容",
+  "contextRef": "context.content"
+}
 ```
 
 Thing 必须属于 Domain Context，可表示具有领域身份的地点、标的物或其他事物。Party 保持在 Context 外，通过 `plays_role` 进入上下文；Domain 内也可有 Party Role 表达参与身份。Party/Thing 是并列 kind，不存在 `party.thing`。领域属性、关系与 CEL Rule 都是同格式模型的一部分，详见 `domain-modeling.md`。
 
 ### Role 可以独立存在
 
-```yaml
-type: entity
-id: role.external-service-provider
-category: role
-kind: third_party
-label: 外部服务提供方
-contextRef: fulfillment.subscription-payment
+```json
+{
+  "type": "entity",
+  "id": "role.external-service-provider",
+  "category": "role",
+  "kind": "third_party",
+  "label": "外部服务提供方",
+  "contextRef": "fulfillment.subscription-payment"
+}
 ```
 
 不要添加占位 Party 或 `playerRef`。Contract Party Role 保持在 Contract Context，不复制到 Fulfillment。
 
 ### 已知 Participant 扮演 Role
 
-```yaml
-type: relationship
-id: relation.customer-plays-subscriber
-kind: plays_role
-sourceRef: party.customer
-targetRef: role.subscriber
-label: 客户扮演订阅方
+```json
+{
+  "type": "relationship",
+  "id": "relation.customer-plays-subscriber",
+  "kind": "plays_role",
+  "sourceRef": "party.customer",
+  "targetRef": "role.subscriber",
+  "label": "客户扮演订阅方"
+}
 ```
 
 只有来源明确同一稳定对象时才建立。
 
 ### Evidence Role 是开放证明插槽
 
-```yaml
-type: entity
-id: role.qualified-payment-confirmation
-category: role
-kind: evidence
-label: 合格付款确认
-contextRef: fulfillment.subscription-payment
+```json
+{
+  "type": "entity",
+  "id": "role.qualified-payment-confirmation",
+  "category": "role",
+  "kind": "evidence",
+  "label": "合格付款确认",
+  "contextRef": "fulfillment.subscription-payment"
+}
 ```
 
 具体玩家只出现在独立 `plays_role` Relationship 中。
@@ -271,26 +292,30 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
 
-```yaml
-type: relationship
-id: relation.inquiry-to-quotes
-kind: precedes
-sourceRef: rfp.product-inquiry
-targetRef: proposal.product-quote
-label: 一份询价可产生一至多份报价
-sourceCardinality:
-  min: 1
-  max: 1
-targetCardinality:
-  min: 1
-  max: many
+```json
+{
+  "type": "relationship",
+  "id": "relation.inquiry-to-quotes",
+  "kind": "precedes",
+  "sourceRef": "rfp.product-inquiry",
+  "targetRef": "proposal.product-quote",
+  "label": "一份询价可产生一至多份报价",
+  "sourceCardinality": {
+    "min": 1,
+    "max": 1
+  },
+  "targetCardinality": {
+    "min": 1,
+    "max": "many"
+  }
+}
 ```
 
 每层关系分别核对数量；申请与确认一对一，不代表合同与申请也一对一。关系 notes 说明数量适用的实例范围和业务阶段；履约尚未形成结果，不等于已经违反完成结构的一对一。是否允许分次、补发或更正须有独立业务依据，不从基数猜测。省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
 
 ## 8. Business Pattern
 
-有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.yaml`。必填内容包括业务目标、运营不变量、领域中立主张、业务脊梁、变化点、合同案例、领域案例、复用状态和人工评审。
+有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.json`。必填内容包括业务目标、运营不变量、领域中立主张、业务脊梁、变化点、合同案例、领域案例、复用状态和人工评审。
 
 - `candidate`：一个领域案例即可；
 - `supported`：至少两个 Contract Context 与两个 Domain Context；

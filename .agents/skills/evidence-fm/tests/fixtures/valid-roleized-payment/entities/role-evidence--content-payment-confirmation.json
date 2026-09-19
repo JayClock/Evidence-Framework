@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "role.content-payment-confirmation",
+  "category": "role",
+  "kind": "evidence",
+  "label": "内容产品付款确认",
+  "contextRef": "fulfillment.content-payment"
+}

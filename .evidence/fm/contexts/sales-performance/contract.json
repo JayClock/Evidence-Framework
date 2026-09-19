@@ -1,0 +1,28 @@
+{
+  "type": "entity",
+  "id": "contract.sales-performance",
+  "category": "evidence",
+  "kind": "contract",
+  "label": "电话销售绩效协议",
+  "contextRef": "context.sales-performance",
+  "attributes": [
+    {
+      "name": "agreement_id",
+      "label": "绩效协议编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "管理者与电话销售达成的本份绩效协议的稳定编号"
+    },
+    {
+      "name": "signed_at",
+      "label": "协议达成时刻",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "管理者与电话销售就本份绩效协议达成一致的业务时刻"
+    }
+  ],
+  "notes": "绩效协议表达内部权责约定；目标设定的磋商过程、变更方式和未达标后果尚未展开。",
+  "roleRefs": ["role.performance-manager", "role.tele-sales"]
+}

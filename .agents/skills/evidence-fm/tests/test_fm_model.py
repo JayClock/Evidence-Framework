@@ -9,8 +9,6 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
 
@@ -33,13 +31,13 @@ class FulfillmentModelTests(unittest.TestCase):
         shutil.copytree(self.fixture(name), root)
         return root
 
-    def read_yaml(self, path: Path) -> dict[str, Any]:
-        return yaml.safe_load(path.read_text(encoding="utf-8"))
+    def read_json(self, path: Path) -> dict[str, Any]:
+        return json.loads(path.read_text(encoding="utf-8"))
 
-    def write_yaml(self, path: Path, document: dict[str, Any]) -> None:
+    def write_json(self, path: Path, document: dict[str, Any]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
-            yaml.safe_dump(document, allow_unicode=True, sort_keys=False),
+            json.dumps(document, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 
@@ -83,8 +81,8 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_fulfillment_rejects_legacy_member_indexes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/context-fulfillment--content-payment.yaml"
-            fulfillment = self.read_yaml(path)
+            path = root / "entities/context-fulfillment--content-payment.json"
+            fulfillment = self.read_json(path)
             for field in (
                 "contractRef",
                 "requestRef",
@@ -98,9 +96,9 @@ class FulfillmentModelTests(unittest.TestCase):
             ):
                 changed = copy.deepcopy(fulfillment)
                 changed[field] = "legacy"
-                self.write_yaml(path, changed)
+                self.write_json(path, changed)
                 self.assertTrue(validate_model(load_model(root)), field)
-            self.write_yaml(path, fulfillment)
+            self.write_json(path, fulfillment)
 
     def test_missing_confirmation_fails(self) -> None:
         errors = validate_model(
@@ -113,15 +111,15 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_orphan_request_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            (root / "entities/context-fulfillment--content-payment.yaml").unlink()
+            (root / "entities/context-fulfillment--content-payment.json").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(any("existing Fulfillment Context" in e for e in errors))
 
     def test_fulfillment_cannot_be_evidence_graph_endpoint(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            self.write_yaml(
-                root / "relationships/relation--invalid-fulfillment-edge.yaml",
+            self.write_json(
+                root / "relationships/relation--invalid-fulfillment-edge.json",
                 {
                     "type": "relationship",
                     "id": "relation.invalid-fulfillment-edge",
@@ -144,8 +142,8 @@ class FulfillmentModelTests(unittest.TestCase):
         for kind, (source, target) in mutations.items():
             with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
                 root = self.copied_fixture("valid-subscription", directory)
-                self.write_yaml(
-                    root / f"relationships/relation--invalid-{kind}.yaml",
+                self.write_json(
+                    root / f"relationships/relation--invalid-{kind}.json",
                     {
                         "type": "relationship",
                         "id": f"relation.invalid-{kind}",
@@ -171,12 +169,12 @@ class FulfillmentModelTests(unittest.TestCase):
             root = self.copied_fixture("valid-subscription", directory)
             path = (
                 root
-                / "relationships/relation--content-payment-precedes-content-payment-confirmation.yaml"
+                / "relationships/relation--content-payment-precedes-content-payment-confirmation.json"
             )
-            relationship = self.read_yaml(path)
+            relationship = self.read_json(path)
             relationship["sourceCardinality"] = {"min": 1, "max": 1}
             relationship["targetCardinality"] = {"min": 1, "max": "many"}
-            self.write_yaml(path, relationship)
+            self.write_json(path, relationship)
 
             model = load_model(root)
             self.assertEqual([], validate_model(model))
@@ -203,11 +201,11 @@ class FulfillmentModelTests(unittest.TestCase):
                 root = self.copied_fixture("valid-subscription", directory)
                 path = (
                     root
-                    / "relationships/relation--content-payment-precedes-content-payment-confirmation.yaml"
+                    / "relationships/relation--content-payment-precedes-content-payment-confirmation.json"
                 )
-                relationship = self.read_yaml(path)
+                relationship = self.read_json(path)
                 relationship["targetCardinality"] = cardinality
-                self.write_yaml(path, relationship)
+                self.write_json(path, relationship)
 
                 errors = validate_model(load_model(root))
                 self.assertTrue(
@@ -217,10 +215,10 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_contract_requires_exactly_two_party_roles(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/evidence-contract--content-subscription.yaml"
-            contract = self.read_yaml(path)
+            path = root / "entities/evidence-contract--content-subscription.json"
+            contract = self.read_json(path)
             contract["roleRefs"] = ["role.subscriber"]
-            self.write_yaml(path, contract)
+            self.write_json(path, contract)
             self.assertTrue(
                 any("roleRefs" in e for e in validate_model(load_model(root)))
             )
@@ -228,13 +226,13 @@ class FulfillmentModelTests(unittest.TestCase):
     def test_request_interval_is_defined_by_required_key_time_attributes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/evidence-fulfillment-request--content-payment.yaml"
-            request = self.read_yaml(path)
+            path = root / "entities/evidence-fulfillment-request--content-payment.json"
+            request = self.read_json(path)
             started = next(
                 a for a in request["attributes"] if a["name"] == "started_at"
             )
             started["keyData"] = False
-            self.write_yaml(path, request)
+            self.write_json(path, request)
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any("required keyData timestamp" in e for e in errors), errors

@@ -1,0 +1,70 @@
+{
+  "type": "fm_scenario",
+  "id": "scenario.monthly-customer-contact-insufficient",
+  "label": "月度客户联系的电话数和总数未达到目标",
+  "asOf": "2026-11-01T00:00:00Z",
+  "givenInstanceRefs": [],
+  "steps": [
+    {
+      "sequence": 1,
+      "actingRoleRef": "role.tele-sales",
+      "issueInstanceRef": "instance.sales-performance-agreement",
+      "availableInstanceRefs": []
+    },
+    {
+      "sequence": 2,
+      "actingRoleRef": "role.performance-manager",
+      "issueInstanceRef": "instance.monthly-customer-contact-request",
+      "availableInstanceRefs": ["instance.sales-performance-agreement"]
+    },
+    {
+      "sequence": 3,
+      "actingRoleRef": "role.tele-sales",
+      "issueInstanceRef": "instance.customer-contact-phone-1",
+      "availableInstanceRefs": [
+        "instance.sales-performance-agreement",
+        "instance.monthly-customer-contact-request"
+      ]
+    },
+    {
+      "sequence": 4,
+      "actingRoleRef": "role.tele-sales",
+      "issueInstanceRef": "instance.customer-contact-email-1",
+      "availableInstanceRefs": [
+        "instance.sales-performance-agreement",
+        "instance.monthly-customer-contact-request",
+        "instance.customer-contact-phone-1"
+      ]
+    }
+  ],
+  "evaluations": [
+    {
+      "ruleRef": "rule.monthly-customer-contact-completed",
+      "bindings": {
+        "agreement": {
+          "instanceRef": "instance.sales-performance-agreement"
+        },
+        "request": {
+          "instanceRef": "instance.monthly-customer-contact-request"
+        },
+        "records": {
+          "instanceRefs": [
+            "instance.customer-contact-phone-1",
+            "instance.customer-contact-email-1"
+          ]
+        }
+      },
+      "expectedResult": false
+    }
+  ],
+  "expectations": {
+    "fulfillmentStatuses": [
+      {
+        "fulfillmentRef": "fulfillment.monthly-customer-contact",
+        "requestInstanceRef": "instance.monthly-customer-contact-request",
+        "status": "pending"
+      }
+    ]
+  },
+  "notes": "合成反例只证明完成条件不成立；来源没有说明未达标是否构成违约或处分，因此不期待 breached。"
+}

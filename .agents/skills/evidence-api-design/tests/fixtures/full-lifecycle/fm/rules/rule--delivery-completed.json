@@ -1,0 +1,24 @@
+{
+  "type": "rule",
+  "id": "rule.delivery-completed",
+  "kind": "completion",
+  "label": "发货履约完成判断",
+  "description": "同一发货申请存在有效期内的发货确认，且已有发货单与申请、确认的编号、地址和形成时间一致时，发货履约完成。",
+  "contextRef": "fulfillment.delivery",
+  "bindings": {
+    "request": {
+      "ref": "request.delivery"
+    },
+    "confirmations": {
+      "ref": "confirmation.delivery",
+      "cardinality": "many"
+    },
+    "proofs": {
+      "ref": "evidence.delivery-note",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.exists(c, c.request_number == request.request_number && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at && proofs.exists(p, p.request_number == request.request_number && p.delivery_note_number == c.delivery_note_number && p.created_at <= c.confirmed_at && p.delivery_address == request.delivery_address))",
+  "resultType": "bool",
+  "notes": "仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。"
+}

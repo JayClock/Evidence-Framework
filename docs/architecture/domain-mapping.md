@@ -1,6 +1,6 @@
 # FM 到实现的映射
 
-业务含义唯一维护在 [FM 源](../../.evidence/fm/model.yaml)、[业务概览](../../.evidence/fm/00-overview.md)和 [正式术语](../../.evidence/fm/01-glossary.md)。本页只规定实现映射，不建立第二套业务事实。
+业务含义唯一维护在 [FM 源](../../.evidence/fm/model.json)、[业务概览](../../.evidence/fm/00-overview.md)和 [正式术语](../../.evidence/fm/01-glossary.md)。本页只规定实现映射，不建立第二套业务事实。
 
 ## 对象与行为
 

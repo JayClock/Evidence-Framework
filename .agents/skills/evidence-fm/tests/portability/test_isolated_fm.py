@@ -121,7 +121,7 @@ class IsolatedFMTests(unittest.TestCase):
         )
         fixture = (
             output
-            / "eval-4-missing-confirmation-repair/inputs/missing-confirmation-model/model.yaml"
+            / "eval-4-missing-confirmation-repair/inputs/missing-confirmation-model/model.json"
         )
         self.assertTrue(fixture.is_file())
         self.assertEqual(before, file_hashes(self.skill))
@@ -169,12 +169,13 @@ class IsolatedFMTests(unittest.TestCase):
         self.example("payment")
         # Intentionally break a type definition, not a command or dependency.
         request = next(
-            (self.model / "entities").glob("evidence-fulfillment-request--*.yaml")
+            (self.model / "entities").glob("evidence-fulfillment-request--*.json")
         )
         text = request.read_text(encoding="utf-8")
-        self.assertIn("name: started_at", text)
+        self.assertIn('"name": "started_at"', text)
         request.write_text(
-            text.replace("name: started_at", "name: old_start"), encoding="utf-8"
+            text.replace('"name": "started_at"', '"name": "old_start"'),
+            encoding="utf-8",
         )
         report = self.check(1)
         self.assertFalse(report["valid"])
@@ -183,13 +184,13 @@ class IsolatedFMTests(unittest.TestCase):
 
     def test_wrong_business_expectation_fails_instead_of_being_rewritten(self):
         self.example("payment")
-        scenario = next((self.model / "validation/scenarios").glob("*.yaml"))
+        scenario = next((self.model / "validation/scenarios").glob("*.json"))
         text = scenario.read_text(encoding="utf-8")
-        self.assertRegex(text, r"expectedResult: (true|false)")
+        self.assertRegex(text, r'"expectedResult": (true|false)')
         changed = re.sub(
-            r"expectedResult: (true|false)",
+            r'"expectedResult": (true|false)',
             lambda match: (
-                "expectedResult: " + ("false" if match[1] == "true" else "true")
+                '"expectedResult": ' + ("false" if match[1] == "true" else "true")
             ),
             text,
             count=1,
@@ -201,9 +202,9 @@ class IsolatedFMTests(unittest.TestCase):
 
     def test_malformed_suite_cannot_be_treated_as_not_applicable(self):
         self.example("domain")
-        scenario = self.model / "validation/scenarios/scenario--broken.yaml"
+        scenario = self.model / "validation/scenarios/scenario--broken.json"
         scenario.parent.mkdir(parents=True)
-        scenario.write_text("type: [invalid yaml", encoding="utf-8")
+        scenario.write_text('{"type": [invalid json', encoding="utf-8")
         self.assertFalse(self.check(1)["valid"])
 
     def test_missing_model_is_a_validation_error(self):
@@ -221,9 +222,11 @@ class IsolatedFMTests(unittest.TestCase):
         notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
         notes_before = notes.read_bytes()
         first = self.check(0)
-        manifest = self.model / "model.yaml"
+        manifest = self.model / "model.json"
+        document = json.loads(manifest.read_text(encoding="utf-8"))
         manifest.write_text(
-            manifest.read_text() + "\n# direct edit\n", encoding="utf-8"
+            json.dumps(document, ensure_ascii=False, indent=4) + "\n",
+            encoding="utf-8",
         )
         result = self.run_script("check_fm.py")
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)

@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "fulfillment.manuscript-delivery",
+  "category": "context",
+  "kind": "fulfillment",
+  "label": "按期交稿",
+  "parentContextRef": "context.content-production"
+}

@@ -1,8 +1,0 @@
-type: fm_model
-schemaVersion: '3.0'
-id: platform-subscription
-name: 内容订阅履约模型
-version: 3.0.0
-ruleLanguage: CEL
-entryContextRefs:
-  - context.content-subscription

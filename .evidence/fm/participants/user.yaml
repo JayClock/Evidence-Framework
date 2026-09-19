@@ -1,7 +1,0 @@
-type: entity
-id: party.user
-category: participant
-kind: party
-label: 用户
-notes: >-
-  同一用户主体可分别扮演绩效管理者或电话销售；角色扮演不表示同一协议实例中由同一自然人同时承担双方，也不自动扩大经办和访问权限。

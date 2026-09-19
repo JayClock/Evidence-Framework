@@ -51,12 +51,12 @@ class CheckModelTests(unittest.TestCase):
 
     def test_edit_changes_digest_and_invalid_model_is_not_repaired(self):
         first = check_fm.check_model(self.model)
-        manifest = self.model / "model.yaml"
-        manifest.write_text("type: [broken yaml", encoding="utf-8")
+        manifest = self.model / "model.json"
+        manifest.write_text('{"type": [', encoding="utf-8")
         second = check_fm.check_model(self.model)
         self.assertFalse(second["valid"])
         self.assertNotEqual(first["modelDigest"], second["modelDigest"])
-        self.assertEqual("type: [broken yaml", manifest.read_text())
+        self.assertEqual('{"type": [', manifest.read_text())
 
     def test_generated_outputs_do_not_change_source_digest(self):
         first = check_fm.check_model(self.model)
@@ -72,7 +72,7 @@ class CheckModelTests(unittest.TestCase):
 
         def change_after_validation(model):
             errors = original(model)
-            manifest = self.model / "model.yaml"
+            manifest = self.model / "model.json"
             manifest.write_text(manifest.read_text() + "\n# concurrent edit\n")
             return errors
 

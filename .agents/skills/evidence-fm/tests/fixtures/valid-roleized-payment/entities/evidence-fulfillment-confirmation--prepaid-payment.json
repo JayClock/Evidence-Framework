@@ -1,0 +1,19 @@
+{
+  "type": "entity",
+  "id": "confirmation.prepaid-payment",
+  "category": "evidence",
+  "kind": "fulfillment_confirmation",
+  "label": "预付费付款确认",
+  "contextRef": "fulfillment.prepaid-payment",
+  "responsibleRoleRef": "role.prepaid-platform",
+  "attributes": [
+    {
+      "name": "confirmed_at",
+      "label": "确认时间",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "确定履约结果形成的时间"
+    }
+  ]
+}

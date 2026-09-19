@@ -1,0 +1,19 @@
+{
+  "type": "entity",
+  "id": "confirmation.external-payment",
+  "category": "evidence",
+  "kind": "fulfillment_confirmation",
+  "label": "外部支付确认",
+  "contextRef": "fulfillment.external-payment",
+  "responsibleRoleRef": "role.external-payment-provider",
+  "attributes": [
+    {
+      "name": "confirmed_at",
+      "label": "确认时间",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "确定履约结果形成的时间"
+    }
+  ]
+}

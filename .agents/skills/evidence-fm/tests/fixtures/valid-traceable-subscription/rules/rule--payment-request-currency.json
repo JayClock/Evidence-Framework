@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.payment-request-currency",
+  "kind": "derivation",
+  "label": "从合同派生请求支付币种",
+  "description": "读取订阅合同（contract.content-subscription）约定的币种，并将其作为付款请求（request.content-payment）的币种。",
+  "contextRef": "fulfillment.content-payment",
+  "bindings": {
+    "contract": {
+      "ref": "contract.content-subscription"
+    }
+  },
+  "expression": "contract.currency",
+  "resultType": "string",
+  "target": {
+    "entityRef": "request.content-payment",
+    "attribute": "currency"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "context.sales-performance",
+  "category": "context",
+  "kind": "contract",
+  "label": "电话销售绩效协议",
+  "rootRefs": ["contract.sales-performance"]
+}

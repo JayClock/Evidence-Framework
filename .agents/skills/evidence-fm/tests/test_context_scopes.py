@@ -154,9 +154,11 @@ class ContextScopeTests(unittest.TestCase):
                 Path(directory), domain_documents(), "context.customer-information"
             )
             (root / "retired-objects").mkdir()
-            (root / "retired-objects/unknown.yaml").write_text("type: retired\n")
+            (root / "retired-objects/unknown.json").write_text(
+                '{"type": "retired"}'
+            )
             self.assertIn(
-                "retired-objects/unknown.yaml: unsupported document type 'retired'",
+                "retired-objects/unknown.json: unsupported document type 'retired'",
                 validate_model(load_model(root)),
             )
 
@@ -293,7 +295,7 @@ class ContextScopeTests(unittest.TestCase):
             (
                 root
                 / "entities"
-                / "evidence-fulfillment-confirmation--content-payment.yaml"
+                / "evidence-fulfillment-confirmation--content-payment.json"
             ).unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
@@ -310,7 +312,7 @@ class ContextScopeTests(unittest.TestCase):
             shutil.copytree(
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
-            (root / "entities" / "context-fulfillment--content-payment.yaml").unlink()
+            (root / "entities" / "context-fulfillment--content-payment.json").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any("existing Fulfillment Context" in error for error in errors),

@@ -191,11 +191,11 @@ class SharedConfirmationTests(unittest.TestCase):
                     root
                     / "validation"
                     / "instances"
-                    / f"{instance['id'].replace('.', '--')}.yaml",
+                    / f"{instance['id'].replace('.', '--')}.json",
                     instance,
                 )
             write_document(
-                root / "validation/scenarios/scenario--shared-income.yaml",
+                root / "validation/scenarios/scenario--shared-income.json",
                 {
                     "type": "fm_scenario",
                     "id": "scenario.shared-income",

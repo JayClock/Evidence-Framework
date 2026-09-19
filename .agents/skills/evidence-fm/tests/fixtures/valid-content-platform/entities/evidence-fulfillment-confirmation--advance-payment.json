@@ -1,0 +1,19 @@
+{
+  "type": "entity",
+  "id": "confirmation.advance-payment",
+  "category": "evidence",
+  "kind": "fulfillment_confirmation",
+  "label": "支付预付款确认",
+  "contextRef": "fulfillment.advance-payment",
+  "responsibleRoleRef": "role.platform-content-production",
+  "attributes": [
+    {
+      "name": "confirmed_at",
+      "label": "确认时间",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "确定履约结果形成的时间"
+    }
+  ]
+}

@@ -17,7 +17,7 @@ def parse_args() -> argparse.Namespace:
         description="Validate an FM Schema v3 model directory."
     )
     parser.add_argument(
-        "model_dir", help="Directory containing model.yaml and FM shards"
+        "model_dir", help="Directory containing model.json and FM shards"
     )
     parser.add_argument(
         "--json", action="store_true", help="Emit a machine-readable validation result"

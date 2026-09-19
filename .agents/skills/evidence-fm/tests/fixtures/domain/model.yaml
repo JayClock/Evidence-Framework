@@ -1,8 +1,0 @@
-type: fm_model
-schemaVersion: '3.0'
-id: portable-domain-example
-name: 合成客户档案示例
-version: '1.0.0'
-ruleLanguage: CEL
-entryContextRefs:
-  - context.profiles

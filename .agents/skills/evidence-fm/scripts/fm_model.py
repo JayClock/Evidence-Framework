@@ -11,11 +11,6 @@ from pathlib import Path
 from typing import Any
 
 try:
-    import yaml
-except ImportError:  # pragma: no cover - dependency failure is reported by CLI
-    yaml = None  # type: ignore[assignment]
-
-try:
     from jsonschema import Draft202012Validator
 except ImportError:  # pragma: no cover - dependency failure is reported by CLI
     Draft202012Validator = None  # type: ignore[assignment,misc]
@@ -145,8 +140,8 @@ def expected_filename(document: dict[str, Any]) -> str:
         category = str(document["category"]).replace("_", "-")
         kind = str(document["kind"]).replace("_", "-")
         object_suffix = object_id.split(".", 1)[-1].replace(".", "--")
-        return f"{category}-{kind}--{object_suffix}.yaml"
-    return object_id.replace(".", "--") + ".yaml"
+        return f"{category}-{kind}--{object_suffix}.json"
+    return object_id.replace(".", "--") + ".json"
 
 
 def format_json_path(parts: Iterable[Any]) -> str:
@@ -159,30 +154,36 @@ def format_json_path(parts: Iterable[Any]) -> str:
     return result
 
 
-def load_single_yaml(path: Path, errors: list[str]) -> dict[str, Any] | None:
-    if yaml is None:
-        errors.append("PyYAML is required; install requirements.txt")
-        return None
+def reject_nonstandard_constant(value: str) -> Any:
+    raise ValueError(f"non-standard JSON constant {value!r}")
+
+
+def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate key {key!r}")
+        result[key] = value
+    return result
+
+
+def load_single_json(path: Path, errors: list[str]) -> dict[str, Any] | None:
     try:
-        documents = [
-            doc
-            for doc in yaml.safe_load_all(path.read_text(encoding="utf-8"))
-            if doc is not None
-        ]
+        text = path.read_text(encoding="utf-8")
     except OSError as error:
         errors.append(f"{path}: cannot read file: {error}")
         return None
-    except yaml.YAMLError as error:
-        errors.append(f"{path}: invalid YAML: {error}")
-        return None
-    if len(documents) != 1:
-        errors.append(
-            f"{path}: expected exactly one YAML document, found {len(documents)}"
+    try:
+        document = json.loads(
+            text,
+            object_pairs_hook=unique_object,
+            parse_constant=reject_nonstandard_constant,
         )
+    except ValueError as error:
+        errors.append(f"{path}: invalid JSON: {error}")
         return None
-    document = documents[0]
     if not isinstance(document, dict):
-        errors.append(f"{path}: YAML document must be an object")
+        errors.append(f"{path}: JSON document must be an object")
         return None
     return document
 
@@ -215,15 +216,15 @@ def load_model(root: Path) -> LoadedModel:
         )
         return model
 
-    manifest_path = root / "model.yaml"
+    manifest_path = root / "model.json"
     if not manifest_path.is_file():
-        model.errors.append("model.yaml is required at the model root")
+        model.errors.append("model.json is required at the model root")
     else:
-        manifest = load_single_yaml(manifest_path, model.errors)
+        manifest = load_single_json(manifest_path, model.errors)
         if manifest is not None:
             model.manifest = manifest
             validate_against_schema(
-                manifest, "model.schema.json", "model.yaml", model.errors
+                manifest, "model.schema.json", "model.json", model.errors
             )
 
     collections: dict[str, list[dict[str, Any]]] = {
@@ -255,12 +256,12 @@ def load_model(root: Path) -> LoadedModel:
             continue
         if not path.is_file():
             continue
-        if path.suffix == ".yml":
-            model.errors.append(f"{rel_path}: model sources must use .yaml")
+        if path.suffix in {".yaml", ".yml"}:
+            model.errors.append(f"{rel_path}: model sources must use .json")
             continue
-        if path.suffix != ".yaml":
+        if path.suffix != ".json":
             continue
-        document = load_single_yaml(path, model.errors)
+        document = load_single_json(path, model.errors)
         if document is None:
             continue
         document_type = document.get("type")
@@ -1405,7 +1406,7 @@ def dedupe(errors: Iterable[str]) -> list[str]:
 
 def compiled_document(model: LoadedModel) -> dict[str, Any]:
     if model.manifest is None:
-        raise ValueError("cannot compile model without model.yaml")
+        raise ValueError("cannot compile model without model.json")
     return {
         "schemaVersion": SCHEMA_VERSION,
         "model": model.manifest,

@@ -1,0 +1,223 @@
+{
+  "type": "fm_scenario",
+  "id": "scenario.product-procurement",
+  "label": "商品采购协议完整履约",
+  "asOf": "2026-11-06T10:00:00Z",
+  "steps": [
+    {
+      "sequence": 1,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.product-inquiry",
+      "availableInstanceRefs": []
+    },
+    {
+      "sequence": 2,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.product-quotation",
+      "availableInstanceRefs": ["instance.product-inquiry"]
+    },
+    {
+      "sequence": 3,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.product-procurement",
+      "availableInstanceRefs": ["instance.product-quotation"]
+    },
+    {
+      "sequence": 4,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.payment-request",
+      "availableInstanceRefs": ["instance.product-procurement"]
+    },
+    {
+      "actingRoleRef": "role.wechat-user",
+      "issueInstanceRef": "instance.wechat-payment-contract",
+      "sequence": 5
+    },
+    {
+      "actingRoleRef": "role.wechat-user",
+      "issueInstanceRef": "instance.wechat-payment-request",
+      "availableInstanceRefs": [
+        "instance.wechat-payment-contract",
+        "instance.payment-request"
+      ],
+      "sequence": 6
+    },
+    {
+      "actingRoleRef": "role.wechat-provider",
+      "issueInstanceRef": "instance.wechat-payment-confirmation",
+      "availableInstanceRefs": ["instance.wechat-payment-request"],
+      "notes": "外部微信支付确认扮演支付凭证角色，不生成采购侧写入API。",
+      "sequence": 7
+    },
+    {
+      "sequence": 8,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.payment-confirmation",
+      "availableInstanceRefs": [
+        "instance.payment-request",
+        "instance.wechat-payment-confirmation"
+      ]
+    },
+    {
+      "sequence": 9,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.invoice-request",
+      "availableInstanceRefs": ["instance.product-procurement"]
+    },
+    {
+      "sequence": 10,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.invoice",
+      "availableInstanceRefs": ["instance.invoice-request"],
+      "notes": "乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。"
+    },
+    {
+      "sequence": 11,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.invoice-confirmation",
+      "availableInstanceRefs": ["instance.invoice-request", "instance.invoice"]
+    },
+    {
+      "sequence": 12,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.delivery-request",
+      "availableInstanceRefs": ["instance.product-procurement"]
+    },
+    {
+      "sequence": 13,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.delivery-note",
+      "availableInstanceRefs": ["instance.delivery-request"],
+      "notes": "乙方销售经办本步骤；actingRoleRef表达业务责任身份，不代表该经办主体可办理角色的全部业务。"
+    },
+    {
+      "sequence": 14,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.delivery-confirmation",
+      "availableInstanceRefs": [
+        "instance.delivery-request",
+        "instance.delivery-note"
+      ]
+    }
+  ],
+  "evaluations": [
+    {
+      "ruleRef": "rule.payment-completed",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.payment-request"
+        },
+        "confirmations": {
+          "instanceRefs": ["instance.payment-confirmation"]
+        },
+        "proofs": {
+          "instanceRefs": ["instance.wechat-payment-confirmation"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.invoice-completed",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.invoice-request"
+        },
+        "confirmations": {
+          "instanceRefs": ["instance.invoice-confirmation"]
+        },
+        "proofs": {
+          "instanceRefs": ["instance.invoice"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.delivery-completed",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.delivery-request"
+        },
+        "confirmations": {
+          "instanceRefs": ["instance.delivery-confirmation"]
+        },
+        "proofs": {
+          "instanceRefs": ["instance.delivery-note"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.payment-evidence-ready",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.payment-request"
+        },
+        "proofs": {
+          "instanceRefs": ["instance.wechat-payment-confirmation"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.invoice-evidence-ready",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.invoice-request"
+        },
+        "proofs": {
+          "instanceRefs": ["instance.invoice"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.delivery-evidence-ready",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.delivery-request"
+        },
+        "proofs": {
+          "instanceRefs": ["instance.delivery-note"]
+        }
+      },
+      "expectedResult": true
+    },
+    {
+      "ruleRef": "rule.wechat-payment-completed",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.wechat-payment-request"
+        },
+        "confirmations": {
+          "instanceRefs": ["instance.wechat-payment-confirmation"]
+        }
+      },
+      "expectedResult": true
+    }
+  ],
+  "expectations": {
+    "fulfillmentStatuses": [
+      {
+        "fulfillmentRef": "fulfillment.payment",
+        "requestInstanceRef": "instance.payment-request",
+        "status": "completed"
+      },
+      {
+        "fulfillmentRef": "fulfillment.invoice",
+        "requestInstanceRef": "instance.invoice-request",
+        "status": "completed"
+      },
+      {
+        "fulfillmentRef": "fulfillment.delivery",
+        "requestInstanceRef": "instance.delivery-request",
+        "status": "completed"
+      },
+      {
+        "fulfillmentRef": "fulfillment.wechat-payment",
+        "requestInstanceRef": "instance.wechat-payment-request",
+        "status": "completed"
+      }
+    ]
+  },
+  "notes": "支付通过外部凭证玩家满足支付凭证角色后形成客户确认；开票、发货各使用具体补充证据。采购三项与微信支付履约均验证完成。"
+}

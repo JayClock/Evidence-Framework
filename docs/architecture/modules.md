@@ -18,7 +18,7 @@ API 与 persistent 不相互依赖；domain 不反向依赖 Spring、MyBatis、J
 
 | 责任             | 现有落点与边界                                                                                                                                                                                                             |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 业务来源         | [party.user](../../.evidence/fm/participants/user.yaml)提供稳定主体概念；本地显示名称来自独立的软件切片说明，不冒充 FM 属性                                                                                                |
+| 业务来源         | [party.user](../../.evidence/fm/participants/user.json)提供稳定主体概念；本地显示名称来自独立的软件切片说明，不冒充 FM 属性                                                                                                |
 | 根集合公开契约   | [domain.model.Users](../../libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/Users.java)                                                                                                              |
 | 成员行为         | [User](../../libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/User.java)、[UserDescription](../../libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/description/UserDescription.java) |
 | 数据与迁移拥有者 | persistent 的 Users 适配器拥有 `app_users` 写入与 [V1 迁移](../../libs/backend/persistent/src/main/resources/db/migration/V1__create_users.sql)                                                                            |

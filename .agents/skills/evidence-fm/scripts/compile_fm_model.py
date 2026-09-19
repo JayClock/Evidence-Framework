@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile FM Schema v3 YAML shards into deterministic JSON."""
+"""Compile FM Schema v3 JSON shards into deterministic JSON."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
         description="Compile a validated FM Schema v3 model."
     )
     parser.add_argument(
-        "model_dir", help="Directory containing model.yaml and FM shards"
+        "model_dir", help="Directory containing model.json and FM shards"
     )
     parser.add_argument("--output", required=True, help="Output JSON path")
     parser.add_argument(

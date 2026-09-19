@@ -1,7 +1,0 @@
-type: entity
-id: context.customer-information
-category: context
-kind: domain
-label: 客户信息领域
-rootRefs:
-  - thing.customer-profile

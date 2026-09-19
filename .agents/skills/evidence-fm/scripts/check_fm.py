@@ -70,7 +70,7 @@ def check_model(root: Path) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("model_dir", type=Path, help="Directory containing model.yaml")
+    parser.add_argument("model_dir", type=Path, help="Directory containing model.json")
     args = parser.parse_args()
     report = check_model(args.model_dir)
     print(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2))

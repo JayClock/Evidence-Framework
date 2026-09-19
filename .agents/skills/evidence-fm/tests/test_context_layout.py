@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
 
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
@@ -37,11 +37,11 @@ class ContextLayoutTests(unittest.TestCase):
             directory = self.root / folder
             if not directory.exists():
                 continue
-            for source in directory.glob("*.yaml"):
-                doc = yaml.safe_load(source.read_text())
-                target = self.root / "contexts" / doc["id"] / "definition.yaml"
+            for source in directory.glob("*.json"):
+                doc = json.loads(source.read_text())
+                target = self.root / "contexts" / doc["id"] / "definition.json"
                 if doc.get("category") == "participant" and doc.get("kind") == "party":
-                    target = self.root / "participants" / (doc["id"] + ".yaml")
+                    target = self.root / "participants" / (doc["id"] + ".json")
                 target.parent.mkdir(parents=True, exist_ok=True)
                 source.rename(target)
                 self.paths[doc["id"]] = target
@@ -67,24 +67,24 @@ class ContextLayoutTests(unittest.TestCase):
 
     def test_duplicate_ids_across_contexts_are_rejected(self):
         source = next(iter(self.paths.values()))
-        target = self.root / "contexts/another/duplicate.yaml"
+        target = self.root / "contexts/another/duplicate.json"
         target.parent.mkdir(parents=True)
         shutil.copyfile(source, target)
         self.assertTrue(any("duplicate id" in e for e in load_model(self.root).errors))
 
     def test_unknown_document_type_is_not_silently_ignored(self):
-        (self.root / "contexts/invalid.yaml").write_text(
-            "type: unknown\nid: invalid.object\n"
+        (self.root / "contexts/invalid.json").write_text(
+            '{"type": "unknown", "id": "invalid.object"}'
         )
         self.assertTrue(
             any("unsupported document type" in e for e in load_model(self.root).errors)
         )
 
-    def test_malformed_yaml_is_reported_with_nested_path(self):
-        (self.root / "contexts/broken.yaml").write_text("type: [\n")
+    def test_malformed_json_is_reported_with_nested_path(self):
+        (self.root / "contexts/broken.json").write_text('{"type": [')
         self.assertTrue(
             any(
-                "broken.yaml" in e and "invalid YAML" in e
+                "broken.json" in e and "invalid JSON" in e
                 for e in load_model(self.root).errors
             )
         )
@@ -100,7 +100,7 @@ class ContextLayoutTests(unittest.TestCase):
 
     def test_reserved_trees_and_markdown_are_not_model_sources(self):
         for folder in ("generated", "discovery", ".cache"):
-            path = self.root / folder / "not-a-source.yaml"
+            path = self.root / folder / "not-a-source.json"
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("type: unknown\n")
         (self.root / "contexts/README.md").write_text("# Context notes\n")
@@ -108,9 +108,9 @@ class ContextLayoutTests(unittest.TestCase):
 
     def test_invalid_entity_schema_remains_an_error(self):
         path = self.paths["request.content-payment"]
-        doc = yaml.safe_load(path.read_text())
+        doc = json.loads(path.read_text())
         doc["kind"] = "invented_kind"
-        path.write_text(yaml.safe_dump(doc))
+        path.write_text(json.dumps(doc, ensure_ascii=False, indent=2))
         self.assertTrue(any("invented_kind" in e for e in load_model(self.root).errors))
 
 

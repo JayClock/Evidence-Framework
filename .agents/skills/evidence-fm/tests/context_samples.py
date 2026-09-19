@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
-import yaml
 
 
 def entity(
@@ -393,7 +393,7 @@ def performance_documents(
 def write_document(path: Path, document: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        yaml.safe_dump(document, allow_unicode=True, sort_keys=False), encoding="utf-8"
+        json.dumps(document, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 
@@ -408,15 +408,15 @@ def write_documents(root: Path, documents: list[dict[str, Any]]) -> None:
             category = document["category"].replace("_", "-")
             kind = document["kind"].replace("_", "-")
             suffix = document["id"].split(".", 1)[-1].replace(".", "--")
-            filename = f"{category}-{kind}--{suffix}.yaml"
+            filename = f"{category}-{kind}--{suffix}.json"
         else:
-            filename = document["id"].replace(".", "--") + ".yaml"
+            filename = document["id"].replace(".", "--") + ".json"
         write_document(root / directories[document["type"]] / filename, document)
 
 
 def write_model(root: Path, documents: list[dict[str, Any]], entry: str) -> Path:
     write_document(
-        root / "model.yaml",
+        root / "model.json",
         {
             "type": "fm_model",
             "schemaVersion": "3.0",

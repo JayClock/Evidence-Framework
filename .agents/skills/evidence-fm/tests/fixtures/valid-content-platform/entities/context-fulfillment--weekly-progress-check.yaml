@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.weekly-progress-check
-category: context
-kind: fulfillment
-label: 完成周进度检查
-parentContextRef: context.operations-performance

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import copy
+import json
 import re
 import sys
 import unittest
 from pathlib import Path
 
-import yaml
 from context_samples import (
     domain_documents,
     performance_documents,
@@ -26,7 +26,7 @@ from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
 
 def errors_for(document: dict, schema: str) -> list[str]:
     errors: list[str] = []
-    validate_against_schema(document, schema + ".schema.json", "test.yaml", errors)
+    validate_against_schema(document, schema + ".schema.json", "test.json", errors)
     return errors
 
 
@@ -127,7 +127,7 @@ class AttributeNamingTests(unittest.TestCase):
             SKILL / "evals" / "fixtures",
         ]
         for fixtures in fixture_roots:
-            for manifest in fixtures.glob("*/model.yaml"):
+            for manifest in fixtures.glob("*/model.json"):
                 model = load_model(manifest.parent)
                 entity_ids = {entity["id"] for entity in model.entities}
                 for rule in model.rules:
@@ -197,9 +197,9 @@ class AttributeNamingTests(unittest.TestCase):
             domain_documents() + precontract_documents() + performance_documents(True)
         )
         for path in (Path(__file__).resolve().parent / "fixtures").glob(
-            "valid-*/entities/*.yaml"
+            "valid-*/entities/*.json"
         ):
-            documents.append(yaml.safe_load(path.read_text(encoding="utf-8")))
+            documents.append(json.loads(path.read_text(encoding="utf-8")))
         for document in documents:
             for attribute in document.get("attributes", []):
                 with self.subTest(entity=document["id"], attribute=attribute["name"]):

@@ -1,6 +1,6 @@
 # 同一 FM 格式中的领域建模
 
-履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.yaml` 及按上下文组织的 Entity、Relationship、Rule 源 YAML（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
+履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.json` 及按上下文组织的 Entity、Relationship、Rule 源 JSON（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
 
 ## 1. 范围与发现顺序
 
@@ -32,48 +32,60 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 
 ## 3. 最小领域模型与同格式交付
 
-```yaml
-# model.yaml
-type: fm_model
-schemaVersion: '3.0'
-id: customer-information
-name: 客户信息领域模型
-version: '1.0.0'
-ruleLanguage: CEL
-entryContextRefs:
-  - context.customer-information
+文件：`model.json`
+
+```json
+{
+  "type": "fm_model",
+  "schemaVersion": "3.0",
+  "id": "customer-information",
+  "name": "客户信息领域模型",
+  "version": "1.0.0",
+  "ruleLanguage": "CEL",
+  "entryContextRefs": ["context.customer-information"]
+}
 ```
 
-```yaml
-# contexts/customer-information/context.yaml
-type: entity
-id: context.customer-information
-category: context
-kind: domain
-label: 客户信息领域
-rootRefs:
-  - thing.customer-profile
+文件：`contexts/customer-information/context.json`
+
+```json
+{
+  "type": "entity",
+  "id": "context.customer-information",
+  "category": "context",
+  "kind": "domain",
+  "label": "客户信息领域",
+  "rootRefs": ["thing.customer-profile"]
+}
 ```
 
-```yaml
-# contexts/customer-information/things/customer-profile.yaml
-type: entity
-id: thing.customer-profile
-category: participant
-kind: thing
-label: 客户档案
-contextRef: context.customer-information
-attributes:
-  - name: profile_id
-    label: 档案标识
-    valueType: string
-    required: true
-    meaning: 在客户信息领域内区分档案的标识
-  - name: archived
-    label: 已归档
-    valueType: bool
-    required: true
-    meaning: 档案是否已经归档
+文件：`contexts/customer-information/things/customer-profile.json`
+
+```json
+{
+  "type": "entity",
+  "id": "thing.customer-profile",
+  "category": "participant",
+  "kind": "thing",
+  "label": "客户档案",
+  "contextRef": "context.customer-information",
+  "attributes": [
+    {
+      "name": "profile_id",
+      "label": "档案标识",
+      "valueType": "string",
+      "required": true,
+      "meaning": "在客户信息领域内区分档案的标识"
+    },
+    {
+      "name": "archived",
+      "label": "已归档",
+      "valueType": "bool",
+      "required": true,
+      "meaning": "档案是否已经归档"
+    }
+  ]
+}
 ```
 
 这些是模型定义，不是已确认业务事实或生产实例。示例不自动确立当前项目的身份规则。
@@ -104,17 +116,21 @@ attributes:
 
 例如已确认“归档档案不能继续修改”时：
 
-```yaml
-type: rule
-id: rule.profile-editable
-kind: precondition
-label: 客户档案可修改条件
-contextRef: context.customer-information
-bindings:
-  profile:
-    ref: thing.customer-profile
-expression: '!profile.archived'
-resultType: bool
+```json
+{
+  "type": "rule",
+  "id": "rule.profile-editable",
+  "kind": "precondition",
+  "label": "客户档案可修改条件",
+  "contextRef": "context.customer-information",
+  "bindings": {
+    "profile": {
+      "ref": "thing.customer-profile"
+    }
+  },
+  "expression": "!profile.archived",
+  "resultType": "bool"
+}
 ```
 
 规则可以引用已建模 Entity 属性，或用显式 typed binding 表达运行时输入；关键派生数据不能隐藏在无来源变量中。数据流使用 `derivedByRuleRef` 与 CEL AST 追溯，不另写第二份依赖表。

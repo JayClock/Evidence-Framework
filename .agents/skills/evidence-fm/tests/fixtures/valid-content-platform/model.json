@@ -1,0 +1,14 @@
+{
+  "type": "fm_model",
+  "schemaVersion": "3.0",
+  "id": "content-platform-panorama",
+  "name": "内容平台多合同履约模型",
+  "version": "3.0.0",
+  "ruleLanguage": "CEL",
+  "entryContextRefs": [
+    "context.content-subscription",
+    "context.content-production",
+    "context.operations-performance",
+    "context.content-production-precontract"
+  ]
+}

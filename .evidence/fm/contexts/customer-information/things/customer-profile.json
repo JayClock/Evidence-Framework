@@ -1,0 +1,19 @@
+{
+  "type": "entity",
+  "id": "thing.customer-profile",
+  "category": "participant",
+  "kind": "thing",
+  "label": "客户档案",
+  "contextRef": "context.customer-information",
+  "attributes": [
+    {
+      "name": "profile_id",
+      "label": "客户档案编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "在客户信息领域中区分客户档案的稳定编号"
+    }
+  ],
+  "notes": "客户档案是电话销售联系工作的标的物；当前材料未说明档案生命周期、去重、归档或联系方式规则。"
+}

@@ -26,7 +26,7 @@ from fm_model import (
     entity_signature,
     expected_filename,
     fulfillment_members,
-    load_single_yaml,
+    load_single_json,
     normalize,
     validate_against_schema,
 )
@@ -86,10 +86,10 @@ def load_validation_suite(model_root: Path) -> ValidationSuite:
             if path.is_dir():
                 suite.errors.append(f"{rel_path}: nested directories are not allowed")
                 continue
-            if path.suffix != ".yaml":
-                suite.errors.append(f"{rel_path}: only .yaml files are allowed")
+            if path.suffix != ".json":
+                suite.errors.append(f"{rel_path}: only .json files are allowed")
                 continue
-            document = load_single_yaml(path, suite.errors)
+            document = load_single_json(path, suite.errors)
             if document is None:
                 continue
             if document.get("type") != expected_type:

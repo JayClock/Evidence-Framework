@@ -1,6 +1,6 @@
 # FM Schema v3 标准建模模式
 
-本文件提供常见结构，不能替代从当前业务中提取 `business-patterns/*.yaml`。后者使用 `business-pattern-extraction.md`。
+本文件提供常见结构，不能替代从当前业务中提取 `business-patterns/*.json`。后者使用 `business-pattern-extraction.md`。
 
 ## 1. Role-first Contract 与子履约边界
 

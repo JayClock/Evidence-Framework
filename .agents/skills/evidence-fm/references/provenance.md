@@ -83,13 +83,13 @@
 
 **是否阻塞取决于业务依据缺口的影响，不取决于有没有公式。** 已知类型语义不因未给时长退回 null；来源未知仍须保留，不能用类型展开关闭真实的期限确定依据问题。类型模型的非派生时间属性无需 derivedByRuleRef，实际实例缺 required 时间值仍校验失败。
 
-最终 Entity 源 YAML 的 `attributes` 须显式定义各类型的对应名称，统一 `valueType: timestamp`、`required: true`、`keyData: true`，说明 meaning 与来源／派生规则。业务属性用 snake_case；不能仅写在说明里或让编译器补齐。Request 本身的 started_at／expired_at 构成区间；实例提供确定的 RFC 3339 时间值。类型必备属性不互换，领域对象不套 Evidence 时间表。
+最终 Entity 源 JSON 的 `attributes` 须显式定义各类型的对应名称，统一 `valueType: timestamp`、`required: true`、`keyData: true`，说明 meaning 与来源／派生规则。业务属性用 snake_case；不能仅写在说明里或让编译器补齐。Request 本身的 started_at／expired_at 构成区间；实例提供确定的 RFC 3339 时间值。类型必备属性不互换，领域对象不套 Evidence 时间表。
 
 ## 映射到正式模型
 
 正式内容按来源与实际 Entity ID、属性名、Rule ID 对齐，原文保留在原始来源／访谈记录中，模型说明引用其版本与定位。工作理解不是已确认模型，需重新核对其所依赖的事实，而不是把整个访谈摘要复制成模型依据。
 
-直接或引用值保留提供依据和适用关系；派生输入与规则映射到 Entity Attribute 和 CEL，依赖由 AST 提取。keyData、derivedByRuleRef、集合 binding、标量输入限制及机器 lineage 见 [追溯与模拟](traceability-and-simulation.md)，YAML 类型要求见 [格式](format.md)。来源说明不新增 Schema 枚举，也不手写第二份依赖清单。
+直接或引用值保留提供依据和适用关系；派生输入与规则映射到 Entity Attribute 和 CEL，依赖由 AST 提取。keyData、derivedByRuleRef、集合 binding、标量输入限制及机器 lineage 见 [追溯与模拟](traceability-and-simulation.md)，JSON 类型要求见 [格式](format.md)。来源说明不新增 Schema 枚举，也不手写第二份依赖清单。
 
 ## 可恢复的来源记录
 

@@ -26,7 +26,7 @@ Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成�
 ├── discovery.json        # 业务来源、回答、问题、状态及交接
 ├── questions.json        # 可选的独立问题记录
 ├── fm/                   # 唯一当前模型，直接编辑
-│   ├── model.yaml
+│   ├── model.json
 │   ├── entities/
 │   ├── relationships/
 │   ├── rules/

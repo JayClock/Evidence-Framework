@@ -6,12 +6,12 @@
 
 ```text
 fm/
-├── model.yaml
-├── participants/user.yaml
+├── model.json
+├── participants/user.json
 ├── contexts/
 │   ├── sales-performance/
-│   │   ├── context.yaml
-│   │   ├── contract.yaml
+│   │   ├── context.json
+│   │   ├── contract.json
 │   │   ├── roles/
 │   │   ├── relationships/
 │   │   └── fulfillments/monthly-customer-contact/
@@ -21,13 +21,13 @@ fm/
 └── generated/
 ```
 
-- [电话销售绩效协议](contexts/sales-performance/contract.yaml)与[客户信息领域](contexts/customer-information/context.yaml)是相互分离的边界：前者表达内部绩效履约，后者只提供客户档案标的物。
+- [电话销售绩效协议](contexts/sales-performance/contract.json)与[客户信息领域](contexts/customer-information/context.json)是相互分离的边界：前者表达内部绩效履约，后者只提供客户档案标的物。
 - `contexts/` 与 `participants/` 共含 10 个业务对象；共 5 条关系；1 条 CEL 完成规则。
-- 月度客户联系目标履约目录以 `context.yaml` 表达责任边界，`request.yaml`、`confirmation.yaml`、`relationships/` 和 `rules/` 表达该履约的凭证与规则。
+- 月度客户联系目标履约目录以 `context.json` 表达责任边界，`request.json`、`confirmation.json`、`relationships/` 和 `rules/` 表达该履约的凭证与规则。
 - 客户联系记录通过跨上下文 `references` 关系指向客户档案，`party.user` 分别扮演绩效管理者和电话销售角色。
 - `validation/instances/`：5 份回放单据。
 - `validation/scenarios/`：2 个场景，覆盖月度目标完成与不足。
-- `generated/`：当前保留本次重建结果；消费前应从当前源 YAML 和 validation 重建。
+- `generated/`：当前保留本次重建结果；消费前应从当前源 JSON 和 validation 重建。
 
 模型概览见 [00-overview.md](00-overview.md)，术语见 [01-glossary.md](01-glossary.md)，CRM 本批次来源、纳入判断与缺口见 [crm-assessment.md](crm-assessment.md)。
 

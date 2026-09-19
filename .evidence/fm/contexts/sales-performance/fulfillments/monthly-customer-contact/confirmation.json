@@ -1,0 +1,68 @@
+{
+  "type": "entity",
+  "id": "confirmation.customer-contact-record",
+  "category": "evidence",
+  "kind": "fulfillment_confirmation",
+  "label": "客户联系记录",
+  "contextRef": "fulfillment.monthly-customer-contact",
+  "attributes": [
+    {
+      "name": "record_id",
+      "label": "联系记录编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次客户联系记录的稳定编号"
+    },
+    {
+      "name": "request_id",
+      "label": "目标请求编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次联系计入的月度客户联系目标请求编号"
+    },
+    {
+      "name": "agreement_id",
+      "label": "绩效协议编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次联系所属绩效协议的编号"
+    },
+    {
+      "name": "period_id",
+      "label": "业务周期编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次联系计入的业务周期编号"
+    },
+    {
+      "name": "customer_profile_id",
+      "label": "客户档案编号",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次实际联系所指向的客户档案编号"
+    },
+    {
+      "name": "channel",
+      "label": "联系渠道",
+      "valueType": "string",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次客户联系采用的电话或邮件渠道"
+    },
+    {
+      "name": "confirmed_at",
+      "label": "联系确认时刻",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "电话销售实际完成本次客户联系并形成记录的业务时刻"
+    }
+  ],
+  "notes": "每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
+  "responsibleRoleRef": "role.tele-sales"
+}

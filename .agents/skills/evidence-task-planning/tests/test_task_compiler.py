@@ -26,7 +26,7 @@ class CompilerTests(unittest.TestCase):
         self.fm = self.root / "fm"
         self.fm.mkdir()
         self.put(
-            "model.yaml",
+            "model.json",
             {
                 "type": "fm_model",
                 "schemaVersion": "3.0",
@@ -35,7 +35,7 @@ class CompilerTests(unittest.TestCase):
             },
         )
         self.put(
-            "contexts/content.yaml",
+            "contexts/content.json",
             {
                 "type": "entity",
                 "id": "context.content",
@@ -45,7 +45,7 @@ class CompilerTests(unittest.TestCase):
             },
         )
         self.put(
-            "things/book.yaml",
+            "things/book.json",
             {
                 "type": "entity",
                 "id": "thing.book",
@@ -56,7 +56,7 @@ class CompilerTests(unittest.TestCase):
             },
         )
         self.put(
-            "rules/title.yaml",
+            "rules/title.json",
             {
                 "type": "rule",
                 "id": "rule.title",
@@ -70,7 +70,9 @@ class CompilerTests(unittest.TestCase):
     def put(self, name, data):
         path = self.fm / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(yaml.safe_dump(data, allow_unicode=True), encoding="utf-8")
+        path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         return path
 
     def mapping(self, inventory):
@@ -172,7 +174,7 @@ class CompilerTests(unittest.TestCase):
 
     def test_multiple_contexts_do_not_create_deployment_or_remote_units(self):
         self.put(
-            "contexts/external.yaml",
+            "contexts/external.json",
             {
                 "type": "entity",
                 "id": "context.reference",
@@ -207,12 +209,12 @@ class CompilerTests(unittest.TestCase):
             compiler.compile_tasks(inv, mapping)
 
     def test_inventory_stable_and_read_only(self):
-        before = {str(p): p.read_bytes() for p in self.fm.rglob("*.yaml")}
+        before = {str(p): p.read_bytes() for p in self.fm.rglob("*.json")}
         a = compiler.inventory(self.fm)
         b = compiler.inventory(self.fm)
         self.assertEqual(a, b)
         self.assertEqual(
-            before, {str(p): p.read_bytes() for p in self.fm.rglob("*.yaml")}
+            before, {str(p): p.read_bytes() for p in self.fm.rglob("*.json")}
         )
         self.assertEqual(a["profile"]["architecture"], "modular-monolith")
         self.assertEqual(a["profile"]["persistence"], "mybatis")
@@ -225,32 +227,32 @@ class CompilerTests(unittest.TestCase):
 
     def test_file_move_and_label_change_keep_keys(self):
         a = compiler.inventory(self.fm)
-        path = self.fm / "things/book.yaml"
-        body = yaml.safe_load(path.read_text())
+        path = self.fm / "things/book.json"
+        body = json.loads(path.read_text())
         body["label"] = "改名"
         path.unlink()
-        self.put("moved/book.yaml", body)
+        self.put("moved/book.json", body)
         b = compiler.inventory(self.fm)
         self.assertEqual([u["key"] for u in a["units"]], [u["key"] for u in b["units"]])
         self.assertNotEqual(a["inputDigest"], b["inputDigest"])
 
     def test_generated_files_are_not_sources(self):
         a = compiler.inventory(self.fm)
-        self.put("generated/broken.yaml", {"id": "thing.book", "bad": True})
+        self.put("generated/broken.json", {"id": "thing.book", "bad": True})
         self.assertEqual(a, compiler.inventory(self.fm))
 
-    def test_duplicate_yaml_key_and_duplicate_id_rejected(self):
-        (self.fm / "bad.yaml").write_text("type: entity\nid: a\nid: b\n")
-        with self.assertRaisesRegex(ValueError, "duplicate YAML key"):
+    def test_duplicate_json_key_and_duplicate_id_rejected(self):
+        (self.fm / "bad.json").write_text('{"type": "entity", "id": "a", "id": "b"}')
+        with self.assertRaisesRegex(ValueError, "duplicate JSON key"):
             compiler.inventory(self.fm)
-        (self.fm / "bad.yaml").unlink()
-        self.put("other.yaml", {"type": "entity", "id": "thing.book"})
+        (self.fm / "bad.json").unlink()
+        self.put("other.json", {"type": "entity", "id": "thing.book"})
         with self.assertRaisesRegex(ValueError, "duplicate source ID"):
             compiler.inventory(self.fm)
 
     def test_missing_fm_reference_rejected(self):
         self.put(
-            "bad.yaml",
+            "bad.json",
             {
                 "type": "relationship",
                 "id": "relation.bad",
@@ -264,7 +266,7 @@ class CompilerTests(unittest.TestCase):
 
     def test_source_cycles_are_not_execution_cycles(self):
         self.put(
-            "cycle.yaml",
+            "cycle.json",
             {
                 "type": "relationship",
                 "id": "relation.cycle",
@@ -520,7 +522,9 @@ class CompilerTests(unittest.TestCase):
             },
         ]
         for i, doc in enumerate(docs):
-            (other / f"{i}.yaml").write_text(yaml.safe_dump(doc))
+            (other / f"{i}.json").write_text(
+                json.dumps(doc, ensure_ascii=False, indent=2)
+            )
         inv = compiler.inventory(other)
         self.assertEqual(inv["modelId"], "laboratory")
         self.assertIn("entity::thing.specimen", {u["key"] for u in inv["units"]})
@@ -530,7 +534,7 @@ class CompilerTests(unittest.TestCase):
     def test_actor_and_proof_roles_are_distinct_units(self):
         for ref, kind in [("role.member", "party"), ("role.proof", "evidence")]:
             self.put(
-                f"{ref}.yaml",
+                f"{ref}.json",
                 {
                     "type": "entity",
                     "id": ref,

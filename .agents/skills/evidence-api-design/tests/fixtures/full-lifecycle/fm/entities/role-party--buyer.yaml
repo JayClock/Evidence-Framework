@@ -1,6 +1,0 @@
-type: entity
-id: role.buyer
-category: role
-kind: party
-label: 客户
-contextRef: context.product-procurement

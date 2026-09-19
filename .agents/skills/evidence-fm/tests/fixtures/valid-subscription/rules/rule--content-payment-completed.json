@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.content-payment-completed",
+  "kind": "completion",
+  "label": "支付内容产品费用完成判断",
+  "description": "付款确认（confirmation.content-payment）的形成时间位于付款请求（request.content-payment）的有效区间内时，判定支付履约（fulfillment.content-payment）完成。",
+  "contextRef": "fulfillment.content-payment",
+  "bindings": {
+    "request": {
+      "ref": "request.content-payment"
+    },
+    "confirmations": {
+      "ref": "confirmation.content-payment",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.exists(c,\n  c.confirmed_at >= request.started_at &&\n  c.confirmed_at <= request.expired_at)",
+  "resultType": "bool"
+}

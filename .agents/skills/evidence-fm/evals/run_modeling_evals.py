@@ -191,14 +191,14 @@ def run_command(
 
 def find_model(output: Path) -> Path | None:
     candidates = [output / "fm-model", output]
-    candidates.extend(path.parent for path in output.rglob("model.yaml"))
+    candidates.extend(path.parent for path in output.rglob("model.json"))
     seen: set[Path] = set()
     for candidate in candidates:
         candidate = candidate.resolve()
         if candidate in seen:
             continue
         seen.add(candidate)
-        if (candidate / "model.yaml").is_file() and (candidate / "entities").is_dir():
+        if (candidate / "model.json").is_file() and (candidate / "entities").is_dir():
             return candidate
     return None
 
@@ -536,7 +536,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             expectations,
             "Output contains an fm-model directory.",
             False,
-            "No model.yaml found",
+            "No model.json found",
         )
         return save_grade(item, workspace, configuration, expectations, model_dir)
 
@@ -567,7 +567,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             compiled_ok = False
     add(
         expectations,
-        "Deterministic generated/model.json matches YAML.",
+        "Deterministic generated/model.json matches JSON sources.",
         compiled_ok,
         str(generated),
     )

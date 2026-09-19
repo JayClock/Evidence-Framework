@@ -1,0 +1,9 @@
+{
+  "type": "relationship",
+  "id": "relation.user-as-tele-sales",
+  "kind": "plays_role",
+  "sourceRef": "party.user",
+  "targetRef": "role.tele-sales",
+  "label": "用户在电话销售绩效协议中扮演电话销售",
+  "notes": "该关系表示用户主体可以承担电话销售角色，不表示同一协议实例中可同时承担双方角色，也不自动授予额外操作权限。"
+}

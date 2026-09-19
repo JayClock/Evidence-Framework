@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
-import yaml
 
 SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
@@ -24,22 +24,22 @@ LEGACY_TERMS = {
 
 
 class CanonicalModelTests(unittest.TestCase):
-    def yaml_documents(self):
+    def json_documents(self):
         for root in MODEL_ROOTS:
-            for path in root.rglob("*.yaml"):
-                value = yaml.safe_load(path.read_text(encoding="utf-8"))
+            for path in root.rglob("*.json"):
+                value = json.loads(path.read_text(encoding="utf-8"))
                 if isinstance(value, dict):
                     yield path, value
 
     def test_entity_filenames_start_with_category_and_kind(self) -> None:
-        for path, entity in self.yaml_documents():
+        for path, entity in self.json_documents():
             if entity.get("type") != "entity":
                 continue
             category = entity["category"].replace("_", "-")
             kind = entity["kind"].replace("_", "-")
             object_suffix = entity["id"].split(".", 1)[-1].replace(".", "--")
             self.assertEqual(
-                f"{category}-{kind}--{object_suffix}.yaml",
+                f"{category}-{kind}--{object_suffix}.json",
                 path.name,
                 path,
             )
@@ -57,7 +57,7 @@ class CanonicalModelTests(unittest.TestCase):
         }
         fulfillments = [
             (path, value)
-            for path, value in self.yaml_documents()
+            for path, value in self.json_documents()
             if (value.get("category"), value.get("kind")) == ("context", "fulfillment")
         ]
         self.assertTrue(fulfillments)
@@ -80,7 +80,7 @@ class CanonicalModelTests(unittest.TestCase):
             self.assertNotIn(term, text, term)
 
     def test_evidence_relationships_use_canonical_directions(self) -> None:
-        documents = [value for _, value in self.yaml_documents()]
+        documents = [value for _, value in self.json_documents()]
         entities = {
             value["id"]: value for value in documents if value.get("type") == "entity"
         }

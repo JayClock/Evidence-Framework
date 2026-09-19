@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.wechat-payment
-category: context
-kind: fulfillment
-label: 微信支付
-parentContextRef: context.wechat-payment

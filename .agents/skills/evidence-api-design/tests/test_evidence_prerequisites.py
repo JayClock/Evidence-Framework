@@ -12,7 +12,7 @@ import yaml
 from test_support import API_ROOT, FM_SKILL
 
 EXAMPLE = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
-SCENARIO = "validation/scenarios/scenario--product-procurement.yaml"
+SCENARIO = "validation/scenarios/scenario--product-procurement.json"
 PROOFS = {
     "payment": ("wechat-payment-confirmation", "payment_number"),
     "invoice": ("invoice", "invoice_number"),
@@ -21,11 +21,15 @@ PROOFS = {
 
 
 def load(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_yaml(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
 def save(path: Path, value) -> None:
-    path.write_text(yaml.safe_dump(value, allow_unicode=True), encoding="utf-8")
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def check(root: Path):
@@ -49,7 +53,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
     def test_contract_roles_and_external_evidence_responsibility_stay_separate(
         self,
     ) -> None:
-        entities = [load(p) for p in (self.root / "entities").glob("*.yaml")]
+        entities = [load(p) for p in (self.root / "entities").glob("*.json")]
         parties = {
             e["label"]
             for e in entities
@@ -74,13 +78,13 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 and evidence["contextRef"] != "fulfillment.wechat-payment"
             ):
                 self.assertIn(evidence["responsibleRoleRef"], contract["roleRefs"])
-        design = load(EXAMPLE / "api.yaml")
+        design = load_yaml(EXAMPLE / "api.yaml")
         for cap in design["capabilities"]:
             self.assertIn(cap["actorRoleRef"], contract["roleRefs"])
         self.assertFalse(
             any(r["entityRef"].startswith("party.") for r in design["resources"])
         )
-        plays = [load(p) for p in (self.root / "relationships").glob("*.yaml")]
+        plays = [load(p) for p in (self.root / "relationships").glob("*.json")]
         self.assertEqual(
             {
                 (r["sourceRef"], r["targetRef"])
@@ -95,7 +99,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
 
     def test_dependencies_and_api_steps_match_for_each_responsibility(self) -> None:
         scenario = load(self.root / SCENARIO)
-        design = load(EXAMPLE / "api.yaml")
+        design = load_yaml(EXAMPLE / "api.yaml")
         steps = {s["issueInstanceRef"]: s for s in scenario["steps"]}
         journey = design["journeys"][0]["steps"]
         caps = {c["id"]: c for c in design["capabilities"]}
@@ -114,7 +118,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 self.assertIn(proof_id, step["availableInstanceRefs"])
                 confirmation = load(
                     self.root
-                    / f"validation/instances/instance--{name}-confirmation.yaml"
+                    / f"validation/instances/instance--{name}-confirmation.json"
                 )
                 self.assertEqual(confirmation["basedOn"], [request_id, proof_id])
                 if name != "payment":
@@ -155,7 +159,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         instances = {
             obj["id"]: obj
             for obj in (
-                load(p) for p in (self.root / "validation/instances").glob("*.yaml")
+                load(p) for p in (self.root / "validation/instances").glob("*.json")
             )
         }
         for step, mapped in zip(scenario["steps"], journey, strict=True):
@@ -215,7 +219,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         self.assertTrue(report["errors"], report)
 
     def test_late_required_evidence_is_rejected(self) -> None:
-        path = self.root / "validation/instances/instance--invoice.yaml"
+        path = self.root / "validation/instances/instance--invoice.json"
         evidence = load(path)
         evidence["values"]["created_at"] = "2026-11-05T09:06:00Z"
         save(path, evidence)
@@ -228,7 +232,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
             with self.subTest(name=name):
                 path = (
                     self.root
-                    / f"validation/instances/instance--{name}-confirmation.yaml"
+                    / f"validation/instances/instance--{name}-confirmation.json"
                 )
                 original = load(path)
                 changed = load(path)
@@ -240,7 +244,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 save(path, original)
 
     def test_evidence_must_belong_to_the_requested_instance(self) -> None:
-        path = self.root / "validation/instances/instance--invoice.yaml"
+        path = self.root / "validation/instances/instance--invoice.json"
         evidence = load(path)
         evidence["values"]["request_number"] = "UNRELATED-REQ-001"
         save(path, evidence)
@@ -252,7 +256,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         (
             self.root
             / "relationships"
-            / "relation--wechat-confirmation-plays-payment-proof.yaml"
+            / "relation--wechat-confirmation-plays-payment-proof.json"
         ).unlink()
         code, report = check(self.root)
         self.assertNotEqual(code, 0)
@@ -261,7 +265,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
     def test_payment_role_cannot_be_issued_as_an_evidence_instance(self) -> None:
         path = (
             self.root
-            / "validation/instances/instance--wechat-payment-confirmation.yaml"
+            / "validation/instances/instance--wechat-payment-confirmation.json"
         )
         instance = load(path)
         instance["entityRef"] = "role.payment-proof"
@@ -313,7 +317,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
     def test_external_proof_must_match_request_amount_and_time(self) -> None:
         path = (
             self.root
-            / "validation/instances/instance--wechat-payment-confirmation.yaml"
+            / "validation/instances/instance--wechat-payment-confirmation.json"
         )
         original = load(path)
         for field, value in (

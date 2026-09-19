@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.content-access-completed",
+  "kind": "completion",
+  "label": "提供付费内容访问完成判断",
+  "description": "存在至少一份与请求（request.content-access）关联的确认凭证（confirmation.content-access）时，判定履约（fulfillment.content-access）完成。",
+  "contextRef": "fulfillment.content-access",
+  "bindings": {
+    "request": {
+      "ref": "request.content-access"
+    },
+    "confirmations": {
+      "ref": "confirmation.content-access",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.size() > 0",
+  "resultType": "bool"
+}

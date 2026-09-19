@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.creator-penalty
-category: context
-kind: fulfillment
-label: 支付断更违约金
-parentContextRef: context.content-production

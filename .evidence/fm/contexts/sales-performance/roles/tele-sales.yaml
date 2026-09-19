@@ -1,6 +1,0 @@
-type: entity
-id: role.tele-sales
-category: role
-kind: party
-label: 电话销售
-contextRef: context.sales-performance

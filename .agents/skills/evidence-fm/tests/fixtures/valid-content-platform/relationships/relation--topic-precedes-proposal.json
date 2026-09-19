@@ -1,0 +1,8 @@
+{
+  "type": "relationship",
+  "id": "relation.topic-precedes-proposal",
+  "kind": "precedes",
+  "sourceRef": "rfp.content-topic",
+  "targetRef": "proposal.content-project",
+  "label": "内容产品选题请求先于立项提案"
+}

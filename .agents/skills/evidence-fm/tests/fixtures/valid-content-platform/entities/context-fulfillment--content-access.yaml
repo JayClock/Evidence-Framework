@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.content-access
-category: context
-kind: fulfillment
-label: 提供付费内容访问
-parentContextRef: context.content-subscription

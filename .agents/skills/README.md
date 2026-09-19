@@ -8,8 +8,8 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 | --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | [evidence-modeling](evidence-modeling/SKILL.md)           | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                                  | 组合 Discovery 与 FM；界面扩展可选                             |
 | [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                                    | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
-| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 YAML、验证场景与实际结果；不足则返回缺口               | 读取准则只需文本；执行校验需 Python 3.10+                      |
-| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 YAML 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
+| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 JSON、验证场景与实际结果；不足则返回缺口               | 读取准则只需文本；执行校验需 Python 3.10+                      |
+| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 JSON 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
 | [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
 | [evidence-api-design](evidence-api-design/SKILL.md)       | 整体 API 设计      | 已确认 FM → HTTP 契约、OpenAPI、超媒体与消费者流程                                       | Python、可定位的 evidence-fm                                   |
 | [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |

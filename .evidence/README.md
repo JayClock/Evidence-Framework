@@ -8,7 +8,7 @@
 | FM 使用入口                  | [fm/README.md](fm/README.md)                       |
 | 合同、责任、变化点与场景概览 | [fm/00-overview.md](fm/00-overview.md)             |
 | 正式业务术语                 | [fm/01-glossary.md](fm/01-glossary.md)             |
-| 模型源                       | [fm/model.yaml](fm/model.yaml)                     |
+| 模型源                       | [fm/model.json](fm/model.json)                     |
 | API 设计说明                 | [api/README.md](api/README.md)                     |
 | API 唯一设计源               | [api/api.yaml](api/api.yaml)                       |
 | 可视化人工审核               | [views/index.html](views/index.html)               |

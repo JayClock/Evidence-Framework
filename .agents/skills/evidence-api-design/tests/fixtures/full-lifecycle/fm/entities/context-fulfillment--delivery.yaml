@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.delivery
-category: context
-kind: fulfillment
-label: 交付商品
-parentContextRef: context.product-procurement

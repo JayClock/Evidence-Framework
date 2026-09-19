@@ -79,8 +79,8 @@ const inScope = (item) =>
 function sourceButton(id) {
   const path = DATA.locations[id.split('#')[0]];
   return path
-    ? button('打开对应 YAML', () => showFile(path, id), '')
-    : text('small', '此项为生成结果，无独立 YAML 文件。', 'muted');
+    ? button('打开对应源文件', () => showFile(path, id), '')
+    : text('small', '此项为生成结果，无独立源文件。', 'muted');
 }
 function table(headers, rows) {
   const el = text('table'),
@@ -119,14 +119,14 @@ function rawSection(parent, title, value) {
 function showFile(path, id = '') {
   const file = DATA.files.find((f) => f.path === path);
   if (!file) return;
-  const box = detailStart('YAML 原文', path);
+  const box = detailStart('源文件原文', path);
   box.append(
     badge(file.generated ? '历史派生快照 · 仅对照' : '当前输入'),
     text('p', `SHA-256 ${file.sha256}`),
   );
   if (id) box.append(text('p', `定位：${id}`));
   const pre = text('pre', file.text, 'raw');
-  pre.id = 'yaml-source';
+  pre.id = 'source-file';
   box.append(pre);
   if (id) {
     const lines = file.text.split('\n'),
@@ -138,7 +138,7 @@ function showFile(path, id = '') {
   }
   box.append(
     button(
-      '下载此 YAML',
+      '下载此源文件',
       () => download(file.path.split('/').pop(), file.text),
       '',
     ),
@@ -1426,7 +1426,7 @@ function renderFiles() {
   $('files').append(
     text(
       'p',
-      `${selected.length} / ${DATA.files.length} 份 YAML。文件索引不受“边界”筛选限制。`,
+      `${selected.length} / ${DATA.files.length} 份源文件。文件索引不受“边界”筛选限制。`,
     ),
   );
   for (const f of selected) {
@@ -1480,7 +1480,7 @@ function initialize() {
   $('notice').textContent =
     `生成时校验：FM ${DATA.check.valid ? '通过' : '未通过'} · 模拟 ${simulationLabel}。快照生成于 ${DATA.meta.generatedAt.slice(0, 19)} UTC；离线页面不会自动检测后续文件变化，请重新生成。`;
   for (const [number, name] of [
-    [DATA.files.length, '份 YAML · 可回到原文'],
+    [DATA.files.length, '份源文件 · 可回到原文'],
     [DATA.model.entities.length, '个业务对象'],
     [DATA.simulation.scenarioResults.length, '个场景回放'],
     [capabilities.length, '个角色接口'],

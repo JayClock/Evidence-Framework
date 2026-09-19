@@ -13,32 +13,23 @@
 
 ## Schema v3 产物
 
-每个模式写入独立的 `business-patterns/*.yaml`：
+每个模式写入独立的 `business-patterns/*.json`：
 
-```yaml
-type: business_pattern
-id: pattern.multi-channel-payment
-label: 多渠道付款确认
-businessGoals:
-  - revenue
-  - risk
-operationInvariant: 销售方要求购买方付款，并只依赖可审计的合格付款确认完成履约。
-domainNeutralClaim: 商品、内容或服务均可作为交易标的，付款凭证责任不依赖具体领域对象。
-businessSpineRefs:
-  - fulfillment.sales-payment
-invariantRefs:
-  - role.qualified-payment-confirmation
-variationPointRefs:
-  - role.qualified-payment-confirmation
-domainInputRefs:
-  - thing.product
-  - thing.content
-supportedByContractContextRefs:
-  - context.product-sales
-  - context.content-sales
-domainExampleContextRefs:
-  - context.catalog
-  - context.content
+```json
+{
+  "type": "business_pattern",
+  "id": "pattern.multi-channel-payment",
+  "label": "多渠道付款确认",
+  "businessGoals": ["revenue", "risk"],
+  "operationInvariant": "销售方要求购买方付款，并只依赖可审计的合格付款确认完成履约。",
+  "domainNeutralClaim": "商品、内容或服务均可作为交易标的，付款凭证责任不依赖具体领域对象。",
+  "businessSpineRefs": ["fulfillment.sales-payment"],
+  "invariantRefs": ["role.qualified-payment-confirmation"],
+  "variationPointRefs": ["role.qualified-payment-confirmation"],
+  "domainInputRefs": ["thing.product", "thing.content"],
+  "supportedByContractContextRefs": ["context.product-sales", "context.content-sales"],
+  "domainExampleContextRefs": ["context.catalog", "context.content"]
+}
 ```
 
 ## 复用证据
@@ -50,14 +41,14 @@ domainExampleContextRefs:
 
 ## 派生文档
 
-分片 YAML 是事实源。需要人类阅读版时运行：
+分片 JSON 是事实源。需要人类阅读版时运行：
 
 ```bash
 python3 scripts/build_fm_business_patterns.py <model-dir> \
   --output <model-dir>/02-business-patterns.md
 ```
 
-不要直接维护 `02-business-patterns.md`，否则会与 YAML 漂移。
+不要直接维护 `02-business-patterns.md`，否则会与 JSON 漂移。
 
 ## 检查问题
 

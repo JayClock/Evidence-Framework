@@ -18,8 +18,8 @@ inputRoots:
   fm: .evidence/fm
   api: .evidence/api/api.yaml
 sourceManifest:
-  - path: .evidence/fm/model.yaml
-    digest: 45204ba1ba5d5c302f575da64d0982a04e483f894681db1d6a701f1853fabf30
+  - path: .evidence/fm/model.json
+    digest: 148e200f8c0c9dbd96a5b6503cb756ae974f64ad2c698d11f342d05bdebbdc6a
     sourceRefs:
       - context.sales-performance
       - context.customer-information
@@ -54,118 +54,118 @@ sourceManifest:
     digest: 0d80197efcc1f45510d4fdd996d9829344cccd122c819b4a088ffe3fdd9d5040
   - path: docs/engineering/examples.md
     digest: b9624de178c6d355a9a2a36b3a380d1ee7ceb17a526be640a9456e8d7bc4a918
-  - path: .evidence/fm/contexts/customer-information/context.yaml
-    digest: 040caea8e4dcaed26def339b0c1b83d215a99db2eec12e9780d91cf510e38368
+  - path: .evidence/fm/contexts/customer-information/context.json
+    digest: a56708460b578f4c295fc35770f35d53329b540da504550662f869dcc0797f7d
     sourceRefs:
       - context.customer-information
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/customer-information/things/customer-profile.yaml
-    digest: ae56f8548bcf137876d71290c926f3cc4e22428a6b5a624e309fb7194c7e35e7
+  - path: .evidence/fm/contexts/customer-information/things/customer-profile.json
+    digest: 764fcdab3cebe3ed296409719ed9aff877968c8a26afc1220dfe1ba897eb0eb4
     sourceRefs:
       - thing.customer-profile
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/context.yaml
-    digest: 569335028f000e917548a381dc2f42e53a959178350a057cbdb53ea70e2077ea
+  - path: .evidence/fm/contexts/sales-performance/context.json
+    digest: 00f7eb476acf7ddbfdeef070e3ffcce6910d5d3b9870a5727c404d6b0c3b708e
     sourceRefs:
       - context.sales-performance
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/contract.yaml
-    digest: 7520b5edbb5c59cbc741f6faba438ad869881a8e528ebc0d638d650d01a7269a
+  - path: .evidence/fm/contexts/sales-performance/contract.json
+    digest: 63e2875ed0e964167f216a385662d60d20457008157c886e08b95e124fc13fa3
     sourceRefs:
       - contract.sales-performance
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/confirmation.yaml
-    digest: 71db7c5c7f8a3dbd0cc21b29a67450ad50a5fce681ec96a276c3591d81ee8341
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/confirmation.json
+    digest: 84dbd3d610393e50e394fe0a9d8c003f970043281333af2976bf09698bf702af
     sourceRefs:
       - confirmation.customer-contact-record
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/context.yaml
-    digest: 179ee5abd3823bb2a0469324405e23e62da89f07a9a15a4d15e552ec0e095f9b
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/context.json
+    digest: 18c0a19aa085c37cd353f4072d5b2ed3a7ecdec0e39f886102d00f2ceb806542
     sourceRefs:
       - fulfillment.monthly-customer-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/relationships/request-contact-record.yaml
-    digest: 45ee81872350caa7e08a2810cc2e274a929cdc4515049c56861e813c6ef8926d
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/relationships/request-contact-record.json
+    digest: 25a5834eb2391c2e3bf930795298d95d5b5860fe3d7903f9ee2c501f10b3e21f
     sourceRefs:
       - relation.monthly-contact-to-record
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/request.yaml
-    digest: 8b8a5f346ec950f685f51ad6f665a75e94e59a2b22e6edd3763432b1a819eca4
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/request.json
+    digest: 2a7edb2209ba1ffbc10a84e3f006932ed32ae6d6da3385c0f277e048ff590c81
     sourceRefs:
       - request.monthly-customer-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/rules/completed.yaml
-    digest: 4904b51bc880ee193a426e7b927854d03779d11e86606e72127445c80d3c414a
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/rules/completed.json
+    digest: c9241e713c3841eb80e68ddf77a1c0a6a542c915b8210aeab699cac818db1bd4
     sourceRefs:
       - rule.monthly-customer-contact-completed
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/relationships/contract-monthly-customer-contact.yaml
-    digest: cbc9e0b6cda1b02cd2ace9b9afd6e93162d44866384134bbf654b1f489923648
+  - path: .evidence/fm/contexts/sales-performance/relationships/contract-monthly-customer-contact.json
+    digest: 2d1d59adc1f125a1cc6310fa296108b43d259ab3b7e1d3550041ea915193d308
     sourceRefs:
       - relation.sales-performance-to-monthly-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/roles/performance-manager.yaml
-    digest: 9724ba39e3f303e5cac1acfe97a8711843fe525f83be60918f0c54ba80ec4828
+  - path: .evidence/fm/contexts/sales-performance/roles/performance-manager.json
+    digest: b6619c6297831e8ab27a934db877f10e3c0df0d974c98109f364b0da59273e4c
     sourceRefs:
       - role.performance-manager
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/roles/tele-sales.yaml
-    digest: 584241bf7424ad9eee190fce6e316eb62d70254673b64e9f10f2c1e5b334d0fb
+  - path: .evidence/fm/contexts/sales-performance/roles/tele-sales.json
+    digest: 62ebb634d97e7c7ab5376cc251c5a564ddc4e39da622db6ca83725153841d71d
     sourceRefs:
       - role.tele-sales
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/participants/user.yaml
-    digest: 9d717d98d9aa8b452023cb92401de3f5b45371f6374051dae316748c66fd2857
+  - path: .evidence/fm/participants/user.json
+    digest: dfbdafa6359ec06130c5d38c1dc5a908a83e94dac1e2393dc0606977737b7a39
     sourceRefs:
       - party.user
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/relationships/customer-contact-profile.yaml
-    digest: b8bebcfc7bf90746aa4bf99441ee6a7ec64f876fffe9a8064074066bd6124f97
+  - path: .evidence/fm/relationships/customer-contact-profile.json
+    digest: 9ff4ff62d6a06f193683cee64a4f4d94b5407a403a322cbf07d00b580b896216
     sourceRefs:
       - relation.customer-contact-references-profile
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/relationships/user-as-performance-manager.yaml
-    digest: 8ab368bb958e9c00a786b4e06487a88b3056409a715038bd2d674b0c2d77c9ac
+  - path: .evidence/fm/relationships/user-as-performance-manager.json
+    digest: 98317347860b37363f482a3bd6b93010b6926f7f1cbbda1a60b84f6ec3c870c0
     sourceRefs:
       - relation.user-as-performance-manager
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/relationships/user-as-tele-sales.yaml
-    digest: 112d58e883d05cdec2a263cf1a8778a7ed436a99c7f3c3245d04e25cf62d3cd0
+  - path: .evidence/fm/relationships/user-as-tele-sales.json
+    digest: a9b2e348e687c2de3cb18ad3a246c06a806f8e384a8b1b06a974599d304e2ba6
     sourceRefs:
       - relation.user-as-tele-sales
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/instances/instance--customer-contact-email-1.yaml
-    digest: 448c3e4ba53fb9b0e8ccecc0a65d2d9ae80613ff68048810ce2913b53336cdad
+  - path: .evidence/fm/validation/instances/instance--customer-contact-email-1.json
+    digest: 9a6a301e7b4a6b398f17f3dd7850e35ac0593afbd2b757df52b902e2053139b9
     sourceRefs:
       - instance.customer-contact-email-1
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/instances/instance--customer-contact-phone-1.yaml
-    digest: f7803c9fe3e9533fbdee14f3dd7966ab1e802320df18dec442993aee5f733b68
+  - path: .evidence/fm/validation/instances/instance--customer-contact-phone-1.json
+    digest: 692a57459db18a54de67195cdaa3ec720566da16d74331bee7a2f3e2b343aa13
     sourceRefs:
       - instance.customer-contact-phone-1
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/instances/instance--customer-contact-phone-2.yaml
-    digest: d0f348a3c1987e9b104861376d0ae30e0eb61359d8d31aa7b4c31a172c7436d3
+  - path: .evidence/fm/validation/instances/instance--customer-contact-phone-2.json
+    digest: 6d46aa4c54a6f61b5524e496d0473a382e45329dcacc9320a446cf4fb84f858e
     sourceRefs:
       - instance.customer-contact-phone-2
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/instances/instance--monthly-customer-contact-request.yaml
-    digest: cdb27adf031f6b98c5af0fa647319b11a20d862602e9106959a247ecfd9205f8
+  - path: .evidence/fm/validation/instances/instance--monthly-customer-contact-request.json
+    digest: b19bfcd1b243c18e5a94e8b3adca5631fe031731936267b519f12f586680d1ea
     sourceRefs:
       - instance.monthly-customer-contact-request
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/instances/instance--sales-performance-agreement.yaml
-    digest: 88740468c2cd5d19f747871ac7b5e8247e6bd022cbeb2bac3bd3c31d4139429d
+  - path: .evidence/fm/validation/instances/instance--sales-performance-agreement.json
+    digest: 82fcaf01528861a0270ed3e25beb7e01245cf05d8fd63028b20f83532a19ac0b
     sourceRefs:
       - instance.sales-performance-agreement
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/scenarios/scenario--monthly-customer-contact-completed.yaml
-    digest: af1eec47d939751db7fea7a51cd909e874dcd5b5db72d6d2906756deb60232d3
+  - path: .evidence/fm/validation/scenarios/scenario--monthly-customer-contact-completed.json
+    digest: ec3138b6ef9c71654b7399dc43843c8b29f47e662d1ef8a891c5ac581da105bc
     sourceRefs:
       - scenario.monthly-customer-contact-completed
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/validation/scenarios/scenario--monthly-customer-contact-insufficient.yaml
-    digest: 38b457d815d2538fd992a2b47c02eebbc7b563f16900f50c788369eac24bd7e4
+  - path: .evidence/fm/validation/scenarios/scenario--monthly-customer-contact-insufficient.json
+    digest: 98465a509adb8886d174779cfe5472f3830c0974e8096b93e2015dfe53cdd47f
     sourceRefs:
       - scenario.monthly-customer-contact-insufficient
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。

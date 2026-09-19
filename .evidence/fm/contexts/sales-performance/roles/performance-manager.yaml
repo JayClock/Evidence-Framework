@@ -1,6 +1,0 @@
-type: entity
-id: role.performance-manager
-category: role
-kind: party
-label: 绩效管理者
-contextRef: context.sales-performance

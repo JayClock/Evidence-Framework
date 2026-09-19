@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "fulfillment.advance-payment",
+  "category": "context",
+  "kind": "fulfillment",
+  "label": "支付创作者预付款",
+  "parentContextRef": "context.content-production"
+}

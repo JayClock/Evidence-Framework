@@ -9,8 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 from .diagnostics import Diagnostic, error
 
 
@@ -52,10 +50,17 @@ def _run(command: list[str], timeout: int = 120) -> subprocess.CompletedProcess[
     )
 
 
-def _load_yaml_objects(root: Path, pattern: str) -> dict[str, dict[str, Any]]:
+class FMSuiteReadError(Exception):
+    """Validation suite could not be read as strict JSON."""
+
+
+def _load_json_objects(root: Path, pattern: str) -> dict[str, dict[str, Any]]:
     objects: dict[str, dict[str, Any]] = {}
     for path in sorted(root.glob(pattern)):
-        value = yaml.safe_load(path.read_text(encoding="utf-8"))
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise FMSuiteReadError(f"{path.name}: {exc}") from exc
         if isinstance(value, dict) and isinstance(value.get("id"), str):
             objects[value["id"]] = value
     return objects
@@ -92,9 +97,9 @@ def load_fm(fm_root: Path, fm_skill: Path) -> tuple[FMIndex | None, list[Diagnos
     fm_skill = fm_skill.resolve()
     check_script = fm_skill / "scripts" / "check_fm.py"
     compile_script = fm_skill / "scripts" / "compile_fm_model.py"
-    if not fm_root.is_dir() or not (fm_root / "model.yaml").is_file():
+    if not fm_root.is_dir() or not (fm_root / "model.json").is_file():
         return None, [
-            error("FM_INVALID", "FM 目录缺少 model.yaml", location=str(fm_root))
+            error("FM_INVALID", "FM 目录缺少 model.json", location=str(fm_root))
         ]
     if not check_script.is_file() or not compile_script.is_file():
         return None, [
@@ -153,9 +158,9 @@ def load_fm(fm_root: Path, fm_skill: Path) -> tuple[FMIndex | None, list[Diagnos
     relationships = {item["id"]: item for item in compiled.get("relationships", [])}
     rules = {item["id"]: item for item in compiled.get("rules", [])}
     try:
-        scenarios = _load_yaml_objects(fm_root, "validation/scenarios/*.yaml")
-        instances = _load_yaml_objects(fm_root, "validation/instances/*.yaml")
-    except (OSError, yaml.YAMLError) as exc:
+        scenarios = _load_json_objects(fm_root, "validation/scenarios/*.json")
+        instances = _load_json_objects(fm_root, "validation/instances/*.json")
+    except FMSuiteReadError as exc:
         return None, [error("FM_INVALID", f"无法读取验证套件: {exc}")]
     members: dict[str, list[str]] = {}
     fulfillment_parent: dict[str, str] = {}

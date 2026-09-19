@@ -17,15 +17,20 @@ machineValidated → simulationPassed
 
 在 Entity Attribute 上使用 `keyData: true`：
 
-```yaml
-attributes:
-  - name: payable_minor_units
-    label: 应付最小货币单位金额
-    valueType: int
-    required: true
-    keyData: true
-    meaning: 本次请求要求支付的整数金额
-    derivedByRuleRef: rule.requested-amount
+```json
+{
+  "attributes": [
+    {
+      "name": "payable_minor_units",
+      "label": "应付最小货币单位金额",
+      "valueType": "int",
+      "required": true,
+      "keyData": true,
+      "meaning": "本次请求要求支付的整数金额",
+      "derivedByRuleRef": "rule.requested-amount"
+    }
+  ]
+}
 ```
 
 所有 Evidence 类型的必备时间属性按 `format.md` 定义为 required `timestamp` 且 `keyData: true`；Request 直接以 `started_at` 和 `expired_at` 表达 interval，RFP／Proposal 同样必须有明确截止时间。不支持 open-ended 或 `openEndedReason`。机器 lineage 将关键属性表示为两种来源分类（不是业务来源充分性的判定）：
@@ -41,11 +46,15 @@ attributes:
 
 规则 binding 默认 `cardinality: one`；集合必须显式声明：
 
-```yaml
-bindings:
-  confirmations:
-    ref: confirmation.delivery
-    cardinality: many
+```json
+{
+  "bindings": {
+    "confirmations": {
+      "ref": "confirmation.delivery",
+      "cardinality": "many"
+    }
+  }
+}
 ```
 
 集合属性只能通过 `all`、`exists`、`filter`、`map` 等 CEL collection macro 的局部变量访问。
@@ -78,21 +87,23 @@ python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> \
 ```text
 fm-model/validation/
 ├── instances/
-│   └── instance--payment-request.yaml
+│   └── instance--payment-request.json
 └── scenarios/
-    └── scenario--successful-payment.yaml
+    └── scenario--successful-payment.json
 ```
 
 ### Evidence Instance
 
-```yaml
-type: evidence_instance
-id: instance.payment-request
-entityRef: request.payment
-values:
-  started_at: '2026-09-01T09:01:00Z'
-basedOn:
-  - instance.sales-contract
+```json
+{
+  "type": "evidence_instance",
+  "id": "instance.payment-request",
+  "entityRef": "request.payment",
+  "values": {
+    "started_at": "2026-09-01T09:01:00Z"
+  },
+  "basedOn": ["instance.sales-contract"]
+}
 ```
 
 规则：
@@ -105,37 +116,51 @@ basedOn:
 
 ### Scenario
 
-```yaml
-type: fm_scenario
-id: scenario.successful-payment
-label: 成功付款
-asOf: '2026-09-01T09:15:00Z'
-givenInstanceRefs:
-  - instance.sales-contract
-steps:
-  - sequence: 1
-    actingRoleRef: role.seller
-    issueInstanceRef: instance.payment-request
-    availableInstanceRefs:
-      - instance.sales-contract
-  - sequence: 2
-    actingRoleRef: role.buyer
-    issueInstanceRef: instance.payment-confirmation
-    availableInstanceRefs:
-      - instance.payment-request
-evaluations:
-  - ruleRef: rule.payment-matches-request
-    bindings:
-      request:
-        instanceRef: instance.payment-request
-      payment:
-        instanceRef: instance.payment-confirmation
-    expectedResult: true
-expectations:
-  fulfillmentStatuses:
-    - fulfillmentRef: fulfillment.payment
-      requestInstanceRef: instance.payment-request
-      status: completed
+```json
+{
+  "type": "fm_scenario",
+  "id": "scenario.successful-payment",
+  "label": "成功付款",
+  "asOf": "2026-09-01T09:15:00Z",
+  "givenInstanceRefs": ["instance.sales-contract"],
+  "steps": [
+    {
+      "sequence": 1,
+      "actingRoleRef": "role.seller",
+      "issueInstanceRef": "instance.payment-request",
+      "availableInstanceRefs": ["instance.sales-contract"]
+    },
+    {
+      "sequence": 2,
+      "actingRoleRef": "role.buyer",
+      "issueInstanceRef": "instance.payment-confirmation",
+      "availableInstanceRefs": ["instance.payment-request"]
+    }
+  ],
+  "evaluations": [
+    {
+      "ruleRef": "rule.payment-matches-request",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.payment-request"
+        },
+        "payment": {
+          "instanceRef": "instance.payment-confirmation"
+        }
+      },
+      "expectedResult": true
+    }
+  ],
+  "expectations": {
+    "fulfillmentStatuses": [
+      {
+        "fulfillmentRef": "fulfillment.payment",
+        "requestInstanceRef": "instance.payment-request",
+        "status": "completed"
+      }
+    ]
+  }
+}
 ```
 
 补充证据先存在，再形成依赖它的凭证：在目标步骤之前签发补充证据，或将已经存在的证据放入 `givenInstanceRefs`；目标步骤的可见凭证必须覆盖必要证据。需要同次登记时仍按证据依赖拓扑执行。为必要证据缺失、编号不匹配、时间晚于目标及不可见建立失败验证；未声明补充证据需求的凭证不强加此条件。
@@ -144,10 +169,18 @@ expectations:
 
 Rule evaluation binding 支持：
 
-```yaml
-variableA: { instanceRef: instance.one }
-variableB: { instanceRefs: [instance.a, instance.b] }
-now: { value: '2026-09-01T09:15:00Z' }
+```json
+{
+  "variableA": {
+    "instanceRef": "instance.one"
+  },
+  "variableB": {
+    "instanceRefs": ["instance.a", "instance.b"]
+  },
+  "now": {
+    "value": "2026-09-01T09:15:00Z"
+  }
+}
 ```
 
 集合 binding 可以显式使用 `instanceRefs: []`，表示该场景当时没有可用的匹配凭证；不能用占位确认代替空集合。空集合仍须匹配 Rule 的 `cardinality: many`，不是缺省 binding。

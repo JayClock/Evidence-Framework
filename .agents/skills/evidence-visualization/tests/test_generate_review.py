@@ -92,7 +92,7 @@ class ReviewGeneratorTest(unittest.TestCase):
         self.assertFalse(changes["available"])
         self.assertEqual([], changes["items"])
 
-    def test_recursive_index_links_interfaces_and_rules_to_yaml(self):
+    def test_recursive_index_links_interfaces_and_rules_to_sources(self):
         files = [
             {
                 "path": ".evidence/api/api.yaml",
@@ -100,9 +100,9 @@ class ReviewGeneratorTest(unittest.TestCase):
                 "text": "id: api.test\ncapabilities:\n  - id: capability.read\n",
             },
             {
-                "path": ".evidence/fm/rules/a.yaml",
+                "path": ".evidence/fm/rules/a.json",
                 "generated": False,
-                "text": "id: rule.amount\ntype: rule\n",
+                "text": '{"id": "rule.amount", "type": "rule"}',
             },
         ]
         locations, objects, scenarios, instances = review.object_index(files)
@@ -111,31 +111,31 @@ class ReviewGeneratorTest(unittest.TestCase):
         self.assertEqual([], scenarios)
         self.assertEqual([], instances)
 
-    def test_collects_yaml_but_not_view_work_files(self):
+    def test_collects_sources_but_not_view_work_files(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for name in [
-                "fm/model.yaml",
+                "fm/model.json",
                 "api/generated/v1/openapi.yaml",
-                "views/.review/a.yaml",
-                "checks/debug.yaml",
+                "views/.review/a.json",
+                "checks/debug.json",
             ]:
                 path = root / ".evidence" / name
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text("id: sample\n")
-            files = review.yaml_files(root)
+                path.write_text('{"id": "sample"}\n')
+            files = review.evidence_files(root)
             self.assertEqual(2, len(files))
             self.assertTrue(files[0]["generated"])
             self.assertTrue(all(len(f["sha256"]) == 64 for f in files))
 
-    def test_rejects_symlink_yaml(self):
+    def test_rejects_symlink_sources(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / ".evidence").mkdir()
             (root / "private.txt").write_text("private")
-            (root / ".evidence/leak.yaml").symlink_to(root / "private.txt")
+            (root / ".evidence/leak.json").symlink_to(root / "private.txt")
             with self.assertRaises(ValueError):
-                review.yaml_files(root)
+                review.evidence_files(root)
 
     def test_only_overwrites_its_own_generated_page(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -162,12 +162,12 @@ class ReviewGeneratorTest(unittest.TestCase):
 
     def test_changed_inputs_abort_before_rendering(self):
         check = {"valid": True, "inputChanged": False, "modelDigest": "same"}
-        first = [{"path": ".evidence/fm/model.yaml", "sha256": "before"}]
-        changed = [{"path": ".evidence/fm/model.yaml", "sha256": "after"}]
+        first = [{"path": ".evidence/fm/model.json", "sha256": "before"}]
+        changed = [{"path": ".evidence/fm/model.json", "sha256": "after"}]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             with (
-                patch.object(review, "yaml_files", side_effect=[first, changed]),
+                patch.object(review, "evidence_files", side_effect=[first, changed]),
                 patch.object(review, "run_json", return_value=check),
                 patch.object(review, "compile_json", return_value={}),
                 self.assertRaisesRegex(ValueError, "输入在生成期间变化"),

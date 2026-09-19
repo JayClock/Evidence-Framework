@@ -156,17 +156,17 @@ def semantic_changes(
     }
 
 
-def yaml_files(root: Path) -> list[dict]:
+def evidence_files(root: Path) -> list[dict]:
     evidence = root / ".evidence"
     files = []
     for path in sorted(evidence.rglob("*")):
         relative = path.relative_to(evidence)
         if relative.parts[0] in {"views", "checks"}:
             continue
-        if path.suffix.lower() not in {".yaml", ".yml"}:
+        if path.suffix.lower() not in {".json", ".yaml", ".yml"}:
             continue
         if path.is_symlink() or not path.resolve().is_relative_to(evidence.resolve()):
-            raise ValueError(f"拒绝读取链接到其他目录的 YAML: {path}")
+            raise ValueError(f"拒绝读取链接到其他目录的源文件: {path}")
         if path.is_file():
             data = path.read_bytes()
             files.append(
@@ -201,7 +201,13 @@ def object_index(files: list[dict]) -> tuple[dict, dict, list, list]:
     for file in files:
         if file["generated"]:
             continue
-        value = yaml.safe_load(file["text"])
+        if file["path"].lower().endswith(".json"):
+            try:
+                value = json.loads(file["text"])
+            except json.JSONDecodeError as error:
+                raise ValueError(f"无效 JSON {file['path']}: {error}") from error
+        else:
+            value = yaml.safe_load(file["text"])
         visit(value, file["path"])
         if isinstance(value, dict) and value.get("type") == "fm_scenario":
             scenarios.append(value)
@@ -248,7 +254,7 @@ def compile_json(script: Path, fm: Path, output: Path, executions: list[dict]) -
 
 def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
     fm, api = root / ".evidence/fm", root / ".evidence/api/api.yaml"
-    files = yaml_files(root)
+    files = evidence_files(root)
     executions: list[dict] = []
     command = [sys.executable, "-B", str(fm_skill / "scripts/check_fm.py"), str(fm)]
     check = run_json(command, executions)
@@ -300,7 +306,7 @@ def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
         not final_check.get("valid")
         or final_check.get("inputChanged")
         or check["modelDigest"] != final_check["modelDigest"]
-        or file_signature(files) != file_signature(yaml_files(root))
+        or file_signature(files) != file_signature(evidence_files(root))
     ):
         raise ValueError("输入在生成期间变化，未覆盖原视图")
     locations, objects, scenarios, instances = object_index(files)
@@ -398,14 +404,14 @@ def main() -> int:
             data = collect(root, fm_skill, api_skill, Path(directory))
             data["changes"] = semantic_changes(previous, data, baseline_source)
             html = render(data)
-            if data["meta"]["inputFiles"] != file_signature(yaml_files(root)):
+            if data["meta"]["inputFiles"] != file_signature(evidence_files(root)):
                 raise ValueError("渲染期间输入变化，未覆盖原视图")
             publish(output, html)
         print(
             json.dumps(
                 {
                     "output": str(views / "index.html"),
-                    "yamlCount": len(data["files"]),
+                    "sourceFileCount": len(data["files"]),
                     "modelDigest": data["meta"]["modelDigest"],
                 },
                 ensure_ascii=False,

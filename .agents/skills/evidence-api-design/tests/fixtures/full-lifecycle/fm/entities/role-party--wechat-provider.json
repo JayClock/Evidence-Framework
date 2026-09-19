@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "role.wechat-provider",
+  "category": "role",
+  "kind": "party",
+  "label": "腾讯",
+  "contextRef": "context.wechat-payment"
+}

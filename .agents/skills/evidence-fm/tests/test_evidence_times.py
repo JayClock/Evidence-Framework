@@ -1,4 +1,4 @@
-"""Evidence-kind time contracts: explicit YAML definitions, never injected defaults."""
+"""Evidence-kind time contracts: explicit JSON definitions, never injected defaults."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-import yaml
 from context_samples import attribute, performance_documents, write_model
 from context_samples import entity as sample_entity
 from jsonschema import Draft202012Validator
@@ -79,7 +78,7 @@ def evidence(kind: str) -> dict:
 
 def schema_errors(doc: dict, schema="entity.schema.json") -> list[str]:
     errors: list[str] = []
-    validate_against_schema(doc, schema, "test.yaml", errors)
+    validate_against_schema(doc, schema, "test.json", errors)
     return errors
 
 
@@ -131,7 +130,7 @@ class EvidenceTimeTests(unittest.TestCase):
         )
         with tempfile.TemporaryDirectory() as directory:
             root = write_model(Path(directory), documents, "context.performance")
-            before = {p: p.read_bytes() for p in root.rglob("*.yaml")}
+            before = {p: p.read_bytes() for p in root.rglob("*.json")}
             model = load_model(root)
             self.assertEqual([], validate_model(model))
             report, errors = analyze_traceability(model)
@@ -159,7 +158,7 @@ class EvidenceTimeTests(unittest.TestCase):
                     ):
                         self.assertNotIn("started_at", attributes)
                         self.assertNotIn("expired_at", attributes)
-            self.assertEqual(before, {p: p.read_bytes() for p in root.rglob("*.yaml")})
+            self.assertEqual(before, {p: p.read_bytes() for p in root.rglob("*.json")})
 
     def test_instances_accept_each_kinds_own_times_without_generation_rules(self):
         for kind, names in TIMES.items():
@@ -206,12 +205,12 @@ class EvidenceTimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(FIXTURES / "valid-traceable-subscription", root)
-            path = root / "entities/evidence-fulfillment-request--content-payment.yaml"
-            doc = yaml.safe_load(path.read_text())
+            path = root / "entities/evidence-fulfillment-request--content-payment.json"
+            doc = json.loads(path.read_text())
             deadline = next(a for a in doc["attributes"] if a["name"] == "expired_at")
             del deadline["derivedByRuleRef"]
-            path.write_text(yaml.safe_dump(doc, allow_unicode=True))
-            (root / "rules/rule--payment-deadline.yaml").unlink()
+            path.write_text(json.dumps(doc, ensure_ascii=False, indent=2))
+            (root / "rules/rule--payment-deadline.json").unlink()
             before = path.read_bytes()
             model = load_model(root)
             self.assertEqual([], validate_model(model))
@@ -265,9 +264,9 @@ class EvidenceTimeTests(unittest.TestCase):
     def test_request_interval_is_owned_by_request_evidence(self):
         path = (
             FIXTURES
-            / "valid-subscription/entities/evidence-fulfillment-request--content-payment.yaml"
+            / "valid-subscription/entities/evidence-fulfillment-request--content-payment.json"
         )
-        doc = yaml.safe_load(path.read_text())
+        doc = json.loads(path.read_text())
         self.assertEqual([], schema_errors(doc, "entity.schema.json"))
         attributes = {item["name"]: item for item in doc["attributes"]}
         self.assertEqual({"started_at", "expired_at"}, set(attributes))
@@ -276,10 +275,10 @@ class EvidenceTimeTests(unittest.TestCase):
             self.assertTrue(attributes[name]["required"])
             self.assertTrue(attributes[name]["keyData"])
 
-        fulfillment = yaml.safe_load(
+        fulfillment = json.loads(
             (
                 FIXTURES
-                / "valid-subscription/entities/context-fulfillment--content-payment.yaml"
+                / "valid-subscription/entities/context-fulfillment--content-payment.json"
             ).read_text()
         )
         fulfillment["requestInterval"] = {
@@ -368,13 +367,13 @@ class EvidenceTimeTests(unittest.TestCase):
                         self.assertIn(name, attributes)
             path = (
                 root
-                / "entities/evidence-fulfillment-confirmation--content-payment.yaml"
+                / "entities/evidence-fulfillment-confirmation--content-payment.json"
             )
-            doc = yaml.safe_load(path.read_text())
+            doc = json.loads(path.read_text())
             doc["attributes"] = [
                 a for a in doc["attributes"] if a["name"] != "confirmed_at"
             ]
-            path.write_text(yaml.safe_dump(doc, allow_unicode=True))
+            path.write_text(json.dumps(doc, ensure_ascii=False, indent=2))
             before = path.read_bytes(), output.read_bytes()
             result = subprocess.run(
                 command, capture_output=True, text=True, check=False

@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "fulfillment.revenue-share",
+  "category": "context",
+  "kind": "fulfillment",
+  "label": "支付创作者收入分成",
+  "parentContextRef": "context.content-production"
+}

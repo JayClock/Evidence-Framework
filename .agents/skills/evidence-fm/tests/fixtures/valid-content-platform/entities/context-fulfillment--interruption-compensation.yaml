@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.interruption-compensation
-category: context
-kind: fulfillment
-label: 提供断更补偿
-parentContextRef: context.content-subscription

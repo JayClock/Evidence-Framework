@@ -1,6 +1,0 @@
-type: entity
-id: fulfillment.payment
-category: context
-kind: fulfillment
-label: 支付货款
-parentContextRef: context.product-procurement

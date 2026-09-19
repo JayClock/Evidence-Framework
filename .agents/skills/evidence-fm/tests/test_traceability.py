@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import json
 import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
-
-import yaml
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
@@ -33,12 +32,12 @@ class TraceabilityTests(unittest.TestCase):
         shutil.copytree(self.fixture("valid-traceable-subscription"), target)
         return target
 
-    def read_yaml(self, path: Path) -> dict[str, Any]:
-        return yaml.safe_load(path.read_text(encoding="utf-8"))
+    def read_json(self, path: Path) -> dict[str, Any]:
+        return json.loads(path.read_text(encoding="utf-8"))
 
-    def write_yaml(self, path: Path, document: dict[str, Any]) -> None:
+    def write_json(self, path: Path, document: dict[str, Any]) -> None:
         path.write_text(
-            yaml.safe_dump(document, allow_unicode=True, sort_keys=False),
+            json.dumps(document, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 
@@ -117,10 +116,10 @@ class TraceabilityTests(unittest.TestCase):
         for name in ("missing_price", "priceMinorUnits"):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 root = self.copied_fixture(directory)
-                path = root / "rules" / "rule--payment-request-amount.yaml"
-                rule = self.read_yaml(path)
+                path = root / "rules" / "rule--payment-request-amount.json"
+                rule = self.read_json(path)
                 rule["expression"] = f"contract.{name}"
-                self.write_yaml(path, rule)
+                self.write_json(path, rule)
                 errors = validate_model(load_model(root))
                 self.assertTrue(
                     any("reads unknown attribute" in error for error in errors), errors
@@ -149,10 +148,10 @@ class TraceabilityTests(unittest.TestCase):
     def test_key_derivation_requires_modeled_attribute_source(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture(directory)
-            path = root / "rules" / "rule--payment-request-amount.yaml"
-            rule = self.read_yaml(path)
+            path = root / "rules" / "rule--payment-request-amount.json"
+            rule = self.read_json(path)
             rule["expression"] = "19900"
-            self.write_yaml(path, rule)
+            self.write_json(path, rule)
             errors = validate_model(load_model(root))
             self.assertTrue(
                 any("key derived attribute must trace" in error for error in errors),
@@ -163,18 +162,18 @@ class TraceabilityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture(directory)
             request_path = (
-                root / "entities" / "evidence-fulfillment-request--content-payment.yaml"
+                root / "entities" / "evidence-fulfillment-request--content-payment.json"
             )
-            request = self.read_yaml(request_path)
+            request = self.read_json(request_path)
             started_at = next(
                 attribute
                 for attribute in request["attributes"]
                 if attribute["name"] == "started_at"
             )
             started_at["derivedByRuleRef"] = "rule.payment-start"
-            self.write_yaml(request_path, request)
-            self.write_yaml(
-                root / "rules" / "rule--payment-start.yaml",
+            self.write_json(request_path, request)
+            self.write_json(
+                root / "rules" / "rule--payment-start.json",
                 {
                     "type": "rule",
                     "id": "rule.payment-start",

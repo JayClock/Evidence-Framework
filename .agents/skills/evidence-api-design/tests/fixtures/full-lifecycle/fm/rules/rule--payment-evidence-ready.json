@@ -1,0 +1,23 @@
+{
+  "type": "rule",
+  "id": "rule.payment-evidence-ready",
+  "kind": "precondition",
+  "label": "支付确认的证据前提",
+  "description": "当前时刻前已有与支付申请编号和请求金额一致的外部支付凭证时，允许形成支付确认。",
+  "contextRef": "fulfillment.payment",
+  "bindings": {
+    "request": {
+      "ref": "request.payment"
+    },
+    "proofs": {
+      "ref": "role.payment-proof",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "proofs.exists(p, p.request_number == request.request_number && p.confirmed_at <= now && p.paid_minor_units == request.requested_minor_units)",
+  "resultType": "bool",
+  "notes": "通过支付凭证角色绑定实际外部凭证，校验申请编号、支付结果编号、金额及结果时间；角色本身没有实例或责任人。"
+}

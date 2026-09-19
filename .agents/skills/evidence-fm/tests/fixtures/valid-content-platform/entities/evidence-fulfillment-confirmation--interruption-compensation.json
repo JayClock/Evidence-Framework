@@ -1,0 +1,19 @@
+{
+  "type": "entity",
+  "id": "confirmation.interruption-compensation",
+  "category": "evidence",
+  "kind": "fulfillment_confirmation",
+  "label": "断更补偿确认",
+  "contextRef": "fulfillment.interruption-compensation",
+  "responsibleRoleRef": "role.platform-subscription",
+  "attributes": [
+    {
+      "name": "confirmed_at",
+      "label": "确认时间",
+      "valueType": "timestamp",
+      "required": true,
+      "keyData": true,
+      "meaning": "确定履约结果形成的时间"
+    }
+  ]
+}

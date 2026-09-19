@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.payment-deadline",
+  "kind": "derivation",
+  "label": "付款截止时间",
+  "description": "以付款请求（request.content-payment）的开始时间为基准增加约定的 30 分钟付款期限，得到该请求的失效时间。",
+  "contextRef": "fulfillment.content-payment",
+  "bindings": {
+    "self": {
+      "ref": "request.content-payment"
+    }
+  },
+  "expression": "self.started_at + duration(\"30m\")",
+  "resultType": "timestamp",
+  "target": {
+    "entityRef": "request.content-payment",
+    "attribute": "expired_at"
+  }
+}

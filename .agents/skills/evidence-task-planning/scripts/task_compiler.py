@@ -64,16 +64,34 @@ def _mapping(loader, node, deep=False):
 UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _mapping)
 
 
+def _unique_pairs(pairs):
+    result = {}
+    for name, value in pairs:
+        if name in result:
+            raise ValueError(f"duplicate JSON key: {name}")
+        result[name] = value
+    return result
+
+
 def load(path: Path) -> dict[str, Any]:
-    # SafeLoader constructors only; additionally reject duplicate mapping keys.
-    if path.suffix.lower() not in {".yaml", ".yml"}:
-        raise ValueError("mapping must be a YAML file")
-    content = path.read_text(encoding="utf-8")
-    loader = UniqueLoader(content)
-    try:
-        value = loader.get_single_data()
-    finally:
-        loader.dispose()
+    suffix = path.suffix.lower()
+    if suffix == ".json":
+        try:
+            value = json.loads(
+                path.read_text(encoding="utf-8"), object_pairs_hook=_unique_pairs
+            )
+        except json.JSONDecodeError as error:
+            raise ValueError(f"invalid JSON: {path}: {error}") from error
+    elif suffix in {".yaml", ".yml"}:
+        # SafeLoader constructors only; additionally reject duplicate mapping keys.
+        content = path.read_text(encoding="utf-8")
+        loader = UniqueLoader(content)
+        try:
+            value = loader.get_single_data()
+        finally:
+            loader.dispose()
+    else:
+        raise ValueError("mapping must be a JSON or YAML file")
     if not isinstance(value, dict):
         raise ValueError(f"expected mapping: {path}")
     return value
@@ -141,7 +159,13 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
             "relatedRefs": list(extra),
         }
 
-    files = sorted(set(root.rglob("*.yaml")) | set(root.rglob("*.yml")))
+    files = sorted(root.rglob("*.json"))
+    for legacy in sorted(set(root.rglob("*.yaml")) | set(root.rglob("*.yml"))):
+        if "generated" in legacy.relative_to(root).parts:
+            continue
+        raise ValueError(
+            f"FM sources must use .json: {legacy.relative_to(root).as_posix()}"
+        )
     for path in files:
         relative = path.relative_to(root)
         if "generated" in relative.parts:

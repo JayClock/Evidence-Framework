@@ -19,7 +19,7 @@ def parse_args() -> argparse.Namespace:
         description="Build FM Schema v3 attribute lineage."
     )
     parser.add_argument(
-        "model_dir", help="Directory containing model.yaml and FM shards"
+        "model_dir", help="Directory containing model.json and FM shards"
     )
     parser.add_argument("--output", required=True, help="Output JSON path")
     parser.add_argument(

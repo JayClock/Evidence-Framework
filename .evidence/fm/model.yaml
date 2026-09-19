@@ -1,9 +1,0 @@
-type: fm_model
-schemaVersion: '3.0'
-id: sales-performance
-name: CRM 电话销售绩效协议
-version: 2.0.0
-ruleLanguage: CEL
-entryContextRefs:
-  - context.sales-performance
-  - context.customer-information

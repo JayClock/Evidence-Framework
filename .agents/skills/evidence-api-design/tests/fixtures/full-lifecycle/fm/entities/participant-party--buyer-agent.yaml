@@ -1,5 +1,0 @@
-type: entity
-id: party.buyer-agent
-category: participant
-kind: party
-label: 甲方采购员

@@ -1,0 +1,24 @@
+{
+  "type": "rule",
+  "id": "rule.payment-completed",
+  "kind": "completion",
+  "label": "支付履约完成判断",
+  "description": "同一支付申请存在有效期内的支付确认，且外部支付凭证与申请、确认的编号、金额和时间一致时，支付履约完成。",
+  "contextRef": "fulfillment.payment",
+  "bindings": {
+    "request": {
+      "ref": "request.payment"
+    },
+    "confirmations": {
+      "ref": "confirmation.payment",
+      "cardinality": "many"
+    },
+    "proofs": {
+      "ref": "role.payment-proof",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.exists(c, c.request_number == request.request_number && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at && proofs.exists(p, p.request_number == request.request_number && p.payment_number == c.payment_number && p.confirmed_at <= c.confirmed_at && p.paid_minor_units == request.requested_minor_units && c.paid_minor_units == p.paid_minor_units))",
+  "resultType": "bool",
+  "notes": "通过支付凭证角色绑定实际外部凭证，校验申请编号、支付结果编号、金额及结果时间；角色本身没有实例或责任人。"
+}

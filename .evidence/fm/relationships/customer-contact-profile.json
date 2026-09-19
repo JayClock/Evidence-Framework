@@ -1,0 +1,9 @@
+{
+  "type": "relationship",
+  "id": "relation.customer-contact-references-profile",
+  "kind": "references",
+  "sourceRef": "confirmation.customer-contact-record",
+  "targetRef": "thing.customer-profile",
+  "label": "客户联系记录指向实际联系的客户档案",
+  "notes": "联系记录通过 customer_profile_id 标识实际客户档案；当前模拟器不执行 Thing 实例级引用一致性。"
+}
