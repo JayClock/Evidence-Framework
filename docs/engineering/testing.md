@@ -4,31 +4,35 @@
 
 以下命令均在仓库根执行。声明命令不是执行结果；运行前核对 [package.json](../../package.json)、根 Gradle 配置和当前环境。
 
-| 命令                               | 实际覆盖                                                                             | 不证明什么                                                |
-| ---------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
-| `npm run guides:verify`            | 前馈检查器回归、维护范围内 Markdown 本地内联链接与过期架构表述检查、前馈相关文件格式 | 不检查外部 URL 可达性、标题锚点或业务语义；不证明任务就绪 |
-| `npm test`                         | Nx 应用/库 test、建模扩展测试、Skills 回归、Guides 检查器回归                        | 具体 suite/缓存及环境以输出为准，不证明生产环境           |
-| `npm run lint`                     | 前端 ESLint 与前馈文档检查                                                           | 不检查 Java 格式或业务授权                                |
-| `npm run build`                    | Nx build 与建模扩展 TypeScript 检查                                                  | 打包成功不等于运行验收                                    |
-| `./gradlew check`                  | Java 测试、Spotless 及模块已配置检查                                                 | 不证明生产数据库、真实支付机构或业务批准                  |
-| `npm run evidence-modeling:verify` | 建模扩展类型、测试及其配置的格式范围                                                 | 不替代产品 HTTP/SQL 检查                                  |
+| 命令                               | 实际覆盖                                                                               | 不证明什么                                                |
+| ---------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `npm run guides:verify`            | 前馈检查器回归、维护范围内 Markdown 本地内联链接与过期架构表述检查、前馈相关文件格式   | 不检查外部 URL 可达性、标题锚点或业务语义；不证明任务就绪 |
+| `npm test`                         | Nx 应用/库 test、建模扩展测试、Python 解释器选择器回归、Skills 回归、Guides 检查器回归 | 具体 suite/缓存及环境以输出为准，不证明生产环境           |
+| `npm run lint`                     | 前端 ESLint 与前馈文档检查                                                             | 不检查 Java 格式或业务授权                                |
+| `npm run build`                    | Nx build 与建模扩展 TypeScript 检查                                                    | 打包成功不等于运行验收                                    |
+| `./gradlew check`                  | Java 测试、Spotless 及模块已配置检查                                                   | 不证明生产数据库、真实支付机构或业务批准                  |
+| `npm run evidence-modeling:verify` | 建模扩展类型、测试及其配置的格式范围                                                   | 不替代产品 HTTP/SQL 检查                                  |
 
 `guides:verify` 由 [检查器](../../tools/guides/check.mjs)定义扫描范围：项目宪法/README、docs、后端切片 README、业务/API 导航、Skills 索引及 planning/delivery 的正文、参考与模板。生成产物、业务源 YAML、历史证据和第三方材料不重写为前馈。代码块中的示例路径、模板变量、远程链接不作为实际本地文件链接检查。检查器仅验证文件路径，不是完整 Markdown 解析器。
+
+## Python 解释器与依赖
+
+Skills 回归要求 Python 3.10+ 与各自 `requirements.txt`；机器上的 `python3` 可能是更低版本且未安装依赖。仓库不假定解析结果，统一经 [解释器选择器](../../tools/python/python.mjs)确定解释器：优先使用 `PYTHON` 环境变量指定的绝对路径，否则按 `python3.13 → python3.12 → python3.11 → python3.10 → python3 → python` 顺序选择第一个同时满足版本与所需模块（`jsonschema`、`celpy`、`yaml`）的解释器。解析失败时列出候选与安装建议并以退出码 `4` 结束，不静默回退到低于要求的解释器。依赖按各 Skill 目录的 `requirements.txt` 安装；`PYTHON` 显式指定时不回退到其他候选。`npm run python:test` 覆盖选择器自身的回归。
 
 ## 按任务选择检查
 
 先按[测试工序](procedures.md)从业务变化确定测试边界、任务粒度和退出条件，再从下表选择命令并落实到具体 CHECK。工序不等于技术层清单；每个场景不必生成所有层的任务，领域、独立 HTTP、SQL 与真实装配证据不能互相冒充。
 
-| 层 / 工作  | 命令                                                                                | 关键依赖与预期                                                                 |
-| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| domain     | `./gradlew :backend-domain:test`                                                    | 纯领域行为与固定边界；不证明 HTTP/SQL                                          |
-| api        | `./gradlew :backend-api:test`                                                       | 真实随机端口 HTTP + mock 领域；不需要数据库，不 mock 被测 Resource/分页/序列化 |
-| persistent | `./gradlew :backend-persistent:test`                                                | 真实 H2/MyBatis/XML/Flyway、行数与事务回滚                                     |
-| app        | `./gradlew :backend:test`                                                           | 真实 HTTP + SQL、配置、profile 隔离及架构检查                                  |
-| frontend   | `npx nx test @evidence-poc/frontend`                                                | Vitest/jsdom/Testing Library；真实浏览器另行检查                               |
-| planning   | `python3 -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v` | 确定性身份、切片、依赖、覆盖、工序分支/汇合与前馈模板契约                      |
-| delivery   | `python3 -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查及执行/恢复前馈协议                                                |
-| Guides     | `npm run guides:test`                                                               | 本地链接检查器的正常、缺失、模板、扫描范围、只读回归与项目工序路由/说明结构    |
+| 层 / 工作  | 命令                                                                                                     | 关键依赖与预期                                                                 |
+| ---------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| domain     | `./gradlew :backend-domain:test`                                                                         | 纯领域行为与固定边界；不证明 HTTP/SQL                                          |
+| api        | `./gradlew :backend-api:test`                                                                            | 真实随机端口 HTTP + mock 领域；不需要数据库，不 mock 被测 Resource/分页/序列化 |
+| persistent | `./gradlew :backend-persistent:test`                                                                     | 真实 H2/MyBatis/XML/Flyway、行数与事务回滚                                     |
+| app        | `./gradlew :backend:test`                                                                                | 真实 HTTP + SQL、配置、profile 隔离及架构检查                                  |
+| frontend   | `npx nx test @evidence-poc/frontend`                                                                     | Vitest/jsdom/Testing Library；真实浏览器另行检查                               |
+| planning   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v` | 确定性身份、切片、依赖、覆盖、工序分支/汇合与前馈模板契约                      |
+| delivery   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查及执行/恢复前馈协议                                                |
+| Guides     | `npm run guides:test`                                                                                    | 本地链接检查器的正常、缺失、模板、扫描范围、只读回归与项目工序路由/说明结构    |
 
 工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
 

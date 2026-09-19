@@ -45,12 +45,16 @@ class FMIntegrationTests(unittest.TestCase):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
         scripts = package["scripts"]
         self.assertIn("evidence-modeling:verify", scripts)
-        self.assertEqual(
-            "python3 .agents/skills/evidence-modeling/tests/run_skill_tests.py",
+        self.assertIn(
+            ".agents/skills/evidence-modeling/tests/run_skill_tests.py",
             scripts["skills:test"],
         )
+        self.assertIn("tools/python/python.mjs", scripts["skills:test"])
         self.assertEqual("npm run skills:test", scripts["skills:verify"])
         self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
+        self.assertIn("tools/python/python.mjs", scripts["skills:test:fm"])
+        self.assertIn("python:test", scripts["test"])
+        self.assertIn("tools/python/python.spec.mjs", scripts["python:test"])
         self.assertIn("schemas/*.json", scripts["evidence-modeling:format:check"])
 
     def test_composition_documents_use_only_current_fm_schema(self):
