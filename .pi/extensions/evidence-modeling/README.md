@@ -30,7 +30,7 @@ Agent 提供 `questionId`、`gapKey`、问题、影响、当前理解及来源�
 
 ## 文件与宿主边界
 
-默认项目布局由四个 Skill 共享：`.evidence/discovery.md`、`.evidence/fm/`、`.evidence/api/`、`.evidence/checks/fm/` 和 `.evidence/checks/api/`。
+默认项目布局由四个 Skill 共享：`.evidence/discovery.json`、`.evidence/fm/`、`.evidence/api/`、`.evidence/checks/fm/` 和 `.evidence/checks/api/`。
 
 TUI 与 RPC 使用宿主选择器和多行编辑器。无 UI 时转普通对话；并发问答互斥只在进程内存在。启动、重载和关闭无文件副作用，不替换系统提示或工具集，不注册自动推进、路径拦截或 Session 恢复逻辑。
 

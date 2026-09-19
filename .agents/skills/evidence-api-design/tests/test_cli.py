@@ -54,7 +54,7 @@ class CliTest(unittest.TestCase):
             shutil.copytree(example / "fm", fm)
             output.parent.mkdir(parents=True)
             shutil.copyfile(example / "api.yaml", api)
-            notes = evidence / "discovery.md"
+            notes = evidence / "discovery.json"
             notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
             inputs = {
                 path: path.read_bytes()

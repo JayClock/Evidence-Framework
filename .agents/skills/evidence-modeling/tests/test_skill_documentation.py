@@ -1,5 +1,6 @@
 """Documentation structure contracts, not proof of agent interview quality."""
 
+import json
 import re
 import unittest
 from pathlib import Path
@@ -41,7 +42,7 @@ class SkillDocumentationTests(unittest.TestCase):
         runtime_docs = [
             discovery / "SKILL.md",
             *(discovery / "references").glob("*.md"),
-            *(discovery / "assets").glob("*.md"),
+            *(discovery / "assets").glob("*.json"),
         ]
         for path in runtime_docs:
             self.assertIsNone(
@@ -61,16 +62,36 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_direct_edit_authorization_is_separate_from_discussion_and_approval(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
-        handoff = (ROOT / "evidence-discovery/assets/discovery-template.md").read_text()
+        handoff = json.loads(
+            (ROOT / "evidence-discovery/assets/discovery-template.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        handoff_text = json.dumps(handoff, ensure_ascii=False)
+        self.assertEqual("1.0", handoff["schemaVersion"])
+        self.assertLessEqual(
+            {
+                "handoff",
+                "businessSlice",
+                "sources",
+                "questions",
+                "downstreamHandoff",
+            },
+            set(handoff),
+        )
+        question = handoff["questions"][0]
+        self.assertEqual("Q-001", question["id"])
+        for key in ("gapKey", "status", "answer", "resolvedBy"):
+            self.assertIn(key, question)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("直接编辑当前模型", fm_entry)
         self.assertIn("编辑授权不是业务批准", fm_entry)
-        self.assertIn("当前实际问题", handoff)
-        self.assertIn("普通回答与停止不是修改授权", handoff)
+        self.assertIn("当前实际问题", handoff_text)
+        self.assertIn("普通回答与停止不是修改授权", handoff_text)
         self.assertIn("modelDigest", validation)
         self.assertIn("只校验请求不写任何项目文件", validation)
         self.assertIn("不自动回滚", fm_entry)
-        for text in (fm_entry, handoff, validation):
+        for text in (fm_entry, handoff_text, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
     def test_direct_workflow_has_no_publication_runtime_or_compatibility_entry(self):
@@ -129,15 +150,14 @@ class SkillDocumentationTests(unittest.TestCase):
         expected_paths = {
             "evidence-modeling/SKILL.md": (".evidence/",),
             "evidence-modeling/references/workflow.md": (
-                ".evidence/discovery.md",
+                ".evidence/discovery.json",
                 ".evidence/fm/",
                 ".evidence/checks/fm/",
                 ".evidence/checks/api/",
             ),
-            "evidence-discovery/SKILL.md": (".evidence/discovery.md",),
-            "evidence-discovery/assets/discovery-template.md": (
-                ".evidence/discovery.md",
-                ".evidence/questions.md",
+            "evidence-discovery/SKILL.md": (".evidence/discovery.json",),
+            "evidence-discovery/assets/discovery-template.json": (
+                ".evidence/questions.json",
             ),
             "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
             "evidence-fm/references/validation.md": (

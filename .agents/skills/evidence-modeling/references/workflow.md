@@ -4,7 +4,7 @@
 
 默认路径均相对项目根，按需创建；沿用已有文件与用户显式指定路径，不自动迁移：
 
-- `.evidence/discovery.md`：来源、回答、工作理解、简化业务视图、问题、暂缓／停止状态与交接；需拆分时用 `.evidence/questions.md`。
+- `.evidence/discovery.json`：来源、回答、工作理解、简化业务视图、问题、暂缓／停止状态与交接；需拆分时用 `.evidence/questions.json`。
 - `.evidence/fm/`：唯一当前正式模型，包含源 YAML、术语、说明、validation 与 generated。
 - `.evidence/checks/fm/`：获授权保存的紧凑运行清单，绑定模型内容摘要。
 - `.evidence/api/api.yaml`：另行使用 `evidence-api-design` 时维护的 API 设计源。

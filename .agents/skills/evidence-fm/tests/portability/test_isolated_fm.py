@@ -217,7 +217,7 @@ class IsolatedFMTests(unittest.TestCase):
         evidence = self.workspace / ".evidence"
         self.model = evidence / "fm"
         self.example("domain")
-        notes = evidence / "discovery.md"
+        notes = evidence / "discovery.json"
         notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
         notes_before = notes.read_bytes()
         first = self.check(0)
@@ -230,7 +230,7 @@ class IsolatedFMTests(unittest.TestCase):
         current = json.loads(result.stdout)
         self.assertNotEqual(first["modelDigest"], current["modelDigest"])
         self.assertFalse(current["inputChanged"])
-        self.assertEqual({"fm", "discovery.md"}, {p.name for p in evidence.iterdir()})
+        self.assertEqual({"fm", "discovery.json"}, {p.name for p in evidence.iterdir()})
         report = evidence / "checks/fm/run-001.json"
         report.parent.mkdir(parents=True)
         report.write_text(result.stdout, encoding="utf-8")

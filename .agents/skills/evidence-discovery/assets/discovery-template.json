@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "handoff": {
+    "businessPosition": "<合同履约／渠道协商／领域对象 → 上下文 → 当前履约／协商／对象；未定位则明示>",
+    "currentGoal": "<当前焦点：本轮讨论内容>",
+    "digestedSources": ["<已消化来源：材料版本／定位及最新回答标识>"],
+    "currentQuestion": "<当前实际问题：原问题 ID、gapKey、原文、定位及待答／已解决状态；没有则明示>",
+    "deferredQuestions": ["<暂缓问题：沿用原 ID 与 gapKey；没有则明示>"],
+    "interactionState": "<问答中／等待／已停止及依据；停止后不自动恢复>",
+    "modelPath": "<当前模型位置：路径或尚无>",
+    "checkRecords": [
+      "<检查记录：报告路径及对应模型内容摘要；未执行／未保存则明示>"
+    ],
+    "nextOptions": [
+      "<下一步选择：继续澄清／生成或修改模型／只校验／停止；建议不是授权>"
+    ]
+  },
+  "businessSlice": {
+    "context": "<上下文类型与身份：pre_contract／contract／domain；依据>",
+    "evidenceStructure": "<凭证责任／协商／对象结构：已知、部分明确或待明确>",
+    "requestEvidence": "<请求凭证：凭证、发起方、接收方、要求、开始时间、截止时间>",
+    "confirmationEvidence": "<确认凭证：凭证、提供方、证明内容、确认时间；不默认审批人>",
+    "participants": "<参与者与代表关系：Role、Party／Player、Representative、Evidence provider 分开>",
+    "subject": "<标的物：Thing 及其与当前切片的关系>",
+    "exceptionChain": "<异常前序与触发：有来源的直接链；无则明示>",
+    "coverage": [
+      "<事实覆盖与当前缺口：按已知／部分明确／待明确列出影响，不写百分比>"
+    ]
+  },
+  "sources": [
+    {
+      "sourceId": "<来源标识>",
+      "locator": "<原始材料／回答定位及版本>",
+      "quote": "<必要原话>",
+      "workingNote": "<临时理解、疑点或冲突>"
+    }
+  ],
+  "questionsFile": "<可选：拆出已提问题时指向 .evidence/questions.json；未拆分时省略此键>",
+  "questions": [
+    {
+      "id": "Q-001",
+      "gapKey": "<已有缺口标识>",
+      "question": "<实际向用户提出的原问题>",
+      "knownBasis": "<已知依据与判断缺口：引用及影响，不重复正文>",
+      "status": "<待答／暂缓／已解决／依据失效>",
+      "answer": "<用户原话或原记录引用，未答则明示>",
+      "resolvedBy": "<解决依据：足以覆盖原题的来源及确定性推导，不造回答>",
+      "corrections": ["<更正／恢复：原版本、更正依据、影响和实际恢复意图>"]
+    }
+  ],
+  "downstreamHandoff": {
+    "consumableMaterials": ["<可消费材料：来源、回答与工作理解的路径／ID>"],
+    "openDecisions": ["<仍需决定的事项：原问题及影响>"],
+    "formalArtifacts": ["<已有正式成果：可选的模型／需求／案例版本引用>"],
+    "modelAndChecks": "<模型与检查：当前模型、对应检查记录指针；不复制模型正文>",
+    "editState": "<未请求修改／已修改待校验／校验通过／校验失败／未执行；普通回答与停止不是修改授权>"
+  }
+}

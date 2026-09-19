@@ -64,8 +64,8 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 ```text
 .evidence/
-├── discovery.md          # 来源、原话、工作理解、问题与恢复点
-├── questions.md          # 可选：需拆分时保存已提问题及回答
+├── discovery.json        # 来源、原话、工作理解、问题与恢复点
+├── questions.json        # 可选：需拆分时保存已提问题及回答
 ├── fm/                   # 当前模型、术语、说明、validation 与 generated
 ├── views/index.html      # 用户要求时生成的自包含离线只读审核页
 ├── api/

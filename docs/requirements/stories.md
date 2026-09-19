@@ -101,7 +101,7 @@
 
 ## 历史故事：移动支付订阅主链（来源已移出当前 FM/API）
 
-以下故事针对当时的移动支付订阅主链，其业务来源（`contract.subscription`、`request.payment`、`confirmation.mobile` 等）已随模型收敛移出当前仓库（提交 `0e76410`），业务澄清仍保留在[发现记录](../../.evidence/discovery.md)。这些 ID 不复用于新故事；该切片授权状态待确认（SCOPE-SUBSCRIPTION），未确认前不作为当前验收输入。原文见 Git 历史提交 `76bbbac` 与 `a6f7ecc`：
+以下故事针对当时的移动支付订阅主链，其业务来源（`contract.subscription`、`request.payment`、`confirmation.mobile` 等）已随模型收敛移出当前仓库（提交 `0e76410`），业务澄清仍保留在[发现记录](../../.evidence/discovery.json)。这些 ID 不复用于新故事；该切片授权状态待确认（SCOPE-SUBSCRIPTION），未确认前不作为当前验收输入。原文见 Git 历史提交 `76bbbac` 与 `a6f7ecc`：
 
 | 历史故事                          | 当时软件职责    |
 | --------------------------------- | --------------- |

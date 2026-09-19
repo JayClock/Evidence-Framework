@@ -4,7 +4,7 @@
 
 | 内容                         | 位置                                               |
 | ---------------------------- | -------------------------------------------------- |
-| 业务材料与发现               | [discovery.md](discovery.md)                       |
+| 业务材料与发现               | [discovery.json](discovery.json)                   |
 | FM 使用入口                  | [fm/README.md](fm/README.md)                       |
 | 合同、责任、变化点与场景概览 | [fm/00-overview.md](fm/00-overview.md)             |
 | 正式业务术语                 | [fm/01-glossary.md](fm/01-glossary.md)             |

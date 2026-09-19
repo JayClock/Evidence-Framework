@@ -85,7 +85,7 @@ class CheckModelTests(unittest.TestCase):
         self.assertIn("Model inputs changed during validation", report["errors"])
 
     def test_cli_prints_report_without_writing_model_or_other_files(self):
-        notes = self.project / ".evidence/discovery.md"
+        notes = self.project / ".evidence/discovery.json"
         notes.write_text("# Discovery\nKeep existing business notes.\n")
         before = {p: p.read_bytes() for p in self.project.rglob("*") if p.is_file()}
         result = subprocess.run(

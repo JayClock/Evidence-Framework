@@ -15,7 +15,7 @@
 
 | 问题                 | 权威位置                                                                                 | 不可替代它的内容                 |
 | -------------------- | ---------------------------------------------------------------------------------------- | -------------------------------- |
-| 业务事实             | [FM 源入口](../../.evidence/fm/model.yaml)、[发现记录](../../.evidence/discovery.md)     | 当前代码、生成报告、Agent 推测   |
+| 业务事实             | [FM 源入口](../../.evidence/fm/model.yaml)、[发现记录](../../.evidence/discovery.json)   | 当前代码、生成报告、Agent 推测   |
 | 接口能力与 HTTP 契约 | [api.yaml](../../.evidence/api/api.yaml)                                                 | Resource 实现、过期 OpenAPI      |
 | 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                 | FM 中存在的所有活动              |
 | 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)          | 目录名、参考产品或模板默认业务   |
