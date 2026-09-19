@@ -13,16 +13,16 @@
 
 ## 来源与冲突处理
 
-| 问题                 | 权威位置                                                                                 | 不可替代它的内容                 |
-| -------------------- | ---------------------------------------------------------------------------------------- | -------------------------------- |
-| 业务事实             | [FM 源入口](../../.evidence/fm/model.json)、[发现记录](../../.evidence/discovery.json)   | 当前代码、生成报告、Agent 推测   |
-| 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                 | Resource 实现、过期 OpenAPI      |
-| 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                 | FM 中存在的所有活动              |
-| 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)          | 目录名、参考产品或模板默认业务   |
-| 业务术语             | [正式术语](../../.evidence/fm/01-glossary.md)                                            | 另写一份业务词典                 |
-| 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md) | 用同义词制造新业务对象           |
-| 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                      | 文件名、审核页、聊天记忆、README |
-| 当前是否验证         | 任务 CHECK 的本次实际结果                                                                | 文件存在、上次通过或模板中的预期 |
+| 问题                 | 权威位置                                                                                             | 不可替代它的内容                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------- |
+| 业务事实             | [FM 源入口](../../.evidence/fm/model.json)、发现记录（`.evidence/discovery.json`，发现流程按需创建） | 当前代码、生成报告、Agent 推测   |
+| 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                             | Resource 实现、过期 OpenAPI      |
+| 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                             | FM 中存在的所有活动              |
+| 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)                      | 目录名、参考产品或模板默认业务   |
+| 业务术语             | [正式术语](../../.evidence/fm/01-glossary.md)                                                        | 另写一份业务词典                 |
+| 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md)             | 用同义词制造新业务对象           |
+| 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                                  | 文件名、审核页、聊天记忆、README |
+| 当前是否验证         | 任务 CHECK 的本次实际结果                                                                            | 文件存在、上次通过或模板中的预期 |
 
 来源冲突时，先说明各自管辖范围及差异，停止受影响行动，交由相应拥有者确认；不能按读取先后、修改时间或“代码已经这样写了”裁决。实现证据与业务批准分开记录。
 
