@@ -6,6 +6,8 @@
 
 只映射具有明确交互场景的实际 Evidence 或有来源的 Participant。Participant 的身份或经办记录只能说明主体存在，不能代替读取、维护资料等独立业务场景；不为覆盖节点类型而生成接口。Context 用于限定责任范围；除非另有业务对象依据，不把它当作可 CRUD 资源。资源必须声明 `businessName`，用业务对象或行为的名称显式配置 `segment`；不从 FM 的 category、kind 或 ID 拼接路径，也不从 label 猜英文、复数或聚合。能力名称描述业务办理目的，不把“创建 Request”或“追加 Evidence”当成业务能力。只有业务确实称其为确认时，才使用相应的确认名称。
 
+先从 Context、聚合关系、父子基数和调用角色推导稳定资源 URI，再用角色、方法和 FM 场景确定 capability。URI 是模型关系的稳定表现，不等于数据库表或部署服务；写入能力仍由富含业务规则的领域模型执行。
+
 以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 根。Fulfillment 资源通常沿所属父合同 Context 的根继续导航；只有确需独立弹性边界时才拆服务，但服务拆分不改变稳定 URI。Contract 的实例读取可用自身业务 ID 定位；Contract 的 GET 列表必须按实际 `participant.party` 具体类型作用域挂载，例如 `/users/{userId}/subscriptions` 或 `/customers/{customerId}/subscriptions`，不能使用统称 `/parties/{partyId}`，因为同一 Contract 同时绑定两方角色，而两方角色可对应不同主体。跨 Context 的 Proposal → Contract 或合同 → Domain 关系使用超媒体链接，不将整条业务流程嵌入一条 URL。
 
 嵌套 URI 同时需要：
@@ -51,13 +53,15 @@ GET 对应 read。Evidence 写入只能用 POST + append_evidence。PUT/PATCH/DE
 
 ## 表示与超媒体
 
-字段使用白名单并回到 `entity#attribute`。不要默认公开所有 FM 属性；业务时间、关联值、服务端记录值和派生值不能因 required 而变成客户端输入。
+字段使用白名单并回到 `entity#attribute`。不要默认公开所有 FM 属性；业务时间、关联值、服务端记录值和派生值不能因 required 而变成客户端输入。HTTP 表示只维护在 `http.representations`；不再维护顶层重复 `representations`。
 
-链接目标和 URI 参数必须闭合。导航链接需要相应角色的 GET 接口；动作链接引用能力。HAL `_links` 不定义 method、body 或写入契约，也不自动创建 GET。
+链接目标和 URI 参数必须闭合。导航链接需要相应角色的 GET 接口；动作链接引用能力。HAL `_links` 不定义 method、body 或写入契约，也不自动创建 GET。`self` 表示资源身份；只有存在同角色 GET capability 时，才可把它作为可跟随的导航。
 
 ## 流程回映
 
 遍历所有 FM scenario 的 step sequence，将每步回映到实际接口、internal、external 或真实 gap。接口必须匹配该步骤的角色、凭证效果和场景依据；内部／外部步骤必须匹配整体 `nonApiActivities` 声明。遗漏整个场景也产生 gap；没有上游场景时报告空回映，不制造模拟成功。静态映射只写 mapped/gap，不写 passed。
+
+`http.entryPoints` 是有依据的消费者初始上下文，不授予权限；`http.journeys` 必须声明 `scenarioRefs`，仅首步引用 `entryPointRef`，后续步骤必须经 HAL `rel`、`self`/`next`、嵌入成员 `self` 或 `Location` 接续，不能用入口重填 ID 重新开始。每个 HTTP step 的 `sourceStepRefs` 将请求绑定到 FM 步骤；没有 FM 形成步骤的读取流程可为空，但每个 capability 仍须有成功 2xx 流程。`consumerCoverage` 逐场景检查 FM capability 步骤是否真的有成功 HTTP 请求，不能使用自由文本入口或重新猜测资源 ID 绕过接续检查。
 
 `modelCoverage` 自动列出整体 FM 的具体 Evidence、Thing 与 Participant。每项须有接口或有业务依据的 `nonApiActivities` 处理方式；有写入接口又声明整体内部／外部处理是冲突。凭证只有读取接口时，必须有追加形成接口；若其 `responsibleRoleRef` 指向未被 Participant Party 扮演的 Party Role，可用 `nonApiActivities` 声明内部／外部形成，并保留读取接口。Context、Party Role、Evidence Role 不因覆盖要求产生 CRUD。内部／外部处理说明用于表达真实责任，不是实施范围开关；不能用“暂不实现”或技术 decision 把缺失接口排除。
 

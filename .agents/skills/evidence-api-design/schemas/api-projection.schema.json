@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/evidence-api-design/v4/api-projection.schema.json",
+  "$id": "https://evidence.local/evidence-api-design/v5/api-projection.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -10,7 +10,6 @@
     "resources",
     "capabilities",
     "operations",
-    "representations",
     "coverage",
     "diagnostics",
     "http",
@@ -19,7 +18,7 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": "4.0"
+      "const": "5.0"
     },
     "inputDigests": {
       "type": "object",
@@ -182,9 +181,6 @@
     "operations": {
       "type": "array"
     },
-    "representations": {
-      "type": "array"
-    },
     "coverage": {
       "type": "array"
     },
@@ -240,7 +236,10 @@
         "representations",
         "operations",
         "journeys",
-        "diagnostics"
+        "diagnostics",
+        "entryPoints",
+        "consumerCoverage",
+        "navigation"
       ],
       "properties": {
         "complete": {
@@ -268,6 +267,24 @@
           }
         },
         "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "entryPoints": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "consumerCoverage": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "navigation": {
           "type": "array",
           "items": {
             "type": "object"

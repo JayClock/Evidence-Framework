@@ -11,6 +11,7 @@ from .diagnostics import error, gap
 links = importlib.import_module("fm_api_core.contract_links")
 payloads = importlib.import_module("fm_api_core.contract_payloads")
 journeys_module = importlib.import_module("fm_api_core.http_journeys")
+consumption_module = importlib.import_module("fm_api_core.consumer_coverage")
 
 
 def _response_checks(
@@ -256,7 +257,7 @@ def _operations(
 def build_http(contract: dict, projection: dict, index) -> dict:
     diagnostics = []
     capabilities = {item["id"]: item for item in projection["capabilities"]}
-    for section in ("representations", "journeys"):
+    for section in ("entryPoints", "representations", "journeys"):
         seen = set()
         for item in contract[section]:
             if item["id"] in seen:
@@ -273,9 +274,16 @@ def build_http(contract: dict, projection: dict, index) -> dict:
     )
     diagnostics.extend(operation_diagnostics)
     journeys, journey_diagnostics = journeys_module.check_journeys(
-        contract, capabilities, operations, representations
+        contract,
+        capabilities,
+        operations,
+        representations,
+        index,
+        {item.get("scenarioRef") for item in projection["coverage"] if item.get("scenarioRef")},
     )
     diagnostics.extend(journey_diagnostics)
+    consumption, consumption_diagnostics = consumption_module.check_consumption(projection, journeys)
+    diagnostics.extend(consumption_diagnostics)
     covered = {
         step["capabilityRef"]
         for journey in journeys
@@ -299,6 +307,9 @@ def build_http(contract: dict, projection: dict, index) -> dict:
     return {
         "complete": not diagnostics and not projection["diagnostics"],
         "runtimeValidated": False,
+        "entryPoints": contract["entryPoints"],
+        "consumerCoverage": consumption,
+        "navigation": consumption_module.navigation_graph(representations, capabilities),
         "representations": representations,
         "operations": operations,
         "journeys": journeys,

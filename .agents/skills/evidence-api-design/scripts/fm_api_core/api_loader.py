@@ -93,7 +93,6 @@ def load_api(
         "bindings",
         "scenarios",
         "capabilities",
-        "representations",
         "journeys",
     ):
         seen: set[str] = set()

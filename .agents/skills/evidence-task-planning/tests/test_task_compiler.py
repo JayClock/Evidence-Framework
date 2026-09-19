@@ -369,7 +369,7 @@ class CompilerTests(unittest.TestCase):
         api.write_text(
             json.dumps(
                 {
-                    "schemaVersion": "4.0",
+                    "schemaVersion": "5.0",
                     "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
                     "capabilities": [
                         {
@@ -457,7 +457,7 @@ class CompilerTests(unittest.TestCase):
     def test_api_role_variants_share_delivery_not_domain_duplicates(self):
         api = self.root / "api.json"
         body = {
-            "schemaVersion": "4.0",
+            "schemaVersion": "5.0",
             "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
             "capabilities": [
                 {"id": "api.reader", "resourceRef": "resource.book", "method": "GET"},
@@ -592,7 +592,7 @@ class CompilerTests(unittest.TestCase):
         api.write_text(
             json.dumps(
                 {
-                    "schemaVersion": "4.0",
+                    "schemaVersion": "5.0",
                     "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
                     "capabilities": [
                         {

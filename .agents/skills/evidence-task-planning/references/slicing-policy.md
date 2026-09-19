@@ -4,7 +4,7 @@
 
 ## 1. 输入与边界
 
-输入为任意 FM Schema v3，可选 API Schema 4.0，以及显式 `slicing`。架构固定模块化单体、生产持久化固定 MyBatis，业务事实由源文件提供。profile 声明 `architecture: modular-monolith`、`deploymentUnit: single-backend-application`、`moduleInteraction: in-process-contracts`；数据库引擎仍为未知，不从单应用架构推导数据库数量或事务范围。
+输入为任意 FM Schema v3，可选 API Schema 5.0，以及显式 `slicing`。架构固定模块化单体、生产持久化固定 MyBatis，业务事实由源文件提供。profile 声明 `architecture: modular-monolith`、`deploymentUnit: single-backend-application`、`moduleInteraction: in-process-contracts`；数据库引擎仍为未知，不从单应用架构推导数据库数量或事务范围。
 
 递归读取 YAML，忽略 `generated/`；拒绝重复键、重复源 ID、不可定位 FM 引用和逃出 FM 根的源链接。只消费模型、实体、关系、规则、场景、实例文档，不执行 CEL、不验证业务来源，也不替代完整 FM/API 校验。
 

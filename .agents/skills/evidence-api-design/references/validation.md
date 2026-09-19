@@ -22,7 +22,7 @@
 
 ## 整体覆盖
 
-输入 API 格式为 4.0，上游为已确认 FM v3；校验不重复业务确认。完整性检查始终执行，不可通过省略 Context、整个场景或某接口的 HTTP 契约得到通过。
+输入 API 格式为 5.0，上游为已确认 FM v3；校验不重复业务确认。完整性检查始终执行，不可通过省略 Context、整个场景、某接口的 HTTP 契约或消费者步骤得到通过。
 
 - `MODEL_ENTITY_UNCOVERED`：整体 FM 的业务对象未对应接口或真实非接口活动。
 - `MODEL_EVIDENCE_WRITE_MISSING`：仅有读取，未覆盖凭证形成。
@@ -33,8 +33,13 @@
 - `SCENARIO_HANDLING_MISMATCH`：步骤内部／外部处理与整体说明不一致。
 - `ACTOR_PARTY_PLAYER_MISSING`：`caller_role` 或 capability 的 Party Role 没有 `participant.party -> plays_role` 玩家；该角色不生成接口。
 - `CONTRACT_LIST_PARTY_SCOPE_MISSING`：Contract 的 GET collection 读取未挂在具体 Participant Party 类型资源根下，或仍使用 `/parties`、`partyId` 这类统称作用域，无法区分合同双方角色对应的不同主体。
-- `CONTRACT_OPERATION_MISSING`：业务接口缺少 HTTP 契约。
 - `HTTP_FLOW_UNCOVERED`：接口没有成功消费步骤。
+- `HTTP_FLOW_SCENARIO`：HTTP journey 或入口引用了未声明的 API 场景，或步骤能力不支持流程声明的场景。
+- `HTTP_FLOW_ENTRY`：首步未引用已声明入口，或后续步骤改用 `entryPointRef` 重新开始而非按返回链接／Location 接续。
+- `HTTP_ENTRY_CAPABILITY`：入口指向的能力不存在，或其能力不支持入口声明的场景。
+- `HTTP_ENTRY_BASIS`：入口缺少 FM 或业务来源依据，只凭技术选择声明初始上下文。
+- `HTTP_FLOW_SOURCE_STEP`：HTTP step 没有引用当前场景中匹配角色和能力的 FM 步骤。
+- `HTTP_SCENARIO_STEP_UNCOVERED`：FM capability 步骤没有对应成功 HTTP 请求；读取等 API-only capability 可没有 FM formation step，但不能没有成功流程。
 
 ## 业务命名、数量与寻址复核
 
@@ -56,7 +61,7 @@
 
 ## 文件纪律
 
-默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.json`，投影输出固定更新 `.evidence/api/generated/`。需要留存 inspect/check 结果时，经授权在 `.evidence/checks/api/<批次>/` 写入紧凑运行清单（命令、退出码、输入摘要、文件 `sha256` 与日志指针），不复制 projection 或契约全文；只校验仍只报告结果，不写文件。
+默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.json`，投影输出固定更新 `.evidence/api/generated/`。需要留存 inspect/check 结果时，经授权在 `.evidence/checks/api/<批次>/` 写入紧凑运行清单（命令、退出码、输入摘要、文件 `sha256` 与日志指针），不复制 projection 或契约全文；只校验仍只报告结果，不写文件。API 设计格式为 5.0，`http.representations` 是唯一表示来源。
 
 所有 CLI 路径参数使用绝对路径。`--api` 指向一份统一 API 文件，必须位于 FM 根目录之外；其中来源路径相对 project root，不得越界。FM、validation、API 和来源均只读；运行前后摘要变化时失败。
 

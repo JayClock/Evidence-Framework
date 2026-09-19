@@ -83,7 +83,7 @@ class ApiDocumentTest(unittest.TestCase):
             api["http"] = importlib.import_module("test_contracts").fixture()[1]
             write_json(path, api)
             self.assertEqual(loader.load_api(path)[1], [])
-            for field, value in (("schemaVersion", "4.0"), ("id", "nested")):
+            for field, value in (("schemaVersion", "5.0"), ("id", "nested")):
                 api["http"][field] = value
                 write_json(path, api)
                 self.assertTrue(loader.load_api(path)[1])

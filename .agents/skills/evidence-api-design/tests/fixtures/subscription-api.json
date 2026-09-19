@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "id": "api.subscription",
   "sources": [
     {
@@ -44,7 +44,9 @@
           "context.content-subscription",
           "contract.content-subscription"
         ],
-        "decisionRefs": ["decision.resource-hierarchy"],
+        "decisionRefs": [
+          "decision.resource-hierarchy"
+        ],
         "reasoning": "以合同 Evidence 作为订阅资源"
       },
       "shape": "collection",
@@ -62,15 +64,22 @@
         "decisionRef": "decision.resource-identity"
       },
       "basis": {
-        "fmRefs": ["fulfillment.content-payment", "request.content-payment"],
-        "sourceRefs": ["source.successful-payment"],
+        "fmRefs": [
+          "fulfillment.content-payment",
+          "request.content-payment"
+        ],
+        "sourceRefs": [
+          "source.successful-payment"
+        ],
         "reasoning": "付款请求履行指定订阅合同的付款责任"
       },
       "shape": "collection",
       "businessName": "订阅费用支付申请",
       "cardinality": {
         "max": "many",
-        "sourceRefs": ["source.payment-multiplicity"],
+        "sourceRefs": [
+          "source.payment-multiplicity"
+        ],
         "reasoning": "测试业务允许同一订阅下分次申请支付，每次申请单独定位"
       }
     },
@@ -86,7 +95,9 @@
         "decisionRef": "decision.resource-identity"
       },
       "basis": {
-        "fmRefs": ["confirmation.content-payment"],
+        "fmRefs": [
+          "confirmation.content-payment"
+        ],
         "reasoning": "确认独立定位并在请求中关联现有付款申请，URI 不假定未经声明的父子基数。"
       }
     }
@@ -102,7 +113,9 @@
           "role.platform-subscription",
           "contract.content-subscription"
         ],
-        "sourceRefs": ["source.successful-payment"],
+        "sourceRefs": [
+          "source.successful-payment"
+        ],
         "reasoning": "场景由平台订阅方签发该合同的付款请求"
       }
     },
@@ -112,8 +125,13 @@
       "parentResourceRef": "resource.subscription",
       "childResourceRef": "resource.payment",
       "basis": {
-        "fmRefs": ["fulfillment.content-payment", "request.content-payment"],
-        "sourceRefs": ["source.successful-payment"],
+        "fmRefs": [
+          "fulfillment.content-payment",
+          "request.content-payment"
+        ],
+        "sourceRefs": [
+          "source.successful-payment"
+        ],
         "reasoning": "请求须关联 URI 中已解析的订阅合同实例"
       }
     },
@@ -123,7 +141,10 @@
       "roleRef": "role.subscriber",
       "scopeResourceRef": "resource.confirmation",
       "basis": {
-        "fmRefs": ["role.subscriber", "confirmation.content-payment"],
+        "fmRefs": [
+          "role.subscriber",
+          "confirmation.content-payment"
+        ],
         "reasoning": "订阅者只可登记其本人订阅合同付款请求的确认，按请求关联校验实例归属。"
       }
     }
@@ -133,8 +154,12 @@
       "id": "scenario.api-payment",
       "sourceScenarioRef": "scenario.successful-payment",
       "basis": {
-        "sourceRefs": ["source.successful-payment"],
-        "fmRefs": ["request.content-payment"],
+        "sourceRefs": [
+          "source.successful-payment"
+        ],
+        "fmRefs": [
+          "request.content-payment"
+        ],
         "reasoning": "复用已校验的成功付款场景"
       }
     },
@@ -142,7 +167,9 @@
       "id": "scenario.api-overdue",
       "sourceScenarioRef": "scenario.overdue-payment",
       "basis": {
-        "fmRefs": ["request.content-payment"],
+        "fmRefs": [
+          "request.content-payment"
+        ],
         "reasoning": "回映上游已确认的逾期场景，接口发起请求不代表付款完成。"
       }
     }
@@ -159,7 +186,10 @@
         "targetRef": "request.content-payment"
       },
       "businessCapability": "请求支付订阅费用",
-      "scenarioRefs": ["scenario.api-payment", "scenario.api-overdue"],
+      "scenarioRefs": [
+        "scenario.api-payment",
+        "scenario.api-overdue"
+      ],
       "bindingRefs": [
         "binding.caller-platform",
         "binding.request-subscription"
@@ -171,8 +201,13 @@
         }
       ],
       "basis": {
-        "fmRefs": ["request.content-payment", "rule.payment-request-amount"],
-        "sourceRefs": ["source.successful-payment"],
+        "fmRefs": [
+          "request.content-payment",
+          "rule.payment-request-amount"
+        ],
+        "sourceRefs": [
+          "source.successful-payment"
+        ],
         "reasoning": "平台依据合同派生金额并追加付款请求凭证"
       }
     },
@@ -187,8 +222,12 @@
         "targetRef": "confirmation.content-payment"
       },
       "businessCapability": "登记订阅付款确认",
-      "scenarioRefs": ["scenario.api-payment"],
-      "bindingRefs": ["binding.caller-subscriber"],
+      "scenarioRefs": [
+        "scenario.api-payment"
+      ],
+      "bindingRefs": [
+        "binding.caller-subscriber"
+      ],
       "basis": {
         "fmRefs": [
           "confirmation.content-payment",
@@ -198,7 +237,6 @@
       }
     }
   ],
-  "representations": [],
   "journeys": [
     {
       "id": "journey.successful-payment",
@@ -211,8 +249,12 @@
           "mapping": "capability",
           "capabilityRef": "capability.request-payment",
           "basis": {
-            "fmRefs": ["request.content-payment"],
-            "sourceRefs": ["source.successful-payment"],
+            "fmRefs": [
+              "request.content-payment"
+            ],
+            "sourceRefs": [
+              "source.successful-payment"
+            ],
             "reasoning": "对应付款请求追加能力"
           }
         },
@@ -222,8 +264,12 @@
           "description": "支付网关形成线下付款收据",
           "mapping": "external",
           "basis": {
-            "fmRefs": ["evidence.gateway-payment-receipt"],
-            "sourceRefs": ["source.successful-payment"],
+            "fmRefs": [
+              "evidence.gateway-payment-receipt"
+            ],
+            "sourceRefs": [
+              "source.successful-payment"
+            ],
             "reasoning": "支付网关活动在本服务外部发生；引用既有收据。"
           }
         },
@@ -233,8 +279,12 @@
           "description": "订阅者形成付款确认",
           "mapping": "capability",
           "basis": {
-            "fmRefs": ["confirmation.content-payment"],
-            "sourceRefs": ["source.successful-payment"],
+            "fmRefs": [
+              "confirmation.content-payment"
+            ],
+            "sourceRefs": [
+              "source.successful-payment"
+            ],
             "reasoning": "订阅者通过接口登记实际支付确认，引用已存在的付款请求和收据。"
           },
           "capabilityRef": "capability.submit-confirmation"
@@ -252,8 +302,12 @@
           "mapping": "capability",
           "capabilityRef": "capability.request-payment",
           "basis": {
-            "fmRefs": ["request.content-payment"],
-            "sourceRefs": ["source.successful-payment"],
+            "fmRefs": [
+              "request.content-payment"
+            ],
+            "sourceRefs": [
+              "source.successful-payment"
+            ],
             "reasoning": "对应付款请求追加能力"
           }
         }
@@ -266,7 +320,9 @@
         "id": "representation.payment",
         "resourceRef": "resource.payment",
         "view": "item",
-        "actorRoleRefs": ["role.platform-subscription"],
+        "actorRoleRefs": [
+          "role.platform-subscription"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -306,7 +362,9 @@
         "id": "representation.confirmation",
         "resourceRef": "resource.confirmation",
         "view": "item",
-        "actorRoleRefs": ["role.subscriber"],
+        "actorRoleRefs": [
+          "role.subscriber"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -492,14 +550,16 @@
     ],
     "journeys": [
       {
-        "id": "http.request-payment",
+        "id": "http-journey.journey.overdue-request",
         "actorRoleRef": "role.platform-subscription",
+        "scenarioRefs": [
+          "scenario.api-overdue"
+        ],
         "steps": [
           {
-            "id": "http.create",
+            "id": "http.create-journey.overdue-request",
             "capabilityRef": "capability.request-payment",
             "expectStatus": 201,
-            "entry": "从已确认订阅业务交接取得入口和现有合同标识",
             "inputs": [
               {
                 "target": "path",
@@ -519,19 +579,25 @@
                   "reason": "Synthetic retry key"
                 }
               }
+            ],
+            "entryPointRef": "entry.request-payment",
+            "sourceStepRefs": [
+              "journey.overdue-request"
             ]
           }
         ]
       },
       {
-        "id": "http.submit-confirmation",
+        "id": "http-journey.journey.step-confirmation",
         "actorRoleRef": "role.subscriber",
+        "scenarioRefs": [
+          "scenario.api-payment"
+        ],
         "steps": [
           {
-            "id": "http.confirm",
+            "id": "http.confirm-journey.step-confirmation",
             "capabilityRef": "capability.submit-confirmation",
             "expectStatus": 201,
-            "entry": "订阅者从现有订阅交接取得付款申请和网关收据后登记确认。",
             "inputs": [
               {
                 "target": "body",
@@ -581,9 +647,87 @@
                   "reason": "合成重试键"
                 }
               }
+            ],
+            "entryPointRef": "entry.submit-confirmation",
+            "sourceStepRefs": [
+              "journey.step-confirmation"
             ]
           }
         ]
+      },
+      {
+        "id": "http-journey.journey.step-request",
+        "actorRoleRef": "role.platform-subscription",
+        "scenarioRefs": [
+          "scenario.api-payment"
+        ],
+        "steps": [
+          {
+            "id": "http.create-journey.step-request",
+            "capabilityRef": "capability.request-payment",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "subscriptionId",
+                "source": {
+                  "kind": "literal",
+                  "value": "sub-1",
+                  "reason": "Synthetic entry input"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "retry-1",
+                  "reason": "Synthetic retry key"
+                }
+              }
+            ],
+            "entryPointRef": "entry.request-payment",
+            "sourceStepRefs": [
+              "journey.step-request"
+            ]
+          }
+        ]
+      }
+    ],
+    "entryPoints": [
+      {
+        "id": "entry.request-payment",
+        "capabilityRef": "capability.request-payment",
+        "scenarioRefs": [
+          "scenario.api-payment",
+          "scenario.api-overdue"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "request.content-payment",
+            "rule.payment-request-amount"
+          ],
+          "sourceRefs": [
+            "source.successful-payment"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.submit-confirmation",
+        "capabilityRef": "capability.submit-confirmation",
+        "scenarioRefs": [
+          "scenario.api-payment"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "confirmation.content-payment",
+            "evidence.gateway-payment-receipt"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
       }
     ]
   },
@@ -592,7 +736,9 @@
       "entityRef": "contract.content-subscription",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["contract.content-subscription"],
+        "fmRefs": [
+          "contract.content-subscription"
+        ],
         "reasoning": "FM 场景以已签署合同为初始输入，订立流程内部持有此记录，不由支付接口重复签署。"
       }
     },
@@ -600,7 +746,9 @@
       "entityRef": "evidence.gateway-payment-receipt",
       "handling": "external",
       "basis": {
-        "fmRefs": ["evidence.gateway-payment-receipt"],
+        "fmRefs": [
+          "evidence.gateway-payment-receipt"
+        ],
         "reasoning": "支付网关形成的外部收据作为凭证输入，不虚构网关接口。"
       }
     },
@@ -608,7 +756,9 @@
       "entityRef": "party.customer",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["party.customer"],
+        "fmRefs": [
+          "party.customer"
+        ],
         "reasoning": "客户主体身份是合同角色依据，FM 未定义客户资料办理活动。"
       }
     },
@@ -616,7 +766,9 @@
       "entityRef": "party.platform",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["party.platform"],
+        "fmRefs": [
+          "party.platform"
+        ],
         "reasoning": "内容平台运营方仅作为平台角色玩家依据，FM 未定义独立主体资料办理活动。"
       }
     },
@@ -624,7 +776,9 @@
       "entityRef": "thing.content",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["thing.content"],
+        "fmRefs": [
+          "thing.content"
+        ],
         "reasoning": "内容标的是付款业务的引用输入；本 FM 未定义独立内容读取或维护活动。"
       }
     }

@@ -1,43 +1,788 @@
 {
+  "consumerCoverage": [
+    {
+      "scenarioRef": "scenario.api-monthly-customer-contact-completed",
+      "sourceScenarioRef": "scenario.monthly-customer-contact-completed",
+      "status": "mapped",
+      "steps": [
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-completed-1",
+              "stepRef": "http.register-sales-performance-agreement-monthly-customer-contact-completed-1"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 1,
+          "sourceStepRef": "step.monthly-customer-contact-completed-1",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-completed-2",
+              "stepRef": "http.register-monthly-customer-contact-target-monthly-customer-contact-completed-2"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 2,
+          "sourceStepRef": "step.monthly-customer-contact-completed-2",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-completed-3",
+              "stepRef": "http.register-customer-contact-record-monthly-customer-contact-completed-3"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 3,
+          "sourceStepRef": "step.monthly-customer-contact-completed-3",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-completed-4",
+              "stepRef": "http.register-customer-contact-record-monthly-customer-contact-completed-4"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 4,
+          "sourceStepRef": "step.monthly-customer-contact-completed-4",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-completed-5",
+              "stepRef": "http.register-customer-contact-record-monthly-customer-contact-completed-5"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 5,
+          "sourceStepRef": "step.monthly-customer-contact-completed-5",
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "scenarioRef": "scenario.api-monthly-customer-contact-insufficient",
+      "sourceScenarioRef": "scenario.monthly-customer-contact-insufficient",
+      "status": "mapped",
+      "steps": [
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-insufficient-1",
+              "stepRef": "http.register-sales-performance-agreement-monthly-customer-contact-insufficient-1"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 1,
+          "sourceStepRef": "step.monthly-customer-contact-insufficient-1",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-insufficient-2",
+              "stepRef": "http.register-monthly-customer-contact-target-monthly-customer-contact-insufficient-2"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 2,
+          "sourceStepRef": "step.monthly-customer-contact-insufficient-2",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-insufficient-3",
+              "stepRef": "http.register-customer-contact-record-monthly-customer-contact-insufficient-3"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 3,
+          "sourceStepRef": "step.monthly-customer-contact-insufficient-3",
+          "status": "mapped"
+        },
+        {
+          "httpSteps": [
+            {
+              "journeyRef": "http-journey.monthly-customer-contact-insufficient-4",
+              "stepRef": "http.register-customer-contact-record-monthly-customer-contact-insufficient-4"
+            }
+          ],
+          "mapping": "capability",
+          "sequence": 4,
+          "sourceStepRef": "step.monthly-customer-contact-insufficient-4",
+          "status": "mapped"
+        }
+      ]
+    }
+  ],
+  "entryPoints": [
+    {
+      "basis": {
+        "fmRefs": [
+          "request.monthly-customer-contact",
+          "confirmation.customer-contact-record",
+          "thing.customer-profile",
+          "relation.monthly-contact-to-record",
+          "relation.customer-contact-references-profile"
+        ],
+        "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+      },
+      "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+      "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+      "id": "entry.register-customer-contact-record-tele-sales",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ]
+    },
+    {
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "request.monthly-customer-contact",
+          "role.performance-manager",
+          "relation.sales-performance-to-monthly-contact"
+        ],
+        "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+      },
+      "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+      "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+      "id": "entry.register-monthly-customer-contact-target-manager",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ]
+    },
+    {
+      "basis": {
+        "fmRefs": [
+          "contract.sales-performance",
+          "role.tele-sales"
+        ],
+        "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+      },
+      "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+      "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+      "id": "entry.register-sales-performance-agreement-tele-sales",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed",
+        "scenario.api-monthly-customer-contact-insufficient"
+      ]
+    }
+  ],
   "journeys": [
     {
       "actorRoleRef": "role.tele-sales",
-      "id": "http-journey.register-sales-performance-agreement",
+      "id": "http-journey.monthly-customer-contact-completed-1",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed"
+      ],
       "status": "mapped",
       "steps": [
         {
           "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "entryPointRef": "entry.register-sales-performance-agreement-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001"
+            },
+            "representationRef": "representation.sales-performance-agreement",
+            "status": 201
+          },
           "expectStatus": 201,
-          "id": "http.register-sales-performance-agreement",
+          "id": "http.register-sales-performance-agreement-monthly-customer-contact-completed-1",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-sales-performance-agreement"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements",
+            "uriTemplate": "/sales-performance-agreements"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-completed-1"
+          ],
           "status": "mapped"
         }
       ]
     },
     {
       "actorRoleRef": "role.performance-manager",
-      "id": "http-journey.register-monthly-customer-contact-target",
+      "id": "http-journey.monthly-customer-contact-completed-2",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed"
+      ],
       "status": "mapped",
       "steps": [
         {
           "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "entryPointRef": "entry.register-monthly-customer-contact-target-manager",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+            },
+            "representationRef": "representation.monthly-customer-contact-target",
+            "status": 201
+          },
           "expectStatus": 201,
-          "id": "http.register-monthly-customer-contact-target",
+          "id": "http.register-monthly-customer-contact-target-monthly-customer-contact-completed-2",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "evidenceRefs": [
+                "instance.sales-performance-agreement"
+              ],
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Idempotency-Key": "idem-monthly-customer-contact-target"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-completed-2"
+          ],
           "status": "mapped"
         }
       ]
     },
     {
       "actorRoleRef": "role.tele-sales",
-      "id": "http-journey.register-customer-contact-record",
+      "id": "http-journey.monthly-customer-contact-completed-3",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed"
+      ],
       "status": "mapped",
       "steps": [
         {
           "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
           "expectStatus": 201,
-          "id": "http.register-customer-contact-record",
+          "id": "http.register-customer-contact-record-monthly-customer-contact-completed-3",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-customer-contact-record"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-completed-3"
+          ],
           "status": "mapped"
         }
       ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.monthly-customer-contact-completed-4",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-customer-contact-record-monthly-customer-contact-completed-4",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-customer-contact-record"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-completed-4"
+          ],
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.monthly-customer-contact-completed-5",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-completed"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-customer-contact-record-monthly-customer-contact-completed-5",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-customer-contact-record"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-completed-5"
+          ],
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.monthly-customer-contact-insufficient-1",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+          "entryPointRef": "entry.register-sales-performance-agreement-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001"
+            },
+            "representationRef": "representation.sales-performance-agreement",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-sales-performance-agreement-monthly-customer-contact-insufficient-1",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "signed_at": "2026-09-25T09:00:00Z"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-sales-performance-agreement"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements",
+            "uriTemplate": "/sales-performance-agreements"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-insufficient-1"
+          ],
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.performance-manager",
+      "id": "http-journey.monthly-customer-contact-insufficient-2",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+          "entryPointRef": "entry.register-monthly-customer-contact-target-manager",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10"
+            },
+            "representationRef": "representation.monthly-customer-contact-target",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-monthly-customer-contact-target-monthly-customer-contact-insufficient-2",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "evidenceRefs": [
+                "instance.sales-performance-agreement"
+              ],
+              "expired_at": "2026-10-31T23:59:59Z",
+              "period_id": "2026-10",
+              "request_id": "CONTACT-2026-10",
+              "started_at": "2026-10-01T00:00:00Z",
+              "target_contact_count": 3,
+              "target_email_count": 1,
+              "target_phone_count": 2
+            },
+            "headers": {
+              "Idempotency-Key": "idem-monthly-customer-contact-target"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-insufficient-2"
+          ],
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.monthly-customer-contact-insufficient-3",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-customer-contact-record-monthly-customer-contact-insufficient-3",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-customer-contact-record"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-insufficient-3"
+          ],
+          "status": "mapped"
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.tele-sales",
+      "id": "http-journey.monthly-customer-contact-insufficient-4",
+      "scenarioRefs": [
+        "scenario.api-monthly-customer-contact-insufficient"
+      ],
+      "status": "mapped",
+      "steps": [
+        {
+          "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+          "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+                }
+              },
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records/CONTACT-REC-001"
+            },
+            "representationRef": "representation.customer-contact-record",
+            "status": 201
+          },
+          "expectStatus": 201,
+          "id": "http.register-customer-contact-record-monthly-customer-contact-insufficient-4",
+          "request": {
+            "body": {
+              "agreement_id": "PERF-2026-Q4-001",
+              "channel": "phone",
+              "confirmed_at": "2026-10-03T02:00:00Z",
+              "customer_profile_id": "CUSTOMER-001",
+              "evidenceRefs": [
+                "instance.monthly-customer-contact-request"
+              ],
+              "period_id": "2026-10",
+              "record_id": "CONTACT-REC-001",
+              "request_id": "CONTACT-2026-10"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-customer-contact-record"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "agreementId": "PERF-2026-Q4-001",
+              "targetId": "CONTACT-2026-10"
+            },
+            "queryParameters": {},
+            "uri": "/sales-performance-agreements/PERF-2026-Q4-001/monthly-customer-contact-targets/CONTACT-2026-10/contact-records",
+            "uriTemplate": "/sales-performance-agreements/{agreementId}/monthly-customer-contact-targets/{targetId}/contact-records"
+          },
+          "sourceStepRefs": [
+            "step.monthly-customer-contact-insufficient-4"
+          ],
+          "status": "mapped"
+        }
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "availability": "not_evaluated",
+      "capabilityRefs": [],
+      "kind": "identity",
+      "rel": "self",
+      "representationRef": "representation.customer-contact-record"
+    },
+    {
+      "availability": "not_evaluated",
+      "capabilityRefs": [],
+      "kind": "identity",
+      "rel": "self",
+      "representationRef": "representation.monthly-customer-contact-target"
+    },
+    {
+      "availability": "not_evaluated",
+      "capabilityRefs": [],
+      "kind": "identity",
+      "rel": "self",
+      "representationRef": "representation.sales-performance-agreement"
     }
   ],
   "runtimeValidated": false

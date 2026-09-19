@@ -222,8 +222,8 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
     diagnostics = []
     if api_path is not None:
         api = load(api_path)
-        if str(api.get("schemaVersion")) != "4.0":
-            raise ValueError("API Schema 4.0 is required")
+        if str(api.get("schemaVersion")) != "5.0":
+            raise ValueError("API Schema 5.0 is required")
         api_digest = digest(api)
         resources = {}
         for r in api.get("resources", []):

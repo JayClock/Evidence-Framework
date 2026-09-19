@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "id": "api.sales-performance",
   "sources": [],
   "decisions": [],
@@ -275,7 +275,6 @@
       }
     }
   ],
-  "representations": [],
   "journeys": [
     {
       "id": "journey.monthly-customer-contact-completed",
@@ -978,14 +977,14 @@
     ],
     "journeys": [
       {
-        "id": "http-journey.register-sales-performance-agreement",
+        "id": "http-journey.monthly-customer-contact-completed-1",
         "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-completed"],
         "steps": [
           {
-            "id": "http.register-sales-performance-agreement",
+            "id": "http.register-sales-performance-agreement-monthly-customer-contact-completed-1",
             "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
             "expectStatus": 201,
-            "entry": "电话销售从本人绩效工作台登记双方已经达成的协议。",
             "inputs": [
               {
                 "target": "body",
@@ -1014,19 +1013,21 @@
                   "reason": "同一次逻辑登记在重试中沿用此键。"
                 }
               }
-            ]
+            ],
+            "entryPointRef": "entry.register-sales-performance-agreement-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-completed-1"]
           }
         ]
       },
       {
-        "id": "http-journey.register-monthly-customer-contact-target",
+        "id": "http-journey.monthly-customer-contact-completed-2",
         "actorRoleRef": "role.performance-manager",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-completed"],
         "steps": [
           {
-            "id": "http.register-monthly-customer-contact-target",
+            "id": "http.register-monthly-customer-contact-target-monthly-customer-contact-completed-2",
             "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
             "expectStatus": 201,
-            "entry": "绩效管理者从已定位的本人参与协议进入本周期目标办理。",
             "inputs": [
               {
                 "target": "path",
@@ -1127,19 +1128,21 @@
                   "reason": "同一次逻辑办理在重试中沿用此键。"
                 }
               }
-            ]
+            ],
+            "entryPointRef": "entry.register-monthly-customer-contact-target-manager",
+            "sourceStepRefs": ["step.monthly-customer-contact-completed-2"]
           }
         ]
       },
       {
-        "id": "http-journey.register-customer-contact-record",
+        "id": "http-journey.monthly-customer-contact-completed-3",
         "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-completed"],
         "steps": [
           {
-            "id": "http.register-customer-contact-record",
+            "id": "http.register-customer-contact-record-monthly-customer-contact-completed-3",
             "capabilityRef": "capability.register-customer-contact-record-tele-sales",
             "expectStatus": 201,
-            "entry": "电话销售从已定位的月度目标登记一次实际客户联系。",
             "inputs": [
               {
                 "target": "path",
@@ -1240,9 +1243,681 @@
                   "reason": "同一次逻辑登记在重试中沿用此键。"
                 }
               }
-            ]
+            ],
+            "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-completed-3"]
           }
         ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-completed-4",
+        "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-completed"],
+        "steps": [
+          {
+            "id": "http.register-customer-contact-record-monthly-customer-contact-completed-4",
+            "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "agreementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "已定位的协议实例；服务端仍核验参与方和实例归属。"
+                }
+              },
+              {
+                "target": "path",
+                "name": "targetId",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "已定位的目标请求；服务端仍核验协议和周期关联。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "record_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-REC-001",
+                  "reason": "合成场景中的客户联系记录编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "合成场景中的月度目标请求编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的绩效协议编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "period_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10",
+                  "reason": "合成场景中的业务周期编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "customer_profile_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CUSTOMER-001",
+                  "reason": "合成场景中实际联系所指向的既有客户档案编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "channel",
+                "source": {
+                  "kind": "literal",
+                  "value": "phone",
+                  "reason": "合成场景中的实际联系渠道。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "confirmed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-03T02:00:00Z",
+                  "reason": "合成场景中实际联系完成并形成记录的业务时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": ["instance.monthly-customer-contact-request"],
+                  "reason": "合成场景中已经存在并可见的月度目标请求凭证。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-customer-contact-record",
+                  "reason": "同一次逻辑登记在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-completed-4"]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-completed-5",
+        "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-completed"],
+        "steps": [
+          {
+            "id": "http.register-customer-contact-record-monthly-customer-contact-completed-5",
+            "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "agreementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "已定位的协议实例；服务端仍核验参与方和实例归属。"
+                }
+              },
+              {
+                "target": "path",
+                "name": "targetId",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "已定位的目标请求；服务端仍核验协议和周期关联。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "record_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-REC-001",
+                  "reason": "合成场景中的客户联系记录编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "合成场景中的月度目标请求编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的绩效协议编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "period_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10",
+                  "reason": "合成场景中的业务周期编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "customer_profile_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CUSTOMER-001",
+                  "reason": "合成场景中实际联系所指向的既有客户档案编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "channel",
+                "source": {
+                  "kind": "literal",
+                  "value": "phone",
+                  "reason": "合成场景中的实际联系渠道。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "confirmed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-03T02:00:00Z",
+                  "reason": "合成场景中实际联系完成并形成记录的业务时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": ["instance.monthly-customer-contact-request"],
+                  "reason": "合成场景中已经存在并可见的月度目标请求凭证。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-customer-contact-record",
+                  "reason": "同一次逻辑登记在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-completed-5"]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-insufficient-1",
+        "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-insufficient"],
+        "steps": [
+          {
+            "id": "http.register-sales-performance-agreement-monthly-customer-contact-insufficient-1",
+            "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的绩效协议编号，不是权限证明。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "signed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-09-25T09:00:00Z",
+                  "reason": "合成场景中双方达成协议的业务时刻。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-sales-performance-agreement",
+                  "reason": "同一次逻辑登记在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-sales-performance-agreement-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-insufficient-1"]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-insufficient-2",
+        "actorRoleRef": "role.performance-manager",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-insufficient"],
+        "steps": [
+          {
+            "id": "http.register-monthly-customer-contact-target-monthly-customer-contact-insufficient-2",
+            "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "agreementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "已定位的协议实例；服务端仍核验参与方和实例归属。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "合成场景中的月度目标请求编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的父绩效协议编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "period_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10",
+                  "reason": "合成场景中的业务周期编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "started_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-01T00:00:00Z",
+                  "reason": "合成场景中双方约定的目标周期开始时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "expired_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-31T23:59:59Z",
+                  "reason": "合成场景中双方约定的目标周期截止时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "target_contact_count",
+                "source": {
+                  "kind": "literal",
+                  "value": 3,
+                  "reason": "合成场景为覆盖完成规则提供的总联系目标。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "target_phone_count",
+                "source": {
+                  "kind": "literal",
+                  "value": 2,
+                  "reason": "合成场景为覆盖完成规则提供的电话联系目标。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "target_email_count",
+                "source": {
+                  "kind": "literal",
+                  "value": 1,
+                  "reason": "合成场景为覆盖完成规则提供的邮件联系目标。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": ["instance.sales-performance-agreement"],
+                  "reason": "合成场景中已经存在并可见的绩效协议凭证。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-monthly-customer-contact-target",
+                  "reason": "同一次逻辑办理在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-monthly-customer-contact-target-manager",
+            "sourceStepRefs": ["step.monthly-customer-contact-insufficient-2"]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-insufficient-3",
+        "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-insufficient"],
+        "steps": [
+          {
+            "id": "http.register-customer-contact-record-monthly-customer-contact-insufficient-3",
+            "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "agreementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "已定位的协议实例；服务端仍核验参与方和实例归属。"
+                }
+              },
+              {
+                "target": "path",
+                "name": "targetId",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "已定位的目标请求；服务端仍核验协议和周期关联。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "record_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-REC-001",
+                  "reason": "合成场景中的客户联系记录编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "合成场景中的月度目标请求编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的绩效协议编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "period_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10",
+                  "reason": "合成场景中的业务周期编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "customer_profile_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CUSTOMER-001",
+                  "reason": "合成场景中实际联系所指向的既有客户档案编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "channel",
+                "source": {
+                  "kind": "literal",
+                  "value": "phone",
+                  "reason": "合成场景中的实际联系渠道。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "confirmed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-03T02:00:00Z",
+                  "reason": "合成场景中实际联系完成并形成记录的业务时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": ["instance.monthly-customer-contact-request"],
+                  "reason": "合成场景中已经存在并可见的月度目标请求凭证。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-customer-contact-record",
+                  "reason": "同一次逻辑登记在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-insufficient-3"]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.monthly-customer-contact-insufficient-4",
+        "actorRoleRef": "role.tele-sales",
+        "scenarioRefs": ["scenario.api-monthly-customer-contact-insufficient"],
+        "steps": [
+          {
+            "id": "http.register-customer-contact-record-monthly-customer-contact-insufficient-4",
+            "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "agreementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "已定位的协议实例；服务端仍核验参与方和实例归属。"
+                }
+              },
+              {
+                "target": "path",
+                "name": "targetId",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "已定位的目标请求；服务端仍核验协议和周期关联。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "record_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-REC-001",
+                  "reason": "合成场景中的客户联系记录编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CONTACT-2026-10",
+                  "reason": "合成场景中的月度目标请求编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "agreement_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "PERF-2026-Q4-001",
+                  "reason": "合成场景中的绩效协议编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "period_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10",
+                  "reason": "合成场景中的业务周期编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "customer_profile_id",
+                "source": {
+                  "kind": "literal",
+                  "value": "CUSTOMER-001",
+                  "reason": "合成场景中实际联系所指向的既有客户档案编号。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "channel",
+                "source": {
+                  "kind": "literal",
+                  "value": "phone",
+                  "reason": "合成场景中的实际联系渠道。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "confirmed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-10-03T02:00:00Z",
+                  "reason": "合成场景中实际联系完成并形成记录的业务时刻。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": ["instance.monthly-customer-contact-request"],
+                  "reason": "合成场景中已经存在并可见的月度目标请求凭证。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "idem-customer-contact-record",
+                  "reason": "同一次逻辑登记在重试中沿用此键。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-customer-contact-record-tele-sales",
+            "sourceStepRefs": ["step.monthly-customer-contact-insufficient-4"]
+          }
+        ]
+      }
+    ],
+    "entryPoints": [
+      {
+        "id": "entry.register-customer-contact-record-tele-sales",
+        "capabilityRef": "capability.register-customer-contact-record-tele-sales",
+        "scenarioRefs": [
+          "scenario.api-monthly-customer-contact-completed",
+          "scenario.api-monthly-customer-contact-insufficient"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "request.monthly-customer-contact",
+            "confirmation.customer-contact-record",
+            "thing.customer-profile",
+            "relation.monthly-contact-to-record",
+            "relation.customer-contact-references-profile"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.register-monthly-customer-contact-target-manager",
+        "capabilityRef": "capability.register-monthly-customer-contact-target-manager",
+        "scenarioRefs": [
+          "scenario.api-monthly-customer-contact-completed",
+          "scenario.api-monthly-customer-contact-insufficient"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "contract.sales-performance",
+            "request.monthly-customer-contact",
+            "role.performance-manager",
+            "relation.sales-performance-to-monthly-contact"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.register-sales-performance-agreement-tele-sales",
+        "capabilityRef": "capability.register-sales-performance-agreement-tele-sales",
+        "scenarioRefs": [
+          "scenario.api-monthly-customer-contact-completed",
+          "scenario.api-monthly-customer-contact-insufficient"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": ["contract.sales-performance", "role.tele-sales"],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
       }
     ]
   }

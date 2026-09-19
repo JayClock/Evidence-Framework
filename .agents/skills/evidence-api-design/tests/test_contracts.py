@@ -21,6 +21,18 @@ def fixture():
         if item["id"] == "capability.request-payment"
     ]
     contract = {
+        "entryPoints": [
+            {
+                "id": "entry.request-payment",
+                "capabilityRef": "capability.request-payment",
+                "scenarioRefs": ["scenario.api-payment"],
+                "context": "Synthetic entry from an existing subscription handoff",
+                "basis": {
+                    "fmRefs": ["request.content-payment"],
+                    "reasoning": "The entry identifies an existing business context; it does not grant access.",
+                },
+            }
+        ],
         "representations": [
             {
                 "id": "representation.payment",
@@ -91,12 +103,14 @@ def fixture():
             {
                 "id": "http.request-payment",
                 "actorRoleRef": "role.platform-subscription",
+                "scenarioRefs": ["scenario.api-payment"],
                 "steps": [
                     {
                         "id": "http.create",
                         "capabilityRef": "capability.request-payment",
                         "expectStatus": 201,
-                        "entry": "Explicitly configured entry and subscription from existing context",
+                        "entryPointRef": "entry.request-payment",
+                        "sourceStepRefs": [],
                         "inputs": [
                             {
                                 "target": "path",
@@ -240,6 +254,18 @@ class ContractTest(unittest.TestCase):
             effect={"kind": "read", "targetRef": "request.content-payment"},
         )
         projection["capabilities"].append(read)
+        contract["entryPoints"].append(
+            {
+                "id": "entry.read-payment",
+                "capabilityRef": read["id"],
+                "scenarioRefs": ["scenario.api-payment"],
+                "context": "Synthetic detail lookup after the request response",
+                "basis": {
+                    "fmRefs": ["request.content-payment"],
+                    "reasoning": "The detail lookup is an explicit read capability in the fixture.",
+                },
+            }
+        )
         operation = copy.deepcopy(contract["operations"][0])
         operation.update(
             capabilityRef=read["id"],
@@ -263,6 +289,7 @@ class ContractTest(unittest.TestCase):
                 "id": "http.read",
                 "capabilityRef": read["id"],
                 "expectStatus": 200,
+                "sourceStepRefs": [],
                 "via": {"stepRef": "http.create", "rel": "details"},
                 "inputs": [],
             }
@@ -310,21 +337,10 @@ class ContractTest(unittest.TestCase):
     def test_response_field_and_header_data_flow(self):
         projection, contract = self.navigation_fixture()
         step = contract["journeys"][0]["steps"][1]
-        step.pop("via")
-        step["entry"] = "Explicit entry with response-derived identity"
         step["inputs"] = [
             {
-                "target": "path",
-                "name": "subscriptionId",
-                "source": {
-                    "kind": "literal",
-                    "value": "sub-1",
-                    "reason": "Known context",
-                },
-            },
-            {
-                "target": "path",
-                "name": "paymentId",
+                "target": "header",
+                "name": "X-Payment-Id",
                 "source": {
                     "kind": "response_field",
                     "stepRef": "http.create",
@@ -343,6 +359,136 @@ class ContractTest(unittest.TestCase):
         ]
         contract["operations"][0]["responses"][0]["headers"]["ETag"] = '"v1"'
         self.assertEqual(self.build(contract, projection)["diagnostics"], [])
+
+    def test_entry_point_cannot_restart_after_the_first_step(self):
+        projection, contract = self.navigation_fixture()
+        step = contract["journeys"][0]["steps"][1]
+        step.pop("via")
+        step["entryPointRef"] = "entry.read-payment"
+        step["inputs"] = [
+            {
+                "target": "path",
+                "name": "subscriptionId",
+                "source": {
+                    "kind": "literal",
+                    "value": "sub-1",
+                    "reason": "Known context",
+                },
+            },
+            {
+                "target": "path",
+                "name": "paymentId",
+                "source": {
+                    "kind": "literal",
+                    "value": "pay-1",
+                    "reason": "Guessed identity must not be accepted",
+                },
+            },
+        ]
+        codes = self.codes(self.build(contract, projection))
+        self.assertIn("HTTP_FLOW_ENTRY", codes)
+
+    def test_journey_scenario_refs_must_be_declared_api_scenarios(self):
+        projection, contract = self.navigation_fixture()
+        contract["journeys"][0]["scenarioRefs"] = ["scenario.api-missing"]
+        codes = self.codes(self.build(contract, projection))
+        self.assertIn("HTTP_FLOW_SCENARIO", codes)
+
+    def test_embedded_member_navigation_uses_returned_self_link(self):
+        projection, contract = self.navigation_fixture()
+        read = projection["capabilities"][-1]
+        listing = copy.deepcopy(read)
+        listing.update(
+            id="capability.list-payments",
+            method="GET",
+            view="collection",
+            uri="/subscriptions/{subscriptionId}/payments",
+        )
+        projection["capabilities"].append(listing)
+        item = contract["representations"][0]
+        collection = copy.deepcopy(item)
+        collection.update(
+            id="representation.payments",
+            view="collection",
+            fields=[],
+            example={},
+            exampleParameters={"subscriptionId": "sub-1"},
+            links=[],
+            embedded=[{"rel": "payments", "representationRefs": [item["id"]]}],
+        )
+        contract["representations"].append(collection)
+        operation = copy.deepcopy(contract["operations"][1])
+        operation.update(
+            capabilityRef=listing["id"],
+            idempotency={"mode": "not_applicable", "reason": "Read only"},
+        )
+        operation["responses"][0].update(
+            status=200, headers={}, representationRef=collection["id"]
+        )
+        contract["operations"].append(operation)
+        contract["entryPoints"].append(
+            {
+                "id": "entry.list-payments",
+                "capabilityRef": listing["id"],
+                "scenarioRefs": ["scenario.api-payment"],
+                "context": "Synthetic collection entry",
+                "basis": {
+                    "fmRefs": ["request.content-payment"],
+                    "reasoning": "Collection entry for the fixture.",
+                },
+            }
+        )
+        contract["journeys"].append(
+            {
+                "id": "http.list-payments",
+                "actorRoleRef": "role.platform-subscription",
+                "scenarioRefs": ["scenario.api-payment"],
+                "steps": [
+                    {
+                        "id": "http.list",
+                        "capabilityRef": listing["id"],
+                        "expectStatus": 200,
+                        "entryPointRef": "entry.list-payments",
+                        "sourceStepRefs": [],
+                        "inputs": [
+                            {
+                                "target": "path",
+                                "name": "subscriptionId",
+                                "source": {
+                                    "kind": "literal",
+                                    "value": "sub-1",
+                                    "reason": "Synthetic entry input",
+                                },
+                            }
+                        ],
+                    },
+                    {
+                        "id": "http.read-member",
+                        "capabilityRef": read["id"],
+                        "expectStatus": 200,
+                        "sourceStepRefs": [],
+                        "via": {
+                            "stepRef": "http.list",
+                            "member": {"rel": "payments", "index": 0},
+                        },
+                        "inputs": [],
+                    },
+                ],
+            }
+        )
+        result = self.build(contract, projection)
+        self.assertEqual(result["diagnostics"], [])
+        journey = next(
+            item for item in result["journeys"] if item["id"] == "http.list-payments"
+        )
+        member = next(
+            row for row in journey["steps"] if row["id"] == "http.read-member"
+        )
+        self.assertEqual(
+            member["request"]["uri"], "/subscriptions/sub-1/payments/pay-1"
+        )
+        contract["journeys"][-1]["steps"][1]["via"]["member"]["index"] = 5
+        self.assertIn("HTTP_FLOW_LINK", self.codes(self.build(contract, projection)))
 
     def test_pagination_requires_collection_get_and_preserves_cursor(self):
         projection, contract = self.navigation_fixture()
@@ -441,6 +587,25 @@ class ContractTest(unittest.TestCase):
         self.assertEqual(list(validator.iter_errors(api)), [])
         api["http"]["operations"][0]["approve"] = True
         self.assertTrue(list(validator.iter_errors(api)))
+
+    def test_via_selector_is_exclusive_in_schema(self):
+        import jsonschema
+
+        _, contract = self.navigation_fixture()
+        api = design()
+        api["http"] = contract
+        validator = jsonschema.Draft202012Validator(
+            json.loads((API_ROOT / "schemas/api.schema.json").read_text())
+        )
+        self.assertEqual(list(validator.iter_errors(api)), [])
+        via = api["http"]["journeys"][0]["steps"][1]["via"]
+        via["header"] = "Location"
+        self.assertTrue(list(validator.iter_errors(api)))
+        via.pop("header")
+        via["member"] = {"rel": "payments", "index": 0}
+        self.assertTrue(list(validator.iter_errors(api)))
+        via.pop("member")
+        self.assertEqual(list(validator.iter_errors(api)), [])
 
 
 if __name__ == "__main__":

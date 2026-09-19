@@ -33,6 +33,9 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
     outputs["http-journeys.json"] = canonical_json(
         {
             "runtimeValidated": False,
+            "entryPoints": http["entryPoints"],
+            "consumerCoverage": http["consumerCoverage"],
+            "navigation": http["navigation"],
             "journeys": http["journeys"],
         }
     )
@@ -55,7 +58,7 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         for name in ("api.schema.json", "api-projection.schema.json")
     }
     manifest = {
-        "schemaVersion": "4.0",
+        "schemaVersion": "5.0",
         "apiId": projection["apiId"],
         "tool": {
             "name": "evidence-api-design",

@@ -140,7 +140,7 @@ class CliTest(unittest.TestCase):
             vector = next(
                 item
                 for item in document["vectors"]
-                if item["journeyRef"] == "http.quote-products"
+                if item["journeyRef"] == "http-journey.procurement-2"
             )
             create = vector["steps"][0]
             self.assertEqual("POST", create["request"]["method"])

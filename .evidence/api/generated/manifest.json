@@ -1,7 +1,7 @@
 {
   "apiId": "api.sales-performance",
   "inputs": {
-    "api": "7566a64bed067536671dc5f214f2a2c6c147e20395abe40e074104d40f74ffe9",
+    "api": "896022e7ed67e5519dcee1c09e687cdf9c7a0c52abd1e22644e2f62fc2e7a331",
     "fm": {
       "00-overview.md": "55b48283e4f73c21025f9f6e1d514d5e7aeb06468c8cd38b329cff4f73edb9d7",
       "01-glossary.md": "bccba6354beb7f8a69516cab36a2e3ece3a7abc1b6480c1db2e63feb04429308",
@@ -36,20 +36,20 @@
   },
   "outputs": {
     "e2e-test-vectors.json": {
-      "bytes": 8143,
-      "sha256": "6a02d3d6187ebed228896ff0a69a1555665426525444c187c820ec9dbc19aaed"
+      "bytes": 26849,
+      "sha256": "eb037c75bcaad5dae23aa18867aabd75b1967f7663b986ab84b5613c688e63c7"
     },
     "http-journeys.json": {
-      "bytes": 1258,
-      "sha256": "362a406816a2c20a57b5816a3309b7a9c4a7738983db61760acb9ca17841d600"
+      "bytes": 30690,
+      "sha256": "5f736ca6b8adba1fd4b640b2993d5b879b9071816a69c62fe6f5fb359e07d943"
     },
     "openapi.json": {
       "bytes": 19497,
-      "sha256": "81fcec2f7d736b7a3c776199a94409ab6e59d58a53a87f0c6aacebdf4becaf86"
+      "sha256": "1df073c9f9ba18f05ffa9489b19dc96de4a600b506cd69be80febc7ec51d919c"
     },
     "projection.json": {
-      "bytes": 41424,
-      "sha256": "bc775ffe14a0136ab1750716d06c6d70af250667215eae71e647adec85de2bfb"
+      "bytes": 72981,
+      "sha256": "31d799dabd13e171ff629f926fd1f040dc1f42d6487ea4791e82d72696c0c07b"
     },
     "representation-examples.json": {
       "bytes": 1242,
@@ -62,13 +62,13 @@
     },
     "python": "3.12.3"
   },
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "tool": {
     "name": "evidence-api-design",
     "schemas": {
-      "api-projection.schema.json": "cf4ebf1dbf4eff5f2936f6b54ac4f38312d6887e43f2cf40ec0baf3e0b14e13d",
-      "api.schema.json": "4ccf7449acbc78e4cf11fbf9874f3c2e32526ba1b4abbab52b892340e3fb4adb"
+      "api-projection.schema.json": "296c61322974456eed6bfb782bb1aa63f0750d1fee1e6b5c7d47095c03b15d9f",
+      "api.schema.json": "fc6fca187ffc0d385e8d47b89acd974cbc35900887709299b8bf5f4119ad19b3"
     },
-    "version": "4.0.0"
+    "version": "5.0.0"
   }
 }

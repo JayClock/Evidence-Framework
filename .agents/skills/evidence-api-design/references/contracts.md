@@ -14,15 +14,16 @@
   --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```
 
-`projection.json.http` 保存 HTTP 设计结果，`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.json` 从它渲染；人工审核页由 `evidence-visualization` 直接消费投影，不维护重复的 Markdown 契约。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝；输出通过同级临时目录整体更新，历史由 Git 管理。
+`projection.json.http` 保存 HTTP 设计结果，`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.json` 从它渲染；人工审核页由 `evidence-visualization` 直接消费投影，不维护重复的 Markdown 契约。`http` 同时保存 `entryPoints`、`consumerCoverage` 和派生 `navigation`，用于证明资源能否被消费者接续。
 
 ## 输入结构
 
-统一格式由 `schemas/api.schema.json` 定义，API 文件的 schemaVersion 为 4.0。以下为其中的 HTTP 部分：
+统一格式由 `schemas/api.schema.json` 定义，API 文件的 schemaVersion 为 5.0。以下为其中的 HTTP 部分：
 
 ```json
 {
   "http": {
+    "entryPoints": [],
     "representations": [],
     "operations": [],
     "journeys": []
@@ -30,7 +31,7 @@
 }
 ```
 
-这是 HTTP 对象结构示意。HTTP 部分不重复文件身份、版本或业务接口范围；所有顶层 capability 自动要求对应契约和成功消费步骤。存在接口时不能留下空操作或空流程；HTTP 不允许为 null。缺口使 check/project 默认返回非零，project 不写局部交付。
+这是 HTTP 对象结构示意。HTTP 部分不重复文件身份、版本或业务接口范围；所有顶层 capability 自动要求对应契约和成功消费步骤。`entryPoints` 是有 FM／来源依据的消费者初始上下文，不授予身份或权限；`journeys` 绑定业务场景并以 `sourceStepRefs` 追溯 FM 步骤。存在接口时不能留下空操作或空流程；HTTP 不允许为 null。缺口使 check/project 默认返回非零，project 不写局部交付。
 
 ## 表示、字段与来源
 
@@ -90,29 +91,43 @@ operation 使用 `capabilityRef/request/responses/idempotency/concurrency`；URI
 
 ## HTTP 消费流程
 
-journey 声明固定 `actorRoleRef`；每个 step 指定 `capabilityRef/expectStatus/inputs`，再二选一：
-
-1. `entry`：说明已约定的入口和如何取得已有输入，不悄悄猜路径。
-2. `via`：跟随前一步返回表示中的 `rel`，或跟随响应头 `Location` 去执行已有 GET。
+`http.journeys` 使用固定调用角色和 `scenarioRefs`；每个 step 都有 `sourceStepRefs`。第一步必须使用 `entryPointRef`，后续步骤不能重新声明自由文本入口，只能使用前序响应的 HAL `rel`、`self`/`next` 或 `Location`。
 
 ```json
 {
-  "via": {
-    "stepRef": "http.create",
-    "header": "Location"
-  }
+  "id": "http-journey.read-payment",
+  "actorRoleRef": "role.subscriber",
+  "scenarioRefs": ["scenario.api-payment"],
+  "steps": [
+    {
+      "id": "http.read",
+      "capabilityRef": "capability.read-payment",
+      "expectStatus": 200,
+      "entryPointRef": "entry.read-payment",
+      "sourceStepRefs": [],
+      "inputs": []
+    }
+  ]
 }
 ```
 
-inputs 的 target 为 `path/body/header`，source 为：
+- `entryPointRef`：只能出现在流程首步；入口必须指向同角色、同场景的 capability，并有 FM／来源依据。后续步骤重复声明入口会被报告为 `HTTP_FLOW_ENTRY`，不能靠重填已有 ID 重新开始。
+- `via`：首步之后必须使用，三选一，不得同时声明：`rel`（`self`/`next` 或前序表示声明的链接）、`header: Location`（仅用于已有 GET 的结果发现）或 `member`（跟随 HAL 集合中显式嵌入成员的 `self`，需匹配同一资源的 item 读取能力）。
+- `sourceStepRefs`：将 HTTP 请求绑定到一个或多个 FM 业务步骤；读取或条件读取若没有 FM 形成步骤可为空，但不得用空引用隐藏形成能力的缺少覆盖。
+
+entries 与 journeys 都受场景约束：入口的 `scenarioRefs` 必须是所指向能力支持且已声明的 API 场景，否则报告 `HTTP_ENTRY_CAPABILITY`；入口缺少 FM／来源依据时保留 `HTTP_ENTRY_BASIS`；journey（包括入口）引用未声明的 API 场景时报告 `HTTP_FLOW_SCENARIO`。
+
+inputs 的 target 为 `path/body/query/header`，source 为：
 
 - `literal`：明确的合成入口值及 reason；不是默认业务值。
 - `response_field`：前序步骤响应 body 的已声明字段。
 - `response_header`：前序响应头，名称大小写不敏感。
 
-不支持任意 JSONPath、脚本或远程调用。未映射步骤不产生可消费输出；未来步骤、悬空链接、无权角色、缺少路径／必填 body／幂等头、覆盖链接提供的参数都会被报告。响应 Location 也不能改变当前请求的父实例范围；同资源的响应表示样例须与请求和 Location 的实例参数一致，不能拿另一实例的样例证明流程可达。304 步骤须为带 If-None-Match 或 If-Modified-Since 的 GET 条件请求。
+链接或 `Location` 的 href 必须能完整解析出目标能力 URI 的全部参数，参数不可由声明外来源补齐；因此后续步骤的显式输入只用于补充 header（幂等、条件请求）或写操作 body，不能覆盖链接已解析的路径与查询参数。
 
-HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链接导航和一次交互中的多份业务证据，不为读取伪造 Evidence。它使用合成响应样例检查数据能否接续，不实际执行服务。`runtimeValidated` 恒为 false；没有旅程返回 `not_evaluated`。每个接口至少需有一个 mapped 的 2xx 消费步骤；403 等失败分支及仅 304 回放可以单独映射，但不能代替成功路径覆盖。complete 表示整体模型覆盖及所有接口契约在当前方言下无检测到的错误或缺口，不是运行时验收。
+不支持任意 JSONPath、脚本或远程调用。未映射步骤不产生可消费输出；未来步骤、悬空链接、无权角色、缺少入口或入口后用重填 ID 重新开始、缺少路径／必填 body／幂等头、覆盖链接提供的参数都会被报告。响应 Location 也不能改变当前请求的父实例范围；同资源的响应表示样例须与请求和 Location 的实例参数一致，不能拿另一实例的样例证明流程可达。304 步骤须为带 If-None-Match 或 If-Modified-Since 的 GET 条件请求。`consumerCoverage` 会逐个报告 FM 场景步骤是否有成功 HTTP 请求，不能只用每个 capability 的孤立入口替代连续场景证据。
+
+HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链接导航和一次交互中的多份业务证据，不为读取伪造 Evidence。它使用合成响应样例检查数据能否接续，不实际执行服务。`runtimeValidated` 恒为 false；没有旅程返回 `not_evaluated`。每个接口至少需有一个 mapped 的 2xx 消费步骤；403 等失败分支及仅 304 回放可以单独映射，但不能代替成功路径覆盖。`complete` 表示整体模型覆盖、所有接口契约和消费者场景在当前方言下无检测到的错误或缺口，不是运行时验收。
 
 ## 可运行测试案例
 

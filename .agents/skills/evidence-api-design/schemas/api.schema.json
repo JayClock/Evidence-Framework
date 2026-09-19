@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/evidence-api-design/v4/api.schema.json",
+  "$id": "https://evidence.local/evidence-api-design/v5/api.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
@@ -11,14 +11,13 @@
     "bindings",
     "scenarios",
     "capabilities",
-    "representations",
     "journeys",
     "http",
     "nonApiActivities"
   ],
   "properties": {
     "schemaVersion": {
-      "const": "4.0"
+      "const": "5.0"
     },
     "id": {
       "$ref": "#/$defs/id"
@@ -57,12 +56,6 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/capability"
-      }
-    },
-    "representations": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/representation"
       }
     },
     "journeys": {
@@ -1048,7 +1041,13 @@
     },
     "httpStep": {
       "type": "object",
-      "required": ["id", "capabilityRef", "expectStatus", "inputs"],
+      "required": [
+        "id",
+        "capabilityRef",
+        "expectStatus",
+        "inputs",
+        "sourceStepRefs"
+      ],
       "properties": {
         "id": {
           "$ref": "#/$defs/httpText"
@@ -1060,9 +1059,6 @@
           "type": "integer",
           "minimum": 200,
           "maximum": 599
-        },
-        "entry": {
-          "$ref": "#/$defs/httpText"
         },
         "via": {
           "type": "object",
@@ -1076,14 +1072,61 @@
             },
             "header": {
               "const": "Location"
+            },
+            "member": {
+              "type": "object",
+              "required": ["rel", "index"],
+              "properties": {
+                "rel": {
+                  "$ref": "#/$defs/httpText"
+                },
+                "index": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
             }
           },
           "oneOf": [
             {
-              "required": ["rel"]
+              "required": ["rel"],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["header"]
+                  },
+                  {
+                    "required": ["member"]
+                  }
+                ]
+              }
             },
             {
-              "required": ["header"]
+              "required": ["header"],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["rel"]
+                  },
+                  {
+                    "required": ["member"]
+                  }
+                ]
+              }
+            },
+            {
+              "required": ["member"],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["rel"]
+                  },
+                  {
+                    "required": ["header"]
+                  }
+                ]
+              }
             }
           ],
           "additionalProperties": false
@@ -1095,7 +1138,7 @@
             "required": ["target", "name", "source"],
             "properties": {
               "target": {
-                "enum": ["path", "body", "header"]
+                "enum": ["path", "body", "header", "query"]
               },
               "name": {
                 "$ref": "#/$defs/httpText"
@@ -1106,11 +1149,39 @@
             },
             "additionalProperties": false
           }
+        },
+        "entryPointRef": {
+          "$ref": "#/$defs/id"
+        },
+        "sourceStepRefs": {
+          "$ref": "#/$defs/ids"
+        },
+        "responseExample": {
+          "type": "object",
+          "required": ["body", "parameters", "headers"],
+          "properties": {
+            "body": {
+              "type": "object"
+            },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": {
+                "type": ["string", "integer"]
+              }
+            },
+            "headers": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
         }
       },
       "oneOf": [
         {
-          "required": ["entry"]
+          "required": ["entryPointRef"]
         },
         {
           "required": ["via"]
@@ -1120,7 +1191,7 @@
     },
     "httpJourney": {
       "type": "object",
-      "required": ["id", "actorRoleRef", "steps"],
+      "required": ["id", "actorRoleRef", "scenarioRefs", "steps"],
       "properties": {
         "id": {
           "$ref": "#/$defs/httpText"
@@ -1134,13 +1205,17 @@
           "items": {
             "$ref": "#/$defs/httpStep"
           }
+        },
+        "scenarioRefs": {
+          "$ref": "#/$defs/ids",
+          "minItems": 1
         }
       },
       "additionalProperties": false
     },
     "http": {
       "type": "object",
-      "required": ["representations", "operations", "journeys"],
+      "required": ["entryPoints", "representations", "operations", "journeys"],
       "properties": {
         "representations": {
           "type": "array",
@@ -1159,6 +1234,35 @@
           "items": {
             "$ref": "#/$defs/httpJourney"
           }
+        },
+        "entryPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/httpEntryPoint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "httpEntryPoint": {
+      "type": "object",
+      "required": ["id", "capabilityRef", "scenarioRefs", "context", "basis"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "capabilityRef": {
+          "$ref": "#/$defs/id"
+        },
+        "scenarioRefs": {
+          "$ref": "#/$defs/ids",
+          "minItems": 1
+        },
+        "context": {
+          "$ref": "#/$defs/httpText"
+        },
+        "basis": {
+          "$ref": "#/$defs/basis"
         }
       },
       "additionalProperties": false

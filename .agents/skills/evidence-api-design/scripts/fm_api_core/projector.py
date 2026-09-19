@@ -9,7 +9,6 @@ from .diagnostics import Diagnostic, error, gap
 capabilities_module = importlib.import_module("fm_api_core.capabilities")
 coverage_module = importlib.import_module("fm_api_core.coverage")
 fm_adapter_module = importlib.import_module("fm_api_core.fm_adapter")
-hypermedia_module = importlib.import_module("fm_api_core.hypermedia")
 resources_module = importlib.import_module("fm_api_core.resources")
 contracts_module = importlib.import_module("fm_api_core.contracts")
 model_coverage_module = importlib.import_module("fm_api_core.model_coverage")
@@ -95,10 +94,10 @@ def _validate_references(
         "bindings",
         "scenarios",
         "capabilities",
-        "representations",
         "nonApiActivities",
     ):
         based_items.extend(design.get(section, []))
+    based_items.extend(design["http"]["entryPoints"])
     for journey in design.get("journeys", []):
         based_items.extend(journey.get("steps", []))
     for item in based_items:
@@ -195,12 +194,6 @@ def build_projection(
         capabilities_module.project_capabilities(design, index, resources)
     )
     diagnostics.extend(capability_diagnostics)
-    representations, representation_diagnostics = (
-        hypermedia_module.validate_representations(
-            design, index, resources, capabilities
-        )
-    )
-    diagnostics.extend(representation_diagnostics)
     coverage, coverage_diagnostics = coverage_module.project_coverage(
         design, index, capabilities
     )
@@ -214,7 +207,7 @@ def build_projection(
         key=lambda item: (item.severity, item.code, item.targetRef or "", item.message),
     )
     projection = {
-        "schemaVersion": "4.0",
+        "schemaVersion": "5.0",
         "apiId": design["id"],
         "inputDigests": {
             "fm": index.files,
@@ -231,7 +224,6 @@ def build_projection(
         ),
         "capabilities": capabilities,
         "operations": operations,
-        "representations": representations,
         "coverage": coverage,
         "http": None,
         "diagnostics": [item.to_dict() for item in diagnostics],

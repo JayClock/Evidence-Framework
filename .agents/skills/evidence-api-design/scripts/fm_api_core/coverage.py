@@ -151,6 +151,7 @@ def project_coverage(
             diagnostics.extend(issues)
             rows.append(
                 {
+                    "sourceStepRef": mapped["id"],
                     "sequence": sequence,
                     "status": status,
                     "mapping": mapped["mapping"],

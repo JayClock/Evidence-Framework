@@ -108,7 +108,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
 ```
 
-API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
+API 设计采用格式 5.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，包含类型化入口、业务场景回映与可接续的成功消费者流程，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
 
 整体覆盖包含采购和微信支付的所有上下文：11 份采购业务凭证对应登记接口；商品对应两个角色读取接口；3 份微信支付凭证由外部主体形成；两个经办主体是角色身份依据，不生成无业务根据的人员管理接口。内部／外部处理在 `nonApiActivities` 中引用模型依据；不是省略接口的实施范围开关。
 

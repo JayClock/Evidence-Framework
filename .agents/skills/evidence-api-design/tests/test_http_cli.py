@@ -121,7 +121,7 @@ class HttpCliTest(unittest.TestCase):
             self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
             self.assertFalse(output.exists())
             path.write_text(
-                '{"schemaVersion": "4.0", "http": {"operations": [null]}}',
+                '{"schemaVersion": "5.0", "http": {"operations": [null]}}',
                 encoding="utf-8",
             )
             result = self.command("check", "--api", str(path))

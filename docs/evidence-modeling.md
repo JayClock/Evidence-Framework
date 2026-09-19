@@ -98,7 +98,7 @@ MODEL_DIR="$PROJECT_ROOT/.evidence/fm"
 
 时间线只包含 Evidence Instance，按 Context 分泳道；保留区间／时刻、`precedes`、`basedOn` 及未决顺序。循环、未来依赖或确定性时间冲突不能忽略。派生结果不是源模型，不手改。
 
-用户另行调用 `evidence-api-design` 才进入 API 设计。API 任务以整体 FM 为上游，直接设计全部业务接口与完整 HTTP 契约，不重复业务确认或接口筛选。API 配置使用格式 4.0，上游 FM 仍为 v3。每次消费当前 FM 都执行技术完整性检查；无效模型或输入变化时停止，不复用旧通过标记。所有接口、整体业务对象及全部场景都须覆盖，缺口默认阻止交付。API 投影完整校验后直接更新 `.evidence/api/generated/`，由 Git 管理历史；更新失败保留原目录。获授权留存的检查结果放到 `.evidence/checks/api/`。
+用户另行调用 `evidence-api-design` 才进入 API 设计。API 任务以整体 FM 为上游，直接设计全部业务接口与完整 HTTP 契约，不重复业务确认或接口筛选。API 配置使用格式 5.0，上游 FM 仍为 v3。每次消费当前 FM 都执行技术完整性检查；无效模型或输入变化时停止，不复用旧通过标记。所有接口、整体业务对象及全部场景都须覆盖，HTTP journey 还需通过类型化入口、场景引用和响应链接/Location 证明消费者可接续，缺口默认阻止交付。API 投影完整校验后直接更新 `.evidence/api/generated/`，由 Git 管理历史；更新失败保留原目录。获授权留存的检查结果放到 `.evidence/checks/api/`。
 
 ## 开发验证
 

@@ -15,7 +15,7 @@ class OpenApiProjectionTest(unittest.TestCase):
         document = self.module().build_openapi(
             {
                 "apiId": "api.subscription",
-                "schemaVersion": "4.0",
+                "schemaVersion": "5.0",
                 "capabilities": [],
                 "http": {
                     "operations": [],
@@ -28,7 +28,7 @@ class OpenApiProjectionTest(unittest.TestCase):
         self.assertEqual(
             document["info"], {"title": "api.subscription", "version": "generated"}
         )
-        self.assertEqual(document["x-evidence-api-design-schema-version"], "4.0")
+        self.assertEqual(document["x-evidence-api-design-schema-version"], "5.0")
         self.assertEqual(
             document["x-generated-from"], "evidence-api-design projection.json"
         )
@@ -39,7 +39,7 @@ class OpenApiProjectionTest(unittest.TestCase):
     def test_shared_route_preserves_role_variants_and_http_contract(self):
         projection = {
             "apiId": "api.products",
-            "schemaVersion": "4.0",
+            "schemaVersion": "5.0",
             "capabilities": [
                 {"id": "capability.read-buyer", "businessCapability": "买方查看商品"},
                 {"id": "capability.read-seller", "businessCapability": "卖方查看商品"},
@@ -153,7 +153,7 @@ class OpenApiProjectionTest(unittest.TestCase):
         }
         projection = {
             "apiId": "api.procurement",
-            "schemaVersion": "4.0",
+            "schemaVersion": "5.0",
             "capabilities": [
                 {"id": "capability.read-quote", "businessCapability": "查看报价"},
                 {

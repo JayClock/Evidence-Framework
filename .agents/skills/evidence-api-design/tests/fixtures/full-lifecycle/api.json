@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "id": "api.product-procurement",
   "sources": [],
   "decisions": [
@@ -27,7 +27,9 @@
         "decisionRef": "decision.api-identities"
       },
       "basis": {
-        "fmRefs": ["rfp.product-inquiry"],
+        "fmRefs": [
+          "rfp.product-inquiry"
+        ],
         "reasoning": "商品询价是合同前 Context 的根资源"
       },
       "businessName": "商品询价",
@@ -43,7 +45,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["proposal.product-quotation", "rfp.product-inquiry"],
+        "fmRefs": [
+          "proposal.product-quotation",
+          "rfp.product-inquiry"
+        ],
         "reasoning": "商品报价属于指定询价"
       },
       "businessName": "商品报价",
@@ -62,7 +67,9 @@
         "decisionRef": "decision.api-identities"
       },
       "basis": {
-        "fmRefs": ["contract.product-procurement"],
+        "fmRefs": [
+          "contract.product-procurement"
+        ],
         "reasoning": "商品采购协议使用独立合同 Context URI 根"
       },
       "businessName": "商品采购协议",
@@ -78,7 +85,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["request.payment", "contract.product-procurement"],
+        "fmRefs": [
+          "request.payment",
+          "contract.product-procurement"
+        ],
         "reasoning": "payment申请属于指定采购协议"
       },
       "businessName": "货款支付申请",
@@ -97,7 +107,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["confirmation.payment", "request.payment"],
+        "fmRefs": [
+          "confirmation.payment",
+          "request.payment"
+        ],
         "reasoning": "payment确认对应指定申请"
       },
       "businessName": "货款支付确认",
@@ -116,7 +129,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["request.invoice", "contract.product-procurement"],
+        "fmRefs": [
+          "request.invoice",
+          "contract.product-procurement"
+        ],
         "reasoning": "invoice申请属于指定采购协议"
       },
       "businessName": "发票开具申请",
@@ -158,7 +174,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["confirmation.invoice", "request.invoice"],
+        "fmRefs": [
+          "confirmation.invoice",
+          "request.invoice"
+        ],
         "reasoning": "invoice确认对应指定申请"
       },
       "businessName": "发票开具确认",
@@ -177,7 +196,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["request.delivery", "contract.product-procurement"],
+        "fmRefs": [
+          "request.delivery",
+          "contract.product-procurement"
+        ],
         "reasoning": "delivery申请属于指定采购协议"
       },
       "businessName": "商品发货申请",
@@ -219,7 +241,10 @@
         "kind": "parent_scoped"
       },
       "basis": {
-        "fmRefs": ["confirmation.delivery", "request.delivery"],
+        "fmRefs": [
+          "confirmation.delivery",
+          "request.delivery"
+        ],
         "reasoning": "delivery确认对应指定申请"
       },
       "businessName": "商品发货确认",
@@ -238,7 +263,9 @@
         "decisionRef": "decision.api-identities"
       },
       "basis": {
-        "fmRefs": ["thing.product"],
+        "fmRefs": [
+          "thing.product"
+        ],
         "reasoning": "商品目录使用独立领域 Context URI 根"
       },
       "businessName": "商品",
@@ -252,7 +279,9 @@
       "roleRef": "role.buyer",
       "scopeResourceRef": "resource.product-inquiry",
       "basis": {
-        "fmRefs": ["role.buyer"],
+        "fmRefs": [
+          "role.buyer"
+        ],
         "reasoning": "客户只发起自己参与的商品询价"
       }
     },
@@ -262,7 +291,9 @@
       "roleRef": "role.seller",
       "scopeResourceRef": "resource.product-inquiry",
       "basis": {
-        "fmRefs": ["role.seller"],
+        "fmRefs": [
+          "role.seller"
+        ],
         "reasoning": "供应商只对指定询价报价"
       }
     },
@@ -272,7 +303,9 @@
       "roleRef": "role.buyer",
       "scopeResourceRef": "resource.product-procurement",
       "basis": {
-        "fmRefs": ["role.buyer"],
+        "fmRefs": [
+          "role.buyer"
+        ],
         "reasoning": "客户只操作自己参与的采购协议"
       }
     },
@@ -282,7 +315,9 @@
       "roleRef": "role.seller",
       "scopeResourceRef": "resource.product-procurement",
       "basis": {
-        "fmRefs": ["role.seller"],
+        "fmRefs": [
+          "role.seller"
+        ],
         "reasoning": "供应商只操作自己参与的采购协议"
       }
     },
@@ -292,7 +327,9 @@
       "roleRef": "role.buyer",
       "scopeResourceRef": "resource.product",
       "basis": {
-        "fmRefs": ["role.buyer"],
+        "fmRefs": [
+          "role.buyer"
+        ],
         "reasoning": "客户读取指定商品"
       }
     },
@@ -302,7 +339,9 @@
       "roleRef": "role.seller",
       "scopeResourceRef": "resource.product",
       "basis": {
-        "fmRefs": ["role.seller"],
+        "fmRefs": [
+          "role.seller"
+        ],
         "reasoning": "供应商读取指定商品"
       }
     },
@@ -312,7 +351,10 @@
       "parentResourceRef": "resource.product-inquiry",
       "childResourceRef": "resource.product-quotation",
       "basis": {
-        "fmRefs": ["rfp.product-inquiry", "proposal.product-quotation"],
+        "fmRefs": [
+          "rfp.product-inquiry",
+          "proposal.product-quotation"
+        ],
         "reasoning": "报价关联指定询价"
       }
     },
@@ -322,7 +364,10 @@
       "parentResourceRef": "resource.product-procurement",
       "childResourceRef": "resource.payment",
       "basis": {
-        "fmRefs": ["contract.product-procurement", "request.payment"],
+        "fmRefs": [
+          "contract.product-procurement",
+          "request.payment"
+        ],
         "reasoning": "payment申请关联指定采购协议"
       }
     },
@@ -332,7 +377,10 @@
       "parentResourceRef": "resource.payment",
       "childResourceRef": "resource.payment-confirmation",
       "basis": {
-        "fmRefs": ["request.payment", "confirmation.payment"],
+        "fmRefs": [
+          "request.payment",
+          "confirmation.payment"
+        ],
         "reasoning": "payment确认关联指定申请"
       }
     },
@@ -342,7 +390,10 @@
       "parentResourceRef": "resource.product-procurement",
       "childResourceRef": "resource.invoicing",
       "basis": {
-        "fmRefs": ["contract.product-procurement", "request.invoice"],
+        "fmRefs": [
+          "contract.product-procurement",
+          "request.invoice"
+        ],
         "reasoning": "invoice申请关联指定采购协议"
       }
     },
@@ -352,7 +403,10 @@
       "parentResourceRef": "resource.invoicing",
       "childResourceRef": "resource.invoice-confirmation",
       "basis": {
-        "fmRefs": ["request.invoice", "confirmation.invoice"],
+        "fmRefs": [
+          "request.invoice",
+          "confirmation.invoice"
+        ],
         "reasoning": "invoice确认关联指定申请"
       }
     },
@@ -376,7 +430,10 @@
       "parentResourceRef": "resource.product-procurement",
       "childResourceRef": "resource.delivery",
       "basis": {
-        "fmRefs": ["contract.product-procurement", "request.delivery"],
+        "fmRefs": [
+          "contract.product-procurement",
+          "request.delivery"
+        ],
         "reasoning": "delivery申请关联指定采购协议"
       }
     },
@@ -386,7 +443,10 @@
       "parentResourceRef": "resource.delivery",
       "childResourceRef": "resource.delivery-confirmation",
       "basis": {
-        "fmRefs": ["request.delivery", "confirmation.delivery"],
+        "fmRefs": [
+          "request.delivery",
+          "confirmation.delivery"
+        ],
         "reasoning": "delivery确认关联指定申请"
       }
     },
@@ -440,10 +500,16 @@
         "targetRef": "rfp.product-inquiry"
       },
       "businessCapability": "发起商品询价",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-sourcing-customer"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-sourcing-customer"
+      ],
       "basis": {
-        "fmRefs": ["rfp.product-inquiry"],
+        "fmRefs": [
+          "rfp.product-inquiry"
+        ],
         "reasoning": "客户追加商品询价凭证"
       }
     },
@@ -458,13 +524,17 @@
         "targetRef": "proposal.product-quotation"
       },
       "businessCapability": "提交商品报价",
-      "scenarioRefs": ["scenario.api-product-procurement"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
       "bindingRefs": [
         "binding.caller-sourcing-supplier",
         "binding.quotation-inquiry"
       ],
       "basis": {
-        "fmRefs": ["proposal.product-quotation"],
+        "fmRefs": [
+          "proposal.product-quotation"
+        ],
         "reasoning": "供应商针对指定询价追加报价凭证"
       }
     },
@@ -479,10 +549,16 @@
         "targetRef": "contract.product-procurement"
       },
       "businessCapability": "登记商品采购协议",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-buyer"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-buyer"
+      ],
       "basis": {
-        "fmRefs": ["contract.product-procurement"],
+        "fmRefs": [
+          "contract.product-procurement"
+        ],
         "reasoning": "客户登记已经形成的商品采购协议"
       }
     },
@@ -497,10 +573,17 @@
         "targetRef": "request.payment"
       },
       "businessCapability": "申请支付货款",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-seller", "binding.payment-procurement"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-seller",
+        "binding.payment-procurement"
+      ],
       "basis": {
-        "fmRefs": ["request.payment"],
+        "fmRefs": [
+          "request.payment"
+        ],
         "reasoning": "针对指定采购协议追加申请支付货款凭证"
       }
     },
@@ -515,8 +598,13 @@
         "targetRef": "confirmation.payment"
       },
       "businessCapability": "确认支付货款",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-buyer", "binding.payment-result"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-buyer",
+        "binding.payment-result"
+      ],
       "ruleBindings": [
         {
           "ruleRef": "rule.payment-evidence-ready",
@@ -548,10 +636,17 @@
         "targetRef": "request.invoice"
       },
       "businessCapability": "申请开具发票",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-buyer", "binding.invoicing-procurement"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-buyer",
+        "binding.invoicing-procurement"
+      ],
       "basis": {
-        "fmRefs": ["request.invoice"],
+        "fmRefs": [
+          "request.invoice"
+        ],
         "reasoning": "针对指定采购协议追加申请开具发票凭证"
       }
     },
@@ -566,10 +661,18 @@
         "targetRef": "evidence.invoice"
       },
       "businessCapability": "提交发票",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-seller", "binding.invoice-invoicing"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-seller",
+        "binding.invoice-invoicing"
+      ],
       "basis": {
-        "fmRefs": ["evidence.invoice", "request.invoice"],
+        "fmRefs": [
+          "evidence.invoice",
+          "request.invoice"
+        ],
         "reasoning": "针对已有开票申请追加补充证据；校验request_number与路径申请一致；乙方销售经办本项，调用角色表达合同责任"
       }
     },
@@ -584,8 +687,13 @@
         "targetRef": "confirmation.invoice"
       },
       "businessCapability": "确认开具发票",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-seller", "binding.invoicing-result"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-seller",
+        "binding.invoicing-result"
+      ],
       "ruleBindings": [
         {
           "ruleRef": "rule.invoice-evidence-ready",
@@ -617,10 +725,17 @@
         "targetRef": "request.delivery"
       },
       "businessCapability": "申请商品发货",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-buyer", "binding.delivery-procurement"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-buyer",
+        "binding.delivery-procurement"
+      ],
       "basis": {
-        "fmRefs": ["request.delivery"],
+        "fmRefs": [
+          "request.delivery"
+        ],
         "reasoning": "针对指定采购协议追加申请商品发货凭证"
       }
     },
@@ -635,10 +750,18 @@
         "targetRef": "evidence.delivery-note"
       },
       "businessCapability": "提交发货单",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-seller", "binding.note-delivery"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-seller",
+        "binding.note-delivery"
+      ],
       "basis": {
-        "fmRefs": ["evidence.delivery-note", "request.delivery"],
+        "fmRefs": [
+          "evidence.delivery-note",
+          "request.delivery"
+        ],
         "reasoning": "针对已有发货申请追加补充证据；校验request_number与路径申请一致；乙方销售经办本项，调用角色表达合同责任"
       }
     },
@@ -653,8 +776,13 @@
         "targetRef": "confirmation.delivery"
       },
       "businessCapability": "确认商品发货",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.caller-seller", "binding.delivery-result"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.caller-seller",
+        "binding.delivery-result"
+      ],
       "ruleBindings": [
         {
           "ruleRef": "rule.delivery-evidence-ready",
@@ -686,10 +814,16 @@
         "targetRef": "thing.product"
       },
       "businessCapability": "客户查看商品",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.buyer-product-read"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.buyer-product-read"
+      ],
       "basis": {
-        "fmRefs": ["thing.product"],
+        "fmRefs": [
+          "thing.product"
+        ],
         "reasoning": "客户查看采购协议涉及的商品"
       }
     },
@@ -704,39 +838,17 @@
         "targetRef": "thing.product"
       },
       "businessCapability": "供应商查看商品",
-      "scenarioRefs": ["scenario.api-product-procurement"],
-      "bindingRefs": ["binding.seller-product-read"],
+      "scenarioRefs": [
+        "scenario.api-product-procurement"
+      ],
+      "bindingRefs": [
+        "binding.seller-product-read"
+      ],
       "basis": {
-        "fmRefs": ["thing.product"],
+        "fmRefs": [
+          "thing.product"
+        ],
         "reasoning": "供应商查看采购协议涉及的商品"
-      }
-    }
-  ],
-  "representations": [
-    {
-      "id": "representation.product-quotation",
-      "resourceRef": "resource.product-quotation",
-      "view": "singleton",
-      "format": "hal",
-      "fields": [
-        {
-          "name": "unitPriceMinorUnits",
-          "fmAttributeRef": "proposal.product-quotation#unit_price_minor_units"
-        }
-      ],
-      "links": [
-        {
-          "rel": "create-procurement",
-          "targetResourceRef": "resource.product-procurement",
-          "targetView": "collection",
-          "parameterBindings": [],
-          "visibleToRoleRefs": ["role.buyer"],
-          "capabilityRef": "capability.register-procurement"
-        }
-      ],
-      "basis": {
-        "fmRefs": ["proposal.product-quotation"],
-        "reasoning": "报价通过超媒体链接进入采购协议 Context 根"
       }
     }
   ],
@@ -752,7 +864,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.inquire-products",
           "basis": {
-            "fmRefs": ["rfp.product-inquiry"],
+            "fmRefs": [
+              "rfp.product-inquiry"
+            ],
             "reasoning": "映射步骤：甲方采购员发起商品询价"
           }
         },
@@ -763,7 +877,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.quote-products",
           "basis": {
-            "fmRefs": ["proposal.product-quotation"],
+            "fmRefs": [
+              "proposal.product-quotation"
+            ],
             "reasoning": "映射步骤：乙方销售提交商品报价"
           }
         },
@@ -774,7 +890,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.register-procurement",
           "basis": {
-            "fmRefs": ["contract.product-procurement"],
+            "fmRefs": [
+              "contract.product-procurement"
+            ],
             "reasoning": "映射步骤：甲方采购员登记采购协议"
           }
         },
@@ -785,7 +903,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.request-payment",
           "basis": {
-            "fmRefs": ["request.payment"],
+            "fmRefs": [
+              "request.payment"
+            ],
             "reasoning": "映射步骤：乙方销售申请支付"
           }
         },
@@ -795,7 +915,9 @@
           "mapping": "external",
           "description": "外部签署微信支付服务协议",
           "basis": {
-            "fmRefs": ["contract.wechat-payment"],
+            "fmRefs": [
+              "contract.wechat-payment"
+            ],
             "reasoning": "微信支付合同内的业务活动，不声明采购API或外部接入方式"
           }
         },
@@ -805,7 +927,9 @@
           "mapping": "external",
           "description": "外部发起微信支付申请",
           "basis": {
-            "fmRefs": ["request.wechat-payment"],
+            "fmRefs": [
+              "request.wechat-payment"
+            ],
             "reasoning": "微信支付合同内的业务活动，不声明采购API或外部接入方式"
           }
         },
@@ -815,7 +939,9 @@
           "mapping": "external",
           "description": "外部形成微信支付确认并扮演支付凭证",
           "basis": {
-            "fmRefs": ["confirmation.wechat-payment"],
+            "fmRefs": [
+              "confirmation.wechat-payment"
+            ],
             "reasoning": "微信支付合同内的业务活动，不声明采购API或外部接入方式"
           }
         },
@@ -826,7 +952,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.confirm-payment",
           "basis": {
-            "fmRefs": ["confirmation.payment"],
+            "fmRefs": [
+              "confirmation.payment"
+            ],
             "reasoning": "映射步骤：甲方采购员确认支付"
           }
         },
@@ -837,7 +965,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.request-invoice",
           "basis": {
-            "fmRefs": ["request.invoice"],
+            "fmRefs": [
+              "request.invoice"
+            ],
             "reasoning": "映射步骤：甲方采购员申请开票"
           }
         },
@@ -848,7 +978,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.issue-invoice",
           "basis": {
-            "fmRefs": ["evidence.invoice"],
+            "fmRefs": [
+              "evidence.invoice"
+            ],
             "reasoning": "映射步骤：乙方销售提交发票"
           }
         },
@@ -859,7 +991,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.confirm-invoicing",
           "basis": {
-            "fmRefs": ["confirmation.invoice"],
+            "fmRefs": [
+              "confirmation.invoice"
+            ],
             "reasoning": "映射步骤：乙方销售确认开票"
           }
         },
@@ -870,7 +1004,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.request-delivery",
           "basis": {
-            "fmRefs": ["request.delivery"],
+            "fmRefs": [
+              "request.delivery"
+            ],
             "reasoning": "映射步骤：甲方采购员申请发货"
           }
         },
@@ -881,7 +1017,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.record-delivery-note",
           "basis": {
-            "fmRefs": ["evidence.delivery-note"],
+            "fmRefs": [
+              "evidence.delivery-note"
+            ],
             "reasoning": "映射步骤：乙方销售提交发货单"
           }
         },
@@ -892,7 +1030,9 @@
           "mapping": "capability",
           "capabilityRef": "capability.confirm-delivery",
           "basis": {
-            "fmRefs": ["confirmation.delivery"],
+            "fmRefs": [
+              "confirmation.delivery"
+            ],
             "reasoning": "映射步骤：乙方销售确认发货"
           }
         }
@@ -905,7 +1045,10 @@
         "id": "representation.product-http",
         "resourceRef": "resource.product",
         "view": "item",
-        "actorRoleRefs": ["role.buyer", "role.seller"],
+        "actorRoleRefs": [
+          "role.buyer",
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -946,7 +1089,9 @@
         "id": "representation.http-product-inquiry",
         "resourceRef": "resource.product-inquiry",
         "view": "item",
-        "actorRoleRefs": ["role.buyer"],
+        "actorRoleRefs": [
+          "role.buyer"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -997,7 +1142,9 @@
         "id": "representation.http-product-quotation",
         "resourceRef": "resource.product-quotation",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1047,7 +1194,9 @@
           "started_at": "2026-11-01T12:00:00Z",
           "expired_at": "2026-11-02T18:00:00Z",
           "unit_price_minor_units": 2500,
-          "evidenceRefs": ["instance.product-inquiry"]
+          "evidenceRefs": [
+            "instance.product-inquiry"
+          ]
         },
         "exampleParameters": {
           "inquiryId": "inquiry-1"
@@ -1062,7 +1211,9 @@
         "id": "representation.http-product-procurement",
         "resourceRef": "resource.product-procurement",
         "view": "item",
-        "actorRoleRefs": ["role.buyer"],
+        "actorRoleRefs": [
+          "role.buyer"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1111,7 +1262,9 @@
           "signed_at": "2026-11-02T10:00:00Z",
           "quantity": 100,
           "total_minor_units": 250000,
-          "evidenceRefs": ["instance.product-quotation"]
+          "evidenceRefs": [
+            "instance.product-quotation"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1126,7 +1279,9 @@
         "id": "representation.http-payment",
         "resourceRef": "resource.payment",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1186,7 +1341,9 @@
           "expired_at": "2026-11-10T09:00:00Z",
           "requested_minor_units": 250000,
           "request_number": "PAYMENT-REQ-001",
-          "evidenceRefs": ["instance.product-procurement"]
+          "evidenceRefs": [
+            "instance.product-procurement"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1201,7 +1358,9 @@
         "id": "representation.http-payment-confirmation",
         "resourceRef": "resource.payment-confirmation",
         "view": "singleton",
-        "actorRoleRefs": ["role.buyer"],
+        "actorRoleRefs": [
+          "role.buyer"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1278,7 +1437,9 @@
         "id": "representation.http-invoicing",
         "resourceRef": "resource.invoicing",
         "view": "singleton",
-        "actorRoleRefs": ["role.buyer"],
+        "actorRoleRefs": [
+          "role.buyer"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1338,7 +1499,9 @@
           "expired_at": "2026-11-11T11:00:00Z",
           "invoice_title": "甲方公司",
           "request_number": "INVOICE-REQ-001",
-          "evidenceRefs": ["instance.product-procurement"]
+          "evidenceRefs": [
+            "instance.product-procurement"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1353,7 +1516,9 @@
         "id": "representation.http-invoice",
         "resourceRef": "resource.invoice",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1412,7 +1577,9 @@
           "invoice_number": "INV-001",
           "request_number": "INVOICE-REQ-001",
           "invoice_title": "甲方公司",
-          "evidenceRefs": ["instance.invoice-request"]
+          "evidenceRefs": [
+            "instance.invoice-request"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1427,7 +1594,9 @@
         "id": "representation.http-invoice-confirmation",
         "resourceRef": "resource.invoice-confirmation",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1476,7 +1645,10 @@
           "confirmed_at": "2026-11-05T09:05:00Z",
           "invoice_number": "INV-001",
           "request_number": "INVOICE-REQ-001",
-          "evidenceRefs": ["instance.invoice-request", "instance.invoice"]
+          "evidenceRefs": [
+            "instance.invoice-request",
+            "instance.invoice"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1491,7 +1663,9 @@
         "id": "representation.http-delivery",
         "resourceRef": "resource.delivery",
         "view": "singleton",
-        "actorRoleRefs": ["role.buyer"],
+        "actorRoleRefs": [
+          "role.buyer"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1551,7 +1725,9 @@
           "expired_at": "2026-11-12T10:00:00Z",
           "delivery_address": "甲方仓库",
           "request_number": "DELIVERY-REQ-001",
-          "evidenceRefs": ["instance.product-procurement"]
+          "evidenceRefs": [
+            "instance.product-procurement"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1566,7 +1742,9 @@
         "id": "representation.http-delivery-note",
         "resourceRef": "resource.delivery-note",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1625,7 +1803,9 @@
           "delivery_note_number": "DN-001",
           "request_number": "DELIVERY-REQ-001",
           "delivery_address": "甲方仓库",
-          "evidenceRefs": ["instance.delivery-request"]
+          "evidenceRefs": [
+            "instance.delivery-request"
+          ]
         },
         "exampleParameters": {
           "procurementId": "procurement-1"
@@ -1640,7 +1820,9 @@
         "id": "representation.http-delivery-confirmation",
         "resourceRef": "resource.delivery-confirmation",
         "view": "singleton",
-        "actorRoleRefs": ["role.seller"],
+        "actorRoleRefs": [
+          "role.seller"
+        ],
         "mediaType": "application/hal+json",
         "fields": [
           {
@@ -1921,7 +2103,9 @@
             "started_at": "2026-11-01T12:00:00Z",
             "expired_at": "2026-11-02T18:00:00Z",
             "unit_price_minor_units": 2500,
-            "evidenceRefs": ["instance.product-inquiry"]
+            "evidenceRefs": [
+              "instance.product-inquiry"
+            ]
           }
         },
         "responses": [
@@ -2012,7 +2196,9 @@
             "signed_at": "2026-11-02T10:00:00Z",
             "quantity": 100,
             "total_minor_units": 250000,
-            "evidenceRefs": ["instance.product-quotation"]
+            "evidenceRefs": [
+              "instance.product-quotation"
+            ]
           }
         },
         "responses": [
@@ -2114,7 +2300,9 @@
             "expired_at": "2026-11-10T09:00:00Z",
             "requested_minor_units": 250000,
             "request_number": "PAYMENT-REQ-001",
-            "evidenceRefs": ["instance.product-procurement"]
+            "evidenceRefs": [
+              "instance.product-procurement"
+            ]
           }
         },
         "responses": [
@@ -2320,7 +2508,9 @@
             "expired_at": "2026-11-11T11:00:00Z",
             "invoice_title": "甲方公司",
             "request_number": "INVOICE-REQ-001",
-            "evidenceRefs": ["instance.product-procurement"]
+            "evidenceRefs": [
+              "instance.product-procurement"
+            ]
           }
         },
         "responses": [
@@ -2421,7 +2611,9 @@
             "invoice_number": "INV-001",
             "request_number": "INVOICE-REQ-001",
             "invoice_title": "甲方公司",
-            "evidenceRefs": ["instance.invoice-request"]
+            "evidenceRefs": [
+              "instance.invoice-request"
+            ]
           }
         },
         "responses": [
@@ -2512,7 +2704,10 @@
             "confirmed_at": "2026-11-05T09:05:00Z",
             "invoice_number": "INV-001",
             "request_number": "INVOICE-REQ-001",
-            "evidenceRefs": ["instance.invoice-request", "instance.invoice"]
+            "evidenceRefs": [
+              "instance.invoice-request",
+              "instance.invoice"
+            ]
           }
         },
         "responses": [
@@ -2614,7 +2809,9 @@
             "expired_at": "2026-11-12T10:00:00Z",
             "delivery_address": "甲方仓库",
             "request_number": "DELIVERY-REQ-001",
-            "evidenceRefs": ["instance.product-procurement"]
+            "evidenceRefs": [
+              "instance.product-procurement"
+            ]
           }
         },
         "responses": [
@@ -2715,7 +2912,9 @@
             "delivery_note_number": "DN-001",
             "request_number": "DELIVERY-REQ-001",
             "delivery_address": "甲方仓库",
-            "evidenceRefs": ["instance.delivery-request"]
+            "evidenceRefs": [
+              "instance.delivery-request"
+            ]
           }
         },
         "responses": [
@@ -2862,86 +3061,16 @@
     ],
     "journeys": [
       {
-        "id": "http.buyer-product",
+        "id": "http-journey.procurement-1",
         "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.buyer-read",
-            "capabilityRef": "capability.read-product-as-buyer",
-            "expectStatus": 200,
-            "entry": "从已有采购业务交接取得商品标识；本例不推导新的列表接口",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "productId",
-                "source": {
-                  "kind": "literal",
-                  "value": "product-1",
-                  "reason": "明确给出的合成入口参数"
-                }
-              }
-            ]
-          },
-          {
-            "id": "http.buyer-revalidate",
-            "capabilityRef": "capability.read-product-as-buyer",
-            "expectStatus": 304,
-            "entry": "对同一入口执行条件读取，沿用前次表示的缓存验证标识",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "productId",
-                "source": {
-                  "kind": "literal",
-                  "value": "product-1",
-                  "reason": "同一合成入口参数"
-                }
-              },
-              {
-                "target": "header",
-                "name": "If-None-Match",
-                "source": {
-                  "kind": "response_header",
-                  "stepRef": "http.buyer-read",
-                  "name": "ETag"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.seller-product",
-        "actorRoleRef": "role.seller",
-        "steps": [
-          {
-            "id": "http.seller-read",
-            "capabilityRef": "capability.read-product-as-seller",
-            "expectStatus": 200,
-            "entry": "供应商从已有业务交接取得商品标识；不是通过客户身份委托",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "productId",
-                "source": {
-                  "kind": "literal",
-                  "value": "product-1",
-                  "reason": "明确给出的合成入口参数"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.inquire-products",
-        "actorRoleRef": "role.buyer",
-        "steps": [
-          {
-            "id": "http.step-inquire-products",
+            "id": "http.step-inquire-products-procurement-1",
             "capabilityRef": "capability.inquire-products",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "body",
@@ -2979,380 +3108,25 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.inquire-products",
+            "sourceStepRefs": [
+              "step.procurement-1"
             ]
           }
         ]
       },
       {
-        "id": "http.quote-products",
+        "id": "http-journey.procurement-10",
         "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.step-quote-products",
-            "capabilityRef": "capability.quote-products",
-            "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "inquiryId",
-                "source": {
-                  "kind": "literal",
-                  "value": "inquiry-1",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "started_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-01T12:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "expired_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-02T18:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "unit_price_minor_units",
-                "source": {
-                  "kind": "literal",
-                  "value": 2500,
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "evidenceRefs",
-                "source": {
-                  "kind": "literal",
-                  "value": ["instance.product-inquiry"],
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "header",
-                "name": "Idempotency-Key",
-                "source": {
-                  "kind": "literal",
-                  "value": "key-capability.quote-products",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.register-procurement",
-        "actorRoleRef": "role.buyer",
-        "steps": [
-          {
-            "id": "http.step-register-procurement",
-            "capabilityRef": "capability.register-procurement",
-            "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
-            "inputs": [
-              {
-                "target": "body",
-                "name": "signed_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-02T10:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "quantity",
-                "source": {
-                  "kind": "literal",
-                  "value": 100,
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "total_minor_units",
-                "source": {
-                  "kind": "literal",
-                  "value": 250000,
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "evidenceRefs",
-                "source": {
-                  "kind": "literal",
-                  "value": ["instance.product-quotation"],
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "header",
-                "name": "Idempotency-Key",
-                "source": {
-                  "kind": "literal",
-                  "value": "key-capability.register-procurement",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.request-payment",
-        "actorRoleRef": "role.seller",
-        "steps": [
-          {
-            "id": "http.step-request-payment",
-            "capabilityRef": "capability.request-payment",
-            "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "procurementId",
-                "source": {
-                  "kind": "literal",
-                  "value": "procurement-1",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "started_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-03T09:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "expired_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-10T09:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "requested_minor_units",
-                "source": {
-                  "kind": "literal",
-                  "value": 250000,
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "request_number",
-                "source": {
-                  "kind": "literal",
-                  "value": "PAYMENT-REQ-001",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "evidenceRefs",
-                "source": {
-                  "kind": "literal",
-                  "value": ["instance.product-procurement"],
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "header",
-                "name": "Idempotency-Key",
-                "source": {
-                  "kind": "literal",
-                  "value": "key-capability.request-payment",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.confirm-payment",
-        "actorRoleRef": "role.buyer",
-        "steps": [
-          {
-            "id": "http.step-confirm-payment",
-            "capabilityRef": "capability.confirm-payment",
-            "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "procurementId",
-                "source": {
-                  "kind": "literal",
-                  "value": "procurement-1",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "confirmed_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-04T10:05:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "paid_minor_units",
-                "source": {
-                  "kind": "literal",
-                  "value": 250000,
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "request_number",
-                "source": {
-                  "kind": "literal",
-                  "value": "PAYMENT-REQ-001",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "payment_number",
-                "source": {
-                  "kind": "literal",
-                  "value": "WX-001",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "evidenceRefs",
-                "source": {
-                  "kind": "literal",
-                  "value": [
-                    "instance.payment-request",
-                    "instance.wechat-payment-confirmation"
-                  ],
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "header",
-                "name": "Idempotency-Key",
-                "source": {
-                  "kind": "literal",
-                  "value": "key-capability.confirm-payment",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.request-invoice",
-        "actorRoleRef": "role.buyer",
-        "steps": [
-          {
-            "id": "http.step-request-invoice",
-            "capabilityRef": "capability.request-invoice",
-            "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
-            "inputs": [
-              {
-                "target": "path",
-                "name": "procurementId",
-                "source": {
-                  "kind": "literal",
-                  "value": "procurement-1",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "started_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-04T11:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "expired_at",
-                "source": {
-                  "kind": "literal",
-                  "value": "2026-11-11T11:00:00Z",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "invoice_title",
-                "source": {
-                  "kind": "literal",
-                  "value": "甲方公司",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "request_number",
-                "source": {
-                  "kind": "literal",
-                  "value": "INVOICE-REQ-001",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "body",
-                "name": "evidenceRefs",
-                "source": {
-                  "kind": "literal",
-                  "value": ["instance.product-procurement"],
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              },
-              {
-                "target": "header",
-                "name": "Idempotency-Key",
-                "source": {
-                  "kind": "literal",
-                  "value": "key-capability.request-invoice",
-                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "http.issue-invoice",
-        "actorRoleRef": "role.seller",
-        "steps": [
-          {
-            "id": "http.step-issue-invoice",
+            "id": "http.step-issue-invoice-procurement-10",
             "capabilityRef": "capability.issue-invoice",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "path",
@@ -3404,7 +3178,9 @@
                 "name": "evidenceRefs",
                 "source": {
                   "kind": "literal",
-                  "value": ["instance.invoice-request"],
+                  "value": [
+                    "instance.invoice-request"
+                  ],
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               },
@@ -3417,19 +3193,25 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.issue-invoice",
+            "sourceStepRefs": [
+              "step.procurement-10"
             ]
           }
         ]
       },
       {
-        "id": "http.confirm-invoicing",
+        "id": "http-journey.procurement-11",
         "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.step-confirm-invoicing",
+            "id": "http.step-confirm-invoicing-procurement-11",
             "capabilityRef": "capability.confirm-invoicing",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "path",
@@ -3472,7 +3254,10 @@
                 "name": "evidenceRefs",
                 "source": {
                   "kind": "literal",
-                  "value": ["instance.invoice-request", "instance.invoice"],
+                  "value": [
+                    "instance.invoice-request",
+                    "instance.invoice"
+                  ],
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               },
@@ -3485,19 +3270,25 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.confirm-invoicing",
+            "sourceStepRefs": [
+              "step.procurement-11"
             ]
           }
         ]
       },
       {
-        "id": "http.request-delivery",
+        "id": "http-journey.procurement-12",
         "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.step-request-delivery",
+            "id": "http.step-request-delivery-procurement-12",
             "capabilityRef": "capability.request-delivery",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "path",
@@ -3549,7 +3340,9 @@
                 "name": "evidenceRefs",
                 "source": {
                   "kind": "literal",
-                  "value": ["instance.product-procurement"],
+                  "value": [
+                    "instance.product-procurement"
+                  ],
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               },
@@ -3562,19 +3355,25 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.request-delivery",
+            "sourceStepRefs": [
+              "step.procurement-12"
             ]
           }
         ]
       },
       {
-        "id": "http.record-delivery-note",
+        "id": "http-journey.procurement-13",
         "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.step-record-delivery-note",
+            "id": "http.step-record-delivery-note-procurement-13",
             "capabilityRef": "capability.record-delivery-note",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "path",
@@ -3626,7 +3425,9 @@
                 "name": "evidenceRefs",
                 "source": {
                   "kind": "literal",
-                  "value": ["instance.delivery-request"],
+                  "value": [
+                    "instance.delivery-request"
+                  ],
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               },
@@ -3639,19 +3440,25 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.record-delivery-note",
+            "sourceStepRefs": [
+              "step.procurement-13"
             ]
           }
         ]
       },
       {
-        "id": "http.confirm-delivery",
+        "id": "http-journey.procurement-14",
         "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
         "steps": [
           {
-            "id": "http.step-confirm-delivery",
+            "id": "http.step-confirm-delivery-procurement-14",
             "capabilityRef": "capability.confirm-delivery",
             "expectStatus": 201,
-            "entry": "该角色通过已确认业务交接取得已有父实例、原始业务凭证及证据引用，按约定登记入口办理；外部证据须先存在。",
             "inputs": [
               {
                 "target": "path",
@@ -3719,9 +3526,682 @@
                   "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
                 }
               }
+            ],
+            "entryPointRef": "entry.confirm-delivery",
+            "sourceStepRefs": [
+              "step.procurement-14"
             ]
           }
         ]
+      },
+      {
+        "id": "http-journey.procurement-2",
+        "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.step-quote-products-procurement-2",
+            "capabilityRef": "capability.quote-products",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "inquiryId",
+                "source": {
+                  "kind": "literal",
+                  "value": "inquiry-1",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "started_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-01T12:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "expired_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-02T18:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "unit_price_minor_units",
+                "source": {
+                  "kind": "literal",
+                  "value": 2500,
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": [
+                    "instance.product-inquiry"
+                  ],
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "key-capability.quote-products",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.quote-products",
+            "sourceStepRefs": [
+              "step.procurement-2"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.procurement-3",
+        "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.step-register-procurement-procurement-3",
+            "capabilityRef": "capability.register-procurement",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "body",
+                "name": "signed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-02T10:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "quantity",
+                "source": {
+                  "kind": "literal",
+                  "value": 100,
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "total_minor_units",
+                "source": {
+                  "kind": "literal",
+                  "value": 250000,
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": [
+                    "instance.product-quotation"
+                  ],
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "key-capability.register-procurement",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.register-procurement",
+            "sourceStepRefs": [
+              "step.procurement-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.procurement-4",
+        "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.step-request-payment-procurement-4",
+            "capabilityRef": "capability.request-payment",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "procurementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "procurement-1",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "started_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-03T09:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "expired_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-10T09:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "requested_minor_units",
+                "source": {
+                  "kind": "literal",
+                  "value": 250000,
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_number",
+                "source": {
+                  "kind": "literal",
+                  "value": "PAYMENT-REQ-001",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": [
+                    "instance.product-procurement"
+                  ],
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "key-capability.request-payment",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.request-payment",
+            "sourceStepRefs": [
+              "step.procurement-4"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.procurement-8",
+        "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.step-confirm-payment-procurement-8",
+            "capabilityRef": "capability.confirm-payment",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "procurementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "procurement-1",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "confirmed_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-04T10:05:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "paid_minor_units",
+                "source": {
+                  "kind": "literal",
+                  "value": 250000,
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_number",
+                "source": {
+                  "kind": "literal",
+                  "value": "PAYMENT-REQ-001",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "payment_number",
+                "source": {
+                  "kind": "literal",
+                  "value": "WX-001",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": [
+                    "instance.payment-request",
+                    "instance.wechat-payment-confirmation"
+                  ],
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "key-capability.confirm-payment",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.confirm-payment",
+            "sourceStepRefs": [
+              "step.procurement-8"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http-journey.procurement-9",
+        "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.step-request-invoice-procurement-9",
+            "capabilityRef": "capability.request-invoice",
+            "expectStatus": 201,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "procurementId",
+                "source": {
+                  "kind": "literal",
+                  "value": "procurement-1",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "started_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-04T11:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "expired_at",
+                "source": {
+                  "kind": "literal",
+                  "value": "2026-11-11T11:00:00Z",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "invoice_title",
+                "source": {
+                  "kind": "literal",
+                  "value": "甲方公司",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "request_number",
+                "source": {
+                  "kind": "literal",
+                  "value": "INVOICE-REQ-001",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "body",
+                "name": "evidenceRefs",
+                "source": {
+                  "kind": "literal",
+                  "value": [
+                    "instance.product-procurement"
+                  ],
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              },
+              {
+                "target": "header",
+                "name": "Idempotency-Key",
+                "source": {
+                  "kind": "literal",
+                  "value": "key-capability.request-invoice",
+                  "reason": "来自合成 FM 实例与业务交接的入口数据，不是服务器当前时间或新的业务默认值。"
+                }
+              }
+            ],
+            "entryPointRef": "entry.request-invoice",
+            "sourceStepRefs": [
+              "step.procurement-9"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http.buyer-product",
+        "actorRoleRef": "role.buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.buyer-read",
+            "capabilityRef": "capability.read-product-as-buyer",
+            "expectStatus": 200,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "productId",
+                "source": {
+                  "kind": "literal",
+                  "value": "product-1",
+                  "reason": "明确给出的合成入口参数"
+                }
+              }
+            ],
+            "sourceStepRefs": [],
+            "entryPointRef": "entry.read-product-as-buyer"
+          },
+          {
+            "id": "http.buyer-revalidate",
+            "capabilityRef": "capability.read-product-as-buyer",
+            "expectStatus": 304,
+            "inputs": [
+              {
+                "target": "header",
+                "name": "If-None-Match",
+                "source": {
+                  "kind": "response_header",
+                  "stepRef": "http.buyer-read",
+                  "name": "ETag"
+                }
+              }
+            ],
+            "sourceStepRefs": [],
+            "via": {
+              "stepRef": "http.buyer-read",
+              "rel": "self"
+            }
+          }
+        ]
+      },
+      {
+        "id": "http.seller-product",
+        "actorRoleRef": "role.seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "steps": [
+          {
+            "id": "http.seller-read",
+            "capabilityRef": "capability.read-product-as-seller",
+            "expectStatus": 200,
+            "inputs": [
+              {
+                "target": "path",
+                "name": "productId",
+                "source": {
+                  "kind": "literal",
+                  "value": "product-1",
+                  "reason": "明确给出的合成入口参数"
+                }
+              }
+            ],
+            "sourceStepRefs": [],
+            "entryPointRef": "entry.read-product-as-seller"
+          }
+        ]
+      }
+    ],
+    "entryPoints": [
+      {
+        "id": "entry.confirm-delivery",
+        "capabilityRef": "capability.confirm-delivery",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "confirmation.delivery",
+            "evidence.delivery-note",
+            "relation.delivery-evidence-precedes-confirmation",
+            "rule.delivery-completed"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.confirm-invoicing",
+        "capabilityRef": "capability.confirm-invoicing",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "confirmation.invoice",
+            "evidence.invoice",
+            "relation.invoice-evidence-precedes-confirmation",
+            "rule.invoice-completed"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.confirm-payment",
+        "capabilityRef": "capability.confirm-payment",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "confirmation.payment",
+            "role.payment-proof",
+            "relation.payment-confirmation-uses-proof",
+            "rule.payment-completed"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.inquire-products",
+        "capabilityRef": "capability.inquire-products",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "rfp.product-inquiry"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.issue-invoice",
+        "capabilityRef": "capability.issue-invoice",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "evidence.invoice",
+            "request.invoice"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.quote-products",
+        "capabilityRef": "capability.quote-products",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "proposal.product-quotation"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.read-product-as-buyer",
+        "capabilityRef": "capability.read-product-as-buyer",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "thing.product"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.read-product-as-seller",
+        "capabilityRef": "capability.read-product-as-seller",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "thing.product"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.record-delivery-note",
+        "capabilityRef": "capability.record-delivery-note",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "evidence.delivery-note",
+            "request.delivery"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.register-procurement",
+        "capabilityRef": "capability.register-procurement",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "contract.product-procurement"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.request-delivery",
+        "capabilityRef": "capability.request-delivery",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "request.delivery"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.request-invoice",
+        "capabilityRef": "capability.request-invoice",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "request.invoice"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
+      },
+      {
+        "id": "entry.request-payment",
+        "capabilityRef": "capability.request-payment",
+        "scenarioRefs": [
+          "scenario.api-product-procurement"
+        ],
+        "context": "从已定位的业务实例或责任方交接进入该能力；不把入口当作权限证明。",
+        "basis": {
+          "fmRefs": [
+            "request.payment"
+          ],
+          "reasoning": "入口只声明消费者如何取得初始业务上下文；实际身份、实例归属和权限仍由服务端核验。"
+        }
       }
     ]
   },
@@ -3730,7 +4210,10 @@
       "entityRef": "contract.wechat-payment",
       "handling": "external",
       "basis": {
-        "fmRefs": ["contract.wechat-payment", "context.wechat-payment"],
+        "fmRefs": [
+          "contract.wechat-payment",
+          "context.wechat-payment"
+        ],
         "reasoning": "微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。"
       }
     },
@@ -3738,7 +4221,10 @@
       "entityRef": "request.wechat-payment",
       "handling": "external",
       "basis": {
-        "fmRefs": ["request.wechat-payment", "context.wechat-payment"],
+        "fmRefs": [
+          "request.wechat-payment",
+          "context.wechat-payment"
+        ],
         "reasoning": "微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。"
       }
     },
@@ -3746,7 +4232,10 @@
       "entityRef": "confirmation.wechat-payment",
       "handling": "external",
       "basis": {
-        "fmRefs": ["confirmation.wechat-payment", "context.wechat-payment"],
+        "fmRefs": [
+          "confirmation.wechat-payment",
+          "context.wechat-payment"
+        ],
         "reasoning": "微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。"
       }
     },
@@ -3754,7 +4243,9 @@
       "entityRef": "party.buyer-agent",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["party.buyer-agent"],
+        "fmRefs": [
+          "party.buyer-agent"
+        ],
         "reasoning": "采购经办主体身份作为角色扮演依据；模型未定义独立人员资料办理能力，不生成主体管理接口。"
       }
     },
@@ -3762,7 +4253,9 @@
       "entityRef": "party.seller-sales",
       "handling": "internal",
       "basis": {
-        "fmRefs": ["party.seller-sales"],
+        "fmRefs": [
+          "party.seller-sales"
+        ],
         "reasoning": "采购经办主体身份作为角色扮演依据；模型未定义独立人员资料办理能力，不生成主体管理接口。"
       }
     }

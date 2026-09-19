@@ -2265,7 +2265,7 @@
       }
     }
   },
-  "x-evidence-api-design-schema-version": "4.0",
+  "x-evidence-api-design-schema-version": "5.0",
   "x-generated-from": "evidence-api-design projection.json",
   "x-runtime-validated": false
 }

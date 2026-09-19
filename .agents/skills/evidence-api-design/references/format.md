@@ -2,22 +2,21 @@
 
 ## 唯一设计输入
 
-项目使用一份 `api.json`，默认位于项目根的 `.evidence/api/api.json`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: "4.0"`。完整约束见 `schemas/api.schema.json`；输入按严格 JSON 解析：对象拒绝未知字段、重复 ID、重复 JSON key、注释、尾部逗号、`NaN`/`Infinity`、多文档、非 JSON 值和非对象根，不再接受 YAML。
+项目使用一份 `api.json`，默认位于项目根的 `.evidence/api/api.json`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: "5.0"`。完整约束见 `schemas/api.schema.json`；输入按严格 JSON 解析：对象拒绝未知字段、重复 ID、重复 JSON key、注释、尾部逗号、`NaN`/`Infinity`、多文档、非 JSON 值和非对象根，不再接受 YAML。
 
-| 字段                   | 职责                                     |
-| ---------------------- | ---------------------------------------- |
-| `schemaVersion`、`id`  | 文件格式与稳定 API 设计身份              |
-| `nonApiActivities`     | 整体 FM 中真实的内部或外部活动及其依据   |
-| `sources`、`decisions` | 已有来源与明确技术选择                   |
-| `resources`            | 业务名称、FM 对象、路径、身份和数量      |
-| `bindings`             | caller_role、parent_child 实例约束       |
-| `scenarios`            | API 场景到 FM validation scenario 的引用 |
-| `capabilities`         | 角色、视图、方法、效果、场景、规则与依据 |
-| `representations`      | 资源字段和导航草图                       |
-| `journeys`             | FM 场景步骤回映                          |
-| `http`                 | 所有接口的完整 HTTP 契约，必须为对象     |
+| 字段                   | 职责                                                      |
+| ---------------------- | --------------------------------------------------------- |
+| `schemaVersion`、`id`  | 文件格式与稳定 API 设计身份                               |
+| `nonApiActivities`     | 整体 FM 中真实的内部或外部活动及其依据                    |
+| `sources`、`decisions` | 已有来源与明确技术选择                                    |
+| `resources`            | 业务名称、FM 对象、路径、身份和数量                       |
+| `bindings`             | caller_role、parent_child 实例约束                        |
+| `scenarios`            | API 场景到 FM validation scenario 的引用                  |
+| `capabilities`         | 角色、视图、方法、效果、场景、规则与依据                  |
+| `journeys`             | FM 场景步骤回映及其 capability/internal/external/gap 去向 |
+| `http`                 | 类型化入口、表示、操作、消费者流程和完整 HTTP 契约        |
 
-`http` 包含 `representations/operations/journeys`，没有独立身份、版本或范围选择。每个顶层 capability 都必须有 operation 和成功 HTTP 消费步骤。详见 [HTTP 契约](contracts.md)。顶层表示图只辅助解释资源关系，不能代替完整 HTTP 契约。`caller_role` 和 capability 的调用角色必须是当前 FM 中被 `participant.party` 通过 `plays_role` 明确扮演的 `role.party`；未被扮演的 Party Role 不产生 HTTP 契约。
+`http` 包含 `entryPoints/representations/operations/journeys`，没有独立身份、版本或范围选择。每个顶层 capability 都必须有 operation 和成功 HTTP 消费步骤。`entryPoints` 是有依据的消费者初始上下文，不授予权限；`http.journeys` 通过 `scenarioRefs`、`sourceStepRefs` 和返回的链接/Location 回放消费接续。详见 [HTTP 契约](contracts.md)。不再维护顶层重复表示图。`caller_role` 和 capability 的调用角色必须是当前 FM 中被 `participant.party` 通过 `plays_role` 明确扮演的 `role.party`；未被扮演的 Party Role 不产生 HTTP 契约。
 
 全模型覆盖由 CLI 从当前 FM 推导，不接受 Context 子集。`nonApiActivities` 的每项包含 `entityRef`、`handling: internal|external`、`basis`，用于说明实际非接口活动。对象已有写入接口时不能同时声明为非接口活动；对象只有读取接口且形成责任角色没有 `participant.party` 玩家时，可以用它说明该凭证由内部／外部形成。Basis 必须引用该 FM 对象或真实业务来源。
 
@@ -119,16 +118,16 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 
 `project` 默认直接更新项目根的 `.evidence/api/generated/`；`--out` 仅用于隔离测试或显式的其他项目布局：
 
-- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、全部接口、整体 `contextRefs`／`modelCoverage`、HTTP 契约及诊断；人工审核由 `evidence-visualization` 直接消费该投影，不生成重复 Markdown。
+- `projection.json`：唯一机器中间结果，包含 `apiId`、资源、全部接口、整体 `contextRefs`／`modelCoverage`、HTTP 契约、`consumerCoverage`、导航图及诊断；人工审核由 `evidence-visualization` 直接消费该投影，不生成重复 Markdown。
 - `representation-examples.json`：HTTP 表示合成样例。
-- `http-journeys.json`：静态 HTTP 流程结果，runtimeValidated 为 false。
+- `http-journeys.json`：静态 HTTP 流程、类型化入口、业务步骤来源引用及接续结果，`runtimeValidated` 为 false。
 - `e2e-test-vectors.json`：从已校验 HTTP 流程、请求/响应样例和契约派生的确定性合成 E2E 向量；包含来源场景、请求、预期响应和未决环境准备，不包含数据库快照、认证凭据或可执行装载器。
 - `openapi.json`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据；与其余产物统一使用规范 JSON 字节。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
 完整 HTTP 契约必须存在于投影中。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。未被 Participant Party 扮演的 Party Role 不是可调用角色；其步骤应以有依据的 internal/external/gap 回映，而不是保留空契约。
 
-资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。
+资源投影以 `uris` 表达实际视图：单例 `{singleton: 路径}`；集合 `{collection: 集合路径, item: 实例路径}`。`parameters` 仅包含所需实例参数。输入摘要只有 `fm/api/sources`，API 文件内任意内容变化均使其摘要变化。API 设计源只保留一套 HTTP 表示；表示字段、HAL 链接和缓存不再在顶层 `representations` 中重复维护。
 
 OpenAPI 的 `info.version` 使用 `generated`，避免在没有来源时发明业务 API 版本；设计格式版本保存于 `x-evidence-api-design-schema-version`。共享 Method＋URI 的角色变体合并为一个 OpenAPI Operation，同时以 `x-fm-capability-refs`、`x-actor-role-refs` 和 `x-fm-operation-variants` 保留来源，不生成认证方案。HAL 运行时链接同时投影为响应 `links`；条件规则通过扩展保留，但 OpenAPI 不执行规则。journey 不伪装成 OpenAPI Operation。
 

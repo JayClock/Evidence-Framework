@@ -1,7 +1,7 @@
 ---
 name: evidence-task-planning
 description: 基于任意 FM Schema v3 规划机器可执行的 smart-domain 实施任务，并生成离线可视化审核投影；固定采用模块化单体、业务模块边界与组合根/实现库分离、MyBatis XML 领域映射和 Jersey 子资源。用户要求从 .evidence/fm/ 划分任务、生成 plan.yaml、编译任务 DAG、检查 API 覆盖或审核计划视图时使用；不生成产品代码、不改写 FM，也不把 HTML 当作状态来源。
-compatibility: Python 3.10+，PyYAML；消费 FM Schema v3，可选 API Schema 4.0。
+compatibility: Python 3.10+，PyYAML；消费 FM Schema v3，可选 API Schema 5.0。
 ---
 
 # Evidence 实施任务规划
