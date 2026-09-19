@@ -16,7 +16,7 @@ class DocumentationTests(unittest.TestCase):
         )
         for folder in ("scripts", "references", "schemas", "assets", "evals"):
             for path in (skill / folder).rglob("*"):
-                if path.suffix in {".py", ".md", ".yaml", ".json"}:
+                if path.suffix in {".py", ".md", ".json"}:
                     self.assertNotRegex(path.read_text(), retired, str(path))
         entry = (skill / "SKILL.md").read_text()
         self.assertIn("上游是整体 FM", entry)

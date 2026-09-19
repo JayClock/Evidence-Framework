@@ -7,7 +7,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
 from test_support import REPO_ROOT, design
 
 fixture = importlib.import_module("test_contracts").fixture
@@ -18,14 +17,20 @@ def api_fixture():
     return design()
 
 
+def write_json(path: Path, value) -> None:
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+
 class HttpCliTest(unittest.TestCase):
     command = cli_tests.CliTest.command
 
     def test_check_project_preserves_input_and_is_deterministic(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
             parent = Path(directory)
-            path = parent / "api.yaml"
-            path.write_text(yaml.safe_dump(api_fixture(), allow_unicode=True))
+            path = parent / "api.json"
+            write_json(path, api_fixture())
             before = path.read_bytes()
             checked = self.command("check", "--api", str(path))
             self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
@@ -38,7 +43,7 @@ class HttpCliTest(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertTrue((output / "projection.json").is_file())
-                openapi = yaml.safe_load((output / "openapi.yaml").read_text())
+                openapi = json.loads((output / "openapi.json").read_text())
                 operation = openapi["paths"][
                     "/subscriptions/{subscriptionId}/payments"
                 ]["post"]
@@ -82,8 +87,8 @@ class HttpCliTest(unittest.TestCase):
         ]
         representation["example"] = {"value": float("nan")}
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api))
+            path = Path(directory) / "api.json"
+            path.write_text(json.dumps(api), encoding="utf-8")
             result = self.command("check", "--api", str(path))
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
             self.assertNotIn("Traceback", result.stderr)
@@ -91,8 +96,8 @@ class HttpCliTest(unittest.TestCase):
 
     def test_output_cannot_overlap_api_input(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api_fixture()))
+            path = Path(directory) / "api.json"
+            write_json(path, api_fixture())
             before = path.read_bytes()
             result = self.command("project", "--api", str(path), "--out", str(path))
             self.assertEqual(result.returncode, 1)
@@ -103,8 +108,8 @@ class HttpCliTest(unittest.TestCase):
         api = api_fixture()
         api["http"]["journeys"] = []
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api))
+            path = Path(directory) / "api.json"
+            write_json(path, api)
             output = Path(directory) / "out"
             result = self.command(
                 "project",
@@ -115,7 +120,10 @@ class HttpCliTest(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
             self.assertFalse(output.exists())
-            path.write_text("schemaVersion: '4.0'\nhttp: {operations: [null]}\n")
+            path.write_text(
+                '{"schemaVersion": "4.0", "http": {"operations": [null]}}',
+                encoding="utf-8",
+            )
             result = self.command("check", "--api", str(path))
             self.assertEqual(result.returncode, 1)
             self.assertNotIn("Traceback", result.stderr)

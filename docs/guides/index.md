@@ -16,7 +16,7 @@
 | 问题                 | 权威位置                                                                                 | 不可替代它的内容                 |
 | -------------------- | ---------------------------------------------------------------------------------------- | -------------------------------- |
 | 业务事实             | [FM 源入口](../../.evidence/fm/model.json)、[发现记录](../../.evidence/discovery.json)   | 当前代码、生成报告、Agent 推测   |
-| 接口能力与 HTTP 契约 | [api.yaml](../../.evidence/api/api.yaml)                                                 | Resource 实现、过期 OpenAPI      |
+| 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                 | Resource 实现、过期 OpenAPI      |
 | 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                 | FM 中存在的所有活动              |
 | 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)          | 目录名、参考产品或模板默认业务   |
 | 业务术语             | [正式术语](../../.evidence/fm/01-glossary.md)                                            | 另写一份业务词典                 |
@@ -38,7 +38,7 @@
 | 恢复 / 执行任务        | [delivery Skill](../../.agents/skills/evidence-delivery/SKILL.md)、有效索引、当前任务、直接前置产物与本次来源                                                                                                                           |
 | 后端领域               | [模块边界](../architecture/modules.md)、[领域映射](../architecture/domain-mapping.md)、[后端规范](../engineering/backend.md)、相关规则/场景                                                                                             |
 | 持久化                 | 模块的数据归属与事务设计、后端规范、[数据库 howto](../howtos/database.md)、真实 SQL/XML 范例                                                                                                                                            |
-| API                    | 对应 api.yaml 能力、[API 规范](../engineering/api.md)、[安全规范](../engineering/security.md)、独立 HTTP 测试边界                                                                                                                       |
+| API                    | 对应 api.json 能力、[API 规范](../engineering/api.md)、[安全规范](../engineering/security.md)、独立 HTTP 测试边界                                                                                                                       |
 | 前端                   | 对应故事/消费者流程、[前端规范](../engineering/frontend.md)、[浏览器调试](../howtos/browser-debugging.md)                                                                                                                               |
 | 环境准备               | [本地开发](../howtos/local-development.md)、相关 howto、实际构建/运行配置                                                                                                                                                               |
 | 鉴权 / 集成 / 质量属性 | [质量属性及缺口](../requirements/quality-attributes.md)、[安全规范](../engineering/security.md)、受影响模块和已有契约                                                                                                                   |

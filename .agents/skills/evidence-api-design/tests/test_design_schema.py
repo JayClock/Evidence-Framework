@@ -56,17 +56,29 @@ class DesignSchemaTest(unittest.TestCase):
         resource["uris"] = {"collection": "/payments", "item": "/payments/{id}"}
         self.assertTrue(list(validator.iter_errors(resource)))
 
-    def test_duplicate_yaml_key_is_rejected(self) -> None:
+    def test_duplicate_json_key_is_rejected(self) -> None:
         from test_support import api_loader
 
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "api.yaml"
+            path = Path(directory) / "api.json"
             path.write_text(
-                "schemaVersion: '4.0'\nschemaVersion: '4.0'\n", encoding="utf-8"
+                '{"schemaVersion": "4.0", "schemaVersion": "4.0"}\n',
+                encoding="utf-8",
             )
             value, diagnostics = api_loader.load_api(path)
         self.assertIsNone(value)
         self.assertEqual(diagnostics[0].code, "DESIGN_INVALID")
+
+    def test_legacy_yaml_file_is_rejected(self) -> None:
+        from test_support import api_loader
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "api.yaml"
+            path.write_text("schemaVersion: '4.0'\n", encoding="utf-8")
+            value, diagnostics = api_loader.load_api(path)
+        self.assertIsNone(value)
+        self.assertEqual(diagnostics[0].code, "DESIGN_INVALID")
+        self.assertIn("不再接受 YAML", diagnostics[0].message)
 
 
 if __name__ == "__main__":

@@ -253,7 +253,7 @@ def compile_json(script: Path, fm: Path, output: Path, executions: list[dict]) -
 
 
 def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
-    fm, api = root / ".evidence/fm", root / ".evidence/api/api.yaml"
+    fm, api = root / ".evidence/fm", root / ".evidence/api/api.json"
     files = evidence_files(root)
     executions: list[dict] = []
     command = [sys.executable, "-B", str(fm_skill / "scripts/check_fm.py"), str(fm)]
@@ -299,7 +299,7 @@ def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
         data["api"] = read_json(work / "api/projection.json")
         if data["api"]["fmCheckSummary"]["modelDigest"] != check["modelDigest"]:
             raise ValueError("FM 在生成过程中发生变化，请重新生成")
-        data["openapi"] = (work / "api/openapi.yaml").read_text()
+        data["openapi"] = (work / "api/openapi.json").read_text()
         data["apiManifest"] = read_json(work / "api/manifest.json")
     final_check = run_json(command, executions)
     if (

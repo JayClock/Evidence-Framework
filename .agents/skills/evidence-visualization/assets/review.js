@@ -1575,7 +1575,7 @@ function initialize() {
     const box = detailStart('当前 OpenAPI 3.1');
     box.append(
       text('p', '本次由当前完整 API 重新投影，不使用历史快照。'),
-      button('下载 OpenAPI', () => download('openapi.yaml', DATA.openapi), ''),
+      button('下载 OpenAPI', () => download('openapi.json', DATA.openapi), ''),
       text('pre', DATA.openapi, 'raw'),
     );
   });

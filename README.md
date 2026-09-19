@@ -49,13 +49,13 @@ Check → Act：回放旅程、记录证据、局部修复或回到上一个阶�
 | 阶段         | 输入 → 产物                                                                                      | PDCA 检查点                                                                                | 截图                                                    |
 | ------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
 | **建模**     | 业务材料 → `.evidence/fm/` 中的 FM、正式术语、关系、规则和验证场景。                             | 业务链能被回放；协议、月度目标、联系记录和完成判断的含义明确。                             | ![建模](docs/visuals/screenshots/01-model.png)          |
-| **API**      | FM → `.evidence/api/api.yaml` 中的资源、能力、调用者绑定、表示、错误和消费者旅程。               | 每项能力能追溯到 FM；HTTP 结果、幂等、导航和参与方边界可观察。                             | ![API](docs/visuals/screenshots/02-api.png)             |
+| **API**      | FM → `.evidence/api/api.json` 中的资源、能力、调用者绑定、表示、错误和消费者旅程。               | 每项能力能追溯到 FM；HTTP 结果、幂等、导航和参与方边界可观察。                             | ![API](docs/visuals/screenshots/02-api.png)             |
 | **任务清单** | API、范围、架构和测试工序 → `plan.yaml` 的切片、`taskKey`、依赖、任务 Guides、验收条件和 CHECK。 | 任务可编译、依赖可排序、每个验收条件都有具体检查，不把 FM 自动变成全套 CRUD。              | ![任务](docs/visuals/screenshots/03-tasks.png)          |
 | **实现**     | 就绪任务 → 领域对象、关联适配器、Jersey 子资源、MyBatis XML、真实装配测试和 `observedEvidence`。 | 完成与不足旅程均可回放；区分领域、HTTP、持久化和应用层证据，再决定修复、重规划或完成任务。 | ![实现](docs/visuals/screenshots/04-implementation.png) |
 
 ### 四阶段截图
 
-每张图都是阶段结果的离线截图；图片负责在 README 中快速浏览，但不是业务事实源。模型、API、任务状态和验收结果仍分别以 `.evidence/fm/`、`.evidence/api/api.yaml`、`plan.yaml` 和任务 CHECK 为准。
+每张图都是阶段结果的离线截图；图片负责在 README 中快速浏览，但不是业务事实源。模型、API、任务状态和验收结果仍分别以 `.evidence/fm/`、`.evidence/api/api.json`、`plan.yaml` 和任务 CHECK 为准。
 
 #### 1. 建模：业务事实与规则
 
@@ -142,7 +142,7 @@ public MonthlyCustomerContactTargetsApi targets() {
 }
 ```
 
-完整请求字段、参与方绑定、`201`/`403`/`409`/`422`、幂等键与 HAL 表示以 [API 设计源](.evidence/api/api.yaml)为准；README 中的路径只是帮助读者建立导航，不是第二份 HTTP 契约。
+完整请求字段、参与方绑定、`201`/`403`/`409`/`422`、幂等键与 HAL 表示以 [API 设计源](.evidence/api/api.json)为准；README 中的路径只是帮助读者建立导航，不是第二份 HTTP 契约。
 
 ## 关联生命周期：概念归属不等于加载策略
 
@@ -224,13 +224,13 @@ public MonthlyCustomerContactTargetsApi targets() {
 | 层       | 位置                                                                                                                                                                                                                                                                    | 这一层负责什么                                                                |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | 业务事实 | [contract.json](.evidence/fm/contexts/sales-performance/contract.json)                                                                                                                                                                                                  | 协议凭证的编号与达成时刻，以及“协议先于月度目标请求”的关系                    |
-| API 设计 | [api.yaml](.evidence/api/api.yaml) 的 `capability.register-sales-performance-agreement-tele-sales`                                                                                                                                                                      | 调用者绑定、请求字段、`201`/`403`/`409`/`422` 与 `Idempotency-Key` 的幂等语义 |
+| API 设计 | [api.json](.evidence/api/api.json) 的 `capability.register-sales-performance-agreement-tele-sales`                                                                                                                                                                      | 调用者绑定、请求字段、`201`/`403`/`409`/`422` 与 `Idempotency-Key` 的幂等语义 |
 | 领域     | [SalesPerformanceAgreement.java](libs/backend/domain/src/main/java/com/evidencepoc/backend/domain/model/SalesPerformanceAgreement.java)                                                                                                                                 | 拥有协议身份、描述与所属目标集合；`proposeTarget` 校验目标归属                |
 | 持久化   | [SalesPerformanceAgreements.java](libs/backend/persistent/src/main/java/com/evidencepoc/backend/persistent/associations/SalesPerformanceAgreements.java)、[Mapper XML](libs/backend/persistent/src/main/resources/mybatis.mappers/SalesPerformanceAgreementsMapper.xml) | 装配领域图、写入与唯一约束、幂等台账回放                                      |
 | HTTP     | [SalesPerformanceAgreementsApi.java](libs/backend/api/src/main/java/com/evidencepoc/backend/api/SalesPerformanceAgreementsApi.java)                                                                                                                                     | Jersey 子资源入口、请求解析、`201` 与 `Location`、异常映射                    |
 | 证据     | [MonthlyCustomerContactJourneyTests.java](apps/backend/src/test/java/com/evidencepoc/backend/salesperformance/MonthlyCustomerContactJourneyTests.java)                                                                                                                  | 真实 HTTP 与 H2/MyBatis 走完完成、不足两条旅程，覆盖周期边界与拒绝后数据不变  |
 
-从 [api.yaml](.evidence/api/api.yaml) 摘录的可观察契约（权威在那里，此处只作导读）：
+从 [api.json](.evidence/api/api.json) 摘录的可观察契约（权威在那里，此处只作导读）：
 
 ```text
 POST /api/sales-performance-agreements
@@ -264,7 +264,7 @@ Idempotency-Key: <同一次登记的重试沿用同一键>
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | `.evidence/discovery.json`            | 业务材料、回答与控制状态                                               |
 | `.evidence/fm/`                       | 当前 FM、正式业务术语、规则与回放场景                                  |
-| `.evidence/api/api.yaml`              | 当前 API 设计源                                                        |
+| `.evidence/api/api.json`              | 当前 API 设计源                                                        |
 | `docs/requirements/`                  | 软件职责、故事验收与质量属性                                           |
 | `docs/architecture/`                  | 项目技术基线、模块/数据边界与领域映射                                  |
 | `docs/engineering/`、`docs/howtos/`   | 按工作类型加载的规范、范例与操作说明                                   |

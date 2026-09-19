@@ -8,7 +8,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
 from test_support import API_ROOT, FM_SKILL
 
 EXAMPLE = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
@@ -22,10 +21,6 @@ PROOFS = {
 
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def load_yaml(path: Path):
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
 def save(path: Path, value) -> None:
@@ -78,7 +73,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                 and evidence["contextRef"] != "fulfillment.wechat-payment"
             ):
                 self.assertIn(evidence["responsibleRoleRef"], contract["roleRefs"])
-        design = load_yaml(EXAMPLE / "api.yaml")
+        design = load(EXAMPLE / "api.json")
         for cap in design["capabilities"]:
             self.assertIn(cap["actorRoleRef"], contract["roleRefs"])
         self.assertFalse(
@@ -99,7 +94,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
 
     def test_dependencies_and_api_steps_match_for_each_responsibility(self) -> None:
         scenario = load(self.root / SCENARIO)
-        design = load_yaml(EXAMPLE / "api.yaml")
+        design = load(EXAMPLE / "api.json")
         steps = {s["issueInstanceRef"]: s for s in scenario["steps"]}
         journey = design["journeys"][0]["steps"]
         caps = {c["id"]: c for c in design["capabilities"]}

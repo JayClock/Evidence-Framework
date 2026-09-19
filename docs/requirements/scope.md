@@ -6,7 +6,7 @@
 
 - [发现记录](../../.evidence/discovery.json)与 [FM 概览](../../.evidence/fm/00-overview.md)：当前模型是 CRM 电话销售绩效协议及其客户信息依赖；发现记录同时保留已移出当前 FM 的移动支付订阅澄清。
 - [模型入口](../../.evidence/fm/model.json)：模型文件不保存审核状态；执行前核对实际源。
-- [API 设计](../../.evidence/api/api.yaml)：当前是 `api.sales-performance`，三个登记能力与两条消费者旅程；业务接口契约，不是已部署接口清单。
+- [API 设计](../../.evidence/api/api.json)：当前是 `api.sales-performance`，三个登记能力与两条消费者旅程；业务接口契约，不是已部署接口清单。
 - [用户切片说明](../../apps/backend/README.md)及其源码/测试：本地基础工程行为；其显示名称等软件字段不假称来自 FM。
 - 本次授权的软件切片是绩效协议主链，授权来源为用户交付指令；计划的 `authorizationRefs` 引用[建模评估](../../.evidence/fm/crm-assessment.md)，收敛状态见缺口 `GAP-SCOPE-CRM`，故事与验收见[故事与验收](stories.md)。
 

@@ -11,7 +11,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
 from test_support import API_ROOT, FM_SKILL, REPO_ROOT
 
 adapter = importlib.import_module("fm_api_core.fm_adapter")
@@ -27,7 +26,7 @@ class WholeModelTest(unittest.TestCase):
         cls.index, diagnostics = adapter.load_fm(EXAMPLE / "fm", FM_SKILL)
         if diagnostics:
             raise AssertionError(diagnostics)
-        cls.design = yaml.safe_load((EXAMPLE / "api.yaml").read_text())
+        cls.design = json.loads((EXAMPLE / "api.json").read_text(encoding="utf-8"))
 
     def project(self, design=None, index=None):
         return projector.build_projection(
@@ -194,8 +193,11 @@ class WholeModelTest(unittest.TestCase):
         value = copy.deepcopy(self.design)
         value["http"]["operations"] = []
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(value, allow_unicode=True))
+            path = Path(directory) / "api.json"
+            path.write_text(
+                json.dumps(value, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
             out = Path(directory) / "output"
             for action in ("check", "project"):
                 args = [

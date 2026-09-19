@@ -12,11 +12,11 @@ compatibility: Python 3.10+ 与 requirements.txt；需要可定位的 evidence-f
 
 - 只讨论展示方式时给建议，不写文件；普通建模或 API 设计结束后不自动生成视图。
 - 用户要求生成／更新页面时，使用本 Skill 自带生成器，不在项目中重新实现或复制一套工具。
-- 读取项目约定和当前文件。默认输入是 `.evidence/fm/` 和可选的 `.evidence/api/api.yaml`；输出是 `.evidence/views/index.html`。已有布局不自动迁移；当前生成器不支持的布局应说明限制，不为展示移动业务文件。
+- 读取项目约定和当前文件。默认输入是 `.evidence/fm/` 和可选的 `.evidence/api/api.json`；输出是 `.evidence/views/index.html`。已有布局不自动迁移；当前生成器不支持的布局应说明限制，不为展示移动业务文件。
 - 通过宿主资源发现或用户提供的绝对路径定位本 Skill、`evidence-fm` 和需要时的 `evidence-api-design`，不假设它们互为兄弟目录。项目根与安装目录分别传入。
 - 资源或依赖缺失时说明执行限制，不把环境问题改写成业务问题，不自动安装软件。FM 不通过时报告真实错误，不修改事实、规则或场景预期来取得成功。
 - 没有 API 时只生成 FM 视图，不创建接口、合同或确认凭证；纯领域模型不补造履约场景。
-- 不修改 FM JSON／API YAML 源文件、历史 generated／checks 或业务确认记录；只修改本次授权的文件。页面含原始业务数据，不上传或对外部署。
+- 不修改 FM JSON／API JSON 源文件、历史 generated／checks 或业务确认记录；只修改本次授权的文件。页面含原始业务数据，不上传或对外部署。
 
 ## 生成
 

@@ -5,61 +5,62 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
-import yaml
 
 from .diagnostics import Diagnostic, error
 
-
-class UniqueKeyLoader(yaml.SafeLoader):
-    pass
+_LEGACY_SUFFIXES = {".yaml", ".yml"}
 
 
-def _construct_mapping(
-    loader: UniqueKeyLoader, node: yaml.MappingNode, deep: bool = False
-) -> dict:
-    mapping: dict[Any, Any] = {}
-    for key_node, value_node in node.value:
-        key = loader.construct_object(key_node, deep=deep)
-        if key in mapping:
-            raise yaml.constructor.ConstructorError(
-                "mapping", node.start_mark, f"duplicate key: {key}", key_node.start_mark
-            )
-        mapping[key] = loader.construct_object(value_node, deep=deep)
-    return mapping
+class DesignJsonError(ValueError):
+    """The design file is not strict JSON."""
 
 
-UniqueKeyLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_mapping
-)
+def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise DesignJsonError(f"设计包含重复 JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def _reject_constant(value: str) -> None:
+    raise DesignJsonError(f"设计包含非 JSON 常量: {value}")
 
 
 def load_api(
     path: Path, *, content: bytes | None = None
 ) -> tuple[dict[str, Any] | None, list[Diagnostic]]:
     schema_path = Path(__file__).resolve().parents[2] / "schemas" / "api.schema.json"
+    if path.suffix.lower() in _LEGACY_SUFFIXES:
+        return None, [
+            error(
+                "DESIGN_INVALID",
+                "API 设计必须使用 .json 文件，不再接受 YAML",
+                location=str(path),
+            )
+        ]
     try:
         text = (
             content.decode("utf-8")
             if content is not None
             else path.read_text(encoding="utf-8")
         )
-        documents = list(yaml.load_all(text, Loader=UniqueKeyLoader))
-    except (OSError, UnicodeError, TypeError, ValueError, yaml.YAMLError) as exc:
+    except (OSError, UnicodeError, TypeError) as exc:
         return None, [error("DESIGN_INVALID", str(exc), location=str(path))]
-    if len(documents) != 1 or not isinstance(documents[0], dict):
-        return None, [
-            error("DESIGN_INVALID", "设计必须是单个 YAML 对象", location=str(path))
-        ]
-    design = documents[0]
     try:
-        json.dumps(design, allow_nan=False)
-    except (TypeError, ValueError, RecursionError) as exc:
+        design = json.loads(
+            text, object_pairs_hook=_unique_object, parse_constant=_reject_constant
+        )
+    except json.JSONDecodeError as exc:
         return None, [
-            error(
-                "DESIGN_INVALID",
-                f"设计包含非 JSON 值或循环结构: {exc}",
-                location=str(path),
-            )
+            error("DESIGN_INVALID", f"设计不是合法 JSON: {exc}", location=str(path))
+        ]
+    except (TypeError, ValueError, RecursionError) as exc:
+        return None, [error("DESIGN_INVALID", str(exc), location=str(path))]
+    if not isinstance(design, dict):
+        return None, [
+            error("DESIGN_INVALID", "设计必须是单个 JSON 对象", location=str(path))
         ]
     try:
         schema = json.loads(schema_path.read_text(encoding="utf-8"))

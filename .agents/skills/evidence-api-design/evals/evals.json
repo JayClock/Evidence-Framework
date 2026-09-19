@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "上游 FM 为整体模型。请基于整个模型直接生成全部 API 接口、HTTP 契约和 OpenAPI，不要再次组织业务确认。",
-      "expected_output": "inspect 检查当前 FM，遍历全部业务对象与场景，维护格式 4.0 的 api.yaml；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，Contract 列表 GET 使用具体 Participant Party 类型 URL 根，补齐每个保留接口的 HTTP 契约与成功消费流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
+      "expected_output": "inspect 检查当前 FM，遍历全部业务对象与场景，维护格式 4.0 的 api.json；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，Contract 列表 GET 使用具体 Participant Party 类型 URL 根，补齐每个保留接口的 HTTP 契约与成功消费流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
       "files": []
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "id": 3,
-      "prompt": "只校验 .evidence/api/api.yaml，不要修改任何文件。",
+      "prompt": "只校验 .evidence/api/api.json，不要修改任何文件。",
       "expected_output": "仅执行 inspect/check，检查整体模型、全部场景、全部 HTTP 契约与成功消费步骤。缺口默认非零，不 project、不写检查记录。",
       "files": []
     },
@@ -29,7 +29,7 @@
       "id": 5,
       "prompt": "更新商品采购示例，询价、报价、协议、支付、开票、发货和商品读取都要完整 HTTP 契约。",
       "expected_output": "13 个角色接口全部有请求、响应、字段来源、幂等缓存策略和成功流程；OpenAPI 合并为 12 个路径方法操作。外部微信支付凭证与经办主体均有整体覆盖依据，不添加无依据的接入或资料接口。",
-      "files": ["tests/fixtures/full-lifecycle/api.yaml"]
+      "files": ["tests/fixtures/full-lifecycle/api.json"]
     },
     {
       "id": 6,
@@ -45,9 +45,9 @@
     },
     {
       "id": 8,
-      "prompt": "将完整 api.yaml 生成 OpenAPI 和接口文档，使用默认产物目录。",
+      "prompt": "将完整 api.json 生成 OpenAPI 和接口文档，使用默认产物目录。",
       "expected_output": "校验整体设计后直接更新 .evidence/api/generated，使用 Git 管理历史且不重复确认目录；缺口时保留现有交付不变。保留角色、实例约束与运行时验证边界。",
-      "files": ["tests/fixtures/full-lifecycle/api.yaml"]
+      "files": ["tests/fixtures/full-lifecycle/api.json"]
     }
   ]
 }

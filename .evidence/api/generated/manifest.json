@@ -1,15 +1,15 @@
 {
   "apiId": "api.sales-performance",
   "inputs": {
-    "api": "79b5c5b09f8f0509ab8983b12ad8915a75503ae51fc50c50f3834c60f73794b2",
+    "api": "7566a64bed067536671dc5f214f2a2c6c147e20395abe40e074104d40f74ffe9",
     "fm": {
       "00-overview.md": "55b48283e4f73c21025f9f6e1d514d5e7aeb06468c8cd38b329cff4f73edb9d7",
       "01-glossary.md": "bccba6354beb7f8a69516cab36a2e3ece3a7abc1b6480c1db2e63feb04429308",
       "README.md": "a5e96fb9ff3797b5cd7c028d3f507b653b9272ce9706de4cfbe6130bfe0b248f",
-      "contexts/customer-information/context.json": "a56708460b578f4c295fc35770f35d53329b540da504550662f869dcc0797f7d",
+      "contexts/customer-information/context.json": "54b56313cdfd85c012d3f9c4814be462ec332e29ec792488061b2d2eb71045cc",
       "contexts/customer-information/things/customer-profile.json": "764fcdab3cebe3ed296409719ed9aff877968c8a26afc1220dfe1ba897eb0eb4",
-      "contexts/sales-performance/context.json": "00f7eb476acf7ddbfdeef070e3ffcce6910d5d3b9870a5727c404d6b0c3b708e",
-      "contexts/sales-performance/contract.json": "63e2875ed0e964167f216a385662d60d20457008157c886e08b95e124fc13fa3",
+      "contexts/sales-performance/context.json": "7a15ebd005d6e19f881fd793c7fb431985708455e6211b8951d4c791dadec65f",
+      "contexts/sales-performance/contract.json": "459afe12ab596eb1568501e76cfa97e2b9361aa64389a41145bd519860c19d59",
       "contexts/sales-performance/fulfillments/monthly-customer-contact/confirmation.json": "84dbd3d610393e50e394fe0a9d8c003f970043281333af2976bf09698bf702af",
       "contexts/sales-performance/fulfillments/monthly-customer-contact/context.json": "18c0a19aa085c37cd353f4072d5b2ed3a7ecdec0e39f886102d00f2ceb806542",
       "contexts/sales-performance/fulfillments/monthly-customer-contact/relationships/request-contact-record.json": "25a5834eb2391c2e3bf930795298d95d5b5860fe3d7903f9ee2c501f10b3e21f",
@@ -24,13 +24,13 @@
       "relationships/customer-contact-profile.json": "9ff4ff62d6a06f193683cee64a4f4d94b5407a403a322cbf07d00b580b896216",
       "relationships/user-as-performance-manager.json": "98317347860b37363f482a3bd6b93010b6926f7f1cbbda1a60b84f6ec3c870c0",
       "relationships/user-as-tele-sales.json": "a9b2e348e687c2de3cb18ad3a246c06a806f8e384a8b1b06a974599d304e2ba6",
-      "validation/instances/instance--customer-contact-email-1.json": "9a6a301e7b4a6b398f17f3dd7850e35ac0593afbd2b757df52b902e2053139b9",
-      "validation/instances/instance--customer-contact-phone-1.json": "692a57459db18a54de67195cdaa3ec720566da16d74331bee7a2f3e2b343aa13",
-      "validation/instances/instance--customer-contact-phone-2.json": "6d46aa4c54a6f61b5524e496d0473a382e45329dcacc9320a446cf4fb84f858e",
-      "validation/instances/instance--monthly-customer-contact-request.json": "b19bfcd1b243c18e5a94e8b3adca5631fe031731936267b519f12f586680d1ea",
+      "validation/instances/instance--customer-contact-email-1.json": "3648ca44dd7a367e08894e6df91180b81865c29e040b81fd85af0a08c15cb92b",
+      "validation/instances/instance--customer-contact-phone-1.json": "d050ad6af87e0bc6191de69e29608f8d8af56dddb73e8c7800f8de1dd42d1c00",
+      "validation/instances/instance--customer-contact-phone-2.json": "d019f616a264e9b1d8059306a09b29a3d2aaa486b8f711b583046563a2181eb2",
+      "validation/instances/instance--monthly-customer-contact-request.json": "14bd22136663e525151dd70ce0c752c6b7ca0eca2b800cc6e20e10934a58b5d5",
       "validation/instances/instance--sales-performance-agreement.json": "82fcaf01528861a0270ed3e25beb7e01245cf05d8fd63028b20f83532a19ac0b",
-      "validation/scenarios/scenario--monthly-customer-contact-completed.json": "ec3138b6ef9c71654b7399dc43843c8b29f47e662d1ef8a891c5ac581da105bc",
-      "validation/scenarios/scenario--monthly-customer-contact-insufficient.json": "98465a509adb8886d174779cfe5472f3830c0974e8096b93e2015dfe53cdd47f"
+      "validation/scenarios/scenario--monthly-customer-contact-completed.json": "adcf29413def47fd95138ed417598b1394c3a0b2f2a824549dfb7364615d22b7",
+      "validation/scenarios/scenario--monthly-customer-contact-insufficient.json": "06fc31b8d797742bf990c2c160276259310787fbec83a8029bd76e4cbf28749a"
     },
     "sources": {}
   },
@@ -43,13 +43,13 @@
       "bytes": 1258,
       "sha256": "362a406816a2c20a57b5816a3309b7a9c4a7738983db61760acb9ca17841d600"
     },
-    "openapi.yaml": {
-      "bytes": 14710,
-      "sha256": "6ce4ecb22a5fc4c14e462def651c05cbbfd92c787ed00b86754409cc7fe8d03d"
+    "openapi.json": {
+      "bytes": 19497,
+      "sha256": "81fcec2f7d736b7a3c776199a94409ab6e59d58a53a87f0c6aacebdf4becaf86"
     },
     "projection.json": {
       "bytes": 41424,
-      "sha256": "7a39b983904fd8e7160fbe06d87b16b6cfaeb7f194f00f3398f4da786dfc1e4a"
+      "sha256": "bc775ffe14a0136ab1750716d06c6d70af250667215eae71e647adec85de2bfb"
     },
     "representation-examples.json": {
       "bytes": 1242,
@@ -58,7 +58,6 @@
   },
   "runtime": {
     "dependencies": {
-      "PyYAML": "6.0.2",
       "jsonschema": "4.25.1"
     },
     "python": "3.12.3"

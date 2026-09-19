@@ -49,11 +49,11 @@ class CliTest(unittest.TestCase):
             root = Path(directory).resolve()
             evidence = root / ".evidence"
             fm = evidence / "fm"
-            api = evidence / "api/api.yaml"
+            api = evidence / "api/api.json"
             output = evidence / "api/generated"
             shutil.copytree(example / "fm", fm)
             output.parent.mkdir(parents=True)
-            shutil.copyfile(example / "api.yaml", api)
+            shutil.copyfile(example / "api.json", api)
             notes = evidence / "discovery.json"
             notes.write_text("# Discovery\nKeep existing notes.\n", encoding="utf-8")
             inputs = {
@@ -85,7 +85,7 @@ class CliTest(unittest.TestCase):
             self.assertEqual(
                 {
                     "projection.json",
-                    "openapi.yaml",
+                    "openapi.json",
                     "representation-examples.json",
                     "http-journeys.json",
                     "e2e-test-vectors.json",
@@ -126,7 +126,7 @@ class CliTest(unittest.TestCase):
                     "--fm-skill",
                     str(FM_SKILL),
                     "--api",
-                    str(example / "api.yaml"),
+                    str(example / "api.json"),
                     "--out",
                     str(output),
                 ],
@@ -191,7 +191,7 @@ class CliTest(unittest.TestCase):
                 self.assertEqual(projected.returncode, 0, projected.stderr)
             for name in (
                 "projection.json",
-                "openapi.yaml",
+                "openapi.json",
                 "representation-examples.json",
                 "http-journeys.json",
                 "e2e-test-vectors.json",
@@ -211,7 +211,7 @@ class CliTest(unittest.TestCase):
                 {path.name for path in first.iterdir()},
                 {
                     "projection.json",
-                    "openapi.yaml",
+                    "openapi.json",
                     "representation-examples.json",
                     "http-journeys.json",
                     "e2e-test-vectors.json",

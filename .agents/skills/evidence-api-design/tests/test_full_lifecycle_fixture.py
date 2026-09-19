@@ -38,7 +38,7 @@ class FullLifecycleFixtureTest(unittest.TestCase):
                 "--fm-skill",
                 str(FM_SKILL),
                 "--api",
-                str(example / "api.yaml"),
+                str(example / "api.json"),
             ],
             check=False,
             capture_output=True,
@@ -52,7 +52,7 @@ class FullLifecycleFixtureTest(unittest.TestCase):
         self.assertEqual(report["projection"]["inputDigests"]["sources"], {})
         openapi = importlib.import_module("fm_api_core.openapi")
         self.assertEqual(
-            (example / "openapi.yaml").read_text(),
+            (example / "openapi.json").read_text(),
             openapi.render_openapi(report["projection"]),
         )
         uris = {

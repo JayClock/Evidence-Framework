@@ -21,7 +21,7 @@ compatibility: Python 3.10+，PyYAML；消费 FM Schema v3，可选 API Schema 4
 
 ## 输入、权限与产物
 
-默认读取 `.evidence/fm/`，可选读取 `.evidence/api/api.yaml`、需求、架构、测试契约与现有代码。只在用户要求生成或更新计划时写计划目录；FM、API、产品代码、依赖和审核记录只读。
+默认读取 `.evidence/fm/`，可选读取 `.evidence/api/api.json`、需求、架构、测试契约与现有代码。只在用户要求生成或更新计划时写计划目录；FM、API、产品代码、依赖和审核记录只读。
 
 ```text
 docs/plans/smart-domain/
@@ -57,7 +57,7 @@ python3 "$SKILL_DIR/scripts/task_compiler.py" inventory \
   --fm "$PROJECT_ROOT/.evidence/fm"
 ```
 
-有 API 时增加 `--api "$PROJECT_ROOT/.evidence/api/api.yaml"`。程序只向 stdout 输出 JSON，不写业务文件。
+有 API 时增加 `--api "$PROJECT_ROOT/.evidence/api/api.json"`。程序只向 stdout 输出 JSON，不写业务文件。
 
 `sourceEdges` 是业务引用，不是执行依赖。源图可有环，任务 DAG 不可有环。具体实例作为场景输入，不逐单建任务，不按字段生成 CRUD。
 

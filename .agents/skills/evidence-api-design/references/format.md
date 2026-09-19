@@ -2,7 +2,7 @@
 
 ## 唯一设计输入
 
-项目使用一份 `api.yaml`，默认位于项目根的 `.evidence/api/api.yaml`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: '4.0'`。完整约束见 `schemas/api.schema.json`；对象拒绝未知字段、重复 ID、重复 YAML key、多文档、非 JSON 值和循环结构。
+项目使用一份 `api.json`，默认位于项目根的 `.evidence/api/api.json`，与 `.evidence/fm/` 分离；格式为 `schemaVersion: "4.0"`。完整约束见 `schemas/api.schema.json`；输入按严格 JSON 解析：对象拒绝未知字段、重复 ID、重复 JSON key、注释、尾部逗号、`NaN`/`Infinity`、多文档、非 JSON 值和非对象根，不再接受 YAML。
 
 | 字段                   | 职责                                     |
 | ---------------------- | ---------------------------------------- |
@@ -21,25 +21,34 @@
 
 全模型覆盖由 CLI 从当前 FM 推导，不接受 Context 子集。`nonApiActivities` 的每项包含 `entityRef`、`handling: internal|external`、`basis`，用于说明实际非接口活动。对象已有写入接口时不能同时声明为非接口活动；对象只有读取接口且形成责任角色没有 `participant.party` 玩家时，可以用它说明该凭证由内部／外部形成。Basis 必须引用该 FM 对象或真实业务来源。
 
-```yaml
-nonApiActivities:
-  - entityRef: confirmation.wechat-payment
-    handling: external
-    basis:
-      fmRefs: [confirmation.wechat-payment, context.wechat-payment]
-      reasoning: 外部支付主体提供既有结果，本服务使用该证据而不代替其提供接口
+```json
+{
+  "nonApiActivities": [
+    {
+      "entityRef": "confirmation.wechat-payment",
+      "handling": "external",
+      "basis": {
+        "fmRefs": ["confirmation.wechat-payment", "context.wechat-payment"],
+        "reasoning": "外部支付主体提供既有结果，本服务使用该证据而不代替其提供接口"
+      }
+    }
+  ]
+}
 ```
 
 上游来源摘要随输入记录保留，不在此设置再次审核流程。
 
 每个业务判断项使用 basis：
 
-```yaml
-basis:
-  fmRefs: [request.payment, rule.payment-amount]
-  sourceRefs: [source.successful-payment]
-  decisionRefs: [decision.resource-hierarchy]
-  reasoning: 说明这些事实和选择为何支持当前映射
+```json
+{
+  "basis": {
+    "fmRefs": ["request.payment", "rule.payment-amount"],
+    "sourceRefs": ["source.successful-payment"],
+    "decisionRefs": ["decision.resource-hierarchy"],
+    "reasoning": "说明这些事实和选择为何支持当前映射"
+  }
+}
 ```
 
 决定仅支持技术选择，不代替业务权限、实例归属或关键值口径。来源定位包含 `id/path/locator/quote`，文档路径相对 project root。
@@ -50,48 +59,58 @@ basis:
 
 父实例下唯一对象采用 singleton：
 
-```yaml
-id: resource.payment
-businessName: 货款支付申请
-entityRef: request.payment
-segment: payment
-shape: singleton
-parentRef: resource.procurement
-parentBindingRef: binding.payment-procurement
-identity:
-  kind: parent_scoped
-cardinality:
-  relationshipRef: relation.procurement-payment
-basis:
-  fmRefs: [contract.procurement, request.payment]
-  reasoning: 该协议下唯一的支付申请，归属由实例绑定约束
+```json
+{
+  "id": "resource.payment",
+  "businessName": "货款支付申请",
+  "entityRef": "request.payment",
+  "segment": "payment",
+  "shape": "singleton",
+  "parentRef": "resource.procurement",
+  "parentBindingRef": "binding.payment-procurement",
+  "identity": { "kind": "parent_scoped" },
+  "cardinality": { "relationshipRef": "relation.procurement-payment" },
+  "basis": {
+    "fmRefs": ["contract.procurement", "request.payment"],
+    "reasoning": "该协议下唯一的支付申请，归属由实例绑定约束"
+  }
+}
 ```
 
 单例只提供 `singleton` 视图，无额外子定位参数；实际凭证仍有实例身份。集合提供 `collection/item` 视图，实例使用 `fm_attribute` 或 `api_resource_id` 身份：
 
-```yaml
-identity:
-  kind: fm_attribute
-  parameter: paymentId
-  attributeRef: request.payment#request_id
+```json
+{
+  "identity": {
+    "kind": "fm_attribute",
+    "parameter": "paymentId",
+    "attributeRef": "request.payment#request_id"
+  }
+}
 ```
 
-```yaml
-identity:
-  kind: api_resource_id
-  parameter: paymentId
-  decisionRef: decision.resource-identity
+```json
+{
+  "identity": {
+    "kind": "api_resource_id",
+    "parameter": "paymentId",
+    "decisionRef": "decision.resource-identity"
+  }
+}
 ```
 
 API 定位 ID 不回写 FM，也不证明实例所属方。
 
 数量优先引用端点对应的 Relationship；正向使用 targetCardinality，反向使用 sourceCardinality。直接业务来源明确数量时也可写：
 
-```yaml
-cardinality:
-  max: many
-  sourceRefs: [source.installment-payments]
-  reasoning: 同一合同允许分次支付，各申请单独定位
+```json
+{
+  "cardinality": {
+    "max": "many",
+    "sourceRefs": ["source.installment-payments"],
+    "reasoning": "同一合同允许分次支付，各申请单独定位"
+  }
+}
 ```
 
 max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error；不能用另一层的数量替代本层依据。
@@ -104,7 +123,7 @@ max 为正整数或 many。缺失数量为 gap，形态或数量冲突为 error�
 - `representation-examples.json`：HTTP 表示合成样例。
 - `http-journeys.json`：静态 HTTP 流程结果，runtimeValidated 为 false。
 - `e2e-test-vectors.json`：从已校验 HTTP 流程、请求/响应样例和契约派生的确定性合成 E2E 向量；包含来源场景、请求、预期响应和未决环境准备，不包含数据库快照、认证凭据或可执行装载器。
-- `openapi.yaml`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据。
+- `openapi.json`：确定性 OpenAPI 3.1 交付投影，包含路径、方法、请求响应、HAL Schema、响应 Links 及 FM 扩展元数据；与其余产物统一使用规范 JSON 字节。
 - `manifest.json`：FM、API、来源摘要，工具及依赖版本和输出摘要。
 
 完整 HTTP 契约必须存在于投影中。每个业务接口都必须有完整契约，全部 FM 场景必须回映；缺口默认使检查返回非零，project 不创建交付目录。确无接口的纯内部模型可使用空 operations，但须完整说明整体对象与场景的处理方式，不能静默忽略。未被 Participant Party 扮演的 Party Role 不是可调用角色；其步骤应以有依据的 internal/external/gap 回映，而不是保留空契约。

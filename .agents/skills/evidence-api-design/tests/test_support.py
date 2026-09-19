@@ -12,7 +12,7 @@ REPO_ROOT = TESTS.parents[3]
 SCRIPTS = API_ROOT / "scripts"
 FM_SKILL = REPO_ROOT / ".agents" / "skills" / "evidence-fm"
 FM_ROOT = FM_SKILL / "tests" / "fixtures" / "valid-traceable-subscription"
-API_PATH = TESTS / "fixtures" / "subscription-api.yaml"
+API_PATH = TESTS / "fixtures" / "subscription-api.json"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 

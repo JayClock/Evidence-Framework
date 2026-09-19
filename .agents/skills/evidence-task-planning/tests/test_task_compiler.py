@@ -365,9 +365,9 @@ class CompilerTests(unittest.TestCase):
 
     def test_procedure_fanout_owns_rules_once_and_joins_at_acceptance(self):
         """Explicit procedure slicing, not automatic procedure inference."""
-        api = self.root / "api.yaml"
+        api = self.root / "api.json"
         api.write_text(
-            yaml.safe_dump(
+            json.dumps(
                 {
                     "schemaVersion": "4.0",
                     "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
@@ -455,7 +455,7 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(plan, compiler.compile_tasks(inv, reversed_mapping))
 
     def test_api_role_variants_share_delivery_not_domain_duplicates(self):
-        api = self.root / "api.yaml"
+        api = self.root / "api.json"
         body = {
             "schemaVersion": "4.0",
             "resources": [{"id": "resource.book", "entityRef": "thing.book"}],
@@ -464,14 +464,14 @@ class CompilerTests(unittest.TestCase):
                 {"id": "api.operator", "resourceRef": "resource.book", "method": "GET"},
             ],
         }
-        api.write_text(yaml.safe_dump(body))
+        api.write_text(json.dumps(body))
         inv = compiler.inventory(self.fm, api)
         mapping = self.mapping(inv)
         plan = compiler.compile_tasks(inv, mapping)
         self.assertEqual(len(plan["tasks"]), 1)
         self.assertEqual(len(plan["apiCoverage"]), 2)
         body["resources"][0]["segment"] = "renamed"
-        api.write_text(yaml.safe_dump(body))
+        api.write_text(json.dumps(body))
         renamed = compiler.compile_tasks(compiler.inventory(self.fm, api), mapping)
         self.assertEqual(plan["tasks"][0]["taskKey"], renamed["tasks"][0]["taskKey"])
 
@@ -588,9 +588,9 @@ class CompilerTests(unittest.TestCase):
                 compiler.compile_tasks(inv, mapping)
 
     def test_task_identity_and_api_coverage_are_presentation_independent(self):
-        api = self.root / "api.yaml"
+        api = self.root / "api.json"
         api.write_text(
-            yaml.safe_dump(
+            json.dumps(
                 {
                     "schemaVersion": "4.0",
                     "resources": [{"id": "resource.book", "entityRef": "thing.book"}],

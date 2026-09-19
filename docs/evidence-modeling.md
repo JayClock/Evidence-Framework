@@ -34,7 +34,7 @@ Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成�
 │   ├── generated/        # 可重建派生结果
 │   └── *.md              # 术语和说明
 ├── api/
-│   ├── api.yaml          # 唯一 API 设计源，位于 FM 根之外
+│   ├── api.json          # 唯一 API 设计源，位于 FM 根之外
 │   └── generated/        # 当前投影、OpenAPI、样例、流程与 manifest
 └── checks/
     ├── fm/               # 获授权留存的 FM 检查记录

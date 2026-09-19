@@ -30,7 +30,7 @@ class ResourcesTest(unittest.TestCase):
 
     def test_different_business_contexts_require_separate_uri_roots(self) -> None:
         example = API_ROOT / "tests" / "fixtures" / "full-lifecycle"
-        value, design_diagnostics = api_loader.load_api(example / "api.yaml")
+        value, design_diagnostics = api_loader.load_api(example / "api.json")
         model, fm_diagnostics = fm_adapter.load_fm(example / "fm", FM_SKILL)
         self.assertEqual(design_diagnostics, [])
         self.assertEqual(fm_diagnostics, [])

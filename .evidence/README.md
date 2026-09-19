@@ -10,12 +10,12 @@
 | 正式业务术语                 | [fm/01-glossary.md](fm/01-glossary.md)             |
 | 模型源                       | [fm/model.json](fm/model.json)                     |
 | API 设计说明                 | [api/README.md](api/README.md)                     |
-| API 唯一设计源               | [api/api.yaml](api/api.yaml)                       |
+| API 唯一设计源               | [api/api.json](api/api.json)                       |
 | 可视化人工审核               | [views/index.html](views/index.html)               |
-| 当前 OpenAPI 3.1             | [openapi.yaml](api/generated/openapi.yaml)         |
+| 当前 OpenAPI 3.1             | [openapi.json](api/generated/openapi.json)         |
 | 检查记录约定                 | 仅在获授权时于 [checks/](checks/) 留存紧凑运行清单 |
 
-先从可视化审核页查看业务边界、责任、场景、规则、消费者旅程、FM/API 覆盖、HTTP 契约和变更影响；存在争议时再回到对应源 YAML。消费机器投影时核对源摘要和实际检查版本，不把目录中有报告视为本次通过。
+先从可视化审核页查看业务边界、责任、场景、规则、消费者旅程、FM/API 覆盖、HTTP 契约和变更影响；存在争议时再回到对应源文件。消费机器投影时核对源摘要和实际检查版本，不把目录中有报告视为本次通过。
 
 业务模型区分稳定主体及上下文角色、请求与完成证明、业务事件时间与记录时间。具体业务事实只在 FM/发现记录维护，不在导航重复金额、期限、接口或场景计数。
 

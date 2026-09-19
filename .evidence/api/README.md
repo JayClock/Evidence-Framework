@@ -1,6 +1,6 @@
 # 电话销售绩效协议 API
 
-唯一设计文件为 [api.yaml](api.yaml)，采用 API 格式 4.0，消费当前 FM v3（模型 `sales-performance`）。
+唯一设计文件为 [api.json](api.json)，采用 API 格式 4.0，消费当前 FM v3（模型 `sales-performance`）。文件按严格 JSON 解析；拒绝注释、尾部逗号、重复 key 与 `NaN`。
 
 ## 接口范围
 
@@ -35,7 +35,7 @@ python3 .agents/skills/evidence-api-design/scripts/fm_api.py check \
   --project-root "$PWD" \
   --fm "$PWD/.evidence/fm" \
   --fm-skill "$PWD/.agents/skills/evidence-fm" \
-  --api "$PWD/.evidence/api/api.yaml"
+  --api "$PWD/.evidence/api/api.json"
 ```
 
 HTTP 流程和 `e2e-test-vectors.json` 只验证契约与数据衔接，`runtimeValidated` 为 false。合成向量不决定数据库装载、认证身份或外部系统 Stub。认证与协议参与方实例核验、`evidenceRefs` 寻址、生产数据库方言与并发仍需由实际服务执行并验收。

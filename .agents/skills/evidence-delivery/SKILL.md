@@ -14,7 +14,7 @@ compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 s
 
 随后读取：
 
-- `.evidence/fm/` 与可选 `.evidence/api/api.yaml`：业务和接口事实；
+- `.evidence/fm/` 与可选 `.evidence/api/api.json`：业务和接口事实；
 - `docs/plans/smart-domain/plan.yaml`：切片、计算 DAG、任务 Guides/设计、状态、CHECK、证据与缺口；
 - `docs/plans/smart-domain/review.html`：只读审核投影，可缺失或过期，不能作为状态来源。
 

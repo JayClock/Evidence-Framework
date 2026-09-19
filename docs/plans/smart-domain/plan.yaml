@@ -16,7 +16,7 @@ metadata:
     - 客户档案生命周期、读取/维护接口与周度进度检查
 inputRoots:
   fm: .evidence/fm
-  api: .evidence/api/api.yaml
+  api: .evidence/api/api.json
 sourceManifest:
   - path: .evidence/fm/model.json
     digest: 148e200f8c0c9dbd96a5b6503cb756ae974f64ad2c698d11f342d05bdebbdc6a
@@ -24,8 +24,8 @@ sourceManifest:
       - context.sales-performance
       - context.customer-information
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/api/api.yaml
-    digest: 79b5c5b09f8f0509ab8983b12ad8915a75503ae51fc50c50f3834c60f73794b2
+  - path: .evidence/api/api.json
+    digest: 7566a64bed067536671dc5f214f2a2c6c147e20395abe40e074104d40f74ffe9
     sourceRefs:
       - resource.sales-performance-agreement
       - resource.monthly-customer-contact-target
@@ -1345,7 +1345,7 @@ tasks:
         - 项目入口：`AGENTS.md`、`docs/guides/index.md`。
         - 交付目标：实现 `POST /sales-performance-agreements`、`POST /sales-performance-agreements/{agreementId}/monthly-customer-contact-targets`、`POST .../{targetId}/contact-records` 的 201/Location/self、no-store、幂等与错误映射。
         - 非目标：不实现读取/列表能力（API 未定义）、不实现真实认证与 403、不访问 persistent/app/数据库、不解析任意 evidenceRefs。
-        - 业务/API 来源：`.evidence/api/api.yaml` 中三个 capability 与三个 resource；请求/响应与示例取自 `http.operations`、`http.representations`、`http-journey` 与合成向量。
+        - 业务/API 来源：`.evidence/api/api.json` 中三个 capability 与三个 resource；请求/响应与示例取自 `http.operations`、`http.representations`、`http-journey` 与合成向量。
         - 工程基线：`docs/engineering/{procedures,api,security,testing,examples}.md`。
         - 工序实例：HTTP 契约；真实随机端口、Jersey、Jackson、HAL/HAL-FORMS，mock 领域公开契约，不 mock 被测 Resource/序列化器。
         - 前置产物：绩效上下文/角色骨架、协议与目标领域行为、记录与完成规则领域契约。

@@ -95,9 +95,9 @@ class ReviewGeneratorTest(unittest.TestCase):
     def test_recursive_index_links_interfaces_and_rules_to_sources(self):
         files = [
             {
-                "path": ".evidence/api/api.yaml",
+                "path": ".evidence/api/api.json",
                 "generated": False,
-                "text": "id: api.test\ncapabilities:\n  - id: capability.read\n",
+                "text": '{"id": "api.test", "capabilities": [{"id": "capability.read"}]}',
             },
             {
                 "path": ".evidence/fm/rules/a.json",
@@ -106,7 +106,7 @@ class ReviewGeneratorTest(unittest.TestCase):
             },
         ]
         locations, objects, scenarios, instances = review.object_index(files)
-        self.assertEqual(".evidence/api/api.yaml", locations["capability.read"])
+        self.assertEqual(".evidence/api/api.json", locations["capability.read"])
         self.assertIn("rule.amount", objects)
         self.assertEqual([], scenarios)
         self.assertEqual([], instances)
@@ -116,7 +116,7 @@ class ReviewGeneratorTest(unittest.TestCase):
             root = Path(directory)
             for name in [
                 "fm/model.json",
-                "api/generated/v1/openapi.yaml",
+                "api/generated/v1/openapi.json",
                 "views/.review/a.json",
                 "checks/debug.json",
             ]:

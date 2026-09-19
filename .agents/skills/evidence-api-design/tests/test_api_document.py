@@ -14,8 +14,13 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-import yaml
 from test_support import API_ROOT, FM_ROOT, FM_SKILL, REPO_ROOT, design
+
+
+def write_json(path: Path, value) -> None:
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 class ApiDocumentTest(unittest.TestCase):
@@ -44,8 +49,8 @@ class ApiDocumentTest(unittest.TestCase):
         api = design()
         api["http"] = None
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api, allow_unicode=True))
+            path = Path(directory) / "api.json"
+            write_json(path, api)
             before = path.read_bytes()
             checked = self.command("check", path)
             self.assertEqual(checked.returncode, 1, checked.stdout + checked.stderr)
@@ -58,7 +63,7 @@ class ApiDocumentTest(unittest.TestCase):
 
     def test_packaged_document_includes_http_without_another_input(self):
         example = API_ROOT / "tests/fixtures/full-lifecycle"
-        result = self.command("check", example / "api.yaml", example / "fm")
+        result = self.command("check", example / "api.json", example / "fm")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout)
         self.assertEqual(report["interfaceCount"], 13)
@@ -71,16 +76,16 @@ class ApiDocumentTest(unittest.TestCase):
         api = design()
         api.pop("http", None)
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api))
+            path = Path(directory) / "api.json"
+            write_json(path, api)
             _, diagnostics = loader.load_api(path)
             self.assertTrue(diagnostics)
             api["http"] = importlib.import_module("test_contracts").fixture()[1]
-            path.write_text(yaml.safe_dump(api))
+            write_json(path, api)
             self.assertEqual(loader.load_api(path)[1], [])
             for field, value in (("schemaVersion", "4.0"), ("id", "nested")):
                 api["http"][field] = value
-                path.write_text(yaml.safe_dump(api))
+                write_json(path, api)
                 self.assertTrue(loader.load_api(path)[1])
                 del api["http"][field]
 
@@ -93,7 +98,7 @@ class ApiDocumentTest(unittest.TestCase):
             "--api",
         }
         for action in ("check", "project"):
-            result = self.command(action, REPO_ROOT / "api.yaml", FM_ROOT, "--help")
+            result = self.command(action, REPO_ROOT / "api.json", FM_ROOT, "--help")
             self.assertEqual(result.returncode, 0)
             self.assertEqual(
                 set(re.findall(r"--[a-z-]+", result.stdout)),
@@ -104,8 +109,8 @@ class ApiDocumentTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
             fm_root = Path(directory) / "fm"
             fm_root.mkdir()
-            path = fm_root / "api.yaml"
-            path.write_text(yaml.safe_dump(design()))
+            path = fm_root / "api.json"
+            write_json(path, design())
             before = path.read_bytes()
             result = self.command("check", path, fm_root)
             self.assertEqual(result.returncode, 1)
@@ -117,8 +122,8 @@ class ApiDocumentTest(unittest.TestCase):
         api = design()
         api["http"] = importlib.import_module("test_contracts").fixture()[1]
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
-            path = Path(directory) / "api.yaml"
-            path.write_text(yaml.safe_dump(api))
+            path = Path(directory) / "api.json"
+            write_json(path, api)
             build = cli.projector.build_projection
 
             def change_after_build(*args, **kwargs):

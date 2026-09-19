@@ -14,7 +14,7 @@
 
 ## 本次授权切片：电话销售绩效协议主链
 
-授权来源：用户交付指令（记录于[软件范围](scope.md)与计划的缺口 `GAP-SCOPE-CRM`）；业务来源 `.evidence/fm/` 的 `contract.sales-performance`、`request.monthly-customer-contact`、`confirmation.customer-contact-record`、`rule.monthly-customer-contact-completed`、角色 `role.performance-manager` 与 `role.tele-sales`，场景 `scenario.monthly-customer-contact-completed`、`scenario.monthly-customer-contact-insufficient`；接口能力见 [API 设计](../../.evidence/api/api.yaml)。来源模型不保存审核状态；本页记录软件职责与可观察预期，不是业务批准。
+授权来源：用户交付指令（记录于[软件范围](scope.md)与计划的缺口 `GAP-SCOPE-CRM`）；业务来源 `.evidence/fm/` 的 `contract.sales-performance`、`request.monthly-customer-contact`、`confirmation.customer-contact-record`、`rule.monthly-customer-contact-completed`、角色 `role.performance-manager` 与 `role.tele-sales`，场景 `scenario.monthly-customer-contact-completed`、`scenario.monthly-customer-contact-insufficient`；接口能力见 [API 设计](../../.evidence/api/api.json)。来源模型不保存审核状态；本页记录软件职责与可观察预期，不是业务批准。
 
 以下引用的编号、时刻与 3／2／1 目标数均来自 FM 验证实例，是合成数据，只用于验证规则，不代表真实企业指标。
 

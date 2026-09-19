@@ -1,6 +1,6 @@
 ---
 name: evidence-api-design
-description: 从整体 FM Schema v3 直接设计全部业务 API，维护统一 api.yaml，生成完整 HTTP 契约、OpenAPI 3.1、超媒体及消费者流程。用户要求 FM 到 REST API、整体接口设计、HAL、幂等、API 校验或 OpenAPI 生成时使用；不修改上游 FM，不生成 Controller，不虚构权限。
+description: 从整体 FM Schema v3 直接设计全部业务 API，维护统一 api.json，生成完整 HTTP 契约、OpenAPI 3.1、超媒体及消费者流程。用户要求 FM 到 REST API、整体接口设计、HAL、幂等、API 校验或 OpenAPI 生成时使用；不修改上游 FM，不生成 Controller，不虚构权限。
 compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evidence-fm Skill。
 ---
 
@@ -11,19 +11,19 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 ## 执行边界
 
 - 讨论：只解释方法和缺口，不写文件。
-- 生成／修改：用户请求就是本次编辑和生成授权。读取当前文件及已有差异，直接维护 `api.yaml`、校验并生成全部交付文件，不停在草稿或再次请求输出目录确认。
+- 生成／修改：用户请求就是本次编辑和生成授权。读取当前文件及已有差异，直接维护 `api.json`、校验并生成全部交付文件，不停在草稿或再次请求输出目录确认。
 - 只校验：只运行 inspect/check 并报告真实结果，不修改 FM、API、发现记录或报告。
 - 仅生成交付文件：校验现有完整设计后运行 project，不重写设计源。
 - 另行要求可视化审核页：通过资源发现定位 `evidence-visualization` 并读取其 `SKILL.md`，复用其生成器；不重复维护展示工具，也不为展示修改 FM 或 API。普通 API 设计结束不自动生成视图。
 
-整体 FM 合法不表示所有技术细节均可机械推导。URI、表示、幂等、缓存等技术选择由本任务形成并记录理由；权限、业务数量、实例归属或关键数据来源若确实缺失，报告具体阻塞，不补造业务规则、不修改 FM 来通过校验。
+整体 FM 合法不表示所有技术细节均可机械推导。URI、表示、幂等、缓存等技术选择由本任务形成并记录理由；权限、业务数量、实例归属或关键数据来源若确实缺失，报告具体阻塞，不补造业务规则、不修改 FM 来通过校验。API 设计源使用严格 JSON：拒绝注释、尾部逗号、重复 JSON key、`NaN`/`Infinity`、非对象根和多文档，不再接受 YAML。
 
 ## 项目产物位置
 
 默认位置相对项目根：
 
 - FM 输入：`.evidence/fm/`，始终只读。
-- 唯一 API 设计源：`.evidence/api/api.yaml`，采用 API 格式 `4.0`，位于 FM 根目录之外；上游仍为 FM v3。
+- 唯一 API 设计源：`.evidence/api/api.json`，采用 API 格式 `4.0`，位于 FM 根目录之外；上游仍为 FM v3。文件按严格 JSON 解析，不用 YAML 表达设计。
 - API 交付：`.evidence/api/generated/`，包含机器投影、OpenAPI、表示样例、合成 E2E 测试向量、流程和 manifest；每次完整校验后直接更新，历史由 Git 管理。人工审核统一使用 `evidence-visualization` 生成的页面，不再生成重复的 Markdown 报告。
 - 按需保存的检查记录（紧凑运行清单，不复制投影或契约全文）：`.evidence/checks/api/<批次>/`；只校验请求不落盘。
 
@@ -55,7 +55,7 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 
 ```bash
 FM_ROOT="$PROJECT_ROOT/.evidence/fm"
-API_FILE="$PROJECT_ROOT/.evidence/api/api.yaml"
+API_FILE="$PROJECT_ROOT/.evidence/api/api.json"
 
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" inspect \
   --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-skill "$FM_SKILL_DIR"

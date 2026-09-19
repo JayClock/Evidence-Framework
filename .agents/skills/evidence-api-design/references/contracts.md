@@ -1,6 +1,6 @@
 # HTTP 资源与消费契约
 
-`api.yaml.http` 为整体 FM 的每个业务接口提供完整 HTTP 契约，覆盖资源表示、超媒体、缓存、流程回映和异步结果发现。不修改 FM，不自动增加查询、调用角色或外部接入 API。
+`api.json.http` 为整体 FM 的每个业务接口提供完整 HTTP 契约，覆盖资源表示、超媒体、缓存、流程回映和异步结果发现。不修改 FM，不自动增加查询、调用角色或外部接入 API。
 
 ## 调用
 
@@ -14,17 +14,20 @@
   --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```
 
-`projection.json.http` 保存 HTTP 设计结果，`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.yaml` 从它渲染；人工审核页由 `evidence-visualization` 直接消费投影，不维护重复的 Markdown 契约。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝；输出通过同级临时目录整体更新，历史由 Git 管理。
+`projection.json.http` 保存 HTTP 设计结果，`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `openapi.json` 从它渲染；人工审核页由 `evidence-visualization` 直接消费投影，不维护重复的 Markdown 契约。全部输出纳入 manifest，API 文件作为整体记录在 `inputDigests.api`。输入只读，来源变更拒绝；输出通过同级临时目录整体更新，历史由 Git 管理。
 
 ## 输入结构
 
 统一格式由 `schemas/api.schema.json` 定义，API 文件的 schemaVersion 为 4.0。以下为其中的 HTTP 部分：
 
-```yaml
-http:
-  representations: []
-  operations: []
-  journeys: []
+```json
+{
+  "http": {
+    "representations": [],
+    "operations": [],
+    "journeys": []
+  }
+}
 ```
 
 这是 HTTP 对象结构示意。HTTP 部分不重复文件身份、版本或业务接口范围；所有顶层 capability 自动要求对应契约和成功消费步骤。存在接口时不能留下空操作或空流程；HTTP 不允许为 null。缺口使 check/project 默认返回非零，project 不写局部交付。
@@ -48,14 +51,20 @@ HAL 集合可用 `embedded: [{rel, representationRefs}]` 显式嵌入同资源�
 
 链接引用本文件的 `capabilityRef`；navigation 必须对应 GET，action 对应写操作。一个含动作链接的表示须明确对应其调用角色，不能把多个角色的动作无条件合并展示。
 
-```yaml
-links:
-  - rel: details
-    kind: navigation
-    capabilityRef: capability.read-payment
-    parameterBindings:
-      subscriptionId: { kind: path, name: subscriptionId }
-      paymentId: { kind: field, name: id }
+```json
+{
+  "links": [
+    {
+      "rel": "details",
+      "kind": "navigation",
+      "capabilityRef": "capability.read-payment",
+      "parameterBindings": {
+        "subscriptionId": { "kind": "path", "name": "subscriptionId" },
+        "paymentId": { "kind": "field", "name": "id" }
+      }
+    }
+  ]
+}
 ```
 
 `path` 来自当前表示的路径参数，`field` 来自当前表示的字段；必须完整提供目标 URI 的参数。HAL 链接只给出目标，method／request／responses 在对应 operation 中，不将 HAL 当作写入表单规范。
@@ -86,10 +95,13 @@ journey 声明固定 `actorRoleRef`；每个 step 指定 `capabilityRef/expectSt
 1. `entry`：说明已约定的入口和如何取得已有输入，不悄悄猜路径。
 2. `via`：跟随前一步返回表示中的 `rel`，或跟随响应头 `Location` 去执行已有 GET。
 
-```yaml
-via:
-  stepRef: http.create
-  header: Location
+```json
+{
+  "via": {
+    "stepRef": "http.create",
+    "header": "Location"
+  }
+}
 ```
 
 inputs 的 target 为 `path/body/header`，source 为：
@@ -104,20 +116,20 @@ HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链�
 
 ## 可运行测试案例
 
-商品采购 API 测试案例（Skill 维护材料 `tests/fixtures/full-lifecycle/api.yaml`）提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
+商品采购 API 测试案例（Skill 维护材料 `tests/fixtures/full-lifecycle/api.json`）提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
 
 ```bash
 EXAMPLE="$API_SKILL_DIR/tests/fixtures/full-lifecycle"
 "$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" --fm "$EXAMPLE/fm" --fm-skill "$FM_SKILL_DIR" \
-  --api "$EXAMPLE/api.yaml"
+  --api "$EXAMPLE/api.json"
 ```
 
 预期 13 个角色接口全部有 HTTP 契约与成功消费步骤，合并同路由的两个商品读取角色后得到 12 个 OpenAPI Path＋Method 操作。示例是合成数据及协议选择，不代表生产默认值。
 
 ## OpenAPI 交付投影
 
-`openapi.yaml` 使用 OpenAPI 3.1 表达路径、方法、路径参数、请求体、响应、Header 和表示 Schema。HAL 示例保留真实 `_links`；表示中的链接另投影为响应 Link Object，以 `operationId` 和运行时表达式连接已有接口。`whenRuleRef` 仅作为条件元数据，不能证明链接在某次响应中可用。
+`openapi.json` 使用 OpenAPI 3.1 表达路径、方法、路径参数、请求体、响应、Header 和表示 Schema。HAL 示例保留真实 `_links`；表示中的链接另投影为响应 Link Object，以 `operationId` 和运行时表达式连接已有接口。`whenRuleRef` 仅作为条件元数据，不能证明链接在某次响应中可用。
 
 OpenAPI 每个 Path＋Method 只能有一个 Operation。同一路由的角色接口合并，并通过 `x-fm-capability-refs`、`x-actor-role-refs`、`x-binding-refs` 和 `x-fm-operation-variants` 保留来源；不会据此生成 security 配置。存在不一致变体时，原有静态检查仍保留 gap，OpenAPI 不消除冲突。API 文件未声明发布版本，因此 `info.version` 明确为 `generated`，不发明业务版本。
 

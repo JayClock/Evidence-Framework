@@ -166,12 +166,12 @@ class SkillDocumentationTests(unittest.TestCase):
             ),
             "evidence-api-design/SKILL.md": (
                 ".evidence/fm/",
-                ".evidence/api/api.yaml",
+                ".evidence/api/api.json",
                 ".evidence/api/generated/",
                 ".evidence/checks/api/",
             ),
             "evidence-api-design/references/validation.md": (
-                ".evidence/api/api.yaml",
+                ".evidence/api/api.json",
                 ".evidence/api/generated/",
             ),
         }

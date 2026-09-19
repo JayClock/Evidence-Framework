@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inspect FM or validate and project a single api.yaml document."""
+"""Inspect FM or validate and project a single API JSON document."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def _validate_paths(args: argparse.Namespace, api: dict | None = None) -> str | 
     if not project_root.is_dir():
         return "PROJECT_ROOT_INVALID: --project-root 必须是现有目录"
     if args.command != "inspect" and _within(args.api.resolve(), args.fm.resolve()):
-        return "API_INPUT_CONFLICT: api.yaml 必须位于 FM 根目录之外"
+        return "API_INPUT_CONFLICT: API 设计文件必须位于 FM 根目录之外"
     if args.command != "project":
         return None
     out = args.out.resolve()

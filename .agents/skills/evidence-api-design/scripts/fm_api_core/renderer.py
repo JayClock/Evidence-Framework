@@ -42,9 +42,9 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
     outputs["e2e-test-vectors.json"] = canonical_json(
         e2e_vectors_module.build_vectors(projection)
     )
-    outputs["openapi.yaml"] = openapi_module.render_openapi(projection)
+    outputs["openapi.json"] = openapi_module.render_openapi(projection)
     dependencies: dict[str, str] = {}
-    for package in ("jsonschema", "PyYAML"):
+    for package in ("jsonschema",):
         try:
             dependencies[package] = importlib.metadata.version(package)
         except importlib.metadata.PackageNotFoundError:

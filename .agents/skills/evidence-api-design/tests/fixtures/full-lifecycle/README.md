@@ -11,7 +11,7 @@
 微信支付服务协议 → 微信支付申请 → 微信支付确认 ─plays_role→ 支付凭证 Role
 ```
 
-为形成可执行 FM 场景，示例补充了标识、数量、金额、期限、凭证号和完成规则等合成字段；这些字段不代表生产业务批准。按示例约束，`api.yaml` 使用 `sources: []`，FM 与 API 文件不包含 `sourceRefs`、原文摘录或来源摘要。
+为形成可执行 FM 场景，示例补充了标识、数量、金额、期限、凭证号和完成规则等合成字段；这些字段不代表生产业务批准。按示例约束，`api.json` 使用 `sources: []`，FM 与 API 文件不包含 `sourceRefs`、原文摘录或来源摘要。API 设计源按严格 JSON 解析，不再使用 YAML。
 
 ## 节点覆盖
 
@@ -105,7 +105,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.yaml"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
 ```
 
 API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角色接口和 13 个完整 HTTP 契约，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
@@ -121,12 +121,12 @@ API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角�
   --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.yaml"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
 ```
 
 ## HTTP 契约
 
-[api.yaml](api.yaml) 的 `http` 部分完整覆盖所有 13 个接口：
+[api.json](api.json) 的 `http` 部分完整覆盖所有 13 个接口：
 
 - 11 个登记接口提供请求字段、响应表示、201 Location、403／409／422 错误响应、幂等键、并发策略和成功消费流程。
 - 登记字段引用合成 FM 原始凭证记录；已有凭证通过 `evidenceRefs` 关联，服务端须核对实例归属、可见性及规则前提。业务时间不使用入库或回调时间替代。
@@ -135,6 +135,6 @@ API 设计采用格式 4.0，直接消费整个 FM v3。预期产生 13 个角�
 
 缺少任一接口契约、成功消费步骤或整体对象／场景映射时，默认返回非零且不修改现有交付目录。
 
-上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定六份文件：`projection.json`、`openapi.yaml`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `manifest.json`。[示例 OpenAPI](openapi.yaml) 是由当前 `api.yaml` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
+上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定六份文件：`projection.json`、`openapi.json`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `manifest.json`。[示例 OpenAPI](openapi.json) 是由当前 `api.json` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
 
 字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/contracts.md)。
