@@ -328,7 +328,7 @@ try {
   await evaluate('document.querySelector(".file-row button").click()');
   assert.ok(
     await evaluate(
-      'document.getElementById("yaml-source").textContent.length > 30',
+      'document.getElementById("source-file").textContent.length > 30',
     ),
   );
   await evaluate(

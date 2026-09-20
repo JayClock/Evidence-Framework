@@ -1,0 +1,26 @@
+{
+  "type": "rule",
+  "id": "rule.refund-eligible",
+  "kind": "precondition",
+  "label": "断更下架且原订阅已经付款",
+  "description": "断更退款请求（request.refund）与订阅合同（contract.subscription）的读者、专栏、全额金额和币种一致，原订阅已有退款所需付款证明（role.refund-payment），且请求前已有断更超过七天、未改期并已下架的断更下架记录（evidence.discontinuation）时，允许提出全额退款。",
+  "contextRef": "fulfillment.refund",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    },
+    "request": {
+      "ref": "request.refund"
+    },
+    "payments": {
+      "ref": "role.refund-payment",
+      "cardinality": "many"
+    },
+    "notices": {
+      "ref": "evidence.discontinuation",
+      "cardinality": "many"
+    }
+  },
+  "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency",
+  "resultType": "bool"
+}

@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.payment-start",
+  "kind": "derivation",
+  "label": "计算订阅费支付请求started_at",
+  "description": "以订阅合同（contract.subscription）的签署时间作为订阅费支付请求（request.payment）的开始时间。",
+  "contextRef": "fulfillment.payment",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    }
+  },
+  "expression": "agreement.signed_at",
+  "resultType": "timestamp",
+  "target": {
+    "entityRef": "request.payment",
+    "attribute": "started_at"
+  }
+}

@@ -12,7 +12,52 @@
 - 业务源 ID、规则/场景、API 能力、质量要求及必要外部责任。
 - 确认状态与未决项；不能从代码输出反推业务预期。
 
-## 本次授权切片：电话销售绩效协议主链
+## 授权切片：移动支付订阅主链
+
+授权来源：当时的用户交付指令（记录于[软件范围](scope.md)）以及[发现记录](../../.evidence/discovery.md)中的实施澄清；该切片随用户 2026-09-20 的还原指令恢复为当前 FM/API/计划来源。业务来源 `.evidence/fm/` 的 `contract.subscription`、`request.payment`、`confirmation.mobile`、`role.payment-proof`、规则 `rule.payment-start/amount/deadline/completed`、`rule.mobile-completed`，场景 `scenario.mobile-subscription`、`scenario.payment-pending`；接口能力见 [API 设计](../../.evidence/api/api.json)。来源模型不保存审核状态；本页记录软件职责与可观察预期，不是业务批准。
+
+### US-001 登记专栏订阅合同
+
+**作为**读者，**我希望**把已接受的订阅条款登记为一份订阅合同，**从而**付款、内容与后续履约都能引用同一份合同。
+
+软件职责：执行（登记合同事实）。来源：`contract.subscription`、`role.reader`、`capability.register-subscription-reader`、`scenario.mobile-subscription` 步骤 1。
+
+| 验收 ID   | Given                                                                                                                                                                                                      | When         | Then                                                   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------ |
+| AC-001-01 | 合同 11 个必填字段齐全：`subscription_id`、`reader_id`、`column_id`、`edition_id`、`amount_minor_units`、`currency`、`signed_at`、`payment_seconds`、`access_seconds`、`refund_seconds`、`restore_seconds` | 读者提交登记 | 形成一份可被后续凭证引用的合同；登记不修改既有合同事实 |
+| AC-001-02 | 缺少任一必填字段（如 `signed_at` 或 `restore_seconds`）                                                                                                                                                    | 读者提交登记 | 拒绝且不写入；状态码与错误表示按 API 契约              |
+
+未决：可信身份来源与代表权限未确认（QA-IDENTITY）；角色绑定与 403 不构成本切片可执行验收。
+
+### US-002 发起付款要求并取得扣款结果
+
+**作为**平台（专栏运营方），**我希望**依据已登记合同发起付款要求、调用支付机构扣款并采信扣款结果，**从而**订阅费付款按合同期限完成。
+
+软件职责：执行 + 接收外部结果。合同登记成功后由系统自动执行 API 旅程中标记为 internal 的付款请求步骤，再调用 local/test 支付端口；不存在对外的 `register-payment` HTTP capability。来源：`request.payment`、`request.mobile`、`confirmation.mobile`、`role.payment-proof`、`relation.mobile-as-payment-proof`、`scenario.mobile-subscription` 步骤 3–5。
+
+| 验收 ID   | Given                                                                                                                                                                                                   | When                         | Then                                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC-002-01 | 合同 `signed_at=2026-10-01T09:00:00Z`、`amount_minor_units=9900`、`currency=CNY`、`payment_seconds=900`                                                                                                 | 合同登记成功                 | 系统自动形成付款要求：`started_at=2026-10-01T09:00:00Z`（`rule.payment-start`）、`amount_minor_units=9900`（`rule.payment-amount`）、`expired_at=2026-10-01T09:15:00Z`（`rule.payment-deadline`） |
+| AC-002-02 | 恰好一份机构扣款成功证明，订阅/读者/专栏/请求编号/金额/币种匹配，`confirmed_at` 落在 `[started_at, expired_at]`，`success=true`                                                                         | 平台判断付款完成             | `rule.payment-completed` 成立，付款状态 completed；重复通知不形成第二份有效结果（`relation.contract-payment` 目标基数 0–1）                                                                       |
+| AC-002-03 | 截止前没有任何证明，`asOf=2026-10-01T09:14:59Z`                                                                                                                                                         | 平台判断付款状态             | 未完成且未失效：pending（`scenario.payment-pending`）                                                                                                                                             |
+| AC-002-04 | 合格扣款恰在 `expired_at` 时刻完成                                                                                                                                                                      | 平台判断付款完成             | 仍为完成（[FM 概览](../../.evidence/fm/00-overview.md) 时间与边界）                                                                                                                               |
+| AC-002-05 | local/test 固定夹具：付款请求 `PAY-001`、移动协议 `MOBILE-001`、移动请求 `MOBILE-REQ-001`、移动请求业务开始时间 `2026-10-01T09:02:00Z`；其余字段引用自动形成的付款要求，截止仍为 `2026-10-01T09:15:00Z` | 系统调用 local/test 支付端口 | 端口收到这些固定标识和业务时间并返回可追溯的 `confirmation.mobile`；固定值不成为生产支付协议或全局标识生成规则                                                                                    |
+
+未决：少付、错配读者、迟到与失败结果只按“未完成”处理；异常履约（`rule.payment-expired` 失效、退款、恢复、内容访问）不在本切片；真实支付协议、验签与超时未确认（QA-INTEGRATION）。自动触发与固定标识/业务时间只约束 local/test 正常主链，不自行补造生产标识生成、远程失败或补偿规则。
+
+### US-003 读取订阅与付款状态
+
+**作为**读者，**我希望**读取自己的订阅与付款状态，**从而**我知道订阅目前是否完成付款。
+
+软件职责：查询与呈现。来源：`capability.read-subscription-reader`、`capability.read-payment-reader`、`rule.payment-completed`、`binding.caller-payment-reader`。
+
+| 验收 ID   | Given                        | When               | Then                                                                                  |
+| --------- | ---------------------------- | ------------------ | ------------------------------------------------------------------------------------- |
+| AC-003-01 | US-002 的完成付款证明已登记  | 读者读取订阅与付款 | 返回合同与付款状态 completed；状态由规则判断，响应存在不等于完成                      |
+| AC-003-02 | 付款要求尚未形成             | 读者读取付款       | 404（`capability.read-payment-reader` 的 reasoning）                                  |
+| AC-003-03 | 读者请求不属于自己的订阅实例 | 读者读取           | 拒绝或不可见——依赖未确认的身份与实例归属（QA-IDENTITY），记为待澄清，不作为可执行验收 |
+
+## 授权切片：电话销售绩效协议主链
 
 授权来源：用户交付指令（记录于[软件范围](scope.md)与计划的缺口 `GAP-SCOPE-CRM`）；业务来源 `.evidence/fm/` 的 `contract.sales-performance`、`request.monthly-customer-contact`、`confirmation.customer-contact-record`、`rule.monthly-customer-contact-completed`、角色 `role.performance-manager` 与 `role.tele-sales`，场景 `scenario.monthly-customer-contact-completed`、`scenario.monthly-customer-contact-insufficient`；接口能力见 [API 设计](../../.evidence/api/api.json)。来源模型不保存审核状态；本页记录软件职责与可观察预期，不是业务批准。
 
@@ -90,24 +135,17 @@
 
 ### 追溯与回馈
 
-| 业务来源／规则／场景                                                                   | 软件职责   | US／AC         | 未决项及影响                                         |
-| -------------------------------------------------------------------------------------- | ---------- | -------------- | ---------------------------------------------------- |
-| `contract.sales-performance`、`role.tele-sales`                                        | 执行       | US-004／AC-004 | 参与方核验与 403（SCOPE-PARTICIPATION、QA-IDENTITY） |
-| `request.monthly-customer-contact`、`relation.sales-performance-to-monthly-contact`    | 执行       | US-005／AC-005 | 目标磋商与变更方式未展开；同周期多请求含义未定义     |
-| `confirmation.customer-contact-record`、`relation.customer-contact-references-profile` | 执行       | US-006／AC-006 | 客户档案实例引用一致性为验证缺口                     |
-| `rule.monthly-customer-contact-completed`、两个场景                                    | 计算／判断 | US-007／AC-007 | 未达标后果未定义；只读接口未纳入                     |
+| 业务来源／规则／场景                                                                   | 软件职责        | US／AC         | 未决项及影响                                         |
+| -------------------------------------------------------------------------------------- | --------------- | -------------- | ---------------------------------------------------- |
+| `contract.subscription`、`role.reader`                                                 | 执行            | US-001／AC-001 | 可信身份与代表权限（QA-IDENTITY）                    |
+| `request.payment`、`confirmation.mobile`、`role.payment-proof`                         | 执行 + 接收结果 | US-002／AC-002 | 真实支付协议、验签与超时（QA-INTEGRATION）           |
+| 读取能力与 `rule.payment-completed`                                                    | 查询与呈现      | US-003／AC-003 | 实例归属与 403 依赖 QA-IDENTITY                      |
+| `contract.sales-performance`、`role.tele-sales`                                        | 执行            | US-004／AC-004 | 参与方核验与 403（SCOPE-PARTICIPATION、QA-IDENTITY） |
+| `request.monthly-customer-contact`、`relation.sales-performance-to-monthly-contact`    | 执行            | US-005／AC-005 | 目标磋商与变更方式未展开；同周期多请求含义未定义     |
+| `confirmation.customer-contact-record`、`relation.customer-contact-references-profile` | 执行            | US-006／AC-006 | 客户档案实例引用一致性为验证缺口                     |
+| `rule.monthly-customer-contact-completed`、两个场景                                    | 计算／判断      | US-007／AC-007 | 未达标后果未定义；只读接口未纳入                     |
 
-这些故事与验收同时是 FM 模型的验证输入（先由协议、目标请求与规则作为学习集，再由两个场景作测试集）：若某场景写不出可观察预期，说明模型或需求缺概念，登记缺口交回 FM 或发现记录，不改写预期迁就实现。编号、时刻与目标数均取自源 YAML 与场景期望值，不在需求中另设默认值。
-
-## 历史故事：移动支付订阅主链（来源已移出当前 FM/API）
-
-以下故事针对当时的移动支付订阅主链，其业务来源（`contract.subscription`、`request.payment`、`confirmation.mobile` 等）已随模型收敛移出当前仓库（提交 `0e76410`），业务澄清保留在 Git 历史提交 `a6f7ecc` 的 `.evidence/discovery.md`（该记录已于 `d00ea07` 从工作树移除）。这些 ID 不复用于新故事；该切片授权状态待确认（SCOPE-SUBSCRIPTION），未确认前不作为当前验收输入。原文见 Git 历史提交 `76bbbac` 与 `a6f7ecc`：
-
-| 历史故事                          | 当时软件职责    |
-| --------------------------------- | --------------- |
-| US-001 登记专栏订阅合同           | 执行            |
-| US-002 发起付款要求并取得扣款结果 | 执行 + 接收结果 |
-| US-003 读取订阅与付款状态         | 查询与呈现      |
+这些故事与验收同时是 FM 模型的验证输入（先由合同、协议、目标请求与规则作为学习集，再由具体场景作测试集）：若某场景写不出可观察预期，说明模型或需求缺概念，登记缺口交回 FM 或发现记录，不改写预期迁就实现。编号、时刻、金额与目标数均取自源 JSON 与场景期望值，不在需求中另设默认值。
 
 ## 本地切片的实现核对入口
 

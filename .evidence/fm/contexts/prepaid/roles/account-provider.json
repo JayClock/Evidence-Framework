@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "role.account-provider",
+  "category": "role",
+  "kind": "party",
+  "label": "专栏平台",
+  "contextRef": "context.prepaid"
+}

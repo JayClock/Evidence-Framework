@@ -1,0 +1,33 @@
+{
+  "type": "rule",
+  "id": "rule.refund-expired",
+  "kind": "breach",
+  "label": "退款逾期保留追责权利",
+  "description": "当前时间超过断更退款请求（request.refund）的截止时间，且符合订阅合同（contract.subscription）已付款和断更下架条件的请求尚无恰好一份期限内全额退款到账凭证（confirmation.refund）时，判定断更退款履约（fulfillment.refund）逾期。",
+  "contextRef": "fulfillment.refund",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    },
+    "request": {
+      "ref": "request.refund"
+    },
+    "payments": {
+      "ref": "role.refund-payment",
+      "cardinality": "many"
+    },
+    "notices": {
+      "ref": "evidence.discontinuation",
+      "cardinality": "many"
+    },
+    "confirmations": {
+      "ref": "confirmation.refund",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\npayments.exists(p, p.subscription_id == agreement.subscription_id &&\np.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1)",
+  "resultType": "bool"
+}

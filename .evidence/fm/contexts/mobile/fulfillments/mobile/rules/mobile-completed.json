@@ -1,0 +1,19 @@
+{
+  "type": "rule",
+  "id": "rule.mobile-completed",
+  "kind": "completion",
+  "label": "本次扣款全额按时完成",
+  "description": "移动支付扣款请求（request.mobile）在期限内恰有一份与订阅、读者、专栏、父付款请求、金额和币种匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）完成。",
+  "contextRef": "fulfillment.mobile",
+  "bindings": {
+    "request": {
+      "ref": "request.mobile"
+    },
+    "confirmations": {
+      "ref": "confirmation.mobile",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success).size() == 1",
+  "resultType": "bool"
+}

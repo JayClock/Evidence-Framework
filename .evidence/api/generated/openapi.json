@@ -65,6 +65,226 @@
         ],
         "type": "object"
       },
+      "representation_list-accounts-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "next": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "next",
+              "self"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded"
+        ],
+        "type": "object"
+      },
+      "representation_list-accounts-account-user-item": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreement_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agreement_id",
+          "reader_id",
+          "signed_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_list-subscriptions-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "next": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "next",
+              "self"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded"
+        ],
+        "type": "object"
+      },
+      "representation_list-subscriptions-reader-item": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "access_seconds": {
+            "type": "integer"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "payment_seconds": {
+            "type": "integer"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "refund_seconds": {
+            "type": "integer"
+          },
+          "restore_seconds": {
+            "type": "integer"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "edition_id",
+          "amount_minor_units",
+          "currency",
+          "signed_at",
+          "payment_seconds",
+          "access_seconds",
+          "refund_seconds",
+          "restore_seconds",
+          "_links"
+        ],
+        "type": "object"
+      },
       "representation_monthly-customer-contact-target": {
         "additionalProperties": false,
         "properties": {
@@ -133,6 +353,1912 @@
         ],
         "type": "object"
       },
+      "representation_read-access-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "chapter": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "chapter",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "chapter_id": {
+            "type": "string"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "chapter_id",
+          "edition_id",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-access-result-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "content": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "content",
+              "self"
+            ],
+            "type": "object"
+          },
+          "chapter_id": {
+            "type": "string"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "delivered": {
+            "type": "boolean"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "confirmed_at",
+          "chapter_id",
+          "edition_id",
+          "delivered",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-account-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreement_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agreement_id",
+          "reader_id",
+          "signed_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-chapter-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "body": {
+            "type": "string"
+          },
+          "chapter_id": {
+            "type": "string"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "column_id",
+          "edition_id",
+          "title",
+          "body",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-column-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "price_minor_units": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "column_id",
+          "title",
+          "edition_id",
+          "price_minor_units",
+          "currency",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-debit-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreement_id": {
+            "type": "string"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "balance_before_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "payment_request_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "payment_request_id",
+          "amount_minor_units",
+          "currency",
+          "agreement_id",
+          "balance_before_minor_units",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-debit-result-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "balance_after_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "payment_id": {
+            "type": "string"
+          },
+          "payment_request_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "confirmed_at",
+          "payment_request_id",
+          "amount_minor_units",
+          "currency",
+          "payment_id",
+          "success",
+          "balance_after_minor_units",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-discontinuation-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "refund": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "refund",
+              "self"
+            ],
+            "type": "object"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "delisted": {
+            "type": "boolean"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "missed_due_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "missing_content": {
+            "type": "boolean"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "rescheduled": {
+            "type": "boolean"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "created_at",
+          "missed_due_at",
+          "missing_content",
+          "rescheduled",
+          "delisted",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-payment-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "amount_minor_units",
+          "currency",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-refund-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "amount_minor_units",
+          "currency",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-refund-result-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "receipt_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "settled": {
+            "type": "boolean"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "confirmed_at",
+          "amount_minor_units",
+          "currency",
+          "receipt_id",
+          "settled",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-relaunch-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "restoration": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "restoration",
+              "self"
+            ],
+            "type": "object"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "listed": {
+            "type": "boolean"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "relaunched_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "edition_id",
+          "created_at",
+          "relaunched_at",
+          "listed",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-restore-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "relaunch": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "relaunch",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "edition_id",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-restore-result-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "charged_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "restored": {
+            "type": "boolean"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "confirmed_at",
+          "edition_id",
+          "charged_minor_units",
+          "restored",
+          "evidenceRefs",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_read-subscription-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "payment": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "refund": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "payment",
+              "refund",
+              "self"
+            ],
+            "type": "object"
+          },
+          "access_seconds": {
+            "type": "integer"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "payment_seconds": {
+            "type": "integer"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "refund_seconds": {
+            "type": "integer"
+          },
+          "restore_seconds": {
+            "type": "integer"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "edition_id",
+          "amount_minor_units",
+          "currency",
+          "signed_at",
+          "payment_seconds",
+          "access_seconds",
+          "refund_seconds",
+          "restore_seconds",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-access-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "chapter": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "chapter",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "chapter_id": {
+            "type": "string"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "chapter_id",
+          "edition_id",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-account-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreement_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agreement_id",
+          "reader_id",
+          "signed_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-debit-account-user": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreement_id": {
+            "type": "string"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "balance_before_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "payment_request_id": {
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "payment_request_id",
+          "amount_minor_units",
+          "currency",
+          "agreement_id",
+          "balance_before_minor_units",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-refund-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "amount_minor_units",
+          "currency",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-restore-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "relaunch": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "relaunch",
+              "result",
+              "self"
+            ],
+            "type": "object"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "evidenceRefs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expired_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "enum": [
+              "pending",
+              "completed",
+              "breached"
+            ],
+            "type": "string"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "started_at",
+          "expired_at",
+          "edition_id",
+          "evidenceRefs",
+          "fulfillmentStatus",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "representation_register-subscription-reader": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": true,
+            "properties": {
+              "column": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "payment": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "refund": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              },
+              "self": {
+                "additionalProperties": true,
+                "properties": {
+                  "href": {
+                    "format": "uri-reference",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "href"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "column",
+              "payment",
+              "refund",
+              "self"
+            ],
+            "type": "object"
+          },
+          "access_seconds": {
+            "type": "integer"
+          },
+          "amount_minor_units": {
+            "type": "integer"
+          },
+          "column_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "edition_id": {
+            "type": "string"
+          },
+          "payment_seconds": {
+            "type": "integer"
+          },
+          "reader_id": {
+            "type": "string"
+          },
+          "refund_seconds": {
+            "type": "integer"
+          },
+          "restore_seconds": {
+            "type": "integer"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "subscription_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscription_id",
+          "reader_id",
+          "column_id",
+          "edition_id",
+          "amount_minor_units",
+          "currency",
+          "signed_at",
+          "payment_seconds",
+          "access_seconds",
+          "refund_seconds",
+          "restore_seconds",
+          "_links"
+        ],
+        "type": "object"
+      },
       "representation_sales-performance-agreement": {
         "additionalProperties": false,
         "properties": {
@@ -176,11 +2302,809 @@
     }
   },
   "info": {
-    "title": "api.sales-performance",
+    "title": "api.column-subscription",
     "version": "generated"
   },
   "openapi": "3.1.0",
   "paths": {
+    "/chapters/{chapterId}": {
+      "get": {
+        "operationId": "capability.read-chapter-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "chapterId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/chapters/CH-01"
+                    }
+                  },
+                  "body": "一项履约始于权利方的请求，完成由实际结果凭证证明。",
+                  "chapter_id": "CH-01",
+                  "column_id": "COL-BM",
+                  "edition_id": "ED-1",
+                  "title": "从请求与证明理解业务"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-chapter-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取章节内容",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-chapter-reader"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-chapter-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-chapter-reader"
+          }
+        ],
+        "x-fm-rule-bindings": [
+          {
+            "purpose": "precondition",
+            "ruleRef": "rule.content-readable"
+          }
+        ]
+      }
+    },
+    "/columns/{columnId}": {
+      "get": {
+        "operationId": "capability.read-column-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/columns/COL-BM"
+                    }
+                  },
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "edition_id": "ED-1",
+                  "price_minor_units": 9900,
+                  "title": "业务建模实战"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-column-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取专栏",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-column-reader"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-column-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-column-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/discontinuations/{discontinuationId}": {
+      "get": {
+        "operationId": "capability.read-discontinuation-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "discontinuationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "refund": {
+                      "href": "/subscriptions/SUB-20261001-001/refund"
+                    },
+                    "self": {
+                      "href": "/discontinuations/DISCONTINUATION-001"
+                    }
+                  },
+                  "column_id": "COL-BM",
+                  "created_at": "2026-10-16T10:00:00Z",
+                  "delisted": true,
+                  "evidenceRefs": [
+                    "instance.subscription"
+                  ],
+                  "missed_due_at": "2026-10-08T10:00:00Z",
+                  "missing_content": true,
+                  "reader_id": "READER-001",
+                  "rescheduled": false,
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-discontinuation-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "refund": {
+                "operationId": "capability.read-refund-reader",
+                "parameters": {
+                  "subscriptionId": "$response.body#/subscription_id"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取断更下架记录",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-discontinuation-reader"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-discontinuation-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-discontinuation-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/prepaid-accounts": {
+      "post": {
+        "operationId": "capability.register-account-account-user",
+        "parameters": [
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "agreement_id": "PREPAID-001",
+                "reader_id": "READER-001",
+                "signed_at": "2026-10-01T08:00:00Z"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "agreement_id": {
+                    "type": "string"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "signed_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "agreement_id",
+                  "reader_id",
+                  "signed_at"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/prepaid-accounts/PREPAID-001"
+                    }
+                  },
+                  "agreement_id": "PREPAID-001",
+                  "reader_id": "READER-001",
+                  "signed_at": "2026-10-01T08:00:00Z"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-account-account-user"
+                }
+              }
+            },
+            "description": "记录已形成的预付费账户协议；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/prepaid-accounts/PREPAID-001",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "登记预付费账户协议",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-account-account-user"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-account-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.register-account-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/prepaid-accounts/{accountId}": {
+      "get": {
+        "operationId": "capability.read-account-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/prepaid-accounts/PREPAID-001"
+                    }
+                  },
+                  "agreement_id": "PREPAID-001",
+                  "reader_id": "READER-001",
+                  "signed_at": "2026-10-01T08:00:00Z"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-account-account-user"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取预付费账户协议",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-account-account-user"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-account-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.read-account-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/prepaid-accounts/{accountId}/debits": {
+      "post": {
+        "operationId": "capability.register-debit-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "agreement_id": "PREPAID-001",
+                "amount_minor_units": 9900,
+                "column_id": "COL-BM",
+                "currency": "CNY",
+                "evidenceRefs": [
+                  "instance.prepaid-agreement",
+                  "instance.payment"
+                ],
+                "expired_at": "2026-10-01T09:15:00Z",
+                "payment_request_id": "PAY-001",
+                "reader_id": "READER-001",
+                "request_id": "PREPAID-REQ-001",
+                "started_at": "2026-10-01T09:02:00Z",
+                "subscription_id": "SUB-20261001-001"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "agreement_id": {
+                    "type": "string"
+                  },
+                  "amount_minor_units": {
+                    "type": "integer"
+                  },
+                  "column_id": {
+                    "type": "string"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "evidenceRefs": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "expired_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "payment_request_id": {
+                    "type": "string"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "request_id": {
+                    "type": "string"
+                  },
+                  "started_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "subscription_id",
+                  "reader_id",
+                  "column_id",
+                  "started_at",
+                  "expired_at",
+                  "payment_request_id",
+                  "amount_minor_units",
+                  "currency",
+                  "agreement_id",
+                  "evidenceRefs"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "result": {
+                      "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                    },
+                    "self": {
+                      "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+                    }
+                  },
+                  "agreement_id": "PREPAID-001",
+                  "amount_minor_units": 9900,
+                  "balance_before_minor_units": 10000,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.prepaid-agreement",
+                    "instance.payment"
+                  ],
+                  "expired_at": "2026-10-01T09:15:00Z",
+                  "fulfillmentStatus": "pending",
+                  "payment_request_id": "PAY-001",
+                  "reader_id": "READER-001",
+                  "request_id": "PREPAID-REQ-001",
+                  "started_at": "2026-10-01T09:02:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-debit-account-user"
+                }
+              }
+            },
+            "description": "记录已形成的账户余额抵扣请求；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "result": {
+                "operationId": "capability.read-debit-result-account-user",
+                "parameters": {
+                  "accountId": "$request.path.accountId",
+                  "debitId": "$request.path.debitId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "申请余额抵扣",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-debit-account-user",
+          "binding.parent-debit"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-debit-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.register-debit-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/prepaid-accounts/{accountId}/debits/{debitId}": {
+      "get": {
+        "operationId": "capability.read-debit-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "debitId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "result": {
+                      "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                    },
+                    "self": {
+                      "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+                    }
+                  },
+                  "agreement_id": "PREPAID-001",
+                  "amount_minor_units": 9900,
+                  "balance_before_minor_units": 10000,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.prepaid-agreement",
+                    "instance.payment"
+                  ],
+                  "expired_at": "2026-10-01T09:15:00Z",
+                  "fulfillmentStatus": "completed",
+                  "payment_request_id": "PAY-001",
+                  "reader_id": "READER-001",
+                  "request_id": "PREPAID-REQ-001",
+                  "started_at": "2026-10-01T09:02:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-debit-account-user"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "result": {
+                "operationId": "capability.read-debit-result-account-user",
+                "parameters": {
+                  "accountId": "$request.path.accountId",
+                  "debitId": "$request.path.debitId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取账户余额抵扣请求",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-debit-account-user",
+          "binding.parent-debit"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-debit-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.read-debit-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/prepaid-accounts/{accountId}/debits/{debitId}/result": {
+      "get": {
+        "operationId": "capability.read-debit-result-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "debitId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                    }
+                  },
+                  "amount_minor_units": 9900,
+                  "balance_after_minor_units": 100,
+                  "column_id": "COL-BM",
+                  "confirmed_at": "2026-10-01T09:05:00Z",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.prepaid-request",
+                    "instance.payment"
+                  ],
+                  "payment_id": "PREPAID-TX-001",
+                  "payment_request_id": "PAY-001",
+                  "reader_id": "READER-001",
+                  "request_id": "PREPAID-REQ-001",
+                  "subscription_id": "SUB-20261001-001",
+                  "success": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-debit-result-account-user"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取预付费抵扣凭证",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-debit-result-account-user",
+          "binding.parent-debit-result"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-debit-result-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.read-debit-result-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
     "/sales-performance-agreements": {
       "post": {
         "operationId": "capability.register-sales-performance-agreement-tele-sales",
@@ -613,6 +3537,1992 @@
           {
             "actorRoleRef": "role.tele-sales",
             "capabilityRef": "capability.register-customer-contact-record-tele-sales"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions": {
+      "post": {
+        "operationId": "capability.register-subscription-reader",
+        "parameters": [
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "access_seconds": 60,
+                "amount_minor_units": 9900,
+                "column_id": "COL-BM",
+                "currency": "CNY",
+                "edition_id": "ED-1",
+                "payment_seconds": 900,
+                "reader_id": "READER-001",
+                "refund_seconds": 604800,
+                "restore_seconds": 86400,
+                "signed_at": "2026-10-01T09:00:00Z",
+                "subscription_id": "SUB-20261001-001"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "access_seconds": {
+                    "type": "integer"
+                  },
+                  "amount_minor_units": {
+                    "type": "integer"
+                  },
+                  "column_id": {
+                    "type": "string"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "edition_id": {
+                    "type": "string"
+                  },
+                  "payment_seconds": {
+                    "type": "integer"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "refund_seconds": {
+                    "type": "integer"
+                  },
+                  "restore_seconds": {
+                    "type": "integer"
+                  },
+                  "signed_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "subscription_id",
+                  "reader_id",
+                  "column_id",
+                  "edition_id",
+                  "amount_minor_units",
+                  "currency",
+                  "signed_at",
+                  "payment_seconds",
+                  "access_seconds",
+                  "refund_seconds",
+                  "restore_seconds"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "payment": {
+                      "href": "/subscriptions/SUB-20261001-001/payment"
+                    },
+                    "refund": {
+                      "href": "/subscriptions/SUB-20261001-001/refund"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001"
+                    }
+                  },
+                  "access_seconds": 60,
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "edition_id": "ED-1",
+                  "payment_seconds": 900,
+                  "reader_id": "READER-001",
+                  "refund_seconds": 604800,
+                  "restore_seconds": 86400,
+                  "signed_at": "2026-10-01T09:00:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-subscription-reader"
+                }
+              }
+            },
+            "description": "记录已形成的专栏订阅合同；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/subscriptions/SUB-20261001-001",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "payment": {
+                "operationId": "capability.read-payment-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "refund": {
+                "operationId": "capability.read-refund-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "登记专栏订阅合同",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-subscription-reader"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-subscription-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.register-subscription-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}": {
+      "get": {
+        "operationId": "capability.read-subscription-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "payment": {
+                      "href": "/subscriptions/SUB-20261001-001/payment"
+                    },
+                    "refund": {
+                      "href": "/subscriptions/SUB-20261001-001/refund"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001"
+                    }
+                  },
+                  "access_seconds": 60,
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "edition_id": "ED-1",
+                  "payment_seconds": 900,
+                  "reader_id": "READER-001",
+                  "refund_seconds": 604800,
+                  "restore_seconds": 86400,
+                  "signed_at": "2026-10-01T09:00:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-subscription-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "payment": {
+                "operationId": "capability.read-payment-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "refund": {
+                "operationId": "capability.read-refund-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取专栏订阅合同",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-subscription-reader"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-subscription-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-subscription-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/accesses": {
+      "post": {
+        "operationId": "capability.register-access-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "chapter_id": "CH-01",
+                "column_id": "COL-BM",
+                "edition_id": "ED-1",
+                "evidenceRefs": [
+                  "instance.subscription",
+                  "instance.mobile-result"
+                ],
+                "reader_id": "READER-001",
+                "request_id": "ACCESS-MOBILE",
+                "started_at": "2026-10-01T09:06:00Z",
+                "subscription_id": "SUB-20261001-001"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "chapter_id": {
+                    "type": "string"
+                  },
+                  "column_id": {
+                    "type": "string"
+                  },
+                  "edition_id": {
+                    "type": "string"
+                  },
+                  "evidenceRefs": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "request_id": {
+                    "type": "string"
+                  },
+                  "started_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "subscription_id",
+                  "reader_id",
+                  "column_id",
+                  "started_at",
+                  "chapter_id",
+                  "edition_id",
+                  "evidenceRefs"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "chapter": {
+                      "href": "/chapters/CH-01"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                    }
+                  },
+                  "chapter_id": "CH-01",
+                  "column_id": "COL-BM",
+                  "edition_id": "ED-1",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.mobile-result"
+                  ],
+                  "expired_at": "2026-10-01T09:07:00Z",
+                  "fulfillmentStatus": "pending",
+                  "reader_id": "READER-001",
+                  "request_id": "ACCESS-MOBILE",
+                  "started_at": "2026-10-01T09:06:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-access-reader"
+                }
+              }
+            },
+            "description": "记录已形成的付费内容访问请求；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "chapter": {
+                "operationId": "capability.read-chapter-reader",
+                "parameters": {
+                  "chapterId": "$response.body#/chapter_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-access-result-reader",
+                "parameters": {
+                  "accessId": "$request.path.accessId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "申请访问付费章节",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-access-reader",
+          "binding.parent-access"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-access-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.register-access-reader"
+          }
+        ],
+        "x-fm-rule-bindings": [
+          {
+            "purpose": "precondition",
+            "ruleRef": "rule.access-eligible"
+          }
+        ]
+      }
+    },
+    "/subscriptions/{subscriptionId}/accesses/{accessId}": {
+      "get": {
+        "operationId": "capability.read-access-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accessId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "chapter": {
+                      "href": "/chapters/CH-01"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                    }
+                  },
+                  "chapter_id": "CH-01",
+                  "column_id": "COL-BM",
+                  "edition_id": "ED-1",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.mobile-result"
+                  ],
+                  "expired_at": "2026-10-01T09:07:00Z",
+                  "fulfillmentStatus": "completed",
+                  "reader_id": "READER-001",
+                  "request_id": "ACCESS-MOBILE",
+                  "started_at": "2026-10-01T09:06:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-access-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "chapter": {
+                "operationId": "capability.read-chapter-reader",
+                "parameters": {
+                  "chapterId": "$response.body#/chapter_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-access-result-reader",
+                "parameters": {
+                  "accessId": "$request.path.accessId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取付费内容访问请求",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-access-reader",
+          "binding.parent-access"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-access-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-access-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/accesses/{accessId}/result": {
+      "get": {
+        "operationId": "capability.read-access-result-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accessId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "content": {
+                      "href": "/chapters/CH-01"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                    }
+                  },
+                  "chapter_id": "CH-01",
+                  "column_id": "COL-BM",
+                  "confirmed_at": "2026-10-01T09:06:02Z",
+                  "delivered": true,
+                  "edition_id": "ED-1",
+                  "evidenceRefs": [
+                    "instance.access-mobile"
+                  ],
+                  "reader_id": "READER-001",
+                  "request_id": "ACCESS-MOBILE",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-access-result-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "content": {
+                "operationId": "capability.read-chapter-reader",
+                "parameters": {
+                  "chapterId": "$response.body#/chapter_id"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取内容提供凭证",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-access-result-reader",
+          "binding.parent-access-result"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-access-result-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-access-result-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/payment": {
+      "get": {
+        "operationId": "capability.read-payment-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/payment"
+                    }
+                  },
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.subscription"
+                  ],
+                  "expired_at": "2026-10-01T09:15:00Z",
+                  "fulfillmentStatus": "completed",
+                  "reader_id": "READER-001",
+                  "request_id": "PAY-001",
+                  "started_at": "2026-10-01T09:00:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-payment-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取订阅费支付请求",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-payment-reader",
+          "binding.parent-payment"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-payment-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-payment-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/refund": {
+      "get": {
+        "operationId": "capability.read-refund-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/refund/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/refund"
+                    }
+                  },
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.discontinuation",
+                    "instance.mobile-result"
+                  ],
+                  "expired_at": "2026-10-23T10:01:00Z",
+                  "fulfillmentStatus": "completed",
+                  "reader_id": "READER-001",
+                  "request_id": "REFUND-001",
+                  "started_at": "2026-10-16T10:01:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-refund-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-refund-result-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取断更退款请求",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-refund-reader",
+          "binding.parent-refund"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-refund-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-refund-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      },
+      "post": {
+        "operationId": "capability.register-refund-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "column_id": "COL-BM",
+                "currency": "CNY",
+                "evidenceRefs": [
+                  "instance.subscription",
+                  "instance.discontinuation",
+                  "instance.mobile-result"
+                ],
+                "reader_id": "READER-001",
+                "request_id": "REFUND-001",
+                "started_at": "2026-10-16T10:01:00Z",
+                "subscription_id": "SUB-20261001-001"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "column_id": {
+                    "type": "string"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "evidenceRefs": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "request_id": {
+                    "type": "string"
+                  },
+                  "started_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "subscription_id",
+                  "reader_id",
+                  "column_id",
+                  "started_at",
+                  "currency",
+                  "evidenceRefs"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/refund/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/refund"
+                    }
+                  },
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.discontinuation",
+                    "instance.mobile-result"
+                  ],
+                  "expired_at": "2026-10-23T10:01:00Z",
+                  "fulfillmentStatus": "pending",
+                  "reader_id": "READER-001",
+                  "request_id": "REFUND-001",
+                  "started_at": "2026-10-16T10:01:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-refund-reader"
+                }
+              }
+            },
+            "description": "记录已形成的断更退款请求；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/subscriptions/SUB-20261001-001/refund",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-refund-result-reader",
+                "parameters": {
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "申请断更退款",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-refund-reader",
+          "binding.parent-refund"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-refund-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.register-refund-reader"
+          }
+        ],
+        "x-fm-rule-bindings": [
+          {
+            "purpose": "precondition",
+            "ruleRef": "rule.refund-eligible"
+          }
+        ]
+      }
+    },
+    "/subscriptions/{subscriptionId}/refund/result": {
+      "get": {
+        "operationId": "capability.read-refund-result-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/refund/result"
+                    }
+                  },
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "confirmed_at": "2026-10-18T10:00:00Z",
+                  "currency": "CNY",
+                  "evidenceRefs": [
+                    "instance.refund"
+                  ],
+                  "reader_id": "READER-001",
+                  "receipt_id": "REFUND-RECEIPT-001",
+                  "request_id": "REFUND-001",
+                  "settled": true,
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-refund-result-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取退款到账凭证",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-refund-result-reader",
+          "binding.parent-refund-result"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-refund-result-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-refund-result-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/relaunches/{relaunchId}": {
+      "get": {
+        "operationId": "capability.read-relaunch-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "relaunchId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "restoration": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                    }
+                  },
+                  "column_id": "COL-BM",
+                  "created_at": "2026-11-01T12:00:00Z",
+                  "edition_id": "ED-2",
+                  "evidenceRefs": [
+                    "instance.subscription"
+                  ],
+                  "listed": true,
+                  "reader_id": "READER-001",
+                  "relaunched_at": "2026-11-01T11:59:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-relaunch-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "restoration": {
+                "operationId": "capability.read-restore-reader",
+                "parameters": {
+                  "relaunchId": "$request.path.relaunchId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取重新上架记录",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-relaunch-reader",
+          "binding.parent-relaunch"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-relaunch-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-relaunch-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration": {
+      "get": {
+        "operationId": "capability.read-restore-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "relaunchId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "relaunch": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                    }
+                  },
+                  "column_id": "COL-BM",
+                  "edition_id": "ED-2",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.relaunch",
+                    "instance.refunded"
+                  ],
+                  "expired_at": "2026-11-02T12:01:00Z",
+                  "fulfillmentStatus": "completed",
+                  "reader_id": "READER-001",
+                  "request_id": "RESTORE-001",
+                  "started_at": "2026-11-01T12:01:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-restore-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "relaunch": {
+                "operationId": "capability.read-relaunch-reader",
+                "parameters": {
+                  "relaunchId": "$request.path.relaunchId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-restore-result-reader",
+                "parameters": {
+                  "relaunchId": "$request.path.relaunchId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取免费恢复请求",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-restore-reader",
+          "binding.parent-restore"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-restore-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-restore-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      },
+      "post": {
+        "operationId": "capability.register-restore-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "relaunchId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "同键同输入返回原结果；不同输入拒绝，避免重复付款、退款或恢复。",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "column_id": "COL-BM",
+                "edition_id": "ED-2",
+                "evidenceRefs": [
+                  "instance.subscription",
+                  "instance.relaunch",
+                  "instance.refunded"
+                ],
+                "reader_id": "READER-001",
+                "request_id": "RESTORE-001",
+                "started_at": "2026-11-01T12:01:00Z",
+                "subscription_id": "SUB-20261001-001"
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "column_id": {
+                    "type": "string"
+                  },
+                  "edition_id": {
+                    "type": "string"
+                  },
+                  "evidenceRefs": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "reader_id": {
+                    "type": "string"
+                  },
+                  "request_id": {
+                    "type": "string"
+                  },
+                  "started_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "subscription_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "subscription_id",
+                  "reader_id",
+                  "column_id",
+                  "started_at",
+                  "edition_id",
+                  "evidenceRefs"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "column": {
+                      "href": "/columns/COL-BM"
+                    },
+                    "relaunch": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                    },
+                    "result": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                    },
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                    }
+                  },
+                  "column_id": "COL-BM",
+                  "edition_id": "ED-2",
+                  "evidenceRefs": [
+                    "instance.subscription",
+                    "instance.relaunch",
+                    "instance.refunded"
+                  ],
+                  "expired_at": "2026-11-02T12:01:00Z",
+                  "fulfillmentStatus": "pending",
+                  "reader_id": "READER-001",
+                  "request_id": "RESTORE-001",
+                  "started_at": "2026-11-01T12:01:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_register-restore-reader"
+                }
+              }
+            },
+            "description": "记录已形成的免费恢复请求；履约完成另按规则判断。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "example": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "links": {
+              "column": {
+                "operationId": "capability.read-column-reader",
+                "parameters": {
+                  "columnId": "$response.body#/column_id"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "relaunch": {
+                "operationId": "capability.read-relaunch-reader",
+                "parameters": {
+                  "relaunchId": "$request.path.relaunchId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              },
+              "result": {
+                "operationId": "capability.read-restore-result-reader",
+                "parameters": {
+                  "relaunchId": "$request.path.relaunchId",
+                  "subscriptionId": "$request.path.subscriptionId"
+                },
+                "x-fm-link-kind": "navigation"
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "409": {
+            "description": "同一幂等键对应不同输入，或同一请求已经有有效结果。"
+          },
+          "422": {
+            "description": "业务字段、证据实际玩家、时间、金额或实例归属不满足规则。"
+          }
+        },
+        "summary": "申请免费恢复",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-restore-reader",
+          "binding.parent-restore"
+        ],
+        "x-fm-capability-refs": [
+          "capability.register-restore-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.register-restore-reader"
+          }
+        ],
+        "x-fm-rule-bindings": [
+          {
+            "purpose": "precondition",
+            "ruleRef": "rule.restore-eligible"
+          }
+        ]
+      }
+    },
+    "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result": {
+      "get": {
+        "operationId": "capability.read-restore-result-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "relaunchId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                    }
+                  },
+                  "charged_minor_units": 0,
+                  "column_id": "COL-BM",
+                  "confirmed_at": "2026-11-01T12:02:00Z",
+                  "edition_id": "ED-2",
+                  "evidenceRefs": [
+                    "instance.restore"
+                  ],
+                  "reader_id": "READER-001",
+                  "request_id": "RESTORE-001",
+                  "restored": true,
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_read-restore-result-reader"
+                }
+              }
+            },
+            "description": "返回本实例当前可读取的业务表示。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非本实例参与方、无代理资格或不具备指定章节访问资格。"
+          },
+          "404": {
+            "description": "指定实例或其履约结果尚未形成。"
+          }
+        },
+        "summary": "读取免费恢复凭证",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-restore-result-reader",
+          "binding.parent-restore-result"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-restore-result-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-restore-result-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/users/{userId}/prepaid-accounts": {
+      "get": {
+        "operationId": "capability.list-accounts-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_embedded": {
+                    "items": [
+                      {
+                        "_links": {
+                          "self": {
+                            "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+                          }
+                        },
+                        "agreement_id": "PREPAID-001",
+                        "reader_id": "READER-001",
+                        "signed_at": "2026-10-01T08:00:00Z"
+                      }
+                    ]
+                  },
+                  "_links": {
+                    "next": {
+                      "href": "/users/USER-001/prepaid-accounts?cursor=next-accounts"
+                    },
+                    "self": {
+                      "href": "/users/USER-001/prepaid-accounts"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_list-accounts-account-user"
+                }
+              }
+            },
+            "description": "返回该主体参与的预付费账户协议列表。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "调用者不能读取该主体范围内的账户协议列表。"
+          }
+        },
+        "summary": "列出本人预付费账户协议",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-party-accounts-account-user",
+          "binding.party-accounts"
+        ],
+        "x-fm-capability-refs": [
+          "capability.list-accounts-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.list-accounts-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/users/{userId}/prepaid-accounts/{accountId}": {
+      "get": {
+        "operationId": "capability.read-party-account-account-user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+                    }
+                  },
+                  "agreement_id": "PREPAID-001",
+                  "reader_id": "READER-001",
+                  "signed_at": "2026-10-01T08:00:00Z"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_list-accounts-account-user-item"
+                }
+              }
+            },
+            "description": "返回该用户主体下的预付费账户列表项。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "调用者不是该用户主体或无代表资格。"
+          },
+          "404": {
+            "description": "合同项尚未登记或不可见。"
+          }
+        },
+        "summary": "读取本人预付费账户列表项",
+        "x-actor-role-refs": [
+          "role.account-user"
+        ],
+        "x-binding-refs": [
+          "binding.caller-party-accounts-account-user",
+          "binding.party-accounts"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-party-account-account-user"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.account-user",
+            "capabilityRef": "capability.read-party-account-account-user"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/users/{userId}/subscriptions": {
+      "get": {
+        "operationId": "capability.list-subscriptions-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_embedded": {
+                    "items": [
+                      {
+                        "_links": {
+                          "self": {
+                            "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+                          }
+                        },
+                        "access_seconds": 60,
+                        "amount_minor_units": 9900,
+                        "column_id": "COL-BM",
+                        "currency": "CNY",
+                        "edition_id": "ED-1",
+                        "payment_seconds": 900,
+                        "reader_id": "READER-001",
+                        "refund_seconds": 604800,
+                        "restore_seconds": 86400,
+                        "signed_at": "2026-10-01T09:00:00Z",
+                        "subscription_id": "SUB-20261001-001"
+                      }
+                    ]
+                  },
+                  "_links": {
+                    "next": {
+                      "href": "/users/USER-001/subscriptions?cursor=next-subscriptions"
+                    },
+                    "self": {
+                      "href": "/users/USER-001/subscriptions"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_list-subscriptions-reader"
+                }
+              }
+            },
+            "description": "返回该主体参与的专栏订阅合同列表。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "调用者不能读取该主体范围内的合同列表。"
+          }
+        },
+        "summary": "列出本人专栏订阅合同",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-party-subscriptions-reader",
+          "binding.party-subscriptions"
+        ],
+        "x-fm-capability-refs": [
+          "capability.list-subscriptions-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.list-subscriptions-reader"
+          }
+        ],
+        "x-fm-rule-bindings": []
+      }
+    },
+    "/users/{userId}/subscriptions/{subscriptionId}": {
+      "get": {
+        "operationId": "capability.read-party-subscription-reader",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "example": {
+                  "_links": {
+                    "self": {
+                      "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+                    }
+                  },
+                  "access_seconds": 60,
+                  "amount_minor_units": 9900,
+                  "column_id": "COL-BM",
+                  "currency": "CNY",
+                  "edition_id": "ED-1",
+                  "payment_seconds": 900,
+                  "reader_id": "READER-001",
+                  "refund_seconds": 604800,
+                  "restore_seconds": 86400,
+                  "signed_at": "2026-10-01T09:00:00Z",
+                  "subscription_id": "SUB-20261001-001"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/representation_list-subscriptions-reader-item"
+                }
+              }
+            },
+            "description": "返回该用户主体下的订阅合同列表项。",
+            "headers": {
+              "Cache-Control": {
+                "example": "no-store",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "调用者不是该用户主体或无代表资格。"
+          },
+          "404": {
+            "description": "合同项尚未登记或不可见。"
+          }
+        },
+        "summary": "读取本人订阅合同列表项",
+        "x-actor-role-refs": [
+          "role.reader"
+        ],
+        "x-binding-refs": [
+          "binding.caller-party-subscriptions-reader",
+          "binding.party-subscriptions"
+        ],
+        "x-fm-capability-refs": [
+          "capability.read-party-subscription-reader"
+        ],
+        "x-fm-operation-variants": [
+          {
+            "actorRoleRef": "role.reader",
+            "capabilityRef": "capability.read-party-subscription-reader"
           }
         ],
         "x-fm-rule-bindings": []

@@ -1,0 +1,8 @@
+{
+  "type": "entity",
+  "id": "context.subscription",
+  "category": "context",
+  "kind": "contract",
+  "label": "专栏订阅",
+  "rootRefs": ["contract.subscription"]
+}

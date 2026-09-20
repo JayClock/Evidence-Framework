@@ -1,0 +1,61 @@
+{
+  "runId": "20260920T093711Z-column-subscription-api",
+  "recordedAt": "2026-09-20T09:37:11Z",
+  "projectRoot": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "inputs": {
+    "fm": ".evidence/fm",
+    "fmModelDigest": "sha256:6a764694d459c932606c50a6c6df90643e64b9f1cf7b0eac4e96b5b8f4871818",
+    "api": ".evidence/api/api.json",
+    "apiSha256": "fb0e7618fb7b5cf4357cfafea69cfb9fdfa8e3727e6e53bb6b43d9a82ec00915"
+  },
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3.12 3.12.3",
+    "tool": ".agents/skills/evidence-api-design/scripts/fm_api.py",
+    "toolSha256": "37a761509f8b8d4a2f0300a4ffe0418012b09fdf4b1bb0a1114c0ddcd00bec10"
+  },
+  "execution": [
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py inspect --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm",
+      "exitCode": 0
+    },
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py check --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm --api $PWD/.evidence/api/api.json",
+      "exitCode": 0
+    },
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py project --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm --api $PWD/.evidence/api/api.json",
+      "exitCode": 0
+    },
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py project --out $PWD/.evidence/api/.generated-verify ...（隔离重渲染）",
+      "exitCode": 0,
+      "observed": "diff -rq .evidence/api/generated .evidence/api/.generated-verify 无差异；临时目录已删除"
+    }
+  ],
+  "result": {
+    "complete": true,
+    "valid": true,
+    "interfaceCount": 26,
+    "gapCount": 0,
+    "diagnostics": [],
+    "generatedDirectory": ".evidence/api/generated",
+    "regeneratedBytesIdentical": true
+  },
+  "coverage": {
+    "checked": [
+      "API Schema 5.0 结构与字段来源",
+      "整体 FM 对象与全部场景覆盖",
+      "资源、绑定、能力与调用角色",
+      "表示、HAL 链接、幂等、并发与缓存",
+      "类型化入口与消费者流程接续",
+      "OpenAPI 3.1、HTTP 流程、E2E 向量与 manifest 投影"
+    ],
+    "notCovered": [
+      "运行时鉴权与实例归属",
+      "外部支付机构与内容服务的真实接入",
+      "数据库装载与生产并发",
+      "人类业务与产品范围批准"
+    ]
+  },
+  "rawResult": "not saved; generated/ retained as the projection and manifest"
+}

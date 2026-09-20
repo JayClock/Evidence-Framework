@@ -1,0 +1,70 @@
+{
+  "runId": "20260920T095239Z-column-subscription-api-redesign",
+  "recordedAt": "2026-09-20T09:52:39Z",
+  "projectRoot": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "inputs": {
+    "fm": ".evidence/fm",
+    "api": ".evidence/api/api.json",
+    "apiSha256": "94fae51cbd7e8d69c76ad60bc21548508613fd7f4b8f55fdd3cd96b712313afb"
+  },
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3.12 3.12.3",
+    "tool": ".agents/skills/evidence-api-design/scripts/fm_api.py",
+    "toolSha256": "37a761509f8b8d4a2f0300a4ffe0418012b09fdf4b1bb0a1114c0ddcd00bec10"
+  },
+  "execution": [
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py inspect --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm",
+      "exitCode": 0
+    },
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py check --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm --api $PWD/.evidence/api/api.json",
+      "exitCode": 0
+    },
+    {
+      "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-api-design/scripts/fm_api.py project --project-root $PWD --fm $PWD/.evidence/fm --fm-skill $PWD/.agents/skills/evidence-fm --api $PWD/.evidence/api/api.json",
+      "exitCode": 0
+    },
+    {
+      "command": "隔离重渲染 project --out $PWD/.evidence/api/.generated-verify 并与 generated/ 逐字节比较",
+      "exitCode": 0,
+      "observed": "diff -rq 无差异；临时目录已删除"
+    }
+  ],
+  "result": {
+    "complete": true,
+    "valid": true,
+    "interfaceCount": 28,
+    "gapCount": 0,
+    "diagnostics": [],
+    "generatedDirectory": ".evidence/api/generated",
+    "regeneratedBytesIdentical": true
+  },
+  "redesign": {
+    "basis": "从整体 FM 重新推导资源、能力、绑定、场景、消费流程与 HTTP 契约；项目规范要求沿用既有稳定接口身份。",
+    "changes": [
+      "thing.customer-profile 的非接口处置由 internal 修正为 external：档案属于独立客户信息领域，本 API 只保存引用。",
+      "按 FM 关系补齐 11 处资源导航链接（订阅→付款/退款/专栏，付款/退款→专栏，访问→章节，恢复→专栏/重新上架，重新上架→恢复，断更记录→退款）。",
+      "新增 2 个列表项读取能力（本人订阅合同列表项、本人预付费账户列表项），使集合嵌入成员的 self 可被同一角色继续跟随。",
+      "debit 表示不得链接 reader 专属的专栏读取能力（CONTRACT_LINK_ROLE），因此不提供该跨角色链接。"
+    ],
+    "converged": "资源/能力/绑定/场景/顶层流程在 FM 基数、扮演角色与项目规范约束下与既有设计一致。"
+  },
+  "coverage": {
+    "checked": [
+      "API Schema 5.0 结构与字段来源",
+      "整体 FM 对象与全部场景覆盖",
+      "资源、绑定、能力与调用角色",
+      "表示、HAL 链接角色一致性与参数闭合",
+      "类型化入口与消费者流程接续",
+      "OpenAPI 3.1、HTTP 流程、E2E 向量与 manifest 投影"
+    ],
+    "notCovered": [
+      "运行时鉴权与实例归属",
+      "外部支付机构与内容服务的真实接入",
+      "数据库装载与生产并发",
+      "人类业务与产品范围批准"
+    ]
+  },
+  "rawResult": "not saved; generated/ retained as the projection and manifest"
+}

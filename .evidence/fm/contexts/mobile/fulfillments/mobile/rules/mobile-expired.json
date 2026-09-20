@@ -1,0 +1,22 @@
+{
+  "type": "rule",
+  "id": "rule.mobile-expired",
+  "kind": "breach",
+  "label": "本次扣款未在期限内完成",
+  "description": "当前时间超过移动支付扣款请求（request.mobile）的截止时间，且期限内没有恰好一份匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）逾期。",
+  "contextRef": "fulfillment.mobile",
+  "bindings": {
+    "request": {
+      "ref": "request.mobile"
+    },
+    "confirmations": {
+      "ref": "confirmation.mobile",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success).size() == 1)",
+  "resultType": "bool"
+}

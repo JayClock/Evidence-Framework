@@ -1,0 +1,25 @@
+{
+  "type": "rule",
+  "id": "rule.payment-expired",
+  "kind": "breach",
+  "label": "付款逾期使合同失效",
+  "description": "当前时间超过订阅费支付请求（request.payment）的截止时间，且请求与订阅合同（contract.subscription）不一致或期限内没有恰好一份匹配的合格付款证明（role.payment-proof）时，判定订阅费支付履约（fulfillment.payment）逾期。",
+  "contextRef": "fulfillment.payment",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    },
+    "request": {
+      "ref": "request.payment"
+    },
+    "proofs": {
+      "ref": "role.payment-proof",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrequest.currency == agreement.currency && request.amount_minor_units\n== agreement.amount_minor_units && request.amount_minor_units > 0 &&\nproofs.filter(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.payment_request_id == request.request_id &&\np.amount_minor_units == request.amount_minor_units && p.currency ==\nrequest.currency && p.success && p.confirmed_at >=\nrequest.started_at && p.confirmed_at <= request.expired_at).size()\n== 1)",
+  "resultType": "bool"
+}

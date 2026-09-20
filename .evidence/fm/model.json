@@ -1,11 +1,15 @@
 {
   "type": "fm_model",
   "schemaVersion": "3.0",
-  "id": "sales-performance",
-  "name": "CRM 电话销售绩效协议",
-  "version": "2.0.0",
+  "id": "column-subscription",
+  "name": "专栏订阅与 CRM 业务示例",
+  "version": "1.2.0",
   "ruleLanguage": "CEL",
   "entryContextRefs": [
+    "context.subscription",
+    "context.mobile",
+    "context.prepaid",
+    "context.content",
     "context.sales-performance",
     "context.customer-information"
   ]

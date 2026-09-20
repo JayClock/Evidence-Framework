@@ -1,9 +1,1427 @@
 {
-  "apiId": "api.sales-performance",
+  "apiId": "api.column-subscription",
   "dataClassification": "synthetic",
   "runtimeValidated": false,
   "schemaVersion": "2.0",
   "vectors": [
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.free-restoration-2",
+      "journeyRef": "http-journey.free-restoration-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-restore-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "relaunch": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                }
+              },
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "expired_at": "2026-11-02T12:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+            },
+            "representationRef": "representation.register-restore-reader",
+            "status": 201
+          },
+          "id": "http.register-restore-reader-free-restoration-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-restore-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
+          },
+          "sourceStepRefs": [
+            "step.free-restoration-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.free-restoration-4",
+      "journeyRef": "http-journey.free-restoration-4",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "chapter": {
+                  "href": "/chapters/CH-01"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-01T09:07:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+            },
+            "representationRef": "representation.register-access-reader",
+            "status": 201
+          },
+          "id": "http.register-access-reader-free-restoration-4",
+          "request": {
+            "body": {
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-access-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses"
+          },
+          "sourceStepRefs": [
+            "step.free-restoration-4"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.restore-expired-2",
+      "journeyRef": "http-journey.restore-expired-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-restore-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "relaunch": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                }
+              },
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "expired_at": "2026-11-02T12:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+            },
+            "representationRef": "representation.register-restore-reader",
+            "status": 201
+          },
+          "id": "http.register-restore-reader-restore-expired-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-restore-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
+          },
+          "sourceStepRefs": [
+            "step.restore-expired-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.mobile-subscription-1",
+      "journeyRef": "http-journey.mobile-subscription-1",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-subscription-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "payment": {
+                  "href": "/subscriptions/SUB-20261001-001/payment"
+                },
+                "refund": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001"
+                }
+              },
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001"
+            },
+            "representationRef": "representation.register-subscription-reader",
+            "status": 201
+          },
+          "id": "http.register-subscription-reader-mobile-subscription-1",
+          "request": {
+            "body": {
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-subscription-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "queryParameters": {},
+            "uri": "/subscriptions",
+            "uriTemplate": "/subscriptions"
+          },
+          "sourceStepRefs": [
+            "step.mobile-subscription-1"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.mobile-subscription-6",
+      "journeyRef": "http-journey.mobile-subscription-6",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "chapter": {
+                  "href": "/chapters/CH-01"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-01T09:07:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+            },
+            "representationRef": "representation.register-access-reader",
+            "status": 201
+          },
+          "id": "http.register-access-reader-mobile-subscription-6",
+          "request": {
+            "body": {
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-access-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses"
+          },
+          "sourceStepRefs": [
+            "step.mobile-subscription-6"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.prepaid-subscription-1",
+      "journeyRef": "http-journey.prepaid-subscription-1",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-subscription-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "payment": {
+                  "href": "/subscriptions/SUB-20261001-001/payment"
+                },
+                "refund": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001"
+                }
+              },
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001"
+            },
+            "representationRef": "representation.register-subscription-reader",
+            "status": 201
+          },
+          "id": "http.register-subscription-reader-prepaid-subscription-1",
+          "request": {
+            "body": {
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-subscription-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "queryParameters": {},
+            "uri": "/subscriptions",
+            "uriTemplate": "/subscriptions"
+          },
+          "sourceStepRefs": [
+            "step.prepaid-subscription-1"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.prepaid-subscription-2",
+      "journeyRef": "http-journey.prepaid-subscription-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-account-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "reader_id": "READER-001",
+              "signed_at": "2026-10-01T08:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/prepaid-accounts/PREPAID-001"
+            },
+            "representationRef": "representation.register-account-account-user",
+            "status": 201
+          },
+          "id": "http.register-account-account-user-prepaid-subscription-2",
+          "request": {
+            "body": {
+              "agreement_id": "PREPAID-001",
+              "reader_id": "READER-001",
+              "signed_at": "2026-10-01T08:00:00Z"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-account-account-user"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {},
+            "queryParameters": {},
+            "uri": "/prepaid-accounts",
+            "uriTemplate": "/prepaid-accounts"
+          },
+          "sourceStepRefs": [
+            "step.prepaid-subscription-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.prepaid-subscription-4",
+      "journeyRef": "http-journey.prepaid-subscription-4",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-debit-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "result": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                },
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "amount_minor_units": 9900,
+              "balance_before_minor_units": 10000,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-agreement",
+                "instance.payment"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "fulfillmentStatus": "pending",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "started_at": "2026-10-01T09:02:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+            },
+            "representationRef": "representation.register-debit-account-user",
+            "status": 201
+          },
+          "id": "http.register-debit-account-user-prepaid-subscription-4",
+          "request": {
+            "body": {
+              "agreement_id": "PREPAID-001",
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-agreement",
+                "instance.payment"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "started_at": "2026-10-01T09:02:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-debit-account-user"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "accountId": "PREPAID-001"
+            },
+            "queryParameters": {},
+            "uri": "/prepaid-accounts/PREPAID-001/debits",
+            "uriTemplate": "/prepaid-accounts/{accountId}/debits"
+          },
+          "sourceStepRefs": [
+            "step.prepaid-subscription-4"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.prepaid-subscription-6",
+      "journeyRef": "http-journey.prepaid-subscription-6",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "chapter": {
+                  "href": "/chapters/CH-01"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-01T09:07:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+            },
+            "representationRef": "representation.register-access-reader",
+            "status": 201
+          },
+          "id": "http.register-access-reader-prepaid-subscription-6",
+          "request": {
+            "body": {
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-access-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses"
+          },
+          "sourceStepRefs": [
+            "step.prepaid-subscription-6"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.refund-late-2",
+      "journeyRef": "http-journey.refund-late-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-refund-late"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-23T10:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/refund"
+            },
+            "representationRef": "representation.register-refund-reader",
+            "status": 201
+          },
+          "id": "http.register-refund-reader-refund-late-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-refund-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund"
+          },
+          "sourceStepRefs": [
+            "step.refund-late-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.discontinuation-refund-2",
+      "journeyRef": "http-journey.discontinuation-refund-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-discontinuation-refund"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-23T10:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/refund"
+            },
+            "representationRef": "representation.register-refund-reader",
+            "status": 201
+          },
+          "id": "http.register-refund-reader-discontinuation-refund-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-refund-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund"
+          },
+          "sourceStepRefs": [
+            "step.discontinuation-refund-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.access-after-refund-2",
+      "journeyRef": "http-journey.access-after-refund-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-23T10:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/refund"
+            },
+            "representationRef": "representation.register-refund-reader",
+            "status": 201
+          },
+          "id": "http.register-refund-reader-access-after-refund-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-refund-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund"
+          },
+          "sourceStepRefs": [
+            "step.access-after-refund-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.insufficient-balance-1",
+      "journeyRef": "http-journey.insufficient-balance-1",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-insufficient-balance"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-debit-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "result": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                },
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "amount_minor_units": 9900,
+              "balance_before_minor_units": 10000,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-agreement",
+                "instance.payment"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "fulfillmentStatus": "pending",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "started_at": "2026-10-01T09:02:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+            },
+            "representationRef": "representation.register-debit-account-user",
+            "status": 201
+          },
+          "id": "http.register-debit-account-user-insufficient-balance-1",
+          "request": {
+            "body": {
+              "agreement_id": "PREPAID-001",
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-agreement",
+                "instance.payment"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "started_at": "2026-10-01T09:02:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-debit-account-user"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "accountId": "PREPAID-001"
+            },
+            "queryParameters": {},
+            "uri": "/prepaid-accounts/PREPAID-001/debits",
+            "uriTemplate": "/prepaid-accounts/{accountId}/debits"
+          },
+          "sourceStepRefs": [
+            "step.insufficient-balance-1"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.restore-charged-2",
+      "journeyRef": "http-journey.restore-charged-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-restore-charged"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-restore-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "relaunch": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                }
+              },
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "expired_at": "2026-11-02T12:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+            },
+            "representationRef": "representation.register-restore-reader",
+            "status": 201
+          },
+          "id": "http.register-restore-reader-restore-charged-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-restore-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
+          },
+          "sourceStepRefs": [
+            "step.restore-charged-2"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.access-expired-1",
+      "journeyRef": "http-journey.access-expired-1",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-access-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "chapter": {
+                  "href": "/chapters/CH-01"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-01T09:07:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+            },
+            "representationRef": "representation.register-access-reader",
+            "status": 201
+          },
+          "id": "http.register-access-reader-access-expired-1",
+          "request": {
+            "body": {
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-access-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses"
+          },
+          "sourceStepRefs": [
+            "step.access-expired-1"
+          ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.refund-expired-2",
+      "journeyRef": "http-journey.refund-expired-2",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-refund-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.register-refund-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-23T10:01:00Z",
+              "fulfillmentStatus": "pending",
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store",
+              "Location": "/subscriptions/SUB-20261001-001/refund"
+            },
+            "representationRef": "representation.register-refund-reader",
+            "status": 201
+          },
+          "id": "http.register-refund-reader-refund-expired-2",
+          "request": {
+            "body": {
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Idempotency-Key": "idem-register-refund-reader"
+            },
+            "mediaType": "application/json",
+            "method": "POST",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund"
+          },
+          "sourceStepRefs": [
+            "step.refund-expired-2"
+          ]
+        }
+      ]
+    },
     {
       "actorRoleRef": "role.tele-sales",
       "id": "vector.http-journey.monthly-customer-contact-completed-1",
@@ -664,6 +2082,1314 @@
           "sourceStepRefs": [
             "step.monthly-customer-contact-insufficient-4"
           ]
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.list-subscriptions-reader",
+      "journeyRef": "http-journey.list-subscriptions-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.list-subscriptions-reader",
+          "expect": {
+            "body": {
+              "_embedded": {
+                "items": [
+                  {
+                    "_links": {
+                      "self": {
+                        "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+                      }
+                    },
+                    "access_seconds": 60,
+                    "amount_minor_units": 9900,
+                    "column_id": "COL-BM",
+                    "currency": "CNY",
+                    "edition_id": "ED-1",
+                    "payment_seconds": 900,
+                    "reader_id": "READER-001",
+                    "refund_seconds": 604800,
+                    "restore_seconds": 86400,
+                    "signed_at": "2026-10-01T09:00:00Z",
+                    "subscription_id": "SUB-20261001-001"
+                  }
+                ]
+              },
+              "_links": {
+                "next": {
+                  "href": "/users/USER-001/subscriptions?cursor=next-subscriptions"
+                },
+                "self": {
+                  "href": "/users/USER-001/subscriptions"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-subscriptions-reader",
+            "status": 200
+          },
+          "id": "http.list-subscriptions-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "userId": "USER-001"
+            },
+            "queryParameters": {},
+            "uri": "/users/USER-001/subscriptions",
+            "uriTemplate": "/users/{userId}/subscriptions"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-subscription-reader",
+      "journeyRef": "http-journey.read-subscription-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-access-expired",
+        "scenario.api-cutoff-paid",
+        "scenario.api-cutoff-pending",
+        "scenario.api-discontinuation-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-insufficient-balance",
+        "scenario.api-late-paid",
+        "scenario.api-mobile-subscription",
+        "scenario.api-payment-expired",
+        "scenario.api-payment-pending",
+        "scenario.api-prepaid-subscription",
+        "scenario.api-refund-expired",
+        "scenario.api-refund-late",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired",
+        "scenario.api-short-paid",
+        "scenario.api-wrong-reader"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-subscription-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "payment": {
+                  "href": "/subscriptions/SUB-20261001-001/payment"
+                },
+                "refund": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001"
+                }
+              },
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-subscription-reader",
+            "status": 200
+          },
+          "id": "http.read-subscription-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001",
+            "uriTemplate": "/subscriptions/{subscriptionId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.list-accounts-account-user",
+      "journeyRef": "http-journey.list-accounts-account-user",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.list-accounts-account-user",
+          "expect": {
+            "body": {
+              "_embedded": {
+                "items": [
+                  {
+                    "_links": {
+                      "self": {
+                        "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+                      }
+                    },
+                    "agreement_id": "PREPAID-001",
+                    "reader_id": "READER-001",
+                    "signed_at": "2026-10-01T08:00:00Z"
+                  }
+                ]
+              },
+              "_links": {
+                "next": {
+                  "href": "/users/USER-001/prepaid-accounts?cursor=next-accounts"
+                },
+                "self": {
+                  "href": "/users/USER-001/prepaid-accounts"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-accounts-account-user",
+            "status": 200
+          },
+          "id": "http.list-accounts-account-user",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "userId": "USER-001"
+            },
+            "queryParameters": {},
+            "uri": "/users/USER-001/prepaid-accounts",
+            "uriTemplate": "/users/{userId}/prepaid-accounts"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.read-account-account-user",
+      "journeyRef": "http-journey.read-account-account-user",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-insufficient-balance",
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-account-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "reader_id": "READER-001",
+              "signed_at": "2026-10-01T08:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-account-account-user",
+            "status": 200
+          },
+          "id": "http.read-account-account-user",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accountId": "PREPAID-001"
+            },
+            "queryParameters": {},
+            "uri": "/prepaid-accounts/PREPAID-001",
+            "uriTemplate": "/prepaid-accounts/{accountId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-payment-reader",
+      "journeyRef": "http-journey.read-payment-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-access-expired",
+        "scenario.api-cutoff-paid",
+        "scenario.api-cutoff-pending",
+        "scenario.api-discontinuation-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-insufficient-balance",
+        "scenario.api-late-paid",
+        "scenario.api-mobile-subscription",
+        "scenario.api-payment-expired",
+        "scenario.api-payment-pending",
+        "scenario.api-prepaid-subscription",
+        "scenario.api-refund-expired",
+        "scenario.api-refund-late",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired",
+        "scenario.api-short-paid",
+        "scenario.api-wrong-reader"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-payment-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/payment"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "fulfillmentStatus": "completed",
+              "reader_id": "READER-001",
+              "request_id": "PAY-001",
+              "started_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-payment-reader",
+            "status": 200
+          },
+          "id": "http.read-payment-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/payment",
+            "uriTemplate": "/subscriptions/{subscriptionId}/payment"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-access-reader",
+      "journeyRef": "http-journey.read-access-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-access-expired",
+        "scenario.api-free-restoration",
+        "scenario.api-mobile-subscription",
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "chapter": {
+                  "href": "/chapters/CH-01"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-01T09:07:00Z",
+              "fulfillmentStatus": "completed",
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "started_at": "2026-10-01T09:06:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-access-reader",
+            "status": 200
+          },
+          "id": "http.content-request",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accessId": "ACCESS-MOBILE",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses/{accessId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-refund-reader",
+      "journeyRef": "http-journey.read-refund-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-discontinuation-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-refund-expired",
+        "scenario.api-refund-late",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.discontinuation",
+                "instance.mobile-result"
+              ],
+              "expired_at": "2026-10-23T10:01:00Z",
+              "fulfillmentStatus": "completed",
+              "reader_id": "READER-001",
+              "request_id": "REFUND-001",
+              "started_at": "2026-10-16T10:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-refund-reader",
+            "status": 200
+          },
+          "id": "http.read-refund-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-restore-reader",
+      "journeyRef": "http-journey.read-restore-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "column": {
+                  "href": "/columns/COL-BM"
+                },
+                "relaunch": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                },
+                "result": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                }
+              },
+              "column_id": "COL-BM",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription",
+                "instance.relaunch",
+                "instance.refunded"
+              ],
+              "expired_at": "2026-11-02T12:01:00Z",
+              "fulfillmentStatus": "completed",
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "started_at": "2026-11-01T12:01:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-restore-reader",
+            "status": 200
+          },
+          "id": "http.read-restore-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.read-debit-account-user",
+      "journeyRef": "http-journey.read-debit-account-user",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-insufficient-balance",
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "result": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                },
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "amount_minor_units": 9900,
+              "balance_before_minor_units": 10000,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-agreement",
+                "instance.payment"
+              ],
+              "expired_at": "2026-10-01T09:15:00Z",
+              "fulfillmentStatus": "completed",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "started_at": "2026-10-01T09:02:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-debit-account-user",
+            "status": 200
+          },
+          "id": "http.read-debit-account-user",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accountId": "PREPAID-001",
+              "debitId": "PREPAID-REQ-001"
+            },
+            "queryParameters": {},
+            "uri": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001",
+            "uriTemplate": "/prepaid-accounts/{accountId}/debits/{debitId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-access-result-reader",
+      "journeyRef": "http-journey.read-access-result-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-mobile-subscription",
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-access-result-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "content": {
+                  "href": "/chapters/CH-01"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result"
+                }
+              },
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "confirmed_at": "2026-10-01T09:06:02Z",
+              "delivered": true,
+              "edition_id": "ED-1",
+              "evidenceRefs": [
+                "instance.access-mobile"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "ACCESS-MOBILE",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-access-result-reader",
+            "status": 200
+          },
+          "id": "http.read-access-result-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accessId": "ACCESS-MOBILE",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/accesses/ACCESS-MOBILE/result",
+            "uriTemplate": "/subscriptions/{subscriptionId}/accesses/{accessId}/result"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-refund-result-reader",
+      "journeyRef": "http-journey.read-refund-result-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-discontinuation-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-refund-late",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-refund-result-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/refund/result"
+                }
+              },
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "confirmed_at": "2026-10-18T10:00:00Z",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.refund"
+              ],
+              "reader_id": "READER-001",
+              "receipt_id": "REFUND-RECEIPT-001",
+              "request_id": "REFUND-001",
+              "settled": true,
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-refund-result-reader",
+            "status": 200
+          },
+          "id": "http.read-refund-result-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/refund/result",
+            "uriTemplate": "/subscriptions/{subscriptionId}/refund/result"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-restore-result-reader",
+      "journeyRef": "http-journey.read-restore-result-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration",
+        "scenario.api-restore-charged"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-restore-result-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result"
+                }
+              },
+              "charged_minor_units": 0,
+              "column_id": "COL-BM",
+              "confirmed_at": "2026-11-01T12:02:00Z",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.restore"
+              ],
+              "reader_id": "READER-001",
+              "request_id": "RESTORE-001",
+              "restored": true,
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-restore-result-reader",
+            "status": 200
+          },
+          "id": "http.read-restore-result-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration/result",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}/restoration/result"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.read-debit-result-account-user",
+      "journeyRef": "http-journey.read-debit-result-account-user",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-debit-result-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result"
+                }
+              },
+              "amount_minor_units": 9900,
+              "balance_after_minor_units": 100,
+              "column_id": "COL-BM",
+              "confirmed_at": "2026-10-01T09:05:00Z",
+              "currency": "CNY",
+              "evidenceRefs": [
+                "instance.prepaid-request",
+                "instance.payment"
+              ],
+              "payment_id": "PREPAID-TX-001",
+              "payment_request_id": "PAY-001",
+              "reader_id": "READER-001",
+              "request_id": "PREPAID-REQ-001",
+              "subscription_id": "SUB-20261001-001",
+              "success": true
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-debit-result-account-user",
+            "status": 200
+          },
+          "id": "http.read-debit-result-account-user",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accountId": "PREPAID-001",
+              "debitId": "PREPAID-REQ-001"
+            },
+            "queryParameters": {},
+            "uri": "/prepaid-accounts/PREPAID-001/debits/PREPAID-REQ-001/result",
+            "uriTemplate": "/prepaid-accounts/{accountId}/debits/{debitId}/result"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-discontinuation-reader",
+      "journeyRef": "http-journey.read-discontinuation-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-access-after-refund",
+        "scenario.api-discontinuation-refund",
+        "scenario.api-free-restoration",
+        "scenario.api-refund-expired",
+        "scenario.api-refund-late",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-discontinuation-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "refund": {
+                  "href": "/subscriptions/SUB-20261001-001/refund"
+                },
+                "self": {
+                  "href": "/discontinuations/DISCONTINUATION-001"
+                }
+              },
+              "column_id": "COL-BM",
+              "created_at": "2026-10-16T10:00:00Z",
+              "delisted": true,
+              "evidenceRefs": [
+                "instance.subscription"
+              ],
+              "missed_due_at": "2026-10-08T10:00:00Z",
+              "missing_content": true,
+              "reader_id": "READER-001",
+              "rescheduled": false,
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-discontinuation-reader",
+            "status": 200
+          },
+          "id": "http.read-discontinuation-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "discontinuationId": "DISCONTINUATION-001"
+            },
+            "queryParameters": {},
+            "uri": "/discontinuations/DISCONTINUATION-001",
+            "uriTemplate": "/discontinuations/{discontinuationId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-relaunch-reader",
+      "journeyRef": "http-journey.read-relaunch-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration",
+        "scenario.api-restore-charged",
+        "scenario.api-restore-expired"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-relaunch-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "restoration": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001/restoration"
+                },
+                "self": {
+                  "href": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001"
+                }
+              },
+              "column_id": "COL-BM",
+              "created_at": "2026-11-01T12:00:00Z",
+              "edition_id": "ED-2",
+              "evidenceRefs": [
+                "instance.subscription"
+              ],
+              "listed": true,
+              "reader_id": "READER-001",
+              "relaunched_at": "2026-11-01T11:59:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-relaunch-reader",
+            "status": 200
+          },
+          "id": "http.read-relaunch-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "relaunchId": "RELAUNCH-001",
+              "subscriptionId": "SUB-20261001-001"
+            },
+            "queryParameters": {},
+            "uri": "/subscriptions/SUB-20261001-001/relaunches/RELAUNCH-001",
+            "uriTemplate": "/subscriptions/{subscriptionId}/relaunches/{relaunchId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-column-reader",
+      "journeyRef": "http-journey.read-column-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration",
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-column-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/columns/COL-BM"
+                }
+              },
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "price_minor_units": 9900,
+              "title": "业务建模实战"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-column-reader",
+            "status": 200
+          },
+          "id": "http.read-column-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "columnId": "COL-BM"
+            },
+            "queryParameters": {},
+            "uri": "/columns/COL-BM",
+            "uriTemplate": "/columns/{columnId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-chapter-reader",
+      "journeyRef": "http-journey.read-chapter-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-free-restoration",
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-chapter-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/chapters/CH-01"
+                }
+              },
+              "body": "一项履约始于权利方的请求，完成由实际结果凭证证明。",
+              "chapter_id": "CH-01",
+              "column_id": "COL-BM",
+              "edition_id": "ED-1",
+              "title": "从请求与证明理解业务"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.read-chapter-reader",
+            "status": 200
+          },
+          "id": "http.read-chapter-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "chapterId": "CH-01"
+            },
+            "queryParameters": {},
+            "uri": "/chapters/CH-01",
+            "uriTemplate": "/chapters/{chapterId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.reader",
+      "id": "vector.http-journey.read-party-subscription-reader",
+      "journeyRef": "http-journey.read-party-subscription-reader",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-mobile-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-party-subscription-reader",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/users/USER-001/subscriptions/SUB-20261001-001"
+                }
+              },
+              "access_seconds": 60,
+              "amount_minor_units": 9900,
+              "column_id": "COL-BM",
+              "currency": "CNY",
+              "edition_id": "ED-1",
+              "payment_seconds": 900,
+              "reader_id": "READER-001",
+              "refund_seconds": 604800,
+              "restore_seconds": 86400,
+              "signed_at": "2026-10-01T09:00:00Z",
+              "subscription_id": "SUB-20261001-001"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-subscriptions-reader-item",
+            "status": 200
+          },
+          "id": "http.read-party-subscription-reader",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "subscriptionId": "SUB-20261001-001",
+              "userId": "USER-001"
+            },
+            "queryParameters": {},
+            "uri": "/users/USER-001/subscriptions/SUB-20261001-001",
+            "uriTemplate": "/users/{userId}/subscriptions/{subscriptionId}"
+          },
+          "sourceStepRefs": []
+        }
+      ]
+    },
+    {
+      "actorRoleRef": "role.account-user",
+      "id": "vector.http-journey.read-party-account-account-user",
+      "journeyRef": "http-journey.read-party-account-account-user",
+      "setup": [
+        {
+          "kind": "actor",
+          "provisioning": "unresolved",
+          "reason": "调用者身份、认证凭据与代表权限须由运行环境提供，API 设计不虚构其方案。"
+        },
+        {
+          "kind": "prerequisites",
+          "provisioning": "unresolved",
+          "reason": "仅准备无法通过本向量公开步骤形成的前置事实；装载方式由实现与测试环境决定。"
+        }
+      ],
+      "sourceScenarioRefs": [
+        "scenario.api-prepaid-subscription"
+      ],
+      "steps": [
+        {
+          "capabilityRef": "capability.read-party-account-account-user",
+          "expect": {
+            "body": {
+              "_links": {
+                "self": {
+                  "href": "/users/USER-001/prepaid-accounts/PREPAID-001"
+                }
+              },
+              "agreement_id": "PREPAID-001",
+              "reader_id": "READER-001",
+              "signed_at": "2026-10-01T08:00:00Z"
+            },
+            "headers": {
+              "Cache-Control": "no-store"
+            },
+            "representationRef": "representation.list-accounts-account-user-item",
+            "status": 200
+          },
+          "id": "http.read-party-account-account-user",
+          "request": {
+            "headers": {},
+            "method": "GET",
+            "pathParameters": {
+              "accountId": "PREPAID-001",
+              "userId": "USER-001"
+            },
+            "queryParameters": {},
+            "uri": "/users/USER-001/prepaid-accounts/PREPAID-001",
+            "uriTemplate": "/users/{userId}/prepaid-accounts/{accountId}"
+          },
+          "sourceStepRefs": []
         }
       ]
     }

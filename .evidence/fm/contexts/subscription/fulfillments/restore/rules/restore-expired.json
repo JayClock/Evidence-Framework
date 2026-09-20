@@ -1,0 +1,33 @@
+{
+  "type": "rule",
+  "id": "rule.restore-expired",
+  "kind": "breach",
+  "label": "免费恢复逾期保留追责权利",
+  "description": "当前时间超过免费恢复请求（request.restore）的截止时间，且具备恢复所需退款证明（role.restore-refund）和同版本重新上架记录（evidence.relaunch）的请求尚无恰好一份期限内收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）逾期。",
+  "contextRef": "fulfillment.restore",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    },
+    "request": {
+      "ref": "request.restore"
+    },
+    "refunds": {
+      "ref": "role.restore-refund",
+      "cardinality": "many"
+    },
+    "notices": {
+      "ref": "evidence.relaunch",
+      "cardinality": "many"
+    },
+    "confirmations": {
+      "ref": "confirmation.restore",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrefunds.exists(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.settled && p.amount_minor_units == agreement.amount_minor_units\n&& p.currency == agreement.currency && p.confirmed_at <=\nrequest.started_at) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.edition_id ==\nrequest.edition_id && n.listed && n.relaunched_at <= n.created_at &&\nn.created_at <= request.started_at) && confirmations.filter(c,\nc.request_id == request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.edition_id == request.edition_id && c.charged_minor_units == 0 &&\nc.restored).size() == 1)",
+  "resultType": "bool"
+}

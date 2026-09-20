@@ -1,0 +1,22 @@
+{
+  "type": "rule",
+  "id": "rule.prepaid-expired",
+  "kind": "breach",
+  "label": "本次扣款未在期限内完成",
+  "description": "当前时间超过余额抵扣请求（request.prepaid）的截止时间，且期限内没有恰好一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）逾期。",
+  "contextRef": "fulfillment.prepaid",
+  "bindings": {
+    "request": {
+      "ref": "request.prepaid"
+    },
+    "confirmations": {
+      "ref": "confirmation.prepaid",
+      "cardinality": "many"
+    },
+    "now": {
+      "type": "timestamp"
+    }
+  },
+  "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success && request.balance_before_minor_units\n>= request.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1)",
+  "resultType": "bool"
+}

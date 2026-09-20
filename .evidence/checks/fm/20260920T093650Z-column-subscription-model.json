@@ -1,0 +1,55 @@
+{
+  "runId": "20260920T093650Z-column-subscription-model",
+  "recordedAt": "2026-09-20T09:36:50Z",
+  "modelPath": ".evidence/fm",
+  "modelDigest": "sha256:6a764694d459c932606c50a6c6df90643e64b9f1cf7b0eac4e96b5b8f4871818",
+  "sourceSummary": {
+    "kind": "restored-historical-evidence",
+    "scope": "按用户指令从 Git 历史恢复专栏订阅（content/mobile/prepaid/subscription）上下文，与电话销售绩效协议共处同一 FM Schema v3 模型；来源为发现记录 B01–B09 与历史 FM 分片"
+  },
+  "environment": {
+    "python": "/opt/miniconda3/bin/python3.12 3.12.3",
+    "validator": ".agents/skills/evidence-fm/scripts/check_fm.py",
+    "validatorSha256": "de9e3c9ef6a8f86f703515522cc1b2796f271590d91aec567ac743f329fadc4b"
+  },
+  "execution": {
+    "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+    "command": "/opt/miniconda3/bin/python3.12 .agents/skills/evidence-fm/scripts/check_fm.py $PWD/.evidence/fm",
+    "exitCode": 0
+  },
+  "result": {
+    "valid": true,
+    "modelValidated": true,
+    "simulationPassed": true,
+    "scenarioCount": 20,
+    "executedScenarioCount": 20,
+    "inputChanged": false,
+    "errors": [],
+    "timelineSummary": {
+      "evidenceTypeCount": 19,
+      "instanceCount": 32,
+      "laneCount": 11,
+      "precedesCount": 15,
+      "sha256": "sha256:32e539cda42a77ecd87be5e4e139d8842ba9ecd6ee28ef39aad4b568cac94e2d",
+      "unresolvedOrderCount": 3
+    }
+  },
+  "coverage": {
+    "checked": [
+      "FM Schema v3",
+      "semantic references",
+      "CEL compilation and bindings",
+      "attribute lineage",
+      "validation suite simulation",
+      "timeline consistency"
+    ],
+    "notCovered": [
+      "内容服务、支付机构与账户账本的真实外部接入",
+      "客户档案 Thing 实例级引用一致性",
+      "身份认证、实例归属与 403",
+      "生产数据库方言、隔离级别与并发",
+      "generated 派生产物与下游 API／计划的字节一致性"
+    ]
+  },
+  "rawResult": "not saved; summary retained in this record"
+}

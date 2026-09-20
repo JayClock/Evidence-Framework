@@ -1,0 +1,26 @@
+{
+  "type": "rule",
+  "id": "rule.restore-eligible",
+  "kind": "precondition",
+  "label": "原退款读者申请同专栏恢复",
+  "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）的读者和专栏一致，存在请求前已到账的恢复所需退款证明（role.restore-refund），并存在请求前形成的同版本重新上架记录（evidence.relaunch）时，允许申请免费恢复。",
+  "contextRef": "fulfillment.restore",
+  "bindings": {
+    "agreement": {
+      "ref": "contract.subscription"
+    },
+    "request": {
+      "ref": "request.restore"
+    },
+    "refunds": {
+      "ref": "role.restore-refund",
+      "cardinality": "many"
+    },
+    "notices": {
+      "ref": "evidence.relaunch",
+      "cardinality": "many"
+    }
+  },
+  "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at)",
+  "resultType": "bool"
+}

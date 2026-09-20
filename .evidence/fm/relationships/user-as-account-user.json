@@ -1,0 +1,8 @@
+{
+  "type": "relationship",
+  "id": "relation.user-as-account-user",
+  "kind": "plays_role",
+  "sourceRef": "party.user",
+  "targetRef": "role.account-user",
+  "label": "同一用户在账户上下文中扮演账户使用方"
+}
