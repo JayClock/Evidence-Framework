@@ -43,6 +43,7 @@ Skill 同样分层：`SKILL.md` 只放方法与边界，`references/` 按需读�
 
 ### 压缩：决定“以什么形式给”
 
+- **提炼接口契约**：不给整个模型或代码库，只给接口形态。[API 设计源](../../.evidence/api/api.json)是从 FM 提炼出的接口层，21 个资源、28 个能力、20 个场景及其关系链接都在里面；需要接口时读它就行，不必把约 1.1 MB 的 FM 读进来再自己推导接口。压缩结果仍要能对回来源：[API 规划投影](../plans/smart-domain/api-planning-input.yaml)的 `canonicalApi.sha256` 绑住 `api.json` 的字节，`api.json` 一变摘要就对不上、投影必须重算，压缩不会变成第二份事实源。
 - **运行记录只留摘要**：`.evidence/checks/fm/` 与 `.evidence/checks/api/<批次>/` 保存的是紧凑清单：命令、cwd、退出码、Python 与工具版本、sha256、结果摘要与 `coverage.checked/notCovered`；[一条 FM 检查记录](../../.evidence/checks/fm/20260920T093650Z-column-subscription-model.json)的 `rawResult` 直接写“not saved; summary retained in this record”。API 批次记录同样只留 `result`（`complete`/`valid`/`interfaceCount`/`gapCount`）与 `redesign.basis`/`changes`/`converged`。
 - **命令也用摘要表达**：[测试指南](../engineering/testing.md)为每条质量命令配“实际覆盖 / 不证明什么”两栏，读两行就能判断要不要深挖，不必先读完整套规范。
 - **成功静默、失败完整**：成功只留一行统计，失败保留完整输出，避免失败被摘要成看不出原因的结论。
