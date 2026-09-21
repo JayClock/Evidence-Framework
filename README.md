@@ -336,8 +336,10 @@ npm run build
 - [指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了](<docs/adoption/指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了.md>)
 - [前馈痴迷：Agent 做完就交，从来没人检查](<docs/adoption/前馈痴迷：Agent 做完就交，从来没人检查.md>)
 - [反馈过载：Sensors 太多，Agent 不知道哪个信号重要？](<docs/adoption/反馈过载：Sensors 太多，Agent 不知道哪个信号重要？.md>)
+- [上下文倾倒：信息过多，Agent 反而迷失](<docs/adoption/上下文倾倒：信息过多，Agent 反而迷失.md>)
+- [上下文焦虑：Agent 在长对话中丢失关键信息](<docs/adoption/上下文焦虑：Agent 在长对话中丢失关键信息.md>)
 
-这七篇有面向外部读者的改写版本，发布在数字花园：[Agent 交付的七个坏味道](https://www.jayclock-garden.top/knowledge/outputs/agent-%E4%BA%A4%E4%BB%98%E7%9A%84%E4%B8%83%E4%B8%AA%E5%9D%8F%E5%91%B3%E9%81%93)。
+前七篇有面向外部读者的改写版本，发布在数字花园：[Agent 交付的七个坏味道](https://www.jayclock-garden.top/knowledge/outputs/agent-%E4%BA%A4%E4%BB%98%E7%9A%84%E4%B8%83%E4%B8%AA%E5%9D%8F%E5%91%B3%E9%81%93)。
 
 ## 许可
 
