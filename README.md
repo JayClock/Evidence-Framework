@@ -2,6 +2,18 @@
 
 Evidence 是 Nx 单仓库中的业务建模与交付 Harness，配有 React/TypeScript 前端和 Spring Boot/Java 后端。它把业务来源、实现依据、任务状态与真实检查结果保存在仓库中，使新会话能恢复同一项工作。
 
+## 实践总结
+
+- [需求模糊：Agent 不知道“好”长什么样](<docs/adoption/需求模糊：Agent 不知道“好”长什么样.md>)
+- [隐式约定：规则只存在于人的脑子里](docs/adoption/隐式约定：规则只存在于人的脑子里.md)
+- [信息散落：知识来源不唯一且更新不及时](docs/adoption/信息散落：知识来源不唯一且更新不及时.md)
+- [虚假胜利：Agent 以为自己做完了，其实没有](<docs/adoption/虚假胜利：Agent 以为自己做完了，其实没有.md>)
+- [指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了](<docs/adoption/指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了.md>)
+- [前馈痴迷：Agent 做完就交，从来没人检查](<docs/adoption/前馈痴迷：Agent 做完就交，从来没人检查.md>)
+- [反馈过载：Sensors 太多，Agent 不知道哪个信号重要？](<docs/adoption/反馈过载：Sensors 太多，Agent 不知道哪个信号重要？.md>)
+- [上下文倾倒：信息过多，Agent 反而迷失](<docs/adoption/上下文倾倒：信息过多，Agent 反而迷失.md>)
+- [上下文焦虑：Agent 在长对话中丢失关键信息](<docs/adoption/上下文焦虑：Agent 在长对话中丢失关键信息.md>)
+
 ## 业务背景
 
 仓库同时承载两个相互独立的业务切片：
@@ -324,22 +336,6 @@ npm run build
 ```
 
 结构自洽、文件写入和命令成功不能替代业务批准。失败应带着真实证据回到正确层次，而不是被改写成完成。
-
-## 实践总结
-
-项目实践总结保存在 [docs/adoption/](docs/adoption/)：
-
-- [需求模糊：Agent 不知道“好”长什么样](<docs/adoption/需求模糊：Agent 不知道“好”长什么样.md>)
-- [隐式约定：规则只存在于人的脑子里](docs/adoption/隐式约定：规则只存在于人的脑子里.md)
-- [信息散落：知识来源不唯一且更新不及时](docs/adoption/信息散落：知识来源不唯一且更新不及时.md)
-- [虚假胜利：Agent 以为自己做完了，其实没有](<docs/adoption/虚假胜利：Agent 以为自己做完了，其实没有.md>)
-- [指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了](<docs/adoption/指令文件腐化：AGENTS.md 越来越长，Agent 反而变笨了.md>)
-- [前馈痴迷：Agent 做完就交，从来没人检查](<docs/adoption/前馈痴迷：Agent 做完就交，从来没人检查.md>)
-- [反馈过载：Sensors 太多，Agent 不知道哪个信号重要？](<docs/adoption/反馈过载：Sensors 太多，Agent 不知道哪个信号重要？.md>)
-- [上下文倾倒：信息过多，Agent 反而迷失](<docs/adoption/上下文倾倒：信息过多，Agent 反而迷失.md>)
-- [上下文焦虑：Agent 在长对话中丢失关键信息](<docs/adoption/上下文焦虑：Agent 在长对话中丢失关键信息.md>)
-
-前七篇有面向外部读者的改写版本，发布在数字花园：[Agent 交付的七个坏味道](https://www.jayclock-garden.top/knowledge/outputs/agent-%E4%BA%A4%E4%BB%98%E7%9A%84%E4%B8%83%E4%B8%AA%E5%9D%8F%E5%91%B3%E9%81%93)。
 
 ## 许可
 
