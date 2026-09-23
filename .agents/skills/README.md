@@ -2,7 +2,7 @@
 
 本仓库的 Evidence Skills 统一放在 `.agents/skills/`，使用 `evidence-<职责>` 命名，目录名与 frontmatter `name` 一致。项目行动从 [宪法](../../AGENTS.md)和 [Guides 导航](../../docs/guides/index.md)进入：宪法、项目基线、工程指南、当前任务按需加载。
 
-Skill 保存可移植方法，项目文档保存实际范围与工程决定；不在两者复制业务知识或状态。交付采用外层 PDCA、内层 Guides → Action → Sensors → Steer。Guides 在开始、恢复、纠偏和来源变化时重新核对，不只是会话开头的一段提示词。
+Skill 保存可移植方法，项目文档保存实际范围与工程决定；不在两者复制业务知识或状态。编排入口按意图选择分支，专业方法由对应拥有者唯一维护；引用写明何时读取，每一步以可观察的退出条件收束。交付采用外层 PDCA、内层 Guides → Action → Sensors → Steer。Guides 在开始、恢复、纠偏和来源变化时重新核对，不只是会话开头的一段提示词。
 
 | Skill                                                     | 用途               | 输入与输出                                                                               | 运行依赖                                                       |
 | --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -13,7 +13,7 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 | [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
 | [evidence-api-design](evidence-api-design/SKILL.md)       | 整体 API 设计      | 已确认 FM → HTTP 契约、OpenAPI、超媒体与消费者流程                                       | Python、可定位的 evidence-fm                                   |
 | [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |
-| [evidence-delivery](evidence-delivery/SKILL.md)           | 双层循环交付       | 任务 DAG → 当前任务实施、检查证据与转向                                                  | Python 3.10+、PyYAML、项目工具链                               |
+| [evidence-delivery](evidence-delivery/SKILL.md)           | 单任务交付         | 任务 DAG → 小步实现／复验、故障诊断、Standards / Spec 审查与真实证据                     | Python 3.10+、PyYAML、项目工具链                               |
 
 ## 安装
 
@@ -115,5 +115,7 @@ python3 -m venv "$VENV_DIR"
 ## 测试与评测
 
 各 Skill 的评测与自身方法一起维护：[业务发现](evidence-discovery/evals/README.md)、[正式 FM](evidence-fm/evals/README.md)、[软件需求](evidence-requirements/evals/README.md)、[smart-domain 任务规划](evidence-task-planning/evals/README.md)。FM 同时包含[功能回归](evidence-fm/tests/README.md)与夹具，完整复制后仍可独立运行。
+
+delivery 的实现、诊断与双维度审查用例位于 `evidence-delivery/evals/evals.json`；协议结构回归不证明 Agent 的实际执行质量，评测方法见其 evals/README.md。
 
 这些目录只在开发验证时按需使用，不是普通业务任务的必读材料。自动回归与人工行为评价分开，没有执行的评测不能记为通过。

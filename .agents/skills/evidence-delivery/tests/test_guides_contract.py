@@ -23,6 +23,10 @@ class DeliveryGuidesContractTests(unittest.TestCase):
             self.assertIn(concept, guides)
         self.assertIn("next` 只判断结构候选", entry)
         self.assertIn("实际目录", entry)
+        self.assertIn("verify 失败不执行 next", entry)
+        for reference in ("implementation.md", "diagnosis.md", "review.md"):
+            self.assertIn(f"references/{reference}", entry)
+            self.assertTrue((SKILL / "references" / reference).is_file())
 
     def test_resume_reloads_engineering_sources_and_checks_before_action(self):
         lifecycle = (SKILL / "references/lifecycle.md").read_text(encoding="utf-8")

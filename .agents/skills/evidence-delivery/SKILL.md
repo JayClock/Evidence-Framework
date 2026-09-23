@@ -1,100 +1,69 @@
 ---
 name: evidence-delivery
-description: 驱动 FM 到 smart-domain 机器计划的双层循环：读取 plan.yaml 的已编译任务 DAG，选择就绪任务，按任务模式执行 Guides→Action→Sensors→Steer，记录真实证据，并在代码修复、计划重编译和业务澄清之间转向。用户要求按计划继续实施、查看下一任务、恢复交付进度或检查整个计划时使用；不修改 FM 事实，不自动审批、提交 Git 或隐藏阻塞。
+description: 按 plan.yaml 恢复交付、选择一个就绪任务、执行并记录真实证据；也用于只读检查计划与下一任务。实现采用小步测试循环，故障先复现，交付分别审查规范与需求；缺口转交对应拥有者，不改 FM/API、不自动审批或提交。
 compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 schemaVersion 3.0 plan.yaml。
 ---
 
-# Evidence 双层循环交付
+# Evidence 单任务交付
 
-以仓库中的单一机器计划连接外层 PDCA 和单任务内层操控循环。扩展只负责交互；本 Skill 不建立私有状态、自动审批、Git 提交或后台推进。
+外层 PDCA 管任务，内层 Guides → Action → Sensors → Steer 管当前任务的执行质量。状态只属于 `plan.yaml`，审核页是投影，扩展只负责交互。每次只执行一个获授权且就绪的任务，完成后停止。
 
-## 输入与边界
+## 1. 确认本次入口
 
-先从消费项目指令定位 Guides 导航，按任务加载项目基线与工程指南。本仓库入口为 `docs/guides/index.md`；其他项目使用实际等价来源。前馈方法由 `evidence-task-planning` 的 [任务前馈协议](../evidence-task-planning/references/guides.md)维护；独立安装时定位 planning Skill 的实际目录，不假定固定安装路径。
+读取项目指令、Guides 导航、用户目标和 Git 差异，确定本次是只读查看还是实施。只读请求不写计划、状态或产品文件；保留已有无关改动。
 
-随后读取：
+定位 `docs/plans/smart-domain/plan.yaml` 或项目指定位置，以及可发现的 planning Skill 实际目录。读取其 `references/guides.md`，按项目开工检查加载必要来源；不假定独立安装后的兄弟路径。业务来自 FM、接口来自 API、软件职责来自需求、实现方法来自工程指南。
 
-- `.evidence/fm/` 与可选 `.evidence/api/api.json`：业务和接口事实；
-- `docs/plans/smart-domain/plan.yaml`：切片、计算 DAG、任务 Guides/设计、状态、CHECK、证据与缺口；
-- `docs/plans/smart-domain/review.html`：只读审核投影，可缺失或过期，不能作为状态来源。
+计划缺失、输入变化或切片需要调整时，转交 `evidence-task-planning`。更新计划需要本次授权；只读查看只报告差异。FM/API 缺口交对应拥有者，不为交付通过修改上游。
 
-计划不存在或来源变化时，先用 `evidence-task-planning` 生成或重编译。FM/API 不完整时返回其拥有者；不得为实施通过而改写上游。用户只要求查看、验证或讨论时保持只读。完整转向规则见[双层循环协议](references/lifecycle.md)。
+**退出条件**：授权、计划位置和输入版本可定位；否则停在 Plan 并说明缺口。
 
-## 外层 PDCA
-
-### Plan
-
-1. 从项目宪法和 Guides 路由进入，读取 FM/API、软件范围、相关架构/质量要求、`plan.yaml` 和 Git 差异，确认授权与来源冲突。
-2. 使用 planning 的 inventory/compile 命令重算 `compiled`；源摘要或 `slicing` 改变时更新计划，不信任旧投影。
-3. 运行只读状态检查：
+## 2. 选择一个结构候选
 
 ```bash
-python3 "$SKILL_DIR/scripts/plan_state.py" verify \
-  --plan "$PROJECT_ROOT/docs/plans/smart-domain/plan.yaml"
+python3 "$SKILL_DIR/scripts/plan_state.py" verify --plan "$PLAN_PATH"
+python3 "$SKILL_DIR/scripts/plan_state.py" next --plan "$PLAN_PATH"
 ```
 
-结构失败先修计划；机器通过不表示业务切片合理或业务批准。
+`SKILL_DIR` 是本包实际绝对路径，`PLAN_PATH` 是计划绝对路径。verify 失败不执行 next；`next` 只判断结构候选。没有候选时报告阻塞，不以聊天、旧报告或 `review.html` 猜测进度。
 
-### Do
+选择一个 taskKey，读取它的任务记录、直接前置及所引来源。状态转换、恢复与知识归位读取[生命周期协议](references/lifecycle.md)。
 
-只读计算可执行任务：
-
-```bash
-python3 "$SKILL_DIR/scripts/plan_state.py" next \
-  --plan "$PROJECT_ROOT/docs/plans/smart-domain/plan.yaml"
-```
-
-从结果选择一个候选任务，只加载 `tasks[taskKey]`、其直接前置记录和所引用来源。按 Guides 检查语义就绪；`next` 只判断结构候选。开始真实实施后才把该任务 `status` 改为 `in-progress`。
-
-按任务 `mode` 执行：`implementation` 普通实现与回归；`verify` 定位并复跑已有行为；`design/setup/manual` 按任务说明执行。环境失败如实记录为阻塞，不当作业务结果。
-
-### Check
-
-执行任务记录中每个适用 CHECK 的精确命令，再运行项目质量命令。随后重新运行 `plan_state.py verify`。命令输出、退出码及必要摘要才是执行证据；文件存在、Agent 自评、审核页或旧报告不是当前通过。
-
-### Act
-
-- 当前实现错误：留在同一任务内修复并重跑；
-- 前置、环境或来源缺失：记录稳定 gap，将该任务标为 `blocked`；
-- FM/API 或业务边界变化：停止实施，返回 Plan，更新上游和 slicing 后重编译；
-- 具体验收数据及检查满足：每条 `acceptanceCriteria` 引用本任务 CHECK，并以 `path/operator/expected` 保存可比较预期；满足后先写 `observedEvidence`，再将任务标为 `done`；
-- 交付或停止前按[知识交接协议](references/lifecycle.md#5-知识交接与归位)清点本轮用户统筹、执行发现与决定；内层只记录本任务获授权的内容，跨任务知识交外层按权威来源归位，未保存的交接明示未保存；
-- 更新 `plan.yaml` 后重新生成 `review.html`；当前任务结束后停止。
-
-## 单任务内层操控循环
+## 3. 执行当前任务
 
 ### Guides
 
-每次开始、恢复、纠偏或来源变化后，核对：
+按项目开工检查和 planning 的前馈协议核对授权、来源与审核、设计、环境和 CHECK。读取 `procedureRefs` 指向的实际做法，确认直接前置为 done 且证据仍有效；FM/API 摘要不覆盖工程指南、代码和环境变化。
 
-1. 当前 taskKey、mode、交付结果、非目标、授权及文件范围。
-2. 软件验收、FM/API/规则/场景及审核来源；架构、模块、质量属性与术语。
-3. 直接前置均为 done，证据仍对应当前源、代码和环境；FM/API 摘要不覆盖工程指南，规范/howto/架构变化需评估重验。
-4. 行为与数据拥有者、公开契约、事务入口、必要外部边界及依赖用法。
-5. `procedureRefs` 指向真实规范/howto/范例，命令、cwd 和依赖可用。
-6. 每条 `acceptanceCriteria` 引用本任务 CHECK，包含稳定路径、受限操作符、保留类型的具体 `expected`，且 CHECK 覆盖失败不变性与停止路径。
-
-必要项缺失不进入 Action，只阻塞受影响任务，不新增状态文件。结构自洽、文件存在和范例曾通过不是语义就绪或批准。
+**退出条件**：每项必要依据和验收检查都能定位，已有决定适用于本次任务。未满足时不进入 Action，按授权关联局部 gap，不新增状态文件。真实实施开始后才设置 in-progress。
 
 ### Action
 
-只交付当前任务拥有的工作单元。跨模块通过计划中的公开契约协作，不重做共享基础，不扩大接口、数据库或远程协议范围。
+按任务 mode 加载一个执行分支：
+
+| mode / 情况             | 读取与动作                                                | 退出条件                           |
+| ----------------------- | --------------------------------------------------------- | ---------------------------------- |
+| implementation          | [小步实现](references/implementation.md)                  | 当前行为及适用反例有测试证据       |
+| verify                  | 读取任务 CHECK，定位已有实现并原样复跑                    | 实际结果及证据限制已记录           |
+| design / setup / manual | 按任务 steps 与 CHECK 执行                                | 任务声明的可观察产物及人工结果齐备 |
+| 故障、回归或性能异常    | 先读[故障诊断](references/diagnosis.md)，再决定修复或转向 | 原始症状已复验，或明确阻塞         |
+
+只交付当前工作单元。跨模块消费公开契约，复用已有基础；任务外发现交接，不顺手实施。
 
 ### Sensors
 
-优先使用编译、测试、静态分析、HTTP/SQL/事务和架构检查。再由 Agent 对照 FM 判断实现是否忠于规则、切片是否内聚、断言是否证明预期。
+运行本任务全部适用 CHECK 和项目质量命令。保留命令、cwd、退出码、输出定位及缓存/环境限制；再按[双维度审查](references/review.md)分别给出 Standards 与 Spec 结论。测试成功不替代语义审查，审查意见不替代测试。
+
+**退出条件**：每条 acceptanceCriteria 都有本轮 CHECK 结果支持，两个审查维度各有结论，未验证项明确可见。
 
 ### Steer
 
-代码问题在当前任务修复；任务设计问题修订同一 `tasks[taskKey]`；切片或依赖问题回到外层 Plan；业务来源问题交回 FM 澄清。调整后重跑受影响检查，不削弱场景或删除失败测试。
+按生命周期协议的转向矩阵处理：实现错误留在本任务修复，设计问题修订任务，单元/依赖变化返回 Plan，业务未知交来源拥有者，环境不可用只阻塞受影响任务。纠偏后重新装配 Guides 并复验。
 
-## 状态纪律
+## 4. 记录并停止
 
-- `plan.yaml` 是唯一计划记录；`review.html` 可删除重建，不能反向覆盖计划。
-- `compiled` 是计算投影；只由当前输入重新编译得到。
-- `tasks[taskKey].status` 是状态唯一位置，依赖只来自 `compiled.tasks[*].dependsOn`。
-- `tasks[taskKey].observedEvidence` 只记录真实观察；规划时为空。
-- 失败和未知保留在 `gaps`，只阻塞受影响任务。
-- `plan_state.py` 只读；状态写入必须是本轮获授权工作的直接结果。
+按[知识交接协议](references/lifecycle.md#5-知识交接与归位)清点新增用户反馈、执行发现与决定，按实际授权归位；未保存内容明确标为未保存。
 
-完成本轮任务后报告实际改动、命令、结果、剩余缺口、知识交接的保存/未保存情况和下一批可执行任务，然后停止。
+只有 CHECK、项目质量检查与两个审查维度均满足要求，才先写 `tasks[taskKey].observedEvidence`，再设置同一任务的 `status: done`。结构通过不表示业务批准。状态唯一位置是 `tasks[taskKey].status`，依赖只读 `compiled.tasks[*].dependsOn`。
+
+写入计划后运行 verify，并通过 planning 的 render_plan.py 重建 `review.html`；失败如实报告，不手改投影或伪造证据。报告改动、实际检查、Standards / Spec、局部缺口、知识保存结果和下一候选，然后停止，不自动执行下一任务、审批或操作 Git 历史。

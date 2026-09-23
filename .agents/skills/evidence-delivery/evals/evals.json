@@ -18,7 +18,7 @@
     {
       "id": 1,
       "name": "resume-first-runnable-task",
-      "prompt": "仓库已有完整的 smart-domain index.md 和三个任务文件。第一个任务 done 且有真实证据，第二个 planned 并依赖第一个，第三个也 planned 但依赖第二个。请恢复进度并继续当前可执行任务，不自动进入后续任务。",
+      "prompt": "仓库已有完整的 smart-domain plan.yaml，tasks 中有三个任务。第一个任务 done 且有真实证据，第二个 planned 并依赖第一个，第三个也 planned 但依赖第二个。请恢复进度并继续当前可执行任务，不自动进入后续任务。",
       "expected_output": "先重编译或核对当前来源，再运行计划 verify/next；只选择第二个任务，加载其直接依赖和来源，按 mode 执行内层循环。通过后记录真实 observedEvidence 和 done 状态并停止，不自动执行第三个任务。",
       "files": []
     },
@@ -32,8 +32,36 @@
     {
       "id": 3,
       "name": "detect-invalid-plan-state",
-      "prompt": "计划里一个 API 任务已经标记 done，但前置领域任务仍是 planned，而且任务文件 observedEvidence 为空。请告诉我下一项并继续。",
+      "prompt": "计划里一个 API 任务已经标记 done，但前置领域任务仍是 planned，而且该 tasks 记录的 observedEvidence 为空。请告诉我下一项并继续。",
       "expected_output": "运行只读计划检查并报告依赖顺序及缺失证据错误；不返回可执行任务、不信任 done 状态、不修改产品代码。修复计划状态前停留在外层 Plan/Check。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "symptom-before-fix",
+      "prompt": "隔离项目的当前任务已就绪。用户报告同一付款证明重复到达时扣款两次，现有单次调用测试全部通过。请修复，不改业务规则。若运行环境无法启动，请说明限制。",
+      "expected_output": "先读取目标症状与依据，构造重复调用的复现并实际运行，区分启动失败和业务失败；保留真实调用链，不用单次调用测试代替。缩小案例，提出可证伪假设并单变量验证；在正确边界补回归，修复后复验原始重复调用及相关 CHECK。无法建立失败信号时停止猜修并报告材料/环境缺口。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "independent-expectation-and-existing-green",
+      "prompt": "当前 implementation 任务的公开测试边界已经由计划确定。已有案例预期是 120，开发者建议测试里调用被测函数计算 expected；另一条新增测试未改实现就已经通过。请继续当前任务，不再逐条找我批准测试边界。",
+      "expected_output": "复用已授权测试边界，以独立案例 120 作为预期，拒绝用被测函数自证。对直接通过的测试核实覆盖并记为已有行为验证，不故意破坏实现制造红灯；对尚未实现行为逐项测试、最小实现和局部整理，完成全部 CHECK 后再审查。",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "standards-and-spec-independent",
+      "prompt": "当前任务代码符合所有工程规范、测试也通过，但需求只允许查询，工作树新增了一个未授权的自动删除操作。该操作在未跟踪文件里，HEAD 没有变化。请做交付审查，不修改文件。",
+      "expected_output": "覆盖未提交和未跟踪文件，区分本轮与用户已有差异；Standards 与 Spec 分别列结论。Spec 引用查询范围和新增删除行为，报告范围扩张，不能因工程规范或测试通过而给任务 done。只读请求不写计划、不删除文件、不新增审批字段。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "flaky-repro-and-evidence-limits",
+      "prompt": "当前任务修复一个并发重复写入，原始场景在 100 次里失败 8 次。修复后单次通过。请直接宣布问题解决，并把所有临时文件删掉。",
+      "expected_output": "沿固定输入与并发条件复验并记录样本量及残余不确定性，单次通过不证明修复。仅清理本轮可确认的临时探针，不删除用户材料或必要失败日志；尚缺证据不提升状态，继续当前任务的诊断与检查或明确局部阻塞。",
       "files": []
     }
   ]

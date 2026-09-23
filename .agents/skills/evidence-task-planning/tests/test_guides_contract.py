@@ -56,6 +56,21 @@ class GuidesContractTests(unittest.TestCase):
         self.assertNotIn("procedureId", template)
         self.assertNotIn("procedureStatus", template)
 
+    def test_slices_and_steps_have_observable_delivery_and_independent_checks(self):
+        entry = self.document("SKILL.md")
+        protocol = self.document("references/guides.md")
+        template = self.document("assets/plan-template.yaml")
+        for phrase in ("最早可验证", "新会话", "测试边界", "最小共享契约"):
+            self.assertIn(phrase, entry)
+        for phrase in ("独立业务依据", "故障先复现", "Standards / Spec", "普通实现与回归"):
+            self.assertIn(phrase, protocol)
+        self.assertIn("单行为测试", template)
+        self.assertIn("规划时保持为空", template)
+        self.assertIn("Standards / Spec", template)
+        self.assertNotIn("## 固定范围", entry)
+        for reference in ("design-rules.md", "backend-layout.md", "upstream.md"):
+            self.assertIn(f"references/{reference}", entry)
+
     def test_review_is_projection_not_state(self):
         entry = self.document("SKILL.md")
         self.assertIn("review.html", entry)

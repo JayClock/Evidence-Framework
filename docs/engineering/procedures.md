@@ -92,7 +92,7 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 
 1. 先按上一节记录本切片的测试策略实例化；再选有来源的 API capability 主交付与验收场景，指出确认状态、非目标和相关缺口；提取 inventory，不修改上游。切片引用的授权、非目标与验收先落在项目需求文档的真实 US/AC 上，不在索引另立一份范围事实；实现映射与缺口的文档回写安排在验收之后，不在前置阶段追认。
 2. 以 API capability 建立主任务，再确定拥有者、操作、最小共享契约和实现子任务；按变化选择工序。在任务 Guides 写清触发条件、采用的工序章节、测试边界及适用限制；未触发的工序不建空任务。
-3. 按测试边界合并与拆分：同一操作的相关场景合并；拥有者、可独立交付结果、测试环境或失败定位边界不同则考虑拆开。不能合并到只剩“实现整个上下文”，也不拆成“写代码”“补测试”两个无法独立证明行为的任务。
+3. 按测试边界合并与拆分：同一操作的相关场景合并；拥有者、可独立交付结果、测试环境或失败定位边界不同则考虑拆开。业务切片指出最早能验证完整结果的交付点，每项机器任务控制在一个新会话可读取必要来源并完成验证的粒度；不是每项任务都贯穿 UI/API/SQL。不能合并到只剩“实现整个上下文”，也不拆成“写代码”“补测试”两个无法独立证明行为的任务。
 4. 工作单元唯一拥有；其他任务通过依赖消费。SQL/装配/前端等无直接源单元的工作登记有实际 inventory 源引用和理由的 `design.*`；不要制造同义设计 ID 绕过去重。
 5. 依赖来自消费的真实产物，不来自工序编号、技术层顺序或 FM 引用图。相同文件的并行编辑需协调文件边界；不能为解决调度冲突虚构业务依赖。
 6. 按现有 schema 写 groups、详情步骤和 CHECK，再 compile。结构通过后仍人工核对工序是否适用、场景/能力是否有证据去向；API capability 不能通过不选工序或 disposition 绕过交付清单。
@@ -124,6 +124,12 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 | 前端交互   | [App 测试](../../apps/frontend/src/app/app.spec.tsx)：当前导航页                                                                                                                                                      | 自动生成完整用户管理或订阅表单                      |
 
 例如对“重命名保持身份且不改变原快照”的复验任务：`files.reuse` 定位 UserTests；`steps` 先核对切片契约和实现，再运行其中 `renameKeepsStableIdentityWithoutMutatingLoadedSnapshot`；CHECK 明确真实 User/Description、固定新旧名称、身份不变和原快照不变的预期。使用领域测试入口并指定该测试；`acceptanceCriteria` 引用该 CHECK，并分别以身份路径等于原 ID、原快照名称等于旧值的有类型断言表达验收数据；`observedEvidence` 在执行前为空。它不证明 HTTP 更新已写入数据库，后者需要持久化和装配工序各自提供证据。人通过 `review.html` 审核这些字段，修改仍回到 `plan.yaml`。
+
+## 任务内执行与审查
+
+implementation 在已确定测试边界内按[小步实现](../../.agents/skills/evidence-delivery/references/implementation.md)执行，不重复询问已获授权的局部设计。故障或性能异常先按[诊断协议](../../.agents/skills/evidence-delivery/references/diagnosis.md)建立能捕捉原始症状的信号；环境失败不当作业务测试失败。具体步骤写入当前任务 steps，预期来自独立业务依据。
+
+完成本任务 CHECK 和项目质量检查后，按[双维度审查](../../.agents/skills/evidence-delivery/references/review.md)分别报告 Standards 与 Spec。规范符合性与需求忠实性不能互相抵消；结论与实际结果归入现有 observedEvidence，不新增批准或执行状态。
 
 ## 工序维护的检查与退出
 

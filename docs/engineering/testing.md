@@ -31,10 +31,10 @@ Skills 回归要求 Python 3.10+ 与各自 `requirements.txt`；机器上的 `py
 | app        | `./gradlew :backend:test`                                                                                | 真实 HTTP + SQL、配置、profile 隔离及架构检查                                  |
 | frontend   | `npx nx test @evidence-poc/frontend`                                                                     | Vitest/jsdom/Testing Library；真实浏览器另行检查                               |
 | planning   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-task-planning/tests -v` | 确定性身份、切片、依赖、覆盖、工序分支/汇合与前馈模板契约                      |
-| delivery   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查及执行/恢复前馈协议                                                |
+| delivery   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查、执行/恢复前馈、实现/诊断/双维度审查的文档契约                    |
 | Guides     | `npm run guides:test`                                                                                    | 本地链接检查器的正常、缺失、模板、扫描范围、只读回归与项目工序路由/说明结构    |
 
-工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
+工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。delivery 的协议回归检查分支可达、退出条件和证据边界，evals 覆盖症状复现、独立预期、未提交差异与双维度结论；未实际运行的 Agent 行为评测保持未执行，不以文档测试代替。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
 
 ## CHECK 的最低证据
 

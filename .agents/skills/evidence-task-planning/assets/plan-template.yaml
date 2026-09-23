@@ -82,6 +82,9 @@ tasks: {}
 #     modify: []
 #     reuse: []
 #   steps: []
+#   # implementation：按单行为测试 → 最小实现 → 局部整理循环；
+#   # 用户明确选择普通实现与回归时记录选择，不伪造测试先行。
+#   # 故障先复现；收束时执行全部 CHECK、项目质量检查和 Standards / Spec 审查。
 #   checks: []
 #   - id: CHECK-<全计划唯一标识>
 #     purpose: <规则或风险及判断目的>
@@ -89,14 +92,14 @@ tasks: {}
 #     subject: <真实被测行为>
 #     dependencies: <真实依赖或替身及限制>
 #     inputs: <固定事实、身份、业务时间及反例>
-#     expected: <结果与失败不变性>
+#     expected: <来自独立业务依据的具体结果与失败不变性>
 #     testFiles: []
 #     cwd: <项目根相对目录>
 #     command: null
 #     procedure: null
 #     preparationTaskRefs: []
 #     gapRefs: []
-#     evidenceRequired: <执行时保存的结果>
+#     evidenceRequired: <命令、cwd、退出码、输出定位、缓存/环境限制与实际结果>
 #   acceptanceCriteria: []
 #   - id: AC-<全计划唯一标识>
 #     checkRefs: [CHECK-<本任务 CHECK ID>]
@@ -107,6 +110,7 @@ tasks: {}
 #         # matches/count-equals。
 #         expected: <保留字符串、数字、布尔、null、数组或对象类型的具体期望值>
 #   observedEvidence: []
+#   # 实施后记录 CHECK 与 Standards / Spec 各自结论及未验证项；规划时保持为空。
 gaps: []
 # - id: GAP-<稳定标识>
 #   sourceRefs: []

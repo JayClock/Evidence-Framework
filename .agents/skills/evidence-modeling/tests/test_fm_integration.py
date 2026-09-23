@@ -96,7 +96,7 @@ class FMIntegrationTests(unittest.TestCase):
             for term in retired:
                 self.assertNotIn(term, text, relative)
 
-    def test_composition_exposes_fulfillment_analysis_before_schema_mapping(self):
+    def test_composition_routes_analysis_and_keeps_method_ownership(self):
         entry = (REPOSITORY / ".agents/skills/evidence-modeling/SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -113,22 +113,24 @@ class FMIntegrationTests(unittest.TestCase):
             "业务逻辑",
             "领域逻辑",
             "工具／胶水",
-            "识别业务变化",
-            "解析当前词汇条目的定义拥有者及来源",
+            "business-analysis.md",
+            "domain-language.md",
+            "先业务分析，再按当前 Schema 映射与校验",
+            "定义拥有者",
             "将条目替换为 FM 引用",
             "目录、命名与结构以当前 FM Schema",
-            "简化分析不能覆盖现行约束",
         ):
             self.assertIn(phrase, entry)
         for phrase in (
-            "找主要履约",
-            "找未履约后果",
-            "递归追踪责任",
-            "合同前渠道",
-            "简化视图必须附来源",
-            "Evidence Role",
+            "文件归属", "恢复一个分支", "不是原子事务", "modelDigest",
+            "只校验请求不写任何项目文件", "不自动解除访谈停止状态",
         ):
-            self.assertIn(phrase, workflow)
+            self.assertIn(phrase, workflow + entry)
+        method = (REPOSITORY / ".agents/skills/evidence-fm/references/business-analysis.md").read_text()
+        for phrase in ("合同与履约", "逐项、递归核对违约责任", "渠道协商", "Evidence Role"):
+            self.assertIn(phrase, method)
+        self.assertNotIn("## 分析路线", workflow)
+        self.assertNotIn("## 组合流程", entry)
         self.assertTrue({9, 10, 11, 12}.issubset({case["id"] for case in evals}))
 
 
