@@ -15,7 +15,7 @@
 
 ## 流程与状态
 
-- 显式建模从 `/evidence-model` 进入，交由 `evidence-modeling`。访谈默认边澄清边沉淀领域语言：先保存原话与来源，再按 FM 方法当轮维护 `.evidence/glossary.json`：未建模术语保存定义，已建模概念只引用 FM，不重复维护名称和含义；不扩大到模型 JSON、规则、场景或 API 编辑，明确的只读／仅记录要求优先。问答工具每次只问一个业务问题，记录与术语任一保存失败就停止，分别交接保存结果。
+- 显式建模从 `/evidence-model` 进入，交由 `evidence-modeling`。访谈沿经营目标与材料、合约权责、凭证追溯、单据推演、参与者与角色扮演、变化点与边界开展；每轮展示有来源的可读业务视图，领域与工具走对应分支。先保存原话与来源，再按 FM 方法当轮维护 `.evidence/glossary.json`：未建模术语保存定义，已建模概念只引用 FM，不重复维护名称和含义；不扩大到模型 JSON、规则、场景或 API 编辑，明确的只读／仅记录要求优先。问答工具每次只问一个业务问题，记录与术语任一保存失败就停止，分别交接保存结果。
 - 扩展只负责交互；业务记录保存在 `.evidence/`，不建立隐藏状态。
 - 需求收敛使用 `evidence-requirements`；实施规划使用 `evidence-task-planning`；执行使用 `evidence-delivery`。
 - 外层 PDCA 管任务，内层 Guides → Action → Sensors → Steer 管单次交付。`plan.yaml` 是任务计划和状态的唯一记录，`tasks[taskKey].status` 是状态唯一位置，`observedEvidence` 只记录真实结果；`review.html` 只是可重建审核投影。

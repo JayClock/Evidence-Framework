@@ -8,7 +8,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 负责业务建模知识、统一领域语言与模型产物，不维护访谈机制。访谈任务按本包方法当轮沉淀术语；本包也可独立消费充分的外部说明、已有 JSON 或访谈记录，材料不足则输出具体缺口，不强制安装其他 Skill。
 
-访谈中的术语澄清和词汇表更新读取 [领域语言沉淀](references/domain-language.md)，按该分支完成并返回，不执行模型 JSON 生成步骤。仅需其他专业判断时，读取 [业务判断准则](references/business-analysis.md)、[来源追溯](references/provenance.md) 或 [场景校验](references/scenario-validation.md) 的相关分支后返回分析。`evidence-discovery` 复用这些方法，不复制术语或建模知识。
+业务访谈先按 [业务判断准则](references/business-analysis.md) 沿经营目标与材料、合约权责、凭证追溯、单据推演、参与者与角色扮演、变化点与边界分析，再按 [来源追溯](references/provenance.md) 和 [场景校验](references/scenario-validation.md) 的适用分支检验依据。术语随业务视图按 [领域语言沉淀](references/domain-language.md) 当轮维护；独立术语任务只读取术语方法。上述分析不执行模型 JSON 生成步骤。`evidence-discovery` 复用这些方法，不复制术语或建模知识。
 
 ## 执行边界与输入
 
@@ -40,7 +40,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 采用唯一 FM v3；纯领域／合同前仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
 - 正式类型源是 `model.json` 及各类 JSON 分片；`.evidence/glossary.json` 是词汇入口：standalone 维护未建模术语，model 只引用已建模对象／属性，不复制名称和含义。Entity／Relationship 的 `label/notes`、Rule 的 `label/description`、属性的 `label/meaning` 是各自定义的唯一来源。模型落实术语时保留 term ID，将原条目替换为引用并移除独立定义；删除或改名后核对悬空引用。说明写 README、overview，验证场景写 validation。发现记录保存来源、更正和未决理解，不维护同步副本。具体要求见领域语言与格式方法。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
-- 先识别 Context、双方 Role 与责任边界；经办人、岗位和部门不自动成为新的业务 Role，有明确主体依据时保留 Participant，有明确扮演依据才连接 `plays_role`，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Evidence Role 和 Rule 通过 `contextRef` 归属它；Confirmation 保留唯一形成 Context，并可由同一合同下一个或多个 Request 通过 `precedes` 关联。
+- 先识别 Context、双方 Role 与责任边界；按业务分析方法沿凭证主动寻找 Party，核对跨上下文同一性和代表依据，再建立或复用 Participant 与 `plays_role`。经办人、岗位和部门不自动成为新的业务 Role，未知玩家保留缺口，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Evidence Role 和 Rule 通过 `contextRef` 归属它；Confirmation 保留唯一形成 Context，并可由同一合同下一个或多个 Request 通过 `precedes` 关联。
 - 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立合同前／领域不补造合同。
 - 区分具体凭证与 Evidence Role：后者是 `category: role / kind: evidence` 的证明插槽，没有责任人、自己的凭证时间或可签发实例，不设置 `responsibleRoleRef`／`roleRefs`。消费方以 `uses_role` 使用角色，外部具体时刻凭证以 `plays_role` 扮演；玩家保留其所属上下文的责任归属，不强加消费合同的双方角色。规则可绑定角色，场景必须提供显式玩家的真实实例；不得复制成消费合同内的新单据。
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。

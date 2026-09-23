@@ -2,7 +2,7 @@
   "schemaVersion": "1.0",
   "handoff": {
     "businessPosition": "<合同履约／渠道协商／领域对象 → 上下文 → 当前履约／协商／对象；未定位则明示>",
-    "currentGoal": "<当前焦点：本轮讨论内容>",
+    "currentGoal": "<当前经营判断或领域目标，以及分析主线所处位置；不是待填字段清单>",
     "digestedSources": ["<已消化来源：材料版本／定位及最新回答标识>"],
     "currentQuestion": "<当前实际问题：原问题 ID、gapKey、原文、定位及待答／已解决状态；没有则明示>",
     "deferredQuestions": ["<暂缓问题：沿用原 ID 与 gapKey；没有则明示>"],
@@ -23,11 +23,28 @@
     ]
   },
   "businessSlice": {
+    "operatingBasis": "<收入、支出或目标与实际的经营依据；纯领域／工具说明其目标，不套经营指标>",
+    "agreementBasis": "<适用合约／专家说明及版本引用；缺材料时的获取结果，或从真实凭证逆推的待核实约定；设计建议与现行事实分开>",
+    "businessView": "<约定与双方 → 主张及依据 → 完成证明 → 后续责任；本轮变化、来源与未知；领域分支改用对象和规则视图>",
+    "keyDataTrace": "<关键值、版本和业务时间如何从结果追到原始依据；引用原对象与规则，不复制正文>",
+    "walkthroughs": [
+      "<正常／争议案例的来源、真实或合成、当时可见凭证、实际推演结果及暴露的缺口；未执行明确说明，不冒充机器校验>"
+    ],
+    "variationAndBoundary": "<有来源的不同渠道／证明／领域能力：哪些责任不变、哪些依据变化；支撑部分本次只消费什么，不展开什么及理由>",
     "context": "<上下文类型与身份：pre_contract／contract／domain；依据>",
     "evidenceStructure": "<凭证责任／协商／对象结构：已知、部分明确或待明确>",
     "requestEvidence": "<请求凭证：凭证、发起方、接收方、要求、开始时间、截止时间>",
     "confirmationEvidence": "<确认凭证：凭证、提供方、证明内容、确认时间；不默认审批人>",
-    "participants": "<参与者与代表关系：Role、Party／Player、Representative、Evidence provider 分开>",
+    "participants": [
+      {
+        "contextAndRole": "<上下文、Party Role 及承担的权责；已有正式对象只引用>",
+        "party": "<实际个人／组织或有来源的候选；未知明示，不制造主体>",
+        "identityBasis": "<跨上下文是否同一主体、稳定业务身份及来源；同名不等于同一，不同角色名不等于不同主体>",
+        "representativeBasis": "<谁代表谁办理本事项及依据；经办人不等于责任主体，不扩展全部操作权限>",
+        "sourceRefs": ["<支持主体及扮演关系的材料／回答定位>"],
+        "unresolved": "<尚不能确定的主体、同一性或代表关系及影响；只阻塞依赖它的判断>"
+      }
+    ],
     "subject": "<标的物：Thing 及其与当前切片的关系>",
     "exceptionChain": "<异常前序与触发：有来源的直接链；无则明示>",
     "coverage": [
