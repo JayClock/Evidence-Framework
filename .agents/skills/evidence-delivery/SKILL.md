@@ -58,6 +58,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 - 前置、环境或来源缺失：记录稳定 gap，将该任务标为 `blocked`；
 - FM/API 或业务边界变化：停止实施，返回 Plan，更新上游和 slicing 后重编译；
 - 具体验收数据及检查满足：每条 `acceptanceCriteria` 引用本任务 CHECK，并以 `path/operator/expected` 保存可比较预期；满足后先写 `observedEvidence`，再将任务标为 `done`；
+- 交付或停止前按[知识交接协议](references/lifecycle.md#5-知识交接与归位)清点本轮用户统筹、执行发现与决定；内层只记录本任务获授权的内容，跨任务知识交外层按权威来源归位，未保存的交接明示未保存；
 - 更新 `plan.yaml` 后重新生成 `review.html`；当前任务结束后停止。
 
 ## 单任务内层操控循环
@@ -96,4 +97,4 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next \
 - 失败和未知保留在 `gaps`，只阻塞受影响任务。
 - `plan_state.py` 只读；状态写入必须是本轮获授权工作的直接结果。
 
-完成本轮任务后报告实际改动、命令、结果、剩余缺口和下一批可执行任务，然后停止。
+完成本轮任务后报告实际改动、命令、结果、剩余缺口、知识交接的保存/未保存情况和下一批可执行任务，然后停止。

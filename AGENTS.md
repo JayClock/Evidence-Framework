@@ -19,7 +19,7 @@
 - 扩展只负责交互；业务记录保存在 `.evidence/`，不建立隐藏状态。
 - 需求收敛使用 `evidence-requirements`；实施规划使用 `evidence-task-planning`；执行使用 `evidence-delivery`。
 - 外层 PDCA 管任务，内层 Guides → Action → Sensors → Steer 管单次交付。`plan.yaml` 是任务计划和状态的唯一记录，`tasks[taskKey].status` 是状态唯一位置，`observedEvidence` 只记录真实结果；`review.html` 只是可重建审核投影。
-- 每次只执行一个获授权且就绪的任务；完成后停止。缺口只阻塞受影响任务，不通过改上游、删测试或扩范围制造通过。
+- 每次只执行一个获授权且就绪的任务；完成后停止。交付或停止前清点本轮新增的用户反馈、执行发现与决定，按授权归位或明确交接未保存，不把聊天当作持久状态。缺口只阻塞受影响任务，不通过改上游、删测试或扩范围制造通过。
 
 ## 验证底线
 
