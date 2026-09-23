@@ -23,6 +23,6 @@
       "meaning": "管理者与电话销售就本份绩效协议达成一致的业务时刻"
     }
   ],
-  "notes": "绩效协议表达内部权责约定；目标设定的磋商过程、变更方式和未达标后果尚未展开。",
+  "notes": "绩效管理者与电话销售就业务周期内客户联系目标形成的内部权责约定 contract.sales-performance。绩效协议表达内部权责约定；目标设定的磋商过程、变更方式和未达标后果尚未展开。",
   "roleRefs": ["role.performance-manager", "role.tele-sales"]
 }

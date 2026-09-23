@@ -13,7 +13,7 @@ Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成�
 
 `/evidence-model` 不带参数时选择“访谈并沉淀领域语言／生成或修改模型／只校验模型／返回”。
 
-- **访谈并沉淀领域语言**：保存原话和来源，含义明确的术语当轮更新到唯一 JSON 词汇表 `.evidence/glossary.json`。本模式只授权发现记录与词汇表，不授权修改模型 JSON、关系、规则、验证场景、API 或实现。只聊不落盘、仅保存资料或只记录冲突等更窄要求优先。
+- **访谈并沉淀领域语言**：保存原话和来源，未建模概念当轮写入 `.evidence/glossary.json` 的 standalone 条目；已建模概念只建立 model 引用，名称和含义从 FM 读取。本模式只授权发现记录与词汇表，不授权修改模型 JSON、关系、规则、验证场景、API 或实现。只聊不落盘、仅保存资料或只记录冲突等更窄要求优先。
 - **生成或修改**：用户请求即授权直接编辑本次范围内的 FM，随后校验并展示差异。
 - **只校验**：只报告结果，不写词汇表、模型、场景、发现记录或报告文件。
 
@@ -59,11 +59,11 @@ Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成�
                         停止
 ```
 
-访谈机制归 `evidence-discovery`，术语判断与写入方法归 `evidence-fm` 的[领域语言沉淀](../.agents/skills/evidence-fm/references/domain-language.md)，组合入口在每轮协作。先对照已有术语澄清歧义，用标为假设的具体案例检验概念边界。未决解释保留在发现记录，已明确的定义按独立 Schema 只维护在 JSON 词汇表，不维护 Markdown 词典或 CONTEXT.md，也不等全部访谈结束再写。
+访谈机制归 `evidence-discovery`，术语判断与写入方法归 `evidence-fm` 的[领域语言沉淀](../.agents/skills/evidence-fm/references/domain-language.md)，组合入口在每轮协作。先对照已有术语澄清歧义，用标为假设的具体案例检验概念边界。未决解释保留在发现记录，词汇入口按独立 Schema 区分 standalone 与 model：前者维护未建模定义，后者只引用 FM 对象或属性，不维护 Markdown 词典或 CONTEXT.md，也不等全部访谈结束再写。
 
-原话先保存，再更新术语；两处写入不是原子事务。任一保存失败就停止推进，交接各自的保存结果；恢复时核对实际内容再补齐。新术语与已有 JSON 或代码冲突时登记影响，不静默改写模型或让实现裁决业务。仅更新词汇表不需要 Python 或 model.json，不声称整个 FM 已校验。
+原话先保存，再更新术语；两处写入不是原子事务。任一保存失败就停止推进，交接各自的保存结果；恢复时核对实际内容再补齐。新术语与已有 JSON 或代码冲突时登记影响，不静默改写模型或让实现裁决业务。纯 standalone 沉淀不需要 Python 或 model.json；model 条目必须有可定位的 FM 目标。已建模概念的更正没有模型编辑授权时仅记录影响，不能在词汇表另存定义，不声称整个 FM 已校验。
 
-编辑前读取当前文件和已有差异，保留用户的无关修改。修改即落盘，不保证 `fm/` 在编辑过程中始终有效。校验失败就明确“当前模型未通过”，报告已经修改的文件与错误，不自动回滚或继续下游。
+模型落实独立术语后，保留 term ID，将词汇条目替换为引用并移除独立名称与含义。编辑前读取当前文件和已有差异，保留用户的无关修改。修改即落盘，不保证 `fm/` 在编辑过程中始终有效。校验失败就明确“当前模型未通过”，报告已经修改的文件与错误，不自动回滚或继续下游。
 
 Git 用于查看差异和按用户要求恢复版本，不自动暂存、提交或回滚；未跟踪的新文件需要单独展示，不能只展示 `git diff`。
 
@@ -84,6 +84,7 @@ Fulfillment 只是责任边界 Context 与时间线泳道，不作为 Evidence �
 
 ```bash
 MODEL_DIR="$PROJECT_ROOT/.evidence/fm"
+"$PYTHON" "$SKILL_DIR/scripts/check_glossary.py" "$PROJECT_ROOT/.evidence/glossary.json" --fm "$MODEL_DIR"
 "$PYTHON" "$SKILL_DIR/scripts/check_fm.py" "$MODEL_DIR"
 ```
 

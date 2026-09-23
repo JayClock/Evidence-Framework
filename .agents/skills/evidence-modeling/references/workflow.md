@@ -5,8 +5,8 @@
 默认路径均相对项目根，按需创建；沿用已有文件与用户显式指定路径，不自动迁移：
 
 - `.evidence/discovery.json`：来源、回答、工作理解、简化业务视图、问题、暂缓／停止状态与交接；需拆分时用 `.evidence/questions.json`。
-- `.evidence/glossary.json`：唯一领域词汇表，使用独立 Schema 的严格 JSON，位于 FM 类型根之外；访谈中当轮沉淀，不要求先有 model.json，不维护 Markdown 词典。
-- `.evidence/fm/`：源 JSON、说明、validation 与 generated；JSON 编辑消费当前词汇表，不覆盖其已澄清含义。
+- `.evidence/glossary.json`：唯一领域词汇表，使用独立 Schema 的严格 JSON，位于 FM 类型根之外；standalone 当轮沉淀未建模术语，model 只引用 FM 对象／属性，不复制定义，不维护 Markdown 词典。
+- `.evidence/fm/`：源 JSON、说明、validation 与 generated；已建模概念的名称和含义由对象唯一维护；落实独立术语后，词汇条目改为引用。
 - `.evidence/checks/fm/`：获授权保存的紧凑运行清单，绑定模型内容摘要。
 - `.evidence/api/api.json`：另行使用 `evidence-api-design` 时维护的 API 设计源。
 - `.evidence/api/generated/`：完整校验后更新的当前 API 投影。
@@ -96,9 +96,9 @@
 
 每轮同时使用 `evidence-discovery` 的访谈机制和 `evidence-fm` 的 `references/domain-language.md`，不把访谈结束作为术语写入的前置条件：
 
-1. 读取当前词汇表、来源和控制状态；对照定义指出模糊词、同名异义及概念边界。
+1. 读取当前词汇表、所引 FM 目标、来源和控制状态；先解析定义拥有者，再指出模糊词、同名异义及概念边界。
 2. 消化本轮全部事实和更正，先保存原话与来源。
-3. 将含义明确的术语当轮更新到 `.evidence/glossary.json`；未决解释仍留在发现记录。词汇表只保留业务含义、上下文、必要区别和来源，不增加实现设计。
+3. 将未建模术语作为 standalone 当轮写入 `.evidence/glossary.json`；已建模概念使用 model 条目引用当前 FM 目标，不能另存名称与含义。未决解释和没有模型编辑授权的更正留在发现记录，不增加实现设计。
 4. 核对术语与现有 JSON、需求和代码的冲突，登记影响；不静默改写模型或验收，不让代码裁决业务含义。
 5. 展示本轮增改条目及保存结果，再选择一个必要问题等待真人。可以用标明为假设的具体案例检验边界，不将合成案例当事实。
 
@@ -121,7 +121,7 @@
 
 用户要求生成或修改即授权编辑本次范围内的当前模型。先读取现有文件和 Git 差异，区分已有改动与本轮变更，不覆盖无关工作。
 
-遵循 `evidence-fm`，按事实依赖评估 ready、support、pending。直接编辑 `.evidence/fm/`，保留未受影响的有效内容和稳定 ID。撤回对象时同步处理引用，真实未知留在评估中；没有可纳入职责时只记录依据与缺口。
+遵循 `evidence-fm`，按事实依赖评估 ready、support、pending。直接编辑 `.evidence/fm/`，保留未受影响的有效内容和稳定 ID。落实独立术语后将同一 term 条目替换为引用，移除独立定义；撤回对象时同步处理词汇表及模型引用，真实未知留在评估中；没有可纳入职责时只记录依据与缺口。
 
 正式映射前执行以下核对：
 

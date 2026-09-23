@@ -4,5 +4,6 @@
   "category": "role",
   "kind": "party",
   "label": "电话销售",
-  "contextRef": "context.sales-performance"
+  "contextRef": "context.sales-performance",
+  "notes": "在电话销售绩效协议中形成每次客户联系记录的合同角色"
 }

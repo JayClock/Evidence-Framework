@@ -73,7 +73,7 @@
       "id": "confirmation.access",
       "kind": "fulfillment_confirmation",
       "label": "内容提供凭证",
-      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "notes": "证明指定内容已经向该读者提供并可检索，不证明读者已经阅读。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -122,7 +122,7 @@
         {
           "keyData": true,
           "label": "联系渠道",
-          "meaning": "本次客户联系采用的电话或邮件渠道",
+          "meaning": "当前模型中来源明确的电话 `phone` 或邮件 `email` 分类；本次客户联系采用的电话或邮件渠道",
           "name": "channel",
           "required": true,
           "valueType": "string"
@@ -141,7 +141,7 @@
       "id": "confirmation.customer-contact-record",
       "kind": "fulfillment_confirmation",
       "label": "客户联系记录",
-      "notes": "每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
+      "notes": "电话销售对一次实际电话或邮件联系形成的履约确认凭证。每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
       "responsibleRoleRef": "role.tele-sales",
       "type": "entity"
     },
@@ -233,7 +233,7 @@
       "id": "confirmation.mobile",
       "kind": "fulfillment_confirmation",
       "label": "移动支付成功凭证",
-      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "notes": "支付机构对实际扣款成功结果负责的具体凭证。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
       "responsibleRoleRef": "role.mobile-provider",
       "type": "entity"
     },
@@ -334,7 +334,7 @@
       "id": "confirmation.prepaid",
       "kind": "fulfillment_confirmation",
       "label": "预付费抵扣凭证",
-      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "notes": "账户服务方对余额扣减、实扣金额和扣后余额负责的具体凭证。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
       "responsibleRoleRef": "role.account-provider",
       "type": "entity"
     },
@@ -418,7 +418,7 @@
       "id": "confirmation.refund",
       "kind": "fulfillment_confirmation",
       "label": "退款到账凭证",
-      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "notes": "证明钱款实际到达收款方，不是退款指令受理回执。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -494,7 +494,7 @@
       "id": "confirmation.restore",
       "kind": "fulfillment_confirmation",
       "label": "免费恢复凭证",
-      "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+      "notes": "证明指定版本访问资格已恢复且实际收费为零。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -661,7 +661,7 @@
       "id": "contract.sales-performance",
       "kind": "contract",
       "label": "电话销售绩效协议",
-      "notes": "绩效协议表达内部权责约定；目标设定的磋商过程、变更方式和未达标后果尚未展开。",
+      "notes": "绩效管理者与电话销售就业务周期内客户联系目标形成的内部权责约定 contract.sales-performance。绩效协议表达内部权责约定；目标设定的磋商过程、变更方式和未达标后果尚未展开。",
       "roleRefs": [
         "role.performance-manager",
         "role.tele-sales"
@@ -764,7 +764,7 @@
       "id": "contract.subscription",
       "kind": "contract",
       "label": "专栏订阅合同",
-      "notes": "一份合同绑定一个读者、一个专栏版本和一次全额付款要求。",
+      "notes": "读者和运营方对专栏版本、成交金额及履约期限的约定。一份合同绑定一个读者、一个专栏版本和一次全额付款要求。",
       "roleRefs": [
         "role.reader",
         "role.publisher"
@@ -843,7 +843,7 @@
       "id": "evidence.discontinuation",
       "kind": "other_evidence",
       "label": "断更下架记录",
-      "notes": "核验发布事实并补充证明本次退款主张；记录形成时刻不覆盖约定更新时刻。",
+      "notes": "核验约定更新日、持续缺失内容、改期情况和下架事实的补充凭证。核验发布事实并补充证明本次退款主张；记录形成时刻不覆盖约定更新时刻。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -911,7 +911,7 @@
       "id": "evidence.relaunch",
       "kind": "other_evidence",
       "label": "重新上架记录",
-      "notes": "向原订阅关联可采信的重新上架事件，证明免费恢复请求的触发条件。",
+      "notes": "证明同一专栏的新版本已重新提供的补充凭证。向原订阅关联可采信的重新上架事件，证明免费恢复请求的触发条件。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -976,7 +976,7 @@
       "id": "party.user",
       "kind": "party",
       "label": "用户",
-      "notes": "同一用户跨合同保持主体身份，可扮演读者、支付用户、账户使用方、绩效管理者或电话销售；角色扮演不表示同一协议实例中由同一人承担双方，也不自动扩大经办和访问权限。",
+      "notes": "跨合同保持身份的主体 party.user，可扮演读者、支付用户、账户使用方、绩效管理者或电话销售；扮演本身不授予额外经办或访问权限。同一用户跨合同保持主体身份，可扮演读者、支付用户、账户使用方、绩效管理者或电话销售；角色扮演不表示同一协议实例中由同一人承担双方，也不自动扩大经办和访问权限。",
       "type": "entity"
     },
     {
@@ -1052,7 +1052,7 @@
       "id": "request.access",
       "kind": "fulfillment_request",
       "label": "付费内容访问请求",
-      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "notes": "读者对指定专栏、版本、章节提出的本次访问主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
       "responsibleRoleRef": "role.reader",
       "type": "entity"
     },
@@ -1169,7 +1169,7 @@
         {
           "keyData": true,
           "label": "业务周期编号",
-          "meaning": "本次月度目标所适用的业务周期编号",
+          "meaning": "月度客户联系目标请求与客户联系记录共同使用的周期编号 period_id；本次月度目标所适用的业务周期编号",
           "name": "period_id",
           "required": true,
           "valueType": "string"
@@ -1220,7 +1220,7 @@
       "id": "request.monthly-customer-contact",
       "kind": "fulfillment_request",
       "label": "月度客户联系目标请求",
-      "notes": "目标数是每份协议实例中的约定值，来源文章没有给出固定数值或统一计算公式。",
+      "notes": "约定业务周期以及联系总数、电话数和邮件数目标的履约请求。目标数是每份协议实例中的约定值，来源文章没有给出固定数值或统一计算公式。",
       "responsibleRoleRef": "role.performance-manager",
       "type": "entity"
     },
@@ -1299,7 +1299,7 @@
       "id": "request.payment",
       "kind": "fulfillment_request",
       "label": "订阅费支付请求",
-      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "notes": "运营方要求读者在约定区间内支付全部订阅费的凭证。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
       "responsibleRoleRef": "role.publisher",
       "type": "entity"
     },
@@ -1477,7 +1477,7 @@
       "id": "request.refund",
       "kind": "fulfillment_request",
       "label": "断更退款请求",
-      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "notes": "已付款读者依据断更事实提出的全额返还主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
       "responsibleRoleRef": "role.reader",
       "type": "entity"
     },
@@ -1546,7 +1546,7 @@
       "id": "request.restore",
       "kind": "fulfillment_request",
       "label": "免费恢复请求",
-      "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
+      "notes": "原退款读者要求免费恢复同一专栏新版本访问资格的主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
       "responsibleRoleRef": "role.reader",
       "type": "entity"
     },
@@ -1919,7 +1919,7 @@
       "id": "role.payment-proof",
       "kind": "evidence",
       "label": "合格付款证明",
-      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
+      "notes": "对匹配订阅、读者、标的、金额、币种及期限的实际资金结果的证明约定。消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
       "type": "entity"
     },
     {
@@ -1928,6 +1928,7 @@
       "id": "role.performance-manager",
       "kind": "party",
       "label": "绩效管理者",
+      "notes": "在电话销售绩效协议中提出月度客户联系目标请求的合同角色",
       "type": "entity"
     },
     {
@@ -1944,6 +1945,7 @@
       "id": "role.reader",
       "kind": "party",
       "label": "读者",
+      "notes": "用户在专栏订阅上下文中扮演的角色 role.reader，不是另一份主体",
       "type": "entity"
     },
     {
@@ -2126,6 +2128,7 @@
       "id": "role.tele-sales",
       "kind": "party",
       "label": "电话销售",
+      "notes": "在电话销售绩效协议中形成每次客户联系记录的合同角色",
       "type": "entity"
     },
     {
@@ -2176,6 +2179,7 @@
       "id": "thing.chapter",
       "kind": "thing",
       "label": "章节内容",
+      "notes": "专栏特定版本下可独立申请访问的内容单元",
       "type": "entity"
     },
     {
@@ -2199,7 +2203,7 @@
         {
           "keyData": true,
           "label": "上架版本",
-          "meaning": "上架版本",
+          "meaning": "一次发布或重新上架所提供的内容版本，用 edition_id 区分",
           "name": "edition_id",
           "required": true,
           "valueType": "string"
@@ -2226,6 +2230,7 @@
       "id": "thing.column",
       "kind": "thing",
       "label": "专栏",
+      "notes": "跨上架版本保持身份的订阅内容产品，用 column_id 定位",
       "type": "entity"
     },
     {
@@ -2244,7 +2249,7 @@
       "id": "thing.customer-profile",
       "kind": "thing",
       "label": "客户档案",
-      "notes": "客户档案是电话销售联系工作的标的物；当前材料未说明档案生命周期、去重、归档或联系方式规则。",
+      "notes": "客户信息领域中被实际联系记录引用的业务标的物。客户档案是电话销售联系工作的标的物；当前材料未说明档案生命周期、去重、归档或联系方式规则。",
       "type": "entity"
     }
   ],

@@ -1,6 +1,8 @@
 """Composition and optional host integration checks owned by evidence-modeling."""
 
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -8,6 +10,20 @@ REPOSITORY = Path(__file__).resolve().parents[4]
 
 
 class FMIntegrationTests(unittest.TestCase):
+    def test_repository_glossary_has_no_parallel_model_definition(self):
+        path = REPOSITORY / ".evidence/glossary.json"
+        before = path.read_bytes()
+        command = [sys.executable, "-B", str(REPOSITORY / ".agents/skills/evidence-fm/scripts/check_glossary.py"), str(path)]
+        run = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(0, run.returncode, run.stdout + run.stderr)
+        result = json.loads(run.stdout)
+        self.assertEqual(30, result["termCount"])
+        self.assertEqual(26, sum(t["kind"] == "model" for t in result["resolvedTerms"]))
+        refund = next(t for t in result["resolvedTerms"] if t["id"] == "term.refund-received-evidence")
+        self.assertEqual("confirmation.refund", refund["target"]["objectRef"])
+        self.assertIn("不是退款指令受理回执", refund["definition"])
+        self.assertEqual(before, path.read_bytes())
+
     def test_extension_only_registers_one_command_and_one_question_tool(self):
         extension = REPOSITORY / ".pi/extensions/evidence-modeling"
         commands = (extension / "commands.ts").read_text(encoding="utf-8")
@@ -98,7 +114,8 @@ class FMIntegrationTests(unittest.TestCase):
             "领域逻辑",
             "工具／胶水",
             "识别业务变化",
-            "消费最新词汇表和来源",
+            "解析当前词汇条目的定义拥有者及来源",
+            "将条目替换为 FM 引用",
             "目录、命名与结构以当前 FM Schema",
             "简化分析不能覆盖现行约束",
         ):

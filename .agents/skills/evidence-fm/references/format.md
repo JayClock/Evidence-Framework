@@ -39,7 +39,7 @@
     └── simulation.json
 ```
 
-`model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的统一词汇表，使用独立 Schema，可以先于 model.json 存在，不作为派生报告重建。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。词汇表、发现与问题不进入 FM 类型加载；发现与问题保存在 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
+`model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的术语入口，使用独立 Schema：standalone 的定义可以先于模型存在，model 条目只引用 FM 对象或属性；解析结果不作为派生报告重建后回写。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。词汇表、发现与问题不进入 FM 类型加载；发现与问题保存在 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
 同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 仍是 `category: context`、`kind: fulfillment` 的 Entity；`fulfillments/<业务名>/context.json` 只是它的存放位置，不新增第二个履约对象。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 

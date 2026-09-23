@@ -28,7 +28,7 @@
       "valueType": "string",
       "required": true,
       "keyData": true,
-      "meaning": "本次月度目标所适用的业务周期编号"
+      "meaning": "月度客户联系目标请求与客户联系记录共同使用的周期编号 period_id；本次月度目标所适用的业务周期编号"
     },
     {
       "name": "started_at",
@@ -71,6 +71,6 @@
       "meaning": "绩效协议实例为本周期约定的邮件联系次数目标"
     }
   ],
-  "notes": "目标数是每份协议实例中的约定值，来源文章没有给出固定数值或统一计算公式。",
+  "notes": "约定业务周期以及联系总数、电话数和邮件数目标的履约请求。目标数是每份协议实例中的约定值，来源文章没有给出固定数值或统一计算公式。",
   "responsibleRoleRef": "role.performance-manager"
 }

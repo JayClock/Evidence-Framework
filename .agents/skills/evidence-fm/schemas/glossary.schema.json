@@ -1,31 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/evidence/glossary/v1/glossary.schema.json",
-  "title": "Evidence domain glossary",
+  "$id": "https://jayclock.dev/evidence/glossary/v2/glossary.schema.json",
+  "title": "Evidence domain language index",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "terms"],
   "properties": {
-    "schemaVersion": { "const": "1.0" },
+    "schemaVersion": { "const": "2.0" },
     "terms": {
       "type": "array",
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name", "definition", "sourceRefs"],
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^term\\.[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
-          },
-          "name": { "$ref": "#/$defs/text" },
-          "definition": { "$ref": "#/$defs/text" },
-          "context": { "$ref": "#/$defs/text" },
-          "aliases": { "$ref": "#/$defs/texts" },
-          "distinctions": { "$ref": "#/$defs/texts" },
-          "sourceRefs": { "$ref": "#/$defs/texts" },
-          "modelRefs": { "$ref": "#/$defs/texts" }
-        }
+        "oneOf": [{ "$ref": "#/$defs/standalone" }, { "$ref": "#/$defs/model" }]
       }
     }
   },
@@ -36,6 +21,51 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/text" }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^term\\.[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "standalone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "name", "definition", "sourceRefs"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "const": "standalone" },
+        "name": { "$ref": "#/$defs/text" },
+        "definition": { "$ref": "#/$defs/text" },
+        "context": { "$ref": "#/$defs/text" },
+        "aliases": { "$ref": "#/$defs/texts" },
+        "distinctions": { "$ref": "#/$defs/texts" },
+        "sourceRefs": { "$ref": "#/$defs/texts" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "target"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "const": "model" },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["objectRef"],
+          "properties": {
+            "objectRef": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+            },
+            "attribute": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
+            }
+          }
+        },
+        "aliases": { "$ref": "#/$defs/texts" },
+        "sourceRefs": { "$ref": "#/$defs/texts" }
+      }
     }
   }
 }

@@ -9,7 +9,7 @@
     "interactionState": "<问答中／等待／已停止及依据；停止后不自动恢复>",
     "glossaryPath": "<唯一 JSON 词汇表：默认 .evidence/glossary.json；没有明确术语时尚无>",
     "languageChanges": [
-      "<本轮增改条目定位、来源及已保存／未保存结果；定义正文只在词汇表维护>"
+      "<本轮增改条目定位、来源及已保存／未保存结果；记录 standalone 或 model 及定义拥有者；已建模含义只在 FM 维护>"
     ],
     "pendingLanguage": [
       "<未决定义、术语冲突或资源缺失导致的待沉淀项及来源；不将候选解释写成定论>"

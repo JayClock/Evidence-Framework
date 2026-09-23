@@ -28,7 +28,7 @@
       "valueType": "string",
       "required": true,
       "keyData": true,
-      "meaning": "上架版本"
+      "meaning": "一次发布或重新上架所提供的内容版本，用 edition_id 区分"
     },
     {
       "name": "price_minor_units",
@@ -46,5 +46,6 @@
       "keyData": true,
       "meaning": "标价币种"
     }
-  ]
+  ],
+  "notes": "跨上架版本保持身份的订阅内容产品，用 column_id 定位"
 }

@@ -4,5 +4,6 @@
   "category": "role",
   "kind": "party",
   "label": "绩效管理者",
-  "contextRef": "context.sales-performance"
+  "contextRef": "context.sales-performance",
+  "notes": "在电话销售绩效协议中提出月度客户联系目标请求的合同角色"
 }

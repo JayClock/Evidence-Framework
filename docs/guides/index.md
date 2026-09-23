@@ -19,7 +19,7 @@
 | 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                                         | Resource 实现、过期 OpenAPI      |
 | 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                                         | FM 中存在的所有活动              |
 | 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)                                  | 目录名、参考产品或模板默认业务   |
-| 业务术语             | [统一 JSON 词汇表](../../.evidence/glossary.json)                                                                | 另写一份业务词典                 |
+| 业务术语             | [JSON 词汇入口](../../.evidence/glossary.json)：standalone 定义或 model 所引 FM 对象                             | 重复维护已建模概念的定义         |
 | 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md)                         | 用同义词制造新业务对象           |
 | 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                                              | 文件名、审核页、聊天记忆、README |
 | 当前是否验证         | 任务 CHECK 的本次实际结果                                                                                        | 文件存在、上次通过或模板中的预期 |

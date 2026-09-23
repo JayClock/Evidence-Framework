@@ -81,7 +81,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`evidence-task-planning` 默认输出 `docs/plans/smart-domain/plan.yaml` 和 `review.html`：YAML 是机器可读的唯一计划记录，保存显式切片、编译 DAG/API 覆盖、任务 Guides/设计、状态、CHECK、证据与缺口；HTML 是可重建的离线只读审核投影。任务标题不参与 taskKey 或排序。实体和规则从任意 FM 提取，不包含项目专用案例。`evidence-delivery` 消费同一 `plan.yaml`，执行前核对授权/范围、业务与工程来源、前置新鲜度、设计边界、环境、CHECK 与退出条件。`next` 只提供结构候选，不证明语义就绪；FM/API 摘要不覆盖架构、规范、howto 或代码变化。真实结果写入任务 `observedEvidence`，状态只在同一任务的 `status` 维护，不从审核页反向更新。任务支持 implementation、verify、design、setup、manual。
 
-已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。明确术语按 FM 的领域语言方法在访谈中持续写入唯一 JSON 词汇表 `.evidence/glossary.json`，不维护 Markdown 词典，未决解释和讨论案例留在发现记录；模型 JSON 消费当前词汇表及来源，不反向覆盖定义。
+已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。明确术语按 FM 的领域语言方法在访谈中持续写入唯一 JSON 词汇表 `.evidence/glossary.json`，不维护 Markdown 词典，未决解释和讨论案例留在发现记录；standalone 保存未建模术语，model 只引用已有 FM 对象／属性。已建模名称与含义只在 FM 维护，落实术语后将同一条目改为引用，不留独立定义。
 
 跨会话读取文件恢复焦点、已知事实、暂缓及停止状态。没有文件写入权限时提供可复制的交接文本，并明确未保存。遵守项目已有权限与审核要求；普通文档不提供身份认证或不可篡改保证。
 

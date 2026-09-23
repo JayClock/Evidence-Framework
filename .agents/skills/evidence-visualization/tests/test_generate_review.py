@@ -133,12 +133,12 @@ class ReviewGeneratorTest(unittest.TestCase):
             root = Path(directory)
             (root / ".evidence").mkdir()
             glossary = root / ".evidence/glossary.json"
-            glossary.write_text(json.dumps({"schemaVersion": "1.0", "terms": []}))
+            glossary.write_text(json.dumps({"schemaVersion": "2.0", "terms": []}))
             files = review.evidence_files(root)
             self.assertEqual([".evidence/glossary.json"], [item["path"] for item in files])
             self.assertFalse(files[0]["generated"])
             before = review.file_signature(files)
-            glossary.write_text(json.dumps({"schemaVersion": "1.0", "terms": [{"id": "term.receipt"}]}))
+            glossary.write_text(json.dumps({"schemaVersion": "2.0", "terms": [{"id": "term.receipt", "kind": "model", "target": {"objectRef": "confirmation.receipt"}}]}))
             self.assertNotEqual(before, review.file_signature(review.evidence_files(root)))
 
     def test_rejects_symlink_sources(self):

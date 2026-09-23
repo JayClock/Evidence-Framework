@@ -113,7 +113,11 @@ class SkillDocumentationTests(unittest.TestCase):
             "不等待所有问题解决",
             "不为术语编造 Entity ID",
             "未澄清不任选其一覆盖",
-            "不能从旧 JSON 反向覆盖新术语",
+            "名称、含义归 FM 唯一维护",
+            "已建模概念的更正属于 FM 修改",
+            "不建立同义 standalone",
+            "悬空",
+            "resolvedTerms",
             "不宣称原子事务",
             "再继续访谈",
             "不能声称整个 FM 已通过校验",
@@ -132,7 +136,11 @@ class SkillDocumentationTests(unittest.TestCase):
         repo = ROOT.parents[1]
         glossary = repo / ".evidence/glossary.json"
         document = json.loads(glossary.read_text())
-        self.assertEqual("1.0", document["schemaVersion"])
+        self.assertEqual("2.0", document["schemaVersion"])
+        for term in document["terms"]:
+            if term["kind"] == "model":
+                self.assertTrue(term["target"]["objectRef"])
+                self.assertTrue({"name", "definition", "context", "distinctions"}.isdisjoint(term))
         self.assertTrue(document["terms"])
         self.assertEqual(
             len(document["terms"]), len({term["id"] for term in document["terms"]})
@@ -171,7 +179,10 @@ class SkillDocumentationTests(unittest.TestCase):
             r"问答只积累发现记录|不另行生成正式词汇表|"
             r"不建立正式词汇表|只整理发现记录，不修改模型|"
             r"发现阶段不加载生成流程|讨论阶段不修改正式 FM|"
-            r"工作术语、关系与讨论案例在访谈中只是材料"
+            r"工作术语、关系与讨论案例在访谈中只是材料|"
+            r"模型 JSON 消费当前词汇表及来源，不反向覆盖定义|"
+            r"已明确的定义按独立 Schema 只维护在 JSON 词汇表|"
+            r"后续模型消费它而非重建覆盖它|modelRefs"
         )
         for document in documents:
             with self.subTest(document=str(document)):

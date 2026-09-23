@@ -52,7 +52,7 @@
       "valueType": "string",
       "required": true,
       "keyData": true,
-      "meaning": "本次客户联系采用的电话或邮件渠道"
+      "meaning": "当前模型中来源明确的电话 `phone` 或邮件 `email` 分类；本次客户联系采用的电话或邮件渠道"
     },
     {
       "name": "confirmed_at",
@@ -63,6 +63,6 @@
       "meaning": "电话销售实际完成本次客户联系并形成记录的业务时刻"
     }
   ],
-  "notes": "每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
+  "notes": "电话销售对一次实际电话或邮件联系形成的履约确认凭证。每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
   "responsibleRoleRef": "role.tele-sales"
 }

@@ -1,216 +1,230 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "terms": [
     {
       "id": "term.user",
-      "name": "用户",
-      "definition": "跨合同保持身份的主体 party.user，可扮演读者、支付用户、账户使用方、绩效管理者或电话销售；扮演本身不授予额外经办或访问权限",
+      "kind": "model",
+      "target": { "objectRef": "party.user" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L5"
       ]
     },
     {
       "id": "term.reader",
-      "name": "读者",
-      "definition": "用户在专栏订阅上下文中扮演的角色 role.reader，不是另一份主体",
+      "kind": "model",
+      "target": { "objectRef": "role.reader" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L6"
       ]
     },
     {
       "id": "term.column",
-      "name": "专栏",
-      "definition": "跨上架版本保持身份的订阅内容产品，用 column_id 定位",
+      "kind": "model",
+      "target": { "objectRef": "thing.column" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L7"
       ]
     },
     {
       "id": "term.edition",
-      "name": "上架版本",
-      "definition": "一次发布或重新上架所提供的内容版本，用 edition_id 区分",
+      "kind": "model",
+      "target": { "objectRef": "thing.column", "attribute": "edition_id" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L8"
       ]
     },
     {
       "id": "term.chapter",
-      "name": "章节",
-      "definition": "专栏特定版本下可独立申请访问的内容单元",
+      "kind": "model",
+      "target": { "objectRef": "thing.chapter" },
+      "aliases": ["章节"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L9"
       ]
     },
     {
       "id": "term.subscription-contract",
-      "name": "订阅合同",
-      "definition": "读者和运营方对专栏版本、成交金额及履约期限的约定",
+      "kind": "model",
+      "target": { "objectRef": "contract.subscription" },
+      "aliases": ["订阅合同"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L10"
       ]
     },
     {
       "id": "term.payment-request",
-      "name": "付款请求",
-      "definition": "运营方要求读者在约定区间内支付全部订阅费的凭证",
+      "kind": "model",
+      "target": { "objectRef": "request.payment" },
+      "aliases": ["付款请求"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L11"
       ]
     },
     {
       "id": "term.payment-proof",
-      "name": "合格付款证明",
-      "definition": "对匹配订阅、读者、标的、金额、币种及期限的实际资金结果的证明约定",
+      "kind": "model",
+      "target": { "objectRef": "role.payment-proof" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L12"
       ]
     },
     {
       "id": "term.mobile-payment-evidence",
-      "name": "移动支付成功凭证",
-      "definition": "支付机构对实际扣款成功结果负责的具体凭证",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.mobile" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L13"
       ]
     },
     {
       "id": "term.prepaid-deduction-evidence",
-      "name": "预付费抵扣凭证",
-      "definition": "账户服务方对余额扣减、实扣金额和扣后余额负责的具体凭证",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.prepaid" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L14"
       ]
     },
     {
       "id": "term.content-access-request",
-      "name": "内容访问请求",
-      "definition": "读者对指定专栏、版本、章节提出的本次访问主张",
+      "kind": "model",
+      "target": { "objectRef": "request.access" },
+      "aliases": ["内容访问请求"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L15"
       ]
     },
     {
       "id": "term.content-provision-evidence",
-      "name": "内容提供凭证",
-      "definition": "证明指定内容已经向该读者提供并可检索，不证明读者已经阅读",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.access" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L16"
       ]
     },
     {
       "id": "term.discontinuation-record",
-      "name": "断更下架记录",
-      "definition": "核验约定更新日、持续缺失内容、改期情况和下架事实的补充凭证",
+      "kind": "model",
+      "target": { "objectRef": "evidence.discontinuation" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L17"
       ]
     },
     {
       "id": "term.refund-request",
-      "name": "退款请求",
-      "definition": "已付款读者依据断更事实提出的全额返还主张",
+      "kind": "model",
+      "target": { "objectRef": "request.refund" },
+      "aliases": ["退款请求"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L18"
       ]
     },
     {
       "id": "term.refund-received-evidence",
-      "name": "退款到账凭证",
-      "definition": "证明钱款实际到达收款方，不是退款指令受理回执",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.refund" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L19"
       ]
     },
     {
       "id": "term.relisting-record",
-      "name": "重新上架记录",
-      "definition": "证明同一专栏的新版本已重新提供的补充凭证",
+      "kind": "model",
+      "target": { "objectRef": "evidence.relaunch" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L20"
       ]
     },
     {
       "id": "term.free-restoration-request",
-      "name": "免费恢复请求",
-      "definition": "原退款读者要求免费恢复同一专栏新版本访问资格的主张",
+      "kind": "model",
+      "target": { "objectRef": "request.restore" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L21"
       ]
     },
     {
       "id": "term.free-restoration-evidence",
-      "name": "免费恢复凭证",
-      "definition": "证明指定版本访问资格已恢复且实际收费为零",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.restore" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L22"
       ]
     },
     {
       "id": "term.sales-performance-contract",
-      "name": "电话销售绩效协议",
-      "definition": "绩效管理者与电话销售就业务周期内客户联系目标形成的内部权责约定 contract.sales-performance",
+      "kind": "model",
+      "target": { "objectRef": "contract.sales-performance" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L23"
       ]
     },
     {
       "id": "term.performance-manager",
-      "name": "绩效管理者",
-      "definition": "在电话销售绩效协议中提出月度客户联系目标请求的合同角色",
+      "kind": "model",
+      "target": { "objectRef": "role.performance-manager" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L24"
       ]
     },
     {
       "id": "term.tele-sales",
-      "name": "电话销售",
-      "definition": "在电话销售绩效协议中形成每次客户联系记录的合同角色",
+      "kind": "model",
+      "target": { "objectRef": "role.tele-sales" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L25"
       ]
     },
     {
       "id": "term.customer-profile",
-      "name": "客户档案",
-      "definition": "客户信息领域中被实际联系记录引用的业务标的物",
+      "kind": "model",
+      "target": { "objectRef": "thing.customer-profile" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L26"
       ]
     },
     {
       "id": "term.business-period",
-      "name": "业务周期",
-      "definition": "月度客户联系目标请求与客户联系记录共同使用的周期编号 period_id",
+      "kind": "model",
+      "target": {
+        "objectRef": "request.monthly-customer-contact",
+        "attribute": "period_id"
+      },
+      "aliases": ["业务周期"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L27"
       ]
     },
     {
       "id": "term.monthly-contact-target-request",
-      "name": "月度联系目标请求",
-      "definition": "约定业务周期以及联系总数、电话数和邮件数目标的履约请求",
+      "kind": "model",
+      "target": { "objectRef": "request.monthly-customer-contact" },
+      "aliases": ["月度联系目标请求"],
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L28"
       ]
     },
     {
       "id": "term.customer-contact-record",
-      "name": "客户联系记录",
-      "definition": "电话销售对一次实际电话或邮件联系形成的履约确认凭证",
+      "kind": "model",
+      "target": { "objectRef": "confirmation.customer-contact-record" },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L29"
       ]
     },
     {
       "id": "term.contact-channel",
-      "name": "联系渠道",
-      "definition": "当前模型中来源明确的电话 `phone` 或邮件 `email` 分类",
+      "kind": "model",
+      "target": {
+        "objectRef": "confirmation.customer-contact-record",
+        "attribute": "channel"
+      },
       "sourceRefs": [
         "git:9bf113b791363a2155598ff62a9366f08673433e:.evidence/fm/01-glossary.md#L30"
       ]
     },
     {
       "id": "term.pending",
+      "kind": "standalone",
       "name": "待定",
       "definition": "请求已形成，当前还不足以判断按时完成或违约",
       "sourceRefs": [
@@ -219,6 +233,7 @@
     },
     {
       "id": "term.completed",
+      "kind": "standalone",
       "name": "完成",
       "definition": "具体证据满足该请求的完成规则；不是单据登记成功的同义词",
       "sourceRefs": [
@@ -227,6 +242,7 @@
     },
     {
       "id": "term.breach",
+      "kind": "standalone",
       "name": "违约",
       "definition": "已有事实满足约定的违约条件，后续补偿不删除原责任记录；当前来源未给出绩效协议未达标后果，不据此判定违约",
       "sourceRefs": [
@@ -235,6 +251,7 @@
     },
     {
       "id": "term.evidence-role",
+      "kind": "standalone",
       "name": "证明角色",
       "definition": "可由不同合同的实际时刻凭证扮演的证明插槽，不是一份新单据",
       "sourceRefs": [

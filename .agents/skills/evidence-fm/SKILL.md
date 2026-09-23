@@ -12,7 +12,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 ## 执行边界与输入
 
-仅沉淀术语或维护说明文档时，只处理获授权产物并保留来源与未决项，不因此创建整套 JSON 或运行单据模拟；完整模型生成／更新再执行相应步骤。统一词汇表可以先于 model.json 存在，后续模型消费它而非重建覆盖它。
+仅沉淀术语或维护说明文档时，只处理获授权产物并保留来源与未决项，不因此创建整套 JSON 或运行单据模拟；完整模型生成／更新再执行相应步骤。未建模术语可先于 model.json 存在；落实为模型后，同一 term 条目改为引用，名称与含义归 FM 目标唯一维护。
 
 - 遵守项目的任务范围、文件权限与审核要求；没有写入授权时只做分析或只读校验。只修改本次授权的文件；`.evidence/` 只是默认产物根，不因此获得其他文件或业务确认记录的修改权限。
 - 区分“访谈并沉淀领域语言”“生成／修改模型 JSON”和“只校验”。访谈授权限于发现记录和已明确术语，普通回答与停止不扩大到模型 JSON、关系、规则或验证场景。用户明确要求生成或修改模型，即授权在本次范围内直接编辑当前 FM。只聊不落盘或仅记录等更窄要求优先；只校验不写词汇表、模型、场景、发现记录或报告文件。编辑授权不是业务批准。
@@ -38,7 +38,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 先说明本次范围、来源、稳定 ID、拟增改／撤回与未决项，读取当前文件及已有 Git 差异后直接编辑 `.evidence/fm/`。保留未受影响事实和用户已有改动，必要支撑引用保持闭合；未知事实不通过模板默认值补齐。修改即落盘，不保证编辑中的目录始终有效。删除或撤回必须属于本次授权范围，并同步清理失效引用。
 
 - 采用唯一 FM v3；纯领域／合同前仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
-- 正式类型源是 `model.json` 及各类 JSON 分片；统一术语写 `.evidence/glossary.json`（独立词汇表 Schema），说明写 README、overview，验证场景写 validation。词汇表由访谈或独立术语任务按领域语言方法持续维护，是当前模型的输入，不是模型 JSON 派生报告。模型编辑消费最新定义、来源和更正链；冲突先定位并澄清，不从旧 JSON 反向覆盖术语。发现记录中的未决结构和讨论案例只作为材料，不另维护同步副本。具体要求见格式指南。
+- 正式类型源是 `model.json` 及各类 JSON 分片；`.evidence/glossary.json` 是词汇入口：standalone 维护未建模术语，model 只引用已建模对象／属性，不复制名称和含义。Entity／Relationship 的 `label/notes`、Rule 的 `label/description`、属性的 `label/meaning` 是各自定义的唯一来源。模型落实术语时保留 term ID，将原条目替换为引用并移除独立定义；删除或改名后核对悬空引用。说明写 README、overview，验证场景写 validation。发现记录保存来源、更正和未决理解，不维护同步副本。具体要求见领域语言与格式方法。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
 - 先识别 Context、双方 Role 与责任边界；经办人、岗位和部门不自动成为新的业务 Role，有明确主体依据时保留 Participant，有明确扮演依据才连接 `plays_role`，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 只表达 Context 边界；Request、Evidence Role 和 Rule 通过 `contextRef` 归属它；Confirmation 保留唯一形成 Context，并可由同一合同下一个或多个 Request 通过 `precedes` 关联。
 - 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立合同前／领域不补造合同。
@@ -57,7 +57,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 读取 [校验指南](references/validation.md)。设置 `SKILL_DIR` 为本 SKILL.md 所在目录的绝对路径；使用满足 requirements.txt 的 Python，环境缺失时说明限制，不自动全局安装。
 
-运行只读 `check_fm.py`。结果包含 `modelDigest` 与 `inputChanged`，绑定本次检查的文件内容；检查期间变化使结果无效。校验失败时修正获授权的表达错误后重跑，不倒改业务预期。无法解决或无法执行时明确当前模型未通过／未校验，保留真实错误及已修改文件，不自动回滚。
+模型及对应词汇引用更新后，运行只读 `check_glossary.py <词汇表> --fm <模型根>` 和 `check_fm.py`，分别核对定义拥有者／引用及 FM 行为。FM 检查结果包含 `modelDigest` 与 `inputChanged`，绑定本次检查的文件内容；检查期间变化使结果无效。校验失败时修正获授权的表达错误后重跑，不倒改业务预期。无法解决或无法执行时明确当前模型未通过／未校验，保留真实错误及已修改文件，不自动回滚。
 
 按 [场景校验](references/scenario-validation.md) 执行适用场景，没有实际执行时 `simulationPassed` 为 null。展示实际增改删、来源、完整差异、Schema／CEL／lineage／simulation／timeline 结果、时间线及未决顺序。已有改动与本轮变更分别说明，Git diff 之外的新文件也须展示。
 

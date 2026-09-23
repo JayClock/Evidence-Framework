@@ -96,6 +96,6 @@
       "derivedByRuleRef": "rule.prepaid-balance"
     }
   ],
-  "notes": "保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
+  "notes": "账户服务方对余额扣减、实扣金额和扣后余额负责的具体凭证。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
   "responsibleRoleRef": "role.account-provider"
 }
