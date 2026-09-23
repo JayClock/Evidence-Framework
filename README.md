@@ -284,7 +284,8 @@ Idempotency-Key: <同一次登记的重试沿用同一键>
 | 位置                                  | 职责                                                                   |
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | `.evidence/discovery.md`              | 历史访谈记录与业务澄清；新访谈由发现流程按需创建                       |
-| `.evidence/fm/`                       | 当前 FM、正式业务术语、规则与回放场景                                  |
+| `.evidence/glossary.json`             | 唯一领域词汇表，访谈中持续沉淀明确术语                                 |
+| `.evidence/fm/`                       | 当前 FM、规则与回放场景                                                |
 | `.evidence/api/api.json`              | 当前 API 设计源                                                        |
 | `docs/requirements/`                  | 软件职责、故事验收与质量属性                                           |
 | `docs/architecture/`                  | 项目技术基线、模块/数据边界与领域映射                                  |
@@ -317,7 +318,7 @@ npm run dev
 按目标显式进入工作流，不自动跨阶段：
 
 ```text
-/evidence-model 讨论业务并保存发现记录
+/evidence-model 边访谈边沉淀领域语言，保存来源并更新统一词汇表
 /evidence-model 根据充分材料修改当前 FM 并校验
 用 evidence-requirements 明确软件职责与验收
 用 evidence-api-design 根据已确认 FM 设计 API

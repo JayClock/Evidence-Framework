@@ -128,6 +128,19 @@ class ReviewGeneratorTest(unittest.TestCase):
             self.assertTrue(files[0]["generated"])
             self.assertTrue(all(len(f["sha256"]) == 64 for f in files))
 
+    def test_glossary_outside_fm_is_included_as_a_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".evidence").mkdir()
+            glossary = root / ".evidence/glossary.json"
+            glossary.write_text(json.dumps({"schemaVersion": "1.0", "terms": []}))
+            files = review.evidence_files(root)
+            self.assertEqual([".evidence/glossary.json"], [item["path"] for item in files])
+            self.assertFalse(files[0]["generated"])
+            before = review.file_signature(files)
+            glossary.write_text(json.dumps({"schemaVersion": "1.0", "terms": [{"id": "term.receipt"}]}))
+            self.assertNotEqual(before, review.file_signature(review.evidence_files(root)))
+
     def test_rejects_symlink_sources(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

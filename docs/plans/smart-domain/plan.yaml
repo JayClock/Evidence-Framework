@@ -259,8 +259,8 @@ sourceManifest:
       - context.sales-performance
       - thing.customer-profile
     purpose: 电话销售绩效协议切片的说明、术语与纳入判断；不构成软件范围批准。
-  - path: .evidence/fm/01-glossary.md
-    digest: 8b24a32e3a633bf64c0b4746d9a09f87228502e1fef530433fa88cdb3a60f473
+  - path: .evidence/glossary.json
+    digest: 10e499cf4385b71ac1b8c422efd32ab8be0b462efc4a4ae5d5c7f811764a7ee2
     sourceRefs:
       - context.sales-performance
       - thing.customer-profile

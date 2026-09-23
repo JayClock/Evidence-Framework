@@ -98,8 +98,9 @@ class FMIntegrationTests(unittest.TestCase):
             "领域逻辑",
             "工具／胶水",
             "识别业务变化",
-            "<category>-<kind>--<id-suffix>.json",
-            "旧图例或简化分析不能覆盖现行约束",
+            "消费最新词汇表和来源",
+            "目录、命名与结构以当前 FM Schema",
+            "简化分析不能覆盖现行约束",
         ):
             self.assertIn(phrase, entry)
         for phrase in (

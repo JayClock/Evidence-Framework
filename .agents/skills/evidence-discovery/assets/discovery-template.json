@@ -7,12 +7,19 @@
     "currentQuestion": "<当前实际问题：原问题 ID、gapKey、原文、定位及待答／已解决状态；没有则明示>",
     "deferredQuestions": ["<暂缓问题：沿用原 ID 与 gapKey；没有则明示>"],
     "interactionState": "<问答中／等待／已停止及依据；停止后不自动恢复>",
+    "glossaryPath": "<唯一 JSON 词汇表：默认 .evidence/glossary.json；没有明确术语时尚无>",
+    "languageChanges": [
+      "<本轮增改条目定位、来源及已保存／未保存结果；定义正文只在词汇表维护>"
+    ],
+    "pendingLanguage": [
+      "<未决定义、术语冲突或资源缺失导致的待沉淀项及来源；不将候选解释写成定论>"
+    ],
     "modelPath": "<当前模型位置：路径或尚无>",
     "checkRecords": [
       "<检查记录：报告路径及对应模型内容摘要；未执行／未保存则明示>"
     ],
     "nextOptions": [
-      "<下一步选择：继续澄清／生成或修改模型／只校验／停止；建议不是授权>"
+      "<下一步选择：继续访谈并沉淀术语／生成或修改模型 JSON／只校验／停止；建议不是授权>"
     ]
   },
   "businessSlice": {
@@ -53,6 +60,6 @@
     "openDecisions": ["<仍需决定的事项：原问题及影响>"],
     "formalArtifacts": ["<已有正式成果：可选的模型／需求／案例版本引用>"],
     "modelAndChecks": "<模型与检查：当前模型、对应检查记录指针；不复制模型正文>",
-    "editState": "<未请求修改／已修改待校验／校验通过／校验失败／未执行；普通回答与停止不是修改授权>"
+    "editState": "<模型 JSON 的实际编辑／校验结果；术语保存另见 languageChanges，普通回答与停止不扩大模型 JSON 编辑授权>"
   }
 }

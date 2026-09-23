@@ -7,7 +7,7 @@
 | 业务材料与发现               | [discovery.md](discovery.md)（历史记录；新访谈由发现流程按需创建） |
 | FM 使用入口                  | [fm/README.md](fm/README.md)                                       |
 | 合同、责任、变化点与场景概览 | [fm/00-overview.md](fm/00-overview.md)                             |
-| 正式业务术语                 | [fm/01-glossary.md](fm/01-glossary.md)                             |
+| 正式业务术语                 | [glossary.json](glossary.json)                                     |
 | 模型源                       | [fm/model.json](fm/model.json)                                     |
 | API 设计说明                 | [api/README.md](api/README.md)                                     |
 | API 唯一设计源               | [api/api.json](api/api.json)                                       |

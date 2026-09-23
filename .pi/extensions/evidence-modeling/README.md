@@ -6,10 +6,10 @@
 
 ```text
 /evidence-model <目标>  # 转发原生 /skill:evidence-modeling
-/evidence-model         # 讨论业务／生成或修改模型／只校验模型／返回
+/evidence-model         # 访谈并沉淀领域语言／生成或修改模型／只校验模型／返回
 ```
 
-- 讨论业务：填写目标，明确只整理发现记录、不修改模型。
+- 访谈并沉淀领域语言：填写目标，保存发现记录并当轮更新已明确术语的统一词汇表；不修改模型 JSON、关系、规则、验证场景、API 或实现。
 - 生成或修改模型：填写目标，明确直接编辑当前 FM 并校验。
 - 只校验模型：只读检查，不修改源文件。
 - 返回、关闭或空白目标：不发送消息。
@@ -26,11 +26,11 @@ Agent 提供 `questionId`、`gapKey`、问题、影响、当前理解及来源�
 - `cancelled`：关闭或空白提交；
 - `unavailable`：无 UI 或问答面板正在使用。
 
-扩展不分配业务标识、不写发现记录、不主动发送下一轮。Agent 必须先保存返回的回答或控制状态；保存失败停止推进。回答不等于修改模型的授权。
+扩展不分配业务标识、不写发现记录、不主动发送下一轮。Agent 必须先保存返回的回答或控制状态，再按授权沉淀术语；任一保存失败停止推进，分别交接发现记录与词汇表的保存结果。回答在本次访谈授权内可用于沉淀明确术语，不扩大模型 JSON 编辑权限；仅记录或只聊不落盘等更窄要求优先。
 
 ## 文件与宿主边界
 
-默认项目布局由四个 Skill 共享：`.evidence/discovery.json`、`.evidence/fm/`、`.evidence/api/`、`.evidence/checks/fm/` 和 `.evidence/checks/api/`。
+默认项目布局由各 Skill 共享：`.evidence/discovery.json`、`.evidence/glossary.json`、`.evidence/fm/`、`.evidence/api/`、`.evidence/checks/fm/` 和 `.evidence/checks/api/`。
 
 TUI 与 RPC 使用宿主选择器和多行编辑器。无 UI 时转普通对话；并发问答互斥只在进程内存在。启动、重载和关闭无文件副作用，不替换系统提示或工具集，不注册自动推进、路径拦截或 Session 恢复逻辑。
 

@@ -6,9 +6,9 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 
 | Skill                                                     | 用途               | 输入与输出                                                                               | 运行依赖                                                       |
 | --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [evidence-modeling](evidence-modeling/SKILL.md)           | 显式组合建模入口   | 目标／已有记录 → 澄清、直接编辑当前模型、校验与差异交接                                  | 组合 Discovery 与 FM；界面扩展可选                             |
-| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 材料／具体缺口 → 原话、来源、工作理解、问题与控制状态                                    | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
-| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 充分材料／访谈记录 → 正式术语、源 JSON、验证场景与实际结果；不足则返回缺口               | 读取准则只需文本；执行校验需 Python 3.10+                      |
+| [evidence-modeling](evidence-modeling/SKILL.md)           | 显式组合建模入口   | 目标／已有记录 → 每轮访谈与术语沉淀；另按授权编辑模型、校验与交接                        | 组合 Discovery 与 FM；界面扩展可选                             |
+| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 材料／具体缺口 → 原话、来源、问题与控制状态；按 FM 方法当轮沉淀术语                      | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
+| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 每轮来源 → 统一领域语言；充分材料 → 源 JSON、验证场景与实际结果                          | 读取准则只需文本；执行校验需 Python 3.10+                      |
 | [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 JSON 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
 | [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
 | [evidence-api-design](evidence-api-design/SKILL.md)       | 整体 API 设计      | 已确认 FM → HTTP 契约、OpenAPI、超媒体与消费者流程                                       | Python、可定位的 evidence-fm                                   |
@@ -27,7 +27,7 @@ npx skills@latest add ./.agents/skills --skill evidence-discovery
 
 也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
-使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；专业 FM 访谈通过已安装的 FM 包或用户提供的路径只读获取准则，不假设兄弟目录，也不自动启动模型生成。缺少准则时说明限制，不能宣称完整专业审查。
+使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；领域语言沉淀与专业 FM 判断通过已安装的 FM 包或用户提供的路径获取方法，不假设兄弟目录。访谈按 FM 方法当轮更新明确术语，不自动启动模型 JSON 生成。缺少准则时保存待沉淀项并说明词汇表未更新，不能宣称完整专业审查。
 
 FM 单独安装可消费充分材料生成模型；输入不足时返回具体缺口，不复制访谈机制。Requirements 仍可直接使用充分的外部材料。无需为了独立使用而在两个包中保留同一套建模知识。
 
@@ -36,27 +36,29 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 `evidence-modeling` 设置为仅用户显式调用；支持的宿主可使用 `/skill:evidence-modeling <目标>`。它只负责编排，通过资源发现定位专业 Skill，不假设兄弟目录，也不依赖界面扩展。
 
 ```text
-用 evidence-discovery 梳理业务：客户手机号不是唯一身份，导入时经常误合。
+用 evidence-discovery 边访谈边沉淀领域语言：客户手机号不是唯一身份，导入时经常误合。
 今天先停止问答，只整理已有信息。
 继续讨论，但先保留之前暂缓的期限问题。
 用 evidence-fm 根据这份材料直接生成当前模型并校验，保留未知责任。
 /skill:evidence-modeling 根据现有发现修改 .evidence/fm/，校验后展示实际差异。
 用 evidence-requirements 收敛这份说明的软件范围，不需要先建 FM。
 用 evidence-visualization 为当前 FM 和已有 API 生成离线审核页，不修改模型。
-用 evidence-task-planning 根据 .evidence/fm/ 生成模块化单体 + MyBatis 的总索引和可读任务文件；有 API 时一并读取。明确业务模块公开接口、数据所有权和本地事务，通过程序计算工作单元、taskKey 和覆盖，不修改模型和业务代码。
+用 evidence-task-planning 根据 .evidence/fm/ 生成模块化单体 + MyBatis 的 plan.yaml 和 review.html；有 API 时一并读取。明确业务模块公开接口、数据所有权和本地事务，通过程序计算工作单元、taskKey 和覆盖，不修改模型和业务代码。
 ```
 
 可以顺序组合，也可以从已有成果直接进入某一步：
 
 ```text
-业务材料 → Discovery 访谈 ← 只读 FM 建模准则
-                    ↓ 用户明确要求生成／更新
-充分材料 ─────────→ 直接编辑当前 FM → 校验／修正 → 展示差异
+业务材料 → Discovery 每轮访谈 ← FM 领域语言与业务判断方法
+                    ↓ 原话先保存，明确术语当轮写入
+               发现记录 ＋ 唯一词汇表
+                    ↓ 用户另行要求生成／更新模型 JSON
+充分材料 ─────────→ 编辑当前 FM → 校验／修正 → 展示差异
                     ↓ 必要业务依据仍缺失
                  返回具体缺口，由访谈承接
 ```
 
-专业 Skill 不自动串联；只有用户显式调用 `evidence-modeling` 时才按当前意图组合。生成／修改请求授权本次范围内的直接编辑；普通回答或“停止”不授权修改模型。编辑成功与校验通过不等于业务批准，不自动进入 API、需求或开发。
+`evidence-modeling` 是显式组合入口；Discovery 也可按 FM 方法在访谈中沉淀领域语言。访谈授权发现记录和已明确术语的词汇表写入，普通回答或“停止”不扩大到模型 JSON、关系、规则或验证场景。只聊不落盘、仅保存资料等更窄要求优先；生成／修改模型请求另行授权本次模型编辑。两处保存任一失败就停止并交接实际结果。编辑成功与校验通过不等于业务批准，不自动进入 API、需求或开发。
 
 ## 文件交接
 
@@ -66,7 +68,8 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 .evidence/
 ├── discovery.json        # 来源、原话、工作理解、问题与恢复点
 ├── questions.json        # 可选：需拆分时保存已提问题及回答
-├── fm/                   # 当前模型、术语、说明、validation 与 generated
+├── glossary.json         # 唯一 JSON 词汇表，独立 Schema，不进入 FM 类型加载
+├── fm/                   # 当前模型、说明、validation 与 generated
 ├── views/index.html      # 用户要求时生成的自包含离线只读审核页
 ├── api/
 │   ├── api.json          # 唯一 API 设计源，位于 FM 根之外
@@ -78,7 +81,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
 
 各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`evidence-task-planning` 默认输出 `docs/plans/smart-domain/plan.yaml` 和 `review.html`：YAML 是机器可读的唯一计划记录，保存显式切片、编译 DAG/API 覆盖、任务 Guides/设计、状态、CHECK、证据与缺口；HTML 是可重建的离线只读审核投影。任务标题不参与 taskKey 或排序。实体和规则从任意 FM 提取，不包含项目专用案例。`evidence-delivery` 消费同一 `plan.yaml`，执行前核对授权/范围、业务与工程来源、前置新鲜度、设计边界、环境、CHECK 与退出条件。`next` 只提供结构候选，不证明语义就绪；FM/API 摘要不覆盖架构、规范、howto 或代码变化。真实结果写入任务 `observedEvidence`，状态只在同一任务的 `status` 维护，不从审核页反向更新。任务支持 implementation、verify、design、setup、manual。
 
-已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。工作术语、关系与讨论案例在访谈中只是材料，正式内容由对应任务消费来源形成。
+已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。明确术语按 FM 的领域语言方法在访谈中持续写入唯一 JSON 词汇表 `.evidence/glossary.json`，不维护 Markdown 词典，未决解释和讨论案例留在发现记录；模型 JSON 消费当前词汇表及来源，不反向覆盖定义。
 
 跨会话读取文件恢复焦点、已知事实、暂缓及停止状态。没有文件写入权限时提供可复制的交接文本，并明确未保存。遵守项目已有权限与审核要求；普通文档不提供身份认证或不可篡改保证。
 

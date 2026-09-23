@@ -62,7 +62,10 @@ describe('/evidence-model', () => {
   });
 
   it.each([
-    ['讨论业务', '讨论业务：付款证明，只整理发现记录，不修改模型'],
+    [
+      '访谈并沉淀领域语言',
+      '访谈并沉淀领域语言：付款证明，保存发现记录并当轮更新已明确术语的统一词汇表，不修改模型 JSON、关系、规则、验证场景、API 或实现',
+    ],
     ['生成或修改模型', '生成或修改模型：付款证明，直接编辑当前 FM 并校验'],
   ])('routes %s with an explicit editing boundary', async (action, intent) => {
     const ctx = context();
@@ -73,7 +76,7 @@ describe('/evidence-model', () => {
     await handler('', ctx);
 
     expect(ctx.ui.select).toHaveBeenCalledWith('Evidence Modeling', [
-      '讨论业务',
+      '访谈并沉淀领域语言',
       '生成或修改模型',
       '只校验模型',
       '返回',
@@ -84,14 +87,17 @@ describe('/evidence-model', () => {
     );
   });
 
-  it('does not authorize an edit after a blank goal', async () => {
-    const ctx = context();
-    ctx.ui.select.mockResolvedValue('生成或修改模型');
-    ctx.ui.editor.mockResolvedValue('  \n');
-    const { handler, sendUserMessage } = setup([skill]);
-    await handler('', ctx);
-    expect(sendUserMessage).not.toHaveBeenCalled();
-  });
+  it.each(['访谈并沉淀领域语言', '生成或修改模型'])(
+    'does not authorize %s after a blank goal',
+    async (action) => {
+      const ctx = context();
+      ctx.ui.select.mockResolvedValue(action);
+      ctx.ui.editor.mockResolvedValue('  \n');
+      const { handler, sendUserMessage } = setup([skill]);
+      await handler('', ctx);
+      expect(sendUserMessage).not.toHaveBeenCalled();
+    },
+  );
 
   it('returns without sending when the panel is closed', async () => {
     const ctx = context();

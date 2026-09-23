@@ -117,11 +117,18 @@ class SkillPackageTests(unittest.TestCase):
         ):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
-        self.assertEqual({1, 2, 3, 4, 5, 6, 8, 9}, {case["id"] for case in cases})
+        self.assertEqual(
+            {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14},
+            {case["id"] for case in cases},
+        )
         ids = [case["id"] for case in cases]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue(
-            {"domain", "fulfillment", "resume", "partial-fm", "requirements"}.issubset(
+            {
+                "domain", "fulfillment", "resume", "partial-fm", "requirements",
+                "inline-language", "language-correction", "language-ambiguity",
+                "language-write-failure", "language-read-only",
+            }.issubset(
                 {case["category"] for case in cases}
             )
         )

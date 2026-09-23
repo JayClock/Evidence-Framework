@@ -42,7 +42,7 @@ fm/
 - `validation/scenarios/`：20 个正常、边界和异常场景，其中 2 个覆盖 CRM 月度目标完成与不足。
 - `generated/`：当前保留本次重建结果；消费前应从当前源 JSON 和 validation 重建。
 
-模型概览见 [00-overview.md](00-overview.md)，术语见 [01-glossary.md](01-glossary.md)，CRM 本批次来源、纳入判断与缺口见 [crm-assessment.md](crm-assessment.md)，原订阅业务条款见 [业务规则](../discovery.md)。
+模型概览见 [00-overview.md](00-overview.md)，术语见 FM 类型根之外的 [glossary.json](../glossary.json)，CRM 本批次来源、纳入判断与缺口见 [crm-assessment.md](crm-assessment.md)，原订阅业务条款见 [业务规则](../discovery.md)。
 
 原目录重构保留原有订阅模型稳定 ID；新增 CRM 上下文时同样按 JSON 分片的 `type` 递归识别源对象，目录不决定业务归属。CRM 不与专栏订阅建立业务关系，只作为同一模型中的独立入口。
 

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jayclock.dev/evidence/glossary/v1/glossary.schema.json",
+  "title": "Evidence domain glossary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "terms"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "definition", "sourceRefs"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^term\\.[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+          },
+          "name": { "$ref": "#/$defs/text" },
+          "definition": { "$ref": "#/$defs/text" },
+          "context": { "$ref": "#/$defs/text" },
+          "aliases": { "$ref": "#/$defs/texts" },
+          "distinctions": { "$ref": "#/$defs/texts" },
+          "sourceRefs": { "$ref": "#/$defs/texts" },
+          "modelRefs": { "$ref": "#/$defs/texts" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "texts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/text" }
+    }
+  }
+}
