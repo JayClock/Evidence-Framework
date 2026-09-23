@@ -2,51 +2,30 @@
 
 ## Bad Smell
 
-虚假胜利指的是完成声明只有生成者自己的判断，没有独立依据。这个仓库里的高发场景是：文件存在或生成页存在就当成实现完成；把 `.evidence/checks/` 里的历史结果、生成报告或缓存命中当成本次通过；把结构校验通过（`plan_state.py` 的 `valid`、`guides:verify` 的 0 errors）当成语义就绪或业务批准；命令没实际执行就写“运行相关测试”；为了通过而删失败测试、改业务预期或手改机器报告。
+文件写完、构建显示绿色，Agent 就说任务完成。过一遍验收才发现：异常输入没测，构建用了缓存，权限来源还没有决定。每一条“成功”都可能是真的，但它们证明的事情比完成声明窄得多。
 
-它以两种面貌出现。还没开工时，Agent 把“文件写完了”讲成“任务完成了”。开工之后，Agent 跳过需要深推理的部分，只处理容易的部分，再对整项任务宣布完成。后者就是惰性生成：容易的做得很快，跳过的不说，最后把局部当成全部。两种面貌的共同点是自评代替验证。
+在 Evidence，`plan.yaml` 有两个必须分开的字段：`tasks[taskKey].status` 是唯一任务状态，`observedEvidence` 只记真实观察。`review.html` 能把计划呈现给人看，却不能反过来批准任务。写出代码、写下 CHECK、运行 CHECK、审核业务含义，是四件不同的事。
 
 ## Solution
 
-消除这个坏味道的手法叫分离执行与验证：把“是否完成”的判断从生成者手里拿走。这个仓库的做法是：验收条件写成具体数据，进度记原始数据，验证由只读脚本执行，失败保留不隐藏。
+### 让结果有可以对照的输入
 
-### 验收数据可比较：CHECK 与 acceptanceCriteria
+计划中的 CHECK 要给出固定输入、业务时间、真实依赖或 Fake、预期结果和失败后的不变性，还要指向测试文件、工作目录和精确命令。`acceptanceCriteria` 通过 `assertions` 引用本任务 CHECK，用具体路径、受限操作符和有类型的期望值表达判断。“测试通过”“文件已存在”不是业务验收数据。命令还没办法确定，应明确填 `null` 并关联受影响的 gap，而不是留下模糊的执行建议。
 
-[机器计划模板](../../.agents/skills/evidence-task-planning/assets/plan-template.yaml)的 `checks` 逐项要求目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令与 `evidenceRequired`；`acceptanceCriteria` 必须引用本任务 CHECK，并以 `assertions[{path, operator, expected}]` 保存具体且保留类型的期望数据，不能用“测试通过”“符合要求”或文件存在替代任务验收。[测试指南](../engineering/testing.md)补充：命令未知时填 `null` 并关联局部 gap，不写“运行相关测试”冒充可执行。
+一条月度客户联系完成规则若只有“达到总联系数”这个测试，电话、邮件各自不足仍可能被漏掉。测试绿色只能说明给出的那组输入满足断言。检查设计本身要对照规则和故事，看反例是否足以暴露错误；这一层靠字段完整性检查不出来。
 
-### 记录原始进度：status 与 observedEvidence
+### 让检查者独立于生成者
 
-`plan.yaml.tasks[taskKey].status` 是任务状态唯一位置；同一任务记录的 `observedEvidence` 只保存真实观察，计划生成时为空。每条证据写明 `checkId`、`command`、`exitCode` 与 `observed`，例如“`MonthlyCustomerContactCompletionTests` 全部通过，命令实际执行；覆盖达标、不足、恰在周期闭合时刻、区间外、跨周期与任一单项不足六类输入”，而不是“已完成”。`review.html` 只投影这些原始记录，不能反向成为状态或批准来源。较长输出留在获授权的检查目录并引用；Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造任务 done 或审核通过。
+只读的 `plan_state.py verify` 可以查任务与 CHECK 是否匹配、完成状态是否有证据、前置任务是否已完成、阻塞任务是否关联已知缺口。它不会把 `planned` 改成 `done`，也不负责判断业务切片是否合理。`npm run guides:verify` 检查维护文档的路径、格式与过期表述，不证明指南说得对。[测试指南](../engineering/testing.md)为质量命令分别标明覆盖和不能证明的内容，避免把结构有效讲成业务批准。
 
-### 独立验证者：只读状态机与项目命令
+执行记录要能让后来的人复核：命令和 cwd 是什么，退出码是多少，哪些断言确实跑了，哪些没有跑。Nx 命中缓存、Gradle 显示 `UP-TO-DATE`，都不能说成测试刚刚实际执行；需要本次执行证据时应按指南关闭缓存或强制重跑。环境缺依赖也不能归咎于业务逻辑。只留下“已验证”，下次会话无法判断证据还适不适用。
 
-- `plan_state.py verify/next` 只读、确定性：每个任务必须有引用本任务 CHECK 的 `acceptanceCriteria` 和结构化断言；done 还必须有非空 `observedEvidence`；`in-progress`/`done` 的前置必须先完成；`blocked` 必须关联 gap；compiled task、机器任务记录与 CHECK 一一对应。
-- 回归测试固定这些边界：`test_done_requires_acceptance_criteria_and_observed_evidence`、`test_acceptance_criteria_require_local_checks_and_typed_assertions`、`test_active_task_requires_completed_dependencies`、`test_task_records_and_check_ids_are_one_to_one`、`test_blocked_task_and_empty_command_require_known_gap`。
-- 它在 Plan 与 Check 两个阶段各运行一次，只报告，不替 Agent 修改状态。
-- 项目质量命令充当脚本裁判：`npm test`、`npm run lint`、`npm run build`、`./gradlew check`、`npm run guides:verify`；[测试指南](../engineering/testing.md)为每条写明“实际覆盖”和“不证明什么”。
+项目级命令也要按各自范围使用。`npm test` 可能串联前端、扩展、Skills 和 Guides 回归；`npm run lint` 看前端与文档；`npm run build` 检查构建；涉及 Java 还要运行 `./gradlew check`。它们是交付底线，不能因为局部 CHECK 绿了就省掉。另一方面，跑了这几项也不能省略特定 HTTP 或持久化 CHECK：纯领域测试不证明序列化与状态码，mock 领域的 HTTP 测试不证明真实 SQL，H2 测试不证明生产数据库的并发行为。要说清每次运行覆盖了哪一段。
 
-### 真实证据：命令、环境与哈希
+如果反馈指出的不是代码错误，而是断言写得过宽，继续调整实现只会让问题更隐蔽。检查设计要先回到故事、规则和来源，例如一个“创建失败”的断言若只看状态码，还需要判断既有数据是否未改变。对无法自动断言的部分，可以保留人工审查及其依据，但不能把人工判断冒充成某条命令的退出码。
 
-[测试指南](../engineering/testing.md)要求记录命令、cwd、退出码、真实输出或日志路径、断言覆盖与未执行项；Nx/Gradle 的缓存命中、UP-TO-DATE 与实际执行分别说明；环境失败与实现失败区分；历史检查只在输入、环境和依赖仍有效时作为有限前置证据。获授权留存的运行目录只保存每命令的 `startedAt`、`exitCode`、时长、`logSha256` 与运行环境，以及 Python/依赖版本与 FM/API 输入摘要，不复制完整输出。仓库曾一次性清空约 1.0 MB 过期检查记录，并把目录约定收紧为“紧凑运行清单”，让旧证据不再充当本次结果。
+### 失败留着，缺口也留着
 
-### 失败保留与反作弊
+如果当前 CHECK 失败，先保留完整输出，定位实现还是测试设计的问题。删掉失败测试、放宽业务期望或手改报告都只会让输出变绿，不会让行为变对。若身份和实例归属仍未确定，local/test 测试可以证明受限场景的行为，却不能替代生产 403 与他人实例拒绝的验收。缺口只阻塞依赖它的工作，不因其他任务完成而消失。
 
-- [OpenWiki 工作流](../../.github/workflows/openwiki-update.yml)区分“生成失败”与“PR 仍有用”：`continue-on-error` 后仍创建 PR（只保留已完成页面），最后由 `exit 1` 标记工作流失败，PR body 附带实际结果。
-- `AGENTS.md` 的受管块要求保留完整失败输出，并提醒 brief 中的未知项与 review 项是验证缺口，不是需求。
-- 纪律：不得删失败测试、改业务预期或手改机器报告制造通过；不自动提升审核状态；链接可达不等于指南正确，结构覆盖不等于业务批准，测试成功不等于生产保证。
-- 仓库里出现过“既有失败如实保留、指向基线复现”的阶段，随后由专门的重构任务修复该失败，并让交付可用 `project` 逐字节复现。失败没有被改写成通过，也没有被留成永久借口。
-
-### 实际闭环：计划任务与证据
-
-当前计划编译出 6 个任务，执行顺序由依赖决定，当前全部为 `done`，每个都满足“具体验收数据加真实证据”：
-
-- 任务状态、检查项与证据在 `plan.yaml` 中一一对应，`observedEvidence` 非空；迁移或重构计划时必须原样保留这些证据，不可凭审核投影重新推断；
-- 领域检查记录写明实际执行的测试项与逐例结果，而不是“已完成”；
-- 项目质量记录区分构建工具报告的“实际执行”“up-to-date”与“命中缓存”：只有强制重跑（`--rerun-tasks`）得到的结果才是本次结果，默认运行命中缓存属于信息级；
-- 只读状态脚本每次核对：任务与 CHECK 一一对应、完成必须有非空证据、前置必须先完成、阻塞必须关联已知缺口。
-
-结构校验与语义判断分得很开：`plan_state.py verify` 通过只说明计划结构有效，是否“切片合理、CHECK 证明业务结果”仍由 Agent 对照业务来源判断；`guides:verify` 的 0 errors 只说明文档链接与格式，不说明指南正确。
-
-### 缺口保持为缺口
-
-可执行基线之外的未知被登记为 gap，而不是被“看起来做完了”吞掉：`GAP-IDENTITY` 说明可信身份与代表权限未决定，只阻塞依赖它的 API 与验收任务；`GAP-DATABASE` 说明生产数据库未选型，只阻塞生产方言与并发验收。纯领域任务不因它们停工，生产保证也不会被本地 H2 证据替代。
+交付时一条可信的陈述通常很具体：哪些命令实际执行、观察到什么结果、哪些检查因为环境或未决问题没有执行。结果可以是“本轮无法完成”。比起宣告胜利后再让别人查出空白，这样的记录能让下一次工作从确切的位置继续。
