@@ -51,6 +51,22 @@ class ExecutionProtocolTests(unittest.TestCase):
         self.assertIn("不能合并成一个总分", text)
         self.assertIn("两个维度均满足要求且质量检查实际通过", text)
 
+    def test_only_main_archives_and_review_has_no_self_review_fallback(self):
+        lifecycle = self.document("lifecycle.md")
+        review = self.document("review.md")
+        entry = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        for text in (lifecycle, review, entry):
+            self.assertIn("主 Agent", text)
+            self.assertIn("独立", text)
+            self.assertIn("reviewer", text)
+        self.assertIn("内层不写持久任务记录", lifecycle)
+        self.assertIn("工具权限直接取自 subagent 定义", lifecycle)
+        self.assertIn("evidence_worker", entry)
+        self.assertIn("evidence_review", entry)
+        self.assertNotIn("没有子 Agent 时分两轮审查", review)
+        self.assertNotIn("内层先将有权限保存", lifecycle)
+        self.assertIn("不由主 Agent 或 worker 自审代替", review)
+
     def test_behavior_evals_cover_execution_risks_without_retired_plan_layout(self):
         document = json.loads((SKILL / "evals/evals.json").read_text(encoding="utf-8"))
         cases = document["evals"]
@@ -59,6 +75,8 @@ class ExecutionProtocolTests(unittest.TestCase):
         self.assertTrue({
             "symptom-before-fix", "independent-expectation-and-existing-green",
             "standards-and-spec-independent", "flaky-repro-and-evidence-limits",
+            "independent-review-and-main-only-archive",
+            "reviewer-tools-and-untrusted-worker-claims",
         }.issubset(names))
         for case in cases:
             self.assertTrue(case["prompt"])

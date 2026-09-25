@@ -167,6 +167,9 @@ test('scans maintained docs and workflow templates, not generated facts or histo
   put('.agents/skills/evidence-task-planning/evals/README.md');
   const files = collectDocuments(root);
   assert.ok(files.includes('docs/engineering/new-guide.md'));
+  assert.ok(files.includes('.pi/agents/evidence-worker.md'));
+  assert.ok(files.includes('.pi/agents/evidence-reviewer.md'));
+  assert.ok(files.includes('.pi/extensions/evidence-delivery/README.md'));
   assert.ok(
     files.includes(
       '.agents/skills/evidence-task-planning/assets/task-plan-template.md',

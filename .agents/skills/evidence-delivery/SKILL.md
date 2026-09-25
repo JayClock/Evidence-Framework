@@ -1,14 +1,16 @@
 ---
 name: evidence-delivery
-description: 按 plan.yaml 恢复交付、选择一个就绪任务、执行并记录真实证据；也用于只读检查计划与下一任务。实现采用小步测试循环，故障先复现，交付分别审查规范与需求；缺口转交对应拥有者，不改 FM/API、不自动审批或提交。
-compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 schemaVersion 3.0 plan.yaml。
+description: 按 plan.yaml 恢复交付，由主 Agent 派发独立 worker 与独立 reviewer，核验后唯一归档；也用于只读检查计划与下一任务。一次只交付一个就绪任务，缺口交对应拥有者，不改 FM/API、不自动审批或提交。
+compatibility: Python 3.10+、PyYAML、可启动独立 worker/reviewer 的 Pi CLI 与项目交付扩展；消费 schemaVersion 3.0 plan.yaml。
 ---
 
 # Evidence 单任务交付
 
-外层 PDCA 管任务，内层 Guides → Action → Sensors → Steer 管当前任务的执行质量。状态只属于 `plan.yaml`，审核页是投影，扩展只负责交互。每次只执行一个获授权且就绪的任务，完成后停止。
+主 Agent 承担外层 PDCA，独立 worker 执行当前任务，另一全新会话的 reviewer 独立审查。只有主 Agent 可归档 `plan.yaml` 的任务记录、证据、缺口与状态，审核页只是投影。扩展只负责进程调度与临时交接，不拥有业务状态。每次只执行一个获授权且就绪的任务，完成后停止。
 
 ## 1. 确认本次入口
+
+本入口由主 Agent 使用；worker/reviewer 只按各自角色读取被引用的专业方法，不运行外层选任务或归档流程。
 
 读取项目指令、Guides 导航、用户目标和 Git 差异，确定本次是只读查看还是实施。只读请求不写计划、状态或产品文件；保留已有无关改动。
 
@@ -39,7 +41,7 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next --plan "$PLAN_PATH"
 
 ### Action
 
-按任务 mode 加载一个执行分支：
+主 Agent 按项目的[Pi 独立交付入口](../../../.pi/extensions/evidence-delivery/README.md)调用 `evidence_worker`，传 taskKey、授权与目标、原始来源路径、精确 allowedFiles；不传整段聊天或上一 worker 的推理。缺少子 Agent 能力时停止并报告环境阻塞，不由主 Agent 兼任执行者或 reviewer。worker 在新的非持久会话中按任务 mode 加载一个执行分支：
 
 | mode / 情况             | 读取与动作                                                | 退出条件                           |
 | ----------------------- | --------------------------------------------------------- | ---------------------------------- |
@@ -52,18 +54,18 @@ python3 "$SKILL_DIR/scripts/plan_state.py" next --plan "$PLAN_PATH"
 
 ### Sensors
 
-运行本任务全部适用 CHECK 和项目质量命令。保留命令、cwd、退出码、输出定位及缓存/环境限制；再按[双维度审查](references/review.md)分别给出 Standards 与 Spec 结论。测试成功不替代语义审查，审查意见不替代测试。
+worker 运行本任务全部适用 CHECK 和项目质量命令，返回命令、cwd、退出码、原始输出定位及缓存/环境限制，不写 observedEvidence。主 Agent 检查交付及工作树后调用 `evidence_review`，由另一独立只读会话按[双维度审查](references/review.md)分别给出 Standards 与 Spec 结论。reviewer 读取实际来源、代码和日志，不照收 worker 声明；测试成功不替代语义审查，审查意见不替代测试。
 
-**退出条件**：每条 acceptanceCriteria 都有本轮 CHECK 结果支持，两个审查维度各有结论，未验证项明确可见。
+**退出条件**：每条 acceptanceCriteria 都有本轮 CHECK 结果支持，独立 reviewer 的两个审查维度各有结论，未验证项明确可见。子进程退出成功仅表示收到交接，不表示任务完成。
 
 ### Steer
 
-按生命周期协议的转向矩阵处理：实现错误留在本任务修复，设计问题修订任务，单元/依赖变化返回 Plan，业务未知交来源拥有者，环境不可用只阻塞受影响任务。纠偏后重新装配 Guides 并复验。
+主 Agent 按生命周期协议的转向矩阵处理：实现错误重新派发本任务 worker 修复并另启 reviewer 重审；设计问题由主 Agent 修订任务，单元/依赖变化返回 Plan，业务未知交来源拥有者，环境不可用只阻塞受影响任务。每次委派重新装配 Guides，不续接子会话。
 
 ## 4. 记录并停止
 
-按[知识交接协议](references/lifecycle.md#5-知识交接与归位)清点新增用户反馈、执行发现与决定，按实际授权归位；未保存内容明确标为未保存。
+worker 与 reviewer 按[知识交接协议](references/lifecycle.md#5-知识交接与归位)分别交接新增用户反馈、执行发现与决定建议；主 Agent 核验来源、适用范围和授权后唯一归位，未保存内容明确标为未保存。
 
-只有 CHECK、项目质量检查与两个审查维度均满足要求，才先写 `tasks[taskKey].observedEvidence`，再设置同一任务的 `status: done`。结构通过不表示业务批准。状态唯一位置是 `tasks[taskKey].status`，依赖只读 `compiled.tasks[*].dependsOn`。
+主 Agent 再核对受审产物未变化，只有 CHECK、项目质量检查与独立 reviewer 的两个审查维度均满足要求，才先写 `tasks[taskKey].observedEvidence`，再设置同一任务的 `status: done`。结构通过不表示业务批准。状态唯一位置是 `tasks[taskKey].status`，依赖只读 `compiled.tasks[*].dependsOn`。
 
 写入计划后运行 verify，并通过 planning 的 render_plan.py 重建 `review.html`；失败如实报告，不手改投影或伪造证据。报告改动、实际检查、Standards / Spec、局部缺口、知识保存结果和下一候选，然后停止，不自动执行下一任务、审批或操作 Git 历史。

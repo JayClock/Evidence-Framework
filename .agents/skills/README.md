@@ -2,7 +2,7 @@
 
 本仓库的 Evidence Skills 统一放在 `.agents/skills/`，使用 `evidence-<职责>` 命名，目录名与 frontmatter `name` 一致。项目行动从 [宪法](../../AGENTS.md)和 [Guides 导航](../../docs/guides/index.md)进入：宪法、项目基线、工程指南、当前任务按需加载。
 
-Skill 保存可移植方法，项目文档保存实际范围与工程决定；不在两者复制业务知识或状态。编排入口按意图选择分支，专业方法由对应拥有者唯一维护；引用写明何时读取，每一步以可观察的退出条件收束。交付采用外层 PDCA、内层 Guides → Action → Sensors → Steer。Guides 在开始、恢复、纠偏和来源变化时重新核对，不只是会话开头的一段提示词。
+Skill 保存可移植方法，项目文档保存实际范围与工程决定；不在两者复制业务知识或状态。编排入口按意图选择分支，专业方法由对应拥有者唯一维护；引用写明何时读取，每一步以可观察的退出条件收束。交付由主 Agent 承担外层 PDCA 与唯一归档，独立 worker 执行内层 Guides → Action → Sensors → Steer，另启独立只读 reviewer 审查；读写工具权限直接配置在 subagent 定义中。Guides 在开始、恢复、纠偏和来源变化时重新核对，不只是会话开头的一段提示词。
 
 | Skill                                                     | 用途               | 输入与输出                                                                               | 运行依赖                                                       |
 | --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -13,7 +13,7 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 | [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
 | [evidence-api-design](evidence-api-design/SKILL.md)       | 整体 API 设计      | 已确认 FM → HTTP 契约、OpenAPI、超媒体与消费者流程                                       | Python、可定位的 evidence-fm                                   |
 | [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |
-| [evidence-delivery](evidence-delivery/SKILL.md)           | 单任务交付         | 任务 DAG → 小步实现／复验、故障诊断、Standards / Spec 审查与真实证据                     | Python 3.10+、PyYAML、项目工具链                               |
+| [evidence-delivery](evidence-delivery/SKILL.md)           | 单任务交付         | 任务 DAG → 小步实现／复验、故障诊断、Standards / Spec 审查与真实证据                     | Python 3.10+、PyYAML、Pi 独立子进程与项目工具链                |
 
 ## 安装
 
@@ -79,7 +79,7 @@ FM 单独安装可消费充分材料生成模型；输入不足时返回具体�
     └── api/              # 按需授权保存的 inspect/check 结果
 ```
 
-各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`evidence-task-planning` 默认输出 `docs/plans/smart-domain/plan.yaml` 和 `review.html`：YAML 是机器可读的唯一计划记录，保存显式切片、编译 DAG/API 覆盖、任务 Guides/设计、状态、CHECK、证据与缺口；HTML 是可重建的离线只读审核投影。任务标题不参与 taskKey 或排序。实体和规则从任意 FM 提取，不包含项目专用案例。`evidence-delivery` 消费同一 `plan.yaml`，执行前核对授权/范围、业务与工程来源、前置新鲜度、设计边界、环境、CHECK 与退出条件。`next` 只提供结构候选，不证明语义就绪；FM/API 摘要不覆盖架构、规范、howto 或代码变化。真实结果写入任务 `observedEvidence`，状态只在同一任务的 `status` 维护，不从审核页反向更新。任务支持 implementation、verify、design、setup、manual。
+各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`evidence-task-planning` 默认输出 `docs/plans/smart-domain/plan.yaml` 和 `review.html`：YAML 是机器可读的唯一计划记录，保存显式切片、编译 DAG/API 覆盖、任务 Guides/设计、状态、CHECK、证据与缺口；HTML 是可重建的离线只读审核投影。任务标题不参与 taskKey 或排序。实体和规则从任意 FM 提取，不包含项目专用案例。`evidence-delivery` 消费同一 `plan.yaml`，执行前核对授权/范围、业务与工程来源、前置新鲜度、设计边界、环境、CHECK 与退出条件。`next` 只提供结构候选，不证明语义就绪；FM/API 摘要不覆盖架构、规范、howto 或代码变化。worker 和 reviewer 只交接，由主 Agent 核验后唯一写入任务 `observedEvidence`，状态只在同一任务的 `status` 维护，不从审核页反向更新。Pi 入口与工具权限见[独立交付](../../.pi/extensions/evidence-delivery/README.md)。任务支持 implementation、verify、design、setup、manual。
 
 已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。明确术语按 FM 的领域语言方法在访谈中持续写入唯一 JSON 词汇表 `.evidence/glossary.json`，不维护 Markdown 词典，未决解释和讨论案例留在发现记录；standalone 保存未建模术语，model 只引用已有 FM 对象／属性。已建模名称与含义只在 FM 维护，落实术语后将同一条目改为引用，不留独立定义。
 

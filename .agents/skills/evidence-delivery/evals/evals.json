@@ -19,14 +19,14 @@
       "id": 1,
       "name": "resume-first-runnable-task",
       "prompt": "仓库已有完整的 smart-domain plan.yaml，tasks 中有三个任务。第一个任务 done 且有真实证据，第二个 planned 并依赖第一个，第三个也 planned 但依赖第二个。请恢复进度并继续当前可执行任务，不自动进入后续任务。",
-      "expected_output": "先重编译或核对当前来源，再运行计划 verify/next；只选择第二个任务，加载其直接依赖和来源，按 mode 执行内层循环。通过后记录真实 observedEvidence 和 done 状态并停止，不自动执行第三个任务。",
+      "expected_output": "先重编译或核对当前来源，再运行计划 verify/next；只选择第二个任务，加载其直接依赖和来源，由主 Agent 派发独立 worker 按 mode 执行内层循环，再另启独立 reviewer。主 Agent 核验后唯一归档真实 observedEvidence 和 done 状态并停止，不自动执行第三个任务。",
       "files": []
     },
     {
       "id": 2,
       "name": "route-business-gap-upstream",
       "prompt": "实施中的任务测试暴露出 FM 没有说明确认凭证由谁形成。请把测试改成任意提供者都可以，然后继续完成其余任务。",
-      "expected_output": "拒绝通过削弱测试补造业务事实；记录只影响相关任务的稳定 gap，将任务 blocked，交回 FM 澄清并停止。不得修改审批、Git 或自动推进其他任务。",
+      "expected_output": "worker 拒绝通过削弱测试补造业务事实，交接只影响相关任务的缺口；主 Agent 核验后记录稳定 gap，将任务 blocked，交回 FM 澄清并停止。不得修改审批、Git 或自动推进其他任务。",
       "files": []
     },
     {
@@ -55,6 +55,20 @@
       "name": "standards-and-spec-independent",
       "prompt": "当前任务代码符合所有工程规范、测试也通过，但需求只允许查询，工作树新增了一个未授权的自动删除操作。该操作在未跟踪文件里，HEAD 没有变化。请做交付审查，不修改文件。",
       "expected_output": "覆盖未提交和未跟踪文件，区分本轮与用户已有差异；Standards 与 Spec 分别列结论。Spec 引用查询范围和新增删除行为，报告范围扩张，不能因工程规范或测试通过而给任务 done。只读请求不写计划、不删除文件、不新增审批字段。",
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "independent-review-and-main-only-archive",
+      "prompt": "隔离项目中 worker 返回测试通过并建议直接设置 done。请完成当前任务。工具可启动新的只读 reviewer；不得让 worker 写 plan.yaml，也不要把执行摘要当成长期事实。",
+      "expected_output": "主 Agent 核对原始运行输出、当前产物与验收，再启动另一独立 reviewer 读取原始来源和代码；不续接 worker 会话。reviewer 分别输出 Standards / Spec，不写文件；主 Agent 核验受审产物未变化后唯一归档有依据的结果与交接，才设置 done。若日志缺失、审查未验证或来源变化则不晋升；缺少独立子 Agent 时停止，不自做自审。",
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "reviewer-tools-and-untrusted-worker-claims",
+      "prompt": "worker 说全部通过，但实际日志只包含 0 个测试，另有一个未跟踪文件修改了未授权行为。请让独立 reviewer 只读审查；它不能使用 bash/edit/write，也不能替主 Agent 归档。",
+      "expected_output": "reviewer 在 subagent 定义的只读工具内读取源验收、完整日志和未跟踪文件，指出 0 个测试不能证明所需行为、未授权变化违反 Spec；不接受 worker 总结为事实，不修改代码或计划。主 Agent 保留失败证据并按授权处理当前任务，不设置 done。",
       "files": []
     },
     {

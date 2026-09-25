@@ -84,7 +84,7 @@ tasks: {}
 #   steps: []
 #   # implementation：按单行为测试 → 最小实现 → 局部整理循环；
 #   # 用户明确选择普通实现与回归时记录选择，不伪造测试先行。
-#   # 故障先复现；收束时执行全部 CHECK、项目质量检查和 Standards / Spec 审查。
+#   # worker 故障先复现，执行全部 CHECK 与项目质量检查；独立 reviewer 审查 Standards / Spec。
 #   checks: []
 #   - id: CHECK-<全计划唯一标识>
 #     purpose: <规则或风险及判断目的>
@@ -110,7 +110,7 @@ tasks: {}
 #         # matches/count-equals。
 #         expected: <保留字符串、数字、布尔、null、数组或对象类型的具体期望值>
 #   observedEvidence: []
-#   # 实施后记录 CHECK 与 Standards / Spec 各自结论及未验证项；规划时保持为空。
+#   # 仅主 Agent 核验后归档 CHECK、独立 reviewer 各维度结论及未验证项；规划时保持为空。
 gaps: []
 # - id: GAP-<稳定标识>
 #   sourceRefs: []

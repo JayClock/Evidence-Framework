@@ -4,16 +4,22 @@
 
 以下命令均在仓库根执行。声明命令不是执行结果；运行前核对 [package.json](../../package.json)、根 Gradle 配置和当前环境。
 
-| 命令                               | 实际覆盖                                                                               | 不证明什么                                                |
-| ---------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `npm run guides:verify`            | 前馈检查器回归、维护范围内 Markdown 本地内联链接与过期架构表述检查、前馈相关文件格式   | 不检查外部 URL 可达性、标题锚点或业务语义；不证明任务就绪 |
-| `npm test`                         | Nx 应用/库 test、建模扩展测试、Python 解释器选择器回归、Skills 回归、Guides 检查器回归 | 具体 suite/缓存及环境以输出为准，不证明生产环境           |
-| `npm run lint`                     | 前端 ESLint 与前馈文档检查                                                             | 不检查 Java 格式或业务授权                                |
-| `npm run build`                    | Nx build 与建模扩展 TypeScript 检查                                                    | 打包成功不等于运行验收                                    |
-| `./gradlew check`                  | Java 测试、Spotless 及模块已配置检查                                                   | 不证明生产数据库、真实支付机构或业务批准                  |
-| `npm run evidence-modeling:verify` | 建模扩展类型、测试及其配置的格式范围                                                   | 不替代产品 HTTP/SQL 检查                                  |
+| 命令                               | 实际覆盖                                                                                         | 不证明什么                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `npm run guides:verify`            | 前馈检查器回归、维护范围内 Markdown 本地内联链接与过期架构表述检查、前馈相关文件格式             | 不检查外部 URL 可达性、标题锚点或业务语义；不证明任务就绪 |
+| `npm test`                         | Nx 应用/库 test、建模与独立交付扩展测试、Python 解释器选择器回归、Skills 回归、Guides 检查器回归 | 具体 suite/缓存及环境以输出为准，不证明生产环境           |
+| `npm run lint`                     | 前端 ESLint 与前馈文档检查                                                                       | 不检查 Java 格式或业务授权                                |
+| `npm run build`                    | Nx build 与建模、独立交付扩展 TypeScript 检查                                                    | 打包成功不等于运行验收                                    |
+| `./gradlew check`                  | Java 测试、Spotless 及模块已配置检查                                                             | 不证明生产数据库、真实支付机构或业务批准                  |
+| `npm run evidence-modeling:verify` | 建模扩展类型、测试及其配置的格式范围                                                             | 不替代产品 HTTP/SQL 检查                                  |
 
-`guides:verify` 由 [检查器](../../tools/guides/check.mjs)定义扫描范围：项目宪法/README、docs、后端切片 README、业务/API 导航、Skills 索引及 planning/delivery 的正文、参考与模板。生成产物、业务源 YAML、历史证据和第三方材料不重写为前馈。代码块中的示例路径、模板变量、远程链接不作为实际本地文件链接检查。检查器仅验证文件路径，不是完整 Markdown 解析器。
+`guides:verify` 由 [检查器](../../tools/guides/check.mjs)定义扫描范围：项目宪法/README、docs、后端切片 README、业务/API 导航、Skills 索引及 planning/delivery 的正文、参考与模板。还覆盖独立交付扩展说明与 `.pi/agents/` 的角色定义。生成产物、业务源 YAML、历史证据和第三方材料不重写为前馈。代码块中的示例路径、模板变量、远程链接不作为实际本地文件链接检查。检查器仅验证文件路径，不是完整 Markdown 解析器。
+
+## Pi 独立交付检查
+
+`npm run evidence-delivery:verify` 运行独立交付扩展的 TypeScript 检查与 Vitest 回归；源码与范围见[独立交付说明](../../.pi/extensions/evidence-delivery/README.md)。`npm test` 包含该扩展回归，`npm run build` 包含类型检查，Guides 门禁包含角色定义和说明的链接与格式。
+
+回归使用受控子进程/模型输出，覆盖新会话、subagent 工具权限、基线保护、新鲜度、错误结果和取消；不证明真实模型已完成业务审查，也不证明 shell 具备路径级隔离。真实 Agent 评测单独保留运行记录，未执行就标未执行。
 
 ## Python 解释器与依赖
 
@@ -47,7 +53,7 @@ Skills 回归要求 Python 3.10+ 与各自 `requirements.txt`；机器上的 `py
 - Nx/Gradle 的缓存命中、UP-TO-DATE、实际执行分别说明。需要复验时使用 `npx nx ... --skip-nx-cache` 或 `./gradlew ... --rerun-tasks`，不能把缓存描述为新运行。
 - 环境失败与实现失败区分；历史检查只有输入、环境和依赖仍有效时才能作为有限的前置证据。
 
-任务结果和状态都写入唯一 `plan.yaml`：`tasks[taskKey].observedEvidence` 记录真实观察，`tasks[taskKey].status` 记录状态；`review.html` 只是可重建审核投影。获授权的 `.evidence/checks/` 运行目录只保存紧凑运行清单（命令、退出码、环境、输入摘要、日志 `sha256` 与指针），不复制完整输出。Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造业务任务 done 或审核通过。
+worker 和独立 reviewer 只交接；主 Agent 核验后，将任务结果和状态唯一归档到 `plan.yaml`：`tasks[taskKey].observedEvidence` 记录真实观察，`tasks[taskKey].status` 记录状态；`review.html` 只是可重建审核投影。获授权的 `.evidence/checks/` 运行目录只保存紧凑运行清单（命令、退出码、环境、输入摘要、日志 `sha256` 与指针），不复制完整输出。Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造业务任务 done 或审核通过。
 
 ## 反馈转向
 

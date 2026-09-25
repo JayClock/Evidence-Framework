@@ -40,7 +40,7 @@ class FMIntegrationTests(unittest.TestCase):
     def test_project_extension_and_script_entrypoints_exist(self):
         extensions = REPOSITORY / ".pi/extensions"
         self.assertEqual(
-            {"evidence-modeling"},
+            {"evidence-modeling", "evidence-delivery"},
             {path.name for path in extensions.iterdir() if path.is_dir()},
         )
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
@@ -70,6 +70,9 @@ class FMIntegrationTests(unittest.TestCase):
         self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
         self.assertIn("tools/python/python.mjs", scripts["skills:test:fm"])
         self.assertIn("python:test", scripts["test"])
+        self.assertIn("evidence-delivery:test", scripts["test"])
+        self.assertIn("evidence-delivery:typecheck", scripts["build"])
+        self.assertIn("evidence-delivery:verify", scripts)
         self.assertIn("tools/python/python.spec.mjs", scripts["python:test"])
         self.assertIn("schemas/*.json", scripts["evidence-modeling:format:check"])
 

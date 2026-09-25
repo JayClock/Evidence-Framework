@@ -1,0 +1,89 @@
+{
+  "kind": "harness-check-record",
+  "recordedBy": "main-agent",
+  "recordedAt": "2026-09-25T07:50:03.534Z",
+  "sessionId": "01a0d758-d968-72ae-a25c-cd422ae9ae14",
+  "scope": "Pi 独立 worker、独立 reviewer、主 Agent 唯一归档；未修改业务 FM/API、业务计划或状态。",
+  "userFeedback": [
+    {
+      "source": "本会话用户实施请求",
+      "quote": "实现 ‘独立 worker + 独立 reviewer + 主 Agent 唯一归档’，需要重构的直接破坏性更新，不要残留旧描述",
+      "appliedTo": "交付扩展、角色定义、delivery 协议、规划模板与质量回归"
+    },
+    {
+      "source": "本会话用户补充",
+      "quote": "读写权限直接在 subagent 中控制",
+      "appliedTo": ".pi/agents/evidence-worker.md 与 evidence-reviewer.md 的 tools；调度器读取定义，不维护第二份工具权限表"
+    }
+  ],
+  "decisions": [
+    "每次调用使用独立 Pi 进程与 --no-session；子进程不加载自动发现的扩展、Skills 或提示模板，不继承父会话历史。",
+    "reviewer 仅提供 read/grep/find/ls；worker 按角色定义获得实现工具。主 Agent 核验后唯一归档；这是角色协议，不是 shell 路径级沙箱。",
+    "直接移除单 Agent 自审回退和内层直接归档的描述；没有子 Agent 能力时停止。",
+    "保留开工前已有的未跟踪 write Skill；不通过删除用户材料或放宽无关测试制造总门禁通过。"
+  ],
+  "environment": {
+    "pi": "0.87.1",
+    "typecheckDependency": "@earendil-works/pi-coding-agent 0.85.0（现有项目依赖，未升级）",
+    "provider": "openai-codex",
+    "model": "gpt-6-astra",
+    "thinking": "medium",
+    "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework"
+  },
+  "checks": [
+    {
+      "command": "npm run evidence-delivery:verify",
+      "exitCode": 0,
+      "observed": "TypeScript 检查与 20 项 Vitest 回归实际通过；包括工具权限来源、取消真实子进程及错误结果处理。",
+      "log": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/delivery.log",
+      "sha256": "93b2573a32f0f9580035f2ebb4ec015fdd2461d64f54f218d8a150d7696ba069"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "observed": "Nx 35/35 命中缓存；独立交付测试通过。Skills 回归仅剩 test_all_project_skills_use_canonical_root 因预先存在的 write 目录失败。末尾 Guides 未执行，另行运行 guides:verify。",
+      "log": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/test.log",
+      "sha256": "c229ad2497ce52910fcac935535e0ef8222c06c5dcd7fd1b690c5870cf8c9cd2"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "observed": "前端 lint 命中缓存；Guides 链接和格式检查实际通过。",
+      "log": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/lint.log",
+      "sha256": "dcfd35d29a20375839cbce3299950c4e09bd5e9dda1fcc55ac8279d22392dbb5"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "observed": "Nx 35/35 命中缓存；modeling 与 delivery 扩展 TypeScript 检查实际通过。",
+      "log": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/build.log",
+      "sha256": "1c3debbf153ddae295de879e2d39232c45bd2fd7d1656c813413f8e7826d9aac"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 0,
+      "observed": "8 项 Guides 回归、58 份文档、389 个本地链接与格式检查实际通过。",
+      "log": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/guides.log",
+      "sha256": "ea0267b4ef6138a4c943f0c89958bc8e1954ea6041e8829ab6aa50bea1b4e20f"
+    }
+  ],
+  "independentReview": {
+    "execution": "实际启动独立 worker 进行只读验证，再启动另一独立 reviewer；两次交接成功，均无项目文件增量。不是完整行为评测集通过。",
+    "standards": "未满足总门禁：npm test 被既有未跟踪 write Skill 阻塞。",
+    "spec": "已核对候选机制满足独立会话、subagent 工具权限、主 Agent 唯一归档与直接替换旧协议；不代表总任务完成或业务批准。",
+    "mainVerification": "主 Agent 对照真实日志，重算五份日志 SHA256，并确认归档前 1019 个工作树文件摘要与受审产物一致。",
+    "workerArtifact": "tmp/evidence-delivery-checks/independent-delivery-20260925/worker/result.json",
+    "workerSha256": "fa81f1522ee7a943f1cff4dce46384c71eb4481806b88d195488efcf3fed27b1",
+    "reviewerArtifact": "tmp/evidence-delivery-checks/independent-delivery-20260925/reviewer/result.json",
+    "reviewerSha256": "81d5142bab26a06e30e3845b8892cf9a3f5b3e6daa698368be2ddb7e9d3e1563"
+  },
+  "qualityGatePassed": false,
+  "limitations": [
+    "完整真实 Agent 行为 evals 未执行；本轮只执行了真实 worker→reviewer 验证链。",
+    "本轮无 Java 改动，未另跑 ./gradlew check，未强制绕过 Nx 缓存。",
+    "Nx 仍报告三个后端 spotlessJava dependsOn 配置警告，未在本任务扩范围修复。",
+    "日志保存在本机 Git 忽略的 tmp/evidence-delivery-checks/，未随 Git 分发；清理该目录前必须另行保留必要原始证据。记录只保存清单、摘要和指针，不复制完整输出。",
+    "首次模块尚未创建时的加载失败不是业务红灯；日志保留在 initial-missing-module.log。首次总测试的扩展目录断言已随新增扩展更新，完整原始失败保留在 initial-test.log。"
+  ],
+  "handoff": "请由用户或 Skills 维护者决定既有 write Skill 的目录约定与测试处理授权，然后复跑 npm test；本轮未提升任何业务任务状态。"
+}

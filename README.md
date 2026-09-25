@@ -35,7 +35,7 @@ Evidence 是 Nx 单仓库中的业务建模与交付 Harness，配有 React/Type
 - 理解产品：[业务模型](.evidence/fm/00-overview.md) → [API 设计](.evidence/api/README.md) → [软件范围](docs/requirements/scope.md)。
 - 理解实现：[架构基线](docs/architecture/overview.md) → [模块边界](docs/architecture/modules.md) → [领域映射](docs/architecture/domain-mapping.md)。
 - 运行工程：[本地开发](docs/howtos/local-development.md)、[数据库](docs/howtos/database.md)、[浏览器调试](docs/howtos/browser-debugging.md)。
-- 使用工作流：[建模指南](docs/evidence-modeling.md)、[Skills 索引](.agents/skills/README.md)。
+- 使用工作流：[建模指南](docs/evidence-modeling.md)、[Skills 索引](.agents/skills/README.md)、[Pi 独立交付](.pi/extensions/evidence-delivery/README.md)：worker 执行、独立 reviewer 审查、主 Agent 唯一归档。读写工具权限直接配置在 subagent 定义中。
 
 ## 前馈结构
 

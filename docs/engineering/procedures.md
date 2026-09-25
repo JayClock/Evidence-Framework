@@ -127,9 +127,9 @@ Q3/Q4 象限不在本步骤展开：跨功能要求按[质量属性](../requirem
 
 ## 任务内执行与审查
 
-implementation 在已确定测试边界内按[小步实现](../../.agents/skills/evidence-delivery/references/implementation.md)执行，不重复询问已获授权的局部设计。故障或性能异常先按[诊断协议](../../.agents/skills/evidence-delivery/references/diagnosis.md)建立能捕捉原始症状的信号；环境失败不当作业务测试失败。具体步骤写入当前任务 steps，预期来自独立业务依据。
+独立 worker 的 implementation 在已确定测试边界内按[小步实现](../../.agents/skills/evidence-delivery/references/implementation.md)执行，不重复询问已获授权的局部设计。故障或性能异常先按[诊断协议](../../.agents/skills/evidence-delivery/references/diagnosis.md)建立能捕捉原始症状的信号；环境失败不当作业务测试失败。具体步骤写入当前任务 steps，预期来自独立业务依据。
 
-完成本任务 CHECK 和项目质量检查后，按[双维度审查](../../.agents/skills/evidence-delivery/references/review.md)分别报告 Standards 与 Spec。规范符合性与需求忠实性不能互相抵消；结论与实际结果归入现有 observedEvidence，不新增批准或执行状态。
+worker 完成本任务 CHECK 和项目质量检查后，主 Agent 另启独立只读 reviewer，按[双维度审查](../../.agents/skills/evidence-delivery/references/review.md)分别报告 Standards 与 Spec。规范符合性与需求忠实性不能互相抵消；主 Agent 核验受审产物与来源未变化后，将结论与实际结果唯一归入现有 observedEvidence；子 Agent 不归档，不新增批准或执行状态。
 
 ## 工序维护的检查与退出
 

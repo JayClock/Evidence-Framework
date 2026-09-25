@@ -30,7 +30,7 @@
 - 用 procedureRefs 引用选用工序及相关规范、howto 与范例的实际项目根相对路径；章节、触发理由和测试边界写入 Guides，在步骤中说明使用顺序与适用限制。不把工序标签当文件路径，不复制打样代码作为新事实源。
 - dependencyUsage 说明消费前置的哪些契约，以及怎样核对真实就绪证据。范例和已存在文件不自动等于依赖完成。
 - 将每条 `acceptanceCriteria` 连接到本任务具体 CHECK，并使用 `assertions` 的稳定 `path`、受限 `operator` 和保留类型的 `expected` 保存可比较数据。预期取自独立业务依据，不复写被测算法。命令、cwd、环境、输入、反例、失败不变性和证据要求仍归 CHECK；未知命令或必要依据关联 gap。
-- implementation 的 steps 实例化单行为测试、最小实现和局部整理；用户明确选择普通实现与回归时记录该选择。故障先复现。收束包含项目质量检查，以及 Standards / Spec 的独立审查结论；方法由 delivery 的对应分支维护，不复制到每个任务或增加状态字段。
+- implementation 的 steps 实例化单行为测试、最小实现和局部整理；用户明确选择普通实现与回归时记录该选择。故障先复现。收束由 worker 执行项目质量检查，另启独立 reviewer 给出 Standards / Spec 结论，主 Agent 核验后唯一归档；方法由 delivery 的对应分支维护，不复制到每个任务或增加状态字段。
 
 ## 执行前检查
 

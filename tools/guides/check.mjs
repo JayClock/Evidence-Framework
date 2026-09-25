@@ -18,6 +18,9 @@ const requiredDocuments = [
   '.agents/skills/README.md',
   '.agents/skills/evidence-task-planning/SKILL.md',
   '.agents/skills/evidence-delivery/SKILL.md',
+  '.pi/extensions/evidence-delivery/README.md',
+  '.pi/agents/evidence-worker.md',
+  '.pi/agents/evidence-reviewer.md',
 ];
 const documentationTrees = [
   'docs',

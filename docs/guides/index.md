@@ -35,7 +35,7 @@
 | 业务澄清 / FM          | [建模指南](../evidence-modeling.md)、[业务分析主线](../../.agents/skills/evidence-fm/references/business-analysis.md)、[统一 JSON 词汇表](../../.evidence/glossary.json)、[领域语言方法](../../.agents/skills/evidence-fm/references/domain-language.md)、[业务概览](../../.evidence/fm/00-overview.md)、相关源 JSON、对应 Skill |
 | 软件需求               | [范围](../requirements/scope.md)、[故事](../requirements/stories.md)、[质量属性](../requirements/quality-attributes.md)、[requirements Skill](../../.agents/skills/evidence-requirements/SKILL.md)                                                                                                                               |
 | 任务规划               | 范围与相关 FM/API、架构三篇、[planning Skill](../../.agents/skills/evidence-task-planning/SKILL.md)、[测试工序](../engineering/procedures.md)、[测试指南](../engineering/testing.md)、[质量属性](../requirements/quality-attributes.md)                                                                                          |
-| 恢复 / 执行任务        | [delivery Skill](../../.agents/skills/evidence-delivery/SKILL.md)、plan.yaml、当前任务、直接前置产物与本次来源；实现、诊断及审查按入口分支加载                                                                                                                                                                                   |
+| 恢复 / 执行任务        | [delivery Skill](../../.agents/skills/evidence-delivery/SKILL.md)、[Pi 独立交付](../../.pi/extensions/evidence-delivery/README.md)、plan.yaml、当前任务、直接前置产物与本次来源；主 Agent 派发 worker/reviewer 并唯一归档                                                                                                        |
 | 后端领域               | [模块边界](../architecture/modules.md)、[领域映射](../architecture/domain-mapping.md)、[后端规范](../engineering/backend.md)、相关规则/场景                                                                                                                                                                                      |
 | 持久化                 | 模块的数据归属与事务设计、后端规范、[数据库 howto](../howtos/database.md)、真实 SQL/XML 范例                                                                                                                                                                                                                                     |
 | API                    | 对应 api.json 能力、[API 规范](../engineering/api.md)、[安全规范](../engineering/security.md)、独立 HTTP 测试边界                                                                                                                                                                                                                |
@@ -62,7 +62,7 @@
 ## 缺口与转向
 
 - 只读讨论/验证：报告缺口，不擅自写计划状态。访谈沉淀只写获授权的发现记录和词汇表；术语与现有模型冲突时登记影响，不静默改写 JSON、规则或验收。
-- 获授权实施：缺口关联 `plan.yaml.gaps` 和受影响任务的 `gapRefs`；阻塞时不进入 Action。
+- 获授权实施：子 Agent 返回缺口，由主 Agent 关联 `plan.yaml.gaps` 和受影响任务的 `gapRefs`；阻塞时不进入 Action。
 - 源业务未知：交回发现/FM/API/需求拥有者，不在代码中猜测。
 - 任务局部设计不充分：修订详情；单元归属或依赖变化：返回 Plan 重编译。
 - 环境不可用：记为环境阻塞，不伪装成业务失败。
