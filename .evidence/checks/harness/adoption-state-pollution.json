@@ -1,0 +1,39 @@
+{
+  "kind": "harness-check-record",
+  "recordedBy": "main-agent",
+  "recordedAt": "2026-09-25T08:09:42.051Z",
+  "userRequest": "先提交涉及到代码变更，然后在 @docs/adoption/ 中补充相关实践文章",
+  "scope": "先提交已有独立交付重构，再由独立 worker 补充既有状态污染草稿，交独立 reviewer 核对；未修改业务事实、业务计划或状态。",
+  "codeCommit": "42763bb",
+  "commitScope": "代码、subagent 定义、配套交付协议、模板、测试和上轮检查记录。未包含原有文章草稿、README 文章链接、write Skill 或其他无关文件。",
+  "article": "docs/adoption/状态污染：状态存在但不可信.md",
+  "articleChange": "沿用开工前已有草稿，只补充工具调用参数及交接内容分类处理两段；保留原文与已有 README 链接。文章未提交，未推送。",
+  "checks": [
+    { "command": "npm run evidence-delivery:verify", "exitCode": 0, "observation": "提交前重新运行类型检查及 20 项测试通过；日志 /tmp/evidence-delivery-precommit.log。" },
+    { "command": "bash .agents/skills/write/scripts/check-punctuation.sh --lang zh 'docs/adoption/状态污染：状态存在但不可信.md'", "exitCode": 0 },
+    { "command": "npx prettier --check 'docs/adoption/状态污染：状态存在但不可信.md'", "exitCode": 0 },
+    { "command": "npm test", "exitCode": 1, "observation": "仅剩既有 write Skill 目录集合断言失败；Nx 35/35 缓存命中；末尾 Guides 未执行，另行运行。" },
+    { "command": "npm run lint", "exitCode": 0, "observation": "前端任务缓存 1/1，Guides 链接及格式实际通过。" },
+    { "command": "npm run build", "exitCode": 0, "observation": "Nx 35/35 缓存命中，两个扩展类型检查实际通过。" },
+    { "command": "npm run guides:verify", "exitCode": 0, "observation": "8 项测试、59 份文档、398 个本地链接及格式检查实际通过。" }
+  ],
+  "logRoot": "tmp/evidence-delivery-checks/adoption-state-pollution-20260925",
+  "checkManifest": "worker/checks-manifest.json",
+  "checkManifestSha256": "3327bd82a92c08976b82b3356826fa256dcca99a0525045102e4611b24712cf9",
+  "workerArtifact": "worker/result.json",
+  "workerSha256": "d6f6b7a03bd2dc0553b197afe47f9603dad2aeaf6f9521a9497ad5432a10c983",
+  "reviewerArtifact": "reviewer/result.json",
+  "reviewerSha256": "892d7cc433773dfd13808f20e57cd0349b83ee5fc60cedd8cd59296a3672d2e7",
+  "review": {
+    "standards": "文章增量未发现违规；项目总门禁仍被既有 write Skill 目录断言阻塞。",
+    "spec": "满足本轮文章补充授权，未重写原稿或扩大范围。",
+    "mainVerification": "主 Agent 读取文章增量、原始失败输出，重算六份日志摘要并核对受审后的 1021 个工作树文件摘要无变化，再归档此记录。"
+  },
+  "qualityGatePassed": false,
+  "limitations": [
+    "完整 Agent 行为评测未执行，无 Java 改动，未另跑 ./gradlew check。",
+    "三个后端 spotlessJava dependsOn 警告保持原样；不在文章任务中扩范围修复。",
+    "原始日志与运行产物保存在本机 Git 忽略目录，未随 Git 分发；临时目录已另存副本，但清理 tmp 前仍需保留必要证据。原始清单中的临时路径可按文件名在 logRoot/worker 下定位。"
+  ],
+  "handoff": "代码已提交，文章、既有 README 文章链接与本检查记录保持未提交；无推送。总门禁问题仍需用户或 Skills 维护者明确处理授权。"
+}
