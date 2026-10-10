@@ -1,0 +1,18 @@
+{
+  "errors": [],
+  "executedScenarioCount": 20,
+  "inputChanged": false,
+  "modelDigest": "sha256:1089294534f87eec7d4aa27b7d106d0efc4f6bdc7f866e114526b7b77b5afebb",
+  "modelValidated": true,
+  "scenarioCount": 20,
+  "simulationPassed": true,
+  "timelineSummary": {
+    "evidenceTypeCount": 19,
+    "instanceCount": 32,
+    "laneCount": 4,
+    "precedesCount": 15,
+    "sha256": "sha256:ec6dbe59ad3efaa24d42e0557b5a6ddc39f2a92b50266dd3aa5a29a6be7a89fe",
+    "unresolvedOrderCount": 31
+  },
+  "valid": true
+}

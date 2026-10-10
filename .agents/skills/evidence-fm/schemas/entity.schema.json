@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v3/entity.schema.json",
+  "$id": "https://jayclock.dev/fm/v4/entity.schema.json",
   "title": "Fulfillment Modeling entity",
   "type": "object",
-  "required": ["type", "id", "category", "kind", "label"],
+  "required": ["type", "id", "category", "label"],
   "properties": {
     "type": {
       "const": "entity"
@@ -12,7 +12,7 @@
       "$ref": "#/$defs/id"
     },
     "category": {
-      "enum": ["evidence", "participant", "role", "context"]
+      "enum": ["evidence", "participant", "role", "context", "fulfillment"]
     },
     "kind": {
       "type": "string",
@@ -31,6 +31,9 @@
       "uniqueItems": true
     },
     "contextRef": {
+      "$ref": "#/$defs/id"
+    },
+    "fulfillmentRef": {
       "$ref": "#/$defs/id"
     },
     "parentContextRef": {
@@ -369,7 +372,6 @@
           "kind": {
             "enum": [
               "contract",
-              "fulfillment",
               "pre_contract",
               "domain",
               "external"
@@ -382,20 +384,19 @@
       "if": {
         "properties": {
           "category": {
-            "const": "context"
-          },
-          "kind": {
             "const": "fulfillment"
           }
         },
-        "required": ["category", "kind"]
+        "required": ["category"]
       },
       "then": {
-        "required": ["parentContextRef"],
+        "required": ["contextRef"],
         "not": {
           "anyOf": [
+            {"required": ["kind"]},
+            {"required": ["fulfillmentRef"]},
             {
-              "required": ["contextRef"]
+              "required": ["parentContextRef"]
             },
             {
               "required": ["rootRefs"]
@@ -412,6 +413,18 @@
           ]
         }
       }
+    },
+    {
+      "if": {"properties": {"category": {"enum": ["context", "evidence", "participant", "role"]}}, "required": ["category"]},
+      "then": {"required": ["kind"]}
+    },
+    {
+      "if": {"properties": {"category": {"const": "evidence"}, "kind": {"const": "fulfillment_request"}}, "required": ["category", "kind"]},
+      "then": {"required": ["fulfillmentRef"]}
+    },
+    {
+      "if": {"required": ["fulfillmentRef"]},
+      "then": {"properties": {"category": {"enum": ["evidence", "role"]}}}
     }
   ],
   "additionalProperties": false,

@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "支付确认",
-  "contextRef": "fulfillment.payment",
+  "contextRef": "context.product-procurement",
   "responsibleRoleRef": "role.buyer",
   "attributes": [
     {
@@ -40,5 +40,6 @@
       "meaning": "引用扮演支付凭证角色的实际外部支付结果编号"
     }
   ],
-  "notes": "客户基于已存在且匹配本申请的外部支付结果形成确认；支付凭证角色无责任人。"
+  "notes": "客户基于已存在且匹配本申请的外部支付结果形成确认；支付凭证角色无责任人。",
+  "fulfillmentRef": "fulfillment.payment"
 }

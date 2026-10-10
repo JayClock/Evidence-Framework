@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "交稿确认",
-  "contextRef": "fulfillment.manuscript-delivery",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.creator",
   "attributes": [
     {
@@ -15,5 +15,6 @@
       "keyData": true,
       "meaning": "确定履约结果形成的时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.manuscript-delivery"
 }

@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "微信支付确认",
-  "contextRef": "fulfillment.wechat-payment",
+  "contextRef": "context.wechat-payment",
   "responsibleRoleRef": "role.wechat-provider",
   "attributes": [
     {
@@ -40,5 +40,6 @@
       "meaning": "实际凭证玩家的履约确认时间，不是角色形成时间"
     }
   ],
-  "notes": "腾讯形成的外部履约确认，通过plays_role扮演采购支付凭证；不归属采购合同客户。"
+  "notes": "腾讯形成的外部履约确认，通过plays_role扮演采购支付凭证；不归属采购合同客户。",
+  "fulfillmentRef": "fulfillment.wechat-payment"
 }

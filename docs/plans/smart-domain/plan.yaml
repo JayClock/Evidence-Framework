@@ -36,7 +36,7 @@ inputRoots:
   api: docs/plans/smart-domain/api-planning-input.yaml
 sourceManifest:
   - path: .evidence/fm/model.json
-    digest: fab5d41f1c4699e3a817455e3c8b54689730dac84eaddfe23b499e75eb51e541
+    digest: 7cab34aedbb47fd17ad10c8004c5fcd434e04804848694e0b9378d1c81dd03cf
     sourceRefs:
       - context.subscription
       - fulfillment.payment
@@ -133,17 +133,17 @@ sourceManifest:
       - context.sales-performance
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/contract.json
-    digest: 459afe12ab596eb1568501e76cfa97e2b9361aa64389a41145bd519860c19d59
+    digest: 824555f7b9fdee86153650a7ab00c4d44c8942a8eab0b6e158ef64f359b949af
     sourceRefs:
       - contract.sales-performance
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/roles/performance-manager.json
-    digest: b6619c6297831e8ab27a934db877f10e3c0df0d974c98109f364b0da59273e4c
+    digest: e25183a14d12d5157f2e3ccac979ce2376722af9e8163bdd5b1adefc34ed51ea
     sourceRefs:
       - role.performance-manager
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/roles/tele-sales.json
-    digest: 62ebb634d97e7c7ab5376cc251c5a564ddc4e39da622db6ca83725153841d71d
+    digest: 2e27d8f8e6c8d0f89eb9dfd8a273662fa4db4be492012880543ebc1f470c6170
     sourceRefs:
       - role.tele-sales
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
@@ -152,23 +152,23 @@ sourceManifest:
     sourceRefs:
       - relation.sales-performance-to-monthly-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
-  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/context.json
-    digest: 18c0a19aa085c37cd353f4072d5b2ed3a7ecdec0e39f886102d00f2ceb806542
+  - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/fulfillment.json
+    digest: da94a3e6573d47d8c01af1352781b63e55b30c47aa513ecd0478dac8c37288fa
     sourceRefs:
       - fulfillment.monthly-customer-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/request.json
-    digest: 2a7edb2209ba1ffbc10a84e3f006932ed32ae6d6da3385c0f277e048ff590c81
+    digest: 187e05ed6fc15a996db830cc173e6cb1eb9fd227ed28ec9736e2c3621ec58651
     sourceRefs:
       - request.monthly-customer-contact
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/confirmation.json
-    digest: 84dbd3d610393e50e394fe0a9d8c003f970043281333af2976bf09698bf702af
+    digest: 431d48f0ddd5e78858a48d1621021ea0c5447ec712bf86bfa51afd498a303c16
     sourceRefs:
       - confirmation.customer-contact-record
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/sales-performance/fulfillments/monthly-customer-contact/rules/completed.json
-    digest: c9241e713c3841eb80e68ddf77a1c0a6a542c915b8210aeab699cac818db1bd4
+    digest: 506ba7281d95c217848207a9173197cb8bf15050667255154bf4b9604fbdc7c9
     sourceRefs:
       - rule.monthly-customer-contact-completed
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
@@ -184,7 +184,7 @@ sourceManifest:
       - context.customer-information
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
   - path: .evidence/fm/contexts/customer-information/things/customer-profile.json
-    digest: 764fcdab3cebe3ed296409719ed9aff877968c8a26afc1220dfe1ba897eb0eb4
+    digest: 64a1663c867cd9ace5acf6a83bf2aa4d05cf4c18cb3823cb00df700085760521
     sourceRefs:
       - thing.customer-profile
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
@@ -224,7 +224,7 @@ sourceManifest:
   - path: docs/engineering/examples.md
     digest: b9624de178c6d355a9a2a36b3a380d1ee7ceb17a526be640a9456e8d7bc4a918
   - path: .evidence/fm/participants/user.json
-    digest: e7055a458f3608baa8f3e295fba3d4174332a88fefbbbe09e46a182f45cb676d
+    digest: 22fb7cf8186476dcafd141bca61d784ed2c0bd2c26fe2a0596ee71294299df25
     sourceRefs:
       - party.user
     purpose: 电话销售绩效协议切片的业务来源；只提供业务事实，不构成软件范围批准。
@@ -460,7 +460,7 @@ slicing:
       operationRef: request.payment
       unitKeys:
         - root-collection::context.subscription::contract.subscription
-        - context-design::fulfillment.payment
+        - fulfillment-design::fulfillment.payment
         - evidence::contract.subscription
         - evidence::request.payment
         - actor-role::role.publisher
@@ -481,7 +481,7 @@ slicing:
       operationRef: request.mobile
       unitKeys:
         - context-design::context.mobile
-        - context-design::fulfillment.mobile
+        - fulfillment-design::fulfillment.mobile
         - root-collection::context.mobile::contract.mobile
         - evidence::contract.mobile
         - evidence::request.mobile
@@ -565,7 +565,7 @@ slicing:
         - root-collection::context.sales-performance::contract.sales-performance
         - evidence::contract.sales-performance
         - evidence::request.monthly-customer-contact
-        - context-design::fulfillment.monthly-customer-contact
+        - fulfillment-design::fulfillment.monthly-customer-contact
         - association::relation.sales-performance-to-monthly-contact
         - design::design.sales-performance-domain-contracts
       dependsOn:
@@ -710,16 +710,6 @@ slicing:
       sourceRefs:
         - relation.prepaid-result
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: association::relation.refund-as-access-refund
-      kind: not-applicable
-      sourceRefs:
-        - relation.refund-as-access-refund
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: association::relation.refund-as-restore-refund
-      kind: not-applicable
-      sourceRefs:
-        - relation.refund-as-restore-refund
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
     - unitKey: association::relation.refund-basis
       kind: not-applicable
       sourceRefs:
@@ -744,11 +734,6 @@ slicing:
       kind: not-applicable
       sourceRefs:
         - relation.refund-result
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: association::relation.restore-as-access-restored
-      kind: not-applicable
-      sourceRefs:
-        - relation.restore-as-access-restored
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
     - unitKey: association::relation.restore-basis
       kind: not-applicable
@@ -790,22 +775,22 @@ slicing:
       sourceRefs:
         - context.prepaid
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: context-design::fulfillment.access
+    - unitKey: fulfillment-design::fulfillment.access
       kind: not-applicable
       sourceRefs:
         - fulfillment.access
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: context-design::fulfillment.prepaid
+    - unitKey: fulfillment-design::fulfillment.prepaid
       kind: not-applicable
       sourceRefs:
         - fulfillment.prepaid
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: context-design::fulfillment.refund
+    - unitKey: fulfillment-design::fulfillment.refund
       kind: not-applicable
       sourceRefs:
         - fulfillment.refund
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: context-design::fulfillment.restore
+    - unitKey: fulfillment-design::fulfillment.restore
       kind: not-applicable
       sourceRefs:
         - fulfillment.restore
@@ -880,25 +865,10 @@ slicing:
       sourceRefs:
         - role.access-payment
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: proof-role::role.access-refund
-      kind: not-applicable
-      sourceRefs:
-        - role.access-refund
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: proof-role::role.access-restored
-      kind: not-applicable
-      sourceRefs:
-        - role.access-restored
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
     - unitKey: proof-role::role.refund-payment
       kind: not-applicable
       sourceRefs:
         - role.refund-payment
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-    - unitKey: proof-role::role.restore-refund
-      kind: not-applicable
-      sourceRefs:
-        - role.restore-refund
       reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
     - unitKey: root-collection::context.content::thing.chapter
       kind: not-applicable
@@ -1113,559 +1083,529 @@ slicing:
       reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
 compiled:
   apiCoverage:
-    - apiRef: capability.list-subscriptions-reader
-      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
-      supportingTaskRefs:
-        - domain::context.subscription::request.payment
-        - foundation::context.subscription::role.reader
-    - apiRef: capability.read-payment-reader
-      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
-      supportingTaskRefs:
-        - domain::context.subscription::request.payment
-        - foundation::context.subscription::role.reader
-    - apiRef: capability.read-subscription-reader
-      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
-      supportingTaskRefs:
-        - domain::context.subscription::request.payment
-        - foundation::context.subscription::role.reader
-    - apiRef: capability.register-customer-contact-record-tele-sales
-      deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-      supportingTaskRefs:
-        - domain::context.sales-performance::confirmation.customer-contact-record
-        - domain::context.sales-performance::contract.sales-performance
-        - foundation::context.sales-performance::role.tele-sales
-    - apiRef: capability.register-monthly-customer-contact-target-manager
-      deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-      supportingTaskRefs:
-        - domain::context.sales-performance::confirmation.customer-contact-record
-        - domain::context.sales-performance::contract.sales-performance
-        - foundation::context.sales-performance::role.tele-sales
-    - apiRef: capability.register-sales-performance-agreement-tele-sales
-      deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-      supportingTaskRefs:
-        - domain::context.sales-performance::confirmation.customer-contact-record
-        - domain::context.sales-performance::contract.sales-performance
-        - foundation::context.sales-performance::role.tele-sales
-    - apiRef: capability.register-subscription-reader
-      deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
-      supportingTaskRefs:
-        - domain::context.subscription::request.payment
-        - foundation::context.subscription::role.reader
+  - apiRef: capability.list-subscriptions-reader
+    deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+    supportingTaskRefs:
+    - domain::context.subscription::request.payment
+    - foundation::context.subscription::role.reader
+  - apiRef: capability.read-payment-reader
+    deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+    supportingTaskRefs:
+    - domain::context.subscription::request.payment
+    - foundation::context.subscription::role.reader
+  - apiRef: capability.read-subscription-reader
+    deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+    supportingTaskRefs:
+    - domain::context.subscription::request.payment
+    - foundation::context.subscription::role.reader
+  - apiRef: capability.register-customer-contact-record-tele-sales
+    deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+    supportingTaskRefs:
+    - domain::context.sales-performance::confirmation.customer-contact-record
+    - domain::context.sales-performance::contract.sales-performance
+    - foundation::context.sales-performance::role.tele-sales
+  - apiRef: capability.register-monthly-customer-contact-target-manager
+    deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+    supportingTaskRefs:
+    - domain::context.sales-performance::confirmation.customer-contact-record
+    - domain::context.sales-performance::contract.sales-performance
+    - foundation::context.sales-performance::role.tele-sales
+  - apiRef: capability.register-sales-performance-agreement-tele-sales
+    deliveryTaskRef: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+    supportingTaskRefs:
+    - domain::context.sales-performance::confirmation.customer-contact-record
+    - domain::context.sales-performance::contract.sales-performance
+    - foundation::context.sales-performance::role.tele-sales
+  - apiRef: capability.register-subscription-reader
+    deliveryTaskRef: api::context.subscription::capability.register-subscription-reader
+    supportingTaskRefs:
+    - domain::context.subscription::request.payment
+    - foundation::context.subscription::role.reader
   coverageComplete: true
   diagnostics: []
   dispositions:
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.account-provider
-      unitKey: actor-role::role.account-provider
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.account-user
-      unitKey: actor-role::role.account-user
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-chapter
-      unitKey: association::relation.access-chapter
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-column
-      unitKey: association::relation.access-column
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-payment-used
-      unitKey: association::relation.access-payment-used
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-refund-used
-      unitKey: association::relation.access-refund-used
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-restored-used
-      unitKey: association::relation.access-restored-used
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.access-result
-      unitKey: association::relation.access-result
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.contract-access
-      unitKey: association::relation.contract-access
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.contract-prepaid
-      unitKey: association::relation.contract-prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.contract-refund
-      unitKey: association::relation.contract-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.contract-restore
-      unitKey: association::relation.contract-restore
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.mobile-as-access-payment
-      unitKey: association::relation.mobile-as-access-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.mobile-as-refund-payment
-      unitKey: association::relation.mobile-as-refund-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.prepaid-as-access-payment
-      unitKey: association::relation.prepaid-as-access-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.prepaid-as-payment-proof
-      unitKey: association::relation.prepaid-as-payment-proof
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.prepaid-as-refund-payment
-      unitKey: association::relation.prepaid-as-refund-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.prepaid-column
-      unitKey: association::relation.prepaid-column
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.prepaid-result
-      unitKey: association::relation.prepaid-result
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-as-access-refund
-      unitKey: association::relation.refund-as-access-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-as-restore-refund
-      unitKey: association::relation.refund-as-restore-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-basis
-      unitKey: association::relation.refund-basis
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-basis-first
-      unitKey: association::relation.refund-basis-first
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-column
-      unitKey: association::relation.refund-column
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-payment-used
-      unitKey: association::relation.refund-payment-used
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.refund-result
-      unitKey: association::relation.refund-result
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-as-access-restored
-      unitKey: association::relation.restore-as-access-restored
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-basis
-      unitKey: association::relation.restore-basis
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-basis-first
-      unitKey: association::relation.restore-basis-first
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-column
-      unitKey: association::relation.restore-column
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-refund-used
-      unitKey: association::relation.restore-refund-used
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.restore-result
-      unitKey: association::relation.restore-result
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - relation.user-as-account-user
-      unitKey: association::relation.user-as-account-user
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - context.content
-      unitKey: context-design::context.content
-    - kind: external
-      reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
-      sourceRefs:
-        - context.customer-information
-        - relation.customer-contact-references-profile
-        - thing.customer-profile
-      unitKey: context-design::context.customer-information
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - context.prepaid
-      unitKey: context-design::context.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - fulfillment.access
-      unitKey: context-design::fulfillment.access
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - fulfillment.prepaid
-      unitKey: context-design::fulfillment.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - fulfillment.refund
-      unitKey: context-design::fulfillment.refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - fulfillment.restore
-      unitKey: context-design::fulfillment.restore
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - thing.chapter
-      unitKey: entity::thing.chapter
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - thing.column
-      unitKey: entity::thing.column
-    - kind: external
-      reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
-      sourceRefs:
-        - context.customer-information
-        - relation.customer-contact-references-profile
-        - thing.customer-profile
-      unitKey: entity::thing.customer-profile
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - confirmation.access
-      unitKey: evidence::confirmation.access
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - confirmation.prepaid
-      unitKey: evidence::confirmation.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - confirmation.refund
-      unitKey: evidence::confirmation.refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - confirmation.restore
-      unitKey: evidence::confirmation.restore
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - contract.prepaid
-      unitKey: evidence::contract.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - evidence.discontinuation
-      unitKey: evidence::evidence.discontinuation
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - evidence.relaunch
-      unitKey: evidence::evidence.relaunch
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - request.access
-      unitKey: evidence::request.access
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - request.prepaid
-      unitKey: evidence::request.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - request.refund
-      unitKey: evidence::request.refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - request.restore
-      unitKey: evidence::request.restore
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.access-payment
-      unitKey: proof-role::role.access-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.access-refund
-      unitKey: proof-role::role.access-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.access-restored
-      unitKey: proof-role::role.access-restored
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.refund-payment
-      unitKey: proof-role::role.refund-payment
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - role.restore-refund
-      unitKey: proof-role::role.restore-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - context.content
-      unitKey: root-collection::context.content::thing.chapter
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - context.content
-      unitKey: root-collection::context.content::thing.column
-    - kind: external
-      reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
-      sourceRefs:
-        - context.customer-information
-        - relation.customer-contact-references-profile
-        - thing.customer-profile
-      unitKey: root-collection::context.customer-information::thing.customer-profile
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - context.prepaid
-      unitKey: root-collection::context.prepaid::contract.prepaid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.access-completed
-      unitKey: rule::rule.access-completed
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.access-deadline
-      unitKey: rule::rule.access-deadline
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.access-eligible
-      unitKey: rule::rule.access-eligible
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.access-expired
-      unitKey: rule::rule.access-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.content-readable
-      unitKey: rule::rule.content-readable
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.mobile-expired
-      unitKey: rule::rule.mobile-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.payment-expired
-      unitKey: rule::rule.payment-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.prepaid-balance
-      unitKey: rule::rule.prepaid-balance
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.prepaid-completed
-      unitKey: rule::rule.prepaid-completed
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.prepaid-expired
-      unitKey: rule::rule.prepaid-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.prepaid-funded
-      unitKey: rule::rule.prepaid-funded
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.refund-amount
-      unitKey: rule::rule.refund-amount
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.refund-completed
-      unitKey: rule::rule.refund-completed
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.refund-deadline
-      unitKey: rule::rule.refund-deadline
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.refund-eligible
-      unitKey: rule::rule.refund-eligible
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.refund-expired
-      unitKey: rule::rule.refund-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.restore-completed
-      unitKey: rule::rule.restore-completed
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.restore-deadline
-      unitKey: rule::rule.restore-deadline
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.restore-eligible
-      unitKey: rule::rule.restore-eligible
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - rule.restore-expired
-      unitKey: rule::rule.restore-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.access-after-refund
-      unitKey: scenario::scenario.access-after-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.access-expired
-      unitKey: scenario::scenario.access-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.cutoff-pending
-      unitKey: scenario::scenario.cutoff-pending
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.discontinuation-refund
-      unitKey: scenario::scenario.discontinuation-refund
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.free-restoration
-      unitKey: scenario::scenario.free-restoration
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.insufficient-balance
-      unitKey: scenario::scenario.insufficient-balance
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.late-paid
-      unitKey: scenario::scenario.late-paid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.payment-expired
-      unitKey: scenario::scenario.payment-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.prepaid-subscription
-      unitKey: scenario::scenario.prepaid-subscription
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.refund-expired
-      unitKey: scenario::scenario.refund-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.refund-late
-      unitKey: scenario::scenario.refund-late
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.restore-charged
-      unitKey: scenario::scenario.restore-charged
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.restore-expired
-      unitKey: scenario::scenario.restore-expired
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.short-paid
-      unitKey: scenario::scenario.short-paid
-    - kind: not-applicable
-      reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
-      sourceRefs:
-        - scenario.wrong-reader
-      unitKey: scenario::scenario.wrong-reader
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - role.account-provider
+    unitKey: actor-role::role.account-provider
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - role.account-user
+    unitKey: actor-role::role.account-user
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-chapter
+    unitKey: association::relation.access-chapter
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-column
+    unitKey: association::relation.access-column
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-payment-used
+    unitKey: association::relation.access-payment-used
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-refund-used
+    unitKey: association::relation.access-refund-used
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-restored-used
+    unitKey: association::relation.access-restored-used
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.access-result
+    unitKey: association::relation.access-result
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.contract-access
+    unitKey: association::relation.contract-access
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.contract-prepaid
+    unitKey: association::relation.contract-prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.contract-refund
+    unitKey: association::relation.contract-refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.contract-restore
+    unitKey: association::relation.contract-restore
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.mobile-as-access-payment
+    unitKey: association::relation.mobile-as-access-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.mobile-as-refund-payment
+    unitKey: association::relation.mobile-as-refund-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.prepaid-as-access-payment
+    unitKey: association::relation.prepaid-as-access-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.prepaid-as-payment-proof
+    unitKey: association::relation.prepaid-as-payment-proof
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.prepaid-as-refund-payment
+    unitKey: association::relation.prepaid-as-refund-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.prepaid-column
+    unitKey: association::relation.prepaid-column
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.prepaid-result
+    unitKey: association::relation.prepaid-result
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.refund-basis
+    unitKey: association::relation.refund-basis
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.refund-basis-first
+    unitKey: association::relation.refund-basis-first
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.refund-column
+    unitKey: association::relation.refund-column
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.refund-payment-used
+    unitKey: association::relation.refund-payment-used
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.refund-result
+    unitKey: association::relation.refund-result
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.restore-basis
+    unitKey: association::relation.restore-basis
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.restore-basis-first
+    unitKey: association::relation.restore-basis-first
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.restore-column
+    unitKey: association::relation.restore-column
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.restore-refund-used
+    unitKey: association::relation.restore-refund-used
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.restore-result
+    unitKey: association::relation.restore-result
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - relation.user-as-account-user
+    unitKey: association::relation.user-as-account-user
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - context.content
+    unitKey: context-design::context.content
+  - kind: external
+    reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
+    sourceRefs:
+    - context.customer-information
+    - relation.customer-contact-references-profile
+    - thing.customer-profile
+    unitKey: context-design::context.customer-information
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - context.prepaid
+    unitKey: context-design::context.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - thing.chapter
+    unitKey: entity::thing.chapter
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - thing.column
+    unitKey: entity::thing.column
+  - kind: external
+    reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
+    sourceRefs:
+    - context.customer-information
+    - relation.customer-contact-references-profile
+    - thing.customer-profile
+    unitKey: entity::thing.customer-profile
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - confirmation.access
+    unitKey: evidence::confirmation.access
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - confirmation.prepaid
+    unitKey: evidence::confirmation.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - confirmation.refund
+    unitKey: evidence::confirmation.refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - confirmation.restore
+    unitKey: evidence::confirmation.restore
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - contract.prepaid
+    unitKey: evidence::contract.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - evidence.discontinuation
+    unitKey: evidence::evidence.discontinuation
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - evidence.relaunch
+    unitKey: evidence::evidence.relaunch
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - request.access
+    unitKey: evidence::request.access
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - request.prepaid
+    unitKey: evidence::request.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - request.refund
+    unitKey: evidence::request.refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - request.restore
+    unitKey: evidence::request.restore
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - fulfillment.access
+    unitKey: fulfillment-design::fulfillment.access
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - fulfillment.prepaid
+    unitKey: fulfillment-design::fulfillment.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - fulfillment.refund
+    unitKey: fulfillment-design::fulfillment.refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - fulfillment.restore
+    unitKey: fulfillment-design::fulfillment.restore
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - role.access-payment
+    unitKey: proof-role::role.access-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - role.refund-payment
+    unitKey: proof-role::role.refund-payment
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - context.content
+    unitKey: root-collection::context.content::thing.chapter
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - context.content
+    unitKey: root-collection::context.content::thing.column
+  - kind: external
+    reason: 客户信息领域拥有客户档案身份与生命周期；当前 API 只把档案作为联系记录的引用标的且不生成读取/维护接口，FM 也未定义生命周期，因此本计划不实现该 Context、根集合或存储，引用只以标识保存。
+    sourceRefs:
+    - context.customer-information
+    - relation.customer-contact-references-profile
+    - thing.customer-profile
+    unitKey: root-collection::context.customer-information::thing.customer-profile
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - context.prepaid
+    unitKey: root-collection::context.prepaid::contract.prepaid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.access-completed
+    unitKey: rule::rule.access-completed
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.access-deadline
+    unitKey: rule::rule.access-deadline
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.access-eligible
+    unitKey: rule::rule.access-eligible
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.access-expired
+    unitKey: rule::rule.access-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.content-readable
+    unitKey: rule::rule.content-readable
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.mobile-expired
+    unitKey: rule::rule.mobile-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.payment-expired
+    unitKey: rule::rule.payment-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.prepaid-balance
+    unitKey: rule::rule.prepaid-balance
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.prepaid-completed
+    unitKey: rule::rule.prepaid-completed
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.prepaid-expired
+    unitKey: rule::rule.prepaid-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.prepaid-funded
+    unitKey: rule::rule.prepaid-funded
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.refund-amount
+    unitKey: rule::rule.refund-amount
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.refund-completed
+    unitKey: rule::rule.refund-completed
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.refund-deadline
+    unitKey: rule::rule.refund-deadline
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.refund-eligible
+    unitKey: rule::rule.refund-eligible
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.refund-expired
+    unitKey: rule::rule.refund-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.restore-completed
+    unitKey: rule::rule.restore-completed
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.restore-deadline
+    unitKey: rule::rule.restore-deadline
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.restore-eligible
+    unitKey: rule::rule.restore-eligible
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - rule.restore-expired
+    unitKey: rule::rule.restore-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.access-after-refund
+    unitKey: scenario::scenario.access-after-refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.access-expired
+    unitKey: scenario::scenario.access-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.cutoff-pending
+    unitKey: scenario::scenario.cutoff-pending
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.discontinuation-refund
+    unitKey: scenario::scenario.discontinuation-refund
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.free-restoration
+    unitKey: scenario::scenario.free-restoration
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.insufficient-balance
+    unitKey: scenario::scenario.insufficient-balance
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.late-paid
+    unitKey: scenario::scenario.late-paid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.payment-expired
+    unitKey: scenario::scenario.payment-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.prepaid-subscription
+    unitKey: scenario::scenario.prepaid-subscription
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.refund-expired
+    unitKey: scenario::scenario.refund-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.refund-late
+    unitKey: scenario::scenario.refund-late
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.restore-charged
+    unitKey: scenario::scenario.restore-charged
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.restore-expired
+    unitKey: scenario::scenario.restore-expired
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.short-paid
+    unitKey: scenario::scenario.short-paid
+  - kind: not-applicable
+    reason: 当前正式 API 规划输入只授权 US-001 至 US-003 的移动支付订阅主链；此单元属于内容访问、退款、恢复、预付费、异常履约或未选验收场景，不进入本计划。
+    sourceRefs:
+    - scenario.wrong-reader
+    unitKey: scenario::scenario.wrong-reader
   executionOrder:
-    - foundation::context.sales-performance::role.tele-sales
-    - foundation::context.subscription::role.reader
-    - domain::context.sales-performance::contract.sales-performance
-    - domain::context.sales-performance::confirmation.customer-contact-record
-    - domain::context.subscription::request.payment
-    - domain::context.mobile::request.mobile
-    - mybatis::context.sales-performance::design.sales-performance-storage
-    - mybatis::context.subscription::design.subscription-payment-storage
-    - integration::context.mobile::design.local-mobile-payment-adapter
-    - api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-    - api::context.subscription::capability.register-subscription-reader
-    - integration::context.subscription::design.subscription-payment-orchestration
-    - acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
-    - acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey
-  inputDigest: 010d6f38eefcb3848da173f7076ec39ce7568dc1642376f2d4e048b3b2ed2978
+  - foundation::context.sales-performance::role.tele-sales
+  - foundation::context.subscription::role.reader
+  - domain::context.sales-performance::contract.sales-performance
+  - domain::context.sales-performance::confirmation.customer-contact-record
+  - domain::context.subscription::request.payment
+  - domain::context.mobile::request.mobile
+  - mybatis::context.sales-performance::design.sales-performance-storage
+  - mybatis::context.subscription::design.subscription-payment-storage
+  - integration::context.mobile::design.local-mobile-payment-adapter
+  - api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+  - api::context.subscription::capability.register-subscription-reader
+  - integration::context.subscription::design.subscription-payment-orchestration
+  - acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+  - acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey
+  inputDigest: 0b37ba84d6cfcab14dbcf9c77051ee6acae4540f25b7620c9147a76e8632fcb6
   modelId: column-subscription
   policyVersion: sd-modular-monolith-mybatis-1
   profile:
@@ -1680,232 +1620,232 @@ compiled:
     resourceNavigation: jersey-subresources
     springBoot: 3.5.x
   tasks:
-    - apiRefs: []
-      concern: acceptance
-      dependsOn:
-        - integration::context.subscription::design.subscription-payment-orchestration
-      operationRef: design.mobile-subscription-journey
-      ownerRef: scenario.mobile-subscription
-      taskKey: acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
-      unitKeys:
-        - design::design.mobile-subscription-journey
-        - scenario::scenario.cutoff-paid
-        - scenario::scenario.mobile-subscription
-        - scenario::scenario.payment-pending
-    - apiRefs: []
-      concern: acceptance
-      dependsOn:
-        - api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-        - mybatis::context.sales-performance::design.sales-performance-storage
-      operationRef: design.monthly-customer-contact-journey
-      ownerRef: scenario.monthly-customer-contact-completed
-      taskKey: acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey
-      unitKeys:
-        - design::design.monthly-customer-contact-journey
-        - scenario::scenario.monthly-customer-contact-completed
-        - scenario::scenario.monthly-customer-contact-insufficient
-    - apiRefs:
-        - capability.register-customer-contact-record-tele-sales
-        - capability.register-monthly-customer-contact-target-manager
-        - capability.register-sales-performance-agreement-tele-sales
-      concern: api
-      dependsOn:
-        - domain::context.sales-performance::confirmation.customer-contact-record
-        - domain::context.sales-performance::contract.sales-performance
-        - foundation::context.sales-performance::role.tele-sales
-      operationRef: capability.register-sales-performance-agreement-tele-sales
-      ownerRef: context.sales-performance
-      taskKey: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
-      unitKeys:
-        - api-capability::capability.register-customer-contact-record-tele-sales
-        - api-capability::capability.register-monthly-customer-contact-target-manager
-        - api-capability::capability.register-sales-performance-agreement-tele-sales
-        - api-resource::resource.customer-contact-record
-        - api-resource::resource.monthly-customer-contact-target
-        - api-resource::resource.sales-performance-agreement
-        - design::design.sales-performance-http-contract
-    - apiRefs:
-        - capability.list-subscriptions-reader
-        - capability.read-payment-reader
-        - capability.read-subscription-reader
-        - capability.register-subscription-reader
-      concern: api
-      dependsOn:
-        - domain::context.subscription::request.payment
-        - foundation::context.subscription::role.reader
-      operationRef: capability.register-subscription-reader
-      ownerRef: context.subscription
-      taskKey: api::context.subscription::capability.register-subscription-reader
-      unitKeys:
-        - api-capability::capability.list-subscriptions-reader
-        - api-capability::capability.read-payment-reader
-        - api-capability::capability.read-subscription-reader
-        - api-capability::capability.register-subscription-reader
-        - api-resource::resource.party-subscriptions
-        - api-resource::resource.party-user
-        - api-resource::resource.payment
-        - api-resource::resource.subscription
-        - design::design.subscription-http-contract
-    - apiRefs: []
-      concern: domain
-      dependsOn:
-        - domain::context.subscription::request.payment
-      operationRef: request.mobile
-      ownerRef: context.mobile
-      taskKey: domain::context.mobile::request.mobile
-      unitKeys:
-        - actor-role::role.mobile-provider
-        - actor-role::role.mobile-user
-        - association::relation.contract-mobile
-        - association::relation.mobile-as-payment-proof
-        - association::relation.mobile-column
-        - association::relation.mobile-result
-        - association::relation.user-as-mobile-user
-        - context-design::context.mobile
-        - context-design::fulfillment.mobile
-        - design::design.mobile-domain-contracts
-        - evidence::confirmation.mobile
-        - evidence::contract.mobile
-        - evidence::request.mobile
-        - root-collection::context.mobile::contract.mobile
-        - rule::rule.mobile-completed
-    - apiRefs:
-        - capability.register-customer-contact-record-tele-sales
-        - capability.register-monthly-customer-contact-target-manager
-        - capability.register-sales-performance-agreement-tele-sales
-      concern: domain
-      dependsOn:
-        - domain::context.sales-performance::contract.sales-performance
-      operationRef: confirmation.customer-contact-record
-      ownerRef: context.sales-performance
-      taskKey: domain::context.sales-performance::confirmation.customer-contact-record
-      unitKeys:
-        - association::relation.customer-contact-references-profile
-        - association::relation.monthly-contact-to-record
-        - design::design.sales-performance-contact-rule
-        - evidence::confirmation.customer-contact-record
-        - rule::rule.monthly-customer-contact-completed
-    - apiRefs:
-        - capability.register-customer-contact-record-tele-sales
-        - capability.register-monthly-customer-contact-target-manager
-        - capability.register-sales-performance-agreement-tele-sales
-      concern: domain
-      dependsOn:
-        - foundation::context.sales-performance::role.tele-sales
-      operationRef: contract.sales-performance
-      ownerRef: context.sales-performance
-      taskKey: domain::context.sales-performance::contract.sales-performance
-      unitKeys:
-        - association::relation.sales-performance-to-monthly-contact
-        - context-design::fulfillment.monthly-customer-contact
-        - design::design.sales-performance-domain-contracts
-        - evidence::contract.sales-performance
-        - evidence::request.monthly-customer-contact
-        - root-collection::context.sales-performance::contract.sales-performance
-    - apiRefs:
-        - capability.list-subscriptions-reader
-        - capability.read-payment-reader
-        - capability.read-subscription-reader
-        - capability.register-subscription-reader
-      concern: domain
-      dependsOn:
-        - foundation::context.subscription::role.reader
-      operationRef: request.payment
-      ownerRef: context.subscription
-      taskKey: domain::context.subscription::request.payment
-      unitKeys:
-        - actor-role::role.publisher
-        - association::relation.contract-payment
-        - association::relation.payment-column
-        - association::relation.payment-proof-used
-        - association::relation.subscription-column
-        - context-design::fulfillment.payment
-        - design::design.subscription-domain-contracts
-        - evidence::contract.subscription
-        - evidence::request.payment
-        - proof-role::role.payment-proof
-        - root-collection::context.subscription::contract.subscription
-        - rule::rule.payment-amount
-        - rule::rule.payment-completed
-        - rule::rule.payment-deadline
-        - rule::rule.payment-start
-    - apiRefs:
-        - capability.register-customer-contact-record-tele-sales
-        - capability.register-monthly-customer-contact-target-manager
-        - capability.register-sales-performance-agreement-tele-sales
-      concern: foundation
-      dependsOn: []
-      operationRef: role.tele-sales
-      ownerRef: context.sales-performance
-      taskKey: foundation::context.sales-performance::role.tele-sales
-      unitKeys:
-        - actor-role::role.performance-manager
-        - actor-role::role.tele-sales
-        - association::relation.user-as-performance-manager
-        - association::relation.user-as-tele-sales
-        - context-design::context.sales-performance
-        - design::design.sales-performance-context-foundation
-    - apiRefs:
-        - capability.list-subscriptions-reader
-        - capability.read-payment-reader
-        - capability.read-subscription-reader
-        - capability.register-subscription-reader
-      concern: foundation
-      dependsOn: []
-      operationRef: role.reader
-      ownerRef: context.subscription
-      taskKey: foundation::context.subscription::role.reader
-      unitKeys:
-        - actor-role::role.reader
-        - association::relation.user-as-reader
-        - context-design::context.subscription
-        - design::design.reader-context-foundation
-        - entity::party.user
-        - platform::profile.backend-modules
-        - platform::profile.jersey
-        - platform::profile.modular-monolith
-        - platform::profile.mybatis
-        - platform::profile.smart-domain
-    - apiRefs: []
-      concern: integration
-      dependsOn:
-        - domain::context.mobile::request.mobile
-      operationRef: design.local-mobile-payment-adapter
-      ownerRef: context.mobile
-      taskKey: integration::context.mobile::design.local-mobile-payment-adapter
-      unitKeys:
-        - design::design.local-mobile-payment-adapter
-    - apiRefs: []
-      concern: integration
-      dependsOn:
-        - api::context.subscription::capability.register-subscription-reader
-        - integration::context.mobile::design.local-mobile-payment-adapter
-        - mybatis::context.subscription::design.subscription-payment-storage
-      operationRef: design.subscription-payment-orchestration
-      ownerRef: context.subscription
-      taskKey: integration::context.subscription::design.subscription-payment-orchestration
-      unitKeys:
-        - design::design.subscription-payment-orchestration
-    - apiRefs: []
-      concern: mybatis
-      dependsOn:
-        - domain::context.sales-performance::confirmation.customer-contact-record
-        - domain::context.sales-performance::contract.sales-performance
-      operationRef: design.sales-performance-storage
-      ownerRef: context.sales-performance
-      taskKey: mybatis::context.sales-performance::design.sales-performance-storage
-      unitKeys:
-        - design::design.sales-performance-storage
-    - apiRefs: []
-      concern: mybatis
-      dependsOn:
-        - domain::context.mobile::request.mobile
-        - domain::context.subscription::request.payment
-      operationRef: design.subscription-payment-storage
-      ownerRef: context.subscription
-      taskKey: mybatis::context.subscription::design.subscription-payment-storage
-      unitKeys:
-        - design::design.subscription-payment-storage
+  - apiRefs: []
+    concern: acceptance
+    dependsOn:
+    - integration::context.subscription::design.subscription-payment-orchestration
+    operationRef: design.mobile-subscription-journey
+    ownerRef: scenario.mobile-subscription
+    taskKey: acceptance::scenario.mobile-subscription::design.mobile-subscription-journey
+    unitKeys:
+    - design::design.mobile-subscription-journey
+    - scenario::scenario.cutoff-paid
+    - scenario::scenario.mobile-subscription
+    - scenario::scenario.payment-pending
+  - apiRefs: []
+    concern: acceptance
+    dependsOn:
+    - api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+    - mybatis::context.sales-performance::design.sales-performance-storage
+    operationRef: design.monthly-customer-contact-journey
+    ownerRef: scenario.monthly-customer-contact-completed
+    taskKey: acceptance::scenario.monthly-customer-contact-completed::design.monthly-customer-contact-journey
+    unitKeys:
+    - design::design.monthly-customer-contact-journey
+    - scenario::scenario.monthly-customer-contact-completed
+    - scenario::scenario.monthly-customer-contact-insufficient
+  - apiRefs:
+    - capability.register-customer-contact-record-tele-sales
+    - capability.register-monthly-customer-contact-target-manager
+    - capability.register-sales-performance-agreement-tele-sales
+    concern: api
+    dependsOn:
+    - domain::context.sales-performance::confirmation.customer-contact-record
+    - domain::context.sales-performance::contract.sales-performance
+    - foundation::context.sales-performance::role.tele-sales
+    operationRef: capability.register-sales-performance-agreement-tele-sales
+    ownerRef: context.sales-performance
+    taskKey: api::context.sales-performance::capability.register-sales-performance-agreement-tele-sales
+    unitKeys:
+    - api-capability::capability.register-customer-contact-record-tele-sales
+    - api-capability::capability.register-monthly-customer-contact-target-manager
+    - api-capability::capability.register-sales-performance-agreement-tele-sales
+    - api-resource::resource.customer-contact-record
+    - api-resource::resource.monthly-customer-contact-target
+    - api-resource::resource.sales-performance-agreement
+    - design::design.sales-performance-http-contract
+  - apiRefs:
+    - capability.list-subscriptions-reader
+    - capability.read-payment-reader
+    - capability.read-subscription-reader
+    - capability.register-subscription-reader
+    concern: api
+    dependsOn:
+    - domain::context.subscription::request.payment
+    - foundation::context.subscription::role.reader
+    operationRef: capability.register-subscription-reader
+    ownerRef: context.subscription
+    taskKey: api::context.subscription::capability.register-subscription-reader
+    unitKeys:
+    - api-capability::capability.list-subscriptions-reader
+    - api-capability::capability.read-payment-reader
+    - api-capability::capability.read-subscription-reader
+    - api-capability::capability.register-subscription-reader
+    - api-resource::resource.party-subscriptions
+    - api-resource::resource.party-user
+    - api-resource::resource.payment
+    - api-resource::resource.subscription
+    - design::design.subscription-http-contract
+  - apiRefs: []
+    concern: domain
+    dependsOn:
+    - domain::context.subscription::request.payment
+    operationRef: request.mobile
+    ownerRef: context.mobile
+    taskKey: domain::context.mobile::request.mobile
+    unitKeys:
+    - actor-role::role.mobile-provider
+    - actor-role::role.mobile-user
+    - association::relation.contract-mobile
+    - association::relation.mobile-as-payment-proof
+    - association::relation.mobile-column
+    - association::relation.mobile-result
+    - association::relation.user-as-mobile-user
+    - context-design::context.mobile
+    - design::design.mobile-domain-contracts
+    - evidence::confirmation.mobile
+    - evidence::contract.mobile
+    - evidence::request.mobile
+    - fulfillment-design::fulfillment.mobile
+    - root-collection::context.mobile::contract.mobile
+    - rule::rule.mobile-completed
+  - apiRefs:
+    - capability.register-customer-contact-record-tele-sales
+    - capability.register-monthly-customer-contact-target-manager
+    - capability.register-sales-performance-agreement-tele-sales
+    concern: domain
+    dependsOn:
+    - domain::context.sales-performance::contract.sales-performance
+    operationRef: confirmation.customer-contact-record
+    ownerRef: context.sales-performance
+    taskKey: domain::context.sales-performance::confirmation.customer-contact-record
+    unitKeys:
+    - association::relation.customer-contact-references-profile
+    - association::relation.monthly-contact-to-record
+    - design::design.sales-performance-contact-rule
+    - evidence::confirmation.customer-contact-record
+    - rule::rule.monthly-customer-contact-completed
+  - apiRefs:
+    - capability.register-customer-contact-record-tele-sales
+    - capability.register-monthly-customer-contact-target-manager
+    - capability.register-sales-performance-agreement-tele-sales
+    concern: domain
+    dependsOn:
+    - foundation::context.sales-performance::role.tele-sales
+    operationRef: contract.sales-performance
+    ownerRef: context.sales-performance
+    taskKey: domain::context.sales-performance::contract.sales-performance
+    unitKeys:
+    - association::relation.sales-performance-to-monthly-contact
+    - design::design.sales-performance-domain-contracts
+    - evidence::contract.sales-performance
+    - evidence::request.monthly-customer-contact
+    - fulfillment-design::fulfillment.monthly-customer-contact
+    - root-collection::context.sales-performance::contract.sales-performance
+  - apiRefs:
+    - capability.list-subscriptions-reader
+    - capability.read-payment-reader
+    - capability.read-subscription-reader
+    - capability.register-subscription-reader
+    concern: domain
+    dependsOn:
+    - foundation::context.subscription::role.reader
+    operationRef: request.payment
+    ownerRef: context.subscription
+    taskKey: domain::context.subscription::request.payment
+    unitKeys:
+    - actor-role::role.publisher
+    - association::relation.contract-payment
+    - association::relation.payment-column
+    - association::relation.payment-proof-used
+    - association::relation.subscription-column
+    - design::design.subscription-domain-contracts
+    - evidence::contract.subscription
+    - evidence::request.payment
+    - fulfillment-design::fulfillment.payment
+    - proof-role::role.payment-proof
+    - root-collection::context.subscription::contract.subscription
+    - rule::rule.payment-amount
+    - rule::rule.payment-completed
+    - rule::rule.payment-deadline
+    - rule::rule.payment-start
+  - apiRefs:
+    - capability.register-customer-contact-record-tele-sales
+    - capability.register-monthly-customer-contact-target-manager
+    - capability.register-sales-performance-agreement-tele-sales
+    concern: foundation
+    dependsOn: []
+    operationRef: role.tele-sales
+    ownerRef: context.sales-performance
+    taskKey: foundation::context.sales-performance::role.tele-sales
+    unitKeys:
+    - actor-role::role.performance-manager
+    - actor-role::role.tele-sales
+    - association::relation.user-as-performance-manager
+    - association::relation.user-as-tele-sales
+    - context-design::context.sales-performance
+    - design::design.sales-performance-context-foundation
+  - apiRefs:
+    - capability.list-subscriptions-reader
+    - capability.read-payment-reader
+    - capability.read-subscription-reader
+    - capability.register-subscription-reader
+    concern: foundation
+    dependsOn: []
+    operationRef: role.reader
+    ownerRef: context.subscription
+    taskKey: foundation::context.subscription::role.reader
+    unitKeys:
+    - actor-role::role.reader
+    - association::relation.user-as-reader
+    - context-design::context.subscription
+    - design::design.reader-context-foundation
+    - entity::party.user
+    - platform::profile.backend-modules
+    - platform::profile.jersey
+    - platform::profile.modular-monolith
+    - platform::profile.mybatis
+    - platform::profile.smart-domain
+  - apiRefs: []
+    concern: integration
+    dependsOn:
+    - domain::context.mobile::request.mobile
+    operationRef: design.local-mobile-payment-adapter
+    ownerRef: context.mobile
+    taskKey: integration::context.mobile::design.local-mobile-payment-adapter
+    unitKeys:
+    - design::design.local-mobile-payment-adapter
+  - apiRefs: []
+    concern: integration
+    dependsOn:
+    - api::context.subscription::capability.register-subscription-reader
+    - integration::context.mobile::design.local-mobile-payment-adapter
+    - mybatis::context.subscription::design.subscription-payment-storage
+    operationRef: design.subscription-payment-orchestration
+    ownerRef: context.subscription
+    taskKey: integration::context.subscription::design.subscription-payment-orchestration
+    unitKeys:
+    - design::design.subscription-payment-orchestration
+  - apiRefs: []
+    concern: mybatis
+    dependsOn:
+    - domain::context.sales-performance::confirmation.customer-contact-record
+    - domain::context.sales-performance::contract.sales-performance
+    operationRef: design.sales-performance-storage
+    ownerRef: context.sales-performance
+    taskKey: mybatis::context.sales-performance::design.sales-performance-storage
+    unitKeys:
+    - design::design.sales-performance-storage
+  - apiRefs: []
+    concern: mybatis
+    dependsOn:
+    - domain::context.mobile::request.mobile
+    - domain::context.subscription::request.payment
+    operationRef: design.subscription-payment-storage
+    ownerRef: context.subscription
+    taskKey: mybatis::context.subscription::design.subscription-payment-storage
+    unitKeys:
+    - design::design.subscription-payment-storage
   unassignedUnitKeys: []
 tasks:
   foundation::context.subscription::role.reader:

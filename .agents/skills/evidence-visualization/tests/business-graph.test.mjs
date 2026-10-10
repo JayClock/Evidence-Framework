@@ -22,7 +22,7 @@ const fixture = () => ({
     { id: 'party', group: 'role', kind: 'party', parent: 'a', label: '责任方' },
     {
       id: 'f',
-      group: 'context',
+      group: 'fulfillment',
       kind: 'fulfillment',
       parent: 'a',
       label: '付款',
@@ -110,7 +110,7 @@ test('legend uses only present object kinds, real examples and explicit responsi
   );
   assert.equal(get('role.evidence').example.id, 'proof');
   assert.equal(get('role.evidence').example.responsibleRef, undefined);
-  assert.equal(get('context.fulfillment').example.parent, 'a');
+  assert.equal(get('fulfillment.fulfillment').example.parent, 'a');
   assert.equal(get('line.plays_role').example.from, 'player');
   assert.equal(get('line.plays_role').example.to, 'proof');
   assert.equal(get('line.plays_role').example.arrow, true);
@@ -197,7 +197,7 @@ test('shared confirmation is one node, not copied for each request', () => {
   data.nodes.find((n) => n.id === 'f').confirmations = ['confirmation'];
   data.nodes.push({
     id: 'f2',
-    group: 'context',
+    group: 'fulfillment',
     kind: 'fulfillment',
     parent: 'a',
     label: '另一履约',
@@ -370,7 +370,7 @@ test('empty contexts stay visible and shared confirmation stays inside its decla
   // A reference to a sibling's confirmation must not determine its placement.
   data.nodes.push({
     id: 'peer',
-    group: 'context',
+    group: 'fulfillment',
     kind: 'fulfillment',
     parent: 'a',
     label: '另一履约',
@@ -401,7 +401,7 @@ test('object highlighting follows one visible hop, not transitive dependencies',
   });
   assert.deepEqual(Array.from(h.nodes).sort(), ['player', 'proof', 'request']);
   assert.deepEqual(Array.from(h.edges).sort(), ['play', 'use']);
-  assert.deepEqual(Array.from(h.contexts).sort(), ['a', 'f']);
+  assert.deepEqual(Array.from(h.boundaries).sort(), ['a', 'f']);
   assert.equal(h.primaryNode, 'proof');
   assert.equal(JSON.stringify(graph), before);
   const isolated = sandbox.businessGraphHighlight(graph, {
@@ -413,12 +413,12 @@ test('object highlighting follows one visible hop, not transitive dependencies',
 });
 test('context highlighting stays inside the exact context and includes descendants', () => {
   const graph = build(fixture());
-  const h = sandbox.businessGraphHighlight(graph, { type: 'context', id: 'f' });
+  const h = sandbox.businessGraphHighlight(graph, { type: 'boundary', id: 'f' });
   assert.deepEqual(Array.from(h.nodes).sort(), ['proof', 'request']);
   assert.deepEqual(Array.from(h.edges), ['use']);
-  assert.deepEqual(Array.from(h.contexts), ['f']);
+  assert.deepEqual(Array.from(h.boundaries), ['f']);
   const root = sandbox.businessGraphHighlight(graph, {
-    type: 'context',
+    type: 'boundary',
     id: 'a',
   });
   assert.deepEqual(Array.from(root.nodes).sort(), [
@@ -452,11 +452,11 @@ test('role badges use the role neighborhood; edges, empty contexts and missing t
   assert.deepEqual(Array.from(edge.nodes).sort(), ['player', 'proof']);
   assert.deepEqual(Array.from(edge.edges), ['play']);
   const empty = sandbox.businessGraphHighlight(graph, {
-    type: 'context',
+    type: 'boundary',
     id: 'empty',
   });
   assert.equal(empty.nodes.size, 0);
-  assert.deepEqual(Array.from(empty.contexts), ['empty']);
+  assert.deepEqual(Array.from(empty.boundaries), ['empty']);
   assert.equal(sandbox.businessGraphHighlight(graph, null).active, false);
   assert.equal(
     sandbox.businessGraphHighlight(graph, { type: 'node', id: 'missing' })

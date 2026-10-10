@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 
-
 def entity(
     entity_id: str, category: str, kind: str, label: str, **fields: Any
 ) -> dict[str, Any]:
@@ -197,24 +196,22 @@ def performance_fulfillment(
         else attribute("actual_count", "int", "本周实际联系数量")
     )
     return [
-        entity(
-            fulfillment,
-            "context",
-            "fulfillment",
-            label,
-            parentContextRef="context.performance",
-            notes=(
+        {
+            "type": "entity", "id": fulfillment, "category": "fulfillment", "label": label,
+            "contextRef": "context.performance",
+            "notes": (
                 "目标变更责任仅要求按时答复，approved=false 不改变旧目标。"
                 if name == "target-change"
                 else "管理方要求执行方提交周进度结果。"
             ),
-        ),
+        },
         entity(
             request,
             "evidence",
             "fulfillment_request",
             label + "请求",
-            contextRef=fulfillment,
+            contextRef="context.performance",
+            fulfillmentRef=fulfillment,
             responsibleRoleRef=request_role,
             attributes=[
                 attribute("started_at", "timestamp", "请求开始时间", keyData=True),
@@ -228,7 +225,8 @@ def performance_fulfillment(
             "evidence",
             "fulfillment_confirmation",
             label + "结果确认",
-            contextRef=fulfillment,
+            contextRef="context.performance",
+            fulfillmentRef=fulfillment,
             responsibleRoleRef=confirmation_role,
             attributes=[
                 attribute(
@@ -246,7 +244,8 @@ def performance_fulfillment(
                 f"结果确认（{confirmation}）在请求（{request}）有效期内形成时，"
                 f"判定履约（{fulfillment}）按期完成。"
             ),
-            "contextRef": fulfillment,
+            "contextRef": "context.performance",
+            "fulfillmentRef": fulfillment,
             "resultType": "bool",
             "bindings": {
                 "request": {"ref": request},
@@ -266,7 +265,8 @@ def performance_fulfillment(
                 f"当前时间超过请求（{request}）截止时间且没有结果确认（{confirmation}）时，"
                 f"判定履约（{fulfillment}）逾期。"
             ),
-            "contextRef": fulfillment,
+            "contextRef": "context.performance",
+            "fulfillmentRef": fulfillment,
             "resultType": "bool",
             "bindings": {
                 "request": {"ref": request},
@@ -406,9 +406,9 @@ def write_documents(root: Path, documents: list[dict[str, Any]]) -> None:
     for document in documents:
         if document["type"] == "entity":
             category = document["category"].replace("_", "-")
-            kind = document["kind"].replace("_", "-")
+            kind = document.get("kind", "").replace("_", "-")
             suffix = document["id"].split(".", 1)[-1].replace(".", "--")
-            filename = f"{category}-{kind}--{suffix}.json"
+            filename = f"{category}{'-' + kind if kind else ''}--{suffix}.json"
         else:
             filename = document["id"].replace(".", "--") + ".json"
         write_document(root / directories[document["type"]] / filename, document)
@@ -419,7 +419,7 @@ def write_model(root: Path, documents: list[dict[str, Any]], entry: str) -> Path
         root / "model.json",
         {
             "type": "fm_model",
-            "schemaVersion": "3.0",
+            "schemaVersion": "4.0",
             "id": "context-sample",
             "name": "上下文范围测试模型",
             "version": "1.0.0",

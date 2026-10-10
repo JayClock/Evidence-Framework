@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "免费恢复凭证",
-  "contextRef": "fulfillment.restore",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -72,5 +72,6 @@
     }
   ],
   "notes": "证明指定版本访问资格已恢复且实际收费为零。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
-  "responsibleRoleRef": "role.publisher"
+  "responsibleRoleRef": "role.publisher",
+  "fulfillmentRef": "fulfillment.restore"
 }

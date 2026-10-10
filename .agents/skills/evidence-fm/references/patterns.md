@@ -1,19 +1,19 @@
-# FM Schema v3 标准建模模式
+# FM Schema v4 标准建模模式
 
 本文件提供常见结构，不能替代从当前业务中提取 `business-patterns/*.json`。后者使用 `business-pattern-extraction.md`。
 
-## 1. Role-first Contract 与子履约边界
+## 1. Role-first Contract 与权责履约
 
 ```text
 Contract Context
 ├── Role A ↔ Contract ↔ Role B
-├── Fulfillment Context A
+├── Fulfillment A
 │   └── Request → Confirmation
-└── Fulfillment Context B
+└── Fulfillment B
     └── Request → Confirmation
 ```
 
-先识别合同 Role，再按证据决定 Participant 玩家。每个 Fulfillment Context 必须指向父 Contract Context；不要把不同弹性诉求的履约压回 Contract Context。
+先识别合同 Role，再按证据决定 Participant 玩家。每项 Fulfillment 以 `contextRef` 指向所属 Contract Context；凭证和规则以 `fulfillmentRef` 声明履约归属。同合约内不同履约之间直接引用凭证，不产生新的上下文边界。
 
 ## 2. 已知 Participant 跨上下文扮演 Role
 
@@ -50,13 +50,13 @@ Annual Request ────┘
 
 ## 6. 多支付渠道：凭证角色化
 
-订阅付款 Fulfillment Context 只声明开放插槽：
+订阅付款履约使用跨上下文的开放证明插槽：
 
 ```text
 Payment Request → Qualified Payment Confirmation Evidence Role
 ```
 
-每个支付合同在自己的 Fulfillment Context 产生时刻凭证：
+每个支付合同在自己的 Context 内形成支付结果凭证：
 
 ```text
 Channel A Confirmation ─┐
@@ -68,7 +68,7 @@ Channel C Confirmation ─┘
 
 ## 7. 未展开的外部协作者
 
-只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及作为子 Context 的 Fulfillment。
+只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及其内部的权责履约。
 
 ## 8. 合同前变化
 
@@ -94,9 +94,9 @@ RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它�
 
 ```text
 Performance Contract
-├── Target-change Fulfillment Context（按协议条款可选）
+├── Target-change Fulfillment（按协议条款可选）
 │   └── Target-change Request → Decision Confirmation
-└── Review Fulfillment Context
+└── Review Fulfillment
     └── Review Request → Actual Result Confirmation
 ```
 
@@ -104,7 +104,7 @@ Performance Contract
 
 ## 10. 取消、退款与补偿
 
-原凭证保持不变，每种新责任位于对应 Fulfillment Context：
+原凭证保持不变，每种新责任以相应的权责履约表达：
 
 ```text
 Cancellation Request → Cancellation Confirmation

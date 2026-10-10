@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "微信支付申请",
-  "contextRef": "fulfillment.wechat-payment",
+  "contextRef": "context.wechat-payment",
   "responsibleRoleRef": "role.wechat-user",
   "attributes": [
     {
@@ -39,5 +39,6 @@
       "keyData": true,
       "meaning": "引用本次采购支付申请金额"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.wechat-payment"
 }

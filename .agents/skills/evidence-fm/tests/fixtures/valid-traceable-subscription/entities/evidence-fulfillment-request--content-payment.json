@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "内容产品付款请求",
-  "contextRef": "fulfillment.content-payment",
+  "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.platform-subscription",
   "attributes": [
     {
@@ -42,5 +42,6 @@
       "meaning": "从合同派生的 ISO 4217 币种代码",
       "derivedByRuleRef": "rule.payment-request-currency"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.content-payment"
 }

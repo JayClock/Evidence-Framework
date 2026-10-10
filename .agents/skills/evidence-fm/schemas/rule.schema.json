@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v3/rule.schema.json",
+  "$id": "https://jayclock.dev/fm/v4/rule.schema.json",
   "title": "Fulfillment Modeling CEL rule",
   "type": "object",
   "required": [
@@ -34,6 +34,7 @@
       "minLength": 1
     },
     "contextRef": { "$ref": "#/$defs/id" },
+    "fulfillmentRef": { "$ref": "#/$defs/id" },
     "bindings": {
       "type": "object",
       "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
@@ -62,6 +63,10 @@
         "required": ["kind"]
       },
       "then": { "required": ["target"] }
+    },
+    {
+      "if": {"properties": {"kind": {"enum": ["completion", "breach"]}}, "required": ["kind"]},
+      "then": {"required": ["fulfillmentRef"]}
     }
   ],
   "additionalProperties": false,

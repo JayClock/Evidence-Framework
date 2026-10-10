@@ -157,7 +157,7 @@ class WholeModelTest(unittest.TestCase):
             "MODEL_EVIDENCE_WRITE_MISSING", {item.code for item in diagnostics}
         )
 
-    def test_context_accounting_includes_external_and_fulfillment_contexts(self):
+    def test_context_accounting_separates_fulfillments(self):
         result = self.project()
         self.assertEqual(
             {
@@ -168,7 +168,8 @@ class WholeModelTest(unittest.TestCase):
             set(result["contextRefs"]),
         )
         self.assertIn("context.wechat-payment", result["contextRefs"])
-        self.assertIn("fulfillment.invoice", result["contextRefs"])
+        self.assertNotIn("fulfillment.invoice", result["contextRefs"])
+        self.assertIn("fulfillment.invoice", result["fulfillmentRefs"])
 
     def test_superseded_format_and_unknown_selection_fields_are_rejected(self):
         value = copy.deepcopy(self.design)

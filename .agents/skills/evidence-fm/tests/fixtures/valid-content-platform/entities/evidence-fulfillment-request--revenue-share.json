@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "收入分成支付请求",
-  "contextRef": "fulfillment.revenue-share",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.creator",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.revenue-share"
 }

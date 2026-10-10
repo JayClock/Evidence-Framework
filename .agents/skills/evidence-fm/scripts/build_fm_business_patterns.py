@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render deterministic business-pattern documentation from FM Schema v3 JSON."""
+"""Render deterministic business-pattern documentation from FM Schema v4 JSON."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from fm_model import LoadedModel, load_model, validate_model
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Render FM Schema v3 business patterns as Markdown."
+        description="Render FM Schema v4 business patterns as Markdown."
     )
     parser.add_argument(
         "model_dir", help="Directory containing model.json and FM shards"
@@ -104,7 +104,7 @@ def main() -> int:
     output = Path(args.output)
     content = render_business_patterns(model)
     write_atomic(output, content)
-    print(f"Rendered FM Schema v3 business patterns: {output}")
+    print(f"Rendered FM Schema v4 business patterns: {output}")
     return 0
 
 

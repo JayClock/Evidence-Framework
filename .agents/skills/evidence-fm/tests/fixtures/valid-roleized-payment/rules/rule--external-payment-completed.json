@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "完成外部支付完成判断",
   "description": "存在至少一份与请求（request.external-payment）关联的确认凭证（confirmation.external-payment）时，判定履约（fulfillment.external-payment）完成。",
-  "contextRef": "fulfillment.external-payment",
+  "contextRef": "context.external-payment",
   "bindings": {
     "request": {
       "ref": "request.external-payment"
@@ -15,5 +15,6 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool"
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.external-payment"
 }

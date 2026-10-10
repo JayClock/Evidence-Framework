@@ -58,7 +58,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         roles = {
             e["id"]: e["label"]
             for e in entities
-            if e["category"] == "role"
+            if e["category"] == "role" and e["kind"] == "party"
             and e["contextRef"] == "context.product-procurement"
         }
         self.assertEqual(roles, {"role.buyer": "客户", "role.seller": "供应商"})
@@ -70,7 +70,7 @@ class EvidencePrerequisiteTest(unittest.TestCase):
             if (
                 evidence["category"] == "evidence"
                 and evidence["kind"] != "contract"
-                and evidence["contextRef"] != "fulfillment.wechat-payment"
+                and evidence["contextRef"] != "context.wechat-payment"
             ):
                 self.assertIn(evidence["responsibleRoleRef"], contract["roleRefs"])
         design = load(EXAMPLE / "api.json")

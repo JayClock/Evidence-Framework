@@ -4,7 +4,7 @@
   "kind": "derivation",
   "label": "引用原合同退款金额",
   "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为断更退款请求（request.refund）的全额退款金额。",
-  "contextRef": "fulfillment.refund",
+  "contextRef": "context.subscription",
   "bindings": {
     "agreement": {
       "ref": "contract.subscription"
@@ -15,5 +15,6 @@
   "target": {
     "entityRef": "request.refund",
     "attribute": "amount_minor_units"
-  }
+  },
+  "fulfillmentRef": "fulfillment.refund"
 }

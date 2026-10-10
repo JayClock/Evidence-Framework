@@ -63,7 +63,7 @@ class ContextScopeTests(unittest.TestCase):
                 any(item["category"] == "evidence" for item in model.entities)
             )
             document = compiled_document(model)
-            self.assertEqual({}, model.fulfillment_contexts_by_id)
+            self.assertEqual({}, model.fulfillments_by_id)
             self.assert_compiled_schema(document)
             lineage, errors = analyze_traceability(model)
             self.assertEqual([], errors)
@@ -134,7 +134,7 @@ class ContextScopeTests(unittest.TestCase):
                     if item["category"] == "evidence"
                 },
             )
-            self.assertEqual({}, model.fulfillment_contexts_by_id)
+            self.assertEqual({}, model.fulfillments_by_id)
             self.assert_compiled_schema(compiled_document(model))
 
     def test_empty_optional_directories_do_not_change_compilation(self) -> None:
@@ -281,8 +281,8 @@ class ContextScopeTests(unittest.TestCase):
             model = load_model(root)
             self.assertEqual([], validate_model(model))
             self.assertEqual(
-                before.fulfillment_contexts_by_id,
-                model.fulfillment_contexts_by_id,
+                before.fulfillments_by_id,
+                model.fulfillments_by_id,
             )
             for item in domain_documents():
                 collection = {
@@ -306,16 +306,16 @@ class ContextScopeTests(unittest.TestCase):
                 errors,
             )
 
-    def test_absent_fulfillment_context_cannot_hide_an_orphan_request(self) -> None:
+    def test_absent_fulfillment_cannot_hide_an_orphan_request(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
-            (root / "entities" / "context-fulfillment--content-payment.json").unlink()
+            (root / "entities" / "fulfillment--content-payment.json").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
-                any("existing Fulfillment Context" in error for error in errors),
+                any("existing Fulfillment" in error for error in errors),
                 errors,
             )
 

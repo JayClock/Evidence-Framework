@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Load, validate, and compile Fulfillment Modeling Schema v3 directories."""
+"""Load, validate, and compile Fulfillment Modeling Schema v4 directories."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
     Environment = None  # type: ignore[assignment,misc]
 
 
-SCHEMA_VERSION = "3.0"
+SCHEMA_VERSION = "4.0"
 # These trees are inputs/outputs of other readers, not FM type definitions.
 NON_SOURCE_TREES = {"discovery", "generated", "validation"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
@@ -89,12 +89,11 @@ class LoadedModel:
         }
 
     @property
-    def fulfillment_contexts_by_id(self) -> dict[str, dict[str, Any]]:
+    def fulfillments_by_id(self) -> dict[str, dict[str, Any]]:
         return {
             str(item["id"]): item
             for item in self.entities
-            if item.get("category") == "context"
-            and item.get("kind") == "fulfillment"
+            if item.get("category") == "fulfillment"
             and isinstance(item.get("id"), str)
         }
 
@@ -138,9 +137,9 @@ def expected_filename(document: dict[str, Any]) -> str:
     object_id = str(document["id"])
     if document.get("type") == "entity":
         category = str(document["category"]).replace("_", "-")
-        kind = str(document["kind"]).replace("_", "-")
+        kind = str(document.get("kind", "")).replace("_", "-")
         object_suffix = object_id.split(".", 1)[-1].replace(".", "--")
-        return f"{category}-{kind}--{object_suffix}.json"
+        return f"{category}{'-' + kind if kind else ''}--{object_suffix}.json"
     return object_id.replace(".", "--") + ".json"
 
 
@@ -319,10 +318,7 @@ def contract_context_ref(
     signature = entity_signature(context)
     if signature == ("context", "contract"):
         return context_ref
-    if signature in {
-        ("context", "fulfillment"),
-        ("context", "pre_contract"),
-    }:
+    if signature == ("context", "pre_contract"):
         parent_ref = normalize(context.get("parentContextRef")) if context else None
         if entity_signature(entities.get(parent_ref or "")) == (
             "context",
@@ -354,21 +350,21 @@ def validate_model(model: LoadedModel) -> list[str]:
         return dedupe(errors)
 
     entities = model.entities_by_id
-    fulfillment_contexts = model.fulfillment_contexts_by_id
+    fulfillments = model.fulfillments_by_id
     relationships = model.relationships_by_id
     rules = model.rules_by_id
 
     validate_manifest(model.manifest, entities, errors)
     validate_entities(model.entities, entities, rules, errors)
     validate_relationships(model.relationships, entities, rules, errors)
-    validate_fulfillment_contexts(
-        fulfillment_contexts, entities, model.relationships, rules, errors
+    validate_fulfillments(
+        fulfillments, entities, model.relationships, rules, errors
     )
     validate_rules(model.rules, entities, rules, errors)
     validate_business_patterns(
         model.business_patterns,
         entities,
-        fulfillment_contexts,
+        fulfillments,
         relationships,
         rules,
         errors,
@@ -462,7 +458,7 @@ def validate_evidence_responsibility(
     owner = context
     parent = entities.get(str(context.get("parentContextRef")))
     if (
-        context.get("kind") in {"fulfillment", "pre_contract"}
+        context.get("kind") == "pre_contract"
         and parent is not None
         and entity_signature(parent) == ("context", "contract")
     ):
@@ -499,7 +495,7 @@ def validate_party_role_owner(
 ) -> None:
     context = context or {}
     parent = entities.get(str(context.get("parentContextRef")))
-    if context.get("kind") == "fulfillment" or (
+    if (
         context.get("kind") == "pre_contract"
         and entity_signature(parent) == ("context", "contract")
     ):
@@ -538,15 +534,9 @@ def validate_entities(
             if context_ref is not None:
                 errors.append(f"{entity_id}: Context must not define contextRef")
             parent_ref = normalize(entity.get("parentContextRef"))
-            if kind == "fulfillment":
-                parent = require_ref(
-                    errors, entity_id, "parentContextRef", parent_ref, entities
-                )
-                if entity_signature(parent) != ("context", "contract"):
-                    errors.append(
-                        f"{entity_id}: Fulfillment Context parent must be a Contract Context"
-                    )
-            elif parent_ref is not None:
+            if kind not in {"contract", "pre_contract", "domain", "external"}:
+                errors.append(f"{entity_id}: invalid Context kind '{kind}'")
+            if parent_ref is not None:
                 parent = require_ref(
                     errors, entity_id, "parentContextRef", parent_ref, entities
                 )
@@ -565,8 +555,9 @@ def validate_entities(
                     )
             continue
 
+        validate_fulfillment_ref(entity, entities, errors)
         context: dict[str, Any] | None = None
-        if category in {"evidence", "role"} or (
+        if category in {"evidence", "role", "fulfillment"} or (
             category == "participant" and kind == "thing"
         ):
             context = require_ref(
@@ -574,6 +565,11 @@ def validate_entities(
             )
             if entity_signature(context)[0] != "context":
                 errors.append(f"{entity_id}: contextRef must reference a Context")
+
+        if category == "fulfillment":
+            if entity_signature(context) != ("context", "contract"):
+                errors.append(f"{entity_id}: Fulfillment contextRef must reference a Contract Context")
+            continue
 
         if (category, kind) == ("participant", "party") and context_ref is not None:
             errors.append(
@@ -646,17 +642,9 @@ def validate_entities(
             validate_evidence_responsibility(entity, context, entities, errors)
             context_kind = entity_signature(context)[1]
 
-            if kind == "fulfillment_request" and context_kind != "fulfillment":
+            if kind in {"fulfillment_request", "fulfillment_confirmation"} and context_kind != "contract":
                 errors.append(
-                    f"{entity_id}: fulfillment_request must belong to a Fulfillment Context"
-                )
-            if kind == "fulfillment_confirmation" and context_kind not in {
-                "contract",
-                "fulfillment",
-            }:
-                errors.append(
-                    f"{entity_id}: fulfillment_confirmation must belong to its owning "
-                    "Contract Context or one of that Contract's Fulfillment Contexts"
+                    f"{entity_id}: {kind} must belong to a Contract Context"
                 )
             if kind == "other_evidence" and context_kind not in {
                 "contract",
@@ -665,7 +653,7 @@ def validate_entities(
             }:
                 errors.append(
                     f"{entity_id}: other_evidence must belong to its owning Contract, "
-                    "Pre-contract, or Domain Context, not a Fulfillment Context"
+                    "Pre-contract, or Domain Context"
                 )
             if kind in {"rfp", "proposal"} and context_kind != "pre_contract":
                 errors.append(
@@ -679,10 +667,11 @@ def fulfillment_members(
     relationships: Iterable[dict[str, Any]] = (),
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     """Return requests, associated confirmations, and roles for a Fulfillment."""
+    relationships = tuple(relationships)
     members = [
         entity
         for entity in entities.values()
-        if object_context_ref(entity) == fulfillment_id
+        if entity.get("fulfillmentRef") == fulfillment_id
     ]
     requests = [
         item
@@ -703,18 +692,28 @@ def fulfillment_members(
         and entity_signature(entities.get(str(relation.get("targetRef"))))
         == ("evidence", "fulfillment_confirmation")
     )
+    role_refs = {
+        str(item["id"]) for item in members
+        if entity_signature(item) == ("role", "evidence")
+    }
+    role_refs.update(
+        str(relation.get("targetRef")) for relation in relationships
+        if relation.get("kind") == "uses_role"
+        and relation.get("sourceRef") in request_refs
+        and entity_signature(entities.get(str(relation.get("targetRef")))) == ("role", "evidence")
+    )
     return (
         requests,
         [entities[ref] for ref in sorted(confirmation_refs) if ref in entities],
-        [item for item in members if entity_signature(item) == ("role", "evidence")],
+        [entities[ref] for ref in sorted(role_refs)],
     )
 
 
 def fulfillment_contract(
     fulfillment: dict[str, Any], entities: dict[str, dict[str, Any]]
 ) -> dict[str, Any] | None:
-    """Resolve the single contract rooted in the parent Contract Context."""
-    parent = entities.get(str(fulfillment.get("parentContextRef")))
+    """Resolve the single contract rooted in the owning Contract Context."""
+    parent = entities.get(str(fulfillment.get("contextRef")))
     contracts = (
         [
             entities[ref]
@@ -728,15 +727,38 @@ def fulfillment_contract(
     return contracts[0] if len(contracts) == 1 else None
 
 
-def validate_fulfillment_contexts(
-    fulfillment_contexts: dict[str, dict[str, Any]],
+def validate_fulfillment_ref(
+    item: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str]
+) -> None:
+    ref = normalize(item.get("fulfillmentRef"))
+    required = entity_signature(item) == ("evidence", "fulfillment_request") or (
+        item.get("type") == "rule" and item.get("kind") in {"completion", "breach"}
+    )
+    if ref is None:
+        if required:
+            errors.append(f"{item['id']}: fulfillmentRef is required")
+        return
+    fulfillment = entities.get(ref)
+    if not fulfillment or fulfillment.get("category") != "fulfillment":
+        errors.append(f"{item['id']}: fulfillmentRef must reference an existing Fulfillment")
+    elif object_context_ref(fulfillment) != object_context_ref(item):
+        errors.append(f"{item['id']}: fulfillmentRef must belong to the same Contract Context")
+    if item.get("type") != "rule" and entity_signature(item) not in {
+        ("evidence", "fulfillment_request"), ("evidence", "fulfillment_confirmation"),
+        ("evidence", "other_evidence"), ("role", "evidence"),
+    }:
+        errors.append(f"{item['id']}: fulfillmentRef is not applicable to this entity")
+
+
+def validate_fulfillments(
+    fulfillments: dict[str, dict[str, Any]],
     entities: dict[str, dict[str, Any]],
     relationships: list[dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
     associated_confirmation_refs: set[str] = set()
-    for fulfillment_id, fulfillment in fulfillment_contexts.items():
+    for fulfillment_id, fulfillment in fulfillments.items():
         contract = fulfillment_contract(fulfillment, entities)
         if contract is None:
             errors.append(
@@ -768,7 +790,7 @@ def validate_fulfillment_contexts(
         context_rules = [
             rule
             for rule in rules.values()
-            if object_context_ref(rule) == fulfillment_id
+            if rule.get("fulfillmentRef") == fulfillment_id
         ]
         completion_rules = [
             rule for rule in context_rules if rule.get("kind") == "completion"
@@ -790,10 +812,10 @@ def validate_fulfillment_contexts(
         signature = entity_signature(entity)
         if (
             signature == ("evidence", "fulfillment_request")
-            and object_context_ref(entity) not in fulfillment_contexts
+            and entity.get("fulfillmentRef") not in fulfillments
         ):
             errors.append(
-                f"{entity_id}: must belong to an existing Fulfillment Context"
+                f"{entity_id}: fulfillmentRef must reference an existing Fulfillment"
             )
         if (
             signature == ("evidence", "fulfillment_confirmation")
@@ -846,7 +868,7 @@ def validate_trigger(
             )
         elif object_context_ref(rule) != expected_context_ref:
             errors.append(
-                f"{owner_id}.{field_name}.ruleRef must belong to the Fulfillment Context"
+                f"{owner_id}.{field_name}.ruleRef must belong to the expected Context"
             )
 
 
@@ -909,6 +931,9 @@ def validate_relationships(
         target_sig = entity_signature(target)
         source_context = object_context_ref(source)
         target_context = object_context_ref(target)
+        if source_sig[0] == "fulfillment" or target_sig[0] == "fulfillment":
+            errors.append(f"{relationship_id}: Fulfillment must not be an endpoint of {kind}")
+            continue
 
         if source_sig == ("evidence", "contract") and target_sig == (
             "evidence",
@@ -966,15 +991,6 @@ def validate_relationships(
             if source.get("type") != "entity" or target.get("type") != "entity":
                 errors.append(f"{relationship_id}: {kind} requires Entity endpoints")
                 continue
-            if source_sig == ("context", "fulfillment") or target_sig == (
-                "context",
-                "fulfillment",
-            ):
-                errors.append(
-                    f"{relationship_id}: Fulfillment must not be an endpoint of {kind}"
-                )
-                continue
-
             proposal_to_contract = source_sig == (
                 "evidence",
                 "proposal",
@@ -986,63 +1002,12 @@ def validate_relationships(
                         f"{relationship_id}: Proposal Context must bind its "
                         "parentContextRef to the target Contract Context"
                     )
-            contract_to_request = (
-                source_sig == ("evidence", "contract")
-                and target_sig == ("evidence", "fulfillment_request")
-                and isinstance(target_context, str)
-                and entities.get(target_context, {}).get("parentContextRef")
-                == source_context
-            )
             evidence_to_thing = source_sig[0] == "evidence" and target_sig == (
-                "participant",
-                "thing",
-            )
-            source_context_entity = entities.get(source_context or "", {})
-            target_context_entity = entities.get(target_context or "", {})
-            direct_contract_fulfillment_pair = (
-                entity_signature(source_context_entity) == ("context", "contract")
-                and entity_signature(target_context_entity)
-                == ("context", "fulfillment")
-                and target_context_entity.get("parentContextRef") == source_context
-            ) or (
-                entity_signature(target_context_entity) == ("context", "contract")
-                and entity_signature(source_context_entity)
-                == ("context", "fulfillment")
-                and source_context_entity.get("parentContextRef") == target_context
-            )
-            contract_fulfillment_other_evidence_link = (
-                direct_contract_fulfillment_pair
-                and (
-                    source_sig == ("evidence", "other_evidence")
-                    and target_sig
-                    in {
-                        ("evidence", "fulfillment_request"),
-                        ("evidence", "fulfillment_confirmation"),
-                    }
-                    or target_sig == ("evidence", "other_evidence")
-                    and source_sig
-                    in {
-                        ("evidence", "fulfillment_request"),
-                        ("evidence", "fulfillment_confirmation"),
-                    }
-                )
-            )
-            shared_fulfillment_confirmation_link = (
-                kind == "precedes"
-                and source_sig == ("evidence", "fulfillment_request")
-                and target_sig == ("evidence", "fulfillment_confirmation")
-                and contract_context_ref(source, entities) is not None
-                and contract_context_ref(source, entities)
-                == contract_context_ref(target, entities)
+                "participant", "thing",
             )
             if source_context != target_context and not (
-                (kind == "precedes" and (proposal_to_contract or contract_to_request))
-                or shared_fulfillment_confirmation_link
+                (kind == "precedes" and proposal_to_contract)
                 or (kind == "references" and evidence_to_thing)
-                or (
-                    kind in {"evidences", "precedes"}
-                    and contract_fulfillment_other_evidence_link
-                )
             ):
                 errors.append(
                     f"{relationship_id}: unsupported cross-context {kind} relationship"
@@ -1064,10 +1029,10 @@ def validate_relationships(
             elif (
                 kind == "references"
                 and source_sig[0] == "evidence"
-                and not evidence_to_thing
+                and not (evidence_to_thing or target_sig[0] == "evidence")
             ):
                 errors.append(
-                    f"{relationship_id}: Evidence references must target a Thing"
+                    f"{relationship_id}: Evidence references must target a Thing or Evidence"
                 )
             elif kind == "derived_from" and not (
                 source_sig[0] == "evidence" and target_sig[0] == "evidence"
@@ -1092,6 +1057,7 @@ def validate_rules(
         context_ref = normalize(rule.get("contextRef"))
         if entity_signature(entities.get(context_ref or ""))[0] != "context":
             errors.append(f"{rule_id}: contextRef must reference Context")
+        validate_fulfillment_ref(rule, entities, errors)
         kind = rule.get("kind")
         if kind in BOOL_RULE_KINDS and rule.get("resultType") != "bool":
             errors.append(f"{rule_id}: {kind} Rule resultType must be bool")
@@ -1172,14 +1138,14 @@ def validate_rules(
 def validate_business_patterns(
     pattern_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
-    fulfillment_contexts: dict[str, dict[str, Any]],
+    fulfillments: dict[str, dict[str, Any]],
     relationships: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
     objects = {**entities, **relationships, **rules}
     allowed_variation_roles = {"domain", "third_party", "context", "evidence"}
-    allowed_variation_contexts = {"pre_contract", "fulfillment", "domain"}
+    allowed_variation_contexts = {"pre_contract", "domain"}
 
     for pattern in pattern_list:
         pattern_id = normalize(pattern.get("id"))
@@ -1188,13 +1154,13 @@ def validate_business_patterns(
 
         spine_contract_contexts: set[str] = set()
         for ref in pattern.get("businessSpineRefs") or []:
-            fulfillment = fulfillment_contexts.get(ref)
+            fulfillment = fulfillments.get(ref)
             if fulfillment is None:
                 errors.append(
                     f"{pattern_id}: businessSpineRef '{ref}' must reference Fulfillment"
                 )
                 continue
-            contract_context = normalize(fulfillment.get("parentContextRef"))
+            contract_context = normalize(fulfillment.get("contextRef"))
             if contract_context is not None:
                 spine_contract_contexts.add(contract_context)
         for ref in pattern.get("invariantRefs") or []:
@@ -1210,10 +1176,10 @@ def validate_business_patterns(
             is_variation_context = (
                 category == "context" and kind in allowed_variation_contexts
             )
-            if not (is_variation_role or is_variation_context):
+            if not (is_variation_role or is_variation_context or category == "fulfillment"):
                 errors.append(
                     f"{pattern_id}: variationPointRef '{ref}' must reference a variation Role "
-                    "or Pre-contract, Fulfillment, or Domain Context"
+                    "or Fulfillment, Pre-contract Context, or Domain Context"
                 )
 
         for ref in pattern.get("domainInputRefs") or []:

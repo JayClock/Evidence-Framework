@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "内容产品付款确认",
-  "contextRef": "fulfillment.content-payment",
+  "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.subscriber",
   "attributes": [
     {
@@ -31,5 +31,6 @@
       "keyData": true,
       "meaning": "ISO 4217 币种代码"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.content-payment"
 }

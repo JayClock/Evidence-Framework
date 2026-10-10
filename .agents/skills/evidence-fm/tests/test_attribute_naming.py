@@ -167,7 +167,7 @@ class AttributeNamingTests(unittest.TestCase):
             "origin": "asserted",
         }
         report = {
-            "schemaVersion": "3.0",
+            "schemaVersion": "4.0",
             "modelId": "sample",
             "nodes": [node],
             "edges": [],

@@ -169,11 +169,10 @@ def load_fm(fm_root: Path, fm_skill: Path) -> tuple[FMIndex | None, list[Diagnos
         if context_ref:
             members.setdefault(context_ref, []).append(entity["id"])
         if (
-            entity.get("category") == "context"
-            and entity.get("kind") == "fulfillment"
-            and entity.get("parentContextRef")
+            entity.get("category") == "fulfillment"
+            and entity.get("contextRef")
         ):
-            fulfillment_parent[entity["id"]] = entity["parentContextRef"]
+            fulfillment_parent[entity["id"]] = entity["contextRef"]
     for values in members.values():
         values.sort()
     return FMIndex(

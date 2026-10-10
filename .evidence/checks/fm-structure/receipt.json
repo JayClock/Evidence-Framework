@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "FM fulfillment structure and downstream consumers",
+  "fmSchemaVersion": "4.0",
+  "modelDigest": "sha256:1089294534f87eec7d4aa27b7d106d0efc4f6bdc7f866e114526b7b77b5afebb",
+  "model": {
+    "contexts": 6,
+    "fulfillments": 7,
+    "entities": 47,
+    "scenariosPassed": 20,
+    "scenariosExecuted": 20,
+    "evidenceInstances": 32,
+    "unresolvedTimelineOrders": 31,
+    "apiSourceUnchanged": true,
+    "scenarioAndInstanceSourcesUnchanged": true
+  },
+  "tests": {
+    "fm": {"passed": 143},
+    "api": {"passed": 104},
+    "planning": {"passed": 41},
+    "delivery": {"passed": 19},
+    "visualizationGraph": {"passed": 16},
+    "visualizationGenerator": {"passed": 15},
+    "visualizationPortability": {"passed": 2}
+  },
+  "browser": {
+    "passed": true,
+    "htmlSha256": "3d5a17789dd21e88f2ca76db510db3cca026f67cfa11a93ecf2c39c2205a6945",
+    "detailTargets": 498,
+    "contextContainers": 6,
+    "fulfillments": 7,
+    "externalRequests": 0,
+    "screenshotsReviewed": ["overview.png", "legend-contexts-lines.png"]
+  },
+  "plan": {
+    "valid": true,
+    "compiledMatchesCurrentInputs": true,
+    "taskRecordsPreserved": true,
+    "taskCount": 14,
+    "statusCounts": {"done": 8, "planned": 6},
+    "historicalTaskEvidenceRevalidated": false
+  },
+  "projectChecks": {
+    "npmTest": {"passed": false, "failure": "test_all_project_skills_use_canonical_root rejects write and content-research-writer", "nxCache": "35/35"},
+    "npmLint": {"passed": false, "failure": "12 existing README links to missing docs/articles targets", "nxCache": "1/1"},
+    "npmBuild": {"passed": true, "nxCache": "35/35"},
+    "guidesVerify": {"passed": false, "failure": "12 existing README links to missing docs/articles targets"},
+    "gitDiffCheck": {"passed": true},
+    "lsp": {"checked": 12, "clean": 2, "inconclusive": 10, "reportedDiagnostics": 0}
+  },
+  "allProjectChecksPassed": false,
+  "agentBehaviorEvalsExecuted": false,
+  "serviceRuntimeVerified": false,
+  "businessApprovalGranted": false,
+  "unpersistedFeedback": [],
+  "artifacts": [".evidence/views/index.html", ".evidence/api/generated/", "docs/plans/smart-domain/review.html"],
+  "logsDirectory": "logs/"
+}

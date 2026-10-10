@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.prepaid-payment",
+  "category": "fulfillment",
+  "label": "完成预付费抵扣",
+  "contextRef": "context.prepaid-payment"
+}

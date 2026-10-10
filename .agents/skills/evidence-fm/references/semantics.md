@@ -1,145 +1,104 @@
-# FM 履约建模 Schema v3 语义规则
+# FM 履约建模 Schema v4 语义规则
 
 ## 1. 核心视角与发现顺序
 
-FM 履约建模用同一格式表达合同履约、签约前渠道和领域部分。领域建模不是外接格式，也不只是履约模型的占位。API、数据库、服务、队列和页面仍不是核心业务／领域对象。
+同一格式表达合同履约、签约前渠道和领域部分。API、数据库、服务、队列和页面不是核心业务／领域对象。
 
 ```text
 当前问题、范围与来源事实
-→ 识别 Contract／Fulfillment、Pre-contract、Domain 上下文
-→ 按当前已知事实局部展开，可从任一上下文进入
-→ 区分领域输入、履约标的、完成证据与实现机制并按需组合
-→ 验证实际存在的结构，按需提取 Business Pattern
+→ 识别 Contract、Pre-contract、Domain 上下文
+→ 展开合约双方、权责履约、请求与完成证明
+→ 区分领域输入、履约标的、完成证据与实现机制
+→ 验证实际结构，按需提取 Business Pattern
 ```
 
-有履约时继续 Role-first：两个合同 Role → 作为 Context 的 Fulfillment 及其请求、确认与 interval → 违约后果及变化点。对外交易与内部绩效共用此机制，只有协议内容不同。领域部分按 `domain-modeling.md`，不先索要合同。
+纯领域或合同前范围不补造合同。对外交易与内部绩效使用相同的合约、角色、凭证和履约结构；责任方向由真实约定决定。输入有歧义或来源变更时执行 [输入复核](input-review.md)，领域部分按 [领域建模](domain-modeling.md)。
 
-输入有歧义或来源变更时执行 [输入复核](input-review.md)，按当前必要事实处理，不重做完整访谈；候选解释保持为候选。
+## 2. Context 与权责履约
 
-## 2. Business、Domain 与 Context 边界
+Context 的 kind：
 
-业务逻辑源自运营，关注收入、成本、KPI、合规和风险；领域逻辑源自问题域，关注算法、计划、统计、优化及领域能力。二者必须分开：
+- `contract`：两个合同 Role 之间全部业务交互的聚合与责任边界。
+- `domain`：领域对象与领域能力的边界。
+- `pre_contract`：合同形成前的协商与渠道边界。
+- `external`：当前模型不展开的外部边界。
 
-- `contract` Context：两个合同 Role 之间全部业务交互的聚合，也是服务／业务边界；
-- `fulfillment` Context：Contract 的子 Context；它本身就是一项 Fulfillment，同时承载该项责任的请求、确认与规则，是业务弹性边界；
-- `domain` Context：承载 Thing 与领域能力，是领域弹性边界；
-- `pre_contract` Context：合同形成前的协商与渠道边界；
-- `external` Context：当前模型不展开的外部边界。
+权责履约是 `category: fulfillment` 的 Entity，不定义 kind，也不是 Context。其 `contextRef` 指向所属 Contract Context。一项履约表达请求、完成证明及相关规则，不创建新的责任、访问或部署边界。
 
-Contract Context 本身不是单一弹性边界。每项 Fulfillment 都是唯一的 `kind: fulfillment` Context，并以 `parentContextRef` 指向所属 Contract Context；不存在与它分离的 Fulfillment 对象。Thing 必须属于 Domain Context；Party 保持在 Context 外。
+`contextRef` 只引用真正的 Context；`parentContextRef` 表达 Context 之间的归属。`fulfillmentRef` 独立表达凭证、证明角色或规则的履约归属，引用的履约必须属于同一个 Contract Context。入口 `entryContextRefs` 只能引用 Context，不能引用履约。
 
-上述上下文可单独建模或组合，`entryContextRefs` 可直接指向 Domain 或 Pre-contract。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的合同、Request、Fulfillment 或引用的约束。
+上下文可单独建模或组合。没有履约的范围允许没有 Contract／Fulfillment；这不放松已经存在的凭证和引用约束。FM 边界不自动等于软件模块、事务或部署单元。
 
-## 3. Contract 与 Party Role
+## 3. Contract 与责任 Role
 
-Contract 是签约时刻 Evidence，也是 Contract Context 的 root。它必须：
+Contract 是签约时刻 Evidence，也是 Contract Context 的 root。它引用恰好两个不同、同 Context 的 Party Role，不要求已有 Participant 玩家，不直接连接另一个 Contract。
 
-- 引用恰好两个不同、同 Contract Context 的 Party Role；
-- 不要求这两个 Role 已有 Participant 玩家；
-- 不直接连接另一个 Contract。
+属于同一合同责任范围的所有 Evidence 均复用该 Contract 的 `roleRefs`。Contract 由双方共同绑定，其余凭证以 `responsibleRoleRef` 指向其中一方；不按凭证、履约或阶段复制角色。合同中的 Party Role 必须被根合同绑定。
 
-合同双方和 Evidence 责任首先用 Role 表达。Role 只表示对所连接凭证负责的业务身份；多个上下文中标签相似的 Role，不能据此推断为同一 Participant。
+明确共享合同责任的 Pre-contract Context 通过 `parentContextRef` 指向 Contract Context。Proposal 经 `precedes` 连接 Contract 时，该责任关联必须与目标合同一致。类型责任关联不表示询报价时合同实例已签署，也不改变合同前凭证的形成上下文或 URI 根。独立合同前 Context 尚无合同责任关联时使用本 Context 的角色，不虚构合同。
 
 ## 4. Role 与 Participant
 
-Role kind：
+Role kind：`party` 为责任或参与身份；`domain` 为领域能力插槽；`third_party` 为外部协作者；`context` 为由其他 Context 扮演的插槽；`evidence` 为由其他 Context 的确定性时刻凭证扮演的证明插槽。
 
-- `party`：购买方、销售方、服务使用方、客户等合同、渠道或领域上下文中的参与身份；
-- `domain`：价格、资格、权益、验收等领域能力插槽；
-- `third_party`：当前边界不展开的外部协作者；
-- `context`：由其它 Context 扮演的上下文插槽；
-- `evidence`：由其它 Context 的确定性时刻 Evidence 扮演的确认插槽。
+Participant Party 表达跨上下文保持身份的个人、组织或法人，保持在 Context 外；Participant Thing 表达具有领域身份的标的或其他事物，属于 Domain Context。
 
-Contract Party Role 位于 Contract Context。属于该合同责任范围的所有 Evidence 均使用 Contract 的 `roleRefs` 所绑定角色，不为凭证种类或阶段复制角色。Contract 由这两个角色共同绑定；其余 Evidence 的 `responsibleRoleRef` 必须是其中之一，包括 RFP、Proposal、Request、Confirmation 与 Other Evidence。
+只有已知稳定玩家或跨上下文同一性时建立 `plays_role`。同名角色不证明主体相同；岗位、经办人、系统或调度器不自动成为合同责任方。角色扮演不等于完整操作授权，办理一份凭证的代表依据不能扩展成该角色全部权限。
 
-Fulfillment 通过 `parentContextRef` 归属合同。明确共享该合同责任的 Pre-contract Context 也用 `parentContextRef` 指向 Contract Context，复用同一组角色；这是类型模型的责任关联，不表示询报价时合同实例已经签署，也不改变凭证各自的 Context 或独立 URI 根。Proposal 通过 `precedes` 连接 Contract 时，该责任关联必须显式给出并与目标合同上下文一致；缺失或不一致直接拒绝，不接受渠道局部角色作为替代。合同责任阶段不定义额外 Party Role，Contract Context 中的 Party Role 必须被根 Contract 绑定。不从相同标签推断责任。独立合同前 Context 尚无合同责任关联时使用本 Context 的角色，不虚构合同。
+## 5. Evidence 与业务时间
 
-Participant：
+- RFP、Proposal 属于 Pre-contract Context。
+- Contract、Fulfillment Request、Fulfillment Confirmation 属于 Contract Context。
+- Other Evidence 属于形成并管理它的 Contract、Pre-contract 或 Domain Context。
 
-- `party`：跨上下文保持身份的个人、组织或法人；保持在 Context 外；
-- `thing`：具有领域身份的地点、标的物或其他事物；必须属于 Domain Context。
+Request 必须通过 `fulfillmentRef` 属于一项履约。Confirmation 保留唯一形成上下文，可用 `fulfillmentRef` 表达其形成的履约；同一合同中多个 Request 可以通过 `precedes` 关联同一个确认，不复制或搬迁确认。补充凭证始终保留真实形成上下文，服务于某项履约时可用 `fulfillmentRef` 组织。
 
-只有来源明确稳定玩家或跨上下文同一性时才建立 `plays_role`。区分合同责任身份与经办主体：财务、销售、库管等岗位名称本身不构成新增业务 Role 的依据；实际主体可作为 Participant 或凭证经办说明保留。不能为了覆盖节点种类，为每个经办主体复制一套 Role。
+Request 是记录要求的时段凭证，Confirmation 是记录完成或部分完成结果的时刻凭证。六类凭证的业务时间按 [格式](format.md) 显式定义，并按 [来源映射](provenance.md) 核对事件含义；签约不等于生效、确认不等于回调、凭证形成不等于原事件时间。
 
-角色扮演关系不等于完整操作授权。同一业务角色可以有不同经办主体，但某主体办理一份凭证的依据，不能扩展为它可执行该角色的所有操作。角色复用以明确的合同责任归属为依据；同名本身既不证明复用，也不是复制角色的理由。
+必需补充证据必须先存在：用 `evidences` 从 Other Evidence 指向被证明凭证，用 `precedes` 声明有依据的形成先后，实例 `basedOn` 引用已存在证据。目标凭证不得早于必需证据形成。补充证据不是固定流程阶段，不为无此需求的业务强加材料。
 
-## 5. Evidence
-
-Evidence kind：
-
-- `rfp`、`proposal`：位于 Pre-contract Context；
-- `contract`：位于 Contract Context；
-- `fulfillment_request`：位于 Fulfillment Context；`fulfillment_confirmation`：保留唯一形成 Context，本履约专有结果可位于该 Fulfillment，同一合同内被多个履约共同采信的结果可位于父 Contract Context 或其中一个子 Fulfillment，并由各 Request 的 `precedes` 关系显式关联；
-- `other_evidence`：对其他凭证提供补充证明的凭证，位于形成并管理它的 Contract、Pre-contract 或 Domain Context；不得直接属于 Fulfillment，也不是固定流程阶段。合同履行期间由本合同形成的补充凭证直接属于父 Contract Context，即使它只证明某一项子履约。
-
-需要补充证明时，先明确凭证自身的形成上下文、被证明凭证及具体证明内容。必需的 `other_evidence` 必须已经存在，才能形成依赖它的凭证；用 `evidences` 从补充证据指向被证明凭证，并用 `precedes` 明确必要的形成先后。实例中由被证明凭证的 `basedOn` 引用已存在的补充证据，场景在形成目标前提供这些证据。补充证据可以支持 RFP、Proposal、Contract、Request、Confirmation 或其他补充证据，不局限于履约确认。不为没有此需求的凭证强加补充证据，也不因它服务于某项履约而改变其上下文归属。
-
-`created_at` 记录补充凭证自身形成时间，不等于上传时间或其记录的原事件时间；目标凭证的相应业务时间不得早于其必需证据的形成时间。是否分开录入不改变业务依赖，不从图上位置推导接口调用方式。
-
-Request 是记录履约要求的时段 Evidence；Confirmation 是证明履约完成或部分完成的时刻 Evidence。两者各自通过 `responsibleRoleRef` 连接对该凭证负责的 Role，Request → Confirmation 的履约结构表达要求与结果的方向。创建六类凭证时均先按 [格式](./format.md) 的必备时间表展开类型；属性约束、请求区间与实例要求在该处维护。再按 [来源映射](./provenance.md) 核对各时间证明的业务事件与形成依据，区分签约与生效、确认与回调、凭证形成与原事件；类型齐全不代表依据已查明。
-
-运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿必须创建新 Evidence 或 Fulfillment，不能修改旧凭证。此约束不等于全部领域 Participant 永不改变；领域状态和行为条件按已确认规则表达，不伪装成履约。
+运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿通过新凭证及有依据的履约表达，不能覆盖旧凭证。这不表示领域 Participant 永不改变，领域状态和操作条件按真实规则建模。
 
 ## 6. Fulfillment
 
-`fulfillment` Context 是第一等多元语义节点，同时表达一项责任及其弹性边界，必须指定：
+每项权责履约具有：
 
-- 父 Contract Context 与具体 Contract；
-- Request 与 Confirmation 各自的责任 Role；
-- 一个 Fulfillment Request 及其 interval；
-- 一个或多个具体 Confirmation 或 Evidence Role；
-- 完成策略和双方业务触发；
-- 可选 Domain Participant 标的物；
-- 可选违约条件与后果。
+- 一个所属 Contract Context，其根中有唯一 Contract；
+- 恰好一个以 `fulfillmentRef` 归属本履约的 Request；
+- 一个或多个具体 Confirmation 或跨上下文 Evidence Role；
+- 恰好一个以 `fulfillmentRef` 归属本履约的 bool completion Rule；
+- 按业务需要定义的前置、派生、违约规则与标的引用。
 
-约束：
+成员自身声明履约归属，不在 Fulfillment 上重复维护成员、标的、触发、完成或违约索引。Fulfillment 没有独立业务属性、凭证时间、责任角色或实例，不作为 Evidence 关系端点。
 
-- Request 与具体 Confirmation 的 `responsibleRoleRef` 必须引用所属 Contract 的 Party Role；
-- Request 与本履约专有 Confirmation、Evidence Role 及履约 Rule 以 `contextRef` 直接属于该 Fulfillment；同一合同责任边界内的共同 Confirmation 保留一个形成 Context，由各 Fulfillment Request 通过 `precedes` 关联；Other Evidence 不得直接属于 Fulfillment，合同内补充凭证属于父 Contract Context；
-- 一个 Request 恰好属于一个 Fulfillment；
-- 一个 Confirmation 保留一个形成 Context，但可被同一 Contract Context 下一个或多个 Request 关联；跨独立 Contract／Domain Context 复用确定结果仍通过外部时刻 Evidence 和 Evidence Role；
-- 多次同类运行时确认用多个 Evidence Instance 和 completion CEL Rule，不复制类型节点；
-- Fulfillment 本身不持有成员、标的、触发、完成或违约索引。
+Request 与具体 Confirmation 的责任方来自同一合同双方。共享确认由显式 Request→Confirmation 关系纳入各履约，分别按对应请求区间、实例匹配和 completion Rule 判断。多次同类结果使用多个 Evidence Instance，不复制类型节点。
 
-在 Request 形成而合格 Confirmation 尚未形成时，履约状态是业务上的 `pending`，不是同步调用中的临时技术状态。
+Request 已形成而合格结果尚未形成时为业务上的 pending，不是同步调用中的临时技术状态。
 
-## 7. Role 扮演与跨上下文变化点
+## 7. 直接引用与跨上下文角色化
 
-允许的 `plays_role`：
+同一合约内不同履约的凭证、规则可以直接引用。履约之间的分组不构成跨上下文，不要求先建立证明角色。同合同 Evidence→Evidence 的 `references` 表达业务引用，不自动声明先后；需要先后时用有依据的 `precedes`，有派生依据时用 `derived_from`。直接引用仍受实例匹配、业务时间、来源与可见性约束。
 
-- Participant Party → Party／Third-party Role；
-- Participant Thing → Domain Role；
-- Context → Context／Third-party Role；
-- Fulfillment Confirmation／Other Evidence → Evidence Role。
+允许的 `plays_role`：Participant Party→Party／Third-party Role；Participant Thing→Domain Role；Context→Context Role；External Context→Third-party Role；Fulfillment Confirmation／Other Evidence→Evidence Role。
 
-Evidence Role 是开放证明插槽：可以没有玩家或有多个玩家；新增渠道只新增外部 Evidence 和 Relationship，不修改核心 Role。Role 没有责任人，不设置 `responsibleRoleRef`／`roleRefs`，没有自身凭证时间或可签发实例；可声明消费者要求的玩家属性。消费方以 `uses_role` 使用它，玩家必须来自另一个 Context 的确定性时刻 Evidence，以 `plays_role` 连接。玩家保留其自身上下文及责任角色，不归入消费方合同责任。Request、Contract、RFP 和 Proposal 不能证明确定结果。规则绑定 Evidence Role 时必须解析显式玩家实例，不接受角色实例或仅字段相同的无关凭证。
+Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方以 `uses_role` 使用角色，实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
 
-跨独立上下文的 Evidence 协作只允许有来源的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing，以及外部时刻 Evidence→Evidence Role。同一 Contract Context 下的多个 Fulfillment Request 可通过 `precedes` 关联同一个共同 Confirmation；该 Confirmation 保留唯一形成 Context 和责任 Role，不因被多项履约采信而复制或多重归属。父 Contract Context 中的 `other_evidence` 与其直接子 Fulfillment 的 Request／Confirmation 可通过 `evidences` 和有依据的 `precedes` 关联；这是同一合同责任边界内的父子关联，不开放到其他合同或任意 Context。Thing 必须由实际涉及它的业务 Evidence 引用；同一非履约 Context 的辅助凭证通过 `evidences` 指向被证明的业务 Evidence；真正的独立外部结果走 Evidence Role，不用 `evidences` 穿透独立边界。Fulfillment 本身不参与这些关系。
+规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。跨独立上下文不能以直接 Evidence 引用穿透边界；允许有依据的 Proposal→Contract 签约追溯与 Evidence→Thing 标的引用，外部确定结果通过 Evidence Role 使用。
 
-这类 Role、Pre-contract Context 和 Fulfillment 是候选业务变化点。
+Role、Pre-contract Context、权责履约可以作为候选业务变化点，但变化点不自动决定部署边界。
 
-## 8. 合同前协商与渠道来源
+## 8. 合同前协商
 
-合同前的 RFP／Proposal 与合同履约具有不同的法律和弹性边界，保留各自的凭证时间线和审计关联。责任归属显式关联同一合同时，复用该合同绑定的两个 Role；独立的合同前 Context 使用本 Context 的角色。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。
-
-固定套餐可以 Proposal→Contract 或直接 Contract；询价与招标可由一个 RFP 对多个 Proposal，再由被接受 Proposal 指向 Contract。不得强迫所有签约来源归并成一条流程。只展开签约前范围时，RFP／Proposal 可以独立存在，不虚构未来 Contract 或 Fulfillment。
+RFP→Proposal→Contract 是可能的证据主线，不是必须走完的流水线。固定套餐可以 Proposal→Contract 或直接 Contract；询价可以有多个 Proposal。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。仅展开签约前范围时不虚构未来合同或履约。
 
 ## 9. Business Pattern
 
-Business Pattern 表达运营特定、领域中立的履约责任结构。它必须引用真实 Fulfillment 业务脊梁、运营不变量、业务变化点、Domain 输入、Contract 案例和 Domain 案例。
+Business Pattern 表达运营特定、领域中立的责任结构，引用真实 Fulfillment 主线、运营不变量、变化点、Domain 输入、Contract 与 Domain 案例。
 
-一个 Domain 只能形成 `candidate`；至少两个 Contract Context 与两个 Domain Context 才能成为 `supported`；`confirmed` 还需要具名业务方确认。机器验证不能证明领域中立或复用价值。纯领域模型不为领域能力复用补造履约责任脊梁；没有 Business Pattern 不影响领域模型成立。
+一个 Domain 只能支持 candidate；至少两个 Contract Context 与两个 Domain Context 才能成为 supported；confirmed 还需要具名业务方确认。机器不能证明领域中立或复用价值。纯领域模型不为提取模式补造履约，没有 Business Pattern 不影响模型成立。
 
-## 10. Trigger 与实现边界
+## 10. 规则、触发与验证
 
-`schedule`、`domain_event`、`integration_event` 或 `rule` 只记录触发机制，`actsForRoleRef` 指向它代表的合同 Role。调度器、API、队列、SDK、数据库和服务均不建成 Participant。
+完成、违约与派生逻辑由有来源的 Evidence 属性、明确 bindings 和 CEL 表达。any、all、count、amount 及具名人工确认不内嵌于履约结构。`schedule`、`domain_event`、`integration_event`、`rule` 只描述触发机制，调度器、API、队列和服务不是业务 Party。
 
-## 11. 状态与验证
-
-必须区分机器结论与业务确认：
-
-```text
-machineValidated → simulationPassed
-```
-
-机器校验通过不能被称为业务已确认；确认依据随项目发现记录与 PDCA 计划／任务记录维护。场景仅根据当时已形成、对 acting Role 可见的凭证执行 CEL；模拟值不是生产事实，不得回写模型条款。
+机器校验、场景模拟和业务批准分别记录。场景只能使用判断时已形成且对 acting Role 可见的凭证；模拟值不是生产事实，不回写条款。业务确认依据归发现记录与项目计划，模型文件不保存审核状态。

@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "断更补偿确认",
-  "contextRef": "fulfillment.interruption-compensation",
+  "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.platform-subscription",
   "attributes": [
     {
@@ -15,5 +15,6 @@
       "keyData": true,
       "meaning": "确定履约结果形成的时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.interruption-compensation"
 }

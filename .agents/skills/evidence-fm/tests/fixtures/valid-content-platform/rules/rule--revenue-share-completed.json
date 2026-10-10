@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "支付创作者收入分成完成判断",
   "description": "存在至少一份与请求（request.revenue-share）关联的确认凭证（confirmation.revenue-share）时，判定履约（fulfillment.revenue-share）完成。",
-  "contextRef": "fulfillment.revenue-share",
+  "contextRef": "context.content-production",
   "bindings": {
     "request": {
       "ref": "request.revenue-share"
@@ -15,5 +15,6 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool"
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.revenue-share"
 }

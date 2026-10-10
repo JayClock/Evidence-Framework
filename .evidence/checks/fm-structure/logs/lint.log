@@ -1,0 +1,44 @@
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 lint
+> nx lint @evidence-poc/frontend && npm run guides:check
+
+
+> nx run @evidence-poc/frontend:lint  [existing outputs match the cache, left as is]
+
+
+
+
+ NX   Successfully ran target lint for project @evidence-poc/frontend
+
+Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
+
+  Run duration:      79ms
+  Cache:             1/1 hit (100%)
+  Critical path:     <1ms (1 task)
+  Recoverable time:  <1ms
+npm warn Unknown env config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown env config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "home". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown user config "is-current". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @evidence-poc/source@0.0.0 guides:check
+> node tools/guides/check.mjs && prettier --check AGENTS.md README.md 'docs/**/*.md' apps/backend/README.md .evidence/README.md .evidence/api/README.md .agents/skills/README.md '.agents/skills/{evidence-discovery,evidence-task-planning,evidence-delivery}/**/*.{md,json}' 'tools/guides/*.mjs' 'tools/python/*.mjs'
+
+Guides: 46 documents, 360 local links, 12 errors
+README.md:33: docs/articles/implicit-conventions.md: missing local target
+README.md:34: docs/articles/scattered-information.md: missing local target
+README.md:35: docs/articles/false-completion.md: missing local target
+README.md:36: docs/articles/instruction-file-rot.md: missing local target
+README.md:37: docs/articles/feedforward-without-feedback.md: missing local target
+README.md:38: docs/articles/feedback-overload.md: missing local target
+README.md:39: docs/articles/context-dumping.md: missing local target
+README.md:40: docs/articles/context-anxiety.md: missing local target
+README.md:41: docs/articles/cross-session-state-loss.md: missing local target
+README.md:42: docs/articles/state-pollution.md: missing local target
+README.md:43: docs/articles/environment-drift.md: missing local target
+README.md:44: docs/articles/pattern-copy-drift.md: missing local target

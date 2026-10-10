@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "完成预付费抵扣完成判断",
   "description": "存在至少一份与请求（request.prepaid-payment）关联的确认凭证（confirmation.prepaid-payment）时，判定履约（fulfillment.prepaid-payment）完成。",
-  "contextRef": "fulfillment.prepaid-payment",
+  "contextRef": "context.prepaid-payment",
   "bindings": {
     "request": {
       "ref": "request.prepaid-payment"
@@ -15,5 +15,6 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool"
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.prepaid-payment"
 }

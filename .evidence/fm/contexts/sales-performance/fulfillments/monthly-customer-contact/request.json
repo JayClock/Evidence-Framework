@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "月度客户联系目标请求",
-  "contextRef": "fulfillment.monthly-customer-contact",
+  "contextRef": "context.sales-performance",
   "attributes": [
     {
       "name": "request_id",
@@ -72,5 +72,6 @@
     }
   ],
   "notes": "约定业务周期以及联系总数、电话数和邮件数目标的履约请求。目标数是每份协议实例中的约定值，来源文章没有给出固定数值或统一计算公式。",
-  "responsibleRoleRef": "role.performance-manager"
+  "responsibleRoleRef": "role.performance-manager",
+  "fulfillmentRef": "fulfillment.monthly-customer-contact"
 }

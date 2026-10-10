@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "周进度检查确认",
-  "contextRef": "fulfillment.weekly-progress-check",
+  "contextRef": "context.operations-performance",
   "responsibleRoleRef": "role.operator",
   "attributes": [
     {
@@ -15,5 +15,6 @@
       "keyData": true,
       "meaning": "确定履约结果形成的时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.weekly-progress-check"
 }

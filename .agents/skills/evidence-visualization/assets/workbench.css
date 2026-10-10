@@ -499,7 +499,7 @@ p {
   stroke: #a9b7ca;
   stroke-dasharray: 6 4;
 }
-.graph-context-label {
+.graph-boundary-label {
   font-size: 16px;
   font-weight: 600;
   fill: #445b78;
@@ -513,14 +513,14 @@ p {
   stroke: var(--blue);
   stroke-width: 3.5;
 }
-.graph-boundary.highlight > .graph-context-label {
+.graph-boundary.highlight > .graph-boundary-label {
   fill: var(--blue);
 }
 .graph-boundary.graph-dim > .graph-boundary-frame {
   fill-opacity: 0.3;
   stroke-opacity: 0.4;
 }
-.graph-boundary.graph-dim > .graph-context-label {
+.graph-boundary.graph-dim > .graph-boundary-label {
   opacity: 0.5;
 }
 .graph-time-field {

@@ -56,8 +56,8 @@ class ContractResponsibilityTests(unittest.TestCase):
         for context_kind, evidence_kind in (
             ("pre_contract", "rfp"),
             ("pre_contract", "proposal"),
-            ("fulfillment", "fulfillment_request"),
-            ("fulfillment", "fulfillment_confirmation"),
+            ("contract", "fulfillment_request"),
+            ("contract", "fulfillment_confirmation"),
             ("pre_contract", "other_evidence"),
         ):
             with self.subTest(context=context_kind, evidence=evidence_kind):
@@ -67,6 +67,8 @@ class ContractResponsibilityTests(unittest.TestCase):
                     "kind": context_kind,
                     "parentContextRef": "context.purchase",
                 }
+                if context_kind == "contract":
+                    context = self.owner
                 for role in ("role.customer", "role.supplier"):
                     self.assertEqual([], self.errors(context, role, evidence_kind))
                 errors = self.errors(context, "role.unbound", evidence_kind)
@@ -79,9 +81,8 @@ class ContractResponsibilityTests(unittest.TestCase):
     def test_other_evidence_cannot_belong_to_fulfillment(self) -> None:
         fulfillment = {
             "id": "fulfillment.purchase",
-            "category": "context",
-            "kind": "fulfillment",
-            "parentContextRef": "context.purchase",
+            "category": "fulfillment",
+            "contextRef": "context.purchase",
         }
         evidence = {
             "id": "evidence.purchase-note",
@@ -114,9 +115,8 @@ class ContractResponsibilityTests(unittest.TestCase):
         fulfillment = {
             "id": "fulfillment.purchase",
             "type": "entity",
-            "category": "context",
-            "kind": "fulfillment",
-            "parentContextRef": "context.purchase",
+            "category": "fulfillment",
+            "contextRef": "context.purchase",
         }
         note = {
             "id": "evidence.purchase-note",
@@ -130,7 +130,8 @@ class ContractResponsibilityTests(unittest.TestCase):
             "type": "entity",
             "category": "evidence",
             "kind": "fulfillment_request",
-            "contextRef": "fulfillment.purchase",
+            "contextRef": "context.purchase",
+            "fulfillmentRef": "fulfillment.purchase",
         }
         self.entities.update(
             {fulfillment["id"]: fulfillment, note["id"]: note, request["id"]: request}
@@ -172,9 +173,8 @@ class ContractResponsibilityTests(unittest.TestCase):
         fulfillment = {
             "id": "fulfillment.other",
             "type": "entity",
-            "category": "context",
-            "kind": "fulfillment",
-            "parentContextRef": "context.other",
+            "category": "fulfillment",
+            "contextRef": "context.other",
         }
         note = {
             "id": "evidence.purchase-note",
@@ -188,7 +188,8 @@ class ContractResponsibilityTests(unittest.TestCase):
             "type": "entity",
             "category": "evidence",
             "kind": "fulfillment_request",
-            "contextRef": "fulfillment.other",
+            "contextRef": "context.other",
+            "fulfillmentRef": "fulfillment.other",
         }
         self.entities.update(
             {

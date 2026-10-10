@@ -23,16 +23,16 @@ def fixture():
         "entities": [
             {"id": "context.a", "category": "context", "kind": "contract", "label": "约定"},
             {"id": "contract.a", "category": "evidence", "kind": "contract", "contextRef": "context.a", "label": "协议"},
-            {"id": "fulfillment.a", "category": "context", "kind": "fulfillment", "parentContextRef": "context.a", "label": "付款"},
-            {"id": "request.a", "category": "evidence", "kind": "fulfillment_request", "contextRef": "fulfillment.a", "label": "付款请求", "sourceRefs": ["SECRET"], "notes": "SECRET"},
-            {"id": "role.proof", "category": "role", "kind": "evidence", "contextRef": "fulfillment.a", "label": "付款证明"},
+            {"id": "fulfillment.a", "category": "fulfillment", "contextRef": "context.a", "label": "付款"},
+            {"id": "request.a", "category": "evidence", "kind": "fulfillment_request", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "label": "付款请求", "sourceRefs": ["SECRET"], "notes": "SECRET"},
+            {"id": "role.proof", "category": "role", "kind": "evidence", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "label": "付款证明"},
             {"id": "confirmation.other", "category": "evidence", "kind": "fulfillment_confirmation", "label": "外部扣款"},
         ],
         "relationships": [
             {"id": "relation.use", "kind": "uses_role", "sourceRef": "request.a", "targetRef": "role.proof", "label": "采信"},
             {"id": "relation.play", "kind": "plays_role", "sourceRef": "confirmation.other", "targetRef": "role.proof", "label": "提供证明"},
         ],
-        "rules": [{"id": "rule.a", "label": "已付款", "kind": "completion", "contextRef": "fulfillment.a", "description": "以外部付款证明判断完成。", "expression": "proof.success", "bindings": {"proof": {"ref": "role.proof"}}, "sourceRefs": ["SECRET"]}],
+        "rules": [{"id": "rule.a", "label": "已付款", "kind": "completion", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "description": "以外部付款证明判断完成。", "expression": "proof.success", "bindings": {"proof": {"ref": "role.proof"}}, "sourceRefs": ["SECRET"]}],
     }
 
 

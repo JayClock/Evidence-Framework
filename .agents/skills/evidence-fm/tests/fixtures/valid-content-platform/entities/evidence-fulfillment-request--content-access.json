@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "付费内容访问请求",
-  "contextRef": "fulfillment.content-access",
+  "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.subscriber",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.content-access"
 }

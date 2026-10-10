@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "支付预付款请求",
-  "contextRef": "fulfillment.advance-payment",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.creator",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.advance-payment"
 }

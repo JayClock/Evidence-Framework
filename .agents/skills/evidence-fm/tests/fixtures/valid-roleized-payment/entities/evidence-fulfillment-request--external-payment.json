@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "外部付款请求",
-  "contextRef": "fulfillment.external-payment",
+  "contextRef": "context.external-payment",
   "responsibleRoleRef": "role.external-payment-customer",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.external-payment"
 }

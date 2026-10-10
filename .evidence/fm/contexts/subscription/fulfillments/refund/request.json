@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "断更退款请求",
-  "contextRef": "fulfillment.refund",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -74,5 +74,6 @@
     }
   ],
   "notes": "已付款读者依据断更事实提出的全额返还主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
-  "responsibleRoleRef": "role.reader"
+  "responsibleRoleRef": "role.reader",
+  "fulfillmentRef": "fulfillment.refund"
 }

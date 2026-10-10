@@ -5,6 +5,7 @@
   "label": "付款逾期",
   "description": "当前时间超过付款请求（request.content-payment）的截止时间且尚无付款确认时，判定该请求逾期。",
   "contextRef": "context.content-subscription",
+  "fulfillmentRef": "fulfillment.content-payment",
   "bindings": {
     "request": {
       "ref": "request.content-payment"

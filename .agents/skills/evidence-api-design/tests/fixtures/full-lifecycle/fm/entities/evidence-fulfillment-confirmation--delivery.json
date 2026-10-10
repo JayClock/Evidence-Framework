@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "发货确认",
-  "contextRef": "fulfillment.delivery",
+  "contextRef": "context.product-procurement",
   "responsibleRoleRef": "role.seller",
   "attributes": [
     {
@@ -40,5 +40,6 @@
       "meaning": "引用本次确认所依据的补充证据业务编号"
     }
   ],
-  "notes": "基于已存在且与申请匹配的补充证据形成；delivery_note_number引用证据业务编号，request_number引用申请编号。"
+  "notes": "基于已存在且与申请匹配的补充证据形成；delivery_note_number引用证据业务编号，request_number引用申请编号。",
+  "fulfillmentRef": "fulfillment.delivery"
 }

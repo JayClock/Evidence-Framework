@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "完成周进度检查完成判断",
   "description": "存在至少一份与请求（request.weekly-progress-check）关联的确认凭证（confirmation.weekly-progress-check）时，判定履约（fulfillment.weekly-progress-check）完成。",
-  "contextRef": "fulfillment.weekly-progress-check",
+  "contextRef": "context.operations-performance",
   "bindings": {
     "request": {
       "ref": "request.weekly-progress-check"
@@ -15,5 +15,6 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool"
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.weekly-progress-check"
 }

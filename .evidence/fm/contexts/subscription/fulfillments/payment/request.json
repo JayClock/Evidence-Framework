@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "订阅费支付请求",
-  "contextRef": "fulfillment.payment",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -75,5 +75,6 @@
     }
   ],
   "notes": "运营方要求读者在约定区间内支付全部订阅费的凭证。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
-  "responsibleRoleRef": "role.publisher"
+  "responsibleRoleRef": "role.publisher",
+  "fulfillmentRef": "fulfillment.payment"
 }

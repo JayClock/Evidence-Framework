@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "退款到账凭证",
-  "contextRef": "fulfillment.refund",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -80,5 +80,6 @@
     }
   ],
   "notes": "证明钱款实际到达收款方，不是退款指令受理回执。保留原请求编号和主体标的，证明实际履约结果；不代表人工审批。",
-  "responsibleRoleRef": "role.publisher"
+  "responsibleRoleRef": "role.publisher",
+  "fulfillmentRef": "fulfillment.refund"
 }

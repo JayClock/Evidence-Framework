@@ -1,0 +1,27 @@
+{
+  "diagnostics": [],
+  "plan": "/Users/zhongjie/Documents/Github/Evidence-Framework/docs/plans/smart-domain/plan.yaml",
+  "runnable": [
+    {
+      "mode": "implementation",
+      "outcome": "交付使用 local/test 固定协议、标识和业务时间的移动扣款请求/机构结果及 PaymentProof 适配契约。",
+      "taskKey": "domain::context.mobile::request.mobile",
+      "title": "移动扣款与付款证明领域契约"
+    },
+    {
+      "mode": "implementation",
+      "outcome": "交付 11 字段合同登记/读取/列表和付款状态读取的独立 HTTP 契约。",
+      "taskKey": "api::context.subscription::capability.register-subscription-reader",
+      "title": "订阅合同与付款查询 HTTP 接口"
+    }
+  ],
+  "sourceFreshness": "not-checked; recompile FM/API inputs before delivery",
+  "statusCounts": {
+    "blocked": 0,
+    "done": 8,
+    "in-progress": 0,
+    "planned": 6
+  },
+  "taskCount": 14,
+  "valid": true
+}

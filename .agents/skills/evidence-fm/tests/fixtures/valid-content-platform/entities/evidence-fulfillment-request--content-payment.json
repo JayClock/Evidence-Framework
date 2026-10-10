@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "内容产品付款请求",
-  "contextRef": "fulfillment.content-payment",
+  "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.platform-subscription",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.content-payment"
 }

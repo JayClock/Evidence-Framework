@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "免费恢复请求",
-  "contextRef": "fulfillment.restore",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -65,5 +65,6 @@
     }
   ],
   "notes": "原退款读者要求免费恢复同一专栏新版本访问资格的主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
-  "responsibleRoleRef": "role.reader"
+  "responsibleRoleRef": "role.reader",
+  "fulfillmentRef": "fulfillment.restore"
 }

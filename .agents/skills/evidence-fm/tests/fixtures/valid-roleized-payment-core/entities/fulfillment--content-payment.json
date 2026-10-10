@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.content-payment",
+  "category": "fulfillment",
+  "label": "支付内容产品费用",
+  "contextRef": "context.content-subscription"
+}

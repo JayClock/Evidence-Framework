@@ -4,7 +4,7 @@
   "kind": "derivation",
   "label": "计算订阅费支付请求started_at",
   "description": "以订阅合同（contract.subscription）的签署时间作为订阅费支付请求（request.payment）的开始时间。",
-  "contextRef": "fulfillment.payment",
+  "contextRef": "context.subscription",
   "bindings": {
     "agreement": {
       "ref": "contract.subscription"
@@ -15,5 +15,6 @@
   "target": {
     "entityRef": "request.payment",
     "attribute": "started_at"
-  }
+  },
+  "fulfillmentRef": "fulfillment.payment"
 }

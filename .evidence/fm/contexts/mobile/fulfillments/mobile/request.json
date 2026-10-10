@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "移动支付扣款请求",
-  "contextRef": "fulfillment.mobile",
+  "contextRef": "context.mobile",
   "attributes": [
     {
       "name": "request_id",
@@ -88,5 +88,6 @@
     }
   ],
   "notes": "一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
-  "responsibleRoleRef": "role.mobile-user"
+  "responsibleRoleRef": "role.mobile-user",
+  "fulfillmentRef": "fulfillment.mobile"
 }

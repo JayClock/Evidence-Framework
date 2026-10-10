@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "交稿请求",
-  "contextRef": "fulfillment.manuscript-delivery",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.platform-content-production",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.manuscript-delivery"
 }

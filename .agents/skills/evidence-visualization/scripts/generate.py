@@ -86,7 +86,11 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
             raise ValueError(f"重复对象 ID: {identity}")
         node = {"id": identity, "label": title or value.get("label") or identity,
                 "group": group, "kind": value.get("kind", group),
-                "parent": value.get("contextRef") or value.get("parentContextRef") or ""}
+                "parent": value.get("fulfillmentRef") or value.get("contextRef") or value.get("parentContextRef") or ""}
+        if value.get("contextRef"):
+            node["contextRef"] = value["contextRef"]
+        if value.get("fulfillmentRef"):
+            node["fulfillmentRef"] = value["fulfillmentRef"]
         nodes[identity] = node
         return node
 
@@ -100,7 +104,8 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
 
     for entity in model.get("entities", []):
         node = add(entity, entity["category"])
-        link(node["id"], node["parent"], "归属边界")
+        link(node["id"], entity.get("contextRef") or entity.get("parentContextRef"), "所属上下文")
+        link(node["id"], entity.get("fulfillmentRef"), "所属履约")
         for ref in entity.get("roleRefs", []):
             link(node["id"], ref, "合同责任角色")
         link(node["id"], entity.get("responsibleRoleRef"), "凭证责任方")
@@ -125,7 +130,8 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
         node = add(rule, "rule")
         node.update(select(rule, "description expression resultType"))
         node["bindings"] = [{"alias": alias, **select(binding, "ref cardinality")} for alias, binding in rule.get("bindings", {}).items()]
-        link(node["id"], node["parent"], "适用边界")
+        link(node["id"], rule.get("contextRef"), "适用上下文")
+        link(node["id"], rule.get("fulfillmentRef"), "适用履约")
         for binding in node["bindings"]:
             link(node["id"], binding.get("ref"), f'读取 · {binding["alias"]}')
         target = rule.get("target")
@@ -227,7 +233,7 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
 
     relations = model.get("relationships", [])
     for node in list(nodes.values()):
-        if node["group"] == "context" and node["kind"] == "fulfillment":
+        if node["group"] == "fulfillment":
             members = [n for n in nodes.values() if n["parent"] == node["id"]]
             node["requests"] = [n["id"] for n in members if n["kind"] == "fulfillment_request"]
             node["confirmations"] = [n["id"] for n in members if n["kind"] == "fulfillment_confirmation"]

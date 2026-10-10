@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "支付预付款确认",
-  "contextRef": "fulfillment.advance-payment",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.platform-content-production",
   "attributes": [
     {
@@ -15,5 +15,6 @@
       "keyData": true,
       "meaning": "确定履约结果形成的时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.advance-payment"
 }

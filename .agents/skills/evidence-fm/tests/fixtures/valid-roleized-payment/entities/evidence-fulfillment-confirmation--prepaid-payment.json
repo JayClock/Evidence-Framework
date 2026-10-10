@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "预付费付款确认",
-  "contextRef": "fulfillment.prepaid-payment",
+  "contextRef": "context.prepaid-payment",
   "responsibleRoleRef": "role.prepaid-platform",
   "attributes": [
     {
@@ -15,5 +15,6 @@
       "keyData": true,
       "meaning": "确定履约结果形成的时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.prepaid-payment"
 }

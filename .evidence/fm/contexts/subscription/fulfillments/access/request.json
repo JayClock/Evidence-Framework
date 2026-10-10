@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "付费内容访问请求",
-  "contextRef": "fulfillment.access",
+  "contextRef": "context.subscription",
   "attributes": [
     {
       "name": "request_id",
@@ -73,5 +73,6 @@
     }
   ],
   "notes": "读者对指定专栏、版本、章节提出的本次访问主张。一项独立责任的起止区间；原请求不因超时或重试而被覆盖。",
-  "responsibleRoleRef": "role.reader"
+  "responsibleRoleRef": "role.reader",
+  "fulfillmentRef": "fulfillment.access"
 }

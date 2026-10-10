@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_confirmation",
   "label": "客户联系记录",
-  "contextRef": "fulfillment.monthly-customer-contact",
+  "contextRef": "context.sales-performance",
   "attributes": [
     {
       "name": "record_id",
@@ -64,5 +64,6 @@
     }
   ],
   "notes": "电话销售对一次实际电话或邮件联系形成的履约确认凭证。每次实际客户联系形成一份记录；当前仅识别 phone 和 email 两种来源明确的渠道值。",
-  "responsibleRoleRef": "role.tele-sales"
+  "responsibleRoleRef": "role.tele-sales",
+  "fulfillmentRef": "fulfillment.monthly-customer-contact"
 }

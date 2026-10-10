@@ -28,6 +28,8 @@ FM 声明 ID 是模型类型身份，不自动等于领域实例主键。确定 
 
 ## 3. Context、根集合与成员实例
 
+Context 与 Fulfillment 分别产生 `context-design`、`fulfillment-design` 工作单元。权责履约属于合约内部结构，不建立独立上下文、业务模块或服务。同合同履约直接引用凭证；跨真实上下文仍通过公开角色契约协作。
+
 Context 表达边界；`rootRefs` 指向入口集合的成员类型；根集合负责定位及有依据的登记/创建。单个成员拥有身份、不可变描述、关联和业务行为。
 
 - 根集合不是普通 List，也不是万能 Repository/Service。

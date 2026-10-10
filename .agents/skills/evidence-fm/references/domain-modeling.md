@@ -1,6 +1,6 @@
 # 同一 FM 格式中的领域建模
 
-履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v3 的 `model.json` 及按上下文组织的 Entity、Relationship、Rule 源 JSON（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
+履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v4 的 `model.json` 及按上下文组织的 Entity、Relationship、Rule 源 JSON（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
 
 ## 1. 范围与发现顺序
 
@@ -37,7 +37,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 ```json
 {
   "type": "fm_model",
-  "schemaVersion": "3.0",
+  "schemaVersion": "4.0",
   "id": "customer-information",
   "name": "客户信息领域模型",
   "version": "1.0.0",
@@ -90,7 +90,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 
 这些是模型定义，不是已确认业务事实或生产实例。示例不自动确立当前项目的身份规则。
 
-纯领域模型不包含 `kind: fulfillment` 的 Context；`entryContextRefs` 直接指向领域上下文。`README.md` 说明当前范围、不展开部分、来源和表达 gap，不添加格式外字段。
+纯领域模型不补造 `category: fulfillment` 的权责履约；`entryContextRefs` 直接指向领域上下文。`README.md` 说明当前范围、不展开部分、来源和表达 gap，不添加格式外字段。
 
 ## 4. 关系与身份
 
@@ -100,7 +100,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 - Context 外的稳定 Party 通过 `plays_role` 扮演上下文内的 Party Role；档案可 `references` 该本地 Role，不直接把跨 Context 的 Party 引用伪装为局部关系。
 - 能力依赖用 `uses_role` 指向非 Party Role；对象扮演能力用允许的 `plays_role`。Role 不因为存在而要求补造玩家。
 - 连接履约时由实际涉及领域对象的 Request 或其他业务 Evidence 使用 `references` 指向 Thing；领域对象本身不是履约完成凭证。
-- 跨独立上下文的业务结果使用外部时刻 Evidence→Evidence Role；同一 Contract Context 内多个履约共同采信一个 Confirmation 时，按合同责任用各 Request→Confirmation `precedes` Relationship 直接关联。辅助凭证归属形成并管理它的非履约 Context，并使用 `evidences` 指向具体业务 Evidence。父 Contract Context 与直接子 Fulfillment 之间的补充证明按合同父子例外处理，其它独立边界不补造任意跨域关系。
+- 跨独立上下文的业务结果使用外部时刻 Evidence→Evidence Role；同一 Contract Context 内多个履约共同采信一个 Confirmation 时，按合同责任用各 Request→Confirmation `precedes` Relationship 直接关联。辅助凭证归属形成并管理它的 Context，并使用 `evidences` 指向具体业务 Evidence。同一合约内不同履约间可直接引用凭证，不构成跨上下文关系；独立边界不补造任意跨域关系。
 
 `references` 的 kind 本身不自动表达组合、拥有权、基数或级联删除。已确认的关系基数可在 Relationship 两端用 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明，不表示无限。组合、拥有权和级联删除仍没有专用字段，且当前模拟器没有通用 Relationship Instance，不能把一条带标签的线或通过静态校验的基数声明声称为已经验证的运行实例约束。
 
@@ -135,7 +135,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 
 规则可以引用已建模 Entity 属性，或用显式 typed binding 表达运行时输入；关键派生数据不能隐藏在无来源变量中。数据流使用 `derivedByRuleRef` 与 CEL AST 追溯，不另写第二份依赖表。
 
-**表达边界**：当前 v3 没有第一等 Command／Operation／状态迁移实体。属性和 CEL 可表达状态、允许条件和结果约束，但不会自动建立操作调度、状态机或证明条件已被运行时执行。关系基数可以声明并静态校验，但没有通用 Relationship Instance，不能运行验证实例数量。未能机器执行的迁移、关系基数或复杂算法要列为验证 gap，不能用假 Fulfillment、任意扩展字段或脚本 DSL 填洞。需要扩展时先确认具体缺口，再改 Schema／校验／投影，不能称本轮已实现完整领域执行引擎。
+**表达边界**：当前格式没有第一等 Command／Operation／状态迁移实体。属性和 CEL 可表达状态、允许条件和结果约束，但不会自动建立操作调度、状态机或证明条件已被运行时执行。关系基数可以声明并静态校验，但没有通用 Relationship Instance，不能运行验证实例数量。未能机器执行的迁移、关系基数或复杂算法要列为验证 gap，不能用假 Fulfillment、任意扩展字段或脚本 DSL 填洞。需要扩展时先确认具体缺口，再改 Schema／校验／投影，不能称本轮已实现完整领域执行引擎。
 
 ## 6. 验收
 

@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.weekly-progress-check",
+  "category": "fulfillment",
+  "label": "完成周进度检查",
+  "contextRef": "context.operations-performance"
+}

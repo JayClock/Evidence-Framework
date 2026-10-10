@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.external-payment",
+  "category": "fulfillment",
+  "label": "完成外部支付",
+  "contextRef": "context.external-payment"
+}

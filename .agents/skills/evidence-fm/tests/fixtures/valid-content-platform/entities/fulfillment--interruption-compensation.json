@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.interruption-compensation",
+  "category": "fulfillment",
+  "label": "提供断更补偿",
+  "contextRef": "context.content-subscription"
+}

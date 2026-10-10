@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v3/model.schema.json",
+  "$id": "https://jayclock.dev/fm/v4/model.schema.json",
   "title": "Fulfillment Modeling manifest",
   "type": "object",
   "required": [
@@ -14,7 +14,7 @@
   ],
   "properties": {
     "type": { "const": "fm_model" },
-    "schemaVersion": { "const": "3.0" },
+    "schemaVersion": { "const": "4.0" },
     "id": { "$ref": "#/$defs/id" },
     "name": { "type": "string", "minLength": 1 },
     "version": {

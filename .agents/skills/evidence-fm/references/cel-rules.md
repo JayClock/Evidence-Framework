@@ -1,6 +1,6 @@
 # CEL 规则
 
-FM Schema v3 直接使用 Common Expression Language（CEL），不再支持 `calculationRule = ...`、自然语言 precondition 或其它自定义表达式 DSL。
+FM Schema v4 直接使用 Common Expression Language（CEL），不再支持 `calculationRule = ...`、自然语言 precondition 或其它自定义表达式 DSL。
 
 ## 1. Rule 结构
 

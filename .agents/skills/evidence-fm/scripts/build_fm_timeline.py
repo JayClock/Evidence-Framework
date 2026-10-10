@@ -164,7 +164,7 @@ def build_timeline(model: LoadedModel, suite: ValidationSuite) -> tuple[dict[str
                 unresolved.append({"leftRef": source, "rightRef": target, "reason": "no sourced precedes path"})
 
     timeline = {
-        "schemaVersion": "3.0",
+        "schemaVersion": "4.0",
         "modelId": (model.manifest or {}).get("id"),
         "lanes": [{"contextRef": ref} for ref in lanes],
         "evidenceTypes": evidence_types,

@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.wechat-payment",
+  "category": "fulfillment",
+  "label": "微信支付",
+  "contextRef": "context.wechat-payment"
+}

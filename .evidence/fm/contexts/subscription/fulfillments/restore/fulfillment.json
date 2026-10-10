@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.restore",
+  "category": "fulfillment",
+  "label": "免费恢复",
+  "contextRef": "context.subscription"
+}

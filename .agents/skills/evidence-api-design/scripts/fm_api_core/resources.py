@@ -33,14 +33,7 @@ def build_resources(
     def root_context(entity_value: dict[str, Any] | None) -> str | None:
         if entity_value is None:
             return None
-        context_ref = entity_value.get("contextRef")
-        context = index.entities.get(context_ref, {})
-        if (
-            context.get("category") == "context"
-            and context.get("kind") == "fulfillment"
-        ):
-            return context.get("parentContextRef")
-        return context_ref
+        return entity_value.get("contextRef")
 
     def visit(resource_id: str) -> dict[str, Any] | None:
         if resource_id in result:

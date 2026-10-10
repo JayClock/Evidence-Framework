@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "按期交稿完成判断",
   "description": "存在至少一份与请求（request.manuscript-delivery）关联的确认凭证（confirmation.manuscript-delivery）时，判定履约（fulfillment.manuscript-delivery）完成。",
-  "contextRef": "fulfillment.manuscript-delivery",
+  "contextRef": "context.content-production",
   "bindings": {
     "request": {
       "ref": "request.manuscript-delivery"
@@ -15,5 +15,6 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool"
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.manuscript-delivery"
 }

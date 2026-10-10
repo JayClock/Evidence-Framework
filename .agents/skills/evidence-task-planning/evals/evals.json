@@ -18,7 +18,7 @@
     {
       "id": 1,
       "name": "generic-domain-foundations",
-      "prompt": "在隔离目录构造一个最小 FM v3 合成夹具：context.library 的 rootRefs 为 thing.document、thing.author；两者有稳定身份，文档可暂缺作者。没有合同、履约和 API。用本 Skill 生成模块化单体、MyBatis 的 plan.yaml 与 review.html，运行工作单元提取及切片编译。按统一后端应用、进程内模块契约规划，但不要给每个 Context 自动建 Gradle 模块，不从单应用推导单数据源或大事务。不要添加档案管理产品、付款或合同。数据库引擎未提供，没有远程调用需求。",
+      "prompt": "在隔离目录构造一个最小 FM v4 合成夹具：context.library 的 rootRefs 为 thing.document、thing.author；两者有稳定身份，文档可暂缺作者。没有合同、履约和 API。用本 Skill 生成模块化单体、MyBatis 的 plan.yaml 与 review.html，运行工作单元提取及切片编译。按统一后端应用、进程内模块契约规划，但不要给每个 Context 自动建 Gradle 模块，不从单应用推导单数据源或大事务。不要添加档案管理产品、付款或合同。数据库引擎未提供，没有远程调用需求。",
       "expected_output": "从夹具提取实际工作单元，不出现其他业务对象；根集合和成员区分、共享身份只分配一次、可缺失导航保留 Optional 语义。taskKey 由程序从三元组计算，标题只存在于 tasks 映射且不参与身份；没有 API 不遗漏领域任务。固定平台集成仍在覆盖中，profile 为 modular-monolith、single-backend-application、in-process-contracts。未知数据库引擎只阻塞相关验证。plan.yaml 包含 slicing、compiled、tasks、gaps，review.html 可离线审核且不是状态来源。",
       "files": []
     },

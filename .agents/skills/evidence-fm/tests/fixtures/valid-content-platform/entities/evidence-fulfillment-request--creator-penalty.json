@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "违约金支付请求",
-  "contextRef": "fulfillment.creator-penalty",
+  "contextRef": "context.content-production",
   "responsibleRoleRef": "role.platform-content-production",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.creator-penalty"
 }

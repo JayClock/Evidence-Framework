@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.goal-setting",
+  "category": "fulfillment",
+  "label": "确认内容运营绩效目标",
+  "contextRef": "context.operations-performance"
+}

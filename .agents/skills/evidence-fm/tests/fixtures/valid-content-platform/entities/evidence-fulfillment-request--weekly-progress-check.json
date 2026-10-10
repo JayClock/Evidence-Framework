@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "周进度检查请求",
-  "contextRef": "fulfillment.weekly-progress-check",
+  "contextRef": "context.operations-performance",
   "responsibleRoleRef": "role.platform-performance",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.weekly-progress-check"
 }

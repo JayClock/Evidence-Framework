@@ -1,4 +1,4 @@
-# FM Schema v3 文件格式
+# FM Schema v4 文件格式
 
 ## 1. 目录与事实源
 
@@ -19,7 +19,7 @@
 │   │   ├── relationships/        # 合同内关系
 │   │   └── fulfillments/
 │   │       └── payment/
-│   │           ├── context.json
+│   │           ├── fulfillment.json
 │   │           ├── request.json
 │   │           ├── confirmation.json  # 有实际确认类型时才存在
 │   │           ├── roles/
@@ -41,11 +41,11 @@
 
 `model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的术语入口，使用独立 Schema：standalone 的定义可以先于模型存在，model 条目只引用 FM 对象或属性；解析结果不作为派生报告重建后回写。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。词汇表、发现与问题不进入 FM 类型加载；发现与问题保存在 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
 
-同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 仍是 `category: context`、`kind: fulfillment` 的 Entity；`fulfillments/<业务名>/context.json` 只是它的存放位置，不新增第二个履约对象。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `category: fulfillment` 的 Entity，不定义 kind，存放于 `fulfillments/<业务名>/fulfillment.json`。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
 加载器递归读取模型根下的 `.json`，按对象的 `type` 分发到 Entity、Relationship、Rule、Business Pattern Schema，不再按目录或文件名决定类型。根 `model.json` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 JSON 文件不参与类型加载；根下或 validation 目录内的 `.yaml`／`.yml` 文件报错，避免混合格式、漏读模型。文件必须是严格 JSON：拒绝注释、尾随逗号、多个顶层值、重复键和非标准常量（`NaN`／`Infinity`）；未知对象类型、重复 ID、坏 JSON 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
 
-目录是阅读组织，不是业务事实：归属仍由 `contextRef`／`parentContextRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
+目录是阅读组织，不是业务事实：上下文归属由 `contextRef`／`parentContextRef` 决定，履约归属由 `fulfillmentRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
 
 ## 2. 稳定 ID 与文件名
 
@@ -55,7 +55,7 @@ ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显�
 
 ```text
 role.subscriber                    → contexts/subscription/roles/subscriber.json
-fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/context.json
+fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/fulfillment.json
 request.subscription-payment      → contexts/subscription/fulfillments/payment/request.json
 pattern.multi-channel-payment     → business-patterns/multi-channel-payment.json
 ```
@@ -99,7 +99,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 ```json
 {
   "type": "fm_model",
-  "schemaVersion": "3.0",
+  "schemaVersion": "4.0",
   "id": "subscription-service",
   "name": "订阅服务履约模型",
   "version": "3.0.0",
@@ -119,7 +119,8 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 | `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
 | `participant` | `party`、`thing`                                                                                   |
 | `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
-| `context`     | `contract`、`fulfillment`、`pre_contract`、`domain`、`external`                                    |
+| `context`     | `contract`、`pre_contract`、`domain`、`external`                                    |
+| `fulfillment` | 不定义 kind；`contextRef` 指向所属 Contract Context |
 
 ### Evidence 必备时间属性（本地硬约束）
 
@@ -177,20 +178,19 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 
 ### Fulfillment
 
-每项 Fulfillment 自身就是 Contract 的子 Context，只定义责任边界：
+每项 Fulfillment 是合约内部的权责履约结构：
 
 ```json
 {
   "type": "entity",
   "id": "fulfillment.subscription-payment",
-  "category": "context",
-  "kind": "fulfillment",
+  "category": "fulfillment",
   "label": "支付订阅费用",
-  "parentContextRef": "context.subscription"
+  "contextRef": "context.subscription"
 }
 ```
 
-Contract Context 是业务聚合／服务边界；Fulfillment 是一项责任及其弹性边界。Request、Evidence Role 和履约 Rule 以 `contextRef` 直接指向 Fulfillment ID。本履约专有 Confirmation 可以同样归属该 Fulfillment；同一合同下由多个履约共同采信的 Confirmation 保留一个形成 Context，可放在父 Contract Context 或其中一个子 Fulfillment，再由各 Request 的 `precedes` Relationship 关联。相关 Contract 从父 Contract Context 的根 Evidence 确定，成员索引同时读取 `contextRef` 和 Request→Confirmation 关系。
+Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。Request 必须属于一项履约；共享 Confirmation 保留唯一形成归属，各 Request 通过 `precedes` 关联它。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
 
 ### Domain Context 与 Thing
 
@@ -227,7 +227,7 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
   "category": "role",
   "kind": "third_party",
   "label": "外部服务提供方",
-  "contextRef": "fulfillment.subscription-payment"
+  "contextRef": "context.subscription"
 }
 ```
 
@@ -257,7 +257,8 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
   "category": "role",
   "kind": "evidence",
   "label": "合格付款确认",
-  "contextRef": "fulfillment.subscription-payment"
+  "contextRef": "context.subscription",
+  "fulfillmentRef": "fulfillment.subscription-payment"
 }
 ```
 
@@ -265,13 +266,13 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
 
 ## 5. Fulfillment、Evidence 与 Rule
 
-Request、本履约专有 Confirmation、Evidence Role 和履约 Rule 以 `contextRef` 指向 Fulfillment；同一合同内的共同 Confirmation 保留一个形成 Context，并由一个或多个 Request→Confirmation `precedes` Relationship 纳入相应 Fulfillment。Other Evidence 不得以 `contextRef` 指向 Fulfillment。合同履行期间由本合同形成的补充凭证属于父 Contract Context，可通过受限的 `evidences`／`precedes` 关联直接子履约的 Request 或 Confirmation。本责任范围内具体 Evidence 的 `responsibleRoleRef` 指向父 Contract Context 的 Party Role。Role 不声明 `responsibleRoleRef` 或 `roleRefs`，不签发实例，也不自动展开六类 Evidence 的时间字段。Role 的属性是玩家数据契约；外部具体玩家保留其自身 Context、凭证时间及责任角色。
+`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。Request、completion 和 breach Rule 必须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文的具体结果仍通过 Evidence Role 使用。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
 
 Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 
 每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。同一个 Confirmation 类型或实例可以在有合同依据时被同一 Contract Context 下多个 Request 关联；每个关联仍按各自请求区间和 completion Rule 独立判断。重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
 
-Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。服务于某项履约的辅助凭证仍按形成责任归属父 Contract、Pre-contract 或 Domain Context，不因此成为 Fulfillment 成员。
+Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。辅助凭证保留形成 Context；合同内辅助凭证可按实际用途声明履约归属，不改变形成责任。
 
 ## 6. 合同前协商与渠道来源
 
@@ -287,7 +288,7 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`、`uses_role`。
 
-方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为业务 Evidence→Thing，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为外部时刻 Evidence→Evidence Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。允许有业务依据的 Proposal→Contract、父 Contract→子 Request、Evidence→Thing 跨 Context 关系；同一 Contract Context 下还允许多个子 Fulfillment 的 Request 通过 `precedes` 指向同一个共同 Confirmation。父 Contract Context 的 Other Evidence 与其直接子 Fulfillment 的 Request／Confirmation 之间也可使用 `evidences` 及有依据的 `precedes`。这些例外不延伸到其他合同或任意 Context；Relationship 标签不能替代来源。
+方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为 Evidence→Thing 或同 Context 的 Evidence→Evidence，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为玩家→Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。同一合约内不同履约之间可以直接引用，不构成跨上下文关系。跨独立上下文保留有依据的 Proposal→Contract、Evidence→Thing 与外部时刻 Evidence→Evidence Role；直接引用不能穿透独立责任边界。
 
 关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
 

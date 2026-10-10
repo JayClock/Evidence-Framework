@@ -4,7 +4,6 @@ import json
 import unittest
 from pathlib import Path
 
-
 SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
     SKILL / "tests/fixtures",
@@ -36,34 +35,33 @@ class CanonicalModelTests(unittest.TestCase):
             if entity.get("type") != "entity":
                 continue
             category = entity["category"].replace("_", "-")
-            kind = entity["kind"].replace("_", "-")
+            kind = entity.get("kind", "").replace("_", "-")
             object_suffix = entity["id"].split(".", 1)[-1].replace(".", "--")
             self.assertEqual(
-                f"{category}-{kind}--{object_suffix}.json",
+                f"{category}{'-' + kind if kind else ''}--{object_suffix}.json",
                 path.name,
                 path,
             )
 
-    def test_fulfillment_is_only_a_context_boundary(self) -> None:
+    def test_fulfillment_is_a_contract_owned_structure(self) -> None:
         allowed = {
             "type",
             "id",
             "category",
-            "kind",
             "label",
             "aliases",
             "notes",
-            "parentContextRef",
+            "contextRef",
         }
         fulfillments = [
             (path, value)
             for path, value in self.json_documents()
-            if (value.get("category"), value.get("kind")) == ("context", "fulfillment")
+            if value.get("category") == "fulfillment"
         ]
         self.assertTrue(fulfillments)
         for path, fulfillment in fulfillments:
             self.assertEqual(set(), set(fulfillment) - allowed, path)
-            self.assertIn("parentContextRef", fulfillment, path)
+            self.assertIn("contextRef", fulfillment, path)
 
     def test_source_schema_prompts_and_docs_have_no_legacy_model(self) -> None:
         paths = [

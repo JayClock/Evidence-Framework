@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.mobile",
+  "category": "fulfillment",
+  "label": "移动支付扣款",
+  "contextRef": "context.mobile"
+}

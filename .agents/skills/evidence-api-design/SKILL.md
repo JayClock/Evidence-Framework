@@ -1,6 +1,6 @@
 ---
 name: evidence-api-design
-description: 从整体 FM Schema v3 直接设计全部业务 API，维护统一 api.json，生成完整 HTTP 契约、OpenAPI 3.1、分布式超媒体及可追溯消费者流程。用户要求 FM 到 REST API、整体接口设计、HAL、HATEOAS、幂等、缓存、API 校验、消费者流程或 OpenAPI 生成时使用；不修改上游 FM，不生成 Controller，不虚构权限。
+description: 从整体 FM Schema v4 直接设计全部业务 API，维护统一 api.json，生成完整 HTTP 契约、OpenAPI 3.1、分布式超媒体及可追溯消费者流程。用户要求 FM 到 REST API、整体接口设计、HAL、HATEOAS、幂等、缓存、API 校验、消费者流程或 OpenAPI 生成时使用；不修改上游 FM，不生成 Controller，不虚构权限。
 compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evidence-fm Skill。
 ---
 
@@ -23,7 +23,7 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 默认位置相对项目根：
 
 - FM 输入：`.evidence/fm/`，始终只读。
-- 唯一 API 设计源：`.evidence/api/api.json`，采用 API 格式 `5.0`，位于 FM 根目录之外；上游仍为 FM v3。文件按严格 JSON 解析，不用 YAML 表达设计。
+- 唯一 API 设计源：`.evidence/api/api.json`，采用 API 格式 `5.0`，位于 FM 根目录之外；上游为 FM v4。文件按严格 JSON 解析，不用 YAML 表达设计。
 - API 交付：`.evidence/api/generated/`，包含机器投影、OpenAPI、表示样例、合成 E2E 测试向量、可追溯 HTTP 流程、消费者覆盖、导航图和 manifest；每次完整校验后直接更新，历史由 Git 管理。人工审核统一使用 `evidence-visualization` 生成的页面，不再生成重复的 Markdown 报告。
 - 按需保存的检查记录（紧凑运行清单，不复制投影或契约全文）：`.evidence/checks/api/<批次>/`；只校验请求不落盘。
 
@@ -41,6 +41,8 @@ compatibility: Python 3.10+；依赖 requirements.txt；需要可定位的 evide
 8. 展示实际差异、接口数、整体覆盖、契约及交付路径后停止。不自动进入编码，不自动暂存、提交或回滚。
 
 ## HTTP 与业务边界
+
+按 `contextRef` 识别真实上下文，按 `fulfillmentRef` 追溯合同内履约。履约不进入 `contextRefs`，使用独立的 `fulfillmentRefs` 索引；同合同直接凭证引用不产生新资源根、权限或远程接口。
 
 - 所有能力自动要求 HTTP 契约；`http.operations[].capabilityRef` 复用顶层接口定义，不重复维护 URI、Method 或角色。
 - 字段白名单保留 client/reference/server/derived 口径；required 不等于客户端输入。模型业务时间不替换成服务器当前时间、入库或回调到达时间。

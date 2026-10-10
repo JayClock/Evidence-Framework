@@ -109,8 +109,7 @@ class ScopeEvalTests(unittest.TestCase):
                 fulfillments = [
                     item
                     for item in documents
-                    if (item.get("category"), item.get("kind"))
-                    == ("context", "fulfillment")
+                    if item.get("category") == "fulfillment"
                 ]
                 self.assertEqual(2 if change else 1, len(fulfillments))
 
@@ -130,11 +129,11 @@ class ScopeEvalTests(unittest.TestCase):
                 )
                 model = load_model(root)
                 self.assertEqual([], validate_model(model))
-                target = model.fulfillment_contexts_by_id["fulfillment.target-change"]
+                target = model.fulfillments_by_id["fulfillment.target-change"]
                 members = [
                     item
                     for item in model.entities
-                    if item.get("contextRef") == target["id"]
+                    if item.get("fulfillmentRef") == target["id"]
                 ]
                 request = next(
                     item for item in members if item["kind"] == "fulfillment_request"
@@ -153,7 +152,7 @@ class ScopeEvalTests(unittest.TestCase):
                     confirmation["responsibleRoleRef"],
                 )
                 reviews.append(
-                    model.fulfillment_contexts_by_id["fulfillment.progress-review"]
+                    model.fulfillments_by_id["fulfillment.progress-review"]
                 )
         self.assertEqual(reviews[0], reviews[1])
 

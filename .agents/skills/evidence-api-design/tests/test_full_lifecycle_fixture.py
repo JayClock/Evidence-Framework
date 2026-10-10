@@ -78,7 +78,7 @@ class FullLifecycleFixtureTest(unittest.TestCase):
             uris["capability.issue-invoice"],
             "/product-procurements/{procurementId}/invoicing/invoice",
         )
-        self.assertEqual(fm_report["timelineSummary"]["unresolvedOrderCount"], 1)
+        self.assertEqual(fm_report["timelineSummary"]["unresolvedOrderCount"], 21)
         kinds = {
             item["effect"]["targetRef"] for item in report["projection"]["capabilities"]
         }

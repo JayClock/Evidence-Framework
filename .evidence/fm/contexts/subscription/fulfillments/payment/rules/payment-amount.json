@@ -4,7 +4,7 @@
   "kind": "derivation",
   "label": "计算订阅费支付请求amount_minor_units",
   "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为订阅费支付请求（request.payment）的金额。",
-  "contextRef": "fulfillment.payment",
+  "contextRef": "context.subscription",
   "bindings": {
     "agreement": {
       "ref": "contract.subscription"
@@ -15,5 +15,6 @@
   "target": {
     "entityRef": "request.payment",
     "attribute": "amount_minor_units"
-  }
+  },
+  "fulfillmentRef": "fulfillment.payment"
 }

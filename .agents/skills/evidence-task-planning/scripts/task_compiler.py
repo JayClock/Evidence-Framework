@@ -179,8 +179,8 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
             )
         source(data.get("id"), data, relative.as_posix())
     models = [s["data"] for s in sources.values() if s["data"]["type"] == "fm_model"]
-    if len(models) != 1 or str(models[0].get("schemaVersion")) != "3.0":
-        raise ValueError("exactly one FM Schema 3.0 model is required")
+    if len(models) != 1 or str(models[0].get("schemaVersion")) != "4.0":
+        raise ValueError("exactly one FM Schema 4.0 model is required")
     for ref, record in sorted(sources.items()):
         data = record["data"]
         for location, target in _refs(data):
@@ -196,6 +196,8 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
                 unit("context-design", ref)
                 for member in sorted(data.get("rootRefs", [])):
                     unit("root-collection", ref, member)
+            elif category == "fulfillment":
+                unit("fulfillment-design", ref)
             elif category == "role":
                 unit(
                     "proof-role"

@@ -14,7 +14,7 @@ compatibility: Python 3.10+、PyYAML；消费 evidence-task-planning 生成的 s
 
 定位 `docs/plans/smart-domain/plan.yaml` 或项目指定位置，以及可发现的 planning Skill 实际目录。读取其 `references/guides.md`，按项目开工检查加载必要来源；不假定独立安装后的兄弟路径。业务来自 FM、接口来自 API、软件职责来自需求、实现方法来自工程指南。
 
-计划缺失、输入变化或切片需要调整时，转交 `evidence-task-planning`。更新计划需要本次授权；只读查看只报告差异。FM/API 缺口交对应拥有者，不为交付通过修改上游。
+计划缺失、输入变化或切片需要调整时，转交 `evidence-task-planning`。更新计划需要本次授权；只读查看只报告差异。FM/API 缺口交对应拥有者，不为交付通过修改上游。消费 FM 时区分上下文与权责履约：`contextRef` 是边界归属，`fulfillmentRef` 是合同内履约归属，不因履约拆分额外 Context 或角色。
 
 **退出条件**：授权、计划位置和输入版本可定位；否则停在 Plan 并说明缺口。
 

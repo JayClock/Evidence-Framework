@@ -1,0 +1,7 @@
+{
+  "type": "entity",
+  "id": "fulfillment.payment",
+  "category": "fulfillment",
+  "label": "支付货款",
+  "contextRef": "context.product-procurement"
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic evidence-instance simulation for FM Schema v3."""
+"""Deterministic evidence-instance simulation for FM Schema v4."""
 
 from __future__ import annotations
 
@@ -125,7 +125,7 @@ def load_validation_suite(model_root: Path) -> ValidationSuite:
 def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> list[str]:
     errors = list(suite.errors)
     entities = model.entities_by_id
-    fulfillment_contexts = model.fulfillment_contexts_by_id
+    fulfillments = model.fulfillments_by_id
     rules = model.rules_by_id
     instances = suite.instances_by_id
 
@@ -425,7 +425,7 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
                 continue
             fulfillment_ref = normalize(expectation.get("fulfillmentRef"))
             request_instance_ref = normalize(expectation.get("requestInstanceRef"))
-            fulfillment = fulfillment_contexts.get(fulfillment_ref or "")
+            fulfillment = fulfillments.get(fulfillment_ref or "")
             if fulfillment is None:
                 errors.append(f"{scenario_id}: unknown Fulfillment '{fulfillment_ref}'")
                 continue
@@ -679,7 +679,7 @@ def simulate_validation_suite(
     for result in results:
         errors.extend(result["errors"])
     document = {
-        "schemaVersion": "3.0",
+        "schemaVersion": "4.0",
         "modelId": model.manifest.get("id") if model.manifest else None,
         "machineValidated": not static_errors,
         "simulationPassed": not errors,
@@ -837,7 +837,7 @@ def fulfillment_status(
     manual_completions: set[str] | None = None,
 ) -> str:
     """Evaluate one request only from rules and evidence available in the graph."""
-    fulfillment = model.fulfillment_contexts_by_id.get(fulfillment_ref)
+    fulfillment = model.fulfillments_by_id.get(fulfillment_ref)
     request_instance = instances.get(request_instance_ref)
     requests, confirmations, evidence_roles = fulfillment_members(
         fulfillment_ref, model.entities_by_id, model.relationships
@@ -869,7 +869,7 @@ def fulfillment_status(
     rules = [
         rule
         for rule in model.rules
-        if rule.get("contextRef") == fulfillment_ref
+        if rule.get("fulfillmentRef") == fulfillment_ref
         and rule.get("kind") in {"completion", "breach"}
     ]
     for rule in rules:
@@ -998,7 +998,7 @@ def from_cel_value(value: Any) -> Any:
     if celtypes is None:
         return value
     if isinstance(value, celtypes.TimestampType):
-        text = value.astimezone(timezone.utc).isoformat(timespec="seconds")
+        text = value.astimezone(timezone.utc).isoformat(timespec="seconds")  # noqa: UP017 — Python 3.10
         return text.replace("+00:00", "Z")
     if isinstance(value, celtypes.DurationType):
         return f"{integer_value(value.total_seconds())}s"
@@ -1031,7 +1031,7 @@ def normalize_json_value(value: Any) -> Any:
     if isinstance(value, str):
         timestamp = parse_timestamp(value)
         if timestamp is not None and ("T" in value or value.endswith("Z")):
-            text = timestamp.astimezone(timezone.utc).isoformat(timespec="seconds")
+            text = timestamp.astimezone(timezone.utc).isoformat(timespec="seconds")  # noqa: UP017 — Python 3.10
             return text.replace("+00:00", "Z")
         return value
     if isinstance(value, float) and not math.isfinite(value):

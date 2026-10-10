@@ -14,6 +14,7 @@ const nodes = new Map(DATA.nodes.map((node) => [node.id, node]));
 const $ = (id) => document.getElementById(id);
 const groups = {
   context: '业务边界',
+  fulfillment: '权责履约',
   evidence: '业务凭证',
   participant: '参与者与标的',
   role: '业务角色',
@@ -31,7 +32,7 @@ const groups = {
 };
 const kinds = {
   contract: '合同',
-  fulfillment: '履约',
+  fulfillment: '权责履约',
   domain: '领域',
   pre_contract: '合同前',
   fulfillment_request: '请求',
@@ -131,6 +132,9 @@ function list(ids, empty = '未声明', target = $('detail')) {
   ids.forEach((id) => box.append(link(id)));
   target.append(box);
 }
+function isContainer(node) {
+  return ['context', 'fulfillment'].includes(node?.group);
+}
 function buildTree() {
   const query = $('search').value.trim().toLocaleLowerCase();
   $('tree').replaceChildren();
@@ -155,6 +159,7 @@ function buildTree() {
   }
   const businessGroups = new Set([
     'context',
+    'fulfillment',
     'evidence',
     'participant',
     'role',
@@ -168,16 +173,17 @@ function buildTree() {
     const children = business.filter(
       (n) => n.parent === node.id && !visited.has(n.id),
     );
-    if (!children.length && node.group !== 'context') return treeButton(node);
+    if (!children.length && !isContainer(node)) return treeButton(node);
     const details = el('details');
     const summary = el('summary', node.label);
     details.append(summary);
-    if (node.group === 'context') {
-      details.dataset.contextGroup = node.id;
-      summary.dataset.context = node.id;
+    if (isContainer(node)) {
+      details.dataset.containerGroup = node.id;
+      details.dataset[node.group === 'context' ? 'contextGroup' : 'fulfillmentGroup'] = node.id;
+      summary.dataset.container = node.id;
       summary.title = `${typeLabel(node)} · ${node.id}`;
       if (!children.length)
-        details.append(el('p', '此上下文暂无对象', 'muted'));
+        details.append(el('p', `此${node.group === 'fulfillment' ? '履约' : '上下文'}暂无对象`, 'muted'));
     } else details.append(treeButton(node));
     children.forEach((child) => {
       if (!visited.has(child.id)) details.append(branch(child));
@@ -187,7 +193,7 @@ function buildTree() {
   const structure = section(
     'business',
     '业务结构',
-    business.filter((n) => n.group !== 'context').length,
+    business.filter((n) => !isContainer(n)).length,
   );
   business
     .filter((n) => !businessGroups.has(nodes.get(n.parent)?.group))
@@ -220,13 +226,13 @@ function buildTree() {
   markSelected();
 }
 function treeButton(node) {
-  if (node.group === 'context') {
+  if (isContainer(node)) {
     const locator = action(
-      `${node.label} · 定位上下文`,
-      () => revealContext(node.id),
+      `${node.label} · 定位${node.group === 'fulfillment' ? '履约' : '上下文'}`,
+      () => revealContainer(node.id),
       'tree-item',
     );
-    locator.dataset.contextLocator = node.id;
+    locator.dataset.containerLocator = node.id;
     return locator;
   }
   const button = action('', () => select(node.id), 'tree-item');
@@ -243,14 +249,14 @@ function treeButton(node) {
   } else button.append(el('span', node.label), el('small', typeLabel(node)));
   return button;
 }
-function revealContext(id) {
-  if (nodes.get(id)?.group !== 'context') return;
+function revealContainer(id) {
+  if (!isContainer(nodes.get(id))) return;
   if ($('search').value) {
     $('search').value = '';
     buildTree();
   }
-  const summary = [...document.querySelectorAll('#tree [data-context]')].find(
-    (n) => n.dataset.context === id,
+  const summary = [...document.querySelectorAll('#tree [data-container]')].find(
+    (n) => n.dataset.container === id,
   );
   if (!summary) return;
   let parent = summary.parentElement;
@@ -585,8 +591,8 @@ function renderReferences(
 }
 function select(id, remember = true) {
   if (id && !nodes.has(id)) return;
-  if (nodes.get(id)?.group === 'context') {
-    revealContext(id);
+  if (isContainer(nodes.get(id))) {
+    revealContainer(id);
     return;
   }
   if (remember && id !== current) history.push(current);

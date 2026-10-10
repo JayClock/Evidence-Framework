@@ -4,5 +4,6 @@
   "category": "role",
   "kind": "evidence",
   "label": "内容产品付款确认",
-  "contextRef": "fulfillment.content-payment"
+  "contextRef": "context.content-subscription",
+  "fulfillmentRef": "fulfillment.content-payment"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare, optionally run, and grade Fulfillment Modeling Schema v3 evals."""
+"""Prepare, optionally run, and grade Fulfillment Modeling Schema v4 evals."""
 
 from __future__ import annotations
 
@@ -273,7 +273,7 @@ def grade_context_scope(
         add(
             expectations,
             "Local scope does not invent Contracts or Fulfillments.",
-            not contracts and not model.fulfillment_contexts_by_id,
+            not contracts and not model.fulfillments_by_id,
             str([item.get("id") for item in contracts]),
         )
     if eval_id in {15, 19}:
@@ -340,12 +340,12 @@ def grade_context_scope(
     if eval_id in {17, 18}:
         targets = [
             item
-            for item in model.fulfillment_contexts_by_id.values()
+            for item in model.fulfillments_by_id.values()
             if re.search(r"目标|target", identity_text_of(item), re.IGNORECASE)
         ]
         reviews = [
             item
-            for item in model.fulfillment_contexts_by_id.values()
+            for item in model.fulfillments_by_id.values()
             if re.search(
                 r"检查|进度|review|progress", identity_text_of(item), re.IGNORECASE
             )
@@ -360,7 +360,7 @@ def grade_context_scope(
                 return [
                     entity
                     for entity in entities.values()
-                    if entity.get("contextRef") == context_ref
+                    if entity.get("fulfillmentRef") == context_ref
                     and entity.get("kind") == kind
                 ]
 
@@ -411,7 +411,7 @@ def grade_context_scope(
                 entity
                 for item in targets
                 for entity in entities.values()
-                if entity.get("contextRef") == item.get("id")
+                if entity.get("fulfillmentRef") == item.get("id")
                 and entity.get("kind") == "fulfillment_confirmation"
             ]
             explicit_decision = any(
@@ -544,16 +544,16 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     errors = validate_model(model)
     add(
         expectations,
-        "FM Schema v3 validation passes.",
+        "FM Schema v4 validation passes.",
         not errors,
         "\n".join(errors) or "valid",
     )
     add(
         expectations,
-        "Manifest declares Schema v3 and CEL.",
+        "Manifest declares Schema v4 and CEL.",
         bool(
             model.manifest
-            and model.manifest.get("schemaVersion") == "3.0"
+            and model.manifest.get("schemaVersion") == "4.0"
             and model.manifest.get("ruleLanguage") == "CEL"
         ),
         str(model.manifest),
@@ -589,15 +589,14 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     )
 
     entities = model.entities
-    fulfillments = list(model.fulfillment_contexts_by_id.values())
+    fulfillments = list(model.fulfillments_by_id.values())
     relationships = model.relationships
     rules = model.rules
     business_patterns = model.business_patterns
     entities_by_id = model.entities_by_id
     strict_boundaries = all(
-        fulfillment.get("category") == "context"
-        and fulfillment.get("kind") == "fulfillment"
-        and (entities_by_id.get(str(fulfillment.get("parentContextRef"))) or {}).get(
+        fulfillment.get("category") == "fulfillment"
+        and (entities_by_id.get(str(fulfillment.get("contextRef"))) or {}).get(
             "kind"
         )
         == "contract"
@@ -613,9 +612,9 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     ) and len(request_entities) == len(fulfillments)
     add(
         expectations,
-        "Every Fulfillment is a child Context of its Contract Context.",
+        "Every Fulfillment belongs to a Contract Context.",
         strict_boundaries,
-        str([item.get("parentContextRef") for item in fulfillments]),
+        str([item.get("contextRef") for item in fulfillments]),
     )
     add(
         expectations,
@@ -1144,7 +1143,7 @@ def write_benchmark(
     passed = sum(item["passed"] for item in results)
     payload = {
         "skill_name": "evidence-fm",
-        "schema_version": "3.0",
+        "schema_version": "4.0",
         "configuration": configuration,
         "generated_at": now(),
         "summary": {
@@ -1159,7 +1158,7 @@ def write_benchmark(
     write_json(workspace / "results.json", payload)
     write_json(workspace / "benchmark.json", payload)
     lines = [
-        "# modeling Schema v3 eval benchmark",
+        "# modeling Schema v4 eval benchmark",
         "",
         f"- Configuration: `{configuration}`",
         f"- Evals passed: {payload['summary']['evals_passed']}/{len(results)}",
@@ -1177,7 +1176,7 @@ def write_benchmark(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run or grade modeling Schema v3 evals"
+        description="Run or grade modeling Schema v4 evals"
     )
     parser.add_argument("--evals", default=str(Path(__file__).with_name("evals.json")))
     parser.add_argument(

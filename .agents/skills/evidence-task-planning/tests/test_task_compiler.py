@@ -29,7 +29,7 @@ class CompilerTests(unittest.TestCase):
             "model.json",
             {
                 "type": "fm_model",
-                "schemaVersion": "3.0",
+                "schemaVersion": "4.0",
                 "id": "sample",
                 "entryContextRefs": ["context.content"],
             },
@@ -502,7 +502,7 @@ class CompilerTests(unittest.TestCase):
         docs = [
             {
                 "type": "fm_model",
-                "schemaVersion": "3.0",
+                "schemaVersion": "4.0",
                 "id": "laboratory",
                 "entryContextRefs": ["context.lab"],
             },

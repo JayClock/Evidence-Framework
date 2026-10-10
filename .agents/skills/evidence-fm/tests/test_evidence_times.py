@@ -57,6 +57,7 @@ def evidence(kind: str) -> dict:
         "kind": kind,
         "label": "合成时间凭证",
         "contextRef": "context.test",
+        **({"fulfillmentRef": "fulfillment.test"} if kind == "fulfillment_request" else {}),
         **(
             {"roleRefs": ["role.one", "role.two"]}
             if kind == "contract"
@@ -278,7 +279,7 @@ class EvidenceTimeTests(unittest.TestCase):
         fulfillment = json.loads(
             (
                 FIXTURES
-                / "valid-subscription/entities/context-fulfillment--content-payment.json"
+                / "valid-subscription/entities/fulfillment--content-payment.json"
             ).read_text()
         )
         fulfillment["requestInterval"] = {

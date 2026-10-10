@@ -4,7 +4,7 @@
   "kind": "completion",
   "label": "微信支付完成判断",
   "description": "同一微信支付申请存在有效期内且实付金额与请求金额一致的微信支付确认时，微信支付履约完成。",
-  "contextRef": "fulfillment.wechat-payment",
+  "contextRef": "context.wechat-payment",
   "bindings": {
     "request": {
       "ref": "request.wechat-payment"
@@ -16,5 +16,6 @@
   },
   "expression": "confirmations.exists(c, c.request_number == request.request_number && c.paid_minor_units == request.requested_minor_units && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)",
   "resultType": "bool",
-  "notes": "合成验证场景检查外部申请与确认匹配；不代表完整支付服务条款。"
+  "notes": "合成验证场景检查外部申请与确认匹配；不代表完整支付服务条款。",
+  "fulfillmentRef": "fulfillment.wechat-payment"
 }

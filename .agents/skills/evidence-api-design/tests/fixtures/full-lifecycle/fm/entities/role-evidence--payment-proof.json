@@ -4,7 +4,7 @@
   "category": "role",
   "kind": "evidence",
   "label": "支付凭证",
-  "contextRef": "fulfillment.payment",
+  "contextRef": "context.product-procurement",
   "attributes": [
     {
       "name": "payment_number",
@@ -39,5 +39,6 @@
       "meaning": "实际凭证玩家的履约确认时间，不是角色形成时间"
     }
   ],
-  "notes": "支付确认所需的外部证明插槽，无责任人，不签发角色实例；按plays_role读取已存在的实际凭证玩家。"
+  "notes": "支付确认所需的外部证明插槽，无责任人，不签发角色实例；按plays_role读取已存在的实际凭证玩家。",
+  "fulfillmentRef": "fulfillment.payment"
 }

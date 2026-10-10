@@ -76,19 +76,14 @@ def shared_confirmation_documents() -> list[dict]:
         request = f"request.{period}-target"
         documents.extend(
             [
-                entity(
-                    fulfillment,
-                    "context",
-                    "fulfillment",
-                    label,
-                    parentContextRef=contract_context,
-                ),
+                {"type": "entity", "id": fulfillment, "category": "fulfillment", "label": label, "contextRef": contract_context},
                 entity(
                     request,
                     "evidence",
                     "fulfillment_request",
                     label + "请求",
-                    contextRef=fulfillment,
+                    contextRef=contract_context,
+                    fulfillmentRef=fulfillment,
                     responsibleRoleRef="role.manager",
                     attributes=[
                         attribute(
@@ -118,7 +113,8 @@ def shared_confirmation_documents() -> list[dict]:
                         f"收入确认（{shared_confirmation}）在{label}请求（{request}）"
                         "有效期内形成时，该指标履约完成。"
                     ),
-                    "contextRef": fulfillment,
+                    "contextRef": contract_context,
+                    "fulfillmentRef": fulfillment,
                     "bindings": {
                         "request": {"ref": request},
                         "confirmations": {

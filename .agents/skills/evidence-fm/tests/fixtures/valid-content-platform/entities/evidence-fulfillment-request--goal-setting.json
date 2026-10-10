@@ -4,7 +4,7 @@
   "category": "evidence",
   "kind": "fulfillment_request",
   "label": "目标设定请求",
-  "contextRef": "fulfillment.goal-setting",
+  "contextRef": "context.operations-performance",
   "responsibleRoleRef": "role.operator",
   "attributes": [
     {
@@ -23,5 +23,6 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ]
+  ],
+  "fulfillmentRef": "fulfillment.goal-setting"
 }

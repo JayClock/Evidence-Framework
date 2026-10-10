@@ -182,7 +182,7 @@ try {
       const legend=document.querySelector('.graph-legend');
       if(!legend || legend.tagName!=='DETAILS') throw Error('Missing collapsible illustrated legend');
       const cards=[...legend.querySelectorAll('[data-legend-kind]')];
-      const expected=new Set(DATA.nodes.filter(n=>['evidence','participant','role','context'].includes(n.group)).map(n=>n.group+'.'+n.kind));
+      const expected=new Set(DATA.nodes.filter(n=>['evidence','participant','role','context','fulfillment'].includes(n.group)).map(n=>n.group+'.'+n.kind));
       const kinds=new Set(cards.filter(n=>!n.dataset.legendKind.startsWith('line.')).map(n=>n.dataset.legendKind));
       if(JSON.stringify([...expected].sort())!==JSON.stringify([...kinds].sort()))throw Error('Legend must cover exactly the present types');
       for(const card of cards) {
@@ -316,29 +316,29 @@ try {
   async function checkContextBoundaries() {
     assert.deepEqual(
       await evaluate(
-        '[...document.querySelectorAll("[data-graph-context]")].map(n=>n.dataset.graphContext).sort()',
+        '[...document.querySelectorAll("[data-graph-boundary]")].map(n=>n.dataset.graphBoundary).sort()',
       ),
       await evaluate(
-        'DATA.nodes.filter(n=>n.group==="context").map(n=>n.id).sort()',
+        'DATA.nodes.filter(n=>["context","fulfillment"].includes(n.group)).map(n=>n.id).sort()',
       ),
     );
     assert.ok(
       await evaluate(`(() => {
-      const frames = [...document.querySelectorAll('[data-graph-context]')];
+      const frames = [...document.querySelectorAll('[data-graph-boundary]')];
       const boxes = [...document.querySelectorAll('[data-graph-node]')];
       const rect = n => n.querySelector('rect').getBBox();
       const contains = (a,b) => a.x<=b.x && a.y<=b.y && a.x+a.width>=b.x+b.width && a.y+a.height>=b.y+b.height;
       const ancestor = (id, parent) => {const seen=new Set(); let n=nodes.get(id); while(n && !seen.has(n.id)){seen.add(n.id); if(n.parent===parent)return true; n=nodes.get(n.parent);} return false;};
       return frames.every(frame => {
-        const id=frame.dataset.graphContext;
-        return boxes.every(box => contains(rect(frame),rect(box))===ancestor(box.dataset.graphNode,id)) && frames.every(child=>!ancestor(child.dataset.graphContext,id)||contains(rect(frame),rect(child)));
+        const id=frame.dataset.graphBoundary;
+        return boxes.every(box => contains(rect(frame),rect(box))===ancestor(box.dataset.graphNode,id)) && frames.every(child=>!ancestor(child.dataset.graphBoundary,id)||contains(rect(frame),rect(child)));
       });
     })()`),
       'Context frames must contain exactly their owned objects and child contexts',
     );
     assert.ok(
       await evaluate(
-        '[...document.querySelectorAll(".graph-context-label")].every(n=>n.getAttribute("tabindex")==="0" && n.getAttribute("role")==="button")',
+        '[...document.querySelectorAll(".graph-boundary-label")].every(n=>n.getAttribute("tabindex")==="0" && n.getAttribute("role")==="button")',
       ),
     );
   }
@@ -348,7 +348,7 @@ try {
       document.activeElement?.blur();
       const svg=document.querySelector('.graph-viewport svg');
       const objects=[...svg.querySelectorAll('[data-graph-node]')];
-      const contexts=[...svg.querySelectorAll('[data-graph-context]')];
+      const contexts=[...svg.querySelectorAll('[data-graph-boundary]')];
       const badges=[...svg.querySelectorAll('[data-responsibility]')];
       const edgeElements=[...svg.querySelectorAll('[data-highlight-edge]')];
       const ids=new Set(objects.map(n=>n.dataset.graphNode));
@@ -373,15 +373,15 @@ try {
       for(const object of objects){enter(object);checkNode(object.dataset.graphNode);leave(object);}
       for(const context of contexts){
         enter(context);
-        const members=new Set([...ids].filter(id=>belongs(id,context.dataset.graphContext)));
+        const members=new Set([...ids].filter(id=>belongs(id,context.dataset.graphBoundary)));
         checkObjects(members,new Set(lines.filter(e=>members.has(e.from)&&members.has(e.to)).map(e=>e.id)));
-        same(contexts.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphContext),contexts.filter(n=>belongs(n.dataset.graphContext,context.dataset.graphContext)).map(n=>n.dataset.graphContext),'context descendants only');
+        same(contexts.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphBoundary),contexts.filter(n=>belongs(n.dataset.graphBoundary,context.dataset.graphBoundary)).map(n=>n.dataset.graphBoundary),'context descendants only');
         leave(context);
       }
       for(const badge of badges){enter(badge);checkNode(badge.dataset.roleRef);leave(badge);}
       for(const edge of edgeElements){enter(edge);const line=lines.find(e=>e.id===edge.dataset.highlightEdge);checkObjects(new Set([line.from,line.to]),new Set([line.id]));leave(edge);}
       const other=objects[1] || contexts[0];
-      for(const focus of [objects[0],contexts[0]?.querySelector('.graph-context-label'),badges[0],edgeElements[0]].filter(Boolean)){
+      for(const focus of [objects[0],contexts[0]?.querySelector('.graph-boundary-label'),badges[0],edgeElements[0]].filter(Boolean)){
         focus.focus({preventScroll:true});focus.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight'}));
         const pinned=JSON.stringify([svg.dataset.highlightType,svg.dataset.highlightId]);
         if(other){enter(other);if(JSON.stringify([svg.dataset.highlightType,svg.dataset.highlightId])!==pinned)throw Error('keyboard focus must win over hover');leave(other);}
@@ -407,7 +407,15 @@ try {
       `document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center',inline:'center'})`,
     );
     const point = await evaluate(
-      `(() => {const n=document.querySelector(${JSON.stringify(selector)}), r=n.querySelector('rect').getBBox();const p=new DOMPoint(r.x+${background ? '12' : 'r.width/2'},r.y+${background ? '12' : 'r.height/2'}).matrixTransform(n.getScreenCTM());return {x:p.x,y:p.y};})()`,
+      `(() => {const n=document.querySelector(${JSON.stringify(selector)}), r=n.querySelector('rect').getBBox();
+        const positions=${background ? '[[12,12],[24,12],[48,12],[96,12],[12,32],[24,32],[48,32],[96,32]]' : '[[r.width/2,r.height/2]]'};
+        for(const [x,y] of positions){
+          const p=new DOMPoint(r.x+x,r.y+y).matrixTransform(n.getScreenCTM());
+          const hit=document.elementFromPoint(p.x,p.y);
+          if(${!background} || (hit?.closest('[data-graph-boundary]')===n && !hit.closest('[data-highlight-edge],[data-graph-node],[data-responsibility]')))return {x:p.x,y:p.y};
+        }
+        throw Error('No exposed hit-test position for '+${JSON.stringify(selector)});
+      })()`,
     );
     await call('Input.dispatchMouseEvent', { type: 'mouseMoved', ...point });
   }
@@ -418,15 +426,15 @@ try {
     if (
       owner &&
       (await evaluate(
-        `Boolean(document.querySelector('[data-graph-context="'+${JSON.stringify(owner)}+'"]'))`,
+        `Boolean(document.querySelector('[data-graph-boundary="'+${JSON.stringify(owner)}+'"]'))`,
       ))
     ) {
-      await moveOverGraph(`[data-graph-context="${owner}"]`, true);
+      await moveOverGraph(`[data-graph-boundary="${owner}"]`, true);
       assert.deepEqual(
         await evaluate(
           '(()=>{const n=document.querySelector(".graph-viewport svg");return [n.dataset.highlightType,n.dataset.highlightId]})()',
         ),
-        ['context', owner],
+        ['boundary', owner],
       );
       await screenshot('graph-highlight-context');
     }
@@ -457,14 +465,14 @@ try {
       await evaluate(
         'document.querySelector(".graph-viewport svg").dataset.highlightType',
       ),
-      'context',
+      'boundary',
     );
     await moveOverGraph(`[data-graph-node="${hoverNode}"]`);
     assert.equal(
       await evaluate(
         'document.querySelector(".graph-viewport svg").dataset.highlightType',
       ),
-      'context',
+      'boundary',
       'real keyboard focus wins over the pointer',
     );
     await evaluate('document.activeElement.blur()');
@@ -484,7 +492,7 @@ try {
     );
   }
   const contextId = await evaluate(
-    'document.querySelector("[data-graph-context]")?.dataset.graphContext',
+    'document.querySelector("[data-graph-boundary]")?.dataset.graphBoundary',
   );
   if (contextId) {
     const beforeZoom = await evaluate('businessGraphState.zoom');
@@ -492,7 +500,7 @@ try {
       '[current,history.length,document.getElementById("detail").textContent]',
     );
     await evaluate(
-      'document.querySelector(".graph-context-label").dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true}))',
+      'document.querySelector(".graph-boundary-label").dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true}))',
     );
     assert.deepEqual(
       await evaluate(
@@ -501,7 +509,7 @@ try {
       beforeContext,
     );
     assert.equal(
-      await evaluate('document.activeElement.dataset.context'),
+      await evaluate('document.activeElement.dataset.container'),
       contextId,
     );
     assert.equal(await evaluate('businessGraphState.zoom'), beforeZoom);
@@ -619,11 +627,11 @@ try {
     ),
   );
   const contextIds = await evaluate(
-    'DATA.nodes.filter(n=>n.group==="context").map(n=>n.id).sort()',
+    'DATA.nodes.filter(n=>["context","fulfillment"].includes(n.group)).map(n=>n.id).sort()',
   );
   assert.deepEqual(
     await evaluate(
-      '[...document.querySelectorAll("#tree [data-context]")].map(n=>n.dataset.context).sort()',
+      '[...document.querySelectorAll("#tree [data-container]")].map(n=>n.dataset.container).sort()',
     ),
     contextIds,
   );
@@ -636,11 +644,11 @@ try {
     );
     assert.ok(
       await evaluate(
-        '[...document.querySelectorAll("#tree [data-node]")].every(n=>nodes.get(n.dataset.node).group!=="context")',
+        '[...document.querySelectorAll("#tree [data-node]")].every(n=>!["context","fulfillment"].includes(nodes.get(n.dataset.node).group))',
       ),
     );
     await evaluate(
-      `[...document.querySelectorAll('[data-context-locator]')].find(n=>n.dataset.contextLocator===${JSON.stringify(id)}).click()`,
+      `[...document.querySelectorAll('[data-container-locator]')].find(n=>n.dataset.containerLocator===${JSON.stringify(id)}).click()`,
     );
     assert.deepEqual(
       await evaluate(
@@ -648,12 +656,12 @@ try {
       ),
       before,
     );
-    assert.equal(await evaluate('document.activeElement.dataset.context'), id);
+    assert.equal(await evaluate('document.activeElement.dataset.container'), id);
     assert.ok(await evaluate('document.activeElement.parentElement.open'));
     await evaluate('document.activeElement.click()');
     assert.equal(
       await evaluate(
-        `[...document.querySelectorAll('[data-context-group]')].find(n=>n.dataset.contextGroup===${JSON.stringify(id)}).open`,
+        `[...document.querySelectorAll('[data-container-group]')].find(n=>n.dataset.containerGroup===${JSON.stringify(id)}).open`,
       ),
       false,
     );
@@ -784,7 +792,7 @@ try {
     try {
       return fixtures.map(fixture => {
         DATA.nodes=fixture; nodes.clear(); fixture.forEach(n=>nodes.set(n.id,n)); buildTree();
-        return {contexts:[...document.querySelectorAll('#tree [data-context]')].map(n=>n.dataset.context).sort(), ids:[...document.querySelectorAll('#tree [data-node]')].map(n=>n.dataset.node).sort(), sections:[...document.querySelectorAll('#tree > [data-navigation]')].map(n=>n.dataset.navigation), emptyApi:document.querySelector('[data-navigation="api"]').textContent.includes('尚无 API 设计')};
+        return {contexts:[...document.querySelectorAll('#tree [data-container]')].map(n=>n.dataset.container).sort(), ids:[...document.querySelectorAll('#tree [data-node]')].map(n=>n.dataset.node).sort(), sections:[...document.querySelectorAll('#tree > [data-navigation]')].map(n=>n.dataset.navigation), emptyApi:document.querySelector('[data-navigation="api"]').textContent.includes('尚无 API 设计')};
       });
     } finally {
       DATA.nodes=originalNodes; nodes.clear(); originalNodes.forEach(n=>nodes.set(n.id,n)); buildTree();
@@ -936,7 +944,7 @@ try {
   } else notApplicable.push('attributes');
   // Test every navigation target, including owner-relative attributes.
   const ids = await evaluate(
-    'DATA.nodes.filter(n=>n.group!=="context").map(n=>n.id)',
+    'DATA.nodes.filter(n=>!["context","fulfillment"].includes(n.group)).map(n=>n.id)',
   );
   for (const id of ids) {
     await evaluate(`select(${JSON.stringify(id)})`);
@@ -992,7 +1000,7 @@ try {
   );
   if (businessObject) {
     await evaluate(`select(${JSON.stringify(businessObject)})`);
-    const parent = await evaluate('nodes.get(current).parent');
+    const parent = await evaluate('nodes.get(current).contextRef');
     assert.equal(
       await evaluate(
         'document.querySelector("#detail .card [data-ref]")?.dataset.ref',
@@ -1012,7 +1020,7 @@ try {
       beforeContext,
     );
     assert.equal(
-      await evaluate('document.activeElement.dataset.context'),
+      await evaluate('document.activeElement.dataset.container'),
       parent,
     );
     assert.equal(await evaluate('current'), businessObject);
@@ -1038,7 +1046,7 @@ try {
       await evaluate('nodes.get(current).description'),
     );
     const destination = await evaluate(
-      '[...document.querySelectorAll("#detail [data-ref]")].find(n=>nodes.get(n.dataset.ref)?.group!=="context")?.dataset.ref',
+      '[...document.querySelectorAll("#detail [data-ref]")].find(n=>!["context","fulfillment"].includes(nodes.get(n.dataset.ref)?.group))?.dataset.ref',
     );
     if (destination) {
       await evaluate(
@@ -1153,7 +1161,9 @@ try {
       passed: true,
       htmlSha256: createHash('sha256').update(original).digest('hex'),
       objects: ids.length,
-      contextContainers: contextIds.length,
+      businessContainers: contextIds.length,
+      contextContainers: await evaluate('DATA.nodes.filter(n=>n.group==="context").length'),
+      fulfillments: await evaluate('DATA.nodes.filter(n=>n.group==="fulfillment").length'),
       externalRequests: network.length,
       notApplicable,
       overview,
