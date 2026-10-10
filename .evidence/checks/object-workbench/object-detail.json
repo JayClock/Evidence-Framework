@@ -1,0 +1,39 @@
+{
+  "feedback": "业务对象改为所属上下文 + 业务属性，其它去除",
+  "decisions": [
+    "上下文、凭证、参与者和角色保留名称与 ID，正文严格只有所属上下文和业务属性两个区块。无归属、无属性显示空态。",
+    "删除业务对象说明、类型徽标、直属对象、履约证明、局部引用及选中属性的附加引用面板，移除失效 proof-grid/arrow 样式；不是仅隐藏旧区块。",
+    "所属上下文可跳转，属性仍保留搜索、规则/API 引用定位、高亮、焦点及返回；规则、关系、场景和 API 的专用详情不变。",
+    "关系从全局图连线或搜索进入；更新当前 Skill、文档、评测和测试。FM/API 与计划状态不修改，历史检查记录保留。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "c76ca27de7e07efbd38ec408f028a493bcd36383f44d4003a3190c890b53efcd",
+    "objects": 543,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-D0v8lV",
+    "reviewedScreenshot": "business-object.png"
+  },
+  "checks": [
+    {"command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html", "exitCode": 0, "log": "/tmp/fm-object-browser.log", "sha256": "eb636b564d4560cc2c1915cbfd20b22a4cb28b3bd7f5bd12abe227a13d2727b2", "redLog": "/tmp/fm-object-red.log", "coverage": "先红后绿；逐一检查业务对象及属性定位时恰有两个区块、属性数量正确且无附加面板；上下文跳转、顶层空归属、全部关系连线点击及搜索、专用详情引用、场景、API、图、三组导航、安全与窄屏。"},
+    {"command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs", "exitCode": 0, "tests": 11, "log": "/tmp/fm-object-unit.log", "sha256": "ce9d38b23385582dc54b34283f043b5b3cc1a9be43fb62e0c9ee058fb99aa1ef"},
+    {"command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design", "exitCode": 0, "log": "/tmp/fm-object-generate.log", "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v", "exitCode": 0, "tests": 15, "log": "/tmp/fm-object-python.log", "sha256": "02e553efa196b96cbb274cb2ced6ffe7483c3321ab951d088feb428e82cfb264"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v", "exitCode": 0, "tests": 2, "log": "/tmp/fm-object-portability.log", "sha256": "cc21e7eee3c32f6628a6327fbddf01c188ab513013c20055910947b501520f4b"},
+    {"command": "npm test", "exitCode": 1, "log": "/tmp/fm-object-npm-test.log", "sha256": "d58d4b46ad2f765357f6436a8b6264365ec7a0926819d6d1cc80ae0155682109", "detail": "Nx 35/35 缓存命中；既有 Skill 固定清单不接受 write/content-research-writer。"},
+    {"command": "npm run build", "exitCode": 0, "log": "/tmp/fm-object-build.log", "sha256": "0bc86e3ac58d912115c77f33d369b0deea3a931809475dab1f324bab6a3ef904", "detail": "Nx 35/35 缓存命中。"},
+    {"command": "npm run lint", "exitCode": 1, "log": "/tmp/fm-object-lint.log", "sha256": "68d99a11974b9d32ccb4f8180076d02adf1ff33a1fb477f5cf9ae94d03f93922", "detail": "README 12 个既有本地断链阻塞 Guides。"},
+    {"command": "npm run guides:verify", "exitCode": 1, "log": "/tmp/fm-object-guides.log", "sha256": "4671ace4b969a5b697a13511e724be6eb925042c2665da705dd04266a3bfbc0c", "detail": "8 项检查器测试通过；同一批 README 断链。"}
+  ],
+  "additionalChecks": {
+    "scopedFormatting": "passed",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "retiredDescriptions": "当前 Skill 与生成页扫描无旧详情区块、失效样式和属性引用展开描述匹配；日志 /tmp/fm-object-retired-text.log。",
+    "lsp": "主动探测 3 文件均 inconclusive，未报告诊断但不能声称确认干净。",
+    "agentBehaviorEvals": "已更新，未执行",
+    "serviceRuntimeAndBusinessApproval": "未执行"
+  },
+  "handoff": "本轮反馈、决定与真实检查已保存；项目质量检查仍有既有阻塞，不提升业务任务状态。"
+}

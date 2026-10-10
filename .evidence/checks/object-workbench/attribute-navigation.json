@@ -1,0 +1,78 @@
+{
+  "task": "属性回归所属对象，不设独立导航栏目",
+  "feedback": "用户要求按讨论方案重构业务属性栏目。",
+  "decisions": [
+    "属性仍保留稳定 ID、搜索与引用能力，只在所属对象详情中展示。",
+    "搜索展示属性所属对象名称和 ID；规则与 API 引用打开所属对象并聚焦、高亮属性行。",
+    "返回恢复属性定位；复制保留属性 ID；属性正反向引用在所属对象详情中展开。",
+    "只修改可视化资源、Skill 展示契约、浏览器测试及重新生成的 HTML，不修改 FM/API 或任务状态。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "5238161a06b5b5c3852ea747c3eb323b4f7d0ea921acb8f9f266fe8cb7835b9c",
+    "navigationTargets": 543,
+    "externalRequests": 0,
+    "screenshotsReviewed": ["attribute-in-owner", "mobile"],
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-vVRpWh"
+  },
+  "checks": [
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html",
+      "beforeImplementation": { "exitCode": 1, "log": "/tmp/attribute-nav-red.log", "sha256": "b83ac6afefd125de0626da9d78a05669f48a50e4bd76932d2e808a5325e749af", "reason": "旧树包含独立属性节点，违反新导航断言" },
+      "exitCode": 0,
+      "log": "/tmp/attribute-nav-browser.log",
+      "sha256": "8c59193f4c56acc34716cc9adc77b89b0929c9efd7b1d8f1dda9c2fe5d5bb8e0",
+      "coverage": "全部对象及属性、同名属性归属、规则/能力/响应表示属性跳转、返回、焦点、窄屏可见性、外部请求和文本安全；无不适用项"
+    },
+    {
+      "command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root \"$PWD\" --fm-skill \"$PWD/.agents/skills/evidence-fm\" --api-skill \"$PWD/.agents/skills/evidence-api-design\"",
+      "exitCode": 0,
+      "log": "/tmp/attribute-nav-generate.log",
+      "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e",
+      "detail": "FM、场景模拟和 API 静态检查通过；服务运行未验证，3 个业务时间顺序未确定。"
+    },
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v",
+      "exitCode": 0, "tests": 15,
+      "log": "/tmp/attribute-nav-unit.log",
+      "sha256": "5d15b3ec31d6d1e5f411f10bb8ecb24a0f4e08f7d3316e5cf5e8eda2f07a65a5"
+    },
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v",
+      "exitCode": 0, "tests": 2,
+      "log": "/tmp/attribute-nav-portability.log",
+      "sha256": "e5be9fc17f6c250980f9a83d877d63027e4dda339a607a4a8cef4c926eb8e31d"
+    },
+    {
+      "command": "npm test", "exitCode": 1,
+      "log": "/tmp/attribute-nav-npm-test.log",
+      "sha256": "51b7127ca15083d72fa91ef464bba2be37341bf9944478d41519482936dc31b3",
+      "detail": "Nx 35/35 缓存命中；其余已执行测试的唯一失败是固定 Skill 清单不接受既有 write 和 content-research-writer。后续 guides:test 因前序失败未执行，已由 guides:verify 单独运行通过。"
+    },
+    {
+      "command": "npm run build", "exitCode": 0,
+      "log": "/tmp/attribute-nav-build.log",
+      "sha256": "a246273bf086b8e255a58f020989595ec545bcfb969c3d85ca01cb7b0c024141"
+    },
+    {
+      "command": "npm run lint", "exitCode": 1,
+      "log": "/tmp/attribute-nav-lint.log",
+      "sha256": "102533fe68b73490391cb89fda66c8ae4667e2a013c2fddfe9c5d43df99a3910",
+      "detail": "前端 lint 缓存命中；README 12 个既有本地断链阻塞 Guides，未进入全局格式检查。"
+    },
+    {
+      "command": "npm run guides:verify", "exitCode": 1,
+      "log": "/tmp/attribute-nav-guides.log",
+      "sha256": "92ff0a31174bed7963cd8377466433722b26b6e544cf2a0ebee0e711dd0b9325",
+      "detail": "8 项测试通过；README 12 个既有本地断链。"
+    }
+  ],
+  "additionalChecks": {
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "lsp": "3 paths probed; JS paths inconclusive (silent-on-clean); CSS auxiliary warning for unchanged [hidden] !important rule",
+    "agentBehaviorEvals": "not executed"
+  },
+  "handoff": "实现及生成页已更新，但项目总检查未全绿；未修复无关既有问题，未更改任务状态或宣告业务批准。日志和截图在临时目录，不嵌入 HTML。"
+}

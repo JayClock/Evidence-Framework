@@ -1,0 +1,43 @@
+{
+  "feedback": "现在业务结构的 collapse 就承载了 context 类型，context 不应该再独立显示，而且其没有属性的概念",
+  "decisions": [
+    "Context 只由业务结构的原生 details/summary 折叠组和图上边界承载；不再生成组内重复条目或独立详情，不进入业务属性渲染。空上下文保留折叠组。",
+    "上下文搜索命中是定位入口，所属上下文链接、面包屑与图边界名称只展开并聚焦对应分组，不切换正文、不新增历史、不重绘画布。",
+    "业务对象计数只含凭证、参与者与角色，排除上下文容器；FM 投影和源记录不改写。",
+    "同步当前 Skill、README、设计/运行文档、评测与测试，清除把 Context 当作有属性详情对象的描述。历史检查记录及无关工作树改动保留。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "fe8fcf84228c25165cf64453d396e68c9fd08b345cb2f010f13bfe90b89fc2d2",
+    "detailTargets": 530,
+    "contextContainers": 13,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-ZuiV1f",
+    "reviewedScreenshot": "business-object.png"
+  },
+  "checks": [
+    {"command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html", "exitCode": 0, "log": "/tmp/fm-container-browser.log", "sha256": "fe7069de30d8235cf18cf5d0cdd0b94d00b82ab7bba490f4c80684899ca48811", "redLog": "/tmp/fm-container-red.log", "coverage": "逐一验证 13 个上下文只有折叠组、搜索定位且不改变正文/历史、原生点击与 Enter 展开、空上下文/环形归属；图边界及所属上下文定位、计数排除 Context；530 个其他目标、关系/属性/场景/API、窄屏、安全与零外联。"},
+    {"command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs", "exitCode": 0, "tests": 11, "log": "/tmp/fm-container-unit.log", "sha256": "6186cec1953840a47b6664368ea69f534b05ae0d475b20ea3967af212332e2a1"},
+    {"command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design", "exitCode": 0, "log": "/tmp/fm-container-generate.log", "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v", "exitCode": 0, "tests": 15, "log": "/tmp/fm-container-python.log", "sha256": "9d43d4abba8aa1f0857fa6ddf6c738f41896ca7be8d74cfc984dcca4bc38ebb0"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v", "exitCode": 0, "tests": 2, "log": "/tmp/fm-container-portability.log", "sha256": "62f9908d83e1548574360bb3267d6e14d007fb549269ec3a631b8267d679a38d"},
+    {"command": "npm test", "exitCode": 1, "log": "/tmp/fm-container-npm-test.log", "sha256": "e43a94e5662a7ff99b8861123c143051e3c707862fe4b1e7ec38627fe0e1a3a4", "detail": "Nx 35/35 缓存命中；既有固定 Skill 清单不接受 write/content-research-writer。"},
+    {"command": "npm run build", "exitCode": 0, "log": "/tmp/fm-container-build.log", "sha256": "86a780ef11f3ccd21c3c7bcf44abedd09c55d032875d360b3a8192a0bea68ddf", "detail": "Nx 35/35 缓存命中。"},
+    {"command": "npm run lint", "exitCode": 1, "log": "/tmp/fm-container-lint.log", "sha256": "f002e0bf2d8d66697e81e9f5005381b3ca163742bc895586b878ff2ce95555c8", "detail": "README 12 个既有 docs/articles 断链。"},
+    {"command": "npm run guides:verify", "exitCode": 1, "log": "/tmp/fm-container-guides.log", "sha256": "dec34dad35621338d9c1415f5021bf295d83c1951c18dbba31cc7f779ed35021", "detail": "8 项检查器回归通过；同一批 README 断链。"}
+  ],
+  "executionFindings": [
+    "新增原生 Enter 测试第一次失败：CDP keyDown 缺少回车 text，未产生完整输入。补齐回车 text 后同一展开断言通过，未修改浏览器产品行为或降低断言。失败日志 /tmp/fm-container-keyboard-red.log。"
+  ],
+  "additionalChecks": {
+    "scopedFormatting": "passed including final browser test check",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "retiredDescriptions": "当前 Skill 扫描无 Context 属性详情和点击边界进入详情的旧描述匹配，日志 /tmp/fm-container-retired-text.log。",
+    "lsp": "主动检查 3 文件均 inconclusive，未报告诊断，不据此宣称确认干净。",
+    "agentBehaviorEvals": "已更新，未执行",
+    "serviceRuntimeAndBusinessApproval": "未执行"
+  },
+  "handoff": "本轮反馈、决定、发现及真实验证结果已保存；业务源及计划状态不变，项目总检查仍有既有阻塞。"
+}

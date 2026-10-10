@@ -1,1 +1,2 @@
-PyYAML>=6,<7
+# Generator uses only Python 3.10+ standard library.
+# Install the separately located FM/API skills' own dependencies.

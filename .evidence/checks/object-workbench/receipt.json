@@ -1,0 +1,80 @@
+{
+  "task": "破坏性重构可视化 Skill 与离线产物",
+  "cwd": "repository-root",
+  "environment": { "node": "26.8.1", "python": "3.12.3", "browser": "local Google Chrome" },
+  "decisions": [
+    "使用对象树、主区业务详情与双向引用替换旧展示层，不保留兼容实现。",
+    "Skill 不携带参考项目说明；HTML 不携带原始文件、路径、来源记录、执行命令、输入摘要或 Git 历史。",
+    "保留模型语义 ID 和业务引用；不修改正式 FM/API、原始材料、历史检查或任务状态。"
+  ],
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "23973b7d7649ab9d0a47f544a14e25c8383f67caecd4fc56ec40f922408e1305",
+    "objects": 543,
+    "contracts": 4,
+    "scenarios": 20,
+    "capabilities": 28,
+    "unresolvedReferences": 0,
+    "externalRequests": 0,
+    "screenshotsReviewed": true
+  },
+  "checks": [
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v",
+      "exitCode": 0,
+      "tests": 15,
+      "log": "/tmp/workbench-unit.log",
+      "sha256": "02e553efa196b96cbb274cb2ced6ffe7483c3321ab951d088feb428e82cfb264"
+    },
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v",
+      "exitCode": 0,
+      "tests": 2,
+      "log": "/tmp/workbench-portability.log",
+      "sha256": "e945b362e4499b09fcc8f58a03020546451ba1c380e7df9131caf0f7ae0cecda"
+    },
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html",
+      "exitCode": 0,
+      "log": "/tmp/workbench-browser.log",
+      "sha256": "8d81456d9d4c73475d6ae7038896f7cade74a3ea085645e4b5566c5374294aaa"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "detail": "应用测试 35/35 Nx 缓存命中；Skills 实际执行，唯一失败为已有 content-research-writer 和 write 未包含在固定 Skill 清单。最终 Guides suite 因前序失败未执行，已单独运行 guides:test 并通过 8 项。",
+      "log": "/tmp/workbench-npm-test-final.log",
+      "sha256": "4772a50828f4307d2d024f59b85b7f73c173ce9ee601fc7f60759ed92d25b562"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 1,
+      "detail": "前端 lint 缓存命中；README 的 12 个既有文章链接缺失，未进入后续全局格式检查。",
+      "log": "/tmp/workbench-lint-final.log",
+      "sha256": "1b1dc93a773a904f9e04248c9c2f9d6dcc290564858904636e8719ff9cf8b579"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "detail": "Nx 35/35 缓存命中；建模扩展 TypeScript 检查实际执行。",
+      "log": "/tmp/workbench-build-final.log",
+      "sha256": "1c319a7532e5100f0b21e05b2eb7d52121306210ad36e998c61dce9af6f508c0"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 1,
+      "detail": "8 项检查器测试通过；README 的 12 个既有文章链接缺失。",
+      "log": "/tmp/workbench-guides-final.log",
+      "sha256": "7f0a669f16d3fb40aff80cebc23322b2968b4c63f58171b138f3ce47a6c4fb52"
+    }
+  ],
+  "additionalChecks": {
+    "scopedPrettier": "passed",
+    "gitDiffCheck": "passed",
+    "metadataAudit": "passed",
+    "fmApiDiff": "unchanged",
+    "lsp": "8 paths probed; zero diagnostics, 2 confirmed clean and 6 inconclusive",
+    "agentBehaviorEvals": "updated prompts, not executed"
+  },
+  "handoff": "本轮实现和产物已替换；项目总检查未全通过。保留无关工作树改动，不删除写作 Skill、不补造文章、不降低测试要求。没有业务批准或任务完成状态变更。日志与截图位于系统临时目录，未嵌入 HTML。"
+}

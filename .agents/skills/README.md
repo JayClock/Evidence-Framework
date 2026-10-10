@@ -9,7 +9,7 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 | [evidence-modeling](evidence-modeling/SKILL.md)           | 显式组合建模入口   | 目标／已有记录 → 每轮访谈与术语沉淀；另按授权编辑模型、校验与交接                        | 组合 Discovery 与 FM；界面扩展可选                             |
 | [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 经营材料 → 合约权责、凭证追溯、单据推演与角色玩家发现；可读视图、来源及当轮术语          | 通用访谈只需对话和文件；FM 专业判断需读取 FM 参考              |
 | [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 每轮来源 → 统一领域语言；充分材料 → 源 JSON、验证场景与实际结果                          | 读取准则只需文本；执行校验需 Python 3.10+                      |
-| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 关系图、时间线、规则追溯、接口矩阵与 JSON 原文                       | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
+| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 对象树、业务详情、场景判断与双向引用；不携带来源信息                 | Python、可定位的 FM／API Skill；浏览器回归需 Node.js 与 Chrome |
 | [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                 |
 | [evidence-api-design](evidence-api-design/SKILL.md)       | 整体 API 设计      | 已确认 FM → HTTP 契约、OpenAPI、超媒体与消费者流程                                       | Python、可定位的 evidence-fm                                   |
 | [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                           |

@@ -1,0 +1,38 @@
+{
+  "feedback": "还缺少了上下文的划分",
+  "decisions": [
+    "同一张全局画布恢复有名称的领域、合同与履约上下文边界，履约嵌套于实际所属合同；不恢复流程列标题、先于标注或多图切换。",
+    "Context 是背景边界而非关系端点；边界名称支持点击及键盘进入详情，返回保持画布状态。",
+    "边界只包住实际归属对象；不能按请求使用关系放置共享确认。跨合同玩家只出现一次并留在原归属，空上下文仍有边界。",
+    "同步 Skill 展示契约和回归；FM/API、计划状态及无关工作树改动保持不变。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "e2510a1d0aa3091488707fd02e7fc7d87fd083d437a275e0ab3e9d45be91bcd1",
+    "navigationTargets": 543,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-bG3xSE",
+    "visualReview": "查看全局简化图及最终标准图，确认边界名称、层级与跨上下文连线。"
+  },
+  "checks": [
+    {"command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs", "exitCode": 0, "tests": 11, "log": "/tmp/fm-context-unit.log", "sha256": "1e93c8eb874a6e56331f29e4f294e13640c9ce064bd6f6797cdf090d66d7bbb1", "redLog": "/tmp/fm-context-red.log", "coverage": "新增边界测试先红后绿；包含关系、空上下文、同合同兄弟履约引用的共享确认归属。"},
+    {"command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html", "exitCode": 0, "log": "/tmp/fm-context-browser.log", "sha256": "a464c0332bc5b710020a0168a9413f6bbdc9c428220ac5573de9b279e9b54a7f", "coverage": "两种模式逐一核对全部上下文 ID、实际几何包含与 parent 祖先关系完全一致；键盘打开边界详情及返回；保留单图对象与关系覆盖、属性导航、安全与零外联检查。"},
+    {"command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design", "exitCode": 0, "log": "/tmp/fm-context-generate.log", "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v", "exitCode": 0, "tests": 15, "log": "/tmp/fm-context-python.log", "sha256": "02e553efa196b96cbb274cb2ced6ffe7483c3321ab951d088feb428e82cfb264"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v", "exitCode": 0, "tests": 2, "log": "/tmp/fm-context-portability.log", "sha256": "458957e97329f8261c7cebef8b9d02ec6d73673b8e31a1edc208072e6d471aa4"},
+    {"command": "npm test", "exitCode": 1, "log": "/tmp/fm-context-npm-test.log", "sha256": "aaab0911e2cb98f218e18ba551de0b83881c1e8f3bfc5435d3be3520fb208e82", "detail": "Nx 35/35 缓存命中；既有固定 Skill 清单不接受 write/content-research-writer，1 项失败。"},
+    {"command": "npm run build", "exitCode": 0, "log": "/tmp/fm-context-build.log", "sha256": "16490aa129912db9623fe76b8febe17a4a8e93482733f47c629d532b245ef7cf"},
+    {"command": "npm run lint", "exitCode": 1, "log": "/tmp/fm-context-lint.log", "sha256": "91d10cac7a8ac9ed719d3c2d90d3b6655578d02db83e1cfd5adcd1e9db408d56", "detail": "README 12 个既有 docs/articles 本地断链。"},
+    {"command": "npm run guides:verify", "exitCode": 1, "log": "/tmp/fm-context-guides.log", "sha256": "6e536f9f234d1f77df221798f95d9cceb35a9804c0148cebcb11c7cbda01b172", "detail": "8 项检查器测试通过；同一批 README 断链阻塞后续格式检查。"}
+  ],
+  "additionalChecks": {
+    "scopedFormatting": "passed",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "lsp": "主动探测 4 文件均 inconclusive；未报告诊断，不据此宣称确认干净。",
+    "agentBehaviorEvals": "提示已更新，未执行",
+    "serviceRuntimeAndBusinessApproval": "未执行"
+  },
+  "handoff": "本轮反馈、决定和执行发现已归档；完整项目检查未全绿，不提升业务任务状态。临时日志与截图未嵌入业务工作台。"
+}

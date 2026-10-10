@@ -1,0 +1,38 @@
+{
+  "feedback": "帮我删除，全局图应该是一整个大图",
+  "decisions": [
+    "全局画布直接展示所有凭证、参与者和角色，正式关系连接实际对象，不汇总到边界入口或切换合同。Context 归属仍保留在树、悬停和详情。",
+    "删除先于文字及其箭头头部、列标题、履约背景框、图内统计和长篇说明。precedes 仍保留原语义，在主图按普通关联绘制。仅 plays_role 带箭头。",
+    "关系名称移入悬停、键盘标签和详情；完整关系清单默认折叠。外部玩家和共享确认各只画一次。",
+    "保留简化/标准模式、真实责任角标、类型/时间字段/基数、缩放、原始大小和详情返回。未修改 FM/API 或计划状态。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "ccd033fd4b54f34e9898bbe3c29aafa852ac1e67e5c6552206400e577d82e066",
+    "navigationTargets": 543,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-CaS8kc",
+    "reviewed": "全局简化图及最终标准图；窄屏详情。"
+  },
+  "checks": [
+    {"command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs", "exitCode": 0, "tests": 9, "log": "/tmp/fm-whole-unit.log", "sha256": "75df6b6f73dc3c511bff1b1327897fca92b1116e0243e839074030eee9e3adfc"},
+    {"command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html", "exitCode": 0, "log": "/tmp/fm-whole-browser.log", "sha256": "1308b3f7e2f9dc5d764f46a99290e757a9539fc14a785d70764f92e50be9361c"},
+    {"command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design", "exitCode": 0, "log": "/tmp/fm-whole-generate.log", "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v", "exitCode": 0, "tests": 15, "log": "/tmp/fm-whole-python.log", "sha256": "9d43d4abba8aa1f0857fa6ddf6c738f41896ca7be8d74cfc984dcca4bc38ebb0"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v", "exitCode": 0, "tests": 2, "log": "/tmp/fm-whole-portability.log", "sha256": "1439acd58c62c8c5eab2885d261fab61e2b0ea88b5b33bd950dfb18d24f3e9b9"},
+    {"command": "npm test", "exitCode": 1, "log": "/tmp/fm-whole-npm-test.log", "sha256": "6df92e32c387f67c45e62c1700ee80ef325456cb8568db775e7a26eec511f0c1", "detail": "Nx 35/35 缓存命中；既有 Skill 固定清单不接受 write/content-research-writer，1 项失败。"},
+    {"command": "npm run build", "exitCode": 0, "log": "/tmp/fm-whole-build.log", "sha256": "45f3e22d1ce8b2f5a25a87861c9afc99418bfd726a9a1266661a119d0d0bfeb9", "detail": "Nx 35/35 缓存命中。"},
+    {"command": "npm run lint", "exitCode": 1, "log": "/tmp/fm-whole-lint.log", "sha256": "f20aa392fb9d1453719910b28ebac070ece075aaecbe5f0a5e4d83bf56fa35c6", "detail": "既有 README 断链阻塞 Guides。"},
+    {"command": "npm run guides:verify", "exitCode": 1, "log": "/tmp/fm-whole-guides.log", "sha256": "f2675b8af799e754ee9987de82937bca1c4b7f566c4ad7e7d1b520c6a96645bb", "detail": "8 项检查器测试通过；README 12 个 docs/articles 链接缺失。"}
+  ],
+  "additionalChecks": {
+    "scopedPrettier": "passed",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "lsp": "3 文件主动检查，1 clean、2 inconclusive，未报告诊断但不能声称全部静态检查确认干净。",
+    "agentBehaviorEvals": "已更新，未执行",
+    "businessApprovalAndServiceRuntime": "未执行，不以可视化验证代替"
+  },
+  "handoff": "本轮反馈、实现决定和真实检查记录已保存；无关既有工作树问题保留，项目总检查未全绿。日志与截图在临时目录，未嵌入工作台。"
+}

@@ -312,14 +312,17 @@ class SkillDocumentationTests(unittest.TestCase):
         visual = ROOT / "evidence-visualization"
         for path in (
             "scripts/generate.py",
-            "assets/page.html",
-            "assets/review.js",
-            "assets/style.css",
-            "assets/vendor/cytoscape.min.js",
+            "assets/workbench.html",
+            "assets/workbench.js",
+            "assets/business-graph.js",
+            "assets/workbench.css",
             "tests/review-browser.mjs",
+            "tests/business-graph.test.mjs",
             "requirements.txt",
         ):
             self.assertTrue((visual / path).is_file(), path)
+        for removed in ("assets/page.html", "assets/review.js", "assets/style.css", "assets/vendor"):
+            self.assertFalse((visual / removed).exists(), removed)
         for name in ("evidence-modeling", "evidence-api-design"):
             entry = (ROOT / name / "SKILL.md").read_text()
             self.assertIn("evidence-visualization", entry)

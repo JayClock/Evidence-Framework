@@ -1,0 +1,47 @@
+{
+  "feedback": "参考《使用履约建模法实施面向业务设计（中篇直播版）.pdf》的形式，内容以当前项目为准，构建图例。",
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "reference": {
+    "path": "使用履约建模法实施面向业务设计（中篇直播版）.pdf",
+    "sha256": "4cc041f932432aa04491bbddc83bfd0c00a6bd081b6f41344ccc29c46023632b",
+    "freshlyRenderedAndReviewedPages": [58, 66],
+    "renderDirectory": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/fm-legend-pdf-osu6lfx5",
+    "use": "仅借鉴矩形/圆角、类型与名称排布、责任角标、扮演箭头的表达方式；不引入采购、发票、支付渠道等参考业务，不嵌入材料内容。"
+  },
+  "decisions": [
+    "替换文字字符图例为原生 details 图形图例，默认收起，按业务对象、上下文边界、关系连线分组。模式切换更名为显示模式，并保留图例展开状态。",
+    "每类只选当前布局中的一个真实示例；当前没有的类型或线型不展示。名称、已有时间字段、责任方、父上下文、关系端点均来自当前投影。",
+    "节点图例与主图共享颜色；上下文仍为归属边界，履约图例嵌套真实父上下文。角色扮演箭头从玩家指向角色，不补付款确认或证明角色责任角标。",
+    "图例使用 HTML/CSS 说明样本，不添加主图节点、业务 ID 或关系；保留单张 SVG 全局图、居中、高亮与导航行为。同步当前 Skill、文档及待执行评测。"
+  ],
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "82f140d95935ffe191cdd05b1958151630df65aebde18cb3d8777e6ea7810fa5",
+    "detailTargets": 530,
+    "contextContainers": 13,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-ngApP6",
+    "reviewedScreenshots": ["legend-objects.png", "legend-contexts-lines.png", "legend-mobile.png"]
+  },
+  "checks": [
+    {"command":"node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs","exitCode":0,"tests":16,"log":"/tmp/fm-legend-unit.log","sha256":"bb1a8e075e51745b338dbdf86d8296a7255d6216196be9caf0ccb567179af596"},
+    {"command":"node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v","exitCode":0,"tests":15,"log":"/tmp/fm-legend-python.log","sha256":"5d15b3ec31d6d1e5f411f10bb8ecb24a0f4e08f7d3316e5cf5e8eda2f07a65a5"},
+    {"command":"node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v","exitCode":0,"tests":2,"log":"/tmp/fm-legend-portability.log","sha256":"00810525c5775ac344b35d074935c15b46e2272e56dc5f23e83e91469e359134"},
+    {"command":"node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design","exitCode":0,"log":"/tmp/fm-legend-generate.log","sha256":"f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command":"node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html","exitCode":0,"log":"/tmp/fm-legend-browser.log","sha256":"809b1bb360457b522aa643bd08ba55860833066947ef0b87d89f046ef5e86545","coverage":"类型集合完整且无增项、真实样例名称与责任引用、颜色一致、关系端点与线型、键盘展开、模式切换保留展开、窄屏无溢出、无重复主图节点；既有居中、高亮、导航、安全与零外联回归通过。"},
+    {"command":"npm test","exitCode":1,"log":"/tmp/fm-legend-npm-test.log","sha256":"c59a5e38b51670c630a8a68b0448054f4279623921943e896661561372467780","detail":"Nx 35/35 缓存；既有固定 Skill 清单检查失败。"},
+    {"command":"npm run build","exitCode":0,"log":"/tmp/fm-legend-build.log","sha256":"735673ece20af0b5754a957650750096c980d98999b8f2c1f7799abd753df663","detail":"Nx 35/35 缓存。"},
+    {"command":"npm run lint","exitCode":1,"log":"/tmp/fm-legend-lint.log","sha256":"3eb48df69527bd5d058f0793ee98ef2b0976c8b4d7b86d127d63165f75e53440","detail":"README 12 个既有 docs/articles 断链。"},
+    {"command":"npm run guides:verify","exitCode":1,"log":"/tmp/fm-legend-guides.log","sha256":"2034678c36b1225846b23f6d072956e93d1c1f340357fbe74918735c868b1a06","detail":"8 项检查器回归通过；同一批 README 断链。"}
+  ],
+  "additionalChecks": {
+    "redBeforeGreen": "新增 2 项图例单测先红后绿，日志 /tmp/fm-legend-red.log，sha256:69d03cfb41e147e0e63d64ec8b4b0d14937a6d57262f2b546a71e903c2fb4366。",
+    "format": "本轮源文件与当前文档 Prettier 通过，日志 /tmp/fm-legend-format.log；未格式化生成 HTML。",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "lsp": "主动检查 4 文件，均 inconclusive，不能据零诊断确认干净。",
+    "agentBehaviorEvals": "新增评测，未执行",
+    "serviceRuntimeAndBusinessApproval": "未执行"
+  },
+  "handoff": "反馈、参考核对与设计决定已保存；专项检查通过，全项目仍有既有阻塞。业务源及计划状态不变。"
+}

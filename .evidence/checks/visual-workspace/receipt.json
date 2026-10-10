@@ -1,0 +1,72 @@
+{
+  "kind": "harness-maintenance-checks",
+  "scope": "evidence-visualization workspace refactor; no business task status changes",
+  "authorization": "用户要求参考 sharptoolbox/ontology-driven-dev 重构当前可视化，允许替换现有设计。",
+  "reference": "https://github.com/sharptoolbox/ontology-driven-dev/blob/main/references/UI-UE界面设计规范.md",
+  "decisionRef": ".agents/skills/evidence-visualization/references/visual-review.md",
+  "cwd": "repository root",
+  "environment": "Node.js v26.8.1; installed Google Chrome; Python selected by tools/python/python.mjs; no dependencies installed",
+  "artifact": ".evidence/views/index.html",
+  "htmlSha256": "ac6f30b53b13589e059ed1e438be58f5b6692a6f0f481faff5ca21576067bd80",
+  "checks": [
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html (before implementation)",
+      "exitCode": 1,
+      "result": "Expected red: old navigation has 0 groups, expected 4.",
+      "log": "/tmp/evidence-visual-red.log",
+      "sha256": "ef7bc8082ac0c8988794f2ed22eb7ffc213c0f556b41561980c72267be562468"
+    },
+    {
+      "command": "node tools/python/python.mjs --require jsonschema,celpy,yaml -B .agents/skills/evidence-visualization/scripts/generate.py --project-root $PWD --fm-skill $PWD/.agents/skills/evidence-fm --api-skill $PWD/.agents/skills/evidence-api-design",
+      "exitCode": 0,
+      "log": "/tmp/evidence-visual-generate.log",
+      "sha256": "ef8c4bb1225d29dcdaaee7e1d7733543bb48a0b9f080899ffaf3ccbfd7f2b422"
+    },
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html",
+      "exitCode": 0,
+      "result": "Final HTML: tabs, keyboard navigation, pane toggles, mobile drawer, 20 scenarios, 28 interfaces, 187 source files, no script errors or external requests. Desktop and mobile screenshots inspected during iteration.",
+      "log": "/tmp/evidence-visual-browser.log",
+      "sha256": "5df8f941269369415a71cad4e5bef654485b61128dfec9dc1e6a533b0c62413b"
+    },
+    {
+      "command": "node tools/python/python.mjs --require jsonschema,celpy,yaml -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v",
+      "exitCode": 0,
+      "result": "16 tests passed; 2 additional portability tests passed in npm test.",
+      "log": "/tmp/evidence-visual-unit.log",
+      "sha256": "4e6f24058617b50ae496c574731c94e36e38606b205364e04736d7012346961a"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "result": "Existing untracked skills write and content-research-writer fail canonical-root inventory assertion. Nx 35/35 tasks used cache; visualization tests passed. Unrelated files preserved.",
+      "log": "/tmp/evidence-visual-npm-test.log",
+      "sha256": "34497ab25cb1d73209b68e50026c86792c803a4f5ce38d64b425b4b2a57f9ee7"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 1,
+      "result": "12 existing README article links have missing targets; unrelated edits preserved.",
+      "log": "/tmp/evidence-visual-lint.log",
+      "sha256": "2044d04c602adf2d8ca81425e3cf9bc66bbbde52dbd9ffede14999455239e338"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "result": "Nx 35/35 cache hits; extension TypeScript check executed successfully.",
+      "log": "/tmp/evidence-visual-build.log",
+      "sha256": "0def2e9e8bc5aad4bed27a9a972f8d48f7b4d2c3aff23a2589d28ab0a4a3ab67"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 1,
+      "result": "Guides tests passed; link check blocked by the same 12 README article links.",
+      "log": "/tmp/evidence-visual-guides.log",
+      "sha256": "9ee27d48d31226f943bd6074caf4927aa279e3a09a2db86b83076a1759f387c9"
+    }
+  ],
+  "standardsReview": "FM/API unchanged; generated page retains CSP and offline text-only data rendering; LSP reports no errors, with existing style hints and hidden !important warning. No Java changes, so gradlew check not separately run.",
+  "specReview": "Reference-inspired grouped navigation, tabs, compact flat layout and source inspector implemented. Reference AI chat and business stack intentionally not imported.",
+  "limitations": "Full repository quality gates are not green. No business approval or runtime API validation claimed. Logs and screenshots are local temporary pointers, not durable copies.",
+  "handoff": "Design decisions saved in visual-review.md; unrelated Skills inventory and README link failures left for their owners. No business plan or task status updated."
+}

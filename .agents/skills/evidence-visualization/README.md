@@ -1,41 +1,36 @@
-# Evidence Visualization Skill
+# Evidence Visualization
 
-把当前 FM 与已有 API 生成为自包含离线审核页。业务使用从 [SKILL.md](SKILL.md) 进入；生成方法及可复用提示词见 [可视化审核](references/visual-review.md)，空白页排查见 [运行说明](references/operations.md)。
+离线只读业务对象工作台。使用入口见 [SKILL.md](SKILL.md)，展示契约见 [工作台设计](references/visual-review.md)，环境及故障处理见 [运行说明](references/operations.md)。
 
 ```text
 evidence-visualization/
 ├── SKILL.md
-├── requirements.txt
 ├── scripts/generate.py
-├── assets/                 # 页面模板、CSS、JS、固定版本图形库
-├── references/             # 方法与运行说明
-├── tests/                  # 可随包复制的生成和浏览器回归
-└── evals/                  # 行为评测用例；不是已执行结论
+├── assets/workbench.html
+├── assets/workbench.css
+├── assets/workbench.js
+├── assets/business-graph.js
+├── references/
+├── tests/
+└── evals/
 ```
 
-完整复制或安装此目录即可复用，不需要业务项目中的工具实现。定位 `evidence-fm`，有 API 时还需 `evidence-api-design`，通过绝对路径传入，不要求兄弟目录。业务 YAML 与输出留在目标项目，不写 Skill 安装目录。
+生成器使用 Python 标准库，调用已安装的 FM/API 正式 CLI。完整复制 Skill 即可复用，不向业务项目复制工具，不携带第三方页面实现。
 
-## 本仓库生成示例
-
-在项目根设置满足依赖的 `PYTHON`：
+在本仓库根运行：
 
 ```bash
-VISUAL_SKILL_DIR="$PWD/.agents/skills/evidence-visualization"
-"$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
+node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py \
   --project-root "$PWD" \
   --fm-skill "$PWD/.agents/skills/evidence-fm" \
   --api-skill "$PWD/.agents/skills/evidence-api-design"
+node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html
 ```
 
-然后用浏览器打开 `.evidence/views/index.html`。不手改或格式化输出；修改资源后重新生成。
+首页用一张完整全局图展示全部凭证、参与者、角色及真实关系，按合同—请求—确认／证明组织位置，不以边界入口卡片代替对象。仅角色扮演保留箭头，先于语义移至详情；不显示流程列标题和图内统计；领域、合同及其内部履约用命名边界框区分，仍在同一张画布上，外部玩家不移入消费方边界。支持简化／标准图、责任角标、缩放、原始大小和详情跳转；标准图只补充已声明的类型、时间字段与基数，属性、场景实例与 API 不成为主图节点。左侧仅业务结构、验证场景、API 三组，API 下为接口能力、接口资源、调用流程。独立参与者归入业务结构；场景凭证从场景进入，响应表示和实例绑定从接口进入，关系从图上连线或搜索进入。Context 仅作为左侧折叠组及图上边界，不重复列为对象，不提供详情和属性；上下文搜索、引用及图边界点击只定位展开分组，不切换当前正文。凭证、参与者和角色的详情仅保留名称、ID、所属上下文与业务属性；属性在所属对象内高亮定位。规则、关系、场景和 API 保留专用详情与引用，全局搜索仍覆盖所有对象。图上分别展示证明角色与具体玩家，场景反例不误报为失败。HTML 不携带原始文件、路径、来源记录、执行命令或历史快照。
 
-## 开发验证
+悬停对象可追踪一跳关联，上下文只高亮内部对象及连线，责任角标按角色处理；键盘焦点优先，移出／失焦恢复，不改变详情和关系语义。完整规则见工作台设计。
 
-```bash
-"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests" -v
-node "$VISUAL_SKILL_DIR/tests/review-browser.mjs" "$PROJECT_ROOT/.evidence/views/index.html"
-```
+画布上方可展开图形图例，按业务对象、上下文、连线说明符号，并使用当前模型的真实名称和责任角标作示例。参考资料只影响表达形式，未建模的类型不加入；原单画布保持不变。
 
-单元测试可从任意工作目录运行，不依赖仓库外的文件。浏览器测试适应实际输入的范围；环境要求、截图位置与错误处理见运行说明。独立安装生成验证在本包 `tests/portability/`，单独执行 `"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests/portability" -v`。可用 `EVIDENCE_FM_SKILL` 指定测试依赖的 FM 包绝对路径；未设置时使用本仓库的相邻 FM 包。该套件复制安装包后仅运行顶层单元测试，避免递归复制自身。
-
-图形库为 Cytoscape.js 3.33.1，保留 [MIT 许可证](assets/vendor/LICENSE.cytoscape) 及 [版本信息](assets/vendor/README.md)。第三方压缩资源不手改。
+开发检查与隔离安装测试见运行说明。`evals/evals.json` 是待执行的 Agent 行为评测，不是检查通过记录。

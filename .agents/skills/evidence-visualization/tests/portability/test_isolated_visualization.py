@@ -81,16 +81,19 @@ class IsolatedVisualizationTests(unittest.TestCase):
         page = project / ".evidence/views/index.html"
         self.assertEqual(str(page), json.loads(result.stdout)["output"])
         match = re.search(
-            r'<script type="application/json" id="review-data">(.*?)</script>',
+            r'<script type="application/json" id="workbench-data">(.*?)</script>',
             page.read_text(),
             re.DOTALL,
         )
         if match is None:
             self.fail("Generated page has no embedded review data")
         data = json.loads(match[1])
-        self.assertTrue(data["check"]["valid"])
-        self.assertIsNone(data["api"])
-        self.assertIsNone(data["simulation"]["simulationPassed"])
+        self.assertTrue(data["validation"]["fm"])
+        self.assertIsNone(data["validation"]["api"])
+        self.assertIsNone(data["validation"]["simulation"])
+        self.assertEqual(0, data["counts"]["contracts"])
+        self.assertNotIn("files", data)
+        self.assertNotIn(str(project), page.read_text())
         self.assertEqual(before_model, file_hashes(model))
         self.assertEqual(before_skill, file_hashes(self.skill))
         self.assertEqual(before_dependency, file_hashes(fm_skill))

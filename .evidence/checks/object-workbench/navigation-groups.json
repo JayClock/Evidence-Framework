@@ -1,0 +1,39 @@
+{
+  "feedback": "按照这个方式，重构一下。不要残留旧描述",
+  "decisions": [
+    "左侧固定业务结构、验证场景、API 三组；API 下为接口能力、接口资源、调用流程。独立参与者纳入业务结构。",
+    "关系、场景凭证、响应表示、实例绑定不再平铺为栏目；保留全部数据、稳定 ID、搜索、详情及正反向引用。属性继续在所属对象内定位。",
+    "用明确导航分组代替遍历类型枚举的通用分类索引，空组显示空态，环形归属与未解析归属的业务对象各列一次。",
+    "同步当前 Skill、README、设计/运行文档、evals、浏览器回归及 HTML；历史检查记录不改写，FM/API 和计划状态未修改。"
+  ],
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "artifact": {
+    "path": ".evidence/views/index.html",
+    "sha256": "84ac3517a787c44241c5d0de859d5247f2bbee8f013296fa948d6b29a272eb82",
+    "objects": 543,
+    "externalRequests": 0,
+    "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-nObMuP",
+    "reviewedScreenshot": "navigation.png"
+  },
+  "checks": [
+    {"command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html", "exitCode": 0, "log": "/tmp/fm-nav-browser.log", "sha256": "5b223d0020b90ae8100257e7078f0a8104735c3c491ae91a9529a5bdf1f9f71a", "redLog": "/tmp/fm-nav-red.log", "coverage": "三组导航及 API 子组、条目唯一、所有辅助对象逐一搜索/打开/详情引用/返回、空输入、独立参与者、环形和未解析归属、无 API；保留全部对象、图、属性、安全和窄屏回归。"},
+    {"command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs", "exitCode": 0, "tests": 11, "log": "/tmp/fm-nav-unit.log", "sha256": "8aab54fabb4279a0a4ed2a34600c9b64c8d72367701c33e6759148a53f6f86ef"},
+    {"command": "node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py --project-root /Users/zhongjie/Documents/Github/Evidence-Framework --fm-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm --api-skill /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-api-design", "exitCode": 0, "log": "/tmp/fm-nav-generate.log", "sha256": "f0be81f02af921d81025a2464fd66f37b209c38c3bccece83a353d2192527f5e"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests -v", "exitCode": 0, "tests": 15, "log": "/tmp/fm-nav-python.log", "sha256": "595ea701f9c2967f530644c7c9bd816e14df447aa81065f5b1c8e6cfba9a9b44"},
+    {"command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-visualization/tests/portability -v", "exitCode": 0, "tests": 2, "log": "/tmp/fm-nav-portability.log", "sha256": "33ec5416b71a231d0048583a2631d96f91be4eab3d18121dff5c4f907675cb5d"},
+    {"command": "npm test", "exitCode": 1, "log": "/tmp/fm-nav-npm-test.log", "sha256": "7d1d077bb6cc1a8935df277becadbe343a2294978e60ccae9e6f3bce8de6c97d", "detail": "Nx 35/35 缓存命中；既有 Skill 清单不接受 write/content-research-writer，1 项失败。"},
+    {"command": "npm run build", "exitCode": 0, "log": "/tmp/fm-nav-build.log", "sha256": "fc2c46d1a8f119ebc736a3e3b1a3ee4246f50f00d7635510c1ba24a1c3e92629", "detail": "Nx 35/35 缓存命中；建模扩展类型检查实际运行。"},
+    {"command": "npm run lint", "exitCode": 1, "log": "/tmp/fm-nav-lint.log", "sha256": "76d103d571d78d42c382d54a97e9ffaed1dfdcb6b3f08e568cba95177cd66ff9", "detail": "README 12 个既有 docs/articles 断链阻塞 Guides。"},
+    {"command": "npm run guides:verify", "exitCode": 1, "log": "/tmp/fm-nav-guides.log", "sha256": "072084520f6f4887e1cf21b787180531fffed1b0006ea6c202c5761b20445dd0", "detail": "8 项检查器回归通过；相同 README 断链。"},
+    {"command": "rg -n '分类对象索引|其余对象提供分类索引|分类索引覆盖|消费者旅程' .agents/skills/evidence-visualization .evidence/views/index.html", "exitCode": 1, "detail": "无匹配，当前 Skill 与产物无旧导航描述。", "log": "/tmp/fm-nav-retired-text.log", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+  ],
+  "additionalChecks": {
+    "scopedFormatting": "passed",
+    "gitDiffCheck": "passed",
+    "fmApiDiff": "empty",
+    "lsp": "未报告错误；workbench.js 保留原有 3 项 getElementById 使用建议。最终截图用测试调整后工具自动复查 JS clean。",
+    "agentBehaviorEvals": "已更新，未执行",
+    "serviceRuntimeAndBusinessApproval": "未执行"
+  },
+  "handoff": "本轮反馈、决定和真实发现已保存；没有业务信息被删除。全项目检查仍有既有阻塞，不据此提升任务状态或宣称业务批准。"
+}

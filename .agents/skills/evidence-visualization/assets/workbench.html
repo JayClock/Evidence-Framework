@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="@@CSP@@" />
+    <title>Evidence · 业务对象工作台</title>
+    <style>
+      @@STYLE@@;
+    </style>
+  </head>
+  <body>
+    <header>
+      <button id="home" class="brand" aria-label="返回模型概览">
+        E<span>Evidence</span>
+      </button>
+      <div class="header-title">业务对象工作台 <span>MODEL EXPLORER</span></div>
+      <span class="offline">离线 · 只读</span>
+    </header>
+    <div class="layout">
+      <aside aria-label="模型导航">
+        <div class="search-box">
+          <label for="search">查找业务对象 <kbd>⌘ / Ctrl K</kbd></label
+          ><input
+            id="search"
+            type="search"
+            placeholder="名称、ID、规则或字段"
+            autocomplete="off"
+          />
+        </div>
+        <div class="tree-tools">
+          <button id="expand">展开全部</button
+          ><button id="collapse">折叠全部</button
+          ><button id="reset">清除搜索</button>
+        </div>
+        <nav id="tree" aria-label="业务对象树"></nav>
+        <p class="aside-note">
+          模型描述业务，场景检验判断。<br />机器检查不等于业务批准。
+        </p>
+      </aside>
+      <main id="main">
+        <div class="navigation">
+          <button id="back" disabled>← 返回</button>
+          <nav id="breadcrumbs" aria-label="当前位置"></nav>
+          <button id="copy" hidden>复制 ID</button>
+        </div>
+        <div id="notice" role="status">正在加载对象工作台…</div>
+        <article id="detail" aria-live="polite"></article>
+      </main>
+    </div>
+    <noscript>请在启用 JavaScript 的浏览器中打开此离线文件。</noscript>
+    <!-- prettier-ignore -->
+    <script type="application/json" id="workbench-data">@@DATA@@</script>
+    <!-- prettier-ignore -->
+    <script>@@APP@@</script>
+  </body>
+</html>
