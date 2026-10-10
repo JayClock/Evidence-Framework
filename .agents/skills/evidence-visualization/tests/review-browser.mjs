@@ -656,7 +656,10 @@ try {
       ),
       before,
     );
-    assert.equal(await evaluate('document.activeElement.dataset.container'), id);
+    assert.equal(
+      await evaluate('document.activeElement.dataset.container'),
+      id,
+    );
     assert.ok(await evaluate('document.activeElement.parentElement.open'));
     await evaluate('document.activeElement.click()');
     assert.equal(
@@ -711,7 +714,7 @@ try {
       '[...document.querySelectorAll("#tree [data-node]")].map(n=>n.dataset.node).sort()',
     ),
     await evaluate(
-      'DATA.nodes.filter(n=>["evidence","participant","role","rule","pattern","scenario","capability","resource","journey"].includes(n.group)).map(n=>n.id).sort()',
+      'DATA.nodes.filter(n=>["evidence","participant","role","rule","pattern","scenario","capability","resource","journey"].includes(n.group)&&!(n.group==="rule"&&n.kind==="derivation")).map(n=>n.id).sort()',
     ),
   );
   assert.ok(
@@ -727,6 +730,83 @@ try {
       '["capability","resource","journey"].filter(group=>DATA.nodes.some(n=>n.group===group))',
     ),
   );
+  // Derivation IDs stay traceable, but all their reading routes lead to target fields.
+  const derivations = await evaluate(
+    'DATA.nodes.filter(n=>n.group==="rule"&&n.kind==="derivation").map(n=>({id:n.id,target:DATA.edges.find(e=>e.from===n.id&&e.label==="计算结果")?.to}))',
+  );
+  for (const derivation of derivations) {
+    assert.ok(derivation.target, `Target field for ${derivation.id}`);
+    await evaluate(
+      `document.getElementById('search').value=${JSON.stringify(derivation.id)}; buildTree()`,
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('#tree [data-node="${derivation.id}"]')`,
+      ),
+      null,
+    );
+    assert.ok(
+      await evaluate(
+        `Boolean(document.querySelector('#tree [data-node="${derivation.target}"]'))`,
+      ),
+    );
+    assert.ok(
+      await evaluate(
+        '[...document.querySelectorAll("#tree [data-node]")].every(n=>!(nodes.get(n.dataset.node).group==="rule"&&nodes.get(n.dataset.node).kind==="derivation"))',
+      ),
+    );
+    assert.equal(
+      await evaluate(
+        'new Set([...document.querySelectorAll("#tree [data-node]")].map(n=>n.dataset.node)).size',
+      ),
+      await evaluate('document.querySelectorAll("#tree [data-node]").length'),
+    );
+    await evaluate(
+      `document.querySelector('#tree [data-node="${derivation.target}"]').click()`,
+    );
+    assert.equal(await evaluate('current'), derivation.target);
+    assert.equal(
+      await evaluate('document.activeElement.dataset.attribute'),
+      derivation.target,
+    );
+    await evaluate('document.getElementById("reset").click(); select("")');
+    await evaluate(`select(${JSON.stringify(derivation.id)})`);
+    assert.equal(await evaluate('current'), derivation.target);
+    assert.deepEqual(
+      await evaluate(
+        '[...document.querySelectorAll("#detail h2")].map(n=>n.textContent)',
+      ),
+      ['所属上下文', '业务属性'],
+    );
+    assert.equal(
+      await evaluate(
+        'document.getElementById("detail").textContent.includes("查看完整规则")',
+      ),
+      false,
+    );
+    await evaluate('document.getElementById("back").click()');
+    assert.equal(await evaluate('current'), '');
+    const entries = await evaluate(
+      `DATA.edges.filter(e=>e.to===${JSON.stringify(derivation.id)}&&["scenario","capability"].includes(nodes.get(e.from)?.group)).map(e=>e.from)`,
+    );
+    for (const entry of entries) {
+      await evaluate(
+        `select(${JSON.stringify(entry)}); [...document.querySelectorAll('#detail [data-ref]')].find(n=>n.dataset.ref===${JSON.stringify(derivation.id)}).click()`,
+      );
+      assert.equal(await evaluate('current'), derivation.target);
+      assert.equal(
+        await evaluate('document.activeElement.dataset.attribute'),
+        derivation.target,
+      );
+      await evaluate('document.getElementById("back").click()');
+      assert.equal(await evaluate('current'), entry);
+    }
+    assert.ok(
+      await evaluate(
+        'history.every(id=>!(nodes.get(id)?.group==="rule"&&nodes.get(id)?.kind==="derivation"))',
+      ),
+    );
+  }
   // Every auxiliary object can be searched and opened, not just representative samples.
   for (const item of await evaluate(
     'DATA.nodes.filter(n=>["relationship","instance","binding","representation"].includes(n.group)).map(n=>({id:n.id,group:n.group}))',
@@ -913,7 +993,7 @@ try {
     // Follow actual rule/API attribute references, then restore the anchor via Back.
     for (const group of ['rule', 'capability', 'representation']) {
       const edge = await evaluate(
-        `DATA.edges.find(e=>nodes.get(e.from)?.group===${JSON.stringify(group)}&&nodes.get(e.to)?.group==="attribute")`,
+        `DATA.edges.find(e=>nodes.get(e.from)?.group===${JSON.stringify(group)}&&!(nodes.get(e.from)?.group==="rule"&&nodes.get(e.from)?.kind==="derivation")&&nodes.get(e.to)?.group==="attribute")`,
       );
       if (!edge) {
         notApplicable.push(`${group} attribute reference`);
@@ -942,13 +1022,185 @@ try {
       assert.equal(await evaluate('current'), edge.from);
     }
   } else notApplicable.push('attributes');
+  // A derived field exposes the existing rule without leaving its owner's table.
+  const fieldRules = await evaluate(
+    'DATA.edges.filter(e=>e.label==="由规则计算"&&nodes.get(e.from)?.group==="attribute")',
+  );
+  for (const edge of fieldRules) {
+    await evaluate(`select(${JSON.stringify(edge.from)})`);
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected [data-field-rule]")?.dataset.fieldRule',
+      ),
+      edge.to,
+      `Inline derivation missing for ${edge.from}`,
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-description")?.textContent',
+      ),
+      await evaluate(`nodes.get(${JSON.stringify(edge.to)}).description`),
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-details")?.open',
+      ),
+      false,
+      'Technical details must be collapsed by default',
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-details > summary")?.textContent',
+      ),
+      '表达式与变量说明',
+    );
+    assert.ok(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-description").getClientRects().length > 0',
+      ),
+    );
+    assert.ok(
+      await evaluate(
+        '!document.querySelector(".attribute-selected [data-field-rule] pre").checkVisibility()',
+      ),
+    );
+    assert.ok(
+      await evaluate(
+        '[...document.querySelectorAll(".attribute-selected [data-binding]")].every(n=>!n.checkVisibility())',
+      ),
+    );
+    const beforeDisclosure = await evaluate('[current,history.length]');
+    await evaluate(
+      'document.querySelector(".attribute-selected .field-rule-details > summary").click()',
+    );
+    assert.ok(
+      await evaluate(
+        'document.querySelector(".attribute-selected [data-field-rule] pre").checkVisibility()',
+      ),
+    );
+    assert.deepEqual(
+      await evaluate('[current,history.length]'),
+      beforeDisclosure,
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected [data-field-rule] pre")?.textContent',
+      ),
+      await evaluate(`nodes.get(${JSON.stringify(edge.to)}).expression`),
+    );
+    assert.deepEqual(
+      await evaluate(
+        '[...document.querySelectorAll(".attribute-selected [data-binding]")].map(n=>n.dataset.binding)',
+      ),
+      await evaluate(
+        `nodes.get(${JSON.stringify(edge.to)}).bindings.map(b=>b.alias)`,
+      ),
+    );
+    assert.deepEqual(
+      await evaluate(
+        '[...document.querySelectorAll(".attribute-selected [data-binding] [data-ref]")].map(n=>n.dataset.ref)',
+      ),
+      await evaluate(
+        `nodes.get(${JSON.stringify(edge.to)}).bindings.filter(b=>b.ref).map(b=>b.ref)`,
+      ),
+    );
+    await checkCellAlignment();
+    await evaluate(
+      'document.querySelector(".attribute-selected .field-rule-details > summary").click()',
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-details").open',
+      ),
+      false,
+    );
+    assert.deepEqual(
+      await evaluate('[current,history.length]'),
+      beforeDisclosure,
+    );
+  }
+  const derivedAttribute = fieldRules[0]?.from;
+  if (derivedAttribute) {
+    await evaluate(`select(${JSON.stringify(derivedAttribute)})`);
+    await screenshot('field-derivation');
+    assert.equal(
+      await evaluate(
+        'document.getElementById("detail").textContent.includes("查看完整规则")',
+      ),
+      false,
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelectorAll(".attribute-selected [data-field-rule] > .object-link").length',
+      ),
+      0,
+    );
+    assert.equal(
+      await evaluate('document.activeElement.dataset.attribute'),
+      derivedAttribute,
+    );
+    const beforeKeyboardDisclosure = await evaluate('[current,history.length]');
+    await evaluate(
+      'document.querySelector(".attribute-selected .field-rule-details > summary").focus()',
+    );
+    for (const type of ['keyDown', 'keyUp'])
+      await call('Input.dispatchKeyEvent', {
+        type,
+        key: 'Enter',
+        code: 'Enter',
+        ...(type === 'keyDown' ? { text: '\r' } : {}),
+        windowsVirtualKeyCode: 13,
+      });
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-details").open',
+      ),
+      true,
+    );
+    assert.deepEqual(
+      await evaluate('[current,history.length]'),
+      beforeKeyboardDisclosure,
+    );
+    await screenshot('field-derivation-expanded');
+    const input = await evaluate(
+      'document.querySelector(".attribute-selected [data-binding] [data-ref]")?.dataset.ref',
+    );
+    if (input) {
+      await evaluate(
+        'document.querySelector(".attribute-selected [data-binding] [data-ref]").click()',
+      );
+      assert.equal(await evaluate('current'), input);
+      await evaluate('document.getElementById("back").click()');
+      assert.equal(await evaluate('current'), derivedAttribute);
+    }
+    // Rule text is displayed as text, never evaluated or parsed as HTML.
+    await evaluate(
+      `globalThis.savedFieldRuleText=nodes.get(${JSON.stringify(fieldRules[0].to)}).expression; nodes.get(${JSON.stringify(fieldRules[0].to)}).expression="<img src=x onerror=alert(1)>"; select(${JSON.stringify(derivedAttribute)})`,
+    );
+    assert.equal(
+      await evaluate('document.querySelectorAll("#detail img").length'),
+      0,
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected [data-field-rule] pre").textContent',
+      ),
+      '<img src=x onerror=alert(1)>',
+    );
+    await evaluate(
+      `nodes.get(${JSON.stringify(fieldRules[0].to)}).expression=globalThis.savedFieldRuleText; delete globalThis.savedFieldRuleText`,
+    );
+  } else notApplicable.push('inline field derivations');
   // Test every navigation target, including owner-relative attributes.
   const ids = await evaluate(
     'DATA.nodes.filter(n=>!["context","fulfillment"].includes(n.group)).map(n=>n.id)',
   );
   for (const id of ids) {
     await evaluate(`select(${JSON.stringify(id)})`);
-    assert.equal(await evaluate('current'), id);
+    const expectedId = await evaluate(
+      `(() => { const n=nodes.get(${JSON.stringify(id)}); return n.group==='rule'&&n.kind==='derivation' ? DATA.edges.find(e=>e.from===n.id&&e.label==='计算结果').to : n.id; })()`,
+    );
+    assert.equal(await evaluate('current'), expectedId);
     if (
       await evaluate(
         '["evidence","participant","role","attribute"].includes(nodes.get(current).group)',
@@ -975,13 +1227,25 @@ try {
           'DATA.nodes.filter(n=>n.group==="attribute"&&n.parent===(nodes.get(current).group==="attribute"?nodes.get(current).parent:current)).length',
         ),
       );
+      assert.ok(
+        await evaluate(`(() => {
+        for (const row of document.querySelectorAll('#detail [data-attribute]')) {
+          const refs=(outgoing.get(row.dataset.attribute)||[]).filter(e=>e.label==='由规则计算').map(e=>e.to);
+          const displayed=[...row.querySelectorAll('[data-field-rule]')].map(n=>n.dataset.fieldRule);
+          if(JSON.stringify(displayed)!==JSON.stringify(refs)) throw Error('Unrelated rule attached to field '+row.dataset.attribute);
+          for(const id of displayed) if(nodes.get(id)?.kind!=='derivation') throw Error('A judgment is not a field computation');
+          if(!refs.length&&!row.textContent.includes('未声明派生规则')) throw Error('Missing field derivation empty state');
+        }
+        return true;
+      })()`),
+      );
     }
     if (await evaluate('nodes.get(current).group === "attribute"')) {
       assert.equal(
         await evaluate(
           'document.querySelector(".attribute-selected")?.dataset.attribute',
         ),
-        id,
+        expectedId,
       );
       assert.equal(
         await evaluate('document.querySelector("#detail h1").textContent'),
@@ -1037,7 +1301,7 @@ try {
     );
   }
   const rule = await evaluate(
-    'DATA.nodes.find(n=>n.group==="rule"&&n.description)?.id',
+    'DATA.nodes.find(n=>n.group==="rule"&&n.kind!=="derivation"&&n.description)?.id',
   );
   if (rule) {
     await evaluate(`select(${JSON.stringify(rule)})`);
@@ -1124,9 +1388,14 @@ try {
   );
   await screenshot('legend-mobile');
   await evaluate('document.querySelector(".graph-legend").open=false');
-  for (const id of ['', rule, businessObject, scenario, attribute].filter(
-    (id) => id !== undefined,
-  )) {
+  for (const id of [
+    '',
+    rule,
+    businessObject,
+    scenario,
+    derivedAttribute,
+    attribute,
+  ].filter((id) => id !== undefined)) {
     await evaluate(`select(${JSON.stringify(id)})`);
     await checkCellAlignment(id === '');
     assert.ok(
@@ -1134,7 +1403,38 @@ try {
       `Mobile overflow: ${id}`,
     );
   }
+  if (derivedAttribute) {
+    await evaluate(`select(${JSON.stringify(derivedAttribute)})`);
+    await evaluate(
+      'document.querySelector(".attribute-selected [data-field-rule]").scrollIntoView({block:"center",inline:"center"})',
+    );
+    assert.ok(
+      await evaluate('document.documentElement.scrollWidth <= innerWidth'),
+    );
+    assert.equal(
+      await evaluate(
+        'document.querySelector(".attribute-selected .field-rule-details").open',
+      ),
+      false,
+    );
+    await screenshot('field-derivation-mobile');
+    await evaluate(
+      'document.querySelector(".attribute-selected .field-rule-details > summary").click(); document.querySelector(".attribute-selected [data-field-rule]").scrollIntoView({block:"center",inline:"center"})',
+    );
+    assert.ok(
+      await evaluate(
+        '(() => { const r=document.querySelector(".attribute-selected [data-field-rule] pre").getBoundingClientRect(); return r.left>=0&&r.right<=innerWidth; })()',
+      ),
+      'Horizontal table scrolling must expose the full inline expression on mobile',
+    );
+    assert.ok(
+      await evaluate('document.documentElement.scrollWidth <= innerWidth'),
+    );
+    await checkCellAlignment();
+    await screenshot('field-derivation-expanded-mobile');
+  }
   if (attribute) {
+    await evaluate(`select(${JSON.stringify(attribute)})`);
     assert.equal(
       await evaluate('document.activeElement.dataset.attribute'),
       attribute,
@@ -1162,8 +1462,12 @@ try {
       htmlSha256: createHash('sha256').update(original).digest('hex'),
       objects: ids.length,
       businessContainers: contextIds.length,
-      contextContainers: await evaluate('DATA.nodes.filter(n=>n.group==="context").length'),
-      fulfillments: await evaluate('DATA.nodes.filter(n=>n.group==="fulfillment").length'),
+      contextContainers: await evaluate(
+        'DATA.nodes.filter(n=>n.group==="context").length',
+      ),
+      fulfillments: await evaluate(
+        'DATA.nodes.filter(n=>n.group==="fulfillment").length',
+      ),
       externalRequests: network.length,
       notApplicable,
       overview,

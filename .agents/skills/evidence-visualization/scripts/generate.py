@@ -129,7 +129,7 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     for rule in model.get("rules", []):
         node = add(rule, "rule")
         node.update(select(rule, "description expression resultType"))
-        node["bindings"] = [{"alias": alias, **select(binding, "ref cardinality")} for alias, binding in rule.get("bindings", {}).items()]
+        node["bindings"] = [{"alias": alias, **select(binding, "ref cardinality type")} for alias, binding in rule.get("bindings", {}).items()]
         link(node["id"], rule.get("contextRef"), "适用上下文")
         link(node["id"], rule.get("fulfillmentRef"), "适用履约")
         for binding in node["bindings"]:

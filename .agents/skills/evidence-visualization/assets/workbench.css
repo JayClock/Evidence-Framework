@@ -714,6 +714,34 @@ td {
   color: var(--muted);
   overflow-wrap: anywhere;
 }
+.field-computation {
+  min-width: 280px;
+  max-width: 400px;
+}
+.field-rule + .field-rule {
+  margin-top: 16px;
+}
+.field-rule-description {
+  margin: 8px 0;
+}
+.field-rule-details {
+  margin-top: 10px;
+}
+.field-rule-details > summary {
+  padding: 6px 0;
+  color: var(--blue);
+  font-size: 11px;
+}
+.field-rule pre {
+  margin: 8px 0;
+  padding: 10px;
+}
+.field-rule-inputs {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
 .attribute-selected {
   background: #eaf1ff;
   outline: 2px solid var(--blue);

@@ -74,6 +74,29 @@ class WorkbenchTests(unittest.TestCase):
         rule = next(n for n in data["nodes"] if n["id"] == "rule.a")
         self.assertEqual("以外部付款证明判断完成。", rule["description"])
 
+    def test_field_derivation_reuses_rule_and_preserves_runtime_binding_type(self):
+        model = fixture()
+        model["entities"][1]["attributes"] = [{"name": "amount", "valueType": "int"}]
+        model["entities"][3]["attributes"] = [
+            {"name": "amount", "valueType": "int", "derivedByRuleRef": "rule.amount"},
+            {"name": "currency", "valueType": "string"},
+        ]
+        model["rules"].append({
+            "id": "rule.amount", "kind": "derivation", "description": "读取协议金额并乘以传入数量。",
+            "expression": "agreement.amount * quantity", "resultType": "int",
+            "bindings": {"agreement": {"ref": "contract.a"}, "quantity": {"type": "int", "sourceRefs": ["SECRET"]}},
+            "target": {"entityRef": "request.a", "attribute": "amount"},
+        })
+        data = self.project(model)
+        rule = next(n for n in data["nodes"] if n["id"] == "rule.amount")
+        self.assertEqual([{"alias": "agreement", "ref": "contract.a"}, {"alias": "quantity", "type": "int"}], rule["bindings"])
+        self.assertEqual("agreement.amount * quantity", rule["expression"])
+        self.assertIn({"from": "request.a#amount", "to": "rule.amount", "label": "由规则计算"}, data["edges"])
+        self.assertIn({"from": "rule.amount", "to": "request.a#amount", "label": "计算结果"}, data["edges"])
+        self.assertFalse(any(e["from"] == "request.a#currency" and e["label"] == "由规则计算" for e in data["edges"]))
+        self.assertEqual(1, sum(n["id"] == "rule.amount" for n in data["nodes"]))
+        self.assertNotIn("SECRET", json.dumps(data))
+
     def test_projection_does_not_embed_provenance_or_raw_inputs(self):
         data = self.project()
         encoded = json.dumps(data)

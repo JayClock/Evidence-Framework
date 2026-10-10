@@ -70,7 +70,8 @@ function action(label, callback, cls = '') {
   return item;
 }
 function title(id) {
-  const node = nodes.get(id);
+  const source = nodes.get(id);
+  const node = isDerivation(source) ? derivationTarget(source) : source;
   if (node?.group === 'attribute')
     return `${nodes.get(node.parent)?.label || node.parent} · ${node.label}`;
   return node?.label || id;
@@ -135,15 +136,29 @@ function list(ids, empty = '未声明', target = $('detail')) {
 function isContainer(node) {
   return ['context', 'fulfillment'].includes(node?.group);
 }
+function isDerivation(node) {
+  return node?.group === 'rule' && node.kind === 'derivation';
+}
+function derivationTarget(node) {
+  const result = (outgoing.get(node.id) || []).find(
+    (edge) =>
+      edge.label === '计算结果' && nodes.get(edge.to)?.group === 'attribute',
+  );
+  return nodes.get(result?.to);
+}
 function buildTree() {
   const query = $('search').value.trim().toLocaleLowerCase();
   $('tree').replaceChildren();
   if (query) {
-    const hits = DATA.nodes.filter((node) =>
-      `${JSON.stringify(node)} ${node.group === 'attribute' ? nodes.get(node.parent)?.label || '' : ''}`
-        .toLocaleLowerCase()
-        .includes(query),
-    );
+    const matches = DATA.nodes
+      .filter((node) =>
+        `${JSON.stringify(node)} ${node.group === 'attribute' ? nodes.get(node.parent)?.label || '' : ''}`
+          .toLocaleLowerCase()
+          .includes(query),
+      )
+      .map((node) => (isDerivation(node) ? derivationTarget(node) : node))
+      .filter(Boolean);
+    const hits = [...new Map(matches.map((node) => [node.id, node])).values()];
     $('tree').append(el('p', `${hits.length} 个搜索结果`, 'tree-count'));
     hits.forEach((node) => $('tree').append(treeButton(node)));
     markSelected();
@@ -166,7 +181,9 @@ function buildTree() {
     'rule',
     'pattern',
   ]);
-  const business = DATA.nodes.filter((n) => businessGroups.has(n.group));
+  const business = DATA.nodes.filter(
+    (n) => businessGroups.has(n.group) && !isDerivation(n),
+  );
   const visited = new Set();
   function branch(node) {
     visited.add(node.id);
@@ -179,11 +196,19 @@ function buildTree() {
     details.append(summary);
     if (isContainer(node)) {
       details.dataset.containerGroup = node.id;
-      details.dataset[node.group === 'context' ? 'contextGroup' : 'fulfillmentGroup'] = node.id;
+      details.dataset[
+        node.group === 'context' ? 'contextGroup' : 'fulfillmentGroup'
+      ] = node.id;
       summary.dataset.container = node.id;
       summary.title = `${typeLabel(node)} · ${node.id}`;
       if (!children.length)
-        details.append(el('p', `此${node.group === 'fulfillment' ? '履约' : '上下文'}暂无对象`, 'muted'));
+        details.append(
+          el(
+            'p',
+            `此${node.group === 'fulfillment' ? '履约' : '上下文'}暂无对象`,
+            'muted',
+          ),
+        );
     } else details.append(treeButton(node));
     children.forEach((child) => {
       if (!visited.has(child.id)) details.append(branch(child));
@@ -346,6 +371,50 @@ function overview() {
   );
   if (DATA.unresolved.length) list(DATA.unresolved, '', checks);
 }
+function bindingFact(binding) {
+  return binding.ref
+    ? link(binding.ref)
+    : el('span', `运行时输入 · ${binding.type || '未声明类型'}`);
+}
+function renderFieldDerivation(attribute) {
+  const rules = (outgoing.get(attribute.id) || []).filter(
+    (edge) => edge.label === '由规则计算',
+  );
+  if (!rules.length) return el('span', '未声明派生规则', 'muted');
+  const box = el('div', '', 'field-computation');
+  for (const edge of rules) {
+    const rule = nodes.get(edge.to);
+    const calculation = el('div', '', 'field-rule');
+    calculation.dataset.fieldRule = edge.to;
+    if (rule?.group !== 'rule' || rule.kind !== 'derivation') {
+      calculation.append(el('p', `派生规则未解析：${edge.to}`, 'missing'));
+    } else {
+      calculation.append(
+        el('p', rule.description || '未声明业务解释', 'field-rule-description'),
+      );
+      const details = el('details', '', 'field-rule-details');
+      details.append(
+        el('summary', '表达式与变量说明'),
+        el('pre', rule.expression || '未声明表达式'),
+      );
+      const inputs = el('div', '', 'field-rule-inputs');
+      for (const binding of rule.bindings || []) {
+        const fact = el('div');
+        fact.dataset.binding = binding.alias;
+        fact.append(el('code', `${binding.alias} = `), bindingFact(binding));
+        if (binding.ref)
+          fact.append(
+            el('small', binding.cardinality === 'many' ? ' · 集合' : ' · 单个'),
+          );
+        inputs.append(fact);
+      }
+      details.append(inputs);
+      calculation.append(details);
+    }
+    box.append(calculation);
+  }
+  return box;
+}
 function renderBusinessObject(node) {
   $('detail').append(el('h1', node.label), el('p', node.id, 'identity'));
   const context = card('所属上下文');
@@ -371,7 +440,7 @@ function renderBusinessObject(node) {
     return;
   }
   const grid = table(
-    ['属性', '类型', '必填', '含义', '关键数据'],
+    ['属性', '类型', '必填', '含义', '关键数据', '派生计算'],
     attributes.map((a) => {
       const name = el('div');
       name.append(link(a.id, a.label), el('small', a.name, 'attribute-name'));
@@ -381,6 +450,7 @@ function renderBusinessObject(node) {
         a.required ? '是' : '否',
         a.meaning,
         a.keyData,
+        renderFieldDerivation(a),
       ];
     }),
   );
@@ -419,7 +489,7 @@ function renderNode(node) {
         ['绑定', '业务对象', '数量'],
         node.bindings.map((b) => [
           b.alias,
-          link(b.ref),
+          bindingFact(b),
           b.cardinality || '单个',
         ]),
       ),
@@ -591,6 +661,14 @@ function renderReferences(
 }
 function select(id, remember = true) {
   if (id && !nodes.has(id)) return;
+  if (isDerivation(nodes.get(id))) {
+    const target = derivationTarget(nodes.get(id));
+    if (!target) {
+      $('notice').textContent = `派生规则目标字段未解析：${id}`;
+      return;
+    }
+    id = target.id;
+  }
   if (isContainer(nodes.get(id))) {
     revealContainer(id);
     return;
