@@ -682,6 +682,110 @@
       ]
     },
     {
+      "id": 56,
+      "category": "incremental-entry-recovery",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "新会话继续运输签收证明。请从已有文件恢复，不重问采购付款。当前记录中运输合同A-2的送达义务R-2正在追溯confirmation，Q-002询问签收证明的提供方；采购付款期限Q-001已暂缓。只维护访谈来源与术语，不生成模型。",
+      "expectations": [
+        "读取实际版本、停止／暂缓状态、focusRef、focusPoint、原问题及必要来源，不依赖旧聊天",
+        "加载当前分支必要方法，不预加载API或正式生成参考；有效焦点恢复不重复总览",
+        "保持Q-002和运输确认焦点，不重问采购事实，不解除Q-001暂缓，不改FM/API"
+      ]
+    },
+    {
+      "id": 57,
+      "category": "incremental-continuous-answer",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "继续当前运输签收证明的访谈，先从实际文件定位问题和依据。",
+      "follow_up": [
+        "签收证明由收货人出具。另外采购协议的交付期限改为下月末，这是补充来源，不是恢复采购的暂缓问题。请保存并继续当前运输问题。"
+      ],
+      "expectations": [
+        "续问读取当前运输节点、必要依据及受影响术语，不重复全文加载未变化且仍在上下文的方法或扫描无关合同",
+        "保存本轮全部原话，包括焦点之外的采购更正及其影响，不因增量处理丢失事实",
+        "先保存来源再维护受影响术语，新增概念检索已有条目去重，不重写无关定义",
+        "如收货人身份或证明采信依据仍缺失，只问一个必要问题，不恢复暂缓问题；不凑题或自答"
+      ]
+    },
+    {
+      "id": 58,
+      "category": "incremental-context-switch",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "从采购付款切换到运输合同A-2，直接分析送达确认。两项合同都未结束；采购期限Q-001仍暂缓。运输双方和全部主履约已在来源及记录中保存，签收证明的采信条件未知。",
+      "expectations": [
+        "读取目标合同的双方、全部主履约、结束依据及必要依赖，不重新分析所有合同或重载全部方法",
+        "核对目标可选后保存选择来源与焦点，承接已知事实而不泛问交易如何成立",
+        "只追问送达确认的一个必要缺口，保留采购责任和暂缓问题，不把切换当范围排除"
+      ]
+    },
+    {
+      "id": 59,
+      "category": "incremental-source-correction",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "更正S-1约定：送达完成需要收货人签收，承运方上传物流截图不能单独证明完成。请保存更正，检查影响。当前viewRefs只有送达确认R-2，另有运输结算R-3引用它；先不要继续问，也不要修改正式FM。",
+      "expectations": [
+        "沿被更正来源及依赖扩大读取到R-3和受影响确认，不把viewRefs当读取白名单",
+        "保留原话、历史确认及失效影响，不能用局部更新维持失效结论",
+        "仅维护获授权记录和术语；涉及已建模含义只记录目标与待改影响，不改FM或创建同义定义",
+        "尊重不要继续问的控制意图；影响范围不明时扩大核对而不是猜测"
+      ]
+    },
+    {
+      "id": 60,
+      "category": "incremental-global-closure",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "当前送达确认这条分支已经清楚。请核对是否可以确认全部追责结束，不生成模型。记录还包含采购付款及运输损坏赔付，赔付的后续争议分支未有人类终点依据。",
+      "expectations": [
+        "读取人类范围内完整责任图、全部终点、推演与全局原话，不局限于当前viewRefs",
+        "明确赔付分支仍缺依据，不把单条分支充分当作全部结束，不伪造人类确认",
+        "不修改正式FM/API，不以省读取或用户核对请求绕过准入"
+      ]
+    },
+    {
+      "id": 61,
+      "category": "incremental-context-loss",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "继续上次的签收证明问题。只交接保存文件和摘要：摘要说已全部读取，但当前会话没有原方法和来源正文；不要恢复采购的暂缓问题。",
+      "expectations": [
+        "必要上下文丢失按恢复处理，读取实际记录、原问题、必要来源与方法，不凭摘要或digestedSources声明依据仍有效",
+        "保持焦点与控制状态，不重问已保存事实，不重复总览，不补造未收到的回答",
+        "不建立方法缓存、故事副本或新的业务状态文件"
+      ]
+    },
+    {
+      "id": 62,
+      "category": "incremental-external-change",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "继续运输签收证明的访谈，先定位当前问题。",
+      "follow_up": ["签收证明由收货人出具，请保存。"],
+      "expectations": [
+        "写入前核对实际文件，检测测试环境在两轮之间修改的来源版本及控制状态，并重新读取受影响内容",
+        "不使用旧文件副本覆盖外部新增事实，不把digestedSources视为未变化证明",
+        "实际记录已停止时保存获授权补充后停止，不继续问；来源冲突保留并交接",
+        "方法文件变化时读取变化内容及影响，未变化方法不无故全文重载"
+      ]
+    },
+    {
+      "id": 63,
+      "category": "incremental-save-failure",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "当前Q-002询问签收证明提供方。我的回答是收货人提供签收回执，请保存后继续。",
+      "follow_up": ["写入权限恢复了，先只补保存，不要继续问。"],
+      "expectations": [
+        "来源保存成功而词汇表真实写入失败时立即停止，分别交接保存结果，不以快速续问跳过失败",
+        "恢复读取两处文件的实际内容，只补齐获授权未保存部分，不重复原话、术语或新建同义问题",
+        "不修改FM/API、记录版本或隐藏状态，补保存后遵守停止意图"
+      ]
+    },
+    {
       "id": 52,
       "category": "ui-answer-save-failure",
       "skill": "evidence-discovery",
