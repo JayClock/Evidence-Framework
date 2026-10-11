@@ -4,7 +4,7 @@
 
 ```text
 商品询价 RFP → 商品报价 Proposal → 商品采购协议 Contract
-                                      ├→ 支付申请 → 支付确认 ─uses_role→ 支付凭证 Role
+                                      ├→ 支付申请 → 支付确认 ─references→ 支付凭证 Role
                                       ├→ 开票申请 → 发票 → 开票确认
                                       └→ 发货申请 → 发货单 → 发货确认
 
@@ -15,20 +15,20 @@
 
 ## 节点覆盖
 
-| 节点类型                  | 示例节点                                                         |
-| ------------------------- | ---------------------------------------------------------------- |
-| Context                   | 商品采购协商、商品采购协议、商品目录、微信支付服务               |
-| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议、微信支付服务协议               |
-| Fulfillment               | 采购支付、开票、发货、微信支付                                   |
-| Request                   | 采购支付申请、开票申请、发货申请、微信支付申请                   |
-| Confirmation              | 采购支付确认、开票确认、发货确认、微信支付确认                   |
-| Other Evidence            | 发票、发货单                                                     |
-| Party Role                | 采购合同：客户、供应商；微信支付合同：微信用户、腾讯             |
-| Evidence Role             | 支付凭证（无责任人，由外部微信支付确认扮演）                     |
-| Participant               | 甲方采购员、乙方销售                                             |
-| Thing                     | 商品                                                             |
-| Rule                      | 采购三项的证据前提与完成规则、微信支付完成规则                   |
-| Relationship              | `plays_role`、`uses_role`、`references`、`precedes`、`evidences` |
+| 节点类型                  | 示例节点                                             |
+| ------------------------- | ---------------------------------------------------- |
+| Context                   | 商品采购协商、商品采购协议、商品目录、微信支付服务   |
+| RFP / Proposal / Contract | 商品询价、商品报价、商品采购协议、微信支付服务协议   |
+| Fulfillment               | 采购支付、开票、发货、微信支付                       |
+| Request                   | 采购支付申请、开票申请、发货申请、微信支付申请       |
+| Confirmation              | 采购支付确认、开票确认、发货确认、微信支付确认       |
+| Other Evidence            | 发票、发货单                                         |
+| Party Role                | 采购合同：客户、供应商；微信支付合同：微信用户、腾讯 |
+| Evidence Role             | 支付凭证（无责任人，由外部微信支付确认扮演）         |
+| Participant               | 甲方采购员、乙方销售                                 |
+| Thing                     | 商品                                                 |
+| Rule                      | 采购三项的证据前提与完成规则、微信支付完成规则       |
+| Relationship              | `plays_role`、`references`、`precedes`、`evidences`  |
 
 ## 业务角色与经办主体
 
@@ -45,7 +45,7 @@ Participant Party 保持在 Context 外，`plays_role` 表达示例中的角色�
 
 ## 证明角色与具体证据
 
-支付确认通过 `uses_role` 使用 `role.payment-proof`。外部微信支付确认通过 `plays_role` 扮演此角色；规则绑定角色，场景提供实际确认实例。角色没有责任字段、自己的业务时间或可签发实例；其属性表达对玩家数据的要求。实际玩家的 `confirmed_at` 不等于采购支付确认时间。
+支付确认通过 `references` 引用本合同中的 Evidence-as-Role `role.payment-proof`。外部微信支付确认通过 `plays_role` 扮演此角色；规则绑定角色，场景提供实际确认实例。角色没有责任字段、自己的业务时间或可签发实例；其属性表达对玩家数据的要求。实际玩家的 `confirmed_at` 不等于采购支付确认时间。
 
 发票和发货单是具体 Other Evidence，通过 `evidences` 证明各自确认，以 `precedes` 表达形成前提。它们的 `created_at` 是自身形成时间。
 

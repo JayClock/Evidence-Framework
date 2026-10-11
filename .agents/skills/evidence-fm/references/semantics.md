@@ -81,7 +81,7 @@ Request 已形成而合格结果尚未形成时为业务上的 pending，不是�
 
 允许的 `plays_role`：Participant Party→Party／Third-party Role；Participant Thing→Domain Role；Context→Context Role；External Context→Third-party Role；Fulfillment Confirmation／Other Evidence→Evidence Role。
 
-Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方以 `uses_role` 使用角色，实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
+Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方 Evidence 以 `references` 引用同一 Context 内的 Evidence-as-Role（`category: role / kind: evidence`），外部实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。前者是引用证明约定，后者是具体凭证扮演该约定；凭证引用不因此扩展到其他 Role 类型，也不直接引用外部具体凭证。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
 
 规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。跨独立上下文不能以直接 Evidence 引用穿透边界；允许有依据的 Proposal→Contract 签约追溯与 Evidence→Thing 标的引用，外部确定结果通过 Evidence Role 使用。
 

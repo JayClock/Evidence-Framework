@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.payment-confirmation-uses-proof",
-  "kind": "uses_role",
+  "kind": "references",
   "sourceRef": "confirmation.payment",
   "targetRef": "role.payment-proof",
-  "label": "支付确认使用支付凭证角色"
+  "label": "支付确认引用支付凭证角色"
 }

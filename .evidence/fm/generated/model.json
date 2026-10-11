@@ -69,7 +69,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.access",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.access",
       "id": "confirmation.access",
       "kind": "fulfillment_confirmation",
       "label": "内容提供凭证",
@@ -137,7 +138,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.monthly-customer-contact",
+      "contextRef": "context.sales-performance",
+      "fulfillmentRef": "fulfillment.monthly-customer-contact",
       "id": "confirmation.customer-contact-record",
       "kind": "fulfillment_confirmation",
       "label": "客户联系记录",
@@ -229,7 +231,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.mobile",
+      "contextRef": "context.mobile",
+      "fulfillmentRef": "fulfillment.mobile",
       "id": "confirmation.mobile",
       "kind": "fulfillment_confirmation",
       "label": "移动支付成功凭证",
@@ -330,7 +333,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "confirmation.prepaid",
       "kind": "fulfillment_confirmation",
       "label": "预付费抵扣凭证",
@@ -414,7 +418,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "confirmation.refund",
       "kind": "fulfillment_confirmation",
       "label": "退款到账凭证",
@@ -490,7 +495,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.restore",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "confirmation.restore",
       "kind": "fulfillment_confirmation",
       "label": "免费恢复凭证",
@@ -916,59 +922,52 @@
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.subscription",
       "id": "fulfillment.access",
-      "kind": "fulfillment",
       "label": "付费内容访问",
-      "parentContextRef": "context.subscription",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.mobile",
       "id": "fulfillment.mobile",
-      "kind": "fulfillment",
       "label": "移动支付扣款",
-      "parentContextRef": "context.mobile",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.sales-performance",
       "id": "fulfillment.monthly-customer-contact",
-      "kind": "fulfillment",
       "label": "月度客户联系目标",
-      "parentContextRef": "context.sales-performance",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.subscription",
       "id": "fulfillment.payment",
-      "kind": "fulfillment",
       "label": "订阅费支付",
-      "parentContextRef": "context.subscription",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.prepaid",
       "id": "fulfillment.prepaid",
-      "kind": "fulfillment",
       "label": "账户余额抵扣",
-      "parentContextRef": "context.prepaid",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.subscription",
       "id": "fulfillment.refund",
-      "kind": "fulfillment",
       "label": "断更退款",
-      "parentContextRef": "context.subscription",
       "type": "entity"
     },
     {
-      "category": "context",
+      "category": "fulfillment",
+      "contextRef": "context.subscription",
       "id": "fulfillment.restore",
-      "kind": "fulfillment",
       "label": "免费恢复",
-      "parentContextRef": "context.subscription",
       "type": "entity"
     },
     {
@@ -1048,7 +1047,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.access",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.access",
       "id": "request.access",
       "kind": "fulfillment_request",
       "label": "付费内容访问请求",
@@ -1140,7 +1140,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.mobile",
+      "contextRef": "context.mobile",
+      "fulfillmentRef": "fulfillment.mobile",
       "id": "request.mobile",
       "kind": "fulfillment_request",
       "label": "移动支付扣款请求",
@@ -1216,7 +1217,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.monthly-customer-contact",
+      "contextRef": "context.sales-performance",
+      "fulfillmentRef": "fulfillment.monthly-customer-contact",
       "id": "request.monthly-customer-contact",
       "kind": "fulfillment_request",
       "label": "月度客户联系目标请求",
@@ -1295,7 +1297,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "request.payment",
       "kind": "fulfillment_request",
       "label": "订阅费支付请求",
@@ -1395,7 +1398,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "request.prepaid",
       "kind": "fulfillment_request",
       "label": "账户余额抵扣请求",
@@ -1473,7 +1477,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "request.refund",
       "kind": "fulfillment_request",
       "label": "断更退款请求",
@@ -1542,7 +1547,8 @@
         }
       ],
       "category": "evidence",
-      "contextRef": "fulfillment.restore",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "request.restore",
       "kind": "fulfillment_request",
       "label": "免费恢复请求",
@@ -1634,168 +1640,11 @@
         }
       ],
       "category": "role",
-      "contextRef": "fulfillment.access",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.access",
       "id": "role.access-payment",
       "kind": "evidence",
       "label": "访问所需付款证明",
-      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
-      "type": "entity"
-    },
-    {
-      "attributes": [
-        {
-          "keyData": false,
-          "label": "对应请求编号",
-          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
-          "name": "request_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "订阅编号",
-          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
-          "name": "subscription_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "读者编号",
-          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
-          "name": "reader_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "专栏编号",
-          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
-          "name": "column_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "履约确认时刻",
-          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
-          "name": "confirmed_at",
-          "required": true,
-          "valueType": "timestamp"
-        },
-        {
-          "keyData": false,
-          "label": "实退金额",
-          "meaning": "具体玩家应提供的实退金额，不是角色自身的记录",
-          "name": "amount_minor_units",
-          "required": true,
-          "valueType": "int"
-        },
-        {
-          "keyData": false,
-          "label": "实退币种",
-          "meaning": "具体玩家应提供的实退币种，不是角色自身的记录",
-          "name": "currency",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "到账回执编号",
-          "meaning": "具体玩家应提供的到账回执编号，不是角色自身的记录",
-          "name": "receipt_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "退款已到账",
-          "meaning": "具体玩家应提供的退款已到账，不是角色自身的记录",
-          "name": "settled",
-          "required": true,
-          "valueType": "bool"
-        }
-      ],
-      "category": "role",
-      "contextRef": "fulfillment.access",
-      "id": "role.access-refund",
-      "kind": "evidence",
-      "label": "已退款证明",
-      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
-      "type": "entity"
-    },
-    {
-      "attributes": [
-        {
-          "keyData": false,
-          "label": "对应请求编号",
-          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
-          "name": "request_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "订阅编号",
-          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
-          "name": "subscription_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "读者编号",
-          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
-          "name": "reader_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "专栏编号",
-          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
-          "name": "column_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "履约确认时刻",
-          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
-          "name": "confirmed_at",
-          "required": true,
-          "valueType": "timestamp"
-        },
-        {
-          "keyData": false,
-          "label": "已恢复版本",
-          "meaning": "具体玩家应提供的已恢复版本，不是角色自身的记录",
-          "name": "edition_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "实收金额",
-          "meaning": "具体玩家应提供的实收金额，不是角色自身的记录",
-          "name": "charged_minor_units",
-          "required": true,
-          "valueType": "int"
-        },
-        {
-          "keyData": false,
-          "label": "资格已恢复",
-          "meaning": "具体玩家应提供的资格已恢复，不是角色自身的记录",
-          "name": "restored",
-          "required": true,
-          "valueType": "bool"
-        }
-      ],
-      "category": "role",
-      "contextRef": "fulfillment.access",
-      "id": "role.access-restored",
-      "kind": "evidence",
-      "label": "免费恢复资格证明",
       "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
       "type": "entity"
     },
@@ -1915,7 +1764,8 @@
         }
       ],
       "category": "role",
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "role.payment-proof",
       "kind": "evidence",
       "label": "合格付款证明",
@@ -2032,93 +1882,11 @@
         }
       ],
       "category": "role",
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "role.refund-payment",
       "kind": "evidence",
       "label": "退款所需付款证明",
-      "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
-      "type": "entity"
-    },
-    {
-      "attributes": [
-        {
-          "keyData": false,
-          "label": "对应请求编号",
-          "meaning": "具体玩家应提供的对应请求编号，不是角色自身的记录",
-          "name": "request_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "订阅编号",
-          "meaning": "具体玩家应提供的订阅编号，不是角色自身的记录",
-          "name": "subscription_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "读者编号",
-          "meaning": "具体玩家应提供的读者编号，不是角色自身的记录",
-          "name": "reader_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "专栏编号",
-          "meaning": "具体玩家应提供的专栏编号，不是角色自身的记录",
-          "name": "column_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "履约确认时刻",
-          "meaning": "具体玩家应提供的履约确认时刻，不是角色自身的记录",
-          "name": "confirmed_at",
-          "required": true,
-          "valueType": "timestamp"
-        },
-        {
-          "keyData": false,
-          "label": "实退金额",
-          "meaning": "具体玩家应提供的实退金额，不是角色自身的记录",
-          "name": "amount_minor_units",
-          "required": true,
-          "valueType": "int"
-        },
-        {
-          "keyData": false,
-          "label": "实退币种",
-          "meaning": "具体玩家应提供的实退币种，不是角色自身的记录",
-          "name": "currency",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "到账回执编号",
-          "meaning": "具体玩家应提供的到账回执编号，不是角色自身的记录",
-          "name": "receipt_id",
-          "required": true,
-          "valueType": "string"
-        },
-        {
-          "keyData": false,
-          "label": "退款已到账",
-          "meaning": "具体玩家应提供的退款已到账，不是角色自身的记录",
-          "name": "settled",
-          "required": true,
-          "valueType": "bool"
-        }
-      ],
-      "category": "role",
-      "contextRef": "fulfillment.restore",
-      "id": "role.restore-refund",
-      "kind": "evidence",
-      "label": "恢复所需退款证明",
       "notes": "消费方只依赖证明约定；实际玩家保留原合同责任，不复制成订阅合同中的新付款凭证。",
       "type": "entity"
     },
@@ -2265,7 +2033,7 @@
     "id": "column-subscription",
     "name": "专栏订阅与 CRM 业务示例",
     "ruleLanguage": "CEL",
-    "schemaVersion": "3.0",
+    "schemaVersion": "4.0",
     "type": "fm_model",
     "version": "1.2.0"
   },
@@ -2288,26 +2056,26 @@
     },
     {
       "id": "relation.access-payment-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用付款证明角色判断访问资格",
       "sourceRef": "request.access",
       "targetRef": "role.access-payment",
       "type": "relationship"
     },
     {
       "id": "relation.access-refund-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用已有结果判断资格",
       "sourceRef": "request.access",
-      "targetRef": "role.access-refund",
+      "targetRef": "confirmation.refund",
       "type": "relationship"
     },
     {
       "id": "relation.access-restored-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用已有结果判断资格",
       "sourceRef": "request.access",
-      "targetRef": "role.access-restored",
+      "targetRef": "confirmation.restore",
       "type": "relationship"
     },
     {
@@ -2514,8 +2282,8 @@
     },
     {
       "id": "relation.payment-proof-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用付款证明角色判断支付完成",
       "sourceRef": "request.payment",
       "targetRef": "role.payment-proof",
       "type": "relationship"
@@ -2570,22 +2338,6 @@
       "type": "relationship"
     },
     {
-      "id": "relation.refund-as-access-refund",
-      "kind": "plays_role",
-      "label": "实际结果扮演证明角色",
-      "sourceRef": "confirmation.refund",
-      "targetRef": "role.access-refund",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.refund-as-restore-refund",
-      "kind": "plays_role",
-      "label": "实际结果扮演证明角色",
-      "sourceRef": "confirmation.refund",
-      "targetRef": "role.restore-refund",
-      "type": "relationship"
-    },
-    {
       "id": "relation.refund-basis",
       "kind": "evidences",
       "label": "补充证明本次请求的发生条件",
@@ -2611,8 +2363,8 @@
     },
     {
       "id": "relation.refund-payment-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用付款证明角色判断退款资格",
       "sourceRef": "request.refund",
       "targetRef": "role.refund-payment",
       "type": "relationship"
@@ -2632,14 +2384,6 @@
         "min": 0
       },
       "targetRef": "confirmation.refund",
-      "type": "relationship"
-    },
-    {
-      "id": "relation.restore-as-access-restored",
-      "kind": "plays_role",
-      "label": "实际结果扮演证明角色",
-      "sourceRef": "confirmation.restore",
-      "targetRef": "role.access-restored",
       "type": "relationship"
     },
     {
@@ -2677,10 +2421,10 @@
     },
     {
       "id": "relation.restore-refund-used",
-      "kind": "uses_role",
-      "label": "本请求使用已有外部结果判断资格",
+      "kind": "references",
+      "label": "本请求引用已有结果判断资格",
       "sourceRef": "request.restore",
-      "targetRef": "role.restore-refund",
+      "targetRef": "confirmation.refund",
       "type": "relationship"
     },
     {
@@ -2784,19 +2528,20 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.access-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.access"
         },
         "restorations": {
           "cardinality": "many",
-          "ref": "role.access-restored"
+          "ref": "confirmation.restore"
         }
       },
-      "contextRef": "fulfillment.access",
-      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，读者凭访问所需付款证明（role.access-payment）或免费恢复资格证明（role.access-restored）具备版本资格，并在期限内恰有一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）完成。",
+      "contextRef": "context.subscription",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，读者凭访问所需付款证明（role.access-payment）或免费恢复凭证（confirmation.restore）具备版本资格，并在期限内恰有一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
+      "fulfillmentRef": "fulfillment.access",
       "id": "rule.access-completed",
       "kind": "completion",
       "label": "指定章节已按时向读者提供",
@@ -2812,9 +2557,10 @@
           "ref": "request.access"
         }
       },
-      "contextRef": "fulfillment.access",
+      "contextRef": "context.subscription",
       "description": "以内容访问请求（request.access）的开始时间为基准增加订阅合同（contract.subscription）约定的访问响应秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.access_seconds) +\n\"s\")",
+      "fulfillmentRef": "fulfillment.access",
       "id": "rule.access-deadline",
       "kind": "derivation",
       "label": "计算付费内容访问请求截止",
@@ -2836,19 +2582,20 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.access-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.access"
         },
         "restorations": {
           "cardinality": "many",
-          "ref": "role.access-restored"
+          "ref": "confirmation.restore"
         }
       },
-      "contextRef": "fulfillment.access",
-      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，且读者持有未在请求开始前退款的访问所需付款证明（role.access-payment），或持有请求开始前已生效的免费恢复资格证明（role.access-restored）时，判定具备访问资格。",
+      "contextRef": "context.subscription",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，且读者持有未在请求开始前退款的访问所需付款证明（role.access-payment），或持有请求开始前已生效的免费恢复凭证（confirmation.restore）时，判定具备访问资格。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at))",
+      "fulfillmentRef": "fulfillment.access",
       "id": "rule.access-eligible",
       "kind": "precondition",
       "label": "本读者对本版本具备访问资格",
@@ -2873,19 +2620,20 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.access-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.access"
         },
         "restorations": {
           "cardinality": "many",
-          "ref": "role.access-restored"
+          "ref": "confirmation.restore"
         }
       },
-      "contextRef": "fulfillment.access",
-      "description": "当前时间超过内容访问请求（request.access）的截止时间，且请求不具备访问所需付款证明（role.access-payment）或免费恢复资格证明（role.access-restored），或期限内没有恰好一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）逾期。",
+      "contextRef": "context.subscription",
+      "description": "当前时间超过内容访问请求（request.access）的截止时间，且请求不具备访问所需付款证明（role.access-payment）或免费恢复凭证（confirmation.restore），或期限内没有恰好一份匹配的内容提供凭证（confirmation.access）时，判定内容访问履约（fulfillment.access）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\n((payments.exists(p, p.subscription_id == agreement.subscription_id\n&& p.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1)",
+      "fulfillmentRef": "fulfillment.access",
       "id": "rule.access-expired",
       "kind": "breach",
       "label": "本次内容未按时提供",
@@ -2910,19 +2658,20 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.access-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.access"
         },
         "restorations": {
           "cardinality": "many",
-          "ref": "role.access-restored"
+          "ref": "confirmation.restore"
         }
       },
-      "contextRef": "fulfillment.access",
-      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，当前查询时刻访问所需付款证明（role.access-payment）尚未退款或请求前已有免费恢复资格证明（role.access-restored），且该请求曾按时形成内容提供凭证（confirmation.access）时，允许检索指定章节。",
+      "contextRef": "context.subscription",
+      "description": "内容访问请求（request.access）与订阅合同（contract.subscription）匹配，当前查询时刻访问所需付款证明（role.access-payment）尚未退款或请求前已有免费恢复凭证（confirmation.restore），且该请求曾按时形成内容提供凭证（confirmation.access）时，允许检索指定章节。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && ((payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && !(refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= now)) &&\nrequest.edition_id == agreement.edition_id) ||\nrestorations.exists(p, p.subscription_id == request.subscription_id\n&& p.reader_id == request.reader_id && p.column_id ==\nrequest.column_id && p.edition_id == request.edition_id &&\np.charged_minor_units == 0 && p.restored && p.confirmed_at <=\nrequest.started_at)) && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.chapter_id ==\nrequest.chapter_id && c.edition_id == request.edition_id &&\nc.delivered).size() == 1",
+      "fulfillmentRef": "fulfillment.access",
       "id": "rule.content-readable",
       "kind": "precondition",
       "label": "按查询时刻检索仍有资格的本人章节",
@@ -2939,9 +2688,10 @@
           "ref": "request.mobile"
         }
       },
-      "contextRef": "fulfillment.mobile",
+      "contextRef": "context.mobile",
       "description": "移动支付扣款请求（request.mobile）在期限内恰有一份与订阅、读者、专栏、父付款请求、金额和币种匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）完成。",
       "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success).size() == 1",
+      "fulfillmentRef": "fulfillment.mobile",
       "id": "rule.mobile-completed",
       "kind": "completion",
       "label": "本次扣款全额按时完成",
@@ -2961,9 +2711,10 @@
           "ref": "request.mobile"
         }
       },
-      "contextRef": "fulfillment.mobile",
+      "contextRef": "context.mobile",
       "description": "当前时间超过移动支付扣款请求（request.mobile）的截止时间，且期限内没有恰好一份匹配的成功结果（confirmation.mobile）时，判定移动支付扣款履约（fulfillment.mobile）逾期。",
       "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success).size() == 1)",
+      "fulfillmentRef": "fulfillment.mobile",
       "id": "rule.mobile-expired",
       "kind": "breach",
       "label": "本次扣款未在期限内完成",
@@ -2983,9 +2734,10 @@
           "ref": "request.monthly-customer-contact"
         }
       },
-      "contextRef": "fulfillment.monthly-customer-contact",
+      "contextRef": "context.sales-performance",
       "description": "月度客户联系目标请求（request.monthly-customer-contact）与电话销售绩效协议 （contract.sales-performance）匹配，并且目标周期内匹配的客户联系记录 （confirmation.customer-contact-record）总数、电话数和邮件数分别达到本次约定目标时， 判定月度客户联系目标履约（fulfillment.monthly-customer-contact）完成。",
       "expression": "request.agreement_id == agreement.agreement_id &&\nrequest.target_contact_count >= 0 && request.target_phone_count >= 0 &&\nrequest.target_email_count >= 0 &&\nrecords.filter(r, r.request_id == request.request_id &&\nr.agreement_id == request.agreement_id && r.period_id == request.period_id &&\nr.confirmed_at >= request.started_at &&\nr.confirmed_at <= request.expired_at &&\n(r.channel == \"phone\" || r.channel == \"email\")).size() >=\nrequest.target_contact_count &&\nrecords.filter(r, r.request_id == request.request_id &&\nr.agreement_id == request.agreement_id && r.period_id == request.period_id &&\nr.confirmed_at >= request.started_at &&\nr.confirmed_at <= request.expired_at &&\nr.channel == \"phone\").size() >= request.target_phone_count &&\nrecords.filter(r, r.request_id == request.request_id &&\nr.agreement_id == request.agreement_id && r.period_id == request.period_id &&\nr.confirmed_at >= request.started_at &&\nr.confirmed_at <= request.expired_at &&\nr.channel == \"email\").size() >= request.target_email_count",
+      "fulfillmentRef": "fulfillment.monthly-customer-contact",
       "id": "rule.monthly-customer-contact-completed",
       "kind": "completion",
       "label": "月度客户联系目标已完成",
@@ -2998,9 +2750,10 @@
           "ref": "contract.subscription"
         }
       },
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
       "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为订阅费支付请求（request.payment）的金额。",
       "expression": "agreement.amount_minor_units",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "rule.payment-amount",
       "kind": "derivation",
       "label": "计算订阅费支付请求amount_minor_units",
@@ -3024,9 +2777,10 @@
           "ref": "request.payment"
         }
       },
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
       "description": "订阅费支付请求（request.payment）与订阅合同（contract.subscription）的订阅、读者、专栏、正数金额和币种一致，且期限内恰有一份同一请求的合格付款证明（role.payment-proof）时，判定订阅费支付履约（fulfillment.payment）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && request.currency == agreement.currency &&\nrequest.amount_minor_units == agreement.amount_minor_units &&\nrequest.amount_minor_units > 0 && proofs.filter(p, p.subscription_id\n== request.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.payment_request_id ==\nrequest.request_id && p.amount_minor_units ==\nrequest.amount_minor_units && p.currency == request.currency &&\np.success && p.confirmed_at >= request.started_at && p.confirmed_at\n<= request.expired_at).size() == 1",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "rule.payment-completed",
       "kind": "completion",
       "label": "收到唯一全额按时付款证明",
@@ -3042,9 +2796,10 @@
           "ref": "request.payment"
         }
       },
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
       "description": "以订阅费支付请求（request.payment）的开始时间为基准增加订阅合同（contract.subscription）约定的付款秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.payment_seconds) +\n\"s\")",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "rule.payment-deadline",
       "kind": "derivation",
       "label": "计算订阅费支付请求expired_at",
@@ -3071,9 +2826,10 @@
           "ref": "request.payment"
         }
       },
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
       "description": "当前时间超过订阅费支付请求（request.payment）的截止时间，且请求与订阅合同（contract.subscription）不一致或期限内没有恰好一份匹配的合格付款证明（role.payment-proof）时，判定订阅费支付履约（fulfillment.payment）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrequest.currency == agreement.currency && request.amount_minor_units\n== agreement.amount_minor_units && request.amount_minor_units > 0 &&\nproofs.filter(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.payment_request_id == request.request_id &&\np.amount_minor_units == request.amount_minor_units && p.currency ==\nrequest.currency && p.success && p.confirmed_at >=\nrequest.started_at && p.confirmed_at <= request.expired_at).size()\n== 1)",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "rule.payment-expired",
       "kind": "breach",
       "label": "付款逾期使合同失效",
@@ -3086,9 +2842,10 @@
           "ref": "contract.subscription"
         }
       },
-      "contextRef": "fulfillment.payment",
+      "contextRef": "context.subscription",
       "description": "以订阅合同（contract.subscription）的签署时间作为订阅费支付请求（request.payment）的开始时间。",
       "expression": "agreement.signed_at",
+      "fulfillmentRef": "fulfillment.payment",
       "id": "rule.payment-start",
       "kind": "derivation",
       "label": "计算订阅费支付请求started_at",
@@ -3108,9 +2865,10 @@
           "ref": "request.prepaid"
         }
       },
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
       "description": "从余额抵扣请求（request.prepaid）的抵扣前可用余额中减去抵扣结果（confirmation.prepaid）的实际金额，得到抵扣后的账户余额。",
       "expression": "request.balance_before_minor_units - confirmation.amount_minor_units",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "rule.prepaid-balance",
       "kind": "derivation",
       "label": "计算抵扣后余额",
@@ -3131,9 +2889,10 @@
           "ref": "request.prepaid"
         }
       },
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
       "description": "账户余额足够时，余额抵扣请求（request.prepaid）在期限内恰有一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）完成。",
       "expression": "confirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.payment_request_id ==\nrequest.payment_request_id && c.amount_minor_units ==\nrequest.amount_minor_units && c.currency == request.currency &&\nc.success && request.balance_before_minor_units >=\nrequest.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "rule.prepaid-completed",
       "kind": "completion",
       "label": "本次扣款全额按时完成",
@@ -3153,9 +2912,10 @@
           "ref": "request.prepaid"
         }
       },
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
       "description": "当前时间超过余额抵扣请求（request.prepaid）的截止时间，且期限内没有恰好一份身份、金额、币种和扣后余额均匹配的成功结果（confirmation.prepaid）时，判定余额抵扣履约（fulfillment.prepaid）逾期。",
       "expression": "now > request.expired_at && !(confirmations.filter(c, c.request_id\n== request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.payment_request_id == request.payment_request_id &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency && c.success && request.balance_before_minor_units\n>= request.amount_minor_units && c.balance_after_minor_units ==\nrequest.balance_before_minor_units - c.amount_minor_units &&\nc.balance_after_minor_units >= 0).size() == 1)",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "rule.prepaid-expired",
       "kind": "breach",
       "label": "本次扣款未在期限内完成",
@@ -3168,9 +2928,10 @@
           "ref": "request.prepaid"
         }
       },
-      "contextRef": "fulfillment.prepaid",
+      "contextRef": "context.prepaid",
       "description": "余额抵扣请求（request.prepaid）的金额大于零且抵扣前可用余额不少于该金额时，允许执行本次余额抵扣。",
       "expression": "request.amount_minor_units > 0 && request.balance_before_minor_units\n>= request.amount_minor_units",
+      "fulfillmentRef": "fulfillment.prepaid",
       "id": "rule.prepaid-funded",
       "kind": "precondition",
       "label": "账户可用余额足够",
@@ -3183,9 +2944,10 @@
           "ref": "contract.subscription"
         }
       },
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "description": "读取订阅合同（contract.subscription）约定的最小货币单位金额，并将其作为断更退款请求（request.refund）的全额退款金额。",
       "expression": "agreement.amount_minor_units",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "rule.refund-amount",
       "kind": "derivation",
       "label": "引用原合同退款金额",
@@ -3217,9 +2979,10 @@
           "ref": "request.refund"
         }
       },
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "description": "断更退款请求（request.refund）与订阅合同（contract.subscription）和退款所需付款证明（role.refund-payment）匹配，存在请求前形成的断更下架记录（evidence.discontinuation），并在期限内恰有一份全额退款到账凭证（confirmation.refund）时，判定断更退款履约（fulfillment.refund）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "rule.refund-completed",
       "kind": "completion",
       "label": "全部订阅费已按时到账",
@@ -3235,9 +2998,10 @@
           "ref": "request.refund"
         }
       },
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "description": "以断更退款请求（request.refund）的开始时间为基准增加订阅合同（contract.subscription）约定的退款秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.refund_seconds) +\n\"s\")",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "rule.refund-deadline",
       "kind": "derivation",
       "label": "计算断更退款请求截止",
@@ -3265,9 +3029,10 @@
           "ref": "request.refund"
         }
       },
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "description": "断更退款请求（request.refund）与订阅合同（contract.subscription）的读者、专栏、全额金额和币种一致，原订阅已有退款所需付款证明（role.refund-payment），且请求前已有断更超过七天、未改期并已下架的断更下架记录（evidence.discontinuation）时，允许提出全额退款。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && payments.exists(p, p.subscription_id ==\nagreement.subscription_id && p.reader_id == agreement.reader_id &&\np.column_id == agreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "rule.refund-eligible",
       "kind": "precondition",
       "label": "断更下架且原订阅已经付款",
@@ -3298,9 +3063,10 @@
           "ref": "request.refund"
         }
       },
-      "contextRef": "fulfillment.refund",
+      "contextRef": "context.subscription",
       "description": "当前时间超过断更退款请求（request.refund）的截止时间，且符合订阅合同（contract.subscription）已付款和断更下架条件的请求尚无恰好一份期限内全额退款到账凭证（confirmation.refund）时，判定断更退款履约（fulfillment.refund）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\npayments.exists(p, p.subscription_id == agreement.subscription_id &&\np.reader_id == agreement.reader_id && p.column_id ==\nagreement.column_id && p.amount_minor_units ==\nagreement.amount_minor_units && p.currency == agreement.currency &&\np.success && p.confirmed_at >= agreement.signed_at && p.confirmed_at\n<= agreement.signed_at + duration(string(agreement.payment_seconds)\n+ \"s\")) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.created_at <=\nrequest.started_at && n.created_at > n.missed_due_at +\nduration(\"604800s\") && n.missing_content && !n.rescheduled &&\nn.delisted) && request.amount_minor_units ==\nagreement.amount_minor_units && request.currency ==\nagreement.currency && confirmations.filter(c, c.request_id ==\nrequest.request_id && c.subscription_id == request.subscription_id\n&& c.reader_id == request.reader_id && c.column_id ==\nrequest.column_id && c.confirmed_at >= request.started_at &&\nc.confirmed_at <= request.expired_at && c.settled &&\nc.amount_minor_units == request.amount_minor_units && c.currency ==\nrequest.currency).size() == 1)",
+      "fulfillmentRef": "fulfillment.refund",
       "id": "rule.refund-expired",
       "kind": "breach",
       "label": "退款逾期保留追责权利",
@@ -3322,15 +3088,16 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.restore-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.restore"
         }
       },
-      "contextRef": "fulfillment.restore",
-      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）匹配，恢复所需退款证明（role.restore-refund）与重新上架记录（evidence.relaunch）均在请求前有效，且期限内恰有一份收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）完成。",
+      "contextRef": "context.subscription",
+      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）匹配，退款到账凭证（confirmation.refund）与重新上架记录（evidence.relaunch）均在请求前有效，且期限内恰有一份收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）完成。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at) &&\nconfirmations.filter(c, c.request_id == request.request_id &&\nc.subscription_id == request.subscription_id && c.reader_id ==\nrequest.reader_id && c.column_id == request.column_id &&\nc.confirmed_at >= request.started_at && c.confirmed_at <=\nrequest.expired_at && c.edition_id == request.edition_id &&\nc.charged_minor_units == 0 && c.restored).size() == 1",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "rule.restore-completed",
       "kind": "completion",
       "label": "已按时免费恢复新版本",
@@ -3346,9 +3113,10 @@
           "ref": "request.restore"
         }
       },
-      "contextRef": "fulfillment.restore",
+      "contextRef": "context.subscription",
       "description": "以免费恢复请求（request.restore）的开始时间为基准增加订阅合同（contract.subscription）约定的恢复秒数，得到该请求的截止时间。",
       "expression": "request.started_at + duration(string(agreement.restore_seconds) +\n\"s\")",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "rule.restore-deadline",
       "kind": "derivation",
       "label": "计算免费恢复请求截止",
@@ -3370,15 +3138,16 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.restore-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.restore"
         }
       },
-      "contextRef": "fulfillment.restore",
-      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）的读者和专栏一致，存在请求前已到账的恢复所需退款证明（role.restore-refund），并存在请求前形成的同版本重新上架记录（evidence.relaunch）时，允许申请免费恢复。",
+      "contextRef": "context.subscription",
+      "description": "免费恢复请求（request.restore）与订阅合同（contract.subscription）的读者和专栏一致，存在请求前已到账的退款到账凭证（confirmation.refund），并存在请求前形成的同版本重新上架记录（evidence.relaunch）时，允许申请免费恢复。",
       "expression": "request.subscription_id == agreement.subscription_id &&\nrequest.reader_id == agreement.reader_id && request.column_id ==\nagreement.column_id && refunds.exists(p, p.subscription_id ==\nrequest.subscription_id && p.reader_id == request.reader_id &&\np.column_id == request.column_id && p.settled &&\np.amount_minor_units == agreement.amount_minor_units && p.currency\n== agreement.currency && p.confirmed_at <= request.started_at) &&\nnotices.exists(n, n.subscription_id == request.subscription_id &&\nn.reader_id == request.reader_id && n.column_id == request.column_id\n&& n.edition_id == request.edition_id && n.listed && n.relaunched_at\n<= n.created_at && n.created_at <= request.started_at)",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "rule.restore-eligible",
       "kind": "precondition",
       "label": "原退款读者申请同专栏恢复",
@@ -3403,15 +3172,16 @@
         },
         "refunds": {
           "cardinality": "many",
-          "ref": "role.restore-refund"
+          "ref": "confirmation.refund"
         },
         "request": {
           "ref": "request.restore"
         }
       },
-      "contextRef": "fulfillment.restore",
-      "description": "当前时间超过免费恢复请求（request.restore）的截止时间，且具备恢复所需退款证明（role.restore-refund）和同版本重新上架记录（evidence.relaunch）的请求尚无恰好一份期限内收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）逾期。",
+      "contextRef": "context.subscription",
+      "description": "当前时间超过免费恢复请求（request.restore）的截止时间，且具备退款到账凭证（confirmation.refund）和同版本重新上架记录（evidence.relaunch）的请求尚无恰好一份期限内收费为零的免费恢复凭证（confirmation.restore）时，判定免费恢复履约（fulfillment.restore）逾期。",
       "expression": "now > request.expired_at && !(request.subscription_id ==\nagreement.subscription_id && request.reader_id ==\nagreement.reader_id && request.column_id == agreement.column_id &&\nrefunds.exists(p, p.subscription_id == request.subscription_id &&\np.reader_id == request.reader_id && p.column_id == request.column_id\n&& p.settled && p.amount_minor_units == agreement.amount_minor_units\n&& p.currency == agreement.currency && p.confirmed_at <=\nrequest.started_at) && notices.exists(n, n.subscription_id ==\nrequest.subscription_id && n.reader_id == request.reader_id &&\nn.column_id == request.column_id && n.edition_id ==\nrequest.edition_id && n.listed && n.relaunched_at <= n.created_at &&\nn.created_at <= request.started_at) && confirmations.filter(c,\nc.request_id == request.request_id && c.subscription_id ==\nrequest.subscription_id && c.reader_id == request.reader_id &&\nc.column_id == request.column_id && c.confirmed_at >=\nrequest.started_at && c.confirmed_at <= request.expired_at &&\nc.edition_id == request.edition_id && c.charged_minor_units == 0 &&\nc.restored).size() == 1)",
+      "fulfillmentRef": "fulfillment.restore",
       "id": "rule.restore-expired",
       "kind": "breach",
       "label": "免费恢复逾期保留追责权利",
@@ -3419,5 +3189,5 @@
       "type": "rule"
     }
   ],
-  "schemaVersion": "3.0"
+  "schemaVersion": "4.0"
 }

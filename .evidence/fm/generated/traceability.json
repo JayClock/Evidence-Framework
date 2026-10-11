@@ -10,6 +10,20 @@
         "confirmation.access#reader_id",
         "confirmation.access#request_id",
         "confirmation.access#subscription_id",
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
+        "confirmation.restore#charged_minor_units",
+        "confirmation.restore#column_id",
+        "confirmation.restore#confirmed_at",
+        "confirmation.restore#edition_id",
+        "confirmation.restore#reader_id",
+        "confirmation.restore#restored",
+        "confirmation.restore#subscription_id",
         "contract.subscription#amount_minor_units",
         "contract.subscription#column_id",
         "contract.subscription#currency",
@@ -32,27 +46,27 @@
         "role.access-payment#currency",
         "role.access-payment#reader_id",
         "role.access-payment#subscription_id",
-        "role.access-payment#success",
-        "role.access-refund#amount_minor_units",
-        "role.access-refund#column_id",
-        "role.access-refund#confirmed_at",
-        "role.access-refund#currency",
-        "role.access-refund#reader_id",
-        "role.access-refund#settled",
-        "role.access-refund#subscription_id",
-        "role.access-restored#charged_minor_units",
-        "role.access-restored#column_id",
-        "role.access-restored#confirmed_at",
-        "role.access-restored#edition_id",
-        "role.access-restored#reader_id",
-        "role.access-restored#restored",
-        "role.access-restored#subscription_id"
+        "role.access-payment#success"
       ],
       "kind": "completion",
       "ruleRef": "rule.access-completed"
     },
     {
       "attributeRefs": [
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
+        "confirmation.restore#charged_minor_units",
+        "confirmation.restore#column_id",
+        "confirmation.restore#confirmed_at",
+        "confirmation.restore#edition_id",
+        "confirmation.restore#reader_id",
+        "confirmation.restore#restored",
+        "confirmation.restore#subscription_id",
         "contract.subscription#amount_minor_units",
         "contract.subscription#column_id",
         "contract.subscription#currency",
@@ -72,21 +86,7 @@
         "role.access-payment#currency",
         "role.access-payment#reader_id",
         "role.access-payment#subscription_id",
-        "role.access-payment#success",
-        "role.access-refund#amount_minor_units",
-        "role.access-refund#column_id",
-        "role.access-refund#confirmed_at",
-        "role.access-refund#currency",
-        "role.access-refund#reader_id",
-        "role.access-refund#settled",
-        "role.access-refund#subscription_id",
-        "role.access-restored#charged_minor_units",
-        "role.access-restored#column_id",
-        "role.access-restored#confirmed_at",
-        "role.access-restored#edition_id",
-        "role.access-restored#reader_id",
-        "role.access-restored#restored",
-        "role.access-restored#subscription_id"
+        "role.access-payment#success"
       ],
       "kind": "precondition",
       "ruleRef": "rule.access-eligible"
@@ -101,6 +101,20 @@
         "confirmation.access#reader_id",
         "confirmation.access#request_id",
         "confirmation.access#subscription_id",
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
+        "confirmation.restore#charged_minor_units",
+        "confirmation.restore#column_id",
+        "confirmation.restore#confirmed_at",
+        "confirmation.restore#edition_id",
+        "confirmation.restore#reader_id",
+        "confirmation.restore#restored",
+        "confirmation.restore#subscription_id",
         "contract.subscription#amount_minor_units",
         "contract.subscription#column_id",
         "contract.subscription#currency",
@@ -123,21 +137,7 @@
         "role.access-payment#currency",
         "role.access-payment#reader_id",
         "role.access-payment#subscription_id",
-        "role.access-payment#success",
-        "role.access-refund#amount_minor_units",
-        "role.access-refund#column_id",
-        "role.access-refund#confirmed_at",
-        "role.access-refund#currency",
-        "role.access-refund#reader_id",
-        "role.access-refund#settled",
-        "role.access-refund#subscription_id",
-        "role.access-restored#charged_minor_units",
-        "role.access-restored#column_id",
-        "role.access-restored#confirmed_at",
-        "role.access-restored#edition_id",
-        "role.access-restored#reader_id",
-        "role.access-restored#restored",
-        "role.access-restored#subscription_id"
+        "role.access-payment#success"
       ],
       "kind": "breach",
       "ruleRef": "rule.access-expired"
@@ -152,6 +152,20 @@
         "confirmation.access#reader_id",
         "confirmation.access#request_id",
         "confirmation.access#subscription_id",
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
+        "confirmation.restore#charged_minor_units",
+        "confirmation.restore#column_id",
+        "confirmation.restore#confirmed_at",
+        "confirmation.restore#edition_id",
+        "confirmation.restore#reader_id",
+        "confirmation.restore#restored",
+        "confirmation.restore#subscription_id",
         "contract.subscription#amount_minor_units",
         "contract.subscription#column_id",
         "contract.subscription#currency",
@@ -174,21 +188,7 @@
         "role.access-payment#currency",
         "role.access-payment#reader_id",
         "role.access-payment#subscription_id",
-        "role.access-payment#success",
-        "role.access-refund#amount_minor_units",
-        "role.access-refund#column_id",
-        "role.access-refund#confirmed_at",
-        "role.access-refund#currency",
-        "role.access-refund#reader_id",
-        "role.access-refund#settled",
-        "role.access-refund#subscription_id",
-        "role.access-restored#charged_minor_units",
-        "role.access-restored#column_id",
-        "role.access-restored#confirmed_at",
-        "role.access-restored#edition_id",
-        "role.access-restored#reader_id",
-        "role.access-restored#restored",
-        "role.access-restored#subscription_id"
+        "role.access-payment#success"
       ],
       "kind": "precondition",
       "ruleRef": "rule.content-readable"
@@ -499,6 +499,13 @@
     },
     {
       "attributeRefs": [
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
         "confirmation.restore#charged_minor_units",
         "confirmation.restore#column_id",
         "confirmation.restore#confirmed_at",
@@ -525,20 +532,20 @@
         "request.restore#reader_id",
         "request.restore#request_id",
         "request.restore#started_at",
-        "request.restore#subscription_id",
-        "role.restore-refund#amount_minor_units",
-        "role.restore-refund#column_id",
-        "role.restore-refund#confirmed_at",
-        "role.restore-refund#currency",
-        "role.restore-refund#reader_id",
-        "role.restore-refund#settled",
-        "role.restore-refund#subscription_id"
+        "request.restore#subscription_id"
       ],
       "kind": "completion",
       "ruleRef": "rule.restore-completed"
     },
     {
       "attributeRefs": [
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
         "contract.subscription#amount_minor_units",
         "contract.subscription#column_id",
         "contract.subscription#currency",
@@ -555,20 +562,20 @@
         "request.restore#edition_id",
         "request.restore#reader_id",
         "request.restore#started_at",
-        "request.restore#subscription_id",
-        "role.restore-refund#amount_minor_units",
-        "role.restore-refund#column_id",
-        "role.restore-refund#confirmed_at",
-        "role.restore-refund#currency",
-        "role.restore-refund#reader_id",
-        "role.restore-refund#settled",
-        "role.restore-refund#subscription_id"
+        "request.restore#subscription_id"
       ],
       "kind": "precondition",
       "ruleRef": "rule.restore-eligible"
     },
     {
       "attributeRefs": [
+        "confirmation.refund#amount_minor_units",
+        "confirmation.refund#column_id",
+        "confirmation.refund#confirmed_at",
+        "confirmation.refund#currency",
+        "confirmation.refund#reader_id",
+        "confirmation.refund#settled",
+        "confirmation.refund#subscription_id",
         "confirmation.restore#charged_minor_units",
         "confirmation.restore#column_id",
         "confirmation.restore#confirmed_at",
@@ -595,14 +602,7 @@
         "request.restore#reader_id",
         "request.restore#request_id",
         "request.restore#started_at",
-        "request.restore#subscription_id",
-        "role.restore-refund#amount_minor_units",
-        "role.restore-refund#column_id",
-        "role.restore-refund#confirmed_at",
-        "role.restore-refund#currency",
-        "role.restore-refund#reader_id",
-        "role.restore-refund#settled",
-        "role.restore-refund#subscription_id"
+        "request.restore#subscription_id"
       ],
       "kind": "breach",
       "ruleRef": "rule.restore-expired"
@@ -1919,118 +1919,6 @@
     },
     {
       "attribute": "amount_minor_units",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#amount_minor_units",
-      "valueType": "int"
-    },
-    {
-      "attribute": "column_id",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#column_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "confirmed_at",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#confirmed_at",
-      "valueType": "timestamp"
-    },
-    {
-      "attribute": "currency",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#currency",
-      "valueType": "string"
-    },
-    {
-      "attribute": "reader_id",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#reader_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "settled",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#settled",
-      "valueType": "bool"
-    },
-    {
-      "attribute": "subscription_id",
-      "entityRef": "role.access-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-refund#subscription_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "charged_minor_units",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#charged_minor_units",
-      "valueType": "int"
-    },
-    {
-      "attribute": "column_id",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#column_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "confirmed_at",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#confirmed_at",
-      "valueType": "timestamp"
-    },
-    {
-      "attribute": "edition_id",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#edition_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "reader_id",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#reader_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "restored",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#restored",
-      "valueType": "bool"
-    },
-    {
-      "attribute": "subscription_id",
-      "entityRef": "role.access-restored",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.access-restored#subscription_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "amount_minor_units",
       "entityRef": "role.payment-proof",
       "keyData": false,
       "origin": "asserted",
@@ -2150,62 +2038,6 @@
       "valueType": "bool"
     },
     {
-      "attribute": "amount_minor_units",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#amount_minor_units",
-      "valueType": "int"
-    },
-    {
-      "attribute": "column_id",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#column_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "confirmed_at",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#confirmed_at",
-      "valueType": "timestamp"
-    },
-    {
-      "attribute": "currency",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#currency",
-      "valueType": "string"
-    },
-    {
-      "attribute": "reader_id",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#reader_id",
-      "valueType": "string"
-    },
-    {
-      "attribute": "settled",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#settled",
-      "valueType": "bool"
-    },
-    {
-      "attribute": "subscription_id",
-      "entityRef": "role.restore-refund",
-      "keyData": false,
-      "origin": "asserted",
-      "path": "role.restore-refund#subscription_id",
-      "valueType": "string"
-    },
-    {
       "attribute": "body",
       "entityRef": "thing.chapter",
       "keyData": true,
@@ -2294,5 +2126,5 @@
       "valueType": "string"
     }
   ],
-  "schemaVersion": "3.0"
+  "schemaVersion": "4.0"
 }

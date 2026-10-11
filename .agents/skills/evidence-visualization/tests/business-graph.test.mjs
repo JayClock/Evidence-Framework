@@ -56,7 +56,7 @@ const fixture = () => ({
     {
       id: 'use',
       group: 'relationship',
-      kind: 'uses_role',
+      kind: 'references',
       sourceRef: 'request',
       targetRef: 'proof',
       label: '采信',
@@ -413,7 +413,10 @@ test('object highlighting follows one visible hop, not transitive dependencies',
 });
 test('context highlighting stays inside the exact context and includes descendants', () => {
   const graph = build(fixture());
-  const h = sandbox.businessGraphHighlight(graph, { type: 'boundary', id: 'f' });
+  const h = sandbox.businessGraphHighlight(graph, {
+    type: 'boundary',
+    id: 'f',
+  });
   assert.deepEqual(Array.from(h.nodes).sort(), ['proof', 'request']);
   assert.deepEqual(Array.from(h.edges), ['use']);
   assert.deepEqual(Array.from(h.boundaries), ['f']);

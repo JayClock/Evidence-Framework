@@ -237,7 +237,7 @@ test('External proof keeps its role and real players; ordinary evidence keeps tw
     {
       id: 'relation.use',
       group: 'relationship',
-      kind: 'uses_role',
+      kind: 'references',
       sourceRef: 'request.a',
       targetRef: 'role.proof',
     },
@@ -269,6 +269,56 @@ test('External proof keeps its role and real players; ordinary evidence keeps tw
       ['所属上下文', '业务属性'],
     );
     assert.equal(JSON.stringify(data), before);
+  } finally {
+    page.close();
+  }
+});
+
+test('References do not turn historical evidence, unbound roles or other requests into completion proofs', () => {
+  const data = fixture();
+  data.nodes = data.nodes.filter((n) => n.id !== 'relation.result');
+  data.nodes.push(
+    {
+      id: 'role.unbound',
+      group: 'role',
+      kind: 'evidence',
+      label: '未绑定证明',
+    },
+    {
+      id: 'role.other',
+      group: 'role',
+      kind: 'evidence',
+      label: '其他请求证明',
+    },
+    { id: 'role.domain', group: 'role', kind: 'domain', label: '领域能力' },
+    ...[
+      ['old', 'request.a', 'confirmation.old'],
+      ['unbound', 'request.a', 'role.unbound'],
+      ['other', 'request.b', 'role.other'],
+      ['domain', 'request.a', 'role.domain'],
+    ].map(([id, sourceRef, targetRef]) => ({
+      id: `relation.${id}`,
+      group: 'relationship',
+      kind: 'references',
+      sourceRef,
+      targetRef,
+    })),
+  );
+  data.nodes
+    .find((n) => n.id === 'rule.completed')
+    .bindings.push(
+      { alias: 'history', ref: 'confirmation.old' },
+      { alias: 'other', ref: 'role.other' },
+      { alias: 'domain', ref: 'role.domain' },
+    );
+  const page = open(data);
+  try {
+    page.run('select("request.a")');
+    const outcome = page.document.querySelector(
+      '[data-request-outcome="completion"]',
+    );
+    assert.equal(outcome.querySelectorAll('[data-ref]').length, 0);
+    assert.ok(outcome.textContent.includes('未声明对应确认凭证或采信证明角色'));
   } finally {
     page.close();
   }

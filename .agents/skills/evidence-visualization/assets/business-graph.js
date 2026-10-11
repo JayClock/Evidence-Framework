@@ -3,7 +3,6 @@
 const businessGraphKinds = {
   references: '业务引用',
   plays_role: '角色扮演',
-  uses_role: '使用角色',
   evidences: '证明依赖',
   precedes: '先于',
 };
@@ -20,7 +19,9 @@ function graphCardinality(value) {
 // Layout is a projection, not another model. Only explicit facts become links.
 function buildBusinessGraph(data, options = {}) {
   const entities = data.nodes.filter((n) =>
-    ['context', 'fulfillment', 'evidence', 'participant', 'role'].includes(n.group),
+    ['context', 'fulfillment', 'evidence', 'participant', 'role'].includes(
+      n.group,
+    ),
   );
   const index = new Map(entities.map((n) => [n.id, n]));
   const warnings = [];
@@ -42,8 +43,7 @@ function buildBusinessGraph(data, options = {}) {
     while (node && !seen.has(node.id)) {
       seen.add(node.id);
       last = node.id;
-      if (node.group === 'context')
-        return node.id;
+      if (node.group === 'context') return node.id;
       node = index.get(node.parent);
     }
     return last;
@@ -136,9 +136,7 @@ function buildBusinessGraph(data, options = {}) {
     originY = 60 + columns[column];
     const owned = entities.filter((n) => owner(n.id) === scope);
     const ownIds = new Set(owned.map((n) => n.id));
-    const fulfillments = owned.filter(
-      (n) => n.group === 'fulfillment',
-    );
+    const fulfillments = owned.filter((n) => n.group === 'fulfillment');
     let y = 90;
     for (const fulfillment of fulfillments) {
       const requests = (
@@ -210,7 +208,10 @@ function buildBusinessGraph(data, options = {}) {
         .map((b) => b.y - originY + b.height + 42),
     );
     owned
-      .filter((n) => !['context', 'fulfillment'].includes(n.group) && !boxMap.has(n.id))
+      .filter(
+        (n) =>
+          !['context', 'fulfillment'].includes(n.group) && !boxMap.has(n.id),
+      )
       .forEach((n, i) =>
         put(n, 280 + (i % 3) * 280, rest + Math.floor(i / 3) * step),
       );
@@ -307,7 +308,10 @@ function buildBusinessLegend(layout) {
   const contexts = {
     domain: ['领域上下文', '划分领域对象的归属。'],
     contract: ['合同上下文', '划分合同权责范围，不是合同凭证节点。'],
-    fulfillment: ['权责履约', '合约内的请求、完成证明及规则，不构成上下文边界。'],
+    fulfillment: [
+      '权责履约',
+      '合约内的请求、完成证明及规则，不构成上下文边界。',
+    ],
   };
   for (const example of layout.boundaries) {
     const key = `${example.group}.${example.kind}`;
@@ -316,7 +320,13 @@ function buildBusinessLegend(layout) {
       '上下文',
       '对象的归属边界。',
     ];
-    items.push({ key, section: example.group === 'fulfillment' ? 'fulfillments' : 'contexts', label, description, example });
+    items.push({
+      key,
+      section: example.group === 'fulfillment' ? 'fulfillments' : 'contexts',
+      label,
+      description,
+      example,
+    });
   }
   const lines = [...layout.edges, ...layout.roleLinks];
   for (const [key, label, description, predicate] of [
@@ -765,7 +775,9 @@ function renderBusinessGraph(target) {
         'data-graph-boundary': boundary.id,
         'data-boundary-kind': boundary.kind,
         'data-boundary-parent': boundary.parent || '',
-        [boundary.group === 'context' ? 'data-graph-context' : 'data-graph-fulfillment']: boundary.id,
+        [boundary.group === 'context'
+          ? 'data-graph-context'
+          : 'data-graph-fulfillment']: boundary.id,
         class: `graph-boundary graph-boundary-${boundary.kind}`,
       });
       group.append(

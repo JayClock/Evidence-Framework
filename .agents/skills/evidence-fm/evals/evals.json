@@ -13,7 +13,7 @@
       "id": 1,
       "name": "payment-channel-evidence-role",
       "prompt": "使用 $modeling 建模订单销售合同。付款可由微信、支付宝或预付余额完成，退款也可走不同渠道；销售合同只依赖确定的付款/退款结果，不展开支付合同内部流程。用开放 Evidence Role 表达变化点，不在 Role 中枚举渠道，不为未知供应商补造 Party。输出 FM Schema v4、变化点说明并编译 JSON。",
-      "expected_output": "支付渠道通过 Evidence Role 和跨上下文时刻 Evidence 的 plays_role 表达；Evidence Role 没有 sourceEvidenceRefs；销售 Contract 不直连支付 Contract；未知供应商不被补造成 Party；付款、发货、退款履约完整；每项 Fulfillment 是合约内的权责履约结构，contextRef 指向合约上下文，成员使用 fulfillmentRef，履约间直接引用同合约凭证，所有 Request 有明确 interval。",
+      "expected_output": "消费方 Evidence 通过 references 引用同一 Context 的 Evidence-as-Role；支付渠道的外部时刻 Evidence 通过 plays_role 扮演它，不额外创建使用角色的关系类型；不能直接引用外部凭证或把 Evidence 的引用扩展到任意 Role；Evidence Role 没有 sourceEvidenceRefs；销售 Contract 不直连支付 Contract；未知供应商不被补造成 Party；付款、发货、退款履约完整；每项 Fulfillment 是合约内的权责履约结构，contextRef 指向合约上下文，成员使用 fulfillmentRef，履约间直接引用同合约凭证，所有 Request 有明确 interval。",
       "files": []
     },
     {
@@ -76,7 +76,7 @@
       "id": 10,
       "name": "explicit-participant-role-binding",
       "prompt": "建立两个合同上下文：内容订阅合同的双方 Role 是订阅方与内容平台；外部支付协议的双方 Role 是支付账户持有人与支付服务提供方。材料明确同一个 Customer 实体扮演订阅方和支付账户持有人，但只给出了支付服务提供方 Role，没有提供其上层 Party。外部支付确认应扮演订阅上下文中的合格付款确认 Evidence Role。不得创建 party.subscriber、party.content-platform 或 party.payment-provider。输出并验证 FM Schema v4。",
-      "expected_output": "存在 Customer Party 及其到 Subscriber、Payment Account Holder Role 的 plays_role；支付服务提供方仅为 Role；两个 Contract 各有两个 roleRefs；外部支付确认跨上下文扮演合格付款确认 Evidence Role；不存在占位 Party；每项 Fulfillment 是合约内的权责履约结构，contextRef 指向合约上下文，成员使用 fulfillmentRef，履约间直接引用同合约凭证，所有 Request 有明确 interval。",
+      "expected_output": "存在 Customer Party 及其到 Subscriber、Payment Account Holder Role 的 plays_role；支付服务提供方仅为 Role；两个 Contract 各有两个 roleRefs；订阅付款请求通过 references 引用本订阅 Context 的合格付款确认 Evidence Role，外部支付确认跨上下文以 plays_role 扮演它；引用与扮演分开，不用直接外部凭证引用代替角色；不存在占位 Party；每项 Fulfillment 是合约内的权责履约结构，contextRef 指向合约上下文，成员使用 fulfillmentRef，履约间直接引用同合约凭证，所有 Request 有明确 interval。",
       "files": []
     },
     {

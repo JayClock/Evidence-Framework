@@ -60,11 +60,11 @@ class FulfillmentStructureTests(unittest.TestCase):
                 values[-1]["kind"] = kind
                 self.assertEqual([], self.errors(values))
 
-    def test_shared_contract_proof_role_is_resolved_from_explicit_use(self):
+    def test_shared_contract_proof_role_is_resolved_from_explicit_reference(self):
         values = documents()
         values.append(entity("role.external-result", "role", "evidence", "外部结果", contextRef="context.agreement"))
         relationships = [
-            {"kind": "uses_role", "sourceRef": f"request.{name}", "targetRef": "role.external-result"}
+            {"kind": "references", "sourceRef": f"request.{name}", "targetRef": "role.external-result"}
             for name in ("delivery", "acceptance")
         ]
         index = {v["id"]: v for v in values if v.get("type") == "entity"}

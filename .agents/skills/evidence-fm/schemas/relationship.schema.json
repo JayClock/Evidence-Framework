@@ -17,8 +17,7 @@
         "references",
         "evidences",
         "precedes",
-        "derived_from",
-        "uses_role"
+        "derived_from"
       ]
     },
     "sourceRef": {

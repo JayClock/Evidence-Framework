@@ -1,0 +1,149 @@
+{
+  "recordedAt": "2026-10-11T01:10:44Z",
+  "scope": "Skill 与当前产出的 Evidence-as-Role 引用破坏性重构；不是产品 DAG 任务交付",
+  "authorization": {
+    "source": "本次用户对话",
+    "feedback": [
+      "这种其实是一种 reference",
+      "evidence 应该是 reference 的 evidence-as-role",
+      "破坏性重构一下 skill 和产出",
+      "继续"
+    ],
+    "referenceMaterial": "使用履约建模法实施面向业务设计（中篇直播版）.pdf，第 58–59 页支付确认关联支付凭证角色、微信支付确认扮演该角色；第 74–75 页关系图例。references 是仓库对引用关联的编码，不是 PDF 原文字段。"
+  },
+  "decisions": [
+    "删除 uses_role 枚举、校验分支及消费逻辑，不设别名或兼容入口；该字符串仅保留在拒绝旧输入的负向测试中。",
+    "Evidence 可 references 同 Context 的 Evidence-as-Role（category=role, kind=evidence），不可据此引用其他 Role 或直接引用外部具体凭证。",
+    "外部时刻凭证继续通过 plays_role 扮演 Evidence-as-Role，保留原归属、责任与业务时间。",
+    "保留 Evidence→Thing、同 Context Evidence→Evidence 及领域对象的本地引用；不将历史凭证引用误作完成结果。",
+    "迁移当前模型三条关系和采购完整生命周期样例的一条关系；保留稳定 ID、端点、规则、场景、API 设计及业务预期。",
+    "使用正式 CLI 重建 FM、API 与工作台，不手改派生文件；更新 Skill 文档、评测预期和回归测试。"
+  ],
+  "environment": {
+    "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+    "python": "/opt/miniconda3/bin/python3.12",
+    "pythonVersion": "3.12.3",
+    "nodeVersion": "26.8.1",
+    "dependencies": { "jsonschema": "4.25.1", "cel-python": "0.5.0", "PyYAML": "6.0.2" }
+  },
+  "inputs": {
+    "fmModelDigest": "sha256:4ad863e86c665e2426e339b9bfa2acdd3bb6dabc458a2ecaee07b19901217afc",
+    "validatorSha256": "05966c68f788631a87553d8d71d64a9df54a5df167e5c19416d30fb682f9e11c",
+    "relationshipSchemaSha256": "ec4bf874acdf0fbae03a26578aa9d8a31ad8610ad1c4735c13788f86d64a4ce6",
+    "visualGeneratorSha256": "ba84ef6cc266e76a87a9b13712231334ba5101f0d64167c0717048c8a812330d",
+    "workbenchScriptSha256": "003177cf43b20a3af2c239a992f5c77b36a0c6e62620e2ced1f7f418e4d35889"
+  },
+  "logRoot": "/tmp/evidence-role-reference-refactor",
+  "logRetention": "完整原始输出保留在本机临时目录；此文件仅保存紧凑结果、路径和摘要，不保证临时目录长期存在。",
+  "checks": [
+    {
+      "command": "node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests -p test_evidence_role_references.py -v",
+      "exitCode": 1,
+      "phase": "修改校验器前的红灯",
+      "result": "新增 9 个测试，6 类 Evidence 的正向子例及旧关系拒绝用例共 7 个失败，准确复现旧约束。",
+      "log": "red-references.log"
+    },
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-fm/tests -v",
+      "exitCode": 0,
+      "tests": 152,
+      "log": "fm-final-tests.log",
+      "sha256": "bc3d9799e40b46e02a82d88470cdebe703332a96dbd18eb18fafc4673d78dc55"
+    },
+    {
+      "command": "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-api-design/tests -v",
+      "exitCode": 0,
+      "tests": 104,
+      "log": "api-final-tests.log",
+      "sha256": "ec76e4710fd67026b072e518331a58f25cd3202d71b9d53191b9e99af4efeeaf"
+    },
+    {
+      "command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs .agents/skills/evidence-visualization/tests/request-detail.test.mjs",
+      "exitCode": 0,
+      "tests": 21,
+      "log": "visual-js-formatted.log",
+      "sha256": "d43da45f8a735e2b861a0922fd29a819978dfb5801f424fdacde7f4b129e71c4"
+    },
+    {
+      "command": "node tools/python/python.mjs -B /Users/zhongjie/Documents/Github/Evidence-Framework/.agents/skills/evidence-fm/scripts/check_fm.py /Users/zhongjie/Documents/Github/Evidence-Framework/.evidence/fm",
+      "exitCode": 0,
+      "valid": true,
+      "executedScenarioCount": 20,
+      "simulationPassed": true,
+      "inputChanged": false,
+      "log": "check-fm.json",
+      "sha256": "25f28e001d0bbce3491a27fc511b41fb79760e11f3b22bd994f9c94854bee426"
+    },
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs /Users/zhongjie/Documents/Github/Evidence-Framework/.evidence/views/index.html",
+      "exitCode": 0,
+      "passed": true,
+      "objects": 498,
+      "externalRequests": 0,
+      "screenshots": "/var/folders/dr/3xyd2lyx7fl9k8drtx8cxwgm0000gn/T/evidence-workbench-capture-ZOGpcU",
+      "screenshotReview": "已查看最终标准图和外部付款证明详情；角色与玩家区分、归属和完成证明链接保留。",
+      "log": "browser-final.log",
+      "sha256": "1b72306adff7d204a8300267672394e10540be85bbb00764d67600cf5a496ecc"
+    },
+    {
+      "command": "npm run test",
+      "exitCode": 1,
+      "result": "相关 suite 均通过（FM 152、FM portability 11、API 104、可视化 Python 17、可视化 portability 2）；现有 Skill 清单测试因用户另行新增的 write/content-research-writer 失败。Nx 应用测试 35/35 缓存命中。",
+      "log": "npm-test.log",
+      "sha256": "997a73e349c16dbbf9d7b71dc0a14393f08671fde82f13c9e98cad85e016efa6"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 1,
+      "result": "README.md:33–44 的 12 个 docs/articles 链接缺失；未修改无关文档。",
+      "log": "npm-lint.log",
+      "sha256": "a4446ad224fa63fa0b505899a88d90ddcc89d7201c3dc9a7562dfca726e5fc50"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "result": "Nx 构建 35/35 缓存命中；建模扩展 TypeScript 检查实际执行通过。",
+      "log": "npm-build.log",
+      "sha256": "f1ce4a6ea7a6b9a8435940dfbe5dc0b68416d2a8023ff62245c4fa7e9d605e27"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 1,
+      "result": "Guides 测试通过，链接检查被相同 12 个 README 文章链接阻塞。",
+      "log": "npm-guides-verify.log",
+      "sha256": "c06a8b3ebf5a075dc19e10e33ee519c7441a26f2cd8ef7338760386f3d0326f6"
+    }
+  ],
+  "additionalChecks": {
+    "glossary": { "exitCode": 0, "log": "glossary.log" },
+    "apiInspect": { "exitCode": 0, "log": "api-inspect.json" },
+    "apiCheck": { "exitCode": 0, "log": "api-check.json", "sha256": "6f79c2a9182778cb4330547792c187230969c4809b7f00f70bf0d4e5adef2983" },
+    "apiProject": { "exitCode": 0, "log": "api-project.json", "sha256": "44f01a7d1e2f5a74013799f153dcaf619a4435f8c3a8756b9f8f3cec27308681" },
+    "fmCompileLineageSimulationTimeline": { "exitCodes": [0, 0, 0, 0], "logs": ["fm-compile.log", "fm-lineage.log", "fm-simulate.log", "fm-timeline.log"] },
+    "changedFileFormatCheck": { "exitCode": 0, "log": "format-final.log", "sha256": "77dff3d4a21755cd17670d11be9acbff8de246a1083e8a4ddbacb59ff5541048" },
+    "gitDiffCheck": { "exitCode": 0 },
+    "activeLsp": { "filesChecked": 9, "diagnostics": 0, "confirmedClean": 1, "inconclusive": 8 }
+  },
+  "artifacts": {
+    "fm": ".evidence/fm/generated/",
+    "api": ".evidence/api/generated/",
+    "workbench": ".evidence/views/index.html",
+    "workbenchSha256": "b01b9757dd33a845831f533f3797340bba9be98a3fe9ade3c03304de2fbae182",
+    "sourceAndCompiledObjectsEqual": true,
+    "objectCount": 116,
+    "relationshipCounts": { "references": 15, "precedes": 15, "plays_role": 11, "evidences": 2 },
+    "apiOutputDigestsMatch": true
+  },
+  "review": {
+    "standards": "新关系约束、Skill 指引、回归与正式产出一致；保留独立上下文边界及证据不可替代性。全仓质量门禁仍未通过，不标记任务 done。",
+    "spec": "引用与扮演分开；不存在旧关系兼容入口；业务规则、实体、场景和正式 API 设计未变。",
+    "findings": [
+      "旧 FM generated/model.json 与 traceability.json 落后于本轮开始时的当前源结构；本轮通过正式生成器重建，产生包含既有结构变化的较大派生差异，不代表本轮改写这些业务源。",
+      "业务 plan.yaml 未重编译或提升状态；本轮 FM 摘要变化后，后续产品交付需重新核对计划输入新鲜度。",
+      "README/文章迁移和新增通用写作 Skills 是用户已有无关改动，保留并交接对应全仓检查失败。"
+    ],
+    "notExecuted": ["真人业务批准", "生产服务运行验收", "新增 Skill 评测预期的独立 Agent 行为评测", "Java 专项 ./gradlew check（无 Java 改动）"],
+    "businessApprovalClaimed": false,
+    "allProjectQualityChecksPassed": false
+  }
+}

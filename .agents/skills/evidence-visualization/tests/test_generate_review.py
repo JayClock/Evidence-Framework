@@ -29,7 +29,7 @@ def fixture():
             {"id": "confirmation.other", "category": "evidence", "kind": "fulfillment_confirmation", "label": "外部扣款"},
         ],
         "relationships": [
-            {"id": "relation.use", "kind": "uses_role", "sourceRef": "request.a", "targetRef": "role.proof", "label": "采信"},
+            {"id": "relation.use", "kind": "references", "sourceRef": "request.a", "targetRef": "role.proof", "label": "采信"},
             {"id": "relation.play", "kind": "plays_role", "sourceRef": "confirmation.other", "targetRef": "role.proof", "label": "提供证明"},
         ],
         "rules": [{"id": "rule.a", "label": "已付款", "kind": "completion", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "description": "以外部付款证明判断完成。", "expression": "proof.success", "bindings": {"proof": {"ref": "role.proof"}}, "sourceRefs": ["SECRET"]}],
@@ -49,6 +49,21 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(["role.proof"], obligation["proofRoles"])
         self.assertEqual(["confirmation.other"], obligation["proofPlayers"])
         self.assertEqual([], obligation["confirmations"])
+
+    def test_only_referenced_evidence_roles_become_fulfillment_proofs(self):
+        model = fixture()
+        model["entities"].extend([
+            {"id": "role.domain", "category": "role", "kind": "domain", "label": "领域能力"},
+            {"id": "evidence.old", "category": "evidence", "kind": "other_evidence", "label": "历史记录"},
+            {"id": "role.unreferenced", "category": "role", "kind": "evidence", "label": "无引用证明"},
+        ])
+        for target in ("role.domain", "evidence.old"):
+            model["relationships"].append({"id": f"relation.{target}", "kind": "references",
+                                           "sourceRef": "request.a", "targetRef": target})
+        node = next(n for n in self.project(model)["nodes"] if n["id"] == "fulfillment.a")
+        self.assertEqual(["role.proof"], node["proofRoles"])
+        self.assertEqual(["confirmation.other"], node["proofPlayers"])
+        self.assertEqual([], node["confirmations"])
 
     def test_shared_confirmation_and_proof_roles_are_both_preserved(self):
         model = fixture()

@@ -477,7 +477,7 @@ function renderRequestConditions(request) {
           relations
             .filter(
               (r) =>
-                r.kind === 'uses_role' &&
+                r.kind === 'references' &&
                 r.sourceRef === request.id &&
                 bound.has(r.targetRef) &&
                 nodes.get(r.targetRef)?.group === 'role' &&

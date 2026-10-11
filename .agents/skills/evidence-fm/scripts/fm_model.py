@@ -698,7 +698,7 @@ def fulfillment_members(
     }
     role_refs.update(
         str(relation.get("targetRef")) for relation in relationships
-        if relation.get("kind") == "uses_role"
+        if relation.get("kind") == "references"
         and relation.get("sourceRef") in request_refs
         and entity_signature(entities.get(str(relation.get("targetRef")))) == ("role", "evidence")
     )
@@ -978,15 +978,6 @@ def validate_relationships(
                 )
             continue
 
-        if kind == "uses_role":
-            if target_sig[0] != "role" or target_sig[1] == "party":
-                errors.append(
-                    f"{relationship_id}: uses_role target must be a non-Party Role"
-                )
-            if source.get("type") != "entity":
-                errors.append(f"{relationship_id}: uses_role source must be an Entity")
-            continue
-
         if kind in {"references", "evidences", "precedes", "derived_from"}:
             if source.get("type") != "entity" or target.get("type") != "entity":
                 errors.append(f"{relationship_id}: {kind} requires Entity endpoints")
@@ -1029,10 +1020,14 @@ def validate_relationships(
             elif (
                 kind == "references"
                 and source_sig[0] == "evidence"
-                and not (evidence_to_thing or target_sig[0] == "evidence")
+                and not (
+                    evidence_to_thing
+                    or target_sig[0] == "evidence"
+                    or target_sig == ("role", "evidence")
+                )
             ):
                 errors.append(
-                    f"{relationship_id}: Evidence references must target a Thing or Evidence"
+                    f"{relationship_id}: Evidence references must target a Thing, Evidence, or Evidence Role"
                 )
             elif kind == "derived_from" and not (
                 source_sig[0] == "evidence" and target_sig[0] == "evidence"

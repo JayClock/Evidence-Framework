@@ -119,8 +119,8 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 | `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
 | `participant` | `party`、`thing`                                                                                   |
 | `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
-| `context`     | `contract`、`pre_contract`、`domain`、`external`                                    |
-| `fulfillment` | 不定义 kind；`contextRef` 指向所属 Contract Context |
+| `context`     | `contract`、`pre_contract`、`domain`、`external`                                                   |
+| `fulfillment` | 不定义 kind；`contextRef` 指向所属 Contract Context                                                |
 
 ### Evidence 必备时间属性（本地硬约束）
 
@@ -286,9 +286,9 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 
 ## 7. Relationship
 
-允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`、`uses_role`。
+允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`。
 
-方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为 Evidence→Thing 或同 Context 的 Evidence→Evidence，`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为玩家→Role，`uses_role` 为业务 Entity→非 Party Role。Fulfillment 不得成为 Evidence 图端点。同一合约内不同履约之间可以直接引用，不构成跨上下文关系。跨独立上下文保留有依据的 Proposal→Contract、Evidence→Thing 与外部时刻 Evidence→Evidence Role；直接引用不能穿透独立责任边界。
+方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为 Evidence→Thing（可跨 Context）、同 Context 的 Evidence→Evidence 或 Evidence→Evidence-as-Role（`category: role / kind: evidence`）；非 Evidence 的领域对象、角色也可引用同 Context 的 Entity。Evidence 不可通过 `references` 指向其他 Role 类型。`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为玩家→Role。引用角色仍是 `references`，不是扮演关系，不另设“使用角色”类型。Fulfillment 不得成为 Evidence 图端点。同一合约内不同履约之间可以直接引用，不构成跨上下文关系。跨独立上下文保留有依据的 Proposal→Contract、Evidence→Thing 与外部时刻 Evidence→Evidence Role；直接引用不能穿透独立责任边界。
 
 关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
 
