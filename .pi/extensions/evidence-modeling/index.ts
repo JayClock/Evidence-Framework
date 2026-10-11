@@ -1,8 +1,8 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
-import { Type } from 'typebox';
 
 import { registerModelingCommand } from './commands.js';
 import { QuestionUI } from './question-ui.js';
+import { QuestionInputSchema } from './ui-contracts.js';
 
 export default function evidenceModelingExtension(pi: ExtensionAPI): void {
   const questions = new QuestionUI();
@@ -10,20 +10,10 @@ export default function evidenceModelingExtension(pi: ExtensionAPI): void {
   registerModelingCommand(pi);
   pi.registerTool({
     name: 'evidence_ui_question',
-    label: 'Evidence Question UI',
+    label: '当前建模问题',
     description:
-      '显示一个由 Agent 提供标识和来源的 FM 业务问题；只返回人工交互结果，不保存业务记录。',
-    parameters: Type.Object({
-      questionId: Type.String({ minLength: 1 }),
-      gapKey: Type.String({
-        minLength: 3,
-        pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$',
-      }),
-      prompt: Type.String({ minLength: 1 }),
-      impact: Type.String({ minLength: 1 }),
-      contextSummary: Type.String({ minLength: 1 }),
-      sourceRefs: Type.Array(Type.String()),
-    }),
+      '围绕当前业务位置，展示已明确内容并澄清一个问题。履约位置精确到合同、履约项和请求或确认；只返回人工交互结果，不保存业务记录。',
+    parameters: QuestionInputSchema,
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const result = await questions.open(params, ctx);
       return {

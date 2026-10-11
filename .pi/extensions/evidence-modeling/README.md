@@ -19,7 +19,24 @@
 
 ## `evidence_ui_question`
 
-Agent 提供 `questionId`、`gapKey`、问题、影响、当前理解及来源引用。工具只返回：
+Agent 提供 `questionId`、`gapKey`、`position`、`known` 和 `prompt`。`position` 是当前业务位置：
+
+- 履约：`kind: fulfillment`，以及 `contract`、`fulfillment`、`point: request / confirmation`。
+- 合同识别：`kind: contract` 与 `contract`。
+- 协商／领域：`kind: negotiation / domain`、`context` 与 `object`。
+- 未定位：`kind: unlocated`，不补造合同或履约。
+
+`known` 是当前节点已明确事实的短列表，允许为空；`prompt` 是一个必要问题。选择动作和多行回答编辑器都展示：
+
+```text
+当前位置：<合同名称> → <履约项名称> → <请求或确认>
+已明确：<当前节点的业务事实>
+正在澄清：<一个问题>
+```
+
+面板不展示业务标识、其他合同、全局进度、来源文章、影响说明或整体准入提醒。来源和完整责任结构继续由 Agent 保存到业务记录。契约拒绝额外字段，不接收旧问答载荷。
+
+工具只返回：
 
 - `answered`：保留多行回答原文；
 - `deferred`：暂缓当前问题；

@@ -1,11 +1,14 @@
 {
   "schemaVersion": "2.0",
   "handoff": {
-    "businessPosition": "<合同履约／渠道协商／领域对象 → 上下文 → 当前对象；未定位明示>",
+    "businessPosition": "<履约为合同名称 → 履约项名称 → 请求或确认；合同识别只到已知合同，协商／领域为上下文 → 当前对象；未定位明示>",
     "focusRef": "<当前约定、履约、协商或领域对象的稳定记录 ID，不复制对象事实>",
+    "focusPoint": "<可选：履约焦点为 request 或 confirmation；与 focusRef 合用，不另存请求或确认正文，非履约省略>",
     "currentGoal": "<当前仍不能作出的业务判断，不是待填字段清单>",
     "digestedSources": ["<已读取来源 ID 或材料版本与定位>"],
-    "viewRefs": ["<生成本轮可读视图所用的记录 ID，不另存业务视图正文>"],
+    "viewRefs": [
+      "<生成当前节点进度所需的记录 ID 及必要支撑引用，不展开全局或另存视图正文>"
+    ],
     "currentQuestion": "<当前实际问题 ID；没有则省略，不复制问题正文>",
     "deferredQuestions": ["<暂缓问题 ID；不换 ID 重问>"],
     "interactionState": "<问答中／等待／已停止及来源依据；补充资料不自动恢复>",
