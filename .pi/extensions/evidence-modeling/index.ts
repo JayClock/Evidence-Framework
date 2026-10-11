@@ -30,9 +30,9 @@ export default function evidenceModelingExtension(pi: ExtensionAPI): void {
     name: 'evidence_ui_contexts',
     label: '合同上下文总览',
     description:
-      'evidence-discovery 的可选 UI 包装；先读取该 Skill，由 Agent 按记录核对候选、结束依据、可选性及权限，本工具只展示投影。' +
-      '从发现记录生成合同上下文总览，展示双方、责任边界、候选状态及待确认点；只返回交互结果，不保存记录、不确认边界或排除责任。' +
-      'selected 携带约定记录 ID，Agent 仍须核对目标再按授权保存；cancelled 保留原焦点等待，不改用文本重问；empty 表示输入无候选，不代表追责结束；' +
+      'evidence-discovery 的可选 UI 包装；先读取该 Skill，由 Agent 依据材料直接识别合同上下文并核对结束依据、可选性及权限，本工具只展示投影，不判断材料是否充分。' +
+      '只传入依据充分的合同，展示双方、责任边界及待追溯事项，让用户选择分析哪一个；不接收候选状态，选择只决定分析焦点，不是合同存在或边界的确认。只返回交互结果，不保存记录或排除责任。' +
+      'selected 携带约定记录 ID，Agent 仍须核对目标再按授权保存；cancelled 保留原焦点等待，不改用文本重问；empty 表示未识别到合同，不代表追责结束；' +
       'unavailable 表示界面不可用，改用普通对话编号列表，不伪造选择。选择不解决原问题，也不解除停止状态。',
     parameters: ContextSelectionSchema,
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {

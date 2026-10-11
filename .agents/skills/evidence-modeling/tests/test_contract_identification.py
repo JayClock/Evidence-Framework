@@ -13,10 +13,10 @@ DISCOVERY_EVALS = SKILLS / "evidence-discovery/evals"
 class ContractIdentificationTests(unittest.TestCase):
     def test_operating_basis_precedes_agreement_and_skeleton(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        flow = "现金权责／目标—实际约束及来源 → 候选约定与双方 → 全部主履约清单"
+        flow = "现金权责／目标—实际约束及来源 → 识别合同上下文与双方 → 全部主履约清单"
         self.assertIn(flow, method)
         self.assertLess(
-            method.index("### 候选上下文的识别依据"),
+            method.index("### 合同上下文的识别依据"),
             method.index("## 2. 合同：确定约定边界"),
         )
         for phrase in (
@@ -29,6 +29,17 @@ class ContractIdentificationTests(unittest.TestCase):
         exit_condition = method.split("**退出条件**：", 1)[1].split("\n", 1)[0]
         self.assertIn("经营依据", exit_condition)
         self.assertIn("边界理由", exit_condition)
+
+    def test_identification_is_a_material_based_result_not_a_candidate_vote(self):
+        method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
+        for phrase in (
+            "依据材料直接识别合同上下文", "不进入合同总览",
+            "不要求用户确认合同是否存在", "不再泛问交易如何成立",
+            "参数缺口不阻塞合同识别", "不删除已知责任",
+        ):
+            self.assertIn(phrase, method)
+        self.assertNotIn("候选约定与双方", method)
+        self.assertNotIn("候选上下文的识别依据", method)
 
     def test_entrypoints_route_operating_identification_to_fm(self):
         for name in ("evidence-fm", "evidence-discovery"):
@@ -79,7 +90,7 @@ class ContractIdentificationTests(unittest.TestCase):
         categories = (
             "operating-basis-marketplace", "target-actual-without-cash",
             "agreement-name-without-operating-basis", "non-cash-duty-in-cash-contract",
-            "unknown-fee-retains-candidate", "custody-not-platform-revenue",
+            "unknown-fee-retains-context", "custody-not-platform-revenue",
         )
         for category in categories:
             with self.subTest(category=category):

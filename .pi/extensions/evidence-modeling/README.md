@@ -25,11 +25,11 @@
 
 ## `evidence_ui_contexts`
 
-首次识别合同候选及用户要求查看／切换时，由 Agent 从发现记录生成 `contexts`：每项包含稳定 `agreementRef`、`name`、`parties`、`boundary`、`status: candidate / confirmed`、`unresolved` 和 `clarification: open / completed`。可选 `currentAgreementRef` 标注当前合同。结束状态依据原约定的 `clarificationCompletionSourceRefs`，由 Agent 核对来源投影；扩展不作业务判断或保存事实。
+首次依据材料直接识别合同上下文及用户要求查看／切换时，由 Agent 从发现记录生成仅含依据充分合同的 `contexts`：每项包含稳定 `agreementRef`、`name`、`parties`（至少双方角色）、`boundary`、`unresolved` 和 `clarification: open / completed`。不传候选或确认状态，不把识别依据不足的线索作为选项；`unresolved` 表示待追溯的履约细节，不是让用户确认合同存在。可选 `currentAgreementRef` 标注当前合同。结束状态依据原约定的 `clarificationCompletionSourceRefs`，由 Agent 核对来源投影；扩展不作业务判断或保存事实。
 
 选择面板展示全部合同摘要，已结束项标记“已结束，不可选择”，不进入选项；伪造的已结束选项也不会返回选择结果。全部结束时仅可返回。重名合同通过序号区分，结果返回稳定 ID；重复 ID 或失效的当前引用拒绝执行。
 
-结果为 `selected`（带 `agreementRef`）、`cancelled`、`empty` 或 `unavailable`。取消不选择默认项、不改用文本强迫再选；不可用时由 Agent 提供同样的普通对话编号列表。选择后按访谈协议重新核对未结束、保存来源及焦点引用，再恢复单点澄清；选择不确认边界或排除其他责任，不自动解除停止状态，自然语言切换同样禁止进入已结束项。
+结果为 `selected`（带 `agreementRef`）、`cancelled`、`empty` 或 `unavailable`。取消不选择默认项、不改用文本强迫再选；不可用时由 Agent 提供同样的普通对话编号列表。选择后按访谈协议重新核对未结束、保存来源及焦点引用，承接已有主履约并进入单点澄清；选择只决定分析焦点，不确认合同存在或边界、不排除其他责任，不自动解除停止状态，自然语言切换同样禁止进入已结束项。
 
 ## `evidence_ui_question`
 
@@ -52,7 +52,7 @@ Agent 提供 `questionId`、`gapKey`、`position`、`story` 和 `prompt`。`posi
 
 请求与确认本身就是凭证。`evidence` 定位当前端点，其他支撑凭证及其证明作用在故事中说明，不把支撑凭证误标为当前履约请求或确认。面板不添加“已明确／正在澄清／尚缺依据”栏目，不展示业务标识、其他合同、全局进度、来源文章、影响说明或整体准入提醒。业务信息来源可以在故事中讲述，文件出处和完整责任结构继续由 Agent 保存到业务记录。故事不另行保存，恢复通过原对象、追溯记录和问题引用重建。契约拒绝额外字段，不接收旧 `known` 问答载荷。
 
-修改扩展后需要重载或新建会话，使宿主重新注册工具 Schema；已加载的旧工具声明不会因文件修改自动更新。自动测试不能证明 Agent 叙述真实或没有夹带问题，这些由访谈行为评测检查。
+修改扩展后需要重载或新建会话，使宿主重新注册工具 Schema；已加载的旧工具声明不会因文件修改自动更新。合同总览载荷不接收 `status` 字段；Schema 校验不证明材料充分，识别判断仍由 Agent 按 FM 方法完成。自动测试不能证明 Agent 叙述真实或没有夹带问题，这些由访谈行为评测检查。
 
 工具只返回：
 

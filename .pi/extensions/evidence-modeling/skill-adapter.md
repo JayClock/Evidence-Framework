@@ -6,15 +6,15 @@ Agent 按 Skill 决定焦点、可选合同、问题及权限，插件不决定�
 
 ## 合同选择
 
-调用 `evidence_ui_contexts` 时传入 `contexts` 和可选 `currentAgreementRef`。每项包含发现记录 ID `agreementRef`，以及 `name`、`parties`、`boundary`、`status: candidate / confirmed`、`unresolved`、`clarification: open / completed`。
+调用 `evidence_ui_contexts` 时传入 `contexts` 和可选 `currentAgreementRef`。只传入 Agent 按 FM 方法从材料直接识别、依据充分的合同上下文。每项包含发现记录 ID `agreementRef`，以及 `name`、`parties`（至少双方角色）、`boundary`、`unresolved`、`clarification: open / completed`；不接收 `status`。依据不足的线索不作为选项，参数与证明缺口则保留在 `unresolved`。插件不判断材料充分性，载荷合法不等于业务依据充分。
 
 `clarification` 是 Agent 按原约定结束依据核对后的投影，不由插件推断。插件只按投影禁用已结束项；接到选择后 Agent 仍须重新核对记录及权限，不能把禁用按钮当成业务保障。焦点在履约上时沿原节点的约定引用确定当前合同。
 
 | 返回                        | 交回访谈协议的含义                                         |
 | --------------------------- | ---------------------------------------------------------- |
-| `selected` + `agreementRef` | 导航选择，不是边界确认；重新核对目标再按授权保存来源和焦点 |
+| `selected` + `agreementRef` | 选择分析焦点，不是合同存在或边界确认；核对目标再按授权保存 |
 | `cancelled`                 | 用户返回或关闭；保留原焦点和原问题，不改用文本强迫再选     |
-| `empty`                     | 输入无候选；核对实际记录，不造占位合同，不当作全局结束     |
+| `empty`                     | 未识别到合同；核对实际记录，不造占位合同，不当作全局结束   |
 | `unavailable`               | 无 UI 或面板占用；按相同记录展示普通编号列表，不伪造选择   |
 
 导航不创建业务问题 ID，也不与业务提问捆绑。编号仅对应本次展示，工具返回的稳定 ID 用于定位原记录，不另存菜单。

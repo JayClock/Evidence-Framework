@@ -52,22 +52,25 @@ export class QuestionUI {
     if (!ctx.hasUI || this.active) return { status: 'unavailable' };
     this.active = true;
     try {
-      const labels = input.contexts.map(
-        (item, index) =>
-          `${index + 1}. ${item.name}（${item.status === 'candidate' ? '候选' : '已确认'}${item.clarification === 'completed' ? '，已结束，不可选择' : ''}${item.agreementRef === input.currentAgreementRef ? '，当前' : ''}）`,
-      );
+      const labels = input.contexts.map((item, index) => {
+        const markers = [
+          ...(item.clarification === 'completed' ? ['已结束，不可选择'] : []),
+          ...(item.agreementRef === input.currentAgreementRef ? ['当前'] : []),
+        ];
+        return `${index + 1}. ${item.name}${markers.length ? `（${markers.join('，')}）` : ''}`;
+      });
       const title = [
         '合同上下文总览',
         ...input.contexts.map((item, index) =>
           [
             labels[index],
-            `双方：${item.parties.join(' / ') || '待明确'}`,
+            `双方：${item.parties.join(' / ')}`,
             `责任边界：${item.boundary}`,
-            `待确认：${item.unresolved.join('；') || '暂无已记录缺口'}`,
+            `待追溯：${item.unresolved.join('；') || '暂无已记录缺口'}`,
           ].join('\n'),
         ),
-        '选择只改变澄清焦点，不代表确认边界或排除其他责任。',
-        '先澄清哪个合同上下文？',
+        '选择只决定分析焦点，不是合同存在或边界的确认，不排除其他责任。',
+        '先分析哪个合同上下文？',
       ].join('\n');
       const selectable = labels.filter(
         (_label, index) => input.contexts[index].clarification === 'open',

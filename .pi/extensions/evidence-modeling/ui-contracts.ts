@@ -75,12 +75,8 @@ export const ContextSelectionSchema = Type.Object(
         {
           agreementRef: BusinessText,
           name: BusinessText,
-          parties: Type.Array(BusinessText),
+          parties: Type.Array(BusinessText, { minItems: 2 }),
           boundary: BusinessText,
-          status: Type.Union([
-            Type.Literal('candidate'),
-            Type.Literal('confirmed'),
-          ]),
           unresolved: Type.Array(BusinessText),
           clarification: Type.Union([
             Type.Literal('open'),

@@ -14,7 +14,6 @@ const input: ContextSelectionInput = {
       name: '采购协议',
       parties: ['买方', '卖方'],
       boundary: '货物价款与交付',
-      status: 'confirmed',
       clarification: 'open',
       unresolved: [],
     },
@@ -23,9 +22,8 @@ const input: ContextSelectionInput = {
       name: '采购协议',
       parties: ['平台', '商户'],
       boundary: '服务费与服务责任',
-      status: 'candidate',
       clarification: 'open',
-      unresolved: ['独立边界待确认'],
+      unresolved: ['服务费率待明确'],
     },
   ],
   currentAgreementRef: 'A-1',
@@ -39,7 +37,10 @@ describe('contract context navigation', () => {
     expect(Check(ContextSelectionSchema, { contexts: [] })).toBe(true);
     for (const fields of [
       { agreementRef: ' ' },
-      { status: 'approved' },
+      { status: 'candidate' },
+      { status: 'confirmed' },
+      { parties: [] },
+      { parties: ['买方'] },
       { boundary: '' },
       { extra: true },
     ]) {
@@ -62,10 +63,12 @@ describe('contract context navigation', () => {
     expect(title).toContain('合同上下文总览');
     expect(title).toContain('买方 / 卖方');
     expect(title).toContain('货物价款与交付');
-    expect(title).toContain('独立边界待确认');
-    expect(title).toContain('不代表确认边界或排除其他责任');
+    expect(title).toContain('服务费率待明确');
+    expect(title).toContain('选择只决定分析焦点');
+    expect(title).toContain('先分析哪个合同上下文？');
+    expect(title).not.toMatch(/候选|已确认/);
     expect(options[0]).toContain('当前');
-    expect(options[1]).toContain('候选');
+    expect(options[1]).toBe('2. 采购协议');
   });
 
   it('keeps completed contexts visible but rejects even a forged selection of them', async () => {
@@ -76,7 +79,7 @@ describe('contract context navigation', () => {
         clarification: 'completed',
       })),
     };
-    ctx.ui.select.mockResolvedValue('1. 采购协议（已确认，已结束，不可选择）');
+    ctx.ui.select.mockResolvedValue('1. 采购协议（已结束，不可选择）');
     expect(
       await new QuestionUI().selectContext(completed, ctx as never),
     ).toEqual({ status: 'cancelled' });

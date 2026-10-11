@@ -16,9 +16,20 @@ class ContextNavigationTests(unittest.TestCase):
             'clarificationCompletionSourceRefs', '不分配业务 Q-ID',
             '取消保留原焦点和原问题', '先重新核对目标存在且未结束',
             '清除不再适用的', '保留原问题记录', '用编号列表展示',
-            '零候选', '全部结束', '只读查看或仅浏览不写焦点',
+            '未识别到合同', '全部结束', '只读查看或仅浏览不写焦点',
         ):
             self.assertIn(phrase, text)
+
+    def test_overview_only_projects_identified_contexts_and_selection_enters_fulfillment(self):
+        text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
+        for phrase in (
+            '依据充分的合同上下文', '不展示候选／已确认分类',
+            '先分析哪个合同上下文？', '选择只决定分析焦点',
+            '先承接已知双方和全部主履约', '不再泛问交易如何成立',
+            '既有记录', '不自动迁移',
+        ):
+            self.assertIn(phrase, text)
+        self.assertNotIn('未取得明确边界确认依据时显示候选', text)
 
     def test_completion_stores_source_references_on_the_original_agreement(self):
         template = json.loads((SKILLS / 'evidence-discovery/assets/discovery-template.json').read_text())
@@ -32,7 +43,11 @@ class ContextNavigationTests(unittest.TestCase):
     def test_behavior_cases_cover_navigation_not_just_display(self):
         data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
         indexed = {item['category']: item for item in data['evals']}
-        for name in ('context-overview-selection', 'completed-context-not-selectable', 'context-navigation-empty-headless'):
+        for name in (
+            'context-overview-selection', 'completed-context-not-selectable',
+            'context-navigation-empty-headless', 'material-contexts-not-candidates',
+            'insufficient-material-no-context-menu', 'legacy-candidate-record-recheck',
+        ):
             case = indexed[name]
             self.assertGreaterEqual(len(case['expectations']), 4)
             self.assertIn('follow_up', case)
