@@ -85,7 +85,7 @@ class SkillPackageTests(unittest.TestCase):
             {
                 path.name
                 for path in ROOT.iterdir()
-                if path.is_dir() and not path.name.startswith(".")
+                if path.is_dir() and path.name.startswith("evidence-")
             },
         )
         for name in WORKFLOW_NAMES:

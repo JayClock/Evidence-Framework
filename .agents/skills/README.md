@@ -48,23 +48,9 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 用 evidence-task-planning 根据 .evidence/fm/ 生成模块化单体 + MyBatis 的 plan.yaml 和 review.html；有 API 时一并读取。明确业务模块公开接口、数据所有权和本地事务，通过程序计算工作单元、taskKey 和覆盖，不修改模型和业务代码。
 ```
 
-已有材料和模型可以作为输入，正式建模仍先核对同一追责结束门槛：
+业务分析只在 [FM 方法](evidence-fm/references/business-analysis.md)维护，正式编辑统一核对 [追责结束准入](evidence-fm/references/responsibility-closure.md)。Discovery 管一轮交互，FM 管专业判断与正式表达，Modeling 管授权和阶段接续，不在每层复述分析过程。
 
-```text
-经营目标与材料 → 合同与双方 → 全部主履约
-                    ↓ 当前请求—确认骨架 → 凭证及关键数据追溯
-                    ↓ 异常新义务重复骨架与追溯，逐枝递归
-                    ↓ Discovery 逐问，FM 提供分析与术语方法
-               全局责任图 ＋ 人类终点确认 ＋ 词汇入口
-                    ↓ 所有分支查清，人类明确确认全部追责结束
-                    ↓ 核对当前来源版本与一体生成授权
-                 编辑当前 FM → 校验／修正 → 整体 API 设计与校验
-                    ↓ 同页联合审核，展示两源差异并停止
-                    ↓ 新责任分支或结束依据失效
-                 停止编辑并交接缺口，不自动恢复问答
-```
-
-`evidence-modeling` 是显式组合入口；Discovery 也可按 FM 方法在访谈中沉淀领域语言。访谈授权发现记录和已明确术语的词汇表写入，普通回答或“停止”不扩大到模型 JSON、关系、规则或验证场景。只聊不落盘、仅保存资料等更窄要求优先；生成／修改模型请求提供本次编辑授权，不替代人类追责结束确认；停止或暂缓不等于追责结束。两处保存任一失败就停止并交接实际结果。生成／修改分支一次触发 FM、整体 API 与联合审核；明确更窄要求优先。编辑成功与校验通过不等于业务批准，不自动进入需求、规划或开发。
+先选择 Skill，再按 Guides / Action / Sensors / Steer 执行：加载当前分支来源，完成授权动作，核对实际证据，修正或停止。独立调用不扩大权限；显式一体生成依次完成 FM、整体 API 和联合审核。只聊不落盘、只校验及仅 FM 等限制优先。保存、准入、机器检查与业务批准互不替代，不自动进入需求、规划或开发。
 
 ## 文件交接
 
@@ -123,5 +109,7 @@ python3 -m venv "$VENV_DIR"
 各 Skill 的评测与自身方法一起维护：[业务发现](evidence-discovery/evals/README.md)、[正式 FM](evidence-fm/evals/README.md)、[软件需求](evidence-requirements/evals/README.md)、[smart-domain 任务规划](evidence-task-planning/evals/README.md)。FM 同时包含[功能回归](evidence-fm/tests/README.md)与夹具，完整复制后仍可独立运行。
 
 delivery 的实现、诊断与双维度审查用例位于 `evidence-delivery/evals/evals.json`；协议结构回归不证明 Agent 的实际执行质量，评测方法见其 evals/README.md。
+
+跨 Skill 选择与近似请求用 [路由评测](evidence-modeling/evals/README.md) 检查，专业执行沿用各包案例。测试结构与引用，不要求编排入口复制专业规则；实测选择、权限、保存顺序和失败转向须保留执行轨迹。
 
 这些目录只在开发验证时按需使用，不是普通业务任务的必读材料。自动回归与人工行为评价分开，没有执行的评测不能记为通过。

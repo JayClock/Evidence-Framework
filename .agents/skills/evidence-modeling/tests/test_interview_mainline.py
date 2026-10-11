@@ -10,11 +10,17 @@ REPO = SKILLS.parents[1]
 
 class InterviewMainlineTests(unittest.TestCase):
     def test_entrypoints_route_to_analysis_not_only_glossary(self):
-        for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
+        for name in ("evidence-discovery", "evidence-fm"):
             text = (SKILLS / name / "SKILL.md").read_text()
             with self.subTest(skill=name):
-                for phrase in ("business-analysis.md", "domain-language.md", "单据推演", "参与者与角色扮演", "变化点", "模型 JSON"):
-                    self.assertIn(phrase, text)
+                for reference in ("business-analysis.md", "domain-language.md", "scenario-validation.md"):
+                    self.assertIn(reference, text)
+        composition = (SKILLS / "evidence-modeling/SKILL.md").read_text()
+        for delegate in ("evidence-discovery", "evidence-fm"):
+            self.assertIn(delegate, composition)
+        method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
+        for judgment in ("单据推演", "参与者与角色扮演", "变化点"):
+            self.assertIn(judgment, method)
         guide = (REPO / "docs/guides/index.md").read_text()
         self.assertIn("evidence-fm/references/business-analysis.md", guide)
 

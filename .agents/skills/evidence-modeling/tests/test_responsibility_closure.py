@@ -31,9 +31,16 @@ class ResponsibilityClosureTests(unittest.TestCase):
                 text = (SKILLS / relative).read_text()
                 self.assertIn("追责结束", text)
                 self.assertIn("人类", text)
-                self.assertIn("建模", text)
+                reference = (
+                    "references/workflow.md"
+                    if relative == "evidence-modeling/SKILL.md"
+                    else "responsibility-closure.md"
+                )
+                self.assertIn(reference, text)
         fm = (SKILLS / "evidence-fm/SKILL.md").read_text()
-        self.assertLess(fm.index("核对追责结束门槛"), fm.index("## 1. 评估"))
+        action = fm.split("## Action", 1)[1].split("## Sensors", 1)[0]
+        self.assertLess(action.index("核对追责结束门槛"), action.index("评估映射"))
+        self.assertLess(action.index("评估映射"), action.index("直接编辑当前模型"))
         guide = (REPO / "docs/evidence-modeling.md").read_text()
         self.assertIn("人类明确确认全部追责结束", guide)
         self.assertIn("不绕过追责结束门槛", guide)

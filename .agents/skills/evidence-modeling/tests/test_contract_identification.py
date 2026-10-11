@@ -31,13 +31,17 @@ class ContractIdentificationTests(unittest.TestCase):
         self.assertIn("边界理由", exit_condition)
 
     def test_entrypoints_route_operating_identification_to_fm(self):
-        for name in ("evidence-fm", "evidence-discovery", "evidence-modeling"):
+        for name in ("evidence-fm", "evidence-discovery"):
             with self.subTest(skill=name):
                 text = (SKILLS / name / "SKILL.md").read_text()
                 self.assertIn("经营依据", text)
                 self.assertIn("business-analysis.md", text)
+        composition = (SKILLS / "evidence-modeling/SKILL.md").read_text()
+        self.assertIn("evidence-fm", composition)
+        self.assertIn("evidence-discovery", composition)
         guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("现金权责／目标—实际约束及来源", guide)
+        self.assertIn("evidence-fm/references/business-analysis.md", guide)
+        self.assertIn("经营依据", guide)
 
     def test_each_agreement_records_basis_without_implicit_migration(self):
         template = json.loads(

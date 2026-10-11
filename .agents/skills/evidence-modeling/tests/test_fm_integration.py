@@ -109,24 +109,23 @@ class FMIntegrationTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )["evals"]
 
-        for phrase in (
-            "业务逻辑",
-            "领域逻辑",
-            "工具／胶水",
-            "business-analysis.md",
-            "domain-language.md",
-            "先业务分析，再按当前 Schema 映射与校验",
-            "定义拥有者",
-            "将条目替换为 FM 引用",
-            "目录、命名与结构以当前 FM Schema",
-        ):
-            self.assertIn(phrase, entry)
+        for delegate in ("evidence-discovery", "evidence-fm", "evidence-api-design", "evidence-visualization"):
+            self.assertIn(delegate, entry)
+        self.assertIn("references/workflow.md", entry)
+        fm_entry = (REPOSITORY / ".agents/skills/evidence-fm/SKILL.md").read_text()
+        for reference in ("business-analysis.md", "domain-language.md", "format.md", "semantics.md"):
+            self.assertIn(reference, fm_entry)
+        language = (REPOSITORY / ".agents/skills/evidence-fm/references/domain-language.md").read_text()
+        for phrase in ("定义拥有者", "保留原 `term.*`", "model 引用"):
+            self.assertIn(phrase, language)
+        method = (REPOSITORY / ".agents/skills/evidence-fm/references/business-analysis.md").read_text()
+        self.assertIn("领域对象", method)
+        self.assertIn("工具／胶水", method)
         for phrase in (
             "文件归属", "恢复一个分支", "不是原子事务", "modelDigest",
             "只校验请求不写任何项目文件", "不自动解除访谈停止状态",
         ):
             self.assertIn(phrase, workflow + entry)
-        method = (REPOSITORY / ".agents/skills/evidence-fm/references/business-analysis.md").read_text()
         for phrase in ("合同与履约", "逐项、递归核对违约责任", "渠道协商", "Evidence Role"):
             self.assertIn(phrase, method)
         self.assertNotIn("## 分析路线", workflow)

@@ -98,7 +98,7 @@ class SkillDocumentationTests(unittest.TestCase):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
     def test_interview_composes_language_updates_without_generating_json(self):
-        for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
+        for name in ("evidence-discovery", "evidence-fm"):
             with self.subTest(skill=name):
                 entry = (ROOT / name / "SKILL.md").read_text()
                 self.assertIn("domain-language.md", entry)
@@ -106,6 +106,12 @@ class SkillDocumentationTests(unittest.TestCase):
                 self.assertIn("词汇表", entry)
                 self.assertIn("模型 JSON", entry)
                 self.assertIn("只聊不落盘", entry)
+        composition = (ROOT / "evidence-modeling/SKILL.md").read_text()
+        self.assertIn("evidence-discovery", composition)
+        self.assertIn("evidence-fm", composition)
+        self.assertIn("当轮词汇表", composition)
+        self.assertIn("不授权模型 JSON", composition)
+        self.assertIn("只聊不落盘", composition)
         language = (ROOT / "evidence-fm/references/domain-language.md").read_text()
         for requirement in (
             ".evidence/glossary.json",
