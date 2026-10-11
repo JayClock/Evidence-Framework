@@ -68,11 +68,11 @@ class SkillDocumentationTests(unittest.TestCase):
             )
         )
         handoff_text = json.dumps(handoff, ensure_ascii=False)
-        self.assertEqual("1.0", handoff["schemaVersion"])
+        self.assertEqual("2.0", handoff["schemaVersion"])
         self.assertLessEqual(
             {
                 "handoff",
-                "businessSlice",
+                "business",
                 "sources",
                 "questions",
                 "downstreamHandoff",

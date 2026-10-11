@@ -51,7 +51,7 @@ class ResponsibilityClosureTests(unittest.TestCase):
 
     def test_closure_evidence_lives_in_discovery_not_model_status(self):
         document = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        closure = document["businessSlice"]["responsibilityClosure"]
+        closure = document["business"]["responsibilityClosure"]
         self.assertEqual(set(closure), {
             "scope", "scopeSourceRefs", "basisRefs", "mainFulfillmentRefs", "chainRefs",
             "terminalDecisions", "unresolvedRefs", "completionSourceRefs",

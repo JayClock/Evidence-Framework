@@ -118,7 +118,7 @@ class SkillPackageTests(unittest.TestCase):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
         self.assertEqual(
-            set(range(1, 30)) - {7},
+            set(range(1, 35)) - {7},
             {case["id"] for case in cases},
         )
         ids = [case["id"] for case in cases]
@@ -134,6 +134,9 @@ class SkillPackageTests(unittest.TestCase):
                 "agreement-material-first", "evidence-based-fallback", "key-value-lineage",
                 "document-walkthrough", "variation-and-support-boundary", "domain-without-contract",
                 "party-cross-context-identity", "party-identity-unresolved", "party-representative-boundary",
+                "agreement-initial-data", "skeleton-before-evidence-trace",
+                "exception-reuses-skeleton-trace", "multi-agreement-reference-resume",
+                "record-version-boundary",
             }.issubset(
                 {case["category"] for case in cases}
             )

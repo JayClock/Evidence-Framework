@@ -1,6 +1,6 @@
 ---
 name: evidence-fm
-description: 维护业务分析、递归追责与领域语言方法；全部主履约及各层异常到达人类确认的终点、且人类明确确认全部追责结束后，才生成或修改 FM Schema v4 模型及验证场景。用于领域语言、正式建模和只读校验；缺口只交接，不接管访谈，不代替业务批准。
+description: 唯一维护合同约定、请求—确认骨架、凭证关键数据追溯、异常递归及领域语言方法。支持方法讨论与术语沉淀；人类确认全部责任终点和全部追责结束后，按授权表达 FM Schema v4 模型及场景，也支持只读校验。缺口只交接，不接管访谈或代替业务批准。
 compatibility: 对话、文件读写及命令执行能力；校验需要 Python 3.10+ 和本包 requirements.txt。
 ---
 
@@ -8,7 +8,9 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 负责业务建模知识、统一领域语言与模型产物，不维护访谈机制。访谈任务按本包方法当轮沉淀术语；本包独立消费外部说明、已有 JSON 或访谈记录时，同样核对人类追责结束依据，缺少依据则输出具体缺口，不强制安装其他 Skill。
 
-业务访谈先按 [业务判断准则](references/business-analysis.md) 沿经营目标与材料、合约权责、凭证追溯、单据推演、参与者与角色扮演、变化点与边界分析，再按 [来源追溯](references/provenance.md) 和 [场景校验](references/scenario-validation.md) 的适用分支检验依据。术语随业务视图按 [领域语言沉淀](references/domain-language.md) 当轮维护；独立术语任务只读取术语方法。递归追责与正式建模准入读取 [全部追责结束](references/responsibility-closure.md)。上述分析不执行模型 JSON 生成步骤。`evidence-discovery` 复用这些方法，不复制术语或建模知识。
+方法讨论与访谈读取 [业务分析](references/business-analysis.md)：从合同及全部主履约进入，先画当前请求—确认骨架，再按 [来源追溯](references/provenance.md) 展开凭证与关键数据；异常新义务重复同一循环。单据推演、参与者与角色扮演及变化点按真实依赖展开，领域和协商走各自分支。术语按 [领域语言沉淀](references/domain-language.md) 当轮维护，案例边界读 [场景校验](references/scenario-validation.md)，递归终点与正式编辑门槛读 [全部追责结束](references/responsibility-closure.md)。这些方法不执行模型 JSON 生成；`evidence-discovery` 只消费方法并管理交互。
+
+发现记录的合同、履约骨架和追溯引用是工作理解，不是当前 FM。讨论仅解释，访谈仅按授权沉淀来源及术语；准入后的正式表达才消费全部依据并创建模型对象。不要将下面的 JSON 映射动作当成访谈问卷。
 
 ## 执行边界与输入
 
@@ -40,7 +42,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 - 采用唯一 FM v4；纯领域／合同前仍适用，不补造合同。仅无独立业务语义的简单胶水可说明不适用，信息不足不是理由。
 - 正式类型源是 `model.json` 及各类 JSON 分片；`.evidence/glossary.json` 是词汇入口：standalone 维护未建模术语，model 只引用已建模对象／属性，不复制名称和含义。Entity／Relationship 的 `label/notes`、Rule 的 `label/description`、属性的 `label/meaning` 是各自定义的唯一来源。模型落实术语时保留 term ID，将原条目替换为引用并移除独立定义；删除或改名后核对悬空引用。说明写 README、overview，验证场景写 validation。发现记录保存来源、更正和未决理解，不维护同步副本。具体要求见领域语言与格式方法。
 - 所有关键数据及六类 Evidence 时间按 [来源追溯](references/provenance.md) 核对；字段齐全或 asserted 标签不等于来源充分。
-- 先识别 Context、双方 Role 与责任边界；按业务分析方法沿凭证主动寻找 Party，核对跨上下文同一性和代表依据，再建立或复用 Participant 与 `plays_role`。经办人、岗位和部门不自动成为新的业务 Role，未知玩家保留缺口，不得据此扩展其操作权限。不为补齐节点种类制造角色或业务能力。再建立 RFP → Proposal → Contract → Request → Confirmation 的 Evidence 主线。Fulfillment 是合约内的权责履约结构，使用 `category: fulfillment`，不是 Context。凭证与规则的 `contextRef` 指向真实上下文，`fulfillmentRef` 表达履约归属。同一合同内不同履约之间直接引用具体凭证，不为履约分组建立证明角色。Confirmation 保留唯一形成上下文，并可由同一合同下多个 Request 通过 `precedes` 关联。
+- 按已确认的约定边界映射 Context、Contract 及双方 Role；合同参数、标的关联、履约结构与实际结果分别表达。再把全部主履约和异常义务的请求—确认骨架、依据凭证与关键数据关系映射为 Evidence、Relationship 和 Rule，保留来源，不把发现记录直接复制成模型。RFP → Proposal → Contract → Request → Confirmation 只表达实际存在的主线，不补齐不存在的阶段。稳定主体和代表依据已明确时建立或复用 Participant 与 `plays_role`；未知不制造玩家，经办人、岗位和部门不自动成为责任 Role，也不扩展其操作权限。Fulfillment 使用 `category: fulfillment`，是合约内的权责履约结构，不是 Context；`contextRef` 指向真实上下文，`fulfillmentRef` 表达履约归属。同一合同内不同履约直接引用具体凭证，不为分组建立证明角色。Confirmation 保留唯一形成上下文，同合同多个 Request 可通过 `precedes` 关联它。
 - 属于同一合同责任范围的所有 Evidence 只使用该 Contract 的 `roleRefs` 绑定角色；包括合同前的 RFP／Proposal 及 Other Evidence。Proposal 已连接 Contract 时，合同前 Context 必须通过 `parentContextRef` 关联该 Contract Context；不接受阶段角色或未被根合同绑定的 Party Role。Contract 用双方 `roleRefs`，其余凭证用其中一个 `responsibleRoleRef`。无合同责任关联的独立合同前／领域不补造合同。
 - 区分具体凭证与 Evidence Role：后者是 `category: role / kind: evidence` 的证明插槽，没有责任人、自己的凭证时间或可签发实例，不设置 `responsibleRoleRef`／`roleRefs`。消费方凭证以 `references` 引用同上下文的 Evidence-as-Role，外部具体时刻凭证以 `plays_role` 扮演；引用与扮演是两种关系，不为引用角色另设关系类型；玩家保留其所属上下文的责任归属，不强加消费合同的双方角色。规则可绑定角色，场景必须提供显式玩家的真实实例；不得复制成消费合同内的新单据。
 - 六类 Evidence 必须展开各自业务时间及来源。Request 区间只由其 `started_at`／`expired_at` 属性表达；不得用文件名、ID、创建顺序或回调到达时间推断业务先后。

@@ -1,8 +1,6 @@
 # Evidence Modeling 使用指南
 
-Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成。可选 Pi 扩展仅提供入口与问答界面，不依赖其他扩展。
-
-从 [项目宪法](../AGENTS.md)与 [Guides 导航](guides/index.md)进入，按本次讨论、模型编辑或只读验证加载来源。本文只维护建模操作方法；软件职责、架构、工程规范和任务状态分别由对应来源维护，不因进入建模工作流自动授予下游实施权限。
+Evidence Modeling 由可移植 Skills、项目文件和独立校验 CLI 组成，可选交互扩展只提供入口与问答。从 [项目宪法](../AGENTS.md)和 [Guides](guides/index.md)进入，按本次意图加载来源；进入建模入口不授权下游需求、API 或实施。
 
 ## 入口与权限
 
@@ -11,111 +9,98 @@ Evidence Modeling 由可移植 Skills、项目文件与独立校验 CLI 组成�
 /evidence-model <目标>
 ```
 
-`/evidence-model` 不带参数时选择“访谈并沉淀领域语言／生成或修改模型／只校验模型／返回”。
+无参数菜单为“访谈并沉淀领域语言／生成或修改模型／只校验模型／返回”；方法讨论可直接在目标中说明。
 
-- **访谈并沉淀领域语言**：从经营目标与材料理解合约权责，追溯凭证，以正常和争议单据推演检验业务视图，沿角色寻找实际 Party、跨上下文同一性和代表依据，再从真实差异识别变化点与边界。保存原话和来源，未建模概念当轮写入 `.evidence/glossary.json` 的 standalone 条目；已建模概念只建立 model 引用，名称和含义从 FM 读取。本模式只授权发现记录与词汇表，不授权修改模型 JSON、关系、规则、验证场景、API 或实现。只聊不落盘、仅保存资料或只记录冲突等更窄要求优先。
-- **生成或修改**：先按 FM 的[全部追责结束](../.agents/skills/evidence-fm/references/responsibility-closure.md)核对当前业务范围、人类终点及全局结束确认；门槛满足且有本次编辑授权，才编辑 FM、校验并展示差异。直接调用 FM 或输入外部材料不绕过追责结束门槛。
-- **只校验**：只报告结果，不写词汇表、模型、场景、发现记录或报告文件。
+| 意图                 | 实际动作及权限                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| 讨论方法／只聊不落盘 | 解释合同、骨架与凭证，不保存、不自动访谈                                                          |
+| 访谈并沉淀领域语言   | 保存原话和发现结构，当轮维护 `.evidence/glossary.json`；不写正式模型 JSON、规则、场景、API 或实现 |
+| 生成／修改正式模型   | 先核对人类全局追责结束依据，满足且有本次编辑授权后维护 FM、校验并展示差异                         |
+| 只校验               | 只读报告，不写发现记录、词汇表、模型或报告文件                                                    |
+| 停止／暂缓／仅补资料 | 按更窄授权处理新增输入后停止，不自动恢复问答                                                      |
+| 按需生成审核页       | 从当前校验的正式 FM／已有 API 生成只读投影，不把发现骨架冒充正式模型                              |
 
-编辑授权不是业务确认。模型文件不保存审核状态；确认依据由项目侧的发现记录与 PDCA 计划／任务记录承载。
+编辑授权不是业务批准。直接调用 FM、已有模型或外部材料不绕过追责结束门槛；缺口只交接，不自动进入访谈。
 
-## 项目布局
+## 专业分工与分析依赖
+
+方法唯一由 FM 的 [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md) 维护；Discovery 只负责交互、记录和恢复，Modeling 只负责分支与交接。
+
+```text
+经营目标与真实材料 → 合同与双方 → 全部主履约清单
+                                      ↓ 当前履约
+                            请求—确认骨架 → 凭证及关键数据追溯
+                                      ↓
+                            异常新义务 → 重复骨架与追溯
+                                      ↓ 逐枝核对人类终点
+                   单据推演 → 参与者与角色扮演 → 变化点与边界
+                                      ↓ 完整责任图无未决责任
+                            人类明确确认全部追责结束
+                                      ↓ 本次正式模型编辑授权
+                             映射 FM → 校验 → 展示差异 → 停止
+```
+
+分析不是逐字段问卷。已知主体、参数或异常立即复用，当前依赖可以提前处理；领域对象和渠道协商走各自分支，不强套合同。请求—确认骨架是工作理解，未明完成证明不抹去已知义务，也不表示证据已经充分。
+
+合同参数、对象关联、履约义务与实际结果分开；合同不先填通用字段表。先展示全部主履约，再逐枝追溯请求依据、完成证明、关键数据、计算及业务时间。异常新义务重复同一分析，不以退款或外部接手作为自动终点。
+
+全局门槛、终点判断及确认失效条件唯一见 [全部追责结束](../.agents/skills/evidence-fm/references/responsibility-closure.md)。可以分轮讨论，不能按局部事实充分放行；停止或暂缓不等于追责结束，机器通过也不是人类确认。
+
+## 发现记录与正式模型分开
+
+默认结构如下，沿用已有指定路径，不自动迁移或删除业务材料：
 
 ```text
 .evidence/
-├── discovery.json        # 业务来源、回答、问题、状态及交接
-├── questions.json        # 可选的独立问题记录
-├── glossary.json         # 唯一 JSON 词汇表，独立于模型类型
-├── fm/                   # 唯一当前模型，直接编辑
-│   ├── model.json
-│   ├── entities/
-│   ├── relationships/
-│   ├── rules/
-│   ├── validation/
-│   ├── generated/        # 可重建派生结果
-│   └── *.md              # 说明
+├── discovery.json        # schemaVersion 2.0：来源、约定、骨架、追溯、问题与恢复点
+├── questions.json        # 按需拆分的已提问题；与主记录只维护一处
+├── glossary.json         # 唯一词汇入口，独立于 FM 类型
+├── fm/                   # 唯一正式模型：JSON、说明、validation、generated
 ├── api/
-│   ├── api.json          # 唯一 API 设计源，位于 FM 根之外
-│   └── generated/        # 当前投影、OpenAPI、样例、流程与 manifest
+│   ├── api.json          # 唯一 API 设计源
+│   └── generated/        # 可重建交付文件
+├── views/index.html      # 按需生成的正式模型只读投影
 └── checks/
-    ├── fm/               # 获授权留存的 FM 检查记录
-    └── api/              # 获授权留存的 API 检查记录
+    ├── fm/               # 获授权的紧凑检查记录
+    └── api/
 ```
 
-默认路径相对项目根，按需创建。用户显式指定路径优先。只修改本次授权的文件，不改变业务确认记录。
+发现记录按 Discovery 的 [模板](../.agents/skills/evidence-discovery/assets/discovery-template.json) 维护：`business.agreements` 保存约定，`business.responsibilities` 唯一保存每项请求与确认，`business.evidenceTraces` 保存其关键数据的来源分析。正常和争议单据推演、主体发现及变化点各有稳定引用；`business.responsibilityClosure` 汇总完整责任及人类依据。
 
-## 工作流程
+`handoff.focusRef` 指向当前对象，`viewRefs` 用于生成本轮可读视图；不维护另一份“当前请求／确认”或视图事实副本。这些是有来源的工作理解，不是正式 FM。记录版本不匹配时先报告限制并停止结构写入，格式转换须单独明确授权，不自动猜测映射。
 
-```text
-经营目标与材料 → 合约权责 → 凭证追溯 → 单据推演 → 参与者与角色扮演 → 变化点与边界
-                         ↓ 识别人类确认范围内的所有主履约
-                 各层异常 → 新履约 → 新履约的各层异常
-                         ↓ 逐枝递归，所有分支到达人类确认的终点
-                 完整责任图与单据推演核对，无未决责任
-                         ↓ 人类明确确认全部追责结束
-                         ↓ 核对本次模型编辑授权
-                  编辑 → 机器校验 → 展示差异 → 停止
-```
+每轮先保存原话与来源，再按 [领域语言方法](../.agents/skills/evidence-fm/references/domain-language.md) 当轮沉淀明确术语。standalone 保存未建模定义，model 只引用已有 FM，名称与含义由目标唯一维护；未决解释及没有模型编辑授权的更正留在发现记录。原话与词汇两处保存不是原子事务，任一失败即停止，恢复先核对实际文件。
 
-每轮先保存原话与来源，再维护全局责任图、当前分支及术语；一次只问一个必要问题。递归追责的具体做法、终点、人类全局确认、纯领域的无适用履约判断和确认失效条件，统一按 FM 的[全部追责结束](../.agents/skills/evidence-fm/references/responsibility-closure.md)。可以分轮访谈，不能以局部事实充分分片放行正式建模；停止或暂缓不等于追责结束。结束依据保存在发现记录，不在模型或扩展中保存批准状态。新增主履约、异常或约定更正后重新核对，旧确认不能覆盖新内容。
+## 准入后的正式表达与校验
 
-访谈机制归 `evidence-discovery`，术语判断与写入方法归 `evidence-fm` 的[领域语言沉淀](../.agents/skills/evidence-fm/references/domain-language.md)，组合入口在每轮协作，业务主线归 FM 的[业务分析方法](../.agents/skills/evidence-fm/references/business-analysis.md)。先读取适用合约或专家说明；无法取得时才从真实凭证逆推待核实权责，新约定设计另需授权。每轮展示“约定与双方 → 主张及依据 → 完成证明 → 后续责任”及变化，术语在具体业务结构中澄清。未决解释保留在发现记录，词汇入口按独立 Schema 区分 standalone 与 model：前者维护未建模定义，后者只引用 FM 对象或属性，不维护 Markdown 词典或 CONTEXT.md，也不等全部访谈结束再写。
+正式表达读取 [语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) 和 [批次评估](../.agents/skills/evidence-fm/references/batch-assessment.md)，把全部有依据的约定、主履约、异常、凭证及规则映射到 FM，不直接复制发现模板。JSON 组装不是访谈顺序；合同前只保留实际存在的阶段。
 
-正常和争议单据推演检验当时的证据能否支撑业务判断，尤其是金额、版本、时间和责任的追溯。未执行真人推演不宣称已验证理解；对话推演不需要 Python 或 validation，也不等于机器模拟。参与者发现按 FM 业务分析方法逐个核对角色对应的实际个人或组织、同一性和代表依据，保存到发现记录的 `participants`；已知事实直接复用，纯领域不等待合约或单据。未知主体不强行补齐，访谈不写正式 `plays_role`。变化点来自真实主体、渠道、证明或领域能力的差异，支撑业务只展开本次必要依赖。
+Fulfillment 是合约内的权责履约结构，不是 Context；`contextRef` 表示真实上下文，`fulfillmentRef` 表示履约归属。同合约履约间直接引用凭证，跨独立上下文结果按证据角色表达；引用不自动声明先后。业务时间按真实事件展开，签约不等于生效，凭证形成不等于回调到达。
 
-原话先保存，再更新业务视图与术语；两处写入不是原子事务。任一保存失败就停止推进，交接各自的保存结果；恢复时核对实际内容再补齐。新术语与已有 JSON 或代码冲突时登记影响，不静默改写模型或让实现裁决业务。纯 standalone 沉淀不需要 Python 或 model.json；model 条目必须有可定位的 FM 目标。已建模概念的更正没有模型编辑授权时仅记录影响，不能在词汇表另存定义，不声称整个 FM 已校验。
+编辑前读取当前文件与已有差异，保留无关改动。落实术语保留 term ID 并替换为 FM 引用，不维护重复定义。模型、来源、场景或校验器变化后旧检查不能证明当前版本有效。
 
-模型落实独立术语后，保留 term ID，将词汇条目替换为引用并移除独立名称与含义。编辑前读取当前文件和已有差异，保留用户的无关修改。修改即落盘，不保证 `fm/` 在编辑过程中始终有效。校验失败就明确“当前模型未通过”，报告已经修改的文件与错误，不自动回滚或继续下游。
-
-Git 用于查看差异和按用户要求恢复版本，不自动暂存、提交或回滚；未跟踪的新文件需要单独展示，不能只展示 `git diff`。
-
-## 规范建模顺序
-
-1. 识别 Context、双方 Role 与责任边界。
-2. 建立适用的 RFP → Proposal → Contract → Request → Confirmation 证据主线；纯领域／合同前不补造合同或履约。
-3. 展开 Evidence 时间：RFP、Proposal、Request 为 `started_at`／`expired_at`；Contract 为 `signed_at`；Confirmation 为 `confirmed_at`；Other Evidence 为 `created_at`。
-4. Evidence 通过 `references` 指向 Thing；Other Evidence 归属形成并管理它的 Context，并通过 `evidences` 指向它证明的业务 Evidence。
-5. 用有来源的 Evidence bindings 与 CEL 建立 completion、breach、derivation Rule。
-6. 用 Evidence Instance 和只引用既有凭证的 `basedOn` 建立回放场景。
-
-Fulfillment 是合约内的权责履约结构，不是 Context，也不作为 Evidence 关系端点。`contextRef` 指向真实上下文，`fulfillmentRef` 表达履约归属。同合约内履约间直接引用凭证；跨独立上下文的确定结果通过 Evidence Role 使用。业务名称、关系基数、关键值及时间顺序均需依据；不从文件名、ID 或回调到达推断业务先后。签约不等于生效，凭证创建不替代原事件时间。无依据的顺序保持未决。
-
-## 校验与留存结果
-
-将变量设为实际绝对路径，Python 需满足 FM 包的 requirements.txt：
+设置实际绝对路径及满足 FM requirements.txt 的 Python，运行：
 
 ```bash
-MODEL_DIR="$PROJECT_ROOT/.evidence/fm"
-"$PYTHON" "$SKILL_DIR/scripts/check_glossary.py" "$PROJECT_ROOT/.evidence/glossary.json" --fm "$MODEL_DIR"
-"$PYTHON" "$SKILL_DIR/scripts/check_fm.py" "$MODEL_DIR"
+"$PYTHON" "$FM_SKILL_DIR/scripts/check_glossary.py" "$PROJECT_ROOT/.evidence/glossary.json" --fm "$PROJECT_ROOT/.evidence/fm"
+"$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py" "$PROJECT_ROOT/.evidence/fm"
 ```
 
-检查覆盖 Schema、CEL、lineage、适用模拟与时间线。没有实际执行场景时 `simulationPassed` 为 null，不宣称模拟通过。
+按 [校验方法](../.agents/skills/evidence-fm/references/validation.md) 报告 Schema、CEL、lineage、simulation、timeline、`modelDigest` 与 `inputChanged`。未实际执行场景时 `simulationPassed` 为 null；检查期间输入变化使结果失效。失败保留真实错误与已修改文件，不倒改预期、不自动回滚或提交。
 
-结果包含 `modelDigest`，绑定模型相对文件路径和字节内容，排除 generated 与 Python 字节码。`inputChanged` 为 true 表示检查期间输入变动，`valid` 为 false。该机制不是文件锁；模型、业务来源、场景或校验器变化后必须重新检查，旧记录不能证明当前版本有效。
+只校验不落盘；获授权检查记录只保存紧凑运行清单、摘要及日志指针，不复制完整输出。派生文件按用户请求用 FM 包的编译器和时间线工具生成，不能手改为新事实源。
 
-用户要求留存结果时，将紧凑运行清单写到 `.evidence/checks/fm/<运行标识>.json`（命令、退出码、环境、来源摘要与日志指针），不复制完整输出。不要覆盖已有运行记录，也不要手改检查结果。只校验请求不落盘。
+## 下游与开发验证
 
-## 派生结果与 API
-
-用户要求生成派生输出时再执行：
+另行要求需求时由 Requirements 消费充分材料或 FM；另行要求 API 时由 API Design 消费当前有效的整体 FM，设计全部接口和消费者流程，不因软件切片修改上游事实。规划消费需求、FM 与可选 API，交付消费唯一 plan.yaml，每次只执行一个获授权任务。
 
 ```bash
-"$PYTHON" "$SKILL_DIR/scripts/build_fm_timeline.py" "$MODEL_DIR"
-"$PYTHON" "$SKILL_DIR/scripts/compile_fm_model.py" "$MODEL_DIR" --output "$MODEL_DIR/generated/model.json"
-```
-
-时间线只包含 Evidence Instance，按 Context 分泳道；保留区间／时刻、`precedes`、`basedOn` 及未决顺序。循环、未来依赖或确定性时间冲突不能忽略。派生结果不是源模型，不手改。
-
-用户另行调用 `evidence-api-design` 才进入 API 设计。API 任务以整体 FM 为上游，直接设计全部业务接口与完整 HTTP 契约，不重复业务确认或接口筛选。API 配置使用格式 5.0，上游 FM 为 v4。每次消费当前 FM 都执行技术完整性检查；无效模型或输入变化时停止，不复用旧通过标记。所有接口、整体业务对象及全部场景都须覆盖，HTTP journey 还需通过类型化入口、场景引用和响应链接/Location 证明消费者可接续，缺口默认阻止交付。API 投影完整校验后直接更新 `.evidence/api/generated/`，由 Git 管理历史；更新失败保留原目录。获授权留存的检查结果放到 `.evidence/checks/api/`。
-
-## 开发验证
-
-```bash
-npm run evidence-modeling:verify
 npm run skills:verify
-# 使用满足依赖的 Python：
-"$PYTHON" -m unittest discover -s .agents/skills/evidence-api-design/tests -v
+npm run evidence-modeling:verify
+npm run guides:verify
+npm test
+npm run lint
+npm run build
 ```
 
-自动检查不能替代业务审核。完成当前任务后停止，不自动进入其他软件交付流程。
+检查的覆盖及环境限制见 [测试指南](engineering/testing.md)。静态文档和模板测试不证明 Agent 实际按顺序访谈；行为评测在隔离环境中另行执行，不改真实业务来源或审核状态。完成当前任务后停止。

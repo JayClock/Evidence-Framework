@@ -13,6 +13,7 @@
 | `.agents/skills/evidence-requirements/evals/`                        | 外部材料直达需求的行为案例（原 ID 5）                                     |
 | `test_skill_packages.py`                                             | 跨 Skill 包完整性、链接闭合及评测目录覆盖                                 |
 | `test_skill_documentation.py`                                        | 业务入口加载边界及跨包文档协作                                            |
+| `test_contract_first_workflow.py`                                    | 合同—骨架—凭证—异常的顺序、发现记录 2.0 单一引用结构及行为案例覆盖        |
 | `test_responsibility_closure.py`                                     | 递归追责、人类终点与全局结束、全部编辑入口及记录引用的静态契约            |
 | `test_fm_integration.py`                                             | 组合流程、可选宿主接入及聚合命令覆盖                                      |
 | `.agents/skills/evidence-fm/tests/portability/`                      | FM 独立安装、真实只读检查及包内回归                                       |
@@ -27,7 +28,7 @@
 
 业务入口只指向必要方法、模板、Schema 与运行脚本；tests/ 和 evals/ 保留在各自包内，但仅在开发验证或明确评测时加载。维护指南可以链接业务材料，业务方法不反向加载测试指南，避免把合成夹具当成项目事实。
 
-Discovery 的 interview 负责访谈机制、记录与每轮沉淀的调用顺序。FM 统一维护 domain-language、business-analysis、provenance、scenario-validation 专业方法及模型／场景生成；input-review 只消费材料并返回具体缺口，不执行访谈。
+Discovery 的 interview 负责访谈机制、来源优先保存、当前对象引用与每轮术语沉淀的调用顺序，发现记录只使用当前 2.0 模板，不提供自动转换。FM 统一维护 domain-language、business-analysis、provenance、scenario-validation 专业方法及模型／场景生成；合同主线先骨架再追溯，异常新义务重复同一循环，input-review 只消费材料并返回具体缺口，不执行访谈。
 
 Discovery 单独安装可做通用访谈，专业 FM 判断通过资源发现或用户提供的路径只读获取 FM 准则；不引入跨包相对链接、符号链接或同步副本。FM 独立安装仍须核对人类追责结束依据；无访谈包且门槛未满足时只返回缺口，不以局部职责充分放行。用户显式调用 `evidence-modeling` 时组合两包知识，缺必需资源只报告资源限制；访谈当轮加载 FM 的领域语言方法沉淀明确术语，不启动模型 JSON 生成。可选 Pi 适配器只提供意图入口和问答，模型差异通过普通对话展示，不是完整性前提。结构与逐字检查不能证明语义完整，组合和独立场景需分别人工评价。
 
@@ -56,6 +57,8 @@ python3 -m unittest discover -s .agents/skills/evidence-modeling/tests -v
 读取本包的[组合入口评测](../evals/evals.json)，以及各自安装位置中 `evidence-discovery/evals/README.md`、`evidence-fm/evals/README.md`、`evidence-requirements/evals/README.md` 的操作说明。独立会话中使用同一模型与输入比较有／无 Skill 或新旧版本，不共享答案；保存原始对话、文件变化和逐项原文依据。真人补充事实，Agent 不自答。
 
 独立行为案例 3、4、5 检查精简交接、保留唯一依据与验证版本；案例 2 加载 FM 方法沉淀术语；案例 8、9 分别检查缺少 FM 知识与缺少访谈包的边界；案例 10–14 检查首轮术语、更正、歧义、两处写入失败恢复和只聊不落盘。组合案例两组提供相同专业知识版本，避免混淆知识与访谈机制效果。FM 技术案例的正向生成输入附有明确标为合成的范围、责任图、终点及人类结束原话，须核对对应案例且不能覆盖真实遗漏。案例 13 未闭合时只返回缺口，不生成局部模型；行为案例另检验深层异常、停止不等于结束、单条终点不等于全局确认及新分支使确认失效。只更新案例说明不等于已完成行为评测。
+
+Discovery 案例 30–34 检查合同参数归位、先骨架后追溯、异常复用、多约定引用恢复及版本不匹配时保留文件。静态顺序和模板结构检查不证明待评 Agent 已执行这些动作；新旧 Skill 对比使用相同来源，保留原始交互与文件差异。
 
 在隔离的临时项目中执行行为评测，不改真实业务文件或审核状态。
 

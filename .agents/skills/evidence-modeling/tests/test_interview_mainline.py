@@ -21,7 +21,8 @@ class InterviewMainlineTests(unittest.TestCase):
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for phrase in (
-            "经营目标与材料 → 合约权责 → 凭证追溯 → 单据推演 → 参与者与角色扮演 → 变化点与边界",
+            "经营目标与材料 → 合同与双方 → 全部主履约清单",
+            "请求—确认骨架 → 履约内凭证追溯",
             "不是逐项问卷", "业务专家或法务专家", "口头约定", "从一件真实业务",
             "新业务设计分开", "不是法律结论", "关键金额", "可读的业务视图",
             "当时已有的凭证", "不伪造已发生事件", "不要求展开所有供应商内部业务",
@@ -35,9 +36,9 @@ class InterviewMainlineTests(unittest.TestCase):
 
     def test_handoff_preserves_business_reasoning_without_model_copy(self):
         template = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        for key in ("operatingBasis", "agreementBasis", "businessView", "keyDataTrace",
-                    "walkthroughs", "variationAndBoundary"):
-            self.assertIn(key, template["businessSlice"])
+        for key in ("operatingBasis", "agreements", "responsibilities", "evidenceTraces",
+                    "walkthroughs", "variations"):
+            self.assertIn(key, template["business"])
         for key in ("languageChanges", "interactionState", "deferredQuestions"):
             self.assertIn(key, template["handoff"])
         text = json.dumps(template, ensure_ascii=False)
@@ -46,17 +47,17 @@ class InterviewMainlineTests(unittest.TestCase):
 
     def test_party_discovery_is_explicit_and_source_bound(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        self.assertLess(method.index("## 5. 用单据推演"), method.index("## 6. 寻找参与者"))
-        self.assertLess(method.index("## 6. 寻找参与者"), method.index("## 7. 从实际差异"))
+        self.assertLess(method.index("## 6. 用单据推演"), method.index("## 7. 寻找参与者"))
+        self.assertLess(method.index("## 7. 寻找参与者"), method.index("## 8. 从实际差异"))
         for phrase in ("从责任定位角色", "寻找实际主体", "核对跨上下文同一性",
                        "区分代表与责任主体", "形成有来源的对应关系", "同名不能证明同一",
                        "不等 API 设计再补", "不以合同或单据推演为前提",
                        "影响责任闭合时，整个已确认业务范围不能进入正式建模"):
             self.assertIn(phrase, method)
         template = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        entries = template["businessSlice"]["participants"]
+        entries = template["business"]["participants"]
         self.assertIsInstance(entries, list)
-        self.assertEqual(set(entries[0]), {"contextAndRole", "party", "identityBasis",
+        self.assertEqual(set(entries[0]), {"id", "contextAndRole", "party", "identityBasis",
                                           "representativeBasis", "sourceRefs", "unresolved"})
         self.assertIsInstance(entries[0]["sourceRefs"], list)
 
