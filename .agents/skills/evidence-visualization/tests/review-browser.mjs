@@ -91,6 +91,14 @@ async function screenshot(name) {
   await writeFile(file, Buffer.from(result.data, 'base64'));
   return file;
 }
+async function expectedBusinessHeadings() {
+  const request = await evaluate(
+    '(nodes.get(current)?.group === "attribute" ? nodes.get(nodes.get(current).parent) : nodes.get(current))?.kind === "fulfillment_request"',
+  );
+  return request
+    ? ['所属上下文', '业务属性', '完成条件', '违约条件']
+    : ['所属上下文', '业务属性'];
+}
 try {
   let port;
   for (let i = 0; i < 150; i++) {
@@ -714,7 +722,7 @@ try {
       '[...document.querySelectorAll("#tree [data-node]")].map(n=>n.dataset.node).sort()',
     ),
     await evaluate(
-      'DATA.nodes.filter(n=>["evidence","participant","role","rule","pattern","scenario","capability","resource","journey"].includes(n.group)&&!(n.group==="rule"&&n.kind==="derivation")).map(n=>n.id).sort()',
+      'DATA.nodes.filter(n=>["evidence","participant","role","rule","pattern","scenario","capability","resource","journey"].includes(n.group)&&!(n.group==="rule"&&n.kind==="derivation")&&!requestRuleTarget(n)).map(n=>n.id).sort()',
     ),
   );
   assert.ok(
@@ -730,6 +738,153 @@ try {
       '["capability","resource","journey"].filter(group=>DATA.nodes.some(n=>n.group===group))',
     ),
   );
+  // Completion/breach IDs remain traceable, but their reading routes lead into Request.
+  const conditions =
+    await evaluate(`DATA.nodes.filter(n=>n.group==='rule'&&['completion','breach'].includes(n.kind)).map(n=>({
+    id:n.id, kind:n.kind, description:n.description, expression:n.expression,
+    request:(n.bindings||[]).map(b=>nodes.get(b.ref)).find(r=>r?.kind==='fulfillment_request'&&r.fulfillmentRef===n.fulfillmentRef)?.id
+  }))`);
+  for (const condition of conditions.filter((n) => n.request)) {
+    assert.equal(
+      await evaluate(
+        `document.querySelector('#tree [data-node="${condition.id}"]')`,
+      ),
+      null,
+    );
+    await evaluate(
+      `document.getElementById('search').value=${JSON.stringify(condition.id)};buildTree()`,
+    );
+    assert.ok(
+      await evaluate(
+        `Boolean(document.querySelector('#tree [data-node="${condition.request}"]'))`,
+      ),
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('#tree [data-node="${condition.id}"]')`,
+      ),
+      null,
+    );
+    await evaluate(
+      `document.getElementById('reset').click();select('');select(${JSON.stringify(condition.id)})`,
+    );
+    assert.equal(await evaluate('current'), condition.request);
+    assert.equal(
+      await evaluate('document.activeElement.dataset.requestRule'),
+      condition.id,
+    );
+    assert.deepEqual(
+      await evaluate(
+        '[...document.querySelectorAll("#detail h2")].map(n=>n.textContent)',
+      ),
+      ['所属上下文', '业务属性', '完成条件', '违约条件'],
+    );
+    assert.ok(
+      await evaluate(
+        `document.querySelector('[data-request-rule="${condition.id}"]').textContent.includes(${JSON.stringify(condition.description)})`,
+      ),
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('[data-request-rule="${condition.id}"] details').open`,
+      ),
+      false,
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('[data-request-rule="${condition.id}"] pre').checkVisibility()`,
+      ),
+      false,
+    );
+    const before = await evaluate('[current,history.length]');
+    await evaluate(
+      `document.querySelector('[data-request-rule="${condition.id}"] summary').focus()`,
+    );
+    await call('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'Enter',
+      code: 'Enter',
+      text: '\r',
+      windowsVirtualKeyCode: 13,
+    });
+    await call('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'Enter',
+      code: 'Enter',
+      windowsVirtualKeyCode: 13,
+    });
+    assert.equal(
+      await evaluate(
+        `document.querySelector('[data-request-rule="${condition.id}"] details').open`,
+      ),
+      true,
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('[data-request-rule="${condition.id}"] pre').textContent`,
+      ),
+      condition.expression,
+    );
+    assert.deepEqual(await evaluate('[current,history.length]'), before);
+    await evaluate(
+      `document.querySelector('[data-request-rule="${condition.id}"] summary').click()`,
+    );
+    if (condition.kind === 'breach') {
+      assert.ok(
+        await evaluate(
+          'document.querySelector("[data-request-outcome=breach]").textContent.includes("未声明")',
+        ),
+      );
+      assert.equal(
+        await evaluate(
+          'document.querySelectorAll("[data-request-outcome=breach] [data-ref]").length',
+        ),
+        0,
+      );
+    }
+    const outcome = await evaluate(
+      'document.querySelector("[data-request-outcome=completion] [data-ref]")?.dataset.ref',
+    );
+    if (outcome) {
+      await evaluate(
+        'document.querySelector("[data-request-outcome=completion] [data-ref]").click()',
+      );
+      assert.equal(await evaluate('current'), outcome);
+      await evaluate('document.getElementById("back").click()');
+      assert.equal(await evaluate('current'), condition.request);
+      assert.equal(
+        await evaluate('document.activeElement.dataset.requestRule'),
+        condition.id,
+      );
+    }
+    const entries = await evaluate(
+      `DATA.edges.filter(e=>e.to===${JSON.stringify(condition.id)}&&['scenario','capability'].includes(nodes.get(e.from)?.group)).map(e=>e.from)`,
+    );
+    for (const entry of entries) {
+      await evaluate(
+        `select(${JSON.stringify(entry)});[...document.querySelectorAll('#detail [data-ref]')].find(n=>n.dataset.ref===${JSON.stringify(condition.id)}).click()`,
+      );
+      assert.equal(await evaluate('current'), condition.request);
+      assert.equal(
+        await evaluate('document.activeElement.dataset.requestRule'),
+        condition.id,
+      );
+      await evaluate('document.getElementById("back").click()');
+      assert.equal(await evaluate('current'), entry);
+    }
+  }
+  for (const id of ['request.refund', 'request.payment'].filter((id) =>
+    graphObjects.has(id),
+  )) {
+    await evaluate(
+      `select(${JSON.stringify(id)});document.querySelector('[data-request-outcome=completion]').scrollIntoView({block:'center'})`,
+    );
+    await screenshot(
+      id === 'request.refund'
+        ? 'request-confirmation'
+        : 'request-external-proof',
+    );
+  }
   // Derivation IDs stay traceable, but all their reading routes lead to target fields.
   const derivations = await evaluate(
     'DATA.nodes.filter(n=>n.group==="rule"&&n.kind==="derivation").map(n=>({id:n.id,target:DATA.edges.find(e=>e.from===n.id&&e.label==="计算结果")?.to}))',
@@ -776,7 +931,7 @@ try {
       await evaluate(
         '[...document.querySelectorAll("#detail h2")].map(n=>n.textContent)',
       ),
-      ['所属上下文', '业务属性'],
+      await expectedBusinessHeadings(),
     );
     assert.equal(
       await evaluate(
@@ -914,7 +1069,7 @@ try {
     await evaluate(
       '[...document.querySelectorAll("#detail h2")].map(n=>n.textContent)',
     ),
-    ['所属上下文', '业务属性'],
+    await expectedBusinessHeadings(),
   );
   // Search returns actual objects, and selecting a result updates the detail.
   await evaluate(
@@ -993,7 +1148,7 @@ try {
     // Follow actual rule/API attribute references, then restore the anchor via Back.
     for (const group of ['rule', 'capability', 'representation']) {
       const edge = await evaluate(
-        `DATA.edges.find(e=>nodes.get(e.from)?.group===${JSON.stringify(group)}&&!(nodes.get(e.from)?.group==="rule"&&nodes.get(e.from)?.kind==="derivation")&&nodes.get(e.to)?.group==="attribute")`,
+        `DATA.edges.find(e=>nodes.get(e.from)?.group===${JSON.stringify(group)}&&!(nodes.get(e.from)?.group==="rule"&&nodes.get(e.from)?.kind==="derivation")&&!requestRuleTarget(nodes.get(e.from))&&nodes.get(e.to)?.group==="attribute")`,
       );
       if (!edge) {
         notApplicable.push(`${group} attribute reference`);
@@ -1198,7 +1353,7 @@ try {
   for (const id of ids) {
     await evaluate(`select(${JSON.stringify(id)})`);
     const expectedId = await evaluate(
-      `(() => { const n=nodes.get(${JSON.stringify(id)}); return n.group==='rule'&&n.kind==='derivation' ? DATA.edges.find(e=>e.from===n.id&&e.label==='计算结果').to : n.id; })()`,
+      `(() => { const n=nodes.get(${JSON.stringify(id)}); return n.group==='rule'&&n.kind==='derivation' ? DATA.edges.find(e=>e.from===n.id&&e.label==='计算结果').to : requestRuleTarget(n)?.id || n.id; })()`,
     );
     assert.equal(await evaluate('current'), expectedId);
     if (
@@ -1210,8 +1365,8 @@ try {
         await evaluate(
           '[...document.querySelectorAll("#detail h2")].map(n=>n.textContent)',
         ),
-        ['所属上下文', '业务属性'],
-        `Only two sections for ${id}`,
+        await expectedBusinessHeadings(),
+        `Business sections for ${id}`,
       );
       assert.equal(
         await evaluate(
@@ -1301,7 +1456,7 @@ try {
     );
   }
   const rule = await evaluate(
-    'DATA.nodes.find(n=>n.group==="rule"&&n.kind!=="derivation"&&n.description)?.id',
+    'DATA.nodes.find(n=>n.group==="rule"&&n.kind!=="derivation"&&!requestRuleTarget(n)&&n.description)?.id',
   );
   if (rule) {
     await evaluate(`select(${JSON.stringify(rule)})`);
@@ -1395,6 +1550,7 @@ try {
     scenario,
     derivedAttribute,
     attribute,
+    conditions[0]?.request,
   ].filter((id) => id !== undefined)) {
     await evaluate(`select(${JSON.stringify(id)})`);
     await checkCellAlignment(id === '');
@@ -1402,6 +1558,15 @@ try {
       await evaluate('document.documentElement.scrollWidth <= innerWidth'),
       `Mobile overflow: ${id}`,
     );
+  }
+  if (conditions[0]?.request) {
+    await evaluate(
+      `select(${JSON.stringify(conditions[0].id)});document.querySelector('[data-request-rule] summary').click()`,
+    );
+    assert.ok(
+      await evaluate('document.documentElement.scrollWidth <= innerWidth'),
+    );
+    await screenshot('request-condition-mobile');
   }
   if (derivedAttribute) {
     await evaluate(`select(${JSON.stringify(derivedAttribute)})`);

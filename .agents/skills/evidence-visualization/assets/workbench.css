@@ -742,6 +742,25 @@ td {
   color: var(--muted);
   font-size: 11px;
 }
+.request-rule {
+  padding: 14px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+.request-rule-selected {
+  background: #eaf1ff;
+  outline: 2px solid var(--blue);
+}
+.request-rule-details > summary {
+  color: var(--blue);
+}
+.request-outcome {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
 .attribute-selected {
   background: #eaf1ff;
   outline: 2px solid var(--blue);

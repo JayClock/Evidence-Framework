@@ -48,6 +48,7 @@ const kinds = {
   invariant: '不变量',
 };
 let current = '';
+let focusedRequestRule = '';
 const history = [];
 const outgoing = new Map(),
   incoming = new Map();
@@ -146,6 +147,20 @@ function derivationTarget(node) {
   );
   return nodes.get(result?.to);
 }
+function requestRuleTarget(node) {
+  if (node?.group !== 'rule' || !['completion', 'breach'].includes(node.kind))
+    return undefined;
+  const requests = [...new Set((node.bindings || []).map((b) => b.ref))]
+    .map((id) => nodes.get(id))
+    .filter(
+      (n) =>
+        n?.group === 'evidence' &&
+        n.kind === 'fulfillment_request' &&
+        n.fulfillmentRef &&
+        n.fulfillmentRef === node.fulfillmentRef,
+    );
+  return requests.length === 1 ? requests[0] : undefined;
+}
 function buildTree() {
   const query = $('search').value.trim().toLocaleLowerCase();
   $('tree').replaceChildren();
@@ -156,7 +171,11 @@ function buildTree() {
           .toLocaleLowerCase()
           .includes(query),
       )
-      .map((node) => (isDerivation(node) ? derivationTarget(node) : node))
+      .map((node) =>
+        isDerivation(node)
+          ? derivationTarget(node)
+          : requestRuleTarget(node) || node,
+      )
       .filter(Boolean);
     const hits = [...new Map(matches.map((node) => [node.id, node])).values()];
     $('tree').append(el('p', `${hits.length} 个搜索结果`, 'tree-count'));
@@ -182,7 +201,8 @@ function buildTree() {
     'pattern',
   ]);
   const business = DATA.nodes.filter(
-    (n) => businessGroups.has(n.group) && !isDerivation(n),
+    (n) =>
+      businessGroups.has(n.group) && !isDerivation(n) && !requestRuleTarget(n),
   );
   const visited = new Set();
   function branch(node) {
@@ -376,6 +396,125 @@ function bindingFact(binding) {
     ? link(binding.ref)
     : el('span', `运行时输入 · ${binding.type || '未声明类型'}`);
 }
+function renderRuleDetails(rule, cls = 'field-rule-details') {
+  const details = el('details', '', cls);
+  details.append(
+    el('summary', '表达式与变量说明'),
+    el('pre', rule.expression || '未声明表达式'),
+  );
+  const inputs = el('div', '', 'field-rule-inputs');
+  for (const binding of rule.bindings || []) {
+    const fact = el('div');
+    fact.dataset.binding = binding.alias;
+    fact.append(el('code', `${binding.alias} = `), bindingFact(binding));
+    if (binding.ref)
+      fact.append(
+        el('small', binding.cardinality === 'many' ? ' · 集合' : ' · 单个'),
+      );
+    inputs.append(fact);
+  }
+  if (!inputs.childElementCount)
+    inputs.append(el('p', '未声明输入绑定', 'muted'));
+  details.append(inputs);
+  return details;
+}
+function renderRequestConditions(request) {
+  for (const kind of ['completion', 'breach']) {
+    const rules = DATA.nodes.filter(
+      (n) => n.kind === kind && requestRuleTarget(n)?.id === request.id,
+    );
+    const section = card(kinds[kind]);
+    if (!rules.length) section.append(el('p', `未声明${kinds[kind]}`, 'muted'));
+    for (const rule of rules) {
+      const box = el('div', '', 'request-rule');
+      box.dataset.requestRule = rule.id;
+      box.tabIndex = -1;
+      if (rule.id === focusedRequestRule)
+        box.classList.add('request-rule-selected');
+      box.append(
+        el('h3', rule.label),
+        el('small', rule.id, 'identity'),
+        el('p', rule.description || '未声明业务解释'),
+        renderRuleDetails(rule, 'request-rule-details'),
+      );
+      section.append(box);
+    }
+    const outcome = el('div', '', 'request-outcome');
+    outcome.dataset.requestOutcome = kind;
+    section.append(outcome);
+    if (kind === 'breach') {
+      outcome.append(
+        el('h3', '违约后的凭证'),
+        el(
+          'p',
+          '未声明。当前模型未声明违约条件到后续凭证的流转；规则读取的事实不代表后续流转，也不表示没有后续责任。',
+          'muted',
+        ),
+      );
+      continue;
+    }
+    outcome.append(el('h3', '对应完成凭证'));
+    const relations = DATA.nodes.filter((n) => n.group === 'relationship');
+    const confirmations = [
+      ...new Set(
+        relations
+          .filter(
+            (r) =>
+              r.kind === 'precedes' &&
+              r.sourceRef === request.id &&
+              nodes.get(r.targetRef)?.kind === 'fulfillment_confirmation',
+          )
+          .map((r) => r.targetRef),
+      ),
+    ];
+    if (confirmations.length) list(confirmations, '', outcome);
+    else {
+      const bound = new Set(
+        rules.flatMap((r) => (r.bindings || []).map((b) => b.ref)),
+      );
+      const roles = [
+        ...new Set(
+          relations
+            .filter(
+              (r) =>
+                r.kind === 'uses_role' &&
+                r.sourceRef === request.id &&
+                bound.has(r.targetRef) &&
+                nodes.get(r.targetRef)?.group === 'role' &&
+                nodes.get(r.targetRef)?.kind === 'evidence',
+            )
+            .map((r) => r.targetRef),
+        ),
+      ];
+      if (!roles.length)
+        outcome.append(el('p', '未声明对应确认凭证或采信证明角色', 'muted'));
+      for (const role of roles) {
+        outcome.append(link(role));
+        outcome.append(el('p', '可提供该证明的实际凭证', 'muted'));
+        const players = [
+          ...new Set(
+            relations
+              .filter(
+                (r) =>
+                  r.kind === 'plays_role' &&
+                  r.targetRef === role &&
+                  nodes.get(r.sourceRef)?.group === 'evidence',
+              )
+              .map((r) => r.sourceRef),
+          ),
+        ];
+        list(players, '未声明实际凭证玩家', outcome);
+      }
+    }
+    outcome.append(
+      el(
+        'p',
+        '上述凭证是完成判断的依据，不表示条件成立后自动生成凭证或进入下一流程。',
+        'muted',
+      ),
+    );
+  }
+}
 function renderFieldDerivation(attribute) {
   const rules = (outgoing.get(attribute.id) || []).filter(
     (edge) => edge.label === '由规则计算',
@@ -392,24 +531,7 @@ function renderFieldDerivation(attribute) {
       calculation.append(
         el('p', rule.description || '未声明业务解释', 'field-rule-description'),
       );
-      const details = el('details', '', 'field-rule-details');
-      details.append(
-        el('summary', '表达式与变量说明'),
-        el('pre', rule.expression || '未声明表达式'),
-      );
-      const inputs = el('div', '', 'field-rule-inputs');
-      for (const binding of rule.bindings || []) {
-        const fact = el('div');
-        fact.dataset.binding = binding.alias;
-        fact.append(el('code', `${binding.alias} = `), bindingFact(binding));
-        if (binding.ref)
-          fact.append(
-            el('small', binding.cardinality === 'many' ? ' · 集合' : ' · 单个'),
-          );
-        inputs.append(fact);
-      }
-      details.append(inputs);
-      calculation.append(details);
+      calculation.append(renderRuleDetails(rule));
     }
     box.append(calculation);
   }
@@ -469,6 +591,7 @@ function renderNode(node) {
   detail.replaceChildren();
   if (['evidence', 'participant', 'role'].includes(node.group)) {
     renderBusinessObject(node);
+    if (node.kind === 'fulfillment_request') renderRequestConditions(node);
     return;
   }
   detail.append(
@@ -479,6 +602,14 @@ function renderNode(node) {
   );
   if (node.description || node.meaning)
     detail.append(el('p', node.description || node.meaning, 'intro'));
+  if (node.group === 'rule' && ['completion', 'breach'].includes(node.kind))
+    detail.append(
+      el(
+        'p',
+        '未能从绑定和履约归属唯一定位请求，保留规则供核对，不猜测所属 Request。',
+        'missing',
+      ),
+    );
   if (node.parent) {
     const owner = card('所属对象');
     owner.append(link(node.parent));
@@ -661,6 +792,9 @@ function renderReferences(
 }
 function select(id, remember = true) {
   if (id && !nodes.has(id)) return;
+  const requestTarget = requestRuleTarget(nodes.get(id));
+  const requestRuleId = requestTarget ? id : '';
+  if (requestTarget) id = requestTarget.id;
   if (isDerivation(nodes.get(id))) {
     const target = derivationTarget(nodes.get(id));
     if (!target) {
@@ -673,8 +807,10 @@ function select(id, remember = true) {
     revealContainer(id);
     return;
   }
-  if (remember && id !== current) history.push(current);
+  if (remember && (id !== current || requestRuleId !== focusedRequestRule))
+    history.push(focusedRequestRule || current);
   current = id;
+  focusedRequestRule = requestRuleId;
   $('back').disabled = history.length === 0;
   $('copy').hidden = !id;
   $('breadcrumbs').replaceChildren(action('模型', () => select('')));
@@ -692,6 +828,11 @@ function select(id, remember = true) {
       $('breadcrumbs').append(el('span', '/'), link(n.id)),
     );
     $('breadcrumbs').append(el('span', '/'), el('span', node.label));
+    if (focusedRequestRule)
+      $('breadcrumbs').append(
+        el('span', '/'),
+        el('span', title(focusedRequestRule)),
+      );
     renderNode(node.group === 'attribute' ? nodes.get(node.parent) : node);
   } else overview();
   markSelected();
@@ -703,6 +844,12 @@ function select(id, remember = true) {
   if (attribute) {
     attribute.focus({ preventScroll: true });
     attribute.scrollIntoView({ block: 'center', inline: 'nearest' });
+  } else if (focusedRequestRule) {
+    const rule = [...document.querySelectorAll('[data-request-rule]')].find(
+      (n) => n.dataset.requestRule === focusedRequestRule,
+    );
+    rule?.focus({ preventScroll: true });
+    rule?.scrollIntoView({ block: 'center', inline: 'nearest' });
   }
 }
 $('search').addEventListener('input', buildTree);
