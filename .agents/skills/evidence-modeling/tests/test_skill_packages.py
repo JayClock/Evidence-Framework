@@ -41,13 +41,10 @@ class SkillPackageTests(unittest.TestCase):
     def test_portable_distribution_does_not_describe_plugins_or_host_workflows(self):
         for name in PORTABLE_NAMES:
             for document in (ROOT / name).rglob("*.md"):
-                # Integration test instructions describe the optional UI adapter.
-                if document == ROOT / "evidence-modeling/tests/README.md":
-                    continue
                 with self.subTest(document=str(document.relative_to(ROOT))):
                     self.assertNotRegex(
                         document.read_text(encoding="utf-8"),
-                        r"插件|\bPi\b|\bGate\b|\.pi/|受控工作流|专用工具",
+                        r"插件|\bPi\b|\bGate\b|\.pi/|evidence_ui_|/skill:|受控工作流|专用工具",
                     )
 
     def test_links_resolve_inside_each_individually_copied_skill(self):
@@ -118,7 +115,7 @@ class SkillPackageTests(unittest.TestCase):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
         self.assertEqual(
-            set(range(1, 49)) - {7},
+            set(range(1, 53)) - {7},
             {case["id"] for case in cases},
         )
         ids = [case["id"] for case in cases]

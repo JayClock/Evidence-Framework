@@ -18,12 +18,13 @@ class CurrentProgressTests(unittest.TestCase):
             "一个仍影响当前判断的业务问题", "不代替业务位置",
             "不要展开其他合同", "全局责任图", "整体准入提醒",
             "不在回答末尾附方法文章、作者、章节或参考链接",
-            "来源与版本继续保存在发现记录", "无 UI", "同一份当前进度",
+            "来源与版本继续保存在发现记录", "普通对话还是可选 UI", "同一份当前进度",
             "不编造合同或履约", "不套履约链", "不携带前一个节点",
         ):
             self.assertIn(phrase, display)
-        for field in ("position", "story", "prompt", "questionId", "gapKey", "evidence"):
+        for field in ("focusRef", "focusPoint", "viewRefs"):
             self.assertIn(f"`{field}`", display)
+        self.assertNotIn('evidence_ui_', display)
         self.assertIn("没有必要问题时交接当前结果", display)
 
     def test_story_is_grounded_provenance_not_a_questionnaire_or_fiction(self):

@@ -1,6 +1,6 @@
 # Evidence Modeling 使用指南
 
-从 [项目宪法](../AGENTS.md)和 [Guides](guides/index.md)确定本次权限，再选择一个入口。Skills 提供方法与执行协议，项目文件保存业务来源和产物；交互界面不保存业务状态。
+从 [项目宪法](../AGENTS.md)和 [Guides](guides/index.md)确定本次权限，再选择一个入口。Skills 提供方法与执行协议，项目文件保存业务来源和产物；交互界面不保存业务状态。依赖方向是 **Pi 插件 → Skill**：Skill 可独立对外安装，不引用 Pi 工具、命令或插件文件。普通对话是完整交互路径，不是功能降级；插件只是可选 UI 包装。
 
 ## 选择入口
 
@@ -14,14 +14,14 @@
 | 一次完成模型、API 与联合审核 | 显式调用 [Modeling](../.agents/skills/evidence-modeling/SKILL.md)  | FM → 整体 API → 联合审核，阶段分别校验 |
 
 ```text
-/evidence-model 访谈并沉淀领域语言
+/skill:evidence-modeling 访谈并沉淀领域语言
 /skill:evidence-modeling 核对准入后修改模型与 API，生成联合审核页
-/evidence-model 只修改 FM，不设计 API，不生成页面
-/evidence-model 只校验当前 FM 与 API，不写任何项目文件
-/evidence-model 生成联合审核页，不修改设计源
+/skill:evidence-modeling 只修改 FM，不设计 API，不生成页面
+/skill:evidence-modeling 只校验当前 FM 与 API，不写任何项目文件
+/skill:evidence-modeling 生成联合审核页，不修改设计源
 ```
 
-无参数菜单提供访谈、生成、只校验、联合审核页与返回。方法讨论可直接在目标中说明。独立 Skill 不自动扩展为完整链路；显式 Modeling 的生成／修改默认一次授权完整链路，更窄要求优先。
+以上是 Pi 的原生 Skill 命令，不要求安装项目插件；其他宿主使用各自 Skill 入口，或显式请求 Agent 读取安装目录的 SKILL.md。安装可选插件后，`/evidence-model <目标>` 转发同一入口，无参数菜单提供访谈、生成、只校验、联合审核页与返回。方法讨论可直接在目标中说明。独立 Skill 不自动扩展为完整链路；显式 Modeling 的生成／修改默认一次授权完整链路，更窄要求优先。
 
 ## 合同总览与当前进度
 
@@ -33,7 +33,7 @@
 
 故事从发现记录的当前节点及必要追溯引用生成，讲清正在追溯凭证中的哪项信息、已找到什么业务来源、它能解释什么、接下来往哪里追；不是“已明确／正在澄清／尚缺依据”字段表，也不是虚构业务实例。来源已知先复用或推导，只有影响判断的未知才接一个自然问题；没有问题就交接结果。切换合同、履约或请求／确认时重建故事；尚未定位明示，不编造占位业务。合同前协商和领域对象使用各自的上下文与当前对象，讲其依据，不硬套履约或凭证。故事不另行持久化，恢复仍从原对象、追溯记录及问题引用生成。
 
-问答面板和回答编辑器保持同一当前位置；无 UI 时使用相同的文本结构。来源、全部责任分支、暂缓及冲突仍保存在业务记录中，展示收窄不删记录。具体交互契约由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 维护。
+问答面板和回答编辑器保持同一当前位置；无 UI 时使用相同的文本结构。来源、全部责任分支、暂缓及冲突仍保存在业务记录中，展示收窄不删记录。具体交互契约由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 维护。Pi 的载荷和返回值映射只在插件侧的 [适配协议](../.pi/extensions/evidence-modeling/skill-adapter.md) 维护，通过工具说明提供给 Agent；Skill 不反向加载它。界面不可用时沿用原问题转普通对话；已收到的回答先保存，取消则等待而不是强迫重问。
 
 ## 编辑准入与停止
 

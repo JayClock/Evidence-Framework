@@ -40,6 +40,88 @@ describe('evidence-modeling UI adapter boundary', () => {
     expect(on).not.toHaveBeenCalled();
   });
 
+  it('owns tool mapping without requiring skills to load adapter documentation', async () => {
+    const registerTool = vi.fn();
+    evidenceModelingExtension({
+      registerCommand: vi.fn(),
+      registerTool,
+    } as never);
+    const [question, contexts] = registerTool.mock.calls.map(([tool]) => tool);
+    for (const tool of [question, contexts]) {
+      expect(tool.description).toContain('evidence-discovery');
+      expect(tool.description).toContain('unavailable');
+      expect(tool.description).toContain('cancelled');
+      expect(tool.description).toContain('普通对话');
+    }
+    for (const status of [
+      'answered',
+      'deferred',
+      'stopped',
+      'switch-context',
+    ]) {
+      expect(question.description).toContain(status);
+    }
+    expect(question.description).toContain('保存失败');
+    expect(contexts.description).toContain('selected');
+    expect(contexts.description).toContain('empty');
+    const adapter = await readFile(join(directory, 'skill-adapter.md'), 'utf8');
+    expect(adapter).toContain('Skill 不反向引用');
+    expect(adapter).toContain('取消不是不可用');
+  });
+
+  it('returns unavailable through both registered tools without advancing or opening UI', async () => {
+    const registerTool = vi.fn();
+    const sendUserMessage = vi.fn();
+    evidenceModelingExtension({
+      registerCommand: vi.fn(),
+      registerTool,
+      sendUserMessage,
+    } as never);
+    const [question, contexts] = registerTool.mock.calls.map(([tool]) => tool);
+    const ctx = { hasUI: false, ui: { select: vi.fn(), editor: vi.fn() } };
+    const questionResult = await question.execute(
+      'question',
+      {
+        questionId: 'Q-018',
+        gapKey: 'delivery.request',
+        position: { kind: 'unlocated' },
+        story: '来源待定位。',
+        prompt: '有哪些约定？',
+      },
+      undefined,
+      undefined,
+      ctx,
+    );
+    expect(questionResult.details).toEqual({
+      status: 'unavailable',
+      questionId: 'Q-018',
+      gapKey: 'delivery.request',
+    });
+    const contextResult = await contexts.execute(
+      'contexts',
+      {
+        contexts: [
+          {
+            agreementRef: 'A-1',
+            name: '采购',
+            parties: [],
+            boundary: '待明确',
+            status: 'candidate',
+            clarification: 'open',
+            unresolved: [],
+          },
+        ],
+      },
+      undefined,
+      undefined,
+      ctx,
+    );
+    expect(contextResult.details).toEqual({ status: 'unavailable' });
+    expect(ctx.ui.select).not.toHaveBeenCalled();
+    expect(ctx.ui.editor).not.toHaveBeenCalled();
+    expect(sendUserMessage).not.toHaveBeenCalled();
+  });
+
   it('uses the shared current-progress contract and returns the original answer', async () => {
     const registerTool = vi.fn();
     evidenceModelingExtension({

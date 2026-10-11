@@ -146,7 +146,7 @@
     },
     {
       "id": "combined-generate",
-      "prompt": "/skill:evidence-modeling 核对当前人类全部追责结束依据后，生成模型、整体 API 和联合审核页。",
+      "prompt": "显式使用 evidence-modeling，核对当前人类全部追责结束依据后，生成模型、整体 API 和联合审核页。",
       "explicit": true,
       "primarySkill": "evidence-modeling",
       "expectations": [
@@ -162,7 +162,7 @@
     },
     {
       "id": "combined-fm-only",
-      "prompt": "/skill:evidence-modeling 核对准入后只修改 FM，明确不要 API 和页面。",
+      "prompt": "显式使用 evidence-modeling，核对准入后只修改 FM，明确不要 API 和页面。",
       "explicit": true,
       "primarySkill": "evidence-modeling",
       "expectations": ["裁剪为 FM 授权", "核对准入和 FM 当前检查"],
@@ -174,7 +174,7 @@
     },
     {
       "id": "combined-read-only",
-      "prompt": "/skill:evidence-modeling 只校验 FM 和 API，缺任何一项就如实报告，不补文件。",
+      "prompt": "显式使用 evidence-modeling，只校验 FM 和 API，缺任何一项就如实报告，不补文件。",
       "explicit": true,
       "primarySkill": "evidence-modeling",
       "expectations": ["分别检查两源", "API 缺失报告联合检查未完成"],
