@@ -24,7 +24,7 @@ async function sourceFiles(path: string): Promise<string[]> {
 }
 
 describe('evidence-modeling UI adapter boundary', () => {
-  it('registers the skill command and question UI only', () => {
+  it('registers the skill command and the question/context UI tools only', () => {
     const registerCommand = vi.fn();
     const registerTool = vi.fn();
     const on = vi.fn();
@@ -33,8 +33,10 @@ describe('evidence-modeling UI adapter boundary', () => {
 
     expect(registerCommand).toHaveBeenCalledOnce();
     expect(registerCommand.mock.calls[0]?.[0]).toBe('evidence-model');
-    expect(registerTool).toHaveBeenCalledOnce();
-    expect(registerTool.mock.calls[0]?.[0].name).toBe('evidence_ui_question');
+    expect(registerTool.mock.calls.map(([tool]) => tool.name)).toEqual([
+      'evidence_ui_question',
+      'evidence_ui_contexts',
+    ]);
     expect(on).not.toHaveBeenCalled();
   });
 
@@ -83,6 +85,41 @@ describe('evidence-modeling UI adapter boundary', () => {
     expect(ctx.ui.editor.mock.calls[0]?.[0]).toContain(
       '运输协议 → 送达 → 请求',
     );
+  });
+
+  it('returns the selected agreement reference through the registered context tool', async () => {
+    const registerTool = vi.fn();
+    evidenceModelingExtension({
+      registerCommand: vi.fn(),
+      registerTool,
+    } as never);
+    const tool = registerTool.mock.calls.find(
+      ([tool]) => tool.name === 'evidence_ui_contexts',
+    )?.[0];
+    const result = await tool.execute(
+      'select',
+      {
+        contexts: [
+          {
+            agreementRef: 'A-1',
+            name: '采购',
+            parties: [],
+            boundary: '待明确',
+            status: 'candidate',
+            clarification: 'open',
+            unresolved: ['双方待明确'],
+          },
+        ],
+      },
+      undefined,
+      undefined,
+      {
+        hasUI: true,
+        ui: { select: vi.fn(async (_title, choices) => choices[0]) },
+      },
+    );
+    expect(result.details).toEqual({ status: 'selected', agreementRef: 'A-1' });
+    expect(JSON.parse(result.content[0].text)).toEqual(result.details);
   });
 
   it('contains no run state, publication tool, path interception, or auto-advance hook', async () => {

@@ -55,12 +55,45 @@ export const QuestionInputSchema = Type.Object(
   { additionalProperties: false },
 );
 
+export const ContextSelectionSchema = Type.Object(
+  {
+    contexts: Type.Array(
+      Type.Object(
+        {
+          agreementRef: BusinessText,
+          name: BusinessText,
+          parties: Type.Array(BusinessText),
+          boundary: BusinessText,
+          status: Type.Union([
+            Type.Literal('candidate'),
+            Type.Literal('confirmed'),
+          ]),
+          unresolved: Type.Array(BusinessText),
+          clarification: Type.Union([
+            Type.Literal('open'),
+            Type.Literal('completed'),
+          ]),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    currentAgreementRef: Type.Optional(BusinessText),
+  },
+  { additionalProperties: false },
+);
+
+export type ContextSelectionInput = Static<typeof ContextSelectionSchema>;
+export type ContextSelectionResult =
+  | { status: 'selected'; agreementRef: string }
+  | { status: 'cancelled' | 'unavailable' | 'empty' };
+
 export type CurrentPosition = Static<typeof CurrentPositionSchema>;
 export type QuestionInput = Static<typeof QuestionInputSchema>;
 
 export type QuestionStatus =
   | 'answered'
   | 'deferred'
+  | 'switch-context'
   | 'stopped'
   | 'cancelled'
   | 'unavailable';

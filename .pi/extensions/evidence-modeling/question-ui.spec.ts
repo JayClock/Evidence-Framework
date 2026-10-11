@@ -44,6 +44,7 @@ describe('QuestionUI', () => {
     ].join('\n');
     expect(ctx.ui.select).toHaveBeenCalledWith(expected, [
       '回答',
+      '查看／切换合同上下文',
       '暂缓此问题',
       '结束本次讨论',
       '关闭面板',
@@ -130,6 +131,7 @@ describe('QuestionUI', () => {
   });
 
   it.each([
+    ['查看／切换合同上下文', 'switch-context'],
     ['暂缓此问题', 'deferred'],
     ['结束本次讨论', 'stopped'],
     ['关闭面板', 'cancelled'],

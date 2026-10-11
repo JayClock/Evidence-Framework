@@ -24,7 +24,7 @@ class FMIntegrationTests(unittest.TestCase):
         self.assertIn("不是退款指令受理回执", refund["definition"])
         self.assertEqual(before, path.read_bytes())
 
-    def test_extension_only_registers_one_command_and_one_question_tool(self):
+    def test_extension_only_registers_one_command_and_two_interaction_tools(self):
         extension = REPOSITORY / ".pi/extensions/evidence-modeling"
         commands = (extension / "commands.ts").read_text(encoding="utf-8")
         sources = "\n".join(
@@ -34,8 +34,9 @@ class FMIntegrationTests(unittest.TestCase):
         )
         self.assertEqual(1, commands.count("registerCommand("))
         self.assertIn("registerCommand('evidence-model'", commands)
-        self.assertEqual(1, sources.count("registerTool("))
+        self.assertEqual(2, sources.count("registerTool("))
         self.assertIn("name: 'evidence_ui_question'", sources)
+        self.assertIn("name: 'evidence_ui_contexts'", sources)
 
     def test_project_extension_and_script_entrypoints_exist(self):
         extensions = REPOSITORY / ".pi/extensions"
