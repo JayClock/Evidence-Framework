@@ -46,6 +46,7 @@ function fixture() {
       },
       {
         id: 'confirmation.a',
+        contextRef: 'context.a',
         group: 'evidence',
         kind: 'fulfillment_confirmation',
         label: '退款到账凭证',
@@ -92,9 +93,9 @@ function fixture() {
       {
         id: 'relation.result',
         group: 'relationship',
-        kind: 'precedes',
-        sourceRef: 'request.a',
-        targetRef: 'confirmation.a',
+        kind: 'references',
+        sourceRef: 'confirmation.a',
+        targetRef: 'request.a',
       },
       { id: 'capability.a', group: 'capability', label: '登记退款' },
     ],

@@ -131,18 +131,17 @@ def build_timeline(model: LoadedModel, suite: ValidationSuite) -> tuple[dict[str
     for instance_id in sorted(by_id):
         visit(instance_id, ())
 
-    precedes = sorted(
+    dependencies = sorted(
         [
-            {"relationshipRef": relation["id"], "sourceRef": relation["sourceRef"], "targetRef": relation["targetRef"]}
-            for relation in model.relationships
-            if relation.get("kind") == "precedes"
-            and relation.get("sourceRef") in evidence
-            and relation.get("targetRef") in evidence
+            {"sourceRef": basis, "targetRef": instance["instanceRef"]}
+            for instance in timeline_instances
+            for basis in instance["basedOn"]
+            if basis in bounds
         ],
-        key=lambda item: item["relationshipRef"],
+        key=lambda item: (item["sourceRef"], item["targetRef"]),
     )
-    adjacency: dict[str, set[str]] = {entity_id: set() for entity_id in evidence}
-    for edge in precedes:
+    adjacency: dict[str, set[str]] = {instance_id: set() for instance_id in bounds}
+    for edge in dependencies:
         adjacency[edge["sourceRef"]].add(edge["targetRef"])
 
     def reachable(source: str, target: str, seen: set[str] | None = None) -> bool:
@@ -155,13 +154,13 @@ def build_timeline(model: LoadedModel, suite: ValidationSuite) -> tuple[dict[str
         return any(reachable(item, target, visited) for item in adjacency.get(source, set()))
 
     unresolved = []
-    ids = sorted(evidence)
+    ids = sorted(bounds)
     for index, source in enumerate(ids):
         for target in ids[index + 1 :]:
-            if evidence[source].get("contextRef") != evidence[target].get("contextRef"):
+            if evidence[by_id[source]["entityRef"]].get("contextRef") != evidence[by_id[target]["entityRef"]].get("contextRef"):
                 continue
             if not reachable(source, target) and not reachable(target, source):
-                unresolved.append({"leftRef": source, "rightRef": target, "reason": "no sourced precedes path"})
+                unresolved.append({"leftRef": source, "rightRef": target, "reason": "no instance basis path; timestamps do not imply dependency"})
 
     timeline = {
         "schemaVersion": "4.0",
@@ -169,7 +168,7 @@ def build_timeline(model: LoadedModel, suite: ValidationSuite) -> tuple[dict[str
         "lanes": [{"contextRef": ref} for ref in lanes],
         "evidenceTypes": evidence_types,
         "instances": timeline_instances,
-        "precedes": precedes,
+        "dependencies": dependencies,
         "unresolvedOrder": unresolved,
     }
     return timeline, list(dict.fromkeys(errors))
@@ -180,7 +179,7 @@ def timeline_summary(timeline: dict[str, Any]) -> dict[str, Any]:
         "laneCount": len(timeline["lanes"]),
         "evidenceTypeCount": len(timeline["evidenceTypes"]),
         "instanceCount": len(timeline["instances"]),
-        "precedesCount": len(timeline["precedes"]),
+        "dependencyCount": len(timeline["dependencies"]),
         "unresolvedOrderCount": len(timeline["unresolvedOrder"]),
         "sha256": "sha256:" + hashlib.sha256(canonical_bytes(timeline)).hexdigest(),
     }

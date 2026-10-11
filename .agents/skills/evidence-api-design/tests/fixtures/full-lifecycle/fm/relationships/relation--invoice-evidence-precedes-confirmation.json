@@ -1,8 +1,10 @@
 {
   "type": "relationship",
   "id": "relation.invoice-evidence-precedes-confirmation",
-  "kind": "precedes",
-  "sourceRef": "evidence.invoice",
-  "targetRef": "confirmation.invoice",
-  "label": "已有开票补充证据是形成确认的必要前提"
+  "kind": "references",
+  "sourceRef": "confirmation.invoice",
+  "targetRef": "evidence.invoice",
+  "label": "开票确认引用发票",
+  "sourceCardinality": { "min": 1, "max": 1 },
+  "targetCardinality": { "min": 1, "max": 1 }
 }

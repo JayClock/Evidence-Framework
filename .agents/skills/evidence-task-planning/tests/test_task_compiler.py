@@ -256,7 +256,7 @@ class CompilerTests(unittest.TestCase):
             {
                 "type": "relationship",
                 "id": "relation.bad",
-                "kind": "precedes",
+                "kind": "references",
                 "sourceRef": "thing.book",
                 "targetRef": "missing",
             },
@@ -270,7 +270,7 @@ class CompilerTests(unittest.TestCase):
             {
                 "type": "relationship",
                 "id": "relation.cycle",
-                "kind": "precedes",
+                "kind": "references",
                 "sourceRef": "thing.book",
                 "targetRef": "thing.book",
             },

@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from fm_model import validate_against_schema, validate_relationships
+from fm_model import validate_against_schema, validate_relationships  # pyright: ignore[reportMissingImports]  # noqa: E402
 
 
 def entity(identity, category, kind, context="context.local"):
@@ -45,11 +45,15 @@ class EvidenceRoleReferenceTests(unittest.TestCase):
             entity("role.proof", "role", "evidence", "context.external"))
         self.assertTrue(any("unsupported cross-context references" in e for e in errors))
 
-    def test_external_concrete_evidence_still_cannot_be_referenced_directly(self):
-        errors = self.errors(
-            entity("evidence.consumer", "evidence", "fulfillment_confirmation"),
-            entity("evidence.external", "evidence", "fulfillment_confirmation", "context.external"))
-        self.assertTrue(any("unsupported cross-context references" in e for e in errors))
+    def test_external_concrete_moment_can_be_referenced_without_role_abstraction(self):
+        for kind in ("fulfillment_confirmation", "other_evidence"):
+            self.assertEqual([], self.errors(
+                entity("evidence.consumer", "evidence", "fulfillment_confirmation"),
+                entity("evidence.external", "evidence", kind, "context.external")))
+        for kind in ("fulfillment_request", "rfp", "proposal", "contract"):
+            self.assertTrue(self.errors(
+                entity("evidence.consumer", "evidence", "fulfillment_confirmation"),
+                entity("evidence.external", "evidence", kind, "context.external")))
 
     def test_external_result_plays_role_instead_of_referencing_it(self):
         source = entity("evidence.external", "evidence", "fulfillment_confirmation", "context.external")

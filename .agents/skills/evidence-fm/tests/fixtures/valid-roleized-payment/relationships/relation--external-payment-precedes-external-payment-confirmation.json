@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.external-payment-precedes-external-payment-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.external-payment",
-  "targetRef": "confirmation.external-payment",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.external-payment",
+  "targetRef": "request.external-payment",
+  "label": "凭证引用形成依据"
 }

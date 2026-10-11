@@ -96,11 +96,11 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 
 沿用当前 Relationship kind：
 
-- 同一 Domain Context 的对象、角色间用 `references` 表达引用，`label`／`notes` 解释具体含义；派生关系可用 `derived_from`，属性派生的唯一依赖事实仍由 CEL AST 生成。
+- 同一 Domain Context 的对象、角色间用 `references` 表达引用，`label`／`notes` 解释具体含义；属性派生的唯一依赖事实由 CEL AST 生成，不另维护派生关系 kind。
 - Context 外的稳定 Party 通过 `plays_role` 扮演上下文内的 Party Role；档案可 `references` 该本地 Role，不直接把跨 Context 的 Party 引用伪装为局部关系。
 - 领域对象的能力依赖用 `references` 指向同一 Domain Context 的角色；对象扮演能力用允许的 `plays_role`。引用不是扮演，不另设关系类型。Evidence 只可引用同 Context 的 Evidence-as-Role，不能借此引用其他 Role；Role 不因为存在而要求补造玩家。
 - 连接履约时由实际涉及领域对象的 Request 或其他业务 Evidence 使用 `references` 指向 Thing；领域对象本身不是履约完成凭证。
-- 跨独立上下文的业务结果使用外部时刻 Evidence→Evidence Role；同一 Contract Context 内多个履约共同采信一个 Confirmation 时，按合同责任用各 Request→Confirmation `precedes` Relationship 直接关联。辅助凭证归属形成并管理它的 Context，并使用 `evidences` 指向具体业务 Evidence。同一合约内不同履约间可直接引用凭证，不构成跨上下文关系；独立边界不补造任意跨域关系。
+- 跨独立上下文可直接引用外部时刻结果；需要变化点时由外部时刻 Evidence 扮演 Evidence Role。同一 Contract Context 内共同 Confirmation 通过 `references` 指向各 Request，保留唯一形成归属。消费凭证引用辅助凭证，实例 `basedOn` 指明具体依据；辅助凭证保留形成 Context。同合约不同履约间直接引用，不构成跨上下文；引用不授予外部内部操作权限。
 
 `references` 的 kind 本身不自动表达组合、拥有权、基数或级联删除。已确认的关系基数可在 Relationship 两端用 `sourceCardinality`／`targetCardinality` 声明；省略表示未声明，不表示无限。组合、拥有权和级联删除仍没有专用字段，且当前模拟器没有通用 Relationship Instance，不能把一条带标签的线或通过静态校验的基数声明声称为已经验证的运行实例约束。
 

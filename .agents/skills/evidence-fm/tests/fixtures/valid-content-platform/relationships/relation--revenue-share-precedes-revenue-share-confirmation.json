@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.revenue-share-precedes-revenue-share-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.revenue-share",
-  "targetRef": "confirmation.revenue-share",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.revenue-share",
+  "targetRef": "request.revenue-share",
+  "label": "凭证引用形成依据"
 }

@@ -3,8 +3,6 @@
 const businessGraphKinds = {
   references: '业务引用',
   plays_role: '角色扮演',
-  evidences: '证明依赖',
-  precedes: '先于',
 };
 
 function graphCardinality(value) {

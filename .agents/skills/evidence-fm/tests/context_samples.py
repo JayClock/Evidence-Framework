@@ -176,9 +176,9 @@ def precontract_documents() -> list[dict[str, Any]]:
         {
             "type": "relationship",
             "id": "relation.inquiry-quote",
-            "kind": "precedes",
-            "sourceRef": "rfp.customer-inquiry",
-            "targetRef": "proposal.customer-quote",
+            "kind": "references",
+            "sourceRef": "proposal.customer-quote",
+            "targetRef": "rfp.customer-inquiry",
             "label": "询价获得报价回应",
         },
     ]
@@ -372,17 +372,17 @@ def performance_documents(
                 {
                     "type": "relationship",
                     "id": "relation.goal-invitation",
-                    "kind": "precedes",
-                    "sourceRef": "rfp.goal-invitation",
-                    "targetRef": "proposal.goals",
+                    "kind": "references",
+                    "sourceRef": "proposal.goals",
+                    "targetRef": "rfp.goal-invitation",
                     "label": "邀请后提出方案",
                 },
                 {
                     "type": "relationship",
                     "id": "relation.goals-agreement",
-                    "kind": "precedes",
-                    "sourceRef": "proposal.goals",
-                    "targetRef": "contract.performance",
+                    "kind": "references",
+                    "sourceRef": "contract.performance",
+                    "targetRef": "proposal.goals",
                     "label": "目标方案经同意后形成协议",
                 },
             ]

@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.prepaid-payment-precedes-prepaid-payment-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.prepaid-payment",
-  "targetRef": "confirmation.prepaid-payment",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.prepaid-payment",
+  "targetRef": "request.prepaid-payment",
+  "label": "凭证引用形成依据"
 }

@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.proposal-precedes-content-production-contract",
-  "kind": "precedes",
-  "sourceRef": "proposal.content-project",
-  "targetRef": "contract.content-production",
-  "label": "立项提案形成创作合同"
+  "kind": "references",
+  "sourceRef": "contract.content-production",
+  "targetRef": "proposal.content-project",
+  "label": "凭证引用形成依据"
 }

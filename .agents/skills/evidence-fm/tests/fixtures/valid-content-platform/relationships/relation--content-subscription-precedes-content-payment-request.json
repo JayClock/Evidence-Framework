@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.content-subscription-precedes-content-payment-request",
-  "kind": "precedes",
-  "sourceRef": "contract.content-subscription",
-  "targetRef": "request.content-payment",
-  "label": "合同签署后形成履约请求"
+  "kind": "references",
+  "sourceRef": "request.content-payment",
+  "targetRef": "contract.content-subscription",
+  "label": "凭证引用形成依据"
 }

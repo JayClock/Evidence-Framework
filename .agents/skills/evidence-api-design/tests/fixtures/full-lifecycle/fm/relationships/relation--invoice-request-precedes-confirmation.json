@@ -1,9 +1,10 @@
 {
   "type": "relationship",
   "id": "relation.invoice-request-precedes-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.invoice",
-  "targetRef": "confirmation.invoice",
+  "kind": "references",
+  "sourceRef": "confirmation.invoice",
+  "targetRef": "request.invoice",
+  "label": "凭证引用形成依据",
   "sourceCardinality": {
     "min": 1,
     "max": 1
@@ -11,6 +12,5 @@
   "targetCardinality": {
     "min": 1,
     "max": 1
-  },
-  "label": "开票申请先于开票确认"
+  }
 }

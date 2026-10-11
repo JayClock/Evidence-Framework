@@ -34,15 +34,14 @@ Request Entity 直接用 required/keyData timestamp 的 `started_at` 与 `expire
 
 ## 4. 多个 Fulfillment 共用 Confirmation
 
-同一合同中的季度与年度 KPI 若由同一收入确认履约，可以让两个 Request 通过 `precedes` 直接关联同一个 Confirmation。该 Confirmation 只保留一个形成 Context、责任 Role 和类型定义；各 Fulfillment 的 completion Rule 分别读取自己的 Request 与共同 Confirmation，按各自区间和条件判断。实例同时完成多个请求时，其 `basedOn` 明确列出这些已经形成的 Request Instance。
+同一合同中的季度与年度 KPI 若由同一收入确认履约，可以让同一个 Confirmation 通过 `references` 指向两个 Request。该 Confirmation 只保留一个形成 Context、责任 Role 和类型定义；各 Fulfillment 的 completion Rule 分别读取自己的 Request 与共同 Confirmation，按各自区间和条件判断。实例同时完成多个请求时，其 `basedOn` 明确列出这些已经形成的 Request Instance。
 
 ```text
-Quarterly Request ─┐
-                   ├─precedes→ Income Confirmation
-Annual Request ────┘
+Income Confirmation ──references→ Quarterly Request
+                    └─references→ Annual Request
 ```
 
-这种共享只适用于同一 Contract Context 内有明确权责等价依据的履约。来自另一个合同、领域或外部渠道的确定结果仍通过 Evidence Role 进入各自 Fulfillment；不能用共同 Confirmation 穿透独立责任边界。
+这种共享只适用于同一 Contract Context 内有明确权责等价依据的履约。来自另一个合同、领域或外部渠道的确定结果可被直接引用，或在需要变化点时扮演 Evidence Role；引用不把外部 Confirmation 迁入本地履约，也不将它当成本合同的共同 Confirmation。
 
 ## 5. 自动动作不成为业务凭证
 

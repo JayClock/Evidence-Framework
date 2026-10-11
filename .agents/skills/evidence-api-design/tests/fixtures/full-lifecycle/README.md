@@ -28,7 +28,7 @@
 | Participant               | 甲方采购员、乙方销售                                 |
 | Thing                     | 商品                                                 |
 | Rule                      | 采购三项的证据前提与完成规则、微信支付完成规则       |
-| Relationship              | `plays_role`、`references`、`precedes`、`evidences`  |
+| Relationship              | `plays_role`、`references`                           |
 
 ## 业务角色与经办主体
 
@@ -47,7 +47,7 @@ Participant Party 保持在 Context 外，`plays_role` 表达示例中的角色�
 
 支付确认通过 `references` 引用本合同中的 Evidence-as-Role `role.payment-proof`。外部微信支付确认通过 `plays_role` 扮演此角色；规则绑定角色，场景提供实际确认实例。角色没有责任字段、自己的业务时间或可签发实例；其属性表达对玩家数据的要求。实际玩家的 `confirmed_at` 不等于采购支付确认时间。
 
-发票和发货单是具体 Other Evidence，通过 `evidences` 证明各自确认，以 `precedes` 表达形成前提。它们的 `created_at` 是自身形成时间。
+发票和发货单是具体 Other Evidence，由各自确认通过 `references` 引用，实例 `basedOn` 和规则表达形成前提。它们的 `created_at` 是自身形成时间。
 
 三项采购确认的 `basedOn` 均引用本申请和实际证据实例，形成前校验已存在、可见、申请归属及金额／记录值，完成规则核对编号及业务时间。微信支付合同链仅作为外部玩家验证，不扩充采购侧 API。
 

@@ -88,14 +88,11 @@ class CanonicalModelTests(unittest.TestCase):
             kind = relation.get("kind")
             self.assertNotEqual("fulfillment", source.get("kind"), relation)
             self.assertNotEqual("fulfillment", target.get("kind"), relation)
-            if kind == "precedes":
-                self.assertEqual("evidence", source.get("category"), relation)
-                self.assertEqual("evidence", target.get("category"), relation)
-            elif kind == "evidences":
-                self.assertEqual("other_evidence", source.get("kind"), relation)
-                self.assertEqual("evidence", target.get("category"), relation)
-            elif kind == "references" and source.get("category") == "evidence":
-                self.assertEqual("thing", target.get("kind"), relation)
+            self.assertIn(kind, {"references", "plays_role"}, relation)
+            if kind == "references" and source.get("category") == "evidence":
+                self.assertTrue(target.get("category") == "evidence"
+                    or (target.get("category"), target.get("kind")) in {
+                        ("participant", "thing"), ("role", "evidence")}, relation)
 
 
 if __name__ == "__main__":

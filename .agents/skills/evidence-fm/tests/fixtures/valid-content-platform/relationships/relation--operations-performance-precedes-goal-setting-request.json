@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.operations-performance-precedes-goal-setting-request",
-  "kind": "precedes",
-  "sourceRef": "contract.operations-performance",
-  "targetRef": "request.goal-setting",
-  "label": "合同签署后形成履约请求"
+  "kind": "references",
+  "sourceRef": "request.goal-setting",
+  "targetRef": "contract.operations-performance",
+  "label": "凭证引用形成依据"
 }

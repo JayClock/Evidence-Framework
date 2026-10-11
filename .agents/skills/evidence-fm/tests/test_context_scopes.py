@@ -233,13 +233,13 @@ class ContextScopeTests(unittest.TestCase):
                         {
                             "type": "relationship",
                             "id": "relation.invalid-bridge",
-                            "kind": "evidences",
+                            "kind": "references",
                             "sourceRef": "proposal.customer-quote",
-                            "targetRef": "thing.customer-profile",
+                            "targetRef": "role.profile-owner",
                             "label": "错误的跨域证明",
                         }
                     )
-                    expected = "requires Other Evidence -> Evidence"
+                    expected = "unsupported cross-context references"
                 root = write_model(Path(directory), documents, "context.sales-inquiry")
                 self.assertTrue(
                     any(expected in error for error in validate_model(load_model(root)))
@@ -271,9 +271,9 @@ class ContextScopeTests(unittest.TestCase):
                     {
                         "type": "relationship",
                         "id": "relation.quote-contract",
-                        "kind": "precedes",
-                        "sourceRef": "proposal.customer-quote",
-                        "targetRef": "contract.content-subscription",
+                        "kind": "references",
+                        "sourceRef": "contract.content-subscription",
+                        "targetRef": "proposal.customer-quote",
                         "label": "报价形成订阅合同",
                     }
                 ],

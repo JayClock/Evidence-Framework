@@ -123,11 +123,13 @@ class TimelineTests(unittest.TestCase):
                 ],
             }
         )
+        suite.instances.append({"type": "evidence_instance", "id": "instance.audit-note",
+            "entityRef": "evidence.audit-note", "values": {"created_at": "2026-09-01T09:15:00Z"}, "basedOn": []})
         timeline, errors = build_timeline(model, suite)
         self.assertEqual([], errors)
         self.assertTrue(
             any(
-                "evidence.audit-note" in pair.values()
+                "instance.audit-note" in pair.values()
                 for pair in timeline["unresolvedOrder"]
             )
         )

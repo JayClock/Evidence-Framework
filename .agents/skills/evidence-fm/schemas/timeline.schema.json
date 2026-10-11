@@ -9,7 +9,7 @@
     "lanes",
     "evidenceTypes",
     "instances",
-    "precedes",
+    "dependencies",
     "unresolvedOrder"
   ],
   "properties": {
@@ -82,9 +82,9 @@
         "additionalProperties": false
       }
     },
-    "precedes": {
+    "dependencies": {
       "type": "array",
-      "items": { "$ref": "#/$defs/precedes" }
+      "items": { "$ref": "#/$defs/dependency" }
     },
     "unresolvedOrder": {
       "type": "array",
@@ -123,11 +123,10 @@
       },
       "additionalProperties": false
     },
-    "precedes": {
+    "dependency": {
       "type": "object",
-      "required": ["relationshipRef", "sourceRef", "targetRef"],
+      "required": ["sourceRef", "targetRef"],
       "properties": {
-        "relationshipRef": { "$ref": "#/$defs/id" },
         "sourceRef": { "$ref": "#/$defs/id" },
         "targetRef": { "$ref": "#/$defs/id" }
       },

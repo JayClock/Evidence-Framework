@@ -61,7 +61,7 @@ def write_json(path: Path, value: Any) -> None:
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(timezone.utc).isoformat()  # noqa: UP017 -- Python 3.10 support
 
 
 def selected(items: list[dict[str, Any]], only: str | None) -> list[dict[str, Any]]:
@@ -326,9 +326,9 @@ def grade_context_scope(
             (rfp_ids, proposal_ids) if eval_id == 16 else (proposal_ids, contract_ids)
         )
         linked = any(
-            item.get("kind") == "precedes"
-            and item.get("sourceRef") in source_ids
-            and item.get("targetRef") in target_ids
+            item.get("kind") == "references"
+            and item.get("sourceRef") in target_ids
+            and item.get("targetRef") in source_ids
             for item in model.relationships
         )
         add(
@@ -734,9 +734,12 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         )
         add(
             expectations,
-            "Proposal precedes Contract.",
-            any(rel.get("kind") == "precedes" for rel in relationships),
-            "precedes relationship",
+            "Contract references its accepted Proposal.",
+            any(rel.get("kind") == "references"
+                and model.entities_by_id.get(rel.get("sourceRef"), {}).get("kind") == "contract"
+                and model.entities_by_id.get(rel.get("targetRef"), {}).get("kind") == "proposal"
+                for rel in relationships),
+            "Contract -> Proposal reference",
         )
     elif eval_id == 3:
         add(

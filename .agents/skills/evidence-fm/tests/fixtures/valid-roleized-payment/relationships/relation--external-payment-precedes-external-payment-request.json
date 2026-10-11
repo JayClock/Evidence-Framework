@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.external-payment-precedes-external-payment-request",
-  "kind": "precedes",
-  "sourceRef": "contract.external-payment",
-  "targetRef": "request.external-payment",
-  "label": "合同签署后形成履约请求"
+  "kind": "references",
+  "sourceRef": "request.external-payment",
+  "targetRef": "contract.external-payment",
+  "label": "凭证引用形成依据"
 }

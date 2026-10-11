@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.content-subscription-precedes-interruption-compensation-request",
-  "kind": "precedes",
-  "sourceRef": "contract.content-subscription",
-  "targetRef": "request.interruption-compensation",
-  "label": "合同签署后形成履约请求"
+  "kind": "references",
+  "sourceRef": "request.interruption-compensation",
+  "targetRef": "contract.content-subscription",
+  "label": "凭证引用形成依据"
 }

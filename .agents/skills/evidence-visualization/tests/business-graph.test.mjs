@@ -72,12 +72,12 @@ const fixture = () => ({
       label: '扮演',
     },
     {
-      id: 'precedes',
+      id: 'basis',
       group: 'relationship',
-      kind: 'precedes',
-      sourceRef: 'contract',
-      targetRef: 'request',
-      label: '先于',
+      kind: 'references',
+      sourceRef: 'request',
+      targetRef: 'contract',
+      label: '合同依据',
     },
     {
       id: 'request#started_at',
@@ -183,7 +183,7 @@ test('external players retain original ownership and point to evidence role', ()
   assert.equal(use.crossBoundary, false);
   assert.equal(use.arrow, false);
   assert.equal(use.dashed, false);
-  assert.equal(graph.edges.find((e) => e.id === 'precedes').arrow, false);
+  assert.equal(graph.edges.find((e) => e.id === 'basis').arrow, false);
 });
 test('shared confirmation is one node, not copied for each request', () => {
   const data = fixture();

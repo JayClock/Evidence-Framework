@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.interruption-request-precedes-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.interruption-compensation",
-  "targetRef": "confirmation.interruption-compensation",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.interruption-compensation",
+  "targetRef": "request.interruption-compensation",
+  "label": "凭证引用形成依据"
 }

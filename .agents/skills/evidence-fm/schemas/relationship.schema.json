@@ -12,13 +12,7 @@
       "$ref": "#/$defs/id"
     },
     "kind": {
-      "enum": [
-        "plays_role",
-        "references",
-        "evidences",
-        "precedes",
-        "derived_from"
-      ]
+      "enum": ["plays_role", "references"]
     },
     "sourceRef": {
       "$ref": "#/$defs/id"

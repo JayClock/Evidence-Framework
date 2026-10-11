@@ -42,7 +42,7 @@ def documents():
              "bindings": {"confirmation": {"ref": f"confirmation.{name}"}},
              "expression": "confirmation.confirmed_at != null", "resultType": "bool"},
         ])
-    result.append({"type": "relationship", "id": "relation.delivery-acceptance", "kind": "derived_from",
+    result.append({"type": "relationship", "id": "relation.delivery-acceptance", "kind": "references",
                    "sourceRef": "request.acceptance", "targetRef": "confirmation.delivery", "label": "验收依据交付结果"})
     return result
 
@@ -54,11 +54,7 @@ class FulfillmentStructureTests(unittest.TestCase):
             return validate_model(load_model(root))
 
     def test_same_contract_fulfillments_reference_evidence_directly(self):
-        for kind in ("references", "derived_from"):
-            with self.subTest(kind=kind):
-                values = documents()
-                values[-1]["kind"] = kind
-                self.assertEqual([], self.errors(values))
+        self.assertEqual([], self.errors(documents()))
 
     def test_shared_contract_proof_role_is_resolved_from_explicit_reference(self):
         values = documents()
@@ -119,7 +115,7 @@ class FulfillmentStructureTests(unittest.TestCase):
         rule.pop("fulfillmentRef")
         self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
 
-    def test_cross_contract_direct_reference_is_rejected(self):
+    def test_cross_contract_moment_reference_is_valid_but_contract_reference_is_not(self):
         values = documents()
         other = copy.deepcopy(values[0])
         other.update(id="context.other", rootRefs=["contract.other"])
@@ -132,7 +128,9 @@ class FulfillmentStructureTests(unittest.TestCase):
             entity("evidence.other", "evidence", "other_evidence", "外部记录", contextRef="context.other",
                    responsibleRoleRef="role.other-a",
                    attributes=[attribute("created_at", "timestamp", "形成时间", keyData=True)]),
-            {"type": "relationship", "id": "relation.cross", "kind": "derived_from",
+            {"type": "relationship", "id": "relation.cross", "kind": "references",
              "sourceRef": "request.acceptance", "targetRef": "evidence.other", "label": "跨边界读取"},
         ])
+        self.assertEqual([], self.errors(values))
+        values[-1]["targetRef"] = "contract.other"
         self.assertTrue(any("unsupported cross-context" in error for error in self.errors(values)))

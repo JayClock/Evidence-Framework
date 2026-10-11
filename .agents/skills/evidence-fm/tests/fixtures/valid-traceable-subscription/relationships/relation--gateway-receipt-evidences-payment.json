@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.gateway-receipt-evidences-payment",
-  "kind": "evidences",
-  "sourceRef": "evidence.gateway-payment-receipt",
-  "targetRef": "confirmation.content-payment",
-  "label": "支付渠道回执证明付款确认"
+  "kind": "references",
+  "sourceRef": "confirmation.content-payment",
+  "targetRef": "evidence.gateway-payment-receipt",
+  "label": "凭证引用形成依据"
 }

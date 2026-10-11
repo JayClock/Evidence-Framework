@@ -240,9 +240,9 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
             node["proofRoles"] = sorted({r["targetRef"] for r in relations if r["kind"] == "references" and r["sourceRef"] in node["requests"] and nodes.get(r["targetRef"], {}).get("group") == "role" and nodes.get(r["targetRef"], {}).get("kind") == "evidence"})
             node["proofPlayers"] = sorted({r["sourceRef"] for r in relations if r["kind"] == "plays_role" and r["targetRef"] in node["proofRoles"]})
             for relation in relations:
-                if relation["kind"] == "precedes" and relation["sourceRef"] in node["requests"]:
-                    target = nodes.get(relation["targetRef"], {})
-                    if target.get("kind") == "fulfillment_confirmation" and target["id"] not in node["confirmations"]:
+                if relation["kind"] == "references" and relation["targetRef"] in node["requests"]:
+                    target = nodes.get(relation["sourceRef"], {})
+                    if target.get("contextRef") == node.get("contextRef") and target.get("kind") == "fulfillment_confirmation" and target["id"] not in node["confirmations"]:
                         node["confirmations"].append(target["id"])
 
     return {

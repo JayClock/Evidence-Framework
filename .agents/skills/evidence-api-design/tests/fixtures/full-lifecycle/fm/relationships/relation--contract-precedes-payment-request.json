@@ -1,9 +1,10 @@
 {
   "type": "relationship",
   "id": "relation.contract-precedes-payment-request",
-  "kind": "precedes",
-  "sourceRef": "contract.product-procurement",
-  "targetRef": "request.payment",
+  "kind": "references",
+  "sourceRef": "request.payment",
+  "targetRef": "contract.product-procurement",
+  "label": "凭证引用形成依据",
   "sourceCardinality": {
     "min": 1,
     "max": 1
@@ -11,6 +12,5 @@
   "targetCardinality": {
     "min": 1,
     "max": 1
-  },
-  "label": "采购协议成立后可发起支付申请"
+  }
 }

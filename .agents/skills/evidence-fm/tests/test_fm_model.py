@@ -72,10 +72,10 @@ class FulfillmentModelTests(unittest.TestCase):
         contract_edges = [
             relation
             for relation in model.relationships
-            if relation.get("sourceRef") == "contract.content-subscription"
-            and relation.get("targetRef") == "request.content-payment"
+            if relation.get("sourceRef") == "request.content-payment"
+            and relation.get("targetRef") == "contract.content-subscription"
         ]
-        self.assertEqual(["precedes"], [edge["kind"] for edge in contract_edges])
+        self.assertEqual(["references"], [edge["kind"] for edge in contract_edges])
 
     def test_fulfillment_rejects_legacy_member_indexes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -122,7 +122,7 @@ class FulfillmentModelTests(unittest.TestCase):
                 {
                     "type": "relationship",
                     "id": "relation.invalid-fulfillment-edge",
-                    "kind": "precedes",
+                    "kind": "references",
                     "sourceRef": "fulfillment.content-payment",
                     "targetRef": "confirmation.content-payment",
                     "label": "错误地把履约当作凭证",

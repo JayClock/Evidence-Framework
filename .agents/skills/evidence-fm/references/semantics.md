@@ -37,7 +37,7 @@ Contract 是签约时刻 Evidence，也是 Contract Context 的 root。它引用
 
 属于同一合同责任范围的所有 Evidence 均复用该 Contract 的 `roleRefs`。Contract 由双方共同绑定，其余凭证以 `responsibleRoleRef` 指向其中一方；不按凭证、履约或阶段复制角色。合同中的 Party Role 必须被根合同绑定。
 
-明确共享合同责任的 Pre-contract Context 通过 `parentContextRef` 指向 Contract Context。Proposal 经 `precedes` 连接 Contract 时，该责任关联必须与目标合同一致。类型责任关联不表示询报价时合同实例已签署，也不改变合同前凭证的形成上下文或 URI 根。独立合同前 Context 尚无合同责任关联时使用本 Context 的角色，不虚构合同。
+明确共享合同责任的 Pre-contract Context 通过 `parentContextRef` 指向 Contract Context。Contract 经 `references` 引用已接受的 Proposal 时，该责任关联必须与引用合同一致。类型责任关联不表示询报价时合同实例已签署，也不改变合同前凭证的形成上下文或 URI 根。独立合同前 Context 尚无合同责任关联时使用本 Context 的角色，不虚构合同。
 
 ## 4. Role 与 Participant
 
@@ -53,11 +53,11 @@ Participant Party 表达跨上下文保持身份的个人、组织或法人，�
 - Contract、Fulfillment Request、Fulfillment Confirmation 属于 Contract Context。
 - Other Evidence 属于形成并管理它的 Contract、Pre-contract 或 Domain Context。
 
-Request 必须通过 `fulfillmentRef` 属于一项履约。Confirmation 保留唯一形成上下文，可用 `fulfillmentRef` 表达其形成的履约；同一合同中多个 Request 可以通过 `precedes` 关联同一个确认，不复制或搬迁确认。补充凭证始终保留真实形成上下文，服务于某项履约时可用 `fulfillmentRef` 组织。
+Request 必须通过 `fulfillmentRef` 属于一项履约。Confirmation 保留唯一形成上下文，可用 `fulfillmentRef` 表达其形成的履约；同一个确认可以通过 `references` 指向同一合同中的多个 Request，不复制或搬迁确认。补充凭证始终保留真实形成上下文，服务于某项履约时可用 `fulfillmentRef` 组织。
 
 Request 是记录要求的时段凭证，Confirmation 是记录完成或部分完成结果的时刻凭证。六类凭证的业务时间按 [格式](format.md) 显式定义，并按 [来源映射](provenance.md) 核对事件含义；签约不等于生效、确认不等于回调、凭证形成不等于原事件时间。
 
-必需补充证据必须先存在：用 `evidences` 从 Other Evidence 指向被证明凭证，用 `precedes` 声明有依据的形成先后，实例 `basedOn` 引用已存在证据。目标凭证不得早于必需证据形成。补充证据不是固定流程阶段，不为无此需求的业务强加材料。
+必需补充证据必须先存在：消费凭证通过 `references` 引用 Other Evidence，说明具体证明作用；实例 `basedOn` 指向已存在证据，规则核对必需性、身份与采信条件。目标凭证不得早于必需证据形成。证明作用和时间先后不另建关系种类。补充证据不是固定流程阶段，不为无此需求的业务强加材料。
 
 运行时 Evidence 只能追加。取消、退款、冲正、更正、补偿和赔偿通过新凭证及有依据的履约表达，不能覆盖旧凭证。这不表示领域 Participant 永不改变，领域状态和操作条件按真实规则建模。
 
@@ -73,19 +73,19 @@ Request 是记录要求的时段凭证，Confirmation 是记录完成或部分�
 
 成员自身声明履约归属，不在 Fulfillment 上重复维护成员、标的、触发、完成或违约索引。Fulfillment 没有独立业务属性、凭证时间、责任角色或实例，不作为 Evidence 关系端点。
 
-Request 与具体 Confirmation 的责任方来自同一合同双方。共享确认由显式 Request→Confirmation 关系纳入各履约，分别按对应请求区间、实例匹配和 completion Rule 判断。多次同类结果使用多个 Evidence Instance，不复制类型节点。
+Request 与具体 Confirmation 的责任方来自同一合同双方。共享确认由显式 Confirmation→Request `references` 关系纳入各履约，分别按对应请求区间、实例匹配和 completion Rule 判断。多次同类结果使用多个 Evidence Instance，不复制类型节点。
 
 Request 已形成而合格结果尚未形成时为业务上的 pending，不是同步调用中的临时技术状态。
 
 ## 7. 直接引用与跨上下文角色化
 
-同一合约内不同履约的凭证、规则可以直接引用。履约之间的分组不构成跨上下文，不要求先建立证明角色。同合同 Evidence→Evidence 的 `references` 表达业务引用，不自动声明先后；需要先后时用有依据的 `precedes`，有派生依据时用 `derived_from`。直接引用仍受实例匹配、业务时间、来源与可见性约束。
+Relationship 只有 `references` 与 `plays_role`。同一合约内不同履约的凭证、规则可以直接引用；履约分组不构成跨上下文，不要求先建立证明角色。具体凭证的依据引用按“消费凭证→依据凭证”表达，例如 Confirmation→Request、Request→Contract、Contract→Proposal。类型关联不证明某个实例已经形成；实例依赖由 `basedOn` 表达，时间线由实例业务时间与依赖生成。属性派生归 CEL 与其 AST lineage，不另存对象级计算关系。引用仍受实例匹配、业务时间、来源与可见性约束。
 
 允许的 `plays_role`：Participant Party→Party／Third-party Role；Participant Thing→Domain Role；Context→Context Role；External Context→Third-party Role；Fulfillment Confirmation／Other Evidence→Evidence Role。
 
-Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方 Evidence 以 `references` 引用同一 Context 内的 Evidence-as-Role（`category: role / kind: evidence`），外部实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。前者是引用证明约定，后者是具体凭证扮演该约定；凭证引用不因此扩展到其他 Role 类型，也不直接引用外部具体凭证。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
+Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方 Evidence 以 `references` 引用同一 Context 内的 Evidence-as-Role（`category: role / kind: evidence`），外部实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。前者是引用证明约定，后者是具体凭证扮演该约定；凭证引用不因此扩展到其他 Role 类型。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
 
-规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。跨独立上下文不能以直接 Evidence 引用穿透边界；允许有依据的 Proposal→Contract 签约追溯与 Evidence→Thing 标的引用，外部确定结果通过 Evidence Role 使用。
+规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。无需替换变化点时，可以直接 `references` 外部 Confirmation／Other Evidence；需要开放证明约定时使用 Evidence Role。外部具体凭证保留形成上下文、责任与时间，直接引用不迁移所有权，不使它成为消费合同的共享确认。跨上下文还允许有依据的 Contract→Proposal 签约追溯与 Evidence→Thing 标的引用，不开放对外部 Request、RFP 或 Contract 的任意依赖。
 
 Role、Pre-contract Context、权责履约可以作为候选业务变化点，但变化点不自动决定部署边界。
 

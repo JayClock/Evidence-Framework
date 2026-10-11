@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.advance-payment-precedes-advance-payment-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.advance-payment",
-  "targetRef": "confirmation.advance-payment",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.advance-payment",
+  "targetRef": "request.advance-payment",
+  "label": "凭证引用形成依据"
 }

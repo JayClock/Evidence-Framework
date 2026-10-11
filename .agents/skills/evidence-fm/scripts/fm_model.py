@@ -685,11 +685,13 @@ def fulfillment_members(
         if entity_signature(item) == ("evidence", "fulfillment_confirmation")
     }
     confirmation_refs.update(
-        str(relation.get("targetRef"))
+        str(relation.get("sourceRef"))
         for relation in relationships
-        if relation.get("kind") == "precedes"
-        and relation.get("sourceRef") in request_refs
-        and entity_signature(entities.get(str(relation.get("targetRef"))))
+        if relation.get("kind") == "references"
+        and relation.get("targetRef") in request_refs
+        and object_context_ref(entities.get(str(relation.get("sourceRef")), {}))
+        == object_context_ref(entities.get(str(relation.get("targetRef")), {}))
+        and entity_signature(entities.get(str(relation.get("sourceRef"))))
         == ("evidence", "fulfillment_confirmation")
     )
     role_refs = {
@@ -823,7 +825,7 @@ def validate_fulfillments(
         ):
             errors.append(
                 f"{entity_id}: must be associated with at least one Fulfillment Request "
-                "through local ownership or a precedes Relationship"
+                "through local ownership or a Confirmation -> Request references Relationship"
             )
 
 
@@ -978,48 +980,39 @@ def validate_relationships(
                 )
             continue
 
-        if kind in {"references", "evidences", "precedes", "derived_from"}:
+        if kind not in {"references", "plays_role"}:
+            errors.append(f"{relationship_id}: unsupported relationship kind '{kind}'")
+            continue
+
+        if kind == "references":
             if source.get("type") != "entity" or target.get("type") != "entity":
                 errors.append(f"{relationship_id}: {kind} requires Entity endpoints")
                 continue
-            proposal_to_contract = source_sig == (
-                "evidence",
-                "proposal",
-            ) and target_sig == ("evidence", "contract")
-            if kind == "precedes" and proposal_to_contract:
-                proposal_context = entities.get(source_context or "", {})
-                if proposal_context.get("parentContextRef") != target_context:
+            contract_to_proposal = source_sig == ("evidence", "contract") and target_sig == (
+                "evidence", "proposal",
+            )
+            if contract_to_proposal:
+                proposal_context = entities.get(target_context or "", {})
+                if proposal_context.get("parentContextRef") != source_context:
                     errors.append(
                         f"{relationship_id}: Proposal Context must bind its "
-                        "parentContextRef to the target Contract Context"
+                        "parentContextRef to the referencing Contract Context"
                     )
             evidence_to_thing = source_sig[0] == "evidence" and target_sig == (
                 "participant", "thing",
             )
             if source_context != target_context and not (
-                (kind == "precedes" and proposal_to_contract)
-                or (kind == "references" and evidence_to_thing)
+                contract_to_proposal
+                or evidence_to_thing
+                or (source_sig[0] == "evidence" and target_sig[0] == "evidence"
+                    and target_sig[1] in MOMENT_EVIDENCE_KINDS)
             ):
                 errors.append(
                     f"{relationship_id}: unsupported cross-context {kind} relationship"
                 )
 
-            if kind == "precedes" and not (
-                source_sig[0] == "evidence" and target_sig[0] == "evidence"
-            ):
-                errors.append(
-                    f"{relationship_id}: precedes requires Evidence -> Evidence"
-                )
-            elif kind == "evidences" and not (
-                source_sig == ("evidence", "other_evidence")
-                and target_sig[0] == "evidence"
-            ):
-                errors.append(
-                    f"{relationship_id}: evidences requires Other Evidence -> Evidence"
-                )
-            elif (
-                kind == "references"
-                and source_sig[0] == "evidence"
+            if (
+                source_sig[0] == "evidence"
                 and not (
                     evidence_to_thing
                     or target_sig[0] == "evidence"
@@ -1028,12 +1021,6 @@ def validate_relationships(
             ):
                 errors.append(
                     f"{relationship_id}: Evidence references must target a Thing, Evidence, or Evidence Role"
-                )
-            elif kind == "derived_from" and not (
-                source_sig[0] == "evidence" and target_sig[0] == "evidence"
-            ):
-                errors.append(
-                    f"{relationship_id}: derived_from requires Evidence endpoints"
                 )
 
 

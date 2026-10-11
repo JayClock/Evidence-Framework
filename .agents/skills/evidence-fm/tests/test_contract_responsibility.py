@@ -140,9 +140,8 @@ class ContractResponsibilityTests(unittest.TestCase):
             entity["type"] = "entity"
 
         for kind, source_ref, target_ref in (
-            ("evidences", "evidence.purchase-note", "request.purchase"),
-            ("precedes", "evidence.purchase-note", "request.purchase"),
-            ("precedes", "request.purchase", "evidence.purchase-note"),
+            ("references", "evidence.purchase-note", "request.purchase"),
+            ("references", "request.purchase", "evidence.purchase-note"),
         ):
             with self.subTest(kind=kind, source=source_ref, target=target_ref):
                 errors: list[str] = []
@@ -206,7 +205,7 @@ class ContractResponsibilityTests(unittest.TestCase):
             [
                 {
                     "id": "relation.invalid-contract-bridge",
-                    "kind": "evidences",
+                    "kind": "references",
                     "sourceRef": "evidence.purchase-note",
                     "targetRef": "request.other",
                 }
@@ -302,9 +301,9 @@ class ContractResponsibilityTests(unittest.TestCase):
             entity["type"] = "entity"
         relationship = {
             "id": "relation.offer-contract",
-            "kind": "precedes",
-            "sourceRef": "proposal.offer",
-            "targetRef": "contract.purchase",
+            "kind": "references",
+            "sourceRef": "contract.purchase",
+            "targetRef": "proposal.offer",
         }
         errors = []
         validate_relationships([relationship], self.entities, {}, errors)

@@ -190,7 +190,7 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 }
 ```
 
-Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。Request 必须属于一项履约；共享 Confirmation 保留唯一形成归属，各 Request 通过 `precedes` 关联它。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
+Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。Request 必须属于一项履约；共享 Confirmation 保留唯一形成归属，该 Confirmation 通过 `references` 指向各 Request。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
 
 ### Domain Context 与 Thing
 
@@ -266,13 +266,13 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
 
 ## 5. Fulfillment、Evidence 与 Rule
 
-`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。Request、completion 和 breach Rule 必须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文的具体结果仍通过 Evidence Role 使用。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
+`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。Request、completion 和 breach Rule 必须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文可直接引用具体时刻结果，需要变化点时才使用 Evidence Role。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
 
 Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 
 每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。同一个 Confirmation 类型或实例可以在有合同依据时被同一 Contract Context 下多个 Request 关联；每个关联仍按各自请求区间和 completion Rule 独立判断。重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
 
-Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；辅助凭证通过 `evidences` 指向其证明的业务 Evidence。辅助凭证保留形成 Context；合同内辅助凭证可按实际用途声明履约归属，不改变形成责任。
+Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；业务 Evidence 通过 `references` 引用所需辅助凭证，实例 `basedOn` 指明实际依据，规则核对证明条件。辅助凭证保留形成 Context；合同内辅助凭证可按实际用途声明履约归属，不改变形成责任。
 
 ## 6. 合同前协商与渠道来源
 
@@ -282,13 +282,15 @@ RFP／Proposal 必须位于 `pre_contract` Context，不得放入 Contract Conte
 RFP → Proposal → Contract
 ```
 
-Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保留签约来源。合同前协商和合同履约仍是不同边界，但 RFP／Proposal 均须显式定义 `started_at`、`expired_at`，不因尚未签约而省略时间。
+Contract 可以通过跨 Context 的 `references` 引用已接受的 Proposal，以保留签约来源。合同前协商和合同履约仍是不同边界，但 RFP／Proposal 均须显式定义 `started_at`、`expired_at`，不因尚未签约而省略时间。
 
 ## 7. Relationship
 
-允许的 kind：`plays_role`、`references`、`evidences`、`precedes`、`derived_from`。
+只允许 `references`（关联／引用）与 `plays_role`（角色扮演）。不接受其他关系 kind，也不自动转换旧输入。
 
-方向固定：`precedes` 为较早 Evidence→较晚 Evidence，`references` 为 Evidence→Thing（可跨 Context）、同 Context 的 Evidence→Evidence 或 Evidence→Evidence-as-Role（`category: role / kind: evidence`）；非 Evidence 的领域对象、角色也可引用同 Context 的 Entity。Evidence 不可通过 `references` 指向其他 Role 类型。`evidences` 为 Other Evidence→被证明 Evidence，`plays_role` 为玩家→Role。引用角色仍是 `references`，不是扮演关系，不另设“使用角色”类型。Fulfillment 不得成为 Evidence 图端点。同一合约内不同履约之间可以直接引用，不构成跨上下文关系。跨独立上下文保留有依据的 Proposal→Contract、Evidence→Thing 与外部时刻 Evidence→Evidence Role；直接引用不能穿透独立责任边界。
+`references` 按消费方→被引用对象定向：具体凭证→依据凭证、Evidence→Thing（可跨 Context）、Evidence→同 Context 的 Evidence-as-Role（`category: role / kind: evidence`）。Confirmation→Request 表达结果对应请求；Request→历史 Confirmation 表达依据，不将历史结果误作本次完成证明。Contract→Proposal 保留已接受方案来源，其合同前 Context 必须归属该合同。非 Evidence 领域对象及角色可引用同 Context 的 Entity；Evidence 不可引用其他 Role 类型。无需抽象变化点时允许 Evidence 引用其他 Context 的 Confirmation／Other Evidence，但不改变其形成责任，也不将其纳入本地共享确认。`plays_role` 为玩家→Role，合法端点见语义规则。Fulfillment 不得成为关系端点。
+
+引用的证明含义写入 `label/notes`，必需性与采信条件由规则及场景验证；类型关联不是已形成的实例证据。实例 `basedOn` 保存已经存在的具体依据，时间线的 `dependencies` 从它派生，`unresolvedOrder` 使用实例 ID。不按图位置、文件顺序或类型关联猜测实例先后；额外期限由 CEL 表达。属性派生只由 CEL AST 生成 lineage。
 
 关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
 
@@ -296,17 +298,17 @@ Proposal 可以通过跨 Context 的 `precedes` 指向最终 Contract，以保�
 {
   "type": "relationship",
   "id": "relation.inquiry-to-quotes",
-  "kind": "precedes",
-  "sourceRef": "rfp.product-inquiry",
-  "targetRef": "proposal.product-quote",
-  "label": "一份询价可产生一至多份报价",
+  "kind": "references",
+  "sourceRef": "proposal.product-quote",
+  "targetRef": "rfp.product-inquiry",
+  "label": "报价引用询价，一份询价对应一至多份报价",
   "sourceCardinality": {
     "min": 1,
-    "max": 1
+    "max": "many"
   },
   "targetCardinality": {
     "min": 1,
-    "max": "many"
+    "max": 1
   }
 }
 ```

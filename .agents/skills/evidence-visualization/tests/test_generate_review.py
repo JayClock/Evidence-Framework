@@ -67,7 +67,8 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_shared_confirmation_and_proof_roles_are_both_preserved(self):
         model = fixture()
-        model["relationships"].append({"id": "relation.shared", "kind": "precedes", "sourceRef": "request.a", "targetRef": "confirmation.other"})
+        next(e for e in model["entities"] if e["id"] == "confirmation.other")["contextRef"] = next(e for e in model["entities"] if e["id"] == "fulfillment.a")["contextRef"]
+        model["relationships"].append({"id": "relation.shared", "kind": "references", "sourceRef": "confirmation.other", "targetRef": "request.a"})
         data = self.project(model)
         node = next(n for n in data["nodes"] if n["id"] == "fulfillment.a")
         self.assertEqual(["confirmation.other"], node["confirmations"])

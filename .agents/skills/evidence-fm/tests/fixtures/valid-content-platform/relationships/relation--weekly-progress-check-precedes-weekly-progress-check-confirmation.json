@@ -1,8 +1,8 @@
 {
   "type": "relationship",
   "id": "relation.weekly-progress-check-precedes-weekly-progress-check-confirmation",
-  "kind": "precedes",
-  "sourceRef": "request.weekly-progress-check",
-  "targetRef": "confirmation.weekly-progress-check",
-  "label": "履约请求先于履约确认"
+  "kind": "references",
+  "sourceRef": "confirmation.weekly-progress-check",
+  "targetRef": "request.weekly-progress-check",
+  "label": "凭证引用形成依据"
 }

@@ -97,12 +97,12 @@ def shared_confirmation_documents() -> list[dict]:
                 {
                     "type": "relationship",
                     "id": f"relation.{period}-request-to-income-confirmation",
-                    "kind": "precedes",
-                    "sourceRef": request,
-                    "targetRef": shared_confirmation,
-                    "label": label + "请求关联共同收入确认",
-                    "sourceCardinality": {"min": 1, "max": 1},
-                    "targetCardinality": {"min": 1, "max": "many"},
+                    "kind": "references",
+                    "sourceRef": shared_confirmation,
+                    "targetRef": request,
+                    "label": "共同收入确认对应" + label + "请求",
+                    "sourceCardinality": {"min": 1, "max": "many"},
+                    "targetCardinality": {"min": 1, "max": 1},
                 },
                 {
                     "type": "rule",
@@ -312,7 +312,7 @@ class SharedConfirmationTests(unittest.TestCase):
             )
             errors = validate_model(model)
             self.assertTrue(
-                any("unsupported cross-context precedes" in error for error in errors),
+                any("unsupported cross-context references" in error for error in errors),
                 errors,
             )
 

@@ -460,11 +460,12 @@ function renderRequestConditions(request) {
         relations
           .filter(
             (r) =>
-              r.kind === 'precedes' &&
-              r.sourceRef === request.id &&
-              nodes.get(r.targetRef)?.kind === 'fulfillment_confirmation',
+              r.kind === 'references' &&
+              r.targetRef === request.id &&
+              nodes.get(r.sourceRef)?.contextRef === request.contextRef &&
+              nodes.get(r.sourceRef)?.kind === 'fulfillment_confirmation',
           )
-          .map((r) => r.targetRef),
+          .map((r) => r.sourceRef),
       ),
     ];
     if (confirmations.length) list(confirmations, '', outcome);
