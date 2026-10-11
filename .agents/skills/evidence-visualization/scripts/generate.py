@@ -255,8 +255,11 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     }
 
 
-def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
+def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path, *, require_api: bool = False) -> dict:
     fm = root / ".evidence/fm"
+    api_path = root / ".evidence/api/api.json"
+    if require_api and not api_path.is_file():
+        raise ValueError("联合审核需要当前 .evidence/api/api.json，不生成 FM 单独页面")
     initial = fingerprint(root)
     command = [sys.executable, "-B", str(fm_skill / "scripts/check_fm.py"), str(fm)]
     check = run(command)
@@ -277,7 +280,6 @@ def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path) -> dict:
         elif value.get("type") == "evidence_instance":
             instances.append(value)
     api = None
-    api_path = root / ".evidence/api/api.json"
     if api_path.exists():
         run([sys.executable, "-B", str(api_skill / "scripts/fm_api.py"), "project",
              "--project-root", str(root), "--fm", str(fm), "--fm-skill", str(fm_skill),
@@ -341,6 +343,7 @@ def main() -> int:
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--fm-skill", type=Path)
     parser.add_argument("--api-skill", type=Path)
+    parser.add_argument("--require-api", action="store_true", help="联合审核必须包含当前 API；缺失时保留已有页面")
     args = parser.parse_args()
     root = args.project_root.resolve()
     fm_skill = (args.fm_skill or root / ".agents/skills/evidence-fm").resolve()
@@ -352,7 +355,7 @@ def main() -> int:
         before = fingerprint(root)
         views.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix=".workbench-", dir=views) as temporary:
-            data = collect(root, fm_skill, api_skill, Path(temporary))
+            data = collect(root, fm_skill, api_skill, Path(temporary), require_api=args.require_api)
             html = render(data)
             if before != fingerprint(root):
                 raise ValueError("发布前输入变化，保留已有视图")

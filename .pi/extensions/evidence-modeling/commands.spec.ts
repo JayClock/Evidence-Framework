@@ -48,15 +48,15 @@ describe('/evidence-model', () => {
     );
   });
 
-  it('maps the no-argument menu to a single modeling intent', async () => {
+  it('maps the no-argument menu to read-only FM and API validation', async () => {
     const ctx = context();
-    ctx.ui.select.mockResolvedValue('只校验模型');
+    ctx.ui.select.mockResolvedValue('只校验模型与 API');
     const { handler, sendUserMessage } = setup([skill]);
 
     await handler('', ctx);
 
     expect(sendUserMessage).toHaveBeenCalledWith(
-      '/skill:evidence-modeling 只校验现有 FM 模型，不修改源文件',
+      '/skill:evidence-modeling 只校验现有 FM 与 API，不修改任何项目文件，不生成审核页',
       { expandPromptTemplates: true },
     );
   });
@@ -66,7 +66,10 @@ describe('/evidence-model', () => {
       '访谈并沉淀领域语言',
       '访谈并沉淀领域语言：付款证明，保存发现记录并当轮更新已明确术语的统一词汇表，不修改模型 JSON、关系、规则、验证场景、API 或实现',
     ],
-    ['生成或修改模型', '生成或修改模型：付款证明，直接编辑当前 FM 并校验'],
+    [
+      '生成或修改模型与 API',
+      '生成或修改模型与 API：付款证明，先核对追责结束依据，编辑并校验当前 FM，再设计并校验整体 API，生成联合审核页；不自动批准或进入实施',
+    ],
   ])('routes %s with an explicit editing boundary', async (action, intent) => {
     const ctx = context();
     ctx.ui.select.mockResolvedValue(action);
@@ -77,8 +80,9 @@ describe('/evidence-model', () => {
 
     expect(ctx.ui.select).toHaveBeenCalledWith('Evidence Modeling', [
       '访谈并沉淀领域语言',
-      '生成或修改模型',
-      '只校验模型',
+      '生成或修改模型与 API',
+      '只校验模型与 API',
+      '生成联合审核页',
       '返回',
     ]);
     expect(sendUserMessage).toHaveBeenCalledWith(
@@ -87,7 +91,7 @@ describe('/evidence-model', () => {
     );
   });
 
-  it.each(['访谈并沉淀领域语言', '生成或修改模型'])(
+  it.each(['访谈并沉淀领域语言', '生成或修改模型与 API'])(
     'does not authorize %s after a blank goal',
     async (action) => {
       const ctx = context();
@@ -98,6 +102,41 @@ describe('/evidence-model', () => {
       expect(sendUserMessage).not.toHaveBeenCalled();
     },
   );
+
+  it('requests a joint review without authorizing source edits', async () => {
+    const ctx = context();
+    ctx.ui.select.mockResolvedValue('生成联合审核页');
+    const { handler, sendUserMessage } = setup([skill]);
+
+    await handler('', ctx);
+
+    expect(ctx.ui.editor).not.toHaveBeenCalled();
+    expect(sendUserMessage).toHaveBeenCalledWith(
+      '/skill:evidence-modeling 生成现有 FM 与 API 的联合审核页，不修改模型或 API 设计源',
+      { expandPromptTemplates: true },
+    );
+  });
+
+  it('preserves an explicit FM-only restriction in arguments', async () => {
+    const { handler, sendUserMessage } = setup([skill]);
+
+    await handler('只修改 FM，不设计 API，不生成审核页', context());
+
+    expect(sendUserMessage).toHaveBeenCalledWith(
+      '/skill:evidence-modeling 只修改 FM，不设计 API，不生成审核页',
+      { expandPromptTemplates: true },
+    );
+  });
+
+  it('does not send a default editing request without UI', async () => {
+    const { handler, sendUserMessage } = setup([skill]);
+    const ctx = context({ hasUI: false });
+
+    await handler('', ctx);
+
+    expect(ctx.ui.select).not.toHaveBeenCalled();
+    expect(sendUserMessage).not.toHaveBeenCalled();
+  });
 
   it('returns without sending when the panel is closed', async () => {
     const ctx = context();

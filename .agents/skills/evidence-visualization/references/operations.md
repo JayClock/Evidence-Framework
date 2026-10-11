@@ -11,7 +11,7 @@
   --api-skill "$API_SKILL_DIR"
 ```
 
-输入为项目 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`。临时编译和 API 投影不覆盖已有 generated 目录。直接在浏览器打开 HTML，无需启动服务器。
+输入为项目 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`。临时编译和 API 投影不覆盖已有 generated 目录。联合审核增加 `--require-api`，API 不存在时返回非零并保留已有页面；不带该参数仍可生成单独 FM 页面。直接在浏览器打开 HTML，无需启动服务器。
 
 ## 失败处理
 

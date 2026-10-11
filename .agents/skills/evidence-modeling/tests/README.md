@@ -4,23 +4,24 @@
 
 ## 目录职责
 
-| 位置                                                                 | 内容                                                                      |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `.agents/skills/evidence-modeling/evals/`                            | 显式组合入口、全局追责结束准入、无 UI 与只读校验边界                      |
-| `.agents/skills/evidence-discovery/evals/`                           | 通用与组合访谈、领域语言沉淀、更正／写入失败及只读边界                    |
-| `.agents/skills/evidence-fm/tests/`                                  | FM 引擎、Schema、CEL、lineage、模拟与评分器的回归及夹具                   |
-| `.agents/skills/evidence-fm/evals/`                                  | 20 个 FM 技术案例及合成准入来源；behavior.json 检查阻塞与满足门槛后的编辑 |
-| `.agents/skills/evidence-requirements/evals/`                        | 外部材料直达需求的行为案例（原 ID 5）                                     |
-| `test_skill_packages.py`                                             | 跨 Skill 包完整性、链接闭合及评测目录覆盖                                 |
-| `test_skill_documentation.py`                                        | 业务入口加载边界及跨包文档协作                                            |
-| `test_contract_first_workflow.py`                                    | 合同—骨架—凭证—异常的顺序、发现记录 2.0 单一引用结构及行为案例覆盖        |
-| `test_responsibility_closure.py`                                     | 递归追责、人类终点与全局结束、全部编辑入口及记录引用的静态契约            |
-| `test_fm_integration.py`                                             | 组合流程、可选宿主接入及聚合命令覆盖                                      |
-| `.agents/skills/evidence-fm/tests/portability/`                      | FM 独立安装、真实只读检查及包内回归                                       |
-| `.agents/skills/evidence-visualization/tests/portability/`           | 可视化独立安装及生成验证                                                  |
-| `.agents/skills/evidence-api-design/tests/test_api_documentation.py` | API 专属文档契约                                                          |
-| `.agents/skills/evidence-task-planning/tests/`                       | 工作单元提取、切片、任务身份和 DAG 校验                                   |
-| `.agents/skills/evidence-delivery/tests/`                            | 任务状态、依赖、文件绑定和只读任务选择                                    |
+| 位置                                                                 | 内容                                                                            |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `.agents/skills/evidence-modeling/evals/`                            | 显式组合入口、全局追责结束准入、无 UI 与只读校验边界                            |
+| `.agents/skills/evidence-discovery/evals/`                           | 通用与组合访谈、领域语言沉淀、更正／写入失败及只读边界                          |
+| `.agents/skills/evidence-fm/tests/`                                  | FM 引擎、Schema、CEL、lineage、模拟与评分器的回归及夹具                         |
+| `.agents/skills/evidence-fm/evals/`                                  | 20 个 FM 技术案例及合成准入来源；behavior.json 检查阻塞与满足门槛后的编辑       |
+| `.agents/skills/evidence-requirements/evals/`                        | 外部材料直达需求的行为案例（原 ID 5）                                           |
+| `test_skill_packages.py`                                             | 跨 Skill 包完整性、链接闭合及评测目录覆盖                                       |
+| `test_skill_documentation.py`                                        | 业务入口加载边界及跨包文档协作                                                  |
+| `test_contract_first_workflow.py`                                    | 合同—骨架—凭证—异常的顺序、发现记录 2.0 单一引用结构及行为案例覆盖              |
+| `test_responsibility_closure.py`                                     | 递归追责、人类终点与全局结束、全部编辑入口及记录引用的静态契约                  |
+| `test_fm_integration.py`                                             | 组合流程、可选宿主接入及聚合命令覆盖                                            |
+| `test_combined_review.py`                                            | FM → API → 联合审核的编排契约、真实双源投影、缺 API／两源无效时保留已有页和输入 |
+| `.agents/skills/evidence-fm/tests/portability/`                      | FM 独立安装、真实只读检查及包内回归                                             |
+| `.agents/skills/evidence-visualization/tests/portability/`           | 可视化独立安装及生成验证                                                        |
+| `.agents/skills/evidence-api-design/tests/test_api_documentation.py` | API 专属文档契约                                                                |
+| `.agents/skills/evidence-task-planning/tests/`                       | 工作单元提取、切片、任务身份和 DAG 校验                                         |
+| `.agents/skills/evidence-delivery/tests/`                            | 任务状态、依赖、文件绑定和只读任务选择                                          |
 
 业务输入、原有案例 ID、FM 评分预期及测试夹具保留。独立行为案例中的特定宿主名称改为通用工具约束，含义不变。FM 生成案例与独立行为案例是不同编号空间，不合并评分。
 
@@ -30,7 +31,7 @@
 
 Discovery 的 interview 负责访谈机制、来源优先保存、当前对象引用与每轮术语沉淀的调用顺序，发现记录只使用当前 2.0 模板，不提供自动转换。FM 统一维护 domain-language、business-analysis、provenance、scenario-validation 专业方法及模型／场景生成；合同主线先骨架再追溯，异常新义务重复同一循环，input-review 只消费材料并返回具体缺口，不执行访谈。
 
-Discovery 单独安装可做通用访谈，专业 FM 判断通过资源发现或用户提供的路径只读获取 FM 准则；不引入跨包相对链接、符号链接或同步副本。FM 独立安装仍须核对人类追责结束依据；无访谈包且门槛未满足时只返回缺口，不以局部职责充分放行。用户显式调用 `evidence-modeling` 时组合两包知识，缺必需资源只报告资源限制；访谈当轮加载 FM 的领域语言方法沉淀明确术语，不启动模型 JSON 生成。可选 Pi 适配器只提供意图入口和问答，模型差异通过普通对话展示，不是完整性前提。结构与逐字检查不能证明语义完整，组合和独立场景需分别人工评价。
+Discovery 单独安装可做通用访谈，专业 FM 判断通过资源发现或用户提供的路径只读获取 FM 准则；不引入跨包相对链接、符号链接或同步副本。FM 独立安装仍须核对人类追责结束依据；无访谈包且门槛未满足时只返回缺口，不以局部职责充分放行。用户显式调用 `evidence-modeling` 时按分支组合知识；生成分支一次触发 FM、API Design 与 Visualization，联合审核必须包含当前 API；缺必需资源在编辑前停止并报告资源限制；访谈当轮加载 FM 的领域语言方法沉淀明确术语，不启动模型 JSON 生成。可选 Pi 适配器只提供意图入口和问答，模型差异通过普通对话展示，不是完整性前提。结构与逐字检查不能证明语义完整，组合和独立场景需分别人工评价。
 
 保留评测输入、判断标准与必要执行证据；不把每次通过的流水账、完整控制台输出或可重建结果写进维护指南。实际评测证据放入指定工作目录，汇总引用其模型／Skill 版本与运行标识，未执行的保持未执行。
 
@@ -60,6 +61,6 @@ python3 -m unittest discover -s .agents/skills/evidence-modeling/tests -v
 
 Discovery 案例 30–34 检查合同参数归位、先骨架后追溯、异常复用、多约定引用恢复及版本不匹配时保留文件。静态顺序和模板结构检查不证明待评 Agent 已执行这些动作；新旧 Skill 对比使用相同来源，保留原始交互与文件差异。
 
-在隔离的临时项目中执行行为评测，不改真实业务文件或审核状态。
+组合案例 13–17 覆盖一体生成、API 业务缺口阻塞、联合只读、更窄仅 FM 授权和缺资源时先停；静态契约和真实投影测试不证明 Agent 已正确执行编排。行为评测在独立会话、隔离的临时项目中执行，不改真实业务文件或审核状态。
 
 自动测试不调用语言模型，输入准备不代表生成评测通过。未执行的行为案例保持未执行；机器结果不等于访谈质量、语义完整、具名审核或 UAT。

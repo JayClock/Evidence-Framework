@@ -1,0 +1,106 @@
+{
+  "task": "建模与 API 一体触发及联合审核入口重构",
+  "userRequest": "需要重构为一体触发，同时审核模型与 api",
+  "cwd": "repository-root",
+  "environment": {
+    "node": "26.8.1",
+    "python": "3.12.3",
+    "browser": "local Google Chrome"
+  },
+  "decisions": [
+    "生成分支一次授权 FM 编辑与校验、整体 API 设计与校验及同页联合审核，内部依次执行，不并行编辑事实源。",
+    "保留追责结束准入、访谈、只读及更窄的仅 FM 权限；不自动批准、规划、实施或操作 Git。",
+    "联合页面复用 Visualization 生成器，新增 --require-api，缺 API 不降级；失败保留已有页与实际已保存文件。",
+    "本轮只维护 Harness、专业交接与回归；不修改正式 FM/API、词汇表、当前业务审核页或计划状态。"
+  ],
+  "sourceDigests": {
+    ".agents/skills/evidence-modeling/SKILL.md": "62630a1b6693e10e4a18bc0429b1681cfd060052cc5b5f85455f8c65a1cce921",
+    ".agents/skills/evidence-modeling/references/workflow.md": "1f99f0dd7a9ad4b15bd887a0994d57df52e094dedcacea42c89ab57cc17bef66",
+    ".agents/skills/evidence-api-design/SKILL.md": "6494e8a22632279cebfcb4e66ee900ce5ce47f4b39aa202ea6ed76ff30c91e06",
+    ".agents/skills/evidence-visualization/scripts/generate.py": "022b685c249655a965d97fb031922a08bc69bd72e07234220e871cfd4cdd7f45",
+    ".pi/extensions/evidence-modeling/commands.ts": "16ec5ec0e78bb49c6546aefc194de5dc40a9da4f4e5cf864968a93255116faf2",
+    ".agents/skills/evidence-modeling/tests/test_combined_review.py": "4a519ca0a26ade2c776827c4de3e387b4cd62b11de799e8a6ab50cac7e919ef2"
+  },
+  "checks": [
+    {
+      "command": "node tools/python/python.mjs --require jsonschema,celpy,yaml -B -m unittest discover -s .agents/skills/evidence-modeling/tests -p test_combined_review.py -v",
+      "exitCode": 0,
+      "tests": 7,
+      "detail": "静态编排契约及合成双源真实投影；成功覆盖全部 13 个 API 能力，缺 API 或无效两源时保留旧页和输入。",
+      "log": "/tmp/evidence-combined-final.TYmE5q",
+      "sha256": "40407372a59628308c552f35a4afaa188f4f3a99cf95d26bfbb678f09bc5d854"
+    },
+    {
+      "command": "NX_DAEMON=false NX_SKIP_NX_CACHE=true npm test",
+      "exitCode": 1,
+      "detail": "Nx 缓存跳过，Gradle 含 UP-TO-DATE；扩展 22 项实际通过，Skills 403 项中 401 通过。两项既有失败：正式 FM 中 precedes/evidences 关系不合当前 Schema；固定目录清单不接受已有 content-research-writer/write。最后 guides:test 因前序失败未执行，已另行运行。",
+      "log": "/tmp/evidence-final-npm-test.SKwVQe",
+      "sha256": "19a44fa1d04cd36652755a0bd11a3e92a540ba9394cef777d5f37a56aefaa7fc"
+    },
+    {
+      "command": "NX_DAEMON=false NX_SKIP_NX_CACHE=true npm run lint",
+      "exitCode": 1,
+      "detail": "前端 lint 实际通过；README 中 12 个本轮之前已存在的文章目标缺失，未进入后续全局格式检查。",
+      "log": "/tmp/evidence-quality-lint.ujyg1B",
+      "sha256": "9f290729e5a89dc52f8a0df73ed265eac7923f8615c05288edc0eb9b5c5f3ab5"
+    },
+    {
+      "command": "NX_DAEMON=false NX_SKIP_NX_CACHE=true npm run build",
+      "exitCode": 0,
+      "detail": "Nx 缓存跳过；Gradle 含 UP-TO-DATE；建模扩展 TypeScript 检查实际通过。未修改 Java，不将历史/缓存结果当新增行为证明。",
+      "log": "/tmp/evidence-quality-build.vft8ek",
+      "sha256": "ccb4f58cda24b9dae19860f61387242cb3faac9b747d2ce964600c3100a27d37"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 1,
+      "detail": "8 项检查器测试通过；README 的 12 个既有文章目标缺失。",
+      "log": "/tmp/evidence-quality-guides.gO7WBJ",
+      "sha256": "54e770794c47358c7da62f76809a6fa97b77c33b263c8f8e41edbdc65bb128f5"
+    },
+    {
+      "command": "npm run evidence-modeling:verify",
+      "exitCode": 1,
+      "detail": "类型检查和 22 项扩展测试通过；未修改的 entity.schema.json/rule.schema.json 格式失败，HEAD 内容同样复现。",
+      "log": "/tmp/evidence-final-modeling-verify.KidvML",
+      "sha256": "256bb29e0cd9f4066301bfa1f21768587ff640e1fb54b4d11fc15f036be7ad7d"
+    },
+    {
+      "command": "node --test .agents/skills/evidence-visualization/tests/business-graph.test.mjs .agents/skills/evidence-visualization/tests/request-detail.test.mjs",
+      "exitCode": 0,
+      "tests": 21,
+      "log": "/tmp/evidence-workbench-dom.KPQhSf",
+      "sha256": "afb39ac96283cb8db02bf16b64aa01d3f958bdfeff099e5ba04f7c7ef43f8095"
+    },
+    {
+      "command": "generate.py --require-api with explicit skill paths in isolated full-lifecycle fixture",
+      "exitCode": 0,
+      "detail": "仅临时合成项目生成，FM/API/simulation 检查通过；runtime=false；未刷新真实业务页面。",
+      "log": "/tmp/evidence-joint-browser.5WZmhn/generate.log",
+      "sha256": "ce49e380888989bb4938a8c259b4a782cfbc8b347c97e877e9627f7e6d4cd48e"
+    },
+    {
+      "command": "node .agents/skills/evidence-visualization/tests/review-browser.mjs /tmp/evidence-joint-browser.5WZmhn/.evidence/views/index.html",
+      "exitCode": 1,
+      "detail": "合成完整采购案例的 Context 边界包含断言失败；以 HEAD 生成器重新生成后同一断言失败且日志相同。未修改既有图形实现，不声称浏览器验收或截图审核通过。",
+      "log": "/tmp/evidence-joint-browser.5WZmhn/browser.log",
+      "sha256": "2621c0fccc89a065096df9adcc7ab2cead06f75ec8ba92e5dbedf04de622255b",
+      "baselineLog": "/tmp/evidence-joint-browser.5WZmhn/baseline-browser.log"
+    },
+    {
+      "command": "prettier --check on this turn's changed Markdown/JSON/TypeScript files",
+      "exitCode": 0,
+      "log": "/tmp/evidence-format-final.Gq6rq2",
+      "sha256": "77dff3d4a21755cd17670d11be9acbff8de246a1083e8a4ddbacb59ff5541048"
+    }
+  ],
+  "review": {
+    "standards": "专业职责、事实源、授权和停止边界保留；正式源及既有无关改动未改，未写任务完成或业务批准。",
+    "spec": "一体入口、整体 API 接续与联合页面防降级已实现并有回归；完整项目质量与浏览器验收未全通过。",
+    "lsp": "最终 4 个源码路径主动探测，无诊断；1 确认 clean、3 inconclusive，另有实际 TypeScript 类型检查和 Python 回归。",
+    "agentBehaviorEvals": "新增 13–17 号行为案例；未实际运行独立 Agent 评测。",
+    "gitDiffCheck": "passed",
+    "formalSourceAndViewDiff": "unchanged"
+  },
+  "handoff": "保留实际改动与原始失败日志。正式模型当前关系错误需业务/FM 拥有者按准入处理；其余目录、文章、格式和图形基线问题未扩大本轮范围修复。没有完整验收完成声明或业务批准。日志在系统临时目录，不复制全文。"
+}

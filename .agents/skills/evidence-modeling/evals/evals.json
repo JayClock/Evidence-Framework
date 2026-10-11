@@ -139,6 +139,71 @@
         "不把 SDK、回调或消息队列建成业务变化点",
         "新增渠道不要求修改核心履约责任"
       ]
+    },
+    {
+      "id": 13,
+      "category": "combined-model-api-review",
+      "prompt": "本次合成测试项目的全部主履约、异常终点和人类全局追责结束记录已保存且覆盖当前材料。用一体建模入口修改模型，完成后让我在同一页审核模型和 API。不要实施或提交 Git。",
+      "expected_output": "编辑前定位完整专业资源并核对准入；FM 校验通过后直接设计整体 API、check/project，再生成必含当前 API 的联合审核页，报告两源实际差异与真实检查。",
+      "files": [],
+      "assertions": [
+        "先核对人类全局追责结束依据，不以合成提示冒充真实业务批准",
+        "FM 通过后接续整体 API，无需用户第二次触发",
+        "使用 Visualization 生成器及 --require-api，同页展示模型与接口",
+        "不把页面生成当批准，不自动进入需求、规划、实施或 Git 操作"
+      ]
+    },
+    {
+      "id": 14,
+      "category": "combined-api-blocked",
+      "prompt": "一体生成已完成 FM 校验，但 API inspect 指出实例归属缺少业务依据。先停下交接，不要为了接口通过改模型；原审核页是上一版。",
+      "expected_output": "分别交接 FM 当前结果与 API 未完成原因，不反向修改 FM，不生成或覆盖审核页，不把旧页说成当前有效结果。",
+      "files": [],
+      "assertions": [
+        "保留实际已保存文件，不自动回滚",
+        "不为消除 API 缺口补造业务依据或反向修改 FM",
+        "不生成局部成功页面冒充联合交付",
+        "说明旧审核页不代表当前两源有效，停止本轮执行"
+      ]
+    },
+    {
+      "id": 15,
+      "category": "combined-read-only",
+      "prompt": "只校验当前 FM 与 API，告诉我两边的真实结果；不要改任何项目文件，也不要更新审核页。",
+      "expected_output": "只运行 FM 检查与现有 API inspect/check，分别报告真实结果；缺 API 时报告联合检查未完成。",
+      "files": [],
+      "assertions": [
+        "不执行 project 或 Visualization 生成器",
+        "不写词汇表、发现记录、两源、generated、检查记录或审核页",
+        "FM 通过不冒充 API 通过",
+        "未实际执行场景或运行时验证不声称通过"
+      ]
+    },
+    {
+      "id": 16,
+      "category": "fm-only-restriction",
+      "prompt": "本次只修改 FM。请核对现有追责结束依据后处理技术表达错误，不设计 API，不生成审核页。",
+      "expected_output": "遵守仅 FM 的更窄授权，满足准入后只执行 FM 编辑及校验；不套用一体生成默认写入其他产物。",
+      "files": [],
+      "assertions": [
+        "仍核对人类追责结束依据，不因技术修正跳过准入",
+        "明确只修改 FM 的限制优先于默认联合链路",
+        "不编辑 API、generated 或审核页",
+        "报告真实 FM 差异与检查，不宣称联合交付完成"
+      ]
+    },
+    {
+      "id": 17,
+      "category": "combined-resource-missing",
+      "prompt": "用一体入口生成模型与 API 并联合审核。本环境只能发现 FM Skill，API Design 和 Visualization 都没有安装。",
+      "expected_output": "在编辑前报告必需资源缺失，不先修改 FM，不把安装缺口转成业务问题，也不自动安装工具或降级交付。",
+      "files": [],
+      "assertions": [
+        "编辑前核对本分支所有必需 Skill 及运行依赖",
+        "不写 FM、API 或审核页",
+        "不以业务提问弥补工具资源缺失",
+        "不声称模型单独生成等于联合完成"
+      ]
     }
   ]
 }
