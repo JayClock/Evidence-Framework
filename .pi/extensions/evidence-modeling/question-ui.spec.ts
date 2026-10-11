@@ -12,8 +12,10 @@ const input: QuestionInput = {
     contract: '订阅协议',
     fulfillment: '付款',
     point: 'confirmation',
+    evidence: '到账回执',
   },
-  known: ['读者应支付199元', '以到账结果证明完成'],
+  story:
+    '我们正在追溯到账回执中的金额。订单记载应付199元，但还需要找到实际到账的证明。',
 };
 
 function context(options: {
@@ -36,11 +38,11 @@ describe('QuestionUI', () => {
     await new QuestionUI().open(input, ctx as never);
 
     const expected = [
-      '当前位置：订阅协议 → 付款 → 确认',
-      '已明确：',
-      '  · 读者应支付199元',
-      '  · 以到账结果证明完成',
-      '正在澄清：什么凭证证明付款完成？',
+      '当前位置：订阅协议 → 付款 → 到账回执〔履约确认〕',
+      '',
+      input.story,
+      '',
+      input.prompt,
     ].join('\n');
     expect(ctx.ui.select).toHaveBeenCalledWith(expected, [
       '回答',
@@ -51,7 +53,7 @@ describe('QuestionUI', () => {
     ]);
     expect(ctx.ui.editor).toHaveBeenCalledWith(expected, '');
     expect(ctx.ui.select.mock.calls[0]?.[0]).not.toMatch(
-      /来源|影响|当前理解|Q-017|整体准入|全局/,
+      /已明确：|正在澄清：|尚缺依据：|Q-017|整体准入|全局/,
     );
   });
 
@@ -79,13 +81,10 @@ describe('QuestionUI', () => {
     'locates $title without inventing a fulfillment',
     async ({ position, title }) => {
       const ctx = context({ action: '暂缓此问题' });
-      await new QuestionUI().open(
-        { ...input, position, known: [] },
-        ctx as never,
-      );
+      await new QuestionUI().open({ ...input, position }, ctx as never);
 
       expect(ctx.ui.select.mock.calls[0]?.[0]).toBe(
-        `当前位置：${title}\n已明确：暂无\n正在澄清：${input.prompt}`,
+        `当前位置：${title}\n\n${input.story}\n\n${input.prompt}`,
       );
       expect(ctx.ui.editor).not.toHaveBeenCalled();
     },
@@ -104,7 +103,8 @@ describe('QuestionUI', () => {
           fulfillment: '送达',
           point: 'request',
         },
-        known: ['承运方须按约送达'],
+        story:
+          '承运方须按约送达。我们沿送达要求回到运输约定，正在寻找期限的确定依据。',
         prompt: '送达要求依据哪份约定？',
       },
       ctx as never,

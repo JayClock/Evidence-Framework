@@ -12,16 +12,23 @@ const input: QuestionInput = {
     fulfillment: '付款',
     point: 'confirmation',
   },
-  known: ['以到账结果证明完成'],
+  story: '付款以到账结果证明完成，我们正在寻找承载实际到账金额的凭证。',
   prompt: '什么凭证证明付款完成？',
 };
 
 const valid = (value: unknown) => Check(QuestionInputSchema, value);
 
 describe('current-progress question contract', () => {
-  it('requires a precise fulfillment location and permits no known facts yet', () => {
+  it('requires a story and permits a business evidence name without forcing one', () => {
     expect(valid(input)).toBe(true);
-    expect(valid({ ...input, known: [] })).toBe(true);
+    expect(
+      valid({
+        ...input,
+        position: { ...input.position, evidence: '银行回执' },
+      }),
+    ).toBe(true);
+    const { story: _story, ...withoutStory } = input;
+    expect(valid(withoutStory)).toBe(false);
     expect(
       valid({ ...input, position: { ...input.position, point: 'request' } }),
     ).toBe(true);
@@ -66,6 +73,13 @@ describe('current-progress question contract', () => {
       point: 'request',
       otherContracts: [],
     },
+    {
+      kind: 'fulfillment',
+      contract: '订阅协议',
+      fulfillment: '付款',
+      point: 'confirmation',
+      evidence: ' ',
+    },
     { kind: 'domain', context: '客户档案' },
     { kind: 'unlocated', contract: '虚构合同' },
     { kind: 'global' },
@@ -90,6 +104,7 @@ describe('current-progress question contract', () => {
   });
 
   it.each([
+    'known',
     'impact',
     'contextSummary',
     'sourceRefs',
@@ -102,7 +117,7 @@ describe('current-progress question contract', () => {
   it.each([
     { questionId: ' ' },
     { gapKey: 'INVALID GAP' },
-    { known: [' \n'] },
+    { story: ' \n' },
     { prompt: ' \n' },
   ])('rejects blank business text and invalid identity: %j', (fields) => {
     expect(valid({ ...input, ...fields })).toBe(false);

@@ -14,7 +14,7 @@ class CurrentProgressTests(unittest.TestCase):
         display = interview.split("## 4. 只展示当前进度", 1)[1].split("## 5.", 1)[0]
         for phrase in (
             "合同名称 → 履约项名称 → 请求或确认",
-            "当前位置：", "已明确：", "正在澄清：",
+            "当前位置：", "简短追溯故事", "业务名称", "类型只作辅助标签",
             "一个仍影响当前判断的业务问题", "不代替业务位置",
             "不要展开其他合同", "全局责任图", "整体准入提醒",
             "不在回答末尾附方法文章、作者、章节或参考链接",
@@ -22,9 +22,18 @@ class CurrentProgressTests(unittest.TestCase):
             "不编造合同或履约", "不套履约链", "不携带前一个节点",
         ):
             self.assertIn(phrase, display)
-        for field in ("position", "known", "prompt", "questionId", "gapKey"):
+        for field in ("position", "story", "prompt", "questionId", "gapKey", "evidence"):
             self.assertIn(f"`{field}`", display)
         self.assertIn("没有必要问题时交接当前结果", display)
+
+    def test_story_is_grounded_provenance_not_a_questionnaire_or_fiction(self):
+        text = (SKILLS / "evidence-discovery/references/interview.md").read_text()
+        for phrase in (
+            "信息来源追到了哪里", "请求与确认本身就是凭证", "不逐字段询问",
+            "不要把故事拆成", "不得补造金额", "不夹带问题", "不保存到 handoff",
+            "没有必要问题时交接当前结果", "不是任意支撑凭证的名称",
+        ):
+            self.assertIn(phrase, text)
 
     def test_focused_position_is_a_reference_not_another_business_copy(self):
         document = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
@@ -35,6 +44,8 @@ class CurrentProgressTests(unittest.TestCase):
         self.assertIn("非履约省略", handoff["focusPoint"])
         self.assertIn("不展开全局", handoff["viewRefs"][0])
         self.assertNotIn("known", handoff)
+        self.assertNotIn("story", handoff)
+        self.assertIn("evidenceTraces", handoff["viewRefs"][0])
         self.assertNotIn("progressState", document)
         self.assertIn("sources", document)
         self.assertIn("request", document["business"]["responsibilities"][0])
@@ -86,6 +97,7 @@ class CurrentProgressTests(unittest.TestCase):
         for category in (
             "current-only-progress", "request-confirmation-progress-resume",
             "progress-without-fictitious-position", "focused-exception-progress",
+            "evidence-provenance-story",
         ):
             case = indexed[category]
             self.assertIn("evidence-fm", case["knowledgeSkills"])

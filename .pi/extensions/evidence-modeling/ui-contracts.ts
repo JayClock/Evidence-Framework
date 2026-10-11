@@ -8,6 +8,14 @@ export const CurrentPositionSchema = Type.Union([
       kind: Type.Literal('fulfillment'),
       contract: BusinessText,
       fulfillment: BusinessText,
+      evidence: Type.Optional(
+        Type.String({
+          minLength: 1,
+          pattern: '\\S',
+          description:
+            '当前请求或确认凭证的业务名称；尚未识别时省略，不按类型拼接后缀。',
+        }),
+      ),
       point: Type.Union([
         Type.Literal('request'),
         Type.Literal('confirmation'),
@@ -49,7 +57,12 @@ export const QuestionInputSchema = Type.Object(
       pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$',
     }),
     position: CurrentPositionSchema,
-    known: Type.Array(BusinessText),
+    story: Type.String({
+      minLength: 1,
+      pattern: '\\S',
+      description:
+        '从记录引用生成的简短追溯故事：正在追溯哪项凭证信息、已找到的业务来源及其证明作用、接下来追向哪里。仅陈述有依据内容，不编造实例或把未知写成事实；不使用已明确、尚缺依据等字段清单。',
+    }),
     prompt: BusinessText,
   },
   { additionalProperties: false },

@@ -159,7 +159,7 @@ describe('contract context navigation', () => {
             questionId: 'Q-1',
             gapKey: 'test.gap',
             position: { kind: 'unlocated' },
-            known: [],
+            story: '当前尚未定位约定，先从已有材料中的双方关系开始。',
             prompt: '问题',
           },
           ctx as never,

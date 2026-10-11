@@ -118,7 +118,7 @@ class SkillPackageTests(unittest.TestCase):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
         self.assertEqual(
-            set(range(1, 48)) - {7},
+            set(range(1, 49)) - {7},
             {case["id"] for case in cases},
         )
         ids = [case["id"] for case in cases]
@@ -143,7 +143,7 @@ class SkillPackageTests(unittest.TestCase):
                 "current-only-progress", "request-confirmation-progress-resume",
                 "progress-without-fictitious-position", "focused-exception-progress",
                 "context-overview-selection", "completed-context-not-selectable",
-                "context-navigation-empty-headless",
+                "context-navigation-empty-headless", "evidence-provenance-story",
             }.issubset(
                 {case["category"] for case in cases}
             )

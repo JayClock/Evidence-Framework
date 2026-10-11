@@ -56,7 +56,7 @@ describe('evidence-modeling UI adapter boundary', () => {
         fulfillment: '送达',
         point: 'request',
       },
-      known: ['承运方须按约送达'],
+      story: '承运方须按约送达，我们正在追溯送达期限的约定依据。',
       prompt: '送达期限依据什么约定？',
     };
     const ctx = {

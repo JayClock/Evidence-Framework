@@ -10,8 +10,13 @@ import type {
 
 function formatPosition(position: CurrentPosition): string {
   switch (position.kind) {
-    case 'fulfillment':
-      return `${position.contract} → ${position.fulfillment} → ${position.point === 'request' ? '请求' : '确认'}`;
+    case 'fulfillment': {
+      const point = position.point === 'request' ? '请求' : '确认';
+      const evidence = position.evidence
+        ? `${position.evidence}〔履约${point}〕`
+        : point;
+      return `${position.contract} → ${position.fulfillment} → ${evidence}`;
+    }
     case 'contract':
       return position.contract;
     case 'negotiation':
@@ -97,10 +102,10 @@ export class QuestionUI {
     try {
       const title = [
         `当前位置：${formatPosition(input.position)}`,
-        ...(input.known.length
-          ? ['已明确：', ...input.known.map((fact) => `  · ${fact}`)]
-          : ['已明确：暂无']),
-        `正在澄清：${input.prompt}`,
+        '',
+        input.story,
+        '',
+        input.prompt,
       ].join('\n');
       const action = await ctx.ui.select(title, [...ACTIONS]);
       if (action === '查看／切换合同上下文')

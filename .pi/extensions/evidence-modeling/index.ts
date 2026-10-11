@@ -10,9 +10,9 @@ export default function evidenceModelingExtension(pi: ExtensionAPI): void {
   registerModelingCommand(pi);
   pi.registerTool({
     name: 'evidence_ui_question',
-    label: '当前建模问题',
+    label: '当前建模追溯',
     description:
-      '围绕当前业务位置，展示已明确内容并澄清一个问题。履约位置精确到合同、履约项和请求或确认；只返回人工交互结果，不保存业务记录。',
+      '围绕当前业务凭证，用简短故事讲述其中信息的来源追溯进展，再问一个必要问题。请求或确认保留语义分类，凭证使用业务名称；只返回人工交互结果，不保存业务记录。',
     parameters: QuestionInputSchema,
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const result = await questions.open(params, ctx);

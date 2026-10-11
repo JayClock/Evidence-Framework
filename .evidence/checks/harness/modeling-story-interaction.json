@@ -1,0 +1,81 @@
+{
+  "scope": "建模交互 Harness 重构；不是业务 DAG 状态或业务批准",
+  "cwd": "/Users/zhongjie/Documents/Github/Evidence-Framework",
+  "feedback": [
+    "用户：应该不是正在澄清什么问题，而是正在追溯凭证中的信息来源是什么",
+    "用户：尚缺依据有点机械式表达了，应该是以 stroy 的形式表达",
+    "用户授权：基于以上内容，帮我重构一下当前系统的建模交互流程"
+  ],
+  "decisions": [
+    "日常交互改为业务位置、短篇信息来源追溯故事、一个必要问题，不添加已明确或尚缺依据字段栏。",
+    "工具载荷以 story 替换 known；position.evidence 可选，为当前请求或确认凭证的业务名称，类型仍由 point 表达。",
+    "故事从原对象、evidenceTraces、viewRefs 和原问题重建，不持久化故事副本；不迁移现有发现记录。",
+    "合同导航、暂缓、停止、先保存来源再沉淀术语和正式模型准入规则不变。",
+    "未修改正式 FM、API、词汇表或业务计划，不自动提交。工具 Schema 需重载扩展后生效。"
+  ],
+  "checks": [
+    {
+      "command": "npm run evidence-modeling:test -- --run .pi/extensions/evidence-modeling/question-ui.spec.ts",
+      "exitCode": 1,
+      "result": "先添加新交互预期，旧实现读取已移除的 known 导致 19 项失败；随后实现并复验。",
+      "log": "/tmp/evidence-story-red.log",
+      "sha256": "f8f24f725f5228c2c5b5175b8ae000b36782475d5af45ad202b571533c33f548"
+    },
+    {
+      "commands": [
+        "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-modeling/tests -p 'test_current_progress.py' -v",
+        "node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-modeling/tests -p 'test_skill_packages.py' -v"
+      ],
+      "exitCodes": [0, 0],
+      "log": "/tmp/evidence-story-focused.log",
+      "sha256": "bb4a5c65464db36c42ca5f90f33955a1fe2eeea74579e0dba83f7a5784ff3faf"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 1,
+      "result": "扩展 70 项通过；Skills 仅剩仓库词汇/FM 集成检查失败：17 处关系仍用 precedes/evidences，与当前 Schema 不符。Nx 应用任务 35/35 缓存命中，不算新执行。",
+      "log": "/tmp/evidence-story-test-final.log",
+      "sha256": "74d62594e36aadd8a91bbe613c32ff47ac363d641b0ea726e4590edb06be46fd"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 1,
+      "result": "前端 lint 缓存命中；Guides 被 README 的 12 个失效本地链接阻塞。保留用户原有 README 改动。",
+      "log": "/tmp/evidence-story-lint.log",
+      "sha256": "01325e2eaf6516866eddef33b73ff841da32aa069227c32100aba9d35e56095f"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "result": "Nx 35/35 缓存命中，扩展 TypeScript 检查实际执行通过。",
+      "log": "/tmp/evidence-story-build.log",
+      "sha256": "0007cb610909aef8bcc228df176f59a719187c7a64741836e33b7a63de68efa9"
+    },
+    {
+      "command": "npm run guides:verify",
+      "exitCode": 1,
+      "result": "检查器回归通过；README 中 12 个 docs/articles 链接失效。",
+      "log": "/tmp/evidence-story-guides.log",
+      "sha256": "d9d1db65a364ea3d2bbf29f0a003423020d7cc8ef4122073be10a7f467b261d0"
+    },
+    {
+      "command": "npm run evidence-modeling:verify",
+      "exitCode": 1,
+      "result": "类型检查及 70 项扩展测试通过；格式检查仅报告未修改的 evidence-fm/schemas/entity.schema.json 和 rule.schema.json。",
+      "log": "/tmp/evidence-story-verify.log",
+      "sha256": "9e50b2b83227391de29a4eef126362e8a30ebe466631159548fe061d1b0c23a3"
+    },
+    {
+      "command": "npx prettier --check .pi/extensions/evidence-modeling/{ui-contracts.ts,ui-contracts.spec.ts,question-ui.ts,question-ui.spec.ts,index.ts,index.spec.ts,context-ui.spec.ts,README.md} .agents/skills/evidence-discovery/{SKILL.md,references/interview.md,assets/discovery-template.json,evals/evals.json,evals/README.md} docs/evidence-modeling.md AGENTS.md",
+      "exitCode": 0,
+      "log": "/tmp/evidence-story-changed-format.log",
+      "sha256": "77dff3d4a21755cd17670d11be9acbff8de246a1083e8a4ddbacb59ff5541048"
+    }
+  ],
+  "review": {
+    "standards": "差异审查未见扩展持久化、业务源写入或自动推进；9 个改动代码/测试路径的主动 LSP 检查无错误，辅助分析保留 switch 无 default、类较大及 SDK 固定参数数量提示。全仓质量门槛未通过。",
+    "spec": "已实现故事展示、业务凭证名称、端点保留、无 UI 协议、保存与恢复引用；自动测试不证明故事真实性或实际 Agent 一问纪律。",
+    "notExecuted": ["真实 Agent 访谈案例 41–44、48 的新旧版本评测", "真人 TUI 窄终端、中文输入法及 RPC 体验", "Java 未修改，未单独运行 ./gradlew check"],
+    "logRetention": "完整输出保留在本机 /tmp，指针与摘要在此保存；临时日志不是长期归档。"
+  }
+}
