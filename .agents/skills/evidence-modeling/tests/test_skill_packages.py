@@ -118,14 +118,17 @@ class SkillPackageTests(unittest.TestCase):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
             cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
         self.assertEqual(
-            {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23},
+            set(range(1, 30)) - {7},
             {case["id"] for case in cases},
         )
         ids = [case["id"] for case in cases]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue(
             {
-                "domain", "fulfillment", "resume", "partial-fm", "requirements",
+                "domain", "fulfillment", "resume", "unclosed-responsibility-blocks-modeling", "requirements",
+                "recursive-responsibility-closure", "human-stop-not-completion",
+                "human-terminal-not-global-completion", "closure-invalidated-by-new-branch",
+                "closed-responsibility-admits-modeling",
                 "inline-language", "language-correction", "language-ambiguity",
                 "language-write-failure", "language-read-only",
                 "agreement-material-first", "evidence-based-fallback", "key-value-lineage",

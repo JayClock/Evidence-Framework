@@ -319,7 +319,7 @@ npm run dev
 
 ```text
 /evidence-model 边访谈边沉淀领域语言，保存来源并更新统一词汇表
-/evidence-model 根据充分材料修改当前 FM 并校验
+/evidence-model 核对全部主履约及各层异常的终点和人类追责结束依据，再修改当前 FM 并校验
 用 evidence-requirements 明确软件职责与验收
 用 evidence-api-design 根据已确认 FM 设计 API
 用 evidence-task-planning 根据当前来源生成实施计划
