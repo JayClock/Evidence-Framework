@@ -1,6 +1,6 @@
 ---
 name: evidence-fm
-description: 唯一维护合同约定、请求—确认骨架、凭证关键数据追溯、异常递归及领域语言方法。支持方法讨论与术语沉淀；人类确认全部责任终点和全部追责结束后，按授权表达 FM Schema v4 模型及场景，也支持只读校验。缺口只交接，不接管访谈或代替业务批准。
+description: 唯一维护经营依据与合同边界识别、请求—确认骨架、凭证关键数据追溯、异常递归及领域语言方法。支持方法讨论与术语沉淀；人类确认全部责任终点和全部追责结束后，按授权表达 FM Schema v4 模型及场景，也支持只读校验。缺口只交接，不接管访谈或代替业务批准。
 compatibility: 对话、文件读写及命令执行能力；校验需要 Python 3.10+ 和本包 requirements.txt。
 ---
 
@@ -8,7 +8,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 负责业务建模知识、统一领域语言与模型产物，不维护访谈机制。访谈任务按本包方法当轮沉淀术语；本包独立消费外部说明、已有 JSON 或访谈记录时，同样核对人类追责结束依据，缺少依据则输出具体缺口，不强制安装其他 Skill。
 
-方法讨论与访谈读取 [业务分析](references/business-analysis.md)：从合同及全部主履约进入，先画当前请求—确认骨架，再按 [来源追溯](references/provenance.md) 展开凭证与关键数据；异常新义务重复同一循环。单据推演、参与者与角色扮演及变化点按真实依赖展开，领域和协商走各自分支。术语按 [领域语言沉淀](references/domain-language.md) 当轮维护，案例边界读 [场景校验](references/scenario-validation.md)，递归终点与正式编辑门槛读 [全部追责结束](references/responsibility-closure.md)。这些方法不执行模型 JSON 生成；`evidence-discovery` 只消费方法并管理交互。
+方法讨论与访谈读取 [业务分析](references/business-analysis.md)：先核对每个候选约定的经营依据与责任边界，再列出全部主履约、画当前请求—确认骨架，再按 [来源追溯](references/provenance.md) 展开凭证与关键数据；异常新义务重复同一循环。单据推演、参与者与角色扮演及变化点按真实依赖展开，领域和协商走各自分支。术语按 [领域语言沉淀](references/domain-language.md) 当轮维护，案例边界读 [场景校验](references/scenario-validation.md)，递归终点与正式编辑门槛读 [全部追责结束](references/responsibility-closure.md)。这些方法不执行模型 JSON 生成；`evidence-discovery` 只消费方法并管理交互。
 
 发现记录的合同、履约骨架和追溯引用是工作理解，不是当前 FM。讨论仅解释，访谈仅按授权沉淀来源及术语；准入后的正式表达才消费全部依据并创建模型对象。不要将下面的 JSON 映射动作当成访谈问卷。
 
@@ -31,7 +31,7 @@ compatibility: 对话、文件读写及命令执行能力；校验需要 Python 
 
 ## 1. 评估来源与表达
 
-门槛满足后，消化新增输入，按 [本批次评估](references/batch-assessment.md) 建立当前完整责任图、业务依据与拟编辑 FM 对象之间的映射。核对身份、期限、完成证明、异常触发及终点，不以实现切片缩小已确认业务范围。
+门槛满足后，消化新增输入，按 [业务分析](references/business-analysis.md) 复核各约定的经营依据、来源与独立边界，再按 [本批次评估](references/batch-assessment.md) 建立当前完整责任图、业务依据与拟编辑 FM 对象之间的映射。核对身份、期限、完成证明、异常触发及终点，不以实现切片缩小已确认业务范围。
 
 业务未知或新责任分支使结束确认不再覆盖当前输入时，返回追责结束门槛并停止编辑；仅缺 JSON、CEL 或技术验证表达时如实记录表达限制，不让业务方决定技术槽位。不为通过校验把未知改为无责任、自由输入或范围排除。
 

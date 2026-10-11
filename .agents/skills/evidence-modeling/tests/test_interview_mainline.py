@@ -21,7 +21,7 @@ class InterviewMainlineTests(unittest.TestCase):
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for phrase in (
-            "经营目标与材料 → 合同与双方 → 全部主履约清单",
+            "现金权责／目标—实际约束及来源 → 候选约定与双方 → 全部主履约清单",
             "请求—确认骨架 → 履约内凭证追溯",
             "不是逐项问卷", "业务专家或法务专家", "口头约定", "从一件真实业务",
             "新业务设计分开", "不是法律结论", "关键金额", "可读的业务视图",

@@ -29,7 +29,7 @@ Evidence Modeling 由可移植 Skills、项目文件和独立校验 CLI 组成�
 方法唯一由 FM 的 [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md) 维护；Discovery 只负责交互、记录和恢复，Modeling 只负责分支与交接。
 
 ```text
-经营目标与真实材料 → 合同与双方 → 全部主履约清单
+现金权责／目标—实际约束及来源 → 候选约定与双方 → 全部主履约清单
                                       ↓ 当前履约
                             请求—确认骨架 → 凭证及关键数据追溯
                                       ↓
@@ -44,7 +44,7 @@ Evidence Modeling 由可移植 Skills、项目文件和独立校验 CLI 组成�
                              同页联合审核 → 展示差异 → 停止
 ```
 
-分析不是逐字段问卷。已知主体、参数或异常立即复用，当前依赖可以提前处理；领域对象和渠道协商走各自分支，不强套合同。请求—确认骨架是工作理解，未明完成证明不抹去已知义务，也不表示证据已经充分。
+合同识别先按 FM 业务分析核对每个候选的经营依据、来源与责任边界，不以协议名称或功能清单代替。分析不是逐字段问卷。已知主体、参数或异常立即复用，当前依赖可以提前处理；领域对象和渠道协商走各自分支，不强套合同。请求—确认骨架是工作理解，未明完成证明不抹去已知义务，也不表示证据已经充分。
 
 合同参数、对象关联、履约义务与实际结果分开；合同不先填通用字段表。先展示全部主履约，再逐枝追溯请求依据、完成证明、关键数据、计算及业务时间。异常新义务重复同一分析，不以退款或外部接手作为自动终点。
 
@@ -69,7 +69,7 @@ Evidence Modeling 由可移植 Skills、项目文件和独立校验 CLI 组成�
     └── api/
 ```
 
-发现记录按 Discovery 的 [模板](../.agents/skills/evidence-discovery/assets/discovery-template.json) 维护：`business.agreements` 保存约定，`business.responsibilities` 唯一保存每项请求与确认，`business.evidenceTraces` 保存其关键数据的来源分析。正常和争议单据推演、主体发现及变化点各有稳定引用；`business.responsibilityClosure` 汇总完整责任及人类依据。
+发现记录按 Discovery 的 [模板](../.agents/skills/evidence-discovery/assets/discovery-template.json) 维护：`business.agreements` 保存约定及可选的逐约定 `operatingBasis` 说明，全局经营目标引用这些记录而不复制依据；既有 2.0 记录不自动补写或迁移。`business.responsibilities` 唯一保存每项请求与确认，`business.evidenceTraces` 保存其关键数据的来源分析。正常和争议单据推演、主体发现及变化点各有稳定引用；`business.responsibilityClosure` 汇总完整责任及人类依据。
 
 `handoff.focusRef` 指向当前对象，`viewRefs` 用于生成本轮可读视图；不维护另一份“当前请求／确认”或视图事实副本。这些是有来源的工作理解，不是正式 FM。记录版本不匹配时先报告限制并停止结构写入，格式转换须单独明确授权，不自动猜测映射。
 
