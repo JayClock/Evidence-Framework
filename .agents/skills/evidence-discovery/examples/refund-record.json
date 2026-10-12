@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "2.0",
+  "handoff": {
+    "businessPosition": "订阅协议 → 退款 → 请求",
+    "focusRef": "R-1",
+    "focusPoint": "request",
+    "viewRefs": ["R-1", "T-1"],
+    "interactionState": "已停止",
+    "glossaryPath": ".evidence/glossary.json",
+    "languageChanges": ["term.refund-application：standalone；S-001；已保存"]
+  },
+  "business": {
+    "agreements": [
+      {
+        "id": "A-1",
+        "name": "订阅协议",
+        "parties": ["读者", "平台"],
+        "operatingBasis": "读者支付订阅费，平台按订阅协议提供内容；退款归该协议责任边界。",
+        "sourceRefs": ["S-001"]
+      }
+    ],
+    "responsibilities": [
+      {
+        "id": "R-1",
+        "agreementRef": "A-1",
+        "name": "退款",
+        "request": "退款申请关联原支付凭证，退款金额按适用约定等于该笔实付金额。",
+        "confirmation": "完成证明及其他责任尚未展开。",
+        "traceRefs": ["T-1"],
+        "sourceRefs": ["S-001", "S-003"]
+      }
+    ],
+    "evidenceTraces": [
+      {
+        "id": "T-1",
+        "anchorRef": "R-1#request.退款金额",
+        "sourceRefs": ["S-001", "S-003"],
+        "reasoning": "原支付凭证提供实付金额；适用约定要求按该笔实付金额全额退还，因此退款金额引用同一金额。"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "sourceId": "S-001",
+      "locator": "合成材料#约定与退款申请",
+      "quote": "读者支付订阅费，平台按协议提供内容。退款申请用于提出本协议的退款要求，关联原支付凭证；支付凭证记录实付金额。"
+    },
+    {
+      "sourceId": "S-002",
+      "locator": "合成回答#继续",
+      "quote": "继续追溯退款金额的依据。"
+    },
+    {
+      "sourceId": "S-003",
+      "locator": "合成回答#退款约定与停止",
+      "quote": "退款金额按该笔实付金额全额退还，这就是适用约定。请只保存并交接，不继续问。"
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q-010",
+      "gapKey": "refund.amount-basis",
+      "question": "退款金额是依据什么约定确定的？",
+      "knownBasis": "R-1、T-1；原支付凭证只能说明实付金额。",
+      "status": "已解决",
+      "answer": "S-003",
+      "resolvedBy": "S-003#全额退还约定；T-1"
+    }
+  ]
+}
