@@ -21,7 +21,7 @@ class ContractFirstWorkflowTests(unittest.TestCase):
     def test_next_question_depends_on_settled_prerequisites(self):
         text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
         for phrase in ('依赖树', '前置依据已经具备', '依赖另一个未知时先追溯该依据',
-                       '已知事实直接复用或推导', '每轮只问一个核心问题并等待真人'):
+                       '已知事实直接复用或推导', '每轮一个业务焦点，可问多个独立问题', '问后等待真人'):
             self.assertIn(phrase, text)
 
     def test_evals_cover_contract_data_and_exception_reuse(self):

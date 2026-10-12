@@ -1,18 +1,18 @@
 # Evidence Modeling 使用指南
 
-从 [项目宪法](../AGENTS.md)和 [Guides](guides/index.md)确定本次权限，再选择入口。Skills 提供专业方法与执行协议，交互界面包装相同业务内容。依赖方向是 **Pi 插件 → Skill**；普通对话是完整交互路径。
+从 [项目宪法](../AGENTS.md)和 [Guides](guides/index.md)确定本次权限，再选择入口。建模只使用 Skill；Skills 提供专业方法与执行协议，普通对话是完整交互路径。
 
 ## 选择入口
 
-| 目标                         | 入口                                                                     | 本轮结果                           |
-| ---------------------------- | ------------------------------------------------------------------------ | ---------------------------------- |
-| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支                  | 方法解释、依据与未知               |
-| 手动记录建模过程或会话交接   | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)                   | Markdown 进展交接及下一轮建议      |
-| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)               | 共同理解、一个必要问题及获授权术语 |
-| 生成、修改或校验 FM 与 API   | [FM](../.agents/skills/evidence-fm/SKILL.md)                             | 模型与整体 API；仅 FM 限制优先     |
-| 从整体 FM 设计 API           | [FM 的 API 阶段](../.agents/skills/evidence-fm/references/api-design.md) | API 设计、HTTP 契约及派生产物      |
-| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md)       | 审核页面或检查结果                 |
-| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)                 | FM → 整体 API → 联合审核           |
+| 目标                         | 入口                                                                     | 本轮结果                                   |
+| ---------------------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
+| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支                  | 方法解释、依据与未知                       |
+| 手动记录建模过程或会话交接   | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)                   | Markdown 进展交接及下一轮建议              |
+| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)               | 共同理解、当前节点的独立问题组及获授权术语 |
+| 生成、修改或校验 FM 与 API   | [FM](../.agents/skills/evidence-fm/SKILL.md)                             | 模型与整体 API；仅 FM 限制优先             |
+| 从整体 FM 设计 API           | [FM 的 API 阶段](../.agents/skills/evidence-fm/references/api-design.md) | API 设计、HTTP 契约及派生产物              |
+| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md)       | 审核页面或检查结果                         |
+| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)                 | FM → 整体 API → 联合审核                   |
 
 ```text
 /skill:evidence-modeling 访谈并沉淀领域语言
@@ -23,7 +23,7 @@
 /skill:evidence-modeling 生成联合审核页，不修改设计源
 ```
 
-其他宿主使用各自 Skill 入口或显式读取 SKILL.md。安装可选插件后，`/evidence-model <目标>` 转发同一入口。显式一体生成默认授权两源与联合审核，更窄要求优先。
+其他宿主使用各自 Skill 入口或显式读取 SKILL.md。显式一体生成默认授权两源与联合审核，更窄要求优先。
 
 ## 合同总览与当前进度
 
@@ -31,9 +31,11 @@
 
 总览在首次识别及用户要求查看／切换时展示。已澄清结束项仅供查看；取消保留原焦点，停止状态由明确继续意图解除。结束确认须覆盖当前合同责任与未决项，单合同结束与全局结束分别核对。
 
-单点澄清每轮显示当前位置、一段简短追溯故事和一个必要问题。履约位置是 `合同名称 → 履约项名称 → 请求或确认`，凭证使用业务名称，类型作辅助标签；请求与确认本身就是凭证。先画请求—确认骨架，再沿当前信息追溯依据。故事说明已追到什么业务依据、能证明什么、接下来追向哪里，展示专注于当前节点。协商与领域使用各自上下文与对象；必要未知才问，已知则复用或推导。
+单点澄清每轮显示当前位置、一段简短追溯故事和当前节点内的一组独立必要问题，各题分别编号。前置依据未明确、题间存在依赖或独立性不明时先问前提；用户要求一次一问时遵守。履约位置是 `合同名称 → 履约项名称 → 请求或确认`，凭证使用业务名称，类型作辅助标签；请求与确认本身就是凭证。先画请求—确认骨架，再沿当前信息追溯依据。故事说明已追到什么业务依据、能证明什么、接下来追向哪里，展示专注于当前节点。协商与领域使用各自上下文与对象；必要未知才问，已知则复用或推导。
 
-普通对话与可选 UI 使用同一内容；界面不可用时沿原问题继续对话，取消时等待。表达质量评测核对故事事实忠实性、单点聚焦，以及来源文章、全局进度或准入提醒是否干扰当前展示。问答、控制与承接由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 维护，Pi 载荷由插件侧 [适配协议](../.pi/extensions/evidence-modeling/skill-adapter.md) 维护。
+收到回答后吸收全部事实并重算依赖，不预排整份问卷。部分回答立即承接已答项，未答不默认同意，不知道保持未决；逐项暂缓保留原标识，整轮停止或取消后等待。合同导航和全局结束确认各自单独一轮，不与业务问题组混问。问题组回答完毕不表示全部追责结束或授权生成。
+
+问答、控制与承接由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 唯一维护；[成组一轮](../.agents/skills/evidence-discovery/examples/grouped-turn.md)给出合成样例。表达质量评测核对问题独立性、故事事实忠实性、单点聚焦，以及来源文章、全局进度或准入提醒是否干扰当前展示。
 
 ## 方法与承接
 
@@ -73,7 +75,6 @@
 
 ```bash
 npm run skills:verify
-npm run evidence-modeling:verify
 npm run guides:verify
 npm test
 npm run lint

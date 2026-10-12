@@ -1,4 +1,4 @@
-"""Composition and optional host integration checks owned by evidence-modeling."""
+"""Skill composition and repository verification checks owned by evidence-modeling."""
 
 import json
 import subprocess
@@ -24,26 +24,13 @@ class FMIntegrationTests(unittest.TestCase):
         self.assertIn("不是退款指令受理回执", refund["definition"])
         self.assertEqual(before, path.read_bytes())
 
-    def test_extension_only_registers_one_command_and_two_interaction_tools(self):
-        extension = REPOSITORY / ".pi/extensions/evidence-modeling"
-        commands = (extension / "commands.ts").read_text(encoding="utf-8")
-        sources = "\n".join(
-            path.read_text(encoding="utf-8")
-            for path in extension.glob("*.ts")
-            if not path.name.endswith(".spec.ts")
-        )
-        self.assertEqual(1, commands.count("registerCommand("))
-        self.assertIn("registerCommand('evidence-model'", commands)
-        self.assertEqual(2, sources.count("registerTool("))
-        self.assertIn("name: 'evidence_ui_question'", sources)
-        self.assertIn("name: 'evidence_ui_contexts'", sources)
+    def test_modeling_is_exclusively_skill_driven(self):
+        self.assertFalse((REPOSITORY / ".pi/extensions/evidence-modeling").exists())
+        constitution = (REPOSITORY / "AGENTS.md").read_text()
+        self.assertIn("建模只通过 Skill 执行", constitution)
+        self.assertNotIn("可选 UI 包装", constitution)
 
-    def test_project_extension_and_script_entrypoints_exist(self):
-        extensions = REPOSITORY / ".pi/extensions"
-        self.assertEqual(
-            {"evidence-modeling"},
-            {path.name for path in extensions.iterdir() if path.is_dir()},
-        )
+    def test_project_script_entrypoints_exist(self):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
         scripts = package["scripts"]
         for command in scripts.values():
@@ -61,18 +48,18 @@ class FMIntegrationTests(unittest.TestCase):
     def test_package_verification_covers_portable_fm_tests(self):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
         scripts = package["scripts"]
-        self.assertIn("evidence-modeling:verify", scripts)
+        self.assertFalse(any(name.startswith("evidence-modeling:") for name in scripts))
         self.assertIn(
             ".agents/skills/evidence-modeling/tests/run_skill_tests.py",
             scripts["skills:test"],
         )
         self.assertIn("tools/python/python.mjs", scripts["skills:test"])
-        self.assertEqual("npm run skills:test", scripts["skills:verify"])
+        self.assertEqual("npm run skills:test && npm run skills:format:check", scripts["skills:verify"])
         self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
         self.assertIn("tools/python/python.mjs", scripts["skills:test:fm"])
         self.assertIn("python:test", scripts["test"])
         self.assertIn("tools/python/python.spec.mjs", scripts["python:test"])
-        self.assertIn("schemas/*.json", scripts["evidence-modeling:format:check"])
+        self.assertIn("schemas/*.json", scripts["skills:format:check"])
 
     def test_composition_documents_use_only_current_fm_schema(self):
         files = [

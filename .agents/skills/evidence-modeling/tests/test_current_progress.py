@@ -8,12 +8,12 @@ REPO = SKILLS.parents[1]
 
 
 class CurrentProgressTests(unittest.TestCase):
-    def test_focused_display_keeps_position_story_and_one_question(self):
+    def test_focused_display_keeps_position_story_and_numbered_questions(self):
         text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
         display = text.split('### 单点澄清', 1)[1].split('## 5.', 1)[0]
         for phrase in ('合同名称 → 履约项名称 → 请求或确认', '当前位置：', '业务名称',
                        '类型只作辅助标签', '简短追溯故事', '信息来源追到了哪里',
-                       '一个仍影响当前判断的业务问题', '未知明确为未知',
+                       '每题只澄清一个仍影响当前判断的业务问题', '未知明确为未知',
                        '领域上下文 → 当前对象', '同一份当前进度'):
             self.assertIn(phrase, display)
         self.assertIn('日常展示聚焦当前节点', display)
@@ -35,7 +35,7 @@ class CurrentProgressTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_project_entrypoints_keep_semantic_position(self):
-        for relative in ('AGENTS.md', 'docs/evidence-modeling.md', '.pi/extensions/evidence-modeling/README.md'):
+        for relative in ('AGENTS.md', 'docs/evidence-modeling.md', '.agents/skills/evidence-discovery/references/interview.md'):
             text = (REPO / relative).read_text()
             self.assertIn('请求或确认', text)
             self.assertIn('当前', text)

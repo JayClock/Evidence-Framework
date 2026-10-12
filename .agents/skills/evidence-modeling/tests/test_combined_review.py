@@ -37,7 +37,7 @@ class CombinedWorkflowContracts(unittest.TestCase):
 
     def test_current_project_entrypoints_describe_the_joint_workflow(self):
         for path in (REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
-                     SKILLS / "README.md", REPO / ".pi/extensions/evidence-modeling/README.md"):
+                     SKILLS / "README.md", REPO / "README.md"):
             with self.subTest(path=path):
                 text = path.read_text()
                 self.assertIn("联合审核", text)

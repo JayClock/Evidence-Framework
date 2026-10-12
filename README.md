@@ -314,13 +314,13 @@ npm run dev
 
 本地 HTTP 请求示例（含 `curl` 与分页说明）见[用户切片说明](apps/backend/README.md)。
 
-按目标显式进入工作流：建模生成分支一次触发 FM、API 与联合审核，不自动进入需求、规划或实施。明确只修改 FM 等更窄要求优先：
+建模只使用 Skill，通过宿主原生入口或让 Agent 读取 `evidence-modeling/SKILL.md` 执行。按目标显式进入工作流：建模生成分支一次触发 FM、API 与联合审核，不自动进入需求、规划或实施。明确只修改 FM 等更窄要求优先：
 
 ```text
-/evidence-model 边访谈边沉淀领域语言，保存来源并更新统一词汇表
-/evidence-model 核对人类追责结束依据，修改模型与 API，校验后生成联合审核页
-/evidence-model 只校验当前 FM 与 API，不写任何项目文件
-/evidence-model 生成现有 FM 与 API 的联合审核页，不编辑设计源
+/skill:evidence-modeling 边访谈边沉淀领域语言，按依赖成组澄清当前节点的独立问题
+/skill:evidence-modeling 核对人类追责结束依据，修改模型与 API，校验后生成联合审核页
+/skill:evidence-modeling 只校验当前 FM 与 API，不写任何项目文件
+/skill:evidence-modeling 生成现有 FM 与 API 的联合审核页，不编辑设计源
 用 evidence-requirements 明确软件职责与验收
 用 evidence-task-planning 根据当前来源生成实施计划
 用 evidence-delivery 检查前馈就绪情况并执行一个任务

@@ -327,7 +327,7 @@
         "承接双方标的参数",
         "分开约定与实际结果",
         "保留必要未知",
-        "沿依赖选择一个问题"
+        "按依赖选择必要问题，未知前提不进入同轮"
       ]
     },
     {
@@ -353,7 +353,7 @@
         "保留完整责任分支",
         "新义务复用骨架追溯循环",
         "定位赔付确认",
-        "只问前置依据已具备的一个问题"
+        "仅提出当前节点内前置充分且彼此独立的问题"
       ]
     },
     {
@@ -548,10 +548,10 @@
     },
     {
       "id": 47,
-      "category": "context-navigation-empty-headless",
+      "category": "context-navigation-ambiguous-selection",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
-      "prompt": "无UI，有两份同名采购约定A-1甲乙、A-2丙丁，均未结束。只浏览列表。",
+      "prompt": "有两份同名采购约定A-1甲乙、A-2丙丁，均未结束。只浏览列表。",
       "follow_up": ["选采购。", "取消。"],
       "expectations": [
         "编号与双方区分",
@@ -576,10 +576,10 @@
     },
     {
       "id": 49,
-      "category": "no-ui-complete-interview",
+      "category": "skill-only-complete-interview",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
-      "prompt": "无UI，采购和运输都有明确双方与权责。先让我选合同。",
+      "prompt": "只通过Skill普通对话，采购和运输都有明确双方与权责。先让我选合同。",
       "follow_up": [
         "先运输，签收证明未知。",
         "今天暂缓停止。",
@@ -587,32 +587,36 @@
       ],
       "expectations": [
         "普通对话完成导航",
-        "沿依赖只问一个问题",
+        "当前节点按依赖选择独立必要问题",
         "停止暂缓分别承接",
         "从提供的上下文继续"
       ]
     },
     {
       "id": 50,
-      "category": "ui-text-semantic-parity",
+      "category": "text-answer-control-parity",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
       "prompt": "退款Q-010追溯金额约定，原支付证明实付。请继续。",
       "follow_up": ["按实付全额退还，停止。", "只看当前理解。"],
       "expectations": [
-        "普通对话与UI问同一必要问题",
-        "共同理解语义一致",
-        "术语权限和结果一致",
+        "沿原问题追溯金额约定，不扩到其他节点",
+        "吸收回答和停止意图，不继续提问",
+        "术语权限与实际保存结果准确",
         "只看保持停止状态"
       ]
     },
     {
       "id": 51,
-      "category": "ui-loss-resume",
+      "category": "text-unanswered-resume",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
-      "prompt": "Q-018付款证明提供方尚未回答，UI不可用，继续。",
-      "follow_up": ["收款银行提供，请停止。", "新会话提供当前理解，只查看。"],
+      "prompt": "Q-018付款证明提供方尚未回答，按当前理解继续。",
+      "follow_up": [
+        "取消，先不要继续。",
+        "继续Q-018：收款银行提供，请停止。",
+        "新会话提供当前理解，只查看。"
+      ],
       "expectations": [
         "普通对话沿同一问题",
         "未收到回答保持未知",
@@ -622,10 +626,10 @@
     },
     {
       "id": 52,
-      "category": "ui-answer-save-failure",
+      "category": "text-answer-save-failure",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
-      "prompt": "UI已返回：银行到账回执证明到账。请沉淀术语，UI随后不可用，环境拒绝词汇表写入。",
+      "prompt": "回答：银行到账回执证明到账。请沉淀术语，环境拒绝词汇表写入。",
       "follow_up": ["权限恢复，只补术语并交接。"],
       "expectations": [
         "吸收已收到事实",
@@ -781,6 +785,124 @@
         "读取实际条目后补齐",
         "已收到事实直接复用",
         "遵守补齐后停止意图"
+      ]
+    },
+    {
+      "id": 64,
+      "category": "grouped-independent-frontier",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成评测：当前采购付款请求，双方、付款义务、标的及适用约定版本已明确。业务专家明确金额条款和期限条款彼此独立，但具体规则都未提供。两项都影响当前请求，请一次澄清。采购交付和异常仍待查。只聊不落盘。",
+      "follow_up": ["Q1按已接受报价，Q2按合同付款条款。请交接并停止。"],
+      "expectations": [
+        "同一位置与追溯故事后分别编号提出金额和期限两题",
+        "仅问前置依据具备且独立的必要问题",
+        "不提供未知业务事实作为推荐或默认答案",
+        "不混入其他履约或全局结束确认",
+        "吸收全部回答并遵守只聊不落盘和停止意图"
+      ]
+    },
+    {
+      "id": 65,
+      "category": "grouped-dependent-questions",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "当前采购付款请求，应付金额计算依据未知，付款期限又按金额档位确定。想一次问完，但不要猜条款。只聊。",
+      "follow_up": ["金额按已接受报价，报价还未提供。继续。"],
+      "expectations": [
+        "先追溯金额计算前提，不同时问依赖金额档位的期限",
+        "缺报价时不猜金额档位或期限",
+        "回答后重算依赖，不机械执行固定问卷",
+        "独立性不明时退回逐问"
+      ]
+    },
+    {
+      "id": 66,
+      "category": "grouped-partial-answer",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "当前采购付款请求的问题组：Q-101金额依据与Q-102期限依据，前置版本明确且两题独立。我只答Q-101：按已接受报价计算。Q-102不知道，请继续。只聊不落盘。",
+      "follow_up": ["只先查提供的报价资料，期限没有新材料，今天停止。"],
+      "expectations": [
+        "立即吸收已答金额依据，不要求重填或重复询问",
+        "未答清楚的期限保持未决，不视为默认同意",
+        "保留Q-102与原缺口关联，先自行查可查事实",
+        "收到部分答案仍重算依赖，停止后不继续问"
+      ]
+    },
+    {
+      "id": 67,
+      "category": "grouped-premise-correction",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "刚把采购付款金额和期限作为独立问题组。更正：期限由应付金额档位决定，金额又依赖已接受报价。报价未提供。请更新理解并继续，只聊。",
+      "follow_up": ["先暂缓报价，今天停止。"],
+      "expectations": [
+        "说明两题独立性已失效并核对共同前提及受影响结论",
+        "不沿旧期限问法机械继续，不猜档位",
+        "先追溯报价或必要金额前提，保留未受影响事实",
+        "旧人类确认按实际影响复核，暂缓和停止不当作闭合"
+      ]
+    },
+    {
+      "id": 68,
+      "category": "grouped-deferred-and-stop",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "当前付款请求Q-101金额依据和Q-102期限依据彼此独立。Q-102继续暂缓，只继续Q-101。请保留原标识，别换号问期限。只聊。",
+      "follow_up": [
+        "金额按报价；今天全部停止。",
+        "补一份期限条款，仅补资料，不恢复问答。"
+      ],
+      "expectations": [
+        "只推进获授权金额题，保留期限题原标识与未决依据",
+        "不靠展示编号变化绕过暂缓",
+        "整轮停止前吸收全部事实，然后不再提问",
+        "后续补资料不自动解除停止或扩大写入权限"
+      ]
+    },
+    {
+      "id": 69,
+      "category": "grouped-save-failure",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "付款问题组已有答案：到账证明指收款银行的到账回执；金额按已接受报价计算。请沉淀明确术语并继续，环境真实拒绝词汇表写入。期限仍有独立缺口。",
+      "follow_up": ["权限恢复，只补术语并交接，不继续问。"],
+      "expectations": [
+        "吸收全部答案并核对定义拥有者，不补造正式模型",
+        "真实保存失败立即停止，即使还有其他可问题",
+        "如实交接已保存和未保存内容，不宣称原子事务",
+        "恢复先读实际条目，不重问已收到事实且补齐后停止"
+      ]
+    },
+    {
+      "id": 70,
+      "category": "grouped-single-question-preference",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成采购付款请求的金额与期限前置依据明确，两项条款独立但规则未知。以后请一次只问一个问题，先金额。只聊。",
+      "follow_up": [
+        "金额按报价；我顺便补充期限从交货后起算，具体时长未知。继续。"
+      ],
+      "expectations": [
+        "遵守一次一问偏好，只提出金额题",
+        "仍吸收主动补充的期限起算事实",
+        "不重复询问已答金额依据或期限起算事件",
+        "按依赖重算后只选择一个仍必要问题"
+      ]
+    },
+    {
+      "id": 71,
+      "category": "grouped-not-global-closure",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "付款请求的问题组已答完，这两题全部同意。采购交付异常和退款失败终点仍未查清，期限之外没有当前可问题。请交接，不生成模型。",
+      "follow_up": ["今天停止，不把其他责任排除。"],
+      "expectations": [
+        "问题组全部同意不解释为全部追责结束",
+        "保留全部主履约及各层异常，不以空前沿缩小责任范围",
+        "全局结束确认独立展示完整理解，不与局部问题组混问",
+        "没有准入及编辑授权时不生成FM或API，交接后停止"
       ]
     }
   ]

@@ -27,7 +27,6 @@ class SkillDocumentationTests(unittest.TestCase):
             *ROOT.rglob("*.json"),
             repo / "README.md",
             repo / "docs/evidence-modeling.md",
-            repo / ".pi/extensions/evidence-modeling/README.md",
         ]
         for document in documents:
             with self.subTest(document=str(document)):
@@ -110,7 +109,7 @@ class SkillDocumentationTests(unittest.TestCase):
         ):
             self.assertIn(requirement, language)
         interview = (ROOT / "evidence-discovery/references/interview.md").read_text()
-        self.assertIn("每轮只问一个核心问题", interview)
+        self.assertIn("每轮一个业务焦点，可问多个独立问题", interview)
         self.assertIn("任一写入失败就停止", interview)
         self.assertIn("实际文件", interview)
         self.assertIn("停止后仅吸收补充资料", interview)
@@ -155,8 +154,6 @@ class SkillDocumentationTests(unittest.TestCase):
             repo / "docs/evidence-modeling.md",
             repo / "docs/guides/index.md",
             ROOT / "README.md",
-            repo / ".pi/extensions/evidence-modeling/README.md",
-            repo / ".pi/extensions/evidence-modeling/commands.ts",
         ]
         for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
             documents.extend((ROOT / name).rglob("*.md"))

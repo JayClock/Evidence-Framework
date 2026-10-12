@@ -1,9 +1,0 @@
-{
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "tsBuildInfoFile": "../../../tmp/evidence-modeling.tsbuildinfo",
-    "types": ["node", "vitest/globals"]
-  },
-  "include": ["**/*.ts", "**/*.mts"]
-}

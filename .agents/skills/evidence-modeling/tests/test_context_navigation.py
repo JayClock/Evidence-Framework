@@ -34,7 +34,7 @@ class ContextNavigationTests(unittest.TestCase):
         data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
         indexed = {item['category']: item for item in data['evals']}
         for category in ('context-overview-selection', 'completed-context-not-selectable',
-                         'context-navigation-empty-headless', 'material-contexts-not-candidates',
+                         'context-navigation-ambiguous-selection', 'material-contexts-not-candidates',
                          'insufficient-material-no-context-menu', 'legacy-candidate-record-recheck'):
             self.assertIn('follow_up', indexed[category])
             self.assertGreaterEqual(len(indexed[category]['expectations']), 4)

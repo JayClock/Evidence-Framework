@@ -28,7 +28,7 @@ class IncrementalInterviewTests(unittest.TestCase):
     def test_continuation_reuses_methods_and_absorbs_all_input(self):
         text = self.section('### 连续问答')
         for phrase in ('授权未变', '仍在上下文', '未变化', '全部输入', '受影响依赖',
-                       '受影响术语', '焦点外', '每轮只问一个核心问题', '任一写入失败就停止'):
+                       '受影响术语', '焦点外', '每轮重新计算', '未答项不视为默认同意', '任一写入失败就停止'):
             self.assertIn(phrase, text)
         self.assertLess(text.index('全部输入'), text.index('维护受影响术语'))
 

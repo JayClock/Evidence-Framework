@@ -36,7 +36,7 @@ class InterviewMainlineTests(unittest.TestCase):
         ):
             self.assertIn(phrase, method)
         interview = (SKILLS / "evidence-discovery/references/interview.md").read_text()
-        for phrase in ("每轮只问一个核心问题", "材料已提供就直接读取", "正常和争议单据推演",
+        for phrase in ("每轮一个业务焦点，可问多个独立问题", "材料已提供就直接读取", "正常和争议单据推演",
                        "领域上下文 → 当前对象", "任一写入失败就停止", "未执行保持未执行"):
             self.assertIn(phrase, interview)
 
