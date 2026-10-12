@@ -1,65 +1,57 @@
 ---
 name: evidence-fm
-description: 当用户讨论履约建模或 API 设计方法、整理业务术语，或要求生成、修改、修复、校验正式 FM 与绑定的整体 API、生成 OpenAPI 时使用。正式 FM 编辑须有人类全部追责结束依据；不主持访谈问答，不实现业务系统。
-compatibility: 方法讨论只需文本；文件维护需读写能力；校验需 Python 3.10+ 和本包 requirements.txt。
+description: 当用户讨论履约建模或 API 方法、整理术语，或要求生成、修改、修复、校验 FM 与整体 API、生成 OpenAPI 时使用。正式 FM 编辑须有人类全部追责结束依据；不主持访谈或实现业务系统。
+compatibility: 讨论只需文本；文件维护需读写能力；校验需 Python 3.10+ 和本包 requirements.txt。
 ---
 
 # Evidence 业务建模与 API
 
-业务分析、领域语言、正式 FM 与整体 API 由本包维护。Discovery 消费方法并管理问答；本包消费来源并维护正式表达，不接管访谈状态。FM 与 API 绑定在同一生成流程中，业务事实与技术契约仍分别保存。
+本包维护业务分析、领域语言、正式 FM 与整体 API。Discovery 管理访谈问答，本包维护专业判断与正式表达；业务事实与接口契约分别保存。
 
 ## Guides
 
-先确定本次是讨论、术语沉淀、正式编辑、API 设计／投影还是只读校验。读取项目权限、实际来源、已有文件与 Git 差异；只修改本次授权的文件，保留无关改动，不自动迁移。只聊不落盘不写文件；只校验不修复、不保存项目报告。
+先确定讨论、术语沉淀、正式编辑、API 设计／投影或只读校验。读取项目权限、实际来源、已有文件与 Git 差异，只修改本次授权的文件，保留无关改动，不自动迁移。只聊不落盘不写文件；只校验不修复、不保存项目报告。
 
 | 当前动作                             | 必要参考                                                                                                                                                                                                                      |
 | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 解释经营依据、责任边界或分析业务材料 | [业务分析](references/business-analysis.md)；存在矛盾或不足时读 [输入复核](references/input-review.md)                                                                                                                        |
+| 解释经营依据、责任边界或业务材料     | [业务分析](references/business-analysis.md)；有矛盾或不足时读 [输入复核](references/input-review.md)                                                                                                                          |
 | 当轮沉淀术语或将术语落实为模型       | [领域语言](references/domain-language.md)                                                                                                                                                                                     |
 | 生成、修改、修复模型、规则或验证场景 | 先读 [追责结束准入](references/responsibility-closure.md) 与 [正式编辑流程](references/editing-workflow.md)，再读 [批次评估](references/batch-assessment.md)、[语义](references/semantics.md) 与 [格式](references/format.md) |
 | 表达关键数据、业务时间或计算规则     | [来源追溯](references/provenance.md)、[CEL](references/cel-rules.md)                                                                                                                                                          |
 | 编写或审查验证场景                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                                                          |
-| 执行 FM 检查或生成派生产物           | [FM 校验命令与结果](references/validation.md)                                                                                                                                                                                 |
-| 设计、修改或投影整体 API             | [API 阶段](references/api-design.md)，按分支加载设计方法、格式、HTTP 契约与校验纪律                                                                                                                                           |
-| 只校验 API                           | FM 校验参考及 [API 校验纪律](references/api-validation.md)，不编辑两源或生成交付                                                                                                                                              |
+| 执行 FM 检查或生成派生产物           | [FM 校验纪律](references/validation.md)                                                                                                                                                                                       |
+| 设计、修改或投影整体 API             | [API 阶段](references/api-design.md)，按分支加载其方法、格式、HTTP 契约与检查                                                                                                                                                 |
+| 只校验 API                           | FM 校验纪律及 [API 校验纪律](references/api-validation.md)，两源只读                                                                                                                                                          |
 
-只加载本次动作所需内容；领域能力、业务模式等专项从 [规则索引](references/README.md) 选择。首次进入当前表达判断时，从 [正式表达基线](examples/README.md) 只读对应小样例或结构对照，续问复用未变化内容。样例是合成表达，不提供当前业务事实、准入依据或默认值；tests/、evals/ 只用于维护评测，不是项目业务来源。
+专项按 [规则索引](references/README.md) 选择；首次处理某类表达时，从 [正式表达基线](examples/README.md) 只读对应样例，续问复用未变化内容。样例不是当前业务事实或准入依据；tests/、evals/ 仅用于维护。
 
-默认正式源为 `.evidence/fm/`，词汇表为其外的 `.evidence/glossary.json`；API 唯一源为 `.evidence/api/api.json`，默认交付 `.evidence/api/generated/`。获授权检查记录分别放在 `.evidence/checks/fm/` 和 `.evidence/checks/api/`。沿用已有指定位置，项目输出不写入 Skill 安装目录。
-
-正式生成／修改默认包含绑定的 API 设计、校验和投影，无需另行触发；明确“只修改 FM”“不要 API”等更窄要求优先。API-only 请求不授权改 FM；仅讨论、术语沉淀和只读校验不自动生成 API。单独调用不自动生成页面；另行要求审核页时定位并读取 `evidence-visualization`。
+默认源为 `.evidence/fm/`、其外的词汇表 `.evidence/glossary.json` 及 `.evidence/api/api.json`；API 投影为 `.evidence/api/generated/`。获授权检查记录分别放在 `.evidence/checks/fm/`、`.evidence/checks/api/`；沿用已有指定位置，项目输出保持在 Skill 安装目录之外。
 
 ## Action
 
-- **讨论**：按专业参考解释判断、来源与未知；不保存，不自动开始访谈。
-- **术语沉淀**：按领域语言方法维护明确术语；访谈来源先由 Discovery 保存。未建模定义使用 standalone，已建模概念只引用 FM；更正影响留在来源记录，不用同义条目覆盖模型含义。术语写入不授权模型 JSON 编辑。
-- **只读校验**：直接进入 Sensors，不要求先通过编辑准入，不因发现错误转为修复；明确仅 FM 时不查 API。
-- **仅 API 设计／交付**：先取得当前 FM 的有效检查结果，再按 API 阶段完成获授权动作，FM 保持只读。
-- **正式编辑**：按正式编辑流程依次核对全局准入、评估映射、直接编辑当前模型、核对差异并检查；编辑授权不是业务批准。适用词汇与 FM 检查通过后自动接续整体 API，API 阶段不重复执行 FM 检查或模拟；明确仅 FM 时交接后停止。步骤前馈、反馈和失败出口只在该流程维护。
-
-表达方式可选择，来源、准入、Schema 和证据边界不可放宽。校验器表达不了的业务保留限制，不制造假凭证或修改业务预期。
+1. **核对分支依据。** 按 Guides 读取当前动作所需方法和实际输入。正式编辑先核对人类全部追责结束依据覆盖当前整体及本轮编辑授权；只读检查与未建模术语沉淀按各自权限执行。完成时，所需依据、允许文件与分支出口可定位；编辑授权不是业务批准。
+2. **维护获授权表达。** 讨论只解释判断、依据与未知；术语沉淀按领域语言维护定义或 FM 引用，不授权模型 JSON 编辑。正式编辑按流程映射来源、直接编辑当前模型并核对差异；API-only 先取得当前 FM 的有效检查结果并保持 FM 只读，校验分支直接进入 Sensors。完成时，本轮增改删及定义拥有者清楚，未知与限制按实际保留。
+3. **检查并交付。** 讨论只交接解释；需要校验的分支执行 Sensors 的适用检查。正式生成／修改在词汇与 FM 检查通过后自动接续整体 API，由 API 消费同一次结果并核对摘要；“只修改 FM”“不要 API”等更窄限制优先，交接后停止。完成时，获授权文件、检查与未覆盖能力均可定位，未完成阶段单独报告。
 
 ## Sensors
 
-设置实际绝对路径及已满足依赖的 Python；执行前读取校验参考。模型编辑后运行两项检查，单独术语任务只运行适用的词汇检查：
+设置实际绝对路径和已满足依赖的 Python，读取校验纪律后执行：
 
 ```bash
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_glossary.py" "$GLOSSARY_FILE" --fm "$FM_ROOT"
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" "$FM_ROOT" > "$FM_CHECK_FILE"
 ```
 
-`FM_CHECK_FILE` 是模型目录之外的临时 JSON 结果路径，不是新业务记录或持久状态；只读请求使用项目之外的临时目录。先核对退出码与内容，失败不接续。检查结果已取得且适用于当前输入时直接交接，不为 API 再跑一次。模型、场景或校验器变化后返回 FM 阶段重新检查。
+模型编辑后运行两项；单独术语任务只运行适用词汇检查。`FM_CHECK_FILE` 是模型目录之外的临时 JSON，只读请求使用项目外临时目录。先核对退出码与内容，失败不接续；已有有效结果直接交接，API 不重复 FM 检查或模拟。
 
-分别报告定义归属／引用、Schema、CEL、lineage、simulation、timeline 的实际结果。`modelDigest` 绑定本次输入；`inputChanged` 为 true 时结果无效。未实际执行场景时 `simulationPassed` 为 null，不把字段齐全或机器通过当作业务批准。
+分别报告定义归属／引用、Schema、CEL、lineage、simulation、timeline 的实际结果。`modelDigest` 绑定输入，`inputChanged: true` 使结果失效；未执行场景时 `simulationPassed: null`。模型、场景或校验器变化后重新检查。
 
-API 的 `inspect` 是可选只读索引，不是第二次 FM 准入；API `check/project` 只消费 `--fm-check` 并核对源摘要，保留整体对象／场景覆盖、HTTP 契约和消费者接续检查。命令与结果由 API 阶段参考维护；`runtimeValidated` 恒为 false。
-
-正式编辑的退出证据是：来源到模型的映射、实际增改删、当前 FM 检查、获授权的 API 交付及未覆盖能力都能定位。获授权留存时按校验参考保存紧凑运行清单；只校验不写任何项目文件。
+API 的 check/project 以 `--fm-check` 消费有效结果，保留整体覆盖、HTTP 契约和消费者接续检查；inspect 是可选只读索引，`runtimeValidated` 恒为 false。机器通过不等于业务批准。
 
 ## Steer
 
-- 表达错误：仅在本次编辑授权内修正并复验，不倒改业务预期；API 技术错误只改技术契约，不反向修改 FM。
-- 新责任、来源冲突、身份／权限／数量缺口或确认失效：停止受影响阶段，交接具体对象和缺口；不自行提问，也不解除访谈停止／暂缓状态。
-- 环境或保存失败：保留真实错误及已改文件，不自动安装依赖、不自动回滚；分别说明已保存、未通过和未执行。
-- FM 摘要失配：返回 FM 阶段重新检查，不在 API 内隐式重跑。API 阻塞不撤销已保存 FM，也不宣称完整交付。
-- 完成：交接文件、差异、来源定位、实际检查和未决项后停止。来自 `evidence-modeling` 时交回入口接续获授权联合审核；独立调用不自动生成页面或需求、进入实施、批准或操作 Git。
+- **表达错误**：在当前授权内修正并复验；API 技术错误只改技术契约。
+- **新责任、来源冲突、身份／权限／数量缺口或确认失效**：停止受影响阶段，交接具体对象与缺口；不自行提问或解除访谈停止／暂缓。
+- **环境或保存失败**：保留错误与已改文件，不自动安装依赖，不自动回滚；分别说明已保存、未通过与未执行。
+- **FM 摘要失配**：返回 FM 阶段检查，API 不隐式重跑。API 阻塞保留已保存 FM，交接部分结果。
+- **完成**：报告实际差异、来源定位、检查和未决项后停止。独立调用不自动生成页面；另行要求时定位 `evidence-visualization`，来自 `evidence-modeling` 时交回入口。需求、实施、批准和 Git 操作保持各自授权边界。
