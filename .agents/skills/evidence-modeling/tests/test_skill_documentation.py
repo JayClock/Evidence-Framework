@@ -117,6 +117,62 @@ class SkillDocumentationTests(unittest.TestCase):
         formatting = (ROOT / "evidence-fm/references/format.md").read_text()
         self.assertIn("不作为派生报告重建", formatting)
 
+    def test_daily_language_uses_canonical_names_without_rewriting_evidence(self):
+        method = (ROOT / "evidence-fm/references/domain-language.md").read_text()
+        daily = method.split("## 日常表达\n", 1)[1].split("\n## ", 1)[0]
+        for requirement in (
+            "规范名称", "aliases", "理解输入", "不轮换同义词",
+            "上下文", "故事", "任务标题", "测试名称", "交接",
+            "原文引用", "既有代码标识", "不批量改名", "不自动创建词汇表",
+            "未保存", "不扩大写入权限", "只读",
+        ):
+            self.assertIn(requirement, daily)
+        self.assertIn("已建模概念的更正属于 FM 修改", method)
+        self.assertIn("不创建 Markdown 词典", method)
+
+    def test_daily_language_is_reachable_from_project_and_consumer_skills(self):
+        repo = ROOT.parents[1]
+        for relative in ("AGENTS.md", "docs/guides/index.md", "docs/engineering/conventions.md"):
+            with self.subTest(document=relative):
+                text = (repo / relative).read_text()
+                self.assertIn("domain-language.md", text)
+                self.assertIn("规范名称", text)
+        for relative in ("evidence-fm/SKILL.md", "evidence-discovery/SKILL.md"):
+            self.assertIn("domain-language.md", (ROOT / relative).read_text())
+        for relative in (
+            "evidence-requirements/SKILL.md", "evidence-handoff/SKILL.md",
+            "evidence-task-planning/references/guides.md",
+        ):
+            with self.subTest(document=relative):
+                text = (ROOT / relative).read_text()
+                self.assertIn("领域语言方法", text)
+                self.assertIn("规范名称", text)
+        for name in ("evidence-task-planning", "evidence-delivery"):
+            self.assertIn("references/guides.md", (ROOT / name / "SKILL.md").read_text())
+        discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
+        self.assertIn("故事、问题与交接使用同一规范名称", discovery)
+
+    def test_daily_language_examples_and_evals_cover_usage_and_permission_edges(self):
+        fm = ROOT / "evidence-fm"
+        method = (fm / "references/domain-language.md").read_text()
+        self.assertIn("../examples/domain-language.md", method)
+        index = (fm / "examples/README.md").read_text()
+        self.assertIn("](domain-language.md)", index)
+        example = (fm / "examples/domain-language.md").read_text()
+        for scenario in ("别名输入", "同名异义", "只读", "缺词"):
+            self.assertIn(scenario, example)
+        catalog = json.loads((fm / "evals/domain-language.json").read_text())
+        cases = {case["category"]: case for case in catalog["evals"]}
+        self.assertEqual({
+            "canonical-expression", "context-sensitive-language", "read-only-language-gap",
+        }, set(cases))
+        for case in cases.values():
+            self.assertTrue(case["prompt"])
+            self.assertTrue(case["expectations"])
+        instructions = (fm / "evals/README.md").read_text()
+        self.assertIn("domain-language.json", instructions)
+        self.assertIn("未执行", instructions)
+
     def test_glossary_has_one_json_source_outside_model_types(self):
         repo = ROOT.parents[1]
         glossary = repo / ".evidence/glossary.json"

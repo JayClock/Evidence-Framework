@@ -12,7 +12,7 @@
 | `.agents/skills/evidence-fm/evals/`                              | 20 个 FM 技术案例及合成准入来源；behavior.json 检查阻塞与满足门槛后的编辑       |
 | `.agents/skills/evidence-requirements/evals/`                    | 外部材料直达需求的行为案例（原 ID 5）                                           |
 | `test_skill_packages.py`                                         | 跨 Skill 包完整性、链接闭合及评测目录覆盖                                       |
-| `test_skill_documentation.py`                                    | 业务入口加载边界及跨包文档协作                                                  |
+| `test_skill_documentation.py`                                    | 业务入口加载边界、日常领域语言消费路由及跨包文档协作                            |
 | `test_incremental_interview.py`                                  | 首次／恢复、连续承接、事件核对、读取新鲜度与可移植边界的静态契约                |
 | `test_contract_first_workflow.py`                                | 合同—骨架—凭证—异常的顺序、发现记录 2.0 单一引用结构及行为案例覆盖              |
 | `test_responsibility_closure.py`                                 | 递归追责、人类终点与全局结束、全部编辑入口及记录引用的静态契约                  |
@@ -65,5 +65,7 @@ Discovery 案例 30–34 检查合同参数归位、先骨架后追溯、异常�
 Discovery 案例 64–71 覆盖依赖前沿成组、依赖分轮、部分回答、更正、逐项暂缓与停止、保存失败、一次一问偏好和局部回答不等于全局确认；须保留真实 Agent 轨迹，静态测试不填行为通过率。
 
 组合案例 13–17 覆盖一体生成、API 业务缺口阻塞、联合只读、更窄仅 FM 授权和缺资源时先停；静态契约和真实投影测试不证明 Agent 已正确执行编排。行为评测在独立会话、隔离的临时项目中执行，不改真实业务文件或审核状态。
+
+FM 包的 `evals/domain-language.json` 检查规范名称贯穿日常表达，以及同名异义、只读缺词与保留既有标识的边界。使用隔离会话核对实际输出和文件差异；文档契约回归不替代这项行为评测。
 
 自动测试不调用语言模型，输入准备不代表生成评测通过。未执行的行为案例保持未执行；机器结果不等于访谈质量、语义完整、具名审核或 UAT。

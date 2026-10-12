@@ -45,7 +45,7 @@
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | 经营依据、合同边界、骨架及依赖 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
 | 关键数据、计算与业务时间依据   | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
-| 术语含义及定义归属             | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
+| 术语理解、日常表达及定义归属   | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
 | 责任终点与全局明确确认         | [追责结束准入](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                           |
 | 正式对象、引用与时间语义       | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
 | 问答、控制与跨会话承接         | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |

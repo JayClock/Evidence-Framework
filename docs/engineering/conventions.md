@@ -2,7 +2,7 @@
 
 ## 命名
 
-- 业务含义与稳定源 ID 引用 [统一 JSON 词汇表](../../.evidence/glossary.json)；实体/属性的代码、API 和 SQL 映射见 [领域映射](../architecture/domain-mapping.md)。不另造同义业务词典。
+- 业务含义与稳定源 ID 引用 [统一 JSON 词汇表](../../.evidence/glossary.json)，日常讨论、任务标题、诊断假设、测试名称与审查意见按 [领域语言方法](../../.agents/skills/evidence-fm/references/domain-language.md)使用当前上下文的规范名称；实体/属性的代码、API 和 SQL 映射见 [领域映射](../architecture/domain-mapping.md)。不另造同义业务词典，不为统一叫法批量改动既有标识或接口。
 - Java 类型使用 PascalCase，方法/字段 camelCase，包名小写；沿用 `com.evidencepoc.backend`。SQL 表/列沿用 snake_case，迁移沿用 Flyway `V<版本>__<描述>.sql`。
 - React 组件、类型使用 PascalCase；函数、变量、Hooks 使用 camelCase，Hooks 以 use 开头。文件组织沿用现有组件及 `.module.css` 约定，不批量更名无关文件。
 - API 路由、关系名、参数和字段以已有契约为准，不为统一代码风格擅自更名。
