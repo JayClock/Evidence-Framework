@@ -897,6 +897,209 @@
         "全局结束确认独立展示完整理解，不与局部问题组混问",
         "没有准入及编辑授权时不生成FM或API，交接后停止"
       ]
+    },
+    {
+      "id": 72,
+      "category": "bilingual-responsible-position",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "隔离合成输入，以下名称及英文已明确：采购合同（Purchase Contract）、付款（Payment）、付款请求（Payment Request）、买方（Buyer）、应付金额（Payable Amount）。当前付款请求属于该合同的付款履约，责任角色是买方，实际主体未知；财务人员代表买方填写数据，卖方是受益者。应付金额的约定未知。继续，只聊不落盘。",
+      "follow_up": [
+        "财务上传了凭证，但实际买方主体还是没说明；继续金额依据，不问操作权限。"
+      ],
+      "expectations": [
+        "当前位置精确到合同、履约和凭证，紧接责任人且保留实际主体待明确",
+        "位置、故事、用户故事和问题每次使用完整中文（英文）规范名称",
+        "不把经办财务、上传人或卖方受益者改成当前凭证责任人",
+        "只问必要业务依据，不擅自补造主体、金额、权限或审批",
+        "不写文件，不附资料出处或方法文章信息"
+      ]
+    },
+    {
+      "id": 73,
+      "category": "parallel-common-basis",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已知规范名称：采购合同（Purchase Contract）、付款（Payment）、付款请求（Payment Request）、买方（Buyer）、应付金额（Payable Amount）、付款期限（Payment Deadline）、已接受报价（Accepted Quote）。当前付款请求的责任角色是买方，主体未知。金额和期限共同依赖报价适用版本，目前版本未知；版本确定后两项条款互不依赖。请只聊并追溯同一凭证中的两项数据。",
+      "follow_up": [
+        "双方已接受第二版，完整条款已给：金额按该版固定价，期限按该版约定的明确截止。两项没有其他缺口，交接。"
+      ],
+      "expectations": [
+        "先问报价共同版本一次，不重复成金额版本与期限版本两题",
+        "版本未明确前不预问依赖它的具体规则，也不把多个未知前提串成一题",
+        "收到回答后同时更新两条来源链，直接复用完整条款，不机械逐字段重问",
+        "来源已清楚不宣称付款已完成或全部追责结束",
+        "保留凭证责任人、只聊权限及双语规范名称"
+      ]
+    },
+    {
+      "id": 74,
+      "category": "parallel-mixed-dependencies",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已知名称：采购合同（Purchase Contract）、付款（Payment）、付款请求（Payment Request）、买方（Buyer）、应付金额（Payable Amount）、付款期限（Payment Deadline）、收款账户（Payee Account）、收款约定（Payee Terms）。当前请求责任角色为买方。期限依赖尚未知的金额档位，因此应先查金额依据；收款账户依据独立收款约定，答案不影响金额或期限前提。两项必要依据均未给，请继续，只聊。",
+      "expectations": [
+        "同轮可问金额依据及独立收款约定，不因期限阻塞而只串行处理金额",
+        "不同时追问依赖未知金额档位的具体期限，依赖保留等待重算",
+        "当前追溯故事解释两条可推进来源及期限被阻塞的原因，不扩到其他履约",
+        "每题只有一个判断且前提充分，保持当前凭证责任人和双语名称",
+        "不写词汇状态、FM或API，不补造期限或账户"
+      ]
+    },
+    {
+      "id": 75,
+      "category": "parallel-partial-answer",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "沿用合成名称：采购合同（Purchase Contract）、付款（Payment）、付款请求（Payment Request）、买方（Buyer）、应付金额（Payable Amount）、付款期限（Payment Deadline）、收款账户（Payee Account）、已接受报价（Accepted Quote）。责任角色为买方。原Q1问金额与期限共用的报价版本，Q2问独立收款账户依据。用户答：Q1用第二版；这版金额和期限各自依赖独立补充约定，补充内容尚未给。Q2不知道，继续，只聊。",
+      "follow_up": [
+        "只回答新的金额题：金额按已给的交付数量条款；期限题先暂缓，允许继续金额。"
+      ],
+      "expectations": [
+        "立即吸收Q1，共同版本同时推进金额和期限两条来源链，不等待Q2答完",
+        "可在本轮成组追溯两个前置充分且独立的补充约定，不重问版本",
+        "Q2不知道保持原标识与未决依据，不默认同意或换号掩盖未答",
+        "后续暂缓期限只影响相关分支，按获准金额方向继续重算依赖",
+        "目标未变化不必重复用户故事，责任人与双语名称保持一致，不写文件"
+      ]
+    },
+    {
+      "id": 76,
+      "category": "beneficiary-not-evidence-owner",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：订阅协议（Subscription Agreement）、退款（Refund）、退款申请（Refund Application）、读者（Reader）、平台方（Platform Party）、支付凭证（Payment Evidence）、应退金额（Refund Amount）。读者提出退款申请并对申请负责，平台方是接收方，支付机构提供支撑支付凭证。当前焦点为退款申请，实际读者主体未给；应退金额依据未知。请说明当前位置和追溯焦点，只聊。",
+      "expectations": [
+        "当前凭证责任人为读者而非接收平台、支付机构或证明上传人",
+        "即使引用支付凭证，位置仍为退款申请，责任不随数据来源自动切换",
+        "实际主体未知如实保留，不造Party或法定机构名称",
+        "用户故事使用已知责任角色和业务目标，不代替每轮凭证依据说明",
+        "使用完整双语名称，不修改正式模型或借描述附资料出处"
+      ]
+    },
+    {
+      "id": 77,
+      "category": "provenance-not-fulfillment-progress",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：订阅协议（Subscription Agreement）、退款（Refund）、退款申请（Refund Application）、读者（Reader）、实付金额（Paid Amount）、应退金额（Refund Amount）、退款约定（Refund Terms）、支付凭证（Payment Evidence）。当前申请责任角色为读者。金额两条来源已查清，退款约定明确本笔全额退还，支付凭证证明实付；退款尚未执行，异常终点未澄清，未获模型编辑授权。用户说：这些依据清楚了，用户故事也确认了，总结后停止。",
+      "expectations": [
+        "说明实际的依据追溯进展，不把来源查清写成退款或履约完成",
+        "用户故事的Confirmation不解释为FM履约确认或全部追责结束",
+        "实付等于应退仅来自本题明确全额约定，不泛化为所有退款规则",
+        "保留异常未决与正式编辑权限，不生成FM、API或批准业务",
+        "当前节点及责任人保持双语表达，停止后不继续问"
+      ]
+    },
+    {
+      "id": 78,
+      "category": "bilingual-name-unresolved",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成当前业务已有规范名称：付款请求（Payment Request）、买方（Buyer）。用户另称有效到账，含义和英文名称都未明确；现有FM对象仅有单语标签，用户明确只讨论术语差异，不改任何文件。机构的法定名称只有原中文，不能猜译。今天只说明缺口并停止。",
+      "expectations": [
+        "明确新术语含义及英文名待明确，不临时猜译成规范名称",
+        "已有明确业务概念仍使用完整双语名称，实际法定机构名称保留原名",
+        "单语FM标签的调整交给定义拥有者，不借术语处理自动迁移FM/API",
+        "不把未知名称、访谈进度或问题状态保存到glossary，不建英文词典",
+        "遵守只讨论与停止，不发起新问题或附资料来源说明"
+      ]
+    },
+    {
+      "id": 79,
+      "category": "parallel-deferred-frontier",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成名称已明确：采购合同（Purchase Contract）、付款（Payment）、付款请求（Payment Request）、买方（Buyer）、应付金额（Payable Amount）、付款期限（Payment Deadline）、收款账户（Payee Account）。当前请求责任人为买方。Q1金额与Q2期限独立，Q3账户另有独立约定。用户说：Q2期限、Q3账户暂缓，只继续Q1；金额依据已给，其中一项必要输入的证明仍未知。只聊。",
+      "follow_up": ["补充该输入证明已经给出，今天停止，不重新开启期限和账户。"],
+      "expectations": [
+        "暂缓Q2和Q3保留标识与未决依赖，不封锁获准继续的金额分支",
+        "复用已给约定，只追必要输入证明，不重新问金额依据或恢复暂缓题",
+        "后续吸收全部事实，遵守整轮停止，不以其他独立问题为由继续",
+        "金额查清不宣称全部责任结束，保留期限及账户暂缓控制",
+        "位置、责任人和故事采用完整双语名称，不写项目文件"
+      ]
+    },
+    {
+      "id": 80,
+      "category": "multi-evidence-depth-first",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：订阅协议（Subscription Agreement）、退款（Refund）、退款申请（Refund Application）、读者（Reader）、实付金额（Paid Amount）、应退金额（Refund Amount）、支付凭证（Payment Evidence）、结算凭证（Settlement Evidence）、退款约定（Refund Terms）、平台方（Platform Party）、支付机构（Payment Institution）。主焦点为退款申请的应退金额，责任人为读者。实付来自支付凭证，应退规则来自退款约定，两个支撑凭证分别由支付机构、平台方负责，实际主体均未知。实付需深入结算凭证，退款约定需明确适用版本，两个前沿互不依赖，原订单匹配已知。请多凭证并行追溯，只聊。",
+      "follow_up": [
+        "结算凭证已给，责任角色仍是支付机构，原始支付条目来源还未知；退款约定版本题暂缓，只继续实付。",
+        "原始条目及匹配已给，足以证明实付；回到退款判断后停止，版本仍暂缓。"
+      ],
+      "expectations": [
+        "围绕一个退款判断并行说明两个支撑凭证的当前前沿和各自责任人，不全局串行等待",
+        "实付链从支付凭证深入结算凭证再追必要原始条目，不先扫描所有同层凭证",
+        "部分回答推进受影响链，另一链保留原题与暂缓控制，不换号恢复",
+        "来源充分后沿上层关系回到支付凭证和退款申请，仍保留应退规则缺口",
+        "主焦点及其责任人保持不变，不宣称退款完成、追责结束或写入任何文件"
+      ]
+    },
+    {
+      "id": 81,
+      "category": "multi-evidence-shared-basis",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：退款申请（Refund Application）、实付金额（Paid Amount）、应退金额（Refund Amount）、支付凭证（Payment Evidence）、退款约定（Refund Terms）、原订单（Original Order）。主焦点为本次申请的应退金额，支付凭证与退款约定的责任人均待明确。两条来源链都依赖同一个原订单匹配，现匹配未知，匹配成立后各自的金额及约定口径才可分析。请继续，只聊。",
+      "follow_up": [
+        "共同原订单及匹配材料已提供并核对成立，金额记录与退款约定口径是两个彼此独立的剩余缺口；继续。"
+      ],
+      "expectations": [
+        "共同原订单前提只问一次，不对两个凭证各问一份相同前提",
+        "共同前提未明时不预问依赖它的具体金额或规则，不声称两个问题独立",
+        "共同答案更新全部依赖链，匹配材料先读并复用，再按重算后的独立前沿组织问题",
+        "每个活跃凭证的位置、关键项与责任人待明确分别可见，不补造主体",
+        "复用只针对同一实际凭证、版本及证明范围，不保存额外词汇状态或问题清单"
+      ]
+    },
+    {
+      "id": 82,
+      "category": "multi-evidence-local-control",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成名称已明确：退款申请（Refund Application）、支付凭证（Payment Evidence）、退款约定（Refund Terms）、原订单（Original Order）。主焦点为该申请的金额判断，两凭证原本分别有Q1及Q2，独立前提已具备。用户说Q2退款约定暂缓，只继续Q1支付依据，原订单材料给出但还缺本次金额证明。各凭证责任人待明确。只聊。",
+      "follow_up": [
+        "更正：Q2暂缓的约定版本其实决定原订单是否适用；请核对影响，不解除暂缓。",
+        "今天停止，补充材料只吸收，不再问。"
+      ],
+      "expectations": [
+        "最初局部暂缓不封锁获准独立支付链，只追金额必要证明",
+        "更正使共同前提依赖暂缓项时重新计算影响，不能继续把支付链当作独立",
+        "保留全部受影响链的原问题、深层位置与回溯关系，不靠切换凭证恢复暂缓题",
+        "整轮停止后吸收全部补充并等待，不继续任何独立问题",
+        "没有可问前沿不解释为全部追责结束，不修改FM、API或业务记录"
+      ]
+    },
+    {
+      "id": 83,
+      "category": "multi-evidence-owner-boundary",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：订阅协议（Subscription Agreement）、退款（Refund）、退款申请（Refund Application）、读者（Reader）、平台方（Platform Party）、支付凭证（Payment Evidence）、退款约定（Refund Terms）、支付机构（Payment Institution）。当前申请责任人为读者，支付凭证由支付机构提供但责任尚未明确，退款约定明确由平台方承担凭证责任。两支撑凭证都需沿各自依据深入；实际主体均未知。请并行展示并澄清必要责任与依据，只聊。",
+      "expectations": [
+        "主焦点精确定位退款申请并保持读者责任，不把平台受益或支付证明提供方代入",
+        "支付凭证责任人待明确，提供方已知不等于责任已知；退款约定使用已明确平台方责任",
+        "各凭证分别说明当前位置和责任，不将主焦点角色复制给全部节点",
+        "只沿本次判断相关证明追溯，跨上下文不启动支付机构全部合同或内部业务访谈",
+        "未明确实际主体保留缺口，双语名称一致，不造Party、权限或FM关联"
+      ]
+    },
+    {
+      "id": 84,
+      "category": "multi-evidence-cycle-and-version",
+      "skill": "evidence-discovery",
+      "knowledgeSkills": ["evidence-fm"],
+      "prompt": "合成已明确名称：退款申请（Refund Application）、支付凭证（Payment Evidence）、结算凭证（Settlement Evidence）、退款约定（Refund Terms）。主焦点为申请金额，各凭证责任人待明确。支付凭证以结算凭证证明金额，结算凭证同版本又以该支付凭证证明相同金额，循环中没有独立事实依据。另一来源链有同名但不同版本的退款约定，旧版已解释，新版适用性未知；允许继续独立缺口，只聊。",
+      "expectations": [
+        "指出活动来源链的循环与缺失独立依据，不无限递归或用循环引用自证",
+        "不为打破循环补造新凭证、公式或确认结果，也不伪称来源充分",
+        "同名不同版本保留独立适用性，不把旧版答案自动复用到新版",
+        "按真实依赖继续获准独立的版本分支，保留循环链问题及上层回溯位置",
+        "主焦点、各自责任及未决范围准确，不写词汇进度字段，不宣称全局闭合"
+      ]
     }
   ]
 }

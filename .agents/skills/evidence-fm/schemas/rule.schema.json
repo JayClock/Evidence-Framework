@@ -29,7 +29,7 @@
     },
     "label": { "type": "string", "minLength": 1 },
     "description": {
-      "description": "Business-language explanation. Model terms use the Chinese name followed by the concrete Entity ID, for example 付款请求（request.payment）.",
+      "description": "Business-language explanation. Model terms use the canonical Chinese（English） name and a separate concrete Entity ID, for example 付款请求（Payment Request）[request.payment]. The ID is not an English business name.",
       "type": "string",
       "minLength": 1
     },
@@ -65,8 +65,11 @@
       "then": { "required": ["target"] }
     },
     {
-      "if": {"properties": {"kind": {"enum": ["completion", "breach"]}}, "required": ["kind"]},
-      "then": {"required": ["fulfillmentRef"]}
+      "if": {
+        "properties": { "kind": { "enum": ["completion", "breach"] } },
+        "required": ["kind"]
+      },
+      "then": { "required": ["fulfillmentRef"] }
     }
   ],
   "additionalProperties": false,

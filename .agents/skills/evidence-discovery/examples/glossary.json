@@ -4,9 +4,9 @@
     {
       "id": "term.refund-application",
       "kind": "standalone",
-      "name": "退款申请",
-      "definition": "读者提出订阅协议退款要求的凭证，关联原支付凭证。",
-      "context": "订阅协议"
+      "name": "退款申请（Refund Application）",
+      "definition": "读者（Reader）提出订阅协议（Subscription Agreement）退款要求的凭证，关联原支付凭证（Payment Evidence）；申请本身不证明退款（Refund）已完成。",
+      "context": "订阅协议（Subscription Agreement）"
     }
   ]
 }

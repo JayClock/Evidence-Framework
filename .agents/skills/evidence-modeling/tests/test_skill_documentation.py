@@ -150,7 +150,7 @@ class SkillDocumentationTests(unittest.TestCase):
         for name in ("evidence-task-planning", "evidence-delivery"):
             self.assertIn("references/guides.md", (ROOT / name / "SKILL.md").read_text())
         discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
-        self.assertIn("故事、问题与交接使用同一规范名称", discovery)
+        self.assertIn("故事、问题与交接使用同一中文（英文）规范名称", discovery)
 
     def test_daily_language_examples_and_evals_cover_usage_and_permission_edges(self):
         fm = ROOT / "evidence-fm"
@@ -163,9 +163,10 @@ class SkillDocumentationTests(unittest.TestCase):
             self.assertIn(scenario, example)
         catalog = json.loads((fm / "evals/domain-language.json").read_text())
         cases = {case["category"]: case for case in catalog["evals"]}
-        self.assertEqual({
+        self.assertTrue({
             "canonical-expression", "context-sensitive-language", "read-only-language-gap",
-        }, set(cases))
+            "bilingual-one-identity", "bilingual-owner-transition", "bilingual-context-ambiguity",
+        }.issubset(cases))
         for case in cases.values():
             self.assertTrue(case["prompt"])
             self.assertTrue(case["expectations"])

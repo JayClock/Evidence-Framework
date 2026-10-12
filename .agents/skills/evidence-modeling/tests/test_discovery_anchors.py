@@ -57,8 +57,10 @@ class DiscoveryAnchorTests(unittest.TestCase):
         for display in displays:
             self.assertTrue(display.startswith('当前位置：'))
             self.assertNotRegex(display, r'已明确：|正在澄清：|尚缺依据：|https?://')
-        self.assertIn('退款申请〔履约请求〕', displays[0])
-        self.assertIn('客户档案 → 身份判断', displays[2])
+        self.assertIn('退款申请（Refund Application）〔履约请求〕', displays[0])
+        self.assertIn('责任人：读者（Reader）', displays[0])
+        self.assertIn('客户领域（Customer Domain）→ 客户档案（Customer Profile）', displays[2])
+        self.assertNotIn('履约请求', displays[2])
 
 
 if __name__ == '__main__':

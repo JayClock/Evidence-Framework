@@ -47,6 +47,7 @@ class FMIntegrationTests(unittest.TestCase):
                 if json.loads(path.read_text()).get("id") == "contract.content-subscription"
             )
             document = json.loads(source.read_text())
+            document["label"] = "内容产品订阅合同（Content Subscription Contract）"
             document["notes"] = "本次隔离合成测试中的内容订阅协议。"
             source.write_text(json.dumps(document, ensure_ascii=False))
             terms = [{
@@ -56,7 +57,7 @@ class FMIntegrationTests(unittest.TestCase):
             for identity in ("first", "second"):
                 terms.append({
                     "id": f"term.synthetic-{identity}", "kind": "standalone",
-                    "name": f"合成概念-{identity}", "definition": "隔离测试中的未建模概念。",
+                    "name": f"合成概念-{identity}（Synthetic Concept {identity}）", "definition": "隔离测试中的未建模概念。",
                 })
                 (evidence / "glossary.json").write_text(json.dumps(
                     {"schemaVersion": "2.0", "terms": terms}, ensure_ascii=False,

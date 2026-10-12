@@ -15,14 +15,14 @@
 ### 期望展示
 
 ```text
-1. 采购协议
-   经营主线：现金权责（买方支出）
-   买方与卖方签订采购协议，使买方取得约定商品，卖方取得商品价款。
-   责任边界：付款与商品交付；尚待逐项追溯，未结束。
-2. 运输协议
-   经营主线：现金权责（货主支出）
-   货主与承运方签订运输协议，使货主的货物送达约定地点，承运方取得运费。
-   责任边界：运费与送达；有效签收证明待追溯，未结束。
+1. 采购协议（Purchase Agreement）
+   经营主线：现金权责，观察主体为买方（Buyer），支出商品价款（Purchase Price）。
+   买方（Buyer）与卖方（Seller）签订采购协议（Purchase Agreement），使前者取得约定商品，后者取得商品价款（Purchase Price）。
+   责任边界：付款（Payment）与商品交付（Goods Delivery）；尚待逐项追溯，未结束。
+2. 运输协议（Transport Agreement）
+   经营主线：现金权责，观察主体为货主（Cargo Owner），支出运费（Freight Charge）。
+   货主（Cargo Owner）与承运方（Carrier）签订运输协议（Transport Agreement），使前者的货物送达约定地点，后者取得运费（Freight Charge）。
+   责任边界：运费支付（Freight Payment）与送达（Delivery）；签收证明（Delivery Receipt）待追溯，未结束。
 
 先分析哪个合同上下文？
 ```

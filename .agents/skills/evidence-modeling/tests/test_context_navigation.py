@@ -25,8 +25,8 @@ class ContextNavigationTests(unittest.TestCase):
     def test_overview_uses_business_purpose_and_one_selection(self):
         text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
-        self.assertIn('现金权责（买方支出）', display)
-        self.assertIn('买方与卖方签订采购协议', display)
+        self.assertIn('现金权责，观察主体为买方（Buyer），支出商品价款（Purchase Price）', display)
+        self.assertIn('买方（Buyer）与卖方（Seller）签订采购协议（Purchase Agreement）', display)
         self.assertEqual(1, display.count('？'))
         self.assertNotRegex(display, r'sourceRefs|https?://|\.md')
 

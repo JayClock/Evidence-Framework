@@ -49,7 +49,7 @@
 
 ## 2. 稳定 ID 与文件名
 
-ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，采用具体业务称谓而非泛化的 Request、Confirmation 等类型名。类型和内部 ID 不规定对外接口名称。
+ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，使用具体业务称谓的中文（英文）形式而非泛化的 Request、Confirmation 等类型名；对象与属性沿用同一领域语言方法。英文业务名称不从 ID 猜译，未知交定义拥有者，不自动迁移已有业务源。类型和内部 ID 不规定对外接口名称。
 
 源 JSON 使用上下文内的短文件名：`context.json`、`contract.json`、`request.json`、`confirmation.json`；角色、主体、标的、规则和关系使用业务名或 ID 后缀。同一目录有多个同类凭证时使用不同业务文件名，不覆盖；不同目录可以重用短文件名。源文件名不再是硬校验，稳定身份只取对象 `id`。
 
@@ -74,14 +74,14 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 - 原始材料／外部 API 的旧字段名可在 `notes` 或词汇表记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
 - JSON 使用两空格缩进（`ensure_ascii=false` 保留中文），UTF-8 编码，文件末尾单个换行，不带注释、尾随逗号或重复键；一个文件一个顶层对象。字符串中的时间戳保持 RFC 3339 字面量，JSON 没有原生日期类型，不写 YAML 风格的无引号时间。
 - 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
-- Rule 按 `type → id → kind → label → description → contextRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用“中文名称（具体 Entity ID）”，不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 省略不适用的 `target`、`notes`。
+- Rule 按 `type → id → kind → label → description → contextRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用完整双语规范名称，再独立附具体 Entity ID，例如 `付款请求（Payment Request）[request.payment]`，不把 ID 放进英文名称位置；不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 省略不适用的 `target`、`notes`。
 
 ```json
 {
   "attributes": [
     {
       "name": "requested_minor_units",
-      "label": "请求支付金额",
+      "label": "请求支付金额（Requested Payment Amount）",
       "valueType": "int",
       "required": true,
       "keyData": true,
@@ -101,7 +101,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
   "type": "fm_model",
   "schemaVersion": "4.0",
   "id": "subscription-service",
-  "name": "订阅服务履约模型",
+  "name": "订阅服务履约模型（Subscription Service Fulfillment Model）",
   "version": "3.0.0",
   "ruleLanguage": "CEL",
   "entryContextRefs": ["context.subscription"]
@@ -145,7 +145,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
   "id": "context.subscription",
   "category": "context",
   "kind": "contract",
-  "label": "订阅合同上下文",
+  "label": "订阅合同上下文（Subscription Contract Context）",
   "rootRefs": ["contract.subscription"]
 }
 ```
@@ -156,13 +156,13 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
   "id": "contract.subscription",
   "category": "evidence",
   "kind": "contract",
-  "label": "订阅服务合同",
+  "label": "订阅服务合同（Subscription Service Contract）",
   "contextRef": "context.subscription",
   "roleRefs": ["role.subscriber", "role.service-provider"],
   "attributes": [
     {
       "name": "signed_at",
-      "label": "签约时间",
+      "label": "签约时间（Signing Time）",
       "valueType": "timestamp",
       "required": true,
       "keyData": true,
@@ -185,7 +185,7 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
   "type": "entity",
   "id": "fulfillment.subscription-payment",
   "category": "fulfillment",
-  "label": "支付订阅费用",
+  "label": "支付订阅费用（Subscription Fee Payment）",
   "contextRef": "context.subscription"
 }
 ```
@@ -200,7 +200,7 @@ Contract Context 表达业务责任边界。Request、Evidence Role、Confirmati
   "id": "context.content",
   "category": "context",
   "kind": "domain",
-  "label": "内容领域上下文",
+  "label": "内容领域上下文（Content Domain Context）",
   "rootRefs": ["thing.subscription-content"]
 }
 ```
@@ -211,7 +211,7 @@ Contract Context 表达业务责任边界。Request、Evidence Role、Confirmati
   "id": "thing.subscription-content",
   "category": "participant",
   "kind": "thing",
-  "label": "订阅内容",
+  "label": "订阅内容（Subscription Content）",
   "contextRef": "context.content"
 }
 ```
@@ -226,7 +226,7 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
   "id": "role.external-service-provider",
   "category": "role",
   "kind": "third_party",
-  "label": "外部服务提供方",
+  "label": "外部服务提供方（External Service Provider）",
   "contextRef": "context.subscription"
 }
 ```
@@ -242,7 +242,7 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
   "kind": "plays_role",
   "sourceRef": "party.customer",
   "targetRef": "role.subscriber",
-  "label": "客户扮演订阅方"
+  "label": "客户扮演订阅方（Customer Plays Subscriber）"
 }
 ```
 
@@ -256,7 +256,7 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
   "id": "role.qualified-payment-confirmation",
   "category": "role",
   "kind": "evidence",
-  "label": "合格付款确认",
+  "label": "合格付款确认（Qualified Payment Confirmation）",
   "contextRef": "context.subscription",
   "fulfillmentRef": "fulfillment.subscription-payment"
 }
@@ -301,7 +301,8 @@ Contract 可以通过跨 Context 的 `references` 引用已接受的 Proposal，
   "kind": "references",
   "sourceRef": "proposal.product-quote",
   "targetRef": "rfp.product-inquiry",
-  "label": "报价引用询价，一份询价对应一至多份报价",
+  "label": "报价引用询价（Quote References Inquiry）",
+  "notes": "一份询价对应一至多份报价。业务基数由两端声明表达。",
   "sourceCardinality": {
     "min": 1,
     "max": "many"

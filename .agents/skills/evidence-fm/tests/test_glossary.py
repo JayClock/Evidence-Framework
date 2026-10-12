@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -24,7 +25,7 @@ def standalone(**fields):
     return {
         "id": "term.receipt",
         "kind": "standalone",
-        "name": "收稿回执",
+        "name": "收稿回执（Manuscript Receipt）",
         "definition": "证明收到稿件，不证明质量合格。",
         **fields,
     }
@@ -48,12 +49,13 @@ class GlossaryTests(unittest.TestCase):
     def model(self):
         root = self.root / "fm"
         docs = [
-            entity("context.authors", "context", "domain", "作者领域", rootRefs=["party.author"]),
-            entity("party.author", "participant", "party", "作者", notes="向出版方提供稿件的主体。",
-                   contextRef="context.authors", attributes=[attribute("author_id", "string", "稳定作者编号")]),
+            entity("context.authors", "context", "domain", "作者领域（Author Domain）", rootRefs=["party.author"]),
+            entity("party.author", "participant", "party", "作者（Author）", notes="向出版方提供稿件的主体。",
+                   contextRef="context.authors", aliases=["投稿者"],
+                   attributes=[attribute("author_id", "string", "稳定作者编号", label="稳定作者编号（Author ID）")]),
             {"type": "relationship", "id": "relation.author", "kind": "references",
-             "sourceRef": "context.authors", "targetRef": "party.author", "label": "领域引用作者", "notes": "定位作者主体。"},
-            {"type": "rule", "id": "rule.author", "label": "作者规则", "description": "用于结构解析的合成规则。",
+             "sourceRef": "context.authors", "targetRef": "party.author", "label": "领域引用作者（Domain References Author）", "notes": "定位作者主体。"},
+            {"type": "rule", "id": "rule.author", "label": "作者规则（Author Rule）", "description": "用于结构解析的合成规则。",
              "contextRef": "context.authors", "kind": "invariant", "expression": "true", "bindings": {}, "resultType": "bool"},
         ]
         write_model(root, docs, "context.authors")
@@ -67,7 +69,7 @@ class GlossaryTests(unittest.TestCase):
         self.assertTrue(result["valid"], result)
         self.assertIsNone(result["referenceValidated"])
         self.assertIsNone(result["fmSourceDigest"])
-        self.assertEqual("收稿回执", result["resolvedTerms"][0]["name"])
+        self.assertEqual("收稿回执（Manuscript Receipt）", result["resolvedTerms"][0]["name"])
         self.assertFalse(result["inputChanged"])
 
     def test_required_standalone_fields_and_unknown_fields(self):
@@ -106,16 +108,16 @@ class GlossaryTests(unittest.TestCase):
         self.assertTrue(result["valid"], result)
         self.assertTrue(result["referenceValidated"])
         resolved = result["resolvedTerms"][0]
-        self.assertEqual("作者", resolved["name"])
+        self.assertEqual("作者（Author）", resolved["name"])
         self.assertEqual("向出版方提供稿件的主体。", resolved["definition"])
         before = self.path.read_bytes()
         source = self.source("party.author")
         document = json.loads(source.read_text())
-        document.update(label="签约作者", notes="当前定义。")
+        document.update(label="签约作者（Contracted Author）", notes="当前定义。")
         source.write_text(json.dumps(document))
         updated = checker.check_glossary(self.path)
         self.assertTrue(updated["valid"], updated)
-        self.assertEqual("签约作者", updated["resolvedTerms"][0]["name"])
+        self.assertEqual("签约作者（Contracted Author）", updated["resolvedTerms"][0]["name"])
         self.assertEqual("当前定义。", updated["resolvedTerms"][0]["definition"])
         self.assertNotEqual(result["fmSourceDigest"], updated["fmSourceDigest"])
         self.assertEqual(before, self.path.read_bytes())
@@ -156,9 +158,9 @@ class GlossaryTests(unittest.TestCase):
     def test_duplicate_targets_and_standalone_shadows_fail(self):
         self.model()
         self.assertFalse(self.save([model_term(), model_term(id="term.other")])["valid"])
-        self.assertFalse(self.save([standalone(name="作者")])["valid"])
-        self.assertFalse(self.save([standalone(name="稳定作者编号")])["valid"])
-        self.assertTrue(self.save([standalone(name="作者", context="context.other")])["valid"])
+        self.assertFalse(self.save([standalone(name="作者（Author）")])["valid"])
+        self.assertFalse(self.save([standalone(name="稳定作者编号（Author ID）")])["valid"])
+        self.assertTrue(self.save([standalone(name="作者（Author）", context="context.other")])["valid"])
 
     def test_explicit_root_source_move_and_read_only(self):
         root = self.model()
@@ -194,7 +196,7 @@ class GlossaryTests(unittest.TestCase):
         self.assertFalse(checker.check_glossary(link)["valid"])
 
     def test_standalone_becomes_reference_with_same_term_identity(self):
-        self.assertTrue(self.save([standalone(name="作者", definition="向出版方提供稿件的主体。")])["valid"])
+        self.assertTrue(self.save([standalone(name="作者（Author）", definition="向出版方提供稿件的主体。")])["valid"])
         self.model()
         self.assertFalse(checker.check_glossary(self.path)["valid"])
         result = self.save([model_term()])
@@ -203,6 +205,110 @@ class GlossaryTests(unittest.TestCase):
         persisted = json.loads(self.path.read_text())["terms"][0]
         self.assertNotIn("name", persisted)
         self.assertNotIn("definition", persisted)
+
+    def test_canonical_names_require_chinese_and_english_without_guessing(self):
+        for name in ("收稿回执", "Manuscript Receipt", "收稿回执(Manuscript Receipt)",
+                     "收稿回执（）", "收稿回执（回执）", "收稿回执（Manuscript Receipt）附注"):
+            with self.subTest(name=name):
+                result = self.save([standalone(name=name)])
+                self.assertFalse(result["valid"], result)
+                self.assertEqual([], result["resolvedTerms"])
+        self.model()
+        source = self.source("party.author")
+        document = json.loads(source.read_text())
+        document["label"] = "作者"
+        source.write_text(json.dumps(document))
+        result = self.save([model_term()])
+        self.assertFalse(result["valid"], result)
+        self.assertTrue(any("bilingual" in error for error in result["errors"]))
+
+    def test_language_components_conflict_only_within_same_context(self):
+        for name in ("收稿回执（Delivery Receipt）", "交稿回执（manuscript receipt）"):
+            with self.subTest(name=name):
+                self.assertFalse(self.save([standalone(), standalone(id="term.other", name=name)])["valid"])
+        result = self.save([standalone(context="one"), standalone(id="term.other", context="two")])
+        self.assertTrue(result["valid"], result)
+        self.assertEqual(2, len(checker.lookup_terms(result["resolvedTerms"], "Manuscript Receipt")))
+        self.assertEqual(["term.other"], [term["id"] for term in checker.lookup_terms(
+            result["resolvedTerms"], "收稿回执", context="two")])
+
+    def test_lookup_chinese_english_alias_and_full_name_keeps_identity(self):
+        result = self.save([standalone(aliases=["收件小票", "Received Slip"])])
+        for query in ("收稿回执", "manuscript receipt", "MANUSCRIPT  RECEIPT",
+                      "收稿回执（Manuscript Receipt）", "收件小票", "received slip"):
+            with self.subTest(query=query):
+                matches = checker.lookup_terms(result["resolvedTerms"], query)
+                self.assertEqual(["term.receipt"], [term["id"] for term in matches])
+                self.assertEqual("收稿回执（Manuscript Receipt）", matches[0]["name"])
+        self.assertEqual([], checker.lookup_terms(result["resolvedTerms"], "收稿"))
+
+    def test_standalone_context_lookup_preserves_language_parts_without_fm(self):
+        result = self.save([standalone(context="出版领域（Publishing Domain）")])
+        self.assertTrue(result["valid"], result)
+        before = self.path.read_bytes()
+        for context in ("出版领域（Publishing Domain）", "出版领域", "publishing domain"):
+            with self.subTest(context=context):
+                matches = checker.lookup_terms(result["resolvedTerms"], "Manuscript Receipt", context=context)
+                self.assertEqual(["term.receipt"], [term["id"] for term in matches])
+        self.assertEqual(before, self.path.read_bytes())
+        self.assertEqual(["party.author"], checker.context_names("party.author", {
+            "party.author": {"id": "party.author", "category": "participant", "label": "作者（Author）"},
+        }))
+
+    def test_context_label_components_resolve_before_shadow_detection(self):
+        self.model()
+        for context in ("作者领域（Author Domain）", "作者领域", "author domain", "context.authors"):
+            with self.subTest(context=context):
+                result = self.save([standalone(name="作者（Writer）", context=context)])
+                self.assertFalse(result["valid"], result)
+                self.assertTrue(any("already exists in FM" in error for error in result["errors"]))
+        result = self.save([standalone(context="作者领域"), model_term(id="term.author")])
+        self.assertTrue(result["valid"], result)
+        self.assertEqual("context.authors", result["resolvedTerms"][0]["context"])
+        for context in ("作者领域", "Author Domain", "context.authors"):
+            matches = checker.lookup_terms(result["resolvedTerms"], "Manuscript Receipt", context=context)
+            self.assertEqual(["term.receipt"], [term["id"] for term in matches])
+
+    def test_fm_aliases_and_partial_names_cannot_create_parallel_definitions(self):
+        self.model()
+        for name in ("投稿者（Contributor）", "写作者（Author）"):
+            result = self.save([standalone(name=name, context="作者领域")])
+            self.assertFalse(result["valid"], result)
+        result = self.save([model_term()])
+        self.assertEqual(["term.receipt"], [term["id"] for term in checker.lookup_terms(
+            result["resolvedTerms"], "投稿者")])
+
+    def test_ambiguous_context_name_fails_instead_of_selecting_a_context(self):
+        root = self.model()
+        document = entity("context.other", "context", "domain", "作者领域（Author Domain）", rootRefs=["party.author"])
+        (root / "other-context.json").write_text(json.dumps(document))
+        result = self.save([standalone(context="作者领域")])
+        self.assertFalse(result["valid"], result)
+        self.assertTrue(any("ambiguous context" in error for error in result["errors"]))
+
+    def test_cli_lookup_is_read_only_and_fails_closed(self):
+        self.save([standalone(aliases=["收件小票"])])
+        before = self.path.read_bytes()
+        command = [sys.executable, str(SCRIPTS / "check_glossary.py"), str(self.path),
+                   "--query", "Manuscript Receipt"]
+        process = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(0, process.returncode, process.stderr)
+        result = json.loads(process.stdout)
+        self.assertEqual(["term.receipt"], [term["id"] for term in result["matches"]])
+        self.assertEqual(before, self.path.read_bytes())
+        self.save([standalone(name="收稿回执")])
+        process = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(1, process.returncode, process.stderr)
+        self.assertEqual([], json.loads(process.stdout)["matches"])
+        process = subprocess.run(command[:-2] + ["--context", "unknown"], capture_output=True, text=True)
+        self.assertEqual(2, process.returncode)
+        self.assertIn("--context requires --query", process.stderr)
+
+    def test_shared_alias_returns_all_candidates_without_merging(self):
+        result = self.save([standalone(aliases=["回执"]), standalone(
+            id="term.other", name="验收回执（Acceptance Receipt）", aliases=["回执"])])
+        self.assertTrue(result["valid"], result)
+        self.assertEqual(2, len(checker.lookup_terms(result["resolvedTerms"], "回执")))
 
 
 if __name__ == "__main__":
