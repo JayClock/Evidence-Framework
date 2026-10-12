@@ -9,6 +9,7 @@ from pathlib import Path
 from context_samples import (
     domain_documents,
     performance_documents,
+    performance_fulfillment,
     precontract_documents,
     write_model,
 )
@@ -266,6 +267,40 @@ class ScopeEvalTests(unittest.TestCase):
                 Path(directory), 19, documents, "context.performance"
             )
             self.assertEqual(result["total"], result["passed"], result["expectations"])
+
+    def test_membership_payment_uses_current_source_name_not_a_purchase_alias(self) -> None:
+        documents = performance_documents(False, negotiate_before_signing=False)[:4]
+        for suffix, label in (
+            ("payment", "付款"), ("activation", "权益开通"), ("refund", "退款")
+        ):
+            documents.extend(
+                performance_fulfillment(suffix, label, "role.manager", "role.employee")
+            )
+        with tempfile.TemporaryDirectory() as directory:
+            result = self.grade_sample(
+                Path(directory), 0, documents, "context.performance"
+            )
+            coverage = next(
+                item for item in result["expectations"]
+                if item["text"] == "Purchase, activation, and refund are explicit Fulfillments."
+            )
+            self.assertTrue(coverage["passed"])
+
+    def test_automatic_trigger_does_not_turn_system_into_a_business_role(self) -> None:
+        documents = json.loads(
+            json.dumps(performance_documents(False, negotiate_before_signing=False))
+            .replace("role.employee", "role.system")
+        )
+        next(item for item in documents if item["id"] == "role.system")["label"] = "系统"
+        with tempfile.TemporaryDirectory() as directory:
+            result = self.grade_sample(
+                Path(directory), 8, documents, "context.performance"
+            )
+            restriction = next(
+                item for item in result["expectations"]
+                if item["text"].startswith("System/scheduler is not modeled")
+            )
+            self.assertFalse(restriction["passed"])
 
     def test_simple_tool_no_model_is_a_successful_result(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

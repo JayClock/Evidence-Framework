@@ -97,7 +97,7 @@ RFP→Proposal→Contract 是可能的证据主线，不是必须走完的流水
 
 Business Pattern 表达运营特定、领域中立的责任结构，引用真实 Fulfillment 主线、运营不变量、变化点、Domain 输入、Contract 与 Domain 案例。
 
-一个 Domain 只能支持 candidate；至少两个 Contract Context 与两个 Domain Context 才能成为 supported；confirmed 还需要具名业务方确认。机器不能证明领域中立或复用价值。纯领域模型不为提取模式补造履约，没有 Business Pattern 不影响模型成立。
+一个 Domain 的案例只支撑该领域内的主张；声称跨领域复用须引用至少两个 Contract Context 与两个 Domain Context 的真实案例。具名业务方决定按实际来源核对，模式 JSON 不保存审核或复用状态。机器不能证明领域中立、复用价值或人类确认。纯领域模型不为提取模式补造履约，没有 Business Pattern 不影响模型成立。
 
 ## 10. 规则、触发与验证
 

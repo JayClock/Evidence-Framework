@@ -660,7 +660,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             "Purchase, activation, and refund are explicit Fulfillments.",
             all(
                 matches(fulfillments, pattern)
-                for pattern in (r"购买|充值", r"开通|权益", r"退款|退费")
+                for pattern in (r"付款|支付|购买|充值", r"开通|权益", r"退款|退费")
             ),
             "Fulfillment lookup",
         )
@@ -826,17 +826,17 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             bool(scheduled_requests),
             str([item.get("id") for item in scheduled_requests]),
         )
-        system_participants = [
+        system_actors = [
             entity.get("id")
             for entity in entities
-            if entity.get("category") == "participant"
+            if entity.get("category") in {"role", "participant"}
             and re.search(r"系统|调度|system|scheduler", text_of(entity), re.IGNORECASE)
         ]
         add(
             expectations,
-            "System/scheduler is not modeled as Participant.",
-            not system_participants,
-            str(system_participants),
+            "System/scheduler is not modeled as Role or Participant.",
+            not system_actors,
+            str(system_actors),
         )
     elif eval_id == 9:
         add(

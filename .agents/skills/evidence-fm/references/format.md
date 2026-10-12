@@ -317,11 +317,9 @@ Contract 可以通过跨 Context 的 `references` 引用已接受的 Proposal，
 
 ## 8. Business Pattern
 
-有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.json`。必填内容包括业务目标、运营不变量、领域中立主张、业务脊梁、变化点、合同案例、领域案例、复用状态和人工评审。
+有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.json`。必填内容为业务目标、运营不变量、领域中立主张、业务脊梁、变化点、领域输入及合同／领域案例引用；格式以当前 Business Pattern Schema 为准。
 
-- `candidate`：一个领域案例即可；
-- `supported`：至少两个 Contract Context 与两个 Domain Context；
-- `confirmed`：在 supported 基础上还需要具名 stakeholder confirmation。
+至少引用一个有依据的合同及领域案例。只有一个领域案例时不声称跨领域复用；声称跨领域时须由至少两个 Contract Context 与两个 Domain Context 的真实案例支撑，不复制上下文凑数。业务确认在实际来源中核对，模式 JSON 不保存审核或复用状态。
 
 完整格式与提取方法见 `business-pattern-extraction.md`。
 
