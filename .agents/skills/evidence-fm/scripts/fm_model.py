@@ -534,7 +534,7 @@ def validate_entities(
             if context_ref is not None:
                 errors.append(f"{entity_id}: Context must not define contextRef")
             parent_ref = normalize(entity.get("parentContextRef"))
-            if kind not in {"contract", "pre_contract", "domain", "external"}:
+            if kind not in {"contract", "pre_contract", "domain"}:
                 errors.append(f"{entity_id}: invalid Context kind '{kind}'")
             if parent_ref is not None:
                 parent = require_ref(
@@ -960,9 +960,6 @@ def validate_relationships(
             )
             context_plays_role = (
                 source_sig[0] == "context" and target_sig == ("role", "context")
-            ) or (
-                source_sig == ("context", "external")
-                and target_sig == ("role", "third_party")
             )
             if not (
                 moment_evidence_plays_evidence_role

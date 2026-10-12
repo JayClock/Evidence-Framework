@@ -23,7 +23,8 @@ Context 的 kind：
 - `contract`：两个合同 Role 之间全部业务交互的聚合与责任边界。
 - `domain`：领域对象与领域能力的边界。
 - `pre_contract`：合同形成前的协商与渠道边界。
-- `external`：当前模型不展开的外部边界。
+
+“外部”是相对于当前分析范围的位置，不是独立的 Context 类型。已展开的外部上下文仍按真实业务性质使用上述三种 kind；未展开的协作边界按需要使用 Context Role、Third-party Role 或 Domain Role，保留已知能力和未决项，不为占位创建 Context 或虚构玩家。必要结果证明使用具体凭证或 Evidence Role，不能由边界角色代替。
 
 权责履约是 `category: fulfillment` 的 Entity，不定义 kind，也不是 Context。其 `contextRef` 指向所属 Contract Context。一项履约表达请求、完成证明及相关规则，不创建新的责任、访问或部署边界。
 
@@ -89,7 +90,7 @@ Request 已形成而合格结果尚未形成时为业务上的 pending，不是�
 
 Relationship 只有 `references` 与 `plays_role`。同一合约内不同履约的凭证、规则可以直接引用；履约分组不构成跨上下文，不要求先建立证明角色。具体凭证的依据引用按“消费凭证→依据凭证”表达，例如 Confirmation→Request、Request→Contract、Contract→Proposal。类型关联不证明某个实例已经形成；实例依赖由 `basedOn` 表达，时间线由实例业务时间与依赖生成。属性派生归 CEL 与其 AST lineage，不另存对象级计算关系。引用仍受实例匹配、业务时间、来源与可见性约束。
 
-允许的 `plays_role`：Participant Party→Party／Third-party Role；Participant Thing→Domain Role；Context→Context Role；External Context→Third-party Role；Fulfillment Confirmation／Other Evidence→Evidence Role。
+允许的 `plays_role`：Participant Party→Party／Third-party Role；Participant Thing→Domain Role；Context→Context Role；Fulfillment Confirmation／Other Evidence→Evidence Role。未展开的第三方系统可保留无玩家的 Third-party Role；明确其内部上下文后，按真实 Context 与 Context Role 表达上下文协作，不将 Context 当作第三方责任主体。
 
 Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个玩家。消费方 Evidence 以 `references` 引用同一 Context 内的 Evidence-as-Role（`category: role / kind: evidence`），外部实际时刻凭证以 `plays_role` 扮演，玩家保留自身上下文与责任。前者是引用证明约定，后者是具体凭证扮演该约定；凭证引用不因此扩展到其他 Role 类型。角色没有自身责任人、凭证时间或可签发实例，其属性表达消费方要求的玩家数据。Request、Contract、RFP、Proposal 不充当确定结果玩家；同上下文玩家不通过 Evidence Role 中转。
 

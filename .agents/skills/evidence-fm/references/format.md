@@ -119,7 +119,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 | `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
 | `participant` | `party`、`thing`                                                                                   |
 | `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
-| `context`     | `contract`、`pre_contract`、`domain`、`external`                                                   |
+| `context`     | `contract`、`pre_contract`、`domain`                                                               |
 | `fulfillment` | 不定义 kind；`contextRef` 指向所属 Contract Context                                                |
 
 ### Evidence 必备时间属性（本地硬约束）

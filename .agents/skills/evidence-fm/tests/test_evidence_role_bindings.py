@@ -32,7 +32,7 @@ class EvidenceRoleBindingTests(unittest.TestCase):
         self.context = {
             "id": "context.core",
             "category": "context",
-            "kind": "external",
+            "kind": "pre_contract",
         }
         self.model = LoadedModel(
             root=Path("."),

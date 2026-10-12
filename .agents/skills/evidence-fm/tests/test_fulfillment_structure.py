@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from context_samples import attribute, entity, write_model
+from context_samples import attribute, domain_documents, entity, write_model
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
     fulfillment_members,
     load_model,
@@ -84,9 +84,9 @@ class FulfillmentStructureTests(unittest.TestCase):
 
     def test_membership_must_share_the_contract_context(self):
         values = documents()
-        values.append(entity("context.other", "context", "external", "其他边界"))
+        values.extend(domain_documents())
         request = next(v for v in values if v["id"] == "request.acceptance")
-        request["contextRef"] = "context.other"
+        request["contextRef"] = "context.customer-information"
         self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
 
     def test_request_requires_fulfillment_membership(self):

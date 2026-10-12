@@ -174,13 +174,12 @@ class CompilerTests(unittest.TestCase):
 
     def test_multiple_contexts_do_not_create_deployment_or_remote_units(self):
         self.put(
-            "contexts/external.json",
+            "contexts/reference.json",
             {
                 "type": "entity",
                 "id": "context.reference",
                 "category": "context",
-                "kind": "external",
-                "rootRefs": [],
+                "kind": "pre_contract",
             },
         )
         inv = compiler.inventory(self.fm)

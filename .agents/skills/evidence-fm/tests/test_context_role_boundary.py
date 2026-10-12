@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from context_samples import entity, write_model
+from context_samples import write_model
 from fm_model import load_model, validate_model  # pyright: ignore[reportMissingImports]  # noqa: E402
 from test_fulfillment_structure import documents
 
@@ -46,9 +46,16 @@ class ContextRoleBoundaryTests(unittest.TestCase):
 
     def test_later_explicit_context_player_preserves_role_identity(self):
         role = self.role()
-        values = documents() + [role, entity("context.support", "context", "external", "外部支撑边界")]
+        support = documents()
+        serialized = json.dumps(support)
+        for value in support:
+            original = value["id"]
+            serialized = serialized.replace(
+                json.dumps(original), json.dumps(original.replace(".", ".support-", 1))
+            )
+        values = documents() + [role] + json.loads(serialized)
         values.append({"type": "relationship", "id": "relation.support-player", "kind": "plays_role",
-                       "sourceRef": "context.support", "targetRef": role["id"], "label": "支撑边界扮演"})
+                       "sourceRef": "context.support-agreement", "targetRef": role["id"], "label": "支撑合同扮演"})
         self.assertEqual([], self.errors(values))
         values[-1]["sourceRef"] = "context.not-modeled"
         self.assertTrue(self.errors(values), "A player cannot be fabricated by writing only a relationship")

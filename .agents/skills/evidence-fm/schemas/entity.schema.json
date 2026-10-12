@@ -370,12 +370,7 @@
       "then": {
         "properties": {
           "kind": {
-            "enum": [
-              "contract",
-              "pre_contract",
-              "domain",
-              "external"
-            ]
+            "enum": ["contract", "pre_contract", "domain"]
           }
         }
       }
@@ -393,8 +388,8 @@
         "required": ["contextRef"],
         "not": {
           "anyOf": [
-            {"required": ["kind"]},
-            {"required": ["fulfillmentRef"]},
+            { "required": ["kind"] },
+            { "required": ["fulfillmentRef"] },
             {
               "required": ["parentContextRef"]
             },
@@ -415,16 +410,27 @@
       }
     },
     {
-      "if": {"properties": {"category": {"enum": ["context", "evidence", "participant", "role"]}}, "required": ["category"]},
-      "then": {"required": ["kind"]}
+      "if": {
+        "properties": {
+          "category": { "enum": ["context", "evidence", "participant", "role"] }
+        },
+        "required": ["category"]
+      },
+      "then": { "required": ["kind"] }
     },
     {
-      "if": {"properties": {"category": {"const": "evidence"}, "kind": {"const": "fulfillment_request"}}, "required": ["category", "kind"]},
-      "then": {"required": ["fulfillmentRef"]}
+      "if": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "fulfillment_request" }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["fulfillmentRef"] }
     },
     {
-      "if": {"required": ["fulfillmentRef"]},
-      "then": {"properties": {"category": {"enum": ["evidence", "role"]}}}
+      "if": { "required": ["fulfillmentRef"] },
+      "then": { "properties": { "category": { "enum": ["evidence", "role"] } } }
     }
   ],
   "additionalProperties": false,
