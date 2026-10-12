@@ -74,7 +74,11 @@ class SkillPackageTests(unittest.TestCase):
             (ROOT / "evidence-modeling/evals/evals.json").read_text(encoding="utf-8")
         )
         self.assertEqual("evidence-modeling", evaluations["skill_name"])
-        self.assertGreaterEqual(len(evaluations["evals"]), 4)
+        categories = {case["category"] for case in evaluations["evals"]}
+        self.assertTrue({"discovery-before-model", "discovery-delegation-controls",
+                         "combined-model-api-review", "combined-api-blocked",
+                         "combined-read-only", "fm-only-restriction",
+                         "combined-resource-missing"}.issubset(categories))
 
     def test_all_project_skills_use_canonical_root(self):
         self.assertEqual(
@@ -113,13 +117,10 @@ class SkillPackageTests(unittest.TestCase):
             ROOT / "evidence-requirements/evals/evals.json",
         ):
             self.assertTrue(path.is_file(), f"Missing evaluation catalog: {path}")
-            cases.extend(json.loads(path.read_text(encoding="utf-8"))["evals"])
-        self.assertEqual(
-            set(range(1, 72)) - {7},
-            {case["id"] for case in cases},
-        )
-        ids = [case["id"] for case in cases]
-        self.assertEqual(len(ids), len(set(ids)))
+            owned_cases = json.loads(path.read_text(encoding="utf-8"))["evals"]
+            ids = [case["id"] for case in owned_cases]
+            self.assertEqual(len(ids), len(set(ids)), path)
+            cases.extend(owned_cases)
         self.assertTrue(
             {
                 "domain", "fulfillment", "resume", "unclosed-responsibility-blocks-modeling", "requirements",

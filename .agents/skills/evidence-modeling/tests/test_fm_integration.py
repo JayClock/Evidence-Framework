@@ -118,7 +118,10 @@ class FMIntegrationTests(unittest.TestCase):
             self.assertIn(phrase, method)
         self.assertNotIn("## 分析路线", workflow)
         self.assertNotIn("## 组合流程", entry)
-        self.assertTrue({9, 10, 11, 12}.issubset({case["id"] for case in evals}))
+        categories = {case["category"] for case in evals}
+        self.assertTrue({"discovery-before-model", "discovery-delegation-controls",
+                         "edit-without-global-admission", "unclosed-scope-blocks-generation"}
+                        .issubset(categories))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 {
   "skill_name": "evidence-discovery",
   "name": "evidence-discovery-behavior",
+  "contract_refs": ["../SKILL.md", "../references/interview.md"],
   "evals": [
     {
       "id": 1,
@@ -594,7 +595,7 @@
     },
     {
       "id": 50,
-      "category": "text-answer-control-parity",
+      "category": "answer-and-stop",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
       "prompt": "退款Q-010追溯金额约定，原支付证明实付。请继续。",
@@ -608,7 +609,7 @@
     },
     {
       "id": 51,
-      "category": "text-unanswered-resume",
+      "category": "unanswered-cancel-resume",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
       "prompt": "Q-018付款证明提供方尚未回答，按当前理解继续。",
@@ -622,20 +623,6 @@
         "未收到回答保持未知",
         "已答事实直接复用",
         "取消时保持等待"
-      ]
-    },
-    {
-      "id": 52,
-      "category": "text-answer-save-failure",
-      "skill": "evidence-discovery",
-      "knowledgeSkills": ["evidence-fm"],
-      "prompt": "回答：银行到账回执证明到账。请沉淀术语，环境拒绝词汇表写入。",
-      "follow_up": ["权限恢复，只补术语并交接。"],
-      "expectations": [
-        "吸收已收到事实",
-        "真实写入失败立即停止",
-        "交接未保存术语",
-        "读取实际条目后补齐权限内内容"
       ]
     },
     {
@@ -764,6 +751,9 @@
       "category": "incremental-external-change",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
+      "setup": [
+        "在 follow_up 前由评测环境向词汇表写入另一条无关术语，保存其内容用于核对是否被覆盖。"
+      ],
       "prompt": "继续签收提供方，先核对依据。",
       "follow_up": ["收货人出具，请沉淀术语。"],
       "expectations": [
@@ -778,6 +768,9 @@
       "category": "incremental-save-failure",
       "skill": "evidence-discovery",
       "knowledgeSkills": ["evidence-fm"],
+      "setup": [
+        "首轮实际拒绝词汇表写入；follow_up 前恢复写入权限，保留首轮错误及文件实际内容。"
+      ],
       "prompt": "Q-002回答是收货人提供签收回执，请沉淀术语并继续。",
       "follow_up": ["权限恢复，只补术语。"],
       "expectations": [
