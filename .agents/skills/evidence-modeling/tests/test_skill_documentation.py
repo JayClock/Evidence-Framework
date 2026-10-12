@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NAMES = (
     "evidence-discovery",
+    "evidence-handoff",
     "evidence-fm",
     "evidence-requirements",
     "evidence-modeling",
@@ -61,35 +62,14 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_direct_edit_authorization_is_separate_from_discussion_and_approval(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
-        handoff = json.loads(
-            (ROOT / "evidence-discovery/assets/discovery-template.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        handoff_text = json.dumps(handoff, ensure_ascii=False)
-        self.assertEqual("2.0", handoff["schemaVersion"])
-        self.assertLessEqual(
-            {
-                "handoff",
-                "business",
-                "sources",
-                "questions",
-                "downstreamHandoff",
-            },
-            set(handoff),
-        )
-        question = handoff["questions"][0]
-        self.assertEqual("Q-001", question["id"])
-        for key in ("gapKey", "status", "answer", "resolvedBy"):
-            self.assertIn(key, question)
+        handoff_text = (ROOT / "evidence-handoff/SKILL.md").read_text()
+        for phrase in ("disable-model-invocation: true", "目标与权限", "人类确认覆盖", "控制意图", "未保存或未执行"):
+            self.assertIn(phrase, handoff_text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("直接编辑当前模型", fm_entry)
         self.assertIn("编辑授权不是业务批准", fm_entry)
-        self.assertIn("当前实际问题", handoff_text)
-        self.assertIn("普通回答与停止不扩大模型 JSON 编辑授权", handoff_text)
-        self.assertIn("glossaryPath", handoff["handoff"])
-        self.assertIn("languageChanges", handoff["handoff"])
-        self.assertIn("pendingLanguage", handoff["handoff"])
+        self.assertIn("当前问题", handoff_text)
+        self.assertIn("区分已明确事实", handoff_text)
         self.assertIn("modelDigest", validation)
         self.assertIn("只校验请求不写任何项目文件", validation)
         self.assertIn("不自动回滚", fm_entry)
@@ -103,7 +83,8 @@ class SkillDocumentationTests(unittest.TestCase):
                 self.assertIn("domain-language.md", entry)
                 self.assertIn("当轮", entry)
                 self.assertIn("词汇表", entry)
-                self.assertIn("模型 JSON", entry)
+                if name == "evidence-fm":
+                    self.assertIn("模型 JSON", entry)
                 self.assertIn("只聊不落盘", entry)
         composition = (ROOT / "evidence-modeling/SKILL.md").read_text()
         self.assertIn("evidence-discovery", composition)
@@ -114,7 +95,7 @@ class SkillDocumentationTests(unittest.TestCase):
         language = (ROOT / "evidence-fm/references/domain-language.md").read_text()
         for requirement in (
             ".evidence/glossary.json",
-            "来源记录先保存原话",
+            "依据本轮已明确的业务含义，当轮维护词汇入口",
             "不等待所有问题解决",
             "不为术语编造 Entity ID",
             "未澄清不任选其一覆盖",
@@ -131,9 +112,9 @@ class SkillDocumentationTests(unittest.TestCase):
         interview = (ROOT / "evidence-discovery/references/interview.md").read_text()
         self.assertIn("每轮只问一个核心问题", interview)
         self.assertIn("任一写入失败就停止", interview)
-        self.assertIn("两处文件", interview)
-        self.assertIn("停止后补充", interview)
-        self.assertIn("仅保存资料时不更新词汇表", interview)
+        self.assertIn("实际文件", interview)
+        self.assertIn("停止后仅吸收补充资料", interview)
+        self.assertIn("只聊不落盘或仅保存资料时以对话承接", interview)
         formatting = (ROOT / "evidence-fm/references/format.md").read_text()
         self.assertIn("不作为派生报告重建", formatting)
 
@@ -248,15 +229,13 @@ class SkillDocumentationTests(unittest.TestCase):
         expected_paths = {
             "evidence-modeling/SKILL.md": (".evidence/",),
             "evidence-modeling/references/workflow.md": (
-                ".evidence/discovery.json",
+                ".evidence/handoffs/",
                 ".evidence/fm/",
                 ".evidence/checks/fm/",
                 ".evidence/checks/api/",
             ),
-            "evidence-discovery/SKILL.md": (".evidence/discovery.json",),
-            "evidence-discovery/assets/discovery-template.json": (
-                ".evidence/questions.json",
-            ),
+            "evidence-discovery/SKILL.md": (".evidence/glossary.json",),
+            "evidence-handoff/SKILL.md": (".evidence/handoffs/",),
             "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
             "evidence-fm/references/validation.md": (
                 ".evidence/fm/",
@@ -301,8 +280,12 @@ class SkillDocumentationTests(unittest.TestCase):
         ):
             with self.subTest(skill=name):
                 text = (ROOT / name / "SKILL.md").read_text()
-                self.assertIn("只修改本次授权的文件", text)
-                self.assertIn("不自动迁移", text)
+                if name == "evidence-discovery":
+                    self.assertIn("按授权当轮沉淀", text)
+                    self.assertIn("更窄授权", text)
+                else:
+                    self.assertIn("只修改本次授权的文件", text)
+                    self.assertIn("不自动迁移", text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("报告位于模型目录之外", validation)
         api = (ROOT / "evidence-fm/references/api-validation.md").read_text()

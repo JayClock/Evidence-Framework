@@ -15,7 +15,7 @@ class UISeparationTests(unittest.TestCase):
                       'kind: fulfillment', '`position`', '`story`', '`prompt`'):
             self.assertNotIn(token, text)
         for phrase in ('普通对话是完整交互路径', '自然语言', '取消',
-                       '同一问题', '未收到的回答', '任一写入失败就停止'):
+                       '同一问题', '已经收到的回答用于业务理解', '任一写入失败就停止'):
             self.assertIn(phrase, text)
 
     def test_distributed_runtime_has_no_host_specific_dependency(self):

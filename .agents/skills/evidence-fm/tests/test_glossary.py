@@ -26,7 +26,6 @@ def standalone(**fields):
         "kind": "standalone",
         "name": "收稿回执",
         "definition": "证明收到稿件，不证明质量合格。",
-        "sourceRefs": ["discovery.json#Q-1"],
         **fields,
     }
 
@@ -72,13 +71,19 @@ class GlossaryTests(unittest.TestCase):
         self.assertFalse(result["inputChanged"])
 
     def test_required_standalone_fields_and_unknown_fields(self):
-        for key in ("id", "kind", "name", "definition", "sourceRefs"):
+        for key in ("id", "kind", "name", "definition"):
             term = standalone()
             del term[key]
             with self.subTest(key=key):
                 self.assertFalse(self.save([term])["valid"])
         for term in (standalone(name=" "), standalone(sourceRefs=[]), standalone(extra=True)):
             self.assertFalse(self.save([term])["valid"])
+
+    def test_optional_source_references_preserve_existing_entries(self):
+        self.assertTrue(self.save([standalone()])["valid"])
+        self.assertTrue(self.save([standalone(sourceRefs=["provided-material#receipt"])])["valid"])
+        self.assertFalse(self.save([standalone(sourceRefs=[" "])])["valid"])
+        self.assertFalse(self.save([standalone(sourceRefs="locator")])["valid"])
 
     def test_rejects_previous_contract_and_mixed_definitions(self):
         self.path.write_text(json.dumps({"schemaVersion": "1.0", "terms": []}))

@@ -15,16 +15,16 @@
 
 ## 来源与冲突处理
 
-| 问题                 | 权威位置                                                                                                         | 不可替代它的内容                 |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| 业务事实             | [FM 源入口](../../.evidence/fm/model.json)、[发现记录](../../.evidence/discovery.md)（新访谈由发现流程按需创建） | 当前代码、生成报告、Agent 推测   |
-| 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                                         | Resource 实现、过期 OpenAPI      |
-| 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                                         | FM 中存在的所有活动              |
-| 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)                                  | 目录名、参考产品或模板默认业务   |
-| 业务术语             | [JSON 词汇入口](../../.evidence/glossary.json)：standalone 定义或 model 所引 FM 对象                             | 重复维护已建模概念的定义         |
-| 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md)                         | 用同义词制造新业务对象           |
-| 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                                              | 文件名、审核页、聊天记忆、README |
-| 当前是否验证         | 任务 CHECK 的本次实际结果                                                                                        | 文件存在、上次通过或模板中的预期 |
+| 问题                 | 权威位置                                                                                             | 不可替代它的内容                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------- |
+| 业务事实             | [FM 源入口](../../.evidence/fm/model.json)、[发现记录](../../.evidence/discovery.md)（已有业务材料） | 当前代码、生成报告、Agent 推测   |
+| 接口能力与 HTTP 契约 | [api.json](../../.evidence/api/api.json)                                                             | Resource 实现、过期 OpenAPI      |
+| 本次软件负责什么     | [范围](../requirements/scope.md)、[故事验收](../requirements/stories.md)                             | FM 中存在的所有活动              |
+| 技术选择与模块边界   | [架构基线](../architecture/overview.md)、[模块设计](../architecture/modules.md)                      | 目录名、参考产品或模板默认业务   |
+| 业务术语             | [JSON 词汇入口](../../.evidence/glossary.json)：standalone 定义或 model 所引 FM 对象                 | 重复维护已建模概念的定义         |
+| 英文代码与字段映射   | [领域映射](../architecture/domain-mapping.md)、[通用命名](../engineering/conventions.md)             | 用同义词制造新业务对象           |
+| 执行顺序与状态       | `plan.yaml` 的 `compiled` / `tasks[taskKey].status`                                                  | 文件名、审核页、聊天记忆、README |
+| 当前是否验证         | 任务 CHECK 的本次实际结果                                                                            | 文件存在、上次通过或模板中的预期 |
 
 来源冲突时，先说明各自管辖范围及差异，停止受影响行动，交由相应拥有者确认；不能按读取先后、修改时间或“代码已经这样写了”裁决。实现证据与业务批准分开记录。
 
@@ -35,6 +35,7 @@
 | 工作                   | 必要前馈                                                                                                                                                                                                                                                                                               |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 业务澄清 / FM          | [建模指南](../evidence-modeling.md)选择分支，再读对应 Skill 与本次实际来源；业务分析按 [FM 方法](../../.agents/skills/evidence-fm/references/business-analysis.md)，术语维护读取 [词汇表](../../.evidence/glossary.json)与领域语言方法，正式编辑先读追责结束准入；仅讨论不预加载全部源 JSON 或生成参考 |
+| 手动建模交接           | [Handoff Skill](../../.agents/skills/evidence-handoff/SKILL.md)：按显式请求压缩当前建模进展，引用已有产物并保存 Markdown 交接                                                                                                                                                                          |
 | 一体建模 / 联合审核    | [Modeling](../../.agents/skills/evidence-modeling/SKILL.md)及 [交接协议](../../.agents/skills/evidence-modeling/references/workflow.md)；先确定权限，再加载该分支的专业 Skill；完整生成先检查 FM（含 API）与 Visualization 依赖，FM 检查一次后接续 API 自身校验，按阶段加载方法；只校验不写两源或页面  |
 | 软件需求               | [范围](../requirements/scope.md)、[故事](../requirements/stories.md)、[质量属性](../requirements/quality-attributes.md)、[requirements Skill](../../.agents/skills/evidence-requirements/SKILL.md)                                                                                                     |
 | 任务规划               | 范围与相关 FM/API、架构三篇、[planning Skill](../../.agents/skills/evidence-task-planning/SKILL.md)、[测试工序](../engineering/procedures.md)、[测试指南](../engineering/testing.md)、[质量属性](../requirements/quality-attributes.md)                                                                |
@@ -64,7 +65,7 @@
 
 ## 缺口与转向
 
-- 只读讨论/验证：报告缺口，不擅自写计划状态。访谈沉淀只写获授权的发现记录和词汇表；术语与现有模型冲突时登记影响，不静默改写 JSON、规则或验收。
+- 只读讨论/验证：报告缺口，不擅自写计划状态。访谈沉淀只写获授权词汇表；术语与现有模型冲突时登记影响，不静默改写 JSON、规则或验收。
 - 获授权实施：缺口关联 `plan.yaml.gaps` 和受影响任务的 `gapRefs`；阻塞时不进入 Action。
 - 源业务未知：交回发现/FM/API/需求拥有者，不在代码中猜测。
 - 任务局部设计不充分：修订详情；单元归属或依赖变化：返回 Plan 重编译。

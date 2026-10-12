@@ -13,6 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 ROOT = Path(__file__).resolve().parents[2]
 PORTABLE_NAMES = (
     "evidence-discovery",
+    "evidence-handoff",
     "evidence-fm",
     "evidence-requirements",
     "evidence-modeling",
@@ -132,7 +133,7 @@ class SkillPackageTests(unittest.TestCase):
                 "party-cross-context-identity", "party-identity-unresolved", "party-representative-boundary",
                 "agreement-initial-data", "skeleton-before-evidence-trace",
                 "exception-reuses-skeleton-trace", "multi-agreement-reference-resume",
-                "record-version-boundary",
+                "context-sufficiency-boundary",
                 "operating-basis-marketplace", "target-actual-without-cash",
                 "agreement-name-without-operating-basis", "non-cash-duty-in-cash-contract",
                 "unknown-fee-retains-context", "custody-not-platform-revenue",

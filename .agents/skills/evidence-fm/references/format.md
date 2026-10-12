@@ -39,7 +39,7 @@
     └── simulation.json
 ```
 
-`model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的术语入口，使用独立 Schema：standalone 的定义可以先于模型存在，model 条目只引用 FM 对象或属性；解析结果不作为派生报告重建后回写。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。词汇表、发现与问题不进入 FM 类型加载；发现与问题保存在 `.evidence/discovery.json`，检查记录放在 `.evidence/checks/fm/`，不维护另一份访谈副本。
+`model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的术语入口，使用独立 Schema：standalone 的定义可以先于模型存在，model 条目只引用 FM 对象或属性；解析结果不作为派生报告重建后回写。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。FM 类型加载只消费正式类型源；词汇入口与获授权检查记录分别位于 FM 根之外，检查记录放在 `.evidence/checks/fm/`。
 
 同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `category: fulfillment` 的 Entity，不定义 kind，存放于 `fulfillments/<业务名>/fulfillment.json`。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
@@ -110,7 +110,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 
 `entryContextRefs` 可以直接引用 Domain 或 Pre-contract Context，不要求包含 Contract。示例见 `domain-modeling.md`。
 
-模型文件不保存审核或生命周期状态。变更由项目 PDCA 触发，确认依据随发现记录与计划索引／任务记录维护；脚本不写入、不推断，机器校验通过也不当作业务确认。
+模型文件不保存审核或生命周期状态。变更由项目 PDCA 触发，确认依据核对本次提供的人类明确决定及其覆盖范围；脚本不写入、不推断，机器校验通过也不当作业务确认。
 
 ## 4. Entity 种类
 

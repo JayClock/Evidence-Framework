@@ -22,10 +22,12 @@ class WorkflowAnchorTests(unittest.TestCase):
         self.assertIn("modeling --> discovery", structure)
         self.assertIn("modeling --> fm", structure)
         self.assertIn("modeling --> visual", structure)
+        self.assertIn("modeling --> manual", structure)
         self.assertIn("discovery -.-> fm", structure)
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", flow))
         self.assertTrue({
             ("intent", "discussion"), ("intent", "discovery"),
+            ("intent", "manual"), ("manual", "handoff"),
             ("intent", "readonly"), ("intent", "review"),
             ("intent", "resources"), ("resources", "admission"),
             ("resources", "blocked"), ("admission", "fm"),

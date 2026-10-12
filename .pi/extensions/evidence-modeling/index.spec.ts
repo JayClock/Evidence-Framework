@@ -61,7 +61,10 @@ describe('evidence-modeling UI adapter boundary', () => {
     ]) {
       expect(question.description).toContain(status);
     }
-    expect(question.description).toContain('保存失败');
+    expect(question.description).toContain('术语写入失败');
+    expect(question.description).toContain('吸收全部事实与控制意图');
+    expect(question.description).not.toContain('先保存来源');
+    expect(contexts.description).not.toContain('按授权保存');
     expect(contexts.description).toContain('selected');
     expect(contexts.description).toContain('empty');
     const adapter = await readFile(join(directory, 'skill-adapter.md'), 'utf8');

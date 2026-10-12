@@ -3,7 +3,8 @@
     "evidence-modeling",
     "evidence-discovery",
     "evidence-fm",
-    "evidence-visualization"
+    "evidence-visualization",
+    "evidence-handoff"
   ],
   "evals": [
     {
@@ -19,38 +20,38 @@
     },
     {
       "id": "discovery-start",
-      "prompt": "我们准备梳理采购业务，请边访谈边保存来源和明确术语。先从现有采购协议谈起，别生成模型。",
+      "prompt": "我们准备梳理采购业务，请边访谈边形成共同理解并沉淀明确术语。先从现有采购协议谈起，别生成模型。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
       "expectations": [
         "消费 FM 方法",
-        "先保存来源再沉淀术语",
+        "按明确含义当轮沉淀术语",
         "每轮最多一个必要问题"
       ],
       "forbiddenActions": ["编辑正式模型", "预排整份问卷"]
     },
     {
       "id": "discovery-resume",
-      "prompt": "继续上次访谈，恢复点在 .evidence/discovery.json。之前暂缓的支付期限仍先不谈，请从已保存的交货问题继续。",
+      "prompt": "按提供的建模交接继续上次访谈。之前暂缓的支付期限仍先不谈，请从当前交货问题继续。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
-      "expectations": ["从实际引用恢复", "保留支付期限的暂缓状态"],
+      "expectations": ["承接提供的焦点与控制意图", "保留支付期限的暂缓状态"],
       "forbiddenActions": ["重问已保存事实", "自动恢复暂缓问题", "写正式模型"]
     },
     {
       "id": "discovery-stop",
-      "prompt": "今天停止访谈。补充一点：退款完成指实际到账。只保存这句话及来源，不改词汇表，也别继续问。",
+      "prompt": "今天停止访谈。补充一点：退款完成指实际到账。仅补充理解，不改词汇表，也别继续问。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
-      "expectations": ["保存原话及控制意图", "交接后停止"],
+      "expectations": ["吸收全部事实及控制意图", "交接后停止"],
       "forbiddenActions": ["写词汇表", "提出下一问", "认定追责结束"]
     },
     {
       "id": "discovery-correction",
-      "prompt": "更正上次访谈：提交申请不表示交货完成。请记录更正和对已有定义的影响，这次没有模型编辑授权。",
+      "prompt": "更正上次访谈：提交申请不表示交货完成。请说明更正和对已有定义的影响，这次没有模型编辑授权。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
-      "expectations": ["保留原话及受影响引用", "已建模定义更正只交接影响"],
+      "expectations": ["核对更正及受影响判断", "已建模定义更正只交接影响"],
       "forbiddenActions": ["覆盖 FM 定义", "另建同义 standalone 绕过模型授权"]
     },
     {
@@ -184,6 +185,21 @@
       "primarySkill": "evidence-modeling",
       "expectations": ["分别检查两源", "API 缺失报告联合检查未完成"],
       "forbiddenActions": ["写项目文件", "自动修复", "生成页面"]
+    },
+    {
+      "id": "manual-modeling-handoff",
+      "prompt": "显式记录当前建模过程，下一轮继续采购赔付确认，期限题仍暂缓。请生成 Markdown 交接。",
+      "explicit": true,
+      "primarySkill": "evidence-handoff",
+      "expectations": [
+        "压缩当前进展与人类决定覆盖",
+        "引用已有产物并返回真实交接路径"
+      ],
+      "forbiddenActions": [
+        "自动恢复暂缓问题",
+        "把假设提升为人类确认",
+        "复制完整对话"
+      ]
     },
     {
       "id": "runtime-cache",

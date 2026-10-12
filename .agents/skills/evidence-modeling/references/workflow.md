@@ -9,9 +9,11 @@
 ```mermaid
 flowchart LR
     modeling[Modeling：授权、分派与交接]
-    discovery[Discovery：交互、记录与恢复]
+    discovery[Discovery：交互、理解更新与控制]
     fm[FM：方法、正式表达与整体 API]
     visual[Visualization：只读审核投影]
+    manual[Handoff：手动建模过程交接]
+    modeling --> manual
     modeling --> discovery
     modeling --> fm
     modeling --> visual
@@ -27,6 +29,7 @@ flowchart TD
     intent{目标与本轮授权}
     discussion[FM 讨论，不写文件]
     discovery[Discovery 访谈、导航或控制]
+    manual[evidence-handoff 保存请求的 Markdown 交接]
     readonly[FM 检查，已有 API 消费同一结果；仅 FM 限制优先]
     resources{所需专业包与运行依赖可用}
     admission{FM 核对当前人类追责结束依据与编辑授权}
@@ -42,6 +45,8 @@ flowchart TD
     handoff[交接真实结果后停止]
     intent -->|讨论| discussion
     intent -->|访谈、导航、停止或仅补资料| discovery
+    intent -->|显式记录建模过程| manual
+    manual --> handoff
     intent -->|只校验| readonly
     intent -->|仅联合审核页| review
     intent -->|正式生成或修改| resources
@@ -78,28 +83,28 @@ flowchart TD
 
 默认路径相对项目根；沿用指定位置，不自动迁移。目录存在不扩大本轮写入权限。
 
-| 产物                             | 位置                                                              | 拥有者                              |
-| -------------------------------- | ----------------------------------------------------------------- | ----------------------------------- |
-| 来源、工作理解、原问题及控制意图 | `.evidence/discovery.json`；必要时引用 `.evidence/questions.json` | Discovery                           |
-| 唯一词汇入口                     | `.evidence/glossary.json`                                         | FM 领域语言方法；访谈按授权当轮维护 |
-| 正式模型、说明与场景             | `.evidence/fm/`                                                   | FM                                  |
-| API 设计与完整投影               | `.evidence/api/api.json`、`.evidence/api/generated/`              | FM 包的 API 阶段                    |
-| 只读审核投影                     | `.evidence/views/index.html`                                      | Visualization                       |
-| 获授权留存的紧凑检查记录         | `.evidence/checks/fm/`、`.evidence/checks/api/`                   | 对应检查执行者                      |
+| 产物                       | 位置                                                 | 拥有者                              |
+| -------------------------- | ---------------------------------------------------- | ----------------------------------- |
+| 用户显式要求的建模过程交接 | `.evidence/handoffs/<主题>.md` 或指定路径            | evidence-handoff                    |
+| 唯一词汇入口               | `.evidence/glossary.json`                            | FM 领域语言方法；访谈按授权当轮维护 |
+| 正式模型、说明与场景       | `.evidence/fm/`                                      | FM                                  |
+| API 设计与完整投影         | `.evidence/api/api.json`、`.evidence/api/generated/` | FM 包的 API 阶段                    |
+| 只读审核投影               | `.evidence/views/index.html`                         | Visualization                       |
+| 获授权留存的紧凑检查记录   | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 对应检查执行者                      |
 
-发现记录不是正式 FM。字段语义由 Discovery 模板维护；词汇定义归 standalone 或其引用的 FM 对象唯一拥有，不在交接中复制正文。
+访谈提供共同业务理解；词汇定义归 standalone 或其引用的 FM 对象唯一拥有，交接传递当前判断与必要依据。
 
 ## 分支进入与连续承接
 
-首次进入按目标选择执行者并传递授权及实际来源。连续问答保持 Discovery 分支，由其访谈协议决定当前节点的增量读取与事件核对；入口不重做专业分析，不反复加载全部 Skill 或生成依赖。目标或授权改变才重新判断分支；未变化且仍在上下文的方法可以复用，不能把聊天摘要当成现行事实。
+首次进入按目标选择执行者并传递授权及实际来源。用户显式要求记录建模过程或会话交接时，委派 evidence-handoff 保存 Markdown；该动作采用单独的请求授权。连续问答保持 Discovery 分支，由其访谈协议决定当前节点的增量读取与事件核对；入口不重做专业分析，不反复加载全部 Skill 或生成依赖。目标或授权改变才重新判断分支；未变化且仍在上下文的方法可以复用，不能把聊天摘要当成现行事实。
 
 ## 恢复一个分支
 
 本节用于跨会话、必要上下文丢失或保存中断，不是每轮回答后的必经步骤。只恢复当前分支所需内容，访谈的最小读取范围、新鲜度和扩大条件归 Discovery 协议。
 
-1. 核对当前目标、允许文件、已有 Git 差异和实际停止／暂缓状态，不用聊天摘要推测已经保存。
-2. 定位分支输入和来源版本。访谈从 `handoff.focusRef`、可选 `handoff.focusPoint`、原问题及来源引用恢复；发现记录 `schemaVersion` 不符时交给 Discovery 处理，不猜测转换。外部材料不必转换成发现模板才能由 FM 只读消费。
-3. 保存中断先核对各文件实际内容。这些写入不是原子事务，只补齐本次授权且尚未保存的部分。交互方式不参与业务恢复：可选界面消失时仍沿用原焦点与原问题，已收到的回答先保存，不重新索取；取消不当作不可用强迫重问。具体输入处理归 Discovery 的访谈协议。
+1. 核对当前目标、允许文件、已有 Git 差异及提供的停止／暂缓状态。
+2. 定位分支输入和适用版本。访谈按提供的材料与交接承接当前合同、履约项、请求或确认、原问题及控制意图；关键上下文不足时交接具体限制。
+3. 产物保存中断先核对各文件实际内容，只补齐本次授权且尚未保存部分。界面消失时沿原焦点与原问题继续普通对话，已收到事实直接复用；取消时等待用户。具体输入处理归 Discovery 的访谈协议。
 4. 恢复正式编辑时，由 FM 按 `references/responsibility-closure.md` 重新核对人类追责结束依据和当前范围；来源变化不能沿用失效确认。
 5. 恢复完整生成时分别检查 FM/API 的差异和新鲜度。已完成且未变的源复验后接续，不无故重写；旧页面不证明当前有效。
 

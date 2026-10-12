@@ -54,21 +54,18 @@ class ResponsibilityClosureTests(unittest.TestCase):
             self.assertIn("追责结束", text)
             self.assertIn("每轮", text)
         interview = (SKILLS / "evidence-discovery/references/interview.md").read_text()
-        self.assertIn("停止或暂缓不等于追责结束", interview)
+        self.assertIn("停止或暂缓与追责结束分别判断", interview)
         self.assertIn("等待人类", interview)
-        self.assertIn("不自动恢复", interview)
+        self.assertIn("继续问答须有明确意图", interview)
 
-    def test_closure_evidence_lives_in_discovery_not_model_status(self):
-        document = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        closure = document["business"]["responsibilityClosure"]
-        self.assertEqual(set(closure), {
-            "scope", "scopeSourceRefs", "basisRefs", "mainFulfillmentRefs", "chainRefs",
-            "terminalDecisions", "unresolvedRefs", "completionSourceRefs",
-        })
-        self.assertIn("humanSourceRefs", closure["terminalDecisions"][0])
-        self.assertNotIn("status", closure)
-        self.assertNotIn("approved", closure)
-        self.assertIn("追责结束", json.dumps(document, ensure_ascii=False))
+    def test_admission_checks_human_decisions_and_complete_current_scope(self):
+        text = (SKILLS / "evidence-fm/references/responsibility-closure.md").read_text()
+        for phrase in ("人类确认的范围与全部主履约清单", "各分支的人类终点决定", "整体业务版本", "缺少任一必要内容"):
+            self.assertIn(phrase, text)
+        self.assertNotIn("business.responsibilityClosure", text)
+        self.assertNotIn("completionSourceRefs", text)
+        handoff = (SKILLS / "evidence-handoff/SKILL.md").read_text()
+        self.assertIn("缺失或失效之处明确列出", handoff)
 
     def test_partial_admission_bypasses_are_removed(self):
         retired = (

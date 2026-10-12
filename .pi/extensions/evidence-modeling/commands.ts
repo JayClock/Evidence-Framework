@@ -34,7 +34,7 @@ async function chooseIntent(
     const goal = await ctx.ui.editor(`描述本次目标：${selected}`, '');
     if (!goal?.trim()) return null;
     return selected === '访谈并沉淀领域语言'
-      ? `访谈并沉淀领域语言：${goal}，保存发现记录并当轮更新已明确术语的统一词汇表，不修改模型 JSON、关系、规则、验证场景、API 或实现`
+      ? `访谈并沉淀领域语言：${goal}，形成共同业务理解并当轮更新已明确术语的统一词汇表，不修改模型 JSON、关系、规则、验证场景、API 或实现`
       : `生成或修改模型与 API：${goal}，先核对追责结束依据，编辑并校验当前 FM，再设计并校验整体 API，生成联合审核页；不自动批准或进入实施`;
   }
   if (selected === '只校验模型与 API') {

@@ -26,7 +26,7 @@ class SkillRoutingTests(unittest.TestCase):
                 assert description is not None
                 prefix = "仅在显式" if name == "evidence-modeling" else "当用户"
                 self.assertTrue(description[1].startswith(prefix))
-                self.assertIn("不", description[1])
+                self.assertIn("当用户" if name == "evidence-discovery" else "不", description[1])
                 self.assertIn("停止", text.split("## Steer", 1)[1])
 
     def test_fm_editing_routes_to_its_specialist_sources(self):
@@ -58,18 +58,18 @@ class SkillRoutingTests(unittest.TestCase):
 
     def test_routing_evaluations_cover_all_entries_and_near_misses(self):
         catalog = json.loads((SKILLS / "evidence-modeling/evals/routing.json").read_text())
-        self.assertEqual(list(NAMES), catalog["availableSkills"])
+        self.assertEqual(list(NAMES) + ["evidence-handoff"], catalog["availableSkills"])
         cases = catalog["evals"]
         self.assertGreaterEqual(len(cases), 20)
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        self.assertEqual(set(NAMES) | {None}, {case["primarySkill"] for case in cases})
+        self.assertEqual(set(NAMES) | {"evidence-handoff", None}, {case["primarySkill"] for case in cases})
         for case in cases:
             with self.subTest(case=case["id"]):
                 self.assertTrue(case["prompt"])
                 self.assertTrue(case["expectations"])
                 self.assertTrue(case["forbiddenActions"])
                 self.assertIsInstance(case["explicit"], bool)
-                if case["primarySkill"] == "evidence-modeling":
+                if case["primarySkill"] in {"evidence-modeling", "evidence-handoff"}:
                     self.assertTrue(case["explicit"])
         self.assertGreaterEqual(sum(case["primarySkill"] is None for case in cases), 3)
 

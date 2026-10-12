@@ -37,19 +37,13 @@ class InterviewMainlineTests(unittest.TestCase):
             self.assertIn(phrase, method)
         interview = (SKILLS / "evidence-discovery/references/interview.md").read_text()
         for phrase in ("每轮只问一个核心问题", "材料已提供就直接读取", "正常和争议单据推演",
-                       "不套履约链", "任一写入失败就停止", "未执行不声称推演通过"):
+                       "领域上下文 → 当前对象", "任一写入失败就停止", "未执行保持未执行"):
             self.assertIn(phrase, interview)
 
-    def test_handoff_preserves_business_reasoning_without_model_copy(self):
-        template = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        for key in ("operatingBasis", "agreements", "responsibilities", "evidenceTraces",
-                    "walkthroughs", "variations"):
-            self.assertIn(key, template["business"])
-        for key in ("languageChanges", "interactionState", "deferredQuestions"):
-            self.assertIn(key, template["handoff"])
-        text = json.dumps(template, ensure_ascii=False)
-        self.assertIn("设计建议与现行事实分开", text)
-        self.assertIn("不冒充机器校验", text)
+    def test_manual_handoff_preserves_business_progress_and_controls(self):
+        text = (SKILLS / "evidence-handoff/SKILL.md").read_text()
+        for phrase in ("全部主履约", "关键数据追溯", "异常责任", "暂缓项", "真实保存与执行结果"):
+            self.assertIn(phrase, text)
 
     def test_party_discovery_is_explicit_and_source_bound(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
@@ -60,12 +54,7 @@ class InterviewMainlineTests(unittest.TestCase):
                        "不等 API 设计再补", "不以合同或单据推演为前提",
                        "影响责任闭合时，整个已确认业务范围不能进入正式建模"):
             self.assertIn(phrase, method)
-        template = json.loads((SKILLS / "evidence-discovery/assets/discovery-template.json").read_text())
-        entries = template["business"]["participants"]
-        self.assertIsInstance(entries, list)
-        self.assertEqual(set(entries[0]), {"id", "contextAndRole", "party", "identityBasis",
-                                          "representativeBasis", "sourceRefs", "unresolved"})
-        self.assertIsInstance(entries[0]["sourceRefs"], list)
+        self.assertIn("核对主体、角色、同一性及代表依据的对应关系", method)
 
     def test_behavior_evals_cover_mainline_and_negative_cases(self):
         document = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())

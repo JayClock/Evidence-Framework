@@ -54,21 +54,12 @@ class ContractIdentificationTests(unittest.TestCase):
         self.assertIn("evidence-fm/references/business-analysis.md", guide)
         self.assertIn("经营依据", guide)
 
-    def test_each_agreement_records_basis_without_implicit_migration(self):
-        template = json.loads(
-            (SKILLS / "evidence-discovery/assets/discovery-template.json").read_text()
-        )
-        self.assertEqual("2.0", template["schemaVersion"])
-        business = template["business"]
-        self.assertIn("约定记录", business["operatingBasis"])
-        basis = business["agreements"][0]["operatingBasis"]
-        for phrase in ("现金权责", "目标—实际", "来源", "边界理由", "未知"):
-            self.assertIn(phrase, basis)
+    def test_agreement_understanding_explains_business_basis(self):
         interview = (SKILLS / "evidence-discovery/references/interview.md").read_text()
-        self.assertIn("agreements[].operatingBasis", interview)
-        self.assertIn("可选说明", interview)
-        self.assertIn("不自动补写", interview)
-        self.assertIn("不自动迁移", interview)
+        for phrase in ("现金权责", "目标与实际", "观察主体", "独立边界", "具体目的", "双方"):
+            self.assertIn(phrase, interview)
+        self.assertIn("经营依据或独立边界不足的线索保持待查", interview)
+        self.assertIn("参数与证明缺口归对应合同", interview)
 
     def test_formal_mapping_rechecks_identification_without_new_contract_kinds(self):
         for filename in ("semantics.md", "input-review.md", "batch-assessment.md"):

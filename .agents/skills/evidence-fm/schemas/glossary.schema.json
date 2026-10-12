@@ -29,7 +29,7 @@
     "standalone": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "kind", "name", "definition", "sourceRefs"],
+      "required": ["id", "kind", "name", "definition"],
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "kind": { "const": "standalone" },
