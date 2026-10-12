@@ -6,7 +6,7 @@ Agent 按 Skill 决定焦点、可选合同、问题及权限，插件不决定�
 
 ## 合同选择
 
-调用 `evidence_ui_contexts` 时传入 `contexts` 和可选 `currentAgreementRef`。只传入 Agent 按 FM 方法从材料直接识别、依据充分的合同上下文。每项包含发现记录 ID `agreementRef`，以及 `name`、`parties`（至少双方角色）、`boundary`、`unresolved`、`clarification: open / completed`；不接收 `status`。依据不足的线索不作为选项，参数与证明缺口则保留在 `unresolved`。插件不判断材料充分性，载荷合法不等于业务依据充分。
+调用 `evidence_ui_contexts` 时传入 `contexts` 和可选 `currentAgreementRef`。只传入 Agent 按 FM 方法从材料直接识别、依据充分的合同上下文。每项包含发现记录 ID `agreementRef`，以及 `name`、`parties`（至少双方角色）、`operatingMainline: cash / target-actual`、`operatingBasis`、`boundary`、`unresolved`、`clarification: open / completed`；不接收 `status`。依据不足的线索不作为选项，参数与证明缺口则保留在 `unresolved`。`operatingMainline` 分别展示为“现金权责”或“目标与实际”。`operatingBasis` 只投影“谁与谁签订什么合同，以实现什么具体经营目的”，口头约定用“达成约定”，现金收入／支出须注明观察主体。所有展示字段不包含资料名称、路径、版本、来源 ID 或参考链接；不能直接复制含来源的记录正文。内部来源引用仍保留。插件不判断材料充分性，载荷合法不等于业务依据充分。
 
 `clarification` 是 Agent 按原约定结束依据核对后的投影，不由插件推断。插件只按投影禁用已结束项；接到选择后 Agent 仍须重新核对记录及权限，不能把禁用按钮当成业务保障。焦点在履约上时沿原节点的约定引用确定当前合同。
 

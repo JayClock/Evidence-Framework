@@ -25,9 +25,9 @@
 
 ## `evidence_ui_contexts`
 
-首次依据材料直接识别合同上下文及用户要求查看／切换时，由 Agent 从发现记录生成仅含依据充分合同的 `contexts`：每项包含稳定 `agreementRef`、`name`、`parties`（至少双方角色）、`boundary`、`unresolved` 和 `clarification: open / completed`。不传候选或确认状态，不把识别依据不足的线索作为选项；`unresolved` 表示待追溯的履约细节，不是让用户确认合同存在。可选 `currentAgreementRef` 标注当前合同。结束状态依据原约定的 `clarificationCompletionSourceRefs`，由 Agent 核对来源投影；扩展不作业务判断或保存事实。
+首次依据材料直接识别合同上下文及用户要求查看／切换时，由 Agent 从发现记录生成仅含依据充分合同的 `contexts`：每项包含稳定 `agreementRef`、`name`、`parties`（至少双方角色）、`operatingMainline: cash / target-actual`、`operatingBasis`、`boundary`、`unresolved` 和 `clarification: open / completed`。不传候选或确认状态，不把识别依据不足的线索作为选项；`unresolved` 表示待追溯的履约细节，不是让用户确认合同存在。可选 `currentAgreementRef` 标注当前合同。结束状态依据原约定的 `clarificationCompletionSourceRefs`，由 Agent 核对来源投影；扩展不作业务判断或保存事实。
 
-选择面板展示全部合同摘要，已结束项标记“已结束，不可选择”，不进入选项；伪造的已结束选项也不会返回选择结果。全部结束时仅可返回。重名合同通过序号区分，结果返回稳定 ID；重复 ID 或失效的当前引用拒绝执行。
+只投影经营依据与独立边界充分的合同。经营主线显示为“现金权责”或“目标与实际”，经营说明用“谁与谁签订什么合同，以实现什么具体经营目的”，口头约定用“达成约定”；现金收入／支出注明观察主体。展示字段不包含资料名称、路径、版本、来源 ID 或参考链接，内部保留来源引用，不能将含来源的记录正文直接传入。选择面板展示全部合同摘要，已结束项标记“已结束，不可选择”，不进入选项；伪造的已结束选项也不会返回选择结果。全部结束时仅可返回。重名合同通过序号区分，结果返回稳定 ID；重复 ID 或失效的当前引用拒绝执行。
 
 结果为 `selected`（带 `agreementRef`）、`cancelled`、`empty` 或 `unavailable`。取消不选择默认项、不改用文本强迫再选；不可用时由 Agent 提供同样的普通对话编号列表。选择后按访谈协议重新核对未结束、保存来源及焦点引用，承接已有主履约并进入单点澄清；选择只决定分析焦点，不确认合同存在或边界、不排除其他责任，不自动解除停止状态，自然语言切换同样禁止进入已结束项。
 

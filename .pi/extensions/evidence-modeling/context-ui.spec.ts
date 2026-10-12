@@ -13,6 +13,9 @@ const input: ContextSelectionInput = {
       agreementRef: 'A-1',
       name: '采购协议',
       parties: ['买方', '卖方'],
+      operatingMainline: 'cash',
+      operatingBasis:
+        '买方与卖方签订采购协议，使买方取得商品、卖方取得价款（买方支出）。',
       boundary: '货物价款与交付',
       clarification: 'open',
       unresolved: [],
@@ -21,6 +24,9 @@ const input: ContextSelectionInput = {
       agreementRef: 'A-2',
       name: '采购协议',
       parties: ['平台', '商户'],
+      operatingMainline: 'cash',
+      operatingBasis:
+        '平台与商户签订服务协议，使商户获得交易服务、平台取得服务费收入。',
       boundary: '服务费与服务责任',
       clarification: 'open',
       unresolved: ['服务费率待明确'],
@@ -42,6 +48,11 @@ describe('contract context navigation', () => {
       { parties: [] },
       { parties: ['买方'] },
       { boundary: '' },
+      { operatingMainline: 'risk' },
+      { operatingMainline: undefined },
+      { operatingBasis: ' ' },
+      { operatingBasis: undefined },
+      { sourceRefs: ['private-material.md'] },
       { extra: true },
     ]) {
       expect(
@@ -63,12 +74,37 @@ describe('contract context navigation', () => {
     expect(title).toContain('合同上下文总览');
     expect(title).toContain('买方 / 卖方');
     expect(title).toContain('货物价款与交付');
+    expect(title).toContain('经营主线：现金权责');
+    expect(title).toContain(input.contexts[0].operatingBasis);
+    expect(title).not.toMatch(/资料来源|sourceRefs|agreementRef/);
     expect(title).toContain('服务费率待明确');
     expect(title).toContain('选择只决定分析焦点');
     expect(title).toContain('先分析哪个合同上下文？');
     expect(title).not.toMatch(/候选|已确认/);
     expect(options[0]).toContain('当前');
     expect(options[1]).toBe('2. 采购协议');
+  });
+
+  it('renders target-actual purposes without cash labels', async () => {
+    const ctx = context();
+    ctx.ui.select.mockResolvedValue('返回');
+    await new QuestionUI().selectContext(
+      {
+        contexts: [
+          {
+            ...input.contexts[0],
+            operatingMainline: 'target-actual',
+            operatingBasis:
+              '管理者与销售达成绩效约定，通过检查实际联系产出落实客户联系目标。',
+          },
+        ],
+      },
+      ctx as never,
+    );
+    const title = ctx.ui.select.mock.calls[0][0];
+    expect(title).toContain('经营主线：目标与实际');
+    expect(title).toContain('管理者与销售达成绩效约定');
+    expect(title).not.toContain('经营主线：现金权责');
   });
 
   it('keeps completed contexts visible but rejects even a forged selection of them', async () => {

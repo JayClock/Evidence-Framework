@@ -105,6 +105,9 @@ describe('evidence-modeling UI adapter boundary', () => {
             agreementRef: 'A-1',
             name: '采购',
             parties: ['买方', '卖方'],
+            operatingMainline: 'cash',
+            operatingBasis:
+              '买方与卖方签订采购协议，使买方取得商品、卖方取得价款（买方支出）。',
             boundary: '价款与交付责任',
             clarification: 'open',
             unresolved: [],
@@ -185,6 +188,9 @@ describe('evidence-modeling UI adapter boundary', () => {
             agreementRef: 'A-1',
             name: '采购',
             parties: ['买方', '卖方'],
+            operatingMainline: 'cash',
+            operatingBasis:
+              '买方与卖方签订采购协议，使买方取得商品、卖方取得价款（买方支出）。',
             boundary: '价款与交付责任',
             clarification: 'open',
             unresolved: ['交付证明待明确'],

@@ -31,6 +31,22 @@ class ContextNavigationTests(unittest.TestCase):
             self.assertIn(phrase, text)
         self.assertNotIn('未取得明确边界确认依据时显示候选', text)
 
+    def test_operating_purpose_is_visible_but_material_metadata_is_internal(self):
+        text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
+        for phrase in (
+            '经营主线', '现金权责', '目标与实际', '观察主体',
+            '谁与谁签订什么合同，以实现什么具体经营目的',
+            '不包含资料名称、文件路径、版本、来源 ID',
+            '只留在内部来源记录', '独立边界不充分',
+        ):
+            self.assertIn(phrase, text)
+        example = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
+        display = example.split('```text', 1)[1].split('```', 1)[0]
+        self.assertIn('经营主线：现金权责（买方支出）', display)
+        self.assertIn('买方与卖方签订采购协议', display)
+        self.assertNotIn('sourceRefs', display)
+        self.assertNotIn('.md', display)
+
     def test_completion_stores_source_references_on_the_original_agreement(self):
         template = json.loads((SKILLS / 'evidence-discovery/assets/discovery-template.json').read_text())
         field = template['business']['agreements'][0]['clarificationCompletionSourceRefs'][0]

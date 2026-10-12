@@ -76,6 +76,19 @@ export const ContextSelectionSchema = Type.Object(
           agreementRef: BusinessText,
           name: BusinessText,
           parties: Type.Array(BusinessText, { minItems: 2 }),
+          operatingMainline: Type.Union(
+            [Type.Literal('cash'), Type.Literal('target-actual')],
+            {
+              description:
+                '经营主线：现金权责或目标与实际；由 Agent 按实际依据判断，不是合同类型。',
+            },
+          ),
+          operatingBasis: Type.String({
+            minLength: 1,
+            pattern: '\\S',
+            description:
+              '谁与谁签订什么合同（或达成什么约定），以实现什么具体经营目的；现金收入或支出须注明观察主体。不含资料名称、路径、版本、来源 ID 或参考链接。',
+          }),
           boundary: BusinessText,
           unresolved: Type.Array(BusinessText),
           clarification: Type.Union([

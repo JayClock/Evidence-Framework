@@ -64,6 +64,8 @@ export class QuestionUI {
         ...input.contexts.map((item, index) =>
           [
             labels[index],
+            `经营主线：${item.operatingMainline === 'cash' ? '现金权责' : '目标与实际'}`,
+            item.operatingBasis,
             `双方：${item.parties.join(' / ')}`,
             `责任边界：${item.boundary}`,
             `待追溯：${item.unresolved.join('；') || '暂无已记录缺口'}`,
