@@ -25,7 +25,8 @@ from fm_simulation import (  # type: ignore[import-not-found]  # noqa: E402
 
 class SimulationTests(unittest.TestCase):
     def fixture(self, name: str) -> Path:
-        return Path(__file__).parent / "fixtures" / name
+        root = SKILL_DIR / "examples" if name == "valid-traceable-subscription" else Path(__file__).parent / "fixtures"
+        return root / name
 
     def test_traceable_fixture_simulates_deterministically(self) -> None:
         root = self.fixture("valid-traceable-subscription")

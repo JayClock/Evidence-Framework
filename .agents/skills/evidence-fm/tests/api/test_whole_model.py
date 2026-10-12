@@ -17,7 +17,7 @@ adapter = importlib.import_module("fm_api_core.fm_adapter")
 projector = importlib.import_module("fm_api_core.projector")
 loader = importlib.import_module("fm_api_core.api_loader")
 model_coverage = importlib.import_module("fm_api_core.model_coverage")
-EXAMPLE = API_ROOT / "tests/api/fixtures/full-lifecycle"
+EXAMPLE = API_ROOT / "examples/full-lifecycle"
 
 
 class WholeModelTest(unittest.TestCase):

@@ -25,7 +25,8 @@ from fm_traceability import (  # type: ignore[import-not-found]  # noqa: E402
 
 class TraceabilityTests(unittest.TestCase):
     def fixture(self, name: str) -> Path:
-        return Path(__file__).parent / "fixtures" / name
+        root = SKILL_DIR / "examples" if name == "valid-traceable-subscription" else Path(__file__).parent / "fixtures"
+        return root / name
 
     def copied_fixture(self, directory: str) -> Path:
         target = Path(directory) / "model"

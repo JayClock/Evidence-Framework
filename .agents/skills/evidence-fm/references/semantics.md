@@ -87,7 +87,7 @@ Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个
 
 规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。无需替换变化点时，可以直接 `references` 外部 Confirmation／Other Evidence；需要开放证明约定时使用 Evidence Role。外部具体凭证保留形成上下文、责任与时间，直接引用不迁移所有权，不使它成为消费合同的共享确认。跨上下文还允许有依据的 Contract→Proposal 签约追溯与 Evidence→Thing 标的引用，不开放对外部 Request、RFP 或 Contract 的任意依赖。
 
-Role、Pre-contract Context、权责履约可以作为候选业务变化点，但变化点不自动决定部署边界。
+Role、Pre-contract Context、权责履约可以作为候选业务变化点，但变化点不自动决定部署边界。判断同合同直接引用或跨上下文证明时，按需读 [结构对照](../examples/structural-contrasts.md)；图与正反例只解释本节规则，不代替当前来源或新增 Schema。
 
 ## 8. 合同前协商
 

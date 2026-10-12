@@ -129,20 +129,9 @@ inputs 的 target 为 `path/body/query/header`，source 为：
 
 HTTP 流程独立于 FM 签发步骤：可以描述读取、条件读取、链接导航和一次交互中的多份业务证据，不为读取伪造 Evidence。它使用合成响应样例检查数据能否接续，不实际执行服务。`runtimeValidated` 恒为 false；没有旅程返回 `not_evaluated`。每个接口至少需有一个 mapped 的 2xx 消费步骤；403 等失败分支及仅 304 回放可以单独映射，但不能代替成功路径覆盖。`complete` 表示整体模型覆盖、所有接口契约和消费者场景在当前方言下无检测到的错误或缺口，不是运行时验收。
 
-## 可运行测试案例
+## 可运行表达基线
 
-商品采购 API 测试案例（Skill 维护材料 `tests/api/fixtures/full-lifecycle/api.json`）提供 13 个角色接口的完整契约：11 个凭证登记接口及客户／供应商商品读取。登记接口包含原始凭证字段、既有证据引用、201 Location、错误响应、幂等策略和成功流程；读取使用私有缓存复验，客户通过前一步 ETag 做条件读取。微信支付按整体模型中的外部责任处理，不虚构支付回调。
-
-```bash
-EXAMPLE="$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle"
-# 单独复验示例时，先由 FM 阶段取得一次结果：
-"$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py" "$EXAMPLE/fm" > "$FM_CHECK_FILE"
-"$PYTHON" "$FM_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" --fm "$EXAMPLE/fm" --fm-check "$FM_CHECK_FILE" \
-  --api "$EXAMPLE/api.json"
-```
-
-预期 13 个角色接口全部有 HTTP 契约与成功消费步骤，合并同路由的两个商品读取角色后得到 12 个 OpenAPI Path＋Method 操作。示例是合成数据及协议选择，不代表生产默认值。
+[商品采购完整链路](../examples/full-lifecycle/README.md)维护合成依据、结构映射、13 个角色接口的完整契约及实际校验命令。11 个凭证登记接口和两个商品读取角色都须有成功消费步骤，合并同路由读取后得到 12 个 OpenAPI Path＋Method 操作；外部支付不补造本地回调。样例与测试共用一份 JSON，不复制另一套设计，协议选择不成为生产默认值。
 
 ## OpenAPI 交付投影
 

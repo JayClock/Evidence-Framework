@@ -37,10 +37,12 @@ class SkillRoutingTests(unittest.TestCase):
             "references/responsibility-closure.md", "references/semantics.md",
             "references/format.md", "references/provenance.md",
             "references/cel-rules.md", "references/scenario-validation.md",
-            "references/validation.md",
+            "references/validation.md", "references/editing-workflow.md",
         }, targets)
-        action = text.split("## Action", 1)[1].split("## Sensors", 1)[0]
-        self.assertLess(action.index("核对追责结束门槛"), action.index("直接编辑当前模型"))
+        flow = (SKILLS / "evidence-fm/references/editing-workflow.md").read_text()
+        self.assertIn("admission -->|满足| mapping", flow)
+        self.assertIn("mapping --> edit", flow)
+        self.assertIn("responsibility-closure.md", flow)
         self.assertNotIn("sourceCardinality", text)
         self.assertNotIn("responsibleRoleRef", text)
 

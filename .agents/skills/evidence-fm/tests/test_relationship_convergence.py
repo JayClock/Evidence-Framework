@@ -13,7 +13,7 @@ from fm_simulation import load_validation_suite  # pyright: ignore[reportMissing
 
 class RelationshipConvergenceTests(unittest.TestCase):
     def model(self):
-        return load_model(Path(__file__).parent / "fixtures/valid-traceable-subscription")
+        return load_model(Path(__file__).resolve().parents[1] / "examples/valid-traceable-subscription")
 
     def test_retired_kinds_are_rejected_without_translation(self):
         for kind in ("precedes", "evidences", "derived_from"):

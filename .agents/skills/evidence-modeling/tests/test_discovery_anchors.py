@@ -38,6 +38,9 @@ class DiscoveryAnchorTests(unittest.TestCase):
             ("languageSaved", "failed"), ("languageSaved", "control"),
             ("control", "stop"), ("control", "navigation"),
             ("control", "focus"), ("navigation", "wait"),
+            ("control", "selection"), ("selection", "wait"),
+            ("selection", "selectSave"), ("selectSave", "selectSaved"),
+            ("selectSaved", "failed"), ("selectSaved", "focus"),
             ("focus", "needed"), ("needed", "question"),
             ("needed", "handoff"), ("question", "wait"),
         }.issubset(edges), edges)

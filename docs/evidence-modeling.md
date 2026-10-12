@@ -69,6 +69,7 @@
 
 - 访谈的单点故事、合同导航、控制与恢复：读 [Discovery 行为基线](../.agents/skills/evidence-discovery/examples/README.md)。
 - 一体入口的授权裁剪、阶段接续与部分交付：读 [Modeling 分派与交接基线](../.agents/skills/evidence-modeling/examples/README.md)。
+- 正式对象映射、引用结构及完整 API 表达：读 [FM 正式表达基线](../.agents/skills/evidence-fm/examples/README.md)，测试直接消费同一份 JSON，不维护重复样例。
 
 样例检查验证引用、结构与表达约束，不证明真实 Agent 已遵守业务分析、保存顺序或停止纪律；这些仍需隔离的行为评测。样例结果不作为当前项目的保存、校验或人类批准证据。
 

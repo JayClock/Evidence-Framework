@@ -42,9 +42,9 @@ class IsolatedFMTests(unittest.TestCase):
         self.samples = self.workspace / "prepared models"
         for name in ("domain", "payment"):
             source = (
-                self.skill / "tests/fixtures/domain"
+                self.skill / "examples/domain"
                 if name == "domain"
-                else self.skill / "tests/fixtures/valid-traceable-subscription"
+                else self.skill / "examples/valid-traceable-subscription"
             )
             shutil.copytree(source, self.samples / name)
 
@@ -108,7 +108,7 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertEqual(before, file_hashes(self.skill))
 
     def test_api_runtime_works_in_the_fm_package_without_tests_or_evals(self):
-        fixture = self.skill / "tests/api/fixtures/full-lifecycle"
+        fixture = self.skill / "examples/full-lifecycle"
         shutil.copytree(fixture / "fm", self.model)
         api = self.workspace / "api.json"
         shutil.copy2(fixture / "api.json", api)

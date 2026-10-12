@@ -26,7 +26,7 @@ from fm_simulation import (  # pyright: ignore[reportMissingImports]  # noqa: E4
 
 class TimelineTests(unittest.TestCase):
     def fixture(self) -> Path:
-        return Path(__file__).parent / "fixtures/valid-traceable-subscription"
+        return SKILL_DIR / "examples/valid-traceable-subscription"
 
     def test_timeline_contains_only_evidence_instances_and_context_lanes(self) -> None:
         model = load_model(self.fixture())

@@ -1,6 +1,6 @@
-# 商品采购协议完整 FM 与 API 测试案例
+# 商品采购完整链路：FM 与 API 共用一份表达基线
 
-这是商品采购协议的可执行测试案例。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象：
+这是合成的可执行表达样例，不提供真实业务准入、人类终点或全局结束依据。模型覆盖采购合同前、采购合同三项履约、外部微信支付链、参与方和商品领域对象；异常责任未全部展开，不能拿此正常链路替代真实范围的追责结束：
 
 ```text
 商品询价 RFP → 商品报价 Proposal → 商品采购协议 Contract
@@ -92,8 +92,8 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ## 校验 FM
 
 ```bash
-"$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle/fm" > "$FM_CHECK_FILE"
+"$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
+  "$FM_SKILL_DIR/examples/full-lifecycle/fm" > "$FM_CHECK_FILE"
 ```
 
 预期 FM 有效，1 个场景实际执行并通过：包含 14 个具体凭证实例，采购支付、开票、发货及外部微信支付均完成。
@@ -101,11 +101,11 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ## 校验 API 设计
 
 ```bash
-"$PYTHON" "$FM_SKILL_DIR/scripts/fm_api.py" check \
+"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" \
-  --fm "$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle/fm" \
+  --fm "$FM_SKILL_DIR/examples/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle/api.json"
+  --api "$FM_SKILL_DIR/examples/full-lifecycle/api.json"
 ```
 
 API 设计采用格式 5.0，直接消费整个 FM v4。预期产生 13 个角色接口和 13 个完整 HTTP 契约，包含类型化入口、业务场景回映与可接续的成功消费者流程，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
@@ -114,14 +114,14 @@ API 设计采用格式 5.0，直接消费整个 FM v4。预期产生 13 个角�
 
 ## 生成投影
 
-固定输出目录由命令直接更新，无需预创建：
+仅在有交付生成授权且完整检查通过后执行。PROJECT_ROOT 必须指向隔离的临时项目；FM_CHECK_FILE 位于样例和 FM 模型根之外。只校验不运行本命令，项目产物不写入 Skill 安装目录。固定输出目录由命令直接更新，无需预创建：
 
 ```bash
-"$PYTHON" "$FM_SKILL_DIR/scripts/fm_api.py" project \
+"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" \
-  --fm "$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle/fm" \
+  --fm "$FM_SKILL_DIR/examples/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$FM_SKILL_DIR/tests/api/fixtures/full-lifecycle/api.json"
+  --api "$FM_SKILL_DIR/examples/full-lifecycle/api.json"
 ```
 
 ## HTTP 契约
@@ -137,4 +137,4 @@ API 设计采用格式 5.0，直接消费整个 FM v4。预期产生 13 个角�
 
 上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定六份文件：`projection.json`、`openapi.json`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `manifest.json`。[示例 OpenAPI](openapi.json) 是由当前 `api.json` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
 
-字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../../references/api-contracts.md)。
+字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../references/api-contracts.md)。

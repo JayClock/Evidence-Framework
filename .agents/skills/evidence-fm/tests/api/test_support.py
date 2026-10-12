@@ -14,7 +14,7 @@ API_ROOT = TESTS.parents[1]
 REPO_ROOT = TESTS / "fixtures"
 SCRIPTS = API_ROOT / "scripts"
 FM_SKILL = API_ROOT
-FM_ROOT = FM_SKILL / "tests" / "fixtures" / "valid-traceable-subscription"
+FM_ROOT = FM_SKILL / "examples" / "valid-traceable-subscription"
 API_PATH = TESTS / "fixtures" / "subscription-api.json"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))

@@ -7,7 +7,7 @@
 - [evals.json](evals.json)：20 个 FM 技术生成／修复及缺口案例，供 `run_modeling_evals.py` 准备或评分。正向案例附有[合成准入来源](fixtures/modeling-admission.md)，先核对对应范围、责任图及人类终点和全局结束原话；缺口仍须阻塞，合成确认不覆盖实际遗漏。
 - [behavior.json](behavior.json)：独立行为案例 4、9、29，检查同一范围未决责任阻止局部建模、独立 FM 不绕过门槛，以及全部追责结束依据充分后的编辑。由独立会话和人工逐项检查，不交给技术产物评分器。
 
-- [api.json](api.json)：整体 API 设计、只读、契约覆盖和生成失败边界；使用本包的 API 阶段，FM 检查一次后直接消费结果，不重复校验。files 相对 Skill 根解析，位于 `tests/api/fixtures/`。
+- [api.json](api.json)：整体 API 设计、只读、契约覆盖和生成失败边界；使用本包的 API 阶段，FM 检查一次后直接消费结果，不重复校验。files 相对 Skill 根解析，商品采购输入位于 `examples/full-lifecycle/`。样例用于表达基线，未展示的评测案例仍用于迁移与越权检查，不把教学样例通过当作生成质量。
 
 各分支保留原 ID，不混作同一编号空间。API 行为评测由独立会话评价，不交给 FM 技术产物评分器；没有实际执行不记为通过。
 

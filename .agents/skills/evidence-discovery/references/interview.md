@@ -16,7 +16,10 @@ flowchart TD
     language[按权限维护当轮术语，无变化则跳过]
     languageSaved{术语保存成功或无需写入}
     control{本轮控制意图}
-    navigation[核对合同总览或选择，不捆绑业务问题]
+    navigation[展示合同总览，不捆绑业务问题]
+    selection{指定或选择的合同存在、未结束，且允许分析}
+    selectSave[引用本轮选择来源，更新获授权焦点]
+    selectSaved{焦点保存成功或明确不落盘}
     focus[定位当前节点，复用并追溯必要依据]
     needed{存在一个必要业务问题}
     question[当前位置与故事，再问一个问题]
@@ -35,9 +38,15 @@ flowchart TD
     languageSaved -->|失败| failed
     languageSaved -->|成功或不适用| control
     control -->|停止、暂缓或仅补资料| stop
-    control -->|首次总览或查看、选择| navigation
+    control -->|首次总览或查看| navigation
+    control -->|指定或选择合同| selection
     control -->|继续当前澄清| focus
     navigation --> wait
+    selection -->|取消、不可选或仅浏览| wait
+    selection -->|有效且允许分析| selectSave
+    selectSave --> selectSaved
+    selectSaved -->|失败| failed
+    selectSaved -->|成功或明确不落盘| focus
     focus --> needed
     needed -->|有，含必要的人类确认| question
     needed -->|没有| handoff

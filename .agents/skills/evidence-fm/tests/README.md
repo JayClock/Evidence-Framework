@@ -1,6 +1,6 @@
 # FM 功能回归
 
-本目录的测试、合成样例和 fixtures 与本 Skill 一起维护。测试从自身位置加载包内 scripts、schemas 和 evals，不依赖原仓库布局或调用目录。
+本目录的测试和回归 fixtures 与本 Skill 一起维护；可运行正向模型唯一维护在 [表达样例](../examples/README.md)，测试直接消费，修改输入时只改临时副本。测试从自身位置加载包内 scripts、schemas、examples 和 evals，不依赖原仓库布局或调用目录。
 
 先使用满足本包 requirements.txt 的 Python 3.10+ 环境，将 SKILL_DIR 设为本包绝对路径：
 

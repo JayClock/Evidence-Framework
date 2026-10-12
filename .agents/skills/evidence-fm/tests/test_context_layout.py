@@ -9,7 +9,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
 
@@ -27,7 +26,7 @@ class ContextLayoutTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name) / "model"
         shutil.copytree(
-            SKILL / "tests/fixtures/valid-traceable-subscription", self.root
+            SKILL / "examples/valid-traceable-subscription", self.root
         )
         self.before = compiled_document(load_model(self.root))
         self.before_check = check_model(self.root)

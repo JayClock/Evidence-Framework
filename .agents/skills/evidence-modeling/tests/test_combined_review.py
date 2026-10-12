@@ -61,7 +61,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory(prefix="joint review ")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        fixture = SKILLS / "evidence-fm/tests/api/fixtures/full-lifecycle"
+        fixture = SKILLS / "evidence-fm/examples/full-lifecycle"
         shutil.copytree(fixture / "fm", self.root / ".evidence/fm")
         api = self.root / ".evidence/api"
         api.mkdir()

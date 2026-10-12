@@ -65,7 +65,7 @@ class IsolatedVisualizationTests(unittest.TestCase):
         )
         project = self.workspace / "business project"
         model = project / ".evidence/fm"
-        shutil.copytree(fm_skill / "tests/fixtures/domain", model)
+        shutil.copytree(fm_skill / "examples/domain", model)
         for name in ("tests", "evals"):
             shutil.rmtree(self.skill / name)
         before_model, before_skill = file_hashes(model), file_hashes(self.skill)

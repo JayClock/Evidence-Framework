@@ -62,7 +62,7 @@ class ApiDocumentTest(unittest.TestCase):
             self.assertEqual(path.read_bytes(), before)
 
     def test_packaged_document_includes_http_without_another_input(self):
-        example = API_ROOT / "tests/api/fixtures/full-lifecycle"
+        example = API_ROOT / "examples/full-lifecycle"
         result = self.command("check", example / "api.json", example / "fm")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout)

@@ -44,7 +44,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue(payload["fmCheckSummary"]["valid"])
 
     def test_evidence_layout_keeps_inputs_and_discovery_unchanged(self) -> None:
-        example = API_ROOT / "tests/api/fixtures/full-lifecycle"
+        example = API_ROOT / "examples/full-lifecycle"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             evidence = root / ".evidence"
@@ -111,7 +111,7 @@ class CliTest(unittest.TestCase):
             )
 
     def test_e2e_vectors_preserve_contract_examples_and_idempotency(self) -> None:
-        example = API_ROOT / "tests/api/fixtures/full-lifecycle"
+        example = API_ROOT / "examples/full-lifecycle"
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as directory:
             output = Path(directory) / "projected"
             result = subprocess.run(

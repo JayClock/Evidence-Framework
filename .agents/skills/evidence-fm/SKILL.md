@@ -12,18 +12,18 @@ compatibility: 方法讨论只需文本；文件维护需读写能力；校验�
 
 先确定本次是讨论、术语沉淀、正式编辑、API 设计／投影还是只读校验。读取项目权限、实际来源、已有文件与 Git 差异；只修改本次授权的文件，保留无关改动，不自动迁移。只聊不落盘不写文件；只校验不修复、不保存项目报告。
 
-| 当前动作                             | 必要参考                                                                                                                                                                    |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 解释经营依据、责任边界或分析业务材料 | [业务分析](references/business-analysis.md)；存在矛盾或不足时读 [输入复核](references/input-review.md)                                                                      |
-| 当轮沉淀术语或将术语落实为模型       | [领域语言](references/domain-language.md)                                                                                                                                   |
-| 生成、修改、修复模型、规则或验证场景 | 先读 [追责结束准入](references/responsibility-closure.md)，再读 [批次评估](references/batch-assessment.md)、[语义](references/semantics.md) 与 [格式](references/format.md) |
-| 表达关键数据、业务时间或计算规则     | [来源追溯](references/provenance.md)、[CEL](references/cel-rules.md)                                                                                                        |
-| 编写或审查验证场景                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                        |
-| 执行 FM 检查或生成派生产物           | [FM 校验命令与结果](references/validation.md)                                                                                                                               |
-| 设计、修改或投影整体 API             | [API 阶段](references/api-design.md)，按分支加载设计方法、格式、HTTP 契约与校验纪律                                                                                         |
-| 只校验 API                           | FM 校验参考及 [API 校验纪律](references/api-validation.md)，不编辑两源或生成交付                                                                                            |
+| 当前动作                             | 必要参考                                                                                                                                                                                                                      |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 解释经营依据、责任边界或分析业务材料 | [业务分析](references/business-analysis.md)；存在矛盾或不足时读 [输入复核](references/input-review.md)                                                                                                                        |
+| 当轮沉淀术语或将术语落实为模型       | [领域语言](references/domain-language.md)                                                                                                                                                                                     |
+| 生成、修改、修复模型、规则或验证场景 | 先读 [追责结束准入](references/responsibility-closure.md) 与 [正式编辑流程](references/editing-workflow.md)，再读 [批次评估](references/batch-assessment.md)、[语义](references/semantics.md) 与 [格式](references/format.md) |
+| 表达关键数据、业务时间或计算规则     | [来源追溯](references/provenance.md)、[CEL](references/cel-rules.md)                                                                                                                                                          |
+| 编写或审查验证场景                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                                                          |
+| 执行 FM 检查或生成派生产物           | [FM 校验命令与结果](references/validation.md)                                                                                                                                                                                 |
+| 设计、修改或投影整体 API             | [API 阶段](references/api-design.md)，按分支加载设计方法、格式、HTTP 契约与校验纪律                                                                                                                                           |
+| 只校验 API                           | FM 校验参考及 [API 校验纪律](references/api-validation.md)，不编辑两源或生成交付                                                                                                                                              |
 
-只加载本次动作所需内容；领域能力、业务模式等专项从 [规则索引](references/README.md) 选择。tests/、evals/ 只用于维护评测，不是项目业务来源。
+只加载本次动作所需内容；领域能力、业务模式等专项从 [规则索引](references/README.md) 选择。首次进入当前表达判断时，从 [正式表达基线](examples/README.md) 只读对应小样例或结构对照，续问复用未变化内容。样例是合成表达，不提供当前业务事实、准入依据或默认值；tests/、evals/ 只用于维护评测，不是项目业务来源。
 
 默认正式源为 `.evidence/fm/`，词汇表为其外的 `.evidence/glossary.json`；API 唯一源为 `.evidence/api/api.json`，默认交付 `.evidence/api/generated/`。获授权检查记录分别放在 `.evidence/checks/fm/` 和 `.evidence/checks/api/`。沿用已有指定位置，项目输出不写入 Skill 安装目录。
 
@@ -35,13 +35,7 @@ compatibility: 方法讨论只需文本；文件维护需读写能力；校验�
 - **术语沉淀**：按领域语言方法维护明确术语；访谈来源先由 Discovery 保存。未建模定义使用 standalone，已建模概念只引用 FM；更正影响留在来源记录，不用同义条目覆盖模型含义。术语写入不授权模型 JSON 编辑。
 - **只读校验**：直接进入 Sensors，不要求先通过编辑准入，不因发现错误转为修复；明确仅 FM 时不查 API。
 - **仅 API 设计／交付**：先取得当前 FM 的有效检查结果，再按 API 阶段完成获授权动作，FM 保持只读。
-- **正式编辑**：执行以下步骤。
-
-1. **核对追责结束门槛**：定位人类确认范围、完整责任图、全部分支终点及全局结束原话，核对当前来源版本和本次编辑授权。任何必要依据未闭合即停止；独立调用、外部材料、已有模型及纯领域范围均按准入方法判断。编辑授权不是业务批准。
-2. **评估映射**：按批次评估复核业务分析，将已确认依据映射到对象、属性、关系、规则与场景；说明本次增改撤回、稳定 ID 和表达限制，不用实现切片缩小责任范围。
-3. **直接编辑当前模型**：按语义与格式维护源文件及说明，删除仅限授权对象并清理失效引用。涉及时间、关键值、规则或场景时加载对应参考；不以模板默认值填补业务未知。落实术语保留 term ID 并改为 FM 引用，定义归目标唯一维护。
-4. **核对差异**：区分已有改动与本轮变更，包含未跟踪新文件；检查支撑引用闭合和源事实忠实性，不手改 generated 产物。
-5. **检查后自动接续 API**：适用的词汇及 FM 检查通过后，以该次结果接续整体 API 设计、API 自身校验和投影。API 阶段不重复执行 FM 检查或模拟；明确仅 FM 时在 FM 检查后交接。
+- **正式编辑**：按正式编辑流程依次核对全局准入、评估映射、直接编辑当前模型、核对差异并检查；编辑授权不是业务批准。适用词汇与 FM 检查通过后自动接续整体 API，API 阶段不重复执行 FM 检查或模拟；明确仅 FM 时交接后停止。步骤前馈、反馈和失败出口只在该流程维护。
 
 表达方式可选择，来源、准入、Schema 和证据边界不可放宽。校验器表达不了的业务保留限制，不制造假凭证或修改业务预期。
 

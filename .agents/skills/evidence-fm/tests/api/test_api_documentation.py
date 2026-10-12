@@ -28,5 +28,5 @@ class DocumentationTests(unittest.TestCase):
         self.assertIn("不重复业务确认", entry)
         self.assertIn("--fm-check", entry)
         self.assertNotIn("--fm-skill", entry)
-        self.assertIn("自动接续 API", (SKILL / "SKILL.md").read_text())
+        self.assertRegex((SKILL / "SKILL.md").read_text(), r"自动接续(?:整体 )?API")
         self.assertFalse((SKILL.parent / "evidence-api-design").exists())

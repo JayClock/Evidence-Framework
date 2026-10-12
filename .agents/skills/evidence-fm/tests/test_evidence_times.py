@@ -21,6 +21,7 @@ from referencing import Registry, Resource  # pyright: ignore[reportMissingImpor
 
 SKILL = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
+EXAMPLES = SKILL / "examples"
 sys.path.insert(0, str(SKILL / "scripts"))
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
     LoadedModel,
@@ -205,7 +206,7 @@ class EvidenceTimeTests(unittest.TestCase):
         # The request supplies time values; there is no deadline-generation rule.
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
-            shutil.copytree(FIXTURES / "valid-traceable-subscription", root)
+            shutil.copytree(EXAMPLES / "valid-traceable-subscription", root)
             path = root / "entities/evidence-fulfillment-request--content-payment.json"
             doc = json.loads(path.read_text())
             deadline = next(a for a in doc["attributes"] if a["name"] == "expired_at")
@@ -331,7 +332,7 @@ class EvidenceTimeTests(unittest.TestCase):
 
     def test_compiled_schema_enforces_the_same_entity_time_contract(self):
         validator = compiled_validator()
-        model = load_model(FIXTURES / "valid-traceable-subscription")
+        model = load_model(EXAMPLES / "valid-traceable-subscription")
         document = compiled_document(model)
         # Replace just entities, so this test isolates compiled time requirements.
         document["entities"] = [evidence(kind) for kind in TIMES]
@@ -343,7 +344,7 @@ class EvidenceTimeTests(unittest.TestCase):
     def test_cli_preserves_explicit_fields_and_refuses_missing_source_without_rewriting(
         self,
     ):
-        source = FIXTURES / "valid-traceable-subscription"
+        source = EXAMPLES / "valid-traceable-subscription"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(source, root)

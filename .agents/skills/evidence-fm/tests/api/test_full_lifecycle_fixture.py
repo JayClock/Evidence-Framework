@@ -13,7 +13,7 @@ from test_support import API_ROOT, FM_SKILL, REPO_ROOT
 
 class FullLifecycleFixtureTest(unittest.TestCase):
     def test_product_procurement_lifecycle_is_valid_and_complete(self) -> None:
-        example = API_ROOT / "tests/api/fixtures/full-lifecycle"
+        example = API_ROOT / "examples/full-lifecycle"
         fm_check = subprocess.run(
             [
                 sys.executable,

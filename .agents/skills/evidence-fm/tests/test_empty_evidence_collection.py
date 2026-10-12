@@ -22,7 +22,7 @@ from fm_simulation import (  # type: ignore[import-not-found]  # noqa: E402
 
 class EmptyEvidenceCollectionTests(unittest.TestCase):
     def test_overdue_request_can_bind_no_confirmation_instances(self):
-        root = SKILL_DIR / "tests/fixtures/valid-traceable-subscription"
+        root = SKILL_DIR / "examples/valid-traceable-subscription"
         model = copy.deepcopy(load_model(root))
         suite = copy.deepcopy(load_validation_suite(root))
         suite.scenarios[:] = [suite.scenarios_by_id["scenario.overdue-payment"]]

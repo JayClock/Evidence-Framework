@@ -10,7 +10,7 @@ from pathlib import Path
 
 from test_support import API_ROOT, FM_SKILL
 
-EXAMPLE = API_ROOT / "tests/api/fixtures/full-lifecycle"
+EXAMPLE = API_ROOT / "examples/full-lifecycle"
 SCENARIO = "validation/scenarios/scenario--product-procurement.json"
 PROOFS = {
     "payment": ("wechat-payment-confirmation", "payment_number"),

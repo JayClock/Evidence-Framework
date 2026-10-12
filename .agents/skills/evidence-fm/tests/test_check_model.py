@@ -22,7 +22,7 @@ class CheckModelTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.project = Path(self.temp.name).resolve()
         self.model = self.project / ".evidence/fm"
-        shutil.copytree(SKILL / "tests/fixtures/domain", self.model)
+        shutil.copytree(SKILL / "examples/domain", self.model)
 
     def test_read_only_report_binds_exact_source_bytes_and_is_location_independent(
         self,
