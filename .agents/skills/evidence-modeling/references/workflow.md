@@ -2,6 +2,78 @@
 
 本页定义编排契约，不保存业务事实或准入状态。专业判断交给对应 Skill，入口只核对它实际交付了什么。
 
+## 职责与依赖
+
+箭头表示入口委派，虚线表示 Discovery 消费 FM 方法；不是重新安装 Skill 的路径，也不是业务事实复制。各专业包通过资源发现定位，均可独立运行。
+
+```mermaid
+flowchart LR
+    modeling[Modeling：授权、分派与交接]
+    discovery[Discovery：交互、记录与恢复]
+    fm[FM：方法、正式表达与整体 API]
+    visual[Visualization：只读审核投影]
+    modeling --> discovery
+    modeling --> fm
+    modeling --> visual
+    discovery -.-> fm
+```
+
+## 分派与阶段路径
+
+先裁剪授权，再走对应路径。完整生成才预检完整依赖；只读不要求编辑准入。图中的失败由对应拥有者报告，技术修正在原授权内处理；业务缺口不自动转成访谈。连续回答沿已选 Discovery 分支，不重新走分派图。
+
+```mermaid
+flowchart TD
+    intent{目标与本轮授权}
+    discussion[FM 讨论，不写文件]
+    discovery[Discovery 访谈、导航或控制]
+    readonly[FM 检查，已有 API 消费同一结果；仅 FM 限制优先]
+    resources{所需专业包与运行依赖可用}
+    admission{FM 核对当前人类追责结束依据与编辑授权}
+    fm[FM 编辑与适用检查]
+    fmValid{FM 结果有效且输入未变}
+    narrow{明确只修改 FM}
+    api[整体 API 设计、检查与投影，复用 FM 结果]
+    apiValid{API 交付完整且检查通过}
+    pageAllowed{授权生成联合审核页}
+    review[独立页面运行核对两源、严格生成与浏览器检查]
+    reviewValid{当前联合页面已验证}
+    blocked[交接缺口、部分保存与未执行阶段后停止]
+    handoff[交接真实结果后停止]
+    intent -->|讨论| discussion
+    intent -->|访谈、导航、停止或仅补资料| discovery
+    intent -->|只校验| readonly
+    intent -->|仅联合审核页| review
+    intent -->|正式生成或修改| resources
+    resources -->|可用| admission
+    resources -->|缺失| blocked
+    admission -->|满足| fm
+    admission -->|不足或失效| blocked
+    fm --> fmValid
+    fmValid -->|失败或输入变化| blocked
+    fmValid -->|有效| narrow
+    narrow -->|是| handoff
+    narrow -->|否| api
+    api --> apiValid
+    apiValid -->|失败或缺口| blocked
+    apiValid -->|通过| pageAllowed
+    pageAllowed -->|否| handoff
+    pageAllowed -->|是| review
+    review --> reviewValid
+    reviewValid -->|失败或未验证| blocked
+    reviewValid -->|通过| handoff
+```
+
+| 检查点    | 前馈                                    | 反馈与出口                                        |
+| --------- | --------------------------------------- | ------------------------------------------------- |
+| 分派      | 当前目标、允许文件与停止条件            | 执行者与写入范围明确；授权缩窄优先                |
+| 准入与 FM | 当前责任依据、编辑授权、源版本          | FM 返回实际差异与有效结果；缺口停止，不局部放行   |
+| API       | 同一次有效 FM 检查、整体模型与 API 权限 | 核对摘要、整体契约与交付；失配返回 FM，不隐式重查 |
+| 联合审核  | 当前两源与页面授权                      | 独立核对、严格联合生成及浏览器证据；旧页不顶替    |
+| 交接      | 各阶段实际文件与检查结果                | 部分保存分别说明，不自动回滚、批准或进入下游      |
+
+按当前分派或交接动作读取 [基线样例](../examples/README.md)，样例不替代专业方法与实际检查。
+
 ## 文件归属
 
 默认路径相对项目根；沿用指定位置，不自动迁移。目录存在不扩大本轮写入权限。
@@ -70,14 +142,6 @@ FM 包在模型检查通过后自动接续本包的 API 阶段，设计或更新
 
 ## 最小交接
 
-每个执行者返回以下信息，入口不重做专业分析：
-
-| 信息           | 可观察依据                                                                              |
-| -------------- | --------------------------------------------------------------------------------------- |
-| 本轮动作及权限 | 分支、允许文件、实际增改删；已有改动与本轮变更分开                                      |
-| 输入与恢复     | 来源版本、对象与焦点引用、原问题及控制意图；不复制事实正文                              |
-| 保存           | 各文件真实保存结果，失败和未保存内容分别列明                                            |
-| 验证           | 实际命令、退出码、输入摘要、适用覆盖和未执行项；未执行场景的 `simulationPassed` 为 null |
-| 剩余工作       | 具体缺口、影响对象、未完成阶段和交接对象                                                |
+每个执行者按 [交接模板](../assets/handoff-template.md) 返回实际授权、输入与恢复引用、各文件保存结果、检查及剩余工作，入口不重做专业分析。未执行场景的 `simulationPassed` 为 null；不抄事实正文、定义或案例，不增加第二份状态。
 
 人类追责结束、编辑授权、保存、机器检查及业务批准是不同结论。完成本次链路或受阻后停止，不自动启动需求、规划、实施、批准或 Git 操作。

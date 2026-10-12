@@ -1,0 +1,70 @@
+{
+  "cases": [
+    {
+      "id": "combined",
+      "input": "核对准入后生成模型、整体 API 和联合审核页。",
+      "allowedWrites": [
+        ".evidence/fm/",
+        ".evidence/glossary.json",
+        ".evidence/api/api.json",
+        ".evidence/api/generated/",
+        ".evidence/views/index.html"
+      ],
+      "steps": [
+        "resources",
+        "admission",
+        "fm-edit",
+        "fm-check",
+        "api-edit",
+        "api-check",
+        "api-project",
+        "joint-review"
+      ],
+      "designFmChecks": 1,
+      "reviewFmChecks": 1,
+      "apiInput": "same-fm-check",
+      "exit": "handoff",
+      "approved": false
+    },
+    {
+      "id": "fm-only",
+      "input": "只修改 FM，不设计 API，不生成页面。",
+      "allowedWrites": [".evidence/fm/", ".evidence/glossary.json"],
+      "steps": ["admission", "fm-edit", "fm-check"],
+      "designFmChecks": 1,
+      "reviewFmChecks": 0,
+      "exit": "handoff",
+      "approved": false
+    },
+    {
+      "id": "read-only",
+      "input": "只校验当前 FM 与已有 API，不写任何项目文件。",
+      "allowedWrites": [],
+      "steps": ["fm-check", "api-check"],
+      "designFmChecks": 1,
+      "reviewFmChecks": 0,
+      "apiInput": "same-fm-check",
+      "exit": "handoff",
+      "approved": false
+    },
+    {
+      "id": "api-blocked",
+      "input": "生成模型、整体 API 和联合审核页；API 设计时发现必要角色权限缺口。",
+      "allowedWrites": [
+        ".evidence/fm/",
+        ".evidence/glossary.json",
+        ".evidence/api/api.json",
+        ".evidence/api/generated/",
+        ".evidence/views/index.html"
+      ],
+      "steps": ["resources", "admission", "fm-edit", "fm-check", "api-edit"],
+      "designFmChecks": 1,
+      "reviewFmChecks": 0,
+      "apiInput": "same-fm-check",
+      "saved": [".evidence/fm/", ".evidence/glossary.json"],
+      "exit": "blocked",
+      "rollback": false,
+      "approved": false
+    }
+  ]
+}
