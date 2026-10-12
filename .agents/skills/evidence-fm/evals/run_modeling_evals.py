@@ -102,7 +102,7 @@ def prepare(item: dict[str, Any], workspace: Path, configuration: str) -> None:
     output = root / configuration / "outputs"
     output.mkdir(parents=True, exist_ok=True)
     copied = copy_inputs(item, root / "inputs")
-    prompt = item["prompt"].replace("$modeling", "$evidence-fm")
+    prompt = item["prompt"]
     (root / "prompt.md").write_text(prompt + "\n", encoding="utf-8")
     (root / "expected_output.md").write_text(
         item["expected_output"] + "\n", encoding="utf-8"
@@ -112,6 +112,7 @@ def prepare(item: dict[str, Any], workspace: Path, configuration: str) -> None:
         {
             "eval_id": item["id"],
             "eval_name": item["name"],
+            "outcome": item["outcome"],
             "prompt": prompt,
             "expected_output": item["expected_output"],
             "input_files": copied,
@@ -136,7 +137,6 @@ def run_command(
     root = eval_root(workspace, item)
     run_dir = root / configuration
     values = {
-        "repo_root": str(Path.cwd()),
         "skill_dir": str(SKILL_DIR),
         "workspace": str(workspace),
         "eval_dir": str(root),
@@ -190,17 +190,32 @@ def run_command(
 
 
 def find_model(output: Path) -> Path | None:
-    candidates = [output / "fm-model", output]
-    candidates.extend(path.parent for path in output.rglob("model.json"))
-    seen: set[Path] = set()
-    for candidate in candidates:
-        candidate = candidate.resolve()
-        if candidate in seen:
-            continue
-        seen.add(candidate)
-        if (candidate / "model.json").is_file() and (candidate / "entities").is_dir():
-            return candidate
+    """Find a source manifest without requiring a retired output directory layout."""
+    candidates = [output / "model.json", *sorted(output.rglob("model.json"))]
+    for manifest in candidates:
+        if manifest.is_file() and "generated" not in manifest.relative_to(output).parts:
+            return manifest.parent.resolve()
     return None
+
+
+def formal_outputs(output: Path) -> list[Path]:
+    """Also catch partial sources and projections when no complete model exists."""
+    found = []
+    source_dirs = {"entities", "contexts", "relationships", "rules", "validation", "generated"}
+    source_types = {"entity", "relationship", "rule", "business_pattern"}
+    for path in sorted(output.rglob("*")):
+        if not path.is_file() or path.suffix not in {".json", ".yaml", ".yml"}:
+            continue
+        parts = path.relative_to(output).parts
+        if path.name in {"model.json", "api.json", "model.yaml", "api.yaml"} or source_dirs.intersection(parts):
+            found.append(path)
+            continue
+        if path.suffix == ".json":
+            with suppress(ValueError):
+                value = read_json(path)
+                if isinstance(value, dict) and value.get("type") in source_types:
+                    found.append(path)
+    return found
 
 
 def collect_docs(output: Path) -> str:
@@ -462,12 +477,17 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     raw_eval_id = item.get("id")
     eval_id = raw_eval_id if isinstance(raw_eval_id, int) else -1
 
-    if eval_id == 6:
+    outcome = item["outcome"]
+    if outcome not in {"model", "blocked", "not-applicable"}:
+        raise ValueError(f"unknown eval outcome: {outcome}")
+
+    if outcome == "not-applicable":
+        artifacts = formal_outputs(output)
         add(
             expectations,
             "Pure tool case does not force an FM model.",
-            model_dir is None,
-            str(model_dir),
+            not artifacts,
+            str(artifacts),
         )
         add(
             expectations,
@@ -484,57 +504,36 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         )
         return save_grade(item, workspace, configuration, expectations, model_dir)
 
-    if eval_id == 13:
-        discovery_files = [
-            path
-            for path in output.rglob("*")
-            if path.is_file() and "discovery" in path.parts
-        ]
-        discovery_text_parts = [docs]
-        for path in discovery_files:
-            with suppress(UnicodeDecodeError):
-                discovery_text_parts.append(path.read_text(encoding="utf-8"))
-        discovery_text = "\n".join(discovery_text_parts)
+    if outcome == "blocked":
+        artifacts = formal_outputs(output)
         add(
             expectations,
-            "Ambiguous narrative produces discovery artifacts before a final model.",
-            bool(discovery_files),
-            str(discovery_files),
+            "Blocked scope produces no formal FM artifacts.",
+            not artifacts,
+            str(artifacts),
         )
         add(
             expectations,
-            "Discovery asks about contract Roles, Evidence responsibility, confirmation, interval, and breach.",
-            bool(
-                re.search(r"合同|签约", discovery_text, re.IGNORECASE)
-                and re.search(r"角色|责任", discovery_text, re.IGNORECASE)
-                and re.search(r"确认|凭证|证明", discovery_text, re.IGNORECASE)
-                and re.search(r"时限|期限|interval", discovery_text, re.IGNORECASE)
-                and re.search(r"违约|异常|补偿", discovery_text, re.IGNORECASE)
-            ),
-            discovery_text[:800],
+            "Gap explanation identifies missing human responsibility-closure admission.",
+            bool(re.search(r"追责结束|全局.*确认", docs)),
+            docs[:800],
         )
-        draft_only = model_dir is None
-        if model_dir is not None:
-            discovery_model = load_model(model_dir)
-            discovery_errors = validate_model(discovery_model)
-            draft_only = bool(
-                not discovery_errors
-                and discovery_model.manifest
-                and "modelStatus" not in discovery_model.manifest
-                and "stakeholderReview" not in discovery_model.manifest
-            )
+        patterns = (
+            (r"合同|签约", r"角色|责任|权责", r"确认|凭证|证明", r"时限|期限|interval", r"违约|异常|补偿")
+            if eval_id == 13 else (r"询价|报价|合同前", r"截止|期限|expired_at")
+        )
         add(
             expectations,
-            "The model file carries no lifecycle or review status.",
-            draft_only,
-            str(model_dir),
+            "Gap explanation covers the case's missing business prerequisites.",
+            all(re.search(pattern, docs, re.IGNORECASE) for pattern in patterns),
+            docs[:800],
         )
         return save_grade(item, workspace, configuration, expectations, model_dir)
 
     if model_dir is None:
         add(
             expectations,
-            "Output contains an fm-model directory.",
+            "Model-generation output contains a source model.json.",
             False,
             "No model.json found",
         )
@@ -736,8 +735,8 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             expectations,
             "Contract references its accepted Proposal.",
             any(rel.get("kind") == "references"
-                and model.entities_by_id.get(rel.get("sourceRef"), {}).get("kind") == "contract"
-                and model.entities_by_id.get(rel.get("targetRef"), {}).get("kind") == "proposal"
+                and model.entities_by_id.get(str(rel.get("sourceRef")), {}).get("kind") == "contract"
+                and model.entities_by_id.get(str(rel.get("targetRef")), {}).get("kind") == "proposal"
                 for rel in relationships),
             "Contract -> Proposal reference",
         )
@@ -1161,7 +1160,7 @@ def write_benchmark(
     write_json(workspace / "results.json", payload)
     write_json(workspace / "benchmark.json", payload)
     lines = [
-        "# modeling Schema v4 eval benchmark",
+        "# evidence-fm Schema v4 eval benchmark",
         "",
         f"- Configuration: `{configuration}`",
         f"- Evals passed: {payload['summary']['evals_passed']}/{len(results)}",
@@ -1183,7 +1182,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--evals", default=str(Path(__file__).with_name("evals.json")))
     parser.add_argument(
-        "--workspace", default=str(Path.cwd() / "modeling-workspace" / "iteration-1")
+        "--workspace", default=str(Path.cwd() / "evidence-fm-workspace" / "iteration-1")
     )
     parser.add_argument("--configuration", default="with_skill")
     parser.add_argument("--only")

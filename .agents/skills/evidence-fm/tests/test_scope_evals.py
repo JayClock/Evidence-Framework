@@ -26,6 +26,8 @@ from fm_model import (  # type: ignore[import-not-found]  # noqa: E402
 from run_modeling_evals import (  # type: ignore[import-not-found]  # noqa: E402
     eval_root,
     grade,
+    grade_context_scope,
+    prepare,
 )
 
 
@@ -48,21 +50,90 @@ class ScopeEvalTests(unittest.TestCase):
         )
         return grade(item, workspace, "with_skill")
 
-    def test_non_fulfillment_scopes_pass_without_vacuous_fulfillment_requirement(
-        self,
-    ) -> None:
-        for eval_id, documents, entry in [
-            (15, domain_documents(), "context.customer-information"),
-            (16, precontract_documents(), "context.sales-inquiry"),
-        ]:
-            with (
-                self.subTest(eval_id=eval_id),
-                tempfile.TemporaryDirectory() as directory,
-            ):
-                result = self.grade_sample(Path(directory), eval_id, documents, entry)
-                self.assertEqual(
-                    result["total"], result["passed"], result["expectations"]
-                )
+    def test_domain_generation_passes_without_vacuous_fulfillment_requirement(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            result = self.grade_sample(
+                Path(directory), 15, domain_documents(), "context.customer-information"
+            )
+            self.assertEqual(result["total"], result["passed"], result["expectations"])
+
+    def test_precontract_structure_remains_valid_independently_of_edit_admission(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = write_model(
+                Path(directory), precontract_documents(), "context.sales-inquiry"
+            )
+            model = load_model(root)
+            self.assertEqual([], validate_model(model))
+            expectations = []
+            grade_context_scope(16, model, expectations)
+            self.assertTrue(expectations)
+            self.assertTrue(all(item.passed for item in expectations), expectations)
+
+    def blocked_output(self, workspace: Path, eval_id: int) -> Path:
+        output = eval_root(workspace, self.item(eval_id)) / "with_skill" / "outputs"
+        output.mkdir(parents=True)
+        explanation = (
+            "询价报价的截止依据未提供；合同双方角色与责任、完成确认凭证、履约期限和违约异常均缺依据。"
+            "缺少人类全局追责结束确认，未生成模型、规则或场景，未执行校验与编译。"
+        )
+        (output / "response.md").write_text(explanation, encoding="utf-8")
+        return output
+
+    def test_blocked_cases_accept_gap_explanations_without_discovery_artifacts(self) -> None:
+        for eval_id in (13, 16):
+            with self.subTest(eval_id=eval_id), tempfile.TemporaryDirectory() as directory:
+                workspace = Path(directory)
+                self.blocked_output(workspace, eval_id)
+                result = grade(self.item(eval_id), workspace, "with_skill")
+                self.assertEqual(result["total"], result["passed"], result["expectations"])
+
+    def test_blocked_cases_reject_generated_models_even_without_review_status(self) -> None:
+        for eval_id in (13, 16):
+            with self.subTest(eval_id=eval_id), tempfile.TemporaryDirectory() as directory:
+                workspace = Path(directory)
+                output = self.blocked_output(workspace, eval_id)
+                write_model(output / "fm-model", domain_documents(), "context.customer-information")
+                (output / "discovery").mkdir()
+                (output / "discovery/open-questions.md").write_text("合同责任确认期限违约")
+                result = grade(self.item(eval_id), workspace, "with_skill")
+                rejection = next(item for item in result["expectations"]
+                                 if item["text"] == "Blocked scope produces no formal FM artifacts.")
+                self.assertFalse(rejection["passed"])
+
+    def test_blocked_cases_reject_partial_rules_scenarios_and_compiled_output(self) -> None:
+        for relative, content in (
+            ("rules/rule.json", {"type": "rule"}),
+            ("loose-rule.json", {"type": "rule"}),
+            ("validation/scenario.json", {}),
+            ("generated/model.json", {}),
+            ("model.json", {}),
+        ):
+            with self.subTest(path=relative), tempfile.TemporaryDirectory() as directory:
+                workspace = Path(directory)
+                output = self.blocked_output(workspace, 13)
+                target = output / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(json.dumps(content))
+                result = grade(self.item(13), workspace, "with_skill")
+                rejection = next(item for item in result["expectations"]
+                                 if item["text"] == "Blocked scope produces no formal FM artifacts.")
+                self.assertFalse(rejection["passed"])
+
+    def test_blocked_cases_require_an_explanation_not_only_empty_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            result = grade(self.item(16), Path(directory), "with_skill")
+            self.assertLess(result["passed"], result["total"])
+
+    def test_eval_preparation_preserves_current_prompt_and_outcome(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            item = self.item(16)
+            prepare(item, workspace, "with_skill")
+            root = eval_root(workspace, item)
+            self.assertEqual(item["prompt"] + "\n", (root / "prompt.md").read_text())
+            metadata = json.loads((root / "eval_metadata.json").read_text())
+            self.assertEqual("blocked", metadata["outcome"])
+            self.assertNotIn("$modeling", item["prompt"])
 
     def test_fulfillment_scenario_still_requires_actual_fulfillment(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
