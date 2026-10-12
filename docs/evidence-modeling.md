@@ -4,14 +4,14 @@
 
 ## 选择入口
 
-| 你要做什么                   | 入口                                                               | 本轮结果                               |
-| ---------------------------- | ------------------------------------------------------------------ | -------------------------------------- |
-| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支            | 解释、依据与未知；不落盘               |
-| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)         | 来源记录和当轮术语；最多一个必要问题   |
-| 只生成、修改或校验正式 FM    | [FM](../.agents/skills/evidence-fm/SKILL.md)                       | 授权范围内的模型与实际检查             |
-| 从整体 FM 设计 API           | [API Design](../.agents/skills/evidence-api-design/SKILL.md)       | api.json、完整 HTTP 契约及派生产物     |
-| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md) | 页面或检查结果，不改两源               |
-| 一次完成模型、API 与联合审核 | 显式调用 [Modeling](../.agents/skills/evidence-modeling/SKILL.md)  | FM → 整体 API → 联合审核，阶段分别校验 |
+| 你要做什么                   | 入口                                                                     | 本轮结果                               |
+| ---------------------------- | ------------------------------------------------------------------------ | -------------------------------------- |
+| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支                  | 解释、依据与未知；不落盘               |
+| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)               | 来源记录和当轮术语；最多一个必要问题   |
+| 生成、修改或校验 FM 与 API   | [FM](../.agents/skills/evidence-fm/SKILL.md)                             | 默认绑定模型与 API；仅 FM 限制优先     |
+| 从整体 FM 设计 API           | [FM 的 API 阶段](../.agents/skills/evidence-fm/references/api-design.md) | api.json、完整 HTTP 契约及派生产物     |
+| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md)       | 页面或检查结果，不改两源               |
+| 一次完成模型、API 与联合审核 | 显式调用 [Modeling](../.agents/skills/evidence-modeling/SKILL.md)        | FM → 整体 API → 联合审核，阶段分别校验 |
 
 ```text
 /skill:evidence-modeling 访谈并沉淀领域语言
@@ -21,7 +21,7 @@
 /skill:evidence-modeling 生成联合审核页，不修改设计源
 ```
 
-以上是 Pi 的原生 Skill 命令，不要求安装项目插件；其他宿主使用各自 Skill 入口，或显式请求 Agent 读取安装目录的 SKILL.md。安装可选插件后，`/evidence-model <目标>` 转发同一入口，无参数菜单提供访谈、生成、只校验、联合审核页与返回。方法讨论可直接在目标中说明。独立 Skill 不自动扩展为完整链路；显式 Modeling 的生成／修改默认一次授权完整链路，更窄要求优先。
+以上是 Pi 的原生 Skill 命令，不要求安装项目插件；其他宿主使用各自 Skill 入口，或显式请求 Agent 读取安装目录的 SKILL.md。安装可选插件后，`/evidence-model <目标>` 转发同一入口，无参数菜单提供访谈、生成、只校验、联合审核页与返回。方法讨论可直接在目标中说明。FM 的正式生成／修改默认绑定整体 API，FM 检查通过后自动接续，不在 API 阶段重复检查 FM，保留 API 自身校验；独立 FM 不自动生成审核页。显式 Modeling 默认一次授权两源与联合审核，更窄要求优先。
 
 ## 合同总览与当前进度
 
@@ -87,7 +87,7 @@
 - **API**：整体覆盖、全部契约与静态消费者流程通过检查；静态结果不证明服务、授权或外部系统已运行。
 - **联合审核**：当前两源重新校验后生成同一页面，并完成浏览器检查及截图复核；缺 API 不降级，旧页面不代表当前有效。
 
-完整链路不是原子事务。FM 已保存但 API 阻塞时分别交接，不撤销已保存事实，也不宣称完整交付。具体命令从对应 Skill 读取；机器通过、页面生成和人类业务批准分开。
+完整链路不是原子事务。FM 已保存但 API 阻塞时分别交接，不撤销已保存事实，也不宣称完整交付。FM 与 API 方法和工具都由 FM Skill 维护；API 消费同一次 FM 检查结果并核对摘要，不再执行 FM 检查。具体命令从对应 Skill 读取；机器通过、页面生成和人类业务批准分开。
 
 ## 维护验证
 

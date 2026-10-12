@@ -11,7 +11,7 @@
 | 来源、工作理解、原问题及控制意图 | `.evidence/discovery.json`；必要时引用 `.evidence/questions.json` | Discovery                           |
 | 唯一词汇入口                     | `.evidence/glossary.json`                                         | FM 领域语言方法；访谈按授权当轮维护 |
 | 正式模型、说明与场景             | `.evidence/fm/`                                                   | FM                                  |
-| API 设计与完整投影               | `.evidence/api/api.json`、`.evidence/api/generated/`              | API Design                          |
+| API 设计与完整投影               | `.evidence/api/api.json`、`.evidence/api/generated/`              | FM 包的 API 阶段                    |
 | 只读审核投影                     | `.evidence/views/index.html`                                      | Visualization                       |
 | 获授权留存的紧凑检查记录         | `.evidence/checks/fm/`、`.evidence/checks/api/`                   | 对应检查执行者                      |
 
@@ -39,11 +39,11 @@
 
 写入前先确认所需 Skill 和运行环境可用。FM 消费人类准入依据、本轮编辑授权及来源，完成映射、源编辑、术语引用与适用场景检查。
 
-交给 API 的是当前完整模型根、实际差异及检查结果；检查须有 `modelDigest` 且 `inputChanged` 不为 true。FM 失败或准入不足不进入 API，也不生成新审核页。业务分析和 JSON 映射的具体动作只由 FM 维护。
+交给同包 API 阶段的是当前完整模型根、实际差异及本次 JSON 检查结果；检查须有 `modelDigest`、`valid: true` 且 `inputChanged: false`。结果放在模型目录之外的临时文件；只读分支使用项目外临时目录，不写项目报告。FM 失败或准入不足不进入 API，也不生成新审核页。业务分析和 JSON 映射的具体动作只由 FM 维护。
 
 ### 2. API
 
-调用 API Design 消费当前整体 FM，执行 inspect、设计或更新 api.json、check、project。无需第二次请求已获授权的 API 生成；不重复业务确认。
+FM 包在模型检查通过后自动接续本包的 API 阶段，设计或更新 api.json、check、project。三个 API 命令均以 `--fm-check` 消费同一结果，只核对摘要，不重复执行 FM 检查、编译校验或模拟。inspect 只是可选索引，不是再次准入。无需第二次请求已获授权的 API 生成；不重复业务确认。摘要失配返回 FM 阶段，API 不隐式重查或反向修改 FM。
 
 接口与消费者覆盖、契约、实际差异和交付路径分别可定位才交给下一阶段。技术错误在 API 授权内修正；身份、权限、数量或来源缺口不反向修改 FM。失败保留已有审核页，明确 API 未完成及旧页不代表当前有效结果。
 
@@ -55,17 +55,16 @@
 "$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
   --project-root "$PROJECT_ROOT" \
   --fm-skill "$FM_SKILL_DIR" \
-  --api-skill "$API_SKILL_DIR" \
   --require-api
 ```
 
-使用实际绝对路径。生成器复验两源和新鲜度，临时 API 投影不重写正式 generated 目录；缺 API 不降级，失败保留已有审核页。按 Visualization 入口检查最终 HTML 和截图，缺浏览器环境报告未验证，不声称完成联合交付。
+使用实际绝对路径。生成器在这次独立页面运行中检查 FM，将同一结果传给同包 API 自身校验，并核对两源新鲜度，API 阶段不再检查 FM。临时 API 投影不重写正式 generated 目录；缺 API 不降级，失败保留已有审核页。按 Visualization 入口检查最终 HTML 和截图，缺浏览器环境报告未验证，不声称完成联合交付。
 
 阶段之间不是原子事务；后续失败不自动回滚已保存源，不删除历史证据。更窄授权只执行获授权阶段。
 
 ## 只读与单独投影
 
-- 只校验请求不写任何项目文件：运行 FM 检查及已有 API 的 inspect/check，不执行 project 或生成器。两源分别报告；API 缺失则联合检查未完成，明确仅 FM 时不查 API。
+- 只校验请求不写任何项目文件：运行一次 FM 检查并将结果交给已有 API 的 check（inspect 可选），不执行 project 或生成器。两源分别报告；API 缺失则联合检查未完成，明确仅 FM 时不查 API。
 - 单独联合审核仅授权更新 HTML，不编辑两源或正式 API generated；仍要求当前 API 和双源检查。
 - 独立 FM 可视化由 Visualization 执行，不将它称为联合审核，不通过隐藏或删除已有 API 绕过检查。
 

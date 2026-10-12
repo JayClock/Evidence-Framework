@@ -11,7 +11,6 @@ NAMES = (
     "evidence-fm",
     "evidence-requirements",
     "evidence-modeling",
-    "evidence-api-design",
     "evidence-visualization",
 )
 
@@ -213,7 +212,6 @@ class SkillDocumentationTests(unittest.TestCase):
             "evidence-modeling",
             "evidence-discovery",
             "evidence-fm",
-            "evidence-api-design",
         ):
             for path in (ROOT / name).rglob("*"):
                 if (
@@ -264,13 +262,13 @@ class SkillDocumentationTests(unittest.TestCase):
                 ".evidence/fm/",
                 ".evidence/checks/fm/",
             ),
-            "evidence-api-design/SKILL.md": (
+            "evidence-fm/references/api-design.md": (
                 ".evidence/fm/",
                 ".evidence/api/api.json",
                 ".evidence/api/generated/",
                 ".evidence/checks/api/",
             ),
-            "evidence-api-design/references/validation.md": (
+            "evidence-fm/references/api-validation.md": (
                 ".evidence/api/api.json",
                 ".evidence/api/generated/",
             ),
@@ -287,7 +285,6 @@ class SkillDocumentationTests(unittest.TestCase):
             "evidence-modeling",
             "evidence-discovery",
             "evidence-fm",
-            "evidence-api-design",
         ):
             package = ROOT / name
             documents.extend(package.rglob("*.md"))
@@ -301,7 +298,6 @@ class SkillDocumentationTests(unittest.TestCase):
             "evidence-modeling",
             "evidence-discovery",
             "evidence-fm",
-            "evidence-api-design",
         ):
             with self.subTest(skill=name):
                 text = (ROOT / name / "SKILL.md").read_text()
@@ -309,7 +305,7 @@ class SkillDocumentationTests(unittest.TestCase):
                 self.assertIn("不自动迁移", text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("报告位于模型目录之外", validation)
-        api = (ROOT / "evidence-api-design/references/validation.md").read_text()
+        api = (ROOT / "evidence-fm/references/api-validation.md").read_text()
         self.assertIn("投影输出固定更新", api)
         self.assertIn("切换失败时恢复", api)
         self.assertIn("FM 根目录之外", api)
@@ -329,7 +325,7 @@ class SkillDocumentationTests(unittest.TestCase):
             self.assertTrue((visual / path).is_file(), path)
         for removed in ("assets/page.html", "assets/review.js", "assets/style.css", "assets/vendor"):
             self.assertFalse((visual / removed).exists(), removed)
-        for name in ("evidence-modeling", "evidence-api-design"):
+        for name in ("evidence-modeling", "evidence-fm"):
             entry = (ROOT / name / "SKILL.md").read_text()
             self.assertIn("evidence-visualization", entry)
         self.assertFalse(

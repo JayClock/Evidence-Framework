@@ -1,6 +1,7 @@
 """Joint modeling contracts and real offline projection; not agent/human approval evidence."""
 
 import hashlib
+import importlib.util
 import json
 import re
 import shutil
@@ -9,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 SKILLS = Path(__file__).resolve().parents[2]
 REPO = SKILLS.parents[1]
@@ -23,7 +25,7 @@ class CombinedWorkflowContracts(unittest.TestCase):
     def test_entry_composes_model_api_and_one_review_with_narrow_permissions(self):
         entry = (SKILLS / "evidence-modeling/SKILL.md").read_text()
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
-        for phrase in ("evidence-fm", "evidence-api-design", "evidence-visualization",
+        for phrase in ("evidence-fm", "evidence-visualization", "不重复 FM 检查",
                        "一次触发", "只修改 FM", "只校验", "不自动批准"):
             self.assertIn(phrase, entry)
         for phrase in ("FM → API → 联合审核", "--require-api", "不是原子事务",
@@ -59,7 +61,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory(prefix="joint review ")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        fixture = SKILLS / "evidence-api-design/tests/fixtures/full-lifecycle"
+        fixture = SKILLS / "evidence-fm/tests/api/fixtures/full-lifecycle"
         shutil.copytree(fixture / "fm", self.root / ".evidence/fm")
         api = self.root / ".evidence/api"
         api.mkdir()
@@ -74,7 +76,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         return subprocess.run([
             sys.executable, "-B", str(SKILLS / "evidence-visualization/scripts/generate.py"),
             "--project-root", str(self.root), "--fm-skill", str(SKILLS / "evidence-fm"),
-            "--api-skill", str(SKILLS / "evidence-api-design"), "--require-api",
+            "--require-api",
         ], capture_output=True, text=True, timeout=120, check=False)
 
     def test_joint_page_contains_current_model_and_all_api_capabilities(self):
@@ -97,6 +99,29 @@ class JointReviewIntegrationTests(unittest.TestCase):
                             for e in data["edges"]))
         self.assertEqual(before, (hashes(self.root / ".evidence/fm"), hashes(self.root / ".evidence/api")))
         self.assertEqual([self.page], list(self.page.parent.iterdir()))
+
+    def test_joint_projection_checks_fm_once_and_hands_result_to_api(self):
+        spec = importlib.util.spec_from_file_location(
+            "joint_review_generator", SKILLS / "evidence-visualization/scripts/generate.py"
+        )
+        assert spec is not None and spec.loader is not None
+        generator = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(generator)
+        before = hashes(self.root)
+        with tempfile.TemporaryDirectory(dir=self.root) as directory:
+            with patch.object(generator, "run", wraps=generator.run) as execute:
+                data = generator.collect(
+                    self.root, SKILLS / "evidence-fm", Path(directory), require_api=True
+                )
+            commands = [call.args[0] for call in execute.call_args_list]
+            checks = [command for command in commands if command[2].endswith("check_fm.py")]
+            api = [command for command in commands if command[2].endswith("fm_api.py")]
+            self.assertEqual(1, len(checks))
+            self.assertEqual(1, len(api))
+            self.assertIn("--fm-check", api[0])
+            self.assertNotIn("--fm-skill", api[0])
+            self.assertTrue(data["validation"]["api"])
+        self.assertEqual(before, hashes(self.root))
 
     def test_missing_api_does_not_publish_an_fm_only_review(self):
         (self.root / ".evidence/api/api.json").unlink()

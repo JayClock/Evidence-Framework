@@ -5,6 +5,13 @@
   "venv": "evidence-fm-runtime",
   "executionEnvironments": [
     {
+      "root": ".agents/skills/evidence-fm/tests/api",
+      "extraPaths": [
+        ".agents/skills/evidence-fm/scripts",
+        ".agents/skills/evidence-fm/tests/api"
+      ]
+    },
+    {
       "root": ".agents/skills/evidence-fm/tests",
       "extraPaths": [
         ".agents/skills/evidence-fm/scripts",

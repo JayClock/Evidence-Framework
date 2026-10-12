@@ -110,7 +110,7 @@ class FMIntegrationTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )["evals"]
 
-        for delegate in ("evidence-discovery", "evidence-fm", "evidence-api-design", "evidence-visualization"):
+        for delegate in ("evidence-discovery", "evidence-fm", "evidence-visualization"):
             self.assertIn(delegate, entry)
         self.assertIn("references/workflow.md", entry)
         fm_entry = (REPOSITORY / ".agents/skills/evidence-fm/SKILL.md").read_text()

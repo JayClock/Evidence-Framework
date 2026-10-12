@@ -196,7 +196,7 @@ class WorkbenchTests(unittest.TestCase):
             root = Path(temp).resolve()
             with patch.object(wb, "run", return_value={"valid": False}) as command:
                 with self.assertRaisesRegex(ValueError, "未通过"):
-                    wb.collect(root, root, root, root)
+                    wb.collect(root, root, root)
                 self.assertEqual(1, command.call_count)
 
     def test_source_fingerprint_ignores_generated_but_detects_inputs(self):
@@ -208,6 +208,10 @@ class WorkbenchTests(unittest.TestCase):
             before = wb.fingerprint(root)
             (fm / "generated").mkdir()
             (fm / "generated/model.json").write_text("changed")
+            self.assertEqual(before, wb.fingerprint(root))
+            (fm / "notes.md").write_text("changed business explanation")
+            self.assertNotEqual(before, wb.fingerprint(root))
+            (fm / "notes.md").unlink()
             self.assertEqual(before, wb.fingerprint(root))
             (fm / "model.json").write_text('{"changed":true}')
             self.assertNotEqual(before, wb.fingerprint(root))

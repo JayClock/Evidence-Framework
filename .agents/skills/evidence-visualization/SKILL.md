@@ -1,7 +1,7 @@
 ---
 name: evidence-visualization
 description: 当用户要求查看 FM 与已有 API、生成或更新离线审核页、排查业务对象工作台显示故障时使用。不设计业务 UI，不修改模型或接口设计，不把页面生成视为业务批准。
-compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm；存在 API 时需要 evidence-api-design；浏览器验证需要 Node.js 22+ 与本机 Chrome。
+compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm（包含 API 工具）；浏览器验证需要 Node.js 22+ 与本机 Chrome。
 date: 2026-10-10 09:37:45
 updated: 2026-10-11 18:07:24
 ---
@@ -14,7 +14,7 @@ updated: 2026-10-11 18:07:24
 
 确认本次是讨论、只读检查、页面生成还是工具维护。讨论与只读检查不写项目文件；生成仅授权更新 `.evidence/views/index.html`。工具源码修改须有独立维护授权，不能借展示故障改写 FM/API。
 
-读取当前 `.evidence/fm/` 和可选 `.evidence/api/api.json`，定位本包及 FM/API Skill 的实际路径，确认 Python 和浏览器环境。联合审核必须有 API；独立 FM 可视化允许没有 API，不隐藏或删除已有 API 来绕过检查。
+读取当前 `.evidence/fm/` 和可选 `.evidence/api/api.json`，定位本包及 FM Skill 的实际路径，确认 Python 和浏览器环境。联合审核必须有 API；独立 FM 可视化允许没有 API，不隐藏或删除已有 API 来绕过检查。
 
 按任务选择参考：
 
@@ -30,11 +30,10 @@ updated: 2026-10-11 18:07:24
 ```bash
 "$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
   --project-root "$PROJECT_ROOT" \
-  --fm-skill "$FM_SKILL_DIR" \
-  --api-skill "$API_SKILL_DIR"
+  --fm-skill "$FM_SKILL_DIR"
 ```
 
-没有 API 的独立 FM 页面可省略 `--api-skill`；联合审核在命令末尾增加 `--require-api`。生成器重新检查两源、适用场景和输入新鲜度，临时投影不重写正式 generated 目录，只原子替换自己拥有的页面。
+FM 与 API 工具使用同一个 FM 包；联合审核在命令末尾增加 `--require-api`。生成器检查当前 FM 后将同一结果交给 API 自身校验，并核对两源和适用场景的新鲜度，临时投影不重写正式 generated 目录，只原子替换自己拥有的页面。
 
 生成或排错都不补造业务结构、权限、确认凭证或流程。显示规则由展示契约与实现负责，不因单份模型的布局问题修改业务源。
 

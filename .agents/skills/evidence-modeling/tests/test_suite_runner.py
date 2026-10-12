@@ -20,7 +20,7 @@ class SuiteRunnerTests(unittest.TestCase):
                 "evidence-fm/tests/portability",
                 "evidence-visualization/tests",
                 "evidence-visualization/tests/portability",
-                "evidence-api-design/tests",
+                "evidence-fm/tests/api",
                 "evidence-modeling/tests",
                 "evidence-delivery/tests",
                 "evidence-task-planning/tests",

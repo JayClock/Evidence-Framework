@@ -15,7 +15,6 @@ PORTABLE_NAMES = (
     "evidence-discovery",
     "evidence-fm",
     "evidence-requirements",
-    "evidence-api-design",
     "evidence-modeling",
     "evidence-visualization",
 )

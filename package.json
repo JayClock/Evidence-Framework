@@ -23,7 +23,7 @@
     "python:test": "node --test tools/python/python.spec.mjs",
     "skills:test": "node tools/python/python.mjs --require jsonschema,celpy,yaml .agents/skills/evidence-modeling/tests/run_skill_tests.py",
     "skills:verify": "npm run skills:test",
-    "skills:test:fm": "node tools/python/python.mjs --require jsonschema,celpy -m unittest discover -s .agents/skills/evidence-fm/tests -v"
+    "skills:test:fm": "node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests -v && node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests/api -v"
   },
   "private": true,
   "dependencies": {

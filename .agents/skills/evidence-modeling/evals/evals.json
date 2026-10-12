@@ -148,7 +148,7 @@
       "files": [],
       "assertions": [
         "先核对人类全局追责结束依据，不以合成提示冒充真实业务批准",
-        "FM 通过后接续整体 API，无需用户第二次触发",
+        "FM 通过后自动接续同包整体 API，无需用户第二次触发，也不重复检查 FM",
         "使用 Visualization 生成器及 --require-api，同页展示模型与接口",
         "不把页面生成当批准，不自动进入需求、规划、实施或 Git 操作"
       ]
@@ -170,7 +170,7 @@
       "id": 15,
       "category": "combined-read-only",
       "prompt": "只校验当前 FM 与 API，告诉我两边的真实结果；不要改任何项目文件，也不要更新审核页。",
-      "expected_output": "只运行 FM 检查与现有 API inspect/check，分别报告真实结果；缺 API 时报告联合检查未完成。",
+      "expected_output": "运行一次 FM 检查，将同一结果交给现有 API 自身 check（inspect 可选），分别报告真实结果；缺 API 时报告联合检查未完成。",
       "files": [],
       "assertions": [
         "不执行 project 或 Visualization 生成器",
@@ -195,7 +195,7 @@
     {
       "id": 17,
       "category": "combined-resource-missing",
-      "prompt": "用一体入口生成模型与 API 并联合审核。本环境只能发现 FM Skill，API Design 和 Visualization 都没有安装。",
+      "prompt": "用一体入口生成模型与 API 并联合审核。本环境能发现 FM Skill，但包内 API 工具不完整，Visualization 也没有安装。",
       "expected_output": "在编辑前报告必需资源缺失，不先修改 FM，不把安装缺口转成业务问题，也不自动安装工具或降级交付。",
       "files": [],
       "assertions": [

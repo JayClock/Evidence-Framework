@@ -10,7 +10,6 @@ NAMES = (
     "evidence-modeling",
     "evidence-discovery",
     "evidence-fm",
-    "evidence-api-design",
     "evidence-visualization",
 )
 

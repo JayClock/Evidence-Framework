@@ -40,16 +40,20 @@
 
 当前交付文件固定保存在 [generated](generated/)；目录只保存机器消费的投影、OpenAPI、表示样例、类型化入口与消费者覆盖、HTTP 流程、合成 E2E 向量和 manifest。接口清单、覆盖与 HTTP 契约统一在 [可视化审核页](../views/index.html) 中阅读，不再维护重复 Markdown。它们是 API 源的派生结果，不是已部署接口或本次运行验收结果。生成文件按权威字节交付，不应再被格式化，否则 manifest 摘要失效。
 
-生成规则以 [API Skill](../../.agents/skills/evidence-api-design/SKILL.md)为准：获授权后先检查当前源，再整体更新固定输出目录；失败保留原目录，成功后由 Git 展示和保存版本差异。源或校验器变化后重验，不用已留存报告替代当前检查。
+生成规则以 [FM Skill 的 API 阶段](../../.agents/skills/evidence-fm/references/api-design.md)为准：获授权后先检查当前源，再整体更新固定输出目录；失败保留原目录，成功后由 Git 展示和保存版本差异。源或校验器变化后重验，不用已留存报告替代当前检查。
 
 检查命令：
 
 ```bash
-python3 .agents/skills/evidence-api-design/scripts/fm_api.py check \
+# FM 阶段检查一次，API 复用结果；失败不接续。
+FM_CHECK_FILE="$(mktemp)"
+python3 .agents/skills/evidence-fm/scripts/check_fm.py "$PWD/.evidence/fm" > "$FM_CHECK_FILE" &&
+python3 .agents/skills/evidence-fm/scripts/fm_api.py check \
   --project-root "$PWD" \
   --fm "$PWD/.evidence/fm" \
-  --fm-skill "$PWD/.agents/skills/evidence-fm" \
+  --fm-check "$FM_CHECK_FILE" \
   --api "$PWD/.evidence/api/api.json"
+rm -f "$FM_CHECK_FILE"
 ```
 
 HTTP 流程和 `e2e-test-vectors.json` 只验证契约与数据衔接，`runtimeValidated` 为 false。合成向量不决定数据库装载、认证身份或外部系统 Stub。认证、机构验签、幂等存储、原子扣减、协议参与方实例核验和业务前置规则仍需由实际服务执行并验收。

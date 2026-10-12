@@ -2,13 +2,12 @@
 
 ## 运行环境
 
-完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试时还需要 `tests/`。生成器自身只使用 Python 3.10+ 标准库，FM/API CLI 的依赖按各自安装包满足。不自动安装软件，不要求三个 Skill 相邻。
+完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试时还需要 `tests/`。生成器自身只使用 Python 3.10+ 标准库，FM/API CLI 都位于 FM 安装包，其依赖按该包满足。不自动安装软件，不要求两个 Skill 相邻。
 
 ```bash
 "$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
   --project-root "$PROJECT_ROOT" \
-  --fm-skill "$FM_SKILL_DIR" \
-  --api-skill "$API_SKILL_DIR"
+  --fm-skill "$FM_SKILL_DIR"
 ```
 
 输入为项目 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`。临时编译和 API 投影不覆盖已有 generated 目录。联合审核增加 `--require-api`，API 不存在时返回非零并保留已有页面；不带该参数仍可生成单独 FM 页面。直接在浏览器打开 HTML，无需启动服务器。

@@ -32,10 +32,9 @@ def fingerprint(root: Path) -> str:
     """Keep paths and input hashes in process memory, never in the page."""
     root = root.resolve()
     fm = root / ".evidence/fm"
-    paths = [p for p in fm.rglob("*") if not any(
-        part in {"generated", "__pycache__", "discovery"} or part.startswith(".")
-        for part in p.relative_to(fm).parts
-    ) and p.suffix in {".json", ".yaml", ".yml"}]
+    paths = [p for p in fm.rglob("*")
+             if p.relative_to(fm).parts[0] != "generated"
+             and "__pycache__" not in p.relative_to(fm).parts]
     api = root / ".evidence/api/api.json"
     if api.exists() or api.is_symlink():
         paths.append(api)
@@ -255,7 +254,7 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     }
 
 
-def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path, *, require_api: bool = False) -> dict:
+def collect(root: Path, fm_skill: Path, work: Path, *, require_api: bool = False) -> dict:
     fm = root / ".evidence/fm"
     api_path = root / ".evidence/api/api.json"
     if require_api and not api_path.is_file():
@@ -265,6 +264,8 @@ def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path, *, require_
     check = run(command)
     if not check.get("valid") or check.get("inputChanged"):
         raise ValueError("FM 未通过，不生成视图")
+    fm_check = work / "fm-check.json"
+    fm_check.write_text(json.dumps(check, ensure_ascii=False), encoding="utf-8")
 
     def compile_model(script: str, name: str) -> dict:
         output = work / name
@@ -281,15 +282,14 @@ def collect(root: Path, fm_skill: Path, api_skill: Path, work: Path, *, require_
             instances.append(value)
     api = None
     if api_path.exists():
-        run([sys.executable, "-B", str(api_skill / "scripts/fm_api.py"), "project",
-             "--project-root", str(root), "--fm", str(fm), "--fm-skill", str(fm_skill),
+        run([sys.executable, "-B", str(fm_skill / "scripts/fm_api.py"), "project",
+             "--project-root", str(root), "--fm", str(fm), "--fm-check", str(fm_check),
              "--api", str(api_path), "--out", str(work / "api")])
         api = read_json(work / "api/projection.json")
         if api["fmCheckSummary"]["modelDigest"] != check["modelDigest"]:
             raise ValueError("FM 在投影期间变化")
         api["bindings"] = read_json(api_path).get("bindings", [])
-    final = run(command)
-    if not final.get("valid") or final.get("inputChanged") or final["modelDigest"] != check["modelDigest"] or initial != fingerprint(root):
+    if initial != fingerprint(root):
         raise ValueError("输入在生成期间变化，保留已有视图")
     data = project(model, scenarios, instances, simulation, api)
     data["validation"] = {"fm": True, "simulation": check.get("simulationPassed"),
@@ -342,12 +342,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="生成离线业务对象工作台")
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--fm-skill", type=Path)
-    parser.add_argument("--api-skill", type=Path)
     parser.add_argument("--require-api", action="store_true", help="联合审核必须包含当前 API；缺失时保留已有页面")
     args = parser.parse_args()
     root = args.project_root.resolve()
     fm_skill = (args.fm_skill or root / ".agents/skills/evidence-fm").resolve()
-    api_skill = (args.api_skill or root / ".agents/skills/evidence-api-design").resolve()
     views = root / ".evidence/views"
     try:
         if views.is_symlink() or not views.resolve().is_relative_to(root):
@@ -355,7 +353,7 @@ def main() -> int:
         before = fingerprint(root)
         views.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix=".workbench-", dir=views) as temporary:
-            data = collect(root, fm_skill, api_skill, Path(temporary), require_api=args.require_api)
+            data = collect(root, fm_skill, Path(temporary), require_api=args.require_api)
             html = render(data)
             if before != fingerprint(root):
                 raise ValueError("发布前输入变化，保留已有视图")

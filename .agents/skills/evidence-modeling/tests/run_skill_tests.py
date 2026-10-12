@@ -14,9 +14,10 @@ def test_suites(skills: Path) -> list[Path]:
     for directory in sorted(skills.glob("*/tests")):
         if directory.is_dir():
             suites.append(directory)
-            portability = directory / "portability"
-            if portability.is_dir():
-                suites.append(portability)
+            for name in ("api", "portability"):
+                owned = directory / name
+                if owned.is_dir():
+                    suites.append(owned)
     return suites
 
 
