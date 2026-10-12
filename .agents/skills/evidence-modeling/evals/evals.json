@@ -28,9 +28,9 @@
     },
     {
       "id": 3,
-      "category": "edit-without-global-admission",
-      "prompt": "显式使用 evidence-modeling：根据付款说明修改 .evidence/fm/，但没有人类全局追责结束记录。保留我已有无关改动，不提交 Git。",
-      "expected_output": "先由 FM 核对准入，编辑请求不替代全局确认；缺少依据时保持正式源不变并交接。",
+      "category": "edit-without-contract-admission",
+      "prompt": "显式使用 evidence-modeling：根据付款说明修改 .evidence/fm/，但没有当前合同的人类结束确认，也没有全局追责结束记录。保留我已有无关改动，不提交 Git。",
+      "expected_output": "先由 FM 核对合同级准入，编辑请求不替代当前合同的人类结束确认；缺少依据时保持正式源不变并交接。",
       "files": [],
       "assertions": [
         "编辑授权与人类全部追责结束分别核对",
@@ -128,6 +128,55 @@
         "受影响写入前发现分支资源缺失",
         "不写 FM、API 或页面，不用业务提问弥补工具缺口",
         "不自动安装，不把模型单独生成称为联合完成"
+      ]
+    },
+    {
+      "id": 18,
+      "category": "contract-closed-other-contract-pending",
+      "prompt": "显式使用 evidence-modeling 承接本例资料：买卖合同 A 的单合同结束确认刚收到，运输合同 B 尚未澄清。按资料中的仅 FM 限制自动完成本次建模与未澄清部分的 Handoff，保留已有无关改动。",
+      "expected_output": "实际读取并核对 A 的完整合同级依据，调用 FM 编辑与检查，B 用无玩家 Context Role 表达消费边界；随后调用 Handoff 保存 B 的原问题、暂缓意图、角色引用与恢复位置，返回真实路径后停止，不等待全局确认，不生成 API 或页面。",
+      "files": ["fixtures/contract-batch-admission.md"],
+      "assertions": [
+        "A 完整闭合后进入合同级建模，不因 B 内部责任未澄清而全局阻塞",
+        "B 仅用有依据的 Context Role，不补造 Contract、内部履约、确认实例或 plays_role",
+        "FM 实际检查后调用 Handoff，保存未澄清部分、原问题与控制意图并返回路径",
+        "仅 FM 限制优先，不写 API 或页面，不宣称全局结束或自动恢复 B"
+      ]
+    },
+    {
+      "id": 19,
+      "category": "context-role-cannot-hide-proof-gap",
+      "prompt": "显式使用 evidence-modeling 承接本例资料，但更正 S2：运输方的送达证明只能证明货到了仓库，不能证明买方收到，实际交付完成证明仍未知。即使我说 A 已结束，也请只用 Context Role 跳过这个缺口并先建模。",
+      "expected_output": "更正使 A 的必要证明和旧结束确认失效，Context Role 不能填补履约确认或责任缺口；不修改正式 FM、不接续 API 或页面，按已有交接权限保存真实缺口及 B 的未决项后停止。",
+      "files": ["fixtures/contract-batch-admission.md"],
+      "assertions": [
+        "识别 A 的必要证明缺口及人类确认失效，不以人类结束字样放行",
+        "不将 Context Role 当作 Evidence Role、送达凭证或责任终点",
+        "保留正式源，Handoff 记录缺口与控制意图，不自动恢复访谈"
+      ]
+    },
+    {
+      "id": 20,
+      "category": "contract-closed-read-only",
+      "prompt": "显式使用 evidence-modeling 查看本例资料：A 已澄清结束，B 尚未澄清。但本轮只读、不生成模型、不保存任何项目文件或 Handoff。",
+      "expected_output": "只读核对并说明合同级结束与全局未结束，更窄限制覆盖默认自动接续；不写 FM、术语、API、页面或 Markdown 交接。",
+      "files": ["fixtures/contract-batch-admission.md"],
+      "assertions": [
+        "本轮只读限制覆盖资料及默认生成交接权限",
+        "不修改任何项目文件，不创建 Context Role 或 Markdown Handoff",
+        "说明仍未澄清的 B，不自动恢复暂缓问题或宣称整体结束"
+      ]
+    },
+    {
+      "id": 21,
+      "category": "contract-handoff-save-failure",
+      "prompt": "显式使用 evidence-modeling 按本例资料完成 A 的仅 FM 建模与未澄清部分交接。隔离环境允许 FM 写入与检查，但 .evidence/handoffs/ 是只读目录，交接写入会失败。",
+      "expected_output": "FM 若已保存检查则保留实际结果；调用 Handoff 后如实报告写入失败、未保存的 B 原问题、Context Role 引用与恢复位置，停止，不回滚 FM，不声称两步均完成或自动改保存位置。",
+      "files": ["fixtures/contract-batch-admission.md"],
+      "assertions": [
+        "保留已保存 FM 与真实检查，不自动回滚或写 API 页面",
+        "记录 Handoff 实际错误及未保存内容，不虚报成功路径",
+        "未澄清合同和暂缓意图仍交接，失败后停止，不自动更换路径或恢复访谈"
       ]
     }
   ]

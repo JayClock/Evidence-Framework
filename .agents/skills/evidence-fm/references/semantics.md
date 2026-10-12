@@ -47,6 +47,14 @@ Participant Party 表达跨上下文保持身份的个人、组织或法人，�
 
 只有已知稳定玩家或跨上下文同一性时建立 `plays_role`。同名角色不证明主体相同；岗位、经办人、系统或调度器不自动成为合同责任方。角色扮演不等于完整操作授权，办理一份凭证的代表依据不能扩展成该角色全部权限。
 
+### 未澄清合同的 Context Role
+
+合同级建模时，相关未澄清合同以 Context Role（`category: role / kind: context`）表达当前合同需要的外部边界。角色归消费方 Context，名称与说明来自已知业务关系，说明需要什么外部能力及哪些内部责任尚未澄清；没有业务关联的合同只留在交接中，不为凑齐合同清单创建角色。
+
+角色可暂不绑定玩家，不创建虚构 Contract、空壳 Contract Context、内部履约、期限、责任终点或场景实例，不补造 plays_role 关系。已有其他合同模型与无关改动保持不变，不为使用角色而删除它们。后续对应合同闭合并获编辑授权后，保留角色 ID，按真实 Context→Context Role 的 `plays_role` 关系接入，复核当前合同的受影响判断与确认适用性。
+
+Context Role 不代替 Evidence Role 或履约确认，不是可被 Evidence 直接引用的证明凭证。当前合同需要外部结果时，仍按下一节及第 7 节表达有依据的具体确认或开放证明约定，保留责任、匹配与采信条件；没有具体玩家时不宣称已形成结果或模拟成功。必要证明尚未查清时返回 [合同级准入](responsibility-closure.md)，不能靠角色化放行。
+
 ## 5. Evidence 与业务时间
 
 - RFP、Proposal 属于 Pre-contract Context。

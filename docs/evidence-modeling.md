@@ -7,7 +7,7 @@
 | 目标                         | 入口                                                                     | 本轮结果                                   |
 | ---------------------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
 | 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支                  | 方法解释、依据与未知                       |
-| 手动记录建模过程或会话交接   | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)                   | Markdown 进展交接及下一轮建议              |
+| 记录建模过程或合同级交接     | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)                   | Markdown 进展交接及下一轮建议              |
 | 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)               | 共同理解、当前节点的独立问题组及获授权术语 |
 | 生成、修改或校验 FM 与 API   | [FM](../.agents/skills/evidence-fm/SKILL.md)                             | 模型与整体 API；仅 FM 限制优先             |
 | 从整体 FM 设计 API           | [FM 的 API 阶段](../.agents/skills/evidence-fm/references/api-design.md) | API 设计、HTTP 契约及派生产物              |
@@ -35,7 +35,7 @@
 
 一个业务焦点下可以开展多凭证并行追溯，同一凭证也可有多条关键数据来源链。各链深度优先深入依据，再回溯上层判断；共同依据只追一次，独立前沿成组，依赖问题先处理前提，不机械逐字段问到底，也不先扫完所有凭证再深入。主焦点保持不变，各活跃凭证分别说明当前位置、关键数据与责任人；一条链暂缓不封锁其他获准继续的独立链。首次进入或目标变化时可用用户故事说明已知业务目的，每轮的凭证依据说明仍讲清各数据的证明边界。来源查清不表示履约完成，用户故事验收不等于 FM 履约确认。描述不附资料出处，内部业务依据引用仍按权限保留。
 
-收到回答后吸收全部事实并重算依赖，不预排整份问卷。部分回答立即承接已答项，未答不默认同意，不知道保持未决；逐项暂缓保留原标识，整轮停止或取消后等待。合同导航和全局结束确认各自单独一轮，不与业务问题组混问。问题组回答完毕不表示全部追责结束或授权生成。
+收到回答后吸收全部事实并重算依赖，不预排整份问卷。部分回答立即承接已答项，未答不默认同意，不知道保持未决；逐项暂缓保留原标识，整轮停止或取消后等待。合同导航、单合同结束确认和全局结束确认各自单独一轮，不与业务问题组混问。问题组回答完毕不表示全部追责结束或授权生成。
 
 问答、控制与承接由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 唯一维护；[成组一轮](../.agents/skills/evidence-discovery/examples/grouped-turn.md)及[多来源一轮](../.agents/skills/evidence-discovery/examples/parallel-turn.md)、[多凭证一轮](../.agents/skills/evidence-discovery/examples/multi-evidence-turn.md)给出合成样例。表达质量评测核对问题独立性、故事事实忠实性、单点聚焦，以及来源文章、全局进度或准入提醒是否干扰当前展示。
 
@@ -43,33 +43,37 @@
 
 首次进入或必要上下文丢失时，定位提供的目标、材料、当前理解、原问题及控制意图，加载当前分支必要方法。连续问答吸收全部新增输入，增量核对当前节点及受影响依赖；已加载且未变化的方法复用。切换、更正与结束核对按影响扩大范围。
 
-| 当前判断                       | 方法来源                                                                                                                     |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 经营依据、合同边界、骨架及依赖 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
-| 关键数据、计算与业务时间依据   | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
-| 术语理解、日常表达及定义归属   | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
-| 责任终点与全局明确确认         | [追责结束准入](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                           |
-| 正式对象、引用与时间语义       | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
-| 问答、控制与跨会话承接         | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |
-| 阶段接续及产物恢复             | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                       |
+| 当前判断                           | 方法来源                                                                                                                     |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 经营依据、合同边界、骨架及依赖     | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
+| 关键数据、计算与业务时间依据       | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
+| 术语理解、日常表达及定义归属       | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
+| 合同级准入、责任终点与全局明确确认 | [追责结束准入](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                           |
+| 正式对象、引用与时间语义           | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
+| 问答、控制与跨会话承接             | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |
+| 阶段接续及产物恢复                 | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                       |
 
 行为基线按当前动作加载：[Discovery](../.agents/skills/evidence-discovery/examples/README.md)、[Modeling](../.agents/skills/evidence-modeling/examples/README.md)、[FM](../.agents/skills/evidence-fm/examples/README.md)。样例是维护参考，实际业务判断使用本轮材料与用户决定。
 
 ## 正式编辑与产物
 
-正式编辑前核对**人类明确确认全部追责结束**，覆盖当前范围、全部主履约、各层异常、人类终点与实际推演。完整责任图及整体确认由 FM 方法逐项复核；直接调用 FM、外部材料或已有模型均不绕过追责结束门槛。停止、暂缓、局部终点与全局结束分别判断，结束确认与编辑授权分别核对。
+正式编辑先核对**合同级准入**：当前合同全部主履约、各层异常、人类终点、必要外部证明、完整责任图与实际推演均查清，且有人类明确结束确认及编辑授权。相关未澄清合同以 Context Role 表达外部边界，不补造其内部履约，也不能用角色隐藏当前合同必要缺口；没有关联的合同只保留在交接中。
 
-| 默认路径                                        | 用途                                 |
-| ----------------------------------------------- | ------------------------------------ |
-| `.evidence/handoffs/<主题>.md`                  | 显式请求时保存的建模过程交接         |
-| `.evidence/glossary.json`                       | 唯一词汇入口，定义或正式对象引用     |
-| `.evidence/fm/`                                 | 正式 JSON、说明、validation 与生成物 |
-| `.evidence/api/api.json`                        | API 设计源                           |
-| `.evidence/api/generated/`                      | API 投影、OpenAPI、样例与流程        |
-| `.evidence/views/index.html`                    | 当前源的只读工作台                   |
-| `.evidence/checks/fm/`、`.evidence/checks/api/` | 获授权紧凑检查记录                   |
+本范围全部合同闭合后，单独取得**人类明确确认全部追责结束**，核对跨合同关联与整体推演；不要求已闭合独立合同等待此全局确认。完整责任判断由 FM 方法逐项复核；直接调用 FM、外部材料或已有模型均不绕过追责结束门槛。停止、暂缓、合同级结束与全局结束分别判断，结束确认与编辑授权分别核对。
+
+| 默认路径                                        | 用途                                   |
+| ----------------------------------------------- | -------------------------------------- |
+| `.evidence/handoffs/<主题>.md`                  | 显式请求或合同级自动保存的建模过程交接 |
+| `.evidence/glossary.json`                       | 唯一词汇入口，定义或正式对象引用       |
+| `.evidence/fm/`                                 | 正式 JSON、说明、validation 与生成物   |
+| `.evidence/api/api.json`                        | API 设计源                             |
+| `.evidence/api/generated/`                      | API 投影、OpenAPI、样例与流程          |
+| `.evidence/views/index.html`                    | 当前源的只读工作台                     |
+| `.evidence/checks/fm/`、`.evidence/checks/api/` | 获授权紧凑检查记录                     |
 
 访谈形成共同理解，明确术语按权限当轮沉淀。词汇表中 standalone 的 `name` 维护完整双语名称与未建模定义，model 引用当前 FM 的 `label` 与定义，落实为模型后保留 term ID。中文、英文及别名用于同一入口检索，不另存英文词典，也不因显示名更正自动迁移 FM/API。术语写入失败时说明真实结果并停止，恢复时核对实际条目。
+
+单合同澄清结束并经人类确认后，建模入口默认调用正式建模 Skill，相关未澄清合同使用 Context Role，随后调用 `evidence-handoff` 保存未澄清部分及恢复位置。只读、仅访谈、不生成或不保存交接等明确限制优先；普通回答不触发生成。合同级自动接续的资源、失败及恢复规则由 [文件交接](../.agents/skills/evidence-modeling/references/workflow.md) 唯一维护；保存成功后停止，不自动切换合同。
 
 完整生成依次执行 FM、整体 API 与联合审核；API 消费同一次有效 FM 检查并核对摘要，保留自身校验。联合页在独立页面运行中核对两源并完成浏览器检查。各阶段保存与检查分别交接，部分成功与完整交付分别报告。只读、仅 FM、仅页面等限定按本轮授权执行。
 

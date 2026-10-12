@@ -161,7 +161,8 @@ class FMIntegrationTests(unittest.TestCase):
         self.assertNotIn("## 组合流程", entry)
         categories = {case["category"] for case in evals}
         self.assertTrue({"discovery-before-model", "discovery-delegation-controls",
-                         "edit-without-global-admission", "unclosed-scope-blocks-generation"}
+                         "edit-without-contract-admission", "unclosed-scope-blocks-generation",
+                         "contract-closed-other-contract-pending", "context-role-cannot-hide-proof-gap"}
                         .issubset(categories))
 
 

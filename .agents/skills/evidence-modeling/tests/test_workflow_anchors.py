@@ -27,19 +27,23 @@ class WorkflowAnchorTests(unittest.TestCase):
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", flow))
         self.assertTrue({
             ("intent", "discussion"), ("intent", "discovery"),
+            ("discovery", "contractEnd"), ("contractEnd", "resources"),
+            ("contractEnd", "handoff"),
             ("intent", "manual"), ("manual", "handoff"),
             ("intent", "readonly"), ("intent", "review"),
             ("intent", "resources"), ("resources", "admission"),
             ("resources", "blocked"), ("admission", "fm"),
             ("admission", "blocked"), ("fm", "fmValid"),
             ("fmValid", "blocked"), ("fmValid", "narrow"),
-            ("narrow", "handoff"), ("narrow", "api"),
+            ("narrow", "finalize"), ("narrow", "api"),
             ("api", "apiValid"), ("apiValid", "blocked"),
-            ("apiValid", "pageAllowed"), ("pageAllowed", "handoff"),
+            ("apiValid", "pageAllowed"), ("pageAllowed", "finalize"),
             ("pageAllowed", "review"), ("review", "reviewValid"),
-            ("reviewValid", "blocked"), ("reviewValid", "handoff"),
+            ("reviewValid", "blocked"), ("reviewValid", "finalize"),
+            ("blocked", "finalize"), ("finalize", "batchRecord"),
+            ("finalize", "handoff"), ("batchRecord", "handoff"),
         }.issubset(edges), edges)
-        self.assertFalse(any(start in {"blocked", "handoff"} for start, _ in edges))
+        self.assertFalse(any(start == "handoff" for start, _ in edges))
 
     def cases(self):
         return json.loads((MODELING / "examples/permissions.json").read_text())["cases"]

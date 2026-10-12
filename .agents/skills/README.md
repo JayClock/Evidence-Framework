@@ -4,16 +4,16 @@
 
 Skill 保存可移植方法，项目文档保存实际范围与工程决定；不在两者复制业务知识或状态。编排入口按意图选择分支，专业方法由对应拥有者唯一维护；引用写明何时读取，每一步以可观察的退出条件收束。交付采用外层 PDCA、内层 Guides → Action → Sensors → Steer。Guides 在开始、恢复、纠偏和来源变化时重新核对，不只是会话开头的一段提示词。
 
-| Skill                                                     | 用途               | 输入与输出                                                                               | 运行依赖                                                            |
-| --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| [evidence-modeling](evidence-modeling/SKILL.md)           | 显式一体建模入口   | 目标／已有记录 → 讨论或访谈；追责结束准入后 FM → 整体 API → 联合审核                     | 生成需 FM（含 API）、Visualization；访谈需 Discovery 和 FM          |
-| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 经营材料 → 约定、请求—确认骨架、凭证追溯、完整责任图及人类依据、当轮术语                 | 通用访谈只需对话；FM 专业判断需读取 FM 参考                         |
-| [evidence-handoff](evidence-handoff/SKILL.md)             | 手动建模交接       | 显式请求 → Markdown 进展、决定、未决项及下一轮建议                                       | 当前会话上下文与文件写入权限                                        |
-| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 每轮来源 → 统一领域语言；追责结束准入及编辑授权 → FM、整体 API、OpenAPI、场景与实际结果  | 读取准则只需文本；执行校验需 Python 3.10+                           |
-| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 对象树、业务详情、场景判断与双向引用；不携带来源信息                 | Python、可定位的 FM Skill（含 API）；浏览器回归需 Node.js 与 Chrome |
-| [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                      |
-| [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                                |
-| [evidence-delivery](evidence-delivery/SKILL.md)           | 单任务交付         | 任务 DAG → 小步实现／复验、故障诊断、Standards / Spec 审查与真实证据                     | Python 3.10+、PyYAML、项目工具链                                    |
+| Skill                                                     | 用途               | 输入与输出                                                                               | 运行依赖                                                                         |
+| --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [evidence-modeling](evidence-modeling/SKILL.md)           | 显式一体建模入口   | 目标／已有记录 → 讨论或访谈；合同级准入后 FM → 整体 API → 联合审核 → 未澄清部分 Handoff  | 生成需 FM（含 API）、Visualization；访谈需 Discovery 和 FM，自动交接还需 Handoff |
+| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 经营材料 → 约定、请求—确认骨架、凭证追溯、完整责任图及人类依据、当轮术语                 | 通用访谈只需对话；FM 专业判断需读取 FM 参考                                      |
+| [evidence-handoff](evidence-handoff/SKILL.md)             | 建模过程交接       | 显式请求或合同级自动交接 → Markdown 进展、未澄清合同、决定及下一轮建议                   | 当前会话上下文与文件写入权限                                                     |
+| [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 每轮来源 → 统一领域语言；追责结束准入及编辑授权 → FM、整体 API、OpenAPI、场景与实际结果  | 读取准则只需文本；执行校验需 Python 3.10+                                        |
+| [evidence-visualization](evidence-visualization/SKILL.md) | 离线可视化审核     | 当前 FM／已有 API → 对象树、业务详情、场景判断与双向引用；不携带来源信息                 | Python、可定位的 FM Skill（含 API）；浏览器回归需 Node.js 与 Chrome              |
+| [evidence-requirements](evidence-requirements/SKILL.md)   | 收敛软件职责       | 充分材料或 FM → 范围、MVP、故事与验收                                                    | 对话与文本文件                                                                   |
+| [evidence-task-planning](evidence-task-planning/SKILL.md) | 通用 FM 实施任务   | 任意 FM／可选 API → 模块化单体、业务模块边界、MyBatis XML 与 Jersey 子资源的可读任务计划 | Python 3.10+、PyYAML；不执行产品实现                                             |
+| [evidence-delivery](evidence-delivery/SKILL.md)           | 单任务交付         | 任务 DAG → 小步实现／复验、故障诊断、Standards / Spec 审查与真实证据                     | Python 3.10+、PyYAML、项目工具链                                                 |
 
 ## 安装
 
@@ -23,11 +23,11 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 npx skills@latest add ./.agents/skills --skill evidence-discovery
 ```
 
-完整一体流程使用 `evidence-modeling`，同时提供 `evidence-fm`（含 API）、`evidence-visualization`，访谈还需 `evidence-discovery`。仅访谈或明确仅 FM 时只加载对应分支依赖；也可独立安装单项或 `evidence-requirements`。保留生成器、assets 和浏览器测试，不需要向业务项目复制工具。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
+完整一体流程使用 `evidence-modeling`，同时提供 `evidence-fm`（含 API）、`evidence-visualization`，访谈还需 `evidence-discovery`，合同级自动交接还需 `evidence-handoff`。仅访谈或明确仅 FM 时只加载对应分支依赖；也可独立安装单项或 `evidence-requirements`。保留生成器、assets 和浏览器测试，不需要向业务项目复制工具。安装器需要 Node.js 和网络；根据提示选择目标 Agent 与安装位置。
 
 也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references，以及 FM 包的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
-使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；领域语言沉淀与专业 FM 判断通过已安装的 FM 包或用户提供的路径获取方法，不假设兄弟目录。访谈按 FM 方法当轮更新明确术语，不自动启动模型 JSON 生成。缺少准则时说明待沉淀项并说明词汇表未更新，不能宣称完整专业审查。
+使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；领域语言沉淀与专业 FM 判断通过已安装的 FM 包或用户提供的路径获取方法，不假设兄弟目录。独立访谈按 FM 方法当轮更新明确术语，不自动启动模型 JSON 生成；来自 Modeling 的获授权单合同结束信号交回入口，按其协议接续建模与交接。缺少准则时说明待沉淀项并说明词汇表未更新，不能宣称完整专业审查。
 
 FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛后才按授权生成或修改模型，检查通过后自动接续整体 API，明确仅 FM 限制优先；未闭合时只返回具体缺口，不复制访谈机制。Requirements 仍可直接使用充分的外部材料。无需为了独立使用而在两个包中保留同一套建模知识。
 
@@ -51,7 +51,7 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 
 业务分析只在 [FM 方法](evidence-fm/references/business-analysis.md)维护，正式编辑统一核对 [追责结束准入](evidence-fm/references/responsibility-closure.md)。Discovery 管一轮交互，FM 管专业判断与正式表达，Modeling 管授权和阶段接续，不在每层复述分析过程。
 
-先选择 Skill，再按 Guides / Action / Sensors / Steer 执行：加载当前分支来源，完成授权动作，核对实际证据，修正或停止。独立调用不扩大权限；显式一体生成依次完成 FM、整体 API 和联合审核。只聊不落盘、只校验及仅 FM 等限制优先。保存、准入、机器检查与业务批准互不替代，不自动进入需求、规划或开发。
+先选择 Skill，再按 Guides / Action / Sensors / Steer 执行：加载当前分支来源，完成授权动作，核对实际证据，修正或停止。独立调用不扩大权限；显式一体生成依次完成 FM、整体 API 和联合审核。入口建模访谈默认在有效单合同结束确认后执行上述生成与 Handoff，相关未澄清合同使用 Context Role；必要证明缺口仍阻塞当前合同，具体接续见 [文件交接](evidence-modeling/references/workflow.md)。只聊不落盘、只校验及仅 FM 等限制优先。保存、准入、机器检查与业务批准互不替代，不自动进入需求、规划或开发。
 
 ## 文件交接
 
@@ -59,7 +59,7 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 
 ```text
 .evidence/
-├── handoffs/             # 显式请求时保存的建模过程 Markdown 交接
+├── handoffs/             # 显式请求或合同级自动保存的建模过程 Markdown 交接
 ├── glossary.json         # 唯一 JSON 词汇表，独立 Schema，不进入 FM 类型加载
 ├── fm/                   # 当前模型、说明、validation 与 generated
 ├── views/index.html      # 一体生成或单独要求时更新的联合只读审核页

@@ -10,6 +10,7 @@
 | 请求、确认、关键值与业务时间怎样落实 | [可追溯订阅付款](valid-traceable-subscription/README.md) | 合成依据到 Entity、Rule、关系与正常／逾期场景的映射   |
 | 没有合同的领域对象怎样表达           | [客户档案领域](domain/README.md)                         | 对象身份、属性与规则，不补造履约                      |
 | 同合同引用与跨上下文开放证明怎样区分 | [结构对照](structural-contrasts.md)                      | Context、Fulfillment、Evidence、Role 的归属与引用方向 |
+| 单合同闭合后怎样保留未澄清边界       | [合同级建模](contract-batch.md)                          | Context Role 无玩家边界、必要证明与后续接入           |
 | 整体 FM 怎样接续完整 API             | [商品采购完整链路](full-lifecycle/README.md)             | 整体对象与场景覆盖、HTTP 契约、消费者接续与静态限制   |
 
 JSON 样例与回归共用一份，测试从这里读取，需改输入时复制到临时目录。项目文件组织、键语义与硬校验由 [格式](../references/format.md) 和 [语义](../references/semantics.md) 维护；样例的独立对象文件不是项目目录模板，新增对象仍按业务上下文归位，稳定 ID 不由路径决定。
