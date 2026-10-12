@@ -13,7 +13,7 @@
 | Handoff 的 `evals/`                                                                             | 显式 Markdown 交接、确认覆盖、未决与控制意图、保存失败              |
 | Visualization 的 `evals/`                                                                       | 当前生成器的只读投影、导航、图形、详情、输入不变性与浏览器证据      |
 | Planning／Delivery 的 `evals/`                                                                  | 计划及测试边界、确定性身份、单任务执行、诊断、双维度审查和真实证据  |
-| `test_skill_packages.py`                                                                        | 包完整性、链接闭合、当前风险覆盖及评测文件内 ID 唯一                    |
+| `test_skill_packages.py`                                                                        | 包完整性、链接闭合、当前风险覆盖及评测文件内 ID 唯一                |
 | `test_skill_documentation.py`                                                                   | 业务入口加载边界、日常领域语言消费及跨包文档协作                    |
 | `test_contract_first_workflow.py`、`test_incremental_interview.py`、`test_grouped_interview.py` | 合同—骨架—追溯—异常、增量读取、独立问题组、部分回答及控制的静态契约 |
 | `test_responsibility_closure.py`                                                                | 人类终点、完整范围与全部编辑入口的准入契约                          |
@@ -21,6 +21,8 @@
 | FM 的 `tests/`、`tests/api/`                                                                    | 引擎、Schema、CEL、lineage、模拟、API与评分器的程序回归             |
 | FM／Visualization 的 `tests/portability/`                                                       | 独立安装及运行，不依赖仓库布局或维护材料                            |
 | Planning／Delivery 的 `tests/`                                                                  | 编译与投影、状态、依赖、文件绑定和只读任务选择                      |
+
+[目录回归](test_eval_catalogs.py)扫描所有 Evidence 评测文件，检查 `contract_refs` 所引当前包内契约、实际 Skill、输入夹具、FM 结果类别与 ID 唯一性。`files` 默认相对 evals 目录；`files_base: ".."` 表示相对 Skill 根。题面和预期只在改变目标契约后相应修订，资源可达不证明语义正确。
 
 案例身份是“评测文件路径 + ID”，不同评测文件不要求全局连续或唯一。保留有效案例的 ID，删除不补号、不复用旧 ID；当前分支和反例覆盖由专属测试检查，不锁定历史数量或编号全集。编排层只评估委派和交接，专业规则由专业包唯一维护。
 

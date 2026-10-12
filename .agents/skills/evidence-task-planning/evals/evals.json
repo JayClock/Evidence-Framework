@@ -1,5 +1,12 @@
 {
   "skill_name": "evidence-task-planning",
+  "contract_refs": [
+    "../SKILL.md",
+    "../references/guides.md",
+    "../references/design-rules.md",
+    "../references/backend-layout.md",
+    "../references/slicing-policy.md"
+  ],
   "evals": [
     {
       "id": 8,

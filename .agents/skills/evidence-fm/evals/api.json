@@ -1,5 +1,12 @@
 {
   "skill_name": "evidence-fm",
+  "files_base": "..",
+  "contract_refs": [
+    "../SKILL.md",
+    "../references/api-design.md",
+    "../references/api-validation.md",
+    "../references/api-contracts.md"
+  ],
   "evals": [
     {
       "id": 1,
@@ -27,9 +34,9 @@
     },
     {
       "id": 5,
-      "prompt": "更新商品采购示例，询价、报价、协议、支付、开票、发货和商品读取都要完整 HTTP 契约。",
-      "expected_output": "13 个角色接口全部有请求、响应、字段来源、幂等缓存策略和成功流程；OpenAPI 合并为 12 个路径方法操作。外部微信支付凭证与经办主体均有整体覆盖依据，不添加无依据的接入或资料接口。",
-      "files": ["examples/full-lifecycle/api.json"]
+      "prompt": "以合成商品采购整体 FM 为输入设计 API：询价、报价、协议、支付、开票、发货和商品读取都要完整 HTTP 契约。只写隔离项目的 API 与投影，不修改 FM 或安装包样例。",
+      "expected_output": "按当前 FM 和角色玩家覆盖全部接口与场景；请求、响应、字段来源、幂等缓存策略和成功流程完整，OpenAPI 按路径方法合并但保留各角色约束。外部微信支付凭证与经办主体均有整体覆盖依据，不添加无依据的接入或资料接口，不以历史接口数量替代覆盖。",
+      "files": ["examples/full-lifecycle"]
     },
     {
       "id": 6,
@@ -45,9 +52,9 @@
     },
     {
       "id": 8,
-      "prompt": "将完整 api.json 生成 OpenAPI 和接口文档，使用默认产物目录。",
+      "prompt": "将隔离合成项目的完整 api.json 生成 OpenAPI 和接口文档，使用默认产物目录，不修改 FM、设计源或安装包样例。",
       "expected_output": "校验整体设计后直接更新 .evidence/api/generated，使用 Git 管理历史且不重复确认目录；缺口时保留现有交付不变。保留角色、实例约束与运行时验证边界。",
-      "files": ["examples/full-lifecycle/api.json"]
+      "files": ["examples/full-lifecycle"]
     }
   ]
 }

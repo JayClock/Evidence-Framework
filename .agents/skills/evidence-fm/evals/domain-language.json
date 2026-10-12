@@ -1,5 +1,7 @@
 {
+  "skill_name": "evidence-fm",
   "name": "evidence-domain-language-behavior",
+  "contract_refs": ["../SKILL.md", "../references/domain-language.md"],
   "evals": [
     {
       "id": 0,

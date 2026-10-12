@@ -1,6 +1,11 @@
 {
   "skill_name": "evidence-requirements",
   "name": "evidence-requirements-behavior",
+  "contract_refs": [
+    "../SKILL.md",
+    "../references/source-check.md",
+    "../assets/requirements-template.md"
+  ],
   "evals": [
     {
       "id": 5,

@@ -1,4 +1,6 @@
 {
+  "skill_name": "evidence-modeling",
+  "contract_refs": ["../SKILL.md", "../references/workflow.md"],
   "availableSkills": [
     "evidence-modeling",
     "evidence-discovery",

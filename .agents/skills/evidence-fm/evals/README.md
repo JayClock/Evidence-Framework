@@ -5,10 +5,10 @@
 ## 案例分支
 
 - [evals.json](evals.json)：FM 技术生成／修复、不适用及阻塞案例，供 `run_modeling_evals.py` 准备或评分。`outcome` 分别为 `model`、`not-applicable`、`blocked`；模型案例明确仅 FM 授权，不触发 API 或页面。正向案例附有[合成准入来源](fixtures/modeling-admission.md)，先核对对应范围、责任图及人类终点和全局结束原话；缺口仍须阻塞，合成确认不覆盖实际遗漏。
-- [behavior.json](behavior.json)：独立行为案例 4、9、29，检查同一范围未决责任阻止局部建模、独立 FM 不绕过门槛，以及全部追责结束依据充分后的编辑。由独立会话和人工逐项检查，不交给技术产物评分器。
+- [behavior.json](behavior.json)：独立行为案例 4、9、29、30，检查未决责任阻止局部建模、独立 FM 不绕过门槛、准入充分后的仅 FM 编辑，以及混合业务／领域材料的只读讨论。由独立会话和人工逐项检查，不交给技术产物评分器。
 - [domain-language.json](domain-language.json)：日常表达案例，检查跨问答、故事、任务、测试与交接的规范名称一致性，同名异义、只读缺词及保留既有标识的边界。按实际消费场景加载相应 Skill 和同一版本的领域语言方法，由独立会话评价，不交给 FM 技术产物评分器。
 
-- [api.json](api.json)：整体 API 设计、只读、契约覆盖和生成失败边界；使用本包的 API 阶段，FM 检查一次后直接消费结果，不重复校验。files 相对 Skill 根解析，商品采购输入位于 `examples/full-lifecycle/`。样例用于表达基线，未展示的评测案例仍用于迁移与越权检查，不把教学样例通过当作生成质量。
+- [api.json](api.json)：整体 API 设计、只读、契约覆盖和生成失败边界；使用本包的 API 阶段，FM 检查一次后直接消费结果，不重复校验。`files_base: ".."` 明确 files 相对 Skill 根解析，商品采购案例提供整个 `examples/full-lifecycle/` 输入，包含配套 FM、场景和 API。样例用于表达基线，未展示的评测案例仍用于迁移与越权检查，不把教学样例通过当作生成质量。
 
 各分支保留原 ID，不混作同一编号空间。API 行为评测由独立会话评价，不交给 FM 技术产物评分器；没有实际执行不记为通过。
 

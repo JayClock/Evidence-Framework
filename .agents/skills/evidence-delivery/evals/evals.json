@@ -1,5 +1,12 @@
 {
   "skill_name": "evidence-delivery",
+  "contract_refs": [
+    "../SKILL.md",
+    "../references/lifecycle.md",
+    "../references/implementation.md",
+    "../references/diagnosis.md",
+    "../references/review.md"
+  ],
   "evals": [
     {
       "id": 4,
