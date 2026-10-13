@@ -9,7 +9,7 @@ SKILLS = Path(__file__).resolve().parents[2]
 class MixedContextWorkflowTests(unittest.TestCase):
     def test_analysis_separates_contexts_without_erasing_responsibility(self):
         text = (SKILLS / 'evidence-fm/references/business-analysis.md').read_text()
-        for phrase in ('初步上下文识别与分流', '领域上下文', '合同前协商',
+        for phrase in ('领域对象与渠道协商走各自分支', '领域（Domain）', '渠道协商',
                        '不把合约章节直接当成上下文', '不因划入领域而删除合同责任'):
             self.assertIn(phrase, text)
 
@@ -56,19 +56,18 @@ class MixedContextWorkflowTests(unittest.TestCase):
         self.assertNotRegex(display, r'待追溯|尚待逐项追溯|待澄清|缺口清单')
         self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|来源 ID|页码')
 
-    def test_classification_is_checked_before_navigation_and_rechecked_on_change(self):
+    def test_boundary_questions_are_local_and_do_not_delay_direct_entry(self):
         method = (SKILLS / 'evidence-fm/references/business-analysis.md').read_text()
-        for phrase in ('分类验证：先检验，再展示', '运营特定', '运营中立',
+        for phrase in ('边界存在疑问时', '运营特定', '运营中立',
                        '改变运营方式', '替换经营对象', '不能把假设当成现行事实',
-                       '没有收费或书面合同', '工具或集成'):
+                       '没有收费或书面合同', '不为工具另造上下文'):
             self.assertIn(phrase, method)
         interview = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
-        for edge in ('understanding --> classification', 'classification -->|需调整| correction',
-                     'correction --> classification',
-                     'classification -->|验证通过或不足项已移出选项| language'):
-            self.assertIn(edge, interview)
-        for phrase in ('选择不是分类验证或业务批准', '受影响边界重新验证',
-                       '没有任何可展示项', '内部仍保留依据及版本'):
+        self.assertIn('understanding --> language', interview)
+        self.assertNotIn('classification{', interview)
+        for phrase in ('明确指定目标或只有一个清晰入口时直接承接',
+                       '新增事实影响边界时局部核对', '没有可定位入口时不输出空导航',
+                       '内部仍保留依据及版本'):
             self.assertIn(phrase, interview)
 
     def test_outer_review_does_not_replace_inner_validation_or_human_confirmation(self):
@@ -78,16 +77,16 @@ class MixedContextWorkflowTests(unittest.TestCase):
             self.assertIn(phrase, workflow)
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         indexed = {case['category']: case for case in cases}
-        insufficient = indexed['agreement-name-without-operating-basis']
-        self.assertIn('功能清单', insufficient['prompt'])
-        self.assertTrue(any('不输出依据不足或空的导航' in item for item in insufficient['expectations']))
-        changed = indexed['domain-classification-keeps-obligations']
-        self.assertIn('新材料', changed['follow_up'][0])
-        self.assertTrue(any('重新验证受影响边界' in item for item in changed['expectations']))
+        insufficient = indexed['agreement-title-insufficient']
+        self.assertIn('功能', insufficient['prompt'])
+        self.assertTrue(any('空导航' in item for item in insufficient['expectations']))
+        changed = indexed['domain-capability-keeps-obligations']
+        self.assertIn('补充', changed['follow_up'][0])
+        self.assertTrue(any('局部核对' in item for item in changed['expectations']))
 
     def test_behavior_cases_cover_navigation_closure_and_counterexamples(self):
         for skill, categories in {
-            'evidence-discovery': ('mixed-context-navigation', 'domain-classification-keeps-obligations'),
+            'evidence-discovery': ('mixed-context-navigation', 'domain-capability-keeps-obligations'),
             'evidence-modeling': ('domain-closed-contract-pending', 'domain-closure-readonly-or-invalid'),
         }.items():
             cases = json.loads((SKILLS / skill / 'evals/evals.json').read_text())['evals']

@@ -1,7 +1,6 @@
-"""Identification guidance and anonymized eval contracts, not agent behavior proof."""
+"""Agreement discovery contracts and eval coverage, not live interview evidence."""
 
 import json
-import re
 import unittest
 from pathlib import Path
 
@@ -11,129 +10,100 @@ DISCOVERY_EVALS = SKILLS / "evidence-discovery/evals"
 
 
 class ContractIdentificationTests(unittest.TestCase):
-    def test_operating_basis_precedes_agreement_and_skeleton(self):
+    def test_discovery_starts_with_agreement_and_responsible_parties(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        flow = "现金权责／目标—实际约束及来源 → 识别合同上下文与双方 → 全部主履约清单"
+        flow = "理解实际经营过程 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解"
         self.assertIn(flow, method)
-        self.assertLess(
-            method.index("### 合同上下文的识别依据"),
-            method.index("## 2. 合同：确定约定边界"),
-        )
-        for phrase in (
-            "经营依据", "交换责任", "约定来源", "边界理由",
-            "不能仅凭协议名称", "代收或托管的商品货款",
-            "不是 Contract 的两种 Schema 类型", "金额或费率尚未明确",
-            "不自动判为领域或工具", "不以未查到现金或 KPI 为由删除",
-        ):
+        self.assertLess(method.index("## 1. 理解实际经营过程"),
+                        method.index("## 2. 寻找合同，明确参与方"))
+        self.assertLess(method.index("## 2. 寻找合同，明确参与方"),
+                        method.index("## 3. 履约"))
+        for phrase in ("已有约定、双方及责任明确时直接进入",
+                       "现金权责和目标—实际是发现线索", "不要求先说明单独收费或 KPI",
+                       "不能仅凭协议名称", "实际主体已明确就复用",
+                       "经办人不自动成为合同责任方", "不表示法律效力裁决"):
             self.assertIn(phrase, method)
-        exit_condition = method.split("**退出条件**：", 1)[1].split("\n", 1)[0]
-        self.assertIn("经营依据", exit_condition)
-        self.assertIn("边界理由", exit_condition)
 
-    def test_identification_is_a_material_based_result_not_a_candidate_vote(self):
+    def test_contract_discovery_is_incremental_without_losing_obligations(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        for phrase in (
-            "依据材料直接识别合同上下文", "不进入合同总览",
-            "不要求用户确认合同是否存在", "不再泛问交易如何成立",
-            "参数缺口不阻塞合同识别", "不删除已知责任",
-        ):
+        for phrase in ("不必先找齐全局所有合同", "当前合同的已知主履约清单",
+                       "沿履约和凭证增量发现", "第三方出现不自动产生新合同",
+                       "不因划入领域而删除合同责任", "金额或费率尚未明确",
+                       "全部主履约及各层异常仍须在正式编辑前核对完整"):
             self.assertIn(phrase, method)
-        self.assertNotIn("候选约定与双方", method)
-        self.assertNotIn("候选上下文的识别依据", method)
+        entry = method.split("**进入履约分析的条件**：", 1)[1].split("\n", 1)[0]
+        self.assertIn("约定", entry)
+        self.assertIn("双方", entry)
+        self.assertIn("责任", entry)
 
-    def test_entrypoints_route_operating_identification_to_fm(self):
+    def test_responsible_party_identity_is_not_deferred_to_walkthrough(self):
+        method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
+        parties = method.split("## 2. 寻找合同，明确参与方", 1)[1].split("## 3.", 1)[0]
+        for phrase in ("个人或组织", "代表办理人", "证明提供方", "权利方和义务方"):
+            self.assertIn(phrase, parties)
+        self.assertIn("合同入口即明确责任双方", method)
+        self.assertIn("不以单据推演完成为前提", method)
+
+    def test_entrypoints_and_mapping_share_agreement_discovery(self):
         for name in ("evidence-fm", "evidence-discovery"):
             with self.subTest(skill=name):
                 text = (SKILLS / name / "SKILL.md").read_text()
-                self.assertIn("经营依据", text)
+                self.assertIn("约定与责任双方", text)
                 self.assertIn("business-analysis.md", text)
-        composition = (SKILLS / "evidence-modeling/SKILL.md").read_text()
-        self.assertIn("evidence-fm", composition)
-        self.assertIn("evidence-discovery", composition)
-        guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("evidence-fm/references/business-analysis.md", guide)
-        self.assertIn("经营依据", guide)
-
-    def test_agreement_understanding_explains_business_basis(self):
-        interview = (SKILLS / "evidence-discovery/references/interview.md").read_text()
-        for phrase in ("现金权责", "目标与实际", "观察主体", "独立边界", "具体目的", "双方"):
-            self.assertIn(phrase, interview)
-        self.assertIn("经营依据或独立边界不足的线索保持待查", interview)
-        self.assertIn("参数与证明缺口归对应合同", interview)
-
-    def test_formal_mapping_rechecks_identification_without_new_contract_kinds(self):
         for filename in ("semantics.md", "input-review.md", "batch-assessment.md"):
             with self.subTest(reference=filename):
                 text = (SKILLS / "evidence-fm/references" / filename).read_text()
-                self.assertIn("经营依据", text)
+                self.assertIn("约定与责任双方", text)
                 self.assertIn("business-analysis.md", text)
-        semantics = (SKILLS / "evidence-fm/references/semantics.md").read_text()
-        self.assertIn("不新增金额型或 KPI 型", semantics)
-        patterns = (SKILLS / "evidence-fm/references/business-pattern-extraction.md").read_text()
-        self.assertNotIn("从收入、支出、KPI、合规或风险链", patterns)
-        self.assertIn("不是另一个合同识别入口", patterns)
+        guide = (REPO / "docs/evidence-modeling.md").read_text()
+        self.assertIn("约定与责任双方", guide)
+        self.assertIn("evidence-fm/references/business-analysis.md", guide)
 
-    def test_behavior_cases_cover_identification_and_counterexamples(self):
-        document = json.loads((DISCOVERY_EVALS / "evals.json").read_text())
-        cases = document["evals"]
+    def test_discovery_does_not_embed_attribution_or_operating_labels(self):
+        paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md"]
+        for name in ("evidence-fm", "evidence-discovery", "evidence-modeling", "evidence-handoff"):
+            paths.extend((SKILLS / name).glob("SKILL.md"))
+            paths.extend((SKILLS / name / "references").glob("*.md"))
+            paths.extend((SKILLS / name / "examples").glob("*.md"))
+        for path in paths:
+            with self.subTest(path=str(path)):
+                text = path.read_text()
+                self.assertNotRegex(text, r"经营依据|经营主线|分类验证|如何落地业务建模|极客时间|徐昊")
+
+    def test_behavior_cases_cover_direct_entry_parties_and_incremental_discovery(self):
+        cases = json.loads((DISCOVERY_EVALS / "evals.json").read_text())["evals"]
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
-        categories = (
-            "operating-basis-marketplace", "target-actual-without-cash",
-            "agreement-name-without-operating-basis",
-        )
-        for category in categories:
+        for category in (
+            "agreement-direct-entry", "agreement-title-insufficient",
+            "performance-agreement-role-direction", "incremental-support-contract",
+            "agreement-parties-versus-representatives", "single-entry-then-overview",
+            "agreement-proof-fallback",
+        ):
             with self.subTest(category=category):
                 case = indexed[category]
                 self.assertIn("evidence-fm", case["knowledgeSkills"])
                 self.assertGreaterEqual(len(case["expectations"]), 4)
                 self.assertIn("只聊", case["prompt"])
-        marketplace = indexed["operating-basis-marketplace"]
-        for phrase in ("费率未知", "托管商品价款", "非收费义务"):
-            self.assertTrue(any(phrase in item for item in marketplace["expectations"]))
-        insufficient = indexed["agreement-name-without-operating-basis"]
-        self.assertTrue(any("旧分类" in item for item in insufficient["expectations"]))
-        self.assertTrue(any("保护信息责任" in item for item in insufficient["expectations"]))
-        self.assertEqual(
-            ["fixtures/anonymized-marketplace-agreement.md"], marketplace["files"]
-        )
+                self.assertTrue(case["follow_up"])
+        incremental = "\n".join(indexed["incremental-support-contract"]["expectations"])
+        self.assertIn("不自动切换", incremental)
+        self.assertIn("第三方", incremental)
+        identity = "\n".join(indexed["agreement-parties-versus-representatives"]["expectations"])
+        self.assertIn("经办人", identity)
+        self.assertIn("证明提供方", identity)
         for case in cases:
             for relative_path in case.get("files", []):
                 path = DISCOVERY_EVALS / relative_path
                 self.assertTrue(path.is_file(), relative_path)
                 self.assertTrue(path.resolve().is_relative_to(DISCOVERY_EVALS.resolve()))
 
-    def test_anonymized_fixture_preserves_rules_without_identifiers_or_answers(self):
-        fixture = DISCOVERY_EVALS / "fixtures/anonymized-marketplace-agreement.md"
-        text = fixture.read_text()
-        for phrase in (
-            "脱敏节选", "不是完整协议", "平台运营方", "卖方服务费",
-            "交易金额的一定比例", "商品货款", "第三方支付机构",
-            "不是商品买卖的一方", "实名认证", "SaaS",
-            "未提供", "并非质量或履行能力保证",
-        ):
-            self.assertIn(phrase, text)
-        for identifier in (
-            r"https?://|www\.",
-            r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}",
-            r"\b(?:1[3-9]\d{9}|0\d{2,3}[- ]?\d{7,8})\b",
-            r"\d{4}年\d{1,2}月|\d{4}-\d{2}-\d{2}",
-            r"有限公司|股份公司|注册地址|办公地址",
-        ):
-            self.assertIsNone(re.search(identifier, text), identifier)
-        self.assertNotIn("期望输出", text)
-        self.assertNotIn("应识别为", text)
-        for section in range(1, 8):
-            self.assertIn(f"A-{section:03}", text)
-
-    def test_eval_instructions_separate_static_and_behavior_evidence(self):
+    def test_evals_distinguish_static_checks_from_actual_interviews(self):
         instructions = (DISCOVERY_EVALS / "README.md").read_text()
-        self.assertIn("案例 35", instructions)
+        self.assertIn("91—97", instructions)
         self.assertIn("独立风险", instructions)
-        self.assertIn("脱敏", instructions)
-        self.assertIn("files", instructions)
         self.assertIn("没有实际执行就保持未执行", instructions)
-        self.assertIn("不是完整协议", instructions)
+        self.assertIn("files", instructions)
 
 
 if __name__ == "__main__":

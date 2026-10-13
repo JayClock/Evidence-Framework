@@ -39,7 +39,7 @@ class DomainReuseWorkflowTests(unittest.TestCase):
     def test_evals_cover_reuse_business_gap_and_explicit_deepening(self):
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         cases = {case['category']: case for case in cases}
-        for category in ('domain-reuse-connection-only', 'domain-classification-keeps-obligations',
+        for category in ('domain-reuse-connection-only', 'domain-capability-keeps-obligations',
                          'domain-reuse-explicit-deepening', 'domain-role-versus-system-role'):
             self.assertIn(category, cases)
             self.assertGreaterEqual(len(cases[category]['expectations']), 3)

@@ -13,7 +13,7 @@ Contract Context
     └── Request → Confirmation
 ```
 
-先识别合同 Role，再按证据决定 Participant 玩家。每项 Fulfillment 以 `contextRef` 指向所属 Contract Context；凭证和规则以 `fulfillmentRef` 声明履约归属。同合约内不同履约之间直接引用凭证，不产生新的上下文边界。
+约定与责任双方明确后表达合同 Role；实际主体已知就复用对应 Participant，未知不制造玩家。每项 Fulfillment 以 `contextRef` 指向所属 Contract Context；凭证和规则以 `fulfillmentRef` 声明履约归属。同合约内不同履约之间直接引用凭证，不产生新的上下文边界。
 
 ## 2. 已知 Participant 跨上下文扮演 Role
 

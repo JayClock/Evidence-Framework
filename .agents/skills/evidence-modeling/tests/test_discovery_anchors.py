@@ -30,9 +30,8 @@ class DiscoveryAnchorTests(unittest.TestCase):
         self.assertIsNotNone(graph)
         assert graph is not None
         edges = set(re.findall(r'(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)', graph[1]))
-        required = {('input', 'understanding'), ('understanding', 'classification'),
-                    ('classification', 'correction'), ('correction', 'classification'),
-                    ('classification', 'language'),
+        required = {('input', 'understanding'), ('understanding', 'language'),
+                    ('control', 'focus'),
                     ('language', 'languageSaved'), ('languageSaved', 'failed'),
                     ('languageSaved', 'control'), ('control', 'stop'), ('control', 'navigation'),
                     ('control', 'selection'), ('selection', 'wait'), ('selection', 'focus'),

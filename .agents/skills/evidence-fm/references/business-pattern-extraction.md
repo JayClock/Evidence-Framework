@@ -4,7 +4,7 @@
 
 ## 提取顺序
 
-1. **找业务脊梁**：按 [业务分析](business-analysis.md) 已核对的经营依据与合同责任边界，从现金权责或目标—实际主线选出能够解释业务价值的 Fulfillment；同时保留该责任链中的合规与风险约束。这不是另一个合同识别入口。
+1. **找业务脊梁**：按 [业务分析](business-analysis.md) 已理解的约定、双方与主要履约，选择解释运营价值的 Fulfillment 责任链。收入、成本及目标—实际帮助说明价值，交付、信息保护及异常责任仍完整保留，不为提取模式补造收费或绩效要求。
 2. **找运营不变量**：说明跨案例保持不变的权利、义务、完成证明和违约后果。
 3. **找变化点**：优先选择 Evidence Role、Domain Role、Third-party Role、Context Role、Pre-contract Context 或权责履约。
 4. **隔离领域输入**：列出被业务模式消费的 Domain Context、Thing 或 Domain Role，不把具体领域对象误写成业务不变量。

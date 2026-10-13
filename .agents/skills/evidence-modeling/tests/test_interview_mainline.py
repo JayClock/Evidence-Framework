@@ -27,10 +27,10 @@ class InterviewMainlineTests(unittest.TestCase):
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for phrase in (
-            "现金权责／目标—实际约束及来源 → 识别合同上下文与双方 → 全部主履约清单",
+            "理解实际经营过程 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解",
             "请求—确认骨架 → 履约内凭证追溯",
             "不是逐项问卷", "业务专家或法务专家", "口头约定", "从一件真实业务",
-            "新业务设计分开", "不是法律结论", "关键金额", "可读的业务视图",
+            "新业务设计分开", "不是法律结论", "关键金额", "每轮展示聚焦当前合同",
             "当时已有的凭证", "不伪造已发生事件", "不要求展开所有供应商内部业务",
             "不直接决定部署方案",
         ):
@@ -47,10 +47,10 @@ class InterviewMainlineTests(unittest.TestCase):
 
     def test_party_discovery_is_explicit_and_source_bound(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        self.assertLess(method.index("## 6. 用单据推演"), method.index("## 7. 寻找参与者"))
-        self.assertLess(method.index("## 7. 寻找参与者"), method.index("## 8. 从实际差异"))
+        self.assertLess(method.index("## 2. 寻找合同，明确参与方"), method.index("## 6. 用单据推演"))
+        self.assertLess(method.index("## 7. 核对参与者"), method.index("## 8. 从实际差异"))
         for phrase in ("从责任定位角色", "寻找实际主体", "核对跨上下文同一性",
-                       "区分代表与责任主体", "形成有来源的对应关系", "同名不能证明同一",
+                       "区分代表与责任主体", "形成有依据的对应关系", "同名不能证明同一",
                        "不等 API 设计再补", "不以合同或单据推演为前提",
                        "影响责任闭合时，受影响合同或本轮确认范围不能进入正式建模"):
             self.assertIn(phrase, method)
@@ -62,15 +62,15 @@ class InterviewMainlineTests(unittest.TestCase):
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
         for category in (
-            "agreement-material-first", "key-value-lineage", "document-walkthrough",
+            "agreement-proof-fallback", "key-value-lineage", "document-walkthrough",
             "variation-and-support-boundary", "domain-without-contract",
             "party-cross-context-identity", "party-identity-unresolved",
         ):
             case = indexed[category]
             self.assertIn("evidence-fm", case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 3)
-        fallback = indexed["agreement-material-first"]
-        self.assertIn("合同确认拿不到", fallback["follow_up"][0])
+        fallback = indexed["agreement-proof-fallback"]
+        self.assertIn("无法取得协议", fallback["follow_up"][0])
         self.assertTrue(any("从可见凭证" in item for item in fallback["expectations"]))
         party = indexed["party-identity-unresolved"]
         self.assertTrue(any("代表关系" in item and "证明提供方" in item for item in party["expectations"]))

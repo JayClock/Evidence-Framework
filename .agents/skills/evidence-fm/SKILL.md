@@ -1,6 +1,6 @@
 ---
 name: evidence-fm
-description: 当用户讨论履约建模方法、整理中文（英文）规范术语，或要求生成、修改、修复、校验 FM 时使用。维护名称与定义的单一归属及多凭证并行、各链深度优先的追溯方法；正式 FM 编辑须有人类合同级或相应范围追责结束依据，不主持访谈或实现业务系统。
+description: 当用户讨论合同与履约发现、整理中文（英文）规范术语，或要求生成、修改、修复、校验 FM 时使用。维护从约定与责任双方进入、沿履约凭证增量发现协作的方法及正式表达；正式编辑须有人类合同级或相应范围追责结束依据，不主持访谈或实现业务系统。
 compatibility: 讨论只需文本；文件维护需读写能力；校验需 Python 3.10+ 和本包 requirements.txt。
 ---
 
@@ -12,15 +12,15 @@ compatibility: 讨论只需文本；文件维护需读写能力；校验需 Pyth
 
 先确定讨论、术语沉淀、正式编辑或只读校验。读取项目权限、实际来源、已有文件与 Git 差异，只修改本次授权的文件，保留无关改动，不自动迁移。只聊不落盘不写文件；只校验不修复、不保存项目报告。
 
-| 当前动作                             | 必要参考                                                                                                                                                                                                                      |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 解释经营依据、责任边界或业务材料     | [业务分析](references/business-analysis.md)；有矛盾或不足时读 [输入复核](references/input-review.md)                                                                                                                          |
-| 分析领域对象、身份、关系与行为规则   | [领域建模](references/domain-modeling.md)；正式编辑另核对分支准入                                                                                                                                                             |
-| 理解与使用术语、当轮沉淀或落实为模型 | [领域语言](references/domain-language.md)                                                                                                                                                                                     |
-| 生成、修改、修复模型、规则或验证场景 | 先读 [追责结束准入](references/responsibility-closure.md) 与 [正式编辑流程](references/editing-workflow.md)，再读 [批次评估](references/batch-assessment.md)、[语义](references/semantics.md) 与 [格式](references/format.md) |
-| 表达关键数据、业务时间或计算规则     | [来源追溯](references/provenance.md)、[CEL](references/cel-rules.md)                                                                                                                                                          |
-| 编写或审查验证场景                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                                                          |
-| 执行 FM 检查或生成派生产物           | [FM 校验纪律](references/validation.md)                                                                                                                                                                                       |
+| 当前动作                               | 必要参考                                                                                                                                                                                                                      |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 解释约定与责任双方、主要履约或协作边界 | [业务分析](references/business-analysis.md)；有矛盾或不足时读 [输入复核](references/input-review.md)                                                                                                                          |
+| 分析领域对象、身份、关系与行为规则     | [领域建模](references/domain-modeling.md)；正式编辑另核对分支准入                                                                                                                                                             |
+| 理解与使用术语、当轮沉淀或落实为模型   | [领域语言](references/domain-language.md)                                                                                                                                                                                     |
+| 生成、修改、修复模型、规则或验证场景   | 先读 [追责结束准入](references/responsibility-closure.md) 与 [正式编辑流程](references/editing-workflow.md)，再读 [批次评估](references/batch-assessment.md)、[语义](references/semantics.md) 与 [格式](references/format.md) |
+| 表达关键数据、业务时间或计算规则       | [来源追溯](references/provenance.md)、[CEL](references/cel-rules.md)                                                                                                                                                          |
+| 编写或审查验证场景                     | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                                                          |
+| 执行 FM 检查或生成派生产物             | [FM 校验纪律](references/validation.md)                                                                                                                                                                                       |
 
 专项按 [规则索引](references/README.md) 选择；首次处理某类表达时，从 [正式表达基线](examples/README.md) 只读对应样例，续问复用未变化内容。样例不是当前业务事实或准入依据；tests/、evals/ 仅用于维护。
 

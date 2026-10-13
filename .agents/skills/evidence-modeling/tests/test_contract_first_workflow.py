@@ -9,13 +9,13 @@ SKILLS = Path(__file__).resolve().parents[2]
 class ContractFirstWorkflowTests(unittest.TestCase):
     def test_method_orders_agreement_skeleton_trace_and_exceptions(self):
         text = (SKILLS / 'evidence-fm/references/business-analysis.md').read_text()
-        headings = ('## 2. 合同：确定约定边界', '## 3. 履约：先画请求—确认骨架',
+        headings = ('## 2. 寻找合同，明确参与方', '## 3. 履约：先画请求—确认骨架',
                     '## 4. 凭证：沿骨架追溯关键数据', '## 5. 异常：对新义务重复同一循环')
         positions = [text.index(heading) for heading in headings]
         self.assertEqual(sorted(positions), positions)
-        for phrase in ('属性、关联、履约项与结果凭证', '不是通用合同字段表',
-                       '骨架存在不等于完成证明已经查清', '引用不自动表示先后',
-                       '不要求每项履约都有固定的中间单据'):
+        for phrase in ('双方与标的是对象关联', '不提前当成签约事实或合同状态字段',
+                       '不是已经找到全部单据', '引用不自动表示先后',
+                       '不要求固定的中间单据'):
             self.assertIn(phrase, text)
 
     def test_next_question_depends_on_settled_prerequisites(self):

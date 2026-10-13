@@ -155,7 +155,7 @@ class FMIntegrationTests(unittest.TestCase):
             "只校验请求不写任何项目文件", "不自动解除访谈停止状态",
         ):
             self.assertIn(phrase, workflow + entry)
-        for phrase in ("合同与履约", "逐项、递归核对违约责任", "渠道协商", "Evidence Role"):
+        for phrase in ("合同与履约", "逐项、递归核对适用异常", "渠道协商", "Evidence Role"):
             self.assertIn(phrase, method)
         self.assertNotIn("## 分析路线", workflow)
         self.assertNotIn("## 组合流程", entry)
