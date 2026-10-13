@@ -57,6 +57,30 @@ class MixedContextWorkflowTests(unittest.TestCase):
             self.assertNotRegex(display, r'待追溯|尚待逐项追溯|待澄清|缺口清单')
             self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|来源 ID|页码')
 
+    def test_classification_is_checked_before_navigation_and_rechecked_on_change(self):
+        method = (SKILLS / 'evidence-fm/references/business-analysis.md').read_text()
+        for phrase in ('分类验证：先检验，再展示', '运营特定', '运营中立',
+                       '改变运营方式', '替换经营对象', '不能把假设当成现行事实',
+                       '没有收费或书面合同', '工具或集成'):
+            self.assertIn(phrase, method)
+        interview = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
+        for edge in ('understanding --> classification', 'classification -->|需调整| correction',
+                     'correction --> classification',
+                     'classification -->|验证通过或不足项已移出选项| language'):
+            self.assertIn(edge, interview)
+        for phrase in ('选择不是分类验证或业务批准', '受影响边界重新验证',
+                       '没有任何可展示项', '内部仍保留依据及版本'):
+            self.assertIn(phrase, interview)
+
+    def test_outer_review_does_not_replace_inner_validation_or_human_confirmation(self):
+        workflow = (SKILLS / 'evidence-modeling/references/workflow.md').read_text()
+        for phrase in ('双层循环的验证与退出', 'Plan', 'Do', 'Check', 'Act',
+                       'Sensors', '人类结束确认', '不自动修改 Skill'):
+            self.assertIn(phrase, workflow)
+        example = (SKILLS / 'evidence-discovery/examples/mixed-contexts.md').read_text()
+        for phrase in ('功能清单不足以分类', '混合责任与能力', '后续输入推翻边界'):
+            self.assertIn(phrase, example)
+
     def test_behavior_cases_cover_navigation_closure_and_counterexamples(self):
         for skill, categories in {
             'evidence-discovery': ('mixed-context-navigation', 'domain-classification-keeps-obligations'),
