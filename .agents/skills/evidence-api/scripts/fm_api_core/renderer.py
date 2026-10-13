@@ -61,7 +61,7 @@ def render_outputs(projection: dict[str, Any]) -> dict[str, str]:
         "schemaVersion": "5.0",
         "apiId": projection["apiId"],
         "tool": {
-            "name": "evidence-fm",
+            "name": "evidence-api",
             "version": __version__,
             "schemas": schema_digests,
         },

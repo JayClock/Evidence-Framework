@@ -1,10 +1,10 @@
-"""API documentation contracts inside the FM package, not agent behavior evidence."""
+"""Independent API documentation contracts, not agent behavior evidence."""
 
 import re
 import unittest
 from pathlib import Path
 
-SKILL = Path(__file__).resolve().parents[2]
+SKILL = Path(__file__).resolve().parents[1]
 
 
 class DocumentationTests(unittest.TestCase):
@@ -18,7 +18,7 @@ class DocumentationTests(unittest.TestCase):
             *sorted((SKILL / "scripts/fm_api_core").glob("*.py")),
             *sorted((SKILL / "references").glob("api-*.md")),
             *sorted((SKILL / "schemas").glob("api*.json")),
-            SKILL / "evals/api.json",
+            SKILL / "evals/evals.json",
         ]
         for path in documents:
             self.assertNotRegex(path.read_text(), retired, str(path))
@@ -27,6 +27,6 @@ class DocumentationTests(unittest.TestCase):
         self.assertIn("每个接口都必须有契约", entry)
         self.assertIn("不重复业务确认", entry)
         self.assertIn("--fm-check", entry)
-        self.assertNotIn("--fm-skill", entry)
-        self.assertRegex((SKILL / "SKILL.md").read_text(), r"自动接续(?:整体 )?API")
-        self.assertFalse((SKILL.parent / "evidence-api-design").exists())
+        self.assertIn("--fm-skill", entry)
+        self.assertTrue((SKILL / "SKILL.md").read_text().startswith("---\nname: evidence-api\n"))
+        self.assertFalse((SKILL / "scripts/check_fm.py").exists())

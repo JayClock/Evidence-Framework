@@ -30,7 +30,7 @@ class OpenApiProjectionTest(unittest.TestCase):
         )
         self.assertEqual(document["x-evidence-api-design-schema-version"], "5.0")
         self.assertEqual(
-            document["x-generated-from"], "evidence-fm API projection.json"
+            document["x-generated-from"], "evidence-api projection.json"
         )
         self.assertEqual(document["paths"], {})
         self.assertEqual(document["components"]["schemas"], {})

@@ -4,15 +4,15 @@
 
 ## 选择入口
 
-| 目标                         | 入口                                                                     | 本轮结果                                   |
-| ---------------------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
-| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支                  | 方法解释、依据与未知                       |
-| 记录建模过程或合同级交接     | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)                   | Markdown 进展交接及下一轮建议              |
-| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)               | 共同理解、当前节点的独立问题组及获授权术语 |
-| 生成、修改或校验 FM 与 API   | [FM](../.agents/skills/evidence-fm/SKILL.md)                             | 模型与整体 API；仅 FM 限制优先             |
-| 从整体 FM 设计 API           | [FM 的 API 阶段](../.agents/skills/evidence-fm/references/api-design.md) | API 设计、HTTP 契约及派生产物              |
-| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md)       | 审核页面或检查结果                         |
-| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)                 | FM → 整体 API → 联合审核                   |
+| 目标                         | 入口                                                               | 本轮结果                                   |
+| ---------------------------- | ------------------------------------------------------------------ | ------------------------------------------ |
+| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支            | 方法解释、依据与未知                       |
+| 记录建模过程或合同级交接     | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)             | Markdown 进展交接及下一轮建议              |
+| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)         | 共同理解、当前节点的独立问题组及获授权术语 |
+| 生成、修改或校验 FM          | [FM](../.agents/skills/evidence-fm/SKILL.md)                       | 模型、场景及实际检查结果                   |
+| 从整体 FM 设计或校验 API     | [API](../.agents/skills/evidence-api/SKILL.md)                     | API 设计、HTTP 契约及派生产物；FM 只读     |
+| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md) | 审核页面或检查结果                         |
+| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)           | FM → 整体 API → 联合审核                   |
 
 ```text
 /skill:evidence-modeling 访谈并沉淀领域语言
@@ -80,7 +80,7 @@
 
 单合同澄清结束并经人类确认后，建模入口默认调用正式建模 Skill，相关未澄清合同使用 Context Role，随后调用 `evidence-handoff` 保存未澄清部分及恢复位置。独立领域／协商在对应分支准入与结束确认有效后，也按入口授权接续正式建模及未澄清上下文的 Handoff，不要求无关合同先结束，不把领域边界一律表达成 Context Role。只读、仅访谈、不生成或不保存交接等明确限制优先；普通回答不触发生成。合同级自动接续的资源、失败及恢复规则由 [文件交接](../.agents/skills/evidence-modeling/references/workflow.md) 唯一维护；保存成功后停止，不自动切换合同。
 
-完整生成依次执行 FM、整体 API 与联合审核；API 消费同一次有效 FM 检查并核对摘要，保留自身校验。联合页在独立页面运行中核对两源并完成浏览器检查。各阶段保存与检查分别交接，部分成功与完整交付分别报告。只读、仅 FM、仅页面等限定按本轮授权执行。
+FM 与 API 分别由独立 Skill 维护；独立 FM 调用只交付 FM。建模入口的完整生成依次委派 FM、API 与 Visualization；API 消费同一次有效 FM 检查并核对摘要，保留自身校验。联合页在独立页面运行中核对两源并完成浏览器检查。各阶段保存与检查分别交接，部分成功与完整交付分别报告。只读、仅 FM、仅页面等限定按本轮授权执行。
 
 ## 维护验证
 

@@ -2266,6 +2266,6 @@
     }
   },
   "x-evidence-api-design-schema-version": "5.0",
-  "x-generated-from": "evidence-fm API projection.json",
+  "x-generated-from": "evidence-api projection.json",
   "x-runtime-validated": false
 }

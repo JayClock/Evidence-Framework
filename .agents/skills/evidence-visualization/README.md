@@ -22,7 +22,8 @@ evidence-visualization/
 ```bash
 node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py \
   --project-root "$PWD" \
-  --fm-skill "$PWD/.agents/skills/evidence-fm"
+  --fm-skill "$PWD/.agents/skills/evidence-fm" \
+  --api-skill "$PWD/.agents/skills/evidence-api"
 node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/views/index.html
 ```
 

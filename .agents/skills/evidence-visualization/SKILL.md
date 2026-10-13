@@ -1,7 +1,7 @@
 ---
 name: evidence-visualization
 description: 当用户要求查看 FM 与已有 API、生成或更新离线审核页、排查工作台显示故障时使用。只维护审核投影，不设计业务 UI、修改业务源或批准业务。
-compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm（含 API 工具）；浏览器验证需 Node.js 22+ 与本机 Chrome。
+compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm；有 API 时还需独立 evidence-api；浏览器验证需 Node.js 22+ 与本机 Chrome。
 ---
 
 # Evidence 离线业务工作台
@@ -17,19 +17,20 @@ compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm（含 API 
 | 环境准备、执行失败或页面加载故障 | [运行说明](references/operations.md)                      |
 | 实现维护或视觉评审               | [展示契约](references/visual-review.md)，再定位源码与测试 |
 
-普通重新生成无需加载完整 UI 规范。联合审核必须有 API；独立 FM 可视化允许没有 API，已有 API 仍参与检查。
+普通重新生成无需加载完整 UI 规范。没有 API 的独立 FM 页面不需要 API 包或 `--api-skill`。联合审核必须有 API；独立 FM 可视化允许没有 API，已有 API 仍参与检查。
 
 页面仅承载白名单业务投影，原始文件、路径、访谈、材料来源、命令、输入摘要与 Git 历史留在页面之外。业务定义与场景仍须按项目权限保管，不上传、部署或发送业务 API 请求。
 
 ## Action
 
-1. **核对输入与环境。** 定位本包、FM 包和项目的实际绝对路径，确认 Python、依赖、浏览器及当前生成权限。联合模式核对 API 存在；只读请求只报告。完成时，运行路径、模式与允许产物明确，必要缺口已交接。
-2. **生成当前投影。** 使用下列命令；联合审核增加 `--require-api`。生成器检查 FM 后将同一结果交给同包 API 自身校验，核对两源与场景新鲜度，仅原子替换自己拥有的页面。完成时，生成实际成功且输入未变，正式源与 generated 目录保持不变。
+1. **核对输入与环境。** 定位本包、FM 包、适用的 API 包和项目的实际绝对路径，确认 Python、依赖、浏览器及当前生成权限。联合模式核对 API 存在；只读请求只报告。完成时，运行路径、模式与允许产物明确，必要缺口已交接。
+2. **生成当前投影。** 使用下列命令；联合审核增加 `--require-api`。生成器检查 FM 后将同一结果交给独立 API 包的自身校验，核对两源与场景新鲜度，仅原子替换自己拥有的页面。完成时，生成实际成功且输入未变，正式源与 generated 目录保持不变。
 
    ```bash
    "$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
      --project-root "$PROJECT_ROOT" \
-     --fm-skill "$FM_SKILL_DIR"
+     --fm-skill "$FM_SKILL_DIR" \
+     --api-skill "$API_SKILL_DIR"
    ```
 
 3. **验证最终页面。** 按 Sensors 对落盘 HTML 执行浏览器回归并检查截图；专项命令与覆盖见运行说明。完成时，对象、引用、交互与可读性有实际证据，或缺少环境及未执行项明确可见，不能把未验证页面当成完整交付。

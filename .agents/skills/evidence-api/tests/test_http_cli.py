@@ -60,7 +60,7 @@ class HttpCliTest(unittest.TestCase):
                     {"subscriptionId", "Idempotency-Key"},
                 )
                 manifest = json.loads((output / "manifest.json").read_text())
-                self.assertEqual(manifest["tool"]["name"], "evidence-fm")
+                self.assertEqual(manifest["tool"]["name"], "evidence-api")
                 self.assertEqual(set(manifest["inputs"]), {"fm", "api", "sources"})
                 for name, info in manifest["outputs"].items():
                     self.assertEqual(

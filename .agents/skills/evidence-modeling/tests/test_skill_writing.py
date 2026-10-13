@@ -8,6 +8,7 @@ SKILLS = Path(__file__).resolve().parents[2]
 NAMES = (
     "evidence-discovery",
     "evidence-fm",
+    "evidence-api",
     "evidence-modeling",
     "evidence-handoff",
     "evidence-visualization",

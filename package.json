@@ -15,12 +15,13 @@
     "guides:check": "node tools/guides/check.mjs && prettier --check AGENTS.md README.md 'docs/**/*.md' apps/backend/README.md .evidence/README.md .evidence/api/README.md .agents/skills/README.md '.agents/skills/{evidence-discovery,evidence-task-planning,evidence-delivery}/**/*.{md,json}' 'tools/guides/*.mjs' 'tools/python/*.mjs'",
     "guides:verify": "npm run guides:test && npm run guides:check",
     "graph": "nx graph",
-    "skills:format": "prettier --write '.agents/skills/{evidence-modeling,evidence-discovery,evidence-handoff,evidence-task-planning,evidence-delivery}/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/*.md,examples/**/*.md,evals/*.json,schemas/*.json}' docs/evidence-modeling.md README.md",
-    "skills:format:check": "prettier --check '.agents/skills/{evidence-modeling,evidence-discovery,evidence-handoff,evidence-task-planning,evidence-delivery}/**/*.{md,json}' '.agents/skills/evidence-fm/{SKILL.md,references/*.md,examples/**/*.md,evals/*.json,schemas/*.json}' docs/evidence-modeling.md README.md",
+    "skills:format": "prettier --write '.agents/skills/{evidence-modeling,evidence-discovery,evidence-handoff,evidence-task-planning,evidence-delivery}/**/*.{md,json}' '.agents/skills/{evidence-fm,evidence-api}/{SKILL.md,references/*.md,examples/**/*.md,evals/*.{md,json},tests/*.md,schemas/*.json}' docs/evidence-modeling.md README.md",
+    "skills:format:check": "prettier --check '.agents/skills/{evidence-modeling,evidence-discovery,evidence-handoff,evidence-task-planning,evidence-delivery}/**/*.{md,json}' '.agents/skills/{evidence-fm,evidence-api}/{SKILL.md,references/*.md,examples/**/*.md,evals/*.{md,json},tests/*.md,schemas/*.json}' docs/evidence-modeling.md README.md",
     "python:test": "node --test tools/python/python.spec.mjs",
     "skills:test": "node tools/python/python.mjs --require jsonschema,celpy,yaml .agents/skills/evidence-modeling/tests/run_skill_tests.py",
     "skills:verify": "npm run skills:test && npm run skills:format:check",
-    "skills:test:fm": "node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests -v && node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests/api -v"
+    "skills:test:fm": "node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-fm/tests -v",
+    "skills:test:api": "node tools/python/python.mjs --require jsonschema,celpy -B -m unittest discover -s .agents/skills/evidence-api/tests -v"
   },
   "private": true,
   "dependencies": {

@@ -2,7 +2,7 @@
 
 ## 运行环境
 
-完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试还需要 `tests/`。生成器使用 Python 3.10+ 标准库，FM/API CLI 与依赖由可定位的 FM 安装包提供，两包无需相邻。缺少软件时报告环境限制，不自动安装。
+完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试还需要 `tests/`。生成器使用 Python 3.10+ 标准库，FM 和 API CLI 与依赖分别由可定位的 FM、API 安装包提供；各包无需相邻。存在 API 时以 `--api-skill` 指定独立 API 包，只有 FM 的页面不要求 API 包。缺少软件时报告环境限制，不自动安装。
 
 生成与浏览器命令见 [入口](../SKILL.md)。输入为 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`；临时编译和 API 投影保持正式 generated 不变。联合模式增加 `--require-api`，缺 API 返回非零并保留旧页；独立模式可生成仅 FM 页面。HTML 直接在浏览器打开，无需服务器。
 

@@ -3,17 +3,23 @@ from __future__ import annotations
 import copy
 import importlib
 import json
+import os
+import shutil
 import sys
 import tempfile
 from functools import cache, lru_cache
 from pathlib import Path
 
 TESTS = Path(__file__).resolve().parent
-API_ROOT = TESTS.parents[1]
-# Synthetic project root keeps this suite runnable after standalone installation.
-REPO_ROOT = TESTS / "fixtures"
+API_ROOT = TESTS.parent
+# Project outputs stay outside both installed Skills, including in regression tests.
+_PROJECT = tempfile.TemporaryDirectory(prefix="api-test-project-")
+REPO_ROOT = Path(_PROJECT.name).resolve()
+shutil.copytree(TESTS / "fixtures", REPO_ROOT, dirs_exist_ok=True)
 SCRIPTS = API_ROOT / "scripts"
-FM_SKILL = API_ROOT
+FM_SKILL = Path(os.environ.get("EVIDENCE_FM_SKILL", API_ROOT.parent / "evidence-fm")).resolve()
+os.environ["EVIDENCE_FM_SKILL"] = str(FM_SKILL)
+sys.path.insert(0, str(FM_SKILL / "scripts"))
 FM_ROOT = FM_SKILL / "examples" / "valid-traceable-subscription"
 API_PATH = TESTS / "fixtures" / "subscription-api.json"
 if str(SCRIPTS) not in sys.path:

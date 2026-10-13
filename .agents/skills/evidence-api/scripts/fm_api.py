@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,10 @@ def parser() -> argparse.ArgumentParser:
         command = subcommands.add_parser(name, allow_abbrev=False)
         command.add_argument("--project-root", required=True, type=Path)
         command.add_argument("--fm", required=True, type=Path)
+        command.add_argument("--fm-skill", type=Path,
+                             default=os.environ.get("EVIDENCE_FM_SKILL"),
+                             required=not os.environ.get("EVIDENCE_FM_SKILL"),
+                             help="通过资源发现定位的 FM Skill 绝对路径；两包无需相邻")
         command.add_argument("--fm-check", required=True, type=Path,
                              help="FM 阶段实际通过的 JSON 检查结果；只核对摘要，不重跑 FM")
         if name != "inspect":
@@ -45,7 +50,7 @@ def _within(child: Path, parent: Path) -> bool:
 
 
 def _validate_paths(args: argparse.Namespace, api: dict | None = None) -> str | None:
-    names = ["project_root", "fm", "fm_check"]
+    names = ["project_root", "fm", "fm_check", "fm_skill"]
     if args.command != "inspect":
         names.append("api")
     if args.command == "project":
@@ -65,13 +70,14 @@ def _validate_paths(args: argparse.Namespace, api: dict | None = None) -> str | 
     out = args.out.resolve()
     if not _within(out, project_root):
         return "OUTPUT_OUTSIDE_PROJECT: 输出目录必须位于项目根内"
-    protected = [args.fm.resolve(), args.api.resolve(), args.fm_check.resolve()]
+    protected = [args.fm.resolve(), args.api.resolve(), args.fm_check.resolve(),
+                 args.fm_skill.resolve(), SCRIPT_DIR.parent]
     if api is not None:
         protected.extend(
             (project_root / item["path"]).resolve() for item in api["sources"]
         )
     if any(_within(out, path) or _within(path, out) for path in protected):
-        return "OUTPUT_INPUT_CONFLICT: 输出不能与 FM、API 输入或来源重叠"
+        return "OUTPUT_INPUT_CONFLICT: 输出不能与 FM、API 输入、来源或 Skill 安装目录重叠"
     if out.is_symlink():
         return "OUTPUT_INVALID: 输出目录不能是符号链接"
     if out.exists() and not out.is_dir():
@@ -141,6 +147,23 @@ def run(argv: list[str] | None = None) -> int:
     if path_error:
         print(path_error, file=sys.stderr)
         return 1
+    fm_scripts = args.fm_skill.resolve() / "scripts"
+    if not all((fm_scripts / name).is_file() for name in ("check_fm.py", "fm_model.py")):
+        _print({"valid": False, "diagnostics": [
+            {"code": "FM_SKILL_INVALID", "severity": "error",
+             "message": "FM Skill 缺少只读模型与摘要工具"}
+        ]})
+        return 1
+    for name in ("check_fm", "fm_model"):
+        loaded = sys.modules.get(name)
+        if loaded is not None and Path(loaded.__file__ or "").resolve().parent != fm_scripts:
+            _print({"valid": False, "diagnostics": [
+                {"code": "FM_SKILL_CONFLICT", "severity": "error",
+                 "message": "当前进程已加载不同 FM 包，请使用独立进程"}
+            ]})
+            return 1
+    if str(fm_scripts) not in sys.path:
+        sys.path.insert(0, str(fm_scripts))
     try:
         fm_check = json.loads(args.fm_check.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:

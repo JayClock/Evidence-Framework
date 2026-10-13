@@ -8,7 +8,8 @@
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | Modeling 的 `evals/`                                                                            | 显式入口委派、权限传递、准入阻塞、阶段接续、部分交付与路由近似请求  |
 | Discovery 的 `evals/`                                                                           | 当前节点访谈、合同导航、领域语言、依赖前沿、控制意图及恢复          |
-| FM 的 `evals/`                                                                                  | 正式表达、生成／阻塞／不适用结果、整体 API、准入与日常领域语言      |
+| FM 的 `evals/`                                                                                  | 正式表达、生成／阻塞／不适用结果、准入与日常领域语言                |
+| API 的 `evals/`                                                                                 | 整体 API 设计、只读、HTTP 契约覆盖与投影失败边界                    |
 | Requirements 的 `evals/`                                                                        | 从充分材料直接收敛软件职责、故事与验收，不强制 FM                   |
 | Handoff 的 `evals/`                                                                             | 显式 Markdown 交接、确认覆盖、未决与控制意图、保存失败              |
 | Visualization 的 `evals/`                                                                       | 当前生成器的只读投影、导航、图形、详情、输入不变性与浏览器证据      |
@@ -18,8 +19,8 @@
 | `test_contract_first_workflow.py`、`test_incremental_interview.py`、`test_grouped_interview.py` | 合同—骨架—追溯—异常、增量读取、独立问题组、部分回答及控制的静态契约 |
 | `test_responsibility_closure.py`                                                                | 人类终点、完整范围与全部编辑入口的准入契约                          |
 | `test_fm_integration.py`、`test_combined_review.py`                                             | 委派与聚合命令、真实双源投影、失败不发布及输入不变性                |
-| FM 的 `tests/`、`tests/api/`                                                                    | 引擎、Schema、CEL、lineage、模拟、API与评分器的程序回归             |
-| FM／Visualization 的 `tests/portability/`                                                       | 独立安装及运行，不依赖仓库布局或维护材料                            |
+| FM／API 的 `tests/`                                                                             | 引擎、Schema、CEL、lineage、模拟、API与评分器的程序回归             |
+| FM／API／Visualization 的 `tests/portability/`                                                  | 独立安装及运行，不依赖仓库布局或维护材料                            |
 | Planning／Delivery 的 `tests/`                                                                  | 编译与投影、状态、依赖、文件绑定和只读任务选择                      |
 
 [目录回归](test_eval_catalogs.py)扫描所有 Evidence 评测文件，检查 `contract_refs` 所引当前包内契约、实际 Skill、输入夹具、FM 结果类别与 ID 唯一性。`files` 默认相对 evals 目录；`files_base: ".."` 表示相对 Skill 根。题面和预期只在改变目标契约后相应修订，资源可达不证明语义正确。
@@ -30,7 +31,7 @@
 
 业务入口只加载当前分支所需的方法、模板、Schema和脚本。tests／evals 仅在维护或明确评测时使用，不把合成输入当项目事实。
 
-Discovery 维护普通对话、当前节点、问题组、控制意图及当轮术语保存；跨会话承接提供的理解与材料。显式要求记录过程时使用 Handoff，不维护自动访谈快照或第二份问题记录。FM 维护专业判断、正式表达与整体 API；正式编辑先核对完整范围的人类追责结束依据。Modeling 分派这些拥有者，完整生成依次取得 FM、API和联合审核，不替专业包执行第二套规则。
+Discovery 维护普通对话、当前节点、问题组、控制意图及当轮术语保存；跨会话承接提供的理解与材料。显式要求记录过程时使用 Handoff，不维护自动访谈快照或第二份问题记录。FM 维护专业判断与正式表达；正式编辑先核对完整范围的人类追责结束依据。独立 API 维护技术契约与投影，复用 FM 的有效检查。Modeling 分派这些拥有者，完整生成依次取得 FM、API和联合审核，不替专业包执行第二套规则。
 
 ## 自动验证
 
@@ -44,7 +45,7 @@ python3 .agents/skills/evidence-modeling/tests/run_skill_tests.py
 python3 -B -m unittest discover -s .agents/skills/evidence-modeling/tests -v
 ```
 
-聚合入口发现各包的 `tests/`、`tests/api/`及`tests/portability/`，逐套件用独立子进程隔离同名模块，任何失败返回非零。安装测试子目录不设`__init__.py`，由聚合入口显式运行，不能漏跑。
+聚合入口发现各包的 `tests/`及`tests/portability/`，逐套件用独立子进程隔离同名模块，任何失败返回非零。安装测试子目录不设`__init__.py`，由聚合入口显式运行，不能漏跑。
 
 FM评分器回归分别检查正向模型和阻塞结果；合法合同前结构的验证与允许正式编辑分别测试。阻塞案例必须拒绝有效模型、零散规则、场景和编译产物，不能因没有审核状态而放行。模型案例的合成准入来源须与题面一致，不覆盖实际遗漏。
 

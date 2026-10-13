@@ -1,10 +1,10 @@
-# FM 内的整体 API 阶段
+# 整体 API 设计流程
 
-上游是整体 FM；本阶段负责技术契约与投影，不重复业务确认，不把技术决定冒充业务事实。FM 检查通过后直接接续，不另设 Skill 或再次检查同一 FM。首次需要完整链路样板时，读 [商品采购表达基线](../examples/full-lifecycle/README.md)；只有当前判断涉及该结构时才读对应 JSON，不照抄样例的身份、权限或协议选择。
+上游是整体 FM；本阶段负责技术契约与投影，不重复业务确认，不把技术决定冒充业务事实。由独立的 `evidence-api` 执行，消费 FM 检查通过的结果，不再次检查同一 FM。首次需要完整链路样板时，读 [商品采购表达基线](../examples/full-lifecycle/README.md)；只有当前判断涉及该结构时才读对应 JSON，不照抄样例的身份、权限或协议选择。
 
 ## 按权限加载
 
-定位项目根、完整 `.evidence/fm/`、当前 `.evidence/api/api.json` 及本包实际绝对路径。读取已有差异；只修改本次授权的文件，保留无关改动，不自动迁移。
+定位项目根、完整 `.evidence/fm/`、当前 `.evidence/api/api.json` 及本包和 FM 包的实际绝对路径。读取已有差异；只修改本次授权的文件，保留无关改动，不自动迁移。
 
 | 请求               | 加载与权限                                                                                        |
 | ------------------ | ------------------------------------------------------------------------------------------------- |
@@ -25,17 +25,18 @@ API 使用格式 5.0 的严格 JSON，上游为 FM v4；具体结构由格式参
 
 ```bash
 # 可选索引；不是重复 FM 检查：
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" inspect \
-  --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE"
+"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" inspect \
+  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+  --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE"
 
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" \
-  --api "$API_FILE"
+"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
+  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+  --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 
 # 仅有交付生成授权且完整检查通过时执行：
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" project \
-  --project-root "$PROJECT_ROOT" --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" \
-  --api "$API_FILE"
+"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
+  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+  --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 ```
 
 路径使用实际绝对路径，Python 满足依赖；三个命令复用同一份 FM 结果，不触发 FM 校验。project 从统一机器投影生成全部文件并整体替换输出目录，失败保留原交付；不手改投影、OpenAPI 或样例。

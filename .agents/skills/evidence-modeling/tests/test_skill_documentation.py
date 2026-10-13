@@ -10,6 +10,7 @@ NAMES = (
     "evidence-discovery",
     "evidence-handoff",
     "evidence-fm",
+    "evidence-api",
     "evidence-requirements",
     "evidence-modeling",
     "evidence-visualization",
@@ -295,13 +296,13 @@ class SkillDocumentationTests(unittest.TestCase):
                 ".evidence/fm/",
                 ".evidence/checks/fm/",
             ),
-            "evidence-fm/references/api-design.md": (
+            "evidence-api/references/api-design.md": (
                 ".evidence/fm/",
                 ".evidence/api/api.json",
                 ".evidence/api/generated/",
                 ".evidence/checks/api/",
             ),
-            "evidence-fm/references/api-validation.md": (
+            "evidence-api/references/api-validation.md": (
                 ".evidence/api/api.json",
                 ".evidence/api/generated/",
             ),
@@ -342,7 +343,7 @@ class SkillDocumentationTests(unittest.TestCase):
                     self.assertIn("不自动迁移", text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("报告位于模型目录之外", validation)
-        api = (ROOT / "evidence-fm/references/api-validation.md").read_text()
+        api = (ROOT / "evidence-api/references/api-validation.md").read_text()
         self.assertIn("投影输出固定更新", api)
         self.assertIn("切换失败时恢复", api)
         self.assertIn("FM 根目录之外", api)

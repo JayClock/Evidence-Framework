@@ -10,12 +10,14 @@
 flowchart LR
     modeling[Modeling：授权、分派与交接]
     discovery[Discovery：交互、理解更新与控制]
-    fm[FM：方法、正式表达与整体 API]
+    fm[FM：方法与正式表达]
+    api[API：技术契约与整体投影]
     visual[Visualization：只读审核投影]
     manual[Handoff：显式记录与合同级自动交接]
     modeling --> manual
     modeling --> discovery
     modeling --> fm
+    modeling --> api
     modeling --> visual
     discovery -.-> fm
 ```
@@ -27,7 +29,7 @@ flowchart LR
 ```mermaid
 flowchart TD
     intent{目标与本轮授权}
-    discussion[FM 讨论，不写文件]
+    discussion[FM 或 API 讨论，不写文件]
     discovery[Discovery 访谈、导航或控制]
     contractEnd{单合同人类结束确认有效且有生成权限}
     branchEnd{领域或协商分支结束确认有效且有生成权限}
@@ -114,7 +116,7 @@ flowchart TD
 | 显式请求或合同级自动交接 | `.evidence/handoffs/<主题>.md` 或指定路径            | evidence-handoff                    |
 | 唯一词汇入口             | `.evidence/glossary.json`                            | FM 领域语言方法；访谈按授权当轮维护 |
 | 正式模型、说明与场景     | `.evidence/fm/`                                      | FM                                  |
-| API 设计与完整投影       | `.evidence/api/api.json`、`.evidence/api/generated/` | FM 包的 API 阶段                    |
+| API 设计与完整投影       | `.evidence/api/api.json`、`.evidence/api/generated/` | evidence-api                        |
 | 只读审核投影             | `.evidence/views/index.html`                         | Visualization                       |
 | 获授权留存的紧凑检查记录 | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 对应检查执行者                      |
 
@@ -129,7 +131,7 @@ flowchart TD
 3. **调用 Handoff Skill。** 建模链路成功或阻塞后，委派 `evidence-handoff` 保存未澄清部分到 `.evidence/handoffs/<主题>.md` 或指定路径。传递所有未澄清上下文（包括剩余合同、领域及协商）、类型与关联、实际 Context Role ID 与所代表边界、已知依据、原问题和未决依赖、暂缓／停止意图、合同级确认覆盖及实际文件和检查结果。已有记录只引用或按授权更新，不新建第二份问题状态。
 4. **核对保存后停止。** 返回模型与交接的实际路径、各阶段结果及未执行项，不自动切换或恢复其他合同访谈，不宣称全局追责结束。没有剩余上下文时如实记录未澄清部分为空，不补造待办；全局确认仍单独处理。
 
-写入前定位本分支所需 FM、Visualization 与 Handoff 等实际资源；更窄仅 FM 分支不要求 API／页面资源，但仍核对获授权的 Handoff。建模阶段失败也记录真实部分结果；Handoff 不可用或保存失败时列明未保存内容并停止，不自动回滚已保存模型，不声称两步都已完成。中断恢复先核对实际模型和交接，再只补齐授权内未完成阶段，不重新生成未变化的已交付合同。
+写入前定位本分支所需 FM、API、Visualization 与 Handoff 等实际资源；更窄仅 FM 分支不要求 API／页面资源，但仍核对获授权的 Handoff。建模阶段失败也记录真实部分结果；Handoff 不可用或保存失败时列明未保存内容并停止，不自动回滚已保存模型，不声称两步都已完成。中断恢复先核对实际模型和交接，再只补齐授权内未完成阶段，不重新生成未变化的已交付合同。
 
 ## 领域与协商结束后的自动接续
 
@@ -165,11 +167,11 @@ flowchart TD
 
 写入前先确认所需 Skill 和运行环境可用。FM 消费人类准入依据、本轮编辑授权及来源，完成映射、源编辑、术语引用与适用场景检查。
 
-交给同包 API 阶段的是当前完整模型根、实际差异及本次 JSON 检查结果；检查须有 `modelDigest`、`valid: true` 且 `inputChanged: false`。结果放在模型目录之外的临时文件；只读分支使用项目外临时目录，不写项目报告。FM 失败或准入不足不进入 API，也不生成新审核页。业务分析和 JSON 映射的具体动作只由 FM 维护。
+由入口交给独立 `evidence-api` 的是当前完整模型根、实际差异及本次 JSON 检查结果；检查须有 `modelDigest`、`valid: true` 且 `inputChanged: false`。结果放在模型目录之外的临时文件；只读分支使用项目外临时目录，不写项目报告。FM 失败或准入不足不进入 API，也不生成新审核页。业务分析和 JSON 映射的具体动作只由 FM 维护。
 
 ### 2. API
 
-FM 包在模型检查通过后自动接续本包的 API 阶段，设计或更新 api.json、check、project。三个 API 命令均以 `--fm-check` 消费同一结果，只核对摘要，不重复执行 FM 检查、编译校验或模拟。inspect 只是可选索引，不是再次准入。无需第二次请求已获授权的 API 生成；不重复业务确认。摘要失配返回 FM 阶段，API 不隐式重查或反向修改 FM。
+入口在模型检查通过后委派独立 `evidence-api`，设计或更新 api.json、check、project；独立 FM 调用只交付 FM 后停止。API 工具位于 API 包，以 `--fm-skill` 指定 FM 包的实际路径，两包无需相邻。API 的 inspect/check/project 均以 `--fm-check` 消费同一结果，只核对摘要，不重复执行 FM 检查、编译校验或模拟。inspect 只是可选索引，不是再次准入。无需第二次请求已获授权的 API 生成；不重复业务确认。摘要失配返回 FM 阶段，API 不隐式重查或反向修改 FM。
 
 接口与消费者覆盖、契约、实际差异和交付路径分别可定位才交给下一阶段。技术错误在 API 授权内修正；身份、权限、数量或来源缺口不反向修改 FM。失败保留已有审核页，明确 API 未完成及旧页不代表当前有效结果。
 

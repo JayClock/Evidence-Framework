@@ -77,7 +77,7 @@
       "files": [],
       "assertions": [
         "实际核对保存的人类准入来源，不以题面声称冒充批准",
-        "FM 通过后自动接续同包 API，复用同一次检查，不要求第二次触发",
+        "FM 通过后入口委派独立 evidence-api，复用同一次检查，不要求第二次触发",
         "Visualization 使用 --require-api，缺 API 不降级为单源页",
         "页面不表示批准，不自动进入需求、规划、实施或 Git 操作"
       ]
@@ -121,7 +121,7 @@
     {
       "id": 17,
       "category": "combined-resource-missing",
-      "prompt": "显式使用 evidence-modeling 生成 FM、API 与联合页。环境能发现 FM，但包内 API 工具不完整，Visualization 未安装。",
+      "prompt": "显式使用 evidence-modeling 生成 FM、API 与联合页。环境能发现 FM，但独立 evidence-api 未安装，Visualization 未安装。",
       "expected_output": "编辑前核对完整分支依赖，报告必要资源缺失并停止；不先修改 FM，不自动安装或降级交付。",
       "files": [],
       "assertions": [

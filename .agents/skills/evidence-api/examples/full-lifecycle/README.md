@@ -93,7 +93,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 
 ```bash
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$FM_SKILL_DIR/examples/full-lifecycle/fm" > "$FM_CHECK_FILE"
+  "$API_SKILL_DIR/examples/full-lifecycle/fm" > "$FM_CHECK_FILE"
 ```
 
 预期 FM 有效，1 个场景实际执行并通过：包含 14 个具体凭证实例，采购支付、开票、发货及外部微信支付均完成。
@@ -101,11 +101,11 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ## 校验 API 设计
 
 ```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" \
-  --fm "$FM_SKILL_DIR/examples/full-lifecycle/fm" \
+"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
+  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+  --fm "$API_SKILL_DIR/examples/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$FM_SKILL_DIR/examples/full-lifecycle/api.json"
+  --api "$API_SKILL_DIR/examples/full-lifecycle/api.json"
 ```
 
 API 设计采用格式 5.0，直接消费整个 FM v4。预期产生 13 个角色接口和 13 个完整 HTTP 契约，包含类型化入口、业务场景回映与可接续的成功消费者流程，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
@@ -117,11 +117,11 @@ API 设计采用格式 5.0，直接消费整个 FM v4。预期产生 13 个角�
 仅在有交付生成授权且完整检查通过后执行。PROJECT_ROOT 必须指向隔离的临时项目；FM_CHECK_FILE 位于样例和 FM 模型根之外。只校验不运行本命令，项目产物不写入 Skill 安装目录。固定输出目录由命令直接更新，无需预创建：
 
 ```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/fm_api.py" project \
-  --project-root "$PROJECT_ROOT" \
-  --fm "$FM_SKILL_DIR/examples/full-lifecycle/fm" \
+"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
+  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+  --fm "$API_SKILL_DIR/examples/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$FM_SKILL_DIR/examples/full-lifecycle/api.json"
+  --api "$API_SKILL_DIR/examples/full-lifecycle/api.json"
 ```
 
 ## HTTP 契约

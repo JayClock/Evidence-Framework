@@ -279,7 +279,7 @@ def build_openapi(projection: dict[str, Any]) -> dict[str, Any]:
         },
         "paths": {},
         "components": {"schemas": {}},
-        "x-generated-from": "evidence-fm API projection.json",
+        "x-generated-from": "evidence-api projection.json",
         "x-evidence-api-design-schema-version": projection["schemaVersion"],
         "x-runtime-validated": False,
     }

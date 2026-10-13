@@ -2,15 +2,16 @@
 
 ## 运行条件
 
-使用 Python 3.10+ 与本包 `requirements.txt`。FM 和 API 使用同一安装包。先由 FM 阶段执行一次 `check_fm.py`；API CLI 通过必需的 `--fm-check` 消费其 JSON 结果，读取当前完整源并核对 `modelDigest`，不调用 FM 检查器、编译校验或模拟，也不复用 generated 模型 JSON。
+使用 Python 3.10+ 与本包及 FM 包各自的 `requirements.txt`。FM 与 API 为独立安装包，通过资源发现或指定路径定位，无需相邻。CLI 的 `--fm-skill` 或显式环境变量 `EVIDENCE_FM_SKILL` 指向 FM 包，缺少或不可用时停止；不从 API 包复制 FM 实现。先由 FM 阶段执行一次 `check_fm.py`；API CLI 通过必需的 `--fm-check` 消费其 JSON 结果，读取当前完整源并核对 `modelDigest`，不调用 FM 检查器、编译校验或模拟，也不复用 generated 模型 JSON。
 
 ```bash
 "$PYTHON" -m unittest discover -s "$FM_SKILL_DIR/tests" -v
-"$PYTHON" -m unittest discover -s "$FM_SKILL_DIR/tests/api" -v
+EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKILL_DIR/tests" -v
 ```
 
 `FM_CHECK_FILE` 位于模型目录之外。只读联合检查用项目之外的临时目录保存本次 stdout，结束后清理，不新增项目报告或隐藏状态。已经取得且适用于当前输入的 FM 结果直接使用；没有结果、模型／场景／校验器变化时返回 FM 阶段取得新结果，不提供跳过检查的参数。
 
+- `FM_SKILL_INVALID`／`FM_SKILL_CONFLICT`：FM 包不可用、依赖缺失，或当前进程已加载另一版本；停止并交接环境限制。
 - `FM_CHECK_INVALID`：结果不可读，或没有实际通过、输入已变化、缺少摘要等必要信息。
 - `FM_CHECK_STALE`：结果摘要与当前 FM 源不匹配；停止 API 阶段，不隐式重跑 FM。
 - `SOURCE_CHANGED`：读取或投影期间源变化；结果失效，不生成输出。
@@ -71,6 +72,6 @@
 
 所有 CLI 路径参数使用绝对路径。`--api` 指向一份统一 API 文件，必须位于 FM 根目录之外；其中来源路径相对 project root，不得越界。FM、validation、API 和来源均只读；运行前后摘要变化时失败。
 
-project 的 out 必须位于项目根内、父目录已存在，并且不能与 FM、检查结果、设计或来源重叠；默认值为 `.evidence/api/generated/`。先在内存形成全部内容，再在输出同级临时目录写出并同步全部文件，最后目录级替换；已有目录在切换失败时恢复，成功后删除旧目录及其中过期产物。版本历史由 Git 管理，不通过批次目录保留。
+project 的 out 必须位于项目根内、父目录已存在，并且不能与 FM、检查结果、设计、来源或 FM／API Skill 安装目录重叠；默认值为 `.evidence/api/generated/`。先在内存形成全部内容，再在输出同级临时目录写出并同步全部文件，最后目录级替换；已有目录在切换失败时恢复，成功后删除旧目录及其中过期产物。版本历史由 Git 管理，不通过批次目录保留。
 
 上游业务确认沿用输入依据；机器检查不充当新的审核步骤，也不代表运行授权或接口验收。接口清单是交付索引，技术缺口不通过人工点击“通过”解除。

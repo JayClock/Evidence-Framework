@@ -5,6 +5,7 @@
     "evidence-modeling",
     "evidence-discovery",
     "evidence-fm",
+    "evidence-api",
     "evidence-visualization",
     "evidence-handoff"
   ],
@@ -95,7 +96,7 @@
       "id": "api-design",
       "prompt": "以当前整体 FM 为输入设计全部业务 API，生成 OpenAPI 和能接续的静态消费者流程。保持 FM 不变。",
       "explicit": false,
-      "primarySkill": "evidence-fm",
+      "primarySkill": "evidence-api",
       "expectations": [
         "FM 检查一次后 API 阶段消费同一结果，不重复检查 FM",
         "维护统一 API 契约并完整检查投影"
@@ -110,7 +111,7 @@
       "id": "api-check",
       "prompt": "只检查 .evidence/api/api.json 的契约与 FM 场景覆盖，发现问题列出来，不要修复或重建 generated。",
       "explicit": false,
-      "primarySkill": "evidence-fm",
+      "primarySkill": "evidence-api",
       "expectations": [
         "执行 FM 检查一次并交给 API check",
         "分别报告 gap 与环境错误"
@@ -121,7 +122,7 @@
       "id": "api-project",
       "prompt": "api.json 已经写好了，请检查后重新生成 OpenAPI 等交付文件，不修改设计源，也不生成 HTML。",
       "explicit": false,
-      "primarySkill": "evidence-fm",
+      "primarySkill": "evidence-api",
       "expectations": [
         "FM 检查一次后只做 API 自身完整检查与 project",
         "沿用现有设计源"

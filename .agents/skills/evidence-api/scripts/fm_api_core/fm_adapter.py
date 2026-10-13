@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-from check_fm import model_digest
-from fm_model import compiled_document, load_model
 
 from .diagnostics import Diagnostic, error
 
@@ -101,11 +99,17 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
     ):
         return None, [error("FM_CHECK_INVALID", "需要 FM 阶段实际通过且输入未变化的检查结果")]
     try:
+        # The caller locates the independent FM package before this read-only adapter runs.
+        model_digest = importlib.import_module("check_fm").model_digest
+        model = importlib.import_module("fm_model")
+    except ImportError as exc:
+        return None, [error("FM_SKILL_INVALID", f"无法加载 FM 只读工具及依赖: {exc}")]
+    try:
         before = snapshot_tree(fm_root)
         if model_digest(fm_root) != check_report["modelDigest"]:
             return None, [error("FM_CHECK_STALE", "FM 已变化，返回 FM 阶段重新检查")]
         # Read the current representation; do not execute compiler validation.
-        compiled = compiled_document(load_model(fm_root))
+        compiled = model.compiled_document(model.load_model(fm_root))
     except (OSError, ValueError) as exc:
         return None, [error("FM_INVALID", f"无法读取当前 FM: {exc}")]
     entities = {item["id"]: item for item in compiled.get("entities", [])}

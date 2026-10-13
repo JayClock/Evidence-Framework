@@ -98,7 +98,7 @@ class IsolatedFMTests(unittest.TestCase):
 
     def test_bundled_regressions_run_without_the_repository(self):
         before = file_hashes(self.skill)
-        for suite in (self.skill / "tests", self.skill / "tests/api"):
+        for suite in (self.skill / "tests",):
             with self.subTest(suite=suite):
                 result = self.run_python(
                     "-m", "unittest", "discover", "-s", str(suite), "-v"
@@ -107,28 +107,11 @@ class IsolatedFMTests(unittest.TestCase):
                 self.assertRegex(result.stderr, r"Ran [1-9][0-9]* tests")
         self.assertEqual(before, file_hashes(self.skill))
 
-    def test_api_runtime_works_in_the_fm_package_without_tests_or_evals(self):
-        fixture = self.skill / "examples/full-lifecycle"
-        shutil.copytree(fixture / "fm", self.model)
-        api = self.workspace / "api.json"
-        shutil.copy2(fixture / "api.json", api)
-        for name in ("tests", "evals"):
-            shutil.rmtree(self.skill / name)
-        before = file_hashes(self.skill), file_hashes(self.model), api.read_bytes()
-        result = self.run_script("check_fm.py")
-        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-        report = self.workspace / "fm-check.json"
-        report.write_text(result.stdout, encoding="utf-8")
-        output = self.workspace / "generated"
-        result = self.run_python(
-            str(self.skill / "scripts/fm_api.py"), "project",
-            "--project-root", str(self.workspace), "--fm", str(self.model),
-            "--fm-check", str(report), "--api", str(api), "--out", str(output),
-        )
-        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-        self.assertTrue(json.loads(result.stdout)["complete"])
-        self.assertTrue((output / "openapi.json").is_file())
-        self.assertEqual(before, (file_hashes(self.skill), file_hashes(self.model), api.read_bytes()))
+    def test_fm_runtime_has_no_api_tools_or_dependency(self):
+        self.assertFalse((self.skill / "scripts/fm_api.py").exists())
+        self.assertFalse((self.skill / "scripts/fm_api_core").exists())
+        self.example("payment")
+        self.assertTrue(self.check(0)["valid"])
 
     def test_eval_preparation_resolves_bundled_fixtures_from_an_unrelated_cwd(self):
         before = file_hashes(self.skill)

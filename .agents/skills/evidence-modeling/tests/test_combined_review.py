@@ -25,7 +25,7 @@ class CombinedWorkflowContracts(unittest.TestCase):
     def test_entry_composes_model_api_and_one_review_with_narrow_permissions(self):
         entry = (SKILLS / "evidence-modeling/SKILL.md").read_text()
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
-        for phrase in ("evidence-fm", "evidence-visualization", "不重复 FM 检查",
+        for phrase in ("evidence-fm", "evidence-api", "evidence-visualization", "不重复 FM 检查",
                        "一次触发", "只修改 FM", "只校验", "不自动批准"):
             self.assertIn(phrase, entry)
         for phrase in ("FM → API → 联合审核", "--require-api", "不是原子事务",
@@ -61,7 +61,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory(prefix="joint review ")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        fixture = SKILLS / "evidence-fm/examples/full-lifecycle"
+        fixture = SKILLS / "evidence-api/examples/full-lifecycle"
         shutil.copytree(fixture / "fm", self.root / ".evidence/fm")
         api = self.root / ".evidence/api"
         api.mkdir()
@@ -76,7 +76,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         return subprocess.run([
             sys.executable, "-B", str(SKILLS / "evidence-visualization/scripts/generate.py"),
             "--project-root", str(self.root), "--fm-skill", str(SKILLS / "evidence-fm"),
-            "--require-api",
+            "--api-skill", str(SKILLS / "evidence-api"), "--require-api",
         ], capture_output=True, text=True, timeout=120, check=False)
 
     def test_joint_page_contains_current_model_and_all_api_capabilities(self):
@@ -111,7 +111,8 @@ class JointReviewIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=self.root) as directory:
             with patch.object(generator, "run", wraps=generator.run) as execute:
                 data = generator.collect(
-                    self.root, SKILLS / "evidence-fm", Path(directory), require_api=True
+                    self.root, SKILLS / "evidence-fm", Path(directory),
+                    api_skill=SKILLS / "evidence-api", require_api=True
                 )
             commands = [call.args[0] for call in execute.call_args_list]
             checks = [command for command in commands if command[2].endswith("check_fm.py")]
@@ -119,7 +120,8 @@ class JointReviewIntegrationTests(unittest.TestCase):
             self.assertEqual(1, len(checks))
             self.assertEqual(1, len(api))
             self.assertIn("--fm-check", api[0])
-            self.assertNotIn("--fm-skill", api[0])
+            self.assertIn("--fm-skill", api[0])
+            self.assertEqual(str(SKILLS / "evidence-api/scripts/fm_api.py"), api[0][2])
             self.assertTrue(data["validation"]["api"])
         self.assertEqual(before, hashes(self.root))
 
@@ -129,6 +131,17 @@ class JointReviewIntegrationTests(unittest.TestCase):
         result = self.generate()
         self.assertEqual(1, result.returncode, result.stdout + result.stderr)
         self.assertIn("联合审核需要", result.stderr)
+        self.assertEqual(before, hashes(self.root))
+
+    def test_missing_api_skill_does_not_fall_back_to_the_fm_package(self):
+        before = hashes(self.root)
+        result = subprocess.run([
+            sys.executable, "-B", str(SKILLS / "evidence-visualization/scripts/generate.py"),
+            "--project-root", str(self.root), "--fm-skill", str(SKILLS / "evidence-fm"),
+            "--api-skill", str(self.root / "missing api skill"), "--require-api",
+        ], capture_output=True, text=True, timeout=120, check=False)
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("独立 evidence-api 包", result.stderr)
         self.assertEqual(before, hashes(self.root))
 
     def test_invalid_api_keeps_previous_page_and_sources(self):

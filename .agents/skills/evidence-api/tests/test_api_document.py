@@ -94,6 +94,7 @@ class ApiDocumentTest(unittest.TestCase):
             "--help",
             "--project-root",
             "--fm",
+            "--fm-skill",
             "--fm-check",
             "--api",
         }

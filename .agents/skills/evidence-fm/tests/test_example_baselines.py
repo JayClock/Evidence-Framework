@@ -30,14 +30,14 @@ class ExampleBaselineTests(unittest.TestCase):
         self.assertIn("references/editing-workflow.md", entry)
         self.assertIn("examples/README.md", entry)
         index = (EXAMPLES / "README.md").read_text()
-        for name in ("valid-traceable-subscription", "domain", "full-lifecycle"):
+        for name in ("valid-traceable-subscription", "domain"):
             self.assertIn(f"]({name}/README.md)", index)
             self.assertTrue((EXAMPLES / name / "README.md").is_file())
         self.assertIn("](structural-contrasts.md)", index)
         self.assertIn("合成", index)
         self.assertIn("准入", index)
 
-    def test_edit_flow_gates_writes_and_reuses_fm_result_for_api(self):
+    def test_edit_flow_gates_writes_and_hands_off_fm_result(self):
         text = (SKILL / "references/editing-workflow.md").read_text()
         graph = re.search(r"```mermaid\n(.*?)```", text, re.S)
         self.assertIsNotNone(graph)
@@ -48,9 +48,7 @@ class ExampleBaselineTests(unittest.TestCase):
             ("admission", "blocked"), ("mapping", "edit"),
             ("edit", "difference"), ("difference", "check"),
             ("check", "valid"), ("valid", "blocked"),
-            ("valid", "narrow"), ("narrow", "handoff"),
-            ("narrow", "api"), ("api", "apiValid"),
-            ("apiValid", "blocked"), ("apiValid", "handoff"),
+            ("valid", "handoff"),
         }.issubset(edges), edges)
         self.assertFalse(any(start in {"blocked", "handoff"} for start, _ in edges))
         self.assertEqual({"input"}, {start for start, end in edges if end == "admission"})
@@ -64,8 +62,7 @@ class ExampleBaselineTests(unittest.TestCase):
         self.assertFalse((SKILL / "tests/fixtures/domain").exists())
         self.assertFalse((SKILL / "tests/api/fixtures/full-lifecycle").exists())
         before = hashes(EXAMPLES)
-        for name, simulation in (("domain", None), ("valid-traceable-subscription", True),
-                                 ("full-lifecycle/fm", True)):
+        for name, simulation in (("domain", None), ("valid-traceable-subscription", True)):
             with self.subTest(example=name):
                 run = self.check(EXAMPLES / name)
                 self.assertEqual(0, run.returncode, run.stdout + run.stderr)

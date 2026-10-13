@@ -1,5 +1,5 @@
 {
-  "skill_name": "evidence-fm",
+  "skill_name": "evidence-api",
   "files_base": "..",
   "contract_refs": [
     "../SKILL.md",
@@ -11,7 +11,7 @@
     {
       "id": 1,
       "prompt": "上游 FM 为整体模型。请基于整个模型直接生成全部 API 接口、HTTP 契约和 OpenAPI，不要再次组织业务确认。",
-      "expected_output": "FM 阶段检查一次，通过后直接接续同包 API，复用该次结果并核对摘要（inspect 可选且不重查 FM），遍历全部业务对象与场景，维护格式 5.0 的 api.json；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，Contract 列表 GET 使用具体 Participant Party 类型 URL 根，补齐每个保留接口的 HTTP 契约、类型化入口、场景回映与成功消费者流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
+      "expected_output": "FM 阶段检查一次，通过后交给独立 evidence-api，复用该次结果并核对摘要（inspect 可选且不重查 FM），遍历全部业务对象与场景，维护格式 5.0 的 api.json；只为已有 participant.party plays_role 玩家的 Party Role 生成接口，Contract 列表 GET 使用具体 Participant Party 类型 URL 根，补齐每个保留接口的 HTTP 契约、类型化入口、场景回映与成功消费者流程，check 后直接 project；不设置人工能力筛选或重复输出确认。",
       "files": []
     },
     {
@@ -28,7 +28,7 @@
     },
     {
       "id": 4,
-      "prompt": "先讨论整体 FM 如何变成完整 API，不要写文件。",
+      "prompt": "使用 evidence-api 讨论整体 FM 如何变成完整 API，不要写文件。",
       "expected_output": "说明业务接口、非接口活动、完整 HTTP 契约及技术校验方法，不把讨论当生成授权。",
       "files": []
     },

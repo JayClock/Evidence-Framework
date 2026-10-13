@@ -254,11 +254,13 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     }
 
 
-def collect(root: Path, fm_skill: Path, work: Path, *, require_api: bool = False) -> dict:
+def collect(root: Path, fm_skill: Path, work: Path, *, api_skill: Path | None = None, require_api: bool = False) -> dict:
     fm = root / ".evidence/fm"
     api_path = root / ".evidence/api/api.json"
     if require_api and not api_path.is_file():
         raise ValueError("联合审核需要当前 .evidence/api/api.json，不生成 FM 单独页面")
+    if api_path.exists() and (api_skill is None or not (api_skill / "scripts/fm_api.py").is_file()):
+        raise ValueError("已有 API 的审核需要可定位的独立 evidence-api 包")
     initial = fingerprint(root)
     command = [sys.executable, "-B", str(fm_skill / "scripts/check_fm.py"), str(fm)]
     check = run(command)
@@ -282,8 +284,10 @@ def collect(root: Path, fm_skill: Path, work: Path, *, require_api: bool = False
             instances.append(value)
     api = None
     if api_path.exists():
-        run([sys.executable, "-B", str(fm_skill / "scripts/fm_api.py"), "project",
-             "--project-root", str(root), "--fm", str(fm), "--fm-check", str(fm_check),
+        assert api_skill is not None
+        run([sys.executable, "-B", str(api_skill / "scripts/fm_api.py"), "project",
+             "--project-root", str(root), "--fm-skill", str(fm_skill),
+             "--fm", str(fm), "--fm-check", str(fm_check),
              "--api", str(api_path), "--out", str(work / "api")])
         api = read_json(work / "api/projection.json")
         if api["fmCheckSummary"]["modelDigest"] != check["modelDigest"]:
@@ -342,10 +346,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="生成离线业务对象工作台")
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--fm-skill", type=Path)
+    parser.add_argument("--api-skill", type=Path, help="存在 API 时使用的独立 API Skill 路径")
     parser.add_argument("--require-api", action="store_true", help="联合审核必须包含当前 API；缺失时保留已有页面")
     args = parser.parse_args()
     root = args.project_root.resolve()
     fm_skill = (args.fm_skill or root / ".agents/skills/evidence-fm").resolve()
+    api_skill = (args.api_skill or root / ".agents/skills/evidence-api").resolve()
     views = root / ".evidence/views"
     try:
         if views.is_symlink() or not views.resolve().is_relative_to(root):
@@ -353,7 +359,7 @@ def main() -> int:
         before = fingerprint(root)
         views.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix=".workbench-", dir=views) as temporary:
-            data = collect(root, fm_skill, Path(temporary), require_api=args.require_api)
+            data = collect(root, fm_skill, Path(temporary), api_skill=api_skill, require_api=args.require_api)
             html = render(data)
             if before != fingerprint(root):
                 raise ValueError("发布前输入变化，保留已有视图")
