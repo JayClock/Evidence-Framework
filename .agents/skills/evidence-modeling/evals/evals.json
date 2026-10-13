@@ -178,6 +178,31 @@
         "记录 Handoff 实际错误及未保存内容，不虚报成功路径",
         "未澄清合同和暂缓意图仍交接，失败后停止，不自动更换路径或恢复访谈"
       ]
+    },
+    {
+      "id": 22,
+      "category": "domain-closed-contract-pending",
+      "prompt": "显式使用 evidence-modeling：隔离材料中的账号领域已经取得覆盖当前身份、规则、关联及正常和反例核对的人类分支结束确认，并明确本范围没有适用履约责任、无需继续追责。订阅合同退款题仍暂缓。请核对后按仅FM限制生成账号领域并交接，不展开订阅。",
+      "expected_output": "读取实际确认与材料，核对独立领域准入；仅FM生成与检查后交接剩余合同及其他上下文，不补造合同，不恢复暂缓。",
+      "files": ["fixtures/domain-branch-admission.md"],
+      "assertions": [
+        "实际核对领域范围、关联责任、反例及确认，不以题面断言替代依据",
+        "独立领域不等待无关合同结束，不补造合同、履约或Context Role",
+        "仅FM限制优先，不生成API或页面，机器模拟未执行如实说明",
+        "交接全部未澄清上下文与原问题并停止，不宣称全局结束"
+      ]
+    },
+    {
+      "id": 23,
+      "category": "domain-closure-readonly-or-invalid",
+      "prompt": "显式使用 evidence-modeling：只读核对所附领域结束记录。更正：账号停用对订阅权益的影响仍未知，并且实际影响当前规则。不要保存任何文件。",
+      "expected_output": "识别关联责任缺口及确认失效，只读报告，不进入生成或Handoff保存。",
+      "files": ["fixtures/domain-branch-admission.md"],
+      "assertions": [
+        "更正使当前领域规则及确认受影响，不用无合同豁免放行",
+        "只读限制覆盖默认接续，不写术语、FM、API、页面或交接",
+        "保留合同暂缓控制，不自动恢复访谈或宣称结束"
+      ]
     }
   ]
 }

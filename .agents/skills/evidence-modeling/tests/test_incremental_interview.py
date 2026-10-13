@@ -40,7 +40,7 @@ class IncrementalInterviewTests(unittest.TestCase):
 
     def test_events_preserve_global_confirmation_and_invalidation(self):
         text = self.section('### 按事件扩大核对')
-        for event in ('切换合同', '新增异常义务', '更正业务依据', '全部追责结束',
+        for event in ('切换上下文', '领域／协商结束', '新增异常义务', '更正业务依据', '全部追责结束',
                       '方法或材料变化', '上下文压缩', '术语保存中断'):
             self.assertRegex(text, rf'(?m)^\| {event}.*\|$')
         for phrase in ('完整责任图', '全部终点', '全局明确确认', '失效'):
