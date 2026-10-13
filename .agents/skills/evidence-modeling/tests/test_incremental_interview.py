@@ -60,13 +60,18 @@ class IncrementalInterviewTests(unittest.TestCase):
     def test_evals_cover_loading_and_term_failure(self):
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         indexed = {case['category']: case for case in cases}
-        for category in ('incremental-entry-recovery', 'incremental-continuous-answer',
-                         'incremental-context-switch', 'incremental-source-correction',
-                         'incremental-global-closure', 'incremental-context-loss',
-                         'incremental-external-change', 'incremental-save-failure'):
+        for category in ('skill-only-complete-interview', 'incremental-continuous-answer',
+                         'incremental-source-correction', 'context-sufficiency-boundary',
+                         'incremental-external-change', 'language-write-failure'):
             case = indexed[category]
             self.assertEqual(['evidence-fm'], case['knowledgeSkills'])
             self.assertTrue(any('读取' in item for item in case['expectations']))
+        external = indexed['incremental-external-change']
+        self.assertTrue(external['setup'])
+        self.assertTrue(any('完整内容' in item for item in external['expectations']))
+        failure = indexed['language-write-failure']
+        self.assertTrue(failure['setup'])
+        self.assertTrue(any('不重问已答事实' in item for item in failure['expectations']))
 
 
 if __name__ == '__main__':

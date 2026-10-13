@@ -46,12 +46,16 @@ class CurrentProgressTests(unittest.TestCase):
     def test_evals_cover_focused_progress_and_context_sufficiency(self):
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         indexed = {case['category']: case for case in cases}
-        for category in ('current-only-progress', 'request-confirmation-progress-resume',
-                         'progress-without-fictitious-position', 'focused-exception-progress',
+        for category in ('skill-only-complete-interview', 'fulfillment',
+                         'domain-without-contract', 'recursive-responsibility-closure',
                          'evidence-provenance-story', 'context-sufficiency-boundary'):
             self.assertIn('evidence-fm', indexed[category]['knowledgeSkills'])
             self.assertGreaterEqual(len(indexed[category]['expectations']), 4)
-        self.assertIn('Q-001', indexed['current-only-progress']['prompt'])
+        self.assertIn('Q-001', indexed['skill-only-complete-interview']['prompt'])
+        domain = indexed['domain-without-contract']
+        self.assertTrue(any('不补造合同' in item for item in domain['expectations']))
+        exception = indexed['recursive-responsibility-closure']
+        self.assertTrue(any('赔付请求' in item and '确认' in item for item in exception['expectations']))
 
 
 if __name__ == '__main__':

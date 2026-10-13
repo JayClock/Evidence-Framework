@@ -27,11 +27,12 @@ class ContractFirstWorkflowTests(unittest.TestCase):
     def test_evals_cover_contract_data_and_exception_reuse(self):
         data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
         indexed = {case['category']: case for case in data['evals']}
-        for category in ('agreement-initial-data', 'skeleton-before-evidence-trace',
-                         'exception-reuses-skeleton-trace', 'multi-agreement-reference-resume',
-                         'context-sufficiency-boundary'):
+        for category in ('fulfillment', 'recursive-responsibility-closure',
+                         'skill-only-complete-interview', 'context-sufficiency-boundary'):
             self.assertIn('evidence-fm', indexed[category]['knowledgeSkills'])
             self.assertGreaterEqual(len(indexed[category]['expectations']), 4)
+        self.assertTrue(any('请求—确认骨架' in item for item in indexed['fulfillment']['expectations']))
+        self.assertTrue(any('追溯循环' in item for item in indexed['recursive-responsibility-closure']['expectations']))
 
 
 if __name__ == '__main__':

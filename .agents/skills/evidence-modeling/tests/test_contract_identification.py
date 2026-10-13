@@ -80,8 +80,7 @@ class ContractIdentificationTests(unittest.TestCase):
         indexed = {case["category"]: case for case in cases}
         categories = (
             "operating-basis-marketplace", "target-actual-without-cash",
-            "agreement-name-without-operating-basis", "non-cash-duty-in-cash-contract",
-            "unknown-fee-retains-context", "custody-not-platform-revenue",
+            "agreement-name-without-operating-basis",
         )
         for category in categories:
             with self.subTest(category=category):
@@ -90,6 +89,11 @@ class ContractIdentificationTests(unittest.TestCase):
                 self.assertGreaterEqual(len(case["expectations"]), 4)
                 self.assertIn("只聊", case["prompt"])
         marketplace = indexed["operating-basis-marketplace"]
+        for phrase in ("费率未知", "托管商品价款", "非收费义务"):
+            self.assertTrue(any(phrase in item for item in marketplace["expectations"]))
+        insufficient = indexed["agreement-name-without-operating-basis"]
+        self.assertTrue(any("旧分类" in item for item in insufficient["expectations"]))
+        self.assertTrue(any("保护信息责任" in item for item in insufficient["expectations"]))
         self.assertEqual(
             ["fixtures/anonymized-marketplace-agreement.md"], marketplace["files"]
         )
@@ -124,7 +128,8 @@ class ContractIdentificationTests(unittest.TestCase):
 
     def test_eval_instructions_separate_static_and_behavior_evidence(self):
         instructions = (DISCOVERY_EVALS / "README.md").read_text()
-        self.assertIn("35 至 40", instructions)
+        self.assertIn("案例 35", instructions)
+        self.assertIn("独立风险", instructions)
         self.assertIn("脱敏", instructions)
         self.assertIn("files", instructions)
         self.assertIn("没有实际执行就保持未执行", instructions)

@@ -50,30 +50,34 @@ class BilingualInterviewTests(unittest.TestCase):
             self.assertNotRegex(frontmatter, r"极客时间|直播版|徐昊|资料来源|参考文章|https?://")
 
     def test_parallel_examples_include_bilingual_position_and_responsibility(self):
-        path = DISCOVERY / "examples/parallel-turn.md"
+        path = DISCOVERY / "examples/tracing.md"
         self.assertTrue(path.is_file())
         text = path.read_text()
         self.assertIn("合成", text)
-        displays = re.findall(r"```text\n(.*?)```", text, re.S)
-        self.assertEqual([2, 2, 1], [display.count("？") for display in displays])
+        single_evidence = text.split("## 1.", 1)[1].split("## 2.", 1)[0]
+        displays = re.findall(r"```text\n(.*?)```", single_evidence, re.S)
+        self.assertEqual([2, 2], [display.count("？") for display in displays])
         for display in displays:
             self.assertEqual(1, display.count("当前位置："))
             self.assertEqual(1, display.count("责任人："))
             self.assertRegex(display, r"付款请求（Payment Request）")
             self.assertNotRegex(display, r"已明确：|尚缺依据：|https?://|资料来源：")
-        self.assertIn("parallel-turn.md", (DISCOVERY / "examples/README.md").read_text())
+        self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
     def test_behavior_catalog_covers_parallel_and_responsibility_boundaries(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         indexed = {case["category"]: case for case in cases}
-        for category in ("bilingual-responsible-position", "parallel-common-basis",
-                         "parallel-mixed-dependencies", "parallel-partial-answer",
-                         "beneficiary-not-evidence-owner", "provenance-not-fulfillment-progress",
-                         "bilingual-name-unresolved", "parallel-deferred-frontier"):
+        for category in ("parallel-mixed-dependencies", "multi-evidence-owner-boundary",
+                         "evidence-provenance-story", "bilingual-name-unresolved"):
             self.assertIn(category, indexed)
             case = indexed[category]
             self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 4)
+        common = indexed["parallel-mixed-dependencies"]
+        self.assertTrue(any("共同版本只问一次" in item for item in common["expectations"]))
+        owner = indexed["multi-evidence-owner-boundary"]
+        self.assertTrue(any("每次使用完整双语名称" in item for item in owner["expectations"]))
+        self.assertTrue(any("证明提供方" in item for item in owner["expectations"]))
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
 
 

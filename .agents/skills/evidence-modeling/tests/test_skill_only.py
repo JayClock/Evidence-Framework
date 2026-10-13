@@ -45,8 +45,8 @@ class SkillOnlyTests(unittest.TestCase):
     def test_behavior_evals_cover_text_controls_resume_and_save_failure(self):
         data = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())
         indexed = {case["category"]: case for case in data["evals"]}
-        for category in ("skill-only-complete-interview", "answer-and-stop",
-                         "unanswered-cancel-resume", "language-write-failure"):
+        for category in ("skill-only-complete-interview", "evidence-provenance-story",
+                         "context-navigation-ambiguous-selection", "language-write-failure"):
             with self.subTest(category=category):
                 case = indexed[category]
                 self.assertIn("follow_up", case)

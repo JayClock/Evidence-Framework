@@ -25,17 +25,18 @@ class ContextNavigationTests(unittest.TestCase):
     def test_overview_uses_business_purpose_and_one_selection(self):
         text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
-        self.assertIn('现金权责，观察主体为买方（Buyer），支出商品价款（Purchase Price）', display)
-        self.assertIn('买方（Buyer）与卖方（Seller）签订采购协议（Purchase Agreement）', display)
+        self.assertIn('现金权责：观察主体为内容平台（Content Platform），收入对应内容提供责任', display)
+        self.assertIn('读者（Reader）与内容平台（Content Platform）签订订阅协议（Subscription Agreement）', display)
+        self.assertIn('责任边界', display)
         self.assertEqual(1, display.count('？'))
         self.assertNotRegex(display, r'sourceRefs|https?://|\.md')
 
     def test_behavior_cases_cover_navigation_and_counterexamples(self):
         data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
         indexed = {item['category']: item for item in data['evals']}
-        for category in ('context-overview-selection', 'completed-context-not-selectable',
-                         'context-navigation-ambiguous-selection', 'material-contexts-not-candidates',
-                         'insufficient-material-no-context-menu', 'legacy-candidate-record-recheck'):
+        for category in ('skill-only-complete-interview', 'completed-context-not-selectable',
+                         'context-navigation-ambiguous-selection', 'operating-basis-marketplace',
+                         'agreement-name-without-operating-basis', 'mixed-context-navigation'):
             self.assertIn('follow_up', indexed[category])
             self.assertGreaterEqual(len(indexed[category]['expectations']), 4)
 

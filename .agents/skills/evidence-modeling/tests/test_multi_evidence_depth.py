@@ -43,10 +43,11 @@ class MultiEvidenceDepthTests(unittest.TestCase):
         self.assertIn("不附资料出处", text)
 
     def test_multi_evidence_example_tracks_depth_and_return_without_global_expansion(self):
-        path = DISCOVERY / "examples/multi-evidence-turn.md"
+        path = DISCOVERY / "examples/tracing.md"
         self.assertTrue(path.is_file())
         text = path.read_text()
-        displays = re.findall(r"```text\n(.*?)```", text, re.S)
+        multi_evidence = text.split("## 2.", 1)[1]
+        displays = re.findall(r"```text\n(.*?)```", multi_evidence, re.S)
         self.assertEqual([2, 1, 0], [display.count("？") for display in displays])
         for display in displays:
             self.assertEqual(1, display.count("主焦点："))
@@ -59,7 +60,7 @@ class MultiEvidenceDepthTests(unittest.TestCase):
         self.assertIn("Q2", displays[1])
         self.assertIn("暂缓", displays[1])
         self.assertIn("回到", displays[2])
-        self.assertIn("multi-evidence-turn.md", (DISCOVERY / "examples/README.md").read_text())
+        self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
     def test_eval_catalog_includes_multi_evidence_depth_and_control_cases(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]

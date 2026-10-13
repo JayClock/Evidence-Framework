@@ -62,13 +62,18 @@ class InterviewMainlineTests(unittest.TestCase):
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
         for category in (
-            "agreement-material-first", "evidence-based-fallback", "key-value-lineage",
-            "document-walkthrough", "variation-and-support-boundary", "domain-without-contract",
-            "party-cross-context-identity", "party-identity-unresolved", "party-representative-boundary",
+            "agreement-material-first", "key-value-lineage", "document-walkthrough",
+            "variation-and-support-boundary", "domain-without-contract",
+            "party-cross-context-identity", "party-identity-unresolved",
         ):
             case = indexed[category]
             self.assertIn("evidence-fm", case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 3)
+        fallback = indexed["agreement-material-first"]
+        self.assertIn("合同确认拿不到", fallback["follow_up"][0])
+        self.assertTrue(any("从可见凭证" in item for item in fallback["expectations"]))
+        party = indexed["party-identity-unresolved"]
+        self.assertTrue(any("代表关系" in item and "证明提供方" in item for item in party["expectations"]))
         instructions = (SKILLS / "evidence-discovery/evals/README.md").read_text()
         self.assertIn("没有实际执行就保持未执行", instructions)
 

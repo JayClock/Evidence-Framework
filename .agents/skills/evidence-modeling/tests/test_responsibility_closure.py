@@ -91,7 +91,7 @@ class ResponsibilityClosureTests(unittest.TestCase):
         document = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())
         indexed = {case["category"]: case for case in document["evals"]}
         for category in (
-            "recursive-responsibility-closure", "human-stop-not-completion",
+            "recursive-responsibility-closure", "grouped-not-global-closure",
             "human-terminal-not-global-completion", "closure-invalidated-by-new-branch",
         ):
             self.assertIn(category, indexed)

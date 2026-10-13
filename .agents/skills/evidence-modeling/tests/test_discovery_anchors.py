@@ -16,7 +16,9 @@ class DiscoveryAnchorTests(unittest.TestCase):
     def test_examples_are_action_scoped_and_material_bound(self):
         self.assertIn('examples/README.md', (DISCOVERY / 'SKILL.md').read_text())
         index = (EXAMPLES / 'README.md').read_text()
-        for name in ('focused-turn.md', 'navigation.md', 'control-and-recovery.md'):
+        self.assertEqual({'README.md', 'tracing.md', 'navigation.md', 'control-and-recovery.md'},
+                         {path.name for path in EXAMPLES.glob('*.md')})
+        for name in ('tracing.md', 'navigation.md', 'control-and-recovery.md'):
             self.assertIn(f']({name})', index)
             self.assertTrue((EXAMPLES / name).is_file())
         self.assertIn('合成', index)
@@ -51,18 +53,19 @@ class DiscoveryAnchorTests(unittest.TestCase):
         self.assertNotIn('sourceRefs', json.loads(path.read_text())['terms'][0])
         self.assertEqual(before, hashlib.sha256(path.read_bytes()).hexdigest())
 
-    def test_focused_displays_have_only_necessary_questions(self):
-        text = (EXAMPLES / 'focused-turn.md').read_text()
+    def test_control_display_reuses_answer_and_stops_without_new_questions(self):
+        text = (EXAMPLES / 'control-and-recovery.md').read_text()
         displays = re.findall(r'```text\n(.*?)```', text, re.S)
-        self.assertEqual(3, len(displays))
-        self.assertEqual([1, 0, 1], [display.count('？') for display in displays])
-        for display in displays:
-            self.assertTrue(display.startswith('当前位置：'))
-            self.assertNotRegex(display, r'已明确：|正在澄清：|尚缺依据：|https?://')
-        self.assertIn('退款申请（Refund Application）〔履约请求〕', displays[0])
-        self.assertIn('责任人：读者（Reader）', displays[0])
-        self.assertIn('客户领域（Customer Domain）→ 客户档案（Customer Profile）', displays[2])
-        self.assertNotIn('履约请求', displays[2])
+        self.assertEqual(1, len(displays))
+        display = displays[0]
+        self.assertTrue(display.startswith('当前位置：'))
+        self.assertEqual(0, display.count('？'))
+        self.assertNotRegex(display, r'已明确：|正在澄清：|尚缺依据：|https?://')
+        self.assertIn('退款申请（Refund Application）〔履约请求〕', display)
+        self.assertIn('责任人：读者（Reader）', display)
+        self.assertIn('实际保存成功后', text)
+        for phrase in ('实际条目', '外部新增', '原标识', '已建模定义', '立即停止'):
+            self.assertIn(phrase, text)
 
 
 if __name__ == '__main__':

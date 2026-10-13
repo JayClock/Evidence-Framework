@@ -51,31 +51,42 @@ class GroupedInterviewTests(unittest.TestCase):
         self.assertIn("人类明确确认全部追责结束", text)
 
     def test_grouped_examples_keep_one_position_and_a_number_for_each_question(self):
-        path = DISCOVERY / "examples/grouped-turn.md"
+        path = DISCOVERY / "examples/tracing.md"
         self.assertTrue(path.is_file())
         text = path.read_text()
         self.assertIn("合成", text)
-        displays = re.findall(r"```text\n(.*?)```", text, re.S)
-        self.assertEqual([2, 1, 0], [display.count("？") for display in displays])
+        single_evidence = text.split("## 1.", 1)[1].split("## 2.", 1)[0]
+        displays = re.findall(r"```text\n(.*?)```", single_evidence, re.S)
+        self.assertEqual([2, 2], [display.count("？") for display in displays])
         for display in displays:
             self.assertEqual(1, display.count("当前位置："))
             self.assertNotRegex(display, r"已明确：|尚缺依据：|https?://")
         self.assertEqual(["Q1", "Q2"], re.findall(r"(?m)^(Q\d+)：", displays[0]))
-        for phrase in ("部分回答", "共同前提", "暂缓", "停止", "保存失败", "原问题标识"):
+        self.assertEqual(["Q3", "Q4"], re.findall(r"(?m)^(Q\d+)：", displays[1]))
+        for phrase in ("部分回答", "共同依据", "重算", "一次一问", "原问题 Q2"):
             self.assertIn(phrase, text)
-        self.assertIn("grouped-turn.md", (DISCOVERY / "examples/README.md").read_text())
+        controls = (DISCOVERY / "examples/control-and-recovery.md").read_text()
+        for phrase in ("暂缓", "停止", "保存失败", "原标识"):
+            self.assertIn(phrase, controls)
+        self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
     def test_behavior_catalog_covers_round_selection_and_failure_boundaries(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
         for category in ("grouped-independent-frontier", "grouped-dependent-questions",
-                         "grouped-partial-answer", "grouped-premise-correction",
-                         "grouped-deferred-and-stop", "grouped-save-failure",
+                         "grouped-premise-correction", "language-write-failure",
                          "grouped-single-question-preference", "grouped-not-global-closure"):
             case = indexed[category]
             self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 4)
+        partial = indexed["grouped-independent-frontier"]
+        self.assertIn("只答金额题", partial["follow_up"][0])
+        self.assertTrue(any("部分回答" in item for item in partial["expectations"]))
+        failure = indexed["language-write-failure"]
+        self.assertIn("问题组", failure["prompt"])
+        self.assertTrue(any("实际拒绝" in item for item in failure["setup"]))
+        self.assertTrue(any("独立可问题" in item for item in failure["expectations"]))
         instructions = (DISCOVERY / "evals/README.md").read_text()
         self.assertIn("依赖前沿", instructions)
         self.assertIn("没有实际执行就保持未执行", instructions)

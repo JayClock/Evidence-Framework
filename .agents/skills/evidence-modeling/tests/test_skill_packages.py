@@ -121,29 +121,22 @@ class SkillPackageTests(unittest.TestCase):
             owned_cases = json.loads(path.read_text(encoding="utf-8"))["evals"]
             ids = [case["id"] for case in owned_cases]
             self.assertEqual(len(ids), len(set(ids)), path)
+            self.assertEqual(len(owned_cases), len({case['category'] for case in owned_cases}), path)
+            self.assertEqual(len(owned_cases), len({case['prompt'] for case in owned_cases}), path)
             cases.extend(owned_cases)
         self.assertTrue(
             {
-                "domain", "fulfillment", "resume", "unclosed-responsibility-blocks-modeling", "requirements",
-                "recursive-responsibility-closure", "human-stop-not-completion",
+                "fulfillment", "unclosed-responsibility-blocks-modeling", "requirements",
+                "recursive-responsibility-closure", "grouped-not-global-closure",
                 "human-terminal-not-global-completion", "closure-invalidated-by-new-branch",
                 "closed-responsibility-admits-modeling",
-                "inline-language", "language-correction", "language-ambiguity",
-                "language-write-failure", "language-read-only",
-                "agreement-material-first", "evidence-based-fallback", "key-value-lineage",
-                "document-walkthrough", "variation-and-support-boundary", "domain-without-contract",
-                "party-cross-context-identity", "party-identity-unresolved", "party-representative-boundary",
-                "agreement-initial-data", "skeleton-before-evidence-trace",
-                "exception-reuses-skeleton-trace", "multi-agreement-reference-resume",
-                "context-sufficiency-boundary",
+                "inline-language", "language-correction", "language-ambiguity", "language-write-failure",
+                "agreement-material-first", "key-value-lineage", "document-walkthrough",
+                "variation-and-support-boundary", "domain-without-contract",
+                "party-cross-context-identity", "party-identity-unresolved", "context-sufficiency-boundary",
                 "operating-basis-marketplace", "target-actual-without-cash",
-                "agreement-name-without-operating-basis", "non-cash-duty-in-cash-contract",
-                "unknown-fee-retains-context", "custody-not-platform-revenue",
-                "material-contexts-not-candidates", "insufficient-material-no-context-menu",
-                "legacy-candidate-record-recheck",
-                "current-only-progress", "request-confirmation-progress-resume",
-                "progress-without-fictitious-position", "focused-exception-progress",
-                "context-overview-selection", "completed-context-not-selectable",
+                "agreement-name-without-operating-basis", "mixed-context-navigation",
+                "skill-only-complete-interview", "completed-context-not-selectable",
                 "context-navigation-ambiguous-selection", "evidence-provenance-story",
             }.issubset(
                 {case["category"] for case in cases}

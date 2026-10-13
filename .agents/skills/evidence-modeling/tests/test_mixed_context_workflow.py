@@ -37,7 +37,7 @@ class MixedContextWorkflowTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_mixed_navigation_example_keeps_contract_and_domain_distinct(self):
-        text = (SKILLS / 'evidence-discovery/examples/mixed-contexts.md').read_text()
+        text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
         for phrase in ('合同', '领域', '协商', '先分析哪个上下文？'):
             self.assertIn(phrase, display)
@@ -51,11 +51,10 @@ class MixedContextWorkflowTests(unittest.TestCase):
         self.assertIn('未决问题继续保留', text)
         self.assertIn('总览和日常问答不展示资料来源信息', text)
         self.assertIn('内部仍保留依据及版本', text)
-        for name in ('navigation.md', 'mixed-contexts.md'):
-            example = (SKILLS / 'evidence-discovery/examples' / name).read_text()
-            display = example.split('```text', 1)[1].split('```', 1)[0]
-            self.assertNotRegex(display, r'待追溯|尚待逐项追溯|待澄清|缺口清单')
-            self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|来源 ID|页码')
+        example = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
+        display = example.split('```text', 1)[1].split('```', 1)[0]
+        self.assertNotRegex(display, r'待追溯|尚待逐项追溯|待澄清|缺口清单')
+        self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|来源 ID|页码')
 
     def test_classification_is_checked_before_navigation_and_rechecked_on_change(self):
         method = (SKILLS / 'evidence-fm/references/business-analysis.md').read_text()
@@ -77,9 +76,14 @@ class MixedContextWorkflowTests(unittest.TestCase):
         for phrase in ('双层循环的验证与退出', 'Plan', 'Do', 'Check', 'Act',
                        'Sensors', '人类结束确认', '不自动修改 Skill'):
             self.assertIn(phrase, workflow)
-        example = (SKILLS / 'evidence-discovery/examples/mixed-contexts.md').read_text()
-        for phrase in ('功能清单不足以分类', '混合责任与能力', '后续输入推翻边界'):
-            self.assertIn(phrase, example)
+        cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
+        indexed = {case['category']: case for case in cases}
+        insufficient = indexed['agreement-name-without-operating-basis']
+        self.assertIn('功能清单', insufficient['prompt'])
+        self.assertTrue(any('不输出依据不足或空的导航' in item for item in insufficient['expectations']))
+        changed = indexed['domain-classification-keeps-obligations']
+        self.assertIn('新材料', changed['follow_up'][0])
+        self.assertTrue(any('重新验证受影响边界' in item for item in changed['expectations']))
 
     def test_behavior_cases_cover_navigation_closure_and_counterexamples(self):
         for skill, categories in {
