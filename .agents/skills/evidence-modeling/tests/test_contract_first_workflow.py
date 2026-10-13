@@ -18,10 +18,10 @@ class ContractFirstWorkflowTests(unittest.TestCase):
                        '不要求固定的中间单据'):
             self.assertIn(phrase, text)
 
-    def test_next_question_depends_on_settled_prerequisites(self):
+    def test_round_groups_shared_prerequisites_with_independent_questions(self):
         text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
-        for phrase in ('带共享节点的依赖图', '每条来源链深度优先', '前置依据已经具备', '依赖另一个未知时先追溯该依据',
-                       '已知事实直接复用或推导', '每轮一个业务焦点，可问多个独立问题', '问后等待真人'):
+        for phrase in ('带共享节点的依赖图', '每条来源链深度优先', '前置依据已经具备', '共同前提与其他独立问题同轮提出',
+                       '已知事实直接复用或推导', '全部可同时澄清的独立必要问题', '问后等待真人'):
             self.assertIn(phrase, text)
 
     def test_evals_cover_contract_data_and_exception_reuse(self):

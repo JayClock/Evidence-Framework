@@ -10,7 +10,7 @@ REPO = SKILLS.parents[1]
 class CurrentProgressTests(unittest.TestCase):
     def test_focused_display_keeps_position_story_and_numbered_questions(self):
         text = (SKILLS / 'evidence-discovery/references/interview.md').read_text()
-        display = text.split('### 单点澄清', 1)[1].split('## 5.', 1)[0]
+        display = text.split('### 同一焦点的成组澄清', 1)[1].split('## 5.', 1)[0]
         for phrase in ('合同名称 → 履约项名称 → 请求或确认', '当前位置：', '业务名称',
                        '类型只作辅助标签', '简短追溯故事', '信息来源追到了哪里',
                        '每题只澄清一个仍影响当前判断的业务问题', '未知明确为未知',

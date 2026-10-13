@@ -25,7 +25,7 @@ class MultiEvidenceDepthTests(unittest.TestCase):
     def test_each_active_evidence_has_its_own_position_and_responsibility(self):
         text = (DISCOVERY / "references/interview.md").read_text()
         for phrase in ("主焦点", "并行追溯", "各凭证当前位置", "各自责任人",
-                       "证明提供方", "责任人待明确", "不会自动成为主焦点的责任人"):
+                       "证明提供方", "合同责任方待明确", "不会自动成为主焦点的责任人"):
             self.assertIn(phrase, text)
         for relative in ("AGENTS.md", "docs/evidence-modeling.md"):
             self.assertIn("多凭证", (REPO / relative).read_text())
@@ -46,9 +46,8 @@ class MultiEvidenceDepthTests(unittest.TestCase):
         path = DISCOVERY / "examples/tracing.md"
         self.assertTrue(path.is_file())
         text = path.read_text()
-        multi_evidence = text.split("## 2.", 1)[1]
-        displays = re.findall(r"```text\n(.*?)```", multi_evidence, re.S)
-        self.assertEqual([2, 1, 0], [display.count("？") for display in displays])
+        displays = re.findall(r"```text\n(.*?)```", text, re.S)
+        self.assertEqual([2, 2, 1, 0], [display.count("？") for display in displays])
         for display in displays:
             self.assertEqual(1, display.count("主焦点："))
             self.assertEqual(1, display.count("当前位置："))
@@ -56,21 +55,28 @@ class MultiEvidenceDepthTests(unittest.TestCase):
             self.assertNotRegex(display, r"已明确：|尚缺依据：|https?://|资料来源：")
         self.assertEqual(3, displays[0].count("责任人："))
         self.assertEqual(3, displays[1].count("责任人："))
-        self.assertIn("结算凭证（Settlement Evidence）", displays[1])
-        self.assertIn("Q2", displays[1])
-        self.assertIn("暂缓", displays[1])
-        self.assertIn("回到", displays[2])
+        self.assertEqual(3, displays[2].count("责任人："))
+        self.assertIn("结算凭证（Settlement Evidence）", displays[2])
+        self.assertIn("Q4", displays[2])
+        self.assertIn("暂缓", displays[2])
+        self.assertIn("回到", displays[3])
         self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
     def test_eval_catalog_includes_multi_evidence_depth_and_control_cases(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         indexed = {case["category"]: case for case in cases}
-        for category in ("multi-evidence-depth-first", "multi-evidence-shared-basis",
-                         "multi-evidence-local-control", "multi-evidence-owner-boundary",
-                         "multi-evidence-cycle-and-version"):
+        for category in ("multi-evidence-depth-first", "multi-evidence-cycle-and-version"):
             self.assertIn(category, indexed)
             self.assertEqual(["evidence-fm"], indexed[category]["knowledgeSkills"])
             self.assertGreaterEqual(len(indexed[category]["expectations"]), 4)
+        boundary = indexed["multi-evidence-depth-first"]
+        self.assertIn("共同匹配摘要", boundary["follow_up"][0])
+        self.assertIn("暂缓", boundary["follow_up"][1])
+        self.assertIn("旧匹配依据不足", boundary["follow_up"][2])
+        for risk in ("共同订单前提只问一次", "深入结算凭证", "回溯", "共同前提阻塞",
+                     "所属合同一方", "原问题", "整轮停止"):
+            content = "\n".join(boundary["expectations"] + boundary["follow_up"])
+            self.assertIn(risk, content)
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
 
 

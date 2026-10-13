@@ -15,15 +15,15 @@ class BilingualInterviewTests(unittest.TestCase):
     def test_canonical_name_has_one_owner_and_two_languages(self):
         text = (FM / "references/domain-language.md").read_text()
         for phrase in ("中文（英文）", "同一个稳定 ID", "name", "label", "不从 ID",
-                       "英文名待明确", "每次使用", "不另建英文词典", "共同业务依据"):
+                       "直接翻译英文", "不等待人类", "每次使用", "不另建英文词典", "共同业务依据"):
             self.assertIn(phrase, text)
         for relative in ("AGENTS.md", "docs/guides/index.md", "docs/evidence-modeling.md"):
             self.assertIn("中文（英文）", (REPO / relative).read_text())
 
-    def test_position_records_evidence_responsibility_not_the_beneficiary(self):
+    def test_position_records_a_party_to_the_evidences_own_contract(self):
         text = (DISCOVERY / "references/interview.md").read_text()
-        for phrase in ("责任人：", "实际主体", "证明提供方", "受益角色", "不自动等于责任人",
-                       "责任人待明确", "凭证类型只作辅助标签"):
+        for phrase in ("责任人：", "实际主体", "证明提供方", "合同责任方", "不自动等于责任人",
+                       "合同责任方待明确", "凭证类型只作辅助标签"):
             self.assertIn(phrase, text)
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         self.assertIn("凭证责任人", workflow)
@@ -54,28 +54,28 @@ class BilingualInterviewTests(unittest.TestCase):
         self.assertTrue(path.is_file())
         text = path.read_text()
         self.assertIn("合成", text)
-        single_evidence = text.split("## 1.", 1)[1].split("## 2.", 1)[0]
-        displays = re.findall(r"```text\n(.*?)```", single_evidence, re.S)
-        self.assertEqual([2, 2], [display.count("？") for display in displays])
+        displays = re.findall(r"```text\n(.*?)```", text, re.S)
+        self.assertTrue(displays)
         for display in displays:
             self.assertEqual(1, display.count("当前位置："))
-            self.assertEqual(1, display.count("责任人："))
-            self.assertRegex(display, r"付款请求（Payment Request）")
+            self.assertIn("责任人：读者（Reader）", display)
+            self.assertIn("退款申请（Refund Application）", display)
             self.assertNotRegex(display, r"已明确：|尚缺依据：|https?://|资料来源：")
         self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
     def test_behavior_catalog_covers_parallel_and_responsibility_boundaries(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         indexed = {case["category"]: case for case in cases}
-        for category in ("parallel-mixed-dependencies", "multi-evidence-owner-boundary",
-                         "evidence-provenance-story", "bilingual-name-unresolved"):
+        for category in ("grouped-independent-frontier", "multi-evidence-depth-first",
+                         "evidence-provenance-story"):
             self.assertIn(category, indexed)
             case = indexed[category]
             self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 4)
-        common = indexed["parallel-mixed-dependencies"]
-        self.assertTrue(any("共同版本只问一次" in item for item in common["expectations"]))
-        owner = indexed["multi-evidence-owner-boundary"]
+        common = indexed["grouped-independent-frontier"]
+        for risk in ("共同版本只问一次", "直接翻译", "不索取英文"):
+            self.assertTrue(any(risk in item for item in common["expectations"]), risk)
+        owner = indexed["multi-evidence-depth-first"]
         self.assertTrue(any("每次使用完整双语名称" in item for item in owner["expectations"]))
         self.assertTrue(any("证明提供方" in item for item in owner["expectations"]))
         self.assertEqual(len(cases), len({case["id"] for case in cases}))

@@ -110,7 +110,7 @@ class SkillDocumentationTests(unittest.TestCase):
         ):
             self.assertIn(requirement, language)
         interview = (ROOT / "evidence-discovery/references/interview.md").read_text()
-        self.assertIn("每轮一个业务焦点，可问多个独立问题", interview)
+        self.assertIn("每轮一个业务焦点，主动寻找并同轮提出全部可同时澄清的独立必要问题", interview)
         self.assertIn("任一写入失败就停止", interview)
         self.assertIn("实际文件", interview)
         self.assertIn("停止后仅吸收补充资料", interview)

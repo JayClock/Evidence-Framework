@@ -101,11 +101,13 @@ class ReferenceConsistencyTests(unittest.TestCase):
                        "外部能力不默认对应合同"):
             self.assertIn(phrase, text)
 
-    def test_request_responsibility_names_the_evidence_not_the_obligated_party(self):
+    def test_request_and_confirmation_responsibility_belongs_to_contract_parties(self):
         text = (SKILL / "references/business-analysis.md").read_text()
-        self.assertIn("请求凭证责任人：平台方（Platform Party）", text)
-        self.assertNotIn("请求责任人：作者（Author）", text)
-        self.assertIn("责任人始终对应具体凭证", text)
+        self.assertIn("责任人就是所属合同的一方", text)
+        self.assertIn("请求责任人：平台方（Platform Party），为合同一方", text)
+        self.assertIn("确认责任人：按约定由作者（Author）", text)
+        self.assertIn("经办人、上传人和证明提供方", text)
+        self.assertIn("不在双方之外另寻凭证责任角色", text)
 
     def test_scope_review_warns_about_omissions_not_candidate_contracts(self):
         text = (SKILL / "references/responsibility-closure.md").read_text()

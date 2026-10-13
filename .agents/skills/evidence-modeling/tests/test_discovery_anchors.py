@@ -35,7 +35,7 @@ class DiscoveryAnchorTests(unittest.TestCase):
                     ('language', 'languageSaved'), ('languageSaved', 'failed'),
                     ('languageSaved', 'control'), ('control', 'stop'), ('control', 'navigation'),
                     ('control', 'selection'), ('selection', 'wait'), ('selection', 'focus'),
-                    ('navigation', 'wait'), ('focus', 'needed'), ('needed', 'question'),
+                    ('navigation', 'wait'), ('focus', 'group'), ('group', 'needed'), ('needed', 'question'),
                     ('needed', 'handoff'), ('question', 'wait')}
         self.assertTrue(required.issubset(edges), edges)
         self.assertFalse(any(start in {'failed', 'stop', 'handoff', 'wait'} for start, _ in edges))

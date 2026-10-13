@@ -24,11 +24,12 @@ class GroupedInterviewTests(unittest.TestCase):
             text = (REPO / relative).read_text()
             self.assertNotRegex(text, r"/evidence-model(?!ing)|evidence_ui_|\.pi/extensions")
 
-    def test_round_selection_requires_independent_settled_prerequisites(self):
+    def test_round_selection_proactively_groups_independent_content(self):
         text = (DISCOVERY / "references/interview.md").read_text()
         for phrase in ("依赖前沿", "前置依据已经具备", "同一业务节点",
                        "一个答案不会改变另一题的前提、对象或问法",
-                       "依赖关系不确定时退回逐问", "每轮重新计算",
+                       "共同前提与其他独立问题同轮提出", "每轮重新计算",
+                       "不在找到第一题后结束分析", "全部独立必要问题",
                        "用户要求一次一问时只选一题", "等待真人"):
             self.assertIn(phrase, text)
         self.assertNotIn("每轮只问一个核心问题", text)
@@ -55,9 +56,8 @@ class GroupedInterviewTests(unittest.TestCase):
         self.assertTrue(path.is_file())
         text = path.read_text()
         self.assertIn("合成", text)
-        single_evidence = text.split("## 1.", 1)[1].split("## 2.", 1)[0]
-        displays = re.findall(r"```text\n(.*?)```", single_evidence, re.S)
-        self.assertEqual([2, 2], [display.count("？") for display in displays])
+        displays = re.findall(r"```text\n(.*?)```", text, re.S)
+        self.assertEqual([2, 2, 1, 0], [display.count("？") for display in displays])
         for display in displays:
             self.assertEqual(1, display.count("当前位置："))
             self.assertNotRegex(display, r"已明确：|尚缺依据：|https?://")
@@ -74,15 +74,17 @@ class GroupedInterviewTests(unittest.TestCase):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
-        for category in ("grouped-independent-frontier", "grouped-dependent-questions",
-                         "grouped-premise-correction", "language-write-failure",
-                         "grouped-single-question-preference", "grouped-not-global-closure"):
+        for category in ("grouped-independent-frontier", "language-write-failure",
+                         "grouped-not-global-closure"):
             case = indexed[category]
             self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 4)
-        partial = indexed["grouped-independent-frontier"]
-        self.assertIn("只答金额题", partial["follow_up"][0])
-        self.assertTrue(any("部分回答" in item for item in partial["expectations"]))
+        mainline = indexed["grouped-independent-frontier"]
+        self.assertIn("只答版本题", mainline["follow_up"][0])
+        self.assertIn("更正", mainline["follow_up"][1])
+        self.assertIn("一次只问一个问题", mainline["follow_up"][2])
+        for risk in ("部分回答", "独立性失效", "整轮串行", "一次一问", "明确解除"):
+            self.assertTrue(any(risk in item for item in mainline["expectations"]), risk)
         failure = indexed["language-write-failure"]
         self.assertIn("问题组", failure["prompt"])
         self.assertTrue(any("实际拒绝" in item for item in failure["setup"]))
