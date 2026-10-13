@@ -30,7 +30,7 @@ Customer Party
 
 Request Entity 直接用 required/keyData timestamp 的 `started_at` 与 `expired_at` 表达区间。每个请求必须有确定截止时间；若来源只说明持续合作，继续核实每次请求的具体期限或确定依据，不自行补造。
 
-一次、任一、全部、分批数量和累计金额都使用明确 Evidence bindings 与 CEL completion Rule。分批履约仍只建一个 Confirmation 类型，以多个 Evidence Instance 表达各批次，不复制类型节点。
+一次、任一、全部、分批数量和累计金额都使用明确 Evidence bindings 与 CEL completion Rule。一次 Request 可以对应不同 Confirmation 类型，分别记录有业务依据的不同结果；同类结果的多次确认以多个 Evidence Instance 表达，不按批次复制类型节点。部分完成可以形成 Confirmation，但不自动使整项履约完成。
 
 ## 4. 多个 Fulfillment 共用 Confirmation
 
@@ -67,7 +67,7 @@ Channel C Confirmation ─┘
 
 ## 7. 未展开的外部协作者
 
-只知道当前业务使用外部能力、又不展开其合同内部结构时，建立独立 `third_party` Role。若完整展开外部合同，则建立 Contract Context、两个 Party Role 及其内部的权责履约。
+外部能力不默认对应合同。只消费能力时，按 [领域复用的角色选择](semantics.md#领域复用的角色选择)区分抽象领域能力的 `domain` Role 与既有系统／协作者边界的 `third_party` Role，不补造合同。已有充分依据识别关联合同、但其内部责任尚未澄清时，使用 `context` Role 保留所需协作边界；对应合同满足准入并获授权后，才展开真实 Contract Context、双方 Party Role 及内部履约。
 
 ## 8. 合同前变化
 
@@ -76,7 +76,7 @@ Channel C Confirmation ─┘
 - 招标：一个 RFP 对多个 Proposal，最终 Contract 追溯被接受 Proposal；
 - 拼团、赠送、活动和谈判位于独立 Pre-contract Context。
 
-RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Proposal→Contract 审计追溯。纯合同前 Context 可没有 Contract 和 Fulfillment，不补造未来履约。
+RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Contract→Proposal 的 `references` 审计追溯，指向已接受方案；Proposal→Contract 只表示可能的业务形成顺序，不是依据引用方向。纯合同前 Context 可没有 Contract 和 Fulfillment，不补造未来履约。
 
 ## 9. KPI／目标—实际
 
@@ -99,7 +99,7 @@ Performance Contract
     └── Review Request → Actual Result Confirmation
 ```
 
-联系记录、周报等只作为证明材料时建成 Other Evidence，必备 `created_at`；真正关闭当前责任的结果才是 Confirmation，必备 `confirmed_at`。周检查、季度目标等是否共用确认，仍按共享确认的证明理由和边界判断。
+联系记录、周报等只作为补充证明材料时建成 Other Evidence，必备 `created_at`；按约定记录履约完成或部分完成结果的凭证是 Confirmation，必备 `confirmed_at`。一份 Confirmation 不自动关闭整项责任，完成仍按该 Request 的具体结果及 completion Rule 判断。周检查、季度目标等是否共用确认，仍按共享确认的证明理由和边界判断。
 
 ## 10. 取消、退款与补偿
 

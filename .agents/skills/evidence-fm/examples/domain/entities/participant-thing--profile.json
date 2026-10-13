@@ -3,7 +3,7 @@
   "id": "thing.profile",
   "category": "participant",
   "kind": "thing",
-  "label": "客户档案",
+  "label": "客户档案（Customer Profile）",
   "contextRef": "context.profiles",
   "attributes": [
     {

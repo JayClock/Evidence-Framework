@@ -3,7 +3,7 @@
   "id": "rule.payment-matches-request",
   "kind": "invariant",
   "label": "实付金额和币种必须匹配付款请求",
-  "description": "付款确认（confirmation.content-payment）的实付金额与币种分别等于付款请求（request.content-payment）中的金额与币种时，判定付款结果与请求一致。",
+  "description": "内容产品付款确认（Content Payment Confirmation）[confirmation.content-payment]的实付金额与币种分别等于内容产品付款请求（Content Payment Request）[request.content-payment]中的金额与币种时，判定付款结果与请求一致。",
   "contextRef": "context.content-subscription",
   "bindings": {
     "request": {

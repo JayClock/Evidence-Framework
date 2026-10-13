@@ -74,7 +74,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
   "id": "thing.customer-profile",
   "category": "participant",
   "kind": "thing",
-  "label": "客户档案",
+  "label": "客户档案（Customer Profile）",
   "contextRef": "context.customer-information",
   "attributes": [
     {
@@ -128,7 +128,8 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
   "type": "rule",
   "id": "rule.profile-editable",
   "kind": "precondition",
-  "label": "客户档案可修改条件",
+  "label": "客户档案可修改条件（Customer Profile Editability）",
+  "description": "客户档案（Customer Profile）[thing.customer-profile]未归档时允许修改，已归档时拒绝修改；该条件不执行实际状态迁移。",
   "contextRef": "context.customer-information",
   "bindings": {
     "profile": {

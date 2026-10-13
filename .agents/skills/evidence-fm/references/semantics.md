@@ -74,7 +74,7 @@ Context Role 不代替 Evidence Role 或履约确认，不是可被 Evidence 直
 
 Request 必须通过 `fulfillmentRef` 属于一项履约。Confirmation 保留唯一形成上下文，可用 `fulfillmentRef` 表达其形成的履约；同一个确认可以通过 `references` 指向同一合同中的多个 Request，不复制或搬迁确认。补充凭证始终保留真实形成上下文，服务于某项履约时可用 `fulfillmentRef` 组织。
 
-Request 是记录要求的时段凭证，Confirmation 是记录完成或部分完成结果的时刻凭证。六类凭证的业务时间按 [格式](format.md) 显式定义，并按 [来源映射](provenance.md) 核对事件含义；签约不等于生效、确认不等于回调、凭证形成不等于原事件时间。
+Request 是记录要求的时段凭证，Confirmation 是记录完成或部分完成结果的时刻凭证。一次 Request 可对应不同 Confirmation 类型；同类结果的多次确认使用不同实例，不能把一份确认的形成等同于整项履约完成。六类凭证的业务时间按 [格式](format.md) 显式定义，并按 [来源映射](provenance.md) 核对事件含义；签约不等于生效、确认不等于回调、凭证形成不等于原事件时间。
 
 必需补充证据必须先存在：消费凭证通过 `references` 引用 Other Evidence，说明具体证明作用；实例 `basedOn` 指向已存在证据，规则核对必需性、身份与采信条件。目标凭证不得早于必需证据形成。证明作用和时间先后不另建关系种类。补充证据不是固定流程阶段，不为无此需求的业务强加材料。
 

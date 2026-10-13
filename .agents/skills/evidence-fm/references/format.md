@@ -74,7 +74,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 - 原始材料／外部 API 的旧字段名可在 `notes` 或词汇表记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
 - JSON 使用两空格缩进（`ensure_ascii=false` 保留中文），UTF-8 编码，文件末尾单个换行，不带注释、尾随逗号或重复键；一个文件一个顶层对象。字符串中的时间戳保持 RFC 3339 字面量，JSON 没有原生日期类型，不写 YAML 风格的无引号时间。
 - 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
-- Rule 按 `type → id → kind → label → description → contextRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用完整双语规范名称，再独立附具体 Entity ID，例如 `付款请求（Payment Request）[request.payment]`，不把 ID 放进英文名称位置；不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 省略不适用的 `target`、`notes`。
+- Rule 按 `type → id → kind → label → description → contextRef → fulfillmentRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用完整双语规范名称，再独立附具体 Entity ID，例如 `付款请求（Payment Request）[request.payment]`，不把 ID 放进英文名称位置；不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 和真实归属省略不适用的 `fulfillmentRef`、`target`、`notes`。
 
 ```json
 {

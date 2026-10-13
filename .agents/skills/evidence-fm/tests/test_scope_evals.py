@@ -75,7 +75,7 @@ class ScopeEvalTests(unittest.TestCase):
         output.mkdir(parents=True)
         explanation = (
             "询价报价的截止依据未提供；合同双方角色与责任、完成确认凭证、履约期限和违约异常均缺依据。"
-            "缺少人类全局追责结束确认，未生成模型、规则或场景，未执行校验与编译。"
+            "缺少合同级或相应分支的人类追责结束确认，未生成模型、规则或场景，未执行校验与编译。"
         )
         (output / "response.md").write_text(explanation, encoding="utf-8")
         return output

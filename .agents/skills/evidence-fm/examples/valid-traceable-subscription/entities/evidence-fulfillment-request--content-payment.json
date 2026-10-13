@@ -3,7 +3,7 @@
   "id": "request.content-payment",
   "category": "evidence",
   "kind": "fulfillment_request",
-  "label": "内容产品付款请求",
+  "label": "内容产品付款请求（Content Payment Request）",
   "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.platform-subscription",
   "attributes": [

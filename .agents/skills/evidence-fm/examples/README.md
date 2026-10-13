@@ -16,4 +16,4 @@ JSON 样例与回归共用一份，测试从这里读取，需改输入时复制
 
 专业方法与实际来源优先于样例。新责任、冲突或确认失效按 [准入方法](../references/responsibility-closure.md) 交接，不因样例能够通过检查就放行当前业务。只读样例检查可以在没有真实业务准入时执行，它不授权正式编辑。
 
-维护时实际运行样例检查及反例，核对源不被重写。整体 API 链路样例与 OpenAPI 快照由独立的 `evidence-api` 维护。脚本通过不证明业务批准、真实服务运行或 Agent 行为质量。
+生成或维护示例时，完整 JSON 必须实际通过对应 Schema 校验，Rule 的 `description` 仍为必填；代码片段不能冒充完整源对象。Markdown 中完整 JSON 的 Schema 回归由 `tests/test_reference_consistency.py` 覆盖，可运行模型另执行 FM 检查与适用场景。维护时实际运行这些检查及反例，核对源不被重写。整体 API 链路样例与 OpenAPI 快照由独立的 `evidence-api` 维护。脚本通过不证明业务批准、真实服务运行或 Agent 行为质量。

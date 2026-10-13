@@ -3,7 +3,7 @@
   "id": "confirmation.content-payment",
   "category": "evidence",
   "kind": "fulfillment_confirmation",
-  "label": "内容产品付款确认",
+  "label": "内容产品付款确认（Content Payment Confirmation）",
   "contextRef": "context.content-subscription",
   "responsibleRoleRef": "role.subscriber",
   "attributes": [

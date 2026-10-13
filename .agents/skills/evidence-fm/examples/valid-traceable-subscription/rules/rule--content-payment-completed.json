@@ -3,7 +3,7 @@
   "id": "rule.content-payment-completed",
   "kind": "completion",
   "label": "支付内容产品费用完成判断",
-  "description": "付款确认（confirmation.content-payment）的形成时间位于付款请求（request.content-payment）的有效区间内时，判定支付履约（fulfillment.content-payment）完成。",
+  "description": "内容产品付款确认（Content Payment Confirmation）[confirmation.content-payment]的形成时间位于内容产品付款请求（Content Payment Request）[request.content-payment]的有效区间内时，判定支付内容产品费用（Content Payment）[fulfillment.content-payment]完成。",
   "contextRef": "context.content-subscription",
   "bindings": {
     "request": {
