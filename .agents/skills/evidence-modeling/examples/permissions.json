@@ -5,7 +5,6 @@
       "input": "核对准入后生成模型、整体 API 和联合审核页。",
       "allowedWrites": [
         ".evidence/fm/",
-        ".evidence/glossary.json",
         ".evidence/api/api.json",
         ".evidence/api/generated/",
         ".evidence/views/index.html"
@@ -29,7 +28,7 @@
     {
       "id": "fm-only",
       "input": "只修改 FM，不设计 API，不生成页面。",
-      "allowedWrites": [".evidence/fm/", ".evidence/glossary.json"],
+      "allowedWrites": [".evidence/fm/"],
       "steps": ["admission", "fm-edit", "fm-check"],
       "designFmChecks": 1,
       "reviewFmChecks": 0,
@@ -52,7 +51,6 @@
       "input": "生成模型、整体 API 和联合审核页；API 设计时发现必要角色权限缺口。",
       "allowedWrites": [
         ".evidence/fm/",
-        ".evidence/glossary.json",
         ".evidence/api/api.json",
         ".evidence/api/generated/",
         ".evidence/views/index.html"
@@ -61,7 +59,7 @@
       "designFmChecks": 1,
       "reviewFmChecks": 0,
       "apiInput": "same-fm-check",
-      "saved": [".evidence/fm/", ".evidence/glossary.json"],
+      "saved": [".evidence/fm/"],
       "exit": "blocked",
       "rollback": false,
       "approved": false

@@ -42,11 +42,11 @@ class SkillOnlyTests(unittest.TestCase):
         self.assertIn("普通对话是完整交互路径", guide)
         self.assertNotRegex(guide, r"/evidence-model(?!ing)|\.pi/|evidence_ui_")
 
-    def test_behavior_evals_cover_text_controls_resume_and_save_failure(self):
+    def test_behavior_evals_cover_text_controls_and_resume(self):
         data = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())
         indexed = {case["category"]: case for case in data["evals"]}
         for category in ("skill-only-complete-interview", "evidence-provenance-story",
-                         "context-navigation-ambiguous-selection", "language-write-failure"):
+                         "context-navigation-ambiguous-selection"):
             with self.subTest(category=category):
                 case = indexed[category]
                 self.assertIn("follow_up", case)

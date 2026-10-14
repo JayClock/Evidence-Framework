@@ -23,12 +23,12 @@
     },
     {
       "id": "discovery-start",
-      "prompt": "我们准备梳理采购业务，请边访谈边形成共同理解并沉淀明确术语。先从现有采购协议谈起，别生成模型。",
+      "prompt": "我们准备梳理采购业务，请访谈并形成共同理解，沿用已有模型中的名称与含义。先从现有采购协议谈起，别生成模型。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
       "expectations": [
         "消费 FM 方法",
-        "按明确含义当轮沉淀术语",
+        "直接消费 Entity/属性定义，当轮统一表达，不提前编辑模型",
         "每轮主动寻找全部可同时澄清的独立内容一起问，责任人为所属合同一方，名称缺英文时直接翻译并等待真人业务回答"
       ],
       "forbiddenActions": ["编辑正式模型", "预排整份问卷"]
@@ -43,11 +43,11 @@
     },
     {
       "id": "discovery-stop",
-      "prompt": "今天停止访谈。补充一点：退款完成指实际到账。仅补充理解，不改词汇表，也别继续问。",
+      "prompt": "今天停止访谈。补充一点：退款完成指实际到账。仅补充理解，不改任何文件，也别继续问。",
       "explicit": false,
       "primarySkill": "evidence-discovery",
       "expectations": ["吸收全部事实及控制意图", "交接后停止"],
-      "forbiddenActions": ["写词汇表", "提出下一问", "认定追责结束"]
+      "forbiddenActions": ["写文件", "提出下一问", "认定追责结束"]
     },
     {
       "id": "discovery-correction",
@@ -55,7 +55,7 @@
       "explicit": false,
       "primarySkill": "evidence-discovery",
       "expectations": ["核对更正及受影响判断", "已建模定义更正只交接影响"],
-      "forbiddenActions": ["覆盖 FM 定义", "另建同义 standalone 绕过模型授权"]
+      "forbiddenActions": ["覆盖 FM 定义", "另建同义对象绕过模型授权"]
     },
     {
       "id": "fm-check-only",
@@ -83,14 +83,6 @@
       "primarySkill": "evidence-fm",
       "expectations": ["指出全局准入缺口", "保持正式源不变并交接"],
       "forbiddenActions": ["按局部切片编辑模型", "自动发起访谈"]
-    },
-    {
-      "id": "glossary-only",
-      "prompt": "把资料中已经明确的业务术语整理进 .evidence/glossary.json，未建模的存定义，已建模的只引用。不要创建模型。",
-      "explicit": false,
-      "primarySkill": "evidence-fm",
-      "expectations": ["读取领域语言方法", "维护定义归属并检查引用"],
-      "forbiddenActions": ["创建正式模型", "重复制定已有 FM 定义", "生成 API"]
     },
     {
       "id": "api-design",

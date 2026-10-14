@@ -111,16 +111,15 @@ flowchart TD
 
 默认路径相对项目根；沿用指定位置，不自动迁移。目录存在不扩大本轮写入权限。
 
-| 产物                     | 位置                                                 | 拥有者                              |
-| ------------------------ | ---------------------------------------------------- | ----------------------------------- |
-| 显式请求或合同级自动交接 | `.evidence/handoffs/<主题>.md` 或指定路径            | evidence-handoff                    |
-| 唯一词汇入口             | `.evidence/glossary.json`                            | FM 领域语言方法；访谈按授权当轮维护 |
-| 正式模型、说明与场景     | `.evidence/fm/`                                      | FM                                  |
-| API 设计与完整投影       | `.evidence/api/api.json`、`.evidence/api/generated/` | evidence-api                        |
-| 只读审核投影             | `.evidence/views/index.html`                         | Visualization                       |
-| 获授权留存的紧凑检查记录 | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 对应检查执行者                      |
+| 产物                     | 位置                                                 | 拥有者           |
+| ------------------------ | ---------------------------------------------------- | ---------------- |
+| 显式请求或合同级自动交接 | `.evidence/handoffs/<主题>.md` 或指定路径            | evidence-handoff |
+| 正式模型、说明与场景     | `.evidence/fm/`                                      | FM               |
+| API 设计与完整投影       | `.evidence/api/api.json`、`.evidence/api/generated/` | evidence-api     |
+| 只读审核投影             | `.evidence/views/index.html`                         | Visualization    |
+| 获授权留存的紧凑检查记录 | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 对应检查执行者   |
 
-访谈提供共同业务理解；词汇定义归 standalone 或其引用的 FM 对象唯一拥有，交接传递当前判断与必要依据。
+访谈提供共同业务理解；统一语言直接由 Entity 及其属性维护，交接引用实际模型身份并传递当前判断与必要依据，不另设定义文件。
 
 ## 单合同澄清结束后的自动接续
 
@@ -165,7 +164,7 @@ flowchart TD
 
 ### 1. FM
 
-写入前先确认所需 Skill 和运行环境可用。FM 消费人类准入依据、本轮编辑授权及来源，完成映射、源编辑、术语引用与适用场景检查。
+写入前先确认所需 Skill 和运行环境可用。FM 消费人类准入依据、本轮编辑授权及来源，完成映射、源编辑、Entity/属性定义与适用场景检查。
 
 由入口交给独立 `evidence-api` 的是当前完整模型根、实际差异及本次 JSON 检查结果；检查须有 `modelDigest`、`valid: true` 且 `inputChanged: false`。结果放在模型目录之外的临时文件；只读分支使用项目外临时目录，不写项目报告。FM 失败或准入不足不进入 API，也不生成新审核页。业务分析和 JSON 映射的具体动作只由 FM 维护。
 

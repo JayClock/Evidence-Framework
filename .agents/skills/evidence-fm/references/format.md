@@ -39,7 +39,7 @@
     └── simulation.json
 ```
 
-`model.json` 与分片 JSON 是模型类型事实源；`validation/` 是测试输入；FM 根之外的 `.evidence/glossary.json` 是按[领域语言方法](domain-language.md)持续维护的术语入口，使用独立 Schema：standalone 的定义可以先于模型存在，model 条目只引用 FM 对象或属性；解析结果不作为派生报告重建后回写。Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。FM 类型加载只消费正式类型源；词汇入口与获授权检查记录分别位于 FM 根之外，检查记录放在 `.evidence/checks/fm/`。
+`model.json` 与分片 JSON 是模型类型事实源；Entity 及其属性按[领域语言方法](domain-language.md)直接承担统一语言，名称与业务含义不作为派生报告重建后回写，也不另设定义索引。`validation/` 是测试输入，Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。FM 类型加载只消费正式类型源；获授权检查记录位于 FM 根之外的 `.evidence/checks/fm/`。
 
 同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `category: fulfillment` 的 Entity，不定义 kind，存放于 `fulfillments/<业务名>/fulfillment.json`。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
@@ -71,7 +71,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 - 协议字段保持 Schema 的拼写，例如 `contextRef`、`valueType`、`keyData`、`derivedByRuleRef`、`asOf`；不改为 snake_case。
 - 所有 Entity category 的 `attributes[].name` 统一小写 ASCII `snake_case`：以字母开头，后续为小写字母、数字或分隔单词的单个下划线；不允许首尾下划线、连续下划线或大写字母。示例：`profile_id`、`requested_minor_units`、`address_line_2`。
 - Rule `target.attribute`、CEL 点访问和静态索引、Instance `values` 的直接键、lineage 的 `#属性名` 与定义逐字一致；禁止只改定义、不改引用。CEL binding 别名、内置函数（如 `startsWith`）、事件类型和自由 map 内的外部原始键不属于 Entity 属性名，不做全局字符串替换。
-- 原始材料／外部 API 的旧字段名可在 `notes` 或词汇表记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
+- 原始材料／外部 API 的旧字段名可在所属 Entity 或属性的 `notes` 记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
 - JSON 使用两空格缩进（`ensure_ascii=false` 保留中文），UTF-8 编码，文件末尾单个换行，不带注释、尾随逗号或重复键；一个文件一个顶层对象。字符串中的时间戳保持 RFC 3339 字面量，JSON 没有原生日期类型，不写 YAML 风格的无引号时间。
 - 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
 - Rule 按 `type → id → kind → label → description → contextRef → fulfillmentRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用完整双语规范名称，再独立附具体 Entity ID，例如 `付款请求（Payment Request）[request.payment]`，不把 ID 放进英文名称位置；不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 和真实归属省略不适用的 `fulfillmentRef`、`target`、`notes`。

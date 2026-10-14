@@ -5,12 +5,12 @@
     {
       "id": 1,
       "category": "discovery-before-model",
-      "prompt": "显式使用 evidence-modeling：先帮我梳理作者交稿争议，还没有模型。本轮允许访谈，但只聊不落盘，不保存术语或正式文件。",
-      "expected_output": "分派 Discovery 并提供当前授权，允许模型之前澄清；不先生成模型，也不把只聊当术语写入授权。",
+      "prompt": "显式使用 evidence-modeling：先帮我梳理作者交稿争议，还没有模型。本轮允许访谈，但只聊不落盘，不保存任何项目文件。",
+      "expected_output": "分派 Discovery 并提供当前授权，允许模型之前澄清；不先生成模型，也不把只聊当模型编辑授权。",
       "files": [],
       "assertions": [
         "没有模型时仍可先访谈，专业判断委派对应 Skill",
-        "尊重只聊不落盘，不修改词汇表、模型或项目记录",
+        "尊重只聊不落盘，不修改模型或项目记录",
         "提出当前节点的必要问题后等待真人，不启动正式生成链路"
       ]
     },
@@ -22,7 +22,7 @@
       "files": [],
       "assertions": [
         "识别仅 FM 校验，不要求编辑准入或 API 资源",
-        "不写词汇表、两源、场景、generated、报告或审核页",
+        "不写两源、场景、generated、报告或审核页",
         "没有执行场景时不声称模拟通过，不从文件顺序补造先后"
       ]
     },
@@ -102,7 +102,7 @@
       "files": [],
       "assertions": [
         "不执行 project 或 Visualization 生成器",
-        "不写词汇表、两源、generated、项目记录或审核页",
+        "不写两源、generated、项目记录或审核页",
         "FM 通过不冒充 API 通过，未实际执行的检查不记通过"
       ]
     },
@@ -159,7 +159,7 @@
       "id": 20,
       "category": "contract-closed-read-only",
       "prompt": "显式使用 evidence-modeling 查看本例资料：A 已澄清结束，B 尚未澄清。但本轮只读、不生成模型、不保存任何项目文件或 Handoff。",
-      "expected_output": "只读核对并说明合同级结束与全局未结束，更窄限制覆盖默认自动接续；不写 FM、术语、API、页面或 Markdown 交接。",
+      "expected_output": "只读核对并说明合同级结束与全局未结束，更窄限制覆盖默认自动接续；不写 FM、API、页面或 Markdown 交接。",
       "files": ["fixtures/contract-batch-admission.md"],
       "assertions": [
         "本轮只读限制覆盖资料及默认生成交接权限",
@@ -200,7 +200,7 @@
       "files": ["fixtures/domain-branch-admission.md"],
       "assertions": [
         "更正使当前领域规则及确认受影响，不用无合同豁免放行",
-        "只读限制覆盖默认接续，不写术语、FM、API、页面或交接",
+        "只读限制覆盖默认接续，不写 FM、API、页面或交接",
         "保留合同暂缓控制，不自动恢复访谈或宣称结束"
       ]
     }

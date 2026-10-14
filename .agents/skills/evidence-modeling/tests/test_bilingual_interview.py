@@ -14,8 +14,8 @@ DISCOVERY = SKILLS / "evidence-discovery"
 class BilingualInterviewTests(unittest.TestCase):
     def test_canonical_name_has_one_owner_and_two_languages(self):
         text = (FM / "references/domain-language.md").read_text()
-        for phrase in ("中文（英文）", "同一个稳定 ID", "name", "label", "不从 ID",
-                       "直接翻译英文", "不等待人类", "每次使用", "不另建英文词典", "共同业务依据"):
+        for phrase in ("中文（英文）", "同一 Entity 或属性", "Entity ID", "属性名", "label", "notes", "meaning", "不从代码、ID",
+                       "直接翻译英文", "不等待人类", "每次使用", "不另设术语表、定义索引或英文词典"):
             self.assertIn(phrase, text)
         for relative in ("AGENTS.md", "docs/guides/index.md", "docs/evidence-modeling.md"):
             self.assertIn("中文（英文）", (REPO / relative).read_text())

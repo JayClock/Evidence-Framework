@@ -1,6 +1,5 @@
 """Interview responsibilities and explicitly requested Markdown handoff contracts."""
 
-import json
 import unittest
 from pathlib import Path
 
@@ -32,13 +31,6 @@ class DiscoveryRetentionBoundaryTests(unittest.TestCase):
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         self.assertIn("显式", workflow)
         self.assertIn("evidence-handoff", workflow)
-
-    def test_glossary_does_not_require_a_source_locator(self):
-        schema = json.loads((SKILLS / "evidence-fm/schemas/glossary.schema.json").read_text())
-        self.assertEqual(["id", "kind", "name", "definition"], schema["$defs"]["standalone"]["required"])
-        terms = json.loads((DISCOVERY / "examples/glossary.json").read_text())["terms"]
-        for term in terms:
-            self.assertNotIn("sourceRefs", term)
 
 
 if __name__ == "__main__":

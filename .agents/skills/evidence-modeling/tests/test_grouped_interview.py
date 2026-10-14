@@ -66,15 +66,15 @@ class GroupedInterviewTests(unittest.TestCase):
         for phrase in ("部分回答", "共同依据", "重算", "一次一问", "原问题 Q2"):
             self.assertIn(phrase, text)
         controls = (DISCOVERY / "examples/control-and-recovery.md").read_text()
-        for phrase in ("暂缓", "停止", "保存失败", "原标识"):
+        for phrase in ("暂缓", "停止", "不扩大编辑权限", "原标识"):
             self.assertIn(phrase, controls)
         self.assertIn("tracing.md", (DISCOVERY / "examples/README.md").read_text())
 
-    def test_behavior_catalog_covers_round_selection_and_failure_boundaries(self):
+    def test_behavior_catalog_covers_round_selection_and_definition_boundaries(self):
         cases = json.loads((DISCOVERY / "evals/evals.json").read_text())["evals"]
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
-        for category in ("grouped-independent-frontier", "language-write-failure",
+        for category in ("grouped-independent-frontier", "language-correction",
                          "grouped-not-global-closure"):
             case = indexed[category]
             self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
@@ -85,10 +85,9 @@ class GroupedInterviewTests(unittest.TestCase):
         self.assertIn("一次只问一个问题", mainline["follow_up"][2])
         for risk in ("部分回答", "独立性失效", "整轮串行", "一次一问", "明确解除"):
             self.assertTrue(any(risk in item for item in mainline["expectations"]), risk)
-        failure = indexed["language-write-failure"]
-        self.assertIn("问题组", failure["prompt"])
-        self.assertTrue(any("实际拒绝" in item for item in failure["setup"]))
-        self.assertTrue(any("独立可问题" in item for item in failure["expectations"]))
+        correction = indexed["language-correction"]
+        self.assertIn("Entity", correction["prompt"])
+        self.assertTrue(any("保持文件不变" in item for item in correction["expectations"]))
         instructions = (DISCOVERY / "evals/README.md").read_text()
         self.assertIn("依赖前沿", instructions)
         self.assertIn("没有实际执行就保持未执行", instructions)

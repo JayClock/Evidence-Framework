@@ -4,18 +4,18 @@
 
 ## 选择入口
 
-| 目标                         | 入口                                                               | 本轮结果                                   |
-| ---------------------------- | ------------------------------------------------------------------ | ------------------------------------------ |
-| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支            | 方法解释、依据与未知                       |
-| 记录建模过程或合同级交接     | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)             | Markdown 进展交接及下一轮建议              |
-| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)         | 共同理解、当前节点的独立问题组及获授权术语 |
-| 生成、修改或校验 FM          | [FM](../.agents/skills/evidence-fm/SKILL.md)                       | 模型、场景及实际检查结果                   |
-| 从整体 FM 设计或校验 API     | [API](../.agents/skills/evidence-api/SKILL.md)                     | API 设计、HTTP 契约及派生产物；FM 只读     |
-| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md) | 审核页面或检查结果                         |
-| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)           | FM → 整体 API → 联合审核                   |
+| 目标                         | 入口                                                               | 本轮结果                                           |
+| ---------------------------- | ------------------------------------------------------------------ | -------------------------------------------------- |
+| 解释履约建模方法或术语       | [FM](../.agents/skills/evidence-fm/SKILL.md) 的讨论分支            | 方法解释、依据与未知                               |
+| 记录建模过程或合同级交接     | [Handoff](../.agents/skills/evidence-handoff/SKILL.md)             | Markdown 进展交接及下一轮建议                      |
+| 访谈、继续澄清、更正或停止   | [Discovery](../.agents/skills/evidence-discovery/SKILL.md)         | 共同理解、当前节点的独立问题组及模型定义的待改影响 |
+| 生成、修改或校验 FM          | [FM](../.agents/skills/evidence-fm/SKILL.md)                       | 模型、场景及实际检查结果                           |
+| 从整体 FM 设计或校验 API     | [API](../.agents/skills/evidence-api/SKILL.md)                     | API 设计、HTTP 契约及派生产物；FM 只读             |
+| 生成或检查离线工作台         | [Visualization](../.agents/skills/evidence-visualization/SKILL.md) | 审核页面或检查结果                                 |
+| 一次完成模型、API 与联合审核 | [Modeling](../.agents/skills/evidence-modeling/SKILL.md)           | FM → 整体 API → 联合审核                           |
 
 ```text
-/skill:evidence-modeling 访谈并沉淀领域语言
+/skill:evidence-modeling 访谈并形成共同理解，沿用模型语言
 /skill:evidence-handoff 下一轮继续运输签收证明，采购期限仍暂缓
 /skill:evidence-modeling 核对准入后修改模型与 API，生成联合审核页
 /skill:evidence-modeling 只修改 FM，不设计 API，不生成页面
@@ -71,14 +71,13 @@
 | 默认路径                                        | 用途                                   |
 | ----------------------------------------------- | -------------------------------------- |
 | `.evidence/handoffs/<主题>.md`                  | 显式请求或合同级自动保存的建模过程交接 |
-| `.evidence/glossary.json`                       | 唯一词汇入口，定义或正式对象引用       |
 | `.evidence/fm/`                                 | 正式 JSON、说明、validation 与生成物   |
 | `.evidence/api/api.json`                        | API 设计源                             |
 | `.evidence/api/generated/`                      | API 投影、OpenAPI、样例与流程          |
 | `.evidence/views/index.html`                    | 当前源的只读工作台                     |
 | `.evidence/checks/fm/`、`.evidence/checks/api/` | 获授权紧凑检查记录                     |
 
-访谈形成共同理解，明确术语按权限当轮沉淀。词汇表中 standalone 的 `name` 维护完整双语名称与未建模定义，model 引用当前 FM 的 `label` 与定义，落实为模型后保留 term ID。优先复用已有规范映射，含义明确且缺英文时直接翻译，不等待人类澄清英文；显示翻译不自动修改已有 FM 标签、稳定 ID 或接口字段。中文、英文及别名用于同一入口检索，不另存英文词典，也不因显示名更正自动迁移 FM/API。术语写入失败时说明真实结果并停止，恢复时核对实际条目。
+Entity 及其属性即统一语言：Entity 的 `label/notes` 承载规范名称与业务定义，属性的 `label/meaning` 承载名称与含义；访谈、需求、任务、测试和交接直接消费当前模型，不另设术语表或定义索引。优先复用已有规范映射，含义明确且缺英文时直接翻译，不等待人类澄清英文；显示翻译不自动修改已有 FM 标签、稳定 ID 或接口字段。尚无模型时承接实际材料，不为保存名称创建占位 Entity；正式新建或更正仍须核对追责结束准入与编辑授权。
 
 单合同澄清结束并经人类确认后，建模入口默认调用正式建模 Skill，相关未澄清合同使用 Context Role，随后调用 `evidence-handoff` 保存未澄清部分及恢复位置。独立领域／协商在对应分支准入与结束确认有效后，也按入口授权接续正式建模及未澄清上下文的 Handoff，不要求无关合同先结束，不把领域边界一律表达成 Context Role。只读、仅访谈、不生成或不保存交接等明确限制优先；普通回答不触发生成。合同级自动接续的资源、失败及恢复规则由 [文件交接](../.agents/skills/evidence-modeling/references/workflow.md) 唯一维护；保存成功后停止，不自动切换合同。
 

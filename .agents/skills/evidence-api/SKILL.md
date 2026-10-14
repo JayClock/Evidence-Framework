@@ -20,7 +20,7 @@ compatibility: 讨论只需文本；校验与投影需 Python 3.10+、本包 req
 
 首次需要链路样板时读 [商品采购基线](examples/full-lifecycle/README.md)，只按当前问题加载对应 JSON。样例不是业务事实、默认权限或 FM 编辑准入依据；tests/、evals/ 仅用于维护。
 
-默认输入为 `.evidence/fm/` 和其外的 `.evidence/api/api.json`；输出为 `.evidence/api/generated/`，获授权紧凑检查记录为 `.evidence/checks/api/`。项目产物不写入 Skill 安装目录。通过资源发现或用户指定路径定位 FM 包，不假设兄弟目录；领域语言按 FM 的 `references/domain-language.md` 消费当前规范名称，不修改词汇表。
+默认输入为 `.evidence/fm/` 和其外的 `.evidence/api/api.json`；输出为 `.evidence/api/generated/`，获授权紧凑检查记录为 `.evidence/checks/api/`。项目产物不写入 Skill 安装目录。通过资源发现或用户指定路径定位 FM 包，不假设兄弟目录；领域语言按 FM 的 `references/domain-language.md` 直接消费当前 Entity 及其属性的规范名称与含义，不修改 FM 或创建额外定义文件。
 
 ## Action
 

@@ -9,7 +9,7 @@ REPO = SKILLS.parents[1]
 
 
 class InterviewMainlineTests(unittest.TestCase):
-    def test_entrypoints_route_to_analysis_not_only_glossary(self):
+    def test_entrypoints_route_to_analysis_and_model_language(self):
         for name in ("evidence-discovery", "evidence-fm"):
             text = (SKILLS / name / "SKILL.md").read_text()
             with self.subTest(skill=name):
@@ -84,7 +84,7 @@ class InterviewMainlineTests(unittest.TestCase):
         retired = (
             "单据推演 → 变化点与边界", "单据推演、变化点与边界",
             "划分领域输入**：识别稳定参与主体",
-            "问题优先顺序跟随当前责任链", "每轮访谈 → 保存原话与来源 → 当轮沉淀明确术语",
+            "问题优先顺序跟随当前责任链",
             "先解析定义拥有者，再指出模糊词", "再由当前判断的重要性决定下一问",
             "在本批次源模型生成或修订后，核对每项受影响规则的已有案例",
         )

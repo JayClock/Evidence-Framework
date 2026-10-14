@@ -1,70 +1,13 @@
 """Skill composition and repository verification checks owned by evidence-modeling."""
 
 import json
-import shutil
-import subprocess
-import sys
-import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 REPOSITORY = Path(__file__).resolve().parents[4]
 
 
 class FMIntegrationTests(unittest.TestCase):
-    def test_repository_glossary_has_no_parallel_model_definition(self):
-        path = REPOSITORY / ".evidence/glossary.json"
-        before = path.read_bytes()
-        command = [sys.executable, "-B", str(REPOSITORY / ".agents/skills/evidence-fm/scripts/check_glossary.py"), str(path)]
-        run = subprocess.run(command, capture_output=True, text=True)
-        self.assertEqual(before, path.read_bytes())
-        self.assertEqual(0, run.returncode, run.stdout + run.stderr)
-        result = json.loads(run.stdout)
-        registered = json.loads(before)["terms"]
-        resolved = {term["id"]: term for term in result["resolvedTerms"]}
-        self.assertEqual(len(registered), result["termCount"])
-        self.assertCountEqual([term["id"] for term in registered], resolved)
-        self.assertEqual(len(registered), len(result["resolvedTerms"]))
-        for term in registered:
-            if term["kind"] == "model":
-                self.assertNotIn("name", term)
-                self.assertNotIn("definition", term)
-                self.assertEqual(term["target"], resolved[term["id"]]["target"])
-
-    def test_registry_evolution_does_not_lock_counts_or_a_business_term(self):
-        fm = REPOSITORY / ".agents/skills/evidence-fm"
-        with tempfile.TemporaryDirectory() as directory:
-            repository = Path(directory)
-            shutil.copytree(
-                fm, repository / ".agents/skills/evidence-fm",
-                ignore=shutil.ignore_patterns("tests", "evals", "examples", "__pycache__"),
-            )
-            evidence = repository / ".evidence"
-            shutil.copytree(fm / "tests/fixtures/valid-subscription", evidence / "fm")
-            source = next(
-                path for path in (evidence / "fm").rglob("*.json")
-                if json.loads(path.read_text()).get("id") == "contract.content-subscription"
-            )
-            document = json.loads(source.read_text())
-            document["label"] = "内容产品订阅合同（Content Subscription Contract）"
-            document["notes"] = "本次隔离合成测试中的内容订阅协议。"
-            source.write_text(json.dumps(document, ensure_ascii=False))
-            terms = [{
-                "id": "term.synthetic-contract", "kind": "model",
-                "target": {"objectRef": "contract.content-subscription"},
-            }]
-            for identity in ("first", "second"):
-                terms.append({
-                    "id": f"term.synthetic-{identity}", "kind": "standalone",
-                    "name": f"合成概念-{identity}（Synthetic Concept {identity}）", "definition": "隔离测试中的未建模概念。",
-                })
-                (evidence / "glossary.json").write_text(json.dumps(
-                    {"schemaVersion": "2.0", "terms": terms}, ensure_ascii=False,
-                ))
-                with self.subTest(terms=len(terms)), patch(f"{__name__}.REPOSITORY", repository):
-                    self.test_repository_glossary_has_no_parallel_model_definition()
-
     def test_modeling_is_exclusively_skill_driven(self):
         self.assertFalse((REPOSITORY / ".pi/extensions/evidence-modeling").exists())
         constitution = (REPOSITORY / "AGENTS.md").read_text()
@@ -145,7 +88,7 @@ class FMIntegrationTests(unittest.TestCase):
         for reference in ("business-analysis.md", "domain-language.md", "format.md", "semantics.md"):
             self.assertIn(reference, fm_entry)
         language = (REPOSITORY / ".agents/skills/evidence-fm/references/domain-language.md").read_text()
-        for phrase in ("定义拥有者", "保留原 `term.*`", "model 引用"):
+        for phrase in ("定义拥有者", "Entity 及其属性即统一语言", "label/meaning"):
             self.assertIn(phrase, language)
         method = (REPOSITORY / ".agents/skills/evidence-fm/references/business-analysis.md").read_text()
         self.assertIn("领域对象", method)

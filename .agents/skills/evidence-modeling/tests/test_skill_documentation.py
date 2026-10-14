@@ -78,45 +78,30 @@ class SkillDocumentationTests(unittest.TestCase):
         for text in (fm_entry, handoff_text, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
-    def test_interview_composes_language_updates_without_generating_json(self):
+    def test_interview_consumes_model_language_without_generating_json(self):
         for name in ("evidence-discovery", "evidence-fm"):
             with self.subTest(skill=name):
                 entry = (ROOT / name / "SKILL.md").read_text()
-                self.assertIn("domain-language.md", entry)
-                self.assertIn("当轮", entry)
-                self.assertIn("词汇表", entry)
-                if name == "evidence-fm":
-                    self.assertIn("模型 JSON", entry)
-                self.assertIn("只聊不落盘", entry)
+                for requirement in ("domain-language.md", "Entity", "属性", "模型 JSON", "只聊不落盘"):
+                    self.assertIn(requirement, entry)
         composition = (ROOT / "evidence-modeling/SKILL.md").read_text()
-        self.assertIn("evidence-discovery", composition)
-        self.assertIn("evidence-fm", composition)
-        self.assertIn("当轮词汇表", composition)
-        self.assertIn("不授权模型 JSON", composition)
-        self.assertIn("只聊不落盘", composition)
+        for requirement in ("evidence-discovery", "evidence-fm", "Entity/属性定义", "不授权模型 JSON", "只聊不落盘"):
+            self.assertIn(requirement, composition)
         language = (ROOT / "evidence-fm/references/domain-language.md").read_text()
         for requirement in (
-            ".evidence/glossary.json",
-            "依据本轮已明确的业务含义，当轮维护词汇入口",
-            "不等待所有问题解决",
-            "不为术语编造 Entity ID",
-            "未澄清不任选其一覆盖",
-            "名称、含义归 FM 唯一维护",
-            "已建模概念的更正属于 FM 修改",
-            "不建立同义 standalone",
-            "悬空",
-            "resolvedTerms",
-            "不宣称原子事务",
-            "再继续访谈",
-            "不能声称整个 FM 已通过校验",
+            "Entity 及其属性即统一语言", "label", "notes", "meaning", "Entity ID",
+            "属性名", "未澄清不任选其一覆盖", "已建模概念的更正属于 FM 修改",
+            "仅有访谈授权时不写模型", "不为保存术语创建占位 Entity",
+            "不宣称原子事务", "同一次有效 FM 结果", "结构通过不证明定义正确",
         ):
             self.assertIn(requirement, language)
         interview = (ROOT / "evidence-discovery/references/interview.md").read_text()
-        self.assertIn("每轮一个业务焦点，主动寻找并同轮提出全部可同时澄清的独立必要问题", interview)
-        self.assertIn("任一写入失败就停止", interview)
-        self.assertIn("实际文件", interview)
-        self.assertIn("停止后仅吸收补充资料", interview)
-        self.assertIn("只聊不落盘或仅保存资料时以对话承接", interview)
+        for requirement in (
+            "每轮一个业务焦点，主动寻找并同轮提出全部可同时澄清的独立必要问题",
+            "实际文件", "停止后仅吸收补充资料", "不把访谈授权当成模型编辑授权",
+            "只聊不落盘或仅保存资料时以对话承接",
+        ):
+            self.assertIn(requirement, interview)
         formatting = (ROOT / "evidence-fm/references/format.md").read_text()
         self.assertIn("不作为派生报告重建", formatting)
 
@@ -126,12 +111,12 @@ class SkillDocumentationTests(unittest.TestCase):
         for requirement in (
             "规范名称", "aliases", "理解输入", "不轮换同义词",
             "上下文", "故事", "任务标题", "测试名称", "交接",
-            "原文引用", "既有代码标识", "不批量改名", "不自动创建词汇表",
+            "原文引用", "既有代码标识", "不批量改名", "不为保存术语创建占位 Entity",
             "未保存", "不扩大写入权限", "只读",
         ):
             self.assertIn(requirement, daily)
         self.assertIn("已建模概念的更正属于 FM 修改", method)
-        self.assertIn("不创建 Markdown 词典", method)
+        self.assertIn("不另设术语表、定义索引或英文词典", method)
 
     def test_daily_language_is_reachable_from_project_and_consumer_skills(self):
         repo = ROOT.parents[1]
@@ -164,72 +149,18 @@ class SkillDocumentationTests(unittest.TestCase):
         example = (fm / "examples/domain-language.md").read_text()
         for scenario in ("别名输入", "同名异义", "只读", "缺词"):
             self.assertIn(scenario, example)
-        catalog = json.loads((fm / "evals/domain-language.json").read_text())
+        catalog = json.loads((fm / "evals/model-language.json").read_text())
         cases = {case["category"]: case for case in catalog["evals"]}
         self.assertTrue({
-            "canonical-expression", "context-sensitive-language", "read-only-language-gap",
-            "bilingual-one-identity", "bilingual-owner-transition", "bilingual-context-ambiguity",
+            "entity-owned-language", "attribute-owned-meaning", "context-sensitive-language",
+            "direct-business-name-translation",
         }.issubset(cases))
         for case in cases.values():
             self.assertTrue(case["prompt"])
             self.assertTrue(case["expectations"])
         instructions = (fm / "evals/README.md").read_text()
-        self.assertIn("domain-language.json", instructions)
+        self.assertIn("model-language.json", instructions)
         self.assertIn("未执行", instructions)
-
-    def test_glossary_has_one_json_source_outside_model_types(self):
-        repo = ROOT.parents[1]
-        glossary = repo / ".evidence/glossary.json"
-        document = json.loads(glossary.read_text())
-        self.assertEqual("2.0", document["schemaVersion"])
-        for term in document["terms"]:
-            if term["kind"] == "model":
-                self.assertTrue(term["target"]["objectRef"])
-                self.assertTrue({"name", "definition", "context", "distinctions"}.isdisjoint(term))
-        self.assertTrue(document["terms"])
-        self.assertEqual(
-            len(document["terms"]), len({term["id"] for term in document["terms"]})
-        )
-        self.assertFalse(list((repo / ".evidence/fm").glob("*glossary*")))
-        method = (ROOT / "evidence-fm/references/domain-language.md").read_text()
-        self.assertIn("glossary.schema.json", method)
-        self.assertIn("check_glossary.py", method)
-        self.assertIn("不创建 Markdown 词典", method)
-        self.assertTrue((ROOT / "evidence-fm/schemas/glossary.schema.json").is_file())
-        for path in (
-            repo / "AGENTS.md", repo / "docs/guides/index.md",
-            repo / "docs/evidence-modeling.md",
-            ROOT / "evidence-discovery/SKILL.md",
-            ROOT / "evidence-modeling/references/workflow.md",
-        ):
-            text = path.read_text()
-            self.assertIn(".evidence/glossary.json", text)
-            self.assertNotRegex(text, r"glossary[.]md")
-
-    def test_active_interview_guidance_has_no_deferred_glossary_contract(self):
-        repo = ROOT.parents[1]
-        documents = [
-            repo / "AGENTS.md",
-            repo / "README.md",
-            repo / "docs/evidence-modeling.md",
-            repo / "docs/guides/index.md",
-            ROOT / "README.md",
-        ]
-        for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
-            documents.extend((ROOT / name).rglob("*.md"))
-            documents.extend((ROOT / name / "evals").glob("*.json"))
-        retired = re.compile(
-            r"问答只积累发现记录|不另行生成正式词汇表|"
-            r"不建立正式词汇表|只整理发现记录，不修改模型|"
-            r"发现阶段不加载生成流程|讨论阶段不修改正式 FM|"
-            r"工作术语、关系与讨论案例在访谈中只是材料|"
-            r"模型 JSON 消费当前词汇表及来源，不反向覆盖定义|"
-            r"已明确的定义按独立 Schema 只维护在 JSON 词汇表|"
-            r"后续模型消费它而非重建覆盖它|modelRefs"
-        )
-        for document in documents:
-            with self.subTest(document=str(document)):
-                self.assertNotRegex(document.read_text(), retired)
 
     def test_direct_workflow_has_no_publication_runtime_or_compatibility_entry(self):
         for path in (
@@ -291,7 +222,7 @@ class SkillDocumentationTests(unittest.TestCase):
                 ".evidence/checks/fm/",
                 ".evidence/checks/api/",
             ),
-            "evidence-discovery/SKILL.md": (".evidence/glossary.json",),
+            "evidence-discovery/SKILL.md": (".evidence/fm/",),
             "evidence-handoff/SKILL.md": (".evidence/handoffs/",),
             "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
             "evidence-fm/references/validation.md": (
@@ -338,7 +269,7 @@ class SkillDocumentationTests(unittest.TestCase):
             with self.subTest(skill=name):
                 text = (ROOT / name / "SKILL.md").read_text()
                 if name == "evidence-discovery":
-                    self.assertIn("按授权当轮沉淀", text)
+                    self.assertIn("不为保存术语创建占位 Entity", text)
                     self.assertIn("更窄授权", text)
                 else:
                     self.assertIn("只修改本次授权的文件", text)

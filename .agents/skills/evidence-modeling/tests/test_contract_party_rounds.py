@@ -80,7 +80,7 @@ class ContractPartyRoundTests(unittest.TestCase):
     def test_clear_business_meanings_are_translated_without_waiting_for_english(self):
         method = (FM / "references/domain-language.md").read_text()
         for phrase in ("直接翻译英文", "不等待人类", "业务含义", "已有规范映射",
-                       "不扩大写入权限", "不自动创建词汇表"):
+                       "不扩大写入权限", "不为保存术语创建占位 Entity"):
             self.assertIn(phrase, method)
         for path in (FM / "references/domain-language.md", FM / "references/format.md",
                      FM / "examples/domain-language.md", DISCOVERY / "references/interview.md",
@@ -89,7 +89,7 @@ class ContractPartyRoundTests(unittest.TestCase):
             with self.subTest(path=path.name):
                 self.assertNotIn("英文名待明确", text)
                 self.assertNotIn("英文未明确不猜译", text)
-        catalog = json.loads((FM / "evals/domain-language.json").read_text())
+        catalog = json.loads((FM / "evals/model-language.json").read_text())
         self.assertTrue(any(case["category"] == "direct-business-name-translation"
                             for case in catalog["evals"]))
 
@@ -106,7 +106,7 @@ class ContractPartyRoundTests(unittest.TestCase):
             self.assertGreaterEqual(len(indexed[category]["follow_up"]), 4)
         self.assertIn("multi-evidence-cycle-and-version", indexed)
         self.assertIn("grouped-not-global-closure", indexed)
-        self.assertIn("language-write-failure", indexed)
+        self.assertIn("language-correction", indexed)
         example = (DISCOVERY / "examples/tracing.md").read_text()
         self.assertEqual(["连续主案例"], re.findall(r"(?m)^## (.+)$", example))
 

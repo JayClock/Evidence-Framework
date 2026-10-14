@@ -49,15 +49,16 @@ class SkillWritingTests(unittest.TestCase):
                         r"(?m:^#{1,6} (?:写法来源|借鉴出处|致谢)(?:\s|$))",
                     )
 
-    def test_language_updates_have_completion_criteria_before_continuation(self):
+    def test_model_language_has_completion_criteria_without_a_save_stage(self):
         text = (SKILLS / "evidence-fm/references/domain-language.md").read_text()
         cycle = section(text, "每轮访谈")
         steps = re.findall(r"(?m)^[1-5]\. .+$", cycle)
         self.assertEqual(5, len(steps))
         for step in steps:
             self.assertIn("完成时", step)
-        self.assertLess(cycle.index("核对含义由谁维护"), cycle.index("当轮维护词汇入口"))
-        self.assertLess(cycle.index("当轮维护词汇入口"), cycle.index("再继续访谈"))
+        self.assertLess(cycle.index("核对含义由谁维护"), cycle.index("当轮统一表达"))
+        self.assertLess(cycle.index("当轮统一表达"), cycle.index("交回访谈"))
+        self.assertIn("仅有访谈授权时不写模型", cycle)
 
     def test_visual_verification_is_grouped_and_keeps_actual_evidence_limits(self):
         text = (SKILLS / "evidence-visualization/references/operations.md").read_text()

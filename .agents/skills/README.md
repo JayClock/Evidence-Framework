@@ -7,7 +7,7 @@ Skill 保存可移植方法，项目文档保存实际范围与工程决定；�
 | Skill                                                     | 用途               | 输入与输出                                                                                | 运行依赖                                                                    |
 | --------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [evidence-modeling](evidence-modeling/SKILL.md)           | 显式一体建模入口   | 目标／已有记录 → 讨论或访谈；对应分支准入后 FM → 整体 API → 联合审核 → 未澄清部分 Handoff | 生成需 FM、API、Visualization；访谈需 Discovery 和 FM，自动交接还需 Handoff |
-| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 经营材料 → 混合上下文导航、合同履约／领域／协商分析、人类分支结束依据、当轮术语           | 通用访谈只需对话；FM 专业判断需读取 FM 参考                                 |
+| [evidence-discovery](evidence-discovery/SKILL.md)         | 访谈与澄清         | 经营材料 → 混合上下文导航、合同履约／领域／协商分析、人类分支结束依据、模型语言           | 通用访谈只需对话；FM 专业判断需读取 FM 参考                                 |
 | [evidence-handoff](evidence-handoff/SKILL.md)             | 建模过程交接       | 显式请求或分支结束自动交接 → Markdown 进展、未澄清上下文、决定及下一轮建议                | 当前会话上下文与文件写入权限                                                |
 | [evidence-fm](evidence-fm/SKILL.md)                       | 建模准则与正式产物 | 每轮来源 → 统一领域语言；追责结束准入及编辑授权 → FM、场景与实际结果                      | 读取准则只需文本；执行校验需 Python 3.10+                                   |
 | [evidence-api](evidence-api/SKILL.md)                     | 独立 API 设计      | 整体 FM 与有效检查 → API 契约、OpenAPI、静态消费者流程与投影                              | Python 3.10+、可定位的 FM Skill；两包无需相邻                               |
@@ -28,7 +28,7 @@ npx skills@latest add ./.agents/skills --skill evidence-discovery
 
 也可以把某个完整目录复制到宿主支持的位置，如目标项目的 `.agents/skills/evidence-discovery/`。保留 references，以及 FM／API 包各自的 scripts、schemas、requirements.txt；不能只复制 SKILL.md。已有同名目录时先比较和备份，不直接覆盖，也不要同时加载两个同名版本。
 
-使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；领域语言沉淀与专业 FM 判断通过已安装的 FM 包或用户提供的路径获取方法，不假设兄弟目录。独立访谈按 FM 方法当轮更新明确术语，不自动启动模型 JSON 生成；来自 Modeling 的获授权合同或领域／协商结束信号交回入口，按其协议接续建模与交接。缺少准则时说明待沉淀项并说明词汇表未更新，不能宣称完整专业审查。
+使用宿主原生 Skill 入口，或让 Agent 读取安装目录里的 SKILL.md。Discovery 单独安装可做通用访谈；模型语言与专业 FM 判断通过已安装的 FM 包或用户提供的路径获取方法，不假设兄弟目录。独立访谈直接读取相关 Entity 及其属性的名称与定义，尚无模型时承接实际材料，不自动启动模型 JSON 生成；来自 Modeling 的获授权合同或领域／协商结束信号交回入口，按其协议接续建模与交接。缺少准则时说明资源限制，不能宣称完整专业审查。
 
 FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛后才按授权生成或修改模型，检查通过后只交付 FM；API 设计使用独立的 `evidence-api`，完整接续由 Modeling 编排；未闭合时只返回具体缺口，不复制访谈机制。Requirements 仍可直接使用充分的外部材料。无需为了独立使用而在两个包中保留同一套建模知识。
 
@@ -37,7 +37,7 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 `evidence-modeling` 设置为仅用户显式调用；支持的宿主可使用 `/skill:evidence-modeling <目标>`。它只负责编排，通过资源发现或用户提供的路径定位专业 Skill，不假设兄弟目录。建模只使用 Skill，普通对话是完整交互路径；Discovery 唯一维护混合上下文选择、当前节点的依赖前沿、成组问答与控制意图。
 
 ```text
-用 evidence-discovery 边访谈边沉淀领域语言：客户手机号不是唯一身份，导入时经常误合。
+用 evidence-discovery 访谈并沿用模型语言：客户手机号不是唯一身份，导入时经常误合。
 今天先停止问答，只整理已有信息。
 /skill:evidence-handoff 记录建模过程，下一轮继续退款完成证明。
 继续讨论，但先保留之前暂缓的期限问题。
@@ -62,7 +62,6 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 ```text
 .evidence/
 ├── handoffs/             # 显式请求或分支结束自动保存的建模过程 Markdown 交接
-├── glossary.json         # 唯一 JSON 词汇表，独立 Schema，不进入 FM 类型加载
 ├── fm/                   # 当前模型、说明、validation 与 generated
 ├── views/index.html      # 一体生成或单独要求时更新的联合只读审核页
 ├── api/
@@ -75,9 +74,9 @@ FM 单独安装仍核对人类追责结束依据及当前范围，满足门槛�
 
 FM 与 API 为独立 Skill，由 Modeling 按授权接续；API 阶段复用同一次 FM 检查结果并核对摘要，不再跑 FM 检查，保留 API 自身契约与覆盖校验。各 Skill 只修改本次授权的文件，不自动批准。`evidence-requirements` 默认使用 `docs/requirements/scope.md` 和 `docs/requirements/stories.md`。`evidence-task-planning` 默认输出 `docs/plans/smart-domain/plan.yaml` 和 `review.html`：YAML 是机器可读的唯一计划记录，保存显式切片、编译 DAG/API 覆盖、任务 Guides/设计、状态、CHECK、证据与缺口；HTML 是可重建的离线只读审核投影。任务标题不参与 taskKey 或排序。实体和规则从任意 FM 提取，不包含项目专用案例。`evidence-delivery` 消费同一 `plan.yaml`，执行前核对授权/范围、业务与工程来源、前置新鲜度、设计边界、环境、CHECK 与退出条件。`next` 只提供结构候选，不证明语义就绪；FM/API 摘要不覆盖架构、规范、howto 或代码变化。真实结果写入任务 `observedEvidence`，状态只在同一任务的 `status` 维护，不从审核页反向更新。任务支持 implementation、verify、design、setup、manual。
 
-已有业务目录、词汇表和案例沿用原路径，不自动迁移或删除。明确术语按 FM 的领域语言方法在访谈中持续写入唯一 JSON 词汇表 `.evidence/glossary.json`，不维护 Markdown 词典，未决解释和讨论案例用于继续澄清；standalone 保存未建模术语，model 只引用已有 FM 对象／属性。已建模名称与含义只在 FM 维护，落实术语后将同一条目改为引用，不留独立定义。
+已有业务目录和案例沿用原路径，不自动迁移或删除。Entity 及其属性即统一语言：名称和定义直接维护在模型的 `label/notes` 与属性的 `label/meaning`，其他阶段只引用，不另设术语表或定义索引。尚未建模的共同理解用于继续澄清，不为保存名称创建占位 Entity；正式新增或更正按 FM 编辑准入执行。
 
-访谈围绕提供的材料和当前理解按依赖前沿分轮推进，同一节点内多个独立问题可成组澄清，依赖不明或用户要求逐问时只问一题。跨会话承接提供的焦点、原问题、各题已答／未答／暂缓情况及控制意图。人类结束确认覆盖范围、完整责任图、终点与实际推演；关键上下文不足时说明限制。术语没有写入权限时给出未保存内容并交接。
+访谈围绕提供的材料和当前理解按依赖前沿分轮推进，同一节点内多个独立问题可成组澄清，依赖不明或用户要求逐问时只问一题。跨会话承接提供的焦点、原问题、各题已答／未答／暂缓情况及控制意图。人类结束确认覆盖范围、完整责任图、终点与实际推演；关键上下文不足时说明限制。未获模型编辑权限时只交接概念的待改影响，不把讨论表述成定义已保存。
 
 ## 独立 FM 校验
 

@@ -15,7 +15,7 @@
     },
     {
       "id": 2,
-      "prompt": "生成建模交接到 .evidence/handoffs/api-next.md。术语已在 glossary.json，FM/API 已保存，API 校验失败，原审核页仍为旧版。下一轮只修 API。",
+      "prompt": "生成建模交接到 .evidence/handoffs/api-next.md。Entity 及其属性的定义直接在 FM 中，FM/API 已保存，API 校验失败，原审核页仍为旧版。下一轮只修 API。",
       "expected_output": "引用已有产物，区分部分保存与失败，裁剪到下一轮 API 焦点，说明旧页及未执行阶段。",
       "expectations": [
         "引用已有产物而非重复正文",

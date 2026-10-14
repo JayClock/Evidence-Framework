@@ -130,7 +130,7 @@ class SkillPackageTests(unittest.TestCase):
                 "recursive-responsibility-closure", "grouped-not-global-closure",
                 "human-terminal-not-global-completion", "closure-invalidated-by-new-branch",
                 "closed-responsibility-admits-modeling",
-                "inline-language", "language-correction", "language-ambiguity", "language-write-failure",
+                "language-correction", "language-ambiguity",
                 "cash-document-agreement-reconstruction", "key-value-lineage", "document-walkthrough",
                 "variation-and-support-boundary", "domain-without-contract",
                 "party-cross-context-identity", "party-identity-unresolved", "context-sufficiency-boundary",

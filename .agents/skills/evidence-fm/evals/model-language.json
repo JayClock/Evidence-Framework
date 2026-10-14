@@ -1,0 +1,52 @@
+{
+  "skill_name": "evidence-fm",
+  "name": "evidence-model-language-behavior",
+  "contract_refs": ["../SKILL.md", "../references/domain-language.md"],
+  "evals": [
+    {
+      "id": "entity-expression",
+      "category": "entity-owned-language",
+      "prompt": "隔离合成输入。Entity confirmation.receipt 的 label 是到账证明（Receipt Evidence），notes 是证明收款方收到款项，aliases 包含银行小票。request.payment 的 label 是付款请求（Payment Request）。用户说银行小票已经收到。请分别写一句访谈承接、一条需求故事标题、一条任务标题、一条测试说明和一句交接；匹配规则未知，只调整表达，不写文件。",
+      "expectations": [
+        "五种表达沿用 Entity 的完整规范名称，不轮换同义词，别名用于理解输入",
+        "名称和含义直接读取当前 Entity，不建立额外定义索引或另一套稳定身份",
+        "收到凭证不推导匹配通过或付款完成，保留未决规则",
+        "不修改 FM、API、需求、任务或代码，不附资料出处"
+      ]
+    },
+    {
+      "id": "attribute-boundary",
+      "category": "attribute-owned-meaning",
+      "prompt": "隔离合成输入。request.refund 的 requested_amount 属性 label 为应退金额（Refund Amount），meaning 为按当前退款约定确定的金额。confirmation.payment 的 paid_amount 属性 label 为实付金额（Paid Amount），meaning 为支付凭证证明的实际付款金额；当前两者是否相等未知。用户希望把两者都叫金额并自动共用字段。只读说明影响后停止。",
+      "expectations": [
+        "直接读取两个 Entity 的属性 label 和 meaning，以所属 Entity ID 与属性名定位",
+        "区分应退口径与实付证明，不因金额名称相同自动合并属性或推导相等",
+        "说明名称更正及字段合并对规则和接口映射的影响，不自动重命名",
+        "只读不修改模型，不新增平行定义或默认退款规则"
+      ]
+    },
+    {
+      "id": "context-and-correction",
+      "category": "context-sensitive-language",
+      "prompt": "隔离合成输入。付款与交稿的两个确认 Entity 都叫完成证明（Completion Evidence），但 contextRef 和 Entity ID 不同，notes 分别说明实际到账与收到稿件。用户说这次完成了，随后更正交稿确认也表示质量合格。仅有访谈授权，请说明应核对什么，不改模型。",
+      "expectations": [
+        "先定位实际上下文与 Entity，不把同名或相同译名当同一业务身份",
+        "更正定位模型定义及受影响规则、人类确认，不把收到稿件推导为质量合格",
+        "只交接待改影响，不把访谈更正当作正式 FM 编辑授权",
+        "不创建同义 Entity 或另一份定义绕过追责结束准入"
+      ]
+    },
+    {
+      "id": "unmodeled-translation",
+      "category": "direct-business-name-translation",
+      "prompt": "隔离合成输入：开箱视频是连续、未经剪辑地记录拆包与验货过程的视频，仅提供中文，尚无正式模型。当前只讨论业务名称，不开始访谈、不写文件。请说明规范表达以及将来模型中的定义归属。",
+      "expectations": [
+        "直接使用开箱视频（Unboxing Video），不等待人类提供英文，不靠翻译补造规则",
+        "Entity 的 label/notes 与属性的 label/meaning 直接承担名称和含义，不增加定义文件",
+        "尚未建模时承接材料，不为保存术语创建占位 Entity 或记录自动持久化状态",
+        "新建对象或更正源标签仍需相应范围追责结束依据与模型编辑授权",
+        "原文引用、法定名称、既有代码标识与外部字段保持原样"
+      ]
+    }
+  ]
+}

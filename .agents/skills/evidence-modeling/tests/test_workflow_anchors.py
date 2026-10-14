@@ -54,7 +54,7 @@ class WorkflowAnchorTests(unittest.TestCase):
         self.assertEqual([], cases["read-only"]["allowedWrites"])
         self.assertEqual(["fm-check", "api-check"], cases["read-only"]["steps"])
         self.assertEqual(["admission", "fm-edit", "fm-check"], cases["fm-only"]["steps"])
-        self.assertEqual([".evidence/fm/", ".evidence/glossary.json"], cases["fm-only"]["allowedWrites"])
+        self.assertEqual([".evidence/fm/"], cases["fm-only"]["allowedWrites"])
         combined = cases["combined"]
         self.assertLess(combined["steps"].index("fm-check"), combined["steps"].index("api-edit"))
         self.assertLess(combined["steps"].index("api-check"), combined["steps"].index("api-project"))
@@ -62,7 +62,7 @@ class WorkflowAnchorTests(unittest.TestCase):
         blocked = cases["api-blocked"]
         self.assertNotIn("api-project", blocked["steps"])
         self.assertNotIn("joint-review", blocked["steps"])
-        self.assertEqual([".evidence/fm/", ".evidence/glossary.json"], blocked["saved"])
+        self.assertEqual([".evidence/fm/"], blocked["saved"])
         self.assertEqual("blocked", blocked["exit"])
         self.assertFalse(blocked["rollback"])
         for case in cases.values():

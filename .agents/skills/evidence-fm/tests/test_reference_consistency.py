@@ -17,17 +17,14 @@ SCHEMAS = {
     "business_pattern": "business-pattern.schema.json",
     "evidence_instance": "evidence-instance.schema.json",
     "fm_scenario": "scenario.schema.json",
-    "glossary": "glossary.schema.json",
 }
 
 
 def json_examples(path):
-    """Check typed sources and glossary roots, not standalone field fragments."""
+    """Check typed FM sources, not isolated field fragments."""
     for match in re.finditer(r"```json\s*\n(.*?)\n```", path.read_text(), re.S):
         document = json.loads(match[1])
-        if isinstance(document, dict) and (
-            "type" in document or {"schemaVersion", "terms"}.issubset(document)
-        ):
+        if isinstance(document, dict) and "type" in document:
             yield document
 
 
@@ -39,7 +36,7 @@ class ReferenceConsistencyTests(unittest.TestCase):
                 for document in json_examples(path):
                     count += 1
                     with self.subTest(path=str(path.relative_to(SKILL)), id=document.get("id")):
-                        document_type = document.get("type", "glossary")
+                        document_type = document["type"]
                         self.assertIn(document_type, SCHEMAS)
                         schema = json.loads((SKILL / "schemas" / SCHEMAS[document_type]).read_text())
                         Draft202012Validator(schema).validate(document)
