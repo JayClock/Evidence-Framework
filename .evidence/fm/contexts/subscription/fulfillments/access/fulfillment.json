@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.access",
-  "category": "fulfillment",
-  "label": "付费内容访问",
-  "contextRef": "context.subscription"
-}

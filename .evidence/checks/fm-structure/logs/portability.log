@@ -1,7 +1,0 @@
-test_bundled_tests_do_not_need_the_repository (test_isolated_visualization.IsolatedVisualizationTests.test_bundled_tests_do_not_need_the_repository) ... ok
-test_generation_uses_installed_fm_and_keeps_project_inputs_unchanged (test_isolated_visualization.IsolatedVisualizationTests.test_generation_uses_installed_fm_and_keeps_project_inputs_unchanged) ... ok
-
-----------------------------------------------------------------------
-Ran 2 tests in 1.421s
-
-OK

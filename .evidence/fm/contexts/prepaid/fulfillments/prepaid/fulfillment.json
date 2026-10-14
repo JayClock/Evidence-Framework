@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.prepaid",
-  "category": "fulfillment",
-  "label": "账户余额抵扣",
-  "contextRef": "context.prepaid"
-}

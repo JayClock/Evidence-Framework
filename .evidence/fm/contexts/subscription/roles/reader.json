@@ -1,9 +1,0 @@
-{
-  "type": "entity",
-  "id": "role.reader",
-  "category": "role",
-  "kind": "party",
-  "label": "读者",
-  "contextRef": "context.subscription",
-  "notes": "用户在专栏订阅上下文中扮演的角色 role.reader，不是另一份主体"
-}

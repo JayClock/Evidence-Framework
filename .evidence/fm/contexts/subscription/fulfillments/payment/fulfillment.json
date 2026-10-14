@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.payment",
-  "category": "fulfillment",
-  "label": "订阅费支付",
-  "contextRef": "context.subscription"
-}

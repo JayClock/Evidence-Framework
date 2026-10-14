@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.monthly-customer-contact",
-  "category": "fulfillment",
-  "label": "月度客户联系目标",
-  "contextRef": "context.sales-performance"
-}

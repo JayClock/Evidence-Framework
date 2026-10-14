@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.access-restored-used",
-  "kind": "references",
-  "sourceRef": "request.access",
-  "targetRef": "confirmation.restore",
-  "label": "本请求引用已有结果判断资格"
-}

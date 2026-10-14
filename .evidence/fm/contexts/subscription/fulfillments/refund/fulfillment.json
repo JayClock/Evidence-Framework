@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.refund",
-  "category": "fulfillment",
-  "label": "断更退款",
-  "contextRef": "context.subscription"
-}

@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.restore-refund-used",
-  "kind": "references",
-  "sourceRef": "request.restore",
-  "targetRef": "confirmation.refund",
-  "label": "本请求引用已有结果判断资格"
-}

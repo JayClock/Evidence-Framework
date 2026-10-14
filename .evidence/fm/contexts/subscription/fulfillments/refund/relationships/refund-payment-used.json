@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.refund-payment-used",
-  "kind": "references",
-  "sourceRef": "request.refund",
-  "targetRef": "role.refund-payment",
-  "label": "本请求引用付款证明角色判断退款资格"
-}

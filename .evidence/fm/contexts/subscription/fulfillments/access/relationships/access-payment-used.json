@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.access-payment-used",
-  "kind": "references",
-  "sourceRef": "request.access",
-  "targetRef": "role.access-payment",
-  "label": "本请求引用付款证明角色判断访问资格"
-}

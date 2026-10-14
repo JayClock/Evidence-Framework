@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.payment-proof-used",
-  "kind": "references",
-  "sourceRef": "request.payment",
-  "targetRef": "role.payment-proof",
-  "label": "本请求引用付款证明角色判断支付完成"
-}
