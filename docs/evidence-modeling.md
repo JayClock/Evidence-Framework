@@ -27,7 +27,7 @@
 
 ## 上下文总览与当前进度
 
-从实际经营过程寻找约定与责任双方，以主要履约检验理解，再展开请求—确认、凭证与异常责任。合同入口明确责任身份，已知个人或组织直接复用；经办人与证明提供方不自动成为合同一方。现金权责和目标—实际帮助发现不明显的约定，不要求已有约定先具备单独收费或 KPI。主履约清单随发现补全，正式建模前仍核对完整责任。
+业务分析以《如何落地业务建模》的四色建模与 8X Flow 为准：从收入流与成本结构出发，以现金权责、目标—实际对比发现业务，寻找实际约定与责任双方，用主要履约检验理解，再展开请求—确认、凭证与异常责任。收款追承担的义务，付款追取得的权利，没有现金往来则核对内部目标、实际产出及检查约定；业务凭证围绕现金往来或 KPI，通过关键数据关联。合同入口明确责任身份，已知个人或组织直接复用；经办人与证明提供方不自动成为合同一方。已有经营依据直接承接，不重复询问已知收支或目标；未知则先澄清，不以任意承诺替代。主履约清单随发现补全，正式建模前仍核对完整责任。
 
 明确目标或单一清晰入口直接进入，多个独立入口需要排序或用户要求查看／切换时才展示总览。总览说明当前已知合同、领域与协商的目的、边界及关联，不证明全局发现已经完成。合同项说明谁与谁达成什么约定、主要责任及协作；领域说明对象与规则，协商说明方案及回应。未知约定不作为合同选项，功能或章节不直接作为上下文；边界疑问局部核对，不因领域归类删除合同责任。专业分析与阶段验收按[双层循环的验证与退出](../.agents/skills/evidence-modeling/references/workflow.md#双层循环的验证与退出)执行。
 
@@ -49,16 +49,16 @@
 
 首次进入或必要上下文丢失时，定位提供的目标、材料、当前理解、原问题及控制意图，加载当前分支必要方法。连续问答吸收全部新增输入，增量核对当前节点及受影响依赖；已加载且未变化的方法复用。切换、更正与结束核对按影响扩大范围。
 
-| 当前判断                           | 方法来源                                                                                                                     |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 约定与责任双方、主要履约及增量发现 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
-| 领域复用、业务连接点及必要内部规则 | [领域建模](../.agents/skills/evidence-fm/references/domain-modeling.md)                                                      |
-| 关键数据、计算与业务时间依据       | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
-| 术语理解、日常表达及定义归属       | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
-| 合同级准入、责任终点与全局明确确认 | [追责结束准入](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                           |
-| 正式对象、引用与时间语义           | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
-| 问答、控制与跨会话承接             | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |
-| 阶段接续及产物恢复                 | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                       |
+| 当前判断                                         | 方法来源                                                                                                                     |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 现金权责、绩效约定与责任双方、主要履约及增量发现 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
+| 领域复用、业务连接点及必要内部规则               | [领域建模](../.agents/skills/evidence-fm/references/domain-modeling.md)                                                      |
+| 关键数据、计算与业务时间依据                     | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
+| 术语理解、日常表达及定义归属                     | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
+| 合同级准入、责任终点与全局明确确认               | [追责结束准入](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                           |
+| 正式对象、引用与时间语义                         | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
+| 问答、控制与跨会话承接                           | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |
+| 阶段接续及产物恢复                               | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                       |
 
 行为基线按当前动作加载：[Discovery](../.agents/skills/evidence-discovery/examples/README.md)、[Modeling](../.agents/skills/evidence-modeling/examples/README.md)、[FM](../.agents/skills/evidence-fm/examples/README.md)。样例是维护参考，实际业务判断使用本轮材料与用户决定。
 

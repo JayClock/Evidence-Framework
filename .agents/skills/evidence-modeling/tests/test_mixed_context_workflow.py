@@ -77,16 +77,16 @@ class MixedContextWorkflowTests(unittest.TestCase):
             self.assertIn(phrase, workflow)
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         indexed = {case['category']: case for case in cases}
-        insufficient = indexed['agreement-title-insufficient']
+        insufficient = indexed['operating-basis-unresolved']
         self.assertIn('功能', insufficient['prompt'])
         self.assertTrue(any('空导航' in item for item in insufficient['expectations']))
-        changed = indexed['domain-capability-keeps-obligations']
+        changed = indexed['noncash-fulfillment-keeps-economic-anchor']
         self.assertIn('补充', changed['follow_up'][0])
         self.assertTrue(any('局部核对' in item for item in changed['expectations']))
 
     def test_behavior_cases_cover_navigation_closure_and_counterexamples(self):
         for skill, categories in {
-            'evidence-discovery': ('mixed-context-navigation', 'domain-capability-keeps-obligations'),
+            'evidence-discovery': ('operating-context-navigation', 'noncash-fulfillment-keeps-economic-anchor'),
             'evidence-modeling': ('domain-closed-contract-pending', 'domain-closure-readonly-or-invalid'),
         }.items():
             cases = json.loads((SKILLS / skill / 'evals/evals.json').read_text())['evals']

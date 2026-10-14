@@ -18,11 +18,13 @@ NAMES = (
 
 
 class SkillDocumentationTests(unittest.TestCase):
-    def test_active_guidance_uses_provenance_without_color_archetypes(self):
-        retired = re.compile(
-            r"四色|彩色建模|(?:four|4)[ -]colou?rs?|粉色|黄色|绿色|蓝色", re.I
-        )
+    def test_course_analysis_does_not_add_color_schema_archetypes(self):
+        retired = re.compile(r"粉色|黄色|绿色|蓝色", re.I)
         repo = ROOT.parents[1]
+        guide = (repo / "docs/evidence-modeling.md").read_text()
+        self.assertIn("四色建模与 8X Flow 为准", guide)
+        method = (ROOT / "evidence-fm/references/business-analysis.md").read_text()
+        self.assertIn("凭证必须围绕现金往来或 KPI", method)
         documents = [
             *ROOT.rglob("*.md"),
             *ROOT.rglob("*.json"),

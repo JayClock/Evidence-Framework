@@ -29,19 +29,20 @@ class ContextNavigationTests(unittest.TestCase):
     def test_overview_explains_agreement_parties_and_one_selection(self):
         text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
-        self.assertIn('委托方（Client）与设计方（Designer）达成设计约定（Design Agreement）', display)
+        self.assertIn('读者（Reader）向平台方（Platform Party）支付订阅费', display)
+        self.assertIn('每月两门专栏的上线准备产出', display)
         self.assertIn('责任边界', display)
         self.assertEqual(1, display.count('？'))
-        self.assertNotRegex(display, r'sourceRefs|https?://|\.md|现金权责|目标与实际|资料来源|待追溯')
-        self.assertIn('直接进入设计约定（Design Agreement）', text)
+        self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|待追溯')
+        self.assertIn('直接进入专栏订阅合同（Column Subscription Contract）', text)
         self.assertIn('不自动切换', text)
 
     def test_behavior_cases_cover_direct_entry_and_explicit_navigation(self):
         data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
         indexed = {item['category']: item for item in data['evals']}
         for category in ('skill-only-complete-interview', 'completed-context-not-selectable',
-                         'context-navigation-ambiguous-selection', 'agreement-direct-entry',
-                         'single-entry-then-overview', 'mixed-context-navigation'):
+                         'context-navigation-ambiguous-selection', 'cash-rights-obligations-discovery',
+                         'payment-support-and-party-identity', 'operating-context-navigation'):
             self.assertIn('follow_up', indexed[category])
             self.assertGreaterEqual(len(indexed[category]['expectations']), 4)
 

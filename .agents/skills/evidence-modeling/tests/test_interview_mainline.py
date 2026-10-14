@@ -27,7 +27,7 @@ class InterviewMainlineTests(unittest.TestCase):
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for phrase in (
-            "理解实际经营过程 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解",
+            "理解收入流与成本结构 → 以现金权责、目标—实际对比发现业务 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解",
             "请求—确认骨架 → 履约内凭证追溯",
             "不是逐项问卷", "业务专家或法务专家", "口头约定", "从一件真实业务",
             "新业务设计分开", "不是法律结论", "关键金额", "每轮展示聚焦当前合同",
@@ -62,14 +62,14 @@ class InterviewMainlineTests(unittest.TestCase):
         self.assertEqual(len(cases), len({case["id"] for case in cases}))
         indexed = {case["category"]: case for case in cases}
         for category in (
-            "agreement-proof-fallback", "key-value-lineage", "document-walkthrough",
+            "cash-document-agreement-reconstruction", "key-value-lineage", "document-walkthrough",
             "variation-and-support-boundary", "domain-without-contract",
             "party-cross-context-identity", "party-identity-unresolved",
         ):
             case = indexed[category]
             self.assertIn("evidence-fm", case["knowledgeSkills"])
             self.assertGreaterEqual(len(case["expectations"]), 3)
-        fallback = indexed["agreement-proof-fallback"]
+        fallback = indexed["cash-document-agreement-reconstruction"]
         self.assertIn("无法取得协议", fallback["follow_up"][0])
         self.assertTrue(any("从可见凭证" in item for item in fallback["expectations"]))
         party = indexed["party-identity-unresolved"]
