@@ -143,7 +143,7 @@ def completeness_gaps(model: LoadedModel) -> list[str]:
 def ready_scope(model: LoadedModel, report: dict[str, Any]) -> LoadedModel:
     """Consume checked scope identity, not a bare `valid: true` or human approval."""
     if not (
-        report.get("checkVersion") == 2
+        report.get("checkVersion") == 4
         and report.get("consistent") is True and report.get("complete") is True
         and report.get("valid") is True and report.get("errors") == []
         and report.get("gaps") == [] and report.get("inputChanged") is False

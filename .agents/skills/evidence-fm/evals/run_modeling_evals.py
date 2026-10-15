@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare, optionally run, and grade Fulfillment Modeling Schema v4 evals."""
+"""Prepare, optionally run, and grade Fulfillment Modeling Schema v5 evals."""
 
 from __future__ import annotations
 
@@ -537,16 +537,16 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     errors = validate_model(model, complete=True)
     add(
         expectations,
-        "FM Schema v4 validation passes.",
+        "FM Schema v5 validation passes.",
         not errors,
         "\n".join(errors) or "valid",
     )
     add(
         expectations,
-        "Manifest declares Schema v4 and CEL.",
+        "Manifest declares Schema v5 and CEL.",
         bool(
             model.manifest
-            and model.manifest.get("schemaVersion") == "4.0"
+            and model.manifest.get("schemaVersion") == "5.0"
             and model.manifest.get("ruleLanguage") == "CEL"
         ),
         str(model.manifest),
@@ -1085,7 +1085,7 @@ def write_benchmark(
     passed = sum(item["passed"] for item in results)
     payload = {
         "skill_name": "evidence-fm",
-        "schema_version": "4.0",
+        "schema_version": "5.0",
         "configuration": configuration,
         "generated_at": now(),
         "summary": {
@@ -1100,7 +1100,7 @@ def write_benchmark(
     write_json(workspace / "results.json", payload)
     write_json(workspace / "benchmark.json", payload)
     lines = [
-        "# evidence-fm Schema v4 eval benchmark",
+        "# evidence-fm Schema v5 eval benchmark",
         "",
         f"- Configuration: `{configuration}`",
         f"- Evals passed: {payload['summary']['evals_passed']}/{len(results)}",
@@ -1118,7 +1118,7 @@ def write_benchmark(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run or grade modeling Schema v4 evals"
+        description="Run or grade modeling Schema v5 evals"
     )
     parser.add_argument("--evals", default=str(Path(__file__).with_name("evals.json")))
     parser.add_argument(

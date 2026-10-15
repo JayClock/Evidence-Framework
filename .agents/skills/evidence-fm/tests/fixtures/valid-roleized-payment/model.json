@@ -1,6 +1,6 @@
 {
   "type": "fm_model",
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "id": "platform-roleized-payment",
   "name": "内容平台多渠道付款确认角色化模型",
   "version": "3.0.0",

@@ -1,6 +1,6 @@
 # 同一 FM 格式中的领域建模
 
-履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v4 的 `model.json` 及按上下文组织的 Entity、Relationship、Rule 源 JSON（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
+履约建模本身包含领域部分。领域与履约分离的是知识和弹性边界，不是文件格式。纯领域模型与混合模型都使用 Schema v5 的 `model.json` 及按上下文组织的 Entity、Relationship、Rule 源 JSON（目录见 [格式](format.md)），不另建领域 DSL，也不为通过校验补造合同。
 
 ## 1. 范围与发现顺序
 
@@ -44,7 +44,7 @@ Party、Thing 是 Participant 的并列 kind，不存在 `party.thing` 类型。
 ```json
 {
   "type": "fm_model",
-  "schemaVersion": "4.0",
+  "schemaVersion": "5.0",
   "id": "customer-information",
   "name": "客户信息领域模型",
   "version": "1.0.0",

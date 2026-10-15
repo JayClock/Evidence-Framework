@@ -50,20 +50,40 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(["confirmation.other"], obligation["proofPlayers"])
         self.assertEqual([], obligation["confirmations"])
 
-    def test_only_referenced_evidence_roles_become_fulfillment_proofs(self):
+    def test_only_owned_result_roles_become_fulfillment_proofs(self):
         model = fixture()
         model["entities"].extend([
             {"id": "role.domain", "category": "role", "kind": "domain", "label": "领域能力"},
             {"id": "evidence.old", "category": "evidence", "kind": "other_evidence", "label": "历史记录"},
             {"id": "role.unreferenced", "category": "role", "kind": "evidence", "label": "无引用证明"},
         ])
-        for target in ("role.domain", "evidence.old"):
+        for target in ("role.domain", "evidence.old", "role.unreferenced"):
             model["relationships"].append({"id": f"relation.{target}", "kind": "references",
                                            "sourceRef": "request.a", "targetRef": target})
         node = next(n for n in self.project(model)["nodes"] if n["id"] == "fulfillment.a")
         self.assertEqual(["role.proof"], node["proofRoles"])
         self.assertEqual(["confirmation.other"], node["proofPlayers"])
         self.assertEqual([], node["confirmations"])
+
+    def test_result_role_does_not_require_a_support_reference_or_completion_rule(self):
+        model = fixture()
+        model["relationships"] = [r for r in model["relationships"] if r["id"] != "relation.use"]
+        model["rules"] = []
+        node = next(n for n in self.project(model)["nodes"] if n["id"] == "fulfillment.a")
+        self.assertEqual(["role.proof"], node["proofRoles"])
+        self.assertEqual(["confirmation.other"], node["proofPlayers"])
+
+    def test_unwrapped_request_is_projected_without_an_empty_fulfillment(self):
+        model = fixture()
+        model["entities"] = [e for e in model["entities"] if e["id"] != "fulfillment.a"]
+        for entity in model["entities"]:
+            entity.pop("fulfillmentRef", None)
+        model["rules"] = []
+        data = self.project(model)
+        self.assertFalse(any(n["group"] == "fulfillment" for n in data["nodes"]))
+        request = next(n for n in data["nodes"] if n["id"] == "request.a")
+        self.assertEqual("context.a", request["parent"])
+        self.assertNotIn("fulfillmentRef", request)
 
     def test_shared_confirmation_and_proof_roles_are_both_preserved(self):
         model = fixture()

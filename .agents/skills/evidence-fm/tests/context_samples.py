@@ -419,7 +419,7 @@ def write_model(root: Path, documents: list[dict[str, Any]], entry: str) -> Path
         root / "model.json",
         {
             "type": "fm_model",
-            "schemaVersion": "4.0",
+            "schemaVersion": "5.0",
             "id": "context-sample",
             "name": "上下文范围测试模型",
             "version": "1.0.0",

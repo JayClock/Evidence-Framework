@@ -1022,7 +1022,8 @@ try {
       {id:'b',group:'context',parent:'a',label:'边界 B'},
       {id:'orphan',group:'rule',parent:'missing',label:'未解析归属'},
       {id:'hidden',group:'binding',label:'绑定'},
-      {id:'empty-context',group:'context',label:'空上下文'}
+      {id:'domain-context',group:'context',kind:'domain',label:'档案领域'},
+      {id:'domain-profile',group:'participant',kind:'thing',parent:'domain-context',label:'档案'}
     ]];
     try {
       return fixtures.map(fixture => {
@@ -1035,11 +1036,11 @@ try {
   })()`);
   assert.deepEqual(
     navigationFixtures.map((f) => f.ids),
-    [[], ['independent'], ['orphan']],
+    [[], ['independent'], ['domain-profile', 'orphan']],
   );
   assert.deepEqual(
     navigationFixtures.map((f) => f.contexts),
-    [[], [], ['a', 'b', 'empty-context']],
+    [[], [], ['a', 'b', 'domain-context']],
   );
   assert.ok(navigationFixtures.every((f) => f.emptyApi));
   for (const fixture of navigationFixtures)

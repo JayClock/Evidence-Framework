@@ -14,11 +14,11 @@
 | 仅生成交付文件     | 校验纪律；完整检查后 project，不编辑设计源                                                        |
 | 另行要求审核页     | 定位并读取 `evidence-visualization`；不复制展示工具                                               |
 
-API 使用格式 5.0 的严格 JSON，上游为 FM v4；具体结构由格式参考维护。API 阶段的 FM 始终只读，API 源位于 FM 根之外。默认交付 `.evidence/api/generated/`，获授权的紧凑检查记录放 `.evidence/checks/api/`；不向 Skill 安装目录写项目产物。tests/、evals/ 的合成案例不作为业务默认值。
+API 使用格式 5.0 的严格 JSON，上游为 FM v5；具体结构由格式参考维护。API 阶段的 FM 始终只读，API 源位于 FM 根之外。默认交付 `.evidence/api/generated/`，获授权的紧凑检查记录放 `.evidence/checks/api/`；不向 Skill 安装目录写项目产物。tests/、evals/ 的合成案例不作为业务默认值。
 
 ## 设计与投影
 
-1. **承接 FM 结果**：使用 FM 阶段已实际通过的结果与当前完整模型。结果须为 `checkVersion: 2`、`consistent: true`、`complete: true`、明确 `scopeRefs/contextRefs`、空错误与缺口、`inputChanged: false` 且摘要匹配；适用模拟必须实际通过，无适用场景另行说明，不能只看 `valid`；没有结果或源已变时交回 FM 阶段，不在 API 内再跑 FM 检查、编译校验或模拟。需要对象索引时可执行 inspect，但它只读取当前源并核对摘要。
+1. **承接 FM 结果**：使用 FM 阶段已实际通过的结果与当前完整模型。结果须为 `checkVersion: 4`、`consistent: true`、`complete: true`、明确 `scopeRefs/contextRefs`、空错误与缺口、`inputChanged: false` 且摘要匹配；适用模拟必须实际通过，无适用场景另行说明，不能只看 `valid`；没有结果或源已变时交回 FM 阶段，不在 API 内再跑 FM 检查、编译校验或模拟。需要对象索引时可执行 inspect，但它只读取当前源并核对摘要。
 2. **形成完整设计**：按设计方法遍历该明确范围及必要依赖的全部对象与场景，不默默过滤不完整对象，不切开同合同付款和退款放行，依次确定资源、角色能力、表示／超媒体、消费者流程；不是按节点类型生成 CRUD。URI、幂等、并发、缓存等技术选择说明理由，身份、权限、数量及实例归属必须有业务依据。
 3. **维护唯一源**：按格式把设计写入 api.json。每个接口都必须有契约；形成步骤、非接口活动、全部场景和 HTTP 接续均有可追溯去向，不用“暂不实现”隐藏遗漏。
 4. **检查并投影**：保留 API 自身的整体覆盖与契约检查；check 无错误及 gap 后执行 project。仅生成分支跳过设计和源编辑；只校验分支不运行 project。

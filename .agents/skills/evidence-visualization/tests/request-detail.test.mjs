@@ -118,6 +118,69 @@ function open(data = fixture()) {
   };
 }
 
+test('Unwrapped endpoints remain under their contract without a fabricated fulfillment', () => {
+  const data = fixture();
+  data.nodes = data.nodes.filter((n) =>
+    ['context.a', 'request.a', 'confirmation.a', 'relation.result'].includes(
+      n.id,
+    ),
+  );
+  for (const node of data.nodes.filter((n) => n.group === 'evidence')) {
+    delete node.fulfillmentRef;
+    node.parent = 'context.a';
+  }
+  const page = open(data);
+  try {
+    assert.equal(
+      page.document.querySelectorAll('[data-fulfillment-group]').length,
+      0,
+    );
+    assert.ok(page.document.querySelector('#tree [data-node="request.a"]'));
+    page.run('select("request.a")');
+    assert.ok(
+      page.document.querySelector(
+        '[data-request-outcome="completion"] [data-ref="confirmation.a"]',
+      ),
+    );
+    assert.ok(
+      page.document
+        .getElementById('detail')
+        .textContent.includes('未声明完成条件'),
+    );
+  } finally {
+    page.close();
+  }
+});
+
+test('Wrapped result endpoints are visible before completion rules or support references exist', () => {
+  for (const group of ['evidence', 'role']) {
+    const data = fixture();
+    data.nodes = data.nodes.filter(
+      (n) => !['rule', 'relationship'].includes(n.group),
+    );
+    data.nodes.push({
+      id: 'result.owned',
+      group,
+      kind: group === 'role' ? 'evidence' : 'fulfillment_confirmation',
+      label: '交付结果',
+      fulfillmentRef: 'fulfillment.a',
+      contextRef: 'context.a',
+      parent: 'fulfillment.a',
+    });
+    const page = open(data);
+    try {
+      page.run('select("request.a")');
+      assert.ok(
+        page.document.querySelector(
+          '[data-request-outcome="completion"] [data-ref="result.owned"]',
+        ),
+      );
+    } finally {
+      page.close();
+    }
+  }
+});
+
 test('Overview separates consistency, scope completeness, gaps and unexecuted simulation', () => {
   for (const [complete, expected] of [
     [null, '未检查'],
@@ -275,6 +338,8 @@ test('External proof keeps its role and real players; ordinary evidence keeps tw
       id: 'role.proof',
       group: 'role',
       kind: 'evidence',
+      contextRef: 'context.a',
+      fulfillmentRef: 'fulfillment.a',
       label: '合格付款证明',
     },
     {
@@ -351,6 +416,7 @@ test('References do not turn historical evidence, unbound roles or other request
     .find((n) => n.id === 'rule.completed')
     .bindings.push(
       { alias: 'history', ref: 'confirmation.old' },
+      { alias: 'support', ref: 'role.unbound' },
       { alias: 'other', ref: 'role.other' },
       { alias: 'domain', ref: 'role.domain' },
     );

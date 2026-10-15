@@ -338,21 +338,18 @@ test('context boundaries enclose actual owners and nest fulfillment within contr
   }
 });
 
-test('empty contexts stay visible and shared confirmation stays inside its declared owner', () => {
+test('empty context projections fail instead of becoming valid-looking boundaries', () => {
   const data = fixture();
-  data.nodes.push({
-    id: 'empty',
-    group: 'context',
-    kind: 'domain',
-    label: '空领域',
-  });
+  data.nodes.push({ id: 'empty', group: 'context', kind: 'domain', label: '无内容边界' });
+  const before = JSON.stringify(data);
+  assert.throws(() => build(data), /empty.*context|context.*empty/i);
+  assert.equal(JSON.stringify(data), before);
+});
+
+test('shared confirmation stays inside its declared owner', () => {
+  const data = fixture();
   data.nodes.find((n) => n.id === 'f').confirmations = ['player'];
   const graph = build(data);
-  assert.ok(
-    graph.boundaries?.some(
-      (b) => b.id === 'empty' && b.width > 0 && b.height > 0,
-    ),
-  );
   const player = graph.boxes.find((b) => b.id === 'player');
   assert.equal(graph.boxes.filter((b) => b.id === 'player').length, 1);
   assert.ok(
@@ -374,8 +371,9 @@ test('empty contexts stay visible and shared confirmation stays inside its decla
     kind: 'fulfillment',
     parent: 'a',
     label: '另一履约',
-  });
+  }, { id: 'peer-request', group: 'evidence', kind: 'fulfillment_request', parent: 'peer', label: '另一请求' });
   data.nodes.find((n) => n.id === 'player').parent = 'peer';
+  data.nodes = data.nodes.filter((n) => n.id !== 'b');
   const shared = build(data);
   const sharedPlayer = shared.boxes.find((b) => b.id === 'player');
   assert.ok(
@@ -433,15 +431,8 @@ test('context highlighting stays inside the exact context and includes descendan
   assert.ok(!root.edges.has('play'));
   assert.equal(root.edges.size, 3); // includes the explicit contract responsibility line
 });
-test('role badges use the role neighborhood; edges, empty contexts and missing targets are bounded', () => {
-  const data = fixture();
-  data.nodes.push({
-    id: 'empty',
-    group: 'context',
-    kind: 'domain',
-    label: '空上下文',
-  });
-  const graph = build(data);
+test('role badges use the role neighborhood; edges, real contexts and missing targets are bounded', () => {
+  const graph = build(fixture());
   const role = sandbox.businessGraphHighlight(graph, {
     type: 'node',
     id: 'party',
@@ -454,12 +445,12 @@ test('role badges use the role neighborhood; edges, empty contexts and missing t
   });
   assert.deepEqual(Array.from(edge.nodes).sort(), ['player', 'proof']);
   assert.deepEqual(Array.from(edge.edges), ['play']);
-  const empty = sandbox.businessGraphHighlight(graph, {
+  const external = sandbox.businessGraphHighlight(graph, {
     type: 'boundary',
-    id: 'empty',
+    id: 'b',
   });
-  assert.equal(empty.nodes.size, 0);
-  assert.deepEqual(Array.from(empty.boundaries), ['empty']);
+  assert.deepEqual(Array.from(external.nodes), ['player']);
+  assert.deepEqual(Array.from(external.boundaries), ['b']);
   assert.equal(sandbox.businessGraphHighlight(graph, null).active, false);
   assert.equal(
     sandbox.businessGraphHighlight(graph, { type: 'node', id: 'missing' })

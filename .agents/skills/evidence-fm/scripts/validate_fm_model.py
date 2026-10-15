@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a Fulfillment Modeling Schema v4 directory."""
+"""Validate a Fulfillment Modeling Schema v5 directory."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from fm_simulation import load_validation_suite, simulate_validation_suite
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate an FM Schema v4 model directory."
+        description="Validate an FM Schema v5 model directory."
     )
     parser.add_argument(
         "model_dir", help="Directory containing model.json and FM shards"
@@ -65,7 +65,7 @@ def main() -> int:
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif errors:
-        print("FM Schema v4 validation failed:", file=sys.stderr)
+        print("FM Schema v5 validation failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
     else:
@@ -77,7 +77,7 @@ def main() -> int:
             else ""
         )
         print(
-            "FM Schema v4 validation passed "
+            "FM Schema v5 validation passed "
             f"(entities={counts['entities']}, fulfillments={counts['fulfillmentCount']}, "
             f"relationships={counts['relationships']}, rules={counts['rules']}"
             f"{scenario_summary})."

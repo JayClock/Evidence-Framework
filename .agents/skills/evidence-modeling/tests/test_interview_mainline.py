@@ -27,8 +27,10 @@ class InterviewMainlineTests(unittest.TestCase):
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for phrase in (
-            "理解收入流与成本结构 → 以现金权责、目标—实际对比发现业务 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解",
-            "请求—确认骨架 → 履约内凭证追溯",
+            "寻找实际约定，明确责任双方",
+            "找到双方主要请求—确认交互 → 配对后包裹为履约项 → 凭证追溯",
+            "主要责任梳理与请求—确认识别是同一件事",
+            "只有一端时", "不创建空履约项", "不建立候选履约实体",
             "不是逐项问卷", "业务专家或法务专家", "口头约定", "从一件真实业务",
             "新业务设计分开", "不是法律结论", "关键金额", "每轮展示聚焦当前合同",
             "当时已有的凭证", "不伪造已发生事件", "不要求展开所有供应商内部业务",
@@ -76,6 +78,24 @@ class InterviewMainlineTests(unittest.TestCase):
         self.assertTrue(any("代表关系" in item and "证明提供方" in item for item in party["expectations"]))
         instructions = (SKILLS / "evidence-discovery/evals/README.md").read_text()
         self.assertIn("没有实际执行就保持未执行", instructions)
+
+    def test_interaction_growth_has_multiturn_evals_and_recovery_contracts(self):
+        catalog = SKILLS / "evidence-discovery/evals/interaction-growth.json"
+        cases = json.loads(catalog.read_text())["evals"]
+        self.assertEqual({"paired-main-interactions", "single-endpoint-and-recovery",
+                          "exception-interaction-recursion"}, {c["category"] for c in cases})
+        for case in cases:
+            self.assertTrue(case["follow_up"])
+            self.assertTrue(case["forbiddenActions"])
+            self.assertIn("evidence-fm", case["knowledgeSkills"])
+        for relative in ("evidence-discovery/references/interview.md",
+                         "evidence-modeling/references/workflow.md",
+                         "evidence-modeling/assets/handoff-template.md",
+                         "evidence-handoff/SKILL.md"):
+            with self.subTest(reference=relative):
+                text = (SKILLS / relative).read_text()
+                self.assertIn("未包裹", text)
+                self.assertIn("履约 ID", text)
 
     def test_no_retired_local_gap_only_flow_in_active_guidance(self):
         paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md", SKILLS / "README.md"]

@@ -223,7 +223,7 @@ function buildTree() {
         details.append(
           el(
             'p',
-            `此${node.group === 'fulfillment' ? '履约' : '上下文'}暂无对象`,
+            `无效投影：此${node.group === 'fulfillment' ? '履约' : '上下文'}缺少业务对象`,
             'muted',
           ),
         );
@@ -470,9 +470,21 @@ function renderRequestConditions(request) {
     }
     outcome.append(el('h3', '对应完成凭证'));
     const relations = DATA.nodes.filter((n) => n.group === 'relationship');
+    const resultMembers = DATA.nodes.filter(
+      (n) =>
+        request.fulfillmentRef &&
+        n.fulfillmentRef === request.fulfillmentRef &&
+        n.contextRef === request.contextRef,
+    );
     const confirmations = [
-      ...new Set(
-        relations
+      ...new Set([
+        ...resultMembers
+          .filter(
+            (n) =>
+              n.group === 'evidence' && n.kind === 'fulfillment_confirmation',
+          )
+          .map((n) => n.id),
+        ...relations
           .filter(
             (r) =>
               r.kind === 'references' &&
@@ -481,46 +493,30 @@ function renderRequestConditions(request) {
               nodes.get(r.sourceRef)?.kind === 'fulfillment_confirmation',
           )
           .map((r) => r.sourceRef),
-      ),
+      ]),
     ];
+    const roles = resultMembers
+      .filter((n) => n.group === 'role' && n.kind === 'evidence')
+      .map((n) => n.id);
     if (confirmations.length) list(confirmations, '', outcome);
-    else {
-      const bound = new Set(
-        rules.flatMap((r) => (r.bindings || []).map((b) => b.ref)),
-      );
-      const roles = [
+    if (!confirmations.length && !roles.length)
+      outcome.append(el('p', '未声明对应确认凭证或采信证明角色', 'muted'));
+    for (const role of roles) {
+      outcome.append(link(role));
+      outcome.append(el('p', '可提供该证明的实际凭证', 'muted'));
+      const players = [
         ...new Set(
           relations
             .filter(
               (r) =>
-                r.kind === 'references' &&
-                r.sourceRef === request.id &&
-                bound.has(r.targetRef) &&
-                nodes.get(r.targetRef)?.group === 'role' &&
-                nodes.get(r.targetRef)?.kind === 'evidence',
+                r.kind === 'plays_role' &&
+                r.targetRef === role &&
+                nodes.get(r.sourceRef)?.group === 'evidence',
             )
-            .map((r) => r.targetRef),
+            .map((r) => r.sourceRef),
         ),
       ];
-      if (!roles.length)
-        outcome.append(el('p', '未声明对应确认凭证或采信证明角色', 'muted'));
-      for (const role of roles) {
-        outcome.append(link(role));
-        outcome.append(el('p', '可提供该证明的实际凭证', 'muted'));
-        const players = [
-          ...new Set(
-            relations
-              .filter(
-                (r) =>
-                  r.kind === 'plays_role' &&
-                  r.targetRef === role &&
-                  nodes.get(r.sourceRef)?.group === 'evidence',
-              )
-              .map((r) => r.sourceRef),
-          ),
-        ];
-        list(players, '未声明实际凭证玩家', outcome);
-      }
+      list(players, '未声明实际凭证玩家', outcome);
     }
     outcome.append(
       el(

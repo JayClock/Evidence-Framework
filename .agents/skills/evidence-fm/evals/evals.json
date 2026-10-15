@@ -1,6 +1,6 @@
 {
   "skill_name": "evidence-fm",
-  "schema_version": "4.0",
+  "schema_version": "5.0",
   "contract_refs": [
     "../SKILL.md",
     "../references/editing-workflow.md",
@@ -14,8 +14,8 @@
       "id": 0,
       "name": "vip-membership-agreement",
       "outcome": "model",
-      "prompt": "使用 evidence-fm 为合成 VIP 会员协议建立 FM v4：用户付款后平台开通会员权益；尚未开通或有效期内无法使用权益时可申请原路退款，退款金额为原实付金额。会员权益计算能力依据会员卡、账号、等级和有效期计算资格，计算能力内部算法不在本题范围。先建立合同双方 Role；只有来源明确稳定 Participant 时才建立 plays_role。本轮仅生成 FM、说明与编译产物，不设计 API、播放器、推荐、页面或数据库。",
-      "expected_output": "按合成业务来源及编辑授权生成有效 v4；付款、开通和退款为独立 Fulfillment；权益计算通过 Domain Role 表达；不按 Role 名称补造 Party；CEL 与确定性编译通过。",
+      "prompt": "使用 evidence-fm 为合成 VIP 会员协议建立 FM v5：用户付款后平台开通会员权益；尚未开通或有效期内无法使用权益时可申请原路退款，退款金额为原实付金额。会员权益计算能力依据会员卡、账号、等级和有效期计算资格，计算能力内部算法不在本题范围。先建立合同双方 Role；只有来源明确稳定 Participant 时才建立 plays_role。本轮仅生成 FM、说明与编译产物，不设计 API、播放器、推荐、页面或数据库。",
+      "expected_output": "按合成业务来源及编辑授权生成有效 v5；付款、开通和退款为独立 Fulfillment；权益计算通过 Domain Role 表达；不按 Role 名称补造 Party；CEL 与确定性编译通过。",
       "files": ["fixtures/modeling-admission.md"]
     },
     {
@@ -46,7 +46,7 @@
       "id": 4,
       "name": "missing-confirmation-repair",
       "outcome": "model",
-      "prompt": "使用 evidence-fm 修复输入中的合成 FM v4。付款 Request 引用的 Confirmation 定义缺失；按照输入及合成来源中已约定的责任与触发语义补齐，不改业务。本轮仅修复 FM 并校验、编译，不设计 API 或页面。",
+      "prompt": "使用 evidence-fm 修复输入中的合成 FM v5。付款 Request 引用的 Confirmation 定义缺失；按照输入及合成来源中已约定的责任与触发语义补齐，不改业务。本轮仅修复 FM 并校验、编译，不设计 API 或页面。",
       "expected_output": "补齐付款 Confirmation，responsibleRoleRef 忠实于来源；contextRef 指向合同 Context，fulfillmentRef 指向付款履约；保留已有稳定 ID、截止与终止条件，校验和编译通过。",
       "files": [
         "fixtures/missing-confirmation-model",

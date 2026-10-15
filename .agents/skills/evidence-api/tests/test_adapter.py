@@ -9,7 +9,7 @@ class AdapterTest(unittest.TestCase):
     def test_real_fm_stage_result_is_used(self) -> None:
         model = index()
         self.assertTrue(model.check["valid"])
-        self.assertEqual(model.compiled["schemaVersion"], "4.0")
+        self.assertEqual(model.compiled["schemaVersion"], "5.0")
         self.assertEqual(model.check["scenarioCount"], 2)
         self.assertTrue(model.check["simulationPassed"])
         self.assertFalse(any(path.startswith("generated/") for path in model.files))

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v4/timeline.schema.json",
+  "$id": "https://jayclock.dev/fm/v5/timeline.schema.json",
   "title": "FM deterministic Evidence timeline",
   "type": "object",
   "required": [
@@ -13,7 +13,7 @@
     "unresolvedOrder"
   ],
   "properties": {
-    "schemaVersion": { "const": "4.0" },
+    "schemaVersion": { "const": "5.0" },
     "modelId": { "$ref": "#/$defs/id" },
     "lanes": {
       "type": "array",

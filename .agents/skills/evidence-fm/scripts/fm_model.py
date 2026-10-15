@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Load, validate, and compile Fulfillment Modeling Schema v4 directories."""
+"""Load, validate, and compile Fulfillment Modeling Schema v5 directories."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
     Environment = None  # type: ignore[assignment,misc]
 
 
-SCHEMA_VERSION = "4.0"
+SCHEMA_VERSION = "5.0"
 # These trees are inputs/outputs of other readers, not FM type definitions.
 NON_SOURCE_TREES = {"discovery", "generated", "validation"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
@@ -508,6 +508,37 @@ def validate_party_role_owner(
             )
 
 
+def validate_context_roots(
+    context: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str],
+) -> None:
+    """A Context is saved with real content, never as a named placeholder."""
+    context_id, kind = context["id"], context.get("kind")
+    roots = context.get("rootRefs") or []
+    if kind in {"contract", "domain"} and not roots:
+        errors.append(f"{context_id}: {kind} Context must define rootRefs")
+    if kind == "contract" and (
+        len(roots) != 1 or entity_signature(entities.get(roots[0])) != ("evidence", "contract")
+    ):
+        errors.append(f"{context_id}: Contract Context must have exactly one root Contract")
+    domain_roots = {("participant", "thing"), ("role", "party"), ("evidence", "other_evidence")}
+    negotiation_roots = {("evidence", "rfp"), ("evidence", "proposal"), ("evidence", "other_evidence")}
+    for ref in roots:
+        target = require_ref(errors, context_id, "rootRefs", ref, entities)
+        if target is None:
+            continue
+        if object_context_ref(target) != context_id:
+            errors.append(f"{context_id}: root '{ref}' must belong to this Context")
+        if kind == "domain" and entity_signature(target) not in domain_roots:
+            errors.append(f"{context_id}: Domain Context root '{ref}' must be a local business object, not a container or collaboration placeholder")
+        if kind == "pre_contract" and entity_signature(target) not in negotiation_roots:
+            errors.append(f"{context_id}: Pre-contract Context root '{ref}' must be a negotiation Evidence")
+    if kind == "pre_contract" and not any(
+        item.get("contextRef") == context_id and entity_signature(item) in negotiation_roots
+        for item in entities.values()
+    ):
+        errors.append(f"{context_id}: Pre-contract Context requires actual local negotiation Evidence; roles or child Contexts alone are not content")
+
+
 def validate_entities(
     entity_list: list[dict[str, Any]],
     entities: dict[str, dict[str, Any]],
@@ -544,15 +575,7 @@ def validate_entities(
                     errors.append(
                         f"{entity_id}: parentContextRef must reference a Context"
                     )
-            roots = entity.get("rootRefs") or []
-            if complete and kind in {"contract", "domain"} and not roots:
-                errors.append(f"{entity_id}: {kind} Context must define rootRefs")
-            for ref in roots:
-                target = require_ref(errors, entity_id, "rootRefs", ref, entities)
-                if target is not None and object_context_ref(target) != entity_id:
-                    errors.append(
-                        f"{entity_id}: root '{ref}' must belong to this Context"
-                    )
+            validate_context_roots(entity, entities, errors)
             continue
 
         validate_fulfillment_ref(entity, entities, errors, complete=complete)
@@ -666,7 +689,7 @@ def fulfillment_members(
     entities: dict[str, dict[str, Any]],
     relationships: Iterable[dict[str, Any]] = (),
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
-    """Return requests, associated confirmations, and roles for a Fulfillment."""
+    """Resolve a wrapped request/result pair; supporting proof is not a result."""
     relationships = tuple(relationships)
     members = [
         entity
@@ -698,12 +721,6 @@ def fulfillment_members(
         str(item["id"]) for item in members
         if entity_signature(item) == ("role", "evidence")
     }
-    role_refs.update(
-        str(relation.get("targetRef")) for relation in relationships
-        if relation.get("kind") == "references"
-        and relation.get("sourceRef") in request_refs
-        and entity_signature(entities.get(str(relation.get("targetRef")))) == ("role", "evidence")
-    )
     return (
         requests,
         [entities[ref] for ref in sorted(confirmation_refs) if ref in entities],
@@ -777,11 +794,11 @@ def validate_fulfillments(
             fulfillment_id, entities, relationships
         )
         associated_confirmation_refs.update(str(item["id"]) for item in confirmations)
-        if len(requests) > 1 or (complete and not requests):
+        if len(requests) != 1:
             errors.append(
                 f"{fulfillment_id}: must contain exactly one Fulfillment Request; found {len(requests)}"
             )
-        if complete and not confirmations and not evidence_roles:
+        if not confirmations and not evidence_roles:
             errors.append(
                 f"{fulfillment_id}: must contain a Fulfillment Confirmation or Evidence Role"
             )

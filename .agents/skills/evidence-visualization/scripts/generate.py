@@ -225,7 +225,7 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
             members = [n for n in nodes.values() if n["parent"] == node["id"]]
             node["requests"] = [n["id"] for n in members if n["kind"] == "fulfillment_request"]
             node["confirmations"] = [n["id"] for n in members if n["kind"] == "fulfillment_confirmation"]
-            node["proofRoles"] = sorted({r["targetRef"] for r in relations if r["kind"] == "references" and r["sourceRef"] in node["requests"] and nodes.get(r["targetRef"], {}).get("group") == "role" and nodes.get(r["targetRef"], {}).get("kind") == "evidence"})
+            node["proofRoles"] = sorted(n["id"] for n in members if n["group"] == "role" and n["kind"] == "evidence" and n.get("contextRef") == node.get("contextRef"))
             node["proofPlayers"] = sorted({r["sourceRef"] for r in relations if r["kind"] == "plays_role" and r["targetRef"] in node["proofRoles"]})
             for relation in relations:
                 if relation["kind"] == "references" and relation["targetRef"] in node["requests"]:

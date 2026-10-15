@@ -23,7 +23,7 @@ class ProgressiveModelTests(unittest.TestCase):
         self.root = Path(temporary.name) / "fm"
         self.root.mkdir()
         self.save("model.json", {
-            "type": "fm_model", "schemaVersion": "4.0", "id": "progressive-example",
+            "type": "fm_model", "schemaVersion": "5.0", "id": "progressive-example",
             "name": "合成渐进模型", "version": "1.0.0", "ruleLanguage": "CEL",
             "entryContextRefs": ["context.inquiry"],
         })
@@ -99,7 +99,14 @@ class ProgressiveModelTests(unittest.TestCase):
         self.finish_receipt_times()
         self.save("unrelated.json", {
             "type": "entity", "id": "context.other-domain", "category": "context",
-            "kind": "domain", "label": "其他领域（Other Domain）",
+            "kind": "domain", "label": "其他档案领域（Other Profile Domain）",
+            "rootRefs": ["thing.other-profile"],
+        })
+        self.save("other-profile.json", {
+            "type": "entity", "id": "thing.other-profile", "category": "participant", "kind": "thing",
+            "label": "其他档案（Other Profile）", "contextRef": "context.other-domain",
+            "attributes": [{"name": "profile_id", "label": "档案标识（Profile ID）",
+                            "meaning": "区分该领域内的档案，类型及必填性仍待澄清。"}],
         })
         whole = check_fm.check_model(self.root)
         self.assertTrue(whole["consistent"], whole)
@@ -160,7 +167,8 @@ class ProgressiveModelTests(unittest.TestCase):
 
     def test_shared_actual_participant_does_not_pull_an_unrelated_scope(self):
         self.finish_receipt_times()
-        self.save("other.json", {"type": "entity", "id": "context.other", "category": "context", "kind": "domain", "label": "其他（Other）"})
+        self.save("other.json", {"type": "entity", "id": "context.other", "category": "context", "kind": "domain", "label": "其他（Other）", "rootRefs": ["thing.other-profile"]})
+        self.save("other-profile.json", {"type": "entity", "id": "thing.other-profile", "category": "participant", "kind": "thing", "label": "其他档案（Other Profile）", "contextRef": "context.other"})
         self.save("other-role.json", {"type": "entity", "id": "role.other", "category": "role", "kind": "party", "label": "另一角色（Other Role）", "contextRef": "context.other"})
         self.save("party.json", {"type": "entity", "id": "party.shared", "category": "participant", "kind": "party", "label": "同一主体（Shared Party）"})
         for name, role in (("inquiry", "role.requester"), ("other", "role.other")):
@@ -215,7 +223,7 @@ class ProgressiveModelTests(unittest.TestCase):
         self.assertEqual({"instance.current", "instance.history"}, set(projection.instances_by_id))
         self.assertEqual(["instance.current"], projection.scenarios[0]["givenInstanceRefs"])
 
-    def test_incomplete_sibling_fulfillment_is_not_cut_out_of_the_same_contract(self):
+    def test_empty_sibling_wrapper_is_an_error_not_a_completeness_gap(self):
         import shutil
         root = self.root.parent / "contract"
         shutil.copytree(SKILL / "examples/valid-traceable-subscription", root)
@@ -223,9 +231,9 @@ class ProgressiveModelTests(unittest.TestCase):
         context = next(item["id"] for item in model.entities if item.get("category") == "context" and item.get("kind") == "contract")
         (root / "refund.json").write_text(json.dumps({"type": "entity", "id": "fulfillment.refund", "category": "fulfillment", "label": "退款（Refund）", "contextRef": context}), encoding="utf-8")
         report = check_fm.check_model(root, scope_refs=[context])
-        self.assertTrue(report["consistent"], report)
+        self.assertFalse(report["consistent"], report)
         self.assertFalse(report["complete"])
-        self.assertTrue(any("fulfillment.refund" in gap for gap in report["gaps"]))
+        self.assertTrue(any("fulfillment.refund" in error for error in report["errors"]))
 
     def test_precontract_rules_execute_without_inventing_a_fulfillment(self):
         self.finish_receipt_times()

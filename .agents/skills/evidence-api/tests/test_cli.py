@@ -40,7 +40,7 @@ class CliTest(unittest.TestCase):
         result = self.command("inspect")
         self.assertEqual(result.returncode, 0, result.stderr)
         payload = json.loads(result.stdout)
-        self.assertEqual(payload["schemaVersion"], "4.0")
+        self.assertEqual(payload["schemaVersion"], "5.0")
         self.assertTrue(payload["fmCheckSummary"]["valid"])
 
     def test_evidence_layout_keeps_inputs_and_discovery_unchanged(self) -> None:

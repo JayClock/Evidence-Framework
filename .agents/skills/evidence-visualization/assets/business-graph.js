@@ -95,8 +95,10 @@ function buildBusinessGraph(data, options = {}) {
       timeFields,
     });
   }
-  function enclose(context, contents, fallback) {
-    const items = contents.length ? contents : [fallback];
+  function enclose(context, contents) {
+    if (!contents.length)
+      throw new Error(`${context.id}: empty ${context.group} projection is invalid`);
+    const items = contents;
     const x = Math.min(...items.map((b) => b.x)) - 24;
     const y = Math.min(...items.map((b) => b.y)) - 50;
     const boundary = {
@@ -180,7 +182,6 @@ function buildBusinessGraph(data, options = {}) {
       enclose(
         fulfillment,
         [...boxMap.values()].filter((b) => b.parent === fulfillment.id),
-        { x: originX + 540, y: originY + y, width: 200, height },
       );
       y += rowHeight + 64;
     }
@@ -218,12 +219,7 @@ function buildBusinessGraph(data, options = {}) {
       ownIds.has(b.id),
     );
     if (scopeNode?.group === 'context' && !boundaryMap.has(scope)) {
-      enclose(scopeNode, contents, {
-        x: originX + 280,
-        y: originY + 90,
-        width: 320,
-        height: 88,
-      });
+      enclose(scopeNode, contents);
     }
     columns[column] =
       Math.max(

@@ -56,7 +56,7 @@ class FulfillmentStructureTests(unittest.TestCase):
     def test_same_contract_fulfillments_reference_evidence_directly(self):
         self.assertEqual([], self.errors(documents()))
 
-    def test_shared_contract_proof_role_is_resolved_from_explicit_reference(self):
+    def test_supporting_proof_reference_does_not_become_a_result_endpoint(self):
         values = documents()
         values.append(entity("role.external-result", "role", "evidence", "外部结果", contextRef="context.agreement"))
         relationships = [
@@ -68,7 +68,7 @@ class FulfillmentStructureTests(unittest.TestCase):
             requests, confirmations, roles = fulfillment_members(f"fulfillment.{name}", index, iter(relationships))
             self.assertEqual([f"request.{name}"], [v["id"] for v in requests])
             self.assertEqual([f"confirmation.{name}"], [v["id"] for v in confirmations])
-            self.assertEqual(["role.external-result"], [v["id"] for v in roles])
+            self.assertEqual([], roles)
 
     def test_business_reference_does_not_adopt_another_fulfillments_confirmation(self):
         values = documents()
@@ -89,11 +89,11 @@ class FulfillmentStructureTests(unittest.TestCase):
         request["contextRef"] = "context.customer-information"
         self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
 
-    def test_membership_can_be_unknown_but_is_required_for_scope_completion(self):
+    def test_existing_wrapper_cannot_lose_its_request_membership(self):
         values = documents()
         next(v for v in values if v["id"] == "request.delivery").pop("fulfillmentRef")
-        self.assertEqual([], self.errors(values))
-        self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values, complete=True)))
+        self.assertTrue(any("fulfillment.delivery" in error and "Request" in error
+                            for error in self.errors(values)))
 
     def test_role_player_in_same_contract_is_rejected(self):
         values = documents()

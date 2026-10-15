@@ -46,6 +46,8 @@ class ContextKindTests(unittest.TestCase):
         for kind in ("contract", "pre_contract", "domain"):
             with self.subTest(kind=kind):
                 value = entity("context.example", "context", kind, "业务边界")
+                if kind in {"contract", "domain"}:
+                    value["rootRefs"] = ["object.root"]
                 self.assertEqual([], list(self.schema.iter_errors(value)))
         for kind in ("external", "fulfillment", "unknown"):
             with self.subTest(kind=kind):

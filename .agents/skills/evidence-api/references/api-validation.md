@@ -29,7 +29,7 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 ## 整体覆盖
 
-输入 API 格式为 5.0，上游为已确认 FM v4；校验不重复业务确认。完整性检查始终执行，不可通过省略 Context、整个场景、某接口的 HTTP 契约或消费者步骤得到通过。
+输入 API 格式为 5.0，上游为已确认 FM v5；校验不重复业务确认。完整性检查始终执行，不可通过省略 Context、整个场景、某接口的 HTTP 契约或消费者步骤得到通过。
 
 - `MODEL_ENTITY_UNCOVERED`：整体 FM 的业务对象未对应接口或真实非接口活动。
 - `MODEL_EVIDENCE_WRITE_MISSING`：仅有读取，未覆盖凭证形成。

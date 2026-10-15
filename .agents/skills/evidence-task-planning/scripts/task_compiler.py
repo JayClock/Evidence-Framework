@@ -188,8 +188,8 @@ def inventory(
             )
         source(data.get("id"), data, relative.as_posix())
     models = [s["data"] for s in sources.values() if s["data"]["type"] == "fm_model"]
-    if len(models) != 1 or str(models[0].get("schemaVersion")) != "4.0":
-        raise ValueError("exactly one FM Schema 4.0 model is required")
+    if len(models) != 1 or str(models[0].get("schemaVersion")) != "5.0":
+        raise ValueError("exactly one FM Schema 5.0 model is required")
     for ref, record in sorted(sources.items()):
         data = record["data"]
         for location, target in _refs(data):

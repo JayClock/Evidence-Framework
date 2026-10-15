@@ -24,7 +24,7 @@ class AnalysisBoundaryTests(unittest.TestCase):
         text = (SKILL / "references/business-analysis.md").read_text()
         self.assertIn("责任人就是所属合同的一方", text)
         self.assertIn("请求责任人：平台方（Platform Party），为合同一方", text)
-        self.assertIn("确认责任人：按约定由作者（Author）", text)
+        self.assertIn("确认责任人：作者（Author），为合同另一方", text)
         self.assertIn("经办人、上传人和证明提供方", text)
         self.assertIn("不在双方之外另寻凭证责任角色", text)
 

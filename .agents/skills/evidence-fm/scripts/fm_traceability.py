@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attribute-level traceability for Fulfillment Modeling Schema v4."""
+"""Attribute-level traceability for Fulfillment Modeling Schema v5."""
 
 from __future__ import annotations
 
@@ -393,7 +393,7 @@ def analyze_traceability(model: LoadedModel) -> tuple[dict[str, Any], list[str]]
 
     errors.extend(_lineage_cycle_errors(edges))
     document = {
-        "schemaVersion": "4.0",
+        "schemaVersion": "5.0",
         "modelId": model.manifest.get("id") if model.manifest else None,
         "nodes": sorted(nodes, key=lambda item: item["path"]),
         "edges": sorted(

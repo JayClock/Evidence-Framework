@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v4/compiled-model.schema.json",
+  "$id": "https://jayclock.dev/fm/v5/compiled-model.schema.json",
   "title": "Compiled Fulfillment Modeling document",
   "type": "object",
   "required": ["schemaVersion", "model", "entities", "relationships", "rules"],
   "properties": {
-    "schemaVersion": { "const": "4.0" },
+    "schemaVersion": { "const": "5.0" },
     "model": { "$ref": "model.schema.json" },
     "entities": {
       "type": "array",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v4/entity.schema.json",
+  "$id": "https://jayclock.dev/fm/v5/entity.schema.json",
   "title": "Progressively modeled Entity with mandatory responsibility",
   "type": "object",
   "required": ["type", "id", "category", "label"],
@@ -164,6 +164,16 @@
           "kind": { "enum": ["contract", "pre_contract", "domain"] }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "const": "context" },
+          "kind": { "enum": ["contract", "domain"] }
+        },
+        "required": ["category", "kind"]
+      },
+      "then": { "required": ["rootRefs"] }
     },
     {
       "if": {

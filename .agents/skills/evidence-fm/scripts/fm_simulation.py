@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic evidence-instance simulation for FM Schema v4."""
+"""Deterministic evidence-instance simulation for FM Schema v5."""
 
 from __future__ import annotations
 
@@ -679,7 +679,7 @@ def simulate_validation_suite(
     for result in results:
         errors.extend(result["errors"])
     document = {
-        "schemaVersion": "4.0",
+        "schemaVersion": "5.0",
         "modelId": model.manifest.get("id") if model.manifest else None,
         "machineValidated": not static_errors,
         "simulationPassed": not errors,

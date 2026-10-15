@@ -12,12 +12,13 @@ DISCOVERY_EVALS = SKILLS / "evidence-discovery/evals"
 class ContractIdentificationTests(unittest.TestCase):
     def test_discovery_starts_with_cash_and_performance_then_agreement(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
-        flow = "理解收入流与成本结构 → 以现金权责、目标—实际对比发现业务 → 寻找实际约定，明确责任双方 → 列出主要履约，检验约定理解"
-        self.assertIn(flow, method)
+        for step in ("以现金权责、目标—实际对比发现业务", "寻找实际约定，明确责任双方",
+                     "找到双方主要请求—确认交互 → 配对后包裹为履约项 → 凭证追溯"):
+            self.assertIn(step, method)
         self.assertLess(method.index("## 1. 理解实际经营过程"),
                         method.index("## 2. 寻找合同，明确参与方"))
         self.assertLess(method.index("## 2. 寻找合同，明确参与方"),
-                        method.index("## 3. 履约"))
+                        method.index("## 3. 请求—确认"))
         for phrase in ("现金权责与目标—实际对比是发现业务的核心逻辑",
                        "现金收入对应承担的义务", "现金支出对应取得的权利",
                        "没有现金往来时", "凭证必须围绕现金往来或 KPI",

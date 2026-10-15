@@ -91,7 +91,7 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
         return None, [error("FM_INVALID", "FM 目录缺少 model.json", location=str(fm_root))]
     if (
         not isinstance(check_report, dict)
-        or check_report.get("checkVersion") != 2
+        or check_report.get("checkVersion") != 4
         or check_report.get("consistent") is not True
         or check_report.get("complete") is not True
         or check_report.get("valid") is not True

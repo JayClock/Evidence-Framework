@@ -29,7 +29,7 @@ class CompilerTests(unittest.TestCase):
             "model.json",
             {
                 "type": "fm_model",
-                "schemaVersion": "4.0",
+                "schemaVersion": "5.0",
                 "id": "sample", "name": "合成书目", "version": "1.0.0", "ruleLanguage": "CEL",
                 "entryContextRefs": ["context.content"],
             },
@@ -517,7 +517,7 @@ class CompilerTests(unittest.TestCase):
         docs = [
             {
                 "type": "fm_model",
-                "schemaVersion": "4.0",
+                "schemaVersion": "5.0",
                 "id": "laboratory",
                 "entryContextRefs": ["context.lab"],
             },
@@ -717,7 +717,8 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
 
     def test_scope_inventory_excludes_unrelated_incomplete_context_and_never_rechecks(self):
-        self.put("other.json", {"type": "entity", "id": "context.other", "category": "context", "kind": "domain", "label": "其他（Other）"})
+        self.put("other.json", {"type": "entity", "id": "context.other", "category": "context", "kind": "domain", "label": "其他（Other）", "rootRefs": ["thing.archive"]})
+        self.put("archive.json", {"type": "entity", "id": "thing.archive", "category": "participant", "kind": "thing", "label": "档案（Archive）", "contextRef": "context.other", "attributes": [{"name": "archive_id", "label": "档案标识（Archive ID）", "meaning": "区分档案，类型与必填性尚未澄清。"}]})
         report, skill = self.scope_report()
         from unittest.mock import patch
         with patch("check_fm.check_model", side_effect=AssertionError("duplicate FM check")), patch("fm_model.validate_model", side_effect=AssertionError("duplicate validation")), patch("fm_simulation.simulate_validation_suite", side_effect=AssertionError("duplicate simulation")):
