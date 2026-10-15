@@ -32,7 +32,7 @@ class ContractIdentificationTests(unittest.TestCase):
         for phrase in ("不必先找齐全局所有合同", "当前合同的已知主履约清单",
                        "沿履约和凭证增量发现", "第三方出现不自动产生新合同",
                        "不因划入领域而删除合同责任", "金额或费率尚未明确",
-                       "全部主履约及各层异常仍须在正式编辑前核对完整"):
+                       "全部主履约及各层异常须在范围结束及下游交付前核对完整"):
             self.assertIn(phrase, method)
         entry = method.split("**进入履约分析的条件**：", 1)[1].split("\n", 1)[0]
         self.assertIn("约定", entry)
@@ -57,7 +57,8 @@ class ContractIdentificationTests(unittest.TestCase):
         for filename in ("semantics.md", "input-review.md", "batch-assessment.md"):
             with self.subTest(reference=filename):
                 text = (SKILLS / "evidence-fm/references" / filename).read_text()
-                self.assertIn("约定与责任双方", text)
+                self.assertIn("约定", text)
+                self.assertIn("责任双方", text)
                 self.assertIn("business-analysis.md", text)
         guide = (REPO / "docs/evidence-modeling.md").read_text()
         self.assertIn("约定与责任双方", guide)

@@ -99,9 +99,9 @@ class FulfillmentModelTests(unittest.TestCase):
                 self.assertTrue(validate_model(load_model(root)), field)
             self.write_json(path, fulfillment)
 
-    def test_missing_confirmation_fails(self) -> None:
+    def test_scope_completion_rejects_missing_confirmation(self) -> None:
         errors = validate_model(
-            load_model(self.fixture("invalid-missing-confirmation"))
+            load_model(self.fixture("invalid-missing-confirmation")), complete=True
         )
         self.assertTrue(
             any("must contain a Fulfillment Confirmation" in e for e in errors)
@@ -234,7 +234,7 @@ class FulfillmentModelTests(unittest.TestCase):
             self.write_json(path, request)
             errors = validate_model(load_model(root))
             self.assertTrue(
-                any("required keyData timestamp" in e for e in errors), errors
+                any("keyData" in e for e in errors), errors
             )
 
     def test_multi_contract_fixture_compiles_fulfillments_only_as_entities(

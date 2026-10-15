@@ -30,7 +30,7 @@ class CompilerTests(unittest.TestCase):
             {
                 "type": "fm_model",
                 "schemaVersion": "4.0",
-                "id": "sample",
+                "id": "sample", "name": "合成书目", "version": "1.0.0", "ruleLanguage": "CEL",
                 "entryContextRefs": ["context.content"],
             },
         )
@@ -38,7 +38,7 @@ class CompilerTests(unittest.TestCase):
             "contexts/content.json",
             {
                 "type": "entity",
-                "id": "context.content",
+                "id": "context.content", "label": "书目（Catalog）",
                 "category": "context",
                 "kind": "domain",
                 "rootRefs": ["thing.book"],
@@ -48,18 +48,18 @@ class CompilerTests(unittest.TestCase):
             "things/book.json",
             {
                 "type": "entity",
-                "id": "thing.book",
+                "id": "thing.book", "label": "图书（Book）",
                 "category": "participant",
                 "kind": "thing",
                 "contextRef": "context.content",
-                "attributes": [{"name": "title", "valueType": "string"}],
+                "attributes": [{"name": "title", "label": "书名（Title）", "meaning": "用于识别合成书目的书名。", "valueType": "string", "required": True}],
             },
         )
         self.put(
             "rules/title.json",
             {
                 "type": "rule",
-                "id": "rule.title",
+                "id": "rule.title", "label": "非空书名（Nonempty Title）", "description": "书名不能为空。", "resultType": "bool",
                 "kind": "precondition",
                 "contextRef": "context.content",
                 "bindings": {"book": {"ref": "thing.book"}},
@@ -74,6 +74,22 @@ class CompilerTests(unittest.TestCase):
             json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         return path
+
+    def scope_report(self):
+        fm_skill = SCRIPT.parents[2] / "evidence-fm"
+        sys.path.insert(0, str(fm_skill / "scripts"))
+        import check_fm  # pyright: ignore[reportMissingImports]
+        report = check_fm.check_model(self.fm, scope_refs=["context.content"])
+        self.assertTrue(report["complete"], report)
+        path = self.root / "fm-check.json"
+        path.write_text(json.dumps(report), encoding="utf-8")
+        return path, fm_skill
+
+    def compile_cli(self, plan, checked=True):
+        args = [sys.executable, str(SCRIPT), "compile", "--fm", str(self.fm), "--mapping", str(plan), "--require-complete"]
+        if checked:
+            args += ["--fm-check", str(self.root / "fm-check.json"), "--fm-skill", str(SCRIPT.parents[2] / "evidence-fm")]
+        return subprocess.run(args, capture_output=True, text=True, check=False)
 
     def mapping(self, inventory):
         return {
@@ -652,6 +668,7 @@ class CompilerTests(unittest.TestCase):
                 compiler.compile_tasks(inv, mapping)
 
     def test_cli_reads_yaml_slicing_and_fails_incomplete_coverage(self):
+        self.scope_report()
         plan = self.root / "plan.yaml"
         plan.write_text(
             yaml.safe_dump(
@@ -659,21 +676,7 @@ class CompilerTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(SCRIPT),
-                "compile",
-                "--fm",
-                str(self.fm),
-                "--mapping",
-                str(plan),
-                "--require-complete",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        result = self.compile_cli(plan)
         self.assertEqual(result.returncode, 1)
         output = json.loads(result.stdout)
         self.assertFalse(output["coverageComplete"])
@@ -684,6 +687,7 @@ class CompilerTests(unittest.TestCase):
             compiler.load(markdown)
 
     def test_cli_compiles_machine_plan_without_writing_outputs(self):
+        self.scope_report()
         inv = compiler.inventory(self.fm)
         mapping = self.mapping(inv)
         plan = self.root / "plan.yaml"
@@ -692,21 +696,7 @@ class CompilerTests(unittest.TestCase):
             encoding="utf-8",
         )
         before = {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(SCRIPT),
-                "compile",
-                "--fm",
-                str(self.fm),
-                "--mapping",
-                str(plan),
-                "--require-complete",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        result = self.compile_cli(plan)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         output = json.loads(result.stdout)
         task = output["tasks"][0]
@@ -718,6 +708,39 @@ class CompilerTests(unittest.TestCase):
             before,
             {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()},
         )
+
+    def test_compile_requires_a_scope_report_without_writing_files(self):
+        before = {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        result = self.compile_cli(self.root / "absent-plan.yaml", checked=False)
+        self.assertEqual(1, result.returncode)
+        self.assertIn("--fm-check", json.loads(result.stdout)["error"])
+        self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+
+    def test_scope_inventory_excludes_unrelated_incomplete_context_and_never_rechecks(self):
+        self.put("other.json", {"type": "entity", "id": "context.other", "category": "context", "kind": "domain", "label": "其他（Other）"})
+        report, skill = self.scope_report()
+        from unittest.mock import patch
+        with patch("check_fm.check_model", side_effect=AssertionError("duplicate FM check")), patch("fm_model.validate_model", side_effect=AssertionError("duplicate validation")), patch("fm_simulation.simulate_validation_suite", side_effect=AssertionError("duplicate simulation")):
+            inventory = compiler.checked_inventory(self.fm, None, report, skill)
+        self.assertNotIn("context.other", {source["id"] for source in inventory["sources"]})
+        self.assertEqual(["context.content"], inventory["fmCheckSummary"]["scopeRefs"])
+        self.assertTrue(compiler.compile_tasks(inventory, self.mapping(inventory))["coverageComplete"])
+
+    def test_api_outside_checked_scope_is_rejected_not_silently_planned(self):
+        report, skill = self.scope_report()
+        api = self.root / "api.json"
+        api.write_text(json.dumps({"schemaVersion": "5.0", "resources": [{"id": "resource.outside", "entityRef": "thing.outside"}]}), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "checked FM scope"):
+            compiler.checked_inventory(self.fm, api, report, skill)
+
+    def test_changed_source_rejects_old_scope_report(self):
+        report, skill = self.scope_report()
+        path = self.fm / "things/book.json"
+        value = json.loads(path.read_text())
+        value["label"] = "更正图书（Corrected Book）"
+        self.put("things/book.json", value)
+        with self.assertRaisesRegex(ValueError, "stale"):
+            compiler.checked_inventory(self.fm, None, report, skill)
 
     def test_cli_emits_json_without_writing_plan(self):
         before = sorted(str(p) for p in self.root.rglob("*"))

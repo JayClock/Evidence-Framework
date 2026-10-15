@@ -297,7 +297,7 @@ class ContextScopeTests(unittest.TestCase):
                 / "entities"
                 / "evidence-fulfillment-confirmation--content-payment.json"
             ).unlink()
-            errors = validate_model(load_model(root))
+            errors = validate_model(load_model(root), complete=True)
             self.assertTrue(
                 any(
                     "must contain a Fulfillment Confirmation or Evidence Role" in error

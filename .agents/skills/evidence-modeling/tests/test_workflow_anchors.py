@@ -27,21 +27,15 @@ class WorkflowAnchorTests(unittest.TestCase):
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", flow))
         self.assertTrue({
             ("intent", "discussion"), ("intent", "discovery"),
-            ("discovery", "contractEnd"), ("contractEnd", "resources"),
-            ("contractEnd", "handoff"),
+            ("discovery", "authorized"), ("authorized", "fm"),
+            ("authorized", "handoff"), ("fm", "check"),
+            ("check", "endScope"), ("check", "handoff"),
+            ("discovery", "endScope"), ("endScope", "complete"),
+            ("endScope", "handoff"), ("complete", "ready"),
+            ("ready", "api"), ("ready", "manual"),
+            ("api", "page"), ("api", "manual"),
+            ("page", "review"), ("page", "manual"), ("review", "manual"),
             ("intent", "manual"), ("manual", "handoff"),
-            ("intent", "readonly"), ("intent", "review"),
-            ("intent", "resources"), ("resources", "admission"),
-            ("resources", "blocked"), ("admission", "fm"),
-            ("admission", "blocked"), ("fm", "fmValid"),
-            ("fmValid", "blocked"), ("fmValid", "narrow"),
-            ("narrow", "finalize"), ("narrow", "api"),
-            ("api", "apiValid"), ("apiValid", "blocked"),
-            ("apiValid", "pageAllowed"), ("pageAllowed", "finalize"),
-            ("pageAllowed", "review"), ("review", "reviewValid"),
-            ("reviewValid", "blocked"), ("reviewValid", "finalize"),
-            ("blocked", "finalize"), ("finalize", "batchRecord"),
-            ("finalize", "handoff"), ("batchRecord", "handoff"),
         }.issubset(edges), edges)
         self.assertFalse(any(start == "handoff" for start, _ in edges))
 
@@ -53,9 +47,13 @@ class WorkflowAnchorTests(unittest.TestCase):
         self.assertEqual({"combined", "fm-only", "read-only", "api-blocked"}, set(cases))
         self.assertEqual([], cases["read-only"]["allowedWrites"])
         self.assertEqual(["fm-check", "api-check"], cases["read-only"]["steps"])
-        self.assertEqual(["admission", "fm-edit", "fm-check"], cases["fm-only"]["steps"])
+        self.assertEqual(["authorization", "fm-edit", "fm-check"], cases["fm-only"]["steps"])
         self.assertEqual([".evidence/fm/"], cases["fm-only"]["allowedWrites"])
+        self.assertEqual("consistency", cases["fm-only"]["checkMode"])
         combined = cases["combined"]
+        self.assertEqual("scope-completeness", combined["checkMode"])
+        self.assertLess(combined["steps"].index("fm-edit"), combined["steps"].index("scope-confirmation"))
+        self.assertLess(combined["steps"].index("scope-confirmation"), combined["steps"].index("fm-check"))
         self.assertLess(combined["steps"].index("fm-check"), combined["steps"].index("api-edit"))
         self.assertLess(combined["steps"].index("api-check"), combined["steps"].index("api-project"))
         self.assertLess(combined["steps"].index("api-project"), combined["steps"].index("joint-review"))

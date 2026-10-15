@@ -29,6 +29,7 @@ from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
     load_model,
     validate_against_schema,
     validate_entities,
+    validate_evidence_times,
     validate_model,
 )
 from fm_simulation import (  # pyright: ignore[reportMissingImports]  # noqa: E402
@@ -94,19 +95,19 @@ def compiled_validator() -> Draft202012Validator:
 
 
 class EvidenceTimeTests(unittest.TestCase):
-    def test_all_kinds_require_explicit_time_definitions(self):
+    def test_all_kinds_allow_unknown_times_but_report_scope_completion_gaps(self):
         for kind, names in TIMES.items():
             with self.subTest(kind=kind):
                 doc = evidence(kind)
-                self.assertEqual([], schema_errors(doc))
-                for name in names:
-                    missing = copy.deepcopy(doc)
-                    missing["attributes"] = [
-                        a for a in doc["attributes"] if a["name"] != name
-                    ]
-                    self.assertTrue(schema_errors(missing), (kind, name))
                 del doc["attributes"]
-                self.assertTrue(schema_errors(doc), kind)
+                self.assertEqual([], schema_errors(doc))
+                consistent: list[str] = []
+                validate_evidence_times(doc, consistent, complete=False)
+                self.assertEqual([], consistent)
+                gaps: list[str] = []
+                validate_evidence_times(doc, gaps, complete=True)
+                for name in names:
+                    self.assertTrue(any(name in gap for gap in gaps), (kind, name))
 
     def test_all_six_kinds_allow_non_derived_times_through_model_lineage_and_compile(
         self,
@@ -199,7 +200,9 @@ class EvidenceTimeTests(unittest.TestCase):
                         keyData=True,
                     )
                 )
-                self.assertTrue(schema_errors(doc))
+                gaps: list[str] = []
+                validate_evidence_times(doc, gaps, complete=True)
+                self.assertTrue(gaps)
 
     def test_request_deadline_can_be_non_derived_without_a_fixed_duration(self):
         # A synthetic alternative model, not a change to a real agreement.
@@ -330,7 +333,7 @@ class EvidenceTimeTests(unittest.TestCase):
                 )
                 self.assertTrue(validate_validation_suite(model, suite))
 
-    def test_compiled_schema_enforces_the_same_entity_time_contract(self):
+    def test_compiled_schema_preserves_progressive_entities_without_injecting_times(self):
         validator = compiled_validator()
         model = load_model(EXAMPLES / "valid-traceable-subscription")
         document = compiled_document(model)
@@ -339,7 +342,7 @@ class EvidenceTimeTests(unittest.TestCase):
         self.assertEqual([], list(validator.iter_errors(document)))
         for entity in document["entities"]:
             entity.pop("attributes")
-        self.assertTrue(list(validator.iter_errors(document)))
+        self.assertEqual([], list(validator.iter_errors(document)))
 
     def test_cli_preserves_explicit_fields_and_refuses_missing_source_without_rewriting(
         self,

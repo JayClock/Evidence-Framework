@@ -344,9 +344,9 @@ def require_ref(
     return target
 
 
-def validate_model(model: LoadedModel) -> list[str]:
+def validate_model(model: LoadedModel, *, complete: bool = False) -> list[str]:
     errors = list(model.errors)
-    if model.manifest is None:
+    if model.manifest is None or model.errors:
         return dedupe(errors)
 
     entities = model.entities_by_id
@@ -355,10 +355,10 @@ def validate_model(model: LoadedModel) -> list[str]:
     rules = model.rules_by_id
 
     validate_manifest(model.manifest, entities, errors)
-    validate_entities(model.entities, entities, rules, errors)
+    validate_entities(model.entities, entities, rules, errors, complete=complete)
     validate_relationships(model.relationships, entities, rules, errors)
     validate_fulfillments(
-        fulfillments, entities, model.relationships, rules, errors
+        fulfillments, entities, model.relationships, rules, errors, complete=complete
     )
     validate_rules(model.rules, entities, rules, errors)
     validate_business_patterns(
@@ -382,6 +382,17 @@ def validate_model(model: LoadedModel) -> list[str]:
 def validate_manifest(
     manifest: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str]
 ) -> None:
+    for entity_id, entity in entities.items():
+        if entity.get("category") != "context":
+            continue
+        seen: set[str] = set()
+        current = entity_id
+        while current in entities:
+            if current in seen:
+                errors.append(f"{entity_id}: Context parentContextRef cycle")
+                break
+            seen.add(current)
+            current = str(entities[current].get("parentContextRef"))
     for ref in manifest.get("entryContextRefs") or []:
         target = entities.get(ref)
         if entity_signature(target)[0] != "context":
@@ -412,7 +423,9 @@ def validate_attribute_names(entity: dict[str, Any], errors: list[str]) -> None:
             )
 
 
-def validate_evidence_times(entity: dict[str, Any], errors: list[str]) -> None:
+def validate_evidence_times(
+    entity: dict[str, Any], errors: list[str], *, complete: bool = True
+) -> None:
     """Also protect in-memory validation; never insert missing source attributes."""
     category, kind = entity_signature(entity)
     if category != "evidence":
@@ -425,15 +438,15 @@ def validate_evidence_times(entity: dict[str, Any], errors: list[str]) -> None:
     for name in EVIDENCE_TIME_ATTRIBUTES.get(kind or "", ()):
         attribute = attributes.get(name)
         if attribute is None:
-            errors.append(
-                f"{entity.get('id')}: {kind} requires explicit time attribute '{name}'"
-            )
-        elif not (
-            attribute.get("valueType") == "timestamp"
-            and isinstance(attribute.get("required"), bool)
-            and attribute["required"]
-            and isinstance(attribute.get("keyData"), bool)
-            and attribute["keyData"]
+            if complete:
+                errors.append(
+                    f"{entity.get('id')}: {kind} requires explicit time attribute '{name}'"
+                )
+            continue
+        expected = {"valueType": "timestamp", "required": True, "keyData": True}
+        if any(
+            (key in attribute or complete) and attribute.get(key) != value
+            for key, value in expected.items()
         ):
             errors.append(
                 f"{entity.get('id')}.{name}: must be a required keyData timestamp"
@@ -520,6 +533,8 @@ def validate_entities(
     entities: dict[str, dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
+    *,
+    complete: bool = True,
 ) -> None:
     for entity in entity_list:
         entity_id = normalize(entity.get("id"))
@@ -527,7 +542,12 @@ def validate_entities(
             continue
         category, kind = entity_signature(entity)
         validate_attribute_names(entity, errors)
-        validate_evidence_times(entity, errors)
+        validate_evidence_times(entity, errors, complete=complete)
+        if complete:
+            for attribute in entity.get("attributes") or []:
+                for field in ("valueType", "required"):
+                    if field not in attribute:
+                        errors.append(f"{entity_id}.{attribute.get('name')}: missing {field}")
         context_ref = normalize(entity.get("contextRef"))
 
         if category == "context":
@@ -545,7 +565,7 @@ def validate_entities(
                         f"{entity_id}: parentContextRef must reference a Context"
                     )
             roots = entity.get("rootRefs") or []
-            if kind in {"contract", "domain"} and not roots:
+            if complete and kind in {"contract", "domain"} and not roots:
                 errors.append(f"{entity_id}: {kind} Context must define rootRefs")
             for ref in roots:
                 target = require_ref(errors, entity_id, "rootRefs", ref, entities)
@@ -555,7 +575,7 @@ def validate_entities(
                     )
             continue
 
-        validate_fulfillment_ref(entity, entities, errors)
+        validate_fulfillment_ref(entity, entities, errors, complete=complete)
         context: dict[str, Any] | None = None
         if category in {"evidence", "role", "fulfillment"} or (
             category == "participant" and kind == "thing"
@@ -730,14 +750,15 @@ def fulfillment_contract(
 
 
 def validate_fulfillment_ref(
-    item: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str]
+    item: dict[str, Any], entities: dict[str, dict[str, Any]], errors: list[str],
+    *, complete: bool = True,
 ) -> None:
     ref = normalize(item.get("fulfillmentRef"))
     required = entity_signature(item) == ("evidence", "fulfillment_request") or (
         item.get("type") == "rule" and item.get("kind") in {"completion", "breach"}
     )
     if ref is None:
-        if required:
+        if required and complete:
             errors.append(f"{item['id']}: fulfillmentRef is required")
         return
     fulfillment = entities.get(ref)
@@ -758,6 +779,8 @@ def validate_fulfillments(
     relationships: list[dict[str, Any]],
     rules: dict[str, dict[str, Any]],
     errors: list[str],
+    *,
+    complete: bool = True,
 ) -> None:
     associated_confirmation_refs: set[str] = set()
     for fulfillment_id, fulfillment in fulfillments.items():
@@ -774,11 +797,11 @@ def validate_fulfillments(
             fulfillment_id, entities, relationships
         )
         associated_confirmation_refs.update(str(item["id"]) for item in confirmations)
-        if len(requests) != 1:
+        if len(requests) > 1 or (complete and not requests):
             errors.append(
                 f"{fulfillment_id}: must contain exactly one Fulfillment Request; found {len(requests)}"
             )
-        if not confirmations and not evidence_roles:
+        if complete and not confirmations and not evidence_roles:
             errors.append(
                 f"{fulfillment_id}: must contain a Fulfillment Confirmation or Evidence Role"
             )
@@ -797,7 +820,7 @@ def validate_fulfillments(
         completion_rules = [
             rule for rule in context_rules if rule.get("kind") == "completion"
         ]
-        if len(completion_rules) != 1:
+        if len(completion_rules) > 1 or (complete and not completion_rules):
             errors.append(
                 f"{fulfillment_id}: must define exactly one completion Rule; found {len(completion_rules)}"
             )
@@ -810,6 +833,8 @@ def validate_fulfillments(
                     f"{rule['id']}: {rule['kind']} Rule resultType must be bool"
                 )
 
+    if not complete:
+        return
     for entity_id, entity in entities.items():
         signature = entity_signature(entity)
         if (
@@ -1079,7 +1104,7 @@ def validate_rules(
                     errors.append(
                         f"{rule_id}: derivation target must belong to the Rule Context"
                     )
-                elif attribute.get("valueType") != rule.get("resultType"):
+                elif attribute.get("valueType") is not None and attribute.get("valueType") != rule.get("resultType"):
                     errors.append(
                         f"{rule_id}: resultType '{rule.get('resultType')}' does not match target valueType '{attribute.get('valueType')}'"
                     )

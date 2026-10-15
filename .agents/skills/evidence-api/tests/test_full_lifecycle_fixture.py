@@ -19,6 +19,7 @@ class FullLifecycleFixtureTest(unittest.TestCase):
                 sys.executable,
                 str(FM_SKILL / "scripts" / "check_fm.py"),
                 str(example / "fm"),
+                "--scope", "context.product-procurement", "--scope", "context.product-catalog",
             ],
             check=False,
             capture_output=True,

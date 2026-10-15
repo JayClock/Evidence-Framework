@@ -1,7 +1,7 @@
 ---
 name: evidence-task-planning
 description: 从 FM 与可选 API 生成或重编译 plan.yaml、任务 DAG 和离线审核页；用于划分实施任务、检查依赖与 API 覆盖。采用模块化单体、smart-domain、MyBatis XML 与 Jersey，不改业务事实、不生成产品代码或预填执行证据。
-compatibility: Python 3.10+、PyYAML；消费 FM Schema v4，可选 API Schema 5.0。
+compatibility: Python 3.10+、PyYAML；消费 FM Schema v4 及显式范围完整性结果、可定位的 FM Skill；可选 API Schema 5.0。
 ---
 
 # Evidence 实施任务规划
@@ -26,7 +26,7 @@ docs/plans/smart-domain/
 
 ## 2. 提取工作单元
 
-读取全部 FM 源 Context、实体、关系、规则、场景及所引实例；有 API 时读取全部资源、能力与角色变体。按[切片与机器契约](references/slicing-policy.md)运行：
+读取明确独立范围及必要依赖的 FM Context、实体、关系、规则、场景及所引实例。规划须有覆盖该范围与业务版本的人类结束确认和软件范围授权，消费匹配摘要的 `complete: true` 结果；不以一致性通过替代就绪。全图 inventory 仅供只读定位，不能据此编译任务。有 API 时读取全部资源、能力与角色变体，其覆盖须落在当前已检查范围内，不静默过滤。按[切片与机器契约](references/slicing-policy.md)运行：
 
 ```bash
 python3 "$SKILL_DIR/scripts/task_compiler.py" inventory --fm "$FM_ROOT"
@@ -56,10 +56,11 @@ python3 "$SKILL_DIR/scripts/task_compiler.py" inventory --fm "$FM_ROOT"
 
 ```bash
 python3 "$SKILL_DIR/scripts/task_compiler.py" compile \
-  --fm "$FM_ROOT" --mapping "$PLAN_DIR/plan.yaml" --require-complete
+  --fm "$FM_ROOT" --mapping "$PLAN_DIR/plan.yaml" \
+  --fm-check "$FM_CHECK_FILE" --fm-skill "$FM_SKILL_DIR" --require-complete
 ```
 
-有 API 时追加 `--api "$API_FILE"`。将 stdout 的完整结果原样写入 compiled；taskKey、依赖与 API 覆盖由程序计算。标题只属于任务记录，不参与身份；编译失败保留缺口，不手改计算字段制造通过。
+`FM_CHECK_FILE` 是模型目录之外同一次显式范围检查结果，`FM_SKILL_DIR` 是实际独立包路径。编译核对源摘要与范围，不重复 FM 检查；缺口或结果过期交回拥有者。无关范围不完整不阻塞当前独立范围，但同合同未完成责任不能切掉。有 API 时追加 `--api "$API_FILE"`。将 stdout 的完整结果原样写入 compiled；taskKey、依赖与 API 覆盖由程序计算。标题只属于任务记录，不参与身份；编译失败保留缺口，不手改计算字段制造通过。
 
 ## 6. 填充任务
 

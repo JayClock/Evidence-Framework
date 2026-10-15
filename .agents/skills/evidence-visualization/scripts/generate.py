@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import base64
 import hashlib
+import importlib
 import json
 import os
 import re
@@ -254,27 +255,33 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     }
 
 
-def collect(root: Path, fm_skill: Path, work: Path, *, api_skill: Path | None = None, require_api: bool = False) -> dict:
+def collect(root: Path, fm_skill: Path, work: Path, *, api_skill: Path | None = None, require_api: bool = False, scope_refs: list[str] | None = None) -> dict:
     fm = root / ".evidence/fm"
     api_path = root / ".evidence/api/api.json"
     if require_api and not api_path.is_file():
         raise ValueError("联合审核需要当前 .evidence/api/api.json，不生成 FM 单独页面")
     if api_path.exists() and (api_skill is None or not (api_skill / "scripts/fm_api.py").is_file()):
         raise ValueError("已有 API 的审核需要可定位的独立 evidence-api 包")
+    if api_path.exists() and not scope_refs:
+        raise ValueError("联合审核需要显式 --scope，不能用一致性结果冒充范围完整性")
     initial = fingerprint(root)
     command = [sys.executable, "-B", str(fm_skill / "scripts/check_fm.py"), str(fm)]
+    for ref in scope_refs or []:
+        command.extend(["--scope", ref])
     check = run(command)
     if not check.get("valid") or check.get("inputChanged"):
         raise ValueError("FM 未通过，不生成视图")
     fm_check = work / "fm-check.json"
     fm_check.write_text(json.dumps(check, ensure_ascii=False), encoding="utf-8")
 
-    def compile_model(script: str, name: str) -> dict:
-        output = work / name
-        return run([sys.executable, "-B", str(fm_skill / "scripts" / script), str(fm), "--output", str(output)], output)
-
-    model = compile_model("compile_fm_model.py", "model.json")
-    simulation = compile_model("simulate_fm_model.py", "simulation.json") if check.get("executedScenarioCount") else {}
+    sys.path.insert(0, str(fm_skill / "scripts"))
+    try:
+        tools = importlib.import_module("fm_model")
+        model = tools.compiled_document(tools.load_model(fm))
+    finally:
+        sys.path.pop(0)
+    # Show the exact checked run, not a second full-graph simulation.
+    simulation = {"scenarioResults": check.get("scenarioResults", [])}
     scenarios, instances = [], []
     for path in sorted((fm / "validation").rglob("*.json")):
         value = read_json(path)
@@ -296,7 +303,11 @@ def collect(root: Path, fm_skill: Path, work: Path, *, api_skill: Path | None = 
     if initial != fingerprint(root):
         raise ValueError("输入在生成期间变化，保留已有视图")
     data = project(model, scenarios, instances, simulation, api)
-    data["validation"] = {"fm": True, "simulation": check.get("simulationPassed"),
+    data["validation"] = {"fm": True, "consistent": check.get("consistent"),
+                          "complete": check.get("complete"), "scopeRefs": check.get("scopeRefs"),
+                          "contextRefs": check.get("contextRefs"), "gaps": check.get("gaps"),
+                          "simulationLimitations": check.get("simulationLimitations", []),
+                          "simulation": check.get("simulationPassed"),
                           "api": api.get("http", {}).get("complete") if api else None,
                           "runtime": False, "unresolvedOrderCount": check.get("timelineSummary", {}).get("unresolvedOrderCount", 0)}
     data["generatedAt"] = datetime.now(timezone.utc).isoformat()  # noqa: UP017 -- Python 3.10
@@ -348,6 +359,7 @@ def main() -> int:
     parser.add_argument("--fm-skill", type=Path)
     parser.add_argument("--api-skill", type=Path, help="存在 API 时使用的独立 API Skill 路径")
     parser.add_argument("--require-api", action="store_true", help="联合审核必须包含当前 API；缺失时保留已有页面")
+    parser.add_argument("--scope", action="append", dest="scope_refs", help="独立 Context ID；联合审核必需，可重复")
     args = parser.parse_args()
     root = args.project_root.resolve()
     fm_skill = (args.fm_skill or root / ".agents/skills/evidence-fm").resolve()
@@ -359,7 +371,7 @@ def main() -> int:
         before = fingerprint(root)
         views.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix=".workbench-", dir=views) as temporary:
-            data = collect(root, fm_skill, Path(temporary), api_skill=api_skill, require_api=args.require_api)
+            data = collect(root, fm_skill, Path(temporary), api_skill=api_skill, require_api=args.require_api, scope_refs=args.scope_refs)
             html = render(data)
             if before != fingerprint(root):
                 raise ValueError("发布前输入变化，保留已有视图")

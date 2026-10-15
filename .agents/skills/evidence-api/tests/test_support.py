@@ -35,7 +35,10 @@ _CHECKS = tempfile.TemporaryDirectory(prefix="fm-api-test-checks-")
 def check_path(root=FM_ROOT):
     """Run the FM stage once per fixture, then reuse its exact result."""
     path = Path(_CHECKS.name) / (str(len(list(Path(_CHECKS.name).iterdir()))) + ".json")
-    path.write_text(json.dumps(check_fm.check_model(root)), encoding="utf-8")
+    loaded = importlib.import_module("fm_model").load_model(root)
+    refs = sorted(entity["id"] for entity in loaded.entities
+                  if entity.get("category") == "context" and not entity.get("parentContextRef"))
+    path.write_text(json.dumps(check_fm.check_model(root, scope_refs=refs)), encoding="utf-8")
     return path
 
 

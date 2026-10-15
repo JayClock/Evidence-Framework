@@ -10,16 +10,17 @@ REPO = SKILLS.parents[1]
 
 
 class ContractBatchModelingTests(unittest.TestCase):
-    def test_contract_admission_keeps_own_responsibility_complete(self):
+    def test_contract_scope_completion_keeps_all_responsibility_without_gating_first_save(self):
         text = (SKILLS / "evidence-fm/references/responsibility-closure.md").read_text()
-        for phrase in ("合同级准入", "当前合同的全部主履约", "Context Role", "未澄清合同",
-                       "不能以 Context Role 隐藏", "全局追责结束", "人类明确确认"):
+        for phrase in ("合同范围结束", "全部主履约", "Context Role", "未澄清合同",
+                       "不以角色隐藏必要缺口", "全部追责结束", "人类明确确认"):
             self.assertIn(phrase, text)
         self.assertNotIn("单条终点确认、编辑请求、用户沉默、文件存在或机器校验通过都不能替代全局确认", text)
         for path in ("evidence-fm/SKILL.md", "evidence-fm/references/input-review.md",
                      "evidence-fm/references/batch-assessment.md", "evidence-fm/references/editing-workflow.md"):
             with self.subTest(path=path):
-                self.assertIn("合同级", (SKILLS / path).read_text())
+                self.assertIn("范围", (SKILLS / path).read_text())
+        self.assertIn("不把追责结束作为首次写入 FM 的条件", text)
 
     def test_context_role_is_not_a_proof_or_fabricated_contract(self):
         text = (SKILLS / "evidence-fm/references/semantics.md").read_text()
@@ -31,11 +32,11 @@ class ContractBatchModelingTests(unittest.TestCase):
         text = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         diagrams = re.findall(r"```mermaid\n(.*?)```", text, re.S)
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", diagrams[1]))
-        for edge in (("discovery", "contractEnd"), ("contractEnd", "resources"),
-                     ("contractEnd", "handoff"), ("blocked", "finalize"),
-                     ("finalize", "batchRecord"), ("batchRecord", "handoff")):
+        for edge in (("discovery", "endScope"), ("endScope", "complete"),
+                     ("endScope", "handoff"), ("ready", "manual"),
+                     ("api", "manual"), ("manual", "handoff")):
             self.assertIn(edge, edges)
-        for phrase in ("单合同澄清结束后的自动接续", "evidence-handoff", "未澄清合同", "Context Role",
+        for phrase in ("范围结束后的自动接续", "evidence-handoff", "未澄清上下文", "Context Role",
                        "未保存", "只聊不落盘", "不自动切换"):
             self.assertIn(phrase, text)
         discovery = (SKILLS / "evidence-discovery/references/interview.md").read_text()
@@ -51,7 +52,7 @@ class ContractBatchModelingTests(unittest.TestCase):
         self.assertIn("Context Role", guide)
         self.assertIn("evidence-handoff", guide)
         constitution = (REPO / "AGENTS.md").read_text()
-        self.assertIn("合同级准入", constitution)
+        self.assertIn("显式范围完整性检查", constitution)
         self.assertIn("自动交接", constitution)
 
     def test_evals_cover_success_dependency_gap_readonly_and_save_failure(self):

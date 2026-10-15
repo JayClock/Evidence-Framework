@@ -30,7 +30,7 @@ fm_model = importlib.import_module("fm_model")
 class FMHandoffTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.report = check_fm.check_model(FM_ROOT)
+        cls.report = check_fm.check_model(FM_ROOT, scope_refs=["context.content-subscription"])
         assert cls.report["valid"], cls.report
 
     def test_api_adapter_does_not_run_fm_checker_or_compiler(self):
@@ -90,6 +90,13 @@ class FMHandoffTests(unittest.TestCase):
                 self.assertIsNone(index)
                 self.assertIn("FM_CHECK_INVALID", {item.code for item in diagnostics})
         index, diagnostics = fm_adapter.load_fm(FM_ROOT, [])
+        self.assertIsNone(index)
+        self.assertIn("FM_CHECK_INVALID", {item.code for item in diagnostics})
+
+    def test_consistency_only_report_is_rejected_even_when_valid(self):
+        report = check_fm.check_model(FM_ROOT)
+        self.assertTrue(report["valid"])
+        index, diagnostics = fm_adapter.load_fm(FM_ROOT, report)
         self.assertIsNone(index)
         self.assertIn("FM_CHECK_INVALID", {item.code for item in diagnostics})
 

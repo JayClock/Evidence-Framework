@@ -15,7 +15,7 @@
       "name": "vip-membership-agreement",
       "outcome": "model",
       "prompt": "使用 evidence-fm 为合成 VIP 会员协议建立 FM v4：用户付款后平台开通会员权益；尚未开通或有效期内无法使用权益时可申请原路退款，退款金额为原实付金额。会员权益计算能力依据会员卡、账号、等级和有效期计算资格，计算能力内部算法不在本题范围。先建立合同双方 Role；只有来源明确稳定 Participant 时才建立 plays_role。本轮仅生成 FM、说明与编译产物，不设计 API、播放器、推荐、页面或数据库。",
-      "expected_output": "核对合成准入来源后生成有效 v4；付款、开通和退款为独立 Fulfillment；权益计算通过 Domain Role 表达；不按 Role 名称补造 Party；CEL 与确定性编译通过。",
+      "expected_output": "按合成业务来源及编辑授权生成有效 v4；付款、开通和退款为独立 Fulfillment；权益计算通过 Domain Role 表达；不按 Role 名称补造 Party；CEL 与确定性编译通过。",
       "files": ["fixtures/modeling-admission.md"]
     },
     {
@@ -122,11 +122,11 @@
       "name": "ambiguous-narrative-input-gaps",
       "outcome": "blocked",
       "prompt": "使用 evidence-fm 核对合成智能结算说明：用户提交订单、系统自动结算，未来支持多渠道。合同双方、收付款权责、完成凭证、履约期限与违约后果均未明确，也没有适用合同级的人类追责结束依据。只说明必要缺口及影响，不开始访谈，不生成或修改正式模型、规则、场景、API及项目记录。",
-      "expected_output": "具体交接合同双方与权责、完成证明、期限、异常后果和缺失的人类追责结束确认；不以已知部分放行，不生成正式或局部模型，不要求旧 discovery 产物。",
+      "expected_output": "按只说明、不生成的限制交接合同双方与权责、完成证明、期限及异常后果缺口；不写模型，不要求 discovery 产物，也不将缺结束确认当成已知表达的保存禁令。",
       "files": [],
       "assertions": [
         "缺口覆盖双方与权责、完成凭证、期限和异常后果，不自行访谈。",
-        "缺少追责结束依据时正式模型、规则、场景、API和项目记录不变。",
+        "只说明、不生成权限优先，正式模型、规则、场景、API和项目记录不变。",
         "缺口说明与实际未执行项准确，不把不生成模型当技术失败。"
       ]
     },
@@ -135,7 +135,7 @@
       "name": "cross-domain-business-pattern",
       "outcome": "model",
       "prompt": "使用 evidence-fm 建模合成内容会员和健身课程会员两个案例：服务方要求会员签约后30分钟内付款，合格付款后在合同有效期内提供访问；内容和健身为独立 Domain Context，凭证可审计。提取付款后提供期限权益 Business Pattern，用两个合同与两个领域的引用支持，不添加审核状态。本轮仅生成 FM、编译与02-business-patterns.md，不设计 API 或页面。",
-      "expected_output": "核对对应准入来源后表达两个 Contract Context、至少四项履约、两个 Domain Context与一个模式；业务主线、变化点及两类案例引用完整，模式无审核状态，Markdown由正式源派生。",
+      "expected_output": "按合成来源及编辑授权表达两个 Contract Context、至少四项履约、两个 Domain Context与一个模式；业务主线、变化点及两类案例引用完整，模式无审核状态，Markdown由正式源派生。",
       "files": ["fixtures/modeling-admission.md"]
     },
     {
@@ -143,7 +143,7 @@
       "name": "customer-domain-only",
       "outcome": "model",
       "prompt": "使用 evidence-fm 建模合成客户领域：客户本人为稳定身份的个人或组织；档案有profileId与archived，编号不能为空，归档后不可编辑；档案引用独立contactId的联系方式，enabled与verified均为true才usable。只表达Domain、身份、关系及CEL，不补合同或履约，不混淆客户与档案。本轮仅生成 FM、说明、校验、lineage与编译，不设计 API 或页面。",
-      "expected_output": "核对纯领域准入；Party与Thing分开，含关系、前置与派生规则及属性lineage；不声称领域状态机模拟；业务属性映射profile_id/contact_id并说明原名，协议键保持Schema原名。",
+      "expected_output": "核对领域来源与编辑权限；Party与Thing分开，含关系、前置与派生规则及属性lineage；不声称领域状态机模拟；业务属性映射profile_id/contact_id并说明原名，协议键保持Schema原名。",
       "files": ["fixtures/modeling-admission.md"]
     },
     {
@@ -151,7 +151,7 @@
       "name": "precontract-only-no-contract",
       "outcome": "blocked",
       "prompt": "使用 evidence-fm 核对合成询价与报价：询价方带requestedAt发询价，报价方带proposedAt回应，尚未签约，没有后续履约事实，也没有人类关于本独立协商分支澄清结束、本范围无适用履约责任及无需继续追责的确认；询价与报价的截止依据未提供。只说明当前来源和缺口，不开始访谈，不生成或修改正式模型、规则、场景、API及项目记录。",
-      "expected_output": "指出截止依据与人类准入确认缺失，交接已有双方和回应事实；不生成正式模型，不补合同、履约或expired_at，不宣称校验编译通过。",
+      "expected_output": "交接已有双方和回应事实、截止依据及范围结束未决；按只说明、不生成限制不写模型，不补合同、履约或expired_at，不宣称校验编译通过。",
       "files": [],
       "assertions": [
         "保留已有询价与报价事实，说明截止依据和追责结束确认缺失。",

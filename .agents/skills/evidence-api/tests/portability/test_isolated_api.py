@@ -34,7 +34,8 @@ class IsolatedAPITests(unittest.TestCase):
         self.source = self.project / ".evidence/api/api.json"
         self.source.parent.mkdir(parents=True)
         shutil.copy2(fixture / "api.json", self.source)
-        result = self.run_python(self.fm / "scripts/check_fm.py", self.model)
+        result = self.run_python(self.fm / "scripts/check_fm.py", self.model,
+                                 "--scope", "context.product-procurement", "--scope", "context.product-catalog")
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.report = self.root / "fm-check.json"
         self.report.write_text(result.stdout)

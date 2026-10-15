@@ -118,6 +118,48 @@ function open(data = fixture()) {
   };
 }
 
+test('Overview separates consistency, scope completeness, gaps and unexecuted simulation', () => {
+  for (const [complete, expected] of [
+    [null, '未检查'],
+    [false, '不完整'],
+  ]) {
+    const data = {
+      ...fixture(),
+      validation: {
+        consistent: true,
+        complete,
+        scopeRefs: complete === null ? [] : ['context.a'],
+        simulation: null,
+        gaps: ['合成责任尚未完整'],
+        simulationLimitations: ['领域行为未执行'],
+      },
+    };
+    const page = open(data);
+    try {
+      const rows = new Map(
+        [...page.document.querySelectorAll('#detail tr')]
+          .map((row) =>
+            [...row.querySelectorAll('td')].map((cell) => cell.textContent),
+          )
+          .filter((cells) => cells.length === 2),
+      );
+      assert.equal(rows.get('当前 FM 表达一致性'), '通过');
+      assert.equal(rows.get('指定范围完整性'), expected);
+      assert.equal(rows.get('检查范围内的适用场景模拟'), '未执行 / 不适用');
+      const detail = page.document.querySelector('#detail').textContent;
+      assert.ok(detail.includes('合成责任尚未完整'));
+      assert.ok(detail.includes('领域行为未执行'));
+      assert.ok(detail.includes('当前整个 FM，含未完成内容'));
+      assert.doesNotMatch(
+        detail,
+        /合成责任尚未完整.*未解析|领域行为未执行.*未解析/,
+      );
+    } finally {
+      page.close();
+    }
+  }
+});
+
 test('Request owns its conditions, expression disclosure and explicit completion evidence', () => {
   const page = open();
   try {

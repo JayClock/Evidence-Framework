@@ -8,7 +8,7 @@ SKILL = Path(__file__).resolve().parents[1]
 
 
 class DocumentationTests(unittest.TestCase):
-    def test_api_design_delivers_whole_model_without_selection_pipeline(self):
+    def test_api_covers_the_whole_explicit_ready_scope_without_candidate_selection(self):
         retired = re.compile(
             r"候选|candidate|exploration|unselected|scopeCapabilityRefs|require-complete|scope\.contextRefs",
             re.I,
@@ -23,7 +23,8 @@ class DocumentationTests(unittest.TestCase):
         for path in documents:
             self.assertNotRegex(path.read_text(), retired, str(path))
         entry = (SKILL / "references/api-design.md").read_text()
-        self.assertIn("上游是整体 FM", entry)
+        for requirement in ("明确范围及必要依赖", "complete: true", "scopeRefs/contextRefs", "不默默过滤不完整对象"):
+            self.assertIn(requirement, entry)
         self.assertIn("每个接口都必须有契约", entry)
         self.assertIn("不重复业务确认", entry)
         self.assertIn("--fm-check", entry)

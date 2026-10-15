@@ -88,12 +88,12 @@ class ContextLayoutTests(unittest.TestCase):
             )
         )
 
-    def test_business_validation_still_rejects_missing_confirmation(self):
+    def test_scope_completion_still_requires_confirmation(self):
         self.paths["confirmation.content-payment"].unlink()
         self.assertTrue(
             any(
                 "must contain a Fulfillment Confirmation" in e
-                for e in validate_model(load_model(self.root))
+                for e in validate_model(load_model(self.root), complete=True)
             )
         )
 

@@ -35,25 +35,28 @@ class ExampleBaselineTests(unittest.TestCase):
             self.assertTrue((EXAMPLES / name / "README.md").is_file())
         self.assertIn("](structural-contrasts.md)", index)
         self.assertIn("合成", index)
-        self.assertIn("准入", index)
+        self.assertIn("责任范围方法", index)
+        self.assertIn("不提供人类追责结束依据或编辑授权", index)
 
-    def test_edit_flow_gates_writes_and_hands_off_fm_result(self):
+    def test_edit_flow_pairs_responsibility_then_separates_consistency_and_scope_completion(self):
         text = (SKILL / "references/editing-workflow.md").read_text()
         graph = re.search(r"```mermaid\n(.*?)```", text, re.S)
         self.assertIsNotNone(graph)
         assert graph is not None
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", graph[1]))
         self.assertTrue({
-            ("input", "admission"), ("admission", "mapping"),
-            ("admission", "blocked"), ("mapping", "edit"),
+            ("input", "permission"), ("permission", "mapping"),
+            ("permission", "handoff"), ("mapping", "pair"), ("pair", "edit"),
             ("edit", "difference"), ("difference", "check"),
-            ("check", "valid"), ("valid", "blocked"),
-            ("valid", "handoff"),
+            ("check", "consistent"), ("consistent", "handoff"),
+            ("consistent", "finish"), ("finish", "scope"),
+            ("finish", "handoff"), ("scope", "ready"), ("ready", "downstream"),
         }.issubset(edges), edges)
         self.assertFalse(any(start in {"blocked", "handoff"} for start, _ in edges))
-        self.assertEqual({"input"}, {start for start, end in edges if end == "admission"})
-        self.assertEqual({"admission"}, {start for start, end in edges if end == "mapping"})
-        self.assertEqual({"mapping"}, {start for start, end in edges if end == "edit"})
+        self.assertEqual({"permission"}, {start for start, end in edges if end == "mapping"})
+        self.assertEqual({"pair"}, {start for start, end in edges if end == "edit"})
+        self.assertIn("不等追责结束", text)
+        self.assertIn("--scope", text)
         self.assertIn("--fm-check", text)
         self.assertIn("不重复", text)
 

@@ -1,5 +1,7 @@
 # FM Schema v4 文件格式
 
+有业务依据及编辑授权即可维护同一份 FM；凭证与所属上下文、责任角色共同落地，合同带双方责任角色，实际主体未知不虚构 Participant。未知属性类型、必需性、时间、关系或规则暂不写，不填占位或默认值。以下完整结构用于范围结束检查，不作为首次保存门槛；已表达字段及引用仍须一致，具体权限与范围见 [责任方法](responsibility-closure.md)。
+
 ## 1. 目录与事实源
 
 ```text
@@ -131,7 +133,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 | `fulfillment_confirmation`               | `confirmed_at`               |
 | `other_evidence`                         | `created_at`                 |
 
-每个字段必须在对应 Entity 源 JSON 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
+范围完整时，表中每个字段须在对应 Entity 源 JSON 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
 
 表中的类型属性、具体实例值和生成规则分开：所有必备时间都允许非派生输入，类型结构不要求实例日期或 `derivedByRuleRef`；有来源的生成规则存在时才定义 CEL。三类时刻凭证不套请求区间或过期时间，各类型的必备时间不能互换。
 
@@ -190,7 +192,7 @@ Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要
 }
 ```
 
-Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。Request 必须属于一项履约；共享 Confirmation 保留唯一形成归属，该 Confirmation 通过 `references` 指向各 Request。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
+Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。范围完整时 Request 必须属于一项履约，尚未明确归属可暂不写 `fulfillmentRef`，已写引用不得悬空；共享 Confirmation 保留唯一形成归属，该 Confirmation 通过 `references` 指向各 Request。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
 
 ### Domain Context 与 Thing
 
@@ -266,9 +268,9 @@ Thing 必须属于 Domain Context，可表示具有领域身份的地点、标�
 
 ## 5. Fulfillment、Evidence 与 Rule
 
-`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。Request、completion 和 breach Rule 必须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文可直接引用具体时刻结果，需要变化点时才使用 Evidence Role。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
+`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。完整 Request、completion 和 breach Rule 须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文可直接引用具体时刻结果，需要变化点时才使用 Evidence Role。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
 
-Request 必须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
+范围完整时 Request 须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
 
 每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。同一个 Confirmation 类型或实例可以在有合同依据时被同一 Contract Context 下多个 Request 关联；每个关联仍按各自请求区间和 completion Rule 独立判断。重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
 

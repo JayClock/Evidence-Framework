@@ -20,16 +20,16 @@ class MixedContextWorkflowTests(unittest.TestCase):
                        '分支结束确认单独一轮', '选择只决定分析焦点'):
             self.assertIn(phrase, text)
 
-    def test_non_contract_admission_does_not_bypass_contract_gaps(self):
+    def test_non_contract_scope_completion_does_not_hide_contract_gaps(self):
         text = (SKILLS / 'evidence-fm/references/responsibility-closure.md').read_text()
-        for phrase in ('领域与独立协商的分支准入', '正常、边界和反例',
+        for phrase in ('领域、协商与全局结束', '正常、边界与反例',
                        '没有适用履约责任', '不能将未闭合合同改名为领域'):
             self.assertIn(phrase, text)
 
     def test_non_contract_completion_reaches_generation_and_handoff(self):
         text = (SKILLS / 'evidence-modeling/references/workflow.md').read_text()
-        for phrase in ('领域与协商结束后的自动接续', 'branchEnd -->|有效且获授权| resources',
-                       'branchEnd -->|依据不足或更窄限制| handoff', '未澄清上下文',
+        for phrase in ('独立领域／协商分支', 'endScope -->|具备| complete',
+                       'endScope -->|未结束或无范围检查授权| handoff', '未澄清上下文',
                        '不自动切换', '仅访谈'):
             self.assertIn(phrase, text)
         text = (SKILLS / 'evidence-handoff/SKILL.md').read_text()

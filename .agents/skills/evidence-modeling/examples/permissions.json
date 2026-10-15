@@ -2,7 +2,8 @@
   "cases": [
     {
       "id": "combined",
-      "input": "核对准入后生成模型、整体 API 和联合审核页。",
+      "input": "维护已知模型，范围结束确认后生成指定范围 API 和联合审核页。",
+      "checkMode": "scope-completeness",
       "allowedWrites": [
         ".evidence/fm/",
         ".evidence/api/api.json",
@@ -11,8 +12,9 @@
       ],
       "steps": [
         "resources",
-        "admission",
+        "authorization",
         "fm-edit",
+        "scope-confirmation",
         "fm-check",
         "api-edit",
         "api-check",
@@ -29,7 +31,8 @@
       "id": "fm-only",
       "input": "只修改 FM，不设计 API，不生成页面。",
       "allowedWrites": [".evidence/fm/"],
-      "steps": ["admission", "fm-edit", "fm-check"],
+      "steps": ["authorization", "fm-edit", "fm-check"],
+      "checkMode": "consistency",
       "designFmChecks": 1,
       "reviewFmChecks": 0,
       "exit": "handoff",
@@ -40,6 +43,7 @@
       "input": "只校验当前 FM 与已有 API，不写任何项目文件。",
       "allowedWrites": [],
       "steps": ["fm-check", "api-check"],
+      "checkMode": "scope-completeness",
       "designFmChecks": 1,
       "reviewFmChecks": 0,
       "apiInput": "same-fm-check",
@@ -55,7 +59,15 @@
         ".evidence/api/generated/",
         ".evidence/views/index.html"
       ],
-      "steps": ["resources", "admission", "fm-edit", "fm-check", "api-edit"],
+      "steps": [
+        "resources",
+        "authorization",
+        "fm-edit",
+        "scope-confirmation",
+        "fm-check",
+        "api-edit"
+      ],
+      "checkMode": "scope-completeness",
       "designFmChecks": 1,
       "reviewFmChecks": 0,
       "apiInput": "same-fm-check",

@@ -71,7 +71,7 @@
       "explicit": false,
       "primarySkill": "evidence-fm",
       "expectations": [
-        "实际读取并核对当前准入依据",
+        "实际读取当前业务依据及授权，保存不以结束确认为前提",
         "仅修改获授权表达并运行检查"
       ],
       "forbiddenActions": ["修改 API", "自动批准", "忽略来源缺口直接生成"]
@@ -81,8 +81,15 @@
       "prompt": "还有退款失败后的责任没查清，但先把已明确付款部分生成正式 FM 吧，不要问问题。",
       "explicit": false,
       "primarySkill": "evidence-fm",
-      "expectations": ["指出全局准入缺口", "保持正式源不变并交接"],
-      "forbiddenActions": ["按局部切片编辑模型", "自动发起访谈"]
+      "expectations": [
+        "按来源及授权渐进保存已知内容，凭证与责任角色共同落地",
+        "保留退款未决，不把局部保存当同合同完整"
+      ],
+      "forbiddenActions": [
+        "无结束确认交付 API 或规划",
+        "自动发起访谈",
+        "补造未知责任或终点"
+      ]
     },
     {
       "id": "api-design",
@@ -156,7 +163,7 @@
         "阶段分别交接"
       ],
       "forbiddenActions": [
-        "缺准入仍编辑",
+        "缺范围结束确认或完整性结果仍交付下游",
         "停在 FM 子步骤声称交付完成",
         "自动进入实施"
       ]
@@ -166,7 +173,7 @@
       "prompt": "显式使用 evidence-modeling，核对准入后只修改 FM，明确不要 API 和页面。",
       "explicit": true,
       "primarySkill": "evidence-modeling",
-      "expectations": ["裁剪为 FM 授权", "核对准入和 FM 当前检查"],
+      "expectations": ["裁剪为 FM 授权", "核对业务依据、编辑权限及 FM 一致性"],
       "forbiddenActions": [
         "修改 API",
         "生成页面",

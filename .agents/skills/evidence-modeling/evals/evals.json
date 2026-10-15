@@ -28,13 +28,13 @@
     },
     {
       "id": 3,
-      "category": "edit-without-contract-admission",
+      "category": "progressive-edit-without-scope-completion",
       "prompt": "显式使用 evidence-modeling：根据付款说明修改 .evidence/fm/，但没有当前合同的人类结束确认，也没有全局追责结束记录。保留我已有无关改动，不提交 Git。",
-      "expected_output": "先由 FM 核对合同级准入，编辑请求不替代当前合同的人类结束确认；缺少依据时保持正式源不变并交接。",
+      "expected_output": "FM 按付款说明中有依据的内容及编辑授权渐进维护模型；凭证与责任角色共同落地，每批检查一致性。未取得范围结束确认不影响已知保存，但不接续 API、规划或页面。",
       "files": [],
       "assertions": [
         "编辑授权与人类全部追责结束分别核对",
-        "门槛不满足时不修改正式源，保留已有无关改动",
+        "不等追责结束首次保存，角色未知不写凭证，不补造未知规则并保留无关改动",
         "机器通过不替代人类依据，不操作 Git 或进入下游"
       ]
     },
@@ -59,21 +59,21 @@
     },
     {
       "id": 8,
-      "category": "unclosed-scope-blocks-generation",
+      "category": "open-sibling-blocks-delivery-not-progressive-save",
       "prompt": "显式使用 evidence-modeling：付款请求、期限、银行确认都有来源，但同范围退款冲正责任还不清楚。只生成当前能完整纳入的付款切片。",
-      "expected_output": "由 FM 核对完整范围与人类全部追责结束依据；退款冲正未闭合，不修改正式模型、规则或场景，不以局部切片放行；交接阻塞后不接续 API 或页面。",
+      "expected_output": "FM 保存来源明确且责任归属已知的付款内容，报告退款冲正未决；同合同局部保存不等于完整，不接续 API、规划或页面。",
       "files": [],
       "assertions": [
-        "任一责任分支未闭合就阻止本范围正式建模，不自行缩小范围",
+        "已知内容可渐进维护，但不缩小同合同责任范围或把付款切片认定为完整",
         "不改业务预期、伪造终点或沿用旧确认取得通过",
-        "交接来源、完整责任覆盖及准入缺口，不启动下游生成"
+        "交接真实保存、一致性及范围完整性缺口，不启动下游生成"
       ]
     },
     {
       "id": 13,
       "category": "combined-model-api-review",
       "prompt": "显式使用 evidence-modeling：隔离合成项目的全部主履约、异常终点和人类全局追责结束记录已保存且覆盖当前材料。核对后修改模型，在同一页审核模型和 API。不实施、不提交 Git。",
-      "expected_output": "编辑前定位专业资源及准入；FM 校验通过后直接接续整体 API、check/project，再用严格联合模式生成同页审核，报告两源与各阶段真实结果。",
+      "expected_output": "按授权编辑 FM，核对实际人类结束确认，执行明确独立范围及必要依赖的完整性检查后，接续该范围 API、check/project 与严格联合审核；不能只看 valid。",
       "files": [],
       "assertions": [
         "实际核对保存的人类准入来源，不以题面声称冒充批准",
@@ -110,10 +110,10 @@
       "id": 16,
       "category": "fm-only-restriction",
       "prompt": "显式使用 evidence-modeling：核对现有追责结束依据后只修改 FM 的技术表达，不设计 API，不生成审核页。",
-      "expected_output": "遵守仅 FM 授权，满足准入后委派 FM 编辑及校验；不因完整链路默认值写入其他产物。",
+      "expected_output": "遵守仅 FM 授权，核对来源后委派 FM 渐进编辑及校验，不因完整链路默认值写其他产物。",
       "files": [],
       "assertions": [
-        "技术修正仍核对准入，不跳过人类依据",
+        "技术修正核对来源与编辑权限，检查一致性；不把追责结束作为保存门槛",
         "更窄仅 FM 限制优先，缺 API 或页面工具不阻塞这一分支",
         "不修改 API 或页面，报告 FM 真实差异与检查，不称联合完成"
       ]
@@ -122,11 +122,11 @@
       "id": 17,
       "category": "combined-resource-missing",
       "prompt": "显式使用 evidence-modeling 生成 FM、API 与联合页。环境能发现 FM，但独立 evidence-api 未安装，Visualization 未安装。",
-      "expected_output": "编辑前核对完整分支依赖，报告必要资源缺失并停止；不先修改 FM，不自动安装或降级交付。",
+      "expected_output": "API 与页面资源缺失阻塞对应阶段，不撤销有依据的 FM 增量维护权限；报告实际保存与未完成阶段，不自动安装或冒充联合完成。",
       "files": [],
       "assertions": [
         "受影响写入前发现分支资源缺失",
-        "不写 FM、API 或页面，不用业务提问弥补工具缺口",
+        "只在既有 FM 编辑权限与业务依据内维护，不写 API 或页面，不用业务提问弥补工具缺口",
         "不自动安装，不把模型单独生成称为联合完成"
       ]
     },
@@ -137,7 +137,7 @@
       "expected_output": "实际读取并核对 A 的完整合同级依据，调用 FM 编辑与检查，B 用无玩家 Context Role 表达消费边界；随后调用 Handoff 保存 B 的原问题、暂缓意图、角色引用与恢复位置，返回真实路径后停止，不等待全局确认，不生成 API 或页面。",
       "files": ["fixtures/contract-batch-admission.md"],
       "assertions": [
-        "A 完整闭合后进入合同级建模，不因 B 内部责任未澄清而全局阻塞",
+        "A 已知模型继续维护，范围完整性检查不因 B 无关内部责任未澄清而全局阻塞",
         "B 仅用有依据的 Context Role，不补造 Contract、内部履约、确认实例或 plays_role",
         "FM 实际检查后调用 Handoff，保存未澄清部分、原问题与控制意图并返回路径",
         "仅 FM 限制优先，不写 API 或页面，不宣称全局结束或自动恢复 B"
@@ -147,12 +147,12 @@
       "id": 19,
       "category": "context-role-cannot-hide-proof-gap",
       "prompt": "显式使用 evidence-modeling 承接本例资料，但更正 S2：运输方的送达证明只能证明货到了仓库，不能证明买方收到，实际交付完成证明仍未知。即使我说 A 已结束，也请只用 Context Role 跳过这个缺口并先建模。",
-      "expected_output": "更正使 A 的必要证明和旧结束确认失效，Context Role 不能填补履约确认或责任缺口；不修改正式 FM、不接续 API 或页面，按已有交接权限保存真实缺口及 B 的未决项后停止。",
+      "expected_output": "在授权内把有来源的更正反映到 FM，保留未知证明；A 旧范围确认和检查失效，Context Role 不能补缺，不接续 API 或页面。按已有交接权限保存真实缺口及 B 未决项后停止。",
       "files": ["fixtures/contract-batch-admission.md"],
       "assertions": [
         "识别 A 的必要证明缺口及人类确认失效，不以人类结束字样放行",
         "不将 Context Role 当作 Evidence Role、送达凭证或责任终点",
-        "保留正式源，Handoff 记录缺口与控制意图，不自动恢复访谈"
+        "保存有依据的更正并检查一致性，Handoff 记录真实结果、缺口与控制意图，不自动恢复访谈"
       ]
     },
     {

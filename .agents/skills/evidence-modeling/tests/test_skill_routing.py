@@ -41,8 +41,9 @@ class SkillRoutingTests(unittest.TestCase):
             "references/validation.md", "references/editing-workflow.md",
         }, targets)
         flow = (SKILLS / "evidence-fm/references/editing-workflow.md").read_text()
-        self.assertIn("admission -->|满足| mapping", flow)
-        self.assertIn("mapping --> edit", flow)
+        self.assertIn("permission -->|满足| mapping", flow)
+        self.assertIn("mapping --> pair", flow)
+        self.assertIn("pair --> edit", flow)
         self.assertIn("responsibility-closure.md", flow)
         self.assertNotIn("sourceCardinality", text)
         self.assertNotIn("responsibleRoleRef", text)

@@ -91,6 +91,9 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
         return None, [error("FM_INVALID", "FM 目录缺少 model.json", location=str(fm_root))]
     if (
         not isinstance(check_report, dict)
+        or check_report.get("checkVersion") != 2
+        or check_report.get("consistent") is not True
+        or check_report.get("complete") is not True
         or check_report.get("valid") is not True
         or check_report.get("inputChanged") is not False
         or check_report.get("modelValidated") is not True
@@ -102,6 +105,8 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
         # The caller locates the independent FM package before this read-only adapter runs.
         model_digest = importlib.import_module("check_fm").model_digest
         model = importlib.import_module("fm_model")
+        scope = importlib.import_module("fm_scope")
+        simulation = importlib.import_module("fm_simulation")
     except ImportError as exc:
         return None, [error("FM_SKILL_INVALID", f"无法加载 FM 只读工具及依赖: {exc}")]
     try:
@@ -109,7 +114,8 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
         if model_digest(fm_root) != check_report["modelDigest"]:
             return None, [error("FM_CHECK_STALE", "FM 已变化，返回 FM 阶段重新检查")]
         # Read the current representation; do not execute compiler validation.
-        compiled = model.compiled_document(model.load_model(fm_root))
+        selected = scope.ready_scope(model.load_model(fm_root), check_report)
+        compiled = model.compiled_document(selected)
     except (OSError, ValueError) as exc:
         return None, [error("FM_INVALID", f"无法读取当前 FM: {exc}")]
     entities = {item["id"]: item for item in compiled.get("entities", [])}
@@ -118,6 +124,11 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
     try:
         scenarios = _load_json_objects(fm_root, "validation/scenarios/*.json")
         instances = _load_json_objects(fm_root, "validation/instances/*.json")
+        selected_suite = scope.scope_suite(selected, simulation.ValidationSuite(
+            root=fm_root, scenarios=list(scenarios.values()), instances=list(instances.values())
+        ))
+        scenarios = selected_suite.scenarios_by_id
+        instances = selected_suite.instances_by_id
         if before != snapshot_tree(fm_root) or model_digest(fm_root) != check_report["modelDigest"]:
             return None, [error("SOURCE_CHANGED", "FM 输入在读取期间发生变化")]
     except (FMSuiteReadError, OSError) as exc:

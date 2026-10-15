@@ -48,10 +48,10 @@ def documents():
 
 
 class FulfillmentStructureTests(unittest.TestCase):
-    def errors(self, values):
+    def errors(self, values, *, complete=False):
         with tempfile.TemporaryDirectory() as directory:
             root = write_model(Path(directory), values, "context.agreement")
-            return validate_model(load_model(root))
+            return validate_model(load_model(root), complete=complete)
 
     def test_same_contract_fulfillments_reference_evidence_directly(self):
         self.assertEqual([], self.errors(documents()))
@@ -89,10 +89,11 @@ class FulfillmentStructureTests(unittest.TestCase):
         request["contextRef"] = "context.customer-information"
         self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
 
-    def test_request_requires_fulfillment_membership(self):
+    def test_membership_can_be_unknown_but_is_required_for_scope_completion(self):
         values = documents()
         next(v for v in values if v["id"] == "request.delivery").pop("fulfillmentRef")
-        self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
+        self.assertEqual([], self.errors(values))
+        self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values, complete=True)))
 
     def test_role_player_in_same_contract_is_rejected(self):
         values = documents()

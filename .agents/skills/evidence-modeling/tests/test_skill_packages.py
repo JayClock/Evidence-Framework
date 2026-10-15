@@ -126,10 +126,11 @@ class SkillPackageTests(unittest.TestCase):
             cases.extend(owned_cases)
         self.assertTrue(
             {
-                "fulfillment", "unclosed-responsibility-blocks-modeling", "requirements",
+                "fulfillment", "progressive-contract-with-open-sibling-obligation", "requirements",
                 "recursive-responsibility-closure", "grouped-not-global-closure",
                 "human-terminal-not-global-completion", "closure-invalidated-by-new-branch",
-                "closed-responsibility-admits-modeling",
+                "complete-contract-scope-with-pending-independent-contract",
+                "responsibility-unknown-blocks-evidence-not-all-progress",
                 "language-correction", "language-ambiguity",
                 "cash-document-agreement-reconstruction", "key-value-lineage", "document-walkthrough",
                 "variation-and-support-boundary", "domain-without-contract",

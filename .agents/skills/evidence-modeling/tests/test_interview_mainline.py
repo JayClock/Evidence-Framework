@@ -52,7 +52,7 @@ class InterviewMainlineTests(unittest.TestCase):
         for phrase in ("从责任定位角色", "寻找实际主体", "核对跨上下文同一性",
                        "区分代表与责任主体", "形成有依据的对应关系", "同名不能证明同一",
                        "不等 API 设计再补", "不以合同或单据推演为前提",
-                       "影响责任闭合时，受影响合同或本轮确认范围不能进入正式建模"):
+                       "责任角色未知暂不写凭证"):
             self.assertIn(phrase, method)
         self.assertIn("核对主体、角色、同一性及代表依据的对应关系", method)
 
@@ -95,7 +95,8 @@ class InterviewMainlineTests(unittest.TestCase):
                     self.assertNotIn(phrase, text)
         scenarios = (SKILLS / "evidence-fm/references/scenario-validation.md").read_text()
         self.assertIn("不需要 model.json、Python 或 validation 文件", scenarios)
-        self.assertIn("用户另行授权模型编辑后", scenarios)
+        self.assertIn("已有模型编辑授权", scenarios)
+        self.assertIn("即可渐进映射可执行场景", scenarios)
 
 
 if __name__ == "__main__":

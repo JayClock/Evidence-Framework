@@ -508,15 +508,9 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         artifacts = formal_outputs(output)
         add(
             expectations,
-            "Blocked scope produces no formal FM artifacts.",
+            "Explanation-only permission produces no formal FM artifacts.",
             not artifacts,
             str(artifacts),
-        )
-        add(
-            expectations,
-            "Gap explanation identifies missing human responsibility-closure admission.",
-            bool(re.search(r"追责结束|全局.*确认", docs)),
-            docs[:800],
         )
         patterns = (
             (r"合同|签约", r"角色|责任|权责", r"确认|凭证|证明", r"时限|期限|interval", r"违约|异常|补偿")
@@ -540,7 +534,7 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
         return save_grade(item, workspace, configuration, expectations, model_dir)
 
     model = load_model(model_dir)
-    errors = validate_model(model)
+    errors = validate_model(model, complete=True)
     add(
         expectations,
         "FM Schema v4 validation passes.",

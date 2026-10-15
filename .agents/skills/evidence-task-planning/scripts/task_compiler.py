@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
+import sys
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -134,7 +136,10 @@ def _refs(value: Any, location: str = "") -> Iterator[tuple[str, str]]:
             yield from _refs(child, f"{location}[{i}]")
 
 
-def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
+def inventory(
+    fm_root: Path, api_path: Path | None = None, *,
+    allowed_ids: set[str] | None = None, entry_refs: list[str] | None = None,
+) -> dict[str, Any]:
     root = fm_root.resolve()
     if not root.is_dir():
         raise ValueError("FM directory not found")
@@ -173,6 +178,10 @@ def inventory(fm_root: Path, api_path: Path | None = None) -> dict[str, Any]:
         if not path.resolve().is_relative_to(root):
             raise ValueError(f"source path escapes FM directory: {relative}")
         data = load(path)
+        if allowed_ids is not None and data.get("id") not in allowed_ids:
+            continue
+        if entry_refs is not None and data.get("type") == "fm_model":
+            data = dict(data, entryContextRefs=entry_refs)
         if data.get("type") not in FM_TYPES:
             raise ValueError(
                 f"unsupported FM document type: {relative}: {data.get('type')}"
@@ -443,22 +452,55 @@ def compile_tasks(inv: dict[str, Any], mapping: dict[str, Any]) -> dict[str, Any
     }
 
 
+def checked_inventory(fm_root: Path, api_path: Path | None, report_path: Path, fm_skill: Path) -> dict[str, Any]:
+    """Compile only the explicitly checked responsibility scope; never rerun FM."""
+    scripts = fm_skill.resolve() / "scripts"
+    if not (scripts / "fm_scope.py").is_file():
+        raise ValueError("an independent FM Skill with scope checks is required")
+    sys.path.insert(0, str(scripts))
+    checker = importlib.import_module("check_fm")
+    model_tools = importlib.import_module("fm_model")
+    scopes = importlib.import_module("fm_scope")
+    simulation = importlib.import_module("fm_simulation")
+    report = load(report_path)
+    before = checker.model_digest(fm_root)
+    if before != report.get("modelDigest"):
+        raise ValueError("FM check is stale; return to FM")
+    selected = scopes.ready_scope(model_tools.load_model(fm_root), report)
+    suite = scopes.scope_suite(selected, simulation.load_validation_suite(fm_root))
+    collections = [selected.entities, selected.relationships, selected.rules, selected.business_patterns, suite.instances, suite.scenarios]
+    allowed = {item["id"] for collection in collections for item in collection}
+    allowed.add(selected.manifest["id"])
+    inv = inventory(fm_root, api_path, allowed_ids=allowed, entry_refs=report["scopeRefs"])
+    if inv["diagnostics"]:
+        raise ValueError("API does not match the checked FM scope: " + "; ".join(inv["diagnostics"]))
+    if before != checker.model_digest(fm_root):
+        raise ValueError("FM changed during planning inventory")
+    inv["fmCheckSummary"] = report
+    return inv
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("inventory", "compile"))
     parser.add_argument("--fm", required=True, type=Path)
     parser.add_argument("--api", type=Path)
     parser.add_argument("--mapping", type=Path)
+    parser.add_argument("--fm-check", type=Path, help="Successful explicit-scope FM report; required for compile")
+    parser.add_argument("--fm-skill", type=Path, help="Independent FM package path")
     parser.add_argument("--require-complete", action="store_true")
     args = parser.parse_args()
     try:
-        inv = inventory(args.fm, args.api)
+        if args.command == "compile" and (args.fm_check is None or args.fm_skill is None):
+            raise ValueError("compile requires --fm-check and --fm-skill; inventory alone does not establish readiness")
+        inv = checked_inventory(args.fm, args.api, args.fm_check, args.fm_skill) if args.fm_check and args.fm_skill else inventory(args.fm, args.api)
         result = inv
         if args.command == "compile":
             if args.mapping is None:
                 raise ValueError("compile requires --mapping")
             mapping_doc = load(args.mapping)
             result = compile_tasks(inv, mapping_doc.get("slicing", mapping_doc))
+            result["fmCheckSummary"] = inv["fmCheckSummary"]
         print(
             json.dumps(
                 result, ensure_ascii=False, sort_keys=True, indent=2, default=str

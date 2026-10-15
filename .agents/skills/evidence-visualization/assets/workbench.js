@@ -370,9 +370,18 @@ function overview() {
     table(
       ['检查', '结果'],
       [
-        ['FM 静态检查', validation.fm === true ? '通过' : '未执行'],
         [
-          '场景模拟',
+          '当前 FM 表达一致性',
+          verdict(validation.consistent, '通过', '未通过', '未执行'),
+        ],
+        [
+          '指定范围完整性',
+          verdict(validation.complete, '完整', '不完整', '未检查'),
+        ],
+        ['完整性检查范围', (validation.scopeRefs || []).join('、') || '未指定'],
+        ['图示范围', '当前整个 FM，含未完成内容'],
+        [
+          '检查范围内的适用场景模拟',
           verdict(validation.simulation, '通过', '未通过', '未执行 / 不适用'),
         ],
         ['API 静态设计', verdict(validation.api, '完整', '不完整', '不适用')],
@@ -389,6 +398,14 @@ function overview() {
       'muted',
     ),
   );
+  for (const [title, messages] of [
+    ['完整性缺口', validation.gaps],
+    ['模拟器未覆盖的行为', validation.simulationLimitations],
+  ]) {
+    if (!messages?.length) continue;
+    checks.append(el('h3', title));
+    for (const message of messages) checks.append(el('p', message, 'muted'));
+  }
   if (DATA.unresolved.length) list(DATA.unresolved, '', checks);
 }
 function bindingFact(binding) {

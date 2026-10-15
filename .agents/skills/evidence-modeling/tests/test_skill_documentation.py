@@ -78,7 +78,7 @@ class SkillDocumentationTests(unittest.TestCase):
         for text in (fm_entry, handoff_text, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
-    def test_interview_consumes_model_language_without_generating_json(self):
+    def test_interview_uses_model_language_and_separately_checks_edit_authority(self):
         for name in ("evidence-discovery", "evidence-fm"):
             with self.subTest(skill=name):
                 entry = (ROOT / name / "SKILL.md").read_text()
@@ -92,13 +92,13 @@ class SkillDocumentationTests(unittest.TestCase):
             "Entity 及其属性即统一语言", "label", "notes", "meaning", "Entity ID",
             "属性名", "未澄清不任选其一覆盖", "已建模概念的更正属于 FM 修改",
             "仅有访谈授权时不写模型", "不为保存术语创建占位 Entity",
-            "不宣称原子事务", "同一次有效 FM 结果", "结构通过不证明定义正确",
+            "不宣称原子事务", "同一次有效范围完整性结果", "结构通过不证明定义正确",
         ):
             self.assertIn(requirement, language)
         interview = (ROOT / "evidence-discovery/references/interview.md").read_text()
         for requirement in (
             "每轮一个业务焦点，主动寻找并同轮提出全部可同时澄清的独立必要问题",
-            "实际文件", "停止后仅吸收补充资料", "不把访谈授权当成模型编辑授权",
+            "实际文件", "停止后仅吸收补充资料", "不把单独访谈授权当成编辑授权",
             "只聊不落盘或仅保存资料时以对话承接",
         ):
             self.assertIn(requirement, interview)

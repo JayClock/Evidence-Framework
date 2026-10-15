@@ -58,7 +58,7 @@ class ScopeEvalTests(unittest.TestCase):
             )
             self.assertEqual(result["total"], result["passed"], result["expectations"])
 
-    def test_precontract_structure_remains_valid_independently_of_edit_admission(self) -> None:
+    def test_precontract_structure_is_consistent_before_scope_completion(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = write_model(
                 Path(directory), precontract_documents(), "context.sales-inquiry"
@@ -75,7 +75,7 @@ class ScopeEvalTests(unittest.TestCase):
         output.mkdir(parents=True)
         explanation = (
             "询价报价的截止依据未提供；合同双方角色与责任、完成确认凭证、履约期限和违约异常均缺依据。"
-            "缺少合同级或相应分支的人类追责结束确认，未生成模型、规则或场景，未执行校验与编译。"
+            "按本轮只说明、不生成的权限，未生成模型、规则或场景，未执行校验与编译。"
         )
         (output / "response.md").write_text(explanation, encoding="utf-8")
         return output
@@ -98,7 +98,7 @@ class ScopeEvalTests(unittest.TestCase):
                 (output / "discovery/open-questions.md").write_text("合同责任确认期限违约")
                 result = grade(self.item(eval_id), workspace, "with_skill")
                 rejection = next(item for item in result["expectations"]
-                                 if item["text"] == "Blocked scope produces no formal FM artifacts.")
+                                 if item["text"] == "Explanation-only permission produces no formal FM artifacts.")
                 self.assertFalse(rejection["passed"])
 
     def test_blocked_cases_reject_partial_rules_scenarios_and_compiled_output(self) -> None:
@@ -117,7 +117,7 @@ class ScopeEvalTests(unittest.TestCase):
                 target.write_text(json.dumps(content))
                 result = grade(self.item(13), workspace, "with_skill")
                 rejection = next(item for item in result["expectations"]
-                                 if item["text"] == "Blocked scope produces no formal FM artifacts.")
+                                 if item["text"] == "Explanation-only permission produces no formal FM artifacts.")
                 self.assertFalse(rejection["passed"])
 
     def test_blocked_cases_require_an_explanation_not_only_empty_outputs(self) -> None:
