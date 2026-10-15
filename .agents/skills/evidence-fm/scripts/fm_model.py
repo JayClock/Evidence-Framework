@@ -345,6 +345,7 @@ def validate_model(model: LoadedModel, *, complete: bool = False) -> list[str]:
     validate_manifest(model.manifest, entities, errors)
     validate_entities(model.entities, entities, rules, errors, complete=complete)
     validate_relationships(model.relationships, entities, rules, errors)
+    validate_request_contract_references(entities, model.relationships, errors)
     validate_fulfillments(
         fulfillments, entities, model.relationships, rules, errors, complete=complete
     )
@@ -728,22 +729,43 @@ def fulfillment_members(
     )
 
 
-def fulfillment_contract(
-    fulfillment: dict[str, Any], entities: dict[str, dict[str, Any]]
+def owning_contract(
+    item: dict[str, Any], entities: dict[str, dict[str, Any]]
 ) -> dict[str, Any] | None:
-    """Resolve the single contract rooted in the owning Contract Context."""
-    parent = entities.get(str(fulfillment.get("contextRef")))
-    contracts = (
-        [
-            entities[ref]
-            for ref in parent.get("rootRefs", [])
-            if ref in entities
-            and entity_signature(entities[ref]) == ("evidence", "contract")
-        ]
-        if isinstance(parent, dict)
-        else []
-    )
+    """Resolve the local root Contract for a request or Fulfillment."""
+    parent = entities.get(str(item.get("contextRef")))
+    if parent is None or entity_signature(parent) != ("context", "contract"):
+        return None
+    contracts = [
+        entities[ref]
+        for ref in parent.get("rootRefs", [])
+        if ref in entities
+        and entity_signature(entities[ref]) == ("evidence", "contract")
+        and entities[ref].get("contextRef") == parent["id"]
+    ]
     return contracts[0] if len(contracts) == 1 else None
+
+
+def validate_request_contract_references(
+    entities: dict[str, dict[str, Any]],
+    relationships: list[dict[str, Any]],
+    errors: list[str],
+) -> None:
+    """Contract authority is mandatory even before a request is wrapped."""
+    references = {
+        (relation.get("sourceRef"), relation.get("targetRef"))
+        for relation in relationships
+        if relation.get("kind") == "references"
+    }
+    for request in entities.values():
+        if entity_signature(request) != ("evidence", "fulfillment_request"):
+            continue
+        contract = owning_contract(request, entities)
+        if contract is None or (request["id"], contract["id"]) not in references:
+            errors.append(
+                f"{request['id']}: Fulfillment Request must directly reference the root Contract "
+                "of its owning Contract Context through a Request -> Contract references Relationship"
+            )
 
 
 def validate_fulfillment_ref(
@@ -781,7 +803,7 @@ def validate_fulfillments(
 ) -> None:
     associated_confirmation_refs: set[str] = set()
     for fulfillment_id, fulfillment in fulfillments.items():
-        contract = fulfillment_contract(fulfillment, entities)
+        contract = owning_contract(fulfillment, entities)
         if contract is None:
             errors.append(
                 f"{fulfillment_id}: parent Contract Context must have exactly one root Contract"

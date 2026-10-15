@@ -95,7 +95,7 @@ def check_model(root: Path, *, scope_refs: list[str] | None = None) -> dict[str,
     consistent = not static_errors and not input_changed
     complete = (not gaps and consistent) if scope_refs is not None else None
     return {
-        "checkVersion": 4,
+        "checkVersion": 5,
         "valid": not errors and complete is not False,
         "consistent": consistent,
         "complete": complete,

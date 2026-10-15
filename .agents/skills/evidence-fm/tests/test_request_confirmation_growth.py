@@ -48,14 +48,18 @@ class RequestConfirmationGrowthTests(unittest.TestCase):
                 }]
                 self.assertTrue(any("fulfillment.delivery" in e for e in self.errors(values)))
 
-    def test_unwrapped_endpoints_can_be_saved_without_inventing_a_wrapper(self):
-        values = self.unwrap_delivery()
+    def test_contract_bound_request_can_be_saved_before_confirmation_is_known(self):
+        values = [v for v in self.unwrap_delivery() if v["id"] != "confirmation.delivery"
+                  and v.get("targetRef") != "confirmation.delivery"]
+        self.assertIn("relation.delivery-contract", {v["id"] for v in values})
+        self.assertNotIn("fulfillment.delivery", {v["id"] for v in values})
         self.assertEqual([], self.errors(values))
-        for missing in ("request.delivery", "confirmation.delivery"):
-            with self.subTest(missing=missing):
-                # Remove consumers of the missing endpoint as well: unknown is not a dangling ref.
-                partial = [v for v in values if v["id"] != missing and v.get("targetRef") != missing]
-                self.assertEqual([], self.errors(partial))
+
+    def test_confirmation_can_be_saved_without_inventing_a_request(self):
+        values = [v for v in self.unwrap_delivery() if v["id"] != "request.delivery"
+                  and v.get("sourceRef") != "request.delivery"
+                  and v.get("targetRef") != "request.delivery"]
+        self.assertEqual([], self.errors(values))
 
     def test_unwrapped_sibling_endpoints_block_the_whole_contract_scope(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -110,15 +114,15 @@ class RequestConfirmationGrowthTests(unittest.TestCase):
             self.assertTrue(validate_model(load_model(root)))
             self.assertEqual(before, manifest.read_bytes())
 
-    def test_old_check_cannot_claim_readiness_under_the_new_contract(self):
+    def test_scope_report_requires_current_contract_binding_check(self):
         root = Path(__file__).resolve().parents[1] / "examples/domain"
         model = load_model(root)
         scopes = [item["id"] for item in model.entities
                   if item.get("category") == "context" and not item.get("parentContextRef")]
         report = check_fm.check_model(root, scope_refs=scopes)
-        self.assertEqual(4, report["checkVersion"])
+        self.assertEqual(5, report["checkVersion"])
         self.assertTrue(report["complete"], report)
-        for previous in (2, 3):
+        for previous in (2, 3, 4):
             with self.subTest(checkVersion=previous), self.assertRaises(ValueError):
                 ready_scope(model, dict(report, checkVersion=previous))
 

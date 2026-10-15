@@ -96,6 +96,14 @@ def shared_confirmation_documents() -> list[dict]:
                 ),
                 {
                     "type": "relationship",
+                    "id": f"relation.{period}-request-contract",
+                    "kind": "references",
+                    "sourceRef": request,
+                    "targetRef": "contract.performance",
+                    "label": label + "请求依据绩效协议",
+                },
+                {
+                    "type": "relationship",
                     "id": f"relation.{period}-request-to-income-confirmation",
                     "kind": "references",
                     "sourceRef": shared_confirmation,

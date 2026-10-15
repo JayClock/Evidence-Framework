@@ -83,7 +83,7 @@ class FMHandoffTests(unittest.TestCase):
         self.assertIn("SOURCE_CHANGED", {item.code for item in diagnostics})
 
     def test_failed_changed_or_unbound_result_is_rejected(self):
-        for field, value in (("checkVersion", 2), ("checkVersion", 3), ("valid", False), ("inputChanged", True), ("modelDigest", None)):
+        for field, value in (("checkVersion", 2), ("checkVersion", 3), ("checkVersion", 4), ("valid", False), ("inputChanged", True), ("modelDigest", None)):
             with self.subTest(field=field):
                 report = {**self.report, field: value}
                 index, diagnostics = fm_adapter.load_fm(FM_ROOT, report)

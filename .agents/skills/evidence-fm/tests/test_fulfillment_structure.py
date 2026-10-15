@@ -34,6 +34,8 @@ def documents():
                    contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef="role.customer",
                    attributes=[attribute("started_at", "timestamp", "开始时间", keyData=True),
                                attribute("expired_at", "timestamp", "截止时间", keyData=True)]),
+            {"type": "relationship", "id": f"relation.{name}-contract", "kind": "references",
+             "sourceRef": f"request.{name}", "targetRef": "contract.agreement", "label": "请求依据服务合同"},
             entity(f"confirmation.{name}", "evidence", "fulfillment_confirmation", f"{name}结果",
                    contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef="role.provider",
                    attributes=[attribute("confirmed_at", "timestamp", "确认时间", keyData=True)]),

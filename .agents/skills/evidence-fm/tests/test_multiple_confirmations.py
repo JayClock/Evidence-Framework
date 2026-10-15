@@ -33,6 +33,8 @@ def documents():
                attributes=[attribute("started_at", "timestamp", "开始时间（Start Time）", keyData=True),
                            attribute("expired_at", "timestamp", "截止时间（Deadline）", keyData=True),
                            attribute("requested_units", "int", "请求数量（Requested Quantity）", keyData=True)]),
+        {"type": "relationship", "id": "relation.delivery-contract", "kind": "references",
+         "sourceRef": "request.delivery", "targetRef": "contract.delivery", "label": "交付请求依据交付合同"},
     ]
     for name, label, responsible, extra in (
         ("delivery", "交付确认（Delivery Confirmation）", "role.seller",

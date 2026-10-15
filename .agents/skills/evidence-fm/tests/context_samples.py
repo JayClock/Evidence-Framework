@@ -220,6 +220,14 @@ def performance_fulfillment(
                 ),
             ],
         ),
+        {
+            "type": "relationship",
+            "id": f"relation.{name}-contract",
+            "kind": "references",
+            "sourceRef": request,
+            "targetRef": "contract.performance",
+            "label": "请求依据绩效协议",
+        },
         entity(
             confirmation,
             "evidence",

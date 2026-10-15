@@ -31,6 +31,6 @@ FM 的收稿回执（Manuscript Receipt）Entity 当前被解释为验收通过�
 
 ## 4. 未包裹交互从原凭证恢复
 
-合成服务约定中，委托方（Commissioning Party）已提出整理要求（Organization Request），确认方式尚未明确。继续时定位 `服务约定（Service Agreement）→ 整理要求（Organization Request）〔履约请求〕`，说明责任人为委托方；没有履约对象或 ID 不阻碍澄清另一端。只有一端时不先建空履约，也不把要求引用的目录等支撑凭证当作结果。
+合成服务约定中，委托方（Commissioning Party）已提出整理要求（Organization Request），确认方式尚未明确。继续时定位 `服务约定（Service Agreement）→ 整理要求（Organization Request）〔履约请求〕`，说明责任人为委托方；整理要求（Organization Request）直接关联服务约定（Service Agreement），该合同依据不会因尚未配对而缺失。没有履约对象或 ID 不阻碍澄清另一端。只有一端时不先建空履约，也不把要求引用的目录等支撑凭证当作结果。
 
 目录来源先得到说明，结果问题仍暂缓时，承接目录依据并保留返回位置。明确恢复结果问题后，只继续确认服务方怎样形成相应结果；配对及责任明确后，才在实际授权内交 FM 包裹。原问答和已有交接足以接续，不另建候选履约实体、责任模型或问题台账。

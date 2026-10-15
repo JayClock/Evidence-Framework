@@ -34,13 +34,13 @@ class RelationshipConvergenceTests(unittest.TestCase):
         model = self.model()
         confirmation = model.entities_by_id["confirmation.content-payment"]
         confirmation.pop("fulfillmentRef", None)
-        model.relationships[:] = [{"type": "relationship", "id": "relation.result",
+        model.relationships[:] = [r for r in model.relationships if r.get("sourceRef") != confirmation["id"]] + [{"type": "relationship", "id": "relation.result",
             "kind": "references", "sourceRef": confirmation["id"],
             "targetRef": "request.content-payment", "label": "结果对应请求"}]
         self.assertEqual([], validate_model(model))
         _, results, _ = fulfillment_members("fulfillment.content-payment", model.entities_by_id, model.relationships)
         self.assertEqual([confirmation["id"]], [r["id"] for r in results])
-        relation = model.relationships[0]
+        relation = next(r for r in model.relationships if r["id"] == "relation.result")
         relation["sourceRef"], relation["targetRef"] = relation["targetRef"], relation["sourceRef"]
         _, results, _ = fulfillment_members("fulfillment.content-payment", model.entities_by_id, model.relationships)
         self.assertEqual([], results)
@@ -52,7 +52,8 @@ class RelationshipConvergenceTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertNotIn("precedes", before)
         self.assertIn({"sourceRef": "instance.payment-request", "targetRef": "instance.payment-confirmation"}, before["dependencies"])
-        model.relationships.clear()
+        model.relationships[:] = [r for r in model.relationships
+                                  if model.entities_by_id.get(str(r.get("targetRef")), {}).get("kind") == "contract"]
         after, errors = build_timeline(model, suite)
         self.assertEqual([], errors)
         self.assertEqual(before, after)
