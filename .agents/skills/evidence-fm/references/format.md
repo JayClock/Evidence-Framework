@@ -1,322 +1,76 @@
-# FM Schema v4 文件格式
+# FM 文件组织与结构契约入口
 
-有业务依据及编辑授权即可维护同一份 FM；凭证与所属上下文、责任角色共同落地，合同带双方责任角色，实际主体未知不虚构 Participant。未知属性类型、必需性、时间、关系或规则暂不写，不填占位或默认值。以下完整结构用于范围结束检查，不作为首次保存门槛；已表达字段及引用仍须一致，具体权限与范围见 [责任方法](responsibility-closure.md)。
+本页只维护文件组织、读写约定和契约导航，不维护字段表、枚举或必填项副本。创建或修改 JSON 时，直接读取下列对应 Schema；跨对象含义看 [语义](semantics.md)，保存权限与范围结束看 [责任方法](responsibility-closure.md)。
 
-## 1. 目录与事实源
+## 结构契约
+
+### 模型类型源
+
+| 要写的对象                         | 直接读取                                                   |
+| ---------------------------------- | ---------------------------------------------------------- |
+| 模型入口                           | [Model Schema](../schemas/model.schema.json)               |
+| 业务对象、角色、凭证、上下文与履约 | [Entity Schema](../schemas/entity.schema.json)             |
+| 引用与角色扮演                     | [Relationship Schema](../schemas/relationship.schema.json) |
+| 可执行业务规则                     | [Rule Schema](../schemas/rule.schema.json)                 |
+
+Schema 负责单对象可表达结构；引用存在、上下文归属、关系端点和规则依赖还须执行语义检查。通过 Schema 不表示完整或获得业务批准，不能用 Schema 的可选项解释为业务上不需要。
+
+### 验证输入
+
+| 要写的输入 | 直接读取                                                             |
+| ---------- | -------------------------------------------------------------------- |
+| 凭证实例   | [Evidence Instance Schema](../schemas/evidence-instance.schema.json) |
+| 场景       | [Scenario Schema](../schemas/scenario.schema.json)                   |
+
+实例与场景的使用方法见 [追溯与模拟](traceability-and-simulation.md)。它们不是模型类型源，也不提供现实业务事实。
+
+### 派生输出
+
+| 要消费的输出 | 直接读取                                                             |
+| ------------ | -------------------------------------------------------------------- |
+| 编译模型     | [Compiled Model Schema](../schemas/compiled-model.schema.json)       |
+| 属性追溯     | [Traceability Schema](../schemas/traceability.schema.json)           |
+| 模拟报告     | [Simulation Report Schema](../schemas/simulation-report.schema.json) |
+| 实例时间线   | [Timeline Schema](../schemas/timeline.schema.json)                   |
+
+派生输出不能手改后回写类型源；生成和保存权限按 [校验纪律](validation.md) 执行。
+
+## 文件组织
 
 ```text
 .evidence/fm/
 ├── model.json
 ├── README.md
-├── 00-overview.md
-├── participants/                 # 跨上下文 Party
-│   └── user.json
-├── contexts/                     # 按业务上下文组织，不按对象类型分根目录
-│   ├── subscription/
-│   │   ├── context.json
-│   │   ├── contract.json
-│   │   ├── evidence/              # 合同形成的补充凭证或同合同多履约共用的 Confirmation
-│   │   ├── roles/
-│   │   ├── relationships/        # 合同内关系
-│   │   └── fulfillments/
-│   │       └── payment/
-│   │           ├── fulfillment.json
-│   │           ├── request.json
-│   │           ├── confirmation.json  # 有实际确认类型时才存在
-│   │           ├── roles/
-│   │           ├── relationships/
-│   │           └── rules/
-│   └── content/
+├── participants/          # 跨上下文的稳定主体
+├── contexts/
+│   └── <业务上下文>/
 │       ├── context.json
-│       └── things/
-├── relationships/                # 跨独立上下文、主体扮演关系，仅定义一次
-├── validation/                   # 可选测试输入
+│       ├── roles/
+│       ├── relationships/
+│       ├── things/        # 有实际领域对象时使用
+│       ├── evidence/      # 有共享或辅助凭证时使用
+│       ├── rules/
+│       └── fulfillments/  # 有实际合同履约时使用
+│           └── <履约项>/
+├── relationships/         # 跨独立上下文关系
+├── validation/
 │   ├── instances/
 │   └── scenarios/
 └── generated/
-    ├── model.json
-    ├── traceability.json
-    └── simulation.json
 ```
 
-`model.json` 与分片 JSON 是模型类型事实源；Entity 及其属性按[领域语言方法](domain-language.md)直接承担统一语言，名称与业务含义不作为派生报告重建后回写，也不另设定义索引。`validation/` 是测试输入，Markdown 只作说明，`generated/` 是派生产物。每个 JSON 文件只包含一个顶层对象，UTF-8 编码，不带注释。FM 类型加载只消费正式类型源；获授权检查记录位于 FM 根之外的 `.evidence/checks/fm/`。
+目录只服务阅读，不定义业务身份、归属或发现顺序；没有实际对象就不建空目录或假对象。上下文内部关系放在最近共同上下文，跨独立上下文关系放在根目录，每个对象只定义一次。项目模型使用上下文内的短文件名；有多个同类对象时用业务名区分，不能覆盖。说明文件记录范围与来源，不保存第二份模型定义。
 
-同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `category: fulfillment` 的 Entity，不定义 kind，存放于 `fulfillments/<业务名>/fulfillment.json`。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
+加载规则直接看 [load_model](../scripts/fm_model.py)：入口单独加载，分片按对象类型分发，非类型树与隐藏路径不作为类型源。严格 JSON 的读取限制看 [load_single_json](../scripts/fm_model.py)。不要用文件名、目录位置或说明文字绕过加载与引用检查。
 
-加载器递归读取模型根下的 `.json`，按对象的 `type` 分发到 Entity、Relationship、Rule Schema，不再按目录或文件名决定类型。根 `model.json` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 JSON 文件不参与类型加载；根下或 validation 目录内的 `.yaml`／`.yml` 文件报错，避免混合格式、漏读模型。文件必须是严格 JSON：拒绝注释、尾随逗号、多个顶层值、重复键和非标准常量（`NaN`／`Infinity`）；未知对象类型、重复 ID、坏 JSON 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
+验证输入的文件名由 [expected_filename](../scripts/fm_model.py) 计算，分别放在实例与场景目录；类型源的文件名不承担稳定身份。重组目录须保留对象 ID、业务内容和场景预期，并核对编译结果。
 
-目录是阅读组织，不是业务事实：上下文归属由 `contextRef`／`parentContextRef` 决定，履约归属由 `fulfillmentRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
+## 编辑约定
 
-## 2. 稳定 ID 与文件名
+- JSON 使用 UTF-8、两空格缩进、保留中文和文件末尾单个换行，一个文件一个顶层对象。键顺序不承载业务语义，不维护固定字段排序模板。
+- 字段拼写、ID 和属性名的合法形式直接遵循对应 Schema；协议字段、业务属性、CEL 变量和外部原始字段不能混为一类做字符串替换。
+- 名称与定义直接消费 [领域语言](domain-language.md)，不作为派生报告重建或回写，不另设术语索引。改显示名不改稳定身份；属性更名须核对规则、实例及下游引用。
+- 同一业务概念复用既有 ID；替换概念时按授权一并处理旧引用，不以目录搬迁制造新身份。保留历史业务凭证和已引用运行证据。
+- 有依据与授权即可渐进保存；未知保持缺失，不填占位值。已表达引用和类型必须一致，范围交付时再核对完整性；检查入口与结果含义统一看 [校验](validation.md)。
 
-ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显示名称放在 `label`，使用具体业务称谓的中文（英文）形式而非泛化的 Request、Confirmation 等类型名；对象与属性沿用同一领域语言方法。英文业务名称复用已有规范映射，缺英文且含义明确时直接翻译，不等待人类提供英文，不从 ID 反推含义；显示翻译不自动迁移已有业务源。类型和内部 ID 不规定对外接口名称。
-
-源 JSON 使用上下文内的短文件名：`context.json`、`contract.json`、`request.json`、`confirmation.json`；角色、主体、标的、规则和关系使用业务名或 ID 后缀。同一目录有多个同类凭证时使用不同业务文件名，不覆盖；不同目录可以重用短文件名。源文件名不再是硬校验，稳定身份只取对象 `id`。
-
-```text
-role.subscriber                    → contexts/subscription/roles/subscriber.json
-fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/fulfillment.json
-request.subscription-payment      → contexts/subscription/fulfillments/payment/request.json
-```
-
-`validation/instances/`、`validation/scenarios/` 仍保留单层目录和原有文件名约定（完整 ID 的 `.` 替换为 `--`，后缀 `.json`），由场景加载器独立处理。
-
-改变标签不改变 ID；替换业务概念时创建新 ID，并删除旧对象及引用。
-
-### 业务属性命名与 JSON 排版（本地统一约定）
-
-区分协议字段和业务属性，避免把一次属性改名变成另一套 FM 格式：
-
-- 协议字段保持 Schema 的拼写，例如 `contextRef`、`valueType`、`keyData`、`derivedByRuleRef`、`asOf`；不改为 snake_case。
-- 所有 Entity category 的 `attributes[].name` 统一小写 ASCII `snake_case`：以字母开头，后续为小写字母、数字或分隔单词的单个下划线；不允许首尾下划线、连续下划线或大写字母。示例：`profile_id`、`requested_minor_units`、`address_line_2`。
-- Rule `target.attribute`、CEL 点访问和静态索引、Instance `values` 的直接键、lineage 的 `#属性名` 与定义逐字一致；禁止只改定义、不改引用。CEL binding 别名、内置函数（如 `startsWith`）、事件类型和自由 map 内的外部原始键不属于 Entity 属性名，不做全局字符串替换。
-- 原始材料／外部 API 的旧字段名可在所属 Entity 或属性的 `notes` 记录映射；遇到改名冲突先确认概念，不合并不同属性。加载器、校验器和编译器均不自动改名，也不写回源文件。
-- JSON 使用两空格缩进（`ensure_ascii=false` 保留中文），UTF-8 编码，文件末尾单个换行，不带注释、尾随逗号或重复键；一个文件一个顶层对象。字符串中的时间戳保持 RFC 3339 字面量，JSON 没有原生日期类型，不写 YAML 风格的无引号时间。
-- 属性定义按 `name → label → valueType → required → keyData → meaning → derivedByRuleRef → notes` 排列。按 Schema 省略不适用的可选键，不填 null 或编造派生规则来凑齐模板。属性条目的业务顺序保持稳定，不要求字母排序。
-- Rule 按 `type → id → kind → label → description → contextRef → fulfillmentRef → bindings → expression → resultType → target → notes` 排列；`description` 必须解释规则所用事实、判断或派生方式及结果含义，涉及模型统一术语时使用完整双语规范名称，再独立附具体 Entity ID，例如 `付款请求（Payment Request）[request.payment]`，不把 ID 放进英文名称位置；不能用泛型英文替代具体对象，也不能只复述 label 或 CEL。按 Schema 和真实归属省略不适用的 `fulfillmentRef`、`target`、`notes`。
-
-```json
-{
-  "attributes": [
-    {
-      "name": "requested_minor_units",
-      "label": "请求支付金额（Requested Payment Amount）",
-      "valueType": "int",
-      "required": true,
-      "keyData": true,
-      "meaning": "请求支付的最小货币单位整数金额",
-      "derivedByRuleRef": "rule.payment-request-amount"
-    }
-  ]
-}
-```
-
-命名、类型和引用一致性是硬校验；键顺序与缩进是 Agent 生成／维护规范，JSON 对象键不承载顺序语义，不作为模型业务有效性的拒绝条件。只有有对应业务依据时才使用上述金额和派生示例。
-
-## 3. Manifest
-
-```json
-{
-  "type": "fm_model",
-  "schemaVersion": "4.0",
-  "id": "subscription-service",
-  "name": "订阅服务履约模型（Subscription Service Fulfillment Model）",
-  "version": "3.0.0",
-  "ruleLanguage": "CEL",
-  "entryContextRefs": ["context.subscription"]
-}
-```
-
-`entryContextRefs` 可以直接引用 Domain 或 Pre-contract Context，不要求包含 Contract。示例见 `domain-modeling.md`。
-
-模型文件不保存审核或生命周期状态。变更由项目 PDCA 触发，确认依据核对本次提供的人类明确决定及其覆盖范围；脚本不写入、不推断，机器校验通过也不当作业务确认。
-
-## 4. Entity 种类
-
-| category      | kind                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------- |
-| `evidence`    | `rfp`、`proposal`、`contract`、`fulfillment_request`、`fulfillment_confirmation`、`other_evidence` |
-| `participant` | `party`、`thing`                                                                                   |
-| `role`        | `party`、`domain`、`third_party`、`context`、`evidence`                                            |
-| `context`     | `contract`、`pre_contract`、`domain`                                                               |
-| `fulfillment` | 不定义 kind；`contextRef` 指向所属 Contract Context                                                |
-
-### Evidence 必备时间属性（本地硬约束）
-
-| kind                                     | `attributes[].name` 必须包含 |
-| ---------------------------------------- | ---------------------------- |
-| `rfp`、`proposal`、`fulfillment_request` | `started_at`、`expired_at`   |
-| `contract`                               | `signed_at`                  |
-| `fulfillment_confirmation`               | `confirmed_at`               |
-| `other_evidence`                         | `created_at`                 |
-
-范围完整时，表中每个字段须在对应 Entity 源 JSON 中唯一、显式定义为 `valueType: timestamp`、`required: true`、`keyData: true`，同时填写 label、meaning。不是 Entity 顶层字段，也不是仅在实例或说明中补充；编译器保留定义但不注入缺省字段。Context／Role／Participant 不套用此表。
-
-表中的类型属性、具体实例值和生成规则分开：所有必备时间都允许非派生输入，类型结构不要求实例日期或 `derivedByRuleRef`；有来源的生成规则存在时才定义 CEL。三类时刻凭证不套请求区间或过期时间，各类型的必备时间不能互换。
-
-本表约束类型结构，不生成访谈问题。当前业务判断是否需要追溯时间口径，由 [来源方法](provenance.md)决定；确定的口径冲突不能用自由 timestamp 参数规避。每个实例必须具有确定的 RFC 3339 时间值，非派生必填值在形成时给出，派生值按 [实例执行规则](traceability-and-simulation.md) 在场景结束前产生。null、无期限说明、占位日期或 `openEndedReason` 均不能代替有效时间。正式类型文件不填写虚构的实例日期，合成实例也不证明业务已约定某个固定时长。
-
-### Contract Context 和两个 Role
-
-```json
-{
-  "type": "entity",
-  "id": "context.subscription",
-  "category": "context",
-  "kind": "contract",
-  "label": "订阅合同上下文（Subscription Contract Context）",
-  "rootRefs": ["contract.subscription"]
-}
-```
-
-```json
-{
-  "type": "entity",
-  "id": "contract.subscription",
-  "category": "evidence",
-  "kind": "contract",
-  "label": "订阅服务合同（Subscription Service Contract）",
-  "contextRef": "context.subscription",
-  "roleRefs": ["role.subscriber", "role.service-provider"],
-  "attributes": [
-    {
-      "name": "signed_at",
-      "label": "签约时间（Signing Time）",
-      "valueType": "timestamp",
-      "required": true,
-      "keyData": true,
-      "meaning": "该合同的签约时间"
-    }
-  ]
-}
-```
-
-Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。上例定义 signed_at 的类型含义；它不表达具体签署方式，也不把签约、下单与权益生效合并为同一个事件。
-
-同理，Confirmation 的 confirmed_at 可写 meaning“该凭证的履约确认时间”，Other Evidence 的 created_at 可写 meaning“该凭证的形成时间”；它们均为 required/keyData timestamp，可不填 derivedByRuleRef。确认采信哪一业务事件、补录凭证与原事件的时间关系，只在有业务依据时另作属性／规则映射，不默认等于回调或入库时间，不补造已完成结果。
-
-### Fulfillment
-
-每项 Fulfillment 是合约内部的权责履约结构：
-
-```json
-{
-  "type": "entity",
-  "id": "fulfillment.subscription-payment",
-  "category": "fulfillment",
-  "label": "支付订阅费用（Subscription Fee Payment）",
-  "contextRef": "context.subscription"
-}
-```
-
-Contract Context 表达业务责任边界。Request、Evidence Role、Confirmation 和履约 Rule 的 `contextRef` 指向所属合同上下文，`fulfillmentRef` 指向履约。范围完整时 Request 必须属于一项履约，尚未明确归属可暂不写 `fulfillmentRef`，已写引用不得悬空；共享 Confirmation 保留唯一形成归属，该 Confirmation 通过 `references` 指向各 Request。相关 Contract 从所属 Contract Context 的根 Evidence 确定。Fulfillment 不持有属性、成员索引、责任角色或独立实例。
-
-### Domain Context 与 Thing
-
-```json
-{
-  "type": "entity",
-  "id": "context.content",
-  "category": "context",
-  "kind": "domain",
-  "label": "内容领域上下文（Content Domain Context）",
-  "rootRefs": ["thing.subscription-content"]
-}
-```
-
-```json
-{
-  "type": "entity",
-  "id": "thing.subscription-content",
-  "category": "participant",
-  "kind": "thing",
-  "label": "订阅内容（Subscription Content）",
-  "contextRef": "context.content"
-}
-```
-
-Thing 必须属于 Domain Context，可表示具有领域身份的地点、标的物或其他事物。Party 保持在 Context 外，通过 `plays_role` 进入上下文；Domain 内也可有 Party Role 表达参与身份。Party/Thing 是并列 kind，不存在 `party.thing`。领域属性、关系与 CEL Rule 都是同格式模型的一部分，详见 `domain-modeling.md`。
-
-### Role 可以独立存在
-
-```json
-{
-  "type": "entity",
-  "id": "role.external-service-provider",
-  "category": "role",
-  "kind": "third_party",
-  "label": "外部服务提供方（External Service Provider）",
-  "contextRef": "context.subscription"
-}
-```
-
-不要添加占位 Party 或 `playerRef`。Contract Party Role 保持在 Contract Context，不复制到 Fulfillment。
-
-### 已知 Participant 扮演 Role
-
-```json
-{
-  "type": "relationship",
-  "id": "relation.customer-plays-subscriber",
-  "kind": "plays_role",
-  "sourceRef": "party.customer",
-  "targetRef": "role.subscriber",
-  "label": "客户扮演订阅方（Customer Plays Subscriber）"
-}
-```
-
-只有来源明确同一稳定对象时才建立。
-
-### Evidence Role 是开放证明插槽
-
-```json
-{
-  "type": "entity",
-  "id": "role.qualified-payment-confirmation",
-  "category": "role",
-  "kind": "evidence",
-  "label": "合格付款确认（Qualified Payment Confirmation）",
-  "contextRef": "context.subscription",
-  "fulfillmentRef": "fulfillment.subscription-payment"
-}
-```
-
-具体玩家只出现在独立 `plays_role` Relationship 中。
-
-## 5. Fulfillment、Evidence 与 Rule
-
-`contextRef` 表达真实上下文归属，`fulfillmentRef` 表达履约归属，两者必须指向同一合同责任范围。完整 Request、completion 和 breach Rule 须声明 `fulfillmentRef`；其他履约凭证、证明角色和规则按实际归属声明。同合同内规则可以直接绑定其他履约的凭证，Evidence 可以直接引用另一份 Evidence，不以证明角色中转。跨独立上下文可直接引用具体时刻结果，需要变化点时才使用 Evidence Role。具体 Evidence 的 `responsibleRoleRef` 指向合同绑定的 Party Role；Role 不声明责任字段，不签发实例，其属性是玩家数据契约。
-
-范围完整时 Request 须显式定义 `started_at` 与 `expired_at`，两者都是 required/keyData timestamp。区间不再在 Fulfillment 中重复声明；存在字段不等于期限业务来源已经充分。
-
-每个 Fulfillment 以唯一 bool completion CEL Rule 表达完成条件。`any`、`all`、`count`、`amount` 和具名人工业务确认都使用明确 Evidence bindings 和 CEL；Breach 同样使用 bool CEL Rule。同一个 Confirmation 类型或实例可以在有合同依据时被同一 Contract Context 下多个 Request 关联；每个关联仍按各自请求区间和 completion Rule 独立判断。重复结果用多个 Evidence Instance 表达，不复制 Confirmation 类型。
-
-Thing 不进入 Fulfillment 清单。实际涉及 Thing 的 Request 或其他业务 Evidence 通过 `references` 指向它；业务 Evidence 通过 `references` 引用所需辅助凭证，实例 `basedOn` 指明实际依据，规则核对证明条件。辅助凭证保留形成 Context；合同内辅助凭证可按实际用途声明履约归属，不改变形成责任。
-
-## 6. 合同前协商与渠道来源
-
-RFP／Proposal 必须位于 `pre_contract` Context，不得放入 Contract Context：
-
-```text
-RFP → Proposal → Contract
-```
-
-Contract 可以通过跨 Context 的 `references` 引用已接受的 Proposal，以保留签约来源。合同前协商和合同履约仍是不同边界，但 RFP／Proposal 均须显式定义 `started_at`、`expired_at`，不因尚未签约而省略时间。
-
-## 7. Relationship
-
-只允许 `references`（关联／引用）与 `plays_role`（角色扮演）。不接受其他关系 kind，也不自动转换旧输入。
-
-`references` 按消费方→被引用对象定向：具体凭证→依据凭证、Evidence→Thing（可跨 Context）、Evidence→同 Context 的 Evidence-as-Role（`category: role / kind: evidence`）。Confirmation→Request 表达结果对应请求；Request→历史 Confirmation 表达依据，不将历史结果误作本次完成证明。Contract→Proposal 保留已接受方案来源，其合同前 Context 必须归属该合同。非 Evidence 领域对象及角色可引用同 Context 的 Entity；Evidence 不可引用其他 Role 类型。无需抽象变化点时允许 Evidence 引用其他 Context 的 Confirmation／Other Evidence，但不改变其形成责任，也不将其纳入本地共享确认。`plays_role` 为玩家→Role，合法端点见语义规则。Fulfillment 不得成为关系端点。
-
-引用的证明含义写入 `label/notes`，必需性与采信条件由规则及场景验证；类型关联不是已形成的实例证据。实例 `basedOn` 保存已经存在的具体依据，时间线的 `dependencies` 从它派生，`unresolvedOrder` 使用实例 ID。不按图位置、文件顺序或类型关联猜测实例先后；额外期限由 CEL 表达。属性派生只由 CEL AST 生成 lineage。
-
-关系两端可按已确认业务规则声明基数。`sourceCardinality` 表示针对一个 target 可关联多少个 source；`targetCardinality` 表示针对一个 source 可关联多少个 target。`min` 为非负整数，`max` 为不小于 1 的整数或 `many`：
-
-```json
-{
-  "type": "relationship",
-  "id": "relation.inquiry-to-quotes",
-  "kind": "references",
-  "sourceRef": "proposal.product-quote",
-  "targetRef": "rfp.product-inquiry",
-  "label": "报价引用询价（Quote References Inquiry）",
-  "notes": "一份询价对应一至多份报价。业务基数由两端声明表达。",
-  "sourceCardinality": {
-    "min": 1,
-    "max": "many"
-  },
-  "targetCardinality": {
-    "min": 1,
-    "max": 1
-  }
-}
-```
-
-每层关系分别核对数量；申请与确认一对一，不代表合同与申请也一对一。关系 notes 说明数量适用的实例范围和业务阶段；履约尚未形成结果，不等于已经违反完成结构的一对一。是否允许分次、补发或更正须有独立业务依据，不从基数猜测。省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
-
-## 8. 关键数据、Rule 与编译
-
-金额、数量、业务时间、KPI 或审计结论使用 `keyData: true`。派生属性用 `derivedByRuleRef` 指向唯一 CEL derivation Rule；来源从 CEL AST 自动提取。
-
-编译结果包含按 ID 排序的 `entities`、`relationships` 和 `rules`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json` 与 `timeline.json` 均可删除重建。时间线只包含 Evidence Instance；Context 是泳道，Thing 仅是引用目标。
+结构变化修改 Schema 及相应实现和测试；跨对象规则变化修改语义校验及行为测试。同步受影响的方法引用和可运行样例，不在本页补一套独立字段规范。发现契约、实现与业务依据冲突时停止受影响行动，交回拥有者，不按“哪个文件更新得晚”裁决。

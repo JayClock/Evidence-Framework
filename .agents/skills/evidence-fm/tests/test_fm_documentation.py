@@ -1,6 +1,5 @@
 """Skill-local documentation contracts, not agent behavior evidence."""
 
-import json
 import unittest
 from pathlib import Path
 
@@ -14,10 +13,3 @@ class DocumentationTests(unittest.TestCase):
             self.assertTrue((references / name).is_file(), name)
         for name in ("discovery-workshop.md", "scenario-replay.md"):
             self.assertFalse((references / name).exists(), name)
-
-    def test_compiled_schema_accepts_only_model_type_collections(self):
-        schema = json.loads((SKILL / "schemas/compiled-model.schema.json").read_text())
-        fields = {"schemaVersion", "model", "entities", "relationships", "rules"}
-        self.assertFalse(schema["additionalProperties"])
-        self.assertEqual(fields, set(schema["properties"]))
-        self.assertEqual(fields, set(schema["required"]))

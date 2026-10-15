@@ -12,8 +12,8 @@
 | 同合同引用与跨上下文开放证明怎样区分 | [结构对照](structural-contrasts.md)                      | Context、Fulfillment、Evidence、Role 的归属与引用方向 |
 | 单合同闭合后怎样保留未澄清边界       | [合同级建模](contract-batch.md)                          | Context Role 无玩家边界、必要证明与后续接入           |
 
-JSON 样例与回归共用一份，测试从这里读取，需改输入时复制到临时目录。项目文件组织、键语义与硬校验由 [格式](../references/format.md) 和 [语义](../references/semantics.md) 维护；样例的独立对象文件不是项目目录模板，新增对象仍按业务上下文归位，稳定 ID 不由路径决定。
+JSON 样例与回归共用一份，测试从这里读取，需改输入时复制到临时目录。项目文件组织见 [文件组织](../references/format.md)，字段结构直接读取其中链接的 Schema，跨对象含义与检查实现见 [语义](../references/semantics.md)；样例的独立对象文件不是项目目录模板，新增对象仍按业务上下文归位，稳定 ID 不由路径决定。
 
 专业方法与实际来源优先于样例。新责任、冲突或确认失效按 [责任范围方法](../references/responsibility-closure.md) 交接，不因样例能够通过检查就放行当前业务。只读样例检查可以在没有真实范围结束确认时执行，它不授权正式编辑。
 
-生成或维护示例时，完整 JSON 必须实际通过对应 Schema 校验，Rule 的 `description` 仍为必填；代码片段不能冒充完整源对象。Markdown 中完整 JSON 的 Schema 回归由 `tests/test_reference_consistency.py` 覆盖，可运行模型另执行 FM 检查与适用场景。维护时实际运行这些检查及反例，核对源不被重写。整体 API 链路样例与 OpenAPI 快照由独立的 `evidence-api` 维护。脚本通过不证明业务批准、真实服务运行或 Agent 行为质量。
+生成或维护示例时，完整 JSON 必须实际通过对应 Schema 校验，Rule 的 `description` 仍为必填；代码片段不能冒充完整源对象。Schema 导航、校验函数定位、Markdown 完整 JSON 与样例编译契约由 `tests/test_expression_contract.py` 覆盖，可运行模型另执行 FM 检查与适用场景。维护时实际运行这些检查及反例，核对源不被重写。整体 API 链路样例与 OpenAPI 快照由独立的 `evidence-api` 维护。脚本通过不证明业务批准、真实服务运行或 Agent 行为质量。

@@ -49,16 +49,16 @@
 
 首次进入或必要上下文丢失时，定位提供的目标、材料、当前理解、原问题及控制意图，加载当前分支必要方法。连续问答吸收全部新增输入，增量核对当前节点及受影响依赖；已加载且未变化的方法复用。切换、更正与结束核对按影响扩大范围。
 
-| 当前判断                                         | 方法来源                                                                                                                     |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 现金权责、绩效约定与责任双方、主要履约及增量发现 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
-| 领域复用、业务连接点及必要内部规则               | [领域建模](../.agents/skills/evidence-fm/references/domain-modeling.md)                                                      |
-| 当前判断的依据不足、冲突或需要深入               | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
-| 术语理解、日常表达及定义归属                     | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
-| 最小保存单元、范围完整性、责任终点与人类确认     | [责任范围与渐进保存](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                     |
-| 正式对象、引用与时间语义                         | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |
-| 问答、控制与跨会话承接                           | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                     |
-| 阶段接续及产物恢复                               | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                       |
+| 当前判断                                         | 方法来源                                                                                                                                                  |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 现金权责、绩效约定与责任双方、主要履约及增量发现 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                                                 |
+| 领域复用、业务连接点及必要内部规则               | [领域建模](../.agents/skills/evidence-fm/references/domain-modeling.md)                                                                                   |
+| 当前判断的依据不足、冲突或需要深入               | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                                                        |
+| 术语理解、日常表达及定义归属                     | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                                                   |
+| 最小保存单元、范围完整性、责任终点与人类确认     | [责任范围与渐进保存](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                                                  |
+| 对象含义、引用与结构契约                         | [FM 语义与跨对象检查](../.agents/skills/evidence-fm/references/semantics.md)、[Schema 入口与文件组织](../.agents/skills/evidence-fm/references/format.md) |
+| 问答、控制与跨会话承接                           | [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)                                                                                  |
+| 阶段接续及产物恢复                               | [文件交接](../.agents/skills/evidence-modeling/references/workflow.md)                                                                                    |
 
 行为基线按当前动作加载：[Discovery](../.agents/skills/evidence-discovery/examples/README.md)、[Modeling](../.agents/skills/evidence-modeling/examples/README.md)、[FM](../.agents/skills/evidence-fm/examples/README.md)。样例是维护参考，实际业务判断使用本轮材料与用户决定。
 

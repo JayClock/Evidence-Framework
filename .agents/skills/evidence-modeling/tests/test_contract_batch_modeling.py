@@ -22,12 +22,6 @@ class ContractBatchModelingTests(unittest.TestCase):
                 self.assertIn("范围", (SKILLS / path).read_text())
         self.assertIn("不把追责结束作为首次写入 FM 的条件", text)
 
-    def test_context_role_is_not_a_proof_or_fabricated_contract(self):
-        text = (SKILLS / "evidence-fm/references/semantics.md").read_text()
-        for phrase in ("未澄清合同", "Context Role", "不创建虚构", "不代替 Evidence Role", "不补造 plays_role"):
-            self.assertIn(phrase, text)
-        self.assertIn("Evidence Role 是跨上下文的开放证明插槽", text)
-
     def test_completed_contract_delegates_then_records_even_partial_failure(self):
         text = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         diagrams = re.findall(r"```mermaid\n(.*?)```", text, re.S)

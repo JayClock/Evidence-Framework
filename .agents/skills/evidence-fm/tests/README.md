@@ -13,4 +13,6 @@
 
 覆盖业务属性命名、六类凭证时间、领域／合同前／混合上下文、同一合同内多个 Request 共用 Confirmation、一次 Request 的部分结果与不同 Confirmation 类型、Markdown 完整 JSON 示例的 Schema、CEL、追溯、编译、单据模拟及评分器正反例。context_samples.py 和 fixtures 都是合成数据，不提供真实业务默认值。测试使用临时模型，不覆盖业务源文件。API、HTTP 契约、覆盖、FM 结果交接及原子发布回归归独立的 `evidence-api`。
 
+正式表达的回归由 `test_expression_contract.py` 负责：从实际 Schema 构建示例校验，检查文档的 Schema、校验函数与源样例链接，实际编译所链接模型，并以反例区分单对象结构、跨对象一致性和范围完整性。四份表达参考不嵌入 JSON 定义，新增 Schema 必须进入结构导航；测试不复制字段清单，也不锁定方法正文的具体措辞。业务分析边界和统一语言分别由 `test_analysis_boundaries.py` 与 `test_model_language.py` 覆盖，运行行为测试继续验证原有契约。
+
 [评测指南](../evals/README.md) 说明完整模型生成与行为评价。自动回归验证实现及评分逻辑，不调用 Agent，不代表真实生成质量或人工批准。改实现与测试时保留有依据的预期，不能为通过校验倒改业务规则。

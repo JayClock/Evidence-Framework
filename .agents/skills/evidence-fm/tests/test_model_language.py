@@ -1,6 +1,7 @@
 """Entity-owned language and read-only consumption; not live-agent quality evidence."""
 
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -39,6 +40,24 @@ class ModelLanguageTests(unittest.TestCase):
             "Entity ID", "属性名", "aliases",
         ):
             self.assertIn(phrase, method)
+
+    def test_example_rule_explanations_reference_canonical_entity_names(self):
+        count = 0
+        for manifest in (SKILL / "examples").glob("*/model.json"):
+            model = load_model(manifest.parent)
+            self.assertEqual([], model.errors)
+            for rule in model.rules:
+                description = rule["description"]
+                refs = re.findall(r"\[([a-z][a-z0-9.-]+)\]", description)
+                self.assertTrue(refs, rule["id"])
+                for ref in refs:
+                    with self.subTest(rule=rule["id"], ref=ref):
+                        self.assertIn(ref, model.entities_by_id)
+                        label = model.entities_by_id[ref]["label"]
+                        self.assertRegex(label, r".+（[A-Za-z][^（）]*）$")
+                        self.assertIn(f"{label}[{ref}]", description)
+                count += 1
+        self.assertGreater(count, 0)
 
     def test_current_source_names_and_meanings_are_consumed_without_sidecar_or_writes(self):
         with tempfile.TemporaryDirectory() as directory:

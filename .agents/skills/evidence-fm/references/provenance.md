@@ -55,7 +55,7 @@ flowchart TD
 
 ## 3. 区分时间定义、规则与实例
 
-[格式](format.md)唯一维护六类凭证的时间属性及类型要求；本页只判断业务时间是否足以支撑当前结论。
+时间属性的结构直接读 [Entity Schema](../schemas/entity.schema.json)，各凭证的时间契约读 [EVIDENCE_TIME_ATTRIBUTES](../scripts/fm_model.py) 与 [validate_evidence_times](../scripts/fm_model.py)；本页只判断业务时间是否足以支撑当前结论。
 
 - **类型含义**：`signed_at` 表达签约时间，`confirmed_at` 表达确认时间；定义这些属性不要求调查界面操作、索取实际日期或再造一张证明签约的凭证。
 - **适用规则**：判断付款是否逾期，需要请求起止与结果时间的业务口径。已有“签约后24小时截止”等约定就直接使用；缺少的起算、工作日、截止是否包含等口径，只有影响当前判断时才形成具体问题。

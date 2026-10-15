@@ -1,129 +1,41 @@
-# CEL 规则
+# 用 CEL 表达有依据的业务规则
 
-FM Schema v4 直接使用 Common Expression Language（CEL），不再支持 `calculationRule = ...`、自然语言 precondition 或其它自定义表达式 DSL。
+业务依据决定要表达什么，CEL 只负责确定性计算和判断。Rule 的 JSON 结构、种类、绑定声明和目标字段直接读取 [Rule Schema](../schemas/rule.schema.json)，属性结构读取 [Entity Schema](../schemas/entity.schema.json)；本页不维护另一份字段模板或类型列表。
 
-## 1. Rule 结构
+## 先写业务解释，再写表达式
 
-```json
-{
-  "type": "rule",
-  "id": "rule.payment-deadline",
-  "kind": "derivation",
-  "label": "付款截止时间（Payment Deadline）",
-  "description": "以付款请求（Payment Request）[request.payment]的开始时间为基准增加约定的 30 分钟付款期限，得到该请求的截止时间。",
-  "contextRef": "context.subscription",
-  "fulfillmentRef": "fulfillment.payment",
-  "bindings": {
-    "self": {
-      "ref": "request.payment"
-    }
-  },
-  "expression": "self.started_at + duration(\"30m\")",
-  "resultType": "timestamp",
-  "target": {
-    "entityRef": "request.payment",
-    "attribute": "expired_at"
-  }
-}
-```
+说明规则读取什么事实、怎样判断或计算、结果在业务上意味着什么。使用 [领域语言](domain-language.md) 中的规范名称，具体 Entity ID 独立标注，不让 ID 充当英文名称；说明不只复述标题或表达式，也不包含技术实现方案。
 
-`description` 是 Rule 文件内必填的业务解释。说明该规则读取的业务事实、判断或派生方式，以及结果为 true／false 或派生值时代表的业务含义；内容应让不阅读 CEL 的审核者也能理解。涉及模型统一术语时使用完整的中文（英文）规范名称，再以 `[Entity ID]` 独立标注具体对象，例如 `付款请求（Payment Request）[request.payment]`；名称取当前对象的 `label`，ID 不代替英文业务名称，也不以 Request、Confirmation、Evidence Role 等泛型名称替代具体对象。同一说明中的同一概念保持一致。它不能只复述 `label`、逐字翻译表达式，也不能写 Controller、数据库或定时任务等实现方案。解释中的条件、期限、比例和例外必须有业务来源，不能为了说明完整而补造。
+期限、比例、资格和例外必须有来源，未知就保留缺口，不用示例公式或恒真表达式填洞。分析依据不足时回到 [来源追溯](provenance.md)，保存权限与检查顺序见 [编辑流程](editing-workflow.md)。
 
-CEL 是纯表达式，因此 `expression` 中禁止赋值。派生目标放在 `target` 中。履约截止、完成与违约 Rule 与 Request 一样，以 `contextRef` 指向所属 Contract Context，以 `fulfillmentRef` 声明对应 Fulfillment 的归属；Rule 可以绑定本履约专有 Confirmation，也可以绑定同一 Contract Context 下通过 Confirmation→Request `references` Relationship 关联的共同 Confirmation。领域规则则位于 Domain Context，不需要虚构合同或 Request。
+## 选择已有规则样例
 
-## 2. Rule kind
+只读当前需要的实际源文件，金额、期限与预期均为合成条件，不是生产默认规则。
 
-- `derivation`：计算属性值，必须有 `target`；
-- `precondition`：业务操作前置条件，结果必须是 `bool`；
-- `invariant`：领域对象、关系或凭证的一致性约束，结果必须是 `bool`；
-- `eligibility`：资格判断，结果必须是 `bool`；
-- `completion`：履约完成判断，结果必须是 `bool`；
-- `breach`：违约判断，结果必须是 `bool`。
+| 要表达的判断                   | 可运行样例中的 Rule                                                                             |
+| ------------------------------ | ----------------------------------------------------------------------------------------------- |
+| 从约定取得请求金额             | [金额派生](../examples/valid-traceable-subscription/rules/rule--payment-request-amount.json)    |
+| 按已有约定计算截止             | [时间派生](../examples/valid-traceable-subscription/rules/rule--payment-deadline.json)          |
+| 核对金额、币种与实例结果       | [结果匹配](../examples/valid-traceable-subscription/rules/rule--payment-matches-request.json)   |
+| 集合结果与请求时段共同判断完成 | [履约完成](../examples/valid-traceable-subscription/rules/rule--content-payment-completed.json) |
+| 截止后的违约判断               | [违约判断](../examples/valid-traceable-subscription/rules/rule--payment-expired.json)           |
+| 没有合同的领域行为条件         | [档案可编辑](../examples/domain/rules/rule--profile-editable.json)                              |
 
-## 3. Bindings
+不复制一份 Markdown JSON 样例；维护时直接修改获授权的真实模型或样例源，再检查其引用与场景。
 
-每个顶层变量必须声明：
+## 绑定与派生
 
-```json
-{
-  "bindings": {
-    "request": {
-      "ref": "request.payment"
-    },
-    "payment": {
-      "ref": "confirmation.payment"
-    },
-    "now": {
-      "type": "timestamp"
-    }
-  }
-}
-```
+绑定把表达式变量对应到已建模对象或明确的运行时输入，变量别名不是属性名。集合绑定须与集合访问方式一致；不能把没有凭证的情况伪装为一份全空确认。
 
-- `ref` 绑定到模型对象，默认 `cardinality: one`；集合实例必须声明 `cardinality: many`，并通过 CEL collection macro 访问元素属性；
-- `type` 声明由运行时传入的标量或结构变量；
-- 变量名使用 CEL 标识符；别名不等于业务属性。Entity 属性访问与 `target.attribute` 统一 snake_case，和 Entity 定义逐字一致；内置函数如 `startsWith` 保持 CEL 原名；
-- 表达式不得引用未声明的顶层变量。
+CEL 是表达式，不执行赋值、SQL、网络调用或状态迁移。派生值的目标在 Rule 中声明，属性引用同一派生规则；判断规则不伪装成数据生产边。关键持久数据必须追回已建模输入，不能藏在无业务来源的自由参数里。
 
-允许的声明类型：`bool`、`int`、`uint`、`double`、`decimal`、`string`、`bytes`、`timestamp`、`duration`、`date`、`money`、`list`、`map`、`dynamic`。
+规则语法、声明变量、目标归属及结果类型的检查见 [validate_rules](../scripts/fm_model.py)；派生指针一致性见 [validate_derived_attributes](../scripts/fm_model.py)；属性读取、集合访问和依赖环见 [analyze_traceability](../scripts/fm_traceability.py)。不另建手写属性依赖表。
 
-## 4. 推荐表达式
+## 类型能力与运行边界
 
-```cel
-// 截止时间
-self.started_at + duration("30m")
+- Schema 接受某种声明类型，不等于当前 CEL 运行库支持该类型的全部运算；语法编译也不等于具体场景已经求值。
+- 金额优先拆分最小货币单位整数与币种；精度、舍入、汇率和比例仍须来自业务依据。不要假定运行库具备项目所需的原生 Money 运算。
+- 时间类型、适用口径和实例值分开处理；场景时间固定，不能读取机器当前时间来生成持久关键值。
+- 领域前置条件和状态属性不会自动形成操作或状态机；当前凭证模拟器不执行领域对象实例与通用关系实例。不能通过假履约或假凭证扩大验证能力。
 
-// 金额一致（最小货币单位整数 + 币种）
-payment.paid_minor_units == contract.price_minor_units && payment.currency == contract.currency
-
-// 退款资格：集合 binding 使用 cardinality: many；没有凭证不等于时间为 null
-payments.size() > 0 && shipments.size() == 0
-
-// SLA 违约
-confirmation.confirmed_at > request.expired_at
-
-// 条件赔偿金额；比例必须来自已确认合同事实
-breached ? int(double(payment.paid_minor_units) * penaltyRate) : 0
-
-// KPI 达成
-actual.call_count >= target.call_count && actual.email_count >= target.email_count
-```
-
-不要在 CEL 中写自然语言、SQL、脚本语句、赋值、外部网络调用或实现组件名。
-
-`money` 保留为 FM 语义类型，但 `cel-python` 目前主要用于语法编译，并不提供项目约定的原生 Money 运算。需要精确比较或计算时，优先分别建模 `minor_units: int` 与 `currency: string`；比例、汇率和舍入规则必须来自已确认业务材料，不能由 Agent 猜测。
-
-## 5. 属性派生
-
-实体属性使用 `derivedByRuleRef` 指向唯一 derivation Rule。所有 Evidence 的必备时间属性均为 required、`keyData: true` 的 timestamp，Request 直接以 `started_at`、`expired_at` 表达 interval。RFP／Proposal 的截止时间也可按真实来源用 CEL 派生，但不能缺少属性定义或使用无期限。示例中的 30 分钟不是默认期限，必须有业务依据：
-
-```json
-{
-  "attributes": [
-    {
-      "name": "expired_at",
-      "label": "付款截止时间",
-      "valueType": "timestamp",
-      "required": true,
-      "keyData": true,
-      "meaning": "本次付款请求失效的时间",
-      "derivedByRuleRef": "rule.payment-deadline"
-    }
-  ]
-}
-```
-
-校验器检查：
-
-- CEL 语法可由 `cel-python` 编译；
-- 顶层变量均已声明；
-- binding 引用存在；
-- bool 规则的 `resultType` 为 `bool`；
-- derivation 的 target 属性存在，且 `resultType` 与属性 `valueType` 一致；
-- `derivedByRuleRef` 与 Rule target 相互一致；
-- CEL 读取的 `binding.attribute` 或静态 `binding["attribute"]` 存在，动态 Entity 索引被拒绝，集合 binding 的 cardinality 正确；
-- 关键派生属性至少追溯到一个已建模属性，且属性派生图无环。
-
-`build_fm_lineage.py` 从 CEL AST 生成属性追溯图，支持领域 Entity 与 Evidence 属性，不另设手写依赖 DSL。`simulate_fm_model.py` 只使用 `validation/` 中明确提供的 Evidence 单据实例求值，不能实例化 Participant；领域模型结构与 lineage 通过不等于领域实例或状态机模拟通过。
-
-领域行为可用 `precondition`、状态属性和一致性规则表达已有格式承载的条件，但 Rule 不会自动成为 Operation 或状态迁移。需要执行语义时按 `domain-modeling.md` 记录明确的表达缺口，不自造字段或把领域操作改名为 Fulfillment。
+实际输入、求值和预期比较按 [实例执行](traceability-and-simulation.md)，统一运行与结果报告按 [校验](validation.md)。结果不符先查模型映射、场景构造和实现；只有业务来源确已更正时才修改预期。

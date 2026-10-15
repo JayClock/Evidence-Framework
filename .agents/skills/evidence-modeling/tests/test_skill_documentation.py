@@ -102,8 +102,6 @@ class SkillDocumentationTests(unittest.TestCase):
             "只聊不落盘或仅保存资料时以对话承接",
         ):
             self.assertIn(requirement, interview)
-        formatting = (ROOT / "evidence-fm/references/format.md").read_text()
-        self.assertIn("不作为派生报告重建", formatting)
 
     def test_daily_language_uses_canonical_names_without_rewriting_evidence(self):
         method = (ROOT / "evidence-fm/references/domain-language.md").read_text()

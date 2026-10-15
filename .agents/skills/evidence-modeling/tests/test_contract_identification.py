@@ -53,7 +53,7 @@ class ContractIdentificationTests(unittest.TestCase):
                 text = (SKILLS / name / "SKILL.md").read_text()
                 self.assertIn("约定与责任双方", text)
                 self.assertIn("business-analysis.md", text)
-        for filename in ("semantics.md", "input-review.md", "batch-assessment.md"):
+        for filename in ("input-review.md", "batch-assessment.md"):
             with self.subTest(reference=filename):
                 text = (SKILLS / "evidence-fm/references" / filename).read_text()
                 self.assertIn("约定", text)
@@ -67,7 +67,6 @@ class ContractIdentificationTests(unittest.TestCase):
         paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
                  SKILLS / "evidence-fm/SKILL.md", SKILLS / "evidence-discovery/SKILL.md",
                  SKILLS / "evidence-fm/references/business-analysis.md",
-                 SKILLS / "evidence-fm/references/semantics.md",
                  SKILLS / "evidence-discovery/references/interview.md"]
         for path in paths:
             with self.subTest(path=str(path)):

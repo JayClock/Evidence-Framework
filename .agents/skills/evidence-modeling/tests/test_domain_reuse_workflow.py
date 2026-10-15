@@ -27,15 +27,6 @@ class DomainReuseWorkflowTests(unittest.TestCase):
                 with self.subTest(path=path, phrase=phrase):
                     self.assertIn(phrase, text)
 
-    def test_role_selection_distinguishes_capability_system_and_proof(self):
-        text = (SKILLS / 'evidence-fm/references/semantics.md').read_text()
-        for phrase in ('领域复用的角色选择', 'role / domain', 'role / third_party',
-                       '3rd-system', '不是公司内外或部署位置', '不自动创建 Domain Context',
-                       '角色不是结果凭证'):
-            self.assertIn(phrase, text)
-        self.assertIn('Evidence 只可引用同 Context 的 Evidence-as-Role',
-                      (SKILLS / 'evidence-fm/references/domain-modeling.md').read_text())
-
     def test_evals_cover_reuse_business_gap_and_explicit_deepening(self):
         cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
         cases = {case['category']: case for case in cases}

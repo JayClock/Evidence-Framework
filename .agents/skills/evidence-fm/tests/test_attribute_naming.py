@@ -3,17 +3,10 @@
 from __future__ import annotations
 
 import copy
-import json
 import re
 import sys
 import unittest
 from pathlib import Path
-
-from context_samples import (
-    domain_documents,
-    performance_documents,
-    precontract_documents,
-)
 
 SKILL = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL / "scripts"))
@@ -181,31 +174,6 @@ class AttributeNamingTests(unittest.TestCase):
             bad = copy.deepcopy(report)
             bad["nodes"][0].update(patch)
             self.assertTrue(errors_for(bad, "traceability"))
-
-    def test_bundled_examples_follow_attribute_key_order(self):
-        order = [
-            "name",
-            "label",
-            "valueType",
-            "required",
-            "keyData",
-            "meaning",
-            "derivedByRuleRef",
-            "notes",
-        ]
-        documents = (
-            domain_documents() + precontract_documents() + performance_documents(True)
-        )
-        for path in (Path(__file__).resolve().parent / "fixtures").glob(
-            "valid-*/entities/*.json"
-        ):
-            documents.append(json.loads(path.read_text(encoding="utf-8")))
-        for document in documents:
-            for attribute in document.get("attributes", []):
-                with self.subTest(entity=document["id"], attribute=attribute["name"]):
-                    self.assertEqual(
-                        [key for key in order if key in attribute], list(attribute)
-                    )
 
     def test_mapping_key_order_is_not_a_semantic_constraint(self):
         document = entity_with("paid_minor_units")

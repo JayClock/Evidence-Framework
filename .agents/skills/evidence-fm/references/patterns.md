@@ -1,140 +1,20 @@
-# FM Schema v4 标准建模模式
+# 表达样例选择
 
-本文件提供常见建模结构，具体表达仍须依据当前业务材料，不把样例当作业务事实。
+本页只帮助选择已有样例，不定义字段、关系种类或新的建模规则。结构直接读取 [Schema 入口](format.md#结构契约)，对象含义看 [语义](semantics.md)，业务分析与范围判断回到各自方法。
 
-## 1. Role-first Contract 与权责履约
+## 按当前问题选择
 
-```text
-Contract Context
-├── Role A ↔ Contract ↔ Role B
-├── Fulfillment A
-│   └── Request → Confirmation
-└── Fulfillment B
-    └── Request → Confirmation
-```
+| 当前问题                                     | 读取哪份已有材料                                                                                                                      | 注意边界                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 合同责任、请求、确认和派生规则怎样组合       | [付款映射说明](../examples/valid-traceable-subscription/README.md)；[付款模型源](../examples/valid-traceable-subscription/model.json) | 这是表达切片，不代表完整订阅合同责任已经结束 |
+| 领域身份与行为条件怎样表达                   | [领域映射说明](../examples/domain/README.md)；[领域模型源](../examples/domain/model.json)                                             | 不补造合同，静态通过不证明领域操作已执行     |
+| 同合同引用、共享结果与跨上下文证明有什么区别 | [结构对照](../examples/structural-contrasts.md)                                                                                       | 分组不是上下文边界，类型线不是实例完成证明   |
+| 当前合同怎样保留未澄清协作边界               | [合同级建模](../examples/contract-batch.md)                                                                                           | 边界角色不补齐必要证明，也不制造外部合同事实 |
+| 业务名称、别名和同名异义怎样使用             | [领域语言样例](../examples/domain-language.md)                                                                                        | 讨论中的翻译不自动修改模型或接口             |
+| 规则怎样绑定已有对象并判断结果               | [CEL 方法与源规则导航](cel-rules.md)                                                                                                  | 样例参数不能变成当前业务默认值               |
 
-约定与责任双方明确后表达合同 Role；实际主体已知就复用对应 Participant，未知不制造玩家。每项 Fulfillment 以 `contextRef` 指向所属 Contract Context；凭证和规则以 `fulfillmentRef` 声明履约归属。同合约内不同履约之间直接引用凭证，不产生新的上下文边界。
+## 样例没有覆盖时
 
-## 2. 已知 Participant 跨上下文扮演 Role
+先按 [业务分析](business-analysis.md) 或 [领域建模](domain-modeling.md) 判断实际含义，再在当前契约内表达，不根据某个样例是否存在决定业务是否成立。绩效与目标—实际、协商、取消退款、补偿和工具集成均按真实责任分析，不在此增加固定流水线或默认条款。
 
-```text
-Customer Party
-├── Subscriber Role（订阅合同）
-├── Buyer Role（销售合同）
-└── Account Holder Role（支付合同）
-```
-
-只有来源明确同一性时才建立多个 `plays_role`。名称相似不构成证据。
-
-## 3. Request interval、单次与多次确认
-
-Request Entity 直接用 required/keyData timestamp 的 `started_at` 与 `expired_at` 表达区间。每个请求必须有确定截止时间；若来源只说明持续合作，继续核实每次请求的具体期限或确定依据，不自行补造。
-
-一次、任一、全部、分批数量和累计金额都使用明确 Evidence bindings 与 CEL completion Rule。一次 Request 可以对应不同 Confirmation 类型，分别记录有业务依据的不同结果；同类结果的多次确认以多个 Evidence Instance 表达，不按批次复制类型节点。部分完成可以形成 Confirmation，但不自动使整项履约完成。
-
-## 4. 多个 Fulfillment 共用 Confirmation
-
-同一合同中的季度与年度 KPI 若由同一收入确认履约，可以让同一个 Confirmation 通过 `references` 指向两个 Request。该 Confirmation 只保留一个形成 Context、责任 Role 和类型定义；各 Fulfillment 的 completion Rule 分别读取自己的 Request 与共同 Confirmation，按各自区间和条件判断。实例同时完成多个请求时，其 `basedOn` 明确列出这些已经形成的 Request Instance。
-
-```text
-Income Confirmation ──references→ Quarterly Request
-                    └─references→ Annual Request
-```
-
-这种共享只适用于同一 Contract Context 内有明确权责等价依据的履约。来自另一个合同、领域或外部渠道的确定结果可被直接引用，或在需要变化点时扮演 Evidence Role；引用不把外部 Confirmation 迁入本地履约，也不将它当成本合同的共同 Confirmation。
-
-## 5. 自动动作不成为业务凭证
-
-调度器、回调和系统任务不是 Participant 或业务时间来源。若自动动作代表某业务 Role 形成 Evidence，该 Evidence 仍使用 `responsibleRoleRef`；调度时刻或回调到达不能替代 Evidence 自身业务时间。
-
-## 6. 多支付渠道：凭证角色化
-
-订阅付款履约使用跨上下文的开放证明插槽：
-
-```text
-Payment Request → Qualified Payment Confirmation Evidence Role
-```
-
-每个支付合同在自己的 Context 内形成支付结果凭证：
-
-```text
-Channel A Confirmation ─┐
-Channel B Confirmation ─┼─plays_role→ Qualified Payment Confirmation Role
-Channel C Confirmation ─┘
-```
-
-增加渠道只新增外部 Context、Evidence 和 Relationship，不修改核心订阅合同或履约确认插槽。
-
-## 7. 未展开的外部协作者
-
-外部能力不默认对应合同。只消费能力时，按 [领域复用的角色选择](semantics.md#领域复用的角色选择)区分抽象领域能力的 `domain` Role 与既有系统／协作者边界的 `third_party` Role，不补造合同。已有充分依据识别关联合同、但其内部责任尚未澄清时，使用 `context` Role 保留所需协作边界；对应合同满足准入并获授权后，才展开真实 Contract Context、双方 Party Role 及内部履约。
-
-## 8. 合同前变化
-
-- 询价：RFP → Proposal → Contract；
-- 固定套餐：Proposal → Contract 或直接 Contract；
-- 招标：一个 RFP 对多个 Proposal，最终 Contract 追溯被接受 Proposal；
-- 拼团、赠送、活动和谈判位于独立 Pre-contract Context。
-
-RFP／Proposal 不是 Fulfillment，但仍是异步请求—响应凭证。它们的生产 Role、`started_at`／`expired_at` 时间定义和回应关系必须明确；Contract 已形成且纳入范围时才建立 Contract→Proposal 的 `references` 审计追溯，指向已接受方案；Proposal→Contract 只表示可能的业务形成顺序，不是依据引用方向。纯合同前 Context 可没有 Contract 和 Fulfillment，不补造未来履约。
-
-## 9. KPI／目标—实际
-
-绩效协议与对外合同使用同一套履约机制，不另设 KPI 模式或内核，也不虚构支付流。先确认目标是在何时、由谁、按什么权限形成的。
-
-- **签约前谈妥目标**：目标磋商属于 Pre-contract 的 RFP／Proposal；签约后按约定检查履约，不默认再创建“目标设定履约”。
-- **执行中可变更目标**：协议明确变更机制时，目标请求与确认可成为合同下的变更履约；必须保留旧约定及新变更凭证。
-- **主管指派目标**：在这一事实分支中，管理方负责形成目标请求，执行方负责形成回应凭证。
-- **执行方自报目标、主管审核**：目标请求和回应凭证的责任 Role 对调；进度检查的凭证责任仍单独确认，不随之全局对调。
-
-是否允许拒绝或要求修改要按真实管理机制建模，不把“只能同意”和“可拒绝”混为一谈。拒绝结果不能自动算作目标已获批准；完成策略必须表达当前履约到底要求答复还是要求同意，必要时用已有属性与 CEL 规则区分。
-
-只有材料明确允许执行中设定／变更目标时，才使用以下示例：
-
-```text
-Performance Contract
-├── Target-change Fulfillment（按协议条款可选）
-│   └── Target-change Request → Decision Confirmation
-└── Review Fulfillment
-    └── Review Request → Actual Result Confirmation
-```
-
-联系记录、周报等只作为补充证明材料时建成 Other Evidence，必备 `created_at`；按约定记录履约完成或部分完成结果的凭证是 Confirmation，必备 `confirmed_at`。一份 Confirmation 不自动关闭整项责任，完成仍按该 Request 的具体结果及 completion Rule 判断。周检查、季度目标等是否共用确认，仍按共享确认的证明理由和边界判断。
-
-## 10. 取消、退款与补偿
-
-原凭证保持不变，每种新责任以相应的权责履约表达：
-
-```text
-Cancellation Request → Cancellation Confirmation
-Refund Request       → Refund Confirmation
-Return Request       → Receipt Confirmation
-Compensation Request → Compensation Confirmation
-```
-
-异常修正是新履约，不是 update/delete/status overwrite。
-
-## 11. 领域模型与业务输入
-
-领域部分本来就在履约建模内，用同一 FM 的 Entity、Relationship、CEL Rule 表达。商品、内容、客户档案、场所等 Thing 位于 Domain Context；稳定 Party 保持外部身份，通过 Role 扮演进入上下文。
-
-独立领域任务不要求 Contract 或 Fulfillment；混合模型按事实由具体 Evidence 通过 `references` 指向 Thing，并以领域 Role 及合法凭证协作组合。领域对象不是完成凭证，能力插槽不是已经展开的领域逻辑。详细过程与表达边界见 `domain-modeling.md`。
-
-## 12. 工具集成与无需建模
-
-电脑控制座机拨号、挂断、重拨，如果只是协议调用的胶水代码且无独立领域规则，可以不生成模型，以范围说明正常结束；不要求用户补出合同。
-
-但出现拨号策略、号码有效性、排队约束、重拨资格等独立领域问题时，应按事实使用 FM 的领域部分，而不是因无合同、收费或 KPI 而排除。播放器、推荐、索引、算法和同步也不能仅凭名称判为不适用；判断的是本次范围内的领域语义，不是工具标签。
-
-## 13. 同一 CRM 的组合范围
-
-```text
-客户信息 Domain：客户身份、档案、联系方式及有效性规则
-      ↓ 作为联系对象／领域输入，不自动证明履约完成
-绩效 Contract：双方就 KPI 达成协议
-      └── 进度检查 Fulfillment：检查请求 → 合格结果确认
-                  ↑ 真实联系记录提供证据
-拨号工具：技术执行机制，不因此成为合同 Role
-```
-
-只做客户信息时可以停止在 Domain；只做绩效时不必展开全部客户信息规则；完整范围才按真实关系组合。新增上下文不重命名或改写已有对象来制造关联。
+需要新的可运行样例时，只新增一份模型源及必要场景，由说明链接它；不同时维护 Markdown JSON 副本。用临时副本验证反例，不覆盖来源预期。样例权限、事实边界和维护入口统一见 [样例索引](../examples/README.md)，检查方法见 [校验纪律](validation.md)。
