@@ -20,7 +20,7 @@ class DiscoveryAnchorTests(unittest.TestCase):
         self.assertIn('合成', index)
         self.assertIn('实际判断', index)
 
-    def test_flow_has_language_control_navigation_question_and_wait_exits(self):
+    def test_control_shell_routes_into_tracing_and_preserves_wait_exits(self):
         text = (DISCOVERY / 'references/interview.md').read_text()
         graph = re.search(r'```mermaid\n(.*?)```', text, re.S)
         self.assertIsNotNone(graph)
@@ -30,7 +30,7 @@ class DiscoveryAnchorTests(unittest.TestCase):
                     ('control', 'focus'),
                     ('language', 'control'), ('control', 'stop'), ('control', 'navigation'),
                     ('control', 'selection'), ('selection', 'wait'), ('selection', 'focus'),
-                    ('navigation', 'wait'), ('focus', 'reuse'), ('reuse', 'needed'),
+                    ('navigation', 'wait'), ('focus', 'reuse'), ('reuse', 'judgment'),
                     ('needed', 'group'), ('group', 'question'), ('needed', 'handoff'),
                     ('question', 'wait')}
         self.assertTrue(required.issubset(edges), edges)

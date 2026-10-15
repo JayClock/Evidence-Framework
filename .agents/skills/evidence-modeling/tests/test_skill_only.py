@@ -14,7 +14,7 @@ class SkillOnlyTests(unittest.TestCase):
         for token in ("evidence_ui_", "switch-context", "currentAgreementRef",
                       "kind: fulfillment", "`position`", "`story`", "`prompt`"):
             self.assertNotIn(token, text)
-        for phrase in ("普通对话是完整交互路径", "自然语言", "取消",
+        for phrase in ("普通对话沿同一条主线推进", "自然语言", "取消",
                        "原问题标识", "已经收到的回答用于业务理解", "任一写入失败就停止"):
             self.assertIn(phrase, text)
 
@@ -31,6 +31,16 @@ class SkillOnlyTests(unittest.TestCase):
             path.name for path in (SKILLS / "evidence-discovery/references").glob("*.md")
         })
 
+    def test_project_wiring_does_not_add_a_host_extension_for_interviews(self):
+        self.assertFalse((REPO / ".pi/extensions/evidence-modeling").exists())
+        package = json.loads((REPO / "package.json").read_text())
+        self.assertFalse(any(name.startswith("evidence-modeling:") for name in package["scripts"]))
+        self.assertFalse(any(".pi/extensions" in command for command in package["scripts"].values()))
+        dependencies = package["devDependencies"]
+        for name in ("@earendil-works/pi-coding-agent", "@earendil-works/pi-server",
+                     "@earendil-works/pi-tui", "typebox"):
+            self.assertNotIn(name, dependencies)
+
     def test_native_skill_entry_is_the_complete_path(self):
         entry = (SKILLS / "evidence-modeling/SKILL.md").read_text()
         self.assertIn("访谈使用普通对话", entry)
@@ -43,10 +53,12 @@ class SkillOnlyTests(unittest.TestCase):
         self.assertNotRegex(guide, r"/evidence-model(?!ing)|\.pi/|evidence_ui_")
 
     def test_behavior_evals_cover_text_controls_and_resume(self):
-        data = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())
-        indexed = {case["category"]: case for case in data["evals"]}
-        for category in ("skill-only-complete-interview", "evidence-provenance-story",
-                         "context-navigation-ambiguous-selection"):
+        cases = []
+        for name in ("evals.json", "evidence-tracing.json"):
+            cases.extend(json.loads((SKILLS / "evidence-discovery/evals" / name).read_text())["evals"])
+        indexed = {case["category"]: case for case in cases}
+        for category in ("skill-only-complete-interview", "delivery-requirement-and-result",
+                         "cross-contract-local-control", "context-navigation-ambiguous-selection"):
             with self.subTest(category=category):
                 case = indexed[category]
                 self.assertIn("follow_up", case)

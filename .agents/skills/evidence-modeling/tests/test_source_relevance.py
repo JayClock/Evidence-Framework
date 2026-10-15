@@ -33,17 +33,6 @@ class SourceRelevanceTests(unittest.TestCase):
         }, edges)
         self.assertFalse(any(start in {"apply", "gap"} for start, _, _ in edges))
 
-    def test_interview_consumes_known_basis_before_building_a_question_group(self):
-        edges = decision_edges(DISCOVERY / "references/interview.md")
-        self.assertLessEqual({
-            ("focus", "", "reuse"),
-            ("reuse", "", "needed"),
-            ("needed", "有", "group"),
-            ("needed", "没有", "handoff"),
-            ("group", "", "question"),
-            ("question", "", "wait"),
-        }, edges)
-
     def test_fulfillment_entry_cases_have_local_sources_and_observable_criteria(self):
         path = DISCOVERY / "evals/fulfillment-entry.json"
         catalog = json.loads(path.read_text())

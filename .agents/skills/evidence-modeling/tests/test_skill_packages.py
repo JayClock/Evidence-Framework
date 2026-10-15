@@ -114,6 +114,7 @@ class SkillPackageTests(unittest.TestCase):
         cases = []
         for path in (
             ROOT / "evidence-discovery/evals/evals.json",
+            ROOT / "evidence-discovery/evals/evidence-tracing.json",
             ROOT / "evidence-fm/evals/behavior.json",
             ROOT / "evidence-requirements/evals/evals.json",
         ):
@@ -139,7 +140,9 @@ class SkillPackageTests(unittest.TestCase):
                 "operating-basis-unresolved", "payment-support-and-party-identity",
                 "noncash-fulfillment-keeps-economic-anchor", "operating-context-navigation",
                 "skill-only-complete-interview", "completed-context-not-selectable",
-                "context-navigation-ambiguous-selection", "evidence-provenance-story",
+                "context-navigation-ambiguous-selection", "delivery-requirement-and-result",
+                "amount-lineage-and-return", "cross-contract-local-control",
+                "cycle-and-evidence-version", "trace-versus-generic-questionnaire",
             }.issubset(
                 {case["category"] for case in cases}
             )
