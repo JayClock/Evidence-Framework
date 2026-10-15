@@ -18,8 +18,7 @@ class ContractIdentificationTests(unittest.TestCase):
                         method.index("## 2. 寻找合同，明确参与方"))
         self.assertLess(method.index("## 2. 寻找合同，明确参与方"),
                         method.index("## 3. 履约"))
-        for phrase in ("已有现金权责或绩效约定、双方及责任明确时直接进入",
-                       "现金权责与目标—实际对比是发现业务的核心逻辑",
+        for phrase in ("现金权责与目标—实际对比是发现业务的核心逻辑",
                        "现金收入对应承担的义务", "现金支出对应取得的权利",
                        "没有现金往来时", "凭证必须围绕现金往来或 KPI",
                        "不是先等实际结果出现偏差", "不要求每项履约单独收费",

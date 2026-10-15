@@ -137,7 +137,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 
 表中的类型属性、具体实例值和生成规则分开：所有必备时间都允许非派生输入，类型结构不要求实例日期或 `derivedByRuleRef`；有来源的生成规则存在时才定义 CEL。三类时刻凭证不套请求区间或过期时间，各类型的必备时间不能互换。
 
-所有关键时间仍须执行 [来源映射](./provenance.md)，真实口径冲突不能用自由 timestamp 参数规避。每个实例必须具有确定的 RFC 3339 时间值，非派生必填值在形成时给出，派生值按 [实例执行规则](traceability-and-simulation.md) 在场景结束前产生。null、无期限说明、占位日期或 `openEndedReason` 均不能代替有效时间。正式类型文件不填写虚构的实例日期，合成实例也不证明业务已约定某个固定时长。
+本表约束类型结构，不生成访谈问题。当前业务判断是否需要追溯时间口径，由 [来源方法](provenance.md)决定；确定的口径冲突不能用自由 timestamp 参数规避。每个实例必须具有确定的 RFC 3339 时间值，非派生必填值在形成时给出，派生值按 [实例执行规则](traceability-and-simulation.md) 在场景结束前产生。null、无期限说明、占位日期或 `openEndedReason` 均不能代替有效时间。正式类型文件不填写虚构的实例日期，合成实例也不证明业务已约定某个固定时长。
 
 ### Contract Context 和两个 Role
 
@@ -174,7 +174,7 @@ pattern.multi-channel-payment     → business-patterns/multi-channel-payment.js
 }
 ```
 
-Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。上例只展开 signed_at 的类型含义，不推定签约等于下单或权益生效；哪种行为构成签约若有真实争议，仍须业务澄清。
+Contract 必须引用两个不同、同 Contract Context 的 Party Role，不要求玩家已经建模。上例定义 signed_at 的类型含义；它不表达具体签署方式，也不把签约、下单与权益生效合并为同一个事件。
 
 同理，Confirmation 的 confirmed_at 可写 meaning“该凭证的履约确认时间”，Other Evidence 的 created_at 可写 meaning“该凭证的形成时间”；它们均为 required/keyData timestamp，可不填 derivedByRuleRef。确认采信哪一业务事件、补录凭证与原事件的时间关系，只在有业务依据时另作属性／规则映射，不默认等于回调或入库时间，不补造已完成结果。
 

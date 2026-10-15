@@ -7,7 +7,7 @@
 | 直接消费 Entity/属性定义、统一表达与更正 | [领域语言](domain-language.md)                                      |
 | 合同约定、请求—确认骨架及凭证展开        | [业务分析](business-analysis.md)                                    |
 | 材料不足、来源矛盾                       | [输入复核](input-review.md)                                         |
-| 关键数据与六类凭证时间                   | [来源映射](./provenance.md)                                         |
+| 当前判断的依据不足、冲突或需要深入       | [来源追溯](provenance.md)                                           |
 | 递归追责、终点与正式建模准入             | [全部追责结束](responsibility-closure.md)                           |
 | 准入后业务到正式表达的映射               | [批次评估](batch-assessment.md)                                     |
 | Context、Role、Evidence 等语义           | [语义](semantics.md)                                                |
@@ -21,6 +21,6 @@
 
 访谈按领域语言方法直接核对相关 Entity 及其属性，当轮统一表达，并按需读取其他专业参考；不为保存名称启动模型 JSON 生成。问题选择、回答等待和控制状态由访谈任务管理，本包输入复核只输出具体缺口。
 
-每项规则在本包按职责维护：合同—骨架—凭证展开的分析依赖看 business-analysis，递归追责及建模准入看 responsibility-closure，关键数据和时间依据看 provenance，时间与 JSON 结构看 format，运行实例与 CEL 依赖看 traceability-and-simulation，执行结果记录看 validation。类型与机器结果不替代业务来源或业务确认依据。Schema v4 的实际格式限制以 format 为准。
+每项规则在本包按职责维护：合同—骨架—凭证展开的分析依赖看 business-analysis，递归追责及建模准入看 responsibility-closure，追溯的进入、深入与返回条件看 provenance，时间类型与 JSON 结构看 format，运行实例与 CEL 依赖看 traceability-and-simulation，执行结果记录看 validation。类型与机器结果不替代业务来源或业务确认依据。Schema v4 的实际格式限制以 format 为准。
 
 只沿当前任务分支加载，不顺序读取整张索引。tests/、evals/ 是 Skill 开发验证材料，不是业务输入，也不从业务入口链接加载；它们的操作说明留在各自目录。

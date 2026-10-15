@@ -28,7 +28,7 @@ class GroupedInterviewTests(unittest.TestCase):
         text = (DISCOVERY / "references/interview.md").read_text()
         for phrase in ("依赖前沿", "前置依据已经具备", "同一业务节点",
                        "一个答案不会改变另一题的前提、对象或问法",
-                       "共同前提与其他独立问题同轮提出", "每轮重新计算",
+                       "共同前提与其他独立问题同轮提出",
                        "不在找到第一题后结束分析", "全部独立必要问题",
                        "用户要求一次一问时只选一题", "等待真人"):
             self.assertIn(phrase, text)

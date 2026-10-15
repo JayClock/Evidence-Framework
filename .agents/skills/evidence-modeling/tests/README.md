@@ -4,31 +4,33 @@
 
 ## 当前覆盖与拥有者
 
-| 位置                                                                                            | 检查职责                                                                                 |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Modeling 的 `evals/`                                                                            | 显式入口委派、权限传递、准入阻塞、阶段接续、部分交付与路由近似请求                       |
-| Discovery 的 `evals/`                                                                           | 当前节点访谈、合同导航、领域语言、依赖前沿、控制意图及恢复                               |
-| FM 的 `evals/`                                                                                  | 正式表达、生成／阻塞／不适用结果、准入与日常领域语言                                     |
-| API 的 `evals/`                                                                                 | 整体 API 设计、只读、HTTP 契约覆盖与投影失败边界                                         |
-| Requirements 的 `evals/`                                                                        | 从充分材料直接收敛软件职责、故事与验收，不强制 FM                                        |
-| Handoff 的 `evals/`                                                                             | 显式 Markdown 交接、确认覆盖、未决与控制意图、保存失败                                   |
-| Visualization 的 `evals/`                                                                       | 当前生成器的只读投影、导航、图形、详情、输入不变性与浏览器证据                           |
-| Planning／Delivery 的 `evals/`                                                                  | 计划及测试边界、确定性身份、单任务执行、诊断、双维度审查和真实证据                       |
-| `test_skill_packages.py`                                                                        | 包完整性、链接闭合、当前风险覆盖及评测文件内 ID 唯一                                     |
-| `test_skill_documentation.py`                                                                   | 业务入口加载边界、日常领域语言消费及跨包文档协作                                         |
-| `test_contract_first_workflow.py`、`test_incremental_interview.py`、`test_grouped_interview.py` | 合同—骨架—追溯—异常、增量读取、独立问题组、部分回答及控制的静态契约                      |
-| `test_contract_party_rounds.py`                                                                 | 合同一方负责、每轮主动成组查找、共同前提与独立证明同轮问、直接翻译英文、交接与旧规则清除 |
-| `test_responsibility_closure.py`                                                                | 人类终点、完整范围与全部编辑入口的准入契约                                               |
-| `test_fm_integration.py`、`test_combined_review.py`                                             | 委派与聚合命令、真实双源投影、失败不发布及输入不变性                                     |
-| FM／API 的 `tests/`                                                                             | 引擎、Schema、CEL、lineage、模拟、API与评分器的程序回归                                  |
-| FM／API／Visualization 的 `tests/portability/`                                                  | 独立安装及运行，不依赖仓库布局或维护材料                                                 |
-| Planning／Delivery 的 `tests/`                                                                  | 编译与投影、状态、依赖、文件绑定和只读任务选择                                           |
+| 位置                                                                                     | 检查职责                                                                                 |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Modeling 的 `evals/`                                                                     | 显式入口委派、权限传递、准入阻塞、阶段接续、部分交付与路由近似请求                       |
+| Discovery 的 `evals/`                                                                    | 当前节点访谈、合同导航、领域语言、依赖前沿、控制意图及恢复                               |
+| FM 的 `evals/`                                                                           | 正式表达、生成／阻塞／不适用结果、准入与日常领域语言                                     |
+| API 的 `evals/`                                                                          | 整体 API 设计、只读、HTTP 契约覆盖与投影失败边界                                         |
+| Requirements 的 `evals/`                                                                 | 从充分材料直接收敛软件职责、故事与验收，不强制 FM                                        |
+| Handoff 的 `evals/`                                                                      | 显式 Markdown 交接、确认覆盖、未决与控制意图、保存失败                                   |
+| Visualization 的 `evals/`                                                                | 当前生成器的只读投影、导航、图形、详情、输入不变性与浏览器证据                           |
+| Planning／Delivery 的 `evals/`                                                           | 计划及测试边界、确定性身份、单任务执行、诊断、双维度审查和真实证据                       |
+| `test_skill_packages.py`                                                                 | 包完整性、链接闭合、当前风险覆盖及评测文件内 ID 唯一                                     |
+| `test_skill_documentation.py`                                                            | 业务入口加载边界、日常领域语言消费及跨包文档协作                                         |
+| `test_source_relevance.py`、`test_incremental_interview.py`、`test_grouped_interview.py` | 先消费已知依据再决定是否提问的流程结构、评测资源、增量读取、独立问题组及控制的静态契约   |
+| `test_contract_party_rounds.py`                                                          | 合同一方负责、每轮主动成组查找、共同前提与独立证明同轮问、直接翻译英文、交接与旧规则清除 |
+| `test_responsibility_closure.py`                                                         | 人类终点、完整范围与全部编辑入口的准入契约                                               |
+| `test_fm_integration.py`、`test_combined_review.py`                                      | 委派与聚合命令、真实双源投影、失败不发布及输入不变性                                     |
+| FM／API 的 `tests/`                                                                      | 引擎、Schema、CEL、lineage、模拟、API与评分器的程序回归                                  |
+| FM／API／Visualization 的 `tests/portability/`                                           | 独立安装及运行，不依赖仓库布局或维护材料                                                 |
+| Planning／Delivery 的 `tests/`                                                           | 编译与投影、状态、依赖、文件绑定和只读任务选择                                           |
 
 [目录回归](test_eval_catalogs.py)扫描所有 Evidence 评测文件，检查 `contract_refs` 所引当前包内契约、实际 Skill、输入夹具、FM 结果类别与 ID 唯一性。`files` 默认相对 evals 目录；`files_base: ".."` 表示相对 Skill 根。题面和预期只在改变目标契约后相应修订，资源可达不证明语义正确。
 
 案例身份是“评测文件路径 + ID”，不同评测文件不要求全局连续或唯一。保留有效案例的 ID，删除不补号、不复用旧 ID；当前分支和反例覆盖由专属测试检查，不锁定历史数量或编号全集。编排层只评估委派和交接，专业规则由专业包唯一维护。
 
 成组提问按连续主线验证部分回答、依赖更正、逐问偏好与停止，不为每条规则或不同业务名称保留独立题。专属测试核对合并后的逐轮输入与风险预期，而非要求旧类别继续存在；写入失败、跨合同依赖阻塞、循环／版本和结束准入等独立反例仍各自验证。提问案例去重不删除正常与争议业务推演。
+
+履约入口的程序回归检查流程图的分支与终止点，不靠正文保留某些字句来证明行为。Discovery 的 `fulfillment-entry.json` 另以真实 Agent 轨迹核对已签约、版本接受争议和平台模板三种输入；FM 的 `behavior.json` 检查类型保存不制造签约流程缺口。静态结构通过不等于这些行为已通过。
 
 ## 方法与维护材料的边界
 

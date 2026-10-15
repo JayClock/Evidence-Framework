@@ -14,8 +14,7 @@ FM = SKILLS / "evidence-fm"
 class ContractPartyRoundTests(unittest.TestCase):
     def test_responsibility_is_a_party_to_the_evidences_own_contract(self):
         for path in (DISCOVERY / "references/interview.md",
-                     FM / "references/business-analysis.md",
-                     FM / "references/provenance.md"):
+                     FM / "references/business-analysis.md"):
             text = path.read_text()
             with self.subTest(path=path.name):
                 self.assertIn("责任人就是所属合同的一方", text)
@@ -33,8 +32,7 @@ class ContractPartyRoundTests(unittest.TestCase):
                        "共同前提与其他独立问题同轮提出", "不因局部依赖不明而整轮逐问",
                        "确实只有一个可问项", "用户要求一次一问"):
             self.assertIn(phrase, text)
-        for path in (DISCOVERY / "SKILL.md", FM / "references/provenance.md",
-                     REPO / "docs/evidence-modeling.md"):
+        for path in (DISCOVERY / "SKILL.md", REPO / "docs/evidence-modeling.md"):
             with self.subTest(path=path.name):
                 self.assertIn("主动寻找", path.read_text())
 

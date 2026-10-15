@@ -38,7 +38,7 @@ machineValidated → simulationPassed
 1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
 2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
 
-在运行 lineage 前，对全部关键属性执行 [业务来源映射](./provenance.md)，其中统一维护直接记录、引用、派生和未知的处理。asserted／derived 仅是机器表达分类，不增设业务来源枚举，也不代替真实依据；来源缺口影响本批次职责时执行 [输入复核](input-review.md)。
+业务依据按 [当前判断的来源方法](provenance.md)消费和核对；lineage 只分析已表达属性及其 CEL 依赖，不要求先展开全部字段的形成流程。asserted／derived 仅是机器表达分类，不增设业务来源枚举，也不代替真实依据；影响当前判断的来源缺口按 [输入复核](input-review.md)交接。
 
 机器从已声明的 CEL AST 提取依赖并验证类型、引用与环，不会发现业务公式、核实 asserted 值的提供依据，或判断所有业务来源是否充分；这些由业务发现和人工审核承担。
 

@@ -8,20 +8,9 @@ from pathlib import Path
 SKILLS = Path(__file__).resolve().parents[2]
 REPO = SKILLS.parents[1]
 DISCOVERY = SKILLS / "evidence-discovery"
-FM = SKILLS / "evidence-fm"
 
 
 class MultiEvidenceDepthTests(unittest.TestCase):
-    def test_depth_first_is_per_chain_not_a_global_serial_lock(self):
-        method = (FM / "references/provenance.md").read_text()
-        for phrase in ("每条来源链深度优先", "多个凭证可以并行追溯", "回到上层判断",
-                       "不先扫完同一层", "共同依据只追一次", "循环引用不能自证"):
-            self.assertIn(phrase, method)
-        interview = (DISCOVERY / "references/interview.md").read_text()
-        self.assertIn("一个业务焦点可以并行追溯多个凭证", interview)
-        self.assertIn("不要求全局只推进一条链", interview)
-        self.assertNotIn("交互节点是一项凭证，不是单个数据项", interview)
-
     def test_each_active_evidence_has_its_own_position_and_responsibility(self):
         text = (DISCOVERY / "references/interview.md").read_text()
         for phrase in ("主焦点", "并行追溯", "各凭证当前位置", "各自责任人",

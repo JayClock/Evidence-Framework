@@ -53,7 +53,7 @@
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | 现金权责、绩效约定与责任双方、主要履约及增量发现 | [业务分析](../.agents/skills/evidence-fm/references/business-analysis.md)                                                    |
 | 领域复用、业务连接点及必要内部规则               | [领域建模](../.agents/skills/evidence-fm/references/domain-modeling.md)                                                      |
-| 关键数据、计算与业务时间依据                     | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
+| 当前判断的依据不足、冲突或需要深入               | [业务追溯](../.agents/skills/evidence-fm/references/provenance.md)                                                           |
 | 术语理解、日常表达及定义归属                     | [领域语言](../.agents/skills/evidence-fm/references/domain-language.md)                                                      |
 | 最小保存单元、范围完整性、责任终点与人类确认     | [责任范围与渐进保存](../.agents/skills/evidence-fm/references/responsibility-closure.md)                                     |
 | 正式对象、引用与时间语义                         | [FM 语义](../.agents/skills/evidence-fm/references/semantics.md)、[格式](../.agents/skills/evidence-fm/references/format.md) |

@@ -34,10 +34,8 @@ class BilingualInterviewTests(unittest.TestCase):
         for phrase in ("一个业务焦点可以并行追溯多个凭证", "共同业务依据", "多条来源链",
                        "不等待整组答完", "其他已判独立的分支", "不逐字段重复提问"):
             self.assertIn(phrase, text)
-        for relative in ("references/business-analysis.md", "references/provenance.md"):
-            method = (FM / relative).read_text()
-            self.assertIn("多条来源链", method)
-            self.assertNotIn("当前分支追到终点后回到兄弟分支", method)
+        method = (FM / "references/business-analysis.md").read_text()
+        self.assertIn("多条来源链", method)
 
     def test_goal_card_and_evidence_story_have_different_purposes(self):
         text = (DISCOVERY / "references/interview.md").read_text()
