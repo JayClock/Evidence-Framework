@@ -1,6 +1,5 @@
 """Contract-level delegation contracts, not proof of live agent execution."""
 
-import json
 import re
 import unittest
 from pathlib import Path
@@ -48,14 +47,6 @@ class ContractBatchModelingTests(unittest.TestCase):
         constitution = (REPO / "AGENTS.md").read_text()
         self.assertIn("显式范围完整性检查", constitution)
         self.assertIn("自动交接", constitution)
-
-    def test_evals_cover_success_dependency_gap_readonly_and_save_failure(self):
-        catalog = json.loads((SKILLS / "evidence-modeling/evals/evals.json").read_text())
-        cases = {case["category"]: case for case in catalog["evals"]}
-        for category in ("contract-closed-other-contract-pending", "context-role-cannot-hide-proof-gap",
-                         "contract-closed-read-only", "contract-handoff-save-failure"):
-            self.assertIn(category, cases)
-            self.assertGreaterEqual(len(cases[category]["assertions"]), 3)
 
 
 if __name__ == "__main__":

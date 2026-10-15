@@ -18,13 +18,13 @@ class APISkillBoundaryTests(unittest.TestCase):
             "schemas/api-projection.schema.json", "references/api-design.md",
             "references/api-method.md", "references/api-contracts.md",
             "references/api-format.md", "references/api-validation.md",
-            "evals/evals.json", "tests/test_cli.py",
+            "tests/test_cli.py",
         ):
             self.assertTrue((api / resource).is_file(), resource)
         for resource in (
             "scripts/fm_api.py", "scripts/fm_api_core", "tests/api",
             "schemas/api.schema.json", "schemas/api-projection.schema.json",
-            "references/api-design.md", "evals/api.json",
+            "references/api-design.md",
         ):
             self.assertFalse((fm / resource).exists(), resource)
 
@@ -36,12 +36,7 @@ class APISkillBoundaryTests(unittest.TestCase):
         self.assertIn("evidence-api", workflow)
         self.assertIn("不重复执行 FM 检查", workflow)
 
-    def test_api_design_check_and_projection_route_to_api_skill(self):
-        catalog = json.loads((SKILLS / "evidence-modeling/evals/routing.json").read_text())
-        self.assertIn("evidence-api", catalog["availableSkills"])
-        cases = {case["id"]: case for case in catalog["evals"]}
-        for case_id in ("api-design", "api-check", "api-project"):
-            self.assertEqual("evidence-api", cases[case_id]["primarySkill"])
+    def test_project_commands_use_the_independent_api_test_suite(self):
         scripts = json.loads((REPO / "package.json").read_text())["scripts"]
         self.assertIn("evidence-api/tests", scripts["skills:test:api"])
         self.assertNotIn("tests/api", scripts["skills:test:fm"])

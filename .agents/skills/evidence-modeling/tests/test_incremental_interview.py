@@ -1,5 +1,4 @@
 """Incremental context consumption contracts, not measured interview behavior."""
-import json
 import re
 import unittest
 from pathlib import Path
@@ -56,19 +55,6 @@ class IncrementalInterviewTests(unittest.TestCase):
         for skill in ('evidence-discovery', 'evidence-modeling', 'evidence-fm', 'evidence-handoff'):
             for doc in (SKILLS / skill).rglob('*.md'):
                 self.assertNotIn('docs/guides/', doc.read_text())
-
-    def test_evals_cover_loading_and_model_definition_correction(self):
-        cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
-        indexed = {case['category']: case for case in cases}
-        for category in ('skill-only-complete-interview', 'incremental-continuous-answer',
-                         'incremental-source-correction', 'context-sufficiency-boundary',
-                         'language-correction'):
-            case = indexed[category]
-            self.assertEqual(['evidence-fm'], case['knowledgeSkills'])
-            self.assertTrue(any('读取' in item for item in case['expectations']))
-        correction = indexed['language-correction']
-        self.assertTrue(any('定义拥有者' in item for item in correction['expectations']))
-        self.assertTrue(any('保持文件不变' in item for item in correction['expectations']))
 
 
 if __name__ == '__main__':

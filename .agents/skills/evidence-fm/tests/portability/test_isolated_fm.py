@@ -80,9 +80,8 @@ class IsolatedFMTests(unittest.TestCase):
         )
         return json.loads(result.stdout)
 
-    def test_runtime_checks_work_without_tests_or_evals(self):
-        for name in ("tests", "evals"):
-            shutil.rmtree(self.skill / name)
+    def test_runtime_checks_work_without_tests(self):
+        shutil.rmtree(self.skill / "tests")
         before = file_hashes(self.skill)
         for name in ("domain", "payment"):
             with self.subTest(example=name):
@@ -112,27 +111,6 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertFalse((self.skill / "scripts/fm_api_core").exists())
         self.example("payment")
         self.assertTrue(self.check(0)["valid"])
-
-    def test_eval_preparation_resolves_bundled_fixtures_from_an_unrelated_cwd(self):
-        before = file_hashes(self.skill)
-        output = self.workspace / "eval output"
-        result = self.run_python(
-            str(self.skill / "evals/run_modeling_evals.py"),
-            "--workspace",
-            str(output),
-            "--prepare-only",
-        )
-        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-        expected = json.loads((self.skill / "evals/evals.json").read_text())["evals"]
-        self.assertEqual(
-            len(expected), len(list(output.glob("eval-*/eval_metadata.json")))
-        )
-        fixture = (
-            output
-            / "eval-4-missing-confirmation-repair/inputs/missing-confirmation-model/model.json"
-        )
-        self.assertTrue(fixture.is_file())
-        self.assertEqual(before, file_hashes(self.skill))
 
     def test_domain_checks_and_compiles_without_contract_or_fake_simulation(self):
         self.example("domain")
@@ -221,8 +199,7 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertTrue(report["errors"])
 
     def test_direct_edit_and_check_work_without_any_extension(self):
-        for name in ("tests", "evals"):
-            shutil.rmtree(self.skill / name)
+        shutil.rmtree(self.skill / "tests")
         evidence = self.workspace / ".evidence"
         self.model = evidence / "fm"
         self.example("domain")

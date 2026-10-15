@@ -22,7 +22,7 @@ compatibility: 讨论只需文本；文件维护需读写能力；校验需 Pyth
 | 编写或审查验证场景                                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                                                                                                             |
 | 执行 FM 检查或生成派生产物                           | [FM 校验纪律](references/validation.md)                                                                                                                                                                                                                                          |
 
-字段结构直接消费 Schema，跨对象约束定位语义校验器，文档不复制字段表或 JSON 模板。专项按 [规则索引](references/README.md) 选择；首次处理某类表达时，从 [正式表达基线](examples/README.md) 只读对应样例，续问复用未变化内容。样例不是当前业务事实或准入依据；tests/、evals/ 仅用于维护。
+字段结构直接消费 Schema，跨对象约束定位语义校验器，文档不复制字段表或 JSON 模板。专项按 [规则索引](references/README.md) 选择；首次处理某类表达时，从 [正式表达基线](examples/README.md) 只读对应样例，续问复用未变化内容。样例不是当前业务事实或准入依据；tests/ 仅用于维护。
 
 默认源为 `.evidence/fm/`；Entity 及其属性直接承担统一语言，不维护额外定义文件。获授权检查记录放在 `.evidence/checks/fm/`；沿用已有指定位置，项目输出保持在 Skill 安装目录之外。
 

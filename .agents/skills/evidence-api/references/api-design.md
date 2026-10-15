@@ -14,7 +14,7 @@
 | 仅生成交付文件     | 校验纪律；完整检查后 project，不编辑设计源                                                        |
 | 另行要求审核页     | 定位并读取 `evidence-visualization`；不复制展示工具                                               |
 
-API 使用格式 5.0 的严格 JSON，上游为 FM v5；具体结构由格式参考维护。API 阶段的 FM 始终只读，API 源位于 FM 根之外。默认交付 `.evidence/api/generated/`，获授权的紧凑检查记录放 `.evidence/checks/api/`；不向 Skill 安装目录写项目产物。tests/、evals/ 的合成案例不作为业务默认值。
+API 使用格式 5.0 的严格 JSON，上游为 FM v5；具体结构由格式参考维护。API 阶段的 FM 始终只读，API 源位于 FM 根之外。默认交付 `.evidence/api/generated/`，获授权的紧凑检查记录放 `.evidence/checks/api/`；不向 Skill 安装目录写项目产物。tests/ 的合成案例不作为业务默认值。
 
 ## 设计与投影
 

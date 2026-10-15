@@ -11,8 +11,7 @@ evidence-visualization/
 ├── assets/workbench.js
 ├── assets/business-graph.js
 ├── references/
-├── tests/
-└── evals/
+└── tests/
 ```
 
 生成器使用 Python 标准库，调用已安装的 FM/API 正式 CLI。完整复制 Skill 即可复用，不向业务项目复制工具，不携带第三方页面实现。
@@ -33,4 +32,4 @@ node .agents/skills/evidence-visualization/tests/review-browser.mjs .evidence/vi
 
 画布上方可展开图形图例，按业务对象、上下文边界、权责履约、连线说明符号，并使用当前模型的真实名称和责任角标作示例。未建模的类型不加入；原单画布保持不变。
 
-开发检查与隔离安装测试见运行说明。`evals/evals.json` 是待执行的 Agent 行为评测，不是检查通过记录。
+开发检查与隔离安装测试见运行说明。测试存在不代表检查已通过。

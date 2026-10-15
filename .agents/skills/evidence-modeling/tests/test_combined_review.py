@@ -45,16 +45,6 @@ class CombinedWorkflowContracts(unittest.TestCase):
         guide = (REPO / "docs/evidence-modeling.md").read_text()
         self.assertNotIn("另行要求 API 时", guide)
 
-    def test_eval_catalog_covers_joint_success_and_failure_boundaries(self):
-        cases = json.loads((SKILLS / "evidence-modeling/evals/evals.json").read_text())["evals"]
-        self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        for category in ("combined-model-api-review", "combined-api-blocked",
-                         "combined-read-only", "fm-only-restriction", "combined-resource-missing"):
-            case = next((c for c in cases if c.get("category") == category), None)
-            self.assertIsNotNone(case, category)
-            assert case is not None
-            self.assertGreaterEqual(len(case["assertions"]), 3)
-
 
 class JointReviewIntegrationTests(unittest.TestCase):
     def setUp(self):

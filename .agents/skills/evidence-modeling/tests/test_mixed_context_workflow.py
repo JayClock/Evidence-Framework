@@ -1,5 +1,4 @@
 """Mixed-context documentation contracts; not live interview evidence."""
-import json
 import unittest
 from pathlib import Path
 
@@ -75,26 +74,6 @@ class MixedContextWorkflowTests(unittest.TestCase):
         for phrase in ('双层循环的验证与退出', 'Plan', 'Do', 'Check', 'Act',
                        'Sensors', '人类结束确认', '不自动修改 Skill'):
             self.assertIn(phrase, workflow)
-        cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
-        indexed = {case['category']: case for case in cases}
-        insufficient = indexed['operating-basis-unresolved']
-        self.assertIn('功能', insufficient['prompt'])
-        self.assertTrue(any('空导航' in item for item in insufficient['expectations']))
-        changed = indexed['noncash-fulfillment-keeps-economic-anchor']
-        self.assertIn('补充', changed['follow_up'][0])
-        self.assertTrue(any('局部核对' in item for item in changed['expectations']))
-
-    def test_behavior_cases_cover_navigation_closure_and_counterexamples(self):
-        for skill, categories in {
-            'evidence-discovery': ('operating-context-navigation', 'noncash-fulfillment-keeps-economic-anchor'),
-            'evidence-modeling': ('domain-closed-contract-pending', 'domain-closure-readonly-or-invalid'),
-        }.items():
-            cases = json.loads((SKILLS / skill / 'evals/evals.json').read_text())['evals']
-            indexed = {case['category']: case for case in cases}
-            for category in categories:
-                self.assertIn(category, indexed)
-                case = indexed[category]
-                self.assertGreaterEqual(len(case.get('expectations', case.get('assertions', []))), 3)
 
 
 if __name__ == '__main__':

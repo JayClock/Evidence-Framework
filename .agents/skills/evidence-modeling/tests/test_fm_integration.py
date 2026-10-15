@@ -49,7 +49,6 @@ class FMIntegrationTests(unittest.TestCase):
         files = [
             ".agents/skills/evidence-modeling/SKILL.md",
             ".agents/skills/evidence-modeling/references/workflow.md",
-            ".agents/skills/evidence-modeling/evals/evals.json",
             "docs/evidence-modeling.md",
         ]
         retired = {
@@ -75,12 +74,6 @@ class FMIntegrationTests(unittest.TestCase):
         workflow = (
             REPOSITORY / ".agents/skills/evidence-modeling/references/workflow.md"
         ).read_text(encoding="utf-8")
-        evals = json.loads(
-            (
-                REPOSITORY / ".agents/skills/evidence-modeling/evals/evals.json"
-            ).read_text(encoding="utf-8")
-        )["evals"]
-
         for delegate in ("evidence-discovery", "evidence-fm", "evidence-visualization"):
             self.assertIn(delegate, entry)
         self.assertIn("references/workflow.md", entry)
@@ -102,11 +95,6 @@ class FMIntegrationTests(unittest.TestCase):
             self.assertIn(phrase, method)
         self.assertNotIn("## 分析路线", workflow)
         self.assertNotIn("## 组合流程", entry)
-        categories = {case["category"] for case in evals}
-        self.assertTrue({"discovery-before-model", "discovery-delegation-controls",
-                         "progressive-edit-without-scope-completion", "open-sibling-blocks-delivery-not-progressive-save",
-                         "contract-closed-other-contract-pending", "context-role-cannot-hide-proof-gap"}
-                        .issubset(categories))
 
 
 if __name__ == "__main__":

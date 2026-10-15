@@ -13,4 +13,4 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 [商品采购基线](../examples/full-lifecycle/README.md)由本包唯一维护，订阅 FM 夹具消费已安装 FM 包的样例。只在临时副本制造反例，不倒改规则或预期来通过测试。portability 不设 `__init__.py`，单独运行非相邻安装、无维护材料的真实 CLI、缺失依赖和只读边界。
 
-程序回归不是 Agent 行为评测、服务运行验收或业务批准；[行为评测](../evals/README.md)未执行时保持未执行。
+程序回归不证明 Agent 行为质量、服务运行验收或业务批准。

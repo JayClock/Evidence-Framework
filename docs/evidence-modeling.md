@@ -41,7 +41,7 @@
 
 收到回答后吸收全部事实并重算依赖，不预排整份问卷。部分回答立即承接已答项，未答不默认同意，不知道保持未决；逐项暂缓保留原标识，整轮停止或取消后等待。合同导航、单合同结束确认和全局结束确认各自单独一轮，不与业务问题组混问。问题组回答完毕不表示全部追责结束或授权生成。
 
-问答、控制与承接由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 唯一维护；[追溯问答](../.agents/skills/evidence-discovery/examples/tracing.md)以脱敏合成的外观等级判断展示要求与结果两侧来源、部分回答、局部暂缓和返回判断的连续合成样例，边界反例集中在 [行为评测](../.agents/skills/evidence-discovery/evals/README.md)，不作为日常必读。表达质量评测核对每题是否由当前判断所需的数据与凭证缺口产生、来源深入后能否返回判断，以及事实复用、独立问题、责任与控制是否保持；格式或关键词出现不等于行为通过。
+问答、控制与承接由 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md) 唯一维护；[追溯问答](../.agents/skills/evidence-discovery/examples/tracing.md)以脱敏合成的外观等级判断展示要求与结果两侧来源、部分回答、局部暂缓和返回判断的连续合成样例，不是当前业务事实。表达质量需核对每题是否由当前判断所需的数据与凭证缺口产生、来源深入后能否返回判断，以及事实复用、独立问题、责任与控制是否保持；格式或关键词出现不等于行为通过。
 
 领域按“识别边界 → 优先复用成熟方案 → 澄清业务连接点 → 必要时深入”推进，不默认重建通用能力；成熟方案不能替合同决定权益或责任。能力抽象用 `role/domain`，既有系统边界用 `role/third_party`（图示 `3rd-system`），不按公司内外或部署分类；确需展开内部且获授权时才建 `context/domain`。角色不是完成证明，关系遵守 FM 语义。领域及协商按各自方法问答，不强套履约凭证格式。分支结束按本次复用连接范围或获授权深入范围，单独展示规则／方案、关联责任及实际正常和反例核对，等待人类确认本分支澄清结束，并确认本范围没有适用履约责任、无需继续追责。必要缺口仍阻塞；不将未闭合合同改名为领域来绕过准入。完整交互与样例见 [访谈协议](../.agents/skills/evidence-discovery/references/interview.md)及 [上下文导航](../.agents/skills/evidence-discovery/examples/navigation.md)。
 
@@ -93,4 +93,4 @@ npm run lint
 npm run build
 ```
 
-覆盖与环境限制见 [测试指南](engineering/testing.md)。真实多轮评测见 [建模评测协议](../.agents/skills/evidence-modeling/evals/README.md)，实际执行与未执行分别报告。
+覆盖与环境限制见 [测试指南](engineering/testing.md)。程序回归不证明真实多轮访谈质量，实际执行与未执行分别报告。

@@ -1,5 +1,4 @@
 """Reuse-first domain guidance; static contracts are not live agent evidence."""
-import json
 import unittest
 from pathlib import Path
 
@@ -26,14 +25,6 @@ class DomainReuseWorkflowTests(unittest.TestCase):
             for phrase in phrases:
                 with self.subTest(path=path, phrase=phrase):
                     self.assertIn(phrase, text)
-
-    def test_evals_cover_reuse_business_gap_and_explicit_deepening(self):
-        cases = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())['evals']
-        cases = {case['category']: case for case in cases}
-        for category in ('domain-reuse-connection-only', 'noncash-fulfillment-keeps-economic-anchor',
-                         'domain-reuse-explicit-deepening', 'domain-role-versus-system-role'):
-            self.assertIn(category, cases)
-            self.assertGreaterEqual(len(cases[category]['expectations']), 3)
 
 
 if __name__ == '__main__':

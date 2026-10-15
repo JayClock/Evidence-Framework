@@ -11,7 +11,7 @@
 | `npm run lint`          | 前端 ESLint 与前馈文档检查                                                           | 不检查 Java 格式或业务授权                                |
 | `npm run build`         | Nx 应用/库 build                                                                     | 打包成功不等于运行验收                                    |
 | `./gradlew check`       | Java 测试、Spotless 及模块已配置检查                                                 | 不证明生产数据库、真实支付机构或业务批准                  |
-| `npm run skills:verify` | Skills 回归与建模方法、样例、评测和 Schema 的格式范围                                | 不证明 Agent 真实多轮访谈质量，不替代产品 HTTP/SQL 检查   |
+| `npm run skills:verify` | Skills 回归与建模方法、样例和 Schema 的格式范围                                      | 不证明 Agent 真实多轮访谈质量，不替代产品 HTTP/SQL 检查   |
 
 `guides:verify` 由 [检查器](../../tools/guides/check.mjs)定义扫描范围：项目宪法/README、docs、后端切片 README、业务/API 导航、Skills 索引及 planning/delivery 的正文、参考与模板。生成产物、业务源 YAML、历史证据和第三方材料不重写为前馈。代码块中的示例路径、模板变量、远程链接不作为实际本地文件链接检查。检查器仅验证文件路径，不是完整 Markdown 解析器。
 
@@ -34,7 +34,7 @@ Skills 回归要求 Python 3.10+ 与各自 `requirements.txt`；机器上的 `py
 | delivery   | `node tools/python/python.mjs -B -m unittest discover -s .agents/skills/evidence-delivery/tests -v`      | 只读状态检查、执行/恢复前馈、实现/诊断/双维度审查的文档契约                    |
 | Guides     | `npm run guides:test`                                                                                    | 本地链接检查器的正常、缺失、模板、扫描范围、只读回归与项目工序路由/说明结构    |
 
-工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。delivery 的协议回归检查分支可达、退出条件和证据边界，evals 覆盖症状复现、独立预期、未提交差异与双维度结论；未实际运行的 Agent 行为评测保持未执行，不以文档测试代替。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
+工序路由/说明结构与模板回归只检查文档契约，合成切片测试只证明显式映射的编译行为；它们不证明 Agent 自动选对工序。delivery 的协议回归检查分支可达、退出条件和证据边界，以及症状复现、独立预期、未提交差异与双维度结论的文档契约；这些检查不证明 Agent 的实际执行质量。业务适用性与例外按[工序维护检查](procedures.md#工序维护的检查与退出)人工复核。
 
 ## CHECK 的最低证据
 

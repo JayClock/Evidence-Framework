@@ -20,13 +20,8 @@
       "root": ".agents/skills/evidence-fm/tests",
       "extraPaths": [
         ".agents/skills/evidence-fm/scripts",
-        ".agents/skills/evidence-fm/tests",
-        ".agents/skills/evidence-fm/evals"
+        ".agents/skills/evidence-fm/tests"
       ]
-    },
-    {
-      "root": ".agents/skills/evidence-fm/evals",
-      "extraPaths": [".agents/skills/evidence-fm/scripts"]
     },
     {
       "root": ".agents/skills/evidence-fm/scripts",

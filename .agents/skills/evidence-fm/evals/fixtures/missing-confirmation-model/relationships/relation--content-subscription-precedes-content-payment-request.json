@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.content-subscription-precedes-content-payment-request",
-  "kind": "references",
-  "sourceRef": "request.content-payment",
-  "targetRef": "contract.content-subscription",
-  "label": "凭证引用形成依据"
-}

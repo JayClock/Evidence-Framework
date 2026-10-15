@@ -58,8 +58,7 @@ class IsolatedAPITests(unittest.TestCase):
 
     def test_cli_works_without_maintenance_files_or_adjacent_fm(self):
         for package in (self.api, self.fm):
-            for name in ("tests", "evals"):
-                shutil.rmtree(package / name)
+            shutil.rmtree(package / "tests")
         before = hashes(self.model), self.source.read_bytes(), hashes(self.api), hashes(self.fm)
         for action in ("inspect", "check", "project"):
             args = [] if action == "inspect" else ["--api", self.source]

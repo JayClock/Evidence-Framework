@@ -117,7 +117,6 @@ class AttributeNamingTests(unittest.TestCase):
     def test_bundled_rule_descriptions_reference_concrete_entities(self):
         fixture_roots = [
             Path(__file__).resolve().parent / "fixtures",
-            SKILL / "evals" / "fixtures",
         ]
         for fixtures in fixture_roots:
             for manifest in fixtures.glob("*/model.json"):

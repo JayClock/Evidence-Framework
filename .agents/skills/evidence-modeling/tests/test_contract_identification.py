@@ -1,12 +1,10 @@
 """Cash/performance discovery contracts, not live interview evidence."""
 
-import json
 import unittest
 from pathlib import Path
 
 SKILLS = Path(__file__).resolve().parents[2]
 REPO = SKILLS.parents[1]
-DISCOVERY_EVALS = SKILLS / "evidence-discovery/evals"
 
 
 class ContractIdentificationTests(unittest.TestCase):
@@ -82,44 +80,6 @@ class ContractIdentificationTests(unittest.TestCase):
         display = text.split("```text", 1)[1].split("```", 1)[0]
         self.assertIn("付款", display)
         self.assertNotRegex(display, r"sourceRefs|https?://|\.md|如何落地业务建模|徐昊|资料来源")
-
-    def test_behavior_cases_cover_operating_basis_parties_and_discovery(self):
-        cases = json.loads((DISCOVERY_EVALS / "evals.json").read_text())["evals"]
-        self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        indexed = {case["category"]: case for case in cases}
-        for category in (
-            "cash-rights-obligations-discovery", "performance-without-variance",
-            "noncash-fulfillment-keeps-economic-anchor", "operating-basis-unresolved",
-            "payment-support-and-party-identity", "operating-context-navigation",
-            "cash-document-agreement-reconstruction",
-        ):
-            with self.subTest(category=category):
-                case = indexed[category]
-                self.assertIn("evidence-fm", case["knowledgeSkills"])
-                self.assertGreaterEqual(len(case["expectations"]), 4)
-                self.assertIn("只聊", case["prompt"])
-                self.assertTrue(case["follow_up"])
-        support = "\n".join(indexed["payment-support-and-party-identity"]["expectations"])
-        for phrase in ("不自动切换", "第三方", "经办人", "证明提供方", "同一读者"):
-            self.assertIn(phrase, support)
-        cash = "\n".join(indexed["cash-rights-obligations-discovery"]["expectations"])
-        for phrase in ("收入流与成本结构", "收款承担义务", "付款取得权利", "关键数据"):
-            self.assertIn(phrase, cash)
-        performance = "\n".join(indexed["performance-without-variance"]["expectations"])
-        self.assertIn("目标—实际对比", performance)
-        self.assertIn("没有实际偏差也能分析", performance)
-        for case in cases:
-            for relative_path in case.get("files", []):
-                path = DISCOVERY_EVALS / relative_path
-                self.assertTrue(path.is_file(), relative_path)
-                self.assertTrue(path.resolve().is_relative_to(DISCOVERY_EVALS.resolve()))
-
-    def test_evals_distinguish_static_checks_from_actual_interviews(self):
-        instructions = (DISCOVERY_EVALS / "README.md").read_text()
-        self.assertIn("98—104", instructions)
-        self.assertIn("独立风险", instructions)
-        self.assertIn("没有实际执行就保持未执行", instructions)
-        self.assertIn("files", instructions)
 
 
 if __name__ == "__main__":

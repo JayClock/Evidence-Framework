@@ -8,7 +8,6 @@ SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
     SKILL / "examples",
     SKILL / "tests/fixtures",
-    SKILL / "evals/fixtures",
 ]
 LEGACY_TERMS = {
     "contractRef",
@@ -64,7 +63,7 @@ class CanonicalModelTests(unittest.TestCase):
             self.assertEqual(set(), set(fulfillment) - allowed, path)
             self.assertIn("contextRef", fulfillment, path)
 
-    def test_source_schema_prompts_and_docs_have_no_legacy_model(self) -> None:
+    def test_source_schema_and_docs_have_no_legacy_model(self) -> None:
         paths = [
             SKILL / "schemas/entity.schema.json",
             SKILL / "schemas/relationship.schema.json",
@@ -72,7 +71,6 @@ class CanonicalModelTests(unittest.TestCase):
             SKILL / "scripts/fm_simulation.py",
             SKILL / "SKILL.md",
             *sorted((SKILL / "references").glob("*.md")),
-            *sorted((SKILL / "evals").glob("*.json")),
         ]
         text = "\n".join(path.read_text(encoding="utf-8") for path in paths)
         for term in LEGACY_TERMS:

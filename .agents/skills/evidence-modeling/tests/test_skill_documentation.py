@@ -1,6 +1,5 @@
 """Documentation structure contracts, not proof of agent interview quality."""
 
-import json
 import re
 import unittest
 from pathlib import Path
@@ -138,7 +137,7 @@ class SkillDocumentationTests(unittest.TestCase):
         discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
         self.assertIn("故事、问题与交接使用同一中文（英文）规范名称", discovery)
 
-    def test_daily_language_examples_and_evals_cover_usage_and_permission_edges(self):
+    def test_daily_language_examples_cover_usage_and_permission_edges(self):
         fm = ROOT / "evidence-fm"
         method = (fm / "references/domain-language.md").read_text()
         self.assertIn("../examples/domain-language.md", method)
@@ -147,18 +146,6 @@ class SkillDocumentationTests(unittest.TestCase):
         example = (fm / "examples/domain-language.md").read_text()
         for scenario in ("别名输入", "同名异义", "只读", "缺词"):
             self.assertIn(scenario, example)
-        catalog = json.loads((fm / "evals/model-language.json").read_text())
-        cases = {case["category"]: case for case in catalog["evals"]}
-        self.assertTrue({
-            "entity-owned-language", "attribute-owned-meaning", "context-sensitive-language",
-            "direct-business-name-translation",
-        }.issubset(cases))
-        for case in cases.values():
-            self.assertTrue(case["prompt"])
-            self.assertTrue(case["expectations"])
-        instructions = (fm / "evals/README.md").read_text()
-        self.assertIn("model-language.json", instructions)
-        self.assertIn("未执行", instructions)
 
     def test_direct_workflow_has_no_publication_runtime_or_compatibility_entry(self):
         for path in (
@@ -205,7 +192,7 @@ class SkillDocumentationTests(unittest.TestCase):
                     self.assertTrue(target.exists(), (document, link))
                     self.assertNotIn(
                         target.relative_to(package).parts[0],
-                        ("tests", "evals"),
+                        ("tests",),
                         (document, link),
                     )
                     if target.suffix == ".md":
@@ -253,7 +240,6 @@ class SkillDocumentationTests(unittest.TestCase):
         ):
             package = ROOT / name
             documents.extend(package.rglob("*.md"))
-            documents.extend((package / "evals").glob("*.json"))
         for document in documents:
             with self.subTest(document=str(document)):
                 self.assertNotRegex(document.read_text(), r"docs/(?:business|api)/")

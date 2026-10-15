@@ -52,21 +52,6 @@ class SkillOnlyTests(unittest.TestCase):
         self.assertIn("普通对话是完整交互路径", guide)
         self.assertNotRegex(guide, r"/evidence-model(?!ing)|\.pi/|evidence_ui_")
 
-    def test_behavior_evals_cover_text_controls_and_resume(self):
-        cases = []
-        for name in ("evals.json", "evidence-tracing.json"):
-            cases.extend(json.loads((SKILLS / "evidence-discovery/evals" / name).read_text())["evals"])
-        indexed = {case["category"]: case for case in cases}
-        for category in ("skill-only-complete-interview", "delivery-requirement-and-result",
-                         "cross-contract-local-control", "context-navigation-ambiguous-selection"):
-            with self.subTest(category=category):
-                case = indexed[category]
-                self.assertIn("follow_up", case)
-                self.assertGreaterEqual(len(case["expectations"]), 4)
-        instructions = (SKILLS / "evidence-discovery/evals/README.md").read_text()
-        self.assertIn("完整普通对话路径", instructions)
-        self.assertIn("没有实际执行就保持未执行", instructions)
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -164,7 +164,6 @@ test('scans maintained docs and workflow templates, not generated facts or histo
   put('.agents/skills/evidence-task-planning/assets/task-plan-template.md');
   put('.evidence/fm/generated/report.md');
   put('.evidence/checks/old/record.md');
-  put('.agents/skills/evidence-task-planning/evals/README.md');
   const files = collectDocuments(root);
   assert.ok(files.includes('docs/engineering/new-guide.md'));
   assert.ok(
@@ -178,10 +177,7 @@ test('scans maintained docs and workflow templates, not generated facts or histo
   );
   assert.ok(
     !files.some(
-      (file) =>
-        file.includes('/generated/') ||
-        file.includes('/checks/') ||
-        file.includes('/evals/'),
+      (file) => file.includes('/generated/') || file.includes('/checks/'),
     ),
   );
   assert.ok(

@@ -1,6 +1,5 @@
 """Evidence-tracing resource contracts; not evidence of live-agent performance."""
 
-import json
 import re
 import unittest
 from pathlib import Path
@@ -107,8 +106,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
             self.assertIn(boundary, text)
 
     def test_teaching_materials_are_synthetic_without_identifiers_or_business_source_links(self):
-        paths = [*(DISCOVERY / "examples").glob("*.md"),
-                 *(DISCOVERY / "evals/fixtures").rglob("*.md")]
+        paths = list((DISCOVERY / "examples").glob("*.md"))
         identifiers = re.compile(
             r"https?://|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|/(?:Users|home)/|\.evidence/"
             r"|(?<!\d)1[3-9]\d{9}(?!\d)|(?<!\d)\d{17}[\dXx](?!\d)"
@@ -120,37 +118,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
                 self.assertNotRegex(text, identifiers)
         self.assertIn("脱敏", (DISCOVERY / "examples/README.md").read_text())
 
-    def test_trace_evaluations_have_isolated_sources_and_observable_failure_modes(self):
-        path = DISCOVERY / "evals/evidence-tracing.json"
-        catalog = json.loads(path.read_text())
-        self.assertEqual("evidence-discovery", catalog["skill_name"])
-        cases = {case["category"]: case for case in catalog["evals"]}
-        self.assertLessEqual({"delivery-requirement-and-result", "amount-lineage-and-return",
-                              "cross-contract-local-control", "cycle-and-evidence-version",
-                              "trace-versus-generic-questionnaire"}, cases.keys())
-        for case in cases.values():
-            with self.subTest(case=case["id"]):
-                self.assertEqual(["evidence-fm"], case["knowledgeSkills"])
-                self.assertTrue(case["expectations"])
-                self.assertTrue(case["forbiddenActions"])
-                self.assertTrue(case["files"])
-                for relative in case["files"]:
-                    source = (path.parent / relative).resolve()
-                    self.assertTrue(source.is_relative_to(path.parent.resolve()))
-                    self.assertTrue(source.is_file())
-                prompt = case["prompt"]
-                self.assertNotRegex(prompt, r"答案是|评判标准是")
-        self.assertTrue(cases["delivery-requirement-and-result"]["follow_up"])
-        self.assertTrue(cases["cross-contract-local-control"]["follow_up"])
-        instructions = (DISCOVERY / "evals/README.md").read_text()
-        self.assertIn("evidence-tracing.json", instructions)
-        self.assertIn("没有实际执行就保持未执行", instructions)
-
-    def test_old_presentation_cases_are_removed_instead_of_kept_as_alternate_mode(self):
-        catalog = json.loads((DISCOVERY / "evals/evals.json").read_text())
-        categories = {case["category"] for case in catalog["evals"]}
-        self.assertFalse(categories & {"evidence-provenance-story", "grouped-independent-frontier",
-                                       "multi-evidence-depth-first", "multi-evidence-cycle-and-version"})
+    def test_project_entrypoints_preserve_evidence_tracing(self):
         for path in (REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
                      DISCOVERY / "SKILL.md", SKILLS / "evidence-modeling/references/workflow.md"):
             self.assertIn("凭证追溯", path.read_text(), path)

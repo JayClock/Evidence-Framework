@@ -18,7 +18,6 @@ class DocumentationTests(unittest.TestCase):
             *sorted((SKILL / "scripts/fm_api_core").glob("*.py")),
             *sorted((SKILL / "references").glob("api-*.md")),
             *sorted((SKILL / "schemas").glob("api*.json")),
-            SKILL / "evals/evals.json",
         ]
         for path in documents:
             self.assertNotRegex(path.read_text(), retired, str(path))

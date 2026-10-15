@@ -1,6 +1,5 @@
 """Static execution contracts; not a substitute for isolated agent evaluations."""
 
-import json
 import unittest
 from pathlib import Path
 
@@ -50,23 +49,6 @@ class ExecutionProtocolTests(unittest.TestCase):
             self.assertIn(phrase, text)
         self.assertIn("不能合并成一个总分", text)
         self.assertIn("两个维度均满足要求且质量检查实际通过", text)
-
-    def test_behavior_evals_cover_execution_risks_without_retired_plan_layout(self):
-        document = json.loads((SKILL / "evals/evals.json").read_text(encoding="utf-8"))
-        cases = document["evals"]
-        self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        names = {case["name"] for case in cases}
-        self.assertTrue({
-            "symptom-before-fix", "independent-expectation-and-existing-green",
-            "standards-and-spec-independent", "flaky-repro-and-evidence-limits",
-        }.issubset(names))
-        for case in cases:
-            self.assertTrue(case["prompt"])
-            self.assertTrue(case["expected_output"])
-            self.assertNotIn("index.md", case["prompt"])
-            self.assertNotIn("任务文件", case["prompt"])
-        instructions = (SKILL / "evals/README.md").read_text(encoding="utf-8")
-        self.assertIn("没有实际执行就保持未执行", instructions)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 """Static mainline contracts; these checks do not prove interview quality."""
 
-import json
 import unittest
 from pathlib import Path
 
@@ -58,36 +57,7 @@ class InterviewMainlineTests(unittest.TestCase):
             self.assertIn(phrase, method)
         self.assertIn("核对主体、角色、同一性及代表依据的对应关系", method)
 
-    def test_behavior_evals_cover_mainline_and_negative_cases(self):
-        document = json.loads((SKILLS / "evidence-discovery/evals/evals.json").read_text())
-        cases = document["evals"]
-        self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        indexed = {case["category"]: case for case in cases}
-        for category in (
-            "cash-document-agreement-reconstruction", "key-value-lineage", "document-walkthrough",
-            "variation-and-support-boundary", "domain-without-contract",
-            "party-cross-context-identity", "party-identity-unresolved",
-        ):
-            case = indexed[category]
-            self.assertIn("evidence-fm", case["knowledgeSkills"])
-            self.assertGreaterEqual(len(case["expectations"]), 3)
-        fallback = indexed["cash-document-agreement-reconstruction"]
-        self.assertIn("无法取得协议", fallback["follow_up"][0])
-        self.assertTrue(any("从可见凭证" in item for item in fallback["expectations"]))
-        party = indexed["party-identity-unresolved"]
-        self.assertTrue(any("代表关系" in item and "证明提供方" in item for item in party["expectations"]))
-        instructions = (SKILLS / "evidence-discovery/evals/README.md").read_text()
-        self.assertIn("没有实际执行就保持未执行", instructions)
-
-    def test_interaction_growth_has_multiturn_evals_and_recovery_contracts(self):
-        catalog = SKILLS / "evidence-discovery/evals/interaction-growth.json"
-        cases = json.loads(catalog.read_text())["evals"]
-        self.assertEqual({"paired-main-interactions", "single-endpoint-and-recovery",
-                          "exception-interaction-recursion"}, {c["category"] for c in cases})
-        for case in cases:
-            self.assertTrue(case["follow_up"])
-            self.assertTrue(case["forbiddenActions"])
-            self.assertIn("evidence-fm", case["knowledgeSkills"])
+    def test_interaction_growth_preserves_recovery_contracts(self):
         for relative in ("evidence-discovery/references/interview.md",
                          "evidence-modeling/references/workflow.md",
                          "evidence-modeling/assets/handoff-template.md",

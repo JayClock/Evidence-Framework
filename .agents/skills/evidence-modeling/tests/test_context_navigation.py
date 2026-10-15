@@ -1,5 +1,4 @@
 """On-demand context navigation contracts, not live interview evidence."""
-import json
 import unittest
 from pathlib import Path
 
@@ -36,15 +35,6 @@ class ContextNavigationTests(unittest.TestCase):
         self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|待追溯')
         self.assertIn('直接进入专栏订阅合同（Column Subscription Contract）', text)
         self.assertIn('不自动切换', text)
-
-    def test_behavior_cases_cover_direct_entry_and_explicit_navigation(self):
-        data = json.loads((SKILLS / 'evidence-discovery/evals/evals.json').read_text())
-        indexed = {item['category']: item for item in data['evals']}
-        for category in ('skill-only-complete-interview', 'completed-context-not-selectable',
-                         'context-navigation-ambiguous-selection', 'cash-rights-obligations-discovery',
-                         'payment-support-and-party-identity', 'operating-context-navigation'):
-            self.assertIn('follow_up', indexed[category])
-            self.assertGreaterEqual(len(indexed[category]['expectations']), 4)
 
 
 if __name__ == '__main__':

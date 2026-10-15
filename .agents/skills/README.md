@@ -105,14 +105,8 @@ python3 -m venv "$VENV_DIR"
 
 更多模型规则和命令见 [FM 指南](evidence-fm/references/README.md)。
 
-## 测试与评测
+## 测试与维护
 
-各 Skill 的评测与自身方法一起维护：[业务发现](evidence-discovery/evals/README.md)、[正式 FM](evidence-fm/evals/README.md)、[API 设计](evidence-api/evals/README.md)、[软件需求](evidence-requirements/evals/README.md)、[smart-domain 任务规划](evidence-task-planning/evals/README.md)、[当前工作台](evidence-visualization/evals/README.md)。FM 包含[功能回归](evidence-fm/tests/README.md)与夹具，可独立运行；API 的[功能回归](evidence-api/tests/README.md)通过显式路径消费已安装 FM 包。
+各 Skill 的程序回归与自身方法一起维护。FM 包含[功能回归](evidence-fm/tests/README.md)与夹具，可独立运行；API 的[功能回归](evidence-api/tests/README.md)通过显式路径消费已安装 FM 包。组合入口、跨包契约和聚合命令见 [Skills 测试说明](evidence-modeling/tests/README.md)。
 
-delivery 的实现、诊断与双维度审查用例位于 `evidence-delivery/evals/evals.json`；协议结构回归不证明 Agent 的实际执行质量，评测方法见其 evals/README.md。
-
-跨 Skill 选择与近似请求用 [路由评测](evidence-modeling/evals/README.md) 检查，专业执行沿用各包案例。测试结构与引用，不要求编排入口复制专业规则；实测选择、权限、保存顺序和失败转向须保留执行轨迹。
-
-各评测文件以 `contract_refs` 定位包内当前契约；案例 ID 只在该文件内唯一，不锁定历史数量。`files` 默认相对 evals 目录，API 案例用 `files_base: ".."` 明确从 Skill 根解析。维护时同步题面、预期、评分器、引用及配套回归；[目录检查](evidence-modeling/tests/test_eval_catalogs.py)拒绝失效契约、夹具、Skill 名称和重复 ID，不证明语义有效。
-
-这些目录只在开发验证时按需使用，不是普通业务任务的必读材料。自动回归与人工行为评价分开，没有执行的评测不能记为通过。
+测试目录只在开发验证时按需使用，不是普通业务任务的必读材料。程序回归和文档结构不证明 Agent 的实际访谈、设计、路由或执行质量，也不代表人工批准。

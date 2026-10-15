@@ -1,6 +1,5 @@
-"""Entrypoint and evaluation-catalog contracts, not measured agent routing accuracy."""
+"""Entrypoint contracts, not measured agent routing accuracy."""
 
-import json
 import re
 import unittest
 from pathlib import Path
@@ -57,23 +56,6 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertNotIn("### 字段内联派生计算", text)
         self.assertNotIn("derivedByRuleRef", text)
         self.assertIn("实现维护或视觉评审", text)
-
-    def test_routing_evaluations_cover_all_entries_and_near_misses(self):
-        catalog = json.loads((SKILLS / "evidence-modeling/evals/routing.json").read_text())
-        self.assertEqual(list(NAMES) + ["evidence-handoff"], catalog["availableSkills"])
-        cases = catalog["evals"]
-        self.assertTrue(cases)
-        self.assertEqual(len(cases), len({case["id"] for case in cases}))
-        self.assertEqual(set(NAMES) | {"evidence-handoff", None}, {case["primarySkill"] for case in cases})
-        for case in cases:
-            with self.subTest(case=case["id"]):
-                self.assertTrue(case["prompt"])
-                self.assertTrue(case["expectations"])
-                self.assertTrue(case["forbiddenActions"])
-                self.assertIsInstance(case["explicit"], bool)
-                if case["primarySkill"] in {"evidence-modeling", "evidence-handoff"}:
-                    self.assertTrue(case["explicit"])
-        self.assertGreaterEqual(sum(case["primarySkill"] is None for case in cases), 3)
 
 
 if __name__ == "__main__":
