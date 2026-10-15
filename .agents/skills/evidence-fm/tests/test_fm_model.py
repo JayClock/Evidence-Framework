@@ -12,9 +12,6 @@ from typing import Any
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
 
-from build_fm_business_patterns import (  # pyright: ignore[reportMissingImports]  # noqa: E402
-    render_business_patterns,
-)
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
     compiled_document,
     load_model,
@@ -251,11 +248,12 @@ class FulfillmentModelTests(unittest.TestCase):
         self.assertEqual(set(model.fulfillments_by_id), fulfillment_ids)
         self.assertNotIn("fulfillments", document)
 
-    def test_business_pattern_and_compilation_are_deterministic(self) -> None:
+    def test_compilation_contains_only_model_type_collections_and_is_deterministic(self) -> None:
         model = load_model(self.fixture("valid-content-platform"))
         self.assertEqual([], validate_model(model))
         self.assertEqual(
-            render_business_patterns(model), render_business_patterns(model)
+            {"schemaVersion", "model", "entities", "relationships", "rules"},
+            set(compiled_document(model)),
         )
         first = json.dumps(compiled_document(model), ensure_ascii=False, sort_keys=True)
         second = json.dumps(

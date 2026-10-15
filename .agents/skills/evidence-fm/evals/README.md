@@ -23,10 +23,9 @@
 | 8   | 自动触发       | 调度器代表角色而非参与方               |
 | 9   | CEL 规则       | 不另造执行 DSL                         |
 | 10  | 参与者绑定     | 同一主体跨上下文扮演角色               |
-| 11  | 多合同         | 合同内权责与候选复用                   |
+| 11  | 多合同         | 合同内权责与跨上下文关联               |
 | 12  | 追溯与模拟     | lineage、成功／违约及机器结果          |
 | 13  | 歧义说明       | 按明确只说明、不生成的权限交接业务缺口 |
-| 14  | 跨领域复用     | 引用有依据的结果，不虚构确认           |
 | 15  | 纯领域         | 身份、关系、规则，不编合同履约         |
 | 16  | 询价与报价说明 | 保留已知事实和截止缺口，遵守不生成限制 |
 | 17  | KPI 合同前协商 | 不变成目标设定履约                     |
@@ -46,7 +45,7 @@
 "$PYTHON" "$SKILL_DIR/evals/run_modeling_evals.py" --workspace "$WORKSPACE" --prepare-only
 
 # 使用实际可用的外部 Agent；路径含空格时在模板中加引号
-"$PYTHON" "$SKILL_DIR/evals/run_modeling_evals.py" --workspace "$WORKSPACE" --only 11,12,13,14 \
+"$PYTHON" "$SKILL_DIR/evals/run_modeling_evals.py" --workspace "$WORKSPACE" --only 11,12,13 \
   --command-template 'agent-cli --prompt-file "{prompt_file}" --output "{output_dir}"'
 
 "$PYTHON" "$SKILL_DIR/evals/run_modeling_evals.py" --workspace "$WORKSPACE" --grade-only

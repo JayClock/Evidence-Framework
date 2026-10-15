@@ -1,6 +1,6 @@
 # FM Schema v4 标准建模模式
 
-本文件提供常见结构，不能替代从当前业务中提取 `business-patterns/*.json`。后者使用 `business-pattern-extraction.md`。
+本文件提供常见建模结构，具体表达仍须依据当前业务材料，不把样例当作业务事实。
 
 ## 1. Role-first Contract 与权责履约
 

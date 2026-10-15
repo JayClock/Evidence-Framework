@@ -32,7 +32,7 @@ class ContextLayoutTests(unittest.TestCase):
         self.before_check = check_model(self.root)
         self.paths = {}
         # Deliberately remove type-based roots and use short, repeated local names.
-        for folder in ("entities", "relationships", "rules", "business-patterns"):
+        for folder in ("entities", "relationships", "rules"):
             directory = self.root / folder
             if not directory.exists():
                 continue

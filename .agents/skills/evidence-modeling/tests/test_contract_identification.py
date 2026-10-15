@@ -68,7 +68,6 @@ class ContractIdentificationTests(unittest.TestCase):
                  SKILLS / "evidence-fm/SKILL.md", SKILLS / "evidence-discovery/SKILL.md",
                  SKILLS / "evidence-fm/references/business-analysis.md",
                  SKILLS / "evidence-fm/references/semantics.md",
-                 SKILLS / "evidence-fm/references/business-pattern-extraction.md",
                  SKILLS / "evidence-discovery/references/interview.md"]
         for path in paths:
             with self.subTest(path=str(path)):

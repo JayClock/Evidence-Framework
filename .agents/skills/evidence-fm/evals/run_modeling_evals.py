@@ -202,7 +202,7 @@ def formal_outputs(output: Path) -> list[Path]:
     """Also catch partial sources and projections when no complete model exists."""
     found = []
     source_dirs = {"entities", "contexts", "relationships", "rules", "validation", "generated"}
-    source_types = {"entity", "relationship", "rule", "business_pattern"}
+    source_types = {"entity", "relationship", "rule"}
     for path in sorted(output.rglob("*")):
         if not path.is_file() or path.suffix not in {".json", ".yaml", ".yml"}:
             continue
@@ -585,7 +585,6 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
     fulfillments = list(model.fulfillments_by_id.values())
     relationships = model.relationships
     rules = model.rules
-    business_patterns = model.business_patterns
     entities_by_id = model.entities_by_id
     strict_boundaries = all(
         fulfillment.get("category") == "fulfillment"
@@ -1000,23 +999,6 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             customer_subscriber,
             f"customers={customer_ids}; subscribers={subscriber_ids}",
         )
-        candidate_patterns = [
-            pattern
-            for pattern in business_patterns
-            if len(set(pattern.get("domainExampleContextRefs") or [])) < 2
-        ]
-        add(
-            expectations,
-            "Single-domain content operation is not claimed as cross-domain reusable.",
-            bool(candidate_patterns),
-            str(candidate_patterns),
-        )
-        add(
-            expectations,
-            "Derived business-pattern Markdown exists.",
-            (model_dir / "02-business-patterns.md").is_file(),
-            str(model_dir / "02-business-patterns.md"),
-        )
     elif eval_id == 12:
         lineage, lineage_errors = analyze_traceability(model)
         key_nodes = [node for node in lineage["nodes"] if node.get("keyData")]
@@ -1067,42 +1049,6 @@ def grade(item: dict[str, Any], workspace: Path, configuration: str) -> dict[str
             "Generated traceability and simulation reports are deterministic.",
             lineage_matches and simulation_matches,
             f"lineage={generated_lineage}; simulation={generated_simulation}",
-        )
-    elif eval_id == 14:
-        domain_contexts = [
-            entity
-            for entity in entities
-            if (entity.get("category"), entity.get("kind")) == ("context", "domain")
-        ]
-        supported_patterns = [
-            pattern
-            for pattern in business_patterns
-            if len(pattern.get("supportedByContractContextRefs") or []) >= 2
-            and len(pattern.get("domainExampleContextRefs") or []) >= 2
-        ]
-        add(
-            expectations,
-            "Cross-domain model contains at least two Domain Contexts.",
-            len(domain_contexts) >= 2,
-            str([item.get("id") for item in domain_contexts]),
-        )
-        add(
-            expectations,
-            "Business Pattern cites two contract and two domain examples.",
-            bool(supported_patterns),
-            str(supported_patterns),
-        )
-        pattern_markdown = model_dir / "02-business-patterns.md"
-        add(
-            expectations,
-            "Derived business-pattern Markdown exists and names the pattern.",
-            pattern_markdown.is_file()
-            and bool(
-                re.search(
-                    r"付款|权益|访问", pattern_markdown.read_text(encoding="utf-8")
-                )
-            ),
-            str(pattern_markdown),
         )
 
     return save_grade(item, workspace, configuration, expectations, model_dir)

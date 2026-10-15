@@ -19,7 +19,7 @@ class ModelLanguageTests(unittest.TestCase):
         self.assertEqual(
             {
                 "model.schema.json", "entity.schema.json", "relationship.schema.json",
-                "rule.schema.json", "business-pattern.schema.json",
+                "rule.schema.json",
                 "evidence-instance.schema.json", "scenario.schema.json",
                 "compiled-model.schema.json", "traceability.schema.json",
                 "simulation-report.schema.json", "timeline.schema.json",

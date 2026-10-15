@@ -105,8 +105,8 @@
       "id": 11,
       "name": "multi-contract-content-platform",
       "outcome": "model",
-      "prompt": "使用 evidence-fm 建模合成内容平台：订阅、生产、运营绩效三个合同，分别有付款/内容访问/中断补偿，预付款/分成/交稿/违约金，目标设定/周检查，共九项。金额、分成比例、目标及交付要求由对应合同或双方逐次冻结的请求明确，不另造公式。加入生产签约前选题/立项凭证与内容领域 Collection/Content Item。明确 Customer 扮演 Subscriber，不按 Creator、Operator、Platform 名称补 Party。提取付费内容运营 Business Pattern，单领域不宣称跨领域复用。本轮仅生成 FM、编译与02-business-patterns.md，不设计 API 或页面。",
-      "expected_output": "三合同、九履约、合同前与领域 Context 完整；Customer→Subscriber 有明确关系，无占位 Party；模式引用当前主线及变化点，不携带审核状态；校验与确定性编译通过。",
+      "prompt": "使用 evidence-fm 建模合成内容平台：订阅、生产、运营绩效三个合同，分别有付款/内容访问/中断补偿，预付款/分成/交稿/违约金，目标设定/周检查，共九项。金额、分成比例、目标及交付要求由对应合同或双方逐次冻结的请求明确，不另造公式。加入生产签约前选题/立项凭证与内容领域 Collection/Content Item。明确 Customer 扮演 Subscriber，不按 Creator、Operator、Platform 名称补 Party。本轮仅生成 FM 与编译产物，不设计 API 或页面。",
+      "expected_output": "三合同、九履约、合同前与领域 Context 完整；Customer→Subscriber 有明确关系，无占位 Party；校验与确定性编译通过。",
       "files": ["fixtures/modeling-admission.md"]
     },
     {
@@ -129,14 +129,6 @@
         "只说明、不生成权限优先，正式模型、规则、场景、API和项目记录不变。",
         "缺口说明与实际未执行项准确，不把不生成模型当技术失败。"
       ]
-    },
-    {
-      "id": 14,
-      "name": "cross-domain-business-pattern",
-      "outcome": "model",
-      "prompt": "使用 evidence-fm 建模合成内容会员和健身课程会员两个案例：服务方要求会员签约后30分钟内付款，合格付款后在合同有效期内提供访问；内容和健身为独立 Domain Context，凭证可审计。提取付款后提供期限权益 Business Pattern，用两个合同与两个领域的引用支持，不添加审核状态。本轮仅生成 FM、编译与02-business-patterns.md，不设计 API 或页面。",
-      "expected_output": "按合成来源及编辑授权表达两个 Contract Context、至少四项履约、两个 Domain Context与一个模式；业务主线、变化点及两类案例引用完整，模式无审核状态，Markdown由正式源派生。",
-      "files": ["fixtures/modeling-admission.md"]
     },
     {
       "id": 15,

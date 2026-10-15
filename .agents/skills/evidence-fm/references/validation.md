@@ -75,7 +75,7 @@ generated 中的编译与 lineage 是可重建产物；已被交接引用的具�
 "$PYTHON" "$SKILL_DIR/scripts/simulate_fm_model.py" "$MODEL_DIR" --output "$MODEL_DIR/generated/simulation.json"
 ```
 
-不要对空场景套件调用底层模拟命令再以其布尔结果宣称业务模拟通过；统一入口会明确区分未执行。存在真实业务复用主张及 `business-patterns` 源 JSON 时，可用 `build_fm_business_patterns.py` 的 `--output` 生成说明；没有复用主张不凑模式。
+不要对空场景套件调用底层模拟命令再以其布尔结果宣称业务模拟通过；统一入口会明确区分未执行。
 
 ## 编辑后的核对
 

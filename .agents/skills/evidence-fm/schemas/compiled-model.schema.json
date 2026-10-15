@@ -3,14 +3,7 @@
   "$id": "https://jayclock.dev/fm/v4/compiled-model.schema.json",
   "title": "Compiled Fulfillment Modeling document",
   "type": "object",
-  "required": [
-    "schemaVersion",
-    "model",
-    "entities",
-    "relationships",
-    "rules",
-    "businessPatterns"
-  ],
+  "required": ["schemaVersion", "model", "entities", "relationships", "rules"],
   "properties": {
     "schemaVersion": { "const": "4.0" },
     "model": { "$ref": "model.schema.json" },
@@ -26,10 +19,6 @@
     "rules": {
       "type": "array",
       "items": { "$ref": "rule.schema.json" }
-    },
-    "businessPatterns": {
-      "type": "array",
-      "items": { "$ref": "business-pattern.schema.json" }
     }
   },
   "additionalProperties": false

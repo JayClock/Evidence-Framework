@@ -2,22 +2,22 @@
 
 本包可以单独安装，所有链接、schemas 和 Python 模块均在包内。API 方法、契约与投影由独立的 `evidence-api` 维护，本包只交接有效 FM 结果。
 
-| 当前任务                                 | 读取                                                                |
-| ---------------------------------------- | ------------------------------------------------------------------- |
-| 直接消费 Entity/属性定义、统一表达与更正 | [领域语言](domain-language.md)                                      |
-| 合同约定、请求—确认骨架及凭证展开        | [业务分析](business-analysis.md)                                    |
-| 材料不足、来源矛盾                       | [输入复核](input-review.md)                                         |
-| 当前判断的依据不足、冲突或需要深入       | [来源追溯](provenance.md)                                           |
-| 递归追责、终点与正式建模准入             | [全部追责结束](responsibility-closure.md)                           |
-| 准入后业务到正式表达的映射               | [批次评估](batch-assessment.md)                                     |
-| Context、Role、Evidence 等语义           | [语义](semantics.md)                                                |
-| 创建／修订 JSON                          | [格式](format.md)                                                   |
-| 领域对象与业务规则                       | [领域建模](domain-modeling.md)                                      |
-| CEL 表达式                               | [CEL](cel-rules.md)                                                 |
-| 关键数据 lineage 与单据实例              | [追溯与模拟](traceability-and-simulation.md)                        |
-| 正常、边界、异常业务预期                 | [场景校验](scenario-validation.md)                                  |
-| 已有业务模式或复用主张                   | [常见结构](patterns.md)、[模式提取](business-pattern-extraction.md) |
-| 执行真实检查                             | [校验](validation.md)                                               |
+| 当前任务                                 | 读取                                         |
+| ---------------------------------------- | -------------------------------------------- |
+| 直接消费 Entity/属性定义、统一表达与更正 | [领域语言](domain-language.md)               |
+| 合同约定、请求—确认骨架及凭证展开        | [业务分析](business-analysis.md)             |
+| 材料不足、来源矛盾                       | [输入复核](input-review.md)                  |
+| 当前判断的依据不足、冲突或需要深入       | [来源追溯](provenance.md)                    |
+| 递归追责、终点与正式建模准入             | [全部追责结束](responsibility-closure.md)    |
+| 准入后业务到正式表达的映射               | [批次评估](batch-assessment.md)              |
+| Context、Role、Evidence 等语义           | [语义](semantics.md)                         |
+| 创建／修订 JSON                          | [格式](format.md)                            |
+| 领域对象与业务规则                       | [领域建模](domain-modeling.md)               |
+| CEL 表达式                               | [CEL](cel-rules.md)                          |
+| 关键数据 lineage 与单据实例              | [追溯与模拟](traceability-and-simulation.md) |
+| 正常、边界、异常业务预期                 | [场景校验](scenario-validation.md)           |
+| 查看常见建模结构                         | [常见结构](patterns.md)                      |
+| 执行真实检查                             | [校验](validation.md)                        |
 
 访谈按领域语言方法直接核对相关 Entity 及其属性，当轮统一表达，并按需读取其他专业参考；不为保存名称启动模型 JSON 生成。问题选择、回答等待和控制状态由访谈任务管理，本包输入复核只输出具体缺口。
 

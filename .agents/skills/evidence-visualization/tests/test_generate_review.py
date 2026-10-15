@@ -74,12 +74,9 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(["confirmation.other"], node["confirmations"])
         self.assertEqual(["role.proof"], node["proofRoles"])
 
-    def test_patterns_and_binding_scope_use_explicit_links(self):
-        model = fixture()
-        model["businessPatterns"] = [{"id": "pattern.a", "label": "证明替换", "operationInvariant": "履约独立于支付方式", "variationPointRefs": ["role.proof"]}]
+    def test_binding_scope_uses_explicit_links(self):
         api = {"bindings": [{"id": "binding.a", "scopeResourceRef": "resource.a", "basis": {"sourceRefs": ["SECRET"]}}], "resources": [{"id": "resource.a", "entityRef": "request.a"}]}
-        data = wb.project(model, [], [], {}, api)
-        self.assertTrue(any(e["from"] == "pattern.a" and e["to"] == "role.proof" for e in data["edges"]))
+        data = wb.project(fixture(), [], [], {}, api)
         self.assertTrue(any(e["from"] == "binding.a" and e["to"] == "resource.a" for e in data["edges"]))
         self.assertNotIn("SECRET", json.dumps(data))
 

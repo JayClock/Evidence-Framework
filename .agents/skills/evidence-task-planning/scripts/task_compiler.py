@@ -468,7 +468,7 @@ def checked_inventory(fm_root: Path, api_path: Path | None, report_path: Path, f
         raise ValueError("FM check is stale; return to FM")
     selected = scopes.ready_scope(model_tools.load_model(fm_root), report)
     suite = scopes.scope_suite(selected, simulation.load_validation_suite(fm_root))
-    collections = [selected.entities, selected.relationships, selected.rules, selected.business_patterns, suite.instances, suite.scenarios]
+    collections = [selected.entities, selected.relationships, selected.rules, suite.instances, suite.scenarios]
     allowed = {item["id"] for collection in collections for item in collection}
     allowed.add(selected.manifest["id"])
     inv = inventory(fm_root, api_path, allowed_ids=allowed, entry_refs=report["scopeRefs"])

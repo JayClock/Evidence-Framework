@@ -722,7 +722,7 @@ try {
       '[...document.querySelectorAll("#tree [data-node]")].map(n=>n.dataset.node).sort()',
     ),
     await evaluate(
-      'DATA.nodes.filter(n=>["evidence","participant","role","rule","pattern","scenario","capability","resource","journey"].includes(n.group)&&!(n.group==="rule"&&n.kind==="derivation")&&!requestRuleTarget(n)).map(n=>n.id).sort()',
+      'DATA.nodes.filter(n=>["evidence","participant","role","rule","scenario","capability","resource","journey"].includes(n.group)&&!(n.group==="rule"&&n.kind==="derivation")&&!requestRuleTarget(n)).map(n=>n.id).sort()',
     ),
   );
   assert.ok(

@@ -33,7 +33,7 @@ def select_scope(model: LoadedModel, scope_refs: list[str]) -> LoadedModel:
     An unresolved Context Role is retained; its player is never invented.
     """
     entities = model.entities_by_id
-    objects = {**entities, **model.rules_by_id, **model.business_patterns_by_id, **model.relationships_by_id}
+    objects = {**entities, **model.rules_by_id, **model.relationships_by_id}
     contexts: set[str] = set()
     members: set[str] = set()
 
@@ -85,7 +85,6 @@ def select_scope(model: LoadedModel, scope_refs: list[str]) -> LoadedModel:
         entities=[item for item in model.entities if item.get("id") in members],
         relationships=relations,
         rules=[item for item in model.rules if item.get("id") in members],
-        business_patterns=[item for item in model.business_patterns if item.get("id") in members],
     )
 
 

@@ -11,7 +11,6 @@
 → 沿凭证增量发现其他合同与协作，保留当前焦点
 → 异常新义务重复骨架与追溯，逐枝核对人类终点
 → 核对参与者、标的及领域边界，用单据推演验证完整责任图
-→ 按需提取 Business Pattern
 ```
 
 约定与责任双方、主要履约及独立责任关系按 [业务分析](business-analysis.md) 核对，不以协议名称或角色齐全替代。现金权责与目标—实际对比是业务发现与凭证组织的核心逻辑，必须能说明合同如何关联收支权责或内部绩效；已知依据直接复用，未知则核对缺口。不新增金额型或 KPI 型 Contract／Context 枚举，经营依据用实际约定与凭证关系解释，不以标签代替。纯领域或合同前范围不补造合同。对外交易与内部绩效使用相同的合约、角色、凭证和履约结构；责任方向由真实约定决定。输入有歧义或来源变更时执行 [输入复核](input-review.md)，领域部分按 [领域建模](domain-modeling.md)。
@@ -106,19 +105,13 @@ Evidence Role 是跨上下文的开放证明插槽，可没有玩家或有多个
 
 规则绑定 Evidence Role 必须解析显式玩家的真实实例，不接受角色实例或仅字段相同的无关凭证。无需替换变化点时，可以直接 `references` 外部 Confirmation／Other Evidence；需要开放证明约定时使用 Evidence Role。外部具体凭证保留形成上下文、责任与时间，直接引用不迁移所有权，不使它成为消费合同的共享确认。跨上下文还允许有依据的 Contract→Proposal 签约追溯与 Evidence→Thing 标的引用，不开放对外部 Request、RFP 或 Contract 的任意依赖。
 
-Role、Pre-contract Context、权责履约可以作为候选业务变化点，但变化点不自动决定部署边界。判断同合同直接引用或跨上下文证明时，按需读 [结构对照](../examples/structural-contrasts.md)；图与正反例只解释本节规则，不代替当前来源或新增 Schema。
+判断同合同直接引用或跨上下文证明时，按需读 [结构对照](../examples/structural-contrasts.md)；图与正反例只解释本节规则，不代替当前来源或新增 Schema。
 
 ## 8. 合同前协商
 
 RFP→Proposal→Contract 是可能的证据主线，不是必须走完的流水线。固定套餐可以 Proposal→Contract 或直接 Contract；询价可以有多个 Proposal。合同只追溯最终形成它的 Proposal，不依赖渠道内部流程。仅展开签约前范围时不虚构未来合同或履约。
 
-## 9. Business Pattern
-
-Business Pattern 表达运营特定、领域中立的责任结构，引用真实 Fulfillment 主线、运营不变量、变化点、Domain 输入、Contract 与 Domain 案例。
-
-一个 Domain 的案例只支撑该领域内的主张；声称跨领域复用须引用至少两个 Contract Context 与两个 Domain Context 的真实案例。具名业务方决定按实际来源核对，模式 JSON 不保存审核或复用状态。机器不能证明领域中立、复用价值或人类确认。纯领域模型不为提取模式补造履约，没有 Business Pattern 不影响模型成立。
-
-## 10. 规则、触发与验证
+## 9. 规则、触发与验证
 
 完成、违约与派生逻辑由有来源的 Evidence 属性、明确 bindings 和 CEL 表达。any、all、count、amount 及具名人工确认不内嵌于履约结构。`schedule`、`domain_event`、`integration_event`、`rule` 只描述触发机制，调度器、API、队列和服务不是业务 Party。
 

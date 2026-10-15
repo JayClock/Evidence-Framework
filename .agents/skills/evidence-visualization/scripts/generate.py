@@ -138,18 +138,6 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
         if target:
             link(node["id"], f'{target["entityRef"]}#{target["attribute"]}', "计算结果")
 
-    for pattern in model.get("businessPatterns", []):
-        node = add(pattern, "pattern")
-        node["description"] = pattern.get("operationInvariant", "")
-        for key, label in {
-            "businessSpineRefs": "业务主线", "invariantRefs": "不变规则",
-            "variationPointRefs": "变化点", "domainInputRefs": "领域输入",
-            "supportedByContractContextRefs": "适用合同边界",
-            "domainExampleContextRefs": "领域示例",
-        }.items():
-            for ref in pattern.get(key, []):
-                link(node["id"], ref, label)
-
     for instance in instances:
         node = add(instance, "instance")
         node["values"] = scalar_values(instance.get("values", {}))

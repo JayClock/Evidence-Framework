@@ -14,7 +14,6 @@ SCHEMAS = {
     "entity": "entity.schema.json",
     "relationship": "relationship.schema.json",
     "rule": "rule.schema.json",
-    "business_pattern": "business-pattern.schema.json",
     "evidence_instance": "evidence-instance.schema.json",
     "fm_scenario": "scenario.schema.json",
 }

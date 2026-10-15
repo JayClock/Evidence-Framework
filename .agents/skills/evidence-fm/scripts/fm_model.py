@@ -76,7 +76,6 @@ class LoadedModel:
     entities: list[dict[str, Any]] = field(default_factory=list)
     relationships: list[dict[str, Any]] = field(default_factory=list)
     rules: list[dict[str, Any]] = field(default_factory=list)
-    business_patterns: list[dict[str, Any]] = field(default_factory=list)
     files_by_id: dict[str, Path] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
 
@@ -110,14 +109,6 @@ class LoadedModel:
         return {
             str(item["id"]): item
             for item in self.rules
-            if isinstance(item.get("id"), str)
-        }
-
-    @property
-    def business_patterns_by_id(self) -> dict[str, dict[str, Any]]:
-        return {
-            str(item["id"]): item
-            for item in self.business_patterns
             if isinstance(item.get("id"), str)
         }
 
@@ -230,13 +221,11 @@ def load_model(root: Path) -> LoadedModel:
         "entity": model.entities,
         "relationship": model.relationships,
         "rule": model.rules,
-        "business_pattern": model.business_patterns,
     }
     schemas = {
         "entity": "entity.schema.json",
         "relationship": "relationship.schema.json",
         "rule": "rule.schema.json",
-        "business_pattern": "business-pattern.schema.json",
     }
 
     for path in sorted(root.rglob("*")):
@@ -351,7 +340,6 @@ def validate_model(model: LoadedModel, *, complete: bool = False) -> list[str]:
 
     entities = model.entities_by_id
     fulfillments = model.fulfillments_by_id
-    relationships = model.relationships_by_id
     rules = model.rules_by_id
 
     validate_manifest(model.manifest, entities, errors)
@@ -361,14 +349,6 @@ def validate_model(model: LoadedModel, *, complete: bool = False) -> list[str]:
         fulfillments, entities, model.relationships, rules, errors, complete=complete
     )
     validate_rules(model.rules, entities, rules, errors)
-    validate_business_patterns(
-        model.business_patterns,
-        entities,
-        fulfillments,
-        relationships,
-        rules,
-        errors,
-    )
     validate_derived_attributes(model.entities, rules, errors)
 
     # Imported lazily because the traceability module reuses LoadedModel and CEL helpers.
@@ -1139,136 +1119,6 @@ def validate_rules(
             )
 
 
-def validate_business_patterns(
-    pattern_list: list[dict[str, Any]],
-    entities: dict[str, dict[str, Any]],
-    fulfillments: dict[str, dict[str, Any]],
-    relationships: dict[str, dict[str, Any]],
-    rules: dict[str, dict[str, Any]],
-    errors: list[str],
-) -> None:
-    objects = {**entities, **relationships, **rules}
-    allowed_variation_roles = {"domain", "third_party", "context", "evidence"}
-    allowed_variation_contexts = {"pre_contract", "domain"}
-
-    for pattern in pattern_list:
-        pattern_id = normalize(pattern.get("id"))
-        if pattern_id is None:
-            continue
-
-        spine_contract_contexts: set[str] = set()
-        for ref in pattern.get("businessSpineRefs") or []:
-            fulfillment = fulfillments.get(ref)
-            if fulfillment is None:
-                errors.append(
-                    f"{pattern_id}: businessSpineRef '{ref}' must reference Fulfillment"
-                )
-                continue
-            contract_context = normalize(fulfillment.get("contextRef"))
-            if contract_context is not None:
-                spine_contract_contexts.add(contract_context)
-        for ref in pattern.get("invariantRefs") or []:
-            if ref not in objects:
-                errors.append(
-                    f"{pattern_id}: invariantRef '{ref}' references unknown model object"
-                )
-
-        for ref in pattern.get("variationPointRefs") or []:
-            target = entities.get(ref)
-            category, kind = entity_signature(target)
-            is_variation_role = category == "role" and kind in allowed_variation_roles
-            is_variation_context = (
-                category == "context" and kind in allowed_variation_contexts
-            )
-            if not (is_variation_role or is_variation_context or category == "fulfillment"):
-                errors.append(
-                    f"{pattern_id}: variationPointRef '{ref}' must reference a variation Role "
-                    "or Fulfillment, Pre-contract Context, or Domain Context"
-                )
-
-        for ref in pattern.get("domainInputRefs") or []:
-            target = entities.get(ref)
-            signature = entity_signature(target)
-            if signature not in {
-                ("participant", "thing"),
-                ("role", "domain"),
-                ("context", "domain"),
-            }:
-                errors.append(
-                    f"{pattern_id}: domainInputRef '{ref}' must reference a domain input"
-                )
-
-        contract_context_refs = pattern.get("supportedByContractContextRefs") or []
-        for ref in contract_context_refs:
-            if entity_signature(entities.get(ref)) != ("context", "contract"):
-                errors.append(
-                    f"{pattern_id}: supportedByContractContextRef '{ref}' must reference Contract Context"
-                )
-        missing_spine_contexts = spine_contract_contexts - set(contract_context_refs)
-        if missing_spine_contexts:
-            errors.append(
-                f"{pattern_id}: supportedByContractContextRefs omit business-spine Contexts "
-                f"{sorted(missing_spine_contexts)}"
-            )
-        empty_contract_examples = set(contract_context_refs) - spine_contract_contexts
-        if empty_contract_examples:
-            errors.append(
-                f"{pattern_id}: Contract examples lack referenced business-spine Fulfillments "
-                f"{sorted(empty_contract_examples)}"
-            )
-
-        domain_context_refs = pattern.get("domainExampleContextRefs") or []
-        for ref in domain_context_refs:
-            if entity_signature(entities.get(ref)) != ("context", "domain"):
-                errors.append(
-                    f"{pattern_id}: domainExampleContextRef '{ref}' must reference Domain Context"
-                )
-        domain_input_contexts: set[str] = set()
-        for ref in pattern.get("domainInputRefs") or []:
-            target = entities.get(ref)
-            signature = entity_signature(target)
-            if signature == ("context", "domain"):
-                domain_input_contexts.add(ref)
-                continue
-            if signature == ("participant", "thing"):
-                input_context_ref = object_context_ref(target)
-                if input_context_ref is not None:
-                    domain_input_contexts.add(input_context_ref)
-                continue
-            if signature == ("role", "domain"):
-                role_context_ref = object_context_ref(target)
-                if entity_signature(entities.get(role_context_ref or "")) == (
-                    "context",
-                    "domain",
-                ):
-                    domain_input_contexts.add(str(role_context_ref))
-                for relationship in relationships.values():
-                    if (
-                        relationship.get("kind") == "plays_role"
-                        and relationship.get("targetRef") == ref
-                    ):
-                        player_context_ref = object_context_ref(
-                            entities.get(str(relationship.get("sourceRef")))
-                        )
-                        if entity_signature(entities.get(player_context_ref or "")) == (
-                            "context",
-                            "domain",
-                        ):
-                            domain_input_contexts.add(str(player_context_ref))
-        missing_domain_examples = domain_input_contexts - set(domain_context_refs)
-        if missing_domain_examples:
-            errors.append(
-                f"{pattern_id}: domainExampleContextRefs omit Domain inputs "
-                f"{sorted(missing_domain_examples)}"
-            )
-        empty_domain_examples = set(domain_context_refs) - domain_input_contexts
-        if empty_domain_examples:
-            errors.append(
-                f"{pattern_id}: Domain examples lack referenced Domain inputs "
-                f"{sorted(empty_domain_examples)}"
-            )
-
-
 def undeclared_cel_identifiers(ast: Any, declared: set[str]) -> set[str]:
     """Return free CEL identifiers while respecting standard macro-local variables."""
 
@@ -1385,8 +1235,4 @@ def compiled_document(model: LoadedModel) -> dict[str, Any]:
             model.relationships, key=lambda item: str(item.get("id", ""))
         ),
         "rules": sorted(model.rules, key=lambda item: str(item.get("id", ""))),
-        "businessPatterns": sorted(
-            model.business_patterns,
-            key=lambda item: str(item.get("id", "")),
-        ),
     }

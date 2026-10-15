@@ -9,7 +9,6 @@
 ├── model.json
 ├── README.md
 ├── 00-overview.md
-├── 02-business-patterns.md       # 派生文档
 ├── participants/                 # 跨上下文 Party
 │   └── user.json
 ├── contexts/                     # 按业务上下文组织，不按对象类型分根目录
@@ -31,7 +30,6 @@
 │       ├── context.json
 │       └── things/
 ├── relationships/                # 跨独立上下文、主体扮演关系，仅定义一次
-├── business-patterns/            # 可省略
 ├── validation/                   # 可选测试输入
 │   ├── instances/
 │   └── scenarios/
@@ -45,7 +43,7 @@
 
 同一目录格式支持纯领域、纯合同前和混合范围；不新增领域模型类型或绩效 profile。Fulfillment 是 `category: fulfillment` 的 Entity，不定义 kind，存放于 `fulfillments/<业务名>/fulfillment.json`。无履约时不创建此类目录或 Entity。`README.md` 和 overview 说明当前范围与未展开部分，不靠假合同满足输出结构。
 
-加载器递归读取模型根下的 `.json`，按对象的 `type` 分发到 Entity、Relationship、Rule、Business Pattern Schema，不再按目录或文件名决定类型。根 `model.json` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 JSON 文件不参与类型加载；根下或 validation 目录内的 `.yaml`／`.yml` 文件报错，避免混合格式、漏读模型。文件必须是严格 JSON：拒绝注释、尾随逗号、多个顶层值、重复键和非标准常量（`NaN`／`Infinity`）；未知对象类型、重复 ID、坏 JSON 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
+加载器递归读取模型根下的 `.json`，按对象的 `type` 分发到 Entity、Relationship、Rule Schema，不再按目录或文件名决定类型。根 `model.json` 单独加载；根下 `validation/`、`generated/`、`discovery/`、隐藏路径及 `__pycache__` 不作为模型类型源。Markdown 等非 JSON 文件不参与类型加载；根下或 validation 目录内的 `.yaml`／`.yml` 文件报错，避免混合格式、漏读模型。文件必须是严格 JSON：拒绝注释、尾随逗号、多个顶层值、重复键和非标准常量（`NaN`／`Infinity`）；未知对象类型、重复 ID、坏 JSON 和失效引用仍报错，源路径不接受符号链接。没有迁移副本、软链接或路径兼容映射。
 
 目录是阅读组织，不是业务事实：上下文归属由 `contextRef`／`parentContextRef` 决定，履约归属由 `fulfillmentRef` 决定。源对象至少包含一个 Entity，不要求名为 `entities/` 的目录。内部关系放在两端最近的共同上下文中，跨独立上下文的关系放在根 `relationships/`；每条关系只保留一份。以 README 导航维护业务入口，移动文件时保留 ID、原始内容和场景预期，并核对编译结果等价。
 
@@ -59,7 +57,6 @@ ID 只使用小写 ASCII 字母、数字、`.` 和 `-`，以字母开头。显�
 role.subscriber                    → contexts/subscription/roles/subscriber.json
 fulfillment.subscription-payment  → contexts/subscription/fulfillments/payment/fulfillment.json
 request.subscription-payment      → contexts/subscription/fulfillments/payment/request.json
-pattern.multi-channel-payment     → business-patterns/multi-channel-payment.json
 ```
 
 `validation/instances/`、`validation/scenarios/` 仍保留单层目录和原有文件名约定（完整 ID 的 `.` 替换为 `--`，后缀 `.json`），由场景加载器独立处理。
@@ -318,16 +315,8 @@ Contract 可以通过跨 Context 的 `references` 引用已接受的 Proposal，
 
 每层关系分别核对数量；申请与确认一对一，不代表合同与申请也一对一。关系 notes 说明数量适用的实例范围和业务阶段；履约尚未形成结果，不等于已经违反完成结构的一对一。是否允许分次、补发或更正须有独立业务依据，不从基数猜测。省略端点基数表示业务材料没有声明该约束，不表示 `0..many`。基数声明随 Relationship 保留到编译结果，Schema 与语义校验检查结构及 `max >= min`；当前通用场景没有 Relationship Instance，因此不会运行验证实例数量。履约完成所需的确认数量仍使用有来源的 Evidence 集合 binding 和 CEL completion Rule，不能由关系基数替代。
 
-## 8. Business Pattern
-
-有复用、平台或中台诉求时，每个模式写一个 `business-patterns/*.json`。必填内容为业务目标、运营不变量、领域中立主张、业务脊梁、变化点、领域输入及合同／领域案例引用；格式以当前 Business Pattern Schema 为准。
-
-至少引用一个有依据的合同及领域案例。只有一个领域案例时不声称跨领域复用；声称跨领域时须由至少两个 Contract Context 与两个 Domain Context 的真实案例支撑，不复制上下文凑数。业务确认在实际来源中核对，模式 JSON 不保存审核或复用状态。
-
-完整格式与提取方法见 `business-pattern-extraction.md`。
-
-## 9. 关键数据、Rule 与编译
+## 8. 关键数据、Rule 与编译
 
 金额、数量、业务时间、KPI 或审计结论使用 `keyData: true`。派生属性用 `derivedByRuleRef` 指向唯一 CEL derivation Rule；来源从 CEL AST 自动提取。
 
-编译结果包含按 ID 排序的 `entities`、`relationships`、`rules` 和 `businessPatterns`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json`、`timeline.json` 与 `02-business-patterns.md` 均可删除重建。时间线只包含 Evidence Instance；Context 是泳道，Thing 仅是引用目标。
+编译结果包含按 ID 排序的 `entities`、`relationships` 和 `rules`；Fulfillment 已包含在 `entities` 中。`generated/model.json`、`traceability.json`、`simulation.json` 与 `timeline.json` 均可删除重建。时间线只包含 Evidence Instance；Context 是泳道，Thing 仅是引用目标。

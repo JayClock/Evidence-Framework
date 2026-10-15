@@ -54,7 +54,6 @@ def main() -> int:
             "fulfillmentCount": len(model.fulfillments_by_id),
             "relationships": len(model.relationships),
             "rules": len(model.rules),
-            "businessPatterns": len(model.business_patterns),
             "evidenceInstances": len(suite.instances) if suite is not None else 0,
             "scenarios": len(suite.scenarios) if suite is not None else 0,
         },
@@ -80,8 +79,7 @@ def main() -> int:
         print(
             "FM Schema v4 validation passed "
             f"(entities={counts['entities']}, fulfillments={counts['fulfillmentCount']}, "
-            f"relationships={counts['relationships']}, rules={counts['rules']}, "
-            f"businessPatterns={counts['businessPatterns']}"
+            f"relationships={counts['relationships']}, rules={counts['rules']}"
             f"{scenario_summary})."
         )
     return 0 if not errors else 1

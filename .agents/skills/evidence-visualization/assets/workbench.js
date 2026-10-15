@@ -28,7 +28,6 @@ const groups = {
   representation: '响应表示',
   binding: '实例绑定',
   journey: '调用流程',
-  pattern: '业务模式',
 };
 const kinds = {
   contract: '合同',
@@ -198,7 +197,6 @@ function buildTree() {
     'participant',
     'role',
     'rule',
-    'pattern',
   ]);
   const business = DATA.nodes.filter(
     (n) =>

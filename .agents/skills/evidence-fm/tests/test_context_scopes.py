@@ -143,7 +143,7 @@ class ContextScopeTests(unittest.TestCase):
                 Path(directory), domain_documents(), "context.customer-information"
             )
             before = compiled_document(load_model(root))
-            (root / "business-patterns").mkdir()
+            (root / "contexts").mkdir()
             model = load_model(root)
             self.assertEqual([], validate_model(model))
             self.assertEqual(before, compiled_document(model))
