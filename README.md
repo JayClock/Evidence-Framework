@@ -13,6 +13,10 @@ Evidence 是 Nx 单仓库中的业务建模与交付 Harness，配有 React/Type
 - [反馈过载：Sensors 太多，Agent 不知道哪个信号重要？](<docs/adoption/反馈过载：Sensors 太多，Agent 不知道哪个信号重要？.md>)
 - [上下文倾倒：信息过多，Agent 反而迷失](<docs/adoption/上下文倾倒：信息过多，Agent 反而迷失.md>)
 - [上下文焦虑：Agent 在长对话中丢失关键信息](<docs/adoption/上下文焦虑：Agent 在长对话中丢失关键信息.md>)
+- [跨会话状态丢失：每次对话 Agent 都不记得上次的事](<docs/adoption/跨会话状态丢失：每次对话 Agent 都不记得上次的事.md>)
+- [状态污染：状态存在但不可信](docs/adoption/状态污染：状态存在但不可信.md)
+- [环境漂移：为什么 Agent 昨天能跑，今天就不行了](<docs/adoption/环境漂移：为什么 Agent 昨天能跑，今天就不行了.md>)
+- [模式复制漂移：Agent 总在抄你最想淘汰的代码](<docs/adoption/模式复制漂移：Agent 总在抄你最想淘汰的代码.md>)
 
 ## 业务背景
 
