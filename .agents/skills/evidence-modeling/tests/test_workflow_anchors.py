@@ -14,7 +14,6 @@ class WorkflowAnchorTests(unittest.TestCase):
         entry = (MODELING / "SKILL.md").read_text()
         self.assertIn("examples/README.md", entry)
         workflow = (MODELING / "references/workflow.md").read_text()
-        self.assertIn("../assets/handoff-template.md", workflow)
         self.assertIn("../examples/README.md", workflow)
         diagrams = re.findall(r"```mermaid\n(.*?)```", workflow, re.S)
         self.assertEqual(2, len(diagrams))
@@ -22,22 +21,20 @@ class WorkflowAnchorTests(unittest.TestCase):
         self.assertIn("modeling --> discovery", structure)
         self.assertIn("modeling --> fm", structure)
         self.assertIn("modeling --> visual", structure)
-        self.assertIn("modeling --> manual", structure)
         self.assertIn("discovery -.-> fm", structure)
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", flow))
         self.assertTrue({
             ("intent", "discussion"), ("intent", "discovery"),
             ("discovery", "authorized"), ("authorized", "fm"),
-            ("authorized", "handoff"), ("fm", "check"),
-            ("check", "endScope"), ("check", "handoff"),
+            ("authorized", "report"), ("fm", "check"),
+            ("check", "endScope"), ("check", "report"),
             ("discovery", "endScope"), ("endScope", "complete"),
-            ("endScope", "handoff"), ("complete", "ready"),
-            ("ready", "api"), ("ready", "manual"),
-            ("api", "page"), ("api", "manual"),
-            ("page", "review"), ("page", "manual"), ("review", "manual"),
-            ("intent", "manual"), ("manual", "handoff"),
+            ("endScope", "report"), ("complete", "ready"),
+            ("ready", "api"), ("ready", "report"),
+            ("api", "page"), ("api", "report"),
+            ("page", "review"), ("page", "report"), ("review", "report"),
         }.issubset(edges), edges)
-        self.assertFalse(any(start == "handoff" for start, _ in edges))
+        self.assertFalse(any(start == "report" for start, _ in edges))
 
     def cases(self):
         return json.loads((MODELING / "examples/permissions.json").read_text())["cases"]
@@ -69,17 +66,8 @@ class WorkflowAnchorTests(unittest.TestCase):
             self.assertFalse(case["approved"])
             self.assertNotIn("requirements", case["steps"])
 
-    def test_handoff_template_reports_observations_without_business_state(self):
-        text = (MODELING / "assets/handoff-template.md").read_text()
-        for heading in ("授权", "输入与恢复", "文件结果", "检查", "剩余工作", "停止"):
-            self.assertIn(f"## {heading}", text)
-        self.assertIn("未执行", text)
-        self.assertIn("不新增", text)
-        self.assertNotRegex(text, r"(?m)^approved:|^status:|^modelDigest:\s*[0-9a-f]+")
-
     def test_runtime_examples_are_internal_and_have_no_external_attribution(self):
         index = (MODELING / "examples/README.md").read_text()
-        self.assertIn("](handoffs.md)", index)
         self.assertIn("](permissions.json)", index)
         for document in (MODELING / "examples").glob("*.md"):
             self.assertNotRegex(document.read_text(), r"(?m)https?://|^author:|^date:")

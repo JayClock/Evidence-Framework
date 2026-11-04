@@ -7,7 +7,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NAMES = (
     "evidence-discovery",
-    "evidence-handoff",
     "evidence-fm",
     "evidence-api",
     "evidence-requirements",
@@ -63,18 +62,13 @@ class SkillDocumentationTests(unittest.TestCase):
 
     def test_direct_edit_authorization_is_separate_from_discussion_and_approval(self):
         fm_entry = (ROOT / "evidence-fm/SKILL.md").read_text()
-        handoff_text = (ROOT / "evidence-handoff/SKILL.md").read_text()
-        for phrase in ("disable-model-invocation: true", "目标与权限", "人类确认覆盖", "控制意图", "未保存或未执行"):
-            self.assertIn(phrase, handoff_text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
         self.assertIn("直接编辑当前模型", fm_entry)
         self.assertIn("编辑授权不是业务批准", fm_entry)
-        self.assertIn("当前问题", handoff_text)
-        self.assertIn("区分已明确事实", handoff_text)
         self.assertIn("modelDigest", validation)
         self.assertIn("只校验请求不写任何项目文件", validation)
         self.assertIn("不自动回滚", fm_entry)
-        for text in (fm_entry, handoff_text, validation):
+        for text in (fm_entry, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
 
     def test_interview_uses_model_language_and_separately_checks_edit_authority(self):
@@ -125,7 +119,7 @@ class SkillDocumentationTests(unittest.TestCase):
         for relative in ("evidence-fm/SKILL.md", "evidence-discovery/SKILL.md"):
             self.assertIn("domain-language.md", (ROOT / relative).read_text())
         for relative in (
-            "evidence-requirements/SKILL.md", "evidence-handoff/SKILL.md",
+            "evidence-requirements/SKILL.md",
             "evidence-task-planning/references/guides.md",
         ):
             with self.subTest(document=relative):
@@ -202,13 +196,11 @@ class SkillDocumentationTests(unittest.TestCase):
         expected_paths = {
             "evidence-modeling/SKILL.md": (".evidence/",),
             "evidence-modeling/references/workflow.md": (
-                ".evidence/handoffs/",
                 ".evidence/fm/",
                 ".evidence/checks/fm/",
                 ".evidence/checks/api/",
             ),
             "evidence-discovery/SKILL.md": (".evidence/fm/",),
-            "evidence-handoff/SKILL.md": (".evidence/handoffs/",),
             "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
             "evidence-fm/references/validation.md": (
                 ".evidence/fm/",

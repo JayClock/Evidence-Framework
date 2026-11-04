@@ -18,7 +18,6 @@ class DomainReuseWorkflowTests(unittest.TestCase):
             'evidence-discovery/references/interview.md': ('优先复用', '业务连接点', '不默认展开内部规则'),
             'evidence-fm/references/responsibility-closure.md': ('复用连接范围', '内部未展开不自动阻塞'),
             'evidence-modeling/references/workflow.md': ('复用连接范围', '不生成成熟方案的内部模型或 API'),
-            'evidence-handoff/SKILL.md': ('复用连接范围', '未展开不等于未决'),
         }
         for path, phrases in expectations.items():
             text = (SKILLS / path).read_text()

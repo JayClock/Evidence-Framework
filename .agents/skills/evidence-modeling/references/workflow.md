@@ -1,4 +1,4 @@
-# 文件交接与恢复
+# 阶段接续与恢复
 
 本页维护分派、授权、阶段接续与恢复；业务事实与专业判断归对应拥有者，不复制事实或建立私有状态，不重做专业分析。FM 只有一份持续生长的源，不按草稿／正式分库。
 
@@ -11,12 +11,10 @@ flowchart LR
     fm[FM：渐进表达、一致性与范围完整性]
     api[API：就绪范围技术契约]
     visual[Visualization：只读审核投影]
-    manual[Handoff：显式记录与范围结束自动交接]
     modeling --> discovery
     modeling --> fm
     modeling --> api
     modeling --> visual
-    modeling --> manual
     discovery -.-> fm
 ```
 
@@ -38,34 +36,31 @@ flowchart TD
     api[API 消费同一次范围结果，设计、校验与投影]
     page{有联合页面授权}
     review[独立页面运行核对两源、严格生成与浏览器检查]
-    manual[evidence-handoff 保存获授权 Markdown 交接]
-    handoff[报告实际保存、检查与缺口后停止]
+    report[报告实际保存、检查与缺口后停止]
     intent -->|讨论| discussion
     intent -->|访谈或控制| discovery
     intent -->|生成或修改 FM| authorized
-    intent -->|显式记录| manual
     discovery -->|已知内容或更正| authorized
     authorized -->|满足| fm
-    authorized -->|只读、仅访谈或依据不足| handoff
+    authorized -->|只读、仅访谈或依据不足| report
     fm --> check
-    check -->|失败| handoff
+    check -->|失败| report
     check -->|一致| endScope
     discovery -->|有效范围结束信号| endScope
-    endScope -->|未结束或无范围检查授权| handoff
+    endScope -->|未结束或无范围检查授权| report
     endScope -->|具备| complete
     complete --> ready
-    ready -->|缺口或输入变化| manual
+    ready -->|缺口或输入变化| report
     ready -->|通过且非仅 FM| api
-    ready -->|仅 FM| manual
-    api -->|失败| manual
+    ready -->|仅 FM| report
+    api -->|失败| report
     api -->|通过| page
     page -->|允许| review
-    page -->|不生成页面| manual
-    review --> manual
-    manual --> handoff
+    page -->|不生成页面| report
+    review --> report
 ```
 
-图中 Handoff 仅在显式记录或范围结束自动交接且允许保存时执行，禁止保存则直接报告未保存内容。只校验与单独页面请求按下文执行，不获得两源编辑权限。连续问答保持原 Discovery 焦点，不每轮重走分派、申请同一授权或重读未变方法。
+图中报告节点只说明实际保存、检查与缺口，不写业务源。只校验与单独页面请求按下文执行，不获得两源编辑权限。连续问答保持原 Discovery 焦点，不每轮重走分派、申请同一授权或重读未变方法。
 
 ## 渐进访谈与模型维护
 
@@ -83,9 +78,9 @@ flowchart TD
 2. **检查整个范围。** FM 以独立 Context ID 运行 `check_fm.py "$FM_ROOT" --scope "$CONTEXT_ID"`，可重复 `--scope` 指定必要合同组。包含子阶段及真实依赖，不把同合同付款和退款切开交付。未澄清外部边界按真实语义使用 Context Role，不能隐藏当前责任或证明缺口。独立范围不等待无关合同完整。
 3. **按授权接续 API。** 仅当当前范围完整、适用模拟通过或确实不适用、人类结束确认有效及下游授权具备时，委派 `evidence-api`。交接当前完整模型根、实际差异、明确范围与必要依赖及同一次 JSON 检查结果。API 整体覆盖这个明确范围，不默默过滤其中不完整对象，也不自动删除其他已交付范围。仅 FM 等限制裁剪阶段，不重复请求已获授权的下游权限。
 4. **核对联合审核。** 两源通过且允许页面时，Visualization 的独立页面运行用相同显式 `--scope` 检查 FM，再将同一结果传给 API 自身校验；API 不再检查 FM。使用 `--require-api`，缺 API 不降级；临时投影不改正式 generated，失败保留旧页。实际 HTML、截图与浏览器验证可定位；缺浏览器环境明确未验证，不称完整联合交付。
-5. **自动交接并停止。** 范围结束链路成功或阻塞后，委派 `evidence-handoff` 保存全部未澄清上下文、类型、边界与关联、真实 Context Role ID、必要依据、原问题、未决依赖、暂缓／停止意图、确认覆盖与各阶段实际文件和结果。沿用已有记录，不建第二套问题台账；返回真实路径后停止，不自动切换其他合同。没有剩余项如实记录为空，全局确认仍单独处理。
+5. **报告并停止。** 范围结束链路成功或阻塞后，说明各阶段实际文件、检查与结果，以及未澄清上下文、类型、边界与关联、真实 Context Role ID、原问题、未决依赖、暂缓／停止意图与确认覆盖；这些内容继续留在同一份 FM 与当前会话中，不另建第二套问题台账或独立交接文件。返回实际结果后停止，不自动切换其他合同。没有剩余项如实说明为空，全局确认仍单独处理。
 
-范围结束后的自动接续包括合同与独立领域／协商分支；普通回答、单条终点、导航选择、停止或全局结束确认不触发下游。仅访谈、只读、不生成或不保存交接等限制优先。必要确认或完整性不足不阻止已有已知模型继续保存，但不得交付受影响下游。
+范围结束后的自动接续包括合同与独立领域／协商分支；普通回答、单条终点、导航选择、停止或全局结束确认不触发下游。仅访谈、只读或不生成等限制优先。必要确认或完整性不足不阻止已有已知模型继续保存，但不得交付受影响下游。
 
 ## 检查结果与阶段交接
 
@@ -107,13 +102,12 @@ flowchart TD
 
 ## 文件归属与恢复
 
-| 产物                   | 位置                                                 | 拥有者        |
-| ---------------------- | ---------------------------------------------------- | ------------- |
-| 唯一模型、说明与场景   | `.evidence/fm/`                                      | FM            |
-| API 设计与派生投影     | `.evidence/api/api.json`、`.evidence/api/generated/` | API           |
-| 显式或范围结束自动交接 | `.evidence/handoffs/<主题>.md` 或指定路径            | Handoff       |
-| 只读审核页             | `.evidence/views/index.html`                         | Visualization |
-| 获授权检查记录         | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 检查执行者    |
+| 产物                 | 位置                                                 | 拥有者        |
+| -------------------- | ---------------------------------------------------- | ------------- |
+| 唯一模型、说明与场景 | `.evidence/fm/`                                      | FM            |
+| API 设计与派生投影   | `.evidence/api/api.json`、`.evidence/api/generated/` | API           |
+| 只读审核页           | `.evidence/views/index.html`                         | Visualization |
+| 获授权检查记录       | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 检查执行者    |
 
 ### 恢复一个分支
 
@@ -121,4 +115,4 @@ flowchart TD
 
 只补齐授权内未保存或未完成阶段，不重新生成未变产物。恢复问答须有明确意图；只校验请求不写任何项目文件，已有 API 的检查仍需当前明确范围。单独页面只授权 HTML，不编辑两源或正式 generated；无 API 的 FM 页面可展示渐进模型及缺口，不称联合交付。
 
-按 [基线样例](../examples/README.md) 和 [交接模板](../assets/handoff-template.md) 返回实际授权、输入、范围、各文件结果、检查、未执行项及恢复位置，不复制定义。合同级结束、领域／协商结束、全局追责结束、保存、机器通过和业务批准互不替代。不自动批准，不进入需求、规划、实施或 Git 操作。
+按 [基线样例](../examples/README.md) 返回实际授权、输入、范围、各文件结果、检查、未执行项及恢复位置，不复制定义。合同级结束、领域／协商结束、全局追责结束、保存、机器通过和业务批准互不替代。不自动批准，不进入需求、规划、实施或 Git 操作。

@@ -25,14 +25,11 @@ class MixedContextWorkflowTests(unittest.TestCase):
                        '没有适用履约责任', '不能将未闭合合同改名为领域'):
             self.assertIn(phrase, text)
 
-    def test_non_contract_completion_reaches_generation_and_handoff(self):
+    def test_non_contract_completion_reaches_generation_and_report(self):
         text = (SKILLS / 'evidence-modeling/references/workflow.md').read_text()
         for phrase in ('独立领域／协商分支', 'endScope -->|具备| complete',
-                       'endScope -->|未结束或无范围检查授权| handoff', '未澄清上下文',
+                       'endScope -->|未结束或无范围检查授权| report', '未澄清上下文',
                        '不自动切换', '仅访谈'):
-            self.assertIn(phrase, text)
-        text = (SKILLS / 'evidence-handoff/SKILL.md').read_text()
-        for phrase in ('未澄清上下文', '领域与协商的分支结束', '原标识'):
             self.assertIn(phrase, text)
 
     def test_mixed_navigation_example_keeps_contract_and_domain_distinct(self):

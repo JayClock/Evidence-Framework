@@ -12,7 +12,6 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 ROOT = Path(__file__).resolve().parents[2]
 PORTABLE_NAMES = (
     "evidence-discovery",
-    "evidence-handoff",
     "evidence-fm",
     "evidence-api",
     "evidence-requirements",

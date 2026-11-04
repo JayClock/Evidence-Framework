@@ -41,11 +41,6 @@ class InterviewMainlineTests(unittest.TestCase):
                        "领域上下文 → 当前对象", "任一写入失败就停止", "未执行保持未执行"):
             self.assertIn(phrase, interview)
 
-    def test_manual_handoff_preserves_business_progress_and_controls(self):
-        text = (SKILLS / "evidence-handoff/SKILL.md").read_text()
-        for phrase in ("全部主履约", "关键数据追溯", "异常责任", "暂缓项", "真实保存与执行结果"):
-            self.assertIn(phrase, text)
-
     def test_party_discovery_is_explicit_and_source_bound(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         self.assertLess(method.index("## 2. 寻找合同，明确参与方"), method.index("## 6. 用单据推演"))
@@ -59,9 +54,7 @@ class InterviewMainlineTests(unittest.TestCase):
 
     def test_interaction_growth_preserves_recovery_contracts(self):
         for relative in ("evidence-discovery/references/interview.md",
-                         "evidence-modeling/references/workflow.md",
-                         "evidence-modeling/assets/handoff-template.md",
-                         "evidence-handoff/SKILL.md"):
+                         "evidence-modeling/references/workflow.md"):
             with self.subTest(reference=relative):
                 text = (SKILLS / relative).read_text()
                 self.assertIn("未包裹", text)

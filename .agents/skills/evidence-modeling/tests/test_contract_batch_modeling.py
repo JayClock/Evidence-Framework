@@ -21,32 +21,31 @@ class ContractBatchModelingTests(unittest.TestCase):
                 self.assertIn("范围", (SKILLS / path).read_text())
         self.assertIn("不把追责结束作为首次写入 FM 的条件", text)
 
-    def test_completed_contract_delegates_then_records_even_partial_failure(self):
+    def test_completed_contract_delegates_then_reports_even_partial_failure(self):
         text = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         diagrams = re.findall(r"```mermaid\n(.*?)```", text, re.S)
         edges = set(re.findall(r"(?m)^\s*(\w+) -->\s*(?:\|[^|]+\|\s*)?(\w+)", diagrams[1]))
         for edge in (("discovery", "endScope"), ("endScope", "complete"),
-                     ("endScope", "handoff"), ("ready", "manual"),
-                     ("api", "manual"), ("manual", "handoff")):
+                     ("endScope", "report"), ("ready", "report"),
+                     ("api", "report"), ("review", "report")):
             self.assertIn(edge, edges)
-        for phrase in ("范围结束后的自动接续", "evidence-handoff", "未澄清上下文", "Context Role",
+        for phrase in ("范围结束后的自动接续", "未澄清上下文", "Context Role",
                        "未保存", "只聊不落盘", "不自动切换"):
             self.assertIn(phrase, text)
         discovery = (SKILLS / "evidence-discovery/references/interview.md").read_text()
         self.assertIn("evidence-modeling", discovery)
         self.assertIn("单合同结束确认单独一轮", discovery)
 
-    def test_handoff_keeps_unresolved_roles_versions_questions_and_controls(self):
-        text = (SKILLS / "evidence-handoff/SKILL.md").read_text()
-        for phrase in ("合同级自动交接", "未澄清合同", "Context Role", "原标识", "暂缓", "业务版本", "实际路径"):
+    def test_scope_report_keeps_unresolved_roles_versions_questions_and_controls(self):
+        text = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
+        for phrase in ("未澄清", "Context Role", "原问题", "暂缓", "确认覆盖", "实际结果"):
             self.assertIn(phrase, text)
         guide = (REPO / "docs/evidence-modeling.md").read_text()
         self.assertIn("单合同澄清结束", guide)
         self.assertIn("Context Role", guide)
-        self.assertIn("evidence-handoff", guide)
         constitution = (REPO / "AGENTS.md").read_text()
         self.assertIn("显式范围完整性检查", constitution)
-        self.assertIn("自动交接", constitution)
+        self.assertIn("分支结束", constitution)
 
 
 if __name__ == "__main__":

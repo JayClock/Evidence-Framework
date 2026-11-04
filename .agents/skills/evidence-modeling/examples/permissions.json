@@ -24,7 +24,7 @@
       "designFmChecks": 1,
       "reviewFmChecks": 1,
       "apiInput": "same-fm-check",
-      "exit": "handoff",
+      "exit": "report",
       "approved": false
     },
     {
@@ -35,7 +35,7 @@
       "checkMode": "consistency",
       "designFmChecks": 1,
       "reviewFmChecks": 0,
-      "exit": "handoff",
+      "exit": "report",
       "approved": false
     },
     {
@@ -47,7 +47,7 @@
       "designFmChecks": 1,
       "reviewFmChecks": 0,
       "apiInput": "same-fm-check",
-      "exit": "handoff",
+      "exit": "report",
       "approved": false
     },
     {

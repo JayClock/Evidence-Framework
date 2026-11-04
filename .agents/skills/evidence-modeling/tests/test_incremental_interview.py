@@ -52,7 +52,7 @@ class IncrementalInterviewTests(unittest.TestCase):
         language = (SKILLS / 'evidence-fm/references/domain-language.md').read_text()
         self.assertIn('Entity 及其属性即统一语言', language)
         self.assertIn('不要求每轮全文重读', language)
-        for skill in ('evidence-discovery', 'evidence-modeling', 'evidence-fm', 'evidence-handoff'):
+        for skill in ('evidence-discovery', 'evidence-modeling', 'evidence-fm'):
             for doc in (SKILLS / skill).rglob('*.md'):
                 self.assertNotIn('docs/guides/', doc.read_text())
 

@@ -1,4 +1,4 @@
-"""Interview responsibilities and explicitly requested Markdown handoff contracts."""
+"""Interview responsibilities and scope-report contracts."""
 
 import unittest
 from pathlib import Path
@@ -20,17 +20,12 @@ class DiscoveryRetentionBoundaryTests(unittest.TestCase):
             for responsibility in ("当前", "每轮", "术语", "等待", "控制"):
                 self.assertIn(responsibility, text)
 
-    def test_manual_handoff_is_explicit_and_preserves_decision_coverage(self):
-        text = (SKILLS / "evidence-handoff/SKILL.md").read_text()
-        self.assertIn("disable-model-invocation: true", text)
-        for contract in ("Markdown", ".evidence/handoffs/", "人类确认覆盖", "未决", "控制意图", "路径或 URL", "敏感值脱敏", "写入失败"):
-            self.assertIn(contract, text)
-        self.assertNotIn("不负责", text)
+    def test_scope_report_preserves_decision_coverage_without_extra_records(self):
         discovery = (DISCOVERY / "SKILL.md").read_text()
-        self.assertNotIn("evidence-handoff", discovery)
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
-        self.assertIn("显式", workflow)
-        self.assertIn("evidence-handoff", workflow)
+        for contract in ("报告并停止", "确认覆盖", "未决", "暂缓", "不另建第二套问题台账"):
+            self.assertIn(contract, workflow)
+        self.assertNotIn("第二份问题记录", discovery)
 
 
 if __name__ == "__main__":
