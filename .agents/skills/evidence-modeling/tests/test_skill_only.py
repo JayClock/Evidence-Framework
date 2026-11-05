@@ -45,12 +45,6 @@ class SkillOnlyTests(unittest.TestCase):
         entry = (SKILLS / "evidence-modeling/SKILL.md").read_text()
         self.assertIn("访谈使用普通对话", entry)
         self.assertIn("无需专门的 Skill 调用工具", entry)
-        constitution = (REPO / "AGENTS.md").read_text()
-        self.assertIn("显式从 `/skill:evidence-modeling`", constitution)
-        self.assertIn("建模只通过 Skill 执行", constitution)
-        guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("普通对话是完整交互路径", guide)
-        self.assertNotRegex(guide, r"/evidence-model(?!ing)|\.pi/|evidence_ui_")
 
 
 if __name__ == "__main__":

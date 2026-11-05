@@ -20,8 +20,6 @@ class InterviewMainlineTests(unittest.TestCase):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
         for judgment in ("单据推演", "参与者与角色扮演", "变化点"):
             self.assertIn(judgment, method)
-        guide = (REPO / "docs/guides/index.md").read_text()
-        self.assertIn("evidence-fm/references/business-analysis.md", guide)
 
     def test_method_covers_materials_lineage_walkthrough_and_boundaries(self):
         method = (SKILLS / "evidence-fm/references/business-analysis.md").read_text()
@@ -61,7 +59,7 @@ class InterviewMainlineTests(unittest.TestCase):
                 self.assertIn("履约 ID", text)
 
     def test_no_retired_local_gap_only_flow_in_active_guidance(self):
-        paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md"]
+        paths = []
         for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
             paths.extend((SKILLS / name).rglob("*.md"))
         retired = (

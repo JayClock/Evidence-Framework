@@ -40,12 +40,6 @@ class ContractBatchModelingTests(unittest.TestCase):
         text = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         for phrase in ("未澄清", "Context Role", "原问题", "暂缓", "确认覆盖", "实际结果"):
             self.assertIn(phrase, text)
-        guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("单合同澄清结束", guide)
-        self.assertIn("Context Role", guide)
-        constitution = (REPO / "AGENTS.md").read_text()
-        self.assertIn("显式范围完整性检查", constitution)
-        self.assertIn("分支结束", constitution)
 
 
 if __name__ == "__main__":

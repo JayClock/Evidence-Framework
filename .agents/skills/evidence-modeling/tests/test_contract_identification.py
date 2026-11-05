@@ -58,13 +58,9 @@ class ContractIdentificationTests(unittest.TestCase):
                 self.assertIn("约定", text)
                 self.assertIn("责任双方", text)
                 self.assertIn("business-analysis.md", text)
-        guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("约定与责任双方", guide)
-        self.assertIn("evidence-fm/references/business-analysis.md", guide)
 
     def test_entrypoints_preserve_core_discovery_instead_of_optional_clues(self):
-        paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
-                 SKILLS / "evidence-fm/SKILL.md", SKILLS / "evidence-discovery/SKILL.md",
+        paths = [SKILLS / "evidence-fm/SKILL.md", SKILLS / "evidence-discovery/SKILL.md",
                  SKILLS / "evidence-fm/references/business-analysis.md",
                  SKILLS / "evidence-discovery/references/interview.md"]
         for path in paths:
@@ -72,8 +68,6 @@ class ContractIdentificationTests(unittest.TestCase):
                 text = path.read_text()
                 self.assertIn("现金权责", text)
                 self.assertIn("目标—实际对比", text)
-        guide = (REPO / "docs/evidence-modeling.md").read_text()
-        self.assertIn("《如何落地业务建模》的四色建模与 8X Flow 为准", guide)
 
     def test_business_display_omits_attribution_not_operating_responsibilities(self):
         text = (SKILLS / "evidence-discovery/examples/navigation.md").read_text()

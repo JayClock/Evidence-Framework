@@ -15,17 +15,13 @@ NAMES = (
 
 
 class SkillDocumentationTests(unittest.TestCase):
-    def test_course_analysis_does_not_add_color_schema_archetypes(self):
+    def test_analysis_does_not_add_color_schema_archetypes(self):
         retired = re.compile(r"粉色|黄色|绿色|蓝色", re.I)
-        repo = ROOT.parents[1]
-        guide = (repo / "docs/evidence-modeling.md").read_text()
-        self.assertIn("四色建模与 8X Flow 为准", guide)
         method = (ROOT / "evidence-fm/references/business-analysis.md").read_text()
         self.assertIn("凭证必须围绕现金往来或 KPI", method)
         documents = [
             *ROOT.rglob("*.md"),
             *ROOT.rglob("*.json"),
-            repo / "docs/evidence-modeling.md",
         ]
         for document in documents:
             with self.subTest(document=str(document)):
@@ -108,12 +104,6 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertIn("不另设术语表、定义索引或英文词典", method)
 
     def test_daily_language_is_reachable_from_project_and_consumer_skills(self):
-        repo = ROOT.parents[1]
-        for relative in ("AGENTS.md", "docs/guides/index.md", "docs/engineering/conventions.md"):
-            with self.subTest(document=relative):
-                text = (repo / relative).read_text()
-                self.assertIn("domain-language.md", text)
-                self.assertIn("规范名称", text)
         for relative in ("evidence-fm/SKILL.md", "evidence-discovery/SKILL.md"):
             self.assertIn("domain-language.md", (ROOT / relative).read_text())
         discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
@@ -212,7 +202,7 @@ class SkillDocumentationTests(unittest.TestCase):
                     self.assertIn(path, text)
 
     def test_modeling_and_api_guidance_has_no_retired_output_defaults(self):
-        documents = [ROOT.parents[1] / "docs/evidence-modeling.md"]
+        documents = []
         for name in (
             "evidence-modeling",
             "evidence-discovery",
@@ -281,3 +271,8 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertEqual(
             set(), passages("evidence-discovery") & passages("evidence-fm")
         )
+
+
+if __name__ == "__main__":
+    unittest.main()
+

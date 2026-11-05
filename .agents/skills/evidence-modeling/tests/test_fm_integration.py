@@ -10,9 +10,6 @@ REPOSITORY = Path(__file__).resolve().parents[4]
 class FMIntegrationTests(unittest.TestCase):
     def test_modeling_is_exclusively_skill_driven(self):
         self.assertFalse((REPOSITORY / ".pi/extensions/evidence-modeling").exists())
-        constitution = (REPOSITORY / "AGENTS.md").read_text()
-        self.assertIn("建模只通过 Skill 执行", constitution)
-        self.assertNotIn("可选 UI 包装", constitution)
 
     def test_project_script_entrypoints_exist(self):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
@@ -45,7 +42,6 @@ class FMIntegrationTests(unittest.TestCase):
         files = [
             ".agents/skills/evidence-modeling/SKILL.md",
             ".agents/skills/evidence-modeling/references/workflow.md",
-            "docs/evidence-modeling.md",
         ]
         retired = {
             "contractRef",

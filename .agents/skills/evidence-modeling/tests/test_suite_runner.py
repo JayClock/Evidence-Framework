@@ -42,7 +42,8 @@ class SuiteRunnerTests(unittest.TestCase):
         ):
             self.assertEqual(1, runner.main())
         self.assertEqual(2, execute.call_count)
-        for call, suite in zip(execute.call_args_list, suites, strict=True):
+        self.assertEqual(len(execute.call_args_list), len(suites))
+        for call, suite in zip(execute.call_args_list, suites):
             self.assertEqual(
                 [
                     sys.executable,
@@ -76,3 +77,7 @@ class SuiteRunnerTests(unittest.TestCase):
             ),
         ):
             self.assertEqual(0, runner.main())
+
+
+if __name__ == "__main__":
+    unittest.main()

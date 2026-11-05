@@ -16,8 +16,8 @@ class IncrementalInterviewTests(unittest.TestCase):
         return match[1]
 
     def test_project_distinguishes_continuation_from_restart(self):
-        self.assertIn('连续问答不是任务重启', (REPO / 'AGENTS.md').read_text())
-        self.assertIn('不重复工程开工检查', (REPO / 'docs/guides/index.md').read_text())
+        text = self.section('### 连续问答')
+        self.assertIn('同任务、授权未变、必要方法仍在上下文且未变化时复用', text)
 
     def test_recovery_consumes_provided_focus_and_control(self):
         text = self.section('### 首次进入或恢复')

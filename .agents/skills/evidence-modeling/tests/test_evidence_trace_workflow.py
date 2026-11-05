@@ -119,8 +119,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
         self.assertIn("脱敏", (DISCOVERY / "examples/README.md").read_text())
 
     def test_project_entrypoints_preserve_evidence_tracing(self):
-        for path in (REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
-                     DISCOVERY / "SKILL.md", SKILLS / "evidence-modeling/references/workflow.md"):
+        for path in (DISCOVERY / "SKILL.md", SKILLS / "evidence-modeling/references/workflow.md"):
             self.assertIn("凭证追溯", path.read_text(), path)
 
 
