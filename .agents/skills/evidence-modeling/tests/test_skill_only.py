@@ -14,7 +14,7 @@ class SkillOnlyTests(unittest.TestCase):
         for token in ("evidence_ui_", "switch-context", "currentAgreementRef",
                       "kind: fulfillment", "`position`", "`story`", "`prompt`"):
             self.assertNotIn(token, text)
-        for phrase in ("普通对话沿同一条主线推进", "自然语言", "取消",
+        for phrase in ("每轮只推进一个业务焦点", "自然语言", "取消",
                        "原问题标识", "已经收到的回答用于业务理解", "任一写入失败就停止"):
             self.assertIn(phrase, text)
 
