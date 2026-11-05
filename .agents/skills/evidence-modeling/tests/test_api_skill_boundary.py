@@ -36,10 +36,10 @@ class APISkillBoundaryTests(unittest.TestCase):
         self.assertIn("evidence-api", workflow)
         self.assertIn("不重复执行 FM 检查", workflow)
 
-    def test_project_commands_use_the_independent_api_test_suite(self):
+    def test_project_commands_do_not_couple_skill_tests(self):
         scripts = json.loads((REPO / "package.json").read_text())["scripts"]
-        self.assertIn("evidence-api/tests", scripts["skills:test:api"])
-        self.assertNotIn("tests/api", scripts["skills:test:fm"])
+        self.assertNotIn("skills:test:api", scripts)
+        self.assertNotIn("skills:test:fm", scripts)
 
 
 if __name__ == "__main__":

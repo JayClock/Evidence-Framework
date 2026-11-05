@@ -26,17 +26,11 @@ class FMIntegrationTests(unittest.TestCase):
             for target in [environment["root"], *environment.get("extraPaths", [])]:
                 self.assertTrue((REPOSITORY / target).is_dir(), target)
 
-    def test_package_verification_covers_portable_fm_tests(self):
+    def test_package_verification_keeps_skills_isolated(self):
         package = json.loads((REPOSITORY / "package.json").read_text(encoding="utf-8"))
         scripts = package["scripts"]
         self.assertFalse(any(name.startswith("evidence-modeling:") for name in scripts))
-        self.assertIn(
-            ".agents/skills/evidence-modeling/tests/run_skill_tests.py",
-            scripts["skills:test"],
-        )
-        self.assertEqual("npm run skills:test && npm run skills:format:check", scripts["skills:verify"])
-        self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
-        self.assertIn("schemas/*.json", scripts["skills:format:check"])
+        self.assertFalse(any(name.startswith("skills:") for name in scripts))
 
     def test_composition_documents_use_only_current_fm_schema(self):
         files = [

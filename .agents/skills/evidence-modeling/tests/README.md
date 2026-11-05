@@ -28,8 +28,7 @@ Discovery 维护普通对话、当前节点、问题组、控制意图及当轮�
 使用满足相关 requirements.txt 的 Python 3.10+ 环境，在仓库根执行：
 
 ```bash
-npm run skills:verify
-# 使用实际 Python 解释器运行相同聚合入口
+# 使用实际 Python 解释器运行聚合入口
 python3 .agents/skills/evidence-modeling/tests/run_skill_tests.py
 # 只运行组合及跨包契约
 python3 -B -m unittest discover -s .agents/skills/evidence-modeling/tests -v
