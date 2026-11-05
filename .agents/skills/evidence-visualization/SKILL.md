@@ -1,6 +1,6 @@
 ---
 name: evidence-visualization
-description: 当用户要求查看 FM 与已有 API、生成或更新离线审核页、排查工作台显示故障时使用。只维护审核投影，不设计业务 UI、修改业务源或批准业务。
+description: 当用户要求生成或更新离线业务审核页、查看当前模型与 API 投影、排查工作台显示故障时使用。维护单页只读审核视图；不设计业务 UI 或修改业务源。
 compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm；有 API 时还需独立 evidence-api；浏览器验证需 Node.js 22+ 与本机 Chrome。
 ---
 
