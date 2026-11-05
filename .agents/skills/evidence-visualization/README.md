@@ -19,7 +19,7 @@ evidence-visualization/
 在本仓库根运行：
 
 ```bash
-node tools/python/python.mjs -B .agents/skills/evidence-visualization/scripts/generate.py \
+python3 -B .agents/skills/evidence-visualization/scripts/generate.py \
   --project-root "$PWD" \
   --fm-skill "$PWD/.agents/skills/evidence-fm" \
   --api-skill "$PWD/.agents/skills/evidence-api"
