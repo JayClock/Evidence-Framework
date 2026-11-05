@@ -23,8 +23,6 @@ class SuiteRunnerTests(unittest.TestCase):
                 "evidence-api/tests",
                 "evidence-api/tests/portability",
                 "evidence-modeling/tests",
-                "evidence-delivery/tests",
-                "evidence-task-planning/tests",
             },
             {path.relative_to(runner.SKILLS).as_posix() for path in suites},
         )

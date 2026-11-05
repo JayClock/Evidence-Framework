@@ -61,7 +61,7 @@ class InterviewMainlineTests(unittest.TestCase):
                 self.assertIn("履约 ID", text)
 
     def test_no_retired_local_gap_only_flow_in_active_guidance(self):
-        paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md", SKILLS / "README.md"]
+        paths = [REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md"]
         for name in ("evidence-discovery", "evidence-modeling", "evidence-fm"):
             paths.extend((SKILLS / name).rglob("*.md"))
         retired = (

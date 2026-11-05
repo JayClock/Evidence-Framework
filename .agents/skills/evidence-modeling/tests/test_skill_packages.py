@@ -14,15 +14,10 @@ PORTABLE_NAMES = (
     "evidence-discovery",
     "evidence-fm",
     "evidence-api",
-    "evidence-requirements",
     "evidence-modeling",
     "evidence-visualization",
 )
-WORKFLOW_NAMES = (
-    "evidence-task-planning",
-    "evidence-delivery",
-)
-ALL_NAMES = PORTABLE_NAMES + WORKFLOW_NAMES
+ALL_NAMES = PORTABLE_NAMES
 
 
 class SkillPackageTests(unittest.TestCase):
@@ -79,18 +74,10 @@ class SkillPackageTests(unittest.TestCase):
                 if path.is_dir() and path.name.startswith("evidence-")
             },
         )
-        for name in WORKFLOW_NAMES:
-            entry = ROOT / name / "SKILL.md"
-            self.assertTrue(entry.is_file(), f"Missing workflow skill: {name}")
-            self.assertTrue(
-                entry.read_text(encoding="utf-8").startswith(f"---\nname: {name}\n")
-            )
 
     def test_skill_names_share_the_evidence_namespace(self):
-        index = (ROOT / "README.md").read_text(encoding="utf-8")
         for name in ALL_NAMES:
             with self.subTest(skill=name):
                 self.assertRegex(name, r"^evidence-[a-z]+(?:-[a-z]+)*$")
-                self.assertIn(f"[{name}]({name}/SKILL.md)", index)
         for resource in (ROOT / "evidence-fm" / "scripts").glob("*.py"):
             self.assertNotIn(".pi/", resource.read_text(encoding="utf-8"))

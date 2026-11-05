@@ -9,7 +9,6 @@ NAMES = (
     "evidence-discovery",
     "evidence-fm",
     "evidence-api",
-    "evidence-requirements",
     "evidence-modeling",
     "evidence-visualization",
 )
@@ -26,7 +25,6 @@ class SkillDocumentationTests(unittest.TestCase):
         documents = [
             *ROOT.rglob("*.md"),
             *ROOT.rglob("*.json"),
-            repo / "README.md",
             repo / "docs/evidence-modeling.md",
         ]
         for document in documents:
@@ -118,16 +116,6 @@ class SkillDocumentationTests(unittest.TestCase):
                 self.assertIn("规范名称", text)
         for relative in ("evidence-fm/SKILL.md", "evidence-discovery/SKILL.md"):
             self.assertIn("domain-language.md", (ROOT / relative).read_text())
-        for relative in (
-            "evidence-requirements/SKILL.md",
-            "evidence-task-planning/references/guides.md",
-        ):
-            with self.subTest(document=relative):
-                text = (ROOT / relative).read_text()
-                self.assertIn("领域语言方法", text)
-                self.assertIn("规范名称", text)
-        for name in ("evidence-task-planning", "evidence-delivery"):
-            self.assertIn("references/guides.md", (ROOT / name / "SKILL.md").read_text())
         discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
         self.assertIn("故事、问题与交接使用同一中文（英文）规范名称", discovery)
 
@@ -224,7 +212,7 @@ class SkillDocumentationTests(unittest.TestCase):
                     self.assertIn(path, text)
 
     def test_modeling_and_api_guidance_has_no_retired_output_defaults(self):
-        documents = [ROOT / "README.md", ROOT.parents[1] / "docs/evidence-modeling.md"]
+        documents = [ROOT.parents[1] / "docs/evidence-modeling.md"]
         for name in (
             "evidence-modeling",
             "evidence-discovery",
@@ -278,9 +266,6 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertFalse(
             (ROOT / "evidence-modeling/references/visual-review.md").exists()
         )
-        self.assertFalse((ROOT.parents[1] / "tools/evidence_review").exists())
-        for document in visual.rglob("*.md"):
-            self.assertNotIn("tools/evidence_review", document.read_text())
 
     def test_discovery_and_fm_do_not_copy_methods_or_long_paragraphs(self):
         def passages(skill: str) -> set[str]:

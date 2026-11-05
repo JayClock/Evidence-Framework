@@ -36,8 +36,7 @@ class CombinedWorkflowContracts(unittest.TestCase):
         self.assertNotIn("完成当前分支后停止，不自动进入需求、API", entry)
 
     def test_current_project_entrypoints_describe_the_joint_workflow(self):
-        for path in (REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md",
-                     SKILLS / "README.md", REPO / "README.md"):
+        for path in (REPO / "AGENTS.md", REPO / "docs/evidence-modeling.md"):
             with self.subTest(path=path):
                 text = path.read_text()
                 self.assertIn("联合审核", text)

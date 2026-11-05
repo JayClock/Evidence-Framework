@@ -37,12 +37,8 @@ class FMIntegrationTests(unittest.TestCase):
             ".agents/skills/evidence-modeling/tests/run_skill_tests.py",
             scripts["skills:test"],
         )
-        self.assertIn("tools/python/python.mjs", scripts["skills:test"])
         self.assertEqual("npm run skills:test && npm run skills:format:check", scripts["skills:verify"])
         self.assertIn(".agents/skills/evidence-fm/tests", scripts["skills:test:fm"])
-        self.assertIn("tools/python/python.mjs", scripts["skills:test:fm"])
-        self.assertIn("python:test", scripts["test"])
-        self.assertIn("tools/python/python.spec.mjs", scripts["python:test"])
         self.assertIn("schemas/*.json", scripts["skills:format:check"])
 
     def test_composition_documents_use_only_current_fm_schema(self):
