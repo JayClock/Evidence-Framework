@@ -14,11 +14,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：trace 校验脚本与 schema 就绪",
+      "deterministic_msg": "确定性检查通过：interview trace 校验器执行成功",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.02,
+      "elapsed_s": 0.0,
       "output": "【责任双方与凭证依据】\n责任双方为需求部门（承担预算支出义务）与财务部（承担对公结算责任）。\n请问确认到货的验收凭证来源是什么？供应商发票以何种方式递交？"
     },
     {
@@ -30,11 +30,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：trace 校验脚本与 schema 就绪",
+      "deterministic_msg": "确定性检查通过：interview trace 校验器执行成功",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.023,
+      "elapsed_s": 0.0,
       "output": "【成组追问 - 依赖前沿】\n1. 主管审批未通过时，采购需求是否有补充或废止路径？\n2. 供应商开具的发票是由税控接口自动核验，还是由财务人工验真？\n3. 15 个工作日的付款起算点是以收到合格发票为准，还是以审批归档时间为准？"
     },
     {
@@ -46,11 +46,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：控制分支未触发下游推进",
+      "deterministic_msg": "确定性检查通过：控制分支状态保持等待，未推进下游",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.024,
+      "elapsed_s": 0.0,
       "output": "已记录会议备忘事实至追溯日志，未推进后续下游模型生成，保持等待状态。"
     },
     {
@@ -62,11 +62,11 @@
       "actually_triggered": false,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：未产生未授权文件写入",
+      "deterministic_msg": "确定性检查通过：沙箱内保持纯净，未发生写操作",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.025,
+      "elapsed_s": 0.0,
       "output": "Python 3.10 的 match-case 支持结构化模式匹配，可用于类型解构与守卫语句。"
     }
   ]

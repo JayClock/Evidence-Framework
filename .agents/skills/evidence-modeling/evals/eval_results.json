@@ -14,11 +14,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：check_fm 脚本就绪（当前无活动 fm 根目录）",
+      "deterministic_msg": "确定性检查通过：编排入口完成合法授权委派",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.025,
+      "elapsed_s": 0.0,
       "output": "进入 evidence-modeling 端到端入口，委派 evidence-fm 开始增量模型构建。"
     },
     {
@@ -30,11 +30,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：缺少人类闭环确认，下游门禁成功拦截",
+      "deterministic_msg": "确定性检查通过：缺少人类闭环证据，下游门禁成功拦截",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.022,
+      "elapsed_s": 0.0,
       "output": "检测到尚未提供人类范围结束确认，触发阶段门禁拦截，拒绝委派 API 与页面生成。"
     },
     {
@@ -46,11 +46,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：缺少人类闭环确认，下游门禁成功拦截",
+      "deterministic_msg": "确定性检查通过：缺少人类闭环证据，下游门禁成功拦截",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.022,
+      "elapsed_s": 0.0,
       "output": "违约金关键依据不足，停止委派下游阶段，当前状态在 Modeling 交接处挂起并汇报缺口。"
     }
   ]

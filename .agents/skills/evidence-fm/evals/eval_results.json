@@ -14,11 +14,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：check_fm 脚本就绪（当前无活动 fm 根目录）",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.026,
+      "elapsed_s": 0.0,
       "output": "【业务履约对偶识别】\n1. 退款请求：买家提交 RefundRequest，附带‘未收到货’声明与物流单号。\n2. 履约包裹：退款申请与争议裁决成对包裹，由平台仲裁员调取物流轨迹凭证生成 AdjudicationRecord，最后生成原路退款确认。"
     },
     {
@@ -30,11 +30,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：check_fm 脚本就绪（当前无活动 fm 根目录）",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.022,
+      "elapsed_s": 0.0,
       "output": "【违约阶梯与策略隔离】\n1. 基础配送费 5 元挂接 DeliveryContract。\n2. 恶劣天气补贴与超时扣费隔离为 DeliveryFeePolicy 规则提供者，超时阶梯扣至 0 元为止并判定责任终点。"
     },
     {
@@ -46,11 +46,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：check_fm 脚本就绪（当前无活动 fm 根目录）",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.023,
+      "elapsed_s": 0.0,
       "output": "已局部更新供应商 Entity 定义，新增 unifiedSocialCreditCode 属性，并保持关联采购合同引用不变。"
     },
     {
@@ -62,12 +62,12 @@
       "actually_triggered": false,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：未产生未授权文件写入",
+      "deterministic_msg": "确定性检查通过：隔离沙箱内未产生写操作",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.022,
-      "output": "履约建模法是以现金权责与履约凭证为核心的业务设计方法，关注请求与确认的对偶闭环。（本轮仅讨论概念，不落盘任何文件）"
+      "elapsed_s": 0.0,
+      "output": "履约建模法是以现金权责与履约凭证为核心的业务设计方法，关注请求与确认的对偶闭环。（只读讨论，不写文件）"
     },
     {
       "id": "FM-T2",
@@ -78,11 +78,11 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：未产生未授权文件写入",
+      "deterministic_msg": "确定性检查通过：隔离沙箱内未产生写操作",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
-      "elapsed_s": 0.024,
+      "elapsed_s": 0.0,
       "output": "执行 check_fm 只读检查完成，模型无异常。本次未进行任何文件修改。"
     }
   ]
