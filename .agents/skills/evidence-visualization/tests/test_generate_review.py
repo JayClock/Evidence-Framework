@@ -208,6 +208,23 @@ class WorkbenchTests(unittest.TestCase):
             self.assertEqual(wb.MARKER + "previous", page.read_text())
             self.assertEqual([page], list(page.parent.iterdir()))
 
+    def test_interview_traces_bind_to_evidence_nodes(self):
+        model = fixture()
+        traces = [
+            {
+                "traceId": "trace-1",
+                "focus": {"evidenceRef": "request.a"},
+                "narrative": {"judgment": "测试采购请求依据", "story": "测试故事"},
+                "qa": [{"questionId": "Q1", "question": "何时支付？"}],
+                "userInput": {"rawText": "下单后15分钟", "confirmedFacts": ["15分钟"]},
+                "targetBindings": [{"evidenceRef": "request.a", "sourceType": "interview_statement"}]
+            }
+        ]
+        data = wb.project(model, [], [], {}, None, traces)
+        req_node = next(n for n in data["nodes"] if n["id"] == "request.a")
+        self.assertIn("interviewTraces", req_node)
+        self.assertEqual("trace-1", req_node["interviewTraces"][0]["traceId"])
+
     def test_checker_failure_stops_collection(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp).resolve()

@@ -74,7 +74,7 @@ def scalar_values(value: dict) -> dict:
     return {k: v for k, v in value.items() if isinstance(v, (str, int, float, bool)) or v is None}
 
 
-def project(model: dict, scenarios: list, instances: list, simulation: dict, api: dict | None) -> dict:
+def project(model: dict, scenarios: list, instances: list, simulation: dict, api: dict | None, traces: list | None = None) -> dict:
     """Explicit display projection: no raw documents, basis, notes or provenance."""
     nodes: dict[str, dict] = {}
     edges: list[dict] = []
@@ -233,6 +233,20 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
                     if target.get("contextRef") == node.get("contextRef") and target.get("kind") == "fulfillment_confirmation" and target["id"] not in node["confirmations"]:
                         node["confirmations"].append(target["id"])
 
+    if traces:
+        traces_by_evidence: dict[str, list[dict]] = {}
+        for record in traces:
+            target_bindings = record.get("targetBindings", [])
+            bound_evidences = {b.get("evidenceRef") for b in target_bindings if b.get("evidenceRef")}
+            if record.get("focus", {}).get("evidenceRef"):
+                bound_evidences.add(record["focus"]["evidenceRef"])
+            for ev_ref in bound_evidences:
+                if ev_ref:
+                    traces_by_evidence.setdefault(ev_ref, []).append(record)
+        for node_id, node in nodes.items():
+            if node.get("group") == "evidence" and node_id in traces_by_evidence:
+                node["interviewTraces"] = traces_by_evidence[node_id]
+
     return {
         "title": model.get("model", {}).get("name", "业务模型"),
         "nodes": list(nodes.values()), "edges": edges,
@@ -288,9 +302,13 @@ def collect(root: Path, fm_skill: Path, work: Path, *, api_skill: Path | None = 
         if api["fmCheckSummary"]["modelDigest"] != check["modelDigest"]:
             raise ValueError("FM 在投影期间变化")
         api["bindings"] = read_json(api_path).get("bindings", [])
+    traces_file = root / ".evidence/traces/interview-trace.json"
+    traces = []
+    if traces_file.is_file():
+        traces = read_json(traces_file).get("traces", [])
     if initial != fingerprint(root):
         raise ValueError("输入在生成期间变化，保留已有视图")
-    data = project(model, scenarios, instances, simulation, api)
+    data = project(model, scenarios, instances, simulation, api, traces)
     data["validation"] = {"fm": True, "consistent": check.get("consistent"),
                           "complete": check.get("complete"), "scopeRefs": check.get("scopeRefs"),
                           "contextRefs": check.get("contextRefs"), "gaps": check.get("gaps"),

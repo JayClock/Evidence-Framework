@@ -106,6 +106,7 @@ flowchart TD
 | 产物                 | 位置                                                 | 拥有者        |
 | -------------------- | ---------------------------------------------------- | ------------- |
 | 唯一模型、说明与场景 | `.evidence/fm/`                                      | FM            |
+| 追溯问答与来源日志   | `.evidence/traces/interview-trace.json`              | Discovery     |
 | API 设计与派生投影   | `.evidence/api/api.json`、`.evidence/api/generated/` | API           |
 | 只读审核页           | `.evidence/views/index.html`                         | Visualization |
 | 获授权检查记录       | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 检查执行者    |
