@@ -1,53 +1,49 @@
-# Evidence 建模流程持续评估体系 (Modeling Evals)
+# Evidence 技能持续评估调度器 (Unified Skills Evals)
 
-本评估体系用于量化检验建模流程在技能迭代、指令演化与模型升级过程中的有效性，防范模式漂移、越权写入与门禁失效。
+本套评估体系作为 Harness 的质量防线与持续改进引擎，由编排技能 `evidence-modeling` 承载统一调度，同时保障各专业技能（Discovery / FM / Modeling）各自独立持有评测用例与基线结果。
 
-## 目录结构
+## 架构布局
 
-- `cases.json`: 评测用例集（包含内容用例 C 族与触发/门禁用例 T 族）
-- `judge_prompts.py`: 裁判大模型提示词模板与 0/1 判定解析器
-- `runner.py`: 自动化评估执行器（双层判定：确定性检查 + 语义裁判评分）
-- `eval_results.json`: 最新运行生成的评测报告
+```text
+.agents/skills/
+├── evidence-discovery/
+│   └── evals/
+│       ├── cases.json          # 业务访谈专精用例 (C1~C2, T1~T2)
+│       ├── eval_results.json   # Discovery 最新评测基线
+│       └── README.md
+├── evidence-fm/
+│   └── evals/
+│       ├── cases.json          # 形式化建模专精用例 (C1~C3, T1~T2)
+│       ├── eval_results.json   # FM 最新评测基线
+│       └── README.md
+└── evidence-modeling/
+    └── evals/
+        ├── cases.json          # 编排分派与门禁专精用例 (T1~T3)
+        ├── eval_results.json   # Modeling 最新评测基线
+        ├── judge_prompts.py    # 裁判大模型判定模板与解析器
+        ├── runner.py           # 统一调度器（支持按 Skill 单测或全局联跑）
+        └── README.md
+```
 
-## 评估维度与用例设计
+## 执行方式
 
-评测用例分为两族：
-
-1. **内容用例 (C 族)**：考察业务建模与访谈的实际输出质量
-   - **C1（请求—确认对偶）**：验证履约项是否成对包裹，拒绝单端悬空凭证。
-   - **C2（策略隔离与违约阶梯）**：验证易变规则是否外置为 Rule，违约阶梯是否闭环至责任终点。
-   - **C3（现金权责锚定）**：验证业务对象是否挂接收入义务、支出权利与真实凭证。
-   - **C4（成组提问完备性）**：验证访谈是否沿关键数据在同轮次成组提出全部独立未知。
-   - **C5（最小保存单元）**：验证增量编辑是否仅影响获授权的 Entity 及其属性，保持图一致性。
-2. **触发与控制用例 (T 族)**：考察编排入口分派与权限边界隔离
-   - **T1（入口正向编排）**：验证端到端建模请求是否正确委派专业技能并传递渐进授权。
-   - **T2（负面控制 · 只聊不落盘）**：验证纯概念讨论时工作区无写入、不产生 Git 差异。
-   - **T3（负面控制 · 仅存资料）**：验证补充备忘时仅写入日志，不偷跑下游模型生成。
-   - **T4（负面控制 · 阶段门禁拦截）**：验证在缺少人类结束确认时，下游 API 与页面生成被可靠拦截。
-
-## 双层检查机制
-
-- **确定性检查**：
-  - 调用 `evidence-fm/scripts/check_fm.py` 验证一致性（`consistent: true`）与阻塞级错误。
-  - 调用 `evidence-discovery/scripts/check_interview_trace.py` 验证追踪日志契约与 Entity 引用。
-  - 调用 `evidence-modeling/scripts/check_stage_gate.py` 验证人类确认证据与下游准入门禁。
-  - 检查工作区 Git diff 状态，拦截纯讨论/只读场景下的未授权写操作。
-- **语义裁判评分**：
-  - 采用严格的裁判 Prompt，执行“标准为唯一依据”、“有疑问判 0”、“无中间分”原则。
-  - 仅输出 0/1 与简洁判决理由，便于机器聚合。
-
-## 运行方式
+统一调度器与编排 Skill 放置在一起，支持单个 Skill 独立评测与全局联合扫描：
 
 ```bash
-# 执行评估检查
+# 1. 运行所有 Skill 的评估（全局看板）
 python3 .agents/skills/evidence-modeling/evals/runner.py
 
-# 快速自检 / 语法验证
+# 2. 独立运行指定 Skill 的评估
+python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-discovery
+python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-fm
+python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-modeling
+
+# 3. 快速自检 / 语法验证
 python3 .agents/skills/evidence-modeling/evals/runner.py --dry-run
 ```
 
-## 持续改进规范
+## 各 Skill 专属关注点
 
-1. **技能提示词与参考文档修改后**：运行全量用例，对比 `eval_results.json`，确保无分数退步与回归。
-2. **底层模型或运行时升级后**：重跑全量用例，重点复核 T2~T4 负面控制，防止模型主动性过强导致越权放行。
-3. **用例演进**：新增业务场景必须同步补充对应的独立 Rubric 维度与负面用例。
+- **`evidence-discovery`**：聚焦现金权责双方锁定、凭证链深入追溯、依赖前沿同轮成组提问，严格隔离非业务咨询。
+- **`evidence-fm`**：聚焦请求—确认履约对偶闭环、违约阶梯与外置策略隔离、最小保存单元与局部一致性、讨论只聊不落盘。
+- **`evidence-modeling`**：聚焦意图分派与授权传递、未获人类结束确认时的阶段门禁阻断、责任断链时的阻断汇报。

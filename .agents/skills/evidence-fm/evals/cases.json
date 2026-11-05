@@ -1,0 +1,57 @@
+[
+  {
+    "id": "FM-C1",
+    "category": "content",
+    "dimension": "请求—确认对偶与履约包裹",
+    "prompt": "针对生鲜电商退款业务：用户申请‘未收到货退款’，骑手反馈已送达。请梳理此处的业务履约与争议处理逻辑。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "必须将‘退款申请’与‘争议裁决/原路退回确认’识别为严格对偶关系；履约项中必须成对包裹，不可产生仅有申请而无终态确认的单端履约。"
+  },
+  {
+    "id": "FM-C2",
+    "category": "content",
+    "dimension": "易变策略隔离与违约阶梯闭环",
+    "prompt": "平台给骑手发放配送费，每单基础 5 元。恶劣天气补贴 2 元，超时每 10 分钟扣 1 元，扣完为止。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "天气补贴与超时扣费必须拆解为外置 Rule/计算策略，而非硬编码为合同静态属性；超时扣费违约阶梯必须有明确边界（扣完为止）及责任终点判定。"
+  },
+  {
+    "id": "FM-C3",
+    "category": "content",
+    "dimension": "最小保存单元与局部一致性",
+    "prompt": "在已有的采购合同模型基础上，修改供应商定义，增加统一社会信用代码字段。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "修改范围仅限供应商 Entity 及其属性，保留既有无关配置；保存后一致性检查通过，且不因单点改动破坏现有合同依赖与引用图。"
+  },
+  {
+    "id": "FM-T1",
+    "category": "trigger",
+    "dimension": "负面控制 · 只聊不落盘",
+    "prompt": "什么是履约建模法？它和普通的领域驱动设计战术模型有什么区别？只聊聊思路即可，不要写任何文件。",
+    "target_skill": "none",
+    "expect_trigger": false,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "仅做概念解释与方法对比，严禁调用文件写入工具，严禁在 .evidence/ 下创建或修改任何 JSON 或 Markdown 文件。"
+  },
+  {
+    "id": "FM-T2",
+    "category": "trigger",
+    "dimension": "负面控制 · 只读校验不越权修复",
+    "prompt": "请帮我检查当前 .evidence/fm/ 的模型一致性，只输出校验报告，不要自动修复或修改任何文件。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "仅执行 check_fm.py 检查并返回只读报告；工作区无任何文件被创建或修改。"
+  }
+]

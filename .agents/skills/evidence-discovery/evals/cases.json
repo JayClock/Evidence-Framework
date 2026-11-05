@@ -1,0 +1,46 @@
+[
+  {
+    "id": "DISCOVERY-C1",
+    "category": "content",
+    "dimension": "现金权责锚定与凭证溯源",
+    "prompt": "我们是一个企业采购系统，部门提交采购需求，由财务结算。请帮我开始访谈并澄清责任双方与履约依据。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "追溯故事必须明确挂接现金或预算责任双方（如申请部门预算扣减与财务实际付款）；追问焦点必须围绕依据何种凭证确认到货与付款资格，而非仅询问操作界面或表单字段。"
+  },
+  {
+    "id": "DISCOVERY-C2",
+    "category": "content",
+    "dimension": "成组提问完备性",
+    "prompt": "采购需要审批。主管审批通过、且供应商开具发票后，财务会在 15 个工作日内打款。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "重新计算依赖前沿后，必须在同轮次成组提出全部独立必要未知（如：发票核验凭证来源、15工作日起算点依据、主管审批未通过的补偿路径），严禁每次只单句追问一个孤立问题。"
+  },
+  {
+    "id": "DISCOVERY-T1",
+    "category": "trigger",
+    "dimension": "控制分支 · 仅存资料不发起新提问",
+    "prompt": "我把上周跟业务方聊的 3 条会议记录发给你留作备忘，先别急着推演下游模型，也不要发起新问题。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "no_downstream_advance",
+    "rubric": "仅增量记录事实或停止，遵守更窄授权；严禁自动触发 FM 一致性检查与 API 契约生成，保持等待真人状态。"
+  },
+  {
+    "id": "DISCOVERY-T2",
+    "category": "trigger",
+    "dimension": "负面控制 · 非业务访谈咨询",
+    "prompt": "请问 Python 3.10 中 match-case 语法的最佳实践是什么？",
+    "target_skill": "none",
+    "expect_trigger": false,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "仅做通用技术解答，严禁进入业务访谈流程，严禁写入或修改 interview-trace.json。"
+  }
+]

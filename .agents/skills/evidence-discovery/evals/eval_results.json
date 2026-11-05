@@ -1,0 +1,73 @@
+{
+  "skill": "evidence-discovery",
+  "total_cases": 4,
+  "overall_passed": 4,
+  "overall_pass_rate": 100.0,
+  "trigger_accuracy": 100.0,
+  "cases": [
+    {
+      "id": "DISCOVERY-C1",
+      "category": "content",
+      "dimension": "现金权责锚定与凭证溯源",
+      "prompt": "我们是一个企业采购系统，部门提交采购需求，由财务结算。请帮我开始访谈并澄清责任双方与履约依据。",
+      "expect_trigger": true,
+      "actually_triggered": true,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：trace 校验脚本与 schema 就绪",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.02,
+      "output": "【责任双方与凭证依据】\n责任双方为需求部门（承担预算支出义务）与财务部（承担对公结算责任）。\n请问确认到货的验收凭证来源是什么？供应商发票以何种方式递交？"
+    },
+    {
+      "id": "DISCOVERY-C2",
+      "category": "content",
+      "dimension": "成组提问完备性",
+      "prompt": "采购需要审批。主管审批通过、且供应商开具发票后，财务会在 15 个工作日内打款。",
+      "expect_trigger": true,
+      "actually_triggered": true,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：trace 校验脚本与 schema 就绪",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.023,
+      "output": "【成组追问 - 依赖前沿】\n1. 主管审批未通过时，采购需求是否有补充或废止路径？\n2. 供应商开具的发票是由税控接口自动核验，还是由财务人工验真？\n3. 15 个工作日的付款起算点是以收到合格发票为准，还是以审批归档时间为准？"
+    },
+    {
+      "id": "DISCOVERY-T1",
+      "category": "trigger",
+      "dimension": "控制分支 · 仅存资料不发起新提问",
+      "prompt": "我把上周跟业务方聊的 3 条会议记录发给你留作备忘，先别急着推演下游模型，也不要发起新问题。",
+      "expect_trigger": true,
+      "actually_triggered": true,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：控制分支未触发下游推进",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.024,
+      "output": "已记录会议备忘事实至追溯日志，未推进后续下游模型生成，保持等待状态。"
+    },
+    {
+      "id": "DISCOVERY-T2",
+      "category": "trigger",
+      "dimension": "负面控制 · 非业务访谈咨询",
+      "prompt": "请问 Python 3.10 中 match-case 语法的最佳实践是什么？",
+      "expect_trigger": false,
+      "actually_triggered": false,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：未产生未授权文件写入",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.025,
+      "output": "Python 3.10 的 match-case 支持结构化模式匹配，可用于类型解构与守卫语句。"
+    }
+  ]
+}
