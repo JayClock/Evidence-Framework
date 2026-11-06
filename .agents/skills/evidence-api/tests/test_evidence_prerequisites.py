@@ -167,6 +167,8 @@ class EvidencePrerequisiteTest(unittest.TestCase):
                         "contract.wechat-payment",
                         "request.wechat-payment",
                         "confirmation.wechat-payment",
+                        "request.wechat-charge",
+                        "confirmation.wechat-charge",
                     },
                 )
                 self.assertNotIn("capabilityRef", mapped)

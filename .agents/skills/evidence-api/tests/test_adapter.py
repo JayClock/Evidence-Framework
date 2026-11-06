@@ -10,7 +10,7 @@ class AdapterTest(unittest.TestCase):
         model = index()
         self.assertTrue(model.check["valid"])
         self.assertEqual(model.compiled["schemaVersion"], "5.0")
-        self.assertEqual(model.check["scenarioCount"], 2)
+        self.assertEqual(model.check["scenarioCount"], 3)
         self.assertTrue(model.check["simulationPassed"])
         self.assertFalse(any(path.startswith("generated/") for path in model.files))
 

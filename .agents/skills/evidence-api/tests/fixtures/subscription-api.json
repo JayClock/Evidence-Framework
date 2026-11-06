@@ -172,6 +172,17 @@
         ],
         "reasoning": "回映上游已确认的逾期场景，接口发起请求不代表付款完成。"
       }
+    },
+    {
+      "id": "scenario.api-content-access",
+      "sourceScenarioRef": "scenario.content-access-after-payment",
+      "basis": {
+        "fmRefs": [
+          "request.content-access",
+          "confirmation.content-access"
+        ],
+        "reasoning": "回映上游已确认的内容访问方向请求—确认场景。"
+      }
     }
   ],
   "capabilities": [
@@ -309,6 +320,36 @@
               "source.successful-payment"
             ],
             "reasoning": "对应付款请求追加能力"
+          }
+        }
+      ]
+    },
+    {
+      "id": "journey.content-access",
+      "scenarioRef": "scenario.api-content-access",
+      "steps": [
+        {
+          "id": "journey.step-access-request",
+          "sourceStepSequence": 1,
+          "description": "订阅者申请付费内容访问",
+          "mapping": "internal",
+          "basis": {
+            "fmRefs": [
+              "request.content-access"
+            ],
+            "reasoning": "访问请求由平台内部受理，本设计不为此声明接口。"
+          }
+        },
+        {
+          "id": "journey.step-access-confirmation",
+          "sourceStepSequence": 2,
+          "description": "平台形成内容访问确认",
+          "mapping": "internal",
+          "basis": {
+            "fmRefs": [
+              "confirmation.content-access"
+            ],
+            "reasoning": "访问结果由平台内部记录，本设计不为此声明接口。"
           }
         }
       ]
@@ -780,6 +821,28 @@
           "thing.content"
         ],
         "reasoning": "内容标的是付款业务的引用输入；本 FM 未定义独立内容读取或维护活动。"
+      }
+    },
+    {
+      "entityRef": "request.content-access",
+      "handling": "internal",
+      "basis": {
+        "fmRefs": [
+          "request.content-access",
+          "context.content-subscription"
+        ],
+        "reasoning": "内容访问在订阅平台内部办理，本设计不声明该方向的服务接口。"
+      }
+    },
+    {
+      "entityRef": "confirmation.content-access",
+      "handling": "internal",
+      "basis": {
+        "fmRefs": [
+          "confirmation.content-access",
+          "context.content-subscription"
+        ],
+        "reasoning": "内容访问在订阅平台内部办理，本设计不声明该方向的服务接口。"
       }
     }
   ]
