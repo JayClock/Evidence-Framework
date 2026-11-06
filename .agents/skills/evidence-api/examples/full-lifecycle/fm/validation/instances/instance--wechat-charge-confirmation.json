@@ -1,0 +1,12 @@
+{
+  "type": "evidence_instance",
+  "id": "instance.wechat-charge-confirmation",
+  "entityRef": "confirmation.wechat-charge",
+  "values": {
+    "paid_minor_units": 250000,
+    "confirmed_at": "2026-11-04T10:00:00Z"
+  },
+  "basedOn": [
+    "instance.wechat-charge-request"
+  ]
+}

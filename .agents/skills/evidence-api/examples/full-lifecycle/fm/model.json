@@ -3,7 +3,7 @@
   "schemaVersion": "5.0",
   "id": "product-procurement-full-lifecycle",
   "name": "商品采购协议完整履约模型",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "ruleLanguage": "CEL",
   "entryContextRefs": [
     "context.product-sourcing",

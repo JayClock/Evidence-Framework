@@ -948,6 +948,30 @@
         {
           "id": "step.procurement-8",
           "sourceStepSequence": 8,
+          "mapping": "external",
+          "description": "外部提出微信支付付款请求",
+          "basis": {
+            "fmRefs": [
+              "request.wechat-charge"
+            ],
+            "reasoning": "微信支付合同内的业务活动，不声明采购API或外部接入方式"
+          }
+        },
+        {
+          "id": "step.procurement-9",
+          "sourceStepSequence": 9,
+          "mapping": "external",
+          "description": "外部形成微信支付付款完成确认",
+          "basis": {
+            "fmRefs": [
+              "confirmation.wechat-charge"
+            ],
+            "reasoning": "微信支付合同内的业务活动，不声明采购API或外部接入方式"
+          }
+        },
+        {
+          "id": "step.procurement-10",
+          "sourceStepSequence": 10,
           "description": "甲方采购员确认支付",
           "mapping": "capability",
           "capabilityRef": "capability.confirm-payment",
@@ -959,8 +983,8 @@
           }
         },
         {
-          "id": "step.procurement-9",
-          "sourceStepSequence": 9,
+          "id": "step.procurement-11",
+          "sourceStepSequence": 11,
           "description": "甲方采购员申请开票",
           "mapping": "capability",
           "capabilityRef": "capability.request-invoice",
@@ -972,8 +996,8 @@
           }
         },
         {
-          "id": "step.procurement-10",
-          "sourceStepSequence": 10,
+          "id": "step.procurement-12",
+          "sourceStepSequence": 12,
           "description": "乙方销售提交发票",
           "mapping": "capability",
           "capabilityRef": "capability.issue-invoice",
@@ -985,8 +1009,8 @@
           }
         },
         {
-          "id": "step.procurement-11",
-          "sourceStepSequence": 11,
+          "id": "step.procurement-13",
+          "sourceStepSequence": 13,
           "description": "乙方销售确认开票",
           "mapping": "capability",
           "capabilityRef": "capability.confirm-invoicing",
@@ -998,8 +1022,8 @@
           }
         },
         {
-          "id": "step.procurement-12",
-          "sourceStepSequence": 12,
+          "id": "step.procurement-14",
+          "sourceStepSequence": 14,
           "description": "甲方采购员申请发货",
           "mapping": "capability",
           "capabilityRef": "capability.request-delivery",
@@ -1011,8 +1035,8 @@
           }
         },
         {
-          "id": "step.procurement-13",
-          "sourceStepSequence": 13,
+          "id": "step.procurement-15",
+          "sourceStepSequence": 15,
           "description": "乙方销售提交发货单",
           "mapping": "capability",
           "capabilityRef": "capability.record-delivery-note",
@@ -1024,8 +1048,8 @@
           }
         },
         {
-          "id": "step.procurement-14",
-          "sourceStepSequence": 14,
+          "id": "step.procurement-16",
+          "sourceStepSequence": 16,
           "description": "乙方销售确认发货",
           "mapping": "capability",
           "capabilityRef": "capability.confirm-delivery",
@@ -3196,7 +3220,7 @@
             ],
             "entryPointRef": "entry.issue-invoice",
             "sourceStepRefs": [
-              "step.procurement-10"
+              "step.procurement-12"
             ]
           }
         ]
@@ -3273,7 +3297,7 @@
             ],
             "entryPointRef": "entry.confirm-invoicing",
             "sourceStepRefs": [
-              "step.procurement-11"
+              "step.procurement-13"
             ]
           }
         ]
@@ -3358,7 +3382,7 @@
             ],
             "entryPointRef": "entry.request-delivery",
             "sourceStepRefs": [
-              "step.procurement-12"
+              "step.procurement-14"
             ]
           }
         ]
@@ -3443,7 +3467,7 @@
             ],
             "entryPointRef": "entry.record-delivery-note",
             "sourceStepRefs": [
-              "step.procurement-13"
+              "step.procurement-15"
             ]
           }
         ]
@@ -3529,7 +3553,7 @@
             ],
             "entryPointRef": "entry.confirm-delivery",
             "sourceStepRefs": [
-              "step.procurement-14"
+              "step.procurement-16"
             ]
           }
         ]
@@ -3843,7 +3867,7 @@
             ],
             "entryPointRef": "entry.confirm-payment",
             "sourceStepRefs": [
-              "step.procurement-8"
+              "step.procurement-10"
             ]
           }
         ]
@@ -3928,7 +3952,7 @@
             ],
             "entryPointRef": "entry.request-invoice",
             "sourceStepRefs": [
-              "step.procurement-9"
+              "step.procurement-11"
             ]
           }
         ]
@@ -4206,6 +4230,28 @@
     ]
   },
   "nonApiActivities": [
+    {
+      "entityRef": "request.wechat-charge",
+      "handling": "external",
+      "basis": {
+        "fmRefs": [
+          "request.wechat-charge",
+          "context.wechat-payment"
+        ],
+        "reasoning": "微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。"
+      }
+    },
+    {
+      "entityRef": "confirmation.wechat-charge",
+      "handling": "external",
+      "basis": {
+        "fmRefs": [
+          "confirmation.wechat-charge",
+          "context.wechat-payment"
+        ],
+        "reasoning": "微信支付服务主体形成的外部凭证；本系统使用既有证据，不代替该主体提供接口。"
+      }
+    },
     {
       "entityRef": "contract.wechat-payment",
       "handling": "external",
