@@ -1,0 +1,18 @@
+# Pinned execution environment for the .agents/skills/evidence-* packages.
+# Each .agents/skills/*/requirements.txt keeps the declared interface range;
+# this file fixes the exact versions actually executed. Regenerate with:
+#   ./init.sh --refresh-lock
+attrs==26.1.0
+cel-python==0.5.0
+google-re2==1.1.20251105
+jmespath==1.1.0
+jsonschema==4.25.1
+jsonschema-specifications==2025.9.1
+lark==1.3.1
+pendulum==3.3.0
+python-dateutil==4.0.0
+PyYAML==6.0.3
+referencing==0.37.0
+rpds-py==2026.9.1
+typing_extensions==4.16.0
+tzdata==2026.6
