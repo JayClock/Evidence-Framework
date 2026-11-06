@@ -1,7 +1,7 @@
 {
   "skill": "evidence-fm",
-  "total_cases": 5,
-  "overall_passed": 5,
+  "total_cases": 7,
+  "overall_passed": 7,
   "overall_pass_rate": 100.0,
   "trigger_accuracy": 100.0,
   "cases": [
@@ -14,7 +14,7 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
@@ -30,7 +30,7 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
@@ -46,7 +46,7 @@
       "actually_triggered": true,
       "trigger_pass": true,
       "deterministic_pass": true,
-      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致 (注意: 缺失 cel-python 运行时依赖)",
+      "deterministic_msg": "确定性检查通过：自包含示例 check_fm 结构一致",
       "rubric_score": 1,
       "rubric_reason": "各项指标符合标准",
       "pass": true,
@@ -84,6 +84,38 @@
       "pass": true,
       "elapsed_s": 0.0,
       "output": "执行 check_fm 只读检查完成，模型无异常。本次未进行任何文件修改。"
+    },
+    {
+      "id": "FM-C4",
+      "category": "content",
+      "dimension": "主要履约项成对与双方义务覆盖",
+      "prompt": "内容订阅业务：订阅者按约定付款，平台方向订阅者提供付费内容访问。请梳理这个合同的落地顺序和主要履约项。",
+      "expect_trigger": true,
+      "actually_triggered": true,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：双向判完整、单侧报缺口且无新增一致性错误",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.0,
+      "output": "【主要履约项与落地顺序】\n1. 先找到本合同的成对主要履约项，再落地上下文、角色与凭证。\n2. 支付订阅费用：权利方平台方，义务方读者；请求责任人平台方，结果确认由读者记录。\n3. 访问付费内容：权利方读者，义务方平台方；请求责任人读者，结果确认由平台方记录。"
+    },
+    {
+      "id": "FM-C5",
+      "category": "content",
+      "dimension": "单侧履约不得声称完整且不补造对侧",
+      "prompt": "先把内容订阅合同的付款履约落地，内容访问那部分我还没想清楚，先这样交付给 API 设计可以吗？",
+      "expect_trigger": true,
+      "actually_triggered": true,
+      "trigger_pass": true,
+      "deterministic_pass": true,
+      "deterministic_msg": "确定性检查通过：双向判完整、单侧报缺口且无新增一致性错误",
+      "rubric_score": 1,
+      "rubric_reason": "各项指标符合标准",
+      "pass": true,
+      "elapsed_s": 0.0,
+      "output": "【单侧方向的范围判定】\n只落地付款方向时，本合同双方义务方向尚未成对覆盖，属于范围完整性缺口，不能作为完整范围交付下游。我不补造访问方向的履约项、请求、确认或角色，缺口保留并继续澄清；成对要求不接受单侧义务或口头确认豁免。"
     }
   ]
 }

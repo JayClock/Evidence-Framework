@@ -24,6 +24,66 @@ SKILL_DIR = Path(__file__).resolve().parents[1]
 CASES_FILE = SKILL_DIR / "evals" / "cases.json"
 RESULTS_FILE = SKILL_DIR / "evals" / "eval_results.json"
 
+PAIRING_EXAMPLE = "valid-traceable-subscription"
+PAIRING_CONTEXT = "context.content-subscription"
+PAIRING_DROPPED = (
+    "entities/*content-access*.json",
+    "rules/rule--content-access-completed.json",
+    "relationships/relation--content-subscription-precedes-content-access-request.json",
+    "validation/instances/instance--content-access-*.json",
+    "validation/scenarios/scenario--content-access-after-payment.json",
+)
+
+
+def run_check_fm(workspace: Path, model_dir: Path, scope: str | None = None) -> dict[str, Any]:
+    command = [sys.executable, str(SKILL_DIR / "scripts" / "check_fm.py"), str(model_dir)]
+    if scope is not None:
+        command += ["--scope", scope]
+    proc = subprocess.run(command, capture_output=True, text=True, cwd=str(workspace))
+    try:
+        return json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return {"errors": [f"check_fm 未返回 JSON，退出码 {proc.returncode}"], "gaps": []}
+
+
+def run_pairing_rule(workspace: Path) -> tuple[bool, str]:
+    """Both Contract Parties must each hold a main Fulfillment in the current scope."""
+    source = SKILL_DIR / "examples" / PAIRING_EXAMPLE
+    if not source.exists():
+        return False, f"FM 自带示例不存在: {source}"
+
+    complete_copy = workspace / "fm_pairing_complete"
+    shutil.copytree(source, complete_copy)
+    complete = run_check_fm(workspace, complete_copy, PAIRING_CONTEXT)
+    complete_errors = set(complete.get("errors") or [])
+    # Without cel-python every CEL rule and its derived attributes cascade into errors,
+    # so the example is only comparable against itself instead of a fixed error list.
+    cel_missing = any("cel-python is required" in error for error in complete_errors)
+    if not cel_missing and complete_errors:
+        return False, f"成对示例存在结构错误: {sorted(complete_errors)}"
+    if not cel_missing and complete.get("complete") is not True:
+        return False, f"双向履约示例应判完整: gaps={complete.get('gaps')}"
+
+    one_sided = workspace / "fm_pairing_one_sided"
+    shutil.copytree(source, one_sided)
+    for pattern in PAIRING_DROPPED:
+        for path in one_sided.glob(pattern):
+            path.unlink()
+    dropped = run_check_fm(workspace, one_sided, PAIRING_CONTEXT)
+    dropped_gaps = dropped.get("gaps") or []
+    introduced = set(dropped.get("errors") or []) - complete_errors
+    if introduced:
+        return False, f"单侧方向不应新增一致性错误: {sorted(introduced)}"
+    if not any("Contract Parties" in gap for gap in dropped_gaps):
+        return False, f"缺少双方义务方向成对缺口: {dropped_gaps}"
+    if not any("role.subscriber" in gap for gap in dropped_gaps):
+        return False, f"缺口应点名缺少请求责任方的一方: {dropped_gaps}"
+    if dropped.get("complete") is not False:
+        return False, "单侧方向的范围不应判为完整"
+
+    note = " (注意: 缺失 cel-python 运行时依赖，仅比对缺口与新增错误)" if cel_missing else ""
+    return True, f"确定性检查通过：双向判完整、单侧报缺口且无新增一致性错误{note}"
+
 
 def run_deterministic_rule(rule: str, workspace: Path) -> tuple[bool, str]:
     """Execute rule check inside an isolated workspace sandbox."""
@@ -62,6 +122,9 @@ def run_deterministic_rule(rule: str, workspace: Path) -> tuple[bool, str]:
         except json.JSONDecodeError:
             return proc.returncode == 0, f"check_fm 退出码: {proc.returncode}"
 
+    if rule == "check_fm_pairing_gap":
+        return run_pairing_rule(workspace)
+
     return True, f"规则 {rule} 放行"
 
 
@@ -83,6 +146,22 @@ def mock_agent_call(case: dict[str, Any], workspace: Path) -> dict[str, Any]:
         triggered_skills = ["evidence-fm"]
     elif cid == "FM-C3":
         output = "已局部更新供应商 Entity 定义，新增 unifiedSocialCreditCode 属性，并保持关联采购合同引用不变。"
+        triggered_skills = ["evidence-fm"]
+    elif cid == "FM-C4":
+        output = (
+            "【主要履约项与落地顺序】\n"
+            "1. 先找到本合同的成对主要履约项，再落地上下文、角色与凭证。\n"
+            "2. 支付订阅费用：权利方平台方，义务方读者；请求责任人平台方，结果确认由读者记录。\n"
+            "3. 访问付费内容：权利方读者，义务方平台方；请求责任人读者，结果确认由平台方记录。"
+        )
+        triggered_skills = ["evidence-fm"]
+    elif cid == "FM-C5":
+        output = (
+            "【单侧方向的范围判定】\n"
+            "只落地付款方向时，本合同双方义务方向尚未成对覆盖，属于范围完整性缺口，"
+            "不能作为完整范围交付下游。我不补造访问方向的履约项、请求、确认或角色，"
+            "缺口保留并继续澄清；成对要求不接受单侧义务或口头确认豁免。"
+        )
         triggered_skills = ["evidence-fm"]
     elif cid == "FM-T1":
         output = "履约建模法是以现金权责与履约凭证为核心的业务设计方法，关注请求与确认的对偶闭环。（只读讨论，不写文件）"

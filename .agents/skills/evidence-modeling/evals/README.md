@@ -13,7 +13,7 @@
 │       └── README.md
 ├── evidence-fm/
 │   └── evals/
-│       ├── cases.json          # 形式化建模专精用例 (C1~C3, T1~T2)
+│       ├── cases.json          # 形式化建模专精用例 (C1~C5, T1~T2)
 │       ├── eval_results.json   # FM 最新评测基线
 │       └── README.md
 └── evidence-modeling/

@@ -53,5 +53,27 @@
     "expect_file_write": false,
     "deterministic_rule": "no_file_write",
     "rubric": "仅执行 check_fm.py 检查并返回只读报告；工作区无任何文件被创建或修改。"
+  },
+  {
+    "id": "FM-C4",
+    "category": "content",
+    "dimension": "主要履约项成对与双方义务覆盖",
+    "prompt": "内容订阅业务：订阅者按约定付款，平台方向订阅者提供付费内容访问。请梳理这个合同的落地顺序和主要履约项。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_pairing_gap",
+    "rubric": "必须先找到主要履约项再落地其他内容；主要履约项必须成对覆盖双方义务方向：支付订阅费用（权利方平台、义务方读者）与访问付费内容（权利方读者、义务方平台）各为一组，请求责任人分别是合同双方；不得只落地付款方向就声称合同完整。"
+  },
+  {
+    "id": "FM-C5",
+    "category": "content",
+    "dimension": "单侧履约不得声称完整且不补造对侧",
+    "prompt": "先把内容订阅合同的付款履约落地，内容访问那部分我还没想清楚，先这样交付给 API 设计可以吗？",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_pairing_gap",
+    "rubric": "必须指出只有单一义务方向属于范围完整性缺口，不可作为完整范围交付下游；不得补造对侧履约项、请求、确认或角色，也不得以‘该合同只有单侧义务’或口头确认换取豁免，应保留缺口并继续澄清。"
   }
 ]
