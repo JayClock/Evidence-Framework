@@ -17,12 +17,13 @@ Schema 负责单对象可表达结构；引用存在、上下文归属、关系�
 
 ### 验证输入
 
-| 要写的输入 | 直接读取                                                             |
-| ---------- | -------------------------------------------------------------------- |
-| 凭证实例   | [Evidence Instance Schema](../schemas/evidence-instance.schema.json) |
-| 场景       | [Scenario Schema](../schemas/scenario.schema.json)                   |
+| 要写的输入      | 直接读取                                                             |
+| --------------- | -------------------------------------------------------------------- |
+| 凭证实例        | [Evidence Instance Schema](../schemas/evidence-instance.schema.json) |
+| 场景            | [Scenario Schema](../schemas/scenario.schema.json)                   |
+| 访谈追溯日志    | [Interview Trace Schema](../schemas/interview-trace.schema.json)     |
 
-实例与场景的使用方法见 [追溯与模拟](traceability-and-simulation.md)。它们不是模型类型源，也不提供现实业务事实。
+实例与场景的使用方法见 [追溯与模拟](traceability-and-simulation.md)。访谈追溯日志由 Discovery 维护，本包只提供结构契约与引用目标；它们都不是模型类型源，也不提供现实业务事实。
 
 ### 派生输出
 

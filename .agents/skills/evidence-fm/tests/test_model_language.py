@@ -17,6 +17,8 @@ from fm_model import load_model  # noqa: E402
 
 class ModelLanguageTests(unittest.TestCase):
     def test_model_types_are_the_only_definition_schemas(self):
+        # `interview-trace.schema.json` is the shared interview trace contract that
+        # Discovery validates against; it is a validation input, not a model type.
         self.assertEqual(
             {
                 "model.schema.json", "entity.schema.json", "relationship.schema.json",
@@ -24,6 +26,7 @@ class ModelLanguageTests(unittest.TestCase):
                 "evidence-instance.schema.json", "scenario.schema.json",
                 "compiled-model.schema.json", "traceability.schema.json",
                 "simulation-report.schema.json", "timeline.schema.json",
+                "interview-trace.schema.json",
             },
             {path.name for path in (SKILL / "schemas").glob("*.schema.json")},
         )
