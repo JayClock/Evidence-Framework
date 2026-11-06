@@ -28,7 +28,7 @@
 
 ```bash
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$FM_SKILL_DIR/examples/valid-traceable-subscription" > "$FM_CHECK_FILE"
+  "$FM_SKILL_DIR/tests/fixtures/models/valid-traceable-subscription" > "$FM_CHECK_FILE"
 ```
 
 预期 valid 为 true，三项场景实际执行且 simulationPassed 为 true。合同两个方向都已成对落地，删除访问方向的履约项后范围检查应报缺口而一致性仍通过。运行前这些只是预期，实际退出码、摘要、覆盖和未执行项仍须报告。检查不会写入模型或批准业务。

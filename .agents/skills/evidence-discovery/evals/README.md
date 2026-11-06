@@ -1,19 +1,33 @@
-# Evidence Discovery 业务访谈评测基线 (Discovery Evals)
+# Evidence Discovery 评测（Evals）
 
-本评测集专注于检验 `evidence-discovery` 技能的访谈质量与边界控制能力。
+本目录用真实提示词检验 `evidence-discovery` 的访谈行为，是提示词改动的判据。对话样例在 `evidence-modeling/tests/fixtures/discovery/`，只由测试消费，不进入提示词。
 
-## 评测维度
+## 用例维度
 
-1. **现金权责与凭证追溯 (DISCOVERY-C1)**：考察访谈是否从经营权责（预算、现金流）与凭证链条切入，避免将业务访谈退化为表单字段梳理。
-2. **成组提问完备性 (DISCOVERY-C2)**：考察是否沿数据依赖前沿，在同轮次成组提出全部独立必要未知，杜绝低效的单点往复追问。
-3. **控制分支管理 (DISCOVERY-T1)**：考察在仅补充资料、暂缓或停止时，能否遵守更窄授权，不偷跑下游模型。
-4. **负面控制 (DISCOVERY-T2)**：考察非业务访谈的技术咨询是否被正确隔离，不触发任何访谈记录写入。
+| 用例            | 考察                                                       |
+| --------------- | ---------------------------------------------------------- |
+| `DISCOVERY-C1`  | 从现金权责定位责任双方，并沿凭证链追溯，不退化为字段清单   |
+| `DISCOVERY-C2`  | 沿依赖前沿同轮成组提出全部独立必要未知，不做单点往复追问   |
+| `DISCOVERY-T1`  | 仅补资料／控制分支下保持等待，不推进下游产物               |
+| `DISCOVERY-T2`  | 负面控制：非业务访谈的技术咨询不触发技能、不写文件         |
 
-## 运行评测
+## 确定性检查
 
-由编排层的统一调度器执行：
+| 规则                     | 验证内容                                                 |
+| ------------------------ | -------------------------------------------------------- |
+| `check_interview_trace`  | 被测 Agent 写出的 `.evidence/traces/interview-trace.json` 通过 `scripts/check_interview_trace.py` |
+| `no_downstream_advance`  | 未产生 `.evidence/api/` 或 `.evidence/views/` 下游产物    |
+| `no_file_write`          | 负面控制分支没有新增或改写文件                            |
+
+## 运行
 
 ```bash
-# 仅评测 discovery 技能
-python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-discovery
+# 真实执行（默认 agent：pi -p --mode json --no-session；裁判：pi ... --no-tools）
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --skill evidence-discovery
+# 只验证运行链路，不产生基线
+"$PYTHON" .agents/skills/evidence-discovery/evals/runner.py --mock
 ```
+
+改动提示词前后各跑一次，比对 `eval_results.json` 的 `baseline.regressions`；退化先回退，通过率提升且 `elapsed_s`／`tool_calls` 未明显变差才保留。mock 结果不写入基线，也不能作为改进证据。
+
+`harness.py` 由各包各自持有同一份实现，保证包独立可运行；不跨包引用，也不在提示词中使用。

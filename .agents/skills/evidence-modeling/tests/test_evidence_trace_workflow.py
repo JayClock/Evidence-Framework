@@ -7,6 +7,7 @@ from pathlib import Path
 SKILLS = Path(__file__).resolve().parents[2]
 REPO = SKILLS.parents[1]
 DISCOVERY = SKILLS / "evidence-discovery"
+FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
 def edges(text):
@@ -63,7 +64,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
 
     def test_runtime_has_one_presentation_without_legacy_templates(self):
         paths = [DISCOVERY / "SKILL.md", DISCOVERY / "references/interview.md",
-                 *list((DISCOVERY / "examples").glob("*.md"))]
+                 *list((FIXTURES / "discovery/conversations").glob("*.md"))]
         retired = re.compile(r"(?m)^(?:主焦点|业务目标|并行追溯|当前追溯)：|### 同一焦点的成组澄清")
         for path in paths:
             with self.subTest(path=path):
@@ -85,7 +86,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
             self.assertIn(rule, method)
 
     def test_examples_explain_both_proof_sides_and_return_without_claiming_completion(self):
-        text = (DISCOVERY / "examples/tracing.md").read_text()
+        text = (FIXTURES / "discovery/conversations/tracing.md").read_text()
         self.assertIn("合成", text)
         self.assertIn("商品交付（Goods Delivery）", text)
         self.assertIn("外观等级（Appearance Grade）", text)
@@ -106,7 +107,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
             self.assertIn(boundary, text)
 
     def test_teaching_materials_are_synthetic_without_identifiers_or_business_source_links(self):
-        paths = list((DISCOVERY / "examples").glob("*.md"))
+        paths = list((FIXTURES / "discovery/conversations").glob("*.md"))
         identifiers = re.compile(
             r"https?://|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|/(?:Users|home)/|\.evidence/"
             r"|(?<!\d)1[3-9]\d{9}(?!\d)|(?<!\d)\d{17}[\dXx](?!\d)"
@@ -116,7 +117,7 @@ class EvidenceTraceWorkflowTests(unittest.TestCase):
                 text = path.read_text()
                 self.assertIn("合成", text)
                 self.assertNotRegex(text, identifiers)
-        self.assertIn("脱敏", (DISCOVERY / "examples/README.md").read_text())
+        self.assertIn("脱敏", (FIXTURES / "README.md").read_text())
 
     def test_project_entrypoints_preserve_evidence_tracing(self):
         for path in (DISCOVERY / "SKILL.md", SKILLS / "evidence-modeling/references/workflow.md"):

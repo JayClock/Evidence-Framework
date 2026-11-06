@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[1]
-EXAMPLES = SKILL / "examples"
+EXAMPLES = SKILL / "tests/fixtures/models"
 
 
 def hashes(root):
@@ -25,18 +25,18 @@ class ExampleBaselineTests(unittest.TestCase):
             sys.executable, "-B", str(SKILL / "scripts/check_fm.py"), str(root),
         ], capture_output=True, text=True, timeout=60, check=False)
 
-    def test_entry_routes_current_action_to_flow_and_selected_examples(self):
+    def test_entry_keeps_synthetic_models_out_of_the_prompt(self):
         entry = (SKILL / "SKILL.md").read_text()
         self.assertIn("references/editing-workflow.md", entry)
-        self.assertIn("examples/README.md", entry)
-        index = (EXAMPLES / "README.md").read_text()
+        self.assertNotIn("examples/", entry)
+        self.assertNotIn("fixtures", entry)
+        self.assertIn("evals/", entry)
+        index = (SKILL / "tests/fixtures/README.md").read_text()
         for name in ("valid-traceable-subscription", "domain"):
-            self.assertIn(f"]({name}/README.md)", index)
+            self.assertIn(f"](models/{name}/README.md)", index)
             self.assertTrue((EXAMPLES / name / "README.md").is_file())
-        self.assertIn("](structural-contrasts.md)", index)
+        self.assertIn("](expressions/structural-contrasts.md)", index)
         self.assertIn("合成", index)
-        self.assertIn("责任范围方法", index)
-        self.assertIn("不提供人类追责结束依据或编辑授权", index)
 
     def test_edit_flow_pairs_responsibility_then_separates_consistency_and_scope_completion(self):
         text = (SKILL / "references/editing-workflow.md").read_text()

@@ -96,7 +96,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 
 ```bash
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$API_SKILL_DIR/examples/full-lifecycle/fm" > "$FM_CHECK_FILE"
+  "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" > "$FM_CHECK_FILE"
 ```
 
 预期 FM 有效，1 个场景实际执行并通过：包含 16 个具体凭证实例，采购支付、开票、发货及外部微信支付两个方向均完成。
@@ -106,9 +106,9 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ```bash
 "$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
   --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --fm "$API_SKILL_DIR/examples/full-lifecycle/fm" \
+  --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$API_SKILL_DIR/examples/full-lifecycle/api.json"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
 ```
 
 API 设计采用格式 5.0，直接消费整个 FM v5。预期产生 13 个角色接口和 13 个完整 HTTP 契约，包含类型化入口、业务场景回映与可接续的成功消费者流程，`complete: true`，无缺口。接口清单、覆盖与契约统一由 `evidence-visualization` 消费投影展示，不再生成需要人工阅读的 Markdown 报告。
@@ -122,9 +122,9 @@ API 设计采用格式 5.0，直接消费整个 FM v5。预期产生 13 个角�
 ```bash
 "$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
   --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
-  --fm "$API_SKILL_DIR/examples/full-lifecycle/fm" \
+  --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
-  --api "$API_SKILL_DIR/examples/full-lifecycle/api.json"
+  --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
 ```
 
 ## HTTP 契约
@@ -140,4 +140,4 @@ API 设计采用格式 5.0，直接消费整个 FM v5。预期产生 13 个角�
 
 上面的命令会同时检查整体模型覆盖与全部接口契约，生成固定六份文件：`projection.json`、`openapi.json`、`representation-examples.json`、`http-journeys.json`、`e2e-test-vectors.json` 和 `manifest.json`。[示例 OpenAPI](openapi.json) 是由当前 `api.json` 和 FM 确定性生成的受测快照，不是第二份设计输入，不应手工修改。它合并同一路由的客户／供应商角色变体，以扩展字段保留能力和角色来源，不生成认证配置。13 个角色接口合并同路由商品读取变体后形成 12 个 OpenAPI Path＋Method 操作。`complete` 是整体覆盖和契约静态检查结果，`runtimeValidated` 始终为 false。
 
-字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../references/api-contracts.md)。
+字段格式、边界及完整命令参见 [HTTP 资源与消费契约](../../../references/api-contracts.md)。

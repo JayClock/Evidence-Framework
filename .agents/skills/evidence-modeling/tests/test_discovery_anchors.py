@@ -1,24 +1,26 @@
-"""Executable examples and interaction flow contracts, not live behavior evidence."""
+"""Executable fixtures and interaction flow contracts, not live behavior evidence."""
 import re
 import unittest
 from pathlib import Path
 
 SKILLS = Path(__file__).resolve().parents[2]
 DISCOVERY = SKILLS / 'evidence-discovery'
-EXAMPLES = DISCOVERY / 'examples'
+FIXTURES = Path(__file__).resolve().parent / 'fixtures'
+CONVERSATIONS = FIXTURES / 'discovery' / 'conversations'
 
 
 class DiscoveryAnchorTests(unittest.TestCase):
-    def test_examples_are_action_scoped_and_material_bound(self):
-        self.assertIn('examples/README.md', (DISCOVERY / 'SKILL.md').read_text())
-        index = (EXAMPLES / 'README.md').read_text()
-        self.assertEqual({'README.md', 'tracing.md', 'navigation.md', 'control-and-recovery.md'},
-                         {path.name for path in EXAMPLES.glob('*.md')})
+    def test_prompt_layer_does_not_route_to_fixtures(self):
+        entry = (DISCOVERY / 'SKILL.md').read_text()
+        for href in re.findall(r'\]\(([^\s)]+)\)', entry):
+            self.assertNotIn('examples', href)
+            self.assertNotIn('fixtures', href)
+        conversations = FIXTURES / 'discovery' / 'conversations'
+        self.assertEqual({'tracing.md', 'navigation.md', 'control-and-recovery.md'},
+                         {path.name for path in conversations.glob('*.md')})
+        index = (FIXTURES / 'README.md').read_text()
         for name in ('tracing.md', 'navigation.md', 'control-and-recovery.md'):
-            self.assertIn(f']({name})', index)
-            self.assertTrue((EXAMPLES / name).is_file())
-        self.assertIn('合成', index)
-        self.assertIn('实际判断', index)
+            self.assertIn(f'](discovery/conversations/{name})', index)
 
     def test_control_shell_routes_into_tracing_and_preserves_wait_exits(self):
         text = (DISCOVERY / 'references/interview.md').read_text()
@@ -37,7 +39,7 @@ class DiscoveryAnchorTests(unittest.TestCase):
         self.assertFalse(any(start in {'stop', 'handoff', 'wait'} for start, _ in edges))
 
     def test_control_display_reuses_answer_and_stops_without_new_questions(self):
-        text = (EXAMPLES / 'control-and-recovery.md').read_text()
+        text = (CONVERSATIONS / 'control-and-recovery.md').read_text()
         displays = re.findall(r'```text\n(.*?)```', text, re.S)
         self.assertEqual(1, len(displays))
         display = displays[0]

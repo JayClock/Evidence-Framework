@@ -202,7 +202,7 @@ class ProgressiveModelTests(unittest.TestCase):
         self.assertEqual([], validate_validation_suite(load_model(self.root), suite))
 
     def test_domain_rules_do_not_require_fake_evidence_to_complete_a_scope(self):
-        root = SKILL / "examples/domain"
+        root = SKILL / "tests/fixtures/models/domain"
         model = load_model(root)
         scopes = [item["id"] for item in model.entities if item.get("category") == "context" and not item.get("parentContextRef")]
         report = check_fm.check_model(root, scope_refs=scopes)
@@ -226,7 +226,7 @@ class ProgressiveModelTests(unittest.TestCase):
     def test_empty_sibling_wrapper_is_an_error_not_a_completeness_gap(self):
         import shutil
         root = self.root.parent / "contract"
-        shutil.copytree(SKILL / "examples/valid-traceable-subscription", root)
+        shutil.copytree(SKILL / "tests/fixtures/models/valid-traceable-subscription", root)
         model = load_model(root)
         context = next(item["id"] for item in model.entities if item.get("category") == "context" and item.get("kind") == "contract")
         (root / "refund.json").write_text(json.dumps({"type": "entity", "id": "fulfillment.refund", "category": "fulfillment", "label": "退款（Refund）", "contextRef": context}), encoding="utf-8")
@@ -253,7 +253,7 @@ class ProgressiveModelTests(unittest.TestCase):
         self.assertEqual({}, load_model(self.root).fulfillments_by_id)
 
     def test_consumer_rejects_scope_and_simulation_claims_that_do_not_match(self):
-        root = SKILL / "examples/valid-traceable-subscription"
+        root = SKILL / "tests/fixtures/models/valid-traceable-subscription"
         model = load_model(root)
         context = next(item["id"] for item in model.entities if item.get("category") == "context" and item.get("kind") == "contract")
         report = check_fm.check_model(root, scope_refs=[context])

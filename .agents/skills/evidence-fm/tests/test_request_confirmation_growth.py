@@ -115,7 +115,7 @@ class RequestConfirmationGrowthTests(unittest.TestCase):
             self.assertEqual(before, manifest.read_bytes())
 
     def test_scope_report_requires_current_contract_binding_check(self):
-        root = Path(__file__).resolve().parents[1] / "examples/domain"
+        root = Path(__file__).resolve().parents[1] / "tests/fixtures/models/domain"
         model = load_model(root)
         scopes = [item["id"] for item in model.entities
                   if item.get("category") == "context" and not item.get("parentContextRef")]

@@ -12,9 +12,8 @@ compatibility: 普通对话即可；专业分析需要可发现的 evidence-fm�
 
 - 读取当前焦点：`.evidence/fm/` 中相关 Entity 及其属性、`.evidence/traces/interview-trace.json` 的最近记录、本轮输入。材料已提供就直接读取，其余必要片段按需读取。
 - 专业方法按当前判断从 `evidence-fm` 取用：`business-analysis.md`、`domain-modeling.md`、`provenance.md`、`domain-language.md`、`responsibility-closure.md`、`scenario-validation.md`；一次只取当前判断需要的文件，续问复用未变化内容。业务分析从现金权责与目标—实际对比找到约定与责任双方。
-- 导航、追溯与控制的对话样例见 [样例索引](examples/README.md)，只读当前场景需要的章节。
+- 凭证追溯、上下文导航、控制与恢复的表达顺序，以及单轮路径、展示格式与追溯日志契约，由 [访谈协议](references/interview.md) 按当前动作给出；只读当前动作需要的章节，不预读其他场景。
 - 统一语言只消费 FM 定义：不为保存术语创建占位 Entity，不另建术语表或英文词典；故事、问题与交接使用同一中文（英文）规范名称。只聊不落盘或仅保存资料时不写模型 JSON。
-- 访谈协议见 [访谈协议](references/interview.md)，其中定义单轮路径、展示格式与追溯日志契约。
 
 ## Action
 

@@ -109,13 +109,15 @@ class SkillDocumentationTests(unittest.TestCase):
         discovery = (ROOT / "evidence-discovery/SKILL.md").read_text()
         self.assertIn("故事、问题与交接使用同一中文（英文）规范名称", discovery)
 
-    def test_daily_language_examples_cover_usage_and_permission_edges(self):
+    def test_daily_language_method_stands_alone_and_fixtures_stay_test_only(self):
         fm = ROOT / "evidence-fm"
         method = (fm / "references/domain-language.md").read_text()
-        self.assertIn("../examples/domain-language.md", method)
-        index = (fm / "examples/README.md").read_text()
-        self.assertIn("](domain-language.md)", index)
-        example = (fm / "examples/domain-language.md").read_text()
+        self.assertNotIn("examples/", method)
+        self.assertNotIn("fixtures/", method)
+        self.assertIn("别名输入只用于理解", method)
+        index = (fm / "tests/fixtures/README.md").read_text()
+        self.assertIn("](expressions/domain-language.md)", index)
+        example = (fm / "tests/fixtures/expressions/domain-language.md").read_text()
         for scenario in ("别名输入", "同名异义", "只读", "缺词"):
             self.assertIn(scenario, example)
 

@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Evidence Modeling Evaluation Runner
+"""Evidence Modeling eval runner and cross-skill dispatcher.
 
-Portable evaluation runner for evidence-modeling.
-1. When run independently, evaluates evidence-modeling's own gate & dispatch cases in an isolated sandbox.
-2. When sibling skills (evidence-discovery, evidence-fm) are present, optionally aggregates cross-skill results via --all.
-Does NOT depend on host project git commands, host package.json, or host node_modules.
+Loop: prompt -> agent turn in an isolated workspace -> deterministic check ->
+rubric judge -> compare with the previous baseline. It also dispatches sibling
+skill runners so one command can show the whole harness scoreboard.
+
+Environment overrides:
+  EVIDENCE_EVAL_AGENT   command used to run the skill (default: pi -p --mode json --no-session)
+  EVIDENCE_EVAL_JUDGE   command used to score output (default: pi ... --no-tools)
+  EVIDENCE_EVAL_TIMEOUT per-turn timeout in seconds
 """
 
 from __future__ import annotations
@@ -18,190 +22,306 @@ import time
 from pathlib import Path
 from typing import Any
 
-from judge_prompts import parse_judge_response
+from harness import (
+    AGENT_DEFAULT,
+    JUDGE_DEFAULT,
+    compare_with_baseline,
+    judge_output,
+    load_baseline,
+    prepare_sandbox,
+    run_command,
+    skill_was_loaded,
+    skill_routing,
+    summarize,
+)
+from judge_prompts import format_judge_prompt, parse_judge_response
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
+SKILL_NAME = SKILL_DIR.name
 CASES_FILE = SKILL_DIR / "evals" / "cases.json"
 RESULTS_FILE = SKILL_DIR / "evals" / "eval_results.json"
-SIBLING_SKILLS_DIR = SKILL_DIR.parent
+SKILLS_DIR = SKILL_DIR.parent
+
+MOCK_OUTPUTS = {
+    "MODELING-T1": "进入证据建模端到端入口，委派 evidence-fm 开始增量模型构建。",
+    "MODELING-T2": "尚未取得人类范围结束确认，阶段门禁拦截，拒绝委派 API 与页面生成。",
+    "MODELING-T3": "违约金关键依据不足，停止委派下游阶段，在交接处挂起并汇报缺口。",
+}
+MOCK_LOADED = {"MODELING-T1", "MODELING-T2", "MODELING-T3"}
+
+DOWNSTREAM = (".evidence/api/api.json", ".evidence/views/index.html")
 
 
-def run_deterministic_rule(rule: str, workspace: Path) -> tuple[bool, str]:
-    """Execute rule check inside an isolated workspace sandbox."""
+def run_deterministic_rule(rule: str, workspace: Path, mode: str) -> tuple[bool, str]:
     if rule == "no_file_write":
-        created = [str(p.relative_to(workspace)) for p in workspace.rglob("*") if p.is_file()]
+        created = [
+            str(path.relative_to(workspace))
+            for path in workspace.rglob("*")
+            if path.is_file() and ".agents" not in path.relative_to(workspace).parts
+        ]
         if created:
-            return False, f"确定性检查失败：负面控制分支产生了未授权写文件: {created}"
-        return True, "确定性检查通过：沙箱内保持纯净，未发生写操作"
+            return False, f"只读分支产生未授权写文件: {created}"
+        return True, "隔离工作区未产生业务写操作"
 
     if rule == "check_stage_gate_blocked":
+        leaked = [name for name in DOWNSTREAM if (workspace / name).exists()]
+        if leaked:
+            return False, f"缺少人类结束确认却产出下游文件: {leaked}"
         gate_script = SKILL_DIR / "scripts" / "check_stage_gate.py"
-        if not gate_script.exists():
+        if not gate_script.is_file():
             return False, f"缺少门禁脚本: {gate_script}"
-
-        fake_report = workspace / "fm_check.json"
-        fake_report.write_text(json.dumps({
-            "checkVersion": 5, "consistent": True, "complete": True, "valid": True,
-            "inputChanged": False, "errors": [], "gaps": []
-        }), encoding="utf-8")
-
+        report = workspace / "fm_check.json"
+        report.write_text(
+            json.dumps(
+                {
+                    "checkVersion": 5,
+                    "consistent": True,
+                    "complete": True,
+                    "valid": True,
+                    "inputChanged": False,
+                    "errors": [],
+                    "gaps": [],
+                }
+            ),
+            encoding="utf-8",
+        )
         proc = subprocess.run(
-            [sys.executable, str(gate_script), "--target", "api", "--fm-check", str(fake_report)],
+            [sys.executable, str(gate_script), "--target", "api", "--fm-check", str(report)],
             capture_output=True,
             text=True,
             cwd=str(workspace),
         )
         if proc.returncode != 0:
-            return True, "确定性检查通过：缺少人类闭环证据，下游门禁成功拦截"
-        return False, "门禁失效：缺少人类确认但 check_stage_gate 意外放行"
+            return True, "缺少人类结束确认时门禁成功拦截"
+        return False, "门禁失效：缺少人类确认却放行下游"
 
     if rule == "check_fm_consistent":
-        return True, "确定性检查通过：编排入口完成合法授权委派"
+        written = workspace / ".evidence" / "fm"
+        if mode != "mock":
+            if not (written / "model.json").is_file():
+                return False, "被测 Agent 未在 .evidence/fm/ 写出可检查模型"
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    str(SKILLS_DIR / "evidence-fm" / "scripts" / "check_fm.py"),
+                    str(written),
+                ],
+                capture_output=True,
+                text=True,
+                cwd=str(workspace),
+            )
+            try:
+                report = json.loads(proc.stdout)
+            except json.JSONDecodeError:
+                return proc.returncode == 0, f"check_fm 退出码: {proc.returncode}"
+            errors = [
+                error
+                for error in report.get("errors") or []
+                if "cel-python is required" not in error
+            ]
+            return (not errors), (
+                "被测模型结构一致" if not errors else f"被测模型结构错误: {errors[:3]}"
+            )
+        return True, "mock 模式跳过模型结构检查"
 
     return True, f"规则 {rule} 放行"
 
 
-def mock_agent_call(case: dict[str, Any], workspace: Path) -> dict[str, Any]:
-    cid = case["id"]
-    if cid == "MODELING-T1":
-        output = "进入 evidence-modeling 端到端入口，委派 evidence-fm 开始增量模型构建。"
-        triggered_skills = ["evidence-modeling", "evidence-fm"]
-    elif cid == "MODELING-T2":
-        output = "检测到尚未提供人类范围结束确认，触发阶段门禁拦截，拒绝委派 API 与页面生成。"
-        triggered_skills = ["evidence-modeling"]
-    elif cid == "MODELING-T3":
-        output = "违约金关键依据不足，停止委派下游阶段，当前状态在 Modeling 交接处挂起并汇报缺口。"
-        triggered_skills = ["evidence-modeling"]
-    else:
-        output = "执行完成"
-        triggered_skills = []
+def evaluate_case(
+    case: dict[str, Any],
+    *,
+    mode: str,
+    agent_cmd: str,
+    judge_cmd: str,
+) -> dict[str, Any]:
+    started = time.time()
+    with tempfile.TemporaryDirectory(prefix="modeling_eval_") as directory:
+        workspace = Path(directory)
+        prepare_sandbox(SKILL_DIR, workspace)
 
-    return {
-        "output": output,
-        "triggered_skills": triggered_skills,
-    }
+        if mode == "mock":
+            output = MOCK_OUTPUTS.get(case["id"], "执行完成")
+            loaded = case["id"] in MOCK_LOADED
+            error = ""
+            tool_calls: list[dict[str, Any]] = []
+        else:
+            effective_prompt = skill_routing(SKILL_DIR) + case["prompt"]
+            result = run_command(agent_cmd, effective_prompt, workspace)
+            output = result["output"]
+            tool_calls = result["tool_calls"]
+            error = result["error"]
+            loaded = skill_was_loaded(SKILL_NAME, tool_calls, output)
 
+        expected_trigger = bool(case.get("expect_trigger", True))
+        trigger_ok = loaded == expected_trigger
+        deterministic_pass, deterministic_msg = run_deterministic_rule(
+            case.get("deterministic_rule", ""), workspace, mode
+        )
 
-def evaluate_case(case: dict[str, Any], dry_run: bool = False) -> dict[str, Any]:
-    t0 = time.time()
-    with tempfile.TemporaryDirectory(prefix="modeling_eval_sandbox_") as tmpdir:
-        workspace = Path(tmpdir)
-        res = mock_agent_call(case, workspace)
-        elapsed = round(time.time() - t0, 3)
+        if mode == "mock":
+            rubric_score: int | None = None
+            rubric_reason = "mock 模式不调用裁判"
+        else:
+            system_prompt, user_prompt = format_judge_prompt(case.get("rubric", ""), output)
+            rubric_score, rubric_reason = judge_output(
+                system_prompt, user_prompt, workspace, judge_cmd, parse_judge_response
+            )
 
-        target_skill = case.get("target_skill")
-        expected_trigger = case.get("expect_trigger", True)
-        actually_triggered = (target_skill in res["triggered_skills"]) if target_skill != "none" else (len(res["triggered_skills"]) > 0)
-        trigger_ok = (actually_triggered == expected_trigger) if target_skill != "none" else (not actually_triggered)
-
-        det_pass, det_msg = run_deterministic_rule(case.get("deterministic_rule", ""), workspace)
-
-        rubric_pass = trigger_ok and det_pass
-        rubric_reason = "各项指标符合标准" if rubric_pass else "未完全符合标准"
-        rubric_score = 1 if rubric_pass else 0
-        overall_pass = trigger_ok and det_pass and (rubric_score == 1)
+        rubric_ok = True if mode == "mock" else rubric_score == 1
+        passed = trigger_ok and deterministic_pass and rubric_ok
 
     return {
         "id": case["id"],
-        "category": case["category"],
-        "dimension": case["dimension"],
+        "category": case.get("category"),
+        "dimension": case.get("dimension"),
         "prompt": case["prompt"],
         "expect_trigger": expected_trigger,
-        "actually_triggered": actually_triggered,
+        "actually_triggered": loaded,
         "trigger_pass": trigger_ok,
-        "deterministic_pass": det_pass,
-        "deterministic_msg": det_msg,
+        "deterministic_pass": deterministic_pass,
+        "deterministic_msg": deterministic_msg,
         "rubric_score": rubric_score,
         "rubric_reason": rubric_reason,
-        "pass": overall_pass,
-        "elapsed_s": elapsed,
-        "output": res["output"]
+        "pass": passed,
+        "elapsed_s": round(time.time() - started, 2),
+        "output": output,
+        "error": error,
+        "tool_calls": tool_calls,
     }
 
 
-def run_self_eval(dry_run: bool = False) -> dict[str, Any]:
+def run_self_eval(
+    *, mode: str, agent_cmd: str, judge_cmd: str, output: Path
+) -> dict[str, Any]:
     cases = json.loads(CASES_FILE.read_text(encoding="utf-8"))
+    baseline = load_baseline(output)
     results = []
-    passed_count = 0
-    trigger_passed_count = 0
-
-    print(f"=== [evidence-modeling 独立自评测] 共 {len(cases)} 个用例 ===")
-
+    print(f"=== [{SKILL_NAME}] {len(cases)} 个用例（mode={mode}）===")
     for case in cases:
-        r = evaluate_case(case, dry_run=dry_run)
-        results.append(r)
-        if r["pass"]:
-            passed_count += 1
-        if r["trigger_pass"]:
-            trigger_passed_count += 1
+        result = evaluate_case(case, mode=mode, agent_cmd=agent_cmd, judge_cmd=judge_cmd)
+        results.append(result)
+        verdict = "✓" if result["pass"] else "✗"
+        print(
+            f"[{verdict}] {result['id']} ({result['dimension']}): "
+            f"触发={'通过' if result['trigger_pass'] else '失败'}, "
+            f"确定性={'通过' if result['deterministic_pass'] else '失败'}, "
+            f"裁判={result['rubric_score'] if result['rubric_score'] is not None else '未评分'}"
+        )
 
-        v = "✓" if r["pass"] else "✗"
-        print(f"[{v}] {r['id']} ({r['category'].upper()} | {r['dimension']}): "
-              f"触发={'是' if r['trigger_pass'] else '否'}, "
-              f"确定性={'通过' if r['deterministic_pass'] else '失败'}, "
-              f"得分={r['rubric_score']}")
+    summary = summarize(SKILL_NAME, results, mode)
+    summary["baseline"] = compare_with_baseline(baseline, results)
+    if mode == "mock" and output == RESULTS_FILE:
+        print("mock 结果未写入基线文件；显式传 --output 才会保存")
+    else:
+        output.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    summary = {
-        "skill": "evidence-modeling",
-        "total_cases": len(cases),
-        "overall_passed": passed_count,
-        "overall_pass_rate": round(passed_count / len(cases) * 100, 1),
-        "trigger_accuracy": round(trigger_passed_count / len(cases) * 100, 1),
-        "cases": results
-    }
-
-    RESULTS_FILE.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\n[evidence-modeling] 评测完成！通过率: {summary['overall_pass_rate']}%, 触发准确率: {summary['trigger_accuracy']}%")
+    comparison = summary["baseline"]
+    print(
+        f"\n[{SKILL_NAME}] 通过率 {summary['overall_pass_rate']}% "
+        f"({summary['overall_passed']}/{summary['total_cases']})，"
+        f"触发精度 {summary['trigger_accuracy']}%"
+    )
+    if comparison["available"]:
+        print(
+            f"对比基线（{comparison['baseline_mode']}）："
+            f"退化 {comparison['regressions'] or '无'}，"
+            f"改善 {comparison['improvements'] or '无'}"
+        )
+    else:
+        print("无历史基线：本次结果将作为下次对比的基线")
+    if mode == "mock":
+        print("警告：mock 结果只验证运行链路，不能作为提示词改进证据")
     return summary
 
 
-def run_all_skills(dry_run: bool = False) -> int:
-    all_skills = ["evidence-discovery", "evidence-fm", "evidence-modeling"]
-    print("==================================================")
-    print("     Evidence Skills 自治评测 - 聚合总调度器      ")
-    print("==================================================")
+def dispatch_siblings(*, mode: str, agent_cmd: str, judge_cmd: str) -> int:
+    names = ["evidence-discovery", "evidence-fm", "evidence-api", "evidence-modeling"]
+    print("=" * 50)
+    print("     Evidence Skills 评测调度 - 聚合看板")
+    print("=" * 50)
+    summaries: list[dict[str, Any]] = []
+    with tempfile.TemporaryDirectory(prefix="modeling_eval_all_") as directory:
+        for name in names:
+            runner = SKILLS_DIR / name / "evals" / "runner.py"
+            if not runner.is_file():
+                continue
+            result_file = (
+                Path(directory) / f"{name}.json"
+                if mode == "mock"
+                else SKILLS_DIR / name / "evals" / "eval_results.json"
+            )
+            command = [
+                sys.executable,
+                str(runner),
+                "--agent-cmd",
+                agent_cmd,
+                "--judge-cmd",
+                judge_cmd,
+                "--output",
+                str(result_file),
+            ]
+            if mode == "mock":
+                command.append("--mock")
+            print(f"\n>>> 调度执行 Skill: {name}")
+            subprocess.run(command, check=False)
+            if result_file.is_file():
+                summaries.append(json.loads(result_file.read_text(encoding="utf-8")))
 
-    summaries = []
-    total_cases = 0
-    total_passed = 0
-
-    for s_name in all_skills:
-        skill_runner = SIBLING_SKILLS_DIR / s_name / "evals" / "runner.py"
-        if not skill_runner.exists():
-            continue
-        print(f"\n>>> 调度执行 Skill: {s_name}")
-        proc = subprocess.run([sys.executable, str(skill_runner), "--dry-run" if dry_run else ""], capture_output=False)
-        result_file = SIBLING_SKILLS_DIR / s_name / "evals" / "eval_results.json"
-        if result_file.exists():
-            s_data = json.loads(result_file.read_text(encoding="utf-8"))
-            summaries.append(s_data)
-            total_cases += s_data.get("total_cases", 0)
-            total_passed += s_data.get("overall_passed", 0)
-
-    overall_pass_rate = round(total_passed / total_cases * 100, 1) if total_cases > 0 else 0.0
-
-    print("\n================ 整体评估汇总看板 ================")
-    for smry in summaries:
-        print(f"• {smry['skill']:<22} 通过率: {smry['overall_pass_rate']:>5}% ({smry['overall_passed']}/{smry['total_cases']})  "
-              f"触发精度: {smry['trigger_accuracy']:>5}%")
-    print("--------------------------------------------------")
-    print(f"总计通过率: {overall_pass_rate}% ({total_passed}/{total_cases} 用例通过)")
-    print("==================================================")
-
-    return 0 if total_passed == total_cases else 1
+    total = sum(summary.get("total_cases", 0) for summary in summaries)
+    passed = sum(summary.get("overall_passed", 0) for summary in summaries)
+    print("\n================ 整体评估看板 ================")
+    for summary in summaries:
+        print(
+            f"• {summary['skill']:<20} 通过率 {summary['overall_pass_rate']:>5}% "
+            f"({summary['overall_passed']}/{summary['total_cases']})  "
+            f"触发精度 {summary['trigger_accuracy']:>5}%  mode={summary['mode']}"
+        )
+    print("-" * 50)
+    rate = round(passed / total * 100, 1) if total else 0.0
+    print(f"总计通过率 {rate}% ({passed}/{total})")
+    return 0 if total and passed == total else 1
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Evidence Modeling Eval Runner")
-    parser.add_argument("--all", action="store_true", help="Aggregate all discoverable sibling skills")
-    parser.add_argument("--dry-run", action="store_true", help="Run in mock/dry-run mode")
+    parser = argparse.ArgumentParser(description="Evidence Modeling eval runner")
+    parser.add_argument("--cases", type=Path, default=CASES_FILE)
+    parser.add_argument("--output", type=Path, default=RESULTS_FILE)
+    parser.add_argument("--agent-cmd", default=AGENT_DEFAULT)
+    parser.add_argument("--judge-cmd", default=JUDGE_DEFAULT)
+    parser.add_argument("--mock", "--dry-run", dest="mock", action="store_true",
+                        help="offline self-check; results are marked mock and never count as evidence")
+    parser.add_argument("--all", action="store_true", help="dispatch every sibling skill runner")
+    parser.add_argument("--skill", choices=["evidence-discovery", "evidence-fm", "evidence-api", "evidence-modeling"],
+                        help="run one sibling skill runner instead of this one")
     args = parser.parse_args()
 
+    mode = "mock" if args.mock else "agent"
     if args.all:
-        return run_all_skills(dry_run=args.dry_run)
-    else:
-        summary = run_self_eval(dry_run=args.dry_run)
-        return 0 if summary["overall_passed"] == summary["total_cases"] else 1
+        return dispatch_siblings(mode=mode, agent_cmd=args.agent_cmd, judge_cmd=args.judge_cmd)
+    if args.skill and args.skill != SKILL_NAME:
+        runner = SKILLS_DIR / args.skill / "evals" / "runner.py"
+        if not runner.is_file():
+            print(f"Error: runner not found: {runner}", file=sys.stderr)
+            return 1
+        command = [
+            sys.executable,
+            str(runner),
+            "--agent-cmd",
+            args.agent_cmd,
+            "--judge-cmd",
+            args.judge_cmd,
+        ]
+        if mode == "mock":
+            command.append("--mock")
+        return subprocess.run(command, check=False).returncode
+
+    summary = run_self_eval(
+        mode=mode,
+        agent_cmd=args.agent_cmd,
+        judge_cmd=args.judge_cmd,
+        output=args.output,
+    )
+    return 0 if summary["overall_passed"] == summary["total_cases"] else 1
 
 
 if __name__ == "__main__":

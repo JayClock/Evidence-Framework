@@ -18,7 +18,7 @@ SKILL = Path(__file__).resolve().parents[1]
 
 class ContextRoleBoundaryTests(unittest.TestCase):
     def role(self):
-        text = (SKILL / "examples/contract-batch.md").read_text()
+        text = (SKILL / "tests/fixtures/expressions/contract-batch.md").read_text()
         block = re.search(r"```json\n(.*?)```", text, re.S)
         self.assertIsNotNone(block)
         assert block is not None

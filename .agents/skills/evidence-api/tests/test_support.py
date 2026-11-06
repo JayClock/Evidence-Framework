@@ -20,7 +20,7 @@ SCRIPTS = API_ROOT / "scripts"
 FM_SKILL = Path(os.environ.get("EVIDENCE_FM_SKILL", API_ROOT.parent / "evidence-fm")).resolve()
 os.environ["EVIDENCE_FM_SKILL"] = str(FM_SKILL)
 sys.path.insert(0, str(FM_SKILL / "scripts"))
-FM_ROOT = FM_SKILL / "examples" / "valid-traceable-subscription"
+FM_ROOT = FM_SKILL / "tests/fixtures/models/valid-traceable-subscription"
 API_PATH = TESTS / "fixtures" / "subscription-api.json"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))

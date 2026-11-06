@@ -70,7 +70,7 @@ class ContractIdentificationTests(unittest.TestCase):
                 self.assertIn("目标—实际对比", text)
 
     def test_business_display_omits_attribution_not_operating_responsibilities(self):
-        text = (SKILLS / "evidence-discovery/examples/navigation.md").read_text()
+        text = (Path(__file__).resolve().parent / "fixtures/discovery/conversations/navigation.md").read_text()
         display = text.split("```text", 1)[1].split("```", 1)[0]
         self.assertIn("付款", display)
         self.assertNotRegex(display, r"sourceRefs|https?://|\.md|如何落地业务建模|徐昊|资料来源")

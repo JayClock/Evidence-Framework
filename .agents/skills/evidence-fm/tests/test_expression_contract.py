@@ -91,18 +91,23 @@ class ExpressionSourceTests(unittest.TestCase):
                 count += 1
         self.assertGreater(count, 0)
 
-    def test_patterns_link_runnable_models_and_rule_guidance_links_real_rules(self):
-        roots = {
-            path.parent for _, path, _ in local_links(SKILL / "references/patterns.md")
-            if path.name == "model.json"
-        }
+    def test_prompt_references_do_not_route_to_synthetic_fixtures(self):
+        for document in FORMAL_REFERENCES:
+            for _, target, _ in local_links(document):
+                with self.subTest(document=document.name, target=target):
+                    self.assertNotIn("fixtures", target.parts)
+                    self.assertNotIn("examples", target.parts)
+
+    def test_fixture_models_and_rules_remain_runnable_for_regression(self):
+        roots = {path.parent for path in (SKILL / "tests/fixtures/models").glob("*/model.json")}
         self.assertGreaterEqual(len(roots), 2)
         for root in roots:
             model = load_model(root)
             with self.subTest(model=root.name):
                 self.assertEqual([], model.errors)
                 self.assertEqual([], validate_model(model))
-        rules = [path for _, path, _ in local_links(SKILL / "references/cel-rules.md") if path.suffix == ".json" and not path.name.endswith(".schema.json")]
+        rules = [path for path in (SKILL / "tests/fixtures/models").rglob("*.json")
+                 if not path.name.endswith(".schema.json") and path.parent.name == "rules"]
         self.assertTrue(rules)
         for path in rules:
             self.assertEqual("rule", json.loads(path.read_text(encoding="utf-8"))["type"])
@@ -119,7 +124,7 @@ class ExpressionContractTests(unittest.TestCase):
                 self.assertNotIn(document_type, by_type)
                 by_type[document_type] = schema
         count = 0
-        for folder in ("references", "examples"):
+        for folder in ("references", "tests/fixtures/expressions"):
             for path in (SKILL / folder).rglob("*.md"):
                 for block in re.findall(r"```json\s*\n(.*?)\n```", path.read_text(encoding="utf-8"), re.S):
                     example = json.loads(block)
@@ -134,10 +139,7 @@ class ExpressionContractTests(unittest.TestCase):
     def test_linked_models_compile_to_the_output_contract(self):
         documents = schemas()
         schema = documents[(SKILL / "schemas/compiled-model.schema.json").resolve()]
-        roots = {
-            path.parent for _, path, _ in local_links(SKILL / "references/patterns.md")
-            if path.name == "model.json"
-        }
+        roots = {path.parent for path in (SKILL / "tests/fixtures/models").glob("*/model.json")}
         self.assertTrue(roots)
         for root in roots:
             compiled = compiled_document(load_model(root))
@@ -147,7 +149,7 @@ class ExpressionContractTests(unittest.TestCase):
                     validator(schema, documents).validate({**compiled, "unexpected": True})
 
     def test_schema_acceptance_does_not_replace_cross_object_validation(self):
-        model = load_model(SKILL / "examples/valid-traceable-subscription")
+        model = load_model(SKILL / "tests/fixtures/models/valid-traceable-subscription")
         self.assertEqual([], validate_model(model))
         request = next(entity for entity in model.entities if entity.get("kind") == "fulfillment_request")
         request["responsibleRoleRef"] = "role.unknown"
@@ -157,7 +159,7 @@ class ExpressionContractTests(unittest.TestCase):
         self.assertTrue(validate_model(model))
 
     def test_progressive_omission_is_a_gap_but_incorrect_expressed_types_are_errors(self):
-        model = load_model(SKILL / "examples/valid-traceable-subscription")
+        model = load_model(SKILL / "tests/fixtures/models/valid-traceable-subscription")
         self.assertEqual([], validate_model(model, complete=True))
         contract = next(entity for entity in model.entities if (entity.get("category"), entity.get("kind")) == ("evidence", "contract"))
         saved = copy.deepcopy(contract["attributes"])
@@ -170,7 +172,7 @@ class ExpressionContractTests(unittest.TestCase):
         self.assertTrue(validate_model(model))
 
     def test_rule_business_explanation_is_checked_at_the_structural_boundary(self):
-        model = load_model(SKILL / "examples/domain")
+        model = load_model(SKILL / "tests/fixtures/models/domain")
         rule = copy.deepcopy(model.rules[0])
         errors = []
         validate_against_schema(rule, "rule.schema.json", "rule.json", errors)

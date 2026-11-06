@@ -16,7 +16,7 @@
 
 ```bash
 "$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$FM_SKILL_DIR/examples/domain" > "$FM_CHECK_FILE"
+  "$FM_SKILL_DIR/tests/fixtures/models/domain" > "$FM_CHECK_FILE"
 ```
 
 预期结构与规则通过，simulationPassed 为 null：本样例没有实际执行场景，不能报告场景模拟通过。结果放在样例目录之外，只读检查不写类型源。

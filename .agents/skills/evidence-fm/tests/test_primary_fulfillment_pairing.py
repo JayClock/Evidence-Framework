@@ -16,7 +16,7 @@ import check_fm  # pyright: ignore[reportMissingImports]  # noqa: E402
 from fm_model import load_model, validate_model  # pyright: ignore[reportMissingImports]  # noqa: E402
 from fm_scope import completeness_gaps, pairing_gaps  # pyright: ignore[reportMissingImports]  # noqa: E402
 
-EXAMPLE = SKILL / "examples/valid-traceable-subscription"
+EXAMPLE = SKILL / "tests/fixtures/models/valid-traceable-subscription"
 CONTRACT_CONTEXT = "context.content-subscription"
 ACCESS_FILES = (
     "entities/fulfillment--content-access.json",

@@ -46,7 +46,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory(prefix="joint review ")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        fixture = SKILLS / "evidence-api/examples/full-lifecycle"
+        fixture = SKILLS / "evidence-api/tests/fixtures/full-lifecycle"
         shutil.copytree(fixture / "fm", self.root / ".evidence/fm")
         api = self.root / ".evidence/api"
         api.mkdir()
@@ -88,7 +88,7 @@ class JointReviewIntegrationTests(unittest.TestCase):
 
     def test_unrelated_runtime_failure_is_not_rerun_as_part_of_the_checked_scope(self):
         fm = self.root / ".evidence/fm"
-        fixture = SKILLS / "evidence-fm/examples/valid-traceable-subscription"
+        fixture = SKILLS / "evidence-fm/tests/fixtures/models/valid-traceable-subscription"
         documents = [json.loads(path.read_text()) for path in fixture.rglob("*.json") if path.name != "model.json"]
         identities = {item["id"]: f"other.{item['id']}" for item in documents}
 

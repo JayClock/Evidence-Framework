@@ -28,7 +28,7 @@ class IsolatedAPITests(unittest.TestCase):
         for source, target in ((API, self.api), (FM, self.fm)):
             shutil.copytree(source, target, ignore=shutil.ignore_patterns("__pycache__", ".ruff_cache"))
         self.project = self.root / "business project"
-        fixture = self.api / "examples/full-lifecycle"
+        fixture = self.api / "tests/fixtures/full-lifecycle"
         self.model = self.project / ".evidence/fm"
         shutil.copytree(fixture / "fm", self.model)
         self.source = self.project / ".evidence/api/api.json"

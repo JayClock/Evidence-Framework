@@ -6,7 +6,7 @@ from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[1]
 MODEL_ROOTS = [
-    SKILL / "examples",
+    SKILL / "tests/fixtures/models",
     SKILL / "tests/fixtures",
 ]
 LEGACY_TERMS = {

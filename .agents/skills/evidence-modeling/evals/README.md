@@ -1,49 +1,68 @@
-# Evidence 技能持续评估调度器 (Unified Skills Evals)
+# 技能评测与提示词进化（Evals）
 
-本套评估体系作为 Harness 的质量防线与持续改进引擎，由编排技能 `evidence-modeling` 承载统一调度，同时保障各专业技能（Discovery / FM / Modeling）各自独立持有评测用例与基线结果。
+本目录是 Harness 的持续改进入口：技能提示词（`SKILL.md` 与 `references/`）的每次改动，用这里的用例分数判断是否值得保留，而不是靠新增示例或主观感觉。用例、裁判模板和各技能基线由各包 `evals/` 独立持有；本包同时提供聚合调度。
 
-## 架构布局
+## 评估什么
 
-```text
-.agents/skills/
-├── evidence-discovery/
-│   └── evals/
-│       ├── cases.json          # 业务访谈专精用例 (C1~C2, T1~T2)
-│       ├── eval_results.json   # Discovery 最新评测基线
-│       └── README.md
-├── evidence-fm/
-│   └── evals/
-│       ├── cases.json          # 形式化建模专精用例 (C1~C5, T1~T2)
-│       ├── eval_results.json   # FM 最新评测基线
-│       └── README.md
-└── evidence-modeling/
-    └── evals/
-        ├── cases.json          # 编排分派与门禁专精用例 (T1~T3)
-        ├── eval_results.json   # Modeling 最新评测基线
-        ├── judge_prompts.py    # 裁判大模型判定模板与解析器
-        ├── runner.py           # 统一调度器（支持按 Skill 单测或全局联跑）
-        └── README.md
-```
+每条用例同时给三类信号，质量与效率必须成对看：
 
-## 执行方式
+| 信号     | 取值来源                                                     |
+| -------- | ------------------------------------------------------------ |
+| 触发精度 | 该触发时是否加载技能，不该触发时是否越界（含至少一条负面控制） |
+| 输出质量 | 确定性检查（文件是否写出、结构是否通过）+ rubric 裁判 0/1    |
+| 效率     | `elapsed_s` 与 `tool_calls` 条数，和通过率一起比较           |
 
-统一调度器与编排 Skill 放置在一起，支持单个 Skill 独立评测与全局联合扫描：
+## 用例结构（`cases.json`）
+
+| 字段                 | 含义                                                       |
+| -------------------- | ---------------------------------------------------------- |
+| `id` / `dimension`   | 用例编号与它单独考察的质量维度                             |
+| `prompt`             | 真实输入；一条用例只考察一个维度                           |
+| `expect_trigger`     | 预期是否加载被测技能；`false` 为负面控制                   |
+| `deterministic_rule` | 客观检查名，由各包 runner 实现                             |
+| `rubric`             | 裁判唯一依据；只写可判定的标准，不写“写得好”               |
+
+`target_skill: "none"` 表示不应触发任何被测技能。
+
+## 运行
 
 ```bash
-# 1. 运行所有 Skill 的评估（全局看板）
-python3 .agents/skills/evidence-modeling/evals/runner.py
+# 全局看板（真实执行，需要可用的 agent 与裁判命令）
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --all
 
-# 2. 独立运行指定 Skill 的评估
-python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-discovery
-python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-fm
-python3 .agents/skills/evidence-modeling/evals/runner.py --skill evidence-modeling
+# 单个技能
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --skill evidence-discovery
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --skill evidence-fm
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --skill evidence-api
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --skill evidence-modeling
 
-# 3. 快速自检 / 语法验证
-python3 .agents/skills/evidence-modeling/evals/runner.py --dry-run
+# 只验证运行链路，不产生基线
+"$PYTHON" .agents/skills/evidence-modeling/evals/runner.py --all --mock
 ```
 
-## 各 Skill 专属关注点
+真实执行默认使用 `pi -p --mode json --no-session` 作为被测 agent，`pi ... --no-tools` 作为裁判；用 `--agent-cmd`、`--judge-cmd` 或 `EVIDENCE_EVAL_AGENT`、`EVIDENCE_EVAL_JUDGE` 换成其他宿主命令。每条用例在独立临时工作区运行，技能被复制到该工作区的 `.agents/skills/` 下供发现，`tests/` 与 `evals/` 不复制。
 
-- **`evidence-discovery`**：聚焦现金权责双方锁定、凭证链深入追溯、依赖前沿同轮成组提问，严格隔离非业务咨询。
-- **`evidence-fm`**：聚焦请求—确认履约对偶闭环、违约阶梯与外置策略隔离、最小保存单元与局部一致性、讨论只聊不落盘。
-- **`evidence-modeling`**：聚焦意图分派与授权传递、未获人类结束确认时的阶段门禁阻断、责任断链时的阻断汇报。
+裁判不可用或被判为 0 分时，用例不算通过；`--mock` 结果标注 `mode: "mock"`，不写入基线文件，不能当作改进证据。
+
+## 提示词进化流程
+
+1. **先取基线。** 改动前跑一次，`eval_results.json` 保留当前分数。
+2. **改一处。** 只改与方法相关的提示词或检查，不顺手改用例预期来通过。
+3. **再跑一次。** 与基线比较：`baseline.regressions` 非空说明这次改动带来退化，先回退或修好；通过率提升且效率未明显变差才保留。
+4. **模型或运行环境升级后重跑全部用例。** 行为走样会以分数变化暴露，不靠等待新模型自动变好。
+5. **废弃判断。** 卸掉技能后仍全部通过（能力已被模型内化或被其他技能覆盖），或连续多轮修改都无法恢复分数，才考虑退役该技能。
+
+`eval_results.json` 是最新一次真实运行的基线，由首次真实运行生成；不要在未重跑的情况下手改分数或把 mock 结果当基线。
+
+## 各技能关注点
+
+- **`evidence-discovery`**：现金权责双方锁定、凭证链追溯、依赖前沿同轮成组提问、控制分支不推进下游、非业务咨询不触发。
+- **`evidence-fm`**：请求—确认对偶、违约阶梯与外置策略、最小保存单元、只聊不落盘与只读不越权；确定性检查优先检查被测 Agent 实际写出的 `.evidence/fm/`。
+- **`evidence-api`**：角色接口与成功消费步骤、只投影不重新设计、只读校验不改写；确定性检查校验被测 `api.json` 是否符合设计 Schema。
+- **`evidence-modeling`**：意图分派与授权传递、阶段门禁、缺口阻断不伪造放行。
+
+## 边界
+
+评测通过只说明这些用例在当前模型与运行环境下达标，不证明真实业务访谈质量、业务批准或服务运行验收。用例是合成的，不进入提示词；提示词不得反向引用本目录或 `tests/` 里的夹具来“教” Agent。
+
+`harness.py` 由各包各自持有同一份实现，保证包独立可运行；不跨包引用，也不在提示词中使用。

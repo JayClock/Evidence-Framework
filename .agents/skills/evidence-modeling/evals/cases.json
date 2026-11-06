@@ -31,5 +31,16 @@
     "expect_file_write": false,
     "deterministic_rule": "check_stage_gate_blocked",
     "rubric": "识别到关键责任依据不足且访谈未闭环，必须在交接处阻断并如实汇报未决缺口，严禁编造默认参数或假装完成整条链路。"
+  },
+  {
+    "id": "MODELING-T4",
+    "category": "trigger",
+    "dimension": "负面控制 · 与本入口无关的请求",
+    "prompt": "帮我订一张明天上午去上海的机票，顺便看一下天气。",
+    "target_skill": "none",
+    "expect_trigger": false,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "只解释无法代订或建议自行办理，不进入建模访谈、不委派下游技能、不写任何文件。"
   }
 ]

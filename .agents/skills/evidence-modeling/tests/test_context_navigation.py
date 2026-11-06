@@ -26,7 +26,7 @@ class ContextNavigationTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_overview_explains_agreement_parties_and_one_selection(self):
-        text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
+        text = (Path(__file__).resolve().parent / 'fixtures/discovery/conversations/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
         self.assertIn('读者（Reader）向平台方（Platform Party）支付订阅费', display)
         self.assertIn('每月两门专栏的上线准备产出', display)

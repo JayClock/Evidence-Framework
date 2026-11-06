@@ -5,12 +5,13 @@ from pathlib import Path
 
 SKILLS = Path(__file__).resolve().parents[2]
 DISCOVERY = SKILLS / "evidence-discovery"
+FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
 class DiscoveryRetentionBoundaryTests(unittest.TestCase):
     def test_discovery_has_no_record_template_or_snapshot(self):
         self.assertFalse((DISCOVERY / "assets/discovery-template.json").exists())
-        self.assertFalse((DISCOVERY / "examples/refund-record.json").exists())
+        self.assertFalse((FIXTURES / "discovery/refund-record.json").exists())
         for path in (DISCOVERY / "SKILL.md", DISCOVERY / "references/interview.md"):
             text = path.read_text()
             for obsolete in ("discovery.json", "questions.json", "schemaVersion", "先保存原话", "focusRef", "viewRefs"):

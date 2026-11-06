@@ -42,9 +42,9 @@ class IsolatedFMTests(unittest.TestCase):
         self.samples = self.workspace / "prepared models"
         for name in ("domain", "payment"):
             source = (
-                self.skill / "examples/domain"
+                self.skill / "tests/fixtures/models/domain"
                 if name == "domain"
-                else self.skill / "examples/valid-traceable-subscription"
+                else self.skill / "tests/fixtures/models/valid-traceable-subscription"
             )
             shutil.copytree(source, self.samples / name)
 

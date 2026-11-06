@@ -11,6 +11,6 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 回归覆盖统一 API 源、全部对象与场景、角色玩家、业务资源、基数、HTTP 契约、静态消费者接续、OpenAPI、失败退出码、输入不变性和原子发布。FM 交接回归禁止重复运行检查器、编译校验或模拟，并拒绝失败或过期结果。
 
-[商品采购基线](../examples/full-lifecycle/README.md)由本包唯一维护，订阅 FM 夹具消费已安装 FM 包的样例。只在临时副本制造反例，不倒改规则或预期来通过测试。portability 不设 `__init__.py`，单独运行非相邻安装、无维护材料的真实 CLI、缺失依赖和只读边界。
+[商品采购链路夹具](fixtures/full-lifecycle/README.md)由本包测试唯一维护，覆盖 13 个角色接口、11 个凭证登记接口和 2 个商品读取角色，合并同路由读取后得到 12 个 OpenAPI Path＋Method 操作，外部支付不补造本地回调；订阅 FM 夹具消费已安装 FM 包的 `tests/fixtures/models/` 样例。夹具不进入提示词，也不构成业务依据或编辑授权。只在临时副本制造反例，不倒改规则或预期来通过测试。portability 不设 `__init__.py`，单独运行非相邻安装、无维护材料的真实 CLI、缺失依赖和只读边界。
 
 程序回归不证明 Agent 行为质量、服务运行验收或业务批准。

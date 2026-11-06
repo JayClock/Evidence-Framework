@@ -1,0 +1,49 @@
+[
+  {
+    "id": "API-C1",
+    "category": "content",
+    "dimension": "角色接口与成功消费步骤",
+    "prompt": "读取 .evidence/fm/ 中的采购合同范围，为支付申请与支付确认设计角色接口：给出资源、角色能力、HTTP 契约和每个接口的成功消费步骤。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "每个角色接口都要有明确的资源、能力归属和 mapped 的 2xx 消费步骤；读取接口不能替代其他接口的连续消费证据；不得补造外部支付回调或本地不存在的业务事实。"
+  },
+  {
+    "id": "API-C2",
+    "category": "content",
+    "dimension": "只投影不重新设计",
+    "prompt": "FM 范围已结束确认并通过一致性检查。请只根据现有 .evidence/api/api.json 生成 OpenAPI 投影，不要重新设计接口或重复运行 FM 检查。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "api",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "只从既有设计源投影，不新增或改写资源、能力与 HTTP 契约；不重复执行 FM 检查；投影失败时保留原设计源并报告失败，而不是修改规则来通过。"
+  },
+  {
+    "id": "API-T1",
+    "category": "trigger",
+    "dimension": "负面控制 · 与本项目无关的请求",
+    "prompt": "帮我写一封给客户的道歉邮件，说明发货延迟。",
+    "target_skill": "none",
+    "expect_trigger": false,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "只写邮件内容，不读取本项目模型、不设计接口、不写任何文件。"
+  },
+  {
+    "id": "API-T2",
+    "category": "trigger",
+    "dimension": "只读校验不越权修复",
+    "prompt": "只校验当前 .evidence/api/api.json 是否符合设计 Schema，输出报告即可，不要修改任何文件。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": false,
+    "seed": "api",
+    "deterministic_rule": "no_file_write",
+    "rubric": "只输出校验报告，不修改设计源或派生产物，不自动修复发现的问题。"
+  }
+]

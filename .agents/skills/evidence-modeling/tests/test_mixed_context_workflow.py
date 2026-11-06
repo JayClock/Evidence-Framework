@@ -33,7 +33,7 @@ class MixedContextWorkflowTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_mixed_navigation_example_keeps_contract_and_domain_distinct(self):
-        text = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
+        text = (Path(__file__).resolve().parent / 'fixtures/discovery/conversations/navigation.md').read_text()
         display = text.split('```text', 1)[1].split('```', 1)[0]
         for phrase in ('合同', '领域', '协商', '先分析哪个上下文？'):
             self.assertIn(phrase, display)
@@ -47,7 +47,7 @@ class MixedContextWorkflowTests(unittest.TestCase):
         self.assertIn('未决问题继续保留', text)
         self.assertIn('总览和日常问答不展示资料来源信息', text)
         self.assertIn('内部仍保留依据及版本', text)
-        example = (SKILLS / 'evidence-discovery/examples/navigation.md').read_text()
+        example = (Path(__file__).resolve().parent / 'fixtures/discovery/conversations/navigation.md').read_text()
         display = example.split('```text', 1)[1].split('```', 1)[0]
         self.assertNotRegex(display, r'待追溯|尚待逐项追溯|待澄清|缺口清单')
         self.assertNotRegex(display, r'sourceRefs|https?://|\.md|资料来源|来源 ID|页码')

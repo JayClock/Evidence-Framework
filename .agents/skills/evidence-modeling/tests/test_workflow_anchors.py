@@ -10,11 +10,15 @@ MODELING = SKILLS / "evidence-modeling"
 
 
 class WorkflowAnchorTests(unittest.TestCase):
-    def test_entry_delegates_flow_and_action_scoped_examples(self):
+    def test_entry_delegates_flow_without_loading_synthetic_samples(self):
         entry = (MODELING / "SKILL.md").read_text()
-        self.assertIn("examples/README.md", entry)
         workflow = (MODELING / "references/workflow.md").read_text()
-        self.assertIn("../examples/README.md", workflow)
+        for label, text in (("SKILL.md", entry), ("workflow.md", workflow)):
+            for href in re.findall(r"\]\(([^\s)]+)\)", text):
+                with self.subTest(document=label, link=href):
+                    self.assertNotIn("examples", href)
+                    self.assertNotIn("fixtures", href)
+        self.assertIn("evals/", entry)
         diagrams = re.findall(r"```mermaid\n(.*?)```", workflow, re.S)
         self.assertEqual(2, len(diagrams))
         structure, flow = diagrams
@@ -37,9 +41,9 @@ class WorkflowAnchorTests(unittest.TestCase):
         self.assertFalse(any(start == "report" for start, _ in edges))
 
     def cases(self):
-        return json.loads((MODELING / "examples/permissions.json").read_text())["cases"]
+        return json.loads((MODELING / "tests/fixtures/permissions.json").read_text())["cases"]
 
-    def test_examples_exercise_narrow_authorization_and_partial_delivery(self):
+    def test_fixtures_exercise_narrow_authorization_and_partial_delivery(self):
         cases = {case["id"]: case for case in self.cases()}
         self.assertEqual({"combined", "fm-only", "read-only", "api-blocked"}, set(cases))
         self.assertEqual([], cases["read-only"]["allowedWrites"])
@@ -66,10 +70,10 @@ class WorkflowAnchorTests(unittest.TestCase):
             self.assertFalse(case["approved"])
             self.assertNotIn("requirements", case["steps"])
 
-    def test_runtime_examples_are_internal_and_have_no_external_attribution(self):
-        index = (MODELING / "examples/README.md").read_text()
+    def test_fixture_index_is_internal_and_has_no_external_attribution(self):
+        index = (MODELING / "tests/fixtures/README.md").read_text()
         self.assertIn("](permissions.json)", index)
-        for document in (MODELING / "examples").glob("*.md"):
+        for document in (MODELING / "tests/fixtures").glob("*.md"):
             self.assertNotRegex(document.read_text(), r"(?m)https?://|^author:|^date:")
 
 

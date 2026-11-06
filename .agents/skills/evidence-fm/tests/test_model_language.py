@@ -46,7 +46,7 @@ class ModelLanguageTests(unittest.TestCase):
 
     def test_example_rule_explanations_reference_canonical_entity_names(self):
         count = 0
-        for manifest in (SKILL / "examples").glob("*/model.json"):
+        for manifest in (SKILL / "tests/fixtures/models").glob("*/model.json"):
             model = load_model(manifest.parent)
             self.assertEqual([], model.errors)
             for rule in model.rules:
@@ -65,7 +65,7 @@ class ModelLanguageTests(unittest.TestCase):
     def test_current_source_names_and_meanings_are_consumed_without_sidecar_or_writes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "fm"
-            shutil.copytree(SKILL / "examples/domain", root)
+            shutil.copytree(SKILL / "tests/fixtures/models/domain", root)
             source = next(
                 path for path in root.rglob("*.json")
                 if json.loads(path.read_text()).get("attributes")

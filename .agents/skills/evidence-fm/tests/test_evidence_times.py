@@ -21,7 +21,7 @@ from referencing import Registry, Resource  # pyright: ignore[reportMissingImpor
 
 SKILL = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
-EXAMPLES = SKILL / "examples"
+EXAMPLES = SKILL / "tests/fixtures/models"
 sys.path.insert(0, str(SKILL / "scripts"))
 from fm_model import (  # pyright: ignore[reportMissingImports]  # noqa: E402
     LoadedModel,

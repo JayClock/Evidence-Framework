@@ -26,7 +26,7 @@ class ContextLayoutTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name) / "model"
         shutil.copytree(
-            SKILL / "examples/valid-traceable-subscription", self.root
+            SKILL / "tests/fixtures/models/valid-traceable-subscription", self.root
         )
         self.before = compiled_document(load_model(self.root))
         self.before_check = check_model(self.root)

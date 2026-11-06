@@ -8,20 +8,17 @@
 
 期限、比例、资格和例外必须有来源，未知就保留缺口，不用示例公式或恒真表达式填洞。分析依据不足时回到 [来源追溯](provenance.md)，保存权限与检查顺序见 [编辑流程](editing-workflow.md)。
 
-## 选择已有规则样例
+## 常见判断的写法边界
 
-只读当前需要的实际源文件，金额、期限与预期均为合成条件，不是生产默认规则。
+按业务依据选择判断形状，不以是否存在现成样例决定能否表达：
 
-| 要表达的判断                   | 可运行样例中的 Rule                                                                             |
-| ------------------------------ | ----------------------------------------------------------------------------------------------- |
-| 从约定取得请求金额             | [金额派生](../examples/valid-traceable-subscription/rules/rule--payment-request-amount.json)    |
-| 按已有约定计算截止             | [时间派生](../examples/valid-traceable-subscription/rules/rule--payment-deadline.json)          |
-| 核对金额、币种与实例结果       | [结果匹配](../examples/valid-traceable-subscription/rules/rule--payment-matches-request.json)   |
-| 集合结果与请求时段共同判断完成 | [履约完成](../examples/valid-traceable-subscription/rules/rule--content-payment-completed.json) |
-| 截止后的违约判断               | [违约判断](../examples/valid-traceable-subscription/rules/rule--payment-expired.json)           |
-| 没有合同的领域行为条件         | [档案可编辑](../examples/domain/rules/rule--profile-editable.json)                              |
+- **从约定取值**：金额、期限与币种从合同或请求的已建模属性派生，不写成自由参数；派生值的口径、精度与舍入必须有来源。
+- **结果匹配**：确认与请求的金额、币种和时段逐项核对，匹配条件来自约定；不把匹配写成恒真或仅比较类型。
+- **集合完成**：完成判断同时看集合结果与请求时段，不能只凭一条结果就宣称整项履约完成。
+- **违约与逾期**：截止后的判断要有明确的责任终点和后续处理，不留在无终点的扣减阶梯里。
+- **领域行为条件**：没有合同时，行为前置条件绑定领域对象的状态属性，不借合同履约补齐。
 
-不复制一份 Markdown JSON 样例；维护时直接修改获授权的真实模型或样例源，再检查其引用与场景。
+规则源直接维护在当前获授权的真实模型里，不另存 Markdown JSON 副本；改完按 [校验纪律](validation.md) 复验引用与场景。
 
 ## 绑定与派生
 

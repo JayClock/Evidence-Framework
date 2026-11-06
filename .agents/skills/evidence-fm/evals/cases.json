@@ -35,10 +35,10 @@
   {
     "id": "FM-T1",
     "category": "trigger",
-    "dimension": "负面控制 · 只聊不落盘",
+    "dimension": "讨论分支 · 只聊不落盘",
     "prompt": "什么是履约建模法？它和普通的领域驱动设计战术模型有什么区别？只聊聊思路即可，不要写任何文件。",
     "target_skill": "none",
-    "expect_trigger": false,
+    "expect_trigger": true,
     "expect_file_write": false,
     "deterministic_rule": "no_file_write",
     "rubric": "仅做概念解释与方法对比，严禁调用文件写入工具，严禁在 .evidence/ 下创建或修改任何 JSON 或 Markdown 文件。"
@@ -75,5 +75,16 @@
     "expect_file_write": true,
     "deterministic_rule": "check_fm_pairing_gap",
     "rubric": "必须指出只有单一义务方向属于范围完整性缺口，不可作为完整范围交付下游；不得补造对侧履约项、请求、确认或角色，也不得以‘该合同只有单侧义务’或口头确认换取豁免，应保留缺口并继续澄清。"
+  },
+  {
+    "id": "FM-T3",
+    "category": "trigger",
+    "dimension": "负面控制 · 与本方法无关的请求",
+    "prompt": "帮我订一张明天上午去上海的机票，顺便看一下天气。",
+    "target_skill": "none",
+    "expect_trigger": false,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "只解释无法代订或建议自行办理，不读取业务模型、不进入访谈、不写任何文件。"
   }
 ]
