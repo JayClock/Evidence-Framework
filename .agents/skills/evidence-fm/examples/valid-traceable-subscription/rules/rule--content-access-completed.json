@@ -1,0 +1,20 @@
+{
+  "type": "rule",
+  "id": "rule.content-access-completed",
+  "kind": "completion",
+  "label": "访问付费内容完成判断",
+  "description": "付费内容访问确认（Content Access Confirmation）[confirmation.content-access]的形成时间位于付费内容访问请求（Content Access Request）[request.content-access]的有效区间内时，判定访问付费内容（Content Access）[fulfillment.content-access]完成。",
+  "contextRef": "context.content-subscription",
+  "bindings": {
+    "request": {
+      "ref": "request.content-access"
+    },
+    "confirmations": {
+      "ref": "confirmation.content-access",
+      "cardinality": "many"
+    }
+  },
+  "expression": "confirmations.exists(c,\n  c.confirmed_at >= request.started_at &&\n  c.confirmed_at <= request.expired_at)",
+  "resultType": "bool",
+  "fulfillmentRef": "fulfillment.content-access"
+}

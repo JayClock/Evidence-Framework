@@ -89,6 +89,15 @@ class ExampleBaselineTests(unittest.TestCase):
         edges = {(relation["sourceRef"], relation["kind"], relation["targetRef"]) for relation in relations}
         self.assertIn(("confirmation.content-payment", "references", "request.content-payment"), edges)
         self.assertIn(("request.content-payment", "references", "contract.content-subscription"), edges)
+        self.assertIn(("request.content-access", "references", "contract.content-subscription"), edges)
+        self.assertEqual(
+            {"role.platform-subscription", "role.subscriber"},
+            {
+                entities["request.content-payment"]["responsibleRoleRef"],
+                entities["request.content-access"]["responsibleRoleRef"],
+            },
+            "both Contract Parties must each hold a main Fulfillment",
+        )
         domain = [json.loads(path.read_text()) for path in (EXAMPLES / "domain/entities").glob("*.json")]
         self.assertTrue(domain)
         self.assertFalse(any(entity.get("category") == "fulfillment" for entity in domain))

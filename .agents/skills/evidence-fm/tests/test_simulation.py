@@ -39,7 +39,7 @@ class SimulationTests(unittest.TestCase):
         self.assertEqual([], first_errors)
         self.assertEqual([], second_errors)
         self.assertEqual(first, second)
-        self.assertEqual(2, len(first["scenarioResults"]))
+        self.assertEqual(3, len(first["scenarioResults"]))
         result = next(
             item
             for item in first["scenarioResults"]
@@ -50,9 +50,19 @@ class SimulationTests(unittest.TestCase):
             for item in first["scenarioResults"]
             if item["scenarioId"] == "scenario.overdue-payment"
         )
+        access = next(
+            item
+            for item in first["scenarioResults"]
+            if item["scenarioId"] == "scenario.content-access-after-payment"
+        )
         self.assertTrue(result["simulationPassed"])
         self.assertEqual("completed", result["fulfillmentStatuses"][0]["status"])
         self.assertEqual("breached", overdue["fulfillmentStatuses"][0]["status"])
+        self.assertTrue(access["simulationPassed"])
+        self.assertEqual(
+            "fulfillment.content-access", access["fulfillmentStatuses"][0]["fulfillmentRef"]
+        )
+        self.assertEqual("completed", access["fulfillmentStatuses"][0]["status"])
 
     def test_wrong_acting_role_is_rejected_before_simulation(self) -> None:
         root = self.fixture("valid-traceable-subscription")

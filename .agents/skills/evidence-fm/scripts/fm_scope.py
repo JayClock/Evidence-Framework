@@ -4,7 +4,13 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 
-from fm_model import LoadedModel, entity_signature, validate_model
+from fm_model import (
+    LoadedModel,
+    entity_signature,
+    fulfillment_members,
+    normalize,
+    validate_model,
+)
 from fm_simulation import ValidationSuite
 
 
@@ -129,6 +135,50 @@ def simulation_rules(model: LoadedModel) -> tuple[list[dict[str, Any]], list[str
     return applicable, limitations
 
 
+def pairing_gaps(model: LoadedModel) -> list[str]:
+    """Both Contract Parties must each claim a main Fulfillment as the right holder.
+
+    A Contract only exists between two Parties, and a Fulfillment Request is issued by
+    the right holder against the other Party. Requiring a claim from each Party keeps
+    both obligation directions in the same Contract; it is a scope gap so that a single
+    identified direction can still be saved and checked while the other is unclear.
+    """
+    entities = model.entities_by_id
+    claimants: dict[str, set[str]] = {}
+    contexts_with_fulfillments: set[str] = set()
+    for fulfillment_id, fulfillment in model.fulfillments_by_id.items():
+        context_ref = str(fulfillment.get("contextRef"))
+        contexts_with_fulfillments.add(context_ref)
+        requests, _, _ = fulfillment_members(fulfillment_id, entities)
+        for request in requests:
+            role_ref = normalize(request.get("responsibleRoleRef"))
+            if role_ref is None:
+                continue
+            claimants.setdefault(context_ref, set()).add(role_ref)
+    gaps: list[str] = []
+    for context in model.entities:
+        if entity_signature(context) != ("context", "contract"):
+            continue
+        if str(context["id"]) not in contexts_with_fulfillments:
+            continue  # Reported as the missing primary Fulfillment gap instead.
+        contracts = [
+            entities[ref]
+            for ref in context.get("rootRefs") or []
+            if entity_signature(entities.get(str(ref))) == ("evidence", "contract")
+        ]
+        if len(contracts) != 1:
+            continue  # Reported as a consistency error by the Context root check.
+        claimed = claimants.get(str(context["id"]), set())
+        for role_ref in contracts[0].get("roleRefs") or []:
+            if str(role_ref) in claimed:
+                continue
+            gaps.append(
+                f"{context['id']}: primary Fulfillments must cover both Contract Parties; "
+                f"Party Role '{role_ref}' is not the right holder of any Fulfillment Request"
+            )
+    return gaps
+
+
 def completeness_gaps(model: LoadedModel) -> list[str]:
     consistent_errors = set(validate_model(model))
     gaps = [error for error in validate_model(model, complete=True) if error not in consistent_errors]
@@ -137,6 +187,7 @@ def completeness_gaps(model: LoadedModel) -> list[str]:
             fulfillment.get("contextRef") == entity["id"] for fulfillment in model.fulfillments_by_id.values()
         ):
             gaps.append(f"{entity['id']}: Contract Context requires its primary Fulfillment before scope completion")
+    gaps.extend(pairing_gaps(model))
     return gaps
 
 

@@ -3,7 +3,7 @@
   "schemaVersion": "5.0",
   "id": "traceable-subscription",
   "name": "可追溯内容订阅履约模型",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "ruleLanguage": "CEL",
   "entryContextRefs": ["context.content-subscription"]
 }

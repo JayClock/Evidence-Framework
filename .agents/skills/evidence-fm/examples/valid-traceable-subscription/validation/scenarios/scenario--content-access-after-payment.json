@@ -1,0 +1,44 @@
+{
+  "type": "fm_scenario",
+  "id": "scenario.content-access-after-payment",
+  "label": "订阅者要求访问付费内容的另一方向履约",
+  "asOf": "2026-09-01T09:15:00Z",
+  "givenInstanceRefs": ["instance.subscription-contract"],
+  "steps": [
+    {
+      "sequence": 1,
+      "actingRoleRef": "role.subscriber",
+      "issueInstanceRef": "instance.content-access-request",
+      "availableInstanceRefs": ["instance.subscription-contract"]
+    },
+    {
+      "sequence": 2,
+      "actingRoleRef": "role.platform-subscription",
+      "issueInstanceRef": "instance.content-access-confirmation",
+      "availableInstanceRefs": ["instance.content-access-request"]
+    }
+  ],
+  "evaluations": [
+    {
+      "ruleRef": "rule.content-access-completed",
+      "bindings": {
+        "request": {
+          "instanceRef": "instance.content-access-request"
+        },
+        "confirmations": {
+          "instanceRefs": ["instance.content-access-confirmation"]
+        }
+      },
+      "expectedResult": true
+    }
+  ],
+  "expectations": {
+    "fulfillmentStatuses": [
+      {
+        "fulfillmentRef": "fulfillment.content-access",
+        "requestInstanceRef": "instance.content-access-request",
+        "status": "completed"
+      }
+    ]
+  }
+}
