@@ -3,7 +3,7 @@
 The `evidence-*` skills are the modeling runtime: interview, formal model,
 API contract and review page all run as local Python scripts under
 `.agents/skills/`. Nothing in this path needs Node, Java or network access; the
-app slice and OpenWiki use those separately.
+app slice uses those separately.
 
 ## What the skills need
 
