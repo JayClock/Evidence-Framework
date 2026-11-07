@@ -25,7 +25,7 @@ actually executed here, including transitive pins.
   from the installed set, and the diff is reviewed like code.
 - `node_modules/.cache/evidence-fm-runtime` — the venv (already ignored by git);
   `pyrightconfig.json` points at the same path.
-- `.evidence/{fm,traces,checks}` — created by `./init.sh` so a session starts from
+- `.evidence/{fm,traces}` — created by `./init.sh` so a session starts from
   a fixed layout instead of whatever the machine happens to have.
 
 ## Commands

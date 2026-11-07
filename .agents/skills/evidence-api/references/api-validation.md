@@ -68,7 +68,7 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 ## 文件纪律
 
-默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.json`，投影输出固定更新 `.evidence/api/generated/`。需要留存 inspect/check 结果时，经授权在 `.evidence/checks/api/<批次>/` 写入紧凑运行清单（命令、退出码、输入摘要、文件 `sha256` 与日志指针），不复制 projection 或契约全文；只校验仍只报告结果，不写文件。API 设计格式为 5.0，`http.representations` 是唯一表示来源。
+默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.json`，投影输出固定更新 `.evidence/api/generated/`。检查只报告结果，不写文件。API 设计格式为 5.0，`http.representations` 是唯一表示来源。
 
 所有 CLI 路径参数使用绝对路径。`--api` 指向一份统一 API 文件，必须位于 FM 根目录之外；其中来源路径相对 project root，不得越界。FM、validation、API 和来源均只读；运行前后摘要变化时失败。
 

@@ -111,7 +111,6 @@ python3 "$MODELING_SKILL_DIR/scripts/check_stage_gate.py" \
 | 追溯问答与来源日志   | `.evidence/traces/interview-trace.json`              | Discovery     |
 | API 设计与派生投影   | `.evidence/api/api.json`、`.evidence/api/generated/` | API           |
 | 只读审核页           | `.evidence/views/index.html`                         | Visualization |
-| 获授权检查记录       | `.evidence/checks/fm/`、`.evidence/checks/api/`      | 检查执行者    |
 
 ### 恢复一个分支
 

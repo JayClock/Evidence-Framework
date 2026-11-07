@@ -219,9 +219,5 @@ class IsolatedFMTests(unittest.TestCase):
         self.assertNotEqual(first["modelDigest"], current["modelDigest"])
         self.assertFalse(current["inputChanged"])
         self.assertEqual({"fm", "discovery.json"}, {p.name for p in evidence.iterdir()})
-        report = evidence / "checks/fm/run-001.json"
-        report.parent.mkdir(parents=True)
-        report.write_text(result.stdout, encoding="utf-8")
-        self.assertEqual(current, json.loads(report.read_text()))
         self.assertEqual(current["modelDigest"], self.check(0)["modelDigest"])
         self.assertEqual(notes_before, notes.read_bytes())

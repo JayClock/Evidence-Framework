@@ -23,7 +23,7 @@ LOCK_FILE = REPO_ROOT / "requirements.lock"
 PYTHON_PIN_FILE = REPO_ROOT / ".python-version"
 SKILLS_ROOT = REPO_ROOT / ".agents" / "skills"
 PYRIGHT_CONFIG = REPO_ROOT / "pyrightconfig.json"
-EVIDENCE_DIRS = (".evidence/fm", ".evidence/traces", ".evidence/checks")
+EVIDENCE_DIRS = (".evidence/fm", ".evidence/traces")
 SKILL_PACKAGES = {
     "evidence-discovery": ("SKILL.md", "requirements.txt"),
     "evidence-fm": ("SKILL.md", "requirements.txt"),

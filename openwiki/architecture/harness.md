@@ -222,9 +222,6 @@ Skill 之间**不假设兄弟目录**：`evidence-modeling`、`evidence-discover
 ├── api/
 │   ├── api.yaml          # 唯一 API 设计源，位于 FM 根之外
 │   └── generated/<批次>/ # 投影、OpenAPI、契约、样例、manifest
-└── checks/
-    ├── fm/               # 获授权留存的 FM 检查记录
-    └── api/              # 获授权留存的 inspect/check 结果
 ```
 
 规划与需求使用项目文档目录：`evidence-requirements` 默认 `docs/requirements/scope.md` 与 `stories.md`；`evidence-task-planning` 默认 `docs/plans/smart-domain/index.md` 与 `tasks/<具体交付结果>.md`。各 Skill 只修改本次授权文件，不自动批准；`.evidence/` 只是默认产物根，不因此获得其他文件或审核状态的修改权限。

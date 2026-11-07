@@ -160,7 +160,7 @@
     },
     {
       "id": "claim_d4ed8030571a4bf1bffdf5be53f87cad",
-      "statement": "Guides 检查器的 node --test 回归 check.spec.mjs 用临时目录与真实前馈文档测试 check.mjs：工序路由与七个工序小节必需字段、编码/尖括号/目录链接解析且不写回、围栏/远程/锚点/模板变量忽略、缺失文档带行号、非法编码与越界（含符号链接）报错、过期架构表述被拒，且 collectDocuments 扫描维护中的 docs/模板而排除 generated/checks/evals。",
+      "statement": "Guides 检查器的 node --test 回归 check.spec.mjs 用临时目录与真实前馈文档测试 check.mjs：工序路由与七个工序小节必需字段、编码/尖括号/目录链接解析且不写回、围栏/远程/锚点/模板变量忽略、缺失文档带行号、非法编码与越界（含符号链接）报错、过期架构表述被拒，且 collectDocuments 扫描维护中的 docs/模板而排除 generated/evals。",
       "evidence": [
         {
           "resource": "repo://tools/guides/check.mjs#L29-L127",

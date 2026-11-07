@@ -24,7 +24,7 @@ compatibility: 讨论只需文本；文件维护需读写能力；校验需 Pyth
 
 字段结构直接消费 Schema，跨对象约束定位语义校验器，文档不复制字段表或 JSON 模板。专项按 [规则索引](references/README.md) 选择，表达规则直接落在方法与 Schema 中；合成模型仅在 tests/ 供回归使用，不进入提示词。提示词改动的取舍以 `evals/` 的用例分数为准。
 
-默认源为 `.evidence/fm/`；Entity 及其属性直接承担统一语言，不维护额外定义文件。获授权检查记录放在 `.evidence/checks/fm/`；沿用已有指定位置，项目输出保持在 Skill 安装目录之外。
+默认源为 `.evidence/fm/`；Entity 及其属性直接承担统一语言，不维护额外定义文件。项目输出保持在 Skill 安装目录之外。
 
 ## Action
 

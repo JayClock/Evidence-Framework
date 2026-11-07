@@ -60,7 +60,7 @@ class SkillDocumentationTests(unittest.TestCase):
         self.assertIn("直接编辑当前模型", fm_entry)
         self.assertIn("编辑授权不是业务批准", fm_entry)
         self.assertIn("modelDigest", validation)
-        self.assertIn("只校验请求不写任何项目文件", validation)
+        self.assertIn("检查只把结果输出到终端", validation)
         self.assertIn("不自动回滚", fm_entry)
         for text in (fm_entry, validation):
             self.assertNotRegex(text, r"fm_model_(?:submit|ask)|\bRun\b|业务 revision")
@@ -175,22 +175,14 @@ class SkillDocumentationTests(unittest.TestCase):
     def test_modeling_and_api_default_outputs_share_evidence_root(self):
         expected_paths = {
             "evidence-modeling/SKILL.md": (".evidence/",),
-            "evidence-modeling/references/workflow.md": (
-                ".evidence/fm/",
-                ".evidence/checks/fm/",
-                ".evidence/checks/api/",
-            ),
+            "evidence-modeling/references/workflow.md": (".evidence/fm/",),
             "evidence-discovery/SKILL.md": (".evidence/fm/",),
-            "evidence-fm/SKILL.md": (".evidence/fm/", ".evidence/checks/fm/"),
-            "evidence-fm/references/validation.md": (
-                ".evidence/fm/",
-                ".evidence/checks/fm/",
-            ),
+            "evidence-fm/SKILL.md": (".evidence/fm/",),
+            "evidence-fm/references/validation.md": (".evidence/fm/",),
             "evidence-api/references/api-design.md": (
                 ".evidence/fm/",
                 ".evidence/api/api.json",
                 ".evidence/api/generated/",
-                ".evidence/checks/api/",
             ),
             "evidence-api/references/api-validation.md": (
                 ".evidence/api/api.json",
@@ -231,7 +223,7 @@ class SkillDocumentationTests(unittest.TestCase):
                     self.assertIn("只修改本次授权的文件", text)
                     self.assertIn("不自动迁移", text)
         validation = (ROOT / "evidence-fm/references/validation.md").read_text()
-        self.assertIn("报告位于模型目录之外", validation)
+        self.assertIn("命令只输出 JSON 结果", validation)
         api = (ROOT / "evidence-api/references/api-validation.md").read_text()
         self.assertIn("投影输出固定更新", api)
         self.assertIn("切换失败时恢复", api)

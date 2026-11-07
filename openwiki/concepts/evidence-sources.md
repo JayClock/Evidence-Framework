@@ -59,7 +59,7 @@ Evidence 仓库把「业务是什么、本次软件负责什么、技术怎么�
 | 执行顺序与状态       | 计划索引的 `compiled` / `taskNotes`                                                                      | 文件名编号、聊天记忆、README     |
 | 当前是否验证         | 任务 CHECK 的本次实际结果                                                                                | 文件存在、上次通过或模板中的预期 |
 
-对应的仓库职责分工在根 [README](../../README.md) 的「仓库中的唯一职责」中固定：`.evidence/fm/` 保存当前 FM、正式术语、规则与回放场景，`.evidence/api/api.yaml` 保存当前 API 设计源，`docs/requirements/` 保存软件职责与质量属性，`docs/architecture/` 保存技术基线与领域映射，`docs/plans/smart-domain/` 保存计划与任务状态，`.evidence/checks/` 保存获授权留存的真实检查记录。
+对应的仓库职责分工在根 [README](../../README.md) 的「仓库中的唯一职责」中固定：`.evidence/fm/` 保存当前 FM、正式术语、规则与回放场景，`.evidence/api/api.yaml` 保存当前 API 设计源，`docs/requirements/` 保存软件职责与质量属性，`docs/architecture/` 保存技术基线与领域映射，`docs/plans/smart-domain/` 保存计划与任务状态。
 
 ### 生成产物不是新的事实源
 
@@ -101,7 +101,7 @@ flowchart TD
 - **业务模型状态**：`model.yaml` 当前为 `modelStatus: draft`、`stakeholderReview.status: pending`。机器校验通过不提升状态；只有真实具名审核依据才反映其他状态，更改已审核语义时回到 draft / pending 并等待重新审核。
 - **计划与任务状态**：`taskNotes` 是任务状态唯一位置，`compiled` 是每次按当前输入重算的计算投影，任务详情通过 `taskKey`/`planRef` 绑定索引、不复制依赖图或状态。`observedEvidence` 只记录真实观察，计划生成时为空；失败与未知保留在 `gaps`，只阻塞受影响任务。
 - **计划路径只是约定**：`docs/plans/smart-domain/index.md` 与 `tasks/*.md` 是工作流输出约定，不表示仓库已经有可执行计划。没有有效索引时先规划，不根据代码存在或聊天记忆跳到实施。
-- **检查记录是历史证据**：`.evidence/checks/` 保存获授权留存的真实输出；环境失败、历史结果、缓存命中与业务批准分别说明，不能用上次通过替代本次执行。
+- **检查记录是历史证据**：环境失败、历史结果、缓存命中与业务批准分别说明，不能用上次通过替代本次执行。
 
 ## 失败语义与不变量
 

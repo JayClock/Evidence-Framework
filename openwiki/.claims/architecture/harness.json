@@ -42,7 +42,7 @@
     },
     {
       "id": "claim_902f814656164bbea774783eff55ce23",
-      "statement": "各 Skill 的默认产物共享项目根 .evidence/ 布局：discovery.md、fm/、views/index.html、api/api.yaml 与 api/generated/<批次>/、checks/{fm,api}/，且只修改本次授权文件，沿用已有文件与用户指定位置而不自动迁移。",
+      "statement": "各 Skill 的默认产物共享项目根 .evidence/ 布局：discovery.md、fm/、views/index.html、api/api.yaml 与 api/generated/<批次>/，且只修改本次授权文件，沿用已有文件与用户指定位置而不自动迁移。",
       "evidence": [
         {
           "resource": "repo://.agents/skills/README.md#L61-L83",

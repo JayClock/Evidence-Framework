@@ -189,7 +189,7 @@ if [ "$REFRESH_LOCK" -eq 1 ]; then
   mv "$ROOT/requirements.lock.tmp" "$ROOT/requirements.lock"
 fi
 
-for directory in fm traces checks; do
+for directory in fm traces; do
   mkdir -p "$ROOT/.evidence/$directory"
 done
 

@@ -165,11 +165,11 @@ app 层的 `:backend:test` 还包含 [BackendArchitectureTests](../../apps/backe
 
 每个任务 CHECK 至少明确：目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令、环境准备与完成条件；命令未知填 `null` 并关联局部 gap，不写「运行相关测试」冒充可执行。实际执行后记录命令、cwd、工具/环境与运行标识、退出码、真实输出或日志路径、断言覆盖与未执行项。
 
-任务结果写入详情 `observedEvidence`，状态只更新索引 `taskNotes`；较长输出留在获授权的 `.evidence/checks/` 运行目录。Harness 文档维护没有业务 DAG 时可以保存独立检查记录，但不能制造业务任务 done 或审核通过。不得删失败测试、改业务预期或手改机器报告制造通过。
+任务结果写入详情 `observedEvidence`，状态只更新索引 `taskNotes`。Harness 文档维护没有业务 DAG 时可以记录独立检查结果，但不能制造业务任务 done 或审核通过。不得删失败测试、改业务预期或手改机器报告制造通过。
 
 ## 相关页面
 
 - [本地开发与数据库](local-development.md)：本地启动、端点与 H2 环境边界，以及质量入口的引用。
 - 后端分层测试：后端模块化单体的 domain/api/persistent/app 测试边界。
 - Harness 测试：前馈检查器与 Skill 套件的维护与回归。
-- 证据交付：任务 CHECK 证据如何写入 `observedEvidence` 与 `.evidence/checks/`。
+- 证据交付：任务 CHECK 证据如何写入 `observedEvidence`。

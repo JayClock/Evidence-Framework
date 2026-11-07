@@ -20,7 +20,7 @@ compatibility: 讨论只需文本；校验与投影需 Python 3.10+、本包 req
 
 表达以当前业务依据和 Schema 为准，不靠历史链路样板；链路回归与合成夹具只在 tests/ 由测试代码消费，不进入提示词。
 
-默认输入为 `.evidence/fm/` 和其外的 `.evidence/api/api.json`；输出为 `.evidence/api/generated/`，获授权紧凑检查记录为 `.evidence/checks/api/`。项目产物不写入 Skill 安装目录。通过资源发现或用户指定路径定位 FM 包，不假设兄弟目录；领域语言按 FM 的 `references/domain-language.md` 直接消费当前 Entity 及其属性的规范名称与含义，不修改 FM 或创建额外定义文件。
+默认输入为 `.evidence/fm/` 和其外的 `.evidence/api/api.json`；输出为 `.evidence/api/generated/`。项目产物不写入 Skill 安装目录。通过资源发现或用户指定路径定位 FM 包，不假设兄弟目录；领域语言按 FM 的 `references/domain-language.md` 直接消费当前 Entity 及其属性的规范名称与含义，不修改 FM 或创建额外定义文件。
 
 ## Action
 

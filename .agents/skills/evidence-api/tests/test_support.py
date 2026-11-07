@@ -28,7 +28,7 @@ if str(SCRIPTS) not in sys.path:
 api_loader = importlib.import_module("fm_api_core.api_loader")
 fm_adapter = importlib.import_module("fm_api_core.fm_adapter")
 check_fm = importlib.import_module("check_fm")
-_CHECKS = tempfile.TemporaryDirectory(prefix="fm-api-test-checks-")
+_CHECKS = tempfile.TemporaryDirectory(prefix="fm-api-stage-")
 
 
 @cache

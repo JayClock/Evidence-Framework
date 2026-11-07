@@ -152,7 +152,7 @@
     },
     {
       "id": "claim_0277629419c3464bafa8ab9f8c385510",
-      "statement": "任务 CHECK 必须明确目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令、环境准备与完成条件（命令未知填 null 并关联 gap）；结果写入详情 observedEvidence，状态只更新索引 taskNotes，较长输出留在获授权的 .evidence/checks/ 目录。",
+      "statement": "任务 CHECK 必须明确目的、被测行为、真实依赖/Fake、固定输入与业务时间、正常/边界/反例、失败不变性、测试文件、cwd、精确命令、环境准备与完成条件（命令未知填 null 并关联 gap）；结果写入详情 observedEvidence，状态只更新索引 taskNotes。",
       "evidence": [
         {
           "resource": "repo://docs/engineering/testing.md#L35-L46",
