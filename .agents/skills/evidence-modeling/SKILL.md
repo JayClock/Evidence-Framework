@@ -34,15 +34,25 @@ compatibility: 通过资源发现定位专业 Skills；访谈需要 Discovery �
 
 ## Sensors
 
-每阶段完成前先取值再判定，不以阶段名称或口头结论代替证据。
+阶段门禁执行自动化校验，并按严重程度分级管理：
 
-- **访谈交付**：推断核查逐项判定，追溯日志通过 `check_interview_trace.py`；报告单合同结束、全局追责结束与实际保存的区别。
-- **FM 每批修改**：`check_fm.py` 的 `consistent`、错误与缺口，以及 `audit_key_data.py` 的台账结论同时成立，本批才完成。
-- **范围结束与下游**：`check_stage_gate.py --target api` 或 `visualization` 退出码为 0，且台账中 `needsDecision` 已逐项有结论，才能委派。门禁读取保存的 FM 结果与追溯日志，核对范围覆盖与人类结束确认。
-- **只校验与纯讨论**：无项目写入，两源分别报告；API 缺失时联合检查未完成。
-- **联合审核验证**：两源与页面验证可定位；旧页面不是当前有效证据。
+```bash
+python3 "$MODELING_SKILL_DIR/scripts/check_stage_gate.py" --target api --fm-check "$FM_CHECK_FILE" --trace "$TRACE_FILE"
+python3 "$MODELING_SKILL_DIR/scripts/check_stage_gate.py" --target visualization --fm-check "$FM_CHECK_FILE" --trace "$TRACE_FILE"
+```
 
-合同级结束、领域／协商分支结束、全局追责结束与实际保存分别说明；未澄清内容与未保存部分如实说明。
+**阻塞级**：门禁脚本退出码非 0；FM 检查结果缺失、摘要失配或输入变化；台账存在未决决策阻止下游委派；超出授权写入；联合审核缺少有效 API 产物。任一发生立即阻断下游委派。
+
+**警告级**：单合同已结束确认但全局追责尚未闭环；专业 Skill 报告的业务缺口待交接真人决策；只校验或纯讨论分支未完成写盘。
+
+**信息级**：阶段流转记录、专业 Skill 执行通过摘要、已确认的合同与领域范围清单。
+
+各阶段验收要求：
+- **访谈交付**：推断核查逐项判定，追溯日志通过 `check_interview_trace.py`；明确区分单合同结束与全局追责结束。
+- **FM 每批修改**：`check_fm.py` 的 `consistent: true`、零错误零缺口，以及 `audit_key_data.py` 的台账结论同时成立。
+- **范围结束与下游**：门禁退出码为 0，台账 `needsDecision` 逐项有结论，且取得人类明确结束确认。
+- **只校验与纯讨论**：无项目文件写入，两源分别报告；API 缺失时联合检查未完成。
+- **联合审核验证**：两源与页面验证可定位，最新生成产物与浏览器断言均通过。
 
 ## Steer
 
