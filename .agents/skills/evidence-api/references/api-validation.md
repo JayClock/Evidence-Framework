@@ -16,7 +16,7 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 - `FM_CHECK_STALE`：结果摘要与当前 FM 源不匹配；停止 API 阶段，不隐式重跑 FM。
 - `SOURCE_CHANGED`：读取或投影期间源变化；结果失效，不生成输出。
 
-摘要核对只保证交接结果仍绑定当前模型，不认证结果签发者或上游业务批准。不得伪造 `valid` 或摘要替代一次实际 FM 检查。
+摘要核对只保证交接结果仍绑定当前模型。不得伪造 `valid` 或摘要替代一次实际 FM 检查。
 
 ## 退出码
 
@@ -50,7 +50,7 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 ## 业务命名、数量与寻址复核
 
-先复核名称是否来自业务对象与办理行为，而非 FM 分类的机械拼接。机器只检查 `businessName` 非空、segment 格式、显式数量及视图一致性，不声称理解或批准业务词汇。
+先复核名称是否来自业务对象与办理行为，而非 FM 分类的机械拼接。机器只检查 `businessName` 非空、segment 格式、显式数量及视图一致性，不声称理解业务词汇。
 
 - `RESOURCE_CARDINALITY_UNRESOLVED`：没有可追溯的父子数量上限，或被引用关系未声明该端点基数。
 - `CARDINALITY_SCOPE_INVALID`：数量关系端点不对应当前父子业务对象，或单例缺少父实例范围。
@@ -66,6 +66,10 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 设计复核检查必要补充证据的形成前提、实例引用、访问范围及创建路径。必需证据先存在，才可形成被证明凭证；证据创建不得依赖该尚未形成的目标。若凭证形成责任属于未被 Participant Party 扮演的 Party Role，设计必须用 `nonApiActivities` 回映该形成步骤，不能生成对应调用接口；已有读取接口仍需遵守实例和可见性约束。FM 的 `basedOn`、时间线和 CEL 场景可验证已声明的依赖；API 的 `ruleBindings` 只表达检查契约，不执行服务端前置校验。工具未覆盖的依赖判断必须由 Agent 复核并保留真实 gap，不把 `complete` 当作业务正确性证明。
 
+## 派生字段复核
+
+请求字段只表达形成输入与证据引用。FM 中 `derivedByRuleRef` 指向规则属性的字段，不得作为请求入参；表示与响应可以包含派生结果。契约检查按字段来源核对派生口径，发现请求体接收派生属性时按设计错误停止，不通过改 `origin` 绕过。
+
 ## 文件纪律
 
 默认输入为项目根下的 `.evidence/fm/` 和 `.evidence/api/api.json`，投影输出固定更新 `.evidence/api/generated/`。检查只报告结果，不写文件。API 设计格式为 5.0，`http.representations` 是唯一表示来源。
@@ -74,4 +78,4 @@ EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKI
 
 project 的 out 必须位于项目根内、父目录已存在，并且不能与 FM、检查结果、设计、来源或 FM／API Skill 安装目录重叠；默认值为 `.evidence/api/generated/`。先在内存形成全部内容，再在输出同级临时目录写出并同步全部文件，最后目录级替换；已有目录在切换失败时恢复，成功后删除旧目录及其中过期产物。版本历史由 Git 管理，不通过批次目录保留。
 
-上游业务确认沿用输入依据；机器检查不充当新的审核步骤，也不代表运行授权或接口验收。接口清单是交付索引，技术缺口不通过人工点击“通过”解除。
+上游业务确认沿用输入依据；机器检查不增设审核步骤。接口清单是交付索引，技术缺口不通过人工点击“通过”解除。

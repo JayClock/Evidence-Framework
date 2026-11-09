@@ -15,13 +15,13 @@
 | 创建／修订 JSON，定位对应 Schema         | [结构契约与文件组织](format.md)              |
 | 领域对象与业务规则                       | [领域建模](domain-modeling.md)               |
 | CEL 表达式                               | [CEL](cel-rules.md)                          |
-| 关键数据 lineage 与单据实例              | [追溯与模拟](traceability-and-simulation.md) |
+| 关键数据台账、属性追溯与单据实例         | [追溯与模拟](traceability-and-simulation.md) |
 | 正常、边界、异常业务预期                 | [场景校验](scenario-validation.md)           |
 | 选择已有表达样例                         | [样例导航](patterns.md)                      |
 | 执行真实检查                             | [校验](validation.md)                        |
 
 访谈按领域语言方法直接核对相关 Entity 及其属性，当轮统一表达，并按需读取其他专业参考；不为保存名称启动模型 JSON 生成。问题选择、回答等待和控制状态由访谈任务管理，本包输入复核只输出具体缺口。
 
-业务分析、来源追溯、责任范围与实例执行各自维护方法。字段、类型、枚举和局部必填直接读取 schemas/；format 只导航结构契约并维护文件组织。semantics 解释对象含义并链接跨对象校验，cel-rules 链接规则 Schema 与真实源规则，patterns 只选择已有样例，不再维护第二份结构规范。实际检查与结果记录看 validation；类型与机器结果不替代业务来源或人类确认。
+业务分析、来源追溯、责任范围与实例执行各自维护方法。字段、类型、枚举和局部必填直接读取 schemas/；format 只导航结构契约并维护文件组织。semantics 解释对象含义并链接跨对象校验，cel-rules 链接规则 Schema 与真实源规则，patterns 只选择已有样例，不再维护第二份结构规范。实际检查与结果记录看 validation。
 
 只沿当前任务分支加载，不顺序读取整张索引。tests/ 是 Skill 开发验证材料，不是业务输入，也不从业务入口链接加载；操作说明留在测试目录。

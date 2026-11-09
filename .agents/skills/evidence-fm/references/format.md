@@ -13,7 +13,7 @@
 | 引用与角色扮演                     | [Relationship Schema](../schemas/relationship.schema.json) |
 | 可执行业务规则                     | [Rule Schema](../schemas/rule.schema.json)                 |
 
-Schema 负责单对象可表达结构；引用存在、上下文归属、关系端点和规则依赖还须执行语义检查。通过 Schema 不表示完整或获得业务批准，不能用 Schema 的可选项解释为业务上不需要。
+Schema 负责单对象可表达结构；引用存在、上下文归属、关系端点和规则依赖还须执行语义检查。通过 Schema 不表示完整；不能用 Schema 的可选项解释为业务上不需要。
 
 ### 验证输入
 

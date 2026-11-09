@@ -1,82 +1,76 @@
-# 属性追溯与业务单据模拟
+# 关键数据、属性追溯与单据模拟
 
-## 1. 两类不同的检查
+## 1. 三类检查
 
-- 属性追溯回答：关键金额、数量、时间、KPI 或领域结论从哪一个已建模 Entity 属性产生？
-- 场景模拟回答：只凭当时可获得的单据，业务 Role 能否完成操作，审计者能否重建凭证责任与结果？
+- **结构一致性**回答模型是否可解析、引用与责任是否成立。
+- **关键数据台账**回答每项金额、期限、数量、时间差从哪来。
+- **单据模拟**回答只凭当时可见的凭证，业务角色能否完成操作。
 
-结构合法不等于业务已验证：
+三者不可互相替代：
 
 ```text
-machineValidated → simulationPassed
+machineValidated → keyDataAccounted → simulationPassed
 ```
 
-脚本只能自动产生机器校验与模拟结果，不能据此声称业务方已确认；确认依据使用本次提供的人类明确决定及其覆盖范围。
 
-## 2. 关键数据项
 
-在 Entity Attribute 上使用 `keyData: true`：
+## 2. 关键数据项与台账
 
-```json
-{
-  "attributes": [
-    {
-      "name": "payable_minor_units",
-      "label": "应付最小货币单位金额",
-      "valueType": "int",
-      "required": true,
-      "keyData": true,
-      "meaning": "本次请求要求支付的整数金额",
-      "derivedByRuleRef": "rule.requested-amount"
-    }
-  ]
-}
+关键数据项是凭证上承载权责的金额、期限、数量、比例、时间差或 KPI 结论。它在 Entity Attribute 上以 `keyData: true` 标记，并且必须有确定提供方。
+
+### 2.1 逐项判定
+
+对每张凭证的每个关键数据项，按顺序判定：
+
+| 判定                         | 表达                                                             |
+| ---------------------------- | ---------------------------------------------------------------- |
+| 由合同约定或领域事实提供     | 先落为合同/领域对象属性，再由派生规则读取；不把数值留在说明文字里 |
+| 由前序凭证属性提供           | 写派生规则，表达式读取该属性；属性挂 `derivedByRuleRef`           |
+| 由形成方记录的结果事实       | 保持 `asserted`，在 `meaning` 写明形成方，并由完成规则核对一致    |
+| 由请求方形成时记录的输入     | 保持 `asserted`，限定为编号、发起时间、地址、描述、申请数量等形成输入 |
+| 规则暂时无法表达             | 记为能力限制或业务缺口，不填默认值、占位日期或自由参数           |
+
+派生规则只读取已建模属性；关键值的全部输入都要成为 Entity Attribute，不能藏在没有来源的标量绑定里。来源由 CEL AST 提取，不另写 `sourceAttributeRefs`。集合必须显式声明 `cardinality: many`，并通过 `all`、`exists`、`filter`、`map` 访问。
+
+### 2.2 禁止写法
+
+| 现象                                     | 为什么错                                       | 正确做法                                             |
+| ---------------------------------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| 把计算结果写进 Instance 值，属性仍是输入 | 生产边消失，接口把派生值当客户端入参           | 属性挂派生规则，实例值只作测试数据                   |
+| 账期、窗口、费率只写在 notes 或对话里    | 规则没有输入可读，只能手填                     | 先落为合同属性，再写规则                             |
+| 确认里重复抄写前序凭证的单号             | 同一数据两处维护，引用形同虚设                 | 用引用指向凭证，单号只留在凭证本身                   |
+| 用默认值、示例公式或恒真条件补洞         | 把未知伪装成事实                               | 保留缺口或能力限制                                   |
+| 只建引用边，不建数据边                   | 单据链可看，金额与期限不可复算                 | 引用与派生同批落地                                   |
+| 请求体接收可派生字段                     | 客户端可改写合同算出的值                       | 由服务端按规则计算，请求体只收形成输入               |
+
+### 2.3 台账输出
+
+```bash
+"$PYTHON" -B "$FM_SKILL_DIR/scripts/audit_key_data.py" "$FM_ROOT"
 ```
 
-Evidence 时间契约直接读取 [EVIDENCE_TIME_ATTRIBUTES](../scripts/fm_model.py) 与 [validate_evidence_times](../scripts/fm_model.py)，属性结构读取 [Entity Schema](../schemas/entity.schema.json)；范围完整时适用时间定义须齐全，实例须提供确定值。不支持 open-ended 或 `openEndedReason`。机器 lineage 将关键属性表示为两种来源分类（不是业务来源充分性的判定）：
+输出每个关键数据的分类：`derived`、`contract-term`、`domain-source`、`negotiation-source`、`result-fact`、`request-input`、`needs-decision`，并列出 `needsDecision` 与派生来源。
 
-1. `asserted`：所属 Entity 的非派生输入；在 Evidence 上如合同价格或付款实付金额，在领域对象上如档案的已核验标志。此标记不自动证明事实已获业务方确认；
-2. `derived`：由 `derivedByRuleRef` 指向的 CEL derivation 产生。
-
-业务依据按 [当前判断的来源方法](provenance.md)消费和核对；lineage 只分析已表达属性及其 CEL 依赖，不要求先展开全部字段的形成流程。asserted／derived 仅是机器表达分类，不增设业务来源枚举，也不代替真实依据；影响当前判断的来源缺口按 [输入复核](input-review.md)交接。
-
-机器从已声明的 CEL AST 提取依赖并验证类型、引用与环，不会发现业务公式、核实 asserted 值的提供依据，或判断所有业务来源是否充分；这些由业务发现和人工审核承担。
-
-不要另写 `sourceAttributeRefs`。派生来源由 CEL AST 从 `binding.attribute` 访问中提取，避免两份依赖描述漂移。关键派生值使用的全部业务／领域输入必须建模为 Entity Attribute（Evidence 或领域对象属性），不能藏在无来源的 scalar binding 中；Scenario `now`／`asOf` 只用于即时判断，不用于生成持久关键值。属性路径在报告中写作 `<entity-id>#<attribute-name>`，属性名为 snake_case，与 Entity 定义、CEL 访问、派生 target 和 Instance values 的直接键一致。
-
-规则 binding 默认 `cardinality: one`；集合必须显式声明：
-
-```json
-{
-  "bindings": {
-    "confirmations": {
-      "ref": "confirmation.delivery",
-      "cardinality": "many"
-    }
-  }
-}
-```
-
-集合属性只能通过 `all`、`exists`、`filter`、`map` 等 CEL collection macro 的局部变量访问。
+`needsDecision` 是待决清单，不是机器错误：每项必须给出提供方结论或补规则。脚本按 Entity 种类分类，不能判断业务意图；不得通过改名、改分类或删标记消除清单。
 
 ## 3. 属性追溯验证
 
 ```bash
-python3 <skill-dir>/scripts/build_fm_lineage.py <model-dir> \
-  --output <model-dir>/generated/traceability.json
+"$PYTHON" -B "$FM_SKILL_DIR/scripts/build_fm_lineage.py" "$FM_ROOT" \
+  --output "$FM_ROOT/generated/traceability.json"
 ```
 
 校验与报告覆盖：
 
 - CEL 读取的 Entity Attribute 必须存在；
 - derivation target、`derivedByRuleRef` 和结果类型必须相互一致；
-- key derived attribute 至少读取一个已建模属性；
+- 关键派生属性至少读取一个已建模属性；
 - 集合 binding 的 cardinality 与 macro 用法一致；
 - 属性派生图不得成环；
 - 非 derivation 规则列为约束，不伪装成数据生产边；
 - 输出按稳定属性路径和 Rule ID 排序。
 
-`traceability.json` 是可删除重建的确定性产物，不是新的事实源。
+`traceability.json` 是可删除重建的确定性产物，不是新的事实源；台账结论与业务来源由人工判断，不由脚本代替。
 
 ## 4. Validation Suite
 

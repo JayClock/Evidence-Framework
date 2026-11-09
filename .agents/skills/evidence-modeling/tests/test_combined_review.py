@@ -26,7 +26,7 @@ class CombinedWorkflowContracts(unittest.TestCase):
         entry = (SKILLS / "evidence-modeling/SKILL.md").read_text()
         workflow = (SKILLS / "evidence-modeling/references/workflow.md").read_text()
         for phrase in ("evidence-fm", "evidence-api", "evidence-visualization", "不重复 FM 检查",
-                       "FM 渐进维护授权", "范围完整性检查", "只修改 FM", "只校验", "不自动批准"):
+                       "FM 渐进维护授权", "范围完整性检查", "只修改 FM", "只校验", "人类结束确认"):
             self.assertIn(phrase, entry)
         for phrase in ("范围结束与下游接续", "--require-api", "不是原子事务",
                        "失败保留旧页", "modelDigest", "不反向修改 FM"):

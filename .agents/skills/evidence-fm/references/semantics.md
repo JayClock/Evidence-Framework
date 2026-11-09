@@ -62,6 +62,6 @@ Context Role 不代替 Evidence Role，也不代表结果已经存在。Evidence
 
 ## 一致性不是范围结束
 
-[validate_model](../scripts/fm_model.py) 检查当前已表达内容；[completeness_gaps](../scripts/fm_scope.py) 区分范围仍缺什么。可暂缺内容不等于允许错误引用、矛盾类型或依赖环。机器不能证明责任全部发现、人类确认有效或业务已批准。
+[validate_model](../scripts/fm_model.py) 检查当前已表达内容；[completeness_gaps](../scripts/fm_scope.py) 区分范围仍缺什么。可暂缺内容不等于允许错误引用、矛盾类型或依赖环。机器不能证明责任全部发现或人类确认有效。
 
 保存、责任终点、范围结束及人类确认只由 [责任方法](responsibility-closure.md) 维护；实际命令和检查结果只由 [校验纪律](validation.md) 维护。来源或语义更正后核对受影响的检查与下游，不通过改分类、删场景或缩范围制造完整。
