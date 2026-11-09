@@ -10,13 +10,11 @@
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | 同一订阅责任边界 | [合同 Context](entities/context-contract--content-subscription.json)                                                                                | 付款属于合同内履约，不另建责任边界              |
 | 签约参数与双方   | [合同](entities/evidence-contract--content-subscription.json)                                                                                       | 约定价格不是后续实付金额                        |
-| 付款义务         | [履约](entities/fulfillment--content-payment.json)                                                                                                  | 只声明合同归属，成员由自身归属与引用确定        |
 | 要求及截止       | [付款请求](entities/evidence-fulfillment-request--content-payment.json)                                                                             | 请求本身是时段凭证，关键属性显式定义            |
 | 截止计算         | [期限规则](rules/rule--payment-deadline.json)                                                                                                       | 在独立 CEL Rule 中派生，属性引用唯一规则        |
 | 付款结果         | [付款确认](entities/evidence-fulfillment-confirmation--content-payment.json)                                                                        | 完成证据与请求要求分开，业务时刻不是回调时刻    |
-| 合格完成         | [完成规则](rules/rule--content-payment-completed.json)                                                                                              | 结合匹配与时间判断，不在 Fulfillment 内重复规则 |
+| 合格完成         | [完成规则](rules/rule--content-payment-completed.json)                                                                                              | 结合匹配与时间判断，纯图直连请求与确认          |
 | 正常与逾期       | [正常场景](validation/scenarios/scenario--successful-payment.json)、[逾期场景](validation/scenarios/scenario--overdue-payment.json)                 | 预期由合成规则确定，不靠校验器输出反改预期      |
-| 对侧义务         | [访问履约](entities/fulfillment--content-access.json)                                                                                               | 合同双方各自承担一项主要履约项                  |
 | 访问要求与结果   | [访问请求](entities/evidence-fulfillment-request--content-access.json)、[访问确认](entities/evidence-fulfillment-confirmation--content-access.json) | 订阅者主张，平台方记录结果                      |
 | 访问场景         | [访问场景](validation/scenarios/scenario--content-access-after-payment.json)                                                                        | 另一个方向也须有可执行预期                      |
 

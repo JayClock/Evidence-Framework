@@ -15,6 +15,5 @@
   "target": {
     "entityRef": "request.content-payment",
     "attribute": "requested_minor_units"
-  },
-  "fulfillmentRef": "fulfillment.content-payment"
+  }
 }

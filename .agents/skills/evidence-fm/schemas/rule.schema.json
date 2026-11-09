@@ -34,7 +34,6 @@
       "minLength": 1
     },
     "contextRef": { "$ref": "#/$defs/id" },
-    "fulfillmentRef": { "$ref": "#/$defs/id" },
     "bindings": {
       "type": "object",
       "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
@@ -63,13 +62,6 @@
         "required": ["kind"]
       },
       "then": { "required": ["target"] }
-    },
-    {
-      "if": {
-        "properties": { "kind": { "enum": ["completion", "breach"] } },
-        "required": ["kind"]
-      },
-      "then": { "required": ["fulfillmentRef"] }
     }
   ],
   "additionalProperties": false,

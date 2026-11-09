@@ -42,6 +42,5 @@
       "meaning": "从合同派生的 ISO 4217 币种代码",
       "derivedByRuleRef": "rule.payment-request-currency"
     }
-  ],
-  "fulfillmentRef": "fulfillment.content-payment"
+  ]
 }

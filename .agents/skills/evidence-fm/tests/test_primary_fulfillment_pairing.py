@@ -19,7 +19,6 @@ from fm_scope import completeness_gaps, pairing_gaps  # pyright: ignore[reportMi
 EXAMPLE = SKILL / "tests/fixtures/models/valid-traceable-subscription"
 CONTRACT_CONTEXT = "context.content-subscription"
 ACCESS_FILES = (
-    "entities/fulfillment--content-access.json",
     "entities/evidence-fulfillment-request--content-access.json",
     "entities/evidence-fulfillment-confirmation--content-access.json",
     "relationships/relation--content-subscription-precedes-content-access-request.json",

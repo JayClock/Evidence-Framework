@@ -60,7 +60,7 @@ class SimulationTests(unittest.TestCase):
         self.assertEqual("breached", overdue["fulfillmentStatuses"][0]["status"])
         self.assertTrue(access["simulationPassed"])
         self.assertEqual(
-            "fulfillment.content-access", access["fulfillmentStatuses"][0]["fulfillmentRef"]
+            "instance.content-access-request", access["fulfillmentStatuses"][0]["requestInstanceRef"]
         )
         self.assertEqual("completed", access["fulfillmentStatuses"][0]["status"])
 
@@ -141,7 +141,6 @@ class SimulationTests(unittest.TestCase):
             model,
             instances,
             set(instances),
-            "fulfillment.content-payment",
             "instance.request",
             {
                 "rule.content-payment-completed": [
@@ -261,7 +260,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 set(instances),
-                "fulfillment.content-payment",
                 "instance.request-1",
                 rule_results,
                 set(),
@@ -273,7 +271,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 set(instances),
-                "fulfillment.content-payment",
                 "instance.request-2",
                 rule_results,
                 set(),
@@ -309,7 +306,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 set(instances),
-                "fulfillment.content-payment",
                 "instance.request",
                 results,
             ),
@@ -320,7 +316,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 set(instances),
-                "fulfillment.content-payment",
                 "instance.request",
                 {},
             ),
@@ -355,7 +350,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 {"instance.request", "instance.payment-1"},
-                "fulfillment.content-payment",
                 "instance.request",
                 {
                     "rule.content-payment-completed": [
@@ -376,7 +370,6 @@ class SimulationTests(unittest.TestCase):
                 model,
                 instances,
                 set(instances),
-                "fulfillment.content-payment",
                 "instance.request",
                 {
                     "rule.content-payment-completed": [

@@ -20,6 +20,5 @@
   },
   "expression": "confirmations.exists(c, c.request_number == request.request_number && c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at && proofs.exists(p, p.request_number == request.request_number && p.invoice_number == c.invoice_number && p.created_at <= c.confirmed_at && p.invoice_title == request.invoice_title))",
   "resultType": "bool",
-  "notes": "仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。",
-  "fulfillmentRef": "fulfillment.invoice"
+  "notes": "仅消费本申请可见的补充证据；编号、记录值及形成时间必须与确认及申请匹配。"
 }

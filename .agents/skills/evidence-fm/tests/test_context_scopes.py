@@ -63,7 +63,7 @@ class ContextScopeTests(unittest.TestCase):
                 any(item["category"] == "evidence" for item in model.entities)
             )
             document = compiled_document(model)
-            self.assertEqual({}, model.fulfillments_by_id)
+            self.assertEqual({}, model.requests_by_id)
             self.assert_compiled_schema(document)
             lineage, errors = analyze_traceability(model)
             self.assertEqual([], errors)
@@ -134,7 +134,7 @@ class ContextScopeTests(unittest.TestCase):
                     if item["category"] == "evidence"
                 },
             )
-            self.assertEqual({}, model.fulfillments_by_id)
+            self.assertEqual({}, model.requests_by_id)
             self.assert_compiled_schema(compiled_document(model))
 
     def test_empty_optional_directories_do_not_change_compilation(self) -> None:
@@ -281,8 +281,8 @@ class ContextScopeTests(unittest.TestCase):
             model = load_model(root)
             self.assertEqual([], validate_model(model))
             self.assertEqual(
-                before.fulfillments_by_id,
-                model.fulfillments_by_id,
+                before.requests_by_id,
+                model.requests_by_id,
             )
             for item in domain_documents():
                 collection = {
@@ -300,22 +300,22 @@ class ContextScopeTests(unittest.TestCase):
             errors = validate_model(load_model(root), complete=True)
             self.assertTrue(
                 any(
-                    "must contain a Fulfillment Confirmation or Evidence Role" in error
+                    "at least one Fulfillment Confirmation or Evidence Role" in error
                     for error in errors
                 ),
                 errors,
             )
 
-    def test_absent_fulfillment_cannot_hide_an_orphan_request(self) -> None:
+    def test_absent_contract_binding_invalidates_request(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "model"
             shutil.copytree(
                 Path(__file__).resolve().parent / "fixtures/valid-subscription", root
             )
-            (root / "entities" / "fulfillment--content-payment.json").unlink()
+            (root / "relationships" / "relation--content-subscription-precedes-content-payment-request.json").unlink()
             errors = validate_model(load_model(root))
             self.assertTrue(
-                any("existing Fulfillment" in error for error in errors),
+                any("root Contract" in error for error in errors),
                 errors,
             )
 

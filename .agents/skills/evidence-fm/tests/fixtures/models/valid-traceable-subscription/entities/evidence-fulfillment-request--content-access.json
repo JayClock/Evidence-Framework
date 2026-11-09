@@ -23,6 +23,5 @@
       "keyData": true,
       "meaning": "订阅期内的访问时段截止时间"
     }
-  ],
-  "fulfillmentRef": "fulfillment.content-access"
+  ]
 }

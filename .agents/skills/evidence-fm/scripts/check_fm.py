@@ -61,7 +61,7 @@ def check_model(root: Path, *, scope_refs: list[str] | None = None) -> dict[str,
             static_errors.append(str(error))
     gaps = [] if model.errors else completeness_gaps(target)
     applicable_rules, limitations = simulation_rules(target) if not model.errors else ([], [])
-    scenario_requirement = "required" if applicable_rules or target.fulfillments_by_id else "not-applicable"
+    scenario_requirement = "required" if applicable_rules or target.requests_by_id else "not-applicable"
     if scope_selected and scenario_requirement == "required":
         covered = {
             evaluation.get("ruleRef") for scenario in target_suite.scenarios
@@ -72,13 +72,16 @@ def check_model(root: Path, *, scope_refs: list[str] | None = None) -> dict[str,
         for rule in applicable_rules:
             if rule.get("id") not in covered:
                 gaps.append(f"{rule['id']}: scope scenarios do not evaluate this Rule")
-        status_coverage = {
-            status.get("fulfillmentRef") for scenario in target_suite.scenarios
+        request_coverage = {
+            status.get("requestEntityRef")
+            or status.get("requestRef")
+            or target_suite.instances_by_id.get(str(status.get("requestInstanceRef")), {}).get("entityRef")
+            for scenario in target_suite.scenarios
             for status in scenario.get("expectations", {}).get("fulfillmentStatuses", [])
         }
-        for fulfillment_id in target.fulfillments_by_id:
-            if fulfillment_id not in status_coverage:
-                gaps.append(f"{fulfillment_id}: scope scenarios do not assert this Fulfillment's status")
+        for request_id in target.requests_by_id:
+            if request_id not in request_coverage:
+                gaps.append(f"{request_id}: scope scenarios do not assert this Fulfillment Request's status")
     simulation_passed: bool | None = None
     simulation: dict[str, Any] = {}
     executed = 0

@@ -3,7 +3,7 @@
   "id": "rule.interruption-compensation-completed",
   "kind": "completion",
   "label": "提供断更补偿完成判断",
-  "description": "存在至少一份与请求（request.interruption-compensation）关联的确认凭证（confirmation.interruption-compensation）时，判定履约（fulfillment.interruption-compensation）完成。",
+  "description": "存在至少一份与请求（request.interruption-compensation）关联的确认凭证（confirmation.interruption-compensation）时，判定请求（request.interruption-compensation）完成。",
   "contextRef": "context.content-subscription",
   "bindings": {
     "request": {
@@ -15,6 +15,5 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.interruption-compensation"
+  "resultType": "bool"
 }

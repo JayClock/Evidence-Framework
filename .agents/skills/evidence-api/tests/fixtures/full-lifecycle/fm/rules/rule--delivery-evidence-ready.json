@@ -19,6 +19,5 @@
   },
   "expression": "proofs.exists(p, p.request_number == request.request_number && p.created_at <= now && p.delivery_address == request.delivery_address)",
   "resultType": "bool",
-  "notes": "形成目标前核对已存在、当前可见且属于本申请的补充证据；now是判断时刻，不用于生成凭证时间。",
-  "fulfillmentRef": "fulfillment.delivery"
+  "notes": "形成目标前核对已存在、当前可见且属于本申请的补充证据；now是判断时刻，不用于生成凭证时间。"
 }

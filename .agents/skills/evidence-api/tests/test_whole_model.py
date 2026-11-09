@@ -168,8 +168,7 @@ class WholeModelTest(unittest.TestCase):
             set(result["contextRefs"]),
         )
         self.assertIn("context.wechat-payment", result["contextRefs"])
-        self.assertNotIn("fulfillment.invoice", result["contextRefs"])
-        self.assertIn("fulfillment.invoice", result["fulfillmentRefs"])
+        self.assertNotIn("fulfillmentRefs", result)
 
     def test_superseded_format_and_unknown_selection_fields_are_rejected(self):
         value = copy.deepcopy(self.design)

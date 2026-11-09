@@ -39,6 +39,5 @@
       "keyData": true,
       "meaning": "引用本次采购支付申请金额"
     }
-  ],
-  "fulfillmentRef": "fulfillment.wechat-payment"
+  ]
 }

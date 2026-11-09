@@ -742,7 +742,7 @@ try {
   const conditions =
     await evaluate(`DATA.nodes.filter(n=>n.group==='rule'&&['completion','breach'].includes(n.kind)).map(n=>({
     id:n.id, kind:n.kind, description:n.description, expression:n.expression,
-    request:(n.bindings||[]).map(b=>nodes.get(b.ref)).find(r=>r?.kind==='fulfillment_request'&&r.fulfillmentRef===n.fulfillmentRef)?.id
+    request:(n.bindings||[]).map(b=>nodes.get(b.ref)).find(r=>r?.kind==='fulfillment_request')?.id
   }))`);
   for (const condition of conditions.filter((n) => n.request)) {
     assert.equal(

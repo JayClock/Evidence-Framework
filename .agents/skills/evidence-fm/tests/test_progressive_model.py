@@ -233,7 +233,7 @@ class ProgressiveModelTests(unittest.TestCase):
         report = check_fm.check_model(root, scope_refs=[context])
         self.assertFalse(report["consistent"], report)
         self.assertFalse(report["complete"])
-        self.assertTrue(any("fulfillment.refund" in error for error in report["errors"]))
+        self.assertTrue(any("refund" in error for error in report["errors"]))
 
     def test_precontract_rules_execute_without_inventing_a_fulfillment(self):
         self.finish_receipt_times()
@@ -250,7 +250,7 @@ class ProgressiveModelTests(unittest.TestCase):
         self.assertTrue(report["complete"], report)
         self.assertTrue(report["simulationPassed"], report)
         self.assertEqual(2, report["executedScenarioCount"])
-        self.assertEqual({}, load_model(self.root).fulfillments_by_id)
+        self.assertFalse(any(e.get("category") == "fulfillment" for e in load_model(self.root).entities))
 
     def test_consumer_rejects_scope_and_simulation_claims_that_do_not_match(self):
         root = SKILL / "tests/fixtures/models/valid-traceable-subscription"

@@ -112,12 +112,6 @@ class ContractResponsibilityTests(unittest.TestCase):
         )
 
     def test_contract_evidence_can_link_to_direct_child_fulfillment(self) -> None:
-        fulfillment = {
-            "id": "fulfillment.purchase",
-            "type": "entity",
-            "category": "fulfillment",
-            "contextRef": "context.purchase",
-        }
         note = {
             "id": "evidence.purchase-note",
             "type": "entity",
@@ -131,11 +125,8 @@ class ContractResponsibilityTests(unittest.TestCase):
             "category": "evidence",
             "kind": "fulfillment_request",
             "contextRef": "context.purchase",
-            "fulfillmentRef": "fulfillment.purchase",
         }
-        self.entities.update(
-            {fulfillment["id"]: fulfillment, note["id"]: note, request["id"]: request}
-        )
+        self.entities.update({note["id"]: note, request["id"]: request})
         for entity in self.entities.values():
             entity["type"] = "entity"
 
@@ -169,12 +160,6 @@ class ContractResponsibilityTests(unittest.TestCase):
             "category": "context",
             "kind": "contract",
         }
-        fulfillment = {
-            "id": "fulfillment.other",
-            "type": "entity",
-            "category": "fulfillment",
-            "contextRef": "context.other",
-        }
         note = {
             "id": "evidence.purchase-note",
             "type": "entity",
@@ -188,12 +173,10 @@ class ContractResponsibilityTests(unittest.TestCase):
             "category": "evidence",
             "kind": "fulfillment_request",
             "contextRef": "context.other",
-            "fulfillmentRef": "fulfillment.other",
         }
         self.entities.update(
             {
                 other_contract["id"]: other_contract,
-                fulfillment["id"]: fulfillment,
                 note["id"]: note,
                 request["id"]: request,
             }

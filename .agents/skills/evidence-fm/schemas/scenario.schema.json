@@ -142,9 +142,9 @@
     },
     "fulfillmentStatus": {
       "type": "object",
-      "required": ["fulfillmentRef", "requestInstanceRef", "status"],
+      "required": ["requestInstanceRef", "status"],
       "properties": {
-        "fulfillmentRef": {
+        "requestEntityRef": {
           "$ref": "#/$defs/id"
         },
         "requestInstanceRef": {

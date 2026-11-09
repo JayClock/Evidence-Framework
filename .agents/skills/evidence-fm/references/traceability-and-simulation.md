@@ -148,7 +148,6 @@ fm-model/validation/
   "expectations": {
     "fulfillmentStatuses": [
       {
-        "fulfillmentRef": "fulfillment.payment",
         "requestInstanceRef": "instance.payment-request",
         "status": "completed"
       }

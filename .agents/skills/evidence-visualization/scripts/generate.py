@@ -86,11 +86,9 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
             raise ValueError(f"重复对象 ID: {identity}")
         node = {"id": identity, "label": title or value.get("label") or identity,
                 "group": group, "kind": value.get("kind", group),
-                "parent": value.get("fulfillmentRef") or value.get("contextRef") or value.get("parentContextRef") or ""}
+                "parent": value.get("contextRef") or value.get("parentContextRef") or ""}
         if value.get("contextRef"):
             node["contextRef"] = value["contextRef"]
-        if value.get("fulfillmentRef"):
-            node["fulfillmentRef"] = value["fulfillmentRef"]
         nodes[identity] = node
         return node
 
@@ -105,7 +103,6 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
     for entity in model.get("entities", []):
         node = add(entity, entity["category"])
         link(node["id"], entity.get("contextRef") or entity.get("parentContextRef"), "所属上下文")
-        link(node["id"], entity.get("fulfillmentRef"), "所属履约")
         for ref in entity.get("roleRefs", []):
             link(node["id"], ref, "合同责任角色")
         link(node["id"], entity.get("responsibleRoleRef"), "凭证责任方")
@@ -131,7 +128,6 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
         node.update(select(rule, "description expression resultType"))
         node["bindings"] = [{"alias": alias, **select(binding, "ref cardinality type")} for alias, binding in rule.get("bindings", {}).items()]
         link(node["id"], rule.get("contextRef"), "适用上下文")
-        link(node["id"], rule.get("fulfillmentRef"), "适用履约")
         for binding in node["bindings"]:
             link(node["id"], binding.get("ref"), f'读取 · {binding["alias"]}')
         target = rule.get("target")
@@ -162,7 +158,7 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
                 actual = {}
             node["evaluations"].append({"ruleRef": evaluation["ruleRef"], "expected": evaluation.get("expectedResult"), "actual": actual.get("result"), "passed": actual.get("passed")})
             link(node["id"], evaluation["ruleRef"], "验证规则")
-        node["statuses"] = [select(s, "fulfillmentRef requestInstanceRef expectedStatus status passed") for s in result.get("fulfillmentStatuses", [])]
+        node["statuses"] = [select(s, "requestInstanceRef requestEntityRef requestRef expectedStatus status passed") for s in result.get("fulfillmentStatuses", [])]
         node["events"] = [{"instanceRef": v["instanceRef"], "entityRef": v["entityRef"], "values": scalar_values(v.get("values", {}))} for v in result.get("instanceValues", [])]
         for step in node["steps"]:
             link(node["id"], step.get("actingRoleRef"), "场景参与角色")
@@ -218,20 +214,6 @@ def project(model: dict, scenarios: list, instances: list, simulation: dict, api
             link(node["id"], journey.get("actorRoleRef"), "旅程调用角色")
             for step in node["steps"]:
                 link(node["id"], step.get("capabilityRef"), "HTTP 步骤（静态）")
-
-    relations = model.get("relationships", [])
-    for node in list(nodes.values()):
-        if node["group"] == "fulfillment":
-            members = [n for n in nodes.values() if n["parent"] == node["id"]]
-            node["requests"] = [n["id"] for n in members if n["kind"] == "fulfillment_request"]
-            node["confirmations"] = [n["id"] for n in members if n["kind"] == "fulfillment_confirmation"]
-            node["proofRoles"] = sorted(n["id"] for n in members if n["group"] == "role" and n["kind"] == "evidence" and n.get("contextRef") == node.get("contextRef"))
-            node["proofPlayers"] = sorted({r["sourceRef"] for r in relations if r["kind"] == "plays_role" and r["targetRef"] in node["proofRoles"]})
-            for relation in relations:
-                if relation["kind"] == "references" and relation["targetRef"] in node["requests"]:
-                    target = nodes.get(relation["sourceRef"], {})
-                    if target.get("contextRef") == node.get("contextRef") and target.get("kind") == "fulfillment_confirmation" and target["id"] not in node["confirmations"]:
-                        node["confirmations"].append(target["id"])
 
     if traces:
         traces_by_evidence: dict[str, list[dict]] = {}

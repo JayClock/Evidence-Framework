@@ -20,7 +20,6 @@ class FMIndex:
     scenarios: dict[str, dict[str, Any]]
     instances: dict[str, dict[str, Any]]
     members_by_context: dict[str, list[str]]
-    fulfillment_parent: dict[str, str]
     files: dict[str, str]
 
 
@@ -134,16 +133,10 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
     except (FMSuiteReadError, OSError) as exc:
         return None, [error("FM_INVALID", f"无法读取验证套件: {exc}")]
     members: dict[str, list[str]] = {}
-    fulfillment_parent: dict[str, str] = {}
     for entity in entities.values():
         context_ref = entity.get("contextRef")
         if context_ref:
             members.setdefault(context_ref, []).append(entity["id"])
-        if (
-            entity.get("category") == "fulfillment"
-            and entity.get("contextRef")
-        ):
-            fulfillment_parent[entity["id"]] = entity["contextRef"]
     for values in members.values():
         values.sort()
     return FMIndex(
@@ -155,7 +148,6 @@ def load_fm(fm_root: Path, check_report: Any) -> tuple[FMIndex | None, list[Diag
         scenarios,
         instances,
         members,
-        fulfillment_parent,
         before,
     ), diagnostics
 

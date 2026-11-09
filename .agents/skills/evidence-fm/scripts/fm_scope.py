@@ -145,21 +145,22 @@ def pairing_gaps(model: LoadedModel) -> list[str]:
     """
     entities = model.entities_by_id
     claimants: dict[str, set[str]] = {}
-    contexts_with_fulfillments: set[str] = set()
-    for fulfillment_id, fulfillment in model.fulfillments_by_id.items():
-        context_ref = str(fulfillment.get("contextRef"))
-        contexts_with_fulfillments.add(context_ref)
-        requests, _, _ = fulfillment_members(fulfillment_id, entities)
-        for request in requests:
-            role_ref = normalize(request.get("responsibleRoleRef"))
-            if role_ref is None:
-                continue
+    contexts_with_requests: set[str] = set()
+    requests = [
+        item for item in model.entities
+        if entity_signature(item) == ("evidence", "fulfillment_request")
+    ]
+    for request in requests:
+        context_ref = str(request.get("contextRef"))
+        contexts_with_requests.add(context_ref)
+        role_ref = normalize(request.get("responsibleRoleRef"))
+        if role_ref is not None:
             claimants.setdefault(context_ref, set()).add(role_ref)
     gaps: list[str] = []
     for context in model.entities:
         if entity_signature(context) != ("context", "contract"):
             continue
-        if str(context["id"]) not in contexts_with_fulfillments:
+        if str(context["id"]) not in contexts_with_requests:
             continue  # Reported as the missing primary Fulfillment gap instead.
         contracts = [
             entities[ref]
@@ -182,11 +183,14 @@ def pairing_gaps(model: LoadedModel) -> list[str]:
 def completeness_gaps(model: LoadedModel) -> list[str]:
     consistent_errors = set(validate_model(model))
     gaps = [error for error in validate_model(model, complete=True) if error not in consistent_errors]
+    requests = [
+        item for item in model.entities
+        if entity_signature(item) == ("evidence", "fulfillment_request")
+    ]
+    contexts_with_requests = {str(item.get("contextRef")) for item in requests}
     for entity in model.entities:
-        if entity_signature(entity) == ("context", "contract") and not any(
-            fulfillment.get("contextRef") == entity["id"] for fulfillment in model.fulfillments_by_id.values()
-        ):
-            gaps.append(f"{entity['id']}: Contract Context requires its primary Fulfillment before scope completion")
+        if entity_signature(entity) == ("context", "contract") and str(entity["id"]) not in contexts_with_requests:
+            gaps.append(f"{entity['id']}: Contract Context requires its primary Fulfillment Request before scope completion")
     gaps.extend(pairing_gaps(model))
     return gaps
 
@@ -208,7 +212,7 @@ def ready_scope(model: LoadedModel, report: dict[str, Any]) -> LoadedModel:
     if actual != report.get("contextRefs"):
         raise ValueError("FM checked scope dependencies do not match current source")
     rules, _ = simulation_rules(selected)
-    requirement = "required" if rules or selected.fulfillments_by_id else "not-applicable"
+    requirement = "required" if rules or selected.requests_by_id else "not-applicable"
     if report.get("scenarioRequirement") != requirement:
         raise ValueError("FM scenario applicability does not match checked scope")
     if requirement == "required" and not (

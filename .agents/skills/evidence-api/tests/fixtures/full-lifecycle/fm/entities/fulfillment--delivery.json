@@ -1,7 +1,0 @@
-{
-  "type": "entity",
-  "id": "fulfillment.delivery",
-  "category": "fulfillment",
-  "label": "交付商品",
-  "contextRef": "context.product-procurement"
-}

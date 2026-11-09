@@ -14,8 +14,7 @@
     "diagnostics",
     "http",
     "modelCoverage",
-    "contextRefs",
-    "fulfillmentRefs"
+    "contextRefs"
   ],
   "properties": {
     "schemaVersion": {
@@ -296,11 +295,6 @@
     },
     "modelCoverage": {
       "type": "array"
-    },
-    "fulfillmentRefs": {
-      "type": "array",
-      "items": { "type": "string" },
-      "uniqueItems": true
     },
     "contextRefs": {
       "type": "array",

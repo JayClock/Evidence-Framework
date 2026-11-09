@@ -38,30 +38,16 @@ class FulfillmentModelTests(unittest.TestCase):
             encoding="utf-8",
         )
 
-    def test_valid_subscription_builds_fulfillment_members_from_fulfillment_refs(
+    def test_valid_subscription_builds_fulfillment_members_from_relationships(
         self,
     ) -> None:
         model = load_model(self.fixture("valid-subscription"))
         self.assertEqual([], validate_model(model))
-        fulfillment = model.fulfillments_by_id["fulfillment.content-payment"]
-        self.assertEqual(
-            {
-                "type": "entity",
-                "id": "fulfillment.content-payment",
-                "category": "fulfillment",
-                "label": "支付内容产品费用",
-                "contextRef": "context.content-subscription",
-            },
-            fulfillment,
-        )
-        members = {
-            item["id"]
-            for item in model.entities
-            if item.get("fulfillmentRef") == fulfillment["id"]
-        }
-        self.assertEqual(
-            {"request.content-payment", "confirmation.content-payment"}, members
-        )
+        request = model.requests_by_id["request.content-payment"]
+        self.assertEqual("context.content-subscription", request["contextRef"])
+        reqs, confs, roles = model.fulfillment_members("request.content-payment")
+        self.assertEqual(["request.content-payment"], [r["id"] for r in reqs])
+        self.assertEqual(["confirmation.content-payment"], [c["id"] for c in confs])
 
     def test_contract_is_resolved_from_parent_context_root(self) -> None:
         model = load_model(self.fixture("valid-subscription"))
@@ -74,42 +60,37 @@ class FulfillmentModelTests(unittest.TestCase):
         ]
         self.assertEqual(["references"], [edge["kind"] for edge in contract_edges])
 
-    def test_fulfillment_rejects_legacy_member_indexes(self) -> None:
+    def test_fulfillment_category_is_rejected_as_entity(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            path = root / "entities/fulfillment--content-payment.json"
-            fulfillment = self.read_json(path)
-            for field in (
-                "contractRef",
-                "requestRef",
-                "requestInterval",
-                "confirmationRefs",
-                "subjectRefs",
-                "completionPolicy",
-                "requestTrigger",
-                "confirmationTriggers",
-                "breaches",
-            ):
-                changed = copy.deepcopy(fulfillment)
-                changed[field] = "legacy"
-                self.write_json(path, changed)
-                self.assertTrue(validate_model(load_model(root)), field)
-            self.write_json(path, fulfillment)
+            path = root / "entities/invalid--fulfillment.json"
+            self.write_json(
+                path,
+                {
+                    "type": "entity",
+                    "id": "fulfillment.content-payment",
+                    "category": "fulfillment",
+                    "label": "Legacy Fulfillment",
+                },
+            )
+            errors = validate_model(load_model(root))
+            self.assertTrue(any("is not one of" in e or "category" in e for e in errors), errors)
 
     def test_scope_completion_rejects_missing_confirmation(self) -> None:
         errors = validate_model(
             load_model(self.fixture("invalid-missing-confirmation")), complete=True
         )
         self.assertTrue(
-            any("must contain a Fulfillment Confirmation" in e for e in errors)
+            any("must be associated with at least one Fulfillment Confirmation" in e for e in errors),
+            errors,
         )
 
     def test_orphan_request_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.copied_fixture("valid-subscription", directory)
-            (root / "entities/fulfillment--content-payment.json").unlink()
+            (root / "relationships/relation--content-subscription-precedes-content-payment-request.json").unlink()
             errors = validate_model(load_model(root))
-            self.assertTrue(any("existing Fulfillment" in e for e in errors))
+            self.assertTrue(any("root Contract" in e for e in errors), errors)
 
     def test_fulfillment_cannot_be_evidence_graph_endpoint(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -126,7 +107,7 @@ class FulfillmentModelTests(unittest.TestCase):
                 },
             )
             errors = validate_model(load_model(root))
-            self.assertTrue(any("must not be an endpoint" in e for e in errors), errors)
+            self.assertTrue(any("unknown sourceRef 'fulfillment.content-payment'" in e for e in errors), errors)
 
     def test_evidence_relationship_directions_are_enforced(self) -> None:
         mutations = {
@@ -240,12 +221,12 @@ class FulfillmentModelTests(unittest.TestCase):
         model = load_model(self.fixture("valid-content-platform"))
         self.assertEqual([], validate_model(model))
         document = compiled_document(model)
-        fulfillment_ids = {
+        request_ids = {
             item["id"]
             for item in document["entities"]
-            if item.get("category") == "fulfillment"
+            if item.get("kind") == "fulfillment_request"
         }
-        self.assertEqual(set(model.fulfillments_by_id), fulfillment_ids)
+        self.assertEqual(set(model.requests_by_id), request_ids)
         self.assertNotIn("fulfillments", document)
 
     def test_compilation_contains_only_model_type_collections_and_is_deterministic(self) -> None:

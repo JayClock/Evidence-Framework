@@ -269,27 +269,22 @@
   "expectations": {
     "fulfillmentStatuses": [
       {
-        "fulfillmentRef": "fulfillment.payment",
         "requestInstanceRef": "instance.payment-request",
         "status": "completed"
       },
       {
-        "fulfillmentRef": "fulfillment.invoice",
         "requestInstanceRef": "instance.invoice-request",
         "status": "completed"
       },
       {
-        "fulfillmentRef": "fulfillment.delivery",
         "requestInstanceRef": "instance.delivery-request",
         "status": "completed"
       },
       {
-        "fulfillmentRef": "fulfillment.wechat-payment",
         "requestInstanceRef": "instance.wechat-payment-request",
         "status": "completed"
       },
       {
-        "fulfillmentRef": "fulfillment.wechat-charge",
         "requestInstanceRef": "instance.wechat-charge-request",
         "status": "completed"
       }

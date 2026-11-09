@@ -23,16 +23,15 @@ def fixture():
         "entities": [
             {"id": "context.a", "category": "context", "kind": "contract", "label": "约定"},
             {"id": "contract.a", "category": "evidence", "kind": "contract", "contextRef": "context.a", "label": "协议"},
-            {"id": "fulfillment.a", "category": "fulfillment", "contextRef": "context.a", "label": "付款"},
-            {"id": "request.a", "category": "evidence", "kind": "fulfillment_request", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "label": "付款请求", "sourceRefs": ["SECRET"], "notes": "SECRET"},
-            {"id": "role.proof", "category": "role", "kind": "evidence", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "label": "付款证明"},
+            {"id": "request.a", "category": "evidence", "kind": "fulfillment_request", "contextRef": "context.a", "label": "付款请求", "sourceRefs": ["SECRET"], "notes": "SECRET"},
+            {"id": "role.proof", "category": "role", "kind": "evidence", "contextRef": "context.a", "label": "付款证明"},
             {"id": "confirmation.other", "category": "evidence", "kind": "fulfillment_confirmation", "label": "外部扣款"},
         ],
         "relationships": [
             {"id": "relation.use", "kind": "references", "sourceRef": "request.a", "targetRef": "role.proof", "label": "采信"},
             {"id": "relation.play", "kind": "plays_role", "sourceRef": "confirmation.other", "targetRef": "role.proof", "label": "提供证明"},
         ],
-        "rules": [{"id": "rule.a", "label": "已付款", "kind": "completion", "contextRef": "context.a", "fulfillmentRef": "fulfillment.a", "description": "以外部付款证明判断完成。", "expression": "proof.success", "bindings": {"proof": {"ref": "role.proof"}}, "sourceRefs": ["SECRET"]}],
+        "rules": [{"id": "rule.a", "label": "已付款", "kind": "completion", "contextRef": "context.a", "description": "以外部付款证明判断完成。", "expression": "proof.success", "bindings": {"proof": {"ref": "role.proof"}}, "sourceRefs": ["SECRET"]}],
     }
 
 
@@ -43,56 +42,17 @@ class WorkbenchTests(unittest.TestCase):
     def test_contract_count_excludes_contract_evidence(self):
         self.assertEqual(1, self.project()["counts"]["contracts"])
 
-    def test_external_proof_is_not_a_missing_confirmation(self):
+    def test_pure_graph_request_projection(self):
         data = self.project()
-        obligation = next(n for n in data["nodes"] if n["id"] == "fulfillment.a")
-        self.assertEqual(["role.proof"], obligation["proofRoles"])
-        self.assertEqual(["confirmation.other"], obligation["proofPlayers"])
-        self.assertEqual([], obligation["confirmations"])
-
-    def test_only_owned_result_roles_become_fulfillment_proofs(self):
-        model = fixture()
-        model["entities"].extend([
-            {"id": "role.domain", "category": "role", "kind": "domain", "label": "领域能力"},
-            {"id": "evidence.old", "category": "evidence", "kind": "other_evidence", "label": "历史记录"},
-            {"id": "role.unreferenced", "category": "role", "kind": "evidence", "label": "无引用证明"},
-        ])
-        for target in ("role.domain", "evidence.old", "role.unreferenced"):
-            model["relationships"].append({"id": f"relation.{target}", "kind": "references",
-                                           "sourceRef": "request.a", "targetRef": target})
-        node = next(n for n in self.project(model)["nodes"] if n["id"] == "fulfillment.a")
-        self.assertEqual(["role.proof"], node["proofRoles"])
-        self.assertEqual(["confirmation.other"], node["proofPlayers"])
-        self.assertEqual([], node["confirmations"])
-
-    def test_result_role_does_not_require_a_support_reference_or_completion_rule(self):
-        model = fixture()
-        model["relationships"] = [r for r in model["relationships"] if r["id"] != "relation.use"]
-        model["rules"] = []
-        node = next(n for n in self.project(model)["nodes"] if n["id"] == "fulfillment.a")
-        self.assertEqual(["role.proof"], node["proofRoles"])
-        self.assertEqual(["confirmation.other"], node["proofPlayers"])
-
-    def test_unwrapped_request_is_projected_without_an_empty_fulfillment(self):
-        model = fixture()
-        model["entities"] = [e for e in model["entities"] if e["id"] != "fulfillment.a"]
-        for entity in model["entities"]:
-            entity.pop("fulfillmentRef", None)
-        model["rules"] = []
-        data = self.project(model)
         self.assertFalse(any(n["group"] == "fulfillment" for n in data["nodes"]))
         request = next(n for n in data["nodes"] if n["id"] == "request.a")
         self.assertEqual("context.a", request["parent"])
         self.assertNotIn("fulfillmentRef", request)
 
-    def test_shared_confirmation_and_proof_roles_are_both_preserved(self):
-        model = fixture()
-        next(e for e in model["entities"] if e["id"] == "confirmation.other")["contextRef"] = next(e for e in model["entities"] if e["id"] == "fulfillment.a")["contextRef"]
-        model["relationships"].append({"id": "relation.shared", "kind": "references", "sourceRef": "confirmation.other", "targetRef": "request.a"})
-        data = self.project(model)
-        node = next(n for n in data["nodes"] if n["id"] == "fulfillment.a")
-        self.assertEqual(["confirmation.other"], node["confirmations"])
-        self.assertEqual(["role.proof"], node["proofRoles"])
+    def test_explicit_relationships_projected_as_edges(self):
+        data = self.project()
+        self.assertTrue(any(e["from"] == "request.a" and e["to"] == "role.proof" for e in data["edges"]))
+        self.assertTrue(any(e["from"] == "confirmation.other" and e["to"] == "role.proof" for e in data["edges"]))
 
     def test_binding_scope_uses_explicit_links(self):
         api = {"bindings": [{"id": "binding.a", "scopeResourceRef": "resource.a", "basis": {"sourceRefs": ["SECRET"]}}], "resources": [{"id": "resource.a", "entityRef": "request.a"}]}
@@ -109,8 +69,8 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_field_derivation_reuses_rule_and_preserves_runtime_binding_type(self):
         model = fixture()
-        model["entities"][1]["attributes"] = [{"name": "amount", "valueType": "int"}]
-        model["entities"][3]["attributes"] = [
+        next(e for e in model["entities"] if e["id"] == "contract.a")["attributes"] = [{"name": "amount", "valueType": "int"}]
+        next(e for e in model["entities"] if e["id"] == "request.a")["attributes"] = [
             {"name": "amount", "valueType": "int", "derivedByRuleRef": "rule.amount"},
             {"name": "currency", "valueType": "string"},
         ]

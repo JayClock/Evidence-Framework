@@ -29,6 +29,5 @@
       "required": true,
       "meaning": "ISO 4217 币种代码"
     }
-  ],
-  "fulfillmentRef": "fulfillment.content-payment"
+  ]
 }

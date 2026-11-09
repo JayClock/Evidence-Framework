@@ -41,7 +41,6 @@
           "required": ["evidenceRef"],
           "properties": {
             "contextRef": { "$ref": "#/$defs/id" },
-            "fulfillmentRef": { "$ref": "#/$defs/id" },
             "evidenceRef": { "$ref": "#/$defs/id" },
             "roleRef": { "$ref": "#/$defs/id" }
           },

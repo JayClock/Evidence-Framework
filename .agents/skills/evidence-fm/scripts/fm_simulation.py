@@ -26,6 +26,7 @@ from fm_model import (
     entity_signature,
     expected_filename,
     fulfillment_members,
+    fulfillment_results,
     load_single_json,
     normalize,
     validate_against_schema,
@@ -125,7 +126,6 @@ def load_validation_suite(model_root: Path) -> ValidationSuite:
 def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> list[str]:
     errors = list(suite.errors)
     entities = model.entities_by_id
-    fulfillments = model.fulfillments_by_id
     rules = model.rules_by_id
     instances = suite.instances_by_id
 
@@ -423,26 +423,20 @@ def validate_validation_suite(model: LoadedModel, suite: ValidationSuite) -> lis
         for expectation in expectations.get("fulfillmentStatuses") or []:
             if not isinstance(expectation, dict):
                 continue
-            fulfillment_ref = normalize(expectation.get("fulfillmentRef"))
             request_instance_ref = normalize(expectation.get("requestInstanceRef"))
-            fulfillment = fulfillments.get(fulfillment_ref or "")
-            if fulfillment is None:
-                errors.append(f"{scenario_id}: unknown Fulfillment '{fulfillment_ref}'")
-                continue
             request_instance = instances.get(request_instance_ref or "")
-            request_types, _, _ = fulfillment_members(
-                fulfillment_ref or "", entities, model.relationships
-            )
-            expected_request_refs = {str(item["id"]) for item in request_types}
             if request_instance is None:
                 errors.append(
                     f"{scenario_id}: unknown request instance '{request_instance_ref}'"
                 )
-            elif request_instance.get("entityRef") not in expected_request_refs:
-                errors.append(
-                    f"{scenario_id}: request instance '{request_instance_ref}' does not instantiate "
-                    f"the Request in '{fulfillment_ref}'"
-                )
+            else:
+                inst_entity_ref = str(request_instance.get("entityRef"))
+                entity = entities.get(inst_entity_ref)
+                if entity_signature(entity) != ("evidence", "fulfillment_request"):
+                    errors.append(
+                        f"{scenario_id}: request instance '{request_instance_ref}' does not instantiate "
+                        "a Fulfillment Request"
+                    )
 
     return dedupe(errors)
 
@@ -602,13 +596,11 @@ def simulate_scenario(
     ) or []:
         if not isinstance(expectation, dict):
             continue
-        fulfillment_ref = str(expectation.get("fulfillmentRef"))
         request_instance_ref = str(expectation.get("requestInstanceRef"))
         actual = fulfillment_status(
             model,
             instances,
             issued,
-            fulfillment_ref,
             request_instance_ref,
             rule_results,
             set(scenario.get("manualCompletionRequestRefs") or []),
@@ -617,18 +609,21 @@ def simulate_scenario(
         passed = actual == expected
         if not passed:
             errors.append(
-                f"{scenario_id}: Fulfillment '{fulfillment_ref}' for '{request_instance_ref}' "
+                f"{scenario_id}: Fulfillment for '{request_instance_ref}' "
                 f"is '{actual}', expected '{expected}'"
             )
-        status_results.append(
-            {
-                "fulfillmentRef": fulfillment_ref,
-                "requestInstanceRef": request_instance_ref,
-                "status": actual,
-                "expectedStatus": expected,
-                "passed": passed,
-            }
-        )
+        req_inst = instances.get(request_instance_ref, {})
+        status_item: dict[str, Any] = {
+            "requestInstanceRef": request_instance_ref,
+            "status": actual,
+            "expectedStatus": expected,
+            "passed": passed,
+        }
+        if expectation.get("requestEntityRef"):
+            status_item["requestEntityRef"] = str(expectation.get("requestEntityRef"))
+        elif req_inst.get("entityRef"):
+            status_item["requestEntityRef"] = str(req_inst.get("entityRef"))
+        status_results.append(status_item)
 
     return {
         "scenarioId": scenario_id,
@@ -831,26 +826,25 @@ def fulfillment_status(
     model: LoadedModel,
     instances: dict[str, dict[str, Any]],
     issued: set[str],
-    fulfillment_ref: str,
     request_instance_ref: str,
     rule_results: dict[str, list[dict[str, Any]]],
     manual_completions: set[str] | None = None,
 ) -> str:
     """Evaluate one request only from rules and evidence available in the graph."""
-    fulfillment = model.fulfillments_by_id.get(fulfillment_ref)
     request_instance = instances.get(request_instance_ref)
-    requests, confirmations, evidence_roles = fulfillment_members(
-        fulfillment_ref, model.entities_by_id, model.relationships
-    )
-    request_types = {str(item["id"]) for item in requests}
     if (
-        fulfillment is None
-        or request_instance is None
+        request_instance is None
         or request_instance_ref not in issued
-        or request_instance.get("entityRef") not in request_types
     ):
         return "not_requested"
+    request_type = str(request_instance.get("entityRef"))
+    request_entity = model.entities_by_id.get(request_type)
+    if not request_entity or entity_signature(request_entity) != ("evidence", "fulfillment_request"):
+        return "not_requested"
 
+    confirmations, evidence_roles = fulfillment_results(
+        request_type, model.entities_by_id, model.relationships, model.rules
+    )
     confirmation_types = {str(item["id"]) for item in confirmations}
     for role in evidence_roles:
         confirmation_types.update(
@@ -866,11 +860,16 @@ def fulfillment_status(
         and instance_descends_from(instance_ref, request_instance_ref, instances)
     }
 
+    req_context = request_entity.get("contextRef")
     rules = [
         rule
         for rule in model.rules
-        if rule.get("fulfillmentRef") == fulfillment_ref
+        if rule.get("contextRef") == req_context
         and rule.get("kind") in {"completion", "breach"}
+        and any(
+            isinstance(b, dict) and b.get("ref") == request_type
+            for b in (rule.get("bindings") or {}).values()
+        )
     ]
     for rule in rules:
         if rule.get("kind") != "breach":
@@ -884,14 +883,17 @@ def fulfillment_status(
             return "breached"
 
     completion_rules = [rule for rule in rules if rule.get("kind") == "completion"]
-    for rule in completion_rules:
-        results = scoped_rule_results(
-            rule_results.get(str(rule.get("id")), []),
-            request_instance_ref,
-            instances,
-        )
-        if related_confirmations and any(bool(result) for result in results):
-            return "completed"
+    if completion_rules:
+        for rule in completion_rules:
+            results = scoped_rule_results(
+                rule_results.get(str(rule.get("id")), []),
+                request_instance_ref,
+                instances,
+            )
+            if related_confirmations and any(bool(result) for result in results):
+                return "completed"
+    elif related_confirmations:
+        return "completed"
     return "pending"
 
 

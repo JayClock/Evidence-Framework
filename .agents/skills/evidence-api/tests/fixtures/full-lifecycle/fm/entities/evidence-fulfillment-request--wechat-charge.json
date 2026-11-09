@@ -31,6 +31,5 @@
       "keyData": true,
       "meaning": "引用本次采购支付申请金额，作为请求支付的最小货币单位整数金额"
     }
-  ],
-  "fulfillmentRef": "fulfillment.wechat-charge"
+  ]
 }

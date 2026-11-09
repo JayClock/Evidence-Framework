@@ -17,7 +17,7 @@ function graphCardinality(value) {
 // Layout is a projection, not another model. Only explicit facts become links.
 function buildBusinessGraph(data, options = {}) {
   const entities = data.nodes.filter((n) =>
-    ['context', 'fulfillment', 'evidence', 'participant', 'role'].includes(
+    ['context', 'evidence', 'participant', 'role'].includes(
       n.group,
     ),
   );
@@ -136,53 +136,77 @@ function buildBusinessGraph(data, options = {}) {
     originY = 60 + columns[column];
     const owned = entities.filter((n) => owner(n.id) === scope);
     const ownIds = new Set(owned.map((n) => n.id));
-    const fulfillments = owned.filter((n) => n.group === 'fulfillment');
+    const requests = owned.filter(
+      (n) => n.group === 'evidence' && n.kind === 'fulfillment_request',
+    );
     let y = 90;
-    for (const fulfillment of fulfillments) {
-      const requests = (
-        fulfillment.requests ||
-        owned
-          .filter(
-            (n) =>
-              n.parent === fulfillment.id && n.kind === 'fulfillment_request',
-          )
-          .map((n) => n.id)
-      ).filter(
-        (id) => ownIds.has(id) && index.get(id).parent === fulfillment.id,
-      );
-      const confirmations = (
-        fulfillment.confirmations ||
-        owned
-          .filter(
-            (n) =>
-              n.parent === fulfillment.id &&
-              n.kind === 'fulfillment_confirmation',
-          )
-          .map((n) => n.id)
-      ).filter(
-        (id) => ownIds.has(id) && index.get(id).parent === fulfillment.id,
-      );
-      const proofRoles = (fulfillment.proofRoles || []).filter(
-        (id) => ownIds.has(id) && index.get(id).parent === fulfillment.id,
-      );
+    for (const request of requests) {
+      const confirmations = owned
+        .filter(
+          (n) =>
+            n.group === 'evidence' &&
+            n.kind === 'fulfillment_confirmation' &&
+            !boxMap.has(n.id) &&
+            relations.some(
+              (r) =>
+                r.kind === 'references' &&
+                ((r.sourceRef === n.id && r.targetRef === request.id) ||
+                 (r.targetRef === n.id && r.sourceRef === request.id)),
+            ),
+        )
+        .map((n) => n.id);
+      const proofRoles = owned
+        .filter(
+          (n) =>
+            n.group === 'role' &&
+            n.kind === 'evidence' &&
+            !boxMap.has(n.id) &&
+            relations.some(
+              (r) =>
+                r.kind === 'references' &&
+                ((r.sourceRef === n.id && r.targetRef === request.id) ||
+                 (r.targetRef === n.id && r.sourceRef === request.id)),
+            ),
+        )
+        .map((n) => n.id);
       const results = confirmations.length ? confirmations : proofRoles;
       const dependencies = owned.filter(
         (n) =>
-          n.parent === fulfillment.id &&
-          !['context', 'fulfillment'].includes(n.group) &&
-          !requests.includes(n.id) &&
-          !results.includes(n.id),
+          n.group !== 'context' &&
+          n.kind !== 'contract' &&
+          !(n.group === 'role' && n.kind === 'party') &&
+          n.id !== request.id &&
+          !results.includes(n.id) &&
+          !boxMap.has(n.id) &&
+          relations.some(
+            (r) =>
+              r.kind === 'references' &&
+              ((r.sourceRef === n.id && (r.targetRef === request.id || results.includes(r.targetRef))) ||
+               (r.targetRef === n.id && (r.sourceRef === request.id || results.includes(r.sourceRef)))),
+          ),
       );
-      requests.forEach((id, i) => put(index.get(id), 540, y + i * step));
+      put(request, 540, y);
       results.forEach((id, i) => put(index.get(id), 820, y + i * step));
       dependencies.forEach((n, i) => put(n, 1100, y + i * step));
       const rowHeight =
-        Math.max(1, requests.length, results.length, dependencies.length) *
-        step;
-      enclose(
-        fulfillment,
-        [...boxMap.values()].filter((b) => b.parent === fulfillment.id),
-      );
+        Math.max(1, results.length, dependencies.length) * step;
+      const memberBoxes = [
+        boxMap.get(request.id),
+        ...results.map((id) => boxMap.get(id)),
+        ...dependencies.map((d) => boxMap.get(d.id)),
+      ].filter(Boolean);
+      const virtualFulfillment = {
+        id: `fulfillment:${request.id}`,
+        parent: scope,
+        kind: 'fulfillment',
+        group: 'fulfillment',
+        label: request.label,
+        members: memberBoxes.map((b) => b.id),
+      };
+      memberBoxes.forEach((b) => {
+        b.fulfillmentParent = virtualFulfillment.id;
+      });
+      enclose(virtualFulfillment, memberBoxes);
       y += rowHeight + 64;
     }
     const contracts = owned.filter(
@@ -201,7 +225,7 @@ function buildBusinessGraph(data, options = {}) {
       ),
     );
     const rest = Math.max(
-      fulfillments.length ? y + 20 : 90,
+      requests.length ? y + 20 : 90,
       ...[...boxMap.values()]
         .filter((b) => ownIds.has(b.id) && b.x === originX + 280)
         .map((b) => b.y - originY + b.height + 42),
@@ -209,15 +233,16 @@ function buildBusinessGraph(data, options = {}) {
     owned
       .filter(
         (n) =>
-          !['context', 'fulfillment'].includes(n.group) && !boxMap.has(n.id),
+          n.group !== 'context' && !boxMap.has(n.id),
       )
       .forEach((n, i) =>
         put(n, 280 + (i % 3) * 280, rest + Math.floor(i / 3) * step),
       );
     const scopeNode = index.get(scope);
-    const contents = [...boxMap.values(), ...boundaryMap.values()].filter((b) =>
-      ownIds.has(b.id),
-    );
+    const contents = [
+      ...[...boxMap.values()].filter((b) => ownIds.has(b.id)),
+      ...[...boundaryMap.values()].filter((b) => b.parent === scope),
+    ];
     if (scopeNode?.group === 'context' && !boundaryMap.has(scope)) {
       enclose(scopeNode, contents);
     }
@@ -392,13 +417,19 @@ function businessGraphHighlight(layout, target) {
     while (node && !seen.has(node.id)) {
       if (node.id === context) return true;
       seen.add(node.id);
-      node = index.get(node.parent);
+      node = index.get(node.fulfillmentParent || node.parent);
     }
+    const b = index.get(context);
+    if (b && b.members && b.members.includes(id)) return true;
     return false;
   }
   function owners(id) {
+    const item = index.get(id);
+    if (item?.fulfillmentParent && boundaryIds.has(item.fulfillmentParent)) {
+      result.boundaries.add(item.fulfillmentParent);
+    }
     const seen = new Set([id]);
-    let parent = index.get(id)?.parent;
+    let parent = item?.parent;
     while (parent && !seen.has(parent)) {
       seen.add(parent);
       if (boundaryIds.has(parent)) result.boundaries.add(parent);

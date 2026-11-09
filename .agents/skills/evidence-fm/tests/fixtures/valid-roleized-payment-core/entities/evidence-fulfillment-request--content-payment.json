@@ -24,6 +24,5 @@
       "meaning": "付款履约时段截止时间",
       "derivedByRuleRef": "rule.payment-deadline"
     }
-  ],
-  "fulfillmentRef": "fulfillment.content-payment"
+  ]
 }

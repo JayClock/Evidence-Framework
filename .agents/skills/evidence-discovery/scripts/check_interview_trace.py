@@ -54,7 +54,7 @@ def reference_errors(traces: list[dict[str, Any]], entities: dict[str, set[str]]
     errors = []
     for index, trace in enumerate(traces):
         focus = trace.get("focus") or {}
-        for field in ("contextRef", "fulfillmentRef", "evidenceRef", "roleRef"):
+        for field in ("contextRef", "evidenceRef", "roleRef"):
             reference = focus.get(field)
             if reference and reference not in entities:
                 errors.append(f"traces[{index}].focus.{field}: unmodeled reference '{reference}'")

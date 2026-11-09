@@ -21,27 +21,17 @@ const fixture = () => ({
     },
     { id: 'party', group: 'role', kind: 'party', parent: 'a', label: '责任方' },
     {
-      id: 'f',
-      group: 'fulfillment',
-      kind: 'fulfillment',
-      parent: 'a',
-      label: '付款',
-      requests: ['request'],
-      confirmations: [],
-      proofRoles: ['proof'],
-    },
-    {
       id: 'request',
       group: 'evidence',
       kind: 'fulfillment_request',
-      parent: 'f',
+      parent: 'a',
       label: '请求',
     },
     {
       id: 'proof',
       group: 'role',
       kind: 'evidence',
-      parent: 'f',
+      parent: 'a',
       label: '证明角色',
     },
     { id: 'b', group: 'context', kind: 'contract', label: '外部合同' },
@@ -191,25 +181,29 @@ test('shared confirmation is one node, not copied for each request', () => {
     id: 'confirmation',
     group: 'evidence',
     kind: 'fulfillment_confirmation',
-    parent: 'f',
+    parent: 'a',
     label: '共享确认',
   });
-  data.nodes.find((n) => n.id === 'f').confirmations = ['confirmation'];
   data.nodes.push({
-    id: 'f2',
-    group: 'fulfillment',
-    kind: 'fulfillment',
-    parent: 'a',
-    label: '另一履约',
-    requests: ['r2'],
-    confirmations: ['confirmation'],
+    id: 'rel_c1',
+    group: 'relationship',
+    kind: 'references',
+    sourceRef: 'confirmation',
+    targetRef: 'request',
   });
   data.nodes.push({
     id: 'r2',
     group: 'evidence',
     kind: 'fulfillment_request',
-    parent: 'f2',
+    parent: 'a',
     label: '另一请求',
+  });
+  data.nodes.push({
+    id: 'rel_c2',
+    group: 'relationship',
+    kind: 'references',
+    sourceRef: 'confirmation',
+    targetRef: 'r2',
   });
   const graph = build(data, { scope: 'a' });
   assert.equal(graph.boxes.filter((b) => b.id === 'confirmation').length, 1);
@@ -314,17 +308,17 @@ test('context boundaries enclose actual owners and nest fulfillment within contr
       'a',
       'b',
       'd',
-      'f',
+      'fulfillment:request',
     ]);
     const boundary = (id) => graph.boundaries.find((b) => b.id === id);
     const box = (id) => graph.boxes.find((b) => b.id === id);
-    assert.ok(contains(boundary('a'), boundary('f')));
-    assert.equal(boundary('f').parent, 'a');
+    assert.ok(contains(boundary('a'), boundary('fulfillment:request')));
+    assert.equal(boundary('fulfillment:request').parent, 'a');
     for (const [context, id] of [
       ['a', 'contract'],
       ['a', 'party'],
-      ['f', 'request'],
-      ['f', 'proof'],
+      ['fulfillment:request', 'request'],
+      ['fulfillment:request', 'proof'],
       ['b', 'player'],
       ['d', 't'],
     ])
@@ -348,7 +342,6 @@ test('empty context projections fail instead of becoming valid-looking boundarie
 
 test('shared confirmation stays inside its declared owner', () => {
   const data = fixture();
-  data.nodes.find((n) => n.id === 'f').confirmations = ['player'];
   const graph = build(data);
   const player = graph.boxes.find((b) => b.id === 'player');
   assert.equal(graph.boxes.filter((b) => b.id === 'player').length, 1);
@@ -360,31 +353,30 @@ test('shared confirmation stays inside its declared owner', () => {
   );
   assert.ok(
     !contains(
-      graph.boundaries.find((b) => b.id === 'f'),
+      graph.boundaries.find((b) => b.id === 'fulfillment:request'),
       player,
     ),
   );
   // A reference to a sibling's confirmation must not determine its placement.
   data.nodes.push({
-    id: 'peer',
-    group: 'fulfillment',
-    kind: 'fulfillment',
-    parent: 'a',
-    label: '另一履约',
-  }, { id: 'peer-request', group: 'evidence', kind: 'fulfillment_request', parent: 'peer', label: '另一请求' });
-  data.nodes.find((n) => n.id === 'player').parent = 'peer';
+    id: 'c',
+    group: 'context',
+    kind: 'contract',
+    label: '另一上下文',
+  });
+  data.nodes.find((n) => n.id === 'player').parent = 'c';
   data.nodes = data.nodes.filter((n) => n.id !== 'b');
   const shared = build(data);
   const sharedPlayer = shared.boxes.find((b) => b.id === 'player');
   assert.ok(
     contains(
-      shared.boundaries.find((b) => b.id === 'peer'),
+      shared.boundaries.find((b) => b.id === 'c'),
       sharedPlayer,
     ),
   );
   assert.ok(
     !contains(
-      shared.boundaries.find((b) => b.id === 'f'),
+      shared.boundaries.find((b) => b.id === 'fulfillment:request'),
       sharedPlayer,
     ),
   );
@@ -399,7 +391,7 @@ test('object highlighting follows one visible hop, not transitive dependencies',
   });
   assert.deepEqual(Array.from(h.nodes).sort(), ['player', 'proof', 'request']);
   assert.deepEqual(Array.from(h.edges).sort(), ['play', 'use']);
-  assert.deepEqual(Array.from(h.boundaries).sort(), ['a', 'f']);
+  assert.deepEqual(Array.from(h.boundaries).sort(), ['a', 'fulfillment:request']);
   assert.equal(h.primaryNode, 'proof');
   assert.equal(JSON.stringify(graph), before);
   const isolated = sandbox.businessGraphHighlight(graph, {
@@ -413,11 +405,11 @@ test('context highlighting stays inside the exact context and includes descendan
   const graph = build(fixture());
   const h = sandbox.businessGraphHighlight(graph, {
     type: 'boundary',
-    id: 'f',
+    id: 'fulfillment:request',
   });
   assert.deepEqual(Array.from(h.nodes).sort(), ['proof', 'request']);
   assert.deepEqual(Array.from(h.edges), ['use']);
-  assert.deepEqual(Array.from(h.boundaries), ['f']);
+  assert.deepEqual(Array.from(h.boundaries), ['fulfillment:request']);
   const root = sandbox.businessGraphHighlight(graph, {
     type: 'boundary',
     id: 'a',
@@ -457,7 +449,7 @@ test('role badges use the role neighborhood; edges, real contexts and missing ta
       .active,
     false,
   );
-  graph.boundaries.find((b) => b.id === 'a').parent = 'f';
+  graph.boundaries.find((b) => b.id === 'a').parent = 'fulfillment:request';
   assert.ok(
     sandbox.businessGraphHighlight(graph, { type: 'node', id: 'proof' }).active,
   );

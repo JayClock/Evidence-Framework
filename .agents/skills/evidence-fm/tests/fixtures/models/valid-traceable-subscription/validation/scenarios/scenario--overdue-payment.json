@@ -3,13 +3,17 @@
   "id": "scenario.overdue-payment",
   "label": "付款逾期并触发合同终止",
   "asOf": "2026-09-01T10:00:00Z",
-  "givenInstanceRefs": ["instance.subscription-contract"],
+  "givenInstanceRefs": [
+    "instance.subscription-contract"
+  ],
   "steps": [
     {
       "sequence": 1,
       "actingRoleRef": "role.platform-subscription",
       "issueInstanceRef": "instance.payment-request",
-      "availableInstanceRefs": ["instance.subscription-contract"]
+      "availableInstanceRefs": [
+        "instance.subscription-contract"
+      ]
     }
   ],
   "evaluations": [
@@ -59,7 +63,6 @@
   "expectations": {
     "fulfillmentStatuses": [
       {
-        "fulfillmentRef": "fulfillment.content-payment",
         "requestInstanceRef": "instance.payment-request",
         "status": "breached"
       }

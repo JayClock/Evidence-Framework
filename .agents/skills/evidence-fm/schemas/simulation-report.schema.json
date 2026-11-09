@@ -56,14 +56,13 @@
     "fulfillmentStatus": {
       "type": "object",
       "required": [
-        "fulfillmentRef",
         "requestInstanceRef",
         "status",
         "expectedStatus",
         "passed"
       ],
       "properties": {
-        "fulfillmentRef": { "$ref": "#/$defs/id" },
+        "requestEntityRef": { "$ref": "#/$defs/id" },
         "requestInstanceRef": { "$ref": "#/$defs/id" },
         "status": {
           "enum": ["not_requested", "pending", "completed", "breached"]

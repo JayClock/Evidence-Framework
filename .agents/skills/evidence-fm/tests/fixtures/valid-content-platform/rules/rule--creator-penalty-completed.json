@@ -3,7 +3,7 @@
   "id": "rule.creator-penalty-completed",
   "kind": "completion",
   "label": "支付断更违约金完成判断",
-  "description": "存在至少一份与请求（request.creator-penalty）关联的确认凭证（confirmation.creator-penalty）时，判定履约（fulfillment.creator-penalty）完成。",
+  "description": "存在至少一份与请求（request.creator-penalty）关联的确认凭证（confirmation.creator-penalty）时，判定请求（request.creator-penalty）完成。",
   "contextRef": "context.content-production",
   "bindings": {
     "request": {
@@ -15,6 +15,5 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.creator-penalty"
+  "resultType": "bool"
 }

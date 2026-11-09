@@ -72,18 +72,15 @@ def shared_confirmation_documents() -> list[dict]:
     ]
 
     for period, label in (("quarterly", "季度指标"), ("annual", "年度指标")):
-        fulfillment = f"fulfillment.{period}-target"
         request = f"request.{period}-target"
         documents.extend(
             [
-                {"type": "entity", "id": fulfillment, "category": "fulfillment", "label": label, "contextRef": contract_context},
                 entity(
                     request,
                     "evidence",
                     "fulfillment_request",
                     label + "请求",
                     contextRef=contract_context,
-                    fulfillmentRef=fulfillment,
                     responsibleRoleRef="role.manager",
                     attributes=[
                         attribute(
@@ -122,7 +119,6 @@ def shared_confirmation_documents() -> list[dict]:
                         "有效期内形成时，该指标履约完成。"
                     ),
                     "contextRef": contract_context,
-                    "fulfillmentRef": fulfillment,
                     "bindings": {
                         "request": {"ref": request},
                         "confirmations": {
@@ -142,7 +138,7 @@ def shared_confirmation_documents() -> list[dict]:
 
 
 class SharedConfirmationTests(unittest.TestCase):
-    def test_pdf_page_39_shared_confirmation_validates_and_completes_both_requests(
+    def test_shared_confirmation_validates_and_completes_both_requests(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -250,12 +246,10 @@ class SharedConfirmationTests(unittest.TestCase):
                     "expectations": {
                         "fulfillmentStatuses": [
                             {
-                                "fulfillmentRef": "fulfillment.quarterly-target",
                                 "requestInstanceRef": "instance.quarterly-request",
                                 "status": "completed",
                             },
                             {
-                                "fulfillmentRef": "fulfillment.annual-target",
                                 "requestInstanceRef": "instance.annual-request",
                                 "status": "completed",
                             },

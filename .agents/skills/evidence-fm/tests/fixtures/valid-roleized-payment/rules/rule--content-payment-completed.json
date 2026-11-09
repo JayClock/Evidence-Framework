@@ -3,7 +3,7 @@
   "id": "rule.content-payment-completed",
   "kind": "completion",
   "label": "支付内容产品费用完成判断",
-  "description": "存在至少一份与请求（request.content-payment）关联的确认凭证（role.content-payment-confirmation）时，判定履约（fulfillment.content-payment）完成。",
+  "description": "存在至少一份与请求（request.content-payment）关联的确认凭证（role.content-payment-confirmation）时，判定请求（request.content-payment）完成。",
   "contextRef": "context.content-subscription",
   "bindings": {
     "request": {
@@ -15,6 +15,5 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.content-payment"
+  "resultType": "bool"
 }

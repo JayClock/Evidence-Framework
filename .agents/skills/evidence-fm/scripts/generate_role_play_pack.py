@@ -192,7 +192,7 @@ def facilitator_sheet(scenario: dict[str, Any], report: dict[str, Any]) -> str:
     lines.extend(["", "## Expected fulfillment outcomes", ""])
     for status in report.get("fulfillmentStatuses") or []:
         lines.append(
-            f"- `{status.get('fulfillmentRef')}` / `{status.get('requestInstanceRef')}`: "
+            f"- `{status.get('requestInstanceRef')}`: "
             f"`{status.get('expectedStatus')}`"
         )
     lines.extend(

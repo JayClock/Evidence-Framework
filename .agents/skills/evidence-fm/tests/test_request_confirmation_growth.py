@@ -1,4 +1,4 @@
-"""A Fulfillment wraps a known request/result pair, never an empty obligation."""
+"""Pure graph requests and confirmations grow incrementally without a fulfillment container."""
 from __future__ import annotations
 
 import copy
@@ -22,85 +22,67 @@ class RequestConfirmationGrowthTests(unittest.TestCase):
             model = load_model(write_model(Path(directory), values, "context.agreement"))
             return validate_model(model, complete=complete)
 
-    def unwrap_delivery(self):
-        values = [v for v in documents() if v["id"] not in {
-            "fulfillment.delivery", "rule.delivery",
-        }]
-        for item in values:
-            if item.get("fulfillmentRef") == "fulfillment.delivery":
-                item.pop("fulfillmentRef")
-        return values
-
-    def test_empty_wrapper_is_an_error_even_before_scope_completion(self):
+    def test_fulfillment_category_is_rejected(self):
         values = documents() + [{
             "type": "entity", "id": "fulfillment.refund", "category": "fulfillment",
             "label": "退款（Refund）", "contextRef": "context.agreement",
         }]
         errors = self.errors(values)
-        self.assertTrue(any("fulfillment.refund" in e and "Request" in e for e in errors), errors)
-        self.assertTrue(any("fulfillment.refund" in e and "Confirmation" in e for e in errors), errors)
+        self.assertTrue(errors)
 
-    def test_each_missing_endpoint_invalidates_an_existing_wrapper(self):
-        for missing in ("request.delivery", "confirmation.delivery"):
-            with self.subTest(missing=missing):
-                values = [v for v in documents() if v["id"] not in {
-                    missing, "rule.delivery", "relation.delivery-acceptance",
-                }]
-                self.assertTrue(any("fulfillment.delivery" in e for e in self.errors(values)))
+    def test_missing_confirmation_fails_completeness(self):
+        values = [v for v in documents() if v["id"] not in {
+            "confirmation.delivery", "relation.delivery-confirmation", "rule.delivery", "relation.delivery-acceptance",
+        }]
+        self.assertEqual([], self.errors(values, complete=False))
+        self.assertTrue(any("confirmation" in e.lower() or "request.delivery" in e for e in self.errors(values, complete=True)))
 
     def test_contract_bound_request_can_be_saved_before_confirmation_is_known(self):
-        values = [v for v in self.unwrap_delivery() if v["id"] != "confirmation.delivery"
-                  and v.get("targetRef") != "confirmation.delivery"]
+        values = [v for v in documents() if v["id"] not in {
+            "confirmation.delivery", "relation.delivery-confirmation", "rule.delivery", "relation.delivery-acceptance",
+        }]
         self.assertIn("relation.delivery-contract", {v["id"] for v in values})
-        self.assertNotIn("fulfillment.delivery", {v["id"] for v in values})
         self.assertEqual([], self.errors(values))
 
     def test_confirmation_can_be_saved_without_inventing_a_request(self):
-        values = [v for v in self.unwrap_delivery() if v["id"] != "request.delivery"
-                  and v.get("sourceRef") != "request.delivery"
-                  and v.get("targetRef") != "request.delivery"]
+        values = [v for v in documents() if v["id"] not in {
+            "request.delivery", "relation.delivery-contract", "relation.delivery-confirmation", "rule.delivery", "relation.delivery-acceptance",
+        }]
         self.assertEqual([], self.errors(values))
 
-    def test_unwrapped_sibling_endpoints_block_the_whole_contract_scope(self):
+    def test_unpaired_request_reports_completeness_gap(self):
+        values = [v for v in documents() if v["id"] not in {
+            "confirmation.delivery", "relation.delivery-confirmation", "rule.delivery", "relation.delivery-acceptance",
+        }]
         with tempfile.TemporaryDirectory() as directory:
-            root = write_model(Path(directory), self.unwrap_delivery(), "context.agreement")
+            root = write_model(Path(directory), values, "context.agreement")
             report = check_fm.check_model(root, scope_refs=["context.agreement"])
             self.assertTrue(report["consistent"], report)
             self.assertFalse(report["complete"])
-            for endpoint in ("request.delivery", "confirmation.delivery"):
-                self.assertTrue(any(endpoint in gap for gap in report["gaps"]), report)
+            self.assertTrue(any("request.delivery" in gap or "confirmation" in gap.lower() for gap in report["gaps"]), report)
 
-    def test_pair_can_be_wrapped_before_its_completion_rule_is_known(self):
+    def test_pair_can_exist_before_its_completion_rule_is_known(self):
         values = [v for v in documents() if v["id"] != "rule.delivery"]
-        self.assertEqual([], self.errors(values))
-        self.assertTrue(any("rule" in e.lower() and "fulfillment.delivery" in e
-                            for e in self.errors(values, complete=True)))
+        self.assertEqual([], self.errors(values, complete=False))
+        self.assertEqual([], self.errors(values, complete=True))
 
-    def test_supporting_proof_role_is_not_a_confirmation_endpoint(self):
-        values = [v for v in documents() if v["id"] not in {
-            "confirmation.delivery", "rule.delivery", "relation.delivery-acceptance",
-        }]
-        values += [
-            entity("role.support", "role", "evidence", "支撑证明（Supporting Proof）",
-                   contextRef="context.agreement"),
-            {"type": "relationship", "id": "relation.support", "kind": "references",
-             "sourceRef": "request.delivery", "targetRef": "role.support", "label": "请求依据"},
-        ]
-        errors = self.errors(values)
-        self.assertTrue(any("fulfillment.delivery" in e and "Confirmation" in e for e in errors), errors)
-
-    def test_explicit_confirmation_role_can_wrap_without_inventing_a_player(self):
-        values = [v for v in documents() if v["id"] not in {"confirmation.delivery", "rule.delivery", "relation.delivery-acceptance"}]
-        values.append(entity("role.result", "role", "evidence", "交付结果（Delivery Result）",
-                             contextRef="context.agreement", fulfillmentRef="fulfillment.delivery"))
+    def test_explicit_confirmation_role_can_satisfy_result_without_inventing_a_player(self):
+        values = [v for v in documents() if v["id"] not in {"confirmation.delivery", "relation.delivery-confirmation", "rule.delivery", "relation.delivery-acceptance"}]
+        values.extend([
+            entity("role.result", "role", "evidence", "交付结果（Delivery Result）", contextRef="context.agreement"),
+            {"type": "relationship", "id": "relation.delivery-result", "kind": "references",
+             "sourceRef": "request.delivery", "targetRef": "role.result", "label": "请求采信结果"},
+        ])
         self.assertEqual([], self.errors(values))
         self.assertFalse(any(v.get("kind") == "plays_role" for v in values))
 
-    def test_multiple_confirmation_types_do_not_require_multiple_wrappers(self):
+    def test_multiple_confirmation_types_are_supported(self):
         values = documents()
         second = copy.deepcopy(next(v for v in values if v["id"] == "confirmation.delivery"))
         second.update(id="confirmation.delivery-quality", label="质量结果（Quality Result）")
-        self.assertEqual([], self.errors(values + [second]))
+        second_rel = {"type": "relationship", "id": "relation.delivery-quality-rel", "kind": "references",
+                      "sourceRef": "confirmation.delivery-quality", "targetRef": "request.delivery", "label": "质量确认依据交付请求"}
+        self.assertEqual([], self.errors(values + [second, second_rel]))
 
     def test_previous_schema_is_rejected_instead_of_implicitly_migrated(self):
         import json

@@ -14,6 +14,5 @@
     }
   },
   "expression": "payment.paid_minor_units == request.requested_minor_units && payment.currency == request.currency",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.content-payment"
+  "resultType": "bool"
 }

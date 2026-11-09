@@ -27,21 +27,21 @@ def documents():
                attributes=[attribute("signed_at", "timestamp", "签约时间", keyData=True)]),
     ]
     for name in ("delivery", "acceptance"):
-        fulfillment = f"fulfillment.{name}"
         result.extend([
-            {"type": "entity", "id": fulfillment, "category": "fulfillment", "label": name, "contextRef": context},
             entity(f"request.{name}", "evidence", "fulfillment_request", f"{name}请求",
-                   contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef="role.customer",
+                   contextRef=context, responsibleRoleRef="role.customer",
                    attributes=[attribute("started_at", "timestamp", "开始时间", keyData=True),
                                attribute("expired_at", "timestamp", "截止时间", keyData=True)]),
             {"type": "relationship", "id": f"relation.{name}-contract", "kind": "references",
              "sourceRef": f"request.{name}", "targetRef": "contract.agreement", "label": "请求依据服务合同"},
             entity(f"confirmation.{name}", "evidence", "fulfillment_confirmation", f"{name}结果",
-                   contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef="role.provider",
+                   contextRef=context, responsibleRoleRef="role.provider",
                    attributes=[attribute("confirmed_at", "timestamp", "确认时间", keyData=True)]),
+            {"type": "relationship", "id": f"relation.{name}-confirmation", "kind": "references",
+             "sourceRef": f"confirmation.{name}", "targetRef": f"request.{name}", "label": "确认关联请求"},
             {"type": "rule", "id": f"rule.{name}", "kind": "completion", "label": "完成", "description": "确认形成即完成",
-             "contextRef": context, "fulfillmentRef": fulfillment,
-             "bindings": {"confirmation": {"ref": f"confirmation.{name}"}},
+             "contextRef": context,
+             "bindings": {"request": {"ref": f"request.{name}"}, "confirmation": {"ref": f"confirmation.{name}"}},
              "expression": "confirmation.confirmed_at != null", "resultType": "bool"},
         ])
     result.append({"type": "relationship", "id": "relation.delivery-acceptance", "kind": "references",
@@ -61,27 +61,27 @@ class FulfillmentStructureTests(unittest.TestCase):
     def test_supporting_proof_reference_does_not_become_a_result_endpoint(self):
         values = documents()
         values.append(entity("role.external-result", "role", "evidence", "外部结果", contextRef="context.agreement"))
-        relationships = [
+        relationships = [v for v in values if v.get("type") == "relationship"] + [
             {"kind": "references", "sourceRef": f"request.{name}", "targetRef": "role.external-result"}
             for name in ("delivery", "acceptance")
         ]
         index = {v["id"]: v for v in values if v.get("type") == "entity"}
         for name in ("delivery", "acceptance"):
-            requests, confirmations, roles = fulfillment_members(f"fulfillment.{name}", index, iter(relationships))
+            requests, confirmations, roles = fulfillment_members(f"request.{name}", index, iter(relationships))
             self.assertEqual([f"request.{name}"], [v["id"] for v in requests])
             self.assertEqual([f"confirmation.{name}"], [v["id"] for v in confirmations])
             self.assertEqual([], roles)
 
     def test_business_reference_does_not_adopt_another_fulfillments_confirmation(self):
         values = documents()
-        values[-1]["kind"] = "references"
         index = {v["id"]: v for v in values if v.get("type") == "entity"}
-        _, confirmations, _ = fulfillment_members("fulfillment.acceptance", index, [values[-1]])
+        rels = [v for v in values if v.get("type") == "relationship"]
+        _, confirmations, _ = fulfillment_members("request.acceptance", index, rels)
         self.assertEqual(["confirmation.acceptance"], [v["id"] for v in confirmations])
 
     def test_fulfillment_is_not_an_entry_context(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = write_model(Path(directory), documents(), "fulfillment.delivery")
+            root = write_model(Path(directory), documents(), "request.delivery")
             self.assertTrue(any("non-Context" in error for error in validate_model(load_model(root))))
 
     def test_membership_must_share_the_contract_context(self):
@@ -89,34 +89,32 @@ class FulfillmentStructureTests(unittest.TestCase):
         values.extend(domain_documents())
         request = next(v for v in values if v["id"] == "request.acceptance")
         request["contextRef"] = "context.customer-information"
-        self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
+        self.assertTrue(any("Contract Context" in error for error in self.errors(values)))
 
-    def test_existing_wrapper_cannot_lose_its_request_membership(self):
+    def test_confirmation_must_be_associated_with_request(self):
         values = documents()
-        next(v for v in values if v["id"] == "request.delivery").pop("fulfillmentRef")
-        self.assertTrue(any("fulfillment.delivery" in error and "Request" in error
-                            for error in self.errors(values)))
+        values = [v for v in values if v.get("id") not in {"relation.delivery-confirmation", "rule.delivery"}]
+        self.assertTrue(any("confirmation.delivery" in error for error in self.errors(values, complete=True)))
 
     def test_role_player_in_same_contract_is_rejected(self):
         values = documents()
         values.extend([
-            entity("role.result", "role", "evidence", "外部结果", contextRef="context.agreement", fulfillmentRef="fulfillment.acceptance"),
+            entity("role.result", "role", "evidence", "外部结果", contextRef="context.agreement"),
             {"type": "relationship", "id": "relation.result-player", "kind": "plays_role",
              "sourceRef": "confirmation.delivery", "targetRef": "role.result", "label": "结果扮演"},
         ])
         self.assertTrue(any("another Context" in error for error in self.errors(values)))
 
-    def test_fulfillment_context_kind_is_rejected(self):
+    def test_fulfillment_category_is_rejected(self):
         values = documents()
-        item = next(v for v in values if v["id"] == "fulfillment.delivery")
-        item.update(category="context", kind="fulfillment", parentContextRef=item.pop("contextRef"))
+        values.append({"type": "entity", "id": "fulfillment.test", "category": "fulfillment", "label": "非法履约实体", "contextRef": "context.agreement"})
         self.assertTrue(self.errors(values))
 
-    def test_completion_rule_requires_matching_fulfillment(self):
+    def test_completion_rule_requires_request_binding(self):
         values = documents()
         rule = next(v for v in values if v["id"] == "rule.delivery")
-        rule.pop("fulfillmentRef")
-        self.assertTrue(any("fulfillmentRef" in error for error in self.errors(values)))
+        rule["bindings"] = {"confirmation": {"ref": "confirmation.delivery"}}
+        self.assertTrue(any("fulfillment_request" in error for error in self.errors(values)))
 
     def test_cross_contract_moment_reference_is_valid_but_contract_reference_is_not(self):
         values = documents()

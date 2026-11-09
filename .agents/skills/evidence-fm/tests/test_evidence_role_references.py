@@ -87,12 +87,9 @@ class EvidenceRoleReferenceTests(unittest.TestCase):
             entity("role.proof", "role", "evidence"), "uses_role")
         self.assertTrue(any("not one of" in e for e in errors), errors)
 
-    def test_self_reference_and_fulfillment_endpoints_remain_invalid(self):
+    def test_self_reference_remains_invalid(self):
         proof = entity("role.proof", "role", "evidence")
         self.assertTrue(any("self relationships" in e for e in self.errors(proof, proof)))
-        fulfillment = {"type": "entity", "id": "fulfillment.pay", "category": "fulfillment", "contextRef": "context.local"}
-        for source, target in ((proof, fulfillment), (fulfillment, proof)):
-            self.assertTrue(any("Fulfillment must not" in e for e in self.errors(source, target)))
 
 
 if __name__ == "__main__":

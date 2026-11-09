@@ -30,15 +30,11 @@ class RequestContractBindingTests(unittest.TestCase):
         errors = self.errors(values, complete=complete)
         self.assertTrue(any("request.delivery" in e and "root Contract" in e for e in errors), errors)
 
-    def test_wrapped_and_unwrapped_requests_require_the_contract_in_both_check_modes(self):
-        unwrapped = [v for v in documents() if v["id"] not in {"fulfillment.delivery", "rule.delivery"}]
-        for item in unwrapped:
-            if item.get("fulfillmentRef") == "fulfillment.delivery":
-                item.pop("fulfillmentRef")
-        for values in (documents(), unwrapped):
-            for complete in (False, True):
-                with self.subTest(wrapped=values is not unwrapped, complete=complete):
-                    self.assert_missing_binding(self.without_binding(values), complete=complete)
+    def test_requests_require_the_contract_in_both_check_modes(self):
+        values = documents()
+        for complete in (False, True):
+            with self.subTest(complete=complete):
+                self.assert_missing_binding(self.without_binding(values), complete=complete)
 
     def test_only_a_direct_outgoing_references_edge_binds_the_request(self):
         for change in (
@@ -79,7 +75,6 @@ class RequestContractBindingTests(unittest.TestCase):
         values = documents()
         request = copy.deepcopy(next(v for v in values if v["id"] == "request.delivery"))
         request.update(id="request.refund", label="退款请求（Refund Request）")
-        request.pop("fulfillmentRef")
         errors = self.errors(values + [request])
         self.assertTrue(any("request.refund" in e and "root Contract" in e for e in errors), errors)
 

@@ -3,19 +3,25 @@
   "id": "scenario.successful-payment",
   "label": "合同价格可追溯的成功付款",
   "asOf": "2026-09-01T09:15:00Z",
-  "givenInstanceRefs": ["instance.subscription-contract"],
+  "givenInstanceRefs": [
+    "instance.subscription-contract"
+  ],
   "steps": [
     {
       "sequence": 1,
       "actingRoleRef": "role.platform-subscription",
       "issueInstanceRef": "instance.payment-request",
-      "availableInstanceRefs": ["instance.subscription-contract"]
+      "availableInstanceRefs": [
+        "instance.subscription-contract"
+      ]
     },
     {
       "sequence": 2,
       "actingRoleRef": "role.subscriber",
       "issueInstanceRef": "instance.gateway-payment-receipt",
-      "availableInstanceRefs": ["instance.payment-request"]
+      "availableInstanceRefs": [
+        "instance.payment-request"
+      ]
     },
     {
       "sequence": 3,
@@ -92,7 +98,9 @@
           "instanceRef": "instance.payment-request"
         },
         "confirmations": {
-          "instanceRefs": ["instance.payment-confirmation"]
+          "instanceRefs": [
+            "instance.payment-confirmation"
+          ]
         }
       },
       "expectedResult": true
@@ -101,7 +109,6 @@
   "expectations": {
     "fulfillmentStatuses": [
       {
-        "fulfillmentRef": "fulfillment.content-payment",
         "requestInstanceRef": "instance.payment-request",
         "status": "completed"
       }

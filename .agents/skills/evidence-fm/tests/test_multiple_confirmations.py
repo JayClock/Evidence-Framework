@@ -26,10 +26,8 @@ def documents():
         entity("contract.delivery", "evidence", "contract", "交付合同（Delivery Contract）",
                contextRef=context, roleRefs=["role.buyer", "role.seller"],
                attributes=[attribute("signed_at", "timestamp", "签约时间（Signing Time）", keyData=True)]),
-        {"type": "entity", "id": fulfillment, "category": "fulfillment",
-         "label": "交付（Delivery）", "contextRef": context},
         entity("request.delivery", "evidence", "fulfillment_request", "交付请求（Delivery Request）",
-               contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef="role.buyer",
+               contextRef=context, responsibleRoleRef="role.buyer",
                attributes=[attribute("started_at", "timestamp", "开始时间（Start Time）", keyData=True),
                            attribute("expired_at", "timestamp", "截止时间（Deadline）", keyData=True),
                            attribute("requested_units", "int", "请求数量（Requested Quantity）", keyData=True)]),
@@ -44,7 +42,7 @@ def documents():
     ):
         result.extend([
             entity(f"confirmation.{name}", "evidence", "fulfillment_confirmation", label,
-                   contextRef=context, fulfillmentRef=fulfillment, responsibleRoleRef=responsible,
+                   contextRef=context, responsibleRoleRef=responsible,
                    attributes=[attribute("confirmed_at", "timestamp", "确认时间（Confirmation Time）", keyData=True), extra]),
             {"type": "relationship", "id": f"relation.{name}-request", "kind": "references",
              "sourceRef": f"confirmation.{name}", "targetRef": "request.delivery",
@@ -54,7 +52,7 @@ def documents():
         "type": "rule", "id": "rule.delivery-completed", "kind": "completion",
         "label": "交付完成（Delivery Completed）",
         "description": "交付确认（Delivery Confirmation）[confirmation.delivery]累计数量满足交付请求（Delivery Request）[request.delivery]，且质量验收确认（Quality Acceptance Confirmation）[confirmation.quality]合格时，交付完成。所有结果必须位于请求区间内。",
-        "contextRef": context, "fulfillmentRef": fulfillment,
+        "contextRef": context,
         "bindings": {"request": {"ref": "request.delivery"},
                      "deliveries": {"ref": "confirmation.delivery", "cardinality": "many"},
                      "qualities": {"ref": "confirmation.quality", "cardinality": "many"}},
@@ -104,8 +102,7 @@ class MultipleConfirmationTests(unittest.TestCase):
                                               "deliveries": {"instanceRefs": delivery_refs},
                                               "qualities": {"instanceRefs": quality_refs}},
                                  "expectedResult": expected_status == "completed"}],
-                "expectations": {"fulfillmentStatuses": [{"fulfillmentRef": "fulfillment.delivery",
-                                                         "requestInstanceRef": "instance.request", "status": expected_status}]},
+                "expectations": {"fulfillmentStatuses": [{"requestInstanceRef": "instance.request", "status": expected_status}]},
             })
             model = load_model(root)
             self.assertEqual([], validate_model(model))

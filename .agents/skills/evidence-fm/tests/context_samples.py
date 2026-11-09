@@ -196,22 +196,12 @@ def performance_fulfillment(
         else attribute("actual_count", "int", "本周实际联系数量")
     )
     return [
-        {
-            "type": "entity", "id": fulfillment, "category": "fulfillment", "label": label,
-            "contextRef": "context.performance",
-            "notes": (
-                "目标变更责任仅要求按时答复，approved=false 不改变旧目标。"
-                if name == "target-change"
-                else "管理方要求执行方提交周进度结果。"
-            ),
-        },
         entity(
             request,
             "evidence",
             "fulfillment_request",
             label + "请求",
             contextRef="context.performance",
-            fulfillmentRef=fulfillment,
             responsibleRoleRef=request_role,
             attributes=[
                 attribute("started_at", "timestamp", "请求开始时间", keyData=True),
@@ -234,7 +224,6 @@ def performance_fulfillment(
             "fulfillment_confirmation",
             label + "结果确认",
             contextRef="context.performance",
-            fulfillmentRef=fulfillment,
             responsibleRoleRef=confirmation_role,
             attributes=[
                 attribute(
@@ -244,16 +233,23 @@ def performance_fulfillment(
             ],
         ),
         {
+            "type": "relationship",
+            "id": f"relation.{name}-confirmation-request",
+            "kind": "references",
+            "sourceRef": confirmation,
+            "targetRef": request,
+            "label": "确认依据请求",
+        },
+        {
             "type": "rule",
             "id": f"rule.{name}-completed",
             "kind": "completion",
             "label": label + "按期完成",
             "description": (
                 f"结果确认（{confirmation}）在请求（{request}）有效期内形成时，"
-                f"判定履约（{fulfillment}）按期完成。"
+                f"判定请求（{request}）按期完成。"
             ),
             "contextRef": "context.performance",
-            "fulfillmentRef": fulfillment,
             "resultType": "bool",
             "bindings": {
                 "request": {"ref": request},
@@ -271,10 +267,9 @@ def performance_fulfillment(
             "label": label + "逾期未答复",
             "description": (
                 f"当前时间超过请求（{request}）截止时间且没有结果确认（{confirmation}）时，"
-                f"判定履约（{fulfillment}）逾期。"
+                f"判定请求（{request}）逾期。"
             ),
             "contextRef": "context.performance",
-            "fulfillmentRef": fulfillment,
             "resultType": "bool",
             "bindings": {
                 "request": {"ref": request},

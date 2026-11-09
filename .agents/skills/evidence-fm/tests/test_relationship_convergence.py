@@ -33,16 +33,15 @@ class RelationshipConvergenceTests(unittest.TestCase):
     def test_confirmation_references_request_not_the_reverse(self):
         model = self.model()
         confirmation = model.entities_by_id["confirmation.content-payment"]
-        confirmation.pop("fulfillmentRef", None)
         model.relationships[:] = [r for r in model.relationships if r.get("sourceRef") != confirmation["id"]] + [{"type": "relationship", "id": "relation.result",
             "kind": "references", "sourceRef": confirmation["id"],
             "targetRef": "request.content-payment", "label": "结果对应请求"}]
         self.assertEqual([], validate_model(model))
-        _, results, _ = fulfillment_members("fulfillment.content-payment", model.entities_by_id, model.relationships)
+        _, results, _ = fulfillment_members("request.content-payment", model.entities_by_id, model.relationships)
         self.assertEqual([confirmation["id"]], [r["id"] for r in results])
         relation = next(r for r in model.relationships if r["id"] == "relation.result")
         relation["sourceRef"], relation["targetRef"] = relation["targetRef"], relation["sourceRef"]
-        _, results, _ = fulfillment_members("fulfillment.content-payment", model.entities_by_id, model.relationships)
+        _, results, _ = fulfillment_members("request.content-payment", model.entities_by_id, model.relationships)
         self.assertEqual([], results)
 
     def test_timeline_depends_on_instances_not_relationship_layout(self):

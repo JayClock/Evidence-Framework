@@ -3,7 +3,7 @@
   "id": "rule.advance-payment-completed",
   "kind": "completion",
   "label": "支付创作者预付款完成判断",
-  "description": "存在至少一份与请求（request.advance-payment）关联的确认凭证（confirmation.advance-payment）时，判定履约（fulfillment.advance-payment）完成。",
+  "description": "存在至少一份与请求（request.advance-payment）关联的确认凭证（confirmation.advance-payment）时，判定请求（request.advance-payment）完成。",
   "contextRef": "context.content-production",
   "bindings": {
     "request": {
@@ -15,6 +15,5 @@
     }
   },
   "expression": "confirmations.size() > 0",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.advance-payment"
+  "resultType": "bool"
 }

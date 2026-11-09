@@ -92,7 +92,7 @@ class ContextLayoutTests(unittest.TestCase):
         self.paths["confirmation.content-payment"].unlink()
         self.assertTrue(
             any(
-                "must contain a Fulfillment Confirmation" in e
+                "must be associated with at least one Fulfillment Confirmation" in e
                 for e in validate_model(load_model(self.root), complete=True)
             )
         )

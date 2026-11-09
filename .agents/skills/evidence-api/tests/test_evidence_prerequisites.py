@@ -301,7 +301,6 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         ]
         scenario["expectations"]["fulfillmentStatuses"] = [
             {
-                "fulfillmentRef": "fulfillment.payment",
                 "requestInstanceRef": "instance.payment-request",
                 "status": "pending",
             }
@@ -337,7 +336,6 @@ class EvidencePrerequisiteTest(unittest.TestCase):
         scenario["evaluations"] = []
         scenario["expectations"]["fulfillmentStatuses"] = [
             {
-                "fulfillmentRef": "fulfillment.payment",
                 "requestInstanceRef": "instance.payment-request",
                 "status": "pending",
             }

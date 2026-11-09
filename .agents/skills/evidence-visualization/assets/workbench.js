@@ -134,7 +134,7 @@ function list(ids, empty = '未声明', target = $('detail')) {
   target.append(box);
 }
 function isContainer(node) {
-  return ['context', 'fulfillment'].includes(node?.group);
+  return node?.group === 'context';
 }
 function isDerivation(node) {
   return node?.group === 'rule' && node.kind === 'derivation';
@@ -154,9 +154,7 @@ function requestRuleTarget(node) {
     .filter(
       (n) =>
         n?.group === 'evidence' &&
-        n.kind === 'fulfillment_request' &&
-        n.fulfillmentRef &&
-        n.fulfillmentRef === node.fulfillmentRef,
+        n.kind === 'fulfillment_request',
     );
   return requests.length === 1 ? requests[0] : undefined;
 }
@@ -192,7 +190,6 @@ function buildTree() {
   }
   const businessGroups = new Set([
     'context',
-    'fulfillment',
     'evidence',
     'participant',
     'role',
@@ -214,16 +211,14 @@ function buildTree() {
     details.append(summary);
     if (isContainer(node)) {
       details.dataset.containerGroup = node.id;
-      details.dataset[
-        node.group === 'context' ? 'contextGroup' : 'fulfillmentGroup'
-      ] = node.id;
+      details.dataset.contextGroup = node.id;
       summary.dataset.container = node.id;
       summary.title = `${typeLabel(node)} · ${node.id}`;
       if (!children.length)
         details.append(
           el(
             'p',
-            `无效投影：此${node.group === 'fulfillment' ? '履约' : '上下文'}缺少业务对象`,
+            '无效投影：此上下文缺少业务对象',
             'muted',
           ),
         );
@@ -271,7 +266,7 @@ function buildTree() {
 function treeButton(node) {
   if (isContainer(node)) {
     const locator = action(
-      `${node.label} · 定位${node.group === 'fulfillment' ? '履约' : '上下文'}`,
+      `${node.label} · 定位上下文`,
       () => revealContainer(node.id),
       'tree-item',
     );
@@ -470,34 +465,30 @@ function renderRequestConditions(request) {
     }
     outcome.append(el('h3', '对应完成凭证'));
     const relations = DATA.nodes.filter((n) => n.group === 'relationship');
-    const resultMembers = DATA.nodes.filter(
-      (n) =>
-        request.fulfillmentRef &&
-        n.fulfillmentRef === request.fulfillmentRef &&
-        n.contextRef === request.contextRef,
-    );
     const confirmations = [
       ...new Set([
-        ...resultMembers
-          .filter(
-            (n) =>
-              n.group === 'evidence' && n.kind === 'fulfillment_confirmation',
-          )
-          .map((n) => n.id),
         ...relations
           .filter(
             (r) =>
               r.kind === 'references' &&
-              r.targetRef === request.id &&
-              nodes.get(r.sourceRef)?.contextRef === request.contextRef &&
-              nodes.get(r.sourceRef)?.kind === 'fulfillment_confirmation',
+              ((r.targetRef === request.id && nodes.get(r.sourceRef)?.kind === 'fulfillment_confirmation') ||
+               (r.sourceRef === request.id && nodes.get(r.targetRef)?.kind === 'fulfillment_confirmation')),
           )
-          .map((r) => r.sourceRef),
+          .map((r) => (nodes.get(r.sourceRef)?.kind === 'fulfillment_confirmation' ? r.sourceRef : r.targetRef)),
       ]),
     ];
-    const roles = resultMembers
-      .filter((n) => n.group === 'role' && n.kind === 'evidence')
-      .map((n) => n.id);
+    const roles = [
+      ...new Set([
+        ...relations
+          .filter(
+            (r) =>
+              r.kind === 'references' &&
+              ((r.targetRef === request.id && nodes.get(r.sourceRef)?.group === 'role' && nodes.get(r.sourceRef)?.kind === 'evidence') ||
+               (r.sourceRef === request.id && nodes.get(r.targetRef)?.group === 'role' && nodes.get(r.targetRef)?.kind === 'evidence')),
+          )
+          .map((r) => (nodes.get(r.sourceRef)?.group === 'role' ? r.sourceRef : r.targetRef)),
+      ]),
+    ];
     if (confirmations.length) list(confirmations, '', outcome);
     if (!confirmations.length && !roles.length)
       outcome.append(el('p', '未声明对应确认凭证或采信证明角色', 'muted'));
@@ -795,10 +786,10 @@ function renderScenario(node) {
   if (node.statuses.length)
     card('履约结果').append(
       table(
-        ['履约', '请求', '预期', '实际'],
+        ['请求实例', '请求定义', '预期', '实际'],
         node.statuses.map((s) => [
-          link(s.fulfillmentRef),
           link(s.requestInstanceRef),
+          link(s.requestEntityRef || s.requestRef),
           s.expectedStatus,
           s.status,
         ]),

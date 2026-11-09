@@ -81,10 +81,9 @@ class ExampleBaselineTests(unittest.TestCase):
                     if (document := json.loads(path.read_text()))}
         self.assertTrue(entities)
         request = entities["request.content-payment"]
-        fulfillment = entities["fulfillment.content-payment"]
-        self.assertEqual("context.content-subscription", fulfillment["contextRef"])
-        self.assertEqual(fulfillment["id"], request["fulfillmentRef"])
-        self.assertNotIn("kind", fulfillment)
+        self.assertEqual("context.content-subscription", request["contextRef"])
+        self.assertFalse(any(e.get("category") == "fulfillment" for e in entities.values()))
+        self.assertNotIn("fulfillmentRef", request)
         relations = [json.loads(path.read_text()) for path in (root / "relationships").glob("*.json")]
         edges = {(relation["sourceRef"], relation["kind"], relation["targetRef"]) for relation in relations}
         self.assertIn(("confirmation.content-payment", "references", "request.content-payment"), edges)
@@ -96,7 +95,7 @@ class ExampleBaselineTests(unittest.TestCase):
                 entities["request.content-payment"]["responsibleRoleRef"],
                 entities["request.content-access"]["responsibleRoleRef"],
             },
-            "both Contract Parties must each hold a main Fulfillment",
+            "both Contract Parties must each hold a main Request",
         )
         domain = [json.loads(path.read_text()) for path in (EXAMPLES / "domain/entities").glob("*.json")]
         self.assertTrue(domain)

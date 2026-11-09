@@ -17,6 +17,5 @@
     }
   },
   "expression": "now > request.expired_at && !paymentConfirmed",
-  "resultType": "bool",
-  "fulfillmentRef": "fulfillment.content-payment"
+  "resultType": "bool"
 }

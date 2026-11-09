@@ -23,6 +23,5 @@
       "keyData": true,
       "meaning": "履约时段截止时间"
     }
-  ],
-  "fulfillmentRef": "fulfillment.revenue-share"
+  ]
 }

@@ -222,10 +222,6 @@ def build_projection(
             for ref, entity in index.entities.items()
             if entity.get("category") == "context"
         ),
-        "fulfillmentRefs": sorted(
-            ref for ref, entity in index.entities.items()
-            if entity.get("category") == "fulfillment"
-        ),
         "capabilities": capabilities,
         "operations": operations,
         "coverage": coverage,

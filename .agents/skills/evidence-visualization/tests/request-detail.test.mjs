@@ -22,17 +22,10 @@ function fixture() {
     nodes: [
       { id: 'context.a', group: 'context', kind: 'contract', label: '约定' },
       {
-        id: 'fulfillment.a',
-        group: 'fulfillment',
-        parent: 'context.a',
-        label: '退款',
-      },
-      {
         id: 'request.a',
         group: 'evidence',
         kind: 'fulfillment_request',
-        parent: 'fulfillment.a',
-        fulfillmentRef: 'fulfillment.a',
+        parent: 'context.a',
         contextRef: 'context.a',
         label: '退款请求',
       },
@@ -40,8 +33,8 @@ function fixture() {
         id: 'request.b',
         group: 'evidence',
         kind: 'fulfillment_request',
-        parent: 'fulfillment.a',
-        fulfillmentRef: 'fulfillment.a',
+        parent: 'context.a',
+        contextRef: 'context.a',
         label: '另一请求',
       },
       {
@@ -49,20 +42,21 @@ function fixture() {
         contextRef: 'context.a',
         group: 'evidence',
         kind: 'fulfillment_confirmation',
+        parent: 'context.a',
         label: '退款到账凭证',
       },
       {
         id: 'confirmation.old',
         group: 'evidence',
         kind: 'fulfillment_confirmation',
+        parent: 'context.a',
         label: '先前付款凭证',
       },
       {
         id: 'rule.completed',
         group: 'rule',
         kind: 'completion',
-        parent: 'fulfillment.a',
-        fulfillmentRef: 'fulfillment.a',
+        parent: 'context.a',
         label: '退款完成',
         description: '本次退款在期限内全额到账。',
         expression: 'confirmations.exists(c, c.settled)',
@@ -79,8 +73,7 @@ function fixture() {
         id: 'rule.breached',
         group: 'rule',
         kind: 'breach',
-        parent: 'fulfillment.a',
-        fulfillmentRef: 'fulfillment.a',
+        parent: 'context.a',
         label: '退款逾期',
         description: '超过期限仍未按约到账。',
         expression: 'now > claim.expired_at',
@@ -126,7 +119,6 @@ test('Unwrapped endpoints remain under their contract without a fabricated fulfi
     ),
   );
   for (const node of data.nodes.filter((n) => n.group === 'evidence')) {
-    delete node.fulfillmentRef;
     node.parent = 'context.a';
   }
   const page = open(data);
@@ -163,9 +155,15 @@ test('Wrapped result endpoints are visible before completion rules or support re
       group,
       kind: group === 'role' ? 'evidence' : 'fulfillment_confirmation',
       label: '交付结果',
-      fulfillmentRef: 'fulfillment.a',
       contextRef: 'context.a',
-      parent: 'fulfillment.a',
+      parent: 'context.a',
+    });
+    data.nodes.push({
+      id: 'relation.owned',
+      group: 'relationship',
+      kind: 'references',
+      sourceRef: 'result.owned',
+      targetRef: 'request.a',
     });
     const page = open(data);
     try {
@@ -339,7 +337,7 @@ test('External proof keeps its role and real players; ordinary evidence keeps tw
       group: 'role',
       kind: 'evidence',
       contextRef: 'context.a',
-      fulfillmentRef: 'fulfillment.a',
+      parent: 'context.a',
       label: '合格付款证明',
     },
     {
@@ -433,7 +431,7 @@ test('References do not turn historical evidence, unbound roles or other request
   }
 });
 
-test('Unbound or ambiguous rules are not assigned by fulfillment alone; condition text is safe', () => {
+test('Unbound or ambiguous rules are not assigned by bindings alone; condition text is safe', () => {
   const data = fixture();
   data.nodes.find((n) => n.id === 'rule.completed').description =
     '<img src=x onerror=alert(1)>';
@@ -441,7 +439,7 @@ test('Unbound or ambiguous rules are not assigned by fulfillment alone; conditio
     id: 'rule.unbound',
     group: 'rule',
     kind: 'completion',
-    fulfillmentRef: 'fulfillment.a',
+    parent: 'context.a',
     label: '无明确请求',
     bindings: [],
   });
@@ -449,7 +447,7 @@ test('Unbound or ambiguous rules are not assigned by fulfillment alone; conditio
     id: 'rule.ambiguous',
     group: 'rule',
     kind: 'breach',
-    fulfillmentRef: 'fulfillment.a',
+    parent: 'context.a',
     label: '多个请求',
     bindings: [{ ref: 'request.a' }, { ref: 'request.b' }],
   });

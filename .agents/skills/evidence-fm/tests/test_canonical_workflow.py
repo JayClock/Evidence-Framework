@@ -43,25 +43,13 @@ class CanonicalModelTests(unittest.TestCase):
                 path,
             )
 
-    def test_fulfillment_is_a_contract_owned_structure(self) -> None:
-        allowed = {
-            "type",
-            "id",
-            "category",
-            "label",
-            "aliases",
-            "notes",
-            "contextRef",
-        }
+    def test_fulfillment_entity_does_not_exist(self) -> None:
         fulfillments = [
             (path, value)
             for path, value in self.json_documents()
             if value.get("category") == "fulfillment"
         ]
-        self.assertTrue(fulfillments)
-        for path, fulfillment in fulfillments:
-            self.assertEqual(set(), set(fulfillment) - allowed, path)
-            self.assertIn("contextRef", fulfillment, path)
+        self.assertEqual([], fulfillments)
 
     def test_source_schema_and_docs_have_no_legacy_model(self) -> None:
         paths = [

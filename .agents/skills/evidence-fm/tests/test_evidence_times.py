@@ -59,7 +59,6 @@ def evidence(kind: str) -> dict:
         "kind": kind,
         "label": "合成时间凭证",
         "contextRef": "context.test",
-        **({"fulfillmentRef": "fulfillment.test"} if kind == "fulfillment_request" else {}),
         **(
             {"roleRefs": ["role.one", "role.two"]}
             if kind == "contract"
@@ -280,17 +279,14 @@ class EvidenceTimeTests(unittest.TestCase):
             self.assertTrue(attributes[name]["required"])
             self.assertTrue(attributes[name]["keyData"])
 
-        fulfillment = json.loads(
-            (
-                FIXTURES
-                / "valid-subscription/entities/fulfillment--content-payment.json"
-            ).read_text()
-        )
-        fulfillment["requestInterval"] = {
-            "startAttribute": "started_at",
-            "endAttribute": "expired_at",
+        entity_invalid = {
+            "type": "entity",
+            "id": "entity.invalid",
+            "category": "fulfillment",
+            "label": "非法",
+            "contextRef": "context.test",
         }
-        self.assertTrue(schema_errors(fulfillment, "entity.schema.json"))
+        self.assertTrue(schema_errors(entity_invalid, "entity.schema.json"))
 
     def test_instances_require_concrete_rfc3339_values_for_all_time_fields(self):
         for kind, names in TIMES.items():
