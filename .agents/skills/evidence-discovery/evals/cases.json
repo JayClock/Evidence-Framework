@@ -22,6 +22,17 @@
     "rubric": "重新计算依赖前沿后，必须在同轮次成组提出全部独立必要未知（如：发票核验凭证来源、15工作日起算点依据、主管审批未通过的补偿路径），严禁每次只单句追问一个孤立问题。"
   },
   {
+    "id": "DISCOVERY-C3",
+    "category": "content",
+    "dimension": "复杂领域叙述中锚定业务凭证",
+    "prompt": "业务方在就诊访谈中详细解释心电图 ST 段异常的医学诊断标准，以及各类复杂的降压药配伍禁忌。请推进访谈。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "不得陷入医学诊断算法与药剂学细节；成组问题必须引导回业务凭证本身（如：由谁签发诊断书、处方单由谁审核、患者凭何单据取药与结算）。"
+  },
+  {
     "id": "DISCOVERY-T1",
     "category": "trigger",
     "dimension": "控制分支 · 仅存资料不发起新提问",

@@ -24,6 +24,30 @@
     "rubric": "只从既有设计源投影，不新增或改写资源、能力与 HTTP 契约；不重复执行 FM 检查；投影失败时保留原设计源并报告失败，而不是修改规则来通过。"
   },
   {
+    "id": "API-C3",
+    "category": "content",
+    "dimension": "严格遵循 CR 哲学杜绝凭证 UD",
+    "prompt": "为大宗采购中的出库申请、出库单与收货确认单设计 RESTful API。业务要求支持后续发现数量错误时的更正操作。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "出库申请与收货确认必须为 POST 创建，凭证查询为 GET；更正操作必须设计为追加红冲凭证的 POST 接口，严禁提供针对原有出库单资源的 PUT/PATCH/DELETE 接口。"
+  },
+  {
+    "id": "API-C4",
+    "category": "content",
+    "dimension": "基于弹性边界冷热分离的资源拆分",
+    "prompt": "为视频流媒体平台设计 API：包含用户购买开通 VIP 会员，以及每次播放视频时的实时鉴权放行。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "必须识别签约（低并发冷流量）与播放鉴权（高并发热流量）之间的业务等待点，将其划分为独立的 URI 根与能力边界，不得将两者打包在同一同步阻塞事务内。"
+  },
+  {
     "id": "API-T1",
     "category": "trigger",
     "dimension": "负面控制 · 与本项目无关的请求",

@@ -47,7 +47,7 @@
 
 调用者必须是有业务依据且已有 Participant Party 玩家扮演的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按可调用业务角色列出能力；经办主体作为办理该能力的业务说明保留，缺少扮演关系时宁可回映为 internal/external/gap，也不暴露对应接口。实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽，没有责任人，也不代表可签发单据；不生成角色的提交或 CRUD 接口。消费能力引用实际玩家并校验归属、可见性和业务规则；外部活动可回映为 `external`，没有接口依据不猜测接入 API。实际玩家的 `responsibleRoleRef` 只是其自身上下文的职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
 
-GET 对应 read。Evidence 写入只能用 POST + append_evidence。PUT/PATCH/DELETE 覆盖 Evidence 会被拒绝；更正与撤销必须先有业务表达，再设计追加证据。
+GET 对应 read。Evidence 写入只能用 POST + append_evidence。基于凭证不可变与不可抛弃理论，业务对外接口严格遵循 CR 哲学（只有 Create 与 Read，杜绝针对 Evidence 记录的 PUT/PATCH/DELETE 覆盖修改）；更正与撤销必须先有业务表达，再设计追加证据或红冲补偿。微服务物理拆分优先考量弹性边界（阶段间业务等待点与冷热并发差异）。
 
 共享 Method + URI 保留各角色的完整接口契约。按参数形状归一化路由，参数改名不能隐藏冲突；不同效果变体无法证明兼容时保留 gap。
 

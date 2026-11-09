@@ -49,10 +49,12 @@ MOCK_OUTPUTS = {
         "每个接口都有 mapped 的 2xx 消费步骤，读取入口不替代连续消费证据。"
     ),
     "API-C2": "已从既有 api.json 生成 OpenAPI 投影，未重新设计接口，也未重复运行 FM 检查。",
+    "API-C3": "出库申请与收货确认为 POST 接口，历史查询为 GET；数量更正通过追加红冲出库凭证实现，无 PUT/DELETE。",
+    "API-C4": "会员签约购买（冷服务）与视频实时播放鉴权（热服务）划为独立资源和消费流程，保障高并发弹性与幂等。",
     "API-T1": "REST 以资源和统一接口为中心，RPC 以远程调用为中心，二者是风格差异。",
     "API-T2": "Schema 校验通过，只输出报告，未修改任何文件。",
 }
-MOCK_LOADED = {"API-C1", "API-C2", "API-T2"}
+MOCK_LOADED = {"API-C1", "API-C2", "API-C3", "API-C4", "API-T2"}
 
 
 def snapshot(workspace: Path) -> dict[str, str]:

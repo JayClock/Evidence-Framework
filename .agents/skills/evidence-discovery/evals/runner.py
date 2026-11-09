@@ -51,10 +51,14 @@ MOCK_OUTPUTS = {
         "供应商发票由税控接口自动核验还是财务人工验真？"
         "付款起算点以收到合格发票为准还是以审批归档时间为准？"
     ),
+    "DISCOVERY-C3": (
+        "暂不展开心电图诊断算法与配药规则细节。"
+        "请问门诊诊断结论通过哪份法定诊断书凭证记录？处方单由哪位医生签发，药剂师凭何单据配发药品？"
+    ),
     "DISCOVERY-T1": "已记录会议备忘事实至追溯日志，未推进下游模型生成，保持等待状态。",
     "DISCOVERY-T2": "Python 3.10 的 match-case 支持结构化模式匹配，可用于类型解构与守卫语句。",
 }
-MOCK_LOADED = {"DISCOVERY-C1", "DISCOVERY-C2", "DISCOVERY-T1"}
+MOCK_LOADED = {"DISCOVERY-C1", "DISCOVERY-C2", "DISCOVERY-C3", "DISCOVERY-T1"}
 
 
 def run_deterministic_rule(rule: str, workspace: Path, mode: str) -> tuple[bool, str]:

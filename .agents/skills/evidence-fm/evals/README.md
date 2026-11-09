@@ -4,16 +4,37 @@
 
 ## 用例维度
 
-| 用例      | 考察                                                     |
-| --------- | -------------------------------------------------------- |
-| `FM-C1`   | 请求—确认对偶与履约包裹                                  |
-| `FM-C2`   | 易变策略隔离为 Rule、违约阶梯有明确责任终点              |
-| `FM-C3`   | 最小保存单元与局部一致性                                 |
-| `FM-C4`   | 主要履约项成对，合同双方各承担一项                       |
-| `FM-C5`   | 单侧方向报范围完整性缺口，不补造对侧凑完整               |
-| `FM-T1`   | 讨论分支：解释方法但不写文件                              |
-| `FM-T2`   | 只读校验不越权修复                                       |
-| `FM-T3`   | 负面控制：与本方法无关的请求不触发、不写文件             |
+| 用例                    | 考察                                                     |
+| ----------------------- | -------------------------------------------------------- |
+| `FM-C1`                 | 请求—确认对偶与履约包裹                                  |
+| `FM-C2`                 | 易变策略隔离为 Rule、违约阶梯有明确责任终点              |
+| `FM-C3`                 | 最小保存单元与局部一致性                                 |
+| `FM-C4`                 | 主要履约项成对，合同双方各承担一项                       |
+| `FM-C5`                 | 单侧方向报范围完整性缺口，不补造对侧凑完整               |
+| `FM-C6`                 | 业务凭证与领域逻辑分离及角色变化点                       |
+| `FM-C7`                 | 凭证不可变性与红冲补偿机制                               |
+| `FM-C8`                 | 跨端变体演进与外部合规角色插槽                           |
+| `FM-C9`                 | 多方居间合同两两分解律                                   |
+| `FM-C-RFP`              | 节点类型 · 索取提案 (evidence/rfp) 协商期时段凭证         |
+| `FM-C-PROPOSAL`         | 节点类型 · 提案报价 (evidence/proposal) 响应时段凭证    |
+| `FM-C-CONTRACT`         | 节点类型 · 双方合约 (evidence/contract) 时刻凭证与上下文根|
+| `FM-C-REQUEST`          | 节点类型 · 履约请求 (evidence/fulfillment_request) 直连根合同|
+| `FM-C-CONFIRMATION`     | 节点类型 · 履约确认 (evidence/fulfillment_confirmation) 多确认基数|
+| `FM-C-SUPPORT-EVIDENCE` | 节点类型 · 通用支撑凭证 (evidence/other_evidence) 形成先决依据|
+| `FM-C-PARTY`            | 节点类型 · 全局参与方 (participant/party) 独立稳定主体   |
+| `FM-C-THING`            | 节点类型 · 领域标的物 (participant/thing) 独立资产属性    |
+| `FM-C-ROLE-PARTY`       | 节点类型 · 参与方角色 (role/party) 上下文身份载体        |
+| `FM-C-ROLE-DOMAIN`      | 节点类型 · 领域能力角色 (role/domain) 算法策略变化点     |
+| `FM-C-ROLE-THIRDPARTY`  | 节点类型 · 外部系统角色 (role/third_party) 外部系统适配边界|
+| `FM-C-ROLE-CONTEXT`     | 节点类型 · 上下文角色 (role/context) 外部未澄清边界占位   |
+| `FM-C-ROLE-EVIDENCE`    | 节点类型 · 凭证证明角色 (role/evidence) 仅限时刻凭证扮演 |
+| `FM-C-CONTEXT-CONTRACT` | 节点类型 · 合同上下文 (context/contract) 两方根与成对履约|
+| `FM-C-CONTEXT-PRECONTRACT` | 节点类型 · 协商上下文 (context/pre_contract) 磋商无正式合同根|
+| `FM-C-CONTEXT-DOMAIN`   | 节点类型 · 领域上下文 (context/domain) 标的物为根无履约  |
+| `FM-C-FULFILLMENT`      | 节点类型 · 履约容器 (fulfillment) 双向覆盖与成对包裹     |
+| `FM-T1`                 | 讨论分支：解释方法但不写文件                              |
+| `FM-T2`                 | 只读校验不越权修复                                       |
+| `FM-T3`                 | 负面控制：与本方法无关的请求不触发、不写文件             |
 
 ## 确定性检查
 

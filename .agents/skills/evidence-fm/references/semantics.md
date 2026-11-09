@@ -20,13 +20,15 @@
 
 责任与角色归属的检查分别见 [validate_evidence_responsibility](../scripts/fm_model.py)、[validate_party_role_owner](../scripts/fm_model.py)；扮演端点见 [validate_relationships](../scripts/fm_model.py)。最小保存单元由 [责任方法](responsibility-closure.md) 维护。
 
-## 领域复用的角色选择
+## 领域复用与五类角色变化点
 
-选择取决于当前抽象的对象，不是公司内外或部署位置；识别领域边界不自动创建 Domain Context。
+角色是业务系统变化点的核心抽象。选择取决于当前抽象的对象，不是公司内外或部署位置；识别领域边界不自动创建 Domain Context。
 
-- 抽象需要什么专业能力时使用领域能力角色，不限定实现系统。
-- 只消费既有系统或协作者时表达系统边界；图示的 `3rd-system` 对应当前 Schema 的系统协作角色，不是新类型。
-- 确需展开内部知识且有授权时才建立领域上下文；已展开上下文的角色化协作用上下文角色。
+- **参与方角色 (`role / party`)**：当事人身份，由 `participant / party` 扮演。
+- **领域能力角色 (`role / domain`)**：抽象需要什么专业能力或算法，由 `participant / thing` 扮演，不限定实现系统。
+- **系统协作角色 (`role / third_party`)**：对应外部通道或系统适配边界，图示的 `3rd-system` 对应此类型。
+- **上下文角色 (`role / context`)**：用于表达未展开或已展开的外部业务上下文协作边界。
+- **凭证证明角色 (`role / evidence`)**：跨上下文的开放证明插槽，仅允许时刻类型凭证（Confirmation 或时刻型支撑凭证）扮演；时段型凭证过程尚未终结，不得跨上下文扮演角色。
 
 角色不是结果凭证。能力声明、系统回调或方案成熟度不能证明履约完成；具体字段与合法端点分别读取 [Entity Schema](../schemas/entity.schema.json) 和 [validate_relationships](../scripts/fm_model.py)。
 
@@ -34,7 +36,7 @@
 
 当前合同确实依赖另一未澄清合同的协作边界时，用 Context Role 保留所需能力及未知；无关联合同只留在交接。不创建虚构合同、内部履约或玩家，也不以外部处理转移当前合同责任。后续依据充分且获授权时接入真实上下文，保留角色身份。
 
-Context Role 不代替 Evidence Role，也不代表结果已经存在。Evidence Role 是跨上下文的开放证明插槽：消费方声明采信约定，具体结果保留提供方上下文、责任与业务时间。插槽自身不签发凭证实例；业务规则必须解析实际玩家，不能凭字段相同接受无关凭证。
+Context Role 不代替 Evidence Role，也不代表结果已经存在。Evidence Role 是跨上下文的开放证明插槽：消费方声明采信约定，具体结果保留提供方上下文、责任与业务时间。仅时刻型凭证可扮演 Evidence Role。插槽自身不签发凭证实例；业务规则必须解析实际玩家，不能凭字段相同接受无关凭证。
 
 无需替换证明方式时可直接引用有依据的外部确定结果，不机械增加插槽。同合同内的不同履约不构成跨上下文，不借证明角色中转。具体允许的引用和扮演组合以 [validate_relationships](../scripts/fm_model.py) 检查：同合同引用只指向本合同对象，跨上下文证明经 Evidence Role 保留提供方归属，未澄清协作边界用 Context Role 记录能力与未知，两者都不签发实例。必要证明不明仍是交付缺口，角色不能补齐它。
 
