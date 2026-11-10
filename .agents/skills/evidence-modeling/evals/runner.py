@@ -46,8 +46,10 @@ MOCK_OUTPUTS = {
     "MODELING-T1": "进入证据建模端到端入口，委派 evidence-fm 开始增量模型构建。",
     "MODELING-T2": "尚未取得人类范围结束确认，阶段门禁拦截，拒绝委派 API 与页面生成。",
     "MODELING-T3": "违约金关键依据不足，停止委派下游阶段，在交接处挂起并汇报缺口。",
+    "MODELING-C1": "严格按照七步法编排执行：完成协议解析、双向权责提取、凭证对偶追溯、参与元素与角色抽象、业务与领域上下文隔离，并提炼宏流程沉淀核心业务模式。",
+    "MODELING-C2": "成功复用基础会员核心业务模式宏流程主干，增量扩展体育赛事观赛券与赛事计算器角色插槽，完成变体演进。",
 }
-MOCK_LOADED = {"MODELING-T1", "MODELING-T2", "MODELING-T3"}
+MOCK_LOADED = {"MODELING-T1", "MODELING-T2", "MODELING-T3", "MODELING-C1", "MODELING-C2"}
 
 DOWNSTREAM = (".evidence/api/api.json", ".evidence/views/index.html")
 

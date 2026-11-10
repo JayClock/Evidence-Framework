@@ -48,6 +48,30 @@
     "rubric": "必须识别签约（低并发冷流量）与播放鉴权（高并发热流量）之间的业务等待点，将其划分为独立的 URI 根与能力边界，不得将两者打包在同一同步阻塞事务内。"
   },
   {
+    "id": "API-C5",
+    "category": "content",
+    "dimension": "凭证角色化消费契约 · 仅限时刻事件",
+    "prompt": "读取采购合同的交付模型，买方要求必须见‘银行支付凭证’才允许仓库出库发货。请为出库服务设计与支付凭证角色对接的 HTTP 消费契约。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "出库前置消费步骤必须且只能绑定银行支付上下文生成的‘支付确认（Confirmation）’时刻事件或支付凭证实体；严禁将未决状态的‘支付申请（Request）’作为出库消费的先决条件；接口映射中体现确定态事实作为消费前提。"
+  },
+  {
+    "id": "API-C6",
+    "category": "content",
+    "dimension": "多请求共享确认的多入度 API 契约",
+    "prompt": "在绩效结算业务中，‘月度交付请求’与‘季度交付请求’共享同一个‘营运收入确认单’。请为该共享确认凭证设计 RESTful 契约及消费步骤。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "设计统一的收入确认资源 POST 契约；请求体支持引用不同类型的履约请求来源标识；每个请求来源在权责层具有等价映射的 2xx 消费确认步骤，接口设计符合单一凭证资源标准 Schema。"
+  },
+  {
     "id": "API-T1",
     "category": "trigger",
     "dimension": "负面控制 · 与本项目无关的请求",

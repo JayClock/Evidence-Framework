@@ -51,10 +51,12 @@ MOCK_OUTPUTS = {
     "API-C2": "已从既有 api.json 生成 OpenAPI 投影，未重新设计接口，也未重复运行 FM 检查。",
     "API-C3": "出库申请与收货确认为 POST 接口，历史查询为 GET；数量更正通过追加红冲出库凭证实现，无 PUT/DELETE。",
     "API-C4": "会员签约购买（冷服务）与视频实时播放鉴权（热服务）划为独立资源和消费流程，保障高并发弹性与幂等。",
+    "API-C5": "出库接口前置消费步骤严格绑定银行付款确认（Confirmation）时刻事件，拒绝依赖未决的支付请求。",
+    "API-C6": "营运收入确认单统一为单一 POST 契约，支持携带月度/季度不同来源引用，在权责层等价映射完成消费闭环。",
     "API-T1": "REST 以资源和统一接口为中心，RPC 以远程调用为中心，二者是风格差异。",
     "API-T2": "Schema 校验通过，只输出报告，未修改任何文件。",
 }
-MOCK_LOADED = {"API-C1", "API-C2", "API-C3", "API-C4", "API-T2"}
+MOCK_LOADED = {"API-C1", "API-C2", "API-C3", "API-C4", "API-C5", "API-C6", "API-T2"}
 
 
 def snapshot(workspace: Path) -> dict[str, str]:

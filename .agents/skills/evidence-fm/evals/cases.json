@@ -3,7 +3,7 @@
     "id": "FM-C1",
     "category": "content",
     "dimension": "请求—确认对偶与履约包裹",
-    "prompt": "针对生鲜电商退款业务：用户申请‘未收到货退款’，骑手反馈已送达。请梳理此处的业务履约与争议处理逻辑。",
+    "prompt": "针对生鲜电商退款业务：用户申请‘未收到货退款’，配送员反馈已按时送达指定地址。请梳理此处的业务履约与争议处理逻辑。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
@@ -14,7 +14,7 @@
     "id": "FM-C2",
     "category": "content",
     "dimension": "易变策略隔离与违约阶梯闭环",
-    "prompt": "平台给骑手发放配送费，每单基础 5 元。恶劣天气补贴 2 元，超时每 10 分钟扣 1 元，扣完为止。",
+    "prompt": "平台给配送员发放配送费，每单基础 5 元。恶劣天气补贴 2 元，超时每 10 分钟扣 1 元，扣完为止。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
@@ -33,32 +33,10 @@
     "rubric": "修改范围仅限供应商 Entity 及其属性，保留既有无关配置；保存后一致性检查通过，且不因单点改动破坏现有合同依赖与引用图。"
   },
   {
-    "id": "FM-T1",
-    "category": "trigger",
-    "dimension": "讨论分支 · 只聊不落盘",
-    "prompt": "什么是履约建模法？它和普通的领域驱动设计战术模型有什么区别？只聊聊思路即可，不要写任何文件。",
-    "target_skill": "none",
-    "expect_trigger": true,
-    "expect_file_write": false,
-    "deterministic_rule": "no_file_write",
-    "rubric": "仅做概念解释与方法对比，严禁调用文件写入工具，严禁在 .evidence/ 下创建或修改任何 JSON 或 Markdown 文件。"
-  },
-  {
-    "id": "FM-T2",
-    "category": "trigger",
-    "dimension": "负面控制 · 只读校验不越权修复",
-    "prompt": "请帮我检查当前 .evidence/fm/ 的模型一致性，只输出校验报告，不要自动修复或修改任何文件。",
-    "target_skill": "evidence-fm",
-    "expect_trigger": true,
-    "expect_file_write": false,
-    "deterministic_rule": "no_file_write",
-    "rubric": "仅执行 check_fm.py 检查并返回只读报告；工作区无任何文件被创建或修改。"
-  },
-  {
     "id": "FM-C4",
     "category": "content",
     "dimension": "主要履约项成对与双方义务覆盖",
-    "prompt": "内容订阅业务：订阅者按约定付款，平台方向订阅者提供付费内容访问。请梳理这个合同的落地顺序和主要履约项。",
+    "prompt": "数字内容订阅业务：订阅者按约定付款，平台方向订阅者提供付费内容访问。请梳理这个合同的落地顺序和主要履约项。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
@@ -69,12 +47,12 @@
     "id": "FM-C5",
     "category": "content",
     "dimension": "单侧履约不得声称完整且不补造对侧",
-    "prompt": "先把内容订阅合同的付款履约落地，内容访问那部分我还没想清楚，先这样交付给 API 设计可以吗？",
+    "prompt": "先把数字内容订阅合同的付款履约落地，内容访问那部分我还没想清楚，先这样交付给 API 设计可以吗？",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_pairing_gap",
-    "rubric": "必须指出只有单一义务方向属于范围完整性缺口，不可作为完整范围交付下游；不得补造对侧履约项、请求、确认或角色，也不得以‘该合同只有单侧义务’或口头确认换取豁免，应保留缺口并继续澄清。"
+    "rubric": "必须指出只有单一义务方向属于范围完整性缺口，不可作为完整范围交付下游；不得补造对侧履约项、请求、确认或角色，也不得以口头确认换取豁免，应保留缺口并继续澄清。"
   },
   {
     "id": "FM-C6",
@@ -85,7 +63,7 @@
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_consistent",
-    "rubric": "挂号单、检查单、缴费证明、诊断书、处方必须识别为业务凭证；医生诊断算法与CT成像不得作为业务凭证；挂号渠道、科室必须抽象为角色变化点，严禁为每种挂号渠道复制凭证类型。"
+    "rubric": "挂号单、检查单、缴费证明、处方必须识别为业务凭证；医生诊断算法与CT成像不得作为业务凭证；挂号渠道、就诊科室必须抽象为角色变化点，严禁为每种挂号渠道复制凭证类型。"
   },
   {
     "id": "FM-C7",
@@ -96,29 +74,106 @@
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_consistent",
-    "rubric": "严禁直接修改或覆盖原有出库单事实；必须遵循凭证不可变与不可抛弃原则，建立一张与原凭证对应的红冲出库凭证，并开具一张80件的蓝字新出库凭证。"
+    "rubric": "严禁直接修改或覆盖原有出库单事实；必须遵循凭证不可变与不可抛弃原则，建立一张与原凭证对应的红冲出库凭证，并开具一张80件的新出库凭证。"
   },
   {
     "id": "FM-C8",
     "category": "content",
     "dimension": "跨端变体演进与外部合规角色插槽",
-    "prompt": "腾讯视频在普通VIP会员（手机/电脑观影）基础上推出超级VIP（支持TV大屏）。大屏播放必须通过南方新媒体牌照商的合规鉴权。请为超级VIP的跨端鉴权扩展建模。",
+    "prompt": "某在线流媒体平台在基础会员（手机/网页观影）基础上推出全屏超级会员（支持TV大屏观影）。大屏端播放前必须调用外部广电播控平台进行合规播控鉴权。请为全屏超级会员的跨端鉴权扩展建模。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_consistent",
-    "rubric": "必须复用核心会员订阅履约主干；南方新媒体牌照商必须作为第三方系统角色接入，严禁在原VIP双边合同中增加第三个签约主体。"
+    "rubric": "必须复用核心会员订阅履约主干；外部广电播控平台必须作为第三方系统角色（third_party as role）接入，严禁在原双边会员服务协议中增加第三个签约主体。"
   },
   {
     "id": "FM-C9",
     "category": "content",
     "dimension": "多方居间合同两两分解律",
-    "prompt": "房屋租赁平台业务涉及三方：房东、租客和中介平台。中介收取双方服务费并提供居间撮合与押金监管，房东向租客交房。请建立其合同履约模型。",
+    "prompt": "房屋租赁平台业务涉及三方：房东、租客和中介撮合平台。平台收取双方服务费并提供撮合与押金监管，房东向租客交房。请建立其合同履约模型。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_consistent",
-    "rubric": "严禁在单个合同中声明3个责任角色；必须拆解为两份两两双方合约（如居间服务合同与租赁履约合同），并通过共享标的物或跨上下文时刻凭证角色连接。"
+    "rubric": "严禁在单个合同中声明3个责任角色；必须拆解为两份两两双方合约（居间服务合同与租赁履约合同），并通过共享标的物或跨上下文时刻凭证角色连接。"
+  },
+  {
+    "id": "FM-C10",
+    "category": "content",
+    "dimension": "合约前场景 · 无磋商直接签约",
+    "prompt": "用户在流媒体音视频平台购买‘连续包月VIP会员’，在客户端直接勾选《会员服务协议》并完成在线首期支付。请为该直接签约与履约开通建模。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "上下文必须直接以会员服务协议 Contract 为根凭证；严禁强行补造空的 RFP 或 Proposal 节点；明确此业务属于标准化产品无前置方案磋商的直接签约场景。"
+  },
+  {
+    "id": "FM-C11",
+    "category": "content",
+    "dimension": "合约前场景 · 多入度磋商汇聚",
+    "prompt": "某数据中心采购网络设备维保服务，既支持通过公开招标流程（发布采购询价单 RFP、收取供应商投标方案 Proposal）定标签约，也支持与原厂战略供应商直接基于年度标准服务协议签约。请建立该合同及其前置签约来源模型。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "维保服务合同上下文的根合同必须能够同时接纳两种不同的签约前来源：一条分支由 RFP 与 Proposal 时段凭证链导向签约，另一条分支由战略提案直接导向签约；清晰表达多入度磋商汇聚于同一履约协议。"
+  },
+  {
+    "id": "FM-C12",
+    "category": "content",
+    "dimension": "履约确认 · 多个请求共享确认",
+    "prompt": "某大型制造企业销售部在考核期内，既有‘月度基础销售交付请求’（时段），又有‘季度重点项目交付请求’（时段）。两项请求在完成交付后，均由财务与运营审计部门统一出具‘营运收入结算确认凭证’（时刻）完成闭环。请建立该履约模型。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "必须在模型中表达多个 Fulfillment Request 关联共同的 Fulfillment Confirmation 凭证；用于履约确认的凭证在权责关系上等价承接多项履约请求的终态事实。"
+  },
+  {
+    "id": "FM-C13",
+    "category": "content",
+    "dimension": "违约判定 · 时段超时无确认追溯",
+    "prompt": "在商业设备维保合同中，甲方发出《紧急抢修申请》（时段凭证，要求 24 小时内完成）。乙方超过 48 小时仍未出具任何《抢修完成确认单》。请为该违约追溯逻辑建模。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "必须在模型中明确履约请求的 started_at 与 expired_at 时段约束；当已过 expired_at 且仍无对应的 confirmation 凭证时，识别为实质违约状态，并挂接合同违约责任条款与赔偿追溯凭证。"
+  },
+  {
+    "id": "FM-C14",
+    "category": "content",
+    "dimension": "凭证角色化 · 仅限时刻凭证扮演（反模式拦截）",
+    "prompt": "在工程设备采购中，买方希望在主合同的交付上下文中设置一个‘付款凭证’角色插槽，并提出直接让外部支付流程中刚提交的‘付款申请单’（尚在审批与转账处理中的时段请求凭证）来扮演该角色以提前发货。请评估该方案并完成建模。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "必须明确拒绝让时段类凭证（如付款申请单）扮演凭证角色；严格遵循凭证角色化铁律——时段类凭证存在未决状态不能代表确定结果，只有时刻类凭证（如银行转账水单/支付确认）才能扮演凭证角色；不建立该非法角色绑定关系，不写入错误模型。"
+  },
+  {
+    "id": "FM-C15",
+    "category": "content",
+    "dimension": "非履约条款与运营附随服务过滤",
+    "prompt": "某在线视听平台拟订了一份《付费会员服务协议》，其中除了付费与免广告权益外，还包含‘平台版权与知识产权声明’、‘不可抗力免责条款’、‘开屏及播放器底部品牌赞助广告展示规则’。请为该会员服务协议实施履约建模。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "必须准确过滤非系统履约项：赞助广告属于平台单向商业变现或附随运营，非会员对价履约项；版权声明与不可抗力属于法律免责条款；严禁将广告展示或法律声明条款建模为双方履约凭证。"
+  },
+  {
+    "id": "FM-C16",
+    "category": "content",
+    "dimension": "缺失合同时的凭证逆推归纳建模",
+    "prompt": "某传统批发企业长期无正式书面合同，但日常交易中严格留存《订货单》、《分批送货签收单》、《月度对账确认单》及《银行电汇回执》。请帮该企业完成业务履约建模。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_fm_consistent",
+    "rubric": "运用凭证逆推三问法（留存凭证追溯、权责履约关系、违约追责依据），从现有事实单据逆推双方隐式合约上下文与权利义务；将订货单/签收单与对账/电汇分别归整为成对双向履约项。"
   },
   {
     "id": "FM-C-RFP",
@@ -190,7 +245,7 @@
     "id": "FM-C-PARTY",
     "category": "content",
     "dimension": "节点类型 · 全局参与方 (participant/party) 独立稳定主体",
-    "prompt": "某设备制造商（张三数控科技有限责任公司）既在甲合同中作为供货方，又在乙借款合同中作为债务人。请为该公司主体建模。",
+    "prompt": "某设备制造商（精密数控科技有限公司）既在甲合同中作为供货方，又在乙借款合同中作为债务人。请为该公司主体建模。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
@@ -234,12 +289,12 @@
     "id": "FM-C-ROLE-THIRDPARTY",
     "category": "content",
     "dimension": "节点类型 · 外部系统角色 (role/third_party) 外部系统适配边界",
-    "prompt": "在视频平台超级 VIP 服务中，TV 端播放前必须调用广电总局授权的南方新媒体（SNM）播控平台进行播控合规性检查。请为该外部系统协作建模。",
+    "prompt": "在视听平台大屏会员服务中，播放前必须调用外部合规播控平台进行内容播控检查。请为该外部系统协作建模。",
     "target_skill": "evidence-fm",
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_fm_consistent",
-    "rubric": "南方新媒体播控必须建模为 role 且 kind 为 third_party；在鉴权流程中作为外部依赖角色接入；严禁把南方新媒体作为第 3 个签约方直接加入用户与视频平台的会员双边服务协议中。"
+    "rubric": "外部合规播控平台必须建模为 role 且 kind 为 third_party；在鉴权流程中作为外部依赖角色接入；严禁把播控平台作为第 3 个签约方直接加入用户与平台的会员双边服务协议中。"
   },
   {
     "id": "FM-C-ROLE-CONTEXT",
@@ -306,6 +361,28 @@
     "expect_file_write": true,
     "deterministic_rule": "check_fm_pairing_gap",
     "rubric": "合同内必须建立成对的双向履约项：甲方主张巡检抢修（请求方甲方、确认方乙方）与乙方主张维保费（请求方乙方、确认方甲方）；每项履约必须且恰好包裹 1 个 Request 与 1 到多份 Confirmation；严禁单端履约，严禁单侧义务覆盖。"
+  },
+  {
+    "id": "FM-T1",
+    "category": "trigger",
+    "dimension": "讨论分支 · 只聊不落盘",
+    "prompt": "什么是履约建模法？它和普通的领域驱动设计战术模型有什么区别？只聊聊思路即可，不要写任何文件。",
+    "target_skill": "none",
+    "expect_trigger": true,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "仅做概念解释与方法对比，严禁调用文件写入工具，严禁在 .evidence/ 下创建或修改任何 JSON 或 Markdown 文件。"
+  },
+  {
+    "id": "FM-T2",
+    "category": "trigger",
+    "dimension": "负面控制 · 只读校验不越权修复",
+    "prompt": "请帮我检查当前 .evidence/fm/ 的模型一致性，只输出校验报告，不要自动修复或修改任何文件。",
+    "target_skill": "evidence-fm",
+    "expect_trigger": true,
+    "expect_file_write": false,
+    "deterministic_rule": "no_file_write",
+    "rubric": "仅执行 check_fm.py 检查并返回只读报告；工作区无任何文件被创建或修改。"
   },
   {
     "id": "FM-T3",

@@ -24,13 +24,46 @@
   {
     "id": "DISCOVERY-C3",
     "category": "content",
-    "dimension": "复杂领域叙述中锚定业务凭证",
-    "prompt": "业务方在就诊访谈中详细解释心电图 ST 段异常的医学诊断标准，以及各类复杂的降压药配伍禁忌。请推进访谈。",
+    "dimension": "业务凭证与领域算法分水岭",
+    "prompt": "业务方在会员中心访谈中，详细阐述了复杂的 VIP 会员积分衰减动力学模型、多因子成长值加权算法以及退费折旧阶梯公式。请推进访谈。",
     "target_skill": "evidence-discovery",
     "expect_trigger": true,
     "expect_file_write": true,
     "deterministic_rule": "check_interview_trace",
-    "rubric": "不得陷入医学诊断算法与药剂学细节；成组问题必须引导回业务凭证本身（如：由谁签发诊断书、处方单由谁审核、患者凭何单据取药与结算）。"
+    "rubric": "不得陷入纯算法公式与数学推导细节；必须将动态积分与计费逻辑收敛为领域能力接口（计算器角色）；成组问题必须引导回业务凭证本身（由谁触发计算、依据何种单据开具扣费凭证、如何出具对账结算确认）。"
+  },
+  {
+    "id": "DISCOVERY-C4",
+    "category": "content",
+    "dimension": "缺失合同时的凭证逆推三问访谈",
+    "prompt": "我们是一家传统五金商贸批发企业，平时做生意全靠熟人口头订货和微信打招呼，根本没有正式的书面合同文本，但日常有送货单和转账记录。请帮我们梳理业务。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "面对缺失书面合同的业务现状，必须主动启动凭证逆推三问法展开成组访谈：① 追问日常有哪些必须留存和核对的纸质/电子业务凭证；② 追问这些凭证代表了买卖双方何种权责与交付承诺；③ 追问发生质量争议或拖欠货款时依据什么约定进行责任追溯。"
+  },
+  {
+    "id": "DISCOVERY-C5",
+    "category": "content",
+    "dimension": "多方复杂交易的双边关系拆解",
+    "prompt": "我们想做一个四方网络货运调度平台：货主发货、平台撮合调度、车队承运并派单给个体司机。请帮我们开展业务访谈。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "严禁将四方混在一个大流程中进行模糊追问；必须引导业务方按法律追责与履约对偶原则拆解为两两双边责任线索（货主与平台、平台与车队、车队与司机）；成组分别澄清各个双边关系中的核心凭证与对价交付。"
+  },
+  {
+    "id": "DISCOVERY-C6",
+    "category": "content",
+    "dimension": "运营免责与附随功能识别澄清",
+    "prompt": "业务方在视频会员服务访谈中，强烈要求优先讨论开屏推荐广告的轮播算法、合作品牌赞助位展示规则，以及版权侵权免责声明。请推进访谈。",
+    "target_skill": "evidence-discovery",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "deterministic_rule": "check_interview_trace",
+    "rubric": "必须清晰识别并引导业务方区分‘核心付费履约责任’与‘平台运营附随服务/法务免责声明’；指出广告和免责条款不构成用户付费对价的核心履约项，成组提问聚焦回会员充值、权益开通、有效期限确认等核心业务凭证。"
   },
   {
     "id": "DISCOVERY-T1",
