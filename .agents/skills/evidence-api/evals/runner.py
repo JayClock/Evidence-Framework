@@ -53,10 +53,26 @@ MOCK_OUTPUTS = {
     "API-C4": "会员签约购买（冷服务）与视频实时播放鉴权（热服务）划为独立资源和消费流程，保障高并发弹性与幂等。",
     "API-C5": "出库接口前置消费步骤严格绑定银行付款确认（Confirmation）时刻事件，拒绝依赖未决的支付请求。",
     "API-C6": "营运收入确认单统一为单一 POST 契约，支持携带月度/季度不同来源引用，在权责层等价映射完成消费闭环。",
+    "API-C7": "合同列表读取挂载于具体参与主体服务路径 /users/{userId}/subscriptions，设计上明确其本质为主体能力与合同能力的函数求值与编排组合，而非主体管理合同；合同单项通过业务 ID 查询。",
+    "API-C8": "买方付款与财务人工复核映射为前台及经办角色 API 契约；银联清算中心跨行结算声明为 nonApiActivities（handling: external），全模型业务对象形成互斥闭包。",
+    "API-C9": "多批次送货申请依据 1:N 映射为集合资源及带 deliveryId 的单项视图；总体验收确认依据 1:1 映射为单例资源（无子 ID），且采用单次 POST 追加凭证，杜绝 PUT/PATCH。",
+    "API-C10": "延期违约金、折旧费与实付结算金额等派生计算字段严禁作为入参，由服务端计算回填；结算列表查询参数严格与已声明日期属性和状态规则对齐。",
     "API-T1": "REST 以资源和统一接口为中心，RPC 以远程调用为中心，二者是风格差异。",
     "API-T2": "Schema 校验通过，只输出报告，未修改任何文件。",
 }
-MOCK_LOADED = {"API-C1", "API-C2", "API-C3", "API-C4", "API-C5", "API-C6", "API-T2"}
+MOCK_LOADED = {
+    "API-C1",
+    "API-C2",
+    "API-C3",
+    "API-C4",
+    "API-C5",
+    "API-C6",
+    "API-C7",
+    "API-C8",
+    "API-C9",
+    "API-C10",
+    "API-T2",
+}
 
 
 def snapshot(workspace: Path) -> dict[str, str]:

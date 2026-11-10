@@ -1,68 +1,98 @@
 # 整体模型到接口的设计方法
 
-读取整体 FM，不设置 Context 子集、不重复业务审核。遍历模型中的全部业务对象与全部场景，直接设计完整接口及 HTTP 契约；技术校验发现真实缺口时报告，不靠局部输出宣称完成。
+以已通过完整性与一致性检查的形式化业务模型（FM）为唯一输入源，不设置 Context 子集、不重复业务审核。遍历模型中的全部业务对象与全部场景，直接映射推导完整接口清单及 HTTP 契约；技术校验发现真实缺口时报告，不靠局部输出宣称完成。
 
-## 资源
+## 映射推导总纲
 
-只映射具有明确交互场景的实际 Evidence 或有来源的 Participant。Participant 的身份或经办记录只能说明主体存在，不能代替读取、维护资料等独立业务场景；不为覆盖节点类型而生成接口。Context 用于限定责任范围；除非另有业务对象依据，不把它当作可 CRUD 资源。资源必须声明 `businessName`，用业务对象或行为的名称显式配置 `segment`；不从 FM 的 category、kind 或 ID 拼接路径，也不从 label 猜英文、复数或聚合。能力名称描述业务办理目的，不把“创建 Request”或“追加 Evidence”当成业务能力。只有业务确实称其为确认时，才使用相应的确认名称。
+从模型到接口清单的推导遵循自顶向下的场景驱动直达与全量闭包原则，彻底摒弃面向过程的 RPC 动词设计与任意谓词穷举，严禁生成角色×视图×方法的笛卡尔探索表。
 
-先从 Context、聚合关系、父子基数和调用角色推导稳定资源 URI，再用角色、方法和 FM 场景确定 capability。URI 是模型关系的稳定表现，不等于数据库表或部署服务；写入能力仍由富含业务规则的领域模型执行。
+1. **不可变凭证的 CR 哲学**：业务对外接口严格遵循 CR 哲学（Create & Read）。对 Evidence 凭证记录的写操作唯一限定为 `POST + append_evidence`，读操作唯一限定为 `GET + read`，严禁针对凭证记录设计 PUT、PATCH 或 DELETE 覆盖写接口。业务更正、撤销与状态流转均通过形成新的修正凭证、红冲凭证或确认凭证推进。
+2. **场景与合法玩家直达**：每一个接口能力直接由 FM 验证场景（Validation Scenario）的交互步骤推导生成，调用者必须是 FM 中由 `participant.party` 实体通过 `plays_role` 显式扮演的 `role.party`，未被实体扮演的角色不生成 API 接口。
+3. **全模型双向覆盖闭包**：模型中的全部 Evidence、Thing 与 Participant 必须构成封闭集，要么在接口清单中具有对应的读/写能力，要么在非接口活动中具有明确的内部或外部处理依据。
 
-以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 根。Fulfillment 资源通常沿所属父合同 Context 的根继续导航；只有确需独立弹性边界时才拆服务，但服务拆分不改变稳定 URI。Contract 的实例读取可用自身业务 ID 定位；Contract 的 GET 列表必须按实际 `participant.party` 具体类型作用域挂载，例如 `/users/{userId}/subscriptions` 或 `/customers/{customerId}/subscriptions`，不能使用统称 `/parties/{partyId}`，因为同一 Contract 同时绑定两方角色，而两方角色可对应不同主体。跨 Context 的 Proposal → Contract 或合同 → Domain 关系使用超媒体链接，不将整条业务流程嵌入一条 URL。
+## 阶段一：上下文根定界、弹性边界与服务编排
 
-嵌套 URI 同时需要：
+以不同的合同前／渠道 Context、合同 Context 和领域 Context 作为不同 URI 寻址根。
 
-1. 资源图中的 `parentRef`；
-2. 匹配的 `parent_child` binding；
-3. FM 结构或业务来源，以及为何它表达实例归属或列表作用域的 reasoning。
+1. **上下文根隔离与跨根规则**：
+   - 合同前上下文（协商、意向、提案）与合同履约上下文物理分属不同根。
+   - 跨 Context 的关联（如提案转合同、履约项关联标的物领域模型）一律通过分布式超媒体链接（Hypermedia Links）建立连接，严禁将跨上下文业务流程直接拼装成单条级联 URL。
+   - 父子 URI 嵌套必须严格保持在同一 Context 根内。CLI 以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 阻断跨根嵌套。
+2. **复合履约链路解耦与弹性边界**：
+   - 履约资源通常沿所属父合同 Context 的根继续导航；
+   - 当长链路履约过程中存在明显的业务等待点（天然异步性）、冷热并发差异、独立吞吐量要求或独立 SLA 约束时，应将其划定为独立弹性边界并拆分为独立资源，通过超媒体链接和结果发现机制解耦，但服务拆分不改变资源的稳定 URI。
+3. **URI 作为函数求值与服务编排（合同列表的本质）**：
+   - 合同（Contract）是双边或多边权责约束的凭证，任何一方参与主体（Party）在数据或模型层面都**不拥有、也不单独管理合同**；
+   - 路径形如 `/users/{userId}/subscriptions`，**其本质绝非主体对合同的包含或从属管理，而是通过 URI 表达的两个独立业务能力（主体服务与合同服务）之间的函数式求值编排（Function Evaluation & Service Composition）**：
+     \[
+     \text{GET } /\text{users}/\{\text{userId}\}/\text{subscriptions} \iff \text{getSubscriptions}(\text{getUsers}(\text{userId})) \iff (\text{subscriptions } (\text{users } \text{userId}))
+     \]
+   - URI 将服务之间的求值策略与编排细节（如网关聚合、服务间内部调用、惰性求值）完全封装在统一稳定的领域模型关系之后。无论底层是单体还是微服务拆分，无论服务编排策略如何调整，外部消费契约始终保持稳定。
+   - 合同单实例读取可用自身业务 ID 定位；合同列表读取严禁暴露全局未隔离查询（如全局 `/contracts`），也严禁使用抹杀具体主体语义的统称 `/parties/{partyId}`，必须明确挂载于具体参与主体 `participant.party` 的类型根下，以明确求值主体服务与合同服务的编排边界。
 
-形成依据、一般引用和基数不会自动转成父子拥有关系。技术导航可以记录为决定，但不能宣称业务拥有权。CLI 会以 `RESOURCE_CONTEXT_ROOT_MISMATCH` 拒绝跨合同前、合同或领域 Context 的父子 URI；所属父合同相同的 Fulfillment 资源不视为跨根。唯一例外是 Contract 列表读取可挂在具体 Participant Party 类型根下，此时路径表达参与主体过滤，不表达该主体拥有合同。
+## 阶段二：资源寻址形态与基数映射
 
-## 业务数量与寻址
+先确认实例归属，再依据 FM Relationship 及业务来源核对各层数量与寻址形态（Shape）。
 
-先确认实例归属，再分别核对每一层的业务数量，不从申请与结果的一对一推定合同下只能有一份申请。
+1. **单例形态（`shape: singleton`）**：
+   - 父实例下至多存在一个业务对象（FM Relationship 声明 `targetCardinality: 1`）；
+   - 采用 `identity.kind: parent_scoped` 寻址，仅提供 `singleton` 视图，路径末尾不增加无意义的子 ID（例如 `/orders/{orderId}/payment/confirmation`）；
+   - 单例形成同样使用一次 POST 追加凭证，不转化为覆盖更新。
+2. **集合形态（`shape: collection`）**：
+   - 父实例下允许多个业务对象（FM Relationship 声明 `targetCardinality: many`）；
+   - 提供 `collection` 视图（列表与集合追加）与带自身定位标识的 `item` 视图（单项详情）。
+3. **基数严格溯源**：
+   - 基数优先通过 `cardinality.relationshipRef` 引用 FM Relationship；
+   - FM 尚未建模但业务来源明确时，通过 `cardinality.max/sourceRefs/reasoning` 保留直接依据；
+   - 缺少数量上限时保留 `RESOURCE_CARDINALITY_UNRESOLVED`，不把未声明解释为多份，也不为主观简化路径而伪造单例。
 
-- 每个父实例下至多一个业务对象：`shape: singleton`，用 `identity.kind: parent_scoped` 定位，只提供 `singleton` 视图，不增加子 ID。
-- 每个父实例下可有多个业务对象：`shape: collection`，集合提供 `collection` 视图，具体实例提供带自身 ID 的 `item` 视图。
-- `cardinality.relationshipRef` 优先引用对应父子对象的 FM Relationship。正向读取 `targetCardinality`，反向读取 `sourceCardinality`；不能拿无关关系或另一层数量作为依据。
-- FM 尚未表达但业务来源已明确数量时，可用 `cardinality.max/sourceRefs/reasoning` 保留直接业务依据；技术决定不能充当数量来源，也不能覆盖已有 FM 冲突。
-- 缺少数量上限时保留 `RESOURCE_CARDINALITY_UNRESOLVED`，不把省略解释为多份，也不为缩短路径修改 FM。
-- 数量上限为 1 时采用单例，`min` 说明业务存在条件；单例可以尚未形成。它不取消凭证实例 ID、责任或审计记录，不自动变成 PUT/PATCH 覆盖更新。重复提交、幂等、更正另需业务及接口契约。
+## 阶段三：服务蓝图交互线分流与全量模型闭包
 
-例如业务允许合同下分次支付、每次只有一份支付确认，可用 `/…/{id}/payments/{paymentId}/confirmation`；若合同下仅有一次支付，则可用 `/…/{id}/payment/confirmation`。单复数命名须符合业务用语，不按英文词尾做机器推断。单例和集合都不能突破 Context 根或替代 `parent_child` 约束。
+通过服务蓝图前后台交互线对模型对象进行严格分流，构建全模型覆盖闭包（Model Coverage）。
 
-## 补充证据与形成前提
+1. **三线分流机制**：
+   - **前台交互线以上**（外部客户/前端主动交互）：直接映射为外部 Party Role 可调用的 API 接口清单；
+   - **交互线与可视线之间**（内部运营/经办经手操作）：映射为内部管理/经办角色的 API 接口清单；
+   - **可视线以下**（后台自动化批处理、事件驱动响应、第三方外部结算系统提供结果）：不生成当前服务的 API 接口，统一定向分流至 `nonApiActivities`，声明其为 `handling: internal`（内部系统完成）或 `handling: external`（外部主体完成）。
+2. **全覆盖互斥纪律**：
+   - 自动遍历整体 FM 中的全部具体 Evidence、Thing 与 Participant；
+   - 每个对象必须要么在 API 清单中具备对应接口，要么在 `nonApiActivities` 中声明合法依据；
+   - 具有写入接口的对象严禁同时声明为非接口活动（触发 `MODEL_HANDLING_CONFLICT`）；
+   - 对象仅有读取接口且形成责任角色未被物理主体扮演时，可通过 `nonApiActivities` 声明外部/内部形成并保留读取接口；
+   - 严禁通过“暂不实现”或空依据排除缺失接口。
 
-`other_evidence` 是其他凭证的补充证据。生成能力前检查 FM 中消费凭证→依据凭证的 `references`、实例 `basedOn`、规则及场景：谁提供什么证据，哪份凭证必须依赖它，目标形成前是否已经存在且可被使用。必需证据缺失时不得形成目标；不能用一个接口的成功响应代替业务证据。
+## 阶段四：场景凭证驱动的接口清单生成
 
-目标能力的 `basis.fmRefs` 引用必要证据、依赖关系及规则，`reasoning` 说明同一业务实例关联、证据引用与可用性检查。已建模的形成条件通过 `ruleBindings` 的 `precondition` 绑定；表达不了的检查保留 gap，不把自然语言说明称为运行时强制校验。
+遍历 FM validation scenario 的步骤序列，直接生成接口清单及能力定义（Capabilities）。
 
-补充证据的创建 URI 不依赖尚未形成的目标凭证 ID，避免形成循环。可在有明确归属的已有申请或合同下追加证据，也可使用独立资源；证明作用及 `references` 本身不证明父子归属。目标通过已有证据的引用形成，证据仍证明目标，而非因 URI 嵌套而改变证明对象。
+1. **调用者与能力绑定**：
+   - 调用者必须是有业务依据且已被 `participant.party` 实体扮演的 `role.party`；
+   - 缺少实体扮演者的角色保留为责任身份，触发 `ACTOR_PARTY_PLAYER_MISSING` 并不暴露接口；
+   - 经办主体仅作为经办说明保留，不能直接提升为调用角色；Evidence Role 仅为插槽，绝不能作为调用者；
+   - 每个能力必须显式声明 `resourceRef`、`view`、`method`、`effect` 以及对应的 `businessCapability`，并绑定匹配的 `caller_role`。
+2. **前置条件与补充证据依赖链**：
+   - 消费凭证依赖前序依据凭证（`references`、`basedOn`）时，目标能力必须通过 `basis.fmRefs` 与 `ruleBindings.precondition` 声明检查前置条件；
+   - 必需凭证缺失时不得调用形成接口；补充证据可独立追加或在同一次会话交互中按序先登记证据再形成目标，严禁用单个接口的虚拟成功响应替代真实凭证链条。
 
-已有证据可以先登记，也可以在一次交互内先登记证据再形成目标；这不是把多个节点强制拆成多个 HTTP 请求。独立接口需要对应调用场景及角色授权。凭证业务形成时间与上传时间分别处理，但必需证据必须先于目标存在。
+## 阶段五：字段纯粹性规约与受控集合查询
 
-## 角色与能力
+1. **字段来源与白名单约束**：
+   - 表示字段严格执行白名单，按 `fmAttributeRef` 追溯至 FM 实体属性；
+   - 字段来源明确划分为 `client`（客户端输入）、`reference`（已有凭证引用）、`server`（服务端内部记录）与 `derived`（模型规则派生）。
+2. **派生属性禁止入参红线**：
+   - 挂有 FM 派生规则（`derivedByRuleRef`）的金额、费率、期限、逾期天数与到期时间等，**严禁出现在请求体中**（违者触发 `REQUEST_BODY_DERIVED_FIELD` 阻断）；
+   - 派生属性必须由服务端在领域模型内按规则求值并回填；请求体仅接收原始形成数据与引用标识。
+3. **受控集合查询（Query Parameters）**：
+   - 集合 GET 的过滤参数必须严格对齐 FM 实体已建模的属性及 Rule 判据条件；
+   - 分页参数明确指定 `cursor/page` 与下一页推导机制，严禁在接口层开放未经领域模型管控的任意数据库字段查询。
 
-对整体模型中的每项真实业务交互，直接定义可调用 Party Role、资源视图、HTTP 方法、效果及实例约束，不生成角色×视图×方法的笛卡尔探索表。可调用 Party Role 必须有 `participant.party -> plays_role -> role.party` 的明确玩家；缺少玩家的 Party Role 保留为 FM 责任身份，但不生成 API capability、HTTP operation 或 OpenAPI operation。显式关联同一合同责任的合同前、合同及履约凭证统一使用该 Contract 的 `roleRefs`；URI 根仍按凭证所属 Context 划分，角色复用不合并资源根。没有合同关系的独立渠道使用自身角色。输入结构无效时停止并报告，不通过新增角色绕过错误。
+## 阶段六：超媒体组装与消费旅程自动化接续
 
-调用者必须是有业务依据且已有 Participant Party 玩家扮演的 Party Role，不能把岗位、部门或经办 Participant 自动提升为新的调用角色。API 表按可调用业务角色列出能力；经办主体作为办理该能力的业务说明保留，缺少扮演关系时宁可回映为 internal/external/gap，也不暴露对应接口。实际操作身份、代理范围和权限仍须有依据，不能把 `plays_role` 当成该角色全部能力的授权。Evidence Role 只是凭证玩家插槽，没有责任人，也不代表可签发单据；不生成角色的提交或 CRUD 接口。消费能力引用实际玩家并校验归属、可见性和业务规则；外部活动可回映为 `external`，没有接口依据不猜测接入 API。实际玩家的 `responsibleRoleRef` 只是其自身上下文的职责线索。每个能力至少引用匹配的 `caller_role`；嵌套资源还要引用自己的 `parent_child`。
-
-GET 对应 read。Evidence 写入只能用 POST + append_evidence。基于凭证不可变与不可抛弃理论，业务对外接口严格遵循 CR 哲学（只有 Create 与 Read，杜绝针对 Evidence 记录的 PUT/PATCH/DELETE 覆盖修改）；更正与撤销必须先有业务表达，再设计追加证据或红冲补偿。微服务物理拆分优先考量弹性边界（阶段间业务等待点与冷热并发差异）。
-
-共享 Method + URI 保留各角色的完整接口契约。按参数形状归一化路由，参数改名不能隐藏冲突；不同效果变体无法证明兼容时保留 gap。
-
-## 表示与超媒体
-
-字段使用白名单并回到 `entity#attribute`。不要默认公开所有 FM 属性；业务时间、关联值、服务端记录值和派生值不能因 required 而变成客户端输入。HTTP 表示只维护在 `http.representations`；不再维护顶层重复 `representations`。
-
-链接目标和 URI 参数必须闭合。导航链接需要相应角色的 GET 接口；动作链接引用能力。HAL `_links` 不定义 method、body 或写入契约，也不自动创建 GET。`self` 表示资源身份；只有存在同角色 GET capability 时，才可把它作为可跟随的导航。
-
-## 流程回映
-
-遍历所有 FM scenario 的 step sequence，将每步回映到实际接口、internal、external 或真实 gap。接口必须匹配该步骤的角色、凭证效果和场景依据；内部／外部步骤必须匹配整体 `nonApiActivities` 声明。遗漏整个场景也产生 gap；没有上游场景时报告空回映，不制造模拟成功。静态映射只写 mapped/gap，不写 passed。
-
-`http.entryPoints` 是有依据的消费者初始上下文，不授予权限；`http.journeys` 必须声明 `scenarioRefs`，仅首步引用 `entryPointRef`，后续步骤必须经 HAL `rel`、`self`/`next`、嵌入成员 `self` 或 `Location` 接续，不能用入口重填 ID 重新开始。每个 HTTP step 的 `sourceStepRefs` 将请求绑定到 FM 步骤；没有 FM 形成步骤的读取流程可为空，但每个 capability 仍须有成功 2xx 流程。`consumerCoverage` 逐场景检查 FM capability 步骤是否真的有成功 HTTP 请求，不能使用自由文本入口或重新猜测资源 ID 绕过接续检查。
-
-`modelCoverage` 自动列出整体 FM 的具体 Evidence、Thing 与 Participant。每项须有接口或有业务依据的 `nonApiActivities` 处理方式；有写入接口又声明整体内部／外部处理是冲突。凭证只有读取接口时，必须有追加形成接口；若其 `responsibleRoleRef` 指向未被 Participant Party 扮演的 Party Role，可用 `nonApiActivities` 声明内部／外部形成，并保留读取接口。Context、Party Role、Evidence Role 不因覆盖要求产生 CRUD。内部／外部处理说明用于表达真实责任，不是实施范围开关；不能用“暂不实现”或技术 decision 把缺失接口排除。
-
-业务依赖、HTTP 交互粒度与 Evidence 业务时间分别表达。业务依赖必须满足，接口可分次或同次登记；同次登记也须先使必需证据可用，再形成目标。流程回映检查必要证据先于消费者可用，不把静态步骤覆盖等同于依赖已验证。
+1. **分布式超媒体（HAL）驱动**：
+   - 采用 HAL 规范，通过 `_links`（导航关联 GET，动作关联写操作）和 `_embedded` 指导客户端进行渐进式服务消费；
+   - 导航链接与动作链接的目标必须在本 API 体系内严格闭合，链接参数必须完全由当前上下文或响应数据提供；
+   - 异步处理（HTTP 202）必须提供 `resultCapabilityRef` 及匹配的 Location，指向同角色的结果读取能力。
+2. **全流程旅程接续自动化闭环**：
+   - 遍历 FM 业务场景，构建对应的 `http.journeys`；
+   - 第一步必须使用有依据的 `entryPoints`；后续每一步的 URL 与路径参数必须严格从前序步骤响应的 `_links`（`rel`, `self`, `next`）、嵌入成员 `self` 或 `Location` 中提取，严禁凭空重新输入参数或跳步；
+   - `consumerCoverage` 逐场景执行机器级链路验证，确保 API 清单中所有业务步骤均具有可接续、可闭环的成功调用路径。

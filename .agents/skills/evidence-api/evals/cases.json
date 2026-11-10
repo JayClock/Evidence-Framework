@@ -72,6 +72,54 @@
     "rubric": "设计统一的收入确认资源 POST 契约；请求体支持引用不同类型的履约请求来源标识；每个请求来源在权责层具有等价映射的 2xx 消费确认步骤，接口设计符合单一凭证资源标准 Schema。"
   },
   {
+    "id": "API-C7",
+    "category": "content",
+    "dimension": "合同列表的函数求值编排与主体作用域",
+    "prompt": "基于用户订阅合同模型设计 API。要求提供针对具体用户的订阅列表查询接口，以及订阅实例详情查看接口。请明确其资源结构、寻址路径与服务编排依据。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "合同列表读取必须以具体参与主体 participant.party 类型资源为 URL 根（例如 /users/{userId}/subscriptions），严禁使用全局 /contracts 或统称 /parties/{partyId}；在设计依据与结构中明确其本质为主体服务与合同服务的函数求值与服务编排，而非主体拥有合同；实例详情保持以合同自身业务 ID 定位。"
+  },
+  {
+    "id": "API-C8",
+    "category": "content",
+    "dimension": "服务蓝图三线分流与全量模型闭包",
+    "prompt": "读取采购与支付清算模型（包含买方付款申请、财务经办人工复核确认单、以及银联清算中心跨行结算结果）。请为全部模型对象完成接口设计与非接口活动分流。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "前台买方交互映射为外部角色 API；财务人工复核映射为内部经办角色 API；银联跨行结算等可视线以下系统活动必须在 nonApiActivities 中声明（如 handling: external 并给出合法 basis）；全模型具体 Evidence、Thing、Participant 达成互斥闭包，严禁有写入接口又声明 nonApi，也严禁遗漏任何对象。"
+  },
+  {
+    "id": "API-C9",
+    "category": "content",
+    "dimension": "单例与集合基数寻址形态精准映射",
+    "prompt": "在供销合同履行过程中，一份合同允许多批次送货申请，但最终验收阶段只允许出具唯一一份总体验收确认单。请为送货申请与验收确认单设计资源寻址与能力契约。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "送货申请依据 1:N 基数设计为 shape: collection，提供 collection 与带 deliveryId 的 item 视图；总体验收确认单依据 1:1 基数设计为 shape: singleton，采用父作用域寻址且末尾不加子 ID；单例形成必须使用单次 POST 追加凭证形成，严禁设计为 PUT/PATCH 覆盖写。"
+  },
+  {
+    "id": "API-C10",
+    "category": "content",
+    "dimension": "派生属性禁止入参红线与受控集合查询",
+    "prompt": "为设备租赁逾期归还设计结算确认接口。模型中挂有规则计算的超期违约金、折旧费与实付结算金额，同时需要提供按归还日期范围与结算状态查询的历史结算列表。",
+    "target_skill": "evidence-api",
+    "expect_trigger": true,
+    "expect_file_write": true,
+    "seed": "fm",
+    "deterministic_rule": "check_api_schema",
+    "rubric": "挂有 FM 派生计算规则的超期违约金、折旧费与实付结算金额严禁出现在结算请求体（Request Body）中，必须由服务端在领域模型内计算并回填至响应中；请求体仅接收实际归还时间等形成输入；列表查询过滤参数必须严格对齐模型中已声明的日期属性与状态规则，严禁开放未经管制的任意自由字段查询。"
+  },
+  {
     "id": "API-T1",
     "category": "trigger",
     "dimension": "负面控制 · 与本项目无关的请求",
