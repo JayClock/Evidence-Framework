@@ -11,6 +11,43 @@ canvas and inspector consume, and the only sanctioned way to change it.
 | `adapters/`  | Parse/serialize the model source tree and write it back without git churn or partial files.       |
 | `diff/`      | `diffDomainModels` lists what moved between two snapshots: objects, attribute rows and key data.   |
 
+## Two source forms, one model
+
+`.evidence/fm/` (a tree) and `*.evidence.json` (one bundle) hold the same
+`DomainModelDocument`; only the adapter differs.
+
+```jsonc
+// <model>.evidence.json
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": { /* model.json */ },
+  "entities": [],
+  "relationships": [],
+  "rules": [],
+  "validation": { "instances": [], "scenarios": [] }, // optional
+  "readme": "…", // optional, `.evidence/fm/README.md`
+}
+```
+
+- `parseModelBundleText` / `serializeModelBundle` are pure and browser-safe.
+  Bundle extras ride along on the document, so an edit-then-save round trip in
+  the canvas keeps `validation` and `readme`.
+- `packModelDirectory`, `unpackModelBundle` and `writeModelBundle` add the disk
+  side. Unpacking never rewrites a file whose object already matches, so a
+  hand-formatted tree keeps its bytes and its git status.
+- `generated/` and `discovery/` never enter a bundle: one is derived output, the
+  other belongs to Discovery.
+
+The FM scripts accept either path, so `check_fm.py` and `audit_key_data.py` read
+a bundle with no extraction step:
+
+```bash
+pnpm model:pack .evidence/fm --out procurement.evidence.json
+pnpm model:inspect procurement.evidence.json
+pnpm model:unpack procurement.evidence.json --out .evidence/fm
+```
+
 Red lines enforced by the command layer, not by the caller:
 
 - ids are unique and well formed across entities, relationships and rules;

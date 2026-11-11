@@ -122,3 +122,24 @@ export {
   type ModelSessionEvent,
   type ModelSessionOptions,
 } from './session/createModelSession.js';
+
+export {
+  DEFAULT_MODEL_BUNDLE_FILE,
+  MODEL_BUNDLE_EXTENSION,
+  MODEL_BUNDLE_TYPE,
+  MODEL_README_PATH,
+  VALIDATION_INSTANCE_TREE,
+  VALIDATION_SCENARIO_TREE,
+  createEmptyModelBundle,
+  isModelBundlePath,
+  isModelBundleShape,
+  modelBundleSourceFiles,
+  packModelSourceFiles,
+  parseModelBundleText,
+  serializeModelBundle,
+  type DomainModelBundle,
+  type ModelBundleParseResult,
+  type ModelBundleValidation,
+  type PackResult,
+  type SerializeBundleOptions,
+} from './adapters/modelBundle.js';
