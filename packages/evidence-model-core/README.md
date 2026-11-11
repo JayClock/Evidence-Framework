@@ -9,6 +9,7 @@ canvas and inspector consume, and the only sanctioned way to change it.
 | `commands/`  | One deterministic transition per business edit, returning the new document and its inverse.       |
 | `session/`   | `createModelSession` holds document, selection and undo/redo history, and emits change events.    |
 | `adapters/`  | Parse/serialize the model source tree and write it back without git churn or partial files.       |
+| `diff/`      | `diffDomainModels` lists what moved between two snapshots: objects, attribute rows and key data.   |
 
 Red lines enforced by the command layer, not by the caller:
 
