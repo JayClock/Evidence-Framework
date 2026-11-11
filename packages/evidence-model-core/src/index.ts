@@ -213,6 +213,16 @@ export {
 } from './validation/scope.js';
 
 export {
+  simulateScenario,
+  simulateValidationSuite,
+  type ScenarioResult,
+  type SimulationEvaluationResult,
+  type SimulationInstanceValues,
+  type SimulationReport,
+  type SimulationStatusResult,
+} from './validation/simulation.js';
+
+export {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_BUNDLE_EXTENSION,
   MODEL_BUNDLE_TYPE,
