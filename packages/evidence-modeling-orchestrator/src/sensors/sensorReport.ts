@@ -95,9 +95,17 @@ export interface FmCheckReport {
 export interface KeyDataAuditReport {
   checkVersion?: number;
   valid?: boolean;
+  modelId?: unknown;
   keyDataCount?: number;
   counts?: Readonly<Record<string, number>>;
   needsDecision?: readonly KeyDataDecision[];
+  /** Derived items and the attributes each derivation reads. */
+  derived?: readonly {
+    path: string;
+    ruleRef?: string;
+    sources: readonly string[];
+  }[];
+  errors?: readonly string[];
   note?: string;
 }
 

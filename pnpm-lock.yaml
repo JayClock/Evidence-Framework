@@ -410,6 +410,12 @@ importers:
       '@evidence-poc/evidence-agent-core':
         specifier: workspace:*
         version: link:../evidence-agent-core
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../evidence-schema
       tslib:
         specifier: ^2.3.0
         version: 2.9.1

@@ -161,8 +161,11 @@ export {
   MODEL_CHECK_TREES,
   MODEL_GENERATED_TREE,
   isValidationPath,
+  modelDigestOf,
   readModelRoot,
+  readModelRootBytes,
   readModelRootFiles,
+  type ModelRootBytes,
 } from './adapters/modelRoot.js';
 
 export {
