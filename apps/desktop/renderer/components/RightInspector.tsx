@@ -15,6 +15,7 @@ import {
 } from '@evidence-poc/evidence-model-core/browser';
 
 import { AttributeTableEditor } from './inspector/AttributeTableEditor';
+import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
 
 interface RightInspectorProps {
   graph: DomainGraph;
@@ -118,6 +119,14 @@ const InspectorBody = ({
 
   return (
     <div className="space-y-4">
+      {entity.category === 'evidence' && entity.kind === 'fulfillment_request' ? (
+        <FulfillmentPairSection
+          entity={entity}
+          graph={graph}
+          session={session}
+        />
+      ) : null}
+
       {groups.map((group) => (
         <section key={group.id}>
           <h3 className="mb-1.5 text-[10px] font-semibold tracking-wide text-[#59606c] uppercase">

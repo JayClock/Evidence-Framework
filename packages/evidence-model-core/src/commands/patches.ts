@@ -27,6 +27,12 @@ import {
   type CreateFulfillmentPairInput,
 } from './fulfillmentCommands.js';
 import {
+  BindBreachRuleCommand,
+  PairFulfillmentCommand,
+  type BindBreachRuleInput,
+  type PairFulfillmentInput,
+} from './fulfillmentPairCommands.js';
+import {
   CreateRelationshipCommand,
   DeleteRelationshipCommand,
 } from './relationshipCommands.js';
@@ -87,7 +93,9 @@ export type ModelPatchCommand =
   | { type: 'update-rule'; ruleId: string; patch: Readonly<Partial<RuleAST>> }
   | { type: 'delete-rule'; ruleId: string; options?: DeleteRuleOptions }
   | { type: 'bind-derived-rule'; input: BindDerivedRuleInput }
-  | { type: 'create-fulfillment-pair'; input: CreateFulfillmentPairInput };
+  | { type: 'create-fulfillment-pair'; input: CreateFulfillmentPairInput }
+  | { type: 'pair-fulfillment'; input: PairFulfillmentInput }
+  | { type: 'bind-breach-rule'; input: BindBreachRuleInput };
 
 /** Stable failure reasons for a malformed patch description. */
 export type ModelPatchErrorCode =
@@ -236,6 +244,14 @@ export const decodeModelPatchCommand = (
     case 'create-fulfillment-pair':
       return new CreateFulfillmentPairCommand(
         requireField<CreateFulfillmentPairInput>(command, 'input', path),
+      );
+    case 'pair-fulfillment':
+      return new PairFulfillmentCommand(
+        requireField<PairFulfillmentInput>(command, 'input', path),
+      );
+    case 'bind-breach-rule':
+      return new BindBreachRuleCommand(
+        requireField<BindBreachRuleInput>(command, 'input', path),
       );
     default:
       throw new ModelPatchError(

@@ -85,6 +85,16 @@ export {
 } from './commands/fulfillmentCommands.js';
 
 export {
+  BindBreachRuleCommand,
+  PairFulfillmentCommand,
+  breachRuleOf,
+  completionRuleOf,
+  type BindBreachRuleInput,
+  type PairFulfillmentInput,
+  type PairFulfillmentResult,
+} from './commands/fulfillmentPairCommands.js';
+
+export {
   ModelPatchError,
   decodeModelPatch,
   decodeModelPatchCommand,
