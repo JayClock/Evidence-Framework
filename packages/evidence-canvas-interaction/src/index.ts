@@ -61,3 +61,42 @@ export type {
   RulerTickLevel,
   RulerTickOptions,
 } from './ruler/types.js';
+
+export {
+  COLUMN_GAP,
+  CONTEXT_GAP,
+  CONTEXT_PADDING,
+  CONTEXT_TITLE_HEIGHT,
+  FREE_BAND_COLUMNS,
+  FULFILLMENT_PADDING,
+  LABEL_CHARS_PER_LINE,
+  MAX_MEASURED_ATTRIBUTE_ROWS,
+  MIN_CONTEXT_WIDTH,
+  NODE_ATTRIBUTE_ROW_HEIGHT,
+  NODE_BASE_HEIGHT,
+  NODE_LABEL_LINE_HEIGHT,
+  NODE_WIDTH,
+  ROW_GAP,
+  STACK_GAP,
+  createGraphLayout,
+  measureNodeHeight,
+  routeEdge,
+} from './layout/graphLayout.js';
+
+export {
+  fulfillmentBoundaryPath,
+  resolveFulfillmentAlignment,
+  type FulfillmentAlignment,
+} from './layout/fulfillmentAlignment.js';
+
+export type {
+  ContextLayoutGroup,
+  DomainGraphLayout,
+  FulfillmentLayoutGroup,
+  GraphLayoutOptions,
+  LayoutEdge,
+  LayoutEdgeKind,
+  LayoutNode,
+  LayoutNodeCategory,
+  ResponsibilityLink,
+} from './layout/types.js';
