@@ -46,6 +46,12 @@ resources/
   workspace virtual environment.
 - `runScript` drops an inherited `PYTHONHOME`/`PYTHONPATH`, so a system Python
   cannot be mixed into the bundled one.
+- The agent's shell gets `PYTHON`, `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR` and one
+  `*_SKILL_DIR` per package, re-asserted before each prompt, so the commands the
+  skill guides quote (`"$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py"`) resolve
+  without the model guessing a path. Per-project paths stay out of the
+  environment — several project windows share one process — and come from the
+  shell's working directory instead.
 
 See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the pins these trees are built
 from.

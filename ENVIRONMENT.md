@@ -92,3 +92,15 @@ Because the scripts run as subprocesses, both trees stay outside `app.asar`
 (`extraResource`); only the JS bundles are packed into it. An inherited
 `PYTHONHOME`/`PYTHONPATH` is dropped before a script runs, so a system Python
 cannot be mixed into the bundled one.
+
+The skill guides write commands as `"$PYTHON" -B "$FM_SKILL_DIR/scripts/…"`, so
+the desktop also publishes those names to the agent's shell (`skillEnvironment`
+in `evidence-agent-core`): `PYTHON`, `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR`, and one
+`*_SKILL_DIR` per package. They are re-asserted before every prompt, because a
+window opened later republishes them for its own tree.
+
+Per-project paths (`PROJECT_ROOT`, `MODEL_DIR`, `FM_ROOT`, `TRACE_FILE`) stay out
+of the environment on purpose: one process serves every open project window, and
+a single global value would silently describe the wrong model. Pi runs bash in
+the session's working directory — the project root — so a command derives them
+from `$PWD`.
