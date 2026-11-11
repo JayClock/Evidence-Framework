@@ -12,7 +12,10 @@
     "graph": "nx graph",
     "desktop": "nx start desktop",
     "desktop:package": "nx package desktop",
-    "test:desktop": "nx test desktop"
+    "test:desktop": "nx test desktop",
+    "model:pack": "node packages/evidence-model-core/dist/cli.js pack",
+    "model:unpack": "node packages/evidence-model-core/dist/cli.js unpack",
+    "model:inspect": "node packages/evidence-model-core/dist/cli.js inspect"
   },
   "private": true,
   "packageManager": "pnpm@12.16.1",
