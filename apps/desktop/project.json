@@ -5,24 +5,46 @@
   "sourceRoot": "apps/desktop",
   "tags": ["scope:desktop", "type:app"],
   "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/.vite", "{projectRoot}/out"],
+      "options": { "command": "electron-forge package", "cwd": "apps/desktop" },
+      "metadata": {
+        "description": "Bundle main, preload and renderer with Vite and emit the unpacked app"
+      }
+    },
+    "package": {
+      "executor": "nx:noop",
+      "cache": true,
+      "dependsOn": ["build"],
+      "metadata": { "description": "Alias for `build`, kept for the documented desktop workflow" }
+    },
+    "make": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/out/make"],
+      "options": { "command": "electron-forge make", "cwd": "apps/desktop" }
+    },
     "start": {
       "executor": "nx:run-commands",
       "options": { "command": "electron-forge start", "cwd": "apps/desktop" }
     },
-    "package": {
-      "executor": "nx:run-commands",
-      "options": { "command": "electron-forge package", "cwd": "apps/desktop" }
-    },
-    "make": {
-      "executor": "nx:run-commands",
-      "options": { "command": "electron-forge make", "cwd": "apps/desktop" }
-    },
     "test": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/vitest.config.mts"],
+      "outputs": ["{projectRoot}/test-output"],
       "options": { "command": "vitest run", "cwd": "apps/desktop" }
     },
     "typecheck": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
       "options": {
         "commands": ["tsc -p tsconfig.app.json", "tsc -p tsconfig.spec.json"],
         "cwd": "apps/desktop",
@@ -31,6 +53,13 @@
     },
     "lint": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/eslint.config.mjs",
+        "{projectRoot}/eslint.config.mjs"
+      ],
       "options": { "command": "eslint .", "cwd": "apps/desktop" }
     }
   }

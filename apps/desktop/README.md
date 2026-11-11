@@ -11,8 +11,14 @@ already read.
 nx start desktop        # Electron Forge dev (Vite HMR for the renderer)
 nx test desktop         # vitest: node project store + jsdom renderer
 nx typecheck desktop    # tsc for app and spec configs
-nx package desktop      # unpacked app in apps/desktop/out
+nx build desktop        # Vite bundles in .vite/ + unpacked app in out/
+nx package desktop      # alias for build, kept for muscle memory
+nx make desktop         # installers in apps/desktop/out/make
 ```
+
+`build` is the Nx contract entry point: it is cached, declares `.vite` and
+`out` as outputs and is what `nx run-many -t build --all` runs. `package` and
+`make` depend on it instead of re-invoking Electron Forge from scratch.
 
 `electron-forge start` needs a display; the test targets do not.
 
