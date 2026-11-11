@@ -10,6 +10,12 @@ export {
 } from './discovery/frontierTracker.js';
 
 export {
+  compareSensorReports,
+  type VerdictDiff,
+  type VerdictSnapshot,
+} from './diff/verdictDiff.js';
+
+export {
   buildSensorReport,
   finalizeSensorReport,
   fmCheckIssues,
