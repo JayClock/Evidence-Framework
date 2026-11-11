@@ -19,9 +19,7 @@
     "name": "evidence-agent-core"
   },
   "dependencies": {
+    "@earendil-works/pi-coding-agent": "^1.5.2",
     "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@earendil-works/pi-coding-agent": "^1.5.2"
   }
 }

@@ -19,11 +19,9 @@
     "name": "evidence-modeling-orchestrator"
   },
   "dependencies": {
-    "@evidence-poc/evidence-agent-core": "0.0.1",
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",
+    "@evidence-poc/evidence-agent-core": "0.0.1",
+    "tslib": "^2.3.0",
     "typebox": "^1.3.27"
   }
 }
