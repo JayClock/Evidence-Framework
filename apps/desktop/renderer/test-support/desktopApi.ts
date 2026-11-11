@@ -204,6 +204,7 @@ export const installDesktopApi = ({
         calls.modelChanged.push(rootPath);
       },
       latestReport: async () => latest,
+      readInterviewTrace: async () => ({ success: true, trace: null }),
       publishCanvasContext: async (input) => {
         canvasContexts.push(input);
       },

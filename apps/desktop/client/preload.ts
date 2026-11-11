@@ -55,6 +55,8 @@ const api: EvidenceDesktopApi = {
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.modelChanged, input),
     latestReport: (input) =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.latestReport, input),
+    readInterviewTrace: (input) =>
+      ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.interviewTrace, input),
     publishCanvasContext: (input: CanvasContextRegistration) =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.canvasContext, input),
     onEvent: (listener) => {

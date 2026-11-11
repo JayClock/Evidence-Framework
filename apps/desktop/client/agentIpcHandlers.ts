@@ -20,6 +20,7 @@ import {
 } from '../shared/agentIpc';
 
 import { createAgentRuntime, type AgentRuntime } from './agentRuntime';
+import { readInterviewTrace } from './traceReader';
 
 export const PATCH_TIMEOUT_MS = 15_000;
 
@@ -183,6 +184,12 @@ export const registerAgentIpc = ({
     async (event, input: { rootPath: string }): Promise<void> => {
       runtimeFor(event.sender, input.rootPath).notifyModelChanged();
     },
+  );
+
+  ipcMain.handle(
+    EVIDENCE_AGENT_IPC_CHANNELS.interviewTrace,
+    async (_event, input: { rootPath: string }) =>
+      readInterviewTrace(input.rootPath),
   );
 
   ipcMain.handle(
