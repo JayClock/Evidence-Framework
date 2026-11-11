@@ -5,6 +5,22 @@ API contract and review page all run as local Python scripts under
 `.agents/skills/`. Nothing in this path needs Node, Java or network access; the
 app slice uses those separately.
 
+The desktop app does not: every check it runs — consistency, key data, interview
+trace, timeline, scenarios, stage gate — is implemented in TypeScript under
+`packages/evidence-model-core/src/validation/` and decided in-process. The Python
+scripts are the reference implementation and the shadow oracle, and this pinned
+environment is what keeps them runnable:
+
+| Consumer                                          | Needs this environment |
+| ------------------------------------------------- | ---------------------- |
+| `apps/desktop` (default `native` sensors)         | no                     |
+| `apps/desktop` with `EVIDENCE_SENSORS_ENGINE=python` or `shadow` | yes    |
+| `.agents/skills/*/tests` (the skill suites)       | yes                    |
+| `evidence-api` / `evidence-visualization` generators | yes                 |
+
+`nx run-many -t test typecheck lint` therefore passes on a machine with no
+Python; the suites above are the ones `./init.sh` exists for.
+
 ## What the skills need
 
 | Requirement                                         | Declared in                                                            |
