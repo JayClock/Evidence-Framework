@@ -33,6 +33,8 @@
     ]
   },
   "dependencies": {
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
     "ajv": "^8.20.0",
     "tslib": "^2.3.0"
   }

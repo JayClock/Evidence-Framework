@@ -205,7 +205,12 @@ export {
   type TimelineUnresolvedOrder,
 } from './validation/timeline.js';
 
+export { compiledDocument, type CompiledModelDocument } from './model/compiledDocument.js';
+
 export {
+  ReadyScopeError,
+  readyScope,
+  type ReadyScopeReport,
   ScopeSelectionError,
   completenessGaps,
   completenessIssues,

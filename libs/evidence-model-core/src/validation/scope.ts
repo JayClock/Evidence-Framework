@@ -582,3 +582,109 @@ export const completenessGaps = (
 
   return gaps;
 };
+
+/** Everything a successful FM check report has to prove before delivery. */
+export interface ReadyScopeReport {
+  checkVersion?: unknown;
+  consistent?: unknown;
+  complete?: unknown;
+  valid?: unknown;
+  inputChanged?: unknown;
+  errors?: unknown;
+  gaps?: unknown;
+  scopeRefs?: unknown;
+  contextRefs?: unknown;
+  scenarioRequirement?: unknown;
+  simulationPassed?: unknown;
+  scenarioCount?: unknown;
+  executedScenarioCount?: unknown;
+}
+
+/** Raised when a check report does not prove the scope it claims. */
+export class ReadyScopeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ReadyScopeError';
+  }
+}
+
+const isStringArray = (value: unknown): value is readonly string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === 'string');
+
+const isInteger = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isInteger(value);
+
+/**
+ * Rebuilds the delivered scope from a check report, refusing a weak one.
+ *
+ * Downstream work consumes the scope identity the check proved, not a bare
+ * `valid: true`: consistency is neither delivery readiness nor human approval, so
+ * a gap, a stale digest or an unexecuted scenario keeps the hand-off closed.
+ */
+export const readyScope = (
+  model: DomainModelDocument,
+  report: ReadyScopeReport,
+): DomainModelDocument => {
+  const ready =
+    report.checkVersion === 5 &&
+    report.consistent === true &&
+    report.complete === true &&
+    report.valid === true &&
+    Array.isArray(report.errors) &&
+    report.errors.length === 0 &&
+    Array.isArray(report.gaps) &&
+    report.gaps.length === 0 &&
+    report.inputChanged === false &&
+    (report.simulationPassed === true ||
+      report.scenarioRequirement === 'not-applicable') &&
+    isStringArray(report.scopeRefs);
+
+  if (!ready || !isStringArray(report.scopeRefs)) {
+    throw new ReadyScopeError(
+      'FM needs a successful scope completeness check; consistency is not delivery readiness or human confirmation',
+    );
+  }
+
+  const selected = selectScope(model, report.scopeRefs);
+  const actual = selected.entities
+    .filter((entity) => entity.category === 'context')
+    .map((entity) => entity.id)
+    .sort();
+
+  const checkedContexts = isStringArray(report.contextRefs)
+    ? [...report.contextRefs].sort()
+    : [];
+
+  if (JSON.stringify(actual) !== JSON.stringify(checkedContexts)) {
+    throw new ReadyScopeError(
+      'FM checked scope dependencies do not match current source',
+    );
+  }
+
+  const { rules } = simulationRules(selected);
+  const requirement =
+    rules.length > 0 || selected.entities.some(isFulfillmentRequest)
+      ? 'required'
+      : 'not-applicable';
+
+  if (report.scenarioRequirement !== requirement) {
+    throw new ReadyScopeError(
+      'FM scenario applicability does not match checked scope',
+    );
+  }
+
+  const scenariosExecuted =
+    report.simulationPassed === true &&
+    isInteger(report.scenarioCount) &&
+    report.scenarioCount > 0 &&
+    isInteger(report.executedScenarioCount) &&
+    report.executedScenarioCount === report.scenarioCount;
+
+  if (requirement === 'required' && !scenariosExecuted) {
+    throw new ReadyScopeError(
+      'FM scope requires all applicable scenarios to have executed successfully',
+    );
+  }
+
+  return selected;
+};

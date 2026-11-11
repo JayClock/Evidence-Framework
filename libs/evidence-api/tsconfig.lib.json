@@ -11,7 +11,14 @@
     "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "references": [],
+  "references": [
+    {
+      "path": "../evidence-schema/tsconfig.lib.json"
+    },
+    {
+      "path": "../evidence-model-core/tsconfig.lib.json"
+    }
+  ],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",

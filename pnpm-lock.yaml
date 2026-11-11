@@ -353,6 +353,12 @@ importers:
 
   libs/evidence-api:
     dependencies:
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../evidence-schema
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
