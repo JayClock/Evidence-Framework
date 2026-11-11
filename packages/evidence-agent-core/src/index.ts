@@ -27,6 +27,7 @@ export {
   VENV_ENVIRONMENT_VARIABLE,
   createPythonEnvResolver,
   pythonExecutableIn,
+  pythonExecutablesIn,
   resolveBundledPythonVenv,
   type PinnedPythonInfo,
   type ProcessRunner,

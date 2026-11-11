@@ -5,6 +5,7 @@ import {
   PYTHON_RUNTIME_RESOURCE_DIRECTORY,
   createPythonEnvResolver,
   pythonExecutableIn,
+  pythonExecutablesIn,
   resolveBundledPythonVenv,
   type ProcessRunner,
   type ScriptRunResult,
@@ -24,6 +25,13 @@ describe('pythonExecutableIn', () => {
     expect(pythonExecutableIn('C:/venv', 'win32')).toBe(
       'C:/venv/Scripts/python.exe',
     );
+  });
+
+  it('also accepts a standalone distribution that keeps python.exe at its root', () => {
+    expect(pythonExecutablesIn('C:/runtime', 'win32')).toEqual([
+      'C:/runtime/Scripts/python.exe',
+      'C:/runtime/python.exe',
+    ]);
   });
 });
 
@@ -98,6 +106,22 @@ describe('createPythonEnvResolver', () => {
     });
 
     expect(resolver.resolveVenvPath()).toBe('/custom/venv');
+  });
+
+  it('finds the interpreter of a portable windows distribution', () => {
+    const resolver = createPythonEnvResolver({
+      projectRoot: PROJECT_ROOT,
+      resourcesPath: RESOURCES_PATH,
+      platform: 'win32',
+      fileExists: (candidate) =>
+        candidate === `${RESOURCES_PATH}/python-runtime/python.exe`,
+    });
+
+    expect(resolver.resolvePinnedPython()).toEqual({
+      executablePath: `${RESOURCES_PATH}/python-runtime/python.exe`,
+      venvPath: `${RESOURCES_PATH}/python-runtime`,
+      isValid: true,
+    });
   });
 
   it('ignores a resources directory that holds no runtime', () => {
@@ -192,6 +216,32 @@ describe('createPythonEnvResolver', () => {
         },
       },
     ]);
+  });
+
+  it('drops inherited PYTHONHOME and PYTHONPATH from the script env', async () => {
+    const seen: NodeJS.ProcessEnv[] = [];
+    const resolver = createPythonEnvResolver({
+      projectRoot: PROJECT_ROOT,
+      environment: {
+        PATH: '/usr/bin',
+        PYTHONHOME: '/usr/local/lib/python3.9',
+        PYTHONPATH: '/usr/local/lib/python3.9/site-packages',
+      },
+      fileExists: () => true,
+      runProcess: async (_command, _args, options) => {
+        seen.push(options.env);
+
+        return { code: 0, stdout: '{}', stderr: '' };
+      },
+    });
+
+    await resolver.runScript('/skills/evidence-fm/scripts/check_fm.py');
+
+    expect(seen[0]).toEqual({
+      PATH: '/usr/bin',
+      PYTHONIOENCODING: 'utf-8',
+      PYTHONDONTWRITEBYTECODE: '1',
+    });
   });
 
   it('reports the lock check through ./init.sh --check', async () => {

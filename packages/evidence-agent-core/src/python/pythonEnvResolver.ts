@@ -121,14 +121,29 @@ const defaultRunProcess: ProcessRunner = (command, args, options) =>
     );
   });
 
+/**
+ * Every interpreter path an environment may use, in priority order.
+ *
+ * A virtual environment keeps the binary in `bin/` or `Scripts/`. A standalone
+ * distribution (python-build-standalone, what the desktop ships) keeps
+ * `python.exe` at its root on Windows, so that layout is accepted too.
+ */
+export const pythonExecutablesIn = (
+  venvPath: string,
+  platform: NodeJS.Platform = process.platform,
+): string[] =>
+  platform === 'win32'
+    ? [
+        path.join(venvPath, 'Scripts', 'python.exe'),
+        path.join(venvPath, 'python.exe'),
+      ]
+    : [path.join(venvPath, 'bin', 'python')];
+
 /** Interpreter path inside a virtual environment, platform aware. */
 export const pythonExecutableIn = (
   venvPath: string,
   platform: NodeJS.Platform = process.platform,
-): string =>
-  platform === 'win32'
-    ? path.join(venvPath, 'Scripts', 'python.exe')
-    : path.join(venvPath, 'bin', 'python');
+): string => pythonExecutablesIn(venvPath, platform)[0] as string;
 
 /**
  * Absolute path of the interpreter a packaged desktop app ships with.
@@ -143,6 +158,18 @@ export const resolveBundledPythonVenv = (
   resourcesPath === undefined || resourcesPath.trim() === ''
     ? null
     : path.join(resourcesPath, PYTHON_RUNTIME_RESOURCE_DIRECTORY);
+
+/**
+ * Drops the two variables that would redirect a self-contained interpreter at
+ * whatever Python the user happens to have installed.
+ */
+const withoutPythonOverrides = (
+  environment: NodeJS.ProcessEnv,
+): NodeJS.ProcessEnv => {
+  const { PYTHONHOME: _home, PYTHONPATH: _path, ...rest } = environment;
+
+  return rest;
+};
 
 /**
  * Resolves the pinned interpreter and runs skill scripts with it.
@@ -164,13 +191,18 @@ export const createPythonEnvResolver = ({
 
   const bundledVenvPath = resolveBundledPythonVenv(resourcesPath);
 
+  /** First interpreter that exists in a directory, or undefined. */
+  const interpreterIn = (directory: string): string | undefined =>
+    pythonExecutablesIn(directory, platform).find((candidate) =>
+      fileExists(candidate),
+    );
+
   /**
    * A bundled runtime only wins when its interpreter is actually there: an
    * Electron dev build also sets `resourcesPath`, but ships no Python.
    */
   const usableBundledVenv = (): string | null =>
-    bundledVenvPath !== null &&
-    fileExists(pythonExecutableIn(bundledVenvPath, platform))
+    bundledVenvPath !== null && interpreterIn(bundledVenvPath) !== undefined
       ? bundledVenvPath
       : null;
 
@@ -196,17 +228,19 @@ export const createPythonEnvResolver = ({
 
   const resolvePinnedPython = (): PinnedPythonInfo => {
     const resolvedVenv = resolvedVenvPath();
-    const executablePath = pythonExecutableIn(resolvedVenv, platform);
+    const executablePath = interpreterIn(resolvedVenv);
 
-    if (fileExists(executablePath)) {
+    if (executablePath !== undefined) {
       return { executablePath, venvPath: resolvedVenv, isValid: true };
     }
 
+    const expected = pythonExecutableIn(resolvedVenv, platform);
+
     return {
-      executablePath,
+      executablePath: expected,
       venvPath: resolvedVenv,
       isValid: false,
-      driftReport: `未找到锁定的 Python 解释器：${executablePath}。请先运行 ./init.sh 修复环境，或重新安装桌面端以取得内置运行时。`,
+      driftReport: `未找到锁定的 Python 解释器：${expected}。请先运行 ./init.sh 修复环境，或重新安装桌面端以取得内置运行时。`,
     };
   };
 
@@ -227,7 +261,9 @@ export const createPythonEnvResolver = ({
       {
         cwd: path.resolve(root, options.cwd ?? '.'),
         env: {
-          ...environment,
+          // The bundled runtime is its own installation: an inherited
+          // PYTHONHOME/PYTHONPATH would point it at a system interpreter.
+          ...withoutPythonOverrides(environment),
           PYTHONIOENCODING: 'utf-8',
           PYTHONDONTWRITEBYTECODE: '1',
         },
