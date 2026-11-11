@@ -69,6 +69,17 @@ export {
 } from './cel/celAnalysis.js';
 
 export {
+  CelDuration,
+  CelEvaluationError,
+  CelTimestamp,
+  celEquals,
+  celValueToJson,
+  compileCelExpression,
+  evaluateCelExpression,
+  type CompiledCel,
+} from './cel/celEvaluator.js';
+
+export {
   aliasFor,
   bindingsForAliases,
   collectCelCandidates,
