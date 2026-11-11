@@ -10,20 +10,14 @@
     "build:apps": "nx run-many --target=build --all",
     "test": "npm run test:apps",
     "test:apps": "nx run-many --target=test --all",
-    "lint": "nx lint @evidence-poc/frontend",
+    "lint": "nx run-many --target=lint --all",
     "graph": "nx graph",
     "desktop": "nx start desktop",
     "desktop:package": "nx package desktop",
     "test:desktop": "nx test desktop"
   },
   "private": true,
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "1.32.2",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "6.30.6",
-    "zod": "3.25.76"
-  },
+  "packageManager": "npm@10.9.9",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@nx/eslint": "23.2.0",
