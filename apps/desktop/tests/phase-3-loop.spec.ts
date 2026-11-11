@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -26,8 +28,10 @@ import type {
 
 import { createAgentRuntime } from '../client/agentRuntime';
 
-const FIXTURE_ROOT =
-  'packages/evidence-schema/tests/fixtures/product-procurement';
+const FIXTURE_ROOT = path.resolve(
+  import.meta.dirname,
+  '../../../packages/evidence-schema/tests/fixtures/product-procurement',
+);
 
 const PROJECT_ROOT = '/models/procurement';
 
