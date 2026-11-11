@@ -7,12 +7,13 @@ import { MakerZIP } from '@electron-forge/maker-zip';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 
 /**
- * Resources `scripts/prepare-desktop-runtime.mjs` writes before packaging.
+ * Resources `scripts/prepare-desktop-resources.mjs` writes before packaging.
  *
- * They must live outside `app.asar`: the app runs both the Python interpreter
- * and the skill scripts as subprocesses, which cannot read through the archive.
- * `extraResource` unpacks them into `Contents/Resources` (macOS) / `resources`
- * (Windows, Linux), i.e. the `process.resourcesPath` the resolvers read.
+ * Only the skill tree travels: the sensors run in-process, so the app needs no
+ * interpreter beside `app.asar`. It must still live outside the archive, because
+ * Pi lists the skill directory with `node:fs` and opens the fixtures by path.
+ * `extraResource` unpacks it into `Contents/Resources` (macOS) / `resources`
+ * (Windows, Linux), i.e. the `process.resourcesPath` the resolver reads.
  */
 const resourcePath = (name) =>
   fileURLToPath(new URL(`./resources/${name}`, import.meta.url));
@@ -23,10 +24,7 @@ const config = {
     name: 'Evidence Modeling',
     appBundleId: 'dev.evidence.modeling',
     asar: true,
-    extraResource: [
-      resourcePath('skills'),
-      resourcePath('python-runtime'),
-    ],
+    extraResource: [resourcePath('skills')],
   },
   rebuildConfig: {},
   makers: [

@@ -22,39 +22,38 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
-## Bundled skills and interpreter
+## Bundled skills, no interpreter
 
-The installer has to work on a machine with no Python and no checkout of this
-repository, so `build` and `make` first run `scripts/prepare-desktop-runtime.mjs`
-(`prepare-runtime` target). It writes two trees Forge copies through
-`extraResource`, i.e. next to `app.asar` rather than inside it — a subprocess
-cannot read through the archive:
+The sensors run in-process, so the installer works on a machine with no Python
+and no checkout of this repository. `build` and `make` first run
+`scripts/prepare-desktop-resources.mjs` (`prepare-resources` target), which
+copies the modeling skills into the tree Forge ships through `extraResource` —
+next to `app.asar` rather than inside it, because Pi lists the skill directory
+with `node:fs` and opens fixtures by path:
 
 ```text
 resources/
-├── skills/            # .agents/skills/evidence-* copied verbatim
-└── python-runtime/    # portable CPython 3.12 with requirements.lock installed
+└── skills/            # .agents/skills/evidence-* copied verbatim
 ```
 
-- The Python step caches on `.python-version` plus a digest of
-  `requirements.lock`, recorded in `python-runtime/runtime.json`; it only
-  rebuilds when either moves. `--force` rebuilds, `--without-python` bundles
-  the skills alone.
-- `resolveSkillsRoot` prefers `<project>/.agents/skills`, then `<resources>/skills`,
-  then the workspace tree while developing; `createPythonEnvResolver` prefers an
-  explicit path, then `EVIDENCE_VENV`, then `<resources>/python-runtime`, then the
-  workspace virtual environment.
-- `runScript` drops an inherited `PYTHONHOME`/`PYTHONPATH`, so a system Python
-  cannot be mixed into the bundled one.
-- The agent's shell gets `PYTHON`, `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR` and one
-  `*_SKILL_DIR` per package, re-asserted before each prompt, so the commands the
-  skill guides quote (`"$PYTHON" "$FM_SKILL_DIR/scripts/check_fm.py"`) resolve
-  without the model guessing a path. Per-project paths stay out of the
-  environment — several project windows share one process — and come from the
-  shell's working directory instead.
+- `resolveSkillsRoot` prefers `<project>/.agents/skills`, then
+  `<resources>/skills`, then the workspace tree while developing.
+- Every sensor — consistency, key data, interview trace, timeline, scenarios and
+  the stage gate — is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
+  reads the model once per run and decides from that one read.
+- `EVIDENCE_SENSORS_ENGINE=python|native|shadow` picks the implementation:
+  `native` is the default, `python` runs the locked scripts (it needs the
+  repository's virtual environment), and `shadow` runs both and reports every
+  field they disagree about as a `SENSOR_DRIFT` warning.
+- The agent's shell gets `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR` and one
+  `*_SKILL_DIR` per package, re-asserted before each prompt, so the paths the
+  skill guides quote resolve without the model guessing. `PYTHON` is published
+  only when an interpreter actually resolves; a native run needs none. Per-project
+  paths stay out of the environment — several project windows share one process —
+  and come from the shell's working directory instead.
 
-See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the pins these trees are built
-from.
+See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the pins the skill packages are
+still developed against.
 
 ## Layout
 
@@ -67,7 +66,7 @@ apps/desktop/
 │   ├── renderer/      # React 19 UI: canvas, inspector, sidebar, agent panel,
 │   │                  # PromptDock, sensor status bar and diagnostics drawer
 │   └── shared/        # IPC channel names and payload contracts (project, agent)
-├── resources/         # build output: bundled skills + python-runtime (gitignored)
+├── resources/         # build output: the bundled skill tree (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
 └── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```
@@ -85,7 +84,7 @@ Renderer modules map onto the four packages built earlier:
 | documents, undo, commands              | `@evidence-poc/evidence-model-core/browser`    |
 | inspector groups and fields            | `@evidence-poc/evidence-schema`                |
 | layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction`    |
-| agent session, pinned interpreter      | `@evidence-poc/evidence-agent-core`            |
+| agent session, sensor engine mode      | `@evidence-poc/evidence-agent-core`            |
 | sensors, tools, frontier               | `@evidence-poc/evidence-modeling-orchestrator` |
 
 `/browser` is the model-core entry that excludes `node:fs`, so the renderer
@@ -163,8 +162,9 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
 - A patch is plain JSON (`ModelPatchCommand`), decoded into real commands by
   `evidence-model-core` so guards and `Cmd/Ctrl+Z` behave exactly as for a human
   edit.
-- Sensors run with the pinned interpreter only. A missing environment reports
-  `SENSOR_UNAVAILABLE` blocks with a `./init.sh` hint rather than a silent pass.
+- Sensors run in-process. `EVIDENCE_SENSORS_ENGINE=python` still runs the locked
+  scripts, and a missing environment then reports `SENSOR_UNAVAILABLE` blocks
+  with a `./init.sh` hint rather than a silent pass.
 - Key data that still owes a provider decision is a warning, not a static error,
   but it keeps `isStageGateReady` false — the model can be saved, the gate stays
   shut.

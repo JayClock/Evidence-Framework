@@ -59,8 +59,8 @@ vitest.config.*.timestamp*
 **/__pycache__/
 *.pyc
 
-# Resources scripts/prepare-desktop-runtime.mjs builds for the installer:
-# the bundled skills tree and a standalone python runtime (~130 MB)
+# Resources scripts/prepare-desktop-resources.mjs builds for the installer:
+# the bundled skill tree. The sensors run in-process, so no interpreter ships.
 apps/desktop/resources/
 
 # Nx scratch state

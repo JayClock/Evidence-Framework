@@ -22,6 +22,7 @@ import {
 } from '@evidence-poc/evidence-modeling-orchestrator';
 
 import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
+import { desktopSensorEngineOptions } from './sensorEngine';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 import { resolveSkillsRoot } from './skillsRoot';
 
@@ -100,21 +101,29 @@ export const createAgentRuntime = ({
   const modelRoot = modelSourceOf(resolvedRoot);
   const projectDirectory = projectDirectoryOf(resolvedRoot);
   const tracePath = tracePathOf(resolvedRoot);
-  const python =
-    resolver ?? createPythonEnvResolver({ projectRoot: projectDirectory });
-  // One tree feeds both the agent prompt and the Python sensors, so a project
-  // that ships its own skills is the only place either of them reads.
+  // One tree feeds both the agent prompt and the sensors, so a project that
+  // ships its own skills is the only place either of them reads.
   const effectiveSkillsRoot =
     skillsRoot ?? resolveSkillsRoot({ projectRoot: projectDirectory });
+  const engineOptions = desktopSensorEngineOptions({
+    projectDirectory,
+    skillsRoot: effectiveSkillsRoot,
+  });
+  const python =
+    resolver ??
+    engineOptions.resolver ??
+    createPythonEnvResolver({ projectRoot: projectDirectory });
   const engine =
     sensors ??
     createSensorsEngine({
-      resolver: python,
-      skillsRoot: effectiveSkillsRoot,
+      ...engineOptions,
+      ...(resolver === undefined ? {} : { resolver }),
     });
 
-  // The skill guides run scripts as `"$PYTHON" "$FM_SKILL_DIR/scripts/…"`, and
-  // Pi's bash tool reads `process.env` when it spawns, with no per-session hook.
+  // The skill guides quote commands as `"$PYTHON" "$FM_SKILL_DIR/scripts/…"`,
+  // and Pi's bash tool reads `process.env` when it spawns, with no per-session
+  // hook. A native run needs no interpreter, so `PYTHON` is published only when
+  // one actually resolves — a path that does not exist is worse than no path.
   // Only install-level paths are published: one process serves every project
   // window, so per-project paths would describe the wrong model.
   const pinnedPython = python.resolvePinnedPython();

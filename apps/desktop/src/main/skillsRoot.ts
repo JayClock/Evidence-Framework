@@ -7,8 +7,9 @@ export const PROJECT_SKILLS_DIRECTORY = path.join('.agents', 'skills');
 /**
  * Directory name the desktop installers unpack the skills into.
  *
- * It sits next to `app.asar` because the Python scripts it contains are run by a
- * subprocess, which cannot read through the asar archive.
+ * It sits next to `app.asar` because Pi lists the skill directory with
+ * `node:fs` and opens the fixtures by path, neither of which works through the
+ * asar archive.
  */
 export const BUNDLED_SKILLS_DIRECTORY = 'skills';
 
