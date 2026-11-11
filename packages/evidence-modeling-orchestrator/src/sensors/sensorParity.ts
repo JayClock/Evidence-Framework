@@ -26,8 +26,30 @@ const FM_CHECK_FIELDS = [
   'simulationPassed',
 ] as const;
 
+/**
+ * Canonical text for a value, with object keys sorted.
+ *
+ * Two reports that agree but build their records in a different order are the
+ * same verdict; reporting that as drift would train a reviewer to ignore it.
+ */
+const canonical = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map((item) => canonical(item));
+  }
+
+  if (typeof value === 'object' && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, item]) => [key, canonical(item)]),
+    );
+  }
+
+  return value;
+};
+
 const traceOf = (value: unknown): string =>
-  value === undefined ? 'undefined' : JSON.stringify(value);
+  value === undefined ? 'undefined' : JSON.stringify(canonical(value));
 
 const readField = (report: unknown, field: string): unknown =>
   typeof report === 'object' && report !== null
