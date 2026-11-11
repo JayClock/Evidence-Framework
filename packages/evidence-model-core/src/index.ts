@@ -188,6 +188,19 @@ export {
 } from './validation/typedValues.js';
 
 export {
+  buildTimeline,
+  digestOf,
+  timelineSummary,
+  type EvidenceTimeline,
+  type TimelineDependency,
+  type TimelineEvidenceType,
+  type TimelineInstance,
+  type TimelineSummary,
+  type TimelineTime,
+  type TimelineUnresolvedOrder,
+} from './validation/timeline.js';
+
+export {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_BUNDLE_EXTENSION,
   MODEL_BUNDLE_TYPE,
