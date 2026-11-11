@@ -7,10 +7,7 @@ import { readModelDirectory } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { EditorScreen } from './EditorScreen';
-import {
-  installDesktopApi,
-  projectSummary,
-} from '../test-support/desktopApi';
+import { installDesktopApi, projectSummary } from '../test-support/desktopApi';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,

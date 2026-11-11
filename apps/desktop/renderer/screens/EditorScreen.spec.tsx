@@ -38,6 +38,11 @@ describe('EditorScreen', () => {
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
+    expect(screen.getByLabelText('AI 访谈输入')).toBeInTheDocument();
+    expect(screen.getByText('AI 访谈与操控')).toBeInTheDocument();
+    expect(
+      await screen.findByText('尚无访谈记录。在下方输入经营事实开始第一轮。'),
+    ).toBeInTheDocument();
     expect(screen.getByText('履约对 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });

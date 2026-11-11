@@ -3,14 +3,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
+import { AgentPanel } from '../components/agent/AgentPanel';
+import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightInspector } from '../components/RightInspector';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
+import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
+import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
+import { useFrontier } from '../state/useFrontier';
 
 type LoadState =
   | { name: 'loading' }
@@ -91,6 +96,9 @@ const EditorWorkspace = ({
 }: EditorWorkspaceProps) => {
   const { state, save, reloadFromDisk, dismissExternalChange } =
     useEditorSession(project, initialDocument);
+  const agent = useAgentSession(project.rootPath);
+  const frontier = useFrontier(project.rootPath, state.document);
+  useAgentPatchBridge(state.session);
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const [searchTerm, setSearchTerm] = useState('');
   const [focusRequest, setFocusRequest] = useState<{
@@ -137,6 +145,47 @@ const EditorWorkspace = ({
 
   useEditorShortcuts(shortcuts);
 
+  useEffect(() => {
+    const entity =
+      state.selection.nodeId === null
+        ? undefined
+        : state.graph.getEntity(state.selection.nodeId);
+
+    void window.evidenceAPI.agent.publishCanvasContext({
+      rootPath: project.rootPath,
+      context: {
+        projectRoot: project.rootPath,
+        modelId: state.document.manifest.id,
+        selection: state.selection,
+        ...(entity === undefined
+          ? {}
+          : {
+              selected: {
+                nodeId: entity.id,
+                label: entity.label,
+                kind: entity.category,
+                ...('contextRef' in entity && entity.contextRef !== undefined
+                  ? { contextRef: entity.contextRef }
+                  : {}),
+              },
+            }),
+      },
+    });
+  }, [
+    project.rootPath,
+    state.selection,
+    state.graph,
+    state.document.manifest.id,
+  ]);
+
+  useEffect(() => {
+    if (state.dirty) {
+      void window.evidenceAPI.agent.notifyModelChanged({
+        rootPath: project.rootPath,
+      });
+    }
+  }, [project.rootPath, state.dirty, state.document]);
+
   return (
     <div className="flex h-full flex-col bg-evidence-surface">
       <TopHeader
@@ -169,17 +218,39 @@ const EditorWorkspace = ({
           onFocusNode={focusNode}
         />
 
-        <CanvasViewport
-          graph={state.graph}
-          layout={state.layout}
-          document={state.document}
-          viewMode={viewMode}
-          selection={state.selection}
-          focusRequest={focusRequest}
-          zoomCommand={zoomCommand}
-          onSelect={(nodeId) => state.session.select(nodeId)}
-          onClearSelection={() => state.session.clearSelection()}
+        <AgentPanel
+          controller={agent}
+          frontier={frontier.frontier}
+          frontierLoading={frontier.loading}
+          frontierError={frontier.error}
+          onRefreshFrontier={frontier.reload}
+          onFocusNode={focusNode}
         />
+
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+          <CanvasViewport
+            graph={state.graph}
+            layout={state.layout}
+            document={state.document}
+            viewMode={viewMode}
+            selection={state.selection}
+            focusRequest={focusRequest}
+            zoomCommand={zoomCommand}
+            onSelect={(nodeId) => state.session.select(nodeId)}
+            onClearSelection={() => state.session.clearSelection()}
+          />
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="pointer-events-auto">
+              <PromptDock
+                running={agent.state.running}
+                activeToolName={agent.state.activeToolName}
+                onSubmit={agent.submit}
+                onStop={agent.stop}
+              />
+            </div>
+          </div>
+        </div>
 
         <RightInspector
           graph={state.graph}
