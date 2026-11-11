@@ -38,5 +38,16 @@ export {
   type InspectSummary,
 } from './inspect.js';
 
+export {
+  buildResources,
+  type BuildResourcesResult,
+  type ProjectedResource,
+} from './projection/resources.js';
+
+export {
+  validateCardinality,
+  type CardinalityMax,
+} from './projection/cardinality.js';
+
 export { API_SCHEMA } from './schemas/apiSchema.js';
 export { API_PROJECTION_SCHEMA } from './schemas/apiProjectionSchema.js';
