@@ -55,6 +55,14 @@ export {
 } from './commands/fulfillmentCommands.js';
 
 export {
+  ModelPatchError,
+  decodeModelPatch,
+  decodeModelPatchCommand,
+  type ModelPatchCommand,
+  type ModelPatchErrorCode,
+} from './commands/patches.js';
+
+export {
   ModelSessionValidationError,
   createModelSession,
   type ModelSelection,
