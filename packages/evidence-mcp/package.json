@@ -1,0 +1,33 @@
+{
+  "name": "@evidence-poc/evidence-mcp",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "@evidence-poc/source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "default": "./dist/cli.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-mcp"
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-schema": "0.0.1",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "tslib": "^2.3.0",
+    "zod": "3.25.76"
+  }
+}

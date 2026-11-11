@@ -23,6 +23,9 @@
     },
     {
       "path": "./packages/evidence-modeling-orchestrator"
+    },
+    {
+      "path": "./packages/evidence-mcp"
     }
   ]
 }
