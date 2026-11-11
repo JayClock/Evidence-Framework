@@ -1,0 +1,29 @@
+{
+  "name": "@evidence-poc/evidence-modeling-orchestrator",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-modeling-orchestrator"
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-agent-core": "0.0.1",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^1.5.2",
+    "typebox": "^1.3.27"
+  }
+}

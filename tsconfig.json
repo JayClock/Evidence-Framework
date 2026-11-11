@@ -20,6 +20,9 @@
     },
     {
       "path": "./packages/evidence-agent-core"
+    },
+    {
+      "path": "./packages/evidence-modeling-orchestrator"
     }
   ]
 }

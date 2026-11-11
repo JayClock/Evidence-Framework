@@ -1,0 +1,27 @@
+export {
+  buildSensorReport,
+  finalizeSensorReport,
+  fmCheckIssues,
+  keyDataSummaryOf,
+  stageGateSummaryOf,
+  type FmCheckReport,
+  type KeyDataAuditReport,
+  type KeyDataDecision,
+  type KeyDataSummary,
+  type SensorIssue,
+  type SensorReport,
+  type SensorSeverity,
+  type SensorSource,
+  type StageGateReport,
+  type StageGateSummary,
+} from './sensors/sensorReport.js';
+
+export {
+  SensorScriptError,
+  createSensorsEngine,
+  type RunSensorsInput,
+  type SensorOutcome,
+  type SensorsEngine,
+  type SensorsEngineOptions,
+  type StageGateInput,
+} from './sensors/sensorsEngine.js';
