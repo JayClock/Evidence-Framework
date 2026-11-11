@@ -152,6 +152,11 @@ describe('RightInspector', () => {
     const row = screen.getByText(/未声明派生规则/).closest('div')!;
 
     fireEvent.click(within(row).getByText('绑定派生规则'));
+
+    const expression = screen.getByLabelText('派生规则表达式');
+
+    fireEvent.change(expression, { target: { value: 'self.signed_at' } });
+    fireEvent.blur(expression);
     fireEvent.click(screen.getByText('保存'));
 
     const attribute = session

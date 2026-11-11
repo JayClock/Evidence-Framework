@@ -13,6 +13,7 @@ export interface CelCandidate {
 
 export type CelDiagnosticCode =
   | 'cel.empty'
+  | 'cel.incomplete'
   | 'cel.unbalanced'
   | 'cel.undeclaredIdentifier'
   | 'cel.unknownAttribute';
@@ -268,6 +269,16 @@ export const analyzeCelExpression = ({
 
   const text = blankStrings(expression);
   const diagnostics = checkBalance(text);
+  const danglingDot = /\.\s*$/.exec(text);
+
+  if (danglingDot !== null) {
+    diagnostics.push({
+      code: 'cel.incomplete',
+      message: '成员访问缺少属性名；例如 contract.unit_price。',
+      offset: danglingDot.index,
+      length: 1,
+    });
+  }
   const byAlias = new Map(
     candidates.map((candidate) => [candidate.alias, candidate]),
   );

@@ -182,9 +182,10 @@ describe('AttributeTableEditor', () => {
       'rule.evidence.request.penalty-amount',
     );
 
-    fireEvent.change(screen.getByLabelText('派生规则表达式'), {
-      target: { value: 'contract.quantity' },
-    });
+    const expression = screen.getByLabelText('派生规则表达式');
+
+    fireEvent.change(expression, { target: { value: 'contract.quantity' } });
+    fireEvent.blur(expression);
     fireEvent.click(screen.getByText('保存'));
 
     const attribute = session

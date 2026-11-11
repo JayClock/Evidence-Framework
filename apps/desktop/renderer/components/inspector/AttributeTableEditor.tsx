@@ -11,13 +11,16 @@ import {
   RemoveAttributeCommand,
   UpdateAttributeCommand,
   UpdateRuleCommand,
+  analyzeCelExpression,
+  bindingsForAliases,
   buildKeyDataLedger,
-  collectCelCandidates,
   type DomainGraph,
   type ModelSession,
 } from '@evidence-poc/evidence-model-core/browser';
 
+import { InlineCelEditor } from './InlineCelEditor';
 import { KeyDataProvenancePicker } from './KeyDataProvenancePicker';
+import { useCelCompletion } from './useCelCompletion';
 
 interface AttributeTableEditorProps {
   entity: EntityAST;
@@ -304,8 +307,13 @@ const DerivedRuleEditor = ({
     attribute.derivedByRuleRef === undefined
       ? undefined
       : graph.getRule(attribute.derivedByRuleRef);
-  const [expression, setExpression] = useState(rule?.expression ?? '');
+  const candidates = useCelCompletion({
+    graph,
+    entityRef: entity.id,
+    ...(rule === undefined ? {} : { ruleId: rule.id }),
+  });
   const showBinding = binding || forceBinding;
+  const ariaLabel = `${attribute.name} CEL 表达式`;
 
   if (rule === undefined) {
     return (
@@ -317,7 +325,7 @@ const DerivedRuleEditor = ({
           <BindRuleForm
             entity={entity}
             attribute={attribute}
-            graph={graph}
+            candidates={candidates}
             onCancel={() => {
               setBinding(false);
               onBindingClose();
@@ -363,18 +371,15 @@ const DerivedRuleEditor = ({
       <p className="mt-0.5 text-[9px] leading-snug text-[#6b7280]">
         {rule.description}
       </p>
-      <textarea
-        aria-label={`${attribute.name} CEL 表达式`}
-        value={expression}
-        onChange={(event) => setExpression(event.target.value)}
-        onBlur={() => {
+      <InlineCelEditor
+        value={rule.expression}
+        candidates={candidates}
+        ariaLabel={ariaLabel}
+        onCommit={(expression) => {
           if (expression !== rule.expression) {
             session.dispatch(new UpdateRuleCommand(rule.id, { expression }));
           }
         }}
-        rows={2}
-        spellCheck={false}
-        className="mt-1 w-full rounded border border-evidence-line bg-[#fbfbfc] px-1.5 py-1 font-mono text-[9px]"
       />
       <p className="mt-0.5 text-[8px] text-[#8a929e]">输入：{inputs}</p>
     </div>
@@ -384,13 +389,13 @@ const DerivedRuleEditor = ({
 const BindRuleForm = ({
   entity,
   attribute,
-  graph,
+  candidates,
   onBind,
   onCancel,
 }: {
   entity: EntityAST;
   attribute: AttributeAST;
-  graph: DomainGraph;
+  candidates: ReturnType<typeof useCelCompletion>;
   onBind: (rule: {
     id: string;
     label: string;
@@ -401,7 +406,6 @@ const BindRuleForm = ({
   }) => void;
   onCancel: () => void;
 }) => {
-  const candidates = collectCelCandidates({ graph, entityRef: entity.id });
   const [ruleId, setRuleId] = useState(
     `rule.${entity.id}.${attribute.name}`.replaceAll('_', '-'),
   );
@@ -409,6 +413,10 @@ const BindRuleForm = ({
     `${attribute.label} 的派生计算。`,
   );
   const [expression, setExpression] = useState('self.');
+  const [aliases, setAliases] = useState<readonly string[]>(['self']);
+  const analysis = analyzeCelExpression({ expression, candidates });
+  const bindings = bindingsForAliases(candidates, aliases);
+  const canSave = analysis.ok && Object.keys(bindings).length > 0;
 
   return (
     <div className="mt-1 space-y-1">
@@ -424,32 +432,31 @@ const BindRuleForm = ({
         onChange={(event) => setDescription(event.target.value)}
         className="w-full rounded border border-evidence-line bg-white px-1.5 py-0.5 text-[9px]"
       />
-      <input
-        aria-label="派生规则表达式"
+      <InlineCelEditor
         value={expression}
-        onChange={(event) => setExpression(event.target.value)}
-        className="w-full rounded border border-evidence-line bg-white px-1.5 py-0.5 font-mono text-[9px]"
+        candidates={candidates}
+        ariaLabel="派生规则表达式"
+        placeholder="contract.unit_price * self.quantity"
+        onCommit={(next) => {
+          setExpression(next);
+          setAliases(analyzeCelExpression({ expression: next, candidates }).identifiers);
+        }}
       />
-      <p className="text-[8px] text-[#8a929e]">
-        可用来源：
-        {candidates
-          .map((candidate) => `${candidate.alias}（${candidate.label}）`)
-          .join('，')}
-      </p>
       <div className="flex gap-1">
         <button
           type="button"
+          disabled={!canSave}
           onClick={() =>
             onBind({
               id: ruleId,
               label: `${attribute.label} 派生规则`,
               description,
-              bindings: { self: { ref: entity.id } },
+              bindings: bindings as Record<string, { ref: string }>,
               expression,
               resultType: attribute.valueType ?? 'dynamic',
             })
           }
-          className="rounded bg-evidence-accent px-1.5 py-0.5 text-[9px] text-white"
+          className="rounded bg-evidence-accent px-1.5 py-0.5 text-[9px] text-white disabled:opacity-40"
         >
           保存
         </button>
