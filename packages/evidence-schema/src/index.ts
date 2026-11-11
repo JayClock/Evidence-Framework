@@ -100,3 +100,23 @@ export {
   assertValidDomainModel,
   strictValidateDomainModel,
 } from './validation/strictValidate.js';
+
+export {
+  INSPECTOR_GROUP_IDS,
+  INSPECTOR_GROUP_LABELS,
+  type InspectorGroupId,
+} from './inspector/groups.js';
+
+export {
+  INSPECTOR_ATTRIBUTE_FIELDS,
+  INSPECTOR_RULE_FIELDS,
+  getInspectorGroup,
+  getInspectorGroups,
+  getReferenceConstraint,
+  type InspectorEditorKind,
+  type InspectorGroupDefinition,
+  type InspectorGroupDefinitionWithCategory,
+  type InspectorOption,
+  type InspectorPropertyDefinition,
+  type InspectorReferenceConstraint,
+} from './inspector/registry.js';
