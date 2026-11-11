@@ -108,7 +108,50 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
 - `PromptDock` sends when idle and steers the live run when busy, so a wrong
   assumption is corrected in place instead of restarting the round.
 
+## Key data, CEL and fulfillment editing (phase 4)
+
+- The attribute table edits through commands (`add-attribute`,
+  `remove-attribute`, `update-attribute`), so structural edits share the undo
+  stack with text edits.
+- Each key data row shows the provider the pinned checker would classify:
+  contract term, domain source, negotiation source, result fact, request formation
+  input, derived rule — or "decision owed". Nothing is stored for it; the badge is
+  derived from the model, so it cannot drift from `audit_key_data.py`.
+- The inline CEL editor completes aliases and attributes from the graph and
+  pre-checks unbalanced brackets, undeclared identifiers and unknown attributes
+  while typing. The pinned Python checker stays the authority; the editor only
+  prevents obviously broken rules from being saved.
+- A `fulfillment_request` exposes its completion condition, the confirmation that
+  decides it and the breach condition. Pairing only offers confirmations in the
+  same Contract Context, and a rejected guard is shown in the panel instead of
+  crashing the window.
+
+## MCP bridge (phase 4)
+
+```text
+Cursor / Claude Code / CLI ──stdio──▶ evidence (--mcp-stdio, headless)
+                                        │ local socket (0600 / named pipe)
+                                        ▼
+                              main process: bridge + capture
+                                        │ IPC: mcp:request / mcp:response
+                                        ▼
+                              renderer: ModelSession + projections
+```
+
+- `nx build evidence-mcp` builds the protocol package; the desktop declares it as
+  a dependency and Vite aliases it in tests.
+- Seven tools: `get_app_state`, `get_domain_model`, `get_selected_entity`,
+  `get_key_data_audit`, `get_canvas_screenshot`, `apply_model_patch`,
+  `run_stage_gate`.
+- `apply_model_patch` is the only writer and it decodes into the same commands a
+  human edit uses, so an external agent's change is one ⌘Z step.
+- Screenshots are captured with selection rings and the zoom control hidden, so a
+  multimodal agent reviews the model, not the editor.
+- The app merges its server entry into `~/.cursor/mcp.json` and the Claude Desktop
+  config when those directories already exist; the merge is idempotent and keeps
+  every other server.
+
 ## Not implemented yet
 
-The MCP sidecar belongs to Phase 4; the main process already owns the IPC
-surface and the tool layer it will expose.
+- Session branching (comparing two interview lineages) is still on the roadmap.
+- The packaged app has not been signed or notarized on this machine.
