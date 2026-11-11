@@ -5,9 +5,28 @@
   "sourceRoot": "apps/desktop",
   "tags": ["scope:desktop", "type:app"],
   "targets": {
+    "prepare-runtime": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/.agents/skills/**/*",
+        "{workspaceRoot}/.python-version",
+        "{workspaceRoot}/requirements.lock",
+        "{workspaceRoot}/scripts/prepare-desktop-runtime.mjs"
+      ],
+      "outputs": ["{projectRoot}/resources"],
+      "options": {
+        "command": "node scripts/prepare-desktop-runtime.mjs",
+        "cwd": "."
+      },
+      "metadata": {
+        "description": "Bundle the skills and a standalone python runtime into apps/desktop/resources"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["prepare-runtime"],
       "inputs": ["production", "^production"],
       "outputs": ["{projectRoot}/.vite", "{projectRoot}/out"],
       "options": {

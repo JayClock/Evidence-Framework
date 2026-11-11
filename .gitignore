@@ -59,6 +59,10 @@ vitest.config.*.timestamp*
 **/__pycache__/
 *.pyc
 
+# Resources scripts/prepare-desktop-runtime.mjs builds for the installer:
+# the bundled skills tree and a standalone python runtime (~130 MB)
+apps/desktop/resources/
+
 # Nx scratch state
 .nx/polygraph
 .nx/self-healing
