@@ -21,6 +21,8 @@ export interface PiSdkPort {
     extensionFactories?: readonly InlineExtension[];
   }): { reload(): Promise<void> };
   createSessionManager(cwd: string, sessionDirectory?: string): unknown;
+  /** Opens one persisted transcript so a branch resumes its own lineage. */
+  openSessionManager(sessionFile: string): unknown;
   createAgentSession(options: {
     cwd: string;
     resourceLoader: unknown;
@@ -42,6 +44,13 @@ export interface EvidenceAgentSessionOptions {
   customTools?: readonly ToolDefinition[];
   /** Where Pi persists the JSONL audit trail; defaults to Pi's session directory. */
   sessionDirectory?: string;
+  /**
+   * Persisted transcript this session continues.
+   *
+   * A branch owns its own forked transcript, so resuming it must not read the
+   * main conversation; when set, `sessionDirectory` is ignored.
+   */
+  sessionFile?: string;
   /** Tool allowlist; omit to keep Pi's defaults plus the custom tools. */
   tools?: readonly string[];
   noTools?: 'all' | 'builtin';
@@ -55,6 +64,8 @@ export interface EvidenceAgentSession {
   start(): Promise<void>;
   /** Live Pi session, or null before `start()`. */
   getSession(): AgentSession | null;
+  /** Transcript file Pi writes for this session, or null before it persists one. */
+  getSessionFile(): string | null;
   prompt(text: string): Promise<void>;
   /** Queues a correction while a run streams; never restarts the run. */
   steer(text: string): Promise<'handled' | 'queued'>;
@@ -90,6 +101,7 @@ export const loadPiSdkPort = async (): Promise<PiSdkPort> => {
       sessionDirectory === undefined
         ? sdk.SessionManager.create(cwd)
         : sdk.SessionManager.create(cwd, sessionDirectory),
+    openSessionManager: (sessionFile) => sdk.SessionManager.open(sessionFile),
     createAgentSession: async (options) =>
       sdk.createAgentSession({
         cwd: options.cwd,
@@ -153,10 +165,10 @@ export const createEvidenceAgentSession = (
       const created = await sdk.createAgentSession({
         cwd: projectRoot,
         resourceLoader,
-        sessionManager: sdk.createSessionManager(
-          projectRoot,
-          options.sessionDirectory,
-        ),
+        sessionManager:
+          options.sessionFile === undefined
+            ? sdk.createSessionManager(projectRoot, options.sessionDirectory)
+            : sdk.openSessionManager(options.sessionFile),
         ...(options.customTools === undefined
           ? {}
           : { customTools: options.customTools }),
@@ -192,6 +204,7 @@ export const createEvidenceAgentSession = (
     projectRoot,
     start,
     getSession: () => session,
+    getSessionFile: () => session?.sessionManager.getSessionFile() ?? null,
     prompt: async (text) => {
       const active = await requireSession();
 

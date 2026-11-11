@@ -8,6 +8,14 @@ export {
 } from './session/evidenceAgentSession.js';
 
 export {
+  SessionForkError,
+  forkSessionLines,
+  type SessionForkErrorCode,
+  type SessionForkOptions,
+  type SessionForkResult,
+} from './session/sessionFork.js';
+
+export {
   projectSessionEvent,
   type AgentStreamEvent,
 } from './session/streamEvents.js';

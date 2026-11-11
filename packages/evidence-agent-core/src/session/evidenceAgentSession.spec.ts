@@ -21,6 +21,9 @@ const createFakeSdk = () => {
   let disposed = 0;
 
   const session = {
+    sessionManager: {
+      getSessionFile: () => '/home/modeler/.pi/agent/sessions/x.jsonl',
+    },
     prompt: async (text: string) => {
       prompts.push(text);
     },
@@ -58,6 +61,7 @@ const createFakeSdk = () => {
       cwd,
       sessionDirectory,
     }),
+    openSessionManager: (sessionFile) => ({ sessionFile }),
     createAgentSession: async (options) => {
       createdOptions.push(options);
 
@@ -223,6 +227,41 @@ describe('createEvidenceAgentSession', () => {
         tools: ['read', 'run_sensors'],
       },
     ]);
+  });
+
+  it('resumes a branch transcript instead of creating a new one', async () => {
+    const fake = createFakeSdk();
+    const session = createEvidenceAgentSession({
+      projectRoot: '/workspace/project',
+      sessionFile: '/workspace/project/.evidence/branches/br-a/session.jsonl',
+      sdk: fake.sdk,
+    });
+
+    await session.start();
+
+    expect(fake.createdOptions).toEqual([
+      {
+        cwd: '/workspace/project',
+        resourceLoader: { reload: expect.any(Function) },
+        sessionManager: {
+          sessionFile: '/workspace/project/.evidence/branches/br-a/session.jsonl',
+        },
+      },
+    ]);
+  });
+
+  it('reports the transcript file the session persists to', async () => {
+    const fake = createFakeSdk();
+    const before = createEvidenceAgentSession({
+      projectRoot: '/workspace/project',
+      sdk: fake.sdk,
+    });
+
+    expect(before.getSessionFile()).toBeNull();
+
+    await before.start();
+
+    expect(before.getSessionFile()).toBe('/home/modeler/.pi/agent/sessions/x.jsonl');
   });
 
   it('streams projected events to subscribers', async () => {
