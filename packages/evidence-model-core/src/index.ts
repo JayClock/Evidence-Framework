@@ -1,1 +1,5 @@
-export * from './lib/evidence-model-core.js';
+export {
+  createDomainGraph,
+  type DomainGraph,
+  type FulfillmentPair,
+} from './model/graph.js';

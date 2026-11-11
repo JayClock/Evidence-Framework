@@ -19,6 +19,7 @@
     "name": "evidence-model-core"
   },
   "dependencies": {
+    "@evidence-poc/evidence-schema": "0.0.1",
     "tslib": "^2.3.0"
   }
 }
