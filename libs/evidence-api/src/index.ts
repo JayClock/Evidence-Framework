@@ -69,6 +69,27 @@ export {
   type ProjectModelCoverageResult,
 } from './projection/modelCoverage.js';
 
+export {
+  bindLink,
+  buildRepresentations,
+  encodeQuery,
+  expand,
+  matchesUri,
+  parameters,
+  renderLinks,
+  type BuildRepresentationsResult,
+} from './http/contractLinks.js';
+
+export {
+  exampleErrors,
+  payloadOf,
+  payloadSchema,
+  schemaSupported,
+  validatePayload,
+  type Payload,
+  type PayloadField,
+} from './http/contractPayloads.js';
+
 export { compareText, sortedText } from './order.js';
 
 export { API_SCHEMA } from './schemas/apiSchema.js';
