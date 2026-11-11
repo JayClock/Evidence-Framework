@@ -5,6 +5,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { AgentPanel } from '../components/agent/AgentPanel';
+import { BranchDiffPanel } from '../components/branches/BranchDiffPanel';
 import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
@@ -14,7 +15,7 @@ import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
-import { useBranches } from '../state/useBranches';
+import { compareBranchVerdicts, useBranches } from '../state/useBranches';
 import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
@@ -106,6 +107,16 @@ const EditorWorkspace = ({
   const frontier = useFrontier(project.rootPath, state.document);
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const comparison =
+    branches.state.comparison === null ? null : branches.state.comparison;
+  const verdictDiff =
+    comparison === null
+      ? null
+      : compareBranchVerdicts(
+          branches.state.branches,
+          comparison.baseBranchId,
+          comparison.targetBranchId,
+        );
 
   useAgentPatchBridge(state.session);
 
@@ -339,6 +350,20 @@ const EditorWorkspace = ({
             </div>
           </div>
         </div>
+
+        {comparison !== null && verdictDiff !== null ? (
+          <BranchDiffPanel
+            branches={branches.state.branches}
+            activeBranchId={branches.state.activeBranchId}
+            compareBranchId={comparison.targetBranchId}
+            diff={comparison.diff}
+            verdict={verdictDiff}
+            busy={branches.state.busy}
+            onClose={() => void branches.compareWith(null)}
+            onMerge={(branchId) => void branches.merge(branchId)}
+            onFocusNode={focusNode}
+          />
+        ) : null}
 
         <RightInspector
           graph={state.graph}
