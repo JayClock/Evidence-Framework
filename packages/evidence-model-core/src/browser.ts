@@ -41,6 +41,18 @@ export {
 } from './commands/attributeCommands.js';
 
 export {
+  diffDomainModels,
+  type AttributeDiff,
+  type DiffChangeType,
+  type EntityDiff,
+  type KeyDataDiff,
+  type ModelDiff,
+  type ModelDiffSummary,
+  type RelationshipDiff,
+  type RuleDiff,
+} from './diff/modelDiff.js';
+
+export {
   buildKeyDataLedger,
   keyDataEntryOf,
   type KeyDataEntry,
