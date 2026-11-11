@@ -1,4 +1,5 @@
 import type { EvidenceAgentApi } from './agentIpc';
+import type { EvidenceMcpApi } from './mcpIpc';
 import type {
   EvidenceProjectSummary,
   OpenProjectDialogResult,
@@ -36,6 +37,8 @@ export interface EvidenceDesktopApi {
   };
   /** Pi agent, sensors and patch application (phase 3). */
   agent: EvidenceAgentApi;
+  /** MCP bridge status and the renderer side of external tool calls (phase 4). */
+  mcp: EvidenceMcpApi;
   system: {
     platform: NodeJS.Platform;
   };

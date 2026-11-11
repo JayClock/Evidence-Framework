@@ -16,6 +16,7 @@
   "dependencies": {
     "@evidence-poc/evidence-agent-core": "0.0.1",
     "@evidence-poc/evidence-canvas-interaction": "0.0.1",
+    "@evidence-poc/evidence-mcp": "0.0.1",
     "@evidence-poc/evidence-model-core": "0.0.1",
     "@evidence-poc/evidence-modeling-orchestrator": "0.0.1",
     "@evidence-poc/evidence-schema": "0.0.1",

@@ -9,6 +9,11 @@ import type {
 } from '../../shared/agentIpc';
 import type { EvidenceDesktopApi } from '../../shared/ipc';
 import type {
+  McpRendererRequest,
+  McpRendererResponse,
+  McpStatus,
+} from '../../shared/mcpIpc';
+import type {
   EvidenceProjectSummary,
   OpenProjectResult,
 } from '../../shared/projects';
@@ -62,6 +67,20 @@ export interface AgentMockController {
   canvasContexts: CanvasContextRegistration[];
 }
 
+/** Test hooks for the MCP bridge; nothing here touches a real socket. */
+export interface McpMockController {
+  /** Main asks the renderer to answer one tool call. */
+  request: (request: McpRendererRequest) => void;
+  /** Answers the renderer sent back, in order. */
+  responses: McpRendererResponse[];
+  /** Broadcasts a bridge status to the renderer. */
+  emitStatus: (status: McpStatus) => void;
+  /** Toggles screenshot mode the way the main process does. */
+  setCaptureMode: (active: boolean) => void;
+  captureModes: boolean[];
+  setStatus: (status: McpStatus) => void;
+}
+
 export interface DesktopApiMock extends EvidenceDesktopApi {
   calls: {
     open: string[];
@@ -75,6 +94,7 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     modelChanged: string[];
   };
   agentMock: AgentMockController;
+  mcpMock: McpMockController;
 }
 
 /**
@@ -131,6 +151,47 @@ export const installDesktopApi = ({
   const canvasContexts: CanvasContextRegistration[] = [];
   let latest: SensorReport | null = null;
 
+  const mcpRequestListeners = new Set<(request: McpRendererRequest) => void>();
+  const mcpStatusListeners = new Set<(status: McpStatus) => void>();
+  const mcpCaptureListeners = new Set<(active: boolean) => void>();
+  const mcpResponses: McpRendererResponse[] = [];
+  const captureModes: boolean[] = [];
+  let mcpStatus: McpStatus = {
+    listening: true,
+    endpoint: '/tmp/evidence-mcp-test.sock',
+    connections: 0,
+    calls: 0,
+    registeredClients: [],
+    error: null,
+  };
+
+  const mcpMock: McpMockController = {
+    request: (request) => {
+      for (const listener of mcpRequestListeners) {
+        listener(request);
+      }
+    },
+    responses: mcpResponses,
+    emitStatus: (next) => {
+      mcpStatus = next;
+
+      for (const listener of mcpStatusListeners) {
+        listener(next);
+      }
+    },
+    setCaptureMode: (active) => {
+      captureModes.push(active);
+
+      for (const listener of mcpCaptureListeners) {
+        listener(active);
+      }
+    },
+    captureModes,
+    setStatus: (next) => {
+      mcpStatus = next;
+    },
+  };
+
   const agentMock: AgentMockController = {
     emitEvent: (event) => {
       for (const listener of eventListeners) {
@@ -156,6 +217,7 @@ export const installDesktopApi = ({
   const api: DesktopApiMock = {
     calls,
     agentMock,
+    mcpMock,
     projects: {
       showOpenDialog: async () => {
         calls.showOpenDialog += 1;
@@ -225,6 +287,27 @@ export const installDesktopApi = ({
       },
       respondPatch: (response) => {
         patchResponses.push(response);
+      },
+    },
+    mcp: {
+      getStatus: async () => mcpStatus,
+      onStatus: (listener) => {
+        mcpStatusListeners.add(listener);
+
+        return () => mcpStatusListeners.delete(listener);
+      },
+      onRequest: (listener) => {
+        mcpRequestListeners.add(listener);
+
+        return () => mcpRequestListeners.delete(listener);
+      },
+      respond: (response) => {
+        mcpResponses.push(response);
+      },
+      onCaptureMode: (listener) => {
+        mcpCaptureListeners.add(listener);
+
+        return () => mcpCaptureListeners.delete(listener);
       },
     },
     system: { platform: 'darwin' },

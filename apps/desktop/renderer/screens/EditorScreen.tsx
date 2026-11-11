@@ -18,6 +18,7 @@ import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useFrontier } from '../state/useFrontier';
+import { useMcpBridge } from '../state/useMcpBridge';
 import { useSensorsState } from '../state/useSensorsState';
 
 type LoadState =
@@ -105,6 +106,23 @@ const EditorWorkspace = ({
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
 
   useAgentPatchBridge(state.session);
+
+  // Monotonic document revision so an external agent can tell whether the model
+  // it read is still the model on screen.
+  const revisionRef = useRef(0);
+  useEffect(() => {
+    revisionRef.current += 1;
+  }, [state.document]);
+
+  useMcpBridge({
+    project,
+    session: state.session,
+    graph: state.graph,
+    document: state.document,
+    validation: state.validation,
+    report: sensors.report,
+    revision: revisionRef.current,
+  });
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const [searchTerm, setSearchTerm] = useState('');
   const [focusRequest, setFocusRequest] = useState<{

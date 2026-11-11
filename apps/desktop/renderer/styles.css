@@ -43,3 +43,17 @@ button {
 .evidence-no-drag {
   -webkit-app-region: no-drag;
 }
+
+/*
+ * Screenshot mode for MCP clients: selection rings, hover outlines and editor
+ * chrome disappear so the captured PNG is a design-side reference, not a picture
+ * of the tool.
+ */
+body[data-evidence-capture='true'] [data-node-id] {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+body[data-evidence-capture='true'] [data-evidence-capture-hide] {
+  display: none !important;
+}

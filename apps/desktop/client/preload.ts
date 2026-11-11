@@ -14,6 +14,12 @@ import {
   type SensorTriggerInput,
 } from '../shared/agentIpc';
 import { EVIDENCE_IPC_CHANNELS, type EvidenceDesktopApi } from '../shared/ipc';
+import {
+  EVIDENCE_MCP_IPC_CHANNELS,
+  type McpRendererRequest,
+  type McpRendererResponse,
+  type McpStatus,
+} from '../shared/mcpIpc';
 
 /**
  * Minimal, typed bridge: the renderer never sees `ipcRenderer`, `fs` or any
@@ -100,6 +106,47 @@ const api: EvidenceDesktopApi = {
     },
     respondPatch: (response: ApplyPatchResponse) => {
       ipcRenderer.send(EVIDENCE_AGENT_IPC_CHANNELS.applyPatchResult, response);
+    },
+  },
+  mcp: {
+    getStatus: () => ipcRenderer.invoke(EVIDENCE_MCP_IPC_CHANNELS.status),
+    onStatus: (listener) => {
+      const handler = (_event: Electron.IpcRendererEvent, status: McpStatus) =>
+        listener(status);
+
+      ipcRenderer.on(EVIDENCE_MCP_IPC_CHANNELS.status, handler);
+
+      return () => {
+        ipcRenderer.removeListener(EVIDENCE_MCP_IPC_CHANNELS.status, handler);
+      };
+    },
+    onRequest: (listener) => {
+      const handler = (
+        _event: Electron.IpcRendererEvent,
+        request: McpRendererRequest,
+      ) => listener(request);
+
+      ipcRenderer.on(EVIDENCE_MCP_IPC_CHANNELS.request, handler);
+
+      return () => {
+        ipcRenderer.removeListener(EVIDENCE_MCP_IPC_CHANNELS.request, handler);
+      };
+    },
+    respond: (response: McpRendererResponse) => {
+      ipcRenderer.send(EVIDENCE_MCP_IPC_CHANNELS.response, response);
+    },
+    onCaptureMode: (listener) => {
+      const handler = (_event: Electron.IpcRendererEvent, active: boolean) =>
+        listener(active);
+
+      ipcRenderer.on(EVIDENCE_MCP_IPC_CHANNELS.captureMode, handler);
+
+      return () => {
+        ipcRenderer.removeListener(
+          EVIDENCE_MCP_IPC_CHANNELS.captureMode,
+          handler,
+        );
+      };
     },
   },
   system: {

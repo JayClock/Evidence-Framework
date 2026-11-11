@@ -432,7 +432,10 @@ const ZoomControl = ({
   onFit: () => void;
   onActual: () => void;
 }) => (
-  <div className="absolute right-4 bottom-4 z-30 flex items-center gap-1 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] text-evidence-muted shadow-sm">
+  <div
+    data-evidence-capture-hide=""
+    className="absolute right-4 bottom-4 z-30 flex items-center gap-1 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] text-evidence-muted shadow-sm"
+  >
     <span className="w-12 tabular-nums text-center">
       {Math.round(zoom * 100)}%
     </span>

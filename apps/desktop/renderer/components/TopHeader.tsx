@@ -4,6 +4,7 @@ import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 
 import type { CanvasViewMode } from './canvas/CanvasStage';
+import { McpStatusPill } from './McpStatusPill';
 
 interface TopHeaderProps {
   projectName: string;
@@ -127,6 +128,8 @@ export const TopHeader = ({
         >
           重做
         </button>
+        <McpStatusPill />
+
         <button
           type="button"
           onClick={onSave}

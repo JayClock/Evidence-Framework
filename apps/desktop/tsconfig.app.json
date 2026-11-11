@@ -30,6 +30,9 @@
       "path": "../../packages/evidence-schema/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/evidence-mcp/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/evidence-agent-core/tsconfig.lib.json"
     },
     {
