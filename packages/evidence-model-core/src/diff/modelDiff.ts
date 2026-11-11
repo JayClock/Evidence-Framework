@@ -320,7 +320,9 @@ const ruleDiff = (
       fields,
     ),
     ...(fields.length === 0 ? {} : { fields }),
-    ...(base.expression === undefined ? {} : { baseExpression: base.expression }),
+    ...(base?.expression === undefined
+      ? {}
+      : { baseExpression: base.expression }),
     ...(target?.expression === undefined
       ? {}
       : { targetExpression: target.expression }),
