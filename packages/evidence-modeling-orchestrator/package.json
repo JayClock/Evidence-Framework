@@ -22,7 +22,8 @@
     }
   },
   "nx": {
-    "name": "evidence-modeling-orchestrator"
+    "name": "evidence-modeling-orchestrator",
+    "tags": ["type:lib", "scope:evidence"]
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",

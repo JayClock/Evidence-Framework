@@ -22,7 +22,8 @@
     }
   },
   "nx": {
-    "name": "evidence-model-core"
+    "name": "evidence-model-core",
+    "tags": ["type:lib", "scope:evidence"]
   },
   "dependencies": {
     "@evidence-poc/evidence-schema": "0.0.1",

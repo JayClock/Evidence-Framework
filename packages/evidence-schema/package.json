@@ -16,7 +16,8 @@
     }
   },
   "nx": {
-    "name": "evidence-schema"
+    "name": "evidence-schema",
+    "tags": ["type:lib", "scope:evidence"]
   },
   "dependencies": {
     "tslib": "^2.3.0"

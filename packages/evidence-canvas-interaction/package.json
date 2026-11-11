@@ -21,6 +21,7 @@
     "tslib": "^2.3.0"
   },
   "nx": {
-    "name": "evidence-canvas-interaction"
+    "name": "evidence-canvas-interaction",
+    "tags": ["type:lib", "scope:evidence"]
   }
 }

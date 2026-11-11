@@ -16,7 +16,8 @@
     }
   },
   "nx": {
-    "name": "evidence-agent-core"
+    "name": "evidence-agent-core",
+    "tags": ["type:lib", "scope:evidence"]
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",
