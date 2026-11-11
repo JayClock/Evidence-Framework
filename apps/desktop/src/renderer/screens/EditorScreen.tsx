@@ -15,6 +15,7 @@ import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
+import { useBranchOverlay } from '../state/branchOverlay';
 import { compareBranchVerdicts, useBranches } from '../state/useBranches';
 import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
@@ -109,6 +110,10 @@ const EditorWorkspace = ({
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const comparison =
     branches.state.comparison === null ? null : branches.state.comparison;
+  const overlay = useBranchOverlay(
+    comparison?.diff ?? null,
+    comparison?.targetDocument ?? null,
+  );
   const verdictDiff =
     comparison === null
       ? null
@@ -335,6 +340,7 @@ const EditorWorkspace = ({
             selection={state.selection}
             focusRequest={focusRequest}
             zoomCommand={zoomCommand}
+            overlay={overlay}
             onSelect={(nodeId) => state.session.select(nodeId)}
             onClearSelection={() => state.session.clearSelection()}
           />

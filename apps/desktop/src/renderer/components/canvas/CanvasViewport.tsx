@@ -21,7 +21,11 @@ import type {
 } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-import { CanvasStage, type CanvasViewMode } from './CanvasStage';
+import {
+  CanvasStage,
+  type BranchOverlay,
+  type CanvasViewMode,
+} from './CanvasStage';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
 
 interface CanvasViewportProps {
@@ -34,6 +38,8 @@ interface CanvasViewportProps {
   focusRequest: { nodeId: string; token: number } | null;
   /** Keyboard zoom requests, one token per key press. */
   zoomCommand: { direction: 'in' | 'out'; token: number } | null;
+  /** Comparison overlay of the branch being compared, when one is open. */
+  overlay?: BranchOverlay | null;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
 }
@@ -56,6 +62,7 @@ export const CanvasViewport = ({
   selection,
   focusRequest,
   zoomCommand,
+  overlay = null,
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
@@ -362,6 +369,7 @@ export const CanvasViewport = ({
             highlightedContextIds={selectedHighlight.contextIds}
             dimmed={selectedHighlight.dimmed}
             marquee={marqueeRect}
+            overlay={overlay}
             onHoverNode={setHoveredNodeId}
             onHoverEdge={setHoveredEdgeId}
             onHoverContext={setHoveredContextId}

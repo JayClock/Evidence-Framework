@@ -176,4 +176,41 @@ describe('CanvasStage', () => {
     expect(onSelect).toHaveBeenCalledTimes(2);
     expect(onSelect).toHaveBeenCalledWith('evidence.contract');
   });
+
+  it('draws the compared branch without moving the active layout', () => {
+    const reference = createGraphLayout(
+      createDomainGraph(createDesktopFixture()),
+    );
+    const ghost = { ...reference.nodes[0]!, nodeId: 'evidence.statement' };
+    const { container, layout } = setup({
+      overlay: {
+        marks: new Map([['evidence.contract', 'removed' as const]]),
+        ghosts: [ghost],
+      },
+    });
+
+    expect(container.querySelector('[data-node-id]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-overlay-node-id="evidence.contract"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-ghost-node-id="evidence.statement"]'),
+    ).not.toBeNull();
+    expect(
+      screen.getByLabelText('对比分支已删除 采购协议（Procurement Contract）'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(/对比分支新增/),
+    ).toBeInTheDocument();
+    expect(container.querySelectorAll('[data-node-id]')).toHaveLength(
+      layout.nodes.length,
+    );
+  });
+
+  it('adds no overlay when no comparison is open', () => {
+    const { container } = setup();
+
+    expect(container.querySelector('[data-ghost-node-id]')).toBeNull();
+    expect(container.querySelector('[data-overlay-node-id]')).toBeNull();
+  });
 });

@@ -1,6 +1,7 @@
 import type {
   DomainGraphLayout,
   LayoutEdge,
+  LayoutNode,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
@@ -8,6 +9,22 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { NodeCard } from './NodeCard';
 
 export type CanvasViewMode = 'simplified' | 'standard';
+
+/** How the compared branch relates to the object the active model draws. */
+export type OverlayChange = 'removed' | 'modified';
+
+/**
+ * Comparison overlay for the canvas.
+ *
+ * Ghost nodes are objects only the compared branch models, placed at the
+ * position that branch's own layout gives them; marks recolour the objects the
+ * checkout already draws. Neither moves the active layout, so the picture stays
+ * the model the user is editing.
+ */
+export interface BranchOverlay {
+  marks: ReadonlyMap<string, OverlayChange>;
+  ghosts: readonly LayoutNode[];
+}
 
 interface CanvasStageProps {
   layout: DomainGraphLayout;
@@ -21,6 +38,7 @@ interface CanvasStageProps {
   highlightedContextIds: ReadonlySet<string>;
   dimmed: boolean;
   marquee: { x: number; y: number; width: number; height: number } | null;
+  overlay?: BranchOverlay | null;
   onHoverNode: (nodeId: string | null) => void;
   onHoverEdge: (edgeId: string | null) => void;
   onHoverContext: (contextId: string | null) => void;
@@ -42,6 +60,7 @@ export const CanvasStage = ({
   highlightedContextIds,
   dimmed,
   marquee,
+  overlay = null,
   onHoverNode,
   onHoverEdge,
   onHoverContext,
@@ -221,9 +240,88 @@ export const CanvasStage = ({
           onSelect={onSelect}
         />
       ))}
+
+      {overlay === null
+        ? null
+        : overlay.ghosts.map((node) => (
+            <GhostNode key={`ghost-${node.nodeId}`} node={node} />
+          ))}
+
+      {overlay === null
+        ? null
+        : [...overlay.marks.entries()].map(([nodeId, change]) => {
+            const node = layout.nodes.find(
+              (candidate) => candidate.nodeId === nodeId,
+            );
+
+            return node === undefined ? null : (
+              <ChangeRing key={`mark-${nodeId}`} node={node} change={change} />
+            );
+          })}
     </div>
   );
 };
+
+const GHOST_COLOR = '#15803d';
+
+const OVERLAY_COLOR: Record<OverlayChange, string> = {
+  removed: '#b42318',
+  modified: '#8d6200',
+};
+
+const OVERLAY_LABEL: Record<OverlayChange, string> = {
+  removed: '对比分支已删除',
+  modified: '对比分支已修改',
+};
+
+/** An object that only the compared branch models. */
+function GhostNode({ node }: { node: LayoutNode }) {
+  return (
+    <div
+      aria-label={`对比分支新增 ${node.entity.label}`}
+      data-ghost-node-id={node.nodeId}
+      className="pointer-events-none absolute flex items-center justify-center rounded-md border border-dashed px-2 text-center text-[10px] text-[#15803d]"
+      style={{
+        left: node.box.x,
+        top: node.box.y,
+        width: node.box.width,
+        height: node.box.height,
+        borderColor: GHOST_COLOR,
+        backgroundColor: 'rgba(21, 128, 61, 0.06)',
+      }}
+    >
+      <span className="line-clamp-2">
+        仅对比分支 · {node.entity.label}
+      </span>
+    </div>
+  );
+}
+
+/** A ring around an object the compared branch removed or changed. */
+function ChangeRing({
+  node,
+  change,
+}: {
+  node: LayoutNode;
+  change: OverlayChange;
+}) {
+  return (
+    <div
+      aria-label={`${OVERLAY_LABEL[change]} ${node.entity.label}`}
+      data-overlay-change={change}
+      data-overlay-node-id={node.nodeId}
+      className="pointer-events-none absolute rounded-md border-2"
+      style={{
+        left: node.box.x - 3,
+        top: node.box.y - 3,
+        width: node.box.width + 6,
+        height: node.box.height + 6,
+        borderColor: OVERLAY_COLOR[change],
+        borderStyle: change === 'removed' ? 'dashed' : 'solid',
+      }}
+    />
+  );
+}
 
 function EdgeCardinality({
   edge,
