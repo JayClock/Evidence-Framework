@@ -35,6 +35,8 @@ export interface AgentIpcOptions {
    * root when the runtime is first needed instead of being baked in at startup.
    */
   resolveSessionFile?: (rootPath: string) => Promise<string | null>;
+  /** Observes every verdict so the active branch can remember its own. */
+  onReport?: (rootPath: string, report: SensorReport) => void;
 }
 
 interface PendingPatch {
@@ -56,6 +58,7 @@ export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
   patchTimeoutMs = PATCH_TIMEOUT_MS,
   resolveSessionFile,
+  onReport,
 }: AgentIpcOptions = {}): {
   dispose: () => void;
   /** Drops the runtime so the next prompt starts in the new branch's lineage. */
@@ -144,6 +147,8 @@ export const registerAgentIpc = ({
           }
         },
         publishReport: (report) => {
+          onReport?.(rootPath, report);
+
           if (!sender.isDestroyed()) {
             sender.send(EVIDENCE_AGENT_IPC_CHANNELS.report, {
               rootPath,

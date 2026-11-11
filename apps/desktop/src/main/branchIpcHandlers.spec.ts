@@ -75,6 +75,7 @@ const storeOf = (overrides: Partial<BranchStore> = {}): BranchStore => ({
     removedBranchId: input.branchId,
   }),
   compare: async () => ({ success: false, error: '未实现。' }),
+  recordVerdict: async () => undefined,
   checkoutModelRoot: () => '/models/procurement/.evidence/fm',
   activeSessionFile: async () => null,
   ...overrides,

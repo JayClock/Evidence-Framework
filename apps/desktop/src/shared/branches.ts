@@ -1,3 +1,4 @@
+import type { VerdictSnapshot } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import type { ModelDiff } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
@@ -49,6 +50,8 @@ export interface EvidenceBranchSummary {
   sessionEntryCount: number;
   status: 'open' | 'merged';
   mergedAt?: string;
+  /** Verdict the pinned sensors produced the last time this branch was active. */
+  lastVerdict?: VerdictSnapshot;
 }
 
 export interface BranchCreateInput {
@@ -148,4 +151,6 @@ export interface BranchMetadata {
   updatedAt: string;
   status: 'open' | 'merged';
   mergedAt?: string;
+  /** Verdict the pinned sensors produced the last time this branch was active. */
+  lastVerdict?: VerdictSnapshot;
 }

@@ -4,6 +4,10 @@ import path from 'node:path';
 
 import { forkSessionLines } from '@evidence-poc/evidence-agent-core';
 import {
+  snapshotOfReport,
+  type SensorReport,
+} from '@evidence-poc/evidence-modeling-orchestrator';
+import {
   readModelDirectory,
   writeModelDirectory,
 } from '@evidence-poc/evidence-model-core';
@@ -62,6 +66,8 @@ export interface BranchStore {
   merge(input: BranchMergeInput): Promise<BranchMergeResult>;
   remove(input: BranchRemoveInput): Promise<BranchRemoveResult>;
   compare(input: BranchCompareInput): Promise<BranchCompareResult>;
+  /** Stamps the active branch with the verdict the sensors just produced. */
+  recordVerdict(rootPath: string, report: SensorReport): Promise<void>;
   /** Absolute model root of the checkout, i.e. what the sensors read. */
   checkoutModelRoot(rootPath: string): string;
   /** Absolute transcript the active branch owns, when it has one. */
@@ -299,6 +305,9 @@ export const createBranchStore = ({
         : null,
       sessionEntryCount,
       status: metadata.status,
+      ...(metadata.lastVerdict === undefined
+        ? {}
+        : { lastVerdict: metadata.lastVerdict }),
       ...(metadata.mergedAt === undefined ? {} : { mergedAt: metadata.mergedAt }),
     };
   };
@@ -637,6 +646,21 @@ export const createBranchStore = ({
       } catch (error) {
         return { success: false, error: toMessage(error) };
       }
+    },
+
+    async recordVerdict(rootPath, report) {
+      const resolved = path.resolve(rootPath);
+      const manifest = await readManifest(resolved);
+      const metadata = await readMetadata(resolved, manifest.activeBranchId);
+
+      if (metadata === null) {
+        return;
+      }
+
+      await writeMetadata(resolved, {
+        ...metadata,
+        lastVerdict: snapshotOfReport(report),
+      });
     },
 
     async compare(input) {

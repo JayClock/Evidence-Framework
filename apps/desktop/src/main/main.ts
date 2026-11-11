@@ -62,6 +62,9 @@ const startApplication = async (): Promise<void> => {
   const branchStore = createBranchStore();
   const agentIpc = registerAgentIpc({
     resolveSessionFile: (rootPath) => branchStore.activeSessionFile(rootPath),
+    onReport: (rootPath, report) => {
+      void branchStore.recordVerdict(rootPath, report).catch(() => undefined);
+    },
   });
 
   registerProjectIpc({ projectStore, openEditorWindow });

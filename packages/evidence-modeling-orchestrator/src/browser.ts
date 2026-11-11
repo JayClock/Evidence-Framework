@@ -11,6 +11,8 @@ export {
 
 export {
   compareSensorReports,
+  compareVerdictSnapshots,
+  snapshotOfReport,
   type VerdictDiff,
   type VerdictSnapshot,
 } from './diff/verdictDiff.js';

@@ -408,6 +408,49 @@ describe('branchStore', () => {
     expect(listed.success && listed.activeBranchId).toBe('main');
   });
 
+  it('stamps the active branch with the verdict it just earned', async () => {
+    const branches = store();
+
+    await branches.create({ rootPath: projectRoot, name: 'monthly' });
+    await branches.recordVerdict(projectRoot, {
+      timestamp: '2026-11-11T09:30:00.000Z',
+      passed: true,
+      blockCount: 0,
+      warnCount: 1,
+      infoCount: 0,
+      issues: [],
+      keyDataSummary: {
+        totalItems: 3,
+        resolvedCount: 2,
+        decisionOwedCount: 1,
+        unresolvedItems: [],
+      },
+      isStageGateReady: false,
+      unavailableSensors: [],
+    });
+
+    const listed = await branches.list(projectRoot);
+
+    expect(
+      listed.success
+        ? listed.branches.find(({ id }) => id === 'main')?.lastVerdict
+        : undefined,
+    ).toEqual({
+      timestamp: '2026-11-11T09:30:00.000Z',
+      passed: true,
+      blockCount: 0,
+      warnCount: 1,
+      infoCount: 0,
+      decisionOwedCount: 1,
+      isStageGateReady: false,
+    });
+    expect(
+      listed.success
+        ? listed.branches.find(({ id }) => id === 'monthly')?.lastVerdict
+        : 'missing',
+    ).toBeUndefined();
+  });
+
   it('reports the transcript the active branch owns', async () => {
     const branches = store();
 

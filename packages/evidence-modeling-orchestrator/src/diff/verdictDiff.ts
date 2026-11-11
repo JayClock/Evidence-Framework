@@ -24,8 +24,11 @@ export interface VerdictDiff {
   base: VerdictSnapshot | null;
   target: VerdictSnapshot | null;
   /** Issue ids that only the base branch reports. */
-  fixedIssues: readonly SensorIssue[];
+  fixedIssueIds: readonly string[];
   /** Issue ids that only the target branch reports. */
+  introducedIssueIds: readonly string[];
+  /** The findings themselves, so a panel can read a message. */
+  fixedIssues: readonly SensorIssue[];
   introducedIssues: readonly SensorIssue[];
   /** Findings both branches still share. */
   sharedIssueCount: number;
@@ -34,7 +37,13 @@ export interface VerdictDiff {
   gateRegressed: boolean;
 }
 
-const snapshotOf = (report: SensorReport): VerdictSnapshot => ({
+/**
+ * What one verdict contributes to a comparison.
+ *
+ * Stored next to a branch so a comparison can show the cost of an assumption
+ * without re-running Python for a tree the user is not editing.
+ */
+export const snapshotOfReport = (report: SensorReport): VerdictSnapshot => ({
   timestamp: report.timestamp,
   passed: report.passed,
   blockCount: report.blockCount,
@@ -48,7 +57,7 @@ const snapshotOf = (report: SensorReport): VerdictSnapshot => ({
 const severityRank = (issue: SensorIssue): number =>
   issue.severity === 'block' ? 0 : issue.severity === 'warn' ? 1 : 2;
 
-const sortIssues = (issues: readonly SensorIssue[]): readonly SensorIssue[] =>
+export const sortIssues = (issues: readonly SensorIssue[]): readonly SensorIssue[] =>
   [...issues].sort(
     (left, right) =>
       severityRank(left) - severityRank(right) ||
@@ -68,8 +77,10 @@ export const compareSensorReports = (
   if (base === null || target === null) {
     return {
       comparable: false,
-      base: base === null ? null : snapshotOf(base),
-      target: target === null ? null : snapshotOf(target),
+      base: base === null ? null : snapshotOfReport(base),
+      target: target === null ? null : snapshotOfReport(target),
+      fixedIssueIds: [],
+      introducedIssueIds: [],
       fixedIssues: [],
       introducedIssues: [],
       sharedIssueCount: 0,
@@ -84,13 +95,15 @@ export const compareSensorReports = (
   const introducedIssues = target.issues.filter(
     (issue) => !baseIds.has(issue.issueId),
   );
-  const baseSnapshot = snapshotOf(base);
-  const targetSnapshot = snapshotOf(target);
+  const baseSnapshot = snapshotOfReport(base);
+  const targetSnapshot = snapshotOfReport(target);
 
   return {
     comparable: true,
     base: baseSnapshot,
     target: targetSnapshot,
+    fixedIssueIds: fixedIssues.map((item) => item.issueId),
+    introducedIssueIds: introducedIssues.map((item) => item.issueId),
     fixedIssues: sortIssues(fixedIssues),
     introducedIssues: sortIssues(introducedIssues),
     sharedIssueCount: base.issues.length - fixedIssues.length,
@@ -98,5 +111,45 @@ export const compareSensorReports = (
       targetSnapshot.isStageGateReady && !baseSnapshot.isStageGateReady,
     gateRegressed:
       baseSnapshot.isStageGateReady && !targetSnapshot.isStageGateReady,
+  };
+};
+
+/**
+ * Compares two stored verdict snapshots.
+ *
+ * A branch that has never run its sensors has no snapshot, and the honest answer
+ * is "not comparable" rather than "nothing is wrong". Findings cannot be named
+ * without their messages, so this only reports counts and gate movement.
+ */
+export const compareVerdictSnapshots = (
+  base: VerdictSnapshot | null,
+  target: VerdictSnapshot | null,
+): VerdictDiff => {
+  if (base === null || target === null) {
+    return {
+      comparable: false,
+      base,
+      target,
+      fixedIssueIds: [],
+      introducedIssueIds: [],
+      fixedIssues: [],
+      introducedIssues: [],
+      sharedIssueCount: 0,
+      gateImproved: false,
+      gateRegressed: false,
+    };
+  }
+
+  return {
+    comparable: true,
+    base,
+    target,
+    fixedIssueIds: [],
+    introducedIssueIds: [],
+    fixedIssues: [],
+    introducedIssues: [],
+    sharedIssueCount: 0,
+    gateImproved: target.isStageGateReady && !base.isStageGateReady,
+    gateRegressed: base.isStageGateReady && !target.isStageGateReady,
   };
 };
