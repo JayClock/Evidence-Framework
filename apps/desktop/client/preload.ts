@@ -51,6 +51,8 @@ const api: EvidenceDesktopApi = {
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.abort, input),
     triggerSensors: (input: SensorTriggerInput) =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.triggerSensors, input),
+    notifyModelChanged: (input) =>
+      ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.modelChanged, input),
     latestReport: (input) =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.latestReport, input),
     publishCanvasContext: (input: CanvasContextRegistration) =>

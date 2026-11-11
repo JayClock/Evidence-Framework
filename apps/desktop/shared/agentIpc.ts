@@ -21,6 +21,7 @@ export const EVIDENCE_AGENT_IPC_CHANNELS = {
   applyPatchResult: 'evidence:agent:apply-patch-result',
   canvasContext: 'evidence:agent:canvas-context',
   triggerSensors: 'evidence:sensor:trigger',
+  modelChanged: 'evidence:sensor:model-changed',
   latestReport: 'evidence:sensor:latest',
   report: 'evidence:sensor:report',
 } as const;
@@ -89,6 +90,8 @@ export interface EvidenceAgentApi {
   steer: (input: AgentSteerInput) => Promise<AgentSteerOutcome>;
   abort: (input: AgentProjectInput) => Promise<AgentActionResult>;
   triggerSensors: (input: SensorTriggerInput) => Promise<SensorReport>;
+  /** Fires on every model edit; the main process debounces the sensor run. */
+  notifyModelChanged: (input: AgentProjectInput) => Promise<void>;
   latestReport: (input: AgentProjectInput) => Promise<SensorReport | null>;
   /** Publishes the current selection so tools can read it. */
   publishCanvasContext: (input: CanvasContextRegistration) => Promise<void>;

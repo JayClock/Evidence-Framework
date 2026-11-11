@@ -72,6 +72,7 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     steer: AgentSteerInput[];
     abort: string[];
     triggerSensors: string[];
+    modelChanged: string[];
   };
   agentMock: AgentMockController;
 }
@@ -115,6 +116,7 @@ export const installDesktopApi = ({
     steer: [],
     abort: [],
     triggerSensors: [],
+    modelChanged: [],
   };
 
   const rootPath =
@@ -197,6 +199,9 @@ export const installDesktopApi = ({
         latest = sensorReport;
 
         return sensorReport;
+      },
+      notifyModelChanged: async ({ rootPath }) => {
+        calls.modelChanged.push(rootPath);
       },
       latestReport: async () => latest,
       publishCanvasContext: async (input) => {

@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { app, BrowserWindow, nativeTheme } from 'electron';
 
+import { registerAgentIpc } from './agentIpcHandlers';
 import { registerProjectIpc } from './projectIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
 import { createDashboardWindow, openEditorWindow } from './windows';
@@ -17,6 +18,7 @@ const startApplication = async (): Promise<void> => {
   });
 
   registerProjectIpc({ projectStore, openEditorWindow });
+  registerAgentIpc();
   createDashboardWindow();
 };
 

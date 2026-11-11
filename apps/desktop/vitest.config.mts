@@ -8,6 +8,14 @@ const workspaceAliases = {
     import.meta.dirname,
     '../../packages/evidence-schema/src/index.ts',
   ),
+  '@evidence-poc/evidence-agent-core': path.resolve(
+    import.meta.dirname,
+    '../../packages/evidence-agent-core/src/index.ts',
+  ),
+  '@evidence-poc/evidence-modeling-orchestrator': path.resolve(
+    import.meta.dirname,
+    '../../packages/evidence-modeling-orchestrator/src/index.ts',
+  ),
   '@evidence-poc/evidence-model-core/browser': path.resolve(
     import.meta.dirname,
     '../../packages/evidence-model-core/src/browser.ts',
