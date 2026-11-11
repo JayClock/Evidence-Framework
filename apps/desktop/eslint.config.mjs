@@ -3,7 +3,9 @@ import baseConfig from '../../eslint.config.mjs';
 
 export default [
   {
-    ignores: ['out/**', '.vite/**', 'dist/**', 'node_modules/**'],
+    // `resources/` is `scripts/prepare-desktop-runtime.mjs` output: the bundled
+    // skills tree and the portable interpreter, neither written by us.
+    ignores: ['out/**', '.vite/**', 'dist/**', 'node_modules/**', 'resources/**'],
   },
   ...nx.configs['flat/react'],
   ...baseConfig,
