@@ -84,3 +84,19 @@ export {
   type DomainModelDocument,
   type DomainModelManifest,
 } from './ast/document.js';
+
+export {
+  DomainModelValidationError,
+  createIssue,
+  dedupeIssues,
+  formatIssue,
+  issueKey,
+  type ValidationCode,
+  type ValidationIssue,
+  type ValidationResult,
+} from './validation/errors.js';
+
+export {
+  assertValidDomainModel,
+  strictValidateDomainModel,
+} from './validation/strictValidate.js';
