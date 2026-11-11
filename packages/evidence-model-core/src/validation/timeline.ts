@@ -332,8 +332,23 @@ export const buildTimeline = (
   };
 };
 
+/** The five collections a summary counts, present even when nothing was built. */
+export type TimelineCollections = Pick<
+  EvidenceTimeline,
+  'lanes' | 'evidenceTypes' | 'instances' | 'dependencies' | 'unresolvedOrder'
+>;
+
+/** An empty timeline, which is what a check reports when it never got to build one. */
+export const emptyTimelineCollections = (): TimelineCollections => ({
+  lanes: [],
+  evidenceTypes: [],
+  instances: [],
+  dependencies: [],
+  unresolvedOrder: [],
+});
+
 /** The counts and digest `check_fm.py` puts under `timelineSummary`. */
-export const timelineSummary = (timeline: EvidenceTimeline): TimelineSummary => ({
+export const timelineSummary = (timeline: TimelineCollections): TimelineSummary => ({
   laneCount: timeline.lanes.length,
   evidenceTypeCount: timeline.evidenceTypes.length,
   instanceCount: timeline.instances.length,

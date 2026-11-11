@@ -143,6 +143,9 @@ type Node =
       offset: number;
     };
 
+/** The parsed expression tree, exported so lineage analysis can walk it. */
+export type CelNode = Node;
+
 type TokenKind = 'number' | 'string' | 'identifier' | 'operator' | 'eof';
 
 interface Token {
@@ -1325,6 +1328,10 @@ export interface CompiledCel {
   /** Root identifiers the expression reads, sorted for stable diagnostics. */
   identifiers(): readonly string[];
 }
+
+/** Parses a CEL expression into the tree the evaluator and lineage walk read. */
+export const parseCelExpression = (source: string): CelNode =>
+  new Parser(lex(source)).parse();
 
 /** Parses a CEL expression; the result can be evaluated many times. */
 export const compileCelExpression = (source: string): CompiledCel => {

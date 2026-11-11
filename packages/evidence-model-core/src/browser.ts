@@ -111,6 +111,53 @@ export {
 } from './validation/typedValues.js';
 
 export {
+  ScopeSelectionError,
+  completenessGaps,
+  completenessIssues,
+  fulfillmentResults,
+  pairingGaps,
+  referencesOf,
+  scopeSuite,
+  selectScope,
+  simulationRules,
+} from './validation/scope.js';
+
+export {
+  simulateScenario,
+  simulateValidationSuite,
+  type ScenarioResult,
+  type SimulationEvaluationResult,
+  type SimulationInstanceValues,
+  type SimulationReport,
+  type SimulationStatusResult,
+} from './validation/simulation.js';
+
+export {
+  analyzeTraceability,
+  attributePath,
+  extractRuleAttributeAccesses,
+  type AttributeAccess,
+  type TraceabilityConstraint,
+  type TraceabilityDocument,
+  type TraceabilityEdge,
+  type TraceabilityNode,
+} from './validation/traceability.js';
+
+export {
+  FM_CHECK_VERSION,
+  buildFmCheckReport,
+  type FmCheckOutcome,
+  type FmCheckReport,
+  type FmCheckRequest,
+  type FmCheckScenarioResultLine,
+} from './validation/fmCheck.js';
+
+export {
+  emptyTimelineCollections,
+  type TimelineCollections,
+} from './validation/timeline.js';
+
+export {
   CreateRuleCommand,
   DeleteRuleCommand,
   UpdateRuleCommand,

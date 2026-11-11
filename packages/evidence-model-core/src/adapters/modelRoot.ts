@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { Dirent } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -118,6 +119,99 @@ export async function readModelRootFiles(
 
   return files;
 }
+
+/** One file as the digest reads it: its path and its bytes. */
+export interface ModelRootBytes {
+  path: string;
+  bytes: Buffer;
+}
+
+const readTreeBytes = async (
+  root: string,
+  relativeDirectory = '',
+): Promise<ModelRootBytes[]> => {
+  const absolute = path.join(root, relativeDirectory);
+  let entries: Dirent[];
+
+  try {
+    entries = await readdir(absolute, { withFileTypes: true });
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+
+    throw error;
+  }
+
+  const files: ModelRootBytes[] = [];
+
+  for (const entry of entries.sort((left, right) =>
+    left.name.localeCompare(right.name),
+  )) {
+    const relative =
+      relativeDirectory === ''
+        ? entry.name
+        : `${relativeDirectory}/${entry.name}`;
+
+    if (isIgnored(relative)) {
+      continue;
+    }
+
+    if (entry.isDirectory()) {
+      files.push(...(await readTreeBytes(root, relative)));
+      continue;
+    }
+
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    files.push({ path: relative, bytes: await readFile(path.join(root, relative)) });
+  }
+
+  return files;
+};
+
+/**
+ * Every file under a model root, with its bytes.
+ *
+ * The digest covers whatever is on disk rather than only the sources: a
+ * hand-edited `README.md` or a stray file is input too, and a check that
+ * silently ignored it could be invalidated without noticing.
+ */
+export async function readModelRootBytes(
+  root: string,
+): Promise<ModelRootBytes[]> {
+  return (await readTreeBytes(root)).sort((left, right) =>
+    left.path.localeCompare(right.path),
+  );
+}
+
+/**
+ * `sha256:...` over the sorted `path → sha256(bytes)` map.
+ *
+ * Same construction as `check_fm.py`: independent of where the tree lives and of
+ * the generated output, so a packed and an unpacked copy stay comparable.
+ */
+export const modelDigestOf = (
+  files: readonly { path: string; content: string | Buffer }[],
+): string => {
+  const hashes: Record<string, string> = {};
+
+  for (const file of files) {
+    hashes[file.path] = createHash('sha256').update(file.content).digest('hex');
+  }
+
+  const content = JSON.stringify(
+    Object.fromEntries(
+      Object.entries(hashes).sort(([left], [right]) =>
+        left < right ? -1 : left > right ? 1 : 0,
+      ),
+    ),
+  );
+
+  return `sha256:${createHash('sha256').update(content, 'utf8').digest('hex')}`;
+};
 
 /** Files below `validation/`, which the checks read but never write. */
 export const isValidationPath = (relativePath: string): boolean =>
