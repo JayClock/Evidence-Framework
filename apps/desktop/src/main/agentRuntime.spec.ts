@@ -139,11 +139,15 @@ const runtimeWith = (options: {
   fake: ReturnType<typeof createFakeSession>;
   sensors?: ReturnType<typeof sensorEngine>;
   sensorDelayMs?: number;
+  skillsRoot?: string;
 }) =>
   createAgentRuntime({
     rootPath: '/models/procurement',
     transport: options.transport,
     sensors: options.sensors ?? sensorEngine(),
+    ...(options.skillsRoot === undefined
+      ? {}
+      : { skillsRoot: options.skillsRoot }),
     sessionFactory: (created) => {
       sessionOptions.push(created);
 
@@ -174,14 +178,37 @@ describe('createAgentRuntime', () => {
   it('registers the three evidence tools and the project skill tree', async () => {
     const { transport } = createTransport();
     const fake = createFakeSession();
-    const runtime = runtimeWith({ transport, fake });
+    const runtime = runtimeWith({
+      transport,
+      fake,
+      skillsRoot: '/workspace/project/.agents/skills',
+    });
 
     await runtime.prompt('开工');
 
     const created = sessionOptions.at(-1);
 
     expect(created?.projectRoot).toBe('/models/procurement');
+    expect(created?.skillDirectories).toEqual([
+      '/workspace/project/.agents/skills',
+    ]);
     expect(created?.extensionFactories).toHaveLength(1);
+  });
+
+  it('falls back to a bundled skill tree when the project has none', async () => {
+    const { transport } = createTransport();
+    const fake = createFakeSession();
+    const runtime = runtimeWith({ transport, fake });
+
+    await runtime.prompt('开工');
+
+    const created = sessionOptions.at(-1);
+    const [skillsRoot] = created?.skillDirectories ?? [];
+
+    // Whatever the host finds, the session must be told explicitly where to
+    // read skills instead of silently defaulting to an empty project folder.
+    expect(skillsRoot).toBeTruthy();
+    expect(skillsRoot).not.toBe('/models/procurement/.agents/skills');
   });
 
   it('streams projected session events to the renderer', async () => {

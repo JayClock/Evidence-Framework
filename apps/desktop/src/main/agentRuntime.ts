@@ -22,6 +22,7 @@ import {
 
 import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
+import { resolveSkillsRoot } from './skillsRoot';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
 
@@ -43,6 +44,10 @@ export interface AgentRuntimeOptions {
   sessionFactory?: (
     options: EvidenceAgentSessionOptions,
   ) => EvidenceAgentSession;
+  /**
+   * Skill tree override. When omitted the project's own `.agents/skills` wins,
+   * then the tree unpacked next to `app.asar`, then the workspace one.
+   */
   skillsRoot?: string;
   sessionDirectory?: string;
   /** Transcript the session continues; a branch resumes its own lineage. */
@@ -96,11 +101,15 @@ export const createAgentRuntime = ({
   const tracePath = tracePathOf(resolvedRoot);
   const python =
     resolver ?? createPythonEnvResolver({ projectRoot: projectDirectory });
+  // One tree feeds both the agent prompt and the Python sensors, so a project
+  // that ships its own skills is the only place either of them reads.
+  const effectiveSkillsRoot =
+    skillsRoot ?? resolveSkillsRoot({ projectRoot: projectDirectory });
   const engine =
     sensors ??
     createSensorsEngine({
       resolver: python,
-      ...(skillsRoot === undefined ? {} : { skillsRoot }),
+      skillsRoot: effectiveSkillsRoot,
     });
 
   let session: EvidenceAgentSession | null = null;
@@ -150,6 +159,7 @@ export const createAgentRuntime = ({
   const startSession = async (): Promise<EvidenceAgentSession> => {
     const created = sessionFactory({
       projectRoot: projectDirectory,
+      skillDirectories: [effectiveSkillsRoot],
       ...(sessionDirectory === undefined ? {} : { sessionDirectory }),
       ...(sessionFile === undefined || sessionFile === null
         ? {}
