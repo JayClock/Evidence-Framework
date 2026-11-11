@@ -192,7 +192,10 @@ export const assertEntityInsertable = (
       }
 
       if (entity.contextRef === undefined) {
-        fail('participant.contextRef', 'Participant Thing requires contextRef.');
+        fail(
+          'participant.contextRef',
+          'Participant Thing requires contextRef.',
+        );
       }
 
       if (requireContext(document, entity.contextRef).kind !== 'domain') {

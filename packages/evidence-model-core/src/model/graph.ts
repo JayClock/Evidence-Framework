@@ -57,10 +57,7 @@ export interface DomainGraph {
   rootContractOf(contextId: string): EvidenceEntityAST | undefined;
   rulesInContext(contextId: string): readonly RuleAST[];
   rulesReferencing(entityId: string): readonly RuleAST[];
-  derivationRule(
-    entityId: string,
-    attributeName: string,
-  ): RuleAST | undefined;
+  derivationRule(entityId: string, attributeName: string): RuleAST | undefined;
   fulfillmentPairs(): readonly FulfillmentPair[];
   fulfillmentPair(requestId: string): FulfillmentPair | undefined;
 }
@@ -90,17 +87,12 @@ const groupBy = <TItem>(
   return grouped;
 };
 
-const rulesBinding = (
-  rule: RuleAST,
-  objectId: string,
-): boolean =>
+const rulesBinding = (rule: RuleAST, objectId: string): boolean =>
   Object.values(rule.bindings).some(
     (binding) => 'ref' in binding && binding.ref === objectId,
   );
 
-export function createDomainGraph(
-  document: DomainModelDocument,
-): DomainGraph {
+export function createDomainGraph(document: DomainModelDocument): DomainGraph {
   const entityById = new Map(
     document.entities.map((entity) => [entity.id, entity]),
   );
@@ -130,9 +122,7 @@ export function createDomainGraph(
   let pairs: readonly FulfillmentPair[] | undefined;
   let pairsByRequest: Map<string, FulfillmentPair> | undefined;
 
-  const rootContractOf = (
-    contextId: string,
-  ): EvidenceEntityAST | undefined => {
+  const rootContractOf = (contextId: string): EvidenceEntityAST | undefined => {
     const context = entityById.get(contextId);
 
     if (context === undefined || !isContextEntity(context)) {
@@ -174,8 +164,7 @@ export function createDomainGraph(
       confirmations,
       proofs,
       completionRules: document.rules.filter(
-        (rule) =>
-          rule.kind === 'completion' && rulesBinding(rule, request.id),
+        (rule) => rule.kind === 'completion' && rulesBinding(rule, request.id),
       ),
       breachRules: document.rules.filter(
         (rule) => rule.kind === 'breach' && rulesBinding(rule, request.id),
@@ -198,8 +187,7 @@ export function createDomainGraph(
     document,
     getEntity: (entityId) => entityById.get(entityId),
     getRule: (ruleId) => ruleById.get(ruleId),
-    getRelationship: (relationshipId) =>
-      relationshipById.get(relationshipId),
+    getRelationship: (relationshipId) => relationshipById.get(relationshipId),
     entities: () => document.entities,
     rules: () => document.rules,
     relationships: () => document.relationships,

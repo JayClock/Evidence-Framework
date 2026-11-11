@@ -18,7 +18,9 @@ const canonical = (document: ReturnType<typeof createProcurementModel>) => ({
   relationships: [...document.relationships].sort((left, right) =>
     left.id.localeCompare(right.id),
   ),
-  rules: [...document.rules].sort((left, right) => left.id.localeCompare(right.id)),
+  rules: [...document.rules].sort((left, right) =>
+    left.id.localeCompare(right.id),
+  ),
 });
 
 describe('modelSourcePaths', () => {
@@ -47,14 +49,18 @@ describe('modelSourcePaths', () => {
 
   it('disambiguates colliding slugs deterministically', () => {
     const base = createProcurementModel();
-    const template = base.entities.find((entity) => entity.id === 'thing.product')!;
+    const template = base.entities.find(
+      (entity) => entity.id === 'thing.product',
+    )!;
     const paths = modelSourcePaths([
       { ...template, id: 'thing.a-b' },
       { ...template, id: 'thing.a.b' },
     ]);
 
     expect(paths.get('thing.a-b')).toBe('entities/participant-thing--a-b.json');
-    expect(paths.get('thing.a.b')).toBe('entities/participant-thing--a-b-2.json');
+    expect(paths.get('thing.a.b')).toBe(
+      'entities/participant-thing--a-b-2.json',
+    );
     expect(
       modelSourcePaths([
         { ...template, id: 'thing.a.b' },
@@ -66,13 +72,15 @@ describe('modelSourcePaths', () => {
 
 describe('stringifyModelJson', () => {
   it('writes two-space JSON with a trailing newline', () => {
-    expect(stringifyModelJson({ b: 1, a: 2 })).toBe('{\n  "b": 1,\n  "a": 2\n}\n');
+    expect(stringifyModelJson({ b: 1, a: 2 })).toBe(
+      '{\n  "b": 1,\n  "a": 2\n}\n',
+    );
   });
 
   it('sorts keys only when asked', () => {
-    expect(stringifyModelJson({ b: 1, a: { d: 1, c: 2 } }, { sortKeys: true })).toBe(
-      '{\n  "a": {\n    "c": 2,\n    "d": 1\n  },\n  "b": 1\n}\n',
-    );
+    expect(
+      stringifyModelJson({ b: 1, a: { d: 1, c: 2 } }, { sortKeys: true }),
+    ).toBe('{\n  "a": {\n    "c": 2,\n    "d": 1\n  },\n  "b": 1\n}\n');
   });
 });
 
@@ -82,13 +90,13 @@ describe('serializeDomainModel', () => {
     const paths = files.map((file) => file.path);
 
     expect(paths[0]).toBe('model.json');
-    expect(paths.slice(1, 13).every((path) => path.startsWith('entities/'))).toBe(
-      true,
-    );
+    expect(
+      paths.slice(1, 13).every((path) => path.startsWith('entities/')),
+    ).toBe(true);
     expect(paths.slice(1, 13)).toEqual([...paths.slice(1, 13)].sort());
-    expect(paths.slice(13, 19).every((path) => path.startsWith('relationships/'))).toBe(
-      true,
-    );
+    expect(
+      paths.slice(13, 19).every((path) => path.startsWith('relationships/')),
+    ).toBe(true);
     expect(paths.slice(19)).toEqual([
       'rules/rule--contract-total.json',
       'rules/rule--payment-completed.json',
@@ -142,7 +150,10 @@ describe('parseModelSourceFiles', () => {
     const parsed = parseModelSourceFiles([
       ...files,
       { path: 'entities/duplicate.json', content: files[1]!.content },
-      { path: 'rules/other.json', content: '{"type":"scenario","id":"scenario.x"}' },
+      {
+        path: 'rules/other.json',
+        content: '{"type":"scenario","id":"scenario.x"}',
+      },
     ]);
 
     expect(parsed.issues.map((issue) => issue.message)).toEqual(

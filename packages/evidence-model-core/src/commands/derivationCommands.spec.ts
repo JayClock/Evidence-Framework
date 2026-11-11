@@ -112,7 +112,10 @@ describe('BindDerivedRuleCommand', () => {
   });
 
   it('requires the attribute to exist', () => {
-    expectCode(() => bind('ghost_attribute').apply(base()), 'attribute.notFound');
+    expectCode(
+      () => bind('ghost_attribute').apply(base()),
+      'attribute.notFound',
+    );
   });
 
   it('rejects entities without a Context', () => {
@@ -156,7 +159,11 @@ describe('assertMandatoryTime', () => {
 
   it('rejects missing or weak business times', () => {
     expectCode(
-      () => assertMandatoryTime('request', { id: 'request.payment', attributes: [] }),
+      () =>
+        assertMandatoryTime('request', {
+          id: 'request.payment',
+          attributes: [],
+        }),
       'attribute.time.missing',
     );
     expectCode(

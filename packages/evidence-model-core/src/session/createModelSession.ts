@@ -48,7 +48,9 @@ export class ModelSessionValidationError extends Error {
       }`,
     );
     this.name = 'ModelSessionValidationError';
-    this.issues = result.issues.map((issue) => `${issue.path}: ${issue.message}`);
+    this.issues = result.issues.map(
+      (issue) => `${issue.path}: ${issue.message}`,
+    );
   }
 }
 
@@ -89,10 +91,11 @@ const DEFAULT_HISTORY_LIMIT = 100;
 
 const emptySelection: ModelSelection = { nodeId: null, attributeName: null };
 
-export function createModelSession(
-  options: ModelSessionOptions,
-): ModelSession {
-  const historyLimit = Math.max(1, options.historyLimit ?? DEFAULT_HISTORY_LIMIT);
+export function createModelSession(options: ModelSessionOptions): ModelSession {
+  const historyLimit = Math.max(
+    1,
+    options.historyLimit ?? DEFAULT_HISTORY_LIMIT,
+  );
   const listeners = new Set<(event: ModelSessionEvent) => void>();
   let document = options.document;
   let graph: DomainGraph | undefined;
@@ -153,7 +156,7 @@ export function createModelSession(
     validate: () => strictValidateDomainModel(document),
     canUndo: () => undoStack.length > 0,
     canRedo: () => redoStack.length > 0,
-    dispatch: <TResult,>(command: ModelCommand<TResult>): TResult => {
+    dispatch: <TResult>(command: ModelCommand<TResult>): TResult => {
       const outcome = command.apply(document);
       guard(outcome.document);
       applyDocument(outcome.document);
@@ -171,7 +174,7 @@ export function createModelSession(
 
       return outcome.result;
     },
-    dispatchAll: <TResult,>(
+    dispatchAll: <TResult>(
       commands: readonly ModelCommand<TResult>[],
       label = 'sequence',
     ): readonly TResult[] => {

@@ -56,12 +56,16 @@ export const sequenceInverse = (
   new CommandSequence([...commands].reverse(), 'sequence-inverse');
 
 /** Replaces the whole document; used by cascade deletes and reloads. */
-export class ReplaceDocumentCommand implements ModelCommand<DomainModelDocument> {
+export class ReplaceDocumentCommand
+  implements ModelCommand<DomainModelDocument>
+{
   readonly type = 'replace-document';
 
   constructor(private readonly next: DomainModelDocument) {}
 
-  apply(document: DomainModelDocument): ModelCommandOutcome<DomainModelDocument> {
+  apply(
+    document: DomainModelDocument,
+  ): ModelCommandOutcome<DomainModelDocument> {
     return {
       document: this.next,
       inverse: new ReplaceDocumentCommand(document),

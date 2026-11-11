@@ -43,7 +43,10 @@ export const assertRuleInsertable = (
   const context = requireEntity(document, rule.contextRef);
 
   if (!isContextEntity(context)) {
-    fail('rule.context', `rule contextRef '${rule.contextRef}' is not a Context.`);
+    fail(
+      'rule.context',
+      `rule contextRef '${rule.contextRef}' is not a Context.`,
+    );
   }
 
   if (isBooleanRuleKind(rule.kind) && rule.resultType !== 'bool') {
@@ -56,7 +59,10 @@ export const assertRuleInsertable = (
 
   if (rule.kind === 'derivation') {
     if (rule.target === undefined) {
-      fail('rule.context', 'derivation rules must declare the target attribute.');
+      fail(
+        'rule.context',
+        'derivation rules must declare the target attribute.',
+      );
     }
 
     const entity = requireEntity(document, rule.target.entityRef);
@@ -85,8 +91,14 @@ export const assertRuleInsertable = (
   }
 
   for (const [alias, binding] of Object.entries(rule.bindings)) {
-    if ('ref' in binding && !document.entities.some((e) => e.id === binding.ref)) {
-      fail('rule.context', `binding '${alias}' references unknown id '${binding.ref}'.`);
+    if (
+      'ref' in binding &&
+      !document.entities.some((e) => e.id === binding.ref)
+    ) {
+      fail(
+        'rule.context',
+        `binding '${alias}' references unknown id '${binding.ref}'.`,
+      );
     }
   }
 };
@@ -111,6 +123,77 @@ export class CreateRuleCommand implements ModelCommand<RuleAST> {
   }
 }
 
+/**
+ * Edits the parts of a rule a modeler may change after it is saved.
+ *
+ * Identity, kind, Context and the derivation target stay immutable: changing
+ * them would silently repoint the attribute that reads the rule.
+ */
+export class UpdateRuleCommand implements ModelCommand<RuleAST> {
+  readonly type = 'update-rule';
+
+  constructor(
+    private readonly ruleId: string,
+    private readonly patch: Readonly<Partial<RuleAST>>,
+  ) {}
+
+  apply(document: DomainModelDocument): ModelCommandOutcome<RuleAST> {
+    const rule = document.rules.find(
+      (candidate) => candidate.id === this.ruleId,
+    );
+
+    if (rule === undefined) {
+      fail('rule.notFound', `unknown rule '${this.ruleId}'.`);
+    }
+
+    const {
+      id: _id,
+      type: _type,
+      kind: _kind,
+      contextRef: _contextRef,
+      target: _target,
+      ...patch
+    } = this.patch;
+
+    if (
+      this.patch.id !== undefined ||
+      this.patch.type !== undefined ||
+      this.patch.kind !== undefined ||
+      this.patch.contextRef !== undefined ||
+      this.patch.target !== undefined
+    ) {
+      fail(
+        'rule.context',
+        'id, type, kind, contextRef and target are immutable once a rule is saved.',
+      );
+    }
+
+    const next: RuleAST = { ...rule, ...patch };
+
+    if (isBooleanRuleKind(next.kind) && next.resultType !== 'bool') {
+      fail('rule.context', `${next.kind} rules must return bool.`);
+    }
+
+    const previous: Record<string, unknown> = {};
+
+    for (const key of Object.keys(patch)) {
+      previous[key] = (rule as unknown as Record<string, unknown>)[key];
+    }
+
+    return {
+      document: {
+        ...document,
+        rules: document.rules.map((candidate) =>
+          candidate.id === this.ruleId ? next : candidate,
+        ),
+      },
+      inverse: new UpdateRuleCommand(this.ruleId, previous as Partial<RuleAST>),
+      affectedIds: [this.ruleId],
+      result: next,
+    };
+  }
+}
+
 export interface DeleteRuleOptions {
   /** Also clears `derivedByRuleRef` from the attribute the rule writes. */
   cascade?: boolean;
@@ -125,7 +208,9 @@ export class DeleteRuleCommand implements ModelCommand<boolean> {
   ) {}
 
   apply(document: DomainModelDocument): ModelCommandOutcome<boolean> {
-    const rule = document.rules.find((candidate) => candidate.id === this.ruleId);
+    const rule = document.rules.find(
+      (candidate) => candidate.id === this.ruleId,
+    );
 
     if (rule === undefined) {
       fail('rule.notFound', `unknown rule '${this.ruleId}'.`);
@@ -179,8 +264,11 @@ export class DeleteRuleCommand implements ModelCommand<boolean> {
 
                   return rest;
                 }),
-              }),
-        rules: document.rules.filter((candidate) => candidate.id !== this.ruleId),
+              },
+        ),
+        rules: document.rules.filter(
+          (candidate) => candidate.id !== this.ruleId,
+        ),
       },
       inverse: new ReplaceDocumentCommand(document),
       affectedIds: [this.ruleId, ...holders.map((entity) => entity.id)],

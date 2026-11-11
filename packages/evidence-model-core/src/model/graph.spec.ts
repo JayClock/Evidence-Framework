@@ -9,9 +9,9 @@ const graph = () => createDomainGraph(createProcurementModel());
 
 describe('graph fixture', () => {
   it('is a valid FM document', () => {
-    expect(
-      strictValidateDomainModel(createProcurementModel()).issues,
-    ).toEqual([]);
+    expect(strictValidateDomainModel(createProcurementModel()).issues).toEqual(
+      [],
+    );
   });
 });
 
@@ -34,9 +34,9 @@ describe('lookups', () => {
     const subject = graph();
 
     expect(subject.attributesOf('request.payment')).toHaveLength(3);
-    expect(subject.attribute('request.payment', 'requested_minor_units')?.valueType).toBe(
-      'int',
-    );
+    expect(
+      subject.attribute('request.payment', 'requested_minor_units')?.valueType,
+    ).toBe('int');
     expect(subject.attribute('request.payment', 'Requested')).toBeUndefined();
     expect(subject.attributesOf('entity.ghost')).toEqual([]);
   });
@@ -54,9 +54,9 @@ describe('relationship index', () => {
   it('indexes outgoing and incoming edges', () => {
     const subject = graph();
 
-    expect(subject.outgoing('confirmation.payment').map((item) => item.id)).toEqual([
-      'relation.confirmation-references-request',
-    ]);
+    expect(
+      subject.outgoing('confirmation.payment').map((item) => item.id),
+    ).toEqual(['relation.confirmation-references-request']);
     expect(subject.incoming('request.payment').map((item) => item.id)).toEqual([
       'relation.confirmation-references-request',
       'relation.slip-references-request',
@@ -82,7 +82,9 @@ describe('context structure', () => {
     const subject = graph();
 
     expect(
-      subject.entitiesInContext('context.procurement').map((entity) => entity.id),
+      subject
+        .entitiesInContext('context.procurement')
+        .map((entity) => entity.id),
     ).toEqual([
       'contract.procurement',
       'role.buyer',
@@ -110,13 +112,12 @@ describe('context structure', () => {
 
     const subject = createDomainGraph(model);
 
-    expect(subject.contextPath('context.catalogue').map((item) => item.id)).toEqual([
-      'context.procurement',
-      'context.catalogue',
-    ]);
-    expect(subject.childContexts('context.procurement').map((item) => item.id)).toEqual(
-      ['context.catalogue'],
-    );
+    expect(
+      subject.contextPath('context.catalogue').map((item) => item.id),
+    ).toEqual(['context.procurement', 'context.catalogue']);
+    expect(
+      subject.childContexts('context.procurement').map((item) => item.id),
+    ).toEqual(['context.catalogue']);
   });
 
   it('breaks parent cycles', () => {
@@ -151,9 +152,9 @@ describe('rules', () => {
   it('lists rules per context', () => {
     const subject = graph();
 
-    expect(subject.rulesInContext('context.procurement').map((rule) => rule.id)).toEqual(
-      ['rule.payment-completed', 'rule.contract-total'],
-    );
+    expect(
+      subject.rulesInContext('context.procurement').map((rule) => rule.id),
+    ).toEqual(['rule.payment-completed', 'rule.contract-total']);
     expect(subject.rulesInContext('context.catalogue')).toEqual([]);
   });
 

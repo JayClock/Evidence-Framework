@@ -36,6 +36,7 @@ export {
 export {
   CreateRuleCommand,
   DeleteRuleCommand,
+  UpdateRuleCommand,
   type DeleteRuleOptions,
 } from './commands/ruleCommands.js';
 

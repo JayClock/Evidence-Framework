@@ -5,6 +5,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
+import { RightInspector } from '../components/RightInspector';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
@@ -180,12 +181,10 @@ const EditorWorkspace = ({
           onClearSelection={() => state.session.clearSelection()}
         />
 
-        <InspectorPlaceholder
-          label={
-            state.selection.nodeId === null
-              ? null
-              : (state.graph.getEntity(state.selection.nodeId)?.label ?? null)
-          }
+        <RightInspector
+          graph={state.graph}
+          session={state.session}
+          selection={state.selection}
         />
       </div>
 
@@ -202,14 +201,3 @@ const EditorWorkspace = ({
     </div>
   );
 };
-
-const InspectorPlaceholder = ({ label }: { label: string | null }) => (
-  <aside className="w-[312px] shrink-0 border-l border-evidence-line bg-white/70 p-3">
-    <p className="text-[10px] tracking-wide text-evidence-muted uppercase">
-      检视器
-    </p>
-    <p className="mt-2 text-[12px] text-evidence-ink">
-      {label === null ? '选择画布上的业务对象查看属性。' : label}
-    </p>
-  </aside>
-);

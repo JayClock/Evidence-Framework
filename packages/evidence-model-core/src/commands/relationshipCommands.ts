@@ -53,10 +53,7 @@ const assertPlaysRole = (source: EntityAST, target: EntityAST): void => {
     return;
   }
 
-  fail(
-    'relationship.endpoint',
-    `plays_role does not allow ${pair}.`,
-  );
+  fail('relationship.endpoint', `plays_role does not allow ${pair}.`);
 };
 
 const assertEndpoints = (
@@ -73,7 +70,10 @@ const assertEndpoints = (
   const sourceSignature = entitySignature(source);
   const targetSignature = entitySignature(target);
 
-  if (sourceSignature === 'evidence.contract' && targetSignature === 'evidence.contract') {
+  if (
+    sourceSignature === 'evidence.contract' &&
+    targetSignature === 'evidence.contract'
+  ) {
     fail(
       'relationship.endpoint',
       'Contract must not connect directly to Contract.',
@@ -90,7 +90,9 @@ const assertEndpoints = (
   }
 };
 
-export class CreateRelationshipCommand implements ModelCommand<RelationshipAST> {
+export class CreateRelationshipCommand
+  implements ModelCommand<RelationshipAST>
+{
   readonly type = 'create-relationship';
 
   constructor(
@@ -127,7 +129,10 @@ export class DeleteRelationshipCommand implements ModelCommand<boolean> {
     );
 
     if (relationship === undefined) {
-      fail('relationship.notFound', `unknown relationship '${this.relationshipId}'.`);
+      fail(
+        'relationship.notFound',
+        `unknown relationship '${this.relationshipId}'.`,
+      );
     }
 
     return {

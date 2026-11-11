@@ -134,9 +134,9 @@ describe('CreateRelationshipCommand', () => {
     );
     expectCode(
       () =>
-        new CreateRelationshipCommand(
-          relation({ id: 'Relation.Bad' }),
-        ).apply(document),
+        new CreateRelationshipCommand(relation({ id: 'Relation.Bad' })).apply(
+          document,
+        ),
       'id.invalid',
     );
   });

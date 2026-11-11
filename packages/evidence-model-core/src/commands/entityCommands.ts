@@ -86,7 +86,10 @@ export class CreateContractCommand implements ModelCommand<EvidenceEntityAST> {
 
   apply(document: DomainModelDocument): ModelCommandOutcome<EvidenceEntityAST> {
     if (this.entity.kind !== 'contract') {
-      fail('context.responsibility', 'CreateContractCommand requires a Contract.');
+      fail(
+        'context.responsibility',
+        'CreateContractCommand requires a Contract.',
+      );
     }
 
     const context = requireContext(document, this.entity.contextRef);
@@ -125,7 +128,11 @@ export class UpdateEntityCommand implements ModelCommand<EntityAST> {
   apply(document: DomainModelDocument): ModelCommandOutcome<EntityAST> {
     const entity = requireEntity(document, this.entityId);
 
-    if ('id' in this.patch || 'category' in this.patch || 'type' in this.patch) {
+    if (
+      'id' in this.patch ||
+      'category' in this.patch ||
+      'type' in this.patch
+    ) {
       fail(
         'entity.immutableField',
         'id, type and category are immutable once the object is saved.',
@@ -313,9 +320,10 @@ export class DeleteEntityCommand implements ModelCommand<boolean> {
       };
     }
 
-    const removedIds = new Set(
-      [...references.map((reference) => reference.id), this.entityId],
-    );
+    const removedIds = new Set([
+      ...references.map((reference) => reference.id),
+      this.entityId,
+    ]);
 
     return {
       document: {
@@ -348,7 +356,9 @@ const stripRootRefs = (entity: EntityAST, removedId: string): EntityAST => {
 };
 
 /** Replaces the `rootRefs` list of a Context, keeping order. */
-export class ReplaceContextRootsCommand implements ModelCommand<ContextEntityAST> {
+export class ReplaceContextRootsCommand
+  implements ModelCommand<ContextEntityAST>
+{
   readonly type = 'replace-context-roots';
 
   constructor(

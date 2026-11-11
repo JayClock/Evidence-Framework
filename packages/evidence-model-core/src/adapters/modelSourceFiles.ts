@@ -10,10 +10,18 @@ import {
 export const MODEL_MANIFEST_PATH = 'model.json';
 
 /** Trees that hold model sources and are therefore rewritten by the adapter. */
-export const MODEL_SOURCE_TREES = ['entities', 'relationships', 'rules'] as const;
+export const MODEL_SOURCE_TREES = [
+  'entities',
+  'relationships',
+  'rules',
+] as const;
 
 /** Sibling trees owned by other skills; the adapter never rewrites them. */
-export const MODEL_NON_SOURCE_TREES = ['discovery', 'generated', 'validation'] as const;
+export const MODEL_NON_SOURCE_TREES = [
+  'discovery',
+  'generated',
+  'validation',
+] as const;
 
 export interface ModelSourceFile {
   /** POSIX-style path relative to the model root. */
@@ -326,7 +334,11 @@ const parseJson = (
   try {
     const parsed: unknown = JSON.parse(content);
 
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    if (
+      typeof parsed !== 'object' ||
+      parsed === null ||
+      Array.isArray(parsed)
+    ) {
       issues.push({ path, message: 'source file must contain a JSON object.' });
 
       return undefined;

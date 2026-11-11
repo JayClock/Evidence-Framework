@@ -1,6 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import type { Dirent } from 'node:fs';
-import { mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  readdir,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
@@ -104,9 +111,7 @@ const removeStaleFiles = async (
   desired: ReadonlySet<string>,
 ): Promise<string[]> => {
   const existing = (
-    await Promise.all(
-      MODEL_SOURCE_TREES.map((tree) => readTree(root, tree)),
-    )
+    await Promise.all(MODEL_SOURCE_TREES.map((tree) => readTree(root, tree)))
   ).flat();
   const removed: string[] = [];
 

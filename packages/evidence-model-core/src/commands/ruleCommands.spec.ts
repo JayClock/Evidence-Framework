@@ -6,6 +6,7 @@ import {
   CreateRuleCommand,
   DeleteRuleCommand,
   ModelCommandError,
+  UpdateRuleCommand,
 } from '../index.js';
 import { createProcurementModel } from '../../tests/support/modelFixture.js';
 
@@ -23,9 +24,7 @@ const expectCode = (work: () => unknown, code: string): void => {
   throw new Error(`expected command to fail with ${code}`);
 };
 
-const completionRule = (
-  overrides: Partial<RuleAST> = {},
-): RuleAST => ({
+const completionRule = (overrides: Partial<RuleAST> = {}): RuleAST => ({
   type: 'rule',
   id: 'rule.payment-breach',
   kind: 'breach',
@@ -57,9 +56,9 @@ describe('CreateRuleCommand', () => {
   it('requires boolean result types for decision rules', () => {
     expectCode(
       () =>
-        new CreateRuleCommand(
-          completionRule({ resultType: 'string' }),
-        ).apply(base()),
+        new CreateRuleCommand(completionRule({ resultType: 'string' })).apply(
+          base(),
+        ),
       'rule.context',
     );
   });
@@ -67,9 +66,9 @@ describe('CreateRuleCommand', () => {
   it('resolves the rule context', () => {
     expectCode(
       () =>
-        new CreateRuleCommand(completionRule({ contextRef: 'context.ghost' })).apply(
-          base(),
-        ),
+        new CreateRuleCommand(
+          completionRule({ contextRef: 'context.ghost' }),
+        ).apply(base()),
       'entity.notFound',
     );
     expectCode(
@@ -86,7 +85,10 @@ describe('CreateRuleCommand', () => {
       () =>
         new CreateRuleCommand(
           completionRule({
-            target: { entityRef: 'request.payment', attribute: 'requested_minor_units' },
+            target: {
+              entityRef: 'request.payment',
+              attribute: 'requested_minor_units',
+            },
           }),
         ).apply(base()),
       'rule.context',
@@ -122,7 +124,10 @@ describe('CreateRuleCommand', () => {
       'attribute.notFound',
     );
     expectCode(
-      () => new CreateRuleCommand(completionRule({ resultType: 'int' })).apply(base()),
+      () =>
+        new CreateRuleCommand(completionRule({ resultType: 'int' })).apply(
+          base(),
+        ),
       'rule.context',
     );
   });
@@ -153,9 +158,10 @@ describe('CreateRuleCommand', () => {
   it('rejects duplicate ids', () => {
     expectCode(
       () =>
-        new CreateRuleCommand({ ...completionRule(), id: 'rule.payment-completed' }).apply(
-          base(),
-        ),
+        new CreateRuleCommand({
+          ...completionRule(),
+          id: 'rule.payment-completed',
+        }).apply(base()),
       'id.duplicate',
     );
   });
@@ -164,7 +170,9 @@ describe('CreateRuleCommand', () => {
 describe('DeleteRuleCommand', () => {
   it('deletes an unreferenced rule and restores it on undo', () => {
     const document = base();
-    const outcome = new DeleteRuleCommand('rule.payment-completed').apply(document);
+    const outcome = new DeleteRuleCommand('rule.payment-completed').apply(
+      document,
+    );
 
     expect(outcome.document.rules).toHaveLength(1);
     expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
@@ -198,6 +206,76 @@ describe('DeleteRuleCommand', () => {
     expectCode(
       () => new DeleteRuleCommand('rule.ghost').apply(base()),
       'rule.notFound',
+    );
+  });
+});
+
+describe('UpdateRuleCommand', () => {
+  it('edits the expression and description of a saved rule', () => {
+    const model = base();
+    const contract = model.entities.find(
+      ({ id }) => id === 'contract.procurement',
+    );
+
+    expect(contract).toBeDefined();
+
+    const outcome = new UpdateRuleCommand('rule.contract-total', {
+      description: '按协议数量与最新约定单价派生协议总金额。',
+      expression: 'contract.quantity * 120',
+    }).apply(model);
+
+    expect(outcome.result.expression).toBe('contract.quantity * 120');
+    expect(
+      outcome.document.rules.find(({ id }) => id === 'rule.contract-total')
+        ?.description,
+    ).toBe('按协议数量与最新约定单价派生协议总金额。');
+    expect(
+      outcome.document.entities.find(({ id }) => id === 'contract.procurement'),
+    ).toEqual(contract);
+
+    const restored = outcome.inverse.apply(outcome.document);
+
+    expect(restored.document).toEqual(model);
+  });
+
+  it('keeps rule identity, kind, context and target immutable', () => {
+    expectCode(
+      () =>
+        new UpdateRuleCommand('rule.contract-total', {
+          contextRef: 'context.catalogue',
+        }).apply(base()),
+      'rule.context',
+    );
+    expectCode(
+      () =>
+        new UpdateRuleCommand('rule.contract-total', {
+          kind: 'completion',
+        }).apply(base()),
+      'rule.context',
+    );
+    expectCode(
+      () =>
+        new UpdateRuleCommand('rule.contract-total', {
+          target: {
+            entityRef: 'contract.procurement',
+            attribute: 'quantity',
+          },
+        }).apply(base()),
+      'rule.context',
+    );
+  });
+
+  it('rejects unknown rules and non-boolean decisions', () => {
+    expectCode(
+      () => new UpdateRuleCommand('rule.missing', {}).apply(base()),
+      'rule.notFound',
+    );
+    expectCode(
+      () =>
+        new UpdateRuleCommand('rule.payment-completed', {
+          resultType: 'money',
+        }).apply(base()),
+      'rule.context',
     );
   });
 });

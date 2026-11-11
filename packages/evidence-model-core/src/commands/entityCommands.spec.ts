@@ -259,11 +259,16 @@ describe('CreateContractCommand', () => {
       (entity) => entity.id === 'context.service',
     );
 
-    expect(outcome.document.entities.some((entity) => entity.id === 'contract.service')).toBe(
-      true,
-    );
+    expect(
+      outcome.document.entities.some(
+        (entity) => entity.id === 'contract.service',
+      ),
+    ).toBe(true);
     expect(context).toMatchObject({ rootRefs: ['contract.service'] });
-    expect(outcome.affectedIds).toEqual(['contract.service', 'context.service']);
+    expect(outcome.affectedIds).toEqual([
+      'contract.service',
+      'context.service',
+    ]);
   });
 
   it('refuses a context that already declares roots', () => {
@@ -310,8 +315,9 @@ describe('UpdateEntityCommand', () => {
     }).apply(document);
 
     expect(
-      outcome.document.entities.find((entity) => entity.id === 'request.payment')
-        ?.label,
+      outcome.document.entities.find(
+        (entity) => entity.id === 'request.payment',
+      )?.label,
     ).toBe('付款申请');
     expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
   });
@@ -343,7 +349,10 @@ describe('UpdateEntityCommand', () => {
       'entity.immutableField',
     );
     expectCode(
-      () => new UpdateEntityCommand('request.ghost', { label: 'x' }).apply(document),
+      () =>
+        new UpdateEntityCommand('request.ghost', { label: 'x' }).apply(
+          document,
+        ),
       'entity.notFound',
     );
   });
@@ -357,9 +366,9 @@ describe('DeleteEntityCommand', () => {
 
     const outcome = new DeleteEntityCommand('thing.service').apply(document);
 
-    expect(outcome.document.entities.some((entity) => entity.id === 'thing.service')).toBe(
-      false,
-    );
+    expect(
+      outcome.document.entities.some((entity) => entity.id === 'thing.service'),
+    ).toBe(false);
     expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
   });
 
@@ -370,8 +379,12 @@ describe('DeleteEntityCommand', () => {
       'entity.referenced',
     );
 
-    expect(error.details.join(' ')).toContain('relation.confirmation-references-request');
-    expect(entityReferences(document, 'request.payment').length).toBeGreaterThan(0);
+    expect(error.details.join(' ')).toContain(
+      'relation.confirmation-references-request',
+    );
+    expect(
+      entityReferences(document, 'request.payment').length,
+    ).toBeGreaterThan(0);
   });
 
   it('cascades removable references in one undo step', () => {
@@ -386,7 +399,9 @@ describe('DeleteEntityCommand', () => {
       ),
     ).toBe(false);
     expect(
-      outcome.document.rules.some((rule) => rule.id === 'rule.payment-completed'),
+      outcome.document.rules.some(
+        (rule) => rule.id === 'rule.payment-completed',
+      ),
     ).toBe(false);
     expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
   });
@@ -395,13 +410,19 @@ describe('DeleteEntityCommand', () => {
     const document = base();
 
     expectCode(
-      () => new DeleteEntityCommand('role.seller', { cascade: true }).apply(document),
+      () =>
+        new DeleteEntityCommand('role.seller', { cascade: true }).apply(
+          document,
+        ),
       'entity.referenced',
     );
   });
 
   it('rejects unknown ids', () => {
-    expectCode(() => new DeleteEntityCommand('entity.ghost').apply(base()), 'entity.notFound');
+    expectCode(
+      () => new DeleteEntityCommand('entity.ghost').apply(base()),
+      'entity.notFound',
+    );
   });
 });
 
@@ -414,7 +435,9 @@ describe('ReplaceContextRootsCommand', () => {
     ]).apply(document);
 
     expect(
-      outcome.document.entities.find((entity) => entity.id === 'context.catalogue'),
+      outcome.document.entities.find(
+        (entity) => entity.id === 'context.catalogue',
+      ),
     ).toMatchObject({ rootRefs: ['thing.product', 'role.catalogue-item'] });
     expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
   });
@@ -422,9 +445,9 @@ describe('ReplaceContextRootsCommand', () => {
   it('rejects unknown roots', () => {
     expectCode(
       () =>
-        new ReplaceContextRootsCommand('context.catalogue', ['thing.ghost']).apply(
-          base(),
-        ),
+        new ReplaceContextRootsCommand('context.catalogue', [
+          'thing.ghost',
+        ]).apply(base()),
       'entity.notFound',
     );
   });

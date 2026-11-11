@@ -26,7 +26,9 @@ const canonical = (document: ReturnType<typeof createProcurementModel>) => ({
   relationships: [...document.relationships].sort((left, right) =>
     left.id.localeCompare(right.id),
   ),
-  rules: [...document.rules].sort((left, right) => left.id.localeCompare(right.id)),
+  rules: [...document.rules].sort((left, right) =>
+    left.id.localeCompare(right.id),
+  ),
 });
 
 const readAll = async (root: string) => {
@@ -86,9 +88,7 @@ describe('writeModelDirectory', () => {
 
     expect(second.written).toEqual([]);
     expect(second.removed).toEqual([]);
-    expect(second.unchanged.length).toBe(
-      serializeDomainModel(model).length,
-    );
+    expect(second.unchanged.length).toBe(serializeDomainModel(model).length);
   });
 
   it('only rewrites the file that changed', async () => {

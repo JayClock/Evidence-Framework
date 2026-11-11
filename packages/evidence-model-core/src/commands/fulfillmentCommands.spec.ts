@@ -78,7 +78,9 @@ describe('CreateFulfillmentPairCommand', () => {
     expect(outcome.document.entities.map((entity) => entity.id)).toEqual(
       expect.arrayContaining(['request.delivery', 'confirmation.delivery']),
     );
-    expect(outcome.document.relationships.map((relation) => relation.id)).toEqual(
+    expect(
+      outcome.document.relationships.map((relation) => relation.id),
+    ).toEqual(
       expect.arrayContaining([
         'relation.request.delivery-confirmed-by',
         'relation.delivery-request-references-contract',
