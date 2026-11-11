@@ -5,6 +5,12 @@
   "references": [
     {
       "path": "./apps/frontend"
+    },
+    {
+      "path": "./packages/evidence-schema"
+    },
+    {
+      "path": "./packages/evidence-model-core"
     }
   ]
 }
