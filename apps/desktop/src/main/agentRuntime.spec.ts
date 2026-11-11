@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type {
   EvidenceAgentSession,
   EvidenceAgentSessionOptions,
+  PythonEnvResolver,
 } from '@evidence-poc/evidence-agent-core';
 import type {
   ModelPatchRequest,
@@ -140,6 +141,7 @@ const runtimeWith = (options: {
   sensors?: ReturnType<typeof sensorEngine>;
   sensorDelayMs?: number;
   skillsRoot?: string;
+  resolver?: PythonEnvResolver;
 }) =>
   createAgentRuntime({
     rootPath: '/models/procurement',
@@ -148,6 +150,7 @@ const runtimeWith = (options: {
     ...(options.skillsRoot === undefined
       ? {}
       : { skillsRoot: options.skillsRoot }),
+    ...(options.resolver === undefined ? {} : { resolver: options.resolver }),
     sessionFactory: (created) => {
       sessionOptions.push(created);
 
@@ -209,6 +212,55 @@ describe('createAgentRuntime', () => {
     // read skills instead of silently defaulting to an empty project folder.
     expect(skillsRoot).toBeTruthy();
     expect(skillsRoot).not.toBe('/models/procurement/.agents/skills');
+  });
+
+  it('publishes the interpreter and skill directories a shell command needs', async () => {
+    const { transport } = createTransport();
+    const fake = createFakeSession();
+    const keys = ['PYTHON', 'FM_SKILL_DIR', 'EVIDENCE_SKILLS_ROOT'] as const;
+    const before = Object.fromEntries(
+      keys.map((key) => [key, process.env[key]]),
+    );
+    const resolver: PythonEnvResolver = {
+      projectRoot: '/models/procurement',
+      resolveVenvPath: () => '/runtime',
+      resolvePinnedPython: () => ({
+        executablePath: '/runtime/bin/python',
+        venvPath: '/runtime',
+        isValid: true,
+      }),
+      runScript: async () => ({ code: 0, stdout: '{}', stderr: '' }),
+      checkLock: async () => ({ ok: true, output: '' }),
+      bundledVenvPath: null,
+    };
+    const runtime = runtimeWith({
+      transport,
+      fake,
+      resolver,
+      skillsRoot: '/workspace/project/.agents/skills',
+    });
+
+    try {
+      await runtime.prompt('开工');
+
+      expect(process.env.EVIDENCE_SKILLS_ROOT).toBe(
+        '/workspace/project/.agents/skills',
+      );
+      expect(process.env.FM_SKILL_DIR).toBe(
+        '/workspace/project/.agents/skills/evidence-fm',
+      );
+      expect(process.env.PYTHON).toBe('/runtime/bin/python');
+    } finally {
+      for (const key of keys) {
+        const value = before[key];
+
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
+      }
+    }
   });
 
   it('streams projected session events to the renderer', async () => {

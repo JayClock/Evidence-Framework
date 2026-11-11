@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   createEvidenceAgentSession,
   createPythonEnvResolver,
+  skillEnvironment,
   type AgentStreamEvent,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
@@ -112,6 +113,20 @@ export const createAgentRuntime = ({
       skillsRoot: effectiveSkillsRoot,
     });
 
+  // The skill guides run scripts as `"$PYTHON" "$FM_SKILL_DIR/scripts/…"`, and
+  // Pi's bash tool reads `process.env` when it spawns, with no per-session hook.
+  // Only install-level paths are published: one process serves every project
+  // window, so per-project paths would describe the wrong model.
+  const pinnedPython = python.resolvePinnedPython();
+  const skillVariables = skillEnvironment({
+    skillsRoot: effectiveSkillsRoot,
+    pythonExecutablePath: pinnedPython.isValid ? pinnedPython.executablePath : null,
+  });
+
+  const publishSkillEnvironment = (): void => {
+    Object.assign(process.env, skillVariables);
+  };
+
   let session: EvidenceAgentSession | null = null;
   let latestReport: SensorReport | null = null;
   let canvasContext: CanvasContext = {
@@ -188,6 +203,7 @@ export const createAgentRuntime = ({
     });
 
     created.subscribe(transport.publishEvent);
+    publishSkillEnvironment();
     await created.start();
 
     return created;
@@ -198,6 +214,10 @@ export const createAgentRuntime = ({
     modelRoot,
     prompt: async (text) => {
       const active = await ensureSession();
+
+      // A window opened later republished the variables for its own skill tree;
+      // re-assert this project's before the model can reach a shell.
+      publishSkillEnvironment();
 
       await active.prompt(text);
     },

@@ -36,3 +36,12 @@ export {
   type ScriptRunOptions,
   type ScriptRunResult,
 } from './python/pythonEnvResolver.js';
+
+export {
+  PYTHON_VARIABLE,
+  SKILLS_ROOT_VARIABLE,
+  SKILL_PACKAGE_NAMES,
+  skillEnvironment,
+  type SkillEnvironmentInput,
+  type SkillPackageName,
+} from './skills/skillEnvironment.js';
