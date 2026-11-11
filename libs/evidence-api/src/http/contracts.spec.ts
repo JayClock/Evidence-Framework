@@ -307,11 +307,19 @@ describe('checkConsumption', () => {
     );
 
     expect(journey).toBeDefined();
-    expect(http.consumerCoverage[0]?.steps[0]).toMatchObject({
-      sourceStepRef: 'step.procurement-1',
+    expect(http.consumerCoverage[0]).toMatchObject({
       status: 'mapped',
-      httpSteps: [
-        { journeyRef: 'http-journey.procurement-1', stepRef: journey?.steps[0]?.id },
+      steps: [
+        expect.objectContaining({
+          sourceStepRef: 'step.procurement-1',
+          status: 'mapped',
+          httpSteps: [
+            {
+              journeyRef: 'http-journey.procurement-1',
+              stepRef: journey?.steps[0]?.id,
+            },
+          ],
+        }),
       ],
     });
   });

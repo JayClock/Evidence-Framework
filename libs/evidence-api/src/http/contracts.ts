@@ -10,7 +10,12 @@ import { compareText, sortedText } from '../order.js';
 import type { ProjectedCapability } from '../projection/capabilities.js';
 import type { ProjectedResource } from '../projection/resources.js';
 import type { CoverageRow } from '../projection/coverage.js';
-import { checkConsumption, navigationGraph } from './consumerCoverage.js';
+import {
+  checkConsumption,
+  navigationGraph,
+  type ConsumptionRow,
+  type NavigationEdge,
+} from './consumerCoverage.js';
 import { buildRepresentations } from './contractLinks.js';
 import { checkJourneys, type JourneyRow } from './httpJourneys.js';
 import { matchesUri } from './contractLinks.js';
@@ -382,8 +387,8 @@ export interface HttpContract {
   complete: boolean;
   runtimeValidated: false;
   entryPoints: unknown;
-  consumerCoverage: unknown;
-  navigation: unknown;
+  consumerCoverage: ConsumptionRow[];
+  navigation: NavigationEdge[];
   representations: JsonObject[];
   operations: JsonObject[];
   journeys: JourneyRow[];
