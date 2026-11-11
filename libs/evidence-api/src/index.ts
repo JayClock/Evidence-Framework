@@ -49,5 +49,27 @@ export {
   type CardinalityMax,
 } from './projection/cardinality.js';
 
+export {
+  projectCapabilities,
+  type BuildCapabilitiesResult,
+  type ProjectedCapability,
+  type ProjectedOperation,
+} from './projection/capabilities.js';
+
+export {
+  projectCoverage,
+  type CoverageRow,
+  type CoverageStep,
+  type ProjectCoverageResult,
+} from './projection/coverage.js';
+
+export {
+  projectModelCoverage,
+  type ModelCoverageRow,
+  type ProjectModelCoverageResult,
+} from './projection/modelCoverage.js';
+
+export { compareText, sortedText } from './order.js';
+
 export { API_SCHEMA } from './schemas/apiSchema.js';
 export { API_PROJECTION_SCHEMA } from './schemas/apiProjectionSchema.js';
