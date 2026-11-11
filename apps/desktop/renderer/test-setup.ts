@@ -2,6 +2,38 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
+// jsdom ships neither of these, and the canvas measures itself with them.
+class ResizeObserverStub {
+  // jsdom has no layout, so observing is a no-op in tests.
+  observe(): void {
+    return undefined;
+  }
+
+  unobserve(): void {
+    return undefined;
+  }
+
+  disconnect(): void {
+    return undefined;
+  }
+}
+
+if (!('ResizeObserver' in globalThis)) {
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    value: ResizeObserverStub,
+    configurable: true,
+    writable: true,
+  });
+}
+
+if (!('setPointerCapture' in HTMLElement.prototype)) {
+  Object.defineProperties(HTMLElement.prototype, {
+    setPointerCapture: { value: () => undefined, configurable: true },
+    releasePointerCapture: { value: () => undefined, configurable: true },
+    hasPointerCapture: { value: () => false, configurable: true },
+  });
+}
+
 afterEach(() => {
   cleanup();
 });
