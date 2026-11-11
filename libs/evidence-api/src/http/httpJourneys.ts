@@ -50,7 +50,7 @@ export interface JourneyStepResult {
 }
 
 /** One resolved response a later step may navigate from. */
-interface PriorStep extends JourneyStepResult {}
+type PriorStep = JourneyStepResult;
 
 /** A step row, whether it resolved or not. */
 export interface JourneyStepRow {

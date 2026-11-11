@@ -1,12 +1,11 @@
 /**
- * The API design contract, as the schema the loader validates against.
+ * The API design contract, byte for byte as `.agents/skills/evidence-api` writes it.
  *
- * It is the same document `.agents/skills/evidence-api/schemas/api.schema.json`
- * carries; a test pins the two together until the skill copy is retired, and
- * embedding it here keeps the package free of a data directory a bundler or a
- * published `dist` would have to carry along.
+ * It travels as text rather than as a parsed object because the manifest records
+ * the digest of the contract a report was produced with; re-serializing it would
+ * change the bytes and make two reports look like they used different schemas.
  */
-export const API_SCHEMA: unknown = {
+export const API_SCHEMA_TEXT = String.raw`{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evidence.local/evidence-api-design/v5/api.schema.json",
   "type": "object",
@@ -1276,4 +1275,8 @@ export const API_SCHEMA: unknown = {
       "additionalProperties": false
     }
   }
-};
+}
+`;
+
+/** The same document, parsed once for the loader. */
+export const API_SCHEMA: unknown = JSON.parse(API_SCHEMA_TEXT);

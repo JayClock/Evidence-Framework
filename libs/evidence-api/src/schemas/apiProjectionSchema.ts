@@ -1,10 +1,10 @@
 /**
- * The projection contract `check` validates its own output against.
+ * The projection contract `check` validates its own output against, as text.
  *
- * Embedded for the same reason as {@link API_SCHEMA}: the engine carries its
- * contract with it instead of reading a file next to the build output.
+ * Embedded for the same reason as the design schema: the digest in the manifest
+ * has to describe the contract that was actually applied.
  */
-export const API_PROJECTION_SCHEMA: unknown = {
+export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evidence.local/evidence-api-design/v5/api-projection.schema.json",
   "type": "object",
@@ -311,4 +311,10 @@ export const API_PROJECTION_SCHEMA: unknown = {
     }
   },
   "additionalProperties": false
-};
+}
+`;
+
+/** The same document, parsed once for the validator. */
+export const API_PROJECTION_SCHEMA: unknown = JSON.parse(
+  API_PROJECTION_SCHEMA_TEXT,
+);

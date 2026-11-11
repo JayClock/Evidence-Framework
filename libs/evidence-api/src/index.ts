@@ -112,7 +112,46 @@ export {
   type JourneyStepRow,
 } from './http/httpJourneys.js';
 
-export { compareText, sortedText } from './order.js';
+export { buildOpenApi, componentName } from './openapi/openapi.js';
 
-export { API_SCHEMA } from './schemas/apiSchema.js';
-export { API_PROJECTION_SCHEMA } from './schemas/apiProjectionSchema.js';
+export {
+  TOOL_NAME,
+  TOOL_VERSION,
+  defaultOutputDirectory,
+  renderOutputs,
+  writeOutput,
+} from './renderer/outputRenderer.js';
+
+export {
+  buildVectors,
+  type TestVector,
+  type TestVectorDocument,
+} from './vectors/e2eVectors.js';
+
+export {
+  buildProjection,
+  isComplete,
+  type BuildProjectionInput,
+  type BuildProjectionResult,
+  type Projection,
+} from './projector.js';
+
+export {
+  runCli,
+  validatePaths,
+  type CliOptions,
+  type CliResult,
+  type Command,
+} from './cli.js';
+
+export { compareText, sortedText } from './order.js';
+export type { JsonObject } from './types.js';
+
+export {
+  API_SCHEMA,
+  API_SCHEMA_TEXT,
+} from './schemas/apiSchema.js';
+export {
+  API_PROJECTION_SCHEMA,
+  API_PROJECTION_SCHEMA_TEXT,
+} from './schemas/apiProjectionSchema.js';

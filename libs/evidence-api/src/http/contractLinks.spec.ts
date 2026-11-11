@@ -1,7 +1,6 @@
 import { buildRepresentations, encodeQuery, expand, matchesUri, parameters, bindLink } from './contractLinks.js';
 import { payloadSchema, validatePayload, payloadOf, schemaSupported } from './contractPayloads.js';
 import type { ProjectedCapability } from '../projection/capabilities.js';
-import type { ProjectedResource } from '../projection/resources.js';
 import { projectCapabilities } from '../projection/capabilities.js';
 import { buildResources } from '../projection/resources.js';
 

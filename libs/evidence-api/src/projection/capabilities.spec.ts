@@ -50,7 +50,7 @@ const withCapability = (
 
 describe('projectCapabilities', () => {
   it('projects every declared interface of the fixture', async () => {
-    const { capabilities, operations, diagnostics } = await project();
+    const { capabilities, diagnostics } = await project();
 
     expect(diagnostics).toEqual([]);
     expect(capabilities).toHaveLength(13);

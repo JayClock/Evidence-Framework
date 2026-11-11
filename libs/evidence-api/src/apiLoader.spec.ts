@@ -17,8 +17,11 @@ import {
   parseStrictJson,
   validateProjection,
 } from './loader/apiLoader.js';
-import { API_PROJECTION_SCHEMA } from './schemas/apiProjectionSchema.js';
-import { API_SCHEMA } from './schemas/apiSchema.js';
+import {
+  API_PROJECTION_SCHEMA,
+  API_PROJECTION_SCHEMA_TEXT,
+} from './schemas/apiProjectionSchema.js';
+import { API_SCHEMA, API_SCHEMA_TEXT } from './schemas/apiSchema.js';
 import { instanceErrors } from './schemas/jsonSchema.js';
 
 const fixture = (name: string): string =>
@@ -27,24 +30,25 @@ const fixture = (name: string): string =>
   );
 
 describe('the embedded contracts', () => {
-  it('are the documents the skill still carries', () => {
-    for (const [name, embedded] of [
-      ['api.schema.json', API_SCHEMA],
-      ['api-projection.schema.json', API_PROJECTION_SCHEMA],
+  it('are the documents the skill still carries, byte for byte', () => {
+    for (const [name, text, parsed] of [
+      ['api.schema.json', API_SCHEMA_TEXT, API_SCHEMA],
+      ['api-projection.schema.json', API_PROJECTION_SCHEMA_TEXT, API_PROJECTION_SCHEMA],
     ] as const) {
-      const onDisk = JSON.parse(
-        readFileSync(
-          fileURLToPath(
-            new URL(
-              `../../../.agents/skills/evidence-api/schemas/${name}`,
-              import.meta.url,
-            ),
+      const onDisk = readFileSync(
+        fileURLToPath(
+          new URL(
+            `../../../.agents/skills/evidence-api/schemas/${name}`,
+            import.meta.url,
           ),
-          'utf8',
         ),
-      ) as unknown;
+        'utf8',
+      );
 
-      expect(embedded).toEqual(onDisk);
+      // The manifest records a digest of the contract, so the bytes matter and
+      // not just the parsed document.
+      expect(text).toBe(onDisk);
+      expect(parsed).toEqual(JSON.parse(onDisk));
     }
   });
 
