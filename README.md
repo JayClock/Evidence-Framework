@@ -90,7 +90,6 @@
 
 ```text
 ├── apps/
-│   ├── frontend/                        # Web 端 (Vite + React)
 │   └── desktop/                         # 桌面可视化工作台 (Electron + Canvas)
 ├── libs/
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格校验契约

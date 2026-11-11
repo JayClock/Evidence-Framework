@@ -5,18 +5,20 @@ each answers a different question.
 
 | Directory | Holds                                                                                                                                                                                   | Listed in `pnpm-workspace.yaml` |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `apps/`   | Runnable entry points: `frontend` (Vite + React) and `desktop` (Electron Forge)                                                                                                         | yes (`apps/*`)                  |
-| `libs/`   | TypeScript libraries the apps compose: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-mcp` | yes (`libs/*`)                  |
+| `apps/`   | Runnable entry points: `desktop` (Electron Forge)                                                                                                                                       | yes (`apps/*`)                  |
+| `libs/`   | TypeScript libraries the app composes: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-mcp` | yes (`libs/*`)                  |
 
 Nothing is a library in two toolchains: every `libs/*` entry is a TypeScript
 package consumed through pnpm, and no Java or Gradle module lives in this
 repository. A new workspace library goes under `libs/`, never under `apps/`.
+`apps/desktop` is the only application; the modeling CLI and the MCP server are
+libraries with a `bin`/`cli` entry rather than separate apps.
 
 ## Dependency declarations
 
 - A runtime dependency is declared in the `package.json` of the project that
-  imports it. `apps/frontend` owns its React stack, `libs/evidence-mcp` owns the
-  MCP SDK and zod.
+  imports it. `apps/desktop` owns its Electron and React stack,
+  `libs/evidence-mcp` owns the MCP SDK and zod.
 - The root `package.json` holds dev tooling only (Nx, TypeScript, ESLint,
   Vitest, Vite plugins) and the `packageManager` pin. Adding a runtime
   dependency there hides it from every consumer that actually needs it.
@@ -66,8 +68,8 @@ Workspace packages are consumed from source, not from `dist`:
 2. `tsconfig.base.json` sets `customConditions: ["@evidence-poc/source"]`, so the
    type checker reads `src` and needs no `paths` table.
 3. Every bundler and test runner repeats the condition in `resolve.conditions`:
-   `apps/frontend/vite.config.mts`, `apps/desktop/vite.*.config.mjs`,
-   `apps/desktop/vitest.config.mts`, and each `libs/*/vitest.config.mts`.
+   `apps/desktop/vite.*.config.mjs`, `apps/desktop/vitest.config.mts`, and each
+   `libs/*/vitest.config.mts`.
 
    A new consumer config that omits it falls back to `dist`, which is why the
    library had to be built first — the failure looks like a missing module
@@ -83,34 +85,36 @@ changes.
 
 ## Project names and tags
 
-Project names are short (`frontend`, `desktop`, `evidence-mcp`) even where the
-package is scoped (`@evidence-poc/frontend`); `apps/frontend` sets `nx.name` for
-that reason. Use the short name on the command line.
+Project names are short (`desktop`, `evidence-mcp`) even where the package is
+scoped (`@evidence-poc/desktop`); the `nx.name` field in each `package.json` or
+`project.json` is what sets it. Use the short name on the command line.
 
 Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
 
 - `type:app` may depend on `type:lib`, never on another app.
 - `type:lib` may depend on `type:lib`.
-- `scope:*` records the owner so a future rule can separate the frontend from
-  the desktop shell without touching the linter config.
+- `scope:*` records the owner (`scope:desktop`, `scope:evidence`) so a future
+  rule can separate the desktop shell from the modeling libraries without
+  touching the linter config.
 
 ## Common commands
 
 ```bash
 pnpm install                                 # from the lockfile
 pnpm install --frozen-lockfile               # what CI runs
-pnpm add --filter @evidence-poc/frontend zustand   # add a dep to one project
+pnpm add --filter @evidence-poc/desktop zustand     # add a dep to one project
 pnpm add -Dw vitest                          # add root dev tooling
 
 nx graph                                     # dependency graph
 nx run-many --target=lint --all              # what `pnpm lint` runs
-nx run-many --target=build --all             # apps and libraries
+nx run-many --target=build --all             # the app and every library
 nx run-many --target=test --all              # every Vitest project
 nx affected --target=test --base=main        # only what a branch touched
 ```
 
 Root scripts are thin wrappers: `pnpm build`, `pnpm test`, `pnpm lint` all call
-`nx run-many`, so the target graph — not the script — decides what runs.
+`nx run-many`, so the target graph — not the script — decides what runs. There is
+no `dev` script: `pnpm desktop` starts the only runnable app.
 
 `apps/desktop` keeps hand-written `build`, `package`, `make`, `start` and
 `typecheck` targets because Electron Forge owns those steps; `lint` and `test`
