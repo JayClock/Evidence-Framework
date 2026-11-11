@@ -22,6 +22,10 @@ except ImportError:  # pragma: no cover - dependency failure is reported by vali
 
 
 SCHEMA_VERSION = "5.0"
+# A single-file bundle holds what this directory keeps in a tree; both forms are
+# the same model, so every reader accepts either one.
+BUNDLE_TYPE = "fm_bundle"
+BUNDLE_SUFFIX = ".evidence.json"
 # These trees are inputs/outputs of other readers, not FM type definitions.
 NON_SOURCE_TREES = {"discovery", "generated", "validation"}
 MOMENT_EVIDENCE_KINDS = {"fulfillment_confirmation", "other_evidence"}
@@ -212,7 +216,90 @@ def validate_against_schema(
         )
 
 
+BUNDLE_COLLECTIONS = (
+    ("entities", "entity", "entity.schema.json"),
+    ("relationships", "relationship", "relationship.schema.json"),
+    ("rules", "rule", "rule.schema.json"),
+)
+
+
+def load_model_bundle(file_path: Path) -> LoadedModel:
+    """Loads a `*.evidence.json` bundle as if it were a source tree."""
+    model = LoadedModel(root=file_path.resolve())
+    document = load_single_json(file_path, model.errors)
+    if document is None:
+        return model
+
+    display = file_path.name
+    if document.get("type") != BUNDLE_TYPE:
+        model.errors.append(
+            f"{display}: type must be '{BUNDLE_TYPE}', "
+            f"found {document.get('type')!r}"
+        )
+        return model
+
+    manifest = document.get("manifest")
+    if not isinstance(manifest, dict):
+        model.errors.append(f"{display}: bundle requires a manifest object")
+        return model
+    model.manifest = manifest
+    validate_against_schema(
+        manifest, "model.schema.json", f"{display}:manifest", model.errors
+    )
+
+    collections: dict[str, list[dict[str, Any]]] = {
+        "entity": model.entities,
+        "relationship": model.relationships,
+        "rule": model.rules,
+    }
+    seen: dict[str, str] = {}
+    for key, expected_type, schema_name in BUNDLE_COLLECTIONS:
+        items = document.get(key)
+        if items is None:
+            model.errors.append(f"{display}.{key}: bundle requires {key}")
+            continue
+        if not isinstance(items, list):
+            model.errors.append(f"{display}.{key}: must be an array")
+            continue
+        for index, item in enumerate(items):
+            item_path = f"{display}:{key}[{index}]"
+            if not isinstance(item, dict):
+                model.errors.append(f"{item_path}: must be an object")
+                continue
+            if item.get("type") != expected_type:
+                model.errors.append(
+                    f"{item_path}: type must be '{expected_type}', "
+                    f"found {item.get('type')!r}"
+                )
+                continue
+            validate_against_schema(item, schema_name, item_path, model.errors)
+            object_id = item.get("id")
+            if isinstance(object_id, str):
+                previous = seen.get(object_id)
+                if previous is not None:
+                    model.errors.append(
+                        f"{item_path}: duplicate id '{object_id}' "
+                        f"also defined at {previous}"
+                    )
+                else:
+                    seen[object_id] = item_path
+                    model.files_by_id[object_id] = file_path
+            collections[expected_type].append(item)
+
+    if not model.entities:
+        model.errors.append(f"{display}: model must contain at least one entity")
+    return model
+
+
+def is_bundle_path(path: Path) -> bool:
+    """True when `path` names a single-file model bundle."""
+    return path.name.lower().endswith(BUNDLE_SUFFIX)
+
+
 def load_model(root: Path) -> LoadedModel:
+    if root.is_file() or (not root.exists() and is_bundle_path(root)):
+        return load_model_bundle(root)
+    # A tree keeps `model.json` at the root and one object per file below it.
     model = LoadedModel(root=root.resolve())
     if not root.exists() or not root.is_dir():
         model.errors.append(

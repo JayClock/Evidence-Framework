@@ -27,6 +27,7 @@ from fm_model import (
     expected_filename,
     fulfillment_members,
     fulfillment_results,
+    is_bundle_path,
     load_single_json,
     normalize,
     validate_against_schema,
@@ -59,7 +60,83 @@ class ValidationSuite:
         }
 
 
+VALIDATION_SPECIFICATIONS = (
+    ("instances", "evidence_instance", "evidence-instance.schema.json"),
+    ("scenarios", "fm_scenario", "scenario.schema.json"),
+)
+
+
+def load_bundle_validation_suite(
+    bundle_path: Path, document: dict[str, Any]
+) -> ValidationSuite:
+    """Reads the `validation` section a single-file bundle carries."""
+    suite = ValidationSuite(root=bundle_path.resolve())
+    display = bundle_path.name
+    validation = document.get("validation")
+    if validation is None:
+        # A bundle without validation inputs matches a tree without
+        # `validation/`: nothing to run, and nothing to report.
+        return suite
+    if not isinstance(validation, dict):
+        suite.errors.append(f"{display}: validation must be an object")
+        return suite
+    for directory_name, expected_type, schema_name in VALIDATION_SPECIFICATIONS:
+        collection: list[dict[str, Any]] = getattr(suite, directory_name)
+        items = validation.get(directory_name)
+        section = f"{display}:validation.{directory_name}"
+        if items is None:
+            suite.errors.append(f"{section}: must be an array")
+            continue
+        if not isinstance(items, list):
+            suite.errors.append(f"{section}: must be an array")
+            continue
+        for index, item in enumerate(items):
+            item_path = f"{section}[{index}]"
+            if not isinstance(item, dict):
+                suite.errors.append(f"{item_path}: must be an object")
+                continue
+            if item.get("type") != expected_type:
+                suite.errors.append(
+                    f"{item_path}: type must be '{expected_type}', "
+                    f"found {item.get('type')!r}"
+                )
+                continue
+            validate_against_schema(item, schema_name, item_path, suite.errors)
+            object_id = item.get("id")
+            if isinstance(object_id, str) and ID_RE.fullmatch(object_id):
+                previous = suite.files_by_id.get(object_id)
+                if previous is not None:
+                    suite.errors.append(
+                        f"{item_path}: duplicate validation id '{object_id}' "
+                        f"already defined in {display}"
+                    )
+                else:
+                    suite.files_by_id[object_id] = bundle_path
+            collection.append(item)
+    if not suite.instances:
+        suite.errors.append(
+            f"{display}: validation.instances must contain at least one "
+            "Evidence Instance"
+        )
+    if not suite.scenarios:
+        suite.errors.append(
+            f"{display}: validation.scenarios must contain at least one Scenario"
+        )
+    return suite
+
+
 def load_validation_suite(model_root: Path) -> ValidationSuite:
+    is_bundle = model_root.is_file() or (
+        not model_root.exists() and is_bundle_path(model_root)
+    )
+    if is_bundle:
+        errors: list[str] = []
+        document = load_single_json(model_root, errors)
+        if document is None:
+            suite = ValidationSuite(root=model_root.resolve())
+            suite.errors.extend(errors)
+            return suite
+        return load_bundle_validation_suite(model_root, document)
     validation_root = model_root / "validation"
     suite = ValidationSuite(root=validation_root.resolve())
     if not validation_root.exists():

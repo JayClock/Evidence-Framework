@@ -57,7 +57,10 @@ def classify(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("model_dir", help="Directory containing model.json and FM shards")
+    parser.add_argument(
+        "model_dir",
+        help="Directory containing model.json and FM shards, or one *.evidence.json bundle",
+    )
     args = parser.parse_args()
 
     try:

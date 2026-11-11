@@ -17,6 +17,8 @@ Windows 使用该环境下的 `Scripts/python.exe`。路径均由当前环境解
 "$PYTHON" "$SKILL_DIR/scripts/check_fm.py" "$MODEL_DIR"
 ```
 
+`$MODEL_DIR` 可以是 `.evidence/fm` 目录，也可以是一个 `*.evidence.json` 单文件；两种形态检查同一模型，`modelDigest` 分别对应目录文件与单文件内容，因此不要把两者的摘要互相比较。
+
 输出 JSON，退出 0 表示本次适用检查通过，退出 1 表示有一致性／场景错误或指定范围存在完整性缺口；查看各维度，不把缺口当已知事实错误。命令只输出 JSON 结果，不写任何项目文件；需要记录时在对话中报告本次实际字段。
 
 关键数据台账是独立的只读报告，不改变一致性结论：

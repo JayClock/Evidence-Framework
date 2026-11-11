@@ -26,6 +26,14 @@ from fm_simulation import (
 
 def model_digest(root: Path) -> str:
     """Hash source paths and bytes, independent of location and generated output."""
+    if root.is_file():
+        # A single-file bundle is its own source tree: hash it as one entry so a
+        # packed and an unpacked copy of the same model stay comparable.
+        files = {root.name: hashlib.sha256(root.read_bytes()).hexdigest()}
+        content = json.dumps(
+            files, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        )
+        return "sha256:" + hashlib.sha256(content.encode("utf-8")).hexdigest()
     files = {}
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
@@ -122,7 +130,11 @@ def check_model(root: Path, *, scope_refs: list[str] | None = None) -> dict[str,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("model_dir", type=Path, help="Directory containing model.json")
+    parser.add_argument(
+        "model_dir",
+        type=Path,
+        help="Directory containing model.json, or one *.evidence.json bundle",
+    )
     parser.add_argument("--scope", action="append", dest="scope_refs", help="Independent Context ID; repeat for multiple scopes")
     args = parser.parse_args()
     report = check_model(args.model_dir, scope_refs=args.scope_refs)
