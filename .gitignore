@@ -4,6 +4,9 @@
 dist
 tmp
 out-tsc
+.vite
+apps/desktop/out
+*.tsbuildinfo
 
 # dependencies
 node_modules

@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-evidence-ink: #1f2329;
+  --color-evidence-muted: #6b7280;
+  --color-evidence-line: #e5e7eb;
+  --color-evidence-surface: #f7f8fa;
+  --color-evidence-accent: #2f5d8f;
+  --color-evidence-evidence: #b43656;
+  --color-evidence-participant: #3d7553;
+  --color-evidence-role: #8d6200;
+}
+
+:root {
+  --evidence-traffic-light-space: 86px;
+  font-family:
+    'Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui,
+    sans-serif;
+  color: var(--color-evidence-ink);
+  background-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+.evidence-drag-region {
+  -webkit-app-region: drag;
+}
+
+.evidence-no-drag {
+  -webkit-app-region: no-drag;
+}

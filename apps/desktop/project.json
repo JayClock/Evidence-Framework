@@ -1,0 +1,37 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "desktop",
+  "projectType": "application",
+  "sourceRoot": "apps/desktop",
+  "tags": ["scope:desktop", "type:app"],
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": { "command": "electron-forge start", "cwd": "apps/desktop" }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": { "command": "electron-forge package", "cwd": "apps/desktop" }
+    },
+    "make": {
+      "executor": "nx:run-commands",
+      "options": { "command": "electron-forge make", "cwd": "apps/desktop" }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "vitest run", "cwd": "apps/desktop" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.app.json", "tsc -p tsconfig.spec.json"],
+        "cwd": "apps/desktop",
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "eslint .", "cwd": "apps/desktop" }
+    }
+  }
+}

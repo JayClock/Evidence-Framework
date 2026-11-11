@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "emitDeclarationOnly": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es2023"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["node", "vite/client"],
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "client/**/*.ts",
+    "renderer/**/*.ts",
+    "renderer/**/*.tsx",
+    "shared/**/*.ts",
+    "forge.env.d.ts"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/globals",
+      "vitest/importMeta",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "client/**/*.ts",
+    "renderer/**/*.ts",
+    "renderer/**/*.tsx",
+    "shared/**/*.ts",
+    "tests/**/*.ts",
+    "forge.env.d.ts",
+    "vitest.config.mts"
+  ]
+}
