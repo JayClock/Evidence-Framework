@@ -2,7 +2,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { EditorScreen } from './EditorScreen';
-import { installDesktopApi, projectSummary } from '../test-support/desktopApi';
+import {
+  healthyReport,
+  installDesktopApi,
+  projectSummary,
+} from '../test-support/desktopApi';
 import { createDesktopFixture } from '../test-support/modelFixture';
 
 const readyProject = () =>
@@ -90,5 +94,69 @@ describe('EditorScreen', () => {
     expect(
       await screen.findByText('model.json 无法解析。'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('EditorScreen sensors', () => {
+  it('shows the verdict, opens the drawer and jumps to the finding', async () => {
+    const api = installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary(),
+        document: createDesktopFixture(),
+        issues: [],
+      },
+      sensorReport: healthyReport({
+        passed: false,
+        blockCount: 1,
+        isStageGateReady: false,
+        issues: [
+          {
+            issueId: 'check_fm:FM_INCONSISTENT:1',
+            severity: 'block',
+            source: 'check_fm',
+            code: 'FM_INCONSISTENT',
+            message: '采购协议缺少确认端',
+            targetNodeId: 'evidence.contract#signed_at',
+            suggestion: '补齐履约配对。',
+          },
+        ],
+      }),
+    });
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+
+    await screen.findByText('商品采购（Product Procurement）');
+    expect(await screen.findByText('阻塞 1')).toBeInTheDocument();
+    expect(api.calls.triggerSensors).toEqual(['/models/procurement']);
+
+    fireEvent.click(screen.getByTitle('展开检查结果'));
+    expect(await screen.findByLabelText('检查结果')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('采购协议缺少确认端'));
+
+    expect(
+      await screen.findByDisplayValue('采购协议（Procurement Contract）'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('签署时间')).toBeInTheDocument();
+  });
+
+  it('tells the main process when the model changes', async () => {
+    const api = installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary(),
+        document: createDesktopFixture(),
+        issues: [],
+      },
+    });
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('商品采购（Product Procurement）');
+
+    fireEvent.click(screen.getByText('保存'));
+
+    expect(await screen.findByText(/已保存/)).toBeInTheDocument();
+    expect(api.calls.save).toEqual(['/models/procurement']);
   });
 });

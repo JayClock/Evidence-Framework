@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
@@ -8,6 +9,7 @@ import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightInspector } from '../components/RightInspector';
+import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
@@ -16,6 +18,7 @@ import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useFrontier } from '../state/useFrontier';
+import { useSensorsState } from '../state/useSensorsState';
 
 type LoadState =
   | { name: 'loading' }
@@ -98,6 +101,9 @@ const EditorWorkspace = ({
     useEditorSession(project, initialDocument);
   const agent = useAgentSession(project.rootPath);
   const frontier = useFrontier(project.rootPath, state.document);
+  const sensors = useSensorsState(project.rootPath);
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+
   useAgentPatchBridge(state.session);
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,6 +125,42 @@ const EditorWorkspace = ({
       setFocusRequest({ nodeId, token: tokenRef.current });
     },
     [state.session],
+  );
+
+  /**
+   * Jumps from a finding to the object it belongs to.
+   *
+   * `entity#attribute` targets select the attribute row; a bare context id
+   * falls back to the first object inside it, and a finding without a target
+   * stays in the drawer instead of guessing.
+   */
+  const focusIssue = useCallback(
+    (issue: SensorIssue) => {
+      const target = issue.targetNodeId;
+
+      if (target !== undefined) {
+        const [nodeId, attributeName] = target.split('#');
+
+        if (nodeId !== undefined && nodeId !== '') {
+          state.session.selectAttribute(nodeId, attributeName ?? null);
+          tokenRef.current += 1;
+          setFocusRequest({ nodeId, token: tokenRef.current });
+
+          return;
+        }
+      }
+
+      const contextRef = issue.contextRef;
+      const group = state.layout.contextGroups.find(
+        (candidate) => candidate.contextId === contextRef,
+      );
+      const nodeId = group?.nodeIds[0];
+
+      if (nodeId !== undefined) {
+        focusNode(nodeId);
+      }
+    },
+    [focusNode, state.layout.contextGroups, state.session],
   );
 
   const requestZoom = useCallback((direction: 'in' | 'out') => {
@@ -259,9 +301,23 @@ const EditorWorkspace = ({
         />
       </div>
 
+      {diagnosticsOpen && sensors.report !== null ? (
+        <DiagnosticsDrawer
+          report={sensors.report}
+          onClose={() => setDiagnosticsOpen(false)}
+          onFocusIssue={focusIssue}
+        />
+      ) : null}
+
       <BottomStatusBar
         layout={state.layout}
         validation={state.validation}
+        report={sensors.report}
+        sensorLoading={sensors.loading}
+        sensorError={sensors.error}
+        diagnosticsOpen={diagnosticsOpen}
+        onToggleDiagnostics={() => setDiagnosticsOpen((open) => !open)}
+        onRerunSensors={() => void sensors.refresh()}
         dirty={state.dirty}
         savedAt={state.savedAt}
         saveError={state.saveError}

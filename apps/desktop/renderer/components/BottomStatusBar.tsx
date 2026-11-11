@@ -1,9 +1,17 @@
 import type { ValidationResult } from '@evidence-poc/evidence-schema';
 import type { DomainGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
+import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator';
 
 interface BottomStatusBarProps {
   layout: DomainGraphLayout;
   validation: ValidationResult;
+  /** Latest sensor verdict; null until the first run finishes. */
+  report: SensorReport | null;
+  sensorLoading: boolean;
+  sensorError: string | null;
+  diagnosticsOpen: boolean;
+  onToggleDiagnostics: () => void;
+  onRerunSensors: () => void;
   dirty: boolean;
   savedAt: string | null;
   saveError: string | null;
@@ -24,9 +32,105 @@ const issueSummary = (validation: ValidationResult): string => {
   }`;
 };
 
+const gateLabel = (report: SensorReport): string => {
+  if (report.unavailableSensors.length > 0) {
+    return '检查器不可用';
+  }
+
+  if (!report.passed) {
+    return '门禁：不闭合';
+  }
+
+  return report.isStageGateReady ? '门禁：可交下游' : '门禁：等待台账决议';
+};
+
+const SensorSummary = ({
+  report,
+  loading,
+  error,
+  onToggle,
+  onRerun,
+}: {
+  report: SensorReport | null;
+  loading: boolean;
+  error: string | null;
+  onToggle: () => void;
+  onRerun: () => void;
+}) => {
+  if (loading && report === null) {
+    return <span>正在运行检查器…</span>;
+  }
+
+  if (error !== null) {
+    return (
+      <span className="flex items-center gap-1.5 text-[#b42318]">
+        {error}
+        <button
+          type="button"
+          onClick={onRerun}
+          className="rounded border border-[#b42318]/40 px-1.5 py-0.5 text-[10px] hover:bg-[#b42318]/10"
+        >
+          重试
+        </button>
+      </span>
+    );
+  }
+
+  if (report === null) {
+    return <span>尚未运行检查器</span>;
+  }
+
+  return (
+    <span className="flex min-w-0 items-center gap-2">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex items-center gap-2 rounded border border-evidence-line px-1.5 py-0.5 hover:bg-[#f1f3f6]"
+        title="展开检查结果"
+      >
+        <span className="flex items-center gap-1">
+          <span
+            className={[
+              'inline-block h-1.5 w-1.5 rounded-full',
+              report.blockCount > 0 ? 'bg-[#b42318]' : 'bg-[#3d7553]',
+            ].join(' ')}
+          />
+          阻塞 {report.blockCount}
+        </span>
+        <span className={report.warnCount > 0 ? 'text-[#8d6200]' : undefined}>
+          警告 {report.warnCount}
+        </span>
+        <span>提示 {report.infoCount}</span>
+        <span
+          className={
+            report.isStageGateReady
+              ? 'text-evidence-participant'
+              : 'text-[#8d6200]'
+          }
+        >
+          {gateLabel(report)}
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={onRerun}
+        className="rounded border border-evidence-line px-1.5 py-0.5 text-[10px] text-evidence-muted hover:bg-[#f1f3f6]"
+      >
+        重新检查
+      </button>
+    </span>
+  );
+};
+
 export const BottomStatusBar = ({
   layout,
   validation,
+  report,
+  sensorLoading,
+  sensorError,
+  diagnosticsOpen,
+  onToggleDiagnostics,
+  onRerunSensors,
   dirty,
   savedAt,
   saveError,
@@ -36,7 +140,10 @@ export const BottomStatusBar = ({
 }: BottomStatusBarProps) => (
   <footer className="col-span-2 flex h-8 shrink-0 items-center justify-between gap-3 border-t border-evidence-line bg-white/85 px-3 text-[10px] text-evidence-muted">
     <div className="flex min-w-0 items-center gap-3">
-      <span title={validation.valid ? undefined : issueSummary(validation)}>
+      <span
+        title={validation.valid ? undefined : issueSummary(validation)}
+        data-diagnostics-open={diagnosticsOpen ? 'true' : 'false'}
+      >
         <span
           className={[
             'mr-1 inline-block h-1.5 w-1.5 rounded-full',
@@ -47,6 +154,13 @@ export const BottomStatusBar = ({
           ? '静态检查通过'
           : `静态检查 ${validation.issues.length} 项`}
       </span>
+      <SensorSummary
+        report={report}
+        loading={sensorLoading}
+        error={sensorError}
+        onToggle={onToggleDiagnostics}
+        onRerun={onRerunSensors}
+      />
       <span>业务对象 {layout.nodes.length}</span>
       <span>履约对 {layout.fulfillmentGroups.length}</span>
       <span>上下文 {layout.contextGroups.length}</span>
