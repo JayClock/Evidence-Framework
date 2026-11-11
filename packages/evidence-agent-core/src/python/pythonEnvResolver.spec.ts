@@ -2,13 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import {
   PinnedPythonMissingError,
+  PYTHON_RUNTIME_RESOURCE_DIRECTORY,
   createPythonEnvResolver,
   pythonExecutableIn,
+  resolveBundledPythonVenv,
   type ProcessRunner,
   type ScriptRunResult,
 } from './pythonEnvResolver.js';
 
 const PROJECT_ROOT = '/workspace/project';
+const RESOURCES_PATH = '/Applications/Evidence Modeling.app/Contents/Resources';
 
 const runnerReturning =
   (result: ScriptRunResult): ProcessRunner =>
@@ -21,6 +24,18 @@ describe('pythonExecutableIn', () => {
     expect(pythonExecutableIn('C:/venv', 'win32')).toBe(
       'C:/venv/Scripts/python.exe',
     );
+  });
+});
+
+describe('resolveBundledPythonVenv', () => {
+  it('reads the runtime next to app.asar when Electron defines one', () => {
+    expect(resolveBundledPythonVenv(RESOURCES_PATH)).toBe(
+      `/Applications/Evidence Modeling.app/Contents/Resources/${PYTHON_RUNTIME_RESOURCE_DIRECTORY}`,
+    );
+  });
+
+  it('is null in a plain node process, so the workspace venv still wins', () => {
+    expect(resolveBundledPythonVenv('')).toBeNull();
   });
 });
 
@@ -56,8 +71,51 @@ describe('createPythonEnvResolver', () => {
     expect(overridden.resolveVenvPath()).toBe('/explicit/venv');
   });
 
-  it('reports drift instead of falling back to a bare python3', () => {
+  it('prefers the interpreter the packaged app ships with', () => {
     const resolver = createPythonEnvResolver({
+      projectRoot: PROJECT_ROOT,
+      resourcesPath: RESOURCES_PATH,
+      fileExists: (candidate) => candidate.endsWith('/python-runtime/bin/python'),
+    });
+
+    expect(resolver.bundledVenvPath).toBe(
+      `${RESOURCES_PATH}/${PYTHON_RUNTIME_RESOURCE_DIRECTORY}`,
+    );
+    expect(resolver.resolveVenvPath()).toBe(resolver.bundledVenvPath);
+    expect(resolver.resolvePinnedPython()).toEqual({
+      executablePath: `${RESOURCES_PATH}/python-runtime/bin/python`,
+      venvPath: `${RESOURCES_PATH}/python-runtime`,
+      isValid: true,
+    });
+  });
+
+  it('lets EVIDENCE_VENV override the bundled runtime', () => {
+    const resolver = createPythonEnvResolver({
+      projectRoot: PROJECT_ROOT,
+      resourcesPath: RESOURCES_PATH,
+      environment: { EVIDENCE_VENV: '/custom/venv' },
+      fileExists: () => true,
+    });
+
+    expect(resolver.resolveVenvPath()).toBe('/custom/venv');
+  });
+
+  it('ignores a resources directory that holds no runtime', () => {
+    // An Electron dev build also defines resourcesPath, but ships no Python.
+    const resolver = createPythonEnvResolver({
+      projectRoot: PROJECT_ROOT,
+      resourcesPath: RESOURCES_PATH,
+      fileExists: (candidate) =>
+        candidate ===
+        '/workspace/project/node_modules/.cache/evidence-fm-runtime/bin/python',
+    });
+
+    expect(resolver.resolveVenvPath()).toBe(
+      '/workspace/project/node_modules/.cache/evidence-fm-runtime',
+    );
+  });
+
+  it('reports drift instead of falling back to a bare python3', () => {    const resolver = createPythonEnvResolver({
       projectRoot: PROJECT_ROOT,
       fileExists: () => false,
     });

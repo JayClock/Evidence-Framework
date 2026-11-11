@@ -16,6 +16,16 @@ export const VENV_CACHE_DIRECTORY = path.join(
 /** Environment variable `init.sh` honours for a relocated virtual environment. */
 export const VENV_ENVIRONMENT_VARIABLE = 'EVIDENCE_VENV';
 
+/**
+ * Directory name the desktop installers unpack the standalone interpreter into.
+ *
+ * Electron Forge copies it next to `app.asar` through `extraResource`, because a
+ * Python subprocess cannot read a script out of the asar archive. The name is
+ * shared by `scripts/prepare-desktop-runtime.mjs` and the resolver so the build
+ * and the runtime agree on one tree.
+ */
+export const PYTHON_RUNTIME_RESOURCE_DIRECTORY = 'python-runtime';
+
 /** Exit status and captured streams of one pinned-interpreter run. */
 export interface ScriptRunResult {
   code: number | null;
@@ -47,10 +57,15 @@ export interface PinnedPythonInfo {
 
 export interface PythonEnvResolverOptions {
   projectRoot: string;
-  /** Overrides `EVIDENCE_VENV` and the workspace default. */
+  /** Overrides `EVIDENCE_VENV`, the bundled runtime and the workspace default. */
   venvPath?: string;
   environment?: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
+  /**
+   * Electron's `process.resourcesPath`; defaults to the running process' one.
+   * Empty in a plain Node process, which only turns the bundled runtime off.
+   */
+  resourcesPath?: string | undefined;
   fileExists?: (candidate: string) => boolean;
   runProcess?: ProcessRunner;
 }
@@ -116,6 +131,20 @@ export const pythonExecutableIn = (
     : path.join(venvPath, 'bin', 'python');
 
 /**
+ * Absolute path of the interpreter a packaged desktop app ships with.
+ *
+ * Only Electron defines `process.resourcesPath`; every other host returns null
+ * so a plain Node process keeps resolving the workspace virtual environment.
+ */
+export const resolveBundledPythonVenv = (
+  resourcesPath: string | undefined = (process as { resourcesPath?: string })
+    .resourcesPath,
+): string | null =>
+  resourcesPath === undefined || resourcesPath.trim() === ''
+    ? null
+    : path.join(resourcesPath, PYTHON_RUNTIME_RESOURCE_DIRECTORY);
+
+/**
  * Resolves the pinned interpreter and runs skill scripts with it.
  *
  * Modeling scripts are the quality gate, so this resolver never falls back to a
@@ -127,10 +156,23 @@ export const createPythonEnvResolver = ({
   venvPath,
   environment = process.env,
   platform = process.platform,
+  resourcesPath,
   fileExists = existsSync,
   runProcess = defaultRunProcess,
 }: PythonEnvResolverOptions) => {
   const root = path.resolve(projectRoot);
+
+  const bundledVenvPath = resolveBundledPythonVenv(resourcesPath);
+
+  /**
+   * A bundled runtime only wins when its interpreter is actually there: an
+   * Electron dev build also sets `resourcesPath`, but ships no Python.
+   */
+  const usableBundledVenv = (): string | null =>
+    bundledVenvPath !== null &&
+    fileExists(pythonExecutableIn(bundledVenvPath, platform))
+      ? bundledVenvPath
+      : null;
 
   const resolvedVenvPath = (): string => {
     if (venvPath !== undefined) {
@@ -141,6 +183,12 @@ export const createPythonEnvResolver = ({
 
     if (configured !== undefined && configured.trim() !== '') {
       return path.resolve(configured);
+    }
+
+    const bundled = usableBundledVenv();
+
+    if (bundled !== null) {
+      return bundled;
     }
 
     return path.join(root, VENV_CACHE_DIRECTORY);
@@ -158,7 +206,7 @@ export const createPythonEnvResolver = ({
       executablePath,
       venvPath: resolvedVenv,
       isValid: false,
-      driftReport: `未找到锁定的 Python 解释器：${executablePath}。请先运行 ./init.sh 修复环境。`,
+      driftReport: `未找到锁定的 Python 解释器：${executablePath}。请先运行 ./init.sh 修复环境，或重新安装桌面端以取得内置运行时。`,
     };
   };
 
@@ -212,6 +260,8 @@ export const createPythonEnvResolver = ({
     projectRoot: root,
     resolveVenvPath: resolvedVenvPath,
     resolvePinnedPython,
+    /** Absolute path of the shipped runtime, or null outside a packaged app. */
+    bundledVenvPath,
     runScript,
     checkLock,
   };

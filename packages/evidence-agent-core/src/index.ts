@@ -22,10 +22,12 @@ export {
 
 export {
   PinnedPythonMissingError,
+  PYTHON_RUNTIME_RESOURCE_DIRECTORY,
   VENV_CACHE_DIRECTORY,
   VENV_ENVIRONMENT_VARIABLE,
   createPythonEnvResolver,
   pythonExecutableIn,
+  resolveBundledPythonVenv,
   type PinnedPythonInfo,
   type ProcessRunner,
   type PythonEnvResolver,

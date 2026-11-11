@@ -2,9 +2,12 @@
 
 进程内的 Pi Harness 底座。桌面端只用这一层的两个能力：
 
-1. **锁定的 Python 解释器**（`createPythonEnvResolver`）——按 `.python-version` /
-   `ENVIRONMENT.md` 的约定定位 `node_modules/.cache/evidence-fm-runtime`，从不回退到
-   裸 `python3`。环境缺失时返回 `driftReport` 而不是降级运行。
+1. **锁定的 Python 解释器**（`createPythonEnvResolver`）——显式 `venvPath` →
+   `EVIDENCE_VENV` → 桌面端内置运行时（`process.resourcesPath/python-runtime`）→
+   `.python-version` / `ENVIRONMENT.md` 约定的 `node_modules/.cache/evidence-fm-runtime`，
+   从不回退到裸 `python3`。环境缺失时返回 `driftReport` 而不是降级运行。内置运行时
+   只有在解释器真实存在时才生效，因此 Electron 开发态（同样定义了 `resourcesPath`）
+   仍走工程虚拟环境。
 2. **Pi Agent 会话**（`createEvidenceAgentSession`）——把 `@earendil-works/pi-coding-agent`
    收敛成一个窄接口（`PiSdkPort`），默认加载项目唯一技能源 `.agents/skills/`，并把 Pi 的
    事件流投影成桌面端可渲染的 `AgentStreamEvent`。传入 `sessionFile` 时改为续写该份
