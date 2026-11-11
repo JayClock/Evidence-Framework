@@ -15,7 +15,11 @@ const workspaceAliases = {
   ),
   '@evidence-poc/evidence-modeling-orchestrator': path.resolve(
     import.meta.dirname,
-    '../../packages/evidence-modeling-orchestrator/src/index.ts',
+    '../../packages/evidence-modeling-orchestrator/src/browser.ts',
+  ),
+  '@evidence-poc/evidence-modeling-orchestrator/browser': path.resolve(
+    import.meta.dirname,
+    '../../packages/evidence-modeling-orchestrator/src/browser.ts',
   ),
   '@evidence-poc/evidence-model-core/browser': path.resolve(
     import.meta.dirname,

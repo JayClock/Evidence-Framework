@@ -1,0 +1,28 @@
+export {
+  CLOSURE_PREFIXES,
+  calculateFrontier,
+  type DependencyFrontier,
+  type FrontierDependencyGap,
+  type InterviewTraceDocument,
+  type InterviewTraceRecord,
+  type OpenQuestion,
+  type TraceQuestion,
+} from './discovery/frontierTracker.js';
+
+export {
+  buildSensorReport,
+  finalizeSensorReport,
+  fmCheckIssues,
+  keyDataSummaryOf,
+  stageGateSummaryOf,
+  type FmCheckReport,
+  type KeyDataAuditReport,
+  type KeyDataDecision,
+  type KeyDataSummary,
+  type SensorIssue,
+  type SensorReport,
+  type SensorSeverity,
+  type SensorSource,
+  type StageGateReport,
+  type StageGateSummary,
+} from './sensors/sensorReport.js';
