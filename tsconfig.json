@@ -17,6 +17,9 @@
     },
     {
       "path": "./apps/desktop"
+    },
+    {
+      "path": "./packages/evidence-agent-core"
     }
   ]
 }

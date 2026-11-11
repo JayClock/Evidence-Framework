@@ -18,5 +18,16 @@
     "renderer/**/*.tsx",
     "shared/**/*.ts",
     "forge.env.d.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/evidence-canvas-interaction/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/evidence-model-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/evidence-schema/tsconfig.lib.json"
+    }
   ]
 }
