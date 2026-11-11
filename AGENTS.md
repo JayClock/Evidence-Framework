@@ -8,8 +8,10 @@ Modeling runs on a pinned interpreter, never a bare `python3`:
 
 ## Workspace
 
-One npm workspace, three directories: `apps/` (runnable), `packages/` (TypeScript libraries), `libs/backend/` (Gradle modules).
+One pnpm workspace, three directories: `apps/` (runnable), `packages/` (TypeScript libraries), `libs/backend/` (Gradle modules). Package-manager settings live in `pnpm-workspace.yaml`, not `.npmrc`.
 
 - Declare a runtime dependency in the `package.json` of the project that imports it; the root manifest keeps dev tooling only.
+- A dependency on a workspace package uses `workspace:*`.
 - Workspace packages resolve from `src` through the `@evidence-poc/source` export condition, so a bundler or test runner that omits it in `resolve.conditions` silently falls back to `dist`.
+- `node_modules` also holds the Python virtualenv (`node_modules/.cache`); after deleting it, rerun `./init.sh`.
 - See [docs/workspace-layout.md](docs/workspace-layout.md) before adding a package or a target.

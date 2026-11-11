@@ -1,9 +1,9 @@
 # Workspace layout
 
-The repository is one npm workspace driven by Nx. Three directories carry code;
+The repository is one pnpm workspace driven by Nx. Three directories carry code;
 each answers a different question.
 
-| Directory       | Holds                                                                                                                                                                                   | Included in npm workspaces                   |
+| Directory       | Holds                                                                                                                                                                                   | Listed in `pnpm-workspace.yaml`              |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | `apps/`         | Runnable entry points: `frontend` (Vite + React), `desktop` (Electron Forge), `backend` (Spring Boot, Gradle)                                                                           | yes (`apps/*`)                               |
 | `packages/`     | TypeScript libraries the apps compose: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-mcp` | yes (`packages/*`)                           |
@@ -18,16 +18,38 @@ module must not be placed under `packages/`.
 
 - A runtime dependency is declared in the `package.json` of the project that
   imports it. `apps/frontend` owns its React stack, `packages/evidence-mcp` owns
-  the MCP SDK and zod. Hoisting in `node_modules` makes an undeclared import
-  work locally, so lint — not the installer — is what catches it.
+  the MCP SDK and zod.
 - The root `package.json` holds dev tooling only (Nx, TypeScript, ESLint,
-  Vitest, Vite plugins) plus the `workspaces` globs. Adding a runtime
+  Vitest, Vite plugins) and the `packageManager` pin. Adding a runtime
   dependency there hides it from every consumer that actually needs it.
+- A dependency on a workspace package uses the `workspace:*` protocol — pnpm
+  refuses to resolve `0.0.1` against the registry, and the protocol is rewritten
+  to a real version if the package is ever published.
 - `@nx/dependency-checks` enforces both directions on the JSON manifests:
   an import without a declaration and a declaration without an import both fail
   `nx lint`.
-- Internal packages are versioned `0.0.1` because nothing is published; the
-  workspace resolves them by name, not by registry.
+
+## Package manager
+
+pnpm is pinned in `package.json` (`"packageManager": "pnpm@12.16.1"`); the
+lockfile is `pnpm-lock.yaml` and CI should install with
+`pnpm install --frozen-lockfile`.
+
+`pnpm-workspace.yaml` is the only place workspace settings live — pnpm 10 moved
+them out of `.npmrc` and `package.json`, and an `.npmrc` setting is silently
+ignored. Every key in it is there for a reason:
+
+| Key                        | Value                                                                       | Why                                                                                                                                                                                                 |
+| -------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nodeLinker`               | `hoisted`                                                                   | Electron Forge walks the app's runtime tree with `flora-colossus`, which does not follow pnpm's symlinks; Forge's docs require a hoisted linker. This also keeps `apps/desktop` packaging working.  |
+| `blockExoticSubdeps`       | `false`                                                                     | `electron-winstaller` depends on `@electron/node-gyp` through a git URL, and pnpm refuses transitive exotic dependencies by default.                                                                |
+| `allowBuilds`              | electron, nx, `@swc/core`, protobufjs, `@google/genai`, electron-winstaller | pnpm blocks lifecycle scripts unless approved; these need one (Electron downloads its binary, nx and swc fetch platform artifacts).                                                                 |
+| `minimumReleaseAgeExclude` | the `@earendil-works/pi-*@1.5.2` set                                        | pnpm 12 refuses packages published inside a quarantine window. The Pi SDK is the modeling runtime and is pinned exactly, so the exemption is per version: a newer release has to be reviewed again. |
+
+Because the linker is hoisted, an undeclared import can still resolve locally;
+the `@nx/dependency-checks` rule, not the installer, is the guard. The Python
+virtualenv lives in `node_modules/.cache/evidence-fm-runtime`, so deleting
+`node_modules` also deletes it — run `./init.sh` afterwards.
 
 ## How imports resolve
 
@@ -77,12 +99,20 @@ Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
 ## Common commands
 
 ```bash
-nx graph                                    # dependency graph
-nx run-many --target=lint --all             # what `npm run lint` runs
-nx run-many --target=build --all            # apps, packages and Gradle modules
-nx run-many --target=test --all             # Vitest and Gradle tests
-nx affected --target=test --base=main       # only what a branch touched
+pnpm install                                 # from the lockfile
+pnpm install --frozen-lockfile               # what CI runs
+pnpm add --filter @evidence-poc/frontend zustand   # add a dep to one project
+pnpm add -Dw vitest                          # add root dev tooling
+
+nx graph                                     # dependency graph
+nx run-many --target=lint --all              # what `pnpm lint` runs
+nx run-many --target=build --all             # apps, packages and Gradle modules
+nx run-many --target=test --all              # Vitest and Gradle tests
+nx affected --target=test --base=main        # only what a branch touched
 ```
+
+Root scripts are thin wrappers: `pnpm build`, `pnpm test`, `pnpm lint` all call
+`nx run-many`, so the target graph — not the script — decides what runs.
 
 `apps/desktop` keeps hand-written `build`, `package`, `make`, `start` and
 `typecheck` targets because Electron Forge owns those steps; `lint` and `test`
@@ -96,6 +126,7 @@ second definition silently wins and loses the per-file `test-ci--*` targets.
 nx g @nx/js:lib evidence-foo --directory=packages/evidence-foo
 ```
 
-Then check the four places a new package must appear: the `exports` block with
-the source condition, the `references` array of the consuming `tsconfig*.json`,
-the `references` list in the root `tsconfig.json`, and its `nx.tags`.
+Then check the five places a new package must appear: the `exports` block with
+the source condition, `"@evidence-poc/foo": "workspace:*"` in each consumer's
+`dependencies`, the `references` array of the consuming `tsconfig*.json`, the
+`references` list in the root `tsconfig.json`, and its `nx.tags`.

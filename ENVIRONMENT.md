@@ -7,12 +7,12 @@ app slice uses those separately.
 
 ## What the skills need
 
-| Requirement | Declared in |
-| --- | --- |
-| Python 3.10+ (`jsonschema`, `celpy` importable) | each `SKILL.md` `compatibility:` line |
-| `jsonschema>=4.22,<5` | `evidence-discovery/`, `evidence-fm/`, `evidence-api/requirements.txt` |
-| `cel-python==0.5.0` (CEL validation and simulation) | `evidence-fm/requirements.txt` |
-| Python standard library only | `evidence-visualization/requirements.txt` |
+| Requirement                                         | Declared in                                                            |
+| --------------------------------------------------- | ---------------------------------------------------------------------- |
+| Python 3.10+ (`jsonschema`, `celpy` importable)     | each `SKILL.md` `compatibility:` line                                  |
+| `jsonschema>=4.22,<5`                               | `evidence-discovery/`, `evidence-fm/`, `evidence-api/requirements.txt` |
+| `cel-python==0.5.0` (CEL validation and simulation) | `evidence-fm/requirements.txt`                                         |
+| Python standard library only                        | `evidence-visualization/requirements.txt`                              |
 
 `*/requirements.txt` states the supported interface range and stays inside each
 independently installable package. `requirements.lock` states the exact versions
@@ -24,7 +24,8 @@ actually executed here, including transitive pins.
 - `requirements.lock` — full pin list; `./init.sh --refresh-lock` regenerates it
   from the installed set, and the diff is reviewed like code.
 - `node_modules/.cache/evidence-fm-runtime` — the venv (already ignored by git);
-  `pyrightconfig.json` points at the same path.
+  `pyrightconfig.json` points at the same path. pnpm manages `node_modules`, so a
+  clean `node_modules` takes the venv with it: rerun `./init.sh` after removing it.
 - `.evidence/{fm,traces}` — created by `./init.sh` so a session starts from
   a fixed layout instead of whatever the machine happens to have.
 
