@@ -1,6 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { runCli } from './cli.js';
 import { checkReportFor, fullLifecycle, fullLifecycleIndex } from '../tests/support/fixtures.js';
@@ -268,6 +269,74 @@ describe('cli', () => {
     expect(result.exitCode).toBe(1);
     expect(result.error).toContain('usage: evidence-api');
     expect(result.output).toBeNull();
+  });
+});
+
+describe('a second design against a second model', () => {
+  it('projects the subscription API into the same documents', async () => {
+    const { cpSync, writeFileSync } = await import('node:fs');
+    const modelRoot = fileURLToPath(
+      new URL(
+        '../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription',
+        import.meta.url,
+      ),
+    );
+    const designPath = fileURLToPath(
+      new URL(
+        '../../../.agents/skills/evidence-api/tests/fixtures/subscription-api.json',
+        import.meta.url,
+      ),
+    );
+
+    await withScratch(async (directory) => {
+      // The design quotes a business source, so the project root has to hold it.
+      cpSync(
+        fileURLToPath(
+          new URL(
+            '../../../.agents/skills/evidence-api/tests/fixtures/source.md',
+            import.meta.url,
+          ),
+        ),
+        path.join(directory, 'source.md'),
+      );
+      const fmCheck = path.join(directory, 'fm-check.json');
+      writeFileSync(
+        fmCheck,
+        JSON.stringify(
+          await checkReportFor(modelRoot, ['context.content-subscription']),
+        ),
+      );
+
+      const out = path.join(directory, 'generated');
+      const result = await runCli([
+        'project',
+        '--project-root',
+        directory,
+        '--fm',
+        modelRoot,
+        '--fm-check',
+        fmCheck,
+        '--api',
+        designPath,
+        '--out',
+        out,
+      ]);
+
+      expect(result.error).toBeUndefined();
+      expect(result.exitCode).toBe(0);
+      expect(result.output).toMatchObject({ complete: true, interfaceCount: 2 });
+
+      const openapi = JSON.parse(
+        readFileSync(path.join(out, 'openapi.json'), 'utf8'),
+      ) as { paths: Record<string, unknown>; 'x-generated-from': string };
+
+      expect(openapi['x-generated-from']).toBe('evidence-api projection.json');
+      // The same two routes the Python engine produced for this design.
+      expect(Object.keys(openapi.paths).sort()).toEqual([
+        '/payment-confirmations',
+        '/subscriptions/{subscriptionId}/payments',
+      ]);
+    });
   });
 });
 
