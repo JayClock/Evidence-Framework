@@ -201,6 +201,18 @@ export {
 } from './validation/timeline.js';
 
 export {
+  ScopeSelectionError,
+  completenessGaps,
+  completenessIssues,
+  fulfillmentResults,
+  pairingGaps,
+  referencesOf,
+  scopeSuite,
+  selectScope,
+  simulationRules,
+} from './validation/scope.js';
+
+export {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_BUNDLE_EXTENSION,
   MODEL_BUNDLE_TYPE,
