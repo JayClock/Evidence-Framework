@@ -11,6 +11,9 @@
     },
     {
       "path": "./packages/evidence-model-core"
+    },
+    {
+      "path": "./packages/evidence-canvas-interaction"
     }
   ]
 }
