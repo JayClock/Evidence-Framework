@@ -4,6 +4,28 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 /** Branch id reserved for the tree that `.evidence/fm` checks out. */
 export const MAIN_BRANCH_ID = 'main';
 
+/** IPC channels the branch surface uses. */
+export const EVIDENCE_BRANCH_IPC_CHANNELS = {
+  list: 'evidence:branch:list',
+  create: 'evidence:branch:create',
+  switchTo: 'evidence:branch:switch',
+  merge: 'evidence:branch:merge',
+  remove: 'evidence:branch:remove',
+  compare: 'evidence:branch:compare',
+  changed: 'evidence:branch:changed',
+} as const;
+
+export type EvidenceBranchIpcChannel =
+  (typeof EVIDENCE_BRANCH_IPC_CHANNELS)[keyof typeof EVIDENCE_BRANCH_IPC_CHANNELS];
+
+/** Broadcast after any branch mutation so every window can refresh. */
+export interface BranchChangedEvent {
+  rootPath: string;
+  activeBranchId: string;
+  reason: 'create' | 'switch' | 'merge' | 'remove';
+}
+
+
 /** One interview lineage the desktop can check out. */
 export interface EvidenceBranchSummary {
   id: string;

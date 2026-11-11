@@ -13,6 +13,10 @@ import {
   type SensorReportPayload,
   type SensorTriggerInput,
 } from '../shared/agentIpc';
+import {
+  EVIDENCE_BRANCH_IPC_CHANNELS,
+  type BranchChangedEvent,
+} from '../shared/branches';
 import { EVIDENCE_IPC_CHANNELS, type EvidenceDesktopApi } from '../shared/ipc';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
@@ -106,6 +110,32 @@ const api: EvidenceDesktopApi = {
     },
     respondPatch: (response: ApplyPatchResponse) => {
       ipcRenderer.send(EVIDENCE_AGENT_IPC_CHANNELS.applyPatchResult, response);
+    },
+  },
+  branches: {
+    list: (rootPath) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.list, rootPath),
+    create: (input) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.create, input),
+    switchTo: (input) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.switchTo, input),
+    merge: (input) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.merge, input),
+    remove: (input) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.remove, input),
+    compare: (input) =>
+      ipcRenderer.invoke(EVIDENCE_BRANCH_IPC_CHANNELS.compare, input),
+    onChanged: (listener) => {
+      const handler = (
+        _event: Electron.IpcRendererEvent,
+        payload: BranchChangedEvent,
+      ) => listener(payload);
+
+      ipcRenderer.on(EVIDENCE_BRANCH_IPC_CHANNELS.changed, handler);
+
+      return () => {
+        ipcRenderer.removeListener(EVIDENCE_BRANCH_IPC_CHANNELS.changed, handler);
+      };
     },
   },
   mcp: {

@@ -49,6 +49,8 @@ export interface AgentRuntimeOptions {
   ) => EvidenceAgentSession;
   skillsRoot?: string;
   sessionDirectory?: string;
+  /** Transcript the session continues; a branch resumes its own lineage. */
+  sessionFile?: string | null;
   sensorDelayMs?: number;
 }
 
@@ -87,6 +89,7 @@ export const createAgentRuntime = ({
   sessionFactory = createEvidenceAgentSession,
   skillsRoot,
   sessionDirectory,
+  sessionFile,
   sensorDelayMs,
 }: AgentRuntimeOptions): AgentRuntime => {
   const resolvedRoot = path.resolve(rootPath);
@@ -149,6 +152,9 @@ export const createAgentRuntime = ({
     const created = sessionFactory({
       projectRoot: resolvedRoot,
       ...(sessionDirectory === undefined ? {} : { sessionDirectory }),
+      ...(sessionFile === undefined || sessionFile === null
+        ? {}
+        : { sessionFile }),
       customTools: [],
       extensionFactories: [
         createEvidenceToolsExtension({

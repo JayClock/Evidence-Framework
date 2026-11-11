@@ -1,4 +1,5 @@
 import type { EvidenceAgentApi } from './agentIpc';
+import type { EvidenceBranchesApi } from './branchApi';
 import type { EvidenceMcpApi } from './mcpIpc';
 import type {
   EvidenceProjectSummary,
@@ -39,6 +40,8 @@ export interface EvidenceDesktopApi {
   agent: EvidenceAgentApi;
   /** MCP bridge status and the renderer side of external tool calls (phase 4). */
   mcp: EvidenceMcpApi;
+  /** Interview lineages: fork, switch and merge model snapshots. */
+  branches: EvidenceBranchesApi;
   system: {
     platform: NodeJS.Platform;
   };

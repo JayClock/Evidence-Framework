@@ -6,8 +6,11 @@ import {
   runEvidenceMcpStdio,
 } from '@evidence-poc/evidence-mcp';
 
+import { EVIDENCE_BRANCH_IPC_CHANNELS } from '../shared/branches';
 import { EVIDENCE_MCP_IPC_CHANNELS } from '../shared/mcpIpc';
 import { registerAgentIpc } from './agentIpcHandlers';
+import { registerBranchIpc } from './branchIpcHandlers';
+import { createBranchStore } from './branchStore';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
 import { createMcpRequestHandler } from './mcpRequestHandler';
@@ -56,8 +59,24 @@ const startApplication = async (): Promise<void> => {
     ),
   });
 
+  const branchStore = createBranchStore();
+  const agentIpc = registerAgentIpc({
+    resolveSessionFile: (rootPath) => branchStore.activeSessionFile(rootPath),
+  });
+
   registerProjectIpc({ projectStore, openEditorWindow });
-  registerAgentIpc();
+  registerBranchIpc({
+    store: branchStore,
+    onCheckout: (rootPath) => agentIpc.disposeRuntime(rootPath),
+    publish: (event) => {
+      for (const window of BrowserWindow.getAllWindows()) {
+        if (!window.isDestroyed()) {
+          window.webContents.send(EVIDENCE_BRANCH_IPC_CHANNELS.changed, event);
+        }
+      }
+    },
+  });
+  app.once('before-quit', () => agentIpc.dispose());
 
   const endpoint = getEvidenceMcpBridgeEndpoint({
     platform: process.platform,

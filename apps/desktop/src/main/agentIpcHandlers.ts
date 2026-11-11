@@ -28,6 +28,13 @@ export interface AgentIpcOptions {
   /** Test injection: production builds the default runtime. */
   createRuntime?: typeof createAgentRuntime;
   patchTimeoutMs?: number;
+  /**
+   * Transcript the runtime should resume.
+   *
+   * A branch owns its own lineage, so the session file is resolved per project
+   * root when the runtime is first needed instead of being baked in at startup.
+   */
+  resolveSessionFile?: (rootPath: string) => Promise<string | null>;
 }
 
 interface PendingPatch {
@@ -48,17 +55,58 @@ const toMessage = (error: unknown): string =>
 export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
   patchTimeoutMs = PATCH_TIMEOUT_MS,
-}: AgentIpcOptions = {}): { dispose: () => void } => {
+  resolveSessionFile,
+}: AgentIpcOptions = {}): {
+  dispose: () => void;
+  /** Drops the runtime so the next prompt starts in the new branch's lineage. */
+  disposeRuntime: (rootPath: string) => void;
+} => {
   const runtimes = new Map<string, AgentRuntime>();
+  const starting = new Map<string, Promise<AgentRuntime>>();
   const ownedBy = new Map<number, Set<string>>();
   const pending = new Map<string, PendingPatch>();
 
-  const runtimeFor = (sender: WebContents, rootPath: string): AgentRuntime => {
+  const disposeRuntime = (rootPath: string): void => {
+    runtimes.get(rootPath)?.dispose();
+    runtimes.delete(rootPath);
+    starting.delete(rootPath);
+  };
+
+  const runtimeFor = async (
+    sender: WebContents,
+    rootPath: string,
+  ): Promise<AgentRuntime> => {
     const existing = runtimes.get(rootPath);
 
     if (existing !== undefined) {
       return existing;
     }
+
+    const inFlight = starting.get(rootPath);
+
+    if (inFlight !== undefined) {
+      return inFlight;
+    }
+
+    const created = createRuntimeFor(sender, rootPath);
+
+    starting.set(rootPath, created);
+
+    try {
+      return await created;
+    } finally {
+      starting.delete(rootPath);
+    }
+  };
+
+  const createRuntimeFor = async (
+    sender: WebContents,
+    rootPath: string,
+  ): Promise<AgentRuntime> => {
+    const sessionFile =
+      resolveSessionFile === undefined
+        ? null
+        : await resolveSessionFile(rootPath).catch(() => null);
 
     const ownsPatch = (patch: ModelPatchRequest): Promise<ModelPatchResult> =>
       new Promise((resolve) => {
@@ -85,6 +133,7 @@ export const registerAgentIpc = ({
 
     const runtime = createRuntime({
       rootPath,
+      ...(sessionFile === null ? {} : { sessionFile }),
       transport: {
         publishEvent: (event) => {
           if (!sender.isDestroyed()) {
@@ -124,7 +173,7 @@ export const registerAgentIpc = ({
     EVIDENCE_AGENT_IPC_CHANNELS.prompt,
     async (event, input: AgentPromptInput): Promise<AgentActionResult> => {
       try {
-        await runtimeFor(event.sender, input.rootPath).prompt(input.text);
+        await (await runtimeFor(event.sender, input.rootPath)).prompt(input.text);
 
         return { success: true };
       } catch (error) {
@@ -139,9 +188,9 @@ export const registerAgentIpc = ({
       try {
         return {
           success: true,
-          disposition: await runtimeFor(event.sender, input.rootPath).steer(
-            input.text,
-          ),
+          disposition: await (
+            await runtimeFor(event.sender, input.rootPath)
+          ).steer(input.text),
         };
       } catch (error) {
         return { success: false, error: toMessage(error) };
@@ -165,9 +214,9 @@ export const registerAgentIpc = ({
   ipcMain.handle(
     EVIDENCE_AGENT_IPC_CHANNELS.triggerSensors,
     async (event, input: SensorTriggerInput): Promise<SensorReport> => {
-      const outcome = await runtimeFor(event.sender, input.rootPath).runSensors(
-        input.scopeRefs,
-      );
+      const outcome = await (
+        await runtimeFor(event.sender, input.rootPath)
+      ).runSensors(input.scopeRefs);
 
       return outcome.report;
     },
@@ -182,7 +231,7 @@ export const registerAgentIpc = ({
   ipcMain.handle(
     EVIDENCE_AGENT_IPC_CHANNELS.modelChanged,
     async (event, input: { rootPath: string }): Promise<void> => {
-      runtimeFor(event.sender, input.rootPath).notifyModelChanged();
+      (await runtimeFor(event.sender, input.rootPath)).notifyModelChanged();
     },
   );
 
@@ -195,7 +244,9 @@ export const registerAgentIpc = ({
   ipcMain.handle(
     EVIDENCE_AGENT_IPC_CHANNELS.canvasContext,
     async (event, input: CanvasContextRegistration): Promise<void> => {
-      runtimeFor(event.sender, input.rootPath).setCanvasContext(input.context);
+      (await runtimeFor(event.sender, input.rootPath)).setCanvasContext(
+        input.context,
+      );
     },
   );
 
@@ -215,6 +266,7 @@ export const registerAgentIpc = ({
   );
 
   return {
+    disposeRuntime,
     dispose: () => {
       for (const entry of pending.values()) {
         clearTimeout(entry.timer);
@@ -227,6 +279,7 @@ export const registerAgentIpc = ({
       }
 
       runtimes.clear();
+      starting.clear();
       ownedBy.clear();
     },
   };
