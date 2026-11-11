@@ -6,12 +6,12 @@
   "productName": "Evidence Modeling",
   "main": ".vite/build/main.js",
   "dependencies": {
-    "@evidence-poc/evidence-agent-core": "0.0.1",
-    "@evidence-poc/evidence-canvas-interaction": "0.0.1",
-    "@evidence-poc/evidence-mcp": "0.0.1",
-    "@evidence-poc/evidence-model-core": "0.0.1",
-    "@evidence-poc/evidence-modeling-orchestrator": "0.0.1",
-    "@evidence-poc/evidence-schema": "0.0.1",
+    "@evidence-poc/evidence-agent-core": "workspace:*",
+    "@evidence-poc/evidence-canvas-interaction": "workspace:*",
+    "@evidence-poc/evidence-mcp": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-modeling-orchestrator": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
     "@use-gesture/react": "^10.3.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

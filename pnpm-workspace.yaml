@@ -1,0 +1,35 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Electron Forge resolves the app's runtime tree with flora-colossus, which does
+# not follow the symlinks pnpm creates by default; Forge's documentation
+# therefore requires a hoisted linker.
+nodeLinker: hoisted
+
+# @electron/node-gyp reaches us as a git dependency of electron-winstaller.
+blockExoticSubdeps: false
+
+# pnpm blocks lifecycle scripts unless they are approved. Electron downloads its
+# own binary, nx and swc fetch platform artifacts, and the packagers build
+# helpers for the installers they produce.
+allowBuilds:
+  '@google/genai': true
+  '@swc/core': true
+  electron: true
+  electron-winstaller: true
+  nx: true
+  protobufjs: true
+
+# pnpm 12 refuses packages published inside a quarantine window. The Pi SDK is
+# the modeling agent runtime, pinned to exact versions, so it is exempted by
+# version rather than by scope: a later release has to be reviewed again.
+minimumReleaseAgeExclude:
+  - '@earendil-works/pi-agent-core@1.5.2'
+  - '@earendil-works/pi-ai@1.5.2'
+  - '@earendil-works/pi-coding-agent@1.5.2'
+  - '@earendil-works/pi-codemode@1.5.2'
+  - '@earendil-works/pi-mcp@1.5.2'
+  - '@earendil-works/pi-schema@1.5.2'
+  - '@earendil-works/pi-telemetry@1.5.2'
+  - '@earendil-works/pi-tui@1.5.2'

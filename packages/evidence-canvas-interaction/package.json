@@ -16,8 +16,8 @@
     }
   },
   "dependencies": {
-    "@evidence-poc/evidence-model-core": "0.0.1",
-    "@evidence-poc/evidence-schema": "0.0.1",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
     "tslib": "^2.3.0"
   },
   "nx": {
