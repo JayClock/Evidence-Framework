@@ -31,6 +31,10 @@ const workspaceAliases = {
     import.meta.dirname,
     '../../packages/evidence-canvas-interaction/src/index.ts',
   ),
+  '@evidence-poc/evidence-mcp': path.resolve(
+    import.meta.dirname,
+    '../../packages/evidence-mcp/src/index.ts',
+  ),
 };
 
 export default defineConfig({
