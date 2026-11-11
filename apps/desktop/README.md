@@ -20,19 +20,23 @@ nx package desktop      # unpacked app in apps/desktop/out
 
 ```text
 apps/desktop/
-├── client/            # main process: windows, IPC, ProjectStore, watcher
-├── shared/            # IPC channel names and payload contracts
-├── renderer/          # React 19 UI: canvas, inspector, sidebar, status bar
+├── client/            # main process: windows, IPC, ProjectStore, watcher,
+│                      # agentRuntime (Pi session), sensorRuntime (debounce)
+├── shared/            # IPC channel names and payload contracts (project, agent)
+├── renderer/          # React 19 UI: canvas, inspector, sidebar, agent panel,
+│                      # PromptDock, sensor status bar and diagnostics drawer
 └── tests/             # integration tests against the product-procurement fixture
 ```
 
 Renderer modules map onto the four packages built earlier:
 
-| Renderer concern                       | Source of truth                             |
-| -------------------------------------- | ------------------------------------------- |
-| documents, undo, commands              | `@evidence-poc/evidence-model-core/browser` |
-| inspector groups and fields            | `@evidence-poc/evidence-schema`             |
-| layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction` |
+| Renderer concern                       | Source of truth                                |
+| -------------------------------------- | ---------------------------------------------- |
+| documents, undo, commands              | `@evidence-poc/evidence-model-core/browser`    |
+| inspector groups and fields            | `@evidence-poc/evidence-schema`                |
+| layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction`    |
+| agent session, pinned interpreter      | `@evidence-poc/evidence-agent-core`            |
+| sensors, tools, frontier               | `@evidence-poc/evidence-modeling-orchestrator` |
 
 `/browser` is the model-core entry that excludes `node:fs`, so the renderer
 bundle never pulls a Node built-in.
@@ -75,7 +79,36 @@ bundle never pulls a Node built-in.
 - Wheel pans, Ctrl/Cmd+wheel zooms at the pointer, space+drag pans, dragging the
   background draws a marquee selection.
 
+## Agent and sensors (phase 3)
+
+```text
+PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
+                                    │ Pi AgentSession + .agents/skills
+                                    │ custom tools: run_sensors,
+                                    │   apply_model_patch, get_canvas_selection
+                                    ▼
+                     IPC: agent:apply-patch ──▶ ModelSession (renderer)
+                                    ▲
+                                    └─ respondPatch(result) — same undo stack
+                     IPC: sensor:model-changed ──▶ debounced sensorRuntime
+                                    ▼
+                     IPC: sensor:report ──▶ status bar + diagnostics drawer
+```
+
+- The renderer holds no model credentials and never runs Python; it asks the
+  main process and applies patches through its live session.
+- A patch is plain JSON (`ModelPatchCommand`), decoded into real commands by
+  `evidence-model-core` so guards and `Cmd/Ctrl+Z` behave exactly as for a human
+  edit.
+- Sensors run with the pinned interpreter only. A missing environment reports
+  `SENSOR_UNAVAILABLE` blocks with a `./init.sh` hint rather than a silent pass.
+- Key data that still owes a provider decision is a warning, not a static error,
+  but it keeps `isStageGateReady` false — the model can be saved, the gate stays
+  shut.
+- `PromptDock` sends when idle and steers the live run when busy, so a wrong
+  assumption is corrected in place instead of restarting the round.
+
 ## Not implemented yet
 
-Agent orchestration (PromptDock, activity stream) and the MCP sidecar belong to
-Phases 3 and 4; the window shell and IPC surface already leave room for both.
+The MCP sidecar belongs to Phase 4; the main process already owns the IPC
+surface and the tool layer it will expose.
