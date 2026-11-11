@@ -156,6 +156,38 @@ export {
 } from './adapters/diskAdapter.js';
 
 export {
+  MODEL_CHECK_TREES,
+  MODEL_GENERATED_TREE,
+  isValidationPath,
+  readModelRoot,
+  readModelRootFiles,
+} from './adapters/modelRoot.js';
+
+export {
+  comparableValue,
+  indexSuite,
+  loadValidationSuite,
+  validateValidationSuite,
+  validationSuiteFromBundle,
+  validationSuiteFromFiles,
+  type EvaluationBinding,
+  type EvidenceInstance,
+  type FulfillmentStatus,
+  type FulfillmentStatusExpectation,
+  type Scenario,
+  type ScenarioEvaluation,
+  type ScenarioExpectations,
+  type ScenarioStep,
+  type ValidationSuite,
+} from './validation/validationSuite.js';
+
+export {
+  isTimestampText,
+  normalizeJsonValue,
+  validateTypedValue,
+} from './validation/typedValues.js';
+
+export {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_BUNDLE_EXTENSION,
   MODEL_BUNDLE_TYPE,

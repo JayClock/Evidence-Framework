@@ -87,6 +87,30 @@ export {
 } from './cel/celCandidates.js';
 
 export {
+  comparableValue,
+  indexSuite,
+  loadValidationSuite,
+  validateValidationSuite,
+  validationSuiteFromBundle,
+  validationSuiteFromFiles,
+  type EvaluationBinding,
+  type EvidenceInstance,
+  type FulfillmentStatus,
+  type FulfillmentStatusExpectation,
+  type Scenario,
+  type ScenarioEvaluation,
+  type ScenarioExpectations,
+  type ScenarioStep,
+  type ValidationSuite,
+} from './validation/validationSuite.js';
+
+export {
+  isTimestampText,
+  normalizeJsonValue,
+  validateTypedValue,
+} from './validation/typedValues.js';
+
+export {
   CreateRuleCommand,
   DeleteRuleCommand,
   UpdateRuleCommand,
