@@ -100,3 +100,21 @@ export type {
   LayoutNodeCategory,
   ResponsibilityLink,
 } from './layout/types.js';
+
+export {
+  computeHighlight,
+  emptyHighlight,
+  isContextDimmed,
+  isEdgeDimmed,
+  isNodeDimmed,
+  type HighlightInput,
+  type HighlightResult,
+} from './selection/hoverHighlight.js';
+
+export {
+  hitTestLayout,
+  selectContextsInBox,
+  selectNodesInBox,
+  type BoxSelectionOptions,
+  type LayoutHit,
+} from './selection/boxSelection.js';
