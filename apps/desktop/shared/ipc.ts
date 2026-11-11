@@ -1,3 +1,4 @@
+import type { EvidenceAgentApi } from './agentIpc';
 import type {
   EvidenceProjectSummary,
   OpenProjectDialogResult,
@@ -33,6 +34,8 @@ export interface EvidenceDesktopApi {
     /** Subscribes to external `.evidence/fm` changes; returns an unsubscribe. */
     onChanged: (listener: (event: ProjectChangedEvent) => void) => () => void;
   };
+  /** Pi agent, sensors and patch application (phase 3). */
+  agent: EvidenceAgentApi;
   system: {
     platform: NodeJS.Platform;
   };

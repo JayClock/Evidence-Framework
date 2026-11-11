@@ -14,8 +14,10 @@
     "typecheck": "tsc -p tsconfig.app.json"
   },
   "dependencies": {
+    "@evidence-poc/evidence-agent-core": "0.0.1",
     "@evidence-poc/evidence-canvas-interaction": "0.0.1",
     "@evidence-poc/evidence-model-core": "0.0.1",
+    "@evidence-poc/evidence-modeling-orchestrator": "0.0.1",
     "@evidence-poc/evidence-schema": "0.0.1",
     "@use-gesture/react": "^10.3.1",
     "react": "^19.2.8",
