@@ -34,6 +34,36 @@ export {
 } from './commands/relationshipCommands.js';
 
 export {
+  AddAttributeCommand,
+  RemoveAttributeCommand,
+  UpdateAttributeCommand,
+  type RemoveAttributeOptions,
+} from './commands/attributeCommands.js';
+
+export {
+  buildKeyDataLedger,
+  keyDataEntryOf,
+  type KeyDataEntry,
+  type KeyDataLedger,
+  type KeyDataProvider,
+} from './keyData/keyDataLedger.js';
+
+export {
+  analyzeCelExpression,
+  type CelAnalysis,
+  type CelCandidate,
+  type CelDiagnostic,
+  type CelDiagnosticCode,
+} from './cel/celAnalysis.js';
+
+export {
+  aliasFor,
+  bindingsForAliases,
+  collectCelCandidates,
+  derivationRuleOf,
+} from './cel/celCandidates.js';
+
+export {
   CreateRuleCommand,
   DeleteRuleCommand,
   UpdateRuleCommand,

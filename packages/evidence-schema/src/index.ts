@@ -52,6 +52,20 @@ export {
 } from './ast/entity.js';
 
 export {
+  KEY_DATA_PROVIDER_CHOICES,
+  KEY_DATA_SOURCE_KINDS,
+  KEY_DATA_SOURCE_LABELS,
+  REQUEST_FORMATION_FIELDS,
+  RESOLVED_KEY_DATA_SOURCES,
+  classifyKeyDataSource,
+  isKeyDataDecisionOwed,
+  isKeyDataResolved,
+  isKeyDataSourceKind,
+  type KeyDataProviderChoice,
+  type KeyDataSourceKind,
+} from './ast/keyData.js';
+
+export {
   RELATIONSHIP_KINDS,
   isCardinality,
   isRelationshipKind,
@@ -109,6 +123,7 @@ export {
 
 export {
   INSPECTOR_ATTRIBUTE_FIELDS,
+  INSPECTOR_KEY_DATA_PROVENANCE_PROPERTY,
   INSPECTOR_RULE_FIELDS,
   getInspectorGroup,
   getInspectorGroups,

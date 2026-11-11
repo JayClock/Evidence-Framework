@@ -20,6 +20,7 @@ export type InspectorEditorKind =
   | 'boolean'
   | 'attribute-table'
   | 'cel-editor'
+  | 'key-data-provenance'
   | 'reference-picker'
   | 'reference-list';
 
@@ -267,6 +268,20 @@ export const INSPECTOR_ATTRIBUTE_FIELDS: readonly InspectorPropertyDefinition[] 
     helper: '派生值只读取已建模属性，规则必须指向该字段本身。',
   },
 ];
+
+/**
+ * Virtual attribute column: the provider behind one key data item.
+ *
+ * Nothing is persisted for it — the ledger derives the provider from the
+ * modeled facts (derivation rule, contract term, result fact), so the same
+ * source of truth stays in the FM files.
+ */
+export const INSPECTOR_KEY_DATA_PROVENANCE_PROPERTY: InspectorPropertyDefinition = {
+  field: 'provenance',
+  label: '提供方',
+  editor: 'key-data-provenance',
+  helper: '金额、期限、数量与时间差必须落到合同参数、前序凭证属性、派生规则或结果事实上。',
+};
 
 /** Rule inspection fields used by the rule panel in Phase 4. */
 export const INSPECTOR_RULE_FIELDS: readonly InspectorPropertyDefinition[] = [

@@ -1,10 +1,17 @@
 import type {
+  AttributeAST,
   EntityAST,
   EvidenceEntityAST,
   RelationshipAST,
   RuleAST,
 } from '@evidence-poc/evidence-schema';
 
+import {
+  AddAttributeCommand,
+  RemoveAttributeCommand,
+  UpdateAttributeCommand,
+  type RemoveAttributeOptions,
+} from './attributeCommands.js';
 import type { BindDerivedRuleInput } from './derivationCommands.js';
 import { BindDerivedRuleCommand } from './derivationCommands.js';
 import {
@@ -42,6 +49,19 @@ import type { ModelCommand } from './types.js';
 export type ModelPatchCommand =
   | { type: 'create-entity'; entity: EntityAST; index?: number }
   | { type: 'create-contract'; entity: EvidenceEntityAST }
+  | { type: 'add-attribute'; entityId: string; attribute: AttributeAST; index?: number }
+  | {
+      type: 'remove-attribute';
+      entityId: string;
+      attribute: string;
+      options?: RemoveAttributeOptions;
+    }
+  | {
+      type: 'update-attribute';
+      entityId: string;
+      attribute: string;
+      patch: Readonly<Partial<AttributeAST>>;
+    }
   | {
       type: 'update-entity';
       entityId: string;
@@ -145,6 +165,26 @@ export const decodeModelPatchCommand = (
     case 'create-contract':
       return new CreateContractCommand(
         requireField<EvidenceEntityAST>(command, 'entity', path),
+      );
+    case 'add-attribute':
+      return new AddAttributeCommand(
+        requireField<string>(command, 'entityId', path),
+        requireField<AttributeAST>(command, 'attribute', path),
+        optionalField<number>(command, 'index'),
+      );
+    case 'remove-attribute':
+      return new RemoveAttributeCommand(
+        requireField<string>(command, 'entityId', path),
+        requireField<string>(command, 'attribute', path),
+        command.options === undefined
+          ? {}
+          : (command.options as RemoveAttributeOptions),
+      );
+    case 'update-attribute':
+      return new UpdateAttributeCommand(
+        requireField<string>(command, 'entityId', path),
+        requireField<string>(command, 'attribute', path),
+        requireField<Readonly<Partial<AttributeAST>>>(command, 'patch', path),
       );
     case 'update-entity':
       return new UpdateEntityCommand(
