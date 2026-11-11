@@ -22,32 +22,32 @@ const workspaceAliases = {
   ),
 };
 
+/**
+ * One project on purpose: the root `vitest.config.mts` discovers workspace
+ * configs, and react tests need jsdom while the store tests only use Node APIs
+ * that stay available inside the jsdom environment.
+ */
 export default defineConfig({
+  root: import.meta.dirname,
+  cacheDir: '../../node_modules/.vite/apps/desktop',
+  resolve: { alias: workspaceAliases },
+  plugins: [react()],
   test: {
+    name: '@evidence-poc/desktop',
     watch: false,
-    projects: [
-      {
-        resolve: { alias: workspaceAliases },
-        plugins: [react()],
-        test: {
-          name: 'renderer',
-          root: import.meta.dirname,
-          globals: true,
-          environment: 'jsdom',
-          include: ['renderer/**/*.spec.{ts,tsx}', 'shared/**/*.spec.ts'],
-          setupFiles: ['renderer/test-setup.ts'],
-        },
-      },
-      {
-        resolve: { alias: workspaceAliases },
-        test: {
-          name: 'client',
-          root: import.meta.dirname,
-          globals: true,
-          environment: 'node',
-          include: ['client/**/*.spec.ts', 'tests/**/*.spec.ts'],
-        },
-      },
+    globals: true,
+    environment: 'jsdom',
+    include: [
+      'renderer/**/*.spec.{ts,tsx}',
+      'shared/**/*.spec.ts',
+      'client/**/*.spec.ts',
+      'tests/**/*.spec.ts',
     ],
+    setupFiles: ['renderer/test-setup.ts'],
+    reporters: ['default'],
+    coverage: {
+      reportsDirectory: './test-output/vitest/coverage',
+      provider: 'v8' as const,
+    },
   },
 });

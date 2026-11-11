@@ -85,8 +85,8 @@ export const NodeCard = ({
         height: box.height,
         borderRadius: entityRadius(entity),
         borderColor: selected ? '#2f5d8f' : '#d7dbe2',
-        borderStyle: entity.category === 'evidence' ? 'solid' : 'solid',
-        borderLeft: `3px solid ${color}`,
+        borderLeftWidth: 3,
+        borderLeftColor: color,
       }}
       onMouseEnter={() => onHover(entity.id)}
       onMouseLeave={() => onHover(null)}
