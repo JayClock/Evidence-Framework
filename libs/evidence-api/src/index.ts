@@ -90,6 +90,28 @@ export {
   type PayloadField,
 } from './http/contractPayloads.js';
 
+export {
+  buildHttp,
+  type HttpContract,
+} from './http/contracts.js';
+
+export {
+  checkConsumption,
+  navigationGraph,
+  type CheckConsumptionResult,
+  type ConsumptionRow,
+  type ConsumptionStep,
+  type NavigationEdge,
+} from './http/consumerCoverage.js';
+
+export {
+  checkJourneys,
+  type CheckJourneysResult,
+  type JourneyRow,
+  type JourneyStepResult,
+  type JourneyStepRow,
+} from './http/httpJourneys.js';
+
 export { compareText, sortedText } from './order.js';
 
 export { API_SCHEMA } from './schemas/apiSchema.js';
