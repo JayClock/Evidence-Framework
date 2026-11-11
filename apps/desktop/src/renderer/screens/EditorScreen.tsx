@@ -14,6 +14,7 @@ import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
+import { useBranches } from '../state/useBranches';
 import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
@@ -98,14 +99,26 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
-  const { state, save, reloadFromDisk, dismissExternalChange } =
+  const { state, save, reloadFromDisk, adoptDocument, dismissExternalChange } =
     useEditorSession(project, initialDocument);
+  const branches = useBranches(project.rootPath);
   const agent = useAgentSession(project.rootPath);
   const frontier = useFrontier(project.rootPath, state.document);
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
 
   useAgentPatchBridge(state.session);
+
+  const checkoutBranch = useCallback(
+    async (branchId: string) => {
+      const document = await branches.checkout(branchId);
+
+      if (document !== null) {
+        adoptDocument(document);
+      }
+    },
+    [adoptDocument, branches],
+  );
 
   // Monotonic document revision so an external agent can tell whether the model
   // it read is still the model on screen.
@@ -265,6 +278,21 @@ const EditorWorkspace = ({
         onSave={() => void save()}
         onViewModeChange={setViewMode}
         onSearch={() => searchInputRef.current?.focus()}
+        branch={{
+          branches: branches.state.branches,
+          activeBranchId: branches.state.activeBranchId,
+          compareBranchId: branches.state.compareBranchId,
+          busy: branches.state.busy,
+          loading: branches.state.loading,
+          error: branches.state.error,
+          actionError: branches.state.actionError,
+          onCheckout: (branchId) => void checkoutBranch(branchId),
+          onFork: (name, description) => {
+            void branches.fork(name, description);
+          },
+          onCompareChange: (branchId) => void branches.compareWith(branchId),
+          onDismissError: branches.clearActionError,
+        }}
       />
 
       <div className="flex min-h-0 flex-1">

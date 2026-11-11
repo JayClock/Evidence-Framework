@@ -420,7 +420,9 @@ export const installDesktopApi = ({
         return {
           success: true,
           branch: { ...(branch ?? branchSummary()), isActive: true },
-          document: { manifest: {} } as never,
+          document: openResult.success
+            ? openResult.document
+            : ({ manifest: {} } as never),
           savedPrevious: true,
         };
       },

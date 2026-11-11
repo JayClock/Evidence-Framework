@@ -38,6 +38,13 @@ export interface EditorSessionController {
   state: EditorSessionState;
   save: () => Promise<void>;
   reloadFromDisk: () => Promise<void>;
+  /**
+   * Takes over a document the main process produced, e.g. after a checkout.
+   *
+   * History is reset because the previous branch's steps no longer apply to the
+   * new tree, but the disk and the canvas already agree, so nothing is dirty.
+   */
+  adoptDocument: (document: DomainModelDocument, savedAt?: string) => void;
   dismissExternalChange: () => void;
 }
 
@@ -155,9 +162,29 @@ export const useEditorSession = (
     setDirty(false);
   }, [project.rootPath, session]);
 
+  const adoptDocument = useCallback(
+    (document: DomainModelDocument, adoptedAt?: string) => {
+      session.replaceDocument(document, { resetHistory: true });
+      setExternalChangeAt(null);
+      setSaveError(null);
+      setDirty(false);
+
+      if (adoptedAt !== undefined) {
+        setSavedAt(adoptedAt);
+      }
+    },
+    [session],
+  );
+
   const dismissExternalChange = useCallback(() => {
     setExternalChangeAt(null);
   }, []);
 
-  return { state, save, reloadFromDisk, dismissExternalChange };
+  return {
+    state,
+    save,
+    reloadFromDisk,
+    adoptDocument,
+    dismissExternalChange,
+  };
 };

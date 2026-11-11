@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 
+import type { EvidenceBranchSummary } from '../../shared/branches';
+import { BranchSelector } from './BranchSelector';
 import type { CanvasViewMode } from './canvas/CanvasStage';
 import { McpStatusPill } from './McpStatusPill';
 
@@ -19,6 +21,19 @@ interface TopHeaderProps {
   onSave: () => void;
   onViewModeChange: (mode: CanvasViewMode) => void;
   onSearch: () => void;
+  branch: {
+    branches: readonly EvidenceBranchSummary[];
+    activeBranchId: string;
+    compareBranchId: string | null;
+    busy: boolean;
+    loading: boolean;
+    error: string | null;
+    actionError: string | null;
+    onCheckout: (branchId: string) => void;
+    onFork: (name: string, description?: string) => void;
+    onCompareChange: (branchId: string | null) => void;
+    onDismissError: () => void;
+  };
 }
 
 export const TopHeader = ({
@@ -34,6 +49,7 @@ export const TopHeader = ({
   onSave,
   onViewModeChange,
   onSearch,
+  branch,
 }: TopHeaderProps) => {
   const breadcrumb = useMemo(() => {
     const nodeId = selection.nodeId;
@@ -83,6 +99,20 @@ export const TopHeader = ({
       </div>
 
       <div className="evidence-no-drag flex items-center gap-1.5">
+        <BranchSelector
+          branches={branch.branches}
+          activeBranchId={branch.activeBranchId}
+          compareBranchId={branch.compareBranchId}
+          busy={branch.busy}
+          loading={branch.loading}
+          error={branch.error}
+          actionError={branch.actionError}
+          onCheckout={branch.onCheckout}
+          onFork={branch.onFork}
+          onCompareChange={branch.onCompareChange}
+          onDismissError={branch.onDismissError}
+        />
+
         <button
           type="button"
           onClick={onSearch}
