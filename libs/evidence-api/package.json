@@ -1,0 +1,39 @@
+{
+  "name": "@evidence-poc/evidence-api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "\u4ece\u5df2\u901a\u8fc7\u95e8\u7981\u7684 FM \u6295\u5f71 API \u6280\u672f\u5951\u7ea6\uff1a\u8d44\u6e90\u3001\u80fd\u529b\u3001\u8d85\u5a92\u4f53\u3001OpenAPI \u4e0e\u6d4b\u8bd5\u5411\u91cf",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "evidence-api": "./dist/cli.js"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "@evidence-poc/source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "default": "./dist/cli.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-api",
+    "tags": [
+      "type:lib",
+      "scope:evidence"
+    ]
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "tslib": "^2.3.0"
+  }
+}

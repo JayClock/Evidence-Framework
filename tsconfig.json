@@ -13,9 +13,6 @@
       "path": "./libs/evidence-canvas-interaction"
     },
     {
-      "path": "./apps/desktop"
-    },
-    {
       "path": "./libs/evidence-agent-core"
     },
     {
@@ -23,6 +20,9 @@
     },
     {
       "path": "./libs/evidence-mcp"
+    },
+    {
+      "path": "./libs/evidence-api"
     }
   ]
 }
