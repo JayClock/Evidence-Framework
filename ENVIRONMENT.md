@@ -58,3 +58,37 @@ anything drifted. Use `--json` to record a run next to a model check.
 New third-party skills are copied into `.agents/skills/` and committed with the
 repository, pinned to a tag or commit. Global skill directories are not part of
 this environment.
+
+## The packaged desktop runtime
+
+A released desktop app must work on a machine that never cloned this repository,
+so the installer carries its own copies instead of asking the user to install
+Python:
+
+```text
+Contents/Resources/            (process.resourcesPath)
+├── skills/                    .agents/skills/evidence-* copied verbatim
+└── python-runtime/            portable CPython 3.12 + requirements.lock
+```
+
+- `node scripts/prepare-desktop-runtime.mjs` writes both trees; `nx build
+desktop` runs it first (`prepare-runtime` target). It reuses
+  `node_modules/.cache/python`, so a local build only pays the copy and
+  `pip install` once. `--force` rebuilds, `--without-python` bundles the skills
+  alone.
+- `python-runtime/runtime.json` records the pinned version and a digest of
+  `requirements.lock`; a mismatch is what triggers a rebuild.
+- `apps/desktop/resources/` is build output and stays out of git.
+
+At runtime both resolvers read the same fallback chain, so a project can still
+override what the app ships:
+
+| What                 | Order                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| Skills               | `<project>/.agents/skills` → `<resources>/skills` → the workspace `.agents/skills` in a dev build |
+| Python interpreter   | explicit path → `EVIDENCE_VENV` → `<resources>/python-runtime` → `node_modules/.cache/evidence-fm-runtime` |
+
+Because the scripts run as subprocesses, both trees stay outside `app.asar`
+(`extraResource`); only the JS bundles are packed into it. An inherited
+`PYTHONHOME`/`PYTHONPATH` is dropped before a script runs, so a system Python
+cannot be mixed into the bundled one.

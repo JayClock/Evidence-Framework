@@ -22,6 +22,34 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
+## Bundled skills and interpreter
+
+The installer has to work on a machine with no Python and no checkout of this
+repository, so `build` and `make` first run `scripts/prepare-desktop-runtime.mjs`
+(`prepare-runtime` target). It writes two trees Forge copies through
+`extraResource`, i.e. next to `app.asar` rather than inside it — a subprocess
+cannot read through the archive:
+
+```text
+resources/
+├── skills/            # .agents/skills/evidence-* copied verbatim
+└── python-runtime/    # portable CPython 3.12 with requirements.lock installed
+```
+
+- The Python step caches on `.python-version` plus a digest of
+  `requirements.lock`, recorded in `python-runtime/runtime.json`; it only
+  rebuilds when either moves. `--force` rebuilds, `--without-python` bundles
+  the skills alone.
+- `resolveSkillsRoot` prefers `<project>/.agents/skills`, then `<resources>/skills`,
+  then the workspace tree while developing; `createPythonEnvResolver` prefers an
+  explicit path, then `EVIDENCE_VENV`, then `<resources>/python-runtime`, then the
+  workspace virtual environment.
+- `runScript` drops an inherited `PYTHONHOME`/`PYTHONPATH`, so a system Python
+  cannot be mixed into the bundled one.
+
+See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the pins these trees are built
+from.
+
 ## Layout
 
 ```text
@@ -33,6 +61,7 @@ apps/desktop/
 │   ├── renderer/      # React 19 UI: canvas, inspector, sidebar, agent panel,
 │   │                  # PromptDock, sensor status bar and diagnostics drawer
 │   └── shared/        # IPC channel names and payload contracts (project, agent)
+├── resources/         # build output: bundled skills + python-runtime (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
 └── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```
