@@ -90,8 +90,9 @@
 
 ```text
 ├── apps/
+│   ├── frontend/                        # Web 端 (Vite + React)
 │   └── desktop/                         # 桌面可视化工作台 (Electron + Canvas)
-├── packages/
+├── libs/
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格校验契约
 │   ├── evidence-model-core/             # 纯内存图引擎、命令总线 (Undo/Redo)、CEL 仿真执行器
 │   ├── evidence-modeling-orchestrator/  # 传感器调度引擎、阶段门禁判定与链路追踪

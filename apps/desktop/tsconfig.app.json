@@ -22,22 +22,22 @@
   ],
   "references": [
     {
-      "path": "../../packages/evidence-canvas-interaction/tsconfig.lib.json"
+      "path": "../../libs/evidence-canvas-interaction/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/evidence-model-core/tsconfig.lib.json"
+      "path": "../../libs/evidence-model-core/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/evidence-schema/tsconfig.lib.json"
+      "path": "../../libs/evidence-schema/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/evidence-mcp/tsconfig.lib.json"
+      "path": "../../libs/evidence-mcp/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/evidence-agent-core/tsconfig.lib.json"
+      "path": "../../libs/evidence-agent-core/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/evidence-modeling-orchestrator/tsconfig.lib.json"
+      "path": "../../libs/evidence-modeling-orchestrator/tsconfig.lib.json"
     }
   ]
 }

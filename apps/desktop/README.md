@@ -93,7 +93,7 @@ bundle never pulls a Node built-in.
 ## Module resolution
 
 Workspace libraries are consumed **from source**, not from their built `dist`.
-Each `packages/*/package.json` exports a `@evidence-poc/source` condition and
+Each `libs/*/package.json` exports a `@evidence-poc/source` condition and
 `tsconfig.base.json` sets `customConditions` to the same value, so TypeScript,
 the three Vite configs and the Vitest config all resolve a package to its
 `src/index.ts`. Adding a library therefore means adding a path mapping nowhere —

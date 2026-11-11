@@ -8,7 +8,7 @@ Modeling runs on a pinned interpreter, never a bare `python3`:
 
 ## Workspace
 
-One pnpm workspace, three directories: `apps/` (runnable), `packages/` (TypeScript libraries), `libs/backend/` (Gradle modules). Package-manager settings live in `pnpm-workspace.yaml`, not `.npmrc`.
+One pnpm workspace, two directories: `apps/` (runnable) and `libs/` (TypeScript libraries). Package-manager settings live in `pnpm-workspace.yaml`, not `.npmrc`.
 
 - Declare a runtime dependency in the `package.json` of the project that imports it; the root manifest keeps dev tooling only.
 - A dependency on a workspace package uses `workspace:*`.

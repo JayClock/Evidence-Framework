@@ -30,7 +30,7 @@ import { createAgentRuntime } from '../src/main/agentRuntime';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,
-  '../../../packages/evidence-schema/tests/fixtures/product-procurement',
+  '../../../libs/evidence-schema/tests/fixtures/product-procurement',
 );
 
 const PROJECT_ROOT = '/models/procurement';

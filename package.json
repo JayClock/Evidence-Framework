@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx run-many --target=serve --projects=frontend,backend --parallel=2",
+    "dev": "nx serve frontend",
     "dev:frontend": "nx serve frontend",
-    "dev:backend": "nx serve backend",
     "build": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
     "lint": "nx run-many --target=lint --all",
@@ -13,9 +12,9 @@
     "desktop": "nx start desktop",
     "desktop:package": "nx package desktop",
     "test:desktop": "nx test desktop",
-    "model:pack": "node packages/evidence-model-core/dist/cli.js pack",
-    "model:unpack": "node packages/evidence-model-core/dist/cli.js unpack",
-    "model:inspect": "node packages/evidence-model-core/dist/cli.js inspect"
+    "model:pack": "node libs/evidence-model-core/dist/cli.js pack",
+    "model:unpack": "node libs/evidence-model-core/dist/cli.js unpack",
+    "model:inspect": "node libs/evidence-model-core/dist/cli.js inspect"
   },
   "private": true,
   "packageManager": "pnpm@12.16.1",
@@ -23,7 +22,6 @@
     "@eslint/js": "^9.8.0",
     "@nx/eslint": "23.2.0",
     "@nx/eslint-plugin": "23.2.0",
-    "@nx/gradle": "^23.2.0",
     "@nx/js": "23.2.0",
     "@nx/react": "23.2.0",
     "@nx/vite": "23.2.0",

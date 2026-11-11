@@ -1,6 +1,0 @@
-plugins { id 'java-library' }
-
-dependencies {
-    api platform("io.github.jayclock:smart-domain-bom:${smartDomainVersion}")
-    api 'io.github.jayclock:smart-domain-core'
-}

@@ -7,7 +7,7 @@ app slice uses those separately.
 
 The desktop app does not: every check it runs — consistency, key data, interview
 trace, timeline, scenarios, stage gate — is implemented in TypeScript under
-`packages/evidence-model-core/src/validation/` and decided in-process. The Python
+`libs/evidence-model-core/src/validation/` and decided in-process. The Python
 scripts are the reference implementation and the shadow oracle, and this pinned
 environment is what keeps them runnable:
 

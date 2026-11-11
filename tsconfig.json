@@ -7,25 +7,25 @@
       "path": "./apps/frontend"
     },
     {
-      "path": "./packages/evidence-schema"
+      "path": "./libs/evidence-schema"
     },
     {
-      "path": "./packages/evidence-model-core"
+      "path": "./libs/evidence-model-core"
     },
     {
-      "path": "./packages/evidence-canvas-interaction"
+      "path": "./libs/evidence-canvas-interaction"
     },
     {
       "path": "./apps/desktop"
     },
     {
-      "path": "./packages/evidence-agent-core"
+      "path": "./libs/evidence-agent-core"
     },
     {
-      "path": "./packages/evidence-modeling-orchestrator"
+      "path": "./libs/evidence-modeling-orchestrator"
     },
     {
-      "path": "./packages/evidence-mcp"
+      "path": "./libs/evidence-mcp"
     }
   ]
 }

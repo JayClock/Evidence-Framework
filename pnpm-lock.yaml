@@ -175,9 +175,6 @@ importers:
       '@nx/eslint-plugin':
         specifier: 23.2.0
         version: 23.2.0(@babel/traverse@7.29.13(supports-color@8.1.1))(@swc/cli@0.8.2(@swc/core@1.15.47(@swc/helpers@0.5.24))(supports-color@8.1.1))(@swc/core@1.15.47(@swc/helpers@0.5.24))(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-config-prettier@10.1.8(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1)))(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))(supports-color@8.1.1)(typescript@6.0.3)
-      '@nx/gradle':
-        specifier: ^23.2.0
-        version: 23.3.1(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))
       '@nx/js':
         specifier: 23.2.0
         version: 23.2.0(@babel/traverse@7.29.13(supports-color@8.1.1))(@swc/cli@0.8.2(@swc/core@1.15.47(@swc/helpers@0.5.24))(supports-color@8.1.1))(@swc/core@1.15.47(@swc/helpers@0.5.24))(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))(supports-color@8.1.1)
@@ -282,22 +279,22 @@ importers:
     dependencies:
       '@evidence-poc/evidence-agent-core':
         specifier: workspace:*
-        version: link:../../packages/evidence-agent-core
+        version: link:../../libs/evidence-agent-core
       '@evidence-poc/evidence-canvas-interaction':
         specifier: workspace:*
-        version: link:../../packages/evidence-canvas-interaction
+        version: link:../../libs/evidence-canvas-interaction
       '@evidence-poc/evidence-mcp':
         specifier: workspace:*
-        version: link:../../packages/evidence-mcp
+        version: link:../../libs/evidence-mcp
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
-        version: link:../../packages/evidence-model-core
+        version: link:../../libs/evidence-model-core
       '@evidence-poc/evidence-modeling-orchestrator':
         specifier: workspace:*
-        version: link:../../packages/evidence-modeling-orchestrator
+        version: link:../../libs/evidence-modeling-orchestrator
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
-        version: link:../../packages/evidence-schema
+        version: link:../../libs/evidence-schema
       '@use-gesture/react':
         specifier: ^10.3.1
         version: 10.3.1(react@19.3.1)
@@ -357,7 +354,7 @@ importers:
         specifier: 6.30.6
         version: 6.30.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
-  packages/evidence-agent-core:
+  libs/evidence-agent-core:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: ^1.5.2
@@ -366,7 +363,7 @@ importers:
         specifier: ^2.3.0
         version: 2.9.1
 
-  packages/evidence-canvas-interaction:
+  libs/evidence-canvas-interaction:
     dependencies:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
@@ -378,7 +375,7 @@ importers:
         specifier: ^2.3.0
         version: 2.9.1
 
-  packages/evidence-mcp:
+  libs/evidence-mcp:
     dependencies:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
@@ -393,7 +390,7 @@ importers:
         specifier: 3.25.76
         version: 3.25.76
 
-  packages/evidence-model-core:
+  libs/evidence-model-core:
     dependencies:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
@@ -402,7 +399,7 @@ importers:
         specifier: ^2.3.0
         version: 2.9.1
 
-  packages/evidence-modeling-orchestrator:
+  libs/evidence-modeling-orchestrator:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: ^1.5.2
@@ -423,7 +420,7 @@ importers:
         specifier: ^1.3.27
         version: 1.4.6
 
-  packages/evidence-schema:
+  libs/evidence-schema:
     dependencies:
       tslib:
         specifier: ^2.3.0
@@ -1662,11 +1659,6 @@ packages:
     peerDependencies:
       nx: '>= 22 <= 24 || ^23.0.0-0'
 
-  '@nx/devkit@23.3.1':
-    resolution: {integrity: sha512-Cw6YISZUjit22Trfo/p6rnrNklIKHYgRyp2IyOgr0i9naDgO3Ufllib9D/v0SInwX2zKevaWJWMyreqVvHRU0w==}
-    peerDependencies:
-      nx: '>= 22 <= 24 || ^23.0.0-0'
-
   '@nx/eslint-plugin@23.2.0':
     resolution: {integrity: sha512-A1TrFTXdGPHU9SmIcLnZPdL5m5vk34edXqhu8aqNPUF1jxnhXk0FURljbIkRdFwBMBDYRrJ3j9dGjXSNWUbitg==}
     peerDependencies:
@@ -1689,9 +1681,6 @@ packages:
         optional: true
       '@zkochan/js-yaml':
         optional: true
-
-  '@nx/gradle@23.3.1':
-    resolution: {integrity: sha512-EDYL/wdoqHISXLfSoeGq5FoLBQd2blAh2Cke0ON0e35jH8/31qqiM4g3CPfOTDb2RoBpnUuboHnI2HMJn+yGzQ==}
 
   '@nx/js@23.2.0':
     resolution: {integrity: sha512-pm3YJK6NO7r8oDLTffV3OBaImaEKdLrGtMM7NjxrS7a0FBS4FQ7k+vPXmV9i/XZIVdC5CBHby5FWJ2SpZxzTag==}
@@ -5890,10 +5879,6 @@ packages:
     resolution: {integrity: sha512-s9euYHM//T3loJtbNUYdbAzsMlvKBeRS+XCLFy+UGosMQH19Hwjap5k19i4PPAEJJBsVIpMpVTxl4fIqCuNfUg==}
     engines: {node: '>=14.16'}
 
-  toml-eslint-parser@0.10.1:
-    resolution: {integrity: sha512-9mjy3frhioGIVGcwamlVlUyJ9x+WHw/TXiz9R4YOlmsIuBN43r9Dp8HZ35SF9EKjHrn3BUZj04CF+YqZ2oJ+7w==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
@@ -8260,15 +8245,6 @@ snapshots:
       tslib: 2.9.1
       yargs-parser: 21.1.1
 
-  '@nx/devkit@23.3.1(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))':
-    dependencies:
-      ejs: 5.0.1
-      minimatch: 10.2.5
-      nx: 23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24))
-      semver: 7.8.6
-      tslib: 2.9.1
-      yargs-parser: 21.1.1
-
   '@nx/eslint-plugin@23.2.0(@babel/traverse@7.29.13(supports-color@8.1.1))(@swc/cli@0.8.2(@swc/core@1.15.47(@swc/helpers@0.5.24))(supports-color@8.1.1))(@swc/core@1.15.47(@swc/helpers@0.5.24))(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-config-prettier@10.1.8(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1)))(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))(supports-color@8.1.1)(typescript@6.0.3)':
     dependencies:
       '@nx/devkit': 23.2.0(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))
@@ -8314,14 +8290,6 @@ snapshots:
       - nx
       - supports-color
       - verdaccio
-
-  '@nx/gradle@23.3.1(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))':
-    dependencies:
-      '@nx/devkit': 23.3.1(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))
-      toml-eslint-parser: 0.10.1
-      tslib: 2.9.1
-    transitivePeerDependencies:
-      - nx
 
   '@nx/js@23.2.0(@babel/traverse@7.29.13(supports-color@8.1.1))(@swc/cli@0.8.2(@swc/core@1.15.47(@swc/helpers@0.5.24))(supports-color@8.1.1))(@swc/core@1.15.47(@swc/helpers@0.5.24))(nx@23.2.0(@swc/core@1.15.47(@swc/helpers@0.5.24)))(supports-color@8.1.1)':
     dependencies:
@@ -13004,10 +12972,6 @@ snapshots:
       '@borewit/text-codec': 0.2.3
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
-
-  toml-eslint-parser@0.10.1:
-    dependencies:
-      eslint-visitor-keys: 3.4.3
 
   totalist@3.0.1: {}
 

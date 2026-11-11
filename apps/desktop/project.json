@@ -64,6 +64,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production"],
       "options": {
         "commands": ["tsc -p tsconfig.app.json", "tsc -p tsconfig.spec.json"],

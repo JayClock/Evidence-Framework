@@ -1,6 +1,6 @@
 packages:
   - 'apps/*'
-  - 'packages/*'
+  - 'libs/*'
 
 # Electron Forge resolves the app's runtime tree with flora-colossus, which does
 # not follow the symlinks pnpm creates by default; Forge's documentation

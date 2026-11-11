@@ -21,7 +21,7 @@ import { createProjectStore } from '../src/main/projectStore';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,
-  '../../../packages/evidence-schema/tests/fixtures/product-procurement',
+  '../../../libs/evidence-schema/tests/fixtures/product-procurement',
 );
 
 const withFixtureCopy = async <T>(

@@ -55,14 +55,6 @@
         "ciTargetName": "test-ci",
         "testMode": "watch"
       }
-    },
-    {
-      "plugin": "@nx/gradle",
-      "options": {
-        "testTargetName": "test",
-        "classesTargetName": "classes",
-        "buildTargetName": "build"
-      }
     }
   ],
   "targetDefaults": {
