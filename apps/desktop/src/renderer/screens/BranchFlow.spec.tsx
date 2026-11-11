@@ -38,8 +38,9 @@ describe('BranchSelector in the editor header', () => {
     const select = await screen.findByLabelText('当前分支');
 
     await waitFor(() => {
-      expect(select).toHaveValue('main');
+      expect(select).not.toBeDisabled();
     });
+    expect(select).toHaveValue('main');
     expect(
       screen.getByRole('option', { name: '月度对账' }),
     ).toBeInTheDocument();
@@ -128,6 +129,10 @@ describe('BranchSelector in the editor header', () => {
 
     const compare = await screen.findByLabelText('对比分支');
 
+    await waitFor(() => {
+      expect(compare).not.toBeDisabled();
+    });
+
     fireEvent.change(compare, { target: { value: 'monthly' } });
 
     await waitFor(() => {
@@ -188,9 +193,12 @@ describe('BranchSelector in the editor header', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    fireEvent.change(await screen.findByLabelText('对比分支'), {
-      target: { value: 'monthly' },
+    const compare = await screen.findByLabelText('对比分支');
+
+    await waitFor(() => {
+      expect(compare).not.toBeDisabled();
     });
+    fireEvent.change(compare, { target: { value: 'monthly' } });
 
     expect(await screen.findByLabelText('分支对比')).toBeInTheDocument();
     expect(screen.getByText('月度对账单')).toBeInTheDocument();
@@ -214,9 +222,12 @@ describe('BranchSelector in the editor header', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    fireEvent.change(await screen.findByLabelText('当前分支'), {
-      target: { value: 'monthly' },
+    const select = await screen.findByLabelText('当前分支');
+
+    await waitFor(() => {
+      expect(select).not.toBeDisabled();
     });
+    fireEvent.change(select, { target: { value: 'monthly' } });
 
     expect(
       await screen.findByText('当前检出的分支不能删除，请先切回主干。'),
