@@ -1,49 +1,26 @@
-import path from 'node:path';
-
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
-
-const workspaceAliases = {
-  '@evidence-poc/evidence-schema': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-schema/src/index.ts',
-  ),
-  '@evidence-poc/evidence-agent-core': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-agent-core/src/index.ts',
-  ),
-  '@evidence-poc/evidence-modeling-orchestrator': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-modeling-orchestrator/src/index.ts',
-  ),
-  '@evidence-poc/evidence-model-core/browser': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-model-core/src/browser.ts',
-  ),
-  '@evidence-poc/evidence-model-core': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-model-core/src/index.ts',
-  ),
-  '@evidence-poc/evidence-canvas-interaction': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-canvas-interaction/src/index.ts',
-  ),
-  '@evidence-poc/evidence-mcp': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-mcp/src/index.ts',
-  ),
-};
+import react from '@vitejs/plugin-react';
 
 /**
  * One project on purpose: the root `vitest.config.mts` discovers workspace
  * configs, and react tests need jsdom while the store tests only use Node APIs
  * that stay available inside the jsdom environment.
+ *
+ * Workspace packages resolve through the `@evidence-poc/source` export
+ * condition, the same way `vite.*.config.mjs` and `tsconfig.base.json` do.
  */
 export default defineConfig({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/desktop',
-  resolve: { alias: workspaceAliases },
   plugins: [react()],
+  resolve: {
+    conditions: [
+      '@evidence-poc/source',
+      'module',
+      'browser',
+      'development|production',
+    ],
+  },
   test: {
     name: '@evidence-poc/desktop',
     watch: false,

@@ -4,7 +4,7 @@ import {
   calculateFrontier,
   type DependencyFrontier,
   type InterviewTraceDocument,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 export interface FrontierState {

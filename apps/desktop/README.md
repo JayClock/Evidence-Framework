@@ -47,6 +47,19 @@ Renderer modules map onto the four packages built earlier:
 `/browser` is the model-core entry that excludes `node:fs`, so the renderer
 bundle never pulls a Node built-in.
 
+## Module resolution
+
+Workspace libraries are consumed **from source**, not from their built `dist`.
+Each `packages/*/package.json` exports a `@evidence-poc/source` condition and
+`tsconfig.base.json` sets `customConditions` to the same value, so TypeScript,
+the three Vite configs and the Vitest config all resolve a package to its
+`src/index.ts`. Adding a library therefore means adding a path mapping nowhere —
+only the package's own `exports` field.
+
+Electron is strict about the two runtimes: the main and preload configs add the
+`node` condition, the renderer config adds `browser`, and renderer code imports
+a library's `/browser` entry whenever a Node-only adapter exists.
+
 ## Data flow
 
 ```text

@@ -1,42 +1,20 @@
-import path from 'node:path';
-
 import { defineConfig } from 'vite';
 
 /**
- * Workspace packages resolve to their `src` entry so `electron-forge start`
- * never needs a prebuilt `dist`.
+ * Workspace packages are consumed from `src` through the `@evidence-poc/source`
+ * export condition declared in their `package.json`, mirroring
+ * `customConditions` in `tsconfig.base.json`. That keeps this config free of a
+ * package-by-package alias table that has to be updated on every new library.
+ *
+ * Electron Forge adds `node` to the condition list for the main target, and
+ * every Node built-in stays external via its own config.
  */
-const workspaceAliases = {
-  '@evidence-poc/evidence-schema': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-schema/src/index.ts',
-  ),
-  '@evidence-poc/evidence-agent-core': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-agent-core/src/index.ts',
-  ),
-  '@evidence-poc/evidence-modeling-orchestrator': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-modeling-orchestrator/src/index.ts',
-  ),
-  '@evidence-poc/evidence-model-core/browser': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-model-core/src/browser.ts',
-  ),
-  '@evidence-poc/evidence-model-core': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-model-core/src/index.ts',
-  ),
-  '@evidence-poc/evidence-canvas-interaction': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-canvas-interaction/src/index.ts',
-  ),
-  '@evidence-poc/evidence-mcp': path.resolve(
-    import.meta.dirname,
-    '../../packages/evidence-mcp/src/index.ts',
-  ),
-};
+const SOURCE_CONDITIONS = [
+  '@evidence-poc/source',
+  'module',
+  'development|production',
+];
 
 export default defineConfig({
-  resolve: { alias: workspaceAliases },
+  resolve: { conditions: SOURCE_CONDITIONS },
 });

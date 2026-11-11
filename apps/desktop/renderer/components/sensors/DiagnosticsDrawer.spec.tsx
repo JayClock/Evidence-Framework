@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { DiagnosticsDrawer } from './DiagnosticsDrawer';
 import { healthyReport } from '../../test-support/desktopApi';
-import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator';
+import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 
 const blockedReport = (overrides: Partial<SensorReport> = {}): SensorReport =>
   healthyReport({

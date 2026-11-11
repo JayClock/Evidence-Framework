@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator';
+import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';

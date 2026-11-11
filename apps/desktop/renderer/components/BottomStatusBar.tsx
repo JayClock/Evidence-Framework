@@ -1,6 +1,6 @@
 import type { ValidationResult } from '@evidence-poc/evidence-schema';
 import type { DomainGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
-import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator';
+import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 
 interface BottomStatusBarProps {
   layout: DomainGraphLayout;

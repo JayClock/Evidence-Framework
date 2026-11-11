@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { DependencyFrontier } from '@evidence-poc/evidence-modeling-orchestrator';
+import type { DependencyFrontier } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 
 import { AgentPanel } from './AgentPanel';
 import type { AgentSessionController } from '../../state/useAgentSession';

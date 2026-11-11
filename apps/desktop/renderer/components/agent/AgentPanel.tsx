@@ -1,4 +1,4 @@
-import type { DependencyFrontier } from '@evidence-poc/evidence-modeling-orchestrator';
+import type { DependencyFrontier } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 
 import type { AgentSessionController } from '../../state/useAgentSession';
 
