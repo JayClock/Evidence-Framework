@@ -12,3 +12,6 @@ package-lock.json
 /.evidence/fm/generated/
 # 测试案例 OpenAPI 与渲染器逐字节比对；regenerate, never format.
 /.agents/skills/evidence-api-design/tests/fixtures/full-lifecycle/openapi.json
+
+# Nx scratch state
+.nx/self-healing
