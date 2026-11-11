@@ -62,3 +62,23 @@ export {
   type ModelSessionOptions,
 } from './session/createModelSession.js';
 
+export {
+  MODEL_MANIFEST_PATH,
+  MODEL_NON_SOURCE_TREES,
+  MODEL_SOURCE_TREES,
+  modelSourcePaths,
+  parseModelSourceFiles,
+  serializeDomainModel,
+  stringifyModelJson,
+  type ModelSourceFile,
+  type ModelSourceIssue,
+  type ModelSourceParseResult,
+  type ParseOptions,
+  type SerializeOptions,
+} from './adapters/modelSourceFiles.js';
+
+export {
+  readModelDirectory,
+  writeModelDirectory,
+  type WriteModelResult,
+} from './adapters/diskAdapter.js';
