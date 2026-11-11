@@ -19,6 +19,18 @@ export default defineConfig(() => ({
     port: 4300,
     host: 'localhost',
   },
+  resolve: {
+    // Workspace packages resolve from `src` through the `@evidence-poc/source`
+    // export condition, the same way `tsconfig.base.json`, the desktop Vite
+    // configs and the Vitest configs do. Without it a library would have to be
+    // built before the dev server or a test run could import it.
+    conditions: [
+      '@evidence-poc/source',
+      'module',
+      'browser',
+      'development|production',
+    ],
+  },
   plugins: [react()],
   // Uncomment this if you are using workers.
   // worker: {

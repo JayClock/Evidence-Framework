@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx run-many --target=serve --projects=@evidence-poc/frontend,backend --parallel=2",
-    "dev:frontend": "nx serve @evidence-poc/frontend",
+    "dev": "nx run-many --target=serve --projects=frontend,backend --parallel=2",
+    "dev:frontend": "nx serve frontend",
     "dev:backend": "nx serve backend",
     "build": "npm run build:apps",
     "build:apps": "nx run-many --target=build --all",
