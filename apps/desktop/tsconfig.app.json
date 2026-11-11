@@ -13,10 +13,11 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "client/**/*.ts",
-    "renderer/**/*.ts",
-    "renderer/**/*.tsx",
-    "shared/**/*.ts",
+    "src/main/**/*.ts",
+    "src/preload/**/*.ts",
+    "src/renderer/**/*.ts",
+    "src/renderer/**/*.tsx",
+    "src/shared/**/*.ts",
     "forge.env.d.ts"
   ],
   "references": [

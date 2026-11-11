@@ -10,10 +10,8 @@
     ]
   },
   "include": [
-    "client/**/*.ts",
-    "renderer/**/*.ts",
-    "renderer/**/*.tsx",
-    "shared/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "tests/**/*.spec.ts",
     "forge.env.d.ts",
     "vitest.config.mts"

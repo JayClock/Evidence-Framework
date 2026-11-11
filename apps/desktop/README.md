@@ -26,13 +26,22 @@ nx make desktop         # installers in apps/desktop/out/make
 
 ```text
 apps/desktop/
-├── client/            # main process: windows, IPC, ProjectStore, watcher,
-│                      # agentRuntime (Pi session), sensorRuntime (debounce)
-├── shared/            # IPC channel names and payload contracts (project, agent)
-├── renderer/          # React 19 UI: canvas, inspector, sidebar, agent panel,
-│                      # PromptDock, sensor status bar and diagnostics drawer
-└── tests/             # integration tests against the product-procurement fixture
+├── src/
+│   ├── main/          # main process: windows, IPC, ProjectStore, watcher,
+│   │                  # agentRuntime (Pi session), sensorRuntime (debounce)
+│   ├── preload/       # the only `contextBridge` surface (index.ts)
+│   ├── renderer/      # React 19 UI: canvas, inspector, sidebar, agent panel,
+│   │                  # PromptDock, sensor status bar and diagnostics drawer
+│   └── shared/        # IPC channel names and payload contracts (project, agent)
+├── tests/             # integration tests against the product-procurement fixture
+└── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```
+
+The folder per process mirrors Electron's runtime boundaries: `main/` may import
+`node:*`, `preload/` only talks to `electron` + `shared/`, `renderer/` is plain
+DOM and reaches the main process exclusively through `window.evidenceAPI`.
+Forge names the preload bundle after its entry, so `vite.preload.config.mjs`
+pins `preload.js` — the name `windows.ts` loads.
 
 Renderer modules map onto the four packages built earlier:
 

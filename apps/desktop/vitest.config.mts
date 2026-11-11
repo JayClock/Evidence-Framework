@@ -27,12 +27,12 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: [
-      'renderer/**/*.spec.{ts,tsx}',
-      'shared/**/*.spec.ts',
-      'client/**/*.spec.ts',
+      'src/renderer/**/*.spec.{ts,tsx}',
+      'src/shared/**/*.spec.ts',
+      'src/main/**/*.spec.ts',
       'tests/**/*.spec.ts',
     ],
-    setupFiles: ['renderer/test-setup.ts'],
+    setupFiles: ['src/renderer/test-setup.ts'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './test-output/vitest/coverage',

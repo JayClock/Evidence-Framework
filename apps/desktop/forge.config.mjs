@@ -22,12 +22,12 @@ const config = {
     new VitePlugin({
       build: [
         {
-          entry: 'client/main.ts',
+          entry: 'src/main/main.ts',
           config: 'vite.main.config.mjs',
           target: 'main',
         },
         {
-          entry: 'client/preload.ts',
+          entry: 'src/preload/index.ts',
           config: 'vite.preload.config.mjs',
           target: 'preload',
         },

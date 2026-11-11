@@ -11,7 +11,8 @@ import { installDesktopApi, projectSummary } from '../test-support/desktopApi';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,
-  '../../../../packages/evidence-schema/tests/fixtures/product-procurement',
+  // src/renderer/screens → workspace root
+  '../../../../../packages/evidence-schema/tests/fixtures/product-procurement',
 );
 
 let document: DomainModelDocument;

@@ -17,7 +17,7 @@ import {
 } from '@evidence-poc/evidence-canvas-interaction';
 import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
 
-import { createProjectStore } from '../client/projectStore';
+import { createProjectStore } from '../src/main/projectStore';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,

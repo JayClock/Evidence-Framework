@@ -26,7 +26,7 @@ import type {
   EvidenceAgentSessionOptions,
 } from '@evidence-poc/evidence-agent-core';
 
-import { createAgentRuntime } from '../client/agentRuntime';
+import { createAgentRuntime } from '../src/main/agentRuntime';
 
 const FIXTURE_ROOT = path.resolve(
   import.meta.dirname,
