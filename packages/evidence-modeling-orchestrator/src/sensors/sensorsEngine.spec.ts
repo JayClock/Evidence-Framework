@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
@@ -7,7 +8,12 @@ import {
   type PythonEnvResolver,
 } from '@evidence-poc/evidence-agent-core';
 
-import { SensorScriptError, createSensorsEngine } from './sensorsEngine.js';
+import {
+  SENSORS_ENGINE_ENVIRONMENT_VARIABLE,
+  SensorScriptError,
+  createSensorsEngine,
+  sensorsEngineModeOf,
+} from './sensorsEngine.js';
 import type { StageGateSummary } from './sensorReport.js';
 
 interface RecordedCall {
@@ -33,6 +39,7 @@ const createFakeResolver = ({
       isValid: !missing,
       ...(missing ? { driftReport: '未找到解释器，请运行 ./init.sh' } : {}),
     }),
+    bundledVenvPath: null,
     runScript: async (script, args = []) => {
       calls.push({ script, args });
 
@@ -50,10 +57,15 @@ const createFakeResolver = ({
   return { resolver, calls };
 };
 
-const engineFor = (options: Parameters<typeof createFakeResolver>[0]) => {
+const engineFor = (
+  options: Parameters<typeof createFakeResolver>[0] & {
+    mode?: 'python' | 'native' | 'shadow';
+  },
+) => {
   const fake = createFakeResolver(options);
   const engine = createSensorsEngine({
     resolver: fake.resolver,
+    mode: options.mode ?? 'python',
     now: () => new Date('2026-11-11T09:00:00.000Z'),
   });
 
@@ -212,5 +224,108 @@ describe('createSensorsEngine', () => {
     expect(calls.map(({ script }) => path.basename(script))).toEqual([
       'check_fm.py',
     ]);
+  });
+});
+
+const goldenModel = fileURLToPath(
+  new URL(
+    '../../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription',
+    import.meta.url,
+  ),
+);
+
+describe('sensorsEngineModeOf', () => {
+  it('defaults to native and accepts the three documented modes', () => {
+    expect(sensorsEngineModeOf({})).toBe('native');
+    expect(
+      sensorsEngineModeOf({ [SENSORS_ENGINE_ENVIRONMENT_VARIABLE]: 'python' }),
+    ).toBe('python');
+    expect(
+      sensorsEngineModeOf({ [SENSORS_ENGINE_ENVIRONMENT_VARIABLE]: 'shadow' }),
+    ).toBe('shadow');
+    expect(
+      sensorsEngineModeOf({ [SENSORS_ENGINE_ENVIRONMENT_VARIABLE]: 'native' }),
+    ).toBe('native');
+  });
+
+  it('refuses a mode it does not implement', () => {
+    expect(() =>
+      sensorsEngineModeOf({ [SENSORS_ENGINE_ENVIRONMENT_VARIABLE]: 'rust' }),
+    ).toThrow(/must be python, native or shadow/);
+  });
+});
+
+describe('native sensor mode', () => {
+  it('needs no interpreter and reads the model directly', async () => {
+    const engine = createSensorsEngine({ now: () => new Date('2026-11-11T09:00:00.000Z') });
+
+    const outcome = await engine.runFullSensors({
+      modelRoot: goldenModel,
+      scopeRefs: ['context.content-subscription'],
+    });
+
+    expect(engine.mode).toBe('native');
+    expect(outcome.report.passed).toBe(true);
+    expect(outcome.report.unavailableSensors).toEqual([]);
+    expect(outcome.fmCheck?.executedScenarioCount).toBe(3);
+    expect(outcome.keyData?.keyDataCount).toBe(14);
+  });
+
+  it('fails loudly when a mode that needs an interpreter has none', async () => {
+    const engine = createSensorsEngine({ mode: 'python' });
+
+    await expect(
+      engine.runFullSensors({ modelRoot: goldenModel }),
+    ).rejects.toThrow(/mode 'python' needs a pinned interpreter/);
+  });
+
+  it('gates natively from the same report the sensors produce', async () => {
+    const engine = createSensorsEngine();
+    const trace = fileURLToPath(
+      new URL(
+        '../../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription/README.md',
+        import.meta.url,
+      ),
+    );
+    const summary = await engine.checkStageGate({
+      target: 'api',
+      modelRoot: goldenModel,
+      tracePath: trace,
+      scopeRefs: ['context.content-subscription'],
+    });
+
+    // The README is not a trace, so the gate must stay shut rather than pass.
+    expect(summary.passed).toBe(false);
+    expect(summary.errors).toEqual(
+      expect.arrayContaining(['Interview trace is not a JSON object']),
+    );
+  });
+});
+
+describe('shadow sensor mode', () => {
+  it('runs both engines and reports the fields they disagree about', async () => {
+    const { resolver, calls } = createFakeResolver({
+      responses: {
+        'check_fm.py': JSON.stringify({ valid: false, errors: ['python says no'] }),
+        'audit_key_data.py': JSON.stringify({ keyDataCount: 0 }),
+      },
+    });
+    const engine = createSensorsEngine({
+      resolver,
+      mode: 'shadow',
+      now: () => new Date('2026-11-11T09:00:00.000Z'),
+    });
+
+    const outcome = await engine.runFullSensors({
+      modelRoot: goldenModel,
+      scopeRefs: ['context.content-subscription'],
+    });
+
+    expect(calls.length).toBeGreaterThan(0);
+    expect(
+      outcome.report.issues.find((issue) => issue.code === 'SENSOR_DRIFT'),
+    ).toMatchObject({ severity: 'warn' });
+    // The native verdict is the one the status bar shows.
+    expect(outcome.report.passed).toBe(true);
   });
 });

@@ -36,8 +36,12 @@ export {
 } from './sensors/sensorReport.js';
 
 export {
+  SENSORS_ENGINE_ENVIRONMENT_VARIABLE,
   SensorScriptError,
   createSensorsEngine,
+  sensorsEngineModeOf,
+  SENSORS_ENGINE_MODES,
+  type SensorsEngineMode,
   type RunSensorsInput,
   type SensorOutcome,
   type SensorsEngine,
@@ -55,3 +59,26 @@ export {
   type ModelPatchRequest,
   type ModelPatchResult,
 } from './tools/evidenceTools.js';
+
+export { compareSensorOutcomes } from './sensors/sensorParity.js';
+
+export {
+  ModelSourceError,
+  checkInterviewTrace,
+  checkNativeStageGate,
+  closureErrors,
+  filterFmCheckErrors,
+  isGateReadyReport,
+  loadModelSources,
+  runNativeFmCheck,
+  runNativeKeyDataAudit,
+  runNativeSensors,
+  scenarioResultsOf,
+  type ModelSources,
+  type NativeFmCheckOptions,
+  type NativeFmCheckOutcome,
+  type NativeSensorsInput,
+  type NativeSensorsOutcome,
+  type StageGateInput as NativeStageGateInput,
+  type TraceCheckResult,
+} from './sensors/native/index.js';

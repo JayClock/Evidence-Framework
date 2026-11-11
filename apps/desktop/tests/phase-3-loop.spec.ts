@@ -265,7 +265,7 @@ describe('phase 3 control loop', () => {
       projectRoot: PROJECT_ROOT,
       fileExists: () => false,
     });
-    const engine = createSensorsEngine({ resolver });
+    const engine = createSensorsEngine({ resolver, mode: 'python' });
 
     const outcome = await engine.runFullSensors({
       modelRoot: `${PROJECT_ROOT}/.evidence/fm`,
@@ -277,6 +277,17 @@ describe('phase 3 control loop', () => {
       'audit_key_data',
     ]);
     expect(outcome.report.issues[0]?.suggestion).toContain('./init.sh');
+  });
+
+  it('checks the same project natively, without any interpreter', async () => {
+    const engine = createSensorsEngine({ mode: 'native' });
+
+    const outcome = await engine.runFullSensors({ modelRoot: FIXTURE_ROOT });
+
+    expect(outcome.report.unavailableSensors).toEqual([]);
+    expect(outcome.report.blockCount).toBe(0);
+    expect(outcome.fmCheck?.valid).toBe(true);
+    expect(outcome.keyData?.keyDataCount).toBeGreaterThan(0);
   });
 
   it('throws the pinned-interpreter error instead of running a script', async () => {

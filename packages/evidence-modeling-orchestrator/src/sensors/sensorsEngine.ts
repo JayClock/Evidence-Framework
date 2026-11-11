@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -21,10 +21,37 @@ import {
   type StageGateSummary,
 } from './sensorReport.js';
 
+import { checkNativeStageGate } from './native/nativeStageGate.js';
+import { runNativeSensors } from './native/nativeSensors.js';
+import { compareSensorOutcomes } from './sensorParity.js';
+
 const DEFAULT_SKILLS_DIRECTORY = path.join('.agents', 'skills');
 
+/** Which implementation produces the verdict. */
+export type SensorsEngineMode = 'python' | 'native' | 'shadow';
+
+/** Every mode the engine implements, for a caller that has to offer a choice. */
+export const SENSORS_ENGINE_MODES: readonly SensorsEngineMode[] = [
+  'python',
+  'native',
+  'shadow',
+];
+
+/** Environment variable that picks the mode when a caller does not. */
+export const SENSORS_ENGINE_ENVIRONMENT_VARIABLE = 'EVIDENCE_SENSORS_ENGINE';
+
 export interface SensorsEngineOptions {
-  resolver: PythonEnvResolver;
+  /**
+   * Pinned interpreter used by `python` and `shadow`.
+   *
+   * Native runs do not start a process, so they need no resolver; a mode that
+   * does and finds none fails loudly instead of silently degrading.
+   */
+  resolver?: PythonEnvResolver;
+  /** Defaults to `EVIDENCE_SENSORS_ENGINE`, then to `native`. */
+  mode?: SensorsEngineMode;
+  /** Environment the mode is read from; injected by tests. */
+  environment?: NodeJS.ProcessEnv;
   /** Defaults to `<projectRoot>/.agents/skills`, the only skill source. */
   skillsRoot?: string;
   discoverySkillDirectory?: string;
@@ -32,6 +59,25 @@ export interface SensorsEngineOptions {
   modelingSkillDirectory?: string;
   now?: () => Date;
 }
+
+/** Reads the configured mode, rejecting a value that is not one of the three. */
+export const sensorsEngineModeOf = (
+  environment: NodeJS.ProcessEnv = process.env,
+): SensorsEngineMode => {
+  const configured = environment[SENSORS_ENGINE_ENVIRONMENT_VARIABLE];
+
+  if (configured === undefined || configured === '') {
+    return 'native';
+  }
+
+  if (configured === 'python' || configured === 'native' || configured === 'shadow') {
+    return configured;
+  }
+
+  throw new Error(
+    `${SENSORS_ENGINE_ENVIRONMENT_VARIABLE} must be python, native or shadow, found '${configured}'`,
+  );
+};
 
 export interface RunSensorsInput {
   /** Absolute path of `.evidence/fm`. */
@@ -94,19 +140,36 @@ const isPinnedPythonMissing = (error: unknown): boolean =>
  */
 export const createSensorsEngine = ({
   resolver,
+  mode,
+  environment,
   skillsRoot,
   discoverySkillDirectory,
   fmSkillDirectory,
   modelingSkillDirectory,
   now = () => new Date(),
-}: SensorsEngineOptions) => {
+}: SensorsEngineOptions = {}) => {
+  const selectedMode = mode ?? sensorsEngineModeOf(environment);
   const root =
-    skillsRoot ?? path.join(resolver.projectRoot, DEFAULT_SKILLS_DIRECTORY);
+    skillsRoot ??
+    path.join(
+      resolver?.projectRoot ?? process.cwd(),
+      DEFAULT_SKILLS_DIRECTORY,
+    );
   const fmSkill = fmSkillDirectory ?? path.join(root, 'evidence-fm');
   const discoverySkill =
     discoverySkillDirectory ?? path.join(root, 'evidence-discovery');
   const modelingSkill =
     modelingSkillDirectory ?? path.join(root, 'evidence-modeling');
+
+  const pythonResolver = (): PythonEnvResolver => {
+    if (resolver === undefined) {
+      throw new Error(
+        `sensor mode '${selectedMode}' needs a pinned interpreter; pass a resolver or use mode 'native'`,
+      );
+    }
+
+    return resolver;
+  };
 
   const runCheckFm = async (
     input: RunSensorsInput,
@@ -116,7 +179,7 @@ export const createSensorsEngine = ({
       input.modelRoot,
       ...(input.scopeRefs ?? []).flatMap((scope) => ['--scope', scope]),
     ];
-    const result = await resolver.runScript(script, args, {
+    const result = await pythonResolver().runScript(script, args, {
       ...(input.signal === undefined ? {} : { signal: input.signal }),
     });
 
@@ -127,7 +190,7 @@ export const createSensorsEngine = ({
     input: RunSensorsInput,
   ): Promise<KeyDataAuditReport | undefined> => {
     const script = path.join(fmSkill, 'scripts', 'audit_key_data.py');
-    const result = await resolver.runScript(script, [input.modelRoot], {
+    const result = await pythonResolver().runScript(script, [input.modelRoot], {
       ...(input.signal === undefined ? {} : { signal: input.signal }),
     });
 
@@ -146,7 +209,7 @@ export const createSensorsEngine = ({
       'scripts',
       'check_interview_trace.py',
     );
-    const result = await resolver.runScript(
+    const result = await pythonResolver().runScript(
       script,
       [
         input.tracePath,
@@ -169,7 +232,7 @@ export const createSensorsEngine = ({
         };
   };
 
-  const runFullSensors = async (
+  const runPythonSensors = async (
     input: RunSensorsInput,
   ): Promise<SensorOutcome> => {
     const unavailableSensors: SensorSource[] = [];
@@ -236,7 +299,7 @@ export const createSensorsEngine = ({
    * Runs `check_stage_gate.py` against a saved FM report, because the gate reads
    * evidence from a file rather than from a pipe.
    */
-  const checkStageGate = async (
+  const checkPythonStageGate = async (
     input: StageGateInput,
   ): Promise<StageGateSummary> => {
     const closedGate = (errors: readonly string[]): StageGateSummary => ({
@@ -284,7 +347,7 @@ export const createSensorsEngine = ({
       );
 
       const script = path.join(modelingSkill, 'scripts', 'check_stage_gate.py');
-      const result = await resolver.runScript(
+      const result = await pythonResolver().runScript(
         script,
         [
           '--target',
@@ -304,8 +367,135 @@ export const createSensorsEngine = ({
     }
   };
 
+  /** Reads the trace a native gate needs; the Python path hands the path over. */
+  const readTraceDocument = async (tracePath: string): Promise<unknown> =>
+    JSON.parse(await readFile(tracePath, 'utf8')) as unknown;
+
+  /** Appends parity findings so a shadow run reports its own disagreement. */
+  const withDrift = (
+    outcome: SensorOutcome,
+    differences: readonly string[],
+  ): SensorOutcome => {
+    if (differences.length === 0) {
+      return outcome;
+    }
+
+    const issues: SensorIssue[] = [
+      ...outcome.report.issues,
+      {
+        issueId: 'shadow:SENSOR_DRIFT',
+        severity: 'warn',
+        source: 'check_fm',
+        code: 'SENSOR_DRIFT',
+        message: `原生传感器与 Python 传感器结论不一致（${differences.length} 项）。`,
+        suggestion: differences.join('; '),
+      },
+    ];
+    const blockCount = issues.filter((issue) => issue.severity === 'block').length;
+
+    return {
+      ...outcome,
+      report: {
+        ...outcome.report,
+        issues,
+        warnCount: issues.filter((issue) => issue.severity === 'warn').length,
+        passed: blockCount === 0,
+      },
+    };
+  };
+
+  const runFullSensors = async (
+    input: RunSensorsInput,
+  ): Promise<SensorOutcome> => {
+    if (selectedMode === 'python') {
+      return runPythonSensors(input);
+    }
+
+    const native = await runNativeSensors({
+      modelRoot: input.modelRoot,
+      ...(input.tracePath === undefined ? {} : { tracePath: input.tracePath }),
+      ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
+      ...(input.signal === undefined ? {} : { signal: input.signal }),
+      readTrace: readTraceDocument,
+    });
+
+    if (selectedMode === 'native') {
+      return native;
+    }
+
+    const differences = compareSensorOutcomes(
+      await runPythonSensors(input),
+      native,
+    );
+
+    return withDrift(native, differences);
+  };
+
+  const checkStageGate = async (
+    input: StageGateInput,
+  ): Promise<StageGateSummary> => {
+    if (selectedMode === 'python') {
+      return checkPythonStageGate(input);
+    }
+
+    const report =
+      input.fmCheck ??
+      (
+        await runNativeSensors({
+          modelRoot: input.modelRoot,
+          ...(input.scopeRefs === undefined
+            ? {}
+            : { scopeRefs: input.scopeRefs }),
+          ...(input.signal === undefined ? {} : { signal: input.signal }),
+          detectInputChange: false,
+        })
+      ).fmCheck;
+
+    if (report === undefined) {
+      return {
+        target: input.target,
+        passed: false,
+        scopeRefs: [],
+        errors: ['缺少 FM 检查结果，无法判定阶段门禁。'],
+        limitations: [],
+      };
+    }
+
+    const trace = await readTraceDocument(input.tracePath).catch(() => null);
+    const gate = checkNativeStageGate({
+      target: input.target,
+      fmCheck: report,
+      trace,
+      scopes: input.scopeRefs ?? [],
+    });
+    const summary = stageGateSummaryOf(gate);
+
+    if (selectedMode === 'native') {
+      return summary;
+    }
+
+    const pythonGate = await checkPythonStageGate({
+      ...input,
+      fmCheck: report,
+    }).catch(() => null);
+
+    if (pythonGate === null || pythonGate.passed === summary.passed) {
+      return summary;
+    }
+
+    return {
+      ...summary,
+      errors: [
+        ...summary.errors,
+        `原生门禁与 Python 门禁结论不一致：python=${pythonGate.passed}，native=${summary.passed}`,
+      ],
+      passed: false,
+    };
+  };
+
   return {
     skillsRoot: root,
+    mode: selectedMode,
     runFullSensors,
     checkStageGate,
   };
