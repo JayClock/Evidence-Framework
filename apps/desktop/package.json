@@ -5,14 +5,6 @@
   "description": "Evidence 履约建模桌面端：本地 .evidence/fm 源树的交互式画布",
   "productName": "Evidence Modeling",
   "main": ".vite/build/main.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "test": "vitest run",
-    "lint": "eslint .",
-    "typecheck": "tsc -p tsconfig.app.json"
-  },
   "dependencies": {
     "@evidence-poc/evidence-agent-core": "0.0.1",
     "@evidence-poc/evidence-canvas-interaction": "0.0.1",
@@ -37,8 +29,5 @@
     "@types/node": "^22.20.1",
     "electron": "^38.4.0",
     "tailwindcss": "^4.1.16"
-  },
-  "nx": {
-    "name": "desktop"
   }
 }
