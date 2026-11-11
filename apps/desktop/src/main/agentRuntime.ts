@@ -20,14 +20,10 @@ import {
   type SensorsEngine,
 } from '@evidence-poc/evidence-modeling-orchestrator';
 
+import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
-export const TRACE_RELATIVE_PATH = path.join(
-  '.evidence',
-  'traces',
-  'interview-trace.json',
-);
 
 /** How the runtime reaches the renderer without importing Electron. */
 export interface AgentRuntimeTransport {
@@ -93,10 +89,13 @@ export const createAgentRuntime = ({
   sensorDelayMs,
 }: AgentRuntimeOptions): AgentRuntime => {
   const resolvedRoot = path.resolve(rootPath);
-  const modelRoot = path.join(resolvedRoot, MODEL_DIRECTORY);
-  const tracePath = path.join(resolvedRoot, TRACE_RELATIVE_PATH);
+  // A bundle project keeps the model and `.evidence/` next to the file, so every
+  // path below is resolved from the source form rather than assumed.
+  const modelRoot = modelSourceOf(resolvedRoot);
+  const projectDirectory = projectDirectoryOf(resolvedRoot);
+  const tracePath = tracePathOf(resolvedRoot);
   const python =
-    resolver ?? createPythonEnvResolver({ projectRoot: resolvedRoot });
+    resolver ?? createPythonEnvResolver({ projectRoot: projectDirectory });
   const engine =
     sensors ??
     createSensorsEngine({
@@ -107,7 +106,7 @@ export const createAgentRuntime = ({
   let session: EvidenceAgentSession | null = null;
   let latestReport: SensorReport | null = null;
   let canvasContext: CanvasContext = {
-    projectRoot: resolvedRoot,
+    projectRoot: projectDirectory,
     selection: emptySelection,
   };
 
@@ -150,7 +149,7 @@ export const createAgentRuntime = ({
 
   const startSession = async (): Promise<EvidenceAgentSession> => {
     const created = sessionFactory({
-      projectRoot: resolvedRoot,
+      projectRoot: projectDirectory,
       ...(sessionDirectory === undefined ? {} : { sessionDirectory }),
       ...(sessionFile === undefined || sessionFile === null
         ? {}

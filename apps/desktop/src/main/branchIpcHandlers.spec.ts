@@ -174,3 +174,51 @@ describe('registerBranchIpc', () => {
     );
   });
 });
+
+describe('registerBranchIpc with a bundle project', () => {
+  beforeEach(() => {
+    handlers.clear();
+  });
+
+  const bundlePath = '/models/procurement.evidence.json';
+
+  it('lists one read-only branch instead of snapshotting a file', async () => {
+    registerBranchIpc({ store: storeOf() });
+
+    const result = (await invoke(
+      EVIDENCE_BRANCH_IPC_CHANNELS.list,
+      bundlePath,
+    )) as { success: boolean; activeBranchId: string; branches: unknown[] };
+
+    expect(result.success).toBe(true);
+    expect(result.activeBranchId).toBe('main');
+    expect(result.branches).toHaveLength(1);
+  });
+
+  it('refuses forks, merges and comparisons with an explanation', async () => {
+    const onCheckout = vi.fn();
+    const publish = vi.fn();
+
+    registerBranchIpc({ store: storeOf(), onCheckout, publish });
+
+    const fork = (await invoke(EVIDENCE_BRANCH_IPC_CHANNELS.create, {
+      rootPath: bundlePath,
+      name: 'monthly',
+    })) as { success: boolean; error: string };
+    const merge = (await invoke(EVIDENCE_BRANCH_IPC_CHANNELS.merge, {
+      rootPath: bundlePath,
+      sourceBranchId: 'monthly',
+    })) as { success: boolean; error: string };
+    const remove = (await invoke(EVIDENCE_BRANCH_IPC_CHANNELS.remove, {
+      rootPath: bundlePath,
+      branchId: 'monthly',
+    })) as { success: boolean; error: string };
+
+    expect(fork.success).toBe(false);
+    expect(fork.error).toContain('单文件模型');
+    expect(merge.success).toBe(false);
+    expect(remove.success).toBe(false);
+    expect(onCheckout).not.toHaveBeenCalled();
+    expect(publish).not.toHaveBeenCalled();
+  });
+});

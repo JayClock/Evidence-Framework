@@ -3,7 +3,11 @@ import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
+  isModelBundleFile,
+  isModelBundlePath,
+  readModelBundle,
   readModelDirectory,
+  writeModelBundle,
   writeModelDirectory,
 } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
@@ -18,6 +22,9 @@ import type {
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
 export const MODEL_MANIFEST_FILE = 'model.json';
 export const RECENT_PROJECTS_FILE = 'recent-projects.json';
+
+/** Suffix the open dialog and error messages name for single-file models. */
+export const MODEL_BUNDLE_LABEL = '*.evidence.json';
 
 const MAX_RECENT_PROJECTS = 20;
 
@@ -78,9 +85,13 @@ const summarize = (
   rootPath: string,
   document: DomainModelDocument,
   lastOpenedAt: string,
+  kind: 'directory' | 'file' = 'directory',
 ): EvidenceProjectSummary => ({
   rootPath: path.resolve(rootPath),
-  modelRoot: modelRootOf(rootPath),
+  // A bundle project has no `.evidence/fm`: the file itself is the model
+  // source every reader (scripts, MCP, canvas) is pointed at.
+  modelRoot: kind === 'file' ? path.resolve(rootPath) : modelRootOf(rootPath),
+  kind,
   name: document.manifest.name,
   modelId: document.manifest.id,
   modelVersion: document.manifest.version,
@@ -121,12 +132,44 @@ export const createProjectStore = ({
 
     async open(rootPath) {
       try {
+        if (await isModelBundleFile(rootPath)) {
+          const parsed = await readModelBundle(rootPath);
+
+          if (
+            parsed.issues.length > 0 &&
+            parsed.document.entities.length === 0
+          ) {
+            return {
+              success: false,
+              error: parsed.issues
+                .map((issue) => `${issue.path}: ${issue.message}`)
+                .join('\n'),
+            };
+          }
+
+          const project = summarize(
+            rootPath,
+            parsed.document,
+            now().toISOString(),
+            'file',
+          );
+
+          await remember(project);
+
+          return {
+            success: true,
+            project,
+            document: parsed.document,
+            issues: parsed.issues,
+          };
+        }
+
         const modelRoot = modelRootOf(rootPath);
         const manifestPath = path.join(modelRoot, MODEL_MANIFEST_FILE);
 
         await stat(manifestPath).catch(() => {
           throw new Error(
-            `未找到 ${path.join(MODEL_DIRECTORY, MODEL_MANIFEST_FILE)}，请选择一个包含 .evidence/fm 源树的项目。`,
+            `未找到 ${path.join(MODEL_DIRECTORY, MODEL_MANIFEST_FILE)}，请选择一个包含 .evidence/fm 源树的项目，或一个 ${MODEL_BUNDLE_LABEL} 单文件。`,
           );
         });
 
@@ -162,6 +205,20 @@ export const createProjectStore = ({
 
     async save(rootPath, document) {
       try {
+        if (isModelBundlePath(rootPath)) {
+          // The document the renderer holds already carries the bundle extras
+          // (`validation`, `readme`), so writing it back stays lossless.
+          const written = await writeModelBundle(rootPath, document);
+
+          return {
+            success: true,
+            written: written.written ? [path.basename(rootPath)] : [],
+            unchanged: written.written ? [] : [path.basename(rootPath)],
+            removed: [],
+            savedAt: now().toISOString(),
+          };
+        }
+
         const modelRoot = modelRootOf(rootPath);
 
         await mkdir(modelRoot, { recursive: true });
@@ -181,6 +238,14 @@ export const createProjectStore = ({
     },
 
     async fingerprint(rootPath) {
+      if (isModelBundlePath(rootPath)) {
+        const content = await readFile(rootPath, 'utf8').catch(() => null);
+
+        return content === null
+          ? null
+          : createHash('sha1').update(content).digest('hex');
+      }
+
       const modelRoot = modelRootOf(rootPath);
       const parsed = await readModelDirectory(modelRoot).catch(() => null);
 

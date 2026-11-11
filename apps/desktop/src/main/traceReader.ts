@@ -1,13 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 
 import type { InterviewTraceDocument } from '@evidence-poc/evidence-modeling-orchestrator';
 
-export const TRACE_RELATIVE_PATH = path.join(
-  '.evidence',
-  'traces',
-  'interview-trace.json',
-);
+import { tracePathOf } from './modelSource';
 
 export type TraceReadResult =
   | { success: true; trace: InterviewTraceDocument }
@@ -25,7 +20,8 @@ export const readInterviewTrace = async (
   rootPath: string,
   readFileImpl: typeof readFile = readFile,
 ): Promise<TraceReadResult> => {
-  const file = path.join(path.resolve(rootPath), TRACE_RELATIVE_PATH);
+  // `.evidence/` lives next to a bundle file, not inside it.
+  const file = tracePathOf(rootPath);
 
   let raw: string;
 

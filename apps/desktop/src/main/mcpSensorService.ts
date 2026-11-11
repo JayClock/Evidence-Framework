@@ -1,22 +1,21 @@
-import path from 'node:path';
-
 import { createPythonEnvResolver } from '@evidence-poc/evidence-agent-core';
 import {
   createSensorsEngine,
   type KeyDataAuditReport,
   type SensorsEngine,
 } from '@evidence-poc/evidence-modeling-orchestrator';
-import type { McpKeyDataAudit, McpStageGateResult } from '@evidence-poc/evidence-mcp';
+import type {
+  McpKeyDataAudit,
+  McpStageGateResult,
+} from '@evidence-poc/evidence-mcp';
 
-import { MODEL_DIRECTORY } from './agentRuntime';
-import { TRACE_RELATIVE_PATH } from './agentRuntime';
+import { modelSourceOf, tracePathOf } from './modelSource';
 
 /** Builds one sensors engine per project root and caches it. */
 export interface McpSensorServiceOptions {
-  createEngine?: (rootPath: string) => Pick<
-    SensorsEngine,
-    'runFullSensors' | 'checkStageGate'
-  >;
+  createEngine?: (
+    rootPath: string,
+  ) => Pick<SensorsEngine, 'runFullSensors' | 'checkStageGate'>;
 }
 
 const toAudit = (report: KeyDataAuditReport | undefined): McpKeyDataAudit => ({
@@ -66,8 +65,8 @@ export const createMcpSensorService = ({
     readKeyDataAudit: async (rootPath: string): Promise<McpKeyDataAudit> => {
       try {
         const outcome = await engineFor(rootPath).runFullSensors({
-          modelRoot: path.join(rootPath, MODEL_DIRECTORY),
-          tracePath: path.join(rootPath, TRACE_RELATIVE_PATH),
+          modelRoot: modelSourceOf(rootPath),
+          tracePath: tracePathOf(rootPath),
         });
 
         return toAudit(outcome.keyData);
@@ -85,8 +84,8 @@ export const createMcpSensorService = ({
       try {
         const gate = await engineFor(rootPath).checkStageGate({
           target,
-          modelRoot: path.join(rootPath, MODEL_DIRECTORY),
-          tracePath: path.join(rootPath, TRACE_RELATIVE_PATH),
+          modelRoot: modelSourceOf(rootPath),
+          tracePath: tracePathOf(rootPath),
         });
 
         return {

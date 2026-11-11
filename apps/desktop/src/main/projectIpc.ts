@@ -9,8 +9,9 @@ import {
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 import type { SaveProjectInput } from '../shared/projects';
 
-import { watchModelDirectory, type ModelWatcher } from './modelWatcher';
-import { modelRootFor, type ProjectStore } from './projectStore';
+import { watchModelSource, type ModelWatcher } from './modelWatcher';
+import { modelSourceOf } from './modelSource';
+import { MODEL_BUNDLE_LABEL, type ProjectStore } from './projectStore';
 
 export interface ProjectIpcOptions {
   projectStore: ProjectStore;
@@ -35,7 +36,7 @@ export const registerProjectIpc = ({
   const startWatching = (sender: WebContents, rootPath: string): void => {
     stopWatching(sender.id);
 
-    const watcher = watchModelDirectory(modelRootFor(rootPath), (paths) => {
+    const watcher = watchModelSource(modelSourceOf(rootPath), (paths) => {
       if (sender.isDestroyed()) {
         stopWatching(sender.id);
         return;
@@ -55,9 +56,10 @@ export const registerProjectIpc = ({
   ipcMain.handle(EVIDENCE_IPC_CHANNELS.showOpenDialog, async (event) => {
     const parent = BrowserWindow.fromWebContents(event.sender);
     const options: OpenDialogOptions = {
-      title: '选择包含 .evidence/fm 的项目目录',
-      buttonLabel: '打开项目',
-      properties: ['openDirectory'],
+      title: `选择包含 .evidence/fm 的项目目录，或一个 ${MODEL_BUNDLE_LABEL} 单文件`,
+      buttonLabel: '打开模型',
+      properties: ['openFile', 'openDirectory'],
+      filters: [{ name: 'Evidence 单文件模型', extensions: ['json'] }],
     };
     const result = parent
       ? await dialog.showOpenDialog(parent, options)

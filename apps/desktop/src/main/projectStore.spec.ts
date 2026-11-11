@@ -6,7 +6,11 @@ import {
   createEmptyDomainModel,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
-import { writeModelDirectory } from '@evidence-poc/evidence-model-core';
+import {
+  readModelBundle,
+  writeModelBundle,
+  writeModelDirectory,
+} from '@evidence-poc/evidence-model-core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -197,5 +201,118 @@ describe('projectStore', () => {
     expect(
       await projectStore.fingerprint(path.join(tempRoot, 'missing')),
     ).toBeNull();
+  });
+});
+
+describe('projectStore with a single-file model', () => {
+  let tempRoot: string;
+  let bundlePath: string;
+
+  beforeEach(async () => {
+    tempRoot = await mkdtemp(
+      path.join(os.tmpdir(), 'evidence-bundle-project-'),
+    );
+    bundlePath = path.join(tempRoot, 'desktop-project.evidence.json');
+    await writeModelBundle(bundlePath, domainModel());
+  });
+
+  afterEach(async () => {
+    await rm(tempRoot, { recursive: true, force: true });
+  });
+
+  const store = () =>
+    createProjectStore({
+      recentProjectsFile: path.join(tempRoot, RECENT_PROJECTS_FILE),
+      now: () => new Date('2026-11-11T08:00:00.000Z'),
+    });
+
+  it('opens a bundle file and points modelRoot at the file', async () => {
+    const result = await store().open(bundlePath);
+
+    expect(result.success).toBe(true);
+
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.project.kind).toBe('file');
+    expect(result.project.modelRoot).toBe(path.resolve(bundlePath));
+    expect(result.project.entityCount).toBe(2);
+    expect(result.issues).toEqual([]);
+  });
+
+  it('saves back into the same file without adding a source tree', async () => {
+    const projectStore = store();
+    const opened = await projectStore.open(bundlePath);
+
+    if (!opened.success) {
+      throw new Error(opened.error);
+    }
+
+    const saved = await projectStore.save(bundlePath, {
+      ...opened.document,
+      entities: opened.document.entities.map((entity) =>
+        entity.id === 'evidence.contract'
+          ? { ...entity, label: '采购合同（Procurement Contract）' }
+          : entity,
+      ),
+    });
+
+    expect(saved.success).toBe(true);
+
+    const reread = await readModelBundle(bundlePath);
+
+    expect(reread.issues).toEqual([]);
+    expect(
+      reread.document.entities.find(
+        (entity) => entity.id === 'evidence.contract',
+      )?.label,
+    ).toBe('采购合同（Procurement Contract）');
+    // Saving a bundle never materializes a neighbouring source tree.
+    await expect(
+      readFile(path.join(tempRoot, '.evidence', 'fm', 'model.json'), 'utf8'),
+    ).rejects.toThrow();
+  });
+
+  it('keeps bundle extras the renderer hands back', async () => {
+    const projectStore = store();
+    const opened = await projectStore.open(bundlePath);
+
+    if (!opened.success) {
+      throw new Error(opened.error);
+    }
+
+    const withExtras = {
+      ...opened.document,
+      validation: { instances: [], scenarios: [] },
+      readme: '范围说明\n',
+    };
+
+    await projectStore.save(bundlePath, withExtras);
+
+    const reread = await readModelBundle(bundlePath);
+
+    expect(reread.document.readme).toBe('范围说明\n');
+    expect(reread.document.validation).toEqual({
+      instances: [],
+      scenarios: [],
+    });
+  });
+
+  it('fingerprints the file so an external write is detectable', async () => {
+    const projectStore = store();
+    const before = await projectStore.fingerprint(bundlePath);
+
+    expect(before).not.toBeNull();
+
+    await writeModelBundle(bundlePath, {
+      ...domainModel(),
+      entities: domainModel().entities.map((entity) => ({
+        ...entity,
+        label: `${entity.label} v2`,
+      })),
+    });
+
+    expect(await projectStore.fingerprint(bundlePath)).not.toBe(before);
   });
 });

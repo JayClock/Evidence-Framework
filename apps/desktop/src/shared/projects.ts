@@ -1,11 +1,21 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-/** One local `.evidence/fm` source tree the desktop app can open. */
+/** One local model source the desktop app can open. */
 export interface EvidenceProjectSummary {
-  /** Absolute path of the repository or folder holding `.evidence/fm`. */
+  /**
+   * Absolute path of the repository or folder holding `.evidence/fm`, or of the
+   * single `*.evidence.json` bundle when `kind` is `'file'`.
+   */
   rootPath: string;
-  /** Absolute path of `.evidence/fm`. */
+  /**
+   * Absolute path of `.evidence/fm`, or of the bundle file itself.
+   *
+   * Scripts and MCP tools read this path, so a bundle and a tree are
+   * interchangeable as long as the reader accepts both.
+   */
   modelRoot: string;
+  /** Which source form `rootPath` names; older entries default to a tree. */
+  kind?: 'directory' | 'file';
   name: string;
   modelId: string;
   modelVersion: string;
