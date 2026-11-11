@@ -28,6 +28,12 @@
     },
     {
       "path": "../../packages/evidence-schema/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/evidence-agent-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/evidence-modeling-orchestrator/tsconfig.lib.json"
     }
   ]
 }
