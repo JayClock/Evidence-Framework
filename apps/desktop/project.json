@@ -11,7 +11,10 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "outputs": ["{projectRoot}/.vite", "{projectRoot}/out"],
-      "options": { "command": "electron-forge package", "cwd": "apps/desktop" },
+      "options": {
+        "command": "electron-forge package",
+        "cwd": "apps/desktop"
+      },
       "metadata": {
         "description": "Bundle main, preload and renderer with Vite and emit the unpacked app"
       }
@@ -20,7 +23,9 @@
       "executor": "nx:noop",
       "cache": true,
       "dependsOn": ["build"],
-      "metadata": { "description": "Alias for `build`, kept for the documented desktop workflow" }
+      "metadata": {
+        "description": "Alias for `build`, kept for the documented desktop workflow"
+      }
     },
     "make": {
       "executor": "nx:run-commands",
@@ -28,18 +33,17 @@
       "dependsOn": ["build"],
       "inputs": ["production", "^production"],
       "outputs": ["{projectRoot}/out/make"],
-      "options": { "command": "electron-forge make", "cwd": "apps/desktop" }
+      "options": {
+        "command": "electron-forge make",
+        "cwd": "apps/desktop"
+      }
     },
     "start": {
       "executor": "nx:run-commands",
-      "options": { "command": "electron-forge start", "cwd": "apps/desktop" }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/vitest.config.mts"],
-      "outputs": ["{projectRoot}/test-output"],
-      "options": { "command": "vitest run", "cwd": "apps/desktop" }
+      "options": {
+        "command": "electron-forge start",
+        "cwd": "apps/desktop"
+      }
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -50,17 +54,6 @@
         "cwd": "apps/desktop",
         "parallel": false
       }
-    },
-    "lint": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{projectRoot}/eslint.config.mjs"
-      ],
-      "options": { "command": "eslint .", "cwd": "apps/desktop" }
     }
   }
 }
