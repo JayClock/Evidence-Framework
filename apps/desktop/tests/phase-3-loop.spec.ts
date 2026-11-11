@@ -112,6 +112,7 @@ const fakeSession = (): EvidenceAgentSession => ({
   projectRoot: PROJECT_ROOT,
   start: async () => undefined,
   getSession: () => null,
+  getSessionFile: () => null,
   prompt: async () => undefined,
   steer: async () => 'queued',
   abort: async () => undefined,

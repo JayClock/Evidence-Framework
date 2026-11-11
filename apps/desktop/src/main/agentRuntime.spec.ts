@@ -64,6 +64,7 @@ const createFakeSession = () => {
       starts += 1;
     },
     getSession: () => null,
+    getSessionFile: () => null,
     prompt: async (text) => {
       prompts.push(text);
     },
