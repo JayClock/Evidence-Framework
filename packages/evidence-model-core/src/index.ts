@@ -53,3 +53,12 @@ export {
   type FulfillmentPairResult,
 } from './commands/fulfillmentCommands.js';
 
+export {
+  ModelSessionValidationError,
+  createModelSession,
+  type ModelSelection,
+  type ModelSession,
+  type ModelSessionEvent,
+  type ModelSessionOptions,
+} from './session/createModelSession.js';
+
