@@ -14,7 +14,7 @@
     "renderer/**/*.ts",
     "renderer/**/*.tsx",
     "shared/**/*.ts",
-    "tests/**/*.ts",
+    "tests/**/*.spec.ts",
     "forge.env.d.ts",
     "vitest.config.mts"
   ]

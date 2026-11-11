@@ -11,7 +11,10 @@
     "test": "npm run test:apps",
     "test:apps": "nx run-many --target=test --all",
     "lint": "nx lint @evidence-poc/frontend",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "desktop": "nx start desktop",
+    "desktop:package": "nx package desktop",
+    "test:desktop": "nx test desktop"
   },
   "private": true,
   "dependencies": {

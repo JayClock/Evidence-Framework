@@ -45,7 +45,7 @@ export default defineConfig({
           root: import.meta.dirname,
           globals: true,
           environment: 'node',
-          include: ['client/**/*.spec.ts'],
+          include: ['client/**/*.spec.ts', 'tests/**/*.spec.ts'],
         },
       },
     ],
