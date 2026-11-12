@@ -16,6 +16,14 @@ export {
 } from './readDraftJson.js';
 
 export {
+  annotateContractClauses,
+  domainNounOf,
+  splitContractClauses,
+  type ClauseReading,
+  type ClauseReadingResult,
+} from './contractAnnotator.js';
+
+export {
   draftFromBusinessText,
   type TextExtractionOptions,
   type TextExtractionResult,
