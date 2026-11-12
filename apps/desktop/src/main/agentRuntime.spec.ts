@@ -1,3 +1,8 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+
+import { writeModelDirectory } from '@evidence-poc/evidence-model-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import type {
@@ -13,6 +18,7 @@ import type {
 } from '@evidence-poc/evidence-modeling-orchestrator';
 
 import { createAgentRuntime, type AgentRuntimeTransport } from './agentRuntime';
+import { createDesktopFixture } from '../renderer/test-support/modelFixture';
 
 const REPORT: SensorReport = {
   timestamp: '2026-11-11T09:00:00.000Z',
@@ -139,9 +145,10 @@ const runtimeWith = (options: {
   fake: ReturnType<typeof createFakeSession>;
   sensors?: ReturnType<typeof sensorEngine>;
   sensorDelayMs?: number;
+  rootPath?: string;
 }) =>
   createAgentRuntime({
-    rootPath: '/models/procurement',
+    rootPath: options.rootPath ?? '/models/procurement',
     transport: options.transport,
     sensors: options.sensors ?? sensorEngine(),
     sessionFactory: (created) => {
@@ -355,5 +362,76 @@ describe('agent patch transport', () => {
 
     expect(result.details).toEqual(applied);
     expect(result.isError).toBe(true);
+  });
+
+  it('reads the project tree so an operator can name the root contract', async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'evidence-operator-'));
+    const { transport, patches } = createTransport();
+    const fake = createFakeSession();
+    const runtime = runtimeWith({ transport, fake, rootPath: tempRoot });
+
+    await writeModelDirectory(
+      path.join(tempRoot, '.evidence', 'fm'),
+      createDesktopFixture(),
+    );
+
+    try {
+      await runtime.prompt('补一组退款履约');
+
+      const extension = sessionOptions.at(-1)?.extensionFactories?.[0];
+
+      if (typeof extension !== 'function') {
+        throw new Error('the evidence tools extension was not registered');
+      }
+
+      type ToolStub = {
+        name: string;
+        execute: (
+          callId: string,
+          params: Record<string, unknown>,
+        ) => Promise<{ details: unknown; isError?: boolean }>;
+      };
+      const tools: ToolStub[] = [];
+
+      extension({
+        registerTool: (tool: ToolStub) => tools.push(tool),
+      } as never);
+
+      const operator = tools.find(
+        ({ name }) => name === 'introduce_fulfillment_pair',
+      );
+
+      if (operator === undefined) {
+        throw new Error('introduce_fulfillment_pair was not registered');
+      }
+
+      const result = await operator.execute('call-1', {
+        contextRef: 'context.procurement',
+        request: {
+          id: 'request.refund',
+          label: '退款申请',
+          responsibleRoleRef: 'role.buyer',
+        },
+        confirmation: {
+          id: 'confirmation.refund',
+          label: '退款确认',
+          responsibleRoleRef: 'role.supplier',
+        },
+      });
+
+      expect(result.isError).toBeUndefined();
+      expect(patches[0]?.commands).toEqual([
+        expect.objectContaining({
+          type: 'create-fulfillment-pair',
+          input: expect.objectContaining({
+            contextRef: 'context.procurement',
+            contractReferenceId:
+              'relation.request.refund-references-contract',
+          }),
+        }),
+      ]);
+    } finally {
+      await rm(tempRoot, { recursive: true, force: true });
+    }
   });
 });
