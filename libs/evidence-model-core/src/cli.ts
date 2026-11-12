@@ -6,9 +6,14 @@ import { pathToFileURL } from 'node:url';
 import {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_DIRECTORY,
+  buildFmCheckReport,
   isModelBundlePath,
+  loadValidationSuite,
+  modelDigestOf,
   packModelDirectory,
   readModelBundle,
+  readModelRoot,
+  readModelRootBytes,
   unpackModelBundle,
   writeModelBundle,
 } from './index.js';
@@ -27,6 +32,10 @@ const USAGE = `Evidence 业务模型单文件打包
   evidence-model inspect <文件|目录> [--json]
       只读打印清单、对象计数与文件级问题，不写任何文件。
 
+  evidence-model check <模型目录> [--scope <上下文 ID>]... [--json]
+      只读执行一致性检查；带 --scope 时另核对责任范围完整性、覆盖与场景执行。
+      通过退出 0，发现阻塞问题退出 1。报告与桌面端、Agent 工具读的是同一份。
+
 选项:
   --out <path>   输出路径；缺省见上面的默认值
   --sort-keys    输出时按对象键名排序，便于稳定 diff
@@ -38,6 +47,7 @@ interface ParsedArguments {
   command: string | undefined;
   target: string | undefined;
   out: string | undefined;
+  scopes: readonly string[];
   sortKeys: boolean;
   json: boolean;
   help: boolean;
@@ -46,6 +56,7 @@ interface ParsedArguments {
 const parseArguments = (argv: readonly string[]): ParsedArguments => {
   const positional: string[] = [];
   let out: string | undefined;
+  const scopes: string[] = [];
   let sortKeys = false;
   let json = false;
   let help = false;
@@ -83,6 +94,22 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
       continue;
     }
 
+    if (argument === '--scope') {
+      index += 1;
+      const scope = argv[index];
+
+      if (scope !== undefined) {
+        scopes.push(scope);
+      }
+
+      continue;
+    }
+
+    if (argument.startsWith('--scope=')) {
+      scopes.push(argument.slice('--scope='.length));
+      continue;
+    }
+
     positional.push(argument);
   }
 
@@ -90,6 +117,7 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
     command: positional[0],
     target: positional[1],
     out,
+    scopes,
     sortKeys,
     json,
     help,
@@ -252,6 +280,105 @@ const runInspect = async (parsed: ParsedArguments): Promise<number> => {
   return 0;
 };
 
+
+const printCheckSummary = (
+  report: {
+    valid: boolean;
+    consistent: boolean;
+    complete: boolean | null;
+    gaps: readonly string[];
+    errors: readonly string[];
+    executedScenarioCount: number;
+    scenarioCount: number;
+    simulationPassed: boolean | null;
+    modelDigest: string;
+  },
+): void => {
+  process.stdout.write(
+    `一致性: ${report.consistent ? '通过' : '未通过'}` +
+      (report.complete === null
+        ? ''
+        : ` · 范围完整性: ${report.complete ? '通过' : '未通过'}`) +
+      `\n场景: 执行 ${report.executedScenarioCount} / ${report.scenarioCount}` +
+      (report.simulationPassed === null
+        ? ''
+        : ` · ${report.simulationPassed ? '全部通过' : '存在失败'}`) +
+      `\n模型摘要: ${report.modelDigest}\n`,
+  );
+
+  if (report.errors.length > 0) {
+    process.stdout.write('\n阻塞问题:\n');
+
+    for (const message of report.errors) {
+      process.stdout.write(`• ${message}\n`);
+    }
+  }
+
+  if (report.gaps.length > 0) {
+    process.stdout.write('\n范围缺口（警告）:\n');
+
+    for (const message of report.gaps) {
+      process.stdout.write(`• ${message}\n`);
+    }
+  }
+};
+
+/**
+ * Runs the same check the desktop and the agent tool run.
+ *
+ * It is the command-line face of \`buildFmCheckReport\`: a caller without the app
+ * gets one report, one exit code and the same digest, so a hand-off is never
+ * decided on a second opinion.
+ */
+const runCheck = async (parsed: ParsedArguments): Promise<number> => {
+  const target = parsed.target;
+
+  if (target === undefined) {
+    process.stderr.write('check 需要一个模型目录。\n\n');
+
+    return 2;
+  }
+
+  const modelRoot = path.resolve(target);
+
+  if (isModelBundlePath(modelRoot)) {
+    process.stderr.write(
+      'check 读取 .evidence/fm 目录；单文件请先 unpack 成目录。\n',
+    );
+
+    return 2;
+  }
+
+  const [{ bundle, files, issues }, bytes] = await Promise.all([
+    readModelRoot(modelRoot),
+    readModelRootBytes(modelRoot),
+  ]);
+  const sourceIssues = issues.map((issue) => `${issue.path}: ${issue.message}`);
+  const digest = modelDigestOf(
+    bytes.map((file) => ({ path: file.path, content: file.bytes })),
+  );
+  const current = await readModelRootBytes(modelRoot);
+  const currentDigest = modelDigestOf(
+    current.map((file) => ({ path: file.path, content: file.bytes })),
+  );
+  const { report } = buildFmCheckReport({
+    model: bundle,
+    suite: loadValidationSuite(files),
+    sourceIssues,
+    modelDigest: digest,
+    currentDigest: () => currentDigest,
+    ...(parsed.scopes.length === 0 ? {} : { scopeRefs: parsed.scopes }),
+  });
+
+  if (parsed.json) {
+    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  } else {
+    printCheckSummary(report);
+  }
+
+  return report.valid ? 0 : 1;
+};
+
 /** Runs one CLI invocation and returns the process exit code. */
 export const runEvidenceModelCommand = async (
   argv: readonly string[],
@@ -271,6 +398,8 @@ export const runEvidenceModelCommand = async (
       return runUnpack(parsed);
     case 'inspect':
       return runInspect(parsed);
+    case 'check':
+      return runCheck(parsed);
     default:
       process.stderr.write(`未知命令 ${parsed.command}。\n\n${USAGE}`);
 

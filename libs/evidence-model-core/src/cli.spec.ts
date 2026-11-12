@@ -64,6 +64,45 @@ describe('evidence-model CLI', () => {
     ).toBe(2);
   });
 
+  it('checks a model directory and reports the same digest the app does', async () => {
+    const output = vi.spyOn(process.stdout, 'write');
+
+    expect(await runEvidenceModelCommand(['check', modelRoot])).toBe(0);
+
+    const printed = output.mock.calls.map(([chunk]) => String(chunk)).join('');
+
+    expect(printed).toContain('一致性: 通过');
+    expect(printed).toContain('模型摘要: sha256:');
+  });
+
+  it('prints the report as JSON when asked, and refuses a bundle', async () => {
+    const output = vi.spyOn(process.stdout, 'write');
+
+    // A scope the model does not contain fails the check instead of passing it.
+    expect(
+      await runEvidenceModelCommand(['check', modelRoot, '--scope=context.missing', '--json']),
+    ).toBe(1);
+
+    const printed = output.mock.calls.map(([chunk]) => String(chunk)).join('');
+    const report = JSON.parse(printed) as {
+      checkVersion: number;
+      scopeRefs: readonly string[];
+      errors: readonly string[];
+    };
+
+    expect(report.checkVersion).toBe(5);
+    expect(report.scopeRefs).toEqual(['context.missing']);
+    expect(report.errors).toEqual([
+      "scope 'context.missing' must be an independent Context, not a fulfillment slice",
+    ]);
+
+    const bundlePath = join(root, 'bundle.evidence.json');
+
+    expect(
+      await runEvidenceModelCommand(['check', bundlePath]),
+    ).toBe(2);
+  });
+
   it('inspects a bundle without writing anything', async () => {
     const bundlePath = join(root, 'out.evidence.json');
 
