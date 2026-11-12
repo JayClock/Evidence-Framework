@@ -10,7 +10,7 @@ const review = (overrides: Partial<PatchReview> = {}): PatchReview => ({
   addedIds: ['request.refund', 'confirmation.refund'],
   removedIds: [],
   modifiedIds: ['request.payment'],
-  overlay: { marks: new Map(), ghosts: [], scope: 'patch' },
+  overlay: { marks: new Map() },
   revertable: true,
   ...overrides,
 });
