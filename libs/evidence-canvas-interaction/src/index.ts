@@ -94,8 +94,6 @@ export {
   MIN_LANE_WIDTH,
   SHARED_BAND_GAP,
   createLifecycleSwimlaneLayout,
-  swimlaneBoardBottom,
-  swimlaneBoardRight,
   type LifecycleSwimlaneLayout,
   type LifecycleSwimlaneOptions,
   type Swimlane,

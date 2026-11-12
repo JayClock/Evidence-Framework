@@ -344,20 +344,3 @@ const placeSharedBand = ({
     height: bottom - top + rowGap,
   };
 };
-
-/** Furthest right edge of any lane, for callers that need the board width. */
-export const swimlaneBoardRight = (layout: LifecycleSwimlaneLayout): number =>
-  layout.swimlanes.reduce(
-    (right, lane) => Math.max(right, rectRight(lane.box)),
-    0,
-  );
-
-/** Bottom of the whole board, lanes and shared band included. */
-export const swimlaneBoardBottom = (layout: LifecycleSwimlaneLayout): number =>
-  Math.max(
-    layout.swimlanes.reduce(
-      (bottom, lane) => Math.max(bottom, rectBottom(lane.box)),
-      0,
-    ),
-    layout.sharedBand === null ? 0 : rectBottom(layout.sharedBand),
-  );

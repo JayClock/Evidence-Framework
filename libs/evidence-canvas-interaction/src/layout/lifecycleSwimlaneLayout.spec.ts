@@ -12,8 +12,6 @@ import {
   createLifecycleSwimlaneLayout,
   rectContainsRect,
   rectsIntersect,
-  swimlaneBoardBottom,
-  swimlaneBoardRight,
 } from '../index.js';
 
 const context = (
@@ -326,12 +324,11 @@ describe('createLifecycleSwimlaneLayout', () => {
       party('participant.buyer'),
     ]);
 
-    expect(layout.bounds.width).toBeGreaterThanOrEqual(
-      swimlaneBoardRight(layout),
-    );
-    expect(layout.bounds.height).toBeGreaterThanOrEqual(
-      swimlaneBoardBottom(layout),
-    );
+    for (const lane of layout.swimlanes) {
+      expect(rectContainsRect(layout.bounds, lane.box)).toBe(true);
+    }
+
+    expect(rectContainsRect(layout.bounds, layout.sharedBand!)).toBe(true);
   });
 
   it('routes relationships after the lanes moved the boxes', () => {
