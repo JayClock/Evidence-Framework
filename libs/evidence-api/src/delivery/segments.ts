@@ -59,9 +59,6 @@ export const createSegmentAllocator = (
   };
 };
 
-/** `{param}` from a plain word. */
-export const pathParameter = (name: string): string => `{${name}}`;
-
 /**
  * The one service a Context becomes.
  *

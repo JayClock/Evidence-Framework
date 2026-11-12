@@ -1,6 +1,8 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
+import { componentName } from '../openapi/openapi.js';
+
 import type { DeliveryField, DeliveryRoute } from './routes.js';
 import { buildDeliveryRoutes } from './routes.js';
 import { createSegmentAllocator } from './segments.js';
@@ -191,10 +193,6 @@ export interface DeliveryContract {
   }[];
 }
 
-/** A schema component name: dots and punctuation folded into underscores. */
-export const componentNameOf = (reference: string): string =>
-  reference.replaceAll('.', '_').replace(/[^A-Za-z0-9._-]/g, '_');
-
 /**
  * Builds the OpenAPI 3.1 document for one model.
  *
@@ -206,7 +204,7 @@ export const buildDeliveryContract = (
   routes: readonly DeliveryRoute[] = buildDeliveryRoutes(document),
   services: readonly DeliveryService[] = buildDeliveryTopology(document).services,
 ): DeliveryContract => {
-  const componentOf = componentNameOf;
+  const componentOf = componentName;
   const paths: Record<string, JsonObject> = {};
 
   for (const route of routes) {

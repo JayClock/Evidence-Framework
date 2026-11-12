@@ -131,6 +131,30 @@ const fieldsOf = (
 };
 
 /**
+ * Which enquiry each proposal answers, when the model says so.
+ *
+ * The reference is the only authority here: a proposal nested under the wrong
+ * window would misdescribe when its price was true.
+ */
+const answeredRfpOf = (graph: DomainGraph): Map<string, string> => {
+  const answered = new Map<string, string>();
+
+  for (const relationship of graph.relationships()) {
+    if (relationship.kind !== 'references') {
+      continue;
+    }
+
+    const target = graph.getEntity(relationship.targetRef);
+
+    if (target?.category === 'evidence' && target.kind === 'rfp') {
+      answered.set(relationship.sourceRef, target.id);
+    }
+  }
+
+  return answered;
+};
+
+/**
  * Every route one model implies, in Context order.
  *
  * The order is derived from the model (Contexts sorted by id, each Context's
@@ -317,10 +341,11 @@ export const buildDeliveryRoutes = (
             (entity.kind === 'rfp' || entity.kind === 'proposal'),
         )
         .sort((left, right) => left.id.localeCompare(right.id));
-      const rfp = members.find((entity) => entity.kind === 'rfp');
+      const rfps = members.filter((entity) => entity.kind === 'rfp');
       const proposals = members.filter((entity) => entity.kind === 'proposal');
+      const answeredBy = answeredRfpOf(graph);
 
-      if (rfp !== undefined) {
+      for (const rfp of rfps) {
         const rfpSegment = segments.segmentOf(rfp.id);
         const rfpFields = fieldsOf(rfp.id, graph);
 
@@ -368,34 +393,45 @@ export const buildDeliveryRoutes = (
             { status: 404, description: '征询不存在' },
           ],
         });
+      }
 
-        for (const proposal of proposals) {
-          const proposalFields = fieldsOf(proposal.id, graph);
+      for (const proposal of proposals) {
+        const proposalFields = fieldsOf(proposal.id, graph);
+        const rfp = rfps.find((candidate) => candidate.id === answeredBy.get(proposal.id));
+        // A proposal the model does not tie to an enquiry still has a business
+        // moment; it answers no particular window, so it sits at the lane root
+        // rather than being nested under a guess.
+        const path =
+          rfp === undefined
+            ? `/${lane}/${segments.segmentOf(proposal.id)}`
+            : `/${lane}/${segments.segmentOf(rfp.id)}/{rfpId}/${segments.segmentOf(proposal.id)}`;
 
-          routes.push({
-            id: `route.propose.${proposal.id}`,
-            operationId: operationIdFor('propose', proposal.id),
-            method: 'POST',
-            path: `/${lane}/${rfpSegment}/{rfpId}/${segments.segmentOf(proposal.id)}`,
-            purpose: 'propose',
-            serviceId,
-            contextRef: context.id,
-            entityRef: proposal.id,
-            contractRef: null,
-            requestRef: null,
-            confirmationRef: null,
-            summary: `提交${proposal.label}，回应征询`,
-            ...proposalFields,
-            responses: [
-              {
-                status: 201,
-                description: '方案已登记',
-                entityRef: proposal.id,
-              },
-              { status: 409, description: '征询已关闭' },
-            ],
-          });
-        }
+        routes.push({
+          id: `route.propose.${proposal.id}`,
+          operationId: operationIdFor('propose', proposal.id),
+          method: 'POST',
+          path,
+          purpose: 'propose',
+          serviceId,
+          contextRef: context.id,
+          entityRef: proposal.id,
+          contractRef: null,
+          requestRef: null,
+          confirmationRef: null,
+          summary:
+            rfp === undefined
+              ? `提交${proposal.label}（模型未声明所属征询）`
+              : `提交${proposal.label}，回应${rfp.label}`,
+          ...proposalFields,
+          responses: [
+            {
+              status: 201,
+              description: '方案已登记',
+              entityRef: proposal.id,
+            },
+            { status: 409, description: '征询已关闭' },
+          ],
+        });
       }
 
       continue;

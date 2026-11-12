@@ -172,7 +172,6 @@ export {
   buildDelivery,
   buildDeliveryContract,
   buildDeliveryDeployment,
-  componentNameOf,
   type DeliveryBundle,
   type DeliveryContract,
   type DeliveryDeployment,

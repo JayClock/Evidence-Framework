@@ -67,6 +67,32 @@ describe('buildDeliveryRoutes', () => {
     expect(routes.every((route) => route.method === 'GET')).toBe(true);
   });
 
+  it('nests a quote under the enquiry it actually answers', async () => {
+    const routes = buildDeliveryRoutes(await model());
+    const propose = routes.find((route) => route.purpose === 'propose');
+
+    expect(propose?.path).toBe(
+      '/product-sourcing/product-inquiry/{rfpId}/product-quotation',
+    );
+    expect(propose?.summary).toContain('回应商品询价');
+  });
+
+  it('leaves a quote at the lane root when the model ties it to no enquiry', async () => {
+    const document = await model();
+    const orphaned = {
+      ...document,
+      relationships: document.relationships.filter(
+        (relationship) => relationship.id !== 'relation.inquiry-precedes-quotation',
+      ),
+    };
+    const propose = buildDeliveryRoutes(orphaned).find(
+      (route) => route.purpose === 'propose',
+    );
+
+    expect(propose?.path).toBe('/product-sourcing/product-quotation');
+    expect(propose?.summary).toContain('模型未声明所属征询');
+  });
+
   it('states the derivations a service owns instead of exposing them as inputs', async () => {
     const routes = buildDeliveryRoutes(await model());
     const confirm = routes.find(
