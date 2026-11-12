@@ -38,6 +38,8 @@ export interface NativeSensorsInput {
   readTrace?: (tracePath: string) => Promise<unknown>;
   /** Skip the second digest read, which a debounced background run does not need. */
   detectInputChange?: boolean;
+  /** Injected clock, so a report's timestamp is reproducible in a test. */
+  now?: () => Date;
 }
 
 export interface NativeSensorsOutcome extends SensorOutcome {
@@ -92,6 +94,7 @@ export const runNativeSensors = async (
   const base = buildSensorReport({
     fmCheck,
     ...(keyData === undefined ? {} : { keyData }),
+    ...(input.now === undefined ? {} : { now: input.now }),
   });
   const traceIssues: SensorIssue[] =
     traceCheck === undefined || traceCheck.valid
@@ -110,6 +113,7 @@ export const runNativeSensors = async (
       : finalizeSensorReport({
           issues: [...base.issues, ...traceIssues],
           keyDataSummary: base.keyDataSummary,
+          ...(input.now === undefined ? {} : { now: input.now }),
         });
 
   return {

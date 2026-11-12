@@ -2,12 +2,10 @@ import path from 'node:path';
 
 import {
   createEvidenceAgentSession,
-  createPythonEnvResolver,
   skillEnvironment,
   type AgentStreamEvent,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
-  type PythonEnvResolver,
 } from '@evidence-poc/evidence-agent-core';
 import {
   TOOL_NAMES,
@@ -22,7 +20,6 @@ import {
 } from '@evidence-poc/evidence-modeling-orchestrator';
 
 import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
-import { desktopSensorEngineOptions } from './sensorEngine';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 import { resolveSkillsRoot } from './skillsRoot';
 
@@ -40,8 +37,6 @@ export interface AgentRuntimeOptions {
   /** Absolute project root that owns `.evidence/`. */
   rootPath: string;
   transport: AgentRuntimeTransport;
-  /** Injected for tests; production builds one from the project root. */
-  resolver?: PythonEnvResolver;
   sensors?: Pick<SensorsEngine, 'runFullSensors' | 'checkStageGate'>;
   sessionFactory?: (
     options: EvidenceAgentSessionOptions,
@@ -87,7 +82,6 @@ const emptySelection = { nodeId: null, attributeName: null };
 export const createAgentRuntime = ({
   rootPath,
   transport,
-  resolver,
   sensors,
   sessionFactory = createEvidenceAgentSession,
   skillsRoot,
@@ -105,32 +99,17 @@ export const createAgentRuntime = ({
   // ships its own skills is the only place either of them reads.
   const effectiveSkillsRoot =
     skillsRoot ?? resolveSkillsRoot({ projectRoot: projectDirectory });
-  const engineOptions = desktopSensorEngineOptions({
-    projectDirectory,
-    skillsRoot: effectiveSkillsRoot,
-  });
-  const python =
-    resolver ??
-    engineOptions.resolver ??
-    createPythonEnvResolver({ projectRoot: projectDirectory });
   const engine =
     sensors ??
-    createSensorsEngine({
-      ...engineOptions,
-      ...(resolver === undefined ? {} : { resolver }),
-    });
+    createSensorsEngine({ skillsRoot: effectiveSkillsRoot });
 
-  // The skill guides quote commands as `"$PYTHON" "$FM_SKILL_DIR/scripts/…"`,
-  // and Pi's bash tool reads `process.env` when it spawns, with no per-session
-  // hook. A native run needs no interpreter, so `PYTHON` is published only when
-  // one actually resolves — a path that does not exist is worse than no path.
-  // Only install-level paths are published: one process serves every project
-  // window, so per-project paths would describe the wrong model.
-  const pinnedPython = python.resolvePinnedPython();
-  const skillVariables = skillEnvironment({
-    skillsRoot: effectiveSkillsRoot,
-    pythonExecutablePath: pinnedPython.isValid ? pinnedPython.executablePath : null,
-  });
+  // The skill guides address their own files as `$FM_SKILL_DIR/…`, and Pi's bash
+  // tool reads `process.env` when it spawns, with no per-session hook. No
+  // interpreter is published: the checks run in-process, so a `PYTHON` variable
+  // would only invite an agent to start one. Only install-level paths appear
+  // here — one process serves every project window, so per-project paths would
+  // describe the wrong model.
+  const skillVariables = skillEnvironment({ skillsRoot: effectiveSkillsRoot });
 
   const publishSkillEnvironment = (): void => {
     Object.assign(process.env, skillVariables);

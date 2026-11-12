@@ -3,7 +3,6 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
-  PYTHON_VARIABLE,
   SKILLS_ROOT_VARIABLE,
   SKILL_PACKAGE_NAMES,
   skillEnvironment,
@@ -13,10 +12,7 @@ const SKILLS_ROOT = '/Applications/Evidence Modeling.app/Contents/Resources/skil
 
 describe('skillEnvironment', () => {
   it('publishes one directory variable per skill package', () => {
-    const environment = skillEnvironment({
-      skillsRoot: SKILLS_ROOT,
-      pythonExecutablePath: `${SKILLS_ROOT}/../python-runtime/bin/python`,
-    });
+    const environment = skillEnvironment({ skillsRoot: SKILLS_ROOT });
 
     expect(environment[SKILLS_ROOT_VARIABLE]).toBe(SKILLS_ROOT);
     expect(environment.FM_SKILL_DIR).toBe(
@@ -38,29 +34,14 @@ describe('skillEnvironment', () => {
     expect(environment.SKILL_DIR).toBe(path.join(SKILLS_ROOT, 'evidence-fm'));
   });
 
-  it('points PYTHON at the pinned interpreter', () => {
-    const environment = skillEnvironment({
-      skillsRoot: SKILLS_ROOT,
-      pythonExecutablePath: '/runtime/bin/python',
-    });
+  it('publishes no interpreter, because nothing runs a script any more', () => {
+    const environment = skillEnvironment({ skillsRoot: SKILLS_ROOT });
 
-    expect(environment[PYTHON_VARIABLE]).toBe('/runtime/bin/python');
-  });
-
-  it('omits PYTHON instead of publishing a path that does not run', () => {
-    const environment = skillEnvironment({
-      skillsRoot: SKILLS_ROOT,
-      pythonExecutablePath: null,
-    });
-
-    expect(environment).not.toHaveProperty(PYTHON_VARIABLE);
+    expect(environment).not.toHaveProperty('PYTHON');
   });
 
   it('names every skill package the desktop ships', () => {
-    const environment = skillEnvironment({
-      skillsRoot: SKILLS_ROOT,
-      pythonExecutablePath: null,
-    });
+    const environment = skillEnvironment({ skillsRoot: SKILLS_ROOT });
     const published = Object.values(environment).filter((value) =>
       SKILL_PACKAGE_NAMES.some((name) => value.endsWith(`/${name}`)),
     );

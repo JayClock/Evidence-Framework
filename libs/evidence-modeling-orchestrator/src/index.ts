@@ -36,12 +36,7 @@ export {
 } from './sensors/sensorReport.js';
 
 export {
-  SENSORS_ENGINE_ENVIRONMENT_VARIABLE,
-  SensorScriptError,
   createSensorsEngine,
-  sensorsEngineModeOf,
-  SENSORS_ENGINE_MODES,
-  type SensorsEngineMode,
   type RunSensorsInput,
   type SensorOutcome,
   type SensorsEngine,
@@ -59,8 +54,6 @@ export {
   type ModelPatchRequest,
   type ModelPatchResult,
 } from './tools/evidenceTools.js';
-
-export { compareSensorOutcomes } from './sensors/sensorParity.js';
 
 export {
   ModelSourceError,

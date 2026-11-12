@@ -3,11 +3,6 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
-  PinnedPythonMissingError,
-  createPythonEnvResolver,
-  type ScriptRunResult,
-} from '@evidence-poc/evidence-agent-core';
-import {
   calculateFrontier,
   createSensorsEngine,
   type InterviewTraceDocument,
@@ -34,23 +29,6 @@ const FIXTURE_ROOT = path.resolve(
 );
 
 const PROJECT_ROOT = '/models/procurement';
-
-/** Pinned interpreter stand-in that answers with canned script output. */
-const fakeResolver = (responses: Readonly<Record<string, string>>) =>
-  createPythonEnvResolver({
-    projectRoot: PROJECT_ROOT,
-    fileExists: () => true,
-    runProcess: async (_command, args): Promise<ScriptRunResult> => {
-      const script = args[0] ?? '';
-      const key = script.slice(script.lastIndexOf('/') + 1);
-
-      return {
-        code: 0,
-        stdout: responses[key] ?? '',
-        stderr: '',
-      };
-    },
-  });
 
 const trace: InterviewTraceDocument = {
   schemaVersion: '5.0',
@@ -166,7 +144,6 @@ describe('phase 3 control loop', () => {
 
     const runtime = createAgentRuntime({
       rootPath: PROJECT_ROOT,
-      resolver: fakeResolver({}),
       sensors: {
         runFullSensors: async () => ({ report: sensorReport() }),
         checkStageGate: async () => {
@@ -260,27 +237,8 @@ describe('phase 3 control loop', () => {
     expect(frontier.closed).toBe(false);
   });
 
-  it('blocks the loop when the pinned interpreter is missing', async () => {
-    const resolver = createPythonEnvResolver({
-      projectRoot: PROJECT_ROOT,
-      fileExists: () => false,
-    });
-    const engine = createSensorsEngine({ resolver, mode: 'python' });
-
-    const outcome = await engine.runFullSensors({
-      modelRoot: `${PROJECT_ROOT}/.evidence/fm`,
-    });
-
-    expect(outcome.report.passed).toBe(false);
-    expect(outcome.report.unavailableSensors).toEqual([
-      'check_fm',
-      'audit_key_data',
-    ]);
-    expect(outcome.report.issues[0]?.suggestion).toContain('./init.sh');
-  });
-
-  it('checks the same project natively, without any interpreter', async () => {
-    const engine = createSensorsEngine({ mode: 'native' });
+  it('checks the same project without an interpreter', async () => {
+    const engine = createSensorsEngine();
 
     const outcome = await engine.runFullSensors({ modelRoot: FIXTURE_ROOT });
 
@@ -288,16 +246,5 @@ describe('phase 3 control loop', () => {
     expect(outcome.report.blockCount).toBe(0);
     expect(outcome.fmCheck?.valid).toBe(true);
     expect(outcome.keyData?.keyDataCount).toBeGreaterThan(0);
-  });
-
-  it('throws the pinned-interpreter error instead of running a script', async () => {
-    const resolver = createPythonEnvResolver({
-      projectRoot: PROJECT_ROOT,
-      fileExists: () => false,
-    });
-
-    await expect(
-      resolver.runScript('.agents/skills/evidence-fm/scripts/check_fm.py'),
-    ).rejects.toBeInstanceOf(PinnedPythonMissingError);
   });
 });

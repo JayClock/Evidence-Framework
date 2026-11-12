@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import type {
   EvidenceAgentSession,
   EvidenceAgentSessionOptions,
-  PythonEnvResolver,
 } from '@evidence-poc/evidence-agent-core';
 import type {
   ModelPatchRequest,
@@ -141,7 +140,6 @@ const runtimeWith = (options: {
   sensors?: ReturnType<typeof sensorEngine>;
   sensorDelayMs?: number;
   skillsRoot?: string;
-  resolver?: PythonEnvResolver;
 }) =>
   createAgentRuntime({
     rootPath: '/models/procurement',
@@ -150,7 +148,7 @@ const runtimeWith = (options: {
     ...(options.skillsRoot === undefined
       ? {}
       : { skillsRoot: options.skillsRoot }),
-    ...(options.resolver === undefined ? {} : { resolver: options.resolver }),
+
     sessionFactory: (created) => {
       sessionOptions.push(created);
 
@@ -214,29 +212,16 @@ describe('createAgentRuntime', () => {
     expect(skillsRoot).not.toBe('/models/procurement/.agents/skills');
   });
 
-  it('publishes the interpreter and skill directories a shell command needs', async () => {
+  it('publishes the skill directories a shell command needs, and no interpreter', async () => {
     const { transport } = createTransport();
     const fake = createFakeSession();
     const keys = ['PYTHON', 'FM_SKILL_DIR', 'EVIDENCE_SKILLS_ROOT'] as const;
     const before = Object.fromEntries(
       keys.map((key) => [key, process.env[key]]),
     );
-    const resolver: PythonEnvResolver = {
-      projectRoot: '/models/procurement',
-      resolveVenvPath: () => '/runtime',
-      resolvePinnedPython: () => ({
-        executablePath: '/runtime/bin/python',
-        venvPath: '/runtime',
-        isValid: true,
-      }),
-      runScript: async () => ({ code: 0, stdout: '{}', stderr: '' }),
-      checkLock: async () => ({ ok: true, output: '' }),
-      bundledVenvPath: null,
-    };
     const runtime = runtimeWith({
       transport,
       fake,
-      resolver,
       skillsRoot: '/workspace/project/.agents/skills',
     });
 
@@ -249,7 +234,8 @@ describe('createAgentRuntime', () => {
       expect(process.env.FM_SKILL_DIR).toBe(
         '/workspace/project/.agents/skills/evidence-fm',
       );
-      expect(process.env.PYTHON).toBe('/runtime/bin/python');
+      // Nothing runs a script any more, so no `PYTHON` is advertised.
+      expect(process.env.PYTHON).toBeUndefined();
     } finally {
       for (const key of keys) {
         const value = before[key];
