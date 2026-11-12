@@ -1,4 +1,18 @@
 export {
+  compileIngestionDraft,
+  type CompileDraftOptions,
+  type CompileDraftResult,
+  type CompileIssue,
+} from './compileDraft.js';
+
+export {
+  LAYOUT_COLUMNS,
+  LAYOUT_ROWS,
+  layoutDomainModel,
+  type LayoutPoint,
+} from './layoutDomainModel.js';
+
+export {
   BLUEPRINT_COLUMNS,
   inferEvidenceKind,
   parseBlueprint,

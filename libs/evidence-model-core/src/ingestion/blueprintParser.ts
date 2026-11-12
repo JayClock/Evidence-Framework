@@ -1,6 +1,7 @@
 import {
   createEmptyIngestionDraft,
   normalizeDraftEvidenceKind,
+  type ContextKind,
   type DraftContext,
   type DraftEvidence,
   type DraftFulfillmentPair,
@@ -24,7 +25,7 @@ import {
  * The variant table is deliberately close to what a business workshop already
  * produces: a stage, an activity, the document the step leaves behind, who
  * signs it and what it is about. Everything else in the draft is derived from
- * those five columns.
+ * those columns.
  */
 export const BLUEPRINT_COLUMNS = [
   'stage',
@@ -88,12 +89,21 @@ export interface BlueprintParseFailure {
   issues: readonly BlueprintIssue[];
 }
 
-export type BlueprintParseResult =
-  | BlueprintParseSuccess
-  | BlueprintParseFailure;
+export type BlueprintParseResult = BlueprintParseSuccess | BlueprintParseFailure;
 
 /** Keywords that mark a row as a breach repair rather than a main fulfilment. */
-const BREACH_KEYWORDS = ['违约', '退款', '退货', '补偿', '赔付', '罚息', '违约赔付'];
+const BREACH_KEYWORDS = ['违约', '退款', '退货', '补偿', '赔付', '罚息'];
+
+/** Job words a party name carries but the side of the contract does not. */
+const ROLE_WORDS =
+  /代表|专员|经理|主管|财务|采购员|销售|库管|顾问|负责人|人员|员|岗|部门/g;
+
+/** Bits of a party name that reveal which side of the contract it is on. */
+const FIRST_SIDE = /甲方|买方|采购|需求|客户|读者|发包|委托/;
+const SECOND_SIDE = /乙方|卖方|供应|销售|平台|承运|承包|受托/;
+
+const stripRoleWord = (label: string): string =>
+  label.replaceAll(ROLE_WORDS, '').trim();
 
 const splitCells = (line: string): string[] =>
   line
@@ -133,13 +143,9 @@ const parseCsvLine = (line: string): string[] => {
 const normalizeHeader = (cell: string): string =>
   cell.toLowerCase().replaceAll(/[\s()（）[\]【】]/g, '');
 
-const matchColumn = (
-  header: string,
-): BlueprintColumn | undefined =>
+const matchColumn = (header: string): BlueprintColumn | undefined =>
   BLUEPRINT_COLUMNS.find((column) =>
-    COLUMN_ALIASES[column].some((alias) =>
-      header.includes(normalizeHeader(alias)),
-    ),
+    COLUMN_ALIASES[column].some((alias) => header.includes(normalizeHeader(alias))),
   );
 
 const splitNames = (cell: string): string[] =>
@@ -154,7 +160,6 @@ interface BlueprintRow {
   activity: string;
   evidence: string;
   kind?: EvidenceKind;
-  rawKind?: string;
   parties: string[];
   thing?: string;
 }
@@ -183,7 +188,9 @@ const readTable = (content: string, format: 'markdown' | 'csv'): ParsedTable => 
   }
 
   const headerCells =
-    format === 'csv' ? parseCsvLine(headerLine.text) : splitCells(headerLine.text);
+    format === 'csv'
+      ? parseCsvLine(headerLine.text)
+      : splitCells(headerLine.text);
 
   const columnIndex = new Map<BlueprintColumn, number>();
 
@@ -247,7 +254,6 @@ const readTable = (content: string, format: 'markdown' | 'csv'): ParsedTable => 
       activity: columnValue(cells, 'activity'),
       evidence: evidenceLabel,
       ...(kind === undefined ? {} : { kind }),
-      ...(rawKind.length === 0 ? {} : { rawKind }),
       parties: splitNames(columnValue(cells, 'party')),
       ...(thing.length === 0 ? {} : { thing }),
     });
@@ -273,23 +279,72 @@ export const inferEvidenceKind = (label: string): EvidenceKind => {
 
 const isBreachLabel = (row: BlueprintRow): boolean =>
   BREACH_KEYWORDS.some(
-    (keyword) => row.evidence.includes(keyword) || row.activity.includes(keyword),
+    (keyword) =>
+      row.evidence.includes(keyword) || row.activity.includes(keyword),
   );
 
 const snippetOf = (row: BlueprintRow): ProvenanceSnippet => ({
-  text: [row.stage, row.activity, row.evidence].filter((part) => part.length > 0).join(' / '),
+  text: [row.stage, row.activity, row.evidence]
+    .filter((part) => part.length > 0)
+    .join(' / '),
   locator: `第 ${row.line} 行`,
   source: 'blueprint',
 });
 
 /**
+ * Decides which side of the contract a party is on.
+ *
+ * A contract has exactly two Party Roles and everyone else plays one of them,
+ * so a job title like 甲方财务 has to resolve to a side rather than become a
+ * third role the contract cannot bind. Names are compared with the job word
+ * stripped first, then by the vocabulary each side uses, so 甲方采购员 and
+ * 甲方代表 both land on the same side.
+ *
+ * `undefined` means the table did not say; the caller reports that instead of
+ * silently choosing a side.
+ */
+export const inferContractSide = (
+  partyLabel: string,
+  sideLabels: readonly string[],
+): number | undefined => {
+  const stripped = stripRoleWord(partyLabel);
+
+  const exact = sideLabels.findIndex(
+    (sideLabel, index) =>
+      stripped.length > 0 &&
+      (stripped.includes(stripRoleWord(sideLabel)) ||
+        sideLabel.includes(stripped) ||
+        partyLabel.includes(stripRoleWord(sideLabel))) &&
+      stripRoleWord(sideLabel).length > 0 &&
+      index < 2,
+  );
+
+  if (exact >= 0) {
+    return exact;
+  }
+
+  if (FIRST_SIDE.test(partyLabel)) {
+    return 0;
+  }
+
+  if (SECOND_SIDE.test(partyLabel)) {
+    return 1;
+  }
+
+  return undefined;
+};
+
+/**
  * Reads the lecture's service-blueprint variant into an ingestion draft.
  *
- * The two structural readings the method insists on are made here rather than
- * left to the compiler: the contract row splits the pre-contract context from
- * the contract context, and a confirmation is paired with the request it
- * answers. A row that cannot be paired keeps its issue, so the review panel can
- * show a gap instead of the model quietly inventing a partner.
+ * Three structural readings the method insists on are made here rather than in
+ * the compiler:
+ *
+ * - the contract row splits the pre-contract context from the contract context;
+ * - a confirmation is paired with the request it answers;
+ * - the contract keeps exactly two Party Roles, and every other party in the
+ *   table is a participant that plays one of them, which is what lets a model
+ *   stay valid while 甲方财务 and 乙方财务 sign different documents.
  *
  * The support-system column is accepted so a real workshop table parses, but it
  * is not compiled: a supporting system becomes a change point later, never an
@@ -324,69 +379,112 @@ export const parseBlueprint = (
   draft.description =
     '由服务蓝图变种导入：阶段与活动落成凭证，合约前后的边界按合同行切分。';
 
-  const contractLabel = options.contractContextLabel ?? '合约上下文';
-  const preContractLabel = options.preContractContextLabel ?? '合约前上下文';
-  const domainLabel = options.domainContextLabel ?? '领域上下文';
-
-  const contractRowIndex = rows.findIndex(
-    (row) => (row.kind ?? inferEvidenceKind(row.evidence)) === 'contract',
-  );
-
   const contractContext: DraftContext = {
     id: 'context.contract',
-    label: contractLabel,
+    label: options.contractContextLabel ?? '合约上下文',
     kind: 'contract',
   };
   const preContractContext: DraftContext = {
     id: 'context.pre-contract',
-    label: preContractLabel,
+    label: options.preContractContextLabel ?? '合约前上下文',
     kind: 'pre_contract',
     parentContextRef: contractContext.id,
   };
-  const domainContext: DraftContext = { id: 'context.domain', label: domainLabel, kind: 'domain' };
+  const domainContext: DraftContext = {
+    id: 'context.domain',
+    label: options.domainContextLabel ?? '领域上下文',
+    kind: 'domain',
+  };
+
+  const contractRowIndex = rows.findIndex(
+    (row) => (row.kind ?? inferEvidenceKind(row.evidence)) === 'contract',
+  );
+  const contractRow = contractRowIndex >= 0 ? rows[contractRowIndex] : undefined;
+
+  const sideLabels: string[] =
+    contractRow !== undefined && contractRow.parties.length >= 2
+      ? contractRow.parties.slice(0, 2)
+      : ['甲方', '乙方'];
+
+  if (contractRow !== undefined && contractRow.parties.length !== 2) {
+    issues.push({
+      line: contractRow.line,
+      message:
+        '合同行需要正好两位当事人；已按「甲方 / 乙方」补齐角色，请在审核面板中改成真实双方。',
+    });
+  }
 
   const takenEvidenceIds = new Set<string>();
   const takenRoleIds = new Set<string>();
   const takenPartyIds = new Set<string>();
   const takenThingIds = new Set<string>();
 
-  const rolesByParty = new Map<string, DraftRole>();
-  const partiesByLabel = new Map<string, DraftParticipant>();
-  const thingsByLabel = new Map<string, DraftThing>();
+  const sides: DraftRole[] = sideLabels.map((sideLabel) => ({
+    id: uniqueId('role', sideLabel, takenRoleIds),
+    label: sideLabel,
+    kind: 'party',
+    contextRef: contractContext.id,
+  }));
+  draft.roles.push(...sides);
 
-  const contextFor = (row: BlueprintRow): DraftContext =>
-    contractRowIndex >= 0 && rows.indexOf(row) < contractRowIndex
-      ? preContractContext
-      : contractContext;
+  const partyByLabel = new Map<string, DraftParticipant>();
+  const thingByLabel = new Map<string, DraftThing>();
+  const played = new Set<string>();
 
-  const roleFor = (partyLabel: string, contextRef: string): DraftRole => {
-    const existing = rolesByParty.get(partyLabel);
+  const partyFor = (partyLabel: string): DraftParticipant => {
+    const existing = partyByLabel.get(partyLabel);
 
     if (existing !== undefined) {
       return existing;
     }
 
-    const participantId = uniqueId('party', partyLabel, takenPartyIds);
     const participant: DraftParticipant = {
-      id: participantId,
+      id: uniqueId('party', partyLabel, takenPartyIds),
       label: partyLabel,
       kind: 'party',
     };
-    partiesByLabel.set(partyLabel, participant);
+    partyByLabel.set(partyLabel, participant);
     draft.participants.push(participant);
 
-    const role: DraftRole = {
-      id: uniqueId('role', partyLabel, takenRoleIds),
-      label: partyLabel,
-      kind: 'party',
-      contextRef,
-      playedByParticipantRef: participantId,
-    };
-    rolesByParty.set(partyLabel, role);
-    draft.roles.push(role);
+    return participant;
+  };
+
+  const sideOf = (partyLabel: string, line: number): DraftRole => {
+    const index = inferContractSide(partyLabel, sideLabels);
+    const role = sides[index ?? 0] ?? sides[0];
+    const participant = partyFor(partyLabel);
+
+    if (index === undefined) {
+      issues.push({
+        line,
+        message: `无法判断当事人「${partyLabel}」属于合同哪一方，已暂时归到「${role.label}」。`,
+      });
+    }
+
+    const relationshipId = `relation.${participant.id}-plays-${role.id}`;
+
+    if (!played.has(relationshipId) && role !== undefined) {
+      played.add(relationshipId);
+      draft.relationships.push({
+        id: relationshipId,
+        kind: 'plays_role',
+        sourceRef: participant.id,
+        targetRef: role.id,
+        label: `${partyLabel}扮演${role.label}的角色`,
+      });
+    }
+
+    if (role === undefined) {
+      throw new Error('合同缺少角色，无法继续解析。');
+    }
 
     return role;
   };
+
+  const contextFor = (row: BlueprintRow): DraftContext =>
+    contractRowIndex >= 0 && rows.indexOf(row) < contractRowIndex
+      ? preContractContext
+      : contractContext;
 
   const evidencesByRow = new Map<BlueprintRow, DraftEvidence>();
 
@@ -395,9 +493,7 @@ export const parseBlueprint = (
     const kind = row.kind ?? inferEvidenceKind(row.evidence);
     const id = uniqueId(evidenceIdPrefix(kind), row.evidence, takenEvidenceIds);
 
-    const rowRoles = row.parties.map((partyLabel) =>
-      roleFor(partyLabel, context.id),
-    );
+    const rowSides = row.parties.map((partyLabel) => sideOf(partyLabel, row.line));
 
     const evidence: DraftEvidence = {
       id,
@@ -407,15 +503,19 @@ export const parseBlueprint = (
       attributes: [...mandatoryTimeAttributes(kind)],
       provenance: snippetOf(row),
       ...(kind === 'contract'
-        ? {}
-        : { responsibleRoleRef: rowRoles[0]?.id }),
+        ? {
+            roleRefs: sides
+              .map((side) => side.id)
+              .filter((ref): ref is string => ref !== undefined),
+          }
+        : { ...(rowSides[0] === undefined ? {} : { responsibleRoleRef: rowSides[0].id }) }),
     };
 
     evidencesByRow.set(row, evidence);
     draft.evidences.push(evidence);
 
-    if (row.thing !== undefined) {
-      let thing = thingsByLabel.get(row.thing);
+    if (row.thing !== undefined && row.thing.length > 0) {
+      let thing = thingByLabel.get(row.thing);
 
       if (thing === undefined) {
         thing = {
@@ -424,12 +524,12 @@ export const parseBlueprint = (
           meaning: `${row.thing}（蓝图标的物）`,
           contextRef: domainContext.id,
         };
-        thingsByLabel.set(row.thing, thing);
+        thingByLabel.set(row.thing, thing);
         draft.things.push(thing);
       }
 
       draft.relationships.push({
-        id: `relation.${id}-refs-${thing.id}`,
+        id: `relation.${id}-references-${thing.id}`,
         kind: 'references',
         sourceRef: id,
         targetRef: thing.id,
@@ -438,34 +538,9 @@ export const parseBlueprint = (
     }
   }
 
-  // A contract is a two-sided agreement; the role pair is what makes it one.
-  const contractRow = contractRowIndex >= 0 ? rows[contractRowIndex] : undefined;
-  const contractEvidence =
-    contractRow === undefined ? undefined : evidencesByRow.get(contractRow);
-  const contractRoles = contractRow?.parties ?? [];
-
-  if (contractEvidence !== undefined) {
-    const roleIds = contractRoles.map(
-      (partyLabel) => rolesByParty.get(partyLabel)?.id,
-    );
-
-    if (roleIds.length === 2 && roleIds[0] !== undefined && roleIds[1] !== undefined) {
-      contractEvidence.roleRefs = [roleIds[0], roleIds[1]];
-    } else {
-      issues.push({
-        line: contractRow?.line,
-        message:
-          '合同行需要正好两位当事人；已用占位角色补齐，请在审核面板中改成真实双方。',
-      });
-      const placeholderA = roleFor('甲方', contractContext.id);
-      const placeholderB = roleFor('乙方', contractContext.id);
-      contractEvidence.roleRefs = [placeholderA.id, placeholderB.id];
-    }
-  }
-
   const pending = new Map<string, { row: BlueprintRow; evidence: DraftEvidence }[]>();
   const lastConfirmation = new Map<string, DraftEvidence>();
-  const pairForRow = new Map<BlueprintRow, DraftFulfillmentPair>();
+  const pairByRow = new Map<BlueprintRow, DraftFulfillmentPair>();
 
   for (const row of rows) {
     const evidence = evidencesByRow.get(row);
@@ -504,19 +579,16 @@ export const parseBlueprint = (
         provenance: snippetOf(row),
       };
       draft.fulfillmentPairs.push(pair);
-      pairForRow.set(row, pair);
+      pairByRow.set(row, pair);
       lastConfirmation.set(evidence.contextRef, evidence);
       continue;
     }
 
     if (evidence.kind === 'other_evidence') {
-      // A proving document belongs to the confirmation it proves; without one
-      // it is a standalone record, not a gap.
       const confirmation = lastConfirmation.get(evidence.contextRef);
-      const pair = [...pairForRow.entries()].reverse().find(
-        ([, candidate]) =>
-          candidate.confirmationRef === confirmation?.id,
-      )?.[1];
+      const pair = [...pairByRow.entries()]
+        .reverse()
+        .find(([, candidate]) => candidate.confirmationRef === confirmation?.id)?.[1];
 
       if (pair !== undefined) {
         pair.proofRef = evidence.id;
@@ -524,7 +596,6 @@ export const parseBlueprint = (
     }
   }
 
-  // Anything left pending never got confirmed.
   for (const [contextRef, queue] of pending) {
     for (const { row, evidence } of queue) {
       issues.push({
@@ -534,18 +605,18 @@ export const parseBlueprint = (
     }
   }
 
-  const breachPairs = draft.fulfillmentPairs.filter((pair) => {
-    const row = [...pairForRow.entries()].find(([, candidate]) => candidate === pair)?.[0];
-
-    return row !== undefined && isBreachLabel(row);
-  });
+  const breachPairs = new Set(
+    [...pairByRow.entries()]
+      .filter(([row]) => isBreachLabel(row))
+      .map(([, pair]) => pair),
+  );
 
   for (const pair of breachPairs) {
     const index = draft.fulfillmentPairs.indexOf(pair);
     const trigger = draft.fulfillmentPairs
       .slice(0, index)
       .reverse()
-      .find((candidate) => !breachPairs.includes(candidate));
+      .find((candidate) => !breachPairs.has(candidate));
 
     if (trigger === undefined) {
       continue;
@@ -561,42 +632,37 @@ export const parseBlueprint = (
     });
   }
 
-  const hasPreContract = draft.evidences.some(
-    (evidence) => evidence.contextRef === preContractContext.id,
-  );
+  const evidencesIn = (contextId: string): DraftEvidence[] =>
+    draft.evidences.filter((evidence) => evidence.contextRef === contextId);
 
-  draft.contexts.push(contractContext);
+  const preContractEvidences = evidencesIn(preContractContext.id);
+  const contractEvidences = evidencesIn(contractContext.id);
+  const contractId = contractEvidences.find(
+    (evidence) => evidence.kind === 'contract',
+  )?.id;
 
-  if (hasPreContract) {
+  // A context is only readable once it names its roots: the contract it holds,
+  // the sourcing documents that led to it, and the things it is about.
+  if (contractId !== undefined) {
+    contractContext.rootRefs = [contractId];
+  }
+
+  if (preContractEvidences.length > 0) {
+    preContractContext.rootRefs = preContractEvidences.map((evidence) => evidence.id);
     draft.contexts.push(preContractContext);
   }
 
   if (draft.things.length > 0) {
+    domainContext.rootRefs = draft.things.map((thing) => thing.id);
     draft.contexts.push(domainContext);
   }
 
-  const contractIds = draft.evidences
-    .filter((evidence) => evidence.kind === 'contract')
-    .map((evidence) => evidence.id);
+  draft.contexts.unshift(contractContext);
 
-  // Contract roots are what makes an FM context complete.
-  const roots = contractIds.length > 0
-    ? contractIds
-    : draft.evidences
-        .filter((evidence) => evidence.contextRef === contractContext.id)
-        .map((evidence) => evidence.id);
-
-  if (roots.length > 0) {
-    contractContext.rootRefs = roots;
-  }
-
-  // Requests and confirmations cite the contract; a confirmation cites its request.
   for (const pair of draft.fulfillmentPairs) {
-    const contractId = contractIds[0];
-
     if (contractId !== undefined) {
       draft.relationships.push({
-        id: `relation.${pair.requestRef}-refs-contract`,
+        id: `relation.${pair.requestRef}-references-${contractId}`,
         kind: 'references',
         sourceRef: pair.requestRef,
         targetRef: contractId,
@@ -623,34 +689,16 @@ export const parseBlueprint = (
     }
   }
 
-  if (contractIds[0] !== undefined) {
-    for (const evidence of draft.evidences) {
-      if (evidence.kind !== 'rfp' && evidence.kind !== 'proposal') {
-        continue;
-      }
-
+  if (contractId !== undefined) {
+    for (const evidence of preContractEvidences) {
       draft.relationships.push({
-        id: `relation.${evidence.id}-refs-contract`,
+        id: `relation.${contractId}-references-${evidence.id}`,
         kind: 'references',
-        sourceRef: contractIds[0],
+        sourceRef: contractId,
         targetRef: evidence.id,
         label: '合约引用合约前的凭证作为签订依据',
       });
     }
-  }
-
-  for (const role of draft.roles) {
-    if (role.playedByParticipantRef === undefined) {
-      continue;
-    }
-
-    draft.relationships.push({
-      id: `relation.${role.playedByParticipantRef}-plays-${role.id}`,
-      kind: 'plays_role',
-      sourceRef: role.playedByParticipantRef,
-      targetRef: role.id,
-      label: `${role.label}扮演${role.label}角色`,
-    });
   }
 
   return { success: true, draft, issues };
@@ -658,3 +706,6 @@ export const parseBlueprint = (
 
 /** Reading a cell that holds several names, kept for callers that show it. */
 export const partyNamesOf = splitNames;
+
+/** Re-exported so a caller can label a context the same way the parser does. */
+export type { ContextKind };
