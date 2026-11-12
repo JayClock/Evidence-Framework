@@ -9,7 +9,6 @@ import {
 } from './collectWorkbench.js';
 import { generateWorkbench, reviewPagePath } from './generateWorkbench.js';
 import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
-import { BUILTIN_ASSETS_DIRECTORY } from '../render/workbenchAssets.js';
 
 /**
  * The verified fixture the rest of the workspace checks against: a subscription
@@ -21,8 +20,6 @@ const FIXTURE = fileURLToPath(
     import.meta.url,
   ),
 );
-
-const ASSETS = BUILTIN_ASSETS_DIRECTORY;
 
 const SCOPE = 'context.content-subscription';
 
@@ -186,7 +183,6 @@ describe('generateWorkbench', () => {
       const generated = await generateWorkbench({
         projectRoot: root,
         output: reviewPagePath(root),
-        assetsDirectory: ASSETS,
         scopeRefs: [SCOPE],
       });
 
@@ -212,8 +208,7 @@ describe('generateWorkbench', () => {
         generateWorkbench({
           projectRoot: root,
           output: page,
-          assetsDirectory: ASSETS,
-          scopeRefs: [SCOPE],
+            scopeRefs: [SCOPE],
           fingerprint: async () => {
             reads += 1;
 
@@ -238,8 +233,7 @@ describe('generateWorkbench', () => {
         generateWorkbench({
           projectRoot: root,
           output: page,
-          assetsDirectory: ASSETS,
-          scopeRefs: [SCOPE],
+            scopeRefs: [SCOPE],
         }),
       ).rejects.toThrow(/拒绝覆盖非工作台文件或符号链接/);
 

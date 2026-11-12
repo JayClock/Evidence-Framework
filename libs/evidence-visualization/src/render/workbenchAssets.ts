@@ -14,15 +14,21 @@ import { fileURLToPath } from 'node:url';
 export const ASSETS_DIRECTORY = 'assets';
 
 /**
- * The assets this package ships.
+ * The assets this package ships, or `undefined` when the module URL cannot name
+ * them.
  *
- * `src/render/` and `dist/render/` are the same depth below the package root, so
- * one expression resolves for a workspace consumer reading `src` and for an
- * installed one reading `dist`.
+ * It is resolved per call rather than at module load: a bundler may rewrite
+ * `import.meta.url` (the desktop main bundle does), and a host that ships its own
+ * copy passes one in. `src/render/` and `dist/render/` sit at the same depth, so
+ * one expression covers a workspace consumer and an installed one.
  */
-export const BUILTIN_ASSETS_DIRECTORY = fileURLToPath(
-  new URL(`../../${ASSETS_DIRECTORY}`, import.meta.url),
-);
+export const builtinAssetsDirectory = (): string | undefined => {
+  try {
+    return fileURLToPath(new URL('../../assets', import.meta.url));
+  } catch {
+    return undefined;
+  }
+};
 
 export class WorkbenchAssetError extends Error {
   constructor(message: string) {
@@ -70,30 +76,31 @@ export const resolveAssetsDirectory = ({
   resourcesPath,
   fileExists = hasTemplate,
 }: ResolveAssetsDirectoryInput = {}): string => {
-  const candidates: string[] = [];
-  const add = (candidate: string): void => {
-    const resolved = path.resolve(candidate);
-
-    if (!candidates.includes(resolved)) {
-      candidates.push(resolved);
-    }
-  };
-
-  if (assetsDirectory !== undefined && assetsDirectory !== '') {
-    add(assetsDirectory);
+  // An explicit directory is the caller's statement about where its copy lives;
+  // `loadWorkbenchAssets` names the missing file if the caller was wrong.
+  if (assetsDirectory !== undefined && assetsDirectory.trim() !== '') {
+    return path.resolve(assetsDirectory);
   }
+
+  const candidates: string[] = [];
 
   if (resourcesPath !== undefined && resourcesPath.trim() !== '') {
-    add(path.join(path.resolve(resourcesPath), ASSETS_DIRECTORY));
+    candidates.push(
+      path.join(path.resolve(resourcesPath), ASSETS_DIRECTORY),
+    );
   }
 
-  add(BUILTIN_ASSETS_DIRECTORY);
+  const builtin = builtinAssetsDirectory();
+
+  if (builtin !== undefined) {
+    candidates.push(builtin);
+  }
 
   const found = candidates.find((candidate) => fileExists(candidate));
 
   if (found === undefined) {
     throw new WorkbenchAssetError(
-      `找不到工作台静态资源，已尝试：${candidates.join('、')}`,
+      `找不到工作台静态资源，已尝试：${candidates.join('、') || '（没有可用的候选路径）'}`,
     );
   }
 

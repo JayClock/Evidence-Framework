@@ -13,7 +13,7 @@ export {
 
 export {
   ASSETS_DIRECTORY,
-  BUILTIN_ASSETS_DIRECTORY,
+  builtinAssetsDirectory,
   WorkbenchAssetError,
   loadWorkbenchAssets,
   resolveAssetsDirectory,
