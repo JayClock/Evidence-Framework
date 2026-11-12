@@ -133,6 +133,13 @@ export type CreateProjectResult =
     }
   | { success: false; error: string };
 
+/** What the create dialog needs to pick a destination. */
+export interface CreateProjectDialogInput {
+  kind: ProjectStorageKind;
+  /** Baseline file name the save dialog starts from. */
+  suggestedName?: string;
+}
+
 export type CreateProjectDialogResult =
   | { success: true; targetPath: string; kind: ProjectStorageKind }
   | { success: false; canceled: true }

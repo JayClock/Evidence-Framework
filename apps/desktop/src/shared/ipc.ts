@@ -2,11 +2,19 @@ import type { EvidenceAgentApi } from './agentIpc';
 import type { EvidenceBranchesApi } from './branchApi';
 import type { EvidenceMcpApi } from './mcpIpc';
 import type {
+  CreateProjectDialogInput,
+  CreateProjectDialogResult,
+  CreateProjectInput,
+  CreateProjectResult,
   EvidenceProjectSummary,
   ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,
+  ProjectStorageKind,
+  ProjectTemplateId,
+  ProjectTemplateMeta,
+  ProjectTemplatesResult,
   RecentProjectsResult,
   SaveProjectInput,
   SaveProjectResult,
@@ -16,6 +24,9 @@ import type {
 export const EVIDENCE_IPC_CHANNELS = {
   showOpenDialog: 'evidence:project:show-open-dialog',
   open: 'evidence:project:open',
+  create: 'evidence:project:create',
+  showCreateDialog: 'evidence:project:show-create-dialog',
+  templates: 'evidence:project:templates',
   save: 'evidence:project:save',
   recent: 'evidence:project:recent',
   openEditorWindow: 'evidence:project:open-editor-window',
@@ -30,6 +41,14 @@ export type EvidenceIpcChannel =
 export interface EvidenceDesktopApi {
   projects: {
     showOpenDialog: () => Promise<OpenProjectDialogResult>;
+    /** Picks the folder or bundle path a new project is written to. */
+    showCreateDialog: (
+      input: CreateProjectDialogInput,
+    ) => Promise<CreateProjectDialogResult>;
+    /** Writes a starter model to `targetPath` and remembers the project. */
+    create: (input: CreateProjectInput) => Promise<CreateProjectResult>;
+    /** Starter templates the dashboard offers, with their real counts. */
+    listTemplates: () => Promise<ProjectTemplatesResult>;
     open: (rootPath: string) => Promise<OpenProjectResult>;
     save: (input: SaveProjectInput) => Promise<SaveProjectResult>;
     listRecent: () => Promise<RecentProjectsResult>;
@@ -57,11 +76,18 @@ export interface EvidenceDesktopApi {
 }
 
 export type {
+  CreateProjectDialogResult,
+  CreateProjectInput,
+  CreateProjectResult,
   EvidenceProjectSummary,
   ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,
+  ProjectStorageKind,
+  ProjectTemplateId,
+  ProjectTemplateMeta,
+  ProjectTemplatesResult,
   RecentProjectsResult,
   SaveProjectInput,
   SaveProjectResult,

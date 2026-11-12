@@ -24,8 +24,13 @@ import type {
   McpStatus,
 } from '../../shared/mcpIpc';
 import type {
+  CreateProjectDialogInput,
+  CreateProjectDialogResult,
+  CreateProjectInput,
+  CreateProjectResult,
   EvidenceProjectSummary,
   OpenProjectResult,
+  ProjectTemplateMeta,
 } from '../../shared/projects';
 
 export const projectSummary = (
@@ -42,6 +47,29 @@ export const projectSummary = (
   lastOpenedAt: '2026-11-11T08:00:00.000Z',
   ...overrides,
 });
+
+/** Starter cards the dashboard fetches; the counts mirror the main process. */
+export const defaultTemplates = (): readonly ProjectTemplateMeta[] => [
+  {
+    id: 'blank',
+    name: '空白模型',
+    description:
+      '只有 model.json 的空源树，适合已经想清楚业务边界的建模者从零开始。',
+    source: '履约建模法元模型',
+    entityCount: 0,
+    relationshipCount: 0,
+    ruleCount: 0,
+  },
+  {
+    id: 'procurement',
+    name: '公对公商品采购履约',
+    description: '询价与报价、采购协议，加上发货、支付、开票三组履约项与对应凭证。',
+    source: '直播案例：商品采购协议履约',
+    entityCount: 22,
+    relationshipCount: 15,
+    ruleCount: 3,
+  },
+];
 
 export const healthyReport = (
   overrides: Partial<SensorReport> = {},
@@ -141,6 +169,8 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     save: string[];
     openEditorWindow: string[];
     showOpenDialog: number;
+    showCreateDialog: CreateProjectDialogInput[];
+    create: CreateProjectInput[];
     prompt: AgentPromptInput[];
     steer: AgentSteerInput[];
     abort: string[];
@@ -173,6 +203,13 @@ export const installDesktopApi = ({
     savedAt: '2026-11-11T08:00:00.000Z',
   },
   dialogResult = { success: false, canceled: true } as const,
+  createDialogResult = { success: false, canceled: true } as const,
+  createResult = {
+    success: true,
+    project: projectSummary(),
+    document: { manifest: {} } as never,
+  },
+  templates = defaultTemplates(),
   sensorReport = healthyReport(),
   branches = [branchSummary()],
   exportReviewResult = { status: 'cancelled' } as const,
@@ -183,6 +220,9 @@ export const installDesktopApi = ({
   dialogResult?: Awaited<
     ReturnType<EvidenceDesktopApi['projects']['showOpenDialog']>
   >;
+  createDialogResult?: CreateProjectDialogResult;
+  createResult?: CreateProjectResult;
+  templates?: readonly ProjectTemplateMeta[];
   sensorReport?: SensorReport;
   branches?: readonly EvidenceBranchSummary[];
   exportReviewResult?: Awaited<
@@ -194,6 +234,8 @@ export const installDesktopApi = ({
     save: [],
     openEditorWindow: [],
     showOpenDialog: 0,
+    showCreateDialog: [],
+    create: [],
     prompt: [],
     steer: [],
     abort: [],
@@ -326,6 +368,17 @@ export const installDesktopApi = ({
 
         return dialogResult;
       },
+      showCreateDialog: async (input) => {
+        calls.showCreateDialog.push(input);
+
+        return createDialogResult;
+      },
+      create: async (input) => {
+        calls.create.push(input);
+
+        return createResult;
+      },
+      listTemplates: async () => ({ success: true, templates }),
       open: async (rootPath) => {
         calls.open.push(rootPath);
 
