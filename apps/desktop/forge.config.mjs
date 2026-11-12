@@ -9,11 +9,12 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 /**
  * Resources `scripts/prepare-desktop-resources.mjs` writes before packaging.
  *
- * Only the skill tree travels: the sensors run in-process, so the app needs no
- * interpreter beside `app.asar`. It must still live outside the archive, because
- * Pi lists the skill directory with `node:fs` and opens the fixtures by path.
- * `extraResource` unpacks it into `Contents/Resources` (macOS) / `resources`
- * (Windows, Linux), i.e. the `process.resourcesPath` the resolver reads.
+ * The sensors and the page compiler run in-process, so the app needs no
+ * interpreter beside `app.asar`. It does need the four files the review page is
+ * assembled from, and they live outside the archive so the compiler can read
+ * them with `node:fs`. `extraResource` unpacks the directory into
+ * `Contents/Resources` (macOS) / `resources` (Windows, Linux), i.e. the
+ * `process.resourcesPath` the resolver reads.
  */
 const resourcePath = (name) =>
   fileURLToPath(new URL(`./resources/${name}`, import.meta.url));
@@ -24,7 +25,7 @@ const config = {
     name: 'Evidence Modeling',
     appBundleId: 'dev.evidence.modeling',
     asar: true,
-    extraResource: [resourcePath('skills')],
+    extraResource: [resourcePath('assets')],
   },
   rebuildConfig: {},
   makers: [

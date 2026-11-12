@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/.agents/skills/**/*",
+        "{workspaceRoot}/libs/evidence-visualization/assets/**/*",
         "{workspaceRoot}/scripts/prepare-desktop-resources.mjs"
       ],
       "outputs": ["{projectRoot}/resources"],
@@ -18,7 +18,7 @@
         "cwd": "."
       },
       "metadata": {
-        "description": "Copy the modeling skills into apps/desktop/resources"
+        "description": "Copy the review page assets into apps/desktop/resources"
       }
     },
     "build": {
