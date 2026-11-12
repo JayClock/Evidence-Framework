@@ -190,20 +190,55 @@ try {
       const legend=document.querySelector('.graph-legend');
       if(!legend || legend.tagName!=='DETAILS') throw Error('Missing collapsible illustrated legend');
       const cards=[...legend.querySelectorAll('[data-legend-kind]')];
-      const expected=new Set(DATA.nodes.filter(n=>['evidence','participant','role','context','fulfillment'].includes(n.group)).map(n=>n.group+'.'+n.kind));
+      // The legend documents what the canvas draws: business objects plus the
+      // Context and fulfillment boundaries around them. Attributes, instances,
+      // scenarios and API objects are read in the side panel, never drawn, and
+      // the fulfillment boundary is synthesized by the layout rather than read
+      // from a node, so DATA.nodes alone cannot say which types are present.
+      const expected=new Set();
+      for(const node of document.querySelectorAll('[data-graph-node]')) {
+        const box=nodes.get(node.dataset.graphNode);
+        if(box) expected.add(box.group+'.'+box.kind);
+      }
+      for(const boundary of document.querySelectorAll('[data-graph-boundary]')) {
+        const group=boundary.hasAttribute('data-graph-context')?'context':'fulfillment';
+        expected.add(group+'.'+boundary.dataset.boundaryKind);
+      }
       const kinds=new Set(cards.filter(n=>!n.dataset.legendKind.startsWith('line.')).map(n=>n.dataset.legendKind));
-      if(JSON.stringify([...expected].sort())!==JSON.stringify([...kinds].sort()))throw Error('Legend must cover exactly the present types');
+      if(JSON.stringify([...expected].sort())!==JSON.stringify([...kinds].sort()))throw Error('Legend must cover exactly the drawn types: drawn '+JSON.stringify([...expected].sort())+', legend '+JSON.stringify([...kinds].sort()));
+      const boundaries=[...document.querySelectorAll('[data-graph-boundary]')];
+      const boundaryOf=(id)=>boundaries.find((n)=>n.dataset.graphBoundary===id);
       for(const card of cards) {
-        const example=nodes.get(card.dataset.legendExample);
-        if(!example) throw Error('Legend fabricated an example');
+        const exampleId=card.dataset.legendExample;
+        const example=nodes.get(exampleId);
+        const boundary=boundaryOf(exampleId);
+        // A card must illustrate something the canvas actually draws: a business
+        // object, a Context boundary or the synthesized fulfillment boundary.
+        if(!example&&!boundary) throw Error('Legend fabricated an example');
         const symbol=card.querySelector('.legend-symbol');
         if(symbol) {
+          if(!example) throw Error('Legend symbol must be a drawn object');
           if(symbol.querySelector('strong').textContent!==example.label)throw Error('Legend name drift');
           const rect=[...document.querySelectorAll('[data-graph-node]')].find(n=>n.dataset.graphNode===example.id).querySelector('rect');
           if(getComputedStyle(symbol).backgroundColor!==getComputedStyle(rect).fill)throw Error('Legend color must match the canvas');
           const badge=card.querySelector('[data-legend-role]');
           if(badge&&!DATA.edges.some(e=>e.from===example.id&&e.to===badge.dataset.legendRole&&e.label==='凭证责任方'))throw Error('Invented responsibility');
           if(example.group==='role'&&badge)throw Error('A role is not a concrete responsible voucher');
+        }
+        const frames=[...card.querySelectorAll('.legend-context')];
+        if(frames.length) {
+          if(!boundary) throw Error('Legend boundary must be drawn on the canvas');
+          const frame=frames[frames.length-1];
+          const label=boundary.querySelector('.graph-boundary-label')?.textContent||'';
+          if(!frame.classList.contains('legend-context-'+boundary.dataset.boundaryKind))throw Error('Legend boundary kind drift');
+          if(!label.includes(frame.textContent.trim()))throw Error('Legend boundary label drift');
+          // The fulfillment boundary is drawn inside the Context that owns it, so
+          // its card nests it too; a child Context is drawn on its own and its
+          // card stays flat.
+          const parentId=boundary.dataset.boundaryParent||'';
+          const parent=boundary.dataset.boundaryKind==='fulfillment'&&parentId?boundaryOf(parentId):null;
+          if(frames.length!==(parent?2:1))throw Error('Legend boundary nesting drift');
+          if(parent&&!frames[0].classList.contains('legend-context-'+parent.dataset.boundaryKind))throw Error('Legend parent boundary kind drift');
         }
         const line=card.querySelector('.legend-line');
         if(line) {
@@ -268,12 +303,25 @@ try {
           if(getComputedStyle(link).textAlign!=='center') throw Error('Cell link text must be centered');
       }
       if(${graph}) for (const node of document.querySelectorAll('[data-graph-node],[data-responsibility]')) {
-        const frame=node.querySelector('rect').getBoundingClientRect();
+        // Measure in the canvas's own coordinate space: a CSS-pixel rectangle at
+        // fractional zoom snaps to the device grid, which cannot resolve the
+        // sub-pixel centering this checks. A content group carries its own
+        // centering transform, so both boxes are mapped through it before the
+        // centres are compared.
+        const into = (box, matrix) => {
+          const xs=[], ys=[];
+          for (const [x,y] of [[box.x,box.y],[box.x+box.width,box.y+box.height]]) {
+            xs.push(matrix.a*x+matrix.c*y+matrix.e); ys.push(matrix.b*x+matrix.d*y+matrix.f);
+          }
+          return {x:Math.min(...xs), y:Math.min(...ys), width:Math.max(...xs)-Math.min(...xs), height:Math.max(...ys)-Math.min(...ys)};
+        };
+        const frame=into(node.querySelector('rect').getBBox(), node.getCTM());
         const content=node.querySelector('.graph-node-content') || (node.hasAttribute('data-responsibility') && node.querySelector('text'));
         if(!content) throw Error('Missing centered text block');
-        const text=content.getBoundingClientRect();
-        if(Math.abs(text.x+text.width/2-frame.x-frame.width/2)>.75||Math.abs(text.y+text.height/2-frame.y-frame.height/2)>.75) throw Error('Graph text block must be centered: '+node.getAttribute('aria-label'));
-        if(text.x<frame.x-.75||text.y<frame.y-.75||text.right>frame.right+.75||text.bottom>frame.bottom+.75) throw Error('Graph text overflows its frame');
+        const text=into(content.getBBox(), content.getCTM());
+        const dx=Math.abs(text.x+text.width/2-frame.x-frame.width/2), dy=Math.abs(text.y+text.height/2-frame.y-frame.height/2);
+        if(dx>.75||dy>.75) throw Error('Graph text block must be centered: '+node.getAttribute('aria-label')+' dx='+dx.toFixed(1)+' dy='+dy.toFixed(1)+' lines='+content.querySelectorAll('tspan').length+' frame='+frame.width.toFixed(0)+'x'+frame.height.toFixed(0)+' text='+text.width.toFixed(0)+'x'+text.height.toFixed(0));
+        if(text.x<frame.x-.75||text.y<frame.y-.75||text.x+text.width>frame.x+frame.width+.75||text.y+text.height>frame.y+frame.height+.75) throw Error('Graph text overflows its frame');
         for(const line of content.matches('text')?[content]:content.querySelectorAll('text,tspan')) {
           if(getComputedStyle(line).textAnchor!=='middle') throw Error('Each graph line must be centered');
         }
@@ -322,13 +370,27 @@ try {
     );
   }
   async function checkContextBoundaries() {
-    assert.deepEqual(
-      await evaluate(
-        '[...document.querySelectorAll("[data-graph-boundary]")].map(n=>n.dataset.graphBoundary).sort()',
-      ),
-      await evaluate(
-        'DATA.nodes.filter(n=>["context","fulfillment"].includes(n.group)).map(n=>n.id).sort()',
-      ),
+    // A frame is either a Context the model declares, or the fulfillment group
+    // the layout synthesizes around one Fulfillment Request. The projection is a
+    // pure graph: it carries no `fulfillment` node for a frame to match, and a
+    // Context that owns nothing is not drawn at all.
+    assert.ok(
+      await evaluate(`(() => {
+      const drawn=[...document.querySelectorAll('[data-graph-boundary]')].map(n=>({id:n.dataset.graphBoundary,kind:n.dataset.boundaryKind}));
+      const contexts=new Set(DATA.nodes.filter(n=>n.group==='context').map(n=>n.id));
+      const requests=new Set(DATA.nodes.filter(n=>n.kind==='fulfillment_request').map(n=>n.id));
+      const frames=drawn.filter(b=>b.kind!=='fulfillment');
+      if(new Set(frames.map(b=>b.id)).size!==frames.length) throw Error('Duplicate context frame');
+      for(const frame of frames) if(!contexts.has(frame.id)) throw Error('Frame invented for '+frame.id);
+      for(const group of drawn.filter(b=>b.kind==='fulfillment')) {
+        if(!group.id.startsWith('fulfillment:')) throw Error('Fulfillment frame without a request: '+group.id);
+        if(!requests.has(group.id.slice('fulfillment:'.length))) throw Error('Fulfillment frame for an unknown request: '+group.id);
+      }
+      const owners=new Set(DATA.nodes.filter(n=>['evidence','participant','role'].includes(n.group)).map(n=>n.parent).filter(Boolean));
+      for(const owner of owners) if(!frames.some(b=>b.id===owner)) throw Error('Context with objects must be drawn: '+owner);
+      return true;
+    })()`),
+      'Every frame must be a declared Context or a request fulfillment group',
     );
     assert.ok(
       await evaluate(`(() => {
@@ -336,13 +398,24 @@ try {
       const boxes = [...document.querySelectorAll('[data-graph-node]')];
       const rect = n => n.querySelector('rect').getBBox();
       const contains = (a,b) => a.x<=b.x && a.y<=b.y && a.x+a.width>=b.x+b.width && a.y+a.height>=b.y+b.height;
+      const overlaps = (a,b) => a.x<b.x+b.width && b.x<a.x+a.width && a.y<b.y+b.height && b.y<a.y+a.height;
       const ancestor = (id, parent) => {const seen=new Set(); let n=nodes.get(id); while(n && !seen.has(n.id)){seen.add(n.id); if(n.parent===parent)return true; n=nodes.get(n.parent);} return false;};
-      return frames.every(frame => {
-        const id=frame.dataset.graphBoundary;
-        return boxes.every(box => contains(rect(frame),rect(box))===ancestor(box.dataset.graphNode,id)) && frames.every(child=>!ancestor(child.dataset.graphBoundary,id)||contains(rect(frame),rect(child)));
+      const contexts=frames.filter(f=>f.dataset.boundaryKind!=='fulfillment');
+      const groups=frames.filter(f=>f.dataset.boundaryKind==='fulfillment');
+      // A frame may only enclose objects that belong to it, and it must enclose
+      // the objects it owns directly: a stage Context is laid out beside its
+      // parent rather than inside it, so "inside means descendant" is not a rule
+      // the layout can keep.
+      const sound=contexts.every(frame => boxes.every(box => !contains(rect(frame),rect(box)) || ancestor(box.dataset.graphNode,frame.dataset.graphBoundary)));
+      const complete=contexts.every(frame => boxes.filter(box => nodes.get(box.dataset.graphNode)?.parent===frame.dataset.graphBoundary).every(box => contains(rect(frame),rect(box))));
+      const disjoint=contexts.every(frame => contexts.filter(other=>other!==frame).every(other => !overlaps(rect(frame),rect(other)) || ancestor(other.dataset.graphBoundary,frame.dataset.graphBoundary) || ancestor(frame.dataset.graphBoundary,other.dataset.graphBoundary)));
+      const nestedGroups=groups.every(group => {
+        const parent=contexts.find(f=>f.dataset.graphBoundary===group.dataset.boundaryParent);
+        return Boolean(parent) && contains(rect(parent),rect(group));
       });
+      return sound && complete && disjoint && nestedGroups;
     })()`),
-      'Context frames must contain exactly their owned objects and child contexts',
+      'Context frames must enclose exactly their own objects, and fulfillment groups must sit inside their Context',
     );
     assert.ok(
       await evaluate(
@@ -378,12 +451,28 @@ try {
         same(objects.filter(n=>n.classList.contains('graph-primary')).map(n=>n.dataset.graphNode),[id],'primary object');
       }
       const belongs=(id,parent)=>{let n=nodes.get(id);const seen=new Set();while(n&&!seen.has(n.id)){if(n.id===parent)return true;seen.add(n.id);n=nodes.get(n.parent);}return false;};
+      // A fulfillment frame is synthesized by the layout, so its parent is read
+      // from the frame it was drawn as rather than from a node that does not exist.
+      const frameParent=(id)=>{const frame=[...document.querySelectorAll('[data-graph-boundary]')].find(n=>n.dataset.graphBoundary===id);return frame?frame.dataset.boundaryParent||'':null;};
+      const belongsFrame=(id,parent)=>{let current=id;const seen=new Set();while(current&&!seen.has(current)){seen.add(current);if(current===parent)return true;const node=nodes.get(current);current=node?node.parent:frameParent(current);}return false;};
       for(const object of objects){enter(object);checkNode(object.dataset.graphNode);leave(object);}
       for(const context of contexts){
         enter(context);
+        if(context.dataset.boundaryKind==='fulfillment'){
+          // The group is synthesized, so its membership is the layout's: what can
+          // be checked is that it highlights its own request and never reaches
+          // outside the Context that owns it.
+          const request=context.dataset.graphBoundary.slice('fulfillment:'.length);
+          const highlighted=new Set(objects.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphNode));
+          if(!highlighted.has(request))throw Error('fulfillment group must highlight its request: '+request);
+          if([...highlighted].some(id=>!belongs(id,context.dataset.boundaryParent)))throw Error('fulfillment group reached outside its Context');
+          if(edgeElements.filter(n=>n.classList.contains('highlight')).some(n=>{const line=lines.find(e=>e.id===n.dataset.highlightEdge);return !line||!highlighted.has(line.from)||!highlighted.has(line.to);}))throw Error('fulfillment group highlighted an unrelated line');
+          leave(context);
+          continue;
+        }
         const members=new Set([...ids].filter(id=>belongs(id,context.dataset.graphBoundary)));
         checkObjects(members,new Set(lines.filter(e=>members.has(e.from)&&members.has(e.to)).map(e=>e.id)));
-        same(contexts.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphBoundary),contexts.filter(n=>belongs(n.dataset.graphBoundary,context.dataset.graphBoundary)).map(n=>n.dataset.graphBoundary),'context descendants only');
+        same(contexts.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphBoundary),contexts.filter(n=>belongsFrame(n.dataset.graphBoundary,context.dataset.graphBoundary)).map(n=>n.dataset.graphBoundary),'context descendants only');
         leave(context);
       }
       for(const badge of badges){enter(badge);checkNode(badge.dataset.roleRef);leave(badge);}

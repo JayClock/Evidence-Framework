@@ -1023,18 +1023,30 @@ function renderBusinessGraph(target) {
     viewport.append(svg);
     // Center the whole text block using rendered bounds, including wrapped
     // names, type/time rows and responsibility badges, rather than baselines.
-    for (const node of svg.querySelectorAll(
-      '[data-graph-node],[data-responsibility]',
-    )) {
-      const frame = node.querySelector('rect').getBBox();
-      const content =
-        node.querySelector('.graph-node-content') || node.querySelector('text');
-      const bounds = content.getBBox();
-      content.setAttribute(
-        'transform',
-        `translate(${frame.x + frame.width / 2 - bounds.x - bounds.width / 2} ${frame.y + frame.height / 2 - bounds.y - bounds.height / 2})`,
-      );
-    }
+    const centreContent = () => {
+      for (const node of svg.querySelectorAll(
+        '[data-graph-node],[data-responsibility]',
+      )) {
+        const frame = node.querySelector('rect').getBBox();
+        const content =
+          node.querySelector('.graph-node-content') ||
+          node.querySelector('text');
+        if (!content) continue;
+        const bounds = content.getBBox();
+        content.setAttribute(
+          'transform',
+          `translate(${frame.x + frame.width / 2 - bounds.x - bounds.width / 2} ${frame.y + frame.height / 2 - bounds.y - bounds.height / 2})`,
+        );
+      }
+    };
+    centreContent();
+    // A bbox read in the task that inserted the subtree can still report the
+    // metrics of a wrapped line before its last line was laid out, which leaves a
+    // two-line label a pixel or two low. Re-centring on the next task measures
+    // the settled text; the first pass keeps the initial paint already close.
+    setTimeout(() => {
+      if (svg.isConnected) centreContent();
+    }, 0);
     setZoom(
       businessGraphState.zoom ??
         Math.min(1, (viewport.clientWidth - 4) / layout.width),
