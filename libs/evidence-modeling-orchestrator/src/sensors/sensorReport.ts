@@ -1,7 +1,7 @@
 /** How a sensor finding blocks work, in the language the skills already use. */
 export type SensorSeverity = 'block' | 'warn' | 'info';
 
-/** Which pinned script produced a finding. */
+/** Which check produced a finding. */
 export type SensorSource =
   | 'check_fm'
   | 'audit_key_data'
@@ -30,7 +30,7 @@ export interface KeyDataDecision {
 }
 
 export interface KeyDataSummary {
-  /** Items `audit_key_data.py` inventoried. */
+  /** Items the key data ledger inventoried. */
   totalItems: number;
   /** Items already backed by a contract term, upstream evidence or result fact. */
   resolvedCount: number;
@@ -59,7 +59,7 @@ export interface SensorReport {
   /** False while the ledger still owes a provider decision. */
   isStageGateReady: boolean;
   stageGate?: StageGateSummary;
-  /** Scripts that could not run, e.g. because the pinned interpreter is missing. */
+  /** Checks the run could not complete, e.g. because the model could not be read. */
   unavailableSensors: readonly SensorSource[];
 }
 
@@ -78,7 +78,7 @@ const issue = (
   ...extra,
 });
 
-/** Shape of `check_fm.py`'s JSON report, narrowed to what the UI reads. */
+/** The FM check report, narrowed to what the UI reads. */
 export interface FmCheckReport {
   checkVersion?: number;
   valid?: boolean;
@@ -91,7 +91,7 @@ export interface FmCheckReport {
   executedScenarioCount?: number;
 }
 
-/** Shape of `audit_key_data.py`'s JSON report. */
+/** The key data audit report. */
 export interface KeyDataAuditReport {
   checkVersion?: number;
   valid?: boolean;
@@ -109,7 +109,7 @@ export interface KeyDataAuditReport {
   note?: string;
 }
 
-/** Shape of `check_stage_gate.py`'s JSON report. */
+/** The stage gate report. */
 export interface StageGateReport {
   passed?: boolean;
   target?: 'api' | 'visualization';
@@ -121,7 +121,7 @@ export interface StageGateReport {
 const MAX_KEY_DATA = 40;
 
 /**
- * Turns `check_fm.py` output into blocking and warning findings.
+ * Turns the FM check report into blocking and warning findings.
  *
  * Static inconsistency is blocking: downstream contracts must not be derived
  * from a model that does not close. Scope gaps stay warnings until the scope is
@@ -175,7 +175,7 @@ export const fmCheckIssues = (report: FmCheckReport): SensorIssue[] => {
 };
 
 /**
- * Turns `audit_key_data.py` output into the ledger summary.
+ * Turns the key data audit report into the ledger summary.
  *
  * Items that still owe a provider decision are warnings, not static errors —
  * the script itself calls them a decision list — but they keep the stage gate

@@ -37,9 +37,8 @@ import {
  *
  * It answers three different questions and keeps them apart: is the model
  * consistent, is the requested scope complete, and did the scenarios execute.
- * Consistency is blocking; a scope gap is not, until the scope is asked for. This
- * ports `check_fm.py`, including the report contract version the stage gate
- * demands.
+ * Consistency is blocking; a scope gap is not, until the scope is asked for. The
+ * report carries the contract version the stage gate demands.
  */
 
 /** Report contract version; the stage gate refuses anything else. */

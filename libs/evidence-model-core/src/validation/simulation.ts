@@ -30,8 +30,7 @@ import {
  *
  * A scenario issues instances in order and asks what the rules say about them.
  * Nothing here reads a clock: `asOf` and `now` are scenario inputs, so a report
- * can be replayed byte for byte. This ports `simulate_scenario` and
- * `simulate_validation_suite` from `fm_simulation.py`.
+ * can be replayed byte for byte.
  */
 
 export interface SimulationEvaluationResult {

@@ -21,9 +21,9 @@ import { checkInterviewTrace, type TraceCheckResult } from './nativeTraceCheck.j
 /**
  * The native sensor set, in one pass over one model read.
  *
- * The Python engine started a process per script; here the document, the
- * validation suite and the digest are loaded once, so every sensor describes the
- * same bytes. That is what makes a native verdict comparable with a saved one.
+ * The document, the validation suite and the digest are loaded once, so every
+ * sensor describes the same bytes. That is what makes a fresh verdict comparable
+ * with a saved one.
  */
 
 export interface NativeSensorsInput {

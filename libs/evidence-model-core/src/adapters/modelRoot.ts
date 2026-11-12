@@ -190,8 +190,8 @@ export async function readModelRootBytes(
 /**
  * `sha256:...` over the sorted `path → sha256(bytes)` map.
  *
- * Same construction as `check_fm.py`: independent of where the tree lives and of
- * the generated output, so a packed and an unpacked copy stay comparable.
+ * Independent of where the tree lives and of the generated output, so a packed
+ * and an unpacked copy stay comparable.
  */
 export const modelDigestOf = (
   files: readonly { path: string; content: string | Buffer }[],

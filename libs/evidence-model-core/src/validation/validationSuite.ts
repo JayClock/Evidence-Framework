@@ -25,9 +25,8 @@ import {
 /**
  * The `validation/` trees the FM checks execute.
  *
- * Loading mirrors `load_validation_suite` and validation mirrors
- * `validate_validation_suite` in `fm_simulation.py`, error message for error
- * message where the wording carries a rule.
+ * Loading and validation report every problem they find, keeping the wording of
+ * a message where the wording carries a rule.
  */
 
 type JsonObject = Record<string, unknown>;
@@ -833,10 +832,10 @@ const validateBinding = (
 /**
  * Checks the suite against the model, returning every problem found.
  *
- * The checks are the ones `fm_simulation.py` performs before a scenario may run:
- * an instance must instantiate a modeled Evidence Entity with completed required
- * values, and a scenario may only evaluate rules and use instances that the
- * model and its own steps actually make available.
+ * A scenario may only run once these hold: an instance must instantiate a
+ * modeled Evidence Entity with completed required values, and a scenario may
+ * only evaluate rules and use instances that the model and its own steps
+ * actually make available.
  */
 export const validateValidationSuite = (
   model: DomainModelDocument,

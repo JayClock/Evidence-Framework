@@ -7,15 +7,15 @@ import {
 import type { KeyDataAuditReport, KeyDataDecision } from '../sensorReport.js';
 
 /**
- * Key data auditing without Python.
+ * Key data auditing.
  *
  * Every key data item is classified by how its value is established: a contract
  * term, a domain source, a negotiation source, a result fact, a request formation
  * input, a derived value, or a decision still owed. The classification is the
  * ledger's, so the badge in the attribute table and this report cannot drift.
  *
- * The report keeps the shape `audit_key_data.py` printed, because a saved report
- * is compared with a fresh one.
+ * The report keeps one stable shape, because a saved report is compared with a
+ * fresh one.
  */
 export const runNativeKeyDataAudit = (
   model: DomainModelDocument,
@@ -33,7 +33,7 @@ export const runNativeKeyDataAudit = (
   const counts: Record<string, number> = {};
 
   for (const [kind, count] of Object.entries(ledger.counts)) {
-    // Only buckets that actually occur are printed, like the Python report.
+    // Only buckets that actually occur are printed, so a clean ledger stays short.
     if (count > 0) {
       counts[kind] = count;
     }

@@ -36,7 +36,7 @@ describe('loadModelSources', () => {
 });
 
 describe('runNativeFmCheck', () => {
-  it('matches the report check_fm.py prints for the golden fixture', async () => {
+  it('matches the pinned report for the golden fixture', async () => {
     const sources = await loadModelSources(golden);
     const { report, simulation } = await runNativeFmCheck(sources, {
       scopeRefs: ['context.content-subscription'],
@@ -60,7 +60,7 @@ describe('runNativeFmCheck', () => {
 });
 
 describe('runNativeKeyDataAudit', () => {
-  it('classifies key data exactly as audit_key_data.py does', async () => {
+  it('classifies key data as the pinned ledger does', async () => {
     const sources = await loadModelSources(golden);
     const { traceability } = await runNativeFmCheck(sources, {
       detectInputChange: false,

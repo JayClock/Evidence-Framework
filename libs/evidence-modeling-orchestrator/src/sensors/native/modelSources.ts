@@ -13,10 +13,9 @@ import {
 } from '@evidence-poc/evidence-model-core';
 
 /**
- * Reads a model root once for every native sensor.
+ * Reads a model root once for every sensor.
  *
- * The Python sensors ran as separate processes, so each one re-read the tree.
- * In-process they share one read: the digest, the document and the validation
+ * Every sensor shares one read: the digest, the document and the validation
  * suite all describe the same bytes, which is what makes `inputChanged` honest.
  */
 export interface ModelSources {

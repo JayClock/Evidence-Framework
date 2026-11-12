@@ -3,9 +3,9 @@ import type { AttributeAST, EntityAST } from './entity.js';
 /**
  * How the value of one key data item is established.
  *
- * The vocabulary mirrors `audit_key_data.py`, which is the authority behind the
- * key data ledger: the desktop must classify an item exactly as the pinned
- * checker does, so a green inspector never hides a decision owed downstream.
+ * This vocabulary is the authority behind the key data ledger: the inspector,
+ * the ledger and the sensors classify an item with it, so a green inspector never
+ * hides a decision owed downstream.
  */
 export const KEY_DATA_SOURCE_KINDS = [
   'derived',
@@ -23,8 +23,7 @@ export type KeyDataSourceKind = (typeof KEY_DATA_SOURCE_KINDS)[number];
 /**
  * Values a requesting party records when it forms the request itself.
  *
- * Kept in sync with `REQUEST_FORMATION_FIELDS` in `audit_key_data.py`; an
- * unknown name falls into `needs-decision` until the business decision lands.
+ * An unknown name falls into `needs-decision` until the business decision lands.
  */
 export const REQUEST_FORMATION_FIELDS: readonly string[] = [
   'started_at',
@@ -75,8 +74,8 @@ export const isKeyDataResolved = (kind: KeyDataSourceKind): boolean =>
 /**
  * Classifies one key data item from the modeled object alone.
  *
- * Pure by design: the same inputs the Python checker reads produce the same
- * bucket here, so the inspector, the ledger and the sensors agree.
+ * Pure by design: the same inputs always produce the same bucket, so the
+ * inspector, the ledger and the sensors agree.
  */
 export const classifyKeyDataSource = (
   entity: Pick<EntityAST, 'category' | 'kind'>,

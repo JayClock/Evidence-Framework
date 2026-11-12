@@ -3,9 +3,9 @@ import { ATTRIBUTE_NAME_PATTERN, DOMAIN_ID_PATTERN } from '@evidence-poc/evidenc
 /**
  * Typed-value rules shared by the scenario simulator and the trace reader.
  *
- * They are the TypeScript counterpart of `validate_typed_value` and
- * `normalize_json_value` in `fm_simulation.py`, so a value that the Python
- * checker accepted keeps passing here — and one it rejected still fails.
+ * They are the one reading of a typed value: the scenario simulator and the
+ * trace reader accept exactly the same values, and a value either satisfies its
+ * declared `valueType` or fails with the reason.
  */
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -27,8 +27,8 @@ export const isTimestampText = (value: unknown): value is string =>
 /**
  * Returns the reason `value` does not satisfy `valueType`, or null when it does.
  *
- * `dynamic` and unknown value types accept anything, matching the Python
- * helper, which only knows the declared FM types.
+ * `dynamic` and unknown value types accept anything: only the declared FM types
+ * carry a rule.
  */
 export const validateTypedValue = (
   value: unknown,

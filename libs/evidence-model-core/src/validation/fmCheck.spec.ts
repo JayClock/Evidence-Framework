@@ -69,7 +69,7 @@ describe('buildFmCheckReport', () => {
     expect(report.modelDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
 
-  it('reports scope completeness against the Python digest and summary', async () => {
+  it('reports scope completeness against the pinned digest and summary', async () => {
     const { report } = await check('valid-traceable-subscription', {
       scopeRefs: ['context.content-subscription'],
     });

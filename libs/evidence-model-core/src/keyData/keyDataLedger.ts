@@ -21,7 +21,7 @@ export interface KeyDataProvider {
   cardinality?: 'one' | 'many';
 }
 
-/** One key data item, classified exactly as `audit_key_data.py` does. */
+/** One key data item, classified by the shared key data vocabulary. */
 export interface KeyDataEntry {
   entityRef: string;
   entityLabel: string;

@@ -7,13 +7,12 @@ import {
 import { isTimestampText } from '@evidence-poc/evidence-model-core';
 
 /**
- * Interview trace validation without Python.
+ * Interview trace validation.
  *
  * The trace is the record of what was asked and what a person confirmed, so it
- * is checked against the same schema constants the Python script used: a
- * question id that repeats, a focus that names an entity the model does not
- * contain, or a binding to an attribute that was never modeled all make the
- * record unusable as provenance.
+ * is checked against the schema constants: a question id that repeats, a focus
+ * that names an entity the model does not contain, or a binding to an attribute
+ * that was never modeled all make the record unusable as provenance.
  */
 
 type JsonObject = Record<string, unknown>;
@@ -53,8 +52,8 @@ interface Shape {
 /**
  * Reports the differences between a value and one object shape.
  *
- * The messages follow the `path: problem` form the Python validator printed, so
- * a reader can jump from a report line to the trace file.
+ * The messages follow the `path: problem` form, so a reader can jump from a
+ * report line to the trace file.
  */
 const checkObject = (
   value: unknown,

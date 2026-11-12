@@ -17,10 +17,9 @@ import {
  *
  * Every read a rule performs is traced to the modeled Entity attribute it comes
  * from, so a derived value can be explained by the values it was computed from.
- * This ports `analyze_traceability` from `fm_traceability.py`, including the
- * checks that make lineage meaningful: a collection binding must be iterated by
- * a macro, an access must name a real attribute, and a derivation cycle is an
- * error rather than a curiosity.
+ * The checks that make lineage meaningful are part of the walk: a collection
+ * binding must be iterated by a macro, an access must name a real attribute, and
+ * a derivation cycle is an error rather than a curiosity.
  */
 
 const MACRO_NAMES = new Set(['all', 'exists', 'exists_one', 'filter', 'map']);

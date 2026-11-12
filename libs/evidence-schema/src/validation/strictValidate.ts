@@ -1788,7 +1788,7 @@ const validateDerivedAttributes = (
 };
 
 /**
- * Static FM v5 checks ported from `evidence-fm/scripts/fm_model.py`.
+ * Static FM v5 checks.
  *
  * Scope: document shape, identifier grammar, category/kind contracts,
  * reference resolution, context ownership, relationship endpoint rules and

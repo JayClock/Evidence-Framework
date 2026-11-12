@@ -16,7 +16,7 @@ import { runNativeSensors } from './native/nativeSensors.js';
  *
  * One implementation, in-process: every check reads the model tree once and
  * decides from that read. There is no mode to select and no interpreter to
- * resolve — the Python scripts this engine used to start are gone.
+ * resolve.
  */
 
 const DEFAULT_SKILLS_DIRECTORY = path.join('.agents', 'skills');
@@ -25,10 +25,9 @@ export interface SensorsEngineOptions {
   /**
    * Skill tree the agent reads.
    *
-   * The sensors no longer open anything under it — they carry the checks, the
-   * schemas and the simulator — but a caller that shares one tree between the
-   * agent and the sensors keeps building it here so both describe the same
-   * install.
+   * The sensors open nothing under it — they carry the checks, the schemas and the
+   * simulator — but a caller that shares one tree between the agent and the
+   * sensors keeps building it here so both describe the same install.
    */
   skillsRoot?: string;
   /** Injected clock, so a report's timestamp is reproducible in a test. */

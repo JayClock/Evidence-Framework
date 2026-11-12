@@ -15,9 +15,8 @@ import type { ValidationSuite } from '../validation/validationSuite.js';
  *
  * Each one is a projection of the checked model, never a second source: the
  * model JSON stays the only truth, and a generated file can be deleted and
- * rebuilt at any time. They used to be separate Python scripts; keeping them
- * here means a caller gets the same objects the checks decided on instead of a
- * second parse of the same files.
+ * rebuilt at any time. They are built from the objects the checks decided on,
+ * not from a second parse of the same files.
  */
 
 export interface DerivedInputs {

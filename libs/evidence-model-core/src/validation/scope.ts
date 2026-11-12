@@ -14,10 +14,10 @@ import type { ValidationSuite } from './validationSuite.js';
  * Responsibility scope, rebuilt from the single FM source.
  *
  * A scope is never persisted as a second model: it is the subset a delivery
- * consumes, derived on demand. Porting `fm_scope.py` keeps the three rules that
- * matter — a scope is always whole Contexts plus real outbound dependencies, a
- * shared Participant never drags in an unrelated Contract, and an unresolved
- * Context Role is retained rather than invented.
+ * consumes, derived on demand. Three rules keep it honest — a scope is always
+ * whole Contexts plus real outbound dependencies, a shared Participant never
+ * drags in an unrelated Contract, and an unresolved Context Role is retained
+ * rather than invented.
  */
 
 type JsonObject = Record<string, unknown>;
@@ -74,9 +74,9 @@ export const referencesOf = (
 /**
  * Every object a scope can contain, keyed by id.
  *
- * The walk in `fm_scope.py` treats entities, rules and relationships alike — an
- * object's Context is whichever of them owns it — so they share one map here and
- * the typed maps below only serve the projection at the end.
+ * The walk treats entities, rules and relationships alike — an object's Context
+ * is whichever of them owns it — so they share one map here and the typed maps
+ * below only serve the projection at the end.
  */
 const indexObjects = (
   model: DomainModelDocument,

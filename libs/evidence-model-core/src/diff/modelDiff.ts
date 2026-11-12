@@ -65,7 +65,7 @@ export interface RuleDiff {
 /**
  * One key data item whose provider decision changed.
  *
- * `source` is what `audit_key_data.py` would classify, so a branch that trades a
+ * `source` is what the key data ledger classifies, so a branch that trades a
  * contract term for a pending decision shows up here as drift rather than as a
  * silent count change.
  */

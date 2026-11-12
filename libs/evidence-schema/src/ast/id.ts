@@ -1,9 +1,8 @@
 /**
  * Identifier grammar shared by every Fulfillment Modeling (FM) v5 source object.
  *
- * The patterns here are the TypeScript counterpart of the regular expressions in
- * `evidence-fm/scripts/fm_model.py`; they are the single source of truth for the
- * schema package and are reused by the model core and the disk adapter.
+ * These patterns are the single source of truth for the schema package and are
+ * reused by the model core and the disk adapter.
  */
 
 /** Entity, Relationship and Rule ids: `context.product-procurement`, `request.payment`. */

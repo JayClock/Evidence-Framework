@@ -3,12 +3,12 @@ import type { FmCheckReport } from '@evidence-poc/evidence-model-core';
 import type { StageGateReport } from '../sensorReport.js';
 
 /**
- * The downstream hand-off gate, without Python.
+ * The downstream hand-off gate.
  *
  * The gate consumes a *saved* FM check report and the recorded human closure,
  * not the live model: it is the moment a scope stops being under interview and
- * becomes something a contract can be derived from. This ports
- * `check_stage_gate.py`, including its refusal of anything but report version 5.
+ * becomes something a contract can be derived from. It refuses any report that
+ * is not contract version 5.
  */
 
 type JsonObject = Record<string, unknown>;

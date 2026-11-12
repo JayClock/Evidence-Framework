@@ -15,7 +15,7 @@ import {
 import { isTimestampText } from './typedValues.js';
 
 /**
- * The deterministic Evidence-only timeline `build_fm_timeline.py` produced.
+ * The deterministic Evidence-only timeline.
  *
  * Order is never derived from timestamps: a lane is read in the order the
  * instances' `basedOn` links establish, and two instances with no basis path
@@ -347,7 +347,7 @@ export const emptyTimelineCollections = (): TimelineCollections => ({
   unresolvedOrder: [],
 });
 
-/** The counts and digest `check_fm.py` puts under `timelineSummary`. */
+/** The counts and digest the FM report puts under `timelineSummary`. */
 export const timelineSummary = (timeline: TimelineCollections): TimelineSummary => ({
   laneCount: timeline.lanes.length,
   evidenceTypeCount: timeline.evidenceTypes.length,
