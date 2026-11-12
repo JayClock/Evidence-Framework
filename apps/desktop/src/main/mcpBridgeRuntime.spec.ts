@@ -11,6 +11,24 @@ import { createMcpRequestHandler } from './mcpRequestHandler';
 const endpointFor = (name: string): string =>
   join(tmpdir(), `evidence-mcp-runtime-${process.pid}-${name}.sock`);
 
+const deliveryService = () => ({
+  topology: async () => ({
+    modelId: 'product-procurement',
+    modelName: '商品采购',
+    modelVersion: '1.1.0',
+    services: [],
+    links: [],
+    limitations: [],
+  }),
+  openapi: async () => ({
+    modelId: 'product-procurement',
+    modelVersion: '1.1.0',
+    pathCount: 0,
+    document: {},
+    limitations: [],
+  }),
+});
+
 const appState = {
   isRunning: true,
   activeProject: {
@@ -57,7 +75,8 @@ describe('startMcpBridgeRuntime', () => {
         createMcpRequestHandler({
           renderer,
           capture,
-          sensors: {
+          delivery: deliveryService(),
+        sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -115,7 +134,8 @@ describe('startMcpBridgeRuntime', () => {
         createMcpRequestHandler({
           renderer,
           capture,
-          sensors: {
+          delivery: deliveryService(),
+        sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -169,7 +189,8 @@ describe('startMcpBridgeRuntime', () => {
         createMcpRequestHandler({
           renderer,
           capture,
-          sensors: {
+          delivery: deliveryService(),
+        sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -233,7 +254,8 @@ describe('startMcpBridgeRuntime', () => {
         createMcpRequestHandler({
           renderer,
           capture,
-          sensors: {
+          delivery: deliveryService(),
+        sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,

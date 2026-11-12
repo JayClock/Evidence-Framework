@@ -68,6 +68,21 @@ const client = (): EvidenceMcpAppClient => ({
     driftDetected: false,
     blockingReasons: ['key data decision owed'],
   })),
+  getDeliveryTopology: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    modelName: '商品采购',
+    modelVersion: '1.0.0',
+    services: [],
+    links: [],
+    limitations: [],
+  })),
+  exportOpenApiContract: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    modelVersion: '1.0.0',
+    pathCount: 0,
+    document: {},
+    limitations: [],
+  })),
 });
 
 let connected: Client | null = null;
@@ -92,7 +107,7 @@ describe('createEvidenceMcpServer', () => {
     const { tools } = await mcp.listTools();
 
     expect(tools.map((tool) => tool.name)).toContain(TOOL_NAMES.appState);
-    expect(tools).toHaveLength(10);
+    expect(tools).toHaveLength(12);
     expect(
       tools.find((tool) => tool.name === TOOL_NAMES.applyPatch)?.annotations,
     ).toMatchObject({ readOnlyHint: false });

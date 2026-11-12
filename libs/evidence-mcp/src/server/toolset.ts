@@ -53,6 +53,8 @@ export const TOOL_NAMES = {
   introduceFulfillmentPair: 'introduce_fulfillment_pair',
   addBreachCompensation: 'add_breach_compensation',
   roleifyAndInvertDependency: 'roleify_and_invert_dependency',
+  deliveryTopology: 'get_delivery_topology',
+  openApiContract: 'export_openapi_contract',
 } as const;
 
 const json = (value: unknown): EvidenceToolResult => ({
@@ -367,6 +369,24 @@ export const createEvidenceTools = (
     },
   },
   {
+    name: TOOL_NAMES.deliveryTopology,
+    title: '读取交付拓扑',
+    description:
+      '返回模型落成的服务边界：每个上下文一个服务，跨边界的调用方式（同步/异步）与尚未闭环的能力。用于在写代码前确认微服务切分与依赖方向。',
+    inputSchema: {},
+    annotations: READ_ONLY,
+    run: async () => json(await client.getDeliveryTopology()),
+  },
+  {
+    name: TOOL_NAMES.openApiContract,
+    title: '导出 OpenAPI 契约',
+    description:
+      '返回模型投影出的 OpenAPI 3.1 文档：履约请求映射为发起接口，履约确认映射为完成接口。派生值与业务时间不出现在请求体中。',
+    inputSchema: {},
+    annotations: READ_ONLY,
+    run: async () => json(await client.exportOpenApiContract()),
+  },
+  {
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
@@ -389,4 +409,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done.';
+  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split.';

@@ -210,5 +210,7 @@ export const createEvidenceMcpBridgeClient = ({
     applyModelPatch: (patch) =>
       call({ method: 'apply_model_patch', patch }),
     runStageGate: (input) => call({ method: 'run_stage_gate', ...input }),
+    getDeliveryTopology: () => call({ method: 'get_delivery_topology' }),
+    exportOpenApiContract: () => call({ method: 'export_openapi_contract' }),
   };
 };

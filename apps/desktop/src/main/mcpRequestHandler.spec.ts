@@ -8,6 +8,25 @@ import type {
 
 import { createMcpRequestHandler, type McpSensorService } from './mcpRequestHandler';
 
+/** A delivery read that answers without projecting a real project. */
+const deliveryService = () => ({
+  topology: async () => ({
+    modelId: 'product-procurement',
+    modelName: '商品采购',
+    modelVersion: '1.1.0',
+    services: [],
+    links: [],
+    limitations: [],
+  }),
+  openapi: async () => ({
+    modelId: 'product-procurement',
+    modelVersion: '1.1.0',
+    pathCount: 0,
+    document: {},
+    limitations: [],
+  }),
+});
+
 const appState = (): McpAppState => ({
   isRunning: true,
   activeProject: {
@@ -66,6 +85,7 @@ describe('createMcpRequestHandler', () => {
 
         return appState();
       },
+      delivery: deliveryService(),
       sensors: sensors(),
       capture: async () => ({ data: 'ZmFrZQ==', width: 1, height: 1 }),
     });
@@ -87,6 +107,7 @@ describe('createMcpRequestHandler', () => {
     const service = sensors();
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
+      delivery: deliveryService(),
       sensors: service,
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -103,6 +124,7 @@ describe('createMcpRequestHandler', () => {
         ...appState(),
         activeProject: null,
       }),
+      delivery: deliveryService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -120,6 +142,7 @@ describe('createMcpRequestHandler', () => {
         method === 'get_capture_rect'
           ? { x: 24, y: 24, width: 320, height: 120 }
           : appState(),
+      delivery: deliveryService(),
       sensors: sensors(),
       capture: async (rect) => {
         captured.push(rect);
@@ -144,6 +167,7 @@ describe('createMcpRequestHandler', () => {
   it('reports an empty canvas instead of an empty image', async () => {
     const handler = createMcpRequestHandler({
       renderer: async () => null,
+      delivery: deliveryService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 0, height: 0 }),
     });
@@ -157,6 +181,7 @@ describe('createMcpRequestHandler', () => {
     const calls: EvidenceMcpAppRequest['method'][] = [];
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
+      delivery: deliveryService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
       onCall: (method) => calls.push(method),

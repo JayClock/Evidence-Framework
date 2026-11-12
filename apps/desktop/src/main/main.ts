@@ -15,6 +15,7 @@ import {
   mcpClientConfigs,
   synchronizeEvidenceMcpRegistration,
 } from './mcpRegistration';
+import { createMcpDeliveryService } from './mcpDeliveryService';
 import { createMcpSensorService } from './mcpSensorService';
 import { registerIngestionIpc } from './ingestionIpc';
 import { createModelIngestionReader } from './ingestionModelReader';
@@ -94,6 +95,7 @@ const startApplication = async (): Promise<void> => {
         renderer,
         capture,
         sensors: createMcpSensorService(),
+        delivery: createMcpDeliveryService(),
         onCall,
       }),
     publishStatus: (status) => {

@@ -111,6 +111,39 @@ export interface McpPatchResult {
   error?: string;
 }
 
+/** The services a model splits into, and what crosses their boundaries. */
+export interface McpDeliveryTopology {
+  modelId: string;
+  modelName: string;
+  modelVersion: string;
+  services: readonly {
+    id: string;
+    name: string;
+    kind: 'channel' | 'fulfillment' | 'domain' | 'capability';
+    contextRef: string;
+    supplies: readonly string[];
+    consumes: readonly string[];
+    routeCount: number;
+  }[];
+  links: readonly {
+    from: string;
+    to: string;
+    kind: string;
+    mode: string;
+    label: string;
+  }[];
+  limitations: readonly string[];
+}
+
+/** The OpenAPI 3.1 document the model implies, plus where it came from. */
+export interface McpOpenApiContract {
+  modelId: string;
+  modelVersion: string;
+  pathCount: number;
+  document: unknown;
+  limitations: readonly string[];
+}
+
 export interface McpStageGateResult {
   passed: boolean;
   exitCode: number;
@@ -130,7 +163,9 @@ export type EvidenceMcpAppRequest =
   | { method: 'get_key_data_audit' }
   | { method: 'get_canvas_screenshot'; targetNodeId?: string }
   | { method: 'apply_model_patch'; patch: McpPatchInput }
-  | { method: 'run_stage_gate'; target: 'api' | 'visualization' };
+  | { method: 'run_stage_gate'; target: 'api' | 'visualization' }
+  | { method: 'get_delivery_topology' }
+  | { method: 'export_openapi_contract' };
 
 export type EvidenceMcpAppResult =
   | McpAppState
@@ -139,7 +174,9 @@ export type EvidenceMcpAppResult =
   | McpKeyDataAudit
   | McpScreenshot
   | McpPatchResult
-  | McpStageGateResult;
+  | McpStageGateResult
+  | McpDeliveryTopology
+  | McpOpenApiContract;
 
 /**
  * What every MCP tool needs from the desktop.
@@ -161,6 +198,10 @@ export interface EvidenceMcpAppClient {
   runStageGate(input: {
     target: 'api' | 'visualization';
   }): Promise<McpStageGateResult>;
+  /** Services, boundary crossings and open questions, from the saved model. */
+  getDeliveryTopology(): Promise<McpDeliveryTopology>;
+  /** The OpenAPI 3.1 contract the saved model implies. */
+  exportOpenApiContract(): Promise<McpOpenApiContract>;
 }
 
 export const MCP_SERVER_NAME = 'evidence-desktop';

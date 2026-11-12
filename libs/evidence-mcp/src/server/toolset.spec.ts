@@ -79,6 +79,21 @@ const createClient = (
     driftDetected: false,
     blockingReasons: [],
   })),
+  getDeliveryTopology: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    modelName: '商品采购',
+    modelVersion: '1.0.0',
+    services: [],
+    links: [],
+    limitations: [],
+  })),
+  exportOpenApiContract: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    modelVersion: '1.0.0',
+    pathCount: 0,
+    document: {},
+    limitations: [],
+  })),
   ...overrides,
 });
 
@@ -169,8 +184,24 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.deliveryTopology,
+      TOOL_NAMES.openApiContract,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(10);
+    expect(createEvidenceTools(createClient())).toHaveLength(12);
+  });
+
+  it('hands an outside agent the delivery boundaries and the contract', async () => {
+    const topology = toolOf(TOOL_NAMES.deliveryTopology);
+    const contract = toolOf(TOOL_NAMES.openApiContract);
+
+    const topologyResult = await topology.tool.run({});
+    const contractResult = await contract.tool.run({});
+
+    expect(topology.client.getDeliveryTopology).toHaveBeenCalledTimes(1);
+    expect(topology.tool.annotations.readOnlyHint).toBe(true);
+    expect(topologyResult.value).toMatchObject({ modelId: 'product-procurement' });
+    expect(contract.client.exportOpenApiContract).toHaveBeenCalledTimes(1);
+    expect(contractResult.value).toMatchObject({ pathCount: 0 });
   });
 
   it('marks the writers, and only the writers, as destructive', () => {

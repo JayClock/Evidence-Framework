@@ -9,6 +9,8 @@ import type {
 
 import type { McpRendererMethod } from '../shared/mcpIpc';
 
+import type { McpDeliveryService } from './mcpDeliveryService';
+
 /** Thrown by a dependency to surface a stable MCP error code. */
 export class McpRequestError extends Error {
   readonly code: string;
@@ -45,6 +47,7 @@ export type McpCaptureService = (rect: {
 export interface McpRequestHandlerDeps {
   renderer: McpRendererChannel;
   sensors: McpSensorService;
+  delivery: McpDeliveryService;
   capture: McpCaptureService;
   /** Notified for every served call, so the header can show activity. */
   onCall?: (method: EvidenceMcpAppRequest['method']) => void;
@@ -75,6 +78,7 @@ const activeRoot = async (
 export const createMcpRequestHandler = ({
   renderer,
   sensors,
+  delivery,
   capture,
   onCall,
 }: McpRequestHandlerDeps) => {
@@ -97,6 +101,10 @@ export const createMcpRequestHandler = ({
           rootPath: await activeRoot(renderer),
           target: request.target,
         });
+      case 'get_delivery_topology':
+        return (await delivery.topology(await activeRoot(renderer))) as EvidenceMcpAppResult;
+      case 'export_openapi_contract':
+        return (await delivery.openapi(await activeRoot(renderer))) as EvidenceMcpAppResult;
       case 'get_canvas_screenshot':
         return captureCanvas({ renderer, capture, targetNodeId: request.targetNodeId });
     }
