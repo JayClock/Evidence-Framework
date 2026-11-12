@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:bf7017384e276a22d9d776ea715f873619ccc2c7b3bef337984b780cd4552404",
+  "claims": [
+    {
+      "id": "claim_268478c2f76e469a8fa21a385f68eec1",
+      "statement": "createGraphLayout is a pure, deterministic function of the document: the same model produces the same boxes and order, using fixed node width, base height, label/attribute increments, column and row gaps, and context chrome constants.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L33-L50",
+          "version": "repo-lines-v1:sha256:97a79677058692f1b3bf402b4bc43e68022e7639a6b622c514fa030b5ac97244:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ZGVhMmU0NzBmYWEzNTBjNDI2YTlhNDcyNTg4NGViNTc0MTYxNDQ2MWRlNGRlODdiMzdiZDdiMWUxZDAzOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2N2E4ZmJiMTUxZjg2ZDU2YzM3MWUxZGMwZDY4MzI2ZWQzZGU4ZTI3MTYzYzNiNGZmNzdjYjUxNDUyNjc1ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmMTk1NTQ3NzBhNDAyODlhOGFhMzYyZmE3Mzk5MGNmNzk5NjA4ODZhMmFmNjdkZGViMmVkZGRkOGM1MGZmYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyYzIxMGIxZjQxMjg4NTEyNzYxYWI4MDFmMmIxYzg2OTAwZTdhNTY5NjZhYWI2ZmQxMWQ2MjViNjAyY2JkZmYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L88-L100",
+          "version": "repo-lines-v1:sha256:175079122b910affdeefacf9bc42f64330d2ba82f4e84358c0c98acc097b2aa0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzOTBmYzMzZDE2MDkwYzExYzI1NWJlNzcwYWE0NjBlOTU0YjNhN2Y0MGZiZjNhYzcxZGEwN2M2MTNlZTBkMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhOWFkNDJlZWE2MjRhZDllYWIwNWNlM2FkOGFmNzFhNjk1Y2VmYWVjZGNhODVlZTZkOTRjZTY0YTVlZWZiYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyMjQ1NGJkNzAwZjk5ZTVmN2VhOTE0ODc1ZjEwODI1ZmVkZjIyZjIxNGYxMTQ3ZDdiOTgxMDUzNmExMGVkZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NTBjNDg4NjdkZmRiNzliYzI4ZDg3OTc5NWNmMGNhM2QzNmM4MWMxZmUxOTgxODY5YmViYzdmYzhmZWVhYWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_77512ae7b4f448a38fc27b6428a4ee6a",
+      "statement": "Node height is derived from at most two label lines and at most three attribute rows, so two objects with the same label length and attribute count always measure the same height.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L52-L70",
+          "version": "repo-lines-v1:sha256:ecd6a76da6b68d30ffa1d03f22ad2d0b7145153fddbb6144391d40c29ada7a4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NTU3MzQ1OGY1M2NmN2I5N2NmOTM4M2VjODAzMjQwMzM2NWU4ZWUwYTM5ZTkxNTEzOTFmNGM4NGRhNjM5NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwYjg1M2RhYjZjN2Q4YTI0YzA0OWU0YTZiOWFlZmNjNTA0NDBiN2IxMDVhYmZiMmZmMmVhYjBhMDI1NDg3MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiM2ZjYzcwODFlOGIxNmNlZmU0MGViOTBiYmRjMThiOTg2ODBjN2UyOWY5MjAxODNhZjI5ZmQ4MDExOTRlODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0ce202fcde3a42e6ba383fc2a6f53f39",
+      "statement": "Entities are bucketed by contextRef into context cards, entities with a missing or unknown context become free nodes, contexts nest by parentContextRef, and an empty context is omitted rather than drawn as a shell with its id recorded in omittedContextIds.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L102-L170",
+          "version": "repo-lines-v1:sha256:41057f025a7a45a5efd4e0c535454eebda0c3bcb8cf890d61ab6a6f0ef7ff0a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMDQzMDhlYTJiZjNhYWQwODlkNjUyYmM0OGZjYmZiMTNhMzg5Mjg3NjNmNDEyOTcwNDc2Y2YzZjkxZjc5NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmZTFmOWFkNTA5MWY3M2RhN2I4N2RkOTYxZjY2YjRmYzkxN2EwMWVkN2YwNmZhZjNjZTlhOWFmZmE1OWU0MmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1NTA5OTQwOWY3MmJlZTU4MjU4MTIzZWU3YTk1ODJhNTI0ODBkMzkwZWU1Yjg1YzZmYjM3YzAyMzU3YzViOGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L294-L306",
+          "version": "repo-lines-v1:sha256:14c35b72b704e01e1ef609c68f507b38ea927c35126e95fcb6e785953222a190:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNTljOGJmNzkxNzExZDQ2OTI5MmNlZTZjODZmOWQ4MjAyNjUzMjQzZmFlZTE5ZWJmOWMzMzk3NTJmNTk1NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4MjcwOWExOGQwY2IxNTVkZGE3OWZlMmIzMDcwMzMxNDY5YzdmN2NlMzZmOTJkZDBlYjg2ODZhMTZiMGQ3MGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiZWM3NDEyMTZkODExY2Y2N2RmOWZmOGYyZjk1NmFmN2VmY2UzNGUxZDY4MDM4ZWMzMWE1MDJiYWVjOWVmZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyYmMxODY2MTcyYWFiYmFmZmQxODdlZDA2MWE0YmY1N2ZjY2E1ZDUyNmNkZGFiNTQ3N2M2M2RhMzlmY2VjMDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5c13fc31fe1047a38135ca8bf27b6f72",
+      "statement": "Each fulfillment request becomes one row: request in column 0, its confirmations in column 1, its proofs in column 2, enclosed by one fulfillment group box so the pair reads as a single object.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L192-L262",
+          "version": "repo-lines-v1:sha256:41e705c94022572b0990023bb5ad4a32ab834fd978e68c05a0dd9a50177ade8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlODRkNDFhYjZhY2FhMzQ2NzkwMjVmMzg5YmFiZWE0MjEzMDEyNzhhNGNiYWNhOTJjZGZjYThjMWM3NjI3OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1ODhjZGI0OWFhYmE1OGRhMDBlN2Q4ZGUwZDVlMTQzMjUxMWMxMDJkMzgwZWM3YWFlOWI5YzViZmY5OWFlYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyYzc2Nzg0NmZkMTNmYmNmM2Y2NmJkY2FlYTdhYjZmYWNhMWJhMzMzNTQwM2ZmZDZmYmQxMzE1YzJmZmQxZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb2c77179e6e4178b93a864897f4959d",
+      "statement": "Relationship edges are dashed when cross-context or plays_role, arrowed only for plays_role, skipped when an endpoint is not laid out, and responsibility links are derived only from explicit roleRefs and responsibleRoleRef fields.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L441-L504",
+          "version": "repo-lines-v1:sha256:702c51b61eca82fb60df77c2806581023dd4899e0472c5b7359e98b69d6077e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MzgxOWE1ZGNkMGJiYzA1ODFjZWY5ZDdiNjgyYjFjNzc4NjllMmQxOTRhZjhjYzcxMjA4M2JiMjM2NzUxYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3OTQ2NGY5NWQ0OTY2MjI0NjgzNDI0MDI2MGRhNGVjMDQwY2QwNDQ3YzI0NTMxNTdjZGJiZWJmMTFlNjNkNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MDRlYzVjNzM0ZDJmYjc4NTMxZDI1M2RiYjYyMDkzOTBmNGYzMDlkN2Q5YmYwNjgzMTJiNjhjYTk3MmMwMzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d80142bc2694fe1944cb3e9248e2e9a",
+      "statement": "Edges are routed as orthogonal two- or three-segment polylines chosen from the relative box positions, so horizontally aligned boxes get a straight line and offset boxes get a midpoint bend.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L548-L597",
+          "version": "repo-lines-v1:sha256:0674b06f0a5aae7c63f392209a0ec67e245dd58a76719500c4ada135d52f3498:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGRhY2U4M2FmOTdlMDZjNzA5YTVkODA2NTkxOGNhNGNiYTZhZDZlYjk1ZmUxOGViMTQwZmU2MjkyOTIwZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2MTRlMTk5NDgzZDQ2NmUwMTIyNjI4ODExMzBjMGJmOTFlMzI4N2JjMmNkY2I4NzJjODkxZWVkZWUyMmFmOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c0d3d0b176f4ffe90baf123f0b2673b",
+      "statement": "The viewport transform is world*zoom+pan measured from the stage origin; zoom is clamped to 0.25–4 with twelve discrete stops, zoomAtPoint keeps the anchor world point on the same pixel, and zoom-to-fit centres content with padding while falling back to the default viewport for empty content.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/viewport/fit.ts#L12-L60",
+          "version": "repo-lines-v1:sha256:95405a1d767a0d33df77ea4151fc556b77d3a47f9abb2ef09ad832f2cab6b056:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5NjMyOWE0NmIwMjdmNDBmMTdmOTI4NDhmM2RmZWVjNTNlNWFjYzEwMzQxMTU4NzIxNDQ3MzNhZTY2ZjYxZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NzlhYWY5YjU4N2YzZjU3MDNiNzMyYmFhZGJmMDM4YWVmNTIyODEzOGNkM2NiMDRhYzM2NjA5YmNmZmE1ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/viewport/transform.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:2274596e1ee926e115bca60e7124f2404e87a8b618cda293f57f766d13d83356:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNjQ2MGFjM2I3YjhmYTdmNjlhYWI2M2Y3NmFjMTJlMzk4OTk4YTI2ZDAyMjdiYjY5NGIwNGQzZThjNDViOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0YjhhNDc0NWM0NTQyYmMwOGM5NDVjZDc1MGY2Y2IzZGYwZWQwNjc3ZDA1YWMxNWYzMDc0YmE0ZjFhNmQxODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViZGRlNzE4N2Y3ZjA2OGVhNmNkODc4NTJmYmFmNmRiNzFiM2M3NDBkYTgyZDhiNWZiZjFiMjRlZDA5Yzk1N2QifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/viewport/zoom.ts#L5-L69",
+          "version": "repo-lines-v1:sha256:9d27676f617d7b19a5ef13092fa1dfcd686c02a97600b230c00306c0d050e289:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjNjA4M2Q1YjNmNWY1Y2VhM2RhOWEwNzBmMTE1NzgxODFiODMzMDY5NWU2YzlkMjQ1ZDNiOGRiZjhkMTU5ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiZWVkZWM0NTI2MDIxMTA3MmMyMzI1OTdiYTE1NjQ3MjFmMzYzZDMzM2U0OTQ3ZjZjMDcwOGFhNzlkMzNkZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOGNkNjMyNDFiZmFkMDA3ODY4YjFhMDcyOTkyMDQzMWIzYjhiOTc3NmRjYTZhOGUwNzcyZTY0ZjU3M2EyYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7047901a96b14e94b470380b8f610c27",
+      "statement": "Ruler ticks use a 1-2-5 ladder and the smallest step whose on-screen width clears the minimum major step, are aligned to the world grid, and keep their labelled positions while panning.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/ruler/math.ts#L1-L84",
+          "version": "repo-lines-v1:sha256:c7257333e4b56fe9b641f9505dc51dd6c394f6d802b3b61daeca772656e428e6:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMzY4Y2MyNTQ3YWZmZDRkYWRlMjQ0MjRlZGI3ZjNiY2I2YzBmYWY3YWQzMjRjNjNiNGM4NWQ2ZWQzYjU2NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d28ec9036684befb8e4272729017e20",
+      "statement": "Highlighting never expands past one hop: a node highlights itself, formal neighbours, touching edges, its context chain and responsibility badges; an edge highlights both endpoints; a context highlights its subtree and only internal edges; unknown ids return an empty undimmed result.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/selection/hoverHighlight.ts#L50-L196",
+          "version": "repo-lines-v1:sha256:4d2edd40833fc40a29a1ff2e97aa1cd14423d8f93a2105559db60c6168c6ac45:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4ZGVmMTQ1MTM5NjFiYTIxYTFhNzQ4ZTA2YTVkMjQzMDMwYzQzOWJhYzIzNTFmNDRmMGRkZTQ5MmY0ZDU1NGM5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3NzllN2NjOTg5NjZiYmI1NDgxNzQ2MGY5MGIyY2UwMGIwMWExOGEyNzM2NmM4OGUzZTNkZDZhOTY1NDU5YWYzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4N2VjN2IyMGJhNDE1ZjBjY2FkYmQ3NmVjYmZlNGIwZWM4ZWQ4MTg2NTI5NTk4ZGEyNjM4OTQxY2Q3NGM5MDQ0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_63495ba29aa348e7aaa6092977776d61",
+      "statement": "Marquee selection intersects layout boxes and can be suppressed below a minimum size, intersecting contexts are ordered outermost first, and pointer hit testing prefers objects over the context background while choosing the innermost context.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/selection/boxSelection.ts#L12-L77",
+          "version": "repo-lines-v1:sha256:8d43f4a6397575f80478c6ac26c667538173bb7a6b38cb062987437b5c1f6690:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYWQxM2I2M2NhN2U1MzY2YmQ2YzU5MzcxMjYzY2ZiYzAxZjU2ZTI5MTEyZTFiZWU4NjI4OWJjNTZlZDBhMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNTkyODIwMWY2Mjc3NWI0NTc0YjM0NjRiYjQ3MGQ5ZjI3ZTc4ZTQ1NTVmYWYxNDUyN2U1MjMyMDgyODhhYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f119e31896a64934870a8752399082c9",
+      "statement": "The editor hook owns one ModelSession per window, rebuilds graph and layout from the session document on every session event, and routes save, reload and adoptDocument through the session; reload and adopt reset history because previous undo steps no longer apply.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L123-L130",
+          "version": "repo-lines-v1:sha256:df03499e3d44f476c0b32c9b82d31382a9d9bf5319d6040d187baa4684e5204f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk4NDEwYjdkNWQ2MDUzNWIxNDdmZjZlNzVjY2U0Mjg1NjM0YzFhMjA2ZDhmMDRlZmJhNmE0YjNkYTA0MzJhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdhMTg0ZTFjMDIyMWUxMGZiYTI1M2M3ZWI5YjMwZTUwMzExNjYxNGViM2IzYTNlNDI2NDQ1ZjdmODJlOTVjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjgzNDgwMWIxNzNhNjI0NGQ0ZGQyNDFiZTEzYjlkOTY2YmNhZmVlMmYwZjEwYTE5OWVkNmExNTQ0NTk0ZmQ0YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU4MzczNmU0ZmRmYjJmZGQwZjExM2UyZDEzNjZjMjg4ZWI4Yjk3ZTc5ZTM2ZWM2MGQzMjkxZDgxY2Y2ODBlYyJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L51-L80",
+          "version": "repo-lines-v1:sha256:d6508ad935284ae4adf8a31937fb50c800acb992af82090ce36f80ce95159d9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OTMwMDk2Yzk3ZDAwNDZhYzE3MWQ0MzE1MGMwNDczZjM0YjZlYmZhOTM5ZTJlYmE3NTIyYTExNGY4MTA1YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmZGFjNWI1OWJhN2MzZWJlOGI0MDJjMzIzOGVhOTE0Yzk0MDRiYjk5NjhhYWQ1YzcxODZmMzEwMzVlZWUxNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlN2E2MjU2YmQyYTI3M2ZhMjhiZmI0MmUxYWM0ZDk1NTZjMTYyNzAxNzZiMDUyYTEyOTBmNjRkNDZmMjIzMTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7196e81329cf4d7195992e8661d968ae",
+      "statement": "The inspector is generated from a declarative registry: five group ids with labels, property definitions naming field, editor kind, select options, reference constraints and helper text, and only getInspectorGroups/getInspectorGroup/getReferenceConstraint as lookup APIs; responsibility roles are constrained to same-context Party Roles.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/inspector/groups.ts#L1-L18",
+          "version": "repo-lines-v1:sha256:dc7b5751b4ea9ee08071ad3bea7d2d60dc1a02eca8d053666efa0ab685c625c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYTk2ZDUzYTIzOGJkYjBhMmUxMzA5NWIzOWU4OWM5YjJmZmZmYTEzYmEyN2RhOGEwMDM2N2FkMDU3MWJlOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L16-L60",
+          "version": "repo-lines-v1:sha256:a166ff5bf2144b574e3efc19f153b2a8280504ffef46c0a97c691f0facba1fec:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZWY1YmU3NzRjMzE2OGZmMmNlYWYxMmJjNDBlMDIzOTk3ZGFiN2I5YmRiMjQ3OGFlMWJlNDVlMzhkNjZjODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4ZTU4MTAwOTFjM2M0MGIxOGE2N2EzZTNkN2E0YTkzZTEwODVmYmZiNThhZWZkYWZkYTViNDc3NGIwN2RiMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmMDM5MzkyZjE2NTZjNWIxMzRhY2JjMWE2YjczNjk1N2JmMjZjOTBkMjBiYTI2YjU0NmJlMzBjZjE0Zjc2NzMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L307-L334",
+          "version": "repo-lines-v1:sha256:cc56b1d55ac9476ba0a5ed5730860450dc548984538415368c6ba0096a07943a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0YTIyZmIzNDViZTJmMTk5NjQ0MDQ0NzI5MWU4ODk1MWNkYjhkMDQzNTExYzVmODk4Y2IzZDg1MTc2YmJiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5YzhhOWViYzBhOTRhZWExOWIyZGVmNDNiZDY2Y2QzYWM0MWI0Y2M2ZGY4NThhMmVkZDMxODFhN2ExMzQ3NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlZjRhODA3ZTVmODVjOTAyMzIzODJjODE4YmI2YjA1NGM0NjMzY2I0N2MzYWQxYTNjMTAxMmNlZjVmZmNkZDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3efdc30d35541c8a66a6cdc1c98af0c",
+      "statement": "Tests pin layout determinism, height measurement, one placement per entity, free participants, child nesting, fulfillment grouping, edge styling, explicit-only responsibility links, empty-context omission, bounds, routing shapes, one-hop highlighting and marquee/hit-test behaviour.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L15-L210",
+          "version": "repo-lines-v1:sha256:30d4fbcd70a69fefa220942ca7262af13c9687e983b36c7151e87ba73b81f1a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYWZiNzhiNDA5YWI5N2U1ZWRmZjk3MjZmMzJhNzg2OTBhYjg4YjJkNmMwMTYzZmFiYTAzZjI4NDllMTYxMDhkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYjFiMmQ4Y2E5NDFjODlhOGFmOTBhYjMzNzlkODQyMTMzMmJmZmIxOThjYmNhMmIzMjNmMDMyM2NlNzA3OGFlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMjI4YjNmYzg1MDNmOTBiOTYyYTQ0NDMzMzMyZjA5ZDIzNTU0NjRhZTAwZjIxNjAwZTQ2YjE5YThiZDEzNDExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MjFlNzVlZWU0MGE3ZDY5NzE4MDhhZjFmOTRhODZhODkwODNhZTY5YTg2OWZhZWQ2MDg1N2Q3OTFkMDNlY2JlIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/selection/boxSelection.spec.ts#L8-L54",
+          "version": "repo-lines-v1:sha256:1affff3b1e7eb7792e0e947530ab3cf7268b765b3d4ad175dbceb150382a8cfe:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNmU3YmUxNWYyYzcyOWU1MTM2NjQxYzU3MTg4ODViMmQ0ZWJmNzMwNDE0NjNjMWNiN2E3YzRiMjVkOGU1ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwYzYyMDUxNWUyOWNlZmMyYWQ1ZmEwMjk1NGQ1NzU4M2EwOTZhZWI1MTg4NDRmMTA5MDc4YWRiZGQxOTgwNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjMmMzOWI0YTA5OWU3NDE5NDk0ZTc1NDZjNzgxNTVjOWYxYjJjNzM2YzQ0OGYzNzU0YzA4ZjhlMjlkZTQwNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5YWI4ZjY2MGRiN2JmZTI5NTJhMTA3MTk5NWY1ZTExNzY0NmEyMDc3N2E0ZjE1YjY1ODRhYjgwZjFmMTE4MDgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/selection/hoverHighlight.spec.ts#L10-L97",
+          "version": "repo-lines-v1:sha256:2b0bcc3c495211a8cb2b13de535301b4c31291a98cfaec2e8f67ab20120f4dee:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMTNlM2QzMzgxOWQ3NGFmYzFkMmVhMDBmNDU1YzVjNTMwM2YwZGRhNDRmMjg0YjllMWUwNzljOGUzMWZmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NzMxYjY2M2I3NzBkNWU4YTM0YWIwYTExMTIzMDBlZDlhMmEzMDEzMTllZjJkNDM4NTc1Njk4NDJjZWQ0MDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjMmMzOWI0YTA5OWU3NDE5NDk0ZTc1NDZjNzgxNTVjOWYxYjJjNzM2YzQ0OGYzNzU0YzA4ZjhlMjlkZTQwNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwMTQ2N2MzZDc2NGIzMDM0M2JhMGUzYmQzMmU1NDhkMTdlNDQwNTUyYTQ1NGNhNjhkOTk5NjY5NzA0ZGNhMzYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

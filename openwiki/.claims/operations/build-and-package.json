@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:60df35eeab088f8cc27abdba07c07e0ad4629404f1daf7393b6aa061a84b93e8",
+  "claims": [
+    {
+      "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
+      "statement": "The repository is one pnpm workspace driven by Nx with only apps/ and libs/ as members; there is no second runtime or interpreter, and CI and local development run the same Nx targets.",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L1-L10",
+          "version": "repo-lines-v1:sha256:d1bc7d9b843873f94fcf80b96e4baa15357e1f3c4664e4978beddf0601558806:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YTM0YjQ4MjUwODI1MDhjM2YzYmRhNzM1MmZjMTBjYTBiNzRmMjk3ZWE3MjgzNWUyYWU5YjI2ZTY0NDkwYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxYjI1M2FkN2YzNGQ2NjVmZmUzY2M0MGIxOWIxYzgzMDUyMjkwYmNlNzk3YzY4NDc4NzBiNDNlMTAzNWI0MTkifQ"
+        },
+        {
+          "resource": "repo://docs/workspace-layout.md#L1-L15",
+          "version": "repo-lines-v1:sha256:9527a07fd98a2cd8c897f09afdbe1e512aa6b602ade4c14571ee9c32b10a0154:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzAyNDUyMDMzNDJlNzhiNTc1N2RmZGM4ZjUyN2NiYjE0YjgzZTljNGFlODY0OGVkZmMyNjFkNTA2NDQ5Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTA4YThkYTcxZjFmZmViMmE4OTlmYmI3M2ExNTExMmNjMDFmMmYwMmJhZTdkOWQ0MjQwMjlhZmY0ZTY5MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNjViZjM4ZTc3OTFlYzcwZjM4ZDM5MTBlZTBiYzAyYzE4NjMyMTgxZWNlN2Q1MDU1MWFhMjA4MTIxMzlkMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85547394beef40fa9a8013a860c10150",
+      "statement": "pnpm-workspace.yaml sets nodeLinker hoisted because Electron Forge's flora-colossus does not follow pnpm symlinks, disables blockExoticSubdeps for electron-winstaller's git dependency, approves six lifecycle-script packages, and exempts the exact @earendil-works/pi-* 1.5.2 versions from the release-age quarantine.",
+      "evidence": [
+        {
+          "resource": "repo://pnpm-workspace.yaml#L1-L35",
+          "version": "repo-lines-v1:sha256:3e5610cf9074a0aa39d0352090a868c263b6f85b04906191129886de2a0ad427:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYjA3NmViODBhZGUxOWZlYTNlMGE0MzE5ODZiNjU1ZjVmYTU5ZWQ2MjY3ZTEwN2Q2ODhiNjFjM2Y0MjE3OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMDQ2ZjM2MTc0MzYwMDAyZjZjNjhjZGUxYzYzOGI0MzUyN2E0OWZiYjZlYWExZTFhZDRiMzM2Yjg1NDNkOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_03967a4415be44018db98eb14b0ca4be",
+      "statement": "Nx infers typecheck/build from @nx/js/typescript, lint from the ESLint plugin, dev/preview from Vite and test plus per-file test-ci targets from Vitest; test depends on ^build, and the production input excludes specs, eslint configs and test setup.",
+      "evidence": [
+        {
+          "resource": "repo://nx.json#L17-L64",
+          "version": "repo-lines-v1:sha256:7ae15a961e2e1d89361837890ad31e2c552c5b7c55d05d002c3efe6c5dda110a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5NDY5YzkxZTViNjgyZjYxZWJiNjgzM2FmZjdhZmE2Y2JlNTdiZTZiOWNhNzQ2NWU4MmZlNmYzOWFmOWVjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMTBmYTcyY2M0MjI1MTZiMGNiYWNlMWRiNjFkOTJkMDdkNzNjYmZkZTgxODdlNGM5MjgzYWFmNmQ1NmYzOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3NWY4NDZjZWM2M2M0ZDVkMDg4NDA1N2YyNWU2ZmE4ODYxZTA2MTY1NGI1MTlhNmZhOGFhOTkyM2YyZTk1MjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2308ba6974a9490681deb937e6e3454f",
+      "statement": "Workspace packages export a @evidence-poc/source condition pointing at src before types/import, and tsconfig.base.json sets customConditions to the same name, so the type checker reads sources without a paths table.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/package.json#L12-L32",
+          "version": "repo-lines-v1:sha256:ad5d463563f66eb4e390a6599603ce8485ae0022017d608e2499a7a5a89c7015:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDViYjlmNGE4Yjk4NDUxMGY4MTVhNWZjNDA3OGQ3N2M1YTIwZTkzZjMzNzNkYzVkZGU0YTM0MWQxYjQwYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZjY0N2M1YWRmMzUzNTA2ZDdlZTBiZDNjZDc4NWE1NzkzN2E3ZTFkYTZhNzU4Y2UxMWJhZmU4OWY0YmUzOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWM1NjM3NDBlYzU5ZWJjMWUwNDdhMmM2MGQ1Y2NkOTM2MDRmYTAwNmI5ZTg0MzAwOWQxYjc4ZGQzYzAzZjUifQ"
+        },
+        {
+          "resource": "repo://tsconfig.base.json#L1-L20",
+          "version": "repo-lines-v1:sha256:41da777ce7f03ee38254f80824c904fce5cac2d4eb1187d5e1902bee717090d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_92a9e851c42344dcb2eff6ed3e1fab8c",
+      "statement": "Every consumer repeats the source condition in resolve.conditions, with node for main/preload and browser for the renderer; omitting it silently falls back to dist and looks like a missing module rather than a missing condition.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/vite.main.config.mjs#L1-L28",
+          "version": "repo-lines-v1:sha256:f50295f8270b616f4b9bc79d53bafe1ca3f1e8efe62bcc5bc9d4ccc1e0f3dd98:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZDAyMTI3OTkzMzU4NzY1OTg0Mjk3ZGQzMzgzNWUwMGYyMjc0MjRjYmQ2NGMyY2JmMDJjYjcxMTQ1Y2ZmMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L1-L25",
+          "version": "repo-lines-v1:sha256:2445357792a82189860d0dd034876759d56bce4a25a2f58ec9c20febec95701e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNGFiMTViZDZiNWEyOTMwMjA3YjFjY2MwMDY3OTZjMzNjYmVjYWRkODViYzdiYmQzMDcyNDllMGUwYmNjN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNmQzNzJlNzJhNjVhZjY0ZTU0ZDlmODkwYTA5OGJjYTFhOWRmM2JiNzMxMzE5ODU1MzI0MTY0NDEzNjA4MzQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/vitest.config.mts#L1-L40",
+          "version": "repo-lines-v1:sha256:14ca9cbd2e259a78706d62339246c1124cd61034a711e0ce026a02d0356a42f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2MwM2ZiZGY5YjM0NmFhNTUyNzg2YjVlZWJiM2FhZDRmYWM4M2FiOWU1YzZiNWQ1MTVhM2ViNTljZWVkNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d3a6f0b55984b848a11836e784b1561",
+      "statement": "@nx/enforce-module-boundaries allows type:app to depend only on type:lib and type:lib only on type:lib, which is what stops a library from importing the Electron main process after the hoisted linker made undeclared imports resolvable.",
+      "evidence": [
+        {
+          "resource": "repo://eslint.config.mjs#L18-L38",
+          "version": "repo-lines-v1:sha256:22dad557fad9330aae1b34c19b4811fcbcd3c8caa10493143655904f191e7270:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTM1NzkyMTQ1ZTJkYmQzODBiYmZiNjMxYjkzMmNhODkyNTFkNWE4M2NmYTUyMTYwNjc3MzEyYTllNjgwZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlYjI5NjEyZTE4MzU2NjZmMzNkNmYyYTdjZDE1OWMyZDUzYjZkYTBkZmU2YWM4ZDU2MzY0NzkwOGNlOGRhNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNjdkYjcwMjI0YWIxNjk4NTE4NmIyYjBhZWE3NTU2M2E4MTBiMDA2MTY2Mjk2N2Y0M2IyNGQ0YmZiMTQ4Y2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_336f26abf8494289ae4f9195ad46f878",
+      "statement": "The desktop target graph runs prepare-resources before build (electron-forge package), provides package as an nx:noop alias, makes make depend on build, and declares start and a two-pass typecheck explicitly instead of relying on inferred targets.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/project.json#L8-L75",
+          "version": "repo-lines-v1:sha256:140e10f111311f15536aa9191bf75f87358c086b6f2660ca64749188ad1928b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YzE1NTk1YTkxZjM1NTgzNGVmYjEwYWQ4MGQwNzRiMTlhZTdkN2NlNTZmZjE0MmUyNTIzMTFlNTk3NWVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlYWM3ZjFlZGRjMzJhNzFlODhkYTY1ODRjZTc1YzZkYmMzOWZjZmUzZGY3NWQzMjRlNmE0NWU1MTU2MzQyZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d8a61de5ce334642bf6c8b925408a413",
+      "statement": "prepare-resources copies exactly workbench.html, workbench.css, workbench.js and business-graph.js from evidence-visualization/assets into apps/desktop/resources/assets after clearing the destination, and Forge ships that directory as extraResource outside app.asar for node:fs reads.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L9-L70",
+          "version": "repo-lines-v1:sha256:8aa72428d867655cd4437cc90a6d6f99a167199e0b1d68a5a3467b3df32f7383:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NWZjNDZlMDhhYzI4MTVmZGJjNDI0M2ZlY2RlNGNmMGRmZWExZjliYWQyY2IyMjQzZGRkN2QxOGJjZDkwNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EifQ"
+        },
+        {
+          "resource": "repo://scripts/prepare-desktop-resources.mjs#L20-L46",
+          "version": "repo-lines-v1:sha256:4b2320d6c400fe45d34c4a5fd1f31ce699c4824ea9dd71aa2a6340f7af110df8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MzdjYWE3NDUwMzRhNjU1YWViYTM4ODI4NDBkZDAzYjhjY2QxNDVhNDJhYmJlZDA5NzA3NjZhOThhNzE4YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5M2IxMTMzNzZlNDM4ZmJiODJjNWVkMDQxZjg2OWM5ZDJiMzY4NzQ0MTYwNDkyZWIzY2Q2NThmYTYxMzUzZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MTJjNDZkN2EwNzcyM2Y1MmNlZTkzNjYyYzQzZWU2Njg4OWM0MTFhM2IyM2IxODE2MzM2MGI1ZjlmOTI4NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66e690a6fe8143baaf7529a4b3aea689",
+      "statement": "Forge packages with asar enabled, Vite entries for main, preload and the main_window renderer, Squirrel/ZIP/RPM/DEB makers, and macOS signing/notarization only when APPLE_ID is set.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L24-L46",
+          "version": "repo-lines-v1:sha256:0a7730efb274aa1770a2be32608349fa86492a355b8283e4a2f8971357b166a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MmQ0OWJkZTA3YTIzMWZlZGEzMmQwMTQ3ZjU1ZTUyZjAwNTQ0OTdiNjM5MDdjMGI5MDhlNjI1NjI5ZGYyZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5Y2NhNzk3N2YxZmQ1MTk5MmY1MGU1OWI4ZDcyMzA4MWVlNjgyNzhiYzVlZDcwMzBiMDA2YWIxOGVkOTVjMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhZDBkOGVlOWNjNzExMDY5YjUwZGY0OTYyYTg4NzRmOWU2MTY5MTQ4Njc4OWE0YWJiZDk0NzY5NTlmODdjYWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6350a203867246709e9d5c139f688533",
+      "statement": "The main Vite config sets rolldownOptions.platform to node so import.meta.url survives CJS output and createRequire works, and preload pins the emitted entry file name to preload.js because Forge names bundles after the entry.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/vite.main.config.mjs#L14-L24",
+          "version": "repo-lines-v1:sha256:ab0e114ec769b4ce8be3ea52119b90bcc7e6fa01f4b2a76304eea23ca31c2f63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxMDI5ZGVkYWZmOWI4YWI4YjdlOTBiNmQ1NzFlMWJhMTNjNWYxOThlNzhiMWZjNmRkODIyNzA4NGVmMzA4NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YWNjNmI5NDhjMjI1ZTRkMjY4NDZlOTM3ODYxMmIyOTE3OWJkMjVlZmUzNmQwNTBmYTAxOTIxYzIwNzI5ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmYTc5NmVmNmMwZmFkODc5NjBmMTgwMGM5ODA4ZWVkNTlhM2Y2NmRlNWQ0YWQyZWI4NTczMDIwMzdhMTAxMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiYzc2OWQyYTZiMGQzYjgyOGVmMWQwM2JjYzMwNjZhMjBjMTZkYTJkMjZhZjdjOWMwMjI1NmVmMjA1OWQ5MjQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/vite.preload.config.mjs#L1-L24",
+          "version": "repo-lines-v1:sha256:715625f408764656c35b44d9f4b26c16bb9331d792e2aaeaee3843070d29b2aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZDAyMTI3OTkzMzU4NzY1OTg0Mjk3ZGQzMzgzNWUwMGYyMjc0MjRjYmQ2NGMyY2JmMDJjYjcxMTQ1Y2ZmMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_62fede52a6c7400a878417ec27c623df",
+      "statement": "CI installs with a frozen lockfile on Node 22 and runs lint, typecheck and test across all projects before building the desktop app, which also exercises prepare-resources and electron-forge package.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L1-L45",
+          "version": "repo-lines-v1:sha256:41f7d1c96e403241a9ce5092b763854d8e7f04058758e236fdc4cff73f4ae198:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ZTFiMzJmYTA5MDc5YWUyZjAwMDFmZmYwZWNhMjdiNDk4NTk1N2Q0ZWI0ODU3OTI5YjNjZjA1OGZhYWU1NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0e1b7fd9c34d400db2def9f076d9394c",
+      "statement": "The release workflow builds a four-way matrix (macOS arm64/x64, Windows x64, Linux x64), installs rpm/fakeroot/dpkg on Linux, runs desktop:make per architecture, collects zip/exe/nupkg/RELEASES/deb/rpm artifacts and publishes a GitHub Release.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release-desktop.yml#L1-L120",
+          "version": "repo-lines-v1:sha256:e78cad2b2675c29142457c5cf8d4b7019d11d3ebf62ced96360d3f3674f7c32b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMjkyNzNkNDJmOTdlNjg5YzgyYWE3NWZiNTI5OWRkZDM5OGRhYjZlOGJlZGFhNzQ2YmJlNjZiMTcxMDI1ZDdjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwYjMyYjk4NzI2M2RmMjE2M2U3MjZkNDhiOTJmNmY5NjUxNDhjYjZiNmQyODMxNzkxNTE0YzkzOWY4MzdhMTQyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2ZTVlMTQyN2FiZjkwMWMzOWUxYzkwZDI3M2I4YWE0OTU1NjA1MTgwNjFiYzIzNWY0YTdiY2NlYTFhMjYxYzg1In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

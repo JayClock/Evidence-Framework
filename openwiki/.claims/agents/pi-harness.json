@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c71f5b81fcd6893831b5356a741453fd28d1cd410bd48353d89591696575688d",
+  "claims": [
+    {
+      "id": "claim_c08824c2d15442f09d8d2d854923d444",
+      "statement": "The Pi SDK is consumed through a narrow PiSdkPort of seven entry points, imported dynamically only when no injected port is supplied, so unit tests run without credentials, a configured model or a terminal.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L12-L33",
+          "version": "repo-lines-v1:sha256:1e515fdfddd3dfb66adf148cf6ef9b494272a18bd26ec8d47f80f577f09590a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4MzhmNDA2YTg4NTkzMWEzMzE5OTQ3ODUzMjk3YWZiZTM5YWI2NjlhNzIzMGJhNDBkYzgzNjk2N2ZlZDg1YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjUyZmYzOGNhY2IzMjU2ZjdlYWU1OTgwYzBmMTc5MjkyNTlkOWVhODA2YTYyNTcwZjUxZWRmMmVlMzI3ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3MDJiYjQ4ZWIxNzI3ZjQ0ZjdlNTE5MGYzODA2NzExODkwMjk5M2IwMWE1ZTRkMTJhZjZmMWMxOTFlZjE2ZTIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L82-L116",
+          "version": "repo-lines-v1:sha256:e1c9406076e858b5e3472c5f3b7930e11c2518072f4a993f2df72d48e318c2ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNzdlZDU0YmYyNzEwYTE3YWJmNmIwZTk4NDg5NmU2MjMzNmQ3ZTBmMzExM2Q5MGVlNmYyMDRiNWE0MDk4NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5Mzc4ZmU4Y2I3NTBjMGM5ZDkxYWU5NjU3YzU3MzQxYWVlZjNjNGRiMmI5MjM3YTk4ZGI4YTBiNWFkMTQ2YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlOWY3NGIwOTExMzQyYTZiNzQ5Mjk2NTM1ODY1ODJkMDQxZDhhZDI3MTZkZDEwY2U3ZTIwYWM2YmY3NTIzNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c45899054904d579b4d219a2de4f071",
+      "statement": "createEvidenceAgentSession initializes lazily on the first prompt or start, shares one in-flight start promise between concurrent callers, resets that promise after a failure so a retry is possible, and dispose unsubscribes, disposes the SDK session and clears listeners.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.spec.ts#L349-L364",
+          "version": "repo-lines-v1:sha256:7edbf4886b9794ca108b67a570f415f303d8bddc8ab9a50fe28f85b2c4f0617e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjZGZkMzM0NjI4ODgxMjQxNTEwYTk5M2M3Y2FkNDU2MTBjYmEzNmUwMzM1MmU4NWUzZjRkMjA0MDU0NGMxZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMGM4NmRmM2NmYjk3NjFiMDIxMzEwODc0ZjRjN2EzM2NiNGJjMDgxNTc4ZTQ5NGMwZjY2OTg2ZDNjOWMxYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L138-L190",
+          "version": "repo-lines-v1:sha256:d357d80ff1bc81bd2e4254b98b63ed7ab6127caef23009b78835548f9483b52e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5YWMzMGI2NTYzNmQ0YzYwNjBjMjcyNjg5M2NkOGY5ODJhYmQ4YWU2MDNhMmM0Y2JmN2FkMzQ0ODM2NDQyNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YTkwMzFhYzE2YTQ0MWU0MzU2ZmM4MTc3OTQxMWU1MDJmYWRlNGVkMDFhY2FhYjM3ZGYxZGIyZGM4ODIyM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5YjQ4Mzk5NGJhNTUxMzA0YjY1YjhkMTBkYzY2NTE4MTQ5MWNmNWMwY2Y1ZTIwNTM2ZTAyMDM2ODBjNGUyMDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1OTFiZjcxNjE2YWY0ZTkzOWExNzkxYzZmZDBkZmUwNjg3OTNlYmEzYTBkMmFjMzdkNDQ4ZmM0NTkzNmQxNzUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L233-L240",
+          "version": "repo-lines-v1:sha256:7458b934dc7c7e2cf7f30069680cdf19a4da3314cff6dd7ba3eba81d811a325a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGNhYzE0NzJhNGJhODYzNWMwZjBmMWYyZDc4N2Y0NjU3MzBlMWQ4NDcwMzc5MTg1YTIwZjNjZDA1NTE3NjkxZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTVkMjJhODkyMjU5ZTFhMTA0YWY4ZjA5NGI4YmVlMWMyNDhiZjE1MGQyYjk5MTIzNTM2NzI2ZDM2MDAwYjQxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODdjMzAyYzA5MDkyNzg1MzY0YmNmYWE4NTgxNjNjMzNmMmJhMDJhYmNlMWRiNzM3N2M1OGU2OTE4OTk3MmNmNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ecec14c98a7d4a95998a36375a07ab24",
+      "statement": "A session starts with the four authored instruction sections appended to Pi's system prompt and with noSkills set, so no project or user directory is scanned for SKILL.md; the prompt names only tools the desktop registers and contains no skill, reference-directory or shell-command relic.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts#L181-L198",
+          "version": "repo-lines-v1:sha256:a32fef69341b7d25466eed43d3d5fb56f0cd0efb94a18c29a251554689a7ef22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwNjgyNjU4YTI5MDU2ZTAzYjQwY2VmMTJkNDdjMDg1YjkyZWZjNDQ2NmZkMTM0ZWExZTgyZWJhNmMxMGNjZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1MmEzZTY4M2Y0NTA3MWNkMGFkMThiNWE0ZDRkY2I3ZmEyNzZmNjM5Nzc0NTc3Y2U1N2E0OTJjMTdjZDk5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiNzdiYjljMTljNjZjMmU3YTlmNjMzMTkwMDQyNTI4MzFmNzcxOGNhMGFkMTNiZGRiZGVkNzJhM2U5M2ZlMTkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/index.ts#L6-L28",
+          "version": "repo-lines-v1:sha256:26108bf46354a146b1d3cd32272bccfa8e0e71cc1a0bb2c232eaaf5a9ec97234:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NjE3OTBmYzlmNzkzYTgwZWFmODE1ODYzYTAxOGJlZTY1NzA5ODQyNWM0OTlhNTQ2MTYzYzRjNDJmZGVjOWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MjlkNTMxZjIxYTk1OGM3MzU1NGQ3NTY5ZWVmZDg3YzlkNDQ3YmViMTdkOGU1NDBlNThmZDFhNDUwOGZjN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/prompts.spec.ts#L12-L36",
+          "version": "repo-lines-v1:sha256:077af9903444d6cc1d1e5e75326ca30283826b2cecfd58aab4df89383f8c97ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZmQ4MjAyNzI1M2U1MDJlYjliNGY5OTQ2NDk3NTgxODIzMDE0YTA0NWMxNjBhNjljMjcxYjlkYjg3MzgyMDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2YTgzNDI5NDM5MzNlZWVhNWE4N2QyZTYxYWQ4ZDFlODUxYzc1NDMzNzMzMWY3YTVjMWNlNDFmYzVmYzU5ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyY2ExY2M4YWU1MDkwNzdhM2ZkZjc0MGRhZDM2N2FhZmZjZGJhMDRiY2QwZDVkN2Q2YzY3MGJhMDdhZDg0Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExOWMxZGY5NTE2NWY2N2UzOTk4Nzc0MTZjZmNmN2NiZTdiM2U5OWVkZTg5MWNlOGMyNzk5MTg0OWVkZmQ0NmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L99-L108",
+          "version": "repo-lines-v1:sha256:95722e70c468ede8084ab741b9fbf5561acb0e79b35299ba800e52df39aaa358:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MGI2ZWY2ZDAyZDRlMjBjZDY1MmI5YjNiODgyMzRiYzEzZDg4ODc1ZDU1ODI4NTlhYjQ2OWI3ZTczMzc2MzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViZGY4ZGUyYThlZjFlNDZmMTk3MGUzMmRhMzM1MmRiM2I4NmM1Y2JjNjI5MmU3NWQ5NzBkMmFiN2FmNzJjNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMWIzOThmYWZiOWQ0ODcxYjE0MTAzMjdlYWI0ODk0NDgzODkyMWI1ZmE4ZWI4NzBhMDg2ZmVmZDlkNjg2MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxYmZkNmVmYjAyMDI3OTk3MjZiYmU3MmI4NmEyZDNkYjE4ZjczZDQ2MDU4YjRjODdiOGY1ZGJkMjBmZjJiMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d6860d6fe654a589d6198343db08a79",
+      "statement": "Pi's event stream is projected onto exactly five plain desktop events (text delta, tool start, tool end, settled, error) and unknown SDK events are dropped, letting the renderer cap transcript text and model tool calls as an activity list without importing the SDK.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentSession.ts#L32-L80",
+          "version": "repo-lines-v1:sha256:7ea9cda435b5ab981de9c2407338a154c8be43980d22d5081989fb51bf6298c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkYjFiY2JlMWQ0MWE3YzA2OGM0NDBlMTE2YmZlODNjYzk4NmY1OGEzY2JhYzY1NGNkMWExNWZmZDMzM2Q4YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxYTJmOTBlZWFmNzYzZWZhNjJjNmYyNWFkNzIyZTYzYTNlMTdkNWUxM2M1N2RjMmE1ZjkyMzNiNjA5MTMxZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4MzhiMzJmZjY4MGNlNWU1NzUxNDllZjA3Y2M3ODhkMWNjNWRhNDFjNDYzZGMyZWQ5MGRkMjk1YzcwZmExM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2YzYwMDUxYWJiMTcxZDIxNWRiNmMyZTc2NjVkZTYzMDI0YzA0OTU2MGNiZGJlMjQ4Y2NiM2QwOWMyNzUyMjEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/streamEvents.ts#L9-L80",
+          "version": "repo-lines-v1:sha256:98a59caa178515abd081aa0b26d15babfae46fef6bb4a2b34c0351309615d34c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwYmRlNzZhMmE0ZWZjMTE3M2RlN2EwYWExYmRlNWE3N2FlZmRjNDFjNmQ0OWUyNjNmY2E2MWZkMGQ1NmY3YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MzBjMWFmNzM2NjNmMmFhNTI2ZWRmMGRlMTljYTA0NWExZWE0NjU4M2ZjNDA0ZWI2ZDJmZjY5NjM1NTc1MDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkZWM1ODQ2MzY3OTcxZmJkNWI3OGJkZjQ3Zjk2YjgxZDJkNjM4ZDFhNTk0OGUyMjkyNzQ5NzhiYzk3ZTE4ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzODQzY2VkOGMyYWQ1OTJlY2JmMGM1NjNlMTk2MmMwYzhjNDZhNTg2ODRjYTI0MGViOThkMjA2NzU4YzU1MjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78125e71fbc841f5adf359b19566f03e",
+      "statement": "forkSessionLines keeps only the ancestor chain of a chosen transcript entry, records the source session as parentSession in a rewritten header, reports dropped siblings, and refuses missing headers, invalid lines or unknown fork points with a typed SessionForkError while leaving the source lines untouched.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/sessionFork.ts#L27-L36",
+          "version": "repo-lines-v1:sha256:bd0c0be59c0d03174deb554924ccff6e6da9791a3df7dd30c2fb9bf9e5853e60:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyMTFiNjZhY2I1Y2NhYjk1OWM0NjFlNThkNjk4MjZjY2RjNzhkMzFiMDNhZWZjMTA3MTRlNDZlZjQ2Y2MzNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0MGZjNTBlNDBiYjE3YmYzMDlhYTk2NzIwMzE5NGE5ZTQ1MmFiODUzNWY3YTVmYjFjNDYwNTM5ZTQ2NDBiNjgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/sessionFork.ts#L72-L165",
+          "version": "repo-lines-v1:sha256:823e0e5b36c809379a415ac5a40570f111c6c9262136f446b9c3892d10e096f7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4ZWVmYjg4MjBmYzU5ZjA3NzdkNWFiODE0Nzg2MDRhNzI3MTMxYjlkMGQ0NWEyZWFkNTBkODAwOWY3ZjRjOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c363ef088ee1465fa193078d7226998a",
+      "statement": "The orchestrator registers six agent tools — run_sensors, apply_model_patch, get_canvas_selection and three fulfillment operators — and each operator resolves references against a freshly loaded document before submitting its generated commands through the same applyModelPatch handler.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.spec.ts#L210-L227",
+          "version": "repo-lines-v1:sha256:2bf458e55d29391d6054bb5af32c328f9a529cb27a5b9d68992a7e0d170f5409:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMmY3MThhNWJjZDgxZWRlNmZhNzU3MmY2MDczZDFlZGIxY2JjNjQ1MzA4ZDNiZDM3NjNhZTZkMGFiNDcwZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NGI2MmZiNjBlODIxZWUxNDFjZTEwZTI3ODE0NTUzNjlkYmU3YWJjMTFhNTk0N2NhNzE2NzFhZGI4MTFmYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0NjQyYzI3YTc5M2U5ZjA2ZjA2ZGU2NWEyYzNhZjdjYmNiM2YxYzBiMWQ2YmQ2ZDg2ZmUxNDA4NTMzOTg0ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NDIwMGUyMmVmODVkYzM1YmM1MjM2MzBlNzE4MWRjOWZiN2VhM2ZiYjFiOWU4ZGI4ZDE5Y2M2MGViMjY4MTcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L16-L70",
+          "version": "repo-lines-v1:sha256:dc3e28dde911fc506b38a8bfa1046a656a61f7dbb9b7b89a3ff94de66c1b2442:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MmU4MzU1ZDM5ZWVlYTMwNDBjNzg1ZGFjMjJkODk2YzJlMjY0ZjYzNjJkOTBmZTI5ZjJmNjFjNDZlZTc0NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxODUzZWRlZDYxZWVkNTBjYzEwMzZjYWI1ZTZhNjAyNDU3MzAyMmI1MWE2ZjQ4NWI3ZDBlZjAxMTJjMTRiOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjY2FmMDZkMzFmNTcyYjQ2YzNjNGY5YWEwMGU2ODI3OGRmYTNkNGI1NTE4M2MzMWU0MGRmZGEwYzg3ZGUwNDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L211-L243",
+          "version": "repo-lines-v1:sha256:2fbd8b755bd9eacaeeeb8d28f1e9820c1e84c8663eccea805ac7fa76488c68d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5Y2JiYzY1NDY5ZGIxY2EyODQyZWZkOTdkZjdlZTJjZTZjYzE1NzE0ODJkMDFhMThiNzkwYTEwYzdjNTEwZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwZTc4MGZjZWVhYjRkMTM3YmIyYTVmM2Y2NGNmMjlmOGJhZDkyMWE2OTVlMmU2NmI2MjFmYTUzNjAyOTQ1MTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkY2VjYmJhOWFkMjQyNGUzNDkwNjMxNmZjOTk1MTU1ZDA5ZmVkNWE5MjY2MGUyZTM3YTA4NWIyNjQyYzY0ZGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db69c799ccb4421cb2fb6d179c3a9cca",
+      "statement": "apply_model_patch rejects a command without a string type before reaching the session, returns the applied command types on success, and converts a rejected patch into an isError tool result instead of throwing into Pi.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.spec.ts#L276-L296",
+          "version": "repo-lines-v1:sha256:19402cd1cac2e9ab4d1d7fac4cd4a8175be38be7214a03c75e8e64a537f6ac64:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ODY5YWE1ZGExZjE1NmY3MmU4ZTE3ZjQ3NzQ1NDgwMGVhN2U1MmU4YmE3NmI4YzU5OWY2YzBkNmI1ZjE1YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlZjc0OWRkMDRiM2M3ODRjYzA3NjI2MGVjNjg5YzgyYjVlODUzZjc2YTk4NzQ3NjRiNWFmNTI0NTVhNDBmYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4Yjc3ZTA1ZTUyMTgxYjdlOTIyZjdiZTVkM2U2MmYwZTJiN2QzMjkzYTIxODk0MWM1ZjM2MGZlYWZhYzgwZWMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L133-L175",
+          "version": "repo-lines-v1:sha256:c1ef215272d7edcb520268596b913b134a12caf8fcc1fc88ffb75d8a9593d90c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNzVjNzBkOTQ2MzYyNWUxMDc5ZmQ4ZmM4ZWU2MmFkMmU5MmM0MmJlYWFiZmQ4NWI3OGQ4ZTBhNDk3OWI5NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MTkxYTgwZTBkZTBkODUwYzY2NjU0ZDI2MzBhMjRiMTBmNDZhOTBjZjRkZGZiZjBlYzlkMjU2YTNlMjBkOTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyYzhhN2RjZTgyN2VjMGYxNjVmNjkxMGU1ZjkwMjUyYTBkODY0NTRjMzQxOWM4MmRlM2FmZDRiN2NkY2JlYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwOTFlYTJiNDU2YjY5NjYxYjdiODhhZmIyNDZlMjMzNzA0ZGM4MzViN2NhNzc0MWM0ZmQ2YWMyOWE4MTc0NWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L77-L88",
+          "version": "repo-lines-v1:sha256:de73896a8146246cc35a63a896cd617e72c7c1c7e6e2fdca584afe7d001a9c80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2Y2RkOWRiNWI5NWMyMjY4ODUxYjkwN2ViYjBkN2UyNGEyMDRlN2FmYzM4NDcyNjIxZmE2N2E2NjdkNjA0MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwOTc1MzI2OTQ5ODcwMmJmZWY4ODQ3MWNjMmUyNjg3NGZlNmM1YjU1ODVlYjFhZjcwZTlkYTkyM2ZjOGYwMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjZTZmNjgwZGQzZDI5MTcwOTk5YzU3NzlmMzA2ZTEyNzBiMWFlMjZiODk5ZTEzODIxOGVmNDI5ZjBlYzQ1MjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88b64a1981974687bc3ef5c9ad72b8d2",
+      "statement": "Agent patches are a correlated round trip: the main process sends them over IPC with a 15 second timeout, and the renderer decodes and dispatches them with one dispatchAll call labelled agent:<rationale>, so each agent patch is one undo step and a guard failure is answered as a failed result.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L105-L135",
+          "version": "repo-lines-v1:sha256:efda74060bd6f331c7b202e8c1e0143fdb544666d6eb5cdbb201b1d9fb994fab:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZDM2ZDhkMjA4YzMyYjEzYWQ4ZmMxZjBjNWJiMTRiNTkyNDYwMmEwNWE1MzYxMjE5MTUwODE4MTA3YTk0NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxZTM3MjVkYTAwMmI0NmVkOGI0ZGU4ODAwM2FkOTcxMGRjYWYxOGQ1N2M0NzAxZGMzYmVmZjBiMmM1Y2IxM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5MTM5YmViMjIwYTExOTJmZGIzNWNiMDAyNWNhMzExNWU4NWNhOTQ3NGQ5YzEyYTkwZDcwNmQ5M2Y3ZDZmZTkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L20-L72",
+          "version": "repo-lines-v1:sha256:91c73b76a29abe206592d916be63b7e8844b5beece69fea6d48e53cf2f6e52f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNTI1Y2I0ZjdiYzk4ZTBmOGViNWRmOTdmOWE5YjQ2NWEzY2ZkMWFhN2E1ZGVkY2VjNjM4MGQ0YWFiNmQ2YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f1faac34e554d9cb07725bb24b68d89",
+      "statement": "The desktop agent runtime resolves model root, project directory and trace path from the project's source form, creates one session with a single extension factory on demand, and debounces background sensor runs so a burst of model edits produces one verdict.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts#L253-L277",
+          "version": "repo-lines-v1:sha256:c340befd43be2fd30310fe4beacf673432a57eb4c7e8ea05a0c8083a81c30cf5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3ZWFhNWY2MjlhMmFmMzU4ZWU5YTFhZDE4YzU4ZWFhM2Q3YjFkNjQwNzY0NmI5NjUyOWU5MGUwOGM5OGM3NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlZjU4M2U4NWNkODU3NTIwM2ZkZjZhYmFlNmZkZmIxZTY5MzQwZTYyMzVkM2NlYTc4YjYwMzFkYjJiODRjYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiNDk1OWY3OWJjNzc3OWIyMTEzNWY5ZWM5M2M0MGQyZTQ0MmIxNDgxNDg5NzIzYmJlZmRmYjhmZWY2ZjIzY2IifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L140-L188",
+          "version": "repo-lines-v1:sha256:7396cf0c5a31bebc85e0123b26ad0f22d7e5d37583ce5474385606b413a8183e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjMmE2N2MwMjYwMzQ4ZTA3YzE1NTJkZWMwOTIzNDVlYjc3NGU0MzFmNmI2MGJmNzlkNzc2MmNmMzMyNWVjNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4MDNhMmE2ZGMyNzU2OTE4YzNlZTkwYTkzYThlOWYyYWZkN2IyZjFkMGUzMWY4MTEwNjgyYzBhMzExNDNkZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzZjQxYTcyODMzNGU2MjA5NDY1ZjYxNzIyYmExMTdiMGMwNWQ1N2YwY2M5YjY3YjBjZjNjMDBmZGM5YzIzYjgifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L79-L138",
+          "version": "repo-lines-v1:sha256:307d504a1540af084ad617d011c4620f5ca9448fc70fc597997abab21e546d0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwOGYyOTM4NGE1NWVhZmJjOWYzNjRlNTMzOWY0ZGI4NDVkMzRhNjBhMDRkNjJjY2ZhMGZjMGJkN2Y4N2NlYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1MTA2NmIyOWQ1ZmFmN2MwZjg3ZTkyM2QxOGMxYmQwN2I4NzAxNzBlMWM5YzczMzY2MDk5NWZkOGMxZTA3NTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3MmRhYzg0NTY0ODUzZDUzNGQ5OTNjNTViMjY4MGEyZjI4YjBiNzAzYzE4ZjQzMDJmODU3MmE3YTJhZWQ3YjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlZTgwN2QzYmE2ZGNjM2MxMjExZGM5YjI5ODMxOGRjZWIxYTc5YmY5ZjlhMTAwYjhiZmQyZWIwZjhmYTg1M2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a00f178f22ab41f8b37508008fa87d9e",
+      "statement": "Agent runtimes are keyed per project root, started single-flight, disposed when the owning WebContents is destroyed, and wired so the transcript to resume comes from the active branch while every published sensor report is recorded as that branch's verdict.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L163-L172",
+          "version": "repo-lines-v1:sha256:b49874fb454c1ea892a4e94eb9ae41eb39c4307c88a9081cd9400712bdd41b32:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3N2MyMDE1MWNiNzJjMjA4OTEyNDMyMWExMzEwNThjZGVlZTc4YjQ0NGY1ODc3Y2UxZTkxMDE0Y2RiM2ZhOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YWNkNjZiMTlkOGY5YTg0NjY3M2RjYzNmYjlmNzIyNTRjYzhkNzIxZmRmNDkzYWFiZmJhZmU2YzJkNWM5ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwNWM3ZTc0Yzc5Y2E4YjEyNWIzMzFiZmFjNmI4ZTk0NWM5ZGI2YmQyYWVlNWQ5NWYwZjg0Y2ExNDM1NmE2YWYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L74-L103",
+          "version": "repo-lines-v1:sha256:31a46b97f31119713f6f68d801bd10454f82994509e4fb980088440b64e46eba:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5M2NjOWJiZWVjZDM2NmViNDU3NzYwODU5ZmRjMjc0MzZlNjRlYzY1MDIwODM1ZTliM2Y2OTg1OTljYTYzNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxMGFiYjAzYWJlMGYyZDc1MjQ4ZDQ2MTA3YzEzODA1N2IwMGVkYmJkZGIxMzEwOTBkZjY3NWU3ZjI0Y2IxZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkYTM3OWM3YmUzNmI4OThkOGNiZDU2ZTVmYTNhMjFlYmNiMTE5OWM4YzExNDYwMGZmNGVkYTZhZmUxYTE2MDIifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L65-L71",
+          "version": "repo-lines-v1:sha256:52eab38c4c1ba572de5463d845d462e4ced9b2d76cfdde80dc78bf8d9af038dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQwM2ZlMTcwYTAxNzFhZjFkODIyYWNiYmRiZWFmNmFiZmFjOWUzOGVlMDBmYTA3N2FhNDFiOTJhMGE4MTU5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjZiZDhmYzMxNWFhZjYwZGU4ODNiZjkxNjU5MWI5MTg2NTlkMzM2MDJmMjQ0Nzk1OTcxZjE4Y2VmMTQwNWExNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTA3MzFmYWFkODk3NDBkZjEzNmU1ZDQ1OTk0MTEwOGJkYmJjNTk2NzkzMTgxOWNhYmFmN2QxN2MyNmY0N2U4NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_88c89c313a15435eb01ed72dbc0fcc18",
+      "statement": "Tests assert that the renderer's patch verdict returns to the tool, that an operator refusal produces a readable error with no command batch, and that operators read the project tree before naming the root contract.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts#L311-L365",
+          "version": "repo-lines-v1:sha256:d2e62c14db8c6453662025fb9424ae3f30280589076c62f09fd1db568897d85c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNWY5Njc0ODgwNzExMmY0ZTg0ZGFjOTMyNDU4ZGRlYmQ5M2NmZmI4ODcwM2NlMTMyMmRhMTRlM2NmYzQzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjYTA4MTZjYmY1N2VkYWM2ODczZjU0ZjJkNDk5ZGJiNTc2NmFmMWI3YTkwNmRlYTVhOWU2MmRjNDA0Y2QzM2IifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.spec.ts#L387-L411",
+          "version": "repo-lines-v1:sha256:92f6f642e7b24e57195addd35bcfb98fb54cc071015dcbd8af3379f5ee73c1f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0YzAwOWI1N2Y5ZTRjNTIwNmU1MjBiMWFiYjJkOTI5Nzg1ZjM0MmIxZjY4NWQxOTQ1OGM1NjVmNTk5MWQ5YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3ZmY2NWEzZTUxYTAzNWM5YWM5NDg5ZjBjZmM0MDdkMjlmMGZhMGZmM2ZkMmU0NmM5ZTVkMWRhYjJmNDYwMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0ZGQ1OTgwODc3MTM3YWEyYjdhMjQ0Nzk4MGZiODAwZGY1ZjIxMmU0NmY5NTVlNzI1MDYyNTRkZjkxOTVjYWUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

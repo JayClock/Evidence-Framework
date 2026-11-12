@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:19fb0bb0ae25c7ada233f7803fa43a21d700270ec34e8a918c29e0d36135e013",
+  "claims": [
+    {
+      "id": "claim_164af37c15bd455a9db772d5a23f1eed",
+      "statement": "The workspace contains exactly one runnable application, apps/desktop, and eight TypeScript libraries under libs/; the modeling CLI and MCP server are libraries with bin entries rather than separate apps.",
+      "evidence": [
+        {
+          "resource": "repo://docs/workspace-layout.md#L1-L15",
+          "version": "repo-lines-v1:sha256:9527a07fd98a2cd8c897f09afdbe1e512aa6b602ade4c14571ee9c32b10a0154:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzAyNDUyMDMzNDJlNzhiNTc1N2RmZGM4ZjUyN2NiYjE0YjgzZTljNGFlODY0OGVkZmMyNjFkNTA2NDQ5Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTA4YThkYTcxZjFmZmViMmE4OTlmYmI3M2ExNTExMmNjMDFmMmYwMmJhZTdkOWQ0MjQwMjlhZmY0ZTY5MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNjViZjM4ZTc3OTFlYzcwZjM4ZDM5MTBlZTBiYzAyYzE4NjMyMTgxZWNlN2Q1MDU1MWFhMjA4MTIxMzlkMmQifQ"
+        },
+        {
+          "resource": "repo://package.json#L1-L5",
+          "version": "repo-lines-v1:sha256:644056bf9d4f114099b1d85d86179702eaeca2f2dcf6b83dc7f8da536ba3e586:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmYjA4ZmRhMWFjYjk1N2I2MTE2YmQzNzgxMWExZmU0MWEwMTYxMWMwNjMxZWRiZjc4NmQ2ODg5YTI3YTU1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmUyOGY2N2RiYWI3ZTcwZTIxMDIxMTIzNzY3NWY0MDRkNWNhYzI1NzZiNjFhZjFkMzg5M2QyNjU3MDI1NjBhOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c552dd1e7d5d4dd7bc923d8dc22b8a96",
+      "statement": "evidence-schema has no runtime dependency beyond tslib, never mutates its input, and is the base of the dependency graph: it owns the FM v5 AST and guards, identifier grammars, strict static validation and inspector metadata, while CEL, scope and provider checks live downstream.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/README.md#L1-L16",
+          "version": "repo-lines-v1:sha256:167ff69265d2fb534e4413b5aac0f62737a4a3da98e7895ffc0277bc916bd469:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3Mzg0YzA4NWM2MjdkOTA0ZDFlNzYxMGIyZjg3ODg2OTFkOGYwODUwMzQ3Y2JhMDMxNmQ3NDBiZDA0NzdhY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5M2NkOWY0ZGVhZjA2MmYyNGY4YWFkZmE5MjEwNmQ0NTNjNzk1OGJkZTg5OTFiNGFiNWFiOWJhY2UwYzc5MTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmZDk5NDhiNzJkNTVhZWI1ZTIyZDU2YTE4YjExMTM4ZTVhZjY0YmYxZWVjZjVhODdlNGUzYzVjMjNlMDNlMjUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/package.json#L1-L20",
+          "version": "repo-lines-v1:sha256:29507ca7461647ba0ce8b4609d281dc5ef2dfa07ca9fa935a2904a5db04bf700:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkZDRhZjVjOWRkYzgwMGQ2NzQzODg5N2EyOGMyNzM0MTQ2MjRmYjg2NDE2NWI0OWI3MWNjMzlkMzcwNmVkYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhYWQ3MTM1MTdiZGU1NmE4ODVkNGY5MjkyNWVhZjQ0YzYzYTYxYWMyNmRkYjU1ODgwZTlkZDI4YTYwNTAwYzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a69b77ead874995aa5e45fc419a0560",
+      "statement": "evidence-model-core depends only on evidence-schema and owns the graph, commands, session, adapters, diff and check pipeline; it exposes a browser-safe subpath without Node built-ins plus a separate CLI entry.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/README.md#L1-L17",
+          "version": "repo-lines-v1:sha256:4fd2200292bf4c22d9f4a7efe1c9bcd22f1617b03d544b8faac5a8f1529a2742:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5ODM5NTk2NGFmYmFkNWE1Mjk4ODkwMTU3NmJmYTdiNmZlZWIyM2JjNzIwOWM5OGI3MWQwODU4ZDVhODY0M2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzYmI1YzBmZGYwNDExZGNiOTM5NGU0YWQyYzAxYWFhYjhhYWNhNzljZGQxMjQwM2UxNTkwMzYyNTg4ODUwNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxM2I4YzA5ZjNmMDRiOTUxYjkzMGU5YWYxNTcyODE5ZDQ3NjZkMjBhY2YxNTJkZjE3MzM3NWMxNTE2ZjA1NzIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/package.json#L12-L32",
+          "version": "repo-lines-v1:sha256:ad5d463563f66eb4e390a6599603ce8485ae0022017d608e2499a7a5a89c7015:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDViYjlmNGE4Yjk4NDUxMGY4MTVhNWZjNDA3OGQ3N2M1YTIwZTkzZjMzNzNkYzVkZGU0YTM0MWQxYjQwYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZjY0N2M1YWRmMzUzNTA2ZDdlZTBiZDNjZDc4NWE1NzkzN2E3ZTFkYTZhNzU4Y2UxMWJhZmU4OWY0YmUzOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWM1NjM3NDBlYzU5ZWJjMWUwNDdhMmM2MGQ1Y2NkOTM2MDRmYTAwNmI5ZTg0MzAwOWQxYjc4ZGQzYzAzZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_92f54e9597bb44dca68b376f091f2b56",
+      "statement": "evidence-modeling-orchestrator composes core checks into sensors and the stage gate in-process, and is also where agent tools are registered; it uses the Pi SDK only for tool registration.",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L12-L21",
+          "version": "repo-lines-v1:sha256:bb9b1218ae1b8496d8df603cbb4b2eda3be64cdfe34b9002644edc9f72aa71a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzOTJhMmVmYjc4ZmI4NGU1NDE4Y2RhYjA0NjIzNTE1ODI2OGQ4MjZlYjA5ZGVkOTgyZjFlZDdjMTI1MjRhYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MDZhNDc2MjVjMzM0NmIxZmRkYWM1Y2Q2ODAxMjYwNTZiMjY0MDk4MTUzNDA0ZDE5YzY3MmJmMzAyMTg5YzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzZTA5ZTc1NzNmYzgxZjNkNDAyZWJjOTUxNmU1NTBkNTE3ZjNjNDc3OGI3MDQ2NWVkZjA5NjgzZWJmOTdiNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxYjc5ZDAyMjBlN2FiNDJjYzk0NDdhZmY0MTM5NDRmZjg2MWEyM2Y1NDJjNDJjNmRiZDgzN2I2YTEyYjdiOWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L13-L19",
+          "version": "repo-lines-v1:sha256:71f9518d9a692c8cd6ac391fc511cc51638c645f5c67cd658b29f53b94c30b7d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzRkOGY0NTc4YmUwNmZmYzkxYjA1NWFhYzE1NWUwYzE5YzljY2MyYWFiYTk1ZTllYmFiYjRiZTQ3MDZiNmY4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2VjNDQ4NjA3NDY0ZGI2MTc2MjBmNjQ3YTViYzVkNTIxZGRiNTcwYmI2NWNhZmY5YmQ0ZTZlMTEyNmQ5NDk5NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc7d5d240e3e463a9fb5828e53267277",
+      "statement": "The API projection has a fixed order — basis references, resources, bindings, capabilities, scenario coverage, model coverage, sorted diagnostics, then HTTP — and refuses to project when a basis reference dangles.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/projector.ts#L302-L380",
+          "version": "repo-lines-v1:sha256:81eefe12414bd21603691297417b6f3bbddf5ff064f00971a1e2a458ec76dcf4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmYWJiZWQyZDZmMTNlMDJjNTE5MWQyNWQ5NmQ2YzllODIxZmUxMDYwZWExNTlmNTJmODllN2U0NDQ0ODAxYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmN2Q1YjEzMmQyMDllM2JhZmEzYzhjNmY2MWZlNWVkZjkwYjYwM2ZkZjMxZGVkOTBlOGFkZWVmNGJiM2M3YWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8cab69f346934e788ec8829bf0c038a5",
+      "statement": "evidence-visualization is the only package that depends on evidence-api; it collects and fingerprints a checked model plus API projection, renders one self-contained page, and publishes only if the fingerprint is unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L6-L21",
+          "version": "repo-lines-v1:sha256:a400a1ac2d28e25b3768aae11541cb99aeff024f76278831fdd5fce55c36a119:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4MjAwOTY0YTk3ODYzNTUyMmIyYWIwOTBjNjUwNjVkOGVmOGU4NWM0NzMwYmIyZWIwNDYwZDM0YzY3N2RkYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwNTJiMGQxNTQ1NmM3Mzc4ZjliOTA0N2VjYTUzNzY4YWM4ZGJmZDU0MTRmMGUxMzMwNTM0MTNhZWEzM2ExYTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3ZDEzYjA2YmIwZWUzMTE0YTUwNjdlY2JhZDY2NzQ1ZjdiZmEyNDExYzdmNjFiNDQ3OTIyMWM5MzM2NzcyMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhNWQ3ZTZkYTQxZTg1MmNkYWI0NTc0NzQ4NmJiNWFjM2QyZTdlMTdlODIyN2NlNDNmZWY0OGVmNWFkYzg1MTEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/generateWorkbench.ts#L20-L85",
+          "version": "repo-lines-v1:sha256:0edf040b2b537363bb0ed072f03474a6814b09e1046a8dd1c8fa4afff5f4999a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2YWJiZDRhZmQ2NjNkZWUyOTZiOTM3MGQxZDczZmRjYTU5NmI1ZjFlZjgyYzdmYzU0NTg1NzRiOGVlZjBlZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_162804aee7cf4d8a86cc3212a92aa7fc",
+      "statement": "The desktop app is the composition root: review export runs the workbench generator in the main process from on-disk sources, while the renderer imports the schema types, browser-safe sensor types and canvas components and owns the live model session.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L20-L45",
+          "version": "repo-lines-v1:sha256:6836a5fc6b1769a2002472dc5aa9be7a07c05c36359691e1899dce377ebd069d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwZGZiYzhjOWU4NjczOTQzMWFmMWQwNTY1ZmQ0NDU0NjczMmM1NzJkMzdiY2I1N2NmNzhjMWMzNjZjYjlmNmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMmZjOGZkODhkNjMzZjE1NmE0YTk4YmViY2RjY2IwOWExZDJlODNkODMxMmZjOWFiZjUwZWIzNDhkMThlMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmMzBlZTY3NWIwMGU2MGEyMDMyMGU1MGMzNjlhOWM0NzkwNDAxNTEwMmVhYmFmYTZiYzA5YTBhODE0MTBiZDYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1-L28",
+          "version": "repo-lines-v1:sha256:13e29b405f1cb5e16006da6f178506ea3b1ae70d5999c9d0179c41c5a0684cc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2OWY5M2FkOWI5ZjJkOWIxM2Q5MWRiYTdhOWRhZWJhOWRhMDJhNTRhYzE1ODhmNDIxMTRkODExN2RiYWFkMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZWM1ZGY5OWU5YjI0MTExNzNkNzdkM2EwNTgzMWFlYTM3NmUyNjY3NzFlZWM1OGUwZDBiNWMyOGViNzMwYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmNGQxOWUwYjZhZjFhMGZkNDkyOTJlMzk5ODMyNmNiZWIxMjZkYzhkYWNiNjEyNzMxMTQ3MDZjM2ZjNDM5ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f449bd660de4e96a278997d25dd8fa0",
+      "statement": "The repository has no second runtime or interpreter: every check, derived document and generator is a TypeScript command, and the desktop app runs the same code as the terminal commands.",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L1-L4",
+          "version": "repo-lines-v1:sha256:a915231c672e5403f50642b1660a2bf654ec25c48722c2f54ac85e89746cc297:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRhMzRiNDgyNTA4MjUwOGMzZjNiZGE3MzUyZmMxMGNhMGI3NGYyOTdlYTcyODM1ZTJhZTliMjZlNjQ0OTBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGEzMzdkN2EwYTdiZTVkYmU4M2E5NzRmNmQ5NDkxZDViZmNkM2ExMWQ5ZDVmYmE1MTRjZGJhZjhhNjFlZDkyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY3NGM0M2I4ZWUzOGExNTZhZTQ1ZTgyZjFkM2Y4M2Q4MjAxMGVkOWZiNTRhMjlhZDk0NzFjNmE3ZjZkZWEwYSJ9"
+        },
+        {
+          "resource": "repo://ENVIRONMENT.md#L35-L45",
+          "version": "repo-lines-v1:sha256:42746650afa58caab7e4ca1a9db45273eb13c6d77d767e1e5ffd76142bc88adb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1OWNiYWQ4NWIxZTg0YWM5MzJiYzBhYzgyOTg1NTllMDBlMTAxMjU0Y2YwNzFjNTViYjgzZTAxZWRiYWVjNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1NmI3YjY4YmVjN2RkZjRlNjNmYjllMGIwZWU4ZmJiNjYzMTkyNzMzMjhkYTQwNmIyYWU1ZjFmY2Q0NzFiYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiZDhhZGYzODE1ZDZjYWQ1Y2VhZjQ1ZGJhZGFhMGJiMTE2YzhhMjEzMWQ2ZjM5NWRkZTcxYmQyOTc5OGNiNWQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

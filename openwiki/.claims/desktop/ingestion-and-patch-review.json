@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6dadb648edb865b60570950f179dca3fee9b372bb72bd2b9893de26a86f17557",
+  "claims": [
+    {
+      "id": "claim_71a034064f924c369c99bf50d91bde55",
+      "statement": "Ingestion exposes draft and compile IPC channels handled in the main process, and a blueprint table is parsed deterministically without calling the configured model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L31-L48",
+          "version": "repo-lines-v1:sha256:dc021443e3ccf3b1bb1644751d18ef10681437cda78b28e6281d84903f33cf43:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllODUwNjg5NjA5YmM2ZWE1OWJkMGVkMTE2MmI2NmZlMDgyZmQyNGE4ODJmZWM0MzRmZTdhZjM1MjUwZmJmMjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmZjBmMWE3OTgzYzA4YmVmOGZkMGU4OGJmOTg1NmE2Y2YyOGFhZjkxNGRhYTJmYmE5NWVlMzIyZDdiODUwMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxZjZlZWY3NTZhNmViMzMzODdhYmFiZThiODY1N2IyNWQ2MTU4ZWYwN2IzY2ViMmIxMWVhNGQzMDJkZGFlZjQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L205-L227",
+          "version": "repo-lines-v1:sha256:572cffc035d8f1880ded7ac13469e156ae10716e7811e6ec7890e22038584f7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMjY3MjdlNTAzYjdmODVmYTdhZTVmMGFkMzMzNjQxNzk2OWU2NTRkNDE0NDczYzhhMTg0NmY2MWU1YzNkYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlYWVjZjdmZmIxNDJlYmU4MDliZjQ5NjFiNzYyNjk3NTA0NjBkNDE3MTdhYWJkNTllYzNiNmY0ZDQwYWIxZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L46-L53",
+          "version": "repo-lines-v1:sha256:0763682502bc265ff381bd7f446c6e4e5b6e82bddbad18a9525d821c54bac2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhjZWU3MzRkZmFhODBjNDc2NGE2OGY4NjNhODRlZTI5ODM2M2ViNTEzZjk3MTQxODQwZDk1OTA2ZWZjN2E3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUxZGQ4ODk0ODgxYjk2Zjg1Y2UxYmVlNzc5ZDUyMmJjYjE3ZWM4MGFkN2I4Mzg5OGI2YmMxMDQ2NzhjMjg0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYThiYTMxZWU4N2YzYmY2MTJmNDU1ZThiM2U2NDA2ZTI3Mjg2NDNjZmY2NjFiY2U2YWY2YjQ4Yzg5MmFlOTk3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2U5OGFhMGMzZWVkMTE4NWI4YmMyZjczMWQ4MzFhZjg5ZThlOGExOTdlYTEzNDUwMWFkYjZiMTRiOGE3MjkxMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_de32043f34a24f13abf30ac01f2cbc18",
+      "statement": "The model ingestion reader starts a session in a fresh temporary project with noTools 'all', assembles the reply from text deltas, rethrows a recorded agent error after the turn, bounds the call with a 120 second timeout, and removes the temporary directory it created.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionModelReader.ts#L10-L45",
+          "version": "repo-lines-v1:sha256:fceb653a4ba6c0b5f7b7ce5b18cb67107ae813d00be3fabab05cdbdfc7662314:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MjU4NjRiZjI0NzlkY2MwMDEzNGNkZDlhMzg1MzZhMWVlNDM0ZDYzY2IyYWY4MmZkMDdkZTI4MWUxYjc1ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlZTgyODk5MGI0MDNlMmYwYzA5Mzc2NDNmMWNjOTRjMDdlYThlNzdhYjBmOWJjMTRkNDc1YmVlNDkyNzEzMDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZWJhM2UyMGIzMTY2OWRiMmVlYWI4ZDYzOGVmYTkwMjk0MDNlYmQyMjIwOTNmMjc4MTA2YjIyN2I0ZmNmNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU5YjZlODNjOGYxYmQwZGIwNzFlZjc1Y2NkMmFkYzQyMWNlNTcxNmUxMGU4MTI3MjNhZGMwNDM5NjM3YTI4NzUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionModelReader.ts#L77-L97",
+          "version": "repo-lines-v1:sha256:1517dcc5e85a3ab339411b8b6c2b9bf6c6a2cc3f1c8a3210305191f01effac0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNjA3YWY0ZTgxM2MwY2ZlYzZhM2M0MDM4NThhNjVjMmVhMjc5MzUyNTg3YTM3MTdkNjYxZGZjMTFiNDc5MGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1c1a5ca3d52e4aa88d961f0038efdab9",
+      "statement": "The ingestion prompt encodes a five-step reading discipline — find the contract, split the pre-contract context, pair request and confirmation, read a breach as a new pair, separate the thing — plus hard constraints against inventing facts, missing provenance, more than two contract roles, and interpreting a moment as confirmation of a period.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/ingestion.ts#L1-L60",
+          "version": "repo-lines-v1:sha256:81fd8f3b3cf4d342ce440d78e8b4753c87912b265e6340b2509a7c8502e31cea:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2M2EzZjhmYTdlMDhhODZmZjkxMGQzMDNhYjg5NmVhYTM4ZWVkYTA4ZDI0NjdhZGQyNzU1YmMxMzYxYTQxNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_40d3015713f445599528f6d9d6f3ee8f",
+      "statement": "When the configured model returns an unreadable reply or its call throws, readDraft falls back to the local text-rules reader, labels the result reader 'text-rules', and prepends an issue explaining the fallback instead of returning an empty draft.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L53-L140",
+          "version": "repo-lines-v1:sha256:916edf667589f2a603a381d91eb58410e64240e0f8c24e38b0b817ccb90cf5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzM3NTcwNTg1MTk0MDU0YzBjNDM3MDMwNGNmMjcyNjgxNWMyZmVmYjIxNWM2NTZkN2JlZmM4MDFmZTFjZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMDQzY2YwZjFjOGMxODI4ZDM3ZjVjNGZiMTcwMTk3MWYwZjU3MDgzYjhjNzA2NmRlY2Q1MDY1MmY0ODAxYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2YxYzEzMjNhYTk5ZWQzNWVlZTQyMDg4M2I4Y2ExNWVjZGQ4NWYzOTViNTVjYWNhZDk3MzA5NGRmM2NmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MThjYmY0MmY0ZWI0MWFjMjY4NmQxYmQwMDU0MTlmOWM5Yjc3YjEwNzgyNzZlMmM4NDQxZmU0OWM5MWZiZTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1712e5e04880440c8feb99da7165e8e2",
+      "statement": "A model reply is repaired when JSON arrives in a code fence or prose, when a collection is missing, or when short evidence kind names are used, and each repair is reported; an unrecognised evidence kind is refused rather than silently becoming other_evidence.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/readDraftJson.ts#L13-L45",
+          "version": "repo-lines-v1:sha256:7e4a7b383ac9e8448781d05b62b6ed5556c581f3d2536e6d67f560f70b9ef3ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjJjZGI3ZWFhMjUyMDBjOWVlZGJlY2NjMDRkZTI3YTY5Yjk1ZWViNTRkNzM4OWI2M2VlM2VhOTllOThkZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMTY5MmUzZWNhNzc1N2M0ZmQwYzJhZGQ5MDAzZGVjZDQxZTVhMGU3N2QxNDAyMGQ3ZmUwNjhlNzhkOGJjYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYTgzMTI4OTY4NGNhMDJhNjcwZWVkMzEwZmM0ZDhlYmExM2Y2OWFjYTcyZWJmZGQ5MjdkMGZkNmIwMjhkZTEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/readDraftJson.ts#L55-L160",
+          "version": "repo-lines-v1:sha256:8ca19813e0efed86750e4025c6292d506d25ba2cac69590f359e0967bdcc5ecd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4YTdhOTBkMmRkMzNiM2U3YzA5NmUyNDJjYTQ3ZGU2NDAyNjBhNDA5ODZjZmRkNzQ3MmExOWRjN2QzZjBmZTJmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3Njc3ZmUxZjFjZDFiYTJjZmNjNzBhNjYxZWViMWFiOGE5YzJmNGUyZDEyYTllZjI0ZDUxOTg2NjQyYzAxNzlhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0NTFmNTAyZDA4MWZkNGNkOTY1ZWZmZjVjZmRiYzhmYzhkNTk5YzAzN2Y0YmE5NDBlNjBlZGZmYmNiNzQ4NWI3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MzE3MzI4ZGEyYTFjODhhNjVmNWZiNGFkOTA3MTg5OGMzMjE5ODQ1OTBjNGI0YzIwZWFiY2JlN2RmYjlhMGFiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2cf79d186e24ba496230632028ef2b3",
+      "statement": "The blueprint reader accepts Markdown or CSV tables with stage, activity, evidence, kind, party, thing and system columns matched by alias containment, infers evidence kind and contract side from names, keeps duplicate document names as separate evidences, and reports an unconfirmed request instead of inventing a partner.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/blueprintParser.spec.ts#L109-L140",
+          "version": "repo-lines-v1:sha256:ae25a0657d5cbdfdcc5837dbd3e2f887c866ed79cb65b9d8fea6647dbaa73eed:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlOTFmYTM0MGIxYzQxZjI3OWM3OTBhNTg2YWY2YTg0NDRkNWFjZDNiN2NlNGRhMzUyMmZjYmM1YmY1MjNjMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5ZjgzMDA5Y2JkMDIxZjczNThjNGM3MzhjMWQxMmRhM2U2NTlkOTkyMDE5N2U0ZGM5ZjI0ZTgwZDAyYzQ0MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiOWVkZDI2ZDA4OGJjY2QwNmQ3ZjhhMWU1MjEzYWYwMTQ4ZGU5OTFjZDMzODZmZTkzYjA0YjA5MjVmZDkwOTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/blueprintParser.ts#L10-L52",
+          "version": "repo-lines-v1:sha256:76df9bc730ff9706088d42317ab7bec116b0afb68e5f3b728dcf493223a20b94:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNDIwM2JhY2FlMGRhNGJjY2Y3OTMxZTFhMjlkMzc2MTZhYTM5YzdmZTA2NTA3ODdjNmIzYWI3MjNkMWM4OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhNjA5M2EyZjVkYjU1MjNjODUxZGQyODVkYjQzN2MzYTE0YjE5NTM5ZDg3OWU0Y2MxZGIyMWE5NTIyYTQ3ODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0ODc2YTg4Nzg0NmE1Nzk0MzI2YzZiZjdmNmM4N2UyNDlkMDgzYjk2OTY5OWZkZDU5YWM3ZmYxZWMxYTM2NmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ZDUxNzNmZjBhOTk0ODQwMGY3ZTRmOTdlYzg3MGZmMGIzYzdmYmI4MjA3M2UxZWUxNTM1OGMzNGFkMmRmZmEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/draftAssembly.ts#L60-L120",
+          "version": "repo-lines-v1:sha256:fdcf517c3598f3eee20982d5cd6726e2c44bb5f64cd7d135f5c7af6dd9240a9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YWNjZWVlZGFmOWI1YzA0MTM5M2FhOGVjN2E3MWViMTU2ZmMxZjlhOTU3NGU2OTQyYTVhYjE0YTdkOTI1MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxZmFiNzg0ZGE2MDE3M2JiMTg2NTcyYTdiNzU1ODQyNjk5OWU3NWQ5OTk0ODdmYjQxMzQ3ZTY5NTU5ZmVjMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjMjRhMTEzMTU5ZTg5NGYwMzFhNzY1NmQ2OTFkNjk2ZTIxYmRhNDJhYjAwYzlkY2FiNDljYWRjMGIzZGI5MDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87e978ea3bfd463d84363345f91f1f5e",
+      "statement": "Compiling a draft re-keys ids uniquely, then computes writability as a monotone fixpoint over contexts, roles, things and evidences: dropping a contract transitively drops the context it rooted and that context's evidences, every removal is reported once, and the compiler never invents a missing role or root.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L103-L190",
+          "version": "repo-lines-v1:sha256:b83f4de16d8dc18d98b3351e95088f6178a7e56dfc0abbabe9b407d0b9932b0d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljZDZjMzFkNzZlNGMzNDBiNGRkMmMzYWJhOGJjNmY2MGZmODk2OGU2YmZkNTlmODMyZTZjYWFhZDA3M2YwMGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxY2VlYjViOGYwOTNjZDZhN2YwZTUwMDA0MWZiMmE4NDgyYmIxNGI1ZmE5NWMwMjYxYzliOTlmN2I1MzBjNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYzM0N2U0MTlkYzdjZjBhYzRlNTFjZWZjNmZiOTJmYWY3OTYyYWRmZDdjMTcyZDgxYmJhMmMxNDliMzY0YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2ZmVlMGNjNGI3NTQxNzliNGRhYjYxZmUwN2JhNDliOTMxMzhlZDE0ODlmZmFkZGVhMTYwMzA4ZDYyMWFmNzYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/draftSupport.ts#L14-L45",
+          "version": "repo-lines-v1:sha256:34d396491f21cda781c30ee801a62071bb7e7b439d80ff7743ca8c83fe0c9c1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjYjA4MzMyOWM2ZjJkMTAzMjcyNDVlMDBjMTdjN2RlNTVmNWM2ZDYxNzdiZmE1YzA1ODlmMDNmMGM5ZGEyZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4YjBjYzRiMTM5ZTU5YmEzN2ZlMDM1MDQ4NjlkMTU3NmY2ZDFhZDFiN2VkZmRjNmEzZDA2MmExNjczOTFhNjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5MTJhZTcxMTNmNjFiYTI1N2IxNWQxNTAyYzMyODc5NzI5Mzg2ZDMzNjM2ZmZlMmZhZmY2MjdhOTFmOWU1MGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWNhOWFmY2U1ZjIwMzVkOTdjYjgwNGEwNjI4MmE0YTEyMjM5ZWM1YTI0YWJiNmFlZmVlNzAzZTQ4YjhjODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_058b7492097648948a7e3ce57cef57ae",
+      "statement": "A fulfilment pair receives a completion rule only when both ends survived compilation, both live in the same contract context, and the confirmation references the request; otherwise the rule is skipped and reported.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L588-L670",
+          "version": "repo-lines-v1:sha256:39835d7e7dd3d051ff52063a876cc7670d768381b4407fe2fffe1f492886567c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMjljOWMyYjM1Y2ExOTdkMGY5OThhOWI5Yjk1ZGQzYzI4NmZkMWMzM2U2ZDdmNzg2OGRjYmUxZTM0OWZlNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0NjU0ZTMxOTkzOGNjY2Q5ZTJmYmYyMDdkOGU3YmRhYjhlMGJlMThhZWI3MGZmZTgwZGU5NmU3OTFmMzU0MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YzQxZTA2ZGQ3NGZmZWQzMDU2ODEzMzY1NGQ1YzA0NDAwNGM4ZDM2Zjk0MjI1ZjE0NWJiNTU4ZjJmZWYyZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_63f3d9d4c63a48cd878f435fe5b53179",
+      "statement": "compileDraft keeps the name the user typed, refuses to write when no entity survived, otherwise creates the project through the project store, returns compiler issues and a layout derived from the compiled model, and the IPC handler opens the editor on success.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L146-L203",
+          "version": "repo-lines-v1:sha256:87a1a122caa7874877f3f0dea64463586d8909cb15a76f65b4c1338738ac0094:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDBmMjUzYmQ3MTFmMzdiNTZiYmEwY2U1MmYzYzZhM2ZkZDQxOTA2NjI3ZGQwMmFlOGZlMTFlOWIxYjc2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMjU1MjcxNjk4YjljYmMwMTEwMmQzOTRmNTJiMTA3MmMyMzEwZjg2Njg4MGRjNjEzZmNmYzc1YmYwMWMwNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NjgzOTQ3NWE0NmYxNTNjNDFiNTQ4ZTZjODc4ZDM5ZGY5Y2EwODI0MzE4OThhMjY0NDQ1N2Q4ZmFlNDNhMDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/layoutDomainModel.ts#L1-L60",
+          "version": "repo-lines-v1:sha256:2ec1b0b41ac741ad7a35a97857573dda1febc359dff9276f1f3e7df63581628f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ODVmNjJmNDM2M2E5NWU4ZmIzMDY2MTc2Y2MzYjkzNTZkYWVlMjQwZDE1YzNkNDYyODBhNmVkYzA5ZDA0MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlN2NlYmNmYTJmYTBhODBlN2U0YjkyMzJkYTAzMzQwNjcyZjBkZmZkYzQ2MWMyMGRlNzQyY2I1NDZlYzVhMTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhODU1NzVmMmE2MDIwMzNjN2NjMGU0ZTcyNjYwOThjZjg2Y2RjMTdmMzJjOWQxMDk0NTYyMTAzMzUzZmMzMGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ea3f7f9f9d534616ae7ececd7e456dc7",
+      "statement": "An agent patch is dispatched inside the tool call, then recorded as a review with rationale, command types, added/removed/modified ids from diffDomainModels, and a canvas overlay scoped to the patch that marks existing objects and adds no ghosts.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L20-L72",
+          "version": "repo-lines-v1:sha256:91c73b76a29abe206592d916be63b7e8844b5beece69fea6d48e53cf2f6e52f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNTI1Y2I0ZjdiYzk4ZTBmOGViNWRmOTdmOWE5YjQ2NWEzY2ZkMWFhN2E1ZGVkY2VjNjM4MGQ0YWFiNmQ2YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L10-L114",
+          "version": "repo-lines-v1:sha256:f960d98848ec782a56344e00796efc412c8ddb9eddf0004b2c7bd0e338eae3f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NzFhYjljNjQyYmMyYjMxODE0YTBiYjI5OTYzNjEwNzdiODIxODRmYzA4NmUzNDUzODZhMzJjMDBiZjIxOTA0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1NGRmOGE3YTZkZjY2NjRmMzkzZGM1NmZkNTYxN2Y0MTI2MGI2ZmMwYmEyMDg3OGU3MGNmMWYzNzQ4YjhjNjdlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_051c0489925e47079159ce52509a374c",
+      "statement": "Revert calls session.undo only while the on-screen document is still identical to the patched document; after a later edit or patch the review closes without undoing and the bar tells the modeler to use the normal undo history, while accept always clears the review without touching the model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PatchReviewBar.tsx#L15-L74",
+          "version": "repo-lines-v1:sha256:e1ba5439f6ef77139ee7b74a86de9f8b0f35c7ad7999235229ff047e0417eba5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlYmM5ODEwMGM5OTg3YTdiNzMxMmJjNWM0YzUzYmNlN2FlZGMwMDIzMjZjMDA3MjQwNTBjNjU5NDAxZDRlZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlNDZjZDcyODM3ODMxMGRhZGI4NjE1ODQwYTE0MjNkNTgyNWFkYjY0MTNiNGI3N2Q0M2MyYTUxM2VkMDkzNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L70-L100",
+          "version": "repo-lines-v1:sha256:d10677d4594dcd1a83e72d7f426d1151f1eb91aa554e54817809252de1989ec2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMTg2ZTZjOTQyYjhiNjZiMjRiMThhODk4NTYxMGM1MmVjOWFhNDc0Y2U4YzkwMmQ1MjMzOWRiMDVmZDBhYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MmExNjY0MmFhOTgxYWVmYWRmNTJhNjMzOWQyN2FmZWMyY2ExOGFjODViMmJiNTcyNjU0NDNiNzliMWU5OTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlZTU1N2ZkMDdiMjA1NmQyZDcxZWI2MThkZGU1ZjFmMzQwY2MyMTFiZGNjNmM3NjUxMjhjMzcxNDJmYWFkMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3OWIyNTAzMGNjM2MwZGI0NDNiOGJkNzhiYTBjODNiYjFhZmZkM2Q4MzhmMDMwZjljZTE1NTdmNjYyMmMyYjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ad5d2f544faf4ed8ac3ea016f7d0fbbb",
+      "statement": "Tests pin patch counts, revert-while-newest, accept, refusal to revert after a later edit, draft compilation and transitive drops, the four layout rules, blueprint/model/fallback reading, empty-model refusal and a refused write.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L30-L215",
+          "version": "repo-lines-v1:sha256:f5569f7dd565602599f008aa50ca55d2c03fa38bee159800a11e028d3bfbcb8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTg2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MzE5NzE2NjgwOGQ5M2NjY2QzNWUyYTcwOTEzZDFkZDMyODZmMmZkODk0MDdjMDBlNzJjOTc0OGM1NjlmMzM1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhOGI5NmVkOWRkNzAzNjA1ZGM0YTQyZTU0YzNkYTllYjQyZjc1N2MxYzk2M2JkZDk1MmFjNTU1ZDAwMDE5OGI4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkYjhhNGQ0NWQ2ZjZhNjVlYzdjNjUwNzZkYTBkMDgxN2ZmNTNiY2EzOGJiNTAwNWIxYzBkYzUwMmZlNmJhNTVjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkN2RkMmE0ZmIwMDQ2ODYzZDc5OWFjNDQyMjQ0Yjg0ZjRmNTE2OWEwMzFhZTQwNTcwNGU4Y2YxNjVjYjQxZjFkIn0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.spec.tsx#L117-L185",
+          "version": "repo-lines-v1:sha256:bdfceebb0c044f41aacde4c7b7af05edcfe73b838155a19e6cdd05a80d937a2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxYTQ3OTI4NGRkZDZiYzI3Yjk4NDg0NzNlYzdhY2YxYTc3MDllNTBhYTVmNTczOWZlYTc5OTIxNjcyZDQ1NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNDkwOTYzOWQyZTY3MTAwOTg5NmE5NTY5M2YzOTQ4MThhYjY0ZTFmY2U1MzFiMmM4MDE5MDYzNTQyMTY4OGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwZTM5Y2Q5OTZhZGZjYzBhNGIxMTQzYTdhNjVmYmFjOTQ1MWUwMmY5NDU1MmQ4NmM5YzM2YjlmM2ZlNjY5NjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.spec.ts#L33-L240",
+          "version": "repo-lines-v1:sha256:4ad0bf8f839586a4a5668fb6c3768a4c07d1bceb422879c51a13dc473617fe99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGYyNTU0OGVjNWEwYTRiYWI3NjU2NTYxMTk0YjU3MDRjNjliMzE5ZWM5YjgzMjU0OTk1MGUxM2NlYWNkZTJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3ZjA4NjVkYWU0MzY1YTA0ZmY4M2Q0NzQ1ZjBjOWVjNjAyODJmNWU4Y2M0MGM5OGY2NDk4YWNmNDM2NzI1Y2Q5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMGQ4MDM4YmFmNTM2MTUwNzMzNzA0NzhhYWMwYmEyYzVmMmYwYTAzNmY2N2Y0ZDU1NDQzNGVhMjdiMzZjODQzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMjJkMWMzNDJjNGVkZGRkNGY1ZTNjNmRlY2RmYzk5NGEzZjgxMjVlNmY4NjM0ZTgzNmIxMzM1YTFkYzA4NWJmIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

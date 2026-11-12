@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a7e11ba91d52a3cee96822cf251dc4f7aab628025ee32770aca5d459642873d3",
+  "claims": [
+    {
+      "id": "claim_a007c15b40764a179f770eb7c0348624",
+      "statement": "A full sensor run reads the model document, validation suite and raw bytes once, derives a sha256 model digest, and keeps a rereadDigest closure so the FM check can detect an input change during the check; a *.evidence.json bundle path is explicitly refused because native sensors read a directory.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L37-L46",
+          "version": "repo-lines-v1:sha256:d4afdb24880789f7b8ee588d2da1b3e0f67d75bcfc7e3e8514f2975d3c9fc8a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMTM5NDc5NTM1ZTA5YzUxZGNmYzAyMmJhYWU2Njc3ZGNjNTgwYTk1NzM0NjMwNjUwYjg2ZmIyNjMwNWUwOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhNGUyZmNlODJkZWMwNjc0NzA0NTVjMjBhZDQ4ZWQ3MzdjNzc3ODFkZDZjNjI5MzI5ZDczZjNjZjgyMWFmZmEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L6-L55",
+          "version": "repo-lines-v1:sha256:84e1db65bb1c69a16f748036ff965364e0fdfcab84568f297e30791d11f77e46:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2NzA1MjZkNjU5YzJjYzhjZDU1YmZhMWY2ZTdlMjc0M2I4YzYyYzYyMzdiMzMwOThhOGY3ODZhZjhhMjE3Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3NTQwNWMzZGU5ZWY1YmU3ZmMxOTkyMTNhNmQ0YzliMGFjMTE3OGE5NTg0NTQyYjU4Njc4MTQ3MGViM2JlNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwYTFjMDU3ZjU5OWU1Zjg1MDlmZWYyYWEyZWMyNWU2ZmQ5ZTU0ZDQ2Zjg3YTAzMDQ2YWFjYzY1ZDFlZDA2MDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_81cd15232f1b4cdc8d5d42f046a2d73a",
+      "statement": "FM check errors become blocking FM_INCONSISTENT findings, scope gaps become warning FM_SCOPE_GAP findings, an input change during the check becomes warning FM_INPUT_CHANGED, and a scope with no executed scenario produces an informational FM_NO_SCENARIO.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L123-L175",
+          "version": "repo-lines-v1:sha256:c675c3a72a2daf16830ba487ef758230fd66333c622e74c2512ef5550b00edf9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0NjFiN2EzZDNmZjFkY2U1NGNjN2M0Yzk0MTFiNDc5ZmE4NzUyZWI5ZjJjNWIzNjBmMDdlNTYxMWIxMjNhODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2Nzg4ODY5ODkxZWU1M2Q1ZmUyM2I2MjhkYjYzMDZkNGQ5OWFjMjQzZDk1YjFlMGEwNDg4NWU0OTQxYzE5NzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6f25c560fb04fca9e096985be9e2743",
+      "statement": "Key data items that still owe a provider decision become warning KEY_DATA_DECISION_OWED findings and increment decisionOwedCount, while a fully resolved ledger produces one informational KEY_DATA_RESOLVED finding; owed decisions are warnings rather than static errors but still keep the stage gate closed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L177-L225",
+          "version": "repo-lines-v1:sha256:b606daa77ee3c3f97ceeb526cc221fbb8c1fd661dc1651914fec378d8e0cb93c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NWQ0ZTRhOGFmYmExMDZiZDc1ODY4ODA1NTA5MjU4MzdjMmE4NTA5NTUxMjU3OGFiZDNkZmM1MTQwNDM5MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_673e8ff985fc4760a0ca4aaf7265d558",
+      "statement": "Sensor issues are de-duplicated by issueId, severities are recounted from the unique list, passed is true exactly when blockCount is zero, and a sensor that could not run contributes a blocking SENSOR_UNAVAILABLE finding.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L237-L276",
+          "version": "repo-lines-v1:sha256:8f5f80dd9ed54e0d2e71991ea0f77d08382ce6ec8b057353386397dd374319d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YmRmNzBhZGFjZjQ4NTBiMGU2YmFjODBjZjkwNzY1OGQ2YjYxYzA2YTU2MmUxN2FjNDdiYzVkNzRlMGUyNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmNDg5MTBlZGI5NDU5OGNmN2VhN2Y5ODNhZjRjZGY4MDQwZjhlYWRjNmEyMjM0NTRhMTJjOTRkMjAzYWNmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWY4ZGVmYzUzMzk4MGNkYzFmN2Y5YjEzZGU3NTgyZTU0NGY1MmE4OTNlZTlkMzZlMDZhNjRlNTJmZGMzODQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L303-L314",
+          "version": "repo-lines-v1:sha256:03d3a85c8b4ea6f62fa8e3246015a028a9394c165a71f27d376febc22185d496:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNTE1MjRmNWU4YTQwOWQ0ZTJlMDE4YjkzMmNkZGY2ZTg0NGJhODI3MmM3MzVkMzUzMGU4MmZmZGQyNmYyNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0MDE5MGEzMDU4ZDliMWU3NmIzYzU1MzdlNzI3YjViYzM2ZGIwNTU0Yjg3MWU1MGRiYjhkYzk1Yjg2OTgyNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4NWU0OGI1ZTBhM2YyNDkwMTI5YmJkYTJmODdlYTU4MjY1NzA4YTYyMjA1MWI3NzcwODk1MzYwNWE4MDU5YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxM2Y2MDBmNGIzMmI3ZWY4ZWFjZDc3MGNjMzU2MGY4MTY3YTA5Nzg3Yzg1NGMwZTgxMWMxNTRkMGYwYzI0NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78f0f5453cd946b68100ef3e1fcefe7b",
+      "statement": "isStageGateReady requires a supplied stageGate whose passed flag is true in addition to zero owed key data decisions and zero blocking findings; because the only production buildSensorReport call does not supply a gate summary, a plain runFullSensors result always reports isStageGateReady false.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L94-L98",
+          "version": "repo-lines-v1:sha256:391f5c1d5c7178edf721856b3109d4f85e1e002de7b23a7c3d8c6b560e4e60d1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTFmNzhjNGI4MzU4ZDFjNTI4ZTQ4NGY0MWU5NWJiYWM2OWQwNGNlZjhlYjBmYTM2NjgyYzk0ZDA2NWNlMTNiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg0NDY4MzdkZmE0YTIxM2MzZmM1NDVjOTIxNGMxZDIxMzI4NTI1YmZjMjRkMmJjYTNmNWI0YjBmOGIxYTRhYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDE4YTZlOTM2ODE2ZjEyMmNjM2IwNzU5ODBjYjNlYjc5MTMwZDkxYTgzOGJiMDBkNTkxMDg1ZmUzN2UzNjI1MCJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L242-L276",
+          "version": "repo-lines-v1:sha256:09ed461749e3fc2b9313dba2ab1ae26c98259f4c6a98bc4f58bd6a59225f08ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1ZGE4ZDViMzI0MGYzNThiYTNhYjNlYmM4MzQyNDI2NGIyOTYzZTc3OTliZWY2YzAyZTJlYmM0Y2ZkODI5YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NDg5OTAxYzc3ZDYxMTEzMzFmOTc4ZDE0MWM5OGE3MDQyYjQ1MWQyOWI0N2JlODI4MTQyNWM1ODllM2M1OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWY4ZGVmYzUzMzk4MGNkYzFmN2Y5YjEzZGU3NTgyZTU0NGY1MmE4OTNlZTlkMzZlMDZhNjRlNTJmZGMzODQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1f02922e42d44d4fbb58af076f6174bb",
+      "statement": "The stage gate refuses an empty scope list and requires checkVersion 5, consistent true, complete true, valid true, inputChanged false, no errors, no gaps, and coverage of every requested scope, then requires an exact recorded closure fact '范围结束确认：<scope>' or '全局追责结束确认：<scope>' for each scope.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L155-L164",
+          "version": "repo-lines-v1:sha256:3265f852f7fb33033e68f24335776a9357b4415ea4ad4d713b1f1de81fb7e8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1NDk2OGIwOGNlNDYxMjgwMzBjOGRlYTI4M2M2ZTZjZTMzNTEzMjM2MDRmZjg5NmY2NzYwZmY3MGMwMWQyYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNTAxM2VkZjUzNWNkOGM2M2VhODJhMjg2MWI5ZmQ5ZDNhMWQ2YzQ1N2NhY2JkMmQ5ZWVlNTI5ZDZlY2UyYmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YmEzODJjNWYyMzQ0OGJiODM0NTM2MmI1ODAzMTI1NjIxZGM3ZWVjZmJlYzIwMzZkMDlkNzQyOThlYWUyZTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L16-L16",
+          "version": "repo-lines-v1:sha256:0e0ec0915439ff6385bbda7a163c4f48ee7c1599b4de701df66668ffe8f801a3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUwZWMwOTE1NDM5ZmY2Mzg1YmJkYTdhMTYzYzRmNDhlZTdjMTU5OWI0ZGU3MDFkZjY2NjY4ZmZlOGY4MDFhMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUwZWMwOTE1NDM5ZmY2Mzg1YmJkYTdhMTYzYzRmNDhlZTdjMTU5OWI0ZGU3MDFkZjY2NjY4ZmZlOGY4MDFhMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTMxZTI5NTVkM2Y4YzYzYzgzYmRiODQxZDg1MzIzYmRlZjdhNmY4NDUyMDg1MGRhY2Q4NDIxNzRmMmJlYTgwZSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L39-L115",
+          "version": "repo-lines-v1:sha256:19c21500b53f897b216437ff8409c1b0be8296660c208a219aba19aa02889b60:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NjgyNWNlMzAzZTEzOTJiNjIyNjBiYjk0YmQ5MGJhMTM4MmU3YTllZDk2NjhlMzk4OTdlODZlYjlmYzdiZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYjhmNDcxNDE5NjNlNGU4NzRmOTBlYTVlM2QzNzJmMGU5ZWY0NGYzZTYwM2I5OThmNjFhNzJiYWEzNDg5NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlOThiMjBmNzgwZDE5MDlkOGFjY2ViY2QzOTdhY2NjM2IzZDQ2NTJiZWYwMzkwZmFkMWM2Y2FiY2U4N2RlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2ZGIwZGQ3Zjg1M2QwZDZmNTFmMDBhZWFjOTJmZDFmMTY3MjcwNzAyZjY0YWUxMGIzNjJlN2QwOTc4OTQ1NzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_93e7a6ed5d224e249edc229485f60dc5",
+      "statement": "The gate explicitly reports as a limitation that downstream authorization and business approval remain human statements: it proves only scope completeness and a recorded closure.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L180-L212",
+          "version": "repo-lines-v1:sha256:41787aa99fad4092ea9055a9ea7b7830e6586b93bae2183b284ba71059526fd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYzliN2M0OTMyMWZjZDUyNDQ0MzQxZjJhNWE4OWE0ZDRjYWZjNDY4MTY0NjVmN2IxZGY5MTA2YjFmNGUxYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODM3YWZiOTAxNzNlNjBjNzA2MGM4ODc3YzIwOWJjNzQ0MzM2ZWE5ZTFmYWFlZTQwOGY1NTM3YTAyNTg1OTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_745815363c844149841ea1dae676c5a6",
+      "statement": "The gate consumes a saved FM report and saved trace rather than re-deriving the model, but the sensors engine will run one fresh full sensor pass when the caller omits the report and closes the gate with an explicit error if no FM report can be produced.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L5-L12",
+          "version": "repo-lines-v1:sha256:30c43055beff948ff56ddbc4a24f2190ac4c5f5c4cecc4067fc103b1db19b5a8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2JkNmM0MDhhYjA4NTk0YTY0NTUwODkxMTA0MjJmZmIyYzBmOGE3NzY1MjcxYjU0ZDBmNTdlMDBhYWE2MGM0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L78-L117",
+          "version": "repo-lines-v1:sha256:34d509282b0c9a4c00945dc8ed5eecba96e08244292db76183cda4857abc8d85:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5NTllNmVmYzk1MjE0YzZkYTcyM2JjMzVlMjQzNGU4ZDhkNWQ4NGQyZmRjOWEyOWY0N2ZiM2Q5MzgxZDFiN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0ZGE3MTg5OWJiMWJhZjFiMThiMGU2NzFhMTBhYzgwYTkzMThjYWE5NGQ0ZTczZWQ1MTEzYjEzNDA0MzE0YWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_418efd3eece74b0a83f1b7bcb2ff2d96",
+      "statement": "The dependency frontier reads only the newest trace record, lists a question as open unless that same round binds its target attribute, reports cited evidence missing from the model, and treats a round as closed only when its confirmed facts contain the exact closure marker for that round's contextRef.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/discovery/frontierTracker.ts#L70-L72",
+          "version": "repo-lines-v1:sha256:a5daa45a7a797937c60079a78e2efc102dc2d474ed760164eb87e72323581666:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFhMTYwYTY4NmFlMjQ1Zjk2OTA1MTQ2YjcxOTAyNzllODc0M2QxYTFjMDljMjM5ZDBmYmFmOGQ2MjNhZmE5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDc1NDc1NjdjZmFkMzljNGUzZmM4ODQ4OWRiZTg0OTNlYTIxYWIxOTQ1MWQxZjljMDNhMmVmNTNhYjMyZDM5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjMzZDM2MWUzZTk3OThiYzk4ZTM2M2YwY2VlZjdhYzhlNjY0ZTIwY2UxMTliNWYzZjE1YTIyNzk0OTkwNzdlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGIyMGZhZWZjM2FjZTU4NjFmNTAyMGFmOTY0ZjNjNTgxYjNkZGMxODlmMjYyMDY3MTE0MjFjNzEzMzY5ODhjNyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/discovery/frontierTracker.ts#L74-L159",
+          "version": "repo-lines-v1:sha256:bc198d52935007d48abeb76481fbed8b764235400ce80adb4be8f51b48a48ab6:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkMDIxZjU1ZGFlM2YxZTJjMTVjMDU0MGJiYjBkYzY3NzRiOTVhZTgyNjIzMTdhZTJmMmY5YWE0NjRiNWE1MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7a093d59144492ab6d4343de6fdd076",
+      "statement": "Verdict comparison returns comparable false when either side is missing instead of treating absence as an empty verdict, compares findings by issueId so a reworded message counts as new, and derives gateImproved or gateRegressed from the stored isStageGateReady snapshots.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.ts#L117-L155",
+          "version": "repo-lines-v1:sha256:50b6b136e09aa67bc3b6185a6ab7f13269073c595c8bade29090c60002c967a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.ts#L69-L115",
+          "version": "repo-lines-v1:sha256:3d94e98ecbf9b97d491d90813033ee8a25bf92f16001c6845878d2e0d46e8590:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhZDQxMDJhM2ZiZjdjZjU4Y2Q5NmE5MzA5MGNmZTE0ZjgwMzBmMjE3ZDgwZGQyZWRmYTkyYjViNzIxMWVlMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMTc0NjVkODUxOTdkMDNjOTMxNzAxM2I4NTI4ODRhNjk0ZDIxMmRhZTMyYzFjMzc4NGNhMGFkYTJhNjkzYWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_791cb7e175a64caba8b0080223958a1e",
+      "statement": "Tests pin the severity mapping and gated-shut ledger case, gate opening only with a recorded closure, refusal of unmodeled trace references, and verdict comparison that reports not-comparable, fixed-versus-introduced and gate movement.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.spec.ts#L33-L100",
+          "version": "repo-lines-v1:sha256:d4dfd7cd280c6386c01bfacdbbbb7bcd22c421b59cabd4e17455af6ca7482b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NTU4MTc1YzZmODQxY2U3MjlkMTM1MDIyMjc3ZjE3Y2MxMTE0YThhMjI1OGVmYTQxMDQ4NTZhNmI0MDE5MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5OWI1YzFlN2NkODE2MGZhMjU5YzI4MmY5MWUzYTRjNTExM2RhOTNlNDc1OTNhNzQwYTdhNTcyNDE2ZjY1NWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NzllZDI4ODY3MTEwMGNhNTg3MDk0ZWRjOWIwNWM4ODY1OGI5Y2JlNzAyYTIyOTg2MDJjYzY5MDNkNTE3NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YTU5MjIyMWI5MzE0NjAyMzM5YThiMmIxMzJiYmIyMWE5NDI2NzRlZjgyNmIyOTZlMzg0Y2U5NWZmMmVhNjAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.spec.ts#L201-L268",
+          "version": "repo-lines-v1:sha256:7bb5b54d8cd2b497f870d545728b50870d8d44336ec8610baeedb79c3e868174:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4NDU1OTBmYzk1NTRkYzVlMGY1ODdmZTlhOTcwYjY4Mzc1ZjI3ZGQ0MjYwMDI0NzlkZTAxNzVkMzQ2OGIxZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyMzlmNTYyNDEyNjE1ODU5YzQ4MzhlNmE2OTgzMmU5N2FjYWEzZTg2YTAxZjgxZDU2M2RhNjUzZDNkZmVmM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzMWZlNjk5NWU1NDNmZDMxNmY2MTNiZjc5N2JkNTAzZjY5NGVkYmYwYjE2OGJjMjNjMTAxZDMyYjcyYmU3YmYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L98-L146",
+          "version": "repo-lines-v1:sha256:ac86e6f907531a04174fd0ec614d83817e8b33b19b2a8b380c830bdf980bf508:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyYTUxZDQ1YjM4NDk2YWZlZDgzNTY1NTg3YWQxMGE5ZjI1MGZhNGRlYTcyN2JjNDkwYTZlNDc2YjAzMTI2MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNmE1NTlmYmQ4MGRkMjljNDFjOTdmNDRhYWFjYWQzMDc2NjAwZWE1ZjNjYmJjYjI3YTNkNDdiMTgzMWYwZmUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

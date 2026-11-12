@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4d4a9b4471761b4e53ff7999aecb6df1a2ba7fac81af9e3aeccfefc3d6187300",
+  "claims": [
+    {
+      "id": "claim_d69b4a3b54db4f69a4cfa0a7b8a8e9d4",
+      "statement": "A model command is a deterministic transition that never mutates its input: it returns the next document, the inverse command, the affected ids and a result, and the session stores the forward/inverse pair as one history entry.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/types.ts#L48-L67",
+          "version": "repo-lines-v1:sha256:0ffd386764928ef34d68a0c48d1451821d0462a12d59c2a9caf3512807edea05:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiYTY0YjZhYTYwMzk2ZjQ2NjhmNDRjNjY4OTUyY2UyY2NjOWE4NWZmMTQ4N2IwY2E1NzhlYmYzZTBjNTA4NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ec9051962c04842b21a69451bdd2527",
+      "statement": "Rejected transitions raise ModelCommandError with a stable code from a closed set (id.invalid, id.duplicate, entity.immutableField, entity.referenced, attribute.time.missing, context.rootMissing, role.notBound, rule.context, derivation.alreadyBound and others), which callers surface as machine-readable diagnostics.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/types.ts#L3-L46",
+          "version": "repo-lines-v1:sha256:c362f9cc3ac26bc50ae65bf65f01fa30f16ab620cd4445cfd55abc71bb3e11cd:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNTBjZGEwMzU1ZGExNWEwNTU4ZDYxZDk0YWMxNWRlYzc3NjQ4MGQwYzQwN2MyODhlMzg3ZTYwYjY4OTI3MjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMmZjOGU3OWM4OGZlNjIyNzQ0MjVjYmI5ZDk1Y2VhNWRiZDhlZTdhMGRhOTZkZGMxNWJhMjk2ZGZmNmUwODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ODM5YjE5ODZhMzc4NjQ2MjlhMTJiOTE5NDcyMjU4ZDhlMDFiZDgxOTA1NGE1MWM1YmE4ODQ0YzIwYTNmOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_31fa8b3be48c461a87c6ac22a9fff26f",
+      "statement": "Guards enforce identifier grammar and cross-collection uniqueness, resolve entities/contexts/contracts, require a Contract Context's single root Contract, require Party Roles bound by that Contract, and apply category rules: no contextRef on participant.party, Thing in a domain Context, evidence kind in its phase Context, Contract with two distinct Party Roles, and a responsible Party Role for other evidence.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/guards.ts#L1-L260",
+          "version": "repo-lines-v1:sha256:f3c0f548835a304d67290e783e681abaf6ba9f8c2f248eec4a3d965d3c9072c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODIwMDk2NGE5Nzg2MzU1MjJiMmFiMDkwYzY1MDY1ZDhlZjhlODVjNDczMGJiMmViMDQ2MGQzNGM2NzdkZGJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhMGU0ZTgxYWVlMDVlOTVlYTk0OWRjNmE1ODNjZDQyZmI4NTUyZjYxNDFkOWIwZDJjNmFmMGQ0ZDRiNjkyZTVlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjNGEwYjhkM2E5NmU4ZmE1NDUyMmRkMzhkZmI0ODc4ZjdkMWRlNmJkZDI1MmU4YWFlM2Y2ZWY4MTIxODRhNjU5In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_490d2adaa2db4e92a0a12d7928c55755",
+      "statement": "assertMandatoryTime refuses to create a fulfillment moment unless its business-time attributes already exist as required keyData timestamps, so a pair cannot be saved in a shape that will fail the later static check.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L85-L112",
+          "version": "repo-lines-v1:sha256:ac2ac9415429377295e6bbf0a6d4ea4d099d7c3c434a89d2dee8c03f4560f6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3Y2Q5YzE2ZTIyNzI1NmUzYmEzYTM3Y2I3MWFlMGI5MWE4NzZiYTQzZWU0ZDI3YzRlNTU4ODI2NTNiNzk5ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzE4YTk3ZGEyYTJmYTNkOWY3MTk0ZjNiODM2MDMzNDEzNDBkMTkxMWFjNmFkOTQ4Njk5ZGNjYzY5ZWJmZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3190ea62af234f83ab255412b979afc7",
+      "statement": "Saved identity is immutable: an entity refuses changes to id, type and category, a rule keeps id, type, kind, contextRef and target fixed, and an attribute rename is refused while a derivation still writes it because expression text cannot be rewritten reliably.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/attributeCommands.ts#L167-L230",
+          "version": "repo-lines-v1:sha256:60bbbaf970787d18a5095a558ae797f5f40accf3b8ef88b52fb92ae807a32e48:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5YTNjNzE5ZWVmMWFkNzU0NTYzMTdmNWI0MzM1Y2MwZTQ2MjU0OTRiMGJhMTNjYzM5OWM1NTgyNTVhY2M4NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwOTdkNjM1ZDU2MDY3NjAyNzU5ZjM2M2U2M2NkZDNlMDJmMzQ0NDNjNzhmMTU1M2QxMDA1MTIyZTBhM2U5NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L120-L160",
+          "version": "repo-lines-v1:sha256:27e5ce4ca9ed972b56db44ccccc9fc9431f6688eabe86c48018f83c3756f9aa9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4OTIyNDcwNzczNmE4Mjc2NWEwMmNkZTNmMzM1OTVhMzFhZjdmN2VkM2NkYzJiYzljOTk5MmVmODU3YzQ4MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwZmYyYjQzYzkxNjE5YWU4M2NlYmEzMmMwY2QxZmRiZWM1YjAwOTVmN2E2YTBlNGU2NTg0N2IzODI0NzRhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0NTk3YzUwNTBlMDk2MTFlZDUzYTk2NDQ5OGM0MjBmYWM1MTRkOGVhMmJkNDVkNWJjM2QzYjJmN2I5YzI1NjMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/ruleCommands.ts#L132-L200",
+          "version": "repo-lines-v1:sha256:55d0e3f1af3d0739294c398a478a7ac0bfb6643145d01e3c576680915afe6d9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzZmUwYjYwZGFmNGJiNTJmNWU2MDczZmFiNDI1ZjkzOGQ1NDc0ZGI5NmY2Y2E0NjZlYjRmODAxN2UyNWQ1MzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhY2JmODhmYjBmYTgwZjA4N2MwZmU4MjBhNGJjMzFmZWU4MmZiNWYwMjgzY2ZiYzc0ZTFjN2QzYzRhMGNhNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkYmZmMjQxMGQ1MmIzMTdlYjQ5MGEzNDYyNDc2NjdkNjY2OWY3N2Q3M2ZkZWExYjAzNTVhOTQzZjcxNGE3MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e64c4bcbfb3c4ccb9d554169646a98e1",
+      "statement": "Business edits that need several writes are composed into one command: CreateContract writes the entity and the Context rootRefs, BindDerivedRule writes the rule and the attribute pointer, and CreateFulfillmentPair writes request, confirmation, reference, optional contract reference and completion rule.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L20-L80",
+          "version": "repo-lines-v1:sha256:0e965ac1fbd2c9cd84d9eeeb5d0f42368bad030bdeef302f72028b996fb4f410:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2FlZmE4OTRhMDhmMTc1YWY0ZjFlNjkzOTEwMDcyY2Q4ZmU0Y2QxZTEzZGQ0MzQ0M2JiZGNiYWNhMGYyM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkODA1ZmJjZDVjOWQyNzUyZDE0MDM3Mzk1MGI5ODg4YWQxMmE4NDAwOTA5ZGYzOTAyOTAyODE5M2I0YWQ4MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxOTQxMTkwZDUyNjMwMjQ3NDE0ODUwOTc2MzQ3ZTA1ZmZmMjVmZWU5YTc4ZmJmOWIxYWEwMTc1ZjJlODE3YjMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L82-L118",
+          "version": "repo-lines-v1:sha256:315565655bce3d5165104fb1ecd40cad25a0bfcc31fcb17cc98a5a2b3dd903ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZmMwZWZhNjRjY2M4Y2RjZjU2ODg4ZDVjY2ZhNjVmMmQ2N2U4NTYxOTY0MDI1OGEzYzUyNGU5OWQyMzNhZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjNGU4YTNiOWUzZmI1ZjRkM2ExYzAwM2UwOTllMmRjYzQwNDQ4YmRhYWQxMjlkNjc0OGM2NjI5MTc3MzY1ZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YmQwNDE0ZmEyMjk4N2VhNTYzMWI5N2ZkNmU4NzNlM2JkZmQxYzJlODAxNzJlNDk2Y2NkNjZjOGQyMjQyZDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentCommands.ts#L65-L178",
+          "version": "repo-lines-v1:sha256:4cc6fe83c841955c6992825cdab4827c9e7d4929e98609d489f1260f929ebd77:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjNmZhYzY5MTEzOGJlMzVhNjg0NzM5ZWMxMTc3ZmEyNTY4OGZkNzZmN2ZkNTFjM2YyMzZkODU5MDRlY2I1ZTZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlZGFlZDkwZjhmMDgxNjA2NGRjZmY2MDIxMTMwMGNjMzc0ZDRiYTA0NTA0NTUyM2U1OGUyZDY4MzNkMTM0ZTE4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_e3f0904e962b4b85b02c6701f4c89cc5",
+      "statement": "CommandSequence applies commands in order and builds its inverse by reversing the individual inverses; dispatchAll wraps a sequence in exactly one history entry, and a command failing midway throws before anything is committed or recorded.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/sequence.ts#L10-L55",
+          "version": "repo-lines-v1:sha256:b4a0d077d8f07de306ecc007ff5910618e403218a912c3a4785c4bdf741f6cbb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2YWQ4YzcxOWNjYTYzYTE2M2E0NTFhMTkyM2MxMDNhNTNhNjlhNWNlYzM5YmUxZDJiNGUyOGQ1MTE4ZGMxMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NjdmZGRjZmI2ZDcyYzZiZTZmYTdhYzI2N2FkNjU3NTFmNzEzZmZjZjUxYmEyNWEwYmVjMTk0MzRiZTYwNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMGRmZTg2ZjNjNWNmY2Y0N2RlNWJlY2IzNjQwOTY3MTBjMTNmYzk1MTgwNTVjMzEzYmJiNjdjZDgzZjExMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YTVlNmYzZmJhMDZiYTkxY2Q3NjVhMDkwNjNjODFmMDBiZTE2ZjIwNWQ2NzFmMDNlMzhjMzI2YzVjNWFiN2YifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L177-L201",
+          "version": "repo-lines-v1:sha256:5c79d016532748f501c0fb1ddb2f2b68d92ed5845a5fbaf6e94d7a5e1e04d1c6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMDU1ZGVjN2NmMzNmNWVjYzUwZjhlNGZiMTk4MzQxOTY1MjNhZDQ0NDU3MGU1N2M3NTU2ZWE3NzQ1MTdlZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwY2RkYjVkMjA1NGU2MzI0OTczYTkwZjI1NDA4ZTIxZTNhNTYxNzE2Njk4NjgzODE3OWEzNGRlMzEzZjA4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZWVhNjVmZGE0MTM5YzVjOWVjZjIxYmM0YmJjNTEzYzkxMzU2NmQyMzFkNzdiM2VmYzM4MTI5Nzk5NTZkYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be4ca639bdba429d8a2f0284701fda99",
+      "statement": "Deleting an entity enumerates every reference (context refs, parent, role fields, rootRefs, rule context/target/bindings, relationship endpoints) and either refuses with entity.referenced, deletes only removable references under cascade, or replaces the whole document with a ReplaceDocumentCommand as its inverse.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L186-L350",
+          "version": "repo-lines-v1:sha256:046dd4d591a28a6ca2e5fd5b8ee6eb535c7742bd3754b57417e183125fa9ba84:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MzQ2NTdjZDI2MDllZjliOWI4MmQwNGNjZmIxNzhkN2QwYmVkNjc3NWZlMmZmYzMwYTFhZWI1YTgwZWI5ODFlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxOGJhODVhMzg2OGNlNzhkMzMwZDczOGQ3MDc4ZmM0OTliNDFhMTZmOTNjZmI0ZmQ2ZTlmYWVjY2Y0NmZjZmI4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkY2NjNzU1NDIzZjZiZGYxY2MyM2RjOTEwYjQxODRiOWM2MjFmNmY1MmFjMmIzMzIyNzFlOWUzYzYyNGY5YjgwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_e05890b1127447868de09824cfe33878",
+      "statement": "Removing a derived attribute either cascades by deleting its rule first or is refused with rule.referenced, so a rule is never left targeting a missing attribute.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/attributeCommands.ts#L104-L160",
+          "version": "repo-lines-v1:sha256:a10f605d490975acf73495f47475db20490df0d6d210d0e14682af3ff521f45d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMjI4NmY5YThlYmFmYTgzYjJjZGY2ZjNmOGI4Zjc3NzAwZDkwODE3NjUwNWU3ZTQwNmEzMjA5Yzc1MjMwMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkNDkxMDJlOGE0MjY5NTdkNGMyN2U4Zjk0M2NiYzk3MTRlMTUyMmU4NGQ0MjgwMmJiNmJmZDc0ZGE4MDM1NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMjU0NWJhNTJjMjE0NGI2ZjExYzRlMDVlY2YyMDJlNTBiMjFmNGIxNTE4ZjMwMjY0ZjljMzgxMTU1ZjgxYzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cef0a897ce784ff491bf550c35271579",
+      "statement": "Every edit has a plain-JSON patch form with seventeen declared command types; decoding checks only the array/object shape, required fields and known type, reporting patch.notArray, patch.notObject, patch.missingField or patch.unknownType with a command path and leaving identity, reference and red-line checks to the guards and static validator.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/patches.ts#L160-L280",
+          "version": "repo-lines-v1:sha256:39db845e299ded1d97f79188623534ee3a6b45388b8f844c1a36a17acf32670d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMTBhNzc3MTA3YmQ3YTE5MTU0MzlkOGRjYWM2NTYyZGMzYWFlYzU2YTdhMTA5NGZkZWU2ZDE3ZDM1OTQwM2JkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNTcyZWVhMGQxMDI3NTQ0MDM2NDA2Mjg1NTIwOTZlZWFlNTlkNzEzYmI2MGI0ODcxYzExZWVjOWIyMjMyZmIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/patches.ts#L55-L155",
+          "version": "repo-lines-v1:sha256:51b36c11e4ba78232231af1af07a9667e88ad47237d76a32c414a0767ec77ab0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlN2VjNzdlZmZhNmM0MTlhMmMyZmRkY2Y2YTU5OTQ2MWMzZWFiYWJkZjBkZTkyMGIyZDczNDM0N2Y1MjZiYmQ4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3OTAyYTFlYjU2OGIzMTgwOTQ5Mzg2MGRmMDIyYzMxNzU5OWIxYWNlYThjMzI5ZDA2YmJkY2Q4YTM4Y2Q2YWU4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2Njg3Y2E5NjMzODViYzJiZWFiNjEyYjI4ZjI4NTJlYzEzYWRmYzAzNjg3OGY5OWJkYzcyZjJkMzQzOTg3MzI1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZjBiNWZkYmU4NzNhMzhiNzE3YTExMzQ4N2JjOGRjMjI3YTEyYmQwN2ZlYmE5NWJmMzdmNmIzY2NmMDQ5MWMxIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2122fa4bf1b49db991ad993366f3097",
+      "statement": "dispatch applies a command, optionally gates the next document on strict validation, then records history and emits document-changed plus history-changed; validateOnDispatch is off by default for progressive modeling, and when on an invalid document throws ModelSessionValidationError with nothing committed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L133-L176",
+          "version": "repo-lines-v1:sha256:7fa40033aeecd294d82ef181cc43961f140bb1a21adca3a7e60933aeb2150513:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzY2ZmOTk4MzFmMWM4ZjI4YmQ4ZGRhYzhjZmIwMTgxYjVjMjVjNjA2YjNjMGVmY2QwNWVjOTcyMGFjNDU4MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxZTM3MjVkYTAwMmI0NmVkOGI0ZGU4ODAwM2FkOTcxMGRjYWYxOGQ1N2M0NzAxZGMzYmVmZjBiMmM1Y2IxM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZjM5ZWVhNjAxN2Y2OWZmZjgyNDhhYjRlMGVlZTMwNTIyMWU5MzlhZTg5NmIyZWJkMmY0ODQ3NWM3Njg3NjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L28-L60",
+          "version": "repo-lines-v1:sha256:594045ad55d4b21415410ae98e368a2e03aa205d77ccfd11af7cd8f6a816b064:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMjc5OTA1ZDY0NWJmMzBkYjE5OWYyYTFmYWM0ZmQwNDJiZmNmM2UyYjk5NzUyNDYyNmQwMmNlODU0MTlmZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxNTUwNGY0YjQxMjI1MjM2NjU5MDJmZWZhMmQ2MTA0ZGZiZjAwNGE3MDA4NzBkNjZhZDBjYTkwNGE5MDFkNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNTc3OGQ0MzJkMjk1NjI5MjIzZmVhYmUxYjIyYTQwOTM2ZGY1ZGQ1NjIzMTA2N2E5YjkwNzM4NmEwZTBjYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4MTk3YjIwMWRiOTQ1ODUzZmNkYThlZmQ0NGUwM2FlZTU0ZGEyYzc0M2QzYTRmMDFkMjA2ZGM1NmI4ZjRmMGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_416e70df503341bab0e244df0bb5f8f5",
+      "statement": "History is capped (100 by default), a new dispatch clears redo, undo applies the inverse and pushes to redo, redo re-applies the original, empty stacks return false, and replaceDocument either records an undoable replacement or resets history when resetHistory is true.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L202-L280",
+          "version": "repo-lines-v1:sha256:1056863516a3795d4008e1237f8faaf608ca81123cc6666435b2e5403c6d6c3d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OTZkNDRmZTVhMTdlY2E3N2IxYTMxMDhkNDI5YzkzMDMzMmQzMmFjY2ZiMzVmZjFkNTQwNmMyNmVhYTlmNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YzMwN2YxZTJiNmE3ZWYwZWZmZTlhNDM1ODhhZWM2OGM5ZGU1ZTM1OGRiZDhhODBlNmVjYWRlZmU4N2VhNWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiOGZiYThjYzEwZTMxYjA4OGRhNWRmNzJhZWY2OGRkNGZlMGUwNWU3MTk3NTZlMWY4MzUxYWZkN2ZiYjA5NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1ZDIyYTg5MjI1OWUxYTEwNGFmOGYwOTRiOGJlZTFjMjQ4YmYxNTBkMmI5OTEyMzUzNjcyNmQzNjAwMGI0MTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4cf159c2dc96403e92ec8d758e9d8640",
+      "statement": "Selection lives in the session; when a change removes the selected node the session clears selection and emits selection-changed, so the inspector cannot keep editing a deleted object.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L120-L132",
+          "version": "repo-lines-v1:sha256:858f453b6d86618755040d40aecc92a2817e098829925dcdc6643e9d948cbe76:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMGU5ODY2OWIyZjMwMWM3N2IzMWVmMjNkOWM5ZDQwYTI2OTVhMTAyYjMwZWE4ZjQ3Y2FhMzAwOWJkNWUyNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzE3MTA0N2E2YWI4YTAyNTY5NjZkMzEwNGE2MWVhNmI5NDk4YzY1MDMyZDhmOWY0N2RmMmUyNzNiMzhiMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzZjU3YWZhNmJmZmRmZThiYzE3NmEwZDE2MzllZDBjM2NiM2RlNTFjZmQ5MWM5OWQ3OWM5NGUwN2MyMzMyMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8453e39f57644388409c99b3477b406",
+      "statement": "createDomainGraph builds Map indexes once per document and is memoised by the session; fulfillment pairs are derived lazily and cached, collecting confirmations that reference the request, other_evidence proofs, the root Contract and the completion/breach rules bound to the request.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/model/graph.ts#L95-L195",
+          "version": "repo-lines-v1:sha256:1220c2ab60a0e2acd04bcf96201f99d82afc652eaff6a7257ee753a47518239f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzODE2ZjZjZTkxZmY5NWJmMGU3OGQzODM3MzljOTY5YTgxZmY4ODhiMzdjMDM5NDg4MzA2YjU4YTU5NzQ3NGEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMDNiYTUzMWFjOGY2NzczNjcwZGI4YTI4MjZlMjlkZWE2ODc3MWJlYmNlZmY2ODgxZjI1MGYzYjNiMDk4MjUzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyNjRlYjg2NzkzYjA4ZTU4Yjk5MGUxMWNhMGZkMDMxNWQ2ODJhMjBiMDNmMzMyNmU5YzcwMzc2NGY5N2I4YTk5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiMzc1NWVhYzljN2ExYWVkYWI5MDVlMDQwY2ZmOGQ5NjgwYTFjNTUwZjBjNDBiODFiZDBiOTI1ZWYzODczZjEyIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

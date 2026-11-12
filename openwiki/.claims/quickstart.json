@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d62b10505c7ba8fc1c86208b1a056025c8a69fdf176e622087c5f47c7d42d6af",
+  "claims": [
+    {
+      "id": "claim_df5076f9176f4575a1cdc338083b09af",
+      "statement": "Evidence is a language-independent workbench and DSL for backend business models that describes responsibilities, evidence, fulfillment flow and derivation rules instead of ORM entities and framework endpoints.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L1-L20",
+          "version": "repo-lines-v1:sha256:a128689add3b2ec0fcd143ebdc2c6b0291fc6ea38b33d80daf543a988a63124e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MTVhYjc5Y2RlOWFlNmFkOWY1NDVmZDZhYzQ4YjljM2Y5MzU5YTYzMTk1NGJkYjY0MzY3Y2U5YmYzNmUzMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZGMxZDM4ZTNlZDkwMzIzZDBjZmI3NWI1ZWVmYWJmNDBiNTc0ODk0ODY4OGQwNjQ3MWNlMTc1OGZjYWU3N2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d1426e9010cc4646a5e2c5090221d33b",
+      "statement": "Setup is pnpm install with no interpreter, virtualenv or skill tree; the workspace has one runnable app (apps/desktop) and eight libraries under libs/, and CI runs the same Nx targets as a developer.",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L1-L10",
+          "version": "repo-lines-v1:sha256:d1bc7d9b843873f94fcf80b96e4baa15357e1f3c4664e4978beddf0601558806:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YTM0YjQ4MjUwODI1MDhjM2YzYmRhNzM1MmZjMTBjYTBiNzRmMjk3ZWE3MjgzNWUyYWU5YjI2ZTY0NDkwYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxYjI1M2FkN2YzNGQ2NjVmZmUzY2M0MGIxOWIxYzgzMDUyMjkwYmNlNzk3YzY4NDc4NzBiNDNlMTAzNWI0MTkifQ"
+        },
+        {
+          "resource": "repo://docs/workspace-layout.md#L1-L15",
+          "version": "repo-lines-v1:sha256:9527a07fd98a2cd8c897f09afdbe1e512aa6b602ade4c14571ee9c32b10a0154:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzAyNDUyMDMzNDJlNzhiNTc1N2RmZGM4ZjUyN2NiYjE0YjgzZTljNGFlODY0OGVkZmMyNjFkNTA2NDQ5Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTA4YThkYTcxZjFmZmViMmE4OTlmYmI3M2ExNTExMmNjMDFmMmYwMmJhZTdkOWQ0MjQwMjlhZmY0ZTY5MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNjViZjM4ZTc3OTFlYzcwZjM4ZDM5MTBlZTBiYzAyYzE4NjMyMTgxZWNlN2Q1MDU1MWFhMjA4MTIxMzlkMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c9ffac9c63e4f818c486866b5d9b699",
+      "statement": "Root scripts are thin Nx wrappers: build, test and lint run nx run-many across all projects, desktop runs nx start desktop, and model:pack/unpack/inspect call the evidence-model CLI.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L5-L17",
+          "version": "repo-lines-v1:sha256:907b6b239502110a74b338959de2d21836235339ec36d269c7c0b7cfdc247288:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0M2QyZDJhMTBiYzQyZTk5MmQzNjBiYjM3MDFhOTk0YzNhMjYyMTJmNGU3NDg1OGQyZTBjZTNkOGNiMDdmOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlMTFlNmIyNGUyNDYxZmEwY2NiMmFjMDYyMTA4ODVlMDZjMjc5NmJiZWIwNmVmNDVmY2QxNjhiNjE2ZTJiM2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5459532c7dd14872b01db4dc7c3a7338",
+      "statement": "A project holds only .evidence/ sources in one of two interchangeable forms, a .evidence/fm tree or a single .evidence.json bundle, and the desktop discovers no modeling instructions from the working copy.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L8-L16",
+          "version": "repo-lines-v1:sha256:63f55dac73fc5189e2898aace3054878a639239fd6254b1a2f6e90c9ecad9566:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODFhMGY2YjY5ZTBhOWIzMDY0ZmNkM2ZlZTJmYjAyMTQ2MTJmNmZlYmU5OGVmY2E2OTk5NmRiNWZlOTdiNGZlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjU5YmFmYjFkMDhiNTg5MjAxNmFkYjQ5ODdjMmRlZTI5NTYzNjkwZGU4YzgzZTlkZDllZjQ5NzBkYmQwZDU5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTc4MGNmZGFmMmIwYjAxOWI0NjgxZmFlMjkzYzA5ZGEwNDE5YWQ1Y2M4MzU5YjM4OTYyMmRhN2FjZDI0NzMzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWIxYmM1YmM0YTIzN2Y1NzhlNmFmNGE0MTVkMDY0N2Y5OTEwYjAzYjM2NGUxZTI3YzFmMWRiYWE3NDNkMDNiYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_40a52e6231ba417781694bf15cae60b7",
+      "statement": "Four command surfaces cover the pipeline: evidence-model (check, pack, unpack, inspect, compile, lineage, timeline, simulate, role-play), evidence-api (inspect/check/project), evidence-workbench (generate) and the desktop binary, which also runs MCP stdio mode.",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L39-L44",
+          "version": "repo-lines-v1:sha256:5745e208f656950e134dba891111d03ee58d9077aa0812e7e1025bf5be06416e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWRlMmY1MzI4ZWU2ZTgwNTBlOGFhZmQ4ZGM4NjlhMDY5Y2Q5NTg0ZWRhYWY1NGZlNTg5ZDczYzNiN2RjZDc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2EyM2FmZjY4YTIwNTAyNjQ3MDRjYjE5NDdmMDViYzNjZDdjNDZjZDJhOTNlZmRjMmU0YzNiMDM0YTYyNTM1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGQwYzY5MTk1ZjljM2MyZWIyNzdiZDIzOTA0M2I0ZjljMzdhNDA5YWNiNmI3Nzg1ZGVhOTExMTlmYjIyZmE4YiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cli.ts#L29-L60",
+          "version": "repo-lines-v1:sha256:3b7dadb5e9d277895af5472f40ebcfe0e16e8ffce9296a015f501da22bd82284:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3Mjk4OGIxOTRjYzIzYThlZjU0OWI1YTk3MGY0ODM5N2ZmNTQwNzg4NjBiODE3MDg3MDY4ZWExNjk4MTY5NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZDc3OGFlNjdiMjY3NjlhYTk0ZmVmMzk4ZjIyNTQ0NDZkODU5ODRhNWVkMjMxNDJiMGIzMzMwMzJjYjU4YTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViZWNiMjJmYjFlYWQ5Yzg0MjA5ZjZhOTk3ZDliYTgwMGQ1MmNhODEyNjA4Njk3OTQyYWFhNmQ3ZmFjZTU1MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5Mzg2ODlmYWI0ZTg2NGE4ZGJjMWIxOWRmNmQ0MGM0YTk5NmJjNjAxMmVjMThiYTdhNThiOThmYzRjODAzZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_67e285cccd4140f699ed78d72369006c",
+      "statement": "evidence-model check is read-only, accepts repeated --scope to add scope completeness and scenario execution, exits 0 when it passes and 1 when a blocking problem is found, and prints the same report the desktop and agent tools read.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/cli.ts#L43-L45",
+          "version": "repo-lines-v1:sha256:a4ba05a1f9e8f920ba93e78887741063c9f69d32f580779713b196b31dba2bb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEwMjA4MDcyMjhkNjlhZTY5NGZmYjU1NTUwYjE0ZjRhYmEzMTZmNDYyMzE5ZGRhYmQxNDAxMDU0NTdjMWM1NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDBjNWQ3NGNkM2FjYmNhYWE4MDY1NmYzODBkN2YxNDgyNDY0N2QzM2NkOGY1MjFkNGUyZGFjODRhN2U1MjRmYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDI4NTM1NmI4MTg3ZDFiMzFlOTUyMTA1NjY0ZDBiNWZiOGE5NTFhZjRhMWQ2ODE4ZDQxZDNlMDAwNjRmMTkzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGM1ZjVjNzcwOTA5ZjhlNjc5NGRkZjMyNmEwNzE2MDk5ZTFhMTQ4NTU1ODUxYTVmYTFjY2Y4OTg2ODJlMTkxYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4e4a2918120641138156a094c9fafaf8",
+      "statement": "evidence-api check exits 3 while only gaps remain, and project writes nothing unless there are no diagnostics and the HTTP contract is complete.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L327-L356",
+          "version": "repo-lines-v1:sha256:50b1e19de20ab18d208835687ed2a402e89f963dd5f101534d2dccb2931afe31:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljN2RhZWZiOGM4YTE4ZDg1ZGJkZmY2ZmJhM2NmM2E5YzliOGZjMmZmOWY1MTY0ZWYxM2IwNGI4MWE3NjdhOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YjMxMDAzZWRlODBkMDE0NjMyYzgxMDcyY2YwOTc2MmNiYzcwNjFiMTY1MDc5ZjRlODdhYmQ3ZTY4MWRkNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NWI2NTI0OGNkMjNlZTQ0NDFhZmZhNTkyMmJkZDRkNGI3NGRkNDBjMDFiY2QyYWMxN2E5ZjM4NzA5ZDhhMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxZjY0M2JjNzg2OTAyYzI4MGI2ZWRlN2JiNjE2NDlhNGI5NjFhODViMmRjNDczY2YyYzg3MTFhMjYyOTc2ZGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7563b376d6944760bb17f7e97ce8114e",
+      "statement": "evidence-workbench generate defaults to .evidence/views/index.html, exits 0 only when the page was written, and the publisher refuses to overwrite a symbolic link or a file that does not carry the workbench marker.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/cli.ts#L80-L130",
+          "version": "repo-lines-v1:sha256:61a67450141a155d902373b301437c2b9ed600172168a7681e74c92d2de0ddbf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMGM0NWE2ZjYzYjI3NTMyOGZhOTJmMDlmZTE4NjQ3YThjNmE5ZTZkNGQ5MjNmMDg5NWUwZmFjMTdmNTdkZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3YmJlMTY5ZTNlMWM3Y2EyODAwOWQ5MjU0ODY3YTE1ZmQwODgwMjZhNmViNjAxNjlmNWQxYjhmMTZlOGIzMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwN2RlMzg4ZTQ1ZGNjZDU4MDJjMzgzNTJkZjg2MTg2MzU0Mzc0NDlhODZmOTQyNmVhODRkNmE5Nzc5Y2RkZWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/publish/workbenchPublisher.ts#L33-L87",
+          "version": "repo-lines-v1:sha256:05ab952dc947a93900460e516a2afeea7f6ca23f936f9c2f9226f4f6309aac5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZjEwMDRiYWU5Zjc3NWI4Mzc5NmY5ZGYyZGFhMGExOGFlMWU5NzJlNmRmN2U0MzVhZDA2M2NkMDlhNWQyY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNjljN2FhYjM3ZmE1Mjc4ZDhhMGY1NzgyNGY3ODUxYTM1NGJiZGFlYjQyMWUxNGYxNTNlODhmZGU4NmFlMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_954923a1673640c797f59bff06f86403",
+      "statement": "External agents reach the live model through a per-user local socket; the same executable runs the MCP stdio server with --mcp-stdio, and apply_model_patch is the only write tool, dispatching into the same undo history a human edit uses.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L30-L55",
+          "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L227-L254",
+          "version": "repo-lines-v1:sha256:5ffbb8aa241d5e62727c240f983af82ce28adddaa49e7523432e73061d2df636:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMTFmMjM5YWM2NWM5ZmVjZDRmNzk3NWQ0ZWUwYzY3N2I1OGE4ZWE2Nzg1MmVhMjVkMjc5MjM5MjUxOGQyZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjY2U5OTA2OGE5N2EwNGIxNjJiNjI0YjdmNTE1ZjUxMTQ5MTBmMTBmZmNmNWJhN2E5NzRkNzE0NzQ5Y2ZkZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5ZjU2MjcxNGNkOTg2YzkxYWQzOWFkZjg1YjYzZjdjNWZhNzBkOWNiM2Y1ZjM4YWI0NjFlOTAxNDM5NmVhNjIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3fae58d7aba1ce8575dbf00630c2d3f1e69ca79a40043d4ef55988741d43b5c4",
+  "claims": [
+    {
+      "id": "claim_16f83966cd85429c854a0516c9100549",
+      "statement": "An FM v5 document is a manifest plus three flat collections (entities, relationships, rules); the manifest fixes type fm_model, schemaVersion 5.0, ruleLanguage CEL, a semver version and a non-empty unique entryContextRefs list, and the JSON Schema forbids additional fields.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/schemas/model.schema.json#L1-L40",
+          "version": "repo-lines-v1:sha256:a147d6d2e62e1707996a8071db77b054dfd3cef654b25c5dd952a17a1a37bfe5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/document.ts#L7-L32",
+          "version": "repo-lines-v1:sha256:b2b4f8556e244bb52c419582b128ff314ff02d400f230173551a9806ae30cc83:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkMmY1YTRhZGY0MzdiNDFlN2NiMmE1ZTJjNDk0YzBhYjI2MjM1NTg1ZjFhOGJjYjVlNjZjYTJjNDUzMmUxNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2MjgwODBkYTlkMDUwYWMzZWI2ZmM2N2MxYWEwODVmMGQzYjI5YjdjYjBiOGEyNjA4NmI5YmNmOTBjYTMyZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2MWI1YzczNGI5ZmU4M2M0NjY3NzEyZDkxOGNkMGYzYzJmMGQwYTUxYjk2OGY0YzZhZmQ1MWViYTcxY2NkMzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1730ce1342df4ffbaa93e0f6eb6daa61",
+      "statement": "Domain ids, attribute names, model versions and CEL aliases each have one grammar, and ids must be unique across entities, relationships and rules together; the second object with a repeated id is reported and not indexed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/id.ts#L1-L35",
+          "version": "repo-lines-v1:sha256:3e3969e2b84fd2bdb3edaad43c739639176f92a139c3b8c9a30d9785ef5de120:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L420-L450",
+          "version": "repo-lines-v1:sha256:43be7f92dc930bf13330e9e5e0fde50fe5b7fb099a78e86270f95027631010a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MGRhZmU3OGUxODgwOGUwODRkMGU0NzFhNTFjOWU5ZDYyZDU1MDZmYjlmYjIzZDE3N2Y2OGYzYzQ3OWE5YWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZWUxNWY2NjViMThjYjFlN2I4NDQ5MmUyMTM0ODhjNDVjNTQ3Njk3YWE4NTI2MGUxMTkxMmIyYWIzMGQzZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZmUxOTE1MTMzODFhYjRiMzU3ZmExNjgwZWU5NjFmZWQ0Njc1NzI0NmEzYmMxYjY3MDc2NDM0OTVhMzlhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4MmE0NTczZmVmYjNmYTc4N2RmNTM3YzE3NmI0MmZhMzE3ZmM3NzhiZjNlNjhmMmQ5OGM3Y2Q0OGI0NWMxNTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4e647c83d02c49308680f8ec9d8a005a",
+      "statement": "The language declares sixteen value types covering CEL scalars plus business types such as decimal, money, enum, id, list, map and dynamic.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/values.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:b7700a460957763f2ae18fc4c300cdf649b7c486f4cda9d93b6d8ee44a47ee18:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkYmUyNGVkMmNjOWI1YjhiN2IwMzk5ODUxMmQ5NjRjYTVmMjdkMTY2YjBkZTgzZjBmYWUxMWNlNGM0YWExYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxOWQ2ODYyMmYyMjQyNDM4MGMyYTFlNmU2ZWU1OTczN2Q4ZjAxNDg1Mjk1NzU2NWVhYTFhN2RiODQyNDQzZDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_502e8e259444414eb7966e2ede4a05c4",
+      "statement": "There are exactly four entity categories — evidence, participant, role and context — with evidence kinds rfp, proposal, contract, fulfillment_request, fulfillment_confirmation and other_evidence, participant kinds party and thing, five role kinds and three context kinds.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L5-L45",
+          "version": "repo-lines-v1:sha256:9fb6e4d644e32b474d9a9be96cd87f1e73ec209aca717d4b48454107b4036b6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MGIyYzU5Y2M1N2MzNDdmNDQxZTVmNWY3Y2Q1NmUyYWM1NTdlNjVmM2U0YWQxMDhkODdiOGZhN2IwZjhjNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGQzYjIzN2FiYTMzMDlmMzlmN2U4NjE5NWM0NDVhMDAwMGExNmFmMjU3MjhmNTJhOTc5YWUzYzJhOTc0NDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3MjA4NDA2ZTk0MjcyOGEzMzUzZjg5Yzk5MDAzZWJiMjgzOTc2NTY5Mzg3OWU2Y2IyNGM2Y2JmNzY4Yjk5NTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4MmYzNzM1NzAxZDJkOGJhMzBiODQ5MDVjYWNhZTQxZDVhNzE5ZDU3ZmQ1NmVhOGE3MjY1YmRmMDhmNGYyZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ea62c75e2dd422699dbb65659f6f01d",
+      "statement": "Each evidence kind mandates specific business-time attributes, and every recognised time attribute must be declared as a required keyData timestamp; a missing required time attribute is a validation error.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L47-L66",
+          "version": "repo-lines-v1:sha256:df8ca01693390026ccf465996715bf79e1a69a5f11b0e98e42d48ca9b7e8b6cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmY2Y2MGJmODUxYjI2ODFjZjJlNjhlZTVmMGQ4YjY3ZGQ1YjcwZjFlNWFkZDBiY2M3ZDJlZDk2NDQxYTdlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGM3NmQxMmU1MzA0ZDMwNzllZGI1Zjg5MDAwN2VhMDVmMjI2ZTRkOTNiNjk1Njg0NjBjYWZhZjgwMDc0NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiZGJlNzk5Y2FiMGNkZDU5NjlhMThkYTJhODZjNjA3ZjNiODllNTE1NjJmNDNkNjVlMTBlNTY5YzVmODM2NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOGEyZGQ2NTBiOGEwZTdkYTRiNTdiZWFmMGMxNGVhNGM3MDdmMzE0OTI4ZjljNGFkMDY5NDAyZDFjMjU1NDUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L515-L545",
+          "version": "repo-lines-v1:sha256:fd41546949c777a9ccb07ba7baf02fc37c634b1353f914c19b416f62a6bc4b9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzY4MGQzMzZlNDY5ZTcxYTFhMzg4N2E3YWUxNTdiM2NlMjMyZWQ4ZTU5NGVmYmRmMDg0ZWMxODAyN2M5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYTUwMGM2YzExOTlhZWQyM2RmMjA3ZWE5OGU5MzU2NTQ3ZTQ1NDQ1NzJkNGYyNTdjODk0MjY0NTY3MGY3YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYzJjZTY5Y2ZkNWRlNjk5MjkzODBlYWIxNDhiODNkYTI5OWJhYTNiOTMwZWE3NjM4ZWQyNDgyOWNmODYzMDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4fe5551de0bf438fa88c0529eca0dda7",
+      "statement": "Every non-contract Evidence must name a responsibleRoleRef that resolves to a Party Role owned by its Context (a pre-contract stage borrows its parent Contract's parties), while a Contract must belong to a Contract Context, be listed in that Context's rootRefs, and carry exactly two distinct Party Roles from that Context.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L761-L940",
+          "version": "repo-lines-v1:sha256:22f32f1a96508baf0e3aa2015beeed3a3507f448bffe7760b9b7e2f42d031e7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMDdhODdlZGUxZTI5MWRhNTNkODg0NGJmY2JlYzE1NDBiYTM1NjY3ODJkYzg4OTgyMjljNDdiOWMxNDQ1NGNkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjE3ODI3MWI1YTcyZWVhYWI0NGRmYWVjNzExMzQyNDE5ZTUzYzZlZmRiNTgzYTZkN2U2MjM4NWRlZGM0ODY0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTcxOTBiNzJlYjZhYWQ0YWU4NThmMzUyYWM5ZTI5ODY2OTM3ZDZjZjY4NTZiNmRkMDQzZWU1NDYyNzA1OThiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_60c9eb67fbb74ba08b43b04ce3c034ee",
+      "statement": "A participant.party must not declare contextRef, a participant.thing must live in a domain Context, and a Role must not declare Evidence responsibility fields such as responsibleRoleRef or roleRefs.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L942-L1060",
+          "version": "repo-lines-v1:sha256:eaebb0e0b715490cce367950a7f3cbb372125e155f8e398e5397e2d2628683eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1OWRiZjZjYzljNDRkZjQyMGM5ODEwZGFkY2E0Yjk4MzhhOTc3NGRhZTE2MjU1ZTZiZDhiZTliN2VjYmJmNzc0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2ODc2NTM3MWFlYTFjYzdkNDZlYzZlZmNjYmJlOWU5ZTczYzkxODk0ZjBkMDZjNzFmMTI1YWM4YmUyNTViN2JhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwOWNlNTk2ZTk3MmE2ZWMyMzk1MDdiNTYyZWQ4NjQ0ZmY1Yzg3OWE2MGNlYzM3NWE2N2RmMTY4YzQ5Y2RmYTEwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_10480cde162b46da90513c6e0a905df0",
+      "statement": "A Context must not declare contextRef, contract and domain contexts must declare rootRefs, a Contract Context must have exactly one root that is an evidence.contract owned by it, and parent context chains may not cycle.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1076-L1105",
+          "version": "repo-lines-v1:sha256:1ac305e067c7d0e75d929e6161bbc9758ddc4e81a52d72adc1864eb52de92c05:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NmQ0NjJkMDIyMzA4MGJlMzMwYTljMmM0NzJhMDc4YWIzNTZlYjM0MmI4ODlhNWI0MGQwZTczMWM4MjhmMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3OTc5ZGZhMTg2MjU4OTU3NzExODI0ODRlMmI1MjIyZWU1NzQ5ODExZDY3MzA5ZDUxN2E3NjBjY2RlNDVkYzYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L631-L760",
+          "version": "repo-lines-v1:sha256:8dfacee5eef46b118729b6a920e89fc57a5b791aad4e89af061112c19f77b287:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGJjYzk2MDlkZjMwNDVlODM5YWM2MzRkOWQ3ZGY0ZTAyNTAxZmYxNTUwZmQyZWY3MzMxYzdiYzgwYWVmOTcyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZmY1MmY3NWNhZjIyNjgwOWU0ZTJiNmVmNmIyN2UwMWFmYTc2NDQyZmVmYzI2M2M3NWEwZWM2ZWUxOTc5ZmU5In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c4a8174282247a2b377c1c6159e88b7",
+      "statement": "Relationships allow only plays_role and references; self relationships and Contract-to-Contract connections are refused, and plays_role only accepts participant.party to role.party/third_party, participant.thing to role.domain, a Context to role.context, or a moment Evidence to role.evidence.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1279-L1400",
+          "version": "repo-lines-v1:sha256:119c3bdbb8c824235eec70271bd3788e8b5cf7ff1c89c82bfca53c6113ac0163:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwOTYyMTg2YzU0YTBlZWRiMDFkYjZiZWM2OTRlNzhjODAwMzk2NjQwNDhjNzgzNDI1OTJkN2E2NDdhMTU1OTdkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhZjBhNzY4YzMxNWEzZjI0ZjM2MGVkZWVjMmMwOGU2MmVlMTZiNTAwZTkxODMwYTkwMzBhZDQyYThmMmM3Zjc3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMDEzMWExMGFjOWU3YmEwN2MzZjM5YTZmN2Y4NzlmYTc1OTM5MTEyMTBhNTQ3ZmRjNTdiMjAxNTZhNDVmMjA5In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_07bd643773de492e8201395d3f95f3e7",
+      "statement": "Cross-context references are allowed only for a Contract referencing a Proposal whose Context declares the Contract Context as parentContextRef, Evidence referencing a Thing, or Evidence referencing a moment Evidence or Evidence Role.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1400-L1485",
+          "version": "repo-lines-v1:sha256:f3eef691e9d5bb48e16309c9646e34305a72aa7d31064ae91a84bc596b1a17dc:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMGE3NjhjMzE1YTNmMjRmMzYwZWRlZWMyYzA4ZTYyZWUxNmI1MDBlOTE4MzBhOTAzMGFkNDJhOGYyYzdmNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1OGIyNTlkMGQ2YzFiNmQ5YzM1ZmMyYTgwYzI0MTBhODQ1ZWM5M2I3YWU4ZGIwZDdmZTI5NWUzMDFjNjY4ZDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_33973ace80d747148f6855b83f79995d",
+      "statement": "Rules are one of six CEL kinds; every kind except derivation requires resultType bool, derivation must declare a target and no other kind may, each rule needs a Context and non-empty label/description/expression, aliases must be CEL identifiers, and binding refs must resolve.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/rule.ts#L1-L50",
+          "version": "repo-lines-v1:sha256:df15f2db4c29deec572329849d2023b69a6c8ce1c5b037504f76a5da81b7a134:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMWE0ODYwNGY3ZGNhNjE4MTZlNmRjMGEzYThjMGRjOGEzYjllYmIyYWVjMmE5Y2I5YzU0NzFmM2U1OWQzZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzMDA2OTNmMTQ0ZWRmYjNkZWI0MWUzM2I4MjM1MzY3ZjE2MmYyNzQ5MDU0NDNkN2M0MjViMDg3NDE1NGU1ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNjMwNmIzZTZjNmQxMWMxNWM1MDA1ZWJkNjNlMDY5MzRkYmJlYTdjZGI0MjEyMzFiZDdlMzVjYTIwNDBmYjIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1490-L1725",
+          "version": "repo-lines-v1:sha256:97a2020b0c841e20d32973d390f9890789ab8a45d34cd21a1486a037fa048d8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjczYjAzMWFlZjkzY2IzMGVhMjZkZDU2MWIzN2I2YjJiOWQxYWZjZjQzMGZjNWI2MzE4MjgwODUyOGFiZTQ3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhMDRmZDYzYzk4OGRmM2Y4MGI1ZTBkZDgwYzkwMzExNDMwMTdkNzRmNzUyZGY4MTNkZjYxY2QzODA2ODRiYjgwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNzNiMGRiZTIxOGM3ODViOGFmODAzYThiZWQwZWVlZjU3NzZlMTUzZDNhYzkxZTMxYmM5YTkyZjUyZWEyMTA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2N2FiMDVmNzU0MGQyYTM5YmYwNjdjM2JhNzZkYTIzMDE5NmUwNWZmOWVkZTZiYjFkZDdjMGVlMTE0N2U4ODZjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_96c51e1476544f338bcd5d2cac52f3fd",
+      "statement": "Derivation symmetry is enforced in both directions: an attribute's derivedByRuleRef must point at a derivation whose target is that exact entity and attribute in the same Context, and a derivation target must be pointed back to by the attribute.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1732-L1782",
+          "version": "repo-lines-v1:sha256:3e9ad77d6df32eabab74b16eb426b4275dfbbe91b81fe73b45e95f6e77b0bf09:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3YjAzNmFiYmM1OWFmOWY1NGQ4NGE4ZDVlODRhMmRiZDI3NjliYmIyM2JiNTZhZDgxY2Y1NTkzZDY1MjhjYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMDI1NGRmYTU2NDg5OTU4NTg3Y2ZjYmE2YzJhMjFmNzAxMTczYmRhYWQ0ZjExNWMxYTM2NTc4OTc4NjUyNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3M2IwZGJlMjE4Yzc4NWI4YWY4MDNhOGJlZDBlZWVmNTc3NmUxNTNkM2FjOTFlMzFiYzlhOTJmNTJlYTIxMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxMDZjMzBlYzVlNGQwMjJmODlmNTM4MmQzMDhiMjIyZjcxMjU2NDVjZWI4NmEyOWE0MmZjODgxYTk5NzRiNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_408437d67ed344c78fa2af36ca7f995c",
+      "statement": "Static validation deliberately stops at shape, ids, category/kind contracts, reference resolution, ownership, relationship endpoints and derivation symmetry; traceability, key-data providers, scope completeness and CEL evaluation are separate passes, while sourceSnippet optionally records the verbatim sentence an ingested element came from.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L1-L39",
+          "version": "repo-lines-v1:sha256:f42d19ed64709081bf65dc2ccd2857efd08d281af8fb87920970810a109e6e19:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1792-L1800",
+          "version": "repo-lines-v1:sha256:7c921834b4df19417b4f8967b7ceb57e8a35d68b837d29fe5e44ba423488f405:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjZjYWFjZDJiNGMzNGRhOTVlN2FjOTFmOTlmODZjNDViZGFiNzkxNGJiODZiZjQzYmEzYmI2NzBhNTYwOGEyYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE2Zjc5ZDc3YzFlNmY5YzgzNDIzNTBhNzM1MGVlYTM4NWY0ZDBiZTZlODQyODY1NDVmYzhlZjAyNmQzOTY1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWVlY2E5YWZjZTVmMjAzNWQ5N2NiODA0YTA2MjgyYTRhMTIyMzllYzVhMjRhYmI2YWVmZWU3MDNlNDhiOGM4MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmU0NzIzMTczMDdjY2FiN2JjZGE0NjVmMmZkZWZmNTkzZWM4ZDVhZDA0NDcyMDBiZmEyNDZhODc0ZTNkNGMxNCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

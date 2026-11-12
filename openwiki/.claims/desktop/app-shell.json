@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a7fa06c5fbe814f66266293ac1d3b10201865512edc2d19c3cdf8b9d28de6dde",
+  "claims": [
+    {
+      "id": "claim_319186a606cf4eb5b41077fcdfadf0b8",
+      "statement": "Every desktop window runs with contextIsolation true and nodeIntegration false, and the renderer receives only the typed evidenceAPI object exposed through contextBridge, never ipcRenderer, fs or another Node module.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/windows.ts#L38-L48",
+          "version": "repo-lines-v1:sha256:b633a45e95471b92e0be46110c2b16843cf0ba4277bd20bbb7342a53a90e72ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjNzhlNWE0NDZiOTZiNDBjNTE3MGFlOGEzYzMzODFlYzIyZWNlMWJiOGNiNzQ4MjEzOTg4Njg3ZDUzMDUzN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwYzVmZmZlMjRmODQ2ZjFjYTJiZDY5NWEyMTg5ZThlMjZmZWI4YmMwZDFkMTQzZjM0ZGE1YjBlMThkMDc1MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjBjMTkzYWExNTQ3ZTBkMGMwMzk4YmY2NmU4NWQ0MWRjZmFhNzk5NjUyZmRhNzczOWNmOGQzOTVjYmExMmEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/preload/index.ts#L203-L205",
+          "version": "repo-lines-v1:sha256:800f386b4c954050fdf5c6501c29a9c1115b93fc99080bf5d0f88898f1396c32:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWE4MmRiY2FhMmE4ZmUyNzgyYmY2NTcwNGE5NzUxMTU5OWE4ZGU1YjNkOTE5MjQzMDY3YWEyZjVlM2Y3NzViYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzBkMTU5M2E3ODc5Y2NjNjdlYzZmZjU5ZTRlZjQxMzY5OTE3ZTQwZTQwZDA3YzQwZmIxZjY0NmUyOTI4Zjk3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/preload/index.ts#L32-L36",
+          "version": "repo-lines-v1:sha256:d919bd724253b684a4d5e117fca79a1679b3dda84b367d5be060074c1d3a17b7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNiOWExOGY2YzViODZjNzNjZTk3YWI1ZDhjZWUwMmQ5MjFjNThkNjM2ODc5YWM2OGRiMWVmMTkzYjJiZjIwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjgzMjA0NGY3Yzc3ZTYwZGM0ODU0ZjE4MGY4MGUzZWZlNmUwZmEwMjAzN2E0N2VhMjIyOTgyNDFiMWM0Zjc4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmJjMjIwZjYwNjk5OTQ1YWZkNDY2MjkzZDRmOWIwMTM0NTIyN2Q4YzRjNmFlMWJlNjZhZmIxM2UyZDVlMzhjMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_05befca32a3f4158ae3b52cd6757edd6",
+      "statement": "The preload surface is grouped into projects, agent, mcp, branches, ingestion and system calls, each mapped to a named IPC channel, and every subscription returns an unsubscribe function.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/preload/index.ts#L36-L203",
+          "version": "repo-lines-v1:sha256:353c0ed167046fc34c6c35fffed1148f9516ed186640f3500951c3b634ab0618:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Y2I5YTE4ZjZjNWI4NmM3M2NlOTdhYjVkOGNlZTAyZDkyMWM1OGQ2MzY4NzlhYzY4ZGIxZWYxOTNiMmJmMjBmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxODdhNTg0NGRjNzZiYWUxMjFhZjQxYWQ2M2FmOWMxNTZmZGM0OGRiNzYyOTJmNDk4NzYzNTc0NDg3YjlkMTg4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxYzkxNDU3YmIwNzE4ZGI0NzZiY2JmMjZhZjBkYTBlNzFjYjg1MjEyZGVmODljNjhkMDhhM2FhYmNhNGMxNDM1In0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L55-L132",
+          "version": "repo-lines-v1:sha256:8858a82edb438b11f44db23f3eb49baf115bf0ce472125a1b6dcc6442f80c46f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1N2MyZGM0NmJlZWJkYjZhYWExNzk2NmM4ZDA3ZmUxNDYxNzI1MGE0ZTFjNGU4NzhlOTg4NmFjNmUzYzlhZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYzY1Zjc5YTBmMmExM2M5Yjc2NzhjZTM5ZTFlYzRmOTU3MjU0ZjBmMTczZDJmZTUzMWI2Y2ZmYTA0YmE0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f56eb7c5fa72408f818137022475698a",
+      "statement": "Startup assembles the project store, branch store, agent IPC, project/ingestion/review/branch IPC, MCP registration and bridge before opening the dashboard, and a failed MCP bridge start is reported to stderr and leaves the rest of the app running.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L125-L140",
+          "version": "repo-lines-v1:sha256:37e79e77b7542d52d363ecd78e87aa00bbf5bbcc57d390141b3400381f5d7e21:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NWE4YjkxY2Y0NDczZGE1ZTM3NGI1ZTA1YWU2OTNiOGI0NTdhOTU2NGRjMjA0YWEwZDAzZjM1ZTFjZmZjMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0Y2EyOTU4YjlmNTBmZjk5YTA5ZGExZmE0MjY4NDY3ZDhmZjkyNGZkMjE4NGUzNDY2ZmI2YjQ2OWIwM2NlOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMmU4MjU1YzZhMmNhMjY1ZjE5MjZkZGRiODc3ZDAxODI5NjVjMjVmY2EyMGIxNzJmYjhmNzc0YjRjYzM2OWYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L57-L142",
+          "version": "repo-lines-v1:sha256:5214e53910268418a0832265e4fca9adc18eb5c15438ee7e90ebc2404aa81a6c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDA4MzE4NGY5YWZkYWI5M2VmZWEzMWJkMjY1ZDgwNWY3ZjY5ZmUzZGZhYjA3Y2Q0ODEyYWNkNDRmMzhiNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YzAwNzA1OWZjZGQ0ZGFkZjA3MTQ4NzBlYTAwNjU2MDAzNTM4ZjkzNTYzZTNjMDQ0NTg2ZGQ0YjYwMjJiMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNzhlZDkzOGE2NDhiZDMzYWFiOGFkN2JlNmIyZWRkOThmY2QyM2NhNDVlZmVmNjQzYmRlNTdlZWQwZTA4NGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7184af0e80b34578a7d71790053e16e0",
+      "statement": "With --mcp-stdio the same executable opens no window, reads no project store and registers nothing, running only the stdio MCP server against the derived endpoint.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L145-L146",
+          "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L30-L55",
+          "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_df7500e168e945528ad7a506045c7f0a",
+      "statement": "The shell keeps one editor window per project root in a Map, focuses an existing window instead of opening a duplicate, removes the entry on close, and exposes the map through listEditorWindows for the MCP bridge.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/windows.ts#L45-L99",
+          "version": "repo-lines-v1:sha256:92622a2849a2f2659136fc9f1218075afb55ac6000ae863c39619488c94f100b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiMGYzMDA2MDNkNGNhYTVmYjhmY2E1OGRiZGNmZTkyMzMzMTkxYTg5OGI0MWVhMTBkNjhiMmQ5NjgwNTFlYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyY2NlNWFiNTBkZmY1OWMxZGRhZTNhNWI0YWY3MTI1YWViYTA4MWRhZTNiNjZjMjQyN2ZjMDRmMTI3MWU0NTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_316bf19c1e854cd0ab852269c72053c8",
+      "statement": "The project store keeps no model in memory: open parses either a .evidence/fm tree (requiring model.json) or a *.evidence.json bundle, points modelRoot at the file for a bundle, remembers the project, and accepts a freshly created blank tree while refusing a source that yields no objects.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L108-L135",
+          "version": "repo-lines-v1:sha256:20deda6b5d2ac5cf3cdf2f787893ebd6041ddc62afc40e1b9954b41ab4c373d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiODI2ZDI3YzhlM2MyZjg1NmNkZmJkNGI0Zjc4NTdhYjU4Yzg3MzAzZmJmYWVhOGRlNjdjOTM3NzBkZTQ5ZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmYjI4NTc0MzFlNmJhM2Q0NzkwNDUzOGRkMTdlMjQwOWQ3N2Q4ZjZmMzIzNDQyMWQwYWNhNzE3NGEzNDAwM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhN2Y0ZjE1ODg5N2JkZTcxYWJjZjg0ZTc2YmIxNWY2Yjg3M2I3Y2Y5ODQ0ZTE1ZDUxZWY3NThlOTliOWYxYjUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L173-L180",
+          "version": "repo-lines-v1:sha256:e41bcf10cf2cf233f6b6f929c9e8257f5b72fde138ac00d927c3c3b6ff5a23ff:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmMzMTkwMzRhZjYxY2ZiZDNkM2ZjN2RmZWJiZDZlNTA0YTlhNTc4MTc5NjNiMTFiYWIwNTI4YjY5NTU3ZDAxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmJlNzAxNWUxMGExYzk3YjRlNGUzNzFkZDVmOWUzM2U4ODhkOGE5ZDIyNzNjZWYwOWU2ZjBkYTkwODdhMTkxMiJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L271-L338",
+          "version": "repo-lines-v1:sha256:880675f1556b5983583f837333f5435cf117893e5e6c5867c756aead025cd409:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NmY5OWFjZjg5MzNjM2Q5ZGJkOTFhMzRlOGU2YzlkY2RiNmUxMmVjZWYyYWI1N2I3NWQ0MDIxZDJiODllZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MWZhOTJjNTJmYzA4Y2UwZDMyM2VhNmI4ODk4YzcyMWJhNzg4ODQ5ZWJiYzg2MjljYTE3M2ViYmU0MTZiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNDFmNDlhMjBlZGQ1NjNlNWRmZjRkM2UyZGIxYjNlNTBlODFjM2JmMzQxZjI3YzdiNjcwNGViYWRkNTQzOWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1d957d1aad50497b9e836ea2d465e18d",
+      "statement": "save writes a bundle back to the same file or a tree through writeModelDirectory, and reports the written, unchanged and removed file names so an idempotent save produces no churn.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L341-L372",
+          "version": "repo-lines-v1:sha256:6aadd481f1782c10a294c076f130136ce090ff7922c25617142d41813e5f37a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YWEwYWQ2YzBhMWQzNmQyMTk1MDE5M2M3MWNjZDQyZWM5YWQ1MzNkY2ZmMDdlMDMyMGY2NzQzOWJjNzEyOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MWZhOTJjNTJmYzA4Y2UwZDMyM2VhNmI4ODk4YzcyMWJhNzg4ODQ5ZWJiYzg2MjljYTE3M2ViYmU0MTZiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiZmE1OTRiYzM5MjgzMTdmODAyZGY5MGMyYTUzMGUxZGI5ZWU1MzNhZGM1ZjMwYzgwNDRkM2VhYTQ4YmM4ZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fafaa4c672524ad3bd5d91f0531d4924",
+      "statement": "Creating a project refuses an existing .evidence/fm/model.json or an existing bundle file and names the path the user should open instead, rather than overwriting a model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L205-L240",
+          "version": "repo-lines-v1:sha256:82df62a3331f180d5df6ce936b0df2ba67bde7d482b1469d2a4c579d790f7b95:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYzRmNTY3ZDBiYTM5ZjZlZjg5ODUzN2E5MTJjODg4ZGRhMTY1NzYxNGFiN2Q1MTA5ZjY1ZTcyZWNhMTQ0NWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMGE4MzBhYzkxMzE2YTc0MjcyMDc5OGM1MDM2ZWU4Yzk3NTA1YTcxNzliMGRmY2Y5OTljYmIzNmEyZWJkNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNWFkN2EyNWQwNTA4NjJkY2QyMmQ2MTA0NGY5NWU0ZDQ0MDhiMzg2NmE3MjUyODkxNWY3MzdiYzRhZTI3MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViYzg3YTkxYWEwNzY5N2VkNWU1NDA3ZTc4ZjNlZTA4MmM1YWI5NWYwMmQ5ZjhmNGJhMzFiNWQ0ZTFjOGZjZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d2a2f471038546888af7443f9b36b1d3",
+      "statement": "The project fingerprint hashes either the bundle bytes or every model source file path and content separated by NUL bytes, so an external write can be distinguished from the app's own save.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L375-L403",
+          "version": "repo-lines-v1:sha256:3db4a2df94323a76daac9d67c0af48ff5a10de22693178401fe991d4e27d405c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YWI2NGU0ZmU2NDRkYjk2NzhhMTBlOTYxNzRjZWU0YTkwYzI4MDRlZjg0NDJjMGU0MTNkYjc2ZjhmNTczN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MWZhOTJjNTJmYzA4Y2UwZDMyM2VhNmI4ODk4YzcyMWJhNzg4ODQ5ZWJiYzg2MjljYTE3M2ViYmU0MTZiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58372312502c40f8a48b1db1c8415b71",
+      "statement": "All shell consumers resolve paths through four helpers: a bundle project's model source is the file itself and its project directory is the parent, while a tree project uses .evidence/fm and the project root, with traces always at .evidence/traces/interview-trace.json beside the project directory.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.ts#L15-L37",
+          "version": "repo-lines-v1:sha256:b28d78d111e772da7e11cc4991bd37c1ac9c043afc981faed332337c59aaedf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhY2Y3MmFkMDc4OGRkNzM4NWI0ZDU0OGIzODE0ODI4OTYzMTYwMDhlM2VkY2Q4MzU2MGE2N2QxZGQ4ODEyOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlOTIyMmMwM2M1YjdkYWFiZjFmNDg1NmMxZGRiMmNkNmEyMzQ3NDdkNTczZTRjMGU3ZGU1OWMzY2NlMzNjNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a3e37c3946854343b0ac8bd881168da1",
+      "statement": "Opening or creating a project starts a watcher keyed by WebContents id: a tree watches its root plus entities, relationships and rules non-recursively, a bundle watches its parent directory so a rename-save does not detach it, and both debounce events before emitting evidence:project:changed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/modelWatcher.ts#L6-L45",
+          "version": "repo-lines-v1:sha256:c9f4727c9d8fbb02f47847e2d266df6b9fd5c848ced6094eb3b15a988335325a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMzcwNWUxMTA5ZTYxZjNmM2IxNjA1YTM4ZTMxNjg3NDA2MGQ5NTEwNzUyNzA0ZjBkOTc5YWFmNTVhMmNiNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyMjA0NjA3ZGRjNmU4NTA1OGE3ZmY5YzU2NTFhMWNmMzI2MmYwMjhiYzIyZjU0YTVmYzZiODFmZmM3ZTBjYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YmNkNDIxZWQ3NDE0ZmI5YTA3MTIyZDQ4M2Y3OWU5ZjUxYzYxYjdjMjg5NDZlYTE4YzZmNTg3Yzc4NDYyMzAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/modelWatcher.ts#L94-L134",
+          "version": "repo-lines-v1:sha256:030d86e71a2b3a993d4252e5f2c6c55cf444e97cf1e29207ef3f3f0129137802:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2N2EzZWU0ZWU2ZDJhMzc0Y2JhNDYzMjMwMzRhNzYwMDZkMWQ5MmVjNmJkMDg2MWVjNGRhMzJhOTk0YWMwZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlNmU4NDgxYTNlZWM2MWQzYjFmZjliNmYxZjdhZTgwM2E2ZjA5Yzc5NzQ1Mjc1ZDhiMjQ5MWU5MjZhYjU5ZWUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L39-L64",
+          "version": "repo-lines-v1:sha256:f9b38597657b6e6133d2d8c8631661936d41402da91781348b8e0fa1694d82ce:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3OTRlNjU3YmM5OGZhMTU2ZTZjZjAwOGQ5YTkyYzdlYjdmODE4NWE0NjcwNjZjMDliODQwMTY4MGRjNzY4OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzZWMwMDc1ZmVmZGFjODk1MjllMDAwMTY4MDkxMGQxNGVjOTc2NDA3MzdjNmUyMGY1YmMwNDIxZDJiMzAwYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxMzI4MzllMWI5ZmIyMjJmMmQ1MzA1NDI0MjYyMTA5YjIyOGJhMWJhNjEzNzdmNzlkY2UwMDQxMDA5MDQ3Y2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c98d284089624cfb97d69905660d44f0",
+      "statement": "Review export runs in the main process from on-disk sources, asks for a save path, derives scope refs from the model's non-child entry Contexts when an API design exists, resolves assets from the packaged resources directory or the workspace package, and returns saved, cancelled or failed rather than throwing across IPC.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/installAssets.ts#L22-L68",
+          "version": "repo-lines-v1:sha256:108ea7df4fa322591ec6dc956c260dfbeec08ceddec1eef88159bd4e882077c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1N2FiM2JmNmY5YjU5MWVmZmQyNmI0NWY3OTU0MTkwNTFjOWY1Mjg5NTJmYTFiMTM5YTdkMDliNjBlNTVjZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1MmE4M2JhNmQ5NjljY2QxZDQ5ZTBmM2JhN2MzOGE5MGRlZTBjZDVkOTUxNzFmYWZiNjNjY2U4ZmNiNWFiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L90-L153",
+          "version": "repo-lines-v1:sha256:5a7848d05232937b737e713008fde4e16b74569ce936f1f1d281636ba55b2b35:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNGZkNGM4Y2I2YWM0YWNkNDA3OTNhZjRkYjIyZTcwOGM4MzlhNWZjOWNlYzk1MjVjNTAxOTAwZmU4ZTQ4ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkZmMyMzYwMDY3YzI1ZGU3MWRjNTg4MTRjODFkZGM5YjQxOTNjY2RiOWYzMjc3MjE2ZTBiYjQ3ZGFkNTcxYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

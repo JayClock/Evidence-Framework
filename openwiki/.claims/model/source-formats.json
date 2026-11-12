@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:275b99a8c5f90050ee65f3c57640952e99494666b7ea0c92729839e4109402ab",
+  "claims": [
+    {
+      "id": "claim_bda93da0553b4aee8e3362edf44058c2",
+      "statement": "One DomainModelDocument has two interchangeable storage forms, a .evidence/fm tree and a *.evidence.json bundle, and only the three source trees model.json/entities/relationships/rules are rewritten by the tree adapter while discovery, generated and validation belong to other owners.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/README.md#L14-L17",
+          "version": "repo-lines-v1:sha256:b146c2043fd6302a19f4296122b3531fdd02e971bf7b9616549329bb8b210afe:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzMxMGM5Njk3MWFlYjVjMDA2NDc3MzI4MDRjMTUwMDRhMDc1Zjk5M2QwMjFkNWYyMmJhMTFiNzk2MzE2MjdlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNiYjVjMGZkZjA0MTFkY2I5Mzk0ZTRhZDJjMDFhYWFiOGFhY2E3OWNkZDEyNDAzZTE1OTAzNjI1ODg4NTA3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDJmZTViNDQyYzM1NTM4MDY3NzIxOWFkZmY3MzBhNzUwMTE4NjFjMzJiNmVjYzQ5OGEyZGFmMmQ1MmJkYzJmOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEzYjhjMDlmM2YwNGI5NTFiOTMwZTlhZjE1NzI4MTlkNDc2NmQyMGFjZjE1MmRmMTczMzc1YzE1MTZmMDU3MiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L10-L30",
+          "version": "repo-lines-v1:sha256:267183fc3370aa0b4fb539a4a502c945594fb73b915c18ba89c70fc1213cb2b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4NWUxZGJjMzgzMDRmZTdmZDdlMWQwYTA2YWM3MjI2ZjM4ZmQ3Mzc5ZmFlODJmZDVhNzU3NmQ3M2EzYmVlNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlNzZmY2FhMTM2ODNjYjE1MTI5NjVkZTQyMjIzM2M4YzE1MGU3NTdlZDYxMTRmZTE1ZWQ0MDJkNThkMjE0NjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhY2NmMjllNzNiZTZmM2ViNmI5ZGMxZGNiNWVjZTZiYjZkYjliZDExM2M3NWUyZGNjYjhiMzBmNGUyZGVmNTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_61c86a3dcaac40d4a91415d1e264c34b",
+      "statement": "Tree file names are a deterministic function of object identity (category-kind--slug for entities, relation--slug, rule--slug), and colliding slugs get -2, -3 suffixes so no object is lost.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L103-L152",
+          "version": "repo-lines-v1:sha256:7fe5936612a9ce89b9892419c466ef6b88179672de1db28f786cf1e9540db622:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTZmNmVlZjc4ODkxYmVlZWI0YmM1MGUyOTcwZTVkNmU2ODA3ZTZlNjQ4ODNiNTc0N2U5NWRjNWVmZjQ2MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2M2ZlOWU1MTliNzAzYThhMDY4N2E0MjY0ZjMzMzExNzRiODVjMzU5NDg5ZWMwMjhkNDY5ZmY2MzE2OTU0MDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4MTkyMjk5ZmY3NzNiNjc0ZTJiNGVmYzdiZTFhMWIzNDM2M2IyZWY1OTk0YjIxODgzOWM5MmJkNTU5MTc4ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzOTNlOTY5MTE4ZTVmNTlmYmI0ZmFhODI0MTE5NDMyMWM4YTZjNWFhZmI3NWZlODk1YzcwNzYzZTJkMWFkOWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9fbcfe0be3db4f5ea935619b753e117d",
+      "statement": "Serialization writes two-space JSON with a trailing newline, sorts keys only when asked, and orders files manifest first then entities, relationships and rules, each sorted by path.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L169-L240",
+          "version": "repo-lines-v1:sha256:a2fa7351956fb39f4ec54bb0b6ba249d3bb646f3a3f592137e5e88f233268e64:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MTkwN2FlNzA5NGFlNzk0OGUzZGMyN2UzNmM4MWVmYWI0ZjY2N2E1MmQzMjEwMTU5NzcyYjYxNTRkMDJhNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NGM4MDA1NWNlZTY5MGQwMjhlMWRmNGRlYWI2MmVhM2NlNWUwZmRhZThkYjA2NzdiNDMwMTliMzAyNWNjMTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMDRmZWIyMjdhZTI0MDE5ZTRhYjBiMTFlODU1OGY2NjEwMjAxZjQ3MzU1ZmUwYjE4MjZlMTliNWE3ODhlMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNTQ4ZTY5MmY5MDA3MDdjYTA2NThjMWRmNmZhZDllZjA2OWZmMmJiMWIwMWJkOTkzNTk0Mzk1MDQwNmQ5YjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c5478b63754f4fb7b325f535d736e9f8",
+      "statement": "Tree parsing never throws: malformed JSON, unsupported types, duplicate ids and a missing manifest become issues on their paths, an entity-less model is coded model.empty so a blank start is distinguishable, and validate:true appends static FM findings.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L243-L340",
+          "version": "repo-lines-v1:sha256:b29c1512f22cc6ea999e60012e5fc36235ba213e08bac107f5e9bbf8474dd212:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1ZWIwYTViZDMzNjlhMzljNjhhOGFmY2NhMzQxM2NhM2VkNmRjMDA3NDNkZTYyZWU1OWExNjM3YmMwY2Q5YzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZjg2ZmQ3OWUxOGJlMzIxODAyNTk2MTdiYTA1MGY4ZjYwZGUyZDI0OGJiYmIwYjMwMDJhNmQ5MDQyYTAyNTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwZGViMWQzMjQzZGFjZTczMGYzOTVlODk5MThmOTUyZDhkZmI2ZWY3MWRjNzQ3NTdiNDdhYTdmYmFiMThhYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1ODQ2Y2Y0OTI4NWEzMGJjMTIzMzRiYmRiNjNiNjJhNjE4MmUwN2YzZTc1M2Y5ZWFkYzUzMmIwYzNlZDYzNDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_861b85395ff94ac5852feeb4bb843074",
+      "statement": "Writing a tree leaves byte-identical files untouched, writes changed files through a temporary file and atomic rename, removes only stale .json files under the three source trees, and never deletes validation or generated content.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/diskAdapter.ts#L99-L174",
+          "version": "repo-lines-v1:sha256:5c2f981aed1ceab52633e76d7836d0b63b655b5e5b509607eed0cfbce745394e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3Y2E3OGE0ZTdhMTY1NDIyMDUwZWY5NzQwMGY3NTdlZTE3YWIxNGJhM2U5Mjc1NWE3YmEwZmY4YTYwNzYyZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NTI3ZDhiYzEyZjcxZDkwMmY3NjQ4MjhjNDI3MTJhNmU4NTQ0ZThjNjM1YWYzZWM2NjE0NzNhNjcxZjI5OWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_753ae866c2a246a6abead8c80a7c47d6",
+      "statement": "A bundle is an fm_bundle envelope with schemaVersion 5.0, the manifest and three arrays plus optional validation and readme; serialization sorts entities, relationships and rules by id by default so the same model writes the same bytes.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L32-L90",
+          "version": "repo-lines-v1:sha256:064474ac14a46fca91efd73b7d804268fe589f085bfcc37a89ae4412f44f1fd9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZjg1ZGY2ZjA2NzU2Y2I2YTY1MTZiMGFjNWY4MjhlMWNkYmFjMTUzMWNiODk2NTczYWJjNDZjNWE4ZWVhODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxNmZlMGI0YWZjNDUyNzI0OGU1MjJhZWNhYTMxMmU4NmM0NTY4NDZmYjRjMGE0ODQ3MDE5N2NiZWNmNjNlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMDRlMzgxNTZjMDExYTFkZjVkZDY1ZmViNGUwZGQ4OGZhMDQ5ODc1OWZlZDM3OWNjY2Y2MmViYmMyZDZhMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxMzE0N2UyMDQwYjczZjE0ZTY4MWMyMzMxODk0ZjcwZWM4ZTA5NjQ4MjM3YjU0N2ZhZGFmNDUyMWFlYjE0MTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L405-L455",
+          "version": "repo-lines-v1:sha256:e8106af3b7d226beeaabd0ef7e0a1984d73e525e029cd54960ec64362a7469ef:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4N2I0MjAzODFlYjhiOTJkZTk3MjM3ZTRhM2JhMjk2ZTFkM2VjNmEzN2Q2YTJhNDdkMDQ1ODE2MmM0MjFjOGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4Yzc5NDg4ZmNiY2VhZTU0NTI3ODMyYjIwYTU2NWI0ZDI0MTQ4ZjVjMTY4MTZiMzQwZGEwMjA2N2YyYzQ0YjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_edb33bcf47be4125a2bd8b84d5090cb3",
+      "statement": "Bundle parsing reports wrong type, wrong schemaVersion, wrong item type, duplicate ids, malformed validation entries and a non-string readme as issues instead of throwing, and tolerates an absent schemaVersion.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L266-L400",
+          "version": "repo-lines-v1:sha256:2b0cbe63669416e28cb6b2f86ddc556eb6d46e62df2ea2aa0c13029e7f5d4620:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMzg2NjBlMjgxOTlmZmJkMWMxOTBiNGQzYjNiZmNmOWI0NjYyYTQyM2FmYWI5MGU0ZmJlNzAxYTVlZjRlM2UwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzYmIyMTgwZmUyZjcwODkxZmM3NDEyOTgwZmRmZWM5N2FkMmJiOWYyOGM2YWI5MDhmM2JiZGY5Zjg0ODk5ZDc4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2OGUyYTM5MTdhYjcwZGZlOGFlZTcyN2NhNDlmYjMwN2YxMTQ3Y2U3ZDVmNzViZmVjYjg1MjFiMDM5YTA4NGQwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b0b1fd68b6a4982a82c9253546d8f3d",
+      "statement": "Packing parses the tree with the tree rules, carries validation/instances, validation/scenarios and README into the bundle, reports a malformed validation file instead of dropping it, and skips generated/, discovery/, dot directories and caches.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L460-L545",
+          "version": "repo-lines-v1:sha256:173d291769395ff04cf005b66246d0a5a1f650500f64740a6db9f2bf491023bb:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiYzkxNDcwMmMyMDM2ZDc4YzhkNTE2MjMwMDBjNzUwZTE3YzMxMzMxN2RiNjA2NmUzOTM3MTFlZmZkODNjYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNjAxOTRlOGU2ZDc1OGYzYjMzMzhlNGNiMzkyZTU2MjVmZGE2ODljOTc5NTU2N2M0ODU1MWEzMjAzODljMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljYmNjYTE0ZWU0MGNlY2U0OWViNGRiNjcxZGVhY2M0YTQ4NDEwMTdlOWRlYzNjMGM4OWQxNDY1MDQ1MmU1MjgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelFileAdapter.ts#L34-L130",
+          "version": "repo-lines-v1:sha256:7cb252f150305c96be364cf19c6d818d6e54fba5fe9f69b0398c94bbb73f5e4d:eyJzZWxlY3RlZExpbmVDb3VudCI6OTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiYzMzM2M3ODZjNDAwZTc2MzczYjE4MWJjYzJiYjFiZGMwMWQ3ZThiOTlkMWY5MmY0ODI1YjVmYzQ0ZDUzZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhOWQyZGZmNzE4NmZhZWJlMDYyYjNhZDY5YmUyODMzZjRiYjk5Y2U5OWIxNzYyZDdlOTdiOGRkNGUyY2EwMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MjEyZWRlMGY0YTZiNzZjZGY4NGY0ZmQ1NjQ1YzUzZmVlYTMzY2EzZTIwZDY5MWFiODE0Yzg3Zjk5MTBkNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkNGE1N2MxMGY5ZjQ1Y2Q3ZmM3MTQ1MjBhODRmMDIyYmYwNjFlNmZkMTJmODljYThiNzIxMjc5MzgyOThjNmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bef10f70037e4c55827bb67ba51ec019",
+      "statement": "Unpacking compares canonical JSON rather than bytes for .json files, so a hand-formatted tree whose objects already match is not rewritten, and files the bundle does not name are left alone.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelFileAdapter.ts#L158-L180",
+          "version": "repo-lines-v1:sha256:dd12e65d688d84d072ff47ab17c390c0b22275408d4d36afc79dd9075484207c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNTUzNDJmZDVmMDgyNTE4N2YzYjQzY2JjOTllM2M0ZDNlZjNiZTkwNTg4ZjU3YTQxMGYzMzI1ODZmNjI2OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NmUzNWEyNDY3ZGZhNjIxODMwNmQ1OWFmYzM4NGM1OWMxMTg3NjZmMDQzYzg4YTU0MWY4ZjBkNmQ4Y2VkZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1NWY4MzY5ZGRlZTAxYWMzZWNhMmE4N2YyOGRiYmZjZTAzMzc3NjNhMDg5ZDAxYzdkMDJlY2I5YzFiYjZmZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlZGNhYWU5MjY0YWNmMzYyMWE2YTZkN2Y5YjJmMmYxNTMyOTdmYjg3OGI3MzlhNjg4MjQxMjYyMzY2ODQ5ZDQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelFileAdapter.ts#L244-L276",
+          "version": "repo-lines-v1:sha256:94e449e4bdf4d5cedd203fbd6e6363415ef7faa0f17fa17871bab2553773d7a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2NzZmMDZjNzAxMWJlYmM3NmM0ZTkxZjQzNTQ4NGIwM2Q0NjFjZDJhYjA2NzVjMjJmMTJjYzE5NGViNTFlZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MWU1N2FiMDJiNDUxYzRhMGQ2ZTA1NmZiMDk3ZDEyNjBhNDhmZWRiYzBlOGFhMGYxYmE5ODUzZmEzMGRmOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f201b5c8199641a89089600faa3c4f0c",
+      "statement": "readModelRootFiles reads the manifest plus the three model trees and validation/ for checks, treating a missing root as empty rather than throwing; readModelRootBytes walks every file except generated/, caches and dot paths because a stray or hand-edited file is also input.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelRoot.ts#L170-L192",
+          "version": "repo-lines-v1:sha256:043dc56b70e6b8c8d2cbd3e9aefd9e76f46f5778b4c827f527d58bbc26e1706c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MzcwMDY4MjNmYzlkOWZlYjNkNzNlNjgzYzFlZmQ3ZTkzZjBkZjYyYWVlNDU0NzNlNWNhZjM5YzE2YjdjYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNDAzYzZiYWJjY2UyMTU2NWNjZjk5MGZlZjRhOWQ0Y2NhYTU0ZjE2NjU1ODMxNjkxNjY1N2QxMTQ5NGVlZTQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelRoot.ts#L99-L140",
+          "version": "repo-lines-v1:sha256:ba392c0c632811fda86e193fd0ab33d741292e0c54e80b016f0a26e790c9d2ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZDYzZjU1MGRkZmM5ODdiODBkNjg2NTNhZjNmZjVjODM0MDM2ZmY2OGI4NGZmMzQ5NDYwNzdhODY1N2Q0M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MzBjMWFmNzM2NjNmMmFhNTI2ZWRmMGRlMTljYTA0NWExZWE0NjU4M2ZjNDA0ZWI2ZDJmZjY5NjM1NTc1MDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4NzA3NjBmMTUxYzA0ZmRiMGIzMDk4NTc3ZjUxNmE1ZTg2ZTFkZTg5ZjMxOGUyOTNiYmFhOGRhNzY1MTJiZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3ZmViYjU1ZmY4MjY0NmNiYTRmOTYwNmM2NGM2ZTE3MjZhNmQ1YTIyM2ViMDExNzE4NjcwYWE0OTM3MWIxMGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58a2f79b4696427699b397d9571a7928",
+      "statement": "modelDigestOf hashes each file, builds a sorted path → sha256 map, serializes that map and hashes it with a sha256: prefix, making the digest independent of tree location and generated output but sensitive to path renames.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelRoot.ts#L196-L213",
+          "version": "repo-lines-v1:sha256:6eedc343f792dc9d2b84ba858704e3c1c78c2496c72b88439c18a190114f4e6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5YzY5NWE0MzE3YjIyNzk1YzJhZGYwZTk3ZjUwNzJkNTA4MjNhMDgwOTM0YmY0NzcxODdhY2Q0MzU0ZDYwZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyYzk3NTJhZjExODk2ZmZiZGE4ZGZjMDgzNmMyMGU5OWRlYzVmODFjZDQ0ODhiYzcxODM4MmM5ZWRhMzllZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiNDAzYzZiYWJjY2UyMTU2NWNjZjk5MGZlZjRhOWQ0Y2NhYTU0ZjE2NjU1ODMxNjkxNjY1N2QxMTQ5NGVlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMDNmMzE2NGQ1MjA1YzZmOWVhZDQ0YzMwOWI2OTU0NzllNjc1NWM4YjUxYmUzMTZlMzZlMmIxOThkN2FjODEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

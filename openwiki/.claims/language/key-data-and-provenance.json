@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4719585b3916695883a6fc39678bd1026466773dc90c2a879b9cffe43da40b4f",
+  "claims": [
+    {
+      "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
+      "statement": "Key data has one eight-kind vocabulary — derived, contract-term, domain-source, negotiation-source, result-fact, request-input, needs-decision and other — declared as the shared authority for the inspector, ledger and sensors.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L1-L25",
+          "version": "repo-lines-v1:sha256:250bc7b043c83f572f3c52643366895f88ef6151fe02e95d8d4955afaa37bda8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkOTliZjEyMzFlODg5ZmQzNzkzNmNmNWI5YWUwODE0NjQyZjViNDRjZTkwYzgxMjE5YjY2NWRmOWFlYzBhMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNWExNzE0NzE0M2U3MTdjMDA4ODAzOWYzYjA3ZWNhMDI1YTIwMmUxMGFjMjRlMWMzZjRiZjBiMWQ3YzcxNGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e7110013986451a81d51e64fe75caf6",
+      "statement": "classifyKeyDataSource is a pure precedence rule: a derivedByRuleRef makes an item derived, otherwise contract attributes are contract-term, Thing attributes domain-source, rfp/proposal attributes negotiation-source, confirmation/other-evidence attributes result-fact, and request attributes request-input or needs-decision.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L72-L122",
+          "version": "repo-lines-v1:sha256:7c73aea811e4993ae09c3929a06df6a46bcbd8aaa307f0758e17738d6b376e34:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5YjQ2NDBlNWI3YjhhMWIyZDdjNzMyYzJmMWI1ODNjNTI0N2Q0NGJmNjdkMmYxZWIwNjdiNWI4ZjZmNjc0MGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1OTZiZmYxNWRlZmMwMWE3NTZkYTFjOWQ0NDMzMWUwNTE2MzQ2YjQwZjY4Mzc3NTI2ZTlkNzYwN2RhN2Y1MzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ecefa3973d3d4e1a8e9f6ca24eaa758f",
+      "statement": "Request attributes count as request-input only when named in the small request-formation whitelist (started_at, request_number, delivery_address, return_address, fault_description, asset_code, billing_period, settlement_period); every other request attribute remains needs-decision.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L26-L37",
+          "version": "repo-lines-v1:sha256:4ed85f6b308188238906bfd029efe6b6b1bea76fc5ab65cce9d8cc32f9bbe335:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzMzVjMWUxNzk5ZGI5ODBhY2Q2OTI2MmY0Y2RmMDg5YjQ4Mzk1YTQwYzA4YWJiMWE3YWVmMjZmMzUyMjUyOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYzZjYjhhYjBhOWY3N2FlOTZlNDNiYjE2ZjM5NDE2Zjc3YTg2ODhmOGZjZTExYjJiMjViZDFlMzMxYzFjOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4M2FkNmU5NGEyZGJiNzZjNWIyYTY0NGY2Y2I2YTM5MmVmMWNlM2QwY2JhMjg2MGI1MjdkZjgwYWVmMzdiYzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_486e8c42fff14039b1d98ee0ced356d4",
+      "statement": "Every source kind except needs-decision and other counts as resolved, and only needs-decision marks a decision still owed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L43-L69",
+          "version": "repo-lines-v1:sha256:6e6b19731fb60cdeb750be268e38de954a2e8aa7852c91089dce4c0d2e7e5683:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxODhlMjhkM2YxN2U5YTc4ZjYwZTRkYTM3OTNmZDdkYjFkNjM1Njg0YjJlY2EyNWEyZDNkMmM0OTkxMzQxNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNzNjYmM1YTllZGZiM2I3NjY0ZjE3NjhmYzRhNGQzOTkxNTE5NDY4YzRhYzM4ZjNmMzdjMzU2MDI2N2RjYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViNWYxMzQ1MWIyM2QwMjBiMTllZWJiMGE3ZWMxNGI3NjhkY2YyNGI5ZTg2M2ZhNGJjYTZkMGIyZGMxNTcyN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a030335759e6420895e2eacb4a157203",
+      "statement": "The ledger inventories only attributes whose keyData flag is exactly true, so an amount, deadline or quantity that is not marked keyData never enters the decision list and cannot block downstream work.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.spec.ts#L147-L160",
+          "version": "repo-lines-v1:sha256:f358eb242de6f71f0d690489322855398745545ef5ff636ba846b810b82a83b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4MTMzMjQwYzY2OTA1ZWUwZWViZGRmYzVmZmYzOTgzMDQ1MzlhNWVkMjI2YzMyOTZlYmU4ZDZmMjAwYjU2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiZGJmMmE1NDcxNDIzNWI1N2ViNjg2YjI4NDhjYTk0MjU0YjhmZmE1ZjhkZDIzMjUwZTcyYzIxOTc0ZjE3ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L85-L140",
+          "version": "repo-lines-v1:sha256:17e0580d3c96e6ac3501aba3303b9ccb439705bdc10b878ba953c26551078707:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjY4OWVjYzMyY2JiNjMxNTQzMGZjY2E3YWQyNWFkZGQwN2I2YWNjN2FiMmQ0Njk5OTg5OTMxOWIyMTQyNjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YmViNmI0ZjQ4M2NmMWZjODA5OTI3NTJhZGJjYjBjMjM5Y2ZiMjliNDA3NzI3NTMxNTYyMDdmMzM1NDA4NjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_95a0b012be164a0a827fd90032c2abe1",
+      "statement": "A derived ledger entry carries its rule id, expression and providers derived from the rule bindings, where each alias resolves either to a modeled ref (with optional cardinality) or to a runtime value type.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L64-L82",
+          "version": "repo-lines-v1:sha256:26319ac75dd074a8f4a75727957ff8531a8e453a5fa474620c8873f7f2f066e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMjU5MWQzOGQ1NTYwMDVhZTMyMmIwMmNmODQ1ZDcwNTA2ZDNkOTdiN2U0NmYwM2Q1YWI4OGQzZThmYTFkZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhOGNiMDIzYzE5ZDQyYzRlNGY4NjkwNmE4NWM0Mzg5ZTFmNTQ3YzhlMzc3NzAzY2QxZDE3ZWY2ZTEwMzY1MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNDUzNWZlYmEzMjgyNmQ0NGY2OTk1NjY1ZjI2N2E0YmU3NTY1ZTY4OTRiZjRmODAxODk1MjljNWY0NDY0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyMGEyYmM1NWY0OGMyMDlhNzVjMWNjYmUyZWFmOWJjZjFkMjU3ZGQ0ODkzZDcxMjY1YTYyNDZiM2E2YTFkYjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1e4ba7511a8243f1813e28fb95b58010",
+      "statement": "The sensor report summarizes the ledger as totalItems, resolvedCount, decisionOwedCount and a capped unresolved list; owed decisions are warnings rather than static errors but keep the stage gate closed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L185-L225",
+          "version": "repo-lines-v1:sha256:7a7a53d5ebb76ea795f9bb8805441c59410624385c04027976497be0c1ab8057:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9129f6f7e61f42c1a5398a5a3b68ce98",
+      "statement": "Each evidence kind mandates business-time attributes (started_at/expired_at for rfp, proposal and request; signed_at for contract; confirmed_at for confirmation; created_at for other evidence), and any recognised time attribute must be a required keyData timestamp.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L47-L66",
+          "version": "repo-lines-v1:sha256:df8ca01693390026ccf465996715bf79e1a69a5f11b0e98e42d48ca9b7e8b6cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmY2Y2MGJmODUxYjI2ODFjZjJlNjhlZTVmMGQ4YjY3ZGQ1YjcwZjFlNWFkZDBiY2M3ZDJlZDk2NDQxYTdlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGM3NmQxMmU1MzA0ZDMwNzllZGI1Zjg5MDAwN2VhMDVmMjI2ZTRkOTNiNjk1Njg0NjBjYWZhZjgwMDc0NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiZGJlNzk5Y2FiMGNkZDU5NjlhMThkYTJhODZjNjA3ZjNiODllNTE1NjJmNDNkNjVlMTBlNTY5YzVmODM2NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOGEyZGQ2NTBiOGEwZTdkYTRiNTdiZWFmMGMxNGVhNGM3MDdmMzE0OTI4ZjljNGFkMDY5NDAyZDFjMjU1NDUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L515-L545",
+          "version": "repo-lines-v1:sha256:fd41546949c777a9ccb07ba7baf02fc37c634b1353f914c19b416f62a6bc4b9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzY4MGQzMzZlNDY5ZTcxYTFhMzg4N2E3YWUxNTdiM2NlMjMyZWQ4ZTU5NGVmYmRmMDg0ZWMxODAyN2M5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYTUwMGM2YzExOTlhZWQyM2RmMjA3ZWE5OGU5MzU2NTQ3ZTQ1NDQ1NzJkNGYyNTdjODk0MjY0NTY3MGY3YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYzJjZTY5Y2ZkNWRlNjk5MjkzODBlYWIxNDhiODNkYTI5OWJhYTNiOTMwZWE3NjM4ZWQyNDgyOWNmODYzMDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a87ffc529da24bddbdd1148680358893",
+      "statement": "Lineage requires a many binding to be read through a CEL macro, forbids a macro over a non-many binding, requires an entity binding to use a static string attribute index, and records every read as an entity#attribute access.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:3a42a2d7e4f13a05a27470b46f965e0d655debbaf15ecaafec26fa3f558580a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxYjdmOTA3OGU5ZTRlMWE0OWRiZDk4MmZiZmIxYWU5ZmVlMzU5NDlhNjhhNTdiN2FiNWE4NGE5ZDcyZTA1MmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZjk5MzY0MzA5NjRmNmQzYzQ1YmU2MmUxYWQ3ODk5ZWQwMzZiNTcyODVhNzgzZThjYjAzNjBkYWVkYjA2NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmMzMyNzY5YTRlZmViYzI2Zjc2YzdlMzc0MjkyNWFmN2IwYzY2ZjdmMThkZDNhNzhjNWFmZjg1MzZiMTFhMWUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L150-L270",
+          "version": "repo-lines-v1:sha256:764270f0e8efaece553f7e175909040ba1872ad9883f20937e68faa5ba59f87c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1MjMxNjAxM2ZlMmFkODM0ZGU3OTJmNzU3NGQ5YmUyNDMwOTc4ZDgxOGI5ZjA5ODQyZTc0ZGYyZWQ4ZDYxZTYwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0OTVhNzIxNjQ2NzllYjdlZTkzOTFmNTgxM2Y1NGQ0NmIyOWExOWZhZjVmODU1YjY4MjMwYjkyZDNjNjk1NTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2YTQxZDczYzQ1MjJiZWEzOWZmODE1ZTI0YmNmMTMxMTg1MzFkNjcxZWIzY2Y1MzEyMTg4NWUxMWExYzQ3MjRkIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c5a8d4ccde141f9be6d12b1a3b90a55",
+      "statement": "Traceability refuses a read of an undeclared attribute, a read whose binding ref differs from the entity, multiple derivation rules targeting one attribute, a derivation target not declared by derivedByRuleRef, and any cycle in attribute lineage.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L392-L555",
+          "version": "repo-lines-v1:sha256:432f2051eb3820ba648c285648352727322226ccbaf76c2063e41b29391a7d8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMjMxZTAwNDMwZTYyOTRiNTQxNjVhOTAwMTQwOTc2ZjIzMGQ5ZjdmYjczODZhODNmNzQ5NTdmOGRlYTViYzVlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZmZhODZjZmQ3ZmMxYmJjNWU1NWMxZDEyODNkZWViZWQxZDU0NzljOGQ4NDBhMzIzNDM4MzZhMzRkMmEzYWE1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MTU1OTAwMmRiN2JhNjY2MGNhNzRhMDM1NWQxYmFkMzA0MTM0ZmZlYjM1NmUxZjI2ZGI1NTZhNDgyNzcwZjViIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8a0c02cf0c645b88f8e8226406ed138",
+      "statement": "For a key derived attribute the lineage must reach at least one modeled Entity attribute and may not read a scalar type-only binding, so a formula cannot hide a constant such as a tax rate outside the model.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L500-L545",
+          "version": "repo-lines-v1:sha256:e66c0a39c6150ae5ce8c5631444fbe4c57cf80f8a6864c9768bafb4893717f3d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZTRhM2U4NDM3MzQ1NjQ5OTc1ZWUxY2ZiZjBkMzVlMWM1NzNlZjg5MzA2MTU3MDI5MWY2Y2U2NDM2NmI0MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkMmY1MGU1NzcyOTE4YzhiZGRkMmYzYTFhNzA2MmZjM2ZkNDljMGU0MDgwOWE0ZjU0MGY3Y2I1N2VmNGU0N2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmNzU4Mzg1NDkxYjJlNzM1MThiNjhlMTI1M2FhZTZmYzhmYWJmNzYwY2FjNGJlNWZjNDRjOTQ1ZTAxYTAyYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzZDM2ZWY4ZTFmYWFmZTAzOWMyOWUzNThkOWE5MGRhOGZkNjY2ZWU2MmI3MGMzZTY1MWM3ZDY3ZjhlNGJmZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f637929ebe8d46488bece2805ad955db",
+      "statement": "An interview trace records focus, narrative, questions, user input and target bindings whose sourceType is one of interview_statement, upstream_evidence, system_rule or document; validation reports an unmodeled evidence reference or a binding to an attribute the model does not declare.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeTraceCheck.ts#L300-L420",
+          "version": "repo-lines-v1:sha256:514a67112bad4db4ff6697e4e74b6ad977e6c1cf1291984967cdd7070b936d77:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzJhNDI5MzgyYjJlMTQ3MThlMGUzN2IwNTcwYThhMTcwMjk5MWZjZDg0OThjZDg0MDYwYThiZjRmMDUwMTdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNGQxYmFkMjJjNTk1NGRlMzU3YWI5YzM3MDA1Y2JiOWJjYjJlMTZiZTc1NDk3MzY1Y2YzODY3M2M4YjdhNjE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiOWUxYmIxMThkMGMyZjI3OTA5YjgxNzYwYjg1NTEyMGQ4NmYzYTNkMDJjNGM3MGI3ZDMwN2ZkOGI1NzdmOTMyIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/schemas/interview-trace.schema.json#L30-L114",
+          "version": "repo-lines-v1:sha256:a2b0521b8d5654f93e32b09c6e8896923a22076c71fa0b54a4b9e534229fc43d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNGM5OTAzMDZmNjdiNGE5N2Y1YmYxMDA5ODFjZGFkOTNiNzY2YWU1ZjY2MGE5YmIyMTM2NDllOGQwYzIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjNTU4YTYzOTU3NjQ1MmM3ZDI0MmJmYzE2MTFmN2UyYzU0NDNjZDJkNjY5OWY3ODBlMjdlMDIyMzJkZWQyOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1821d89346c14667a4445e0df28bb512",
+      "statement": "An entity may carry a sourceSnippet with the verbatim sentence, locator and input kind, and tests pin the ledger's per-kind counts, the separation of owed decisions, derivation providers, exclusion of unmarked attributes, and the trace reference checks.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.spec.ts#L62-L190",
+          "version": "repo-lines-v1:sha256:178164a59df138ec512e3aa103b266a8fda3ba3023e4782343cc4ad6a36ba3d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmZjYzNzBlMzlhMTJjZmYxYWQ0MzMyZWU4MTQ5YzYxMzRlZjk2OTkyOTdmOTZkY2E3NjJjZDQxYmI2ZjU1MGY0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5MDkzZTEyOTA2YTYxZmQ1YzA4OWZlZThmY2FmZDk1MmU1N2E1OTA5YTI0OWRkMTI1MDk0OThkMjcxYTcxYzk2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L185-L225",
+          "version": "repo-lines-v1:sha256:7a7a53d5ebb76ea795f9bb8805441c59410624385c04027976497be0c1ab8057:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L23-L39",
+          "version": "repo-lines-v1:sha256:a0dc51b2b2211d0578e4d19cba663355c824972e999947bfd16405c1dd2019e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5ZGMzZjIyYzgzOGJmYzQ0MDVmM2FkYzgzNjBhOGM0ZmI3MmEzMGJlMjUyZjZiYWY2MTZjMmE2MzQ4ZTk2MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}

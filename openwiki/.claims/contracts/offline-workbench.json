@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:84075a822e292f5d508d9d7530cb2d117eb3456991fb2580f03dbce3f4dae17b",
+  "claims": [
+    {
+      "id": "claim_c9dcbba3eb984064895b9db0f4f28080",
+      "statement": "generateWorkbench fingerprints the project, collects and renders the page, then fingerprints again and refuses to publish when the digest moved, leaving the previous page untouched.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/generateWorkbench.ts#L55-L85",
+          "version": "repo-lines-v1:sha256:dbfdd13a57d0e731cd5fd5721ca693665085c2fe529d0af20e972cd4e659192c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNmUyZmMyMjBmMmZhZTFjZmM3Y2E4MzNjNDdlNWY2OWY5ZjU2NTQ0MWRlYzQ5ZTZjNzhhNGJhMTBiYTc3YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YjMzMTNlMmU1MDdmZjY5M2U1ZWYyMTZkZDAxZWZkYmJjYjU4ZDE5NmM1YTAyNWM1ZTdhMTRhYjY4NGExODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ddd8877180d949e2825c34534a63cd13",
+      "statement": "The workbench fingerprint covers every file under .evidence/fm plus .evidence/api/api.json when present, excludes generated/ and __pycache__, and refuses symbolic links instead of following them.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L155-L200",
+          "version": "repo-lines-v1:sha256:b36a90ca61b6926507d010d041a1e2ae632fce5b1d4a5926e6341905ded51b88:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkZGRiZDNlMWIyYWM1YzhmOTEzMTUxYWI3NzA3M2M4ZmJhOWI2ZmFkNGYxZjkxMTNmNDA3Y2QxNjJiOTQyNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzNGYzYWJlM2NiMjNiOTBmYWY1ODE1Mzg3OTQ5NTE2MjUwOGFjZTQ4ZmMzMjZmMzhjMGRkZjgyZTg5Njc2MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiOTY1MDg4NjBhMDcyN2FiNjRmM2M0YmNlOGQ0YjA0NjdlODQ1NTU0NzRhZjMzOGZiODE5ZWM1YmZmMDhlMjkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L74-L134",
+          "version": "repo-lines-v1:sha256:a6ba4c469d0a48e8218d9305e08079f015ce258842934ae86d7ed9fb285c51c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlNmQ3OGRjODRmNWYwYTE4ZWU3MzgyZTE4NDZjM2UwYThjNjBlZWVmOGFiNzk0MmFjY2JhNGU4MzdjMmQ1NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2NTk1ZjRlZTVmZjYzZDUwOTUwNDE5ZGMzNDQxNDUxMzg1MWRjOTczNmZkMTdhNGY3YmZhOTMwYjI2MWI2ZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhMTA5ZjZkY2I3YmM2MzI2N2ZlOTE3N2E1N2NlMzc2NDAyOWVlMDZhOTQ0ZGNiNjU3NDA5ZTlkOWQ3MDhkMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1MTM5Y2QyNzM0MDBmMDgzODE0MTdiMWQ4N2Y3OGEyYWI1ZDRmOWZmODI4YmJlZWExYmU4OWI5YTUwYzBkNTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cdf4f491c29e4c5482db2a3a50457344",
+      "statement": "Collection refuses to build a page when the FM check is invalid or its input changed, when --require-api is set without an API design, or when an API design exists but no scope is supplied, because a consistency-only result is not scope completeness.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L253-L388",
+          "version": "repo-lines-v1:sha256:aac52c732157d71eaa4d35b1ae9e9bca0571229186e64e23d66100acfb6904f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkMzMwM2VmMTc1OGJiMzJmZmE5NDRmOGM0MzQ2YjI5ZGY0OWQ0OWU5NjBjYTRjZDJmYjJiMjlhYjVkYTBjNzc5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmMTE1ODJjMmZlMDY2M2NkOTUwNTU2MzU5MGUwYzNkYmE4ZTBkYTk3ZDQzNWY2MjcwYzYzZDliOGNhMzUxNWJlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_1971c57957fd4c59b14160cfde0d5c12",
+      "statement": "After projecting the API design, collection requires the modelDigest recorded in the projection's fmCheckSummary to equal the digest the FM check produced, and stops with 'FM 在投影期间变化' otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L325-L345",
+          "version": "repo-lines-v1:sha256:f10f362260175d3bb6cddd3591b70e05b94c71455f12f3a980f87ef5a5304ea8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhMjllNTg4ZWIxMTg2ODIxMTA1YTc3YzcwMGY4ZTkzMjk3YmMwNjcxYmRkMjM0YzQxNDAwZGQzMTNjOWMzZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1YjY2NWUzMTQ3NDYwZWE5ZTAzOGNjZjYwNWVmNTg1ZWVhMDBlMzljY2Y4ODA3YzRjYTZhMzFiNDA0NzhkODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4M2VlYWExNTZkMjcxZTk3MjFmNzFkMTVkYWU0YmFjOWYxY2YwOTUwM2VhYjRjYzVjODhlYTg2YzAxMGM0MDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5aaa8377d94f40f8b1c5768a3d3dd7ac",
+      "statement": "The page projection selects fields by name and emits nodes, edges, unresolved edge targets, counts and a validation block whose fm flag is the literal true; dangling edge targets stay visible and duplicate ids fail rather than overwrite.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.ts#L1-L11",
+          "version": "repo-lines-v1:sha256:8e14c5d9138ec32e971fdf6afe99407e3e6c85bde4004d1450aee1734abacef0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2MzY2ZDI0OWIzODVmN2RlN2E0ZTI1Y2IyZWE4NDhiZWFlYWM1N2M0M2Y3OWM1NzI3ZGQ4MTMxOTk2YWJlZmIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.ts#L596-L627",
+          "version": "repo-lines-v1:sha256:499327086202250cae38f81099f84988aa468837786c49d6292f9fd8a947865a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwMTk5OWE1OWEwYjk4MDA1NTM2NDA3YzE1MjViNWRkZjg0NTVkZDI3NjI4ZmI3NGIxMDgxYzM4NTFkYTdjNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMzg1N2I4MTVmNjUwZTg4OTYyNTFhMGM5NmE4YjUyNmM3YzRkM2Q1NjY5Y2VmNmFmOTllNjY3NWMwNTJjMDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9cc8c94e8ae243e5897778029b80f5ce",
+      "statement": "Although the projection module states that interview prose stays out and a test asserts provenance and digests never appear, an existing interview trace is attached to its Evidence as the whole record, including narrative and userInput text, because the records are assigned rather than field-selected.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.spec.ts#L224-L239",
+          "version": "repo-lines-v1:sha256:060a85b6b5dc132e7d975efeb5632bdcfdb461c35b3b1c9223e8ce65695e9d36:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MTZkMDg5YjE1OGViOWVlYzRhN2NlODMwZjI5ZDFhN2RjNjM2ODFiMGMxZjU4ZmZjZTNmZTc4ZjgyNzc5ZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3YjgzMmIxNDUyYzBhYzMxYmI0ODg1MmNhMzUxMmMxNThlMjU2YWQ1NDQwNWI5ZGUzMDE3NGYzNDg2ZTk4MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlYzVmNDQ1ZGVjNjhlNTE1YTE5ZTcyODQxNzMzMDlhOGQ5NjMxZTQ5MjcwOTJmNDgyMGNlODhjZjYzOGMzMTQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.ts#L559-L593",
+          "version": "repo-lines-v1:sha256:1bc35363d497a84c103a96cb3895bfa64233bbe9718d3b76cc976bb5192775ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlODhhZDI3MzdjZWNjMmY0MTdjZTQwNjBlNTdjMmI2ZjgyZjQzMTViNzkzZGU5NzA4OGMxNDk3NGNkOThkZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyNjRlZDU0ZDExOGQ0OWFjMWJhZTFhMGJlMDk2MDZlZTMxMTAzZTJjZmEwYWIwM2UzMGYxNTdjOTM5Yzg1OGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_baf3812608cb48098d3ff5d5b0961ec1",
+      "statement": "The renderer escapes <, >, & and the two line separators in the embedded JSON, requires exactly one inline script, and pins a CSP with default-src none, that script's sha256 hash, connect-src none and no object, base or form actions.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/render/workbenchRenderer.ts#L35-L42",
+          "version": "repo-lines-v1:sha256:2325748e956f9a13b0a95551fb9e89ab105544c9f44ec1388281c64ed443bc0c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU1ZWM4YTA0Y2ZkZjE4ZjBkNjAyOTAwMDQzM2Q4YjVkMDc3NTBkYjRlNmFjYTA1ZTY5YjdlYzMwZjU1YmMyMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWY1MWZhZGI1MGNjNjc3YTRjYzQxZGE5Yjk3ZjQ0NmYyYTcxMjNkZjUwZDYzMjMzNzU3Y2MzMjI4MzQ4M2RmMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNlZGE1YjQ0MWQxZWJiN2ZhMDQ5NTUzODhmZjYxZTVkY2YyNzBiOGU5MWJkMzAzMDc2MGExZGYwMDMxOTA1MSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/render/workbenchRenderer.ts#L57-L102",
+          "version": "repo-lines-v1:sha256:ecb4922b6c53684a9be8cc563e1206fbc3c1eb044d26e66d24efefc8b1a28d70:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZjU5OWY4NmQxYmQ0Y2MyZWExYThiNThiNzMxZjhiZjcxNGI1MzEyZmM5YWU2NTVhMTg0ODU0Y2E2ZmY5NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmNGExMmI5ZDA0ZTJkYjM1YjIxZDhmMDZkMzEyMThmM2I2YjI5ZTc2ODhkNWQxN2Q0OWRmMWNmY2IzMGJhNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0bc11b6debc247e2901a2fb105970528",
+      "statement": "Assets are resolved from an explicit override, then process.resourcesPath, then the package's own assets directory; the four files are read from the install and the two scripts are joined, with a missing asset reported as a WorkbenchAssetError.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/render/workbenchAssets.ts#L10-L30",
+          "version": "repo-lines-v1:sha256:8106a1bc21110da2f0e74cfbfd19ee2bc60d8340e58ba5ee30b1f05632f22665:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNjc2ODhkOTFjMjYyODMwYTM0NDIxMDk5OGIzNjE1NDZlYzc1OGJhZGQ5OGNiYWYyOGM5YTZmYjIzYzllNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyZjcyOTU3MTgzN2YxMDQ1ODY1MTc3MGI5NGZjNDcyODAzZjJjYjBiNTk4NGM2NjEyOWE1MGJmMzMyMWNkN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMzA3OWY3YzJiMzA2ZjdiYTk3Njg5Y2Q5NWRiMTgzYjA3YzFjODVlMWYwNGE3ZTcwYmZkY2JlOTc3NmU1MjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/render/workbenchAssets.ts#L62-L135",
+          "version": "repo-lines-v1:sha256:e960ffb13e484e252058e460f0fa6494f6ec95fe65a598547cf80c69064731df:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNjQzOTQzYzNmNTAxZTRlNDYxNWQ3MWQzMjUwMTg1YjE3M2QwMTI1ZTJmYzRjNTFhYTI5ZWYyMzM5ZjZmMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjZGU5ZWI5MzhjZTg1YTVmZGEyYTJkMjBjM2FjYjYwNDBiZmRlMTU5NzlkZGRiMzg0OWNmMTg0MjNkZDZlYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1b4d89f024a4845ab5391a8a1693c85",
+      "statement": "The publisher refuses a symbolic link or an existing file that does not begin with the workbench marker, and otherwise writes a uniquely named temporary beside the target and renames it into place so a reader sees either the old page or the new one.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/publish/workbenchPublisher.ts#L33-L87",
+          "version": "repo-lines-v1:sha256:05ab952dc947a93900460e516a2afeea7f6ca23f936f9c2f9226f4f6309aac5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZjEwMDRiYWU5Zjc3NWI4Mzc5NmY5ZGYyZGFhMGExOGFlMWU5NzJlNmRmN2U0MzVhZDA2M2NkMDlhNWQyY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNjljN2FhYjM3ZmE1Mjc4ZDhhMGY1NzgyNGY3ODUxYTM1NGJiZGFlYjQyMWUxNGYxNTNlODhmZGU4NmFlMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_deea725741f0467999c92afdd88e955b",
+      "statement": "The evidence-workbench CLI has one generate verb, defaults its output to .evidence/views/index.html, accepts repeated --scope plus --require-api and --assets, and exits 0 only when the page was written with a stable counts/validation summary.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/cli.ts#L80-L130",
+          "version": "repo-lines-v1:sha256:61a67450141a155d902373b301437c2b9ed600172168a7681e74c92d2de0ddbf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMGM0NWE2ZjYzYjI3NTMyOGZhOTJmMDlmZTE4NjQ3YThjNmE5ZTZkNGQ5MjNmMDg5NWUwZmFjMTdmNTdkZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3YmJlMTY5ZTNlMWM3Y2EyODAwOWQ5MjU0ODY3YTE1ZmQwODgwMjZhNmViNjAxNjlmNWQxYjhmMTZlOGIzMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwN2RlMzg4ZTQ1ZGNjZDU4MDJjMzgzNTJkZjg2MTg2MzU0Mzc0NDlhODZmOTQyNmVhODRkNmE5Nzc5Y2RkZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8dbe6ec77db543d9a3dfa4c29f82c283",
+      "statement": "Tests pin fingerprint exclusions and symlink refusal, the invalid-check and API/scope refusals, mid-generation change detection, atomic replacement without leftover temporary files, refusal to overwrite foreign files, payload escaping and the exact CSP hash.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/generateWorkbench.spec.ts#L41-L235",
+          "version": "repo-lines-v1:sha256:737aae2ad9aa66247effb17f991cf2416507d0a6db2e58dbbd99fcd8fa3cabe5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzNjk5OTJiMjVlZTUyZDQ0Y2M2YzYwY2Y5MjgwMzVlYjE1Yzk4OWI3MDg2NmExYzM3Y2FiOWYyNTk4ZDk4Y2NhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlYzdmYmUwNWM1ZjZiMjA4ZTMyZmEyYzIzM2Q3YjhjOTJkZjc2OTVmNmRhMDkyYzdhN2U2YWI4NzVhMDYzYjJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NDZhY2QyMDNkZWIyZTY4Njg2Zjc4YzlkZmQ4YTkxMjgzZmY4MjQ1YzQ0MmQ1YjBiZjEyM2FiY2JiODY2YjFiIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/render/workbenchRenderer.spec.ts#L56-L175",
+          "version": "repo-lines-v1:sha256:c7e3d2834dafc000e7113e99e00563d578b6a9b39c6606c0037493e4fafb11ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1YWMyYWQ5YWM3ZWM2ZGRlYzk0Y2NhZTMwMmM1MjllMTg0YzYwM2ZkNTdiZjg5MjIxOWRiMjU0ZTk2ZGUzOWUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2YjJiNjdjOWQyMmFjMzU3YTNiZTBlMzMzMDhkZjUzYjBmNThlNTkzZjVkMzExMGU5NTk1NzExMDk1Yzk0MmFhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-12T12:33:13.984Z"
+  }
+}
