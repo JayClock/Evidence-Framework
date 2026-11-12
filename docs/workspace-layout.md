@@ -6,7 +6,7 @@ each answers a different question.
 | Directory | Holds                                                                                                                                                                                   | Listed in `pnpm-workspace.yaml` |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `apps/`   | Runnable entry points: `desktop` (Electron Forge)                                                                                                                                       | yes (`apps/*`)                  |
-| `libs/`   | TypeScript libraries the app composes: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-mcp` | yes (`libs/*`)                  |
+| `libs/`   | TypeScript libraries the app composes: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-api`, `evidence-visualization`, `evidence-mcp` | yes (`libs/*`)                  |
 
 Nothing is a library in two toolchains: every `libs/*` entry is a TypeScript
 package consumed through pnpm, and no Java or Gradle module lives in this

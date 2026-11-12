@@ -1,7 +1,7 @@
 ---
 name: evidence-visualization
 description: 当用户要求生成或更新离线业务审核页、查看当前模型与 API 投影、排查工作台显示故障时使用。维护单页只读审核视图；不设计业务 UI 或修改业务源。
-compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm；有 API 时还需独立 evidence-api；浏览器验证需 Node.js 22+ 与本机 Chrome。
+compatibility: Node.js 22+（`evidence-workbench` 命令）；可选 Python 3.10+ 作为参考实现；浏览器验证需本机 Chrome。
 ---
 
 # Evidence 离线业务工作台
@@ -32,14 +32,14 @@ compatibility: Python 3.10+、可定位且满足依赖的 evidence-fm；有 API 
 
 1. **核对输入与环境。** 定位本包、FM 包、适用的 API 包和项目的实际绝对路径，确认 Python、依赖、浏览器及当前生成权限。联合模式核对 API 存在；只读请求只报告。完成时，运行路径、模式与允许产物明确，必要缺口已交接。
 
-2. **生成当前投影。** 使用下列命令；联合审核增加 `--require-api --scope "$CONTEXT_ID"`，可重复 `--scope` 覆盖 API 实际范围及必要依赖。生成器检查 FM 后将同一结果交给独立 API 包的自身校验，核对两源与场景新鲜度，仅原子替换自己拥有的页面。完成时，生成实际成功且输入未变，正式源与 generated 目录保持不变。
+2. **生成当前投影。** 使用下列命令；联合审核增加 `--require-api --scope "$CONTEXT_ID"`，可重复 `--scope` 覆盖 API 实际范围及必要依赖。生成器检查 FM 后将同一结果交给模型内的 API 投影，核对两源与场景新鲜度，仅原子替换自己拥有的页面。完成时，生成实际成功且输入未变，正式源与 generated 目录保持不变。
 
 ```bash
-"$PYTHON" -B "$VISUAL_SKILL_DIR/scripts/generate.py" \
-  --project-root "$PROJECT_ROOT" \
-  --fm-skill "$FM_SKILL_DIR" \
-  --api-skill "$API_SKILL_DIR"
+npx evidence-workbench generate --project-root "$PROJECT_ROOT"
+# 联合审核：追加 --require-api --scope "$CONTEXT_ID"（可重复）
 ```
+
+生成器是 TypeScript（`libs/evidence-visualization`），在进程内完成检查、投影、渲染与发布，无需 Python 解释器。`scripts/generate.py` 保留为参考实现，输出与之一致，仅供对照与回归。
 
 3. **验证最终页面。** 按 Sensors 对落盘 HTML 执行浏览器回归并检查截图，同时核对关键数据展示：属性详情是否给出派生规则或结果事实，追溯问答是否与模型一致。完成时，对象、引用、交互、关键数据与可读性有实际证据，或缺少环境及未执行项明确可见。
 

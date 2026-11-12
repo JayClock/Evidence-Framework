@@ -2,7 +2,9 @@
 
 ## 运行环境
 
-完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试还需要 `tests/`。生成器使用 Python 3.10+ 标准库，FM 和 API CLI 与依赖分别由可定位的 FM、API 安装包提供；各包无需相邻。存在 API 时以 `--api-skill` 指定独立 API 包，只有 FM 的页面不要求 API 包。缺少软件时报告环境限制，不自动安装。
+完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试还需要 `tests/`。
+
+生成器有两份实现，输出等价：`npx evidence-workbench generate`（TypeScript，随工作区安装，默认路径）与 `scripts/generate.py`（Python 3.10+，参考实现）。TypeScript 版在进程内完成检查、投影、渲染与发布，不需要 Python；Python 版需要可定位的 FM 包，存在 API 时再加 `--api-skill`。缺少软件时报告环境限制，不自动安装。
 
 生成与浏览器命令见 [入口](../SKILL.md)。输入为 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`；内存模型投影与临时 API 投影保持正式 generated 不变，场景详情复用同一次 FM 检查结果，不再次模拟完整图。联合模式增加 `--require-api --scope "$CONTEXT_ID"`（可重复 `--scope` 指定 API 实际覆盖的独立范围），缺 API 返回非零并保留旧页；独立模式可生成仅 FM 页面。HTML 直接在浏览器打开，无需服务器。
 
@@ -23,7 +25,8 @@
 维护生成器或资源时按影响选择回归；普通页面生成执行入口中的最终 HTML 浏览器检查。
 
 ```bash
-"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests" -v
+npx nx test evidence-visualization            # TypeScript 生成器：投影、渲染、发布、收集
+"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests" -v   # 参考实现契约
 "$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests/portability" -v
 node --test "$VISUAL_SKILL_DIR/tests/business-graph.test.mjs"
 # 维护仓库提供 jsdom；它不是安装包运行依赖：
