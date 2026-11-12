@@ -17,4 +17,12 @@ const SOURCE_CONDITIONS = [
 
 export default defineConfig({
   resolve: { conditions: SOURCE_CONDITIONS },
+  build: {
+    // `@electron-forge/plugin-vite` emits CJS without `build.ssr: true`, so
+    // Vite 8's Rolldown defaults to `platform: 'browser'` and turns
+    // `import.meta.url` into `{}.url` (`undefined`), breaking `createRequire`.
+    rolldownOptions: {
+      platform: 'node',
+    },
+  },
 });
