@@ -62,6 +62,49 @@ describe('EditorScreen', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
   });
 
+  it('opens the delivery hub from the header', async () => {
+    const api = installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document: createDesktopFixture(),
+        issues: [],
+      },
+      deliveryPreviewResult: {
+        success: true,
+        preview: {
+          modelId: 'desktop-fixture',
+          modelName: '桌面端夹具',
+          modelVersion: '1.0.0',
+          services: [
+            {
+              id: 'service.procurement',
+              name: '商品采购',
+              kind: 'fulfillment',
+              contextRef: 'context.procurement',
+              supplies: [],
+              consumes: [],
+              notes: '合同上下文。',
+              routeCount: 4,
+            },
+          ],
+          links: [],
+          routes: [],
+          limitations: [],
+        },
+      },
+    });
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    fireEvent.click(screen.getByText('交付'));
+
+    expect(await screen.findByLabelText('交付中心')).toBeInTheDocument();
+    expect(await screen.findByText('核心履约')).toBeInTheDocument();
+    expect(api.calls.deliveryPreview).toEqual(['/models/procurement']);
+  });
+
   it('shows a save failure without claiming success', async () => {
     installDesktopApi({
       openResult: {
