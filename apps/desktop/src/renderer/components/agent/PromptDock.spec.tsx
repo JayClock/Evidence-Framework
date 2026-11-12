@@ -199,4 +199,92 @@ describe('PromptDock', () => {
 
     expect(document.activeElement).toBe(screen.getByLabelText('访谈内容'));
   });
+
+  it('offers the seven workshop steps, each with its hint', () => {
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={() => undefined}
+        onStop={() => undefined}
+      />,
+    );
+
+    const steps = screen.getByRole('group', { name: '工作坊步骤' });
+
+    expect(steps).toHaveTextContent('1. 锚定合约与双方');
+    expect(steps).toHaveTextContent('7. 串起业务宏流程');
+    expect(
+      screen.getByTitle('先确定哪一份合约约束双方，甲乙方分别是谁'),
+    ).toBeInTheDocument();
+  });
+
+  it('sends the step the modeler picked with the message', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={onSubmit}
+        onStop={() => undefined}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '3. 补上标的物与领域组件' }));
+    type('会员等级怎么算出来的？');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      '【第 3 步 · 补上标的物与领域组件】\n会员等级怎么算出来的？',
+    );
+  });
+
+  it('keeps the step for the next turn and can clear it again', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={onSubmit}
+        onStop={() => undefined}
+      />,
+    );
+
+    const chip = screen.getByRole('button', { name: '2. 成对挖掘履约项' });
+
+    fireEvent.click(chip);
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
+
+    type('发货确认呢？');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    expect(onSubmit).toHaveBeenLastCalledWith(
+      '【第 2 步 · 成对挖掘履约项】\n发货确认呢？',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '清除当前步骤' }));
+    type('那违约呢？');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    expect(onSubmit).toHaveBeenLastCalledWith('那违约呢？');
+  });
+
+  it('sends plain text when no step is chosen', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={onSubmit}
+        onStop={() => undefined}
+      />,
+    );
+
+    type('先把故事讲一遍');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    expect(onSubmit).toHaveBeenCalledWith('先把故事讲一遍');
+  });
 });

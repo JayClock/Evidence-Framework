@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
+import {
+  WORKSHOP_STEPS,
+  workshopStepFocus,
+  workshopStepRank,
+  type WorkshopStepId,
+} from '@evidence-poc/evidence-schema';
+
 const MIN_HEIGHT = 36;
 const MAX_HEIGHT = 240;
 
@@ -27,11 +34,16 @@ export interface PromptDockProps {
 }
 
 /**
- * The interview input.
+ * The workshop input.
  *
- * One composer for both directions: while the agent streams, Enter queues a
- * steering message instead of starting a second run, which is how a modeler
- * corrects a wrong assumption without restarting the round.
+ * One composer for both directions: while the agent streams, Command+Enter
+ * queues a steering message instead of starting a second run, which is how a
+ * modeler corrects a wrong assumption without restarting the round.
+ *
+ * The seven steps sit above it because a facilitator needs to know what the room
+ * is working on. The session keeps no step state, so the modeler says it: the
+ * chosen step travels as a prefix on the next message, and stays chosen for the
+ * following turns until it is cleared.
  */
 export const PromptDock = ({
   running,
@@ -44,6 +56,7 @@ export const PromptDock = ({
   disabled = false,
 }: PromptDockProps) => {
   const [value, setValue] = useState('');
+  const [step, setStep] = useState<WorkshopStepId | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   // Mounting must not steal focus; only a later ⌘K moves the caret here.
   const previousFocusToken = useRef(focusToken);
@@ -79,7 +92,7 @@ export const PromptDock = ({
     }
 
     setValue('');
-    await onSubmit(text);
+    await onSubmit(step === null ? text : `${workshopStepFocus(step)}\n${text}`);
   };
 
   return (
@@ -87,6 +100,43 @@ export const PromptDock = ({
       aria-label="AI 访谈输入"
       className="evidence-no-drag flex w-[560px] max-w-[calc(100%-48px)] flex-col gap-2 rounded-[10px] border border-evidence-line bg-white/95 px-3 pt-2.5 pb-2 shadow-[0_6px_24px_#00000014]"
     >
+      <div className="flex flex-wrap items-center gap-1" role="group" aria-label="工作坊步骤">
+        {WORKSHOP_STEPS.map((candidate) => {
+          const active = step === candidate.id;
+
+          return (
+            <button
+              aria-pressed={active}
+              className={`rounded-full border px-1.5 py-0.5 text-[10px] transition ${
+                active
+                  ? 'border-evidence-accent bg-evidence-accent/10 text-evidence-accent'
+                  : 'border-evidence-line text-evidence-muted hover:border-evidence-accent'
+              }`}
+              key={candidate.id}
+              onClick={() => {
+                setStep(active ? null : candidate.id);
+              }}
+              title={candidate.hint}
+              type="button"
+            >
+              {workshopStepRank(candidate.id)}. {candidate.label}
+            </button>
+          );
+        })}
+        {step === null ? null : (
+          <button
+            aria-label="清除当前步骤"
+            className="shrink-0 text-[10px] text-evidence-muted hover:text-evidence-ink"
+            onClick={() => {
+              setStep(null);
+            }}
+            type="button"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
       {focus === null ? null : (
         <div className="flex items-center gap-1.5">
           <span
