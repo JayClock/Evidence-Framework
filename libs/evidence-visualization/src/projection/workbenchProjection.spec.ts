@@ -6,7 +6,7 @@ import {
 
 type JsonObject = Record<string, unknown>;
 
-/** The fixture `test_generate_review.py` uses, so both engines see one model. */
+/** The fixture every projection case shares, so each one sees one model. */
 const fixtureSource = (): {
   schemaVersion: string;
   model: JsonObject;

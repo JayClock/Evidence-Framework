@@ -52,8 +52,8 @@ describe('selectScope', () => {
       .map((entity) => entity.id)
       .sort();
 
-    // `check_fm.py --scope context.content-subscription` reports the same two
-    // Contexts: the Domain Context the contract depends on comes along.
+    // The requested scope resolves to two Contexts: the Domain Context the
+    // contract depends on comes along.
     expect(contextIds).toEqual(['context.cms', 'context.content-subscription']);
     expect(scoped.manifest.entryContextRefs).toEqual([
       'context.content-subscription',

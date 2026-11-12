@@ -32,7 +32,7 @@ import { API_SCHEMA_TEXT } from '../schemas/apiSchema.js';
 /** The tool identity a manifest records. */
 export const TOOL_NAME = 'evidence-api';
 
-/** Report contract version, kept in step with the Python engine it replaces. */
+/** Projection contract version, written into every manifest it renders. */
 export const TOOL_VERSION = '5.0.0';
 
 const sha256 = (content: string): string =>

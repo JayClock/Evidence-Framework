@@ -2,9 +2,9 @@
  * The JSON text every generated file is written as.
  *
  * Keys are sorted, indentation is two spaces and the file ends with a newline,
- * which is what makes two projections of the same model diff cleanly. Python's
- * `json.dumps(..., ensure_ascii=False)` is the reference: non-ASCII text stays
- * readable rather than `\\uXXXX`, so a reviewer can read the business labels.
+ * which is what makes two projections of the same model diff cleanly. Non-ASCII
+ * text is written as itself rather than `\uXXXX`, so a reviewer can read the
+ * business labels in the diff.
  */
 
 /** Recursively sorts object keys; arrays keep their order. */

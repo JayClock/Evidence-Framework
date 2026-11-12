@@ -74,7 +74,8 @@ describe('buildFmCheckReport', () => {
       scopeRefs: ['context.content-subscription'],
     });
 
-    // Values printed by `check_fm.py --scope context.content-subscription`.
+    // Pinned values for `--scope context.content-subscription`: the digest and
+    // the summary are report contract, so they must not drift.
     expect(report).toMatchObject({
       valid: true,
       consistent: true,

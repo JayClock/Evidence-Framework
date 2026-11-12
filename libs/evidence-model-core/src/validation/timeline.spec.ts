@@ -114,8 +114,7 @@ describe('timelineSummary', () => {
       instanceCount: 6,
       dependencyCount: 6,
       unresolvedOrderCount: 6,
-      // Produced by `build_fm_timeline.py` for the same fixture; the digest is
-      // part of the report contract, so it must not drift.
+      // The digest is part of the report contract, so it must not drift.
       sha256:
         'sha256:361a464e960aced6a173a1d6f4b74fbf8de7e8ee0d99df853c1106940d0e5602',
     });

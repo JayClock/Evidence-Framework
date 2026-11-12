@@ -126,7 +126,7 @@ export const normalizeDiagnostics = (
     }
 
     // Findings that agree on every sorted field still have to print in a fixed
-    // order; the Python sort left this to set iteration, which is arbitrary.
+    // order, so the identity breaks the tie rather than set iteration order.
     return identityOf(left).localeCompare(identityOf(right));
   });
 };

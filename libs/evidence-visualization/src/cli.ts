@@ -74,8 +74,8 @@ const single = (
 /**
  * Generates the page and reports what it contains.
  *
- * The summary is the same shape the Python generator printed, so a caller that
- * already parses one can read the other.
+ * The summary keeps a stable shape, so a caller that parses it once keeps
+ * reading it as the page changes.
  */
 export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
   const parsed = parse(argv);

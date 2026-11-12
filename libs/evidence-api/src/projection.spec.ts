@@ -15,7 +15,7 @@ import { buildOpenApi } from './openapi/openapi.js';
  *
  * A projection has to be reproducible: the same model, the same design and the
  * same digest produce the same bytes. The strongest way to say that is to compare
- * with the artifacts the Python engine left in the repository.
+ * with the artifacts committed beside the model.
  */
 
 const fixturePath = (name: string): string =>
@@ -331,7 +331,7 @@ describe('a second design against a second model', () => {
       ) as { paths: Record<string, unknown>; 'x-generated-from': string };
 
       expect(openapi['x-generated-from']).toBe('evidence-api projection.json');
-      // The same two routes the Python engine produced for this design.
+      // The two routes this design licenses, neither more nor fewer.
       expect(Object.keys(openapi.paths).sort()).toEqual([
         '/payment-confirmations',
         '/subscriptions/{subscriptionId}/payments',

@@ -78,7 +78,7 @@ const UNRESOLVED_REASON =
   'no instance basis path; timestamps do not imply dependency';
 
 /**
- * Compact JSON with sorted keys, byte-identical to the Python writer.
+ * Compact JSON with sorted keys and no whitespace.
  *
  * The FM reports hash this text, so key order and separators are part of the
  * contract rather than a formatting preference.

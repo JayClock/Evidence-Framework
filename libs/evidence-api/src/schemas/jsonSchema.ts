@@ -9,9 +9,9 @@ import type {
  * JSON Schema 2020-12 validation with the format checks the FM contracts use.
  *
  * `ajv` walks `properties`, `oneOf` and `if`/`then` for us; the only thing worth
- * owning is which `format` names mean something. Python's `FormatChecker`
- * validates the formats it knows and silently ignores the rest, so a design that
- * declares a project-specific format keeps working — it just is not enforced.
+ * owning is which `format` names mean something. A name this engine knows is
+ * enforced; anything else is carried as an annotation, so a design that declares
+ * a project-specific format keeps working — it just is not enforced.
  */
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -105,8 +105,8 @@ export const compileSchema = (
       continue;
     }
 
-    // Unknown formats are carried, not enforced — the same reading Python's
-    // format checker gives a name it has no validator for.
+    // Unknown formats are carried, not enforced: the schema still names them and
+    // no invented rule is applied to the values.
     ajv.addFormat(name, { type: 'string', validate: () => true });
   }
 

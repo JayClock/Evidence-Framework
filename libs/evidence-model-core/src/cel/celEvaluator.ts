@@ -1,10 +1,8 @@
 /**
  * A CEL (Common Expression Language) reader and evaluator.
  *
- * The FM checks evaluate rule expressions against Evidence Instances; the
- * Python sensors did that with `cel-python`. This module keeps the same
- * semantics in TypeScript so the desktop app can decide a scenario without
- * starting an interpreter, and it deliberately covers the subset the FM
+ * The FM checks evaluate rule expressions against Evidence Instances. This module
+ * decides a scenario in-process, and it deliberately covers the subset the FM
  * language allows: no protobuf messages, no `optional`, no `dyn` conversions
  * beyond the scalar ones below.
  *
@@ -62,7 +60,7 @@ export class CelTimestamp {
     return Number.isNaN(millis) ? null : new CelTimestamp(millis);
   }
 
-  /** UTC, second precision, `Z` suffix — the shape the Python checker printed. */
+  /** UTC, second precision, `Z` suffix: the RFC 3339 form the reports print. */
   toIso(): string {
     const iso = new Date(this.epochMillis).toISOString();
 
