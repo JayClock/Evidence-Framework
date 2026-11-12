@@ -17,6 +17,12 @@ import type {
   BranchSwitchResult,
   EvidenceBranchSummary,
 } from '../../shared/branches';
+import type {
+  CompileDraftInput,
+  CompileDraftOutcome,
+  IngestDraftInput,
+  IngestDraftResult,
+} from '../../shared/ingestion';
 import type { EvidenceDesktopApi } from '../../shared/ipc';
 import type {
   McpRendererRequest,
@@ -177,6 +183,8 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     triggerSensors: string[];
     modelChanged: string[];
     exportReview: string[];
+    ingestDraft: IngestDraftInput[];
+    compileDraft: CompileDraftInput[];
   };
   agentMock: AgentMockController;
   mcpMock: McpMockController;
@@ -213,6 +221,16 @@ export const installDesktopApi = ({
   sensorReport = healthyReport(),
   branches = [branchSummary()],
   exportReviewResult = { status: 'cancelled' } as const,
+  ingestResult = {
+    success: false,
+    error: '测试没有配置导入结果。',
+    issues: [],
+  } as IngestDraftResult,
+  compileResult = {
+    success: false,
+    error: '测试没有配置编译结果。',
+    issues: [],
+  } as CompileDraftOutcome,
 }: {
   projects?: readonly EvidenceProjectSummary[];
   openResult?: OpenProjectResult;
@@ -228,6 +246,8 @@ export const installDesktopApi = ({
   exportReviewResult?: Awaited<
     ReturnType<EvidenceDesktopApi['projects']['exportReview']>
   >;
+  ingestResult?: IngestDraftResult;
+  compileResult?: CompileDraftOutcome;
 } = {}): DesktopApiMock => {
   const calls: DesktopApiMock['calls'] = {
     open: [],
@@ -242,6 +262,8 @@ export const installDesktopApi = ({
     triggerSensors: [],
     modelChanged: [],
     exportReview: [],
+    ingestDraft: [],
+    compileDraft: [],
   };
 
   const rootPath =
@@ -547,7 +569,19 @@ export const installDesktopApi = ({
         return () => mcpCaptureListeners.delete(listener);
       },
     },
-    system: { platform: 'darwin' },
+    ingestion: {
+    draft: async (input) => {
+      calls.ingestDraft.push(input);
+
+      return ingestResult;
+    },
+    compile: async (input) => {
+      calls.compileDraft.push(input);
+
+      return compileResult;
+    },
+  },
+  system: { platform: 'darwin' },
   };
 
   Object.defineProperty(window, 'evidenceAPI', {

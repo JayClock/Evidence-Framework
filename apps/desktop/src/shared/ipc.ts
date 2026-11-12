@@ -1,5 +1,11 @@
 import type { EvidenceAgentApi } from './agentIpc';
 import type { EvidenceBranchesApi } from './branchApi';
+import type {
+  CompileDraftInput,
+  CompileDraftOutcome,
+  IngestDraftInput,
+  IngestDraftResult,
+} from './ingestion';
 import type { EvidenceMcpApi } from './mcpIpc';
 import type {
   CreateProjectDialogInput,
@@ -37,6 +43,15 @@ export const EVIDENCE_IPC_CHANNELS = {
 export type EvidenceIpcChannel =
   (typeof EVIDENCE_IPC_CHANNELS)[keyof typeof EVIDENCE_IPC_CHANNELS];
 
+/** Channels that read business prose into a draft, and compile that draft. */
+export const EVIDENCE_INGESTION_IPC_CHANNELS = {
+  draft: 'evidence:ingestion:draft',
+  compile: 'evidence:ingestion:compile',
+} as const;
+
+export type EvidenceIngestionIpcChannel =
+  (typeof EVIDENCE_INGESTION_IPC_CHANNELS)[keyof typeof EVIDENCE_INGESTION_IPC_CHANNELS];
+
 /** The only surface the renderer can reach: no `ipcRenderer`, no `fs`. */
 export interface EvidenceDesktopApi {
   projects: {
@@ -70,10 +85,33 @@ export interface EvidenceDesktopApi {
   mcp: EvidenceMcpApi;
   /** Interview lineages: fork, switch and merge model snapshots. */
   branches: EvidenceBranchesApi;
+  /**
+   * Business text and blueprint tables in, a model out.
+   *
+   * Both calls run in the main process: reading uses the project's model
+   * configuration, and compiling writes a source tree, so neither belongs in a
+   * renderer that has no filesystem.
+   */
+  ingestion: {
+    /** Reads business text or a blueprint table into a draft. */
+    draft: (input: IngestDraftInput) => Promise<IngestDraftResult>;
+    /** Compiles a reviewed draft into a saved project. */
+    compile: (input: CompileDraftInput) => Promise<CompileDraftOutcome>;
+  };
   system: {
     platform: NodeJS.Platform;
   };
 }
+
+export type {
+  CompileDraftInput,
+  CompileDraftOutcome,
+  CompileDraftResult,
+  IngestDraftInput,
+  IngestDraftResult,
+  IngestionInputKind,
+  IngestionReader,
+} from './ingestion';
 
 export type {
   CreateProjectDialogResult,

@@ -17,7 +17,11 @@ import {
   EVIDENCE_BRANCH_IPC_CHANNELS,
   type BranchChangedEvent,
 } from '../shared/branches';
-import { EVIDENCE_IPC_CHANNELS, type EvidenceDesktopApi } from '../shared/ipc';
+import {
+  EVIDENCE_INGESTION_IPC_CHANNELS,
+  EVIDENCE_IPC_CHANNELS,
+  type EvidenceDesktopApi,
+} from '../shared/ipc';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
@@ -186,6 +190,12 @@ const api: EvidenceDesktopApi = {
         );
       };
     },
+  },
+  ingestion: {
+    draft: (input) =>
+      ipcRenderer.invoke(EVIDENCE_INGESTION_IPC_CHANNELS.draft, input),
+    compile: (input) =>
+      ipcRenderer.invoke(EVIDENCE_INGESTION_IPC_CHANNELS.compile, input),
   },
   system: {
     platform: process.platform,
