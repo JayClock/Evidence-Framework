@@ -374,8 +374,10 @@ export const projectWorkbenchData = ({
     const actuals = listOf(result['evaluations']);
     const evaluations: JsonObject[] = [];
 
-    node['asOf'] = scenario['asOf'];
-    node['passed'] = result['simulationPassed'];
+    // Absent check values are printed as `null`, not dropped: the page must
+    // describe the same run whether or not a field was asserted.
+    node['asOf'] = scenario['asOf'] ?? null;
+    node['passed'] = result['simulationPassed'] ?? null;
     node['steps'] = listOf(scenario['steps']).map((step) =>
       select(
         step,
@@ -390,10 +392,10 @@ export const projectWorkbenchData = ({
       const used = matches ? actual : {};
 
       evaluations.push({
-        ruleRef: evaluation['ruleRef'],
-        expected: evaluation['expectedResult'],
-        actual: used['result'],
-        passed: used['passed'],
+        ruleRef: evaluation['ruleRef'] ?? null,
+        expected: evaluation['expectedResult'] ?? null,
+        actual: used['result'] ?? null,
+        passed: used['passed'] ?? null,
       });
       link(node.id, evaluation['ruleRef'], '验证规则');
     });
@@ -435,7 +437,7 @@ export const projectWorkbenchData = ({
           : '',
       );
 
-      node['shape'] = resource['shape'];
+      node['shape'] = resource['shape'] ?? null;
       link(node.id, resource['entityRef'], '业务对象');
       link(node.id, resource['parentRef'], '父资源');
     }
@@ -530,8 +532,8 @@ export const projectWorkbenchData = ({
         ? operation['concurrency']
         : {};
 
-      node['idempotency'] = idempotency['mode'];
-      node['concurrency'] = concurrency['mode'];
+      node['idempotency'] = idempotency['mode'] ?? null;
+      node['concurrency'] = concurrency['mode'] ?? null;
     }
 
     for (const journey of listOf(http['journeys'])) {
@@ -606,13 +608,13 @@ export const projectWorkbenchData = ({
     },
     validation: {
       fm: true,
-      consistent: check.consistent,
-      complete: check.complete,
-      scopeRefs: check.scopeRefs,
-      contextRefs: check.contextRefs,
-      gaps: check.gaps,
+      consistent: check.consistent ?? null,
+      complete: check.complete ?? null,
+      scopeRefs: check.scopeRefs ?? null,
+      contextRefs: check.contextRefs ?? null,
+      gaps: check.gaps ?? null,
       simulationLimitations: check.simulationLimitations ?? [],
-      simulation: check.simulationPassed,
+      simulation: check.simulationPassed ?? null,
       api: api === null ? null : (isRecord(api.http) ? api.http['complete'] : null),
       runtime: false,
       unresolvedOrderCount: check.timelineSummary?.unresolvedOrderCount ?? 0,

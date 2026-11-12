@@ -311,6 +311,32 @@ describe('projectWorkbenchData', () => {
     ]);
   });
 
+  it('prints an absent value as null so every key survives the round trip', () => {
+    const data = project(fixture(), {
+      scenarios: [{ id: 'scenario.a', label: '未运行' }],
+    });
+    const scenario = nodeOf(data, 'scenario.a');
+
+    expect(Object.keys(data.validation).sort()).toEqual([
+      'api',
+      'complete',
+      'consistent',
+      'contextRefs',
+      'fm',
+      'gaps',
+      'runtime',
+      'scopeRefs',
+      'simulation',
+      'simulationLimitations',
+      'unresolvedOrderCount',
+    ]);
+    expect(data.validation.consistent).toBeNull();
+    expect(data.validation.scopeRefs).toBeNull();
+    expect(scenario['asOf']).toBeNull();
+    expect(scenario['passed']).toBeNull();
+    expect(JSON.parse(JSON.stringify(data))).toEqual(data);
+  });
+
   it('prints the check verdict the page displays', () => {
     const data = project(fixture(), {
       check: {
