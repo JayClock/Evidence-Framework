@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
+  GOVERNANCE_INSTRUCTIONS,
+  GOVERNANCE_PROMPT,
+  GOVERNANCE_SYSTEM_PROMPT,
   MODELING_PROMPT,
   OPERATOR_PROMPT,
   ROLE_PROMPT,
@@ -72,5 +75,34 @@ describe('the built-in instructions', () => {
     expect(ROLE_PROMPT).toContain('主持，不是审讯');
     expect(ROLE_PROMPT).toContain('允许粗糙');
     expect(ROLE_PROMPT).not.toContain('审讯员');
+  });
+});
+
+describe('the governance instructions', () => {
+  it('keep the red lines and the operators a repair also needs', () => {
+    expect(GOVERNANCE_INSTRUCTIONS).toEqual([
+      ROLE_PROMPT,
+      MODELING_PROMPT,
+      OPERATOR_PROMPT,
+      GOVERNANCE_PROMPT,
+    ]);
+    expect(GOVERNANCE_SYSTEM_PROMPT).toBe(GOVERNANCE_INSTRUCTIONS.join('\n\n'));
+  });
+
+  it('start from the trace instead of the workshop board', () => {
+    for (const tool of ['audit_production_drift', 'run_scenario_replay']) {
+      expect(GOVERNANCE_PROMPT).toContain(tool);
+    }
+
+    // A governance turn that walks the workshop steps would ask a business
+    // again for facts the trace already holds.
+    expect(GOVERNANCE_PROMPT).not.toContain('锚定合约与双方');
+    expect(GOVERNANCE_SYSTEM_PROMPT).not.toContain('锚定合约与双方');
+  });
+
+  it('never lets an audit rewrite the model to match a leaking service', () => {
+    expect(GOVERNANCE_PROMPT).toContain('生产越权');
+    expect(GOVERNANCE_PROMPT).toContain('不许改模型迁就');
+    expect(GOVERNANCE_PROMPT).toContain('没有回放结果就等于没有结论');
   });
 });

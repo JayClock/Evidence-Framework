@@ -1,3 +1,20 @@
+export { GOVERNANCE_PROMPT } from './prompts/governance.js';
+
+export {
+  GOVERNANCE_INSTRUCTIONS,
+  GOVERNANCE_SYSTEM_PROMPT,
+} from './prompts/index.js';
+
+export {
+  decideGovernance,
+  type GovernanceAction,
+  type GovernanceActionKind,
+  type GovernanceDecision,
+  type GovernanceDrift,
+  type GovernanceSimulation,
+  type GovernanceVerdict,
+} from './governance/governanceLoop.js';
+
 export {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
