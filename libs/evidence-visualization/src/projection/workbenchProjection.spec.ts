@@ -107,6 +107,28 @@ describe('projectWorkbenchData', () => {
     expect(request).not.toHaveProperty('fulfillmentRef');
   });
 
+  it('nests a child Context under its parent without claiming ownership', () => {
+    const model = fixtureSource();
+
+    model.entities.push({
+      id: 'context.child',
+      category: 'context',
+      kind: 'pre_contract',
+      label: '子上下文',
+      parentContextRef: 'context.a',
+    });
+
+    const data = project(model);
+    const child = nodeOf(data, 'context.child');
+    const request = nodeOf(data, 'request.a');
+
+    // A Context nests, it does not belong to another Context.
+    expect(child['parent']).toBe('context.a');
+    expect(child).not.toHaveProperty('contextRef');
+    expect(request['parent']).toBe('context.a');
+    expect(request['contextRef']).toBe('context.a');
+  });
+
   it('projects explicit relationships as labelled edges', () => {
     const { edges } = project();
 

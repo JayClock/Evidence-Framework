@@ -214,9 +214,15 @@ export const projectWorkbenchData = ({
       throw new Error(`重复对象 ID：${identity}`);
     }
 
+    // `parent` is where the tree nests the node; `contextRef` is the Context the
+    // object belongs to, which only an owned object has. A Context names its
+    // parent instead, so copying that into `contextRef` would claim an ownership
+    // the model never declared.
+    const ownContext =
+      typeof value['contextRef'] === 'string' ? value['contextRef'] : '';
     const contextRef =
-      typeof value['contextRef'] === 'string'
-        ? value['contextRef']
+      ownContext !== ''
+        ? ownContext
         : typeof value['parentContextRef'] === 'string'
           ? value['parentContextRef']
           : '';
@@ -228,7 +234,7 @@ export const projectWorkbenchData = ({
       group,
       kind: typeof value['kind'] === 'string' ? value['kind'] : group,
       parent: contextRef,
-      ...(contextRef === '' ? {} : { contextRef }),
+      ...(ownContext === '' ? {} : { contextRef: ownContext }),
     };
 
     nodes.set(identity, node);
