@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.prepaid-payment-precedes-prepaid-payment-request",
-  "kind": "references",
-  "sourceRef": "request.prepaid-payment",
-  "targetRef": "contract.prepaid-payment",
-  "label": "凭证引用形成依据"
-}

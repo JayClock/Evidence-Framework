@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.interruption-request-precedes-confirmation",
-  "kind": "references",
-  "sourceRef": "confirmation.interruption-compensation",
-  "targetRef": "request.interruption-compensation",
-  "label": "凭证引用形成依据"
-}

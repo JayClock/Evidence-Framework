@@ -1,9 +1,0 @@
-{
-  "type": "evidence_instance",
-  "id": "instance.content-access-confirmation",
-  "entityRef": "confirmation.content-access",
-  "values": {
-    "confirmed_at": "2026-09-01T09:12:00Z"
-  },
-  "basedOn": ["instance.content-access-request"]
-}

@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.revenue-share-precedes-revenue-share-confirmation",
-  "kind": "references",
-  "sourceRef": "confirmation.revenue-share",
-  "targetRef": "request.revenue-share",
-  "label": "凭证引用形成依据"
-}

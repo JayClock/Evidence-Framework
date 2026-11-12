@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.proposal-precedes-content-production-contract",
-  "kind": "references",
-  "sourceRef": "contract.content-production",
-  "targetRef": "proposal.content-project",
-  "label": "凭证引用形成依据"
-}

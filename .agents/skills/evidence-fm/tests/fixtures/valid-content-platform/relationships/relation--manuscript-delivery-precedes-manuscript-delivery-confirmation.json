@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.manuscript-delivery-precedes-manuscript-delivery-confirmation",
-  "kind": "references",
-  "sourceRef": "confirmation.manuscript-delivery",
-  "targetRef": "request.manuscript-delivery",
-  "label": "凭证引用形成依据"
-}

@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.creator-penalty-precedes-creator-penalty-confirmation",
-  "kind": "references",
-  "sourceRef": "confirmation.creator-penalty",
-  "targetRef": "request.creator-penalty",
-  "label": "凭证引用形成依据"
-}

@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.operations-performance-precedes-weekly-progress-check-request",
-  "kind": "references",
-  "sourceRef": "request.weekly-progress-check",
-  "targetRef": "contract.operations-performance",
-  "label": "凭证引用形成依据"
-}

@@ -1,8 +1,0 @@
-{
-  "type": "relationship",
-  "id": "relation.operations-performance-precedes-goal-setting-request",
-  "kind": "references",
-  "sourceRef": "request.goal-setting",
-  "targetRef": "contract.operations-performance",
-  "label": "凭证引用形成依据"
-}
