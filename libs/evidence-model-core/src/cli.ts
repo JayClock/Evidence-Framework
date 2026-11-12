@@ -1,10 +1,17 @@
 #!/usr/bin/env node
-import { realpathSync } from 'node:fs';
+import { existsSync, realpathSync } from 'node:fs';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import {
   DEFAULT_MODEL_BUNDLE_FILE,
+  buildRolePlayPack,
+  compiledDocument,
+  derivedSimulation,
+  derivedTimeline,
+  derivedTraceability,
+  RolePlayPackError,
   MODEL_DIRECTORY,
   buildFmCheckReport,
   isModelBundlePath,
@@ -14,6 +21,7 @@ import {
   readModelBundle,
   readModelRoot,
   readModelRootBytes,
+  stringifyModelJson,
   unpackModelBundle,
   writeModelBundle,
 } from './index.js';
@@ -36,6 +44,23 @@ const USAGE = `Evidence 业务模型单文件打包
       只读执行一致性检查；带 --scope 时另核对责任范围完整性、覆盖与场景执行。
       通过退出 0，发现阻塞问题退出 1。报告与桌面端、Agent 工具读的是同一份。
 
+  evidence-model compile <模型目录> --out <文件> [--compact] [--sort-keys]
+      把已通过一致性检查的模型编译成一份 JSON 快照。
+
+  evidence-model lineage <模型目录> --out <文件>
+      写出属性追溯：每条 CEL 读取来自哪个 Entity Attribute。
+
+  evidence-model timeline <模型目录> --out <文件>
+      写出确定性证据时间线与依赖顺序。
+
+  evidence-model simulate <模型目录> --out <文件> [--scenario <场景 ID>]...
+      执行验证场景并写出模拟报告。
+
+  evidence-model role-play <模型目录> <场景 ID> --out <目录> [--force]
+      生成可离线使用的人工角色扮演包（空白凭证、角色卡、主持卡与审核清单）。
+
+所有 --out 命令只写指定路径；--force 才会替换已存在的目录。
+
 选项:
   --out <path>   输出路径；缺省见上面的默认值
   --sort-keys    输出时按对象键名排序，便于稳定 diff
@@ -46,8 +71,11 @@ const USAGE = `Evidence 业务模型单文件打包
 interface ParsedArguments {
   command: string | undefined;
   target: string | undefined;
+  subject: string | undefined;
   out: string | undefined;
   scopes: readonly string[];
+  force: boolean;
+  compact: boolean;
   sortKeys: boolean;
   json: boolean;
   help: boolean;
@@ -57,6 +85,8 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
   const positional: string[] = [];
   let out: string | undefined;
   const scopes: string[] = [];
+  let force = false;
+  let compact = false;
   let sortKeys = false;
   let json = false;
   let help = false;
@@ -80,6 +110,16 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
 
     if (argument === '--json') {
       json = true;
+      continue;
+    }
+
+    if (argument === '--force') {
+      force = true;
+      continue;
+    }
+
+    if (argument === '--compact') {
+      compact = true;
       continue;
     }
 
@@ -116,8 +156,11 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
   return {
     command: positional[0],
     target: positional[1],
+    subject: positional[2],
     out,
     scopes,
+    force,
+    compact,
     sortKeys,
     json,
     help,
@@ -379,6 +422,255 @@ const runCheck = async (parsed: ParsedArguments): Promise<number> => {
   return report.valid ? 0 : 1;
 };
 
+
+/** Reads a model root once, refusing the bundle a derived command cannot use. */
+const readDerivedInputs = async (
+  parsed: ParsedArguments,
+  command: string,
+): Promise<
+  | { ok: false }
+  | {
+      ok: true;
+      modelRoot: string;
+      model: Awaited<ReturnType<typeof readModelRoot>>
+    }
+> => {
+  const target = parsed.target;
+
+  if (target === undefined) {
+    process.stderr.write(`${command} 需要一个模型目录。\n\n`);
+
+    return { ok: false };
+  }
+
+  const modelRoot = path.resolve(target);
+
+  if (isModelBundlePath(modelRoot)) {
+    process.stderr.write(
+      `${command} 读取 .evidence/fm 目录；单文件请先 unpack 成目录。\n`,
+    );
+
+    return { ok: false };
+  }
+
+  return { ok: true, modelRoot, model: await readModelRoot(modelRoot) };
+};
+
+/** Fails when the model has file-level or consistency problems. */
+const ensureCheckable = (
+  model: Awaited<ReturnType<typeof readModelRoot>>,
+): boolean => {
+  const sourceIssues = model.issues.map(
+    (issue) => `${issue.path}: ${issue.message}`,
+  );
+  const result = buildFmCheckReport({
+    model: model.bundle,
+    suite: loadValidationSuite(model.files),
+    sourceIssues,
+    modelDigest: modelDigestOf([]),
+  });
+
+  if (result.report.valid) {
+    return true;
+  }
+
+  process.stderr.write('模型未通过一致性检查，已中止：\n');
+
+  for (const message of result.report.errors) {
+    process.stderr.write(`- ${message}\n`);
+  }
+
+  return false;
+};
+
+const writeJsonReport = async (
+  target: string,
+  value: unknown,
+  compact: boolean,
+  sortKeys: boolean,
+): Promise<void> => {
+  const text = compact
+    ? `${JSON.stringify(value)}\n`
+    : stringifyModelJson(value, { ...(sortKeys ? { sortKeys: true } : {}) });
+
+  await mkdir(path.dirname(path.resolve(target)), { recursive: true });
+  await writeFile(path.resolve(target), text, 'utf8');
+  process.stdout.write(`已写入 ${path.resolve(target)}\n`);
+};
+
+const runCompile = async (parsed: ParsedArguments): Promise<number> => {
+  const inputs = await readDerivedInputs(parsed, 'compile');
+
+  if (!inputs.ok) {
+    return 2;
+  }
+
+  if (parsed.out === undefined) {
+    process.stderr.write('compile 需要 --out <文件>。\n');
+
+    return 2;
+  }
+
+  if (!ensureCheckable(inputs.model)) {
+    return 1;
+  }
+
+  await writeJsonReport(
+    parsed.out,
+    compiledDocument(inputs.model.bundle),
+    parsed.compact,
+    parsed.sortKeys,
+  );
+
+  return 0;
+};
+
+const runLineage = async (parsed: ParsedArguments): Promise<number> => {
+  const inputs = await readDerivedInputs(parsed, 'lineage');
+
+  if (!inputs.ok) {
+    return 2;
+  }
+
+  if (parsed.out === undefined) {
+    process.stderr.write('lineage 需要 --out <文件>。\n');
+
+    return 2;
+  }
+
+  if (!ensureCheckable(inputs.model)) {
+    return 1;
+  }
+
+  await writeJsonReport(
+    parsed.out,
+    derivedTraceability(inputs.model.bundle),
+    parsed.compact,
+    parsed.sortKeys,
+  );
+
+  return 0;
+};
+
+const runTimeline = async (parsed: ParsedArguments): Promise<number> => {
+  const inputs = await readDerivedInputs(parsed, 'timeline');
+
+  if (!inputs.ok) {
+    return 2;
+  }
+
+  if (parsed.out === undefined) {
+    process.stderr.write('timeline 需要 --out <文件>。\n');
+
+    return 2;
+  }
+
+  const { timeline, errors } = derivedTimeline({
+    model: inputs.model.bundle,
+    suite: loadValidationSuite(inputs.model.files),
+  });
+
+  if (errors.length > 0) {
+    process.stderr.write('时间线存在问题，已中止：\n');
+
+    for (const message of errors) {
+      process.stderr.write(`- ${message}\n`);
+    }
+
+    return 1;
+  }
+
+  await writeJsonReport(parsed.out, timeline, parsed.compact, parsed.sortKeys);
+
+  return 0;
+};
+
+const runSimulate = async (parsed: ParsedArguments): Promise<number> => {
+  const inputs = await readDerivedInputs(parsed, 'simulate');
+
+  if (!inputs.ok) {
+    return 2;
+  }
+
+  if (parsed.out === undefined) {
+    process.stderr.write('simulate 需要 --out <文件>。\n');
+
+    return 2;
+  }
+
+  const suite = loadValidationSuite(inputs.model.files);
+  const { report } = derivedSimulation(
+    { model: inputs.model.bundle, suite },
+    parsed.scopes.length === 0 ? undefined : parsed.scopes,
+  );
+
+  await writeJsonReport(parsed.out, report, parsed.compact, parsed.sortKeys);
+
+  return report.simulationPassed ? 0 : 1;
+};
+
+const runRolePlay = async (parsed: ParsedArguments): Promise<number> => {
+  const scenarioId = parsed.subject;
+  const inputs = await readDerivedInputs(parsed, 'role-play');
+
+  if (!inputs.ok) {
+    return 2;
+  }
+
+  if (scenarioId === undefined || parsed.out === undefined) {
+    process.stderr.write(
+      'role-play 需要 <场景 ID> 与 --out <目录>。\n\n',
+    );
+
+    return 2;
+  }
+
+  const output = path.resolve(parsed.out);
+
+  if (existsSync(output)) {
+    if (!parsed.force) {
+      process.stderr.write(
+        `输出目录已存在：${output}；使用 --force 才会替换。\n`,
+      );
+
+      return 1;
+    }
+
+    await rm(output, { recursive: true, force: true });
+  }
+
+  let pack: ReturnType<typeof buildRolePlayPack>;
+
+  try {
+    pack = buildRolePlayPack({
+      model: inputs.model.bundle,
+      suite: loadValidationSuite(inputs.model.files),
+      scenarioId,
+    });
+  } catch (error) {
+    if (!(error instanceof RolePlayPackError)) {
+      throw error;
+    }
+
+    process.stderr.write(`${error.message}\n`);
+
+    return 1;
+  }
+
+  for (const [relative, content] of pack.files) {
+    const target = path.join(output, relative);
+
+    await mkdir(path.dirname(target), { recursive: true });
+    await writeFile(target, content, 'utf8');
+  }
+
+  process.stdout.write(
+    `已生成角色扮演包 ${output}（场景 ${scenarioId}，${pack.files.size} 个文件）\n`,
+  );
+
+  return 0;
+};
+
 /** Runs one CLI invocation and returns the process exit code. */
 export const runEvidenceModelCommand = async (
   argv: readonly string[],
@@ -400,6 +692,16 @@ export const runEvidenceModelCommand = async (
       return runInspect(parsed);
     case 'check':
       return runCheck(parsed);
+    case 'compile':
+      return runCompile(parsed);
+    case 'lineage':
+      return runLineage(parsed);
+    case 'timeline':
+      return runTimeline(parsed);
+    case 'simulate':
+      return runSimulate(parsed);
+    case 'role-play':
+      return runRolePlay(parsed);
     default:
       process.stderr.write(`未知命令 ${parsed.command}。\n\n${USAGE}`);
 

@@ -253,6 +253,19 @@ export {
 } from './validation/fmCheck.js';
 
 export {
+  derivedSimulation,
+  derivedTimeline,
+  derivedTraceability,
+  type DerivedInputs,
+} from './derive/derivedDocuments.js';
+
+export {
+  RolePlayPackError,
+  buildRolePlayPack,
+  type RolePlayPack,
+} from './derive/rolePlayPack.js';
+
+export {
   emptyTimelineCollections,
   type TimelineCollections,
 } from './validation/timeline.js';
