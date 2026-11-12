@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * The static presentation assets the workbench page is built from.
@@ -72,18 +73,25 @@ export const resolveAssetsDirectory = ({
     add(path.join(path.resolve(projectRoot), '.agents', 'skills'));
   }
 
-  let current = path.resolve(searchStartDirectory);
+  // Climb from the caller's directory and from this module, so a CLI installed
+  // with the workspace finds the skill whether it runs from `src` or `dist`.
+  for (const start of [
+    path.resolve(searchStartDirectory),
+    path.dirname(fileURLToPath(import.meta.url)),
+  ]) {
+    let current = start;
 
-  for (let depth = 0; depth < 8; depth += 1) {
-    add(path.join(current, '.agents', 'skills'));
+    for (let depth = 0; depth < 8; depth += 1) {
+      add(path.join(current, '.agents', 'skills'));
 
-    const parent = path.dirname(current);
+      const parent = path.dirname(current);
 
-    if (parent === current) {
-      break;
+      if (parent === current) {
+        break;
+      }
+
+      current = parent;
     }
-
-    current = parent;
   }
 
   const found = candidates.find((candidate) => fileExists(candidate));

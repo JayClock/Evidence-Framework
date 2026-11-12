@@ -431,6 +431,12 @@ importers:
 
   libs/evidence-visualization:
     dependencies:
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../evidence-api
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
       tslib:
         specifier: ^2.3.0
         version: 2.9.1

@@ -33,3 +33,23 @@ export {
   publishRefusal,
   publishWorkbench,
 } from './publish/workbenchPublisher.js';
+
+export {
+  API_DESIGN_PATH,
+  MODEL_TREE,
+  TRACE_PATH,
+  WorkbenchInputError,
+  collectWorkbench,
+  workbenchFingerprint,
+  type CollectWorkbenchInput,
+  type CollectedWorkbench,
+} from './generate/collectWorkbench.js';
+
+export {
+  generateWorkbench,
+  reviewPagePath,
+  type GenerateWorkbenchInput,
+  type GenerateWorkbenchResult,
+} from './generate/generateWorkbench.js';
+
+export { runCli, type CliResult } from './cli.js';

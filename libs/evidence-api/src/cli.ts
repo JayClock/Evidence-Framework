@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { loadFm } from './adapter/fmAdapter.js';
 import { canonicalJson } from './canonicalJson.js';
@@ -370,6 +371,11 @@ const main = async (): Promise<void> => {
   process.exitCode = result.exitCode;
 };
 
-if (process.argv[1] !== undefined && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+// Compare the resolved entry path, not its basename: every package ships a
+// `cli.js`, so a suffix test runs this command whenever another one is imported.
+if (
+  process.argv[1] !== undefined &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+) {
   void main();
 }
