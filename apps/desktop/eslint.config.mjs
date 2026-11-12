@@ -3,8 +3,8 @@ import baseConfig from '../../eslint.config.mjs';
 
 export default [
   {
-    // `resources/` is `scripts/prepare-desktop-runtime.mjs` output: the bundled
-    // skills tree and the portable interpreter, neither written by us.
+    // `resources/` is `scripts/prepare-desktop-resources.mjs` output: the page
+    // assets copied out of `libs/evidence-visualization`, not written here.
     ignores: ['out/**', '.vite/**', 'dist/**', 'node_modules/**', 'resources/**'],
   },
   ...nx.configs['flat/react'],

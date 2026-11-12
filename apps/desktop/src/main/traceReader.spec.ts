@@ -50,7 +50,7 @@ describe('readInterviewTrace', () => {
     }
   });
 
-  it('reads a trace document as written by the discovery skill', async () => {
+  it('reads a trace document as the interview appends it', async () => {
     const document = {
       schemaVersion: '5.0',
       modelId: 'product-procurement',

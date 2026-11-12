@@ -37,7 +37,7 @@ export const BRANCH_DIRECTORY = path.join('.evidence', 'branches');
 export const BRANCH_MANIFEST_FILE = 'manifest.json';
 /** File holding one branch's interview lineage. */
 export const BRANCH_SESSION_FILE = 'session.jsonl';
-/** Relative path of the checkout every skill and sensor reads. */
+/** Relative path of the checkout every sensor and tool reads. */
 export const CHECKOUT_DIRECTORY = path.join('.evidence', 'fm');
 /** Relative path of the interview trace the frontier panel reads. */
 export const BRANCH_TRACE_PATH = path.join(
@@ -113,7 +113,7 @@ const writeAtomically = async (file: string, content: string): Promise<void> => 
 /**
  * File-backed branch store.
  *
- * `.evidence/fm` stays the checkout that the skills, the sensors and Git already
+ * `.evidence/fm` stays the checkout that the sensors, the tools and Git already
  * read, and every branch — including `main` — keeps a snapshot beside it. A
  * switch therefore saves the current checkout back to its own snapshot first, so
  * no edit can be lost by moving between assumptions.

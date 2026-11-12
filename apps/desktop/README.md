@@ -65,7 +65,7 @@ apps/desktop/
 │   ├── renderer/      # React 19 UI: canvas, inspector, sidebar, agent panel,
 │   │                  # PromptDock, sensor status bar and diagnostics drawer
 │   └── shared/        # IPC channel names and payload contracts (project, agent)
-├── resources/         # build output: the bundled skill tree (gitignored)
+├── resources/         # build output: the bundled page assets (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
 └── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```
@@ -215,7 +215,7 @@ Cursor / Claude Code / CLI ──stdio──▶ evidence (--mcp-stdio, headless)
 ## Interview branches (phase 5)
 
 ```text
-.evidence/fm                        <- the checkout every skill and sensor reads
+.evidence/fm                        <- the checkout every sensor and tool reads
 .evidence/traces/interview-trace.json
 .evidence/branches/manifest.json    <- which branch is checked out
 .evidence/branches/<id>/fm          <- that branch's own source tree

@@ -22,8 +22,8 @@ import { modelSourceOf, projectDirectoryOf } from './modelSource';
  *
  * The page is generated from the sources on disk, not from the canvas: a review
  * someone mails to a colleague has to describe what was saved. Generation stays
- * in the main process because it reads the model tree and the skill assets, and
- * the renderer owns neither.
+ * in the main process because it reads the model tree and the page assets this
+ * install ships, and the renderer owns neither.
  */
 
 export interface ReviewIpcOptions {
