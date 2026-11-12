@@ -11,6 +11,7 @@ import {
   PARTICIPANT_KINDS,
   REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
   ROLE_KINDS,
+  isDomainComponentRole,
 } from '../ast/entity.js';
 import { isCardinality, RELATIONSHIP_KINDS } from '../ast/relationship.js';
 import {
@@ -56,6 +57,7 @@ const ENTITY_KEYS = new Set([
   'rootRefs',
   'responsibleRoleRef',
   'roleRefs',
+  'domainRole',
   'attributes',
   'notes',
   'sourceSnippet',
@@ -996,6 +998,19 @@ const validateNonContextEntity = (
   }
 
   if (
+    entity['domainRole'] !== undefined &&
+    !(category === 'participant' && kind === 'thing')
+  ) {
+    pushIssue(
+      issues,
+      'entity.domainRole.thingOnly',
+      `${path}.domainRole`,
+      'Only a Participant Thing may stand for a domain calculator or checker.',
+      entityId,
+    );
+  }
+
+  if (
     category === 'role' &&
     (entity['responsibleRoleRef'] !== undefined ||
       entity['roleRefs'] !== undefined)
@@ -1148,8 +1163,19 @@ const validateEntityKinds = (
     );
   }
 
-  const aliases = entity['aliases'];
+  const domainRole = entity['domainRole'];
 
+  if (domainRole !== undefined && !isDomainComponentRole(domainRole)) {
+    pushIssue(
+      issues,
+      'entity.kind',
+      `${path}.domainRole`,
+      `unsupported domain role '${String(domainRole)}'.`,
+      entityId,
+    );
+  }
+
+  const aliases = entity['aliases'];
   if (
     aliases !== undefined &&
     (!Array.isArray(aliases) ||

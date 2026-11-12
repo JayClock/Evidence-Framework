@@ -26,6 +26,25 @@ export const PARTICIPANT_KINDS = ['party', 'thing'] as const;
 
 export type ParticipantKind = (typeof PARTICIPANT_KINDS)[number];
 
+/**
+ * What a `thing` stands for when the domain is the hard part.
+ *
+ * Most things are what the business trades in (a course, a device, a carton).
+ * Some are not objects at all but the work the domain exists to do: a pricing
+ * band, a ratio, a tier ladder, an eligibility test. Naming that difference keeps
+ * a calculated value out of the contract, where it would become a hard-coded
+ * number, and puts it in the Domain Context where a rule can own it.
+ */
+export const DOMAIN_COMPONENT_ROLES = ['calculator', 'checker'] as const;
+
+export type DomainComponentRole = (typeof DOMAIN_COMPONENT_ROLES)[number];
+
+export const DOMAIN_COMPONENT_ROLE_LABELS: Record<DomainComponentRole, string> =
+  {
+    calculator: '计算器',
+    checker: '检查器',
+  };
+
 export const ROLE_KINDS = [
   'party',
   'domain',
@@ -113,6 +132,8 @@ export interface ParticipantEntityAST extends EntityBase {
   kind: ParticipantKind;
   /** Required for `thing`, forbidden for `party`. */
   contextRef?: string;
+  /** Set on a `thing` that stands for domain computation, never on a `party`. */
+  domainRole?: DomainComponentRole;
 }
 
 export interface RoleEntityAST extends EntityBase {
@@ -200,6 +221,29 @@ export function isParticipantEntity(
   entity: EntityAST | undefined,
 ): entity is ParticipantEntityAST {
   return entity?.category === 'participant';
+}
+
+export const isDomainComponentRole = (
+  value: unknown,
+): value is DomainComponentRole =>
+  typeof value === 'string' &&
+  (DOMAIN_COMPONENT_ROLES as readonly string[]).includes(value);
+
+/**
+ * True for the thing a derivation reads instead of a contract parameter.
+ *
+ * A calculator or checker is where a "how much" or "may they" question lives
+ * once it has been taken out of the agreement, so the model can answer it with a
+ * rule instead of a value somebody typed in.
+ */
+export function isDomainComponent(
+  entity: EntityAST | undefined,
+): entity is ParticipantEntityAST & { domainRole: DomainComponentRole } {
+  return (
+    entity?.category === 'participant' &&
+    entity.kind === 'thing' &&
+    entity.domainRole !== undefined
+  );
 }
 
 export function isContextEntity(

@@ -444,6 +444,35 @@ describe('evidence context checks', () => {
   });
 });
 
+describe('domain component checks', () => {
+  it('accepts a calculator kept in the Domain Context', () => {
+    const document = baseDocument();
+    const product = requireParticipant(document, 'thing.product');
+
+    product.domainRole = 'calculator';
+
+    expect(validate(document).valid).toBe(true);
+  });
+
+  it('refuses a domain role on a Party', () => {
+    const document = baseDocument();
+    const buyer = requireParticipant(document, 'party.buyer-agent');
+
+    buyer.domainRole = 'calculator';
+
+    expectIssue(document, 'entity.domainRole.thingOnly');
+  });
+
+  it('refuses a domain role the vocabulary does not name', () => {
+    const document = baseDocument();
+    const product = requireParticipant(document, 'thing.product');
+
+    product.domainRole = 'pricer' as never;
+
+    expectIssue(document, 'entity.kind');
+  });
+});
+
 describe('relationship checks', () => {
   it('rejects unknown endpoints', () => {
     const document = baseDocument();

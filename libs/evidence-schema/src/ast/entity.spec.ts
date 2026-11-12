@@ -9,6 +9,8 @@ import {
   isContextEntity,
   isContractContext,
   isContractEntity,
+  isDomainComponent,
+  isDomainComponentRole,
   isEvidenceEntity,
   isEvidenceMoment,
   isFulfillmentConfirmation,
@@ -61,6 +63,25 @@ const buyerRole: RoleEntityAST = {
   contextRef: contractContext.id,
 };
 
+const membershipCard: ParticipantEntityAST = {
+  type: 'entity',
+  id: 'thing.membership-card',
+  category: 'participant',
+  kind: 'thing',
+  label: '会员卡',
+  contextRef: 'context.membership',
+};
+
+const tierCalculator: ParticipantEntityAST = {
+  type: 'entity',
+  id: 'thing.tier-calculator',
+  category: 'participant',
+  kind: 'thing',
+  label: '会员等级计算器',
+  contextRef: 'context.membership',
+  domainRole: 'calculator',
+};
+
 const buyerAgent: ParticipantEntityAST = {
   type: 'entity',
   id: 'party.buyer-agent',
@@ -100,6 +121,23 @@ describe('entity signatures', () => {
     expect(isRoleEntity(undefined)).toBe(false);
     expect(isParticipantEntity(undefined)).toBe(false);
     expect(isPartyRole(undefined)).toBe(false);
+  });
+});
+
+describe('domain components', () => {
+  it('tells a traded object from the work the domain does', () => {
+    expect(isDomainComponent(tierCalculator)).toBe(true);
+    expect(isDomainComponent(membershipCard)).toBe(false);
+    // A Party never stands for computation, however it is labelled.
+    expect(isDomainComponent(buyerAgent)).toBe(false);
+    expect(isDomainComponent(undefined)).toBe(false);
+  });
+
+  it('accepts only the two component roles the vocabulary names', () => {
+    expect(isDomainComponentRole('calculator')).toBe(true);
+    expect(isDomainComponentRole('checker')).toBe(true);
+    expect(isDomainComponentRole('pricer')).toBe(false);
+    expect(isDomainComponentRole(undefined)).toBe(false);
   });
 });
 

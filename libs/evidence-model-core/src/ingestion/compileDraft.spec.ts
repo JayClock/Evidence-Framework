@@ -168,8 +168,32 @@ describe('compiling a draft', () => {
     expect(cited.some((entity) => entity?.category === 'evidence' && entity.kind === 'proposal')).toBe(true);
   });
 
-  it('records the id every draft element ended up with', () => {
-    const { parsed, compiled } = compileBlueprint();
+  it('keeps a domain component a thing, with the role it was read as', () => {
+    const parsed = parseBlueprint(BLUEPRINT, { modelName: '采购履约' });
+
+    if (!parsed.success) {
+      throw new Error(parsed.error);
+    }
+
+    const thing = parsed.draft.things[0];
+
+    if (thing === undefined) {
+      throw new Error('蓝图应当读出一个标的物。');
+    }
+
+    thing.domainRole = 'checker';
+
+    const compiled = compileIngestionDraft(parsed.draft, { modelId: 'procurement' });
+    const written = compiled.document.entities.find(
+      (entity) => entity.id === compiled.writtenIds[thing.id],
+    );
+
+    expect(written?.category).toBe('participant');
+    expect(written).toMatchObject({ kind: 'thing', domainRole: 'checker' });
+    expect(strictValidateDomainModel(compiled.document).valid).toBe(true);
+  });
+
+  it('records the id every draft element ended up with', () => {    const { parsed, compiled } = compileBlueprint();
     const request = parsed.draft.evidences.find(
       (evidence) => evidence.kind === 'fulfillment_request',
     );

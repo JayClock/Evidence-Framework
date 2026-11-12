@@ -33,6 +33,8 @@ export {
 
 export {
   CONTEXT_KINDS,
+  DOMAIN_COMPONENT_ROLES,
+  DOMAIN_COMPONENT_ROLE_LABELS,
   ENTITY_CATEGORIES,
   EVIDENCE_KINDS,
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
@@ -44,6 +46,8 @@ export {
   isContextEntity,
   isContractContext,
   isContractEntity,
+  isDomainComponent,
+  isDomainComponentRole,
   isEvidenceEntity,
   isEvidenceMoment,
   isFulfillmentConfirmation,
@@ -54,6 +58,7 @@ export {
   type AttributeAST,
   type ContextEntityAST,
   type ContextKind,
+  type DomainComponentRole,
   type EntityAST,
   type EntityCategory,
   type EntitySignature,

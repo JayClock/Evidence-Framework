@@ -26,6 +26,10 @@
       "uniqueItems": true
     },
     "responsibleRoleRef": { "$ref": "#/$defs/id" },
+    "domainRole": {
+      "description": "A Thing that stands for domain computation rather than a traded object.",
+      "enum": ["calculator", "checker"]
+    },
     "roleRefs": {
       "description": "A Contract is stored together with exactly two contextual Party Roles; actual players may be unknown.",
       "type": "array",
@@ -133,6 +137,16 @@
         "required": ["category", "kind"]
       },
       "then": { "required": ["contextRef"] }
+    },
+    {
+      "if": { "required": ["domainRole"] },
+      "then": {
+        "properties": {
+          "category": { "const": "participant" },
+          "kind": { "const": "thing" }
+        },
+        "required": ["category", "kind"]
+      }
     },
     {
       "if": {

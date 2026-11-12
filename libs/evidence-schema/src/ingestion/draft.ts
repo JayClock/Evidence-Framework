@@ -1,5 +1,6 @@
 import type {
   ContextKind,
+  DomainComponentRole,
   EvidenceKind,
   RoleKind,
 } from '../ast/entity.js';
@@ -72,6 +73,8 @@ export interface DraftThing {
   meaning?: string;
   /** Domain context the thing belongs to; defaults to a generated one. */
   contextRef?: string;
+  /** Set when the thing stands for domain computation rather than trade. */
+  domainRole?: DomainComponentRole;
   provenance?: ProvenanceSnippet;
 }
 

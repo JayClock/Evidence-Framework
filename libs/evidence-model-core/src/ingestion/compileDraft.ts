@@ -438,6 +438,7 @@ export const compileIngestionDraft = (
       kind: 'thing',
       label: thing.label,
       contextRef,
+      ...(thing.domainRole === undefined ? {} : { domainRole: thing.domainRole }),
       ...(thing.meaning === undefined
         ? {}
         : {

@@ -32,6 +32,7 @@ export type ValidationCode =
   | 'entity.evidenceContext.kind'
   | 'entity.contract.rootMissing'
   | 'entity.participantParty.contextRef'
+  | 'entity.domainRole.thingOnly'
   | 'attribute.shape'
   | 'attribute.name'
   | 'attribute.duplicate'
