@@ -93,9 +93,9 @@ describe('BottomStatusBar sensor summary', () => {
   });
 
   it('shows a run failure with a retry instead of a stale verdict', () => {
-    renderBar({ report: null, sensorError: '未找到锁定的 Python 解释器' });
+    renderBar({ report: null, sensorError: '传感器引擎未能读取模型目录' });
 
-    expect(screen.getByText('未找到锁定的 Python 解释器')).toBeInTheDocument();
+    expect(screen.getByText('传感器引擎未能读取模型目录')).toBeInTheDocument();
     expect(screen.getByText('重试')).toBeInTheDocument();
   });
 

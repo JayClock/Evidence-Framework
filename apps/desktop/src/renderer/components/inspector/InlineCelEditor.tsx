@@ -25,9 +25,9 @@ const DEBOUNCE_MS = 300;
 /**
  * Inline CEL editor with AST-aware completion and a fast pre-check.
  *
- * The pre-check is a guard, not the authority: the pinned Python checker still
- * decides whether the saved model holds. What it buys is immediate feedback while
- * the modeler types, so a broken rule never reaches the file system unnoticed.
+ * The pre-check is a guard, not the authority: the sensor engine still decides
+ * whether the saved model holds. What it buys is immediate feedback while the
+ * modeler types, so a broken rule never reaches the file system unnoticed.
  */
 export const InlineCelEditor = ({
   value,

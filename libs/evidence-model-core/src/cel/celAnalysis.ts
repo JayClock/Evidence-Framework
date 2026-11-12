@@ -239,8 +239,8 @@ const readMember = (
  *
  * It is deliberately not a full CEL parser: it catches the mistakes that break
  * the saved model (unbalanced brackets, undeclared aliases, attributes the bound
- * object does not model) so the pinned Python checker stays the authority
- * instead of being replaced by a second, drifting implementation.
+ * object does not model) so the sensor engine stays the authority instead of
+ * being replaced by a second, drifting implementation.
  */
 export const analyzeCelExpression = ({
   expression,

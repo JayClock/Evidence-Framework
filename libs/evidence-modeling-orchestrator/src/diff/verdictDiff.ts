@@ -41,7 +41,7 @@ export interface VerdictDiff {
  * What one verdict contributes to a comparison.
  *
  * Stored next to a branch so a comparison can show the cost of an assumption
- * without re-running Python for a tree the user is not editing.
+ * without re-running the sensors for a tree the user is not editing.
  */
 export const snapshotOfReport = (report: SensorReport): VerdictSnapshot => ({
   timestamp: report.timestamp,

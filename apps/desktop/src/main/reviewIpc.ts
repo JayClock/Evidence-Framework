@@ -105,7 +105,7 @@ export const registerReviewIpc = ({
         }
 
         // An API design makes the review joint, and a joint review must name its
-        // scope; a model-only page is the consistency view Python also produced.
+        // scope; a model-only page is the consistency view on its own.
         const scopeRefs = existsSync(
           path.join(projectRoot, '.evidence', 'api', 'api.json'),
         )

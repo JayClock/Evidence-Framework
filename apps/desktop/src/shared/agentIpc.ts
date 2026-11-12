@@ -10,8 +10,9 @@ import type {
 /**
  * IPC channels shared by the main process, the preload bridge and the renderer.
  *
- * The renderer never runs Python or a model: it asks, the main process works, and
- * patches come back for `ModelSession` to apply so undo keeps covering agent edits.
+ * The renderer never runs a check or a model: it asks, the main process works,
+ * and patches come back for `ModelSession` to apply so undo keeps covering agent
+ * edits.
  */
 export const EVIDENCE_AGENT_IPC_CHANNELS = {
   prompt: 'evidence:agent:prompt',

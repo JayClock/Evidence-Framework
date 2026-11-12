@@ -112,7 +112,7 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.keyDataAudit,
     title: '读取关键数据台账',
     description:
-      '返回锁定的 Python 检查器给出的关键数据台账：哪些金额、期限、数量与时间差仍缺少提供方或派生规则。',
+      '返回关键数据台账：哪些金额、期限、数量与时间差仍缺少提供方或派生规则。',
     inputSchema: {},
     annotations: READ_ONLY,
     run: async () => json(await client.getKeyDataAudit()),
@@ -186,7 +186,7 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
-      '运行锁定的阶段门禁脚本，判断当前模型是否满足下游 API 契约或联合审核页的交付条件。',
+      '运行阶段门禁判定，说明当前模型是否满足下游 API 契约或联合审核页的交付条件。',
     inputSchema: {
       target: z
         .enum(['api', 'visualization'])

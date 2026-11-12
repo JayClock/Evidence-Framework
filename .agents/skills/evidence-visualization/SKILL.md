@@ -1,7 +1,7 @@
 ---
 name: evidence-visualization
 description: 当用户要求生成或更新离线业务审核页、查看当前模型与 API 投影、排查工作台显示故障时使用。维护单页只读审核视图；不设计业务 UI 或修改业务源。
-compatibility: Node.js 22+（`evidence-workbench` 命令）；可选 Python 3.10+ 作为参考实现；浏览器验证需本机 Chrome。
+compatibility: Node.js 22+（`evidence-workbench` 命令）；浏览器验证需本机 Chrome。
 ---
 
 # Evidence 离线业务工作台
@@ -30,7 +30,7 @@ compatibility: Node.js 22+（`evidence-workbench` 命令）；可选 Python 3.10
 
 ## Action
 
-1. **核对输入与环境。** 定位本包、FM 包、适用的 API 包和项目的实际绝对路径，确认 Python、依赖、浏览器及当前生成权限。联合模式核对 API 存在；只读请求只报告。完成时，运行路径、模式与允许产物明确，必要缺口已交接。
+1. **核对输入与环境。** 定位本包、FM 包、适用的 API 包和项目的实际绝对路径，确认命令可用性、浏览器及当前生成权限。联合模式核对 API 存在；只读请求只报告。完成时，运行路径、模式与允许产物明确，必要缺口已交接。
 
 2. **生成当前投影。** 使用下列命令；联合审核增加 `--require-api --scope "$CONTEXT_ID"`，可重复 `--scope` 覆盖 API 实际范围及必要依赖。生成器检查 FM 后将同一结果交给模型内的 API 投影，核对两源与场景新鲜度，仅原子替换自己拥有的页面。完成时，生成实际成功且输入未变，正式源与 generated 目录保持不变。
 

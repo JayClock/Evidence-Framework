@@ -88,7 +88,7 @@ describe('buildFmCheckReport', () => {
       simulationPassed: true,
       errors: [],
       modelDigest:
-        'sha256:1e47609b3502a403cd76d680b5978fb59d3219dee514524dd59d633bda05ceee',
+        'sha256:7b002eff09437a82cc90f6b47830633fff1eeb2aa8f7213ba233e22bcdb21b04',
       timelineSummary: {
         laneCount: 1,
         evidenceTypeCount: 6,

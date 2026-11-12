@@ -32,7 +32,7 @@ export type ModelPatchResult =
   | { success: false; error: string };
 
 export interface EvidenceToolsHandlers {
-  /** Runs the pinned Python sensors and returns their verdict. */
+  /** Runs the sensors and returns their verdict. */
   runSensors: (input: {
     modelRoot: string;
     scope?: string;
@@ -84,7 +84,7 @@ export const createEvidenceToolsExtension =
       name: TOOL_NAMES.runSensors,
       label: '运行质量传感器',
       description:
-        '运行锁定的 Python 检查器（一致性、关键数据台账）并返回阻塞与警告项。修改模型后必须调用它确认没有留下虚假胜利。',
+        '运行质量传感器（一致性、关键数据台账）并返回阻塞与警告项。修改模型后必须调用它确认没有留下虚假胜利。',
       parameters: Type.Object({
         scope: Type.Optional(
           Type.String({

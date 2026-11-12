@@ -171,14 +171,14 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
 - The attribute table edits through commands (`add-attribute`,
   `remove-attribute`, `update-attribute`), so structural edits share the undo
   stack with text edits.
-- Each key data row shows the provider the pinned checker would classify:
-  contract term, domain source, negotiation source, result fact, request formation
-  input, derived rule — or "decision owed". Nothing is stored for it; the badge is
-  derived from the model, so it cannot drift from `audit_key_data.py`.
+- Each key data row shows the provider the sensor engine classifies: contract
+  term, domain source, negotiation source, result fact, request formation input,
+  derived rule — or "decision owed". Nothing is stored for it; the badge is derived
+  from the model, so it cannot drift from the ledger.
 - The inline CEL editor completes aliases and attributes from the graph and
   pre-checks unbalanced brackets, undeclared identifiers and unknown attributes
-  while typing. The pinned Python checker stays the authority; the editor only
-  prevents obviously broken rules from being saved.
+  while typing. The sensor engine stays the authority; the editor only prevents
+  obviously broken rules from being saved.
 - A `fulfillment_request` exposes its completion condition, the confirmation that
   decides it and the breach condition. Pairing only offers confirmations in the
   same Contract Context, and a rejected guard is shown in the panel instead of

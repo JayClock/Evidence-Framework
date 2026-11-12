@@ -1,7 +1,7 @@
 ---
 name: evidence-api
 description: 当用户讨论 API 设计方法，或要求基于 FM 就绪范围设计、修改、校验 API 技术契约与派生产物时使用。维护唯一 API 设计源及 HTTP 契约；消费有效 FM 检查结果，不修改业务模型。
-compatibility: 讨论只需文本；校验与投影需 Python 3.10+、本包 requirements.txt，以及通过资源发现定位且满足依赖的 evidence-fm；两包无需相邻。
+compatibility: 讨论只需文本；校验与投影需 `evidence-api` 命令（工作区中由 `pnpm install` 提供），以及通过资源发现定位且可用的 evidence-fm；两包无需相邻。
 ---
 
 # Evidence API 设计

@@ -1793,7 +1793,8 @@ const validateDerivedAttributes = (
  * Scope: document shape, identifier grammar, category/kind contracts,
  * reference resolution, context ownership, relationship endpoint rules and
  * derivation symmetry. Traceability, key-data providers, scope completeness and
- * CEL evaluation stay in the Python sensors and are not re-implemented here.
+ * CEL evaluation are separate passes in `evidence-model-core`, not re-implemented
+ * here.
  */
 export function strictValidateDomainModel(input: unknown): ValidationResult {
   const issues: ValidationIssue[] = [];

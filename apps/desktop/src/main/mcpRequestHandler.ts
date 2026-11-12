@@ -26,7 +26,7 @@ export type McpRendererChannel = (
   payload: unknown,
 ) => Promise<unknown>;
 
-/** Pinned Python work the main process runs for MCP clients. */
+/** Sensor and gate work the main process runs for MCP clients. */
 export interface McpSensorService {
   readKeyDataAudit: (rootPath: string) => Promise<McpKeyDataAudit>;
   checkStageGate: (input: {

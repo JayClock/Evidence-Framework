@@ -73,8 +73,8 @@ const verdictLine = (
  * Structural and verdict difference between the checkout and one other branch.
  *
  * The panel only reports what the two trees and their stored verdicts say: it
- * never re-runs Python for a branch nobody is editing, and a branch without a
- * verdict says so instead of inheriting the active one.
+ * never re-runs the sensors for a branch nobody is editing, and a branch without
+ * a verdict says so instead of inheriting the active one.
  */
 export const BranchDiffPanel = ({
   branches,

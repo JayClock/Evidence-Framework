@@ -1,7 +1,7 @@
 ---
 name: evidence-fm
 description: 当用户要求生成、修改、修复或校验正式业务模型（FM），维护统一语言，或核对合同、履约、规则与关键数据来源时使用。渐进维护模型源、实体与约束，执行一致性与范围检查；不主持访谈、不设计 API。
-compatibility: 讨论只需文本；文件维护需读写能力；校验需 Python 3.10+ 与本包 requirements.txt。
+compatibility: 讨论只需文本；文件维护需读写能力；校验需 `evidence-model` 命令（工作区中由 `pnpm install` 提供）。
 ---
 
 # Evidence 业务建模

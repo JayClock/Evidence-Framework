@@ -1,7 +1,7 @@
 ---
 name: evidence-discovery
 description: 当用户要求业务访谈、澄清经营权责与履约凭证、更正事实、查看或切换上下文、控制暂停与结束时使用。聚焦问答推进与依赖前沿，按业务判断成组澄清；不直接编辑模型或执行技术校验。
-compatibility: 普通对话即可；专业分析需要可发现的 evidence-fm；追溯日志校验需 Python 3.10+ 与 jsonschema。
+compatibility: 普通对话即可；专业分析需要可发现的 evidence-fm；追溯日志校验需 `evidence-model` 命令（工作区中由 `pnpm install` 提供）。
 ---
 
 # Evidence 业务访谈

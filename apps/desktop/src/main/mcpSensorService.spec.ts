@@ -68,7 +68,7 @@ describe('createMcpSensorService', () => {
     });
     const failing = createMcpSensorService({
       createEngine: () =>
-        engineThat({ gateError: new Error('check_stage_gate.py crashed') }) as never,
+        engineThat({ gateError: new Error('stage gate crashed') }) as never,
     });
 
     await expect(
@@ -85,7 +85,7 @@ describe('createMcpSensorService', () => {
     ).resolves.toMatchObject({
       passed: false,
       exitCode: 1,
-      blockingReasons: ['check_stage_gate.py crashed'],
+      blockingReasons: ['stage gate crashed'],
     });
   });
 

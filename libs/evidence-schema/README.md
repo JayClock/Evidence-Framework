@@ -5,11 +5,10 @@ client, the model core and future MCP tools.
 
 - `ast/` — entity, relationship, rule and document types with narrow guards,
   mirroring `evidence-fm/schemas/*.json` field for field.
-- `validation/` — `strictValidateDomainModel` ports the deterministic half of
-  `evidence-fm/scripts/fm_model.py` (ids, category contracts, context ownership,
-  responsibility, relationship endpoints, derivation symmetry). Traceability,
-  key-data providers, scope completeness and CEL evaluation stay in the Python
-  sensors.
+- `validation/` — `strictValidateDomainModel` holds the static FM v5 checks (ids,
+  category contracts, context ownership, responsibility, relationship endpoints,
+  derivation symmetry). Traceability, key-data providers, scope completeness and
+  CEL evaluation are separate passes in `evidence-model-core`.
 - `inspector/` — declarative metadata for the right-hand inspector: groups,
   editors, reference constraints and the attribute/rule field tables.
 
