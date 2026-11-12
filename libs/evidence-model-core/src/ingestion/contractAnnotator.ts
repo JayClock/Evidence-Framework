@@ -46,7 +46,7 @@ const BOILERPLATE: readonly { pattern: RegExp; label: string }[] = [
  * formula in the same sentence is picked up separately, by `computesValue`.
  */
 const BUSINESS_ACTIONS =
-  /支付|付款|转账|缴纳|结算|发货|配送|送达.{0,4}货物|出库|开通|授权|激活|开票|开具|验收|签收|入库|交付|提交|出具|订阅|续费|扣费|代扣|退订|退款|退还|补偿|赔付|赔偿|提供|使用|访问|享受|领取|兑换|消费|终止|中止|暂停|解约|停服|注销|升级|降级|调整/;
+  /支付|付款|转账|缴纳|结算|发货|配送|送达.{0,4}货物|出库|开通|授权|激活|开票|开具|验收|签收|入库|交付|提交|出具|订阅|续费|扣费|代扣|退订|退款|退还|补偿|赔付|赔偿|提供|使用|访问|享受|领取|兑换|消费|终止|中止|暂停|解约|停服|注销|升级|降级|调整|签订|签署|签约|达成/;
 
 /** Vocabulary that names a computed value rather than an act. */
 const COMPUTATION: readonly { pattern: RegExp; label: string }[] = [

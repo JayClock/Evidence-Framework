@@ -24,6 +24,11 @@ export {
 } from './contractAnnotator.js';
 
 export {
+  draftFromContract,
+  type ContractDraftResult,
+} from './contractReader.js';
+
+export {
   draftFromBusinessText,
   type TextExtractionOptions,
   type TextExtractionResult,

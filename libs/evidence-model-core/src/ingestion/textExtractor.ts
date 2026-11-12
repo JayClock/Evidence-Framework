@@ -46,12 +46,25 @@ const DEADLINE = /(\d+|几|若干)\s*(个)?\s*(工作日|自然日|日|天|小�
 /** A clause that names completion is the result side. */
 const COMPLETION = /完成|确认|到账|签收|验收|收到|出具|已开通|已支付/;
 
-/** Documents a clause mentions as proof, mapped to their business name. */
-const PROOFS: readonly { pattern: RegExp; label: string }[] = [
+/**
+ * Documents a clause mentions, mapped to their business name.
+ *
+ * `confirms` marks the documents that are themselves the result of a
+ * performance: a 确认函 or a 签收单 records that the other side delivered, so it
+ * belongs on the confirmation side of the pair. A 转账凭证 or a 回单 only proves
+ * a payment someone else already confirmed, which is why it stays a separate
+ * evidence the pair can cite as its proof.
+ */
+const PROOFS: readonly {
+  pattern: RegExp;
+  label: string;
+  confirms?: boolean;
+}[] = [
   { pattern: /转账凭证|银行回单|付款凭证/, label: '转账凭证' },
-  { pattern: /确认函/, label: '确认函' },
+  { pattern: /确认函|确认单|回执/, label: '确认函', confirms: true },
   { pattern: /发票|增值税专用发票/, label: '发票' },
-  { pattern: /送货单|签收单|物流单/, label: '送货单' },
+  { pattern: /送货单|物流单/, label: '送货单' },
+  { pattern: /签收单|验收单/, label: '签收单', confirms: true },
   { pattern: /质检报告|检测报告/, label: '质检报告' },
   { pattern: /对账单/, label: '对账单' },
 ];
@@ -157,6 +170,15 @@ export const draftFromBusinessText = (
 
   let line = 0;
   const emitted = new Set<string>();
+  /**
+   * A document signs one agreement, however often it says 合同.
+   *
+   * Without this every clause that mentions 「合同签订后」 becomes another
+   * contract, and the model ends up with a contract per deadline. A second
+   * contract is only read when the clause names it — 《…》 is how a text
+   * introduces a supplementary agreement.
+   */
+  let contractEmitted = false;
 
   const push = (row: Omit<DraftRow, 'line'>): void => {
     line += 1;
@@ -174,7 +196,14 @@ export const draftFromBusinessText = (
     const thing = thingOf(clause);
     const breach = isBreachClause(clause);
 
-    if (AGREEMENT.test(clause) && AGREEMENT_SUBJECT.test(clause)) {
+    const namedAgreement = /《([^》]+)》/.exec(clause)?.[1];
+
+    if (
+      AGREEMENT.test(clause) &&
+      AGREEMENT_SUBJECT.test(clause) &&
+      !(contractEmitted && namedAgreement === undefined)
+    ) {
+      contractEmitted = true;
       push({
         stage: '合约确立',
         activity: clause,
@@ -249,6 +278,25 @@ export const draftFromBusinessText = (
 
     for (const proof of PROOFS) {
       if (!proof.pattern.test(clause)) {
+        continue;
+      }
+
+      // A confirmation document answers the action the same clause performs, so
+      // it is read as that action's result rather than as another loose proof.
+      // Without this the pair stays open even though the text said 「出具开通
+      // 确认函」, and the workshop is asked to invent the confirmation it just
+      // read.
+      const answered = proof.confirms === true ? actions[0] : undefined;
+
+      if (answered !== undefined) {
+        push({
+          stage,
+          activity: clause,
+          evidence: `${answered.label}确认`,
+          kind: 'fulfillment_confirmation',
+          parties,
+          ...(thing === undefined ? {} : { thing }),
+        });
         continue;
       }
 
