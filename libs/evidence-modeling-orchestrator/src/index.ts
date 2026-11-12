@@ -53,3 +53,10 @@ export {
   type NativeSensorsOutcome,
   type StageGateInput as NativeStageGateInput,
 } from './sensors/native/index.js';
+
+export {
+  TRACE_ATTRIBUTE_KEYS,
+  readProductionTrace,
+  type EvidenceCommit,
+  type ProductionTrace,
+} from './telemetry/index.js';

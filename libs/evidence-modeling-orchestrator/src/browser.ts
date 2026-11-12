@@ -15,3 +15,10 @@ export {
   type StageGateReport,
   type StageGateSummary,
 } from './sensors/sensorReport.js';
+
+export {
+  TRACE_ATTRIBUTE_KEYS,
+  readProductionTrace,
+  type EvidenceCommit,
+  type ProductionTrace,
+} from './telemetry/index.js';
