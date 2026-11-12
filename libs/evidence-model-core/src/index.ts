@@ -1,3 +1,5 @@
+export * from './ingestion/index.js';
+
 export {
   createDomainGraph,
   type DomainGraph,
