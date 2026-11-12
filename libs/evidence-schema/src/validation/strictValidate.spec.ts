@@ -488,6 +488,74 @@ describe('relationship checks', () => {
     expectIssue(document, 'relationship.playsRole.endpoints');
   });
 
+  it('accepts valid context playing role.context and contract playing role.evidence across contexts', () => {
+    const document = baseDocument();
+
+    // 1. Context playing role.context
+    document.entities.push({
+      type: 'entity',
+      id: 'role.alipay-context',
+      label: '支付宝上下文',
+      category: 'role',
+      kind: 'context',
+      contextRef: 'context.product-procurement',
+    });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.context-plays-context-role',
+      kind: 'plays_role',
+      sourceRef: 'context.wechat-payment',
+      targetRef: 'role.alipay-context',
+      label: '外部上下文扮演角色',
+    });
+
+    // 2. Contract playing role.evidence across contexts
+    document.entities.push({
+      type: 'entity',
+      id: 'role.payment-contract-evidence',
+      label: '支付协议凭证角色',
+      category: 'role',
+      kind: 'evidence',
+      contextRef: 'context.product-procurement',
+    });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.contract-plays-evidence-role',
+      kind: 'plays_role',
+      sourceRef: 'contract.wechat-payment',
+      targetRef: 'role.payment-contract-evidence',
+      label: '外部时刻合约扮演凭证角色',
+    });
+
+    const result = validate(document);
+    expect(result.valid).toBe(true);
+    expect(result.issues).toEqual([]);
+  });
+
+  it('rejects interval evidence playing role.evidence', () => {
+    const document = baseDocument();
+
+    document.entities.push({
+      type: 'entity',
+      id: 'role.payment-evidence-role',
+      label: '支付凭证角色',
+      category: 'role',
+      kind: 'evidence',
+      contextRef: 'context.product-procurement',
+    });
+    // request.wechat-payment is a fulfillment_request (an interval), which cannot play role.evidence
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.interval-plays-evidence-role',
+      kind: 'plays_role',
+      sourceRef: 'request.wechat-payment',
+      targetRef: 'role.payment-evidence-role',
+      label: '时段凭证不可扮演角色',
+    });
+
+    expectIssue(document, 'relationship.playsRole.endpoints');
+  });
+
   it('rejects malformed cardinality', () => {
     const document = baseDocument();
 

@@ -1291,11 +1291,21 @@ const isPlaysRolePair = (
     return true;
   }
 
+  // An external Context can play an Other Context Role.
+  if (
+    signatureOf(source)[0] === 'context' &&
+    signatureOf(target).join('.') === 'role.context'
+  ) {
+    return true;
+  }
+
   // A moment Evidence can play an Evidence Role owned by another Context.
+  // Moment evidences are: fulfillment_confirmation, other_evidence, contract.
   return (
     signatureOf(source)[0] === 'evidence' &&
     (kindOf(source) === 'fulfillment_confirmation' ||
-      kindOf(source) === 'other_evidence') &&
+      kindOf(source) === 'other_evidence' ||
+      kindOf(source) === 'contract') &&
     signatureOf(target).join('.') === 'role.evidence'
   );
 };

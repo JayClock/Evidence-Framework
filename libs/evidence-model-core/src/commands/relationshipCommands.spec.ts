@@ -64,6 +64,31 @@ describe('CreateRelationshipCommand', () => {
         targetRef: 'role.catalogue-item',
       }).apply(document),
     ).not.toThrow();
+    const docWithEvidenceRole = {
+      ...document,
+      entities: [
+        ...document.entities,
+        {
+          type: 'entity' as const,
+          id: 'role.payment-evidence',
+          label: '支付凭证角色',
+          category: 'role' as const,
+          kind: 'evidence' as const,
+          contextRef: 'context.procurement',
+        },
+      ],
+    };
+
+    expect(() =>
+      new CreateRelationshipCommand({
+        type: 'relationship',
+        id: 'relation.contract-plays-evidence-role',
+        kind: 'plays_role',
+        sourceRef: 'contract.procurement',
+        targetRef: 'role.payment-evidence',
+        label: '时刻合约扮演凭证角色',
+      }).apply(docWithEvidenceRole),
+    ).not.toThrow();
   });
 
   it('rejects invalid plays_role pairs', () => {

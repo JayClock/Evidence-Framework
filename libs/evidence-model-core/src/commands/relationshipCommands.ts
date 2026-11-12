@@ -35,7 +35,8 @@ const PLAYER_PAIRS: readonly string[] = [
 const isMomentEvidence = (entity: EntityAST): boolean =>
   isEvidenceEntity(entity) &&
   (entity.kind === 'fulfillment_confirmation' ||
-    entity.kind === 'other_evidence');
+    entity.kind === 'other_evidence' ||
+    entity.kind === 'contract');
 
 /** Direction matrix for `plays_role`; mirrors the static validator. */
 const assertPlaysRole = (source: EntityAST, target: EntityAST): void => {
