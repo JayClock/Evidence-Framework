@@ -155,6 +155,15 @@ export {
 } from './delivery/segments.js';
 
 export {
+  buildDeliveryTopology,
+  type DeliveryLink,
+  type DeliveryLinkMode,
+  type DeliveryService,
+  type DeliveryServiceKind,
+  type DeliveryTopology,
+} from './delivery/topology.js';
+
+export {
   runCli,
   validatePaths,
   type CliOptions,
