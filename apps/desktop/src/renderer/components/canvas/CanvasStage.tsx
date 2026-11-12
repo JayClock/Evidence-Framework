@@ -10,8 +10,8 @@ import { NodeCard } from './NodeCard';
 
 export type CanvasViewMode = 'simplified' | 'standard';
 
-/** How the compared branch relates to the object the active model draws. */
-export type OverlayChange = 'removed' | 'modified';
+/** How a change relates to the object the active model draws. */
+export type OverlayChange = 'added' | 'removed' | 'modified';
 
 /**
  * Comparison overlay for the canvas.
@@ -24,6 +24,13 @@ export type OverlayChange = 'removed' | 'modified';
 export interface BranchOverlay {
   marks: ReadonlyMap<string, OverlayChange>;
   ghosts: readonly LayoutNode[];
+  /**
+   * Who the marks belong to.
+   *
+   * A compared branch and an applied agent patch both ring objects, but the
+   * modeler reads them differently, so the wording travels with the overlay.
+   */
+  scope?: 'branch' | 'patch';
 }
 
 interface CanvasStageProps {
@@ -255,7 +262,12 @@ export const CanvasStage = ({
             );
 
             return node === undefined ? null : (
-              <ChangeRing key={`mark-${nodeId}`} node={node} change={change} />
+              <ChangeRing
+                key={`mark-${nodeId}`}
+                node={node}
+                change={change}
+                scope={overlay.scope ?? 'branch'}
+              />
             );
           })}
     </div>
@@ -265,14 +277,24 @@ export const CanvasStage = ({
 const GHOST_COLOR = '#15803d';
 
 const OVERLAY_COLOR: Record<OverlayChange, string> = {
+  added: GHOST_COLOR,
   removed: '#b42318',
   modified: '#8d6200',
 };
 
-const OVERLAY_LABEL: Record<OverlayChange, string> = {
-  removed: '对比分支已删除',
-  modified: '对比分支已修改',
-};
+const OVERLAY_LABEL: Record<'branch' | 'patch', Record<OverlayChange, string>> =
+  {
+    branch: {
+      added: '对比分支新增',
+      removed: '对比分支已删除',
+      modified: '对比分支已修改',
+    },
+    patch: {
+      added: '本次补丁新增',
+      removed: '本次补丁删除',
+      modified: '本次补丁修改',
+    },
+  };
 
 /** An object that only the compared branch models. */
 function GhostNode({ node }: { node: LayoutNode }) {
@@ -301,13 +323,15 @@ function GhostNode({ node }: { node: LayoutNode }) {
 function ChangeRing({
   node,
   change,
+  scope,
 }: {
   node: LayoutNode;
   change: OverlayChange;
+  scope: 'branch' | 'patch';
 }) {
   return (
     <div
-      aria-label={`${OVERLAY_LABEL[change]} ${node.entity.label}`}
+      aria-label={`${OVERLAY_LABEL[scope][change]} ${node.entity.label}`}
       data-overlay-change={change}
       data-overlay-node-id={node.nodeId}
       className="pointer-events-none absolute rounded-md border-2"
@@ -317,7 +341,8 @@ function ChangeRing({
         width: node.box.width + 6,
         height: node.box.height + 6,
         borderColor: OVERLAY_COLOR[change],
-        borderStyle: change === 'removed' ? 'dashed' : 'solid',
+        borderStyle:
+          change === 'removed' || change === 'added' ? 'dashed' : 'solid',
       }}
     />
   );

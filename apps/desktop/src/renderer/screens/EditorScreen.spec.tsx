@@ -159,4 +159,81 @@ describe('EditorScreen sensors', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
     expect(api.calls.save).toEqual(['/models/procurement']);
   });
+
+  it('shows what an agent patch changed and reverts it on Escape', async () => {
+    const api = readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    api.agentMock.requestPatch({
+      requestId: 'patch-review',
+      patch: {
+        rationale: '新增审计员参与方',
+        commands: [
+          {
+            type: 'create-entity',
+            entity: {
+              type: 'entity',
+              id: 'party.auditor',
+              category: 'participant',
+              kind: 'party',
+              label: '审计员',
+            },
+          },
+        ],
+      },
+    });
+
+    expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
+    expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
+    expect(screen.getByText('新增 1')).toBeInTheDocument();
+    expect(
+      await screen.findByLabelText('本次补丁新增 审计员'),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
+    });
+    expect(
+      screen.queryByLabelText('本次补丁新增 审计员'),
+    ).toBeNull();
+  });
+
+  it('keeps an agent patch when the modeler accepts it', async () => {
+    const api = readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    api.agentMock.requestPatch({
+      requestId: 'patch-keep',
+      patch: {
+        rationale: '新增审计员参与方',
+        commands: [
+          {
+            type: 'create-entity',
+            entity: {
+              type: 'entity',
+              id: 'party.auditor',
+              category: 'participant',
+              kind: 'party',
+              label: '审计员',
+            },
+          },
+        ],
+      },
+    });
+
+    fireEvent.click(await screen.findByRole('button', { name: '保留' }));
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
+    });
+    expect(
+      screen.queryByLabelText('本次补丁新增 审计员'),
+    ).toBeNull();
+  });
 });

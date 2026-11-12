@@ -1,19 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
-import { useAgentPatchBridge } from './useAgentPatchBridge';
+import { useAgentPatchBridge, type AppliedPatch } from './useAgentPatchBridge';
 import { installDesktopApi } from '../test-support/desktopApi';
 import { createDesktopFixture } from '../test-support/modelFixture';
 
 const BridgeHarness = ({
   session,
+  onApplied,
 }: {
   session: ReturnType<typeof createModelSession>;
+  onApplied?: (patch: AppliedPatch) => void;
 }) => {
-  useAgentPatchBridge(session);
+  useAgentPatchBridge(session, onApplied);
 
   return <p>bridge</p>;
 };
@@ -110,6 +112,47 @@ describe('useAgentPatchBridge', () => {
       },
     ]);
     expect(session.getDocument()).toEqual(before);
+  });
+
+  it('hands both snapshots to the caller so a review can offer one-step revert', () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    const before = session.getDocument();
+    const onApplied = vi.fn<(patch: AppliedPatch) => void>();
+
+    render(<BridgeHarness session={session} onApplied={onApplied} />);
+    api.agentMock.requestPatch({
+      requestId: 'patch-5',
+      patch: {
+        rationale: '新增审计员',
+        commands: [{ type: 'create-entity', entity: extraParticipant() }],
+      },
+    });
+
+    expect(onApplied).toHaveBeenCalledTimes(1);
+    const patch = onApplied.mock.calls[0]?.[0] as AppliedPatch;
+
+    expect(patch.rationale).toBe('新增审计员');
+    expect(patch.commands).toEqual(['create-entity']);
+    expect(patch.before).toBe(before);
+    expect(patch.after).toBe(session.getDocument());
+  });
+
+  it('never reports a rejected patch as applied', () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    const onApplied = vi.fn<(patch: AppliedPatch) => void>();
+
+    render(<BridgeHarness session={session} onApplied={onApplied} />);
+    api.agentMock.requestPatch({
+      requestId: 'patch-6',
+      patch: {
+        rationale: '删掉根合同',
+        commands: [{ type: 'delete-entity', entityId: 'evidence.contract' }],
+      },
+    });
+
+    expect(onApplied).not.toHaveBeenCalled();
   });
 
   it('stops listening once the harness unmounts', () => {

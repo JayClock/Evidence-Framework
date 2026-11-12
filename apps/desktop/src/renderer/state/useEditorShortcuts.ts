@@ -8,6 +8,15 @@ interface ShortcutHandlers {
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  /**
+   * Settles a pending agent patch.
+   *
+   * Escape and Mod+Enter belong to the review while one is open, because a
+   * half-read patch is the most urgent thing on screen; the editor's own
+   * Escape (clearing the selection) resumes once it is settled.
+   */
+  acceptPatch?: () => void;
+  revertPatch?: () => void;
 }
 
 const isEditable = (target: EventTarget | null): boolean => {
@@ -42,7 +51,19 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
+      if (event.key === 'Escape' && handlers.revertPatch !== undefined) {
+        event.preventDefault();
+        handlers.revertPatch();
+        return;
+      }
+
       if (typing) {
+        return;
+      }
+
+      if (mod && event.key === 'Enter' && handlers.acceptPatch !== undefined) {
+        event.preventDefault();
+        handlers.acceptPatch();
         return;
       }
 

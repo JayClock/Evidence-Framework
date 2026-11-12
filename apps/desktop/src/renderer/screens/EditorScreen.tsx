@@ -6,6 +6,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { AgentPanel } from '../components/agent/AgentPanel';
 import { BranchDiffPanel } from '../components/branches/BranchDiffPanel';
+import { PatchReviewBar } from '../components/agent/PatchReviewBar';
 import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
@@ -22,6 +23,7 @@ import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useFrontier } from '../state/useFrontier';
 import { useMcpBridge } from '../state/useMcpBridge';
+import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 
@@ -125,7 +127,9 @@ const EditorWorkspace = ({
           comparison.targetBranchId,
         );
 
-  useAgentPatchBridge(state.session);
+  const patchReview = usePatchReview(state.session, state.document);
+
+  useAgentPatchBridge(state.session, patchReview.record);
 
   const checkoutBranch = useCallback(
     async (branchId: string) => {
@@ -217,6 +221,8 @@ const EditorWorkspace = ({
     setZoomCommand({ direction, token: tokenRef.current });
   }, []);
 
+  const { accept: acceptPatch, revert: revertPatch } = patchReview;
+
   const shortcuts = useMemo(
     () => ({
       undo: () => {
@@ -230,8 +236,9 @@ const EditorWorkspace = ({
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
+      ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
-    [requestZoom, save, state.session],
+    [acceptPatch, patchReview.review, requestZoom, revertPatch, save, state.session],
   );
 
   useEditorShortcuts(shortcuts);
@@ -365,12 +372,20 @@ const EditorWorkspace = ({
             selection={state.selection}
             focusRequest={focusRequest}
             zoomCommand={zoomCommand}
-            overlay={overlay}
+            overlay={patchReview.review?.overlay ?? overlay}
             onSelect={(nodeId) => state.session.select(nodeId)}
             onClearSelection={() => state.session.clearSelection()}
           />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
+            {patchReview.review === null ? null : (
+              <PatchReviewBar
+                review={patchReview.review}
+                onAccept={patchReview.accept}
+                onRevert={patchReview.revert}
+              />
+            )}
+
             <div className="pointer-events-auto">
               <PromptDock
                 running={agent.state.running}
