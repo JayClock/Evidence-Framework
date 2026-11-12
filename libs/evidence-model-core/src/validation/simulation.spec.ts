@@ -7,7 +7,7 @@ import { loadValidationSuite } from './validationSuite.js';
 const fixture = (name: string): string =>
   fileURLToPath(
     new URL(
-      `../../../../.agents/skills/evidence-fm/tests/fixtures/models/${name}`,
+      `../../tests/fixtures/models/${name}`,
       import.meta.url,
     ),
   );

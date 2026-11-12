@@ -1,0 +1,12 @@
+{
+  "type": "evidence_instance",
+  "id": "instance.delivery-confirmation",
+  "entityRef": "confirmation.delivery",
+  "values": {
+    "confirmed_at": "2026-11-06T09:05:00Z",
+    "tracking_number": "TRACK-001",
+    "request_number": "DELIVERY-REQ-001",
+    "delivery_note_number": "DN-001"
+  },
+  "basedOn": ["instance.delivery-request", "instance.delivery-note"]
+}

@@ -11,7 +11,7 @@ import { checkNativeStageGate, filterFmCheckErrors } from './nativeStageGate.js'
 const fixture = (path: string): string =>
   fileURLToPath(
     new URL(
-      `../../../../../.agents/skills/evidence-fm/tests/fixtures/${path}`,
+      `../../../../evidence-model-core/tests/fixtures/${path}`,
       import.meta.url,
     ),
   );

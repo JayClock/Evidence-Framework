@@ -18,7 +18,7 @@ import { inspectSummary } from './inspect.js';
 
 const fmRoot = fileURLToPath(
   new URL(
-    '../../../.agents/skills/evidence-api/tests/fixtures/full-lifecycle/fm',
+    '../tests/fixtures/full-lifecycle/fm',
     import.meta.url,
   ),
 );

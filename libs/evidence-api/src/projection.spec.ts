@@ -167,7 +167,7 @@ describe('cli', () => {
         '--project-root',
         directory,
         '--fm',
-        '.agents/skills/evidence-api/tests/fixtures/full-lifecycle/fm',
+        'tests/fixtures/full-lifecycle/fm',
         '--fm-check',
         fmCheck,
       ]);
@@ -277,13 +277,13 @@ describe('a second design against a second model', () => {
     const { cpSync, writeFileSync } = await import('node:fs');
     const modelRoot = fileURLToPath(
       new URL(
-        '../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription',
+        '../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription',
         import.meta.url,
       ),
     );
     const designPath = fileURLToPath(
       new URL(
-        '../../../.agents/skills/evidence-api/tests/fixtures/subscription-api.json',
+        '../tests/fixtures/subscription-api.json',
         import.meta.url,
       ),
     );
@@ -293,7 +293,7 @@ describe('a second design against a second model', () => {
       cpSync(
         fileURLToPath(
           new URL(
-            '../../../.agents/skills/evidence-api/tests/fixtures/source.md',
+            '../tests/fixtures/source.md',
             import.meta.url,
           ),
         ),

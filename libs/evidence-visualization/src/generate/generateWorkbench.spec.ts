@@ -16,7 +16,7 @@ import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
  */
 const FIXTURE = fileURLToPath(
   new URL(
-    '../../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription',
+    '../../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription',
     import.meta.url,
   ),
 );

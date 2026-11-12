@@ -26,7 +26,7 @@ import { instanceErrors } from './schemas/jsonSchema.js';
 
 const fixture = (name: string): string =>
   fileURLToPath(
-    new URL(`../../../.agents/skills/evidence-api/tests/fixtures/${name}`, import.meta.url),
+    new URL(`../tests/fixtures/${name}`, import.meta.url),
   );
 
 describe('the embedded contracts', () => {

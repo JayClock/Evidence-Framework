@@ -20,7 +20,7 @@ import { loadDesign, type DesignDocument } from '../../src/loader/apiLoader.js';
  */
 
 export const API_FIXTURES = fileURLToPath(
-  new URL('../../../../.agents/skills/evidence-api/tests/fixtures/', import.meta.url),
+  new URL('../fixtures/', import.meta.url),
 );
 
 export const fullLifecycle = (): {

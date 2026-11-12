@@ -229,7 +229,7 @@ describe('createSensorsEngine', () => {
 
 const goldenModel = fileURLToPath(
   new URL(
-    '../../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription',
+    '../../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription',
     import.meta.url,
   ),
 );
@@ -283,7 +283,7 @@ describe('native sensor mode', () => {
     const engine = createSensorsEngine();
     const trace = fileURLToPath(
       new URL(
-        '../../../../.agents/skills/evidence-fm/tests/fixtures/models/valid-traceable-subscription/README.md',
+        '../../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription/README.md',
         import.meta.url,
       ),
     );

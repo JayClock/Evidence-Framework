@@ -1,0 +1,8 @@
+{
+  "type": "relationship",
+  "id": "relation.payment-request-precedes-gateway-receipt",
+  "kind": "references",
+  "sourceRef": "evidence.gateway-payment-receipt",
+  "targetRef": "request.content-payment",
+  "label": "凭证引用形成依据"
+}
