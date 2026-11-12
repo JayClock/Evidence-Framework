@@ -4,6 +4,7 @@ import { lstat, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
+  buildDelivery,
   buildProjection,
   loadDesign,
   loadFm,
@@ -20,6 +21,7 @@ import {
   type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 
+import { deliveryViewOf } from '../projection/deliveryView.js';
 import {
   projectWorkbenchData,
   type CompiledModel,
@@ -327,6 +329,7 @@ export const collectWorkbench = async ({
         >[],
       },
       api,
+      delivery: deliveryViewOf(buildDelivery(bundle)),
       check: {
         consistent: check.consistent,
         complete: check.complete,

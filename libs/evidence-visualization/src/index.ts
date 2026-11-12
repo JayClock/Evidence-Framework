@@ -1,3 +1,5 @@
+export { deliveryViewOf } from './projection/deliveryView.js';
+
 export {
   projectWorkbenchData,
   type CompiledModel,
@@ -5,6 +7,9 @@ export {
   type WorkbenchCheckInput,
   type WorkbenchCounts,
   type WorkbenchData,
+  type WorkbenchDelivery,
+  type WorkbenchDeliveryLink,
+  type WorkbenchService,
   type WorkbenchEdge,
   type WorkbenchNode,
   type WorkbenchProjectionInput,

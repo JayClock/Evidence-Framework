@@ -116,6 +116,23 @@ describe('collectWorkbench', () => {
     });
   });
 
+  it('carries the delivery boundaries of the checked model', async () => {
+    await withProject(async (root) => {
+      const { data } = await collectWorkbench({
+        projectRoot: root,
+        scopeRefs: [SCOPE],
+      });
+
+      expect(data.delivery?.services.length).toBeGreaterThan(0);
+      expect(
+        data.nodes.filter((node) => node.group === 'service').length,
+      ).toBe(data.delivery?.services.length);
+      expect(
+        data.delivery?.services.every((service) => service.routes.length > 0),
+      ).toBe(true);
+    });
+  });
+
   it('stops before rendering when the model does not check', async () => {
     await withProject(async (root) => {
       await rm(

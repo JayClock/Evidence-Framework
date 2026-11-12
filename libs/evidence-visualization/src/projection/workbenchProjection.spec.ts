@@ -337,6 +337,40 @@ describe('projectWorkbenchData', () => {
     expect(JSON.parse(JSON.stringify(data))).toEqual(data);
   });
 
+  it('draws each service at the root and points it at its Context', () => {
+    const data = project(fixture(), {
+      delivery: {
+        services: [
+          {
+            id: 'service.a',
+            name: '约定服务',
+            kind: 'fulfillment',
+            lane: 'a',
+            contextRef: 'context.a',
+            supplies: [],
+            consumes: ['role.proof'],
+            notes: '合同上下文。',
+            routes: [{ method: 'GET', path: '/a/a', summary: '读取协议' }],
+          },
+        ],
+        links: [],
+        limitations: [],
+      },
+    });
+    const service = nodeOf(data, 'service.a');
+
+    expect(service['group']).toBe('service');
+    // A service is not a business object owned by the Context it serves.
+    expect(service['parent']).toBe('');
+    expect(service['kind']).toBe('fulfillment');
+    expect(data.edges).toEqual(
+      expect.arrayContaining([
+        { from: 'service.a', to: 'context.a', label: '部署边界' },
+      ]),
+    );
+    expect(data.delivery?.services).toHaveLength(1);
+  });
+
   it('prints the check verdict the page displays', () => {
     const data = project(fixture(), {
       check: {

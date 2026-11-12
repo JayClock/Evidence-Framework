@@ -8,14 +8,13 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "references": [
+    {
+      "path": "../evidence-schema/tsconfig.lib.json"
+    },
     {
       "path": "../evidence-model-core/tsconfig.lib.json"
     },

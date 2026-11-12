@@ -48,6 +48,41 @@ export interface WorkbenchValidation {
   unresolvedOrderCount: unknown;
 }
 
+/** One service the model splits into, as the page lists it. */
+export interface WorkbenchService {
+  id: string;
+  name: string;
+  /** `channel`, `fulfillment`, `domain` or `capability`. */
+  kind: string;
+  lane: string;
+  contextRef: string;
+  supplies: readonly string[];
+  consumes: readonly string[];
+  notes: string;
+  /** Routes this service serves, as `GET /path` lines with their moment. */
+  routes: readonly { method: string; path: string; summary: string }[];
+}
+
+/** How two services talk, and what crosses the boundary. */
+export interface WorkbenchDeliveryLink {
+  id: string;
+  from: string;
+  to: string;
+  kind: string;
+  /** `sync` or `async`; an external confirmation arrives as a callback. */
+  mode: string;
+  label: string;
+  viaRef: string;
+}
+
+/** The delivery view: what the model becomes when it is deployed. */
+export interface WorkbenchDelivery {
+  services: readonly WorkbenchService[];
+  links: readonly WorkbenchDeliveryLink[];
+  /** What the model cannot answer yet, printed instead of guessed. */
+  limitations: readonly string[];
+}
+
 export interface WorkbenchCounts {
   contracts: number;
   entities: number;
@@ -64,6 +99,8 @@ export interface WorkbenchData {
   unresolved: string[];
   counts: WorkbenchCounts;
   validation: WorkbenchValidation;
+  /** Null when the page was generated without a delivery projection. */
+  delivery: WorkbenchDelivery | null;
   generatedAt: string;
 }
 
@@ -110,6 +147,7 @@ export interface WorkbenchProjectionInput {
   /** Scenario results from the checked FM run. */
   simulation?: { scenarioResults?: readonly JsonObject[] };
   api?: WorkbenchApiInput | null;
+  delivery?: WorkbenchDelivery | null;
   check: WorkbenchCheckInput;
   /** ISO timestamp the page prints as its generation time. */
   generatedAt?: string;
@@ -193,6 +231,7 @@ export const projectWorkbenchData = ({
   instances = [],
   simulation = {},
   api = null,
+  delivery = null,
   check,
   generatedAt,
 }: WorkbenchProjectionInput): WorkbenchData => {
@@ -553,6 +592,32 @@ export const projectWorkbenchData = ({
     }
   }
 
+  if (delivery !== null) {
+    for (const service of delivery.services) {
+      const node = add({ id: service.id, label: service.name }, 'service');
+
+      Object.assign(node, {
+        kind: service.kind,
+        ...select(
+          service as unknown as JsonObject,
+          'lane supplies consumes notes',
+        ),
+      });
+      node['routes'] = service.routes.map((route) => ({ ...route }));
+      // A service is not a business object owned by the Context it serves, so it
+      // sits at the root of the tree and points at its Context with an edge.
+      node['parent'] = '';
+      delete node['contextRef'];
+      link(node.id, service.contextRef, '部署边界');
+    }
+
+    for (const edge of delivery.links) {
+      // A link between two services is drawn as the boundary crossing it is;
+      // both ends are service nodes, so nothing has to be invented.
+      link(edge.from, edge.to, edge.mode === 'async' ? `${edge.label}（异步）` : edge.label);
+    }
+  }
+
   const name = isRecord(model.model) ? model.model['name'] : undefined;
 
   return {
@@ -586,6 +651,7 @@ export const projectWorkbenchData = ({
       runtime: false,
       unresolvedOrderCount: check.timelineSummary?.unresolvedOrderCount ?? 0,
     },
+    delivery,
     generatedAt: generatedAt ?? new Date().toISOString(),
   };
 };

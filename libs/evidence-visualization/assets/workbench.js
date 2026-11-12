@@ -28,6 +28,7 @@ const groups = {
   representation: '响应表示',
   binding: '实例绑定',
   journey: '调用流程',
+  service: '交付服务',
 };
 const kinds = {
   contract: '合同',
@@ -45,6 +46,8 @@ const kinds = {
   derivation: '派生计算',
   precondition: '前置条件',
   invariant: '不变量',
+  channel: '渠道服务',
+  capability: '能力支撑',
 };
 let current = '';
 let focusedRequestRule = '';
@@ -400,6 +403,48 @@ function overview() {
     for (const message of messages) checks.append(el('p', message, 'muted'));
   }
   if (DATA.unresolved.length) list(DATA.unresolved, '', checks);
+  const delivery = DATA.delivery;
+  if (delivery) {
+    const section = card('交付边界');
+    section.append(
+      el(
+        'p',
+        '每个上下文成为一个服务；跨边界的只有凭证，不是数据表行。',
+        'intro',
+      ),
+    );
+    section.append(
+      table(
+        ['服务', '类型', '所属上下文', '路由'],
+        delivery.services.map((service) => [
+          link(service.id),
+          kinds[service.kind] || service.kind,
+          link(service.contextRef),
+          String(service.routes.length),
+        ]),
+      ),
+    );
+    if (delivery.links.length) {
+      section.append(el('h3', '跨边界调用'));
+      section.append(
+        table(
+          ['从', '到', '语义', '方式', '凭证'],
+          delivery.links.map((edge) => [
+            link(edge.from),
+            link(edge.to),
+            edge.label,
+            edge.mode === 'async' ? '异步回调' : '同步调用',
+            edge.viaRef ? link(edge.viaRef) : '—',
+          ]),
+        ),
+      );
+    }
+    if (delivery.limitations.length) {
+      section.append(el('h3', '尚未闭环的能力'));
+      for (const message of delivery.limitations)
+        section.append(el('p', message, 'muted'));
+    }
+  }
 }
 function bindingFact(binding) {
   return binding.ref
@@ -668,6 +713,24 @@ function renderNode(node) {
         ]),
       ),
     );
+  }
+  if (node.group === 'service') {
+    card('所属上下文').append(link(node.contextRef));
+    if (node.routes?.length)
+      card('交付契约 · 路由').append(
+        table(
+          ['方法', '路径', '业务时刻'],
+          node.routes.map((route) => [route.method, route.path, route.summary]),
+        ),
+      );
+    if (node.supplies?.length)
+      card('供给他人的能力插槽').append(
+        table(['插槽'], node.supplies.map((ref) => [link(ref)])),
+      );
+    if (node.consumes?.length)
+      card('依赖但不由自己实现的能力').append(
+        table(['插槽'], node.consumes.map((ref) => [link(ref)])),
+      );
   }
   if (node.method)
     card('HTTP 契约').append(

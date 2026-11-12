@@ -32,6 +32,9 @@
       "scope:evidence"
     ]
   },
+  "devDependencies": {
+    "@evidence-poc/evidence-schema": "workspace:*"
+  },
   "dependencies": {
     "@evidence-poc/evidence-api": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
