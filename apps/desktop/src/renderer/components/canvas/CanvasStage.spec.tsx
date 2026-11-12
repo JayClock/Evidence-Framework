@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
+import {
+  createGraphLayout,
+  createLifecycleSwimlaneLayout,
+} from '@evidence-poc/evidence-canvas-interaction';
 
 import { CanvasStage } from './CanvasStage';
 import { createDesktopFixture } from '../../test-support/modelFixture';
@@ -200,5 +203,64 @@ describe('CanvasStage', () => {
     const { container } = setup();
 
     expect(container.querySelector('[data-overlay-node-id]')).toBeNull();
+  });
+
+  it('draws the four stage columns when given a lifecycle layout', () => {
+    const document = createDesktopFixture();
+    const lifecycle = createLifecycleSwimlaneLayout(
+      createDomainGraph(document),
+    );
+    const { container } = render(
+      <CanvasStage
+        layout={lifecycle}
+        document={document}
+        viewMode="simplified"
+        selection={{ nodeId: null, attributeName: null }}
+        hoveredEdgeId={null}
+        hoveredContextId={null}
+        highlightedNodeIds={new Set<string>()}
+        highlightedEdgeIds={new Set<string>()}
+        highlightedContextIds={new Set<string>()}
+        dimmed={false}
+        marquee={null}
+        onHoverNode={vi.fn()}
+        onHoverEdge={vi.fn()}
+        onHoverContext={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(
+      container.querySelector('[data-region="lifecycle-banner"]'),
+    ).not.toBeNull();
+    expect(container.querySelectorAll('[data-swimlane-stage]')).toHaveLength(4);
+  });
+
+  it('omits the banner when the layout is not lane-based', () => {
+    const { container } = setup();
+
+    expect(
+      container.querySelector('[data-region="lifecycle-banner"]'),
+    ).toBeNull();
+  });
+
+  it('draws a request as a window and a confirmation as a stamp', () => {
+    const { container } = setup();
+
+    expect(
+      container.querySelector(
+        '[data-node-id="evidence.request"][data-node-shape="interval"]',
+      ),
+    ).not.toBeNull();
+    expect(
+      container.querySelector(
+        '[data-node-id="evidence.request"] [data-node-shape="interval"]',
+      ),
+    ).not.toBeNull();
+    expect(
+      container.querySelector(
+        '[data-node-id="evidence.contract"][data-node-shape="moment"]',
+      ),
+    ).not.toBeNull();
   });
 });

@@ -2,10 +2,12 @@ import type {
   DomainGraphLayout,
   LayoutEdge,
   LayoutNode,
+  LifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
+import { LifecycleBanner } from './LifecycleBanner';
 import { NodeCard } from './NodeCard';
 
 export type CanvasViewMode = 'simplified' | 'standard';
@@ -45,6 +47,14 @@ interface CanvasStageProps {
 const EDGE_COLOR = '#98a2b3';
 const EDGE_HIGHLIGHT = '#2f5d8f';
 
+/** Lane data only exists on a lifecycle layout, but the stage accepts either. */
+const swimlanesOf = (
+  layout: DomainGraphLayout,
+): LifecycleSwimlaneLayout | null =>
+  'swimlanes' in layout && Array.isArray(layout.swimlanes)
+    ? (layout as LifecycleSwimlaneLayout)
+    : null;
+
 export const CanvasStage = ({
   layout,
   document,
@@ -65,6 +75,7 @@ export const CanvasStage = ({
 }: CanvasStageProps) => {
   const width = Math.max(1, layout.bounds.width);
   const height = Math.max(1, layout.bounds.height);
+  const swimlanes = swimlanesOf(layout);
   const relationshipById = new Map(
     document.relationships.map(
       (relationship) => [relationship.id, relationship] as const,
@@ -76,6 +87,8 @@ export const CanvasStage = ({
       style={{ width, height }}
       data-region="canvas-stage"
     >
+      {swimlanes === null ? null : <LifecycleBanner layout={swimlanes} />}
+
       {layout.contextGroups.map((group) => {
         const active = highlightedContextIds.has(group.contextId);
         const faded = dimmed && !active;
@@ -246,11 +259,7 @@ export const CanvasStage = ({
             );
 
             return node === undefined ? null : (
-              <ChangeRing
-                key={`mark-${nodeId}`}
-                node={node}
-                change={change}
-              />
+              <ChangeRing key={`mark-${nodeId}`} node={node} change={change} />
             );
           })}
     </div>

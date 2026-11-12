@@ -11,8 +11,8 @@ import type {
   ValidationResult,
 } from '@evidence-poc/evidence-schema';
 import {
-  type DomainGraphLayout,
-  createGraphLayout,
+  type LifecycleSwimlaneLayout,
+  createLifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
@@ -23,7 +23,7 @@ export interface EditorSessionState {
   session: ModelSession;
   document: DomainModelDocument;
   graph: DomainGraph;
-  layout: DomainGraphLayout;
+  layout: LifecycleSwimlaneLayout;
   selection: ModelSelection;
   canUndo: boolean;
   canRedo: boolean;
@@ -61,7 +61,7 @@ const readState = (
     session,
     document,
     graph,
-    layout: createGraphLayout(graph),
+    layout: createLifecycleSwimlaneLayout(graph),
     selection: session.getSelection(),
     canUndo: session.canUndo(),
     canRedo: session.canRedo(),
