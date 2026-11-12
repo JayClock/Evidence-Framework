@@ -6,10 +6,8 @@ import type {
   ToolDefinition,
 } from '@earendil-works/pi-coding-agent';
 
+import { EVIDENCE_INSTRUCTIONS } from '../prompts/index.js';
 import { type AgentStreamEvent, projectSessionEvent } from './streamEvents.js';
-
-/** Project-local skill tree; the only skill source `AGENTS.md` allows. */
-export const PROJECT_SKILL_DIRECTORY = path.join('.agents', 'skills');
 
 /** The few Pi SDK entry points the desktop needs, narrowed for injection. */
 export interface PiSdkPort {
@@ -17,7 +15,8 @@ export interface PiSdkPort {
   createResourceLoader(options: {
     cwd: string;
     agentDir: string;
-    skillDirectories?: readonly string[];
+    /** Sections appended to Pi's own system prompt, in order. */
+    instructions?: readonly string[];
     extensionFactories?: readonly InlineExtension[];
   }): { reload(): Promise<void> };
   createSessionManager(cwd: string, sessionDirectory?: string): unknown;
@@ -34,12 +33,18 @@ export interface PiSdkPort {
 }
 
 export interface EvidenceAgentSessionOptions {
-  /** Project root whose `.evidence/`, `.agents/` and instructions are discovered. */
+  /** Project root whose `.evidence/` and instructions are discovered. */
   projectRoot: string;
   /** Defaults to `~/.pi/agent` through Pi's own resolver. */
   agentDir?: string;
-  /** Defaults to `<projectRoot>/.agents/skills`. */
-  skillDirectories?: readonly string[];
+  /**
+   * System-prompt sections appended after Pi's own prompt.
+   *
+   * Defaults to {@link EVIDENCE_INSTRUCTIONS}: the modeling rules travel with
+   * the code, so a project does not have to carry a skill tree for the agent to
+   * know how to behave.
+   */
+  instructions?: readonly string[];
   extensionFactories?: readonly InlineExtension[];
   customTools?: readonly ToolDefinition[];
   /** Where Pi persists the JSONL audit trail; defaults to Pi's session directory. */
@@ -88,13 +93,18 @@ export const loadPiSdkPort = async (): Promise<PiSdkPort> => {
     createResourceLoader: ({
       cwd,
       agentDir,
-      skillDirectories = [],
+      instructions = [],
       extensionFactories = [],
     }) =>
       new sdk.DefaultResourceLoader({
         cwd,
         agentDir,
-        additionalSkillPaths: [...skillDirectories],
+        // A packaged app owns its instructions. Pi would otherwise scan the
+        // project and the user's agent directory for `SKILL.md`, which both
+        // widens the prompt with files the install never reviewed and asks the
+        // model to go looking for a skill that is not part of this product.
+        noSkills: true,
+        appendSystemPromptOverride: (base) => [...base, ...instructions],
         extensionFactories: [...extensionFactories],
       }),
     createSessionManager: (cwd, sessionDirectory) =>
@@ -148,13 +158,10 @@ export const createEvidenceAgentSession = (
     starting ??= (async () => {
       const sdk = options.sdk ?? (await loadPiSdkPort());
       const agentDir = options.agentDir ?? sdk.getAgentDir();
-      const skillDirectories = options.skillDirectories ?? [
-        path.join(projectRoot, PROJECT_SKILL_DIRECTORY),
-      ];
       const resourceLoader = sdk.createResourceLoader({
         cwd: projectRoot,
         agentDir,
-        skillDirectories,
+        instructions: options.instructions ?? EVIDENCE_INSTRUCTIONS,
         ...(options.extensionFactories === undefined
           ? {}
           : { extensionFactories: options.extensionFactories }),

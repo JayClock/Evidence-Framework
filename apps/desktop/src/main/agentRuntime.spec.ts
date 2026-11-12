@@ -139,16 +139,11 @@ const runtimeWith = (options: {
   fake: ReturnType<typeof createFakeSession>;
   sensors?: ReturnType<typeof sensorEngine>;
   sensorDelayMs?: number;
-  skillsRoot?: string;
 }) =>
   createAgentRuntime({
     rootPath: '/models/procurement',
     transport: options.transport,
     sensors: options.sensors ?? sensorEngine(),
-    ...(options.skillsRoot === undefined
-      ? {}
-      : { skillsRoot: options.skillsRoot }),
-
     sessionFactory: (created) => {
       sessionOptions.push(created);
 
@@ -176,27 +171,7 @@ describe('createAgentRuntime', () => {
     expect(fake.prompts).toEqual(['澄清退货履约', '继续']);
   });
 
-  it('registers the three evidence tools and the project skill tree', async () => {
-    const { transport } = createTransport();
-    const fake = createFakeSession();
-    const runtime = runtimeWith({
-      transport,
-      fake,
-      skillsRoot: '/workspace/project/.agents/skills',
-    });
-
-    await runtime.prompt('开工');
-
-    const created = sessionOptions.at(-1);
-
-    expect(created?.projectRoot).toBe('/models/procurement');
-    expect(created?.skillDirectories).toEqual([
-      '/workspace/project/.agents/skills',
-    ]);
-    expect(created?.extensionFactories).toHaveLength(1);
-  });
-
-  it('falls back to a bundled skill tree when the project has none', async () => {
+  it('hands the session its tools and no skill directory to discover', async () => {
     const { transport } = createTransport();
     const fake = createFakeSession();
     const runtime = runtimeWith({ transport, fake });
@@ -204,49 +179,15 @@ describe('createAgentRuntime', () => {
     await runtime.prompt('开工');
 
     const created = sessionOptions.at(-1);
-    const [skillsRoot] = created?.skillDirectories ?? [];
 
-    // Whatever the host finds, the session must be told explicitly where to
-    // read skills instead of silently defaulting to an empty project folder.
-    expect(skillsRoot).toBeTruthy();
-    expect(skillsRoot).not.toBe('/models/procurement/.agents/skills');
-  });
-
-  it('publishes the skill directories a shell command needs, and no interpreter', async () => {
-    const { transport } = createTransport();
-    const fake = createFakeSession();
-    const keys = ['PYTHON', 'FM_SKILL_DIR', 'EVIDENCE_SKILLS_ROOT'] as const;
-    const before = Object.fromEntries(
-      keys.map((key) => [key, process.env[key]]),
-    );
-    const runtime = runtimeWith({
-      transport,
-      fake,
-      skillsRoot: '/workspace/project/.agents/skills',
-    });
-
-    try {
-      await runtime.prompt('开工');
-
-      expect(process.env.EVIDENCE_SKILLS_ROOT).toBe(
-        '/workspace/project/.agents/skills',
-      );
-      expect(process.env.FM_SKILL_DIR).toBe(
-        '/workspace/project/.agents/skills/evidence-fm',
-      );
-      // Nothing runs a script any more, so no `PYTHON` is advertised.
-      expect(process.env.PYTHON).toBeUndefined();
-    } finally {
-      for (const key of keys) {
-        const value = before[key];
-
-        if (value === undefined) {
-          delete process.env[key];
-        } else {
-          process.env[key] = value;
-        }
-      }
-    }
+    expect(created?.projectRoot).toBe('/models/procurement');
+    expect(created?.extensionFactories).toHaveLength(1);
+    // The modeling instructions travel with the session; the runtime neither
+    // points at a skill tree nor publishes a path for a shell to read.
+    expect(created).not.toHaveProperty('skillDirectories');
+    expect(created).not.toHaveProperty('instructions');
+    expect(process.env.EVIDENCE_SKILLS_ROOT).toBeUndefined();
+    expect(process.env.FM_SKILL_DIR).toBeUndefined();
   });
 
   it('streams projected session events to the renderer', async () => {

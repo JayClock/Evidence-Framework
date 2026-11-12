@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import {
   createEvidenceAgentSession,
-  skillEnvironment,
   type AgentStreamEvent,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
@@ -21,7 +20,6 @@ import {
 
 import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
-import { resolveSkillsRoot } from './skillsRoot';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
 
@@ -41,11 +39,6 @@ export interface AgentRuntimeOptions {
   sessionFactory?: (
     options: EvidenceAgentSessionOptions,
   ) => EvidenceAgentSession;
-  /**
-   * Skill tree override. When omitted the project's own `.agents/skills` wins,
-   * then the tree unpacked next to `app.asar`, then the workspace one.
-   */
-  skillsRoot?: string;
   sessionDirectory?: string;
   /** Transcript the session continues; a branch resumes its own lineage. */
   sessionFile?: string | null;
@@ -84,7 +77,6 @@ export const createAgentRuntime = ({
   transport,
   sensors,
   sessionFactory = createEvidenceAgentSession,
-  skillsRoot,
   sessionDirectory,
   sessionFile,
   sensorDelayMs,
@@ -95,25 +87,9 @@ export const createAgentRuntime = ({
   const modelRoot = modelSourceOf(resolvedRoot);
   const projectDirectory = projectDirectoryOf(resolvedRoot);
   const tracePath = tracePathOf(resolvedRoot);
-  // One tree feeds both the agent prompt and the sensors, so a project that
-  // ships its own skills is the only place either of them reads.
-  const effectiveSkillsRoot =
-    skillsRoot ?? resolveSkillsRoot({ projectRoot: projectDirectory });
-  const engine =
-    sensors ??
-    createSensorsEngine({ skillsRoot: effectiveSkillsRoot });
-
-  // The skill guides address their own files as `$FM_SKILL_DIR/…`, and Pi's bash
-  // tool reads `process.env` when it spawns, with no per-session hook. No
-  // interpreter is published: the checks run in-process, so a `PYTHON` variable
-  // would only invite an agent to start one. Only install-level paths appear
-  // here — one process serves every project window, so per-project paths would
-  // describe the wrong model.
-  const skillVariables = skillEnvironment({ skillsRoot: effectiveSkillsRoot });
-
-  const publishSkillEnvironment = (): void => {
-    Object.assign(process.env, skillVariables);
-  };
+  // The sensors carry their checks and schemas, so one engine per project needs
+  // no install directory: it reads the model and decides.
+  const engine = sensors ?? createSensorsEngine();
 
   let session: EvidenceAgentSession | null = null;
   let latestReport: SensorReport | null = null;
@@ -162,7 +138,6 @@ export const createAgentRuntime = ({
   const startSession = async (): Promise<EvidenceAgentSession> => {
     const created = sessionFactory({
       projectRoot: projectDirectory,
-      skillDirectories: [effectiveSkillsRoot],
       ...(sessionDirectory === undefined ? {} : { sessionDirectory }),
       ...(sessionFile === undefined || sessionFile === null
         ? {}
@@ -191,7 +166,6 @@ export const createAgentRuntime = ({
     });
 
     created.subscribe(transport.publishEvent);
-    publishSkillEnvironment();
     await created.start();
 
     return created;
@@ -202,10 +176,6 @@ export const createAgentRuntime = ({
     modelRoot,
     prompt: async (text) => {
       const active = await ensureSession();
-
-      // A window opened later republished the variables for its own skill tree;
-      // re-assert this project's before the model can reach a shell.
-      publishSkillEnvironment();
 
       await active.prompt(text);
     },

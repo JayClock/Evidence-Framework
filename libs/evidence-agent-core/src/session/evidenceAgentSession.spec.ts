@@ -6,6 +6,7 @@ import {
   createEvidenceAgentSession,
   type PiSdkPort,
 } from './evidenceAgentSession.js';
+import { EVIDENCE_INSTRUCTIONS } from '../prompts/index.js';
 import { projectSessionEvent } from './streamEvents.js';
 
 type Listener = (event: AgentSessionEvent) => void;
@@ -173,7 +174,7 @@ describe('projectSessionEvent', () => {
 });
 
 describe('createEvidenceAgentSession', () => {
-  it('loads the project skill tree and creates the session once', async () => {
+  it('starts with the built-in instructions and no discovered skill tree', async () => {
     const fake = createFakeSdk();
     const session = createEvidenceAgentSession({
       projectRoot: '/workspace/project',
@@ -188,7 +189,7 @@ describe('createEvidenceAgentSession', () => {
       {
         cwd: '/workspace/project',
         agentDir: '/home/modeler/.pi/agent',
-        skillDirectories: ['/workspace/project/.agents/skills'],
+        instructions: EVIDENCE_INSTRUCTIONS,
       },
     ]);
     expect(fake.createdOptions).toEqual([

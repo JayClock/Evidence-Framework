@@ -9,7 +9,6 @@ import type {
 } from '@evidence-poc/evidence-mcp';
 
 import { modelSourceOf, tracePathOf } from './modelSource';
-import { resolveSkillsRoot } from './skillsRoot';
 
 /** Builds one sensors engine per project root and caches it. */
 export interface McpSensorServiceOptions {
@@ -50,13 +49,9 @@ export const createMcpSensorService = ({
       return existing;
     }
 
-    const created =
-      createEngine?.(rootPath) ??
-      createSensorsEngine({
-        // The MCP tools answer from the same sensors as the canvas, so they must
-        // read the same tree instead of assuming `<project>/.agents/skills`.
-        skillsRoot: resolveSkillsRoot({ projectRoot: rootPath }),
-      });
+    // The MCP tools answer from the same engine as the canvas: one read of the
+    // model, one verdict, no install directory to locate.
+    const created = createEngine?.(rootPath) ?? createSensorsEngine();
 
     engines.set(rootPath, created);
 

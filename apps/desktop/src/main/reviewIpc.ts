@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain } from 'electron';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { readModelRoot } from '@evidence-poc/evidence-model-core';
@@ -14,8 +14,8 @@ import {
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 import type { ExportReviewResult } from '../shared/projects';
 
+import { resolveReviewAssetsDirectory } from './installAssets';
 import { modelSourceOf, projectDirectoryOf } from './modelSource';
-import { resolveSkillsRoot } from './skillsRoot';
 
 /**
  * Writing the offline review page from the app.
@@ -36,6 +36,8 @@ export interface ReviewIpcOptions {
   generate?: typeof generateWorkbench;
   /** Injected by a test that must not read the project. */
   readDocument?: (modelRoot: string) => Promise<DomainModelDocument>;
+  /** Injected by a test that must not look at the install's directories. */
+  resolveAssets?: typeof resolveReviewAssetsDirectory;
 }
 
 /** `review.html` beside the project is a friendlier default than a dot directory. */
@@ -87,12 +89,18 @@ export const registerReviewIpc = ({
   },
   generate = generateWorkbench,
   readDocument = async (modelRoot) => (await readModelRoot(modelRoot)).bundle,
+  resolveAssets = resolveReviewAssetsDirectory,
 }: ReviewIpcOptions = {}): void => {
   ipcMain.handle(
     EVIDENCE_IPC_CHANNELS.exportReview,
     async (event, rootPath: string): Promise<ExportReviewResult> => {
       const projectRoot = projectDirectoryOf(rootPath);
       const modelRoot = modelSourceOf(projectRoot);
+      const installedAssets = resolveAssets({
+        isPackaged: app.isPackaged,
+        resourcesPath: process.resourcesPath,
+        appPath: app.getAppPath(),
+      });
 
       try {
         const chosen = await showSaveDialog({
@@ -115,10 +123,13 @@ export const registerReviewIpc = ({
         const generated = await generate({
           projectRoot,
           output: chosen.filePath,
+          // The page assets belong to the install, not to the project: a
+          // packaged app reads the copy beside `app.asar`, a checkout reads the
+          // package it builds from.
           assetsDirectory: resolveAssetsDirectory({
-            skillsRoot: resolveSkillsRoot({ projectRoot }),
-            projectRoot,
-            searchStartDirectory: projectRoot,
+            ...(installedAssets === undefined
+              ? {}
+              : { assetsDirectory: installedAssets }),
           }),
           ...(scopeRefs === undefined ? {} : { scopeRefs }),
         });

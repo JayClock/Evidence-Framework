@@ -11,6 +11,7 @@ vi.mock('electron', () => ({
   },
   BrowserWindow: { fromWebContents: () => null },
   dialog: { showSaveDialog: async () => ({ canceled: true }) },
+  app: { isPackaged: false, getAppPath: () => '/repo/apps/desktop' },
 }));
 
 const { registerReviewIpc, reviewScopeRefs, suggestedReviewFileName } =
@@ -44,7 +45,10 @@ const invoke = async (
   options: Parameters<typeof registerReviewIpc>[0] = {},
 ): Promise<unknown> => {
   handlers.clear();
-  registerReviewIpc(options);
+  registerReviewIpc({
+    resolveAssets: () => '/install/assets',
+    ...options,
+  });
 
   const handler = handlers.get('evidence:project:export-review');
 

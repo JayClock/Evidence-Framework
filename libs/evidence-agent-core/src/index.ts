@@ -1,5 +1,12 @@
 export {
-  PROJECT_SKILL_DIRECTORY,
+  EVIDENCE_INSTRUCTIONS,
+  EVIDENCE_SYSTEM_PROMPT,
+  MODELING_PROMPT,
+  ROLE_PROMPT,
+  WORKFLOW_PROMPT,
+} from './prompts/index.js';
+
+export {
   createEvidenceAgentSession,
   loadPiSdkPort,
   type EvidenceAgentSession,
@@ -19,11 +26,3 @@ export {
   projectSessionEvent,
   type AgentStreamEvent,
 } from './session/streamEvents.js';
-
-export {
-  SKILLS_ROOT_VARIABLE,
-  SKILL_PACKAGE_NAMES,
-  skillEnvironment,
-  type SkillEnvironmentInput,
-  type SkillPackageName,
-} from './skills/skillEnvironment.js';

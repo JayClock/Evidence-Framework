@@ -1,5 +1,4 @@
 import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 
 import {
   stageGateSummaryOf,
@@ -15,21 +14,11 @@ import { runNativeSensors } from './native/nativeSensors.js';
  * The sensor engine.
  *
  * One implementation, in-process: every check reads the model tree once and
- * decides from that read. There is no mode to select and no interpreter to
- * resolve.
+ * decides from that read. There is no mode to select, no interpreter to resolve
+ * and no install directory to locate — the checks and the schemas are the code.
  */
 
-const DEFAULT_SKILLS_DIRECTORY = path.join('.agents', 'skills');
-
 export interface SensorsEngineOptions {
-  /**
-   * Skill tree the agent reads.
-   *
-   * The sensors open nothing under it — they carry the checks, the schemas and the
-   * simulator — but a caller that shares one tree between the agent and the
-   * sensors keeps building it here so both describe the same install.
-   */
-  skillsRoot?: string;
   /** Injected clock, so a report's timestamp is reproducible in a test. */
   now?: () => Date;
 }
@@ -73,12 +62,8 @@ const readTrace = async (tracePath: string): Promise<unknown> => {
 
 /** Runs every sensor against one model root. */
 export const createSensorsEngine = ({
-  skillsRoot,
   now = () => new Date(),
 }: SensorsEngineOptions = {}) => {
-  const root =
-    skillsRoot ?? path.join(process.cwd(), DEFAULT_SKILLS_DIRECTORY);
-
   const runFullSensors = async (
     input: RunSensorsInput,
   ): Promise<SensorOutcome> =>
@@ -132,7 +117,6 @@ export const createSensorsEngine = ({
   };
 
   return {
-    skillsRoot: root,
     runFullSensors,
     checkStageGate,
   };
