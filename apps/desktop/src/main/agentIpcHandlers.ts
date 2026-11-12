@@ -20,7 +20,6 @@ import {
 } from '../shared/agentIpc';
 
 import { createAgentRuntime, type AgentRuntime } from './agentRuntime';
-import { readInterviewTrace } from './traceReader';
 
 export const PATCH_TIMEOUT_MS = 15_000;
 
@@ -28,15 +27,6 @@ export interface AgentIpcOptions {
   /** Test injection: production builds the default runtime. */
   createRuntime?: typeof createAgentRuntime;
   patchTimeoutMs?: number;
-  /**
-   * Transcript the runtime should resume.
-   *
-   * A branch owns its own lineage, so the session file is resolved per project
-   * root when the runtime is first needed instead of being baked in at startup.
-   */
-  resolveSessionFile?: (rootPath: string) => Promise<string | null>;
-  /** Observes every verdict so the active branch can remember its own. */
-  onReport?: (rootPath: string, report: SensorReport) => void;
 }
 
 interface PendingPatch {
@@ -57,23 +47,13 @@ const toMessage = (error: unknown): string =>
 export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
   patchTimeoutMs = PATCH_TIMEOUT_MS,
-  resolveSessionFile,
-  onReport,
 }: AgentIpcOptions = {}): {
   dispose: () => void;
-  /** Drops the runtime so the next prompt starts in the new branch's lineage. */
-  disposeRuntime: (rootPath: string) => void;
 } => {
   const runtimes = new Map<string, AgentRuntime>();
   const starting = new Map<string, Promise<AgentRuntime>>();
   const ownedBy = new Map<number, Set<string>>();
   const pending = new Map<string, PendingPatch>();
-
-  const disposeRuntime = (rootPath: string): void => {
-    runtimes.get(rootPath)?.dispose();
-    runtimes.delete(rootPath);
-    starting.delete(rootPath);
-  };
 
   const runtimeFor = async (
     sender: WebContents,
@@ -106,11 +86,6 @@ export const registerAgentIpc = ({
     sender: WebContents,
     rootPath: string,
   ): Promise<AgentRuntime> => {
-    const sessionFile =
-      resolveSessionFile === undefined
-        ? null
-        : await resolveSessionFile(rootPath).catch(() => null);
-
     const ownsPatch = (patch: ModelPatchRequest): Promise<ModelPatchResult> =>
       new Promise((resolve) => {
         if (sender.isDestroyed()) {
@@ -136,7 +111,6 @@ export const registerAgentIpc = ({
 
     const runtime = createRuntime({
       rootPath,
-      ...(sessionFile === null ? {} : { sessionFile }),
       transport: {
         publishEvent: (event) => {
           if (!sender.isDestroyed()) {
@@ -147,8 +121,6 @@ export const registerAgentIpc = ({
           }
         },
         publishReport: (report) => {
-          onReport?.(rootPath, report);
-
           if (!sender.isDestroyed()) {
             sender.send(EVIDENCE_AGENT_IPC_CHANNELS.report, {
               rootPath,
@@ -241,12 +213,6 @@ export const registerAgentIpc = ({
   );
 
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.interviewTrace,
-    async (_event, input: { rootPath: string }) =>
-      readInterviewTrace(input.rootPath),
-  );
-
-  ipcMain.handle(
     EVIDENCE_AGENT_IPC_CHANNELS.canvasContext,
     async (event, input: CanvasContextRegistration): Promise<void> => {
       (await runtimeFor(event.sender, input.rootPath)).setCanvasContext(
@@ -271,7 +237,6 @@ export const registerAgentIpc = ({
   );
 
   return {
-    disposeRuntime,
     dispose: () => {
       for (const entry of pending.values()) {
         clearTimeout(entry.timer);

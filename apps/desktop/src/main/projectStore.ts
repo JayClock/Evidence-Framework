@@ -199,8 +199,8 @@ export const createProjectStore = ({
    * Writes one document to a new source tree or bundle file.
    *
    * Refusing an existing target matters more than it looks: silently
-   * overwriting is how a half-written model replaces a real one, so both
-   * branches fail with the path the user should open instead.
+   * overwriting is how a half-written model replaces a real one, so both source
+   * forms fail with the path the user should open instead.
    */
   const writeProject = async (
     target: StarterTarget,

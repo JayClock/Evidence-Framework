@@ -31,23 +31,13 @@ describe('createSensorsEngine', () => {
 
   it('gates natively from the same report the sensors produce', async () => {
     const engine = createSensorsEngine();
-    const trace = fileURLToPath(
-      new URL(
-        '../../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription/README.md',
-        import.meta.url,
-      ),
-    );
     const summary = await engine.checkStageGate({
       target: 'api',
       modelRoot: goldenModel,
-      tracePath: trace,
       scopeRefs: ['context.content-subscription'],
     });
 
-    // The README is not a trace, so the gate must stay shut rather than pass.
-    expect(summary.passed).toBe(false);
-    expect(summary.errors).toEqual(
-      expect.arrayContaining(['Interview trace is not a JSON object']),
-    );
+    expect(summary.passed).toBe(true);
+    expect(summary.errors).toEqual([]);
   });
 });

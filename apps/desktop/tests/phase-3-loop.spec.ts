@@ -3,9 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
-  calculateFrontier,
   createSensorsEngine,
-  type InterviewTraceDocument,
   type ModelPatchRequest,
   type SensorReport,
 } from '@evidence-poc/evidence-modeling-orchestrator';
@@ -29,36 +27,6 @@ const FIXTURE_ROOT = path.resolve(
 );
 
 const PROJECT_ROOT = '/models/procurement';
-
-const trace: InterviewTraceDocument = {
-  schemaVersion: '5.0',
-  modelId: 'product-procurement-full-lifecycle',
-  traces: [
-    {
-      traceId: 'trace-1',
-      timestamp: '2026-11-11T08:00:00.000Z',
-      focus: {
-        contextRef: 'context.product-procurement',
-        evidenceRef: 'request.payment',
-        roleRef: 'role.seller',
-      },
-      narrative: {
-        judgment: '付款以银行回单为证明',
-        story: '客户提出付款请求，卖方以银行回单确认收款。',
-        keyData: ['request.payment#requested_minor_units'],
-      },
-      qa: [
-        {
-          questionId: 'Q1',
-          question: '运费由谁提供、怎么算？',
-          targetAttribute: 'request.payment#freight',
-        },
-      ],
-      userInput: { rawText: '客户财务口头说明', confirmedFacts: [] },
-      targetBindings: [],
-    },
-  ],
-};
 
 type ToolStub = {
   name: string;
@@ -225,19 +193,6 @@ describe('phase 3 control loop', () => {
     expect(published.length).toBeGreaterThanOrEqual(2);
 
     runtime.dispose();
-  });
-
-  it('derives the frontier from the trace against the live model', async () => {
-    const parsed = await readModelDirectory(FIXTURE_ROOT);
-    const frontier = calculateFrontier({
-      trace,
-      entityIds: parsed.document.entities.map((entity) => entity.id),
-    });
-
-    expect(frontier.contextRef).toBe('context.product-procurement');
-    expect(frontier.openQuestions).toHaveLength(1);
-    expect(frontier.gaps).toEqual([]);
-    expect(frontier.closed).toBe(false);
   });
 
   it('checks the same project without an interpreter', async () => {

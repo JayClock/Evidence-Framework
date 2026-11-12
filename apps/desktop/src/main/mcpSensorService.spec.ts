@@ -63,7 +63,7 @@ describe('createMcpSensorService', () => {
     const passing = createMcpSensorService({
       createEngine: () =>
         engineThat({
-          gate: { passed: true, target: 'api', errors: [], limitations: [] },
+          gate: { passed: true, target: 'api', errors: [] },
         }) as never,
     });
     const failing = createMcpSensorService({

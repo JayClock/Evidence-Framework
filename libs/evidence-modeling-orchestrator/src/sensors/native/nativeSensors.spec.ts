@@ -1,11 +1,8 @@
 import { fileURLToPath } from 'node:url';
 
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
-
 import { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
 import { loadModelSources, runNativeFmCheck } from './modelSources.js';
 import { runNativeSensors } from './nativeSensors.js';
-import { checkInterviewTrace } from './nativeTraceCheck.js';
 import { checkNativeStageGate, filterFmCheckErrors } from './nativeStageGate.js';
 
 const fixture = (path: string): string =>
@@ -109,102 +106,15 @@ describe('runNativeKeyDataAudit', () => {
   });
 });
 
-describe('checkInterviewTrace', () => {
-  it('accepts a trace that only names modeled objects', async () => {
-    const { bundle } = await readModelRoot(golden);
-    const document = {
-      schemaVersion: '5.0',
-      modelId: 'traceable-subscription',
-      traces: [
-        {
-          traceId: 'trace-1',
-          timestamp: '2026-09-01T09:20:00Z',
-          focus: {
-            contextRef: 'context.content-subscription',
-            evidenceRef: 'request.content-payment',
-            roleRef: 'role.subscriber',
-          },
-          narrative: { judgment: '按月订阅', story: '用户确认按月订阅并预付一期。' },
-          qa: [{ questionId: 'Q1', question: '计费周期多久？' }],
-          userInput: {
-            rawText: '按月。',
-            confirmedFacts: ['范围结束确认：context.content-subscription'],
-          },
-          targetBindings: [
-            { evidenceRef: 'request.content-payment', sourceType: 'interview_statement' },
-          ],
-        },
-      ],
-    };
-
-    expect(checkInterviewTrace(document, bundle)).toEqual({
-      valid: true,
-      traceCount: 1,
-      errors: [],
-      limitations: [],
-    });
-  });
-
-  it('reports an unmodeled reference and a repeated question id', async () => {
-    const { bundle } = await readModelRoot(golden);
-    const record = {
-      traceId: 'trace-1',
-      timestamp: '2026-09-01T09:20:00Z',
-      focus: { evidenceRef: 'request.missing' },
-      narrative: { judgment: 'j', story: 's' },
-      qa: [
-        { questionId: 'Q1', question: 'q' },
-        { questionId: 'Q1', question: 'q again' },
-      ],
-      userInput: { rawText: 'r', confirmedFacts: [] },
-      targetBindings: [
-        {
-          evidenceRef: 'request.content-payment',
-          attributeName: 'not_modeled',
-          sourceType: 'interview_statement',
-        },
-      ],
-    };
-
-    expect(
-      checkInterviewTrace(
-        { schemaVersion: '5.0', modelId: 'traceable-subscription', traces: [record] },
-        bundle,
-      ),
-    ).toMatchObject({
-      valid: false,
-      traceCount: 1,
-      errors: [
-        "traces[0].qa[1].questionId: duplicate 'Q1' also used at qa[0]",
-        "traces[0].focus.evidenceRef: unmodeled reference 'request.missing'",
-        "traces[0].targetBindings[0].attributeName: 'request.content-payment' has no modeled attribute 'not_modeled'",
-      ],
-    });
-  });
-
-  it('reports a document that is not a trace at all', async () => {
-    const { bundle } = await readModelRoot(golden);
-
-    expect(checkInterviewTrace([], bundle).errors).toEqual([
-      '<root>: must be an object',
-    ]);
-  });
-});
-
 describe('checkNativeStageGate', () => {
   const scopes = ['context.content-subscription'];
 
-  const trace = (facts: readonly string[]) => ({
-    traces: [{ traceId: 'trace-1', userInput: { confirmedFacts: facts } }],
-  });
-
-  it('opens for a checked scope with a recorded closure', async () => {
+  it('opens for a checked scope the saved report covers', async () => {
     const sources = await loadModelSources(golden);
     const { report } = await runNativeFmCheck(sources, { scopeRefs: scopes });
     const gate = checkNativeStageGate({
       target: 'api',
       fmCheck: report,
-      trace: trace(['范围结束确认：context.content-subscription']),
       scopes,
     });
 
@@ -214,24 +124,20 @@ describe('checkNativeStageGate', () => {
       scopeRefs: scopes,
       errors: [],
     });
-    expect(gate.limitations).toEqual([
-      'downstream authorization and business approval remain human statements; this gate only proves scope completeness and recorded closure',
-    ]);
   });
 
-  it('stays shut without a recorded human closure', async () => {
+  it('stays shut when the report does not cover the requested scope', async () => {
     const sources = await loadModelSources(golden);
     const { report } = await runNativeFmCheck(sources, { scopeRefs: scopes });
     const gate = checkNativeStageGate({
       target: 'api',
       fmCheck: report,
-      trace: trace(['范围结束确认：context.something-else']),
-      scopes,
+      scopes: ['context.something-else'],
     });
 
     expect(gate.passed).toBe(false);
     expect(gate.errors).toEqual([
-      "no recorded human closure for scope 'context.content-subscription'; expected a confirmed fact '范围结束确认：context.content-subscription'",
+      "FM check does not cover scope 'context.something-else'",
     ]);
   });
 
@@ -253,7 +159,6 @@ describe('checkNativeStageGate', () => {
     const unbounded = checkNativeStageGate({
       target: 'visualization',
       fmCheck: { ...report, checkVersion: 4 },
-      trace: trace([]),
       scopes: [],
     });
 
@@ -284,23 +189,5 @@ describe('runNativeSensors', () => {
     });
     expect(outcome.scenarioResults).toHaveLength(3);
     expect(outcome.fmCheck?.executedScenarioCount).toBe(3);
-  });
-
-  it('reports a missing trace as an invalid trace instead of crashing', async () => {
-    const outcome = await runNativeSensors({
-      modelRoot: golden,
-      tracePath: fixture('no-such-trace.json'),
-    });
-
-    expect(outcome.report.passed).toBe(false);
-    expect(outcome.report.issues).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          code: 'TRACE_INVALID',
-          severity: 'block',
-          message: expect.stringContaining('unreadable trace file'),
-        }),
-      ]),
-    );
   });
 });

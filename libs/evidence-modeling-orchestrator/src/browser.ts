@@ -1,23 +1,4 @@
 export {
-  CLOSURE_PREFIXES,
-  calculateFrontier,
-  type DependencyFrontier,
-  type FrontierDependencyGap,
-  type InterviewTraceDocument,
-  type InterviewTraceRecord,
-  type OpenQuestion,
-  type TraceQuestion,
-} from './discovery/frontierTracker.js';
-
-export {
-  compareSensorReports,
-  compareVerdictSnapshots,
-  snapshotOfReport,
-  type VerdictDiff,
-  type VerdictSnapshot,
-} from './diff/verdictDiff.js';
-
-export {
   buildSensorReport,
   finalizeSensorReport,
   fmCheckIssues,

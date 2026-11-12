@@ -5,13 +5,6 @@ import {
   isModelBundlePath,
 } from '@evidence-poc/evidence-model-core';
 
-/** Relative location of the interview transcript inside `.evidence/`. */
-export const TRACE_RELATIVE_PATH = path.join(
-  '.evidence',
-  'traces',
-  'interview-trace.json',
-);
-
 /**
  * A project root is either a folder holding `.evidence/fm/` or one
  * `*.evidence.json` bundle. Both forms feed the same readers, so path
@@ -20,7 +13,7 @@ export const TRACE_RELATIVE_PATH = path.join(
 export const isBundleProject = (rootPath: string): boolean =>
   isModelBundlePath(rootPath);
 
-/** Directory that owns `.evidence/`, i.e. where traces and branches live. */
+/** Directory that owns `.evidence/`, which a review page is written beside. */
 export const projectDirectoryOf = (rootPath: string): string =>
   isBundleProject(rootPath)
     ? path.dirname(path.resolve(rootPath))
@@ -31,7 +24,3 @@ export const modelSourceOf = (rootPath: string): string =>
   isBundleProject(rootPath)
     ? path.resolve(rootPath)
     : path.join(path.resolve(rootPath), MODEL_DIRECTORY);
-
-/** `<project>/.evidence/traces/interview-trace.json`. */
-export const tracePathOf = (rootPath: string): string =>
-  path.join(projectDirectoryOf(rootPath), TRACE_RELATIVE_PATH);

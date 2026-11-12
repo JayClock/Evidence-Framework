@@ -8,7 +8,7 @@ import type {
   McpStageGateResult,
 } from '@evidence-poc/evidence-mcp';
 
-import { modelSourceOf, tracePathOf } from './modelSource';
+import { modelSourceOf } from './modelSource';
 
 /** Builds one sensors engine per project root and caches it. */
 export interface McpSensorServiceOptions {
@@ -63,7 +63,6 @@ export const createMcpSensorService = ({
       try {
         const outcome = await engineFor(rootPath).runFullSensors({
           modelRoot: modelSourceOf(rootPath),
-          tracePath: tracePathOf(rootPath),
         });
 
         return toAudit(outcome.keyData);
@@ -82,7 +81,6 @@ export const createMcpSensorService = ({
         const gate = await engineFor(rootPath).checkStageGate({
           target,
           modelRoot: modelSourceOf(rootPath),
-          tracePath: tracePathOf(rootPath),
         });
 
         return {

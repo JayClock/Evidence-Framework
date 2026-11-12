@@ -5,7 +5,6 @@ export type SensorSeverity = 'block' | 'warn' | 'info';
 export type SensorSource =
   | 'check_fm'
   | 'audit_key_data'
-  | 'check_interview_trace'
   | 'stage_gate';
 
 export interface SensorIssue {
@@ -44,7 +43,6 @@ export interface StageGateSummary {
   passed: boolean;
   scopeRefs: readonly string[];
   errors: readonly string[];
-  limitations: readonly string[];
 }
 
 export interface SensorReport {
@@ -115,7 +113,6 @@ export interface StageGateReport {
   target?: 'api' | 'visualization';
   scopeRefs?: readonly string[];
   errors?: readonly string[];
-  limitations?: readonly string[];
 }
 
 const MAX_KEY_DATA = 40;
@@ -231,7 +228,6 @@ export const stageGateSummaryOf = (
   passed: report.passed === true,
   scopeRefs: report.scopeRefs ?? [],
   errors: report.errors ?? [],
-  limitations: report.limitations ?? [],
 });
 
 const countBy = (

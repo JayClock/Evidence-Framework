@@ -7,7 +7,7 @@ import {
 } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-import type { BranchOverlay, OverlayChange } from '../components/canvas/CanvasStage';
+import type { ModelOverlay, OverlayChange } from '../components/canvas/CanvasStage';
 import type { AppliedPatch } from './useAgentPatchBridge';
 
 /** What one applied agent patch changed, kept until the modeler decides. */
@@ -18,7 +18,7 @@ export interface PatchReview {
   removedIds: readonly string[];
   modifiedIds: readonly string[];
   /** Rings the canvas draws so the change is visible where it happened. */
-  overlay: BranchOverlay;
+  overlay: ModelOverlay;
   /**
    * True while the patched document is still the one on screen.
    *
@@ -38,7 +38,7 @@ export interface PatchReviewController {
   revert: () => void;
 }
 
-const overlayFor = (diff: ModelDiff): BranchOverlay => {
+const overlayFor = (diff: ModelDiff): ModelOverlay => {
   const marks = new Map<string, OverlayChange>();
 
   for (const entity of [...diff.contexts, ...diff.entities]) {
@@ -47,7 +47,7 @@ const overlayFor = (diff: ModelDiff): BranchOverlay => {
     }
   }
 
-  return { marks, ghosts: [], scope: 'patch' };
+  return { marks };
 };
 
 const idsWith = (diff: ModelDiff, change: 'added' | 'removed' | 'modified') =>

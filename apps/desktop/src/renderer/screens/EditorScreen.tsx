@@ -5,7 +5,6 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { AgentPanel } from '../components/agent/AgentPanel';
-import { BranchDiffPanel } from '../components/branches/BranchDiffPanel';
 import { PatchReviewBar } from '../components/agent/PatchReviewBar';
 import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
@@ -16,12 +15,9 @@ import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
-import { useBranchOverlay } from '../state/branchOverlay';
-import { compareBranchVerdicts, useBranches } from '../state/useBranches';
 import { useAgentSession } from '../state/useAgentSession';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
-import { useFrontier } from '../state/useFrontier';
 import { useMcpBridge } from '../state/useMcpBridge';
 import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
@@ -105,42 +101,15 @@ const EditorWorkspace = ({
   initialDocument,
 }: EditorWorkspaceProps) => {
   const reviewExport = useReviewExport(project.rootPath);
-  const { state, save, reloadFromDisk, adoptDocument, dismissExternalChange } =
+  const { state, save, reloadFromDisk, dismissExternalChange } =
     useEditorSession(project, initialDocument);
-  const branches = useBranches(project.rootPath);
   const agent = useAgentSession(project.rootPath);
-  const frontier = useFrontier(project.rootPath, state.document);
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
-  const comparison =
-    branches.state.comparison === null ? null : branches.state.comparison;
-  const overlay = useBranchOverlay(
-    comparison?.diff ?? null,
-    comparison?.targetDocument ?? null,
-  );
-  const verdictDiff =
-    comparison === null
-      ? null
-      : compareBranchVerdicts(
-          branches.state.branches,
-          comparison.baseBranchId,
-          comparison.targetBranchId,
-        );
 
   const patchReview = usePatchReview(state.session, state.document);
 
   useAgentPatchBridge(state.session, patchReview.record);
-
-  const checkoutBranch = useCallback(
-    async (branchId: string) => {
-      const document = await branches.checkout(branchId);
-
-      if (document !== null) {
-        adoptDocument(document);
-      }
-    },
-    [adoptDocument, branches],
-  );
 
   // Monotonic document revision so an external agent can tell whether the model
   // it read is still the model on screen.
@@ -323,21 +292,6 @@ const EditorWorkspace = ({
         exportReviewBusy={reviewExport.busy}
         onViewModeChange={setViewMode}
         onSearch={() => searchInputRef.current?.focus()}
-        branch={{
-          branches: branches.state.branches,
-          activeBranchId: branches.state.activeBranchId,
-          compareBranchId: branches.state.compareBranchId,
-          busy: branches.state.busy,
-          loading: branches.state.loading,
-          error: branches.state.error,
-          actionError: branches.state.actionError,
-          onCheckout: (branchId) => void checkoutBranch(branchId),
-          onFork: (name, description) => {
-            void branches.fork(name, description);
-          },
-          onCompareChange: (branchId) => void branches.compareWith(branchId),
-          onDismissError: branches.clearActionError,
-        }}
       />
 
       {reviewExport.notice !== null ? (
@@ -372,14 +326,7 @@ const EditorWorkspace = ({
           onFocusNode={focusNode}
         />
 
-        <AgentPanel
-          controller={agent}
-          frontier={frontier.frontier}
-          frontierLoading={frontier.loading}
-          frontierError={frontier.error}
-          onRefreshFrontier={frontier.reload}
-          onFocusNode={focusNode}
-        />
+        <AgentPanel controller={agent} />
 
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           <CanvasViewport
@@ -390,7 +337,7 @@ const EditorWorkspace = ({
             selection={state.selection}
             focusRequest={focusRequest}
             zoomCommand={zoomCommand}
-            overlay={patchReview.review?.overlay ?? overlay}
+            overlay={patchReview.review?.overlay ?? null}
             onSelect={(nodeId) => state.session.select(nodeId)}
             onClearSelection={() => state.session.clearSelection()}
           />
@@ -417,20 +364,6 @@ const EditorWorkspace = ({
             </div>
           </div>
         </div>
-
-        {comparison !== null && verdictDiff !== null ? (
-          <BranchDiffPanel
-            branches={branches.state.branches}
-            activeBranchId={branches.state.activeBranchId}
-            compareBranchId={comparison.targetBranchId}
-            diff={comparison.diff}
-            verdict={verdictDiff}
-            busy={branches.state.busy}
-            onClose={() => void branches.compareWith(null)}
-            onMerge={(branchId) => void branches.merge(branchId)}
-            onFocusNode={focusNode}
-          />
-        ) : null}
 
         <RightInspector
           graph={state.graph}

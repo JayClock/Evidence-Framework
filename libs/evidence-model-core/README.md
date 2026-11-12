@@ -36,8 +36,7 @@ canvas and inspector consume, and the only sanctioned way to change it.
 - `packModelDirectory`, `unpackModelBundle` and `writeModelBundle` add the disk
   side. Unpacking never rewrites a file whose object already matches, so a
   hand-formatted tree keeps its bytes and its git status.
-- `generated/` and `discovery/` never enter a bundle: one is derived output, the
-  other belongs to Discovery.
+- `generated/` never enters a bundle: it is derived output, not a source.
 
 Both forms are first-class for the library: `readModelRoot` and
 `loadValidationSuite` accept either, so a caller decides and no extraction step

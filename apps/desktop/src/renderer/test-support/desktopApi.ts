@@ -8,16 +8,6 @@ import type {
   SensorReportPayload,
 } from '../../shared/agentIpc';
 import type {
-  BranchCompareInput,
-  BranchCompareResult,
-  BranchCreateInput,
-  BranchMergeInput,
-  BranchRemoveInput,
-  BranchSwitchInput,
-  BranchSwitchResult,
-  EvidenceBranchSummary,
-} from '../../shared/branches';
-import type {
   CompileDraftInput,
   CompileDraftOutcome,
   IngestDraftInput,
@@ -111,50 +101,6 @@ export interface AgentMockController {
   canvasContexts: CanvasContextRegistration[];
 }
 
-/** One branch summary with sensible defaults for renderer tests. */
-export const branchSummary = (
-  overrides: Partial<EvidenceBranchSummary> = {},
-): EvidenceBranchSummary => ({
-  id: 'main',
-  name: '主干（main）',
-  parentBranchId: null,
-  sourceEntryId: null,
-  createdAt: '2026-11-11T08:00:00.000Z',
-  updatedAt: '2026-11-11T08:00:00.000Z',
-  modelId: 'product-procurement',
-  entityCount: 12,
-  relationshipCount: 8,
-  ruleCount: 3,
-  isActive: true,
-  sessionFile: null,
-  sessionEntryCount: 0,
-  status: 'open',
-  ...overrides,
-});
-
-/** Test hooks for the branch surface; nothing here touches `.evidence/`. */
-export interface BranchMockController {
-  /** Current branch list the renderer will read. */
-  setBranches: (
-    branches: readonly EvidenceBranchSummary[],
-    activeBranchId: string,
-  ) => void;
-  /** Branches the renderer asked to create, in order. */
-  created: BranchCreateInput[];
-  /** Checkouts the renderer asked for, in order. */
-  switched: BranchSwitchInput[];
-  /** Merges the renderer asked for, in order. */
-  merged: BranchMergeInput[];
-  /** Removals the renderer asked for, in order. */
-  removed: BranchRemoveInput[];
-  /** Comparisons the renderer asked for, in order. */
-  compared: BranchCompareInput[];
-  /** Overrides the comparison payload returned to the renderer. */
-  setComparison: (result: BranchCompareResult | null) => void;
-  /** Overrides the checkout payload returned to the renderer. */
-  setSwitchResult: (result: BranchSwitchResult | null) => void;
-}
-
 /** Test hooks for the MCP bridge; nothing here touches a real socket. */
 export interface McpMockController {
   /** Main asks the renderer to answer one tool call. */
@@ -188,7 +134,6 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
   };
   agentMock: AgentMockController;
   mcpMock: McpMockController;
-  branchMock: BranchMockController;
 }
 
 /**
@@ -219,7 +164,6 @@ export const installDesktopApi = ({
   },
   templates = defaultTemplates(),
   sensorReport = healthyReport(),
-  branches = [branchSummary()],
   exportReviewResult = { status: 'cancelled' } as const,
   ingestResult = {
     success: false,
@@ -242,7 +186,6 @@ export const installDesktopApi = ({
   createResult?: CreateProjectResult;
   templates?: readonly ProjectTemplateMeta[];
   sensorReport?: SensorReport;
-  branches?: readonly EvidenceBranchSummary[];
   exportReviewResult?: Awaited<
     ReturnType<EvidenceDesktopApi['projects']['exportReview']>
   >;
@@ -277,44 +220,6 @@ export const installDesktopApi = ({
   const patchResponses: unknown[] = [];
   const canvasContexts: CanvasContextRegistration[] = [];
   let latest: SensorReport | null = null;
-
-  let branchList = [...(branches ?? [branchSummary()])];
-  let activeBranchId =
-    branchList.find((branch) => branch.isActive)?.id ?? branchList[0]?.id ?? 'main';
-  const branchCreated: BranchCreateInput[] = [];
-  const branchSwitched: BranchSwitchInput[] = [];
-  const branchMerged: BranchMergeInput[] = [];
-  const branchRemoved: BranchRemoveInput[] = [];
-  const branchCompared: BranchCompareInput[] = [];
-  const branchChangeListeners = new Set<
-    (event: { rootPath: string; activeBranchId: string }) => void
-  >();
-  let comparisonOverride: BranchCompareResult | null = null;
-  let switchOverride: BranchSwitchResult | null = null;
-
-  const markActive = (
-    list: readonly EvidenceBranchSummary[],
-    active: string,
-  ): EvidenceBranchSummary[] =>
-    list.map((branch) => ({ ...branch, isActive: branch.id === active }));
-
-  const branchMock: BranchMockController = {
-    setBranches: (list, active) => {
-      activeBranchId = active;
-      branchList = markActive(list, active);
-    },
-    created: branchCreated,
-    switched: branchSwitched,
-    merged: branchMerged,
-    removed: branchRemoved,
-    compared: branchCompared,
-    setComparison: (result) => {
-      comparisonOverride = result;
-    },
-    setSwitchResult: (result) => {
-      switchOverride = result;
-    },
-  };
 
   const mcpRequestListeners = new Set<(request: McpRendererRequest) => void>();
   const mcpStatusListeners = new Set<(status: McpStatus) => void>();
@@ -383,7 +288,6 @@ export const installDesktopApi = ({
     calls,
     agentMock,
     mcpMock,
-    branchMock,
     projects: {
       showOpenDialog: async () => {
         calls.showOpenDialog += 1;
@@ -448,7 +352,6 @@ export const installDesktopApi = ({
         calls.modelChanged.push(rootPath);
       },
       latestReport: async () => latest,
-      readInterviewTrace: async () => ({ success: true, trace: null }),
       publishCanvasContext: async (input) => {
         canvasContexts.push(input);
       },
@@ -469,83 +372,6 @@ export const installDesktopApi = ({
       },
       respondPatch: (response) => {
         patchResponses.push(response);
-      },
-    },
-    branches: {
-      list: async () => ({
-        success: true,
-        branches: markActive(branchList, activeBranchId),
-        activeBranchId,
-      }),
-      create: async (input) => {
-        branchCreated.push(input);
-
-        const created = branchSummary({
-          id: input.name,
-          name: input.name,
-          parentBranchId: input.sourceBranchId ?? activeBranchId,
-          sourceEntryId: input.sourceEntryId ?? null,
-          isActive: false,
-        });
-
-        branchList = [...branchList, created];
-
-        return { success: true, branch: created };
-      },
-      switchTo: async (input) => {
-        branchSwitched.push(input);
-
-        if (switchOverride !== null) {
-          return switchOverride;
-        }
-
-        activeBranchId = input.branchId;
-
-        const branch = branchList.find((item) => item.id === input.branchId);
-
-        return {
-          success: true,
-          branch: { ...(branch ?? branchSummary()), isActive: true },
-          document: openResult.success
-            ? openResult.document
-            : ({ manifest: {} } as never),
-          savedPrevious: true,
-        };
-      },
-      merge: async (input) => {
-        branchMerged.push(input);
-        activeBranchId = 'main';
-
-        return {
-          success: true,
-          branch: branchSummary({ id: input.sourceBranchId, status: 'merged' }),
-          written: [],
-          unchanged: [],
-          removed: [],
-          mergedAt: '2026-11-11T09:00:00.000Z',
-        };
-      },
-      remove: async (input) => {
-        branchRemoved.push(input);
-
-        return { success: true, removedBranchId: input.branchId };
-      },
-      compare: async (input) => {
-        branchCompared.push(input);
-
-        if (comparisonOverride !== null) {
-          return comparisonOverride;
-        }
-
-        return {
-          success: false as const,
-          error: '未提供对比夹具。',
-        };
-      },
-      onChanged: (listener) => {
-        branchChangeListeners.add(listener);
-
-        return () => branchChangeListeners.delete(listener);
       },
     },
     mcp: {

@@ -864,47 +864,4 @@ pre {
   }
 }
 
-.trace-item {
-  border: 1px solid #edf0f5;
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-top: 12px;
-  background: #fcfdff;
-}
-.trace-title {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1a2233;
-}
-.trace-story {
-  font-size: 12px;
-  color: #4a5568;
-  margin: 0 0 8px 0;
-  line-height: 1.5;
-}
-.trace-question {
-  font-size: 12px;
-  font-weight: 500;
-  color: #2b6cb0;
-  margin: 4px 0;
-}
-.trace-answer {
-  margin: 8px 0;
-  padding: 8px 12px;
-  background: #f7fafc;
-  border-left: 3px solid #3182ce;
-  font-size: 12px;
-  color: #2d3748;
-}
-.trace-facts {
-  margin: 6px 0 6px 18px;
-  padding: 0;
-  font-size: 12px;
-  color: #2c5282;
-}
-.trace-upstream {
-  font-size: 12px;
-  margin: 6px 0 0 0;
-}
 

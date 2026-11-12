@@ -14,23 +14,13 @@ export type CanvasViewMode = 'simplified' | 'standard';
 export type OverlayChange = 'added' | 'removed' | 'modified';
 
 /**
- * Comparison overlay for the canvas.
+ * Marks the objects a pending agent patch touches.
  *
- * Ghost nodes are objects only the compared branch models, placed at the
- * position that branch's own layout gives them; marks recolour the objects the
- * checkout already draws. Neither moves the active layout, so the picture stays
- * the model the user is editing.
+ * Rings only recolour objects the model already draws, so the picture stays the
+ * model the user is editing rather than a proposal that has not been accepted.
  */
-export interface BranchOverlay {
+export interface ModelOverlay {
   marks: ReadonlyMap<string, OverlayChange>;
-  ghosts: readonly LayoutNode[];
-  /**
-   * Who the marks belong to.
-   *
-   * A compared branch and an applied agent patch both ring objects, but the
-   * modeler reads them differently, so the wording travels with the overlay.
-   */
-  scope?: 'branch' | 'patch';
 }
 
 interface CanvasStageProps {
@@ -45,7 +35,7 @@ interface CanvasStageProps {
   highlightedContextIds: ReadonlySet<string>;
   dimmed: boolean;
   marquee: { x: number; y: number; width: number; height: number } | null;
-  overlay?: BranchOverlay | null;
+  overlay?: ModelOverlay | null;
   onHoverNode: (nodeId: string | null) => void;
   onHoverEdge: (edgeId: string | null) => void;
   onHoverContext: (contextId: string | null) => void;
@@ -250,12 +240,6 @@ export const CanvasStage = ({
 
       {overlay === null
         ? null
-        : overlay.ghosts.map((node) => (
-            <GhostNode key={`ghost-${node.nodeId}`} node={node} />
-          ))}
-
-      {overlay === null
-        ? null
         : [...overlay.marks.entries()].map(([nodeId, change]) => {
             const node = layout.nodes.find(
               (candidate) => candidate.nodeId === nodeId,
@@ -266,7 +250,6 @@ export const CanvasStage = ({
                 key={`mark-${nodeId}`}
                 node={node}
                 change={change}
-                scope={overlay.scope ?? 'branch'}
               />
             );
           })}
@@ -274,64 +257,29 @@ export const CanvasStage = ({
   );
 };
 
-const GHOST_COLOR = '#15803d';
-
 const OVERLAY_COLOR: Record<OverlayChange, string> = {
-  added: GHOST_COLOR,
+  added: '#15803d',
   removed: '#b42318',
   modified: '#8d6200',
 };
 
-const OVERLAY_LABEL: Record<'branch' | 'patch', Record<OverlayChange, string>> =
-  {
-    branch: {
-      added: '对比分支新增',
-      removed: '对比分支已删除',
-      modified: '对比分支已修改',
-    },
-    patch: {
-      added: '本次补丁新增',
-      removed: '本次补丁删除',
-      modified: '本次补丁修改',
-    },
-  };
+const OVERLAY_LABEL: Record<OverlayChange, string> = {
+  added: '本次补丁新增',
+  removed: '本次补丁删除',
+  modified: '本次补丁修改',
+};
 
-/** An object that only the compared branch models. */
-function GhostNode({ node }: { node: LayoutNode }) {
-  return (
-    <div
-      aria-label={`对比分支新增 ${node.entity.label}`}
-      data-ghost-node-id={node.nodeId}
-      className="pointer-events-none absolute flex items-center justify-center rounded-md border border-dashed px-2 text-center text-[10px] text-[#15803d]"
-      style={{
-        left: node.box.x,
-        top: node.box.y,
-        width: node.box.width,
-        height: node.box.height,
-        borderColor: GHOST_COLOR,
-        backgroundColor: 'rgba(21, 128, 61, 0.06)',
-      }}
-    >
-      <span className="line-clamp-2">
-        仅对比分支 · {node.entity.label}
-      </span>
-    </div>
-  );
-}
-
-/** A ring around an object the compared branch removed or changed. */
+/** A ring around an object the pending patch added, removed or changed. */
 function ChangeRing({
   node,
   change,
-  scope,
 }: {
   node: LayoutNode;
   change: OverlayChange;
-  scope: 'branch' | 'patch';
 }) {
   return (
     <div
-      aria-label={`${OVERLAY_LABEL[scope][change]} ${node.entity.label}`}
+      aria-label={`${OVERLAY_LABEL[change]} ${node.entity.label}`}
       data-overlay-change={change}
       data-overlay-node-id={node.nodeId}
       className="pointer-events-none absolute rounded-md border-2"

@@ -589,46 +589,6 @@ function renderBusinessObject(node) {
   });
   section.append(grid);
 
-  if (node.interviewTraces?.length) {
-    const traceSection = card('业务来源与追溯问答');
-    node.interviewTraces.forEach((t) => {
-      const item = el('div', '', 'trace-item');
-      item.append(
-        el('h4', `问答轮次：${t.traceId} · ${t.timestamp || ''}`, 'trace-title'),
-        el('p', `【业务判断背景】${t.narrative?.story || t.narrative?.judgment || ''}`, 'trace-story'),
-      );
-      if (t.qa?.length) {
-        const qList = el('div', '', 'trace-qa-list');
-        t.qa.forEach((q) => {
-          qList.append(el('p', `${q.questionId}：${q.question}`, 'trace-question'));
-        });
-        item.append(qList);
-      }
-      if (t.userInput?.rawText) {
-        item.append(el('blockquote', `原始陈述：“${t.userInput.rawText}”`, 'trace-answer'));
-      }
-      if (t.userInput?.confirmedFacts?.length) {
-        const facts = el('ul', '', 'trace-facts');
-        t.userInput.confirmedFacts.forEach((f) => {
-          facts.append(el('li', `确认事实：${f}`));
-        });
-        item.append(facts);
-      }
-      if (t.targetBindings?.length) {
-        const bindings = el('div', '', 'trace-bindings');
-        t.targetBindings
-          .filter((b) => b.upstreamEvidenceRef)
-          .forEach((b) => {
-            const row = el('p', '', 'trace-upstream');
-            row.append(el('span', '前序依据凭证：'), link(b.upstreamEvidenceRef));
-            if (b.sourceDescription) row.append(el('small', ` (${b.sourceDescription})`, 'muted'));
-            bindings.append(row);
-          });
-        item.append(bindings);
-      }
-      traceSection.append(item);
-    });
-  }
 }
 function renderNode(node) {
   const detail = $('detail');

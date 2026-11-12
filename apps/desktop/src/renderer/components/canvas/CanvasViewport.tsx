@@ -23,7 +23,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import {
   CanvasStage,
-  type BranchOverlay,
+  type ModelOverlay,
   type CanvasViewMode,
 } from './CanvasStage';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
@@ -38,8 +38,8 @@ interface CanvasViewportProps {
   focusRequest: { nodeId: string; token: number } | null;
   /** Keyboard zoom requests, one token per key press. */
   zoomCommand: { direction: 'in' | 'out'; token: number } | null;
-  /** Comparison overlay of the branch being compared, when one is open. */
-  overlay?: BranchOverlay | null;
+  /** Rings the objects a pending agent patch touches. */
+  overlay?: ModelOverlay | null;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
 }

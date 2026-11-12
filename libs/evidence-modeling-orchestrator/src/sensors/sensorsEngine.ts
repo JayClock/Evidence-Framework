@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises';
-
 import {
   stageGateSummaryOf,
   type FmCheckReport,
@@ -26,8 +24,6 @@ export interface SensorsEngineOptions {
 export interface RunSensorsInput {
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
-  /** Absolute path of `.evidence/traces/interview-trace.json`, when present. */
-  tracePath?: string;
   /** Context IDs to completeness-check; omitted means consistency only. */
   scopeRefs?: readonly string[];
   signal?: AbortSignal;
@@ -37,28 +33,17 @@ export interface SensorOutcome {
   report: SensorReport;
   fmCheck?: FmCheckReport;
   keyData?: KeyDataAuditReport;
-  traceCheck?: { valid: boolean; errors: readonly string[] };
 }
 
 export interface StageGateInput {
   target: 'api' | 'visualization';
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
-  tracePath: string;
   scopeRefs?: readonly string[];
   /** Saved `check` report; a fresh one is produced when omitted. */
   fmCheck?: FmCheckReport;
   signal?: AbortSignal;
 }
-
-/** Reads the trace a gate needs; an unreadable file closes the gate. */
-const readTrace = async (tracePath: string): Promise<unknown> => {
-  try {
-    return JSON.parse(await readFile(tracePath, 'utf8')) as unknown;
-  } catch {
-    return null;
-  }
-};
 
 /** Runs every sensor against one model root. */
 export const createSensorsEngine = ({
@@ -69,14 +54,13 @@ export const createSensorsEngine = ({
   ): Promise<SensorOutcome> =>
     runNativeSensors({
       modelRoot: input.modelRoot,
-      ...(input.tracePath === undefined ? {} : { tracePath: input.tracePath }),
       ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
       ...(input.signal === undefined ? {} : { signal: input.signal }),
       now,
     });
 
   /**
-   * Decides the downstream hand-off from the saved report and the trace.
+   * Decides the downstream hand-off from the saved report.
    *
    * The gate reads evidence rather than re-deriving it, so a caller that already
    * ran the check passes its report in and nothing is computed twice.
@@ -96,21 +80,10 @@ export const createSensorsEngine = ({
         })
       ).fmCheck;
 
-    if (report === undefined) {
-      return {
-        target: input.target,
-        passed: false,
-        scopeRefs: [],
-        errors: ['缺少 FM 检查结果，无法判定阶段门禁。'],
-        limitations: [],
-      };
-    }
-
     return stageGateSummaryOf(
       checkNativeStageGate({
         target: input.target,
         fmCheck: report,
-        trace: await readTrace(input.tracePath),
         scopes: input.scopeRefs ?? [],
       }),
     );

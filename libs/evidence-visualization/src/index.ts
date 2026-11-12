@@ -38,7 +38,6 @@ export {
 export {
   API_DESIGN_PATH,
   MODEL_TREE,
-  TRACE_PATH,
   WorkbenchInputError,
   collectWorkbench,
   workbenchFingerprint,

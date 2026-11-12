@@ -16,12 +16,8 @@ export const MODEL_SOURCE_TREES = [
   'rules',
 ] as const;
 
-/** Sibling trees owned by other skills; the adapter never rewrites them. */
-export const MODEL_NON_SOURCE_TREES = [
-  'discovery',
-  'generated',
-  'validation',
-] as const;
+/** Sibling trees that are not model sources; the adapter never rewrites them. */
+export const MODEL_NON_SOURCE_TREES = ['generated', 'validation'] as const;
 
 export interface ModelSourceFile {
   /** POSIX-style path relative to the model root. */

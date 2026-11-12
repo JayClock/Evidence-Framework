@@ -10,13 +10,7 @@ export {
 export { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
 
 export {
-  checkInterviewTrace,
-  type TraceCheckResult,
-} from './nativeTraceCheck.js';
-
-export {
   checkNativeStageGate,
-  closureErrors,
   filterFmCheckErrors,
   isGateReadyReport,
   type StageGateInput,

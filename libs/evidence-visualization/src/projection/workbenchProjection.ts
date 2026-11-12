@@ -110,8 +110,6 @@ export interface WorkbenchProjectionInput {
   /** Scenario results from the checked FM run. */
   simulation?: { scenarioResults?: readonly JsonObject[] };
   api?: WorkbenchApiInput | null;
-  /** Interview trace records, which attach to the Evidence they cite. */
-  traces?: readonly JsonObject[];
   check: WorkbenchCheckInput;
   /** ISO timestamp the page prints as its generation time. */
   generatedAt?: string;
@@ -195,7 +193,6 @@ export const projectWorkbenchData = ({
   instances = [],
   simulation = {},
   api = null,
-  traces = [],
   check,
   generatedAt,
 }: WorkbenchProjectionInput): WorkbenchData => {
@@ -552,42 +549,6 @@ export const projectWorkbenchData = ({
 
       for (const step of node['steps'] as JsonObject[]) {
         link(node.id, step['capabilityRef'], 'HTTP 步骤（静态）');
-      }
-    }
-  }
-
-  if (traces.length > 0) {
-    const byEvidence = new Map<string, JsonObject[]>();
-
-    for (const record of traces) {
-      const bound = new Set<string>();
-
-      for (const binding of listOf(record['targetBindings'])) {
-        const ref = binding['evidenceRef'];
-
-        if (typeof ref === 'string' && ref !== '') {
-          bound.add(ref);
-        }
-      }
-
-      const focus = isRecord(record['focus']) ? record['focus'] : {};
-
-      if (typeof focus['evidenceRef'] === 'string') {
-        bound.add(focus['evidenceRef']);
-      }
-
-      for (const ref of bound) {
-        const bucket = byEvidence.get(ref) ?? [];
-        bucket.push(record);
-        byEvidence.set(ref, bucket);
-      }
-    }
-
-    for (const node of nodes.values()) {
-      const attached = byEvidence.get(node.id);
-
-      if (node.group === 'evidence' && attached !== undefined) {
-        node['interviewTraces'] = attached;
       }
     }
   }

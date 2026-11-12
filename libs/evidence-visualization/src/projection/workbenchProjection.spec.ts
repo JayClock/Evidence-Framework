@@ -311,28 +311,6 @@ describe('projectWorkbenchData', () => {
     expect(JSON.stringify(data)).not.toContain('SECRET');
   });
 
-  it('attaches interview traces to the Evidence they cite', () => {
-    const data = project(fixture(), {
-      traces: [
-        {
-          traceId: 'trace-1',
-          focus: { evidenceRef: 'request.a' },
-          narrative: { judgment: '测试采购请求依据', story: '测试故事' },
-          qa: [{ questionId: 'Q1', question: '何时支付？' }],
-          userInput: { rawText: '下单后15分钟', confirmedFacts: ['15分钟'] },
-          targetBindings: [
-            { evidenceRef: 'request.a', sourceType: 'interview_statement' },
-          ],
-        },
-      ],
-    });
-    const request = nodeOf(data, 'request.a');
-
-    expect(request['interviewTraces']).toEqual([
-      expect.objectContaining({ traceId: 'trace-1' }),
-    ]);
-  });
-
   it('prints an absent value as null so every key survives the round trip', () => {
     const data = project(fixture(), {
       scenarios: [{ id: 'scenario.a', label: '未运行' }],

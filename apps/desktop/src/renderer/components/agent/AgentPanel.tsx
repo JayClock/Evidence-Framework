@@ -1,14 +1,7 @@
-import type { DependencyFrontier } from '@evidence-poc/evidence-modeling-orchestrator/browser';
-
 import type { AgentSessionController } from '../../state/useAgentSession';
 
 interface AgentPanelProps {
   controller: AgentSessionController;
-  frontier: DependencyFrontier | null;
-  frontierLoading: boolean;
-  frontierError: string | null;
-  onRefreshFrontier: () => void;
-  onFocusNode: (nodeId: string) => void;
 }
 
 const statusGlyph = (status: 'running' | 'completed' | 'failed'): string =>
@@ -22,21 +15,13 @@ const statusClass = (status: 'running' | 'completed' | 'failed'): string =>
       : 'text-evidence-participant';
 
 /**
- * Frontier plus activity stream.
+ * The activity stream beside the canvas.
  *
- * The frontier is what the trace already says — open questions, dangling
- * references, whether the round was closed — so the modeler can see why the
- * agent asks what it asks. The activity stream is the tool-call history, which
- * is also the honest record of what the agent actually did.
+ * It is the tool-call history, which is also the honest record of what the agent
+ * actually did — no separate interview log has to be kept for the modeler to see
+ * where the conversation went.
  */
-export const AgentPanel = ({
-  controller,
-  frontier,
-  frontierLoading,
-  frontierError,
-  onRefreshFrontier,
-  onFocusNode,
-}: AgentPanelProps) => {
+export const AgentPanel = ({ controller }: AgentPanelProps) => {
   const { state } = controller;
 
   return (
@@ -45,77 +30,9 @@ export const AgentPanel = ({
         <span className="text-[10px] tracking-wide text-evidence-muted uppercase">
           AI 访谈与操控
         </span>
-        <button
-          type="button"
-          onClick={onRefreshFrontier}
-          className="rounded border border-evidence-line px-1.5 py-0.5 text-[10px] text-evidence-muted hover:bg-[#f1f3f6]"
-        >
-          刷新前沿
-        </button>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
-        {frontierLoading ? (
-          <p className="text-[11px] text-evidence-muted">正在读取追溯日志…</p>
-        ) : frontierError !== null ? (
-          <p className="text-[11px] text-[#b42318]">{frontierError}</p>
-        ) : frontier === null ? (
-          <p className="text-[11px] text-evidence-muted">
-            尚无访谈记录。在下方输入经营事实开始第一轮。
-          </p>
-        ) : (
-          <section aria-label="依赖前沿" className="mb-3">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-[10px] tracking-wide text-evidence-muted uppercase">
-                依赖前沿
-              </span>
-              {frontier.closed ? (
-                <span className="rounded bg-evidence-participant/10 px-1.5 py-0.5 text-[10px] text-evidence-participant">
-                  已记录结束确认
-                </span>
-              ) : null}
-            </div>
-
-            <p className="mb-1 text-[11px] font-medium text-evidence-ink">
-              {frontier.judgment}
-            </p>
-            <p className="mb-2 text-[11px] leading-relaxed whitespace-pre-wrap text-[#4b5563]">
-              {frontier.story}
-            </p>
-
-            {frontier.keyData.length > 0 ? (
-              <p className="mb-2 text-[10px] text-evidence-muted">
-                关键数据：
-                <span className="text-[#414751]">
-                  {frontier.keyData.join('、')}
-                </span>
-              </p>
-            ) : null}
-
-            {frontier.openQuestions.length > 0 ? (
-              <ol className="mb-2 list-decimal space-y-1 pr-1 pl-4 text-[11px] text-[#414751]">
-                {frontier.openQuestions.map((question) => (
-                  <li key={question.questionId}>{question.question}</li>
-                ))}
-              </ol>
-            ) : (
-              <p className="mb-2 text-[11px] text-evidence-muted">
-                本轮问题已全部绑定到模型属性。
-              </p>
-            )}
-
-            {frontier.gaps.length > 0 ? (
-              <ul className="space-y-1">
-                {frontier.gaps.map((gap) => (
-                  <li key={gap.message} className="text-[10px] text-[#b42318]">
-                    {gap.message}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </section>
-        )}
-
         <section aria-label="工具调用记录">
           <span className="text-[10px] tracking-wide text-evidence-muted uppercase">
             工具调用
@@ -166,20 +83,6 @@ export const AgentPanel = ({
               知道了
             </button>
           </div>
-        ) : null}
-
-        {frontier !== null ? (
-          <button
-            type="button"
-            onClick={() => {
-              if (frontier.evidenceRef !== null) {
-                onFocusNode(frontier.evidenceRef);
-              }
-            }}
-            className="mt-3 rounded border border-evidence-line px-2 py-1 text-[10px] text-evidence-muted hover:bg-[#f1f3f6]"
-          >
-            定位本轮聚焦凭证
-          </button>
         ) : null}
       </div>
     </aside>

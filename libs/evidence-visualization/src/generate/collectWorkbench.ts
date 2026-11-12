@@ -42,9 +42,6 @@ export const MODEL_TREE = path.join('.evidence', 'fm');
 /** The API design a joint review adds to the page. */
 export const API_DESIGN_PATH = path.join('.evidence', 'api', 'api.json');
 
-/** The recorded interview, which attaches to the Evidence it cites. */
-export const TRACE_PATH = path.join('.evidence', 'traces', 'interview-trace.json');
-
 /** Trees and caches the fingerprint ignores, because nothing there is input. */
 const IGNORED_TREES = new Set(['generated']);
 const IGNORED_PARTS = new Set(['__pycache__']);
@@ -199,16 +196,6 @@ export interface CollectedWorkbench {
   projection: Projection | null;
 }
 
-const readJsonFile = async (target: string): Promise<unknown> => {
-  try {
-    return JSON.parse(await readFile(target, 'utf8')) as unknown;
-  } catch (error) {
-    throw new WorkbenchInputError(
-      `无法读取 JSON：${target}（${error instanceof Error ? error.message : String(error)}）`,
-    );
-  }
-};
-
 const bindingsOf = (design: DesignDocument): readonly Record<string, unknown>[] =>
   Array.isArray(design['bindings'])
     ? design['bindings'].filter(
@@ -216,32 +203,6 @@ const bindingsOf = (design: DesignDocument): readonly Record<string, unknown>[] 
           typeof item === 'object' && item !== null && !Array.isArray(item),
       )
     : [];
-
-/** The recorded traces, or none when the project has not interviewed anyone. */
-const readTraces = async (
-  projectRoot: string,
-): Promise<readonly Record<string, unknown>[]> => {
-  const target = path.join(projectRoot, TRACE_PATH);
-
-  if (!(await exists(target))) {
-    return [];
-  }
-
-  const document = await readJsonFile(target);
-  const traces =
-    typeof document === 'object' &&
-    document !== null &&
-    Array.isArray((document as Record<string, unknown>)['traces'])
-      ? (document as Record<string, unknown>)['traces']
-      : null;
-
-  return Array.isArray(traces)
-    ? traces.filter(
-        (item): item is Record<string, unknown> =>
-          typeof item === 'object' && item !== null && !Array.isArray(item),
-      )
-    : [];
-};
 
 /**
  * Reads the project and projects the page data.
@@ -350,8 +311,6 @@ export const collectWorkbench = async ({
     };
   }
 
-  const traces = await readTraces(root);
-
   if ((await fingerprint(root)) !== before) {
     throw new WorkbenchInputError('输入在生成期间变化，保留已有视图');
   }
@@ -368,7 +327,6 @@ export const collectWorkbench = async ({
         >[],
       },
       api,
-      traces,
       check: {
         consistent: check.consistent,
         complete: check.complete,

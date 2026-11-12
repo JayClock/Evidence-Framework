@@ -1,5 +1,4 @@
 import type { EvidenceAgentApi } from './agentIpc';
-import type { EvidenceBranchesApi } from './branchApi';
 import type {
   CompileDraftInput,
   CompileDraftOutcome,
@@ -83,8 +82,6 @@ export interface EvidenceDesktopApi {
   agent: EvidenceAgentApi;
   /** MCP bridge status and the renderer side of external tool calls (phase 4). */
   mcp: EvidenceMcpApi;
-  /** Interview lineages: fork, switch and merge model snapshots. */
-  branches: EvidenceBranchesApi;
   /**
    * Business text and blueprint tables in, a model out.
    *

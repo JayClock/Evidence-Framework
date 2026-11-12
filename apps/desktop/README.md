@@ -33,8 +33,8 @@ either: an opened folder only has to hold its `.evidence/` sources.
   the turn loop). They are appended to Pi's prompt, and the session asks for
   `noSkills: true`, so no working copy is scanned for `SKILL.md` and the model is
   never invited to go looking for one.
-- Every sensor — consistency, key data, interview trace, timeline, scenarios and
-  the stage gate — is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
+- Every sensor — consistency, key data, timeline, scenarios and the stage gate —
+  is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
   reads the model once per run and decides from that one read.
 - `build` and `make` first run `scripts/prepare-desktop-resources.mjs`
   (`prepare-resources` target), which copies the review page assets into the
@@ -84,7 +84,7 @@ Renderer modules map onto the four packages built earlier:
 | inspector groups and fields            | `@evidence-poc/evidence-schema`                |
 | layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction`    |
 | agent session, sensor engine mode      | `@evidence-poc/evidence-agent-core`            |
-| sensors, tools, frontier               | `@evidence-poc/evidence-modeling-orchestrator` |
+| sensors, tools                         | `@evidence-poc/evidence-modeling-orchestrator` |
 
 `/browser` is the model-core entry that excludes `node:fs`, so the renderer
 bundle never pulls a Node built-in.
@@ -212,45 +212,6 @@ Cursor / Claude Code / CLI ──stdio──▶ evidence (--mcp-stdio, headless)
   config when those directories already exist; the merge is idempotent and keeps
   every other server.
 
-## Interview branches (phase 5)
-
-```text
-.evidence/fm                        <- the checkout every sensor and tool reads
-.evidence/traces/interview-trace.json
-.evidence/branches/manifest.json    <- which branch is checked out
-.evidence/branches/<id>/fm          <- that branch's own source tree
-.evidence/branches/<id>/traces      <- that branch's own interview trace
-.evidence/branches/<id>/session.jsonl <- transcript forked at a checkpoint
-.evidence/branches/<id>/branch.json <- lineage, status, last verdict
-```
-
-- Branching stays model-level on purpose: `.evidence/fm` is still the only tree
-  the sensors, the MCP tools and Git read, so an assumption is a checkout, not a
-  second dialect of the project layout.
-- `main` is a branch too. Forking, switching and merging all snapshot the
-  checkout back to its own branch first, so moving between assumptions cannot
-  drop an edit; `nx test desktop` proves the round trip both ways.
-- A fork copies the model tree, the interview trace and — when a transcript
-  exists — a transcript forked at the chosen entry. The fork keeps the ancestry
-  of that entry and leaves the abandoned siblings in the source file, so a branch
-  cannot inherit a conclusion it never reached.
-- A checkout drops the agent runtime and re-resolves the branch transcript, so
-  the next prompt continues that lineage instead of the previous one.
-- The inspector panel compares the checkout with one other branch: object and
-  attribute movement, the key data provider that moved, and the two stored
-  verdicts. A branch that never ran its sensors reports as *not comparable*, not
-  as healthy.
-- The canvas draws objects only the compared branch models as dashed ghosts at
-  that branch's own layout position, and rings removed objects red and changed
-  ones amber. The active layout is never recomputed, so reading a diff does not
-  move the model being edited.
-- Merging writes the winning tree to both the checkout and the `main` snapshot and
-  marks the source branch `merged`; `keepSourceBranch: false` discards it instead.
-  The checkout keeps the same atomic, byte-stable writes as a normal save, so
-  `git diff` only shows the files the decision actually changed.
-
 ## Not implemented yet
 
-- A branch comparison cannot show a branch's findings by message: only the stored
-  verdict snapshot (counts and gate movement) travels with the branch metadata.
 - The packaged app has not been signed or notarized on this machine.

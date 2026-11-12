@@ -1,7 +1,6 @@
 import type { AgentStreamEvent } from '@evidence-poc/evidence-agent-core';
 import type {
   CanvasContext,
-  InterviewTraceDocument,
   ModelPatchRequest,
   ModelPatchResult,
   SensorReport,
@@ -22,7 +21,6 @@ export const EVIDENCE_AGENT_IPC_CHANNELS = {
   applyPatch: 'evidence:agent:apply-patch',
   applyPatchResult: 'evidence:agent:apply-patch-result',
   canvasContext: 'evidence:agent:canvas-context',
-  interviewTrace: 'evidence:agent:interview-trace',
   triggerSensors: 'evidence:sensor:trigger',
   modelChanged: 'evidence:sensor:model-changed',
   latestReport: 'evidence:sensor:latest',
@@ -96,8 +94,6 @@ export interface EvidenceAgentApi {
   /** Fires on every model edit; the main process debounces the sensor run. */
   notifyModelChanged: (input: AgentProjectInput) => Promise<void>;
   latestReport: (input: AgentProjectInput) => Promise<SensorReport | null>;
-  /** Reads `.evidence/traces/interview-trace.json` for the frontier panel. */
-  readInterviewTrace: (input: AgentProjectInput) => Promise<TraceReadOutcome>;
   /** Publishes the current selection so tools can read it. */
   publishCanvasContext: (input: CanvasContextRegistration) => Promise<void>;
   /** Subscribes to streamed agent activity; returns an unsubscribe. */
@@ -110,15 +106,9 @@ export interface EvidenceAgentApi {
   respondPatch: (response: ApplyPatchResponse) => void;
 }
 
-/** Null means the project has not run an interview yet. */
-export type TraceReadOutcome =
-  | { success: true; trace: InterviewTraceDocument | null }
-  | { success: false; error: string };
-
 export type {
   AgentStreamEvent,
   CanvasContext,
-  InterviewTraceDocument,
   ModelPatchRequest,
   ModelPatchResult,
   SensorReport,

@@ -22,7 +22,7 @@ import {
   readModelDirectory,
 } from '@evidence-poc/evidence-model-core';
 
-import { isBundleProject, modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
+import { isBundleProject, modelSourceOf, projectDirectoryOf } from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
@@ -44,7 +44,7 @@ export interface AgentRuntimeOptions {
     options: EvidenceAgentSessionOptions,
   ) => EvidenceAgentSession;
   sessionDirectory?: string;
-  /** Transcript the session continues; a branch resumes its own lineage. */
+  /** Transcript the session continues, when the project already has one. */
   sessionFile?: string | null;
   sensorDelayMs?: number;
 }
@@ -90,7 +90,6 @@ export const createAgentRuntime = ({
   // path below is resolved from the source form rather than assumed.
   const modelRoot = modelSourceOf(resolvedRoot);
   const projectDirectory = projectDirectoryOf(resolvedRoot);
-  const tracePath = tracePathOf(resolvedRoot);
   // The sensors carry their checks and schemas, so one engine per project needs
   // no install directory: it reads the model and decides.
   const engine = sensors ?? createSensorsEngine();
@@ -107,7 +106,6 @@ export const createAgentRuntime = ({
   ): Promise<SensorOutcome> => {
     const outcome = await engine.runFullSensors({
       modelRoot,
-      tracePath,
       ...(scopeRefs === undefined ? {} : { scopeRefs }),
     });
 
@@ -164,7 +162,6 @@ export const createAgentRuntime = ({
           runSensors: async ({ scope, signal }) => {
             const outcome = await engine.runFullSensors({
               modelRoot,
-              tracePath,
               ...(scope === undefined ? {} : { scopeRefs: [scope] }),
               ...(signal === undefined ? {} : { signal }),
             });

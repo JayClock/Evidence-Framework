@@ -135,7 +135,6 @@ describe('usePatchReview', () => {
     expect(harness.current().review?.overlay.marks.get('party.auditor')).toBe(
       'added',
     );
-    expect(harness.current().review?.overlay.scope).toBe('patch');
   });
 
   it('reverts the patch when it is still the newest edit', () => {

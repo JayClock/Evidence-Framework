@@ -30,8 +30,8 @@ import type { ModelSourceFile, ModelSourceIssue } from './modelSourceFiles.js';
 /** Relative location of the FM source tree inside a project root. */
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
 
-/** Trees a bundle never carries: derived output and another skill's inputs. */
-const SKIPPED_TREES = new Set(['generated', 'discovery']);
+/** Trees a bundle never carries: derived output only. */
+const SKIPPED_TREES = new Set(['generated']);
 
 export interface WriteModelBundleResult {
   written: boolean;
@@ -48,8 +48,7 @@ const isSkippedPath = (relative: string): boolean =>
  * Reads every file a bundle should carry: `model.json`, the three source trees,
  * `validation/**` and `README.md`.
  *
- * `generated/` stays behind because it is derived output, and `discovery/`
- * because interview traces belong to Discovery and are never model sources.
+ * `generated/` stays behind because it is derived output, not a source.
  */
 async function readSourceTree(root: string): Promise<ModelSourceFile[]> {
   const files: ModelSourceFile[] = [];

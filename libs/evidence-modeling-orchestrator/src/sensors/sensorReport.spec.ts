@@ -108,7 +108,6 @@ describe('buildSensorReport', () => {
         passed: true,
         scopeRefs: ['ctx.purchase'],
         errors: [],
-        limitations: [],
       },
       now: () => new Date('2026-11-11T08:00:00.000Z'),
     });
@@ -154,17 +153,17 @@ describe('finalizeSensorReport', () => {
       issues: [
         ...base.issues,
         {
-          issueId: 'trace:1',
+          issueId: 'fm:1',
           severity: 'block',
-          source: 'check_interview_trace',
-          code: 'TRACE_INVALID',
+          source: 'check_fm',
+          code: 'FM_INCONSISTENT',
           message: 'Entity 引用不存在',
         },
         {
-          issueId: 'trace:1',
+          issueId: 'fm:1',
           severity: 'block',
-          source: 'check_interview_trace',
-          code: 'TRACE_INVALID',
+          source: 'check_fm',
+          code: 'FM_INCONSISTENT',
           message: 'Entity 引用不存在',
         },
       ],
@@ -184,24 +183,21 @@ describe('stageGateSummaryOf', () => {
       passed: false,
       scopeRefs: [],
       errors: [],
-      limitations: [],
     });
   });
 
-  it('keeps the target, scopes and limitations from the script', () => {
+  it('keeps the target and scopes from the saved report', () => {
     expect(
       stageGateSummaryOf({
         target: 'visualization',
         passed: true,
         scopeRefs: ['ctx.purchase'],
-        limitations: ['human approval is not machine-checked'],
       }),
     ).toEqual({
       target: 'visualization',
       passed: true,
       scopeRefs: ['ctx.purchase'],
       errors: [],
-      limitations: ['human approval is not machine-checked'],
     });
   });
 });
