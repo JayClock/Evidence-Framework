@@ -169,6 +169,34 @@ describe('compiling a reviewed draft', () => {
     );
   });
 
+  it('refuses to write an empty model and says why', async () => {
+    const target = store();
+    const outcome = await compileDraft(
+      {
+        draft: {
+          modelName: '空草稿',
+          source: 'unknown',
+          contexts: [],
+          participants: [],
+          roles: [],
+          things: [],
+          evidences: [],
+          fulfillmentPairs: [],
+          breachCompensations: [],
+          relationships: [],
+        },
+        targetPath: '/models/empty',
+        name: '空草稿',
+        kind: 'directory',
+      },
+      target,
+    );
+
+    expect(outcome.success).toBe(false);
+    expect(outcome.success ? '' : outcome.error).toContain('没有读到可以落地的业务对象');
+    expect(target.createFromDocument).not.toHaveBeenCalled();
+  });
+
   it('reports a refused write without pretending the model exists', async () => {
     const draft = await readDraft({ kind: 'blueprint', content: BLUEPRINT });
 

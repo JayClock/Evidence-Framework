@@ -157,6 +157,18 @@ export const compileDraft = async (
     modelId: input.modelId ?? modelIdFrom(name),
   });
 
+  // Nothing to write is a reading failure, not an empty model: saving a blank
+  // tree would look like the text said nothing and leave the user with a
+  // project they cannot explain.
+  if (compiled.document.entities.length === 0) {
+    return {
+      success: false,
+      error:
+        '没有读到可以落地的业务对象：先确认文中哪一句确立了合约关系，再重新读取。',
+      issues: compiled.issues.map((issue) => issue.message),
+    };
+  }
+
   const created = await projectStore.createFromDocument({
     targetPath: input.targetPath,
     kind: input.kind,

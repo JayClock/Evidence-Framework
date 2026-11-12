@@ -174,6 +174,48 @@ describe('IngestDraftModal', () => {
     ).toBe('other_evidence');
   });
 
+  it('lets a document be renamed before it is written', async () => {
+    const api = installDesktopApi({
+      ingestResult: {
+        success: true,
+        draft: draft(),
+        reader: 'text-model',
+        issues: [],
+      },
+      createDialogResult: { success: true, targetPath: '/models/new', kind: 'directory' },
+      compileResult: {
+        success: true,
+        project: projectSummary({ rootPath: '/models/new' }),
+        document: { manifest: {}, entities: [], relationships: [], rules: [] } as never,
+        layout: {},
+        issues: [],
+      },
+    });
+
+    render(
+      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+    );
+
+    fireEvent.change(screen.getByLabelText('业务原文'), {
+      target: { value: '文本' },
+    });
+    fireEvent.click(screen.getByText('读成草稿'));
+    await screen.findByLabelText('校对导入的草稿');
+
+    fireEvent.change(screen.getAllByLabelText('凭证名称')[0] as HTMLElement, {
+      target: { value: '首期服务费支付申请' },
+    });
+    fireEvent.click(screen.getByText('选择位置并生成模型'));
+
+    await waitFor(() => {
+      expect(api.calls.compileDraft).toHaveLength(1);
+    });
+
+    expect(api.calls.compileDraft[0]?.draft.evidences[0]?.label).toBe(
+      '首期服务费支付申请',
+    );
+  });
+
   it('drops an element the reader got wrong', async () => {
     const api = installDesktopApi({
       ingestResult: {

@@ -82,6 +82,14 @@ export const DraftReviewPanel = ({
 
   const orphans = pairs.length === 0 ? 0 : draft.fulfillmentPairs.length - pairs.length;
 
+  const rename = (id: string, label: string): void => {
+    setEvidences((current) =>
+      current.map((evidence) =>
+        evidence.id === id ? { ...evidence, label } : evidence,
+      ),
+    );
+  };
+
   const updateKind = (id: string, next: DraftEvidence['kind']): void => {
     setEvidences((current) =>
       current.map((evidence) =>
@@ -183,10 +191,18 @@ export const DraftReviewPanel = ({
                 key={evidence.id}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-[12px] font-medium text-evidence-ink">
-                      {evidence.label}
-                    </p>
+                  <div className="min-w-0 flex-1">
+                    <label className="sr-only" htmlFor={`label-${evidence.id}`}>
+                      凭证名称
+                    </label>
+                    <input
+                      className="w-full rounded-md border border-transparent bg-transparent px-1 py-0.5 text-[12px] font-medium text-evidence-ink outline-none hover:border-evidence-line focus:border-evidence-accent"
+                      id={`label-${evidence.id}`}
+                      onChange={(event) => {
+                        rename(evidence.id, event.target.value);
+                      }}
+                      value={evidence.label}
+                    />
                     <p className="mt-0.5 text-[10px] text-evidence-muted">
                       {evidence.id} · {isMoment(evidence.kind) ? '时刻' : '时段'} ·{' '}
                       {evidence.contextRef}
