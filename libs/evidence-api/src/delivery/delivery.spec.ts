@@ -256,6 +256,29 @@ describe('buildDelivery', () => {
     expect(files.every((file) => file.content.endsWith('\n'))).toBe(true);
   });
 
+  it('swaps a capability provider without touching the contract that needs it', async () => {
+    const document = await model();
+    const swapped = JSON.parse(
+      JSON.stringify(document).replaceAll('wechat', 'alipay'),
+    ) as DomainModelDocument;
+    const before = buildDelivery(document);
+    const after = buildDelivery(swapped);
+    const corePaths = (bundle: typeof before): string[] =>
+      bundle.routes
+        .filter((route) => route.serviceId === 'service.product-procurement')
+        .map((route) => `${route.method} ${route.path}`);
+
+    // The core agreement names a socket, never the provider, so replacing the
+    // vendor leaves every contract path exactly where it was.
+    expect(corePaths(after)).toEqual(corePaths(before));
+    expect(after.services.map((service) => service.id)).toEqual([
+      'service.alipay-payment',
+      'service.product-catalog',
+      'service.product-procurement',
+      'service.product-sourcing',
+    ]);
+  });
+
   it('keeps the contract and the topology naming the same services', async () => {
     const bundle = buildDelivery(await model());
     const fromTopology = bundle.services.map((service) => service.id).sort();
