@@ -2,11 +2,13 @@ import path from 'node:path';
 
 import {
   buildDelivery,
+  deliveryFilesOf,
   type DeliveryBundle,
-  type DeliveryRoute,
   type DeliveryService,
 } from '@evidence-poc/evidence-api';
 import { readModelRoot } from '@evidence-poc/evidence-model-core';
+
+export { deliveryFilesOf };
 
 /**
  * Turning a project's model into the documents a delivery hand-off consists of.
@@ -52,17 +54,21 @@ export interface DeliveryPreview {
   limitations: readonly string[];
 }
 
-/** One file the export writes, relative to the chosen directory. */
-export interface DeliveryFile {
-  path: string;
-  content: string;
-}
-
+/**
+ * The preview the hub renders.
+ *
+ * It counts routes per service because that is the number a reader checks first:
+ * a service with no route exists in the topology but answers nothing, and the hub
+ * should show that rather than hide it behind a tidy table.
+ */
 export const previewOf = (bundle: DeliveryBundle): DeliveryPreview => {
   const countByService = new Map<string, number>();
 
   for (const route of bundle.routes) {
-    countByService.set(route.serviceId, (countByService.get(route.serviceId) ?? 0) + 1);
+    countByService.set(
+      route.serviceId,
+      (countByService.get(route.serviceId) ?? 0) + 1,
+    );
   }
 
   return {
@@ -80,7 +86,7 @@ export const previewOf = (bundle: DeliveryBundle): DeliveryPreview => {
       routeCount: countByService.get(service.id) ?? 0,
     })),
     links: bundle.links.map((link) => ({ ...link })),
-    routes: bundle.routes.map((route: DeliveryRoute) => ({
+    routes: bundle.routes.map((route) => ({
       method: route.method,
       path: route.path,
       summary: route.summary,
@@ -88,51 +94,6 @@ export const previewOf = (bundle: DeliveryBundle): DeliveryPreview => {
     })),
     limitations: [...bundle.limitations],
   };
-};
-
-/**
- * The files a hand-off writes.
- *
- * The contract is machine-read (`openapi.json`), the topology is read by whoever
- * deploys it, and the limitations are prose because they are the part a reviewer
- * has to act on. Nothing here restates what the model says: every file is a
- * serialization of one projection.
- */
-export const deliveryFilesOf = (bundle: DeliveryBundle): DeliveryFile[] => {
-  const json = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
-  const files: DeliveryFile[] = [
-    { path: 'openapi.json', content: json(bundle.openapi) },
-    {
-      path: 'topology.json',
-      content: json({
-        schemaVersion: bundle.schemaVersion,
-        modelId: bundle.modelId,
-        modelName: bundle.modelName,
-        modelVersion: bundle.modelVersion,
-        services: bundle.services,
-        links: bundle.links,
-        limitations: bundle.limitations,
-      }),
-    },
-    { path: 'routes.json', content: json(bundle.routes) },
-    { path: 'deployment.compose.json', content: json(bundle.deployment) },
-  ];
-
-  if (bundle.limitations.length > 0) {
-    files.push({
-      path: 'limitations.md',
-      content: [
-        `# ${bundle.modelName} · 尚未闭环的能力`,
-        '',
-        '以下内容模型尚未给出答案，交付物按缺口保留，不做推测：',
-        '',
-        ...bundle.limitations.map((limitation) => `- ${limitation}`),
-        '',
-      ].join('\n'),
-    });
-  }
-
-  return files;
 };
 
 /** Reads a model root and projects its delivery. */

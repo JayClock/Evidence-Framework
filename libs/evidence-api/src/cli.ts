@@ -1,9 +1,13 @@
 #!/usr/bin/env node
-import { readFileSync, statSync } from 'node:fs';
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { loadFm } from './adapter/fmAdapter.js';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+
+import { loadFm, type FmIndex } from './adapter/fmAdapter.js';
+import { buildDelivery } from './delivery/delivery.js';
+import { deliveryFilesOf } from './delivery/files.js';
 import { canonicalJson } from './canonicalJson.js';
 import { hasErrors, hasGaps, type Diagnostic } from './diagnostics.js';
 import { inspectSummary } from './inspect.js';
@@ -24,7 +28,7 @@ import {
  * open questions — so a script can gate on it.
  */
 
-export type Command = 'inspect' | 'check' | 'project';
+export type Command = 'inspect' | 'check' | 'project' | 'deliver';
 
 export interface CliOptions {
   command: Command;
@@ -44,7 +48,7 @@ export interface CliResult {
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project> --project-root DIR --fm DIR --fm-check FILE [--api FILE] [--out DIR]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR --fm-check FILE [--api FILE] [--out DIR]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -72,7 +76,11 @@ export const validatePaths = (
     [options.projectRoot, 'project-root', true],
     [options.fm, 'fm', true],
     [options.fmCheck, 'fm-check', true],
-    [options.api, 'api', options.command !== 'inspect'],
+    [
+      options.api,
+      'api',
+      options.command === 'check' || options.command === 'project',
+    ],
     [options.out, 'out', false],
   ];
 
@@ -108,7 +116,7 @@ export const validatePaths = (
     return 'API_INPUT_CONFLICT: API 设计文件必须位于 FM 根目录之外';
   }
 
-  if (options.command !== 'project') {
+  if (options.command !== 'project' && options.command !== 'deliver') {
     return null;
   }
 
@@ -143,7 +151,12 @@ const parse = (
 ): { command: Command; values: Record<string, string> } | string => {
   const [command, ...rest] = argv;
 
-  if (command !== 'inspect' && command !== 'check' && command !== 'project') {
+  if (
+    command !== 'inspect' &&
+    command !== 'check' &&
+    command !== 'project' &&
+    command !== 'deliver'
+  ) {
     return USAGE;
   }
 
@@ -167,6 +180,52 @@ const parse = (
   }
 
   return { command, values };
+};
+
+/**
+ * Writes the delivery documents the checked model implies.
+ *
+ * The FM check has already decided that the model is what it says it is; the
+ * delivery adds no new authority, only the shape of the HTTP surface, the service
+ * boundaries and the deployment sketch. What the model still owes is printed as
+ * limitations instead of blocking the hand-off, because a reviewer needs to see
+ * the gap more than they need a refusal.
+ */
+const writeDelivery = (options: CliOptions, index: FmIndex): CliResult => {
+  const document: DomainModelDocument = {
+    manifest: index.compiled.model,
+    entities: index.compiled.entities,
+    relationships: index.compiled.relationships,
+    rules: index.compiled.rules,
+  };
+  const bundle = buildDelivery(document);
+  const out = options.out ?? path.join(options.projectRoot, '.evidence', 'delivery');
+
+  try {
+    mkdirSync(out, { recursive: true });
+
+    for (const file of deliveryFilesOf(bundle)) {
+      writeFileSync(path.join(out, file.path), file.content, 'utf8');
+    }
+  } catch (error) {
+    return {
+      output: null,
+      error: error instanceof Error ? error.message : String(error),
+      exitCode: 1,
+    };
+  }
+
+  return {
+    output: {
+      modelId: bundle.modelId,
+      out,
+      files: deliveryFilesOf(bundle).map((file) => file.path),
+      serviceCount: bundle.services.length,
+      routeCount: bundle.routes.length,
+      limitations: bundle.limitations,
+    },
+    exitCode: 0,
+  };
 };
 
 /** The findings a CLI report prints, in the shape the reports use. */
@@ -273,6 +332,10 @@ export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
 
   if (command === 'inspect') {
     return { output: inspectSummary(loaded.index), exitCode: 0 };
+  }
+
+  if (command === 'deliver') {
+    return writeDelivery(options, loaded.index);
   }
 
   const designPath = options.api as string;

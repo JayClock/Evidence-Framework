@@ -44,6 +44,57 @@ const checkFileFor = async (directory: string): Promise<string> => {
   ), target;
 };
 
+describe('deliver command', () => {
+  it('writes the contract, the topology and the limitations of a checked model', async () => {
+    await withScratch(async (directory) => {
+      const fmCheck = await checkFileFor(directory);
+      const out = path.join(directory, 'delivery');
+      const result = await runCli([
+        'deliver',
+        '--project-root',
+        directory,
+        '--fm',
+        fullLifecycle().modelRoot,
+        '--fm-check',
+        fmCheck,
+        '--out',
+        out,
+      ]);
+
+      expect(result.error).toBeUndefined();
+      expect(result.exitCode).toBe(0);
+      expect(result.output).toMatchObject({
+        modelId: 'product-procurement-full-lifecycle',
+        out,
+        serviceCount: 4,
+      });
+      expect(statSync(path.join(out, 'openapi.json')).isFile()).toBe(true);
+      expect(
+        JSON.parse(readFileSync(path.join(out, 'openapi.json'), 'utf8')),
+      ).toMatchObject({ openapi: '3.1.0' });
+      expect(
+        JSON.parse(readFileSync(path.join(out, 'topology.json'), 'utf8')),
+      ).toMatchObject({ modelId: 'product-procurement-full-lifecycle' });
+    });
+  });
+
+  it('refuses a model whose check report no longer matches the sources', async () => {
+    await withScratch(async (directory) => {
+      const result = await runCli([
+        'deliver',
+        '--project-root',
+        directory,
+        '--fm',
+        fullLifecycle().modelRoot,
+        '--fm-check',
+        path.join(directory, 'missing-check.json'),
+      ]);
+
+      expect(result.exitCode).toBe(1);
+    });
+  });
+});
+
 describe('projection of the full-lifecycle fixture', () => {
   it('writes the six generated documents', async () => {
     await withScratch(async (directory) => {

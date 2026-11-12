@@ -8,6 +8,7 @@ import {
   buildDeliveryContract,
   buildDeliveryDeployment,
 } from './delivery.js';
+import { deliveryFilesOf } from './files.js';
 
 const model = async (): Promise<DomainModelDocument> => {
   const { bundle } = await readModelRoot(`${API_FIXTURES}full-lifecycle/fm`);
@@ -241,6 +242,18 @@ describe('buildDelivery', () => {
 
   it('has nothing to report when every pair is closed and nothing is derived', async () => {
     expect(buildDelivery(await model()).limitations).toEqual([]);
+  });
+
+  it('serializes the bundle into the files a hand-off writes', async () => {
+    const files = deliveryFilesOf(buildDelivery(await model()));
+
+    expect(files.map((file) => file.path)).toEqual([
+      'openapi.json',
+      'topology.json',
+      'routes.json',
+      'deployment.compose.json',
+    ]);
+    expect(files.every((file) => file.content.endsWith('\n'))).toBe(true);
   });
 
   it('keeps the contract and the topology naming the same services', async () => {

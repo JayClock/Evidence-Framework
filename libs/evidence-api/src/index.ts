@@ -148,6 +148,11 @@ export {
 } from './delivery/routes.js';
 
 export {
+  deliveryFilesOf,
+  type DeliveryFile,
+} from './delivery/files.js';
+
+export {
   createSegmentAllocator,
   operationIdFor,
   rawSegmentOf,
