@@ -1,4 +1,27 @@
 export {
+  assembleDraftFromRows,
+  inferContractSide,
+  inferEvidenceKind,
+  type AssembleOptions,
+  type AssembleResult,
+  type DraftRow,
+} from './draftAssembly.js';
+
+export {
+  jsonBodyOf,
+  readIngestionDraftJson,
+  type DraftJsonReadFailure,
+  type DraftJsonReadResult,
+  type DraftJsonReadSuccess,
+} from './readDraftJson.js';
+
+export {
+  draftFromBusinessText,
+  type TextExtractionOptions,
+  type TextExtractionResult,
+} from './textExtractor.js';
+
+export {
   compileIngestionDraft,
   type CompileDraftOptions,
   type CompileDraftResult,
@@ -14,7 +37,6 @@ export {
 
 export {
   BLUEPRINT_COLUMNS,
-  inferEvidenceKind,
   parseBlueprint,
   partyNamesOf,
   type BlueprintColumn,
