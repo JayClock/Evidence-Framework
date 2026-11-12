@@ -13,7 +13,93 @@ import {
   type ModelPatchRequest,
   type ModelPatchResult,
 } from './evidenceTools.js';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+
 import type { SensorReport } from '../sensors/sensorReport.js';
+
+/** Business time an operator fills in; the model must already name it. */
+const momentTime = (name: string, label: string) => ({
+  name,
+  label,
+  meaning: `${label}由责任方登记。`,
+  valueType: 'timestamp' as const,
+  required: true,
+  keyData: true,
+});
+
+/** Smallest Contract Context the operators need: one root, two parties, one pair. */
+const createOrchestratorModel = (): DomainModelDocument => ({
+  manifest: {
+    type: 'fm_model',
+    schemaVersion: '5.0',
+    id: 'orchestrator-fixture',
+    name: '采购夹具（Orchestrator Fixture）',
+    version: '1.0.0',
+    ruleLanguage: 'CEL',
+    entryContextRefs: ['context.procurement'],
+  },
+  entities: [
+    {
+      type: 'entity',
+      id: 'context.procurement',
+      category: 'context',
+      kind: 'contract',
+      label: '商品采购',
+      rootRefs: ['contract.procurement'],
+    },
+    {
+      type: 'entity',
+      id: 'contract.procurement',
+      category: 'evidence',
+      kind: 'contract',
+      label: '采购合同',
+      contextRef: 'context.procurement',
+      roleRefs: ['role.buyer', 'role.seller'],
+      attributes: [momentTime('signed_at', '签署时间')],
+    },
+    {
+      type: 'entity',
+      id: 'role.buyer',
+      category: 'role',
+      kind: 'party',
+      label: '买方',
+      contextRef: 'context.procurement',
+    },
+    {
+      type: 'entity',
+      id: 'role.seller',
+      category: 'role',
+      kind: 'party',
+      label: '卖方',
+      contextRef: 'context.procurement',
+    },
+    {
+      type: 'entity',
+      id: 'request.payment',
+      category: 'evidence',
+      kind: 'fulfillment_request',
+      label: '支付申请',
+      contextRef: 'context.procurement',
+      responsibleRoleRef: 'role.buyer',
+      attributes: [
+        momentTime('started_at', '发起时间'),
+        momentTime('expired_at', '履约截止时间'),
+      ],
+    },
+    {
+      type: 'entity',
+      id: 'confirmation.payment',
+      category: 'evidence',
+      kind: 'fulfillment_confirmation',
+      label: '支付确认',
+      contextRef: 'context.procurement',
+      responsibleRoleRef: 'role.seller',
+      attributes: [momentTime('confirmed_at', '确认时间')],
+    },
+  ],
+  relationships: [],
+  rules: [],
+});
 
 type Registered = ToolDefinition<never, unknown, unknown>;
 
@@ -98,6 +184,7 @@ const createHandlers = (overrides: Partial<EvidenceToolsHandlers> = {}) => {
       } satisfies ModelPatchResult;
     },
     getCanvasContext: async () => canvasContext,
+    loadDocument: async () => createOrchestratorModel(),
     ...overrides,
   };
 
@@ -121,7 +208,7 @@ const invoke = async <TParams>(
   )) as never;
 
 describe('createEvidenceToolsExtension', () => {
-  it('registers exactly the three modeling tools', () => {
+  it('registers the three read/write tools and the three operators', () => {
     const fake = createFakePi();
     const { handlers } = createHandlers();
 
@@ -131,6 +218,9 @@ describe('createEvidenceToolsExtension', () => {
       TOOL_NAMES.runSensors,
       TOOL_NAMES.applyModelPatch,
       TOOL_NAMES.getCanvasSelection,
+      TOOL_NAMES.introduceFulfillmentPair,
+      TOOL_NAMES.addBreachCompensation,
+      TOOL_NAMES.roleifyAndInvertDependency,
     ]);
   });
 
@@ -227,5 +317,124 @@ describe('createEvidenceToolsExtension', () => {
 
     expect(result.details).toEqual(canvasContext);
     expect(JSON.parse(result.content[0]?.text ?? '{}')).toEqual(canvasContext);
+  });
+
+  it('turns one pair intent into a single patch the session can validate', async () => {
+    const fake = createFakePi();
+    const { handlers, patches } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.introduceFulfillmentPair), {
+      contextRef: 'context.procurement',
+      request: {
+        id: 'request.refund',
+        label: '退款申请',
+        responsibleRoleRef: 'role.buyer',
+        window: '3 个工作日',
+      },
+      confirmation: {
+        id: 'confirmation.refund',
+        label: '退款到账确认',
+        responsibleRoleRef: 'role.seller',
+      },
+    });
+
+    expect(patches).toEqual([
+      {
+        rationale: '新增履约项：退款申请 / 退款到账确认',
+        commands: [
+          expect.objectContaining({ type: 'create-fulfillment-pair' }),
+        ],
+      },
+    ]);
+    expect(result.isError).toBeUndefined();
+    expect(result.content[0]?.text).toBe(
+      '已写入：request.refund, confirmation.refund。',
+    );
+  });
+
+  it('reads the model before an operator resolves a reference', async () => {
+    const fake = createFakePi();
+    const reads: unknown[] = [];
+    const { handlers } = createHandlers({
+      loadDocument: async () => {
+        reads.push('read');
+
+        return createOrchestratorModel();
+      },
+    });
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    await invoke(fake.tool(TOOL_NAMES.addBreachCompensation), {
+      requestRef: 'request.payment',
+      confirmationRef: 'confirmation.payment',
+      condition: '超过约定窗口仍未到账',
+      request: {
+        id: 'request.penalty',
+        label: '逾期违约金申请',
+        responsibleRoleRef: 'role.seller',
+      },
+      confirmation: {
+        id: 'confirmation.penalty',
+        label: '违约金到账确认',
+        responsibleRoleRef: 'role.buyer',
+      },
+    });
+
+    expect(reads).toEqual(['read']);
+  });
+
+  it('answers a refused operator with a readable error instead of a command batch', async () => {
+    const fake = createFakePi();
+    const { handlers, patches } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.roleifyAndInvertDependency), {
+      targetConfirmationRef: 'request.payment',
+      socket: { id: 'role.payment-capability', label: '付款能力' },
+      supporting: {
+        context: { id: 'context.wallet', label: '钱包支付服务' },
+        contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
+        provider: { id: 'role.wallet-provider', label: '钱包服务商' },
+        consumer: { id: 'role.wallet-user', label: '付款用户' },
+        request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
+        confirmation: {
+          id: 'confirmation.wallet-charge',
+          label: '钱包扣款确认',
+        },
+      },
+    });
+
+    expect(patches).toEqual([]);
+    expect(result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('不是履约确认');
+  });
+
+  it('reports a rejected operator patch as an error, not as a silent success', async () => {
+    const fake = createFakePi();
+    const { handlers } = createHandlers({
+      applyModelPatch: async () => ({
+        success: false,
+        error: 'role.notBound',
+      }),
+    });
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.introduceFulfillmentPair), {
+      contextRef: 'context.procurement',
+      request: {
+        id: 'request.refund',
+        label: '退款申请',
+        responsibleRoleRef: 'role.buyer',
+      },
+      confirmation: {
+        id: 'confirmation.refund',
+        label: '退款确认',
+        responsibleRoleRef: 'role.seller',
+      },
+    });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0]?.text).toBe('补丁被拒绝：role.notBound');
   });
 });

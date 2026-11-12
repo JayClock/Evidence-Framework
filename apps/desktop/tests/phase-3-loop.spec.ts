@@ -192,6 +192,9 @@ describe('phase 3 control loop', () => {
       'run_sensors',
       'apply_model_patch',
       'get_canvas_selection',
+      'introduce_fulfillment_pair',
+      'add_breach_compensation',
+      'roleify_and_invert_dependency',
     ]);
 
     const appliedResult = await apply?.execute('call-1', {

@@ -17,8 +17,12 @@ import {
   type SensorReport,
   type SensorsEngine,
 } from '@evidence-poc/evidence-modeling-orchestrator';
+import {
+  readModelBundle,
+  readModelDirectory,
+} from '@evidence-poc/evidence-model-core';
 
-import { modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
+import { isBundleProject, modelSourceOf, projectDirectoryOf, tracePathOf } from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
@@ -122,6 +126,17 @@ export const createAgentRuntime = ({
     ...(sensorDelayMs === undefined ? {} : { delayMs: sensorDelayMs }),
   });
 
+  /**
+   * Reads the model an operator resolves references against.
+   *
+   * The desktop main process owns no live document, so this reads the source
+   * tree the same way the sensors do. A bundle project reads its single file.
+   */
+  const loadDocument = async () =>
+    isBundleProject(resolvedRoot)
+      ? (await readModelBundle(modelRoot)).document
+      : (await readModelDirectory(modelRoot)).document;
+
   let starting: Promise<EvidenceAgentSession> | null = null;
 
   const ensureSession = async (): Promise<EvidenceAgentSession> => {
@@ -161,6 +176,7 @@ export const createAgentRuntime = ({
           },
           applyModelPatch: (patch) => transport.requestPatch(patch),
           getCanvasContext: async () => canvasContext,
+          loadDocument,
         }),
       ],
     });
