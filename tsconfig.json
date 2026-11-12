@@ -23,6 +23,9 @@
     },
     {
       "path": "./libs/evidence-api"
+    },
+    {
+      "path": "./libs/evidence-visualization"
     }
   ]
 }

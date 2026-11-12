@@ -1,0 +1,38 @@
+{
+  "name": "@evidence-poc/evidence-visualization",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "把已校验的 FM 与 API 投影编译为单文件离线业务对象工作台：图投影、内联资产、CSP 签名与原子发布",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "evidence-workbench": "./dist/cli.js"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "@evidence-poc/source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "default": "./dist/cli.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-visualization",
+    "tags": [
+      "type:lib",
+      "scope:evidence"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}
