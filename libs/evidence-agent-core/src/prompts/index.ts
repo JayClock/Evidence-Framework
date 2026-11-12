@@ -14,6 +14,12 @@ export const EVIDENCE_INSTRUCTIONS: readonly string[] = [
   WORKFLOW_PROMPT,
 ];
 
+export {
+  INGESTION_EXAMPLES,
+  INGESTION_PROMPT,
+  buildIngestionPrompt,
+} from './ingestion.js';
+
 export { MODELING_PROMPT, ROLE_PROMPT, WORKFLOW_PROMPT };
 
 /** One prompt string, for a host that replaces the system prompt wholesale. */

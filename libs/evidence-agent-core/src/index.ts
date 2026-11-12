@@ -1,9 +1,12 @@
 export {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
+  INGESTION_EXAMPLES,
+  INGESTION_PROMPT,
   MODELING_PROMPT,
   ROLE_PROMPT,
   WORKFLOW_PROMPT,
+  buildIngestionPrompt,
 } from './prompts/index.js';
 
 export {
