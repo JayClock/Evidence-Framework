@@ -5,16 +5,23 @@ import { fileURLToPath } from 'node:url';
 /**
  * The static presentation assets the workbench page is built from.
  *
- * They live with the skill, not with this package: the same files drive the
- * browser regression test under `.agents/skills/evidence-visualization/tests`,
- * and a copy here would let the two drift. The compiler reads them; the skill
- * owns them.
+ * They ship inside this package (`assets/` beside `src/` and `dist/`), so the
+ * page is generated from the install and never from a file the project happens
+ * to keep. The same files drive the browser regression tests under `tests/`.
  */
 
-/** Directory of the assets inside the skill package. */
-export const ASSETS_DIRECTORY = path.join(
-  'evidence-visualization',
-  'assets',
+/** Directory name, inside the package root, that holds the four assets. */
+export const ASSETS_DIRECTORY = 'assets';
+
+/**
+ * The assets this package ships.
+ *
+ * `src/render/` and `dist/render/` are the same depth below the package root, so
+ * one expression resolves for a workspace consumer reading `src` and for an
+ * installed one reading `dist`.
+ */
+export const BUILTIN_ASSETS_DIRECTORY = fileURLToPath(
+  new URL(`../../${ASSETS_DIRECTORY}`, import.meta.url),
 );
 
 export class WorkbenchAssetError extends Error {
@@ -32,67 +39,55 @@ export interface WorkbenchAssets {
 }
 
 export interface ResolveAssetsDirectoryInput {
-  /** Directory holding skill packages, i.e. `…/.agents/skills`. */
-  skillsRoot?: string | undefined;
-  /** Project root that may vendor the skill. */
-  projectRoot?: string | undefined;
-  /** Where the fallback search climbs from; defaults to `process.cwd()`. */
-  searchStartDirectory?: string;
+  /** Explicit directory, for a host that ships its own copy or a test. */
+  assetsDirectory?: string | undefined;
+  /**
+   * `process.resourcesPath` of a packaged Electron app.
+   *
+   * The desktop bundle carries its own path inside `app.asar`, so a packaged
+   * install points the compiler at the `assets` directory unpacked beside the
+   * archive instead of relying on the bundle's location.
+   */
+  resourcesPath?: string | undefined;
   /** Only for a caller that already knows whether the page template exists. */
   fileExists?: (candidate: string) => boolean;
 }
 
+const hasTemplate = (candidate: string): boolean =>
+  existsSync(path.join(candidate, 'workbench.html'));
+
 /**
- * Finds the asset directory from a skill root, a project, or the workspace.
+ * Picks the asset directory: an explicit override, then the packaged copy, then
+ * the one this package ships.
  *
- * The order keeps three promises: a packaged app reads the tree it ships, a
- * project that vendors the skill reads its own copy, and a developer in this
- * repository reads the workspace skill. Nothing found is an error naming every
- * path that was tried, because a bare `ENOENT` sends a reader hunting.
+ * There is no search up the filesystem and no project-local lookup: the assets
+ * belong to the install, so the only thing that can vary is where an installer
+ * put them. Naming the paths that were tried matters because a bare `ENOENT`
+ * sends a reader hunting.
  */
 export const resolveAssetsDirectory = ({
-  skillsRoot,
-  projectRoot,
-  searchStartDirectory = process.cwd(),
-  fileExists = (candidate) => existsSync(path.join(candidate, 'workbench.html')),
-}: ResolveAssetsDirectoryInput): string => {
+  assetsDirectory,
+  resourcesPath,
+  fileExists = hasTemplate,
+}: ResolveAssetsDirectoryInput = {}): string => {
   const candidates: string[] = [];
-  const add = (base: string): void => {
-    const candidate = path.join(path.resolve(base), ASSETS_DIRECTORY);
+  const add = (candidate: string): void => {
+    const resolved = path.resolve(candidate);
 
-    if (!candidates.includes(candidate)) {
-      candidates.push(candidate);
+    if (!candidates.includes(resolved)) {
+      candidates.push(resolved);
     }
   };
 
-  if (skillsRoot !== undefined && skillsRoot !== '') {
-    add(path.resolve(skillsRoot));
+  if (assetsDirectory !== undefined && assetsDirectory !== '') {
+    add(assetsDirectory);
   }
 
-  if (projectRoot !== undefined && projectRoot !== '') {
-    add(path.join(path.resolve(projectRoot), '.agents', 'skills'));
+  if (resourcesPath !== undefined && resourcesPath.trim() !== '') {
+    add(path.join(path.resolve(resourcesPath), ASSETS_DIRECTORY));
   }
 
-  // Climb from the caller's directory and from this module, so a CLI installed
-  // with the workspace finds the skill whether it runs from `src` or `dist`.
-  for (const start of [
-    path.resolve(searchStartDirectory),
-    path.dirname(fileURLToPath(import.meta.url)),
-  ]) {
-    let current = start;
-
-    for (let depth = 0; depth < 8; depth += 1) {
-      add(path.join(current, '.agents', 'skills'));
-
-      const parent = path.dirname(current);
-
-      if (parent === current) {
-        break;
-      }
-
-      current = parent;
-    }
-  }
+  add(BUILTIN_ASSETS_DIRECTORY);
 
   const found = candidates.find((candidate) => fileExists(candidate));
 

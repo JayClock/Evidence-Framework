@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const sandbox = vm.createContext({});
 vm.runInContext(
-  readFileSync(new URL('../assets/business-graph.js', import.meta.url), 'utf8'),
+  readFileSync(new URL('../../assets/business-graph.js', import.meta.url), 'utf8'),
   sandbox,
 );
 const build = (data, options = {}) => sandbox.buildBusinessGraph(data, options);

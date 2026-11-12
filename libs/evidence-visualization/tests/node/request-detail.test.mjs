@@ -5,11 +5,11 @@ import { runInContext } from 'node:vm';
 import { JSDOM } from 'jsdom';
 
 const template = await readFile(
-  new URL('../assets/workbench.html', import.meta.url),
+  new URL('../../assets/workbench.html', import.meta.url),
   'utf8',
 );
 const script = await readFile(
-  new URL('../assets/workbench.js', import.meta.url),
+  new URL('../../assets/workbench.js', import.meta.url),
   'utf8',
 );
 

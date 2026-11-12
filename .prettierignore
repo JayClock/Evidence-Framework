@@ -6,12 +6,13 @@
 package-lock.json
 # Offline snapshots contain CSP-hashed inline scripts; regenerate, never format.
 /.evidence/views/
-/.agents/skills/evidence-visualization/assets/vendor/
+# 页面资产按浏览器字节交付；regenerate, never format.
+/libs/evidence-visualization/assets/
 # 派生交付按权威字节核对 manifest 摘要；regenerate, never format.
 /.evidence/api/generated/
 /.evidence/fm/generated/
 # 测试案例 OpenAPI 与渲染器逐字节比对；regenerate, never format.
-/.agents/skills/evidence-api-design/tests/fixtures/full-lifecycle/openapi.json
+/libs/evidence-api/tests/fixtures/full-lifecycle/openapi.json
 
 # Nx scratch state
 .nx/self-healing

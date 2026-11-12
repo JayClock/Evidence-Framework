@@ -32,7 +32,7 @@ export const reviewPagePath = (projectRoot: string): string =>
 export interface GenerateWorkbenchInput extends CollectWorkbenchInput {
   /** Absolute path of the page to write. */
   output: string;
-  /** Asset directory; defaults to the skill beside the project or the workspace. */
+  /** Asset directory; defaults to the copy this package ships. */
   assetsDirectory?: string;
   /** Extra input read by {@link collectWorkbench}; defaults to the filesystem. */
   collect?: typeof collectWorkbench;
@@ -69,8 +69,7 @@ export const generateWorkbench = async ({
 
   const before = await fingerprint(root);
   const assets = loadWorkbenchAssets(
-    assetsDirectory ??
-      resolveAssetsDirectory({ projectRoot: root, searchStartDirectory: root }),
+    assetsDirectory ?? resolveAssetsDirectory(),
   );
   const collected = await collect({ ...input, projectRoot: root, fingerprint });
   const html = render(collected.data, assets);

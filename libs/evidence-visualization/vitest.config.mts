@@ -9,6 +9,10 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // `tests/node` and `tests/browser` hold `node:test` harnesses that drive the
+    // page assets in a VM or a real Chrome; they run through `node --test`, not
+    // through Vitest, and would otherwise be collected here and fail to load.
+    exclude: ['tests/node/**', 'tests/browser/**'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './test-output/vitest/coverage',
