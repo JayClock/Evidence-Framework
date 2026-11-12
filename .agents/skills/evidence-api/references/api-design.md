@@ -40,21 +40,21 @@ API 使用格式 5.0 的严格 JSON，上游为 FM v5；具体结构由格式参
    - 执行统一命令行检查与投影：
      ```bash
      # 可选索引；不是重复 FM 检查：
-     "$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" inspect \
-       --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+     npx evidence-api inspect \
+       --project-root "$PROJECT_ROOT" \
        --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE"
 
      # API 整体静态检查：
-     "$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
-       --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+     npx evidence-api check \
+       --project-root "$PROJECT_ROOT" \
        --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 
      # 仅有交付生成授权且完整检查通过时执行：
-     "$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
-       --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+     npx evidence-api project \
+       --project-root "$PROJECT_ROOT" \
        --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
      ```
-   - 路径使用实际绝对路径，三个命令复用同一份 `--fm-check` 结果；project 自动生成 OpenAPI、测试向量、超媒体样例并整体原子替换交付目录。
+   - 路径使用实际绝对路径，三个命令复用同一份 `--fm-check` 结果；project 自动生成 OpenAPI、测试向量、超媒体样例并整体原子替换交付目录。`FM_CHECK_FILE` 由 `npx evidence-model check "$FM_ROOT"`（或 `run_sensors` 工具）产生。
 
 ## 复核与交接
 

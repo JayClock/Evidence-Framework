@@ -14,20 +14,15 @@ Windows 使用该环境下的 `Scripts/python.exe`。路径均由当前环境解
 ## 统一只读入口
 
 ```bash
-"$PYTHON" "$SKILL_DIR/scripts/check_fm.py" "$MODEL_DIR"
+npx evidence-model check "$MODEL_DIR"            # 一致性
+npx evidence-model check "$MODEL_DIR" --scope "$CONTEXT_ID"
 ```
 
-`$MODEL_DIR` 可以是 `.evidence/fm` 目录，也可以是一个 `*.evidence.json` 单文件；两种形态检查同一模型，`modelDigest` 分别对应目录文件与单文件内容，因此不要把两者的摘要互相比较。
+在桌面端或已接入的 Harness 内，`run_sensors` 工具返回同一份报告，不必落盘。`$MODEL_DIR` 指 `.evidence/fm` 目录；单文件先 `unpack` 成目录再检查，`modelDigest` 分别对应两种形态，因此不要把两者的摘要互相比较。
 
 输出 JSON，退出 0 表示本次适用检查通过，退出 1 表示有一致性／场景错误或指定范围存在完整性缺口；查看各维度，不把缺口当已知事实错误。命令只输出 JSON 结果，不写任何项目文件；需要记录时在对话中报告本次实际字段。
 
-关键数据台账是独立的只读报告，不改变一致性结论：
-
-```bash
-"$PYTHON" -B "$SKILL_DIR/scripts/audit_key_data.py" "$MODEL_DIR"
-```
-
-输出每个关键数据的分类与 `needsDecision` 清单，退出 0 表示报告已生成，退出 1 表示模型或 lineage 无法通过。`needsDecision` 不是错误：它列出还没有提供方结论的金额、期限、数量或时间差，交付前必须逐项给出结论或补派生规则；不能通过改名或删标记消除。
+关键数据台账在同一份报告里，`keyDataSummary` 与 `issues` 的分类结论不改变一致性结论：分类为 `derived`、`contract-term`、`domain-source`、`negotiation-source`、`result-fact`、`request-input`、`needs-decision`，`unresolvedItems` 即 `needsDecision` 清单。`needsDecision` 不是错误：它列出还没有提供方结论的金额、期限、数量或时间差，交付前必须逐项给出结论或补派生规则；不能通过改名或删标记消除。
 
 - `checkVersion: 5`：请求必须直接引用所属根合同、请求—确认配对包裹且拒绝空壳上下文的范围检查契约；只消费 FM Schema v5，不接受旧检查结果或只有 `valid` 的报告。
 - `consistent`：当前完整图的已表达结构、责任归属、引用、CEL、lineage 与提交的场景没有静态错误，且输入未变化。
@@ -46,7 +41,7 @@ Windows 使用该环境下的 `Scripts/python.exe`。路径均由当前环境解
 - 模型文件不保存审核或生命周期状态；业务确认消费本次提供的人类明确决定及其覆盖范围，脚本不推断确认。
 - `errors`：错误列表；无模型、坏 JSON、坏引用或预期不匹配都不能当作不适用。
 
-每批源修改执行一致性检查；准备结束或交付的明确范围运行 `check_fm.py "$MODEL_DIR" --scope "$CONTEXT_ID"`，可重复 `--scope` 指定合同组。无关不完整范围不阻塞独立完整范围；真实必要依赖必须包含。下游只消费 `complete: true`、无缺口、明确范围且适用模拟实际通过或确不适用的结果。FM 与 API 的同轮范围交付只执行一次本入口，检查结果随会话交接。API 的 `--fm-check` 只消费结果并核对摘要，不再次检查 FM。API 自身校验由独立的 `evidence-api` 维护，通过资源发现定位该包；独立 FM 校验不自动执行 API。
+每批源修改执行一致性检查；准备结束或交付的明确范围运行 `npx evidence-model check "$MODEL_DIR" --scope "$CONTEXT_ID"`，可重复 `--scope` 指定合同组。无关不完整范围不阻塞独立完整范围；真实必要依赖必须包含。下游只消费 `complete: true`、无缺口、明确范围且适用模拟实际通过或确不适用的结果。FM 与 API 的同轮范围交付只执行一次本入口，检查结果随会话交接。API 的 `--fm-check` 只消费结果并核对摘要，不再次检查 FM。API 自身校验由独立的 `evidence-api` 维护，通过资源发现定位该包；独立 FM 校验不自动执行 API。
 
 脚本不能判断业务来源是否充分、模型是否忠实或人工身份是否真实。时间类型、适用规则与实例值按 [当前判断的来源方法](provenance.md)区分；类型字段或 lineage 通过不能消除影响当前结论的真实来源缺口，也不要求为类型检查补出签约操作流程。
 
@@ -74,15 +69,18 @@ generated 中的编译与 lineage 是可重建产物；清理派生产物不改�
 下列命令仅在用户要求生成派生输出时执行，默认 `MODEL_DIR="$PROJECT_ROOT/.evidence/fm"`；只校验不执行这些写入命令。源 JSON 才是模型事实源。
 
 ```bash
-"$PYTHON" "$SKILL_DIR/scripts/build_fm_lineage.py" "$MODEL_DIR" --output "$MODEL_DIR/generated/traceability.json"
-"$PYTHON" "$SKILL_DIR/scripts/compile_fm_model.py" "$MODEL_DIR" --output "$MODEL_DIR/generated/model.json"
+npx evidence-model lineage "$MODEL_DIR" --out "$MODEL_DIR/generated/traceability.json"
+npx evidence-model compile "$MODEL_DIR" --out "$MODEL_DIR/generated/model.json"
 ```
 
-存在实际适用单据场景时可另外保存完整模拟报告：
+存在实际适用单据场景时可另外保存完整模拟报告与时间线：
 
 ```bash
-"$PYTHON" "$SKILL_DIR/scripts/simulate_fm_model.py" "$MODEL_DIR" --output "$MODEL_DIR/generated/simulation.json"
+npx evidence-model simulate "$MODEL_DIR" --out "$MODEL_DIR/generated/simulation.json"
+npx evidence-model timeline "$MODEL_DIR" --out "$MODEL_DIR/generated/timeline.json"
 ```
+
+派生命令先跑一致性检查，未通过即中止，不写半份产物；源 JSON 才是模型事实源。
 
 不要对空场景套件调用底层模拟命令再以其布尔结果宣称业务模拟通过；统一入口会明确区分未执行。
 

@@ -5,7 +5,6 @@
 ```text
 evidence-visualization/
 ├── SKILL.md
-├── scripts/generate.py
 ├── assets/workbench.html
 ├── assets/workbench.css
 ├── assets/workbench.js
@@ -14,7 +13,7 @@ evidence-visualization/
 └── tests/
 ```
 
-生成器是 TypeScript 包 `libs/evidence-visualization`（命令 `evidence-workbench`），在进程内完成检查、投影、渲染与发布，不需要 Python；`scripts/generate.py` 保留为输出等价的参考实现。`assets/` 由本 Skill 维护，TypeScript 生成器只读取它们。
+生成器是 TypeScript 包 `libs/evidence-visualization`（命令 `evidence-workbench`），在进程内完成检查、投影、渲染与发布，不需要解释器。`assets/` 由本 Skill 维护，生成器只读取它们。
 
 在本仓库根运行：
 

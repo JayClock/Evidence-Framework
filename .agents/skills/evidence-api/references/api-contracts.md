@@ -5,12 +5,12 @@
 ## 调用
 
 ```bash
-"$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api check \
+  --project-root "$PROJECT_ROOT" \
   --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 
-"$PYTHON" "$API_SKILL_DIR/scripts/fm_api.py" project \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api project \
+  --project-root "$PROJECT_ROOT" \
   --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" \
   --api "$API_FILE" --out "$NEW_OUTPUT_DIR"
 ```

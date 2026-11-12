@@ -30,7 +30,7 @@ compatibility: 讨论只需文本；文件维护需读写能力；校验需 Pyth
 | 编写或审查验证场景                                   | [场景边界](references/scenario-validation.md)、[实例执行](references/traceability-and-simulation.md)                                                                                            |
 | 执行检查或生成派生产物                               | [校验](references/validation.md)                                                                                                                                                               |
 
-字段结构直接消费 Schema，跨对象约束定位语义校验器；文档不复制字段表或 JSON 模板。专项按 [规则索引](references/README.md) 选择；合成模型只在 tests/ 供回归使用，不进入提示词，取舍以 `evals/` 的用例分数为准。
+字段结构直接消费 Schema，跨对象约束定位语义校验器（引擎实现见 `libs/evidence-model-core/src/validation/`；本包文档里的 `snake_case` 名称是约束标识，按名检索即可）；文档不复制字段表或 JSON 模板。专项按 [规则索引](references/README.md) 选择；合成模型只在工作区的测试夹具里供回归使用，不进入提示词。
 
 ## Action
 
@@ -38,16 +38,16 @@ compatibility: 讨论只需文本；文件维护需读写能力；校验需 Pyth
 
 2. **落表达与关键数据台账。** 先按双方义务找到主要履约项，主要责任梳理与请求—确认识别合为同一动作；请求从首次保存起直接关联根合同，配对后包裹履约，单端凭证不建空履约；Context 与真实内容共同保存。对每张凭证列出金额、期限、数量、时间差等关键数据项，逐项判定提供方与表达：合同参数先落为属性，凭证再挂到责任角色与上下文，最后写派生规则或标注结果事实。派生属性只在实例中保留测试值，属性本身必须指向规则；结果事实在 meaning 写明由谁形成、由哪条完成规则核对。直接编辑当前模型，核对增改删、稳定身份与引用。完成时，本批对象、规则与每个关键数据的结论可定位，未知按实际保留。
 
-3. **检查并交付。** 先跑一致性，再跑关键数据台账，范围结束另用 `--scope` 核对完整责任、适用场景与派生图。按 Sensors 分级报告，未通过不接续下游。完成时，获授权文件、检查结果与未完成阶段分别可报告。
+3. **检查并交付。** 一次检查同时得到一致性与关键数据台账，范围结束另用 `--scope` 核对完整责任、适用场景与派生图。按 Sensors 分级报告，未通过不接续下游。完成时，获授权文件、检查结果与未完成阶段分别可报告。
 
 ## Sensors
 
-设置实际绝对路径与已满足依赖的 Python：
+检查在建模引擎内运行，不需要解释器。两种等价入口：
 
-```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" "$FM_ROOT" > "$FM_CHECK_FILE"
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/audit_key_data.py" "$FM_ROOT"
-```
+- 在桌面端或已接入的 Harness 内调用 `run_sensors` 工具，它返回一致性、关键数据台账、追溯日志校验与场景结果；
+- 没有工具时执行 `npx evidence-model check "$FM_ROOT" > "$FM_CHECK_FILE"`，范围结束追加 `--scope "$CONTEXT_ID"`（可重复）。
+
+两者输出同一份报告：`errors` 是阻塞项，`gaps` 是范围缺口，`keyDataSummary` 是台账结论。
 
 **阻塞级**：文件写入失败；一致性错误（请求未直连根合同、空履约或空上下文、坏引用、CEL 失败、依赖环）；范围完整性未通过或适用场景模拟失败；派生指针与规则目标不一致。任一出现立即停止接续。
 

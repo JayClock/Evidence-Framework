@@ -2,11 +2,11 @@
 
 ## 运行条件
 
-使用 Python 3.10+ 与本包及 FM 包各自的 `requirements.txt`。FM 与 API 为独立安装包，通过资源发现或指定路径定位，无需相邻。CLI 的 `--fm-skill` 或显式环境变量 `EVIDENCE_FM_SKILL` 指向 FM 包，缺少或不可用时停止；不从 API 包复制 FM 实现。先由 FM 阶段执行一次 `check_fm.py`；API CLI 通过必需的 `--fm-check` 消费其 JSON 结果，读取当前完整源并核对 `modelDigest`，不调用 FM 检查器、编译校验或模拟，也不复用 generated 模型 JSON。
+`evidence-api` 是工作区里的 TypeScript 命令（`libs/evidence-api`），随 `pnpm install` 提供，不需要解释器或依赖安装。FM 与 API 各自拥有阶段，API 命令只读 FM 的检查结果，缺少时停止；不在 API 内复制 FM 实现。先由 FM 阶段执行一次 `npx evidence-model check`（或 `run_sensors`）；API CLI 通过必需的 `--fm-check` 消费其 JSON 结果，读取当前完整源并核对 `modelDigest`，不调用 FM 检查器、编译校验或模拟，也不复用 generated 模型 JSON。
 
 ```bash
-"$PYTHON" -m unittest discover -s "$FM_SKILL_DIR/tests" -v
-EVIDENCE_FM_SKILL="$FM_SKILL_DIR" "$PYTHON" -B -m unittest discover -s "$API_SKILL_DIR/tests" -v
+npx nx test evidence-api
+npx nx test evidence-model-core
 ```
 
 `FM_CHECK_FILE` 位于模型目录之外。只读联合检查用项目之外的临时目录保存本次 stdout，结束后清理，不新增项目报告或隐藏状态。已经取得且适用于当前输入的 FM 结果直接使用；没有结果、模型／场景／校验器变化时返回 FM 阶段取得新结果，不提供跳过检查的参数。

@@ -26,7 +26,7 @@
 
 CEL 是表达式，不执行赋值、SQL、网络调用或状态迁移。派生值的目标在 Rule 中声明，属性引用同一派生规则；判断规则不伪装成数据生产边。关键持久数据必须追回已建模输入，不能藏在无业务来源的自由参数里。
 
-规则语法、声明变量、目标归属及结果类型的检查见 [validate_rules](../scripts/fm_model.py)；派生指针一致性见 [validate_derived_attributes](../scripts/fm_model.py)；属性读取、集合访问和依赖环见 [analyze_traceability](../scripts/fm_traceability.py)。不另建手写属性依赖表。
+规则语法、声明变量、目标归属及结果类型的检查见 `validate_rules`；派生指针一致性见 `validate_derived_attributes`；属性读取、集合访问和依赖环见 `analyze_traceability`。不另建手写属性依赖表。
 
 ## 类型能力与运行边界
 

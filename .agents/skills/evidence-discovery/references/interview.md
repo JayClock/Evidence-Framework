@@ -148,13 +148,9 @@ Q2：〈同轮可独立澄清的另一项必要未知；没有就不增加〉
 
 每轮澄清问答结束并确认事实后，把焦点凭证 `focus.evidenceRef`、追溯故事 `narrative`、提出的问题 `qa`、用户原话 `userInput.rawText`、确认事实与来源绑定 `targetBindings` 增量写入 `.evidence/traces/interview-trace.json`，结构按 `interview-trace.schema.json`。写入后立即校验：
 
-```bash
-python3 "$DISCOVERY_SKILL_DIR/scripts/check_interview_trace.py" "$TRACE_FILE" \
-  --schema "<evidence-fm>/schemas/interview-trace.schema.json" \
-  --fm-root "$FM_ROOT"
-```
+有 `run_sensors` 工具时直接调用它；没有时执行 `npx evidence-model check "$FM_ROOT"`。两个入口返回同一份报告，追溯日志的问题以 `TRACE_INVALID` 出现。
 
-退出码非 0 时按报告修正后再交付；引用必须指向已建模的 Entity 及其属性，否则先把凭证交 FM 落地。
+报告非空时按结论修正后再交付；引用必须指向已建模的 Entity 及其属性，否则先把凭证交 FM 落地。
 
 回答涉及金额、期限、数量或时间差时，`userInput.confirmedFacts` 写成「输入 → 规则 → 结果」，`targetBindings` 绑到派生属性或提供该值的属性；只有数值没有来源的，保留为缺口，等 FM 台账给出提供方结论后再写入。完成时：问题组已交付或交接已说明，追溯日志通过校验。
 

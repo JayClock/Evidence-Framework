@@ -8,9 +8,9 @@
 
 上下文表达合同责任、领域知识或合同前协商的边界；履约是合同内部的一项权利义务，不是新的上下文，也不自动对应软件模块、事务或部署单元。
 
-上下文不是预先建立的空容器。合同上下文以唯一的本地 Contract 为根并共同维护双方角色；领域上下文以实际本地业务对象为根（Thing、领域参与身份或业务记录），不能用自身、其他 Context、Fulfillment 或未展开协作角色充当根；协商上下文至少已有本地邀请、方案或回应凭证，角色或常量规则本身不证明协商存在。这些均属于一致性约束，由 [validate_context_roots](../scripts/fm_model.py) 检查，不推迟到范围结束。尚无履约、部分属性或时间未明与空上下文不同，不要求为此补造履约、主体或完成规则。
+上下文不是预先建立的空容器。合同上下文以唯一的本地 Contract 为根并共同维护双方角色；领域上下文以实际本地业务对象为根（Thing、领域参与身份或业务记录），不能用自身、其他 Context、Fulfillment 或未展开协作角色充当根；协商上下文至少已有本地邀请、方案或回应凭证，角色或常量规则本身不证明协商存在。这些均属于一致性约束，由 `validate_context_roots` 检查，不推迟到范围结束。尚无履约、部分属性或时间未明与空上下文不同，不要求为此补造履约、主体或完成规则。
 
-上下文归属、子上下文分别表达不同关系，不能互相替代。入口指向业务上下文，不把当前展示的履约切片冒充合同范围。机器约束见 [validate_manifest](../scripts/fm_model.py) 和 [validate_entities](../scripts/fm_model.py)。
+上下文归属、子上下文分别表达不同关系，不能互相替代。入口指向业务上下文，不把当前展示的履约切片冒充合同范围。机器约束见 `validate_manifest` 和 `validate_entities`。
 
 ## 责任身份与稳定主体
 
@@ -18,7 +18,7 @@
 
 合同凭证绑定责任双方，其余合同凭证复用所属合同的一方承担责任，不能按履约或阶段复制合同角色。经办人、上传人和证明提供方不替代责任方；实际主体未知不补玩家，同名也不证明身份相同。角色扮演只表达有依据的对应，不授予未约定的全部操作权限。
 
-责任与角色归属的检查分别见 [validate_evidence_responsibility](../scripts/fm_model.py)、[validate_party_role_owner](../scripts/fm_model.py)；扮演端点见 [validate_relationships](../scripts/fm_model.py)。最小保存单元由 [责任方法](responsibility-closure.md) 维护。
+责任与角色归属的检查分别见 `validate_evidence_responsibility`、`validate_party_role_owner`；扮演端点见 `validate_relationships`。最小保存单元由 [责任方法](responsibility-closure.md) 维护。
 
 ## 领域复用与五类角色变化点
 
@@ -30,7 +30,7 @@
 - **上下文角色 (`role / context`)**：用于表达未展开或已展开的外部业务上下文协作边界。
 - **凭证证明角色 (`role / evidence`)**：跨上下文的开放证明插槽，仅允许时刻类型凭证（Confirmation 或时刻型支撑凭证）扮演；时段型凭证过程尚未终结，不得跨上下文扮演角色。
 
-角色不是结果凭证。能力声明、系统回调或方案成熟度不能证明履约完成；具体字段与合法端点分别读取 [Entity Schema](../schemas/entity.schema.json) 和 [validate_relationships](../scripts/fm_model.py)。
+角色不是结果凭证。能力声明、系统回调或方案成熟度不能证明履约完成；具体字段与合法端点分别读取 [Entity Schema](../schemas/entity.schema.json) 和 `validate_relationships`。
 
 ## 未澄清合同与证明插槽
 
@@ -38,32 +38,32 @@
 
 Context Role 不代替 Evidence Role，也不代表结果已经存在。Evidence Role 是跨上下文的开放证明插槽：消费方声明采信约定，具体结果保留提供方上下文、责任与业务时间。仅时刻型凭证可扮演 Evidence Role。插槽自身不签发凭证实例；业务规则必须解析实际玩家，不能凭字段相同接受无关凭证。
 
-无需替换证明方式时可直接引用有依据的外部确定结果，不机械增加插槽。同合同内的不同履约不构成跨上下文，不借证明角色中转。具体允许的引用和扮演组合以 [validate_relationships](../scripts/fm_model.py) 检查：同合同引用只指向本合同对象，跨上下文证明经 Evidence Role 保留提供方归属，未澄清协作边界用 Context Role 记录能力与未知，两者都不签发实例。必要证明不明仍是交付缺口，角色不能补齐它。
+无需替换证明方式时可直接引用有依据的外部确定结果，不机械增加插槽。同合同内的不同履约不构成跨上下文，不借证明角色中转。具体允许的引用和扮演组合以 `validate_relationships` 检查：同合同引用只指向本合同对象，跨上下文证明经 Evidence Role 保留提供方归属，未澄清协作边界用 Context Role 记录能力与未知，两者都不签发实例。必要证明不明仍是交付缺口，角色不能补齐它。
 
 ## 请求、结果与业务时间
 
-请求必须以 `references` 直接指向所属合同上下文的根 Contract，不以 `contextRef`、履约归属、间接凭证链或其他请求的合同引用代替；已包裹与未包裹请求均适用。这是合同权责依据，不是可延后补齐的分组线。检查见 [validate_request_contract_references](../scripts/fm_model.py)，首次保存条件见[责任方法](responsibility-closure.md)。
+请求必须以 `references` 直接指向所属合同上下文的根 Contract，不以 `contextRef`、履约归属、间接凭证链或其他请求的合同引用代替；已包裹与未包裹请求均适用。这是合同权责依据，不是可延后补齐的分组线。检查见 `validate_request_contract_references`，首次保存条件见[责任方法](responsibility-closure.md)。
 
 请求记录要求及适用时段，确认记录完成或部分完成结果，补充凭证提供采信依据；确认不默认人工审批，也不自动结束整项责任。同类多次结果用不同实例，不按批次复制类型；同合同共享确认保留唯一形成归属，各请求独立判断。
 
 类型引用按消费方指向依据；实例依赖指向当时已经形成的具体凭证。引用不证明实例存在，也不单独规定时间先后。签约、生效、确认、补录、回调和入库时间各有含义，不能相互替代。
 
-时间属性契约直接读 [EVIDENCE_TIME_ATTRIBUTES](../scripts/fm_model.py) 与 [validate_evidence_times](../scripts/fm_model.py)，属性结构读 [Entity Schema](../schemas/entity.schema.json)。这里区分渐进保存与范围完整性，不生成默认日期或期限；是否继续追溯业务口径按 [来源方法](provenance.md) 决定。
+时间属性契约直接读 `EVIDENCE_TIME_ATTRIBUTES` 与 `validate_evidence_times`，属性结构读 [Entity Schema](../schemas/entity.schema.json)。这里区分渐进保存与范围完整性，不生成默认日期或期限；是否继续追溯业务口径按 [来源方法](provenance.md) 决定。
 
 运行时凭证只追加；取消、更正、退款、冲正与赔偿保留原事实，用新增凭证及实际新义务表达。这不表示领域对象的状态永不变化，实例执行与时间线见 [追溯与模拟](traceability-and-simulation.md)。
 
 ## 完成、异常与协商
 
-履约是由请求与其结果确认凭证构成的交互结构，不作为物理实体容器存储；履约边界由可视化层动态合成呈现。每个请求必须关联至少一个有效结果端；缺任一端在范围完整性检查时作为缺口报告。结果端可以是确认凭证或明确归属的确认角色；请求引用的普通支撑证明角色不自动成为结果端。完整结构与结果配对由 [validate_fulfillment_pairs](../scripts/fm_model.py) 检查，计算表达见 [CEL 方法](cel-rules.md)。
+履约是由请求与其结果确认凭证构成的交互结构，不作为物理实体容器存储；履约边界由可视化层动态合成呈现。每个请求必须关联至少一个有效结果端；缺任一端在范围完整性检查时作为缺口报告。结果端可以是确认凭证或明确归属的确认角色；请求引用的普通支撑证明角色不自动成为结果端。完整结构与结果配对由 `validate_fulfillment_pairs` 检查，计算表达见 [CEL 方法](cel-rules.md)。
 
-合同只存在于双方之间，主要履约项成对：一方承担义务的履约项，权利方是另一方。因此范围完整性要求双方各自是至少一项履约项的请求责任方（权利方），缺一侧是缺口而非一致性错误，由 [pairing_gaps](../scripts/fm_scope.py) 与 [completeness_gaps](../scripts/fm_scope.py) 检查；不以一致性通过代替，也不为通过检查虚构对侧履约项或玩家。
+合同只存在于双方之间，主要履约项成对：一方承担义务的履约项，权利方是另一方。因此范围完整性要求双方各自是至少一项履约项的请求责任方（权利方），缺一侧是缺口而非一致性错误，由 `pairing_gaps` 与 `completeness_gaps` 检查；不以一致性通过代替，也不为通过检查虚构对侧履约项或玩家。
 
 合同前的邀请、方案和回应按实际出现表达，不强制完整询报价流水线；合同只追溯实际接受的方案，不虚构未来合同或履约。形成顺序不等于依据引用方向。
 
-关系基数声明只说明已知数量约束，不自动表达拥有权或级联操作。静态检查见 [validate_relationship_cardinality](../scripts/fm_model.py)；当前没有通用关系实例，不能声称运行验证了实例数量。
+关系基数声明只说明已知数量约束，不自动表达拥有权或级联操作。静态检查见 `validate_relationship_cardinality`；当前没有通用关系实例，不能声称运行验证了实例数量。
 
 ## 一致性不是范围结束
 
-[validate_model](../scripts/fm_model.py) 检查当前已表达内容；[completeness_gaps](../scripts/fm_scope.py) 区分范围仍缺什么。可暂缺内容不等于允许错误引用、矛盾类型或依赖环。机器不能证明责任全部发现或人类确认有效。
+`validate_model` 检查当前已表达内容；`completeness_gaps` 区分范围仍缺什么。可暂缺内容不等于允许错误引用、矛盾类型或依赖环。机器不能证明责任全部发现或人类确认有效。
 
 保存、责任终点、范围结束及人类确认只由 [责任方法](responsibility-closure.md) 维护；实际命令和检查结果只由 [校验纪律](validation.md) 维护。来源或语义更正后核对受影响的检查与下游，不通过改分类、删场景或缩范围制造完整。

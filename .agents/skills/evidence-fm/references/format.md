@@ -62,7 +62,7 @@ Schema 负责单对象可表达结构；引用存在、上下文归属、关系�
 
 目录只服务阅读，不定义业务身份、归属或发现顺序；没有实际对象就不建空目录或假对象。上下文内部关系放在最近共同上下文，跨独立上下文关系放在根目录，每个对象只定义一次。项目模型使用上下文内的短文件名；有多个同类对象时用业务名区分，不能覆盖。说明文件记录范围与来源，不保存第二份模型定义。
 
-加载规则直接看 [load_model](../scripts/fm_model.py)：入口单独加载，分片按对象类型分发，非类型树与隐藏路径不作为类型源。严格 JSON 的读取限制看 [load_single_json](../scripts/fm_model.py)。不要用文件名、目录位置或说明文字绕过加载与引用检查。
+加载规则由引擎的 `readModelRoot`（`libs/evidence-model-core/src/adapters/modelRoot.ts`）实现：`model.json` 单独读取，分片按对象类型分发，`generated/`、隐藏路径与 `__pycache__` 不作为类型源。不要用文件名、目录位置或说明文字绕过加载与引用检查。
 
 ### 单文件模型
 
@@ -75,12 +75,12 @@ Schema 负责单对象可表达结构；引用存在、上下文归属、关系�
   "validation": { "instances": […], "scenarios": […] }, "readme": … }
 ```
 
-- 目录与单文件是同一模型的两种形态：`load_model`、`load_validation_suite`、`check_fm.py` 与 `audit_key_data.py` 都接受目录或单文件路径，判定结果一致。
+- 目录与单文件是同一模型的两种形态：`readModelRoot` 与 `loadValidationSuite` 都接受目录或单文件路径，判定结果一致；命令行 `check` 只读目录，单文件先 `unpack`。
 - 打包与还原只在需要换形态时执行，不在编辑循环里来回转换：`evidence-model pack <目录> [--out <文件>]`、`evidence-model unpack <文件> [--out <目录>]`、`evidence-model inspect <文件|目录>`。还原不覆盖对象已一致的文件，因此不产生无意义的格式改动。
 - `generated/` 不进单文件（派生输出），`discovery/` 也不进（访谈追溯由 Discovery 拥有）。只读检查与网络无关。
 - 编辑单文件时，对象仍按相同 Schema、相同稳定 ID 与相同语义约束维护；不能因为是单文件就把实例、场景或派生结果写成模型类型源。
 
-验证输入的文件名由 [expected_filename](../scripts/fm_model.py) 计算，分别放在实例与场景目录；类型源的文件名不承担稳定身份。重组目录须保留对象 ID、业务内容和场景预期，并核对编译结果。
+验证输入的文件名由 `expected_filename` 计算，分别放在实例与场景目录；类型源的文件名不承担稳定身份。重组目录须保留对象 ID、业务内容和场景预期，并核对编译结果。
 
 ## 编辑约定
 

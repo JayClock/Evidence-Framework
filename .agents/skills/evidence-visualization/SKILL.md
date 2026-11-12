@@ -39,7 +39,7 @@ npx evidence-workbench generate --project-root "$PROJECT_ROOT"
 # 联合审核：追加 --require-api --scope "$CONTEXT_ID"（可重复）
 ```
 
-生成器是 TypeScript（`libs/evidence-visualization`），在进程内完成检查、投影、渲染与发布，无需 Python 解释器。`scripts/generate.py` 保留为参考实现，输出与之一致，仅供对照与回归。
+生成器是工作区里的 TypeScript 命令 `evidence-workbench`（`libs/evidence-visualization`），在进程内完成检查、投影、渲染与发布，不需要解释器或项目内的 FM 包。
 
 3. **验证最终页面。** 按 Sensors 对落盘 HTML 执行浏览器回归并检查截图，同时核对关键数据展示：属性详情是否给出派生规则或结果事实，追溯问答是否与模型一致。完成时，对象、引用、交互、关键数据与可读性有实际证据，或缺少环境及未执行项明确可见。
 

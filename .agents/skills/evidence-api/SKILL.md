@@ -28,7 +28,7 @@ compatibility: 讨论只需文本；校验与投影需 Python 3.10+、本包 req
 
 ## Action
 
-1. **承接输入与权限。** 定位项目、本包与 FM 包的实际绝对路径，核对允许文件与当前整体模型。消费有效 FM 范围结果；没有结果时交给 `evidence-fm` 的只读检查分支取得一次结果，再返回本包，不由 API 工具隐式重查。完成时，来源、运行依赖、FM 结果与分支出口明确。
+1. **承接输入与权限。** 定位项目、FM 源与 API 设计的实际绝对路径，核对允许文件与当前整体模型。消费有效 FM 范围结果；没有结果时交给 `evidence-fm` 的只读检查分支取得一次结果，再返回本包，不由 API 工具隐式重查。完成时，来源、运行依赖、FM 结果与分支出口明确。
 
 2. **维护获授权契约。** 讨论只解释判断与未知；编辑按设计流程遍历明确范围及依赖中的全部对象与场景，不默默过滤不完整对象，不以同合同局部履约切片交付。形成资源、角色能力、HTTP 契约及可接续消费者流程，维护唯一 `api.json`；派生字段只出现在表示与响应，不出现在请求体。完成时，接口与非接口活动均有依据，请求字段与 FM 的派生口径一致。
 
@@ -36,18 +36,20 @@ compatibility: 讨论只需文本；校验与投影需 Python 3.10+、本包 req
 
 ## Sensors
 
-读取校验纪律，设置实际绝对路径与已满足依赖的 Python：
+读取校验纪律，设置实际绝对路径：
 
 ```bash
-"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api check \
+  --project-root "$PROJECT_ROOT" \
   --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 
 # 仅有投影授权且完整检查通过时：
-"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api project \
+  --project-root "$PROJECT_ROOT" \
   --fm "$FM_ROOT" --fm-check "$FM_CHECK_FILE" --api "$API_FILE"
 ```
+
+`FM_CHECK_FILE` 来自 `npx evidence-model check "$FM_ROOT"`（或 `run_sensors` 工具）；API 检查只消费它并核对摘要，不重跑 FM。
 
 **阻塞级**：FM 结果缺失、失败、摘要失配或输入变化；设计结构无效、悬空引用；整体对象或场景未覆盖；接口缺少完整契约或成功消费步骤；请求字段把派生属性当入参。出现任一即停止接续，不生成投影。
 

@@ -2,9 +2,7 @@
 
 ## 运行环境
 
-完整保留 Skill 的 `scripts/`、`assets/` 和文档；测试还需要 `tests/`。
-
-生成器有两份实现，输出等价：`npx evidence-workbench generate`（TypeScript，随工作区安装，默认路径）与 `scripts/generate.py`（Python 3.10+，参考实现）。TypeScript 版在进程内完成检查、投影、渲染与发布，不需要 Python；Python 版需要可定位的 FM 包，存在 API 时再加 `--api-skill`。缺少软件时报告环境限制，不自动安装。
+完整保留 Skill 的 `assets/` 和文档；生成器是工作区里的 TypeScript 命令 `evidence-workbench`（`libs/evidence-visualization`），随 `pnpm install` 提供，在进程内完成检查、投影、渲染与发布，不需要解释器，也不需要项目里有 FM 包或 API 包。缺少 Node 或浏览器时报告环境限制，不自动安装。
 
 生成与浏览器命令见 [入口](../SKILL.md)。输入为 `.evidence/fm/` 与可选 `.evidence/api/api.json`，输出为 `.evidence/views/index.html`；内存模型投影与临时 API 投影保持正式 generated 不变，场景详情复用同一次 FM 检查结果，不再次模拟完整图。联合模式增加 `--require-api --scope "$CONTEXT_ID"`（可重复 `--scope` 指定 API 实际覆盖的独立范围），缺 API 返回非零并保留旧页；独立模式可生成仅 FM 页面。HTML 直接在浏览器打开，无需服务器。
 
@@ -25,16 +23,14 @@
 维护生成器或资源时按影响选择回归；普通页面生成执行入口中的最终 HTML 浏览器检查。
 
 ```bash
-npx nx test evidence-visualization            # TypeScript 生成器：投影、渲染、发布、收集
-"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests" -v   # 参考实现契约
-"$PYTHON" -B -m unittest discover -s "$VISUAL_SKILL_DIR/tests/portability" -v
+npx nx test evidence-visualization            # 投影、渲染、发布、收集
 node --test "$VISUAL_SKILL_DIR/tests/business-graph.test.mjs"
-# 维护仓库提供 jsdom；它不是安装包运行依赖：
+# 工作区提供 jsdom；它不是安装包运行依赖：
 node --test "$VISUAL_SKILL_DIR/tests/request-detail.test.mjs"
 node "$VISUAL_SKILL_DIR/tests/review-browser.mjs" "$PROJECT_ROOT/.evidence/views/index.html"
 ```
 
-隔离安装测试通过 `EVIDENCE_FM_SKILL` 指定 FM 包；省略时使用测试包相邻位置。浏览器测试要求 Node.js 22+，默认尝试 macOS 标准 Chrome，可用 `CHROME_BIN` 指定已有浏览器，不自动下载。
+浏览器测试要求 Node.js 22+，默认尝试 macOS 标准 Chrome，可用 `CHROME_BIN` 指定已有浏览器，不自动下载。
 
 ## 验证覆盖
 

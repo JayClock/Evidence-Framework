@@ -25,15 +25,13 @@ compatibility: 普通对话即可；专业分析需要可发现的 evidence-fm�
 
 ## Sensors
 
-每轮交付前先执行推断核查，再运行自动化校验脚本；按三级信号反馈，成功静默，失败精确定位：
+每轮交付前先执行推断核查，再取自动化校验结果；按三级信号反馈，成功静默，失败精确定位：
 
-```bash
-python3 "$DISCOVERY_SKILL_DIR/scripts/check_interview_trace.py" "$TRACE_FILE" \
-  --schema "<evidence-fm>/schemas/interview-trace.schema.json" \
-  --fm-root "$FM_ROOT"
-```
+- 在桌面端或已接入的 Harness 内，调用 `run_sensors` 工具：它一次返回模型一致性、关键数据台账、追溯日志校验与场景结果，`check_interview_trace` 的结论在 `report.issues` 中带 `code: "TRACE_INVALID"`。
+- 没有该工具时执行 `npx evidence-model check "$FM_ROOT"`，读取同一份报告；追溯日志的阻塞结论同样以 `TRACE_INVALID` 出现在 `errors`。
+- 追溯日志的 schema 与模型引用校验都已内置，不需要再传 `--schema` 或 `--fm-root`。
 
-**阻塞级**：脚本退出码非 0（JSON 结构失效、问答标识重复或 Entity 引用不存在）；涉及金额、期限、数量、时间差却缺少提供方与计算规则；违反停止、暂缓或未获授权写入。任一出现立即阻断交付并回到 Action 修复。
+**阻塞级**：日志校验失败（JSON 结构失效、问答标识重复或 Entity 引用不存在）；涉及金额、期限、数量、时间差却缺少提供方与计算规则；违反停止、暂缓或未获授权写入。任一出现立即阻断交付并回到 Action 修复。
 
 **警告级**：回答中关键数据仅有口头数值缺少可执行计算规则（显式登记为缺口待决策）；未回答项缺少来源（保留未知，不默认同意）；单合同已完成但全局前沿尚未闭环。
 

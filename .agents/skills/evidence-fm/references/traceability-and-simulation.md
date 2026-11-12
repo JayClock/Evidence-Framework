@@ -46,18 +46,17 @@ machineValidated → keyDataAccounted → simulationPassed
 ### 2.3 台账输出
 
 ```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/audit_key_data.py" "$FM_ROOT"
+npx evidence-model check "$FM_ROOT" --json
 ```
 
-输出每个关键数据的分类：`derived`、`contract-term`、`domain-source`、`negotiation-source`、`result-fact`、`request-input`、`needs-decision`，并列出 `needsDecision` 与派生来源。
+在桌面端或已接入的 Harness 内，`run_sensors` 工具返回同一份报告的 `keyDataSummary`。分类为：`derived`、`contract-term`、`domain-source`、`negotiation-source`、`result-fact`、`request-input`、`needs-decision`，并列出 `needsDecision` 与派生来源。
 
-`needsDecision` 是待决清单，不是机器错误：每项必须给出提供方结论或补规则。脚本按 Entity 种类分类，不能判断业务意图；不得通过改名、改分类或删标记消除清单。
+`needsDecision` 是待决清单，不是机器错误：每项必须给出提供方结论或补规则。引擎按 Entity 种类分类，不能判断业务意图；不得通过改名、改分类或删标记消除清单。
 
 ## 3. 属性追溯验证
 
 ```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/build_fm_lineage.py" "$FM_ROOT" \
-  --output "$FM_ROOT/generated/traceability.json"
+npx evidence-model lineage "$FM_ROOT" --out "$FM_ROOT/generated/traceability.json"
 ```
 
 校验与报告覆盖：
@@ -183,11 +182,10 @@ Derivation evaluation 还必须给出 `targetInstanceRef`。Rule 中名为 `now`
 ## 5. 确定性模拟
 
 ```bash
-python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> \
-  --output <model-dir>/generated/simulation.json
+npx evidence-model simulate <model-dir> --out <model-dir>/generated/simulation.json
 ```
 
-可用 `--scenario <id>` 重复选择场景。执行器：
+可用 `--scenario <id>` 重复选择场景（缺省执行全部）。场景结果同时出现在 `check` 报告的 `scenarioResults` 与 `run_sensors` 的返回值里，无需为常规检查另跑一次。执行器：
 
 1. 校验 Instance 与 Scenario Schema；
 2. 按 sequence 追加单据；
@@ -203,9 +201,10 @@ python3 <skill-dir>/scripts/simulate_fm_model.py <model-dir> \
 ## 6. 人工角色扮演包
 
 ```bash
-python3 <skill-dir>/scripts/generate_role_play_pack.py \
-  <model-dir> <scenario-id> --output <role-play-dir>
+npx evidence-model role-play <model-dir> <scenario-id> --out <role-play-dir>
 ```
+
+场景未通过模拟时命令拒绝生成，已有目录需 `--force` 才替换。
 
 输出包括：
 

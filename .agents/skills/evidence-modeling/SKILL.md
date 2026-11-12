@@ -11,7 +11,7 @@ compatibility: 通过资源发现定位专业 Skills；访谈需要 Discovery �
 
 ## Guides
 
-首次进入或恢复时读取项目指令、当前目标、实际文件与 Git 差异。默认产物根为 `.evidence/`，只修改本次授权的文件，保留无关改动，不自动迁移。分派、恢复与阶段接续按 [阶段接续与恢复](references/workflow.md) 执行；提示词与分派规则的取舍以 `evals/` 的用例分数为准。
+首次进入或恢复时读取项目指令、当前目标、实际文件与 Git 差异。默认产物根为 `.evidence/`，只修改本次授权的文件，保留无关改动，不自动迁移。分派、恢复与阶段接续按 [阶段接续与恢复](references/workflow.md) 执行；提示词与分派规则的取舍以用例评测分数为准。
 
 本入口建模访谈默认包含 FM 渐进维护授权，不等全部澄清结束才首次保存，也不逐轮重新申请；模型每批修改检查一次一致性，范围结束再核对完整责任与关键数据结论。凭证与责任角色、所属上下文按最小保存单元共同落地，履约请求从首次保存起直接关联所属根合同。普通回答不触发下游；合同或独立领域／协商取得人类结束确认后，才检查范围并接续 API 与联合审核。更窄授权优先：只聊不落盘、仅访谈、不生成模型、只读、只修改 FM、不设计 API、不生成审核页。纯方法讨论不授权模型 JSON，也不扩大 Entity/属性定义的写入范围。
 
@@ -34,23 +34,23 @@ compatibility: 通过资源发现定位专业 Skills；访谈需要 Discovery �
 
 ## Sensors
 
-阶段门禁执行自动化校验，并按严重程度分级管理：
+阶段门禁读取当前生效的 FM 检查结果与追溯日志，并按严重程度分级管理：
 
-```bash
-python3 "$MODELING_SKILL_DIR/scripts/check_stage_gate.py" --target api --fm-check "$FM_CHECK_FILE" --trace "$TRACE_FILE"
-python3 "$MODELING_SKILL_DIR/scripts/check_stage_gate.py" --target visualization --fm-check "$FM_CHECK_FILE" --trace "$TRACE_FILE"
-```
+- 有 `run_sensors` 工具时看它返回的 `report.isStageGateReady`：只有一致性通过、零缺口、台账无待决项时为 `true`。
+- 没有工具时执行 `npx evidence-model check "$FM_ROOT" --scope "$CONTEXT_ID"`（可重复 `--scope`），退出码 0 且 `complete: true`、`gaps` 为空即通过。
 
-**阻塞级**：门禁脚本退出码非 0；FM 检查结果缺失、摘要失配或输入变化；台账存在未决决策阻止下游委派；超出授权写入；联合审核缺少有效 API 产物。任一发生立即阻断下游委派。
+门禁本身不写任何项目文件，也不代替人类确认。
+
+**阻塞级**：门禁未打开；FM 检查结果缺失、摘要失配或输入变化；台账存在未决决策阻止下游委派；超出授权写入；联合审核缺少有效 API 产物。任一发生立即阻断下游委派。
 
 **警告级**：单合同已结束确认但全局追责尚未闭环；专业 Skill 报告的业务缺口待交接真人决策；只校验或纯讨论分支未完成写盘。
 
 **信息级**：阶段流转记录、专业 Skill 执行通过摘要、已确认的合同与领域范围清单。
 
 各阶段验收要求：
-- **访谈交付**：推断核查逐项判定，追溯日志通过 `check_interview_trace.py`；明确区分单合同结束与全局追责结束。
-- **FM 每批修改**：`check_fm.py` 的 `consistent: true`、零错误零缺口，以及 `audit_key_data.py` 的台账结论同时成立。
-- **范围结束与下游**：门禁退出码为 0，台账 `needsDecision` 逐项有结论，且取得人类明确结束确认。
+- **访谈交付**：推断核查逐项判定，追溯日志校验无 `TRACE_INVALID`；明确区分单合同结束与全局追责结束。
+- **FM 每批修改**：`consistent: true`、零错误零缺口，以及关键数据台账结论同时成立。
+- **范围结束与下游**：`isStageGateReady` 为 `true`（或 `check` 退出码 0），台账 `needsDecision` 逐项有结论，且取得人类明确结束确认。
 - **只校验与纯讨论**：无项目文件写入，两源分别报告；API 缺失时联合检查未完成。
 - **联合审核验证**：两源与页面验证可定位，最新生成产物与浏览器断言均通过。
 
