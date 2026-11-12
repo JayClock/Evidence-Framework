@@ -170,6 +170,15 @@ export const CanvasStage = ({
           />
         ))}
 
+        {layout.fulfillmentGroups.map((group) => (
+          <FulfillmentPairLinks
+            key={`pair-${group.groupId}`}
+            layout={layout}
+            requestId={group.requestId}
+            resultIds={[...group.confirmationIds, ...group.proofIds]}
+          />
+        ))}
+
         {layout.edges.map((edge) => {
           const active = highlightedEdgeIds.has(edge.relationshipId);
           const faded = dimmed && !active;
@@ -265,6 +274,76 @@ export const CanvasStage = ({
     </div>
   );
 };
+
+const PAIR_LINK_COLOR = 'rgba(180, 54, 86, 0.55)';
+
+/**
+ * Connects a request's window to each result that answers it.
+ *
+ * A Fulfillment pair is a claim about delivery, not a modeled relationship, so
+ * without these links a board could show a request and a confirmation next to
+ * each other with no statement that one discharges the other. The links are
+ * drawn from the request's right edge to each result's left edge and never
+ * replace a `references` route: when a model also relates the two, the pair link
+ * says "same obligation" while the relationship says "this document cites that
+ * one".
+ */
+function FulfillmentPairLinks({
+  layout,
+  requestId,
+  resultIds,
+}: {
+  layout: DomainGraphLayout;
+  requestId: string;
+  resultIds: readonly string[];
+}) {
+  const request = layout.nodeById.get(requestId);
+
+  if (request === undefined) {
+    return null;
+  }
+
+  const origin = {
+    x: request.box.x + request.box.width,
+    y: request.box.y + request.box.height / 2,
+  };
+
+  return (
+    <>
+      {resultIds.map((resultId) => {
+        const result = layout.nodeById.get(resultId);
+
+        if (result === undefined) {
+          return null;
+        }
+
+        const target = {
+          x: result.box.x,
+          y: result.box.y + result.box.height / 2,
+        };
+        const midX = (origin.x + target.x) / 2;
+
+        return (
+          <polyline
+            key={`pair-link-${resultId}`}
+            data-pair-link={resultId}
+            points={[
+              `${origin.x},${origin.y}`,
+              `${midX},${origin.y}`,
+              `${midX},${target.y}`,
+              `${target.x},${target.y}`,
+            ].join(' ')}
+            fill="none"
+            stroke={PAIR_LINK_COLOR}
+            strokeWidth={1}
+            strokeDasharray="3 3"
+            markerEnd="url(#evidence-arrow)"
+          />
+        );
+      })}
+    </>
+  );
+}
 
 const OVERLAY_COLOR: Record<OverlayChange, string> = {
   added: '#15803d',

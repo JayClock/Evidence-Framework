@@ -92,7 +92,17 @@ describe('CanvasStage', () => {
   it('draws one polyline per relationship and a dashed fulfillment boundary', () => {
     const { container } = setup();
 
-    expect(container.querySelectorAll('polyline')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-edge-id] polyline')).toHaveLength(
+      3,
+    );
+    expect(container.querySelectorAll('polyline[data-pair-link]')).toHaveLength(
+      1,
+    );
+    expect(
+      container.querySelector(
+        'polyline[data-pair-link="evidence.confirmation"]',
+      ),
+    ).not.toBeNull();
     expect(
       container.querySelector(
         '[data-edge-id="relation.buyer-plays-role"] polyline',
