@@ -85,3 +85,59 @@ export type ExportReviewResult =
   | { status: 'saved'; path: string; counts: ReviewPageCounts }
   | { status: 'cancelled' }
   | { status: 'failed'; error: string };
+
+/**
+ * Starter models a new project can be seeded with.
+ *
+ * Every id but `blank` ships a complete, statically valid `.evidence/fm` tree so
+ * a first-time reader sees Contracts, Fulfillment pairs and Evidence instead of
+ * an empty canvas.
+ */
+export type ProjectTemplateId =
+  | 'blank'
+  | 'procurement'
+  | 'subscription'
+  | 'service_blueprint';
+
+/** What the dashboard shows on a template card. */
+export interface ProjectTemplateMeta {
+  id: ProjectTemplateId;
+  name: string;
+  description: string;
+  /** Short provenance line, e.g. the lecture case the starter replays. */
+  source: string;
+  entityCount: number;
+  relationshipCount: number;
+  ruleCount: number;
+}
+
+/** Where the new model is written: a source tree or a single bundle file. */
+export type ProjectStorageKind = 'directory' | 'file';
+
+export interface CreateProjectInput {
+  /** Absolute folder of the source tree, or the absolute bundle file path. */
+  targetPath: string;
+  /** Manifest name, used as the project label. */
+  name: string;
+  /** Manifest id; derived from the name when the caller omits it. */
+  modelId?: string;
+  templateId?: ProjectTemplateId;
+  kind?: ProjectStorageKind;
+}
+
+export type CreateProjectResult =
+  | {
+      success: true;
+      project: EvidenceProjectSummary;
+      document: DomainModelDocument;
+    }
+  | { success: false; error: string };
+
+export type CreateProjectDialogResult =
+  | { success: true; targetPath: string; kind: ProjectStorageKind }
+  | { success: false; canceled: true }
+  | { success: false; canceled?: false; error: string };
+
+export type ProjectTemplatesResult =
+  | { success: true; templates: readonly ProjectTemplateMeta[] }
+  | { success: false; error: string };
