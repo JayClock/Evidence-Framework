@@ -3,6 +3,7 @@ import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
+  EMPTY_MODEL_ISSUE_CODE,
   isModelBundleFile,
   isModelBundlePath,
   readModelBundle,
@@ -13,10 +14,13 @@ import {
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type {
+  CreateProjectInput,
+  CreateProjectResult,
   EvidenceProjectSummary,
   OpenProjectResult,
   SaveProjectResult,
 } from '../shared/projects';
+import { createStarterDocument, deriveModelId } from './templates/starterModels';
 
 /** Relative location of the FM source tree inside a project root. */
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
@@ -37,6 +41,8 @@ export interface ProjectStoreOptions {
 export interface ProjectStore {
   listRecent(): Promise<readonly EvidenceProjectSummary[]>;
   open(rootPath: string): Promise<OpenProjectResult>;
+  /** Writes a starter model to a new folder or bundle file. */
+  create(input: CreateProjectInput): Promise<CreateProjectResult>;
   save(
     rootPath: string,
     document: DomainModelDocument,
@@ -79,6 +85,57 @@ const writeAtomically = async (
 
   await writeFile(temporary, content, 'utf8');
   await rename(temporary, absolute);
+};
+
+/** True when something already exists at the path. */
+const exists = async (absolute: string): Promise<boolean> =>
+  stat(absolute).then(
+    () => true,
+    () => false,
+  );
+
+/**
+ * A freshly created project holds a manifest and no entity yet.
+ *
+ * The parser reports that as a finding so a reader can tell a blank start from a
+ * broken tree; opening one must not turn that notice into an error.
+ */
+const isBlankStart = (issues: readonly { code?: string }[]): boolean =>
+  issues.length > 0 &&
+  issues.every((issue) => issue.code === EMPTY_MODEL_ISSUE_CODE);
+
+/**
+ * Whether a parsed source can feed the canvas.
+ *
+ * A tree that reports findings but holds objects is still worth showing, and so
+ * is a blank start; only a source that failed to yield anything else is refused.
+ */
+const isReadableSource = (parsed: {
+  document: { entities: readonly unknown[] };
+  issues: readonly { code?: string }[];
+}): boolean =>
+  parsed.document.entities.length > 0 || isBlankStart(parsed.issues);
+
+/** Where a starter document lands, before anything is written. */
+interface StarterTarget {
+  kind: 'directory' | 'file';
+  /** Absolute folder of the source tree, or the absolute bundle file path. */
+  rootPath: string;
+}
+
+const resolveStarterTarget = (input: CreateProjectInput): StarterTarget => {
+  if (input.kind !== 'file') {
+    return { kind: 'directory', rootPath: path.resolve(input.targetPath) };
+  }
+
+  const targetPath = path.resolve(input.targetPath);
+
+  return {
+    kind: 'file',
+    rootPath: isModelBundlePath(targetPath)
+      ? targetPath
+      : `${targetPath}.evidence.json`,
+  };
 };
 
 const summarize = (
@@ -130,15 +187,59 @@ export const createProjectStore = ({
       return readRecent(recentProjectsFile);
     },
 
+    async create(input) {
+      try {
+        const target = resolveStarterTarget(input);
+        const document = createStarterDocument(input.templateId ?? 'blank', {
+          name: input.name,
+          modelId: input.modelId ?? deriveModelId(input.name),
+        });
+
+        if (target.kind === 'file') {
+          if (await exists(target.rootPath)) {
+            return {
+              success: false,
+              error: `目标文件已存在：${target.rootPath}，请直接打开它或换一个位置。`,
+            };
+          }
+
+          await mkdir(path.dirname(target.rootPath), { recursive: true });
+          await writeModelBundle(target.rootPath, document);
+        } else {
+          const modelRoot = modelRootOf(target.rootPath);
+
+          if (await exists(path.join(modelRoot, MODEL_MANIFEST_FILE))) {
+            return {
+              success: false,
+              error: `目标目录已有模型（${path.join(MODEL_DIRECTORY, MODEL_MANIFEST_FILE)}），请直接打开它或换一个目录。`,
+            };
+          }
+
+          await mkdir(modelRoot, { recursive: true });
+          await writeModelDirectory(modelRoot, document);
+        }
+
+        const project = summarize(
+          target.rootPath,
+          document,
+          now().toISOString(),
+          target.kind,
+        );
+
+        await remember(project);
+
+        return { success: true, project, document };
+      } catch (error) {
+        return { success: false, error: toMessage(error) };
+      }
+    },
+
     async open(rootPath) {
       try {
         if (await isModelBundleFile(rootPath)) {
           const parsed = await readModelBundle(rootPath);
 
-          if (
-            parsed.issues.length > 0 &&
-            parsed.document.entities.length === 0
-          ) {
+          if (!isReadableSource(parsed)) {
             return {
               success: false,
               error: parsed.issues
@@ -175,7 +276,7 @@ export const createProjectStore = ({
 
         const parsed = await readModelDirectory(modelRoot);
 
-        if (parsed.issues.length > 0 && parsed.document.entities.length === 0) {
+        if (!isReadableSource(parsed)) {
           return {
             success: false,
             error: parsed.issues

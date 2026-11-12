@@ -316,3 +316,175 @@ describe('projectStore with a single-file model', () => {
     expect(await projectStore.fingerprint(bundlePath)).not.toBe(before);
   });
 });
+
+describe('projectStore.create', () => {
+  let tempRoot: string;
+
+  beforeEach(async () => {
+    tempRoot = await mkdtemp(path.join(os.tmpdir(), 'evidence-desktop-create-'));
+  });
+
+  afterEach(async () => {
+    await rm(tempRoot, { recursive: true, force: true });
+  });
+
+  const store = () =>
+    createProjectStore({
+      recentProjectsFile: path.join(tempRoot, RECENT_PROJECTS_FILE),
+      now: () => new Date('2026-11-11T08:00:00.000Z'),
+    });
+
+  it('writes a starter source tree and remembers it', async () => {
+    const projectRoot = path.join(tempRoot, 'procurement-model');
+    const projectStore = store();
+    const result = await projectStore.create({
+      targetPath: projectRoot,
+      name: '采购履约模型',
+      modelId: 'procurement-demo',
+      templateId: 'procurement',
+    });
+
+    expect(result.success).toBe(true);
+
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.project).toMatchObject({
+      name: '采购履约模型',
+      modelId: 'procurement-demo',
+      kind: 'directory',
+      entityCount: result.document.entities.length,
+      lastOpenedAt: '2026-11-11T08:00:00.000Z',
+    });
+    expect(result.project.modelRoot).toBe(modelRootFor(projectRoot));
+
+    const manifest = JSON.parse(
+      await readFile(
+        path.join(modelRootFor(projectRoot), 'model.json'),
+        'utf8',
+      ),
+    );
+
+    expect(manifest.id).toBe('procurement-demo');
+    expect(result.document.entities.length).toBeGreaterThan(0);
+
+    const [recent] = await projectStore.listRecent();
+
+    expect(recent?.rootPath).toBe(path.resolve(projectRoot));
+
+    const reopened = await projectStore.open(projectRoot);
+
+    expect(reopened.success).toBe(true);
+
+    if (reopened.success) {
+      expect(reopened.document.entities.map(({ id }) => id).sort()).toEqual(
+        result.document.entities.map(({ id }) => id).sort(),
+      );
+    }
+  });
+
+  it('derives the manifest id when the caller names none', async () => {
+    const result = await store().create({
+      targetPath: path.join(tempRoot, 'unnamed'),
+      name: 'Procurement',
+      templateId: 'blank',
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.project.modelId).toBe('procurement');
+    }
+  });
+
+  it('refuses a folder that already holds a model', async () => {
+    const projectRoot = path.join(tempRoot, 'taken');
+
+    await writeModelDirectory(modelRootFor(projectRoot), domainModel());
+
+    const result = await store().create({
+      targetPath: projectRoot,
+      name: '采购履约模型',
+      templateId: 'procurement',
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error).toContain('已有模型');
+    }
+  });
+
+  it('writes a single-file bundle and adds the suffix', async () => {
+    const targetPath = path.join(tempRoot, 'mailed-model');
+    const projectStore = store();
+    const result = await projectStore.create({
+      targetPath,
+      name: '订阅履约模型',
+      templateId: 'subscription',
+      kind: 'file',
+    });
+
+    expect(result.success).toBe(true);
+
+    if (!result.success) {
+      return;
+    }
+
+    const bundlePath = `${targetPath}.evidence.json`;
+
+    expect(result.project).toMatchObject({
+      rootPath: path.resolve(bundlePath),
+      modelRoot: path.resolve(bundlePath),
+      kind: 'file',
+    });
+
+    const bundle = JSON.parse(await readFile(bundlePath, 'utf8'));
+
+    expect(bundle.type).toBe('fm_bundle');
+    expect(bundle.manifest.name).toBe('订阅履约模型');
+
+    const reopened = await projectStore.open(bundlePath);
+
+    expect(reopened.success).toBe(true);
+  });
+
+  it('refuses to overwrite an existing bundle file', async () => {
+    const bundlePath = path.join(tempRoot, 'again.evidence.json');
+
+    await writeModelBundle(bundlePath, domainModel());
+
+    const result = await store().create({
+      targetPath: bundlePath,
+      name: '订阅履约模型',
+      kind: 'file',
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error).toContain('已存在');
+    }
+  });
+
+  it('opens a blank start instead of calling it a broken tree', async () => {
+    const projectRoot = path.join(tempRoot, 'blank-model');
+    const projectStore = store();
+
+    await projectStore.create({
+      targetPath: projectRoot,
+      name: '空白模型',
+      templateId: 'blank',
+    });
+
+    const result = await projectStore.open(projectRoot);
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.document.entities).toEqual([]);
+      expect(result.issues.map(({ code }) => code)).toContain('model.empty');
+    }
+  });
+});
