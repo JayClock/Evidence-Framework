@@ -130,6 +130,16 @@ export {
 } from './commands/patches.js';
 
 export {
+  addBreachCompensation,
+  introduceFulfillmentPair,
+  roleifyAndInvertDependency,
+  type BreachCompensationIntent,
+  type FulfillmentPairIntent,
+  type OperatorPatch,
+  type RoleInversionIntent,
+} from './commands/operators.js';
+
+export {
   ModelSessionValidationError,
   createModelSession,
   type ModelSelection,
