@@ -2,10 +2,17 @@ import type {
   ExtensionAPI,
   ToolDefinition,
 } from '@earendil-works/pi-coding-agent';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  DomainModelDocument,
+  ValueType,
+} from '@evidence-poc/evidence-schema';
 import {
   addBreachCompensation,
+  annotateContractClauses,
+  domainNounOf,
   introduceFulfillmentPair,
+  isolateDomainCalculator,
+  parseBlueprint,
   roleifyAndInvertDependency,
   type OperatorPatch,
 } from '@evidence-poc/evidence-model-core';
@@ -67,6 +74,9 @@ export const TOOL_NAMES = {
   introduceFulfillmentPair: 'introduce_fulfillment_pair',
   addBreachCompensation: 'add_breach_compensation',
   roleifyAndInvertDependency: 'roleify_and_invert_dependency',
+  annotateContractClauses: 'annotate_contract_clauses',
+  readServiceBlueprint: 'read_service_blueprint',
+  isolateDomainCalculator: 'isolate_domain_calculator',
 } as const;
 
 const textResult = <T>(value: T, text: string) => ({
@@ -180,6 +190,99 @@ export const createEvidenceToolsExtension =
         const context = await handlers.getCanvasContext();
 
         return textResult(context, JSON.stringify(context, null, 2));
+      },
+    });
+
+    pi.registerTool({
+      name: TOOL_NAMES.annotateContractClauses,
+      label: '读一份协议的条款分类',
+      description:
+        '把一份协议或用户协议原文按业务逻辑、领域逻辑、纯法务条款分成三类，并给出可以抽成领域计算器的条款。只读不写：先看清哪几句是业务，再决定建什么。',
+      parameters: Type.Object({
+        text: Type.String({
+          description: '协议或合同原文，整段粘贴，不需要预先分句。',
+        }),
+      }),
+      execute: async (_toolCallId, params) => {
+        const { clauses, issues } = annotateContractClauses(params.text);
+        const summary = {
+          counts: {
+            business: clauses.filter((clause) => clause.category === 'business')
+              .length,
+            domain: clauses.filter((clause) => clause.category === 'domain').length,
+            boilerplate: clauses.filter((clause) => clause.category === 'boilerplate')
+              .length,
+          },
+          clauses: clauses.map((clause) => ({
+            index: clause.index,
+            category: clause.category,
+            computesValue: clause.computesValue,
+            reason: clause.reason,
+            text: clause.text,
+            component: clause.computesValue
+              ? (domainNounOf(clause.text) ?? null)
+              : null,
+          })),
+          issues,
+        };
+
+        return textResult(summary, JSON.stringify(summary, null, 2));
+      },
+    });
+
+    pi.registerTool({
+      name: TOOL_NAMES.readServiceBlueprint,
+      label: '读一张服务蓝图',
+      description:
+        '把「阶段 / 活动 / 凭证 / 当事人 / 标的物」的服务蓝图表格读成履约草稿，返回凭证、成对履约与缺口。没有合同可读时，用它把业务流程转成模型骨架。',
+      parameters: Type.Object({
+        table: Type.String({
+          description: 'Markdown 表格或 CSV，表头至少包含「业务凭证 / 凭证」列。',
+        }),
+        modelName: Type.Optional(Type.String({ description: '模型名称。' })),
+      }),
+      execute: async (_toolCallId, params) => {
+        const parsed = parseBlueprint(params.table, {
+          ...(params.modelName === undefined ? {} : { modelName: params.modelName }),
+          format: 'auto',
+        });
+
+        if (!parsed.success) {
+          const failure = {
+            contexts: [],
+            evidences: [],
+            pairs: [],
+            things: [],
+            issues: [
+              parsed.error,
+              ...parsed.issues.map((issue) => issue.message),
+            ],
+          };
+
+          return {
+            ...textResult(failure, `蓝图读不出来：${parsed.error}`),
+            isError: true,
+          };
+        }
+
+        const summary = {
+          contexts: parsed.draft.contexts.map((context) => ({
+            id: context.id,
+            label: context.label,
+            kind: context.kind,
+          })),
+          evidences: parsed.draft.evidences.map((evidence) => ({
+            id: evidence.id,
+            label: evidence.label,
+            kind: evidence.kind,
+            contextRef: evidence.contextRef,
+          })),
+          pairs: parsed.draft.fulfillmentPairs.map((pair) => pair.label),
+          things: parsed.draft.things.map((thing) => thing.label),
+          issues: parsed.issues.map((issue) => issue.message),
+        };
+
+        return textResult(summary, JSON.stringify(summary, null, 2));
       },
     });
 
@@ -352,6 +455,127 @@ export const createEvidenceToolsExtension =
         runOperator(
           `反转依赖：${params.socket.label} 交由 ${params.supporting.contract.label} 履约`,
           (document) => roleifyAndInvertDependency(document, params),
+        ),
+    });
+
+    pi.registerTool({
+      name: TOOL_NAMES.isolateDomainCalculator,
+      label: '抽出领域计算器',
+      description:
+        '把合同里「按比例算、按阶梯算、按条件判定」的部分抽成领域上下文里的计算器或检查器，并同时写入读取它的派生规则。计价、折扣、等级、有效期、资格校验都走这条路径，不要把它们留成合同参数或前端入参。',
+      parameters: Type.Object({
+        host: Type.Object({
+          ref: Type.String({ description: '承载派生值的实体 ID，通常是履约凭证。' }),
+          attribute: Type.Object({
+            name: Type.String({ description: '派生属性名，例如 service_fee。' }),
+            label: Type.String({ description: '属性中文名，例如 服务费。' }),
+            meaning: Type.String({ description: '业务含义，写清由谁形成、怎么核对。' }),
+            valueType: Type.String({
+              description: '属性值类型，例如 money、decimal、int、date。',
+            }),
+            required: Type.Optional(Type.Boolean()),
+            keyData: Type.Optional(Type.Boolean()),
+          }),
+        }),
+        context: Type.Object({
+          id: Type.String({ description: '领域上下文 ID，例如 context.fee-rules。' }),
+          label: Type.String({ description: '领域上下文名称。' }),
+        }),
+        calculator: Type.Object({
+          id: Type.String({ description: '组件 ID，例如 thing.fee-calculator。' }),
+          label: Type.String({
+            description: '组件名称，例如 服务费计算器；判定类用 检查器。',
+          }),
+          role: Type.Optional(
+            Type.String({ description: 'calculator 或 checker，缺省 calculator。' }),
+          ),
+          meaning: Type.Optional(
+            Type.String({ description: '这个组件负责算什么、依据什么。' }),
+          ),
+          attributes: Type.Optional(
+            Type.Array(
+              Type.Object({
+                name: Type.String(),
+                label: Type.String(),
+                meaning: Type.String(),
+                valueType: Type.String(),
+                required: Type.Optional(Type.Boolean()),
+                keyData: Type.Optional(Type.Boolean()),
+              }),
+              { description: '计算器的输入参数，例如协议费率。' },
+            ),
+          ),
+        }),
+        rule: Type.Object({
+          id: Type.String({ description: '规则 ID，例如 rule.service-fee。' }),
+          label: Type.String(),
+          description: Type.String({
+            description: '业务口径，用一句话写清这条规则怎么算。',
+          }),
+          expression: Type.String({
+            description:
+              'CEL 表达式，只读已建模属性；计算器默认别名 calculator，宿主默认别名 host。',
+          }),
+          resultType: Type.String({ description: '结果类型，例如 money。' }),
+          alias: Type.Optional(Type.String()),
+        }),
+        hostAlias: Type.Optional(Type.String()),
+      }),
+      execute: async (_toolCallId, params) =>
+        runOperator(
+          `抽出领域计算：${params.calculator.label}`,
+          (document) =>
+            isolateDomainCalculator(document, {
+              host: {
+                ref: params.host.ref,
+                attribute: {
+                  name: params.host.attribute.name,
+                  label: params.host.attribute.label,
+                  meaning: params.host.attribute.meaning,
+                  valueType: params.host.attribute.valueType as ValueType,
+                  ...(params.host.attribute.required === undefined
+                    ? {}
+                    : { required: params.host.attribute.required }),
+                  ...(params.host.attribute.keyData === undefined
+                    ? {}
+                    : { keyData: params.host.attribute.keyData }),
+                },
+              },
+              context: params.context,
+              calculator: {
+                id: params.calculator.id,
+                label: params.calculator.label,
+                role: params.calculator.role === 'checker' ? 'checker' : 'calculator',
+                ...(params.calculator.meaning === undefined
+                  ? {}
+                  : { meaning: params.calculator.meaning }),
+                ...(params.calculator.attributes === undefined
+                  ? {}
+                  : {
+                      attributes: params.calculator.attributes.map((attribute) => ({
+                        name: attribute.name,
+                        label: attribute.label,
+                        meaning: attribute.meaning,
+                        valueType: attribute.valueType as ValueType,
+                        ...(attribute.required === undefined
+                          ? {}
+                          : { required: attribute.required }),
+                        ...(attribute.keyData === undefined
+                          ? {}
+                          : { keyData: attribute.keyData }),
+                      })),
+                    }),
+              },
+              rule: {
+                id: params.rule.id,
+                label: params.rule.label,
+                description: params.rule.description,
+                expression: params.rule.expression,
+                resultType: params.rule.resultType as ValueType,
+                ...(params.rule.alias === undefined ? {} : { alias: params.rule.alias }),
+              },
+              ...(params.hostAlias === undefined ? {} : { hostAlias: params.hostAlias }),
+            }),
         ),
     });
   };

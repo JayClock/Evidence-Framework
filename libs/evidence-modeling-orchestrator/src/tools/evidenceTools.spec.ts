@@ -208,7 +208,7 @@ const invoke = async <TParams>(
   )) as never;
 
 describe('createEvidenceToolsExtension', () => {
-  it('registers the three read/write tools and the three operators', () => {
+  it('registers the read/write tools, the readings and the operators', () => {
     const fake = createFakePi();
     const { handlers } = createHandlers();
 
@@ -218,9 +218,12 @@ describe('createEvidenceToolsExtension', () => {
       TOOL_NAMES.runSensors,
       TOOL_NAMES.applyModelPatch,
       TOOL_NAMES.getCanvasSelection,
+      TOOL_NAMES.annotateContractClauses,
+      TOOL_NAMES.readServiceBlueprint,
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.isolateDomainCalculator,
     ]);
   });
 
@@ -436,5 +439,133 @@ describe('createEvidenceToolsExtension', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content[0]?.text).toBe('补丁被拒绝：role.notBound');
+  });
+});
+
+describe('the workshop readings', () => {
+  const AGREEMENT = `甲乙双方签订《企业级云服务采购协议》。
+因本协议产生的争议，提交深圳仲裁委员会仲裁。
+乙方应在收到款项后 2 个工作日内开通企业账号权限，并出具开通确认函。
+乙方应在收到款项后按销售额的 30% 支付分成。`;
+
+  it('splits an agreement into business, domain and legal clauses', async () => {
+    const fake = createFakePi();
+    const { handlers, patches } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.annotateContractClauses), {
+      text: AGREEMENT,
+    });
+    const summary = result.details as {
+      counts: { business: number; domain: number; boilerplate: number };
+      clauses: { category: string }[];
+    };
+
+    expect(summary.counts.boilerplate).toBe(1);
+    expect(summary.counts.business).toBe(3);
+    expect(summary.clauses[1]?.category).toBe('boilerplate');
+    // Reading a contract is a reading, not an edit.
+    expect(patches).toEqual([]);
+  });
+
+  it('names the component a computing clause describes', async () => {
+    const fake = createFakePi();
+    const { handlers } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.annotateContractClauses), {
+      text: '会员等级按累计成长值计算。',
+    });
+    const summary = result.details as {
+      clauses: { component: { label: string; role: string } | null }[];
+    };
+
+    expect(summary.clauses[0]?.component).toEqual({
+      label: '会员等级',
+      role: 'calculator',
+    });
+  });
+
+  it('reads a blueprint table into a draft summary', async () => {
+    const fake = createFakePi();
+    const { handlers } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.readServiceBlueprint), {
+      table: `| 阶段 | 业务凭证 | 凭证类型 | 当事人 |
+| :--- | :--- | :--- | :--- |
+| 签约 | 服务合同 | contract | 甲方, 乙方 |
+| 履约 | 支付申请 | request | 甲方财务 |
+| 履约 | 支付确认 | confirmation | 乙方财务 |`,
+      modelName: '服务采购',
+    });
+    const summary = result.details as {
+      evidences: { kind: string }[];
+      pairs: string[];
+    };
+
+    expect(summary.evidences.map((evidence) => evidence.kind)).toContain(
+      'contract',
+    );
+    expect(summary.pairs).toHaveLength(1);
+  });
+
+  it('answers a blueprint it cannot read as an error, not an empty draft', async () => {
+    const fake = createFakePi();
+    const { handlers } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.readServiceBlueprint), {
+      table: 'just some prose',
+    });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('蓝图读不出来');
+  });
+
+  it('turns a calculation into a component plus its derivation', async () => {
+    const fake = createFakePi();
+    const { handlers, patches } = createHandlers();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+
+    const result = await invoke(fake.tool(TOOL_NAMES.isolateDomainCalculator), {
+      host: {
+        ref: 'request.payment',
+        attribute: {
+          name: 'service_fee',
+          label: '服务费',
+          meaning: '按协议费率派生的服务费',
+          valueType: 'money',
+        },
+      },
+      context: { id: 'context.fee-rules', label: '费率规则上下文' },
+      calculator: {
+        id: 'thing.fee-calculator',
+        label: '服务费计算器',
+        attributes: [
+          {
+            name: 'rate',
+            label: '费率',
+            meaning: '协议约定的服务费率',
+            valueType: 'decimal',
+          },
+        ],
+      },
+      rule: {
+        id: 'rule.service-fee',
+        label: '服务费派生',
+        description: '服务费 = 请求金额 × 费率',
+        expression: 'host.requested_minor_units * calculator.rate',
+        resultType: 'money',
+      },
+    });
+
+    expect(result.isError).toBeUndefined();
+    expect(patches[0]?.commands.map((command) => (command as { type: string }).type)).toEqual([
+      'create-entity',
+      'create-entity',
+      'add-attribute',
+      'bind-derived-rule',
+    ]);
   });
 });
