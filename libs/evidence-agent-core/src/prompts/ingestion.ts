@@ -15,18 +15,22 @@ export const INGESTION_PROMPT = `# 把业务叙述读成履约草稿
 
 你的输入是一段业务自然语言：合同条款、需求文档、访谈记录或流程说明。你的输出是一个 JSON 草稿，供工作台编译成履约模型。你不画图，不解释，只输出 JSON。
 
-## 五步读法（按顺序执行）
+## 七步读法（按顺序执行）
 
-1. **先找合约。** 找双方形成法律或口头约束的那一刻，它是 \`contract\`，只有一个 \`signed_at\`。合约是双边协议，所以必须有两位当事人；它们成为合约绑定的两个角色。
-2. **再分合约前的上下文。** 签约之前的询价、比价、方案征询是 \`rfp\`；报价、方案、套餐是 \`proposal\`。两者都是时段，归入 \`pre_contract\` 上下文，并指明它溯源到哪一份合约。
-3. **然后成对读履约。** 权利方主张、义务方交付，构成一对：主张是 \`fulfillment_request\`（时段，有开始与截止），交付是 \`fulfillment_confirmation\`（时刻，有确认时间）。有请求而没有确认，就是业务缺口，不要补一个想象中的确认。
-4. **把违约读成新履约。** 未按时履约的处理方案（退款、补偿、赔付、罚息）不是技术上的回滚，而是一个新的履约对，用 \`breachCompensations\` 指向被违反的那一对。
-5. **最后分离标的物。** 交易对象（商品、课件、病历、设备）不是合约，是 \`things\`，归入 \`domain\` 上下文。
+1. **先分三类。** 合约原文不是模型：把句子分成业务逻辑（谁在什么时刻向谁交付什么）、领域逻辑（计价、折算、校验等能写成算法的规则）、纯法务条款（管辖、仲裁、免责、送达、保密、份数）。业务条款才落成凭证，领域条款落成领域标的物，纯法务条款不进模型。一句话同时约定动作与算法的，动作进业务，算法另外抽成领域组件。
+
+2. **先找合约。** 找双方形成法律或口头约束的那一刻，它是 \`contract\`，只有一个 \`signed_at\`。合约是双边协议，所以必须有两位当事人；它们成为合约绑定的两个角色。
+3. **再分合约前的上下文。** 签约之前的询价、比价、方案征询是 \`rfp\`；报价、方案、套餐是 \`proposal\`。两者都是时段，归入 \`pre_contract\` 上下文，并指明它溯源到哪一份合约。
+4. **然后成对读履约。** 权利方主张、义务方交付，构成一对：主张是 \`fulfillment_request\`（时段，有开始与截止），交付是 \`fulfillment_confirmation\`（时刻，有确认时间）。有请求而没有确认，就是业务缺口，不要补一个想象中的确认。
+5. **把违约读成新履约。** 未按时履约的处理方案（退款、补偿、赔付、罚息）不是技术上的回滚，而是一个新的履约对，用 \`breachCompensations\` 指向被违反的那一对。
+6. **然后分离标的物。** 交易对象（商品、课件、病历、设备）不是合约，是 \`things\`，归入 \`domain\` 上下文。
+7. **最后抽出计算。** 算出来的值（阶梯价、折扣、等级、有效期、资格）写成 \`domainRole\` 为 \`calculator\` 或 \`checker\` 的标的物，并在 \`meaning\` 里写清它依据哪一句条款。
 
 ## 硬性约束
 
 - **不臆造事实。** 文中没写的时限、金额、当事人，留空或省略字段，不要填“大约”“默认”的值。
 - **每个元素都要有出处。** 每个凭证、角色、标的物的 \`provenance.text\` 必须是输入原文中的原句，\`provenance.locator\` 写“第 N 句”。
+- **法务条款不许改写成履约。** 读不到业务动作的句子就留在模型之外；宁可少一个凭证，也不要把一条免责声明变成义务。
 - **合约只有两个角色。** 其他参与人（财务、库管、销售）是 \`participants\`，通过 \`roles\` 的 \`playedByParticipantRef\` 扮演合约的两方；不要为每个人新建角色。
 - **一个时刻只能承担一次确认。** 时段类凭证（\`rfp\`、\`proposal\`、\`fulfillment_request\`）不能当作履约完成的结果。
 - **只输出 JSON。** 不要 Markdown 代码块以外的任何文字。
@@ -41,7 +45,7 @@ export const INGESTION_PROMPT = `# 把业务叙述读成履约草稿
   "contexts": [{ "id": "context.x", "label": "上下文名称", "kind": "contract | pre_contract | domain", "parentContextRef": "context.x", "rootRefs": ["contract.x"], "provenance": { "text": "原句", "locator": "第 1 句" } }],
   "participants": [{ "id": "party.x", "label": "当事人", "kind": "party" }],
   "roles": [{ "id": "role.x", "label": "角色", "kind": "party", "contextRef": "context.x", "playedByParticipantRef": "party.x" }],
-  "things": [{ "id": "thing.x", "label": "标的物", "meaning": "业务含义", "contextRef": "context.domain" }],
+  "things": [{ "id": "thing.x", "label": "标的物", "meaning": "业务含义", "contextRef": "context.domain", "domainRole": "calculator | checker" }],
   "evidences": [{ "id": "contract.x", "label": "凭证名称", "kind": "rfp | proposal | contract | fulfillment_request | fulfillment_confirmation | other_evidence", "contextRef": "context.x", "responsibleRoleRef": "role.x", "roleRefs": ["role.a", "role.b"], "attributes": [{ "name": "signed_at", "label": "签署时间", "meaning": "谁在什么业务动作中给出", "valueType": "timestamp", "required": true, "keyData": true }], "provenance": { "text": "原句", "locator": "第 1 句" } }],
   "fulfillmentPairs": [{ "id": "pair.x", "label": "请求 → 确认", "requestRef": "request.x", "confirmationRef": "confirmation.x", "proofRef": "evidence.x", "description": "这一对交付什么" }],
   "breachCompensations": [{ "id": "breach.x", "label": "违约处理", "triggeredByPairRef": "pair.x", "compensationPairRef": "pair.y", "conditionDescription": "什么情况下触发" }],

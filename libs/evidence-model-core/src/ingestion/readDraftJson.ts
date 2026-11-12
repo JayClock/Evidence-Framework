@@ -1,5 +1,6 @@
 import {
   createEmptyIngestionDraft,
+  isDomainComponentRole,
   isIngestionDraftShape,
   normalizeDraftEvidenceKind,
   type IngestionDraft,
@@ -178,6 +179,24 @@ export const readIngestionDraftJson = (reply: string): DraftJsonReadResult => {
     }
 
     evidence.kind = kind;
+  }
+
+  for (const thing of draft.things) {
+    const role = (thing as { domainRole?: unknown }).domainRole;
+
+    if (role === undefined) {
+      continue;
+    }
+
+    if (!isDomainComponentRole(role)) {
+      issues.push(
+        `标的物「${thing.label}」的领域角色「${String(role)}」无法识别，已按普通标的物保留。`,
+      );
+      delete thing.domainRole;
+      continue;
+    }
+
+    thing.domainRole = role;
   }
 
   return { success: true, draft, issues };

@@ -156,6 +156,35 @@ describe('reading a large model’s reply', () => {
     expect(result.draft.evidences[0]?.kind).toBe('fulfillment_request');
   });
 
+  it('keeps the domain role a model gave a thing', () => {
+    const result = readIngestionDraftJson(
+      '{"modelName":"x","things":[{"id":"thing.tier","label":"等级计算器","contextRef":"context.domain","domainRole":"calculator"}]}',
+    );
+
+    expect(result.success).toBe(true);
+
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.draft.things[0]?.domainRole).toBe('calculator');
+  });
+
+  it('drops a domain role the vocabulary does not know, and says so', () => {
+    const result = readIngestionDraftJson(
+      '{"modelName":"x","things":[{"id":"thing.tier","label":"等级计算器","contextRef":"context.domain","domainRole":"pricer"}]}',
+    );
+
+    expect(result.success).toBe(true);
+
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.draft.things[0]?.domainRole).toBeUndefined();
+    expect(result.issues.join(' ')).toContain('领域角色');
+  });
+
   it('reports an unknown kind instead of promoting it silently', () => {
     const result = readIngestionDraftJson(
       '{"modelName":"x","evidences":[{"id":"evidence.x","label":"收据","kind":"收据","contextRef":"context.c"}]}',

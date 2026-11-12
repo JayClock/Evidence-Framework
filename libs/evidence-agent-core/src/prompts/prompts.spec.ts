@@ -28,6 +28,9 @@ describe('the built-in instructions', () => {
       'introduce_fulfillment_pair',
       'add_breach_compensation',
       'roleify_and_invert_dependency',
+      'annotate_contract_clauses',
+      'read_service_blueprint',
+      'isolate_domain_calculator',
     ]) {
       expect(EVIDENCE_SYSTEM_PROMPT).toContain(tool);
     }
@@ -37,5 +40,37 @@ describe('the built-in instructions', () => {
     for (const relic of ['SKILL.md', '.agents', 'references/', 'npx ', '$']) {
       expect(EVIDENCE_SYSTEM_PROMPT).not.toContain(relic);
     }
+  });
+
+  it('walks the seven workshop steps in the order the board shows them', () => {
+    const anchors = [
+      '锚定合约与双方',
+      '成对挖掘履约项',
+      '补上标的物与领域组件',
+      '反转易变依赖',
+      '给违约一条补偿路径',
+      '让每个数字有来源',
+      '串起业务宏流程',
+    ];
+    const positions = anchors.map((anchor) => WORKFLOW_PROMPT.indexOf(anchor));
+
+    expect(positions.every((position) => position >= 0)).toBe(true);
+    expect([...positions].sort((left, right) => left - right)).toEqual(positions);
+  });
+
+  it('reads a contract before it writes one', () => {
+    // A facilitator who starts from an empty canvas invents the business; the
+    // reading tool is what keeps the first turn grounded in the text.
+    const reading = OPERATOR_PROMPT.indexOf('annotate_contract_clauses');
+    const writing = OPERATOR_PROMPT.indexOf('introduce_fulfillment_pair');
+
+    expect(reading).toBeGreaterThanOrEqual(0);
+    expect(reading).toBeLessThan(writing);
+  });
+
+  it('never turns the workshop into an interrogation', () => {
+    expect(ROLE_PROMPT).toContain('主持，不是审讯');
+    expect(ROLE_PROMPT).toContain('允许粗糙');
+    expect(ROLE_PROMPT).not.toContain('审讯员');
   });
 });

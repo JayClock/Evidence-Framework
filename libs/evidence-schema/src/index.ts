@@ -85,6 +85,16 @@ export {
 } from './ast/lifecycle.js';
 
 export {
+  WORKSHOP_STEPS,
+  WORKSHOP_STEP_IDS,
+  isWorkshopStepId,
+  workshopStepFocus,
+  workshopStepRank,
+  type WorkshopStep,
+  type WorkshopStepId,
+} from './ast/workshop.js';
+
+export {
   KEY_DATA_PROVIDER_CHOICES,
   KEY_DATA_SOURCE_KINDS,
   KEY_DATA_SOURCE_LABELS,

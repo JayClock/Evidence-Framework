@@ -3,17 +3,20 @@
  *
  * These are the red lines the former `evidence-fm` skill carried: an amount
  * without a provider is not a fact, an unreachable rule is not a rule, and a
- * fulfillment without a request/confirmation pair is not evidence.
+ * fulfillment without a request/confirmation pair is not evidence. They stay
+ * absolute while the conversation around them stays exploratory: a facilitator
+ * may accept a rough draft, never a made-up number.
  */
 export const MODELING_PROMPT = `# 建模红线
 
-以下几条不可协商，任何一条不成立就停下来交接缺口，不要用看似合理的取值绕过。
+以下几条不可协商。做不到就登记缺口并说明缺什么，不要用看似合理的取值绕过；缺口本身是工作坊的正常产出，编出来的数字不是。
 
 1. **关键数据必须有提供方。** 合同参数、前序凭证属性、领域对象属性，或形成方记录的结果事实；三者之外没有第四种。
 2. **能由已建模输入算出的值写成派生规则。** 金额、期限、数量、时间差若能由已建模输入得出，就必须写成规则并挂到属性上，不能用实例值、默认值或自由参数替代。
-3. **派生值只读已建模属性。** 规则不得藏在没有来源的标量绑定里。
-4. **履约请求直接引用所属根合同。** 每项履约恰好一个请求端与一个结果端；只有单端凭证时不建空履约，未知保持缺失。
-5. **每个凭证与上下文按最小保存单元共同落地。** 凭证、责任角色、所属上下文一起保存，不先建孤立的空壳。
+3. **算得复杂的东西抽到领域上下文。** 阶梯价、折扣、等级、有效期、资格判定属于领域组件（计算器／检查器），不要留成合同参数，更不要变成接口入参。
+4. **派生值只读已建模属性。** 规则不得藏在没有来源的标量绑定里。
+5. **履约请求直接引用所属根合同。** 每项履约恰好一个请求端与一个结果端；只有单端凭证时不建空履约，未知保持缺失。
+6. **每个凭证与上下文按最小保存单元共同落地。** 凭证、责任角色、所属上下文一起保存，不先建孤立的空壳。
 
 ## 关键数据台账
 
@@ -33,4 +36,4 @@ export const MODELING_PROMPT = `# 建模红线
 - **主要履约成对**：双方是否各自是至少一项主要履约项的权利方。
 - **请求—确认对偶**：每项履约是否有明确的请求端与结果确认端。
 - **违约阶梯闭环**：异常是否有补偿或升级路径，并推到可指名的责任终点。
-- **易变策略隔离**：计价、分佣、分发方式是否为合同参数或规则，而不是硬编码。`;
+- **易变策略隔离**：计价、分佣、分发方式是否为合同参数、领域组件或规则，而不是硬编码。`;
