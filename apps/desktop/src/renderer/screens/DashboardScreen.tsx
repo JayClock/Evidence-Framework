@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type {
+  EvidenceProjectSummary,
+  ProjectTemplateId,
+  ProjectTemplateMeta,
+} from '../../shared/projects';
+import { CreateProjectModal } from '../components/dashboard/CreateProjectModal';
 
 type Status =
   | { name: 'loading' }
@@ -10,6 +15,11 @@ type Status =
 export const DashboardScreen = () => {
   const [status, setStatus] = useState<Status>({ name: 'loading' });
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<
+    readonly ProjectTemplateMeta[] | null
+  >(null);
+  const [createTemplate, setCreateTemplate] =
+    useState<ProjectTemplateId | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -24,6 +34,16 @@ export const DashboardScreen = () => {
           ? { name: 'ready', projects: result.projects }
           : { name: 'error', message: result.error },
       );
+    });
+
+    // The starter cards are part of the first screen, so read them with the
+    // recents instead of waiting for the dialog to open.
+    void window.evidenceAPI.projects.listTemplates().then((result) => {
+      if (!active) {
+        return;
+      }
+
+      setTemplates(result.success ? result.templates : []);
     });
 
     return () => {
@@ -67,6 +87,31 @@ export const DashboardScreen = () => {
     }
   };
 
+  const startCreate = (templateId: ProjectTemplateId = 'procurement') => {
+    setCreateTemplate(templateId);
+  };
+
+  const starterTemplates = (templates ?? []).filter(
+    (template) => template.id !== 'blank',
+  );
+
+  const rememberCreated = (project: EvidenceProjectSummary) => {
+    setStatus((current) =>
+      current.name === 'ready'
+        ? {
+            name: 'ready',
+            projects: [
+              project,
+              ...current.projects.filter(
+                (item) => item.rootPath !== project.rootPath,
+              ),
+            ],
+          }
+        : current,
+    );
+    void window.evidenceAPI.projects.openEditorWindow(project.rootPath);
+  };
+
   return (
     <div className="flex h-full flex-col bg-[#f7f8fa]">
       <header className="evidence-drag-region flex h-14 shrink-0 items-center justify-between border-b border-evidence-line bg-white/80 pr-6 pl-[var(--evidence-traffic-light-space)]">
@@ -78,13 +123,24 @@ export const DashboardScreen = () => {
             本地 .evidence/fm 源树 · 离线只读投影之外的交互式工作台
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void chooseProject()}
-          className="evidence-no-drag rounded-md bg-evidence-accent px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#274c76]"
-        >
-          打开本地项目…
-        </button>
+        <div className="evidence-no-drag flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              startCreate();
+            }}
+            className="rounded-md bg-evidence-accent px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#274c76]"
+          >
+            新建模型
+          </button>
+          <button
+            type="button"
+            onClick={() => void chooseProject()}
+            className="rounded-md border border-evidence-line bg-white px-3 py-1.5 text-[12px] font-medium text-evidence-ink hover:border-evidence-accent"
+          >
+            打开本地项目…
+          </button>
+        </div>
       </header>
 
       <main className="min-h-0 flex-1 overflow-y-auto px-10 py-8">
@@ -96,7 +152,7 @@ export const DashboardScreen = () => {
           <code className="rounded bg-white px-1 py-0.5 text-[11px] text-evidence-ink">
             .evidence/fm/model.json
           </code>{' '}
-          的目录开始建模。
+          的目录开始建模，或新建一个起点模型。
         </p>
 
         {status.name === 'loading' ? (
@@ -110,15 +166,38 @@ export const DashboardScreen = () => {
         ) : null}
 
         {status.name === 'ready' && status.projects.length === 0 ? (
-          <div className="mt-6 rounded-lg border border-dashed border-evidence-line bg-white/70 px-6 py-10 text-center">
+          <div className="mt-6 rounded-lg border border-dashed border-evidence-line bg-white/70 px-6 py-8 text-center">
             <p className="text-[13px] font-medium text-evidence-ink">
               还没有打开过模型
             </p>
             <p className="mt-2 text-[12px] text-evidence-muted">
-              建模产物默认写入{' '}
+              直接新建一个起点模型，或从下面的经典范例开始；建模产物写入{' '}
               <code className="text-[11px]">.evidence/fm/</code>
               ，桌面端只读写该源树。
             </p>
+            <ul className="mt-5 grid grid-cols-1 gap-2 text-left md:grid-cols-3">
+              {starterTemplates.map((template) => (
+                <li key={template.id}>
+                  <button
+                    className="h-full w-full rounded-lg border border-evidence-line bg-white px-3 py-2.5 transition hover:border-evidence-accent"
+                    onClick={() => {
+                      startCreate(template.id);
+                    }}
+                    type="button"
+                  >
+                    <span className="block text-[12px] font-medium text-evidence-ink">
+                      {template.name}
+                    </span>
+                    <span className="mt-1 block text-[11px] text-evidence-muted">
+                      {template.description}
+                    </span>
+                    <span className="mt-1.5 block text-[10px] text-evidence-muted">
+                      {template.entityCount} 业务对象 · {template.ruleCount} 规则
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         ) : null}
 
@@ -154,6 +233,17 @@ export const DashboardScreen = () => {
           </ul>
         ) : null}
       </main>
+
+      {createTemplate === null || templates === null ? null : (
+        <CreateProjectModal
+          initialTemplateId={createTemplate}
+          onClose={() => {
+            setCreateTemplate(null);
+          }}
+          onCreated={rememberCreated}
+          templates={templates}
+        />
+      )}
     </div>
   );
 };
