@@ -52,6 +52,20 @@ export {
 } from './ast/entity.js';
 
 export {
+  LIFECYCLE_STAGES,
+  LIFECYCLE_STAGE_CAPTIONS,
+  LIFECYCLE_STAGE_ENGLISH_LABELS,
+  LIFECYCLE_STAGE_LABELS,
+  LIFECYCLE_STAGE_ORDER,
+  furthestLifecycleStage,
+  isLifecycleStage,
+  lifecycleStageOf,
+  lifecycleStageOfContext,
+  lifecycleStageRank,
+  type LifecycleStage,
+} from './ast/lifecycle.js';
+
+export {
   KEY_DATA_PROVIDER_CHOICES,
   KEY_DATA_SOURCE_KINDS,
   KEY_DATA_SOURCE_LABELS,
