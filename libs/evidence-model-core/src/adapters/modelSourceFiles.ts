@@ -35,6 +35,15 @@ export interface ModelSourceIssue {
   code?: string;
 }
 
+/**
+ * Code of the finding that reports a source tree holding no entity yet.
+ *
+ * A reader that tolerates a blank start (a freshly created project) filters on
+ * this code instead of matching the message, so every other finding stays
+ * fatal.
+ */
+export const EMPTY_MODEL_ISSUE_CODE = 'model.empty';
+
 export interface ModelSourceParseResult {
   document: DomainModelDocument;
   issues: ModelSourceIssue[];
@@ -310,6 +319,7 @@ export function parseModelSourceFiles(
     issues.push({
       path: 'entities',
       message: 'model must contain at least one entity.',
+      code: EMPTY_MODEL_ISSUE_CODE,
     });
   }
 

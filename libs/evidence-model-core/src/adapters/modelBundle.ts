@@ -9,6 +9,7 @@ import {
 } from '@evidence-poc/evidence-schema';
 
 import {
+  EMPTY_MODEL_ISSUE_CODE,
   serializeDomainModel,
   stringifyModelJson,
   type ModelSourceFile,
@@ -136,9 +137,14 @@ export const createEmptyModelBundle = (
   rules: [],
 });
 
-const failure = (path: string, message: string): ModelSourceIssue => ({
+const failure = (
+  path: string,
+  message: string,
+  code?: string,
+): ModelSourceIssue => ({
   path,
   message,
+  ...(code === undefined ? {} : { code }),
 });
 
 const readJsonObject = (
@@ -368,7 +374,13 @@ export function parseModelBundleText(
   }
 
   if (entities.length === 0) {
-    issues.push(failure('entities', 'model must contain at least one entity.'));
+    issues.push(
+      failure(
+        'entities',
+        'model must contain at least one entity.',
+        EMPTY_MODEL_ISSUE_CODE,
+      ),
+    );
   }
 
   if (options.validate === true) {
