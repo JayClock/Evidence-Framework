@@ -95,8 +95,7 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ## 校验 FM
 
 ```bash
-"$PYTHON" -B "$FM_SKILL_DIR/scripts/check_fm.py" \
-  "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" > "$FM_CHECK_FILE"
+npx evidence-model check "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" > "$FM_CHECK_FILE"
 ```
 
 预期 FM 有效，1 个场景实际执行并通过：包含 16 个具体凭证实例，采购支付、开票、发货及外部微信支付两个方向均完成。
@@ -104,8 +103,8 @@ Context、Role、Rule 和纯 Relationship 只约束模型及授权语义，不�
 ## 校验 API 设计
 
 ```bash
-"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" check \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api check \
+  --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
   --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"
@@ -120,8 +119,8 @@ API 设计采用格式 5.0，直接消费整个 FM v5。预期产生 13 个角�
 仅在有交付生成授权且完整检查通过后执行。PROJECT_ROOT 必须指向隔离的临时项目；FM_CHECK_FILE 位于样例和 FM 模型根之外。只校验不运行本命令，项目产物不写入 Skill 安装目录。固定输出目录由命令直接更新，无需预创建：
 
 ```bash
-"$PYTHON" -B "$API_SKILL_DIR/scripts/fm_api.py" project \
-  --project-root "$PROJECT_ROOT" --fm-skill "$FM_SKILL_DIR" \
+npx evidence-api project \
+  --project-root "$PROJECT_ROOT" \
   --fm "$API_SKILL_DIR/tests/fixtures/full-lifecycle/fm" \
   --fm-check "$FM_CHECK_FILE" \
   --api "$API_SKILL_DIR/tests/fixtures/full-lifecycle/api.json"

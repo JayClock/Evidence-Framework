@@ -2,14 +2,7 @@
 
 ## 环境
 
-只讨论业务无需安装依赖。执行校验需要 Python 3.10+（内置 `json`）；先检查已有 Python 是否可导入 jsonschema 和 celpy。没有合适环境时，经用户允许在缓存或临时目录创建 venv：
-
-```bash
-python3 -m venv "$VENV_DIR"
-"$VENV_DIR/bin/python" -m pip install -r "$SKILL_DIR/requirements.txt"
-```
-
-Windows 使用该环境下的 `Scripts/python.exe`。路径均由当前环境解析，使用本包绝对路径与隔离的 Python 环境。不要覆盖已有环境，也不要为校验上传业务材料。
+只讨论业务无需安装任何依赖。执行校验需要工作区的 `evidence-model` 命令（`pnpm install` 提供），它在进程内完成全部检查，不启动解释器、不读临时目录，也不需要 `requirements.txt`。校验只读当前模型目录，不上传业务材料。
 
 ## 统一只读入口
 

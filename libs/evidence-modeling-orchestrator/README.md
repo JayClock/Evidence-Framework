@@ -6,10 +6,10 @@
 
 | 模块         | 职责                                                                                                                                | 不做                       |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `sensors/`   | 用锁定的 Python 跑 `check_fm.py`、`audit_key_data.py`、`check_interview_trace.py`、`check_stage_gate.py`，折叠成一份 `SensorReport` | 不判断业务对错，不改模型   |
+| `sensors/`   | 在进程内跑一致性、关键数据台账、追溯日志校验与场景，折叠成一份 `SensorReport` | 不判断业务对错，不改模型   |
 | `tools/`     | 把传感器、模型补丁、画布选中项注册为 Pi 工具                                                                                        | 不直接写 `.evidence/fm`    |
 | `discovery/` | 从追溯日志推出依赖前沿（焦点、未答问题、悬空引用、结束确认）                                                                        | 不发明问题，不把未答当同意 |
-| `diff/`      | 对比两份裁决：修好的、新引入的、以及阶段门禁的开关方向                                                                              | 不重跑 Python，不把未跑当通过 |
+| `diff/`      | 对比两份裁决：修好的、新引入的、以及阶段门禁的开关方向                                                                              | 不重新判定，不把未跑当通过 |
 
 ## 信号分级
 
@@ -37,4 +37,4 @@
 npx vitest run --project evidence-modeling-orchestrator
 ```
 
-`PythonEnvResolver` 与 `ExtensionAPI` 都是注入点，测试里没有真实 Python、模型或终端。
+`SensorsEngine` 与 `ExtensionAPI` 都是注入点，测试里没有真实模型或终端。

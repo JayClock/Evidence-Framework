@@ -39,14 +39,18 @@ canvas and inspector consume, and the only sanctioned way to change it.
 - `generated/` and `discovery/` never enter a bundle: one is derived output, the
   other belongs to Discovery.
 
-The FM scripts accept either path, so `check_fm.py` and `audit_key_data.py` read
-a bundle with no extraction step:
+Both forms are first-class for the library: `readModelRoot` and
+`loadValidationSuite` accept either, so a caller decides and no extraction step
+is implied.
 
 ```bash
 pnpm model:pack .evidence/fm --out procurement.evidence.json
 pnpm model:inspect procurement.evidence.json
 pnpm model:unpack procurement.evidence.json --out .evidence/fm
 ```
+
+The `check` and derive commands read a directory; `check` refuses a bundle with a
+hint to unpack it first, so a report always names files a reader can open.
 
 Red lines enforced by the command layer, not by the caller:
 

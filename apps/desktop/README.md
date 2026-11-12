@@ -41,19 +41,15 @@ resources/
 - Every sensor — consistency, key data, interview trace, timeline, scenarios and
   the stage gate — is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
   reads the model once per run and decides from that one read.
-- `EVIDENCE_SENSORS_ENGINE=python|native|shadow` picks the implementation:
-  `native` is the default, `python` runs the locked scripts (it needs the
-  repository's virtual environment), and `shadow` runs both and reports every
-  field they disagree about as a `SENSOR_DRIFT` warning.
 - The agent's shell gets `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR` and one
   `*_SKILL_DIR` per package, re-asserted before each prompt, so the paths the
-  skill guides quote resolve without the model guessing. `PYTHON` is published
-  only when an interpreter actually resolves; a native run needs none. Per-project
-  paths stay out of the environment — several project windows share one process —
-  and come from the shell's working directory instead.
+  skill guides quote resolve without the model guessing. No interpreter variable
+  is published: nothing starts a script. Per-project paths stay out of the
+  environment — several project windows share one process — and come from the
+  shell's working directory instead.
 
-See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the pins the skill packages are
-still developed against.
+See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the workspace the checks, the API
+projection and the review page all come from.
 
 ## Layout
 
