@@ -78,15 +78,36 @@ export {
   NODE_WIDTH,
   ROW_GAP,
   STACK_GAP,
+  assembleGraphLayout,
   createGraphLayout,
   measureNodeHeight,
+  ownerContextId,
   routeEdge,
+  translateLayoutObjects,
+  type LayoutAssemblyInput,
 } from './layout/graphLayout.js';
+
+export {
+  LANE_GAP,
+  LANE_HEADER_HEIGHT,
+  LANE_PADDING,
+  MIN_LANE_WIDTH,
+  SHARED_BAND_GAP,
+  createLifecycleSwimlaneLayout,
+  swimlaneBoardBottom,
+  swimlaneBoardRight,
+  type LifecycleSwimlaneLayout,
+  type LifecycleSwimlaneOptions,
+  type Swimlane,
+} from './layout/lifecycleSwimlaneLayout.js';
 
 export {
   fulfillmentBoundaryPath,
   resolveFulfillmentAlignment,
+  resolveFulfillmentBand,
   type FulfillmentAlignment,
+  type FulfillmentBand,
+  type FulfillmentMoment,
 } from './layout/fulfillmentAlignment.js';
 
 export type {

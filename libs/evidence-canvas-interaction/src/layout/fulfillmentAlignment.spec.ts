@@ -1,6 +1,7 @@
 import {
   fulfillmentBoundaryPath,
   resolveFulfillmentAlignment,
+  resolveFulfillmentBand,
 } from '../index.js';
 import { createFixtureModel } from '../../tests/support/fixtureModel.js';
 
@@ -21,6 +22,38 @@ describe('fulfillment alignment', () => {
       alignment.requestBox.y + alignment.requestBox.height / 2,
     );
     expect(alignment.aligned).toBe(true);
+  });
+
+  it('reads the request as an interval and the results as moments', () => {
+    const band = resolveFulfillmentBand(layout, 'evidence.delivery-request')!;
+    const request = layout.nodeById.get('evidence.delivery-request')!;
+
+    expect(band.groupId).toBe('fulfillment:evidence.delivery-request');
+    expect(band.intervalBar).toEqual(request.box);
+    expect(band.centerY).toBe(
+      request.box.y + request.box.height / 2,
+    );
+    expect(band.moments.map((moment) => moment.kind)).toEqual([
+      'confirmation',
+      'proof',
+    ]);
+  });
+
+  it('reports a moment that answers the request on its own row', () => {
+    const band = resolveFulfillmentBand(layout, 'evidence.delivery-request')!;
+    const confirmation = band.moments.find(
+      (moment) => moment.kind === 'confirmation',
+    )!;
+
+    expect(confirmation.nodeId).toBe('evidence.delivery-confirmation');
+    expect(confirmation.onRequestRow).toBe(true);
+    expect(band.alignedMomentIds).toContain(confirmation.nodeId);
+  });
+
+  it('returns null for a band whose request is not placed', () => {
+    expect(
+      resolveFulfillmentBand(layout, 'evidence.procurement-contract'),
+    ).toBeNull();
   });
 
   it('returns null for unknown or unpaired requests', () => {

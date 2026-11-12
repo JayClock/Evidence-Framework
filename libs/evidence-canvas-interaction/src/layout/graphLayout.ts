@@ -10,6 +10,7 @@ import {
   rectBottom,
   rectCenter,
   rectRight,
+  translateRect,
   unionRects,
   type Point,
   type Rect,
@@ -82,8 +83,131 @@ interface StackItem {
   height: number;
 }
 
-const ownerContextId = (entity: EntityAST): string | undefined =>
+/** Everything the derived part of a layout needs: boxes already placed. */
+export interface LayoutAssemblyInput {
+  document: DomainModelDocument;
+  nodes: LayoutNode[];
+  contextGroups: ContextLayoutGroup[];
+  fulfillmentGroups: FulfillmentLayoutGroup[];
+  freeNodeIds: readonly string[];
+  omittedContextIds: readonly string[];
+}
+
+export const ownerContextId = (entity: EntityAST): string | undefined =>
   'contextRef' in entity ? entity.contextRef : undefined;
+
+/**
+ * Derives edges, responsibility links and bounds from placed boxes.
+ *
+ * Split out of `createGraphLayout` because the lifecycle board places the same
+ * Context subtrees at different coordinates. Every consumer of a layout reads
+ * the derived half (edges, lookups, bounds), so a second placement pass reuses
+ * this instead of recomputing routes with a copy of the logic.
+ */
+export const assembleGraphLayout = (
+  input: LayoutAssemblyInput,
+): DomainGraphLayout => {
+  const { document, nodes: allNodes, contextGroups: allContextGroups } = input;
+  const allGroups = input.fulfillmentGroups;
+  const nodeById = new Map(
+    allNodes.map((node) => [node.nodeId, node] as const),
+  );
+  const contextGroupById = new Map(
+    allContextGroups.map((group) => [group.contextId, group] as const),
+  );
+
+  const boxOf = (objectId: string): Rect | undefined =>
+    nodeById.get(objectId)?.box ?? contextGroupById.get(objectId)?.box;
+
+  const edges: LayoutEdge[] = [];
+
+  for (const relationship of document.relationships) {
+    const sourceBox = boxOf(relationship.sourceRef);
+    const targetBox = boxOf(relationship.targetRef);
+
+    if (sourceBox === undefined || targetBox === undefined) {
+      continue;
+    }
+
+    const sourceContext =
+      nodeById.get(relationship.sourceRef)?.contextId ??
+      contextGroupById.get(relationship.sourceRef)?.contextId ??
+      null;
+    const targetContext =
+      nodeById.get(relationship.targetRef)?.contextId ??
+      contextGroupById.get(relationship.targetRef)?.contextId ??
+      null;
+    const crossContext =
+      sourceContext !== null &&
+      targetContext !== null &&
+      sourceContext !== targetContext;
+
+    edges.push({
+      relationshipId: relationship.id,
+      kind: relationship.kind,
+      sourceRef: relationship.sourceRef,
+      targetRef: relationship.targetRef,
+      points: routeEdge(sourceBox, targetBox),
+      dashed: crossContext || relationship.kind === 'plays_role',
+      arrow: relationship.kind === 'plays_role',
+      crossContext,
+      label: relationship.label,
+    });
+  }
+
+  const responsibilityLinks: ResponsibilityLink[] = [];
+
+  for (const entity of document.entities) {
+    if (entity.category !== 'evidence') {
+      continue;
+    }
+
+    for (const roleId of entity.roleRefs ?? []) {
+      if (boxOf(roleId) !== undefined) {
+        responsibilityLinks.push({
+          sourceRef: entity.id,
+          roleId,
+          kind: 'contract_party',
+        });
+      }
+    }
+
+    if (
+      entity.responsibleRoleRef !== undefined &&
+      boxOf(entity.responsibleRoleRef) !== undefined
+    ) {
+      responsibilityLinks.push({
+        sourceRef: entity.id,
+        roleId: entity.responsibleRoleRef,
+        kind: 'responsibility',
+      });
+    }
+  }
+
+  const bounds = computeBounds(
+    allNodes.map((node) => node.box),
+    allContextGroups.map((group) => group.box),
+  );
+
+  return {
+    bounds,
+    nodes: allNodes,
+    nodeById,
+    edges,
+    edgeById: new Map(
+      edges.map((edge) => [edge.relationshipId, edge] as const),
+    ),
+    responsibilityLinks,
+    contextGroups: allContextGroups,
+    contextGroupById,
+    fulfillmentGroups: allGroups,
+    fulfillmentGroupByRequest: new Map(
+      allGroups.map((group) => [group.requestId, group] as const),
+    ),
+    freeNodeIds: [...input.freeNodeIds],
+    omittedContextIds: [...input.omittedContextIds],
+  };
+};
 
 export const createGraphLayout = (
   graph: DomainGraph,
@@ -429,103 +553,37 @@ export const createGraphLayout = (
     cursorY = rectBottom(subtree.box) + CONTEXT_GAP;
   }
 
-  const nodeById = new Map(
-    allNodes.map((node) => [node.nodeId, node] as const),
-  );
-  const contextGroupById = new Map(
-    allContextGroups.map((group) => [group.contextId, group] as const),
-  );
-  const boxOf = (objectId: string): Rect | undefined =>
-    nodeById.get(objectId)?.box ?? contextGroupById.get(objectId)?.box;
-
-  const edges: LayoutEdge[] = [];
-
-  for (const relationship of document.relationships) {
-    const sourceBox = boxOf(relationship.sourceRef);
-    const targetBox = boxOf(relationship.targetRef);
-
-    if (sourceBox === undefined || targetBox === undefined) {
-      continue;
-    }
-
-    const sourceContext =
-      nodeById.get(relationship.sourceRef)?.contextId ??
-      contextGroupById.get(relationship.sourceRef)?.contextId ??
-      null;
-    const targetContext =
-      nodeById.get(relationship.targetRef)?.contextId ??
-      contextGroupById.get(relationship.targetRef)?.contextId ??
-      null;
-    const crossContext =
-      sourceContext !== null &&
-      targetContext !== null &&
-      sourceContext !== targetContext;
-
-    edges.push({
-      relationshipId: relationship.id,
-      kind: relationship.kind,
-      sourceRef: relationship.sourceRef,
-      targetRef: relationship.targetRef,
-      points: routeEdge(sourceBox, targetBox),
-      dashed: crossContext || relationship.kind === 'plays_role',
-      arrow: relationship.kind === 'plays_role',
-      crossContext,
-      label: relationship.label,
-    });
-  }
-
-  const responsibilityLinks: ResponsibilityLink[] = [];
-
-  for (const entity of document.entities) {
-    if (entity.category !== 'evidence') {
-      continue;
-    }
-
-    for (const roleId of entity.roleRefs ?? []) {
-      if (boxOf(roleId) !== undefined) {
-        responsibilityLinks.push({
-          sourceRef: entity.id,
-          roleId,
-          kind: 'contract_party',
-        });
-      }
-    }
-
-    if (
-      entity.responsibleRoleRef !== undefined &&
-      boxOf(entity.responsibleRoleRef) !== undefined
-    ) {
-      responsibilityLinks.push({
-        sourceRef: entity.id,
-        roleId: entity.responsibleRoleRef,
-        kind: 'responsibility',
-      });
-    }
-  }
-
-  const bounds = computeBounds(
-    allNodes.map((node) => node.box),
-    allContextGroups.map((group) => group.box),
-  );
-
-  return {
-    bounds,
+  return assembleGraphLayout({
+    document,
     nodes: allNodes,
-    nodeById,
-    edges,
-    edgeById: new Map(
-      edges.map((edge) => [edge.relationshipId, edge] as const),
-    ),
-    responsibilityLinks,
     contextGroups: allContextGroups,
-    contextGroupById,
     fulfillmentGroups: allGroups,
-    fulfillmentGroupByRequest: new Map(
-      allGroups.map((group) => [group.requestId, group] as const),
-    ),
     freeNodeIds: freeEntities.map(({ id }) => id),
     omittedContextIds,
-  };
+  });
+};
+
+/** Moves every object this layout owns by the same offset, in place. */
+export const translateLayoutObjects = (
+  layout: Pick<
+    DomainGraphLayout,
+    'nodes' | 'contextGroups' | 'fulfillmentGroups'
+  >,
+  dx: number,
+  dy: number,
+): void => {
+  for (const node of layout.nodes) {
+    node.box = translateRect(node.box, dx, dy);
+  }
+
+  for (const group of layout.fulfillmentGroups) {
+    group.box = translateRect(group.box, dx, dy);
+  }
+
+  for (const group of layout.contextGroups) {
+    group.box = translateRect(group.box, dx, dy);
+    group.titleBox = translateRect(group.titleBox, dx, dy);
+  }
 };
 
 const computeBounds = (
