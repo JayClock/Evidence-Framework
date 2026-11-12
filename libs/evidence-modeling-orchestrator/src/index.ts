@@ -1,9 +1,11 @@
 export {
   buildSensorReport,
+  driftIssues,
   finalizeSensorReport,
   fmCheckIssues,
   keyDataSummaryOf,
   stageGateSummaryOf,
+  type DriftAuditReport,
   type FmCheckReport,
   type KeyDataAuditReport,
   type KeyDataDecision,
@@ -35,6 +37,19 @@ export {
   type ModelPatchRequest,
   type ModelPatchResult,
 } from './tools/evidenceTools.js';
+
+export {
+  DRIFT_KIND_LABELS,
+  auditProductionDrift,
+  type ArchitectureDriftFinding,
+  type ArchitectureDriftKind,
+  type DriftAudit,
+} from './sensors/native/driftSensor.js';
+
+export {
+  runNativeDriftAudit,
+  type NativeDriftInput,
+} from './sensors/native/nativeDriftAudit.js';
 
 export {
   ModelSourceError,

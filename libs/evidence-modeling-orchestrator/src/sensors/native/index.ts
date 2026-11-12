@@ -10,6 +10,19 @@ export {
 export { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
 
 export {
+  DRIFT_KIND_LABELS,
+  auditProductionDrift,
+  type ArchitectureDriftFinding,
+  type ArchitectureDriftKind,
+  type DriftAudit,
+} from './driftSensor.js';
+
+export {
+  runNativeDriftAudit,
+  type NativeDriftInput,
+} from './nativeDriftAudit.js';
+
+export {
   checkNativeStageGate,
   filterFmCheckErrors,
   isGateReadyReport,

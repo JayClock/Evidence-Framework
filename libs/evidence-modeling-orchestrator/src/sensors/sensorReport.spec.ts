@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildSensorReport,
+  driftIssues,
   finalizeSensorReport,
   fmCheckIssues,
   keyDataSummaryOf,
@@ -199,5 +200,71 @@ describe('stageGateSummaryOf', () => {
       scopeRefs: ['ctx.purchase'],
       errors: [],
     });
+  });
+});
+
+describe('driftIssues', () => {
+  it('keeps the audit\'s severity and points at the evidence it names', () => {
+    const issues = driftIssues({
+      findings: [
+        {
+          kind: 'DERIVED_VALUE_SUPPLIED',
+          severity: 'block',
+          message: '服务直接写入了派生字段 request.payment#amount。',
+          evidenceRef: 'request.payment',
+          contextRef: 'context.payment',
+          remediation: '改由规则算出。',
+        },
+        {
+          kind: 'CROSS_CONTEXT_WRITE',
+          severity: 'warn',
+          message: '凭证被写进了别的上下文。',
+          evidenceRef: null,
+          contextRef: null,
+        },
+      ],
+    });
+
+    expect(issues.map((item) => `${item.severity}:${item.code}`)).toEqual([
+      'block:DERIVED_VALUE_SUPPLIED',
+      'warn:CROSS_CONTEXT_WRITE',
+    ]);
+    expect(issues[0]).toMatchObject({
+      source: 'audit_drift',
+      targetNodeId: 'request.payment',
+      contextRef: 'context.payment',
+      suggestion: '改由规则算出。',
+    });
+    expect(issues[1]?.targetNodeId).toBeUndefined();
+  });
+
+  it('reports a trace it could not read instead of an empty clean audit', () => {
+    const issues = driftIssues({ errors: ['trace/resourceSpans: must be an array'] });
+
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toMatchObject({
+      severity: 'warn',
+      code: 'DRIFT_TRACE_UNREADABLE',
+    });
+  });
+
+  it('folds into the one verdict, so a blocking drift closes the gate', () => {
+    const report = buildSensorReport({
+      fmCheck: { valid: true, errors: [], gaps: [] },
+      drift: {
+        findings: [
+          {
+            kind: 'UNMODELED_EVIDENCE_COMMITTED',
+            severity: 'block',
+            message: '模型里没有这张凭证。',
+            evidenceRef: 'evidence.ghost',
+          },
+        ],
+      },
+    });
+
+    expect(report.passed).toBe(false);
+    expect(report.blockCount).toBe(1);
+    expect(report.issues.map((item) => item.source)).toContain('audit_drift');
   });
 });

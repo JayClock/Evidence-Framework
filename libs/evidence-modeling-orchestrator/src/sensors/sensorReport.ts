@@ -5,6 +5,7 @@ export type SensorSeverity = 'block' | 'warn' | 'info';
 export type SensorSource =
   | 'check_fm'
   | 'audit_key_data'
+  | 'audit_drift'
   | 'stage_gate';
 
 export interface SensorIssue {
@@ -115,7 +116,60 @@ export interface StageGateReport {
   errors?: readonly string[];
 }
 
+/** The drift audit report, narrowed to what the desktop reads. */
+export interface DriftAuditReport {
+  checkVersion?: number;
+  modelId?: unknown;
+  spanCount?: number;
+  commitCount?: number;
+  counts?: Readonly<Record<string, number>>;
+  findings?: readonly {
+    kind: string;
+    severity: 'block' | 'warn';
+    message: string;
+    evidenceRef?: string | null;
+    contextRef?: string | null;
+    remediation?: string;
+  }[];
+  passed?: boolean;
+  errors?: readonly string[];
+}
+
 const MAX_KEY_DATA = 40;
+
+/**
+ * Turns a drift audit into findings the status bar can rank.
+ *
+ * Production disagreeing with the model is not a model error: the report says
+ * what the service did, and the modeler decides which side moves. That is why
+ * the remediation travels with the issue instead of a repair instruction.
+ */
+export const driftIssues = (report: DriftAuditReport): SensorIssue[] => [
+  ...(report.findings ?? []).map((item) =>
+    issue(
+      'audit_drift',
+      item.severity,
+      item.kind,
+      item.message,
+      {
+        ...(item.evidenceRef === null || item.evidenceRef === undefined
+          ? {}
+          : { targetNodeId: item.evidenceRef }),
+        ...(item.contextRef === null || item.contextRef === undefined
+          ? {}
+          : { contextRef: item.contextRef }),
+        ...(item.remediation === undefined
+          ? {}
+          : { suggestion: item.remediation }),
+      },
+    ),
+  ),
+  ...(report.errors ?? []).map((message) =>
+    issue('audit_drift', 'warn', 'DRIFT_TRACE_UNREADABLE', message, {
+      suggestion: '确认导出的 trace 是 OTLP/JSON，并包含 resourceSpans。',
+    }),
+  ),
+];
 
 /**
  * Turns the FM check report into blocking and warning findings.
@@ -282,12 +336,15 @@ const emptyKeyData: KeyDataSummary = {
 export const buildSensorReport = ({
   fmCheck,
   keyData,
+  drift,
   stageGate,
   unavailableSensors = [],
   now = () => new Date(),
 }: {
   fmCheck?: FmCheckReport;
   keyData?: KeyDataAuditReport;
+  /** A production trace already compared with this model, when one was read. */
+  drift?: DriftAuditReport;
   stageGate?: StageGateSummary;
   unavailableSensors?: readonly SensorSource[];
   now?: () => Date;
@@ -296,6 +353,7 @@ export const buildSensorReport = ({
   const issues: SensorIssue[] = [
     ...(fmCheck === undefined ? [] : fmCheckIssues(fmCheck)),
     ...(ledger === undefined ? [] : ledger.issues),
+    ...(drift === undefined ? [] : driftIssues(drift)),
     ...unavailableSensors.map((source) =>
       issue(
         source,
