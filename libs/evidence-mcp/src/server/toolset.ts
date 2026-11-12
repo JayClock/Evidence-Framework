@@ -1,4 +1,10 @@
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
+import {
+  addBreachCompensation,
+  introduceFulfillmentPair,
+  roleifyAndInvertDependency,
+  type OperatorPatch,
+} from '@evidence-poc/evidence-model-core';
 import * as z from 'zod/v4';
 
 import type { EvidenceMcpAppClient } from '../types.js';
@@ -44,12 +50,77 @@ export const TOOL_NAMES = {
   screenshot: 'get_canvas_screenshot',
   applyPatch: 'apply_model_patch',
   stageGate: 'run_stage_gate',
+  introduceFulfillmentPair: 'introduce_fulfillment_pair',
+  addBreachCompensation: 'add_breach_compensation',
+  roleifyAndInvertDependency: 'roleify_and_invert_dependency',
 } as const;
 
 const json = (value: unknown): EvidenceToolResult => ({
   text: JSON.stringify(value, null, 2),
   value,
 });
+
+const momentSchema = {
+  id: z.string().min(1).describe('实体 ID，例如 request.refund。'),
+  label: z.string().min(1).describe('业务名称，例如 退款申请。'),
+  responsibleRoleRef: z
+    .string()
+    .min(1)
+    .describe('责任角色 ID，必须是根合同绑定的当事人角色。'),
+};
+
+const proofSchema = z
+  .object({
+    id: z.string().min(1).describe('证明凭证 ID。'),
+    label: z.string().min(1).describe('证明凭证名称，例如 银行回单。'),
+    responsibleRoleRef: z
+      .string()
+      .min(1)
+      .optional()
+      .describe('出具证明的角色，缺省与确认方一致。'),
+  })
+  .optional();
+
+/**
+ * Builds one operator's commands against the live model, then commits them
+ * through the same patch channel a hand-written command batch uses.
+ *
+ * External agents hit the same guards and the same undo history as the desktop
+ * session; a builder refusal becomes a readable error instead of a partial
+ * write.
+ */
+const runOperator = async (
+  client: EvidenceMcpAppClient,
+  rationale: string,
+  build: (
+    document: Awaited<ReturnType<EvidenceMcpAppClient['getDomainModel']>>['document'],
+  ) => OperatorPatch,
+): Promise<EvidenceToolResult> => {
+  let patch: OperatorPatch;
+
+  try {
+    const model = await client.getDomainModel({ includeRules: true });
+
+    patch = build(model.document);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '未知原因';
+
+    return { text: `算子未执行：${message}`, value: { error: message }, isError: true };
+  }
+
+  const result = await client.applyModelPatch({
+    rationale,
+    commands: patch.commands,
+  });
+
+  return result.success
+    ? json({ ...result, createdIds: patch.createdIds })
+    : {
+        text: JSON.stringify(result, null, 2),
+        value: result,
+        isError: true,
+      };
+};
 
 /**
  * The seven tools the desktop exposes to external agents.
@@ -183,6 +254,119 @@ export const createEvidenceTools = (
     },
   },
   {
+    name: TOOL_NAMES.introduceFulfillmentPair,
+    title: '新增成对履约项',
+    description:
+      '在一个合同上下文里新增一组履约请求（时段）与履约确认（时刻），自动补齐业务时间、引用根合同并装配完成判断规则。有请求就必须有确认，不要分两次建。',
+    inputSchema: {
+      contextRef: z
+        .string()
+        .min(1)
+        .describe('所属合同上下文 ID，例如 context.procurement。'),
+      request: z.object({
+        ...momentSchema,
+        window: z.string().min(1).optional().describe('履约窗口，例如 7 个工作日。'),
+      }),
+      confirmation: z.object(momentSchema),
+      proof: proofSchema,
+    },
+    annotations: WRITES_MODEL,
+    run: async (input) => {
+      const intent = input as unknown as Parameters<
+        typeof introduceFulfillmentPair
+      >[1];
+
+      return runOperator(
+        client,
+        `新增履约项：${intent.request.label} / ${intent.confirmation.label}`,
+        (document) => introduceFulfillmentPair(document, intent),
+      );
+    },
+  },
+  {
+    name: TOOL_NAMES.addBreachCompensation,
+    title: '新增违约补偿分支',
+    description:
+      '为一个已有履约请求声明违约条件，并同时新增该违约触发的补偿履约对。违约不是回滚，而是在同一合同上下文中触发新的履约项。',
+    inputSchema: {
+      requestRef: z.string().min(1).describe('被违反的履约请求 ID。'),
+      confirmationRef: z
+        .string()
+        .min(1)
+        .describe('本应关闭该请求的履约确认 ID。'),
+      condition: z
+        .string()
+        .min(1)
+        .describe('违约的业务描述，例如 超过约定窗口仍未到账。'),
+      request: z.object({
+        ...momentSchema,
+        window: z.string().min(1).optional(),
+      }),
+      confirmation: z.object(momentSchema),
+      proof: proofSchema,
+    },
+    annotations: WRITES_MODEL,
+    run: async (input) => {
+      const intent = input as unknown as Parameters<
+        typeof addBreachCompensation
+      >[1];
+
+      return runOperator(client, `违约补偿：${intent.condition}`, (document) =>
+        addBreachCompensation(document, intent),
+      );
+    },
+  },
+  {
+    name: TOOL_NAMES.roleifyAndInvertDependency,
+    title: '反转依赖并隔离变化点',
+    description:
+      '把核心合同依赖的履约确认抽象为能力角色，并新增独立的支撑合同上下文，让外部履约确认扮演该角色。用于引入支付渠道、物流或其它第三方能力时隔离变化点。',
+    inputSchema: {
+      targetConfirmationRef: z
+        .string()
+        .min(1)
+        .describe('核心合同中将被抽象的履约确认 ID。'),
+      socket: z.object({
+        id: z.string().min(1).describe('能力角色 ID。'),
+        label: z.string().min(1).describe('能力角色名称，例如 付款能力。'),
+      }),
+      supporting: z.object({
+        context: z.object({ id: z.string().min(1), label: z.string().min(1) }),
+        contract: z.object({
+          id: z.string().min(1),
+          label: z.string().min(1),
+          signedAtMeaning: z.string().min(1).optional(),
+        }),
+        provider: z.object({
+          id: z.string().min(1),
+          label: z.string().min(1).describe('提供能力的一方。'),
+        }),
+        consumer: z.object({
+          id: z.string().min(1),
+          label: z.string().min(1).describe('请求能力的一方。'),
+        }),
+        request: z.object({
+          id: z.string().min(1),
+          label: z.string().min(1),
+          window: z.string().min(1).optional(),
+        }),
+        confirmation: z.object({ id: z.string().min(1), label: z.string().min(1) }),
+      }),
+    },
+    annotations: WRITES_MODEL,
+    run: async (input) => {
+      const intent = input as unknown as Parameters<
+        typeof roleifyAndInvertDependency
+      >[1];
+
+      return runOperator(
+        client,
+        `反转依赖：${intent.socket.label} 交由 ${intent.supporting.contract.label} 履约`,
+        (document) => roleifyAndInvertDependency(document, intent),
+      );
+    },
+  },
+  {
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
@@ -205,4 +389,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Every edit must go through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done.';
+  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done.';
