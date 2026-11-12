@@ -2,8 +2,8 @@
 
 Electron desktop workspace for the Fulfillment Modeling source tree. It opens a
 local `<project>/.evidence/fm` directory, draws the model as an interactive
-canvas and writes edits back to the same JSON files that Git and the skills
-already read.
+canvas and writes edits back to the same JSON files that Git, the sensors and
+the MCP tools already read.
 
 ## Run
 
@@ -22,31 +22,34 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
-## Bundled skills, no interpreter
+## Bundled instructions and assets, no interpreter
 
 The sensors run in-process, so the installer works on a machine with no Python
-and no checkout of this repository. `build` and `make` first run
-`scripts/prepare-desktop-resources.mjs` (`prepare-resources` target), which
-copies the modeling skills into the tree Forge ships through `extraResource` —
-next to `app.asar` rather than inside it, because Pi lists the skill directory
-with `node:fs` and opens fixtures by path:
+and no checkout of this repository. Nothing is discovered from the project
+either: an opened folder only has to hold its `.evidence/` sources.
 
-```text
-resources/
-└── skills/            # .agents/skills/evidence-* copied verbatim
-```
-
-- `resolveSkillsRoot` prefers `<project>/.agents/skills`, then
-  `<resources>/skills`, then the workspace tree while developing.
+- The instructions the session starts with are code —
+  `@evidence-poc/evidence-agent-core/src/prompts/` (role, modeling red lines,
+  the turn loop). They are appended to Pi's prompt, and the session asks for
+  `noSkills: true`, so no working copy is scanned for `SKILL.md` and the model is
+  never invited to go looking for one.
 - Every sensor — consistency, key data, interview trace, timeline, scenarios and
   the stage gate — is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
   reads the model once per run and decides from that one read.
-- The agent's shell gets `EVIDENCE_SKILLS_ROOT`, `SKILL_DIR` and one
-  `*_SKILL_DIR` per package, re-asserted before each prompt, so the paths the
-  skill guides quote resolve without the model guessing. No interpreter variable
-  is published: nothing starts a script. Per-project paths stay out of the
-  environment — several project windows share one process — and come from the
-  shell's working directory instead.
+- `build` and `make` first run `scripts/prepare-desktop-resources.mjs`
+  (`prepare-resources` target), which copies the review page assets into the
+  tree Forge ships through `extraResource` — next to `app.asar` rather than
+  inside it, because the page compiler reads them with `node:fs`:
+
+```text
+resources/
+└── assets/            # libs/evidence-visualization/assets copied verbatim
+```
+
+`installAssets.ts` reads `<resources>/assets` when packaged and, in development,
+`apps/desktop/resources/assets` after the copy or the workspace package directly.
+No interpreter variable and no skill directory are published to the agent's
+environment: nothing starts a script and no path is left to guess.
 
 See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the workspace the checks, the API
 projection and the review page all come from.
@@ -141,7 +144,7 @@ a library's `/browser` entry whenever a Node-only adapter exists.
 
 ```text
 PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
-                                    │ Pi AgentSession + .agents/skills
+                                    │ Pi AgentSession + built-in instructions
                                     │ custom tools: run_sensors,
                                     │   apply_model_patch, get_canvas_selection
                                     ▼
@@ -222,8 +225,8 @@ Cursor / Claude Code / CLI ──stdio──▶ evidence (--mcp-stdio, headless)
 ```
 
 - Branching stays model-level on purpose: `.evidence/fm` is still the only tree
-  the skills, the sensors, the MCP tools and Git read, so an assumption is a
-  checkout, not a second dialect of the project layout.
+  the sensors, the MCP tools and Git read, so an assumption is a checkout, not a
+  second dialect of the project layout.
 - `main` is a branch too. Forking, switching and merging all snapshot the
   checkout back to its own branch first, so moving between assumptions cannot
   drop an edit; `nx test desktop` proves the round trip both ways.

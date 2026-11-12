@@ -3,7 +3,7 @@
 One toolchain: Node.js and pnpm. `pnpm install` is the whole setup.
 
 - The checks, the derived documents, the API projection and the review page are TypeScript commands in `libs/`; nothing runs an interpreter, so there is no second runtime to pin. See [ENVIRONMENT.md](ENVIRONMENT.md).
-- `.agents/skills/` is the only skill source, and it is prompt and reference material plus the schemas and page assets the libraries read — never something executed. Global skill directories and unpinned third-party skills are not part of this environment.
+- There is no skill tree. The modeling instructions, the JSON Schemas and the page assets ship inside the libraries that read them, so a project only holds its `.evidence/` sources and the desktop discovers no instructions from a working copy.
 
 ## Workspace
 

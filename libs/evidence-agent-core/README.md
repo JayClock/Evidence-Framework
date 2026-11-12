@@ -3,9 +3,10 @@
 进程内的 Pi Harness 底座。桌面端只用这一层的两个能力：
 
 1. **Pi Agent 会话**（`createEvidenceAgentSession`）——把 `@earendil-works/pi-coding-agent`
-   收敛成一个窄接口（`PiSdkPort`），默认加载项目唯一技能源 `.agents/skills/`，并把 Pi 的
-   事件流投影成桌面端可渲染的 `AgentStreamEvent`。传入 `sessionFile` 时改为续写该份
-   记录，分支因此能拥有自己的对话谱系。
+   收敛成一个窄接口（`PiSdkPort`），把内置建模指令（`src/prompts/`：角色、建模红线、
+   一轮如何推进）追加到 Pi 的系统提示词后启动，并把 Pi 的事件流投影成桌面端可渲染的
+   `AgentStreamEvent`。会话以 `noSkills: true` 启动，不扫描工作目录寻找 `SKILL.md`。
+   传入 `sessionFile` 时改为续写该份记录，分支因此能拥有自己的对话谱系。
 2. **记录分叉**（`forkSessionLines`）——纯函数，按检查点只保留祖先链并改写
    `session` 头（新 `id` 与 `parentSession`），被放弃的兄弟分支留在原文件里。
 

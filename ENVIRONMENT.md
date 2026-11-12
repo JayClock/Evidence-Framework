@@ -18,16 +18,19 @@ npx nx start desktop
 | sensors, stage gate, agent tools                                | `libs/evidence-modeling-orchestrator`             | process      |
 | API contract projection, OpenAPI, HTTP journeys                 | `libs/evidence-api` (`evidence-api` command)       | process      |
 | offline review page                                             | `libs/evidence-visualization` (`evidence-workbench` command) | process |
-| interview and modeling prompts                                  | `.agents/skills/*/{SKILL.md,references}`          | prompt layer |
+| interview and modeling prompts                                  | `libs/evidence-agent-core/src/prompts/`             | prompt layer |
 
-Nothing under `.agents/skills/` is executed. A skill package is the agent's
-instructions plus the data it points at:
+There is no skill tree. The agent's instructions are code, and the data they
+used to point at belongs to the library that consumes it:
 
-| Path in a skill | What it is |
-| --------------- | ---------- |
-| `SKILL.md`, `references/*.md` | the prompt layer the agent reads |
-| `schemas/*.json` | the contract the guides and the libraries both consume |
-| `evidence-visualization/assets/*` | the page templates the generator inlines |
+| What the agent or a generator needs | Where it lives |
+| ----------------------------------- | -------------- |
+| the prompt the session starts with   | `libs/evidence-agent-core/src/prompts/` |
+| the FM and API JSON Schemas          | `libs/evidence-schema/schemas/`, `libs/evidence-api/schemas/` |
+| the page templates the generator inlines | `libs/evidence-visualization/assets/` |
+
+The agent session asks Pi for `noSkills: true`, so a working copy is never
+scanned for instructions: opening a project reads its model, nothing else.
 
 The Python scripts these packages used to carry are gone; the checks, the derived
 documents and the generators are the TypeScript commands listed above. A command
@@ -67,6 +70,7 @@ silently falls back to `dist`.
 ## Desktop packaging
 
 `nx build desktop` first runs `scripts/prepare-desktop-resources.mjs`, which
-copies the skill tree into `apps/desktop/resources/skills`; Forge ships it beside
-`app.asar` because Pi lists that directory with `node:fs`. No interpreter and no
-virtualenv are packaged — the app decides everything in-process.
+copies the review page assets into `apps/desktop/resources/assets`; Forge ships
+that directory beside `app.asar` because the page compiler reads it with
+`node:fs`. No interpreter, no virtualenv and no skill tree are packaged — the app
+decides everything in-process.
