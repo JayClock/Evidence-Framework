@@ -1,5 +1,5 @@
 /**
- * The API design contract, byte for byte as `.agents/skills/evidence-api` writes it.
+ * The API design contract, byte for byte as `schemas/api.schema.json` carries it.
  *
  * It travels as text rather than as a parsed object because the manifest records
  * the digest of the contract a report was produced with; re-serializing it would

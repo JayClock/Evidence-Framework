@@ -30,17 +30,14 @@ const fixture = (name: string): string =>
   );
 
 describe('the embedded contracts', () => {
-  it('are the documents the skill still carries, byte for byte', () => {
+  it('are the documents this package ships, byte for byte', () => {
     for (const [name, text, parsed] of [
       ['api.schema.json', API_SCHEMA_TEXT, API_SCHEMA],
       ['api-projection.schema.json', API_PROJECTION_SCHEMA_TEXT, API_PROJECTION_SCHEMA],
     ] as const) {
       const onDisk = readFileSync(
         fileURLToPath(
-          new URL(
-            `../../../.agents/skills/evidence-api/schemas/${name}`,
-            import.meta.url,
-          ),
+          new URL(`../schemas/${name}`, import.meta.url),
         ),
         'utf8',
       );
