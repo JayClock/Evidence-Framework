@@ -5,6 +5,8 @@ interface ShortcutHandlers {
   redo: () => void;
   save: () => void;
   focusSearch: () => void;
+  /** Moves the caret into the agent composer. */
+  focusAgent: () => void;
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
@@ -46,6 +48,12 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       }
 
       if (mod && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        handlers.focusAgent();
+        return;
+      }
+
+      if (mod && event.key.toLowerCase() === 'f') {
         event.preventDefault();
         handlers.focusSearch();
         return;

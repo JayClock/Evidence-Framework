@@ -170,6 +170,8 @@ const EditorWorkspace = ({
   } | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const tokenRef = useRef(0);
+  // ⌘K bumps this, which moves the caret into the agent composer.
+  const [agentFocusToken, setAgentFocusToken] = useState(0);
 
   const focusNode = useCallback(
     (nodeId: string) => {
@@ -216,6 +218,21 @@ const EditorWorkspace = ({
     [focusNode, state.layout.contextGroups, state.session],
   );
 
+  // What the next question will be about: the canvas selection, reduced to what
+  // the composer can name without a graph.
+  const selectedEntity =
+    state.selection.nodeId === null
+      ? undefined
+      : state.graph.getEntity(state.selection.nodeId);
+  const promptFocus =
+    selectedEntity === undefined
+      ? null
+      : {
+          nodeId: selectedEntity.id,
+          label: selectedEntity.label,
+          kind: selectedEntity.category,
+        };
+
   const requestZoom = useCallback((direction: 'in' | 'out') => {
     tokenRef.current += 1;
     setZoomCommand({ direction, token: tokenRef.current });
@@ -233,6 +250,7 @@ const EditorWorkspace = ({
       },
       save: () => void save(),
       focusSearch: () => searchInputRef.current?.focus(),
+      focusAgent: () => setAgentFocusToken((token) => token + 1),
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -392,6 +410,9 @@ const EditorWorkspace = ({
                 activeToolName={agent.state.activeToolName}
                 onSubmit={agent.submit}
                 onStop={agent.stop}
+                focus={promptFocus}
+                onClearFocus={() => state.session.clearSelection()}
+                focusToken={agentFocusToken}
               />
             </div>
           </div>

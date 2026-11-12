@@ -71,7 +71,7 @@ export const LeftSidebar = ({
           ref={searchInputRef}
           value={searchTerm}
           onChange={(event) => onSearchTermChange(event.target.value)}
-          placeholder="搜索业务对象（Cmd+K）"
+          placeholder="搜索业务对象（Cmd+F）"
           aria-label="搜索业务对象"
           className="w-full rounded border border-evidence-line bg-white px-2 py-1.5 text-[11px] outline-none focus:border-evidence-accent"
         />

@@ -128,4 +128,75 @@ describe('PromptDock', () => {
       screen.getByText('⌘/Ctrl + Enter 发送 · 运行中发送即插话'),
     ).toBeInTheDocument();
   });
+
+  it('names the object the next question is about and can drop the focus', () => {
+    const onClearFocus = vi.fn();
+
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={() => undefined}
+        onStop={() => undefined}
+        focus={{ nodeId: 'request.payment', label: '支付申请', kind: 'evidence' }}
+        onClearFocus={onClearFocus}
+      />,
+    );
+
+    expect(screen.getByTestId('prompt-dock-focus')).toHaveTextContent(
+      '焦点：支付申请（evidence）',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '清除焦点' }));
+
+    expect(onClearFocus).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows no focus pill when nothing is selected', () => {
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={() => undefined}
+        onStop={() => undefined}
+      />,
+    );
+
+    expect(screen.queryByTestId('prompt-dock-focus')).toBeNull();
+  });
+
+  it('stops the live run on Escape without sending a steering message', () => {
+    const onSubmit = vi.fn();
+    const onStop = vi.fn();
+
+    render(
+      <PromptDock
+        running
+        activeToolName={null}
+        onSubmit={onSubmit}
+        onStop={onStop}
+      />,
+    );
+
+    fireEvent.keyDown(type('先别管运费'), { key: 'Escape' });
+
+    expect(onStop).toHaveBeenCalledTimes(1);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('moves the caret into the composer when the focus token changes', () => {
+    const props = {
+      running: false,
+      activeToolName: null,
+      onSubmit: () => undefined,
+      onStop: () => undefined,
+    };
+    const { rerender } = render(<PromptDock {...props} focusToken={0} />);
+
+    expect(document.activeElement).not.toBe(screen.getByLabelText('访谈内容'));
+
+    rerender(<PromptDock {...props} focusToken={1} />);
+
+    expect(document.activeElement).toBe(screen.getByLabelText('访谈内容'));
+  });
 });

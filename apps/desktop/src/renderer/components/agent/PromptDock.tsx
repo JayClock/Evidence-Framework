@@ -3,6 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 const MIN_HEIGHT = 36;
 const MAX_HEIGHT = 240;
 
+/** What the next prompt is about, when the modeler has something selected. */
+export interface PromptFocus {
+  nodeId: string;
+  label: string;
+  /** Entity category, shown so the modeler knows the kind they selected. */
+  kind: string;
+}
+
 export interface PromptDockProps {
   running: boolean;
   /** Tool currently executing, shown as the status line. */
@@ -10,6 +18,11 @@ export interface PromptDockProps {
   /** Sends when idle, steers the live run when busy. */
   onSubmit: (text: string) => Promise<void> | void;
   onStop: () => Promise<void> | void;
+  /** Selected object the question will be about; null when nothing is selected. */
+  focus?: PromptFocus | null;
+  onClearFocus?: () => void;
+  /** Bumped by ⌘K; every change moves the caret into the composer. */
+  focusToken?: number;
   disabled?: boolean;
 }
 
@@ -25,10 +38,15 @@ export const PromptDock = ({
   activeToolName,
   onSubmit,
   onStop,
+  focus = null,
+  onClearFocus,
+  focusToken,
   disabled = false,
 }: PromptDockProps) => {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  // Mounting must not steal focus; only a later ⌘K moves the caret here.
+  const previousFocusToken = useRef(focusToken);
 
   useEffect(() => {
     const element = textareaRef.current;
@@ -43,6 +61,15 @@ export const PromptDock = ({
       Math.max(MIN_HEIGHT, element.scrollHeight),
     )}px`;
   }, [value]);
+
+  useEffect(() => {
+    if (focusToken === undefined || focusToken === previousFocusToken.current) {
+      return;
+    }
+
+    previousFocusToken.current = focusToken;
+    textareaRef.current?.focus();
+  }, [focusToken]);
 
   const send = async (): Promise<void> => {
     const text = value.trim();
@@ -60,6 +87,29 @@ export const PromptDock = ({
       aria-label="AI 访谈输入"
       className="evidence-no-drag flex w-[560px] max-w-[calc(100%-48px)] flex-col gap-2 rounded-[10px] border border-evidence-line bg-white/95 px-3 pt-2.5 pb-2 shadow-[0_6px_24px_#00000014]"
     >
+      {focus === null ? null : (
+        <div className="flex items-center gap-1.5">
+          <span
+            data-testid="prompt-dock-focus"
+            className="inline-flex max-w-full items-center gap-1 rounded-full bg-evidence-accent/10 px-2 py-0.5 text-[10px] text-evidence-accent"
+          >
+            <span aria-hidden="true">🎯</span>
+            <span className="truncate">
+              焦点：{focus.label}
+              <span className="text-evidence-accent/70">（{focus.kind}）</span>
+            </span>
+          </span>
+          <button
+            type="button"
+            aria-label="清除焦点"
+            onClick={onClearFocus}
+            className="shrink-0 text-[10px] text-evidence-muted hover:text-evidence-ink"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <textarea
         ref={textareaRef}
         value={value}
@@ -69,6 +119,13 @@ export const PromptDock = ({
           if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
             void send();
+          }
+
+          // Escape belongs to the live run while one is streaming: stopping is
+          // the only action that cannot wait for the agent to settle.
+          if (event.key === 'Escape' && running) {
+            event.preventDefault();
+            void onStop();
           }
         }}
         rows={1}

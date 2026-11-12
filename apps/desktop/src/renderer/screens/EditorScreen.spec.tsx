@@ -236,4 +236,36 @@ describe('EditorScreen sensors', () => {
       screen.queryByLabelText('本次补丁新增 审计员'),
     ).toBeNull();
   });
+
+  it('focuses the agent composer on Cmd+K and the search on Cmd+F', async () => {
+    readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    expect(document.activeElement).toBe(screen.getByLabelText('访谈内容'));
+
+    fireEvent.keyDown(window, { key: 'f', metaKey: true });
+    expect(document.activeElement).toBe(screen.getByLabelText('搜索业务对象'));
+  });
+
+  it('tells the dock what the next question is about', async () => {
+    readyProject();
+
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    expect(screen.queryByTestId('prompt-dock-focus')).toBeNull();
+
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.contract"]') as Element,
+    );
+
+    expect(await screen.findByTestId('prompt-dock-focus')).toHaveTextContent(
+      '焦点：',
+    );
+  });
 });
