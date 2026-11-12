@@ -518,16 +518,17 @@ export const compileIngestionDraft = (
   const relationships: RelationshipAST[] = [];
   const relationshipIds = new Set<string>();
 
-  const pushRelationship = (relationship: RelationshipAST): void => {
-    if (relationshipIds.has(relationship.id)) {
-      return;
-    }
-
-    relationshipIds.add(relationship.id);
-    relationships.push(relationship);
-  };
+  // `uniqueId` already reserves the id it returns, so a duplicate check on the
+  // allocated id would reject every relationship it just named.
+  const seenDraftRelationshipIds = new Set<string>();
 
   for (const relationship of draft.relationships) {
+    if (seenDraftRelationshipIds.has(relationship.id)) {
+      continue;
+    }
+
+    seenDraftRelationshipIds.add(relationship.id);
+
     const sourceRef =
       evidenceIds.get(relationship.sourceRef) ??
       roleIds.get(relationship.sourceRef) ??
@@ -548,7 +549,7 @@ export const compileIngestionDraft = (
       continue;
     }
 
-    pushRelationship({
+    relationships.push({
       type: 'relationship',
       id: uniqueId('relation', relationship.id, relationshipIds),
       kind: relationship.kind,
@@ -576,7 +577,7 @@ export const compileIngestionDraft = (
       continue;
     }
 
-    pushRelationship({
+    relationships.push({
       type: 'relationship',
       id: uniqueId('relation', `${sourceRef}-plays-${targetRef}`, relationshipIds),
       kind: 'plays_role',
@@ -627,7 +628,7 @@ export const compileIngestionDraft = (
     );
 
     if (!hasReference) {
-      pushRelationship({
+      relationships.push({
         type: 'relationship',
         id: uniqueId(
           'relation',

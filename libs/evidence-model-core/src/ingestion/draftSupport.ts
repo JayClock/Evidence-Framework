@@ -21,11 +21,13 @@ export const uniqueId = (
   prefix: string,
   label: string,
   taken: Set<string>,
+  /** Stable token for a label no slug can describe, e.g. a row number. */
+  fallback?: string,
 ): string => {
   const slug = slugify(label);
   const base =
     slug.length === 0
-      ? `${prefix}.item`
+      ? `${prefix}.${fallback ?? `n${taken.size + 1}`}`
       : `${prefix}.${/^[a-z]/.test(slug) ? slug : `n-${slug}`}`;
 
   if (!taken.has(base)) {

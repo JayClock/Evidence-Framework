@@ -80,33 +80,37 @@ export const layoutDomainModel = (
     };
   };
 
+  // Evidence first: the contract should sit at the top of its own column, above
+  // the roles and parties that annotate it, not below them.
   for (const entity of document.entities) {
-    if (entity.category === 'context') {
+    if (entity.category !== 'evidence') {
       continue;
     }
 
+    if (isPreContractEvidence(entity, preContractContextIds)) {
+      place(entity.id, 'preContract');
+      continue;
+    }
+
+    place(entity.id, isContractEvidence(entity) ? 'contract' : 'fulfillment');
+  }
+
+  for (const entity of document.entities) {
+    if (entity.category === 'role') {
+      place(entity.id, 'contract');
+    }
+  }
+
+  for (const entity of document.entities) {
+    if (entity.category === 'participant' && entity.kind === 'party') {
+      place(entity.id, 'contract');
+    }
+  }
+
+  for (const entity of document.entities) {
     if (entity.category === 'participant' && entity.kind === 'thing') {
       place(entity.id, 'domain');
-      continue;
     }
-
-    if (entity.category === 'evidence') {
-      if (isPreContractEvidence(entity, preContractContextIds)) {
-        place(entity.id, 'preContract');
-        continue;
-      }
-
-      if (isContractEvidence(entity)) {
-        place(entity.id, 'contract');
-        continue;
-      }
-
-      place(entity.id, 'fulfillment');
-      continue;
-    }
-
-    // Roles and parties annotate the contract they belong to.
-    place(entity.id, 'contract');
   }
 
   return layout;

@@ -127,6 +127,39 @@ describe('compiling a draft', () => {
     );
   });
 
+  it('writes the references the draft declared', () => {
+    const { compiled } = compileBlueprint();
+    const references = compiled.document.relationships.filter(
+      (relationship) => relationship.kind === 'references',
+    );
+    const playsRole = compiled.document.relationships.filter(
+      (relationship) => relationship.kind === 'plays_role',
+    );
+
+    expect(references.length).toBeGreaterThan(0);
+    expect(playsRole.length).toBeGreaterThan(0);
+    expect(compiled.issues).toEqual([]);
+  });
+
+  it('cites only the proposal across the pre-contract boundary', () => {
+    const { compiled } = compileBlueprint();
+    const contract = compiled.document.entities.find(
+      (entity) => entity.category === 'evidence' && entity.kind === 'contract',
+    );
+    const cited = compiled.document.relationships
+      .filter((relationship) => relationship.sourceRef === contract?.id)
+      .map((relationship) =>
+        compiled.document.entities.find(
+          (entity) => entity.id === relationship.targetRef,
+        ),
+      );
+
+    // A cross-context reference may only cite a proposal; an inquiry stays in
+    // its own context, and the proposal references it from there.
+    expect(cited.every((entity) => entity?.category !== 'evidence' || entity.kind === 'proposal' || entity.kind === 'other_evidence')).toBe(true);
+    expect(cited.some((entity) => entity?.category === 'evidence' && entity.kind === 'proposal')).toBe(true);
+  });
+
   it('records the id every draft element ended up with', () => {
     const { parsed, compiled } = compileBlueprint();
     const request = parsed.draft.evidences.find(
@@ -139,6 +172,21 @@ describe('compiling a draft', () => {
 });
 
 describe('laying out a compiled model', () => {
+  it('puts the contract above the roles and parties that annotate it', () => {
+    const { compiled } = compileBlueprint();
+    const layout = layoutDomainModel(compiled.document);
+    const contract = compiled.document.entities.find(
+      (entity) => entity.category === 'evidence' && entity.kind === 'contract',
+    );
+    const party = compiled.document.entities.find(
+      (entity) => entity.category === 'participant' && entity.kind === 'party',
+    );
+
+    expect(layout[contract?.id ?? '']?.y).toBeLessThan(
+      layout[party?.id ?? '']?.y ?? Number.POSITIVE_INFINITY,
+    );
+  });
+
   it('reads left to right: sourcing, contract, fulfilment', () => {
     const { compiled } = compileBlueprint();
     const layout = layoutDomainModel(compiled.document);

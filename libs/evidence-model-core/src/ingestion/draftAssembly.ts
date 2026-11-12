@@ -278,7 +278,12 @@ export const assembleDraftFromRows = (
   for (const row of rows) {
     const context = contextFor(row);
     const kind = row.kind ?? inferEvidenceKind(row.evidence);
-    const id = uniqueId(evidenceIdPrefix(kind), row.evidence, takenEvidenceIds);
+    const id = uniqueId(
+      evidenceIdPrefix(kind),
+      row.evidence,
+      takenEvidenceIds,
+      `row-${row.line}`,
+    );
     const rowSides = row.parties.map((partyLabel) => sideOf(partyLabel, row.line));
 
     const evidence: DraftEvidence = {
@@ -477,13 +482,38 @@ export const assembleDraftFromRows = (
   }
 
   if (contractId !== undefined) {
+    // Only a proposal may be cited across the boundary: it is the document the
+    // contract is signed against. The inquiry stays inside its own context, and
+    // a proposal already references the inquiry it answers.
     for (const evidence of preContractEvidences) {
+      if (evidence.kind !== 'proposal') {
+        continue;
+      }
+
       draft.relationships.push({
         id: `relation.${contractId}-references-${evidence.id}`,
         kind: 'references',
         sourceRef: contractId,
         targetRef: evidence.id,
-        label: '合约引用合约前的凭证作为签订依据',
+        label: '合约引用提案作为签订依据',
+      });
+    }
+
+    for (const evidence of preContractEvidences) {
+      const inquiry = preContractEvidences.find(
+        (candidate) => candidate.kind === 'rfp',
+      );
+
+      if (evidence.kind !== 'proposal' || inquiry === undefined) {
+        continue;
+      }
+
+      draft.relationships.push({
+        id: `relation.${evidence.id}-references-${inquiry.id}`,
+        kind: 'references',
+        sourceRef: evidence.id,
+        targetRef: inquiry.id,
+        label: '提案引用询价作为发起依据',
       });
     }
   }

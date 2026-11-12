@@ -81,6 +81,23 @@ describe('reading prose without a model', () => {
     expect(issues).toEqual(['没有读到任何业务句子。']);
   });
 
+  it('treats 订阅 as the agreement the lecture treats it as', () => {
+    const { draft } = draftFromBusinessText(SUBSCRIPTION_RULE);
+
+    const contract = draft.evidences.find(
+      (evidence) => evidence.kind === 'contract',
+    );
+
+    expect(contract?.label).toBe('极客时间专栏订阅协议');
+  });
+
+  it('does not read the same obligation twice when a breach clause repeats it', () => {
+    const { draft } = draftFromBusinessText(CONTRACT_CLAUSE);
+    const labels = draft.evidences.map((evidence) => evidence.label);
+
+    expect(labels.filter((label) => label === '开通申请')).toHaveLength(1);
+  });
+
   it('reads the subscription rule as a subscription, not a purchase', () => {
     const { draft } = draftFromBusinessText(SUBSCRIPTION_RULE, {
       modelName: '专栏订阅',

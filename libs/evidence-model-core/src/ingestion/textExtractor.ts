@@ -19,6 +19,16 @@ export interface TextExtractionResult {
   issues: readonly string[];
 }
 
+/**
+ * What establishes a contract in a clause.
+ *
+ * 订阅 and 开通会员 are here because a subscription *is* the agreement in the
+ * lecture's own example; requiring the word 合同 would read that case as a
+ * document list with no contract at all.
+ */
+const AGREEMENT = /签订|签署|签约|认购|订阅|开通会员/;
+const AGREEMENT_SUBJECT = /合同|协议|专栏|课程|服务|会员/;
+
 /** Verbs a business clause uses to name what has to be delivered. */
 const ACTIONS: readonly { pattern: RegExp; label: string }[] = [
   { pattern: /退款|退还|退回/, label: '退款' },
@@ -95,10 +105,19 @@ const contractLabelOf = (clause: string): string => {
     return quoted;
   }
 
-  const named =
-    /([\u4e00-\u9fa5]{2,10}(?:合同|协议))/.exec(clause)?.[1];
+  const named = /([\u4e00-\u9fa5]{2,10}(?:合同|协议))/.exec(clause)?.[1];
 
-  return named ?? '业务合同';
+  if (named !== undefined) {
+    return named;
+  }
+
+  // 订阅 and 会员 are agreements the text names by their subject, not by the
+  // word 合同: 「读者订阅极客时间专栏」is the 极客时间专栏订阅协议.
+  // Two to four characters keeps the nearest noun: the leftmost match of a
+  // longer run would swallow the readers as part of the subject.
+  const subject = /([\u4e00-\u9fa5]{2,4})(专栏|课程|服务|会员)/.exec(clause);
+
+  return subject === null ? '业务合同' : `${subject[0]}订阅协议`;
 };
 
 const isBreachClause = (clause: string): boolean =>
@@ -137,6 +156,7 @@ export const draftFromBusinessText = (
   }
 
   let line = 0;
+  const emitted = new Set<string>();
 
   const push = (row: Omit<DraftRow, 'line'>): void => {
     line += 1;
@@ -154,7 +174,7 @@ export const draftFromBusinessText = (
     const thing = thingOf(clause);
     const breach = isBreachClause(clause);
 
-    if (/签订|签署|签约/.test(clause) && /合同|协议/.test(clause)) {
+    if (AGREEMENT.test(clause) && AGREEMENT_SUBJECT.test(clause)) {
       push({
         stage: '合约确立',
         activity: clause,
@@ -190,12 +210,21 @@ export const draftFromBusinessText = (
     const actions = ACTIONS.filter((action) => action.pattern.test(clause));
 
     for (const action of actions) {
+      // A breach clause names both the obligation that failed and its repair, so
+      // 开通 appears again after 开通申请 already exists. Today's text establishes
+      // the obligation once; a second reading of the same document is a
+      // duplicate, not a second commitment.
+      if (emitted.has(`${action.label}`)) {
+        continue;
+      }
+
       const hasDeadline = DEADLINE.test(clause);
       const hasCompletion = COMPLETION.test(clause);
 
       // A deadline governs the claim, so a clause with both is still a request;
       // its confirmation is the next clause that reports the result.
       if (hasDeadline || !hasCompletion) {
+        emitted.add(`${action.label}`);
         push({
           stage,
           activity: clause,
@@ -207,6 +236,7 @@ export const draftFromBusinessText = (
         continue;
       }
 
+      emitted.add(`${action.label}`);
       push({
         stage,
         activity: clause,
