@@ -30,9 +30,7 @@ describe('fulfillment alignment', () => {
 
     expect(band.groupId).toBe('fulfillment:evidence.delivery-request');
     expect(band.intervalBar).toEqual(request.box);
-    expect(band.centerY).toBe(
-      request.box.y + request.box.height / 2,
-    );
+    expect(band.centerY).toBe(request.box.y + request.box.height / 2);
     expect(band.moments.map((moment) => moment.kind)).toEqual([
       'confirmation',
       'proof',

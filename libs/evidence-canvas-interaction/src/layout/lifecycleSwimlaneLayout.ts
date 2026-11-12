@@ -88,23 +88,25 @@ export const createLifecycleSwimlaneLayout = (
   const sharedBandGap = options.sharedBandGap ?? SHARED_BAND_GAP;
   const nested = createGraphLayout(graph, options);
 
+  /**
+   * Topmost drawn Context of a subtree.
+   *
+   * A malformed model can carry a `parentContextRef` cycle; the visited set makes
+   * the walk stop on the first repeat instead of hanging the canvas.
+   */
   const rootOf = (contextId: string): string => {
+    const visited = new Set<string>();
     let current = contextId;
-    const seen = new Set<string>([current]);
 
     for (;;) {
-      const group = nested.contextGroupById.get(current);
+      const parent = nested.contextGroupById.get(current)?.parentContextId;
 
-      if (group === undefined || group.parentContextId === null) {
+      if (parent === undefined || parent === null || visited.has(parent)) {
         return current;
       }
 
-      if (seen.has(group.parentContextId)) {
-        return current;
-      }
-
-      seen.add(group.parentContextId);
-      current = group.parentContextId;
+      visited.add(current);
+      current = parent;
     }
   };
 
@@ -128,22 +130,21 @@ export const createLifecycleSwimlaneLayout = (
     descendantsOf.get(rootOf(group.contextId))?.add(group.contextId);
   }
 
-  const contextOf = (contextId: string) =>
-    nested.contextGroupById.get(contextId)?.entity;
-
   const stageByRoot = new Map<string, LifecycleStage>();
 
   for (const rootId of rootIds) {
-    const entity = contextOf(rootId);
+    const context = nested.contextGroupById.get(rootId)?.entity;
+    // Only the root's own objects decide its stage: a nested contract Context
+    // belongs to its own lane, which the root carries with it.
     const members = nested.nodes
       .filter((node) => node.contextId === rootId)
       .map((node) => node.entity);
 
     stageByRoot.set(
       rootId,
-      entity === undefined
+      context === undefined
         ? 'contract'
-        : lifecycleStageOfContext(entity, members),
+        : lifecycleStageOfContext(context, members),
     );
   }
 

@@ -48,12 +48,9 @@ const EDGE_COLOR = '#98a2b3';
 const EDGE_HIGHLIGHT = '#2f5d8f';
 
 /** Lane data only exists on a lifecycle layout, but the stage accepts either. */
-const swimlanesOf = (
+const isLifecycleLayout = (
   layout: DomainGraphLayout,
-): LifecycleSwimlaneLayout | null =>
-  'swimlanes' in layout && Array.isArray(layout.swimlanes)
-    ? (layout as LifecycleSwimlaneLayout)
-    : null;
+): layout is LifecycleSwimlaneLayout => 'swimlanes' in layout;
 
 export const CanvasStage = ({
   layout,
@@ -75,7 +72,7 @@ export const CanvasStage = ({
 }: CanvasStageProps) => {
   const width = Math.max(1, layout.bounds.width);
   const height = Math.max(1, layout.bounds.height);
-  const swimlanes = swimlanesOf(layout);
+  const swimlanes = isLifecycleLayout(layout) ? layout : null;
   const relationshipById = new Map(
     document.relationships.map(
       (relationship) => [relationship.id, relationship] as const,
