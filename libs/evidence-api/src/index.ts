@@ -164,6 +164,16 @@ export {
 } from './delivery/topology.js';
 
 export {
+  buildDelivery,
+  buildDeliveryContract,
+  buildDeliveryDeployment,
+  componentNameOf,
+  type DeliveryBundle,
+  type DeliveryContract,
+  type DeliveryDeployment,
+} from './delivery/delivery.js';
+
+export {
   runCli,
   validatePaths,
   type CliOptions,
