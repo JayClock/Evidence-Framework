@@ -14,6 +14,7 @@ import {
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type {
+  CreateProjectDocumentInput,
   CreateProjectInput,
   CreateProjectResult,
   EvidenceProjectSummary,
@@ -43,6 +44,15 @@ export interface ProjectStore {
   open(rootPath: string): Promise<OpenProjectResult>;
   /** Writes a starter model to a new folder or bundle file. */
   create(input: CreateProjectInput): Promise<CreateProjectResult>;
+  /**
+   * Writes an already-built document to a new folder or bundle file.
+   *
+   * The ingestion path compiles a document before it knows where it goes, so the
+   * store has to accept one; the caller keeps the manifest name and id.
+   */
+  createFromDocument(
+    input: CreateProjectDocumentInput,
+  ): Promise<CreateProjectResult>;
   save(
     rootPath: string,
     document: DomainModelDocument,
@@ -123,7 +133,10 @@ interface StarterTarget {
   rootPath: string;
 }
 
-const resolveStarterTarget = (input: CreateProjectInput): StarterTarget => {
+const resolveStarterTarget = (input: {
+  targetPath: string;
+  kind?: 'directory' | 'file';
+}): StarterTarget => {
   if (input.kind !== 'file') {
     return { kind: 'directory', rootPath: path.resolve(input.targetPath) };
   }
@@ -182,6 +195,53 @@ export const createProjectStore = ({
     );
   };
 
+  /**
+   * Writes one document to a new source tree or bundle file.
+   *
+   * Refusing an existing target matters more than it looks: silently
+   * overwriting is how a half-written model replaces a real one, so both
+   * branches fail with the path the user should open instead.
+   */
+  const writeProject = async (
+    target: StarterTarget,
+    document: DomainModelDocument,
+  ): Promise<CreateProjectResult> => {
+    if (target.kind === 'file') {
+      if (await exists(target.rootPath)) {
+        return {
+          success: false,
+          error: `目标文件已存在：${target.rootPath}，请直接打开它或换一个位置。`,
+        };
+      }
+
+      await mkdir(path.dirname(target.rootPath), { recursive: true });
+      await writeModelBundle(target.rootPath, document);
+    } else {
+      const modelRoot = modelRootOf(target.rootPath);
+
+      if (await exists(path.join(modelRoot, MODEL_MANIFEST_FILE))) {
+        return {
+          success: false,
+          error: `目标目录已有模型（${path.join(MODEL_DIRECTORY, MODEL_MANIFEST_FILE)}），请直接打开它或换一个目录。`,
+        };
+      }
+
+      await mkdir(modelRoot, { recursive: true });
+      await writeModelDirectory(modelRoot, document);
+    }
+
+    const project = summarize(
+      target.rootPath,
+      document,
+      now().toISOString(),
+      target.kind,
+    );
+
+    await remember(project);
+
+    return { success: true, project, document };
+  };
+
   return {
     async listRecent() {
       return readRecent(recentProjectsFile);
@@ -189,46 +249,20 @@ export const createProjectStore = ({
 
     async create(input) {
       try {
-        const target = resolveStarterTarget(input);
         const document = createStarterDocument(input.templateId ?? 'blank', {
           name: input.name,
           modelId: input.modelId ?? deriveModelId(input.name),
         });
 
-        if (target.kind === 'file') {
-          if (await exists(target.rootPath)) {
-            return {
-              success: false,
-              error: `目标文件已存在：${target.rootPath}，请直接打开它或换一个位置。`,
-            };
-          }
+        return await writeProject(resolveStarterTarget(input), document);
+      } catch (error) {
+        return { success: false, error: toMessage(error) };
+      }
+    },
 
-          await mkdir(path.dirname(target.rootPath), { recursive: true });
-          await writeModelBundle(target.rootPath, document);
-        } else {
-          const modelRoot = modelRootOf(target.rootPath);
-
-          if (await exists(path.join(modelRoot, MODEL_MANIFEST_FILE))) {
-            return {
-              success: false,
-              error: `目标目录已有模型（${path.join(MODEL_DIRECTORY, MODEL_MANIFEST_FILE)}），请直接打开它或换一个目录。`,
-            };
-          }
-
-          await mkdir(modelRoot, { recursive: true });
-          await writeModelDirectory(modelRoot, document);
-        }
-
-        const project = summarize(
-          target.rootPath,
-          document,
-          now().toISOString(),
-          target.kind,
-        );
-
-        await remember(project);
-
-        return { success: true, project, document };
+    async createFromDocument(input) {
+      try {
+        return await writeProject(resolveStarterTarget(input), input.document);
       } catch (error) {
         return { success: false, error: toMessage(error) };
       }

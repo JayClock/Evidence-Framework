@@ -125,6 +125,15 @@ export interface CreateProjectInput {
   kind?: ProjectStorageKind;
 }
 
+/** A document a caller already compiled, plus where it should be written. */
+export interface CreateProjectDocumentInput {
+  /** Absolute folder of the source tree, or the absolute bundle file path. */
+  targetPath: string;
+  kind?: ProjectStorageKind;
+  /** The compiled model; its manifest supplies the name and id. */
+  document: DomainModelDocument;
+}
+
 export type CreateProjectResult =
   | {
       success: true;

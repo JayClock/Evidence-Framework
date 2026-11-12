@@ -19,6 +19,8 @@ import {
   synchronizeEvidenceMcpRegistration,
 } from './mcpRegistration';
 import { createMcpSensorService } from './mcpSensorService';
+import { registerIngestionIpc } from './ingestionIpc';
+import { createModelIngestionReader } from './ingestionModelReader';
 import { registerProjectIpc } from './projectIpc';
 import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
@@ -69,6 +71,11 @@ const startApplication = async (): Promise<void> => {
   });
 
   registerProjectIpc({ projectStore, openEditorWindow });
+  registerIngestionIpc({
+    projectStore,
+    generate: createModelIngestionReader(),
+    openEditorWindow,
+  });
   registerReviewIpc();
   registerBranchIpc({
     store: branchStore,
