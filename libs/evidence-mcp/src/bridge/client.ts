@@ -212,5 +212,14 @@ export const createEvidenceMcpBridgeClient = ({
     runStageGate: (input) => call({ method: 'run_stage_gate', ...input }),
     getDeliveryTopology: () => call({ method: 'get_delivery_topology' }),
     exportOpenApiContract: () => call({ method: 'export_openapi_contract' }),
+    runScenarioReplay: (input) =>
+      call({
+        method: 'run_scenario_replay',
+        ...(input.scenarioId === undefined
+          ? {}
+          : { scenarioId: input.scenarioId }),
+      }),
+    auditProductionDrift: (input) =>
+      call({ method: 'audit_production_drift', document: input.document }),
   };
 };

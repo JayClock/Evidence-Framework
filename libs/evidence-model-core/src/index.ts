@@ -239,6 +239,19 @@ export {
 } from './validation/scope.js';
 
 export {
+  replayScenario,
+  replayValidationSuite,
+  replayableScenarioIds,
+  type ReplayCheckpoint,
+  type ReplayDerivation,
+  type ReplayFulfillmentState,
+  type ReplayOpening,
+  type ReplayReport,
+  type ReplayStep,
+  type ScenarioReplay,
+} from './validation/replay.js';
+
+export {
   simulateScenario,
   simulateValidationSuite,
   type ScenarioResult,

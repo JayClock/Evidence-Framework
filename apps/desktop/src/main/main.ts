@@ -11,6 +11,7 @@ import { registerAgentIpc } from './agentIpcHandlers';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
 import { createMcpRequestHandler } from './mcpRequestHandler';
+import { createSimulationService } from './mcpSimulationService';
 import {
   mcpClientConfigs,
   synchronizeEvidenceMcpRegistration,
@@ -96,6 +97,7 @@ const startApplication = async (): Promise<void> => {
         capture,
         sensors: createMcpSensorService(),
         delivery: createMcpDeliveryService(),
+        simulation: createSimulationService(),
         onCall,
       }),
     publishStatus: (status) => {

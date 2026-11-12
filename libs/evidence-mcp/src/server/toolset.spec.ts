@@ -87,6 +87,22 @@ const createClient = (
     links: [],
     limitations: [],
   })),
+  runScenarioReplay: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    passed: true,
+    scenarios: [],
+    frames: [],
+    errors: [],
+  })),
+  auditProductionDrift: vi.fn(async () => ({
+    modelId: 'product-procurement',
+    spanCount: 0,
+    commitCount: 0,
+    counts: {},
+    findings: [],
+    passed: true,
+    errors: [],
+  })),
   exportOpenApiContract: vi.fn(async () => ({
     modelId: 'product-procurement',
     modelVersion: '1.0.0',
@@ -186,8 +202,10 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.roleifyAndInvertDependency,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
+      TOOL_NAMES.scenarioReplay,
+      TOOL_NAMES.productionDrift,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(12);
+    expect(createEvidenceTools(createClient())).toHaveLength(14);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -367,5 +385,32 @@ describe('createEvidenceTools', () => {
     expect(result.isError).toBe(true);
     expect(result.text).toContain('不是履约请求');
     expect(client.applyModelPatch).not.toHaveBeenCalled();
+  });
+
+  it('replays the scenario it was asked about and reports the frames', async () => {
+    const replay = toolOf(TOOL_NAMES.scenarioReplay);
+    const result = await replay.tool.run({ scenarioId: 'scenario.payment' });
+
+    expect(replay.client.runScenarioReplay).toHaveBeenCalledWith({
+      scenarioId: 'scenario.payment',
+    });
+    expect(JSON.parse(result.text)).toMatchObject({ passed: true });
+  });
+
+  it('omits the scenario id when the caller wants every summary', async () => {
+    const replay = toolOf(TOOL_NAMES.scenarioReplay);
+
+    await replay.tool.run({});
+
+    expect(replay.client.runScenarioReplay).toHaveBeenCalledWith({});
+  });
+
+  it('hands the exported trace to the audit unchanged', async () => {
+    const drift = toolOf(TOOL_NAMES.productionDrift);
+    const document = { resourceSpans: [] };
+
+    await drift.tool.run({ document });
+
+    expect(drift.client.auditProductionDrift).toHaveBeenCalledWith({ document });
   });
 });

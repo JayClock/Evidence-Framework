@@ -144,6 +144,68 @@ export interface McpOpenApiContract {
   limitations: readonly string[];
 }
 
+/** One step of a scenario played back, reduced to what an agent reads. */
+export interface McpReplayFrame {
+  sequence: number;
+  actingRoleRef: string;
+  instanceRef: string;
+  entityRef: string;
+  /** Business time the issued Evidence carries, when it declares one. */
+  at: string | null;
+  derivations: readonly {
+    ruleRef: string;
+    target: string | null;
+    result: unknown;
+  }[];
+  checkpoints: readonly {
+    ruleRef: string;
+    actual: unknown;
+    passed: boolean;
+  }[];
+  fulfillmentStates: readonly {
+    requestInstanceRef: string;
+    status: string;
+  }[];
+}
+
+/** A replay of the model's own scenarios, projected for external agents. */
+export interface McpScenarioReplay {
+  modelId: string;
+  passed: boolean;
+  scenarios: readonly {
+    scenarioId: string;
+    label: string;
+    stepCount: number;
+    checkpointCount: number;
+    passed: boolean;
+    errors: readonly string[];
+  }[];
+  /** Frames of the scenario that was asked for; empty when none was named. */
+  frames: readonly McpReplayFrame[];
+  errors: readonly string[];
+}
+
+/** One production/shape disagreement, projected for external agents. */
+export interface McpDriftFinding {
+  kind: string;
+  severity: 'block' | 'warn';
+  message: string;
+  evidenceRef: string | null;
+  contextRef: string | null;
+  remediation: string;
+}
+
+/** The drift audit between one exported trace and the saved model. */
+export interface McpDriftAudit {
+  modelId: string;
+  spanCount: number;
+  commitCount: number;
+  counts: Readonly<Record<string, number>>;
+  findings: readonly McpDriftFinding[];
+  passed: boolean;
+  errors: readonly string[];
+}
+
 export interface McpStageGateResult {
   passed: boolean;
   exitCode: number;
@@ -165,7 +227,9 @@ export type EvidenceMcpAppRequest =
   | { method: 'apply_model_patch'; patch: McpPatchInput }
   | { method: 'run_stage_gate'; target: 'api' | 'visualization' }
   | { method: 'get_delivery_topology' }
-  | { method: 'export_openapi_contract' };
+  | { method: 'export_openapi_contract' }
+  | { method: 'run_scenario_replay'; scenarioId?: string }
+  | { method: 'audit_production_drift'; document: unknown };
 
 export type EvidenceMcpAppResult =
   | McpAppState
@@ -176,7 +240,9 @@ export type EvidenceMcpAppResult =
   | McpPatchResult
   | McpStageGateResult
   | McpDeliveryTopology
-  | McpOpenApiContract;
+  | McpOpenApiContract
+  | McpScenarioReplay
+  | McpDriftAudit;
 
 /**
  * What every MCP tool needs from the desktop.
@@ -202,6 +268,10 @@ export interface EvidenceMcpAppClient {
   getDeliveryTopology(): Promise<McpDeliveryTopology>;
   /** The OpenAPI 3.1 contract the saved model implies. */
   exportOpenApiContract(): Promise<McpOpenApiContract>;
+  /** Plays the model's own scenarios back, step by step. */
+  runScenarioReplay(input: { scenarioId?: string }): Promise<McpScenarioReplay>;
+  /** Compares an exported production trace with the saved model. */
+  auditProductionDrift(input: { document: unknown }): Promise<McpDriftAudit>;
 }
 
 export const MCP_SERVER_NAME = 'evidence-desktop';

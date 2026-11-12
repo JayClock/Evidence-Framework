@@ -27,6 +27,37 @@ const deliveryService = () => ({
   }),
 });
 
+/** A replay and a drift audit that answer without reading a real project. */
+const simulationService = () => ({
+  replay: async (input: { rootPath: string; scenarioId?: string }) => ({
+    modelId: 'product-procurement',
+    passed: true,
+    scenarios: [],
+    frames: [
+      {
+        sequence: 1,
+        actingRoleRef: 'role.buyer',
+        instanceRef: `instance.${input.scenarioId ?? 'all'}`,
+        entityRef: 'request.purchase',
+        at: '2026-09-01T09:00:00Z',
+        derivations: [],
+        checkpoints: [],
+        fulfillmentStates: [],
+      },
+    ],
+    errors: [],
+  }),
+  auditDrift: async (input: { rootPath: string; document: unknown }) => ({
+    modelId: 'product-procurement',
+    spanCount: 1,
+    commitCount: 0,
+    counts: {},
+    findings: [],
+    passed: input.document !== undefined,
+    errors: [],
+  }),
+});
+
 const appState = (): McpAppState => ({
   isRunning: true,
   activeProject: {
@@ -86,6 +117,7 @@ describe('createMcpRequestHandler', () => {
         return appState();
       },
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: sensors(),
       capture: async () => ({ data: 'ZmFrZQ==', width: 1, height: 1 }),
     });
@@ -108,6 +140,7 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: service,
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -125,6 +158,7 @@ describe('createMcpRequestHandler', () => {
         activeProject: null,
       }),
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -143,6 +177,7 @@ describe('createMcpRequestHandler', () => {
           ? { x: 24, y: 24, width: 320, height: 120 }
           : appState(),
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: sensors(),
       capture: async (rect) => {
         captured.push(rect);
@@ -168,6 +203,7 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => null,
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 0, height: 0 }),
     });
@@ -182,6 +218,7 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
       delivery: deliveryService(),
+      simulation: simulationService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
       onCall: (method) => calls.push(method),
@@ -190,5 +227,39 @@ describe('createMcpRequestHandler', () => {
     await handler({ method: 'get_domain_model', includeRules: false });
 
     expect(calls).toEqual(['get_domain_model']);
+  });
+
+  it('answers a replay for the active project and passes the scenario through', async () => {
+    const handler = createMcpRequestHandler({
+      renderer: async () => appState(),
+      delivery: deliveryService(),
+      simulation: simulationService(),
+      sensors: sensors(),
+      capture: async () => ({ data: '', width: 1, height: 1 }),
+    });
+
+    const result = (await handler({
+      method: 'run_scenario_replay',
+      scenarioId: 'scenario.payment',
+    })) as unknown as { frames: { instanceRef: string }[] };
+
+    expect(result.frames[0]?.instanceRef).toBe('instance.scenario.payment');
+  });
+
+  it('audits the trace the caller exported against the active project', async () => {
+    const handler = createMcpRequestHandler({
+      renderer: async () => appState(),
+      delivery: deliveryService(),
+      simulation: simulationService(),
+      sensors: sensors(),
+      capture: async () => ({ data: '', width: 1, height: 1 }),
+    });
+
+    const result = (await handler({
+      method: 'audit_production_drift',
+      document: { resourceSpans: [] },
+    })) as { passed: boolean };
+
+    expect(result.passed).toBe(true);
   });
 });

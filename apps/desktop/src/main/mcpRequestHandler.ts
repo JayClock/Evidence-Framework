@@ -10,6 +10,7 @@ import type {
 import type { McpRendererMethod } from '../shared/mcpIpc';
 
 import type { McpDeliveryService } from './mcpDeliveryService';
+import type { SimulationService } from './mcpSimulationService';
 
 /** Thrown by a dependency to surface a stable MCP error code. */
 export class McpRequestError extends Error {
@@ -48,6 +49,7 @@ export interface McpRequestHandlerDeps {
   renderer: McpRendererChannel;
   sensors: McpSensorService;
   delivery: McpDeliveryService;
+  simulation: SimulationService;
   capture: McpCaptureService;
   /** Notified for every served call, so the header can show activity. */
   onCall?: (method: EvidenceMcpAppRequest['method']) => void;
@@ -79,6 +81,7 @@ export const createMcpRequestHandler = ({
   renderer,
   sensors,
   delivery,
+  simulation,
   capture,
   onCall,
 }: McpRequestHandlerDeps) => {
@@ -105,6 +108,18 @@ export const createMcpRequestHandler = ({
         return (await delivery.topology(await activeRoot(renderer))) as EvidenceMcpAppResult;
       case 'export_openapi_contract':
         return (await delivery.openapi(await activeRoot(renderer))) as EvidenceMcpAppResult;
+      case 'run_scenario_replay':
+        return simulation.replay({
+          rootPath: await activeRoot(renderer),
+          ...(request.scenarioId === undefined
+            ? {}
+            : { scenarioId: request.scenarioId }),
+        });
+      case 'audit_production_drift':
+        return simulation.auditDrift({
+          rootPath: await activeRoot(renderer),
+          document: request.document,
+        });
       case 'get_canvas_screenshot':
         return captureCanvas({ renderer, capture, targetNodeId: request.targetNodeId });
     }
