@@ -203,6 +203,7 @@ export {
 
 export {
   isTimestampText,
+  jsonValuesEqual,
   normalizeJsonValue,
   validateTypedValue,
 } from './validation/typedValues.js';

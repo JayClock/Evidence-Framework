@@ -1,21 +1,19 @@
-import {
-  isFulfillmentRequest,
-  type AttributeAST,
-  type DomainModelDocument,
-  type EntityAST,
-  type RuleAST,
-  type RuleBinding,
-} from '@evidence-poc/evidence-schema';
+import type { DomainModelDocument, RuleAST } from '@evidence-poc/evidence-schema';
 
+import { celValueToJson, compileCelExpression } from '../cel/celEvaluator.js';
 import {
-  CelDuration,
-  CelTimestamp,
-  CelEvaluationError,
-  celValueToJson,
-  compileCelExpression,
-} from '../cel/celEvaluator.js';
-import { fulfillmentResults } from './scope.js';
-import { normalizeJsonValue, validateTypedValue } from './typedValues.js';
+  attributesOf,
+  entityOf,
+  fulfillmentStatusOf,
+  type RuleResultRecord,
+  type RuntimeInstance,
+} from './fulfillmentState.js';
+import { buildActivation } from './ruleActivation.js';
+import {
+  jsonValuesEqual,
+  normalizeJsonValue,
+  validateTypedValue,
+} from './typedValues.js';
 import {
   indexSuite,
   validateValidationSuite,
@@ -75,138 +73,9 @@ export interface SimulationReport {
 }
 
 /** One scenario instance while the simulation mutates it with derivations. */
-interface WorkingInstance {
-  id: string;
-  entityRef: string;
-  values: Record<string, unknown>;
-  basedOn: readonly string[];
-}
-
-const attributesOf = (entity: EntityAST | undefined): Map<string, AttributeAST> =>
-  new Map(
-    (entity?.attributes ?? []).map((attribute) => [attribute.name, attribute] as const),
-  );
-
-const entityOf = (
-  model: DomainModelDocument,
-  entityId: string | undefined,
-): EntityAST | undefined =>
-  entityId === undefined
-    ? undefined
-    : model.entities.find((entity) => entity.id === entityId);
+type WorkingInstance = RuntimeInstance;
 
 const dedupe = (messages: readonly string[]): string[] => [...new Set(messages)];
-
-/** Converts a JSON value into the CEL value its declared type implies. */
-const typedToCel = (value: unknown, valueType: string): unknown => {
-  switch (valueType) {
-    case 'timestamp': {
-      const parsed = CelTimestamp.parse(String(value));
-
-      return parsed ?? value;
-    }
-    case 'duration': {
-      const parsed = CelDuration.parse(String(value));
-
-      return parsed ?? value;
-    }
-    case 'int':
-    case 'uint':
-    case 'double':
-    case 'decimal':
-      return typeof value === 'number' ? value : Number(value);
-    case 'bool':
-      return value;
-    default:
-      return value;
-  }
-};
-
-/** One instance as the rule sees it: typed values plus its own identity. */
-const instanceToCel = (
-  instance: WorkingInstance,
-  attributes: ReadonlyMap<string, AttributeAST>,
-): Record<string, unknown> => {
-  const converted: Record<string, unknown> = {};
-
-  for (const [name, value] of Object.entries(instance.values)) {
-    converted[name] = typedToCel(value, attributes.get(name)?.valueType ?? 'dynamic');
-  }
-
-  converted['id'] = instance.id;
-  converted['entityRef'] = instance.entityRef;
-
-  return converted;
-};
-
-interface Activation {
-  [variable: string]: unknown;
-}
-
-/**
- * The variables a rule reads, from the scenario's bindings and its clock.
- *
- * `asOf` and `now` are never asserted by hand: the static checks compare them
- * with the scenario timestamp, so they come from `asOf` here.
- */
-const buildActivation = (
-  rule: RuleAST,
-  evaluation: ScenarioEvaluation,
-  instances: ReadonlyMap<string, WorkingInstance>,
-  model: DomainModelDocument,
-  asOf: string,
-): Activation => {
-  const activation: Activation = {};
-
-  const instanceAsCel = (ref: string): unknown => {
-    const instance = instances.get(ref);
-
-    if (instance === undefined) {
-      throw new CelEvaluationError(
-        `cannot evaluate Rule '${rule.id}': unknown instance '${ref}'`,
-      );
-    }
-
-    return instanceToCel(
-      instance,
-      attributesOf(entityOf(model, instance.entityRef)),
-    );
-  };
-
-  for (const [variable, source] of Object.entries(evaluation.bindings)) {
-    const binding: RuleBinding | undefined = rule.bindings[variable];
-
-    if ('instanceRef' in source) {
-      activation[variable] = instanceAsCel(source.instanceRef);
-    } else if ('instanceRefs' in source) {
-      activation[variable] = source.instanceRefs.map(instanceAsCel);
-    } else {
-      activation[variable] = typedToCel(
-        source.value,
-        binding !== undefined && 'type' in binding ? binding.type : 'dynamic',
-      );
-    }
-  }
-
-  for (const [variable, binding] of Object.entries(rule.bindings)) {
-    if (
-      variable in activation ||
-      !('type' in binding) ||
-      binding.type !== 'timestamp' ||
-      (variable !== 'asOf' && variable !== 'now')
-    ) {
-      continue;
-    }
-
-    const parsed = CelTimestamp.parse(asOf);
-
-    if (parsed !== null) {
-      activation[variable] = parsed;
-    }
-  }
-
-  return activation;
-};
 
 const instanceReferences = (evaluation: ScenarioEvaluation): readonly string[] => {
   const refs = new Set<string>();
@@ -224,193 +93,6 @@ const instanceReferences = (evaluation: ScenarioEvaluation): readonly string[] =
   }
 
   return [...refs];
-};
-
-const descendsFrom = (
-  instanceRef: string,
-  ancestorRef: string,
-  instances: ReadonlyMap<string, WorkingInstance>,
-  seen: ReadonlySet<string> = new Set<string>(),
-): boolean => {
-  if (instanceRef === ancestorRef) {
-    return true;
-  }
-
-  const visited = new Set(seen);
-
-  if (visited.has(instanceRef)) {
-    return false;
-  }
-
-  visited.add(instanceRef);
-
-  return (instances.get(instanceRef)?.basedOn ?? []).some((parent) =>
-    descendsFrom(parent, ancestorRef, instances, visited),
-  );
-};
-
-interface RuleResultRecord {
-  result: unknown;
-  instanceRefs: readonly string[];
-}
-
-const scopedResults = (
-  records: readonly RuleResultRecord[],
-  requestInstanceRef: string,
-  instances: ReadonlyMap<string, WorkingInstance>,
-): readonly unknown[] =>
-  records
-    .filter(
-      (record) =>
-        record.instanceRefs.length === 0 ||
-        record.instanceRefs.some((ref) =>
-          descendsFrom(ref, requestInstanceRef, instances),
-        ),
-    )
-    .map((record) => record.result);
-
-/**
- * What one request's Fulfillment status is, using only the issued graph.
- *
- * A breach wins over a completion, and a completion only counts when a related
- * confirmation was actually issued: a rule that evaluates true on a graph with
- * no result cannot complete anything.
- */
-const fulfillmentStatusOf = (
-  model: DomainModelDocument,
-  instances: ReadonlyMap<string, WorkingInstance>,
-  issued: ReadonlySet<string>,
-  requestInstanceRef: string,
-  ruleResults: ReadonlyMap<string, readonly RuleResultRecord[]>,
-  manualCompletions: ReadonlySet<string>,
-): FulfillmentStatus => {
-  const requestInstance = instances.get(requestInstanceRef);
-
-  if (requestInstance === undefined || !issued.has(requestInstanceRef)) {
-    return 'not_requested';
-  }
-
-  const requestEntity = entityOf(model, requestInstance.entityRef);
-
-  if (requestEntity === undefined || !isFulfillmentRequest(requestEntity)) {
-    return 'not_requested';
-  }
-
-  const results = fulfillmentResults(model, requestEntity.id);
-  const confirmationTypes = new Set(results.confirmations.map((item) => item.id));
-
-  for (const role of results.roles) {
-    for (const relationship of model.relationships) {
-      if (
-        relationship.kind === 'plays_role' &&
-        relationship.targetRef === role.id
-      ) {
-        confirmationTypes.add(relationship.sourceRef);
-      }
-    }
-  }
-
-  const relatedConfirmations = [...issued].filter((instanceRef) => {
-    const instance = instances.get(instanceRef);
-
-    return (
-      instance !== undefined &&
-      confirmationTypes.has(instance.entityRef) &&
-      descendsFrom(instanceRef, requestInstanceRef, instances)
-    );
-  });
-
-  if (manualCompletions.has(requestInstanceRef)) {
-    return 'completed';
-  }
-
-  const contextRef = 'contextRef' in requestEntity ? requestEntity.contextRef : undefined;
-  const rules = model.rules.filter(
-    (rule) =>
-      rule.contextRef === contextRef &&
-      (rule.kind === 'completion' || rule.kind === 'breach') &&
-      Object.values(rule.bindings).some(
-        (binding) =>
-          'ref' in binding &&
-          binding.ref === requestEntity.id,
-      ),
-  );
-
-  for (const rule of rules) {
-    if (rule.kind !== 'breach') {
-      continue;
-    }
-
-    const scoped = scopedResults(
-      ruleResults.get(rule.id) ?? [],
-      requestInstanceRef,
-      instances,
-    );
-
-    if (scoped.some((result) => Boolean(result))) {
-      return 'breached';
-    }
-  }
-
-  const completionRules = rules.filter((rule) => rule.kind === 'completion');
-
-  if (completionRules.length > 0) {
-    if (relatedConfirmations.length === 0) {
-      return 'pending';
-    }
-
-    for (const rule of completionRules) {
-      const scoped = scopedResults(
-        ruleResults.get(rule.id) ?? [],
-        requestInstanceRef,
-        instances,
-      );
-
-      if (scoped.some((result) => Boolean(result))) {
-        return 'completed';
-      }
-    }
-
-    return 'pending';
-  }
-
-  return relatedConfirmations.length > 0 ? 'completed' : 'pending';
-};
-
-/** Structural equality over normalized JSON, independent of key order. */
-const jsonEqual = (left: unknown, right: unknown): boolean => {
-  if (Array.isArray(left) || Array.isArray(right)) {
-    return (
-      Array.isArray(left) &&
-      Array.isArray(right) &&
-      left.length === right.length &&
-      left.every((item, index) => jsonEqual(item, right[index]))
-    );
-  }
-
-  if (
-    typeof left === 'object' &&
-    left !== null &&
-    typeof right === 'object' &&
-    right !== null
-  ) {
-    const leftKeys = Object.keys(left).sort();
-    const rightKeys = Object.keys(right).sort();
-
-    return (
-      leftKeys.length === rightKeys.length &&
-      leftKeys.every(
-        (key, index) =>
-          key === rightKeys[index] &&
-          jsonEqual(
-            (left as Record<string, unknown>)[key],
-            (right as Record<string, unknown>)[key],
-          ),
-      )
-    );
-  }
-
-  return left === right;
 };
 
 const print = (value: unknown): string => JSON.stringify(value) ?? 'null';
@@ -435,7 +117,7 @@ const applyDerivation = (
   }
 
   if (attribute in instance.values) {
-    if (!jsonEqual(normalizeJsonValue(instance.values[attribute]), normalizeJsonValue(result))) {
+    if (!jsonValuesEqual(normalizeJsonValue(instance.values[attribute]), normalizeJsonValue(result))) {
       errors.push(
         `${scenarioId}.evaluations[${evaluationIndex}]: derived value for '${instance.id}#${attribute}' conflicts with asserted value`,
       );
@@ -508,7 +190,7 @@ export const simulateScenario = (
 
       const passed =
         resultError === null &&
-        jsonEqual(normalizeJsonValue(normalized), normalizeJsonValue(evaluation.expectedResult));
+        jsonValuesEqual(normalizeJsonValue(normalized), normalizeJsonValue(evaluation.expectedResult));
 
       if (!passed) {
         errors.push(

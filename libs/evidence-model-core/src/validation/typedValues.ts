@@ -144,3 +144,35 @@ export const normalizeJsonValue = (value: unknown): unknown => {
 /** True when `name` is a lower snake_case attribute name. */
 export const isAttributeName = (name: string): boolean =>
   ATTRIBUTE_NAME_PATTERN.test(name);
+
+/**
+ * Structural equality over normalized JSON, independent of key order.
+ *
+ * Two derivations of the same object can print their keys in different orders;
+ * comparing their text would call them different values.
+ */
+export const jsonValuesEqual = (left: unknown, right: unknown): boolean => {
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((item, index) => jsonValuesEqual(item, right[index]))
+    );
+  }
+
+  if (isRecord(left) && isRecord(right)) {
+    const leftKeys = Object.keys(left).sort();
+    const rightKeys = Object.keys(right).sort();
+
+    return (
+      leftKeys.length === rightKeys.length &&
+      leftKeys.every(
+        (key, index) =>
+          key === rightKeys[index] && jsonValuesEqual(left[key], right[key]),
+      )
+    );
+  }
+
+  return left === right;
+};

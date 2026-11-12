@@ -108,9 +108,18 @@ export {
 
 export {
   isTimestampText,
+  jsonValuesEqual,
   normalizeJsonValue,
   validateTypedValue,
 } from './validation/typedValues.js';
+
+export {
+  attributesOf,
+  descendsFrom,
+  fulfillmentStatusOf,
+  type RuleResultRecord,
+  type RuntimeInstance,
+} from './validation/fulfillmentState.js';
 
 export {
   ScopeSelectionError,
@@ -123,6 +132,19 @@ export {
   selectScope,
   simulationRules,
 } from './validation/scope.js';
+
+export {
+  replayScenario,
+  replayValidationSuite,
+  replayableScenarioIds,
+  type ReplayCheckpoint,
+  type ReplayDerivation,
+  type ReplayFulfillmentState,
+  type ReplayOpening,
+  type ReplayReport,
+  type ReplayStep,
+  type ScenarioReplay,
+} from './validation/replay.js';
 
 export {
   simulateScenario,
