@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
+import {
+  isContextEntity,
+  isContractEntity,
+  strictValidateDomainModel,
+  type ContextEntityAST,
+} from '@evidence-poc/evidence-schema';
 
 import { parseBlueprint } from './blueprintParser.js';
 import { compileIngestionDraft } from './compileDraft.js';
@@ -37,12 +42,15 @@ describe('compiling a draft', () => {
   it('writes the pre-contract context under the contract it sourced', () => {
     const { compiled } = compileBlueprint();
 
-    const contract = compiled.document.entities.find(
-      (entity) => entity.category === 'evidence' && entity.kind === 'contract',
-    );
-    const preContract = compiled.document.entities.find(
-      (entity) => entity.category === 'context' && entity.kind === 'pre_contract',
-    );
+    // Narrow with the schema's own guards: `find` alone leaves the union wide
+    // open, and `contextRef` only exists on the evidence member.
+    const isPreContractContext = (
+      entity: Parameters<typeof isContextEntity>[0],
+    ): entity is ContextEntityAST =>
+      isContextEntity(entity) && entity.kind === 'pre_contract';
+
+    const contract = compiled.document.entities.find(isContractEntity);
+    const preContract = compiled.document.entities.find(isPreContractContext);
 
     expect(preContract?.parentContextRef).toBe(contract?.contextRef);
     expect(compiled.document.manifest.entryContextRefs).toEqual([

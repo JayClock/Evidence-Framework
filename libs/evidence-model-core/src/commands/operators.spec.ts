@@ -8,7 +8,7 @@ import {
   roleifyAndInvertDependency,
   type FulfillmentPairIntent,
 } from './operators.js';
-import { decodeModelPatch } from './patches.js';
+import { decodeModelPatch, type ModelPatchCommand } from './patches.js';
 import { createModelSession } from '../session/createModelSession.js';
 import { createProcurementModel } from '../../tests/support/modelFixture.js';
 
@@ -21,6 +21,22 @@ const apply = (
   session.dispatchAll(decodeModelPatch(patch.commands));
 
   return { session, document: session.getDocument() };
+};
+
+/**
+ * First command of a patch, narrowed to the pair command it must be.
+ *
+ * Reading the union member directly keeps the assertion honest: a test that
+ * casts to `any` would still pass if the operator stopped emitting the command.
+ */
+const pairCommandOf = (commands: readonly ModelPatchCommand[]) => {
+  const command = commands[0];
+
+  if (command?.type !== 'create-fulfillment-pair') {
+    throw new Error('the operator did not emit a fulfillment pair command');
+  }
+
+  return command;
 };
 
 const pairIntent = (
@@ -83,13 +99,7 @@ describe('introduceFulfillmentPair', () => {
 
   it('models the mandatory business time instead of leaving it to the caller', () => {
     const patch = introduceFulfillmentPair(createProcurementModel(), pairIntent());
-    const moment = patch.commands[0] as {
-      type: string;
-      input: {
-        request: { attributes: { name: string }[] };
-        confirmation: { attributes: { name: string }[] };
-      };
-    };
+    const moment = pairCommandOf(patch.commands);
 
     expect(moment.type).toBe('create-fulfillment-pair');
     expect(moment.input.request.attributes.map((item) => item.name)).toEqual([
@@ -153,9 +163,8 @@ describe('introduceFulfillmentPair', () => {
       ),
     };
     const patch = introduceFulfillmentPair(detached, pairIntent());
-    const command = patch.commands[0] as { input: Record<string, unknown> };
 
-    expect(command.input.contractReferenceId).toBeUndefined();
+    expect(pairCommandOf(patch.commands).input.contractReferenceId).toBeUndefined();
   });
 });
 
@@ -213,9 +222,13 @@ describe('addBreachCompensation', () => {
         responsibleRoleRef: 'role.buyer',
       },
     });
-    const rule = patch.commands[0] as { input: { rule: { expression: string } } };
+    const [breach] = patch.commands;
 
-    expect(rule.input.rule.expression).toContain('now > request.expired_at');
+    if (breach?.type !== 'bind-breach-rule') {
+      throw new Error('the operator did not emit a breach rule');
+    }
+
+    expect(breach.input.rule.expression).toContain('now > request.expired_at');
     expect(patch.commands.map((command) => command.type)).toEqual([
       'bind-breach-rule',
       'create-fulfillment-pair',
