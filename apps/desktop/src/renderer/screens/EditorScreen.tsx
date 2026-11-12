@@ -22,6 +22,7 @@ import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useFrontier } from '../state/useFrontier';
 import { useMcpBridge } from '../state/useMcpBridge';
+import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 
 type LoadState =
@@ -101,6 +102,7 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const reviewExport = useReviewExport(project.rootPath);
   const { state, save, reloadFromDisk, adoptDocument, dismissExternalChange } =
     useEditorSession(project, initialDocument);
   const branches = useBranches(project.rootPath);
@@ -292,6 +294,8 @@ const EditorWorkspace = ({
           state.session.redo();
         }}
         onSave={() => void save()}
+        onExportReview={() => void reviewExport.exportPage()}
+        exportReviewBusy={reviewExport.busy}
         onViewModeChange={setViewMode}
         onSearch={() => searchInputRef.current?.focus()}
         branch={{
@@ -310,6 +314,27 @@ const EditorWorkspace = ({
           onDismissError: branches.clearActionError,
         }}
       />
+
+      {reviewExport.notice !== null ? (
+        <div
+          role="status"
+          className={[
+            'flex items-center justify-between gap-2 border-b px-4 py-1.5 text-[11px]',
+            reviewExport.notice.tone === 'saved'
+              ? 'border-evidence-line bg-evidence-surface text-evidence-muted'
+              : 'border-evidence-evidence bg-[#fdf3f1] text-evidence-evidence',
+          ].join(' ')}
+        >
+          <span className="truncate">{reviewExport.notice.message}</span>
+          <button
+            type="button"
+            onClick={reviewExport.dismissNotice}
+            className="shrink-0 rounded border border-evidence-line px-1.5 py-0.5 text-evidence-muted hover:text-evidence-ink"
+          >
+            知道了
+          </button>
+        </div>
+      ) : null}
 
       <div className="flex min-h-0 flex-1">
         <LeftSidebar

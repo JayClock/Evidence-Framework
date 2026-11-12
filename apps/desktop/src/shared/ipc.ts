@@ -3,6 +3,7 @@ import type { EvidenceBranchesApi } from './branchApi';
 import type { EvidenceMcpApi } from './mcpIpc';
 import type {
   EvidenceProjectSummary,
+  ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,
@@ -19,6 +20,7 @@ export const EVIDENCE_IPC_CHANNELS = {
   recent: 'evidence:project:recent',
   openEditorWindow: 'evidence:project:open-editor-window',
   changed: 'evidence:project:changed',
+  exportReview: 'evidence:project:export-review',
 } as const;
 
 export type EvidenceIpcChannel =
@@ -35,6 +37,13 @@ export interface EvidenceDesktopApi {
     openEditorWindow: (rootPath: string) => Promise<void>;
     /** Subscribes to external `.evidence/fm` changes; returns an unsubscribe. */
     onChanged: (listener: (event: ProjectChangedEvent) => void) => () => void;
+    /**
+     * Writes the offline review page for one project.
+     *
+     * The page is generated in the main process from the sources on disk, so a
+     * review always describes what was saved, not what the canvas shows.
+     */
+    exportReview: (rootPath: string) => Promise<ExportReviewResult>;
   };
   /** Pi agent, sensors and patch application (phase 3). */
   agent: EvidenceAgentApi;
@@ -49,6 +58,7 @@ export interface EvidenceDesktopApi {
 
 export type {
   EvidenceProjectSummary,
+  ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,

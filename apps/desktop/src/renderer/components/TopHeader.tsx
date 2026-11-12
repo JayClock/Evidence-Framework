@@ -19,6 +19,9 @@ interface TopHeaderProps {
   onUndo: () => void;
   onRedo: () => void;
   onSave: () => void;
+  /** Writes the offline review page; reports progress so the button can wait. */
+  onExportReview: () => void;
+  exportReviewBusy: boolean;
   onViewModeChange: (mode: CanvasViewMode) => void;
   onSearch: () => void;
   branch: {
@@ -47,6 +50,8 @@ export const TopHeader = ({
   onUndo,
   onRedo,
   onSave,
+  onExportReview,
+  exportReviewBusy,
   onViewModeChange,
   onSearch,
   branch,
@@ -159,6 +164,16 @@ export const TopHeader = ({
           重做
         </button>
         <McpStatusPill />
+
+        <button
+          type="button"
+          onClick={onExportReview}
+          disabled={exportReviewBusy}
+          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink disabled:opacity-40"
+          title="导出单文件离线审查页（HTML）"
+        >
+          {exportReviewBusy ? '导出中…' : '导出审查页'}
+        </button>
 
         <button
           type="button"

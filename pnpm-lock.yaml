@@ -295,6 +295,9 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../libs/evidence-schema
+      '@evidence-poc/evidence-visualization':
+        specifier: workspace:*
+        version: link:../../libs/evidence-visualization
       '@use-gesture/react':
         specifier: ^10.3.1
         version: 10.3.1(react@19.3.1)

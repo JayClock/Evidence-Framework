@@ -20,6 +20,7 @@ import {
 } from './mcpRegistration';
 import { createMcpSensorService } from './mcpSensorService';
 import { registerProjectIpc } from './projectIpc';
+import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
 import { createDashboardWindow, listEditorWindows, openEditorWindow } from './windows';
 
@@ -68,6 +69,7 @@ const startApplication = async (): Promise<void> => {
   });
 
   registerProjectIpc({ projectStore, openEditorWindow });
+  registerReviewIpc();
   registerBranchIpc({
     store: branchStore,
     onCheckout: (rootPath) => agentIpc.disposeRuntime(rootPath),

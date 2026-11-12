@@ -146,6 +146,7 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     abort: string[];
     triggerSensors: string[];
     modelChanged: string[];
+    exportReview: string[];
   };
   agentMock: AgentMockController;
   mcpMock: McpMockController;
@@ -174,6 +175,7 @@ export const installDesktopApi = ({
   dialogResult = { success: false, canceled: true } as const,
   sensorReport = healthyReport(),
   branches = [branchSummary()],
+  exportReviewResult = { status: 'cancelled' } as const,
 }: {
   projects?: readonly EvidenceProjectSummary[];
   openResult?: OpenProjectResult;
@@ -183,6 +185,9 @@ export const installDesktopApi = ({
   >;
   sensorReport?: SensorReport;
   branches?: readonly EvidenceBranchSummary[];
+  exportReviewResult?: Awaited<
+    ReturnType<EvidenceDesktopApi['projects']['exportReview']>
+  >;
 } = {}): DesktopApiMock => {
   const calls: DesktopApiMock['calls'] = {
     open: [],
@@ -194,6 +199,7 @@ export const installDesktopApi = ({
     abort: [],
     triggerSensors: [],
     modelChanged: [],
+    exportReview: [],
   };
 
   const rootPath =
@@ -333,6 +339,11 @@ export const installDesktopApi = ({
       listRecent: async () => ({ success: true, projects }),
       openEditorWindow: async (rootPath) => {
         calls.openEditorWindow.push(rootPath);
+      },
+      exportReview: async (rootPath) => {
+        calls.exportReview.push(rootPath);
+
+        return exportReviewResult;
       },
       onChanged: () => () => undefined,
     },
