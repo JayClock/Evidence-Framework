@@ -39,24 +39,24 @@ describe('createMcpSensorService', () => {
     });
 
     await expect(service.readKeyDataAudit('/repo')).resolves.toMatchObject({
-      producedBy: 'pinned-python',
+      producedBy: 'native',
       keyDataCount: 5,
       counts: { 'contract-term': 2 },
       note: '待决清单',
     });
   });
 
-  it('reports the audit as unavailable instead of empty when Python is missing', async () => {
+  it('reports the audit as unavailable instead of empty when the model cannot be read', async () => {
     const service = createMcpSensorService({
       createEngine: () =>
-        engineThat({ error: new Error('missing interpreter') }) as never,
+        engineThat({ error: new Error('unreadable model') }) as never,
     });
 
     const audit = await service.readKeyDataAudit('/repo');
 
     expect(audit.producedBy).toBe('unavailable');
     expect(audit.keyDataCount).toBe(0);
-    expect(audit.note).toContain('./init.sh');
+    expect(audit.note).toContain('不可用');
   });
 
   it('maps a gate verdict and closes it on failure', async () => {

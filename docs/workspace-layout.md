@@ -47,9 +47,9 @@ ignored. Every key in it is there for a reason:
 | `minimumReleaseAgeExclude` | the `@earendil-works/pi-*@1.5.2` set                                        | pnpm 12 refuses packages published inside a quarantine window. The Pi SDK is the modeling runtime and is pinned exactly, so the exemption is per version: a newer release has to be reviewed again. |
 
 Because the linker is hoisted, an undeclared import can still resolve locally;
-the `@nx/dependency-checks` rule, not the installer, is the guard. The Python
-virtualenv lives in `node_modules/.cache/evidence-fm-runtime`, so deleting
-`node_modules` also deletes it — run `./init.sh` afterwards.
+the `@nx/dependency-checks` rule, not the installer, is the guard.
+`node_modules/.cache` holds the build caches (Nx, Vite, the desktop resource
+tree), so deleting `node_modules` means rerunning `pnpm install`.
 
 ## How imports resolve
 

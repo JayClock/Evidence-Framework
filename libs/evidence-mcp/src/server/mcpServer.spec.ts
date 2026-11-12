@@ -41,7 +41,7 @@ const client = (): EvidenceMcpAppClient => ({
     throw new Error('selection is empty');
   }),
   getKeyDataAudit: vi.fn(async () => ({
-    producedBy: 'pinned-python' as const,
+    producedBy: 'native' as const,
     keyDataCount: 0,
     counts: {},
     needsDecision: [],

@@ -36,7 +36,7 @@ const sensors = (): McpSensorService & {
       keyDataCalls.push(rootPath);
 
       return {
-        producedBy: 'pinned-python',
+        producedBy: 'native',
         keyDataCount: 3,
         counts: { 'needs-decision': 1 },
         needsDecision: [],
@@ -94,7 +94,7 @@ describe('createMcpRequestHandler', () => {
     const result = await handler({ method: 'get_key_data_audit' });
 
     expect(service.keyDataCalls).toEqual(['/models/procurement']);
-    expect(result).toMatchObject({ producedBy: 'pinned-python' });
+    expect(result).toMatchObject({ producedBy: 'native' });
   });
 
   it('refuses sensor work when no project is open', async () => {

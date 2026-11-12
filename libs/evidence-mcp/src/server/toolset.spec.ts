@@ -50,7 +50,7 @@ const createClient = (
     fulfillmentPair: null,
   })),
   getKeyDataAudit: vi.fn(async () => ({
-    producedBy: 'pinned-python' as const,
+    producedBy: 'native' as const,
     keyDataCount: 3,
     counts: { 'request-input': 1, 'needs-decision': 2 },
     needsDecision: [],

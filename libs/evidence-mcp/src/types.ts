@@ -80,7 +80,7 @@ export interface McpSelectedEntity {
 }
 
 export interface McpKeyDataAudit {
-  producedBy: 'pinned-python' | 'unavailable';
+  producedBy: 'native' | 'unavailable';
   keyDataCount: number;
   counts: Readonly<Record<string, number>>;
   needsDecision: readonly unknown[];

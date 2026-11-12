@@ -162,9 +162,8 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
 - A patch is plain JSON (`ModelPatchCommand`), decoded into real commands by
   `evidence-model-core` so guards and `Cmd/Ctrl+Z` behave exactly as for a human
   edit.
-- Sensors run in-process. `EVIDENCE_SENSORS_ENGINE=python` still runs the locked
-  scripts, and a missing environment then reports `SENSOR_UNAVAILABLE` blocks
-  with a `./init.sh` hint rather than a silent pass.
+- Sensors run in-process and are the only implementation: there is no mode to
+  select and no interpreter to install.
 - Key data that still owes a provider decision is a warning, not a static error,
   but it keeps `isStageGateReady` false — the model can be saved, the gate stays
   shut.

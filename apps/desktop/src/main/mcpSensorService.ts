@@ -19,21 +19,21 @@ export interface McpSensorServiceOptions {
 }
 
 const toAudit = (report: KeyDataAuditReport | undefined): McpKeyDataAudit => ({
-  producedBy: report === undefined ? 'unavailable' : 'pinned-python',
+  producedBy: report === undefined ? 'unavailable' : 'native',
   keyDataCount: report?.keyDataCount ?? 0,
   counts: report?.counts ?? {},
   needsDecision: report?.needsDecision ?? [],
   derived: [],
   note:
     report?.note ??
-    '未找到锁定的 Python 解释器，关键数据台账不可用；请运行 ./init.sh。',
+    '关键数据台账暂不可用：模型目录未通过读取，或检查尚未运行。',
 });
 
 /**
- * The two MCP calls that must run the pinned Python checkers.
+ * The two MCP calls that need a decided model.
  *
- * They are honestly reported as unavailable when the pinned interpreter is
- * missing, instead of returning an empty ledger that reads like a clean model.
+ * They are honestly reported as unavailable when the model cannot be read,
+ * instead of returning an empty ledger that reads like a clean model.
  */
 export const createMcpSensorService = ({
   createEngine,
@@ -104,7 +104,7 @@ export const createMcpSensorService = ({
           blockingReasons: [
             error instanceof Error
               ? error.message
-              : '阶段门禁无法执行；请确认已运行 ./init.sh。',
+              : '阶段门禁无法执行；请确认模型目录可读。',
           ],
         };
       }

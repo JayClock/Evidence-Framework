@@ -307,7 +307,7 @@ export const buildSensorReport = ({
         'SENSOR_UNAVAILABLE',
         `无法执行 ${source}，结论不可用。`,
         {
-          suggestion: '运行 ./init.sh 修复锁定的运行环境。',
+          suggestion: '确认模型目录可读，然后重新运行检查。',
         },
       ),
     ),
