@@ -182,6 +182,21 @@ describe('DashboardScreen starters', () => {
     expect(screen.getByRole('dialog', { name: '新建模型' })).toBeInTheDocument();
   });
 
+  it('offers a business text as a way to start, next to the templates', async () => {
+    installDesktopApi({ projects: [] });
+
+    render(<DashboardScreen />);
+
+    // The header button and the empty-state hint both open the same dialog.
+    const [headerButton] = await screen.findAllByText('从业务文本生成');
+
+    fireEvent.click(headerButton as HTMLElement);
+
+    expect(
+      await screen.findByRole('dialog', { name: '从业务文本生成模型' }),
+    ).toBeInTheDocument();
+  });
+
   it('switches to a single-file model when asked', async () => {
     const api = installDesktopApi({
       projects: [],

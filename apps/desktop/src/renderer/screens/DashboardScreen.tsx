@@ -6,6 +6,7 @@ import type {
   ProjectTemplateMeta,
 } from '../../shared/projects';
 import { CreateProjectModal } from '../components/dashboard/CreateProjectModal';
+import { IngestDraftModal } from '../components/ingestion/IngestDraftModal';
 
 type Status =
   | { name: 'loading' }
@@ -20,6 +21,7 @@ export const DashboardScreen = () => {
   >(null);
   const [createTemplate, setCreateTemplate] =
     useState<ProjectTemplateId | null>(null);
+  const [isIngestOpen, setIsIngestOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -127,6 +129,15 @@ export const DashboardScreen = () => {
           <button
             type="button"
             onClick={() => {
+              setIsIngestOpen(true);
+            }}
+            className="rounded-md border border-evidence-accent px-3 py-1.5 text-[12px] font-medium text-evidence-accent hover:bg-[#f2f6fb]"
+          >
+            从业务文本生成
+          </button>
+          <button
+            type="button"
+            onClick={() => {
               startCreate();
             }}
             className="rounded-md bg-evidence-accent px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#274c76]"
@@ -171,10 +182,19 @@ export const DashboardScreen = () => {
               还没有打开过模型
             </p>
             <p className="mt-2 text-[12px] text-evidence-muted">
-              直接新建一个起点模型，或从下面的经典范例开始；建模产物写入{' '}
+              直接新建一个起点模型，或从下面的经典范例开始；也可以粘贴一段合同条款、需求段落或服务蓝图表格，让工作台先读成草稿再校对。建模产物写入{' '}
               <code className="text-[11px]">.evidence/fm/</code>
               ，桌面端只读写该源树。
             </p>
+            <button
+              className="mt-4 rounded-md border border-evidence-accent px-3 py-1.5 text-[12px] font-medium text-evidence-accent hover:bg-[#f2f6fb]"
+              onClick={() => {
+                setIsIngestOpen(true);
+              }}
+              type="button"
+            >
+              从业务文本生成
+            </button>
             <ul className="mt-5 grid grid-cols-1 gap-2 text-left md:grid-cols-3">
               {starterTemplates.map((template) => (
                 <li key={template.id}>
@@ -233,6 +253,15 @@ export const DashboardScreen = () => {
           </ul>
         ) : null}
       </main>
+
+      {isIngestOpen ? (
+        <IngestDraftModal
+          onClose={() => {
+            setIsIngestOpen(false);
+          }}
+          onCompiled={rememberCreated}
+        />
+      ) : null}
 
       {createTemplate === null || templates === null ? null : (
         <CreateProjectModal
