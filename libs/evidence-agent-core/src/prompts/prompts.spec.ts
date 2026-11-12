@@ -4,15 +4,17 @@ import {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
   MODELING_PROMPT,
+  OPERATOR_PROMPT,
   ROLE_PROMPT,
   WORKFLOW_PROMPT,
 } from './index.js';
 
 describe('the built-in instructions', () => {
-  it('cover the three things a turn needs: the role, the red lines, the loop', () => {
+  it('cover the four things a turn needs: role, red lines, operators, loop', () => {
     expect(EVIDENCE_INSTRUCTIONS).toEqual([
       ROLE_PROMPT,
       MODELING_PROMPT,
+      OPERATOR_PROMPT,
       WORKFLOW_PROMPT,
     ]);
     expect(EVIDENCE_SYSTEM_PROMPT).toBe(EVIDENCE_INSTRUCTIONS.join('\n\n'));
@@ -23,6 +25,9 @@ describe('the built-in instructions', () => {
       'apply_model_patch',
       'run_sensors',
       'get_canvas_selection',
+      'introduce_fulfillment_pair',
+      'add_breach_compensation',
+      'roleify_and_invert_dependency',
     ]) {
       expect(EVIDENCE_SYSTEM_PROMPT).toContain(tool);
     }
