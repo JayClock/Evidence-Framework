@@ -9,6 +9,7 @@
     "graph": "nx graph",
     "desktop": "nx start desktop",
     "desktop:package": "nx package desktop",
+    "desktop:make": "nx make desktop",
     "test:desktop": "nx test desktop",
     "model:pack": "node libs/evidence-model-core/dist/cli.js pack",
     "model:unpack": "node libs/evidence-model-core/dist/cli.js unpack",

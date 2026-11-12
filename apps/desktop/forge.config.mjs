@@ -26,6 +26,16 @@ const config = {
     appBundleId: 'dev.evidence.modeling',
     asar: true,
     extraResource: [resourcePath('assets')],
+    ...(process.env.APPLE_ID
+      ? {
+          osxSign: {},
+          osxNotarize: {
+            appleId: process.env.APPLE_ID,
+            appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+            teamId: process.env.APPLE_TEAM_ID,
+          },
+        }
+      : {}),
   },
   rebuildConfig: {},
   makers: [
