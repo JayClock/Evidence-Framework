@@ -6,7 +6,6 @@ import {
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
 import {
-  CONTEXT_GAP,
   LANE_HEADER_HEIGHT,
   LANE_PADDING,
   MIN_LANE_WIDTH,

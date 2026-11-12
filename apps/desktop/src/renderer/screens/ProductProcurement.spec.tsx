@@ -52,6 +52,34 @@ describe('EditorScreen with product-procurement', () => {
     expect(screen.getByText('履约对 5')).toBeInTheDocument();
   });
 
+  it('opens the real model on the lifecycle board, not a flat stack', async () => {
+    installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: document.manifest.name }),
+        document,
+        issues: [],
+      },
+    });
+
+    const { container } = render(
+      <EditorScreen rootPath="/models/product-procurement" />,
+    );
+
+    await screen.findByText(document.manifest.name);
+
+    expect(container.querySelectorAll('[data-swimlane-stage]')).toHaveLength(4);
+    expect(
+      container.querySelector('[data-swimlane-stage="contract"]'),
+    ).not.toBeNull();
+    // A request states a window; a confirmation states an instant.
+    for (const node of container.querySelectorAll(
+      '[data-category="evidence"][data-node-shape="interval"]',
+    )) {
+      expect(node.querySelector('[data-node-shape="interval"]')).not.toBeNull();
+    }
+  });
+
   it('opens the inspector for a canvas node', async () => {
     installDesktopApi({
       openResult: {
