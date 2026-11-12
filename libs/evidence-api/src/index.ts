@@ -137,6 +137,24 @@ export {
 } from './projector.js';
 
 export {
+  buildDeliveryRoutes,
+  fieldFor,
+  type DeliveryField,
+  type DeliveryFieldReason,
+  type DeliveryRoute,
+  type DeliveryRouteMethod,
+  type DeliveryRoutePurpose,
+  type DeliveryRouteResponse,
+} from './delivery/routes.js';
+
+export {
+  createSegmentAllocator,
+  operationIdFor,
+  rawSegmentOf,
+  serviceIdOf,
+} from './delivery/segments.js';
+
+export {
   runCli,
   validatePaths,
   type CliOptions,
