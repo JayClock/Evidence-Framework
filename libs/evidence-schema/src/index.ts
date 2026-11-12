@@ -18,6 +18,20 @@ export {
 } from './ast/values.js';
 
 export {
+  CLAUSE_CATEGORIES,
+  CLAUSE_CATEGORY_ENGLISH_LABELS,
+  CLAUSE_CATEGORY_HINTS,
+  CLAUSE_CATEGORY_LABELS,
+  CLAUSE_DESTINATIONS,
+  CLAUSE_DESTINATION_OF,
+  countClausesByCategory,
+  isClauseCategory,
+  type ClauseAnnotation,
+  type ClauseCategory,
+  type ClauseDestination,
+} from './ast/clause.js';
+
+export {
   CONTEXT_KINDS,
   ENTITY_CATEGORIES,
   EVIDENCE_KINDS,
