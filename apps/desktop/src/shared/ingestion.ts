@@ -1,4 +1,5 @@
 import type {
+  ClauseAnnotation,
   DomainModelDocument,
   IngestionDraft,
 } from '@evidence-poc/evidence-schema';
@@ -14,11 +15,16 @@ import type {
  * The review panel says so out loud, because "a model read this" and "the
  * built-in vocabulary matched this" carry different promises about quality.
  */
-export const INGESTION_READERS = ['blueprint', 'text-rules', 'text-model'] as const;
+export const INGESTION_READERS = [
+  'blueprint',
+  'contract',
+  'text-rules',
+  'text-model',
+] as const;
 
 export type IngestionReader = (typeof INGESTION_READERS)[number];
 
-export const INGESTION_INPUT_KINDS = ['text', 'blueprint'] as const;
+export const INGESTION_INPUT_KINDS = ['contract', 'text', 'blueprint'] as const;
 
 export type IngestionInputKind = (typeof INGESTION_INPUT_KINDS)[number];
 
@@ -39,6 +45,15 @@ export type IngestDraftResult =
       reader: IngestionReader;
       /** Gaps the reader noticed; the review panel shows them as findings. */
       issues: readonly string[];
+      /**
+       * How a contract was split before it was read.
+       *
+       * Only the contract reader produces it: the panel shows which clauses
+       * became evidence, which became domain components and which were filtered
+       * out, because a clause silently dropped is the failure mode a reviewer
+       * most needs to catch.
+       */
+      annotations?: readonly ClauseAnnotation[];
     }
   | { success: false; error: string; issues: readonly string[] };
 

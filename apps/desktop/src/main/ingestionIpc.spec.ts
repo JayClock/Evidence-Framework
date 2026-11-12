@@ -27,7 +27,42 @@ const REPLY = `\`\`\`json
 }
 \`\`\``;
 
+const CONTRACT = `甲乙双方签订《企业级云服务采购协议》。
+因本协议产生的争议，提交深圳仲裁委员会仲裁。
+甲方应在合同签订后 5 个工作日内支付首期技术服务费，并上传银行转账凭证。
+乙方应在收到款项后 2 个工作日内开通企业账号权限，并出具开通确认函。
+会员等级按累计成长值计算，成长值每满 1000 点晋升一级。`;
+
 describe('reading a draft', () => {
+  it('reads a contract by its clauses without asking a model', async () => {
+    const generate = vi.fn<IngestionTextGenerator>();
+
+    const result = await readDraft(
+      { kind: 'contract', content: CONTRACT, modelName: '云服务采购' },
+      generate,
+    );
+
+    expect(result.success).toBe(true);
+    expect(generate).not.toHaveBeenCalled();
+
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.reader).toBe('contract');
+    expect(result.annotations?.map((annotation) => annotation.category)).toContain(
+      'boilerplate',
+    );
+    expect(
+      result.draft.things.some((thing) => thing.domainRole === 'calculator'),
+    ).toBe(true);
+    expect(
+      result.draft.evidences.some((evidence) =>
+        evidence.label.includes('仲裁'),
+      ),
+    ).toBe(false);
+  });
+
   it('reads a blueprint table without asking a model', async () => {
     const generate = vi.fn<IngestionTextGenerator>();
 

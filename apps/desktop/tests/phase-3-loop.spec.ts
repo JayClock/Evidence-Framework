@@ -160,9 +160,12 @@ describe('phase 3 control loop', () => {
       'run_sensors',
       'apply_model_patch',
       'get_canvas_selection',
+      'annotate_contract_clauses',
+      'read_service_blueprint',
       'introduce_fulfillment_pair',
       'add_breach_compensation',
       'roleify_and_invert_dependency',
+      'isolate_domain_calculator',
     ]);
 
     const appliedResult = await apply?.execute('call-1', {

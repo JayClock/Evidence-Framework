@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type {
+  ClauseAnnotation,
   DraftEvidence,
   IngestionDraft,
 } from '@evidence-poc/evidence-schema';
@@ -9,6 +10,8 @@ import type {
   CompileDraftInput,
   IngestionReader,
 } from '../../../shared/ingestion';
+
+import { ClauseSplit } from './ClauseSplit';
 import type {
   EvidenceProjectSummary,
   ProjectStorageKind,
@@ -26,6 +29,7 @@ const KIND_CHOICES: readonly { kind: DraftEvidence['kind']; label: string }[] = 
 
 const READER_LABELS: Record<IngestionReader, string> = {
   blueprint: '读自服务蓝图',
+  contract: '读自合同条款',
   'text-rules': '读自本地规则',
   'text-model': '读自模型',
 };
@@ -34,6 +38,8 @@ export interface DraftReviewPanelProps {
   draft: IngestionDraft;
   reader: IngestionReader;
   issues: readonly string[];
+  /** Clause split the contract reader produced, when it produced one. */
+  annotations?: readonly ClauseAnnotation[];
   onCancel: () => void;
   onCompiled: (project: EvidenceProjectSummary) => void;
 }
@@ -60,6 +66,7 @@ export const DraftReviewPanel = ({
   draft,
   reader,
   issues,
+  annotations,
   onCancel,
   onCompiled,
 }: DraftReviewPanelProps) => {
@@ -166,6 +173,12 @@ export const DraftReviewPanel = ({
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+          {annotations === undefined ? null : (
+            <div className="mb-4">
+              <ClauseSplit annotations={annotations} />
+            </div>
+          )}
+
           {issues.length > 0 ? (
             <section className="mb-4 rounded-md border border-[#f5e2b8] bg-[#fdf8ec] px-3 py-2">
               <p className="text-[11px] font-medium text-[#8a6100]">

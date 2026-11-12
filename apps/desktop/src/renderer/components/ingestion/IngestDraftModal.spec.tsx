@@ -84,7 +84,7 @@ describe('IngestDraftModal', () => {
 
     expect(api.calls.ingestDraft).toEqual([
       expect.objectContaining({
-        kind: 'text',
+        kind: 'contract',
         content: '甲乙双方签订《企业级云服务采购协议》…',
       }),
     ]);
@@ -254,5 +254,69 @@ describe('IngestDraftModal', () => {
     expect(api.calls.compileDraft[0]?.draft.evidences).toHaveLength(1);
     // Both sides of the pair are no longer there, so the panel stops counting it.
     expect(screen.queryByText(/组履约对/)).toBeInTheDocument();
+  });
+
+  it('reads a contract by its clauses, not as one more paragraph', async () => {
+    const api = installDesktopApi({
+      ingestResult: {
+        success: true,
+        draft: draft(),
+        reader: 'contract',
+        issues: [],
+        annotations: [
+          { index: 1, text: '甲乙双方签订《云服务采购协议》', category: 'business', reason: '约定了业务动作' },
+          { index: 2, text: '因本协议产生的争议提交仲裁', category: 'boilerplate', reason: '争议解决' },
+          { index: 3, text: '服务费按 30% 计算', category: 'domain', reason: '计算口径' },
+        ],
+      },
+    });
+
+    render(
+      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+    );
+
+    fireEvent.change(screen.getByLabelText('业务原文'), {
+      target: { value: '甲乙双方签订《云服务采购协议》。' },
+    });
+    fireEvent.click(screen.getByText('读成草稿'));
+    await screen.findByLabelText('校对导入的草稿');
+
+    expect(api.calls.ingestDraft[0]?.kind).toBe('contract');
+    expect(screen.getByText(/读自合同条款/)).toBeInTheDocument();
+
+    const split = screen.getByLabelText('条款分类');
+
+    expect(split).toHaveTextContent('业务逻辑 1');
+    expect(split).toHaveTextContent('领域逻辑 1');
+    expect(split).toHaveTextContent('纯法务条款 1');
+    // The filtered clause stays readable: a silent drop is the failure mode.
+    expect(split).toHaveTextContent('因本协议产生的争议提交仲裁');
+  });
+
+  it('sends a blueprint table as a blueprint, however the tab was reached', async () => {
+    const api = installDesktopApi({
+      ingestResult: {
+        success: true,
+        draft: draft(),
+        reader: 'blueprint',
+        issues: [],
+      },
+    });
+
+    render(
+      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+    );
+
+    // The tab comes before the preset of the same name in the DOM.
+    fireEvent.click(screen.getAllByText('服务蓝图表格')[0] as HTMLElement);
+    fireEvent.change(screen.getByLabelText('业务原文'), {
+      target: { value: '| 阶段 | 业务凭证 |\n| --- | --- |\n| 履约 | 支付申请 |' },
+    });
+    fireEvent.click(screen.getByText('读成草稿'));
+    await screen.findByLabelText('校对导入的草稿');
+
+    expect(api.calls.ingestDraft[0]).toEqual(
+      expect.objectContaining({ kind: 'blueprint' }),
+    );
   });
 });

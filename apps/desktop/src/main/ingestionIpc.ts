@@ -1,8 +1,10 @@
 import { ipcMain } from 'electron';
 
 import {
+  annotateContractClauses,
   compileIngestionDraft,
   draftFromBusinessText,
+  draftFromContract,
   layoutDomainModel,
   parseBlueprint,
   readIngestionDraftJson,
@@ -55,6 +57,21 @@ export const readDraft = async (
   generate?: IngestionTextGenerator,
 ): Promise<IngestDraftResult> => {
   const modelName = input.modelName;
+
+  if (input.kind === 'contract') {
+    const { clauses } = annotateContractClauses(input.content);
+    const read = draftFromContract(input.content, {
+      ...(modelName === undefined ? {} : { modelName }),
+    });
+
+    return {
+      success: true,
+      draft: read.draft,
+      reader: 'contract',
+      annotations: clauses,
+      issues: read.issues,
+    };
+  }
 
   if (generate !== undefined && input.kind === 'text') {
     try {

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-import type { IngestionDraft } from '@evidence-poc/evidence-schema';
+import type {
+  ClauseAnnotation,
+  IngestionDraft,
+} from '@evidence-poc/evidence-schema';
 
 import type {
   IngestDraftInput,
@@ -43,6 +46,7 @@ interface DraftState {
   draft: IngestionDraft;
   reader: IngestionReader;
   issues: readonly string[];
+  annotations?: readonly ClauseAnnotation[];
 }
 
 export interface IngestDraftModalProps {
@@ -56,9 +60,14 @@ const INPUT_KINDS: readonly {
   hint: string;
 }[] = [
   {
+    kind: 'contract',
+    label: '合同或协议原文',
+    hint: '先按业务 / 领域 / 法务分句，再落模型',
+  },
+  {
     kind: 'text',
     label: '业务自然语言',
-    hint: '合同条款、需求文档、访谈记录',
+    hint: '需求文档、访谈记录、流程说明',
   },
   {
     kind: 'blueprint',
@@ -79,7 +88,7 @@ export const IngestDraftModal = ({
   onClose,
   onCompiled,
 }: IngestDraftModalProps) => {
-  const [kind, setKind] = useState<IngestionInputKind>('text');
+  const [kind, setKind] = useState<IngestionInputKind>('contract');
   const [content, setContent] = useState('');
   const [modelName, setModelName] = useState('文本导入的履约模型');
   const [draft, setDraft] = useState<DraftState | null>(null);
@@ -115,6 +124,9 @@ export const IngestDraftModal = ({
         draft: result.draft,
         reader: result.reader,
         issues: result.issues,
+        ...(result.annotations === undefined
+          ? {}
+          : { annotations: result.annotations }),
       });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : '无法读取业务文本。');
@@ -131,6 +143,9 @@ export const IngestDraftModal = ({
         onCancel={onClose}
         onCompiled={onCompiled}
         reader={draft.reader}
+        {...(draft.annotations === undefined
+          ? {}
+          : { annotations: draft.annotations })}
       />
     );
   }
@@ -201,7 +216,7 @@ export const IngestDraftModal = ({
                 className="rounded-md border border-evidence-line px-2 py-1 text-[10px] text-evidence-ink hover:border-evidence-accent"
                 key={preset.id}
                 onClick={() => {
-                  setKind(preset.id === 'blueprint' ? 'blueprint' : 'text');
+                  setKind(preset.id === 'blueprint' ? 'blueprint' : 'contract');
                   setContent(preset.content);
                 }}
                 type="button"
