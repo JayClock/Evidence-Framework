@@ -100,6 +100,31 @@ export {
 } from './ast/document.js';
 
 export {
+  INGESTION_SOURCE_KINDS,
+  isIngestionSourceKind,
+  type IngestionSourceKind,
+  type ProvenanceSnippet,
+} from './ast/provenance.js';
+
+export {
+  EVIDENCE_KIND_ALIASES,
+  createEmptyIngestionDraft,
+  draftEvidenceIsMoment,
+  isIngestionDraftShape,
+  normalizeDraftEvidenceKind,
+  type DraftAttribute,
+  type DraftBreachCompensation,
+  type DraftContext,
+  type DraftEvidence,
+  type DraftFulfillmentPair,
+  type DraftParticipant,
+  type DraftRelationship,
+  type DraftRole,
+  type DraftThing,
+  type IngestionDraft,
+} from './ingestion/draft.js';
+
+export {
   DomainModelValidationError,
   createIssue,
   dedupeIssues,

@@ -58,6 +58,7 @@ const ENTITY_KEYS = new Set([
   'roleRefs',
   'attributes',
   'notes',
+  'sourceSnippet',
 ]);
 
 const ATTRIBUTE_KEYS = new Set([

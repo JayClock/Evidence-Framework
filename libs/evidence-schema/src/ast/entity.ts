@@ -1,4 +1,5 @@
 import type { ValueType } from './values.js';
+import type { ProvenanceSnippet } from './provenance.js';
 
 /** Business object categories of the pure graph fulfillment model. */
 export const ENTITY_CATEGORIES = [
@@ -87,6 +88,14 @@ interface EntityBase {
   aliases?: string[];
   attributes?: AttributeAST[];
   notes?: string;
+  /**
+   * Sentence this element was read from.
+   *
+   * An ingested element keeps the clause that established it, so a reviewer can
+   * re-read the business text instead of trusting the extraction. Hand-written
+   * entities may omit it; nothing in the model depends on it.
+   */
+  sourceSnippet?: ProvenanceSnippet;
 }
 
 export interface EvidenceEntityAST extends EntityBase {

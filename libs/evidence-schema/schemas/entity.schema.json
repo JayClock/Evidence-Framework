@@ -39,7 +39,8 @@
       "items": { "$ref": "#/$defs/attribute" },
       "uniqueItems": true
     },
-    "notes": { "type": "string", "minLength": 1 }
+    "notes": { "type": "string", "minLength": 1 },
+    "sourceSnippet": { "$ref": "#/$defs/provenance" }
   },
   "allOf": [
     {
@@ -187,6 +188,19 @@
   "additionalProperties": false,
   "$defs": {
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$" },
+    "provenance": {
+      "description": "Sentence an ingested element was read from, so a reviewer can re-read the clause instead of trusting the extraction.",
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 },
+        "source": {
+          "enum": ["contract", "prd", "interview", "blueprint", "unknown"]
+        }
+      },
+      "additionalProperties": false
+    },
     "attribute": {
       "type": "object",
       "required": ["name", "label", "meaning"],
