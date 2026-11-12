@@ -18,6 +18,7 @@ import {
 import { createMcpSensorService } from './mcpSensorService';
 import { registerIngestionIpc } from './ingestionIpc';
 import { createModelIngestionReader } from './ingestionModelReader';
+import { registerDeliveryIpc } from './deliveryIpc';
 import { registerProjectIpc } from './projectIpc';
 import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
@@ -68,6 +69,7 @@ const startApplication = async (): Promise<void> => {
     openEditorWindow,
   });
   registerReviewIpc();
+  registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());
 
   const endpoint = getEvidenceMcpBridgeEndpoint({

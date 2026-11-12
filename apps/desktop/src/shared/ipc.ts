@@ -1,5 +1,9 @@
 import type { EvidenceAgentApi } from './agentIpc';
 import type {
+  DeliveryPreviewResult,
+  ExportDeliveryResult,
+} from './projects';
+import type {
   CompileDraftInput,
   CompileDraftOutcome,
   IngestDraftInput,
@@ -37,6 +41,8 @@ export const EVIDENCE_IPC_CHANNELS = {
   openEditorWindow: 'evidence:project:open-editor-window',
   changed: 'evidence:project:changed',
   exportReview: 'evidence:project:export-review',
+  deliveryPreview: 'evidence:project:delivery-preview',
+  exportDelivery: 'evidence:project:export-delivery',
 } as const;
 
 export type EvidenceIpcChannel =
@@ -77,6 +83,15 @@ export interface EvidenceDesktopApi {
      * review always describes what was saved, not what the canvas shows.
      */
     exportReview: (rootPath: string) => Promise<ExportReviewResult>;
+    /**
+     * What the model becomes when it is deployed.
+     *
+     * Projected in the main process from the saved sources, so the hub describes
+     * the delivery the export would actually write.
+     */
+    deliveryPreview: (rootPath: string) => Promise<DeliveryPreviewResult>;
+    /** Writes the contract, topology, routes and deployment sketch to a folder. */
+    exportDelivery: (rootPath: string) => Promise<ExportDeliveryResult>;
   };
   /** Pi agent, sensors and patch application (phase 3). */
   agent: EvidenceAgentApi;
@@ -109,6 +124,15 @@ export type {
   IngestionInputKind,
   IngestionReader,
 } from './ingestion';
+
+export type {
+  DeliveryPreview,
+  DeliveryPreviewLink,
+  DeliveryPreviewResult,
+  DeliveryPreviewRoute,
+  DeliveryPreviewService,
+  ExportDeliveryResult,
+} from './projects';
 
 export type {
   CreateProjectDialogResult,

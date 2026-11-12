@@ -7,6 +7,7 @@
   "main": ".vite/build/main.js",
   "dependencies": {
     "@evidence-poc/evidence-agent-core": "workspace:*",
+    "@evidence-poc/evidence-api": "workspace:*",
     "@evidence-poc/evidence-canvas-interaction": "workspace:*",
     "@evidence-poc/evidence-mcp": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",

@@ -40,6 +40,9 @@
       "path": "../../libs/evidence-canvas-interaction/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/evidence-api/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/evidence-agent-core/tsconfig.lib.json"
     }
   ]

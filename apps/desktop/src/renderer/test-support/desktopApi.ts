@@ -129,6 +129,8 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     triggerSensors: string[];
     modelChanged: string[];
     exportReview: string[];
+    deliveryPreview: string[];
+    exportDelivery: string[];
     ingestDraft: IngestDraftInput[];
     compileDraft: CompileDraftInput[];
   };
@@ -165,6 +167,11 @@ export const installDesktopApi = ({
   templates = defaultTemplates(),
   sensorReport = healthyReport(),
   exportReviewResult = { status: 'cancelled' } as const,
+  deliveryPreviewResult = {
+    success: false,
+    error: '测试没有配置交付预览。',
+  } as const,
+  exportDeliveryResult = { status: 'cancelled' } as const,
   ingestResult = {
     success: false,
     error: '测试没有配置导入结果。',
@@ -189,6 +196,12 @@ export const installDesktopApi = ({
   exportReviewResult?: Awaited<
     ReturnType<EvidenceDesktopApi['projects']['exportReview']>
   >;
+  deliveryPreviewResult?: Awaited<
+    ReturnType<EvidenceDesktopApi['projects']['deliveryPreview']>
+  >;
+  exportDeliveryResult?: Awaited<
+    ReturnType<EvidenceDesktopApi['projects']['exportDelivery']>
+  >;
   ingestResult?: IngestDraftResult;
   compileResult?: CompileDraftOutcome;
 } = {}): DesktopApiMock => {
@@ -205,6 +218,8 @@ export const installDesktopApi = ({
     triggerSensors: [],
     modelChanged: [],
     exportReview: [],
+    deliveryPreview: [],
+    exportDelivery: [],
     ingestDraft: [],
     compileDraft: [],
   };
@@ -323,6 +338,16 @@ export const installDesktopApi = ({
         calls.exportReview.push(rootPath);
 
         return exportReviewResult;
+      },
+      deliveryPreview: async (rootPath) => {
+        calls.deliveryPreview.push(rootPath);
+
+        return deliveryPreviewResult;
+      },
+      exportDelivery: async (rootPath) => {
+        calls.exportDelivery.push(rootPath);
+
+        return exportDeliveryResult;
       },
       onChanged: () => () => undefined,
     },

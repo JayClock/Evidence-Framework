@@ -86,6 +86,64 @@ export type ExportReviewResult =
   | { status: 'cancelled' }
   | { status: 'failed'; error: string };
 
+/** One route the delivery contract declares. */
+export interface DeliveryPreviewRoute {
+  method: string;
+  path: string;
+  summary: string;
+  serviceId: string;
+}
+
+/** One service the model splits into, as the delivery hub lists it. */
+export interface DeliveryPreviewService {
+  id: string;
+  name: string;
+  kind: 'channel' | 'fulfillment' | 'domain' | 'capability';
+  contextRef: string;
+  supplies: readonly string[];
+  consumes: readonly string[];
+  notes: string;
+  routeCount: number;
+}
+
+export interface DeliveryPreviewLink {
+  id: string;
+  from: string;
+  to: string;
+  kind: string;
+  mode: string;
+  label: string;
+  viaRef: string;
+}
+
+/** What the delivery hub shows before anything is written. */
+export interface DeliveryPreview {
+  modelId: string;
+  modelName: string;
+  modelVersion: string;
+  services: readonly DeliveryPreviewService[];
+  links: readonly DeliveryPreviewLink[];
+  routes: readonly DeliveryPreviewRoute[];
+  /** What the model cannot answer yet, shown instead of hidden. */
+  limitations: readonly string[];
+}
+
+export type DeliveryPreviewResult =
+  | { success: true; preview: DeliveryPreview }
+  | { success: false; error: string };
+
+/** What a delivery hand-off wrote, and where. */
+export type ExportDeliveryResult =
+  | {
+      status: 'saved';
+      directory: string;
+      files: readonly string[];
+      serviceCount: number;
+      routeCount: number;
+    }
+  | { status: 'cancelled' }
+  | { status: 'failed'; error: string };
+
 /**
  * Starter models a new project can be seeded with.
  *

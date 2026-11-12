@@ -10,6 +10,7 @@ import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightInspector } from '../components/RightInspector';
+import { DeliveryHub } from '../components/delivery/DeliveryHub';
 import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
@@ -106,6 +107,7 @@ const EditorWorkspace = ({
   const agent = useAgentSession(project.rootPath);
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const [deliveryOpen, setDeliveryOpen] = useState(false);
 
   const patchReview = usePatchReview(state.session, state.document);
 
@@ -290,6 +292,7 @@ const EditorWorkspace = ({
         onSave={() => void save()}
         onExportReview={() => void reviewExport.exportPage()}
         exportReviewBusy={reviewExport.busy}
+        onOpenDelivery={() => setDeliveryOpen(true)}
         onViewModeChange={setViewMode}
         onSearch={() => searchInputRef.current?.focus()}
       />
@@ -371,6 +374,13 @@ const EditorWorkspace = ({
           selection={state.selection}
         />
       </div>
+
+      {deliveryOpen ? (
+        <DeliveryHub
+          rootPath={project.rootPath}
+          onClose={() => setDeliveryOpen(false)}
+        />
+      ) : null}
 
       {diagnosticsOpen && sensors.report !== null ? (
         <DiagnosticsDrawer

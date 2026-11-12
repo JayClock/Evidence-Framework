@@ -20,6 +20,8 @@ interface TopHeaderProps {
   /** Writes the offline review page; reports progress so the button can wait. */
   onExportReview: () => void;
   exportReviewBusy: boolean;
+  /** Opens the delivery hub: what the model becomes when it is deployed. */
+  onOpenDelivery: () => void;
   onViewModeChange: (mode: CanvasViewMode) => void;
   onSearch: () => void;
 }
@@ -37,6 +39,7 @@ export const TopHeader = ({
   onSave,
   onExportReview,
   exportReviewBusy,
+  onOpenDelivery,
   onViewModeChange,
   onSearch,
 }: TopHeaderProps) => {
@@ -143,6 +146,15 @@ export const TopHeader = ({
           title="导出单文件离线审查页（HTML）"
         >
           {exportReviewBusy ? '导出中…' : '导出审查页'}
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenDelivery}
+          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
+          title="查看服务边界并导出契约、拓扑与部署草图"
+        >
+          交付
         </button>
 
         <button

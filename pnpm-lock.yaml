@@ -280,6 +280,9 @@ importers:
       '@evidence-poc/evidence-agent-core':
         specifier: workspace:*
         version: link:../../libs/evidence-agent-core
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../../libs/evidence-api
       '@evidence-poc/evidence-canvas-interaction':
         specifier: workspace:*
         version: link:../../libs/evidence-canvas-interaction
