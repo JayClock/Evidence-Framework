@@ -5,6 +5,7 @@ import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
 import {
   addBreachCompensation,
   introduceFulfillmentPair,
+  isolateDomainCalculator,
   roleifyAndInvertDependency,
   type FulfillmentPairIntent,
 } from './operators.js';
@@ -372,5 +373,173 @@ describe('roleifyAndInvertDependency', () => {
         },
       }),
     ).toThrow("'request.payment' 不是履约确认");
+  });
+});
+
+const calculatorIntent = (overrides: Record<string, unknown> = {}) => ({
+  host: {
+    ref: 'request.payment',
+    attribute: {
+      name: 'service_fee',
+      label: '服务费',
+      meaning: '按协议费率与请求金额派生的服务费',
+      valueType: 'money' as const,
+      required: true,
+      keyData: true,
+    },
+  },
+  context: { id: 'context.fee-rules', label: '费率规则上下文' },
+  calculator: {
+    id: 'thing.fee-calculator',
+    label: '服务费计算器',
+    meaning: '按协议费率计算服务费',
+    attributes: [
+      {
+        name: 'rate',
+        label: '费率',
+        meaning: '协议约定的服务费率',
+        valueType: 'decimal' as const,
+        required: true,
+        keyData: true,
+      },
+    ],
+  },
+  rule: {
+    id: 'rule.service-fee',
+    label: '服务费派生',
+    description: '服务费 = 请求金额 × 协议费率',
+    expression: 'host.requested_minor_units * calculator.rate',
+    resultType: 'money' as const,
+  },
+  ...overrides,
+});
+
+describe('isolateDomainCalculator', () => {
+  it('creates the Domain Context, the component and the derivation together', () => {
+    const model = createProcurementModel();
+    const patch = isolateDomainCalculator(model, calculatorIntent());
+    const { document } = apply(model, patch);
+
+    expect(patch.createdIds).toEqual([
+      'context.fee-rules',
+      'thing.fee-calculator',
+      'request.payment.service_fee',
+      'rule.service-fee',
+    ]);
+    expect(
+      document.entities.find((entity) => entity.id === 'context.fee-rules'),
+    ).toMatchObject({ kind: 'domain', rootRefs: ['thing.fee-calculator'] });
+    expect(
+      document.entities.find((entity) => entity.id === 'thing.fee-calculator'),
+    ).toMatchObject({
+      category: 'participant',
+      kind: 'thing',
+      domainRole: 'calculator',
+      contextRef: 'context.fee-rules',
+    });
+  });
+
+  it('binds both sides of the link the static check demands', () => {
+    const model = createProcurementModel();
+    const { document } = apply(model, isolateDomainCalculator(model, calculatorIntent()));
+    const request = document.entities.find(
+      (entity) => entity.id === 'request.payment',
+    );
+
+    expect(
+      request?.attributes?.find((attribute) => attribute.name === 'service_fee'),
+    ).toMatchObject({ derivedByRuleRef: 'rule.service-fee' });
+    expect(document.rules.find((rule) => rule.id === 'rule.service-fee')).toMatchObject({
+      contextRef: 'context.procurement',
+      target: { entityRef: 'request.payment', attribute: 'service_fee' },
+    });
+  });
+
+  it('keeps the resulting model free of static FM issues', () => {
+    const model = createProcurementModel();
+    const { document } = apply(model, isolateDomainCalculator(model, calculatorIntent()));
+
+    expect(strictValidateDomainModel(document).issues).toEqual([]);
+  });
+
+  it('reuses a Domain Context that already exists instead of creating a second', () => {
+    const model = createProcurementModel();
+    const patch = isolateDomainCalculator(model, {
+      ...calculatorIntent(),
+      context: { id: 'context.catalogue', label: '商品目录上下文' },
+    });
+
+    expect(patch.createdIds).not.toContain('context.catalogue');
+  });
+
+  it('adds an attribute that the host does not carry yet', () => {
+    const model = createProcurementModel();
+    const patch = isolateDomainCalculator(model, {
+      ...calculatorIntent(),
+      host: {
+        ref: 'confirmation.payment',
+        attribute: {
+          name: 'net_amount',
+          label: '实收金额',
+          meaning: '扣费后的实收金额',
+          valueType: 'money' as const,
+          required: true,
+          keyData: true,
+        },
+      },
+      rule: {
+        id: 'rule.net-amount',
+        label: '实收金额派生',
+        description: '实收金额 = 请求金额 × 费率',
+        expression: 'host.requested_minor_units * calculator.rate',
+        resultType: 'money' as const,
+      },
+    });
+
+    expect(patch.commands.map((command) => command.type)).toContain('add-attribute');
+  });
+
+  it('refuses to overwrite a value that is already derived', () => {
+    const model = createProcurementModel();
+    const request = model.entities.find((entity) => entity.id === 'request.payment');
+
+    if (request?.category !== 'evidence') {
+      throw new Error('fixture changed');
+    }
+
+    request.attributes?.push({
+      name: 'already_derived',
+      label: '已有派生',
+      meaning: '已经由规则写入',
+      valueType: 'int',
+      derivedByRuleRef: 'rule.existing',
+    });
+
+    expect(() =>
+      isolateDomainCalculator(model, {
+        ...calculatorIntent(),
+        host: {
+          ref: 'request.payment',
+          attribute: {
+            name: 'already_derived',
+            label: '已有派生',
+            meaning: '已经由规则写入',
+            valueType: 'int',
+          },
+        },
+      }),
+    ).toThrow('已有派生规则');
+  });
+
+  it('refuses a context that is not a Domain Context', () => {
+    expect(() =>
+      isolateDomainCalculator(
+        createProcurementModel(),
+        {
+          ...calculatorIntent(),
+          context: { id: 'context.procurement', label: '采购上下文' },
+        },
+      ),
+    ).toThrow('不是领域上下文');
   });
 });

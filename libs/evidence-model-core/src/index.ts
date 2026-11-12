@@ -132,8 +132,10 @@ export {
 export {
   addBreachCompensation,
   introduceFulfillmentPair,
+  isolateDomainCalculator,
   roleifyAndInvertDependency,
   type BreachCompensationIntent,
+  type DomainCalculatorIntent,
   type FulfillmentPairIntent,
   type OperatorPatch,
   type RoleInversionIntent,

@@ -3,6 +3,8 @@ import type {
   DomainModelDocument,
   EvidenceEntityAST,
   RoleEntityAST,
+  RuleAST,
+  RuleBinding,
 } from '@evidence-poc/evidence-schema';
 
 import type { CreateFulfillmentPairInput } from './fulfillmentCommands.js';
@@ -473,4 +475,155 @@ export const roleifyAndInvertDependency = (
       supporting.confirmation.id,
     ],
   };
+};
+
+export interface DomainCalculatorIntent {
+  /** Entity that owns the computed value, usually an evidence in the contract. */
+  host: { ref: string; attribute: AttributeAST };
+  /** Domain Context the calculation lives in; created when absent. */
+  context: { id: string; label: string };
+  /** The component itself: what the calculation is called and what it reads. */
+  calculator: {
+    id: string;
+    label: string;
+    role?: 'calculator' | 'checker';
+    meaning?: string;
+    attributes?: AttributeAST[];
+  };
+  /** Derivation that writes the host attribute from the calculator. */
+  rule: {
+    id: string;
+    label: string;
+    description: string;
+    expression: string;
+    resultType: RuleAST['resultType'];
+    /** Alias the expression uses for the component; defaults to `calculator`. */
+    alias?: string;
+  };
+  /** Extra bindings the expression needs, by alias. */
+  bindings?: Record<string, RuleBinding>;
+  /** Further reads of the host entity the expression makes, by alias. */
+  hostAlias?: string;
+}
+
+/**
+ * Takes a calculation out of the agreement and puts it in the Domain Context.
+ *
+ * The lecture's reason for separating business from domain is elasticity: a tier
+ * ladder or a discount rule changes on a different clock than the contract does,
+ * and a value that stays in the contract has to be re-signed to change. This
+ * operator performs the move in one step — context, component, attribute and the
+ * derivation that reads it — so the model cannot be left with a component nobody
+ * computes with or a derivation pointing at a missing input.
+ */
+export const isolateDomainCalculator = (
+  document: DomainModelDocument,
+  intent: DomainCalculatorIntent,
+): OperatorPatch => {
+  const host = document.entities.find((entity) => entity.id === intent.host.ref);
+
+  if (host === undefined) {
+    throw new Error(`未知的宿主对象 '${intent.host.ref}'，无法为它抽出领域计算。`);
+  }
+
+  if (host.category === 'context') {
+    throw new Error(`上下文 '${intent.host.ref}' 不能承载计算属性。`);
+  }
+
+  if (
+    (host.attributes ?? []).some(
+      (attribute) =>
+        attribute.name === intent.host.attribute.name &&
+        attribute.derivedByRuleRef !== undefined,
+    )
+  ) {
+    throw new Error(
+      `'${intent.host.ref}.${intent.host.attribute.name}' 已有派生规则，先用 update-attribute 解除再抽出计算。`,
+    );
+  }
+
+  const commands: ModelPatchCommand[] = [];
+  const createdIds: string[] = [];
+  const existingContext = document.entities.find(
+    (entity) => entity.id === intent.context.id,
+  );
+
+  if (existingContext === undefined) {
+    commands.push({
+      type: 'create-entity',
+      entity: {
+        type: 'entity',
+        category: 'context',
+        kind: 'domain',
+        id: intent.context.id,
+        label: intent.context.label,
+        rootRefs: [intent.calculator.id],
+      },
+    });
+    createdIds.push(intent.context.id);
+  } else if (existingContext.category !== 'context' || existingContext.kind !== 'domain') {
+    throw new Error(`'${intent.context.id}' 不是领域上下文，计算不能放在那里。`);
+  }
+
+  if (document.entities.some((entity) => entity.id === intent.calculator.id)) {
+    throw new Error(`'${intent.calculator.id}' 已被占用，领域组件需要新的标识。`);
+  }
+
+  commands.push({
+    type: 'create-entity',
+    entity: {
+      type: 'entity',
+      category: 'participant',
+      kind: 'thing',
+      id: intent.calculator.id,
+      label: intent.calculator.label,
+      contextRef: intent.context.id,
+      domainRole: intent.calculator.role ?? 'calculator',
+      ...(intent.calculator.meaning === undefined
+        ? {}
+        : { notes: intent.calculator.meaning }),
+      ...(intent.calculator.attributes === undefined
+        ? {}
+        : { attributes: intent.calculator.attributes }),
+    },
+  });
+  createdIds.push(intent.calculator.id);
+
+  const hasAttribute = (host.attributes ?? []).some(
+    (attribute) => attribute.name === intent.host.attribute.name,
+  );
+
+  if (!hasAttribute) {
+    commands.push({
+      type: 'add-attribute',
+      entityId: host.id,
+      attribute: intent.host.attribute,
+    });
+    createdIds.push(`${host.id}.${intent.host.attribute.name}`);
+  }
+
+  const alias = intent.rule.alias ?? 'calculator';
+
+  commands.push({
+    type: 'bind-derived-rule',
+    input: {
+      entityRef: host.id,
+      attribute: intent.host.attribute.name,
+      rule: {
+        id: intent.rule.id,
+        label: intent.rule.label,
+        description: intent.rule.description,
+        bindings: {
+          [alias]: { ref: intent.calculator.id },
+          [intent.hostAlias ?? 'host']: { ref: host.id },
+          ...intent.bindings,
+        },
+        expression: intent.rule.expression,
+        resultType: intent.rule.resultType,
+      },
+    },
+  });
+  createdIds.push(intent.rule.id);
+
+  return { commands, createdIds };
 };
