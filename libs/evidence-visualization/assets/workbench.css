@@ -322,8 +322,7 @@ p {
   gap: 10px;
   margin: 12px 0;
 }
-.graph-toolbar button,
-.graph-toolbar select {
+.graph-toolbar button {
   padding: 7px 10px;
   font-size: 12px;
 }
@@ -483,6 +482,12 @@ p {
   display: block;
   max-width: none;
 }
+.graph-viewport > p {
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 12px;
+}
 .graph-boundary-frame {
   fill: #edf3fb;
   stroke: #8ba3c2;
@@ -504,6 +509,14 @@ p {
   font-weight: 600;
   fill: #445b78;
   cursor: pointer;
+}
+.graph-band-label {
+  font-size: 12px;
+  fill: #6b7c93;
+  letter-spacing: 0.04em;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
 }
 .graph-boundary.highlight > .graph-boundary-frame {
   stroke: #6f91bb;
@@ -588,9 +601,6 @@ p {
 }
 .graph-evidence-role rect {
   stroke-width: 2;
-}
-.graph-toolbar select {
-  max-width: 210px;
 }
 .graph-toolbar button:disabled {
   opacity: 0.5;
