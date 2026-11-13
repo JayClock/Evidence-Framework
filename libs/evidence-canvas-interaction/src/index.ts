@@ -130,6 +130,11 @@ export type {
 } from './layout/types.js';
 
 export {
+  computeContextScope,
+  type ContextScope,
+} from './selection/contextScope.js';
+
+export {
   computeHighlight,
   emptyHighlight,
   isContextDimmed,
