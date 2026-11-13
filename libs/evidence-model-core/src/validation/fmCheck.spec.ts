@@ -65,8 +65,35 @@ describe('buildFmCheckReport', () => {
       executedScenarioCount: 3,
       simulationPassed: true,
       errors: [],
+      advisories: [],
     });
     expect(report.modelDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('carries naming advice without changing the verdict', async () => {
+    const { bundle } = await readModelRoot(
+      fixture('valid-traceable-subscription'),
+    );
+    const model = structuredClone(bundle);
+
+    model.entities.push({
+      type: 'entity',
+      id: 'role.pricing',
+      category: 'role',
+      kind: 'domain',
+      label: '折扣算法',
+      contextRef: 'context.cms',
+    });
+
+    const { report } = buildFmCheckReport({ model, suite: { instances: [], scenarios: [], errors: [] } });
+
+    expect(report.consistent).toBe(true);
+    expect(report.advisories).toEqual([
+      expect.objectContaining({
+        code: 'ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC',
+        entityId: 'role.pricing',
+      }),
+    ]);
   });
 
   it('reports scope completeness against the pinned digest and summary', async () => {

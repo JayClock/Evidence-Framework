@@ -282,6 +282,12 @@ export {
 } from './validation/fmCheck.js';
 
 export {
+  auditDomainComponentNaming,
+  type ModelAdvisory,
+  type ModelAdvisoryCode,
+} from './validation/lintRules.js';
+
+export {
   derivedSimulation,
   derivedTimeline,
   derivedTraceability,

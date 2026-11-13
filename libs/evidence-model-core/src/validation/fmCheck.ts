@@ -26,6 +26,7 @@ import {
   type TimelineSummary,
 } from './timeline.js';
 import { analyzeTraceability } from './traceability.js';
+import { auditDomainComponentNaming, type ModelAdvisory } from './lintRules.js';
 import {
   validateValidationSuite,
   type Scenario,
@@ -70,6 +71,13 @@ export interface FmCheckReport {
   scenarioResults: SimulationReport['scenarioResults'];
   timelineSummary: TimelineSummary;
   errors: readonly string[];
+  /**
+   * Non-blocking modelling advice.
+   *
+   * An advisory never changes `valid`: it is a naming or shape suggestion a
+   * human should read, not a reason to stop a hand-off.
+   */
+  advisories: readonly ModelAdvisory[];
 }
 
 export interface FmCheckRequest {
@@ -288,6 +296,7 @@ export const buildFmCheckReport = (request: FmCheckRequest): FmCheckOutcome => {
       scenarioResults: simulation?.scenarioResults ?? [],
       timelineSummary: timelineSummary(timelineValue),
       errors: dedupe(errors),
+      advisories: auditDomainComponentNaming(model),
     },
     timeline,
     simulation,

@@ -331,6 +331,7 @@ const printCheckSummary = (
     complete: boolean | null;
     gaps: readonly string[];
     errors: readonly string[];
+    advisories: readonly { entityId: string; message: string }[];
     executedScenarioCount: number;
     scenarioCount: number;
     simulationPassed: boolean | null;
@@ -362,6 +363,14 @@ const printCheckSummary = (
 
     for (const message of report.gaps) {
       process.stdout.write(`• ${message}\n`);
+    }
+  }
+
+  if (report.advisories.length > 0) {
+    process.stdout.write('\n建模建议（不阻断）:\n');
+
+    for (const advisory of report.advisories) {
+      process.stdout.write(`• ${advisory.entityId}: ${advisory.message}\n`);
     }
   }
 };
