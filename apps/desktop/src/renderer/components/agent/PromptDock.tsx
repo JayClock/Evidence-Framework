@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import {
+  REVERSE_CONTRACT_MODE,
   WORKSHOP_STEPS,
   workshopStepFocus,
   workshopStepRank,
@@ -59,6 +60,7 @@ export const PromptDock = ({
 }: PromptDockProps) => {
   const [value, setValue] = useState('');
   const [step, setStep] = useState<WorkshopStepId | null>(null);
+  const [reverse, setReverse] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   // Mounting must not steal focus; only a later ⌘K moves the caret here.
   const previousFocusToken = useRef(focusToken);
@@ -104,8 +106,13 @@ export const PromptDock = ({
     }
 
     setValue('');
+    const prefixes = [
+      step === null ? '' : workshopStepFocus(step),
+      reverse ? REVERSE_CONTRACT_MODE.focus : '',
+    ].filter((prefix) => prefix !== '');
+
     await onSubmit(
-      step === null ? text : `${workshopStepFocus(step)}\n${text}`,
+      prefixes.length === 0 ? text : `${prefixes.join('\n')}\n${text}`,
     );
   };
 
@@ -153,6 +160,28 @@ export const PromptDock = ({
             ×
           </button>
         )}
+      </div>
+
+      <div
+        className="flex flex-wrap items-center gap-1"
+        role="group"
+        aria-label="访谈方式"
+      >
+        <button
+          aria-pressed={reverse}
+          className={`rounded-full border px-1.5 py-0.5 text-[10px] transition ${
+            reverse
+              ? 'border-[#b79b56] bg-[#fff8e8] text-[#8d6200]'
+              : 'border-evidence-line text-evidence-muted hover:border-[#b79b56]'
+          }`}
+          onClick={() => {
+            setReverse((current) => !current);
+          }}
+          title={REVERSE_CONTRACT_MODE.hint}
+          type="button"
+        >
+          🔄 {REVERSE_CONTRACT_MODE.label}
+        </button>
       </div>
 
       {focus === null ? null : (

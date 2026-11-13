@@ -287,4 +287,35 @@ describe('PromptDock', () => {
 
     expect(onSubmit).toHaveBeenCalledWith('先把故事讲一遍');
   });
+
+  it('lets the modeler say the business has no agreement to read', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptDock
+        running={false}
+        activeToolName={null}
+        onSubmit={onSubmit}
+        onStop={() => undefined}
+      />,
+    );
+
+    const reverse = screen.getByRole('button', { name: '🔄 无合同逆推' });
+
+    fireEvent.click(reverse);
+    expect(reverse).toHaveAttribute('aria-pressed', 'true');
+
+    type('我们只有回执和退款的微信聊天记录');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      '【无合同逆推 · 从凭证与追责推导合约】\n我们只有回执和退款的微信聊天记录',
+    );
+
+    fireEvent.click(reverse);
+    type('那先看合同吧');
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+
+    expect(onSubmit).toHaveBeenLastCalledWith('那先看合同吧');
+  });
 });
