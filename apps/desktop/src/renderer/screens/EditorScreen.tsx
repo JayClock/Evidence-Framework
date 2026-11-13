@@ -20,6 +20,7 @@ import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import { useAgentSession } from '../state/useAgentSession';
+import { LiveApiProvider } from '../state/LiveApiContext';
 import { useDeliveryHub } from '../state/useDeliveryHub';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
@@ -366,190 +367,196 @@ const EditorWorkspace = ({
   ]);
 
   return (
-    <div className="flex h-full flex-col bg-evidence-surface">
-      <TopHeader
-        projectName={state.project.name}
-        dirty={state.dirty}
-        canUndo={state.canUndo}
-        canRedo={state.canRedo}
-        viewMode={viewMode}
-        graph={state.graph}
-        selection={state.selection}
-        onUndo={() => {
-          state.session.undo();
-        }}
-        onRedo={() => {
-          state.session.redo();
-        }}
-        onSave={() => void save()}
-        onPreviewReview={() => setReviewOpen(true)}
-        onExportDiffReview={() => void reviewExport.exportPage(true)}
-        onExportReview={() => void reviewExport.exportPage()}
-        exportReviewBusy={reviewExport.busy}
-        onOpenDelivery={() => setDeliveryOpen(true)}
-        onOpenSandbox={() => setSandboxOpen(true)}
-        onViewModeChange={setViewMode}
-        onSearch={() => searchInputRef.current?.focus()}
-      />
-
-      {liveModel.error === null ? null : (
-        <p role="alert">实时诊断同步失败：{liveModel.error}</p>
-      )}
-      {reviewExport.notice !== null ? (
-        <div
-          role="status"
-          className={[
-            'flex items-center justify-between gap-2 border-b px-4 py-1.5 text-[11px]',
-            reviewExport.notice.tone === 'saved'
-              ? 'border-evidence-line bg-evidence-surface text-evidence-muted'
-              : 'border-evidence-evidence bg-[#fdf3f1] text-evidence-evidence',
-          ].join(' ')}
-        >
-          <span className="truncate">{reviewExport.notice.message}</span>
-          <button
-            type="button"
-            onClick={reviewExport.dismissNotice}
-            className="shrink-0 rounded border border-evidence-line px-1.5 py-0.5 text-evidence-muted hover:text-evidence-ink"
-          >
-            知道了
-          </button>
-        </div>
-      ) : null}
-
-      <div className="flex min-h-0 flex-1">
-        <LeftSidebar
+    <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
+      <div className="flex h-full flex-col bg-evidence-surface">
+        <TopHeader
+          projectName={state.project.name}
+          dirty={state.dirty}
+          canUndo={state.canUndo}
+          canRedo={state.canRedo}
+          viewMode={viewMode}
           graph={state.graph}
-          layout={state.layout}
-          selectedNodeId={state.selection.nodeId}
-          searchTerm={searchTerm}
-          onSearchTermChange={setSearchTerm}
-          searchInputRef={searchInputRef}
-          onFocusNode={focusNode}
+          selection={state.selection}
+          onUndo={() => {
+            state.session.undo();
+          }}
+          onRedo={() => {
+            state.session.redo();
+          }}
+          onSave={() => void save()}
+          onPreviewReview={() => setReviewOpen(true)}
+          onExportDiffReview={() => void reviewExport.exportPage(true)}
+          onExportReview={() => void reviewExport.exportPage()}
+          exportReviewBusy={reviewExport.busy}
+          onOpenDelivery={() => setDeliveryOpen(true)}
+          onOpenSandbox={() => setSandboxOpen(true)}
+          onViewModeChange={setViewMode}
+          onSearch={() => searchInputRef.current?.focus()}
         />
 
-        <AgentPanel controller={agent} />
+        {liveModel.error === null ? null : (
+          <p role="alert">实时诊断同步失败：{liveModel.error}</p>
+        )}
+        {reviewExport.notice !== null ? (
+          <div
+            role="status"
+            className={[
+              'flex items-center justify-between gap-2 border-b px-4 py-1.5 text-[11px]',
+              reviewExport.notice.tone === 'saved'
+                ? 'border-evidence-line bg-evidence-surface text-evidence-muted'
+                : 'border-evidence-evidence bg-[#fdf3f1] text-evidence-evidence',
+            ].join(' ')}
+          >
+            <span className="truncate">{reviewExport.notice.message}</span>
+            <button
+              type="button"
+              onClick={reviewExport.dismissNotice}
+              className="shrink-0 rounded border border-evidence-line px-1.5 py-0.5 text-evidence-muted hover:text-evidence-ink"
+            >
+              知道了
+            </button>
+          </div>
+        ) : null}
 
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-          <CanvasViewport
+        <div className="flex min-h-0 flex-1">
+          <LeftSidebar
             graph={state.graph}
             layout={state.layout}
-            document={state.document}
-            viewMode={viewMode}
-            selection={state.selection}
-            focusRequest={focusRequest}
-            zoomCommand={zoomCommand}
-            diagnostics={diagnostics}
-            onOpenIssues={(issues) => {
-              setActiveIssueIds(issues.map((issue) => issue.issueId));
-              setDiagnosticsOpen(true);
-              if (issues[0]) focusIssue(issues[0]);
-            }}
-            overlay={patchReview.review?.overlay ?? null}
-            scope={scope}
-            onScopeChange={changeScope}
-            onSelect={(nodeId) => state.session.select(nodeId)}
-            onClearSelection={() => state.session.clearSelection()}
+            selectedNodeId={state.selection.nodeId}
+            searchTerm={searchTerm}
+            onSearchTermChange={setSearchTerm}
+            searchInputRef={searchInputRef}
+            onFocusNode={focusNode}
           />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
-            {patchReview.review === null ? null : (
-              <PatchReviewBar
-                review={patchReview.review}
-                onAccept={patchReview.accept}
-                onRevert={patchReview.revert}
-              />
-            )}
+          <AgentPanel controller={agent} />
 
-            <div className="pointer-events-auto">
-              <PromptDock
-                prefill={reviewPrompt}
-                running={agent.state.running}
-                activeToolName={agent.state.activeToolName}
-                onSubmit={agent.submit}
-                onStop={agent.stop}
-                focus={promptFocus}
-                onClearFocus={() => state.session.clearSelection()}
-                focusToken={agentFocusToken}
-              />
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+            <CanvasViewport
+              graph={state.graph}
+              layout={state.layout}
+              document={state.document}
+              viewMode={viewMode}
+              selection={state.selection}
+              focusRequest={focusRequest}
+              zoomCommand={zoomCommand}
+              diagnostics={diagnostics}
+              onOpenIssues={(issues) => {
+                setActiveIssueIds(issues.map((issue) => issue.issueId));
+                setDiagnosticsOpen(true);
+                if (issues[0]) focusIssue(issues[0]);
+              }}
+              overlay={patchReview.review?.overlay ?? null}
+              scope={scope}
+              onScopeChange={changeScope}
+              onSelect={(nodeId) => state.session.select(nodeId)}
+              onClearSelection={() => state.session.clearSelection()}
+            />
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
+              {patchReview.review === null ? null : (
+                <PatchReviewBar
+                  review={patchReview.review}
+                  onAccept={patchReview.accept}
+                  onRevert={patchReview.revert}
+                />
+              )}
+
+              <div className="pointer-events-auto">
+                <PromptDock
+                  prefill={reviewPrompt}
+                  running={agent.state.running}
+                  activeToolName={agent.state.activeToolName}
+                  onSubmit={agent.submit}
+                  onStop={agent.stop}
+                  focus={promptFocus}
+                  onClearFocus={() => state.session.clearSelection()}
+                  focusToken={agentFocusToken}
+                />
+              </div>
             </div>
           </div>
+
+          <RightInspector
+            graph={state.graph}
+            session={state.session}
+            selection={state.selection}
+          />
         </div>
 
-        <RightInspector
-          graph={state.graph}
-          session={state.session}
-          selection={state.selection}
+        {reviewOpen ? (
+          <ReviewHubModal
+            input={reviewInput}
+            onClose={() => setReviewOpen(false)}
+            canLocate={(issue) => {
+              const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
+              return (
+                !!id &&
+                (state.layout.nodeById.has(id) ||
+                  state.layout.contextGroups.some(
+                    (group) => group.contextId === id,
+                  ) ||
+                  state.layout.edges.some((edge) => edge.relationshipId === id))
+              );
+            }}
+            onLocate={(issue) => {
+              setReviewOpen(false);
+              focusIssue(issue);
+            }}
+            onPrompt={(issue) => {
+              setReviewOpen(false);
+              focusIssue(issue);
+              tokenRef.current += 1;
+              setReviewPrompt({
+                token: tokenRef.current,
+                text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
+              });
+            }}
+          />
+        ) : null}
+        {deliveryOpen ? (
+          <DeliveryHub
+            hub={delivery}
+            onFocusEntity={focusNode}
+            onClose={() => setDeliveryOpen(false)}
+          />
+        ) : null}
+
+        {sandboxOpen ? (
+          <SimulationSandbox
+            rootPath={project.rootPath}
+            onClose={() => setSandboxOpen(false)}
+            onFocusEntity={focusNode}
+          />
+        ) : null}
+
+        {diagnosticsOpen && sensors.report !== null ? (
+          <DiagnosticsDrawer
+            selectedIssueIds={activeIssueIds}
+            stale={diagnosticsStale}
+            report={sensors.report}
+            onClose={() => setDiagnosticsOpen(false)}
+            onFocusIssue={focusIssue}
+          />
+        ) : null}
+
+        <BottomStatusBar
+          layout={state.layout}
+          validation={state.validation}
+          report={sensors.report}
+          sensorLoading={sensors.loading}
+          sensorError={sensors.error}
+          diagnosticsOpen={diagnosticsOpen}
+          onToggleDiagnostics={() => setDiagnosticsOpen((open) => !open)}
+          onRerunSensors={() => void sensors.refresh()}
+          dirty={state.dirty}
+          savedAt={state.savedAt}
+          saveError={state.saveError}
+          externalChangeAt={state.externalChangeAt}
+          onReload={() => void reloadFromDisk()}
+          onDismissExternalChange={dismissExternalChange}
         />
       </div>
-
-      {reviewOpen ? (
-        <ReviewHubModal
-          input={reviewInput}
-          onClose={() => setReviewOpen(false)}
-          canLocate={(issue) => {
-            const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
-            return (
-              !!id &&
-              (state.layout.nodeById.has(id) ||
-                state.layout.contextGroups.some(
-                  (group) => group.contextId === id,
-                ) ||
-                state.layout.edges.some((edge) => edge.relationshipId === id))
-            );
-          }}
-          onLocate={(issue) => {
-            setReviewOpen(false);
-            focusIssue(issue);
-          }}
-          onPrompt={(issue) => {
-            setReviewOpen(false);
-            focusIssue(issue);
-            tokenRef.current += 1;
-            setReviewPrompt({
-              token: tokenRef.current,
-              text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
-            });
-          }}
-        />
-      ) : null}
-      {deliveryOpen ? (
-        <DeliveryHub hub={delivery} onClose={() => setDeliveryOpen(false)} />
-      ) : null}
-
-      {sandboxOpen ? (
-        <SimulationSandbox
-          rootPath={project.rootPath}
-          onClose={() => setSandboxOpen(false)}
-          onFocusEntity={focusNode}
-        />
-      ) : null}
-
-      {diagnosticsOpen && sensors.report !== null ? (
-        <DiagnosticsDrawer
-          selectedIssueIds={activeIssueIds}
-          stale={diagnosticsStale}
-          report={sensors.report}
-          onClose={() => setDiagnosticsOpen(false)}
-          onFocusIssue={focusIssue}
-        />
-      ) : null}
-
-      <BottomStatusBar
-        layout={state.layout}
-        validation={state.validation}
-        report={sensors.report}
-        sensorLoading={sensors.loading}
-        sensorError={sensors.error}
-        diagnosticsOpen={diagnosticsOpen}
-        onToggleDiagnostics={() => setDiagnosticsOpen((open) => !open)}
-        onRerunSensors={() => void sensors.refresh()}
-        dirty={state.dirty}
-        savedAt={state.savedAt}
-        saveError={state.saveError}
-        externalChangeAt={state.externalChangeAt}
-        onReload={() => void reloadFromDisk()}
-        onDismissExternalChange={dismissExternalChange}
-      />
-    </div>
+    </LiveApiProvider>
   );
 };

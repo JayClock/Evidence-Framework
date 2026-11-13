@@ -1,6 +1,6 @@
+import { fieldFor } from './fieldOrigin.js';
+export { fieldFor } from './fieldOrigin.js';
 import {
-  EVIDENCE_TIME_ATTRIBUTE_NAMES,
-  type AttributeAST,
   type DomainModelDocument,
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
@@ -99,40 +99,6 @@ export interface DeliveryRoute {
     'id' | 'kind' | 'expression' | 'bindings' | 'target' | 'resultType'
   >[];
 }
-
-const timeAttributes = new Set<string>(EVIDENCE_TIME_ATTRIBUTE_NAMES);
-
-/** How one attribute reaches the service. */
-export const fieldFor = (
-  attribute: AttributeAST,
-  graph: DomainGraph,
-  entityRef: string,
-): DeliveryField => {
-  const rule = graph.derivationRule(entityRef, attribute.name);
-  const field: DeliveryField = {
-    name: attribute.name,
-    label: attribute.label,
-    valueType: attribute.valueType ?? 'string',
-    required: attribute.required === true,
-    reason: 'caller',
-    meaning: attribute.meaning,
-  };
-
-  if (rule !== undefined || attribute.derivedByRuleRef !== undefined) {
-    return {
-      ...field,
-      reason: 'derived',
-      ruleRef: rule?.id ?? attribute.derivedByRuleRef,
-      ...(rule === undefined ? {} : { ruleExpression: rule.expression }),
-    };
-  }
-
-  if (timeAttributes.has(attribute.name)) {
-    return { ...field, reason: 'service-time' };
-  }
-
-  return field;
-};
 
 /** Classifies every attribute of one object once, in declaration order. */
 const fieldsOf = (

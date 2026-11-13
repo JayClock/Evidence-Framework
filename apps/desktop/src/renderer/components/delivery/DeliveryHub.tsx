@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { IncrementalDiffPanel } from './IncrementalDiffPanel';
 import type { DeliveryHubController } from '../../state/useDeliveryHub';
 
 const KIND_LABELS: Record<string, string> = {
@@ -14,6 +16,7 @@ const LINK_MODE_LABELS: Record<string, string> = {
 
 export interface DeliveryHubProps {
   hub: DeliveryHubController;
+  onFocusEntity?: (entityRef: string) => void;
   onClose: () => void;
 }
 
@@ -24,7 +27,12 @@ export interface DeliveryHubProps {
  * become? One row per service, one row per crossing, and the work the model still
  * owes stated as an obligation rather than hidden behind a green check.
  */
-export const DeliveryHub = ({ hub, onClose }: DeliveryHubProps) => {
+export const DeliveryHub = ({
+  hub,
+  onClose,
+  onFocusEntity,
+}: DeliveryHubProps) => {
+  const [tab, setTab] = useState<'full' | 'diff'>('full');
   const preview = hub.preview;
 
   return (
@@ -67,6 +75,27 @@ export const DeliveryHub = ({ hub, onClose }: DeliveryHubProps) => {
             </button>
           </div>
         </header>
+        <div
+          role="tablist"
+          aria-label="交付视图"
+          className="flex gap-2 border-b px-5 py-2 text-[11px]"
+        >
+          <button
+            role="tab"
+            aria-selected={tab === 'full'}
+            onClick={() => setTab('full')}
+          >
+            契约全览
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'diff'}
+            onClick={() => setTab('diff')}
+          >
+            本次增量变更
+            {hub.analysis?.diff.summary.hasBreakingChanges ? ' ⚠' : ''}
+          </button>
+        </div>
         <p role="status" className="px-5 py-2 text-[11px] text-evidence-muted">
           会话基线：打开编辑器时的模型；保存不会重置差异。
           {hub.stale
@@ -97,7 +126,14 @@ export const DeliveryHub = ({ hub, onClose }: DeliveryHubProps) => {
             <p className="whitespace-pre-wrap text-[#b42318]">{hub.error}</p>
           )}
 
-          {preview === null ? null : (
+          {tab !== 'diff' || hub.analysis === null ? null : (
+            <IncrementalDiffPanel
+              analysis={hub.analysis}
+              stale={hub.stale}
+              onFocusEntity={onFocusEntity}
+            />
+          )}
+          {tab !== 'full' || preview === null ? null : (
             <div className="flex flex-col gap-5">
               <section>
                 <h3 className="mb-1 text-[11px] font-medium text-evidence-muted">
@@ -195,6 +231,22 @@ export const DeliveryHub = ({ hub, onClose }: DeliveryHubProps) => {
                 )}
               </section>
 
+              <section aria-label="路由契约">
+                <h3 className="font-medium">
+                  路由契约 {preview.routes.length}
+                </h3>
+                {(hub.analysis?.bindings ?? []).map((route) => (
+                  <p key={route.id} className="mt-1 break-all">
+                    <code>
+                      {route.method} {route.path}
+                    </code>{' '}
+                    ·{' '}
+                    {route.exposure === 'internal'
+                      ? '内部操作'
+                      : route.roleRefs.join('、')}
+                  </p>
+                ))}
+              </section>
               <section>
                 <h3 className="mb-1 text-[11px] font-medium text-evidence-muted">
                   尚未闭环的能力 {preview.limitations.length}

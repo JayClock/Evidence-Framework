@@ -6,6 +6,8 @@ import {
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import { createDesktopFixture } from '../../test-support/modelFixture';
+import { LiveApiProvider } from '../../state/LiveApiContext';
+import { liveDeliveryPreview } from '../../test-support/liveDelivery';
 import { NodeCard } from './NodeCard';
 import { summarizeCards } from './cardSummary';
 
@@ -113,6 +115,53 @@ describe('business card summaries', () => {
 });
 
 describe('NodeCard modes', () => {
+  it('shows projected routes, distinguishes internal operations and hides stale bindings', () => {
+    const document = createDesktopFixture();
+    const node = createGraphLayout(createDomainGraph(document)).nodeById.get(
+      'evidence.request',
+    )!;
+    const props = {
+      node,
+      selected: false,
+      dimmed: false,
+      highlighted: false,
+      viewMode: 'simplified' as const,
+      summary: summarizeCards(document).get(node.nodeId)!,
+      onHover: vi.fn(),
+      onSelect: vi.fn(),
+    };
+    const analysis = liveDeliveryPreview();
+    analysis.bindings = [
+      {
+        id: 'route.request',
+        entityRef: node.nodeId,
+        method: 'POST',
+        path: '/test/request',
+        roleRefs: [],
+        exposure: 'internal',
+        fields: [],
+      },
+    ];
+    const { rerender } = render(
+      <LiveApiProvider analysis={analysis} stale={false}>
+        <NodeCard {...props} />
+      </LiveApiProvider>,
+    );
+    expect(screen.getByText('内部 · POST /test/request')).toBeInTheDocument();
+    rerender(
+      <LiveApiProvider analysis={analysis} stale={true}>
+        <NodeCard {...props} />
+      </LiveApiProvider>,
+    );
+    expect(screen.getByText('API 待刷新')).toBeInTheDocument();
+    expect(screen.queryByText('内部 · POST /test/request')).toBeNull();
+    rerender(
+      <LiveApiProvider analysis={liveDeliveryPreview()} stale={false}>
+        <NodeCard {...props} />
+      </LiveApiProvider>,
+    );
+    expect(screen.getByText('No API Exposure')).toBeInTheDocument();
+  });
   it('keeps an accessible responsibility in bounds and hides detail only in simplified mode', () => {
     const document = createDesktopFixture();
     const graph = createDomainGraph(document);

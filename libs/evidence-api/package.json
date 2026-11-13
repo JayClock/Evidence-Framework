@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "\u4ece\u5df2\u901a\u8fc7\u95e8\u7981\u7684 FM \u6295\u5f71 API \u6280\u672f\u5951\u7ea6\uff1a\u8d44\u6e90\u3001\u80fd\u529b\u3001\u8d85\u5a92\u4f53\u3001OpenAPI \u4e0e\u6d4b\u8bd5\u5411\u91cf",
+  "description": "从已通过门禁的 FM 投影 API 技术契约：资源、能力、超媒体、OpenAPI 与测试向量",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +17,12 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./browser": {
+      "@evidence-poc/source": "./src/browser.ts",
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js",
+      "default": "./dist/browser.js"
     },
     "./cli": {
       "@evidence-poc/source": "./src/cli.ts",

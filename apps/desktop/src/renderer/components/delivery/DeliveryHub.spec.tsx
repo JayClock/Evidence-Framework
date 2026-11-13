@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { DeliveryHubController } from '../../state/useDeliveryHub';
-import type { LiveDeliveryPreview } from '../../../shared/delivery';
+import { liveDeliveryPreview } from '../../test-support/liveDelivery';
 import { DeliveryHub } from './DeliveryHub';
 
 const controller = (
@@ -12,7 +12,7 @@ const controller = (
   error: null,
   busy: false,
   notice: null,
-  analysis: { canExportDraft: true } as LiveDeliveryPreview,
+  analysis: liveDeliveryPreview(),
   preview: {
     modelId: 'procurement',
     modelName: '商品采购',
@@ -39,6 +39,18 @@ const controller = (
 });
 
 describe('DeliveryHub', () => {
+  it('switches between the full contract and incremental diff', () => {
+    render(<DeliveryHub hub={controller()} onClose={() => undefined} />);
+    fireEvent.click(screen.getByRole('tab', { name: '本次增量变更' }));
+    expect(screen.getByRole('tab', { name: '本次增量变更' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.getByText('无路由变更')).toBeInTheDocument();
+    expect(screen.queryByText('核心履约')).toBeNull();
+    fireEvent.click(screen.getByRole('tab', { name: '契约全览' }));
+    expect(screen.getByText('核心履约')).toBeInTheDocument();
+  });
   it('lists the contract with an explicit session baseline and draft status', () => {
     render(<DeliveryHub hub={controller()} onClose={() => undefined} />);
     expect(screen.getByText('核心履约')).toBeInTheDocument();

@@ -1,3 +1,4 @@
+import { useLiveApi } from '../../state/LiveApiContext';
 import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   type EntityAST,
@@ -122,6 +123,9 @@ export const NodeCard = ({
   onSelect,
 }: NodeCardProps) => {
   const { entity, box } = node;
+  const api = useLiveApi();
+  const routes = api.byEntity.get(entity.id) ?? [];
+  const primary = routes.find((route) => route.method === 'POST') ?? routes[0];
   const color = entityColor(entity);
   const token = CATEGORY_TOKENS[entity.category];
   const time = businessTime(entity);
@@ -222,6 +226,29 @@ export const NodeCard = ({
             title={entity.id}
           >
             {entity.id}
+          </span>
+        ) : null}
+        {api.active && entity.category === 'evidence' ? (
+          <span
+            data-api-route={entity.id}
+            className="mt-0.5 block max-w-full truncate rounded bg-white/70 px-1 text-[8px] text-evidence-muted"
+            title={
+              api.stale
+                ? 'API 草稿待刷新'
+                : routes
+                    .map(
+                      (route) =>
+                        `${route.exposure === 'internal' ? '内部' : '对外'} ${route.method} ${route.path}`,
+                    )
+                    .join('\n') || '当前无路由覆盖，请检查履约结构。'
+            }
+          >
+            {api.stale
+              ? 'API 待刷新'
+              : primary === undefined
+                ? 'No API Exposure'
+                : `${primary.exposure === 'internal' ? '内部 · ' : ''}${primary.method} ${primary.path}`}
+            {!api.stale && routes.length > 1 ? ` +${routes.length - 1}` : ''}
           </span>
         ) : null}
         {shape === 'interval' ? <IntervalBar accent={color} /> : null}

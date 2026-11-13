@@ -18,6 +18,7 @@ import {
   type ModelSession,
 } from '@evidence-poc/evidence-model-core/browser';
 
+import { ApiFieldBadge } from './ApiFieldBadge';
 import { InlineCelEditor } from './InlineCelEditor';
 import { KeyDataProvenancePicker } from './KeyDataProvenancePicker';
 import { useCelCompletion } from './useCelCompletion';
@@ -139,6 +140,11 @@ export const AttributeTableEditor = ({
                     />
                     必填
                   </label>
+                  <ApiFieldBadge
+                    attribute={attribute}
+                    entityRef={entity.id}
+                    graph={graph}
+                  />
                   {attribute.derivedByRuleRef !== undefined ? (
                     <span className="rounded bg-[#eef2f7] px-1 text-[8px] text-evidence-accent">
                       派生
@@ -439,7 +445,9 @@ const BindRuleForm = ({
         placeholder="contract.unit_price * self.quantity"
         onCommit={(next) => {
           setExpression(next);
-          setAliases(analyzeCelExpression({ expression: next, candidates }).identifiers);
+          setAliases(
+            analyzeCelExpression({ expression: next, candidates }).identifiers,
+          );
         }}
       />
       <div className="flex gap-1">
