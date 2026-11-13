@@ -6,7 +6,9 @@ import { pointOnRoute } from './edgeLabels';
 describe('BusinessLegend', () => {
   beforeEach(() => localStorage.clear());
   it('explains actual shapes and edges, remembers expansion, and is excluded from captures', () => {
-    const { container, unmount } = render(<BusinessLegend />);
+    const { container, unmount } = render(
+      <BusinessLegend viewMode="standard" />,
+    );
     expect(screen.getByRole('button', { name: '图例说明' })).toHaveAttribute(
       'aria-expanded',
       'false',
@@ -18,6 +20,7 @@ describe('BusinessLegend', () => {
     );
     expect(screen.getByText('虚线：跨业务边界或角色扮演')).toBeVisible();
     expect(screen.queryByText(/法定/)).toBeNull();
+    expect(screen.getByText('1..N：源端 / 目标端关系基数')).toBeVisible();
     expect(container.firstChild).toHaveAttribute('data-evidence-capture-hide');
     unmount();
     render(<BusinessLegend />);
@@ -28,6 +31,17 @@ describe('BusinessLegend', () => {
     fireEvent.click(screen.getByRole('button', { name: '图例说明' }));
     expect(screen.getByText('虚线：跨业务边界或角色扮演')).not.toBeVisible();
   });
+  it('describes only what the compact board draws', () => {
+    render(<BusinessLegend viewMode="simplified" />);
+    fireEvent.click(screen.getByRole('button', { name: '图例说明' }));
+
+    expect(
+      screen.getByText('简化模式隐藏属性与基数，扮演关系线仅在悬停时显示'),
+    ).toBeVisible();
+    expect(screen.queryByText('1..N：源端 / 目标端关系基数')).toBeNull();
+    expect(screen.getByText(/签署该凭证的当事人/)).toBeVisible();
+  });
+
   it('moves above the composer in a narrow canvas', () => {
     const { container } = render(<BusinessLegend compact />);
     expect(container.firstChild).toHaveClass('top-[76px]', 'max-h-[35%]');

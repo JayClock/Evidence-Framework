@@ -207,7 +207,11 @@ export const NodeCard = ({
       </div>
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <span
-          className="line-clamp-2 text-[11px] leading-tight font-medium text-evidence-ink"
+          className={[
+            'line-clamp-2 leading-tight font-medium text-evidence-ink',
+            // The workshop reading has one job: say what the object is.
+            standard ? 'text-[11px]' : 'text-[13px]',
+          ].join(' ')}
           title={entity.label}
         >
           {entity.label}

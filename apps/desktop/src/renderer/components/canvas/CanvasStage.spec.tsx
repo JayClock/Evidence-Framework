@@ -75,8 +75,55 @@ describe('CanvasStage', () => {
     expect(highlighted?.className).toContain('opacity-100');
     expect(faded?.className).toContain('opacity-20');
     expect(
-      container.querySelector('[data-edge-id="relation.buyer-plays-role"]'),
+      container.querySelector(
+        '[data-edge-id="relation.confirmation-references-request"]',
+      ),
     ).toHaveAttribute('opacity', '0.16');
+  });
+
+  it('keeps plays_role routes out of the workshop board until they are pointed at', () => {
+    const muted = setup();
+
+    expect(
+      muted.container.querySelector(
+        '[data-edge-id="relation.buyer-plays-role"]',
+      ),
+    ).toHaveAttribute('opacity', '0');
+    expect(
+      muted.container
+        .querySelector('[data-edge-id="relation.buyer-plays-role"]')
+        ?.getAttribute('style'),
+    ).toContain('pointer-events: none');
+    // A cited document is not decoration: the reference line stays visible.
+    expect(
+      muted.container.querySelector(
+        '[data-edge-id="relation.confirmation-references-request"]',
+      ),
+    ).toHaveAttribute('opacity', '1');
+
+    muted.unmount();
+    const pointed = setup({
+      highlightedEdgeIds: new Set(['relation.buyer-plays-role']),
+    });
+
+    expect(
+      pointed.container.querySelector(
+        '[data-edge-id="relation.buyer-plays-role"]',
+      ),
+    ).toHaveAttribute('opacity', '1');
+  });
+
+  it('draws every route in the hand-off board', () => {
+    const { container } = setup({ viewMode: 'standard' });
+
+    expect(
+      container.querySelector('[data-edge-id="relation.buyer-plays-role"]'),
+    ).toHaveAttribute('opacity', '1');
+    expect(
+      container.querySelector(
+        '[data-edge-id="relation.buyer-plays-role"] polyline',
+      ),
+    ).toHaveAttribute('marker-end', 'url(#evidence-arrow)');
   });
 
   it('marks the selected object with a ring', () => {

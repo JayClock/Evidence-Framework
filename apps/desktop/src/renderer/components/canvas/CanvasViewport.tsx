@@ -466,7 +466,7 @@ export const CanvasViewport = ({
           onScopeChange={onScopeChange}
         />
       ) : null}
-      <BusinessLegend compact={size.width < 800} />
+      <BusinessLegend compact={size.width < 800} viewMode={viewMode} />
       <ZoomControl
         zoom={viewport.zoom}
         onFit={fitToContent}

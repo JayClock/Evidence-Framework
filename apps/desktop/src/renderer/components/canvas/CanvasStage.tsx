@@ -208,6 +208,16 @@ export const CanvasStage = ({
           const outOfScope =
             scope !== null && !scope.edgeIds.has(edge.relationshipId);
           const faded = dimmed && !active;
+          /**
+           * A workshop board states who signed in the card corner, not in a
+           * line to every player, so the compact reading keeps `plays_role`
+           * routes hidden until the modeler points at one of the two ends.
+           */
+          const mutedForBusinessReading =
+            viewMode === 'simplified' &&
+            edge.kind === 'plays_role' &&
+            !active &&
+            hoveredEdgeId !== edge.relationshipId;
           const relationship = relationshipById.get(edge.relationshipId);
           const midpoint = pointOnRoute(edge.points, 0.5);
           const points = edge.points
@@ -218,8 +228,19 @@ export const CanvasStage = ({
             <g
               key={edge.relationshipId}
               data-edge-id={edge.relationshipId}
-              opacity={outOfScope ? 0.15 : faded ? 0.16 : 1}
-              style={{ pointerEvents: outOfScope ? 'none' : 'stroke' }}
+              opacity={
+                outOfScope
+                  ? 0.15
+                  : mutedForBusinessReading
+                    ? 0
+                    : faded
+                      ? 0.16
+                      : 1
+              }
+              style={{
+                pointerEvents:
+                  outOfScope || mutedForBusinessReading ? 'none' : 'stroke',
+              }}
               onMouseEnter={() =>
                 !outOfScope && onHoverEdge(edge.relationshipId)
               }
