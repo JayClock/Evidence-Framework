@@ -19,6 +19,9 @@
       "path": "../evidence-model-core/tsconfig.lib.json"
     },
     {
+      "path": "../evidence-canvas-interaction/tsconfig.lib.json"
+    },
+    {
       "path": "../evidence-api/tsconfig.lib.json"
     }
   ],
