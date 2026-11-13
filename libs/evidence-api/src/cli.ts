@@ -13,21 +13,33 @@ import {
   type DesignDocument,
 } from './loader/apiLoader.js';
 import { buildProjection, isComplete } from './projector.js';
+import { diffApiSnapshots } from './diff/apiDiff.js';
+import { renderApiDiff } from './diff/renderApiDiff.js';
+import { diffDomainModels } from '@evidence-poc/evidence-model-core';
 import {
   defaultOutputDirectory,
   renderOutputs,
   writeOutput,
 } from './renderer/outputRenderer.js';
 
-export type Command = 'inspect' | 'check' | 'project' | 'deliver';
+export type Command = 'inspect' | 'check' | 'project' | 'deliver' | 'diff';
 
 export interface CliOptions {
-  command: Command;
+  command: Exclude<Command, 'diff'>;
   projectRoot: string;
   fm: string;
   fmCheck?: string;
   api?: string;
   out?: string;
+}
+
+export interface DiffCliOptions {
+  command: 'diff';
+  base: string;
+  target: string;
+  format: 'json' | 'summary';
+  baseApi?: string;
+  api?: string;
 }
 
 export interface CliResult {
@@ -37,7 +49,7 @@ export interface CliResult {
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|summary]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -116,17 +128,24 @@ export const validatePaths = (options: CliOptions): string | null => {
   }
 };
 
-const parse = (argv: readonly string[]): CliOptions | string => {
+const parse = (
+  argv: readonly string[],
+): CliOptions | DiffCliOptions | string => {
   const [command, ...rest] = argv;
   if (
     command !== 'inspect' &&
     command !== 'check' &&
     command !== 'project' &&
-    command !== 'deliver'
+    command !== 'deliver' &&
+    command !== 'diff'
   )
     return USAGE;
   const values: Record<string, string> = {};
-  const flags = new Set(['project-root', 'fm', 'fm-check', 'api', 'out']);
+  const flags = new Set(
+    command === 'diff'
+      ? ['base', 'target', 'base-api', 'api', 'format']
+      : ['project-root', 'fm', 'fm-check', 'api', 'out'],
+  );
   for (let index = 0; index < rest.length; index += 2) {
     const token = rest[index]!;
     const key = token.slice(2);
@@ -137,6 +156,21 @@ const parse = (argv: readonly string[]): CliOptions | string => {
     if (value === undefined || value.startsWith('--'))
       return `${token} needs a value`;
     values[key] = value;
+  }
+  if (command === 'diff') {
+    const format = values['format'] ?? 'json';
+    if (format !== 'json' && format !== 'summary')
+      return '--format 必须是 json 或 summary';
+    return {
+      command,
+      base: values['base'] ?? '',
+      target: values['target'] ?? '',
+      format,
+      ...(values['base-api'] === undefined
+        ? {}
+        : { baseApi: values['base-api'] }),
+      ...(values['api'] === undefined ? {} : { api: values['api'] }),
+    };
   }
   return {
     command,
@@ -155,11 +189,93 @@ const refused = (code: string, message: string): CliResult => ({
   exitCode: 1,
 });
 
+const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
+  for (const [value, name, required] of [
+    [options.base, 'base', true],
+    [options.target, 'target', true],
+    [options.baseApi, 'base-api', false],
+    [options.api, 'api', false],
+  ] as const) {
+    if (value === undefined) {
+      if (required)
+        return { output: null, error: `--${name} 是必需的`, exitCode: 1 };
+    } else if (value === '')
+      return { output: null, error: `--${name} 是必需的`, exitCode: 1 };
+    else if (!path.isAbsolute(value))
+      return {
+        output: null,
+        error: `PATH_NOT_ABSOLUTE: --${name} 必须使用绝对路径`,
+        exitCode: 1,
+      };
+  }
+  try {
+    const base = await loadFm(options.base),
+      target = await loadFm(options.target);
+    if (base.index === null || target.index === null)
+      return {
+        output: {
+          valid: false,
+          diagnostics: [...base.diagnostics, ...target.diagnostics].map(
+            diagnosticToJson,
+          ),
+        },
+        exitCode: 1,
+      };
+    const overlays = [options.baseApi, options.api].map((file) =>
+      file === undefined ? undefined : loadDesign(file),
+    );
+    const invalid = overlays.flatMap((overlay) => overlay?.diagnostics ?? []);
+    if (hasErrors(invalid))
+      return {
+        output: { valid: false, diagnostics: invalid.map(diagnosticToJson) },
+        exitCode: 1,
+      };
+    const before = buildProjection({
+      index: base.index,
+      ...(overlays[0]?.design == null ? {} : { design: overlays[0].design }),
+    }).projection;
+    const after = buildProjection({
+      index: target.index,
+      ...(overlays[1]?.design == null ? {} : { design: overlays[1].design }),
+    }).projection;
+    const diff = {
+      ...diffApiSnapshots(before, after),
+      modelChanges: diffDomainModels(
+        base.index.document,
+        target.index.document,
+      ),
+    };
+    const diagnostics = [...before.diagnostics, ...after.diagnostics];
+    const exitCode = hasErrors(diagnostics)
+      ? 1
+      : diff.summary.hasBreakingChanges || hasGaps(diagnostics)
+        ? 3
+        : 0;
+    return {
+      output:
+        options.format === 'json'
+          ? diff
+          : renderApiDiff(
+              diff,
+              process.stdout.isTTY === true &&
+                process.env['NO_COLOR'] === undefined,
+            ),
+      exitCode,
+    };
+  } catch (error) {
+    return refused(
+      'API_DIFF_INVALID',
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+};
+
 /** Preview and export current inputs; stale evidence is a gap, not a reason to hide the draft. */
 export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
   const options = parse(argv);
   if (typeof options === 'string')
     return { output: null, error: options, exitCode: 1 };
+  if (options.command === 'diff') return runDiff(options);
   const problem = validatePaths(options);
   if (problem !== null) return { output: null, error: problem, exitCode: 1 };
 
@@ -252,7 +368,11 @@ const main = async (): Promise<void> => {
   const result = await runCli(process.argv.slice(2));
   if (result.error !== undefined) process.stderr.write(`${result.error}\n`);
   if (result.output !== null)
-    process.stdout.write(canonicalJson(result.output));
+    process.stdout.write(
+      typeof result.output === 'string'
+        ? result.output
+        : canonicalJson(result.output),
+    );
   process.exitCode = result.exitCode;
 };
 

@@ -9,6 +9,7 @@ export {
   type HypermediaLinkDiff,
   type ApiModelDiffResult,
 } from './diff/apiDiff.js';
+export { renderApiDiff } from './diff/renderApiDiff.js';
 export { patchDeliveryRoutes } from './diff/patchDeliveryRoutes.js';
 
 export {
@@ -202,6 +203,7 @@ export {
   runCli,
   validatePaths,
   type CliOptions,
+  type DiffCliOptions,
   type CliResult,
   type Command,
 } from './cli.js';
