@@ -410,7 +410,7 @@ describe('createEvidenceToolsExtension', () => {
 
     expect(patches).toEqual([]);
     expect(result.isError).toBe(true);
-    expect(result.content[0]?.text).toContain('不是履约确认');
+    expect(result.content[0]?.text).toContain('是时段凭证');
   });
 
   it('reports a rejected operator patch as an error, not as a silent success', async () => {
