@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 interface ShortcutHandlers {
+  openReview?: () => void;
   undo: () => void;
   redo: () => void;
   save: () => void;
@@ -41,6 +42,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
     const onKeyDown = (event: KeyboardEvent) => {
       const mod = event.metaKey || event.ctrlKey;
       const typing = isEditable(event.target);
+      if (event.altKey && event.code === 'KeyR' && !typing && handlers.openReview) {
+        event.preventDefault(); handlers.openReview(); return;
+      }
 
       if (mod && event.key.toLowerCase() === 's') {
         event.preventDefault();

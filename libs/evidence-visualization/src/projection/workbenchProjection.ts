@@ -38,8 +38,8 @@ export interface WorkbenchEdge {
 
 /** What the page shows about the checks behind it. */
 export interface WorkbenchValidation {
-  /** True: the page only renders a model the checker accepted. */
-  fm: true;
+  /** Formal exports pass the collector gate; authoring previews may be invalid. */
+  fm: boolean;
   consistent: unknown;
   complete: unknown;
   scopeRefs: unknown;
@@ -170,6 +170,8 @@ export interface WorkbenchProjectionInput {
   api?: WorkbenchApiInput | null;
   delivery?: WorkbenchDelivery | null;
   check: WorkbenchCheckInput;
+  /** False only for explicitly labelled authoring previews. */
+  checked?: boolean;
   /** ISO timestamp the page prints as its generation time. */
   generatedAt?: string;
 }
@@ -256,6 +258,7 @@ export const projectWorkbenchData = ({
   delivery = null,
   check,
   generatedAt,
+  checked = true,
 }: WorkbenchProjectionInput): WorkbenchData => {
   const nodes = new Map<string, WorkbenchNode>();
   const edges: WorkbenchEdge[] = [];
@@ -661,7 +664,7 @@ export const projectWorkbenchData = ({
       capabilities: api?.capabilities?.length ?? 0,
     },
     validation: {
-      fm: true,
+      fm: checked,
       consistent: check.consistent ?? null,
       complete: check.complete ?? null,
       scopeRefs: check.scopeRefs ?? null,

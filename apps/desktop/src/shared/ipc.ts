@@ -1,3 +1,4 @@
+import type { PreviewReviewInput, PreviewReviewResult } from './review';
 import type { EvidenceAgentApi } from './agentIpc';
 import type {
   DeliveryPreviewResult,
@@ -41,6 +42,7 @@ export const EVIDENCE_IPC_CHANNELS = {
   recent: 'evidence:project:recent',
   openEditorWindow: 'evidence:project:open-editor-window',
   changed: 'evidence:project:changed',
+  previewReview: 'evidence:project:preview-review',
   exportReview: 'evidence:project:export-review',
   deliveryPreview: 'evidence:project:delivery-preview',
   exportDelivery: 'evidence:project:export-delivery',
@@ -83,6 +85,7 @@ export interface EvidenceDesktopApi {
      * The page is generated in the main process from the sources on disk, so a
      * review always describes what was saved, not what the canvas shows.
      */
+    previewReview: (input: PreviewReviewInput) => Promise<PreviewReviewResult>;
     exportReview: (rootPath: string) => Promise<ExportReviewResult>;
     /**
      * What the model becomes when it is deployed.

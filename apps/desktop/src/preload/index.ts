@@ -50,6 +50,7 @@ const api: EvidenceDesktopApi = {
     listRecent: () => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.recent),
     openEditorWindow: (rootPath) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.openEditorWindow, rootPath),
+    previewReview: (input) => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.previewReview, input),
     exportReview: (rootPath: string) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportReview, rootPath),
     deliveryPreview: (rootPath: string) =>

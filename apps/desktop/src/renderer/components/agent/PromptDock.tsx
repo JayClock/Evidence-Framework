@@ -30,6 +30,7 @@ export interface PromptDockProps {
   onClearFocus?: () => void;
   /** Bumped by ⌘K; every change moves the caret into the composer. */
   focusToken?: number;
+  prefill?: { token: number; text: string } | null;
   disabled?: boolean;
 }
 
@@ -53,6 +54,7 @@ export const PromptDock = ({
   focus = null,
   onClearFocus,
   focusToken,
+  prefill,
   disabled = false,
 }: PromptDockProps) => {
   const [value, setValue] = useState('');
@@ -83,6 +85,14 @@ export const PromptDock = ({
     previousFocusToken.current = focusToken;
     textareaRef.current?.focus();
   }, [focusToken]);
+
+  const previousPrefill = useRef<number | null>(null);
+  useEffect(() => {
+    if (!prefill || previousPrefill.current === prefill.token) return;
+    previousPrefill.current = prefill.token;
+    setValue((current) => current.trim() ? `${current}\n\n${prefill.text}` : prefill.text);
+    textareaRef.current?.focus();
+  }, [prefill]);
 
   const send = async (): Promise<void> => {
     const text = value.trim();

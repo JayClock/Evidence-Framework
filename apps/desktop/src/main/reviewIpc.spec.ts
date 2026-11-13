@@ -1,3 +1,6 @@
+import path from 'node:path';
+import { projectWorkbenchData } from '@evidence-poc/evidence-visualization';
+import { createEmptyDomainModel } from '@evidence-poc/evidence-schema';
 import { describe, expect, it, vi } from 'vitest';
 
 // `electron` is stubbed because this handler only needs the two calls it makes.
@@ -77,6 +80,21 @@ describe('reviewScopeRefs', () => {
 });
 
 describe('registerReviewIpc', () => {
+  it('previews through installed assets without a save dialog and reports failures', async () => {
+    const data = projectWorkbenchData({ model: { schemaVersion: '5.0', model: { name: '预览' }, entities: [], relationships: [], rules: [] }, check: {}, checked: false });
+    const saveDialog = vi.fn();
+    const input = { rootPath: '/model', revision: 2, document: createEmptyDomainModel() };
+    const preview = vi.fn(async () => ({ success: true as const, revision: 2, data, issues: [], notice: '编辑快照' }));
+    registerReviewIpc({ preview, showSaveDialog: saveDialog, resolveAssets: () => path.resolve(import.meta.dirname, '../../../../libs/evidence-visualization/assets') });
+    const handle = handlers.get('evidence:project:preview-review')!;
+    const response = await handle({ sender: {} } as never, input as never) as { html: string; success: boolean };
+    expect(response, JSON.stringify(response)).toHaveProperty('success', true);
+    expect(response.html).toContain('Content-Security-Policy');
+    expect(preview).toHaveBeenCalledWith(input);
+    expect(saveDialog).not.toHaveBeenCalled();
+    registerReviewIpc({ preview: async () => { throw new Error('输入变化'); } });
+    expect(await handlers.get('evidence:project:preview-review')!({} as never, input as never)).toEqual({ success: false, error: '输入变化' });
+  });
   it('reports a cancelled dialog without generating anything', async () => {
     const generate = vi.fn();
 

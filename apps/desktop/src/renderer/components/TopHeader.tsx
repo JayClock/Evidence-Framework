@@ -18,6 +18,7 @@ interface TopHeaderProps {
   onRedo: () => void;
   onSave: () => void;
   /** Writes the offline review page; reports progress so the button can wait. */
+  onPreviewReview?: () => void;
   onExportReview: () => void;
   exportReviewBusy: boolean;
   /** Opens the delivery hub: what the model becomes when it is deployed. */
@@ -39,6 +40,7 @@ export const TopHeader = ({
   onUndo,
   onRedo,
   onSave,
+  onPreviewReview,
   onExportReview,
   exportReviewBusy,
   onOpenDelivery,
@@ -141,6 +143,7 @@ export const TopHeader = ({
         </button>
         <McpStatusPill />
 
+        {onPreviewReview ? <button type="button" onClick={onPreviewReview} title="审查中心（Alt+R）" className="rounded border border-evidence-line px-2 py-1 text-[11px]">审查中心</button> : null}
         <button
           type="button"
           onClick={onExportReview}

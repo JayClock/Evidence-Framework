@@ -8,12 +8,16 @@ import { readModelRoot } from '@evidence-poc/evidence-model-core';
 import {
   WorkbenchInputError,
   generateWorkbench,
+  renderWorkbenchHtml,
+  loadWorkbenchAssets,
   resolveAssetsDirectory,
 } from '@evidence-poc/evidence-visualization';
 
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 import type { ExportReviewResult } from '../shared/projects';
 
+import { previewReview } from './reviewPreview';
+import type { PreviewReviewInput, PreviewReviewResult } from '../shared/review';
 import { resolveReviewAssetsDirectory } from './installAssets';
 import { modelSourceOf, projectDirectoryOf } from './modelSource';
 
@@ -27,6 +31,7 @@ import { modelSourceOf, projectDirectoryOf } from './modelSource';
  */
 
 export interface ReviewIpcOptions {
+  preview?: typeof previewReview;
   /** Injected by a test; production shows the real save dialog. */
   showSaveDialog?: (input: {
     parent: BrowserWindow | null;
@@ -70,6 +75,7 @@ export const reviewScopeRefs = (
 };
 
 export const registerReviewIpc = ({
+  preview = previewReview,
   showSaveDialog = async ({ parent, defaultPath }) => {
     const options = {
       title: '导出离线审查页',
@@ -91,6 +97,16 @@ export const registerReviewIpc = ({
   readDocument = async (modelRoot) => (await readModelRoot(modelRoot)).bundle,
   resolveAssets = resolveReviewAssetsDirectory,
 }: ReviewIpcOptions = {}): void => {
+  ipcMain.handle(EVIDENCE_IPC_CHANNELS.previewReview, async (_event, input: PreviewReviewInput): Promise<PreviewReviewResult> => {
+    try {
+      const result = await preview(input);
+      const installed = resolveAssets({ isPackaged: app.isPackaged, resourcesPath: process.resourcesPath, appPath: app.getAppPath() });
+      const assets = loadWorkbenchAssets(resolveAssetsDirectory(installed === undefined ? {} : { assetsDirectory: installed }));
+      return { ...result, html: renderWorkbenchHtml(result.data, assets) };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
   ipcMain.handle(
     EVIDENCE_IPC_CHANNELS.exportReview,
     async (event, rootPath: string): Promise<ExportReviewResult> => {

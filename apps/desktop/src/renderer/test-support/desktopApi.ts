@@ -365,6 +365,7 @@ export const installDesktopApi = ({
       openEditorWindow: async (rootPath) => {
         calls.openEditorWindow.push(rootPath);
       },
+      previewReview: async () => ({ success: false, error: '未配置审查预览' }),
       exportReview: async (rootPath) => {
         calls.exportReview.push(rootPath);
 
