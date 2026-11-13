@@ -12,6 +12,7 @@ import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
 import { createMcpRequestHandler } from './mcpRequestHandler';
 import { createSimulationService } from './mcpSimulationService';
+import { registerSimulationIpc } from './simulationIpc';
 import {
   mcpClientConfigs,
   synchronizeEvidenceMcpRegistration,
@@ -71,6 +72,7 @@ const startApplication = async (): Promise<void> => {
     openEditorWindow,
   });
   registerReviewIpc();
+  registerSimulationIpc();
   registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());
 

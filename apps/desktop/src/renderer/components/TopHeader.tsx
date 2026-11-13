@@ -22,6 +22,8 @@ interface TopHeaderProps {
   exportReviewBusy: boolean;
   /** Opens the delivery hub: what the model becomes when it is deployed. */
   onOpenDelivery: () => void;
+  /** Opens the sandbox: does the model still hold, does production match it. */
+  onOpenSandbox: () => void;
   onViewModeChange: (mode: CanvasViewMode) => void;
   onSearch: () => void;
 }
@@ -40,6 +42,7 @@ export const TopHeader = ({
   onExportReview,
   exportReviewBusy,
   onOpenDelivery,
+  onOpenSandbox,
   onViewModeChange,
   onSearch,
 }: TopHeaderProps) => {
@@ -155,6 +158,15 @@ export const TopHeader = ({
           title="查看服务边界并导出契约、拓扑与部署草图"
         >
           交付
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenSandbox}
+          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
+          title="逐步回放业务场景，并把导出的 trace 与模型比对"
+        >
+          沙盒
         </button>
 
         <button

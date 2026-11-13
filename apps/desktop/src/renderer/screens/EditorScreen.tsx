@@ -12,6 +12,7 @@ import { LeftSidebar } from '../components/LeftSidebar';
 import { RightInspector } from '../components/RightInspector';
 import { DeliveryHub } from '../components/delivery/DeliveryHub';
 import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
+import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
@@ -108,6 +109,7 @@ const EditorWorkspace = ({
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
+  const [sandboxOpen, setSandboxOpen] = useState(false);
 
   const patchReview = usePatchReview(state.session, state.document);
 
@@ -293,6 +295,7 @@ const EditorWorkspace = ({
         onExportReview={() => void reviewExport.exportPage()}
         exportReviewBusy={reviewExport.busy}
         onOpenDelivery={() => setDeliveryOpen(true)}
+        onOpenSandbox={() => setSandboxOpen(true)}
         onViewModeChange={setViewMode}
         onSearch={() => searchInputRef.current?.focus()}
       />
@@ -379,6 +382,14 @@ const EditorWorkspace = ({
         <DeliveryHub
           rootPath={project.rootPath}
           onClose={() => setDeliveryOpen(false)}
+        />
+      ) : null}
+
+      {sandboxOpen ? (
+        <SimulationSandbox
+          rootPath={project.rootPath}
+          onClose={() => setSandboxOpen(false)}
+          onFocusEntity={focusNode}
         />
       ) : null}
 

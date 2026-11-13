@@ -19,6 +19,11 @@ import {
   type EvidenceDesktopApi,
 } from '../shared/ipc';
 import {
+  EVIDENCE_SIMULATION_IPC_CHANNELS,
+  type DriftRequest,
+  type ReplayRequest,
+} from '../shared/simulation';
+import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
   type McpRendererResponse,
@@ -162,6 +167,14 @@ const api: EvidenceDesktopApi = {
         );
       };
     },
+  },
+  simulation: {
+    replay: (input: ReplayRequest) =>
+      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.replay, input),
+    drift: (input: DriftRequest) =>
+      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.drift, input),
+    pickTrace: () =>
+      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.traceDialog),
   },
   ingestion: {
     draft: (input) =>
