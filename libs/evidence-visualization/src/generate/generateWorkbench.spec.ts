@@ -133,6 +133,40 @@ describe('collectWorkbench', () => {
     });
   });
 
+  it('carries the placement of the objects it lists', async () => {
+    await withProject(async (root) => {
+      const { data } = await collectWorkbench({
+        projectRoot: root,
+        scopeRefs: [SCOPE],
+      });
+
+      const listed = new Set(data.nodes.map((node) => node.id));
+
+      expect(data.layout.nodes.length).toBeGreaterThan(0);
+      expect(data.layout.bounds.width).toBeGreaterThan(0);
+      expect(
+        data.layout.contextGroups.map((group) => group.contextId),
+      ).toContain(SCOPE);
+      // A placement only describes objects the page also lists; a node that no
+      // other section knows about would be a drawing of something else.
+      expect(
+        data.layout.nodes.every((node) => listed.has(node.nodeId)),
+      ).toBe(true);
+      expect(
+        data.layout.nodes.every((node) =>
+          Number.isFinite(node.box.x) && Number.isFinite(node.box.y),
+        ),
+      ).toBe(true);
+      expect(JSON.parse(JSON.stringify(data.layout))).toEqual(data.layout);
+      // A placement says where an object is, not what the document holds about
+      // it: the reader is already given the parts of the record it may see.
+      expect(data.layout.nodes.every((node) => !('entity' in node))).toBe(true);
+      expect(
+        data.layout.contextGroups.every((group) => !('entity' in group)),
+      ).toBe(true);
+    });
+  });
+
   it('stops before rendering when the model does not check', async () => {
     await withProject(async (root) => {
       await rm(

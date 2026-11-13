@@ -22,6 +22,7 @@ import {
 } from '@evidence-poc/evidence-model-core';
 
 import { deliveryViewOf } from '../projection/deliveryView.js';
+import { workbenchLayoutOf } from '../projection/workbenchLayout.js';
 import {
   projectWorkbenchData,
   type CompiledModel,
@@ -320,6 +321,9 @@ export const collectWorkbench = async ({
   return {
     data: projectWorkbenchData({
       model: loaded.index.compiled as unknown as CompiledModel,
+      // The page carries the placement the canvas computed, from the same
+      // document the check accepted, so the drawing and the review agree.
+      layout: workbenchLayoutOf(bundle),
       scenarios: suite.scenarios as unknown as readonly Record<string, unknown>[],
       instances: suite.instances as unknown as readonly Record<string, unknown>[],
       simulation: {
