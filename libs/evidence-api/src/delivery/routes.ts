@@ -3,8 +3,16 @@ import {
   type AttributeAST,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
-import { createDomainGraph, type DomainGraph } from '@evidence-poc/evidence-model-core';
+import {
+  createDomainGraph,
+  type DomainGraph,
+} from '@evidence-poc/evidence-model-core';
 
+import {
+  callerRoles,
+  childShape,
+  type UnaddressedRoute,
+} from './addressing.js';
 import {
   createSegmentAllocator,
   operationIdFor,
@@ -79,6 +87,11 @@ export interface DeliveryRoute {
   derived: readonly DeliveryField[];
   stamped: readonly DeliveryField[];
   responses: readonly DeliveryRouteResponse[];
+  shape: 'singleton' | 'collection';
+  itemPath: string;
+  allowedPartyRoleRefs: readonly string[];
+  exposure: 'external' | 'internal';
+  outputFields: readonly DeliveryField[];
 }
 
 const timeAttributes = new Set<string>(EVIDENCE_TIME_ATTRIBUTE_NAMES);
@@ -118,7 +131,11 @@ export const fieldFor = (
 const fieldsOf = (
   entityRef: string,
   graph: DomainGraph,
-): { fields: DeliveryField[]; derived: DeliveryField[]; stamped: DeliveryField[] } => {
+): {
+  fields: DeliveryField[];
+  derived: DeliveryField[];
+  stamped: DeliveryField[];
+} => {
   const classified = graph
     .attributesOf(entityRef)
     .map((attribute) => fieldFor(attribute, graph, entityRef));
@@ -163,15 +180,20 @@ const answeredRfpOf = (graph: DomainGraph): Map<string, string> => {
  */
 export const buildDeliveryRoutes = (
   document: DomainModelDocument,
+  contextRefs?: ReadonlySet<string>,
 ): DeliveryRoute[] => {
   const graph = createDomainGraph(document);
   const segments = createSegmentAllocator(
     graph.entities().map((entity) => entity.id),
   );
-  const routes: DeliveryRoute[] = [];
+  const routes: UnaddressedRoute[] = [];
   const contexts = graph
     .entities()
-    .filter((entity) => entity.category === 'context')
+    .filter(
+      (entity) =>
+        entity.category === 'context' &&
+        (contextRefs === undefined || contextRefs.has(entity.id)),
+    )
     .sort((left, right) => left.id.localeCompare(right.id));
 
   for (const context of contexts) {
@@ -397,7 +419,9 @@ export const buildDeliveryRoutes = (
 
       for (const proposal of proposals) {
         const proposalFields = fieldsOf(proposal.id, graph);
-        const rfp = rfps.find((candidate) => candidate.id === answeredBy.get(proposal.id));
+        const rfp = rfps.find(
+          (candidate) => candidate.id === answeredBy.get(proposal.id),
+        );
         // A proposal the model does not tie to an enquiry still has a business
         // moment; it answers no particular window, so it sits at the lane root
         // rather than being nested under a guess.
@@ -441,7 +465,10 @@ export const buildDeliveryRoutes = (
     // written: a caller asks for the current answer instead of setting one.
     for (const thing of graph
       .entitiesInContext(context.id)
-      .filter((entity) => entity.category === 'participant' && entity.kind === 'thing')
+      .filter(
+        (entity) =>
+          entity.category === 'participant' && entity.kind === 'thing',
+      )
       .sort((left, right) => left.id.localeCompare(right.id))) {
       const thingFields = fieldsOf(thing.id, graph);
 
@@ -468,5 +495,51 @@ export const buildDeliveryRoutes = (
     }
   }
 
-  return routes;
+  const requestPaths = new Map<string, { path: string; itemPath: string }>();
+  for (const route of routes.filter((item) => item.purpose === 'request')) {
+    const shape =
+      route.contractRef === null
+        ? 'collection'
+        : childShape(graph, route.contractRef, route.entityRef);
+    const path = route.path.replace(/\/requests$/, '/request');
+    requestPaths.set(route.entityRef, {
+      path,
+      itemPath: shape === 'singleton' ? path : `${path}/{requestId}`,
+    });
+  }
+  return routes.map((route) => {
+    let path = route.path;
+    let shape: DeliveryRoute['shape'] = 'collection';
+    let itemPath = route.method === 'GET' ? path : `${path}/{evidenceId}`;
+    const request = requestPaths.get(route.requestRef ?? '');
+    if (route.purpose === 'request' && request !== undefined) {
+      path = request.path;
+      itemPath = request.itemPath;
+      shape = path === itemPath ? 'singleton' : 'collection';
+    } else if (route.purpose === 'confirm' && request !== undefined) {
+      const confirmations =
+        graph.fulfillmentPair(route.requestRef!)?.confirmations ?? [];
+      path = `${request.itemPath}/confirmation${confirmations.length > 1 ? `/${segments.segmentOf(route.entityRef)}` : ''}`;
+      shape = childShape(graph, route.requestRef!, route.entityRef);
+      itemPath = shape === 'singleton' ? path : `${path}/{confirmationId}`;
+    } else if (route.purpose === 'propose') {
+      const parent = answeredRfpOf(graph).get(route.entityRef);
+      if (parent !== undefined)
+        shape = childShape(graph, parent, route.entityRef);
+      itemPath = shape === 'singleton' ? path : `${path}/{proposalId}`;
+    } else if (route.purpose === 'sign') itemPath = `${path}/{contractId}`;
+    else if (route.purpose === 'open') itemPath = `${path}/{rfpId}`;
+    const allowedPartyRoleRefs = callerRoles(graph, route);
+    return {
+      ...route,
+      path,
+      itemPath,
+      shape,
+      allowedPartyRoleRefs,
+      exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
+      outputFields: graph
+        .attributesOf(route.entityRef)
+        .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
+    };
+  });
 };

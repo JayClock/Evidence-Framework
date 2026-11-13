@@ -45,7 +45,7 @@ describe('buildDeliveryContract', () => {
     const contract = buildDeliveryContract(await model());
     const confirm = operationAt(
       contract,
-      '/product-procurement/product-procurement/{contractId}/payment/requests/{requestId}/confirmations/payment',
+      '/product-procurement/product-procurement/{contractId}/payment/request/confirmation',
       'post',
     );
     const body = confirm['requestBody'] as {
@@ -66,7 +66,7 @@ describe('buildDeliveryContract', () => {
     const contract = buildDeliveryContract(await model());
     const request = operationAt(
       contract,
-      '/product-procurement/product-procurement/{contractId}/payment/requests',
+      '/product-procurement/product-procurement/{contractId}/payment/request',
       'post',
     );
 

@@ -23,10 +23,10 @@ describe('buildDeliveryRoutes', () => {
 
     expect(paymentRequest?.method).toBe('POST');
     expect(paymentRequest?.path).toBe(
-      '/product-procurement/product-procurement/{contractId}/payment/requests',
+      '/product-procurement/product-procurement/{contractId}/payment/request',
     );
     expect(paymentConfirm?.path).toBe(
-      '/product-procurement/product-procurement/{contractId}/payment/requests/{requestId}/confirmations/payment',
+      '/product-procurement/product-procurement/{contractId}/payment/request/confirmation',
     );
     expect(paymentConfirm?.requestRef).toBe('request.payment');
     expect(paymentConfirm?.serviceId).toBe('service.product-procurement');
@@ -82,7 +82,8 @@ describe('buildDeliveryRoutes', () => {
     const orphaned = {
       ...document,
       relationships: document.relationships.filter(
-        (relationship) => relationship.id !== 'relation.inquiry-precedes-quotation',
+        (relationship) =>
+          relationship.id !== 'relation.inquiry-precedes-quotation',
       ),
     };
     const propose = buildDeliveryRoutes(orphaned).find(
@@ -93,14 +94,68 @@ describe('buildDeliveryRoutes', () => {
     expect(propose?.summary).toContain('模型未声明所属征询');
   });
 
+  it('follows both endpoint cardinalities and keeps unplayed roles internal', async () => {
+    const document = await model();
+    const changed = {
+      ...document,
+      relationships: document.relationships.map((edge) =>
+        edge.id === 'relation.contract-precedes-payment-request'
+          ? { ...edge, sourceCardinality: { min: 0, max: 'many' as const } }
+          : edge,
+      ),
+    };
+    const routes = buildDeliveryRoutes(changed);
+    expect(
+      routes.find((route) => route.id === 'route.request.request.payment'),
+    ).toMatchObject({
+      shape: 'collection',
+      itemPath:
+        '/product-procurement/product-procurement/{contractId}/payment/request/{requestId}',
+      allowedPartyRoleRefs: ['role.seller'],
+      exposure: 'external',
+    });
+    expect(
+      routes.find((route) => route.id === 'route.confirm.confirmation.payment')
+        ?.path,
+    ).toContain('/request/{requestId}/confirmation');
+    expect(
+      routes.find(
+        (route) => route.id === 'route.request.request.wechat-payment',
+      ),
+    ).toMatchObject({
+      allowedPartyRoleRefs: [],
+      exposure: 'internal',
+    });
+    const reversed = {
+      ...changed,
+      relationships: changed.relationships.map((edge) => ({
+        ...edge,
+        sourceRef: edge.targetRef,
+        targetRef: edge.sourceRef,
+        sourceCardinality: edge.targetCardinality,
+        targetCardinality: edge.sourceCardinality,
+      })),
+    };
+    expect(
+      buildDeliveryRoutes(reversed).find(
+        (route) => route.id === 'route.request.request.payment',
+      )?.shape,
+    ).toBe('collection');
+  });
+
   it('states the derivations a service owns instead of exposing them as inputs', async () => {
     const routes = buildDeliveryRoutes(await model());
     const confirm = routes.find(
       (route) => route.id === 'route.confirm.confirmation.delivery',
     );
 
-    for (const field of [...(confirm?.derived ?? []), ...(confirm?.stamped ?? [])]) {
-      expect(confirm?.fields.map((input) => input.name)).not.toContain(field.name);
+    for (const field of [
+      ...(confirm?.derived ?? []),
+      ...(confirm?.stamped ?? []),
+    ]) {
+      expect(confirm?.fields.map((input) => input.name)).not.toContain(
+        field.name,
+      );
     }
   });
 });
