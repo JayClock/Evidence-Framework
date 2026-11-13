@@ -1,14 +1,22 @@
-import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+  cp,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import {
-  collectWorkbench,
-  workbenchFingerprint,
-} from './collectWorkbench.js';
+import { collectWorkbench, workbenchFingerprint } from './collectWorkbench.js';
 import { generateWorkbench, reviewPagePath } from './generateWorkbench.js';
-import { readModelRoot, serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import {
+  readModelRoot,
+  serializeModelBundle,
+} from '@evidence-poc/evidence-model-core';
 import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
 
 /**
@@ -49,14 +57,31 @@ describe('baseline review generation', () => {
       const bundlePath = path.join(root, 'current.evidence.json');
       await writeFile(bundlePath, serializeModelBundle(current));
       const output = path.join(root, 'diff-review.html');
-      const generated = await generateWorkbench({ projectRoot: root, modelRoot: bundlePath, output, baselineDocument: baseline });
+      const generated = await generateWorkbench({
+        projectRoot: root,
+        modelRoot: bundlePath,
+        output,
+        baselineDocument: baseline,
+      });
       expect(generated.data.diff?.counts.modified).toBe(1);
       const html = await readFile(output, 'utf8');
       expect(html).toContain('baselineFingerprint');
-      await expect(generateWorkbench({ projectRoot: root, modelRoot: bundlePath, output, baselineDocument: baseline, render: () => {
-        // Fingerprinting after rendering must cover the bundle, not a neighbouring tree.
-        return 'unused';
-      }, fingerprint: (() => { let calls = 0; return async () => ++calls < 4 ? 'old' : 'new'; })() })).rejects.toThrow('输入变化');
+      await expect(
+        generateWorkbench({
+          projectRoot: root,
+          modelRoot: bundlePath,
+          output,
+          baselineDocument: baseline,
+          render: () => {
+            // Fingerprinting after rendering must cover the bundle, not a neighbouring tree.
+            return 'unused';
+          },
+          fingerprint: (() => {
+            let calls = 0;
+            return async () => (++calls < 4 ? 'old' : 'new');
+          })(),
+        }),
+      ).rejects.toThrow('输入变化');
       expect(await readFile(output, 'utf8')).toBe(html);
     });
   });
@@ -148,9 +173,9 @@ describe('collectWorkbench', () => {
       });
 
       expect(data.delivery?.services.length).toBeGreaterThan(0);
-      expect(
-        data.nodes.filter((node) => node.group === 'service').length,
-      ).toBe(data.delivery?.services.length);
+      expect(data.nodes.filter((node) => node.group === 'service').length).toBe(
+        data.delivery?.services.length,
+      );
       expect(
         data.delivery?.services.every((service) => service.routes.length > 0),
       ).toBe(true);
@@ -173,12 +198,12 @@ describe('collectWorkbench', () => {
       ).toContain(SCOPE);
       // A placement only describes objects the page also lists; a node that no
       // other section knows about would be a drawing of something else.
+      expect(data.layout.nodes.every((node) => listed.has(node.nodeId))).toBe(
+        true,
+      );
       expect(
-        data.layout.nodes.every((node) => listed.has(node.nodeId)),
-      ).toBe(true);
-      expect(
-        data.layout.nodes.every((node) =>
-          Number.isFinite(node.box.x) && Number.isFinite(node.box.y),
+        data.layout.nodes.every(
+          (node) => Number.isFinite(node.box.x) && Number.isFinite(node.box.y),
         ),
       ).toBe(true);
       expect(JSON.parse(JSON.stringify(data.layout))).toEqual(data.layout);
@@ -209,11 +234,21 @@ describe('collectWorkbench', () => {
     });
   });
 
-  it('refuses a joint review without the API design it promises', async () => {
+  it('builds a model-driven API review without requiring an overlay file', async () => {
     await withProject(async (root) => {
+      const result = await collectWorkbench({
+        projectRoot: root,
+        requireApi: true,
+        scopeRefs: [SCOPE],
+      });
+      expect(result.projection?.schemaVersion).toBe('5.1');
+      expect(result.projection?.routes.length).toBeGreaterThan(0);
+      expect(result.data.counts.capabilities).toBe(
+        result.projection?.routes.length,
+      );
       await expect(
         collectWorkbench({ projectRoot: root, requireApi: true }),
-      ).rejects.toThrow(/联合审核需要当前 \.evidence\/api\/api\.json/);
+      ).rejects.toThrow(/联合审核需要显式 --scope/);
     });
   });
 
@@ -283,7 +318,7 @@ describe('generateWorkbench', () => {
         generateWorkbench({
           projectRoot: root,
           output: page,
-            scopeRefs: [SCOPE],
+          scopeRefs: [SCOPE],
           fingerprint: async () => {
             reads += 1;
 
@@ -293,7 +328,9 @@ describe('generateWorkbench', () => {
         }),
       ).rejects.toThrow(/发布前输入变化，保留已有视图/);
 
-      expect(await readFile(page, 'utf8')).toBe(`${WORKBENCH_MARKER}\nprevious`);
+      expect(await readFile(page, 'utf8')).toBe(
+        `${WORKBENCH_MARKER}\nprevious`,
+      );
     });
   });
 
@@ -308,7 +345,7 @@ describe('generateWorkbench', () => {
         generateWorkbench({
           projectRoot: root,
           output: page,
-            scopeRefs: [SCOPE],
+          scopeRefs: [SCOPE],
         }),
       ).rejects.toThrow(/拒绝覆盖非工作台文件或符号链接/);
 

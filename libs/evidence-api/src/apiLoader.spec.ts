@@ -25,20 +25,20 @@ import { API_SCHEMA, API_SCHEMA_TEXT } from './schemas/apiSchema.js';
 import { instanceErrors } from './schemas/jsonSchema.js';
 
 const fixture = (name: string): string =>
-  fileURLToPath(
-    new URL(`../tests/fixtures/${name}`, import.meta.url),
-  );
+  fileURLToPath(new URL(`../tests/fixtures/${name}`, import.meta.url));
 
 describe('the embedded contracts', () => {
   it('are the documents this package ships, byte for byte', () => {
     for (const [name, text, parsed] of [
       ['api.schema.json', API_SCHEMA_TEXT, API_SCHEMA],
-      ['api-projection.schema.json', API_PROJECTION_SCHEMA_TEXT, API_PROJECTION_SCHEMA],
+      [
+        'api-projection.schema.json',
+        API_PROJECTION_SCHEMA_TEXT,
+        API_PROJECTION_SCHEMA,
+      ],
     ] as const) {
       const onDisk = readFileSync(
-        fileURLToPath(
-          new URL(`../schemas/${name}`, import.meta.url),
-        ),
+        fileURLToPath(new URL(`../schemas/${name}`, import.meta.url)),
         'utf8',
       );
 
@@ -50,25 +50,58 @@ describe('the embedded contracts', () => {
   });
 
   it('name the sections whose ids must be unique', () => {
-    expect(API_DESIGN_SECTIONS).toEqual([
-      'sources',
-      'decisions',
-      'resources',
-      'bindings',
-      'scenarios',
-      'capabilities',
-      'journeys',
-    ]);
+    expect(API_DESIGN_SECTIONS).toEqual(['routes', 'journeys']);
   });
 });
 
 describe('loadDesign', () => {
-  it('accepts the full lifecycle design', () => {
-    const { design, diagnostics } = loadDesign(fixture('full-lifecycle/api.json'));
-
+  it('accepts an empty overlay without dropping defaults', () => {
+    const { design, diagnostics } = loadDesign('/project/api.json', '{}');
     expect(diagnostics).toEqual([]);
-    expect(design).not.toBeNull();
-    expect((design as { id: string }).id).toBe('api.product-procurement');
+    expect(design).toEqual({
+      schemaVersion: '5.0',
+      id: 'default-api',
+      routes: [],
+      journeys: [],
+    });
+  });
+
+  it('accepts a local route override and leaves the rest model-driven', () => {
+    const { design, diagnostics } = loadDesign(
+      '/project/api.json',
+      JSON.stringify({
+        schemaVersion: '5.0',
+        routes: [{ id: 'route.contract', summary: 'Updated' }],
+      }),
+    );
+    expect(diagnostics).toEqual([]);
+    expect(design?.['routes']).toEqual([
+      { id: 'route.contract', summary: 'Updated' },
+    ]);
+    expect(design?.['journeys']).toEqual([]);
+  });
+
+  it('rejects obsolete full designs rather than silently ignoring their fields', () => {
+    const result = loadDesign(fixture('full-lifecycle/api.json'));
+    expect(
+      result.diagnostics.some((item) => item.code === 'DESIGN_INVALID'),
+    ).toBe(true);
+  });
+
+  it('never replaces malformed supplied fields with defaults', () => {
+    for (const raw of [
+      { routes: {} },
+      { journeys: null },
+      { id: 42 },
+      { routes: [{ id: 'a', method: 'DELETE' }] },
+    ]) {
+      expect(
+        loadDesign('/project/api.json', JSON.stringify(raw)).diagnostics.length,
+      ).toBeGreaterThan(0);
+    }
+    expect(
+      loadDesign('/project/api.json', '{"id":"Infinity"}').diagnostics,
+    ).toEqual([]);
   });
 
   it('refuses YAML, which the contract no longer accepts', () => {
@@ -99,8 +132,9 @@ describe('loadDesign', () => {
 
   it('refuses a non-standard constant', () => {
     expect(
-      loadDesign('/project/api.json', '{"schemaVersion": NaN}').diagnostics[0]?.message,
-    ).toContain('设计包含非 JSON 常量');
+      loadDesign('/project/api.json', '{"schemaVersion": NaN}').diagnostics[0]
+        ?.message,
+    ).toContain('设计不是合法 JSON');
   });
 
   it('reports schema violations with the location a reader can jump to', () => {
@@ -111,25 +145,25 @@ describe('loadDesign', () => {
 
     expect(design).not.toBeNull();
     expect(diagnostics.length).toBeGreaterThan(0);
-    expect(diagnostics.every((item) => item.code === 'DESIGN_INVALID')).toBe(true);
-    expect(diagnostics.some((item) => item.location === '$')).toBe(true);
+    expect(diagnostics.every((item) => item.code === 'DESIGN_INVALID')).toBe(
+      true,
+    );
+    expect(
+      diagnostics.some((item) => item.location?.includes('schemaVersion')),
+    ).toBe(true);
   });
 
   it('reports a duplicated id inside one section', () => {
-    const document = JSON.parse(
-      readFileSync(fixture('full-lifecycle/api.json'), 'utf8'),
-    ) as { decisions: Record<string, unknown>[] };
-    document.decisions.push({ ...(document.decisions[0] as Record<string, unknown>) });
-
     const { diagnostics } = loadDesign(
       '/project/api.json',
-      JSON.stringify(document),
+      JSON.stringify({
+        routes: [{ id: 'route.a' }, { id: 'route.a' }],
+      }),
     );
-
     expect(diagnostics).toEqual([
       expect.objectContaining({
         code: 'DUPLICATE_ID',
-        message: `decisions 中 ID 重复: ${document.decisions[0]?.id}`,
+        message: 'routes 中 ID 重复: route.a',
       }),
     ]);
   });
@@ -172,7 +206,9 @@ describe('instanceErrors', () => {
       },
     };
 
-    expect(instanceErrors(schema, { at: '2026-09-01T09:15:00Z', link: '/a/b' })).toEqual([]);
+    expect(
+      instanceErrors(schema, { at: '2026-09-01T09:15:00Z', link: '/a/b' }),
+    ).toEqual([]);
     expect(instanceErrors(schema, { at: 'not a time' })).toHaveLength(1);
     expect(instanceErrors(schema, { unknown: 'anything' })).toEqual([]);
   });
@@ -197,7 +233,9 @@ describe('diagnostics', () => {
       relatedRefs: [],
     });
     expect(
-      diagnosticToJson(gapDiagnostic('Y', 'resource.a.thing', 'business', 'open')),
+      diagnosticToJson(
+        gapDiagnostic('Y', 'resource.a.thing', 'business', 'open'),
+      ),
     ).toMatchObject({ gapKey: 'resource.a.thing', category: 'business' });
   });
 
@@ -222,7 +260,9 @@ describe('diagnostics', () => {
     ];
 
     expect(
-      normalizeDiagnostics(findings).map((item) => `${item.severity}:${item.code}`),
+      normalizeDiagnostics(findings).map(
+        (item) => `${item.severity}:${item.code}`,
+      ),
     ).toEqual(['error:A', 'error:B', 'gap:A']);
   });
 });

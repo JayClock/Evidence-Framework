@@ -1,320 +1,136 @@
-/**
- * The projection contract `check` validates its own output against, as text.
- *
- * Embedded for the same reason as the design schema: the digest in the manifest
- * has to describe the contract that was actually applied.
- */
+/** Embedded contract; keep its bytes synchronized with schemas/api-projection.schema.json. */
 export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/evidence-api-design/v5/api-projection.schema.json",
+  "$id": "https://evidence.local/api-snapshot/v5/api-projection.schema.json",
   "type": "object",
   "required": [
     "schemaVersion",
     "apiId",
-    "inputDigests",
-    "fmCheckSummary",
-    "resources",
-    "capabilities",
-    "operations",
-    "coverage",
+    "mode",
+    "modelId",
+    "modelName",
+    "modelVersion",
+    "routes",
+    "services",
+    "links",
+    "openapi",
+    "deployment",
+    "limitations",
+    "journeys",
     "diagnostics",
-    "http",
-    "modelCoverage",
-    "contextRefs"
+    "digests"
   ],
   "properties": {
-    "schemaVersion": {
-      "const": "5.0"
-    },
-    "inputDigests": {
-      "type": "object",
-      "required": ["fm", "api", "sources"],
-      "properties": {
-        "fm": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "api": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    "fmCheckSummary": {
-      "type": "object"
-    },
-    "resources": {
+    "schemaVersion": { "const": "5.1" },
+    "apiId": { "type": "string", "minLength": 1 },
+    "mode": { "const": "draft" },
+    "modelId": { "type": "string" },
+    "modelName": { "type": "string" },
+    "modelVersion": { "type": "string" },
+    "routes": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
           "id",
+          "operationId",
+          "method",
+          "path",
           "entityRef",
-          "businessName",
-          "shape",
-          "uris",
-          "parameters",
-          "segment",
-          "identity",
-          "basis"
+          "fields",
+          "derived",
+          "stamped",
+          "responses"
         ],
         "properties": {
-          "shape": {
-            "enum": ["singleton", "collection"]
-          },
-          "uris": {
-            "oneOf": [
-              {
-                "type": "object",
-                "required": ["singleton"],
-                "properties": {
-                  "singleton": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "required": ["collection", "item"],
-                "properties": {
-                  "collection": {
-                    "type": "string"
-                  },
-                  "item": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": false
-              }
-            ]
-          },
-          "id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "entityRef": {
-            "type": "string",
-            "minLength": 1
-          },
-          "businessName": {
-            "type": "string",
-            "minLength": 1
-          },
-          "segment": {
-            "type": "string",
-            "minLength": 1
-          },
-          "parentRef": {
-            "type": "string",
-            "minLength": 1
-          },
-          "parentBindingRef": {
-            "type": "string",
-            "minLength": 1
-          },
-          "identity": {
-            "type": "object"
-          },
-          "basis": {
-            "type": "object"
-          },
-          "cardinality": {
-            "type": "object"
-          },
-          "parameters": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "uniqueItems": true
-          }
-        },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "shape": {
-                  "const": "singleton"
-                }
-              }
-            },
-            "then": {
-              "required": ["parentRef"],
-              "properties": {
-                "uris": {
-                  "required": ["singleton"]
-                },
-                "identity": {
-                  "properties": {
-                    "kind": {
-                      "const": "parent_scoped"
-                    }
-                  }
-                }
-              }
-            },
-            "else": {
-              "properties": {
-                "uris": {
-                  "required": ["collection", "item"]
-                },
-                "identity": {
-                  "properties": {
-                    "kind": {
-                      "enum": ["api_resource_id", "fm_attribute"]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ]
+          "id": { "type": "string" },
+          "operationId": { "type": "string" },
+          "method": { "enum": ["GET", "POST"] },
+          "path": { "type": "string", "pattern": "^/" },
+          "entityRef": { "type": "string" },
+          "fields": { "type": "array" },
+          "derived": { "type": "array" },
+          "stamped": { "type": "array" },
+          "responses": { "type": "array" }
+        }
       }
     },
-    "capabilities": {
-      "type": "array"
+    "services": { "type": "array", "items": { "type": "object" } },
+    "links": { "type": "array", "items": { "type": "object" } },
+    "openapi": {
+      "type": "object",
+      "required": ["openapi", "info", "paths", "components"],
+      "properties": {
+        "openapi": { "const": "3.1.0" },
+        "info": { "type": "object" },
+        "paths": { "type": "object" },
+        "components": { "type": "object" }
+      }
     },
-    "operations": {
-      "type": "array"
+    "deployment": {
+      "type": "object",
+      "required": ["version", "services"],
+      "properties": {
+        "version": { "const": "3" },
+        "services": { "type": "object" }
+      }
     },
-    "coverage": {
-      "type": "array"
-    },
-    "diagnostics": {
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "journeys": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
-          "code",
-          "severity",
-          "targetRef",
-          "location",
-          "relatedRefs",
-          "message"
+          "id",
+          "roleRef",
+          "routeId",
+          "method",
+          "path",
+          "purpose",
+          "nextPossibleSteps"
         ],
         "properties": {
-          "code": {
-            "type": "string"
-          },
-          "severity": {
-            "enum": ["error", "gap", "warning"]
-          },
-          "targetRef": {
-            "type": ["string", "null"]
-          },
-          "location": {
-            "type": ["string", "null"]
-          },
-          "relatedRefs": {
-            "type": "array"
-          },
-          "message": {
-            "type": "string"
-          },
-          "gapKey": {
-            "type": "string"
-          },
-          "category": {
-            "enum": ["business", "design", "expression", "coverage"]
+          "id": { "type": "string" },
+          "roleRef": { "type": "string" },
+          "routeId": { "type": "string" },
+          "method": { "type": "string" },
+          "path": { "type": "string" },
+          "purpose": { "type": "string" },
+          "nextPossibleSteps": {
+            "type": "array",
+            "items": { "type": "string" }
           }
         },
         "additionalProperties": false
       }
     },
-    "apiId": {
-      "type": "string"
-    },
-    "http": {
-      "type": "object",
-      "required": [
-        "complete",
-        "runtimeValidated",
-        "representations",
-        "operations",
-        "journeys",
-        "diagnostics",
-        "entryPoints",
-        "consumerCoverage",
-        "navigation"
-      ],
-      "properties": {
-        "complete": {
-          "type": "boolean"
-        },
-        "runtimeValidated": {
-          "const": false
-        },
-        "representations": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "operations": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "journeys": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "diagnostics": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "entryPoints": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "consumerCoverage": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "navigation": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    "modelCoverage": {
-      "type": "array"
-    },
-    "contextRefs": {
+    "diagnostics": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "enum": ["error", "gap", "warning"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "digests": {
+      "type": "object",
+      "required": ["model"],
+      "properties": {
+        "model": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "design": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "checkReport": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
       },
-      "uniqueItems": true
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
 }
 `;
 
-/** The same document, parsed once for the validator. */
-export const API_PROJECTION_SCHEMA: unknown = JSON.parse(
+export const API_PROJECTION_SCHEMA = JSON.parse(
   API_PROJECTION_SCHEMA_TEXT,
-);
+) as Record<string, unknown>;

@@ -24,7 +24,12 @@ const { suggestedDeliveryDirectory, deliveryFilesOf, previewOf } = await import(
 
 const bundle = (): DeliveryBundle =>
   ({
-    schemaVersion: '1.0',
+    schemaVersion: '5.1',
+    apiId: 'procurement-api',
+    mode: 'draft',
+    journeys: [],
+    diagnostics: [],
+    digests: { model: `sha256:${'0'.repeat(64)}` },
     modelId: 'procurement',
     modelName: '商品采购',
     modelVersion: '1.1.0',

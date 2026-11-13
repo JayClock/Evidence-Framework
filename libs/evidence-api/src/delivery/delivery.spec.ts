@@ -18,16 +18,23 @@ const model = async (): Promise<DomainModelDocument> => {
 
 type OpenApi = ReturnType<typeof buildDeliveryContract>;
 
-const operationAt = (contract: OpenApi, path: string, method: string): Record<string, unknown> =>
-  (contract.paths[path] as Record<string, Record<string, unknown>>)[method] as Record<
-    string,
-    unknown
-  >;
+const operationAt = (
+  contract: OpenApi,
+  path: string,
+  method: string,
+): Record<string, unknown> =>
+  (contract.paths[path] as Record<string, Record<string, unknown>>)[
+    method
+  ] as Record<string, unknown>;
 
 describe('buildDeliveryContract', () => {
   it('names one operation id per route and tags it with its Context', async () => {
     const contract = buildDeliveryContract(await model());
-    const sign = operationAt(contract, '/product-procurement/product-procurement', 'post');
+    const sign = operationAt(
+      contract,
+      '/product-procurement/product-procurement',
+      'post',
+    );
 
     expect(sign['operationId']).toBe('signContractProductProcurement');
     expect(sign['tags']).toEqual(['context:context.product-procurement']);
@@ -42,9 +49,13 @@ describe('buildDeliveryContract', () => {
       'post',
     );
     const body = confirm['requestBody'] as {
-      content: { 'application/json': { schema: { properties: Record<string, unknown> } } };
+      content: {
+        'application/json': { schema: { properties: Record<string, unknown> } };
+      };
     };
-    const names = Object.keys(body.content['application/json'].schema.properties);
+    const names = Object.keys(
+      body.content['application/json'].schema.properties,
+    );
 
     expect(names).not.toContain('confirmed_at');
     expect(confirm['x-evidence-stamped']).toContain('confirmed_at');
@@ -59,7 +70,9 @@ describe('buildDeliveryContract', () => {
       'post',
     );
 
-    expect(Object.keys(request['responses'] as Record<string, unknown>)).toContain('409');
+    expect(
+      Object.keys(request['responses'] as Record<string, unknown>),
+    ).toContain('409');
   });
 
   it('publishes the service base paths with the document', async () => {
@@ -234,7 +247,7 @@ describe('buildDelivery', () => {
     const bundle = buildDelivery(openEndedModel());
     const report = bundle.limitations.join('\n');
 
-    expect(bundle.schemaVersion).toBe('1.0');
+    expect(bundle.schemaVersion).toBe('5.1');
     expect(bundle.modelId).toBe('open-ended');
     expect(report).toContain('request.delivery 没有履约确认');
     expect(report).toContain('派生属性 total_amount');

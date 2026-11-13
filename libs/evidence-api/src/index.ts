@@ -1,3 +1,5 @@
+export type { EvidenceApiSnapshot, ApiJourneyStep } from './types.js';
+
 export {
   diagnosticToJson,
   errorDiagnostic,
@@ -16,6 +18,9 @@ export {
   API_DESIGN_SECTIONS,
   DesignJsonError,
   loadDesign,
+  normalizeDesignDocument,
+  type RouteOverlay,
+  type JourneyOverlay,
   parseStrictJson,
   validateProjection,
   type DesignDocument,

@@ -15,9 +15,8 @@ import path from 'node:path';
 
 import { canonicalJson } from '../canonicalJson.js';
 import { compareText } from '../order.js';
-import type { JsonObject } from '../types.js';
-import { buildOpenApi } from '../openapi/openapi.js';
-import { buildVectors } from '../vectors/e2eVectors.js';
+import type { EvidenceApiSnapshot } from '../types.js';
+import { deliveryFilesOf } from '../delivery/files.js';
 import { API_PROJECTION_SCHEMA_TEXT } from '../schemas/apiProjectionSchema.js';
 import { API_SCHEMA_TEXT } from '../schemas/apiSchema.js';
 
@@ -33,36 +32,29 @@ import { API_SCHEMA_TEXT } from '../schemas/apiSchema.js';
 export const TOOL_NAME = 'evidence-api';
 
 /** Projection contract version, written into every manifest it renders. */
-export const TOOL_VERSION = '5.0.0';
+export const TOOL_VERSION = '5.1.0';
 
 const sha256 = (content: string): string =>
   createHash('sha256').update(content, 'utf8').digest('hex');
 
 /** Every file a projection renders, in the order the manifest lists them. */
-export const renderOutputs = (projection: JsonObject): Record<string, string> => {
-  const http = isRecord(projection['http']) ? projection['http'] : {};
-  const representations = recordsOf(http['representations']);
+export const renderOutputs = (
+  projection: EvidenceApiSnapshot,
+): Record<string, string> => {
   const outputs: Record<string, string> = {
+    ...Object.fromEntries(
+      deliveryFilesOf(projection).map((file) => [file.path, file.content]),
+    ),
     'projection.json': canonicalJson(projection),
     'http-journeys.json': canonicalJson({
       runtimeValidated: false,
-      entryPoints: http['entryPoints'],
-      consumerCoverage: http['consumerCoverage'],
-      navigation: http['navigation'],
-      journeys: http['journeys'],
+      journeys: projection.journeys,
     }),
-    'representation-examples.json': canonicalJson(
-      Object.fromEntries(
-        representations.map((item) => [String(item['id']), item['example']]),
-      ),
-    ),
-    'e2e-test-vectors.json': canonicalJson(buildVectors(projection)),
-    'openapi.json': canonicalJson(buildOpenApi(projection)),
   };
 
   const manifest = {
-    schemaVersion: '5.0',
-    apiId: projection['apiId'],
+    schemaVersion: '5.1',
+    apiId: projection.apiId,
     tool: {
       name: TOOL_NAME,
       version: TOOL_VERSION,
@@ -75,13 +67,16 @@ export const renderOutputs = (projection: JsonObject): Record<string, string> =>
       node: process.versions.node,
       dependencies: { ajv: toolVersionOf('ajv') },
     },
-    inputs: projection['inputDigests'],
+    inputs: projection.digests,
     outputs: Object.fromEntries(
       Object.entries(outputs)
         .sort(([left], [right]) => compareText(left, right))
         .map(([name, content]) => [
           name,
-          { sha256: sha256(content), bytes: Buffer.byteLength(content, 'utf8') },
+          {
+            sha256: sha256(content),
+            bytes: Buffer.byteLength(content, 'utf8'),
+          },
         ]),
     ),
   };
@@ -106,14 +101,12 @@ const toolVersionOf = (name: string): string => {
   }
 };
 
-const isRecord = (value: unknown): value is JsonObject =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const recordsOf = (value: unknown): JsonObject[] =>
-  Array.isArray(value) ? value.filter(isRecord) : [];
-
 /** Writes one generated file, flushed so a crash cannot leave a torn tail. */
-const writeFileDurably = (directory: string, name: string, content: string): void => {
+const writeFileDurably = (
+  directory: string,
+  name: string,
+  content: string,
+): void => {
   if (path.basename(name) !== name || name === '.' || name === '..') {
     throw new Error('OUTPUT_NAME_INVALID: 输出只允许直接文件名');
   }
@@ -133,7 +126,10 @@ const writeFileDurably = (directory: string, name: string, content: string): voi
  * The staging directory is a sibling so the final move is a rename on the same
  * filesystem; a failed move restores the previous tree rather than leaving none.
  */
-export const writeOutput = (out: string, outputs: Record<string, string>): void => {
+export const writeOutput = (
+  out: string,
+  outputs: Record<string, string>,
+): void => {
   const parent = path.dirname(out);
   const stage = mkdtempSync(path.join(parent, `.${path.basename(out)}.stage-`));
   let backup: string | null = null;

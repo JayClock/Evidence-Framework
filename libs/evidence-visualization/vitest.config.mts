@@ -4,8 +4,10 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/evidence-visualization',
   resolve: { conditions: ['@evidence-poc/source', 'node', 'import'] },
+  ssr: { resolve: { conditions: ['@evidence-poc/source', 'node', 'import'] } },
   test: {
     name: 'evidence-visualization',
+    server: { deps: { inline: [/@evidence-poc\//] } },
     watch: false,
     globals: true,
     environment: 'node',

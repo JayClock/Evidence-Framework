@@ -1,32 +1,23 @@
 #!/usr/bin/env node
-import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-
-import { loadFm, type FmIndex } from './adapter/fmAdapter.js';
-import { buildDelivery } from './delivery/delivery.js';
-import { deliveryFilesOf } from './delivery/files.js';
+import { loadFm } from './adapter/fmAdapter.js';
 import { canonicalJson } from './canonicalJson.js';
-import { hasErrors, hasGaps, type Diagnostic } from './diagnostics.js';
+import { diagnosticToJson, hasErrors, hasGaps } from './diagnostics.js';
 import { inspectSummary } from './inspect.js';
-import { loadDesign, validateProjection } from './loader/apiLoader.js';
-import { buildProjection, type Projection } from './projector.js';
+import {
+  loadDesign,
+  validateProjection,
+  type DesignDocument,
+} from './loader/apiLoader.js';
+import { buildProjection, isComplete } from './projector.js';
 import {
   defaultOutputDirectory,
   renderOutputs,
   writeOutput,
 } from './renderer/outputRenderer.js';
-
-/**
- * The `evidence-api` command.
- *
- * Three subcommands over one contract: `inspect` lists what the model offers,
- * `check` says whether a design is ready, and `project` writes the delivery tree.
- * The exit status is the same for all three — 0 clean, 1 a blocking problem, 3
- * open questions — so a script can gate on it.
- */
 
 export type Command = 'inspect' | 'check' | 'project' | 'deliver';
 
@@ -34,21 +25,19 @@ export interface CliOptions {
   command: Command;
   projectRoot: string;
   fm: string;
-  fmCheck: string;
+  fmCheck?: string;
   api?: string;
   out?: string;
 }
 
 export interface CliResult {
-  /** Text written to stdout. */
   output: unknown;
-  /** Text written to stderr. */
   error?: string;
   exitCode: number;
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR --fm-check FILE [--api FILE] [--out DIR]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -57,357 +46,176 @@ const isDirectory = (target: string): boolean => {
     return false;
   }
 };
-
 const isInside = (child: string, parent: string): boolean =>
   child === parent || child.startsWith(`${parent}${path.sep}`);
 
-/**
- * Why the paths cannot describe this run.
- *
- * Every argument is absolute because a relative one would resolve against
- * whatever directory the process happens to start in, and the output must not
- * sit inside an input: the projection would then read its own previous result.
- */
-export const validatePaths = (
-  options: CliOptions,
-  designSourcePaths: readonly string[] = [],
-): string | null => {
-  const required: [string | undefined, string, boolean][] = [
+/** Optional inputs remain protected against output overlap when they are supplied. */
+export const validatePaths = (options: CliOptions): string | null => {
+  for (const [value, name, required] of [
     [options.projectRoot, 'project-root', true],
     [options.fm, 'fm', true],
-    [options.fmCheck, 'fm-check', true],
-    [
-      options.api,
-      'api',
-      options.command === 'check' || options.command === 'project',
-    ],
+    [options.fmCheck, 'fm-check', false],
+    [options.api, 'api', false],
     [options.out, 'out', false],
-  ];
-
-  for (const [value, name, needed] of required) {
+  ] as const) {
     if (value === undefined || value === '') {
-      if (needed) {
-        return `--${name} 是必需的`;
-      }
-
-      continue;
-    }
-
-    if (!path.isAbsolute(value)) {
+      if (required || value === '') return `--${name} 是必需的`;
+    } else if (!path.isAbsolute(value)) {
       return `PATH_NOT_ABSOLUTE: --${name} 必须使用绝对路径`;
     }
   }
-
-  const projectRoot = path.resolve(options.projectRoot);
-
-  if (!isDirectory(projectRoot)) {
+  const root = path.resolve(options.projectRoot);
+  if (!isDirectory(root))
     return 'PROJECT_ROOT_INVALID: --project-root 必须是现有目录';
-  }
-
   const fm = path.resolve(options.fm);
-  const fmCheck = path.resolve(options.fmCheck);
-  const api = options.api === undefined ? undefined : path.resolve(options.api);
-
-  if (isInside(fmCheck, fm)) {
+  if (
+    options.fmCheck !== undefined &&
+    isInside(path.resolve(options.fmCheck), fm)
+  ) {
     return 'FM_CHECK_INPUT_CONFLICT: FM 检查结果必须位于模型目录之外';
   }
-
-  if (api !== undefined && isInside(api, fm)) {
-    return 'API_INPUT_CONFLICT: API 设计文件必须位于 FM 根目录之外';
+  if (options.api !== undefined && isInside(path.resolve(options.api), fm)) {
+    return 'API_INPUT_CONFLICT: API 覆盖文件必须位于 FM 根目录之外';
   }
-
-  if (options.command !== 'project' && options.command !== 'deliver') {
+  if (options.command !== 'project' && options.command !== 'deliver')
     return null;
-  }
-
-  const out = path.resolve(options.out ?? defaultOutputDirectory(projectRoot));
-
-  if (!isInside(out, projectRoot)) {
+  const out = path.resolve(options.out ?? defaultOutputDirectory(root));
+  if (!isInside(out, root))
     return 'OUTPUT_OUTSIDE_PROJECT: 输出目录必须位于项目根内';
-  }
-
-  for (const protectedPath of [
-    fm,
-    ...(api === undefined ? [] : [api]),
-    fmCheck,
-    ...designSourcePaths.map((source) => path.resolve(projectRoot, source)),
-  ]) {
-    if (isInside(out, protectedPath) || isInside(protectedPath, out)) {
-      return 'OUTPUT_INPUT_CONFLICT: 输出不能与 FM、API 输入、来源或 Skill 安装目录重叠';
+  for (const input of [options.fm, options.api, options.fmCheck]) {
+    if (
+      input !== undefined &&
+      (isInside(out, path.resolve(input)) || isInside(path.resolve(input), out))
+    ) {
+      return 'OUTPUT_INPUT_CONFLICT: 输出不能与模型、覆盖文件或检查报告重叠';
     }
   }
-
-  if (isDirectory(out)) {
-    return null;
-  }
-
-  return isDirectory(path.dirname(out))
-    ? null
-    : 'OUTPUT_PARENT_INVALID: 输出父目录必须已存在';
+  return null;
 };
 
-const parse = (
-  argv: readonly string[],
-): { command: Command; values: Record<string, string> } | string => {
+const parse = (argv: readonly string[]): CliOptions | string => {
   const [command, ...rest] = argv;
-
   if (
     command !== 'inspect' &&
     command !== 'check' &&
     command !== 'project' &&
     command !== 'deliver'
-  ) {
+  )
     return USAGE;
-  }
-
   const values: Record<string, string> = {};
-
-  for (let index = 0; index < rest.length; index += 1) {
-    const token = rest[index] as string;
-
-    if (!token.startsWith('--')) {
+  const flags = new Set(['project-root', 'fm', 'fm-check', 'api', 'out']);
+  for (let index = 0; index < rest.length; index += 2) {
+    const token = rest[index]!;
+    const key = token.slice(2);
+    if (!token.startsWith('--') || !flags.has(key))
       return `unexpected argument: ${token}`;
-    }
-
+    if (key in values) return `duplicate argument: ${token}`;
     const value = rest[index + 1];
-
-    if (value === undefined) {
+    if (value === undefined || value.startsWith('--'))
       return `${token} needs a value`;
-    }
-
-    values[token.slice(2)] = value;
-    index += 1;
+    values[key] = value;
   }
-
-  return { command, values };
-};
-
-/**
- * Writes the delivery documents the checked model implies.
- *
- * The FM check has already decided that the model is what it says it is; the
- * delivery adds no new authority, only the shape of the HTTP surface, the service
- * boundaries and the deployment sketch. What the model still owes is printed as
- * limitations instead of blocking the hand-off, because a reviewer needs to see
- * the gap more than they need a refusal.
- */
-const writeDelivery = (options: CliOptions, index: FmIndex): CliResult => {
-  const document: DomainModelDocument = {
-    manifest: index.compiled.model,
-    entities: index.compiled.entities,
-    relationships: index.compiled.relationships,
-    rules: index.compiled.rules,
-  };
-  const bundle = buildDelivery(document);
-  const out = options.out ?? path.join(options.projectRoot, '.evidence', 'delivery');
-
-  try {
-    mkdirSync(out, { recursive: true });
-
-    for (const file of deliveryFilesOf(bundle)) {
-      writeFileSync(path.join(out, file.path), file.content, 'utf8');
-    }
-  } catch (error) {
-    return {
-      output: null,
-      error: error instanceof Error ? error.message : String(error),
-      exitCode: 1,
-    };
-  }
-
   return {
-    output: {
-      modelId: bundle.modelId,
-      out,
-      files: deliveryFilesOf(bundle).map((file) => file.path),
-      serviceCount: bundle.services.length,
-      routeCount: bundle.routes.length,
-      limitations: bundle.limitations,
-    },
-    exitCode: 0,
-  };
-};
-
-/** The findings a CLI report prints, in the shape the reports use. */
-const printed = (diagnostic: Diagnostic): Record<string, unknown> => ({
-  code: diagnostic.code,
-  severity: diagnostic.severity,
-  message: diagnostic.message,
-  targetRef: diagnostic.targetRef ?? null,
-  location: diagnostic.location ?? null,
-  relatedRefs: [...(diagnostic.relatedRefs ?? [])],
-  ...(diagnostic.gapKey === undefined ? {} : { gapKey: diagnostic.gapKey }),
-  ...(diagnostic.category === undefined ? {} : { category: diagnostic.category }),
-});
-
-const refused = (code: string, message: string): CliResult => ({
-  output: {
-    valid: false,
-    diagnostics: [{ code, severity: 'error', message }],
-  },
-  exitCode: 1,
-});
-
-const reportOf = (
-  projection: Projection,
-  diagnostics: readonly Diagnostic[],
-): Record<string, unknown> => {
-  const complete = diagnostics.length === 0 && projection.http?.complete === true;
-
-  if (projection.http !== null) {
-    projection.http.complete = complete;
-  }
-
-  return {
-    valid: !hasErrors(diagnostics),
-    complete,
-    interfaceCount: projection.capabilities.length,
-    gapCount: diagnostics.filter((item) => item.severity === 'gap').length,
-    diagnostics: diagnostics.map(printed),
-  };
-};
-
-const sourcePathsOf = (design: Record<string, unknown>): string[] =>
-  Array.isArray(design['sources'])
-    ? design['sources']
-        .map((source) =>
-          typeof source === 'object' && source !== null
-            ? (source as Record<string, unknown>)['path']
-            : undefined,
-        )
-        .filter((value): value is string => typeof value === 'string')
-    : [];
-
-/**
- * Runs one command.
- *
- * Nothing is written while a question is open: a partially resolved tree would be
- * read as a finished one, and the next consumer has no way to tell.
- */
-export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
-  const parsed = parse(argv);
-
-  if (typeof parsed === 'string') {
-    return { output: null, error: parsed, exitCode: 1 };
-  }
-
-  const { command, values } = parsed;
-  const options: CliOptions = {
     command,
     projectRoot: values['project-root'] ?? '',
     fm: values['fm'] ?? '',
-    fmCheck: values['fm-check'] ?? '',
+    ...(values['fm-check'] === undefined
+      ? {}
+      : { fmCheck: values['fm-check'] }),
     ...(values['api'] === undefined ? {} : { api: values['api'] }),
     ...(values['out'] === undefined ? {} : { out: values['out'] }),
   };
+};
 
-  const pathProblem = validatePaths(options);
+const refused = (code: string, message: string): CliResult => ({
+  output: { valid: false, diagnostics: [{ code, severity: 'error', message }] },
+  exitCode: 1,
+});
 
-  if (pathProblem !== null) {
-    return { output: null, error: pathProblem, exitCode: 1 };
-  }
+/** Preview and export current inputs; stale evidence is a gap, not a reason to hide the draft. */
+export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
+  const options = parse(argv);
+  if (typeof options === 'string')
+    return { output: null, error: options, exitCode: 1 };
+  const problem = validatePaths(options);
+  if (problem !== null) return { output: null, error: problem, exitCode: 1 };
 
   let check: unknown;
-
-  try {
-    check = JSON.parse(readFileSync(options.fmCheck, 'utf8')) as unknown;
-  } catch (error) {
-    return refused(
-      'FM_CHECK_INVALID',
-      error instanceof Error ? error.message : String(error),
-    );
+  if (options.fmCheck !== undefined) {
+    try {
+      check = JSON.parse(readFileSync(options.fmCheck, 'utf8'));
+    } catch (error) {
+      return refused(
+        'FM_CHECK_INVALID',
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   }
-
   const loaded = await loadFm(options.fm, check);
-
   if (loaded.index === null) {
     return {
       output: {
         valid: false,
-        diagnostics: loaded.diagnostics.map(printed),
+        diagnostics: loaded.diagnostics.map(diagnosticToJson),
       },
       exitCode: 1,
     };
   }
-
-  if (command === 'inspect') {
-    return { output: inspectSummary(loaded.index), exitCode: 0 };
+  const index = loaded.index;
+  let design: DesignDocument | undefined;
+  if (options.api !== undefined) {
+    const overlay = loadDesign(options.api);
+    if (overlay.design === null || hasErrors(overlay.diagnostics)) {
+      return {
+        output: {
+          valid: false,
+          diagnostics: overlay.diagnostics.map(diagnosticToJson),
+        },
+        exitCode: 1,
+      };
+    }
+    design = overlay.design;
   }
-
-  if (command === 'deliver') {
-    return writeDelivery(options, loaded.index);
-  }
-
-  const designPath = options.api as string;
-  let designContent: string;
-
-  try {
-    designContent = readFileSync(designPath, 'utf8');
-  } catch (error) {
-    return refused(
-      'DESIGN_INVALID',
-      error instanceof Error ? error.message : String(error),
-    );
-  }
-
-  const loadedDesign = loadDesign(designPath, designContent);
-
-  if (loadedDesign.design === null || loadedDesign.diagnostics.length > 0) {
-    return {
-      output: {
-        valid: false,
-        diagnostics: loadedDesign.diagnostics.map(printed),
-      },
-      exitCode: 1,
-    };
-  }
-
-  const design = loadedDesign.design;
-  const outputProblem = validatePaths(options, sourcePathsOf(design));
-
-  if (outputProblem !== null) {
-    return { output: null, error: outputProblem, exitCode: 1 };
-  }
-
   const built = buildProjection({
-    design,
-    index: loaded.index,
-    projectRoot: options.projectRoot,
-    apiContent: designContent,
+    index,
+    ...(design === undefined ? {} : { design }),
   });
-  const projectionProblems = validateProjection(built.projection);
-
-  for (const problem of projectionProblems) {
-    built.projection.diagnostics.push(printed(problem));
-  }
-
-  const allDiagnostics: Diagnostic[] = [
+  const diagnostics = [
     ...built.diagnostics,
-    ...projectionProblems.map((problem) => problem),
+    ...validateProjection(built.projection),
   ];
-  const summary = reportOf(built.projection, allDiagnostics);
-
-  if (command === 'check') {
-    return {
-      output: { ...summary, projection: built.projection },
-      exitCode: hasErrors(allDiagnostics) ? 1 : hasGaps(allDiagnostics) ? 3 : 0,
-    };
-  }
-
-  if (summary['complete'] !== true) {
-    return {
-      output: summary,
-      exitCode: hasErrors(allDiagnostics) ? 1 : 3,
-    };
-  }
+  const exitCode = hasErrors(diagnostics) ? 1 : hasGaps(diagnostics) ? 3 : 0;
+  const summary = {
+    status: 'FM_LIVE_INSPECTED',
+    mode: built.projection.mode,
+    valid: !hasErrors(diagnostics),
+    complete: isComplete(built.projection) && diagnostics.length === 0,
+    modelId: built.projection.modelId,
+    routeCount: built.projection.routes.length,
+    serviceCount: built.projection.services.length,
+    gapCount: diagnostics.filter((item) => item.severity === 'gap').length,
+    diagnostics: diagnostics.map(diagnosticToJson),
+  };
+  if (options.command === 'inspect')
+    return { output: { ...inspectSummary(index), ...summary }, exitCode };
+  if (options.command === 'check')
+    return { output: { ...summary, projection: built.projection }, exitCode };
+  if (hasErrors(diagnostics)) return { output: summary, exitCode };
 
   const out = options.out ?? defaultOutputDirectory(options.projectRoot);
-
   try {
-    writeOutput(
-      out,
-      renderOutputs(built.projection as unknown as Record<string, unknown>),
-    );
+    mkdirSync(path.dirname(out), { recursive: true });
+    const outputs = renderOutputs(built.projection);
+    writeOutput(out, outputs);
+    return {
+      output: {
+        ...summary,
+        out,
+        files: Object.keys(outputs),
+        limitations: built.projection.limitations,
+      },
+      exitCode,
+    };
   } catch (error) {
     return {
       output: null,
@@ -415,30 +223,18 @@ export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
       exitCode: 1,
     };
   }
-
-  return { output: { ...summary, out }, exitCode: 0 };
 };
 
-/** Entry point when this file is run directly. */
 const main = async (): Promise<void> => {
   const result = await runCli(process.argv.slice(2));
-
-  if (result.error !== undefined) {
-    process.stderr.write(`${result.error}\n`);
-  }
-
-  if (result.output !== null) {
+  if (result.error !== undefined) process.stderr.write(`${result.error}\n`);
+  if (result.output !== null)
     process.stdout.write(canonicalJson(result.output));
-  }
-
   process.exitCode = result.exitCode;
 };
 
-// Compare the resolved entry path, not its basename: every package ships a
-// `cli.js`, so a suffix test runs this command whenever another one is imported.
 if (
   process.argv[1] !== undefined &&
   fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
-) {
+)
   void main();
-}

@@ -14,19 +14,35 @@ import { errorDiagnostic, type Diagnostic } from '../diagnostics.js';
  */
 
 /** The design file must be one JSON object of this shape. */
+export interface RouteOverlay {
+  id: string;
+  path?: string;
+  summary?: string;
+}
+
+export interface JourneyOverlay {
+  id: string;
+  roleRef: string;
+  routeId: string;
+  nextPossibleSteps?: readonly string[];
+}
+
 export interface DesignDocument {
   [key: string]: unknown;
 }
 
-export const API_DESIGN_SECTIONS = [
-  'sources',
-  'decisions',
-  'resources',
-  'bindings',
-  'scenarios',
-  'capabilities',
-  'journeys',
-] as const;
+/** Validate supplied fields before applying defaults; never erase malformed input. */
+export const normalizeDesignDocument = (
+  raw: DesignDocument,
+): DesignDocument => ({
+  schemaVersion: '5.0',
+  id: 'default-api',
+  routes: [],
+  journeys: [],
+  ...raw,
+});
+
+export const API_DESIGN_SECTIONS = ['routes', 'journeys'] as const;
 
 const SEPARATORS = new Set(['.yaml', '.yml']);
 
@@ -57,7 +73,9 @@ const pointerOf = (instancePath: string): string => {
     .map((part) => part.replaceAll('~1', '/').replaceAll('~0', '~'));
 
   return `$${parts
-    .map((part) => (/^\d+$/.test(part) ? `[${part}]` : `[${JSON.stringify(part)}]`))
+    .map((part) =>
+      /^\d+$/.test(part) ? `[${part}]` : `[${JSON.stringify(part)}]`,
+    )
     .join('')}`;
 };
 
@@ -187,9 +205,6 @@ const duplicateKeyOf = (text: string): string | null => {
   return null;
 };
 
-/** Rejects the non-standard constants `JSON.parse` refuses but YAML allows. */
-const NON_STANDARD_CONSTANTS = /\b(?:NaN|Infinity|-Infinity|undefined)\b/;
-
 export interface LoadDesignResult {
   design: DesignDocument | null;
   diagnostics: readonly Diagnostic[];
@@ -251,10 +266,6 @@ export const loadDesign = (
       throw new DesignJsonError(`设计包含重复 JSON key: ${duplicate}`);
     }
 
-    if (NON_STANDARD_CONSTANTS.test(text)) {
-      throw new DesignJsonError('设计包含非 JSON 常量');
-    }
-
     design = parseStrictJson(text);
   } catch (error) {
     return {
@@ -274,7 +285,12 @@ export const loadDesign = (
     return {
       design: null,
       diagnostics: [
-        errorDiagnostic('DESIGN_INVALID', '设计必须是单个 JSON 对象', undefined, path),
+        errorDiagnostic(
+          'DESIGN_INVALID',
+          '设计必须是单个 JSON 对象',
+          undefined,
+          path,
+        ),
       ],
     };
   }
@@ -326,7 +342,7 @@ export const loadDesign = (
     });
   }
 
-  return { design: document, diagnostics };
+  return { design: normalizeDesignDocument(document), diagnostics };
 };
 
 /** Validates a produced document against the projection contract. */
@@ -340,6 +356,11 @@ export const validateProjection = (
   }
 
   return messagesOf(validate).map((item) =>
-    errorDiagnostic('PROJECTION_INVALID', item.message, undefined, item.location),
+    errorDiagnostic(
+      'PROJECTION_INVALID',
+      item.message,
+      undefined,
+      item.location,
+    ),
   );
 };

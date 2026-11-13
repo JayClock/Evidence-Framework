@@ -1,29 +1,33 @@
-import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
+import {
+  readModelRoot,
+  serializeModelBundle,
+} from '@evidence-poc/evidence-model-core';
 import { runCli } from './cli.js';
-import { checkReportFor, fullLifecycle, fullLifecycleIndex } from '../tests/support/fixtures.js';
-import { buildProjection } from './projector.js';
-import { renderOutputs } from './renderer/outputRenderer.js';
-import { loadDesign } from './loader/apiLoader.js';
-import { buildOpenApi } from './openapi/openapi.js';
+import {
+  fullLifecycle,
+  fullLifecycleIndex,
+  checkReportFor,
+} from '../tests/support/fixtures.js';
+import { buildDelivery, buildProjection } from './projector.js';
+import { renderOutputs, writeOutput } from './renderer/outputRenderer.js';
+import { validateProjection } from './loader/apiLoader.js';
+import { digestBytes, loadFmFromDocument } from './adapter/fmAdapter.js';
 
-/**
- * The end-to-end contract of the engine.
- *
- * A projection has to be reproducible: the same model, the same design and the
- * same digest produce the same bytes. The strongest way to say that is to compare
- * with the artifacts committed beside the model.
- */
-
-const fixturePath = (name: string): string =>
-  path.resolve(fullLifecycle().modelRoot, '..', name);
-
-const withScratch = async (run: (directory: string) => Promise<void>): Promise<void> => {
+const withScratch = async (
+  run: (directory: string) => Promise<void>,
+): Promise<void> => {
   const directory = mkdtempSync(path.join(tmpdir(), 'evidence-api-'));
-
   try {
     await run(directory);
   } finally {
@@ -31,390 +35,339 @@ const withScratch = async (run: (directory: string) => Promise<void>): Promise<v
   }
 };
 
-/** Writes the check report the FM stage would have handed over. */
-const checkFileFor = async (directory: string): Promise<string> => {
-  const report = await checkReportFor(fullLifecycle().modelRoot, [
-    'context.product-procurement',
-  ]);
-  const target = path.join(directory, 'fm-check.json');
+const args = (command: string, directory: string): string[] => [
+  command,
+  '--project-root',
+  directory,
+  '--fm',
+  fullLifecycle().modelRoot,
+];
 
-  return (await import('node:fs')).writeFileSync(
-    target,
-    `${JSON.stringify(report, null, 2)}\n`,
-  ), target;
-};
-
-describe('deliver command', () => {
-  it('writes the contract, the topology and the limitations of a checked model', async () => {
-    await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
-      const out = path.join(directory, 'delivery');
-      const result = await runCli([
-        'deliver',
-        '--project-root',
-        directory,
-        '--fm',
-        fullLifecycle().modelRoot,
-        '--fm-check',
-        fmCheck,
-        '--out',
-        out,
-      ]);
-
-      expect(result.error).toBeUndefined();
-      expect(result.exitCode).toBe(0);
-      expect(result.output).toMatchObject({
-        modelId: 'product-procurement-full-lifecycle',
-        out,
-        serviceCount: 4,
+describe('model-driven snapshots', () => {
+  it('uses the same contract for memory, indexed projection and delivery exports', async () => {
+    const { bundle } = await readModelRoot(fullLifecycle().modelRoot);
+    const memory = buildDelivery(bundle);
+    const projected = buildProjection({
+      index: loadFmFromDocument(bundle).index!,
+    }).projection;
+    expect(memory).toEqual(projected);
+    expect(memory.schemaVersion).toBe('5.1');
+    expect(memory.mode).toBe('draft');
+    expect(memory.routes.length).toBeGreaterThan(0);
+    expect(memory.journeys).toEqual([]);
+    expect(memory.diagnostics).toEqual([]);
+    expect(memory.digests.checkReport).toBeUndefined();
+    expect(validateProjection(memory)).toEqual([]);
+    const outputs = renderOutputs(memory);
+    expect(JSON.parse(outputs['openapi.json']!)).toEqual(memory.openapi);
+    const manifest = JSON.parse(outputs['manifest.json']!);
+    expect(manifest.inputs).toEqual(memory.digests);
+    for (const [name, content] of Object.entries(outputs)) {
+      if (name === 'manifest.json') continue;
+      expect(manifest.outputs[name]).toEqual({
+        sha256: digestBytes(content),
+        bytes: Buffer.byteLength(content),
       });
-      expect(statSync(path.join(out, 'openapi.json')).isFile()).toBe(true);
-      expect(
-        JSON.parse(readFileSync(path.join(out, 'openapi.json'), 'utf8')),
-      ).toMatchObject({ openapi: '3.1.0' });
-      expect(
-        JSON.parse(readFileSync(path.join(out, 'topology.json'), 'utf8')),
-      ).toMatchObject({ modelId: 'product-procurement-full-lifecycle' });
-    });
+    }
+    expect(renderOutputs(projected)).toEqual(outputs);
   });
 
-  it('refuses a model whose check report no longer matches the sources', async () => {
-    await withScratch(async (directory) => {
-      const result = await runCli([
-        'deliver',
-        '--project-root',
-        directory,
-        '--fm',
-        fullLifecycle().modelRoot,
-        '--fm-check',
-        path.join(directory, 'missing-check.json'),
-      ]);
-
-      expect(result.exitCode).toBe(1);
+  it('updates one route without losing other generated routes or changing the model', async () => {
+    const index = await fullLifecycleIndex();
+    const original = JSON.stringify(index.document);
+    const baseline = buildProjection({ index }).projection;
+    const route = baseline.routes.find((item) => item.method === 'POST')!;
+    const next = buildProjection({
+      index,
+      design: {
+        routes: [
+          {
+            id: route.id,
+            path: `/custom${route.path}`,
+            summary: 'Custom summary',
+          },
+        ],
+      },
     });
+    expect(next.diagnostics).toEqual([]);
+    expect(next.projection.routes).toHaveLength(baseline.routes.length);
+    expect(
+      next.projection.routes.find((item) => item.id === route.id),
+    ).toMatchObject({
+      path: `/custom${route.path}`,
+      summary: 'Custom summary',
+    });
+    expect(
+      next.projection.openapi.paths[`/custom${route.path}`]?.['post'],
+    ).toMatchObject({ summary: 'Custom summary' });
+    expect(
+      next.projection.routes.filter((item) => item.id !== route.id),
+    ).toEqual(baseline.routes.filter((item) => item.id !== route.id));
+    expect(JSON.stringify(index.document)).toBe(original);
+  });
+
+  it('rejects dangling overrides, altered identity parameters and collisions', async () => {
+    const index = await fullLifecycleIndex();
+    const routes = buildProjection({ index }).projection.routes.filter(
+      (route) => route.method === 'POST',
+    );
+    const a = routes[0]!;
+    const b = routes.find(
+      (route) =>
+        route.path !== a.path &&
+        route.path.match(/\{/g)?.length === a.path.match(/\{/g)?.length,
+    )!;
+    expect(
+      buildProjection({ index, design: { routes: [{ id: 'missing' }] } })
+        .diagnostics,
+    ).toContainEqual(expect.objectContaining({ code: 'API_ROUTE_NOT_FOUND' }));
+    const withParams = buildProjection({ index }).projection.routes.find(
+      (route) => route.path.includes('{'),
+    )!;
+    expect(
+      buildProjection({
+        index,
+        design: { routes: [{ id: withParams.id, path: '/without-identity' }] },
+      }).diagnostics,
+    ).toContainEqual(expect.objectContaining({ code: 'API_PATH_INVALID' }));
+    const collision = buildProjection({
+      index,
+      design: { routes: [{ id: b.id, path: a.path }] },
+    });
+    expect(collision.diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'API_ROUTE_COLLISION' }),
+    );
+  });
+
+  it('only projects explicitly declared navigation and validates its references', async () => {
+    const index = await fullLifecycleIndex();
+    const route = buildProjection({ index }).projection.routes[0]!;
+    const next = buildProjection({
+      index,
+      design: {
+        journeys: [{ id: 'start', roleRef: 'role.buyer', routeId: route.id }],
+      },
+    });
+    expect(next.diagnostics).toEqual([]);
+    expect(next.projection.journeys).toEqual([
+      {
+        id: 'start',
+        roleRef: 'role.buyer',
+        routeId: route.id,
+        path: route.path,
+        method: route.method,
+        purpose: route.purpose,
+        nextPossibleSteps: [],
+      },
+    ]);
+    const broken = buildProjection({
+      index,
+      design: {
+        journeys: [
+          {
+            id: 'start',
+            roleRef: 'role.buyer',
+            routeId: route.id,
+            nextPossibleSteps: ['missing'],
+          },
+        ],
+      },
+    });
+    expect(broken.diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'API_JOURNEY_STEP_NOT_FOUND' }),
+    );
+  });
+
+  it('reports static errors instead of inventing passing validation evidence', async () => {
+    const { bundle } = await readModelRoot(fullLifecycle().modelRoot);
+    const broken = {
+      ...bundle,
+      entities: [...bundle.entities, bundle.entities[0]!],
+    };
+    expect(buildDelivery(broken).diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'FM_INVALID', severity: 'error' }),
+    );
   });
 });
 
-describe('projection of the full-lifecycle fixture', () => {
-  it('writes the six generated documents', async () => {
+describe('live CLI', () => {
+  it.each(['inspect', 'check', 'project', 'deliver'])(
+    'runs %s without an offline report or design',
+    async (command) => {
+      await withScratch(async (directory) => {
+        const out = path.join(directory, 'generated');
+        const result = await runCli([
+          ...args(command, directory),
+          '--out',
+          out,
+        ]);
+        expect(result.error).toBeUndefined();
+        expect(result.exitCode).toBe(0);
+        expect(result.output).toMatchObject({
+          status: 'FM_LIVE_INSPECTED',
+          valid: true,
+          mode: 'draft',
+        });
+        expect(existsSync(out)).toBe(
+          command === 'project' || command === 'deliver',
+        );
+        if (existsSync(out)) {
+          const snapshot = JSON.parse(
+            readFileSync(path.join(out, 'projection.json'), 'utf8'),
+          );
+          expect(validateProjection(snapshot)).toEqual([]);
+          expect(snapshot.digests.checkReport).toBeUndefined();
+          expect(
+            JSON.parse(readFileSync(path.join(out, 'openapi.json'), 'utf8')),
+          ).toEqual(snapshot.openapi);
+        }
+      });
+    },
+  );
+
+  it('projects a bundle using the same model-derived routes', async () => {
     await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
-      const out = path.join(directory, 'generated');
+      const { bundle } = await readModelRoot(fullLifecycle().modelRoot);
+      const file = path.join(directory, 'model.evidence.json');
+      writeFileSync(file, serializeModelBundle(bundle));
       const result = await runCli([
-        'project',
+        'check',
         '--project-root',
         directory,
         '--fm',
-        fullLifecycle().modelRoot,
+        file,
+      ]);
+      expect(result.exitCode).toBe(0);
+      expect(
+        (result.output as { projection: { routes: unknown } }).projection
+          .routes,
+      ).toEqual(buildDelivery(bundle).routes);
+    });
+  });
+
+  it('writes a current draft with stale-check gaps rather than hiding it', async () => {
+    await withScratch(async (directory) => {
+      const check = await checkReportFor(fullLifecycle().modelRoot, [
+        'context.product-procurement',
+      ]);
+      const report = path.join(directory, 'check.json');
+      writeFileSync(
+        report,
+        JSON.stringify({ ...check, modelDigest: 'sha256:old' }),
+      );
+      const out = path.join(directory, 'generated');
+      const result = await runCli([
+        ...args('project', directory),
         '--fm-check',
-        fmCheck,
-        '--api',
-        fullLifecycle().designPath,
+        report,
         '--out',
         out,
       ]);
-
-      expect(result.error).toBeUndefined();
-      expect(result.exitCode).toBe(0);
+      expect(result.exitCode).toBe(3);
       expect(result.output).toMatchObject({
         valid: true,
-        complete: true,
-        interfaceCount: 13,
-        gapCount: 0,
-        out,
+        complete: false,
+        diagnostics: [
+          expect.objectContaining({ code: 'FM_CHECK_STALE', severity: 'gap' }),
+        ],
       });
+      expect(existsSync(path.join(out, 'projection.json'))).toBe(true);
+    });
+  });
 
-      for (const name of [
-        'projection.json',
-        'openapi.json',
-        'http-journeys.json',
-        'representation-examples.json',
-        'e2e-test-vectors.json',
-        'manifest.json',
+  it('accepts empty and partial overlay files', async () => {
+    await withScratch(async (directory) => {
+      const overlay = path.join(directory, 'api.json');
+      const route = (await fullLifecycleIndex()).document;
+      for (const input of [
+        {},
+        {
+          routes: [
+            { id: buildDelivery(route).routes[0]!.id, summary: 'New title' },
+          ],
+        },
       ]) {
-        expect(statSync(path.join(out, name)).size).toBeGreaterThan(0);
+        writeFileSync(overlay, JSON.stringify(input));
+        expect(
+          (await runCli([...args('check', directory), '--api', overlay]))
+            .exitCode,
+        ).toBe(0);
       }
     });
   });
 
-  it('renders the OpenAPI document the repository already carries', async () => {
-    const index = await fullLifecycleIndex();
-    const { design } = loadDesign(fullLifecycle().designPath);
-    const { projection } = buildProjection({
-      design: design as Record<string, unknown>,
-      index,
-      projectRoot: path.dirname(fullLifecycle().modelRoot),
-      apiContent: readFileSync(fullLifecycle().designPath),
-    });
-    const rendered = renderOutputs(projection as unknown as Record<string, unknown>);
-
-    expect(rendered['openapi.json']).toBe(
-      readFileSync(fixturePath('openapi.json'), 'utf8'),
-    );
-  });
-
-  it('keeps the manifest honest about the schemas and the runtime', async () => {
-    const index = await fullLifecycleIndex();
-    const { design } = loadDesign(fullLifecycle().designPath);
-    const { projection } = buildProjection({
-      design: design as Record<string, unknown>,
-      index,
-      projectRoot: path.dirname(fullLifecycle().modelRoot),
-      apiContent: readFileSync(fullLifecycle().designPath),
-    });
-    const rendered = renderOutputs(projection as unknown as Record<string, unknown>);
-    const manifest = JSON.parse(rendered['manifest.json'] as string) as {
-      schemaVersion: string;
-      tool: { name: string; version: string; schemas: Record<string, string> };
-      runtime: { node: string; dependencies: Record<string, string> };
-      outputs: Record<string, { sha256: string; bytes: number }>;
-    };
-
-    expect(manifest.schemaVersion).toBe('5.0');
-    expect(manifest.tool).toMatchObject({ name: 'evidence-api', version: '5.0.0' });
-    expect(Object.keys(manifest.tool.schemas).sort()).toEqual([
-      'api-projection.schema.json',
-      'api.schema.json',
-    ]);
-    expect(manifest.runtime.node).toBe(process.versions.node);
-    expect(Object.keys(manifest.outputs)).toEqual([
-      'e2e-test-vectors.json',
-      'http-journeys.json',
-      'openapi.json',
-      'projection.json',
-      'representation-examples.json',
-    ]);
-    // The digests describe the documents that were actually written.
-    for (const [name, entry] of Object.entries(manifest.outputs)) {
-      expect(Buffer.byteLength(rendered[name] as string, 'utf8')).toBe(entry.bytes);
-    }
-  });
-});
-
-describe('cli', () => {
-  it('lists what the model offers without writing anything', async () => {
+  it('does not replace an existing export when an overlay is malformed', async () => {
     await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
-      const result = await runCli([
-        'inspect',
-        '--project-root',
-        directory,
-        '--fm',
-        fullLifecycle().modelRoot,
-        '--fm-check',
-        fmCheck,
-      ]);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.output).toMatchObject({ schemaVersion: '5.0' });
+      const out = path.join(directory, 'generated');
+      writeOutput(out, { 'keep.txt': 'previous' });
+      const overlay = path.join(directory, 'api.json');
+      for (const input of [
+        '{"routes":null}',
+        '{"routes":[{"id":"missing"}]}',
+        '{',
+      ]) {
+        writeFileSync(overlay, input);
+        const result = await runCli([
+          ...args('project', directory),
+          '--api',
+          overlay,
+          '--out',
+          out,
+        ]);
+        expect(result.exitCode).toBe(1);
+        expect(readFileSync(path.join(out, 'keep.txt'), 'utf8')).toBe(
+          'previous',
+        );
+      }
     });
   });
 
-  it('refuses a relative path instead of guessing one', async () => {
+  it('fails explicitly supplied unreadable reports instead of throwing', async () => {
     await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
       const result = await runCli([
-        'inspect',
-        '--project-root',
-        directory,
-        '--fm',
-        'tests/fixtures/full-lifecycle/fm',
+        ...args('project', directory),
         '--fm-check',
-        fmCheck,
+        path.join(directory, 'missing.json'),
       ]);
-
-      expect(result.exitCode).toBe(1);
-      expect(result.error).toBe('PATH_NOT_ABSOLUTE: --fm 必须使用绝对路径');
-    });
-  });
-
-  it('refuses an output directory outside the project', async () => {
-    await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
-      const result = await runCli([
-        'project',
-        '--project-root',
-        directory,
-        '--fm',
-        fullLifecycle().modelRoot,
-        '--fm-check',
-        fmCheck,
-        '--api',
-        fullLifecycle().designPath,
-        '--out',
-        path.join(fullLifecycle().modelRoot, 'generated'),
-      ]);
-
-      expect(result.exitCode).toBe(1);
-      expect(result.error).toBe(
-        'OUTPUT_OUTSIDE_PROJECT: 输出目录必须位于项目根内',
-      );
-    });
-  });
-
-  it('refuses an output directory that overlaps an input', async () => {
-    await withScratch(async (directory) => {
-      const fmCheck = path.join(directory, 'fm-check.json');
-      const modelRoot = path.join(directory, 'fm');
-      const { cpSync } = await import('node:fs');
-
-      cpSync(fullLifecycle().modelRoot, modelRoot, { recursive: true });
-      (await import('node:fs')).writeFileSync(
-        fmCheck,
-        JSON.stringify(
-          await checkReportFor(fullLifecycle().modelRoot, [
-            'context.product-procurement',
-          ]),
-        ),
-      );
-
-      const result = await runCli([
-        'project',
-        '--project-root',
-        directory,
-        '--fm',
-        modelRoot,
-        '--fm-check',
-        fmCheck,
-        '--api',
-        fullLifecycle().designPath,
-        '--out',
-        path.join(modelRoot, 'generated'),
-      ]);
-
-      expect(result.exitCode).toBe(1);
-      expect(result.error).toContain('OUTPUT_INPUT_CONFLICT');
-    });
-  });
-
-  it('refuses a check report that does not prove the model', async () => {
-    await withScratch(async (directory) => {
-      const fmCheck = await checkFileFor(directory);
-      const report = JSON.parse(readFileSync(fmCheck, 'utf8')) as Record<string, unknown>;
-      (await import('node:fs')).writeFileSync(
-        fmCheck,
-        JSON.stringify({ ...report, modelDigest: 'sha256:stale' }),
-      );
-
-      const result = await runCli([
-        'inspect',
-        '--project-root',
-        directory,
-        '--fm',
-        fullLifecycle().modelRoot,
-        '--fm-check',
-        fmCheck,
-      ]);
-
       expect(result.exitCode).toBe(1);
       expect(result.output).toMatchObject({
-        valid: false,
-        diagnostics: [expect.objectContaining({ code: 'FM_CHECK_STALE' })],
+        diagnostics: [expect.objectContaining({ code: 'FM_CHECK_INVALID' })],
       });
     });
   });
 
-  it('reports a usage error rather than throwing', async () => {
-    const result = await runCli(['nonsense']);
-
-    expect(result.exitCode).toBe(1);
-    expect(result.error).toContain('usage: evidence-api');
-    expect(result.output).toBeNull();
-  });
-});
-
-describe('a second design against a second model', () => {
-  it('projects the subscription API into the same documents', async () => {
-    const { cpSync, writeFileSync } = await import('node:fs');
-    const modelRoot = fileURLToPath(
-      new URL(
-        '../../evidence-model-core/tests/fixtures/models/valid-traceable-subscription',
-        import.meta.url,
-      ),
-    );
-    const designPath = fileURLToPath(
-      new URL(
-        '../tests/fixtures/subscription-api.json',
-        import.meta.url,
-      ),
-    );
-
+  it('protects inputs even when no optional report was supplied', async () => {
     await withScratch(async (directory) => {
-      // The design quotes a business source, so the project root has to hold it.
-      cpSync(
-        fileURLToPath(
-          new URL(
-            '../tests/fixtures/source.md',
-            import.meta.url,
-          ),
-        ),
-        path.join(directory, 'source.md'),
-      );
-      const fmCheck = path.join(directory, 'fm-check.json');
-      writeFileSync(
-        fmCheck,
-        JSON.stringify(
-          await checkReportFor(modelRoot, ['context.content-subscription']),
-        ),
-      );
-
-      const out = path.join(directory, 'generated');
+      const fm = path.join(directory, 'fm');
+      cpSync(fullLifecycle().modelRoot, fm, { recursive: true });
       const result = await runCli([
-        'project',
+        'deliver',
         '--project-root',
         directory,
         '--fm',
-        modelRoot,
-        '--fm-check',
-        fmCheck,
-        '--api',
-        designPath,
+        fm,
         '--out',
-        out,
+        path.join(fm, 'generated'),
       ]);
-
-      expect(result.error).toBeUndefined();
-      expect(result.exitCode).toBe(0);
-      expect(result.output).toMatchObject({ complete: true, interfaceCount: 2 });
-
-      const openapi = JSON.parse(
-        readFileSync(path.join(out, 'openapi.json'), 'utf8'),
-      ) as { paths: Record<string, unknown>; 'x-generated-from': string };
-
-      expect(openapi['x-generated-from']).toBe('evidence-api projection.json');
-      // The two routes this design licenses, neither more nor fewer.
-      expect(Object.keys(openapi.paths).sort()).toEqual([
-        '/payment-confirmations',
-        '/subscriptions/{subscriptionId}/payments',
+      expect(result.error).toContain('OUTPUT_INPUT_CONFLICT');
+      const relative = await runCli([
+        'inspect',
+        '--project-root',
+        directory,
+        '--fm',
+        'relative',
       ]);
+      expect(relative.error).toContain('PATH_NOT_ABSOLUTE');
     });
   });
-});
 
-describe('buildOpenApi', () => {
-  it('groups a shared route into one operation with both actors', async () => {
-    const index = await fullLifecycleIndex();
-    const { design } = loadDesign(fullLifecycle().designPath);
-    const { projection } = buildProjection({
-      design: design as Record<string, unknown>,
-      index,
-      projectRoot: path.dirname(fullLifecycle().modelRoot),
-      apiContent: readFileSync(fullLifecycle().designPath),
-    });
-    const document = buildOpenApi(projection as unknown as Record<string, unknown>);
-    const paths = document['paths'] as Record<string, Record<string, unknown>>;
-    const operation = paths['/products/{productId}']?.['get'] as Record<
-      string,
-      unknown
-    >;
-
-    expect(operation['x-actor-role-refs']).toEqual(['role.buyer', 'role.seller']);
-    expect(operation['x-fm-capability-refs']).toEqual([
-      'capability.read-product-as-buyer',
-      'capability.read-product-as-seller',
-    ]);
+  it('reports unknown commands and malformed options', async () => {
+    expect((await runCli(['unknown'])).error).toContain('usage: evidence-api');
     expect(
-      (document['components'] as { schemas: Record<string, unknown> }).schemas,
-    ).toHaveProperty('representation_product-http');
+      (await runCli(['check', '--fm', '--out', '/tmp/out'])).error,
+    ).toContain('needs a value');
+    expect((await runCli(['check', '--unknown', 'x'])).error).toContain(
+      'unexpected argument',
+    );
   });
 });

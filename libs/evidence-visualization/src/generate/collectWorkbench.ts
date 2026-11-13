@@ -7,8 +7,7 @@ import {
   buildDelivery,
   buildProjection,
   loadDesign,
-  loadFm,
-  type DesignDocument,
+  loadFmFromDocument,
   type Projection,
 } from '@evidence-poc/evidence-api';
 import {
@@ -221,16 +220,6 @@ export interface CollectedWorkbench {
   projection: Projection | null;
 }
 
-const bindingsOf = (
-  design: DesignDocument,
-): readonly Record<string, unknown>[] =>
-  Array.isArray(design['bindings'])
-    ? design['bindings'].filter(
-        (item): item is Record<string, unknown> =>
-          typeof item === 'object' && item !== null && !Array.isArray(item),
-      )
-    : [];
-
 /**
  * Reads the project and projects the page data.
  *
@@ -256,13 +245,8 @@ export const collectWorkbench = async ({
   const before = await fingerprint(root);
   const apiExists = await exists(apiPath);
 
-  if (requireApi && !apiExists) {
-    throw new WorkbenchInputError(
-      '联合审核需要当前 .evidence/api/api.json，不生成 FM 单独页面',
-    );
-  }
-
-  if (apiExists && (scopeRefs === undefined || scopeRefs.length === 0)) {
+  const includeApi = apiExists || requireApi;
+  if (includeApi && (scopeRefs === undefined || scopeRefs.length === 0)) {
     throw new WorkbenchInputError(
       '联合审核需要显式 --scope，不能用一致性结果冒充范围完整性',
     );
@@ -270,7 +254,11 @@ export const collectWorkbench = async ({
 
   const [{ bundle, issues, files }, bytes] = await Promise.all([
     readWorkbenchModel(fmRoot),
-    isModelBundlePath(fmRoot) ? readFile(fmRoot).then((bytes) => [{ path: path.basename(fmRoot), bytes }]) : readModelRootBytes(fmRoot),
+    isModelBundlePath(fmRoot)
+      ? readFile(fmRoot).then((bytes) => [
+          { path: path.basename(fmRoot), bytes },
+        ])
+      : readModelRootBytes(fmRoot),
   ]);
   const modelDigest = modelDigestOf(
     bytes.map((file) => ({ path: file.path, content: file.bytes })),
@@ -289,12 +277,12 @@ export const collectWorkbench = async ({
   }
 
   const check = checked.report;
-  // A model-only review asserts consistency, not API delivery readiness.
-  // loadFm deliberately requires scope completeness and belongs to the joint path.
-  if (apiExists && isModelBundlePath(fmRoot)) {
-    throw new WorkbenchInputError('联合 API 审查需要源树；请先将模型快照解包为 .evidence/fm');
+  if (includeApi && !check.complete) {
+    throw new WorkbenchInputError('FM 范围未闭环，不生成联合审核视图');
   }
-  const loaded = apiExists ? await loadFm(fmRoot, check) : null;
+  const loaded = includeApi
+    ? loadFmFromDocument(bundle, { checkReport: check, modelDigest, suite })
+    : null;
 
   if (loaded !== null && loaded.index === null) {
     throw new WorkbenchInputError(
@@ -307,15 +295,17 @@ export const collectWorkbench = async ({
   let projection: Projection | null = null;
   let api: WorkbenchApiInput | null = null;
 
-  if (apiExists) {
-    const content = await readFile(apiPath, 'utf8').catch((error: unknown) => {
-      throw new WorkbenchInputError(
-        `无法读取 API 设计：${error instanceof Error ? error.message : String(error)}`,
-      );
-    });
+  if (includeApi) {
+    const content = apiExists
+      ? await readFile(apiPath, 'utf8').catch((error: unknown) => {
+          throw new WorkbenchInputError(
+            `无法读取 API 设计：${error instanceof Error ? error.message : String(error)}`,
+          );
+        })
+      : '{}';
     const design = loadDesign(apiPath, content);
 
-    if (design.design === null) {
+    if (design.design === null || design.diagnostics.length > 0) {
       throw new WorkbenchInputError(
         `API 设计不可用：${design.diagnostics
           .map((diagnostic) => diagnostic.message)
@@ -326,28 +316,45 @@ export const collectWorkbench = async ({
     const built = buildProjection({
       design: design.design,
       index: loaded!.index!,
-      projectRoot: root,
-      apiContent: content,
     });
-    const summary = built.projection.fmCheckSummary;
-    const projected =
-      typeof summary === 'object' && summary !== null
-        ? (summary as Record<string, unknown>)['modelDigest']
-        : undefined;
-
-    if (projected !== check.modelDigest) {
+    if (built.projection.digests.model !== check.modelDigest) {
       throw new WorkbenchInputError('FM 在投影期间变化');
     }
-
+    if (built.diagnostics.some((item) => item.severity === 'error')) {
+      throw new WorkbenchInputError(
+        `API 投影不可用：${built.diagnostics.map((item) => item.message).join('；')}`,
+      );
+    }
     projection = built.projection;
     api = {
-      resources: projection.resources as readonly Record<string, unknown>[],
-      capabilities: projection.capabilities as readonly Record<
-        string,
-        unknown
-      >[],
-      bindings: bindingsOf(design.design),
-      http: projection.http as WorkbenchApiInput['http'],
+      resources: [
+        ...new Map(
+          projection.routes.map((route) => [
+            route.entityRef,
+            {
+              id: `resource.${route.entityRef}`,
+              entityRef: route.entityRef,
+              businessName: route.summary,
+            },
+          ]),
+        ).values(),
+      ],
+      capabilities: projection.routes.map((route) => ({
+        id: route.id,
+        method: route.method,
+        uri: route.path,
+        resourceRef: `resource.${route.entityRef}`,
+        businessCapability: route.summary,
+        effect: { targetRef: route.entityRef },
+      })),
+      http: {
+        complete: built.diagnostics.length === 0,
+        operations: projection.routes.map((route) => ({
+          capabilityRef: route.id,
+          request: { fields: route.fields },
+          responses: route.responses,
+        })),
+      },
     };
   }
 
@@ -369,7 +376,7 @@ export const collectWorkbench = async ({
       >[],
     },
     api,
-    delivery: deliveryViewOf(buildDelivery(bundle)),
+    delivery: deliveryViewOf(projection ?? buildDelivery(bundle)),
     check: {
       consistent: check.consistent,
       complete: check.complete,

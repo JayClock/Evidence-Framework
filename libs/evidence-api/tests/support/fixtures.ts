@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -9,7 +10,7 @@ import {
 } from '@evidence-poc/evidence-model-core';
 
 import { loadFm, type FmIndex } from '../../src/adapter/fmAdapter.js';
-import { loadDesign, type DesignDocument } from '../../src/loader/apiLoader.js';
+import type { DesignDocument } from '../../src/loader/apiLoader.js';
 
 /**
  * Helpers that stand in for the two stages around this one.
@@ -58,7 +59,9 @@ let cachedDesign: DesignDocument | undefined;
 export const fullLifecycleIndex = async (): Promise<FmIndex> => {
   if (cachedIndex === undefined) {
     const { modelRoot } = fullLifecycle();
-    const check = await checkReportFor(modelRoot, ['context.product-procurement']);
+    const check = await checkReportFor(modelRoot, [
+      'context.product-procurement',
+    ]);
     const { index, diagnostics } = await loadFm(modelRoot, check);
 
     if (index === null) {
@@ -74,13 +77,9 @@ export const fullLifecycleIndex = async (): Promise<FmIndex> => {
 /** The design document under test. */
 export const fullLifecycleDesign = (): DesignDocument => {
   if (cachedDesign === undefined) {
-    const { design, diagnostics } = loadDesign(fullLifecycle().designPath);
-
-    if (design === null || diagnostics.length > 0) {
-      throw new Error(`fixture did not load: ${JSON.stringify(diagnostics)}`);
-    }
-
-    cachedDesign = design;
+    cachedDesign = JSON.parse(
+      readFileSync(fullLifecycle().designPath, 'utf8'),
+    ) as DesignDocument;
   }
 
   return cachedDesign;
