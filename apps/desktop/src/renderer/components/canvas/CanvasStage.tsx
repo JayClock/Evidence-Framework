@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type {
+  CanvasViewMode,
   ContextScope,
   DomainGraphLayout,
   LayoutEdge,
@@ -22,7 +23,6 @@ import { NodeCard } from './NodeCard';
 
 import { summarizeCards } from './cardSummary';
 export type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
-import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
 /** How a change relates to the object the active model draws. */
 export type OverlayChange = 'added' | 'removed' | 'modified';
