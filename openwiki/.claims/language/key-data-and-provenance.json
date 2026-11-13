@@ -1,24 +1,40 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4719585b3916695883a6fc39678bd1026466773dc90c2a879b9cffe43da40b4f",
+  "pageVersion": "sha256:5fe8610fc359e4c119ff085c22771717bbacc6d65b8aab627de8cab69474a42e",
   "claims": [
     {
       "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
-      "statement": "Key data has one eight-kind vocabulary — derived, contract-term, domain-source, negotiation-source, result-fact, request-input, needs-decision and other — declared as the shared authority for the inspector, ledger and sensors.",
+      "statement": "Key data has one eight-kind declaration, KEY_DATA_SOURCE_DEFINITIONS (derived, contract-term, domain-source, negotiation-source, result-fact, request-input, needs-decision, other), where each entry carries its picker label and a resolved flag; the inspector badge, the ledger and the native key-data audit all read that declaration, and RESOLVED_KEY_DATA_SOURCES is a filter over the same flags rather than a second list.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L1-L25",
-          "version": "repo-lines-v1:sha256:250bc7b043c83f572f3c52643366895f88ef6151fe02e95d8d4955afaa37bda8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkOTliZjEyMzFlODg5ZmQzNzkzNmNmNWI5YWUwODE0NjQyZjViNDRjZTkwYzgxMjE5YjY2NWRmOWFlYzBhMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNWExNzE0NzE0M2U3MTdjMDA4ODAzOWYzYjA3ZWNhMDI1YTIwMmUxMGFjMjRlMWMzZjRiZjBiMWQ3YzcxNGUifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/inspector/KeyDataProvenancePicker.tsx#L44-L72",
+          "version": "repo-lines-v1:sha256:2055847d30c3fc1f652f5e1356f2d0185a041a557c258934f57073bc4adef85a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzMzc5ZDg0ZmIxMDEyN2RlM2ExYTNhZjU2YjYyMmIxMWIxMGQwYzE3NTdlODA3YTI1ZWE2NTNmYzQ3YmZkNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZGE3NDI4MDIzYTI3ZmQ3ZWY3ZjY5MTFkNGZmOWQyYTIwNWE2MTJhMTE0ZTBlN2I2MWRlYzFhNDliMWJhOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5YmVlYmQ4MzkxM2FmYmM5OTc3NjI3NmE3MDcxZDQzYTNkODgyZDExYmJmMjVmZDEwYWMyMWFlYTE3ZDEwODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhZTA3OTdjOWQzMzRjODJiMTBkZWRjNWVlMTk3MTk2M2ZkMGZhNDA1OWY4ZTVlM2Y1MGE4ODA1ZmNjMjQwYmMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L85-L139",
+          "version": "repo-lines-v1:sha256:911a2f08ec05f32f7a56a9c00d367114d62fef16f45194f01ea3a02cc513b961:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzMDNiNjAyM2VhYzQ0Y2VmYjVjNGU0OWE2MGZlYTg4NDZmNWYxNmIyMWY5YWU3YjAwYzU5MWZkY2MwNDFiZjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeKeyDataAudit.ts#L20-L66",
+          "version": "repo-lines-v1:sha256:e529e08cdb0b1a86b90321f83a95abd70b3848c6d025164452ef6f39e679bf07:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhZDdlMDExNWY4MTIyOWZmNDc2ZDUyZWQwYTAyOTI4MTc3NjNmYTVhNTcyYTYwNDg2YmVkODJmYWU0MjQ2NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmMGQxMWI2Yjk2ODY2ODNkYjI4MmY4Mjg5YzgwNzcyYWZjNzRkYTc1ZjZkOGExNGJkNTUyN2FkYWYyMjFiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L25-L72",
+          "version": "repo-lines-v1:sha256:8c3708d2f54c461def3317634b0c74faa53458efce2f3eba9c8df10deb780818:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNjA4ZWEzYzIwMGM3ZWIxNzI1Y2YxNzNlYTQyZjVkZTM5NzFiYzg3YzY1MDIyZTRjZjc3OTM5NTZmMTU3ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YTY3NmFhZTgwOTU1NTMwNTlhOWIwZDU5MDIzZDEwOTRlMGNhZGVlOWQ3YjBmNzA3YmYzN2NhMDQ2ZGVkMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4MzdkNTNjYmMwYTYwYWJjNGE1OWZlMWE2ZDY0MzQyMzUxMDkwMTUxZDU2MjUwODZjZDgzNTUzOGVjMmM0ZjkifQ"
         }
       ]
     },
     {
       "id": "claim_9e7110013986451a81d51e64fe75caf6",
-      "statement": "classifyKeyDataSource is a pure precedence rule: a derivedByRuleRef makes an item derived, otherwise contract attributes are contract-term, Thing attributes domain-source, rfp/proposal attributes negotiation-source, confirmation/other-evidence attributes result-fact, and request attributes request-input or needs-decision.",
+      "statement": "classifyKeyDataSource is a pure precedence rule over the entity category/kind and the attribute name/derivedByRuleRef: a derivedByRuleRef makes an item derived, otherwise contract attributes are contract-term, Thing attributes domain-source, rfp/proposal attributes negotiation-source, confirmation/other-evidence attributes result-fact, and fulfillment_request attributes request-input when the name is in REQUEST_FORMATION_FIELDS or needs-decision otherwise.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L72-L122",
-          "version": "repo-lines-v1:sha256:7c73aea811e4993ae09c3929a06df6a46bcbd8aaa307f0758e17738d6b376e34:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5YjQ2NDBlNWI3YjhhMWIyZDdjNzMyYzJmMWI1ODNjNTI0N2Q0NGJmNjdkMmYxZWIwNjdiNWI4ZjZmNjc0MGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1OTZiZmYxNWRlZmMwMWE3NTZkYTFjOWQ0NDMzMWUwNTE2MzQ2YjQwZjY4Mzc3NTI2ZTlkNzYwN2RhN2Y1MzUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L100-L147",
+          "version": "repo-lines-v1:sha256:dfeea63de74fc4d3e51bf66d963a2be5413cad67305b7b702fd0bf4492a10619:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3NDBmNDE5Yzk1YWI2ODhlZTA2NWU3MGRmODUwMjA2MTI3Y2I4YTQwMDg0NjY2ZDk1MDFmNmFjZTlhZDdhYjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMzMxZDM0YmM5MzI3ZWI4M2NiNzE0ZDk4ZDc0OGQ4MDM4YTZkMjNiYjNiZjgyMDgxYmJhNWQzYTU5ZTgzM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MWNmYzg4MGM0ZjQ2NDMxNDE2ZDk1ZmRjOGEwMjA4NmI5NGNjYWY3YzA5MTYwOWEzNjIxYWY5NDdhZTAxMTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L75-L88",
+          "version": "repo-lines-v1:sha256:995b1020c71e404db964814266cd820a1e236bb43ccdad5defca99c04b8e3d82:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmN2ExZDEyNWRjNTM4MWRlOTg5NTAyZmNlNzRjNGQwNDQ5YmQyNGU1ZGQ2MGJkOTVmOGIyYTAzMGE5NTUyOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmYjI4NTc0MzFlNmJhM2Q0NzkwNDUzOGRkMTdlMjQwOWQ3N2Q4ZjZmMzIzNDQyMWQwYWNhNzE3NGEzNDAwM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3N2MyNzhmNTdjZmRhZGU2Nzc4ZDFjNzcwYzg5MDVkZDc1MDU5NDU0YThjNDBiOWNkODlkNzIwNmQxOWYyYWQifQ"
         }
       ]
     },
@@ -27,7 +43,7 @@
       "statement": "Request attributes count as request-input only when named in the small request-formation whitelist (started_at, request_number, delivery_address, return_address, fault_description, asset_code, billing_period, settlement_period); every other request attribute remains needs-decision.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L26-L37",
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L77-L88",
           "version": "repo-lines-v1:sha256:4ed85f6b308188238906bfd029efe6b6b1bea76fc5ab65cce9d8cc32f9bbe335:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzMzVjMWUxNzk5ZGI5ODBhY2Q2OTI2MmY0Y2RmMDg5YjQ4Mzk1YTQwYzA4YWJiMWE3YWVmMjZmMzUyMjUyOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYzZjYjhhYjBhOWY3N2FlOTZlNDNiYjE2ZjM5NDE2Zjc3YTg2ODhmOGZjZTExYjJiMjViZDFlMzMxYzFjOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4M2FkNmU5NGEyZGJiNzZjNWIyYTY0NGY2Y2I2YTM5MmVmMWNlM2QwY2JhMjg2MGI1MjdkZjgwYWVmMzdiYzgifQ"
         }
       ]
@@ -37,8 +53,8 @@
       "statement": "Every source kind except needs-decision and other counts as resolved, and only needs-decision marks a decision still owed.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L43-L69",
-          "version": "repo-lines-v1:sha256:6e6b19731fb60cdeb750be268e38de954a2e8aa7852c91089dce4c0d2e7e5683:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxODhlMjhkM2YxN2U5YTc4ZjYwZTRkYTM3OTNmZDdkYjFkNjM1Njg0YjJlY2EyNWEyZDNkMmM0OTkxMzQxNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNzNjYmM1YTllZGZiM2I3NjY0ZjE3NjhmYzRhNGQzOTkxNTE5NDY4YzRhYzM4ZjNmMzdjMzU2MDI2N2RjYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViNWYxMzQ1MWIyM2QwMjBiMTllZWJiMGE3ZWMxNGI3NjhkY2YyNGI5ZTg2M2ZhNGJjYTZkMGIyZGMxNTcyN2MifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L69-L101",
+          "version": "repo-lines-v1:sha256:c991764ac826038b28dfcd34b054cfff79e2b48b7c714c867c8c844a67bde3a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjOTQ0ODZjYzkyM2ZhYjJkNzdlNTU0Y2ExNGQ4N2Q5M2U4YTAzYTY0OWM3MjJiNzZmMzk2MWMxM2Q1ODBiNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5NzMyYzczYTlmMzg4Yjg5NjdlNjYwYzkzNzdiZmZlMGQ2ZWEyNzhkY2M1ZjEwM2FjMDlmNzNhNjdiMzdhNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZjA4N2ZlMmVkMjQ3NzAwOGY2M2U2ZjQ3NDBhNjgzNDZhNzRjMDhhMzI4OGJkOTgyMGNlNWMyNGU0NTk1MDIifQ"
         }
       ]
     },
@@ -71,7 +87,7 @@
       "statement": "The sensor report summarizes the ledger as totalItems, resolvedCount, decisionOwedCount and a capped unresolved list; owed decisions are warnings rather than static errors but keep the stage gate closed.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L185-L225",
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L261-L301",
           "version": "repo-lines-v1:sha256:7a7a53d5ebb76ea795f9bb8805441c59410624385c04027976497be0c1ab8057:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
         }
       ]
@@ -81,12 +97,16 @@
       "statement": "Each evidence kind mandates business-time attributes (started_at/expired_at for rfp, proposal and request; signed_at for contract; confirmed_at for confirmation; created_at for other evidence), and any recognised time attribute must be a required keyData timestamp.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L47-L66",
-          "version": "repo-lines-v1:sha256:df8ca01693390026ccf465996715bf79e1a69a5f11b0e98e42d48ca9b7e8b6cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmY2Y2MGJmODUxYjI2ODFjZjJlNjhlZTVmMGQ4YjY3ZGQ1YjcwZjFlNWFkZDBiY2M3ZDJlZDk2NDQxYTdlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGM3NmQxMmU1MzA0ZDMwNzllZGI1Zjg5MDAwN2VhMDVmMjI2ZTRkOTNiNjk1Njg0NjBjYWZhZjgwMDc0NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiZGJlNzk5Y2FiMGNkZDU5NjlhMThkYTJhODZjNjA3ZjNiODllNTE1NjJmNDNkNjVlMTBlNTY5YzVmODM2NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOGEyZGQ2NTBiOGEwZTdkYTRiNTdiZWFmMGMxNGVhNGM3MDdmMzE0OTI4ZjljNGFkMDY5NDAyZDFjMjU1NDUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L155-L175",
+          "version": "repo-lines-v1:sha256:d5a5905b0a7573ddc33b21c104afee6a542b197f0fafe43055624dede14d57b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwY2VkOTE2NWFkZDA5ZjFhM2JkOGY2NThkMjE2ZGRkYTBkMmQ4NTFlM2U2YTkxODFiODUyYzE1NDdjZTk2NDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5N2JjZGYzYmRjMmRlODkwNjkxZTRkZDZmMzkyNDU4YTdiMDc5Zjc3MWQ3N2ZiMDRlMjhiYWMwYmI3YTgwZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MTMzZjQyZjk0NDkwNzdjNDhhNzdmNDQyMDBhZmU3ODVlOGRkOTM4MGFmOTU2YTMwZGU3YjE5ZGExY2QwYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjZTU2N2Q4YjM4MmY3MDliZDFjZTQ0Njg3YjlmZTdjMTNiOGE5YWY3OTViOGFlOGU3ZGRiNTc4ODhjYWE4MWUifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L515-L545",
-          "version": "repo-lines-v1:sha256:fd41546949c777a9ccb07ba7baf02fc37c634b1353f914c19b416f62a6bc4b9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzY4MGQzMzZlNDY5ZTcxYTFhMzg4N2E3YWUxNTdiM2NlMjMyZWQ4ZTU5NGVmYmRmMDg0ZWMxODAyN2M5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYTUwMGM2YzExOTlhZWQyM2RmMjA3ZWE5OGU5MzU2NTQ3ZTQ1NDQ1NzJkNGYyNTdjODk0MjY0NTY3MGY3YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYzJjZTY5Y2ZkNWRlNjk5MjkzODBlYWIxNDhiODNkYTI5OWJhYTNiOTMwZWE3NjM4ZWQyNDgyOWNmODYzMDIifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L33-L66",
+          "version": "repo-lines-v1:sha256:35f291e84d7ab66c46b9b2032f4ac714663a416b2c59b70a5ec04d5158ca1640:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyOGM3OGY3MGQ5Mjk2NGE4NjQzMjMyYmU3YTlkNmFiYTE1ZTcyMzU4ZjMzMjhiZjJlNTkyYjRhYzhjMGY0OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNDgxMGEwZTllNmRiMTAwNzlmMTc2ZjQxOTBjOTE2ZDVjN2M5MGZkNDQ3ZWRjMGM3YmQ4N2I4MmU4NzI2NmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllOGY1Y2MyNTE5ODM0N2MxMzM1MDRiZTJmYzhmOGMyMThhMDE0YTY4OTdjZjE5Njk3MjcyNzJiNjkxOGE1MWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L577-L630",
+          "version": "repo-lines-v1:sha256:071187ab07304acf801ef6e7fa80b2a060bc12fb9742b34010c746b69d841795:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMTdiNTIwMThjNDM2ZWRmZjA2N2U2NGVhNzYyMmEzOWU0MmEwNjZkNTQ5YjZmMjhjZjdkOWM5NDc5NTRhZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYzNhZDFlZjRlOWE2MGM4OWY5Y2FiMjlhMDgwZmM1MDdiYjA0NGM5MjY3OTQzNjEwN2E4ZTU4ZWM0MzA5ZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3NzBhY2Y4MGYwMTdkMjgwMzM3ZmY5ZmNmZDRkZDQzMzIxM2VhODRkMmE5YmU5NzdjMGFjNDI5OWIxYzE3ZjUifQ"
         }
       ]
     },
@@ -125,40 +145,218 @@
       ]
     },
     {
-      "id": "claim_f637929ebe8d46488bece2805ad955db",
-      "statement": "An interview trace records focus, narrative, questions, user input and target bindings whose sourceType is one of interview_statement, upstream_evidence, system_rule or document; validation reports an unmodeled evidence reference or a binding to an attribute the model does not declare.",
+      "id": "claim_1821d89346c14667a4445e0df28bb512",
+      "statement": "An entity may carry an optional entity-level sourceSnippet (verbatim sentence, locator, input kind), which compileDraft copies from the draft element's provenance, which the draft review panel prints as 原文 before compile and the workbench projection strips; sourceSnippet is in the entity key set only and no check resolves it against the model.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeTraceCheck.ts#L300-L420",
-          "version": "repo-lines-v1:sha256:514a67112bad4db4ff6697e4e74b6ad977e6c1cf1291984967cdd7070b936d77:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzJhNDI5MzgyYjJlMTQ3MThlMGUzN2IwNTcwYThhMTcwMjk5MWZjZDg0OThjZDg0MDYwYThiZjRmMDUwMTdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNGQxYmFkMjJjNTk1NGRlMzU3YWI5YzM3MDA1Y2JiOWJjYjJlMTZiZTc1NDk3MzY1Y2YzODY3M2M4YjdhNjE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiOWUxYmIxMThkMGMyZjI3OTA5YjgxNzYwYjg1NTEyMGQ4NmYzYTNkMDJjNGM3MGI3ZDMwN2ZkOGI1NzdmOTMyIn0"
+          "resource": "repo://apps/desktop/src/renderer/components/ingestion/DraftReviewPanel.tsx#L250-L265",
+          "version": "repo-lines-v1:sha256:ee5d5720335db6699028e533f27a8ffb8de0288ee2819c3d75e2c60df96f04e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMzUzZmQ4YTNjNmRkODI1YmMzZGVhYTE3MDY3ZWFhMjI1NTVmMzIwZmJlMGY3MmQ0YTMzNDU5MWEwOWQxYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNjQzMWY0M2M4YTJmNTQ4YmM1YzRhZGI5Mjg1NTFmY2JhZjAzNGI1YmZhNDcwNGY0M2E1ODRlYTA1NmVhYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MThhMzc3N2ZlYTg3MTM2ZTlkMDMyZTMxOGQxNzBiZTU4NDI5MmMwMjVmNWFkOTQ1MGY4NDAwYzI2ZDU1NGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwMjYwNWJmNmFmMmUzYWU0YWYzMDQ1NzBmZTRmNjdmOTdjNjlhMWViMWRjYTNhNWM4ZDg1MmMxYjQ1OTViZDUifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/schemas/interview-trace.schema.json#L30-L114",
-          "version": "repo-lines-v1:sha256:a2b0521b8d5654f93e32b09c6e8896923a22076c71fa0b54a4b9e534229fc43d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNGM5OTAzMDZmNjdiNGE5N2Y1YmYxMDA5ODFjZGFkOTNiNzY2YWU1ZjY2MGE5YmIyMTM2NDllOGQwYzIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjNTU4YTYzOTU3NjQ1MmM3ZDI0MmJmYzE2MTFmN2UyYzU0NDNjZDJkNjY5OWY3ODBlMjdlMDIyMzJkZWQyOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L331-L350",
+          "version": "repo-lines-v1:sha256:0710c7f62c4afb776155c1b066d0278b33f0877832d3dca04ea3505471a9d07f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNDk5NmEwOTkwMTgyM2FiOWJkOGVlY2ZlYmMwOWQ3MmEyNWM5NmRmZTY0Njk2NmViNWQyNDVkM2RkNTMxOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2ODAxODFjYjE2MjA5YmIwZTZmMmQyMDUxMjM0NzBjMzUyMDM3MDg2YjJjNDA3OTU2NjAwZGQ3YjA4M2JmOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjM2E5N2ViZjcwNzFlZWE1NTcwM2I0YzZlMDExZmJmNDNhNjMxZTYxZmJmMWUwMzZjNTdmNjRmZTNiZTE1YjUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L189-L198",
+          "version": "repo-lines-v1:sha256:4b667c2bd88b803150c4c3572b425d5bfb32931746fe8c8af15c40f31d611978:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0ODE0ZDk1ZGFhNDgyM2U3ZTA1ZThjMDA4MzZiMDE2MTU2NGY5ODJkMmQ5ZGU4MmVjYTY2Y2Y0MGE5MDRlZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NjQwMzMyNDhjOGI4YWMzYjRlMzAwMmM5ZWE4ZmE2NDY5MTAzY2RhMDY2ZTBhNWRlNGViNmRlMzkxNjdiMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZmY0ZWJjZWNmNGNkNmNiNzY3YTZhNjljMjgzNmMxYWY3OTVlZjQ2ZjkxNTUyZjI1MGIxMWZkOGJkNTMxYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmYTMwNDVhM2QzNmNmOTFjOThmMzZkMDg3MzY0MzJkZDY2MTA5NzZhZmY3NTRhNzEwYjQ2YzFlNmM0NWI2YmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L19-L54",
+          "version": "repo-lines-v1:sha256:58b7131ebc93d0ed1eb01cea7b58269855bd3a03f0f1245390478c173a8ee911:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyZjA5YTkyZmEzZjc2MzFmMzFjN2FlYjNiZjc1MWNiYmI4YmQzYjFlYzkxYzY2NDZhZjgyOTg4MzZjZTA3ZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMGVjMTQ4ODI2Yzg1YzE4MzU2MDRmMmNmMjA1MTZlOWEzZWUwZjMzMmFjNmJkYmZkYmQ1ZGU3NzUyOWZhOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L48-L67",
+          "version": "repo-lines-v1:sha256:033faf0d1669488bd7988ff1b82a9fec5c196e1cafc565933ce778f0cd15a0ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OWM1MDVjYThmNjQ0NDVkNzhmNzNkMDNmMjYyN2Y0ODEzNjU2Njk4NmY5NWQ3NWU1NGFkY2M5YmFhMzgzYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjZWZiZGNhNmZjZWViMTg3ZGM0MTE2MGM3OTY5ZTUzZDk3ZGNjYWJjMzRkNTBiY2JhY2U5MjBlNGQ0YTBmYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiMmJhMGZjZWM5ODZlYzk2MzQ5Mjc0ZGFmZjVjNjBkZWY3ZmYzOGI5MGIxMWYwZTY0YWY5ODJlMGU2YzY5MzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhNzRjZDE5NjJjY2I5NTBmYTYyOWY4NDg2YjhmM2ZjYjQ1MjBiOGJmOTg0OTdkOWFlYzhhOTIxNzdmYzA3YTIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.ts#L8-L16",
+          "version": "repo-lines-v1:sha256:2d4c22fc20faeffb1e78e8ef7499761579499bd505c88f26ed38e3d8f975a02f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjIzY2I0YzEzZDY3NzU5ZDU0Zjc2NzFkNDQwMzQ5NzJkMDkwM2EzOWQwOGFmYWU3M2JiOTgxZWI5YWIwZGNmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGIyZDRlYmNmOTFlZTU0YzdkNTk5MjFmNTJkMDdhZTZlYjljZWE5NzViYWM0NzI1MzhiMTUxNTQ5MDg2MzVmNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiJ9"
         }
       ]
     },
     {
-      "id": "claim_1821d89346c14667a4445e0df28bb512",
-      "statement": "An entity may carry a sourceSnippet with the verbatim sentence, locator and input kind, and tests pin the ledger's per-kind counts, the separation of owed decisions, derivation providers, exclusion of unmarked attributes, and the trace reference checks.",
+      "id": "claim_d07c5dea50bf4760afc0e336fc5bd3ac",
+      "statement": "other is the one kind that is neither resolved nor owed: it never enters the ledger's decisionOwed list, while the sensor summary computes resolvedCount arithmetically as totalItems minus decisionOwedCount, so an unclassified item is counted as resolved in the summary even though isKeyDataResolved returns false for it.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.spec.ts#L62-L190",
-          "version": "repo-lines-v1:sha256:178164a59df138ec512e3aa103b266a8fda3ba3023e4782343cc4ad6a36ba3d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmZjYzNzBlMzlhMTJjZmYxYWQ0MzMyZWU4MTQ5YzYxMzRlZjk2OTkyOTdmOTZkY2E3NjJjZDQxYmI2ZjU1MGY0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5MDkzZTEyOTA2YTYxZmQ1YzA4OWZlZThmY2FmZDk1MmU1N2E1OTA5YTI0OWRkMTI1MDk0OThkMjcxYTcxYzk2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIn0"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L104-L139",
+          "version": "repo-lines-v1:sha256:1cf845c10f5955779ee22ad49187f9fd8a31285d2c46785e18eb95b349818d1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxMzM2ZDgwMDExMzYyZTQ3NDZkODczMjcyYzI5MTg5ZjMyNzc3ODQ0NzEyYWIzMzlkODg1YmY4YjgzYmEwZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzMDNiNjAyM2VhYzQ0Y2VmYjVjNGU0OWE2MGZlYTg4NDZmNWYxNmIyMWY5YWU3YjAwYzU5MWZkY2MwNDFiZjYifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L185-L225",
-          "version": "repo-lines-v1:sha256:7a7a53d5ebb76ea795f9bb8805441c59410624385c04027976497be0c1ab8057:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L261-L300",
+          "version": "repo-lines-v1:sha256:e02f4d8150957121ea4635ce36128e5b8fdf04073011b404c0801f843eaf4c5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L23-L39",
-          "version": "repo-lines-v1:sha256:a0dc51b2b2211d0578e4d19cba663355c824972e999947bfd16405c1dd2019e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5ZGMzZjIyYzgzOGJmYzQ0MDVmM2FkYzgzNjBhOGM0ZmI3MmEzMGJlMjUyZjZiYWY2MTZjMmE2MzQ4ZTk2MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L69-L101",
+          "version": "repo-lines-v1:sha256:c991764ac826038b28dfcd34b054cfff79e2b48b7c714c867c8c844a67bde3a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjOTQ0ODZjYzkyM2ZhYjJkNzdlNTU0Y2ExNGQ4N2Q5M2U4YTAzYTY0OWM3MjJiNzZmMzk2MWMxM2Q1ODBiNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5NzMyYzczYTlmMzg4Yjg5NjdlNjYwYzkzNzdiZmZlMGQ2ZWEyNzhkY2M1ZjEwM2FjMDlmNzNhNjdiMzdhNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZjA4N2ZlMmVkMjQ3NzAwOGY2M2U2ZjQ3NDBhNjgzNDZhNzRjMDhhMzI4OGJkOTgyMGNlNWMyNGU0NTk1MDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_02f638a449114e47b0677f030697133b",
+      "statement": "A derivation is recorded on both sides — the attribute's derivedByRuleRef and the rule's target — and strictValidateDomainModel plus analyzeTraceability keep them symmetric through an unresolved-ref check, a mismatch in either direction and an owner-context rule; because classifyKeyDataSource only tests that derivedByRuleRef is present, a dangling ref still classifies as derived even though the model is invalid.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L486-L556",
+          "version": "repo-lines-v1:sha256:3f2e42f42939ab94194600df58b4c12f822d7dbe53cfd59390117b8129adef5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2YTc3NjI0ZDFlZGNmZjMyNjNiYTBiZWI5N2YyODFhYWRhODQwZmJhYmQ0NzNlZmY1NTYzNGRjZjU3MDU3NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMDcwZTI0M2VlMWIzOWY4OWRkNGYwYTY0ZGU3NTAyNWMyYTZjMzg1YzQyMDMwMGFjYTdmMjJmNmQ1YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5ZGUxNjBjZjhiODE2NDQxZWMzYzE3MDM5OTY1Zjg3MmI2NDgzZmEzZjdlZGMzMDllYTVhMTM2ZjgwYWU2MTkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L109-L115",
+          "version": "repo-lines-v1:sha256:107c4272d9a0d44057e959b14a53d40ce2cba95bde1012d1bafd128c94f17e75:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTIwMzQ5NTYyMTM4ZDFhOTVhMTY4YjVhMjU5NDMwODQ0NTcwMWQwYjlhODQ5ZDMwNzIxMzgzZTdjZjg4MGY5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzg1MmY3NjJkYmFiOGNmMzRjOTU1NzE5MTEwODEyYjk0ZjVkYWFmMWJlNTc3ZDgxZjUxZjNmMmZiMzRkZTg2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjk2ODFkYzE5ZjE5ZGVkNzdjNjMxN2E1MTU0YzgxYjk5ODkyYTg2N2Q1MDUyZmI3YTMzNzZkNTA3N2VmMGYwYyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1770-L1845",
+          "version": "repo-lines-v1:sha256:fd2da109fa37663253d10ba252a7ca75a957b0afc0554cdb4a5104f8d9a5c4c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1Nzc2NWZmZjdkMzhmOWM2MmE4MWFkODkxZjk1YjI0ZGYzZjMzODgzZDg4NWM4Nzc0NzE5MWE0NmNiMTk1ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1NTRlMGU3ZTBjOTA0YTJlZTVhNjEyM2ZhOTU3YWFmOTk4NjJkOTk0NWQ2ZmI4ZTYwOThhOTFmNDQ0ODQ3NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmOTQ1Njc4ZWZkNmExMWQxMjBiZTZlZjBhNGJlM2RmODI5ZTMxMWY4OGY5MTVjMjQ4N2ZmZDZhODY4YTE4ZTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L560-L578",
+          "version": "repo-lines-v1:sha256:5a996252cae5dc45bc51dc689dc58db5e8c11a2b0a5a4a84f740b1f17f69b54f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYTliNTU3MzFlOGQ4NjRmYmQ3MmRiZGY1ZTI2YTJkNTg3MTU0ZjFmZTdhNzZmODA3YzBhZDEwNGExYmIwY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNzVjNzBkOTQ2MzYyNWUxMDc5ZmQ4ZmM4ZWU2MmFkMmU5MmM0MmJlYWFiZmQ4NWI3OGQ4ZTBhNDk3OWI5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YjlhMGIxNmI5OTEwYmFhNWQwYTRkY2FmZjhhNjBjNDI5NjMzYmYyYWUzY2JhY2M4MjAyOTA3NTgwZDEwY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YjlhMGIxNmI5OTEwYmFhNWQwYTRkY2FmZjhhNjBjNDI5NjMzYmYyYWUzY2JhY2M4MjAyOTA3NTgwZDEwY2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7fdbd173671e4b7ea738c91f5d7bd5aa",
+      "statement": "buildKeyDataLedger inventories only attributes whose keyData flag is true, and nothing in strictValidateDomainModel forces that flag onto an amount-like attribute (only the recognised business-time names are forced), so an unmarked amount stays out of the ledger and blocks nothing.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.spec.ts#L147-L160",
+          "version": "repo-lines-v1:sha256:f358eb242de6f71f0d690489322855398745545ef5ff636ba846b810b82a83b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4MTMzMjQwYzY2OTA1ZWUwZWViZGRmYzVmZmYzOTgzMDQ1MzlhNWVkMjI2YzMyOTZlYmU4ZDZmMjAwYjU2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiZGJmMmE1NDcxNDIzNWI1N2ViNjg2YjI4NDhjYTk0MjU0YjhmZmE1ZjhkZDIzMjUwZTcyYzIxOTc0ZjE3ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L85-L139",
+          "version": "repo-lines-v1:sha256:911a2f08ec05f32f7a56a9c00d367114d62fef16f45194f01ea3a02cc513b961:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzMDNiNjAyM2VhYzQ0Y2VmYjVjNGU0OWE2MGZlYTg4NDZmNWYxNmIyMWY5YWU3YjAwYzU5MWZkY2MwNDFiZjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L577-L630",
+          "version": "repo-lines-v1:sha256:071187ab07304acf801ef6e7fa80b2a060bc12fb9742b34010c746b69d841795:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMTdiNTIwMThjNDM2ZWRmZjA2N2U2NGVhNzYyMmEzOWU0MmEwNjZkNTQ5YjZmMjhjZjdkOWM5NDc5NTRhZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYzNhZDFlZjRlOWE2MGM4OWY5Y2FiMjlhMDgwZmM1MDdiYjA0NGM5MjY3OTQzNjEwN2E4ZTU4ZWM0MzA5ZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3NzBhY2Y4MGYwMTdkMjgwMzM3ZmY5ZmNmZDRkZDQzMzIxM2VhODRkMmE5YmU5NzdjMGFjNDI5OWIxYzE3ZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0a827893bf1f45e68882aed2e7287a55",
+      "statement": "A ledger entry carries the entity identity and category.kind signature, an optional contextRef, the attribute's name/label/meaning/value type, the classified source and decisionOwed; a derived entry adds the rule id, the expression and one provider per binding alias — a modeled ref with optional cardinality, or a runtime valueType with an empty ref — and an unresolvable derivedByRuleRef yields no rule id and no providers.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L104-L149",
+          "version": "repo-lines-v1:sha256:a79225cd291240590b667f56d024d6bdc9454f404a0d0d944736df44fd83e720:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxMzM2ZDgwMDExMzYyZTQ3NDZkODczMjcyYzI5MTg5ZjMyNzc3ODQ0NzEyYWIzMzlkODg1YmY4YjgzYmEwZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L13-L77",
+          "version": "repo-lines-v1:sha256:346ff297d86284a51ea42a20b57ce3af8cf301698c300e2189a0888f1ed13969:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMWYwYzRmMjM3ZWQ5MWNkNDFkMjQ2NjFkZWVjMzE2NTkxZDhiODcwZTEwMjk1OWJjYzIxYzM0MTY3OTk3OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3NjhkMzc3ZGIxM2ExZjZiZGIxNzhkZTMwOTk4MjdiYTc5NjY0ODYyNjcwZDJjM2Y0MzQxYjllYzc5Mjk2YjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxYTY3ZmZjZjQ3ZTA4NTc2OGU4M2ViYjczOWY1NTU1ZjBmNmYwMmEzNmVlMjU0NDdlMjVkZGZhNjNjMzc2OTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e2a8572d8be048c59577cbaf7e14ca40",
+      "statement": "A key-data source is never written by hand: the inspector badge is read-only over the classification and offers only binding a derivation rule or retracting the claim with keyData false, and the ledger is rebuilt from session.getDocument() on every document change so the badge cannot drift from the model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/inspector/AttributeTableEditor.tsx#L71-L100",
+          "version": "repo-lines-v1:sha256:21056d9c46df0070bbe1dec4883e532f6f03466525d13182c090cbb21143f3e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczM2VlMjI0Y2NkNTQ5ZTI4MTk5NWM2ODA2NWM0YTA4Yzg5NjgwZDE4YzM3MTZhYTVjYTgzNjg4MTcyMmRhZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNmM0OGRjZmZhZjhhZTQ0MjMzMTljNzg2ZGZiZmM5OTc3MGRkMDhjMzk4OGQ0MTMwZjk2NGExNGUxOTA0ZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMGI0YjY3NzRmNGZkMGE1ZTFiODY2NjQyNWY0YWM4ZGU2OTEwZjA3YTk4ODcwOTc4YzU1NjFmNmY4ZWYwNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5YWJmM2RkNjFmNWFmYTU4ZTQ5MGY3MWIwOWExY2NmN2E1OTdiYjFjYjJkNjZhMGEwYTdhYWI4MGE5Yjg5ZTkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/inspector/KeyDataProvenancePicker.tsx#L44-L104",
+          "version": "repo-lines-v1:sha256:4be4ccd2b147ee23a76899d923dcb30436024ed096fc889f0d44887185e6a658:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzMzc5ZDg0ZmIxMDEyN2RlM2ExYTNhZjU2YjYyMmIxMWIxMGQwYzE3NTdlODA3YTI1ZWE2NTNmYzQ3YmZkNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiNWRiYzc4MGE3OWEzMDhhMDcyYjA0MWY5YTg4ZGI2YjU3NzQwNDFhNjk1YmI3NjQ1ZGFiNDVjZjYxYTMyNjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5YmVlYmQ4MzkxM2FmYmM5OTc3NjI3NmE3MDcxZDQzYTNkODgyZDExYmJmMjVmZDEwYWMyMWFlYTE3ZDEwODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNjA5ZmZlZjRmZjIzYzk5YTlkMTAwNWVmYjQ3MDcyYjE4MjBiOGNkZGUyMjg3YThhMDAxNmEzNDUyOTc0ZDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc51827c7224481b9c2f573d9e6c5011",
+      "statement": "An owed key-data decision is a warn-severity KEY_DATA_DECISION_OWED finding rather than a static error: the report keeps passed true and blockCount 0, but isStageGateReady ANDs decisionOwedCount === 0 with the gate summary, block count and API coverage, so owed key data alone keeps the model out of downstream hand-off and the status bar reads 门禁：等待台账决议.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L34-L46",
+          "version": "repo-lines-v1:sha256:713f96661eec1c123105ae29211e9bca5511add4a160833110a871cf4eda3dd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3Yjg0MTFmMmNhYzlmMjliNDM4MzliOTViYmExZDVlMjJlODZhOGZkNzNjMjEyNjRiZTBjZGNjM2YyMDFlNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxN2RjMTQ5YWRhMDEyZjhiY2E4NDBmNjBmYmNmZDVlOTJlYWU0OWEyZWNhZDI0OTg3NWRkMDk1YWQ2MjRjMjQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L123-L150",
+          "version": "repo-lines-v1:sha256:6b8ba9d3cdc986682bedce43d896bd5e17b41c5b5f0086f6538f71f34266b106:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZDQwYjY5MmVlZjMxZDVlYjQyMjE2NzQ0N2FjNzViOWNlMzBiOGQ3N2JiOTNkMWM4MjJiZGNlZWJlOGM0ZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyOWY2ZDc5ZmQzNzliOTg0OWMyNjZjYmUyZjk1ODM1OWZkZjE3MTI3MGQ5NjY0ZGYwNTlkMzYxZjVjZmZlMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwZmZjYzZlMzcxMDQ5YTZiZjg4MjgyNTA2ZjQwODM5OWIzZjFkMjI4MDczMGI4ZWM0OGRhMDNmZTUxYmVjN2UifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L261-L300",
+          "version": "repo-lines-v1:sha256:e02f4d8150957121ea4635ce36128e5b8fdf04073011b404c0801f843eaf4c5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L344-L356",
+          "version": "repo-lines-v1:sha256:11928746b49f81b6b86d1d904e2b847753f38291abbf000dab6a37a17a0063ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ZDc0M2NiMzNlNTZiMjc3OTlhYzNkNjI5MmFlM2Q3MjIzYjYyMTY0MGU2NmVhYmM0Nzg1OWM5YjExMjczNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmOWI3ZmQwMTQ4YzlhNjU0NGU0YjhmMTNhODc2MDQxMzQ5OWNkNDQyNmFiNGU2NTY1ODE3NGUzYWJmZGE3NzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhZWZmYWNkYjMxOTQxOTZkMTQ2ZDNjOGU5MmJlMzdmZGE2NWY0ZGE2ZThlMGM1YzE4MDI0NGM2MmEzN2U5MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0ce7a471887c4b00b19fb3cc8f7d685b",
+      "statement": "keyDataSummary caps the unresolvedItems list and the per-item findings at MAX_KEY_DATA (40) while decisionOwedCount keeps the full count, so a large decision list is truncated in display but not in the gate arithmetic.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L158-L158",
+          "version": "repo-lines-v1:sha256:608975306c668abcafcbaf67a72347d7fd8280e6c3827d811b55c8e6ab114129:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjA4OTc1MzA2YzY2OGFiY2FmY2JhZjY3YTcyMzQ3ZDdmZDgyODBlNmMzODI3ZDgxMWI1NWM4ZTZhYjExNDEyOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjA4OTc1MzA2YzY2OGFiY2FmY2JhZjY3YTcyMzQ3ZDdmZDgyODBlNmMzODI3ZDgxMWI1NWM4ZTZhYjExNDEyOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTBlYWY1Y2RkOTA0Y2VhODkwZjRkYzhjNjE4OTdhZmE2MDdkYmMwODRkMzdlMWEwYzAwMmUyMTFjYmU2NWJhNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTU0MjIzNjEzOTE2ZTk5MGExNGQ4YjM5MWNjNGU3ZmRjZWEzOGIwZGJhNDIxZmRjMTcwZjc5MWRkNTU0NDI0MyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L261-L300",
+          "version": "repo-lines-v1:sha256:e02f4d8150957121ea4635ce36128e5b8fdf04073011b404c0801f843eaf4c5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_427bfcc02efe4f5b8688b46a2b976fc6",
+      "statement": "analyzeTraceability enforces the lineage rules (a many binding read only through a CEL collection macro, static string attribute index, declared attributes, binding/attribute match, one derivation per attribute, a derivation target declared back by derivedByRuleRef, no cycles) and adds two key-data rules: a key derived attribute must trace to at least one modeled Entity attribute and may not read a scalar binding the expression uses.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.spec.ts#L191-L250",
+          "version": "repo-lines-v1:sha256:052bb2496b1162becb158e1949e3c4dbdf9e70b4b33a1a05931e2cf95abd62b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNmUzODZjMTcyYzc2MDgyNzY2ZDczYzZmZDE1MGQzODJmYTkwMTJhMjE3MjIxNGExY2NjYTNiNTc4NTYyNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4YmZlOTk4ZTNmYjJkOTA4YTQ1NTgxMWFhYjFmZjFmMTdlYzRlNGNkNGUzYWVjY2VmYzgzN2ZjYjY2OTJkOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NzZjNmM0MWVlNGZhYmY5NDJlZDMyOGNhODg5ZDMxYjhjZmRiMTBkY2JlOWI4MTBkZDNlNDk1NTE0Y2EyOTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L191-L250",
+          "version": "repo-lines-v1:sha256:b878ff84ebe023afef71bc2fb2939d53c5eb30c042e3aef995797731093c14f0:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyOWRkMWMxMDhiZDIyNjFkMGRmOTE2N2UzMjQ2M2E1OTkwMDJjZWI3MjgxYTNhMDcxZjMyNDIxZTU1YzM5Y2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZmMwZmNjZjJhMmNmZmY3YmE4YTJkNGFjZDExNzFlMjAyZTFmYmQ5MGM1OGNiMjEwOWJlZDI4ZTVjNWMzZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiZTU0NGNlYjYxMzg4OTM3OTExYTA4MTk4ODBhZGNkYjg4MDE4YTQ3Yjk0MTIzYzFhOWU2OGJhYTM2Y2ZkM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZjYzMDA4MzM1NWUzNTk4MTM0ZmU3NzQ4MTBlZjgzODRiYzM4MjQ5YmY2ZGRmNmE0ZTU0YzZmMDk5MmMxOTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L392-L560",
+          "version": "repo-lines-v1:sha256:b890e55157944ce90341bc573dfae23783a3e23c5f7d48f26e85ef629488b673:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMjMxZTAwNDMwZTYyOTRiNTQxNjVhOTAwMTQwOTc2ZjIzMGQ5ZjdmYjczODZhODNmNzQ5NTdmOGRlYTViYzVlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2ZTdlOGEzZTE2MjBiYjM0ZDhiYmVjNDQzYzhhMjg3NmMxOTE5NzhhMGU4NDIwNGZiYWJkMjc3NTUzZjRlYmE5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZmZhODZjZmQ3ZmMxYmJjNWU1NWMxZDEyODNkZWViZWQxZDU0NzljOGQ4NDBhMzIzNDM4MzZhMzRkMmEzYWE1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1NmU2NWNlNGIyNTc3YjJmYWJiMmNmNWE2ODVkNjk4OGJkM2M1ODAwMDE4MDViOWQ1MmI0MmM4YmY4N2MxZmU4In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc95035f476b4b44a8953d694c798426",
+      "statement": "A contract is first annotated into three clause categories (business, domain, boilerplate) that each declare a destination — evidence, domain-thing, none — and annotateContractClauses filters boilerplate first, then a business action, then a computation, reporting the sentences it cannot place; the annotations live only in the reading result, because a compiled model persists sourceSnippet instead of clause buckets.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L110-L165",
+          "version": "repo-lines-v1:sha256:8ca10f5e8f475fd7bc700d5808bfb1072d1a4e6cea26fdf7caddf18db2108d02:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYzAxMmIwYzZkNzVlZGYxMDhhNmI3NzkzYjgyNGFkZGY0NGIwYTM0MTlkMWFkNTkyYWQxMmFkNDgzZmQ5MjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYjcyYjFiNmNlMDE1YmE5MmQ5MGQ4ZThmZDkzMGU1MTU5MDNiM2M0YmMwMGM4MmY3ZGUyYWE3MjRjY2ZiMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1MTc4ODYyYjU4M2E1Yzc3Y2Y4NmMwMGQ3OGRjNGJmZTY0ZjJmNzIyNzljMjRmZmVjNjZlMmIyZmJiMTRlYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5MzljNDY4YjhhZWE2M2NhNDQ4NWYyNTU4MzRlNjlhNDdmMjliYjk2YTI4NTgwYmVjMjQ0Y2ViYWZiMGFhYmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractReader.ts#L42-L110",
+          "version": "repo-lines-v1:sha256:7f5e7c7bb6a8831bd69025d8a3a6a231bc1f5385a66f0ed2baa3795d8c5be896:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NGJkYzYwZGI5ZmRiNWZjZDA4MWUyYWY2MTVmOGQ2MzJmOGZkM2MyNzE5ZDg1YzcwOWQwZjM2OWVmYzQ5MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhYjkzNTQ0OTUzNzY5MTI5ZjBhN2MxN2QxMTJiYjJiNDI0ODkwMzdlMzk5N2RjN2E0ODI0MDI3Yzc4MDI3NWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiYTJlMjUzNDRmZDMzMWQ5OGY4OGVlMjUyYzBjYzg5ZDIwNmJhY2M4ZmU2NjQ4MzRlNjdlZWE5MDUyNWUzYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyNmVhYjAzZDBhNjQ4Yjc5OTIxMmY1YTkwYmVmZmU1YjNhM2M2YmFiMDllYTQ4OGQ0YzdkYThhMTJhZmZjNWUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/clause.spec.ts#L30-L40",
+          "version": "repo-lines-v1:sha256:8c301a77a39da19290d0181c6304dad7606b979638ce626024073eebc7ba31e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2OWI3NWRmZjJjZDY0OTNkMjMwYTE3ODExODdkNDk0ZTVhMDYzNmU1MTgxOTQ4ODFlOTRiYjFhYmI3NWYzZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5NTBhMGE2MWI3NWMwZDIwZDUxMGFkMTcxOTYxNGNmNjk0ZDBiYzg5YmYzYTQwNzBlOTI1NGUxOThkZmFlZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlNDQ2MmNkYjY3NmI1M2ZjZmRmNTQ0MTk0MGNjMjJkZTg3YmUyZGIyNDg4ZjA3Yzk5M2M4M2U0ZmFjMGMzNTQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/clause.ts#L1-L101",
+          "version": "repo-lines-v1:sha256:6e10d6fb1141fa7fe1b84f20794d33371cdf3fcc559bda6e08a82be958989319:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODIwMDk2NGE5Nzg2MzU1MjJiMmFiMDkwYzY1MDY1ZDhlZjhlODVjNDczMGJiMmViMDQ2MGQzNGM2NzdkZGJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjOWY2MjliZGY3ZjEwYTFlOWFmN2I5MzRhNDg1OTgxY2NiZjQ4MmIxY2U5M2VjNWY0YjdiZThiY2NjNzM4Mzk5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NjdiYTVmZmFmNzMxZWViNTFmYzRjY2FiMTQ4MTVmNDgyMmMzOTZmZTliYzJhNDllYjgyMTZjZDMxZmExMDM4In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_63d7cdd3ddc74244aaa3592a40ca9f55",
+      "statement": "There is no persisted interview trace: the native sensor set states that the model is its only input, the desktop keeps no interview log (the tool-call activity stream is the record of the conversation), and interview survives only as one value of sourceSnippet.source.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/AgentPanel.tsx#L18-L24",
+          "version": "repo-lines-v1:sha256:6a444fe12dc10985293ae793ede8aad078440d5a375564f301ab89771ec511c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGNkYjhiM2JjZTljY2UxYTgwZjUxYTZmZmYzNzFhN2Q3YTI0OGZiYmI0NmFiY2M5MjUxZDcyZTg4NDNhMzdkZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFlYTI3MDliODY4MjI3MGYyMmM3M2RhMzVmYjk1NmYwNjBmZTU0ZjA4ODUyNWY2NDU5NTczNzhiYWQ5MTc5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWMxZDMxOGI4ZjY1YWQwMTY1ZjdkMjA4M2Y3ZDIwMjQ1ZTI5MTE5MDVkM2Q4YzY3ZWFhYzhmNGM0MjNmMDMzZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODAyOWYyZDIyOTE4M2QzZGJiN2VlMDNlZmIzYzAzNTVlNDgzNGU4MmIwNTY1MTcwOGVjMzA1Y2NhODI1ZWY2NSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L55-L60",
+          "version": "repo-lines-v1:sha256:383bb3d1c2762c5f0ba54b860859dc9145748fce418265f17c8e92c6c9cd63e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE1OGM4MzdlNGEyYWNjYzQ3ODZhMjhmMWQ5MmIzODM1NTUyNjU2MTNiZjYyZGUwNmNlNWQ0ODI5ZTJhZDgxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjZmMjAwMmU2Yzk1MWM3MDU1Yzk5NGVmMmMwMjA5Yzg2MGUyN2I1ZmYxOWFjNjdjZTEzMDc5MWJkNDFiMjIwOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYThhZjRmYmFhNjFlZTEwMmUxMmE0N2I0NGJjMjhkNmE0MDNkYzkwZmE2M2I4YmI3NTU1ZjcwMWVkZTE1MTUwYyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L19-L31",
+          "version": "repo-lines-v1:sha256:995db7957458d3275ca68cf84a53c7b54ff2afaccc8e189444c1ef5569a5180c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyZjA5YTkyZmEzZjc2MzFmMzFjN2FlYjNiZjc1MWNiYmI4YmQzYjFlYzkxYzY2NDZhZjgyOTg4MzZjZTA3ZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNWI1NTY3ODA4ZjAwMDU4ZjJhMmYxZWIxMDRlYzg3MWM4MjY4NTI3MGY3MTZiMDk0OWNkZTE3M2MyZmIzMTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMGVjMTQ4ODI2Yzg1YzE4MzU2MDRmMmNmMjA1MTZlOWEzZWUwZjMzMmFjNmJkYmZkYmQ1ZGU3NzUyOWZhOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4MTA1NDkwMmIyZDNjNjE2MTIzYzY2ZTU1M2E0MTJlN2Q0MTJmMjk1MDliNWM1YmU4YThhNjhlOTAwNWRlZjcifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

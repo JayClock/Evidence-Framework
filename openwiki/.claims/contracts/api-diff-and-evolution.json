@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:389981c96e8b3cfe621ca3858357c541730854c5a5a620c77f5e58a059660590",
+  "claims": [
+    {
+      "id": "claim_f1880777471545f3aa045b551109f732",
+      "statement": "The API diff compares two already-projected snapshots instead of translating model edits into routes: diffApiSnapshots throws API_MODEL_MISMATCH when the two model ids differ, and each route is normalized (fields, derived, stamped, outputFields, roles, responses and rules sorted) before canonical-JSON equality, so declaration reordering produces an empty diff.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.spec.ts#L162-L170",
+          "version": "repo-lines-v1:sha256:de2cbe56321198dcda410d88284bd06f644b907896cd33ce6757b5a952f62111:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGVhZDc2MmFmNmQwYmQwMDE2Yjk1M2NkNGZkMjliMjE3MDI3MDNkOGZmNTU2NDMyNzA5Njk2NmRiN2QwN2YzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWY3OWRkOTc5MzBkZmJjMTAzOWQyNWQxZWFjNDg0ZTgxMWU4NTk1ZTA4ZWY4ZTAzOWIyNjMyNzU5MTBhOWU5ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjgwZDJkZDRmMjg5ZDI2ZGM3NTdjMmI2NWEwNmMzOTIyN2E2NzE3YzRiNDhiNWEzOTc5MmM5ZjExZTQxYWVhNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWEzMDg4OTBkNzMzYjVjZGIwYzEzY2VjMTQwMDliNDI4MWRkY2E4ODIxNWViN2Q3YTAxMmQ3MjIzZmY3NzNhOCJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L100-L109",
+          "version": "repo-lines-v1:sha256:1748c7b9c96662f31c47820c3fc1ed64d9539f52e3b62aa1f816c2e4932ef781:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YmI5MWY1ZWJhOTQ4ZDA2Nzc5NjRlMjEyOWE2YTQzMzQxZTBjNDNlZDYxN2M5ZTVjMWQ2OTJiNDA4Nzg1NGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiZjAxZjc3YWFkZjNkZDUyYjEyOWE4YzcwZGRmYzRkMjQzYTRjNTk4OGZlZmVhZmVmMTA1ZWY2NGYwMGNhN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhYmY0Y2U1YjM3MGE0MzMyZWIzNWRmZWQzZjE1MzhjY2UyN2RmODRiNzc2ZWQzYzMzNTZmMzQ0YTIwNzlhNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNDQxNGRkZTQ0ZTVlNDVlY2IwNGJiY2VjZWRlNjdjMTVjY2U2N2FlYjM2ODIzNGMxOTZiNDhkNzJiYzE3OTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L220-L232",
+          "version": "repo-lines-v1:sha256:d5f0cb9977e9a086bcc1cd8517ab816bd61d17c0b3a267e1339f4cbfdbc6dcae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlOWFmNmQ2MDZmNTg5ZDFiYzRiOWViZWE2ODE4YmU4OTAyZWNiOGYyYjEzOTU4ZjU2YzQyYjMyNWZmZDgyNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxMzgzNTBlY2Y5OTllZmM5YTY5NThmZTc1NWZkZjIzNDBmMjRkMjNhNGI5ZWNlY2JmZDQ3ZTE0NjdmZjUyZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5YjUxN2RkZWYwNDM2YzczYjZhY2Q1ZmE3NzBhZjE1YTM2ZmQ1MGQyZTU4YTg2MDBkYzQyOWZjZTBhMWNjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NzkyMzc4NmFhMmI5OTRlMjJlY2U2Zjk3MDg5NTM4YmI0MWUzZGQyNjE3NzU0ZWMzOGRjMjFjYjU4MTY4ZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1c4a687148d410fba813664a78a1d42",
+      "statement": "diffModelToApi projects each document with its own optional design overlay, delegates to diffApiSnapshots, and attaches modelChanges from diffDomainModels; the CLI diff verb performs the same composition directly on the two projections it already built.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L233-L246",
+          "version": "repo-lines-v1:sha256:c978c4d928bc3a19eb999e9f279104bfb3a1eb61d9aa8911941d23429359cc1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyZTEzYzY1ZGFmOGIyNGU4NmIxZTIxNDBmN2E5NjlmMTVkMjI5NzI0Nzc2ZGU5MTNjMjNkNmJhZjJhZjE3MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZTkzYTBkNmMzNzE1NGM2OGExMjJiYjkyM2I1NGY2NmVlNWNiODM0NDliOWViNGIyZDQxMjg4MGJiY2NjMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMDY5MTZiZGVkODc0NmQ5YTUyYTRiMzlmMzhiMWY3YzVjOTRkZDM4OWVjNWNlYzcxMmJjODJkY2ZjNjNiMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwODdhYTEyMTk3ZmJiNmI4M2M2MzJmYTYxYzZiOGI0Yjk1NzU2Y2FkZGEzZjc5NzAxMWYxYmI4NTEzMTk4ZWYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L339-L356",
+          "version": "repo-lines-v1:sha256:77b719cfbc0847d8a8357a157548cb912b34f9dc3fdc11058090db5fbcc4c212:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyOGMzNmM1OWNiZWYzZGY5NTdiMWI1ZDM2NzZiOTVlNmIzZGE0ZTZiYTExYjY4YTkyNzFkMWJlYTdmOTE5Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ca754f71951d4c36b6ba6ab7a7a3f060",
+      "statement": "Only routes that were added, removed, modified or whose hypermedia links changed appear in ApiModelDiffResult.routes; each RouteDiff carries before/after route objects, previousPath, fieldDiffs and its own breaking findings, the summary counts added/removed/modified routes plus the number of findings rather than breaking routes, and both sides' projection diagnostics are carried in diagnostics.base and diagnostics.target.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L263-L338",
+          "version": "repo-lines-v1:sha256:943e275a073a8fda1f50be8390d7f43daac1173bb811f8d17ff40a76df6cdd03:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYzMzYjMzN2Y2ZTkxNTVjZjI4MTBiZjAyMTc1ZGQ3Y2Q3YjkxNDExOWUxMWM3YzBhZGQwMDE1MDRkOTRjOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhNTA2ZmM2NDY0MzRkNmNlMmM2NzVkYWEzNGJkYjViYmNmMTU1YWU5ZmNiOWIxZTY3MDEzMTA0ODUxNzBlNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyYzI3YzllNGFhM2ZlZDA1MjU5NjE3YmYzZjZjZjQyYmQyNjM3ZGZiYTY4NWM1NjE0YjRmMWE0YTc3MTQ0ODMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L79-L99",
+          "version": "repo-lines-v1:sha256:bba83853de99f0d411421545d6c5be561eeddad4ddbedf5a80ed49569762bff4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ZDVhNDM1MzZjMDgwMTMyMzJhNmE3MWYxMzcxN2E0YWI0NTg1NDE3ZGViODg1MWEzYjY1N2UwOWQ2MGY1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZjkxMWE0NmNhMmFkMjIxODkwNDgzMTMwZTFkOGNlOTE2YzNmYzgyZjk5MDRlZmRmOTMyNzA0YTQ1OWZmYTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0ZjRmNDJlMzg4N2ExOGQ5NDkzMWMzODgyOGNmZmQzNzk1ZjkyYzU0MmVjNThmMmI5YjlmN2YyMTU4MzY1NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlNGQwMzJlNmZhMzM3MDYzOTc1ZDM1YmU1M2Q4MTUzNDlkNGIyMTc4ZDQ4YWY0N2MyMWQ3NDRhODlkNDYyODAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a5577564e9ec4e5db034af8dc6babb38",
+      "statement": "FieldDiff compares the union of both sides' outputFields by name, drops canonically identical fields, records beforeReason/afterReason, exposes the full before/after DeliveryField, flags a flipped requirement, and marks a reason change with shifted as to_derived or to_caller (leaving no marker for shifts involving service-time).",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L111-L148",
+          "version": "repo-lines-v1:sha256:aae99c7bdb8ad54918c427ac112cd176716332325767a01bfff9e8dd3a78da06:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMWM4ZmNjYmVmNTVkNjIzNzQyNjgyNjZlYTNmMzA3NWRlYWZjYTk2MDQzZjM5ZThkYTQ5Y2JkNTVhYzhjNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlZjBkODM3NTE2OGEyZDkzOGY0YWU1OWRlY2Y2ZjMzMmY0NjUxYWRhZGMxYjkxYzE1M2YwODcyODUzOTIyMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlZDI1YWY3YWZjNWYzN2QyODhkYzE0YjU3ZTZlZWY5MGNmODMwNjhjZTk1NzhjZThhOGRiYjViNjIyN2E0N2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a86f81a18df47b18bdcca9a74cd9a95",
+      "statement": "BreakingChangeKind is a closed union of thirteen kinds, and every ApiBreakingChange is anchored to the base route's path and method with a fixed remediation hint; a removed route produces exactly one ROUTE_REMOVED finding and an added route produces none.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L149-L163",
+          "version": "repo-lines-v1:sha256:237be8c56d43fd9b65fccfa98d7b698a54ef58d7c1eec55288bf9f98152d28cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNzFmYWNkOTQ2ZTM2MWIyNmY3ZGRiYzZkNjY2Y2UxMWZhZjVlZTI1NWQyMDFmMWRkMmJhOWFhNjIyYWUxNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NDVlZTA3OGRhZmQxZmYwY2RiMWYxZjk0ZWVmYTI5OTc5NDQ4NDA2N2RlZjk3ZTMwOWEyYjUyMDY5NGRjOTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwZTZmNGIxOWY2ZDUzYmUwN2MwODZlZTNiMjlhOWQ5YTE4NDdiN2Y0ZGM2NmY2YzI5NjMxYWYwYmY4MDFmZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0YmMxOTU2MjY0ZGQ1ODYyMTIxYWE4NmM3NGRjYmQ3NDVlMjUyNWY5ZDcxMTdiNzEzMjk4NDAxZTdlZjFlZDQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L20-L34",
+          "version": "repo-lines-v1:sha256:db1a3d8ab61475f2b478ecb6a98806545f97bd766b5e5360d136a39d39bf7640:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljOWRiMmViYTgzN2RlM2U0Y2ZkNmFjNjhmZmNhYWI0MjFjMTY4YjlkMDY5ZGY0NjBmYjQxNTYxNTI1MGI4YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2ZGJmYTliN2M2MDlkMDhmYTQ4MDY5MTcyMzBhOGYyYTQ3N2E0NTllZTQ0NmVmOThkNzNkZTE4MmJiYmUzMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1NWZmNGFkYjlkZTJjYzUzNmY4YmY5NTFjOWE4MTEwYzM1OTZiOGZjMTQ5NDhkN2VhYWQxNTk2ZDZhYTRkMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMTlkOTliZTEyZmQxMmFiYmFjZTU4YjdhNDE3MjYyNTkxOWZlYWM2ZGY4MTY5MDM2NjRkYTRkZWU1Y2RmMTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_43c7c8f0677c455aa5d17a93204c6b37",
+      "statement": "RULE_CHANGED fires for any base rule that differs on the target side and for any new target rule whose kind is not 'derivation', so a newly added derivation rule alone is not a breaking change.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L184-L195",
+          "version": "repo-lines-v1:sha256:708c999c9f88f274a3cd41431bb4c25b838d7185324207615d2824125a88f1f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTI2NTIxNzA3ZTlhNDkxM2JjNzExZmUxMjI1OTE2YmEyYThjMGY2ZjU1ZDVjZmY1ZGVmOTVmMTgxYzliZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNzU2NjI5YWU1OThlNDViNTBjNzEzZmU0ZjRlMWJjOTBlNGI5ZjZmMGU3NGM3ODRlNzI3OGNkZDg1OTU2NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliZDUzMGQyMTczY2JlZGUxOGE0NDY0N2FhZjRhYjhkNjJmNTE3ZDhjYjdmMzgxZDA1NWFjNzMxODcxZmFlOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2NDI3NzVkZTc0ZGJkYjIzM2RhZmM4NzM2MjI5YTU4MzY5YTM5MzdlNzg5MGIxMTZkYzk5NTA2OTUxNWRkMWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87110b5b964a4723afa8e6e51df2e11e",
+      "statement": "REQUIRED_FIELD_ADDED and INPUT_FIELD_REMOVED are evaluated only when the base or target method is POST, CALLER_ROLE_RESTRICTED fires when a base allowedPartyRoleRefs entry disappears from the target, and STATUS_CODE_CHANGED compares only 2xx statuses so an added error status is not breaking.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L168-L182",
+          "version": "repo-lines-v1:sha256:ea4e0e970bfe1c1a2004089cfc4892d3e44b2b362220e92a4b44fd82dca423f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlMTkyZGYxZWU1YmRlNDk2ZGE5NmU4NmRhNTYwMGIwM2ViZWNkZmZkMzA1ZTA2ZmUzNDM0ZmU3MGI2MzQ3ZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhNmFhYWZlZGNmMTAzZWY3N2Y3YzYwYzFlZmI2MzExMTQ2ZjVjYjJkZWM3MzA4ODRhOWQ5OTU2ZGNhNGExYjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjNTUzZDY3YjI0NmIyOWYzOTI1N2JkNWYxMzRiMDk2MTBkMzE1NTgxMmY5M2E5ZTcyZDJjYzQ0YzFmYzYxMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhZTgwMDU1NThlYWZkM2VkNTZjY2YwMDIxZjBlZWJjMWFkMzM1YmU4NTA5YWMyNjAxZGFkZTk2NzY5OTkwMGQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L196-L204",
+          "version": "repo-lines-v1:sha256:74aba07975bde688cf507c301eba08791408e36524e2b784b8460798cb1b9b4d:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQ1NzA2NWUyZTUyMTQ1N2Q5MDFkYWVjZDk5ZmFjNGQ5ODVmYWEyYmMwOWNlY2YwZTU5NThiYjQwNDRhNTU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2UwMGZiZDJkYTUxZmNiMTBkNGNjYjU5OTg3YzYxMWE1ZDQ4MjMxZjNjYWMwZWVhODBmZmQwZjg5MTJiOTAxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTEyMDcwMjZmNmU4ZWJiZTg3MjI2YjZjMWI4MzA3NzI5YjZlYjMzMzA0ZTA5ZmIxOTI0N2FmYjlmOGM3ODk5YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d4cf8e4b3bdf445b93e56b3217912023",
+      "statement": "The response-side findings FIELD_REMOVED_FROM_RESPONSE, FIELD_TYPE_CHANGED and RESPONSE_FIELD_OPTIONAL come from comparing outputFields by name, and RESPONSE_FIELD_OPTIONAL only fires when a field was required and no longer is, so tightening a response field from optional to required is not flagged.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L206-L218",
+          "version": "repo-lines-v1:sha256:78b64687fcaf089fd4822bde41130965ffc7cc603a13157104c0ad7d8efef550:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjZDE2YWJhMTAwZjMyZDc4NGMwMDg0MzBiY2QyMjhlZWUzODVlNjdjYjBhNGRhOTIzMmQ0ZDg0NGU1MTJhYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ODE0ZjM5ZGU0ZTJkNmUxZWMyYzQxNmIwNmJmMTczZjMzNTZjNjQ0Mzk1ZGY0NTJmYWUwMzE5MmQwYzljNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczNTBmNWFkN2E1NTA0MWE5OTdiZGZjYTE3NmEyYzY2OGVjNDkzOTk5NzM4MGZmMTFkMmQ3YWNjNjgzYjRjZTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_42f654ced9054d3aa596341a334dccc7",
+      "statement": "Hypermedia links are diffed by the key sourceRouteId plus rel plus targetRouteId, so an href-only change is a 'modified' link rather than a removal; a route whose links changed is included in the route list even when its own fields did not move, and a removed non-self relation on a route present on both sides becomes a NAVIGATION_LINK_REMOVED finding.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.spec.ts#L212-L233",
+          "version": "repo-lines-v1:sha256:c45c988ac5ce5c1d2b4802cda0b2d75794d568bd1b02e3deea6f97127c0aebd6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjU4ZGQ3NGI5NWJkNDYwYTUwMzliMzRiMTYyZjdmNWU4YzVjMGU5Zjk1ZmYyYTE4ZDBkOTVmMWRhMzNlMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiOTg1NmY5Yzk1MTc1NDM4ZDQ5OGYyNjgxMDNjMDM4ZmVmNDcyZjY5NmY3YjE5YTEwNDMyNjUwYzYyMWQ4ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwMDQ4ZjcwZjY4MzIwZjgzYmM0MWJmNTJhOGNlNmU5ZjJlY2M4M2EwOGQ2YjM0YmU2NGQwOGI4NmMxZjM5MmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.ts#L229-L296",
+          "version": "repo-lines-v1:sha256:b6db3a359406638691b2dcc1abecd3f8d903c74412f4dce0c3de08a0e7844423:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZGVlZGZiYjY2NjAxZjllMjFlOTBiMWQ4YWU2YmU2ZWQ5N2YxMGY4N2MzNThhMmQ5ODhmYmY2MTYwYjkxNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxOTg0ZDA0NGZjMjk3NjFiNTU4Nzg5NWYxZTJlMTEyZDE3MzY4ZmJiN2NhYjY2ZjI1OWFkNzE1YjEwNTkzOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxN2JiOGNkOWM4ZDhkOTBkYjU2ZmFiYTEyNWFkYjVmZjNiZGM2MjdiODhjMDBlMDJlNzcwMWVjMjE5ODE3MGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkZTFmMWI2ZDJhMmNkMWYwMGJmMmRiMDFmYTE5YmM0NjU2YTIwZTU1MzFiZDE1NzgxMTFjZmExYTc0NzI5YWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f5679a2d2ae347c5b772837929ec29df",
+      "statement": "renderApiDiff emits a text summary with the base model id and added/removed/modified counts, one line per changed route marked +, - or ~ with an optional [BREAKING] tag, indented field diffs including the shifted marker, '! KIND: description' findings, both sides' diagnostics, and 'No API changes.' when no route changed; colour is optional and applied per route line, and hypermedia link diffs get no section of their own.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/renderApiDiff.ts#L3-L37",
+          "version": "repo-lines-v1:sha256:b66a7c9c03f647fb92f6da373ae3ae34089f5bc93c87c7558f6175589381e833:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMTg4MDM4ZGM0Nzk2MTUxMTI4Y2U4NGM1OWY1NTBkM2M2MzgxNTU2ZDhhZTY2NTBmMDU3YWEwMzI1YWFlMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzNzcxN2E0ZTE1YzExNDg2ZWNlYTQ0ODY4OGViOTUzMDE0YTZjYzQ2MmYzZmI1ZGIwN2JmYTRhZGJlYTY0OTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZDIwODU0NmFmYmQ2ZThkMDEwNmJmYTU4ZTRiYzU4MWQ4NjM3YmE5MTQ3ZWU4MmNlZGFlMWMzYWE4YmJiYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd4df3cfb10f4c07851e7504d444bf78",
+      "statement": "patchDeliveryRoutes validates the diff against the target snapshot — the diff's target model id must equal the document's manifest id, its base and target model ids must match each other, and its Context/entity, relationship and rule sets must equal the document's under canonical JSON — and throws API_PATCH_TARGET_MISMATCH otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/patchDeliveryRoutes.ts#L15-L37",
+          "version": "repo-lines-v1:sha256:3c287aa42a62bfccb35b41b2dda9356d8e0f77df0d11b657bfd90248ebb1497d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMDg5Y2IwYzE4OWJmOTE1MDViNDk1MTc2ODJiNDc2ZDA1OWI2NWQzMDY3ODhjOTNiNzcwMjc2ZThkNjlmYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YTU1ZjU4ZmE1ODRlNDVhYjk0OTBjYjIyODM5OWExOTQwNWMzOTNhY2NkMTI0MGFmYzU0NTZkYTBjYzI3YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZTY4MWE3ZWE4NTc4NjJiYmNjMzZmY2IzNTYyMGEwMmYwZjZkNzQ3ODg3NjM0Y2VlM2FmZmY2YWE2MTRmMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZjM0YjY5OTJhNGVlNWE1N2I3MDE1OTc4OWVlZWFmZTgzMDRkOGExYTZjMmVjYmIwYTIwZjJlY2MxNWUxMjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc753f78ff704fa282072c7586b667c3",
+      "statement": "patchDeliveryRoutes expands the affected Context set from changed entities, both endpoints of changed relationships, a changed rule's own Context plus its target entity's Context and binding references, any entity whose global segment allocation changed, the role Context of a changed plays_role player, and a fixpoint cascade to child Contexts.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/segments.ts#L44-L67",
+          "version": "repo-lines-v1:sha256:b3df612bcb27522507da094612d03a78ec7fa9b77cb7cf84f4a74773476ba4ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0Mzk4YmI0ZGVmMzYyNmE1OWY3M2UxZDRhM2ZiMzJjMmViMGMyZGFjZGVlMmQ3Yzc5YjA3MTQ4N2ZlMDIzZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0N2Y0NDFmOTRiODZkZTlhNGE2MzQ0ODcyNjkwYmQ3YTNhM2U1MjVlMmI5OTY1Mjg2ODkyYjU3MTZmMDQ0NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4ZTg5NjE2YjlmYzBmMTczZDkyNTlhNzAyNDI2NWQwODQ3MjM5MzEwMmUxMmQxNDZmMTAxMTIwZmI4MmViM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3OWEzZTBkMDM3ODczODc2NzY2MGI5ZGFmMDY4Zjc3MDdjNGZlY2Q0ODQxMTEzNDA2N2ZkMmJlM2E5MjAwZmUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/patchDeliveryRoutes.ts#L38-L105",
+          "version": "repo-lines-v1:sha256:f3692ad8750ae2495242954f6ed5c4d848b0e8e938deb27a983ea1aedaa298ef:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZTkyOGYyZTA1YjljY2RlZmNjYjNlNGMzZjFlOTVlMGIwNzk3ODkzZWZiMzZmN2YwY2QzMjQ2NmE3ZDBjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmYWZmNTBjZmNkNGI1MjdhOThkMmRlNjNlZDQ5NzY0Yjc5ODBjMzI5MTVjZjUyMTQxY2MzYzc3NzM4NWQ0ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyNmNlMzg0YWJlNzJmMGU1ZWJlYmIxNDg3NjlkOTY1ZDZjODAzMjc4Yzc4MjFlNjI4Mjg4NThmYmNmMTY1MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlYmI1MDZjZWUzMzRjNWNkN2ExMWMyOWZmODM4ODVlYmZhMjI2NWNjMDM1NmFmYjJhMmI4OGMxYzQ5ODQ1YWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4495ce7e01744b8d9ee95114189d531f",
+      "statement": "patchDeliveryRoutes rebuilds only the affected Contexts, returns the existing route object when the rebuilt route is canonically identical so unchanged routes keep object identity, carries untouched Contexts' routes over, and sorts the result with compareRoutes (Context first, then id); the function is exported from the package index and is exercised only by the diff specs.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.spec.ts#L235-L265",
+          "version": "repo-lines-v1:sha256:04267876675b62dad13d6b40f36b4802eab7e5905b1a06420e571e027d58304d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjU4ZGQ3NGI5NWJkNDYwYTUwMzliMzRiMTYyZjdmNWU4YzVjMGU5Zjk1ZmYyYTE4ZDBkOTVmMWRhMzNlMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZmZlOGVkMDE2ZGUyZTIyNjc5YzU0N2NkZGE4ZTllYWY2ODAwYWYwYzA4MWNiMjJhMTUyZmFmZmNkNmVhNjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/diff/patchDeliveryRoutes.ts#L106-L117",
+          "version": "repo-lines-v1:sha256:06a0f6cd62268e1824aa3d10b46e86421434f54ab9bd071e58d1de2afbbcd3fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzNGRmODBiZGNkOTFlMGY5MGFkMzI1NWI3NWNlY2U0YTE4NzRjNmM1YjRjYzc0NDY1YmM1YmY4MzQ4ZGM0NzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4NWY4ZDMzMjIyZGExZGE0NDU4ODA2NmNjZTFlNTRmNDM2YzY1ZTJhMTMzMjUwMmJlZDAxZWMwY2YwZWVlMGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/index.ts#L13-L13",
+          "version": "repo-lines-v1:sha256:3b7c74cb9860a9a751586055d188b61c8413fd815b144e52b8de3a10385a7ded:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I3Yzc0Y2I5ODYwYTlhNzUxNTg2MDU1ZDE4OGI2MWM4NDEzZmQ4MTViMTQ0ZTUyYjhkZTNhMTAzODVhN2RlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I3Yzc0Y2I5ODYwYTlhNzUxNTg2MDU1ZDE4OGI2MWM4NDEzZmQ4MTViMTQ0ZTUyYjhkZTNhMTAzODVhN2RlZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTkyNTA0ZTdlNzFhMGE3M2YwMGM1MDVhNWZmZDFiNjNiYWQxN2FkM2Y2ZmJkMzE5ZWE5N2U4YjFjNjgyNDY3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmNiMjNiNmE5MjM4YjUwNWQ5Njg4ZjViOWI3NGVhNzM5YzBkMTM4MGIzZjEyMTYzY2UzMGU3ZDNhZjZmMmVjNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0326f1b4a51443ee91ed97029d38931f",
+      "statement": "The evidence-api diff verb takes two model directories or bundles plus per-side design overlays, requires absolute paths, rejects unknown flags (including --out) and duplicate flags and unsupported formats, and exits 0 for a clean diff, 1 for model or overlay errors and for thrown diff errors reported as API_DIFF_INVALID, and 3 when breaking changes exist or gaps remain.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L131-L180",
+          "version": "repo-lines-v1:sha256:fb0cad89786eea6c35a123c40f223ab0b6cda5326f58f2e0a7ecbb977ffcd9f7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyN2Y1OGYzNTE1NDAwNGViNDYwMmJjZjhjMGU3YTVhMGEzODNjOGRjNjFjYzMyZDU0MzkwMDEyYzc3M2M1ZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYjM5N2M2OTcyODE3NjM5YTg4MmIwMjgxMmUwZDE3MmM5NDZhNGIxNDBiY2NhYTI3YTMxOTM1OGViYmRkM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMjQ2NzA3YzhkNTIyZTdmZGUzNDIwOWRlMjgxNjg4ZTJmNmY1OTBkZTZkMmNjM2EzN2ZmNWQyYTM1NjM5ODkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L192-L273",
+          "version": "repo-lines-v1:sha256:15e6c476b3c4a077f0471c24ffa0d99e0ad77c1b1f3f2ab33a4f41bb1721d850:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YzMwZDMwNTQxMDQ2NDY3NzhiNDFmNmNjNDI4NGU4OGExNGRhMzZkNzkwYWQ2Nzk3ZjVmMzE1Y2YxYzZkODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExMTI4MjNjN2VhNzQ0MTcxMGIyMDgyMDQxMDc2ZTY3ZDg1ZjIyZmEyMmJkODA3MTI2ZWRiZGUwMGQ5OGJkMGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMjU3MGM4MWZiY2E2YmY0MGQ3ZDdlYjU2ODFlZjgzOTcwYmVkMDZhY2YxMjI1ZjIwMWM5MDc2MmM4NjlkZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwMzY4OTAwNWYyNDdhZDIzYjVjMDVmMzU1M2FkNmJiN2Q5NjAzOWJjZmY5ZWMzODI4MDY2OWRkMjMyNzI2NTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8d5e2ebbaa4442a91f76250eb8ffe61",
+      "statement": "checkNativeApiSensor always builds a snapshot of the current document and diffs only when a baseDocument is supplied; it emits one audit_api API_BREAKING_CHANGE per finding whose severity is warn in draft mode and block in release mode from an identical diff, plus an informational API_DERIVATION_DRIFT for each field whose diff is shifted to derived.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.spec.ts#L34-L68",
+          "version": "repo-lines-v1:sha256:1861ff66b12aba23a7d9b93596d48bc8efb8df22165fef9f9c158e684ee8f2d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2M2I0ZTQ1OWRlZTRhZDYxM2I1N2NiYWM3NDlkMjI5ZWY4YTgxYzZhYTIzZWNmZDNhODc1OWVkNjkxNjI1ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzNzJiZDYyYzlkZDMxY2QwMjU5MTJiYTM2Y2E3ODE0YjNlYWJhZTQ3ZTc3Yjc3ODMyYTJkYTJmODVhMmU5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2MzRiOTZkZmUzYWNiMmNlZjU2Y2Q2ZTNhZmMzNWI0ODM3MDhmNTA1NWZjNzNjYzU2ZTMwZjkxNTI2N2EwMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4MWMyOTE3ZDFjZTBmYjFkNzlhNTg1NDhjODg4ZGIxM2NiZmIwZDFiNjE3YjgxY2E4NzJiNTZlZmUxYmU0MDcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.ts#L24-L84",
+          "version": "repo-lines-v1:sha256:15e1941437dcefae936bb29919d4ffc54d085f346c5aad62d49f9cbe7ff9a471:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlMzk4MDI2M2UxNzU3ODlhNzMzNDMyNmYwY2YzMDMyYWNmMTcyYjQ4ZGQyMjMzODg5YTkzM2M4OTNlNTE5YjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZjU2NDdkNzg4ZmVlNWI4ZTRlMjk2ODhjOGMyMTZkMGY3MmRlYWFjYjA0YTgzNjk5NWE3MjRjZmFiMjA4NWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyMDkyMzJjOTE5OWQyMGE5NzY1N2ZjNjM3NTQ1Mjg2MDZiMjIwMGM3YjRmMWFiMjc1MWI0MDFlM2Y4MTc2YjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf6333803c5143f08b9bd0aa0ae6cf3a",
+      "statement": "The diff's breakingChangeCount participates in release readiness — finalizeSensorReport keeps isStageGateReady false while apiSummary reports breaking changes or uncovered entities — and an API sensor exception inside a sensor run becomes a blocking SENSOR_UNAVAILABLE finding with audit_api listed in unavailableSensors rather than a silently missing analysis.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L86-L118",
+          "version": "repo-lines-v1:sha256:18587e90732ffdb6d0493b786afac5d7a2cdfec46b0965b721c477eedff71c7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmY2NmM2EwYjUxYjlhNzg3YzgyZTU4YWIwMzdkNDViOTZiZTNlMGEzYzIwYTcxNmJkYmI4ZTAxMjU5ZDE3YzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NThlYzA1MjIwZTE0NTU5MjgwYWRiOTU4NWM1NWQxZGYyZWFkMGU2MTAyZjBhMWM2Y2Y0YTM4M2ZkY2YzMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwMWQ4NDg3YTY1Yjk0NjdhMTA5NDYxMDViNDk2NTI1MmRhMTk0MGE3OWRjODg1NjYyZmExODdiZWIyOGZkZTQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L347-L355",
+          "version": "repo-lines-v1:sha256:64a0fd6390908dc86e8e152a200583108f82b6d518ae1aca50a133e82189394a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZiZjFlNGUxOGE3ZTg1NjA1Nzk1NzFhNjg4ZDkxYzkyM2ZhN2E0NzliOTllMzMzYTExZGZhZGI3N2NiMTczMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGRmNzAzNTQzZTU3NGE3YTFkYmQ1ZTE5NDBmZjdjODI1N2FkNGU0Mjg1Nzk3ZDhkODMzMzE4MWNkMmY1YjBiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWNkYWYzMDEyMTZiYjc5MzA1ZjQwZmY2YzNlYmI4MGEwY2Q4MzgyYzJiNDUzZDIxOTM0MzE3NDU0MWZmYzNiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjdmYmE3MGU3N2U2YjkxNjQwYzIzYWQzNGNiNmVjMDk2NzIzMTRmM2FjNzUyMTEyOWMzYmQ4YzJlOWJiYTFmNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2e7229d0cb574ae6afbdb7726d2e23d5",
+      "statement": "Desktop sensor runs supply neither baseDocument nor apiMode, so app-driven reports have apiSummary.hasBaseline false and no breaking-change findings, and breaking changes only appear for callers that pass a baseline explicitly.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L104-L111",
+          "version": "repo-lines-v1:sha256:aec6b976163cf9f2743e98785c70dc916fa342ec052e64e6b645830eeaad9a28:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGMyMWJiNjAzYzAyYjA2NWJlMTRmY2UyNTY1ZWEzOTg0OTYwYmY3MmRlZTFlZmM0MTcwNDUyYTQ5NzFmYWI4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjMwMTdlZjY5MGZhOWIyMmMxYmU2Y2ZhYTUzODkzZTlmZTY5MDEzMjQ4MDEyNGRiYTA2NTFhMWFjMGViMTc1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU4ZTk0YjY4Yjg2ZGE0NWU5MjZmMDliYWY1ZTAwZTAzYmJjOTdmYzFlZTI5ZGQ2YjI4YTRmYTYxOTM0YzY3MCJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.spec.ts#L20-L33",
+          "version": "repo-lines-v1:sha256:663c5bb9332e558fdc23b4f07327d869de84f7a8a23ece13b5060e706949542f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYzdmM2Q5M2MzZTI4NWFkYjdjNTFkNzE2N2E1ZDNjZjg1MTYyZTcwOGU0Y2M5MjI5ODQ0OTJhZTAyZGU3MDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0MjJjN2FjN2Q2MzI0ZmI4ZjY5NjUwZTdmMzczY2MxZDI1ZDkzMDA0MTNjNjYwNGQ1ODFkYzkwNTk1MjA0NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMDY4ZTg5ODZmNzBlNTc3NWVjNmQ0YjZhNmVkOTVkNGM1MzE5ZDVhZWNkYmU1Y2VlN2I4MTg0ZWE0OWVhYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiNWY0ZjIyY2I4YzllYTRhNGY5MDk0Mjg5NDcyMDY5ZjgzZjY2NWNjNDQ5ZDI0MWRlZGE2MTQ3NzI1NWIwNDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_608099efffb241f0815554eec2089df2",
+      "statement": "get_api_diff and sync_api_projection are read-only: get_api_diff diffs the current document against the session baseline, or against the current document after hypothetically applying proposedCommands, and renders renderApiDiff text; sync_api_projection calls the refreshApi hook first; neither emits a model patch or accepts a new baseline, and a malformed hypothetical command throws without touching the model.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.spec.ts#L211-L242",
+          "version": "repo-lines-v1:sha256:03c27bd6c8f4bb571032a4a6e9a7c2aa606001a0b17c3df1d8d9b8b5ee88316f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjNGNhNmM4ZTA4Yzg2Mzk0NWZkOWQ1ZTUzZTJlMGFhMDlhZDg1NjgyMGY1MzIxMDMxNWUxNjMwMjQ0NTdiYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwZmI4YTc0ZTEyY2E1NjdmYzI4OWM2M2M3Zjc2NzYzZGFjNGQxMmY4MDhkYzU5YjEzMGNlNzA1MjVlMGMwZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjNjRhZmI1Yjc0YzRkODFkMTY3MjdhYzhkMTdhMmQ5OWQzYTA4MDcyZThmZDkyYThhMGRjYmJmNWQyZTUzOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L116-L166",
+          "version": "repo-lines-v1:sha256:4050463e01f0e2f40e92d29f353c1fd9c5e9633dc32ac3766448e1e0d71a209b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNjlkYTQzODUyNmQ2OTQ3YWVhZjc4ZDBkYzljMzg5MzNlMjUyYzRlNzZlOWFmZWYxODU2ZTU1MTI5ZjNlMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0ZWMyYjQyMWUxZDc1ZDYxZGVkNmY2ZWU1NDY5NDc2NTM2YjQwOTM4YWExZmFhNDhhZmIzYWYxNWQ2ZDYzM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzNDdlNWVhZDczMzM0YzlkM2RjNzM2ZmRkNzYyYjE2OGU3MjZlMDNlMGMzOWFlYTRkMGE0OGMwYTU2MGM2Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8daa7eac7bc04171b9aa4552c7af2c78",
+      "statement": "The modelling workflow prompt requires the agent to check routes, caller roles and inputs with get_api_diff after changing fulfilment structure, fields or rules, to report that a caller-to-derived shift breaks existing clients while treating derived fields as never caller inputs, and to state the impact and wait for the user instead of accepting a new baseline when a route is deleted, a role narrowed or a required input added.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L47-L52",
+          "version": "repo-lines-v1:sha256:b9a7d57fe6c8627f53095a6a8b1b6e4f8f80ad794bb9bb177b2abb37b8d9f973:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjE2NmEyNzY1NzFiMjI1M2MxMzk1NGFjNTAxOWU2NTkwYjk2ZWIyOTBkM2Q0MTgzNGE0MWNiMmY3ZWZlZGM0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk2OTVlYmE1MjdiZmRiM2NhNGUxMTg3ZWZhYjg0ODk3MzU3NmI4MzRiNTMyMmUwYmM0Yjc1MDEwOTcxMWQ2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzAxY2U3MTg5ZWI3YmMwMDQwMzVhOGMzOTI4Yzc5N2FjMjJkZWVjYTBiM2UyMWY1ODc4NmE0NWEyNTMwNDRmMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjY5ODRmMDJhODY5NGRlMDU1ZDVmM2U0MGQ1ZjljN2ZjYjM0OTdlNDBiNmM1YmIzZDA4NzE2MGM1YzI4NGFlOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_899a3c245b4e49639c3ca60bd0e00901",
+      "statement": "evolution.spec.ts proves the incremental path: for five mutations (removing a confirmation, removing every plays_role edge, deleting a parent Context, moving a request to another Context, and changing a dependency's cardinality) patching must equal a full rebuild, must not mutate the route array passed in, and must be reversible.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/evolution.spec.ts#L43-L72",
+          "version": "repo-lines-v1:sha256:13f79ec0e5a85d73a3454e774f306ea4f61d1106933b8f1ab3c6624a5e0b8d4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1NTZjNGFkODZiN2U1M2Q4YWQwOTlhYjk5NzIwNDZkZGFiYTdhYjllZTk5NWE4MWI3YjliYjcyNzU2ZmM3MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlZjg4ZTg2NWU5ZjBmY2U2NjhmZDkwZWMyYzgyMjg2MjY0MzBmNTVhOWQ4NmVmZTkyMTdkNjA1YTcwNDlkOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwMDY4N2IwMmY2NTBhYmQ0MWEyZTgxMWU4ZWZiOTIyYTVmNmFjYmQxY2M1YzgyZTFjNDY5ZGEwNGIyYjJjYWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bad73b11918e43049e44aff275f7ae2b",
+      "statement": "cliDiff.spec.ts pins the CLI diff behaviour: a directory compared with a bundle of the same model reports zero changes and exits 0 with 'No API changes.', an overlay-only path change exits 3, the compared input file stays byte-identical, a changed manifest id or unparseable file exits 1, and every malformed diff argument form is refused.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/cliDiff.spec.ts#L13-L70",
+          "version": "repo-lines-v1:sha256:81a58b6a8de832267d1ab3d76edd5266e35dd42ef326fa98184c8bd4b2f5bcc3:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlMWY2ZTk3NzRkNjJkMTZjYzhkY2U0Zjk4Zjg1MzdlMGJiNTZiMDQwYTQ3Mjc5MDlmZTQzMjU0NDE1Y2I5ZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2YjgxYzAyZTFmMmY5NjJlMTgzYjVmMzg1MDU3ZWQzNTQxMzk1MTFhY2MwMjBkNzk2NTM0MTA0ZjMwY2JmY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_44c7801373754b39a158a8f591fffdf5",
+      "statement": "apiDiff.spec.ts pins the breaking-change vocabulary and the patch equivalence: input-to-derived shifts alongside INPUT_FIELD_REMOVED and the reverse REQUIRED_FIELD_ADDED, ROUTE_REMOVED for a deleted confirmation, PATH_CHANGED/CALLER_ROLE_RESTRICTED/FIELD_TYPE_CHANGED on cardinality, role and type edits, METHOD_CHANGED/STATUS_CODE_CHANGED/OPERATION_ID_CHANGED/FIELD_REMOVED_FROM_RESPONSE on snapshot edits, and identical route identity for untouched Contexts in patched output.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/diff/apiDiff.spec.ts#L41-L265",
+          "version": "repo-lines-v1:sha256:c131479f52d5fb3ee5c1b39695e89f70d03e562351cfbb48ed864d89dcefc18c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjI1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyZGEyYjcxNjIyZjFlMDc3YTMzNWU2NjU3YzY1MDJlNGEwODViOTNkMjljNzdjMDU0ZDBjMDI2OGQ5MWI1NDM5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmMWIxZjFjYzY5NTNkNDA3ZTIyYTA5YzE3ZmQwYTZlNDY0YjEyNjNjYzAxZDZlODVmZGI4ZTRkMmNhMTJlOTcwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}

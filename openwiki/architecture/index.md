@@ -1,3 +1,3 @@
 # Files
 
-- [System map and dependency direction](overview.md) - How the one desktop app and eight TypeScript libraries compose, which way dependencies point, and how a model travels from source text to a checked verdict, an API contract and an offline review page.
+- [System map and dependency direction](overview.md) - The repository-level map of Evidence — one Electron app and eight TypeScript libraries, the dependency edges declared in their package.json files, the runtime domain each package owns, and the flows that cross them from model to checked verdict, API delivery, review page and production drift.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3fae58d7aba1ce8575dbf00630c2d3f1e69ca79a40043d4ef55988741d43b5c4",
+  "pageVersion": "sha256:71199d57b12cb1aee6e829b2a414563eac61568eb193b65fe3d1fd37e3e0003e",
   "claims": [
     {
       "id": "claim_16f83966cd85429c854a0516c9100549",
@@ -25,7 +25,7 @@
           "version": "repo-lines-v1:sha256:3e3969e2b84fd2bdb3edaad43c739639176f92a139c3b8c9a30d9785ef5de120:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L420-L450",
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L422-L452",
           "version": "repo-lines-v1:sha256:43be7f92dc930bf13330e9e5e0fde50fe5b7fb099a78e86270f95027631010a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MGRhZmU3OGUxODgwOGUwODRkMGU0NzFhNTFjOWU5ZDYyZDU1MDZmYjlmYjIzZDE3N2Y2OGYzYzQ3OWE5YWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZWUxNWY2NjViMThjYjFlN2I4NDQ5MmUyMTM0ODhjNDVjNTQ3Njk3YWE4NTI2MGUxMTkxMmIyYWIzMGQzZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZmUxOTE1MTMzODFhYjRiMzU3ZmExNjgwZWU5NjFmZWQ0Njc1NzI0NmEzYmMxYjY3MDc2NDM0OTVhMzlhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4MmE0NTczZmVmYjNmYTc4N2RmNTM3YzE3NmI0MmZhMzE3ZmM3NzhiZjNlNjhmMmQ5OGM3Y2Q0OGI0NWMxNTcifQ"
         }
       ]
@@ -42,11 +42,11 @@
     },
     {
       "id": "claim_502e8e259444414eb7966e2ede4a05c4",
-      "statement": "There are exactly four entity categories — evidence, participant, role and context — with evidence kinds rfp, proposal, contract, fulfillment_request, fulfillment_confirmation and other_evidence, participant kinds party and thing, five role kinds and three context kinds.",
+      "statement": "There are exactly four entity categories — evidence, participant, role and context — with evidence kinds rfp, proposal, contract, fulfillment_request, fulfillment_confirmation and other_evidence, participant kinds party and thing, five role kinds (party, domain, third_party, context, evidence) and three context kinds (contract, pre_contract, domain), each id carrying the Chinese label a surface prints.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L5-L45",
-          "version": "repo-lines-v1:sha256:9fb6e4d644e32b474d9a9be96cd87f1e73ec209aca717d4b48454107b4036b6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MGIyYzU5Y2M1N2MzNDdmNDQxZTVmNWY3Y2Q1NmUyYWM1NTdlNjVmM2U0YWQxMDhkODdiOGZhN2IwZjhjNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGQzYjIzN2FiYTMzMDlmMzlmN2U4NjE5NWM0NDVhMDAwMGExNmFmMjU3MjhmNTJhOTc5YWUzYzJhOTc0NDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3MjA4NDA2ZTk0MjcyOGEzMzUzZjg5Yzk5MDAzZWJiMjgzOTc2NTY5Mzg3OWU2Y2IyNGM2Y2JmNzY4Yjk5NTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4MmYzNzM1NzAxZDJkOGJhMzBiODQ5MDVjYWNhZTQxZDVhNzE5ZDU3ZmQ1NmVhOGE3MjY1YmRmMDhmNGYyZGEifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L11-L145",
+          "version": "repo-lines-v1:sha256:0c1cc49b033fc5f920cd446d000ea1ff8d4e3afcf8fe32c2d47af9d3107a1dde:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwZGM2ZjQ1YThlOTUyODFlODYwNzM0NTFlMGFkZTRkOTNlYjBiODc2YTA5Yzc3OTgzOTQ5YTRmMTEwZjkzNTU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhOTk4YmFhN2EyY2RhOWYzZjdjZTgxYTU5MzY0MDMzZDdlNDEyOWZiNzU0NmRlNjMyZGQxOGFhNGE3MzVlNmE5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlYjU5YzE2ZDRlMWU2YjljMzRkYjI1YzJmNWEwYjFiYmM0ODg0NmYwM2M0NjI3ODBkOTk1NGMyZDk2MzMwZjRmIn0"
         }
       ]
     },
@@ -55,12 +55,12 @@
       "statement": "Each evidence kind mandates specific business-time attributes, and every recognised time attribute must be declared as a required keyData timestamp; a missing required time attribute is a validation error.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L47-L66",
-          "version": "repo-lines-v1:sha256:df8ca01693390026ccf465996715bf79e1a69a5f11b0e98e42d48ca9b7e8b6cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmY2Y2MGJmODUxYjI2ODFjZjJlNjhlZTVmMGQ4YjY3ZGQ1YjcwZjFlNWFkZDBiY2M3ZDJlZDk2NDQxYTdlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGM3NmQxMmU1MzA0ZDMwNzllZGI1Zjg5MDAwN2VhMDVmMjI2ZTRkOTNiNjk1Njg0NjBjYWZhZjgwMDc0NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiZGJlNzk5Y2FiMGNkZDU5NjlhMThkYTJhODZjNjA3ZjNiODllNTE1NjJmNDNkNjVlMTBlNTY5YzVmODM2NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOGEyZGQ2NTBiOGEwZTdkYTRiNTdiZWFmMGMxNGVhNGM3MDdmMzE0OTI4ZjljNGFkMDY5NDAyZDFjMjU1NDUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L32-L80",
+          "version": "repo-lines-v1:sha256:5c75acfe52b513db6a79c0f324af7225d29c5a9f1cb2abb50689f86381ed1ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDQ1YWIxYmVhYjRlNjk5ZmRmOWRjNGI0OGRmMzRkODgxZTg0NTAzNDU4MDQ5NzBlNzJmMzQ5NWM4ZmRkNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiNWFlYzYwMjE2ZDQ5Y2ExODAyZmIxYzMyOTM2YTc5NTYwOTY4ZDQzZDk2YTkzZDZlOGIwNjE2MjA2MDg4NWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0Mzc2YWVmN2Q4MmFjYjNmZDA4ZGYzNjQ2MzhlY2I1YzMxMmI4MmI4MzgxYTM5ZTI5Njg2OTY3ZDQzMTQ0NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxOTI3MmRlMzM3MTllMWYxYjZiZWJhZWQ5NzgzNjg4MjFkMjYxOTZkMTQ0Yjc0OGY0YjYxMDhjYjAyMjMzZjAifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L515-L545",
-          "version": "repo-lines-v1:sha256:fd41546949c777a9ccb07ba7baf02fc37c634b1353f914c19b416f62a6bc4b9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzY4MGQzMzZlNDY5ZTcxYTFhMzg4N2E3YWUxNTdiM2NlMjMyZWQ4ZTU5NGVmYmRmMDg0ZWMxODAyN2M5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYTUwMGM2YzExOTlhZWQyM2RmMjA3ZWE5OGU5MzU2NTQ3ZTQ1NDQ1NzJkNGYyNTdjODk0MjY0NTY3MGY3YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYzJjZTY5Y2ZkNWRlNjk5MjkzODBlYWIxNDhiODNkYTI5OWJhYTNiOTMwZWE3NjM4ZWQyNDgyOWNmODYzMDIifQ"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L447-L631",
+          "version": "repo-lines-v1:sha256:54b70cef3863df334d8dd6b94a4d123a0a25e3b5f236504ba877cfdff053242f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTg1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmYjYxNzAzZTdkODYzOTg3OGRmNTZhYTRmMTEzODg3YTYyOGVkODY0NDlhNDJlODQwOWQ0Yzc5YTI5NzlhMDI3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNzNiMGRiZTIxOGM3ODViOGFmODAzYThiZWQwZWVlZjU3NzZlMTUzZDNhYzkxZTMxYmM5YTkyZjUyZWEyMTA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MzhlMmU0MjIyZjc5MDYyOWJmNGM4Yjg5Y2Q3YjAwOTNmYmY4N2I1MjIzYzRiY2Y3YThkYzY5M2I1ZTRmMjkwIn0"
         }
       ]
     },
@@ -69,7 +69,7 @@
       "statement": "Every non-contract Evidence must name a responsibleRoleRef that resolves to a Party Role owned by its Context (a pre-contract stage borrows its parent Contract's parties), while a Contract must belong to a Contract Context, be listed in that Context's rootRefs, and carry exactly two distinct Party Roles from that Context.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L761-L940",
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L763-L942",
           "version": "repo-lines-v1:sha256:22f32f1a96508baf0e3aa2015beeed3a3507f448bffe7760b9b7e2f42d031e7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMDdhODdlZGUxZTI5MWRhNTNkODg0NGJmY2JlYzE1NDBiYTM1NjY3ODJkYzg4OTgyMjljNDdiOWMxNDQ1NGNkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjE3ODI3MWI1YTcyZWVhYWI0NGRmYWVjNzExMzQyNDE5ZTUzYzZlZmRiNTgzYTZkN2U2MjM4NWRlZGM0ODY0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTcxOTBiNzJlYjZhYWQ0YWU4NThmMzUyYWM5ZTI5ODY2OTM3ZDZjZjY4NTZiNmRkMDQzZWU1NDYyNzA1OThiIn0"
         }
       ]
@@ -79,8 +79,8 @@
       "statement": "A participant.party must not declare contextRef, a participant.thing must live in a domain Context, and a Role must not declare Evidence responsibility fields such as responsibleRoleRef or roleRefs.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L942-L1060",
-          "version": "repo-lines-v1:sha256:eaebb0e0b715490cce367950a7f3cbb372125e155f8e398e5397e2d2628683eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1OWRiZjZjYzljNDRkZjQyMGM5ODEwZGFkY2E0Yjk4MzhhOTc3NGRhZTE2MjU1ZTZiZDhiZTliN2VjYmJmNzc0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2ODc2NTM3MWFlYTFjYzdkNDZlYzZlZmNjYmJlOWU5ZTczYzkxODk0ZjBkMDZjNzFmMTI1YWM4YmUyNTViN2JhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwOWNlNTk2ZTk3MmE2ZWMyMzk1MDdiNTYyZWQ4NjQ0ZmY1Yzg3OWE2MGNlYzM3NWE2N2RmMTY4YzQ5Y2RmYTEwIn0"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L944-L1089",
+          "version": "repo-lines-v1:sha256:d8a6546697ea9f9bdb8b356d835c89e3c345da82ce5453c81aa88c56a44aebd5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1OWRiZjZjYzljNDRkZjQyMGM5ODEwZGFkY2E0Yjk4MzhhOTc3NGRhZTE2MjU1ZTZiZDhiZTliN2VjYmJmNzc0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNjZkYjNlZDNlNDQxZDk5MTZlOGFlMTNiMjRmNjU3MTFlMmNjOTJjMjY5ZmU3ZjNiMzQ0ZDliYjc1NDUzOWNiIn0"
         }
       ]
     },
@@ -89,32 +89,32 @@
       "statement": "A Context must not declare contextRef, contract and domain contexts must declare rootRefs, a Contract Context must have exactly one root that is an evidence.contract owned by it, and parent context chains may not cycle.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1076-L1105",
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1091-L1120",
           "version": "repo-lines-v1:sha256:1ac305e067c7d0e75d929e6161bbc9758ddc4e81a52d72adc1864eb52de92c05:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NmQ0NjJkMDIyMzA4MGJlMzMwYTljMmM0NzJhMDc4YWIzNTZlYjM0MmI4ODlhNWI0MGQwZTczMWM4MjhmMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3OTc5ZGZhMTg2MjU4OTU3NzExODI0ODRlMmI1MjIyZWU1NzQ5ODExZDY3MzA5ZDUxN2E3NjBjY2RlNDVkYzYifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L631-L760",
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L633-L762",
           "version": "repo-lines-v1:sha256:8dfacee5eef46b118729b6a920e89fc57a5b791aad4e89af061112c19f77b287:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGJjYzk2MDlkZjMwNDVlODM5YWM2MzRkOWQ3ZGY0ZTAyNTAxZmYxNTUwZmQyZWY3MzMxYzdiYzgwYWVmOTcyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZmY1MmY3NWNhZjIyNjgwOWU0ZTJiNmVmNmIyN2UwMWFmYTc2NDQyZmVmYzI2M2M3NWEwZWM2ZWUxOTc5ZmU5In0"
         }
       ]
     },
     {
       "id": "claim_7c4a8174282247a2b377c1c6159e88b7",
-      "statement": "Relationships allow only plays_role and references; self relationships and Contract-to-Contract connections are refused, and plays_role only accepts participant.party to role.party/third_party, participant.thing to role.domain, a Context to role.context, or a moment Evidence to role.evidence.",
+      "statement": "Relationships allow only plays_role and references; self relationships and Contract-to-Contract connections are refused, and plays_role accepts participant.party to role.party or role.third_party, participant.thing to role.domain, any Context to role.context, or a moment Evidence (contract, fulfillment_confirmation, other_evidence) to a role.evidence owned by another Context, while a window kind (rfp, proposal, fulfillment_request) aimed at role.evidence is rejected as an interval.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1279-L1400",
-          "version": "repo-lines-v1:sha256:119c3bdbb8c824235eec70271bd3788e8b5cf7ff1c89c82bfca53c6113ac0163:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwOTYyMTg2YzU0YTBlZWRiMDFkYjZiZWM2OTRlNzhjODAwMzk2NjQwNDhjNzgzNDI1OTJkN2E2NDdhMTU1OTdkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhZjBhNzY4YzMxNWEzZjI0ZjM2MGVkZWVjMmMwOGU2MmVlMTZiNTAwZTkxODMwYTkwMzBhZDQyYThmMmM3Zjc3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMDEzMWExMGFjOWU3YmEwN2MzZjM5YTZmN2Y4NzlmYTc1OTM5MTEyMTBhNTQ3ZmRjNTdiMjAxNTZhNDVmMjA5In0"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1305-L1470",
+          "version": "repo-lines-v1:sha256:93d67cc895e181613e032ea4dcfa856930b70d38ca368b69995b26954d3c60d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwOTYyMTg2YzU0YTBlZWRiMDFkYjZiZWM2OTRlNzhjODAwMzk2NjQwNDhjNzgzNDI1OTJkN2E2NDdhMTU1OTdkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZTc1YzcwZDk0NjM2MjVlMTA3OWZkOGZjOGVlNjJhZDJlOTJjNDJiZWFhYmZkODViNzhkOGUwYTQ5NzliOTRhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3Mjc2NzNkMjA2MGEwOGE1OTU1N2FhNzdjZTQwMWZmYTQ4MDY3OTUyNDUxNmU3MjZlNGM0ODRlMjlmNmIzMDA3In0"
         }
       ]
     },
     {
       "id": "claim_07bd643773de492e8201395d3f95f3e7",
-      "statement": "Cross-context references are allowed only for a Contract referencing a Proposal whose Context declares the Contract Context as parentContextRef, Evidence referencing a Thing, or Evidence referencing a moment Evidence or Evidence Role.",
+      "statement": "Cross-context references are allowed only for a Contract referencing a Proposal whose Context declares the Contract Context as parentContextRef, Evidence referencing a Thing, or Evidence referencing a fulfillment_confirmation or other_evidence; a cross-context reference to a role.evidence is not on the whitelist.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1400-L1485",
-          "version": "repo-lines-v1:sha256:f3eef691e9d5bb48e16309c9646e34305a72aa7d31064ae91a84bc596b1a17dc:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMGE3NjhjMzE1YTNmMjRmMzYwZWRlZWMyYzA4ZTYyZWUxNmI1MDBlOTE4MzBhOTAzMGFkNDJhOGYyYzdmNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1OGIyNTlkMGQ2YzFiNmQ5YzM1ZmMyYTgwYzI0MTBhODQ1ZWM5M2I3YWU4ZGIwZDdmZTI5NWUzMDFjNjY4ZDkifQ"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1470-L1547",
+          "version": "repo-lines-v1:sha256:d4b5bab962143c18a923fe19771f4d4c5edef7f73e25d008df533aaf6a3c0236:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNzVjNzBkOTQ2MzYyNWUxMDc5ZmQ4ZmM4ZWU2MmFkMmU5MmM0MmJlYWFiZmQ4NWI3OGQ4ZTBhNDk3OWI5NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwODZlMjE4NjgzODhjZjVhYzJiYWY5Y2NhMTExODM1MDBhZTkzNDNjYTdiNWIzNjE3MDU5YTA1NDU4NTgzYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlYWNmNWIwYzVjMGE1ODc2MTdjNjE5NzBkNTgyZmI5NDcyYTFiMTEzMjYwOWRkY2JmOTRjMjc1MWQ1Y2UxYTEifQ"
         }
       ]
     },
@@ -123,12 +123,12 @@
       "statement": "Rules are one of six CEL kinds; every kind except derivation requires resultType bool, derivation must declare a target and no other kind may, each rule needs a Context and non-empty label/description/expression, aliases must be CEL identifiers, and binding refs must resolve.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/rule.ts#L1-L50",
-          "version": "repo-lines-v1:sha256:df15f2db4c29deec572329849d2023b69a6c8ce1c5b037504f76a5da81b7a134:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMWE0ODYwNGY3ZGNhNjE4MTZlNmRjMGEzYThjMGRjOGEzYjllYmIyYWVjMmE5Y2I5YzU0NzFmM2U1OWQzZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzMDA2OTNmMTQ0ZWRmYjNkZWI0MWUzM2I4MjM1MzY3ZjE2MmYyNzQ5MDU0NDNkN2M0MjViMDg3NDE1NGU1ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNjMwNmIzZTZjNmQxMWMxNWM1MDA1ZWJkNjNlMDY5MzRkYmJlYTdjZGI0MjEyMzFiZDdlMzVjYTIwNDBmYjIifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/rule.ts#L1-L45",
+          "version": "repo-lines-v1:sha256:1833757f34327217cba19c27d2440d184b3da2a7c630dcf1165c7245afa54700:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMWE0ODYwNGY3ZGNhNjE4MTZlNmRjMGEzYThjMGRjOGEzYjllYmIyYWVjMmE5Y2I5YzU0NzFmM2U1OWQzZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2YTM4ZTllNDM1MjA4N2FiMzdkYjdhMjhkZDc0ODc1OGQzOTVjNWEzNzViNGU3ZGU0YjNlMmM0YTI3Yzg4NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyZmU3NTUyNDdhMzNmZDc2MDdjNjQ2OTdhMTk1YTU3NTllZDE4NGI4ODI0ZjljOWYzNmI4YjFlZWNiMDQzZGMifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1490-L1725",
-          "version": "repo-lines-v1:sha256:97a2020b0c841e20d32973d390f9890789ab8a45d34cd21a1486a037fa048d8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjczYjAzMWFlZjkzY2IzMGVhMjZkZDU2MWIzN2I2YjJiOWQxYWZjZjQzMGZjNWI2MzE4MjgwODUyOGFiZTQ3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhMDRmZDYzYzk4OGRmM2Y4MGI1ZTBkZDgwYzkwMzExNDMwMTdkNzRmNzUyZGY4MTNkZjYxY2QzODA2ODRiYjgwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNzNiMGRiZTIxOGM3ODViOGFmODAzYThiZWQwZWVlZjU3NzZlMTUzZDNhYzkxZTMxYmM5YTkyZjUyZWEyMTA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2N2FiMDVmNzU0MGQyYTM5YmYwNjdjM2JhNzZkYTIzMDE5NmUwNWZmOWVkZTZiYjFkZDdjMGVlMTE0N2U4ODZjIn0"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1549-L1789",
+          "version": "repo-lines-v1:sha256:40f4a80b875f8a9c6adbddf96e849096098f6b4753ab6cb5d6830d4e35b60ea8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjczYjAzMWFlZjkzY2IzMGVhMjZkZDU2MWIzN2I2YjJiOWQxYWZjZjQzMGZjNWI2MzE4MjgwODUyOGFiZTQ3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNzNiMGRiZTIxOGM3ODViOGFmODAzYThiZWQwZWVlZjU3NzZlMTUzZDNhYzkxZTMxYmM5YTkyZjUyZWEyMTA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyOTA1M2RjODg4NDc0YThmYTg3ZGNkZGQ4MTgzMTFjYzU4NzliMDdhZjNjMWQ1ODZlMzRjMjg5MTNlZDc0MmMxIn0"
         }
       ]
     },
@@ -137,28 +137,140 @@
       "statement": "Derivation symmetry is enforced in both directions: an attribute's derivedByRuleRef must point at a derivation whose target is that exact entity and attribute in the same Context, and a derivation target must be pointed back to by the attribute.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1732-L1782",
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1791-L1841",
           "version": "repo-lines-v1:sha256:3e9ad77d6df32eabab74b16eb426b4275dfbbe91b81fe73b45e95f6e77b0bf09:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3YjAzNmFiYmM1OWFmOWY1NGQ4NGE4ZDVlODRhMmRiZDI3NjliYmIyM2JiNTZhZDgxY2Y1NTkzZDY1MjhjYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMDI1NGRmYTU2NDg5OTU4NTg3Y2ZjYmE2YzJhMjFmNzAxMTczYmRhYWQ0ZjExNWMxYTM2NTc4OTc4NjUyNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3M2IwZGJlMjE4Yzc4NWI4YWY4MDNhOGJlZDBlZWVmNTc3NmUxNTNkM2FjOTFlMzFiYzlhOTJmNTJlYTIxMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxMDZjMzBlYzVlNGQwMjJmODlmNTM4MmQzMDhiMjIyZjcxMjU2NDVjZWI4NmEyOWE0MmZjODgxYTk5NzRiNzQifQ"
         }
       ]
     },
     {
       "id": "claim_408437d67ed344c78fa2af36ca7f995c",
-      "statement": "Static validation deliberately stops at shape, ids, category/kind contracts, reference resolution, ownership, relationship endpoints and derivation symmetry; traceability, key-data providers, scope completeness and CEL evaluation are separate passes, while sourceSnippet optionally records the verbatim sentence an ingested element came from.",
+      "statement": "Static validation deliberately stops at shape, ids, category/kind contracts, reference resolution, ownership, relationship endpoints and derivation symmetry; traceability, key-data providers, scope completeness and CEL evaluation are separate passes, while sourceSnippet optionally records the verbatim sentence an ingested element came from and is part of the entity key set only.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L1-L39",
-          "version": "repo-lines-v1:sha256:f42d19ed64709081bf65dc2ccd2857efd08d281af8fb87920970810a109e6e19:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts#L1-L54",
+          "version": "repo-lines-v1:sha256:9606b7911e8ce26ba100e1b3bb05328f209ac2f7498841d78b12dd4feb40ca82:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4MjAwOTY0YTk3ODYzNTUyMmIyYWIwOTBjNjUwNjVkOGVmOGU4NWM0NzMwYmIyZWIwNDYwZDM0YzY3N2RkYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1792-L1800",
-          "version": "repo-lines-v1:sha256:7c921834b4df19417b4f8967b7ceb57e8a35d68b837d29fe5e44ba423488f405:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjZjYWFjZDJiNGMzNGRhOTVlN2FjOTFmOTlmODZjNDViZGFiNzkxNGJiODZiZjQzYmEzYmI2NzBhNTYwOGEyYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE2Zjc5ZDc3YzFlNmY5YzgzNDIzNTBhNzM1MGVlYTM4NWY0ZDBiZTZlODQyODY1NDVmYzhlZjAyNmQzOTY1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWVlY2E5YWZjZTVmMjAzNWQ5N2NiODA0YTA2MjgyYTRhMTIyMzllYzVhMjRhYmI2YWVmZWU3MDNlNDhiOGM4MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmU0NzIzMTczMDdjY2FiN2JjZGE0NjVmMmZkZWZmNTkzZWM4ZDVhZDA0NDcyMDBiZmEyNDZhODc0ZTNkNGMxNCJ9"
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1849-L1856",
+          "version": "repo-lines-v1:sha256:0aeab515a67f5b254211db144ccceabed9c3b398842bb6eb1993c5e67a21c9b0:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDE3OGMyM2E4Y2QxYjg5NDQ0ODM5ZmY5OWUyYWFmNTQ0MWYzY2VkNGQ3NmZiNTYwOWVkZjI0NTNiYWMwY2Y2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWY5NDU2NzhlZmQ2YTExZDEyMGJlNmVmMGE0YmUzZGY4MjllMzExZjg4ZjkxNWMyNDg3ZmZkNmE4NjhhMThlOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODE4M2ZkN2I5YmU5NzllMjg4MDQ3NTAzMjU3YWFhMTJlOWUzYTEzNmUyZjQ5YzI5NmFkNjFhYjQ2MWZlMjM0NyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L48-L102",
+          "version": "repo-lines-v1:sha256:20da088aea501b206b6710cc7416981d4a62e9f95386b9238191c0537895f19d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OWM1MDVjYThmNjQ0NDVkNzhmNzNkMDNmMjYyN2Y0ODEzNjU2Njk4NmY5NWQ3NWU1NGFkY2M5YmFhMzgzYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiMmJhMGZjZWM5ODZlYzk2MzQ5Mjc0ZGFmZjVjNjBkZWY3ZmYzOGI5MGIxMWYwZTY0YWY5ODJlMGU2YzY5MzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjODBjYmQ4OWIzNDIzZDlhMWZlMWRlMWY0MWVmZWViNTkzYjAyZjU2ZmMxOTAxNGEwMjEwMjIxZjJjNTc3ZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7dd7eb12a65a41cfafb949cf9f662d31",
+      "statement": "Each closed FM vocabulary is declared once as an `as const satisfies` object keyed by the id written to disk, and vocabularyIds, vocabularyLabels, vocabularyField and isVocabularyId derive the ordered id list (declaration order is the reading order), the label map, per-field tables and the guard from that one declaration.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/vocabulary.ts#L1-L61",
+          "version": "repo-lines-v1:sha256:67327fb19239e11ac81f3ccc49396d0af9d287210aba48184a6a1af2bcc4e1fb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMTI0NmI2NTcwNWU0OWVjNmEyNmQ4ZTllNmVhOGYxY2U0MWJjYmVlZDM0OTQ2YmI5ODA1Mzc0NWU0ZDIxNzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c73bcd0f6f064658ab8c48e11c4bb53c",
+      "statement": "LIFECYCLE_STAGE_DEFINITIONS owns four stages (rfp 邀请投标, proposal 投标, contract 合同签约, fulfillment 履约履行) with a label, a caption and an English label; the stage of a Context is derived by lifecycleStageOfContext from its kind and the evidence it holds rather than stored, so a stage field on an entity is an unknown-field finding, and other_evidence has no stage of its own.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/lifecycle.ts#L13-L163",
+          "version": "repo-lines-v1:sha256:548d3e3334de046883eae67aecf5b5a7e96707a96150148ea783171f3ca6224f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5Y2M2ZWNhNThkMzE2NDZmNDUzMTliMDk3ZjFjZmZjYTg3NzFjNjcyNDk5ODUyZjc2ODhmMjRlNWYwMTM1YjBiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNmVkODcxZWM1ZmI1MjdkNDZiNzYwYzZlNmM3YTFhM2I2ZDU5Y2JmYmEwZDIzMDk3NTBiM2VjNmRiMzM0N2I1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L48-L64",
+          "version": "repo-lines-v1:sha256:9abca455a9aad5575aa04c58df6965bcfbc69a82566646080987df5e3864e7b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OWM1MDVjYThmNjQ0NDVkNzhmNzNkMDNmMjYyN2Y0ODEzNjU2Njk4NmY5NWQ3NWU1NGFkY2M5YmFhMzgzYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1ZTI2Y2Q5MjM2NmY2MGQ4ZWQ5MmQwMjM5ZjA3ZmVmNzRjYWMxNGFhNjlhZGRmOWMyY2MwZDExZWIwMGE0NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiMmJhMGZjZWM5ODZlYzk2MzQ5Mjc0ZGFmZjVjNjBkZWY3ZmYzOGI5MGIxMWYwZTY0YWY5ODJlMGU2YzY5MzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiMDIwODczMmMwZTQ2ZmY1MzVjMjYxMDA4ZTJhM2I3Y2JiYWM5OTY3NzdlNDBhYWIyMzIwMzMyZGQxYTdiZTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f0c4d5355dda49af971dbb32edc58e92",
+      "statement": "DOMAIN_COMPONENT_ROLES names calculator (计算器) and checker (检查器); a participant.thing may carry domainRole, the field is rejected on any other entity kind as entity.domainRole.thingOnly, an unrecognised value is an entity.kind finding, and the isolate_domain_calculator operator creates such a Thing inside a Domain Context, creating that Context when missing.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L552-L601",
+          "version": "repo-lines-v1:sha256:72b9dda6b6f93e8a122ff7149d29025fb431c46c3f9620d3ec723f6ab79db8e0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkM2ZlNTczMjY5Y2RlYWRjMTViZGI4Y2U1NDIyZDQ2Y2VmNGI2MDRlYzFiNmE3OTFmMjA2MmU2OThkZDhiYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjNlN2NkMGMzYTYyMzA0NzY2ODE2MWQxMDRlOTlkODYyMDljYTNlNzc1NGEyNWIxMTlhNDkwNzg3ODA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkNDRlMzRiZThjMTgzNzlhZWZkODQyMWJhOTYwNTA1OTBkODc5YmRhNmQyZjAzMWM1ZTdhZTFhNDhhNDA5NWQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L95-L118",
+          "version": "repo-lines-v1:sha256:7ee8dbdb32c644d5dd8536c39be74fe394946f7a4c14655cfc5ec8a52b121785:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4MDE3ZDkzNTU0ODg5MzY2ZjVhOTliODcyMzhiMTlmNzQyYmU5OTU5YWFmM2UxM2NiYzIwYzQyNTQ4N2ZjZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlZjFiMDhmZDBlYTk4ODNlYTFjNDJjNWFmYzUwZWI2NTQ5YzI4ODA0YmYwZTU5ZWU2NjMzNDEwYTdmMDljYWUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1121-L1193",
+          "version": "repo-lines-v1:sha256:00b3a08d1bfd2a582f155c1c8a2a79f15c415c854f3f636c541b4f051ddb1cc3:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4M2EwZGI2Y2IyYTBiOTRhMWEwYzlkZWM0ZDYzMTdkZTI1MmU1NmUzMWQzYmRlYWI3OWM1N2U2OGYxMjc5YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5ZGYyNTRiOGRjNTY0NGZhMTgyNjRiMWMwYzAwZWNmMzY4ODdhYWEzYmVlMGNlNjQ0OWZkMTNjZWNiYjBkZTYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L944-L1089",
+          "version": "repo-lines-v1:sha256:d8a6546697ea9f9bdb8b356d835c89e3c345da82ce5453c81aa88c56a44aebd5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1OWRiZjZjYzljNDRkZjQyMGM5ODEwZGFkY2E0Yjk4MzhhOTc3NGRhZTE2MjU1ZTZiZDhiZTliN2VjYmJmNzc0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNjZkYjNlZDNlNDQxZDk5MTZlOGFlMTNiMjRmNjU3MTFlMmNjOTJjMjY5ZmU3ZjNiMzQ0ZDliYjc1NDUzOWNiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f2c73b5c0924fde9534b3c61b589313",
+      "statement": "The inspector registry's participant group exposes only kind and contextRef, so domainRole has no property-grid editor and is written by operators and ingestion instead.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L168-L190",
+          "version": "repo-lines-v1:sha256:56ec5e7abac8cdcb9396f760dbf6a06c09b5a93227098927078e38bb14da8fbf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3ZjcwMDFmMDZkNWE0MjhmOTcxMjE2OTg3NjE3OWM5Y2U2NTc3YzE3NmNkNWJlYzg5NjEyMWNlNjU3NDcxNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwODgyZGU2MmNjOWYzMjQ3NWZlYWUxNjRlNTI0ODJmMjljNWRmNjZiZjZjNzZlMWVlODMzZjAxMzNjNDg0YWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8eae83162c194c7e89c4527ca1e18753",
+      "statement": "WORKSHOP_STEPS is an ordered tuple of seven steps owned by ast/workshop.ts and read by the desktop composer chips and the agent workflow prompt, with isWorkshopStepId, workshopStepRank, workshopStepFocus (the 【第 N 步 · label】 prefix) and REVERSE_CONTRACT_MODE for contract-less sessions; nothing on disk records a current step.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L101-L150",
+          "version": "repo-lines-v1:sha256:3bb1b1333339fd12f842988e6381ed1af9738dfa33eea491c0a6fc43571453ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYzNjZDI2MTRhMDg3NGU4ZmI4ZTJjM2RjOTYwOGY1ZGIyZTAxMDU3ZWNhOTliNzA0ZDk3NDFkODg1N2NhNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYTEyZDg1ZjRmY2JhODJkNGIxYTE2MjA0NDEzMTNiNDIzZjljZGIxMGE0MDgzYzdhZjBjMmZjZWQ3ZTgxNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3NzJjZmFhOTM3YzY3YzA1NWQwYWQzMTIyMjlhNjg3N2MyNGY1ZjVmN2FkMjcwNGY0MDhkZjRmZGYwZTQyZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NDYxYzJhNmQ1OTg1ZjMyNDcwYmJkY2VhYjE5OTYwNjY4Mjg3ZjBhMWMyMDdhYThkZTQ1MTVhMTU2ZGZkODgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:eff9c7b834ebd85e9525f1eb336cea936d3660df0db25129c0efab15f4ea7516:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzMDg0MDlkODQ4ZDBkYjRmZDhmNTIxMGNiMmVhMjJmNjU1OGY5ZjRjNGU4Y2U5OWIxZjQwZWFhNmYzNDM5MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ZWUzMDBjNDdkZjZjODBjNDMwNTUwYzVjZjExMDJiOGQ1NzdmMGI4NGZlOGJjNGQ5MGYwODg1MzhjNThhMjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L1-L100",
+          "version": "repo-lines-v1:sha256:97261f0d1004df8f86ebd18efe0936abf6fda6320a7fe5f96439fb2809d07efa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzN2UwYjBkNjAxMTI3YzkwMzRjNzdlMzRlYjc0ODJkMGQyYjgwNjI4NzdiYzViYjk4ZWI3ZDdmYmUyOWRiNDE4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_fba423c15e474257a73cbd4e3f46e97a",
+      "statement": "CLAUSE_CATEGORY_DEFINITIONS fixes three readings of an agreement — business 业务逻辑 to evidence, domain 领域逻辑 to domain-thing, boilerplate 纯法务条款 to none — and the contract annotator classifies each sentence in that order (boilerplate, then action verb, then formula) and reports the sentences it cannot place instead of inventing a duty.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L110-L165",
+          "version": "repo-lines-v1:sha256:8ca10f5e8f475fd7bc700d5808bfb1072d1a4e6cea26fdf7caddf18db2108d02:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYzAxMmIwYzZkNzVlZGYxMDhhNmI3NzkzYjgyNGFkZGY0NGIwYTM0MTlkMWFkNTkyYWQxMmFkNDgzZmQ5MjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYjcyYjFiNmNlMDE1YmE5MmQ5MGQ4ZThmZDkzMGU1MTU5MDNiM2M0YmMwMGM4MmY3ZGUyYWE3MjRjY2ZiMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1MTc4ODYyYjU4M2E1Yzc3Y2Y4NmMwMGQ3OGRjNGJmZTY0ZjJmNzIyNzljMjRmZmVjNjZlMmIyZmJiMTRlYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5MzljNDY4YjhhZWE2M2NhNDQ4NWYyNTU4MzRlNjlhNDdmMjliYjk2YTI4NTgwYmVjMjQ0Y2ViYWZiMGFhYmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/clause.ts#L1-L135",
+          "version": "repo-lines-v1:sha256:9f42fc0c7bf1ce98e6fea87beccedbf25f8870554ac9022a1f98fee3fb533238:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODIwMDk2NGE5Nzg2MzU1MjJiMmFiMDkwYzY1MDY1ZDhlZjhlODVjNDczMGJiMmViMDQ2MGQzNGM2NzdkZGJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_be4df2b48e2d4f8b98bc6ae9cd0c5e29",
+      "statement": "A references relationship requires entity endpoints on both sides, and when the source is Evidence its target must be a Thing, an Evidence, or a role.evidence.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1470-L1547",
+          "version": "repo-lines-v1:sha256:d4b5bab962143c18a923fe19771f4d4c5edef7f73e25d008df533aaf6a3c0236:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNzVjNzBkOTQ2MzYyNWUxMDc5ZmQ4ZmM4ZWU2MmFkMmU5MmM0MmJlYWFiZmQ4NWI3OGQ4ZTBhNDk3OWI5NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwODZlMjE4NjgzODhjZjVhYzJiYWY5Y2NhMTExODM1MDBhZTkzNDNjYTdiNWIzNjE3MDU5YTA1NDU4NTgzYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlYWNmNWIwYzVjMGE1ODc2MTdjNjE5NzBkNTgyZmI5NDcyYTFiMTEzMjYwOWRkY2JmOTRjMjc1MWQ1Y2UxYTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_93ff20af49eb4db3a8c39ef96ca761e5",
+      "statement": "Each rule kind declares booleanResult beside its label, and BOOLEAN_RULE_KINDS is filtered from that declaration, so the requirement that decision rules return bool is read off the kind declaration rather than a parallel list.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/rule.ts#L8-L45",
+          "version": "repo-lines-v1:sha256:dc599f53d011ea4b677d396a9aa3392d1a7bf80cf33a27ecc57b5918cdd8e9b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2YTM4ZTllNDM1MjA4N2FiMzdkYjdhMjhkZDc0ODc1OGQzOTVjNWEzNzViNGU3ZGU0YjNlMmM0YTI3Yzg4NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjYjk5MzFlNjE4ZTlkYmFkMmQwZmQ1OGY0NmQyMDQwNGFkNDA5NTMzODQyZmUwNzFjNThhZTI3MGZhNWI1YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyZmU3NTUyNDdhMzNmZDc2MDdjNjQ2OTdhMTk1YTU3NTllZDE4NGI4ODI0ZjljOWYzNmI4YjFlZWNiMDQzZGMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

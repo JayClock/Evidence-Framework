@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:9901f37d4b04858fe2f0d64f3f6835fd97e9e979b540dc3a58afe0c8eb42ad87",
+  "claims": [
+    {
+      "id": "claim_9f2064b61ccb4c1fa58a85a0e5f7bc94",
+      "statement": "The four model operators live in evidence-model-core (re-exported from its public index) and each returns an OperatorPatch — a batch of plain ModelPatchCommand descriptions plus createdIds in the order the commands create objects — which the caller submits through the ordinary apply_model_patch channel; an operator is therefore a named, reusable assembly of commands, not a second write path.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L14-L27",
+          "version": "repo-lines-v1:sha256:eabf40ded9d9ba63f44913c0767d0dd29afdd733061159f83a8be27b30a7f3af:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MDJiOTg5ZjI4NDFiYWUzYTNmY2ZjMDRhMmRjNjNjMjU3MjRlYmNjYmQwNzQxYjI1ZTk5MWVkZmQ4NzNkMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3M2I1OTViNGFkZmMwNDBiMGFhYTM3ZDBhMTc1MzVkNmU3YTQ3M2UxODk3NGFhYjc4OGY4ZjE5M2FhMTlmYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZGE3NzRiMWI0MDBlNWI1NmIwZTE3ZGYxNzdjMjFhYTAwMjI0Y2IzYzYzMDA1NWIwNjA1NTQwODgwNTBjYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMWIwZjRjMjBlNTMxYzZhYjdiNzg0OTlmMDc5MzNkYzUzNDcyODUzM2E2ZWFlNzI4M2EyNGEzM2QzMDJhODUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/index.ts#L132-L143",
+          "version": "repo-lines-v1:sha256:733833f9adaec8d029eaaa68ed29e70442c436cb600e60ee0646c70914a63951:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNzQ0MjkwOTg3MDNlNjM0Y2M2NjRlNDk3NWQxNGFjNDkxMjc0OWU1MTYyNGFiMWEzNTNiZTI0NzNmOWMxMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZjhmOTFlMGRjMjBmZGZhN2RlODY0OTg4YzM4NmU3NmQzZmRlMDNkOWRjN2E5MjVlYzcwZmRlNDk2ODIwMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhM2M5NzEwZDhhMmJjZjMxMDNjMjY1YTRlZGYwY2QwYTFhODk5ZGM4ZGJmNjIxMmZhYjRkMWMyNjBkODA1ZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7afa37e805174bf4b676c09db9ada5b8",
+      "statement": "The MCP toolset's shared runOperator helper reads the live document with getDomainModel({ includeRules: true }), builds the operator patch from it, and submits patch.commands through applyModelPatch({ rationale, commands }); a builder throw is returned as a readable `算子未执行：<message>` error with no patch sent, and a rejected patch is returned as an error result carrying error and diagnostics rather than a silent success.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts#L324-L388",
+          "version": "repo-lines-v1:sha256:0ed530a5c086fa97babbbdfc765d881cda7018c088949511caaa10aa1ba04e6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NTM0ZjIwN2U3ZjUxYTFkOWJjYzE2YWVjNDU1YzE2NDVjMzliZDNmY2E5MDM2YTFlMzE4OWI1ZWE4MzcwYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlYmQ4ZmIxZmJkMzVhNDlhMmM3YTZlMGU5ODZlYzdhY2Q4YzJhMmQ0OWVhZDY2ZDIyZjU5NjU2ZTE0NjJmYmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L96-L124",
+          "version": "repo-lines-v1:sha256:4b249fef2789af48b906ea432026501b4bda1147534c82946742b67af4331774:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4M2MzYTdmY2U0OWI5ZGI2NzdlZDkwZmM1MGJjOWFjMjgyOGRiZTk1NDgyNjdjODc4ZWJmNzM2ZDQzZWE0MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMGY1ZTE3ODRjOWFmOWM1ZTVlNDdhYzlmMDljZDM3YmU0NDg0ZDIzYzhkMmViM2NkNTUzN2JlMzQ1Y2JjMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwM2JjODAyNjI1Yzc3YTAxN2E0ZjkwOTBlMzM4NGM4ODM4OTIzZDdmYjkwYmI3YzE3NThmNjVkN2I3MjVmZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzNTBlYzFhMmNmMDc2NGRhMWZiMTFkNWI1MmU5M2RhNTgxZjFjNjQ0YWM0ZmI2NjU0OGVjM2UxZDA5OWNhMzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_75037a99e568411ea4c39e2a1d809b1f",
+      "statement": "The Pi extension registers its own runOperator wrapper that builds against handlers.loadDocument(), submits through the applyModelPatch handler, answers a builder refusal with `算子未执行：…` and a rejected patch with `补丁被拒绝：<error>`; it registers four operators — introduce_fulfillment_pair, add_breach_compensation, roleify_and_invert_dependency and isolate_domain_calculator — whereas the MCP toolset exposes only the first three.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L261-L372",
+          "version": "repo-lines-v1:sha256:f4fd33752781cb978c09f76973d0df24ed9ca35a7aba8ede8a9914ed095fb23f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkMmNlNmQ4ODhiZWMxYjkyY2I4ZmEwYmM3ZDMwODU1MDc5ODlhM2U0ODU1YmNjODgwMjhiYWM5N2UyODIxYmQ2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ZDVjZDJmYjRmM2RmODg0NTE1MjU1YjM5NTIzZjJmOGI1NDcyYmVlYTlmNTY2ZmZjYTIwNGRiODAyNTYxMDQxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzZjhlMWJiNzdiM2EyODA1MTFkZGFlY2ZjZWYwYzg5N2ViODhlMWNkZDk4YTUzMTRhNjRhZWQzODI4Y2RmMDVlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MzZjYzk1NTAxMDBmODcyMmVhM2JhM2JjNDQzZWQxMTc2ZWNjMDIzZjFlMjRmNjVkMzE4NmIyYTZiZDI3ZTA0In0"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.spec.ts#L248-L268",
+          "version": "repo-lines-v1:sha256:f91692701e82270a1bf1949fee2c8382a951288d3264679361940aeb11d7b207:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMDMxNDJiNzM0ZmFiNjBiNmQ2NWIwNDc3ZjFmYzk2MmIwNmRhYTFkZmIyNzJmOTE2NGIzNmY5MjBmMTEwM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NGI2MmZiNjBlODIxZWUxNDFjZTEwZTI3ODE0NTUzNjlkYmU3YWJjMTFhNTk0N2NhNzE2NzFhZGI4MTFmYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlODgwMmRhNmFiN2ZkY2FkZTM4ZDllN2JlYThkYzYxZjJlOTQwNDA4MjU3NDI4ZWZiOGUxZmE4ZDcxZmFhZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NDIwMGUyMmVmODVkYzM1YmM1MjM2MzBlNzE4MWRjOWZiN2VhM2ZiYjFiOWU4ZGI4ZDE5Y2M2MGViMjY4MTcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L383-L412",
+          "version": "repo-lines-v1:sha256:80a137f8d66e40ed62ca68de7f86128ef43bd2cf4ee9556b0b58050d6113fbec:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZTlmZGRhODJiMDQzMDBlNDE4MmExNjE1YjM3MzMzNWY0OWMwNjYyYWEzMTE4YzIxMjk1NDU0MzU3MTZhMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhMzY1NjVjZDM5YzljOTJlNzJjMTBmNjEyNmFmZTlmMDA0M2YxNTdlOThkN2Q0MzQ4MGVlYjczYzlkNDM5ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkY2VjYmJhOWFkMjQyNGUzNDkwNjMxNmZjOTk1MTU1ZDA5ZmVkNWE5MjY2MGUyZTM3YTA4NWIyNjQyYzY0ZGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/tools/evidenceTools.ts#L415-L534",
+          "version": "repo-lines-v1:sha256:20a891b08c6368ce1380ba5f13ffc10ad8db4c63cb91554d7a0b41322286d754:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3MWNjZTI2MTcyYjBhMTc4MTY3ODkzOWVjMWVhM2M4MWRlZjY2YmU4OTIyYjk2MzdhZDhhNjU3ZjEwOTRlNGM4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmMjU2MDc4ODU5NDcyYTIwYjM0YzhjMjlhYjg2MGQ1NTUyMjE4ODkxMTFiMDU0NmZlZmNkNDk2ZjMwYjY2ZmFhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYjNhZDg4NDY1NzNkOTJjYjQzZWNmOTViNzg4ZmE2Yzc4M2RjMmU4YTMwZGYwOWVlZDhlYzc1ZTU2NTYxN2E0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3YjdhZjY2NTZkNWMyYTQwYTA3OTRhYmYyMjA0OTk0YTE5ZTBmZTYzMWJjNjczOTY0YzE0NmQ3MzllZjRmZGNkIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_452ea9a33049476c8dac309bb9fd1fd5",
+      "statement": "introduceFulfillmentPair emits at most three commands in a fixed order — an optional other_evidence proof carrying created_at (responsibleRoleRef defaulting to the confirmation's role), then create-fulfillment-pair, then the confirmation → proof references edge (1..1, 确认引用履约证明) — and returns createdIds [proof?, request, confirmation] without listing the rule and relationship ids the commands assign by default.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L62-L145",
+          "version": "repo-lines-v1:sha256:38ffd3bb4f83591d02b256336ef28d2fdf58a4a4d20953e52d8bd4fea350ce53:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwYmVkOWY4OGYxYTY1YWY0MmM0ZmY5NWE1M2FkMzQyNWMyMDQ3Zjc1ZWI2NmFhZTJlZWFkYmJjY2FmYjZjMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllZTg5Mjk3M2Q5ZWM0NmE3OTIzNzQxOThmY2U3Nzg3NGZhZWVlZDVhYjlkODQ0YmYwZDcwNGRjYTI0NmQ2MDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkZDliYThkOTcwYmY2MGJhNGVlOWY3YzlkYjM1MDhmYTI2ZTU0NzgxYzk0ZWU4NzU2ZGU2ZTEzYTgyOTYxOGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L172-L229",
+          "version": "repo-lines-v1:sha256:8515740cdb29b797a22abfb192a0f318a9530b26d15a3140344bfacf566b4bb8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOTJjNjkxNWRlM2ViMzNjZjEzMzFhMDI0YTUzYTY1MmQ2YThjNDFjNzMzYTc5MGZkZDdiZjdmNTY4NGJhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkMTNlNjg3OTkyYWYwNWEyYzY3YTI1MGVkNjNiNTJmY2VjN2NlNDdiNTJhYjU5ODA4M2U3NjU2M2IxMjk3YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5ZjhmZTA1NjNkYTE0MDAzNjkxZGVmNTE4YTdiOGNiMzY5OWI0MzE2MWQ0YzRjZDljZWMwOTZjODA3YmU0ODQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7d78a1356e834764be418a9928c2be7a",
+      "statement": "The pair operator fills in the mandatory business time itself — started_at (发起时间) and expired_at (履约截止时间) on the request, confirmed_at (确认时间) on the confirmation, all required keyData timestamps — because assertMandatoryTime refuses a moment without them; the optional window only rewrites the expiry meaning to \"发起时间加 N\", it creates no derived value.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L85-L112",
+          "version": "repo-lines-v1:sha256:ac2ac9415429377295e6bbf0a6d4ea4d099d7c3c434a89d2dee8c03f4560f6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3Y2Q5YzE2ZTIyNzI1NmUzYmEzYTM3Y2I3MWFlMGI5MWE4NzZiYTQzZWU0ZDI3YzRlNTU4ODI2NTNiNzk5ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzE4YTk3ZGEyYTJmYTNkOWY3MTk0ZjNiODM2MDMzNDEzNDBkMTkxMWFjNmFkOTQ4Njk5ZGNjYzY5ZWJmZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L101-L113",
+          "version": "repo-lines-v1:sha256:c243786869db652d2598e1eea42bf60e1e645525abe9b02df9fa2575ca92ab68:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYTUzNTY5NmNmNDM4ZmRiZmM1MDE0M2I3NWY4YmM5MmMzOTdmOTdiY2U4M2ZhNjY0ZmRhNzIwM2JkOWMzNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMGEwY2NiN2QyNWI1NmVlNzdjYTQzZjAxOTBkMDVhZjhhOTUyYzNjNWVjNDQ2Y2ZlZThjMzY5NDc1YzliMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjNjU2MjdlNTg5MGZiNTA1MmMwMWViOGMxODY0Mjk4ZjRmZDFmZGQwZmM3YjA4MjcyZGJhNzQ4ZDY1MWNhOWYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L29-L75",
+          "version": "repo-lines-v1:sha256:55466343c37ec2f6eca67cd6949bbd14921b4f8b82c9c5147718924b0ffa081b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjYmU0NmJhYjU4MDk1NWY1MTE3N2FkNWEwZGUxY2FmMWZhODNhNDk4MWU5NTNhYmMxZGI4OGVjYjRkMmQxMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1MDBjZDg1MWJkZmVkMDU5ZGQ3YmQwODNmMzFmOTFkNjAzMjU4Y2FhMWExMDRjOGU3OGFjYjQ1ZjUxNzNhM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4NmRmODJiYjg2ODdlMWViMTM0ZTgzYjZlMGMzOTI4MDA4YmRlNGEwYjQzMTllMTY4NzE5YjcyODZmMTZmNGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b97815660114883951362ffec9e80d7",
+      "statement": "rootContractOf refuses an unknown or non-Context contextRef outright but, when a Contract Context has zero or several root Contracts, the operator omits contractReferenceId instead of inventing a root — and the pair is still refused downstream by requireRootContract (context.rootMissing) and by requireRoleBoundByContract (role.notBound), which demand exactly one root Contract with both responsible roles bound to it and living in that Context.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentCommands.ts#L61-L120",
+          "version": "repo-lines-v1:sha256:16416c6cd36adef7181fb724b15337754daf6c5727c33a856ff6e071b059ebf6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NWE2ZjgyYzFiZGE1Y2ZiMGUyYmNmODY1YjMzYmE0ZGI3OTU5NmM1YTRlZjAxNGMxYzQ1ZWE5Nzg0MDc5ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkM2MwZTllOGRkYzRmODg5ZThjNDgwMTFhZDZlODg0NDQzMjdhMjA2YTlhM2YwMzZiOGYwYWRjYzEzYjVlYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhNzEwZjk3MzUyZmExYmFmNmY5OWEyZjUwOTY0ZTcyNjZlNmZjNDlkY2E4MGQ1NDQxNWI0ZDczYmQ4MzY0Y2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjOTZhYWJhMjJhMTQ1YWE3M2E4MzMwNjZlMDYxOWFmNDgxN2Q0ZTNjZGFiNjUzYmNmZDE5MjQ1MGE1MDJiMDYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/guards.ts#L74-L139",
+          "version": "repo-lines-v1:sha256:22281c008c183a9bba5c5caa2e422dabfa3c7df98197255dbd4dd93df65501ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmM2Q4MmQxZTZiNDliNjJlMThkMDFlMzkzYmZhYjE5MTc5NzZkZmM1MjdmMDhhOGNhYWNmNzcxYzhhZjdkZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNjE4Y2FkMWEyYzQwMzYzNDlhYmMyYWNkNWFlYjQxMGZhNGVlMzUyZGRkYTY3ODIyNThjYTM2MWNjYTIwNGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNzYwOGFhZWU5NzViYzllNzE1YzViOWFmZjMzY2FmYWFlOGEzZWY5MzczYTVkMGYzOTIzY2VjY2FkNTA3YTkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L147-L171",
+          "version": "repo-lines-v1:sha256:be4addb5abbfc5b1ae7332cee9533f8dc1e293504de0c19ce3982f474728344d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyOTJiOThkOWVhZmY0NGNmYzJlOGQ4M2ZjZDQ5MGU0MWUzNjFjMGM4NWM3NDQ3NDJkYWQ3NjlkNDkxOTRjZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMGEwY2NiN2QyNWI1NmVlNzdjYTQzZjAxOTBkMDVhZjhhOTUyYzNjNWVjNDQ2Y2ZlZThjMzY5NDc1YzliMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4OTZjNzVlZjdkNDE4ZWIzMTMwMTBhMTJmODczMTdlMjJhMTc4ODlkZDU2ODBmNTkyMTdmOTMyODMxMTY1NjQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L117-L140",
+          "version": "repo-lines-v1:sha256:5570d24ebf7c78698f211d7224aeb6186328b3727356179c6e2ada9972b07ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiMjY2ZWI0YTYxZDE4MDBiMjgwZjc0MTAxODQ3NmIwNmFjZjE5MzI2MjM5NzJhOTI4ZGI3YjIxOWYwN2FiYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjZDQwNDkxZGViZDMxOTQzNzc1ZDM5NDY1NDQwNTRhZmQ0ZDliZjI3OWY5MmQ1MmJiMzFmNjdhZjJhMzRhNzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_47149f3c4d1742b7bd1cd9fac48d9d8a",
+      "statement": "CreateFulfillmentPairCommand writes the whole fulfillment unit in one command: request and confirmation entities with distinct ids, the 1..1 confirmation → request reference, an optional request → root Contract reference, and a completion rule whose default expression requires a confirmation formed between request.started_at and request.expired_at.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentCommands.ts#L41-L168",
+          "version": "repo-lines-v1:sha256:ec489dd806469458f0c34d7a4cc210ed5c332385472b6f2d92d28e8d06035ee0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTgyNDc4ZmFhZTlhN2FlOGM1ZDUxMjEwNWY1YTg2YTVmZjZhOGVlM2M1OGRiY2EzMjFjZmI5Yzk2NmIzNmVjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyOTU5MjgwZjYxNTZjMWY2NTFiNTIyYjFiMTg2MTYzYjY2ZGI0NWFkYmZhOWJjNjcxYmVkMDczNTI5ZWVjMWQzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmNDhkNGRlM2NkNGZlOWFkNWJiYzU3Mjk1NGEwYzk1YmRkOTFiNjM0MDQ0NGJlY2ViNTNjZDZiMmZhN2NmZTllIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxZjUyY2Q4YTQzNmE0ZTM3ZjdiZWFmYjA5NjQ1NWY4MmE1M2NjMDc2YWM3M2YwYWZjYjZkYTM0YmQyZDgwNzU2In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_071080a283b44edf8ea3b24209727a22",
+      "statement": "addBreachCompensation refuses a requestRef that is not an evidence.fulfillment_request, then emits bind-breach-rule first — a breach rule named rule.<requestRef>-breached whose description is the intent's business condition, binding the request, the confirmations alias and now, with expression `now > request.expired_at && !confirmations.exists(c, c.confirmed_at <= request.expired_at)` — followed by the ordinary fulfillment-pair commands in the breached request's Contract Context, so a missed deadline becomes a new pair plus a rule and never a rollback or retry of the original pair.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentPairCommands.ts#L183-L263",
+          "version": "repo-lines-v1:sha256:cefbb4409a038e8b0dbc5f4401901172f4f87d338cdf70df05a75157f6f963a1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4N2MxYjlmMDEwZTc1YjEyN2QwMjEwN2IzYjdmODdmYjQ1YTE2MzE4MDQzMmJjYTIyY2IzYWFjMDQyMzQwNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkYzU1MTAzNzNhZjA5MTM5NTc0YTNkNjg4YWY5YmNhMmM3ZDdiZmNlM2M2NWQ1Y2ViODc1MGY5MmIzYzMyNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L173-L258",
+          "version": "repo-lines-v1:sha256:9b027c46d45c449ee87ca7236e7ef018940dbac661900261fe937f0e87742d88:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNDQwNmQyMTMzYTY3Y2RlNzZiZjQ4ZTM5NThlOGFlNGMzYmI4MDE3OWJkNDY0NDQ1MGM4Mzk1NjAwM2IwOWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5MTJlMjY5OWY4ZGQyNzZhNmVhNjRiZGIyZGI1YjM4ZDM4ZDhjMzRkYzNlZjZjNTJjNmZjMTVlM2QxZjRlMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjNDhmNzNmZGM5OWM5MDZmMDYzZGVmMmNkZTA5YTkzZDE4MWU0OTkwOGRjODQzZjE1NmRjZjhhNWRjYTg3ZDEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L264-L321",
+          "version": "repo-lines-v1:sha256:cf39edf7b240d1a200176c9e33cce3e2395a8bd634438f9402202f5e96ecbe47:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMGMzODZkNjRmNWNhMDEyODViZDljN2Q3MzMwODA5ZGM0OTE0M2QzZjFmM2JkZjc1Mzc3NjZlOTJmM2Q5YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExZTlkMGMwZWI4ODI4ZTE2N2NlZTEyOTgxYjQ4YmI2NDM1YTVlYTEwMWUyOGJmNDQxOGEwMDM3NGEzYjJjNzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjZjViMDU0MWZhZDc2MDIzNTIyYjY5NTI3ZjE0OWFlZDE2MjdkYjAwNWNjNWY2NTg0MzNiNDdhMGE3ZTQwMzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_277661bdaae542f28e82ae5fdc192072",
+      "statement": "Only the breached request is validated by the breach builder; the confirmationRef travels as a rule binding, so an unresolvable id is refused later by assertRuleInsertable's binding check rather than by the builder, and a request that already declares a breach rule is refused with rule.duplicate.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentPairCommands.ts#L227-L245",
+          "version": "repo-lines-v1:sha256:356f7299c34830d8543e3f0d050ec0cc6df6d049f464118c77cf8dfd08f06870:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmOGRkNDEyMzBjNTdkMzhjMTNkMjZiMTBiMDcxNzAxMmMyNmViMmE2NDk4NDI2MzcxMDBhYzdjZmQwYjQ4NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2NjBhZmE2ODQ1Y2FkZWVmNjkzMzRmOTliZWIyY2UxMzgzYTEzNzdiNDVhYWQ0MjYyNWRjNjhjMDcwY2EzMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmYTdmNDA4MWRlMzU1YzM5MmIwYzFkOTZjMTdiYzQ0MTg3ZDllOTlmZTMzMWFiN2FlYWI3NmNhZTc1Njg5ZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwODNiYzJmNDFiOGFmZGM2MDNiMzZmM2YzNTEyZmMxMTMwOWQ5ZDdlZDA1NDkwNTY4MTBjNjU2MjQyM2NjYjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/ruleCommands.ts#L34-L100",
+          "version": "repo-lines-v1:sha256:fd7cca253c2f1930c1ad306c62ec76cd59c1ae4b0d5c7473d694c015e252de29:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYjc5NWYyY2RkMTQyOGI1ODBlOTlmMTIwNzQ4Yzg0MjExN2I2YzdlZGNhMzMzZTU0ZTNkN2VhNWNiYjUyMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwOTdhMjFjYjJmYmFmM2IzNTliYzYzNTAzOTFhMmQwOTQ2YWQ3NmZhYzI0NDg5ZjFiYmIxNzRhZTJhYmVmNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjNzk1YmI1M2I3MDI0MTcyMWNhN2EwZGJkYTExZGQ5NDMyMGZmZDFlNTBjOTlkMmNjOGE0ODA1YTZlMzgwMjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_510d7e3326134f5ca5692e605e0a651b",
+      "statement": "roleifyAndInvertDependency accepts only an evidence entity of kind fulfillment_confirmation: any other evidence kind is refused with a message naming it as a 时段凭证 (<kind>) that only marks an unsettled fulfillment window and instructing the caller to add the confirmation first, while a non-evidence or unknown id gets the generic 'not a fulfillment confirmation' refusal.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L358-L380",
+          "version": "repo-lines-v1:sha256:3dc4bb33caf0d52066c1b080a5ff9d32c497022601f6a0187f299701781ee311:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZDMxODJkNTAwNDVlNGY5ZjI3M2JiNTExMGE3ODg0MjYyNDRhZDY3OTIzZjg4MGU1M2E2NWI1ZThlNDM0MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmODQyZjY5MjkyN2RhMGU3N2E3ZjYxZTFiYzg4OTZjNTJlYzhiZmM3Nzc2ZmFkYzhhNWUxNTJmODZjZDAxZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNjIwZjcwZDE2NTQxOWE4NzY5ZjFiY2YwMWFjYWU1ZWY4YWE2OTMwMzBiODU4NmYxOTNlMDJlMzYxYTJjZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlMTg0NjQ0MWFkMTQxNDc2ODUyZjFiYzkxNjE3YTdhODc5NTIwMDc4NjNmN2QyOTQ0ODgwZDRjOGJlMWUyODUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L355-L377",
+          "version": "repo-lines-v1:sha256:7fa9c9bdbfea4da6394b960e0776b0bfc6c13f37dfc955702d1175fab5d6461c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3M2M5MTViNTY2MjQ4ZDQyNmEwNmYwODk1ZDNmYjE4ZTVlZjY2Njc0MGUwMjdkM2NmNDI1Njk4OWQ0YmYyNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmM2U5NDhjZjk1OGU3MzRhNDlmZmY3ZWIwMDBjOWRiYzBlNDFkZGVlYTM0MWI4ZDg4NGE4YmRmZGYxYjNhOGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlYzU2MTI0NTA0ZTAzZGZhNmY5Y2ZhNDkxOGZlOWE3ZGMxMjBjMWVhZmUwNmExYzM2NGUwNWEwNmNjYWE2OTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1050cd891137432a911302804a7f435a",
+      "statement": "That interval refusal mirrors an invariant enforced beneath it: assertPlaysRole in CreateRelationshipCommand allows plays_role only from a moment evidence (fulfillment_confirmation, other_evidence, contract) to role.evidence, and the static validator reports relationship.playsRole.momentOnly for a request or proposal playing a role.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/relationshipCommands.ts#L33-L56",
+          "version": "repo-lines-v1:sha256:e87e0dc757137c889057c0cf79f59b63e3c83a0b3a4ff594faac95a9fd5c6ad6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNzJhNTk4NzIxZDc0MmI1ZGE1NjAzMzRjNjkyZmIwZWM4OGEwNzc4NWMyMDRkYmE5MTJmNTBkZTJmNDczMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2ZDJiZDU4NDM0MTNmODQyMWI3Y2U5MWU4MWRiYTk2MzhkNzg5ZTk0N2Q2NWNmYTUxNjllYWQwN2I0OTE0MGUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.spec.ts#L580-L610",
+          "version": "repo-lines-v1:sha256:63ace9c7a2fcdcc2b35ee48dce2b67263aea4369d721b3ab93c4b454d432e974:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYWE0NDcwYzUwMGZlMTA5ZTJkYjEwNGU0N2I0MzlhZmM1ZmYyZTE1ZDUyMGNmNjNjZDVkMWM1ZjMyZDBkNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiM2NjY2MzZTVjODY3MGM3Y2JiNzU0YzYyMTQzNDI4NjJhZjY5ODQ2MjBjOWVlNDMwMWFjYmFmYTY3N2M0ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmY2QxYjk5MjEyNTllMzIzZDEzMzVjY2E2NTQ5Mzk1ZGY1ZDFiZjRmMjFhZmFjOTU2ZmJlOWVhMTJmZGMwYzcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts#L1425-L1450",
+          "version": "repo-lines-v1:sha256:85961a243664f3e4a86b76748df635a90e9d9d55335a1469100a80e35996f05d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMDg0ODNkYWM0MDExNTI4ZGZlNTAyYzhiZmE4Zjg2ZGY0NjY3ZGE2YjJmMmU0YTQ4ZDg2YTlmN2NkY2M3NTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiNjg0MjA5MjAzNTg0NDM5ZDQzZWUwYzM1Y2IwZDllOGEzYjAzNjYyM2I1MjU2MTQ1ODIwOTRlNjk4NjdkMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjODhjMmMxYjMwNjZhYzM1YWRjOWE2OGM1NDk1Y2RjYzM4MTc4MTE0ZTVjNGVmOWM0ZjYxNGY3YmQxZDRkNGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9defccf54ff47cbabcc71089ad76d95",
+      "statement": "The dependency-inversion batch creates, in one ordered patch, an evidence-kind capability role in the target confirmation's context, a rootless supporting Contract Context, provider and consumer Party Roles, a supporting Contract with roleRefs [provider, consumer] and a required signed_at, the consumer-asks/provider-confirms pair referencing that Contract, a references edge from the core confirmation to the socket and a plays_role edge from the supporting confirmation to the socket; createdIds follows that same order (socket, context, provider, consumer, contract, request, confirmation).",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L261-L311",
+          "version": "repo-lines-v1:sha256:9a83f0a01568562183a777ca3396e607ca4f5c9bebc3d2ea067de1fb02af48e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiZDg1NGEwZDRlZjk0MmNiNTJmNzVlYjFiNDZjYjhiZWJmYTE1ZTBlMDA1YThhODM2ODcyMzcyYjNmMWI3NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjM2NjODRiODhjNzY5YzRhYTdlMzYwYzAzMmY0Y2Q5OGNmZDUwYzI5OTMyOTdkYzViNGVjYmI5Njg0NzQ4YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlNGU4NjBiYzFkYTBjMGFmMjA5ZTkxMGJjNzEzMDBmYTIzZDYwZjQxZDg3YzcwYTE1ZGE3MWVmYWQ0NWIyZmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L380-L485",
+          "version": "repo-lines-v1:sha256:5580c47140a8977817fdb9c80a63b30ee733cfc33f1ebc4b993073e6fce69e3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjNDYzM2QxNjE3MTA0M2Q2Njk4MzhjYmZhNDhkMzY4NzM2ZGFiMjk1NDE3MGZhYjU2OGQyYzFiZjBmNGY4NGI3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0MWIwODczYzc5MzFlMmJmODI2MjNhOGQyMzhhNzFjODgzMDZlNTFlZjlhMTAzNWQxMmYwZjBiZWQ5YjZkYzFlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlZWEyY2EzMGFkOWIwY2NhMzRhNmIyYWZiYjg0YTY1ZmQ3NzQzYmRhNGU4YWExNzA4OWVmMjFjNWQ4YzlmMGVjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_449c2055ebb04fe08cfb8449eb9e6c0d",
+      "statement": "CreateContractCommand is what makes the inversion legal in one batch: it creates the Contract and binds it as the single root of its context in one undoable command, refusing a context that already declares rootRefs — so the supporting context the operator just created rootless is never left without exactly one root.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L76-L114",
+          "version": "repo-lines-v1:sha256:eb41392de1592d828d914de6e223557df734f1dd83dbca4a446dce8557bf8882:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2YWY3MTE1YWYyMDI0MGZiZWVjMDE0ZjIyOTYyNTY3OWRiYzU2NDRjMmU2NmM2MTgyMjcyMjM3YjEwYzZkYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwMGU2Zjk3MDZlYmIyYzI4ZmNiZDIwNGM1MTA0OWNmMWU5MmM0NzZhMmY2YmRhN2FiODBlMTM1OWU2NGRmZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3bb53aa02b5f42fab4218fe00e068c98",
+      "statement": "The inversion never edits the core Contract: its roleRefs stay the original parties while the provider Role exists in the supporting context, and the resulting document passes strictValidateDomainModel with no issues.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L312-L356",
+          "version": "repo-lines-v1:sha256:89fa15605e07ecec2f9c297acab5616831ca9100b908f7bdb2d163b554ed5ecc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyMjg3N2RlM2FlYWZlNWY4YTAwNzIzNzdhOGMyNjhkZjJhNjM5MTZjYTlmYjQ4MzhhOGExY2Q3YzZmNTMwYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkOGY4NDU5NGQxNDc2ZTUzNmUyODY4MDI0MzdlYzAyOGE0ZDM5M2I5OTE0Mjg2ZDNhMTljYzBkNTIyMjFiMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3YWI0MzgzMDhiMjk1NzAxYzM0ODc1ZDZlMDVhODJiZGIxMjhjNDI2Y2VlZTUwYzFkODM3NTkwNTE0YzQ5MmMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L476-L484",
+          "version": "repo-lines-v1:sha256:77c408f7085ec02c07002252ad5e809472947c34e226b834eaf9f76491adefb1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGE5Yjg2NGQ3MTY0MTIzODRjYmM2YzljZmM5Y2QxMGNmMzk0ZmFjZWVhM2NkZmQxYTY5Y2U1NmJhMGU3YTE0NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTdkY2E4NThjNmE5ZTUyNTc5NDUxZTgzMjU1ZDkxYzE4YWU2YmIyZjY5N2Q5OGQ4YWQ2ODQ0YmYwZjMxOThlNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTk4M2FjNWQ2YmQyZWQ5MzI3MDNiNTg1ODVjMDNmMDEyNWNiZTM4OTgxZDIzYWM5MzQ1YzI3YWY5ZmYyZmQ4NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a64cfad7eba44c67839c78942ad16724",
+      "statement": "isolateDomainCalculator creates (or reuses) a Domain Context whose rootRefs name the calculator, adds a participant/thing with domainRole calculator (default) or checker, adds the computed attribute only when the host lacks it, and then binds the derivation with default aliases calculator and host plus any extra bindings — returning createdIds in the order context, calculator, host attribute, rule.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L418-L500",
+          "version": "repo-lines-v1:sha256:50ee5a0d0ebf7c67ab94d7276e2624107ab42e4f7e288c0d86efe47c5e362398:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0ZTI5NTc5MTdlMTY2ZjgyZGU1NTc3MWRjNTMyOGFlYzFjY2ZmZmVmM2M0ZDRiNDM1ZTNjZjBhMzk3ODg3YWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmZjJkMGJmNDNiNDBmOTFhOWNjN2ViNDQ0NzQ2ZWU1YTM4ZDgzNDAzMzQ0NDdlZGYwMzM3ZTk2OTI1ZTdmNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlZGVkMGI1MTg3ZDA0OGEwZjNkMTg4MDcxNTFlNzNlM2YxYWI0ZGUwZDUyMTZlMjc4ZjI0OGQ5ODg2ZWZlZGYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L526-L636",
+          "version": "repo-lines-v1:sha256:97bf11b45759535ae5486207c85eab95e0a74f29cbffb0df375031d6a0d5a683:eyJzZWxlY3RlZExpbmVDb3VudCI6MTExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNDA1ZGI5ODFlNmQwNzkzMjliODg5ZTg2YTA5YzI3ZDRhMjYwNzllOGZkYzlhMDUxZmRkYmFjMmFmN2YzNDI4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0NTI4NTg5YTc5NGJhYTY5NzNkMzEzZmNlMjNjZWIxYTE3YzVjYjU5MjI2M2M0OWUyZmY3NjRjODE5NmUwOTlkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_84e88b24d83248c78b994fe03a04bd6d",
+      "statement": "isolateDomainCalculator refuses an unknown host, a Context host, a host attribute that already carries a derivedByRuleRef (telling the caller to release it with update-attribute first), a context id that exists but is not a Domain Context, and a calculator id that is already taken.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.spec.ts#L502-L545",
+          "version": "repo-lines-v1:sha256:a9ec9939f8100cf1ca47d2742e3acc84f449063b36262fedc266c82a15f88270:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMWYzNDg5ZGY1NDc0MDYxNWFiYjI3OTk0YzMzNWIzYThjMzA1YmQzNWM1MzU5NzIyMGNhNmQ2NzVjZTdiNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5ZjY0NjE2ZTI4ZDk0NTUzYTJhMjk5OWQyM2VkNDhiMTk1ZTFlNGNmZDM3MjA2MzhhNzU0Yjk2MjU4NmQ1ODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L530-L570",
+          "version": "repo-lines-v1:sha256:6a2612affb0cfc34164c99554ce320fa6f9a9a8eeb8d7e67616f29aeb5e91db0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTMwNTRlOTcyZGE4MjdmYmU3MTdmMTg2ODFmZTlmOWEyYWM2ZTlkZjYyMTAxYjQ0YmFmN2EyYWNjYmY1NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZTg1MjUzZjE0Y2M0NWViNDI1ODNhMzFmMDA5ZmI1ZGRkZDE0MjlkZTc4ODZkZWJhNjRiNDAwNTExMzQ3MzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1ZThiNzgzMGQxYzhiMDFjNjY4MjNlYzRhODMzM2FjMWNkNGNkNTE4MTA4NGU1OGM1MzFiYjQxZGQ0ZjA2YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyN2Q1M2U0N2JhNzgyZmYxZjkzNzE1Mjc1OWZiNjViYzlhMzM5NzU5YmEyNmUwM2ExMTc4NzIxYzBlZDcyY2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_af39e859018144af9050442053cb4382",
+      "statement": "BindDerivedRuleCommand enforces derivation symmetry in one command and one inverse: it creates the derivation rule with target { entityRef, attribute } and sets the attribute's derivedByRuleRef in the same step, refusing an attribute that is already derived (derivation.alreadyBound) or an entity without a Context (rule.context).",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L22-L72",
+          "version": "repo-lines-v1:sha256:3eaddd8fc28873b8be05a709a09287f8c88bc702272d3ea5a1fcd2d5143ef60a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NmM0YTM1ZjU4OWE3NDlkNDEzNWZlNTA2NGYyN2MwZjA1YmE1NTAzNmNmMGJjMWUzZWM2NDRkYTNmNzY4MDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViOWZiNDE4NWMxY2I0M2ZlNzczYTkzMDNkMDc4Y2U3N2ZlMjFhYThmYWI3ZWVhODZiM2U1Nzg0NWE5YTZhNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxZTg1YTU4ZDU1ODMwYzk3ZWRlZWNjYzg2NjhiN2FjMzEwMzQxZmE3MzU0NjhiNDJjMTIxZGM4NTZlY2I1MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NzYxZjY3MmZkOTc0ZDVmNTA1MmViZTA2NTIxYTk0MGI4NjgxNTBmNTg3ZTA1OTA0ZjE5NDhiY2QxMmU5OWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/commands/ruleCommands.ts#L60-L100",
+          "version": "repo-lines-v1:sha256:93c26ea8c9a79c663d0eed5bb6563a1857a029a49d499a10fcb7f8d8c074880d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0NTFlZTJlZGNlNDQ0YThlMjkwYTQwNDFjOGFiMGFiYTc0YjQ2MTAyZWRmNjg5Njg1M2M2ODZmOThiNjUwNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYjc5NWYyY2RkMTQyOGI1ODBlOTlmMTIwNzQ4Yzg0MjExN2I2YzdlZGNhMzMzZTU0ZTNkN2VhNWNiYjUyMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0YjA1ODkxNGI2NTAxM2M0MzFhODQ3YjY5NTZhZTI4ODAxODhjNTljMDQyZTY3NDJjYjU4Yzg4NDY5ZjNjN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjNzk1YmI1M2I3MDI0MTcyMWNhN2EwZGJkYTExZGQ5NDMyMGZmZDFlNTBjOTlkMmNjOGE0ODA1YTZlMzgwMjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4027c5d1a00b4ce389a05eb4e9678df0",
+      "statement": "createdIds is the builder's claim about the batch, not proof of commitment: it is merged into the success payload next to the patch result, and the batch only lands if every command passes, because dispatchAll applies the whole CommandSequence to the document and records one undo entry only after the whole sequence succeeds.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L114-L124",
+          "version": "repo-lines-v1:sha256:64ce3426873258db8c2e17c3701e39e542d0cb5cd5ef83e81bfec757c99864a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMGY1ZTE3ODRjOWFmOWM1ZTVlNDdhYzlmMDljZDM3YmU0NDg0ZDIzYzhkMmViM2NkNTUzN2JlMzQ1Y2JjMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0NTgyOGYzYmQ0OGVjNzYxMTlmM2Y2ZDUyYTgyYzY3YWVkODM0NGRiNjY5YjQxOWUwMGI5NzIwYWRkOWU5ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzNTBlYzFhMmNmMDc2NGRhMWZiMTFkNWI1MmU5M2RhNTgxZjFjNjQ0YWM0ZmI2NjU0OGVjM2UxZDA5OWNhMzEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L177-L199",
+          "version": "repo-lines-v1:sha256:b73e2d09dd6f7d374159d087b19ea807ef8950bc4caf02c75733ffc1063c79b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMDU1ZGVjN2NmMzNmNWVjYzUwZjhlNGZiMTk4MzQxOTY1MjNhZDQ0NDU3MGU1N2M3NTU2ZWE3NzQ1MTdlZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwY2RkYjVkMjA1NGU2MzI0OTczYTkwZjI1NDA4ZTIxZTNhNTYxNzE2Njk4NjgzODE3OWEzNGRlMzEzZjA4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3MTAxYWUyMjQ0MTdiZDRmYjY5MmViMmVkNmQ0M2E4YWY2OWY2OTkzODIyM2Y3MGU1MjEwNWUyMWIyZmY3ZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_03638886b2e84b43beaccdcc31646140",
+      "statement": "OPERATOR_PROMPT makes operator selection explicit policy: it maps each intent to one operator (pair, breach compensation, dependency inversion, domain calculator), sends every other edit through apply_model_patch, states that all operators use the same patch channel so they are not a shortcut around checks, and lists the misjudgments the operators exist to prevent, including substituting auto-close for a compensation path and packing two fulfillments into one pair.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/operators.ts#L12-L48",
+          "version": "repo-lines-v1:sha256:b12d2d9dc07f4bceb6a8a95b9e4d86ad18753815ba5d95e1a28bcfb45ea65e72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwY2U2MTY5NjJhM2JlNzQzNjg4MTZjMDc4NWU3ZmIxNjU4Y2FkNGJmN2JmNGU0NjM1MDcwN2I1OTkxZTE3OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3YjNhMjUxYTUyMWNkOTE4MTg4OGFlODE1NzgzMmNiZmU4Mjg1NmQ0MDNmZWZkZmUyMzhjYzQwYWJkZDgzNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1NTc5YmFlNjNiYmM0ZGMwYzBhM2MxMTI5ZWQwY2IwODE0ZjUyNWY1ZmMwZDA1MDdiZTM2OGU4ZTgzZTJiNWQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/prompts.spec.ts#L24-L46",
+          "version": "repo-lines-v1:sha256:82f3dc2a8b4a0e08a1b0b647118e3df408e118d7a0e3c3c1b36c9d0fce0922f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MjgwMWJiYTRhMDFiOTE3OTM4YzU1MThhOGY3MTYyZTllNmM1YmIxNzg4ZmYwZDMwNTMzYmNkMjAyYWU4NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMzk1YzZiODQ5OWFlNDkyZWY5ZjUzMTU3OWVkMmVkZGE3ZDQyOTI3MTYyMmY3ZGI0ODZlZjMxMzEyNTg4MWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d26e42bc5d8d4b1f955b315758f96634",
+      "statement": "The MCP operator tool schemas mirror the core intent shapes field by field but only constrain shape (non-empty ids, optional window, optional proof), and the handler casts the parsed input to the core intent type — reference existence, kind and Context legality are therefore decided by the operator builders and command guards, so a schema-valid call can still come back refused.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L261-L289",
+          "version": "repo-lines-v1:sha256:59bb9243c3fae8406f4fa75904fe508c31d95af5e752804dfcce96b1e46259ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyY2U2ZDg4OGJlYzFiOTJjYjhmYTBiYzdkMzA4NTUwNzk4OWEzZTQ4NTViY2M4ODAyOGJhYzk3ZTI4MjFiZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmOGUxYmI3N2IzYTI4MDUxMWRkYWVjZmNlZjBjODk3ZWI4OGUxY2RkOThhNTMxNGE2NGFlZDM4MjhjZGYwNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5YTI1YzNlZGMzYTAzNjM1MDQzOTNhOTkxODg3MDNhMDAyODFmYjcxNzI2NTMzNWJmYjIwMWQ1NTEyMzdhYWMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L66-L94",
+          "version": "repo-lines-v1:sha256:458be0a9fa0d616c3823e92c9a0b378b36c6de9e2e666b216f91391fbcdfb11f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjOWZjOGRmYTZjNzQ2MTc0ZTEzNGY1MWEzNjBlODM1ZTU5YWU0MTY3YjQ1Y2IwOTdhNzE0MmE5YmY1OWE4MjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwNGM4ZjI1MDU4ZGUwZjBhYjdhOWFjMzMzMGFlZTFmNGY2MTAyZWNmYmY4YzllZWFmZThiMDFhYzc0MTI1NmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhYjBmNjZiNDM2YWZhZmEwMGQ0ZTRmZmUyNTZjOTUzMmRlMWU2YTYwNzFlMjczYTJkZTZiZTVhMDZjNWZlNGIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}

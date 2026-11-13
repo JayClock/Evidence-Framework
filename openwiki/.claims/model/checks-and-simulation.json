@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5da9ee71171f0d0fa9f15e070d5167ebb5095baff2f02694844668cdaee1a978",
+  "pageVersion": "sha256:5f3b9d1140c468320867a98726bae6b7b9c74ae1bbeb430507dc8d1a7cf8591e",
   "claims": [
     {
       "id": "claim_4260686904514941808ef785c7ef5562",
-      "statement": "buildFmCheckReport is the single check entry point: it unions source issues, strict validation, traceability, validation-suite and timeline errors, optionally selects a scope, computes completeness and coverage gaps, re-reads the digest, and only then simulates scenarios.",
+      "statement": "buildFmCheckReport is the single check entry point shared by the CLI, the native sensor run and the desktop preview: it unions source, structural, lineage, suite and timeline findings, skips the timeline when sources failed to load, selects a scope only when the model validated, computes completeness gaps and coverage gaps, guards the digest, and simulates only when errors and gaps are empty and scenarios exist — a scope is not required for simulation to run.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L164-L296",
-          "version": "repo-lines-v1:sha256:f66458ddb11d29c5d23ec79fc7bc4e7cdcfa2abb0d33a93daa7e3965f9911780:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMGE4YWJjOGM0ZWY5NTg0Y2NkNWQyYmRmZTk2ODYyZTI5MGRjZmU4ZWM2NWIwNmViMzY4YzBkNTEzMmI3M2NiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3YjEzYjUwZmRiYTkxN2Y5NDFjZDlmNmFiZGEyOGM0NTBiZDgwNWVhMWY4NDNjMTI5MDA4MjEwNmY2ZTJkM2Q5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L172-L305",
+          "version": "repo-lines-v1:sha256:cb973c784b86c81bbdbfd5c435f1104c5b7b7f7661355acb818e3640f85fedae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMGE4YWJjOGM0ZWY5NTg0Y2NkNWQyYmRmZTk2ODYyZTI5MGRjZmU4ZWM2NWIwNmViMzY4YzBkNTEzMmI3M2NiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3YjEzYjUwZmRiYTkxN2Y5NDFjZDlmNmFiZGEyOGM0NTBiZDgwNWVhMWY4NDNjMTI5MDA4MjEwNmY2ZTJkM2Q5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
@@ -17,11 +17,11 @@
       "statement": "consistency is true only when the de-duplicated static error list is empty and the model digest did not change during the check; an input change is both reported as an error and reflected in inputChanged.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L188-L190",
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L196-L198",
           "version": "repo-lines-v1:sha256:98d5dca303639c8e7cdaed8bf7c2bf881e0618f819049f9bd7b5c001623a2c48:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDBmMDM0ODM4YThiYjcxN2M1MGE0MTlkNjUwYjA5ZmI5ZWEyNjcxYzU5ZjcyZjUzMWE4ZGZmMmM2OWMxY2RjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjgzNWYwMDZiYWYyMjI5YmFjMTBlM2RlODI2YTk3YmNkY2ZiYTVhMmM5ZjEwMmY0MGI2ZGMxMzhlMGIyNTBkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTNhZjlmYmU3YmM1ZDRkZTdiOTkzZjllZjJlZDNiZDIyZTEwNGNiYjE5MTU2ZjRiM2NmNmUyMWUyN2FjZmZjMyJ9"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L254-L256",
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L262-L264",
           "version": "repo-lines-v1:sha256:47acdf1e1ee3694a053326b276dc102263db0d20c26e4baee5d4b18f8161cf13:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTk1ODRiNDZlZDEwMzU0ZTdjNjdiMTEzODNiYjlhY2U4NGYyOWI4NmI0MTllZTYyZjZhMmYyNmNhNzdkNzNiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE0MDQyMTA0YzEwM2U1MTlhZmIxNWZiZmQzODUzNjYwZmNlZDA4Y2ZlMDNhMTkyMmZjNTAzYjIyYmFjNDJlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDhhNDk0ZTE1MWRmMzUwNTllNTQxZjg1NzE5YTUyMWM1NDUzMzBlMTBkYWJjODllYjRjZDJkNWMxMTNiNzE0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGRmYzYyNDhkYzQyYThiM2U4MTYyN2I2OTc3ZGQzOGU1YzMxNDcxMjA5OTQ2MDVkODMzMzhkMWUwNGFhYzY5YiJ9"
         }
       ]
@@ -31,7 +31,7 @@
       "statement": "complete is null when no scope was requested and otherwise true only with zero gaps and consistency; valid requires no errors and complete not false, and humanConfirmation is the literal 'not-asserted-by-machine'.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L254-L280",
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L262-L288",
           "version": "repo-lines-v1:sha256:c151e285dedee526fa8d4d3ad60a8c9ae9b723ed17b3708015482633b252ffff:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5NTg0YjQ2ZWQxMDM1NGU3YzY3YjExMzgzYmI5YWNlODRmMjliODZiNDE5ZWU2MmY2YTJmMjZjYTc3ZDczYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxM2VkYzRkNDgyN2FhNzFiOGUxNGU2NmQ0Njg4NzM0YjQ2ZDRiNDlkMDA3OWExZjk2OTRlZTVkNTcwMjk0ZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4YTQ5NGUxNTFkZjM1MDU5ZTU0MWY4NTcxOWE1MjFjNTQ1MzMwZTEwZGFiYzg5ZWI0Y2QyZDVjMTEzYjcxNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3Y2JmZDAwMzFjM2I3NGU0ZDFlMTEwZDZjNjkxNzYxYTgwOGM1NjBiYzYzYmMwZTlmNGJmOGE3Zjc2YjA3YTEifQ"
         }
       ]
@@ -85,40 +85,40 @@
       "statement": "Scenarios become required when the scoped model has an applicable rule or any fulfillment request, and coverage gaps are added for no executable scenario, an unevaluated applicable rule, or a request whose status no scenario asserts; simulation runs only when errors and gaps are both empty.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L112-L160",
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L120-L168",
           "version": "repo-lines-v1:sha256:1e6325fbd55dd001aa556fba124e2f7928f53b1bd09b9c2d6ae4af503acaa88d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzOTFlNjM4YjMzM2NjMGU4MmU3NTQ0Zjg3MzRjYzUyNTM0YzgxOWJiOTk2MjZhODI5MzJjNzYwYWZjYjdkMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZDFjYzMzZDI4OGExNmJiNGY4NDY5MWM3YjY5ZGUwMzg4MmU4NGY0ZDEzOThkMzM4ZmQ3MDk3ZmMzYjIwM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMTNiNTBmZGJhOTE3Zjk0MWNkOWY2YWJkYTI4YzQ1MGJkODA1ZWExZjg0M2MxMjkwMDgyMTA2ZjZlMmQzZDkifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L205-L252",
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L213-L260",
           "version": "repo-lines-v1:sha256:20fd7949dfd7397c650b5791d040c6f95a450efe60e5f7d8fb3b44d81f6bc533:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyNWMyMzVlZDU5ZmI1OGYwMDcwMDAwOWYzYTE1ZTViNzY4YmYwMmVlYTQyZjZmMGRhM2YyODljY2YxZDQwZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMDM5NDQ5OWJiMTEwNzQwY2JhODFhZTNkMTAxYzUyOTg1OTNkN2RlZDYxYjVkNzYxMjEzZmFjMGFkZmM3ZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3NzViNjgyNWI0ZWUwYWVhYmJiYTAzZWNjNmE0ZjVlMjY3MWY4YzcwNmZlNDQ0M2VhMzI3ZWEwYTU4MDJhMWMifQ"
         }
       ]
     },
     {
       "id": "claim_935c40cda3174925a5402f4d27f149b2",
-      "statement": "Simulation is deterministic: asOf and now always come from the scenario, JSON values are converted to the CEL type implied by their declared valueType, and a derivation writes its result back but reports a conflict instead of overwriting an asserted different value.",
+      "statement": "Simulation is deterministic: an activation is built from the scenario's bindings with JSON values converted to the CEL type implied by their declared valueType, asOf and now come from the scenario timestamp rather than the machine clock, and a derivation writes its result back but reports a conflict instead of overwriting an asserted different value.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L153-L205",
-          "version": "repo-lines-v1:sha256:e57ea33eaf3efc8f6cd65f2f220181fb2a450c560d4c937786e5a65a1b556f1b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2MzgyZDNiNTQyNDk4MDNmOGM0NDIwMmIwNGU1NjcyZjVmYmIwMTdhMzU1YTQyYTc2ZTM4YTVlMTM1OTcwYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2MTRiMDczN2MxNWNjYTE5OTAyZmUyY2UyMWY5Y2VlNmZhZDJhZWJmYzhmM2FkNzU1OTkxN2UyNWYyMzJlM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxNmZkNWFlODkyYzliZjJkYzQ5M2RmNWExMjNiZjYwYjcwMGVhMzUzMzg4NGJhMmI5ZmY1MTZmMmI5ZmQ2ZjMifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/ruleActivation.ts#L78-L135",
+          "version": "repo-lines-v1:sha256:fd5272b9fe526cfe7a67ae710b461366f80a7fb2de676c71534ac2e1a18ed169:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjM2QzNjNiNjhmNzM5NmFhNDU5YzgyMTFkNmM4MjgwZDU1YzBmMDkzYTM4N2M4MzNiMTU3N2Y2MDM5ZmMwOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2ODQ0ODFmNmU2NDFmMzNkYWVkNGU4Y2Y4MDY2ODhjNWQ4MGJiODU2ODdlM2JjNDJmYWJlMzEwYjY2OTNjODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxZTVhY2Y3YWU0OTM3NTY1NzQyMjkwZWMxYmExZTAyNmZjYjk2MDY1OGRlZjA2NjkxZmRlNDk0YWM5NDdlOGEifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L419-L456",
-          "version": "repo-lines-v1:sha256:beaff3d80d89cc07d670a82bf8eb7c5637f0c6faeeebbcfd22737173eeefe25f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODIxMTg5YmExOWZjOGYxYzlkODc0MGQxZDQ0Mjc4OTkxY2U5N2ExZjU3OTliM2VkNGE2Yjk2MDkwYWY4MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmN2E2M2M1ZWNjNmE0ZmU0OGEzYzQ3MWM5NGQ3MzA2OTY1MzNhYjZlNTYwMGU0MWNmMTcxMGFiZWUyZDMyMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YTk4ZjI3NTc5ODczN2VhNTUzMWJmZDhhNWRiMjRhMGM3NmQ0NmZmYzBhMjU5MzVlMmQ0YjI1ODg3ZDM0NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWU4MTZmMDlmOWI2YTJhMjQ4N2QzNTllOTAzOWE1ZjVhZTMwYzY2N2E2ODQ5YTgyMzRjYzA5MjRmZTkwZDgifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L101-L130",
+          "version": "repo-lines-v1:sha256:9964530c0ff92b7883b8aabb70d8087388e6f76b315db9630ad62db94babd1de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODIxMTg5YmExOWZjOGYxYzlkODc0MGQxZDQ0Mjc4OTkxY2U5N2ExZjU3OTliM2VkNGE2Yjk2MDkwYWY4MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YTk4ZjI3NTc5ODczN2VhNTUzMWJmZDhhNWRiMjRhMGM3NmQ0NmZmYzBhMjU5MzVlMmQ0YjI1ODg3ZDM0NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyOGFiM2ExNzhmOGM2YzdmMmRlY2I2M2Y3YzhkNTY3ODU5NDNiZDBkZTVhNzk3NTI4ZjE1NGY1NDY3YzAxNGQifQ"
         }
       ]
     },
     {
       "id": "claim_e5f32e03cc6e482eb9a22ce782104040",
-      "statement": "Fulfillment status is derived from the issued graph: an unissued request is not_requested, a true breach rule yields breached, a completion rule counts only with a related issued confirmation, a manual completion yields completed, and otherwise the status is pending; all required attributes must have values after derivations.",
+      "statement": "Fulfillment status is derived from the issued graph by one function that the end-of-scenario verdict and every replay frame share: an unissued instance or a non-request entity is not_requested, a declared manual completion yields completed, a scoped true breach rule wins over completion, a completion rule counts only when a related confirmation was actually issued, and otherwise the status is pending; simulation additionally requires every required attribute of an issued instance to hold a value after derivations.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L279-L380",
-          "version": "repo-lines-v1:sha256:a3a686fa22f42a23f39e6eb3503819cb54da78a2ea0cf96a1ebcb4af7499cdc4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjNjQ1NTJlOTRlMzllZDE3YjIyZDA0NTRiMzI5ZjRkNzQ5ZWU1Njc0ZWI1YzQ5MjBiY2EzMzkxNmJmYWVhYWVjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzMzU2Y2E1ZjBlYmY0NmIwZGY1MjU2M2FkNDAyODI2YWY4NjIxZTdmNzVhMzE2ODA4NjIwYmU2NmI2ZTBlNmJjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwODk4NmUxYzkxNmRlMzdlYjRkNTM2NjljZjY0NzgwMjdhYjQ2YWYxNmZhMDEwZWNkZDJlZjNlMTk3NDQ5NDA1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1NjE0MzUyZDEzMTRhOTZhN2EzNTIyMjc1YzUwMjA5ZWQ2MTE4ODUyZjc5Mzg3YTU1OTBhODBjZTkxNDM3NGMwIn0"
+          "resource": "repo://libs/evidence-model-core/src/validation/fulfillmentState.ts#L96-L195",
+          "version": "repo-lines-v1:sha256:ff97fcd7d6c1598fb775a2d5cab7ec3f0c2169532946116f1cd6a940fe8aa1e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzYzVlYzgzOGU4NzVjMDk3Y2YyY2U0ZTg4ZWI1YzU4NjI2ZjRmZWNiYjI2YjdiMmZhZmU0ODFkMTNlNWIyZWJlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwODk4NmUxYzkxNmRlMzdlYjRkNTM2NjljZjY0NzgwMjdhYjQ2YWYxNmZhMDEwZWNkZDJlZjNlMTk3NDQ5NDA1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L520-L560",
-          "version": "repo-lines-v1:sha256:370ec593728a65628d80dc4d6588229649f32fc6078d8eef7f62a3e14f25bdd1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiOTQ0ODEyNjFjYTY1NTIwN2UyZDRlYjE3ZDUzZGYzOGJlNTFjNWMwMWJlMzMzY2UyYWJjZDBkMzI3NWNmY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OGE1NTdjNjlkNzdmOWE4N2UxNTExYjMzNjA2MTZhYjM3MDgyZjRmZGJjNzI2ZjMxMTU3ZDc3ZThhMTY5YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZjE3ODkwNDNjMDY0ZmE3YzNkZWM2OTFiMzkyMjAzMDQ2YmM3OTEzOTUzNjcyM2ZjY2Y2YTZhOTU0NzI4YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4MmIxMTRiZjdhMDRlOWNjMjk0MTA3MTM0NGQzODNlOWYwNDBlMjQ3ZTVmNTA4ZTZmM2E5OTM3MmIxNGEzOGUifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L235-L250",
+          "version": "repo-lines-v1:sha256:0e2357f8cd93ac05e77c81abcfa101ef91b0fbfe93c06e5d99e4e2b79e5132bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjOGRlMWZmNDg5MzU5NTIxODgwNTE5OTM3MDlhOTg2Yjk4ODZiMWI3ODExYjQzOTY4YmQyOTBlYzZiNzVlYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMGZjOWU2N2RiMDdlZDIzOWJiM2FkMjMxMmVhYWI5YTcwZTFmNmZiYTAxMjg4YjBiYTZlNjFkN2Y4ZWU3ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhY2MwNTk2OTE2OGZhNjYzNWU2MGNiNjQ2MDViMmUyNGFiZjNhYWJkOTA0MjRlZGZhZjVmZTgyNzI5ZDdjYWQifQ"
         }
       ]
     },
@@ -127,26 +127,26 @@
       "statement": "A validation suite that fails static validation executes no scenario and reports machineValidated false, because running scenarios on an inconsistent suite would prove nothing.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L631-L675",
+          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L313-L357",
           "version": "repo-lines-v1:sha256:b94d7e866d6666918b9d4b45dd019b6decdb40fad0e4b405219dd8338a2df48a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YTJiOGQ2ZThjZDJjOTAxODdiMDdmYzI0NWVjNDEyZDY2OTE3NzBkYzcxODhlMjUwNmQzMzQ5MjllMzBjOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyYWEwNGY4MDY4NmU1YTllNDI3NDIwN2Q2M2IyYThiNDVmZGQ1Y2M3ZDg0MGZkNTU0Y2RhYWZhM2RhNWFlY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_6d879758beb3467581eb2f5feb02239f",
-      "statement": "Timeline order comes from basedOn, not timestamps; an interval starting after it expires, a basis cycle and a basis formed after its dependent are errors, unordered pairs are reported in unresolvedOrder, and the canonical timeline digest plus counts form timelineSummary.",
+      "statement": "Timeline order comes from basedOn, not timestamps; an interval starting after it expires, a basis cycle and a basis formed after its dependent are errors, unordered pairs are reported in unresolvedOrder, and the canonical timeline digest plus five counts form timelineSummary.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L166-L345",
-          "version": "repo-lines-v1:sha256:80b1e451d30f0fadb148aa52afa80228bf2d075edb2046757e41a1f91b3b375e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNmEyZTMwMjZmNWNlMWQ1ODUxODI3OTljYjhjMzkwMjE2YTcwZTFjN2RhYmY1OWNhNWUzMjM0MjYwNTEzMDIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNGRiNzQwYzk4ZmMzMWJkYTA4YTdkYjVjZjAzMjc3YzljNjVkMTNkNTJjN2IwMTE2NTY5NTVmMjhiYTBmOGE5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZjgxNWEzZDI2MjIyOTkzYzA2Zjk5MDJiNzdlY2M0ZTRkY2MxMzZiMjdkNWM4ZGViYWRjNzZkNTkwYjM3NzQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwYzE5YjUwY2JkNjQ5YzVlODBjZjgxNTg5MzA1MWU2NmVlMDZiN2I0MDJiNGY0N2ExOTM5N2ZiOTljMzY2MWUyIn0"
+          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L170-L336",
+          "version": "repo-lines-v1:sha256:890adc464859bfdd4b8ed4bf1521d5d9992da9afa9ed366195d9e4b54e3bd176:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNmEyZTMwMjZmNWNlMWQ1ODUxODI3OTljYjhjMzkwMjE2YTcwZTFjN2RhYmY1OWNhNWUzMjM0MjYwNTEzMDIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MmEyY2IyNWExMjJiNDQyMjFhNjIzNGVjNjYwYTdiNWZiN2Y5YmRlN2IzYjllMmIzYzU1OWEwZDk2ZmFjNzM5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZjgxNWEzZDI2MjIyOTkzYzA2Zjk5MDJiNzdlY2M0ZTRkY2MxMzZiMjdkNWM4ZGViYWRjNzZkNTkwYjM3NzQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4ODhmNGM5M2IyY2ZjNDBhMjgwNGEyY2JjNjY0NWI4OTEwNjA2YzU4OTQ5NDI1ZDI4M2NmN2QwZmU0YWYyNTExIn0"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L351-L358",
-          "version": "repo-lines-v1:sha256:5493f655588ac7476248acbc1b1b22302bfb46486b6832ad98092c4c2184e287:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWRlNzFhM2YzNjhjOGNjNmI2MmRkNGRmMWJmNDkxMjUwN2E0NWQ5MmZmZGE0MGI2YWRlYjZlMDBiODk2MDA0MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTM4NGM0NzkyZTkwNTAxMWUzNDExMzQwODIzMWY0NjRjOTQ4ZThmNzE2YWNmMWIyZmQ0N2I1MDI3OGMyZDQ4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L340-L362",
+          "version": "repo-lines-v1:sha256:b08d74b3d05a719ff897bb37a55394f703d72b7fc4b856469cf4e0c9b55eb1bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlYzBhY2RhYTE4MWU3NTQ1YjhmOWJhNzgyODQxMTY3MGVjOTNmMmZkY2E4NTQ5YTU1MWMzMjJmYjRiMGE0YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OGY0YzkzYjJjZmM0MGEyODA0YTJjYmM2NjQ1Yjg5MTA2MDZjNTg5NDk0MjVkMjgzY2Y3ZDBmZTRhZjI1MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L84-L110",
-          "version": "repo-lines-v1:sha256:87e7f8fb08a2780ceae15b8943c9041b0a33f684ad03c5425f57a96d58a664d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzYWYwYWY3MjM3YjA1MTYxZGUzZmJjY2ZiMTNiZTFkOTkwMTllOGMzNTI5Mjc2Y2RiNmI0Y2M2NmE1MWYzYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MjhmOWMwNjk4ZmM1YmNlY2M5ZTI4NTgxM2QyMjUwOGIyMzJkYzM3YmY4NjcyZWUyZDIxNDY1ZTY1MzMxYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljM2Q2YzI1Y2RjMjdkZjMyZWRiYzcyZWFjOTIwMzgwN2YxZjA5NzNmNTM4NGQ5Y2QzMmUzMjIwZDg0YmNiNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhOTJhMDJjNGI5MDYzMDQzY2VhOGIzYzczMTlhNTFiZDBkMGFlZjUyMWQ3YmQyMmI3MGMyNjIxOTY2MDQ3NTAifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L84-L112",
+          "version": "repo-lines-v1:sha256:cca28a2591dd15a0861c27c9a5e46b426585586c12d2e94f6ca2f037d6b30cd0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzYWYwYWY3MjM3YjA1MTYxZGUzZmJjY2ZiMTNiZTFkOTkwMTllOGMzNTI5Mjc2Y2RiNmI0Y2M2NmE1MWYzYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljM2Q2YzI1Y2RjMjdkZjMyZWRiYzcyZWFjOTIwMzgwN2YxZjA5NzNmNTM4NGQ5Y2QzMmUzMjIwZDg0YmNiNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MzEyNzJhMGExY2VmYmZiMzJmMmE2Yjk0NjZiM2Q5NDIwOWE2MTQyYTQzZjE3NWVkZmNkNTEyNWRlNDY4MjMifQ"
         }
       ]
     },
@@ -165,14 +165,196 @@
       "statement": "evidence-model check runs the same report as the app, accepts repeated --scope and --json, prints consistency, completeness, scenario counts and the digest, exits 1 when the report is not valid, and refuses a bundle with a hint to unpack it first.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/cli.ts#L376-L422",
+          "resource": "repo://libs/evidence-model-core/src/cli.ts#L385-L431",
           "version": "repo-lines-v1:sha256:42b757081d638763a428b2e22543cfd04134af7d597058dc12a27bbb01bac484:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZTNjZmQ2ODU1YjQ4MWIyNmFjYWQwMzAzMGFmMjE4YmVhZTY5NzhmYjE2NDY2ZmQxZmE2ODIzZDE0MDlkODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2Y2U0YjFkYzBjYjVkYjdlZDk2ZTc5M2UwZDlkNmFjOTUzNWIzYmUxMWQyYzZjYzk0ODQ2MjBmM2UxN2UyYzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzMmNlNTU2MDFhM2E3MjNlZDUwN2VhMjk2YTgwMThlYjdkNTA5MTgxZGE2MjY4NDVkNWQ0NTIwMjEwMTMyOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMjJkOTg1ZWY3NGZlOWU1ZDE1YzZkYjA4YzA5OTU3Y2E0ZjVhMmJkNmUxY2M4YWYzZGU5Zjg0MzE2ZjE1NGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e056c2f1c8bc432cb661d97ce0c7fbbc",
+      "statement": "The report keeps modelValidated, consistent and valid apart: modelValidated counts only source, structural and lineage problems; a failed scenario leaves consistent true while valid becomes false; and completeness gaps stop simulation so simulationPassed stays null without invalidating a scope-less report.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.spec.ts#L158-L171",
+          "version": "repo-lines-v1:sha256:483edf61fadb016ee842334d5008e988be7e1796f063263a5fe3eb904f8dc27f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiYzM5OWY4OGMyMThlY2I5YmU2YWZmMGZhNGM4MTYzNzQ0OGRhMjBmYzUwYjhiMDAzNDViZmY1MTY3ZmIyNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwNDY0NDI4YjFlY2IwNTYzMGUyOGUxODIzMTkxNmQxYzcxNzQxYjJiNDM5YTQ3NTg0ODBmZmJiOTcyZjUwOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YmM3Mzg4NTM5ZGZjOTAwMzMyODUwM2MwYzNkMzZkY2UwYzc0MDk2OGZlZWJmZDFiNzU3NjFjMzRhZmQwZmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L242-L275",
+          "version": "repo-lines-v1:sha256:c79fb330e5410dc4471602283251c86b79b9afc8061531e1bb6a0ef545b48c77:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MTI0M2EyOWU4ZWIyN2IyYjViZWU1Zjg1NDNmZDAyZTc1ZjNlZDhmMjJjODI2YjQ0ZDBkZmMyOTEwMjgwZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMDkwZjAxMDU1ODRkNzc0MjYyNmYxZTI4YTExMjNkYmYzNjM3NzM2YjM2OTJjNWE4NzBjNTA2NWE2ZGZjZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjZDAwZTY0YzI4YTlmYWJmN2RjNDgxNjUyZWVjYmI5YmNlMTYwNjcyZTM0ZGU0ODQ0ODk1ZjlmODMyZmY3NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiMzNhYjliNzUyOTFlZjBhYjY5ZmFhYTQ5YTRhNjlhYzg4ODcxODYyNjljY2QwNGVmNjJhNGNjODI4ZWI1MjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6bbb3b2dd8214fd380414ee04abf4ab3",
+      "statement": "The report's timelineSummary counts and digests empty collections whenever the check ends with any error, even when the timeline itself was built successfully, so a failing report never shows a partial lane summary.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L267-L272",
+          "version": "repo-lines-v1:sha256:79d4377b417ac8869b42a0f141d89f0d49a0ec2d09f4b31d24ae0516de3fa933:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTc5NjEyY2Y4ZjNjNGI1MmNkNDZhMmI2NTExYjdmN2ExMjA1YzkxNWVhNDZmZjc4MzFjZjQ5YTNjOTIzZWIzNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdmNmEyZTlkNmY1ZWFhZGEwMGNkMDMwODg3N2VmMDZmOTAzNzllOWQ5OWU1N2E5ZWIyMWY5MTEzNmU0ZWFlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWFlYjcyNmNkMmZkNzZiNDlhOWYyNTgzMGY0MzViYTIwNDM0OTk3YmQ1MTQyZjhkMDhjNTE3YWI5MTgwN2E4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODE3YThmYWM3N2QwMWViMjkxMzk3ZGQyMDc5ZmUyMmI2YjEyY2FjNmI2N2EwNjU0Zjk5NWIxOTYxYzAzZTllMSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L340-L362",
+          "version": "repo-lines-v1:sha256:b08d74b3d05a719ff897bb37a55394f703d72b7fc4b856469cf4e0c9b55eb1bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlYzBhY2RhYTE4MWU3NTQ1YjhmOWJhNzgyODQxMTY3MGVjOTNmMmZkY2E4NTQ5YTU1MWMzMjJmYjRiMGE0YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OGY0YzkzYjJjZmM0MGEyODA0YTJjYmM2NjQ1Yjg5MTA2MDZjNTg5NDk0MjVkMjgzY2Y3ZDBmZTRhZjI1MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_50bc5d213cec4c11aaa356176291ede6",
+      "statement": "The input-changed guard compares the digest of the bytes the caller parsed with a currentDigest callback evaluated at the end of the pipeline; a mismatch appends 'Model inputs changed during validation' and forces inputChanged, consistent and valid false, and the desktop's debounced sensor run skips that second read on purpose.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L257-L261",
+          "version": "repo-lines-v1:sha256:e61e9722ec8bb76f6ee7a7de9f447439176261c7f2fda7f413bba3ee2001a765:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTA2OTkwOTQ5ZDI5YmVjOWY5YWFmMGE4MmNkYjNlZDU4MWVmNWU4MjcwNzRjOGRhODNkNWM5ZDI5N2U4MTBjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDdhY2RmMWUxZWUzNjk0YTA1MzMyNmIyNzZkYzEwMjI2M2RiMGQyMGMyNmU0YmFlZTVkNGIxOGY4MTYxY2YxMyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L83-L95",
+          "version": "repo-lines-v1:sha256:550f7c24c2b4ec52e7c271faa29cb0114c88664239cc103779facb601e7961fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmODI1YzcwYTgzMzc4YjQ4MjY3MTM0Y2EwMjkyYzc1NmZhYmI0Y2UzZTRlMGNiM2NlZjllMTFiMTE3MjNlZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4Yzc3N2QyODEwMTJjNWZhM2EzZGNkMmMwYjc1OWFhYmZmZDNmZDY1NDhhYzJlMWE3ZTFlMGJkNjY1NTNjZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkMjczNGRmYzY4ZmQ4M2M3ODM0MzI4N2U1OWQ3OTQ4MWJjZTE4ZmVhMTFkYTRlM2M1OGI3MzE1Y2M5YTQ1ZGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L89-L124",
+          "version": "repo-lines-v1:sha256:d8cc46e9e9f1dd8ad57d4dba4462055167ad75ab59b9625a8511c3e205fb305d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMDcxNzBhZGY0YTViMDcyM2I1ZjVmNTU1ZmRjMDUyNDFhZjM4ZGI0NmY1Zjc4N2MzNDk0YTcyMzI4NzRjNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYmRjNzYyY2RlZTRjYWIzNWQxYjQ3MzhjNTMwOWY4OWZhYjhjNjMxM2Q5MDhhYWI4ZWQ2Y2YxNTVlNzk4YTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljNzdkMjM5NTVlODcwZjEyOTdhMjllMTA2MmVjOGRkNmY3NWUyNTBiOTcyOTZkZmQ0MGEzYTQ4NzBlOWYwYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4ODY0ZDFjOThiMmYyYWYwMWM1NWYyMWNlMjNhNWI5MmM4OGRhMjkyNjE4M2I4YTFhYmY5ODFiODcwY2Q3MjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_45cbe3bb36d740e69e011ba433d27dd7",
+      "statement": "replayValidationSuite gives each scenario an opening plus one frame per declared step in sequence order, and each frame carries the acting role, the issued instance and its context and evidence kind, the business time it carries, its basis and visible refs, the derivations it introduced, the checkpoints it decided, the fulfillment states of every issued request, and the post-derivation values; evaluations settle at the first frame whose inputs are all issued rather than all landing on the last frame.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L157-L246",
+          "version": "repo-lines-v1:sha256:d3d85dce48445cdcf464cf033ff7ccc043ed6b997c44ab2ff660827f410ec22b:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4YmUxODQ5MDIyZmQ4ZDMzN2RkZTllYTIwZTUwY2E4MmM2ZTg3ZTQzYTE1ZTQyZTM5NGIwZjBhMDBkM2I3MTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNGJjNmM1ZDE0NGViYzE4YWY4M2FlMzU2YTI5ODYzYWVjNmM3MjhhOWJjN2JiYjAxMTU4OGI2MjM0YTg5OTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4NjJlYWYyZmJlNDQ4YzRmYmFjOTVmN2EyZGFhODlhZDJmYmI5ZWE0MjIxOWZlY2IzMDUxZDU4MWFiY2Q1MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NmUzMTIwZWE0MjUzZDllOGRlMTc0MDI2NTk1ZDYyMjkyNmVkMjVkNjJlNTU1MDcyODg2MWEyMTU0ZjY0NjAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L279-L395",
+          "version": "repo-lines-v1:sha256:388d5f5a12bd182cf79882996a03589e3f0588a7b742a30eca50c9279010f787:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZThhOThmMzFhY2MyZmY4OThlMjc0ODA3OTdlZWIzYWY2MWYzNDdkMmU4YWUxZTk5MjkxMDNhZmIzMGNhODMwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MTQ2MzZiYmUwMGEyZDgwODM2ZDFmZTIxYzM4MTc3MDA5YTUzZmRmNjk2NmExOTgyYmMxYjMyYzQyMWRkMjJmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiNDQ4NmQ1NDRiNWQ5MGMxMTJkNmU3MDhjZTM5NDU2OTY0MTEwZjkzNTZjMDEzODdjNmM3NmI3NjU3NmJhMTA4In0"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L37-L100",
+          "version": "repo-lines-v1:sha256:decfdb0c34e8a55f7676d1ee01fbd217bb6016687f6f9ed1a4c68cbddc4f5b52:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExMjQ0MzUxODZjMDdmNzgwZjU3Mjg4ZjI1NTEzY2RjYjQ2ZTdkZDA5M2EwOTA1NjJkMGY4YWJkNmZmMDZhZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzZjI3ODIxNWYwOGQ4M2E3MjU0Yjg2OGZmZjEzMjlmMjRhN2ViOWJjNWVjMGRlZTBjNTA5OTg3ZDQ5NDI0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiMGI3MjlhODg0OGUzODczMzMyYWUzODJkNzNiMTIwMzkzYzViNWUyMzcwOWFmMzhkOTg4YTBlOWEwYmIxY2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2640bbf4a90c48b38f4de18c63567d95",
+      "statement": "A replay refuses rather than guesses: a suite that fails validation produces no frames and the suite errors, an unknown scenario id fails the whole replay report, a scenario that issues the same instance twice reports an undefined frame order, and replaying twice on the same sources yields byte-identical frames.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.spec.ts#L143-L181",
+          "version": "repo-lines-v1:sha256:646f698a32b1ed86a122307d7deb1acc62343e65272cd4bbcb573278925df4d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YmE4YzUyYmFhOWMwOGE1YzViMjgyNzViOTFlMzVkNDAxYWFlN2EyMWVlMmRkYjBhNzE2M2E2NGIxM2Q1OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNTBhNjI1MjE1YzVkYzZmYzE4OGM1ODdhOWZmZTcxM2YxOWY2Mjg5MDVmMTZjMWJjODJhNDhjMzNmYzIxMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L286-L312",
+          "version": "repo-lines-v1:sha256:b42644a905253cf5d04a2908f9883f39ad4d70986887cce4c60162db8f0bbea3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2Y2EwNjkwZGU3OGFhMzQ2MjdhODFmMDkxZmMzMWJhMmFkMjZmODI3NTU2MDMyMDYzYzEyYjBlNGY3N2EwZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNmZlNTAyODJkYjM4ZTIwNGQ4NDdhOWFjYmU2MjQ4MTIwNDU1ZDUzMGE0ZGQ5YWFjOTJjZWU0NjVmMmQxNTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkYjZlMjRlNjM5Y2I0MGMzZjcwOGU3ZDk4NWJhOGNiM2MwYjA1N2JiNWUxZWIzNzQ0YmU0YTU1ZDU4ZGVmMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3ZTcxM2M2MGI5MzRkZmVkNjhlZDhjOGY5OWQyYWVhYmQ4OWRlMzg1ZDAwMGM5YjY0NDIxNGRjMzVjMWIzZTIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L402-L453",
+          "version": "repo-lines-v1:sha256:e84e3d40ac728cbcf11667973ecb7a0e3e1ebcff13437380250f462ad4a49518:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzNTI4NjhlNTU2ODNlNjQ1ODY0ZTM4NWFmNTJmYmU3NGQwNzY1ZGU1ZTE5NjhlMzhjZDcwMDM1MmEzNjUxZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhNWM0MTliZWJkY2YzZGQ2MTg2ZGE5ZGM0NGViMThiMmJkOWU0MGI0MDE2OWY1YTVkMmY1NTQxMzNlMDc4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2NzcxZDljYjQ5ZmEzM2U4ZTM3ZjkxOGI4Y2Q0ZDVjNDIxMGQ0ZTllY2Y2NDg5NTE0YmE0N2I0YjVlZmE0MjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c1f16ce639d4975ab761707039a97c1",
+      "statement": "The desktop simulation sandbox and the MCP run_scenario_replay tool both consume frames produced by replayValidationSuite over the saved sources: the main process computes the replay and the renderer only moves a cursor, while the agent-facing projection keeps sequence, acting role, instance, entity, business time, derivations, checkpoints and fulfillment statuses for the scenario that was named.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L100-L130",
+          "version": "repo-lines-v1:sha256:4aa973c369d8b6d304d9f79ccd8761830530ee88230bf07466ae6c27cee33d73:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzZmE0MDRkNGUxMGM5ZDBhNDBjZjZiYzNiZWQ2NDY0Mjc4MzczOTgzOTA5ZTUwZWZiNTRiZThjNDlmZjM5YTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3MzI5ZWQwNjY4NTBiYTUyMDRmZDMxNDRmY2Y1NDljMjMwZjEzNjA0NzdjM2QwOTcwOTIwMjE0YTFmODdjM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhOWE3Njc1YjIyNjRkYWQ0NDkwM2YxYTlkMDFjYzgxYmI3NGJkNTBlN2VmNjJjMWVhYjlhZTM5OTcwY2ZmZWQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L33-L53",
+          "version": "repo-lines-v1:sha256:b4f53797a9993006d428776332ef1d2ef13a0f75ba9e5805e88ee40d6cb15c29:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmYzU0M2RhZWFiMWNlNjM2YTEyMmFlYjNmNDg0ZGIyMDFjZGU3MTNiOWUzMTRlZDgxZGZlZGYxMGQ2YzUxNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3ZmI3YjVmMzQxNjRjOTg1ZjE3ZTI2NmFhMzQyMzEzODNmMTQxZGE3ZGFhZDM0MTk4ZGU2M2Y2YWIzODc0MTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5YjIyOGZiZjFkNzM5MGQ3OWJiOTgxNzQ5NTQ1OTA1Nzg1NTM1OTU4NmFhNTIyMWJlYjI3YjVmZWM4NGM4MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNmQ4MmFjOTYxZTQyNzk0YzQxZjM3OTlhYTFhZDg4M2YxYzE4N2M0MThmZjU2NDQxNGY3YmIyMzk3MDMzNzEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/simulationIpc.ts#L86-L100",
+          "version": "repo-lines-v1:sha256:6b5de119f1faf07cde22b1afe036ea640e0bf6a96333eccd2f1e4db15bfffe3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzdkMmYwMzFlOThiNWU5MTFjNWFkNGZiOWIyMTg2YTkzMjUyMmU4ZjQ2ZWU0MGJhYmZhZTNkYTAwZmMxMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyNjAxN2QyNGQzMzk5NDhkYmFiNzE3MWYxMzUxMzgzYzYyZjA3ZTJjYzU3YWJjNjUzZDhhZjgyOGU5MjljOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fba61489882b4bc0bef97d6140ae6dfc",
+      "statement": "Simulation and replay share the runtime state helpers — buildActivation, requiredInstanceRefs and fulfillmentStatusOf — so a value or status cannot be computed one way when a scenario is judged and another way when it is played back.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L157-L215",
+          "version": "repo-lines-v1:sha256:9935b797740692ed7bfc52fd2c55c7b3478b4b330da6181923a5a187e3a5124a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4YmUxODQ5MDIyZmQ4ZDMzN2RkZTllYTIwZTUwY2E4MmM2ZTg3ZTQzYTE1ZTQyZTM5NGIwZjBhMDBkM2I3MTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0MmNhOTBmYjYzODY3MTFlNDAwZTM2ZmYwODc4NTg3MzM5ZTUwNzUzOGEwMDA0ZmI2ZDA4MTA2MjBmZjU5ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4NjJlYWYyZmJlNDQ4YzRmYmFjOTVmN2EyZGFhODlhZDJmYmI5ZWE0MjIxOWZlY2IzMDUxZDU4MWFiY2Q1MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2NmM4YmU0MTUyZjZiN2UxMGExZjI2M2E4ZmYzODlhMjljMjYzM2ZkZmY0ZTkyYzRiOWY2MWYyMzI5MmM2ZDkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/ruleActivation.ts#L17-L22",
+          "version": "repo-lines-v1:sha256:26f31b4c0d28d69771c34463899746a92da5f30cc3069df9efb912b419016b6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBiZjcwZWQwM2I0YTU1OGM1MmJhNmFjNjcxYWI5NjQzN2ExNTk2ZDM5OWFlZDgxN2U2ZjhlOGM1OTQ5NmRhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTRlNjczNTk2MTUwYjNjM2I0ODk0Y2RiMjY0YjRhODhiMGU2NTQ0ODkyNjE5YmM5YTYxZWQ4MDVmZWM2OThkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTMwNzljODU2ZWRlZGE4MTk4YmFiMWUyYTViNTlmZTllZjNjZWRmNmIyYzRjOTMxNmM4YjI0N2EzNDZhNGZhOCJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L150-L180",
+          "version": "repo-lines-v1:sha256:889f860420d2de7143b1be93855d9776f77b0b67908d99ec064a18a6567e9d60:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwNjNhMTU1ZTkxZDFlNTNhYWIzMWQwYTkxYWNkMDUwOWJmM2E0ZGY2MjMwNjIzYzcwZGZlZGZiOGQ0YzVmNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczYzM3ZDQwZWJiMDI4MWI2ZTAyMzg2NWMxYTA4YjM0M2M0OTk1NTU5MWI3OGViMDU5OGIxODIzNTNjOGM0OTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczNTQzMDMzNzkxMTIyNDIxMzM0NWUzOTkyODk4MDY2MjQwYWE1Y2FjODBjM2E5ODkwOTg1ODgwNjYzYjMyMTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_082513056456420b9b96654c2f1e72a7",
+      "statement": "Advisories are ModelAdvisory values with the single code ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC, computed on every check for role.domain and domain participant.thing labels that name the work instead of the actor, each carrying a rename suggestion; they never enter errors or gaps and never change consistent, complete or valid.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L288-L300",
+          "version": "repo-lines-v1:sha256:880ff4e46f00e6cd416155ca238921f12824aee6b036fac1220ebd03206d6876:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxM2VkYzRkNDgyN2FhNzFiOGUxNGU2NmQ0Njg4NzM0YjQ2ZDRiNDlkMDA3OWExZjk2OTRlZTVkNTcwMjk0ZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Njk1OGRkY2U3NGNkY2VlNWY3NTg1ODljZGY4MGViYjg4M2QzY2M4MjBiNTkxNjViZWQ5M2ZiMjlkNDFlODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4M2I2MGFmY2FmNWFiMmUzNzY5OThhNGNlNzFhM2Y1YzM0YmE0MjllZDgwZmYwNjlhYzg3NTAxM2IyYWI3NGIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L70-L79",
+          "version": "repo-lines-v1:sha256:e84ac2d850c570bd0a16919d7143392d261f60bf13844d2c070c564e15c8c876:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyNjgzMmQ2ZmFmNmYzMzc2ODBhNWIyYzA4MzhkNTRkMWJiZDBiMDA4NTg0NjdmOWQ2MzU3MDU0Mzg1ZGU4YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlNzExMjdmN2Y1ZjE3MTdiOTZlN2U5NzY5MGE3ZDE4MWE1MDcyMzdmY2FkMTg4NDBiYmIwOTM0MDIyYTkyMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdmNzU1NWRlYzk3NDkxMTNkODU5YWVmNTYxYzJjNDM4YTY3ZDUyYmJhOWE3ZWQ5NjAyZjQ4NGIyNjhjOTE5MjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4Yzc3N2QyODEwMTJjNWZhM2EzZGNkMmMwYjc1OWFhYmZmZDNmZDY1NDhhYzJlMWE3ZTFlMGJkNjY1NTNjZGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/lintRules.ts#L14-L142",
+          "version": "repo-lines-v1:sha256:6a61f0af7c096651a2fea278f73483ca8d1cef0dd68d641df3e469ca35afba0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMTE1OGNmOTY2MWY1OTM3YWM1YWQ4YjU5ZjFlYTAzYzI5NzI3YWE0NzJiOGJlMWNjNzg0ODQzYTllMWFiM2QxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZGY2Yjg4OWQ3NTM5YmQ1MGNiNDA1MWFkNDBkMzgwMzg1MDIwYmRlNmI1NDhjMWQzZTAxNzZiNTA2NzJlYjIxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_354ec89f4e1b4d5e8e9e204cc287a3e4",
+      "statement": "The sensor report converts each advisory into exactly one warn finding whose code is the advisory code and whose targetNodeId is the advised entity, and the desktop diagnostic index attaches that finding to the object and keeps the highest severity per object, so naming advice shows on its object without blocking anything.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/diagnosticIndex.ts#L15-L52",
+          "version": "repo-lines-v1:sha256:250dae142b04fe4d349680f8bc5375c819d8354274bdfef83a30013c3104503b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhZTdhY2M0ZGM3YTBkNmI3ODFhMTdiZDYyOWU1OWU3MjllZTM5MTc4ODczZWE1MmVkN2QwYWEyOTM2Njg5NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1NWZkMTliNzM1MjQ1OGQ0MDg4ZWI0ZWUyZTIzZmZjMDJlOGJiNDViOTE2NzhiZjI5MzZhOTVhMWQyNTRhMDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZDAxZDgyOWMyNzg5NDRhZDI1OTI1ZTZmZTk3NGFmZmI5M2ExZTA3ODZhODZhMWVmZTRhNTNhZmNmYWYyNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyY2U1YWJmNWMzOGNjMDVmZTllYmY3Y2U3MTUwNDE1Y2ZkN2Y1MDUzNGU3YmNhNDdhZDc5NGVlMTc1YjVkZjMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L55-L80",
+          "version": "repo-lines-v1:sha256:5abec17cfc5926db617804a380f20531767b97888873376dd1369876fec30a16:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZmQzNWQyNzRlZjdhMzk4NzFjNGIzZTE4NmRjNzBkYmU2Y2M1YjE4ZGQ2NGYyNmZjMDJmMTU3NjBiYWE2ZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYWFjZmU0ZWRmMGIwNTkwZDY5ZjQ1YTAyYzgwNWQ1N2I1Y2I5MDYxNjhhOTA3MWRhNjk4NjgyYWViOWNhYmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NGYxM2FlZWIwYTdjNDc1MDMyZGY0MWVmNzg4ZDUxMzk1ZTg1NDJkY2VkNDRkZGM4ODgyY2ZmZTdmOTJiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4ZWM0ZjJkMjY1ZTFjM2ZmMWZhZTM3YzYyNDBiYzg5MzM5NzQ3ZjhjZWYxZmI4YTRmMDk0OThlZDk3NTg0YzYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L195-L248",
+          "version": "repo-lines-v1:sha256:c91952933521829236aed0f2cbddc1a9aa3b7c379e28ee38e1fece99218ac824:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiMmFkNzc2YTgzYWFkZmU1ZWY1Y2YzMjAyYzY3YmRlOTExN2VlZmQ1N2UxZTcxZjAxNzViMWExNGI4MTNkODYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eaa4fc971ef348d2a36b2efb965d511e",
+      "statement": "analyzeTraceability produces the deterministic lineage document (key-data, derived and accessed attribute nodes, derivation edges, per-rule constraints) together with the blocking lineage errors — unknown or mismatched attribute reads, a many binding used without a CEL macro, misdeclared derivations, key derivations without modeled inputs, cycles and duplicate attribute names — and the sensor run returns that same document beside the report so the key data audit does not compute lineage twice.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L392-L573",
+          "version": "repo-lines-v1:sha256:7cbefcc7e4703e4512c9f8f2a3d9c50525a2f96e9f5dad14b20c169a20da7da9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMjMxZTAwNDMwZTYyOTRiNTQxNjVhOTAwMTQwOTc2ZjIzMGQ5ZjdmYjczODZhODNmNzQ5NTdmOGRlYTViYzVlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZmZhODZjZmQ3ZmMxYmJjNWU1NWMxZDEyODNkZWViZWQxZDU0NzljOGQ4NDBhMzIzNDM4MzZhMzRkMmEzYWE1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L105-L132",
+          "version": "repo-lines-v1:sha256:12e0604109c5f92abaa30bdfe283b9b6cd17ca4a0915e001d6221c2bc4b4a8d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1OWU3ZWZmMzFiNGE3NDA5ZTJiNzFjNGMzNzhhMTRhZTkzYzE3NWVlNmFkNGEyZGI1YWRlZGIwYWIwNmFlMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjZGU0NzhmOTliNzViMDZkODY0ZjU0ZTBkMDViMDIyY2RkNDQ0ODU5NmFjNTlkYTFhMzlmYzliYTgwZjRjOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eddc04244d37409991b6023bee59ee32",
+      "statement": "readyScope and the in-repo stage gate both consume a version 5 report but check different field sets: readyScope also requires executedScenarioCount to equal scenarioCount when scenarios are required, while the stage gate checks version, consistency, completeness, validity, freshness, empty errors and gaps, and scope coverage only, so a consumer that needs executed scenarios must demand them itself.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L624-L690",
+          "version": "repo-lines-v1:sha256:f9493a116103f4bfb4e13567348f237239ec85da8ce44246192927c7fefc1215:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1N2ZiMDA0ZWFlZTdkMGRkNjEyOTQ2YzNmZjk5Y2ZkMzdjOGMwNDBjNDAyMzliZmE0YjI4MjhiYzlmOGZlMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyZjVmMGUwNTZlNDljMjFiYTE3MmJlNThjYzJiNTg2MjJlNDNiMTI4YzI5Y2Q4OTMwOGMxYzcwM2M3N2M0OGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L36-L110",
+          "version": "repo-lines-v1:sha256:4794cefe98c23e661ebee719f71dd6f0a6ad62435895cf8df0455cd7c9134a7f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NjgyNWNlMzAzZTEzOTJiNjIyNjBiYjk0YmQ5MGJhMTM4MmU3YTllZDk2NjhlMzk4OTdlODZlYjlmYzdiZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYTM4ZDcyMzc3ODNkZDhjYjQ3YzAzMGRmNWM5MjkyODA2MGNiNzNiZjc3MjZhZTJiNmUzNGZhNTdjNTI4MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlOThiMjBmNzgwZDE5MDlkOGFjY2ViY2QzOTdhY2NjM2IzZDQ2NTJiZWYwMzkwZmFkMWM2Y2FiY2U4N2RlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3YTUzNzhiMDQyZWVmZGI1MWU5NDg2NjBmMDYyNDM0ZjFhNjhkZTM4OTNmNWVhOTZjMzIwMTgzYzNjMTA1YzIifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

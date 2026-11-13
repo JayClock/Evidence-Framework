@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:725b02b18b74017275d05390bcc11f3d6184dea1a84bd5a576f0f07ee34f09b6",
+  "claims": [
+    {
+      "id": "claim_430b059122b84ae5848ab9d763db1659",
+      "statement": "The desktop delivery hand-off answers both delivery IPC calls by projecting the saved model on disk: registerDeliveryIpc normalizes a folder-or-bundle project root with modelSourceOf(projectDirectoryOf(rootPath)) and calls readDelivery, so preview and export describe what a colleague receives rather than the unsaved canvas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L27-L33",
+          "version": "repo-lines-v1:sha256:cc2ba961fa931016f5095dc3be7a9334018b7b8954deb0f4eef2ec800bca5526:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTNhYTBhZmE5NDRmMDcxYTkyYzNlZmJlMzc5YWU5ZmEzZTEyMjE4MTU2ZWMxNDZkYzM5ODVkZmVjNzY0M2U1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjRhOWIwMzZiYjMyYWY2ZTUzN2VmZGRhZThiYTNjOGJlNDdhNDM4MzYzZTgyMTVjYWQwNTFiMzgxMjVkMGZiMCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L82-L97",
+          "version": "repo-lines-v1:sha256:e9a708b07f160fa255b6148cf36032880a995a2d33bc2c4959a4602ad24f241a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmNDM0NmJlNDRjNTc2YmFkZDYxOGIyMmE1M2E4Y2U0NDMyM2ZhOWU1ODA1MTIwZWFmYWI2NGRhNjcyN2VkYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllNTVjYzkxYjZiMGI0YmM0MWEwMGI2MzU5NWE3YWQwY2FkMWI5YmQ1MTk0NmZlZjBkMTRmYjMxYjA2OTkwNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNDk3NzJlZmM4MTI3NDFjYTM2N2IxZWY4MDE0NjI1MGM5ZWNlY2RjOTc0YjRhYmQyZmNkNzMzZTA4MmI2YzQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L14-L20",
+          "version": "repo-lines-v1:sha256:179803cc7eca5423d50970d5c7d7156ac737a29657e7765efc77d1a83839b77c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzZjMzBjZDJhMmM0MTI5ZjZkYWQ2NmEzNTMzOTg2ZGE1MjEyYjZjYjkxMTlkM2E5OWYwMjNlMmE2YzAwOTliOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzEyMjZhZDEzZTZmNjc3ZTA2MGI3NmQ4NmQxYzk0Y2Q1NjY3YTU5ODUzNDQ5OWE5Yzc0ZGIzMWJhMDE4YjcxNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_24a72f5ae63f4d038186c2854b14f69f",
+      "statement": "readDelivery is the single projection step behind preview, export and the MCP reads: it runs loadFm, throws the joined loader diagnostics when no index is produced, runs buildProjection, throws the joined diagnostics when any error is present, and returns the projection as the DeliveryBundle — passing no design overlay, no FM check report, and skipping validateProjection.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L100-L113",
+          "version": "repo-lines-v1:sha256:efc0cf2e9d5500c4bb6e69dfdefb564698aa79451017dde951f91ded0784ad53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxNGFjMTk1MzhjMDA2NTU0NTA2NjFhYWUyMTg1Mzc5Njc1YTM0MGZmYTA2OGQ2ZWJlYjMwMjFhN2M3YTU0YzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxZDRkZTFkYTRmZmZmZjU1NmM3OTQwZjNlOGQxNzk1MjBjODNjZGQ5MWM1M2M4NjJmYTkwNWNkYmVmOTJjZTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f51971847f447958289cecbc57d8d0d",
+      "statement": "previewOf reduces the bundle to model identity, services carrying supplies, consumes, notes and a routeCount counted from bundle.routes per serviceId, links, routes and limitations, so a service with no route appears with a route count of 0 instead of being dropped from the panel.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L58-L98",
+          "version": "repo-lines-v1:sha256:398fc30867922c63cedb7121e16a7265b1e09ce7d7c7f9ce80dad5cd37ca58cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMTYyM2IwOWMxMmExNGQxNTFkMzZmNDg5NDE3ZDlmMmEwNWVjNjU1MDU4YmIyZjkzZGUyMjZiOWRhYzhkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjYTZmMzZjNzlkYTI0MTI1Y2M3Njg2ODQxYTdjZDhiMzdkZWE2YjJhYjhhYmQ2NjQxN2NmOTAxYjM1NTM4ZjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88b7e7c61a9b40ce8971f70b4729f7b3",
+      "statement": "A model that cannot be projected yields the deliveryPreview error union rather than a throw across IPC; the hook stores the error and leaves preview null, and the panel's export button is disabled while preview is null, so a failed read produces an explanation instead of an empty panel.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L88-L95",
+          "version": "repo-lines-v1:sha256:e2c84cfe2742eb0b135846acd988e4d273c8bcb9bb439f0ed7f2d244aa82c419:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjlhN2U2NTA0NzRhZWY0ZTlmODUwMjQwZjkzODMzOTA3M2IxZGM5NDE1ODY5MjQ2YzlhYzk2ZDc4N2RkNjRkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTM5MzQyY2VkNDNhN2NjNzZmZmY2MWJhZjYzNmI2MTFiMWYxNmNjNDU1Yjg0NGY3ZDhkMWJkYzA0YTRiOTc5OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTMwYzU4YTkxNzA1YWE4NjNlN2ZkMjM5MmRkYTRkY2FjMzRiNDA4NDRmNDY3ODFkY2M5YjYzZWVhMzdmZGMyZSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/delivery/DeliveryHub.tsx#L53-L62",
+          "version": "repo-lines-v1:sha256:1cdc1273f07a37e023d08f1f76150a9270c8ed72b0ea1008d48a61ee173d4ab3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwNzJhMDQ0NTE0OTQ1NzM4NWE4MjQwZTMwMWI5MDc4NDU5NjcyY2FjNTM2Nzc5OTllYmUwOTI1ZGM1NDE2YWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxNjM3OGMxZDJkNTYzYjdiOTA1ODg1MWRhMDY5ZmZmZmM5YWQ4YTUwY2ZiNWRiZTYyYWZhNTJlYTA4ZTYyOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMTUwOTgwYjg2M2M0MWNhNTllYTZkNWQyYjNlZTllZjVmOGI4MTUyOTcyNWI4MjU1YjljYzQ4Nzg2MzIwMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwOGY3NzgyMmNhNGUzZmJmZjRiODk2MzQ1NWY5ZTRhOTFkNzY2YTEyNGVlY2FjNWE1Zjc3MDFhNmU1OTZiYzYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.ts#L60-L95",
+          "version": "repo-lines-v1:sha256:77d6fbb821822e587c1386a380a3ee3b43ecc383fcef12513ffc373424148829:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzY2QwMjA1NTk3YjNkMzVmODhkNTlkNWIwZTNjYTgwYjFjMGFlMWZlYzliMTZiM2ZhMjdmZTUzZWVmNzExZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZGIzODg3MTUxZTA0ZmY5YWFlODUzYmQ2MThjNjQxYTkwYjlkYmUzNmQyOTJhZGU4YzU0ODgxNWNlZGI5ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwNzllZmQ4YTQyZTIxMmEwODBhYjYyZjcxMjQ5MTY5ODA1NDJiNjYwNzE4M2E5NjFjYjQwZGUzYjliODNhZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_84021d61074e4cdfa87cb6405c24df70",
+      "statement": "exportDelivery projects the bundle before it opens the directory picker, suggests suggestedDeliveryDirectory(projectDirectoryOf(rootPath)) which is the folder 'delivery' beside the project, returns { status: 'cancelled' } without writing when the picker is dismissed, and otherwise returns saved with the chosen directory, the written file names, serviceCount and routeCount, or failed with the thrown message.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L99-L131",
+          "version": "repo-lines-v1:sha256:e39003c8d35b517c754b894767f4cc4828cb134e7bdb0eb522985c81de14406b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L115-L117",
+          "version": "repo-lines-v1:sha256:89e0bd9696519b14f1717ab22420cf83b1b658000febcc5c069e8d8245536f49:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDhhNWVkNWFiZTM4MmU1ZmEwMWEzNmMyYzhhY2I4OGMxYmUxYjYwYzk4MDZhMzgwY2M1OGMwYmFlODA2MjVhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmFhNTU4NmU4YzgyNDY0NTE2MWM3MTNiYTdjZGI5NzM1MjZhYzVmYTQzZmQ0MDAyNTA0MWVhMzQ0M2U2OWE5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJmMjE4YjhkOGRiMDBiMDc2NmJlMTE4YTMwMjQ5MmMwMTdlNjNmOTdmMmE5YzMyNjA3NmUxMGVjZmYyNmZkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/projects.ts#L136-L146",
+          "version": "repo-lines-v1:sha256:334aa97bf755185d08f5a46d7725d561fa33164898aa958fd92ea701bbe72ecc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNGM1YTBhYjQxZmM4ZjIwNGQwZjY3YmE2YmNjMzMyYTRhNmU5MjAxYTYwZjk0NTI1OGUwMDIwZjA5YzFmOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2MTJmNzY5Yzk0ZjQxMTI2NjkyMTViYWZjMWRiNWRjOGE5Njk4NWFlZTM3OTg5YWQ2NGU1MzY2MjMwOTcyNGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5NTRiNGQ4M2NkOTEyYTI5ODY1ZjIwNTQ2ZjU2MTk5NTk0NzAzZjc0MWY4NDRmYzAxZjdhYmJmOGFmYzc3ZGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e0711ef5a8e84d2b8f193adba09abd1a",
+      "statement": "The desktop export writes with mkdir recursive followed by one writeFile per file, so it has no staging directory or rollback (a write that fails midway leaves the files already written even though the result is failed), produces no manifest.json, and does not restrict the destination to the project the way the CLI restricts --out.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L47-L56",
+          "version": "repo-lines-v1:sha256:93e07c625c6e729cda73c965a09abaafd05a6b0f73cda9513d6efde65c3081ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMDAzNjIxNDQ3MTc4MGU3MDZlN2ZjZmM1NjU1YTIwMDZmYTQzZjlmNjg0NjkxZmU3YjllYmM3MTM1YTA5NjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhZjA0Yzc2YTZlNmNlNTgyMzMwMDQ4YWM4NDdlNTE4ZDExMmE2NjFkOWNhODYxOGZlMTM0YmYwOWFlYzMxOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MTk0NDRkZTU5ZTJiMWQ4YTk5MDQ1OTI1YWEyNTNmYTRkYTEyZDdhY2FlZWM5MWY1MTgyMDJjODJlMTA2NmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_564936d2dade4adeba20bb47138a9a68",
+      "statement": "deliveryFilesOf serializes one projection into openapi.json, topology.json, routes.json, deployment.compose.json, projection.json and http-journeys.json, and appends a prose limitations.md only when bundle.limitations is non-empty, so the written tree cannot drift from the document it was built from.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L18-L62",
+          "version": "repo-lines-v1:sha256:b1a51663888a5d73839cfa80d1f53799736c99fe4bdfaf52ca8722bca0ee3f87:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3OWUwODRlOTQ2ZGNkYmUwYjdmOWNiYzBiNmQ2Yzc2NjAzYjJmMWNkM2JmMDViOTNmOTIxMDc4NDBhY2E0NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhMWYxOTBmMTBmNmY0ZDVkNjM1ZTBhZGRjYTY0OTFhMjdmNzNlMzJkZWQ2YTcxMDA1NDcwZGU4NzhkYzMyOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1265152bdfe4f13af1798b188496436",
+      "statement": "http-journeys.json is written as { runtimeValidated: false, journeys, hypermedia } to state that no runtime validation has been performed against the navigation graph.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L37-L44",
+          "version": "repo-lines-v1:sha256:256f3308cb575b35aafed390d526b32f8683d669e1052c52bda48ec97e922e04:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjljYTg5MWJmZjdhYzFmN2NlYWFlNDBlZjA1MTA2NmJlOWVmZTQ3YjRlNDI4MWU4NmMzMTliZTJjNTVlYmNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDkxNDA2Y2YyOTlmNTM0MDgwMDE1NjNlOWU1NTIxZjZhYzM2YWRmMTdmZjZiOWM5YzFmNTc2ZTBhMmNmOTIzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGQxZDE1Y2IyMjBiOGRjMzdjMjVhMmVlM2VkZjhiMzE2NTA5MzdiZDRlYThjMmQ5OTQ5YWRiOTMzOTNjMjgyZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_15a0cc1be7bf4a3f8b99a1bfdf1e0e05",
+      "statement": "The CLI's deliver and project verbs are aliases that share path validation, load, projection, renderOutputs and writeOutput; their output directory defaults to <root>/.evidence/api/generated, must stay inside the project root and must not overlap the model, overlay or check report (OUTPUT_OUTSIDE_PROJECT, OUTPUT_INPUT_CONFLICT).",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L104-L112",
+          "version": "repo-lines-v1:sha256:d5d7f22419d88078967abbd5bde2dbb178f4aa97829f88164d852822350d035a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Q0NzJhYWVmMDE0YjU3MjE0NmE2NTBkNGI4OGI1ZjFlYmRiNzgzNGMxMWEzOGVkMGNlMmVlN2RlYzhlOTkwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY4ZGQ0MTIzMGM1N2QzOGMxM2QyNmIxMGIwNzE3MDEyYzI2ZWIyYTY0OTg0MjYzNzEwMGFjN2NmZDBiNDg1YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2ViNjY5NzViZjQ5ODgzMWEzZTdiYTNjZjZkOTJiZmUwNzJjNjU1NDQxZDAyNGRjYWE1OTU2MzA3ZmE0YWNiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU4ZTY3MDM4OGE4ZTUxMjJlZGM3NzA5MTdhYjIwNjU0OTM5MWU0YjVhZDY0NjI2YWZjNWNhMTlkOWRmZTU5MiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L337-L362",
+          "version": "repo-lines-v1:sha256:8dd0edc6fc4f1090cfeb60ab79dc9d248b01391f5989253349c92e09bba64980:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYmQ3MzhjOTU2YTE0ZGZjZmJlMWZkMjJkYWEyNTcwZDYzMzdiYzk2ZjE0MjY4OTBhZjUxN2RlNjE2YTcyMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6bc8f73b9d364f4183fe71cefb2b3a48",
+      "statement": "The CLI adds to the desktop file set: optional --fm-check and --api inputs, validateProjection against the projection schema, a manifest.json carrying input and per-output digests, and an all-or-nothing write that stages a sibling directory and renames it into place, restoring the previous tree on failure.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L300-L362",
+          "version": "repo-lines-v1:sha256:93c0fd4a1aadcace05bad49eba75f2ad47a4cd94cef468c28df1caa56758060f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxZDBkZTA3NjgyMWVmODM1ZDMyZDIyMTQzMTU4MTBjOGRjYmNhNjgyZTRlOWZkMGI3NzQyZmRiNWM5MWJjYmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts#L122-L175",
+          "version": "repo-lines-v1:sha256:77feb68609c272007ff775009cdeccb8d984fc63075abb88c6afa3dd0714b30b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMmE3MTJlYmU4ZmI0ZGI4NjcyYTdhOTYyYmNmOTg1MjI5NzY5N2Y1YjE1YzM1NTIyOTMyNDg2Y2U5YjdhYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzMzgzYTNiYWQ1ZWMwYTcxYjg3OTcyY2VlYzYwOGEwOWE3MmM5YmM5NjgzZTUwYWJjNGViOTU1MWQ5ZmQ4ODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyNGFmNGFiNjhkNzQ1ZTdjYTlkZjFlMzFiNWI4N2Q3YjBlMDEwNDlkYjU0OTU5NGNjYjY0MTVkNzc4MmU0YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts#L41-L90",
+          "version": "repo-lines-v1:sha256:eaf32066145204aba22a81698851de8aaea30ae841ed9cc90d139c47815dd117:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNGM0ZjliZDc0NjJlNDIyZmRiZDA0NjI2ZWY1NDc2YTAxMzdhZTg3ZWMyNzQ1MjA0NDhhZDdhMjgyY2RlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzZmNlYWU1MGU0ZDc2ZTE1MTJiZjcwMmJmMzdhMTRiM2RmMjE0MzQ4YjU3Y2FiZTE4ODc0MjUyZDg0YzNjNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyN2NjNDk5YWQwZDJkM2ZmYmQwOTE5NzM4NTA3ZWIyMmY5NjY2ZGQwOGY2MGJhZTU4ZWIzMDY1ZTY5MjNlMTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_53c98908df9740db9b643e853e83bb65",
+      "statement": "CLI delivery writing is gated on errors and not on gaps: a draft with only gap diagnostics is still written and exits 3, an error writes nothing and exits 1, and a clean run exits 0.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/cli.ts#L326-L362",
+          "version": "repo-lines-v1:sha256:1615b6c8ae9bb74581b0e66d714373c6b49d600e55903dc20156ec0a187a58ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NTljNDljOGY3MGNjNDgzMGMzMmMwYmIwNWQ3ZDQ5MjFlMWRkMDUyOGQ0MGQ1Nzc1NjlmMjQzOGFhM2U0OWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxZTcxMGYwNTZjNWQwNWVhODI0YzExNmFiMGIwZDAwN2VhZmJlNDQxODk3NDI3ODlhMGQ5ODg5OGEzZDM3Y2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_09867844fbfd44ce8f3bc844d9e819bf",
+      "statement": "createMcpDeliveryService projects the saved sources through the same readDelivery the hub uses and deliberately writes nothing, so a contract an agent intends to deploy lands in the caller's repository rather than the modeler's project.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L10-L17",
+          "version": "repo-lines-v1:sha256:8f978bfe6fd3732262847ef54166798380de8fa9ffb38525a605e037a35a03f4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGIxMWU0ZWM1OWE5ODljYzFhMzIyNzhiNmRiY2ExZjJmNjFmZDk4NjkwYWMyOTc3Mjc1MzMzNDk0NGE3NTRiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2ZmMzE4ZjI5ODZmNDU5OGVjNzI3MTcyNjFmZTk3MDJlZGE3ZWFhMjYxNGJmMjAzY2YwMzAyMzU4Y2JhNjI5MSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L55-L75",
+          "version": "repo-lines-v1:sha256:29581ca9ff2c53b24f84125feb77c3d526520ad876b32289741f3d4cd4c33048:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlMjFmZjY1MmU5MGYxZjBhNjNhMzEyZTIwMTlkZGNmZmEzZjVjODYxMWMxOWRmNzU2MjI5ZDczMTVjYjE1MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_00264844c1d94377b3a44a262ca5be98",
+      "statement": "The MCP delivery service reduces the bundle lossily: topology() returns model identity, services with supplies/consumes/routeCount, links reduced to from/to/kind/mode/label, and limitations; openapi() returns model id and version, pathCount taken from the key count of bundle.openapi.paths, the OpenAPI document, and limitations.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L24-L53",
+          "version": "repo-lines-v1:sha256:493b38caf9ce9e7f4a1706be6095a8decedd6add32bc3b2178366624d3aac0a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZTVjYmU4OWM1YjQwNTQ2NTdkMTllY2JjY2U4YTNiMjJlZjVkMzY5MDAyMmEwNWRiM2Y4NDZlOTA1Y2M2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlOThlMTczNzYzODNlNzEwZWJhOThkMjM0NTlhYTAyYWM3MzU2Y2FjNmVkMjA0ZjVlMDAwZmE5ZGI3OGE4MGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYzY3NjcwYjkzNjg3YjEyYjY1NDJkNWM5Y2IyNDdiOGNhMDY1MTQ4ZTM3MzVjMDYwMjkzYzRhNzM1Y2FkOTcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L61-L74",
+          "version": "repo-lines-v1:sha256:3f61f17a3fe850d18e86f1564033b2a0333dc3bccb7397b7409f795dc61d5b2d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NWFmOTMyNTk1MTVkZTU5MTI4YjM2NjYzZGEwYTNmNDJmZjM1YWI5NGFkZjlhOGM4NzlkN2NlZmNhZDY2NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58a24dc9bc03486bb8b7138cb5fb134a",
+      "statement": "get_delivery_topology and export_openapi_contract are served by the main-process delivery service in createMcpRequestHandler after the active project root is resolved through the renderer's get_app_state, so they fail with NO_ACTIVE_PROJECT before touching the filesystem when no project is open.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L96-L106",
+          "version": "repo-lines-v1:sha256:c48fa0dba37134a8d0605933f0a0e8cf41930db1aed6862977527951d83d0158:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmNDAyNWM0NDNkMmY4Yjg4MjA5YzhlNjg2NGUzMjMwMDE4NWJhMDg4OGFjNmViMGFlMTU5NGFmMzM0YzM3YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4MTg5M2Q1NDc5NWMwNmI3ZmUyMmJjMjZlNmRiZjk2ZDc1Mzc4YjVmYTJiOTQ5YzdhMWQ0NDlkYTQxOGYyYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3YzQzODdmNzMzZTk3M2NiNTRmNjZkOGQ3Y2RlMWQzOTJmNTBiNjA4N2NiOTEzZjI2MTk5NDEzYjRiODcwNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MzhmODY4ODNjNGMwMGI2ODQxNGIyYmM5MGFmZWE5YjcwNWJmODg4YjRiNjU1MTgzYzJmOWQzODUxMTM2MjYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L105-L110",
+          "version": "repo-lines-v1:sha256:2b90deab57843719632d4204b81210a49e8df16c72e0c218e7264357a4d05556:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFhZTk0ZmFhOWE3NWU3NThjM2U5ODM0MjQwMjU4MDcyZTQwNzRkNDhlYTliMmQ5MGY5MDE5NjM0NGFhNDljYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjFkYTI4NTUzYWRiYjQyNjU0MzRjMDk5MTg4ZmJhODJmNTk3NTczNzMwMjNiYzhjNjQxMDBjYjNkNmU5N2MwNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTZlYjlhMzFhNDQ4MWEwMWMwZTlhOGRlZmE1YjgxOTNjMGEyYmE1ZjdmYTFlYzJiYjlmZjU5MGFkMThiYjk3MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWIyMjBjYzgwYjQwYjM0YjBiYzE5ODhkMDM3YzgzZGVjNDFhNTAzYTY3ZWVkMGVjZTkxYmMzZDYzZjk1ZDczYyJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L58-L72",
+          "version": "repo-lines-v1:sha256:b1dac4eab9cdb5da070174e96d3bd04f2dda5d9e6d4b99ffc489b7a34cb4b31e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNWZkZTVmZTdkMjNlOTI2NGFlNTBjYTVmZjlmNTBmMGE1OTk0MTk1ZTQ3OTY2YzUzZjZkNWQ0ZWRkZDQyY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MGFkODg3ODVjN2NjZDg4YjYxYTk5ZDg0Mzg1Mjg1MjA1ZDA5N2M0MmIyMTEwNWFmODQzNjY1MjgwMWNkNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiNjUyYTM1NzcwMWYwODE0OWI3NjA4NDZkMjg0MWJkOWVkNmE0YzMwZjM1OWFiOTQyMmZlODhmZjdmY2YzMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_143b5168683744b08d4b32a4dffc44f2",
+      "statement": "The hand-off records exactly two kinds of limitation instead of guessing: a fulfillment pair with no confirmation has no completion callback, and derived attributes need a server-side rule runtime so the contract only declares their sources.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L384-L407",
+          "version": "repo-lines-v1:sha256:c5f03542d6f2cd528affb93e7ae7b27c987e0b201b16f1fde9806695b0d75352:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YTYyZDUwZDlmYjAxZDA1OWYyODBkYWI4OGJlMzYyZjk3N2Y5NDczMDBiNjg3NDRjMjVkNWFjZGVmNDk5MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMTYyM2IwOWMxMmExNGQxNTFkMzZmNDg5NDE3ZDlmMmEwNWVjNjU1MDU4YmIyZjkzZGUyMjZiOWRhYzhkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwMDY4NThkMzlhY2FmMmI5NGJiZTBmZjE5MDNmZDU2YmM0NzZkODFmYWI5Njc3ZTQ0YTY4NzZlYzRiMDA0NWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2149669e971c4efeb231d28b601bd95b",
+      "statement": "Limitations travel in projection.json, topology.json and both MCP reads, and become a limitations.md whose prose states that the delivery keeps these as gaps rather than inferring an answer.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L22-L33",
+          "version": "repo-lines-v1:sha256:32ea99de71d2de9990821acd6314c89cf1fc00f0c1d619536641a670c9e532dd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ZDYyYzEyYzU0YTRlOTlmYzhkZjZmZDFjOGJhMzFmMTJmY2E3ZTFjZjg2YjUyYTFkYTA2YjQ5ZDczMmY3OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5MTQwNmNmMjk5ZjUzNDA4MDAxNTYzZTllNTUyMWY2YWMzNmFkZjE3ZmY2YjljOWMxZjU3NmUwYTJjZjkyMzEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L47-L59",
+          "version": "repo-lines-v1:sha256:9453678ac7a64f50ac92621e4a6b4f97af7f5da997bd3df1555b99d4ba6db4bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1M2ViMjNhY2NhZGY4Mjg2YjRiNzczN2U3ODJkNjJlYjM4NzY4ODViNWJiMmM4YWNhNmU3NTIwYzE2NDQyYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2MTkwMjhkOWExMjA4NTYwMzNmMmE1NTA3MDhhYzhmYTUwYjNjZTgxYjc5MzkyNTU3MjRiZGMyYThhYzgyMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NTAwZDA3MjNjZWRhODU4ZjIxNWNhMjIyNGQ2MjRmODNmOGQ4MTUyOGU2NTQwZDIyMTE0NzBkOWRhMjAzNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_583cf5554ddc49b6916c32b9bac8dc69",
+      "statement": "The topology preserves unanswered dependencies rather than filling them: a service's consumes lists the evidence-kind sockets its Context depends on and does not itself answer, capability links derived from plays_role sockets are always async because the confirmation arrives on the supplier's clock, and each Context becomes exactly one service so a promise and its answer stay together.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/topology.ts#L10-L29",
+          "version": "repo-lines-v1:sha256:74cd938e3f420fbdf73d765a1e76ced1720250dfa4ca91d8d8be93edd9514449:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyOGUzYTZjMzgzYTZmZTM2YmYwMTJmMjhiYTMzMzQwYTNkMWI2MzY0OWQzMGU5ZWYzZTg1ZDUxYTQ1ZWY0MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4ZDNmOWVhMTVjZGIzNTNjOTRmMTBiZGM2NGFlZjVjMDY0ZWJlNzVmNzM3MTc1NThiYzc2Mzc0YTViMjA4ZjUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/topology.ts#L196-L262",
+          "version": "repo-lines-v1:sha256:37fec4eba653fcfef8682e20c046c9e1a1ec5455ba4ecffc79334752350d10dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhNjg4ZjM2NGVkYWI2MTdiYjc5ODBmNTc2Y2MyYjNhOGFlMmRhMGFjMDg3NWM1NDNkMWE2MjhjN2E5NzBmOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5NDE1OGY0ZGNkZGY4ZjY1OTc3MTUwYTMyNzIxNDUzN2RmMTQzNTk0ZGI5MjZlMGMxNzg1NTdlOTA1MTc3MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxOGFkNDJiNjdmMDQwMzY5MGNiMTRiZTEwMDI5NjA4NDI0NGVjYTFlNTY5MTBiOGY2OGYxODU0OTc5MjM0ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViN2M3NTlhOWI4OTlkMTAyODcwNzdlNmIxYzk3MTQ5YmRjZmFlNWJmMmU1MmJiNzQ1MGQzOWMxNzA4MzczMjIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/topology.ts#L224-L235",
+          "version": "repo-lines-v1:sha256:c345b34f52b07443f2ba6f8babc69e2f1566aadf7a5bc796ea6524839f720635:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NzUxZGZhNGI3MjM5N2E5ZDg1Y2Y5MGQzYjg5ZmIxZDdiYjdhNTMxNTUxMjY2MTFiNDg5MTY5ZDg0N2RkZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZWFjMmIxZmZjMzBhM2Q1N2UyMzRmNzlkYTY2ODU5NTkxZTA0NTk5ZDU3ZDlhYjMyOWI2YjgxMTY4ZmU5M2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmM2Y3ZDAzODc3ZWExMTJkOWQ1NTc1MDk3YWQwYjYyNDZhOTFmNDVmMWIzOWNiMTBmOGJkNmY5Yjk1NDQyZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ODUxMzM3M2UxMDRjMGQ0YTYwNjAwZGVmMmM4YmU4ZGFkYWU3MzMwZGI5NTQ2MzNlM2JhMjYxYjA5M2VlMzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_47925b18d6c64c519c3c9be41ea38174",
+      "statement": "The deployment sketch is explicitly a sketch: it keeps the projected services and dependency direction but uses placeholder image names and no real ports, so an operator reads the model's boundaries rather than a release configuration.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L306-L333",
+          "version": "repo-lines-v1:sha256:a2901a8272ec137220c4954dd05fe43fce862823f7d8843f95d905f007387015:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0NTM3MzUyN2U5YTAzNWZjY2NjYmIwZGU1NGRkMGI5ZTEzZmRiZWJjMmY1ZDE3NjY2OTNiZGIzMmJlZWNkODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1NDlkNmUyMGMzODczMGRmZGJkNGVlNDNiYzQxMjhmZDRhMTRhNTMwODUyOTY0NTIxMzEzNjQzYWMzODEyODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_73e978ac447041c79d7ff8365a3ed39a",
+      "statement": "The delivery hub panel renders three counted sections — 服务边界 (name, localized kind, contextRef, routeCount, notes), 跨边界调用 (from, to, label, localized sync/async mode with an empty-state sentence) and 尚未闭环的能力 (the limitations list) — and counts routes per service rather than listing the routes the preview also carries.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/delivery/DeliveryHub.tsx#L96-L190",
+          "version": "repo-lines-v1:sha256:decfdfcde6dbc076e3b2e1ff7278b89df1b96d959ef09a769a87432a66ff9caf:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjMWQ3MjA2ZTllNmUzNzExNTEyYmUwMjdlMDIxYWUyYzQ4NDExZWNlZTliNWY4YjMwZDhlYzg3NjM4OGQwMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZjNjZmQxMWRhNjE1MDE5N2FjZWVkMDg0MDZhYzY0YjA1MDM0MGRlN2JjMDQxMjRhNGNiN2VmYTY3MTM0MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5ZTA0OThkYWEyMTFiYjE1NGVmMDVkYjM2YmQyMWViZDczMDA3MThhYmZhODFkN2ZmMDlkMzc0MGMxMzhhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiYzdhMmU1NGY1NjNmNmIyNDIzOGNkNTE4OTgwMTdmNzRjNjI5M2JmMzU5ZDY5ZGFlNGVkNDEzMTQ4NWE3ZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1414fb95741748b0864b964377c56b69",
+      "statement": "Preview and export each build their own projection — the hook reads on mount and export builds again on click — so both describe the saved model through the same code path, and an edit between opening the panel and pressing export is a fresh re-read rather than a cached description.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L99-L109",
+          "version": "repo-lines-v1:sha256:68ca3e65c3a91e9a51af91242538da8cd28df60dcbe2d4a83844f22856fd722e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmMjRmODZiZjk4M2MwMDYxNDVlY2M3ZTNiZjM1OWU0ZjE0OGM0ZjliNmEwZDBiYTc4MWJjMDYxNjJhOGExZjYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.ts#L60-L112",
+          "version": "repo-lines-v1:sha256:764779bbbad09715d8891eed32fb91d68f82492e026f33e95596c9a3c7f8aa6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZGIzODg3MTUxZTA0ZmY5YWFlODUzYmQ2MThjNjQxYTkwYjlkYmUzNmQyOTJhZGU4YzU0ODgxNWNlZGI5ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4ZDYxNTc0ODEyMzdhNGE5NDhmYTQ0YzdmOTg2OTIwNGQ5OTg4ZjlkODczYTM4ODA1YzExNWI4MjVkZWFhZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a7c8f01820d40ada28acbc3814d9b8a",
+      "statement": "The desktop export surface exposed to the renderer is exactly two promise-returning calls under window.evidenceAPI.projects — deliveryPreview and exportDelivery — with the directory picker and all writes kept in the main process.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L47-L49",
+          "version": "repo-lines-v1:sha256:aa179f0c7da6ea83569a5e27d2e2483dc0dda3eb053585b8b7c7924d39b60db6:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk4NzA0OTFkZDhhZTMwMzUyMTM4MzE0MDkxN2U1ZThmNTViMzY4NTI5NGYwMWI5YTE0MGY3NmEyYzU3MTM2MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODI5YWY1MTY3MzE2YTA2NzFhZDY3NTEwYzUyY2I5OTgwYzBjYmE4YTI5M2QxNTVjMmMwZjVhNmIyZDZjM2NiNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2QyNzEzZTFiZDc3NGEwOTlkZGNkN2NlNzFiZThlZTE1MjJlNmM0ODViMjEzYTBlNzFmOWI3YjE2YzhkNDY5ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ1OTA0MWM1ODdmMGU4ZDc2ZWYxNGM2MTFlYjVmMDk4YWZjMDNiM2MzYmUyMTEwMGY0MjAwZWE3YTE3MjhlNCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L98-L101",
+          "version": "repo-lines-v1:sha256:4e85ef49aaeaaf460e1584601d7bdcdb14a592176bbf06de2bf7ee8570664a55:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmYwYzBlNjgxMTlmNWRjMzBkMDVmOTA1MjIwNDg0ZmY3MjIwMDcyNzJjOTEyZmU5ZGFlMzJkNWZmZTAzMGNkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWIxNDAwNTZlMzA1MTEzZTljM2Y5YjNjYzdlMTFhOTkyYzlhNzlhMzg1OWJkMzExN2VmOGZjNGNiMGQ3ODIzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNiYWY3NTE3YzFlNGVjM2FmZGQ5NDRiOTM2MGI1OTA1M2Q3ZDZiMDZhZDhkN2I5MzY5YWNiZTU5Njc4ZGQ2NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3939e7367f104e459a766f739999be05",
+      "statement": "deliveryIpc.spec.ts pins the hand-off contract without touching disk by injecting build, write and showDirectoryDialog: the seven-file order, the per-service route count and limitations, the suggested delivery folder, the read failure reported instead of thrown, and that a dismissed picker writes nothing.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.spec.ts#L101-L208",
+          "version": "repo-lines-v1:sha256:481cb0400cf4460b01b27b8ffef4a359971505d3a89a1a6a35921939f9d98ad4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNGYxN2QzOTg1MzgyZWJjZjc0ZDkwZTlkODQ3NzdiYTg0ZmJiMTI3NDc4YmQ1YzFjOTI1ZTBiMDA1Nzg3ODc3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMjIxZGU0OWMyNGMwMGYyNzAwMGM3YTY4MDYxMjVmNWFhN2UxNTU2Nzc1ZWY5ZmI2OWNlODFkMzhiZWYyOGExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c1023ef842e545268b4301ec391d5b2f",
+      "statement": "deliveryProjection.spec.ts pins the hand-off's central invariant: a .evidence/fm tree and the same model serialized as a portable *.evidence.json bundle export the same routes and OpenAPI document, while malformed or statically inconsistent input is refused instead of exported.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.spec.ts#L17-L55",
+          "version": "repo-lines-v1:sha256:f617db2515992bf54e6489fd11b46198acd198f30bb4f49d3af07ac0a81f8c9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0OGI3YjBkZmI1MmM3ZDg1ZmI4MjM0NTkzYWM5NjEyNzIxMGQ0YzJkNTEyMGQyMjkwMTcyMzI0NjhjNmZhNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwN2E1N2NmMDcwNGUwMDY0ODJmYzc2ODBhZDgzNDc0YjI5ODA5OGUwMDA5YTU4NzY2NjdkNTE3OGYwYTNkYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MTdmYmI3M2M5MmIzNmQ1ZTQ4OTZmZjUxYzFiNThlZWMzMzBiYmU5NjFiYTA1ZmM2MjA1Zjg2N2VhMWJjZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_437bf22cbc2946f7a401dc68ba1d9430",
+      "statement": "DeliveryHub.spec.tsx pins the panel's behaviour end to end: the three sections with localized kind/mode labels, the export call with the project root and the notice naming the directory the main process reported, and a disabled export button after a preview failure.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/delivery/DeliveryHub.spec.tsx#L49-L99",
+          "version": "repo-lines-v1:sha256:1560c265edcd376a0d93035b04a30a335aad129a69b62eceb8cf66096d3fae4a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYjA4NjljNjEyMjZmOGU0N2ViODI3YWFjNzM1ODk2NjM0NjMxZTc4MjVmZDY3ZTYwZjY5ZmViMzQ2ZDQxZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiYTA1ZGY3OThjNjgzYTM1NmY2ODJhNjI3ZmI1NmI2NDY0OTE5MzkzMzJjMmNkZGE4MzkwMTA4Y2YyNzNhMzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}
