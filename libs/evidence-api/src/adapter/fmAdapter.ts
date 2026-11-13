@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import type {
@@ -10,55 +10,47 @@ import type {
 } from '@evidence-poc/evidence-schema';
 import {
   compiledDocument,
+  isModelBundlePath,
+  loadValidationSuite,
   modelDigestOf,
+  parseModelBundleText,
   readModelRoot,
   readModelRootBytes,
-  readyScope,
-  scopeSuite,
-  validationSuiteFromFiles,
   type CompiledModelDocument,
+  type DomainModelBundle,
   type EvidenceInstance,
-  type ReadyScopeReport,
   type Scenario,
+  type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 
-import { errorDiagnostic, type Diagnostic } from '../diagnostics.js';
+import { canonicalJson } from '../canonicalJson.js';
+import {
+  errorDiagnostic,
+  gapDiagnostic,
+  normalizeDiagnostics,
+  type Diagnostic,
+} from '../diagnostics.js';
 
-/**
- * Reading the FM a design was written against.
- *
- * Two promises make the projection trustworthy. The first is that the model is
- * the one the FM stage checked: the digest in the report is compared with the
- * bytes on disk, so a model edited after its check is refused instead of
- * projected. The second is that nothing moved while it was read: the snapshot is
- * taken again at the end, which is what `SOURCE_CHANGED` reports.
- */
-
-/** `sha256:<hex>` over one file's bytes, the form the reports carry. */
+/** SHA-256 over bytes, without the model digest's prefix. */
 export const digestBytes = (content: string | Buffer): string =>
   createHash('sha256').update(content).digest('hex');
 
-/** `{ relative path: sha256 }` for every source file under a model root. */
 export type FmSnapshot = Record<string, string>;
 
-/**
- * The model a projection reads, indexed for lookup.
- *
- * Every collection is a `Map` keyed by id, so a reference either resolves or is
- * reported; the iteration order is the compiled (id-sorted) order, which keeps a
- * report's findings stable across runs.
- */
+/** Current model inputs, independent of any previously saved check report. */
 export interface FmIndex {
+  document: DomainModelDocument;
   compiled: CompiledModelDocument;
-  check: ReadyScopeReport & { modelDigest: string; modelValidated?: boolean };
+  /** Recorded evidence only. Null means no report was supplied, not a passing check. */
+  check: unknown;
+  modelDigest: string;
+  diagnostics: readonly Diagnostic[];
   entities: ReadonlyMap<string, EntityAST>;
   relationships: ReadonlyMap<string, RelationshipAST>;
   rules: ReadonlyMap<string, RuleAST>;
   scenarios: ReadonlyMap<string, Scenario>;
   instances: ReadonlyMap<string, EvidenceInstance>;
-  /** Entity ids per Context, sorted, so a scope can be listed cheaply. */
   membersByContext: ReadonlyMap<string, readonly string[]>;
-  /** Digest per source file, printed under `inputDigests.fm`. */
   files: FmSnapshot;
 }
 
@@ -67,31 +59,30 @@ export interface LoadFmResult {
   diagnostics: readonly Diagnostic[];
 }
 
+export interface LoadFmDocumentOptions {
+  checkReport?: unknown;
+  diagnostics?: readonly Diagnostic[];
+  files?: FmSnapshot;
+  modelDigest?: string;
+  suite?: ValidationSuite;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const snapshotOf = (files: readonly { path: string; bytes: Buffer }[]): FmSnapshot =>
+const snapshotOf = (
+  files: readonly { path: string; bytes: Buffer }[],
+): FmSnapshot =>
   Object.fromEntries(
     [...files]
       .sort((left, right) => left.path.localeCompare(right.path))
       .map((file) => [file.path, digestBytes(file.bytes)]),
   );
 
-const sameSnapshot = (left: FmSnapshot, right: FmSnapshot): boolean =>
-  JSON.stringify(left) === JSON.stringify(right);
-
-/**
- * Checks that a report proves a delivered scope before anything is projected.
- *
- * A report with a different contract version, a stale digest or an unexecuted
- * scenario is refused here rather than halfway through a projection.
- */
-export const checkReportProblem = (
-  report: unknown,
-): string | null => {
-  if (!isRecord(report)) {
-    return '需要 FM 阶段实际通过且输入未变化的检查结果';
-  }
+/** A missing report is allowed; an invalid supplied report remains visible. */
+export const checkReportProblem = (report: unknown): string | null => {
+  if (report === undefined || report === null) return null;
+  if (!isRecord(report)) return 'FM 检查结果必须是 JSON 对象';
 
   const valid =
     report['checkVersion'] === 5 &&
@@ -104,23 +95,88 @@ export const checkReportProblem = (
     report['errors'].length === 0 &&
     typeof report['modelDigest'] === 'string';
 
-  return valid ? null : '需要 FM 阶段实际通过且输入未变化的检查结果';
+  return valid ? null : 'FM 检查未通过或未证明范围完整性';
 };
 
-/** Party Roles a Participant Party actually plays, which is who can call the API. */
-export const partyRolesPlayedByParticipants = (
-  index: FmIndex,
-): Set<string> => {
-  const played = new Set<string>();
+/** Builds an index synchronously without filesystem access or invented check results. */
+export const loadFmFromDocument = (
+  document: DomainModelDocument,
+  options: LoadFmDocumentOptions = {},
+): LoadFmResult => {
+  const compiled = compiledDocument(document);
+  const suite =
+    options.suite ?? loadValidationSuite(document as DomainModelBundle);
+  const modelDigest =
+    options.modelDigest ?? `sha256:${digestBytes(canonicalJson(compiled))}`;
+  const diagnostics: Diagnostic[] = [...(options.diagnostics ?? [])];
+  const problem = checkReportProblem(options.checkReport);
+  if (problem !== null) {
+    diagnostics.push(
+      gapDiagnostic('FM_CHECK_INVALID', 'fm.check.invalid', 'design', problem),
+    );
+  }
+  if (
+    isRecord(options.checkReport) &&
+    typeof options.checkReport['modelDigest'] === 'string' &&
+    options.checkReport['modelDigest'] !== modelDigest
+  ) {
+    diagnostics.push(
+      gapDiagnostic(
+        'FM_CHECK_STALE',
+        'fm.check.stale',
+        'design',
+        'FM 已变化，投影使用当前模型；旧检查结果不证明当前模型已通过校验',
+      ),
+    );
+  }
+  for (const message of suite.errors) {
+    diagnostics.push(errorDiagnostic('FM_VALIDATION_INPUT_INVALID', message));
+  }
 
-  for (const relationship of index.relationships.values()) {
-    if (relationship.kind !== 'plays_role') {
-      continue;
+  const membersByContext = new Map<string, string[]>();
+  for (const entity of compiled.entities) {
+    if ('contextRef' in entity && typeof entity.contextRef === 'string') {
+      const members = membersByContext.get(entity.contextRef) ?? [];
+      members.push(entity.id);
+      membersByContext.set(entity.contextRef, members);
     }
+  }
+  const sorted = normalizeDiagnostics(diagnostics);
+  return {
+    index: {
+      document,
+      compiled,
+      check: options.checkReport ?? null,
+      modelDigest,
+      diagnostics: sorted,
+      entities: new Map(compiled.entities.map((entity) => [entity.id, entity])),
+      relationships: new Map(
+        compiled.relationships.map((relationship) => [
+          relationship.id,
+          relationship,
+        ]),
+      ),
+      rules: new Map(compiled.rules.map((rule) => [rule.id, rule])),
+      scenarios: new Map(
+        suite.scenarios.map((scenario) => [scenario.id, scenario]),
+      ),
+      instances: new Map(
+        suite.instances.map((instance) => [instance.id, instance]),
+      ),
+      membersByContext,
+      files: options.files ?? {},
+    },
+    diagnostics: sorted,
+  };
+};
 
+/** Party Roles a Participant Party actually plays. This is not an authorization grant. */
+export const partyRolesPlayedByParticipants = (index: FmIndex): Set<string> => {
+  const played = new Set<string>();
+  for (const relationship of index.relationships.values()) {
+    if (relationship.kind !== 'plays_role') continue;
     const source = index.entities.get(relationship.sourceRef);
     const target = index.entities.get(relationship.targetRef);
-
     if (
       source?.category === 'participant' &&
       source.kind === 'party' &&
@@ -130,58 +186,55 @@ export const partyRolesPlayedByParticipants = (
       played.add(target.id);
     }
   }
-
   return played;
 };
 
-/**
- * Reads a checked model root.
- *
- * FM allows Party Roles with no player and Fulfillment Requests no one can
- * confirm; the design stage has to see both, so nothing here filters them out —
- * it either resolves a reference or reports that it cannot.
- */
+/** Reads a directory or portable bundle. Concurrent input changes still invalidate the read. */
 export const loadFm = async (
   fmRoot: string,
-  checkReport: unknown,
+  checkReport?: unknown,
 ): Promise<LoadFmResult> => {
   const root = path.resolve(fmRoot);
-
-  if (!existsSync(root) || !existsSync(path.join(root, 'model.json'))) {
-    return {
-      index: null,
-      diagnostics: [
-        errorDiagnostic('FM_INVALID', 'FM 目录缺少 model.json', undefined, root),
-      ],
-    };
-  }
-
-  const problem = checkReportProblem(checkReport);
-
-  if (problem !== null) {
-    return {
-      index: null,
-      diagnostics: [errorDiagnostic('FM_CHECK_INVALID', problem)],
-    };
-  }
-
-  const check = checkReport as FmIndex['check'];
-  const beforeFiles = await readModelRootBytes(root);
-  const before = snapshotOf(beforeFiles);
-
-  if (modelDigestOf(beforeFiles.map((file) => ({ path: file.path, content: file.bytes }))) !== check.modelDigest) {
-    return {
-      index: null,
-      diagnostics: [
-        errorDiagnostic('FM_CHECK_STALE', 'FM 已变化，返回 FM 阶段重新检查'),
-      ],
-    };
-  }
-
-  let selected: DomainModelDocument;
-
   try {
-    selected = readyScope((await readModelRoot(root)).bundle, check);
+    const readBytes = () =>
+      isModelBundlePath(root)
+        ? readFile(root).then((bytes) => [{ path: path.basename(root), bytes }])
+        : readModelRootBytes(root);
+    const beforeFiles = await readBytes();
+    const before = snapshotOf(beforeFiles);
+    const parsed = isModelBundlePath(root)
+      ? (() => {
+          const result = parseModelBundleText(
+            beforeFiles[0]!.bytes.toString('utf8'),
+          );
+          return { bundle: result.document, issues: result.issues };
+        })()
+      : await readModelRoot(root);
+    if (
+      JSON.stringify(before) !== JSON.stringify(snapshotOf(await readBytes()))
+    ) {
+      return {
+        index: null,
+        diagnostics: [
+          errorDiagnostic('SOURCE_CHANGED', 'FM 输入在读取期间发生变化'),
+        ],
+      };
+    }
+    if (parsed.issues.length > 0) {
+      return {
+        index: null,
+        diagnostics: parsed.issues.map((issue) =>
+          errorDiagnostic('FM_INVALID', issue.message, undefined, issue.path),
+        ),
+      };
+    }
+    return loadFmFromDocument(parsed.bundle, {
+      checkReport,
+      files: before,
+      modelDigest: modelDigestOf(
+        beforeFiles.map((file) => ({ path: file.path, content: file.bytes })),
+      ),
+    });
   } catch (error) {
     return {
       index: null,
@@ -189,70 +242,10 @@ export const loadFm = async (
         errorDiagnostic(
           'FM_INVALID',
           `无法读取当前 FM: ${error instanceof Error ? error.message : String(error)}`,
+          undefined,
+          root,
         ),
       ],
     };
   }
-
-  const compiled = compiledDocument(selected);
-  const suite = scopeSuite(
-    selected,
-    validationSuiteFromFiles(
-      beforeFiles
-        .filter(
-          (file) =>
-            file.path.startsWith('validation/scenarios/') ||
-            file.path.startsWith('validation/instances/'),
-        )
-        .map((file) => ({ path: file.path, content: file.bytes.toString('utf8') })),
-    ),
-  );
-  const after = snapshotOf(await readModelRootBytes(root));
-
-  if (!sameSnapshot(before, after)) {
-    return {
-      index: null,
-      diagnostics: [
-        errorDiagnostic('SOURCE_CHANGED', 'FM 输入在读取期间发生变化'),
-      ],
-    };
-  }
-
-  const membersByContext = new Map<string, string[]>();
-
-  for (const entity of compiled.entities) {
-    const contextRef =
-      'contextRef' in entity && typeof entity.contextRef === 'string'
-        ? entity.contextRef
-        : undefined;
-
-    if (contextRef === undefined) {
-      continue;
-    }
-
-    const members = membersByContext.get(contextRef) ?? [];
-    members.push(entity.id);
-    membersByContext.set(contextRef, members);
-  }
-
-  for (const members of membersByContext.values()) {
-    members.sort();
-  }
-
-  return {
-    index: {
-      compiled,
-      check,
-      entities: new Map(compiled.entities.map((entity) => [entity.id, entity] as const)),
-      relationships: new Map(
-        compiled.relationships.map((relationship) => [relationship.id, relationship] as const),
-      ),
-      rules: new Map(compiled.rules.map((rule) => [rule.id, rule] as const)),
-      scenarios: new Map(suite.scenarios.map((scenario) => [scenario.id, scenario] as const)),
-      instances: new Map(suite.instances.map((instance) => [instance.id, instance] as const)),
-      membersByContext,
-      files: before,
-    },
-    diagnostics: [],
-  };
 };

@@ -26,7 +26,9 @@ export {
   checkReportProblem,
   digestBytes,
   loadFm,
+  loadFmFromDocument,
   partyRolesPlayedByParticipants,
+  type LoadFmDocumentOptions,
   type FmIndex,
   type FmSnapshot,
   type LoadFmResult,
@@ -90,10 +92,7 @@ export {
   type PayloadField,
 } from './http/contractPayloads.js';
 
-export {
-  buildHttp,
-  type HttpContract,
-} from './http/contracts.js';
+export { buildHttp, type HttpContract } from './http/contracts.js';
 
 export {
   checkConsumption,
@@ -147,10 +146,7 @@ export {
   type DeliveryRouteResponse,
 } from './delivery/routes.js';
 
-export {
-  deliveryFilesOf,
-  type DeliveryFile,
-} from './delivery/files.js';
+export { deliveryFilesOf, type DeliveryFile } from './delivery/files.js';
 
 export {
   createSegmentAllocator,
@@ -188,10 +184,7 @@ export {
 export { compareText, sortedText } from './order.js';
 export type { JsonObject } from './types.js';
 
-export {
-  API_SCHEMA,
-  API_SCHEMA_TEXT,
-} from './schemas/apiSchema.js';
+export { API_SCHEMA, API_SCHEMA_TEXT } from './schemas/apiSchema.js';
 export {
   API_PROJECTION_SCHEMA,
   API_PROJECTION_SCHEMA_TEXT,

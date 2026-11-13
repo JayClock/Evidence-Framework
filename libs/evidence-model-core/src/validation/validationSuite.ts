@@ -201,11 +201,18 @@ const readIdList = (
   return value;
 };
 
-const readInstance = (value: unknown, path: string, errors: string[]): EvidenceInstance | undefined => {
+const readInstance = (
+  value: unknown,
+  path: string,
+  errors: string[],
+): EvidenceInstance | undefined => {
   const object = readObject(
     value,
     path,
-    { required: ['type', 'id', 'entityRef', 'values'], optional: ['basedOn', 'notes'] },
+    {
+      required: ['type', 'id', 'entityRef', 'values'],
+      optional: ['basedOn', 'notes'],
+    },
     errors,
   );
 
@@ -261,7 +268,11 @@ const readInstance = (value: unknown, path: string, errors: string[]): EvidenceI
   };
 };
 
-const readStep = (value: unknown, path: string, errors: string[]): ScenarioStep | undefined => {
+const readStep = (
+  value: unknown,
+  path: string,
+  errors: string[],
+): ScenarioStep | undefined => {
   const object = readObject(
     value,
     path,
@@ -278,11 +289,19 @@ const readStep = (value: unknown, path: string, errors: string[]): ScenarioStep 
 
   const sequence = object['sequence'];
 
-  if (typeof sequence !== 'number' || !Number.isInteger(sequence) || sequence < 1) {
+  if (
+    typeof sequence !== 'number' ||
+    !Number.isInteger(sequence) ||
+    sequence < 1
+  ) {
     errors.push(`${path}/sequence: must be an integer >= 1`);
   }
 
-  const actingRoleRef = readId(object['actingRoleRef'], `${path}/actingRoleRef`, errors);
+  const actingRoleRef = readId(
+    object['actingRoleRef'],
+    `${path}/actingRoleRef`,
+    errors,
+  );
   const issueInstanceRef = readId(
     object['issueInstanceRef'],
     `${path}/issueInstanceRef`,
@@ -291,9 +310,17 @@ const readStep = (value: unknown, path: string, errors: string[]): ScenarioStep 
   const available =
     object['availableInstanceRefs'] === undefined
       ? undefined
-      : readIdList(object['availableInstanceRefs'], `${path}/availableInstanceRefs`, errors);
+      : readIdList(
+          object['availableInstanceRefs'],
+          `${path}/availableInstanceRefs`,
+          errors,
+        );
 
-  if (typeof sequence !== 'number' || actingRoleRef === undefined || issueInstanceRef === undefined) {
+  if (
+    typeof sequence !== 'number' ||
+    actingRoleRef === undefined ||
+    issueInstanceRef === undefined
+  ) {
     return undefined;
   }
 
@@ -320,19 +347,29 @@ const readBinding = (
   const keys = Object.keys(value);
 
   if (keys.length !== 1) {
-    errors.push(`${path}: must declare exactly one of instanceRef, instanceRefs or value`);
+    errors.push(
+      `${path}: must declare exactly one of instanceRef, instanceRefs or value`,
+    );
 
     return undefined;
   }
 
   if (keys[0] === 'instanceRef') {
-    const instanceRef = readId(value['instanceRef'], `${path}/instanceRef`, errors);
+    const instanceRef = readId(
+      value['instanceRef'],
+      `${path}/instanceRef`,
+      errors,
+    );
 
     return instanceRef === undefined ? undefined : { instanceRef };
   }
 
   if (keys[0] === 'instanceRefs') {
-    const instanceRefs = readIdList(value['instanceRefs'], `${path}/instanceRefs`, errors);
+    const instanceRefs = readIdList(
+      value['instanceRefs'],
+      `${path}/instanceRefs`,
+      errors,
+    );
 
     return instanceRefs === undefined ? undefined : { instanceRefs };
   }
@@ -341,7 +378,9 @@ const readBinding = (
     return { value: value['value'] };
   }
 
-  errors.push(`${path}: must declare exactly one of instanceRef, instanceRefs or value`);
+  errors.push(
+    `${path}: must declare exactly one of instanceRef, instanceRefs or value`,
+  );
 
   return undefined;
 };
@@ -372,7 +411,11 @@ const readEvaluation = (
     errors.push(`${path}/bindings: must be an object`);
   } else {
     for (const [variable, source] of Object.entries(object['bindings'])) {
-      const binding = readBinding(source, `${path}/bindings/${variable}`, errors);
+      const binding = readBinding(
+        source,
+        `${path}/bindings/${variable}`,
+        errors,
+      );
 
       if (binding !== undefined) {
         bindings[variable] = binding;
@@ -383,7 +426,11 @@ const readEvaluation = (
   const targetInstanceRef =
     object['targetInstanceRef'] === undefined
       ? undefined
-      : readId(object['targetInstanceRef'], `${path}/targetInstanceRef`, errors);
+      : readId(
+          object['targetInstanceRef'],
+          `${path}/targetInstanceRef`,
+          errors,
+        );
 
   if (ruleRef === undefined || !('expectedResult' in object)) {
     return undefined;
@@ -403,7 +450,12 @@ const readExpectations = (
   path: string,
   errors: string[],
 ): ScenarioExpectations | undefined => {
-  const object = readObject(value, path, { required: ['fulfillmentStatuses'], optional: [] }, errors);
+  const object = readObject(
+    value,
+    path,
+    { required: ['fulfillmentStatuses'], optional: [] },
+    errors,
+  );
 
   if (object === undefined) {
     return undefined;
@@ -424,7 +476,10 @@ const readExpectations = (
     const entry = readObject(
       item,
       itemPath,
-      { required: ['requestInstanceRef', 'status'], optional: ['requestEntityRef'] },
+      {
+        required: ['requestInstanceRef', 'status'],
+        optional: ['requestEntityRef'],
+      },
       errors,
     );
 
@@ -448,7 +503,11 @@ const readExpectations = (
     const requestEntityRef =
       entry['requestEntityRef'] === undefined
         ? undefined
-        : readId(entry['requestEntityRef'], `${itemPath}/requestEntityRef`, errors);
+        : readId(
+            entry['requestEntityRef'],
+            `${itemPath}/requestEntityRef`,
+            errors,
+          );
 
     if (requestInstanceRef === undefined) {
       return;
@@ -464,7 +523,11 @@ const readExpectations = (
   return { fulfillmentStatuses };
 };
 
-const readScenario = (value: unknown, path: string, errors: string[]): Scenario | undefined => {
+const readScenario = (
+  value: unknown,
+  path: string,
+  errors: string[],
+): Scenario | undefined => {
   const object = readObject(
     value,
     path,
@@ -503,7 +566,11 @@ const readScenario = (value: unknown, path: string, errors: string[]): Scenario 
   const given =
     object['givenInstanceRefs'] === undefined
       ? undefined
-      : readIdList(object['givenInstanceRefs'], `${path}/givenInstanceRefs`, errors);
+      : readIdList(
+          object['givenInstanceRefs'],
+          `${path}/givenInstanceRefs`,
+          errors,
+        );
 
   const steps: ScenarioStep[] = [];
 
@@ -526,7 +593,11 @@ const readScenario = (value: unknown, path: string, errors: string[]): Scenario 
       errors.push(`${path}/evaluations: must be an array`);
     } else {
       object['evaluations'].forEach((item, index) => {
-        const evaluation = readEvaluation(item, `${path}/evaluations[${index}]`, errors);
+        const evaluation = readEvaluation(
+          item,
+          `${path}/evaluations[${index}]`,
+          errors,
+        );
 
         if (evaluation !== undefined) {
           evaluations.push(evaluation);
@@ -535,7 +606,11 @@ const readScenario = (value: unknown, path: string, errors: string[]): Scenario 
     }
   }
 
-  const expectations = readExpectations(object['expectations'], `${path}/expectations`, errors);
+  const expectations = readExpectations(
+    object['expectations'],
+    `${path}/expectations`,
+    errors,
+  );
 
   if (object['notes'] !== undefined && !isNonEmptyString(object['notes'])) {
     errors.push(`${path}/notes: must be a non-empty string`);
@@ -562,9 +637,9 @@ const readScenario = (value: unknown, path: string, errors: string[]): Scenario 
     expectations,
     ...(Array.isArray(object['manualCompletionRequestRefs'])
       ? {
-          manualCompletionRequestRefs: object['manualCompletionRequestRefs'].filter(
-            (item): item is string => typeof item === 'string',
-          ),
+          manualCompletionRequestRefs: object[
+            'manualCompletionRequestRefs'
+          ].filter((item): item is string => typeof item === 'string'),
         }
       : {}),
     ...(typeof object['notes'] === 'string' ? { notes: object['notes'] } : {}),
@@ -572,7 +647,8 @@ const readScenario = (value: unknown, path: string, errors: string[]): Scenario 
 };
 
 /** `scenario.successful-payment` → `scenario--successful-payment.json`. */
-const expectedFileName = (id: string): string => `${id.split('.').join('--')}.json`;
+const expectedFileName = (id: string): string =>
+  `${id.split('.').join('--')}.json`;
 
 interface ValidationDocument {
   path: string;
@@ -651,14 +727,21 @@ const buildSuite = (
     const previous = seenIds.get(record.id);
 
     if (previous !== undefined) {
-      errors.push(`${path}: duplicate validation id '${record.id}' already defined in ${previous}`);
+      errors.push(
+        `${path}: duplicate validation id '${record.id}' already defined in ${previous}`,
+      );
       continue;
     }
 
     seenIds.set(record.id, path);
 
-    if (naming === 'file' && !path.endsWith(`/${expectedFileName(record.id)}`)) {
-      errors.push(`${path}: filename must be '${expectedFileName(record.id)}' for id '${record.id}'`);
+    if (
+      naming === 'file' &&
+      !path.endsWith(`/${expectedFileName(record.id)}`)
+    ) {
+      errors.push(
+        `${path}: filename must be '${expectedFileName(record.id)}' for id '${record.id}'`,
+      );
     }
 
     if (isInstance) {
@@ -680,7 +763,9 @@ const buildSuite = (
   }
 
   if (scenarios.length === 0) {
-    errors.push(`${VALIDATION_SCENARIO_TREE}/ must contain at least one Scenario`);
+    errors.push(
+      `${VALIDATION_SCENARIO_TREE}/ must contain at least one Scenario`,
+    );
   }
 
   return { instances, scenarios, errors };
@@ -692,7 +777,10 @@ export const validationSuiteFromFiles = (
 ): ValidationSuite =>
   buildSuite(
     files
-      .map((file) => ({ path: file.path.replaceAll('\\', '/'), content: file.content }))
+      .map((file) => ({
+        path: file.path.replaceAll('\\', '/'),
+        content: file.content,
+      }))
       .filter((file) => file.path.startsWith('validation/'))
       .sort((left, right) => left.path.localeCompare(right.path)),
     'file',
@@ -711,11 +799,11 @@ export const validationSuiteFromBundle = (
   return buildSuite(
     [
       ...validation.instances.map((item, index) => ({
-        path: `${VALIDATION_INSTANCE_TREE}#${index}`,
+        path: `${VALIDATION_INSTANCE_TREE}/${index}.json`,
         content: item,
       })),
       ...validation.scenarios.map((item, index) => ({
-        path: `${VALIDATION_SCENARIO_TREE}#${index}`,
+        path: `${VALIDATION_SCENARIO_TREE}/${index}.json`,
         content: item,
       })),
     ],
@@ -731,7 +819,9 @@ export const loadValidationSuite = (
     ? validationSuiteFromFiles(source)
     : validationSuiteFromBundle(source as DomainModelBundle);
 
-const attributesOf = (entity: EntityAST | undefined): Map<string, AttributeAST> =>
+const attributesOf = (
+  entity: EntityAST | undefined,
+): Map<string, AttributeAST> =>
   new Map(
     (entity?.attributes ?? []).map((attribute) => [attribute.name, attribute]),
   );
@@ -751,11 +841,14 @@ const playsRoleSources = (
   document.relationships
     .filter(
       (relationship) =>
-        relationship.kind === 'plays_role' && relationship.targetRef === roleRef,
+        relationship.kind === 'plays_role' &&
+        relationship.targetRef === roleRef,
     )
     .map((relationship) => relationship.sourceRef);
 
-const dedupe = (messages: readonly string[]): string[] => [...new Set(messages)];
+const dedupe = (messages: readonly string[]): string[] => [
+  ...new Set(messages),
+];
 
 const bindingReferences = (evaluation: ScenarioEvaluation): string[] => {
   const refs = new Set<string>();
@@ -859,12 +952,18 @@ export const validateValidationSuite = (
 
     for (const name of Object.keys(instance.values)) {
       if (!attributes.has(name)) {
-        errors.push(`${instance.id}: unknown value '${instance.entityRef}#${name}'`);
+        errors.push(
+          `${instance.id}: unknown value '${instance.entityRef}#${name}'`,
+        );
       }
     }
 
     for (const [name, attribute] of attributes) {
-      if (attribute.required === true && attribute.derivedByRuleRef === undefined && !(name in instance.values)) {
+      if (
+        attribute.required === true &&
+        attribute.derivedByRuleRef === undefined &&
+        !(name in instance.values)
+      ) {
         errors.push(
           `${instance.id}: required asserted value '${instance.entityRef}#${name}' is missing`,
         );
@@ -886,7 +985,9 @@ export const validateValidationSuite = (
       if (basedOn === instance.id) {
         errors.push(`${instance.id}: basedOn must not reference itself`);
       } else if (!instances.has(basedOn)) {
-        errors.push(`${instance.id}: basedOn references unknown instance '${basedOn}'`);
+        errors.push(
+          `${instance.id}: basedOn references unknown instance '${basedOn}'`,
+        );
       }
     }
   }
@@ -912,9 +1013,13 @@ export const validateValidationSuite = (
       const givenInstance = instances.get(instanceRef);
 
       if (givenInstance === undefined) {
-        errors.push(`${scenarioId}: givenInstanceRefs contains unknown '${instanceRef}'`);
+        errors.push(
+          `${scenarioId}: givenInstanceRefs contains unknown '${instanceRef}'`,
+        );
       } else if (issued.has(instanceRef)) {
-        errors.push(`${scenarioId}: instance '${instanceRef}' is issued more than once`);
+        errors.push(
+          `${scenarioId}: instance '${instanceRef}' is issued more than once`,
+        );
       } else {
         const missingBasis = (givenInstance?.basedOn ?? []).filter(
           (basis) => !givenSet.has(basis),
@@ -929,7 +1034,10 @@ export const validateValidationSuite = (
         const entity = entityOf(model, givenInstance?.entityRef);
 
         for (const [name, attribute] of attributesOf(entity)) {
-          if (attribute.required === true && !(name in (givenInstance?.values ?? {}))) {
+          if (
+            attribute.required === true &&
+            !(name in (givenInstance?.values ?? {}))
+          ) {
             errors.push(
               `${scenarioId}: given instance '${instanceRef}' lacks completed required value '${givenInstance?.entityRef}#${name}'`,
             );
@@ -948,7 +1056,9 @@ export const validateValidationSuite = (
         errors.push(`${scenarioId}: duplicate step sequence ${step.sequence}`);
       }
       if (step.sequence <= previousSequence) {
-        errors.push(`${scenarioId}: steps must be ordered by increasing sequence`);
+        errors.push(
+          `${scenarioId}: steps must be ordered by increasing sequence`,
+        );
       }
 
       sequences.add(step.sequence);
@@ -1053,7 +1163,9 @@ export const validateValidationSuite = (
       );
 
       if (expectedError !== null) {
-        errors.push(`${scenarioId}.evaluations[${index}].expectedResult: ${expectedError}`);
+        errors.push(
+          `${scenarioId}.evaluations[${index}].expectedResult: ${expectedError}`,
+        );
       }
 
       const declared = rule.bindings;
@@ -1132,7 +1244,10 @@ export const validateValidationSuite = (
               `${scenarioId}.evaluations[${index}]: binding '${variable}' expects Evidence instance input`,
             );
           } else {
-            const reason = validateTypedValue(source.value, binding.type ?? 'dynamic');
+            const reason = validateTypedValue(
+              source.value,
+              binding.type ?? 'dynamic',
+            );
 
             if (reason !== null) {
               errors.push(
@@ -1191,13 +1306,18 @@ export const validateValidationSuite = (
       const requestInstance = instances.get(expectation.requestInstanceRef);
 
       if (requestInstance === undefined) {
-        errors.push(`${scenarioId}: unknown request instance '${expectation.requestInstanceRef}'`);
+        errors.push(
+          `${scenarioId}: unknown request instance '${expectation.requestInstanceRef}'`,
+        );
         continue;
       }
 
       const entity = entityOf(model, requestInstance.entityRef);
 
-      if (entity === undefined || entitySignature(entity) !== 'evidence.fulfillment_request') {
+      if (
+        entity === undefined ||
+        entitySignature(entity) !== 'evidence.fulfillment_request'
+      ) {
         errors.push(
           `${scenarioId}: request instance '${expectation.requestInstanceRef}' does not instantiate a Fulfillment Request`,
         );
@@ -1223,4 +1343,5 @@ export const indexSuite = (
  * Normalized comparison value, so an expected result and an evaluated one are
  * compared the way the reports print them.
  */
-export const comparableValue = (value: unknown): unknown => normalizeJsonValue(value);
+export const comparableValue = (value: unknown): unknown =>
+  normalizeJsonValue(value);

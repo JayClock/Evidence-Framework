@@ -1,4 +1,9 @@
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as modelCore from '@evidence-poc/evidence-model-core';
+import { vi } from 'vitest';
 
 import {
   buildFmCheckReport,
@@ -6,21 +11,20 @@ import {
   modelDigestOf,
   readModelRoot,
   readModelRootBytes,
+  serializeModelBundle,
 } from '@evidence-poc/evidence-model-core';
 
 import {
   checkReportProblem,
   digestBytes,
   loadFm,
+  loadFmFromDocument,
   partyRolesPlayedByParticipants,
 } from './adapter/fmAdapter.js';
 import { inspectSummary } from './inspect.js';
 
 const fmRoot = fileURLToPath(
-  new URL(
-    '../tests/fixtures/full-lifecycle/fm',
-    import.meta.url,
-  ),
+  new URL('../tests/fixtures/full-lifecycle/fm', import.meta.url),
 );
 
 /** The check report the FM stage would have handed over. */
@@ -65,6 +69,8 @@ describe('checkReportProblem', () => {
   });
 
   it('refuses consistency without completeness or a digest', () => {
+    expect(checkReportProblem(undefined)).toBeNull();
+    expect(checkReportProblem(null)).toBeNull();
     for (const broken of [
       { ...ready, checkVersion: 4 },
       { ...ready, consistent: false },
@@ -74,11 +80,8 @@ describe('checkReportProblem', () => {
       { ...ready, errors: ['boom'] },
       { ...ready, modelDigest: undefined },
       {},
-      null,
     ]) {
-      expect(checkReportProblem(broken)).toBe(
-        '需要 FM 阶段实际通过且输入未变化的检查结果',
-      );
+      expect(checkReportProblem(broken)).not.toBeNull();
     }
   });
 });
@@ -98,16 +101,16 @@ describe('loadFm', () => {
     expect(Object.keys(index?.files ?? {}).length).toBe(77);
   });
 
-  it('refuses a model that changed after its check', async () => {
+  it('keeps the current model when its saved report is stale', async () => {
     const check = await checkReportOf(fmRoot);
     const { index, diagnostics } = await loadFm(fmRoot, {
       ...check,
       modelDigest: 'sha256:0000',
     });
 
-    expect(index).toBeNull();
+    expect(index).not.toBeNull();
     expect(diagnostics).toEqual([
-      expect.objectContaining({ code: 'FM_CHECK_STALE' }),
+      expect.objectContaining({ code: 'FM_CHECK_STALE', severity: 'gap' }),
     ]);
   });
 
@@ -121,12 +124,76 @@ describe('loadFm', () => {
     expect(diagnostics[0]?.code).toBe('FM_INVALID');
   });
 
-  it('refuses a report that is not a passing one', async () => {
-    const { diagnostics } = await loadFm(fmRoot, { checkVersion: 5 });
+  it('keeps an invalid report visible without treating it as a passing check', async () => {
+    const { index, diagnostics } = await loadFm(fmRoot, { checkVersion: 5 });
+    expect(index?.check).toEqual({ checkVersion: 5 });
 
     expect(diagnostics).toEqual([
-      expect.objectContaining({ code: 'FM_CHECK_INVALID' }),
+      expect.objectContaining({ code: 'FM_CHECK_INVALID', severity: 'gap' }),
     ]);
+  });
+});
+
+describe('loadFmFromDocument', () => {
+  it('indexes an in-memory document and its inline validation suite without a fake check', async () => {
+    const { bundle } = await readModelRoot(fmRoot);
+    const original = JSON.stringify(bundle);
+    const { index, diagnostics } = loadFmFromDocument(bundle);
+    expect(diagnostics).toEqual([]);
+    expect(index?.check).toBeNull();
+    expect(index?.entities.size).toBe(bundle.entities.length);
+    expect(index?.scenarios.size).toBeGreaterThan(0);
+    expect(index?.instances.size).toBeGreaterThan(0);
+    expect(index?.modelDigest).toMatch(/^sha256:[a-f0-9]{64}$/);
+    expect(loadFmFromDocument(bundle).index?.modelDigest).toBe(
+      index?.modelDigest,
+    );
+    expect(JSON.stringify(bundle)).toBe(original);
+    const edited = {
+      ...bundle,
+      manifest: { ...bundle.manifest, name: 'Edited' },
+    };
+    expect(loadFmFromDocument(edited).index?.modelDigest).not.toBe(
+      index?.modelDigest,
+    );
+  });
+
+  it('reads directories and bundles without a check report', async () => {
+    const directory = mkdtempSync(path.join(tmpdir(), 'api-input-'));
+    try {
+      const { bundle } = await readModelRoot(fmRoot);
+      const file = path.join(directory, 'model.evidence.json');
+      writeFileSync(file, serializeModelBundle(bundle));
+      const tree = await loadFm(fmRoot);
+      const packed = await loadFm(file);
+      expect(tree.diagnostics).toEqual([]);
+      expect(packed.diagnostics).toEqual([]);
+      expect(packed.index?.compiled).toEqual(tree.index?.compiled);
+      expect(packed.index?.scenarios).toEqual(tree.index?.scenarios);
+      expect(packed.index?.check).toBeNull();
+      writeFileSync(file, '{');
+      expect((await loadFm(file)).index).toBeNull();
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('still refuses a source that changes during a read', async () => {
+    const original = modelCore.readModelRootBytes;
+    const spy = vi.spyOn(modelCore, 'readModelRootBytes');
+    spy
+      .mockImplementationOnce(original)
+      .mockImplementationOnce(async (root) => [
+        ...(await original(root)),
+        { path: 'changed.txt', bytes: Buffer.from('changed') },
+      ]);
+    try {
+      const result = await loadFm(fmRoot);
+      expect(result.index).toBeNull();
+      expect(result.diagnostics[0]?.code).toBe('SOURCE_CHANGED');
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
 
