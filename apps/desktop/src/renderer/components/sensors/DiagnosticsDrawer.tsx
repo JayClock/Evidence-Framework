@@ -52,44 +52,62 @@ export const DiagnosticsDrawer = ({
       </button>
     </div>
 
-    {stale ? <p role="status" className="px-3 text-[11px] text-evidence-muted">检查基于磁盘快照；当前有未保存或外部修改，保存并重新检查后更新图上标记。</p> : null}
+    {stale ? (
+      <p role="status" className="px-3 text-[11px] text-evidence-muted">
+        检查基于磁盘快照；当前有未保存或外部修改，保存并重新检查后更新图上标记。
+      </p>
+    ) : null}
     {report.issues.length === 0 ? (
       <p className="px-3 py-2 text-[11px] text-evidence-muted">
         本轮没有发现项。
       </p>
     ) : (
       <ul className="divide-y divide-evidence-line">
-        {[...report.issues].sort((a, b) => Number(selectedIssueIds.includes(b.issueId)) - Number(selectedIssueIds.includes(a.issueId))).map((issue) => (
-          <li key={issue.issueId} data-active-issue={selectedIssueIds.includes(issue.issueId) || undefined} className={selectedIssueIds.includes(issue.issueId) ? 'bg-blue-50' : ''}>
-            <button
-              type="button"
-              onClick={() => onFocusIssue(issue)}
-              className="flex w-full items-start gap-2 px-3 py-1.5 text-left hover:bg-[#f1f3f6]"
+        {[...report.issues]
+          .sort(
+            (a, b) =>
+              Number(selectedIssueIds.includes(b.issueId)) -
+              Number(selectedIssueIds.includes(a.issueId)),
+          )
+          .map((issue) => (
+            <li
+              key={issue.issueId}
+              data-active-issue={
+                selectedIssueIds.includes(issue.issueId) || undefined
+              }
+              className={
+                selectedIssueIds.includes(issue.issueId) ? 'bg-blue-50' : ''
+              }
             >
-              <span
-                className={`shrink-0 text-[10px] ${severityClass(issue.severity)}`}
+              <button
+                type="button"
+                onClick={() => onFocusIssue(issue)}
+                className="flex w-full items-start gap-2 px-3 py-1.5 text-left hover:bg-[#f1f3f6]"
               >
-                {severityLabel(issue.severity)}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[11px] text-evidence-ink">
-                  {issue.message}
+                <span
+                  className={`shrink-0 text-[10px] ${severityClass(issue.severity)}`}
+                >
+                  {severityLabel(issue.severity)}
                 </span>
-                <span className="block text-[10px] text-evidence-muted">
-                  {issue.source} · {issue.code}
-                  {issue.targetNodeId === undefined
-                    ? ''
-                    : ` · ${issue.targetNodeId}`}
-                </span>
-                {issue.suggestion === undefined ? null : (
-                  <span className="block text-[10px] text-evidence-muted">
-                    {issue.suggestion}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[11px] text-evidence-ink">
+                    {issue.message}
                   </span>
-                )}
-              </span>
-            </button>
-          </li>
-        ))}
+                  <span className="block text-[10px] text-evidence-muted">
+                    {issue.source} · {issue.code}
+                    {issue.targetNodeId === undefined
+                      ? ''
+                      : ` · ${issue.targetNodeId}`}
+                  </span>
+                  {issue.suggestion === undefined ? null : (
+                    <span className="block text-[10px] text-evidence-muted">
+                      {issue.suggestion}
+                    </span>
+                  )}
+                </span>
+              </button>
+            </li>
+          ))}
       </ul>
     )}
 

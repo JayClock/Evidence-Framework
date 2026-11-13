@@ -32,7 +32,11 @@ const document = (): {
     ],
   },
   entities: [
-    { id: 'context.product-procurement', category: 'context', kind: 'contract' },
+    {
+      id: 'context.product-procurement',
+      category: 'context',
+      kind: 'contract',
+    },
     { id: 'context.product-catalog', category: 'context', kind: 'domain' },
     {
       id: 'context.product-sourcing',
@@ -81,19 +85,59 @@ describe('reviewScopeRefs', () => {
 
 describe('registerReviewIpc', () => {
   it('previews through installed assets without a save dialog and reports failures', async () => {
-    const data = projectWorkbenchData({ model: { schemaVersion: '5.0', model: { name: '预览' }, entities: [], relationships: [], rules: [] }, check: {}, checked: false });
+    const data = projectWorkbenchData({
+      model: {
+        schemaVersion: '5.0',
+        model: { name: '预览' },
+        entities: [],
+        relationships: [],
+        rules: [],
+      },
+      check: {},
+      checked: false,
+    });
     const saveDialog = vi.fn();
-    const input = { rootPath: '/model', revision: 2, document: createEmptyDomainModel() };
-    const preview = vi.fn(async () => ({ success: true as const, revision: 2, data, issues: [], notice: '编辑快照' }));
-    registerReviewIpc({ preview, showSaveDialog: saveDialog, resolveAssets: () => path.resolve(import.meta.dirname, '../../../../libs/evidence-visualization/assets') });
+    const input = {
+      rootPath: '/model',
+      revision: 2,
+      document: createEmptyDomainModel(),
+    };
+    const preview = vi.fn(async () => ({
+      success: true as const,
+      revision: 2,
+      data,
+      issues: [],
+      notice: '编辑快照',
+    }));
+    registerReviewIpc({
+      preview,
+      showSaveDialog: saveDialog,
+      resolveAssets: () =>
+        path.resolve(
+          import.meta.dirname,
+          '../../../../libs/evidence-visualization/assets',
+        ),
+    });
     const handle = handlers.get('evidence:project:preview-review')!;
-    const response = await handle({ sender: {} } as never, input as never) as { html: string; success: boolean };
+    const response = (await handle(
+      { sender: {} } as never,
+      input as never,
+    )) as { html: string; success: boolean };
     expect(response, JSON.stringify(response)).toHaveProperty('success', true);
     expect(response.html).toContain('Content-Security-Policy');
     expect(preview).toHaveBeenCalledWith(input);
     expect(saveDialog).not.toHaveBeenCalled();
-    registerReviewIpc({ preview: async () => { throw new Error('输入变化'); } });
-    expect(await handlers.get('evidence:project:preview-review')!({} as never, input as never)).toEqual({ success: false, error: '输入变化' });
+    registerReviewIpc({
+      preview: async () => {
+        throw new Error('输入变化');
+      },
+    });
+    expect(
+      await handlers.get('evidence:project:preview-review')!(
+        {} as never,
+        input as never,
+      ),
+    ).toEqual({ success: false, error: '输入变化' });
   });
   it('reports a cancelled dialog without generating anything', async () => {
     const generate = vi.fn();
@@ -105,6 +149,58 @@ describe('registerReviewIpc', () => {
       }),
     ).toEqual({ status: 'cancelled' });
     expect(generate).not.toHaveBeenCalled();
+  });
+
+  it('chooses a baseline before exporting and passes a portable current source unchanged', async () => {
+    const baseline = createEmptyDomainModel();
+    const generate = vi.fn(async (input) => ({
+      output: input.output,
+      data: { counts: {} },
+    }));
+    const save = vi.fn(async () => ({
+      canceled: false,
+      filePath: '/tmp/diff.html',
+    }));
+    registerReviewIpc({
+      resolveAssets: () => '/assets',
+      showBaselineDialog: async () => ({
+        canceled: false,
+        filePaths: ['/baseline.evidence.json'],
+      }),
+      readDocument: async () => baseline,
+      showSaveDialog: save,
+      generate: generate as never,
+    });
+    const response = await handlers.get('evidence:project:export-diff-review')!(
+      { sender: {} } as never,
+      '/models/current.evidence.json' as never,
+    );
+    expect(response).toHaveProperty('status', 'saved');
+    expect(generate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baselineDocument: baseline,
+        modelRoot: '/models/current.evidence.json',
+      }),
+    );
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({ defaultPath: '/models/diff-review.html' }),
+    );
+    generate.mockClear();
+    save.mockClear();
+    registerReviewIpc({
+      resolveAssets: () => '/assets',
+      showBaselineDialog: async () => ({ canceled: true, filePaths: [] }),
+      showSaveDialog: save,
+      generate: generate as never,
+    });
+    expect(
+      await handlers.get('evidence:project:export-diff-review')!(
+        { sender: {} } as never,
+        '/models/current.evidence.json' as never,
+      ),
+    ).toEqual({ status: 'cancelled' });
+    expect(generate).not.toHaveBeenCalled();
+    expect(save).not.toHaveBeenCalled();
   });
 
   it('generates the page the user chose and reports what it holds', async () => {

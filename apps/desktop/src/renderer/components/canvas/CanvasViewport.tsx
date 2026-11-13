@@ -195,10 +195,19 @@ export const CanvasViewport = ({
     }
 
     const node = layout.nodeById.get(focusRequest.nodeId);
-
-    if (node === undefined) {
-      return;
-    }
+    const context = layout.contextGroups.find(
+      (item) => item.contextId === focusRequest.nodeId,
+    );
+    const edge = layout.edges.find(
+      (item) => item.relationshipId === focusRequest.nodeId,
+    );
+    const box = node?.box ?? context?.box;
+    const point = box
+      ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+      : edge?.points[Math.floor(edge.points.length / 2)];
+    if (!point) return;
+    if (edge) setHoveredEdgeId(edge.relationshipId);
+    if (context) setHoveredContextId(context.contextId);
 
     lastFocusToken.current = focusRequest.token;
     setViewport((current) => {
@@ -209,15 +218,11 @@ export const CanvasViewport = ({
 
       return panViewport(
         current,
-        target.x / 2 -
-          (node.box.x + node.box.width / 2) * current.zoom -
-          current.panX,
-        target.y / 2 -
-          (node.box.y + node.box.height / 2) * current.zoom -
-          current.panY,
+        target.x / 2 - point.x * current.zoom - current.panX,
+        target.y / 2 - point.y * current.zoom - current.panY,
       );
     });
-  }, [focusRequest, layout.nodeById, size.height, size.width]);
+  }, [focusRequest, layout, size.height, size.width]);
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {

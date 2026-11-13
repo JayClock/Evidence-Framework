@@ -388,6 +388,9 @@ const businessGraphState = {
 };
 
 function renderBusinessGraph(target, data = DATA, baseline = false) {
+  const graphState = baseline ? { zoom: null, left: 0, top: 0 } : businessGraphState;
+  const nodes = new Map((data.nodes || []).map((node) => [node.id, node]));
+  const title = (id) => nodes.get(id)?.label || id;
   const section = card(baseline ? '基线模型图（旧坐标，非当前模型）' : '业务模型图', target);
   section.id = baseline ? 'baseline-business-graph' : 'business-graph';
   const changes = new Map((DATA.diff?.changes || []).map((change) => [change.id, change]));
@@ -412,22 +415,23 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
 
   function control(id, label, run) {
     const button = action(label, run);
-    button.id = id;
+    button.id = baseline ? `baseline-${id}` : id;
     toolbar.append(button);
     return button;
   }
 
   function setZoom(value) {
-    businessGraphState.zoom = Math.max(0.2, Math.min(2, value));
-    svg.setAttribute('width', graph.width * businessGraphState.zoom);
-    svg.setAttribute('height', graph.height * businessGraphState.zoom);
-    zoomLabel.textContent = `${Math.round(businessGraphState.zoom * 100)}%`;
+    if (!svg) return;
+    graphState.zoom = Math.max(0.2, Math.min(2, value));
+    svg.setAttribute('width', graph.width * graphState.zoom);
+    svg.setAttribute('height', graph.height * graphState.zoom);
+    zoomLabel.textContent = `${Math.round(graphState.zoom * 100)}%`;
   }
   control('graph-zoom-out', '− 缩小', () =>
-    setZoom(businessGraphState.zoom / 1.25),
+    setZoom(graphState.zoom / 1.25),
   );
   control('graph-zoom-in', '+ 放大', () =>
-    setZoom(businessGraphState.zoom * 1.25),
+    setZoom(graphState.zoom * 1.25),
   );
   toolbar.append(zoomLabel);
   control('graph-fit', '适合宽度', () => {
@@ -441,8 +445,8 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
   relationDetails.append(el('summary', '查看关系详情'), selection);
   section.append(toolbar, legend, viewport, relationDetails);
   viewport.addEventListener('scroll', () => {
-    businessGraphState.left = viewport.scrollLeft;
-    businessGraphState.top = viewport.scrollTop;
+    graphState.left = viewport.scrollLeft;
+    graphState.top = viewport.scrollTop;
   });
   function element(tag, attributes = {}, text = '') {
     const item = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -659,6 +663,7 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
     ) {
       const entry = { item, target, description, badgeOwner };
       entries.push(entry);
+      item.addEventListener('review-focus', () => { focused = entry; paintHighlight(); });
       item.addEventListener('mouseenter', () => {
         hovered = entry;
         paintHighlight();
@@ -936,10 +941,10 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
       if (svg.isConnected) centreContent();
     }, 0);
     setZoom(
-      businessGraphState.zoom ??
+      graphState.zoom ??
         Math.min(1, (viewport.clientWidth - 4) / graph.width),
     );
-    viewport.scrollTo(businessGraphState.left, businessGraphState.top);
+    viewport.scrollTo(graphState.left, graphState.top);
     selection.textContent = graph.warnings.join('；');
     relationDetails.replaceChildren(el('summary', '查看关系详情'), selection);
     relationDetails.append(

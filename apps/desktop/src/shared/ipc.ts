@@ -43,6 +43,7 @@ export const EVIDENCE_IPC_CHANNELS = {
   openEditorWindow: 'evidence:project:open-editor-window',
   changed: 'evidence:project:changed',
   previewReview: 'evidence:project:preview-review',
+  exportDiffReview: 'evidence:project:export-diff-review',
   exportReview: 'evidence:project:export-review',
   deliveryPreview: 'evidence:project:delivery-preview',
   exportDelivery: 'evidence:project:export-delivery',
@@ -86,6 +87,7 @@ export interface EvidenceDesktopApi {
      * review always describes what was saved, not what the canvas shows.
      */
     previewReview: (input: PreviewReviewInput) => Promise<PreviewReviewResult>;
+    exportDiffReview: (rootPath: string) => Promise<ExportReviewResult>;
     exportReview: (rootPath: string) => Promise<ExportReviewResult>;
     /**
      * What the model becomes when it is deployed.

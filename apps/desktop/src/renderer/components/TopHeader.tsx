@@ -19,6 +19,7 @@ interface TopHeaderProps {
   onSave: () => void;
   /** Writes the offline review page; reports progress so the button can wait. */
   onPreviewReview?: () => void;
+  onExportDiffReview?: () => void;
   onExportReview: () => void;
   exportReviewBusy: boolean;
   /** Opens the delivery hub: what the model becomes when it is deployed. */
@@ -41,6 +42,7 @@ export const TopHeader = ({
   onRedo,
   onSave,
   onPreviewReview,
+  onExportDiffReview,
   onExportReview,
   exportReviewBusy,
   onOpenDelivery,
@@ -143,16 +145,44 @@ export const TopHeader = ({
         </button>
         <McpStatusPill />
 
-        {onPreviewReview ? <button type="button" onClick={onPreviewReview} title="审查中心（Alt+R）" className="rounded border border-evidence-line px-2 py-1 text-[11px]">审查中心</button> : null}
+        {onPreviewReview ? (
+          <button
+            type="button"
+            onClick={onPreviewReview}
+            title="审查中心（Alt+R）"
+            className="rounded border border-evidence-line px-2 py-1 text-[11px]"
+          >
+            审查中心
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={onExportReview}
-          disabled={exportReviewBusy}
+          disabled={exportReviewBusy || dirty}
           className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink disabled:opacity-40"
-          title="导出单文件离线审查页（HTML）"
+          title={
+            dirty
+              ? '请先保存；正式审查导出只读取磁盘快照'
+              : '导出单文件离线审查页（HTML）'
+          }
         >
           {exportReviewBusy ? '导出中…' : '导出审查页'}
         </button>
+        {onExportDiffReview ? (
+          <button
+            type="button"
+            disabled={exportReviewBusy || dirty}
+            onClick={onExportDiffReview}
+            title={
+              dirty
+                ? '请先保存再与基线比较'
+                : '选择 *.evidence.json 基线，导出差异审查页'
+            }
+            className="rounded border border-evidence-line px-2 py-1 text-[11px] disabled:opacity-40"
+          >
+            导出差异审查
+          </button>
+        ) : null}
 
         <button
           type="button"

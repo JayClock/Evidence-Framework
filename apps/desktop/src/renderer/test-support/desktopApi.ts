@@ -135,6 +135,7 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     abort: string[];
     triggerSensors: string[];
     modelChanged: string[];
+    exportDiffReview: string[];
     exportReview: string[];
     deliveryPreview: string[];
     exportDelivery: string[];
@@ -246,6 +247,7 @@ export const installDesktopApi = ({
     abort: [],
     triggerSensors: [],
     modelChanged: [],
+    exportDiffReview: [],
     exportReview: [],
     deliveryPreview: [],
     exportDelivery: [],
@@ -366,6 +368,7 @@ export const installDesktopApi = ({
         calls.openEditorWindow.push(rootPath);
       },
       previewReview: async () => ({ success: false, error: '未配置审查预览' }),
+      exportDiffReview: async (rootPath) => { calls.exportDiffReview.push(rootPath); return exportReviewResult; },
       exportReview: async (rootPath) => {
         calls.exportReview.push(rootPath);
 

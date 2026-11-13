@@ -36,7 +36,10 @@ export interface GenerateWorkbenchInput extends CollectWorkbenchInput {
   assetsDirectory?: string;
   /** Extra input read by {@link collectWorkbench}; defaults to the filesystem. */
   collect?: typeof collectWorkbench;
-  render?: (data: WorkbenchData, assets: ReturnType<typeof loadWorkbenchAssets>) => string;
+  render?: (
+    data: WorkbenchData,
+    assets: ReturnType<typeof loadWorkbenchAssets>,
+  ) => string;
 }
 
 export interface GenerateWorkbenchResult {
@@ -57,11 +60,14 @@ export const generateWorkbench = async ({
   assetsDirectory,
   collect = collectWorkbench,
   render = renderWorkbenchHtml,
-  fingerprint = workbenchFingerprint,
+  fingerprint: suppliedFingerprint,
   ...input
 }: GenerateWorkbenchInput): Promise<GenerateWorkbenchResult> => {
   const root = path.resolve(input.projectRoot);
   const target = path.resolve(output);
+  const fingerprint =
+    suppliedFingerprint ??
+    ((root: string) => workbenchFingerprint(root, input.modelRoot));
 
   if (path.dirname(target) === target) {
     throw new WorkbenchAssetError('输出必须是文件路径');

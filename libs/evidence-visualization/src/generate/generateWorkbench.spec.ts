@@ -8,6 +8,7 @@ import {
   workbenchFingerprint,
 } from './collectWorkbench.js';
 import { generateWorkbench, reviewPagePath } from './generateWorkbench.js';
+import { readModelRoot, serializeModelBundle } from '@evidence-poc/evidence-model-core';
 import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
 
 /**
@@ -37,6 +38,29 @@ const withProject = async (
     await rm(root, { recursive: true, force: true });
   }
 };
+
+describe('baseline review generation', () => {
+  it('exports a portable snapshot and detects edits to that exact input before publishing', async () => {
+    await withProject(async (root) => {
+      const source = path.join(root, '.evidence/fm');
+      const baseline = (await readModelRoot(source)).bundle;
+      const current = structuredClone(baseline);
+      current.entities[0]!.label += '（修订）';
+      const bundlePath = path.join(root, 'current.evidence.json');
+      await writeFile(bundlePath, serializeModelBundle(current));
+      const output = path.join(root, 'diff-review.html');
+      const generated = await generateWorkbench({ projectRoot: root, modelRoot: bundlePath, output, baselineDocument: baseline });
+      expect(generated.data.diff?.counts.modified).toBe(1);
+      const html = await readFile(output, 'utf8');
+      expect(html).toContain('baselineFingerprint');
+      await expect(generateWorkbench({ projectRoot: root, modelRoot: bundlePath, output, baselineDocument: baseline, render: () => {
+        // Fingerprinting after rendering must cover the bundle, not a neighbouring tree.
+        return 'unused';
+      }, fingerprint: (() => { let calls = 0; return async () => ++calls < 4 ? 'old' : 'new'; })() })).rejects.toThrow('输入变化');
+      expect(await readFile(output, 'utf8')).toBe(html);
+    });
+  });
+});
 
 describe('workbenchFingerprint', () => {
   it('ignores generated output but notices a real input', async () => {

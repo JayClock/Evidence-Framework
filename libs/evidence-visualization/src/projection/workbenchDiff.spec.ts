@@ -15,7 +15,7 @@ const base = () => {
     kind: 'party',
     label: '旧主体',
     notes: 'PRIVATE_SOURCE',
-    attributes: [{ name: 'name', label: '姓名', valueType: 'string' }],
+    attributes: [{ name: 'name', label: '姓名', valueType: 'string', meaning: '姓名' }],
   });
   return document;
 };

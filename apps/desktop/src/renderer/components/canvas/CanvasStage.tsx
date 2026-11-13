@@ -10,7 +10,10 @@ import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { DiagnosticMarkers } from './DiagnosticMarkers';
-import { diagnosticColor, type DiagnosticIndex } from '../../state/diagnosticIndex';
+import {
+  diagnosticColor,
+  type DiagnosticIndex,
+} from '../../state/diagnosticIndex';
 import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import { EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
@@ -222,7 +225,18 @@ export const CanvasStage = ({
               }
               onMouseLeave={() => !outOfScope && onHoverEdge(null)}
             >
-              {diagnostics?.has(edge.relationshipId) ? <polyline points={points} fill="none" stroke={diagnosticColor(diagnostics.get(edge.relationshipId)!.severity)} strokeWidth={6} opacity={0.35} data-edge-diagnostic={edge.relationshipId} /> : null}
+              {diagnostics?.has(edge.relationshipId) ? (
+                <polyline
+                  points={points}
+                  fill="none"
+                  stroke={diagnosticColor(
+                    diagnostics.get(edge.relationshipId)!.severity,
+                  )}
+                  strokeWidth={6}
+                  opacity={0.35}
+                  data-edge-diagnostic={edge.relationshipId}
+                />
+              ) : null}
               <polyline
                 points={points}
                 fill="none"
@@ -290,7 +304,14 @@ export const CanvasStage = ({
         />
       ))}
 
-      {diagnostics && onOpenIssues ? <DiagnosticMarkers index={diagnostics} layout={layout} scope={scope} onOpen={onOpenIssues} /> : null}
+      {diagnostics && onOpenIssues ? (
+        <DiagnosticMarkers
+          index={diagnostics}
+          layout={layout}
+          scope={scope}
+          onOpen={onOpenIssues}
+        />
+      ) : null}
       {overlay === null
         ? null
         : [...overlay.marks.entries()].map(([nodeId, change]) => {

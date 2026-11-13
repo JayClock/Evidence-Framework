@@ -90,7 +90,9 @@ export const PromptDock = ({
   useEffect(() => {
     if (!prefill || previousPrefill.current === prefill.token) return;
     previousPrefill.current = prefill.token;
-    setValue((current) => current.trim() ? `${current}\n\n${prefill.text}` : prefill.text);
+    setValue((current) =>
+      current.trim() ? `${current}\n\n${prefill.text}` : prefill.text,
+    );
     textareaRef.current?.focus();
   }, [prefill]);
 
@@ -102,7 +104,9 @@ export const PromptDock = ({
     }
 
     setValue('');
-    await onSubmit(step === null ? text : `${workshopStepFocus(step)}\n${text}`);
+    await onSubmit(
+      step === null ? text : `${workshopStepFocus(step)}\n${text}`,
+    );
   };
 
   return (
@@ -110,7 +114,11 @@ export const PromptDock = ({
       aria-label="AI 访谈输入"
       className="evidence-no-drag flex w-[560px] max-w-[calc(100%-48px)] flex-col gap-2 rounded-[10px] border border-evidence-line bg-white/95 px-3 pt-2.5 pb-2 shadow-[0_6px_24px_#00000014]"
     >
-      <div className="flex flex-wrap items-center gap-1" role="group" aria-label="工作坊步骤">
+      <div
+        className="flex flex-wrap items-center gap-1"
+        role="group"
+        aria-label="工作坊步骤"
+      >
         {WORKSHOP_STEPS.map((candidate) => {
           const active = step === candidate.id;
 

@@ -143,15 +143,41 @@ const EditorWorkspace = ({
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [activeIssueIds, setActiveIssueIds] = useState<readonly string[]>([]);
   // Sensor runs read disk, not the live ModelSession. Never paint old findings as current.
-  const diagnosticsStale = state.dirty || state.externalChangeAt !== null || sensors.loading || sensors.error !== null ||
-    (state.savedAt !== null && (sensors.report === null || sensors.report.timestamp < state.savedAt));
-  const diagnostics = useMemo(() => createDiagnosticIndex(diagnosticsStale ? null : sensors.report, state.document), [diagnosticsStale, sensors.report, state.document]);
-  useEffect(() => { if (state.savedAt !== null) void sensors.refresh(); }, [state.savedAt, sensors.refresh]);
+  const diagnosticsStale =
+    state.dirty ||
+    state.externalChangeAt !== null ||
+    sensors.loading ||
+    sensors.error !== null ||
+    (state.savedAt !== null &&
+      (sensors.report === null || sensors.report.timestamp < state.savedAt));
+  const diagnostics = useMemo(
+    () =>
+      createDiagnosticIndex(
+        diagnosticsStale ? null : sensors.report,
+        state.document,
+      ),
+    [diagnosticsStale, sensors.report, state.document],
+  );
+  useEffect(() => {
+    if (state.savedAt !== null) void sensors.refresh();
+  }, [state.savedAt, sensors.refresh]);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewRevision, setReviewRevision] = useState(0);
-  const [reviewPrompt, setReviewPrompt] = useState<{ token: number; text: string } | null>(null);
-  useEffect(() => { setReviewRevision((current) => current + 1); }, [state.document]);
-  const reviewInput = useMemo(() => ({ rootPath: project.rootPath, document: state.document, revision: reviewRevision }), [project.rootPath, state.document, reviewRevision]);
+  const [reviewPrompt, setReviewPrompt] = useState<{
+    token: number;
+    text: string;
+  } | null>(null);
+  useEffect(() => {
+    setReviewRevision((current) => current + 1);
+  }, [state.document, state.externalChangeAt]);
+  const reviewInput = useMemo(
+    () => ({
+      rootPath: project.rootPath,
+      document: state.document,
+      revision: reviewRevision,
+    }),
+    [project.rootPath, state.document, reviewRevision],
+  );
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [sandboxOpen, setSandboxOpen] = useState(false);
 
@@ -202,9 +228,8 @@ const EditorWorkspace = ({
   /**
    * Jumps from a finding to the object it belongs to.
    *
-   * `entity#attribute` targets select the attribute row; a bare context id
-   * falls back to the first object inside it, and a finding without a target
-   * stays in the drawer instead of guessing.
+   * `entity#attribute` targets select the attribute row; Contexts and
+   * relationships pan to their actual geometry without selecting a made-up object.
    */
   const focusIssue = useCallback(
     (issue: SensorIssue) => {
@@ -224,17 +249,22 @@ const EditorWorkspace = ({
         }
       }
 
-      const contextRef = issue.contextRef ?? target?.split('#')[0];
+      const id = target?.split('#')[0];
+      const contextRef = issue.contextRef ?? id;
       const group = state.layout.contextGroups.find(
         (candidate) => candidate.contextId === contextRef,
       );
-      const nodeId = group?.nodeIds[0];
-
-      if (nodeId !== undefined) {
-        focusNode(nodeId);
+      const edge = state.layout.edges.find(
+        (candidate) => candidate.relationshipId === id,
+      );
+      const ref = edge?.relationshipId ?? group?.contextId;
+      if (ref) {
+        setSelectedScope(null);
+        tokenRef.current += 1;
+        setFocusRequest({ nodeId: ref, token: tokenRef.current });
       }
     },
-    [focusNode, state.layout.contextGroups, state.layout.nodeById, state.session, scope],
+    [state.layout, state.session, scope],
   );
 
   // What the next question will be about: the canvas selection, reduced to what
@@ -347,6 +377,7 @@ const EditorWorkspace = ({
         }}
         onSave={() => void save()}
         onPreviewReview={() => setReviewOpen(true)}
+        onExportDiffReview={() => void reviewExport.exportPage(true)}
         onExportReview={() => void reviewExport.exportPage()}
         exportReviewBusy={reviewExport.busy}
         onOpenDelivery={() => setDeliveryOpen(true)}
@@ -442,19 +473,36 @@ const EditorWorkspace = ({
         />
       </div>
 
-      {reviewOpen ? <ReviewHubModal input={reviewInput}
-        onClose={() => setReviewOpen(false)}
-        canLocate={(issue) => {
-          const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
-          return !!id && (state.layout.nodeById.has(id) || state.layout.contextGroups.some((group) => group.contextId === id && group.nodeIds.length > 0));
-        }}
-        onLocate={(issue) => { setReviewOpen(false); focusIssue(issue); }}
-        onPrompt={(issue) => {
-          setReviewOpen(false);
-          focusIssue(issue);
-          tokenRef.current += 1;
-          setReviewPrompt({ token: tokenRef.current, text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}` });
-        }} /> : null}
+      {reviewOpen ? (
+        <ReviewHubModal
+          input={reviewInput}
+          onClose={() => setReviewOpen(false)}
+          canLocate={(issue) => {
+            const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
+            return (
+              !!id &&
+              (state.layout.nodeById.has(id) ||
+                state.layout.contextGroups.some(
+                  (group) => group.contextId === id,
+                ) ||
+                state.layout.edges.some((edge) => edge.relationshipId === id))
+            );
+          }}
+          onLocate={(issue) => {
+            setReviewOpen(false);
+            focusIssue(issue);
+          }}
+          onPrompt={(issue) => {
+            setReviewOpen(false);
+            focusIssue(issue);
+            tokenRef.current += 1;
+            setReviewPrompt({
+              token: tokenRef.current,
+              text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
+            });
+          }}
+        />
+      ) : null}
       {deliveryOpen ? (
         <DeliveryHub
           rootPath={project.rootPath}

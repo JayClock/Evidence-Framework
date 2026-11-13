@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import type { ExportReviewResult } from '../../shared/projects';
 
@@ -12,7 +12,7 @@ export interface ReviewExportController {
   busy: boolean;
   notice: ReviewExportNotice | null;
   /** Writes the offline review page, asking the user where to put it. */
-  exportPage: () => Promise<void>;
+  exportPage: (diff?: boolean) => Promise<void>;
   dismissNotice: () => void;
 }
 
@@ -42,23 +42,32 @@ export const useReviewExport = (rootPath: string): ReviewExportController => {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<ReviewExportNotice | null>(null);
 
-  const exportPage = useCallback(async () => {
-    setBusy(true);
-    setNotice(null);
+  const pending = useRef(false);
+  const exportPage = useCallback(
+    async (diff = false) => {
+      if (pending.current) return;
+      pending.current = true;
+      setBusy(true);
+      setNotice(null);
 
-    try {
-      const result = await window.evidenceAPI.projects.exportReview(rootPath);
+      try {
+        const result = await (diff
+          ? window.evidenceAPI.projects.exportDiffReview(rootPath)
+          : window.evidenceAPI.projects.exportReview(rootPath));
 
-      setNotice(messageOf(result));
-    } catch (error) {
-      setNotice({
-        tone: 'failed',
-        message: `导出失败：${error instanceof Error ? error.message : '未知错误。'}`,
-      });
-    } finally {
-      setBusy(false);
-    }
-  }, [rootPath]);
+        setNotice(messageOf(result));
+      } catch (error) {
+        setNotice({
+          tone: 'failed',
+          message: `导出失败：${error instanceof Error ? error.message : '未知错误。'}`,
+        });
+      } finally {
+        pending.current = false;
+        setBusy(false);
+      }
+    },
+    [rootPath],
+  );
 
   return {
     busy,

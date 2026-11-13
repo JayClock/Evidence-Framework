@@ -1,8 +1,11 @@
-import { cp, mkdtemp, rm, readdir } from 'node:fs/promises';
+import { cp, mkdtemp, rm, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import {
+  readModelRoot,
+  serializeModelBundle,
+} from '@evidence-poc/evidence-model-core';
 import { workbenchFingerprint } from '@evidence-poc/evidence-visualization';
 import { previewReview } from './reviewPreview';
 
@@ -28,6 +31,19 @@ const fixture = async () => {
 };
 
 describe('live review preview', () => {
+  it('reads validation inputs from a portable bundle without treating it as a directory', async () => {
+    const { root, document } = await fixture();
+    const file = path.join(root, 'snapshot.evidence.json');
+    await writeFile(file, serializeModelBundle(document));
+    const result = await previewReview({
+      rootPath: file,
+      document,
+      revision: 1,
+    });
+    expect(result.success).toBe(true);
+    expect(result.data.counts.scenarios).toBeGreaterThan(0);
+    expect(result.notice).toContain('已保存');
+  });
   it('checks an unsaved snapshot without publishing files or overwriting sources', async () => {
     const { root, document } = await fixture();
     const before = await workbenchFingerprint(root);

@@ -48,7 +48,7 @@ export const ReviewHubModal = ({
       request.current++;
       previous?.focus();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Refresh is intentionally explicit; a later input revision marks this result stale.
   }, []);
   return (
     <div

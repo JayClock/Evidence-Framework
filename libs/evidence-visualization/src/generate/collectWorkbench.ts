@@ -13,9 +13,10 @@ import {
 } from '@evidence-poc/evidence-api';
 import {
   buildFmCheckReport,
+  compiledDocument,
+  isModelBundlePath,
   loadValidationSuite,
   modelDigestOf,
-  readModelRoot,
   readModelRootBytes,
   type FmCheckReport,
   type ValidationSuite,
@@ -23,6 +24,7 @@ import {
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { projectWorkbenchDiff } from '../projection/workbenchDiff.js';
+import { readWorkbenchModel } from './readWorkbenchModel.js';
 import { deliveryViewOf } from '../projection/deliveryView.js';
 import { workbenchLayoutOf } from '../projection/workbenchLayout.js';
 import {
@@ -98,9 +100,7 @@ const collectFiles = async (
       left.name.localeCompare(right.name),
     )) {
       const relative = `${relativeDirectory}/${entry.name}`;
-      const insideTree = relative
-        .slice(relativeRoot.length + 1)
-        .split('/');
+      const insideTree = relative.slice(relativeRoot.length + 1).split('/');
 
       if (insideTree.some((part) => IGNORED_PARTS.has(part))) {
         continue;
@@ -156,13 +156,29 @@ const exists = async (target: string): Promise<boolean> => {
  */
 export const workbenchFingerprint = async (
   projectRoot: string,
+  modelRoot?: string,
 ): Promise<string> => {
   const root = path.resolve(projectRoot);
-  const files = await collectFiles(root, path.join('.evidence', 'fm'));
+  const source =
+    modelRoot === undefined
+      ? path.join(root, MODEL_TREE)
+      : path.resolve(modelRoot);
+  let files: FingerprintFile[];
+  if (source === path.join(root, MODEL_TREE)) {
+    files = await collectFiles(root, MODEL_TREE);
+  } else {
+    const stats = await lstat(source);
+    if (!stats.isFile() || stats.isSymbolicLink())
+      throw new WorkbenchInputError('替代模型输入必须是普通快照文件');
+    files = [{ path: path.basename(source), bytes: await readFile(source) }];
+  }
   const design = path.join('.evidence', 'api', 'api.json');
 
   if (await exists(path.join(root, design))) {
-    files.push({ path: design, bytes: await readFile(path.join(root, design)) });
+    files.push({
+      path: design,
+      bytes: await readFile(path.join(root, design)),
+    });
   }
 
   const digest = createHash('sha256');
@@ -183,6 +199,8 @@ export const workbenchFingerprint = async (
 export interface CollectWorkbenchInput {
   /** Absolute project root that owns `.evidence/`. */
   projectRoot: string;
+  /** Optional portable model bundle instead of the project's default FM tree. */
+  modelRoot?: string;
   /** An explicitly chosen baseline; used only for the optional diff projection. */
   baselineDocument?: DomainModelDocument;
   /** Independent Context IDs the review covers; required once an API exists. */
@@ -203,7 +221,9 @@ export interface CollectedWorkbench {
   projection: Projection | null;
 }
 
-const bindingsOf = (design: DesignDocument): readonly Record<string, unknown>[] =>
+const bindingsOf = (
+  design: DesignDocument,
+): readonly Record<string, unknown>[] =>
   Array.isArray(design['bindings'])
     ? design['bindings'].filter(
         (item): item is Record<string, unknown> =>
@@ -220,14 +240,18 @@ const bindingsOf = (design: DesignDocument): readonly Record<string, unknown>[] 
  */
 export const collectWorkbench = async ({
   projectRoot,
+  modelRoot,
   baselineDocument,
   scopeRefs,
   requireApi = false,
   generatedAt,
-  fingerprint = workbenchFingerprint,
+  fingerprint = (root) => workbenchFingerprint(root, modelRoot),
 }: CollectWorkbenchInput): Promise<CollectedWorkbench> => {
   const root = path.resolve(projectRoot);
-  const fmRoot = path.join(root, MODEL_TREE);
+  const fmRoot =
+    modelRoot === undefined
+      ? path.join(root, MODEL_TREE)
+      : path.resolve(modelRoot);
   const apiPath = path.join(root, API_DESIGN_PATH);
   const before = await fingerprint(root);
   const apiExists = await exists(apiPath);
@@ -245,8 +269,8 @@ export const collectWorkbench = async ({
   }
 
   const [{ bundle, issues, files }, bytes] = await Promise.all([
-    readModelRoot(fmRoot),
-    readModelRootBytes(fmRoot),
+    readWorkbenchModel(fmRoot),
+    isModelBundlePath(fmRoot) ? readFile(fmRoot).then((bytes) => [{ path: path.basename(fmRoot), bytes }]) : readModelRootBytes(fmRoot),
   ]);
   const modelDigest = modelDigestOf(
     bytes.map((file) => ({ path: file.path, content: file.bytes })),
@@ -265,9 +289,14 @@ export const collectWorkbench = async ({
   }
 
   const check = checked.report;
-  const loaded = await loadFm(fmRoot, check);
+  // A model-only review asserts consistency, not API delivery readiness.
+  // loadFm deliberately requires scope completeness and belongs to the joint path.
+  if (apiExists && isModelBundlePath(fmRoot)) {
+    throw new WorkbenchInputError('联合 API 审查需要源树；请先将模型快照解包为 .evidence/fm');
+  }
+  const loaded = apiExists ? await loadFm(fmRoot, check) : null;
 
-  if (loaded.index === null) {
+  if (loaded !== null && loaded.index === null) {
     throw new WorkbenchInputError(
       `FM 未通过，不生成视图：${loaded.diagnostics
         .map((diagnostic) => diagnostic.message)
@@ -296,7 +325,7 @@ export const collectWorkbench = async ({
 
     const built = buildProjection({
       design: design.design,
-      index: loaded.index,
+      index: loaded!.index!,
       projectRoot: root,
       apiContent: content,
     });
@@ -313,7 +342,10 @@ export const collectWorkbench = async ({
     projection = built.projection;
     api = {
       resources: projection.resources as readonly Record<string, unknown>[],
-      capabilities: projection.capabilities as readonly Record<string, unknown>[],
+      capabilities: projection.capabilities as readonly Record<
+        string,
+        unknown
+      >[],
       bindings: bindingsOf(design.design),
       http: projection.http as WorkbenchApiInput['http'],
     };
@@ -324,32 +356,32 @@ export const collectWorkbench = async ({
   }
 
   const data = projectWorkbenchData({
-      model: loaded.index.compiled as unknown as CompiledModel,
-      // The page carries the placement the canvas computed, from the same
-      // document the check accepted, so the drawing and the review agree.
-      layout: workbenchLayoutOf(bundle),
-      scenarios: suite.scenarios as unknown as readonly Record<string, unknown>[],
-      instances: suite.instances as unknown as readonly Record<string, unknown>[],
-      simulation: {
-        scenarioResults: check.scenarioResults as unknown as readonly Record<
-          string,
-          unknown
-        >[],
-      },
-      api,
-      delivery: deliveryViewOf(buildDelivery(bundle)),
-      check: {
-        consistent: check.consistent,
-        complete: check.complete,
-        scopeRefs: check.scopeRefs,
-        contextRefs: check.contextRefs,
-        gaps: check.gaps,
-        simulationLimitations: check.simulationLimitations,
-        simulationPassed: check.simulationPassed,
-        timelineSummary: check.timelineSummary,
-      },
-      ...(generatedAt === undefined ? {} : { generatedAt }),
-    });
+    model: compiledDocument(bundle) as unknown as CompiledModel,
+    // The page carries the placement the canvas computed, from the same
+    // document the check accepted, so the drawing and the review agree.
+    layout: workbenchLayoutOf(bundle),
+    scenarios: suite.scenarios as unknown as readonly Record<string, unknown>[],
+    instances: suite.instances as unknown as readonly Record<string, unknown>[],
+    simulation: {
+      scenarioResults: check.scenarioResults as unknown as readonly Record<
+        string,
+        unknown
+      >[],
+    },
+    api,
+    delivery: deliveryViewOf(buildDelivery(bundle)),
+    check: {
+      consistent: check.consistent,
+      complete: check.complete,
+      scopeRefs: check.scopeRefs,
+      contextRefs: check.contextRefs,
+      gaps: check.gaps,
+      simulationLimitations: check.simulationLimitations,
+      simulationPassed: check.simulationPassed,
+      timelineSummary: check.timelineSummary,
+    },
+    ...(generatedAt === undefined ? {} : { generatedAt }),
+  });
   if (baselineDocument !== undefined) {
     data.diff = projectWorkbenchDiff(baselineDocument, bundle, data);
   }

@@ -4,9 +4,6 @@ import {
   buildKeyDataLedger,
   compiledDocument,
   loadValidationSuite,
-  modelDigestOf,
-  readModelRoot,
-  readModelRootBytes,
 } from '@evidence-poc/evidence-model-core';
 import { buildSensorReport } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import {
@@ -14,6 +11,8 @@ import {
   strictValidateDomainModel,
 } from '@evidence-poc/evidence-schema';
 import {
+  readWorkbenchModel,
+  workbenchFingerprint,
   collectWorkbench,
   deliveryViewOf,
   projectWorkbenchData,
@@ -37,15 +36,10 @@ export const previewReview = async (
   )
     throw new Error('审查预览输入无效');
   const source = modelSourceOf(input.rootPath);
-  const fingerprint = async () =>
-    modelDigestOf(
-      (await readModelRootBytes(source)).map((item) => ({
-        path: item.path,
-        content: item.bytes,
-      })),
-    );
+  const fingerprint = () =>
+    workbenchFingerprint(projectDirectoryOf(input.rootPath), source);
   const before = await fingerprint();
-  const loaded = await readModelRoot(source);
+  const loaded = await readWorkbenchModel(source);
   const suite = loadValidationSuite(loaded.files);
   const document = input.document;
   const contexts = new Map(

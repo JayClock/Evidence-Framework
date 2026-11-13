@@ -382,6 +382,15 @@ function overview() {
       const item = el('details');
       item.append(el('summary', `${{ added: '+', removed: '−', modified: '~' }[change.changeType]} ${change.label} · ${change.id}`));
       renderDiffChange(change, item);
+      if (['context', 'evidence', 'participant', 'role', 'relationship'].includes(change.category)) item.append(action('在模型图定位', () => {
+        const section = $(change.changeType === 'removed' ? 'baseline-business-graph' : 'business-graph');
+        const target = [...(section?.querySelectorAll('[data-graph-node],[data-graph-context],[data-graph-edge]') || [])].find((element) => [element.dataset.graphNode, element.dataset.graphContext, element.dataset.graphEdge].includes(change.id));
+        if (target) {
+          target.scrollIntoView({ block: 'center', inline: 'center' });
+          (target.matches('[tabindex]') ? target : target.querySelector('[tabindex]'))?.focus({ preventScroll: true });
+          target.dispatchEvent(new Event('review-focus'));
+        }
+      }));
       diff.append(item);
     }
   }

@@ -42,8 +42,15 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
     const onKeyDown = (event: KeyboardEvent) => {
       const mod = event.metaKey || event.ctrlKey;
       const typing = isEditable(event.target);
-      if (event.altKey && event.code === 'KeyR' && !typing && handlers.openReview) {
-        event.preventDefault(); handlers.openReview(); return;
+      if (
+        event.altKey &&
+        event.code === 'KeyR' &&
+        !typing &&
+        handlers.openReview
+      ) {
+        event.preventDefault();
+        handlers.openReview();
+        return;
       }
 
       if (mod && event.key.toLowerCase() === 's') {
