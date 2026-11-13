@@ -126,6 +126,93 @@ describe('CanvasStage', () => {
     ).toHaveAttribute('marker-end', 'url(#evidence-arrow)');
   });
 
+  it('draws the reason a boundary is crossed, not just the fact that it is', () => {
+    const document = createDesktopFixture();
+
+    document.entities.push(
+      {
+        type: 'entity',
+        id: 'participant.product',
+        category: 'participant',
+        kind: 'thing',
+        label: '商品（Product）',
+        contextRef: 'context.catalog',
+      },
+      {
+        type: 'entity',
+        id: 'role.payment-capability',
+        category: 'role',
+        kind: 'evidence',
+        label: '付款能力（Payment Capability）',
+        contextRef: 'context.procurement',
+      },
+      {
+        type: 'entity',
+        id: 'context.wallet',
+        category: 'context',
+        kind: 'contract',
+        label: '钱包服务（Wallet）',
+        rootRefs: ['evidence.wallet-contract'],
+      },
+      {
+        type: 'entity',
+        id: 'evidence.wallet-contract',
+        category: 'evidence',
+        kind: 'contract',
+        label: '钱包服务协议（Wallet Contract）',
+        contextRef: 'context.wallet',
+        roleRefs: ['role.buyer', 'role.supplier'],
+        attributes: [
+          {
+            name: 'signed_at',
+            label: '签署时间',
+            meaning: '钱包服务协议由双方签署的业务时间。',
+            valueType: 'timestamp',
+            required: true,
+            keyData: true,
+          },
+        ],
+      },
+    );
+    document.relationships.push(
+      {
+        type: 'relationship',
+        id: 'relation.request-references-product',
+        kind: 'references',
+        sourceRef: 'evidence.request',
+        targetRef: 'participant.product',
+        label: '交付请求指向商品',
+      },
+      {
+        type: 'relationship',
+        id: 'relation.wallet-contract-plays-capability',
+        kind: 'plays_role',
+        sourceRef: 'evidence.wallet-contract',
+        targetRef: 'role.payment-capability',
+        label: '钱包合同扮演付款能力',
+      },
+    );
+
+    const layout = createGraphLayout(createDomainGraph(document));
+    const { container } = setup({ document, layout, viewMode: 'standard' });
+    const shared = container.querySelector(
+      '[data-edge-id="relation.request-references-product"] polyline',
+    );
+    const inverted = container.querySelector(
+      '[data-edge-id="relation.wallet-contract-plays-capability"]',
+    );
+
+    expect(shared).toHaveAttribute('stroke', '#78a788');
+    expect(shared).toHaveAttribute('stroke-dasharray', '2 3');
+    expect(inverted).not.toBeNull();
+    expect(
+      inverted!.querySelector('polyline'),
+    ).toHaveAttribute('stroke', '#b79b56');
+    expect(
+      inverted!.querySelector('circle[data-edge-socket]'),
+    ).not.toBeNull();
+  });
+
   it('marks the selected object with a ring', () => {
     const { container } = setup({
       selection: { nodeId: 'evidence.request', attributeName: null },

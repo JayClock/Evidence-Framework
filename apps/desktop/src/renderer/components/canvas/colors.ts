@@ -39,6 +39,41 @@ export const CATEGORY_COLORS = {
 } as const;
 
 /**
+ * How a boundary crossing is drawn, by the reason it exists.
+ *
+ * One grey dashed line for every crossing hides the difference between a fact
+ * another boundary already settled, a capability that can be replaced, and an
+ * object two agreements happen to share. Those are the three places a reader of
+ * the board has to act differently on.
+ */
+export const CROSS_CONTEXT_EDGE_STYLES = {
+  moment_trace: {
+    stroke: '#2f5d8f',
+    dasharray: undefined,
+    width: 1.8,
+    label: '时刻追溯：引用另一个边界已落定的凭证',
+  },
+  role_inversion: {
+    stroke: '#b79b56',
+    dasharray: '6 4',
+    width: 1.6,
+    label: '能力插槽：外部凭证扮演本边界的角色',
+  },
+  shared_thing: {
+    stroke: '#78a788',
+    dasharray: '2 3',
+    width: 1.4,
+    label: '共享标的：两个边界围绕同一对象展开',
+  },
+  standard_cross: {
+    stroke: EDGE_STYLES.stroke,
+    dasharray: EDGE_STYLES.dashed,
+    width: EDGE_STYLES.width,
+    label: '其它跨边界引用',
+  },
+} as const;
+
+/**
  * Kind of a node, in the words the model uses.
  *
  * The names come from the schema vocabulary so the canvas, the inspector and the

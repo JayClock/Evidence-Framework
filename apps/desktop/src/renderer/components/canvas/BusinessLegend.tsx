@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
-import { CATEGORY_TOKENS, EDGE_STYLES } from './colors';
+import { CATEGORY_TOKENS, CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
 
 const STORAGE_KEY = 'evidence.canvas.legend.expanded';
 const readExpanded = () => {
@@ -98,6 +98,32 @@ export const BusinessLegend = ({
             <span>虚线：跨业务边界或角色扮演</span>
           </div>
           <p>箭头：角色扮演（plays_role）</p>
+          <div className="space-y-1 border-t border-evidence-line pt-2">
+            <p>跨边界的三种原因：</p>
+            {Object.entries(CROSS_CONTEXT_EDGE_STYLES).map(([kind, style]) => (
+              <div key={kind} className="flex items-start gap-2">
+                <svg aria-hidden="true" width="28" height="12" className="shrink-0">
+                  <path
+                    d="M0 6 H28"
+                    stroke={style.stroke}
+                    strokeWidth={style.width}
+                    strokeDasharray={style.dasharray}
+                  />
+                  {kind === 'role_inversion' ? (
+                    <circle
+                      cx="14"
+                      cy="6"
+                      r="3"
+                      fill="#fff"
+                      stroke={style.stroke}
+                      strokeWidth="1.4"
+                    />
+                  ) : null}
+                </svg>
+                <span>{style.label}</span>
+              </div>
+            ))}
+          </div>
           <p>履约虚线框 / 配对线：同一履约，不代表引用</p>
           {standard ? (
             <>

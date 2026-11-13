@@ -16,7 +16,7 @@ import {
   type DiagnosticIndex,
 } from '../../state/diagnosticIndex';
 import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
-import { EDGE_STYLES } from './colors';
+import { CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
 import { LifecycleBanner } from './LifecycleBanner';
 import { NodeCard } from './NodeCard';
@@ -216,6 +216,7 @@ export const CanvasStage = ({
           const mutedForBusinessReading =
             viewMode === 'simplified' &&
             edge.kind === 'plays_role' &&
+            edge.crossContextKind !== 'role_inversion' &&
             !active &&
             hoveredEdgeId !== edge.relationshipId;
           const relationship = relationshipById.get(edge.relationshipId);
@@ -223,6 +224,28 @@ export const CanvasStage = ({
           const points = edge.points
             .map((point) => `${point.x},${point.y}`)
             .join(' ');
+          /**
+           * A boundary crossing keeps the reason it exists in its line style, so
+           * the board reads as an architecture and not just as a graph.
+           */
+          const crossing =
+            edge.crossContextKind === null
+              ? null
+              : CROSS_CONTEXT_EDGE_STYLES[edge.crossContextKind];
+          const stroke = active
+            ? EDGE_HIGHLIGHT
+            : (crossing?.stroke ?? EDGE_COLOR);
+          const strokeWidth = active
+            ? EDGE_STYLES.activeWidth
+            : (crossing?.width ?? EDGE_STYLES.width);
+          const strokeDasharray =
+            crossing === null
+              ? edge.dashed
+                ? EDGE_STYLES.dashed
+                : undefined
+              : crossing.dasharray;
+          const socket =
+            edge.crossContextKind === 'role_inversion' ? crossing : null;
 
           return (
             <g
@@ -261,17 +284,26 @@ export const CanvasStage = ({
               <polyline
                 points={points}
                 fill="none"
-                stroke={active ? EDGE_HIGHLIGHT : EDGE_COLOR}
-                strokeWidth={
-                  active ? EDGE_STYLES.activeWidth : EDGE_STYLES.width
-                }
-                strokeDasharray={edge.dashed ? EDGE_STYLES.dashed : undefined}
+                stroke={stroke}
+                strokeWidth={strokeWidth}
+                strokeDasharray={strokeDasharray}
                 markerEnd={
                   edge.kind === 'plays_role'
                     ? 'url(#evidence-arrow)'
                     : undefined
                 }
               />
+              {socket === null ? null : (
+                <circle
+                  cx={midpoint.x}
+                  cy={midpoint.y}
+                  r={4}
+                  fill="#fff"
+                  stroke={socket.stroke}
+                  strokeWidth={1.6}
+                  data-edge-socket={edge.relationshipId}
+                />
+              )}
               {(viewMode === 'standard' ||
                 active ||
                 hoveredEdgeId === edge.relationshipId) &&
