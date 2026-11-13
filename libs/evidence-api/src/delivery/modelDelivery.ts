@@ -76,14 +76,19 @@ const objectSchemas = (
     const properties: JsonObject = {};
     const required: string[] = [];
 
-    for (const field of [...route.fields, ...route.derived, ...route.stamped]) {
+    for (const field of route.outputFields) {
       properties[field.name] = {
         ...schemaOf(field),
         description: field.meaning,
         'x-evidence-origin': field.reason,
+        'x-evidence-caller-input': field.reason === 'caller',
+        ...(field.reason === 'caller' ? {} : { readOnly: true }),
         ...(field.ruleRef === undefined
           ? {}
-          : { 'x-evidence-rule': field.ruleRef }),
+          : {
+              'x-evidence-rule': field.ruleRef,
+              'x-evidence-derived-by-rule': field.ruleRef,
+            }),
       };
 
       if (field.required) {
@@ -115,6 +120,7 @@ const requestBody = (route: DeliveryRoute): JsonObject | null => {
     properties[field.name] = {
       ...schemaOf(field),
       description: field.meaning,
+      'x-evidence-caller-input': true,
     };
 
     if (field.required) {
@@ -149,6 +155,8 @@ const operationOf = (
   'x-evidence-context': route.contextRef,
   'x-evidence-entity': route.entityRef,
   'x-evidence-service': route.serviceId,
+  'x-evidence-allowed-party-roles': route.allowedPartyRoleRefs,
+  'x-evidence-exposure': route.exposure,
   ...(route.contractRef === null
     ? {}
     : { 'x-evidence-contract': route.contractRef }),
@@ -170,6 +178,17 @@ const operationOf = (
       String(response.status),
       {
         description: response.description,
+        ...(response.status === 201
+          ? {
+              headers: {
+                Location: {
+                  description: '新凭证地址',
+                  schema: { type: 'string', format: 'uri-reference' },
+                  'x-evidence-uri-template': route.itemPath,
+                },
+              },
+            }
+          : {}),
         ...(response.status >= 200 &&
         response.status < 300 &&
         response.entityRef !== undefined
