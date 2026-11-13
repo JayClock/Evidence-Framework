@@ -153,11 +153,6 @@ try {
     ),
   );
   const graphRelations = new Set();
-  async function graphChoice(id, value) {
-    await evaluate(
-      `document.getElementById(${JSON.stringify(id)}).value=${JSON.stringify(value)};document.getElementById(${JSON.stringify(id)}).dispatchEvent(new Event("change"))`,
-    );
-  }
   assert.equal(
     await evaluate(
       'document.querySelectorAll("#graph-scope,#graph-overview,#graph-players,#graph-filter,#graph-status,[data-graph-band],.graph-column,.graph-order-label,.graph-edge-label").length',
@@ -169,9 +164,30 @@ try {
     1,
   );
   {
+    // The drawing is the persisted placement: every card is drawn exactly where
+    // the generator put it, so the page and the desktop canvas show one model.
     assert.equal(
-      await evaluate('document.querySelectorAll(".graph-time-field").length'),
-      0,
+      await evaluate(`(() => {
+      const placed=new Map(DATA.layout.nodes.map(n=>[n.nodeId,n.box]));
+      const drawn=[...document.querySelectorAll('[data-graph-node]')];
+      if(drawn.length!==placed.size)throw Error('Drawn objects differ from the placement: '+drawn.length+' of '+placed.size);
+      for(const node of drawn) {
+        const box=placed.get(node.dataset.graphNode);
+        if(!box)throw Error('Object drawn outside the placement: '+node.dataset.graphNode);
+        const rect=node.querySelector('rect');
+        const same=(a,b)=>Math.abs(Number(a)-Number(b))<0.001;
+        if(!same(rect.getAttribute('x'),box.x)||!same(rect.getAttribute('y'),box.y)||!same(rect.getAttribute('width'),box.width)||!same(rect.getAttribute('height'),box.height))
+          throw Error('Card moved away from its placement: '+node.dataset.graphNode);
+      }
+      const frames=new Set(DATA.layout.contextGroups.map(g=>g.contextId));
+      const bands=new Set(DATA.layout.fulfillmentGroups.map(g=>g.groupId));
+      for(const boundary of document.querySelectorAll('[data-graph-boundary]')) {
+        const id=boundary.dataset.graphBoundary;
+        if(!frames.has(id)&&!bands.has(id))throw Error('Frame invented for '+id);
+      }
+      return true;
+    })()`),
+      true,
     );
     assert.ok(
       await evaluate(
@@ -180,8 +196,28 @@ try {
     );
     assert.ok(
       await evaluate(
-        '[...document.querySelectorAll("[data-responsibility]")].every(n=>DATA.edges.some(e=>e.from===n.dataset.responsibility&&e.to===n.dataset.roleRef&&e.label==="凭证责任方"))',
+        '[...document.querySelectorAll("[data-graph-edge]")].every(n=>DATA.layout.edges.some(e=>e.relationshipId===n.dataset.graphEdge&&e.sourceRef===nodes.get(n.dataset.graphEdge).sourceRef&&e.targetRef===nodes.get(n.dataset.graphEdge).targetRef))',
       ),
+      'Every line must be a routed relationship in the placement',
+    );
+    assert.ok(
+      await evaluate(
+        '[...document.querySelectorAll("[data-responsibility]")].every(n=>DATA.layout.responsibilityLinks.some(l=>l.kind==="responsibility"&&l.sourceRef===n.dataset.responsibility&&l.roleId===n.dataset.roleRef))',
+      ),
+      'A badge is an explicit responsibility field of the placement',
+    );
+    assert.equal(
+      await evaluate('document.querySelectorAll(".graph-time-field").length'),
+      await evaluate(
+        '[...document.querySelectorAll("[data-graph-node]")].flatMap(b=>DATA.nodes.filter(n=>n.group==="attribute"&&n.parent===b.dataset.graphNode&&["started_at","expired_at","signed_at","confirmed_at","created_at"].includes(n.name))).length',
+      ),
+    );
+    const expectedCardinalities = await evaluate(
+      '[...document.querySelectorAll("[data-graph-edge]")].reduce((s,e)=>s+["sourceCardinality","targetCardinality"].filter(k=>nodes.get(e.dataset.graphEdge)[k]!==undefined).length,0)',
+    );
+    assert.equal(
+      await evaluate('document.querySelectorAll(".graph-cardinality").length'),
+      expectedCardinalities,
     );
   }
   async function checkLegend() {
@@ -231,7 +267,11 @@ try {
           const frame=frames[frames.length-1];
           const label=boundary.querySelector('.graph-boundary-label')?.textContent||'';
           if(!frame.classList.contains('legend-context-'+boundary.dataset.boundaryKind))throw Error('Legend boundary kind drift');
-          if(!label.includes(frame.textContent.trim()))throw Error('Legend boundary label drift');
+          if(boundary.dataset.boundaryKind==='fulfillment') {
+            // A band is named by its kind on the canvas; the request it gathers
+            // is the card inside it, and the legend card illustrates that name.
+            if(!label.includes('权责履约'))throw Error('Legend band label drift');
+          } else if(!label.includes(frame.textContent.trim()))throw Error('Legend boundary label drift');
           // The fulfillment boundary is drawn inside the Context that owns it, so
           // its card nests it too; a child Context is drawn on its own and its
           // card stays flat.
@@ -284,13 +324,6 @@ try {
     'document.querySelectorAll(".legend-group")[1]?.scrollIntoView({block:"start"})',
   );
   await screenshot('legend-contexts-lines');
-  await graphChoice('graph-mode', 'standard');
-  assert.equal(
-    await evaluate('document.querySelector(".graph-legend").open'),
-    true,
-  );
-  await checkLegend();
-  await graphChoice('graph-mode', 'simple');
   await evaluate('document.querySelector(".graph-legend").open=false');
   assert.deepEqual(await evaluate('[current,history.length]'), beforeLegend);
   async function checkCellAlignment(graph = false) {
@@ -335,14 +368,29 @@ try {
   // Cover two-line/truncated names, all five supported time fields, badge text,
   // and unequal-height table cells without changing the real model.
   await evaluate(`(() => {
-    globalThis.cellFixture = {nodes:DATA.nodes,edges:DATA.edges,state:{...businessGraphState},host:el('div')};
+    globalThis.cellFixture = {nodes:DATA.nodes,edges:DATA.edges,layout:DATA.layout,state:{...businessGraphState},host:el('div')};
+    const box=(x,y,width,height)=>({x,y,width,height});
     DATA.nodes = [
       {id:'cell-context',group:'context',kind:'domain',label:'居中测试'},
       {id:'cell-evidence',group:'evidence',kind:'other_evidence',parent:'cell-context',label:'这是一份需要分成两行且末尾截断的业务凭证名称用来验证内容居中'},
       {id:'cell-role',group:'role',kind:'party',parent:'cell-context',label:'业务责任方'},
       ...['started_at','expired_at','signed_at','confirmed_at','created_at'].map(name=>({id:'cell-evidence#'+name,group:'attribute',parent:'cell-evidence',name}))
     ];
-    DATA.edges=[{from:'cell-evidence',to:'cell-role',label:'凭证责任方'}];
+    DATA.edges=[];
+    // The page draws the placement, so a fixture supplies one.
+    DATA.layout = {
+      bounds: box(0,0,520,280),
+      nodes:[
+        {nodeId:'cell-evidence',box:box(20,40,220,170),contextId:'cell-context'},
+        {nodeId:'cell-role',box:box(280,40,220,64),contextId:'cell-context'},
+      ],
+      edges:[],
+      responsibilityLinks:[],
+      contextGroups:[{contextId:'cell-context',box:box(0,20,520,240),titleBox:box(0,20,520,36),depth:0,parentContextId:null,childContextIds:[],nodeIds:['cell-evidence','cell-role'],fulfillmentGroupIds:[]}],
+      fulfillmentGroups:[],
+      freeNodeIds:[],
+      omittedContextIds:[],
+    };
     DATA.nodes.forEach(n=>nodes.set(n.id,n));
     document.getElementById('detail').append(cellFixture.host);
     const tall=el('div');
@@ -350,12 +398,8 @@ try {
     cellFixture.host.append(table(['名称','多行内容'],[['短文',tall],[link('cell-evidence'),'值']]));
   })()`);
   try {
-    for (const mode of ['simple', 'standard']) {
-      await evaluate(
-        `businessGraphState.mode=${JSON.stringify(mode)};renderBusinessGraph(cellFixture.host)`,
-      );
-      await checkCellAlignment(true);
-    }
+    await evaluate('renderBusinessGraph(cellFixture.host)');
+    await checkCellAlignment(true);
     assert.ok(
       await evaluate(`(() => {
       const cell=cellFixture.host.querySelector('td'), text=cell.firstElementChild;
@@ -366,7 +410,7 @@ try {
     );
   } finally {
     await evaluate(
-      `DATA.nodes.forEach(n=>nodes.delete(n.id));DATA.nodes=cellFixture.nodes;DATA.edges=cellFixture.edges;Object.assign(businessGraphState,cellFixture.state);cellFixture.host.remove();delete globalThis.cellFixture;`,
+      `DATA.nodes.forEach(n=>nodes.delete(n.id));DATA.nodes=cellFixture.nodes;DATA.edges=cellFixture.edges;DATA.layout=cellFixture.layout;Object.assign(businessGraphState,cellFixture.state);cellFixture.host.remove();delete globalThis.cellFixture;`,
     );
   }
   async function checkContextBoundaries() {
@@ -433,7 +477,9 @@ try {
       const badges=[...svg.querySelectorAll('[data-responsibility]')];
       const edgeElements=[...svg.querySelectorAll('[data-highlight-edge]')];
       const ids=new Set(objects.map(n=>n.dataset.graphNode));
-      const lines=[...DATA.nodes.filter(n=>n.group==='relationship'&&ids.has(n.sourceRef)&&ids.has(n.targetRef)).map(n=>({id:n.id,from:n.sourceRef,to:n.targetRef})),...DATA.edges.filter(e=>e.label==='合同责任角色'&&ids.has(e.from)&&ids.has(e.to)).map(e=>({...e,id:'responsibility:'+JSON.stringify([e.from,e.to])}))];
+      // Only relationships are drawn as lines: a responsibility field is a badge,
+      // and the placement routes every line it draws.
+      const lines=DATA.nodes.filter(n=>n.group==='relationship'&&ids.has(n.sourceRef)&&ids.has(n.targetRef)).map(n=>({id:n.id,from:n.sourceRef,to:n.targetRef}));
       const same=(actual,expected,label)=>{if(JSON.stringify([...actual].sort())!==JSON.stringify([...expected].sort()))throw Error(label+': '+JSON.stringify([...actual])+' != '+JSON.stringify([...expected]));};
       const enter=n=>n.dispatchEvent(new MouseEvent('mouseenter'));
       const leave=n=>n.dispatchEvent(new MouseEvent('mouseleave'));
@@ -633,13 +679,12 @@ try {
     await evaluate(
       'document.getElementById("business-graph").scrollIntoView({block:"start"})',
     );
-    await screenshot('graph-global-simple');
+    await screenshot('graph-global');
     assert.ok(
       await evaluate(
         '[...document.querySelectorAll(".graph-evidence-role rect")].every(n=>n.getAttribute("rx")==="0")',
       ),
     );
-    await graphChoice('graph-mode', 'standard');
     await checkContextBoundaries();
     await checkGraphHighlights();
     await checkCellAlignment(true);
@@ -673,7 +718,7 @@ try {
       ),
       'Cardinality labels must not be hidden by their endpoint nodes',
     );
-    await screenshot('graph-global-standard');
+    await screenshot('graph-global-fields');
     const responsibility = await evaluate(
       'document.querySelector("[data-responsibility]")?.dataset.roleRef',
     );
@@ -683,10 +728,6 @@ try {
       );
       assert.equal(await evaluate('current'), responsibility);
       await evaluate('document.getElementById("back").click()');
-      assert.equal(
-        await evaluate('document.getElementById("graph-mode").value'),
-        'standard',
-      );
       assert.equal(
         await evaluate('document.querySelectorAll("[data-graph-node]").length'),
         graphObjects.size,
@@ -713,7 +754,6 @@ try {
     assert.equal(await evaluate('current'), graphEdge);
     await evaluate('document.getElementById("back").click()');
   }
-  await graphChoice('graph-mode', 'simple');
   assert.ok(
     await evaluate('document.querySelectorAll("#tree [data-node]").length > 0'),
   );
