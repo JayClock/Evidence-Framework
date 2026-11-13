@@ -1,9 +1,11 @@
+import type {
+  LiveDeliveryInput,
+  LiveDeliveryResult,
+  ExportLiveDeliveryInput,
+} from './delivery';
 import type { PreviewReviewInput, PreviewReviewResult } from './review';
 import type { EvidenceAgentApi } from './agentIpc';
-import type {
-  DeliveryPreviewResult,
-  ExportDeliveryResult,
-} from './projects';
+import type { DeliveryPreviewResult, ExportDeliveryResult } from './projects';
 import type {
   CompileDraftInput,
   CompileDraftOutcome,
@@ -45,6 +47,8 @@ export const EVIDENCE_IPC_CHANNELS = {
   previewReview: 'evidence:project:preview-review',
   exportDiffReview: 'evidence:project:export-diff-review',
   exportReview: 'evidence:project:export-review',
+  deliveryLivePreview: 'evidence:project:delivery-live-preview',
+  exportLiveDelivery: 'evidence:project:export-live-delivery',
   deliveryPreview: 'evidence:project:delivery-preview',
   exportDelivery: 'evidence:project:export-delivery',
 } as const;
@@ -95,6 +99,12 @@ export interface EvidenceDesktopApi {
      * Projected in the main process from the saved sources, so the hub describes
      * the delivery the export would actually write.
      */
+    deliveryLivePreview: (
+      input: LiveDeliveryInput,
+    ) => Promise<LiveDeliveryResult>;
+    exportLiveDelivery: (
+      input: ExportLiveDeliveryInput,
+    ) => Promise<ExportDeliveryResult>;
     deliveryPreview: (rootPath: string) => Promise<DeliveryPreviewResult>;
     /** Writes the contract, topology, routes and deployment sketch to a folder. */
     exportDelivery: (rootPath: string) => Promise<ExportDeliveryResult>;

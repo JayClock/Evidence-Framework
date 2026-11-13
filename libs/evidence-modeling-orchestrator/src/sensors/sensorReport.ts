@@ -57,6 +57,7 @@ export interface ApiCoverageSummary {
 }
 
 export interface SensorReport {
+  documentRevision?: number;
   apiSummary?: ApiCoverageSummary;
   /** Draft preview eligibility is independent of release readiness. */
   canPreviewApi?: boolean;

@@ -1,3 +1,4 @@
+import { liveDeliveryPreview } from './liveDelivery';
 import type {
   AgentEventPayload,
   AgentPromptInput,
@@ -66,7 +67,8 @@ export const defaultTemplates = (): readonly ProjectTemplateMeta[] => [
   {
     id: 'procurement',
     name: '公对公商品采购履约',
-    description: '询价与报价、采购协议，加上发货、支付、开票三组履约项与对应凭证。',
+    description:
+      '询价与报价、采购协议，加上发货、支付、开票三组履约项与对应凭证。',
     source: '直播案例：商品采购协议履约',
     entityCount: 22,
     relationshipCount: 15,
@@ -137,6 +139,7 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     modelChanged: string[];
     exportDiffReview: string[];
     exportReview: string[];
+    deliveryLivePreview: string[];
     deliveryPreview: string[];
     exportDelivery: string[];
     ingestDraft: IngestDraftInput[];
@@ -249,6 +252,7 @@ export const installDesktopApi = ({
     modelChanged: [],
     exportDiffReview: [],
     exportReview: [],
+    deliveryLivePreview: [],
     deliveryPreview: [],
     exportDelivery: [],
     ingestDraft: [],
@@ -368,12 +372,32 @@ export const installDesktopApi = ({
         calls.openEditorWindow.push(rootPath);
       },
       previewReview: async () => ({ success: false, error: '未配置审查预览' }),
-      exportDiffReview: async (rootPath) => { calls.exportDiffReview.push(rootPath); return exportReviewResult; },
+      exportDiffReview: async (rootPath) => {
+        calls.exportDiffReview.push(rootPath);
+        return exportReviewResult;
+      },
       exportReview: async (rootPath) => {
         calls.exportReview.push(rootPath);
 
         return exportReviewResult;
       },
+      deliveryLivePreview: async (input) => {
+        calls.deliveryLivePreview.push(input.rootPath);
+        return deliveryPreviewResult.success
+          ? {
+              success: true,
+              analysis: liveDeliveryPreview(
+                input.revision,
+                deliveryPreviewResult.preview,
+              ),
+            }
+          : {
+              success: false,
+              revision: input.revision,
+              error: deliveryPreviewResult.error,
+            };
+      },
+      exportLiveDelivery: async () => exportDeliveryResult,
       deliveryPreview: async (rootPath) => {
         calls.deliveryPreview.push(rootPath);
 
@@ -456,31 +480,31 @@ export const installDesktopApi = ({
       },
     },
     simulation: {
-    replay: async (input) => {
-      calls.replay.push(input);
+      replay: async (input) => {
+        calls.replay.push(input);
 
-      return replayResult;
-    },
-    drift: async (input) => {
-      calls.drift.push(input);
+        return replayResult;
+      },
+      drift: async (input) => {
+        calls.drift.push(input);
 
-      return driftResult;
+        return driftResult;
+      },
+      pickTrace: async () => traceDialogResult,
     },
-    pickTrace: async () => traceDialogResult,
-  },
     ingestion: {
-    draft: async (input) => {
-      calls.ingestDraft.push(input);
+      draft: async (input) => {
+        calls.ingestDraft.push(input);
 
-      return ingestResult;
-    },
-    compile: async (input) => {
-      calls.compileDraft.push(input);
+        return ingestResult;
+      },
+      compile: async (input) => {
+        calls.compileDraft.push(input);
 
-      return compileResult;
+        return compileResult;
+      },
     },
-  },
-  system: { platform: 'darwin' },
+    system: { platform: 'darwin' },
   };
 
   Object.defineProperty(window, 'evidenceAPI', {

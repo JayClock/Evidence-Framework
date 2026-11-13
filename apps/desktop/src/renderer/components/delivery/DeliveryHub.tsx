@@ -1,4 +1,4 @@
-import { useDeliveryHub } from '../../state/useDeliveryHub';
+import type { DeliveryHubController } from '../../state/useDeliveryHub';
 
 const KIND_LABELS: Record<string, string> = {
   channel: '渠道前置',
@@ -13,7 +13,7 @@ const LINK_MODE_LABELS: Record<string, string> = {
 };
 
 export interface DeliveryHubProps {
-  rootPath: string;
+  hub: DeliveryHubController;
   onClose: () => void;
 }
 
@@ -24,8 +24,7 @@ export interface DeliveryHubProps {
  * become? One row per service, one row per crossing, and the work the model still
  * owes stated as an obligation rather than hidden behind a green check.
  */
-export const DeliveryHub = ({ rootPath, onClose }: DeliveryHubProps) => {
-  const hub = useDeliveryHub(rootPath, true);
+export const DeliveryHub = ({ hub, onClose }: DeliveryHubProps) => {
   const preview = hub.preview;
 
   return (
@@ -54,10 +53,10 @@ export const DeliveryHub = ({ rootPath, onClose }: DeliveryHubProps) => {
             <button
               type="button"
               onClick={() => void hub.exportDelivery()}
-              disabled={hub.busy || preview === null}
+              disabled={hub.busy || hub.stale || !hub.analysis?.canExportDraft}
               className="rounded bg-evidence-accent px-2.5 py-1 text-[11px] font-medium text-white disabled:opacity-40"
             >
-              {hub.busy ? '导出中…' : '导出到文件夹'}
+              {hub.busy ? '导出中…' : '导出当前草稿'}
             </button>
             <button
               type="button"
@@ -68,6 +67,12 @@ export const DeliveryHub = ({ rootPath, onClose }: DeliveryHubProps) => {
             </button>
           </div>
         </header>
+        <p role="status" className="px-5 py-2 text-[11px] text-evidence-muted">
+          会话基线：打开编辑器时的模型；保存不会重置差异。
+          {hub.stale
+            ? '正在重新计算，旧预览不可导出。'
+            : '当前为内存草稿，未授权发布。'}
+        </p>
 
         {hub.notice === null ? null : (
           <p
@@ -101,11 +106,21 @@ export const DeliveryHub = ({ rootPath, onClose }: DeliveryHubProps) => {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="text-left text-evidence-muted">
-                      <th className="border-b border-evidence-line py-1">服务</th>
-                      <th className="border-b border-evidence-line py-1">类型</th>
-                      <th className="border-b border-evidence-line py-1">上下文</th>
-                      <th className="border-b border-evidence-line py-1">路由</th>
-                      <th className="border-b border-evidence-line py-1">说明</th>
+                      <th className="border-b border-evidence-line py-1">
+                        服务
+                      </th>
+                      <th className="border-b border-evidence-line py-1">
+                        类型
+                      </th>
+                      <th className="border-b border-evidence-line py-1">
+                        上下文
+                      </th>
+                      <th className="border-b border-evidence-line py-1">
+                        路由
+                      </th>
+                      <th className="border-b border-evidence-line py-1">
+                        说明
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,15 +152,25 @@ export const DeliveryHub = ({ rootPath, onClose }: DeliveryHubProps) => {
                   跨边界调用 {preview.links.length}
                 </h3>
                 {preview.links.length === 0 ? (
-                  <p className="text-evidence-muted">各服务之间没有直接调用。</p>
+                  <p className="text-evidence-muted">
+                    各服务之间没有直接调用。
+                  </p>
                 ) : (
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="text-left text-evidence-muted">
-                        <th className="border-b border-evidence-line py-1">从</th>
-                        <th className="border-b border-evidence-line py-1">到</th>
-                        <th className="border-b border-evidence-line py-1">语义</th>
-                        <th className="border-b border-evidence-line py-1">方式</th>
+                        <th className="border-b border-evidence-line py-1">
+                          从
+                        </th>
+                        <th className="border-b border-evidence-line py-1">
+                          到
+                        </th>
+                        <th className="border-b border-evidence-line py-1">
+                          语义
+                        </th>
+                        <th className="border-b border-evidence-line py-1">
+                          方式
+                        </th>
                       </tr>
                     </thead>
                     <tbody>

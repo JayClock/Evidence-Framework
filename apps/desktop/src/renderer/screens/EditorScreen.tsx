@@ -20,6 +20,8 @@ import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import { useAgentSession } from '../state/useAgentSession';
+import { useDeliveryHub } from '../state/useDeliveryHub';
+import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
@@ -92,7 +94,11 @@ export const EditorScreen = ({ rootPath }: { rootPath: string }) => {
   }
 
   return (
-    <EditorWorkspace project={state.project} initialDocument={state.document} />
+    <EditorWorkspace
+      key={rootPath}
+      project={state.project}
+      initialDocument={state.document}
+    />
   );
 };
 
@@ -111,6 +117,16 @@ const EditorWorkspace = ({
     useEditorSession(project, initialDocument, viewMode);
   const agent = useAgentSession(project.rootPath);
   const sensors = useSensorsState(project.rootPath);
+  const liveModel = useLiveModelBridge(
+    project.rootPath,
+    state.session,
+    initialDocument,
+  );
+  const delivery = useDeliveryHub(
+    project.rootPath,
+    state.session,
+    initialDocument,
+  );
   const [selectedScope, setSelectedScope] = useState<string | null>(null);
   const scope = useMemo(
     () => computeContextScope(state.layout, selectedScope),
@@ -142,14 +158,12 @@ const EditorWorkspace = ({
   }, [selectedScope, scope, state.selection.nodeId]);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [activeIssueIds, setActiveIssueIds] = useState<readonly string[]>([]);
-  // Sensor runs read disk, not the live ModelSession. Never paint old findings as current.
+  // Findings must describe the exact live revision, including undo/redo.
   const diagnosticsStale =
-    state.dirty ||
-    state.externalChangeAt !== null ||
+    liveModel.error !== null ||
+    sensors.report?.documentRevision !== liveModel.revision ||
     sensors.loading ||
-    sensors.error !== null ||
-    (state.savedAt !== null &&
-      (sensors.report === null || sensors.report.timestamp < state.savedAt));
+    sensors.error !== null;
   const diagnostics = useMemo(
     () =>
       createDiagnosticIndex(
@@ -351,14 +365,6 @@ const EditorWorkspace = ({
     state.document.manifest.id,
   ]);
 
-  useEffect(() => {
-    if (state.dirty) {
-      void window.evidenceAPI.agent.notifyModelChanged({
-        rootPath: project.rootPath,
-      });
-    }
-  }, [project.rootPath, state.dirty, state.document]);
-
   return (
     <div className="flex h-full flex-col bg-evidence-surface">
       <TopHeader
@@ -386,6 +392,9 @@ const EditorWorkspace = ({
         onSearch={() => searchInputRef.current?.focus()}
       />
 
+      {liveModel.error === null ? null : (
+        <p role="alert">实时诊断同步失败：{liveModel.error}</p>
+      )}
       {reviewExport.notice !== null ? (
         <div
           role="status"
@@ -504,10 +513,7 @@ const EditorWorkspace = ({
         />
       ) : null}
       {deliveryOpen ? (
-        <DeliveryHub
-          rootPath={project.rootPath}
-          onClose={() => setDeliveryOpen(false)}
-        />
+        <DeliveryHub hub={delivery} onClose={() => setDeliveryOpen(false)} />
       ) : null}
 
       {sandboxOpen ? (

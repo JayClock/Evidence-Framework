@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ModelSession } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  LiveDeliveryInput,
+  LiveDeliveryPreview,
+} from '../../shared/delivery';
 import type {
   DeliveryPreview,
   ExportDeliveryResult,
 } from '../../shared/projects';
 
-/** What the hub shows after an export attempt. */
 export interface DeliveryNotice {
   tone: 'saved' | 'failed';
   message: string;
@@ -13,12 +17,12 @@ export interface DeliveryNotice {
 
 export interface DeliveryHubController {
   loading: boolean;
-  /** Why the preview could not be read; the hub offers no export then. */
+  stale: boolean;
   error: string | null;
   preview: DeliveryPreview | null;
+  analysis: LiveDeliveryPreview | null;
   busy: boolean;
   notice: DeliveryNotice | null;
-  /** Writes the delivery documents into a folder the user picks. */
   exportDelivery: () => Promise<void>;
   dismissNotice: () => void;
 }
@@ -28,7 +32,7 @@ const noticeOf = (result: ExportDeliveryResult): DeliveryNotice | null => {
     case 'saved':
       return {
         tone: 'saved',
-        message: `已写入 ${result.directory}：${result.files.join('、')}（${result.serviceCount} 个服务，${result.routeCount} 条路由）`,
+        message: `已写入草稿 ${result.directory}：${result.files.join('、')}`,
       };
     case 'failed':
       return { tone: 'failed', message: `导出失败：${result.error}` };
@@ -37,83 +41,109 @@ const noticeOf = (result: ExportDeliveryResult): DeliveryNotice | null => {
   }
 };
 
-/**
- * Reads the delivery preview and exports it.
- *
- * Both calls run in the main process, so the hub never reads the model tree: what
- * it lists is the projection the export writes, and a model that cannot be
- * projected shows the error instead of an empty promise.
- */
+/** One subscription for the editor lifetime, not the modal lifetime. */
 export const useDeliveryHub = (
   rootPath: string,
-  enabled: boolean,
+  session: ModelSession,
+  baseDocument: DomainModelDocument,
+  enabled = true,
 ): DeliveryHubController => {
   const [loading, setLoading] = useState(false);
+  const [stale, setStale] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<DeliveryPreview | null>(null);
+  const [analysis, setAnalysis] = useState<LiveDeliveryPreview | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<DeliveryNotice | null>(null);
+  const generation = useRef(0);
+  const accepted = useRef<{
+    input: LiveDeliveryInput;
+    analysis: LiveDeliveryPreview;
+  } | null>(null);
 
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
+    accepted.current = null;
+    setAnalysis(null);
+    if (!enabled) return;
     let active = true;
-
-    setLoading(true);
-    setError(null);
-
-    void window.evidenceAPI.projects
-      .deliveryPreview(rootPath)
-      .then((result) => {
-        if (!active) {
-          return;
-        }
-
-        if (result.success) {
-          setPreview(result.preview);
-        } else {
-          setPreview(null);
-          setError(result.error);
-        }
-      })
-      .catch((cause: unknown) => {
-        if (active) {
-          setError(cause instanceof Error ? cause.message : String(cause));
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
-      });
-
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const refresh = () => {
+      const revision = ++generation.current;
+      accepted.current = null;
+      setStale(true);
+      setLoading(true);
+      setError(null);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const input: LiveDeliveryInput = {
+          rootPath,
+          revision,
+          document: session.getDocument(),
+          baseDocument,
+        };
+        void window.evidenceAPI.projects
+          .deliveryLivePreview(input)
+          .then((result) => {
+            if (!active || revision !== generation.current) return;
+            if (!result.success) throw new Error(result.error);
+            if (result.analysis.revision !== revision)
+              throw new Error('API 预览版本不匹配。');
+            accepted.current = { input, analysis: result.analysis };
+            setAnalysis(result.analysis);
+            setStale(false);
+          })
+          .catch((cause: unknown) => {
+            if (!active || revision !== generation.current) return;
+            setAnalysis(null);
+            setError(cause instanceof Error ? cause.message : String(cause));
+          })
+          .finally(() => {
+            if (active && revision === generation.current) setLoading(false);
+          });
+      }, 150);
+    };
+    const unsubscribe = session.subscribe((event) => {
+      if (event.type === 'document-changed') refresh();
+    });
+    refresh();
     return () => {
       active = false;
+      ++generation.current;
+      accepted.current = null;
+      clearTimeout(timer);
+      unsubscribe();
     };
-  }, [enabled, rootPath]);
+  }, [rootPath, session, baseDocument, enabled]);
 
   const exportDelivery = useCallback(async () => {
+    const current = accepted.current;
+    if (busy || current === null || !current.analysis.canExportDraft) return;
     setBusy(true);
     setNotice(null);
-
     try {
-      setNotice(noticeOf(await window.evidenceAPI.projects.exportDelivery(rootPath)));
+      setNotice(
+        noticeOf(
+          await window.evidenceAPI.projects.exportLiveDelivery({
+            ...current.input,
+            expectedModelDigest: current.analysis.modelDigest,
+          }),
+        ),
+      );
     } catch (cause) {
       setNotice({
         tone: 'failed',
-        message: `导出失败：${cause instanceof Error ? cause.message : '未知错误。'}`,
+        message: `导出失败：${cause instanceof Error ? cause.message : String(cause)}`,
       });
     } finally {
       setBusy(false);
     }
-  }, [rootPath]);
+  }, [busy]);
 
   return {
     loading,
+    stale,
     error,
-    preview,
+    analysis,
+    preview: analysis?.preview ?? null,
     busy,
     notice,
     exportDelivery,

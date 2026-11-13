@@ -8,8 +8,14 @@ import {
   type OpenDialogOptions,
 } from 'electron';
 
+import { buildDelivery } from '@evidence-poc/evidence-api';
 import type { DeliveryBundle } from '@evidence-poc/evidence-api';
 
+import type {
+  LiveDeliveryInput,
+  LiveDeliveryResult,
+  ExportLiveDeliveryInput,
+} from '../shared/delivery';
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 import type {
   DeliveryPreviewResult,
@@ -17,6 +23,8 @@ import type {
 } from '../shared/projects';
 
 import {
+  livePreviewOf,
+  validateLiveDeliveryInput,
   deliveryFilesOf,
   previewOf,
   readDelivery,
@@ -41,7 +49,10 @@ export interface DeliveryIpcOptions {
   /** Injected by a test that must not read the project. */
   build?: (modelRoot: string) => Promise<DeliveryBundle>;
   /** Injected by a test that must not touch the filesystem. */
-  write?: (directory: string, files: { path: string; content: string }[]) => Promise<void>;
+  write?: (
+    directory: string,
+    files: { path: string; content: string }[],
+  ) => Promise<void>;
 }
 
 const writeFiles = async (
@@ -73,7 +84,9 @@ export const registerDeliveryIpc = ({
 
     return {
       canceled: result.canceled,
-      ...(result.filePaths[0] === undefined ? {} : { directory: result.filePaths[0] }),
+      ...(result.filePaths[0] === undefined
+        ? {}
+        : { directory: result.filePaths[0] }),
     };
   },
   build = readDelivery,
@@ -81,6 +94,77 @@ export const registerDeliveryIpc = ({
 }: DeliveryIpcOptions = {}): void => {
   const modelRootOfProject = (rootPath: string): string =>
     modelSourceOf(projectDirectoryOf(rootPath));
+
+  ipcMain.handle(
+    EVIDENCE_IPC_CHANNELS.deliveryLivePreview,
+    async (_event, input: LiveDeliveryInput): Promise<LiveDeliveryResult> => {
+      try {
+        return { success: true, analysis: livePreviewOf(input) };
+      } catch (error) {
+        return {
+          success: false,
+          revision: input?.revision ?? -1,
+          error: errorMessage(error),
+        };
+      }
+    },
+  );
+
+  ipcMain.handle(
+    EVIDENCE_IPC_CHANNELS.exportLiveDelivery,
+    async (
+      event,
+      input: ExportLiveDeliveryInput,
+    ): Promise<ExportDeliveryResult> => {
+      try {
+        validateLiveDeliveryInput(input);
+        // Freeze before the asynchronous directory picker; no later canvas/disk read.
+        const frozen = structuredClone(input);
+        const analysis = livePreviewOf(frozen);
+        if (!analysis.canExportDraft)
+          throw new Error('API 存在阻塞项，不能导出草稿。');
+        if (analysis.modelDigest !== frozen.expectedModelDigest)
+          throw new Error('预览已过期，请等待重新计算后导出。');
+        const bundle = buildDelivery(frozen.document);
+        const chosen = await showDirectoryDialog({
+          parent: BrowserWindow.fromWebContents(event.sender),
+          defaultPath: suggestedDeliveryDirectory(
+            projectDirectoryOf(frozen.rootPath),
+          ),
+        });
+        if (chosen.canceled || chosen.directory === undefined)
+          return { status: 'cancelled' };
+        const files = [
+          ...deliveryFilesOf(bundle),
+          { path: 'api-changes.md', content: analysis.changeLog },
+          {
+            path: 'draft-status.json',
+            content: JSON.stringify(
+              {
+                mode: 'draft',
+                releaseAuthorized: false,
+                modelDigest: analysis.modelDigest,
+                baseModelDigest: analysis.baseModelDigest,
+                issues: analysis.issues,
+              },
+              null,
+              2,
+            ),
+          },
+        ];
+        await write(chosen.directory, files);
+        return {
+          status: 'saved',
+          directory: chosen.directory,
+          files: files.map((file) => file.path),
+          serviceCount: bundle.services.length,
+          routeCount: bundle.routes.length,
+        };
+      } catch (error) {
+        return { status: 'failed', error: errorMessage(error) };
+      }
+    },
+  );
 
   ipcMain.handle(
     EVIDENCE_IPC_CHANNELS.deliveryPreview,

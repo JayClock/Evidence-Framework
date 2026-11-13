@@ -1,3 +1,4 @@
+import type { LiveDeliveryInput } from '../shared/delivery';
 import { randomUUID } from 'node:crypto';
 
 import { ipcMain, type WebContents } from 'electron';
@@ -150,7 +151,9 @@ export const registerAgentIpc = ({
     EVIDENCE_AGENT_IPC_CHANNELS.prompt,
     async (event, input: AgentPromptInput): Promise<AgentActionResult> => {
       try {
-        await (await runtimeFor(event.sender, input.rootPath)).prompt(input.text);
+        await (
+          await runtimeFor(event.sender, input.rootPath)
+        ).prompt(input.text);
 
         return { success: true };
       } catch (error) {
@@ -207,8 +210,13 @@ export const registerAgentIpc = ({
 
   ipcMain.handle(
     EVIDENCE_AGENT_IPC_CHANNELS.modelChanged,
-    async (event, input: { rootPath: string }): Promise<void> => {
-      (await runtimeFor(event.sender, input.rootPath)).notifyModelChanged();
+    async (
+      event,
+      input: { rootPath: string } | LiveDeliveryInput,
+    ): Promise<void> => {
+      (await runtimeFor(event.sender, input.rootPath)).notifyModelChanged(
+        'document' in input ? input : undefined,
+      );
     },
   );
 

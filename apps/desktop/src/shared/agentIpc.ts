@@ -1,3 +1,4 @@
+import type { LiveDeliveryInput } from './delivery';
 import type { AgentStreamEvent } from '@evidence-poc/evidence-agent-core';
 import type {
   CanvasContext,
@@ -92,7 +93,9 @@ export interface EvidenceAgentApi {
   abort: (input: AgentProjectInput) => Promise<AgentActionResult>;
   triggerSensors: (input: SensorTriggerInput) => Promise<SensorReport>;
   /** Fires on every model edit; the main process debounces the sensor run. */
-  notifyModelChanged: (input: AgentProjectInput) => Promise<void>;
+  notifyModelChanged: (
+    input: AgentProjectInput | LiveDeliveryInput,
+  ) => Promise<void>;
   latestReport: (input: AgentProjectInput) => Promise<SensorReport | null>;
   /** Publishes the current selection so tools can read it. */
   publishCanvasContext: (input: CanvasContextRegistration) => Promise<void>;

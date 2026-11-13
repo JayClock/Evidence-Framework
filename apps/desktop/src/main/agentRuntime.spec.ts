@@ -161,6 +161,58 @@ const runtimeWith = (options: {
       : { sensorDelayMs: options.sensorDelayMs }),
   });
 
+describe('live agent analysis', () => {
+  it('uses the latest unsaved document, preserves the first baseline and discards obsolete runs', async () => {
+    const { transport, reports } = createTransport();
+    const resolvers: ((outcome: SensorOutcome) => void)[] = [];
+    const runFullSensors = vi.fn<SensorsEngine['runFullSensors']>(
+      () => new Promise((resolve) => resolvers.push(resolve)),
+    );
+    const runtime = createAgentRuntime({
+      rootPath: '/models/procurement',
+      transport,
+      sensors: {
+        runFullSensors,
+        checkStageGate: async () => {
+          throw new Error('unused');
+        },
+      },
+    });
+    const baseDocument = createDesktopFixture();
+    const input = {
+      rootPath: '/models/procurement',
+      revision: 1,
+      document: baseDocument,
+      baseDocument,
+    };
+    runtime.notifyModelChanged(input);
+    const first = runtime.runSensors();
+    const next = structuredClone(baseDocument);
+    next.entities[0]!.label = 'new';
+    runtime.notifyModelChanged({
+      ...input,
+      revision: 2,
+      document: next,
+      baseDocument: next,
+    });
+    const second = runtime.runSensors();
+    expect(runFullSensors.mock.calls[1]![0]).toMatchObject({
+      document: next,
+      baseDocument,
+    });
+    resolvers[0]!(OUTCOME);
+    await first;
+    expect(reports).toHaveLength(0);
+    resolvers[1]!(OUTCOME);
+    await second;
+    expect(reports).toHaveLength(1);
+    expect(reports[0]?.documentRevision).toBe(2);
+    runtime.notifyModelChanged(input);
+    expect(runtime.latestReport()?.documentRevision).toBe(2);
+    runtime.dispose();
+  });
+});
+
 describe('createAgentRuntime', () => {
   it('resolves the model root and starts the session only on the first prompt', async () => {
     const { transport } = createTransport();
@@ -365,7 +417,9 @@ describe('agent patch transport', () => {
   });
 
   it('reads the project tree so an operator can name the root contract', async () => {
-    const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'evidence-operator-'));
+    const tempRoot = await mkdtemp(
+      path.join(os.tmpdir(), 'evidence-operator-'),
+    );
     const { transport, patches } = createTransport();
     const fake = createFakeSession();
     const runtime = runtimeWith({ transport, fake, rootPath: tempRoot });
@@ -425,8 +479,7 @@ describe('agent patch transport', () => {
           type: 'create-fulfillment-pair',
           input: expect.objectContaining({
             contextRef: 'context.procurement',
-            contractReferenceId:
-              'relation.request.refund-references-contract',
+            contractReferenceId: 'relation.request.refund-references-contract',
           }),
         }),
       ]);

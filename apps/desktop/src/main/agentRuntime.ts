@@ -1,3 +1,5 @@
+import type { LiveDeliveryInput } from '../shared/delivery';
+import { validateLiveDeliveryInput } from './deliveryProjection';
 import path from 'node:path';
 
 import {
@@ -22,7 +24,11 @@ import {
   readModelDirectory,
 } from '@evidence-poc/evidence-model-core';
 
-import { isBundleProject, modelSourceOf, projectDirectoryOf } from './modelSource';
+import {
+  isBundleProject,
+  modelSourceOf,
+  projectDirectoryOf,
+} from './modelSource';
 import { createDebouncedSensorRuntime } from './sensorRuntime';
 
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
@@ -59,7 +65,7 @@ export interface AgentRuntime {
   runSensors: (scopeRefs?: readonly string[]) => Promise<SensorOutcome>;
   latestReport: () => SensorReport | null;
   /** Re-arms the background sensor check after a model edit. */
-  notifyModelChanged: () => void;
+  notifyModelChanged: (input?: LiveDeliveryInput) => void;
   /** Records what the canvas shows so tools can read the selection. */
   setCanvasContext: (context: CanvasContext) => void;
   getCanvasContext: () => CanvasContext;
@@ -94,6 +100,9 @@ export const createAgentRuntime = ({
   // no install directory: it reads the model and decides.
   const engine = sensors ?? createSensorsEngine();
 
+  let live: LiveDeliveryInput | undefined;
+  let runSequence = 0;
+  let disposed = false;
   let session: EvidenceAgentSession | null = null;
   let latestReport: SensorReport | null = null;
   let canvasContext: CanvasContext = {
@@ -103,16 +112,27 @@ export const createAgentRuntime = ({
 
   const runSensors = async (
     scopeRefs?: readonly string[],
+    signal?: AbortSignal,
   ): Promise<SensorOutcome> => {
+    const sequence = ++runSequence;
+    const captured = live;
     const outcome = await engine.runFullSensors({
       modelRoot,
+      ...(captured === undefined
+        ? {}
+        : { document: captured.document, baseDocument: captured.baseDocument }),
+      ...(signal === undefined ? {} : { signal }),
       ...(scopeRefs === undefined ? {} : { scopeRefs }),
     });
-
-    latestReport = outcome.report;
-    transport.publishReport(outcome.report);
-
-    return outcome;
+    const report =
+      captured === undefined
+        ? outcome.report
+        : { ...outcome.report, documentRevision: captured.revision };
+    if (!disposed && sequence === runSequence && captured === live) {
+      latestReport = report;
+      transport.publishReport(report);
+    }
+    return { ...outcome, report };
   };
 
   const backgroundSensors = createDebouncedSensorRuntime({
@@ -131,9 +151,10 @@ export const createAgentRuntime = ({
    * tree the same way the sensors do. A bundle project reads its single file.
    */
   const loadDocument = async () =>
-    isBundleProject(resolvedRoot)
+    live?.document ??
+    (isBundleProject(resolvedRoot)
       ? (await readModelBundle(modelRoot)).document
-      : (await readModelDirectory(modelRoot)).document;
+      : (await readModelDirectory(modelRoot)).document);
 
   let starting: Promise<EvidenceAgentSession> | null = null;
 
@@ -159,17 +180,16 @@ export const createAgentRuntime = ({
       extensionFactories: [
         createEvidenceToolsExtension({
           modelRoot,
-          runSensors: async ({ scope, signal }) => {
-            const outcome = await engine.runFullSensors({
-              modelRoot,
-              ...(scope === undefined ? {} : { scopeRefs: [scope] }),
-              ...(signal === undefined ? {} : { signal }),
-            });
-
-            latestReport = outcome.report;
-            transport.publishReport(outcome.report);
-
-            return outcome.report;
+          runSensors: async ({ scope, signal }) =>
+            (
+              await runSensors(
+                scope === undefined ? undefined : [scope],
+                signal,
+              )
+            ).report,
+          loadBaseDocument: async () => live?.baseDocument,
+          refreshApi: async () => {
+            await runSensors();
           },
           applyModelPatch: (patch) => transport.requestPatch(patch),
           getCanvasContext: async () => canvasContext,
@@ -206,13 +226,29 @@ export const createAgentRuntime = ({
     },
     runSensors,
     latestReport: () => latestReport,
-    notifyModelChanged: () => backgroundSensors.schedule(),
+    notifyModelChanged: (input) => {
+      if (input !== undefined) {
+        validateLiveDeliveryInput(input);
+        if (path.resolve(input.rootPath) !== resolvedRoot)
+          throw new Error('模型不属于当前项目。');
+        if (live !== undefined && input.revision <= live.revision) return;
+        live = structuredClone({
+          ...input,
+          baseDocument: live?.baseDocument ?? input.baseDocument,
+        });
+        latestReport = null;
+      }
+      backgroundSensors.schedule();
+    },
     setCanvasContext: (context) => {
       canvasContext = context;
     },
     getCanvasContext: () => canvasContext,
     getSession: () => session,
     dispose: () => {
+      disposed = true;
+      ++runSequence;
+      live = undefined;
       backgroundSensors.cancel();
       session?.dispose();
       session = null;

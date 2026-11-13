@@ -160,7 +160,8 @@ describe('EditorScreen', () => {
 
     expect(await screen.findByLabelText('交付中心')).toBeInTheDocument();
     expect(await screen.findByText('核心履约')).toBeInTheDocument();
-    expect(api.calls.deliveryPreview).toEqual(['/models/procurement']);
+    expect(api.calls.deliveryLivePreview).toEqual(['/models/procurement']);
+    expect(api.calls.deliveryPreview).toEqual([]);
   });
 
   it('shows a save failure without claiming success', async () => {

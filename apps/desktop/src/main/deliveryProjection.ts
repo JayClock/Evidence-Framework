@@ -1,3 +1,9 @@
+import { checkNativeApiSensor } from '@evidence-poc/evidence-modeling-orchestrator';
+import { renderApiDiff } from '@evidence-poc/evidence-api';
+import type {
+  LiveDeliveryInput,
+  LiveDeliveryPreview,
+} from '../shared/delivery';
 import path from 'node:path';
 
 import {
@@ -110,6 +116,60 @@ export const readDelivery = async (
     throw new Error(built.diagnostics.map((item) => item.message).join('；'));
   }
   return built.projection;
+};
+
+/** Validates the transport envelope without treating an incomplete model as released. */
+export const validateLiveDeliveryInput = (input: LiveDeliveryInput): void => {
+  if (
+    !input ||
+    typeof input.rootPath !== 'string' ||
+    !path.isAbsolute(input.rootPath) ||
+    !Number.isSafeInteger(input.revision) ||
+    input.revision < 0
+  ) {
+    throw new Error('无效的 API 预览请求。');
+  }
+  for (const document of [input.document, input.baseDocument]) {
+    if (
+      !document?.manifest ||
+      !Array.isArray(document.entities) ||
+      !Array.isArray(document.relationships) ||
+      !Array.isArray(document.rules)
+    ) {
+      throw new Error('无效的模型快照。');
+    }
+  }
+};
+
+export const livePreviewOf = (
+  input: LiveDeliveryInput,
+): LiveDeliveryPreview => {
+  validateLiveDeliveryInput(input);
+  const outcome = checkNativeApiSensor({
+    currentDocument: input.document,
+    baseDocument: input.baseDocument,
+  });
+  const diff = outcome.diff!;
+  return {
+    revision: input.revision,
+    modelDigest: outcome.snapshot.digests.model,
+    baseModelDigest: diff.baseModelDigest,
+    preview: previewOf(outcome.snapshot),
+    diff,
+    changeLog: renderApiDiff(diff),
+    apiSummary: outcome.summary,
+    issues: outcome.issues,
+    canExportDraft: !outcome.issues.some((issue) => issue.severity === 'block'),
+    bindings: outcome.snapshot.routes.map((route) => ({
+      id: route.id,
+      entityRef: route.entityRef,
+      method: route.method,
+      path: route.path,
+      roleRefs: route.allowedPartyRoleRefs,
+      exposure: route.exposure,
+      fields: route.outputFields,
+    })),
+  };
 };
 
 /** Default directory a hand-off is written to, beside the project. */

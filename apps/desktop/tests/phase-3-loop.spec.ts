@@ -157,6 +157,8 @@ describe('phase 3 control loop', () => {
     const sensors = tools.get('run_sensors');
 
     expect([...tools.keys()]).toEqual([
+      'get_api_diff',
+      'sync_api_projection',
       'run_sensors',
       'apply_model_patch',
       'get_canvas_selection',

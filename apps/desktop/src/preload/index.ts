@@ -40,20 +40,24 @@ const api: EvidenceDesktopApi = {
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.showOpenDialog),
     showCreateDialog: (input) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.showCreateDialog, input),
-    create: (input) =>
-      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.create, input),
-    listTemplates: () =>
-      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.templates),
+    create: (input) => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.create, input),
+    listTemplates: () => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.templates),
     open: (rootPath) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.open, rootPath),
     save: (input) => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.save, input),
     listRecent: () => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.recent),
     openEditorWindow: (rootPath) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.openEditorWindow, rootPath),
-    previewReview: (input) => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.previewReview, input),
-    exportDiffReview: (rootPath: string) => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportDiffReview, rootPath),
+    previewReview: (input) =>
+      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.previewReview, input),
+    exportDiffReview: (rootPath: string) =>
+      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportDiffReview, rootPath),
     exportReview: (rootPath: string) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportReview, rootPath),
+    deliveryLivePreview: (input) =>
+      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.deliveryLivePreview, input),
+    exportLiveDelivery: (input) =>
+      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportLiveDelivery, input),
     deliveryPreview: (rootPath: string) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.deliveryPreview, rootPath),
     exportDelivery: (rootPath: string) =>
