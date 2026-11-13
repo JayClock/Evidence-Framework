@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -10,26 +9,15 @@ import {
 } from '@evidence-poc/evidence-model-core';
 
 import { loadFm, type FmIndex } from '../../src/adapter/fmAdapter.js';
-import type { DesignDocument } from '../../src/loader/apiLoader.js';
 
-/**
- * Helpers that stand in for the two stages around this one.
- *
- * The FM stage hands over a check report and the design stage hands over an
- * `api.json`; a test has to produce both, and producing them the way the real
- * stages do is what makes the fixture meaningful.
- */
+/** Model fixtures shared by snapshot, adapter and contract tests. */
 
 export const API_FIXTURES = fileURLToPath(
   new URL('../fixtures/', import.meta.url),
 );
 
-export const fullLifecycle = (): {
-  modelRoot: string;
-  designPath: string;
-} => ({
+export const fullLifecycle = (): { modelRoot: string } => ({
   modelRoot: `${API_FIXTURES}full-lifecycle/fm`,
-  designPath: `${API_FIXTURES}full-lifecycle/api.json`,
 });
 
 /** The report `check_fm` would have produced for a delivered scope. */
@@ -53,7 +41,6 @@ export const checkReportFor = async (
 };
 
 let cachedIndex: FmIndex | undefined;
-let cachedDesign: DesignDocument | undefined;
 
 /** The checked model the full-lifecycle design was written against. */
 export const fullLifecycleIndex = async (): Promise<FmIndex> => {
@@ -72,15 +59,4 @@ export const fullLifecycleIndex = async (): Promise<FmIndex> => {
   }
 
   return cachedIndex;
-};
-
-/** The design document under test. */
-export const fullLifecycleDesign = (): DesignDocument => {
-  if (cachedDesign === undefined) {
-    cachedDesign = JSON.parse(
-      readFileSync(fullLifecycle().designPath, 'utf8'),
-    ) as DesignDocument;
-  }
-
-  return cachedDesign;
 };

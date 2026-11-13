@@ -41,7 +41,13 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
           "fields",
           "derived",
           "stamped",
-          "responses"
+          "responses",
+          "shape",
+          "itemPath",
+          "allowedPartyRoleRefs",
+          "exposure",
+          "outputFields",
+          "rules"
         ],
         "properties": {
           "id": { "type": "string" },
@@ -52,7 +58,17 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
           "fields": { "type": "array" },
           "derived": { "type": "array" },
           "stamped": { "type": "array" },
-          "responses": { "type": "array" }
+          "responses": { "type": "array" },
+          "shape": { "enum": ["singleton", "collection"] },
+          "itemPath": { "type": "string", "pattern": "^/" },
+          "allowedPartyRoleRefs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" }
+          },
+          "exposure": { "enum": ["external", "internal"] },
+          "outputFields": { "type": "array" },
+          "rules": { "type": "array" }
         }
       }
     },

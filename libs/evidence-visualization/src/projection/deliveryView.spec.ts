@@ -247,12 +247,14 @@ describe('deliveryViewOf', () => {
 
     expect(view.services).toHaveLength(3);
     expect(core?.kind).toBe('fulfillment');
-    expect(core?.routes.map((route) => `${route.method} ${route.path}`)).toEqual([
+    expect(
+      core?.routes.map((route) => `${route.method} ${route.path}`),
+    ).toEqual([
       'GET /core/core/{contractId}',
       'GET /core/core/{contractId}/payment',
       'POST /core/core',
-      'POST /core/core/{contractId}/payment/requests',
-      'POST /core/core/{contractId}/payment/requests/{requestId}/confirmations/payment',
+      'POST /core/core/{contractId}/payment/request',
+      'POST /core/core/{contractId}/payment/request/{requestId}/confirmation',
     ]);
   });
 
@@ -260,7 +262,8 @@ describe('deliveryViewOf', () => {
     const view = deliveryViewOf(bundle());
 
     expect(
-      view.services.find((service) => service.lane === 'supplier-payment')?.kind,
+      view.services.find((service) => service.lane === 'supplier-payment')
+        ?.kind,
     ).toBe('capability');
     expect(view.links).toEqual([
       expect.objectContaining({

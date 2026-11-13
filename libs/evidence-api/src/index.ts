@@ -66,78 +66,7 @@ export {
   type InspectSummary,
 } from './inspect.js';
 
-export {
-  buildResources,
-  type BuildResourcesResult,
-  type ProjectedResource,
-} from './projection/resources.js';
-
-export {
-  validateCardinality,
-  type CardinalityMax,
-} from './projection/cardinality.js';
-
-export {
-  projectCapabilities,
-  type BuildCapabilitiesResult,
-  type ProjectedCapability,
-  type ProjectedOperation,
-} from './projection/capabilities.js';
-
-export {
-  projectCoverage,
-  type CoverageRow,
-  type CoverageStep,
-  type ProjectCoverageResult,
-} from './projection/coverage.js';
-
-export {
-  projectModelCoverage,
-  type ModelCoverageRow,
-  type ProjectModelCoverageResult,
-} from './projection/modelCoverage.js';
-
-export {
-  bindLink,
-  buildRepresentations,
-  encodeQuery,
-  expand,
-  matchesUri,
-  parameters,
-  renderLinks,
-  type BuildRepresentationsResult,
-} from './http/contractLinks.js';
-
-export {
-  exampleErrors,
-  payloadOf,
-  payloadSchema,
-  schemaSupported,
-  validatePayload,
-  type Payload,
-  type PayloadField,
-} from './http/contractPayloads.js';
-
-export { buildHttp, type HttpContract } from './http/contracts.js';
-
-export {
-  checkConsumption,
-  navigationGraph,
-  type CheckConsumptionResult,
-  type ConsumptionRow,
-  type ConsumptionStep,
-  type NavigationEdge,
-} from './http/consumerCoverage.js';
-
-export {
-  checkJourneys,
-  type CheckJourneysResult,
-  type JourneyRow,
-  type JourneyStepResult,
-  type JourneyStepRow,
-} from './http/httpJourneys.js';
-
-export { buildOpenApi, componentName } from './openapi/openapi.js';
+export { componentName } from './delivery/schemaName.js';
 
 export {
   TOOL_NAME,
@@ -146,12 +75,6 @@ export {
   renderOutputs,
   writeOutput,
 } from './renderer/outputRenderer.js';
-
-export {
-  buildVectors,
-  type TestVector,
-  type TestVectorDocument,
-} from './vectors/e2eVectors.js';
 
 export {
   buildProjection,

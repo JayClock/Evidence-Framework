@@ -1,7 +1,7 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
-import { componentName } from '../openapi/openapi.js';
+import { componentName } from './schemaName.js';
 import {
   weaveHypermedia,
   halLinksFor,
@@ -113,6 +113,7 @@ const objectSchemas = (
         },
       },
     };
+    required.push('_links');
     schemas[key] = {
       type: 'object',
       description: route.summary,
