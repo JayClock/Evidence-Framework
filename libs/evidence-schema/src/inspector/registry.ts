@@ -1,16 +1,17 @@
 import {
   CONTEXT_KINDS,
+  CONTEXT_KIND_LABELS,
   EVIDENCE_KINDS,
+  EVIDENCE_KIND_LABELS,
   PARTICIPANT_KINDS,
+  PARTICIPANT_KIND_LABELS,
   ROLE_KINDS,
+  ROLE_KIND_LABELS,
   type EntityCategory,
 } from '../ast/entity.js';
-import { RULE_KINDS } from '../ast/rule.js';
+import { RULE_KINDS, RULE_KIND_LABELS } from '../ast/rule.js';
 import { VALUE_TYPES } from '../ast/values.js';
-import {
-  INSPECTOR_GROUP_LABELS,
-  type InspectorGroupId,
-} from './groups.js';
+import { INSPECTOR_GROUP_LABELS, type InspectorGroupId } from './groups.js';
 
 /** Editor widget the renderer should mount for a property. */
 export type InspectorEditorKind =
@@ -58,10 +59,18 @@ export interface InspectorGroupDefinitionWithCategory
   category: EntityCategory;
 }
 
-const toOptions = (
-  values: readonly string[],
+/**
+ * Select options for a closed vocabulary.
+ *
+ * The value is the id written to disk; the label is the business name the
+ * vocabulary declares beside it. A vocabulary without labels of its own (the CEL
+ * value types) falls back to the id.
+ */
+const toOptions = <Id extends string>(
+  values: readonly Id[],
+  labels?: Readonly<Record<Id, string>>,
 ): readonly InspectorOption[] =>
-  values.map((value) => ({ label: value, value }));
+  values.map((value) => ({ label: labels?.[value] ?? value, value }));
 
 const ID_PROPERTY: InspectorPropertyDefinition = {
   field: 'id',
@@ -113,7 +122,7 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
           field: 'kind',
           label: '凭证类型',
           editor: 'select',
-          options: toOptions(EVIDENCE_KINDS),
+          options: toOptions(EVIDENCE_KINDS, EVIDENCE_KIND_LABELS),
         },
       ],
     },
@@ -121,7 +130,9 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
       id: 'responsibility',
       label: INSPECTOR_GROUP_LABELS.responsibility,
       properties: [
-        contextPicker('履约请求与确认必须归属合同上下文；违约判断只读取同一上下文内的凭证。'),
+        contextPicker(
+          '履约请求与确认必须归属合同上下文；违约判断只读取同一上下文内的凭证。',
+        ),
         {
           field: 'responsibleRoleRef',
           label: '签署/经办角色',
@@ -131,7 +142,8 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
             kinds: ['party'],
             sameContext: true,
           },
-          helper: '责任角色必须由所属根合同绑定，主体、经办人与证明提供方保持分明。',
+          helper:
+            '责任角色必须由所属根合同绑定，主体、经办人与证明提供方保持分明。',
         },
         {
           field: 'roleRefs',
@@ -163,9 +175,11 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
           field: 'kind',
           label: '参与者类型',
           editor: 'select',
-          options: toOptions(PARTICIPANT_KINDS),
+          options: toOptions(PARTICIPANT_KINDS, PARTICIPANT_KIND_LABELS),
         },
-        contextPicker('业务对象（thing）必须属于领域上下文；参与者（party）保持跨上下文。'),
+        contextPicker(
+          '业务对象（thing）必须属于领域上下文；参与者（party）保持跨上下文。',
+        ),
       ],
     },
     {
@@ -185,7 +199,7 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
           field: 'kind',
           label: '角色类型',
           editor: 'select',
-          options: toOptions(ROLE_KINDS),
+          options: toOptions(ROLE_KINDS, ROLE_KIND_LABELS),
         },
         contextPicker('角色始终属于某个上下文；合同角色由根合同绑定。'),
       ],
@@ -207,7 +221,7 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
           field: 'kind',
           label: '上下文类型',
           editor: 'select',
-          options: toOptions(CONTEXT_KINDS),
+          options: toOptions(CONTEXT_KINDS, CONTEXT_KIND_LABELS),
         },
         {
           field: 'parentContextRef',
@@ -226,7 +240,8 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
           label: '上下文根对象',
           editor: 'reference-list',
           reference: { categories: ['evidence', 'participant', 'role'] },
-          helper: '上下文必须与真实业务内容共同保存；合同上下文恰好一个根合同。',
+          helper:
+            '上下文必须与真实业务内容共同保存；合同上下文恰好一个根合同。',
         },
       ],
     },
@@ -239,35 +254,36 @@ const GROUPS: Record<EntityCategory, InspectorGroupDefinition[]> = {
 };
 
 /** Attribute table columns shared by every entity category. */
-export const INSPECTOR_ATTRIBUTE_FIELDS: readonly InspectorPropertyDefinition[] = [
-  {
-    field: 'name',
-    label: '属性名',
-    editor: 'text',
-    helper: 'lower snake_case，例如 total_minor_units。',
-  },
-  { field: 'label', label: '业务名称', editor: 'text' },
-  {
-    field: 'valueType',
-    label: '数据类型',
-    editor: 'select',
-    options: toOptions(VALUE_TYPES),
-  },
-  { field: 'required', label: '必填', editor: 'boolean' },
-  {
-    field: 'keyData',
-    label: '关键数据',
-    editor: 'boolean',
-    helper: '金额、期限、数量、时间差必须标记为关键数据。',
-  },
-  { field: 'meaning', label: '业务含义', editor: 'text' },
-  {
-    field: 'derivedByRuleRef',
-    label: '派生规则',
-    editor: 'cel-editor',
-    helper: '派生值只读取已建模属性，规则必须指向该字段本身。',
-  },
-];
+export const INSPECTOR_ATTRIBUTE_FIELDS: readonly InspectorPropertyDefinition[] =
+  [
+    {
+      field: 'name',
+      label: '属性名',
+      editor: 'text',
+      helper: 'lower snake_case，例如 total_minor_units。',
+    },
+    { field: 'label', label: '业务名称', editor: 'text' },
+    {
+      field: 'valueType',
+      label: '数据类型',
+      editor: 'select',
+      options: toOptions(VALUE_TYPES),
+    },
+    { field: 'required', label: '必填', editor: 'boolean' },
+    {
+      field: 'keyData',
+      label: '关键数据',
+      editor: 'boolean',
+      helper: '金额、期限、数量、时间差必须标记为关键数据。',
+    },
+    { field: 'meaning', label: '业务含义', editor: 'text' },
+    {
+      field: 'derivedByRuleRef',
+      label: '派生规则',
+      editor: 'cel-editor',
+      helper: '派生值只读取已建模属性，规则必须指向该字段本身。',
+    },
+  ];
 
 /**
  * Virtual attribute column: the provider behind one key data item.
@@ -276,12 +292,14 @@ export const INSPECTOR_ATTRIBUTE_FIELDS: readonly InspectorPropertyDefinition[] 
  * modeled facts (derivation rule, contract term, result fact), so the same
  * source of truth stays in the FM files.
  */
-export const INSPECTOR_KEY_DATA_PROVENANCE_PROPERTY: InspectorPropertyDefinition = {
-  field: 'provenance',
-  label: '提供方',
-  editor: 'key-data-provenance',
-  helper: '金额、期限、数量与时间差必须落到合同参数、前序凭证属性、派生规则或结果事实上。',
-};
+export const INSPECTOR_KEY_DATA_PROVENANCE_PROPERTY: InspectorPropertyDefinition =
+  {
+    field: 'provenance',
+    label: '提供方',
+    editor: 'key-data-provenance',
+    helper:
+      '金额、期限、数量与时间差必须落到合同参数、前序凭证属性、派生规则或结果事实上。',
+  };
 
 /** Rule inspection fields used by the rule panel in Phase 4. */
 export const INSPECTOR_RULE_FIELDS: readonly InspectorPropertyDefinition[] = [
@@ -291,7 +309,7 @@ export const INSPECTOR_RULE_FIELDS: readonly InspectorPropertyDefinition[] = [
     field: 'kind',
     label: '规则类型',
     editor: 'select',
-    options: toOptions(RULE_KINDS),
+    options: toOptions(RULE_KINDS, RULE_KIND_LABELS),
   },
   {
     field: 'description',
@@ -299,7 +317,12 @@ export const INSPECTOR_RULE_FIELDS: readonly InspectorPropertyDefinition[] = [
     editor: 'text',
     helper: '先用业务语言说明判断依据，公式其次。',
   },
-  { field: 'contextRef', label: '所属上下文', editor: 'reference-picker', reference: { categories: ['context'] } },
+  {
+    field: 'contextRef',
+    label: '所属上下文',
+    editor: 'reference-picker',
+    reference: { categories: ['context'] },
+  },
   { field: 'bindings', label: '输入绑定', editor: 'reference-list' },
   { field: 'expression', label: 'CEL 表达式', editor: 'cel-editor' },
 ];

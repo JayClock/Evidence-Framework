@@ -19,28 +19,46 @@ export {
 
 export {
   CLAUSE_CATEGORIES,
+  CLAUSE_CATEGORY_DEFINITIONS,
   CLAUSE_CATEGORY_ENGLISH_LABELS,
   CLAUSE_CATEGORY_HINTS,
   CLAUSE_CATEGORY_LABELS,
   CLAUSE_DESTINATIONS,
+  CLAUSE_DESTINATION_DEFINITIONS,
+  CLAUSE_DESTINATION_LABELS,
   CLAUSE_DESTINATION_OF,
   countClausesByCategory,
   isClauseCategory,
+  isClauseDestination,
   type ClauseAnnotation,
   type ClauseCategory,
+  type ClauseCategoryDefinition,
   type ClauseDestination,
 } from './ast/clause.js';
 
 export {
   CONTEXT_KINDS,
+  CONTEXT_KIND_DEFINITIONS,
+  CONTEXT_KIND_LABELS,
   DOMAIN_COMPONENT_ROLES,
+  DOMAIN_COMPONENT_ROLE_DEFINITIONS,
   DOMAIN_COMPONENT_ROLE_LABELS,
   ENTITY_CATEGORIES,
+  ENTITY_CATEGORY_DEFINITIONS,
+  ENTITY_CATEGORY_LABELS,
   EVIDENCE_KINDS,
+  EVIDENCE_KIND_DEFINITIONS,
+  EVIDENCE_KIND_LABELS,
+  EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
+  EVIDENCE_TIME_ATTRIBUTE_LABELS,
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   PARTICIPANT_KINDS,
+  PARTICIPANT_KIND_DEFINITIONS,
+  PARTICIPANT_KIND_LABELS,
   REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
   ROLE_KINDS,
+  ROLE_KIND_DEFINITIONS,
+  ROLE_KIND_LABELS,
   entitySignature,
   findAttribute,
   isContextEntity,
@@ -64,6 +82,7 @@ export {
   type EntitySignature,
   type EvidenceEntityAST,
   type EvidenceKind,
+  type EvidenceKindDefinition,
   type ParticipantEntityAST,
   type ParticipantKind,
   type RoleEntityAST,
@@ -73,6 +92,7 @@ export {
 export {
   LIFECYCLE_STAGES,
   LIFECYCLE_STAGE_CAPTIONS,
+  LIFECYCLE_STAGE_DEFINITIONS,
   LIFECYCLE_STAGE_ENGLISH_LABELS,
   LIFECYCLE_STAGE_LABELS,
   LIFECYCLE_STAGE_ORDER,
@@ -82,6 +102,7 @@ export {
   lifecycleStageOfContext,
   lifecycleStageRank,
   type LifecycleStage,
+  type LifecycleStageDefinition,
 } from './ast/lifecycle.js';
 
 export {
@@ -96,6 +117,7 @@ export {
 
 export {
   KEY_DATA_PROVIDER_CHOICES,
+  KEY_DATA_SOURCE_DEFINITIONS,
   KEY_DATA_SOURCE_KINDS,
   KEY_DATA_SOURCE_LABELS,
   REQUEST_FORMATION_FIELDS,
@@ -105,11 +127,14 @@ export {
   isKeyDataResolved,
   isKeyDataSourceKind,
   type KeyDataProviderChoice,
+  type KeyDataSourceDefinition,
   type KeyDataSourceKind,
 } from './ast/keyData.js';
 
 export {
   RELATIONSHIP_KINDS,
+  RELATIONSHIP_KIND_DEFINITIONS,
+  RELATIONSHIP_KIND_LABELS,
   isCardinality,
   isRelationshipKind,
   type CardinalityAST,
@@ -120,6 +145,8 @@ export {
 export {
   BOOLEAN_RULE_KINDS,
   RULE_KINDS,
+  RULE_KIND_DEFINITIONS,
+  RULE_KIND_LABELS,
   isBooleanRuleKind,
   isDerivationRule,
   isRuleBinding,
@@ -128,6 +155,7 @@ export {
   type RuleAST,
   type RuleBinding,
   type RuleKind,
+  type RuleKindDefinition,
   type RuleTarget,
 } from './ast/rule.js';
 
@@ -144,6 +172,8 @@ export {
 
 export {
   INGESTION_SOURCE_KINDS,
+  INGESTION_SOURCE_KIND_DEFINITIONS,
+  INGESTION_SOURCE_KIND_LABELS,
   isIngestionSourceKind,
   type IngestionSourceKind,
   type ProvenanceSnippet,
@@ -184,6 +214,7 @@ export {
 } from './validation/strictValidate.js';
 
 export {
+  INSPECTOR_GROUP_DEFINITIONS,
   INSPECTOR_GROUP_IDS,
   INSPECTOR_GROUP_LABELS,
   type InspectorGroupId,

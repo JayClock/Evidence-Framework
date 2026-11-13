@@ -1,4 +1,7 @@
-import type { EntityAST } from '@evidence-poc/evidence-schema';
+import {
+  EVIDENCE_TIME_ATTRIBUTE_NAMES,
+  type EntityAST,
+} from '@evidence-poc/evidence-schema';
 import type {
   CanvasViewMode,
   LayoutNode,
@@ -7,7 +10,6 @@ import type { CardSummary } from './cardSummary';
 
 import {
   CATEGORY_TOKENS,
-  TYPED_TIME_ATTRIBUTES,
   entityColor,
   entityKindLabel,
   entityRadius,
@@ -28,7 +30,7 @@ interface NodeCardProps {
 }
 
 const timeAttributes = (entity: EntityAST): string[] =>
-  TYPED_TIME_ATTRIBUTES.filter(
+  EVIDENCE_TIME_ATTRIBUTE_NAMES.filter(
     (name) =>
       entity.attributes?.some((candidate) => candidate.name === name) === true,
   );

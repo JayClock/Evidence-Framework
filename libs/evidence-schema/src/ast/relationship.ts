@@ -1,7 +1,22 @@
-/** Relationship kinds of the pure graph fulfillment model. */
-export const RELATIONSHIP_KINDS = ['plays_role', 'references'] as const;
+import {
+  isVocabularyId,
+  vocabularyIds,
+  vocabularyLabels,
+} from '../vocabulary.js';
 
-export type RelationshipKind = (typeof RELATIONSHIP_KINDS)[number];
+/** Relationship kinds of the pure graph fulfillment model. */
+export const RELATIONSHIP_KIND_DEFINITIONS = {
+  plays_role: { label: '扮演角色（Plays Role）' },
+  references: { label: '引用（References）' },
+} as const satisfies Record<string, { readonly label: string }>;
+
+export type RelationshipKind = keyof typeof RELATIONSHIP_KIND_DEFINITIONS;
+
+export const RELATIONSHIP_KINDS = vocabularyIds(RELATIONSHIP_KIND_DEFINITIONS);
+
+export const RELATIONSHIP_KIND_LABELS = vocabularyLabels(
+  RELATIONSHIP_KIND_DEFINITIONS,
+);
 
 export interface CardinalityAST {
   min: number;
@@ -20,13 +35,8 @@ export interface RelationshipAST {
   notes?: string;
 }
 
-export function isRelationshipKind(
-  value: unknown,
-): value is RelationshipKind {
-  return (
-    typeof value === 'string' &&
-    (RELATIONSHIP_KINDS as readonly string[]).includes(value)
-  );
+export function isRelationshipKind(value: unknown): value is RelationshipKind {
+  return isVocabularyId(RELATIONSHIP_KIND_DEFINITIONS, value);
 }
 
 /** Value semantics are intentionally left to the owning rule language. */

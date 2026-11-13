@@ -1,18 +1,23 @@
-/** Inspector sections rendered by the desktop right-hand panel. */
-export const INSPECTOR_GROUP_IDS = [
-  'general',
-  'responsibility',
-  'attributes',
-  'fulfillment',
-  'rules',
-] as const;
+import { vocabularyIds, vocabularyLabels } from '../vocabulary.js';
 
-export type InspectorGroupId = (typeof INSPECTOR_GROUP_IDS)[number];
+/**
+ * Inspector sections rendered by the desktop right-hand panel.
+ *
+ * The id and the heading the panel prints live together, so a section cannot be
+ * declared without the text that names it.
+ */
+export const INSPECTOR_GROUP_DEFINITIONS = {
+  general: { label: '基础信息' },
+  responsibility: { label: '责任锚定' },
+  attributes: { label: '业务属性与关键数据' },
+  fulfillment: { label: '履约结构' },
+  rules: { label: '规则与计算' },
+} as const satisfies Record<string, { readonly label: string }>;
 
-export const INSPECTOR_GROUP_LABELS: Record<InspectorGroupId, string> = {
-  general: '基础信息',
-  responsibility: '责任锚定',
-  attributes: '业务属性与关键数据',
-  fulfillment: '履约结构',
-  rules: '规则与计算',
-};
+export type InspectorGroupId = keyof typeof INSPECTOR_GROUP_DEFINITIONS;
+
+export const INSPECTOR_GROUP_IDS = vocabularyIds(INSPECTOR_GROUP_DEFINITIONS);
+
+export const INSPECTOR_GROUP_LABELS = vocabularyLabels(
+  INSPECTOR_GROUP_DEFINITIONS,
+);

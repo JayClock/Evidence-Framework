@@ -1,4 +1,10 @@
 import type { ContextEntityAST, EntityAST, EvidenceKind } from './entity.js';
+import {
+  isVocabularyId,
+  vocabularyField,
+  vocabularyIds,
+  vocabularyLabels,
+} from '../vocabulary.js';
 
 /**
  * The four business moments an 8X Flow workshop reads a model through.
@@ -12,43 +18,65 @@ import type { ContextEntityAST, EntityAST, EvidenceKind } from './entity.js';
  * "Contract signed" is the hinge. Everything to its left is pre-contract and has
  * no legal force; everything to its right is obligated delivery. That is why the
  * stage of a Context is derived from the evidence it holds rather than declared.
+ *
+ * Each stage carries the label, caption and English name the workshop board and
+ * the review page print, so text cannot drift away from the lane it names.
  */
-export const LIFECYCLE_STAGES = [
-  'rfp',
-  'proposal',
-  'contract',
-  'fulfillment',
-] as const;
+export interface LifecycleStageDefinition {
+  readonly label: string;
+  /** One line describing what a stage holds, printed under its label. */
+  readonly caption: string;
+  /** English name, kept beside the Chinese so a reader can map to the lecture. */
+  readonly englishLabel: string;
+}
 
-export type LifecycleStage = (typeof LIFECYCLE_STAGES)[number];
+export const LIFECYCLE_STAGE_DEFINITIONS = {
+  rfp: {
+    label: '邀请投标',
+    caption: '时段：询价、比价、方案征询',
+    englishLabel: 'Request for Proposal',
+  },
+  proposal: {
+    label: '投标',
+    caption: '时段：报价、方案、套餐',
+    englishLabel: 'Proposal',
+  },
+  contract: {
+    label: '合同签约',
+    caption: '时刻：签署生效，权责成立',
+    englishLabel: 'Contract',
+  },
+  fulfillment: {
+    label: '履约履行',
+    caption: '请求是时段，确认是时刻',
+    englishLabel: 'Fulfillment',
+  },
+} as const satisfies Record<string, LifecycleStageDefinition>;
+
+export type LifecycleStage = keyof typeof LIFECYCLE_STAGE_DEFINITIONS;
+
+export const LIFECYCLE_STAGES = vocabularyIds(LIFECYCLE_STAGE_DEFINITIONS);
 
 /** Reading order, left to right. Also the tie-break for "furthest stage". */
 export const LIFECYCLE_STAGE_ORDER: readonly LifecycleStage[] =
   LIFECYCLE_STAGES;
 
 /** Human labels the workshop board and the review page both show. */
-export const LIFECYCLE_STAGE_LABELS: Record<LifecycleStage, string> = {
-  rfp: '邀请投标',
-  proposal: '投标',
-  contract: '合同签约',
-  fulfillment: '履约履行',
-};
+export const LIFECYCLE_STAGE_LABELS = vocabularyLabels(
+  LIFECYCLE_STAGE_DEFINITIONS,
+);
 
 /** One line describing what a stage holds, printed under its label. */
-export const LIFECYCLE_STAGE_CAPTIONS: Record<LifecycleStage, string> = {
-  rfp: '时段：询价、比价、方案征询',
-  proposal: '时段：报价、方案、套餐',
-  contract: '时刻：签署生效，权责成立',
-  fulfillment: '请求是时段，确认是时刻',
-};
+export const LIFECYCLE_STAGE_CAPTIONS = vocabularyField(
+  LIFECYCLE_STAGE_DEFINITIONS,
+  'caption',
+);
 
 /** English names, kept beside the Chinese so a reader can map to the lecture. */
-export const LIFECYCLE_STAGE_ENGLISH_LABELS: Record<LifecycleStage, string> = {
-  rfp: 'Request for Proposal',
-  proposal: 'Proposal',
-  contract: 'Contract',
-  fulfillment: 'Fulfillment',
-};
+export const LIFECYCLE_STAGE_ENGLISH_LABELS = vocabularyField(
+  LIFECYCLE_STAGE_DEFINITIONS,
+  'englishLabel',
+);
 
 /**
  * Evidence kinds that pin a Context to one moment.
@@ -66,8 +94,7 @@ const EVIDENCE_STAGE: Partial<Record<EvidenceKind, LifecycleStage>> = {
 };
 
 export const isLifecycleStage = (value: unknown): value is LifecycleStage =>
-  typeof value === 'string' &&
-  (LIFECYCLE_STAGES as readonly string[]).includes(value);
+  isVocabularyId(LIFECYCLE_STAGE_DEFINITIONS, value);
 
 /** Position of a stage in the reading order; used to compare two stages. */
 export const lifecycleStageRank = (stage: LifecycleStage): number =>

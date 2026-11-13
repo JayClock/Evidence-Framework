@@ -43,7 +43,9 @@ describe('inspector groups', () => {
       'kind',
     ]);
     expect(general?.properties[0]?.editor).toBe('readonly-id');
-    expect(general?.properties[2]?.options?.map((option) => option.value)).toEqual([
+    expect(
+      general?.properties[2]?.options?.map((option) => option.value),
+    ).toEqual([
       'rfp',
       'proposal',
       'contract',
@@ -51,6 +53,20 @@ describe('inspector groups', () => {
       'fulfillment_confirmation',
       'other_evidence',
     ]);
+  });
+
+  it('shows the vocabulary label while keeping the persisted id as the value', () => {
+    const kind = getInspectorGroup('evidence', 'general')?.properties[2];
+
+    expect(kind?.options?.[0]).toEqual({ label: '询价', value: 'rfp' });
+  });
+
+  it('falls back to the id for a vocabulary without labels', () => {
+    const valueType = INSPECTOR_ATTRIBUTE_FIELDS.find(
+      (field) => field.field === 'valueType',
+    );
+
+    expect(valueType?.options?.[0]).toEqual({ label: 'bool', value: 'bool' });
   });
 
   it('keeps contexts to context-level fields', () => {
@@ -109,9 +125,9 @@ describe('attribute and rule fields', () => {
         ?.editor,
     ).toBe('cel-editor');
     expect(
-      INSPECTOR_RULE_FIELDS.find((field) => field.field === 'kind')?.options?.map(
-        (option) => option.value,
-      ),
+      INSPECTOR_RULE_FIELDS.find(
+        (field) => field.field === 'kind',
+      )?.options?.map((option) => option.value),
     ).toEqual([
       'derivation',
       'precondition',

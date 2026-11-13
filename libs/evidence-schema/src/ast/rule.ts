@@ -1,25 +1,43 @@
 import type { ValueType } from './values.js';
 import { isBindingCardinality, isValueType } from './values.js';
+import {
+  isVocabularyId,
+  vocabularyIds,
+  vocabularyLabels,
+} from '../vocabulary.js';
 
-export const RULE_KINDS = [
-  'derivation',
-  'precondition',
-  'invariant',
-  'eligibility',
-  'completion',
-  'breach',
-] as const;
+/**
+ * What a rule asserts, and whether its CEL result is a decision.
+ *
+ * Only a derivation writes an attribute; the other five kinds answer a yes/no
+ * question, so `booleanResult` keeps the CEL result type beside the kind instead
+ * of in a second list the validator has to trust.
+ */
+export interface RuleKindDefinition {
+  readonly label: string;
+  /** True when the CEL result must be a boolean decision. */
+  readonly booleanResult: boolean;
+}
 
-export type RuleKind = (typeof RULE_KINDS)[number];
+export const RULE_KIND_DEFINITIONS = {
+  derivation: { label: '派生规则（Derivation）', booleanResult: false },
+  precondition: { label: '前置条件（Precondition）', booleanResult: true },
+  invariant: { label: '不变量（Invariant）', booleanResult: true },
+  eligibility: { label: '资格判定（Eligibility）', booleanResult: true },
+  completion: { label: '完成判定（Completion）', booleanResult: true },
+  breach: { label: '违约判定（Breach）', booleanResult: true },
+} as const satisfies Record<string, RuleKindDefinition>;
+
+export type RuleKind = keyof typeof RULE_KIND_DEFINITIONS;
+
+export const RULE_KINDS = vocabularyIds(RULE_KIND_DEFINITIONS);
+
+export const RULE_KIND_LABELS = vocabularyLabels(RULE_KIND_DEFINITIONS);
 
 /** Rule kinds whose CEL result must be a boolean decision. */
-export const BOOLEAN_RULE_KINDS: readonly RuleKind[] = [
-  'precondition',
-  'invariant',
-  'eligibility',
-  'completion',
-  'breach',
-];
+export const BOOLEAN_RULE_KINDS: readonly RuleKind[] = RULE_KINDS.filter(
+  (kind) => RULE_KIND_DEFINITIONS[kind].booleanResult,
+);
 
 /** Binding of a CEL alias to a modeled instance or a runtime value type. */
 export type RuleBinding =
@@ -48,16 +66,11 @@ export interface RuleAST {
 }
 
 export function isRuleKind(value: unknown): value is RuleKind {
-  return (
-    typeof value === 'string' && (RULE_KINDS as readonly string[]).includes(value)
-  );
+  return isVocabularyId(RULE_KIND_DEFINITIONS, value);
 }
 
 export function isBooleanRuleKind(value: unknown): boolean {
-  return (
-    typeof value === 'string' &&
-    (BOOLEAN_RULE_KINDS as readonly string[]).includes(value)
-  );
+  return isRuleKind(value) && RULE_KIND_DEFINITIONS[value].booleanResult;
 }
 
 const isDomainRef = (value: unknown): value is string =>
@@ -75,8 +88,7 @@ export function isRuleBinding(value: unknown): value is RuleBinding {
     return (
       isDomainRef(candidate.ref) &&
       (keys.length === 1 ||
-        (keys.length === 2 &&
-          isBindingCardinality(candidate.cardinality)))
+        (keys.length === 2 && isBindingCardinality(candidate.cardinality)))
     );
   }
 

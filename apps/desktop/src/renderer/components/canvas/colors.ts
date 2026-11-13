@@ -1,4 +1,11 @@
 import type { EntityAST } from '@evidence-poc/evidence-schema';
+import {
+  CONTEXT_KIND_LABELS,
+  EVIDENCE_KIND_LABELS,
+  EVIDENCE_TIME_ATTRIBUTE_LABELS,
+  PARTICIPANT_KIND_LABELS,
+  ROLE_KIND_LABELS,
+} from '@evidence-poc/evidence-schema';
 
 export const CATEGORY_TOKENS = {
   context: { stroke: '#5b6472', fill: '#f8fafc', radius: 8, label: '业务边界' },
@@ -31,44 +38,22 @@ export const CATEGORY_COLORS = {
   role: '#8d6200',
 } as const;
 
-const EVIDENCE_KIND_LABELS: Record<string, string> = {
-  rfp: '询价',
-  proposal: '方案',
-  contract: '合同',
-  fulfillment_request: '履约请求',
-  fulfillment_confirmation: '履约确认',
-  other_evidence: '其他凭证',
-};
-
-const PARTICIPANT_KIND_LABELS: Record<string, string> = {
-  party: '参与方',
-  thing: '业务对象',
-};
-
-const ROLE_KIND_LABELS: Record<string, string> = {
-  party: '合同角色',
-  domain: '领域角色',
-  third_party: '第三方角色',
-  context: '上下文角色',
-  evidence: '凭证角色',
-};
-
-const CONTEXT_KIND_LABELS: Record<string, string> = {
-  contract: '合同上下文',
-  pre_contract: '前期上下文',
-  domain: '领域上下文',
-};
-
+/**
+ * Kind of a node, in the words the model uses.
+ *
+ * The names come from the schema vocabulary so the canvas, the inspector and the
+ * review page cannot label the same kind differently.
+ */
 export const entityKindLabel = (entity: EntityAST): string => {
   switch (entity.category) {
     case 'evidence':
-      return EVIDENCE_KIND_LABELS[entity.kind] ?? entity.kind;
+      return EVIDENCE_KIND_LABELS[entity.kind];
     case 'participant':
-      return PARTICIPANT_KIND_LABELS[entity.kind] ?? entity.kind;
+      return PARTICIPANT_KIND_LABELS[entity.kind];
     case 'role':
-      return ROLE_KIND_LABELS[entity.kind] ?? entity.kind;
+      return ROLE_KIND_LABELS[entity.kind];
     case 'context':
-      return CONTEXT_KIND_LABELS[entity.kind] ?? entity.kind;
+      return CONTEXT_KIND_LABELS[entity.kind];
   }
 };
 
@@ -79,29 +64,17 @@ export const entityColor = (entity: EntityAST): string =>
 export const entityRadius = (entity: EntityAST): number =>
   CATEGORY_TOKENS[entity.category].radius;
 
-/** Evidence time attributes already modeled, shown inside the node. */
-export const TYPED_TIME_ATTRIBUTES = [
-  'started_at',
-  'expired_at',
-  'signed_at',
-  'confirmed_at',
-  'created_at',
-] as const;
-
 /**
- * Short forms of the five business-time attributes.
+ * Short form of a recognised business-time attribute name.
  *
  * Used only as a fallback when a project modeled the attribute without a label.
  * The modeled label wins, because a workshop board has to say what the model
  * says; a long label is truncated by the card and revealed on hover.
  */
-const TIME_SHORT_LABELS: Record<string, string> = {
-  started_at: '开始',
-  expired_at: '截止',
-  signed_at: '签署',
-  confirmed_at: '确认',
-  created_at: '创建',
-};
+const timeShortLabel = (name: string): string =>
+  EVIDENCE_TIME_ATTRIBUTE_LABELS[
+    name as keyof typeof EVIDENCE_TIME_ATTRIBUTE_LABELS
+  ] ?? name;
 
 /**
  * The business time a card shows, in reading order.
@@ -118,9 +91,7 @@ export const formatBusinessTimeWindow = (
     return null;
   }
 
-  return names
-    .map((name) => labelOf(name) ?? TIME_SHORT_LABELS[name] ?? name)
-    .join(' → ');
+  return names.map((name) => labelOf(name) ?? timeShortLabel(name)).join(' → ');
 };
 
 /** How a node states its relationship to the clock. */
