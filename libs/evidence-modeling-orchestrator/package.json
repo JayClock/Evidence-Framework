@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",
+    "@evidence-poc/evidence-api": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "tslib": "^2.3.0",

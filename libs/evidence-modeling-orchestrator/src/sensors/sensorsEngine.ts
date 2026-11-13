@@ -1,3 +1,4 @@
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   stageGateSummaryOf,
   type FmCheckReport,
@@ -22,6 +23,9 @@ export interface SensorsEngineOptions {
 }
 
 export interface RunSensorsInput {
+  document?: DomainModelDocument;
+  baseDocument?: DomainModelDocument;
+  apiMode?: 'draft' | 'release';
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
   /** Context IDs to completeness-check; omitted means consistency only. */
@@ -53,6 +57,7 @@ export const createSensorsEngine = ({
     input: RunSensorsInput,
   ): Promise<SensorOutcome> =>
     runNativeSensors({
+      ...input,
       modelRoot: input.modelRoot,
       ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
       ...(input.signal === undefined ? {} : { signal: input.signal }),

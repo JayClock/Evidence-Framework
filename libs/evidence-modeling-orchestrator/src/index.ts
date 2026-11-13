@@ -1,10 +1,16 @@
 export {
+  checkNativeApiSensor,
+  type ApiSensorInput,
+  type ApiSensorOutcome,
+} from './sensors/native/nativeApiSensor.js';
+export {
   buildSensorReport,
   driftIssues,
   finalizeSensorReport,
   fmCheckIssues,
   keyDataSummaryOf,
   stageGateSummaryOf,
+  type ApiCoverageSummary,
   type DriftAuditReport,
   type FmCheckReport,
   type KeyDataAuditReport,

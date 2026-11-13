@@ -12,6 +12,7 @@
   },
   "include": ["src/**/*.ts"],
   "references": [
+    { "path": "../evidence-api/tsconfig.lib.json" },
     {
       "path": "../evidence-schema/tsconfig.lib.json"
     },

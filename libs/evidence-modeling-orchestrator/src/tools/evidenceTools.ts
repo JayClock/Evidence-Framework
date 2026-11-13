@@ -7,6 +7,7 @@ import type {
   ValueType,
 } from '@evidence-poc/evidence-schema';
 import {
+  decodeModelPatch,
   addBreachCompensation,
   annotateContractClauses,
   domainNounOf,
@@ -18,6 +19,8 @@ import {
 } from '@evidence-poc/evidence-model-core';
 import { Type } from 'typebox';
 
+import { checkNativeApiSensor } from '../sensors/native/nativeApiSensor.js';
+import { renderApiDiff } from '@evidence-poc/evidence-api';
 import type { SensorReport } from '../sensors/sensorReport.js';
 
 /** What the canvas is showing right now, for selection-aware answers. */
@@ -62,12 +65,16 @@ export interface EvidenceToolsHandlers {
    * An operator names the root contract or the breached request itself, so it
    * needs the current tree rather than a guessed id.
    */
+  loadBaseDocument?: () => Promise<DomainModelDocument | undefined>;
+  refreshApi?: () => Promise<void>;
   loadDocument: () => Promise<DomainModelDocument>;
   /** Absolute path of `.evidence/fm` for this project. */
   modelRoot: string;
 }
 
 export const TOOL_NAMES = {
+  getApiDiff: 'get_api_diff',
+  syncApiProjection: 'sync_api_projection',
   runSensors: 'run_sensors',
   applyModelPatch: 'apply_model_patch',
   getCanvasSelection: 'get_canvas_selection',
@@ -107,6 +114,56 @@ const commandTypes = (commands: readonly unknown[]): string[] =>
 export const createEvidenceToolsExtension =
   (handlers: EvidenceToolsHandlers) =>
   (pi: ExtensionAPI): void => {
+    pi.registerTool({
+      name: TOOL_NAMES.getApiDiff,
+      label: '查看 API 增量',
+      description:
+        '只读比对当前画布与会话基线；可试算补丁，不修改模型或发布基线。',
+      parameters: Type.Object({
+        proposedCommands: Type.Optional(Type.Array(Type.Unknown())),
+      }),
+      execute: async (_id, params) => {
+        const current = await handlers.loadDocument();
+        let proposed = current;
+        for (const command of decodeModelPatch(params.proposedCommands ?? [])) {
+          proposed = command.apply(proposed).document;
+        }
+        const base =
+          params.proposedCommands === undefined
+            ? await handlers.loadBaseDocument?.()
+            : current;
+        const outcome = checkNativeApiSensor({
+          currentDocument: proposed,
+          ...(base === undefined ? {} : { baseDocument: base }),
+        });
+        return textResult(
+          outcome,
+          outcome.diff === null
+            ? '当前没有比较基线；仅返回当前 API 检查结果。'
+            : renderApiDiff(outcome.diff),
+        );
+      },
+    });
+    pi.registerTool({
+      name: TOOL_NAMES.syncApiProjection,
+      label: '刷新 API 草稿',
+      description:
+        '重新投影当前模型并刷新诊断；不写盘、不补造接口、不确认破坏性变更。',
+      parameters: Type.Object({ rationale: Type.String({ minLength: 1 }) }),
+      execute: async (_id, params) => {
+        await handlers.refreshApi?.();
+        const current = await handlers.loadDocument();
+        const base = await handlers.loadBaseDocument?.();
+        const outcome = checkNativeApiSensor({
+          currentDocument: current,
+          ...(base === undefined ? {} : { baseDocument: base }),
+        });
+        return textResult(
+          outcome,
+          `${params.rationale}\n${JSON.stringify(outcome.summary)}`,
+        );
+      },
+    });
     pi.registerTool({
       name: TOOL_NAMES.runSensors,
       label: '运行质量传感器',
@@ -209,9 +266,11 @@ export const createEvidenceToolsExtension =
           counts: {
             business: clauses.filter((clause) => clause.category === 'business')
               .length,
-            domain: clauses.filter((clause) => clause.category === 'domain').length,
-            boilerplate: clauses.filter((clause) => clause.category === 'boilerplate')
+            domain: clauses.filter((clause) => clause.category === 'domain')
               .length,
+            boilerplate: clauses.filter(
+              (clause) => clause.category === 'boilerplate',
+            ).length,
           },
           clauses: clauses.map((clause) => ({
             index: clause.index,
@@ -237,13 +296,16 @@ export const createEvidenceToolsExtension =
         '把「阶段 / 活动 / 凭证 / 当事人 / 标的物」的服务蓝图表格读成履约草稿，返回凭证、成对履约与缺口。没有合同可读时，用它把业务流程转成模型骨架。',
       parameters: Type.Object({
         table: Type.String({
-          description: 'Markdown 表格或 CSV，表头至少包含「业务凭证 / 凭证」列。',
+          description:
+            'Markdown 表格或 CSV，表头至少包含「业务凭证 / 凭证」列。',
         }),
         modelName: Type.Optional(Type.String({ description: '模型名称。' })),
       }),
       execute: async (_toolCallId, params) => {
         const parsed = parseBlueprint(params.table, {
-          ...(params.modelName === undefined ? {} : { modelName: params.modelName }),
+          ...(params.modelName === undefined
+            ? {}
+            : { modelName: params.modelName }),
           format: 'auto',
         });
 
@@ -329,7 +391,11 @@ export const createEvidenceToolsExtension =
       } catch (error) {
         const message = error instanceof Error ? error.message : '未知原因';
 
-        return operatorResult({ error: message }, `算子未执行：${message}`, true);
+        return operatorResult(
+          { error: message },
+          `算子未执行：${message}`,
+          true,
+        );
       }
 
       const result = await handlers.applyModelPatch({
@@ -366,9 +432,13 @@ export const createEvidenceToolsExtension =
         proof: Type.Optional(
           Type.Object({
             id: Type.String({ description: '证明凭证 ID。' }),
-            label: Type.String({ description: '证明凭证名称，例如 银行回单。' }),
+            label: Type.String({
+              description: '证明凭证名称，例如 银行回单。',
+            }),
             responsibleRoleRef: Type.Optional(
-              Type.String({ description: '出具证明的角色，缺省与确认方一致。' }),
+              Type.String({
+                description: '出具证明的角色，缺省与确认方一致。',
+              }),
             ),
           }),
         ),
@@ -409,9 +479,8 @@ export const createEvidenceToolsExtension =
         ),
       }),
       execute: async (_toolCallId, params) =>
-        runOperator(
-          `违约补偿：${params.condition}`,
-          (document) => addBreachCompensation(document, params),
+        runOperator(`违约补偿：${params.condition}`, (document) =>
+          addBreachCompensation(document, params),
         ),
     });
 
@@ -448,7 +517,10 @@ export const createEvidenceToolsExtension =
             label: Type.String(),
             window: Type.Optional(Type.String()),
           }),
-          confirmation: Type.Object({ id: Type.String(), label: Type.String() }),
+          confirmation: Type.Object({
+            id: Type.String(),
+            label: Type.String(),
+          }),
         }),
       }),
       execute: async (_toolCallId, params) =>
@@ -465,11 +537,17 @@ export const createEvidenceToolsExtension =
         '把合同里「按比例算、按阶梯算、按条件判定」的部分抽成领域上下文里的计算器或检查器，并同时写入读取它的派生规则。计价、折扣、等级、有效期、资格校验都走这条路径，不要把它们留成合同参数或前端入参。',
       parameters: Type.Object({
         host: Type.Object({
-          ref: Type.String({ description: '承载派生值的实体 ID，通常是履约凭证。' }),
+          ref: Type.String({
+            description: '承载派生值的实体 ID，通常是履约凭证。',
+          }),
           attribute: Type.Object({
-            name: Type.String({ description: '派生属性名，例如 service_fee。' }),
+            name: Type.String({
+              description: '派生属性名，例如 service_fee。',
+            }),
             label: Type.String({ description: '属性中文名，例如 服务费。' }),
-            meaning: Type.String({ description: '业务含义，写清由谁形成、怎么核对。' }),
+            meaning: Type.String({
+              description: '业务含义，写清由谁形成、怎么核对。',
+            }),
             valueType: Type.String({
               description: '属性值类型，例如 money、decimal、int、date。',
             }),
@@ -478,16 +556,22 @@ export const createEvidenceToolsExtension =
           }),
         }),
         context: Type.Object({
-          id: Type.String({ description: '领域上下文 ID，例如 context.fee-rules。' }),
+          id: Type.String({
+            description: '领域上下文 ID，例如 context.fee-rules。',
+          }),
           label: Type.String({ description: '领域上下文名称。' }),
         }),
         calculator: Type.Object({
-          id: Type.String({ description: '组件 ID，例如 thing.fee-calculator。' }),
+          id: Type.String({
+            description: '组件 ID，例如 thing.fee-calculator。',
+          }),
           label: Type.String({
             description: '组件名称，例如 服务费计算器；判定类用 检查器。',
           }),
           role: Type.Optional(
-            Type.String({ description: 'calculator 或 checker，缺省 calculator。' }),
+            Type.String({
+              description: 'calculator 或 checker，缺省 calculator。',
+            }),
           ),
           meaning: Type.Optional(
             Type.String({ description: '这个组件负责算什么、依据什么。' }),
@@ -522,37 +606,37 @@ export const createEvidenceToolsExtension =
         hostAlias: Type.Optional(Type.String()),
       }),
       execute: async (_toolCallId, params) =>
-        runOperator(
-          `抽出领域计算：${params.calculator.label}`,
-          (document) =>
-            isolateDomainCalculator(document, {
-              host: {
-                ref: params.host.ref,
-                attribute: {
-                  name: params.host.attribute.name,
-                  label: params.host.attribute.label,
-                  meaning: params.host.attribute.meaning,
-                  valueType: params.host.attribute.valueType as ValueType,
-                  ...(params.host.attribute.required === undefined
-                    ? {}
-                    : { required: params.host.attribute.required }),
-                  ...(params.host.attribute.keyData === undefined
-                    ? {}
-                    : { keyData: params.host.attribute.keyData }),
-                },
+        runOperator(`抽出领域计算：${params.calculator.label}`, (document) =>
+          isolateDomainCalculator(document, {
+            host: {
+              ref: params.host.ref,
+              attribute: {
+                name: params.host.attribute.name,
+                label: params.host.attribute.label,
+                meaning: params.host.attribute.meaning,
+                valueType: params.host.attribute.valueType as ValueType,
+                ...(params.host.attribute.required === undefined
+                  ? {}
+                  : { required: params.host.attribute.required }),
+                ...(params.host.attribute.keyData === undefined
+                  ? {}
+                  : { keyData: params.host.attribute.keyData }),
               },
-              context: params.context,
-              calculator: {
-                id: params.calculator.id,
-                label: params.calculator.label,
-                role: params.calculator.role === 'checker' ? 'checker' : 'calculator',
-                ...(params.calculator.meaning === undefined
-                  ? {}
-                  : { meaning: params.calculator.meaning }),
-                ...(params.calculator.attributes === undefined
-                  ? {}
-                  : {
-                      attributes: params.calculator.attributes.map((attribute) => ({
+            },
+            context: params.context,
+            calculator: {
+              id: params.calculator.id,
+              label: params.calculator.label,
+              role:
+                params.calculator.role === 'checker' ? 'checker' : 'calculator',
+              ...(params.calculator.meaning === undefined
+                ? {}
+                : { meaning: params.calculator.meaning }),
+              ...(params.calculator.attributes === undefined
+                ? {}
+                : {
+                    attributes: params.calculator.attributes.map(
+                      (attribute) => ({
                         name: attribute.name,
                         label: attribute.label,
                         meaning: attribute.meaning,
@@ -563,19 +647,24 @@ export const createEvidenceToolsExtension =
                         ...(attribute.keyData === undefined
                           ? {}
                           : { keyData: attribute.keyData }),
-                      })),
-                    }),
-              },
-              rule: {
-                id: params.rule.id,
-                label: params.rule.label,
-                description: params.rule.description,
-                expression: params.rule.expression,
-                resultType: params.rule.resultType as ValueType,
-                ...(params.rule.alias === undefined ? {} : { alias: params.rule.alias }),
-              },
-              ...(params.hostAlias === undefined ? {} : { hostAlias: params.hostAlias }),
-            }),
+                      }),
+                    ),
+                  }),
+            },
+            rule: {
+              id: params.rule.id,
+              label: params.rule.label,
+              description: params.rule.description,
+              expression: params.rule.expression,
+              resultType: params.rule.resultType as ValueType,
+              ...(params.rule.alias === undefined
+                ? {}
+                : { alias: params.rule.alias }),
+            },
+            ...(params.hostAlias === undefined
+              ? {}
+              : { hostAlias: params.hostAlias }),
+          }),
         ),
     });
   };

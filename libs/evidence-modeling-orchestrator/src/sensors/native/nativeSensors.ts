@@ -1,3 +1,5 @@
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import { checkNativeApiSensor } from './nativeApiSensor.js';
 import type {
   ScenarioResult,
   SimulationReport,
@@ -5,11 +7,16 @@ import type {
 
 import {
   buildSensorReport,
+  finalizeSensorReport,
   type KeyDataAuditReport,
 } from '../sensorReport.js';
 import type { SensorOutcome } from '../sensorsEngine.js';
 
-import { loadModelSources, runNativeFmCheck } from './modelSources.js';
+import {
+  loadModelSources,
+  modelSourcesFromDocument,
+  runNativeFmCheck,
+} from './modelSources.js';
 import { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
 
 /**
@@ -21,6 +28,9 @@ import { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
  */
 
 export interface NativeSensorsInput {
+  document?: DomainModelDocument;
+  baseDocument?: DomainModelDocument;
+  apiMode?: 'draft' | 'release';
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
   /** Context IDs to completeness-check; omitted means consistency only. */
@@ -52,26 +62,67 @@ export const scenarioResultsOf = (
 export const runNativeSensors = async (
   input: NativeSensorsInput,
 ): Promise<NativeSensorsOutcome> => {
-  const sources = await loadModelSources(input.modelRoot);
-  const { report: fmCheck, traceability, simulation } = await runNativeFmCheck(
-    sources,
-    {
-      ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
-      ...(input.detectInputChange === false ? { detectInputChange: false } : {}),
-    },
-  );
+  input.signal?.throwIfAborted();
+  const sources =
+    input.document === undefined
+      ? await loadModelSources(input.modelRoot)
+      : modelSourcesFromDocument(input.document);
+  const {
+    report: fmCheck,
+    traceability,
+    simulation,
+  } = await runNativeFmCheck(sources, {
+    ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
+    ...(input.detectInputChange === false ? { detectInputChange: false } : {}),
+  });
   const keyData = runNativeKeyDataAudit(sources.model, traceability);
 
-  const report = buildSensorReport({
+  const baseReport = buildSensorReport({
     fmCheck,
     ...(keyData === undefined ? {} : { keyData }),
     ...(input.now === undefined ? {} : { now: input.now }),
   });
 
+  input.signal?.throwIfAborted();
+  let report = baseReport;
+  try {
+    const api = checkNativeApiSensor({
+      currentDocument: sources.model,
+      ...(input.baseDocument === undefined
+        ? {}
+        : { baseDocument: input.baseDocument }),
+      ...(input.apiMode === undefined ? {} : { mode: input.apiMode }),
+    });
+    report = finalizeSensorReport({
+      ...baseReport,
+      issues: [...baseReport.issues, ...api.issues],
+      apiSummary: api.summary,
+      ...(input.now === undefined ? {} : { now: input.now }),
+    });
+  } catch (error) {
+    report = finalizeSensorReport({
+      ...baseReport,
+      issues: [
+        ...baseReport.issues,
+        {
+          issueId: 'audit_api:SENSOR_UNAVAILABLE',
+          source: 'audit_api',
+          severity: 'block',
+          code: 'SENSOR_UNAVAILABLE',
+          message: `API 分析不可用: ${error instanceof Error ? error.message : String(error)}`,
+        },
+      ],
+      unavailableSensors: [...baseReport.unavailableSensors, 'audit_api'],
+      ...(input.now === undefined ? {} : { now: input.now }),
+    });
+  }
+
   return {
     report,
     fmCheck,
-    ...(keyData === undefined ? {} : { keyData: keyData as KeyDataAuditReport }),
+    ...(keyData === undefined
+      ? {}
+      : { keyData: keyData as KeyDataAuditReport }),
     scenarioResults: scenarioResultsOf(simulation),
     simulation,
   };

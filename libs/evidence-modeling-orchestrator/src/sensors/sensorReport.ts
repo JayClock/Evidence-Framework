@@ -3,6 +3,7 @@ export type SensorSeverity = 'block' | 'warn' | 'info';
 
 /** Which check produced a finding. */
 export type SensorSource =
+  | 'audit_api'
   | 'check_fm'
   | 'audit_key_data'
   | 'audit_drift'
@@ -46,7 +47,19 @@ export interface StageGateSummary {
   errors: readonly string[];
 }
 
+export interface ApiCoverageSummary {
+  totalRoutes: number;
+  coverageRatio: number;
+  uncoveredEntities: readonly string[];
+  breakingChangeCount: number;
+  hasBaseline: boolean;
+  modelDigest: string;
+}
+
 export interface SensorReport {
+  apiSummary?: ApiCoverageSummary;
+  /** Draft preview eligibility is independent of release readiness. */
+  canPreviewApi?: boolean;
   timestamp: string;
   /** True when static FM consistency produced no blocking issue. */
   passed: boolean;
@@ -153,23 +166,17 @@ const MAX_KEY_DATA = 40;
  */
 export const driftIssues = (report: DriftAuditReport): SensorIssue[] => [
   ...(report.findings ?? []).map((item) =>
-    issue(
-      'audit_drift',
-      item.severity,
-      item.kind,
-      item.message,
-      {
-        ...(item.evidenceRef === null || item.evidenceRef === undefined
-          ? {}
-          : { targetNodeId: item.evidenceRef }),
-        ...(item.contextRef === null || item.contextRef === undefined
-          ? {}
-          : { contextRef: item.contextRef }),
-        ...(item.remediation === undefined
-          ? {}
-          : { suggestion: item.remediation }),
-      },
-    ),
+    issue('audit_drift', item.severity, item.kind, item.message, {
+      ...(item.evidenceRef === null || item.evidenceRef === undefined
+        ? {}
+        : { targetNodeId: item.evidenceRef }),
+      ...(item.contextRef === null || item.contextRef === undefined
+        ? {}
+        : { contextRef: item.contextRef }),
+      ...(item.remediation === undefined
+        ? {}
+        : { suggestion: item.remediation }),
+    }),
   ),
   ...(report.errors ?? []).map((message) =>
     issue('audit_drift', 'warn', 'DRIFT_TRACE_UNREADABLE', message, {
@@ -312,10 +319,12 @@ export const finalizeSensorReport = ({
   issues,
   keyDataSummary,
   stageGate,
+  apiSummary,
   unavailableSensors = [],
   now = () => new Date(),
 }: {
   issues: readonly SensorIssue[];
+  apiSummary?: ApiCoverageSummary;
   keyDataSummary: KeyDataSummary;
   stageGate?: StageGateSummary;
   unavailableSensors?: readonly SensorSource[];
@@ -329,6 +338,8 @@ export const finalizeSensorReport = ({
   return {
     timestamp: now().toISOString(),
     passed: blockCount === 0,
+    canPreviewApi: blockCount === 0,
+    ...(apiSummary === undefined ? {} : { apiSummary }),
     blockCount,
     warnCount: countBy(unique, 'warn'),
     infoCount: countBy(unique, 'info'),
@@ -337,7 +348,10 @@ export const finalizeSensorReport = ({
     isStageGateReady:
       stageGate?.passed === true &&
       keyDataSummary.decisionOwedCount === 0 &&
-      blockCount === 0,
+      blockCount === 0 &&
+      (apiSummary === undefined ||
+        (apiSummary.uncoveredEntities.length === 0 &&
+          apiSummary.breakingChangeCount === 0)),
     ...(stageGate === undefined ? {} : { stageGate }),
     unavailableSensors,
   };

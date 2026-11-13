@@ -207,6 +207,42 @@ const invoke = async <TParams>(
     {} as never,
   )) as never;
 
+describe('API projection tools', () => {
+  it('refreshes without applying a patch or accepting a new baseline', async () => {
+    const document = createOrchestratorModel();
+    const before = structuredClone(document);
+    let refreshCount = 0;
+    const { handlers, patches } = createHandlers({
+      loadDocument: async () => document,
+      loadBaseDocument: async () => before,
+      refreshApi: async () => {
+        refreshCount += 1;
+      },
+    });
+    const fake = createFakePi();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+    const first = await invoke(fake.tool(TOOL_NAMES.getApiDiff), {});
+    await invoke(fake.tool(TOOL_NAMES.syncApiProjection), {
+      rationale: 'refresh',
+    });
+    const second = await invoke(fake.tool(TOOL_NAMES.getApiDiff), {});
+    expect(first.details).toEqual(second.details);
+    expect(refreshCount).toBe(1);
+    expect(patches).toEqual([]);
+    expect(document).toEqual(before);
+  });
+
+  it('rejects malformed hypothetical commands without modifying the model', async () => {
+    const { handlers, patches } = createHandlers();
+    const fake = createFakePi();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+    await expect(
+      invoke(fake.tool(TOOL_NAMES.getApiDiff), { proposedCommands: [{}] }),
+    ).rejects.toThrow();
+    expect(patches).toEqual([]);
+  });
+});
+
 describe('createEvidenceToolsExtension', () => {
   it('registers the read/write tools, the readings and the operators', () => {
     const fake = createFakePi();
@@ -215,6 +251,8 @@ describe('createEvidenceToolsExtension', () => {
     createEvidenceToolsExtension(handlers)(fake.pi);
 
     expect(fake.tools.map(({ name }) => name)).toEqual([
+      TOOL_NAMES.getApiDiff,
+      TOOL_NAMES.syncApiProjection,
       TOOL_NAMES.runSensors,
       TOOL_NAMES.applyModelPatch,
       TOOL_NAMES.getCanvasSelection,
@@ -327,20 +365,23 @@ describe('createEvidenceToolsExtension', () => {
     const { handlers, patches } = createHandlers();
     createEvidenceToolsExtension(handlers)(fake.pi);
 
-    const result = await invoke(fake.tool(TOOL_NAMES.introduceFulfillmentPair), {
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: '退款申请',
-        responsibleRoleRef: 'role.buyer',
-        window: '3 个工作日',
+    const result = await invoke(
+      fake.tool(TOOL_NAMES.introduceFulfillmentPair),
+      {
+        contextRef: 'context.procurement',
+        request: {
+          id: 'request.refund',
+          label: '退款申请',
+          responsibleRoleRef: 'role.buyer',
+          window: '3 个工作日',
+        },
+        confirmation: {
+          id: 'confirmation.refund',
+          label: '退款到账确认',
+          responsibleRoleRef: 'role.seller',
+        },
       },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: '退款到账确认',
-        responsibleRoleRef: 'role.seller',
-      },
-    });
+    );
 
     expect(patches).toEqual([
       {
@@ -392,21 +433,24 @@ describe('createEvidenceToolsExtension', () => {
     const { handlers, patches } = createHandlers();
     createEvidenceToolsExtension(handlers)(fake.pi);
 
-    const result = await invoke(fake.tool(TOOL_NAMES.roleifyAndInvertDependency), {
-      targetConfirmationRef: 'request.payment',
-      socket: { id: 'role.payment-capability', label: '付款能力' },
-      supporting: {
-        context: { id: 'context.wallet', label: '钱包支付服务' },
-        contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
-        provider: { id: 'role.wallet-provider', label: '钱包服务商' },
-        consumer: { id: 'role.wallet-user', label: '付款用户' },
-        request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
-        confirmation: {
-          id: 'confirmation.wallet-charge',
-          label: '钱包扣款确认',
+    const result = await invoke(
+      fake.tool(TOOL_NAMES.roleifyAndInvertDependency),
+      {
+        targetConfirmationRef: 'request.payment',
+        socket: { id: 'role.payment-capability', label: '付款能力' },
+        supporting: {
+          context: { id: 'context.wallet', label: '钱包支付服务' },
+          contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
+          provider: { id: 'role.wallet-provider', label: '钱包服务商' },
+          consumer: { id: 'role.wallet-user', label: '付款用户' },
+          request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
+          confirmation: {
+            id: 'confirmation.wallet-charge',
+            label: '钱包扣款确认',
+          },
         },
       },
-    });
+    );
 
     expect(patches).toEqual([]);
     expect(result.isError).toBe(true);
@@ -423,19 +467,22 @@ describe('createEvidenceToolsExtension', () => {
     });
     createEvidenceToolsExtension(handlers)(fake.pi);
 
-    const result = await invoke(fake.tool(TOOL_NAMES.introduceFulfillmentPair), {
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: '退款申请',
-        responsibleRoleRef: 'role.buyer',
+    const result = await invoke(
+      fake.tool(TOOL_NAMES.introduceFulfillmentPair),
+      {
+        contextRef: 'context.procurement',
+        request: {
+          id: 'request.refund',
+          label: '退款申请',
+          responsibleRoleRef: 'role.buyer',
+        },
+        confirmation: {
+          id: 'confirmation.refund',
+          label: '退款确认',
+          responsibleRoleRef: 'role.seller',
+        },
       },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: '退款确认',
-        responsibleRoleRef: 'role.seller',
-      },
-    });
+    );
 
     expect(result.isError).toBe(true);
     expect(result.content[0]?.text).toBe('补丁被拒绝：role.notBound');
@@ -561,7 +608,9 @@ describe('the workshop readings', () => {
     });
 
     expect(result.isError).toBeUndefined();
-    expect(patches[0]?.commands.map((command) => (command as { type: string }).type)).toEqual([
+    expect(
+      patches[0]?.commands.map((command) => (command as { type: string }).type),
+    ).toEqual([
       'create-entity',
       'create-entity',
       'add-attribute',

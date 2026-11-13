@@ -5,6 +5,7 @@ export {
   fmCheckIssues,
   keyDataSummaryOf,
   stageGateSummaryOf,
+  type ApiCoverageSummary,
   type DriftAuditReport,
   type FmCheckReport,
   type KeyDataAuditReport,

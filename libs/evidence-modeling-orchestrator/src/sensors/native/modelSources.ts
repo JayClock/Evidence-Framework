@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { modelBundleSourceFiles } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   analyzeTraceability,
@@ -69,6 +71,19 @@ export const loadModelSources = async (
   };
 };
 
+export const modelSourcesFromDocument = (
+  model: DomainModelDocument,
+): ModelSources => {
+  const digest = `sha256:${createHash('sha256').update(JSON.stringify(model)).digest('hex')}`;
+  return {
+    model,
+    suite: loadValidationSuite(modelBundleSourceFiles(model)),
+    sourceIssues: [],
+    digest,
+    rereadDigest: async () => digest,
+  };
+};
+
 export interface NativeFmCheckOptions {
   scopeRefs?: readonly string[];
   /** Skip the second read; only the desktop's debounced run does that. */
@@ -101,7 +116,9 @@ export const runNativeFmCheck = async (
     suite: sources.suite,
     sourceIssues: sources.sourceIssues,
     modelDigest: sources.digest,
-    ...(currentDigest === undefined ? {} : { currentDigest: () => currentDigest }),
+    ...(currentDigest === undefined
+      ? {}
+      : { currentDigest: () => currentDigest }),
     ...(options.scopeRefs === undefined
       ? {}
       : { scopeRefs: options.scopeRefs }),
