@@ -28,6 +28,12 @@ describe('BusinessLegend', () => {
     fireEvent.click(screen.getByRole('button', { name: '图例说明' }));
     expect(screen.getByText('虚线：跨业务边界或角色扮演')).not.toBeVisible();
   });
+  it('moves above the composer in a narrow canvas', () => {
+    const { container } = render(<BusinessLegend compact />);
+    expect(container.firstChild).toHaveClass('top-[76px]', 'max-h-[35%]');
+    expect(container.firstChild).not.toHaveClass('bottom-16');
+  });
+
   it('works when preference storage is unavailable', () => {
     const read = vi
       .spyOn(Storage.prototype, 'getItem')

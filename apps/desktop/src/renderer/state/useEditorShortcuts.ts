@@ -27,6 +27,7 @@ const isEditable = (target: EventTarget | null): boolean => {
   return (
     element?.tagName === 'INPUT' ||
     element?.tagName === 'TEXTAREA' ||
+    element?.tagName === 'SELECT' ||
     element?.isContentEditable === true
   );
 };

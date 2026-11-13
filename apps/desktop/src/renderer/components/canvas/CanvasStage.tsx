@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type {
+  ContextScope,
   DomainGraphLayout,
   LayoutEdge,
   LayoutNode,
@@ -43,6 +44,7 @@ interface CanvasStageProps {
   dimmed: boolean;
   marquee: { x: number; y: number; width: number; height: number } | null;
   overlay?: ModelOverlay | null;
+  scope?: ContextScope | null;
   onHoverNode: (nodeId: string | null) => void;
   onHoverEdge: (edgeId: string | null) => void;
   onHoverContext: (contextId: string | null) => void;
@@ -70,6 +72,7 @@ export const CanvasStage = ({
   dimmed,
   marquee,
   overlay = null,
+  scope = null,
   onHoverNode,
   onHoverEdge,
   onHoverContext,
@@ -94,6 +97,8 @@ export const CanvasStage = ({
 
       {layout.contextGroups.map((group) => {
         const active = highlightedContextIds.has(group.contextId);
+        const outOfScope =
+          scope !== null && !scope.contextIds.has(group.contextId);
         const faded = dimmed && !active;
 
         return (
@@ -110,6 +115,8 @@ export const CanvasStage = ({
               faded ? 'opacity-30' : 'opacity-100',
             ].join(' ')}
             style={{
+              opacity: outOfScope ? 0.15 : undefined,
+              pointerEvents: outOfScope ? 'none' : undefined,
               left: group.box.x,
               top: group.box.y,
               width: group.box.width,
@@ -125,10 +132,10 @@ export const CanvasStage = ({
                   ? '#2f5d8f'
                   : 'rgba(120, 128, 140, 0.45)',
             }}
-            onMouseEnter={() => onHoverContext(group.contextId)}
-            onMouseLeave={() => onHoverContext(null)}
-            onFocus={() => onHoverContext(group.contextId)}
-            onBlur={() => onHoverContext(null)}
+            onMouseEnter={() => !outOfScope && onHoverContext(group.contextId)}
+            onMouseLeave={() => !outOfScope && onHoverContext(null)}
+            onFocus={() => !outOfScope && onHoverContext(group.contextId)}
+            onBlur={() => !outOfScope && onHoverContext(null)}
             tabIndex={-1}
           >
             <span className="absolute top-3 left-4 text-[11px] font-medium tracking-wide text-[#4b5563]">
@@ -165,6 +172,9 @@ export const CanvasStage = ({
             y={group.box.y}
             width={group.box.width}
             height={group.box.height}
+            opacity={
+              scope !== null && !scope.nodeIds.has(group.requestId) ? 0.15 : 1
+            }
             rx={10}
             fill="none"
             stroke="rgba(180, 54, 86, 0.35)"
@@ -177,6 +187,7 @@ export const CanvasStage = ({
           <FulfillmentPairLinks
             key={`pair-${group.groupId}`}
             layout={layout}
+            scope={scope}
             requestId={group.requestId}
             resultIds={[...group.confirmationIds, ...group.proofIds]}
           />
@@ -184,6 +195,8 @@ export const CanvasStage = ({
 
         {layout.edges.map((edge) => {
           const active = highlightedEdgeIds.has(edge.relationshipId);
+          const outOfScope =
+            scope !== null && !scope.edgeIds.has(edge.relationshipId);
           const faded = dimmed && !active;
           const relationship = relationshipById.get(edge.relationshipId);
           const midpoint = pointOnRoute(edge.points, 0.5);
@@ -195,10 +208,12 @@ export const CanvasStage = ({
             <g
               key={edge.relationshipId}
               data-edge-id={edge.relationshipId}
-              opacity={faded ? 0.16 : 1}
-              style={{ pointerEvents: 'stroke' }}
-              onMouseEnter={() => onHoverEdge(edge.relationshipId)}
-              onMouseLeave={() => onHoverEdge(null)}
+              opacity={outOfScope ? 0.15 : faded ? 0.16 : 1}
+              style={{ pointerEvents: outOfScope ? 'none' : 'stroke' }}
+              onMouseEnter={() =>
+                !outOfScope && onHoverEdge(edge.relationshipId)
+              }
+              onMouseLeave={() => !outOfScope && onHoverEdge(null)}
             >
               <polyline
                 points={points}
@@ -258,6 +273,7 @@ export const CanvasStage = ({
           node={node}
           viewMode={viewMode}
           summary={summaries.get(node.nodeId)!}
+          outOfScope={scope !== null && !scope.nodeIds.has(node.nodeId)}
           selected={selection.nodeId === node.nodeId}
           highlighted={highlightedNodeIds.has(node.nodeId)}
           dimmed={dimmed && !highlightedNodeIds.has(node.nodeId)}
@@ -296,10 +312,12 @@ const PAIR_LINK_COLOR = 'rgba(180, 54, 86, 0.55)';
  */
 function FulfillmentPairLinks({
   layout,
+  scope,
   requestId,
   resultIds,
 }: {
   layout: DomainGraphLayout;
+  scope: ContextScope | null;
   requestId: string;
   resultIds: readonly string[];
 }) {
@@ -333,6 +351,12 @@ function FulfillmentPairLinks({
           <polyline
             key={`pair-link-${resultId}`}
             data-pair-link={resultId}
+            opacity={
+              scope !== null &&
+              (!scope.nodeIds.has(requestId) || !scope.nodeIds.has(resultId))
+                ? 0.15
+                : 1
+            }
             points={[
               `${origin.x},${origin.y}`,
               `${midX},${origin.y}`,

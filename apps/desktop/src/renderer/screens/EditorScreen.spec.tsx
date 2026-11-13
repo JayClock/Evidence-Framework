@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { EditorScreen } from './EditorScreen';
@@ -46,6 +52,58 @@ describe('EditorScreen', () => {
     expect(screen.getByText('AI 访谈与操控')).toBeInTheDocument();
     expect(screen.getByText('履约对 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
+  });
+
+  it('keeps scope and view mode out of the document and undo history', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
+    fireEvent.click(screen.getByText('标准图'));
+    const world = container.querySelector(
+      '[data-region="canvas-world"]',
+    ) as HTMLElement;
+    const beforeKeys = world.style.transform;
+    fireEvent.keyDown(screen.getByLabelText('聚焦范围'), { key: '+' });
+    expect(world.style.transform).toBe(beforeKeys);
+    expect(
+      container.querySelector('[data-node-id="role.inventory"]'),
+    ).toHaveStyle({ height: '156px' });
+    expect(screen.getByTitle('撤销（Cmd/Ctrl+Z）')).toBeDisabled();
+    expect(screen.queryByTitle('有未保存修改')).toBeNull();
+    fireEvent.click(screen.getByText('保存'));
+    await waitFor(() => expect(api.calls.save).toHaveLength(1));
+    expect(screen.queryByTitle('有未保存修改')).toBeNull();
+  });
+
+  it('resets scope when sidebar navigation selects an out-of-scope object', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // The sidebar remains a full-model navigator, not a second scope filter.
+    const request = screen
+      .getAllByText('交付请求（Delivery Request）')
+      .find((item) => item.closest('button') !== null)!;
+    fireEvent.click(request);
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue('');
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      screen.getByDisplayValue('交付请求（Delivery Request）'),
+    ).toBeInTheDocument();
   });
 
   it('saves the edited document to disk from the header', async () => {
@@ -178,7 +236,7 @@ describe('EditorScreen sensors', () => {
     expect(
       await screen.findByDisplayValue('采购协议（Procurement Contract）'),
     ).toBeInTheDocument();
-    expect(screen.getByText('签署时间')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('签署时间')).toBeInTheDocument();
   });
 
   it('tells the main process when the model changes', async () => {
@@ -206,24 +264,29 @@ describe('EditorScreen sensors', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
-    api.agentMock.requestPatch({
-      requestId: 'patch-review',
-      patch: {
-        rationale: '新增审计员参与方',
-        commands: [
-          {
-            type: 'create-entity',
-            entity: {
-              type: 'entity',
-              id: 'party.auditor',
-              category: 'participant',
-              kind: 'party',
-              label: '审计员',
-            },
-          },
-        ],
-      },
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.procurement' },
     });
+    act(() =>
+      api.agentMock.requestPatch({
+        requestId: 'patch-review',
+        patch: {
+          rationale: '新增审计员参与方',
+          commands: [
+            {
+              type: 'create-entity',
+              entity: {
+                type: 'entity',
+                id: 'party.auditor',
+                category: 'participant',
+                kind: 'party',
+                label: '审计员',
+              },
+            },
+          ],
+        },
+      }),
+    );
 
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
@@ -237,9 +300,10 @@ describe('EditorScreen sensors', () => {
     await waitFor(() => {
       expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
     });
-    expect(
-      screen.queryByLabelText('本次补丁新增 审计员'),
-    ).toBeNull();
+    expect(screen.queryByLabelText('本次补丁新增 审计员')).toBeNull();
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue(
+      'context.procurement',
+    );
   });
 
   it('keeps an agent patch when the modeler accepts it', async () => {
@@ -248,33 +312,33 @@ describe('EditorScreen sensors', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
-    api.agentMock.requestPatch({
-      requestId: 'patch-keep',
-      patch: {
-        rationale: '新增审计员参与方',
-        commands: [
-          {
-            type: 'create-entity',
-            entity: {
-              type: 'entity',
-              id: 'party.auditor',
-              category: 'participant',
-              kind: 'party',
-              label: '审计员',
+    act(() =>
+      api.agentMock.requestPatch({
+        requestId: 'patch-keep',
+        patch: {
+          rationale: '新增审计员参与方',
+          commands: [
+            {
+              type: 'create-entity',
+              entity: {
+                type: 'entity',
+                id: 'party.auditor',
+                category: 'participant',
+                kind: 'party',
+                label: '审计员',
+              },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      }),
+    );
 
     fireEvent.click(await screen.findByRole('button', { name: '保留' }));
 
     await waitFor(() => {
       expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
     });
-    expect(
-      screen.queryByLabelText('本次补丁新增 审计员'),
-    ).toBeNull();
+    expect(screen.queryByLabelText('本次补丁新增 审计员')).toBeNull();
   });
 
   it('focuses the agent composer on Cmd+K and the search on Cmd+F', async () => {

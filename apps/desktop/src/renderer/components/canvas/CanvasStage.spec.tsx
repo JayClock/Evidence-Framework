@@ -203,6 +203,27 @@ describe('CanvasStage', () => {
     );
   });
 
+  it('draws cross-Context references as dashed, arrowless relationships', () => {
+    const document = createDesktopFixture();
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.cross-context',
+      kind: 'references',
+      sourceRef: 'role.inventory',
+      targetRef: 'evidence.request',
+      label: '库存引用请求',
+    });
+    const { container } = setup({
+      document,
+      layout: createGraphLayout(createDomainGraph(document)),
+    });
+    const line = container.querySelector(
+      '[data-edge-id="relation.cross-context"] polyline',
+    );
+    expect(line).toHaveAttribute('stroke-dasharray', '4 4');
+    expect(line).not.toHaveAttribute('marker-end');
+  });
+
   it('selects a node on click and on Enter', () => {
     const onSelect = vi.fn();
     const { container } = setup({ onSelect });

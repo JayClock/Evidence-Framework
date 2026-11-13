@@ -9,6 +9,7 @@ import {
   selectNodesInBox,
   zoomAtPoint,
   zoomByFactor,
+  type ContextScope,
   type DomainGraphLayout,
   type HighlightResult,
   type Point,
@@ -26,6 +27,7 @@ import {
   type ModelOverlay,
   type CanvasViewMode,
 } from './CanvasStage';
+import { ScopeFilterControl } from './ScopeFilterControl';
 import { BusinessLegend } from './BusinessLegend';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
 
@@ -41,6 +43,8 @@ interface CanvasViewportProps {
   zoomCommand: { direction: 'in' | 'out'; token: number } | null;
   /** Rings the objects a pending agent patch touches. */
   overlay?: ModelOverlay | null;
+  scope?: ContextScope | null;
+  onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
 }
@@ -64,6 +68,8 @@ export const CanvasViewport = ({
   focusRequest,
   zoomCommand,
   overlay = null,
+  scope = null,
+  onScopeChange,
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
@@ -78,6 +84,16 @@ export const CanvasViewport = ({
     [],
   );
   const spacePressed = useRef(false);
+  const [transitioning, setTransitioning] = useState(false);
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scopeId = scope?.contextId ?? null;
+  useEffect(
+    () => () => {
+      if (transitionTimer.current !== null)
+        clearTimeout(transitionTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     const element = containerRef.current;
@@ -104,12 +120,12 @@ export const CanvasViewport = ({
 
   const fitToContent = useCallback(() => {
     setViewport(
-      calculateZoomToFit(layout.bounds, {
+      calculateZoomToFit(scope?.bounds ?? layout.bounds, {
         width: Math.max(1, size.width - RULER_THICKNESS),
         height: Math.max(1, size.height - RULER_THICKNESS),
       }),
     );
-  }, [layout.bounds, size.height, size.width]);
+  }, [layout.bounds, scope, size.height, size.width]);
 
   // Fit once the first layout and viewport size are known.
   const fittedRef = useRef(false);
@@ -123,10 +139,31 @@ export const CanvasViewport = ({
     fitToContent();
   }, [fitToContent, layout.nodes.length, size.width]);
 
+  const previousFitKey = useRef(`${scopeId ?? ''}:${viewMode}`);
   useEffect(() => {
-    if (zoomCommand === null) {
+    const key = `${scopeId ?? ''}:${viewMode}`;
+    if (size.width === 0 || previousFitKey.current === key) return;
+    previousFitKey.current = key;
+    fitToContent();
+    setHoveredNodeId(null);
+    setHoveredEdgeId(null);
+    setHoveredContextId(null);
+    setMarqueeSelection([]);
+    setDrag(null);
+    if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setTransitioning(true);
+      if (transitionTimer.current !== null)
+        clearTimeout(transitionTimer.current);
+      transitionTimer.current = setTimeout(() => setTransitioning(false), 180);
+    }
+  }, [fitToContent, scopeId, viewMode, size.width]);
+
+  const lastZoomToken = useRef<number | null>(null);
+  useEffect(() => {
+    if (zoomCommand === null || lastZoomToken.current === zoomCommand.token) {
       return;
     }
+    lastZoomToken.current = zoomCommand.token;
 
     const anchor = {
       x: (size.width - RULER_THICKNESS) / 2,
@@ -142,8 +179,12 @@ export const CanvasViewport = ({
     );
   }, [zoomCommand, size.height, size.width]);
 
+  const lastFocusToken = useRef<number | null>(null);
   useEffect(() => {
-    if (focusRequest === null) {
+    if (
+      focusRequest === null ||
+      lastFocusToken.current === focusRequest.token
+    ) {
       return;
     }
 
@@ -153,6 +194,7 @@ export const CanvasViewport = ({
       return;
     }
 
+    lastFocusToken.current = focusRequest.token;
     setViewport((current) => {
       const target = {
         x: size.width - RULER_THICKNESS,
@@ -173,7 +215,15 @@ export const CanvasViewport = ({
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
-      if (event.code === 'Space') {
+      if (
+        event.code === 'Space' &&
+        !(
+          event.target instanceof Element &&
+          event.target.closest(
+            '[data-canvas-control], input, textarea, [contenteditable="true"], [data-node-id]',
+          )
+        )
+      ) {
         spacePressed.current = true;
       }
     };
@@ -183,12 +233,17 @@ export const CanvasViewport = ({
       }
     };
 
+    const resetSpace = () => {
+      spacePressed.current = false;
+    };
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
+    window.addEventListener('blur', resetSpace);
 
     return () => {
       window.removeEventListener('keydown', down);
       window.removeEventListener('keyup', up);
+      window.removeEventListener('blur', resetSpace);
     };
   }, []);
 
@@ -196,6 +251,7 @@ export const CanvasViewport = ({
     {
       onWheel: ({ event, delta: [dx, dy], ctrlKey, metaKey, pinching }) => {
         if ((event.target as Element).closest('[data-canvas-control]')) return;
+        setTransitioning(false);
         event.preventDefault();
 
         const stagePoint = stagePointOf(event, containerRef.current);
@@ -247,6 +303,7 @@ export const CanvasViewport = ({
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if ((event.target as Element).closest('[data-canvas-control]')) return;
+    setTransitioning(false);
     const stagePoint = stagePointOf(event, containerRef.current);
 
     if (event.button === 1 || spacePressed.current) {
@@ -295,7 +352,11 @@ export const CanvasViewport = ({
 
     const rect = marqueeSelectionOf(current, viewport);
 
-    setMarqueeSelection(selectNodesInBox(layout, rect, { minimumSize: 2 }));
+    setMarqueeSelection(
+      selectNodesInBox(layout, rect, { minimumSize: 2 }).filter(
+        (id) => scope === null || scope.nodeIds.has(id),
+      ),
+    );
   };
 
   const onPointerUp = () => {
@@ -353,8 +414,10 @@ export const CanvasViewport = ({
         }}
       >
         <div
+          data-region="canvas-world"
           className="absolute origin-top-left"
           style={{
+            transition: transitioning ? 'transform 180ms ease-out' : undefined,
             transform: `translate(${viewport.panX}px, ${viewport.panY}px) scale(${viewport.zoom})`,
           }}
         >
@@ -374,6 +437,7 @@ export const CanvasViewport = ({
             dimmed={selectedHighlight.dimmed}
             marquee={marqueeRect}
             overlay={overlay}
+            scope={scope}
             onHoverNode={setHoveredNodeId}
             onHoverEdge={setHoveredEdgeId}
             onHoverContext={setHoveredContextId}
@@ -382,7 +446,14 @@ export const CanvasViewport = ({
         </div>
       </div>
 
-      <BusinessLegend />
+      {onScopeChange ? (
+        <ScopeFilterControl
+          contextGroups={layout.contextGroups}
+          selectedScope={scopeId}
+          onScopeChange={onScopeChange}
+        />
+      ) : null}
+      <BusinessLegend compact={size.width < 800} />
       <ZoomControl
         zoom={viewport.zoom}
         onFit={fitToContent}

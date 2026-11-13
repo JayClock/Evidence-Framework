@@ -22,6 +22,7 @@ interface NodeCardProps {
   highlighted: boolean;
   viewMode: CanvasViewMode;
   summary: CardSummary;
+  outOfScope?: boolean;
   onHover: (nodeId: string | null) => void;
   onSelect: (nodeId: string) => void;
 }
@@ -114,6 +115,7 @@ export const NodeCard = ({
   highlighted,
   viewMode,
   summary,
+  outOfScope = false,
   onHover,
   onSelect,
 }: NodeCardProps) => {
@@ -127,7 +129,8 @@ export const NodeCard = ({
   return (
     <div
       role="button"
-      tabIndex={0}
+      tabIndex={outOfScope ? -1 : 0}
+      aria-disabled={outOfScope || undefined}
       aria-label={`${entity.label}（${entityKindLabel(entity)}）`}
       data-node-id={entity.id}
       data-category={entity.category}
@@ -139,12 +142,16 @@ export const NodeCard = ({
         dimmed ? 'opacity-20' : 'opacity-100',
       ].join(' ')}
       style={{
+        opacity: outOfScope ? 0.15 : undefined,
+        pointerEvents: outOfScope ? 'none' : undefined,
         left: box.x,
         top: box.y,
         width: box.width,
         height: box.height,
         borderRadius: entityRadius(entity),
-        borderColor: selected ? '#2f5d8f' : token.stroke,
+        borderTopColor: selected ? '#2f5d8f' : token.stroke,
+        borderRightColor: selected ? '#2f5d8f' : token.stroke,
+        borderBottomColor: selected ? '#2f5d8f' : token.stroke,
         borderLeftWidth: 3,
         borderLeftColor: color,
         backgroundColor: token.fill,
@@ -152,12 +159,13 @@ export const NodeCard = ({
           ? undefined
           : '0 1px 2px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.06)',
       }}
-      onMouseEnter={() => onHover(entity.id)}
-      onMouseLeave={() => onHover(null)}
-      onFocus={() => onHover(entity.id)}
-      onBlur={() => onHover(null)}
-      onClick={() => onSelect(entity.id)}
+      onMouseEnter={() => !outOfScope && onHover(entity.id)}
+      onMouseLeave={() => !outOfScope && onHover(null)}
+      onFocus={() => !outOfScope && onHover(entity.id)}
+      onBlur={() => !outOfScope && onHover(null)}
+      onClick={() => !outOfScope && onSelect(entity.id)}
       onKeyDown={(event) => {
+        if (outOfScope) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           onSelect(entity.id);

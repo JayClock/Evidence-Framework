@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
@@ -108,6 +109,35 @@ const EditorWorkspace = ({
     useEditorSession(project, initialDocument, viewMode);
   const agent = useAgentSession(project.rootPath);
   const sensors = useSensorsState(project.rootPath);
+  const [selectedScope, setSelectedScope] = useState<string | null>(null);
+  const scope = useMemo(
+    () => computeContextScope(state.layout, selectedScope),
+    [state.layout, selectedScope],
+  );
+  const changeScope = useCallback(
+    (contextId: string | null) => {
+      const next = computeContextScope(state.layout, contextId);
+      if (
+        next &&
+        state.selection.nodeId !== null &&
+        !next.nodeIds.has(state.selection.nodeId)
+      )
+        state.session.clearSelection();
+      setSelectedScope(next?.contextId ?? null);
+    },
+    [state.layout, state.selection.nodeId, state.session],
+  );
+  // Deletion/undo and selection from inspectors, sensors or MCP must never
+  // leave the editor inspecting an invisible, non-interactive object.
+  useEffect(() => {
+    if (
+      selectedScope !== null &&
+      (scope === null ||
+        (state.selection.nodeId !== null &&
+          !scope.nodeIds.has(state.selection.nodeId)))
+    )
+      setSelectedScope(null);
+  }, [selectedScope, scope, state.selection.nodeId]);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [sandboxOpen, setSandboxOpen] = useState(false);
@@ -148,11 +178,12 @@ const EditorWorkspace = ({
 
   const focusNode = useCallback(
     (nodeId: string) => {
+      if (scope !== null && !scope.nodeIds.has(nodeId)) setSelectedScope(null);
       state.session.select(nodeId);
       tokenRef.current += 1;
       setFocusRequest({ nodeId, token: tokenRef.current });
     },
-    [state.session],
+    [state.session, scope],
   );
 
   /**
@@ -170,6 +201,8 @@ const EditorWorkspace = ({
         const [nodeId, attributeName] = target.split('#');
 
         if (nodeId !== undefined && nodeId !== '') {
+          if (scope !== null && !scope.nodeIds.has(nodeId))
+            setSelectedScope(null);
           state.session.selectAttribute(nodeId, attributeName ?? null);
           tokenRef.current += 1;
           setFocusRequest({ nodeId, token: tokenRef.current });
@@ -188,7 +221,7 @@ const EditorWorkspace = ({
         focusNode(nodeId);
       }
     },
-    [focusNode, state.layout.contextGroups, state.session],
+    [focusNode, state.layout.contextGroups, state.session, scope],
   );
 
   // What the next question will be about: the canvas selection, reduced to what
@@ -351,11 +384,13 @@ const EditorWorkspace = ({
             focusRequest={focusRequest}
             zoomCommand={zoomCommand}
             overlay={patchReview.review?.overlay ?? null}
+            scope={scope}
+            onScopeChange={changeScope}
             onSelect={(nodeId) => state.session.select(nodeId)}
             onClearSelection={() => state.session.clearSelection()}
           />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
             {patchReview.review === null ? null : (
               <PatchReviewBar
                 review={patchReview.review}

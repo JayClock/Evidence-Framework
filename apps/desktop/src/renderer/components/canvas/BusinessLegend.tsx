@@ -11,7 +11,7 @@ const readExpanded = () => {
 };
 
 /** Viewport furniture, not part of a captured or exported business model. */
-export const BusinessLegend = () => {
+export const BusinessLegend = ({ compact = false }: { compact?: boolean }) => {
   const [expanded, setExpanded] = useState(readExpanded);
   const id = useId();
   return (
@@ -19,7 +19,10 @@ export const BusinessLegend = () => {
       data-canvas-control=""
       data-evidence-capture-hide=""
       aria-label="业务图例"
-      className="absolute right-4 bottom-16 z-30 max-h-[45%] max-w-[calc(100%-48px)] overflow-auto rounded-lg border border-evidence-line bg-white/95 text-[11px] shadow-sm"
+      className={[
+        'absolute right-4 z-30 max-w-[calc(100%-48px)] overflow-auto rounded-lg border border-evidence-line bg-white/95 text-[11px] shadow-sm',
+        compact ? 'top-[76px] max-h-[35%]' : 'bottom-16 max-h-[45%]',
+      ].join(' ')}
     >
       <button
         type="button"
