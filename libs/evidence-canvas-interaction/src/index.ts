@@ -88,6 +88,14 @@ export {
 } from './layout/graphLayout.js';
 
 export {
+  EMPTY_GRAPH_LAYOUT,
+  toSerializableLayout,
+  type PlacedContext,
+  type PlacedNode,
+  type SerializableGraphLayout,
+} from './layout/serializable.js';
+
+export {
   LANE_GAP,
   LANE_HEADER_HEIGHT,
   LANE_PADDING,
