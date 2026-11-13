@@ -10,6 +10,7 @@
     "modelName",
     "modelVersion",
     "routes",
+    "hypermedia",
     "services",
     "links",
     "openapi",
@@ -52,6 +53,29 @@
           "stamped": { "type": "array" },
           "responses": { "type": "array" }
         }
+      }
+    },
+    "hypermedia": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceRouteId",
+          "targetRouteId",
+          "rel",
+          "href",
+          "method",
+          "templated"
+        ],
+        "properties": {
+          "sourceRouteId": { "type": "string" },
+          "targetRouteId": { "type": "string" },
+          "rel": { "type": "string" },
+          "href": { "type": "string" },
+          "method": { "enum": ["GET", "POST"] },
+          "templated": { "type": "boolean" }
+        },
+        "additionalProperties": false
       }
     },
     "services": { "type": "array", "items": { "type": "object" } },

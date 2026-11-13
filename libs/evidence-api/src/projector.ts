@@ -27,6 +27,7 @@ import {
   type RouteOverlay,
 } from './loader/apiLoader.js';
 import type { ApiJourneyStep, EvidenceApiSnapshot } from './types.js';
+import { deriveJourneys, weaveHypermedia } from './http/hateoasWeaver.js';
 
 export type Projection = EvidenceApiSnapshot;
 
@@ -97,7 +98,12 @@ export const buildProjection = ({
       );
       return route;
     }
-    return { ...route, path, summary: override.summary ?? route.summary };
+    return {
+      ...route,
+      path,
+      itemPath: `${path}${route.itemPath.slice(route.path.length)}`,
+      summary: override.summary ?? route.summary,
+    };
   });
   const occupied = new Set<string>();
   for (const route of routes) {
@@ -109,7 +115,7 @@ export const buildProjection = ({
     occupied.add(key);
   }
 
-  // Navigation is declared, not guessed from service dependencies or evidence references.
+  const hypermedia = weaveHypermedia(model, routes);
   const declared = (overlay?.['journeys'] ?? []) as JourneyOverlay[];
   const stepIds = new Set(declared.map((step) => step.id));
   const journeys: ApiJourneyStep[] = [];
@@ -122,7 +128,11 @@ export const buildProjection = ({
       );
       continue;
     }
-    if (role?.category !== 'role' || role.kind !== 'party') {
+    if (
+      role?.category !== 'role' ||
+      role.kind !== 'party' ||
+      !route.allowedPartyRoleRefs.includes(step.roleRef)
+    ) {
       diagnostics.push(
         errorDiagnostic(
           'API_ROLE_INVALID',
@@ -157,7 +167,9 @@ export const buildProjection = ({
     apiId: typeof overlay?.['id'] === 'string' ? overlay['id'] : 'default-api',
     mode: 'draft',
     routes,
-    journeys,
+    hypermedia,
+    journeys:
+      declared.length === 0 ? deriveJourneys(routes, hypermedia) : journeys,
     openapi: buildDeliveryContract(model, routes, baseline.services),
     deployment: buildDeliveryDeployment(
       model,

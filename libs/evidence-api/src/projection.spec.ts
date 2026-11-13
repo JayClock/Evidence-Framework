@@ -55,7 +55,7 @@ describe('model-driven snapshots', () => {
     expect(memory.schemaVersion).toBe('5.1');
     expect(memory.mode).toBe('draft');
     expect(memory.routes.length).toBeGreaterThan(0);
-    expect(memory.journeys).toEqual([]);
+    expect(memory.journeys.length).toBeGreaterThan(0);
     expect(memory.diagnostics).toEqual([]);
     expect(memory.digests.checkReport).toBeUndefined();
     expect(validateProjection(memory)).toEqual([]);
@@ -140,9 +140,11 @@ describe('model-driven snapshots', () => {
     );
   });
 
-  it('only projects explicitly declared navigation and validates its references', async () => {
+  it('allows explicit journey overrides and validates their references', async () => {
     const index = await fullLifecycleIndex();
-    const route = buildProjection({ index }).projection.routes[0]!;
+    const route = buildProjection({ index }).projection.routes.find(
+      (item) => item.purpose === 'sign',
+    )!;
     const next = buildProjection({
       index,
       design: {

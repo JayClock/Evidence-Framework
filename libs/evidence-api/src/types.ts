@@ -3,7 +3,7 @@ import type { Diagnostic } from './diagnostics.js';
 
 export type JsonObject = Record<string, unknown>;
 
-/** Explicitly declared navigation, not inferred runtime permissions or business order. */
+/** Possible navigation; execution still requires runtime authorization and business checks. */
 export interface ApiJourneyStep {
   id: string;
   roleRef: string;

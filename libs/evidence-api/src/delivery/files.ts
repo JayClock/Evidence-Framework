@@ -36,7 +36,11 @@ export const deliveryFilesOf = (bundle: DeliveryBundle): DeliveryFile[] => {
     { path: 'projection.json', content: json(bundle) },
     {
       path: 'http-journeys.json',
-      content: json({ runtimeValidated: false, journeys: bundle.journeys }),
+      content: json({
+        runtimeValidated: false,
+        journeys: bundle.journeys,
+        hypermedia: bundle.hypermedia,
+      }),
     },
   ];
 

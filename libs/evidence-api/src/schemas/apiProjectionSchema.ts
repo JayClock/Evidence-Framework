@@ -11,6 +11,7 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
     "modelName",
     "modelVersion",
     "routes",
+    "hypermedia",
     "services",
     "links",
     "openapi",
@@ -53,6 +54,29 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
           "stamped": { "type": "array" },
           "responses": { "type": "array" }
         }
+      }
+    },
+    "hypermedia": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceRouteId",
+          "targetRouteId",
+          "rel",
+          "href",
+          "method",
+          "templated"
+        ],
+        "properties": {
+          "sourceRouteId": { "type": "string" },
+          "targetRouteId": { "type": "string" },
+          "rel": { "type": "string" },
+          "href": { "type": "string" },
+          "method": { "enum": ["GET", "POST"] },
+          "templated": { "type": "boolean" }
+        },
+        "additionalProperties": false
       }
     },
     "services": { "type": "array", "items": { "type": "object" } },
@@ -131,6 +155,6 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
 }
 `;
 
-export const API_PROJECTION_SCHEMA = JSON.parse(
+export const API_PROJECTION_SCHEMA: Record<string, unknown> = JSON.parse(
   API_PROJECTION_SCHEMA_TEXT,
-) as Record<string, unknown>;
+);

@@ -1,3 +1,10 @@
+export {
+  weaveHypermedia,
+  halLinksFor,
+  deriveJourneys,
+  type HypermediaLink,
+} from './http/hateoasWeaver.js';
+
 export type { EvidenceApiSnapshot, ApiJourneyStep } from './types.js';
 
 export {

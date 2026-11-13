@@ -2,6 +2,11 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
 import { componentName } from '../openapi/openapi.js';
+import {
+  weaveHypermedia,
+  halLinksFor,
+  type HypermediaLink,
+} from '../http/hateoasWeaver.js';
 
 import type { DeliveryField, DeliveryRoute } from './routes.js';
 import { buildDeliveryRoutes } from './routes.js';
@@ -96,6 +101,18 @@ const objectSchemas = (
       }
     }
 
+    properties['_links'] = {
+      type: 'object',
+      additionalProperties: {
+        type: 'object',
+        required: ['href'],
+        properties: {
+          href: { type: 'string' },
+          templated: { type: 'boolean' },
+          method: { type: 'string' },
+        },
+      },
+    };
     schemas[key] = {
       type: 'object',
       description: route.summary,
@@ -147,6 +164,7 @@ const requestBody = (route: DeliveryRoute): JsonObject | null => {
 const operationOf = (
   route: DeliveryRoute,
   componentOf: (ref: string) => string,
+  links: readonly HypermediaLink[],
 ): JsonObject => ({
   operationId: route.operationId,
   summary: route.summary,
@@ -194,7 +212,8 @@ const operationOf = (
         response.entityRef !== undefined
           ? {
               content: {
-                'application/json': {
+                'application/hal+json': {
+                  'x-evidence-link-templates': halLinksFor(links, route.id),
                   schema: {
                     $ref: `#/components/schemas/${componentOf(response.entityRef)}`,
                   },
@@ -239,10 +258,11 @@ export const buildDeliveryContract = (
 ): DeliveryContract => {
   const componentOf = componentName;
   const paths: Record<string, JsonObject> = {};
+  const links = weaveHypermedia(document, routes);
 
   for (const route of routes) {
     const entry = paths[route.path] ?? {};
-    entry[route.method.toLowerCase()] = operationOf(route, componentOf);
+    entry[route.method.toLowerCase()] = operationOf(route, componentOf, links);
     paths[route.path] = entry;
   }
 
@@ -343,6 +363,7 @@ export interface ModelDelivery {
   modelName: string;
   modelVersion: string;
   routes: readonly DeliveryRoute[];
+  hypermedia: readonly HypermediaLink[];
   services: readonly DeliveryService[];
   links: readonly {
     id: string;
@@ -399,6 +420,7 @@ export const buildModelDelivery = (
     modelName: document.manifest.name,
     modelVersion: document.manifest.version,
     routes,
+    hypermedia: weaveHypermedia(document, routes),
     services,
     links: topology.links.map((link) => ({
       id: link.id,
