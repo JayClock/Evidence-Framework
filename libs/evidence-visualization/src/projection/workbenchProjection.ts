@@ -1,3 +1,8 @@
+import {
+  EMPTY_GRAPH_LAYOUT,
+  type SerializableGraphLayout,
+} from '@evidence-poc/evidence-canvas-interaction';
+
 /**
  * The projection the offline workbench renders.
  *
@@ -101,6 +106,13 @@ export interface WorkbenchData {
   validation: WorkbenchValidation;
   /** Null when the page was generated without a delivery projection. */
   delivery: WorkbenchDelivery | null;
+  /**
+   * Where the canvas places every business object and relationship.
+   *
+   * The placement is computed by the layout library the desktop canvas uses, so
+   * a reader sees the drawing the modeler saw rather than a second opinion.
+   */
+  layout: SerializableGraphLayout;
   generatedAt: string;
 }
 
@@ -142,6 +154,13 @@ export interface WorkbenchCheckInput {
 export interface WorkbenchProjectionInput {
   /** Compiled FM document: `model`, `entities`, `relationships`, `rules`. */
   model: CompiledModel;
+  /**
+   * Placement of the model on the canvas; see `workbenchLayoutOf`.
+   *
+   * A caller that projects from a compiled document alone has no canvas to
+   * describe, so the page states an empty drawing instead of inventing one.
+   */
+  layout?: SerializableGraphLayout;
   scenarios?: readonly JsonObject[];
   instances?: readonly JsonObject[];
   /** Scenario results from the checked FM run. */
@@ -227,6 +246,7 @@ const fieldRows = (fields: unknown): JsonObject[] =>
  */
 export const projectWorkbenchData = ({
   model,
+  layout = EMPTY_GRAPH_LAYOUT,
   scenarios = [],
   instances = [],
   simulation = {},
@@ -652,6 +672,7 @@ export const projectWorkbenchData = ({
       unresolvedOrderCount: check.timelineSummary?.unresolvedOrderCount ?? 0,
     },
     delivery,
+    layout,
     generatedAt: generatedAt ?? new Date().toISOString(),
   };
 };

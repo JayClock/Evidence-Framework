@@ -371,8 +371,7 @@ describe('projectWorkbenchData', () => {
     expect(data.delivery?.services).toHaveLength(1);
   });
 
-  it('prints the check verdict the page displays', () => {
-    const data = project(fixture(), {
+  it('prints the check verdict the page displays', () => {    const data = project(fixture(), {
       check: {
         consistent: true,
         complete: true,
@@ -400,5 +399,28 @@ describe('projectWorkbenchData', () => {
     });
     expect(data.generatedAt).toBe('2026-11-12T00:00:00.000Z');
     expect(data.title).toBe('测试模型');
+  });
+
+  it('carries the placement it was given, so the page draws the canvas', () => {
+    const layout = {
+      bounds: { x: 0, y: 0, width: 320, height: 240 },
+      nodes: [],
+      edges: [],
+      responsibilityLinks: [],
+      contextGroups: [],
+      fulfillmentGroups: [],
+      freeNodeIds: [],
+      omittedContextIds: [],
+    };
+
+    expect(project(fixture(), { layout }).layout).toEqual(layout);
+  });
+
+  it('states an empty drawing when the caller has no canvas', () => {
+    expect(project().layout).toMatchObject({
+      bounds: { x: 0, y: 0, width: 0, height: 0 },
+      nodes: [],
+      edges: [],
+    });
   });
 });

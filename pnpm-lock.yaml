@@ -440,16 +440,18 @@ importers:
       '@evidence-poc/evidence-api':
         specifier: workspace:*
         version: link:../evidence-api
+      '@evidence-poc/evidence-canvas-interaction':
+        specifier: workspace:*
+        version: link:../evidence-canvas-interaction
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../evidence-model-core
-      tslib:
-        specifier: ^2.3.0
-        version: 2.9.1
-    devDependencies:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
 
 packages:
 

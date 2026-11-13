@@ -1,5 +1,7 @@
 export { deliveryViewOf } from './projection/deliveryView.js';
 
+export { workbenchLayoutOf, type SerializableGraphLayout } from './projection/workbenchLayout.js';
+
 export {
   projectWorkbenchData,
   type CompiledModel,
