@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a7fa06c5fbe814f66266293ac1d3b10201865512edc2d19c3cdf8b9d28de6dde",
+  "pageVersion": "sha256:fd0bf988a9ffdf0f8f3928623dd96d8163cce6184f4b13e6138950760288f200",
   "claims": [
     {
       "id": "claim_319186a606cf4eb5b41077fcdfadf0b8",
@@ -11,40 +11,48 @@
           "version": "repo-lines-v1:sha256:b633a45e95471b92e0be46110c2b16843cf0ba4277bd20bbb7342a53a90e72ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjNzhlNWE0NDZiOTZiNDBjNTE3MGFlOGEzYzMzODFlYzIyZWNlMWJiOGNiNzQ4MjEzOTg4Njg3ZDUzMDUzN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwYzVmZmZlMjRmODQ2ZjFjYTJiZDY5NWEyMTg5ZThlMjZmZWI4YmMwZDFkMTQzZjM0ZGE1YjBlMThkMDc1MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjBjMTkzYWExNTQ3ZTBkMGMwMzk4YmY2NmU4NWQ0MWRjZmFhNzk5NjUyZmRhNzczOWNmOGQzOTVjYmExMmEifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/preload/index.ts#L203-L205",
+          "resource": "repo://apps/desktop/src/preload/index.ts#L190-L192",
           "version": "repo-lines-v1:sha256:800f386b4c954050fdf5c6501c29a9c1115b93fc99080bf5d0f88898f1396c32:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWE4MmRiY2FhMmE4ZmUyNzgyYmY2NTcwNGE5NzUxMTU5OWE4ZGU1YjNkOTE5MjQzMDY3YWEyZjVlM2Y3NzViYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzBkMTU5M2E3ODc5Y2NjNjdlYzZmZjU5ZTRlZjQxMzY5OTE3ZTQwZTQwZDA3YzQwZmIxZjY0NmUyOTI4Zjk3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/preload/index.ts#L32-L36",
+          "resource": "repo://apps/desktop/src/preload/index.ts#L33-L37",
           "version": "repo-lines-v1:sha256:d919bd724253b684a4d5e117fca79a1679b3dda84b367d5be060074c1d3a17b7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNiOWExOGY2YzViODZjNzNjZTk3YWI1ZDhjZWUwMmQ5MjFjNThkNjM2ODc5YWM2OGRiMWVmMTkzYjJiZjIwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjgzMjA0NGY3Yzc3ZTYwZGM0ODU0ZjE4MGY4MGUzZWZlNmUwZmEwMjAzN2E0N2VhMjIyOTgyNDFiMWM0Zjc4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmJjMjIwZjYwNjk5OTQ1YWZkNDY2MjkzZDRmOWIwMTM0NTIyN2Q4YzRjNmFlMWJlNjZhZmIxM2UyZDVlMzhjMiJ9"
         }
       ]
     },
     {
       "id": "claim_05befca32a3f4158ae3b52cd6757edd6",
-      "statement": "The preload surface is grouped into projects, agent, mcp, branches, ingestion and system calls, each mapped to a named IPC channel, and every subscription returns an unsubscribe function.",
+      "statement": "The preload surface EvidenceDesktopApi declares six groups — projects, agent, mcp, simulation, ingestion and system — and the review, diff-review and delivery channels live under projects rather than in groups of their own; each method maps to a named IPC channel and every subscription returns an unsubscribe function.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/preload/index.ts#L36-L203",
-          "version": "repo-lines-v1:sha256:353c0ed167046fc34c6c35fffed1148f9516ed186640f3500951c3b634ab0618:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Y2I5YTE4ZjZjNWI4NmM3M2NlOTdhYjVkOGNlZTAyZDkyMWM1OGQ2MzY4NzlhYzY4ZGIxZWYxOTNiMmJmMjBmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxODdhNTg0NGRjNzZiYWUxMjFhZjQxYWQ2M2FmOWMxNTZmZGM0OGRiNzYyOTJmNDk4NzYzNTc0NDg3YjlkMTg4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxYzkxNDU3YmIwNzE4ZGI0NzZiY2JmMjZhZjBkYTBlNzFjYjg1MjEyZGVmODljNjhkMDhhM2FhYmNhNGMxNDM1In0"
+          "resource": "repo://apps/desktop/src/preload/index.ts#L37-L190",
+          "version": "repo-lines-v1:sha256:6d574dfe62429f4f601c01268dc7fe0c98dbaeb793c9cbef36b79f08676af5f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Y2I5YTE4ZjZjNWI4NmM3M2NlOTdhYjVkOGNlZTAyZDkyMWM1OGQ2MzY4NzlhYzY4ZGIxZWYxOTNiMmJmMjBmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxODdhNTg0NGRjNzZiYWUxMjFhZjQxYWQ2M2FmOWMxNTZmZGM0OGRiNzYyOTJmNDk4NzYzNTc0NDg3YjlkMTg4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxYzkxNDU3YmIwNzE4ZGI0NzZiY2JmMjZhZjBkYTBlNzFjYjg1MjEyZGVmODljNjhkMDhhM2FhYmNhNGMxNDM1In0"
         },
         {
-          "resource": "repo://apps/desktop/src/shared/ipc.ts#L55-L132",
-          "version": "repo-lines-v1:sha256:8858a82edb438b11f44db23f3eb49baf115bf0ce472125a1b6dcc6442f80c46f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1N2MyZGM0NmJlZWJkYjZhYWExNzk2NmM4ZDA3ZmUxNDYxNzI1MGE0ZTFjNGU4NzhlOTg4NmFjNmUzYzlhZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYzY1Zjc5YTBmMmExM2M5Yjc2NzhjZTM5ZTFlYzRmOTU3MjU0ZjBmMTczZDJmZTUzMWI2Y2ZmYTA0YmE0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L35-L53",
+          "version": "repo-lines-v1:sha256:c12d01e390d4d3dbcf4866c613e7a2a81fb4e3ec5fb8876e590ba90c5d3a1fd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3M2FhZmQ1MDRhM2NjOTBjNDJmNWQzY2M3MDViODA4ZDI0YWViMzlmNGJjY2QxNzgyNTM0MzRiYTFmYTkwYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4MDc5ZDgyMWM4MWMwZTRhYTk2YTI4OWFiZTk4M2IwODczNWQ3YjE1NTk3OGI2NzkzNWZjYjQ2YjQ4MjA4NjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NzA5Mjk5ZjdmNjAyMGM1YjFmN2QwMGQyODI5ZTFmMzIwNjc5ODk3ZDc1YWIxZTQ5MGEyNWI1MGI1MTU2NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzOGMwYzk4MzFlNzE1YTA1MWJiYmEwMzM3YjgwN2M3MzIzNWZmOGFkNDIzNWMyMDc1MmVhZjI3M2ZhOThlYWMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L65-L129",
+          "version": "repo-lines-v1:sha256:7e4d2ad156d52be1da9b9f8a01a9b2160ca12182e902ed0560a824208af194ac:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZjI3ZWY2YTYxNGVjNTJjN2VhM2RiMjQxZmE2MjU0MTljOWIwYzE1YjVjNzMxMzhkMjBlZDc2MTVlNjBlMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZTI5YTg5NTgwYWQ3ZDlmNWJmZmEzM2NkMThhYmZhY2VhODY0NTQ1MjFkNTdkNzI4MzhkNjc1MDQzNmU2ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0NjQ3YjMzZjA1ZjQ5OWQ0ZTU2NzE3ZjU1NzZhMDRmMzU1ZGEzMDkwZDgyNzgwNWFiZWZhYmNlZGQ4YjEyYjcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/simulation.ts#L6-L44",
+          "version": "repo-lines-v1:sha256:e053b8f9016adf7deb95854ff0c70cd998aae727e46f67938f2a282820da7f89:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYTY4MWE4N2I0YjQ3ZDYyZDZmNGNjNDNjZjUyYWJkMjZjZmQzYjQxNGYwZjQ3ZGRlZGMyODFhMjU0MzkzYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_f56eb7c5fa72408f818137022475698a",
-      "statement": "Startup assembles the project store, branch store, agent IPC, project/ingestion/review/branch IPC, MCP registration and bridge before opening the dashboard, and a failed MCP bridge start is reported to stderr and leaves the rest of the app running.",
+      "statement": "startApplication registers, in order, the project store over userData/recent-projects.json, the agent IPC, then project, ingestion, review, simulation and delivery IPC, then the MCP client config sync and bridge (plus MCP renderer IPC when the bridge started), and only then opens the dashboard window; there is no branch store or branch IPC among the registrations.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L125-L140",
-          "version": "repo-lines-v1:sha256:37e79e77b7542d52d363ecd78e87aa00bbf5bbcc57d390141b3400381f5d7e21:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NWE4YjkxY2Y0NDczZGE1ZTM3NGI1ZTA1YWU2OTNiOGI0NTdhOTU2NGRjMjA0YWEwZDAzZjM1ZTFjZmZjMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0Y2EyOTU4YjlmNTBmZjk5YTA5ZGExZmE0MjY4NDY3ZDhmZjkyNGZkMjE4NGUzNDY2ZmI2YjQ2OWIwM2NlOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMmU4MjU1YzZhMmNhMjY1ZjE5MjZkZGRiODc3ZDAxODI5NjVjMjVmY2EyMGIxNzJmYjhmNzc0YjRjYzM2OWYifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts#L10-L30",
+          "version": "repo-lines-v1:sha256:ec31ff2d97a5102f8e45b86f11ce75677791fb64e714c905eea1b250117f204a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlYTY3YTMwOWIxZjA4MmIwNWRkM2ZmOTM5ZGU5ODE3ODA1ZWVjZGFkOTg0YjkzMDgzZjZkODYyMzMwOTRjYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxZDYxODk4NGEyMTkwMzRlOWIxY2RlZjc5MjFjZWU4MGQwMmE1Y2UxMzQ2MWEzYjA4YmQ3OTRjM2NmMDk3N2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5ZWM4NmFiNGY0ZTM0MjkxYTQ2YjYwZTA0MDhjMmIzOTUwYzI3ZjA3MzcxZmEwZWY4YjBmNDY2ZGVmNjY3NDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2ZDE0ZWExMjgyM2RjNDBiOGNjMDU1MGE5ZGY2NjgwMGZhNmY3MjgyMjU4MzlhNTIxZDY0NmM1NjRkNTg1ZDMifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L57-L142",
-          "version": "repo-lines-v1:sha256:5214e53910268418a0832265e4fca9adc18eb5c15438ee7e90ebc2404aa81a6c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDA4MzE4NGY5YWZkYWI5M2VmZWEzMWJkMjY1ZDgwNWY3ZjY5ZmUzZGZhYjA3Y2Q0ODEyYWNkNDRmMzhiNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YzAwNzA1OWZjZGQ0ZGFkZjA3MTQ4NzBlYTAwNjU2MDAzNTM4ZjkzNTYzZTNjMDQ0NTg2ZGQ0YjYwMjJiMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNzhlZDkzOGE2NDhiZDMzYWFiOGFkN2JlNmIyZWRkOThmY2QyM2NhNDVlZmVmNjQzYmRlNTdlZWQwZTA4NGEifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts#L58-L130",
+          "version": "repo-lines-v1:sha256:74b7150244c267527d403487a604a1c80591c9b920f3178fbd7852cebb574e5c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDA4MzE4NGY5YWZkYWI5M2VmZWEzMWJkMjY1ZDgwNWY3ZjY5ZmUzZGZhYjA3Y2Q0ODEyYWNkNDRmMzhiNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YzAwNzA1OWZjZGQ0ZGFkZjA3MTQ4NzBlYTAwNjU2MDAzNTM4ZjkzNTYzZTNjMDQ0NTg2ZGQ0YjYwMjJiMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNzhlZDkzOGE2NDhiZDMzYWFiOGFkN2JlNmIyZWRkOThmY2QyM2NhNDVlZmVmNjQzYmRlNTdlZWQwZTA4NGEifQ"
         }
       ]
     },
@@ -53,11 +61,11 @@
       "statement": "With --mcp-stdio the same executable opens no window, reads no project store and registers nothing, running only the stdio MCP server against the derived endpoint.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L145-L146",
+          "resource": "repo://apps/desktop/src/main/main.ts#L133-L134",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L30-L55",
+          "resource": "repo://apps/desktop/src/main/main.ts#L31-L56",
           "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
         }
       ]
@@ -122,11 +130,23 @@
     },
     {
       "id": "claim_58372312502c40f8a48b1db1c8415b71",
-      "statement": "All shell consumers resolve paths through four helpers: a bundle project's model source is the file itself and its project directory is the parent, while a tree project uses .evidence/fm and the project root, with traces always at .evidence/traces/interview-trace.json beside the project directory.",
+      "statement": "Path resolution for both project forms lives in modelSource.ts with three helpers and no fixed trace path: isBundleProject reports whether the root is a *.evidence.json file, projectDirectoryOf returns the root for a tree or the bundle's parent directory, and modelSourceOf returns <root>/.evidence/fm for a tree or the bundle file itself; callers such as the watcher, review preview/export, delivery, MCP sensor and simulation services, and the agent runtime use these instead of concatenating paths.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/modelSource.ts#L15-L37",
-          "version": "repo-lines-v1:sha256:b28d78d111e772da7e11cc4991bd37c1ac9c043afc981faed332337c59aaedf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhY2Y3MmFkMDc4OGRkNzM4NWI0ZDU0OGIzODE0ODI4OTYzMTYwMDhlM2VkY2Q4MzU2MGE2N2QxZGQ4ODEyOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlOTIyMmMwM2M1YjdkYWFiZjFmNDg1NmMxZGRiMmNkNmEyMzQ3NDdkNTczZTRjMGU3ZGU1OWMzY2NlMzNjNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L89-L134",
+          "version": "repo-lines-v1:sha256:470737b12378980af365b92a5147571667089c8939b35667c1769c874eb37169:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyN2VlYzA1NWVlYjU3N2NkY2UxZDgwNjE4ZGU1NmQyZmUzNzE0NDZjMjE1MGYyNWFmMjgzNWNjYzE5ZDVlOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzNjZmOTc3M2MwNzBjYTdjMzRhNDEzMDU0NWU1ZTgyOTc1YWViMmJiZTM5OTY4OWQ1OWJiZWI4NzcwZjA0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwOTMyNGZmZGM2ZGU5YzgwNmFmZjkyNDMwMDc5NDMyZWQyOWZjYzUxNDdmODFlNTQyYmM0OWY5MGUxZTRhZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4MDNhMmE2ZGMyNzU2OTE4YzNlZTkwYTkzYThlOWYyYWZkN2IyZjFkMGUzMWY4MTEwNjgyYzBhMzExNDNkZGMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L60-L90",
+          "version": "repo-lines-v1:sha256:bee9011a97f18ae613dbee65cb6f6ff3e1601fcd4962314d5eaf6083edd12cef:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwOTBmNTFhMjkwMmU4ZDZiOGY2ZjBhZWM5ZmM2ODFhNGMwNmNhOTBkMjQ3MmU2MDRjMDRlNDMxOTg3NDMzNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0MGE0OGNhYWYwM2EwMjQzMWIzYjQyYTE5NDliZDkxYzFhNzIwZTM4N2JhMjY3Y2VkNGIyZTVhMTdiNzliOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWEyODU0MTMxYjc4MjA5YWQwN2FmNmEyYzkxYjMzNTUxZDQ0ODQ2MTE5ZDFhNmIzMzAwYjAwOTQ4MjIyMDUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.spec.ts#L11-L27",
+          "version": "repo-lines-v1:sha256:4732f94f6c9476157f4359438c2e61a218afd99f7d64601b0d724697e08ffff4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlOTQ2ZDQxN2I4ZWY2MTZkMjhiY2MyYzY1Mjc2NTI4NzZlNDAwMWRlNTU4YmVjN2FkZTU1NDE2MTQxNTkwOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZjEzZWIxYWEzNzBlZjQ1NTQzN2M4ZGIzYjRlZGM2MTc4MTU1YjE4NDVlN2FjNDZiM2RjNWYwYWNjNDdkZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.ts#L8-L26",
+          "version": "repo-lines-v1:sha256:4ef703b23512b90a9473c3a713f396d3e2ab9f2e935514b3848e6919e6b68a54:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMzk4MjgwNmE4OGI1ZWMyZWI4YjY0YWI1ZDNjY2ZjZTk1MGE2YzMyNzIxODk1MDI5OThlNWM0Mjc0YTQ5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NzI2NTFlYzkzNTA2MGRhYjMzNzdlZDIyZTdjZWM1ZDMzN2ZhNDllMzM3YzUyYjlmOGFjNDdjYzZkNGQ0NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -157,14 +177,250 @@
           "version": "repo-lines-v1:sha256:108ea7df4fa322591ec6dc956c260dfbeec08ceddec1eef88159bd4e882077c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1N2FiM2JmNmY5YjU5MWVmZmQyNmI0NWY3OTU0MTkwNTFjOWY1Mjg5NTJmYTFiMTM5YTdkMDliNjBlNTVjZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1MmE4M2JhNmQ5NjljY2QxZDQ5ZTBmM2JhN2MzOGE5MGRlZTBjZDVkOTUxNzFmYWZiNjNjY2U4ZmNiNWFiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L90-L153",
-          "version": "repo-lines-v1:sha256:5a7848d05232937b737e713008fde4e16b74569ce936f1f1d281636ba55b2b35:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNGZkNGM4Y2I2YWM0YWNkNDA3OTNhZjRkYjIyZTcwOGM4MzlhNWZjOWNlYzk1MjVjNTAxOTAwZmU4ZTQ4ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkZmMyMzYwMDY3YzI1ZGU3MWRjNTg4MTRjODFkZGM5YjQxOTNjY2RiOWYzMjc3MjE2ZTBiYjQ3ZGFkNTcxYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L108-L219",
+          "version": "repo-lines-v1:sha256:67b86704ed70ac52bf7b605fc034bc4f2d3f94ec417b6b383aedd6c9e3e6e85a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjMzRmZDRjOGNiNmFjNGFjZDQwNzkzYWY0ZGIyMmU3MDhjODM5YTVmYzljZWM5NTI1YzUwMTkwMGZlOGU0OGVhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlZGZjMjM2MDA2N2MyNWRlNzFkYzU4ODE0YzgxZGRjOWI0MTkzY2NkYjlmMzI3NzIxNmUwYmI0N2RhZDU3MWE0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b008137c72b84652adbe8adf0ca822ac",
+      "statement": "A failed MCP bridge start is written to stderr and turned into a null runtime, so the app keeps running without external-agent access and the dashboard still opens; because registerMcpIpc runs only inside the success branch, a failed bridge leaves the mcp preload group without a handler for the rest of the session.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L90-L130",
+          "version": "repo-lines-v1:sha256:582c02a02cc1511b42518790fdc52690c9f3b57cd8815b6f2f8482881ad90005:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhMWExOWM0MTMzMmIyMzc3YTYxN2Y0MWJjMjE5YmQxYTE0NjVhMDE2N2Q5Y2I4NDk1OGI4YmFmMGEwZDFmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YzAwNzA1OWZjZGQ0ZGFkZjA3MTQ4NzBlYTAwNjU2MDAzNTM4ZjkzNTYzZTNjMDQ0NTg2ZGQ0YjYwMjJiMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkNTk3Zjc2ODgxZGQyNzViNjNkOTFhMGQ0YzliNzcxODEyMjc3MWI4MDRhNDkxZjRlNTEzNTI3ZjM2OTg0NzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNzhlZDkzOGE2NDhiZDMzYWFiOGFkN2JlNmIyZWRkOThmY2QyM2NhNDVlZmVmNjQzYmRlNTdlZWQwZTA4NGEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpIpcHandlers.ts#L17-L41",
+          "version": "repo-lines-v1:sha256:8ee545f12b7c35bce663e38ecef1bc1a34a277f32581ec9be46c1687096f7af7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmFkODU5ZTAxM2I0N2Y4YWMyMjJmODgwY2IwNDA0YjYzM2ExYjBkYTFlMTc2NDNhYzIxNDk5OGQ0NWM5YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzYzQ5YzlmY2UwOTQ0NWFkNmNhMTcwZjdmZGY3YmRlNGM5YWRjYzVlYzVkOTkwYjExY2E2NWMxMzQ4NDQ3YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_86d467da03cb404d8cd8688c1466cddb",
+      "statement": "The MCP bridge takes the first window in listEditorWindows() as the renderer that owns the live model and broadcasts bridge status to every open window, so a bridge call is answered by whichever editor was opened first rather than by the focused one.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L90-L118",
+          "version": "repo-lines-v1:sha256:ead06b71972ced607d03e51eb4ac1ccee8ee8bfa911db80d3104f3863037ce18:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhMWExOWM0MTMzMmIyMzc3YTYxN2Y0MWJjMjE5YmQxYTE0NjVhMDE2N2Q5Y2I4NDk1OGI4YmFmMGEwZDFmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1MzhkM2IxNWZiMjljZTkzMjM2OGFiNTQyYzYwYzViNWFlNTU1OGMzZjEzNjlhZmRlY2ZiMWM4NTEwYTU0MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkNTk3Zjc2ODgxZGQyNzViNjNkOTFhMGQ0YzliNzcxODEyMjc3MWI4MDRhNDkxZjRlNTEzNTI3ZjM2OTg0NzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0NzkzMDNmZWNkMDIxM2EzYjBhM2IwY2ZmMTIxM2U2MmQ5MTc1MzIwMjUzYjg1NTdhNmFiOTJmN2ZmMmJkNjcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts#L88-L130",
+          "version": "repo-lines-v1:sha256:9fd2be68fb4f761a8d60d06dbe83c7aeb6f3c5b327346927340bc04d520a1724:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3ZTQ0ZjZlYTBjZGU0MDIxMzIzOTNlMTMyODFhNmY1MjFlMjdiYmI5MmRiMzJhYzE1NzYxYWY0YjQwNzY0NGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5YjhjMThiNjllMzZjNDE1ZTVkZDZjZGU3NWJiMDY4MDM3NjUwYmRmZGQ1OTY2NzY4ZDNmNzQzOTQzZGI0YTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1NzZhZDViMTZjMDFlMmY4ODQ5ODczYTJjMDA4OWI0ZWZjNDcwMzM3ODdjYmJlZDk5MDIxMmJjYjRiY2Y0ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhZjVjNjY1Mzc0ZDY1OWU1NjkyMmFmYjcwMzk4ZDRlYjRlMTkxZTNiYzY1ZjgzYWIzYTM4NzdlM2E2YTNhOWEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/windows.ts#L98-L99",
+          "version": "repo-lines-v1:sha256:275684f11572e67b3b015bf5442a7cecad23c8e5fc691c7c41b452b166fa4671:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzcwNGI2NzBmYzdjOWQ4MGI1ZjEyMDdiNjA4YzFlZDdlOWNhZWVjZTJlYmFkZWM0NDcyNTNjMTE1YjVlYjFlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTFkYzQ5Njg1YWQzMmY0N2I1OGZlNTViMjUyY2FkZDNkMTM2OTc2NTlhYjFmY2RjZDc3MGQ4OTMxNTY5YjBmYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd214f7bdc6c437582e05a1beadda7ea",
+      "statement": "In headless --mcp-stdio mode the process resolves one endpoint from EVIDENCE_MCP_ENDPOINT or the derived per-user socket — a 12-hex-character SHA-1 of the userData path named evidence-mcp-<digest>, as a Windows named pipe or a <tmpdir> .sock elsewhere — forwards stdio MCP traffic to the running app, and on failure writes stderr and exits with code 1.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L36-L56",
+          "version": "repo-lines-v1:sha256:4ec6c4d739c310f17b81a0f956703434313764212a61cc21f2a3d117db9a4f51:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4OTllZjUyNTBkNzA0ZGIwZWRlOGVjMTE3ZGE3MGFmOTJlMjc4Y2MwNTk3OTRlZTI4ZjkxN2M2ZWVlYTFlMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzYTMwZmIwY2EzY2I2YWMyYjIzYTFiNDI5ZmI3ZjgyMTVlODlhOWMxOTMwMjhlN2ZmZGFiNWIxMjUzYjIzODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/bridge/endpoint.ts#L10-L31",
+          "version": "repo-lines-v1:sha256:730516792aefe61c315ca3017851d62f39568d02ac446fd103fd4b29bce74a21:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZWE3Yjk3Mzc5MDMzYWU2ZjNhNTNjYWE2NTZkODgwMGI0N2Q5NDZmZGFjZjlhYWQ0ZGY0MTg3NGNjMjIwZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NzEyMWIwNTUyMTExNzRiN2FhZDliYTk3ZDQyYTdmNjZkOTdkZjQzZDY3MDRlOTZkZjVjZGFjOGJlNDZmNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwZTVmM2ZjNjQxOGIzN2U5M2VlMGJjYzU4MGIwYmY0ODNkODVlNmU5NGVjZTllNzRkNWIyZGEzYTUyYTM2YmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjZjU2YTEzYmNkYTA4YjhjOTNhNzI1ODNhMjM5ZDgxZGIwNWY1MmE1MDNmYTMwM2NjZWFhYjkxNDE3YmM3YzYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/cli.ts#L13-L28",
+          "version": "repo-lines-v1:sha256:5d2544fbc7d554ef671d88e359083f031b222fbf455a381f99761d4faf03ea5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlOTBmNGNhNmNmY2I5NDIyNjg5MDU2NzVjNDE2NDFmY2YwOTkzYjExNmU3OWZhYmY0ZWQ3NGZmYWM0YjhmZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlNmEyZDM3Mjg3NzQ0YWE4ODgyNjFmYTYwNDQ0YjFjYjEyOGRlNDBlMDhiYTAxYWRlM2EwY2ZlYTkxODY4YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7777564deb834d1abfd53150de01c414",
+      "statement": "The client config the app writes is command process.execPath with args ['--mcp-stdio'] and env EVIDENCE_MCP_ENDPOINT; only clients whose config directory already exists are touched, the merge is idempotent and preserves other servers and keys, and a config that fails to parse is reported in failed and left unmodified so startup continues.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRegistration.spec.ts#L59-L142",
+          "version": "repo-lines-v1:sha256:596b0f8731200fe93236c1d7e6ea3b478d3cfc6c7a3f17849eeb33c91196ec8e:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Y2JiYWVjNGNiOGFlM2U1ZGY5NmE4NDc2NzcxMGE1NDVkMzA1N2UwYWNlMzUzYTY4NmM3NjU4ZjAyYWJhYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRegistration.ts#L134-L172",
+          "version": "repo-lines-v1:sha256:c495b707bf5e44a12ef1355435e312aa5a2d75b219816d47b7d14df4666c0d3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwZmY3ODNkMGQ3M2I1YzllOTBhZTBkZjYwZWFhN2JjY2ExYjA5OWM3NGY3YjA0Mjc2MjU4NzhhMDIzMzg5ZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMTdmYWMwNTQ4N2U3MjM2MWQ5MWFiOTYxMTlkNzFiNTg0ZTgwNDUzYTViNjkyZjA0NWZlMWIyMjEwNzI1NzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4YjYzNTQ1NDRkNzA0NmYwMzEwNzhjOWQ4OGViNGNkNDM4NDJmNWQ1Nzg3Yjg1MDMzNjc3YTkzZDY4Mjk0NzgifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRegistration.ts#L25-L55",
+          "version": "repo-lines-v1:sha256:9235dfc3ff903bc5f8961d97a070f34a3c23875e7e2a609f6bcdcad653de2254:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YjM1OTE2ZDVhZTZhOTBkOGRmNDkzOWRiOWYxMDNiNWE4NmRhY2Q5NWZhOTMxY2NkZGUwMTM5NmI1NmU1YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3ZmIyNmY3NzMwOTczNGY5NGU2MjgyYmJmOTY0YjZlMDI3YTEzN2E4YWMzNTllZGJkZDU5NDdiOWMxMzBmOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhM2Q3ODNjYTU0MWU5MDI1YmI0ZTE3ZDM0ZDUzOTVjNmUwOWEzZjc1ZTRiZDBjZTVlZjMwOGIyMTI5Y2Y4M2MifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRegistration.ts#L94-L105",
+          "version": "repo-lines-v1:sha256:1cc4377340d3f519d6c44207c61bf29829771c14bc50e31ad07a2e3724842f2a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiYmRjNzA1MGY5OTQ2MDY1MmE0ZWRkNDZlMDQ1MThlYjE1YmNmYmYyODEzYTc0MmYxNTM4NmRlMTcxY2U0MDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3NjgwM2M5NTE2ZjU4OGNjYWJiMjM3ZTlkYTdhZDYwNmVhODdjYzQwMzdjNWNjYzc3ZjUxOWMzMzBjYzc1YTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_23ae913f7f0944ebabcaaca50459046f",
+      "statement": "The review preview channel builds the page for the unsaved renderer snapshot, validates the supplied document shape and revision, re-reads the on-disk model for scenarios, throws when the disk fingerprint changed during the preview, then renders HTML from the installed assets in the main process and returns {success: false, error} instead of throwing; it never opens a save dialog.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.spec.ts#L86-L140",
+          "version": "repo-lines-v1:sha256:96c42a044d9b526ca9056541e50b40779f31ff328d170d33f6ff9d3f27c41b48:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZDUxNTNhNjA0YjMwMjhlMmNjZTNhZmY2OTI1ZmI2M2Y0YTNlNWQyNWZmOTY4MThkNmY1OTJiZjA5OTU5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzNGQyYWQzMTRiMWE1YWYxOGNiNTk2ZjkyYzg3NGM2NDI5ZTMzOTI2ODgyZTc4MTdmMzFlNTkyNWNiYjA2MmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyZjQ1MzUyNjM4MWRiNDlkMjZmNjZhMjkxM2IyOGE0MzM1MTk5MGU3MjU5NmY1OTc0ZjdkZDE2OTEzNDIwYjEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L117-L139",
+          "version": "repo-lines-v1:sha256:65b77a1a9610439c44968d1d47bedba226b8c32ce910946ab5d1ecb6066a36de:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YjczNTRlOGExM2JiYTJiOWZlNDllODI4N2QxMzc0YjQ5NTc5NGE2NzNiN2FmODIwODJjOGZiNjY1ZDQ5NGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2RlZjgwODVhZTc0YWI2MzZkNjQ1OWY1YzZkNWZiZmIwZGIyNjRmMWIwZDc1YmFjNTE5YzliM2Y2NzE3YWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmY2Y1YWNiZjk1MDVlMjZlMGE0OTBhOGE2ZTYwNDEyNDhiNWNhNmNkMGUyYjczMzE5OWM0NTZmNzQ3MjgwNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4OWE5MDE2OWY2NDljMzEwMTUyY2YwMjViODQ2ZjFlODllNTk4Mzc3YThmZGYyNTlhYjI1MGMzNDIyNjYwNDAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L28-L120",
+          "version": "repo-lines-v1:sha256:0f93cc29dc80be4d0cf1f2aede96b97b690abd117c4a53a26a0e7196066d9f44:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlNjEwNzlmNzAwM2Q5NTYwYTgxYjQ3YmMwYWMyZWY3NGMxYzZjNTI4ZWIzN2Q5MjJhNTk1NDIzYzU0MThlNDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMjZmN2IxNjhiYzRiNTBlNGFlNWVjMmJiNzc5MGMzNDFlNWQxYzNmODA1M2I4ODM5ZDFiZGJkZDg2YmI5ZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_136fc251ab7549adaaddaf59d7aaeb2a",
+      "statement": "The diff review export asks for a portable *.evidence.json baseline before the save dialog, returns cancelled when that dialog is dismissed without generating anything, defaults the page name to diff-review.html, and passes the baseline document into generateWorkbench rather than executing Git or a project script.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.spec.ts#L161-L204",
+          "version": "repo-lines-v1:sha256:54b59a9696561d1af7aa5ab96121bd0a605842d53179e7d925bc44acd6d61afe:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZDk1OGE1MWQwOWUyNzdjYTEwOWViZWZmNTI4NTQyZDU4ZGMzNmEzY2FjNTI5N2IxNWZiNTJhODFkYWFiM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MGVkMzA3N2VjM2I3MTZjZjQyNThhOGFhNDJmZjZkYmZlMTIyNzljMTgwMGRlNzA1YzljNTY1NjZmYzZlNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNmZlODRiZWQxMGJkYmYzNDBmMWE3NDhiMzEyNjMwZWQyMDNmNDJjZTYyZDJkZGRmMGMyNGYxZWQ5M2VhNGMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L141-L214",
+          "version": "repo-lines-v1:sha256:c04d02d7358686417ca50867d3697263b3ed714e3a9d8126241464eff83a6db5:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyZGEzMGQxNDllMDcwNGRiNjNkZTkxZmUzNDc4ZmY3OTU5ZDU2ZDIxMDgyY2UxMmVlZmVhZDgyYzExYmYwOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhMmEwMmJlNmI3NWJjZTQ3Y2I5ZmM5OTQ0ZjNiNDAwMTMyYTdlY2EzN2NjMDk5ODNjMDhjZDE2ZDI0ZWU5YmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5927850eced244969b1612487d8c3bc3",
+      "statement": "The delivery channels project the saved model in the main process: deliveryPreview returns the services with route counts, links, routes and limitations, and exportDelivery asks for a directory, writes openapi.json, topology.json, routes.json, deployment.compose.json, projection.json, http-journeys.json and limitations.md, and returns saved with file names and counts, cancelled when the picker is dismissed, or failed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.spec.ts#L107-L208",
+          "version": "repo-lines-v1:sha256:8d0aa14f77e39fba952fe7ce0f96764b261c1d1e9e480a0fab455246820b87e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NWI1MmM1NGU0OWNiMWQ0OTkxNDA5Yzc5NTE4OGMzOWFlNDdiYWUxYmY5ZWU4OGYyN2M2OTE5YWFlYWNhY2U5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjMTU2NGM1Yjk0NzE1YmM2MDg3NWRiODRmYWQ1M2ZmOTEwMDE4YTAzNzcyYWMzZDA4YjFiYjY3ZmI2ZmY4MjA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIn0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L82-L131",
+          "version": "repo-lines-v1:sha256:15453d631ef19d186b82e2a1595c14183ec3ef78cf2b0d7e5fde08547c4bd92e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmNDM0NmJlNDRjNTc2YmFkZDYxOGIyMmE1M2E4Y2U0NDMyM2ZhOWU1ODA1MTIwZWFmYWI2NGRhNjcyN2VkYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllNTVjYzkxYjZiMGI0YmM0MWEwMGI2MzU5NWE3YWQwY2FkMWI5YmQ1MTk0NmZlZjBkMTRmYjMxYjA2OTkwNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L65-L117",
+          "version": "repo-lines-v1:sha256:507dd26d3b62d87d4a76370dfb25e0ed98c4f0c57427f37187af606b8b4b5804:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzODkzMzQ5MDUyYzFhOGRkNTcwZjU0YWM4MDk0YjZjMGIzZTM3YTg0NmNiYzlmYzEyZjQ1NTA3MTVhNDBkNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYTU1ODZlOGM4MjQ2NDUxNjFjNzEzYmE3Y2RiOTczNTI2YWM1ZmE0M2ZkNDAwMjUwNDFlYTM0NDNlNjlhOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5ZGYxZGU4Y2I2MDI2OTVlOGIzM2JlZWY2NWMyYTAwZjk1ZGE1YjYyNjcwNGQ1ODgwYjA2ZTFiMmM1NGI4OWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f290cb9e0223485b91b90a17b24e9ea3",
+      "statement": "The simulation channels keep filesystem access in the main process: replay forwards rootPath and an optional scenarioId to a lazily imported SimulationService that reads modelSourceOf(rootPath) and reports an unreadable model as passed false with errors, drift reads the picked trace file and throws a JSON parse message instead of reporting an audit, and the picker returns cancelled rather than an empty path.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L99-L140",
+          "version": "repo-lines-v1:sha256:929b38d8cd80eef6ffb5cf13940b9c775f2fef6a518b6774d27faf46c382af7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4OTMxZmQzNjRlMDVhMTRkODlhZjIwYTFlODliZGM0MjljYTVmMWQ2MzQ2OWI0NTQ0ZTRhNTE3MmNjZmJhYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2NkM2ExNTM2YTdlZTU1MWU4NDRiZjYxNWQyMDNmMjc4YjMyM2YzOTI5YTdlOWU0NmMyYTJkM2JjYWI5ZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1YWFmMGI1ZDYzZDhlOTFiNGM4ZjEwNjNlY2UwODcyOWFlZmNiOTE5NDdjMDRjZjdmODBjN2MxNmUzOWFmOGMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/simulationIpc.spec.ts#L77-L151",
+          "version": "repo-lines-v1:sha256:c28b444453de926e22a9c8b7b0e0b927e52e2091249622826e40fed09d54b70b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjMmU4ZTRmNzZkZGU3ZmE1YTQzMDI3NGNlOTVkNGUwMjJmMGNhNzM5ZTc2MGQyMzlhNDFiMWY3MmFhNTdkZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyYzUyOGMwZmU0MDUwYzQ3MjdlY2EwMzQ5MjAwMzQ5NzE1M2U3ZmEwNWI5MWVjYjUwYjU2ZDgxNTY3ZWEwNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/simulationIpc.ts#L40-L113",
+          "version": "repo-lines-v1:sha256:3ec5407cd69adcabbd168ec62ef52e65d5c92011ca74f05c199dfe72b9c76956:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyM2NhNGM1YTk1OGJlMzE5YTFmZjdkNGQ0YTY1MmJhYzg5MjE0ZDBmNTliZmEzNGY1MzUxMzFkNDBlMTI5ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkYzZjNjA3YzI0MjVjNWJmZDY3NjBmZWIyZDNjMDMyN2U5NjkyODc5YmM4MDBhMThjYmNkYWI5ODQ5ODg3YjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a332db65b11a487d99c96701a71ab32e",
+      "statement": "registerAgentIpc owns one agent runtime per project root, keyed by root path and disposed when its WebContents is destroyed, and applies patches by sending evidence:agent:apply-patch to the renderer that holds the live ModelSession and awaiting evidence:agent:apply-patch-result with a 15 s timeout, reporting a closed window as {success: false, error: '编辑器窗口已关闭。'}.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L203-L255",
+          "version": "repo-lines-v1:sha256:201e499fabdc648b0d8596e6329617258e5fdf15b4a2f74a6735143a0088d6c8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYjQzYjNmY2NjZTUwYWJkZjUyYjA4NGIyZWYxZGQyNTA0YzczYThhNzZkOGM4Mjk2ZWIyYjZjNWQwNDM2YzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkNTFhMTAyYmRkYTAxYzZhZTBhYjNiYWExZTllN2E3ZDg0ZDc3Mjg5ZmQ1ZDVjMWIyYjNmNDA4ODIwNGMwYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L24-L150",
+          "version": "repo-lines-v1:sha256:68c2f97a020340fe5ec66cc73793e76ffe942fb1fe2017143effe60df671ea2d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0NDNlZTliNDU5ZmI0YTAwNjIwZWQ4ZWNjMTJlNDU4Njg4YjIwYmNmMTNlN2U3YWIxZjc5YWRhNGYwYjNmNmUwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5ZTcxMWViZjQ0MTU1ZTNkNmNiOGE0MmNkYThmZjMzNTk2YmUyMDdjYTRmYmJmOGJmZjUyNzFhYzQ0NDY5ZTFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNjNmOTQ4ODQxYWYzNjg4YWJhMmQ1ZDkxMmMwNDZiZjUxODM2NGUzZGFjYzEyMDNmMDk4OGJlYjA3OWQxNGFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMjk2OWM1MTVjODBkNzI4ZDA4NWYzOTI2ZmZjMzgyNzFjMzg5NGZjNzI0MGI2OTJhM2MzN2VmMWUyYjIyZGZkIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_711601e7a41148c8ad42e84a93bc0dab",
+      "statement": "The ingestion channels run in the main process: draft reads business text, a contract or a blueprint table into a draft, and compile builds a document, writes it through projectStore.createFromDocument, and opens the editor window for the new project when the write succeeds.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L160-L219",
+          "version": "repo-lines-v1:sha256:ddbc2f53eec8ac8234f5bc8cbc42303d68f1947162aa1f06c4a6b8757273925d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NmQwZDlmYTE1MDg2MzEyZjRmZTA5NDhiZmI0ZDU1MGQ1MDU0OTkxY2Q2NWQ1MDdkODlhNDIyMThmZTJmMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NTFjMDA3YTFhMDk4N2M5NzgyMDU3OGY0MDM3YzMwOGJiOTQxZTNlNjVjZDFkZjc4YWI1MTgzMTA5YmI0NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyODEwODJmMjFiMTNlNGJlZGI1MmQ2ZjkxYmFiMWJjN2E5OWY0ODFmMTA3ZjUyMjIwZjU4YWY2OTBhNTM0OTgifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L222-L244",
+          "version": "repo-lines-v1:sha256:572cffc035d8f1880ded7ac13469e156ae10716e7811e6ec7890e22038584f7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMjY3MjdlNTAzYjdmODVmYTdhZTVmMGFkMzMzNjQxNzk2OWU2NTRkNDE0NDczYzhhMTg0NmY2MWU1YzNkYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlYWVjZjdmZmIxNDJlYmU4MDliZjQ5NjFiNzYyNjk3NTA0NjBkNDE3MTdhYWJkNTllYzNiNmY0ZDQwYWIxZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_929c18cd060f46e5a8e6e965d12f30f7",
+      "statement": "New-project templates are built rather than stored: createStarterDocument builds one of blank, procurement, subscription or service_blueprint, and listProjectTemplates reports each template's real entity, relationship and rule counts by building it, which the evidence:project:templates handler serves or reports as success false.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L145-L155",
+          "version": "repo-lines-v1:sha256:39799b22bae510438f0a0ec27b8685a2600eab4af0838732d92681f970b9ca92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmOTcxNGFkYjU1Y2Q3YjQ0MGUxNzQ2YTg3MDNhODAwY2UxNTNlNzM3OTg5NDA4ZWMxZTQ1NTc4OTVjNjM5NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3M2Q4ODRhYjFjZmNmMWQ5MjE0ZDFkN2EwMmEzNTYxMjVmM2ExOWUzZDc0NTM3MjAyNmE3YjJkMTVlYzc5MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2ODhkOTMxNjIzYmY4MjVhNTE5MGFiZjYxNzI5YjBjNTFmNTE2MzAxNDhkYmYxNWJmMmEzOTU2MDc0NmYyMDcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/templates/starterModels.ts#L1106-L1140",
+          "version": "repo-lines-v1:sha256:4c2ae2778043323140623c265216df22b003c73f8e1747d99e2e7eae66d833e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwZTgwZTU1YTBjZGZhMWI0NDAxZWI4ZjhiY2QwZmE2MTZiMmI5YTc0ZjUzZmMwYTVkYTE1OWRmMThkMmNhMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3ODQ3NGNkZmU4MGE0NjY5ZGYyNWJjZTNlZTdmY2NmYWU0YzBkOTE2ZTJlNGQ2YjIyYjgwZjIwMDc4MzU2M2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9400d57475184e50a76b13f4b97f20c7",
+      "statement": "A successful open, create or createFromDocument rewrites userData/recent-projects.json with the newest entry first, previous entries sharing the same rootPath removed, the list capped at 20, and the file written through a temporary file plus rename; a missing or unreadable file reads as an empty list.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L58-L65",
+          "version": "repo-lines-v1:sha256:1f9119d3101abde8e8b03171269fa32804095028c339e60dbaa0bbead0f3c347:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmVkMDgzMTg0ZjlhZmRhYjkzZWZlYTMxYmQyNjVkODA1ZjdmNjlmZTNkZmFiMDdjZDQ4MTJhY2Q0NGYzOGI2MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzIxMjljMjczNTJiNDk1NTQ4YjA3MWFlMzRhYjkwODExNzI4NzM0MjhmNmY4N2Y1NGI1ODBlNTE1M2M5YWEwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzYwZDljYmY2NzEyZDY1OTY0NzFiMWI0OTdkYjVlMmFkNDI5NjE0NWVhMjkwYTBlNmUyNmE0ZmQ2ODM3Y2FmNyJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L182-L196",
+          "version": "repo-lines-v1:sha256:718bcdd9513cd0922c852bfb3c8941b7bd3cd6702a97b3e0d9fbe6eb3c785527:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNjg0NGRkYWIzMjVmMmRkNjBjMDc1ODIwODZjYzVkZWVkNjI0Zjc4OWU0MjBlN2ZiZDc2MjE0YjdjZjllZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjZjkzN2NlN2E4NGQzMTNhM2ZiYWExNTk5NWIxODViMjY0Yjk5N2VmMzlhNjVkZDY1MTk1MDVkNGJjNzA5ZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4ZDAwODEyNDJiZDI1MjU5ZjZkZTgzNGY2MjAyMDg4MGE2M2E4Mzk1ZGQ1NmQzMDM4YjIwNjUzNDExMDBmOTYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L72-L99",
+          "version": "repo-lines-v1:sha256:be110cd0475529a9d87a8d97d2c23a4a9ad788babd2deac001950ad0294b3fd2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmNjVjMjk1MWRjNzUxYzg2ZDgyZjk5MzBlOTJkNjEwZDM0NzA4NTM2MjM4MGFlYWVlZWM1NjljZWI2ODc3YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlMjNiMmU5Yjk1YzdkMjgwZTk4ODJlZWRjZTg1ZGNkYTViYzE2MTcxMGFmYzFiNTI2NjM4NjJlMjUzNTBhNjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dccb1240856d41959d1931706d90368c",
+      "statement": "Both windows are frameless with a hidden title bar and load the renderer by hash — <dev-server URL>#/dashboard or #/editor?rootPath=<encoded> in development, the bundled index.html with the same hash when packaged — and App.tsx parses window.location.hash, treating /editor as the editor route and everything else as the dashboard.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/windows.ts#L18-L99",
+          "version": "repo-lines-v1:sha256:c8aff801490f01d40433614e9a57561d9559cf8877e549a3d2bbbe485ab8a844:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2OTZkMzY5MTg2MTY0N2IzYTQ3MjkwZmVkMjEzZjliZDIzY2Y5NTQ0NTlmYzJmN2EwZjAyODQzMGIwNTVhMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhYmI3ZWQ2NTEwMmM0NDc0YWVjMjEzNzQ2ZDVmNzJmMmNmMDEzYWJkM2MyN2U1YjRjZjI3MzYxYTBmMDVhZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/App.tsx#L8-L24",
+          "version": "repo-lines-v1:sha256:e72a88da2750a7f7bd3630e2ceeb567f2c0b8eea56adbae748f6a42d5e442dfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3OWYxZmE2NjlhYzA1NmEzNGM1OGUzM2QzNjM0MzViYTdlZmE2YzEzMzY2Nzg3MjkyNzY4ZDdhZjQ2MWY4NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZjcwYzJlZmEyMjI3YmE2ZmNjYzI5OTM1M2Q0YzBiMDNhNTFkYjYxZTkwYzlmYjkxNDcwMTQ5ODYwZjAzNmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1MjNjYmNmZmJlZWUzYjgxOTYyZWM5YWFiYWVmOWM3YzExMzljYmU4OTIyOGEzZDBiNDdmZWIwZmZkYmRkNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyMGMzMmI5NzBlZDEyNTJmMjMwMTFlYjBjMDBmNDg1ZTlhNzkxZDYxNmMxNzAyNzA3NWIyZGU4MGJjMDY5ZTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bfe448209e7d42c995c42ce7307932f5",
+      "statement": "Review page assets resolve without searching up the tree: a packaged install reads the assets directory Forge unpacks beside app.asar via extraResource, a development run prefers apps/desktop/resources/assets after prepare-resources copies it and then the evidence-visualization workspace package, and undefined is returned when nothing is found so the library can name the paths it tried.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L18-L31",
+          "version": "repo-lines-v1:sha256:228de591fa98a46e18a4aea7129ace78c185dcf98a4a5ba49062a599720b4cdc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZjI4ZTdjNzkzYWJjYTI3NjRiNTdiNjRiMmJiZmIzN2M0MGFkOGQ5MDNlYTExODVkNjk3ZGIyZWUwZmQyMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMGFlZmZhZDhhMzNhZmQ4ZTQxNmI0N2JlZmQ3NTQ0NmYzNzAyZjg1YTQwOTJhNmM1OWEzZWRmN2VlZjRiMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlOTNlMzE0ZWUxMTkyZmZlMWUyZmJmNjM1OGVmZGYyNzA3YjVkOTVhMmE0ZTI5YTkyMTg1OGE3ZjZmNjJiYzcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/project.json#L7-L23",
+          "version": "repo-lines-v1:sha256:0291c96ea3bb0ebea241b0b11831d3561f53adc67893dd6e6597cccddd02c5ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4NmMwYzgzYzMxYzgyZTM4YTQyZDEzYjQ4YmU0ZmEzYTI4YmI1ODkxNTlkYjBiNTc2ZTZmYmQ2NmRkNDgwMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzNTc4N2M1Yzc1ZDQ4ZjViODlkYjM0MGZmYWFhY2YyN2VmZTljNmYyZWMxYWE2YmM4OTVlZGRiMGNkMDEyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxOTdlM2Y5NDY2OGNlNGRiOTQ2ODVhNTJhYjBmZWE3ODMxZWExMzQ0NTY4ZTAzMWIxZGViYjZlZjk4NGVkMmEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/installAssets.spec.ts#L14-L75",
+          "version": "repo-lines-v1:sha256:7089f12889220e0e5412190f6956c00e0d0cadfc5774269c959051f529d5d1c8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNmM5NmUxYjYyMDljMjcxZWVkZWMxOWNlOTY4ZGU3NGQ3ZmYwODVjNjVmZGE4YTQ4YTQ5NTRkYzJmZDdiZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkN2EzZWZiZGU2NzA4OWQwYWM4MGUyZjM2NGJiMDkxNmUwNmQzNTIwYWFmOGFkZDQ1ZWQwYmUxYTZiNzcxMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/installAssets.ts#L22-L68",
+          "version": "repo-lines-v1:sha256:108ea7df4fa322591ec6dc956c260dfbeec08ceddec1eef88159bd4e882077c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1N2FiM2JmNmY5YjU5MWVmZmQyNmI0NWY3OTU0MTkwNTFjOWY1Mjg5NTJmYTFiMTM5YTdkMDliNjBlNTVjZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1MmE4M2JhNmQ5NjljY2QxZDQ5ZTBmM2JhN2MzOGE5MGRlZTBjZDVkOTUxNzFmYWZiNjNjY2U4ZmNiNWFiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

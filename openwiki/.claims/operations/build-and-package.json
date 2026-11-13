@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:60df35eeab088f8cc27abdba07c07e0ad4629404f1daf7393b6aa061a84b93e8",
+  "pageVersion": "sha256:872de5e1f54d04a7a6b2b8f3e302d2ce7d22883ebbda1c19d93ce626f0f43a61",
   "claims": [
     {
       "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
@@ -52,19 +52,27 @@
     },
     {
       "id": "claim_92a9e851c42344dcb2eff6ed3e1fab8c",
-      "statement": "Every consumer repeats the source condition in resolve.conditions, with node for main/preload and browser for the renderer; omitting it silently falls back to dist and looks like a missing module rather than a missing condition.",
+      "statement": "Each desktop consumer config restates the @evidence-poc/source condition: the main config omits node because Forge injects it for the main target, preload lists node explicitly, the renderer lists browser, and the desktop Vitest config uses browser for the jsdom client resolve plus node/import via ssr.resolve.conditions for main-process specs; omitting the condition silently falls back to dist and looks like a missing module rather than a missing condition.",
       "evidence": [
         {
           "resource": "repo://apps/desktop/vite.main.config.mjs#L1-L28",
           "version": "repo-lines-v1:sha256:f50295f8270b616f4b9bc79d53bafe1ca3f1e8efe62bcc5bc9d4ccc1e0f3dd98:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZDAyMTI3OTkzMzU4NzY1OTg0Mjk3ZGQzMzgzNWUwMGYyMjc0MjRjYmQ2NGMyY2JmMDJjYjcxMTQ1Y2ZmMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L1-L25",
-          "version": "repo-lines-v1:sha256:2445357792a82189860d0dd034876759d56bce4a25a2f58ec9c20febec95701e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNGFiMTViZDZiNWEyOTMwMjA3YjFjY2MwMDY3OTZjMzNjYmVjYWRkODViYzdiYmQzMDcyNDllMGUwYmNjN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNmQzNzJlNzJhNjVhZjY0ZTU0ZDlmODkwYTA5OGJjYTFhOWRmM2JiNzMxMzE5ODU1MzI0MTY0NDEzNjA4MzQifQ"
+          "resource": "repo://apps/desktop/vite.preload.config.mjs#L8-L18",
+          "version": "repo-lines-v1:sha256:1ae03eb26c11efd3f69c27cd0d3df17248c1a5ce118fc42616ec1cfad7bd4b47:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2OTY0OWUwN2ExNzNlYzFkZjM0Y2NkYWQzYTVkZTQ3OTY2MzE4NzIyZDQyMzVmNzFlZWMyMDk0ZWMwOTM4YzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmY2U0MDM2YmRmNTVhMTQ1ODQ5YTBkNWMxMmE3NzYxYTE3NWE3YmM5YTE3NDg5YTIyZjIwYzc1MjRkOGI2MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4ZTk5MWYwMDE1MjNlNmUzNjUzOTFhYTFhZDRlODcwMDQ5NWMwYWNmY2JmMDZhNDQ2ZmRiOTNkNDFjYWEyYzYifQ"
         },
         {
-          "resource": "repo://apps/desktop/vitest.config.mts#L1-L40",
-          "version": "repo-lines-v1:sha256:14ca9cbd2e259a78706d62339246c1124cd61034a711e0ce026a02d0356a42f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2MwM2ZiZGY5YjM0NmFhNTUyNzg2YjVlZWJiM2FhZDRmYWM4M2FiOWU1YzZiNWQ1MTVhM2ViNTljZWVkNTIifQ"
+          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L10-L22",
+          "version": "repo-lines-v1:sha256:08238c25281f0b2c6a5345e76e62368b9866e0caa4da2feb0839b45826ed10aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYTc4NjFhMmE2MTI3YTYzMTg2OThiZWMwMDRhNmM2NTdmM2M2ZGMyYzRkOWY2Mzk5YWI1NDg1NWJjNDc2ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2M2Q1MzVjZTM4MDYzZDZiNGM1MWQ4YzM4NmE3ZjliM2U1ODBhMTRhMTBjMDdiMTk4ZGZhZjE5YzkzYTNiZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5NDhlYzFkMTgwYTBjNmI0MDUxYThkMWU1N2YxZDk5YzMyYjFjOThiOGVlMmY2MmYzNDFjN2ExOGNjZTZkMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDg3NGVhZjE2N2MxNDU4ZGQ2MTdiNTU4OTczYTNiZGIwNWNjMjFjYjJlYTYyOTg1NzIwZGQ1YjY0NzU1ODkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/vitest.config.mts#L14-L24",
+          "version": "repo-lines-v1:sha256:7e706044e050ab1cd043142a46f06a29e6ea99849d9c21e4df3aae477e1dfcf1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOTZjN2Q0MmM0MGY0NzljNjZhNjAwMmVhODJjNDE2NDdjZTk0N2VkZmFlNGUwYTI3NTIyZDVmMWNiNzE4ZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyZTFmZTZjN2E4ODNhMWZhOWQxMmMxZDQyNGI5Y2VkMWJmM2FkNDU4NWMwZGQyMGYxMWVkNjlmYzQ2ZjU0YjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyZDYwNTVmOTJmZGM0ZGI3MjQxOThmMzQwN2RkYWIwMGYzNjM0OGRhMTIzZmY2OTY0MzFjZjRlYWQ2YzBlNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1NWY1NGZhNjUzYTU1MzQ2MmNkNTgxZGJjMzFkYWM4Nzg0MDUzZmQ0MmIxMWFkOTZhZDM5NzRhZmZhMzE0MDgifQ"
+        },
+        {
+          "resource": "repo://docs/workspace-layout.md#L54-L88",
+          "version": "repo-lines-v1:sha256:2134ae209fa55b09f2e6ae58b3982f14849a4d62b4213ef12ac2ca88633c5bfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMjJjYzA0NmExYjdjOGY3ZDU4NmYxZmI0NjM5Y2MzNTYyYzJmZWY0MzVkZWIyYTMwYTE3NmVlODkzMDE1N2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYmU1MTI0YzZjNWRiZTQxOTdkOThmYTVjYmM3ZmJhZGQzZDdjYzliODcwNGFmNDI5ZjMzODJlNTc1ODFkODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxOTBmODhiZWU4ZGFkY2Y1ZTg2YWQ1MDViMjdjMWJhY2M4NzcyOGI3Y2VkOWEwMzM5NjgwY2FiNzJlODMzMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MWU3MTBlNDQ3ZDEzMjMwOGM3NjYwZjk0ODIxMDIzNjUwMTU1NjAyYjI5NmJjNDM2MGU2NjdhYTFkNDQ0OWYifQ"
         }
       ]
     },
@@ -145,10 +153,116 @@
           "version": "repo-lines-v1:sha256:e78cad2b2675c29142457c5cf8d4b7019d11d3ebf62ced96360d3f3674f7c32b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMjkyNzNkNDJmOTdlNjg5YzgyYWE3NWZiNTI5OWRkZDM5OGRhYjZlOGJlZGFhNzQ2YmJlNjZiMTcxMDI1ZDdjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwYjMyYjk4NzI2M2RmMjE2M2U3MjZkNDhiOTJmNmY5NjUxNDhjYjZiNmQyODMxNzkxNTE0YzkzOWY4MzdhMTQyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2ZTVlMTQyN2FiZjkwMWMzOWUxYzkwZDI3M2I4YWE0OTU1NjA1MTgwNjFiYzIzNWY0YTdiY2NlYTFhMjYxYzg1In0"
         }
       ]
+    },
+    {
+      "id": "claim_20be7f4df85e41f2a9092eb306d318e3",
+      "statement": "The renderer Vite config sets preserveSymlinks: false to override Forge's default so linked workspace packages stay source instead of becoming optimized dependencies, and pins outDir to .vite/renderer/main_window with emptyOutDir and a strict port 4200 dev server.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L12-L29",
+          "version": "repo-lines-v1:sha256:40b26f928d6ea2cb61b4e4eaa18fa9356a0927dc9893ea8d2b29d71aed30553c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyY2VjYjE0NGE0NmY1ZGNmMTJhNjE2OWZjZWVkNzY5NWU4Mjk0YjA5MGRlNzZmMzY2MWNkZDAyNDkzMDAxNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMDcyZDA0ODRlM2QwZjI1ZGVmNGY4ZmFhMDg3YjNhODViMGI1NGU1MmU5ODg2OWExMjk2NzE2MDFmYmJjZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2OTVhYTQ3ZmFjZGZhN2IxYmY2ZTU2NDVkNDJhYzY3NzNiNGQ1YjA5N2EzZWQ0OWIzMGY1NjljMjg3MmYyZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlYTc0M2QzNDI0YTgzYzEzNjdlNmEzZDg4YzBkYTg5NTgzNTk4ZjhlMTAxMGI3OTcxZDkxZjYxZjQ5MzE3Y2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_86c2f638623d4adcb1b256d129eebf0a",
+      "statement": "The desktop build target does not depend on library builds because the bundler resolves workspace packages from src, while the desktop typecheck target depends on ^build because tsc consumes the libraries' emitted dist declaration files through project references.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/project.json#L24-L40",
+          "version": "repo-lines-v1:sha256:8d702623189d56739a3749b7b97b7446810d6761baa744a088d2afce4f37b8d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllY2VlOTlmN2ExZTVlMGNkYzllODNiYTZlNWE4MGUwM2FiNDQ3ZWZiNjRkYmQ4ZTk0YWIwYTk0OTg5YTAyYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNzIwMTU3MmI4NmExYjFlNTg2NDU3OTNmZThmMmM4YjhkNWNlOGNjYTZhMzkwYjIzOWM0MjI0YWEyNjE4ZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlYjEyODE5OGVlMjE2MmE3MDc0MWY5NDk5NzdjNTBjNDZmNzUzMzAzNzU3YTc0NDA1MGQwY2U5ODY4Y2E4NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyZDY2MjgyNzc1ODQ5MDNkYzIzZTEzZGE5YzlhNWJlNGM5ZWU3ODE5ZTI2OTY4NDEyZDExYTM4MTkzOTc4NTcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/project.json#L71-L76",
+          "version": "repo-lines-v1:sha256:f003ebc98b5b49cdbe2f4f2fdd19133878b036b8ed560ef9e26e1bb0e1ad1ad8:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTNkMzMwMWUxNTM5OTdiYmU0ZmRlMGM5MzBiYTQ0ZmI4N2Q0MjU2OGFiODQ4ZDZkZTY2OTViNWMxNzJlNmMwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGQzYWRmMWJiZWNhZmNjZGMyMDUxYTEyNTNlYjA0N2IzMDRkNTYxZTgxMjBkYmVjZWNhMjQwMjEzNmNmNjczMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://docs/workspace-layout.md#L83-L86",
+          "version": "repo-lines-v1:sha256:3f85e259d1792cd141c5c62cca7f2e76a10f22a685181781e7ff07fdbd09a114:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ4NDM4ODg1NGZjMDQ2MjdhYmU0MjEwYzQ3NWM3MDg5NzNiMGY5N2JjNDJkZjUzNTk1ZDQ2NmRmZjY3NzE5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI1ZjdmYmQxOGYwZjU5NDAzNjQ3MTM5ZjNkZWVkNjljM2ZiNzJmNzU2NDhhYWM4YjI2YjRlOWNmNTQwOTlkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjA0YTU3MWZlYTM0NjZlZTRiZGMxMjExMTZjMDg2MTE4MGI3MWIzMTVjMWViNjUyYzI2ZTUzMTU5NTg4MmM2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzBjNzRkNThmNmRiNDAyZDMzYTIxM2FjNjcxNjJkNGZmMWYxZmQzMThlZWU0NmQ0MWVhYTFkMTRlNDQ0Y2Y1MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa8355a0fb1a4899bebdc699473feff4",
+      "statement": "targetDefaults.test.dependsOn [^build] is the safety net for library Vitest configs that do not repeat the source condition (such as evidence-model-core and evidence-schema), because those specs resolve sibling workspace packages through their built dist entries.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/vitest.config.mts#L1-L18",
+          "version": "repo-lines-v1:sha256:3ff3f506ad3532818a2d480c6e3932030f9a2d7a75c1d0141edd5b47b7b177d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNzQxZDJjMDhlNmY1MTBiN2U5YTI2NGYzNzhmOWNlMDA0OWE1MDRlMGU3ZWY1ZDY3Y2QzZWE4MTNmODU0NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/vitest.config.mts#L1-L18",
+          "version": "repo-lines-v1:sha256:644b18c61721dec25eb4a95c19109824c8421f1e1d3c71bd493b0a3dc4398f39:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNzQxZDJjMDhlNmY1MTBiN2U5YTI2NGYzNzhmOWNlMDA0OWE1MDRlMGU3ZWY1ZDY3Y2QzZWE4MTNmODU0NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://nx.json#L63-L67",
+          "version": "repo-lines-v1:sha256:ec3fa1b1cb79d18d85e1cc70a750000bb7c5b9c7c5f9f2fcf7691776f6d88940:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmUxMGNhODdjMTA2MDRlMWU3Yzk1Njk4NDQ4NDgzNGRiNGI0Yzg3Y2YyMDlhNDNhYzc1MTM3M2Y1M2ZkYmJlZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjc4Y2YzZDI1NGVlOWYzZmNjZDExNzZkNzk1NmRmNWNiMWQyODEzNWYyZjRhZWE2MDJhN2QzODVlMGM5YzU5ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjY4ZmNmNzcwNjQzNTQzMGE1ZWY5YzIxZjVjMGU4NmQwOGJkOGUxNDU3N2NlZWQ5NThlZWI0MDhmMzczOWIzMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2a1a0eed7fa04bc091da035e8a08e0d1",
+      "statement": "Three libraries expose bins — evidence-model, evidence-api and evidence-workbench — all pointing at their built dist/cli.js, and because the packages are private a command works only after that library has been built; the root model:pack/unpack/inspect scripts call node libs/evidence-model-core/dist/cli.js directly.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/package.json#L10-L12",
+          "version": "repo-lines-v1:sha256:1158eb7a6217e79b53b3ac2a521feb8a5b231e5ba4a601233c59ea326dffc4bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZjMTQ3NTdiOGUxZTlkNmE3ZGVlOTkwMmU5MDQwN2FkOGNmNjczYjNlOGQ3NjNlMjc5NTBkMTlkMDY3OGQ2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZDJiZTZiNTc3YmE5NzEwNDQ4YTU0ZjM3YTBmZjYxM2UxMzlhMTNlYzYwODEzNzBhNGU4NDJjYzhmZTNjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBjYjllYTU0NjEyNDkyOGI3ODYwZmFhMmQxYjM1Zjk4MjFjNzQwZjdiMmI0NDI2MTdmMjJkZDc4ZDVjOGFkNiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/package.json#L9-L11",
+          "version": "repo-lines-v1:sha256:35f647c5adf353506d7ee0bd3cd785a57937a7e1da6a758ce11bafe89f4be394:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZjMTQ3NTdiOGUxZTlkNmE3ZGVlOTkwMmU5MDQwN2FkOGNmNjczYjNlOGQ3NjNlMjc5NTBkMTlkMDY3OGQ2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZDJiZTZiNTc3YmE5NzEwNDQ4YTU0ZjM3YTBmZjYxM2UxMzlhMTNlYzYwODEzNzBhNGU4NDJjYzhmZTNjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBjYjllYTU0NjEyNDkyOGI3ODYwZmFhMmQxYjM1Zjk4MjFjNzQwZjdiMmI0NDI2MTdmMjJkZDc4ZDVjOGFkNiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cli.ts#L22-L58",
+          "version": "repo-lines-v1:sha256:42a26b878b601f6b8c0a74b68465a3d2b37ac7274d4544970e38739073fe42fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjNzliOGQyYjQ1MDQwNGQ0ZGE1YTA3Nzc2NzU1YWVmMjE3Njk0MDMwMGRlOGI4MWY3NTc1OTQzZjRmNTFjMTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmZTdiMDMyZDk3M2M2MzQxYjY0NWM3NjYzNTk2YjBiM2JhMzdjOTQ3Nzc5MzBkOWYyZjViYTIzZDI0Mjk4MWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyODc3YzMwZjlhZDI1YWQ4ZTZjMGNlYmJiNjE3YjEwNjdhNDlhMzgyNzc0OTg4ZjlmYTQ4NWQwNTliNWZhYjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/package.json#L10-L12",
+          "version": "repo-lines-v1:sha256:15d6953f6f7ffa0f413662d1c09b182cda14dd110e7d38c44a984b99013ed40b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZjMTQ3NTdiOGUxZTlkNmE3ZGVlOTkwMmU5MDQwN2FkOGNmNjczYjNlOGQ3NjNlMjc5NTBkMTlkMDY3OGQ2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZDJiZTZiNTc3YmE5NzEwNDQ4YTU0ZjM3YTBmZjYxM2UxMzlhMTNlYzYwODEzNzBhNGU4NDJjYzhmZTNjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBjYjllYTU0NjEyNDkyOGI3ODYwZmFhMmQxYjM1Zjk4MjFjNzQwZjdiMmI0NDI2MTdmMjJkZDc4ZDVjOGFkNiJ9"
+        },
+        {
+          "resource": "repo://package.json#L5-L17",
+          "version": "repo-lines-v1:sha256:907b6b239502110a74b338959de2d21836235339ec36d269c7c0b7cfdc247288:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0M2QyZDJhMTBiYzQyZTk5MmQzNjBiYjM3MDFhOTk0YzNhMjYyMTJmNGU3NDg1OGQyZTBjZTNkOGNiMDdmOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlMTFlNmIyNGUyNDYxZmEwY2NiMmFjMDYyMTA4ODVlMDZjMjc5NmJiZWIwNmVmNDVmY2QxNjhiNjE2ZTJiM2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60e17f3e958448259b0a0a1913d8be00",
+      "statement": "The release workflow passes APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID from secrets into the desktop:make step, so osxSign/osxNotarize engage only when those secrets exist and macOS artifacts are unsigned otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release-desktop.yml#L55-L63",
+          "version": "repo-lines-v1:sha256:11d23a81399c6bab8c6dc0abfa387dfe2d35b6a12d7b6f3a0a36638d0e831531:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMzNmM5ZjFhM2QxNTY5MmFjZmRiMmFlMWFhZjUyYTJmMTQwMDRmNDBiNWIwNzQxYmY4YjU4YTU0MWIxMmU0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWNlOGI4MmUzODA1YTNhMTgwMDNmMmZlNDVkNGY1ZGJiNDdhZmRlOGMyZGRmNTU5Y2VkMmI0ZmRjNGY0MDYzOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzNjMDFiYTliYTdmNzk2NjJmZWRiZjQ3OTg0ZDRlNWQ4OTA5YTNjMmU0YTA0Yjk1Y2IyNmQyMjA0OTY3MDE5MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGRjYWMzMTFkYmUzMmE0OWVkYzA5Zjk5YTNlNGU4NmYxMTgzZDQwODgzY2VmYjQxMDJhM2EwNDBlYmQxNjkxNyJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L26-L35",
+          "version": "repo-lines-v1:sha256:b7a04cc022b06075a226f15c0edc39a5bafacbb2715d804b44ba5d340bcb7ed1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ODdjNjA0MGU5OWZhN2JlYzEzMTExNmQ0MjNiMWM2N2JjNWVkNjYwMmZlMGUxMjg1NDE5MjI4MTc1ZTA3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YTY3YmI4NjljOWZiYTkwMmZiNjRmOTcyOTk0NmU2NjRiNjY1YzEyNjc4OTI4OGFlYTMzMDJmM2ViOWUxOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1ZTBlYWM5ZjM2YzcyNWFmNTY1ZjM1NWM5NzdiNGRhZjk0OWU2MTEwMmM2MGQzYmI0ODgwYTU4YTVmNDI1MDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMTlhZmMxZDUzZmY2NmMzMzliYWRiM2ZlYmM5MjEwMDA1ZGQwN2E4OGNhMjNlYTI2NWMxOTQ5OGVkYmFlOWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_76368853a5434715b7467a4244b65d65",
+      "statement": "The release publish job runs only after every matrix job succeeds, needs contents: write, downloads all desktop-artifacts-* uploads into one flat directory, and creates or updates a non-draft, non-prerelease GitHub Release with generated notes under a tag taken from github.ref or the tag_name dispatch input (default draft-release).",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release-desktop.yml#L88-L126",
+          "version": "repo-lines-v1:sha256:7b1d9762bc0cd3bf058a3926d40bd8f12b65426fa8baac21ccf2f95bea39fdcd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMTYzZmRhM2U1MWZkZTU1YTVmOTdlNDU0NzA2YmRkZjY4ZjJkNDExOGFiMDQyMWMwZWQzMDJlNTJhNmI2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4Njg1MmY3MmU1MTQzZDM1OWE1ODM1YzQyNmM0OTViNzM5NTYzMzE4ZTJjNGRhZDFlYmRiYTIzMzA5NTIwMTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1MDkxZTgyZWFkOWNhNjA5NTUwOTI1YzhkNjViMjczM2UzODc5NGFjZDU0OGMyNzVlN2ZjMjY2YjdlYmJhNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f6bc812a1bb48a8a7c1c023a2a063cd",
+      "statement": "The nightly OpenWiki workflow runs on a 0 16 * * * schedule and manual dispatch with contents/pull-requests write permission, checks out full history so the update can diff HEAD against the last documented commit, installs pinned openwiki@0.9.0 with mermaid and jsdom, runs openwiki code --update --print against a DeepSeek openai-compatible endpoint with a 32768 output-token cap, deletes openwiki/.run.json, opens or updates the openwiki/update branch PR staging openwiki, AGENTS.md, the workflow file and CLAUDE.md when present, and re-raises a failed run with exit 1 after the PR step.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L1-L98",
+          "version": "repo-lines-v1:sha256:494a8b67a0dd136c594618845276ab6d1b24f6de52bb931171629cd1ffb09695:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2MDI3ODdhZjZkY2MwODM0ZGUxMjFjYmIxY2I5NWY5NDU5YjcyMWVhYjAzNDlmMTA1MDFiOTk2YzFjNzdmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NzE4ZjA2N2I1ZTVjMWYwOTkxYTZlNzQ3MjZmZTJhMjNkMjY0MzQ1ZTA4ZTRlYWQwNGZhZjczYzI3ZWQ0NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

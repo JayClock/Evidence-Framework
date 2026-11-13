@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a7e11ba91d52a3cee96822cf251dc4f7aab628025ee32770aca5d459642873d3",
+  "pageVersion": "sha256:5346edc5adca9c86711ae2c06b7eac7ac99166c8cad7996a06f433d6e919836e",
   "claims": [
     {
       "id": "claim_a007c15b40764a179f770eb7c0348624",
       "statement": "A full sensor run reads the model document, validation suite and raw bytes once, derives a sha256 model digest, and keeps a rereadDigest closure so the FM check can detect an input change during the check; a *.evidence.json bundle path is explicitly refused because native sensors read a directory.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L37-L46",
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L39-L48",
           "version": "repo-lines-v1:sha256:d4afdb24880789f7b8ee588d2da1b3e0f67d75bcfc7e3e8514f2975d3c9fc8a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMTM5NDc5NTM1ZTA5YzUxZGNmYzAyMmJhYWU2Njc3ZGNjNTgwYTk1NzM0NjMwNjUwYjg2ZmIyNjMwNWUwOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhNGUyZmNlODJkZWMwNjc0NzA0NTVjMjBhZDQ4ZWQ3MzdjNzc3ODFkZDZjNjI5MzI5ZDczZjNjZjgyMWFmZmEifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L6-L55",
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L8-L57",
           "version": "repo-lines-v1:sha256:84e1db65bb1c69a16f748036ff965364e0fdfcab84568f297e30791d11f77e46:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2NzA1MjZkNjU5YzJjYzhjZDU1YmZhMWY2ZTdlMjc0M2I4YzYyYzYyMzdiMzMwOThhOGY3ODZhZjhhMjE3Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3NTQwNWMzZGU5ZWY1YmU3ZmMxOTkyMTNhNmQ0YzliMGFjMTE3OGE5NTg0NTQyYjU4Njc4MTQ3MGViM2JlNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwYTFjMDU3ZjU5OWU1Zjg1MDlmZWYyYWEyZWMyNWU2ZmQ5ZTU0ZDQ2Zjg3YTAzMDQ2YWFjYzY1ZDFlZDA2MDYifQ"
         }
       ]
@@ -21,8 +21,8 @@
       "statement": "FM check errors become blocking FM_INCONSISTENT findings, scope gaps become warning FM_SCOPE_GAP findings, an input change during the check becomes warning FM_INPUT_CHANGED, and a scope with no executed scenario produces an informational FM_NO_SCENARIO.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L123-L175",
-          "version": "repo-lines-v1:sha256:c675c3a72a2daf16830ba487ef758230fd66333c622e74c2512ef5550b00edf9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0NjFiN2EzZDNmZjFkY2U1NGNjN2M0Yzk0MTFiNDc5ZmE4NzUyZWI5ZjJjNWIzNjBmMDdlNTYxMWIxMjNhODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2Nzg4ODY5ODkxZWU1M2Q1ZmUyM2I2MjhkYjYzMDZkNGQ5OWFjMjQzZDk1YjFlMGEwNDg4NWU0OTQxYzE5NzMifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L195-L258",
+          "version": "repo-lines-v1:sha256:40c6d199eb14995b192e9c44e9c41a37ddbc0b7803c757878389bf4830a3e78f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhZWMxNTA2MTUwN2FhZTgxZjE5ZTMyYTc1YjBjMTU2NWY5ODhlYmQ0YmE5YTQwODY2Mjg5ZmYzMDMyMWI4YjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0MGIyMDJkZjM1ODAyMDJmYzUxZDA3ZDdhOGU1MDQ5OTMzOGQyNDM1ZjljYWNjMDVmOWQ4MzcyOGI3OThhODUifQ"
         }
       ]
     },
@@ -31,130 +31,302 @@
       "statement": "Key data items that still owe a provider decision become warning KEY_DATA_DECISION_OWED findings and increment decisionOwedCount, while a fully resolved ledger produces one informational KEY_DATA_RESOLVED finding; owed decisions are warnings rather than static errors but still keep the stage gate closed.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L177-L225",
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L253-L301",
           "version": "repo-lines-v1:sha256:b606daa77ee3c3f97ceeb526cc221fbb8c1fd661dc1651914fec378d8e0cb93c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NWQ0ZTRhOGFmYmExMDZiZDc1ODY4ODA1NTA5MjU4MzdjMmE4NTA5NTUxMjU3OGFiZDNkZmM1MTQwNDM5MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
         }
       ]
     },
     {
       "id": "claim_673e8ff985fc4760a0ca4aaf7265d558",
-      "statement": "Sensor issues are de-duplicated by issueId, severities are recounted from the unique list, passed is true exactly when blockCount is zero, and a sensor that could not run contributes a blocking SENSOR_UNAVAILABLE finding.",
+      "statement": "Sensor issues are de-duplicated by issueId, severities are recounted from the unique list, passed and canPreviewApi are true exactly when blockCount is zero, and a sensor that could not run contributes a blocking SENSOR_UNAVAILABLE finding.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L237-L276",
-          "version": "repo-lines-v1:sha256:8f5f80dd9ed54e0d2e71991ea0f77d08382ce6ec8b057353386397dd374319d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YmRmNzBhZGFjZjQ4NTBiMGU2YmFjODBjZjkwNzY1OGQ2YjYxYzA2YTU2MmUxN2FjNDdiYzVkNzRlMGUyNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmNDg5MTBlZGI5NDU5OGNmN2VhN2Y5ODNhZjRjZGY4MDQwZjhlYWRjNmEyMjM0NTRhMTJjOTRkMjAzYWNmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWY4ZGVmYzUzMzk4MGNkYzFmN2Y5YjEzZGU3NTgyZTU0NGY1MmE4OTNlZTlkMzZlMDZhNjRlNTJmZGMzODQifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L318-L357",
+          "version": "repo-lines-v1:sha256:f2f2b98c12765eb96a31148f701c531871f6b26c332c9d1555c27fca20c5477c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NTNjNzc3MmYwZTAzYmZjMTRhNmExMTJmZDkyMDdiYWU4MzExNzFmNTI5MjJmNjk3ZGY4YTNhZjFmNzMxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMTJmNWFkZTIyZGRjZTA4MWY1MDkyYTFkYzA3MjUyNGEwOGY3ZjNkNWViNDQ1YTBhMDI5YmU0YTUyMDIxNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzRjMDE0NmEyYWYzMTY5Y2UxNWE4YzljNTIzMmFlMDYzMTFlMzEyZmY3ODcyYzZhNDNkYWI5YTliM2M2MjEifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L303-L314",
-          "version": "repo-lines-v1:sha256:03d3a85c8b4ea6f62fa8e3246015a028a9394c165a71f27d376febc22185d496:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNTE1MjRmNWU4YTQwOWQ0ZTJlMDE4YjkzMmNkZGY2ZTg0NGJhODI3MmM3MzVkMzUzMGU4MmZmZGQyNmYyNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0MDE5MGEzMDU4ZDliMWU3NmIzYzU1MzdlNzI3YjViYzM2ZGIwNTU0Yjg3MWU1MGRiYjhkYzk1Yjg2OTgyNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4NWU0OGI1ZTBhM2YyNDkwMTI5YmJkYTJmODdlYTU4MjY1NzA4YTYyMjA1MWI3NzcwODk1MzYwNWE4MDU5YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxM2Y2MDBmNGIzMmI3ZWY4ZWFjZDc3MGNjMzU2MGY4MTY3YTA5Nzg3Yzg1NGMwZTgxMWMxNTRkMGYwYzI0NGIifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L380-L401",
+          "version": "repo-lines-v1:sha256:ec8816270a86535a1c6fd71d43754bd93afa6868f0facf7a53aba844ff2e0e61:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyZWJhZGZjZWNlNjI2MDU1NGU4ZjNlY2NkNGQwMmE1MTQ1YzY4OTcyYzQzNDBiYWQ4MDZiMmY5YjZiYzYxZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiYWJmMjM2MjU0Yzk3NTg2MTUyYWJkZGM1MGZkMDY4YTg1M2YzZjNmN2FlNzY5Y2Q1YzA1ZmE3YWI3NzY0ZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3MzcwMTIyOGIxZDY3MWYwNDNlMzM5NzE0NWEyMGFjZWI2ZGNmYTE4NDIzZTZjM2VmZTBmNjdmNGYyYmQ5ODMifQ"
         }
       ]
     },
     {
       "id": "claim_78f0f5453cd946b68100ef3e1fcefe7b",
-      "statement": "isStageGateReady requires a supplied stageGate whose passed flag is true in addition to zero owed key data decisions and zero blocking findings; because the only production buildSensorReport call does not supply a gate summary, a plain runFullSensors result always reports isStageGateReady false.",
+      "statement": "isStageGateReady requires a supplied stageGate whose passed flag is true, zero owed key data decisions and zero blocking findings, plus no uncovered entities and no breaking changes when an API summary is present; because neither production buildSensorReport caller (runNativeSensors and the review-page preview) supplies a gate summary, a plain run always reports isStageGateReady false and gate readiness must be read from the stage gate's own summary.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L94-L98",
-          "version": "repo-lines-v1:sha256:391f5c1d5c7178edf721856b3109d4f85e1e002de7b23a7c3d8c6b560e4e60d1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTFmNzhjNGI4MzU4ZDFjNTI4ZTQ4NGY0MWU5NWJiYWM2OWQwNGNlZjhlYjBmYTM2NjgyYzk0ZDA2NWNlMTNiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg0NDY4MzdkZmE0YTIxM2MzZmM1NDVjOTIxNGMxZDIxMzI4NTI1YmZjMjRkMmJjYTNmNWI0YjBmOGIxYTRhYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDE4YTZlOTM2ODE2ZjEyMmNjM2IwNzU5ODBjYjNlYjc5MTMwZDkxYTgzOGJiMDBkNTkxMDg1ZmUzN2UzNjI1MCJ9"
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L55-L78",
+          "version": "repo-lines-v1:sha256:fdada2779ad9d00b9d43b534e2b9f2963f442633856db1d2d77734c34a8d5d95:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlNDhhOWIzNTkxYThhY2NlMDg4NGQwZTE3NDhlYjY0OWZlMjYwZDRhNDdjNDY2NzlhYjA3OWQzNWE0MzZiYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZWNjNGZkNWI1OTU4NWY3MDY4YjY0M2I5MGMwMWY2NjM5MDk3Njg1N2Q0MWE1NDM5ZTJkODk4MTdhODJkMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmOTRjOWRkNjVkOTYwNmNiMDczNTE3NGQ0ZGJlNWFlYjYxYjViYjZiM2JmZjYwZjNiMzZhOTU4NWMyMDI3MWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MzM5ZWI1YWI5NTZjYjYwZDBlMmEwNjJmNDg3M2YxOTE5NDk2YWFhMDNkYTA4MzU4OGMyYTJlMTViNDBiMWYifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L242-L276",
-          "version": "repo-lines-v1:sha256:09ed461749e3fc2b9313dba2ab1ae26c98259f4c6a98bc4f58bd6a59225f08ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1ZGE4ZDViMzI0MGYzNThiYTNhYjNlYmM4MzQyNDI2NGIyOTYzZTc3OTliZWY2YzAyZTJlYmM0Y2ZkODI5YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NDg5OTAxYzc3ZDYxMTEzMzFmOTc4ZDE0MWM5OGE3MDQyYjQ1MWQyOWI0N2JlODI4MTQyNWM1ODllM2M1OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWY4ZGVmYzUzMzk4MGNkYzFmN2Y5YjEzZGU3NTgyZTU0NGY1MmE4OTNlZTlkMzZlMDZhNjRlNTJmZGMzODQifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L80-L100",
+          "version": "repo-lines-v1:sha256:50160f3b202b947af3aca49aa754f6b6a991412b2ea56681f44e62ccc5beec5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2MzFjZThmMjhhZTJkZWQ3NjBlZTk2Y2E5Y2YyM2NlOGIxYjI4MGYwYTkzOWQ5NWUzNjI3YTY0MTRjMjIxZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyNzEyYzMyOWI0NTA3OTFiOGZhYmFkYTVkYTNiZjJhZWU5NjNjODNkYjBlZWUyNTQ2NWEwOTdkYjAzMmY0OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5Y2M1YWFjOWQ4OGE1NDAyMWM1ZjJlY2E1M2FiNjdhZGRiZDEzZTE0N2I0NzAzYWMzNTZiODM4NDgxMWJjMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2Y2E0YjQ1NTlhYTk3MDc1MjQ5NTExMGI0NzZjMjFkYjYxOTYyYTg3Yzk4MTg4MmIwOTY3YjRhZDk5MzQ0YjEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L344-L356",
+          "version": "repo-lines-v1:sha256:11928746b49f81b6b86d1d904e2b847753f38291abbf000dab6a37a17a0063ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ZDc0M2NiMzNlNTZiMjc3OTlhYzNkNjI5MmFlM2Q3MjIzYjYyMTY0MGU2NmVhYmM0Nzg1OWM5YjExMjczNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmOWI3ZmQwMTQ4YzlhNjU0NGU0YjhmMTNhODc2MDQxMzQ5OWNkNDQyNmFiNGU2NTY1ODE3NGUzYWJmZGE3NzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhZWZmYWNkYjMxOTQxOTZkMTQ2ZDNjOGU5MmJlMzdmZGE2NWY0ZGE2ZThlMGM1YzE4MDI0NGM2MmEzN2U5MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAifQ"
         }
       ]
     },
     {
       "id": "claim_1f02922e42d44d4fbb58af076f6174bb",
-      "statement": "The stage gate refuses an empty scope list and requires checkVersion 5, consistent true, complete true, valid true, inputChanged false, no errors, no gaps, and coverage of every requested scope, then requires an exact recorded closure fact '范围结束确认：<scope>' or '全局追责结束确认：<scope>' for each scope.",
+      "statement": "The stage gate refuses an empty scope list and requires checkVersion 5, consistent true, complete true, valid true, inputChanged false, no errors, no gaps, and coverage of every requested scope, checking each condition separately with no early return so every failing reason is reported at once.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L155-L164",
-          "version": "repo-lines-v1:sha256:3265f852f7fb33033e68f24335776a9357b4415ea4ad4d713b1f1de81fb7e8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1NDk2OGIwOGNlNDYxMjgwMzBjOGRlYTI4M2M2ZTZjZTMzNTEzMjM2MDRmZjg5NmY2NzYwZmY3MGMwMWQyYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNTAxM2VkZjUzNWNkOGM2M2VhODJhMjg2MWI5ZmQ5ZDNhMWQ2YzQ1N2NhY2JkMmQ5ZWVlNTI5ZDZlY2UyYmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YmEzODJjNWYyMzQ0OGJiODM0NTM2MmI1ODAzMTI1NjIxZGM3ZWVjZmJlYzIwMzZkMDlkNzQyOThlYWUyZTgifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L106-L124",
+          "version": "repo-lines-v1:sha256:ff874541a3e9b786ca45a1873f24524f690accbd4ada498230894316282d7533:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZmEzYzY5MmRkZGY3OWQ3ZTYxOTU5MzY2ZDZmNjViYTA5YTAwMzQwZTRlMTZkMDVhNmI1MDYwOTFjZmRiNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNDQ3ZDgwN2ZlOTU4ZTM3YTI5MDA4MTg0N2I4NGE4ZTJkY2I2YmY2ZmFiODc4NDM4MTEwOWJhODVjOGU4YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODM3YWZiOTAxNzNlNjBjNzA2MGM4ODc3YzIwOWJjNzQ0MzM2ZWE5ZTFmYWFlZTQwOGY1NTM3YTAyNTg1OTEifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L16-L16",
-          "version": "repo-lines-v1:sha256:0e0ec0915439ff6385bbda7a163c4f48ee7c1599b4de701df66668ffe8f801a3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUwZWMwOTE1NDM5ZmY2Mzg1YmJkYTdhMTYzYzRmNDhlZTdjMTU5OWI0ZGU3MDFkZjY2NjY4ZmZlOGY4MDFhMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUwZWMwOTE1NDM5ZmY2Mzg1YmJkYTdhMTYzYzRmNDhlZTdjMTU5OWI0ZGU3MDFkZjY2NjY4ZmZlOGY4MDFhMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTMxZTI5NTVkM2Y4YzYzYzgzYmRiODQxZDg1MzIzYmRlZjdhNmY4NDUyMDg1MGRhY2Q4NDIxNzRmMmJlYTgwZSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L39-L115",
-          "version": "repo-lines-v1:sha256:19c21500b53f897b216437ff8409c1b0be8296660c208a219aba19aa02889b60:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NjgyNWNlMzAzZTEzOTJiNjIyNjBiYjk0YmQ5MGJhMTM4MmU3YTllZDk2NjhlMzk4OTdlODZlYjlmYzdiZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYjhmNDcxNDE5NjNlNGU4NzRmOTBlYTVlM2QzNzJmMGU5ZWY0NGYzZTYwM2I5OThmNjFhNzJiYWEzNDg5NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlOThiMjBmNzgwZDE5MDlkOGFjY2ViY2QzOTdhY2NjM2IzZDQ2NTJiZWYwMzkwZmFkMWM2Y2FiY2U4N2RlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2ZGIwZGQ3Zjg1M2QwZDZmNTFmMDBhZWFjOTJmZDFmMTY3MjcwNzAyZjY0YWUxMGIzNjJlN2QwOTc4OTQ1NzYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_93e7a6ed5d224e249edc229485f60dc5",
-      "statement": "The gate explicitly reports as a limitation that downstream authorization and business approval remain human statements: it proves only scope completeness and a recorded closure.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L180-L212",
-          "version": "repo-lines-v1:sha256:41787aa99fad4092ea9055a9ea7b7830e6586b93bae2183b284ba71059526fd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYzliN2M0OTMyMWZjZDUyNDQ0MzQxZjJhNWE4OWE0ZDRjYWZjNDY4MTY0NjVmN2IxZGY5MTA2YjFmNGUxYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODM3YWZiOTAxNzNlNjBjNzA2MGM4ODc3YzIwOWJjNzQ0MzM2ZWE5ZTFmYWFlZTQwOGY1NTM3YTAyNTg1OTEifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L36-L103",
+          "version": "repo-lines-v1:sha256:d53cc0114e03edc6be7cf3b71f8bc57bf33c08fad356c46dedcc5e9069d95925:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NjgyNWNlMzAzZTEzOTJiNjIyNjBiYjk0YmQ5MGJhMTM4MmU3YTllZDk2NjhlMzk4OTdlODZlYjlmYzdiZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlOThiMjBmNzgwZDE5MDlkOGFjY2ViY2QzOTdhY2NjM2IzZDQ2NTJiZWYwMzkwZmFkMWM2Y2FiY2U4N2RlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkZmZhYzEwYTk5ZmNiMDU0ZjYzMzg4Y2UyZTkyOTYwMmRlZjM2MGQ0MzliNThkYjkyOTc2ZDM5YzFiZjVjOTkifQ"
         }
       ]
     },
     {
       "id": "claim_745815363c844149841ea1dae676c5a6",
-      "statement": "The gate consumes a saved FM report and saved trace rather than re-deriving the model, but the sensors engine will run one fresh full sensor pass when the caller omits the report and closes the gate with an explicit error if no FM report can be produced.",
+      "statement": "The gate consumes a saved FM check report and saved evidence rather than re-deriving the model, but the sensors engine runs one fresh full sensor pass when the caller omits the report; an absent or non-object report is refused as not a JSON object, and an unreadable model root makes the gate promise reject instead of returning a verdict.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L5-L12",
-          "version": "repo-lines-v1:sha256:30c43055beff948ff56ddbc4a24f2190ac4c5f5c4cecc4067fc103b1db19b5a8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2JkNmM0MDhhYjA4NTk0YTY0NTUwODkxMTA0MjJmZmIyYzBmOGE3NzY1MjcxYjU0ZDBmNTdlMDBhYWE2MGM0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiJ9"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L1-L13",
+          "version": "repo-lines-v1:sha256:a0306044e573ecde3f36eef4d20f10099f13e0640b5fb214cfd9cc5cba1c8df2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkZmYyNjMxN2M4MTNkMjZmMWU3YzkwNzEwYTU5OWIxMDlkNzY0ZDU4MDczY2MzMDVlODIyZWYyMTJlMWVlNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNzAzM2I2ZTQ2ODMzMDBlYjI4OTk5NzBlMGUzYzA3OGFlOGM5ZjQ4NDA5NDZiYzJjNTQ1NDIzNjg0NmNmYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzMWUyOTU1ZDNmOGM2M2M4M2JkYjg0MWQ4NTMyM2JkZWY3YTZmODQ1MjA4NTBkYWNkODQyMTc0ZjJiZWE4MGUifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L78-L117",
-          "version": "repo-lines-v1:sha256:34d509282b0c9a4c00945dc8ed5eecba96e08244292db76183cda4857abc8d85:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5NTllNmVmYzk1MjE0YzZkYTcyM2JjMzVlMjQzNGU4ZDhkNWQ4NGQyZmRjOWEyOWY0N2ZiM2Q5MzgxZDFiN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0ZGE3MTg5OWJiMWJhZjFiMThiMGU2NzFhMTBhYzgwYTkzMThjYWE5NGQ0ZTczZWQ1MTEzYjEzNDA0MzE0YWMifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_418efd3eece74b0a83f1b7bcb2ff2d96",
-      "statement": "The dependency frontier reads only the newest trace record, lists a question as open unless that same round binds its target attribute, reports cited evidence missing from the model, and treats a round as closed only when its confirmed facts contain the exact closure marker for that round's contextRef.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/discovery/frontierTracker.ts#L70-L72",
-          "version": "repo-lines-v1:sha256:a5daa45a7a797937c60079a78e2efc102dc2d474ed760164eb87e72323581666:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFhMTYwYTY4NmFlMjQ1Zjk2OTA1MTQ2YjcxOTAyNzllODc0M2QxYTFjMDljMjM5ZDBmYmFmOGQ2MjNhZmE5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDc1NDc1NjdjZmFkMzljNGUzZmM4ODQ4OWRiZTg0OTNlYTIxYWIxOTQ1MWQxZjljMDNhMmVmNTNhYjMyZDM5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjMzZDM2MWUzZTk3OThiYzk4ZTM2M2YwY2VlZjdhYzhlNjY0ZTIwY2UxMTliNWYzZjE1YTIyNzk0OTkwNzdlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGIyMGZhZWZjM2FjZTU4NjFmNTAyMGFmOTY0ZjNjNTgxYjNkZGMxODlmMjYyMDY3MTE0MjFjNzEzMzY5ODhjNyJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/discovery/frontierTracker.ts#L74-L159",
-          "version": "repo-lines-v1:sha256:bc198d52935007d48abeb76481fbed8b764235400ce80adb4be8f51b48a48ab6:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkMDIxZjU1ZGFlM2YxZTJjMTVjMDU0MGJiYjBkYzY3NzRiOTVhZTgyNjIzMTdhZTJmMmY5YWE0NjRiNWE1MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_b7a093d59144492ab6d4343de6fdd076",
-      "statement": "Verdict comparison returns comparable false when either side is missing instead of treating absence as an empty verdict, compares findings by issueId so a reworded message counts as new, and derives gateImproved or gateRegressed from the stored isStageGateReady snapshots.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.ts#L117-L155",
-          "version": "repo-lines-v1:sha256:50b6b136e09aa67bc3b6185a6ab7f13269073c595c8bade29090c60002c967a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.ts#L69-L115",
-          "version": "repo-lines-v1:sha256:3d94e98ecbf9b97d491d90813033ee8a25bf92f16001c6845878d2e0d46e8590:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhZDQxMDJhM2ZiZjdjZjU4Y2Q5NmE5MzA5MGNmZTE0ZjgwMzBmMjE3ZDgwZGQyZWRmYTkyYjViNzIxMWVlMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMTc0NjVkODUxOTdkMDNjOTMxNzAxM2I4NTI4ODRhNjk0ZDIxMmRhZTMyYzFjMzc4NGNhMGFkYTJhNjkzYWYifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L51-L99",
+          "version": "repo-lines-v1:sha256:f1caf5d172d816bdfc9da963077b8c90f1174c27216e9c447e3952c9d24c495d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZDJhOGUzYzhlMDI3MDQ1Mjg1NWIzNTE2NzAwNjk3YjBkYzJjMzUxN2MzMzliOTBkNDA2MTc1YWZiZmJiNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1YjQ3ZTljYzkwOTZhODRiZWE0ODg4MWU2ZjU4N2NkNjc1MDBlMGMzOTU1YmIwMTg2Y2Y1YjhlMGIxMjM1MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAifQ"
         }
       ]
     },
     {
       "id": "claim_791cb7e175a64caba8b0080223958a1e",
-      "statement": "Tests pin the severity mapping and gated-shut ledger case, gate opening only with a recorded closure, refusal of unmodeled trace references, and verdict comparison that reports not-comparable, fixed-versus-introduced and gate movement.",
+      "statement": "Tests pin the severity mapping including advisory and drift folds, the consistent-but-gated-shut ledger case, API breaking-change severity by draft versus release mode with coverage gaps limited to evidence entities, gate refusal of uncovered scopes and non-version-5 reports, and the desktop and MCP consumers of the same report.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/diff/verdictDiff.spec.ts#L33-L100",
-          "version": "repo-lines-v1:sha256:d4dfd7cd280c6386c01bfacdbbbb7bcd22c421b59cabd4e17455af6ca7482b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NTU4MTc1YzZmODQxY2U3MjlkMTM1MDIyMjc3ZjE3Y2MxMTE0YThhMjI1OGVmYTQxMDQ4NTZhNmI0MDE5MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5OWI1YzFlN2NkODE2MGZhMjU5YzI4MmY5MWUzYTRjNTExM2RhOTNlNDc1OTNhNzQwYTdhNTcyNDE2ZjY1NWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NzllZDI4ODY3MTEwMGNhNTg3MDk0ZWRjOWIwNWM4ODY1OGI5Y2JlNzAyYTIyOTg2MDJjYzY5MDNkNTE3NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YTU5MjIyMWI5MzE0NjAyMzM5YThiMmIxMzJiYmIyMWE5NDI2NzRlZjgyNmIyOTZlMzg0Y2U5NWZmMmVhNjAifQ"
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.spec.ts#L27-L108",
+          "version": "repo-lines-v1:sha256:4e16caca025dd9559b21cb0442af0147fefa028e43aa1bc8f1446f8b8e13cbad:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3NmY0NDUwZGM3MDQ2ZmEzMmQwMjFkZDc4ODU1NjY1OGU0NjUyZGMzNjg4MzRkMGRhYzVhOTk0OWJhZDI3NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzODNhYzE5OThhZDg4Mjg4NDVjNzBlZGZmOWQyNWZjYzc4OTU3ZjU1MzBhNzk4MzhkNTE4NGExZTE3MGZlNDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.spec.ts#L201-L268",
-          "version": "repo-lines-v1:sha256:7bb5b54d8cd2b497f870d545728b50870d8d44336ec8610baeedb79c3e868174:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4NDU1OTBmYzk1NTRkYzVlMGY1ODdmZTlhOTcwYjY4Mzc1ZjI3ZGQ0MjYwMDI0NzlkZTAxNzVkMzQ2OGIxZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyMzlmNTYyNDEyNjE1ODU5YzQ4MzhlNmE2OTgzMmU5N2FjYWEzZTg2YTAxZjgxZDU2M2RhNjUzZDNkZmVmM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzMWZlNjk5NWU1NDNmZDMxNmY2MTNiZjc5N2JkNTAzZjY5NGVkYmYwYjE2OGJjMjNjMTAxZDMyYjcyYmU3YmYifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.spec.ts#L21-L134",
+          "version": "repo-lines-v1:sha256:d077361dc50046ac0569b5b37dd494b77239918e3d11e9ece7fe4df08df0b4ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MjQxYmRiNDc2NThjYzBhY2ZiMjQyYmQwY2EwY2YyYzk2YTAzZTk0YWIxZDllZWQxYmZhM2I0YzZmYjA3MTkyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0MzczZDJjNGU2NjJmOWU1N2E1NGRmYThlMzAwMTFlMzAzOWJlNTY5MTdmMjAzYzhhMWM2MjM1MWM5M2MwMGJjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L98-L146",
-          "version": "repo-lines-v1:sha256:ac86e6f907531a04174fd0ec614d83817e8b33b19b2a8b380c830bdf980bf508:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyYTUxZDQ1YjM4NDk2YWZlZDgzNTY1NTg3YWQxMGE5ZjI1MGZhNGRlYTcyN2JjNDkwYTZlNDc2YjAzMTI2MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNmE1NTlmYmQ4MGRkMjljNDFjOTdmNDRhYWFjYWQzMDc2NjAwZWE1ZjNjYmJjYjI3YTNkNDdiMTgzMWYwZmUifQ"
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.spec.ts#L109-L193",
+          "version": "repo-lines-v1:sha256:97be5c10175a20ec82f0907e47521417d4bdb57404f5e7dcad072d982f05771d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYzVjNjg0MzUzYTY2ZDNhZDBkMThhYmZmNjVjZWI4NmIwODMzN2U1YzIzMWIyNGM1NTEzZGFkZDdmYmFiMDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L10-L230",
+          "version": "repo-lines-v1:sha256:5c0620f3a8c84a7579af47e49d01aea3142e7a747c66b1eb6dbe40961fce44e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4YWU3Zjk4NjhhN2ZhNjIxOGE2NmFjZjJkNzIzYzQzOTc4MDBkMzI1YmQzMmI2ZTYwYzRmYTkwMTdmOTM4NTg2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNzFmZDZmOGVlMzQzNTI5YjY5NTIzM2UzYjM5Yzg3M2Q5OWRmYzBlNzNkYzY4NTMxYjNkN2NlMGJhYzQ2YjczIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5YjUxNGNlZTViMjcyNmVmNGUyZDVkYzVkNmNmM2M5MzdmZGQ5NDRlZjMxYWY0NzNmYmNmODI4MTExZjkyYThiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d1ba8525c75942b09df558a91640b553",
+      "statement": "loadModelSources reads the document, the validation suite and the raw bytes in one pass, derives a sha256 digest and exposes a rereadDigest closure for the stale-input check, refuses a bundle path with ModelSourceError, while modelSourcesFromDocument hashes a caller-supplied document and returns that same digest from rereadDigest so an unsaved-document run can never report inputChanged.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L42-L86",
+          "version": "repo-lines-v1:sha256:efe24dd60887bec161629dbf106e539f31d741a95833c3f7bc8f2753803e0a7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjM2U2N2JiODZlZTg0OWU3M2UxOTYwMTkxNzQ5NTcxMDY2MjhkMmE5MTVjZmMyOWEzYTJhMjg2M2ZiNGRkOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2MjU5YWFkNTU2ZWI5M2RhZGQ5ZDVmN2U3M2ZiMDAwMjViYTE5Zjg2NjRhNGZmZmQ5ZDc1Mjg4NTkxOWZjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0Y2EwYTBhODA3NWE2MTY0OTU0MjZlY2MyMzA5MDE0M2MyNWFjMzI5ODA5OWU4N2EyNGYzNDhjNTM0YmYyMzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58a813f9a58846e1a149ef8c11e4d54b",
+      "statement": "runNativeFmCheck computes the traceability document once and returns it beside the FM report so the key data audit reads the same lineage, and runNativeSensors composes the pass as FM check, key data audit, base report, then one API fold through finalizeSensorReport.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/modelSources.ts#L103-L132",
+          "version": "repo-lines-v1:sha256:68e7fe98d58edaf7b6a12baa93e2941ddf14595067bc5bf45e34bf6431b9ed82:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1MDg5YjllMTU4M2EzMDdjNzU0NzIzYWE0NzJlN2FiODhiZmI2OGI5ZjEwMTI5MTNiNTQwOGFlZjMxMGIwODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyZTZkNTE4YjcwMjUxNDdkMzg3ZGRlNTUxZTJkOTI4NWY0ZjNiYjllNWUxZWFlN2U3ZTRiNmZhMDFjZjAwNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L62-L100",
+          "version": "repo-lines-v1:sha256:56d50c2a91a1a7c35ce4fb2115c4cac57823d54813abb7d33a2942b1111c1b9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyYjk3OTk4YmJiNDI1YTEyZDU3MTJlOTA3MzI2ZTA4OTk0OTJlYjU2MjRhZDNiZmU0Y2JiNWQ1NjA2MjcyMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyNzEyYzMyOWI0NTA3OTFiOGZhYmFkYTVkYTNiZjJhZWU5NjNjODNkYjBlZWUyNTQ2NWEwOTdkYjAzMmY0OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMWFlYzVhMWMzMzcyZmNiY2VjZjEyN2QwYWJmZWYzN2I2MmZkNTg0M2EzMjczNjczN2UwN2I1MTlkMzBmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2Y2E0YjQ1NTlhYTk3MDc1MjQ5NTExMGI0NzZjMjFkYjYxOTYyYTg3Yzk4MTg4MmIwOTY3YjRhZDk5MzQ0YjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a9a0c98d3554137bf8d7345bd3c6395",
+      "statement": "A failing API analysis is isolated: it becomes a blocking SENSOR_UNAVAILABLE finding plus an unavailableSensors entry for audit_api while the FM check and key data findings stay intact in the returned report.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.spec.ts#L121-L134",
+          "version": "repo-lines-v1:sha256:9de64598db7cce16a30d4cf60f91dc2c064cf401b969a6c80c3a0922b4e969b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNWY3OGQzOWQ1OTM2YmYzZmI5Njc5NWNiMTlhZDhiZTBmMzRiNTYzM2VjOWY4ZWU3NTc4ZmFjODc5NDkzMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxZmE3NzNhMWU1ZWY1NDc0MjNmNzk2ZTgxZDkyZDE4OGM3NmE0N2UwYWM3Yzg2NmNiOWJjNzk5NTUxMTEwMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeSensors.ts#L86-L114",
+          "version": "repo-lines-v1:sha256:a6ca86644a9f2d0afc6b1d595a7d42a026534420f7722afa964259e741f066e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmY2NmM2EwYjUxYjlhNzg3YzgyZTU4YWIwMzdkNDViOTZiZTNlMGEzYzIwYTcxNmJkYmI4ZTAxMjU5ZDE3YzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NDE5MTE5Nzk5YTUwNDVmOWY5OTkxY2YxZjkxMGE0OGZjYmNlNDU4MmRlMDE3NmM4MzJhNjRhYmM3ZmYzNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NThlYzA1MjIwZTE0NTU5MjgwYWRiOTU4NWM1NWQxZGYyZWFkMGU2MTAyZjBhMWM2Y2Y0YTM4M2ZkY2YzMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3ODY4YjAyY2JkZmI0MWY2MjBhNmUzOGI1OTcwNTc3YmQ3Mzc0ZmEwZDQxMWRhMmU5NDdkMGU1M2E5YTFhZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7415c37c4ca8446a8478ea00c1eef645",
+      "statement": "The native API sensor derives expected coverage from entities whose category is evidence, so roles and participants are not treated as CRUD resources; each uncovered evidence entity yields a warning API_COVERAGE_GAP pointing at that entity, coverageRatio is 1 when there are no evidence entities, and the summary also carries totalRoutes, sorted uncoveredEntities, breakingChangeCount, hasBaseline and the snapshot's modelDigest.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.ts#L34-L51",
+          "version": "repo-lines-v1:sha256:00d94eabea1253d3cc0cac126a784181924453b3bbbccd37a2671fc0e2b4cb69:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2YjUwM2I0OThmZGQxNzEwMDBmMTlkY2Q2NmUyMGQyMjQ0NDM5MTYyNzc4YTU3ZGFmY2Y0MmNlM2ZkYzNjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOTgzNTQ5OWU1YmE5MWY4NzI2N2M5NTJiNzhlYWVkZDZjNDY2Zjk1YjY4ODFiMDdiNDZjY2FlYzBjZGYxNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkN2M4ODRhZjRlNGJhZmQ5MzUxN2EzMzI1ZmVjNWM0ZDhmNGY0NjI2MjZlMzZhNGRmNTI4MDUwMThkOGJkNjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ZTJkMDkzOTM3MDYyOGViNzQxMWZmM2U1ZDA5MTljOTQ0ZWVhYjQwOTQ2YWFiZTkzYzQyZTBkOGYxMGVmZTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.ts#L94-L110",
+          "version": "repo-lines-v1:sha256:0205133112030f7f7a83b3c9465939b9c6a2ece0fd075e45c472ccb0d8585208:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwOGJjZTRhZWEzYzgzODgwNTYxNGFjOGU3ZjJjZDFmNWQ1YjM4Y2VhZjc1YTY0Y2Q5ZmYxM2Y3ZTZhNWYyY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d1db7f9051448d2a87f5879cee03ae1",
+      "statement": "API_BREAKING_CHANGE severity depends on the request mode (warn for draft, block for release) and is only produced when a base document supplies a diff, while the sensors engine forwards only modelRoot and scopeRefs so a desktop sensor run always analyses draft mode with no baseline and breakingChangeCount zero.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.ts#L61-L72",
+          "version": "repo-lines-v1:sha256:2d5ac03a639239f8cd09a17794eb659a26d1c452e06a183aa852727b782321b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3ZTUxNmViY2VlMTczZWFhMDRkNzliZWZmMTNmZGVjZWY4OGExMDE4NzczOTZkODQzNWYxZjM5MTA0OTg0ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwZjA0ZTk4YWM3YmEwYWY2YTM5YTllMTc4NDY3ZjE3OTBjNWUxZTQzYzRjNGFkNmZlNDMzNTFmODE2MmNkY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzMTUyZDJhMDgxZjU0ODY4NTY1Y2QxYzQ5ZjZiYzMzNDM1YTg3MWE3NDRlNDA2ZmUzY2EyZWEzYzQ1NDdkYTAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L56-L68",
+          "version": "repo-lines-v1:sha256:2f5ec1194fbc490353244c8de819a2f23fe1252ae484f85cf302564b068e1f95:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhOTZmNTA4NzJlNzU5OTU1YjlhNDBhYjRjNzQ1NTU3ZGY4ZDgwMGYxN2VlNTEzOTUwYTg0ZjYzNmJhY2FkMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZjUyNjVlMjI5NzhlNTEyOTc5NDAwZmU1YjQwMTBjMWYzMGUwOTQyMjA2NjE1YjlhNTUyMmViNzhkYTliYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkOWI5ZGMxNjk1ZTAwMTViMGZmMjY2MWY2NmEzZDdkNzUyNjM2YzhjODk0NGUzMjgxZDkzN2VkNDViZTg2YmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhZDlmOTE5M2YwZTBlOTliODA4NTIzZjg3ZDYzNWQ2N2RjMzI1MjFlZThmNDA5NTA3NTcyMmFkZDM1Y2VmYWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eb81938266f84bc09b96494f61e0a952",
+      "statement": "A route field whose diff is shifted to_derived becomes an informational API_DERIVATION_DRIFT finding on entity#attribute, and API_ALIGNED is emitted as information only when the API sensor produced no issue of its own while explicitly disclaiming that release review passed.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeApiSensor.ts#L73-L93",
+          "version": "repo-lines-v1:sha256:5d6523d62abebd598abcdc417e189dd70401a4389264e0579e39c194950a24cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0OGU5ZGRlNDkwZGY3YjJkZDYyMGY0MWFiOTIwZmRjMmI3MWJmNWQ5ZWFlMzljMzE5ZDU0Zjk5Y2M2MjRmMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkM2YzZDc1MGY3ZjczNWQ2YmU5MzM5OWM2M2YzZTdmYzRlNjZkZmZiZDMzMWZmNWU1YmVmMjg3MGJhODgzNDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzYzI0Yjk1MGY2YjM4YTE0ZmE5YWVkZmUyMDE0YmU5NDEyOWE2ODMwYTgwYmJkZTllMWYyMmFlNTMyYmY3MDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_00402b03fbbd4629b6452b4d04b6477b",
+      "statement": "driftIssues converts drift audit findings into sensor findings that keep the audit's severity, map evidenceRef to targetNodeId, preserve contextRef, carry the remediation as the suggestion, and turn trace read errors into warning DRIFT_TRACE_UNREADABLE, with UNMODELED_EVIDENCE_COMMITTED and DERIVED_VALUE_SUPPLIED as the only blocking drift kinds; buildSensorReport folds a drift report when one is supplied, but no production sensor run supplies one because drift is answered by runNativeDriftAudit behind the MCP audit_production_drift tool.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L97-L106",
+          "version": "repo-lines-v1:sha256:13b1a5d20795d93fea866bc43ded603e5d257d2f3126a0bef3528dc443ffdfd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0YWIyZWFkMTM2MTc2MzRhMTBjMTQyN2VkYTRkMDFiNjZjOGIzZTk2YzA0YTZkYjRlODEwMDdiNjk1OGU3ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOWUwM2UyZDEzN2NlZTU0NjI0YmJhZjQwODY0ZmQyYzk5YjViYzE3ZDVmZjQwZGE4NjdhZTVlODEyMWEzYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiM2Q4MjdhYjY2N2QyNzAzMWMxOThkYjNhYzI4N2Y1YWI5MzIwMTJlNzljY2YyMzg0ZDg5Y2YzZDc1ZmExMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkNmVlY2RhZjY3Mjk3MGE5MjhjYjI4ZTEyOTE3ODM3NjQ0NGIwY2I1YWY1OTg1YzA3NmUxM2M1ZDQ0OTY0NjkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeDriftAudit.ts#L19-L30",
+          "version": "repo-lines-v1:sha256:3941e5c86f50a7f465b21fb3a651bda16bfa64c6e0aeeb0ceb51eaa82428ac18:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNjMyY2UyMzQ0NzFiOTk1ODUxZDQzYzViYTFkOTg4ODJjYjE3NmNjMzllNGQ5Nzc3MWNlOTNmNDY5ZmE0ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMzEwNjc1YjQ4YjViYTc4YWUzZDFlNGVlOWExZTMwNzE0OWE5NDAwMjU0ODAzZGMzNmIzNjAwOTEzN2Q0YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L161-L190",
+          "version": "repo-lines-v1:sha256:e3aeec8347f8ce37cd66be19854a68e37ed05e17517f16a5c5c6be94d9b01183:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0MGY3YmM2MzhhMDRkMTU5NWFiMzkxMDRlYzYzYThiNTc5YThlMGM3MTlkZmQ2YzNmNTgzMTA3NjlhZjkyMTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiZWFkNTNhNmQ3Yzg2NmNiOTJiYTY0MDY4YzAyNDg2MDMwMGQxNmZmOGZjMTk4YjNkY2E5NDJhMzBiZDUxNzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4YmQyZWRmZTZmYzJlYThmNzNlYTUwOTQyZTUzMWZlMDE1MjUwMmY2YmYwNTUxOGUxMGI0OGM3NzU3MWY0MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fec1e6e81da04ea4b3f260c3256b9752",
+      "statement": "checkNativeStageGate de-duplicates its error list and sets passed to errors.length === 0, collects an evidence block of checkVersion, consistent, complete, valid, inputChanged, errors and sorted scopeRefs that the returned StageGateReport has no field for, and exposes isGateReadyReport as a boolean-only helper for callers that already hold a report.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeStageGate.ts#L106-L130",
+          "version": "repo-lines-v1:sha256:bbb1f199c1512d2481ddf90ccd637f63fdc28c75aeb943713536797e09dae537:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZmEzYzY5MmRkZGY3OWQ3ZTYxOTU5MzY2ZDZmNjViYTA5YTAwMzQwZTRlMTZkMDVhNmI1MDYwOTFjZmRiNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4Nzk2OGNjMmQzOGQ3OTE4MjUyMmQ5Y2JlY2E0NGIzNDA3NjZjODRlYTg0MWNkNGI0ZTQ2NThiMTZlOWI4NTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNDQ3ZDgwN2ZlOTU4ZTM3YTI5MDA4MTg0N2I4NGE4ZTJkY2I2YmY2ZmFiODc4NDM4MTEwOWJhODVjOGU4YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a0a1facb712f48dd97d5c1483f1c8684",
+      "statement": "The sensors engine reuses a caller-supplied FM report or runs one full pass for the gate, normalises the result through stageGateSummaryOf so a missing passed flag becomes a closed gate and a missing target becomes api, and forwards only modelRoot and scopeRefs to that fresh pass, so a gate decision always evaluates a draft-mode API analysis with no baseline.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L303-L316",
+          "version": "repo-lines-v1:sha256:618a46dc48a1b431d43c7176cd212cec4400b6714f5c40889a74fbc6e0a78ead:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxMGUxODQ1NzdjMzVlYzMxMjdiNGQ4ZDZlMGRiZDlkYWYyYmE4MDE5MzRjZWQwOTU2MDMzZTE2NzAyMWZiNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5ZWQ5NmYzNmQyOGU3MDIwYmM2YjNmYjBhNGQyMWZjMzUxNjBhZjUwMDQ4OTQ2YWNiM2RkZGE2MmFhNWQwNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2YmVlYjZlYzA0NzNhN2ZiYzllYjNjMjUzMTE5OWZiMWU5MGE4OTkxNDlhZDgxZGE0OWUyMDEyYzEzYmI4MzEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorsEngine.ts#L77-L99",
+          "version": "repo-lines-v1:sha256:722fe5d5bf4b7281dd232f7697f1f491a83bc96c8da21417dcd4b38bfa700cd4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiMWY1ZDBiYzVlZmZiYTQwNDc0ZDlkYWU2NTNlNTJhMzg5YThkMmY3NjIxNzU0ZGQ2NDhjZDYwZmIxMTUyNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZDJhOGUzYzhlMDI3MDQ1Mjg1NWIzNTE2NzAwNjk3YjBkYzJjMzUxN2MzMzliOTBkNDA2MTc1YWZiZmJiNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjNDFhOTE5ODIwOTVjNTYyYWJjMTUyZTcyZjAyNTk1MjJjNzZiYTA5ZjU0ZDZjNzY3YTdkYzI1NGMzNjY0YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c99fec90a1d94388965919aa407218b7",
+      "statement": "The desktop status bar renders the three counters and collapses the two booleans into one label: 检查器不可用 when unavailableSensors is non-empty, 门禁：不闭合 when passed is false, and otherwise 门禁：可交下游 or 门禁：等待台账决议 by isStageGateReady, so a plain run with no merged gate summary always shows the waiting label even when the model passes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L35-L45",
+          "version": "repo-lines-v1:sha256:0c4ab40c444eafe562b65ec1aac94c1daab9030aa758dae1f5b8511c5c2c3473:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxOGE2NzRjN2Q1YzFhM2FmNmMwYzQzYzNmN2JlNWI2Y2QyNDE1N2E4MTg5NGUxYmY3ODE4MTZhMDViOGFmMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ZWM3NGY5ZWNiZGE4OWFkNjUxNzc1YmNiYzIzMzkwMmZiOGU5YzQxZTcyZmI5YmY3MDM4ODkyNWU1MGEzZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiMTdhOWNmNTNkZGFkMmU4MDc0NzZhNjYzNjc3MDY3MzJiNTJhM2IzODhkMDlkNGEwNTc4NTYxYmFjNjdmZDEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L95-L117",
+          "version": "repo-lines-v1:sha256:7b63233bfed58c66f9f95ff6dd347bd711792180e491da8c83366f62364c698d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYmMzZTFiYWUzNjcwMTE3ZjlmY2EwOWNkYzQ3NTM3NDBkNTM5YmVjZDBkM2YwMDk2Yzk5MjgwMDJiZWIxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZjhjZmEwYzFiYjc5NmYwOWRiNjBiOTQzYzEwZjYyNjUxN2U0MzJjMWYxYTc5NDY4MzNiODI1ZTRjNTAwMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3YmMzNzAyZDMxN2E1MjdiNmZiYTI4NDUxNmNlNTBiYjAxOWZjOGM4OTVlMDc4MTk5ZTQ0N2EwNWYxOTlkN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2NGQ1OWYxMzNlNTViODY0MGYyN2JmNmRhYjc2ODA1MzkzNjBhODZhOTQyMWEzNzA5YTZlNTNhZDQxMzAxZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_498761a52dba4f2ea418289900471a2b",
+      "statement": "The diagnostics drawer repeats the counters, lists each finding with severity, message, source, code and target plus its suggestion, marks findings stale when the report is older than the last save or a run is pending or failed, and appends the owed key data section that states the stage gate stays closed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/sensors/DiagnosticsDrawer.tsx#L26-L131",
+          "version": "repo-lines-v1:sha256:283ee716265b10332d17951c83c5ec7f4452af1606cd6dd5b5117aaf5f6b4a9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MjNjYjRjMTNkNjc3NTlkNTRmNzY3MWQ0NDAzNDk3MmQwOTAzYTM5ZDA4YWZhZTczYmI5ODFlYjlhYjBkY2YzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0OTk2N2VjMWVkMzgzNmY4ZWIxN2FmZjE3MmI1YmZlZjdkZTYwNDg1YTQzOWM2Y2ExMWM1OTFlMTc1NTczOWFlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjOTEyMzJmY2UwYzYxYTI4OWRiZDgxYjg2MmEzMDU4Zjk5YTIxYjllNWM1NjZhYjNiNTQ2MzYxNWQ5YWY2NTIwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L144-L159",
+          "version": "repo-lines-v1:sha256:f9983be51a31a312884336a9d2c40b8de8d454911176de51c4f2cd8162561d3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0OTkzMGIyZGI5MWI2OTE5YWU2ZGJhZDU1OTJlZjEwMjRjZjUyMTgyYzEzN2JhNjdmNTM3ZmQ2ZjFlNGEzNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmMjI2YjcwZGY1Y2NmZmNkYmEwNmMyNGE3M2VhOWE1YWI2ODNmMDhiNDFjYmZiYjA3OGIxZTc0MTk4OGFhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlZDVmZGU0M2MyNmY0MTE1NjE3MDMzYmY5ODhiZThmYjY1ZWI4NWFlZWFmMTRiMDVjNDg2MmMyZDNkYTljNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmMzg5OGRmOWJjMTdmNTMyZGFlNDc4NTkyNTM2ZjVkZTlkMmZkNzk1YjlhOTZjN2Y4MzAxY2I3NTZiNzVlNGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba7b9383d4924ca48747f8078c8cfa83",
+      "statement": "createDiagnosticIndex attaches findings to canvas objects only by explicit reference - the entity part of targetNodeId or a contextRef naming a known context - never from message text, collapses duplicate issueIds, and keeps the highest severity per object; the editor blanks that index while findings are stale and focusIssue selects the entity#attribute row or else pans to the owning context group or relationship geometry.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L228-L267",
+          "version": "repo-lines-v1:sha256:bdcf0cd880624de236fcb6472e76f545634fb34cb3aa1278e1c04b05d8dcf4e5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYzI1MzQzY2VlNTI2ZjUyODU2MDgzNTBmODU1ODFjNGVmNjc2MDdlNzRhODcxNDRhZDM3MzI2YWU5Y2Q2NDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzOGI5NzNmM2Y3OWExN2NhMzc0YzJlMjAxMTQzMzY1NTg5ZjEwZmNlZjE3YTg5MDBiMGE4NTUwZTc1ZjdlNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ZDljZmI2NzI3NzQxMDI2ZTY5YjE5YWY3ZTkwYzJmYzYzN2U4NjM2Mjc2MzA2ZTYyYTkxNDNjZGY0MjBjYjMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/diagnosticIndex.ts#L14-L56",
+          "version": "repo-lines-v1:sha256:bf7a2ca5d0d01b7022f331a475b856496450cfcf491c9b0e5d529e4487660da0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0NjQzMTNlYmJmYWQ1ZDExZDFlN2UyOWRiMjE2YWM4NjExZmYyMGZlNTFlY2M5MGJhYWY3MjFjNGMxZDZkNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiMzY0NGQzMGZiOTM5Y2Y2ZTI5ZjNiNjE3NDdlMWI1MGY2ODMyNzZkYmIzZmViMjg5ZTg1NGM2ZDg5N2RlYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d688b89fc58946588ec20e04d8f69d54",
+      "statement": "useSensorsState starts from the main process's latest report, triggers a run when none exists, subscribes to reports filtered by project root, and exposes a refresh that bypasses the debounce; the runtime's runSensors stores the outcome as latestReport and publishes it to the renderer.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L100-L125",
+          "version": "repo-lines-v1:sha256:453c1e00e21fd8fbf9ddfc515f23e1dccf51b008988d34e07f419dda33ed1d15:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4NzBkZDBlNWMwZmMxMTA3NTFkYWRhODU0NTZkZGQ1Yzk4NDk1Y2E5NTE4OWMwNDI3YTA3MmY1MTIwNmFlZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2YTYyZmUxYWIzMmU3Yjg5YmIxMWVkODgwOTJiOGM0YWYxYWM3Nzc3ZWZiYWMzMTZmYmRmZDlmMGU3MTIyNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmZjMwYjMzZGRlMWU5NGJmNTg0MzBlYjA5YzcyNzc1ZWJiNWQzODVlMjZkNWRiMDZmZGFjZWVhMTY2MDY3NTEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useSensorsState.ts#L20-L90",
+          "version": "repo-lines-v1:sha256:e38a8b0c8d096545fe5a13c96bba001b8b9ad25aff5cc1fb54dda8fe3fbd524e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZmFkMzIxODAzODAwY2U5ODQwNzdlMDQ1ZWMxZWRlODRkNjNlMjhmNGJkMzA5MGYyMGNhNTJjMmI1MDEwODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5NjY2NzMxNGUwOTQwNjNiOTJjMGI3ZWUxNjQ5NTgzY2Q0MDEyY2Q1YWEzYTY1NGNmMjc5Y2VmZDRiODY1MmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a7fbedd7bbf417f93e260edcacf7a28",
+      "statement": "createMcpSensorService caches one sensors engine per project root and runs the checks itself against the model on disk: get_key_data_audit is projected as producedBy native or as unavailable with an explanatory note instead of an empty ledger (dropping the derived list), and run_stage_gate maps the gate to passed, exitCode 0 or 1, driftDetected false and the gate errors as blockingReasons, turning a throw into a closed gate carrying the error message.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L20-L29",
+          "version": "repo-lines-v1:sha256:4e3d2a0c2f604b81802026c6f03f1b9539dfe67e66c927aee5f68d6d2cc090b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMmMyMzg3MGI5ODYzYmE0ZTM5ZjlhNzFlN2Q1ZjJhOWIzYWU4ODBiMWRmN2Y5OWVmN2Y3MjliODA2ZTExNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNzk1OTk0ODU0MjY4YzY2MWVlMjBmZTY4YjEyNGU5MzIwZjFiODI3Mjg2NzA3MDNiMDc3MTBhNDBkZTZmYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwNWJlZWMwMWE5NTU3MjQwMjBlMWUxZWI4NmRhNGNhYzI2NDE2ZDdkYmQxY2UxYzU5ZmI0OTY2YTM1N2Q0N2MifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L37-L60",
+          "version": "repo-lines-v1:sha256:f9f5fd4d4998c6436b7def9a5b08a1d7be046a2180c8bdce195c9aeb9f4af604:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMDQxYjRiZmVmZWU0ZDRlZTkzYTY2MGVlODdhZGI5ODMzYTBmM2YxN2JjYTUwMGQzNGQxZmYzNGEzNDA5ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjY2NkNDM0NjMxZDY4NjYxYWNlZjczOTJkYmY4NTlhZDkyNWU3NDkzZGU0MDhiMmE5MDllY2NhM2EwYmM1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1MTE2MzE5YWViODU1Y2Q4NmExNjZiNTA3Mzk4NGJmYTZmYWQ5OTEzMjE5YWI2ZTM3ZDkzN2MxNTY3YzlkZjQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L62-L104",
+          "version": "repo-lines-v1:sha256:b573b36ab635151fbae9569c46bc0b262eedf7f0b008f97aabd59d0722fabd4b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhM2FkNTFmMTQyZGU0NTQ5ZDFlMmFkODU3NzI4OGZiOGIwMDA4OWU1YWZjOTcyYWQ3OTQ4NzhjYjFmM2M0YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlMTMyNzQ1ZTNlN2IyZGU2NTI1NTM5NTc1Y2NlNDE3ZmQwZjJhNTVkMjRkZDA1ODNlZjczYjE1NDA3ZDAyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YzMwMmMwOTA5Mjc4NTM2NGJjZmFhODU4MTYzYzMzZjJiYTAyYWJjZTFkYjczNzdjNThlNjkxODk5NzJjZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1cf02f11e08748128a38f31d8382419f",
+      "statement": "The MCP request handler routes get_key_data_audit and run_stage_gate to the main-process sensor service using the active project root from get_app_state and fails with NO_ACTIVE_PROJECT when none is open, while get_app_state also carries a sensorsSummary (blockCount, warnCount, decisionOwedCount, isStageGateReady) published from the renderer's current report.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L61-L107",
+          "version": "repo-lines-v1:sha256:1d938ef7929e1e05f3b7510a347f18e87020d0fcde0dede18dc6a10fc9c65392:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzZThmMzFiMzVkMmQ5NTlkYjRmZTViOWM2YzhlNGI2ZDViZWVjMDZhNDliMDVjNTgyZDgxNTQ3NmNjNjA1NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NDA3MTlkNDI5ODZkOTU1MWRiNWU4YzM3NDJmNTA4ZDA0YjAxNTY5NWJhMmQ3NTMwNWI4NWRmNTE2OTJlOWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxY2NiMzJhNmI4MGI4MDBiMjE0MGRiMTUxZTUwMzU2M2E0NGU2NmJkMTZjOTE5OTcyNDJiYjA5OTkzOTc1NzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyNmIyYzBhODE2OTg5OGQyMmNkZGQ5NmVlMzRiNmFhOTAwMGI3MjgyZGJjNTE1YjFlNjkwODcwYWUzZTU3NzAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L51-L71",
+          "version": "repo-lines-v1:sha256:52993d88473571d2cd54817dbf0bad0bdce002536959e0e252933faf51f5d62c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhYjcwNmJkNTliZWVkOGE0N2Q4N2I2YjU3OGNiOTIyZjczZWI0OGU1MTliYjA4NGQ0YTRlNmU1ZTkyMjM5ZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxMWMyNThhOGJjZDY4MWJlYTNhYjVlOWMxZWFmMTJkZTU2NjVlZmYwYWIxNjA1OGUzNzYwZGJhOWNiYTlhYzAifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

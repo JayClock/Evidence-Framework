@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d3d676db8b69b577399ae74847c1ecd956256ae84dc7903e2d7fbd0dc1efd707",
+  "claims": [
+    {
+      "id": "claim_5428d34a91d64556a8b67ba223b1932c",
+      "statement": "Exporting a review page is only allowed on a clean document: both the 导出审查页 and 导出差异审查 header buttons are disabled while an export is in flight or the editor has unsaved edits, with tooltips telling the modeler to save first because formal review export reads the disk snapshot.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/TopHeader.tsx#L158-L188",
+          "version": "repo-lines-v1:sha256:ecf29e1160bb228d15aab9a0d2dd5d6e16758cdc10d72752c1c3b44454e12ea9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyOGMyZmFiMzNhZWRjZDNiNDcyYzhlOTUwZDg4ZGNhZjZkNzAwODRjZmI2YTgyODIxMWRjYjczYWUwZGMxNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzY2MmQ4NDUxNmY2OGE4NWYyYzYyMWVjNDAxZTBkYWYzMDUxODM1ZTNhZTdmMzQxMGQwMTU3NzJiMDlmNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4Mjc5N2Q1NDIzMzY3Y2ZlOGE4ZWYzMmMxOWNhOWQxY2M0NGRmNmE0M2U5YjQ3NWNkMmI1ODZmNDE1NzU0ZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4OWY5Y2ZiMjZlNWY1NjBkYWQ3NDY0YmY4ZDg5NWM3YTIyNmM1YmMxOGM0MGZkNTVjMjYyNjNmZjQyYmQzNzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8ead54d9dc34eb9a2a7b02e46315587",
+      "statement": "The review hub opens from a window-level Alt+R shortcut that is ignored while focus is in an editable control (input, textarea, select, contenteditable), and from the header's 审查中心 button; both set per-window renderer state rather than a persisted panel.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/TopHeader.tsx#L148-L157",
+          "version": "repo-lines-v1:sha256:31c5394a3132fccba98de08a22692f4de6794a6e1ea210a9cdf9379bfd1e5a33:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0N2JhOTlhZDNmZTMxZjlkNmJlYzIwMjdjZjU4NTQ1MWMwOWI4YzQ2M2IyMzJhMjNiMzFhOWYyNjExYWM2N2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzOGQzNWE3MDc3Mjg2MzUxY2MyNGEyNjQxZWExYzQ2NzcxMzQ5NzJiYWJkYTg5ZGIyMDkxMjI0OWY2MzZmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3MmEzNjcxYWY3MWM0NWYzMGJmMmRkZmU5NzhmMTFjYjE3ZjRiMjEwNzE0MzQ3MzFmZmRhOTFkYzVlNWM2NmMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L160-L180",
+          "version": "repo-lines-v1:sha256:5d1beeea1a9b52d962442e5b3c9da4a3b3d5191b93a654c840a697357491a97d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNDVjNDVjNjYyZmIwMmQyMjAxYzBiOWZhNGVkYjhmOTE1ZTdkMDU0YTc5MGNhYzNhYmY4Y2JkM2Y3NmFkMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NTEzYzc4NTg1MDAzMmRkMGU5OWUwNzU1ZTg1NDVkNDM1MWJlOTI3ZDgwYzM2NDVjMGMxZjI2MjY3ZDNkNjAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L28-L56",
+          "version": "repo-lines-v1:sha256:c09cdacb82d1206043f8317cc36efc4e8a16f045c07ad020ad8825c478cd1880:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZWZiMjEwY2FiZWZmZTZiMTA2YjIxNDVhNzk1YjZhYmU4Y2ExZmJlYTA0N2QzYTg2NmEyMjRmY2Q5ZTE4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkZjJhMTEyZjc0M2VlYzBhY2MzZGUyNDFmMDEyZjMzYTJkNWZiYmMxY2ZkNWRiOGY5MDZhZWNiNGM0MDM4ODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMzdmMDIyYzI2NzRiNTExMTM2ODkyOGI4NWJmODYyMjhkNDljOTYxNzc2MzhhNDJjYTI0MTc3MThhMzI5ODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fb2c73df5e3344f8972de4d98ad55536",
+      "statement": "ReviewHubModal previews exactly once when it mounts and never re-previews itself as the document changes; 刷新审查 is the only way to pull a new review, and a request counter discards out-of-order answers and any response arriving after the dialog closed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L25-L58",
+          "version": "repo-lines-v1:sha256:cfd24d7228876ec8cd0af147a5c70631a548ee195bbb8a5d9a07ff35781cfce2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNGY3YjZmMzNlMTg3YTlkMDk3YjhiODVlMjliNTMzNzYxOGYwMzc5NGZjOWUyZThkODFmNjA4ZTY4MDBiYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNzI3ZmIyNmIzZDM1ZWRlZjk1ZjI3YjAwYTJjYjMzYTA1ZjQ5YzYzYjAyYjRkMTQ5NWJmZGY1ZTY3ZTUzMzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyMGE2MmI3ZDg5Y2MwZjk3ZmY1ODRmZGViNGFlNDJhZDIxYmUzNmMwYTRjNWNiZTZiYTRkZTdlNGI1N2VhNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0YTU1MDJkNjNiMzY3MTcyYTJmZGY4MGYzOWQzOTkzNWRlNDNkZGNjMmM0MDk2ZDMwYzg5MWQxYmFjY2NlZTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4faa7d64c8a24d059db0f1de9a1ff0a2",
+      "statement": "The hub behaves as a modal dialog: role=dialog with aria-label 审查中心, self-focus on mount, focus restored to the previously active element on unmount, Escape closes, Tab cycles over enabled buttons plus the preview iframe, and keydown propagation is stopped so editor shortcuts cannot fire underneath it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L41-L87",
+          "version": "repo-lines-v1:sha256:3b59840495c7bdae0bc3b72eb21dcf75da440e90ecdceda4d32ad49ff468fb76:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTFjYWJjZTExYWY0MWI2MzdiMDFlMWRjNGU4NDc1MGE2ZDY3NzJiOTUxN2ZjZmU3YTY5Mzg4Y2RiYmIxMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2MWY1MzBjZGEwZDViMmRkMjRkNzE2Yzg2ZDQ1MWFhZTEzNmU4MTA5NzgzZmQ5ZjBlNGNlY2MyNjRhYTIwODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NDg1YThjZDJlM2I4MWYyNjk5YzA2ZTQ3YzQxNzZkOWRkNTVjMTBjZWNmNTc4ZDM0MmNhMDliZjFiYWRlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0NDliYTc5NzgwMDg2NDYwYTBlNzMyNGM4NjBiZjJiN2NjMGY4NmVkZDE4YmM4MTUwMTIwMzM4Mzk2M2E2YjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c69c3c6528554444a0b3b0f3770ef8eb",
+      "statement": "A review goes stale when the preview result's revision differs from the revision the editor now holds, where the editor bumps its revision on every document change and external-change notification; a stale review stays readable but its 画布定位 and 交由 Agent 修复 actions are disabled behind the banner 模型已变更，此审查已过期。刷新后再定位或修复。 until the modeler refreshes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.spec.tsx#L69-L99",
+          "version": "repo-lines-v1:sha256:8f49fd1b9b29703d284d443af3dd04fe21cf96e9a063c490c86952f7855fa64b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViZGVlMmJmMjc2MTUzODhhNDJiNzM3YmM2MDJkZjI1MTdjNmRjNTQwYTRiZjg3M2QyYThiZmI4OTE1M2FjYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1MGIxNmUxNzM5YWNhYzZmNmM0OWJjYTIzZjE4NGE0OWViNTE1YTM5ZmQwYTU1ZjczNmRjZWZiYWFjYWVmMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4ZjdjMzI4ZWYwYzZmMTBkNmU3NTQwN2NiZGU1YTY0NTBjZThjM2UyYzBhMDQ5NjAzZGE4OTIwOGViNjFmNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3Njk4NzQ4MjJkNTRjZWNkNGZmMmQ3ZTkzOTYyYmIzYWQ3MWE5N2EyNDQ2NzUzNTE4ZGZmYzk5ZDE0ZDM4YjYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L109-L158",
+          "version": "repo-lines-v1:sha256:31134cad8b3c1d7ac15ac2a37a6e10fc1364d6f677d781e7581de14bbc3a8480:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMjk2MTkzYTA3ODgzYWI0YmExYTcyNWY2ZWMxMGQ1ZmYxZjc0NGNiMjNmYmM4YTI1YzRmYmRlZGVhNTAxNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZGZjZjBiNGUxZjExZDY1Nzk2ZWQ4NTU1MDg2OTNmNmIyYjU4YzA1MDI1NzNlYzZkODgwMGQ2MDI1ZTJkNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MmQ0NDU3OWU1NTI0NTI3MmI0MDgzNTQ3N2M1YTQ0ZTM5YWQzMTNhOGIxODY4ZjBhMmEzMDliOTczZGYxZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhMDcxNzc1NWNhNWVmZTUyZTUwYjgwZDQ1ZjJiMmIyY2VhNmRmZGU0YzVlZjc2NDkyZjVmMzdlODVhMzhmMzkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L25-L25",
+          "version": "repo-lines-v1:sha256:df4f7b6f33e187a9d097b8b85e29b5337618f03794fc9e2e8d81f608e6800ba0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY0ZjdiNmYzM2UxODdhOWQwOTdiOGI4NWUyOWI1MzM3NjE4ZjAzNzk0ZmM5ZTJlOGQ4MWY2MDhlNjgwMGJhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY0ZjdiNmYzM2UxODdhOWQwOTdiOGI4NWUyOWI1MzM3NjE4ZjAzNzk0ZmM5ZTJlOGQ4MWY2MDhlNjgwMGJhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTIwYTYyYjdkODljYzBmOTdmZjU4NGZkZWI0YWU0MmFkMjFiZTM2YzBhNGM1Y2JlNmJhNGRlN2U0YjU3ZWE1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmMzYWQ5MzdlZjRiMTU3OGUzNmM1YjMwNGFiMDFiZGFjNWNlODMzNWJhYmNiMzI2MmI1M2MzNmYzNWRlOTdhYiJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L165-L180",
+          "version": "repo-lines-v1:sha256:0f20b1f9cfbe17cf09834fc4951b6fbdd177037813e8656de06311208852a3a3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZDYxYWEyODYzOGY2MDI4MWViZDcwZGI1YzE4ODdkMzdmZWM2MDc0OWMwNmI5MGFjMTNjYTU3MzY5YmM2OTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NWM4MjU2NGEyMzY1ZjNkODVkMTZhYjY2N2U1YTY3MmE4MzE5YzkwMzVlNTI4Njg0MjU0ZDk5NzUzNTQwNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NTEzYzc4NTg1MDAzMmRkMGU5OWUwNzU1ZTg1NDVkNDM1MWJlOTI3ZDgwYzM2NDVjMGMxZjI2MjY3ZDNkNjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d785ede3cc5446b9ca16886d59477f3",
+      "statement": "previewReview rejects a malformed input before reading anything: a document failing isDomainModelDocumentShape or a revision that is not a safe integer throws 审查预览输入无效.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L33-L37",
+          "version": "repo-lines-v1:sha256:082d10999f0a9a9d24491db5a709b7544af626c6152317348ebf057e383e05d9:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjg3NjUzNzFhZWExY2M3ZDQ2ZWM2ZWZjY2JiZTllOWU3M2M5MTg5NGYwZDA2YzcxZjEyNWFjOGJlMjU1YjdiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTlkMjY3OTIyNjA5ODdiZTdkODE0YTcxNTExNjFjZTAyNjQ3NDI2NDAwNDFhOTAyM2I3YjE0ZTA3YzMxNGRmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmQ0MmVkZTdmY2I3ZTExYmY3NzQwYWI5ZDYwOTYzNGZjNTkzNWQzNWYzM2NjOGE3NjNhNTQ0MTRlZTI0MDNiYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2FlZTg4MzI0NGQ1MTA1ZTNlZGYzYTY1NDlkOTQ5YjQxY2Y3MGYxOTBkYTlhNmY1Nzg3ODBiMzBmZmM1NDRjZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_20866db626474a498a8b79f340b9df7e",
+      "statement": "The preview is bracketed by two workbenchFingerprint calls over the project directory and model source and throws 预览期间磁盘输入变化，请重新预览 when they differ, so a page assembled while the sources moved is never returned; the accompanying test confirms a preview leaves the project holding only .evidence/fm and the fingerprint unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.spec.ts#L40-L62",
+          "version": "repo-lines-v1:sha256:dc3c5ae02ea57c95b8f7054ba48bdd29459e46674905408d25789894ffd33cef:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzYjgzOTBjZmYzMWM3NGU3ZTAwNmIwZGU5YTEwNGRkNWIwODk3YTc3YWZlNzYwYTY0ZjZjNGVhOWQyNGNjMGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllMGEyZjU2ZDQ2NmQyMmM0ZjIyYjI1NWFiMWY5MDhkYWQ2MGYyYzRmZjliYzA3YTdlYjFiNmRjODQwZmI4Y2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMmMzNDc5ZGFlZjY5ZWZhYWVjMmE5YmM5NjMzZjFlNTg2MGQyZjI2MzBjMTM0ZGYxZmM2OWJkZjI2NDM5YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2MGM4ZTJhY2I0NWE5OGY1YmIyZmUxODUwZTMzZTk4MGYzMmFjZmZmNzgwMDBiMmZlOTBlOTQzNTY5MTBiNDcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L118-L119",
+          "version": "repo-lines-v1:sha256:7db826a8489396df3a65b9dcca28752889e276e3a67c943a5b3c8e0c95f5cef6:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAxYThkYTA3MzYwYjc0MTgwZTg3YTIwY2Y5MTQwN2QwMjE3M2FkYzQ4ZWY5MTdmOTFmNTg1MDFiNjExMzdhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWNkZDAxMDI4NDVhYzk0MzgzODhmMGM3ZjM3YTk3NTVhNjU2ZDdlNTg0Y2E3Yjc2NDMzMWYxNzE5YmNhMjcxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2UwMmQ3ZWI2YmE1MDEyNTg2ZjBmODQ4M2UwODI5ZGEyYzhhM2Y3ZDQyNDdmMmNkYzhmZDY5ZGU5MTk2MjQ0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5ODAwNDE4N2U4NTYyNjI0N2QyOGUxNWNjMzkwZWMxMjA1YzEyMDkxY2VlM2RkM2UwNWIyYzFiYmE2YmFmMCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L38-L41",
+          "version": "repo-lines-v1:sha256:b3db631ee79272143a8aaa46b74e240a1280716ec8ab58fc7b398a8e8c5e1d70:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhmMDA3ZGJlYzU3NzkxMzA0OTNkY2M2MWRlMzJkOWM1MmYyYmVjZTEyMDBiMzg1NTJhOTlkZjg2NTllMjc3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdiY2U2NWE1NWQ3NjhkZTljZjNhNTkxZmQyNzExNDZiNzY4Yjk2MTQ1MTUyNjE2NjI1YjcxYWJhNjgwMGZlNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFhYzkwZGQzYzAzZGZlZDJkYmQ0NzQzOGZiODIwZjQzZjBiMWQ3ZjQ1ZjY2ZDU0ZTYxZmRkMWJiODNmNGY5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQ2ZWVmZjA4ZWM4NTE4YzdkMWMwNDVlYTBlZTkxYjVjZjJlMTk5NTg0YmVhZjFiODdhZmEyYzQ1N2FiMmExNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8a542d447f945f8834f28534ed9adac",
+      "statement": "The preview checks the supplied live document but reads the model source from disk for the validation suite, so scenarios and instances always come from disk; the notice states which parts were checked, defaulting to 编辑快照预览（未保存）；场景来自磁盘，API 静态设计未检查。机器检查不等于业务批准。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L29-L43",
+          "version": "repo-lines-v1:sha256:e19d204b6b5b29482eb5bf20d8191be9fc4622c78bfd8ffce078ab5083f27133:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3N2YxMjlhY2ExODFlZjM2Yzk0NTllNGMxODU1ODA0OTkzNDMwODkzMDJjNjdiNTU4N2U2NWM4OGQzNTVlMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4ZjMwMTY1MmVlZmY5ZTgyNzM1ZTYwZGNjMzkwYTgzNWFkNGVhYWVmODY2NmNkYjU1YTg4YzhiMzFjZjY5MDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZjEzZWIxYWEzNzBlZjQ1NTQzN2M4ZGIzYjRlZGM2MTc4MTU1YjE4NDVlN2FjNDZiM2RjNWYwYWNjNDdkZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1OGI3M2JkYTg5ZWVjNzQ0Yjk1MTc0NzU2ZmIyMzJkNzU3YThmMjk3ZDZjYTYwNzIwYmQ5N2M2N2QxYzk4MDEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L98-L117",
+          "version": "repo-lines-v1:sha256:9279b1f5e9548b61fafaeac56eda7a49e13a2354adbdb001d6219b16abfb60f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNThmYTEyYjE4MGQxNzU5ZjE5MTIxZTQzMjcyMmZkNTg5ZGQxNmVlODM3ZWVhNmNiODJmZGE2M2M1NzU1YjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmMWIwM2UxNTg4ZGExNmFiYWUzYjhjZTFhYTA4MDc1ODEzZmYzMWVlNWRmZmQ4NWFhNDAwOTI1NTk5MmY4ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhZjIxY2VjN2ZkNjkyZTZkOWZhNDVhYTQyNGM5ZDc5MjMxZWUxYTMwYTQwZDliMmJkMjczNmI4NWFiNmQ1NDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9276738b4a9e4d90aeaef32762b441db",
+      "statement": "The hub's finding list is the sensor report's issues plus strictValidateDomainModel issues, each rewritten to severity block and source check_fm with issueId validation:<code>:<path> and a targetNodeId taken from the schema result's objectId, because validation owns the location and the app must not infer one from prose.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L58-L86",
+          "version": "repo-lines-v1:sha256:e2fcb15fec40e8493ec66fe91afc0cd13b284a88b529571b15b6307005cf9d0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMDBlYzRjNTg1MzlhMGFlMzNmMGYzZTViZTU2MTlkNDI5MWQ1ZTFkMmI2MGNjZDlkMjMxZWQ2Y2RkOWQ1Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhODJmNGY2NGI5ZGEyOTBiYzNjOGIxYjIzM2ZiMTUzNDI4MDJjYThlZTg1MWRhMGEyZjIxNWViN2UwMGViMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMzA0OGRjOWM3MTU2YzI5NTZiOGI1ODM5NWY3YmY4NWFkODkzYzk2ODQyNzEyMDc4NWRkMWJjZDFjZjg4NjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzZTJmZmZhZDBmYTc4ZTRkMTEyNWE3YTQxZmFmYjgxZTc4NzM5MDlkMDI3YzU0MTM4ZmIyN2ZlMWU0OWQxN2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2dc35511f9424444b2d06102b4c2784e",
+      "statement": "When the live document compiles to the same JSON as the on-disk bundle and the check is valid, a directory project's preview upgrades itself to the formal collectWorkbench result and appends API / 正式审查不可用：… if that path refuses; every other case, including every single-file *.evidence.json project, is told the API static design was not checked.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.spec.ts#L30-L39",
+          "version": "repo-lines-v1:sha256:24dc8471725cf1289d997eb6a71cf4cbb2fdea6e382caaf9bcaef2ba8bf7a1f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkNmQ1NTI2MTQyZGVjOWQwZmEwNGFmYjBhNDc5NzRiMzhjM2Q0ZDU5MTk3MTQ3NWE2Yzg3MmJiNGYzZDYwNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NTY2ZDQ2NWE2NzkzMzZjMTNkNzM0ZWQ1YzIwYTM2M2YxODkyM2Y2NzY3MDBmMjUwYTY5YzJmYTQxZTYzMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNzY1ZTFjMzZkZjllNTRkZmYxYzU0ODM3NjA0ZjhlZjBlMjMxZjY3MGQ0NTBiOTk1MWFmOWFkYjc2OGUxODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkNGE3OTJlNjk0ODIxNmVlMGM1Njg2M2U3MzliOTZlOGFlNDgzNzViZTcyOTI2ZWExMDJjZTI4MGFjY2RjNWEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L98-L117",
+          "version": "repo-lines-v1:sha256:9279b1f5e9548b61fafaeac56eda7a49e13a2354adbdb001d6219b16abfb60f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNThmYTEyYjE4MGQxNzU5ZjE5MTIxZTQzMjcyMmZkNTg5ZGQxNmVlODM3ZWVhNmNiODJmZGE2M2M1NzU1YjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmMWIwM2UxNTg4ZGExNmFiYWUzYjhjZTFhYTA4MDc1ODEzZmYzMWVlNWRmZmQ4NWFhNDAwOTI1NTk5MmY4ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhZjIxY2VjN2ZkNjkyZTZkOWZhNDVhYTQyNGM5ZDc5MjMxZWUxYTMwYTQwZDliMmJkMjczNmI4NWFiNmQ1NDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d664d80b66b4eac89af0368e13f2447",
+      "statement": "The preview handler renders the page in the main process from the install's assets and merges the HTML into the result, converting any thrown error into { success: false, error } and opening no dialog, while the renderer shows that page inside a sandbox=\"allow-scripts\" srcDoc iframe.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L119-L140",
+          "version": "repo-lines-v1:sha256:0f85e1f487ee8eb6b62d4378e9b415865d3af5337ce50f794d9a2e8da35d0696:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkMTAxYjkwNjAxMjljYzBjOWJjMDljYmE4MGZmNzBjZDM2MWUzNDI0NjAwNzgxOGViNDMwYmFiN2IwYjQwMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZjRkM2RkNjg1OTU4NDMzZjNhMDUxZTNhYTdlYmM3OWIxNDQyZWU1ZTI2MTM4NjYzN2Y2NTEyMzBhNjNlNTcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L116-L167",
+          "version": "repo-lines-v1:sha256:e6503cce26b99c7b2445d0a3cd57c9f1d89f5e49e965685ec941083bb0cc1aef:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YjJiYWQ2YjAyYTQzZDVlOWY5ZmEzN2ZhMDRmYzU0NTQ2OTI1YzAwNjM3ZjgzNTk0NDNiZmUxNjNiN2YwYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNTYzMDRiMGVlYWJkODhhZDRjYmRkNjBiZGY0NjY1MWFkODU3YWQxZTAxMDRlNDJhYmZmNmIwNDNhZThlYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4NmMxNDM3OGQ3YjAzNzJmZTI4OWQ5NDY1Y2QzN2FkMGMxYjdlMWNkOGM1MjZhNGU0ZWQxMDllMDk4M2JhM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwMTk2OWE1MTE4NTIxZTk1MzQ5NDI4YzEwNGRlODgwYTk1MWQ4MGIxZDZjYWUwMDI3NGY3Mzk0YTlhMTI5NGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8df1b8cae7c741808a7cfab4e855db51",
+      "statement": "画布定位 is additionally gated on the target resolving in the current layout, so a finding whose targetNodeId (before any #attribute) or contextRef names no node, context group or relationship edge keeps the button disabled.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.spec.tsx#L100-L122",
+          "version": "repo-lines-v1:sha256:0f4ce32fd699eb102a16ac191d05a86e88a4042ac03430add6dd31b065af156e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2NDBkZmEzN2E0YzYzNTVjZjI3ZjZiMTk3YjZmMTI0ZmMzYWJjNWVlN2I0NTQxYjdmZDA4ODdhMDcwMzIwZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNmRlYTZlZjQ3YWJiODkwNjY1NDUxODFmZjIxOTU4NzgyODkwM2M5MGYwOGNlMzRjNzMyZjYwMjZjMmVhMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L480-L494",
+          "version": "repo-lines-v1:sha256:95bb14e0a0ceb9c9bd4b32ecff9003b0b7f6b968bb40166f582d5574f831ae62:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDgzODc1Y2M2NGE3ZDQ4OWRmOGFjODY4MmUzYWQ2NDBiNDMzYWU0NWJhNTQxNGUyMDljNmIzYzI3OWE4MzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZWE1YmFmN2EzOTRiZTMzOTQ4MzI5YThlMzA0NzYwNGUyMGI5ZDMzYjRmZjllNmE3MmFjN2UwMTY3NTY1ZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5YzI0NzZjMzIzNjEzYjkyMWQyMzg1NWUwNzNjZDI4YWQ4YmM3YzBmYTAwYmZmNjk0MjRkOWJjZTlmNzRmMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlOTJjMTU3ZDY0N2YxNTQ2OGI0ZjdhNTE2ZTQ4MmJjOTQzZjA5OTdmNDFlYTc3ODI2YjlmODI2MmQwNjhlOTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c97b2e29e2a4ac69e3a3efdd474318c",
+      "statement": "交由 Agent 修复 closes the hub, focuses the same target on the canvas, and prefills the agent composer with an advisory prompt naming the code, message, target and suggestion; PromptDock appends that text to any existing draft and focuses the textarea, and nothing reaches the agent until the modeler sends it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L91-L100",
+          "version": "repo-lines-v1:sha256:6057a92b3170f87ee72f26a6f2f48ebb58a9d5cd68f4231db2e7ab9fa8373a43:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMGYxMzI1ODFkYzIzNDgwMTNiYzEzYzY4Zjg5MGJmYWIzYzI4MTMxMzg4OWE5NjdjNDIyMzBjNTNlZDYxZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlOGUzM2EzYjJiNGQ5NmI3YTE5ZDM1N2M1NDJkMzQ1ZjgzMTFmYTlmZGJkNjdiNDU1MDgzNGQ2NWMyMTFlMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwODBhMzdmMjM0YjU5MzZmMTIyYWQxMTVlNGY3NjQ1ZDBhMjdlOTU0NDEzYTgzN2FhYmQ2ODI3OWViMmY5OTkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L495-L504",
+          "version": "repo-lines-v1:sha256:4fd79696a757adfb1a6ae22c86504d34c542e4ad5db05a28d023a594b44761f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkZDQyYzQ5NTIwODRmNTRhNTFkYWU2YTQwOGMwMTllOGQyY2VmYzBkNzE0OWRiM2VlNDI0MjFlOWFlYmQxOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYTU5M2ViODNjNzlmZTljNmQyNjhkMWMxYjg3ODdhMDkyODEwODYyYjIxZmU4YTFkMTYyZjRmMWQxZjMxMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwZjBhYmU1MjFlODUzZmE5MWVmYjBiZWExMzM4YzU4YTE4MDhiOWQ5NGE0NTJhNTMxNzg0ZDNmNTFmN2MwNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNDAzMDIxMjA0MzcwZTc5MmE1N2I4YTFmNGEwYmI5ODM1Y2NmYWVhZTAyNjkwYjJhMjMwZTc0ZTA0ZTVlZGYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/tests/phase-4-review-loop.spec.ts#L60-L80",
+          "version": "repo-lines-v1:sha256:f9fe9b1ae0c2d8c71a0908fbdf39c1f3976951cb0be64c48246efdcaba5e7133:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViZTI0OTIwOWJkZDk1NGVjOWYzYWQ0YzQ0MGM0NDViYjE1MmJhYzM3MThjYWUzMGJmMjU0YzgyYWU4NGE2OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1MDYwZWVkZGZhZjA2OWRjMGQ4NmRmMzIxYTM5NDQ1ZDIyNzMyZmYxZWY4ZDg1NDI3YzZiMmVlNTQ4OGE1ZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwNTIxYzkzY2ZiZGQxZjY1NDg3ODBlYjllMDQ3ZDY4NzdlOWQxMWNlODg3MmJkYzlkODgyOGI4MzBhYTUzMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4YTA1NmVlMTc1MjAwYzc2OTdlMzBlZmFiN2RkNmM1NDZkZmU3OGIzNjI0Yzk2ODIzN2ZmNGFlOTNjMTNhZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6bfb76cf378d4399b9448dec346f8db8",
+      "statement": "Accepting an applied patch does not touch the model, so the kept change stays unsaved and the diff export is re-disabled; the phase-4 loop test pins disabled while the patch review is pending, enabled after 保留 plus 保存, and disabled again after Ctrl+Z re-dirties the model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L77-L80",
+          "version": "repo-lines-v1:sha256:98c6a3e8eae5a461b6e1e7900ab6dbf85da7d0c576cf3a8f1800387f7c3db50b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ5YTZjZTBjZWUwN2IyZWEzYTYzODk5NTlkYTljZDgyMWM1NGVlOTY0ZjYwNDAzMjU0OTA5ZDYyOTdhYzBjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRjNTJmMDhiMzliMDhiMDFjOGQzMDhiZjg4MGIwYmVmMDJmZDFkZmNjOWQ5YWE5M2E0ZDFiNWY0ZDU4YjZjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2ExZWY4YjdiODhiZDQ3Y2I5Zjc4NzdiNzdkN2UzNGUyZmNhYjAwM2RjMTkzNGM5MjdjNzRmN2UyZGI5OTZlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTU3N2FlYzAyY2M5ZDRmNDkwODI4ZDY2NmFlZTZiMmM3MzU5ZmIwYTFmNDEwZjFmNDU3NGRmNmVmZjYxYzNhNyJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/tests/phase-4-review-loop.spec.ts#L98-L117",
+          "version": "repo-lines-v1:sha256:8f5ce571ee48906b51374c15d25411d522d7f17b5739936b74306480d458705f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjczYWJkNDU3YTk3ZWVhMTdhNjAwNjJlYjBmYWVhNmJkZjA5NDg2OGNjNmI4ZjhjMGViZGEyZjYxZWQ0MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjYjZhMGIxNjJhM2E3NmIwZDlkYTljM2I5NjA1YTUyMzUxMjU1OTMyMDM0NGY0ZWM2NzU4NjRkMzFjODczMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7f0c14c269b4f20b367082dbc350a17",
+      "statement": "The export IPC returns an envelope instead of throwing — { status: 'saved', path, counts }, { status: 'cancelled' } or { status: 'failed', error } — and useReviewExport adds a single-flight guard that ignores a second click plus a notice mapper in which saved and failed produce a banner and cancelled produces none.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L203-L216",
+          "version": "repo-lines-v1:sha256:c10fcbda4d24316b10779bbfb1d961f7b6925e782b44898838f0b4843fbaee04:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YWM0N2JkOTI3YzU5ZDQxOWJhNmQ4NzkzMTQ3ZTBmNzRjZTY4NWJhOWU1NzE5ZmM5ZjNkNmY5MGJiZDhjNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhNDNkZDQwYjg3YmI1NWRhMDMwNzU4NjhhZWVmNTVhNDY4ZWVlMjVhNWY2MmViODQ2OWJhMzQ0NTQzMDg2ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyNzFiNjUxMWRhMzBmNjQ0YTU2ODgwMGVjYWRmNTVhYWU3YmMzNzYyNDYyMWRkNjAyMTRjNGZiZGI0YmE1M2IifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useReviewExport.ts#L19-L33",
+          "version": "repo-lines-v1:sha256:3486247b67c9c84cc406290ccb897a749518caa09d130cd31be06ddb38677b70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmN2E0YmZlZTEzZGMzZDhmYjNmMWMyYjM2OTY4ZmY5NWYyZjI3ZGFjMzk1Mjk4MWMxOTk4ZThlMDMxNjdhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzYzg0MzJlOThkNzE5Yzg5MDAzMjA1MDY1MzlmNzQ4NTQ2NDZlZjZlYTNjNmRlNjg3Y2RiOWQyMTU3NjQ3M2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2OWVmYTU3NDRkMTU1OTNlMzk2OWEyMzU1YTQ1MGM2YmZlZTc3YzdkNDM3MjVhMTIwZWMxMzZjZWE0ZDk3OTEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useReviewExport.ts#L41-L78",
+          "version": "repo-lines-v1:sha256:da893b115edb4231af9c5ae50fd0adac0236bf5662e4384b878fe03580ac23fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4ZTBjNWQ0YWQ0ZWY4YjQ4NzA0NWUwNjg1ZTc5ZjQxMTMwOGY0YWIxMTAzYTM1Y2ZjMDIzNzIzMjk4MmI1N2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzZTgyYjZiYTk0MWNhMDk3MjY1YzE4MmU4MTRlYzFmNTFiNTYyMjQ0OTgwY2U5YTU1YmE0ZjAwMmJiM2NhNjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a5a609bf82aa422eba6f48ca1ca512a6",
+      "statement": "exportDiffReview asks for a portable *.evidence.json baseline through an open dialog before any save dialog, refuses an unreadable baseline as 模型快照不可读：…, defaults the output to <project dir>/diff-review.html, and passes baselineDocument downstream while leaving the current modelRoot unchanged so a bundle project stays a bundle project.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.spec.ts#L154-L205",
+          "version": "repo-lines-v1:sha256:b113c610787db0ca2dc6277ce26afb0c65cc271272eef0bfda4f7e1c423569b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkOTE1NzZhYTQ4M2RiYTAwYTM2MGNiODE0YmE1YmE3Y2FiNDU0ZmM5OTQzNmMyM2E0NDc3MGJlYzlmMWJlYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzMDdkODBlODYxNWRmODUzMDBkN2FkY2U5MmNhMDdiM2JkYTA2MmJkYzJjNDJiMjM3ZTQ0OTU5ZjdjM2QyMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiY2IzYjQ4MzMxM2E0MmNjMjNmOWNjODQyOGM1YTllYzUwYjliOGVkYmFjZWU4MDJjYTQ4OTQzNzk2OWQ5OTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L109-L116",
+          "version": "repo-lines-v1:sha256:4d638afe34e1e8c5cb86d7ec18ab6dca91a0c0d490ca34682785cf6c6259dff1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWIxMWNlNTliYjVmYThkZDQ4NmMzZTBhOWMwNTM1OWUyNmU2MDgwNWZiM2FmZjc3MmY5MDU5MmY4YWFiYmUzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTcwZTg2Yjk1NWI2NDc4ZTM4YWEwYjNmOGI2NGM5ZDRhNzJjMjhkMGI5OWE5YzRiOWQ5NzA5ODBkZDFmMTAwZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTIxZmMzMDRkODc5ODFmNmVkNGIyYTZiOTljYzZlZGY2YjM0YmZlZTQzMjY2NDlhYTkyYWQ2OWMzNjQ1NmU5ZSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L143-L205",
+          "version": "repo-lines-v1:sha256:338fddd7a1ab28631634f36737819519274c4461d321f77e3066e493d6c428d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxYTRhMmQ1OTkzMTM1YjBjNmFkZTgwMjk3Y2VhOTYzMzlkYzVhNmQ3ZWE2NWU5ODU2ZTMyNmNhNTAwMjIzNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOTQwYThiOGM0ZDFhNWY1NTY5YmNjOWFkOGZmYWFjODkxNTZjZTE2MWM3YTBlNTY2NWRhNDIyYzVkMjY4MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4OWE5MDE2OWY2NDljMzEwMTUyY2YwMjViODQ2ZjFlODllNTk4Mzc3YThmZGYyNTlhYjI1MGMzNDIyNjYwNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2YTUzNDE0Mzk0MWE5OTViYmJhYzA2MzY2ODI4YWVlOGVkNjA3ODRjMzQ5OGE4NmEwYmY5MDEyOGMyMjUxNWMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L81-L91",
+          "version": "repo-lines-v1:sha256:84a08ff77bd859a95448276edb6db4d3766725957dc7b95e66538554409ac02d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmMGI2OWE0YWIwYWE5MTc5NjU3OTdkMGRkNWI3MTRlMDc0ODE5NjFiMmRjMTM3NWFmZWUzNmZiM2QyYjQ0OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhYzg3NTQ0NGI0NmM3MGI5YTgwOWQ5YThlMjc3MjBjMzE1MzI4Nzg3YjhjODVmNWFjZjIwZmYwMjZmNjk4MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMWNiMWRhOTQ4M2QzYmU4OGZmNzM1NzFlYmU0NTk5ODBhODZhYmZiMWZiNWQ4ZTA0MmQxZGJiNGJjNmM2YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxMjk2MzBkNDA5YTQ0ZmJhOThmZTU1ODdkODM3NDMyZWQ2ZmY3MzViYzEwNjZjYWQ3MmY5YTg4ZTE2NzI3NzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_892b2d04b0254ac3922365b1514ac8f5",
+      "statement": "reviewScopeRefs derives a joint review's scope from the manifest's entryContextRefs whose Context has no parentContextRef, so a nested Context is never mistaken for a delivery boundary of its own, and it only looks refs up in the parent map rather than re-verifying that they name declared Contexts.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.spec.ts#L77-L85",
+          "version": "repo-lines-v1:sha256:f2fedc91e00096edef90981a11c7766ef6382091d55393e993ed99878d49ae70:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjFjY2QzODlmNGJhZDRhZjk0ODJiZWZkZDE1NTU1NWYxMDYzNDlhNjEyNmVkZmEzY2EzMjZlZTY0MjU1NjNmOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjc3OWQxMThkNmUzY2JmNDUwNTM5NzQ4ZGVlN2E0MzA3YWNiZTY0NDZjYmEyOTdmMjc2MGZhNWQwYmJhMWJjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGI5OTA4MWE2NzYwNGQ1ODI2NTBlYWI5ZDBjOGMyMmI3ZWFlYzZiMWRiYmM0NTY5NmEzY2U2NjQwZDQ2NTFjOCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L55-L76",
+          "version": "repo-lines-v1:sha256:969ab5d6c4f5a87414d90b49237b709b0e94b68c2b29754541da8ee3b66b5c55:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3ZWM3YTRmN2U5ODU2MzlhNTMyNTkwNTIyOWE5MDYwN2VlZjBjNmM4YjBjOWY0NmFmOTE4M2QxNzI1OTExZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlYWMzYTljYmZhNmY2YTJlZTRhYWNlNDU4NzEyOTRkZDA1YWMwMzVkYjI1N2M2YjFhOTZiNjhjZjZmMGUwOWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7b018d18492e401ea6967d0aa44c183b",
+      "statement": "The desktop passes scopeRefs only when .evidence/api/api.json exists, so a model-only project exports the consistency view and is never refused for a missing scope, whereas the collector stops an API review with 联合审核需要显式 --scope，不能用一致性结果冒充范围完整性 because a consistency result is not scope completeness.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L177-L185",
+          "version": "repo-lines-v1:sha256:4c6839a529c42e2f077b95ce8c72d4e095c77675f555d157c68da065a7ff73d1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGIyYWIwNmQ3ZGMwMGQ3MzNhZmRiNGE5MTIxOGIyOTE5M2Y2OTk0MGQ0ZTk5MGNjMjBjNjA0MjcxZTg1M2Q1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc5MDk1Yzc3OWQzYTk3ZjIyMGYxN2FjNjQ2ZDlmYjg4YTczMzhkNGEzMDdiZjkxNjc2NGZiOTJhYjRjYzc3MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjU3YWVhMTBlMzNhYzU3NmE3ZDdjOWI3M2RmNzZkMzk5ZGZhNzFmYzRkNjAzNmVkMjgyMzkxOGNiYWI2ZWRmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmQzMDY5YjQxMTIwOTAwZjI3M2YxNDFmZmNjNWIxZjhhOTJhNzk4MjgyMGMxMjU5MmI5MWY5MjdlNGI5YmMzNSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L242-L252",
+          "version": "repo-lines-v1:sha256:147cea628598f16b3573997f7d161cd11ca018bc7a16c9a10cb634a2eeaa5a71:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5N2I1NzA4Y2M5NTUzYTExM2Q0MjQ3ZmRhYzk1NzdjYzNkYmVjNWYzM2RmYzg5YzkxMzQyMzFmYjI4YWZmNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1MGEzOTk1ZjA4ZmUwMGI4NWFlYjZkNmMxODY1MGQwZTliYjBjMGYzMjU1ZmNiZTU2ZWZkYzNmZmE0Mjc0OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhNGUyZmNlODJkZWMwNjc0NzA0NTVjMjBhZDQ4ZWQ3MzdjNzc3ODFkZDZjNjI5MzI5ZDczZjNjZjgyMWFmZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_11c0437952c64db6957b321c8121bcd5",
+      "statement": "The preview derives its own scope set with one extra guard over the export's derivation: the manifest ref must resolve to a Context entity that declares no parentContextRef, so an entry ref naming an unknown Context yields no scope instead of a bogus one.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L45-L57",
+          "version": "repo-lines-v1:sha256:6b069b542f142064b0daa135a514223c16d38dbcb3937230229fd9cbaff9e212:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4OTI4ZTlhMTI5MWRhMzAyYjk2MWRjNzFkN2ExMTM0YjlkNWJhODA4YmQ0ZDhlM2YyYTVlNzYwMzY1MjUyOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzN2M1MmRkZTUwZjY3MjAxY2E5ZmMxNjJkMWU5ZmFhNDIxMWYyZjNmYmEyZTRjNDIzNjJhMWQ4ZmFkNDk5ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0NmVlZmYwOGVjODUxOGM3ZDFjMDQ1ZWEwZWU5MWI1Y2YyZTE5OTU4NGJlYWYxYjg3YWZhMmM0NTdhYjJhMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0MzUzNWYwOTU0Y2UxMjMxMGNiODJlMzY1YTQyZmVlM2RjZjliOTMxOTc4NGU0NDNkYzBjMTZmNzdiNjNkZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf7658913acd4118b43577745173a521",
+      "statement": "A baseline diff review is refused when the baseline and the current model declare different model ids, with the message 基线与当前模型 ID 不一致，不能进行差异审查, so a page never compares two unrelated models.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-visualization/src/projection/workbenchDiff.ts#L40-L47",
+          "version": "repo-lines-v1:sha256:09ac92a5a9057281adf74083266d156396014a86e82d77cbd95b5368d95900a3:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDNjYzY3NzdkOGRkNWU3MDJjMGE5ZDg1ZjVlOTk0NGE5ZTdjZDI5NjkwNjI0NzZlMThiODY5YjhhN2U3ODljOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTA1NGUyODZiNDM5NWQ4NWI5NDJhOGM0YTQ0MzQyZGZiMTFmYTVmNTE3Yzg3MjI1MmRmMWNhZDNmZTRkYjQwOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGMyYzQ1YmJiZTcxNDQwYmIyYTQ5ZGMyZDlkMGVmN2I3MDBiYzQ0MjM4MDRmMGVmNjEyY2Y3ZjJhMGZiNjFkOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_715432a1cd3b414e8e97b2797a0bc087",
+      "statement": "suggestedReviewFileName places the plain export page as review.html beside the project rather than inside a dot directory, which is the friendlier default for a file a colleague is meant to open.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.spec.ts#L69-L75",
+          "version": "repo-lines-v1:sha256:e724ee7fbebdde41b8726a29dce6a15475363493da2d50853d837e009415ce19:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I2Njk3NGUyZTg4ZWY1ODhmZjRiNTE2YTkxMmNhYTY2YjUxNmQ4NzkzOTVkYThmNGM5YmIzYTllNTAyMmQxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzE1NjRjNWI5NDcxNWJjNjA4NzVkYjg0ZmFkNTNmZjkxMDAxOGEwMzc3MmFjM2QwOGIxYmI2N2ZiNmZmODIwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODNhMjllZDkxNTQ3M2M3ZDg3MzZkNTI0OTc0YTNkNzlkMjhmZTNhNjE1MTM0NDk4ZjcwMjEyNmU0YjEyZDYwOSJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L52-L54",
+          "version": "repo-lines-v1:sha256:b7ec7a4f7e985639a5325905229a90607eef0c6c8b0c9f46af9183d1725911f2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGY2MjAwOTU3OGQ2NDhmYWIyMDhjYmYxNjdkZTM1NzEwNDVmZmYwMTNlNzA1ODQwNjU5MjhkY2RiYWMyYzBjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDBkZmJjOGM5ZTg2NzM5NDMxYWYxZDA1NjVmZDQ0NTQ2NzMyYzU3MmQzN2JjYjU3Y2Y3OGMxYzM2NmNiOWY2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjg5ZWNjZjQxNjE4MzYyODMzMGUxYjA4MzUzZmE4Y2M2OWY4ZjA1YmQ5OTZiNGY4YmZlNmViZDA5MjA5ZTNhNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGYzMGVlNjc1YjAwZTYwYTIwMzIwZTUwYzM2OWE5YzQ3OTA0MDE1MTAyZWFiYWZhNmJjMDlhMGE4MTQxMGJkNiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}

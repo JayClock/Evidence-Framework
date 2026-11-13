@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:515d822555be8a065fc472269e52f30367e9b5b2ec16dc546b13b86ab2d1edb7",
+  "claims": [
+    {
+      "id": "claim_823abc360f534893a2927bd78fe61219",
+      "statement": "The seven workshop steps live in evidence-schema as the WORKSHOP_STEPS tuple of {id, label, hint} records with ids anchor-contract, pair-fulfillment, name-things, invert-dependency, close-breach, trace-key-data and connect-flow; they are shared vocabulary only, and nothing on disk, in the model, in the session or in Pi records a current step.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L1-L52",
+          "version": "repo-lines-v1:sha256:a5506dbaba9815bc3765d25a26c4b3c7cf80d58f3cc6318a03c4c16a6072112b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGM3NmQxMmU1MzA0ZDMwNzllZGI1Zjg5MDAwN2VhMDVmMjI2ZTRkOTNiNjk1Njg0NjBjYWZhZjgwMDc0NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2YWQ0ZDQxOGM1NGQ0Y2YxYzEwNDliMDgzNWM2MmIyYmY0MDFlOWQyMzI4ZWZiZmQxM2FhMGEzZjQxMjM1OGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5afe1a9f644465b90ca5162bd229081",
+      "statement": "The step order is deliberate: contract before its obligations, obligations before the things they trade in, things before the computations over them, happy path before its failures, and key data after the failure path because most amounts only become decidable once the compensation route is known.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L11-L14",
+          "version": "repo-lines-v1:sha256:04c52a496f6a971f3cfcf2af4c159f139b5cd7654e2e0ca182714834c4ac6cd8:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MxM2ZhMDllNzI3YjJlNGFhMWRlMzkxODczNDk5M2M2ZGM0NmY0ZjdkM2U2YzJhMTI0NjBkZTQwOTY3YjQ0NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY0Zjc5MjFjZjc4ZjhjNWY0YTE2NTYyMWU5NGZhNzUyM2EzOGRkN2UyYzIyMGE3YzQ4MTIzMzMyMTMyYWNhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2U3MTlmNDkzODgxZTdlNmZlNjdhYjQ5ZTIwMTQ3MjE3OTVjZGM1MGNjYWFmZjliNDJmZDhiNWFhNmIwZWFlNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWZhNGE2NTM3MzM0ZWVmOTFhOWNkNDFkN2YyOGQxNDg4NTVjZjlkYTYwNGRmZjY0Y2UyNzQwOGFlYTY3NTE5NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c47befe80fa841ca98a0e635efdea9a6",
+      "statement": "The workshop module exposes WORKSHOP_STEP_IDS derived from the tuple, the isWorkshopStepId type guard, a one-based workshopStepRank, and workshopStepFocus which renders the prefix 【第 N 步 · label】 and returns an empty string for an unknown id so a stale id yields no prefix rather than a malformed one.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L54-L83",
+          "version": "repo-lines-v1:sha256:d2519d9c6f5bcc32ec3623b07ae1a4d83f14c2182435f3211ab1b00d3873f874:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjOGY0NGY3NWUwOTcwYzI2OGM1NzZkNjQ0NTlmMzgzNGNkNGEzYWVkNGMyZmZjMzE2NjQwN2JlZWRjYmRmYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiZDMxZjEyZDEzNWI3ODhiNzNlMmUyNjA1OTlhMjkxZTNjOThmOTBkZTUyZTVlZWZhYTZlZWVlY2U0YjIxZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2OWQ5MTZiNDJiODZkNjg3MzdjNmNiYjQ5NjcxNTM2NzExMDlmNTE5MDllYWMwMGQ5MzVmMTAyMTliMTM5N2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c4f8efdbdc154a83b91bdc3367baa94b",
+      "statement": "REVERSE_CONTRACT_MODE declares the no-contract opening as id reverse-contract, label 无合同逆推, a hint about deriving the agreement from receipts and liability, and the prompt prefix 【无合同逆推 · 从凭证与追责推导合约】, so a business with no agreement to read is named in one move instead of re-explained every turn.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L85-L98",
+          "version": "repo-lines-v1:sha256:4087731fa4eb6683d67ba00ef345c9a267f14bda2e681ea93efd23604b13f7e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMWFmZDI1MGJjNTQzN2IwNjJlMjFkNzcwZWUyZTEyZjdmZmJlZGQ3OGVmMDFjMjdiOTNjMzg4MGIxY2JjMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1YzFkMjRkY2E0ODVhNzE1OGVhMGU4ZmQzNTZlYTk1M2I2YTE2YTY3N2U0MzNkYzQ2NDY0M2FiODliOTQ2OTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4ae2a73a67f14c84a8fd8cc04c0b7f04",
+      "statement": "PromptDock builds the outgoing message in send(): it renders the step focus (when a step is chosen) and the reverse-mode focus (when the mode is on), filters out the empty strings, joins the remaining prefixes with newlines and appends the trimmed draft, so a message with only a step carries exactly one prefix line and a message with neither goes out unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.spec.tsx#L222-L242",
+          "version": "repo-lines-v1:sha256:0ba13499bcc6ee9951c4de1b2cf975962faed05b67b16c9c9144c370dbb9ba8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MmQyYmQxOWVjMjA3ZDIzNmY5YjUzYTJjYTIzN2UxNDJmNDUxOTExYmQ1Nzg4MWNkMzhmYTliNTFiZTdjZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxYjRmY2I5Yjc3YTQ3ZDhhNzE1OTA1YzYyZjQwYWNjYzQ2MTgxNjQ2MDAwMmVkNWNkMzAzODQ5YmFkYjNjMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmYzM5NzdjMDAxYzhiM2ZlYzg0MmEzNGE3Y2EzNTU0Y2E0ZThlZGU4MDk1NWQ4YWYzNGEyMGFlNDc2OGE1ZGEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.spec.tsx#L273-L291",
+          "version": "repo-lines-v1:sha256:4ca09527822d411c0f9d6f969e3e447fc1cf6912753e3634f633e18b8ef8d436:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmNzQ1M2MxNTE0Y2M3MWZmZmJjMDBjZWJhMzVjNzEyYTQ1MGJlOGY5MzNhOGQwODMxYzZmZmQ2ZTAwZDdjOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhMWM5ZDBmYWQ5Y2IxNTYwYzI2Y2UzMjExNmE2ZmY3ZWFkYTg4NmJjZTZjMWVlMjZmMjUzOGNhYmNlNzg1N2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3NGYxNzZjZTcxZTVhODkwYzY5ZWM5ZmQyMWM2MDg0OTc2MGU3YjRjOGEyM2FkNTk2MzMyYjBiOTJkOTExZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMmY1YzE1ZGI0NjYzNWU2ZjA5Mjk5Njk0ZWIwMGMwYjUzNzZhYzhhODJhNDQ1YzIxYzIwNzBkNDFlNzc3MTQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L101-L117",
+          "version": "repo-lines-v1:sha256:f7874dcb0253e26c6579cd9dec283c5ac210c503929e4e8e5094f434b8a0967e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYzNjZDI2MTRhMDg3NGU4ZmI4ZTJjM2RjOTYwOGY1ZGIyZTAxMDU3ZWNhOTliNzA0ZDk3NDFkODg1N2NhNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3NzJjZmFhOTM3YzY3YzA1NWQwYWQzMTIyMjlhNjg3N2MyNGY1ZjVmN2FkMjcwNGY0MDhkZjRmZGYwZTQyZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMzgzOWQyOGMxYjdhZmRkYjUwMzBlZjM5YTdhZjIyMjBkZDFjOTdjNTgyMTBjZWQxM2MyYWVkYjBmMjIxNzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9bd9d42165e34becae2cf4c4938238c9",
+      "statement": "The chosen step is component-local PromptDock state, not session state: the pressed chip keeps the prefix on following turns until the chip is toggled off or the 清除当前步骤 control is used, remounting the dock loses the selection, and the session never needs to be told what step it is on.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.spec.tsx#L243-L272",
+          "version": "repo-lines-v1:sha256:dbb6b1c46e7604329a5d39305244d9ebfbb568f117d680bf89f9fe27ae8ee49c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1N2ZlNmI1ODMzNzgwM2NiMGJhMjk0NWM3ZGY2YmE0MDJlZWVhN2Q0YThkOGM5ZGM3ODViZjFjZDRiYThlMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjODNjZmQzNTJkYTZiMGRkMWVmZDJmOTk1NTM1ZjdiOTM2ZGU4N2NlYzhiMmM4YTc5MDRhMWIwNWRmNTI0OTAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L124-L165",
+          "version": "repo-lines-v1:sha256:60964fd8b616f1e9234e2a8f01f22f778c1fbd0a56ac832891509d1be8001a97:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MjdlZjQxYjhkNTMyMjgyOWViYjllNjUwNzg5NTFmNWYxZGU3MDNiNDA1MzYxNzllNzhmZTJhMjlhNDlkZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MjdlZjQxYjhkNTMyMjgyOWViYjllNjUwNzg5NTFmNWYxZGU3MDNiNDA1MzYxNzllNzhmZTJhMjlhNDlkZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiZmZlNDVkOGQwMmFkNDlmOTQ0Y2MwNDhkZjA5Y2VhNmE0ZGUyODAxNTdkZWY2YmYwNmRiMDBiOGMyOTdlMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwNzY2YTJiOTk3YWE2OTQwZmFlNDQzMDBmMzAwMjliYWUzMzZkNmU2NjFlZjBhY2NjMTg3ODIzYjM2Y2I3ZTgifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L38-L66",
+          "version": "repo-lines-v1:sha256:5ac8de952b4856ca302586470b60d81a8763d7d3f377ec30703f95ae238a43b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3YjUwZWY3NjE4NjJkNzEwNzYxZWNkNzdkY2M3OGMyNzE2MWQzNTgyMzQ5MTkxOTM4NmEwN2MzZTdjNGVlYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyNmYzOWY3OWRmMTZjZDExYjk1YWYyMTAwN2ViYjg5NmU2NmFkYWZhZjdkZTNhN2IyOTcxODlmMGNlMDk4MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0ZDI3MjM1ODNlNDhiNzI1NDlmODc0YzM5N2JhMTA3NjZkZjYwZDg2MzJlOGFkMmY3NjJhZTJlNmQ4MDE4NzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e6fa6760833432eb8a88d4c2972054e",
+      "statement": "The prefix travels only as message text: useAgentSession.submit forwards the submitted string as the text of agent.prompt when idle or agent.steer while a run streams, so a chosen step can steer a live turn instead of only opening a new one.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentSession.ts#L117-L160",
+          "version": "repo-lines-v1:sha256:1a6f77caae320fccaa0bccbfb510fa15941896017ed049bf3f491e84d5bc9b48:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2ZGJiMjU4YjFmYzg4YjJiNTVjYTk5ZjllNjc2YjJkZTgwMjdlYTk3NmJjYzUwZjAwM2RkNzljMTNjOTUwY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2MWM1MmQ4OWEzMzcwZGZhM2I2NDU1OWJhODRkYjRkZTQ5YWFmNTgwYTY3NmQ4ODRmYjBmN2Y5Y2NhYjEwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkYjQ2MmNjZGQ1MzgwMDA0MzY2MzA3OGU1OTM2OWYzYjFjMmMyOWQ1NzAyZmEyMDFjOTY2MjI2NGIwNzFlY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxM2I1YTUzODM4YzNkOGYwZmZiZDI3ZTVhMmYyYjRmYWUwMTcyNTA4N2I0NmIyZGViNDZlYmJjZmI5ZjYzZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_39a8801707bc4cac8edd57e6411208b6",
+      "statement": "The step is interpreted by instruction: WORKFLOW_PROMPT says a turn advances exactly one of the seven steps, that a step the user names becomes that turn's focus, and that otherwise the agent continues from the frontmost gap in the current model; ROLE_PROMPT adds that a user-named step is the focus of the turn while the other steps stay as they were, making a named step a focus rather than a permission.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/role.ts#L38-L44",
+          "version": "repo-lines-v1:sha256:5d35dc5f0ae4e0460dc8f0aa93b225bd219d658d493f3c4079da9d19315e29ea:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODAwZWEwZGE1MWNlOTViZmZmYTMzN2U3MTRmMjhiYWEyNGUwNzJkNDM0MzZmYmQ0ZDQ5MjY3OGMyZDgyNGZhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTcxYTQxZTI5NjQ0ZmY5ODY1ODhhNDczNjYzMmYxOTcwMjQ2YTU4OTA1MWY0ZTJhYTFmNDMyMTIxODQyYjgwZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L13-L23",
+          "version": "repo-lines-v1:sha256:4daf3cfa9d445920e82da2d09eb98f6c8a2c4a643b307aac4fb60cb45428a1d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MWE2ZjQyNGQzMWRkMzg0N2Q2NWY1MmJhZTI5ZTVlMjA2ZmQ2Mjc1MTA5YzZjMGZhOTNhZDliMjBiODI5YTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZDFmZGYxZjRlOTM2ZjdlOTc5ZDgxNWQ1OWRhNzNhOGExNGY5ZTI4N2I3NmRmZTdhODFkZjMyZGQzMDMxYjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMzVkYTg1ZDY4NmQwZmE0MmI0YzI0NjBjZmJhYzM1OWQ3YzhiOWZlNjNjZTdmMzdiYTE4ZTc1N2E1MDg0NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwZDBlNTIxMmYwYWIwMDllNWYxMWQ4YTRhYTY4ZTBhZTUyOTU3ZmFlNjA4OTEzNDFjNTZhOTMzZTE2YjljMjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9055543fbc08408ba0330e74bf2c8ab8",
+      "statement": "WORKFLOW_PROMPT carries the no-contract path as a dedicated section, 没有合约时：从凭证逆推, which asks three questions — which receipts must be kept and traceable, whose obligation each receipt claims, and on what a claim is pursued when performance fails — and only then writes the root contract, the two roles and the first pair, stating in the rationale which answers and receipts the derivation rests on.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/prompts.spec.ts#L80-L89",
+          "version": "repo-lines-v1:sha256:70ce1b681d1d9589cf83207c5d5584c5c8d28d58c59d25544e663b12c8a80601:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlYjI5MDNkZGI3OGRmM2IwNmNiMWNlMjE1ZGYwMjk0MzFkNmUxOWZmMjY2MzE4N2IwMWViODVhZTQ0ZTM2NGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViNzQ0NGM3MDhhMTNjY2UyYTE5ODdiMTNiZTE0YmRiNzA5YWNjNmVhMTg5NDAxZWNkNGM0ODA2NzExYWUzMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMWNjYjZhMmNkMDQxMGE2MTJhMzEyZjcwZTAyOWJmM2M3ZGQ2M2E3ZTUzODg2Y2JiOTM2YmRmMGJkM2E5NjUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L64-L72",
+          "version": "repo-lines-v1:sha256:32d1290d6d959958e6eaf8d602b4354f57da9f3d328bfbc8800a60014f09551e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWEzNzg5YTYxYzJlY2M0NDliYmVmZTU0OWZiZTBhM2ZlNzlhYzQ3Yzg4MjYwMGNmOWJkYzE2NzE2YTQwMGFlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ3MWQ5MmY4MjhmZTQ4ODExZTkwNzhmMzYwODM3NmM5YWI5YzExNDkyYjg2M2ExZTJlYTg3N2E5ODA1NDIxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjk4ZDRiYzE5ZDBkOTZhNTljY2NiMTE2YTFkMzRkNDgwMTVmZmY4ZWJjNjZiNDE2NTM0ZDJlY2EyYmY5ZGQ3YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2UzZjE3OGYzZTExOGE1YmViNGE3OTJhMzMwM2IwNmVmNTYyYjI0ZmE1YTYxY2NiMjUzM2U3NzYwMjc4YWQwNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1130ae7d73b9447e9d974629a1c7ca63",
+      "statement": "The reverse mode is an independent opening mode rather than a replacement for the seven steps: it has its own toggle in a second chip group labelled 访谈方式 and can be combined with a chosen step (producing two prefix lines), and the seven moves still run on the material the three answers produce.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.tsx#L165-L199",
+          "version": "repo-lines-v1:sha256:438b19cb2a13b7e91e64c446ab2e57b4a0df44267772958213032b943db466c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MjdlZjQxYjhkNTMyMjgyOWViYjllNjUwNzg5NTFmNWYxZGU3MDNiNDA1MzYxNzllNzhmZTJhMjlhNDlkZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZjQ2YWUzZDk0Y2MwMGRiMDI3NDI0NGU5NTM0MWVkOGU4ODE0YTc3OGExOGU1NmNiNDBiNWFkZGZmMDM5MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZGY0ZmZmNjcyNjQwZmIxMjYzYjVmNzgzODBmZWNlNTJhZWE4OTBiMjBiOTEyMzgwY2RlOWI2MTg4MmRjODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjZTY1MzhkYTkxZmI4ZmMzM2FiYmNjNjE0OWIwOTkzZmY2MjQ0YTBlYTI3OTZhNTk3ZTkxOTcxYzJkYTkyNDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L64-L72",
+          "version": "repo-lines-v1:sha256:32d1290d6d959958e6eaf8d602b4354f57da9f3d328bfbc8800a60014f09551e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWEzNzg5YTYxYzJlY2M0NDliYmVmZTU0OWZiZTBhM2ZlNzlhYzQ3Yzg4MjYwMGNmOWJkYzE2NzE2YTQwMGFlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ3MWQ5MmY4MjhmZTQ4ODExZTkwNzhmMzYwODM3NmM5YWI5YzExNDkyYjg2M2ExZTJlYTg3N2E5ODA1NDIxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjk4ZDRiYzE5ZDBkOTZhNTljY2NiMTE2YTFkMzRkNDgwMTVmZmY4ZWJjNjZiNDE2NTM0ZDJlY2EyYmY5ZGQ3YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2UzZjE3OGYzZTExOGE1YmViNGE3OTJhMzMwM2IwNmVmNTYyYjI0ZmE1YTYxY2NiMjUzM2U3NzYwMjc4YWQwNiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L85-L100",
+          "version": "repo-lines-v1:sha256:1835563a08fd2eda724b98485417719085f63fbfc55eafde840caed1b42dabb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZTBiMGQ2MDExMjdjOTAzNGM3N2UzNGViNzQ4MmQwZDJiODA2Mjg3N2JjNWJiOThlYjdkN2ZiZTI5ZGI0MTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMWFmZDI1MGJjNTQzN2IwNjJlMjFkNzcwZWUyZTEyZjdmZmJlZGQ3OGVmMDFjMjdiOTNjMzg4MGIxY2JjMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c45f6e41e7af491a8e018821eb1e1075",
+      "statement": "EVIDENCE_INSTRUCTIONS is the ordered array ROLE_PROMPT, MODELING_PROMPT, OPERATOR_PROMPT, WORKFLOW_PROMPT and EVIDENCE_SYSTEM_PROMPT is that array joined with a blank line, giving every evidence session a role section, red lines, operator selection and a turn loop.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/index.ts#L13-L35",
+          "version": "repo-lines-v1:sha256:9a3b6cb6c0e83a14fa72eff47f20dec1c4fa6a5ee7f4fe31f119a70096c300c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2M2JiMmMxOWE5NTY4MTA1YmVlODAxZjI0NmI0OGM4ZWE1YjM0NDdiYTAwOTg4OTgwMzc0MzY2YTE4ZTVmMTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NjE3OTBmYzlmNzkzYTgwZWFmODE1ODYzYTAxOGJlZTY1NzA5ODQyNWM0OTlhNTQ2MTYzYzRjNDJmZGVjOWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMjA0ZTA0MWE1MTczYTlhMGEwNzliNmZkM2ZmMzcwNzZjNmIwYzEyODFmMzI1Njk1NDQwMWUwMDRmYWZlMzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ZWE5ZmI0YTA1ODY0MTVkZDkyN2NhNzc4ZDc5MGQ4YTA0YjFiMDMyNTg4OGZkYjEzMTYwNDE4ZGM4MWI5ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_359bf7e5b34342dea517b93f5a8a1842",
+      "statement": "GOVERNANCE_INSTRUCTIONS keeps ROLE_PROMPT, MODELING_PROMPT and OPERATOR_PROMPT but swaps WORKFLOW_PROMPT for GOVERNANCE_PROMPT, because a repair writes the same model a workshop does; the governance prompt starts from a production trace via audit_production_drift and run_scenario_replay, separates block from warn, and refuses to change the model to match a service that writes derived fields or another context's evidence.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/governance.ts#L1-L28",
+          "version": "repo-lines-v1:sha256:c70fb8cfa65f0a1b5771bc2df9475a2d25e42a599e7ce854d0dfe12cd9ac9645:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZDQ0YTY2MGQwZWZlNTdlYmFiZWViODRhOTYzYmZhZjBhZjg4N2UyNDFkYmU5OGU0NWNlZWY2M2QwZTQ2ODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViNDIwNTllMmRkMTQyZDZhNGM3ZDU4YWU5NTRiNTM5YzljZjRjM2VkODQ0NzdmZjg2NTYzYzVjMWZhOTE4MzYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/index.ts#L37-L51",
+          "version": "repo-lines-v1:sha256:27a30119d032ec4d4c69cd14a71cf3b9f3be86eb4d9106e2eec6a95044baa0e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMTYzZWE0MjcxNGE5NDk5YWQ1NmRmYjVjOGRlNDA0ODhlNDcwZTE3OGVmZDE5Nzc5MGM0NTBmYmVlMzYwODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2NGYwY2U1OTFlZDBkOTAzYzE1YTc0MDdhZjdmMzI1NjEzOTU2NjIwZmY3MTU2MjA3ZTRjYWFiNmQ5MGU3ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bb6fa43d81bd4c09b367eae38ac7b1e6",
+      "statement": "The governance prompt deliberately contains no workshop step, and the spec asserts neither GOVERNANCE_PROMPT nor the governance system prompt mentions a workshop step, so an audit cannot fall back into asking a business for facts the trace already holds.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/prompts.spec.ts#L91-L117",
+          "version": "repo-lines-v1:sha256:3c3b10ad0aeb5ab59da94aa0ca46710868ea7ccd573152a4243a32018364e157:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NTU1NjUwOTRlNjcwODliNWFhMmVhYmYyMThiOGQ3YzJmN2Y5MjdmNzhhMGY2ZWY0YjM1ZTFmNWM5YWFiNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhNWFjYmZhZTc4NGRlYjAxYzA2MGVmOWRjMDZlYWNjYTczZmVmMmI2NThkOTdhNjY2NTBmZDBiYWZjYjlmOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7c79395015d40fd918f8d513eb43b74",
+      "statement": "The desktop agent runtime does not select the governance set: createAgentRuntime passes extension factories and no instructions override, so the session default EVIDENCE_INSTRUCTIONS is what a desktop conversation carries, and the runtime spec asserts the created session options have no instructions key and no skill-directory environment variables.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts#L181-L198",
+          "version": "repo-lines-v1:sha256:a32fef69341b7d25466eed43d3d5fb56f0cd0efb94a18c29a251554689a7ef22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwNjgyNjU4YTI5MDU2ZTAzYjQwY2VmMTJkNDdjMDg1YjkyZWZjNDQ2NmZkMTM0ZWExZTgyZWJhNmMxMGNjZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1MmEzZTY4M2Y0NTA3MWNkMGFkMThiNWE0ZDRkY2I3ZmEyNzZmNjM5Nzc0NTc3Y2U1N2E0OTJjMTdjZDk5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiNzdiYjljMTljNjZjMmU3YTlmNjMzMTkwMDQyNTI4MzFmNzcxOGNhMGFkMTNiZGRiZGVkNzJhM2U5M2ZlMTkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L151-L190",
+          "version": "repo-lines-v1:sha256:f7759ae01fa911428d582fe67e4b4f2e083ab1b79d3c0320b8d504dc592f7f55:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMjcyZDg3YWE2ZWYxMDAwMGYzNDM5NDNkMTE3MjE0ZDc2YjczNzMzOWZjMzY1NzJkYzZlNzgwMzI2NzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMThhNGY2MDNhN2Y3NWI2ZGFiYmFmNWUxOTMyNTNjZGU2NmI3NDYxNzE4NjNiNDYyZGM3MTkzZDI1ZDA5MjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5YTEzZjNiN2RlZWViNTVlNjYzYmI0NzhlNGU5ODY0ODc0YmY4ZjE4NzAxMDliNzUxNTFmMDAwMDRkODNjMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmZDk0NmExYWQyNDhhNDc0ZjkxY2RhODQ0MjM5ZWIyOGNkMmQ2OWZkYWM1ZGY2ZDEyYTlkZDA3M2M2Mzc0NTcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L153-L184",
+          "version": "repo-lines-v1:sha256:f4e43cead10805f99570501dce3fa733d80323366042791631f9795e38a420ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwYWIzNTBiMGUzMzU5OTU0NTQzNDA4YmIyYzYyN2JlNWYzMjM2MzdhYWE1ZDQ3OGI1M2JhYWI4ZjRjNjU2YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxZTM3MjVkYTAwMmI0NmVkOGI0ZGU4ODAwM2FkOTcxMGRjYWYxOGQ1N2M0NzAxZGMzYmVmZjBiMmM1Y2IxM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiZTFhNTNlNDA0YzMyOTFjY2M5OGNlM2ZkMmNiYmRkZTU1MzE4NTAyNWVkNzZiMzI3NjIwZjRmYzBmMjA2OWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_558ba2cca4fe4afcad5bc21d4828d66f",
+      "statement": "The session appends the instruction sections after Pi's own system prompt with appendSystemPromptOverride and builds the loader with noSkills: true, so no SKILL.md is discovered from the project or the user's agent directory and the method a project runs is the method the install shipped.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/session/evidenceAgentSession.ts#L99-L108",
+          "version": "repo-lines-v1:sha256:95722e70c468ede8084ab741b9fbf5561acb0e79b35299ba800e52df39aaa358:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MGI2ZWY2ZDAyZDRlMjBjZDY1MmI5YjNiODgyMzRiYzEzZDg4ODc1ZDU1ODI4NTlhYjQ2OWI3ZTczMzc2MzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViZGY4ZGUyYThlZjFlNDZmMTk3MGUzMmRhMzM1MmRiM2I4NmM1Y2JjNjI5MmU3NWQ5NzBkMmFiN2FmNzJjNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMWIzOThmYWZiOWQ0ODcxYjE0MTAzMjdlYWI0ODk0NDgzODkyMWI1ZmE4ZWI4NzBhMDg2ZmVmZDlkNjg2MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxYmZkNmVmYjAyMDI3OTk3MjZiYmU3MmI4NmEyZDNkYjE4ZjczZDQ2MDU4YjRjODdiOGY1ZGJkMjBmZjJiMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a342ab2a49a446429db2c98292c1ced4",
+      "statement": "prompts.spec.ts is the drift guard between chips and instructions: it asserts the system prompt names only tools the desktop registers and contains none of SKILL.md, .agents, references/, npx or $, that the seven step labels appear inside WORKFLOW_PROMPT in tuple order (the prompt is a literal string, not built from WORKSHOP_STEPS), that the reading tool is named before the writing tool, and that the role section keeps its facilitator-not-interrogator wording.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/prompts.spec.ts#L16-L89",
+          "version": "repo-lines-v1:sha256:a234002109c654f2194d9e986011b08dba6eb22a1a34773fe82dd33cb40284e8:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjYWIwNmIwOTFkZDE0OGQ1NGUyODVlNGJlNTAxMDQ5MDZkNTM2NWNlZDFmZWVhZjNjYmQ1NGZjYWE4NjEyZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxNzk0MjA5MDM2MWFiZjY0NTBlMjIwYmY5YmM5ZjQxYmY3ZDM4Y2MxNmVlNTU2Y2E0MmU0YWFkMzY0NGY0NjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMWNjYjZhMmNkMDQxMGE2MTJhMzEyZjcwZTAyOWJmM2M3ZGQ2M2E3ZTUzODg2Y2JiOTM2YmRmMGJkM2E5NjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_29f6fcfa68ba460787ecbbefc13d77e9",
+      "statement": "MODELING_PROMPT states six non-negotiable red lines — key data must have a provider, computable values must be derivation rules, complex computation moves into a domain calculator or checker, derivations read modeled attributes only, a fulfillment request references its root contract with one request and one result end per pair, and evidence, responsible role and owning context are saved as one minimal unit — plus a key-data ledger format and a five-item business-semantics review.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/modeling.ts#L9-L38",
+          "version": "repo-lines-v1:sha256:a665ab1bc36525d04dd321f6fec0d17d2701d7c1b12cee514c96c89d00c7b754:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1MDM4MmRhYjliYTU0ZTUwZTQ5NzA3YmIyYjI5Mjc0NTFkNTkxNzI0OGVhYjBjNzZiNjFhMGM1NTM2ZjAxNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3NDI2MjkxN2ZkMTgxNDZhMTNmNjJlNzY4MDVmODY3NGY1YTEzZWFkZTNiNTk0MThkMDEzMTAxYTU5OTUzNzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzOTlkOGQzZTYzNjMxMGJmNzE2NjEwYjgyZTdjYmQ4ZWZmNGI3OGFiZTc1ZGE2YzlmMjg3MGY5NmZhMTczMGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_392bf1f914e74ec7a29d88c0db7bbd35",
+      "statement": "OPERATOR_PROMPT establishes read-before-write (annotate_contract_clauses for contract text, read_service_blueprint for a process table, ask the business when neither exists), maps intents onto introduce_fulfillment_pair, add_breach_compensation, roleify_and_invert_dependency, isolate_domain_calculator and apply_model_patch, and requires all of them to enter the same patch channel and undo history.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/operators.ts#L10-L28",
+          "version": "repo-lines-v1:sha256:888e3ef16de7633bf94c15e4237c3eb23d6a71600709f57cc213cc4f56efc0db:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjODk0ODY3Y2Y0N2MyZmQ0ZmFhYmIxMTVjMjFhN2RiODliY2JlODUxZDg0MGMwNDJiZmIyOWI2MjMyZDIwYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZjcyMzMyYzViMWQ2YjcxMjNkZjI0YTE5Zjk5ZDZhYmRhYmIyYTExM2E5ODFhNjU2YzYwZDY1MDg0OGJhZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YTE0N2JhZjRlMTRjMWVkODU1MjU5ZjgzYjZhZDI5MTRjZGM1ZDY1ZjgzMjI5M2Y4MGNhZTdmMTM2ODZhZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxOGQyYzM2YmJjNmFhZmIwZGY1ZjUzMzc1Njg1NWJiMzgyYmEzMTMzYzZhNWYyYTlhZGQwMGYzZWUyMTFiNjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b5a44d5727144457a6198b276205e64a",
+      "statement": "WORKFLOW_PROMPT requires run_sensors after every write and triages the result into three severities — blocking consistency or scenario failures that stop hand-off, warning-level ledger decision-owed items that must be closed or registered, and informational output that stays quiet — and gates stage hand-off on a passing check, an empty ledger and an explicit end confirmation.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L54-L62",
+          "version": "repo-lines-v1:sha256:43a2ffb8b9839adde787022e22b4a437bfb4b5ea491992160f862c9ca3b14ee9:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I5M2ZjYjZkM2Q0NzliZDc2NTRhYjRhOTEwYWRiYWE4YTc0MjY2ZTg4OWEyMjM2ZGRjZTYwNmQ3ZmE4MmJkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE5NjBhZTE4YmYxMjJhYjg2YTc4NzAwNjk5ZWY4M2VhNGNhNmYzMWQzMjMyMmIwMjNkMTMyYmE5NjZlNzhjYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZkMDVhMTJmY2VkMmM4M2FiYzRhYzNhNWQ4M2RkNTM4YTY4YmQwYTM4YWJkMGE0NzMxN2ZjMGRmZDE3M2UyYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzkzM2RlMTJjODM2NzM1ZWU2MjIyZmIzNjllOWNmZmZjMzc5ZTc0Mzc5MzA4ZWVjNDc3NzE0ZDEzNDVjODg2NiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/workflow.ts#L74-L80",
+          "version": "repo-lines-v1:sha256:3b996d2935f69b2fba2569cbeab6424403b157502247eddcaeb7a6010a55c72a:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTM5NjBlZWY3NDQ2ODgyNTY0MDAzODkwMjcwZGMzMWI4YTQxYjBjMWFjYTU3YTJhMDRkNzUzZmNiYjhmODNmMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmU4MjU1ZjQ4YTU4NDhkNTIxMWE3MTA0NzU2NTUwYTgwOTJiNWJiMTg4ZTYxNWQ1OTM3NjllMzMyYjZmNDAwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTgxMDcxNzFiNTkwYjViMDM2N2Y2OTNlODZkYzY0ZWQ5YWI0MTlhZjg0NWRkM2FlZjk5ZWZlZGYyYWI5YmM5MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_de4643bc290f4b708e6d7412781a8461",
+      "statement": "Desktop and schema tests pin the surface: PromptDock shows the seven chips with their hints and sends the verbatim prefixed text, keeps the step for the next turn and clears it again, and the workshop spec pins seven labelled steps, unique ids, one-based rank, the exact focus string, unknown-id rejection and the reverse mode's label, hint and focus.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/agent/PromptDock.spec.tsx#L203-L321",
+          "version": "repo-lines-v1:sha256:ea33fbcbfaced5a179391eb4fcd99b087228fe4b276b76ffd49e1fce06ea566c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOTUzZWRjYWM5ZjQ4MmEwZDkwNTViMGQwYThjNWQ1NzZkNzA2NDAzYTg0OGE5N2MxMzU4YWI3OWMyZDhhMDQ1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3OTJmNzJiNDIwODhlOTM5YjQxMGEyMjBjYmRjOWQ3ZjkxMzg5MTk3OTBkOGRmNzVlYzYxNDVjMDU0YjVjNmU2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.spec.ts#L13-L47",
+          "version": "repo-lines-v1:sha256:55a149b73dbc06c2e4285d19720213e10d7319da93ba52b99a1c8440898f24b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhYjAzYzc2ODQ5ZTczNzMwNTNjMTY4MGU4YjEzNjMwYmY1OTY5NTE4MGIwYTM4YzI4Yjk4YWM4ZDRkYzQ1MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZDk3MmU4MDE2MTRmMjNiNTIxNTQyZDcxZGU5MmNmMzU4YWRkYWNiNzYwNWQ5YjFlM2ZmYmE4ZDNkY2IwNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}

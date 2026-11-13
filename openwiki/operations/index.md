@@ -1,3 +1,3 @@
 # Files
 
-- [Workspace, build and packaging](build-and-package.md) - The operational rules of the repository — pnpm and Nx settings that change how code resolves, the @evidence-poc/source condition chain, inferred targets, CI verification, and the Electron Forge build that ships review assets beside app.asar.
+- [Workspace, build, packaging and release](build-and-package.md) - How the pnpm/Nx workspace builds and ships the app — the hoisted-linker and allowBuilds reasons, the declared versus inferred desktop target graph, the @evidence-poc/source condition every consumer must repeat, Forge packaging and installers, the CI and release workflows, and the nightly OpenWiki pull request.

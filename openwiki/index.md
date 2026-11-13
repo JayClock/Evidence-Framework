@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # Files
 
-- [Quickstart](quickstart.md) - What Evidence is, how to run it from a fresh clone, and which wiki page answers which question.
+- [Quickstart and task routing](quickstart.md) - What Evidence is, the one toolchain and its commands, the shape of a project, and which wiki page answers which question.
 
 # Directories
 
@@ -16,3 +16,4 @@ okf_version: "0.2"
 - [model](model/)
 - [operations](operations/)
 - [testing](testing/)
+- [workflows](workflows/)

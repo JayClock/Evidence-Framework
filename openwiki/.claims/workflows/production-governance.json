@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:637e3f826fec9bd6b47590ab10ab68a39e0e2edd1916e803e6eec3a668d0f972",
+  "claims": [
+    {
+      "id": "claim_a6b76333048546e6ac1774682b37374b",
+      "statement": "Both production-facing simulation reads (`replay` and `auditDrift`) run in the desktop main process against the saved model resolved by `modelSourceOf` (`<root>/.evidence/fm` or a bundle path), never against the unsaved canvas, because the audit must describe what was saved and deployed; `runNativeDriftAudit` re-reads the model for each call rather than taking it from a session.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L16-L24",
+          "version": "repo-lines-v1:sha256:e5f54e70ffa097058aa755335b25cbb6fc57b4c43cb4d8d358fe012ae91938ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjkyMzM3MjYzMWE5YWI4NGM0NTQ0ZGQ2MGQ4ODY3YjYzMWE3MDRkMTlhMjA0NWQ2MGZmNDFiMGY0ZTYwZDkzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWY1OTcwZDQ2MjQxODRlZGQ3YjM4NGYyYTY3OGU5MzMxNWEwN2QyNmU0OTFkNDM2YmY2MDFlNDg1ZDUxNzdhNiJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.ts#L18-L25",
+          "version": "repo-lines-v1:sha256:fbd6f24eb0da3d9d13327d6435d380560528ac01b0d2c2dee6f12bb1905b232d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODA2MDg0MTc0MTQ4YmZjNmQ4MzFlZDJlYjY3NGJiOGEzZmE2NmIyY2M1MmY4OGVlYTU0YTM3OWY5M2I2NzM1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2E3NzMxZDliZDJhMzQyNTVhN2YwODUzZjQ5MGUzZWViZDhmNDdhNTIwMjNiMDYxYzc0ZDY5NjVkNGRhOTMxMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODUzNWNlYWUwYzcwYjgyMTk3OTRhYzA5MzY1OTA5ZTA0ZTU0OGQ4YmYyODg5Y2M3ZjdhMjRmYmY1NjI4ZTJjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjEzOTgyODA2YTg4YjVlYzJlYjhiNjRhYjVkM2NjZmNlOTUwYTZjMzI3MjE4OTUwMjk5OGU1YzQyNzRhNDk0YSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeDriftAudit.ts#L1-L16",
+          "version": "repo-lines-v1:sha256:c65b5ddb6951bb0bb9debe4db77be813554c446571f2c794ce76009883cb139b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNzY5NDhkOWEwOWFlYWQ3M2Q4OTI4ZDUxNWU1ZjU3MWJjODI3NmU3MzEyNDE5OTAwOTExYzg0ZTJiN2YxMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmY2Y2Nzg2ZTY5YTFmMzg2MWE0MGVkNzExMGY1MWJmZjZiYTY5MTE4NzZjYjFlNDkzMTk2MDYwNzczZTM4N2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNzBiMTE0MWZkYWEwMjIzYTYxODQ1MDQxNTI4YzQ0NmIxY2QyMWYxNGI0YTZhZjE4MDU4OGM1OWNjNTVjZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_adbf3efafdec477f85cf8a39a5475482",
+      "statement": "`readProductionTrace` turns a span into an `EvidenceCommit` only when the span carries a non-empty `fm.evidence.ref` and a `traceId`/`spanId`: spans without the ref are skipped silently as context, a span that names Evidence but lacks ids produces a `path: ...` error and is dropped while the rest of the trace is still read, and the resulting commits are ordered by `startTimeUnixNano` then `spanId`.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/telemetry/productionTrace.spec.ts#L35-L135",
+          "version": "repo-lines-v1:sha256:5fca57261ac67ad38804d6038577d911cdcdeab8ffaf5e4b0486876e1bcad0e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzYmQ1NTVlNjEyMGQ4MmFmYjY4ZjczN2M0OTMzMWU2OTE0ZjcwY2EyZDI1NDM0OTE2YmIzN2U4MjExNTlhZDE5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MzFjZmJmNTg5NTExZGEzNGIwOWEwNmMzZWI1NTM4ZTE4ODhmMThmN2EyZjYzYTIxYThlNGUzNGIyOGZmODFjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhZTM1MjhmNGE3NjNjNjk3MWU2NWFmYjE5MTJjNzNlYWE2YjFiMTdlYzQ5NTNmNzFmODE0YTE4NjNmNjE1ZTc0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZmNhODI1YWI3M2MwZjEzOWU4ODNlZjExM2Q4NzVjNmM3MTA0YjQxZDU3ZTg4MjcwNGYzNjFmMmExNWNhYTlkIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/telemetry/productionTrace.ts#L203-L293",
+          "version": "repo-lines-v1:sha256:bf30324a5a9b7ac39603bf6f472f39ebe9afd4ac0f04de1e97337d879462ce12:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlYTNmZmM0MDA4Y2VmM2I4MTYwZDg4YTFlNjljNzhiMzYyOWVmZDkzNzQ3MjUwZmNmODhkYTdkYTI4YTU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzMWIzNGZlMjVkZTQ0YzE1MjlmZjkwNmU0MTZlMDM3N2U5ZmI0NGMyMDk5YWFhZDdmZjllZWNlNjgwY2E4MjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_80bd2c02c2a34c9489f0c9fa73ced651",
+      "statement": "The trace reader understands exactly `fm.evidence.ref`, `fm.context.ref`, `fm.fulfillment.request.ref`, `fm.fulfillment.status`, any `fm.value.*` (prefix stripped into `values`) and `service.name`, where a span-level service name overrides the resource-level one, an unknown fulfillment status collapses the claim to `null`, and an OTLP `intValue` string is converted with `Number` so numeric comparisons against modeled values work.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/telemetry/productionTrace.spec.ts#L68-L130",
+          "version": "repo-lines-v1:sha256:7f07f8b919eb3c6265a739b44ec542e1fd19d454182cb89031fbfede3a0c0f12:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzNDczZjc5OTE4MTU2ODVmZThlMjc3ZjNlZjJkZjk3MTkwY2ViZjljYTk2NWU1ZjU5NzFlNTdlZGZlNmYzYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhNjZkOGQ4YmFlMjI4MDRmZTNjOGVhOGUyYjI1YjJjNmU1M2EyMzJhNDcyNGFjZjcxN2MwNGI4OGNlMzdmY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmNWFjN2FiYTY1ZjliZDE0NDFkODRmNGZmZjllZDZlMmQ3N2UzZDJhY2E0Y2MxOTlmNWFhZTBiMGFhNTIyN2QifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/telemetry/productionTrace.ts#L160-L201",
+          "version": "repo-lines-v1:sha256:d4711021d34ac7e6cc3067ae3d7dd5e99aea05e49f74f10f8ac293fbe0f92e1f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiOGVlYmI2ZmQ5M2Y1NTZiNTllZGFmMjQ5YWZjZmU0ZGE3MmIzMTJmYjk4YzZiZDg3ZjAxYTE0MTI3ZmVjNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjOTNiOWY5NWUyYzRhM2QxNmEzMTExODliN2JhOWI1N2I2OGZhYjg2ZGI2MDBhYjZlYTQ1NTE4M2E3MjhlOTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhZjcxNTM2MjljOWVlZjgwN2VlMWIzMGRlZmM2MGIyZWFiZjA4NTBmNDNkNDBkZDFhMjdjOWEyYTQ5ZGU3NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3NWQyN2NlODEyYjYwMGMxMTRiZDI4MjVhNmZiM2RjMmFmOTQ2YTRkYzdlODEwMzQ1MmJmOGRkZTQxNjg0N2EifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/telemetry/productionTrace.ts#L44-L128",
+          "version": "repo-lines-v1:sha256:bde3f31c556728afb6b9ba2e6c589265708cd55c48a8fce7d277053dc71e3863:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmOTE3ZDlhYTc3MDc3NDZiOTllOThmNzhiYzcwZTRiNmI1YTZiOWRiNzBmYzJkYTQwYTU3Mjc1MzI3ZWRkNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjZDgxMjkyMjYwNzk1ZmI4NDM2YTcyOTdiNjU2MmY0ODZkYzA2OTVkZWFhNGZkODBlNWJjYTEyNjkxNTQ3OTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4Njg4Y2ExMTU2MmZiZDcxNGY3ZTFiZmMxZDJhOTdhMDEwMWI0MWRmYTkyMWRmNmM1YzYzMWQ1Y2UzMmE3NTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78a8d94031fe46928d3ac72fe43c40ad",
+      "statement": "The drift vocabulary is five kinds with severity fixed per kind: `UNMODELED_EVIDENCE_COMMITTED` and `DERIVED_VALUE_SUPPLIED` are `block`; `UNMODELED_ATTRIBUTE_WRITTEN`, `CROSS_CONTEXT_WRITE` and `BREACH_WITHOUT_FOLLOW_UP` are `warn`.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L8-L30",
+          "version": "repo-lines-v1:sha256:4f8a5e7a4e740a9ac7dbf1eeb4dde68ca2ffbd1892df28d3d94c98630b439660:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmE2OTkxNjMwZTFjZmVjMDM2YzUxYjg1OWMyMDYwMmVkMzA4YmJhOTEzNzU2NThiNWY0MGQyYTBkYzZlMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4ZmViNTZiZTRmNjU4MmI0ZTk0NTBkNGJhMTcyN2NjYWFlYmU5MzhjMDY2YjA3OGM2OTIzYjg4YmViYzIzNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2OWE2YTI5YzI2OWI3NGNiMGIyNDAxMTc5NzgwMzdiNjNmOTE1ZmZlZTk3ZTcwM2E3YTE2OWM3MGY2M2NlOGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L99-L102",
+          "version": "repo-lines-v1:sha256:62eb3437fee35e6fc9d1881216476c854f76eb1b8700d94b136c4aa5476e81b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM2YTY2NGUwYzI5MTJkOWVjNDUzMGE2MTZlMDEzZGY0MzQ2YWY2MWM3MWZkYmM4MmQ2ZWZmNjM1MWYwY2UzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk2OWZkYzBlODc3NWI0MTkxMzM4M2NkZmMyYjkxNTI0NmYwN2ZhNzcxN2JlZGE4MGNiNTdkNzNiNTQ1Yzg5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjFkNzY1NzUwMGNkNGVkMzYxYTFkZjMzM2RmY2QwMTM0NTA2Yzk4MzJhOTU1ODE0MWJkODNkMjIyZTJjNGVmYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e8bfd241a546484e98ad95b33d86c4b5",
+      "statement": "A commit whose `fm.evidence.ref` is absent from the model, or resolves to a non-Evidence entity such as a context or role, is reported as `UNMODELED_EVIDENCE_COMMITTED` and short-circuits the remaining checks for that commit.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.spec.ts#L88-L108",
+          "version": "repo-lines-v1:sha256:8e44a05fd1e601e7f12a5b5832e89bbadadf73d7246ad2721caa80b3a3e770f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjM2IxMDU3OTMyMmZiNzA4NGVkNTViMGEzYmY0ZDRjZmQ2MjE0YTljNWY5YTA1ZGUzNWY4MWU5MDZlMTBiMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYmMxM2IxMjRkYTFlMDNjMTAyMDc2MzViMDFhZmY5YjkwZmU2MjRmNjk4OTgwMTUyMjNiNjFlZjk0YjQ2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzMTc3YmUyZDFiNDdhYmNiMWRjMTdlNDg3YmYwNmQyYjQyMGM0ZDU0MTA3YWE1MGFlYWUyZWIyZTc0ZDM2ZDEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L195-L216",
+          "version": "repo-lines-v1:sha256:b1a40771a3c279349781a85adfe34bfb0b4ae344d918fc617ef3feaee9248893:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmYmViMDIwMzdjZWRhYWE0NTg1MDQ4ZTQ0Y2YxNDFiMTg4ZWI3Njg1MDQwNjgyZDRiMTRjYjRlNWM5MTVlZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3YTQwOWVjNTcwYmJmYTIzOGQzNDZjNjE0MzQzMWFmNjVhN2Y1ODg0MGM5YWRjODFjYzMzZTkwNWVmZjE3OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YWU1ZGZhZDQxZGQwZjIxMGIxMjUwMmEzYmFhMDk0MWRjOGJhYzZkZjVmZmZlMGM2ZjVjNjk2OTAxZDVlNGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c679746f8dc144a68ab4ec066fe1c776",
+      "statement": "`CROSS_CONTEXT_WRITE` is raised only when the commit itself states a `fm.context.ref` that differs from the entity's modeled context, and it carries distinct messages for a modeled context written by the wrong service versus a context the model never declared.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.spec.ts#L136-L170",
+          "version": "repo-lines-v1:sha256:0b12074af8f7618cc34c3c2425c85f829c15abff0d78ac69c7a514225ac83991:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNWIxNTE5YjFhYmNhYzQ3OTNmNjBiN2U5Yjg0MjFkNWIzZmY5MjU3YmFjOGM2MDY2OWUyYjUzNmM1MDE5MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NjVhOGFkYjQ1OGI5NzYyZjg4NzAxYTMyZmQ0ODEzYjFlYWJiMjg1NmE0NDVhYWUxY2UwMzdlNjRkYTA3MWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2ZWQxMzc4OGU2ZTE2MTU1NjhjNjFlM2IyZmIyZTg1ODNjYTVmMmZkNjBjMDhlYzg3N2JmZjY4MmJiZDBlMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyYjcxOWJjMWI0NjVlYWU3MjI1Y2E1MjkzMDBhNDFhYjMwYmExMWViOWY3ZWE1M2U1MWZmNzdlZDBhZjVjMzAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L218-L251",
+          "version": "repo-lines-v1:sha256:2d7a7563b1ce99d3f7b155c23715debdf4fd5366833046fc4fd457ca1f88e88b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkYWM5NjUwMDY4YmFhMjY5YzllMTQwOGY1MDEyZTc5OTg2ODMzMTM1OTE5MjkzMzNkNzg3M2E5NGRhMTg2N2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwZWY0ZDE1ODU3OTc0MDc4Y2YzYTBhNDY4M2M4N2Y1ZDMzZjc5YmMyYThjYWViZjk4NTg4NTM1NDJiMmJkNTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ZjdjNmYxYTFjMGNjOWUyZmI0ODYzYmNhMDEyZTMwZmYyNjMwOWY5NTZhM2Q1YzIwMzExMDljOWIxNDJkZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjOTUxYjQ2ODNjNjNlY2YwNmY1M2JiNWM1YWNkYTVkODhjNmYzODdkMzY5YjljYzFlNGUyOTFlMTVhMjc4NzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_25dec26dd5df4408b99a5cc48a979151",
+      "statement": "`DERIVED_VALUE_SUPPLIED` requires the written attribute to be declared on the entity and to carry `derivedByRuleRef`, and is skipped when the written value is `null` or `undefined`, so a modeled-but-empty derived field is tolerated.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.spec.ts#L110-L146",
+          "version": "repo-lines-v1:sha256:5315b09ff5970f12700d19a44001166356eabac841857a2fca6dccb4543d9ac2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MmFlMTgxZmRhZjRmZTM3Mzg3MzY0Mjk2YjA1MWYxZDdjNjZlMjBjYjAyNTc3YmNmMTE4MTAzZWE0MTY1MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0MTVkYWUzYjEwYmVhZTM4OTAzOWNmMzBhZTIzNDU0NTIzMDYyZWQ0ZjUzNmMzMjVlYjAwMzRjZDFmNWRmZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiMTYwMThiMTBkNzFjYTU5ZmM3MTVmNjQ2NTI2YjhhMDY5NmE2NjNmYWE4M2VlNzkzNmM3NzZkMWUyNTgxODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiYzRkYzA0NjY4ZTg0NGMwMTYwOWMwZjVlZDczZWIwNDdhZDc1MzMwMGIxMDk0NGY0NzI3MDE1MDkyNzZiMWIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L253-L300",
+          "version": "repo-lines-v1:sha256:fa90f01f3d31fec1f496e10209486b3409ec3cdff69b04b69f316186ebf9abcc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzN2ZmMGVjNDRlYTE1MGQyOTc0ODI5MjNhNmNmOGE4OGJmNjdiYjBiYzc2ZDEzZTE4MmM1MDZhOTBhMjE1YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZGQ3MjkxZjIzYTc2MWUzNTcxYjEyMTA5NzgzYWMyODgxN2M1NWRkZTAwNDgyYjdiMTgzMWQ1M2NmYzNkOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1ODc3ZDkxYWRiMTc5NGQxOGU4YWVkOTI4OGI2MzllMzkyMjU3OTE5MjNhYjU5NTNkNWZiNTNiZDU0MzBjYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiYzI4NGU2ZGY4MjJkNmZmYmIyMTYwMDEyYTNmMTQ4NjM1ODI0MTZjYTk3NWZiN2VlNmQyZDA0NjdmYTNiNDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a969ec8cb1f4583a346ab43054a004e",
+      "statement": "`BREACH_WITHOUT_FOLLOW_UP` is raised when a `breached` fulfillment references a request that has no model breach rule, or when no other commit in the breached request's context (different Evidence ref, not one of the rule's confirmation bindings) follows it — a deliberately tolerant check, since the compensation may be recorded in another team's trace.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L130-L170",
+          "version": "repo-lines-v1:sha256:fe67098e48f552994d533b2a3200f9f7a0976d6736f92a71c5edf75c2d2dd80f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYzcyODVlMTFjNGQ4ZjNjYjI3MjcyNTk0MGQ1ZDFkZGU4Y2Q2MDBhNmVhMTE2N2VjNThmNzc5ZjFkNzVjMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiNTBmNGVjMzdkMjk3NWQxZjZmZGY4NTliNmM1Y2Y0YjhhZWUwMmU5YzRhZGFhZWJkYzczOGM5ODRiNWQwZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1MDI1YTFkMTNmYjBlMDM2ODc1ODA3MzRjMzYzOGYzYjgxOTdkMTczYjU2NDFhNGYwMzcwYzAwZjEzY2NhNWQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L302-L360",
+          "version": "repo-lines-v1:sha256:132102ea58d407eb2d7b6e3371cdfdc7ca3cc608f3ae993637a825be45995a58:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlMzc0YzcwZDNhNTczOTE0NTBhOThjYjE1MDZiMTY3NGYwZjUxZGJlYjlhNTk4NzQ0ZTk5NjRjMTg5NzMxMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhNzI0OTQzODFiNTg0MjRjYjdlODQ5YzhhNDliNmFlY2I4MmM0MWZjNmIyNTc2ZjA4ODc3MjY4YmY0YTEzNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzZDQ5NGIyNDQ4NGVkMjAzYTBiODQzZjFhN2U1NWE4Njc5Nzg3Yzk4ZmVmNWQyYTIyMmRiMGU1YTU5OTU0MGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9d0badb438343108dadb5197b72a623",
+      "statement": "Every drift finding carries the commit pointer (`traceId`, `spanId`, `serviceName`, `operation`, `at`), `evidenceRef`, `contextRef`, a `modelExpectation` naming the expected rule or context, a business-worded `remediation`, and a `driftId` derived deterministically from kind, ref, trace/span and message.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L104-L128",
+          "version": "repo-lines-v1:sha256:d16986ee6d4eeacf1d7ebf20ac443172d6a134e0c82250a22ff5d0e5d79b9133:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5YWI0ZjllMjliNWM1MWMwODFhMDg1YjA2MDk5ZTIyZjljNjFkZDI0NTAyNjQ4YWEzNzFiY2MyNzIxNjZkNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmYjVmMGFhNGY3ZjJkMmY4MDg2ODk4NDgwOTkwNTliNzEwZjNiNzNjMTU2ZmI0MWRlMjViODgwODNiZjE2MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlNjhhMmYzZjQwNmNmYTRlMmNmOWNlY2M0MDI3NWZhYjk5MDJlYzEyOGQxMjVmMGFiOGZmNjFhMTNmNTE5MGQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L30-L60",
+          "version": "repo-lines-v1:sha256:a57321ccebea796db4513128bd81a37cf67f527ad38e2e27c7e005a43b9e07e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmE2OTkxNjMwZTFjZmVjMDM2YzUxYjg1OWMyMDYwMmVkMzA4YmJhOTEzNzU2NThiNWY0MGQyYTBkYzZlMjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwOGQ1ZWZjNWQwODBlMzczODI5YWQ4NTk3YjEzNDg2NmY2ZjQxYzdjZGUyNDYxYzBmNmZkZWMzNWQ1ZTYxMzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MDZhMWZmOGYyYWUwOTIzODM2ZWFjMzAxYzllMjE1Y2RiNjdlOTQzODQ0ZjA5ZDE4NTMxYTEwM2RlNjlhYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2N2E2ZWU4YWQzMjJhMTFiZTA0MGEyMGNjYmQ4ZDRkNDE3ZDRmOTQ4MGMwNTJiYTc0MzhkNzhhNWRmOThiMzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd4621d4992b4b8580094f0f6da728ea",
+      "statement": "`DriftAudit.passed` means only \"no blocking finding\", not \"the trace was readable\": a non-OTLP or unparsed document yields `passed: true` with no findings and an `errors` entry, and `runNativeDriftAudit` merges model source issues into that same de-duplicated error list.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.spec.ts#L239-L259",
+          "version": "repo-lines-v1:sha256:07517772cf26d8e5d1923d52b4dd646a774498b5a970b5daf625433e4d1f3cf7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNjZmNDc3MDYzMjIyY2M1YThlYjU2OWMyMzkwYWE2MWMyNDdiYWM1OWY0NGVlOTM4OTEwYWFlOGEzMmFlMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMjk4YzAzYTI2NmE5YjY0ZDRiNzFhYzgxZTAxODI3NjA4ZmExYzUxMjlmZGI5ZmI4ZmJlNGJlMDIzNmI0MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/driftSensor.ts#L357-L370",
+          "version": "repo-lines-v1:sha256:3af29fb81a96ef5ab882bf0928ece3e3eeb33f94d60eed7de049eae587a9b57c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyMzBkYTBmMmZjMGU1OGJlMWM2ZWE4NzFmZmY2YjFjODYyMjkzN2U5OTIyYzdjMzY4NmY2NmVmNzY4MTA1YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeDriftAudit.ts#L18-L30",
+          "version": "repo-lines-v1:sha256:98e6074abe08a601b0de3522da3b24da65e51978c727380fbb8510105d14de8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwOGJjMzYxNzk3NDQwNzQ0ZTk1MWUyZDEyNzBkNjRkZmVlMjBlMDg0NDIyZThmZWVkYTE1MmNmYjliZjNkNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b99a6d9217dc45af8ddf15c8770be850",
+      "statement": "`driftIssues` converts audit findings into `SensorIssue`s tagged `source: 'audit_drift'`, keeping severity, using the kind as `code`, `evidenceRef` as `targetNodeId`, `contextRef`, and the remediation as `suggestion`, and turns each audit error into a `warn` `DRIFT_TRACE_UNREADABLE` so an unreadable trace cannot pass as a clean audit.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L231-L275",
+          "version": "repo-lines-v1:sha256:aba411b32811fb288d11143c5f20001bb4679ee2b5841b40128ac47ad54c2f6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZDJkOWNjODgzMzhjZjJiMmY0NzdmZWJiZWU0ZjI4ZWI1M2MzNjU1Y2U1M2Q5MDAxYTkyMTUyODcyZjkxYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkYmJjNGQ1ZTc3MGUwZWJhMzQ5NDM2Y2Q2N2ExZDYzNjU4MGFiMjUxODI5MTMwZjc0ZjBlNmM2N2Y2ZThiNWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L161-L190",
+          "version": "repo-lines-v1:sha256:e3aeec8347f8ce37cd66be19854a68e37ed05e17517f16a5c5c6be94d9b01183:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0MGY3YmM2MzhhMDRkMTU5NWFiMzkxMDRlYzYzYThiNTc5YThlMGM3MTlkZmQ2YzNmNTgzMTA3NjlhZjkyMTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiZWFkNTNhNmQ3Yzg2NmNiOTJiYTY0MDY4YzAyNDg2MDMwMGQxNmZmOGZjMTk4YjNkY2E5NDJhMzBiZDUxNzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4YmQyZWRmZTZmYzJlYThmNzNlYTUwOTQyZTUzMWZlMDE1MjUwMmY2YmYwNTUxOGUxMGI0OGM3NzU3MWY0MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_84de486f6f8a453fa7a65dc423623e4c",
+      "statement": "`buildSensorReport` accepts an optional drift report, folds it after the FM check and key-data ledger, and `finalizeSensorReport` de-duplicates by `issueId` and recomputes `passed` and `isStageGateReady`, so one blocking drift fails the report; no ordinary desktop sensor run supplies a drift report, which reaches users through the radar and the MCP tool instead.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/native/nativeDriftAudit.ts#L18-L30",
+          "version": "repo-lines-v1:sha256:98e6074abe08a601b0de3522da3b24da65e51978c727380fbb8510105d14de8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwOGJjMzYxNzk3NDQwNzQ0ZTk1MWUyZDEyNzBkNjRkZmVlMjBlMDg0NDIyZThmZWVkYTE1MmNmYjliZjNkNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.spec.ts#L276-L295",
+          "version": "repo-lines-v1:sha256:9090b13289c349e1d01fab47b271f4323e38f73cbf4e265ad909f6b52680645b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhZGQ2MzJjYWFkNjgwZGQ3OTViY2QxYmJlZWZhZmI5NTY3YzNlYThmZThkN2ZjODcxOTQ1YzljOGYyNDhhY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-modeling-orchestrator/src/sensors/sensorReport.ts#L318-L409",
+          "version": "repo-lines-v1:sha256:aa164d3c8cf455350891163af31528eb4d636edc08e7f0d001eb228ef2e1ffe4:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NTNjNzc3MmYwZTAzYmZjMTRhNmExMTJmZDkyMDdiYWU4MzExNzFmNTI5MjJmNjk3ZGY4YTNhZjFmNzMxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMTJmNWFkZTIyZGRjZTA4MWY1MDkyYTFkYzA3MjUyNGEwOGY3ZjNkNWViNDQ1YTBhMDI5YmU0YTUyMDIxNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa82b18c3d1e42899d289f02c5d2145a",
+      "statement": "`decideGovernance` maps each drift kind to exactly one action and tool: `UNMODELED_EVIDENCE_COMMITTED` to `adopt_production_change` via `roleify_and_invert_dependency`, `UNMODELED_ATTRIBUTE_WRITTEN` to `adopt_production_change` via `apply_model_patch`, `BREACH_WITHOUT_FOLLOW_UP` to `close_compensation_gap` via `add_breach_compensation`, `CROSS_CONTEXT_WRITE` to `move_write_to_owner` via `apply_model_patch`, and `DERIVED_VALUE_SUPPLIED` as well as any unknown kind to `raise_blocking_ticket` with a `null` tool because it is a person's decision.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.spec.ts#L28-L120",
+          "version": "repo-lines-v1:sha256:ea92ab4f1e18c914d3b666e8d96a6ed932b7b23c2a67d2d6a71e860508e6b8c7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwNGRhYzgzZTQ0NzcxNGIzNDcxMjU1NDkxMTY3NzY1MmJjMmYwM2JlYWUxOGQ1MjE1ZDRlNGZkNTZiNzA1NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1ZjU3MDhkNzFjOThiYTc3ZmUxNDYyYTRlYzE0NjUyYjRlN2I2MDIzM2ViMmNhMjM1Njg0NTUyOWMyNWVmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmZGFmODNlZGU4OWE1ZGNjODg2MTI5OTczNDgzM2NjNjkwN2ViZDI0MDNjOTRhMDVkMjBlZmEyYmM3MTAyZDgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.ts#L78-L125",
+          "version": "repo-lines-v1:sha256:277dc39c9df1ad66bc19ccde8b74c618840f463cc91500e953daf9f8fb152eb8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5Mzg0ZDc4ZjEwNzVmZDRlN2I2NWRjYmFiZWI5MjYwMjQzMjhhMjAzYTNkZWI5MGExYzFmMjg5YmY1MjY0YWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZDNiMTJlMmZmMWU5MmU4ZDZiNTI1NjkzY2I2ZTJkNzZhMmEzZTI2YjhlNzQ1ZmVjM2M2MDNmMmQzZTM0NDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlOGJkMzhlZjI4MDZmMmFmYjNkMzg3M2EwZTQzMDNjNDQ1MDNiZDVhODlkOWYyNDc3NjU1MGZhOGE4OWQ4M2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkNGRkNTRkODk3OTVlOWQ1ZDcxNmM2MGRkNjVlZmE4Zjc2NDRiZWE3MjIwODdlN2RmNWZkYjU1NTM2ODViZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c652d4415ceb4ddfa5d0699b8b8a044c",
+      "statement": "The governance verdict is ranked `production_overreach` over `needs_repair` over `model_lagging` over `healthy`, and a replay with `passedCount < scenarioCount` appends a `repair_model` action using the agent's `run_sensors` tool without outranking a production overreach.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.spec.ts#L88-L125",
+          "version": "repo-lines-v1:sha256:7e207d3cd4be2e11ae0e7bd42e4d270c0ec1d6007bc73072bb5253048e18b2ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxM2I1YWFkMmQzMjBkNDY3ODIzNmZmMTA5MmZiMjJlZjQ1ZGE3Y2UxOGQ5NTRmMDc5NDgxNDUyNjkyYWZiOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwZTFiNGY1MzUxMTMwZTg1YmY5N2Y5ZjU0OTlmMjExZDRjNGVlMmE1MGNmMGVhZmQ4N2M5Mjk2NTM1MmIwMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxODlhNWFhYjc5OWI1MTU1NDQ4MWUxMTRmNWY1NTIzYTE4YzUxOWE5ZDZmZjgwMGQ1MGFhM2FkNDEzZjQ5NjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.ts#L142-L197",
+          "version": "repo-lines-v1:sha256:d7db01ed9f00b1b9617a6520113b814996377922a6b7679102ac45180cc35906:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNTQxMjVmZTQ2NDQ2MTgzMWYxOGI0NGY3YWU0NDc1ZGVhYjRjNWMxMmU5ZGVhZWJkMDhjYjhkOGQ3MDFlYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZTk3NjMwOTRkNWY4ZjY2OWI3NDViYTg5NGI1YzEwMTBlNDVkNDI1MjE0MjQxYTJiZWIyOWViZWJjNGI0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjYzVmZjMyOWQ4MjM3NzgwMmMzNWQ3YTMxYzc1OWU1NTc1NDI0NTYyNTFhYTQ0NjI0NGNjNjAxZGUzMmU5YjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0f8eeed9c4c04ef28726cdf1b348317f",
+      "statement": "`canPatchModel` requires no blocking drift, a supplied replay that did not fail, and a `model_lagging` verdict — so a `healthy` verdict also disables patching, and a failing replay closes the patch path because the repair would otherwise be built on a broken baseline.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.spec.ts#L10-L86",
+          "version": "repo-lines-v1:sha256:4ef004684ae3ec80401c3a04ae4ed6811ff644280903f092fb9fb6418090f411:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5ZTI1Njk1ZmRjNmFlOWQzYWZjNWQ4NzgyY2FlN2I5YmM2NTE4MmI3NWQ4ZTJiMmIzM2Q5YzU1MGFlMjA2NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmZDNmODMwOWVmNmIyY2UzZjUwMjFkYWQ2NDE3ODE2Mjk4Y2U2M2NmY2EyNzUwZWM3OGU4N2U1MGEwMDgzY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YzBmMTRhM2Y5MWM5YmQxNmQ5YzMwM2UyYzEzMzg0NjgxMTViYWVhYWY1ZjlmOTQ4YTFhYjMyYjQzMTRiYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5ZDYzNzhkMTE0MWUwNWRmOGEwYzE2ZDU0ZjdmYWU0ODM0MDIxYzQyZGYwM2NiM2UzMDYzZjBmYmNiYTQyMmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.ts#L126-L140",
+          "version": "repo-lines-v1:sha256:7b61fdb47a5f5c0bf0712a69bc79f55442a8c664eea764a119face0ba589cc83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxM2Q3MWY3YTQzMTAxNmRjYmVlNDFiODE3Mjc1MGM1YTUyOWUxODIwYmY3Y2IzZDFkMGFkOWZiOGZmY2FlOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMDI1MjAwMGFjODRlMjU0YjJkZjQ4MWE1YjYyYzJmMDZhNDJkYmM4ZDAyNDQ1NzA3MDQ4MDNjODEyZmE5NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyYjc4NWZjYzNhZjQ0NGNiMDMzOTgyNDA1ODVlNTBhYWJmNzEyNmMyNTg2ZWRjZjIyZWNhOGM2Y2Y4OTc0NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjI0Y2U4NmRiNzM5YWFlN2VkNmUwOWFiZWVkZDNjODdjNTQwNjgwMjUzNTNhZWVkNTgzMjIyODZjN2Q5ZDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/governance/governanceLoop.ts#L198-L208",
+          "version": "repo-lines-v1:sha256:e9de29e10eed24b437213ace02d5fc94d76e11d62946a854205029b7d66f8004:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlZWJjZTAzNjllY2M3YjZiZGYwOGEyMzQzMWVhOTRlNTYwMDJjNTgwZWZiZGZmMjcwODVjZmIwZjYzYjY5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d88ab9e0dbb0493ab7942ab89b84a180",
+      "statement": "`GOVERNANCE_PROMPT` is the reverse-direction turn — read the trace with `audit_production_drift` and the replay, keep `block` and `warn` distinct, let the model move for unmodeled facts and breach gaps, refuse model edits for supplied derived values and cross-context writes, patch only through `apply_model_patch` and the existing operators, re-run the replay afterwards, and report what was adopted, refused and deferred — and `GOVERNANCE_INSTRUCTIONS` composes it with the role, modeling and operator sections in place of the workshop workflow, which the desktop runtime does not select.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L151-L175",
+          "version": "repo-lines-v1:sha256:a949c19f42532cd0e7eaed6db43c63bada79421de7eab1ba8e350a1f7b6fefa0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMjcyZDg3YWE2ZWYxMDAwMGYzNDM5NDNkMTE3MjE0ZDc2YjczNzMzOWZjMzY1NzJkYzZlNzgwMzI2NzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlODA5YTE5OTJiMTJiMWUyYjA3YWVkYTlhYjI1NDVlZDUyZTYyZWMxYTc1MTkzMWFkYzFkOGMwM2EzMmUxNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5YTEzZjNiN2RlZWViNTVlNjYzYmI0NzhlNGU5ODY0ODc0YmY4ZjE4NzAxMDliNzUxNTFmMDAwMDRkODNjMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZDhkNTU3YjE0YjA5MTFjYjc2NDNkYTNhMGY3NzE1MDljMzExYWUzMzI4YmMxOWU5ZjJiMTc5ZDU0NjQ2MTkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/governance.ts#L10-L35",
+          "version": "repo-lines-v1:sha256:0a54d1a1cd8b27a8e5d1d461d265b0c5a5051861f082e904d88addb9e898109e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwODE1MTk1MzBjMGNjYTIzNzdmMTQ5NWMzYzQ2NzEzOTllNmU0MjFmZjNkNmE0YjJhZGE3ZjQ1ZDg0MzEzNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllYmZhOTRiNzcxMDY1YjA3MGM2NTA3ZjQ0MmJlYjBjNjFlMTdkMjQzNmMzNzhjMmZmODdlNTdkNTBjOTZjYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNTAzY2FmZThkMzhiYmNmY2MyYTRiYzhmY2MxMmFmMzk5NWJiYWE1YjM3NWQxNmQ3ZmIyZjNhMzI0NTYzOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent-core/src/prompts/index.ts#L39-L51",
+          "version": "repo-lines-v1:sha256:b988b7e4884d9b3f055fd39dfbff549ae385d5d0ebf8908f47458ac0726632a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMTYzZWE0MjcxNGE5NDk5YWQ1NmRmYjVjOGRlNDA0ODhlNDcwZTE3OGVmZDE5Nzc5MGM0NTBmYmVlMzYwODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZWE5ZmI0YTA1ODY0MTVkZDkyN2NhNzc4ZDc5MGQ4YTA0YjFiMDMyNTg4OGZkYjEzMTYwNDE4ZGM4MWI5ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9bb1b701827f4840bf80eb8233d28d6f",
+      "statement": "`registerSimulationIpc` answers replay, drift and trace-dialog channels through the same `createSimulationService` factory the MCP tools use; the drift channel reads the picked file and `JSON.parse`s it in the main process, so a non-JSON trace rejects with a `不是 JSON` error and the audit service is never called.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/simulationIpc.spec.ts#L86-L115",
+          "version": "repo-lines-v1:sha256:bbe7dcc75bf602f8e348a37f7b51b16c021aa9232a605cdb860490da78dbeb86:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0MjljNDg3MmM3ZWJjNTEyNjQwMzg0MzBjOTQ0NzgzOTZkNWViMjU0ZWIxZjk3ZGFiMGVkZDI1N2QzYjI1YmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlNjUzMDExYjQwNDk5NmEwZTA1MGE0NGJkYjM4NTJhYmM3MDVlYmJkN2Y1YmQ4ZGRhNjc1ZWM2NDNiNzkxMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiOWNhMmExOGI3MmE0N2M2M2FlYmVkNWU2ZWU1NGIyM2QyOGJjN2Y5OWJmNzk5YTc1M2NmMDUxNTMwYWU4MWEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/simulationIpc.ts#L33-L115",
+          "version": "repo-lines-v1:sha256:48648c237f3661dea6ae69f3f51cbe50df3f25df97851b7bb6e2916870f356f8:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlMDU3NWM0NjMzMGU2ZWQ1ZmE5ODJlNTA0NGQwYzAwMjRjMTkyNWJlNGRlNzE4OTlmZmZhYThiMGZlMzFhNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkOThkZDVmMGZiODUwNzM0NDIyMGVjZTJlMmNlYjAwNDNkNTc4OTAwYjkyYzZlMjQ1YWY2ZWE4MWZmNDBhMWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0NTJkMTRhNTE3ZWRiYzY1NGUwODM0YTA4OTFjMzM0MTg1ZWZiMzQ4M2EwYmEzZTMyOWUxMzk5ODU2ODNjNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1M2Q5Y2E4NjgxOTBkYTA3ZGU3MGU2NjBiYjcyMjViODFiYTIyMTAwZWNkMzk3Yzg0ZmQ4MDg1NjAwODdhZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba5c9e2defbf40caaac33434ef185d72",
+      "statement": "`useSimulationReplay` holds a frame cursor rather than a timer (0 on a new reply with frames, -1 otherwise), clamps at both ends, and drops replies from an earlier load, so stepping forward twice always shows the same two frames.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useSimulation.ts#L1-L143",
+          "version": "repo-lines-v1:sha256:5873282fd0a3012a2d7c363f35902fa2cb950bc52efded26c530606e1bf8eb53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkZTdiNGUwYmYyYTg1YTJhNGY5MGNlOWM2M2IxOGM5ZmU5NDU4ODI2YTlkYjZiOWY5NmI1MWRiYmU4ZmZkNDRhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjNzc0ZDI1NDI4MzRkZWFkYzFiNTE5YmE3Y2RhYTczOWNlNTQ2MDZhYTc5YTA2MTI2NDg4ZGRiYmU4Njc4NjE4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyNmQwZWRmOWU0OTliZWVlYWEzYjllMjAyMzVkZTFjODQxZWFlMzYzODM5ZDViNWVmYWU4YzUwMzk5ZDc2ZWRhIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_68b26da138fc41599f55877f85e2833e",
+      "statement": "`useDriftAudit` owns `{audit, tracePath, loading, error}` and a cancelled trace picker returns without calling the drift channel, so the previous audit stays on screen.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/simulation/SimulationSandbox.spec.tsx#L176-L191",
+          "version": "repo-lines-v1:sha256:ae83440d1f42ebd33fb819eb20fc10bf03fc8daacba03d101ad8502a4dcf8f80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YTY4NzJlYTZiNzY1ODFjNGMyYzg4OTBmMDg3MDNhMmNhMDQ1YTc5OGYwNTYxMTFjYWJmYjU0M2M1Nzc5ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiODRiYjJhY2IwNDE2Y2U3MWNlZGNiY2JhZGIwYzJmNDEwODk1NGNhMTllMjE2ZDliY2ZkMjM0ODUwZDljODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useSimulation.ts#L146-L193",
+          "version": "repo-lines-v1:sha256:e61bf36406861576efcaa8f4f3ee5a21256cb18638d58ee2f66ff37145a71233:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjZjBiYjlmYjIwM2ZlMjdlNTA1YWNiNzkwOGU4NGQ2MTczZmM5Njk0NTJkNGEzNzNhYThiM2M3ZTIyN2E5OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyMTBmMzFlYmU0OTBjOWNjMjVlNTc2YmM1ZmVmZGU0ZTBhZmFhOWY3ZTE3NjM1YWQyN2NiZGM1NzBmNjVhYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c5d01bbcec254ac28086eef35dfc9eb7",
+      "statement": "`SimulationSandbox` is one dialog with a replay tab and a production-drift tab: the replay side lists scenario summaries and per-frame acting role, instance, derivations, fulfillment states and checkpoints with a locate-on-canvas action, while the drift side shows per finding a severity badge, the localized kind label, the evidence ref, the message and the remediation, omitting `contextRef` and `modelExpectation`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/simulation/SimulationSandbox.tsx#L104-L300",
+          "version": "repo-lines-v1:sha256:53c01d04508cd9b592e31d30d687b3039cf8d9e8271c9935e7c792e80020a6bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmY2Q1OTdhMDA5OWVkZWUwM2Y5MDExZmU2MGI4ZmEzM2VhZDgyNzQ5OWEzMTQ1ZjBjNjM3MDE5NzEwY2MzMGNjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkOGI4ZWMwODAwYTIwMDQ2OWYzNjRhOWMyOWVkNDliY2RkM2RhYTYxYWFlM2YxNWM5NTk2YjlkNTk5YzE0MDYwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlOTEyMTM4NzEwZjZmNTYxNWRjMjUyNTIwYmRlMjY3NmYxNTE4ZTRjZjZhNjBjYmVjZmI3NzFiNTk4MTg2NGI2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiMjU0MDdkYmQ0MDI3MTdhMzlmNTZmM2E2NWYxMjlhZWE5ZWJjZmUyNWM2NmI2YTliNDRjNDA0MjdkOWRhMTg0In0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/simulation/SimulationSandbox.tsx#L26-L45",
+          "version": "repo-lines-v1:sha256:71fad19fc803b6448056ad5a9d5e558575931acac34f68e134ed5c4778c1c71e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwNWM4MWYxYzI2NmI2MjcyOTg0NzFmMDg2ZWVlYWUzYzQ2NjZhMmE0OGY4OTBlNThlZDMzM2UzOTk2Y2MwM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxOWZiMTEyYjAwNTEwYjRjNTA1NmU2ZDY3M2ZmYTEwMDFlNDU5YzZmMWJjNzJiMGRhZDRmMzlkZWZhYjIzZTQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/simulation/SimulationSandbox.tsx#L320-L435",
+          "version": "repo-lines-v1:sha256:04290746546602ada59125275f9a09ea2de728af6d1504873ad85fbff2fc9c1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4OGFlYzUwOGQ5ZWY0MTA0NTk0NWFmMzEwYWYwYmMzOGU0ZjUxYTAxYzdiZmZhNDhjNzc4Njg5NWE0NjAyNjkxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmYjgzYzEzMDI1MjBiMWU1ZTk2OTczMjM4YjhiMGRlNTk5MmE3NjZkNjkzNzY3MzNiZGRhMzE0NzFiNTBjN2Q4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_4af063dc1c4c42d6a46f180e027e7835",
+      "statement": "`audit_production_drift` is a read-only MCP tool whose input is an already-parsed OTLP/JSON document rather than a path; the main process resolves the active project root through `get_app_state` and refuses with `NO_ACTIVE_PROJECT` when nothing is open.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L58-L123",
+          "version": "repo-lines-v1:sha256:ca7c68a9bc7cee87e53f2d395f3c0c5f85c0231e079cd2c63d2d04954501d8a3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNWZkZTVmZTdkMjNlOTI2NGFlNTBjYTVmZjlmNTBmMGE1OTk0MTk1ZTQ3OTY2YzUzZjZkNWQ0ZWRkZDQyY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0OWQ2OTM3NzUwZWE3MGE5NzVhNDZiNzFiMmY2ZjMyMzlhOWI3NDlmNmFmODdhZDA3Y2Q2OWU1YmE1M2VjY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MGFkODg3ODVjN2NjZDg4YjYxYTk5ZDg0Mzg1Mjg1MjA1ZDA5N2M0MmIyMTEwNWFmODQzNjY1MjgwMWNkNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NWM5Y2NjYTYzOWNiNDcyM2E5ZWM4MzI1YjdmOGJkMGM2MDg5ZjcxMmUxYjE3MDUyNDZjNzgxN2UxODk3YTAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L413-L430",
+          "version": "repo-lines-v1:sha256:cba59c1c8a7f814af6f753ac1d61cbe270d7ade2affc00d54547e1e9d9751064:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMTFmMjM5YWM2NWM5ZmVjZDRmNzk3NWQ0ZWUwYzY3N2I1OGE4ZWE2Nzg1MmVhMjVkMjc5MjM5MjUxOGQyZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MDVjNGY4NDc3ODA2MTUxNjMwNTQwMWFlMWI5YjMyNWJlM2I2MGMyMGRlNzc4Y2NhMDBjNTUxYTUyYzU4YjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5MjI1YWQ3YTczM2Y4ZDMyYWJkODViMzE0MjQ1OThlZjMxOGZjNjg1NjJlZTliMmZlYmM2MTU5NWFhMDNmNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliNGQ5ODE5Y2IxY2FlY2UxYzk1NDVlN2VmOWIzMGUyOTRhZmIyMmE3NDcyYjZmYTE3M2I3MmI0ZDBjMTM1YzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8f74986bfc74b08874a8c78a807ede0",
+      "statement": "The agent-facing projection `driftOf` keeps `modelId`, span and commit counts, `counts`, each finding's kind, severity, message, evidenceRef, contextRef and remediation, plus `passed` and `errors`, dropping `driftId`, the commit pointer and `modelExpectation`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L62-L77",
+          "version": "repo-lines-v1:sha256:596e59674780cb85305da4245405deeafcdf9283a24c53b4163cc815a89d79b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3NDQ4YzliYWUzMzYyN2U3NTIwNWFlMGM1NTllMDJiMzM0OTMwMDJhNjYzZTNmNDI4YzFlMTcyYmQ3NmRiZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhNmEwMmQ3MzQxYzI0MmFkNDNiYmFlYjMwYWM2NmNkNDdlYWY0ODI2ZmY2YTEyOTMxMDkxODJjMzY0OTU2ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1OTNlM2M1YWI3YTJjMmFmZDI3OTViZmE2ZjE3NWY5ZWUwYzc5YjlhYzAwNzY4NmVjZDI4ZjBhZDAxOTQ2NWIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/types.ts#L179-L210",
+          "version": "repo-lines-v1:sha256:cb02791be6d854a59530bf51c8e6e1116b49044fbd4946edc93e229c7c72fc8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxZjNhMWYwNWFhODZmYWFhNmQ4YTNkNGJmMmYyMWIzNmFhODljYTY2NjFiZjc0OWU4MzNiYWYxYzA0OGM0YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyMDNlMjdiMDc1MjVjNzAxNmVmM2UxNWJmZmRmZTFiZTI4NjNjOGFjYTVkNjczMGU4YzhjY2NjZjRlYmFiNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2YzcwOGIzNzFkZTRjMWEzN2VkN2M4YTdjOWM4ZTI0NjNlMzFjNDAwMTg0ZmQxNTE4YTc4OWNiYTMwZDkyNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3ZDVlOGFkNWU0MmIyMGVjMzM5OWRmYzQyMWQ4NTA3ZTdkZmM2MmI2YmViNjBlNmIxYzkwMTQyYjcxYzNhMGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf68a69ca85e46c682937da43374d2c4",
+      "statement": "Both simulation reads degrade instead of throwing: an unreadable model directory yields `passed: false` with the read error in `errors` for replay and for the drift audit.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.spec.ts#L122-L135",
+          "version": "repo-lines-v1:sha256:ee6d1c964ff3610aaec489f03f718985e014a5cc02c666cf3d3dcd9059de809c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMGJiMmE1YTdjNDllZWQ5OGEwYWUzODljMTlmMWZkOTVkMDUzY2RlYjE0NDNiOTE5M2RhMmIxMWI4NGExNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L79-L152",
+          "version": "repo-lines-v1:sha256:f0def8621fe06465f49cd670fc033b47ee7002ae7490ef0ddc870c4645bb00dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4MDM3NDQxODNiNjg2YzBmNjg0NWQ0YTg5NmU1YjI5ZDY3MTU5NzJiYjllZjdjMjc5MTZlMjAzYTNhNmJiODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NjQ4ZTk1MGNmNTg0MWZlODUxNWUzZTJlNjZhMjA5OTQ0YWE4YmMyZTU3ZDZiZjUzODNkZWEyNWM3NjE3OTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzODNhYzE5OThhZDg4Mjg4NDVjNzBlZGZmOWQyNWZjYzc4OTU3ZjU1MzBhNzk4MzhkNTE4NGExZTE3MGZlNDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2ca3a7748c74d698fe1404da4d4e38f",
+      "statement": "`apps/desktop/src/main/governanceLoop.spec.ts` proves the loop end to end on the traceable-subscription fixture: sandbox frames walk a payment from pending to completed, a matching trace yields verdict `healthy` with `canPatchModel: false`, a service-written `expired_at` yields `production_overreach` with a null-tool ticket, and a breach with no follow-up yields `model_lagging` with `add_breach_compensation`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/governanceLoop.spec.ts#L87-L218",
+          "version": "repo-lines-v1:sha256:73316542b6ec969a5afb317bfb15b0fc3c946cffdec008353cdbe37b01c0ec01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkZTg3MDc1MGYxNzI3OGU3OWM0NTk5MTVkYmY1YzZkYWNmNmUxZDVlMWUwOThmZTNhMzljYzNmZjYyZTkyNzQ3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2ODhlYTc5NjllZmI3MmU3ZDk3ZWU4NDdlNmU5NGNlNzc1NTQ4YzhmMTA0N2VjNTk4MzE1OTkzMzA1MTM3YmI3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T21:43:57.154Z"
+  }
+}

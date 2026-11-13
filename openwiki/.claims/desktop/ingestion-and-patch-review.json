@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6dadb648edb865b60570950f179dca3fee9b372bb72bd2b9893de26a86f17557",
+  "pageVersion": "sha256:7074bce25ee5a20a9f78d6f1599e0235777a919c5ba8eaf249f318b579371e18",
   "claims": [
     {
       "id": "claim_71a034064f924c369c99bf50d91bde55",
       "statement": "Ingestion exposes draft and compile IPC channels handled in the main process, and a blueprint table is parsed deterministically without calling the configured model.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L31-L48",
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L66-L83",
           "version": "repo-lines-v1:sha256:dc021443e3ccf3b1bb1644751d18ef10681437cda78b28e6281d84903f33cf43:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllODUwNjg5NjA5YmM2ZWE1OWJkMGVkMTE2MmI2NmZlMDgyZmQyNGE4ODJmZWM0MzRmZTdhZjM1MjUwZmJmMjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmZjBmMWE3OTgzYzA4YmVmOGZkMGU4OGJmOTg1NmE2Y2YyOGFhZjkxNGRhYTJmYmE5NWVlMzIyZDdiODUwMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxZjZlZWY3NTZhNmViMzMzODdhYmFiZThiODY1N2IyNWQ2MTU4ZWYwN2IzY2ViMmIxMWVhNGQzMDJkZGFlZjQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L205-L227",
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L222-L244",
           "version": "repo-lines-v1:sha256:572cffc035d8f1880ded7ac13469e156ae10716e7811e6ec7890e22038584f7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMjY3MjdlNTAzYjdmODVmYTdhZTVmMGFkMzMzNjQxNzk2OWU2NTRkNDE0NDczYzhhMTg0NmY2MWU1YzNkYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlYWVjZjdmZmIxNDJlYmU4MDliZjQ5NjFiNzYyNjk3NTA0NjBkNDE3MTdhYWJkNTllYzNiNmY0ZDQwYWIxZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/shared/ipc.ts#L46-L53",
+          "resource": "repo://apps/desktop/src/shared/ipc.ts#L55-L62",
           "version": "repo-lines-v1:sha256:0763682502bc265ff381bd7f446c6e4e5b6e82bddbad18a9525d821c54bac2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhjZWU3MzRkZmFhODBjNDc2NGE2OGY4NjNhODRlZTI5ODM2M2ViNTEzZjk3MTQxODQwZDk1OTA2ZWZjN2E3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUxZGQ4ODk0ODgxYjk2Zjg1Y2UxYmVlNzc5ZDUyMmJjYjE3ZWM4MGFkN2I4Mzg5OGI2YmMxMDQ2NzhjMjg0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYThiYTMxZWU4N2YzYmY2MTJmNDU1ZThiM2U2NDA2ZTI3Mjg2NDNjZmY2NjFiY2U2YWY2YjQ4Yzg5MmFlOTk3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2U5OGFhMGMzZWVkMTE4NWI4YmMyZjczMWQ4MzFhZjg5ZThlOGExOTdlYTEzNDUwMWFkYjZiMTRiOGE3MjkxMCJ9"
         }
       ]
@@ -36,11 +36,11 @@
     },
     {
       "id": "claim_1c1a5ca3d52e4aa88d961f0038efdab9",
-      "statement": "The ingestion prompt encodes a five-step reading discipline — find the contract, split the pre-contract context, pair request and confirmation, read a breach as a new pair, separate the thing — plus hard constraints against inventing facts, missing provenance, more than two contract roles, and interpreting a moment as confirmation of a period.",
+      "statement": "The ingestion prompt lays out seven readings in order — split the agreement into business, domain and boilerplate clauses, find the contract, split the pre-contract context, pair request and confirmation, read a breach as a new pair, separate things, and extract computed values as calculator or checker things — plus hard constraints against inventing facts, missing provenance, rewriting legal clauses as obligations, more than two contract roles, and treating a moment as the confirmation of a period.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent-core/src/prompts/ingestion.ts#L1-L60",
-          "version": "repo-lines-v1:sha256:81fd8f3b3cf4d342ce440d78e8b4753c87912b265e6340b2509a7c8502e31cea:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2M2EzZjhmYTdlMDhhODZmZjkxMGQzMDNhYjg5NmVhYTM4ZWVkYTA4ZDI0NjdhZGQyNzU1YmMxMzYxYTQxNGEifQ"
+          "resource": "repo://libs/evidence-agent-core/src/prompts/ingestion.ts#L14-L58",
+          "version": "repo-lines-v1:sha256:3bec77cba75489a40d54645f8fa2e3e3f3d2f9e037f3b0be80f5a7754cd09e25:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzMTFhNDdlNjFhNWEzMDExZmVlOTI2OGNhYjlhMDQ3MzY0YTlkNzc4YmYzMDI4ZjI4Zjk5MGFjYjU3ODExNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3MjhlZTY5MGNkNDZhZGFlZTNhNDY2NDM1NTFiY2JmZDEwMGNhN2Y4NTk1MzVhZmU1YjY4OWQwYzkzMGVjNGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzZDI0NzY2NTJhYTNmOGFiYTI1OWQwZWMyNjFmNzI1ZWUyMGYxYmIxZDM2ZjVjZTdmZTVjNmNiMWE5ZDg1NjMifQ"
         }
       ]
     },
@@ -49,22 +49,18 @@
       "statement": "When the configured model returns an unreadable reply or its call throws, readDraft falls back to the local text-rules reader, labels the result reader 'text-rules', and prepends an issue explaining the fallback instead of returning an empty draft.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L53-L140",
-          "version": "repo-lines-v1:sha256:916edf667589f2a603a381d91eb58410e64240e0f8c24e38b0b817ccb90cf5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzM3NTcwNTg1MTk0MDU0YzBjNDM3MDMwNGNmMjcyNjgxNWMyZmVmYjIxNWM2NTZkN2JlZmM4MDFmZTFjZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMDQzY2YwZjFjOGMxODI4ZDM3ZjVjNGZiMTcwMTk3MWYwZjU3MDgzYjhjNzA2NmRlY2Q1MDY1MmY0ODAxYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2YxYzEzMjNhYTk5ZWQzNWVlZTQyMDg4M2I4Y2ExNWVjZGQ4NWYzOTViNTVjYWNhZDk3MzA5NGRmM2NmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MThjYmY0MmY0ZWI0MWFjMjY4NmQxYmQwMDU0MTlmOWM5Yjc3YjEwNzgyNzZlMmM4NDQxZmU0OWM5MWZiZTkifQ"
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L55-L157",
+          "version": "repo-lines-v1:sha256:2c01ef67c1c6c4df0b5718a56c061cbb8acfbfe00a706513a747134787ffed8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NTMzNzU3MDU4NTE5NDA1NGMwYzQzNzAzMDRjZjI3MjY4MTVjMmZlZmIyMTVjNjU2ZDdiZWZjODAxZmUxY2Y1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3MzA0M2NmMGYxYzhjMTgyOGQzN2Y1YzRmYjE3MDE5NzFmMGY1NzA4M2I4YzcwNjZkZWNkNTA2NTJmNDgwMWIxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhOTNmMWMxMzIzYWE5OWVkMzVlZWU0MjA4ODNiOGNhMTVlY2RkODVmMzk1YjU1Y2FjYWQ5NzMwOTRkZjNjZjZkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTE4Y2JmNDJmNGViNDFhYzI2ODZkMWJkMDA1NDE5ZjljOWI3N2IxMDc4Mjc2ZTJjODQ0MWZlNDljOTFmYmU5In0"
         }
       ]
     },
     {
       "id": "claim_1712e5e04880440c8feb99da7165e8e2",
-      "statement": "A model reply is repaired when JSON arrives in a code fence or prose, when a collection is missing, or when short evidence kind names are used, and each repair is reported; an unrecognised evidence kind is refused rather than silently becoming other_evidence.",
+      "statement": "A model reply is repaired when JSON arrives inside a code fence or prose, when a collection is missing or wrongly typed, and when short evidence kind names are used, with every repair reported; an unrecognised evidence kind is kept as other_evidence with an issue asking the reviewer to fix it, an unrecognised domainRole is dropped with an issue, and a reply whose elements lack ids is refused.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/readDraftJson.ts#L13-L45",
-          "version": "repo-lines-v1:sha256:7e4a7b383ac9e8448781d05b62b6ed5556c581f3d2536e6d67f560f70b9ef3ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjJjZGI3ZWFhMjUyMDBjOWVlZGJlY2NjMDRkZTI3YTY5Yjk1ZWViNTRkNzM4OWI2M2VlM2VhOTllOThkZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMTY5MmUzZWNhNzc1N2M0ZmQwYzJhZGQ5MDAzZGVjZDQxZTVhMGU3N2QxNDAyMGQ3ZmUwNjhlNzhkOGJjYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYTgzMTI4OTY4NGNhMDJhNjcwZWVkMzEwZmM0ZDhlYmExM2Y2OWFjYTcyZWJmZGQ5MjdkMGZkNmIwMjhkZTEifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/readDraftJson.ts#L55-L160",
-          "version": "repo-lines-v1:sha256:8ca19813e0efed86750e4025c6292d506d25ba2cac69590f359e0967bdcc5ecd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4YTdhOTBkMmRkMzNiM2U3YzA5NmUyNDJjYTQ3ZGU2NDAyNjBhNDA5ODZjZmRkNzQ3MmExOWRjN2QzZjBmZTJmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3Njc3ZmUxZjFjZDFiYTJjZmNjNzBhNjYxZWViMWFiOGE5YzJmNGUyZDEyYTllZjI0ZDUxOTg2NjQyYzAxNzlhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0NTFmNTAyZDA4MWZkNGNkOTY1ZWZmZjVjZmRiYzhmYzhkNTk5YzAzN2Y0YmE5NDBlNjBlZGZmYmNiNzQ4NWI3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MzE3MzI4ZGEyYTFjODhhNjVmNWZiNGFkOTA3MTg5OGMzMjE5ODQ1OTBjNGI0YzIwZWFiY2JlN2RmYjlhMGFiIn0"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/readDraftJson.ts#L20-L200",
+          "version": "repo-lines-v1:sha256:1fbad27e30715461de76801d110fbeecba3c6e1b7a75c2f9af6a19fb213d6eef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlZDljZTg4OGIzNTg4MTMzNmFiZmEwNTY1Y2FhNWIzMWVkY2NiZWFkMTlhNjBhZTVkY2Q4NzNhMWIwMmNhMmY1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTlkNjI5ZTdlZWQ0MmJmOWU4ZDE1MDI5N2I5ZGJlOTdkOTA5MWJiYzRiNTVmNGY3M2NhZDRlOGEwY2E1MTZlIn0"
         }
       ]
     },
@@ -105,7 +101,7 @@
       "statement": "A fulfilment pair receives a completion rule only when both ends survived compilation, both live in the same contract context, and the confirmation references the request; otherwise the rule is skipped and reported.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L588-L670",
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L589-L671",
           "version": "repo-lines-v1:sha256:39835d7e7dd3d051ff52063a876cc7670d768381b4407fe2fffe1f492886567c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMjljOWMyYjM1Y2ExOTdkMGY5OThhOWI5Yjk1ZGQzYzI4NmZkMWMzM2U2ZDdmNzg2OGRjYmUxZTM0OWZlNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0NjU0ZTMxOTkzOGNjY2Q5ZTJmYmYyMDdkOGU3YmRhYjhlMGJlMThhZWI3MGZmZTgwZGU5NmU3OTFmMzU0MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YzQxZTA2ZGQ3NGZmZWQzMDU2ODEzMzY1NGQ1YzA0NDAwNGM4ZDM2Zjk0MjI1ZjE0NWJiNTU4ZjJmZWYyZmEifQ"
         }
       ]
@@ -115,7 +111,7 @@
       "statement": "compileDraft keeps the name the user typed, refuses to write when no entity survived, otherwise creates the project through the project store, returns compiler issues and a layout derived from the compiled model, and the IPC handler opens the editor on success.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L146-L203",
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L163-L220",
           "version": "repo-lines-v1:sha256:87a1a122caa7874877f3f0dea64463586d8909cb15a76f65b4c1338738ac0094:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDBmMjUzYmQ3MTFmMzdiNTZiYmEwY2U1MmYzYzZhM2ZkZDQxOTA2NjI3ZGQwMmFlOGZlMTFlOWIxYjc2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMjU1MjcxNjk4YjljYmMwMTEwMmQzOTRmNTJiMTA3MmMyMzEwZjg2Njg4MGRjNjEzZmNmYzc1YmYwMWMwNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NjgzOTQ3NWE0NmYxNTNjNDFiNTQ4ZTZjODc4ZDM5ZGY5Y2EwODI0MzE4OThhMjY0NDQ1N2Q4ZmFlNDNhMDIifQ"
         },
         {
@@ -126,15 +122,15 @@
     },
     {
       "id": "claim_ea3f7f9f9d534616ae7ececd7e456dc7",
-      "statement": "An agent patch is dispatched inside the tool call, then recorded as a review with rationale, command types, added/removed/modified ids from diffDomainModels, and a canvas overlay scoped to the patch that marks existing objects and adds no ghosts.",
+      "statement": "An agent patch is dispatched inside the tool call, then recorded as a review carrying the rationale, the command types, added/removed/modified ids from diffDomainModels, and a canvas overlay that marks the touched objects in place; the overlay draws no ghosts because the patch is already in the model.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L20-L72",
-          "version": "repo-lines-v1:sha256:91c73b76a29abe206592d916be63b7e8844b5beece69fea6d48e53cf2f6e52f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNTI1Y2I0ZjdiYzk4ZTBmOGViNWRmOTdmOWE5YjQ2NWEzY2ZkMWFhN2E1ZGVkY2VjNjM4MGQ0YWFiNmQ2YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L28-L72",
+          "version": "repo-lines-v1:sha256:93c042ab9878b27aff787cee48c72afe5b095ec5887a54125eb8692c62431337:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYzAwNTdiNWRiZDhhZTVlZDA4OTUyOWFiMWUwZWVlNmJhYzczMGQxODcwMTMzOTgxZDZiM2U1NzEzZmQwY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhOTRjYjg3NzM0ZDIxMTg4ZmI5ZGRhMDE1NjkyZTQwNTQ0YzRmYzczYzViYmZiNTNmNmUwZDJkZjhhYzI3NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L10-L114",
-          "version": "repo-lines-v1:sha256:f960d98848ec782a56344e00796efc412c8ddb9eddf0004b2c7bd0e338eae3f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NzFhYjljNjQyYmMyYjMxODE0YTBiYjI5OTYzNjEwNzdiODIxODRmYzA4NmUzNDUzODZhMzJjMDBiZjIxOTA0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1NGRmOGE3YTZkZjY2NjRmMzkzZGM1NmZkNTYxN2Y0MTI2MGI2ZmMwYmEyMDg3OGU3MGNmMWYzNzQ4YjhjNjdlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L44-L108",
+          "version": "repo-lines-v1:sha256:0267e1197f72a6c8006e971409bfeee9be6e7789eca67ec731bba711f65dbbea:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYWI2NGY5NWNkZjU5OTBlZTUwYWEwOTlkZjZjZGY0N2M3NjVjMmY5ZmM2MGFiMWU0MzRiODEzZWQ4NjliYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZDM4NWU3NDFjNTNiMzMwZjc5YzY5YzllNTAxMWM2NDFkNGUwYThhODNkNjYwN2QwZGM0MDQ0YWVjZjIyNWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlM2MwM2I3NzY2NmIyOGUwOWIyODRkOTU3YjQ5NjAxZWZhMmNkOTNjYmU4NjdmNmMxNjM2YjI1ZTg0NTgxNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE5YzRjOWEyNDQ2ZTgyNjFiNzNiMGE1ZTg2MjAzNGY2ZDI2MmM0M2RjZGFmNzY3MGY3YjFlYWI3Y2YxYjdkZTIifQ"
         }
       ]
     },
@@ -154,25 +150,157 @@
     },
     {
       "id": "claim_ad5d2f544faf4ed8ac3ea016f7d0fbbb",
-      "statement": "Tests pin patch counts, revert-while-newest, accept, refusal to revert after a later edit, draft compilation and transitive drops, the four layout rules, blueprint/model/fallback reading, empty-model refusal and a refused write.",
+      "statement": "Tests pin patch counts and overlay marks, revert-while-newest, accept, refusal to revert after a later edit, contract clause classification and contract reading, blueprint and model/fallback reading, draft compilation with transitive drops and the four layout rules, empty-model refusal and a refused write.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L30-L215",
-          "version": "repo-lines-v1:sha256:f5569f7dd565602599f008aa50ca55d2c03fa38bee159800a11e028d3bfbcb8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTg2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MzE5NzE2NjgwOGQ5M2NjY2QzNWUyYTcwOTEzZDFkZDMyODZmMmZkODk0MDdjMDBlNzJjOTc0OGM1NjlmMzM1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhOGI5NmVkOWRkNzAzNjA1ZGM0YTQyZTU0YzNkYTllYjQyZjc1N2MxYzk2M2JkZDk1MmFjNTU1ZDAwMDE5OGI4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkYjhhNGQ0NWQ2ZjZhNjVlYzdjNjUwNzZkYTBkMDgxN2ZmNTNiY2EzOGJiNTAwNWIxYzBkYzUwMmZlNmJhNTVjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkN2RkMmE0ZmIwMDQ2ODYzZDc5OWFjNDQyMjQ0Yjg0ZjRmNTE2OWEwMzFhZTQwNTcwNGU4Y2YxNjVjYjQxZjFkIn0"
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.spec.ts#L41-L260",
+          "version": "repo-lines-v1:sha256:c347c2f4872531460a2f28301e2fd912448c27a5afa3baef23a4503bbf26bd52:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MTk5MTU2NGY1ZTVlNzhkN2ExN2VjMTA4MjlhM2MzZGEwZWRmNWJmZTM1YTJhOGZjODg5N2VmOWQwMDkzYWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MWM2NTIxZWUwYjE2MmI5MzU2NWM2NGRmOTM1MzMwODQ0YTYxODIxNWFlZGNhMjU2YzI0NDE2MjFjYjVhNjljIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.spec.tsx#L117-L185",
-          "version": "repo-lines-v1:sha256:bdfceebb0c044f41aacde4c7b7af05edcfe73b838155a19e6cdd05a80d937a2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxYTQ3OTI4NGRkZDZiYzI3Yjk4NDg0NzNlYzdhY2YxYTc3MDllNTBhYTVmNTczOWZlYTc5OTIxNjcyZDQ1NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNDkwOTYzOWQyZTY3MTAwOTg5NmE5NTY5M2YzOTQ4MThhYjY0ZTFmY2U1MzFiMmM4MDE5MDYzNTQyMTY4OGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwZTM5Y2Q5OTZhZGZjYzBhNGIxMTQzYTdhNjVmYmFjOTQ1MWUwMmY5NDU1MmQ4NmM5YzM2YjlmM2ZlNjY5NjcifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.spec.tsx#L117-L189",
+          "version": "repo-lines-v1:sha256:5c2f9e7b33b5b4e9260c90067822e167fb775e6333854f78a939e9a5ea22c184:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxYTQ3OTI4NGRkZDZiYzI3Yjk4NDg0NzNlYzdhY2YxYTc3MDllNTBhYTVmNTczOWZlYTc5OTIxNjcyZDQ1NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.spec.ts#L33-L240",
-          "version": "repo-lines-v1:sha256:4ad0bf8f839586a4a5668fb6c3768a4c07d1bceb422879c51a13dc473617fe99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGYyNTU0OGVjNWEwYTRiYWI3NjU2NTYxMTk0YjU3MDRjNjliMzE5ZWM5YjgzMjU0OTk1MGUxM2NlYWNkZTJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3ZjA4NjVkYWU0MzY1YTA0ZmY4M2Q0NzQ1ZjBjOWVjNjAyODJmNWU4Y2M0MGM5OGY2NDk4YWNmNDM2NzI1Y2Q5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMGQ4MDM4YmFmNTM2MTUwNzMzNzA0NzhhYWMwYmEyYzVmMmYwYTAzNmY2N2Y0ZDU1NDQzNGVhMjdiMzZjODQzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMjJkMWMzNDJjNGVkZGRkNGY1ZTNjNmRlY2RmYzk5NGEzZjgxMjVlNmY4NjM0ZTgzNmIxMzM1YTFkYzA4NWJmIn0"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.spec.ts#L33-L271",
+          "version": "repo-lines-v1:sha256:66c2e5bc63fd6eeb2664cd25adea38d16b81bbb5063cb96592633e5f4a090fa5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGYyNTU0OGVjNWEwYTRiYWI3NjU2NTYxMTk0YjU3MDRjNjliMzE5ZWM5YjgzMjU0OTk1MGUxM2NlYWNkZTJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMGQ4MDM4YmFmNTM2MTUwNzMzNzA0NzhhYWMwYmEyYzVmMmYwYTAzNmY2N2Y0ZDU1NDQzNGVhMjdiMzZjODQzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.spec.ts#L40-L131",
+          "version": "repo-lines-v1:sha256:d7c2b75b44e0935bc0e0b86de3e05aaba28457c2ecc70ff9a2df9bece0518e9e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MTg3N2FkNjE4MDAxZjk2YTk2YzdlOGVlNThiMTI0MjA2ZDg0Y2E1YmMzMTY3ZGMxNzliMzg0OGYxNjAwNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractReader.spec.ts#L24-L125",
+          "version": "repo-lines-v1:sha256:8a90954f880d73e3dbd426862fc80fd1e40cc5a67f5f9dd872778065b8dbcd05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwZDZjZWU4MDcwMmZlNGViNzFhNWVkY2Y2MmY1OTczMDQxM2Y5MTIxY2I5Nzg0NDQ0MjQyZWEwNGVjNWUzMmZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhY2VmMDQ1ZjNlNzY5N2MwZWVlODNkNmY4YThhZGUxNGYzNTk5MGNiM2RlODEwZmE4ZDAxYWVjOTlkOGMxZGUyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f5addd2981e49cd9c1036a950c3cf51",
+      "statement": "The clause vocabulary lives in the schema as CLAUSE_CATEGORY_DEFINITIONS, where business maps to the evidence destination, domain to domain-thing and boilerplate to none, so the extraction prompt, the review panel and the ingestion compiler name the same three buckets; ClauseReading adds computesValue, which marks a clause whose stated value must be answered by a rule even when the clause itself is classified as a business obligation.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L6-L14",
+          "version": "repo-lines-v1:sha256:f6bc4d1b5659908d2572294a6b7f588f2d6e69968c1ebc67daa45ac22e48650c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M1Nzc1M2YxZTUzNjM4MTIwMjZkOGE4ODVlOGQ2NTgyMTRhOTRlYzdhM2UzODY3NTc0Y2FjN2ZlYTc1YTQ1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGI0ODAxYzIxOTQ0NzU0OWVlZWNhZWQxNjhhNGEwMTc0ODA2OGFlODA3ZTg0ZWRlMzY5MzM3MzhlNDI3MjZlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTlkMzkyNGM0MjZmNzNkNWYxNjkzNTM2YmYwMjk4NDEyNGRlMjAwYjhiYmMyNDI4OGY2MjM0ZGQ2ZWQ5YzE0NSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/clause.ts#L11-L90",
+          "version": "repo-lines-v1:sha256:0268a6141f32e41e27382f8ede62849c4fa284edf830792109590864577d052a:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2MjBhYWE4ZWYwOGZiMWVhZTNhY2FjNjZjMjk1MWE1NWZiY2NhNWY4MjNkZWQxMThmYzY3Y2MxNzI2NmExODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0M2RlNjRhZGMyZDczYzNmZGUxZTMxMWEzZGQxYzE1NWQ5Yjk1M2JlYmYwOTc5YTgwMjQ5YTAxYzAyNzFjNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3YjMwZWFiZmM5MWVjNmUzOGFhYThjMDc4ZGQ5MmRkN2VjM2ExNjE1MGQ1ZDVhZTNjZWU0YzAzMmM2ZWRmYjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d27cfbb8046f400081e7f3549765c9bf",
+      "statement": "annotateContractClauses splits an agreement into indexed sentences and classifies each one in a fixed order — a boilerplate pattern first, then a business action verb, then a computation pattern, otherwise boilerplate — and reports both a clause that mixes procedural content with a business action and a clause it could not place, instead of inventing a duty for either.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.spec.ts#L40-L108",
+          "version": "repo-lines-v1:sha256:e9be2c507ffa79f471fda96cf503fe921ce2f23970dd033e7e905ec667caedbe:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MTg3N2FkNjE4MDAxZjk2YTk2YzdlOGVlNThiMTI0MjA2ZDg0Y2E1YmMzMTY3ZGMxNzliMzg0OGYxNjAwNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5M2ZmM2YwNmRhM2U4MjlhNmQ5ZTIzMWE1ZWIyY2ZiMjI0YjliN2NlOGFhODQyZDM2MzRlNGE3NDBlMzUzYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4YWYxY2VkYWZlNDQ4N2NjMTJiMzRkNzZmNmJlNDc5MzcyZjI0M2RhMDMzZmUwOTQyNmY3YjRiMzdjZjg5OTYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L87-L160",
+          "version": "repo-lines-v1:sha256:0fcb08f6bed03562e38479bf874c393e0a050184ce9f8623e35be79c3054c0bf:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjYzMyMGJiMmI1MTk2Yjg4ZTQ2YWI3MTk4OGUzOWIyYjRhZTIzZWZkM2QzNGU2N2Q0Y2RkMDMyYWY2MWQyYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiNDg4MTY4MmY5NjUzODM1MDljNzNjMjc5YWYwMDZiNjljZTNlNmZlOTExNDJhZDZiYjVhZmEzMTYwODMxNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2I1NmUxMDZkNDVjODI2NDk5YWJhYWUwMDcwN2U5NGYwZWY2NjUxYTYyMDBkMmI0MWZiMzFmNWRlMTU5NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhODhmMjdiYWM4MGM0MmFhN2NkMjRlNWMxNmVkYjI2NjUyZGRjYjNjZjIwNjgzNmI2YThhNTg4ZDdjOTQyNzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5dd6f57260414a30ad48f5510937db20",
+      "statement": "draftFromContract routes the split: business clauses are re-read through draftFromBusinessText with source 'contract', boilerplate clauses never enter the draft and their count is reported, and each computable clause that domainNounOf can name becomes a calculator or checker Thing under context.domain with the clause as provenance; an unnameable formula or an agreement without a business clause is reported rather than filled in, and the contract kind never calls the configured model.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L64-L76",
+          "version": "repo-lines-v1:sha256:e7f1b253bfaf2fd08eb880721deccc0c965b1546da840991ff372635e62c8041:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1YjJiMjk3NzhiMWViY2NhMjFkODQ4MGRmMjg0NDNmYmI4YWFiMmRiYmE1YjgzNjViMWYzZTAxZmMxMjc5MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNDUwMjg4OGVkOWRlMzQ3MjcwZGFhOWExYjRjN2JkY2JmYTk4YjEwZWViNTczZTNhNjE1NGRhYjU1NTNjOTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMDMyOTNlOGIxMWI2MTg2MTllZmNhM2IxY2Q1MWZlZjk5MGJhYWY1NzgwZWRjMjI4ZWMwMGJiYzQ1MGQxZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNzA1NjNmZmZkNTZhYTQzZmM3MjAyOTE4MTJiM2Q2ODZiMzlkZTk5ZmM5OGQ5NjRmMTgxMWM5YmY0MTk0MGEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L162-L177",
+          "version": "repo-lines-v1:sha256:fb2630f3ab9d1f06f5986e1a80fa6925c029a4828569c80f1ee894d48f4b3e68:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMGJkMWY5Yjg0NGI0M2IyYTQyN2FiYWFjMjQ3OGZhODMxNzRmOGZjNzY0MDc2ZDJkYjMyODI5YmMzZTA3NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractReader.ts#L38-L143",
+          "version": "repo-lines-v1:sha256:14ccd2fc78f9c77b354b3a568d208c1a9ad5fd993ff525791f870ba00e377950:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzUyZmFiNTQ5NmRmMDlmYmRhYjAzOWY1MThlNjQzYjNjNjQ2NmM0YWVhNGI4NjllMzJhMjYyODBhYzA5NWJhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkNjg3OWU0ZWE4ZmI1ZDcxYjRjZmM1NWFjMmIxZGU0YmZkYjIzM2E2OTVhNTZjZTQ5YWU2YWUzODA4NTNhNjdlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3acb57e0b004c0e80945bada7117280",
+      "statement": "INGESTION_READERS is exactly blueprint, contract, text-rules and text-model, and the review panel prints a distinct label per reader; only the text kind may consult the configured model, so contract and blueprint reads stay deterministic even when a generator exists.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L55-L96",
+          "version": "repo-lines-v1:sha256:df89a4e43829b219c2c13382b5dcf22909b0af24c65faf8206290ac557d828a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzM3NTcwNTg1MTk0MDU0YzBjNDM3MDMwNGNmMjcyNjgxNWMyZmVmYjIxNWM2NTZkN2JlZmM4MDFmZTFjZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0ZDUxYzkxNzEzZWYwMDJkYzRkN2UyZjMzMGNlN2I0NDhjNjZmODQyODNjNTQ1ZjBjMDRhMWRkZTNlNmQ2NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2YxYzEzMjNhYTk5ZWQzNWVlZTQyMDg4M2I4Y2ExNWVjZGQ4NWYzOTViNTVjYWNhZDk3MzA5NGRmM2NmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmODc2NWIyNzEwOWM3OTZhMzlkZTI0YmFjYmI4NDRmN2EyOGEyNGVjMGM5MDI4M2NmOTRiMjRhMTdjYWUyMmMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/ingestion/DraftReviewPanel.tsx#L26-L32",
+          "version": "repo-lines-v1:sha256:ddbec79ddfb4749f392ee6e791789e30d45bbd69e2d3273abe30d9aab5b2f3cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM4M2UzNjNlNzRlNzFkOGZlYjJkNGRjYjBmYjA0YjVlZjNjNTBiYTgwNTQ4ODEwOWJhZWJlNzhhZGQyNjU5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjYwYWJiZDc2ODI2YmM5YzE1NzVjZDQyMDY2ODJiMThjOWFiNjkwNzAxMjAxNDcxY2VjMzYxOWI3ODE1MTg4YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGM5ZTIzYmY5YTZiOTZhNjQ3YjY0MjZmY2U0NmNlNGE1ODU0YTg0MGQ1Y2EyMGQ5ZDQ0YmEwYTg1NWVlMzlkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE5YmM1Zjg0ZDgwN2EyOTRlMTc1ZTkyOTAxMGJiZDBhNzkzNTc3ODMyOGFkZjNmZGY2OGFkZGI5Mzg4MWJjMCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/shared/ingestion.ts#L8-L26",
+          "version": "repo-lines-v1:sha256:435c6e562ffbf8cc5bd698f8fa2187a225a8a8ac6172979517e1b816e3d88308:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMzY4ZTU4NzZiOGQzMTY5YTZhZTBkNzBiZTVjMzVhYWYyMmNlODM1MWFkZjAyOTY3ODM1MDE1OWQ3NzAzMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyYTZmMzE2ZmIxZTRlOWNkMDM2ZmQwMTRiNzRlZTAyY2MzOThhNDM2Y2ZmZjU1NTYyOTEyNWY0OWVjNmUwYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2OTIwMGVhMzA2ZmE5N2JkNTA3ZTgzZDUyNWVkOTFjNDRkNzUxYjEyNGFlMTM2ZjRlN2E5NDU3ODAyODc0Y2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1172f937da6f43ef932a913780f32f61",
+      "statement": "The draft review panel shows the reader, evidence and pair counts, the gaps the reader reported, and the clause split with the filtered boilerplate sentences still readable; it lets a reviewer rename, re-kind or remove an evidence and reports how many pairs those edits broke, but leaves the contract's two roles uneditable because compiling an unbalanced contract is what the compiler refuses.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/ingestion/ClauseSplit.tsx#L9-L65",
+          "version": "repo-lines-v1:sha256:922d769e04c386765cc8423e4bc9b0118fa34b6f84dda7c21ec611d013c4ff03:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1ZGU1NDE2MzNkYzExMmNhZTkwNzkxOGM5NDIyMjk0MDljMTVlOTMwN2YxYmI4M2NlZWFjMTMwZDE0MTY4ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4N2M4NjU1NzUyYWNhMDFkZDhkNDU4MmQ3YWU2YTYyN2EwZThlODA0Mjk3OTE0MzdiYmJjYmVkNzc2YmVjMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/ingestion/DraftReviewPanel.tsx#L46-L240",
+          "version": "repo-lines-v1:sha256:94bcb79c96b6fa0008702ae87efbec7279ccd61e7ef294b6b403226de91421d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyNGE2OGRmYTA5NTM1ODczODZkYTMwZDg1Yjk3NzA0ZDAwNTQ1NjAxYjVmYWNmMTIxZGU5ZWI3MWExMzgyZTBlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5NTUxMDAxZWYyZDdiNDMxMTI5YmRmYTA1YjdlMzJkMjQ5NzU2OGEwYTg3NGE1YmM1NjYwNzQzZThhYTY2NTE1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmODlkMDQ3N2VjYzYxZDFiMGYwOTcwMjM5MzgzMTIwZDU0ODhhOTQwNjg5OWEzZjcwYmY0NjRmZGZhMTE0ODFlIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_7745f875a71145f69aba2d04e63e6b8c",
+      "statement": "Compiling returns the document, a writtenIds map from draft id to written id, droppedIds and issues carrying an optional draftId, sets the manifest entryContextRefs to the surviving contract contexts, and the desktop handler forwards only the project, document, layout and issue messages to the renderer.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L155-L210",
+          "version": "repo-lines-v1:sha256:119a7202b72910b04fdb9fcc35961f8adf4c6f92b12feadd5271b6dd6d8d33b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3YzNjZTNkNzBlYzc1N2RjZjAxZGNiZDIwZjZkYWM4NzAyZDAyYmMyZWEyNDQ0NzJkMzQ5YTVmM2NjYTg4YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmZTZhNjc2NTg3ZTA1M2JiZWE0YmIyYTYwZTBkZWY2MTkyODA5NTUyYTRkODY4NzJjODdlOWFmMDc4NTZlN2MifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L18-L34",
+          "version": "repo-lines-v1:sha256:c61ed3f0fd1e124cca2600e8b08be07b2fd788755a051875784bb2059e02647e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyOTU0N2Y2OTY2NmQ2ZTQzYTBjNTU2YTQ0OTI5Yzg4YzJkZTg4ZDU2ODA0OGYzYTEwZGI5ZDA2YmNhMmMxMTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MGU1ZWJlMDZlMzYzZjk2Mjg5YzEwOTFjMDQ2NjQzOGY2NjUyOGVjNzY0NWQ5ZjVjZjVhMTEyYTUzNzNmN2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTQzYzQwYmM4YmM0YzIyYTU5YzA0OGE4YjY1NGQ0MTg4NWY4YTMwMDhjMGExOTVkYTQ1NDZjZjJjY2E0ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3NzM2MzFjYzM1MTI3ZjlmNjdkODUxMjU4MmZmNzI4NTRlYjdmZDMyZmZhMDcwNDFhOTBmYzU2MDY1ZGYyNjYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L660-L701",
+          "version": "repo-lines-v1:sha256:8680a60199b850dbabd824950b372770b620d41f6153788b0640c80ae4673c64:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyZGQ2MjJlM2I4NTM2OWNiMDdiYjgyOGIwMTQxOWU0YmY2ZWI5ZWVhNDgzMTk5NDg2MDFiNjY3NWYzMGY1ZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxYTVkMTUzMjIyNjAwMWVhYjY3MDI2YWRjZjk5ODgwMGI0MDUxZjc3Y2IxM2M0M2MxZWFhYWI1MGI2YzhkZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5abd1dfcf42548adb23b32d5e21c74d1",
+      "statement": "Applying an agent patch is a round trip keyed by requestId: the main process sends the patch to the editor window that holds the live ModelSession and resolves the tool call when the renderer answers through applyPatchResult, while a renderer that never answers leaves the promise to a 15 second PATCH_TIMEOUT_MS that reports the canvas did not apply the patch.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L218-L232",
+          "version": "repo-lines-v1:sha256:793af6a28ab96ee40f4cc32bba3fcdb65a3ffc73b9b3de706a2da2d8dd54b1f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MjFmMWIyMDQ3ZTEwY2Y4MDllOTA3OWQ4ZjI0M2M3YTU4Y2JlYTc5ZjkyZmU1NmI1Yjc3Yjk5NTcxNTBkY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2NmExNGI4MjRkYTU2MThmODcwODZiZWE1NjY0ZmQ5Mzc0OTk1MmMxZGRkYzgzNGYyOGEyNjVkZTkxNjFiZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhMjA5NzlkZDA0ZDgyZmY0NTBlNWNkNzUwMDgxMDYzYTE1MTU2MGQ5NzBmYWU0MjU0OGMxNjVkZmUzNWZmNWIifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L24-L122",
+          "version": "repo-lines-v1:sha256:9c8e760545d3cd420d88938edda52aad928cb685311b60029a63f72e72ad4223:eyJzZWxlY3RlZExpbmVDb3VudCI6OTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0M2VlOWI0NTlmYjRhMDA2MjBlZDhlY2MxMmU0NTg2ODhiMjBiY2YxM2U3ZTdhYjFmNzlhZGE0ZjBiM2Y2ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjczYWJkNDU3YTk3ZWVhMTdhNjAwNjJlYjBmYWVhNmJkZjA5NDg2OGNjNmI4ZjhjMGViZGEyZjYxZWQ0MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2M2Y5NDg4NDFhZjM2ODhhYmEyZDVkOTEyYzA0NmJmNTE4MzY0ZTNkYWNjMTIwM2YwOTg4YmViMDc5ZDE0YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5ZTRkNTUzYTQ3ZmU5MGQ0YmExMTNmOWIxNTYwNjg3M2M0YzZlNTk1NjA3OGVjMmM3ODIwNDYzYmRkNmY1NmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_12f794ca9778401fa5405ec26cc655f0",
+      "statement": "While a patch review is pending the editor shortcuts belong to it — Mod+Enter accepts and Escape reverts — because the two handlers are only registered when a review exists, and the editor's own Escape for clearing the selection resumes once the review is settled.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L184-L320",
+          "version": "repo-lines-v1:sha256:119924579ffce6b1107405c8e45dc1fc787d8f07e01d5b2919a75c82f881f25d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyOTU4YTBjNmM2ZDViNDQzYTM1NWI5NjQ2NDExOWY4MzYzN2FhYmJjNTdjMWQ0NWM3NTk3ODVjZWQzNGY4ZTUzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNTUxM2M3ODU4NTAwMzJkZDBlOTllMDc1NWU4NTQ1ZDQzNTFiZTkyN2Q4MGMzNjQ1YzBjMWYyNjI2N2QzZDYwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5NzI1MWYzOThkZGI4NjRjYTFhNDQwYzlkOGU4ZGU2YThlMjIwNDNmMWE5Y2U1YmE3OGQ3OGIxN2EzMzVhMTkwIn0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L1-L100",
+          "version": "repo-lines-v1:sha256:720286412ab5fb45cba4a8b53c91087066896f289a6246a38f3199d113fead98:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyOGZhYmJhZWI1NjE0YmQ0ZDkwYTg5YzFlZjMyYjU4Mjg3OGY5YzUwNDhmMGQzMzdjYzRiMzcwZTdkMzIyZDFkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjY2I2ODUwNDEzZDY4OGY3MTU0ZmJjMTQwNmRmY2UzZDA3MjcyYTQxMjBiOWY5ODRlNDZkYjc3NzBkOTkxZTdkIn0"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-13T21:43:57.154Z"
   }
 }

@@ -1,3 +1,3 @@
 # Files
 
-- [Verification strategy and fixtures](verification-strategy.md) - How the repository proves itself — co-located Vitest projects, injected ports instead of live models or terminals, three fixture families, desktop end-to-end loops, and the pinned digests that are part of the report contract.
+- [Verification strategy and fixtures](verification-strategy.md) - How the repository proves itself — the root Vitest project discovery, per-package node and jsdom projects and their resolution conditions, injected ports instead of live models or terminals, single-sourced fixtures, the desktop integration and phase-loop suites, the browser harnesses outside Vitest, the pinned digests, and what CI gates.
