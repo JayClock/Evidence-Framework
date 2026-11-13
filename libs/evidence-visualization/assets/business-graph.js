@@ -387,9 +387,18 @@ const businessGraphState = {
   top: 0,
 };
 
-function renderBusinessGraph(target) {
-  const section = card('业务模型图', target);
-  section.id = 'business-graph';
+function renderBusinessGraph(target, data = DATA, baseline = false) {
+  const section = card(baseline ? '基线模型图（旧坐标，非当前模型）' : '业务模型图', target);
+  section.id = baseline ? 'baseline-business-graph' : 'business-graph';
+  const changes = new Map((DATA.diff?.changes || []).map((change) => [change.id, change]));
+  const diffType = (id) => {
+    const type = changes.get(id)?.changeType;
+    return baseline ? (type === 'removed' || type === 'modified' ? type : '') : (type === 'added' || type === 'modified' ? type : '');
+  };
+  const selectForGraph = (id) => baseline && changes.has(id)
+    ? globalThis.selectWorkbenchDiff(id)
+    : select(id);
+  if (DATA.diff) section.append(el('p', '+ 新增（绿） · ~ 修改（蓝） · − 删除（红虚线）；删除对象仅在基线图显示。', 'muted'));
 
   const toolbar = el('div', '', 'graph-toolbar'),
     viewport = el('div', '', 'graph-viewport');
@@ -590,7 +599,7 @@ function renderBusinessGraph(target) {
     return Math.round(value * 100) / 100;
   }
   function draw() {
-    graph = businessGraphOf(DATA);
+    graph = businessGraphOf(data);
     drawLegend();
     viewport.replaceChildren();
     if (graph.boxes.length === 0 && graph.boundaries.length === 0) {
@@ -679,7 +688,7 @@ function renderBusinessGraph(target) {
     const defs = element('defs');
     svg.append(defs);
     const marker = element('marker', {
-      id: 'graph-arrow',
+      id: baseline ? 'baseline-graph-arrow' : 'graph-arrow',
       viewBox: '0 0 10 10',
       refX: 9,
       refY: 5,
@@ -701,6 +710,7 @@ function renderBusinessGraph(target) {
         [boundary.group === 'context'
           ? 'data-graph-context'
           : 'data-graph-fulfillment']: boundary.id,
+        'data-diff': diffType(boundary.id),
         class: `graph-boundary graph-boundary-${boundary.kind}`,
       });
       group.append(
@@ -735,7 +745,7 @@ function renderBusinessGraph(target) {
       );
       label.append(element('title', {}, `${boundary.label} · ${boundary.id}`));
       interactive(label, `定位${kind}：${boundary.label}`, () =>
-        select(boundary.id),
+        selectForGraph(boundary.id),
       );
       group.append(label);
       bindHighlight(
@@ -771,6 +781,7 @@ function renderBusinessGraph(target) {
         class: 'graph-edge',
         'data-highlight-edge': businessGraphEdgeKey(edge),
         'data-graph-edge': edge.id,
+        'data-diff': diffType(edge.id),
         'data-kind': edge.kind,
         'data-cross-boundary': String(edge.crossBoundary),
       });
@@ -779,7 +790,7 @@ function renderBusinessGraph(target) {
       const d = pathOf(points);
       const attrs = { d, stroke: '#4b5e75', class: 'graph-line' };
       if (edge.dashed) attrs['stroke-dasharray'] = '5 4';
-      if (edge.arrow) attrs['marker-end'] = 'url(#graph-arrow)';
+      if (edge.arrow) attrs['marker-end'] = baseline ? 'url(#baseline-graph-arrow)' : 'url(#graph-arrow)';
       group.append(
         element('title', {}, full),
         element('path', attrs),
@@ -803,7 +814,7 @@ function renderBusinessGraph(target) {
             points[points.length - 2],
           ),
         );
-      interactive(group, full, () => select(edge.id));
+      interactive(group, full, () => selectForGraph(edge.id));
       bindHighlight(group, { type: 'edge', id: businessGraphEdgeKey(edge) }, full);
       edgeLayer.append(group);
     }
@@ -812,6 +823,7 @@ function renderBusinessGraph(target) {
       const evidenceRole = box.group === 'role' && box.kind === 'evidence';
       const group = element('g', {
         'data-graph-node': box.id,
+        'data-diff': diffType(box.id),
         class: `graph-node graph-${box.group}${evidenceRole ? ' graph-evidence-role' : ''}`,
       });
       group.append(
@@ -823,6 +835,8 @@ function renderBusinessGraph(target) {
           rx: box.group === 'evidence' || evidenceRole ? 0 : 12,
         }),
       );
+      const change = diffType(box.id);
+      if (change) group.append(element('text', { x: box.x + box.width - 14, y: box.y + 16, class: 'graph-diff-badge' }, change === 'added' ? '+' : change === 'removed' ? '−' : '~'));
       const content = element('g', { class: 'graph-node-content' });
       content.append(
         element(
@@ -856,7 +870,7 @@ function renderBusinessGraph(target) {
       group.append(
         element('title', {}, `${box.label} · ${box.id} · ${title(box.owner)}`),
       );
-      interactive(group, `查看${box.label}`, () => select(box.id));
+      interactive(group, `查看${box.label}`, () => selectForGraph(box.id));
       bindHighlight(group, { type: 'node', id: box.id }, box.label);
       svg.append(group);
       if (box.responsibleRef) {

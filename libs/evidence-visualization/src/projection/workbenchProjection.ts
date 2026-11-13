@@ -114,6 +114,8 @@ export interface WorkbenchData {
    */
   layout: SerializableGraphLayout;
   generatedAt: string;
+  /** Optional, explicitly selected baseline; never inferred from an undo stack. */
+  diff?: import('./workbenchDiff.js').WorkbenchDiffSummary;
 }
 
 /** The FM document as `fm_model.compiled_document` shapes it. */

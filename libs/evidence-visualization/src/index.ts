@@ -1,3 +1,4 @@
+export { projectWorkbenchDiff, type WorkbenchDiffSummary, type WorkbenchEntityDiff } from './projection/workbenchDiff.js';
 export { deliveryViewOf } from './projection/deliveryView.js';
 
 export { workbenchLayoutOf, type SerializableGraphLayout } from './projection/workbenchLayout.js';

@@ -328,6 +328,20 @@ function markSelected() {
     } else button.removeAttribute('aria-current');
   });
 }
+function renderDiffChange(change, target) {
+  const section = card(`${{ added: '+ 新增', removed: '− 删除', modified: '~ 修改' }[change.changeType]} · ${change.label}`, target);
+  section.append(el('p', change.id, 'muted'));
+  section.append(table(['字段', '基线', '当前'], change.fields.map((field) => [field.name, format(field.before), format(field.after)])));
+  if (change.attributeChanges.length) section.append(table(['属性', '变更', '基线', '当前'], change.attributeChanges.map((attribute) => [attribute.name, attribute.changeType, format(attribute.before), format(attribute.after)])));
+}
+globalThis.selectWorkbenchDiff = (id) => {
+  const change = DATA.diff?.changes.find((item) => item.id === id);
+  if (!change) return;
+  $('detail').replaceChildren();
+  renderDiffChange(change, $('detail'));
+  $('detail').append(action('返回变更概览', () => select('')));
+};
+
 function overview() {
   const detail = $('detail');
   detail.replaceChildren();
@@ -359,7 +373,20 @@ function overview() {
     stats.append(item);
   }
   detail.append(stats);
+  if (DATA.diff) {
+    const diff = card('变更审查对比', detail);
+    diff.append(el('p', `新增 ${DATA.diff.counts.added} · 修改 ${DATA.diff.counts.modified} · 删除 ${DATA.diff.counts.removed}`));
+    diff.append(el('p', `基线指纹：${DATA.diff.baselineFingerprint}；仅比较 FM 对象、关系、规则与属性，不代表场景或 API 设计差异。`, 'muted'));
+    if (!DATA.diff.changes.length) diff.append(el('p', '无模型对象变更', 'muted'));
+    for (const change of DATA.diff.changes) {
+      const item = el('details');
+      item.append(el('summary', `${{ added: '+', removed: '−', modified: '~' }[change.changeType]} ${change.label} · ${change.id}`));
+      renderDiffChange(change, item);
+      diff.append(item);
+    }
+  }
   globalThis.renderBusinessGraph(detail);
+  if (DATA.diff?.counts.removed) globalThis.renderBusinessGraph(detail, DATA.diff.baseline, true);
   const validation = DATA.validation || {};
   const checks = card('检查边界');
   checks.append(

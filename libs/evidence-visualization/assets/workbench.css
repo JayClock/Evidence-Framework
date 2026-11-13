@@ -1,3 +1,14 @@
+/* Diff marks preserve the business category fill and add a separate symbol. */
+[data-diff='added'] { --diff-color: #16803b; }
+[data-diff='modified'] { --diff-color: #2563eb; }
+[data-diff='removed'] { --diff-color: #b42318; }
+svg [data-diff='added'][data-diff] > rect, svg [data-diff='modified'][data-diff] > rect, svg [data-diff='removed'][data-diff] > rect,
+svg [data-diff='added'][data-diff] .graph-line, svg [data-diff='modified'][data-diff] .graph-line, svg [data-diff='removed'][data-diff] .graph-line {
+  stroke: var(--diff-color); stroke-width: 3;
+}
+[data-diff='removed'] > rect, [data-diff='removed'] .graph-line { stroke-dasharray: 6 4; opacity: .65; }
+.graph-diff-badge { fill: var(--diff-color); font-weight: 700; font-size: 16px; }
+
 :root {
   color-scheme: light;
   font-family:

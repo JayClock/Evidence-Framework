@@ -21,6 +21,8 @@ import {
   type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import { projectWorkbenchDiff } from '../projection/workbenchDiff.js';
 import { deliveryViewOf } from '../projection/deliveryView.js';
 import { workbenchLayoutOf } from '../projection/workbenchLayout.js';
 import {
@@ -181,6 +183,8 @@ export const workbenchFingerprint = async (
 export interface CollectWorkbenchInput {
   /** Absolute project root that owns `.evidence/`. */
   projectRoot: string;
+  /** An explicitly chosen baseline; used only for the optional diff projection. */
+  baselineDocument?: DomainModelDocument;
   /** Independent Context IDs the review covers; required once an API exists. */
   scopeRefs?: readonly string[];
   /** Refuse to fall back to a model-only page when an API is expected. */
@@ -216,6 +220,7 @@ const bindingsOf = (design: DesignDocument): readonly Record<string, unknown>[] 
  */
 export const collectWorkbench = async ({
   projectRoot,
+  baselineDocument,
   scopeRefs,
   requireApi = false,
   generatedAt,
@@ -318,8 +323,7 @@ export const collectWorkbench = async ({
     throw new WorkbenchInputError('输入在生成期间变化，保留已有视图');
   }
 
-  return {
-    data: projectWorkbenchData({
+  const data = projectWorkbenchData({
       model: loaded.index.compiled as unknown as CompiledModel,
       // The page carries the placement the canvas computed, from the same
       // document the check accepted, so the drawing and the review agree.
@@ -345,7 +349,12 @@ export const collectWorkbench = async ({
         timelineSummary: check.timelineSummary,
       },
       ...(generatedAt === undefined ? {} : { generatedAt }),
-    }),
+    });
+  if (baselineDocument !== undefined) {
+    data.diff = projectWorkbenchDiff(baselineDocument, bundle, data);
+  }
+  return {
+    data,
     check,
     suite,
     projection,
