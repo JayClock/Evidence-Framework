@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, readFileSync, statSync } from 'node:fs';
+import { mkdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,8 +49,22 @@ const isDirectory = (target: string): boolean => {
 const isInside = (child: string, parent: string): boolean =>
   child === parent || child.startsWith(`${parent}${path.sep}`);
 
+/** Resolve existing ancestors too, so new outputs cannot hide behind a symlink. */
+const canonicalPath = (target: string): string => {
+  const absolute = path.resolve(target);
+  try {
+    return realpathSync(absolute);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    const parent = path.dirname(absolute);
+    return parent === absolute
+      ? absolute
+      : path.join(canonicalPath(parent), path.basename(absolute));
+  }
+};
+
 /** Optional inputs remain protected against output overlap when they are supplied. */
-export const validatePaths = (options: CliOptions): string | null => {
+const validateResolvedPaths = (options: CliOptions): string | null => {
   for (const [value, name, required] of [
     [options.projectRoot, 'project-root', true],
     [options.fm, 'fm', true],
@@ -64,33 +78,42 @@ export const validatePaths = (options: CliOptions): string | null => {
       return `PATH_NOT_ABSOLUTE: --${name} 必须使用绝对路径`;
     }
   }
-  const root = path.resolve(options.projectRoot);
+  const root = canonicalPath(options.projectRoot);
   if (!isDirectory(root))
     return 'PROJECT_ROOT_INVALID: --project-root 必须是现有目录';
-  const fm = path.resolve(options.fm);
+  const fm = canonicalPath(options.fm);
   if (
     options.fmCheck !== undefined &&
-    isInside(path.resolve(options.fmCheck), fm)
+    isInside(canonicalPath(options.fmCheck), fm)
   ) {
     return 'FM_CHECK_INPUT_CONFLICT: FM 检查结果必须位于模型目录之外';
   }
-  if (options.api !== undefined && isInside(path.resolve(options.api), fm)) {
+  if (options.api !== undefined && isInside(canonicalPath(options.api), fm)) {
     return 'API_INPUT_CONFLICT: API 覆盖文件必须位于 FM 根目录之外';
   }
   if (options.command !== 'project' && options.command !== 'deliver')
     return null;
-  const out = path.resolve(options.out ?? defaultOutputDirectory(root));
+  const out = canonicalPath(options.out ?? defaultOutputDirectory(root));
   if (!isInside(out, root))
     return 'OUTPUT_OUTSIDE_PROJECT: 输出目录必须位于项目根内';
   for (const input of [options.fm, options.api, options.fmCheck]) {
     if (
       input !== undefined &&
-      (isInside(out, path.resolve(input)) || isInside(path.resolve(input), out))
+      (isInside(out, canonicalPath(input)) ||
+        isInside(canonicalPath(input), out))
     ) {
       return 'OUTPUT_INPUT_CONFLICT: 输出不能与模型、覆盖文件或检查报告重叠';
     }
   }
   return null;
+};
+
+export const validatePaths = (options: CliOptions): string | null => {
+  try {
+    return validateResolvedPaths(options);
+  } catch (error) {
+    return `PATH_INVALID: ${error instanceof Error ? error.message : String(error)}`;
+  }
 };
 
 const parse = (argv: readonly string[]): CliOptions | string => {

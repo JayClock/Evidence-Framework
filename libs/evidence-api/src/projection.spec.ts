@@ -4,6 +4,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -358,6 +359,46 @@ describe('live CLI', () => {
         'relative',
       ]);
       expect(relative.error).toContain('PATH_NOT_ABSOLUTE');
+    });
+  });
+
+  it('protects source trees reached through output symlinks', async () => {
+    await withScratch(async (directory) => {
+      const fm = path.join(directory, 'fm');
+      cpSync(fullLifecycle().modelRoot, fm, { recursive: true });
+      const alias = path.join(directory, 'alias');
+      symlinkSync(fm, alias, 'dir');
+      const manifest = readFileSync(path.join(fm, 'model.json'), 'utf8');
+      const result = await runCli([
+        'project',
+        '--project-root',
+        directory,
+        '--fm',
+        fm,
+        '--out',
+        path.join(alias, 'new-output'),
+      ]);
+      expect(result.exitCode).toBe(1);
+      expect(result.error).toContain('OUTPUT_INPUT_CONFLICT');
+      expect(readFileSync(path.join(fm, 'model.json'), 'utf8')).toBe(manifest);
+      expect(existsSync(path.join(fm, 'new-output'))).toBe(false);
+    });
+  });
+
+  it('rejects output aliases that escape the project', async () => {
+    await withScratch(async (directory) => {
+      await withScratch(async (outside) => {
+        const alias = path.join(directory, 'external');
+        symlinkSync(outside, alias, 'dir');
+        const result = await runCli([
+          ...args('deliver', directory),
+          '--out',
+          path.join(alias, 'output'),
+        ]);
+        expect(result.exitCode).toBe(1);
+        expect(result.error).toContain('OUTPUT_OUTSIDE_PROJECT');
+        expect(existsSync(path.join(outside, 'output'))).toBe(false);
+      });
     });
   });
 

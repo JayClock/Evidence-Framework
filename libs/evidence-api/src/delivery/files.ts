@@ -1,4 +1,5 @@
 import type { DeliveryBundle } from './delivery.js';
+import { canonicalJson } from '../canonicalJson.js';
 
 /** One file a delivery hand-off writes, relative to the chosen directory. */
 export interface DeliveryFile {
@@ -15,7 +16,7 @@ export interface DeliveryFile {
  * the document it was built from.
  */
 export const deliveryFilesOf = (bundle: DeliveryBundle): DeliveryFile[] => {
-  const json = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
+  const json = canonicalJson;
   const files: DeliveryFile[] = [
     { path: 'openapi.json', content: json(bundle.openapi) },
     {
@@ -32,6 +33,11 @@ export const deliveryFilesOf = (bundle: DeliveryBundle): DeliveryFile[] => {
     },
     { path: 'routes.json', content: json(bundle.routes) },
     { path: 'deployment.compose.json', content: json(bundle.deployment) },
+    { path: 'projection.json', content: json(bundle) },
+    {
+      path: 'http-journeys.json',
+      content: json({ runtimeValidated: false, journeys: bundle.journeys }),
+    },
   ];
 
   if (bundle.limitations.length > 0) {

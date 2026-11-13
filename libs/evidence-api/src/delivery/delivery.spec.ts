@@ -265,6 +265,8 @@ describe('buildDelivery', () => {
       'topology.json',
       'routes.json',
       'deployment.compose.json',
+      'projection.json',
+      'http-journeys.json',
     ]);
     expect(files.every((file) => file.content.endsWith('\n'))).toBe(true);
   });

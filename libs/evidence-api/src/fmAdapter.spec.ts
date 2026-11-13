@@ -158,6 +158,19 @@ describe('loadFmFromDocument', () => {
     );
   });
 
+  it('pins indexed inputs and fingerprints inline scenario edits', async () => {
+    const { bundle } = await readModelRoot(fmRoot);
+    const loaded = loadFmFromDocument(bundle).index!;
+    const originalName = loaded.document.manifest.name;
+    bundle.manifest.name = 'Later edit';
+    expect(loaded.document.manifest.name).toBe(originalName);
+    const next = structuredClone(bundle);
+    next.validation!.scenarios[0]!['label'] = 'Updated scenario';
+    expect(loadFmFromDocument(next).index?.modelDigest).not.toBe(
+      loadFmFromDocument(bundle).index?.modelDigest,
+    );
+  });
+
   it('reads directories and bundles without a check report', async () => {
     const directory = mkdtempSync(path.join(tmpdir(), 'api-input-'));
     try {

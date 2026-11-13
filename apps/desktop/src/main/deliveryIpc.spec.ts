@@ -106,6 +106,8 @@ describe('deliveryProjection', () => {
       'topology.json',
       'routes.json',
       'deployment.compose.json',
+      'projection.json',
+      'http-journeys.json',
       'limitations.md',
     ]);
     expect(JSON.parse(files[0]?.content ?? '{}')).toMatchObject({
@@ -175,6 +177,8 @@ describe('registerDeliveryIpc', () => {
           'topology.json',
           'routes.json',
           'deployment.compose.json',
+          'projection.json',
+          'http-journeys.json',
           'limitations.md',
         ],
       },

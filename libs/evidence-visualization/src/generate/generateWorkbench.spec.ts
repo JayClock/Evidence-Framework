@@ -252,6 +252,54 @@ describe('collectWorkbench', () => {
     });
   });
 
+  it('reviews portable inputs and applies the same route overlay to API and delivery views', async () => {
+    await withProject(async (root) => {
+      const bundle = (await readModelRoot(path.join(root, '.evidence/fm')))
+        .bundle;
+      const modelRoot = path.join(root, 'review.evidence.json');
+      await writeFile(modelRoot, serializeModelBundle(bundle));
+      const before = await collectWorkbench({
+        projectRoot: root,
+        modelRoot,
+        scopeRefs: [SCOPE],
+        requireApi: true,
+      });
+      const route = before.projection!.routes[0]!;
+      await mkdir(path.join(root, '.evidence/api'), { recursive: true });
+      const overlay = path.join(root, '.evidence/api/api.json');
+      await writeFile(
+        overlay,
+        JSON.stringify({
+          routes: [{ id: route.id, summary: 'Reviewed operation' }],
+        }),
+      );
+      const after = await collectWorkbench({
+        projectRoot: root,
+        modelRoot,
+        scopeRefs: [SCOPE],
+        requireApi: true,
+      });
+      expect(
+        after.projection!.routes.find((item) => item.id === route.id)?.summary,
+      ).toBe('Reviewed operation');
+      expect(after.projection!.digests.design).toMatch(/^[a-f0-9]{64}$/);
+      expect(
+        after.data.delivery?.services
+          .flatMap((service) => service.routes)
+          .some((item) => item.summary === 'Reviewed operation'),
+      ).toBe(true);
+      await writeFile(overlay, '{"routes":null}');
+      await expect(
+        collectWorkbench({
+          projectRoot: root,
+          modelRoot,
+          scopeRefs: [SCOPE],
+          requireApi: true,
+        }),
+      ).rejects.toThrow(/API 设计不可用/);
+    });
+  });
+
   it('refuses an API review that does not name its scope', async () => {
     await withProject(async (root) => {
       await mkdir(path.join(root, '.evidence', 'api'), { recursive: true });

@@ -21,7 +21,7 @@ import { API_PROJECTION_SCHEMA_TEXT } from '../schemas/apiProjectionSchema.js';
 import { API_SCHEMA_TEXT } from '../schemas/apiSchema.js';
 
 /**
- * The generated tree: five documents plus the manifest that describes them.
+ * The generated tree: one snapshot, its delivery files and an integrity manifest.
  *
  * Writing is all-or-nothing. A half-replaced directory would let a consumer read
  * a new `projection.json` beside a stale `openapi.json`, which is worse than the
@@ -41,16 +41,9 @@ const sha256 = (content: string): string =>
 export const renderOutputs = (
   projection: EvidenceApiSnapshot,
 ): Record<string, string> => {
-  const outputs: Record<string, string> = {
-    ...Object.fromEntries(
-      deliveryFilesOf(projection).map((file) => [file.path, file.content]),
-    ),
-    'projection.json': canonicalJson(projection),
-    'http-journeys.json': canonicalJson({
-      runtimeValidated: false,
-      journeys: projection.journeys,
-    }),
-  };
+  const outputs = Object.fromEntries(
+    deliveryFilesOf(projection).map((file) => [file.path, file.content]),
+  );
 
   const manifest = {
     schemaVersion: '5.1',

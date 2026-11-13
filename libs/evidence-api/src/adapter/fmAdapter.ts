@@ -103,11 +103,27 @@ export const loadFmFromDocument = (
   document: DomainModelDocument,
   options: LoadFmDocumentOptions = {},
 ): LoadFmResult => {
+  // Pin the input so later caller edits cannot silently change an existing index.
+  document = structuredClone(document);
   const compiled = compiledDocument(document);
   const suite =
     options.suite ?? loadValidationSuite(document as DomainModelBundle);
   const modelDigest =
-    options.modelDigest ?? `sha256:${digestBytes(canonicalJson(compiled))}`;
+    options.modelDigest ??
+    `sha256:${digestBytes(
+      canonicalJson({
+        ...compiled,
+        validation: {
+          instances: [...suite.instances].sort((a, b) =>
+            a.id.localeCompare(b.id),
+          ),
+          scenarios: [...suite.scenarios].sort((a, b) =>
+            a.id.localeCompare(b.id),
+          ),
+          errors: [...suite.errors].sort(),
+        },
+      }),
+    )}`;
   const diagnostics: Diagnostic[] = [...(options.diagnostics ?? [])];
   const problem = checkReportProblem(options.checkReport);
   if (problem !== null) {

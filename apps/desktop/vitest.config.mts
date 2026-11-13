@@ -21,8 +21,10 @@ export default defineConfig({
       'development|production',
     ],
   },
+  ssr: { resolve: { conditions: ['@evidence-poc/source', 'node', 'import'] } },
   test: {
     name: '@evidence-poc/desktop',
+    server: { deps: { inline: [/@evidence-poc\//] } },
     watch: false,
     globals: true,
     environment: 'jsdom',

@@ -1,12 +1,13 @@
 import path from 'node:path';
 
 import {
-  buildDelivery,
+  buildProjection,
+  hasErrors,
+  loadFm,
   deliveryFilesOf,
   type DeliveryBundle,
   type DeliveryService,
 } from '@evidence-poc/evidence-api';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
 
 export { deliveryFilesOf };
 
@@ -97,10 +98,18 @@ export const previewOf = (bundle: DeliveryBundle): DeliveryPreview => {
 };
 
 /** Reads a model root and projects its delivery. */
-export const readDelivery = async (modelRoot: string): Promise<DeliveryBundle> => {
-  const { bundle } = await readModelRoot(modelRoot);
-
-  return buildDelivery(bundle);
+export const readDelivery = async (
+  modelRoot: string,
+): Promise<DeliveryBundle> => {
+  const loaded = await loadFm(modelRoot);
+  if (loaded.index === null) {
+    throw new Error(loaded.diagnostics.map((item) => item.message).join('；'));
+  }
+  const built = buildProjection({ index: loaded.index });
+  if (hasErrors(built.diagnostics)) {
+    throw new Error(built.diagnostics.map((item) => item.message).join('；'));
+  }
+  return built.projection;
 };
 
 /** Default directory a hand-off is written to, beside the project. */
