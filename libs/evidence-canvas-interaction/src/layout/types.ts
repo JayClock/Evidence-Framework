@@ -4,6 +4,7 @@ import type {
 } from '@evidence-poc/evidence-schema';
 
 import type { Point, Rect } from '../geometry.js';
+import type { CrossContextEdgeKind } from './edgeClassification.js';
 
 export type LayoutNodeCategory = 'evidence' | 'participant' | 'role';
 
@@ -29,6 +30,8 @@ export interface LayoutEdge {
   dashed: boolean;
   arrow: boolean;
   crossContext: boolean;
+  /** Why the edge crosses a Context boundary; `null` inside one Context. */
+  crossContextKind: CrossContextEdgeKind | null;
   label: string;
 }
 

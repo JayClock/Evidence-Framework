@@ -116,6 +116,11 @@ export {
   type FulfillmentMoment,
 } from './layout/fulfillmentAlignment.js';
 
+export {
+  classifyCrossContextEdge,
+  type CrossContextEdgeKind,
+} from './layout/edgeClassification.js';
+
 export type {
   CanvasViewMode,
   ContextLayoutGroup,

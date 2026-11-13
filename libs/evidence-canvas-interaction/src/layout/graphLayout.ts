@@ -26,6 +26,7 @@ import type {
   LayoutNode,
   ResponsibilityLink,
 } from './types.js';
+import { classifyCrossContextEdge } from './edgeClassification.js';
 
 export const NODE_WIDTH = 220;
 export const NODE_BASE_HEIGHT = 64;
@@ -126,6 +127,10 @@ export const assembleGraphLayout = (
   const boxOf = (objectId: string): Rect | undefined =>
     nodeById.get(objectId)?.box ?? contextGroupById.get(objectId)?.box;
 
+  const entityById = new Map(
+    document.entities.map((entity) => [entity.id, entity] as const),
+  );
+
   const edges: LayoutEdge[] = [];
 
   for (const relationship of document.relationships) {
@@ -148,6 +153,19 @@ export const assembleGraphLayout = (
       sourceContext !== null &&
       targetContext !== null &&
       sourceContext !== targetContext;
+    const sourceEntity = entityById.get(relationship.sourceRef);
+    const targetEntity = entityById.get(relationship.targetRef);
+    const crossContextKind =
+      sourceEntity === undefined || targetEntity === undefined
+        ? crossContext
+          ? 'standard_cross'
+          : null
+        : classifyCrossContextEdge({
+            source: sourceEntity,
+            target: targetEntity,
+            kind: relationship.kind,
+            crossContext,
+          });
 
     edges.push({
       relationshipId: relationship.id,
@@ -158,6 +176,7 @@ export const assembleGraphLayout = (
       dashed: crossContext || relationship.kind === 'plays_role',
       arrow: relationship.kind === 'plays_role',
       crossContext,
+      crossContextKind,
       label: relationship.label,
     });
   }

@@ -245,7 +245,24 @@ describe('createGraphLayout', () => {
     expect(crossContext.arrow).toBe(false);
     expect(inside.crossContext).toBe(false);
     expect(inside.dashed).toBe(false);
+    expect(inside.crossContextKind).toBeNull();
     expect(inside.points.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('says why an edge leaves its context', () => {
+    const { layout } = createFixtureModel();
+
+    expect(
+      layout.edgeById.get('relation.request-references-product')!
+        .crossContextKind,
+    ).toBe('shared_thing');
+    expect(
+      layout.edgeById.get('relation.buyer-plays-role')!.crossContextKind,
+    ).toBeNull();
+    expect(
+      layout.edgeById.get('relation.confirmation-references-request')!
+        .crossContextKind,
+    ).toBeNull();
   });
 
   it('derives responsibility links from explicit fields only', () => {
