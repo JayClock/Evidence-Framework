@@ -2,6 +2,7 @@ import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   type AttributeAST,
   type DomainModelDocument,
+  type RuleAST,
 } from '@evidence-poc/evidence-schema';
 import {
   createDomainGraph,
@@ -47,6 +48,7 @@ export interface DeliveryField {
   meaning: string;
   /** Rule that produces the value, for a derived field. */
   ruleRef?: string;
+  ruleExpression?: string;
 }
 
 export type DeliveryRouteMethod = 'GET' | 'POST';
@@ -92,6 +94,10 @@ export interface DeliveryRoute {
   allowedPartyRoleRefs: readonly string[];
   exposure: 'external' | 'internal';
   outputFields: readonly DeliveryField[];
+  rules: readonly Pick<
+    RuleAST,
+    'id' | 'kind' | 'expression' | 'bindings' | 'target' | 'resultType'
+  >[];
 }
 
 const timeAttributes = new Set<string>(EVIDENCE_TIME_ATTRIBUTE_NAMES);
@@ -117,6 +123,7 @@ export const fieldFor = (
       ...field,
       reason: 'derived',
       ruleRef: rule?.id ?? attribute.derivedByRuleRef,
+      ...(rule === undefined ? {} : { ruleExpression: rule.expression }),
     };
   }
 
@@ -507,39 +514,63 @@ export const buildDeliveryRoutes = (
       itemPath: shape === 'singleton' ? path : `${path}/{requestId}`,
     });
   }
-  return routes.map((route) => {
-    let path = route.path;
-    let shape: DeliveryRoute['shape'] = 'collection';
-    let itemPath = route.method === 'GET' ? path : `${path}/{evidenceId}`;
-    const request = requestPaths.get(route.requestRef ?? '');
-    if (route.purpose === 'request' && request !== undefined) {
-      path = request.path;
-      itemPath = request.itemPath;
-      shape = path === itemPath ? 'singleton' : 'collection';
-    } else if (route.purpose === 'confirm' && request !== undefined) {
-      const confirmations =
-        graph.fulfillmentPair(route.requestRef!)?.confirmations ?? [];
-      path = `${request.itemPath}/confirmation${confirmations.length > 1 ? `/${segments.segmentOf(route.entityRef)}` : ''}`;
-      shape = childShape(graph, route.requestRef!, route.entityRef);
-      itemPath = shape === 'singleton' ? path : `${path}/{confirmationId}`;
-    } else if (route.purpose === 'propose') {
-      const parent = answeredRfpOf(graph).get(route.entityRef);
-      if (parent !== undefined)
-        shape = childShape(graph, parent, route.entityRef);
-      itemPath = shape === 'singleton' ? path : `${path}/{proposalId}`;
-    } else if (route.purpose === 'sign') itemPath = `${path}/{contractId}`;
-    else if (route.purpose === 'open') itemPath = `${path}/{rfpId}`;
-    const allowedPartyRoleRefs = callerRoles(graph, route);
-    return {
-      ...route,
-      path,
-      itemPath,
-      shape,
-      allowedPartyRoleRefs,
-      exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
-      outputFields: graph
-        .attributesOf(route.entityRef)
-        .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
-    };
-  });
+  return routes
+    .map<DeliveryRoute>((route) => {
+      let path = route.path;
+      let shape: DeliveryRoute['shape'] = 'collection';
+      let itemPath = route.method === 'GET' ? path : `${path}/{evidenceId}`;
+      const request = requestPaths.get(route.requestRef ?? '');
+      if (route.purpose === 'request' && request !== undefined) {
+        path = request.path;
+        itemPath = request.itemPath;
+        shape = path === itemPath ? 'singleton' : 'collection';
+      } else if (route.purpose === 'confirm' && request !== undefined) {
+        const confirmations =
+          graph.fulfillmentPair(route.requestRef!)?.confirmations ?? [];
+        path = `${request.itemPath}/confirmation${confirmations.length > 1 ? `/${segments.segmentOf(route.entityRef)}` : ''}`;
+        shape = childShape(graph, route.requestRef!, route.entityRef);
+        itemPath = shape === 'singleton' ? path : `${path}/{confirmationId}`;
+      } else if (route.purpose === 'propose') {
+        const parent = answeredRfpOf(graph).get(route.entityRef);
+        if (parent !== undefined)
+          shape = childShape(graph, parent, route.entityRef);
+        itemPath = shape === 'singleton' ? path : `${path}/{proposalId}`;
+      } else if (route.purpose === 'sign') itemPath = `${path}/{contractId}`;
+      else if (route.purpose === 'open') itemPath = `${path}/{rfpId}`;
+      const allowedPartyRoleRefs = callerRoles(graph, route);
+      return {
+        ...route,
+        path,
+        itemPath,
+        shape,
+        allowedPartyRoleRefs,
+        exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
+        rules: graph
+          .rules()
+          .filter(
+            (rule) =>
+              rule.target?.entityRef === route.entityRef ||
+              Object.values(rule.bindings).some(
+                (binding) =>
+                  'ref' in binding && binding.ref === route.entityRef,
+              ),
+          )
+          .map(({ id, kind, expression, bindings, target, resultType }) => ({
+            id,
+            kind,
+            expression,
+            bindings,
+            ...(target === undefined ? {} : { target }),
+            resultType,
+          }))
+          .sort((a, b) => a.id.localeCompare(b.id)),
+        outputFields: graph
+          .attributesOf(route.entityRef)
+          .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
+      };
+    })
+    .sort(compareRoutes);
 };
+
+export const compareRoutes = (a: DeliveryRoute, b: DeliveryRoute): number =>
+  a.contextRef.localeCompare(b.contextRef) || a.id.localeCompare(b.id);

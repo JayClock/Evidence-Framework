@@ -3,7 +3,12 @@ import type { DeliveryRoute } from './routes.js';
 
 export type UnaddressedRoute = Omit<
   DeliveryRoute,
-  'shape' | 'itemPath' | 'allowedPartyRoleRefs' | 'exposure' | 'outputFields'
+  | 'shape'
+  | 'itemPath'
+  | 'allowedPartyRoleRefs'
+  | 'exposure'
+  | 'outputFields'
+  | 'rules'
 >;
 
 /** Read the child endpoint regardless of the relationship's arrow direction. */

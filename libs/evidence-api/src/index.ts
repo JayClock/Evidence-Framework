@@ -1,4 +1,17 @@
 export {
+  diffApiSnapshots,
+  diffModelToApi,
+  type ApiChangeType,
+  type BreakingChangeKind,
+  type ApiBreakingChange,
+  type FieldDiff,
+  type RouteDiff,
+  type HypermediaLinkDiff,
+  type ApiModelDiffResult,
+} from './diff/apiDiff.js';
+export { patchDeliveryRoutes } from './diff/patchDeliveryRoutes.js';
+
+export {
   weaveHypermedia,
   halLinksFor,
   deriveJourneys,
