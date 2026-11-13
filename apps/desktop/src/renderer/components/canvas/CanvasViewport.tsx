@@ -26,6 +26,7 @@ import {
   type ModelOverlay,
   type CanvasViewMode,
 } from './CanvasStage';
+import { BusinessLegend } from './BusinessLegend';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
 
 interface CanvasViewportProps {
@@ -194,6 +195,7 @@ export const CanvasViewport = ({
   useGesture(
     {
       onWheel: ({ event, delta: [dx, dy], ctrlKey, metaKey, pinching }) => {
+        if ((event.target as Element).closest('[data-canvas-control]')) return;
         event.preventDefault();
 
         const stagePoint = stagePointOf(event, containerRef.current);
@@ -244,6 +246,7 @@ export const CanvasViewport = ({
   );
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if ((event.target as Element).closest('[data-canvas-control]')) return;
     const stagePoint = stagePointOf(event, containerRef.current);
 
     if (event.button === 1 || spacePressed.current) {
@@ -316,6 +319,7 @@ export const CanvasViewport = ({
 
         if (
           target.closest('[data-node-id]') === null &&
+          target.closest('[data-canvas-control]') === null &&
           target.closest('button') === null &&
           drag === null
         ) {
@@ -378,6 +382,7 @@ export const CanvasViewport = ({
         </div>
       </div>
 
+      <BusinessLegend />
       <ZoomControl
         zoom={viewport.zoom}
         onFit={fitToContent}
@@ -441,6 +446,7 @@ const ZoomControl = ({
   onActual: () => void;
 }) => (
   <div
+    data-canvas-control=""
     data-evidence-capture-hide=""
     className="absolute right-4 bottom-4 z-30 flex items-center gap-1 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] text-evidence-muted shadow-sm"
   >

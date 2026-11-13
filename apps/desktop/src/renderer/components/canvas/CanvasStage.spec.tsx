@@ -107,7 +107,7 @@ describe('CanvasStage', () => {
       container.querySelector(
         '[data-edge-id="relation.buyer-plays-role"] polyline',
       ),
-    ).toHaveAttribute('stroke-dasharray', '5 4');
+    ).toHaveAttribute('stroke-dasharray', '4 4');
     expect(
       container.querySelector(
         '[data-edge-id="relation.confirmation-references-request"] polyline',
@@ -118,7 +118,7 @@ describe('CanvasStage', () => {
     ).toHaveLength(1);
   });
 
-  it('shows cardinality only in standard mode', () => {
+  it('shows cardinality in standard mode or for an active relationship', () => {
     const document = createDesktopFixture();
     document.relationships[2] = {
       ...document.relationships[2]!,
@@ -128,7 +128,7 @@ describe('CanvasStage', () => {
     const graph = createDomainGraph(document);
     const layout = createGraphLayout(graph);
 
-    const { rerender } = render(
+    const { rerender, container } = render(
       <CanvasStage
         layout={layout}
         document={document}
@@ -172,6 +172,35 @@ describe('CanvasStage', () => {
 
     expect(screen.getByText('1..1')).toBeInTheDocument();
     expect(screen.getByText('0..N')).toBeInTheDocument();
+    expect(
+      container.querySelectorAll('[data-cardinality-end] rect'),
+    ).toHaveLength(2);
+    const label = container.querySelector('[data-cardinality-end="source"]');
+    expect(label).toHaveTextContent('源端基数');
+  });
+
+  it('shows simplified-mode cardinality on hover and arrows only for role playing', () => {
+    const document = createDesktopFixture();
+    document.relationships[2]!.targetCardinality = { min: 1, max: 'many' };
+    const { container } = setup({
+      document,
+      layout: createGraphLayout(createDomainGraph(document)),
+      hoveredEdgeId: document.relationships[2]!.id,
+    });
+    expect(screen.getByText('1..N')).toBeInTheDocument();
+    expect(
+      container.querySelector(
+        '[data-edge-id="relation.buyer-plays-role"] polyline',
+      ),
+    ).toHaveAttribute('marker-end', 'url(#evidence-arrow)');
+    expect(
+      container.querySelector(
+        '[data-edge-id="relation.confirmation-references-request"] polyline',
+      ),
+    ).not.toHaveAttribute('marker-end');
+    expect(container.querySelector('[data-pair-link]')).not.toHaveAttribute(
+      'marker-end',
+    );
   });
 
   it('selects a node on click and on Enter', () => {

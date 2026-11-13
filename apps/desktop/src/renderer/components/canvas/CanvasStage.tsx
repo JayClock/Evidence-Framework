@@ -8,6 +8,8 @@ import type {
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
+import { EDGE_STYLES } from './colors';
+import { pointOnRoute } from './edgeLabels';
 import { LifecycleBanner } from './LifecycleBanner';
 import { NodeCard } from './NodeCard';
 
@@ -47,8 +49,8 @@ interface CanvasStageProps {
   onSelect: (nodeId: string) => void;
 }
 
-const EDGE_COLOR = '#98a2b3';
-const EDGE_HIGHLIGHT = '#2f5d8f';
+const EDGE_COLOR = EDGE_STYLES.stroke;
+const EDGE_HIGHLIGHT = EDGE_STYLES.highlighted;
 
 /** Lane data only exists on a lifecycle layout, but the stage accepts either. */
 const isLifecycleLayout = (
@@ -152,7 +154,7 @@ export const CanvasStage = ({
             markerHeight="6"
             orient="auto-start-reverse"
           >
-            <path d="M 0 0 L 8 4 L 0 8 z" fill={EDGE_COLOR} />
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="context-stroke" />
           </marker>
         </defs>
 
@@ -184,6 +186,7 @@ export const CanvasStage = ({
           const active = highlightedEdgeIds.has(edge.relationshipId);
           const faded = dimmed && !active;
           const relationship = relationshipById.get(edge.relationshipId);
+          const midpoint = pointOnRoute(edge.points, 0.5);
           const points = edge.points
             .map((point) => `${point.x},${point.y}`)
             .join(' ');
@@ -201,11 +204,20 @@ export const CanvasStage = ({
                 points={points}
                 fill="none"
                 stroke={active ? EDGE_HIGHLIGHT : EDGE_COLOR}
-                strokeWidth={active ? 2 : 1.2}
-                strokeDasharray={edge.dashed ? '5 4' : undefined}
-                markerEnd={edge.arrow ? 'url(#evidence-arrow)' : undefined}
+                strokeWidth={
+                  active ? EDGE_STYLES.activeWidth : EDGE_STYLES.width
+                }
+                strokeDasharray={edge.dashed ? EDGE_STYLES.dashed : undefined}
+                markerEnd={
+                  edge.kind === 'plays_role'
+                    ? 'url(#evidence-arrow)'
+                    : undefined
+                }
               />
-              {viewMode === 'standard' && relationship !== undefined ? (
+              {(viewMode === 'standard' ||
+                active ||
+                hoveredEdgeId === edge.relationshipId) &&
+              relationship !== undefined ? (
                 <EdgeCardinality
                   edge={edge}
                   source={relationship.sourceCardinality}
@@ -214,17 +226,8 @@ export const CanvasStage = ({
               ) : null}
               {hoveredEdgeId === edge.relationshipId && relationship ? (
                 <text
-                  x={
-                    (edge.points[0]!.x +
-                      edge.points[edge.points.length - 1]!.x) /
-                    2
-                  }
-                  y={
-                    (edge.points[0]!.y +
-                      edge.points[edge.points.length - 1]!.y) /
-                      2 -
-                    6
-                  }
+                  x={midpoint.x}
+                  y={midpoint.y - 14}
                   fontSize={9}
                   textAnchor="middle"
                   fill="#2f5d8f"
@@ -340,7 +343,6 @@ function FulfillmentPairLinks({
             stroke={PAIR_LINK_COLOR}
             strokeWidth={1}
             strokeDasharray="3 3"
-            markerEnd="url(#evidence-arrow)"
           />
         );
       })}
@@ -407,27 +409,52 @@ function EdgeCardinality({
     return null;
   }
 
-  const first = edge.points[0]!;
-  const last = edge.points[edge.points.length - 1]!;
-
   return (
     <>
-      {sourceText !== null ? (
-        <text x={first.x + 6} y={first.y - 5} fontSize={8} fill="#8a929e">
-          {sourceText}
-        </text>
-      ) : null}
-      {targetText !== null ? (
-        <text
-          x={last.x - 6}
-          y={last.y - 5}
-          fontSize={8}
-          fill="#8a929e"
-          textAnchor="end"
-        >
-          {targetText}
-        </text>
-      ) : null}
+      {[
+        { end: 'source', label: '源端基数', text: sourceText, fraction: 0.25 },
+        {
+          end: 'target',
+          label: '目标端基数',
+          text: targetText,
+          fraction: 0.75,
+        },
+      ].map(({ end, label, text, fraction }) => {
+        if (text === null) return null;
+        const point = pointOnRoute(edge.points, fraction);
+        const width = Math.max(30, text.length * 6 + 10);
+        return (
+          <g
+            key={end}
+            data-cardinality-end={end}
+            transform={`translate(${point.x}, ${point.y})`}
+          >
+            <title>
+              {label}：{text}
+            </title>
+            <rect
+              x={-width / 2}
+              y={-8}
+              width={width}
+              height={16}
+              rx={3}
+              fill="white"
+              fillOpacity={0.95}
+              stroke="#d0d5dd"
+              strokeWidth={0.8}
+            />
+            <text
+              y={3}
+              fontSize={9}
+              fontFamily="monospace"
+              textAnchor="middle"
+              fill="#475467"
+            >
+              {text}
+            </text>
+          </g>
+        );
+      })}
     </>
   );
 }

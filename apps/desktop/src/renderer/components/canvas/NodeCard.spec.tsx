@@ -25,7 +25,12 @@ describe('business card summaries', () => {
         keyData: true,
         derivedByRuleRef: 'rule.amount',
       },
-      { name: 'status', label: '状态', meaning: '请求状态', valueType: 'string' },
+      {
+        name: 'status',
+        label: '状态',
+        meaning: '请求状态',
+        valueType: 'string',
+      },
     );
     document.rules.push({
       ...document.rules[0]!,
