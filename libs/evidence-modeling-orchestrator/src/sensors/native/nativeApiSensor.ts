@@ -56,6 +56,9 @@ export const checkNativeApiSensor = ({
       severity: diagnostic.severity === 'error' ? 'block' : 'warn',
       code: diagnostic.code,
       message: diagnostic.message,
+      ...(diagnostic.targetRef === undefined
+        ? {}
+        : { targetNodeId: diagnostic.targetRef }),
     });
   }
   for (const route of diff?.routes ?? []) {

@@ -46,6 +46,31 @@ const renderBar = (
 };
 
 describe('BottomStatusBar sensor summary', () => {
+  it('never presents an old revision as ready for release', () => {
+    renderBar({
+      reportStale: true,
+      report: healthyReport({ isStageGateReady: true }),
+    });
+    expect(screen.getByText('检查结果已过期')).toBeInTheDocument();
+    expect(screen.queryByText('门禁：可交下游')).toBeNull();
+  });
+
+  it('distinguishes API review gaps from ledger decisions', () => {
+    renderBar({
+      report: healthyReport({
+        apiSummary: {
+          totalRoutes: 4,
+          coverageRatio: 0.5,
+          uncoveredEntities: ['evidence.pending'],
+          breakingChangeCount: 1,
+          hasBaseline: true,
+          modelDigest: 'digest',
+        },
+      }),
+    });
+    expect(screen.getByText('门禁：等待 API 契约审查')).toBeInTheDocument();
+    expect(screen.getByText('API 4 路由 · 覆盖 50%')).toBeInTheDocument();
+  });
   it('keeps the gate closed while key data still owes a decision', () => {
     renderBar({
       report: healthyReport({

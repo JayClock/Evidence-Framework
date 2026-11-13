@@ -93,6 +93,7 @@ const issue = (
 
 /** The FM check report, narrowed to what the UI reads. */
 export interface FmCheckReport {
+  modelDigest?: string;
   checkVersion?: number;
   valid?: boolean;
   consistent?: boolean;

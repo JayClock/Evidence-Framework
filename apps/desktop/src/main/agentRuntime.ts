@@ -145,10 +145,8 @@ export const createAgentRuntime = ({
   });
 
   /**
-   * Reads the model an operator resolves references against.
-   *
-   * The desktop main process owns no live document, so this reads the source
-   * tree the same way the sensors do. A bundle project reads its single file.
+   * Reads the latest mirrored canvas document, including unsaved patches.
+   * Headless callers without a live registration fall back to the saved model.
    */
   const loadDocument = async () =>
     live?.document ??

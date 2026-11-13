@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import {
   decodeModelPatch,
@@ -31,7 +31,7 @@ export const useAgentPatchBridge = (
   session: ModelSession,
   onApplied?: (patch: AppliedPatch) => void,
 ): void => {
-  useEffect(
+  useLayoutEffect(
     () =>
       window.evidenceAPI.agent.onApplyPatch(({ requestId, patch }) => {
         const before = session.getDocument();

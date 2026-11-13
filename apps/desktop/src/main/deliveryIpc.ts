@@ -35,9 +35,9 @@ import { modelSourceOf, projectDirectoryOf } from './modelSource';
 /**
  * The delivery hand-off, from the app.
  *
- * Both calls project the model on disk, not the canvas: what a colleague receives
- * has to describe what was saved. The preview exists so the modeler reads the
- * boundaries before writing four files into a folder they will have to explain.
+ * Disk endpoints remain available for saved hand-offs. Live endpoints analyse
+ * an explicit document revision and freeze it before the export dialog opens.
+ * Every live export is labelled as a draft, never release authorization.
  */
 
 export interface DeliveryIpcOptions {

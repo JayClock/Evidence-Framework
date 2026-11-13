@@ -7,6 +7,7 @@ interface BottomStatusBarProps {
   validation: ValidationResult;
   /** Latest sensor verdict; null until the first run finishes. */
   report: SensorReport | null;
+  reportStale?: boolean;
   sensorLoading: boolean;
   sensorError: string | null;
   diagnosticsOpen: boolean;
@@ -41,17 +42,25 @@ const gateLabel = (report: SensorReport): string => {
     return '门禁：不闭合';
   }
 
+  if (
+    report.apiSummary &&
+    (report.apiSummary.uncoveredEntities.length > 0 ||
+      report.apiSummary.breakingChangeCount > 0)
+  )
+    return '门禁：等待 API 契约审查';
   return report.isStageGateReady ? '门禁：可交下游' : '门禁：等待台账决议';
 };
 
 const SensorSummary = ({
   report,
+  stale,
   loading,
   error,
   onToggle,
   onRerun,
 }: {
   report: SensorReport | null;
+  stale: boolean;
   loading: boolean;
   error: string | null;
   onToggle: () => void;
@@ -92,7 +101,13 @@ const SensorSummary = ({
           <span
             className={[
               'inline-block h-1.5 w-1.5 rounded-full',
-              report.blockCount > 0 ? 'bg-[#b42318]' : 'bg-[#3d7553]',
+              stale
+                ? 'bg-[#c4c9d2]'
+                : report.blockCount > 0
+                  ? 'bg-[#b42318]'
+                  : report.warnCount > 0
+                    ? 'bg-[#8d6200]'
+                    : 'bg-[#3d7553]',
             ].join(' ')}
           />
           阻塞 {report.blockCount}
@@ -103,14 +118,21 @@ const SensorSummary = ({
         <span>提示 {report.infoCount}</span>
         <span
           className={
-            report.isStageGateReady
+            report.isStageGateReady && !stale
               ? 'text-evidence-participant'
               : 'text-[#8d6200]'
           }
         >
-          {gateLabel(report)}
+          {stale ? '检查结果已过期' : gateLabel(report)}
         </span>
       </button>
+      {report.apiSummary === undefined ? null : (
+        <span className="text-evidence-muted">
+          API {report.apiSummary.totalRoutes} 路由 · 覆盖{' '}
+          {(report.apiSummary.coverageRatio * 100).toFixed(0)}%
+          {stale ? '（旧结果）' : ''}
+        </span>
+      )}
       <button
         type="button"
         onClick={onRerun}
@@ -126,6 +148,7 @@ export const BottomStatusBar = ({
   layout,
   validation,
   report,
+  reportStale = false,
   sensorLoading,
   sensorError,
   diagnosticsOpen,
@@ -156,6 +179,7 @@ export const BottomStatusBar = ({
       </span>
       <SensorSummary
         report={report}
+        stale={reportStale}
         loading={sensorLoading}
         error={sensorError}
         onToggle={onToggleDiagnostics}

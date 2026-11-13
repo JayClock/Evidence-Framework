@@ -544,6 +544,7 @@ const EditorWorkspace = ({
           layout={state.layout}
           validation={state.validation}
           report={sensors.report}
+          reportStale={diagnosticsStale}
           sensorLoading={sensors.loading}
           sensorError={sensors.error}
           diagnosticsOpen={diagnosticsOpen}

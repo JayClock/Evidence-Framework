@@ -20,9 +20,9 @@ export { deliveryFilesOf };
 /**
  * Turning a project's model into the documents a delivery hand-off consists of.
  *
- * The renderer never reads the model tree, so the preview it shows and the files
- * the export writes are both produced here, from the same bundle. That way the
- * modal cannot describe a delivery the export would not produce.
+ * The renderer sends an immutable document revision for live previews. Saved
+ * hand-offs can still read disk. Live export uses the same model digest that
+ * the preview displayed, so neither path silently substitutes another model.
  */
 
 /** One route as the preview lists it. */

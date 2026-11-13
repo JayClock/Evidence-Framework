@@ -208,6 +208,29 @@ const invoke = async <TParams>(
   )) as never;
 
 describe('API projection tools', () => {
+  it('previews hypothetical commands without dispatching them', async () => {
+    const document = createOrchestratorModel();
+    const original = structuredClone(document);
+    const { handlers, patches } = createHandlers({
+      loadDocument: async () => document,
+    });
+    const fake = createFakePi();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+    const result = await invoke(fake.tool(TOOL_NAMES.getApiDiff), {
+      proposedCommands: [
+        {
+          type: 'update-entity',
+          entityId: 'contract.procurement',
+          patch: { label: '新合同' },
+        },
+      ],
+    });
+    expect(result.details).toMatchObject({
+      diff: { summary: { routesModified: 2 } },
+    });
+    expect(patches).toEqual([]);
+    expect(document).toEqual(original);
+  });
   it('refreshes without applying a patch or accepting a new baseline', async () => {
     const document = createOrchestratorModel();
     const before = structuredClone(document);

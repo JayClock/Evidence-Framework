@@ -40,6 +40,8 @@ export interface SensorOutcome {
 }
 
 export interface StageGateInput {
+  /** Optional published contract baseline; never inferred from the latest edit. */
+  baseDocument?: DomainModelDocument;
   target: 'api' | 'visualization';
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
@@ -65,33 +67,51 @@ export const createSensorsEngine = ({
     });
 
   /**
-   * Decides the downstream hand-off from the saved report.
-   *
-   * The gate reads evidence rather than re-deriving it, so a caller that already
-   * ran the check passes its report in and nothing is computed twice.
+   * FM authorization still comes from a scope check. API hand-off additionally
+   * rechecks the saved model and compares any supplied baseline in release mode;
+   * a permissive authoring preview never opens this gate.
    */
   const checkStageGate = async (
     input: StageGateInput,
   ): Promise<StageGateSummary> => {
-    const report =
-      input.fmCheck ??
-      (
-        await runFullSensors({
-          modelRoot: input.modelRoot,
-          ...(input.scopeRefs === undefined
-            ? {}
-            : { scopeRefs: input.scopeRefs }),
-          ...(input.signal === undefined ? {} : { signal: input.signal }),
-        })
-      ).fmCheck;
-
-    return stageGateSummaryOf(
+    const fresh =
+      input.target === 'api' || input.fmCheck === undefined
+        ? await runFullSensors({
+            modelRoot: input.modelRoot,
+            apiMode: 'release',
+            ...(input.baseDocument === undefined
+              ? {}
+              : { baseDocument: input.baseDocument }),
+            ...(input.scopeRefs === undefined
+              ? {}
+              : { scopeRefs: input.scopeRefs }),
+            ...(input.signal === undefined ? {} : { signal: input.signal }),
+          })
+        : undefined;
+    const gate = stageGateSummaryOf(
       checkNativeStageGate({
         target: input.target,
-        fmCheck: report,
+        fmCheck: input.fmCheck ?? fresh?.fmCheck,
         scopes: input.scopeRefs ?? [],
       }),
     );
+    if (input.target !== 'api' || fresh === undefined) return gate;
+    const apiErrors = fresh.report.issues
+      .filter(
+        (issue) => issue.source === 'audit_api' && issue.severity !== 'info',
+      )
+      .map((issue) => `${issue.code}: ${issue.message}`);
+    if (
+      input.fmCheck !== undefined &&
+      input.fmCheck.modelDigest !== fresh.fmCheck?.modelDigest
+    ) {
+      apiErrors.push('FM 检查与当前模型摘要不一致，请重新检查。');
+    }
+    return {
+      ...gate,
+      passed: gate.passed && apiErrors.length === 0,
+      errors: [...gate.errors, ...apiErrors],
+    };
   };
 
   return {

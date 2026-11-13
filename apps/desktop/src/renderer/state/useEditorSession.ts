@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import {
   type DomainGraph,
@@ -96,7 +96,8 @@ export const useEditorSession = (
   const [dirty, setDirty] = useState(false);
   const [version, forceRender] = useState(0);
 
-  useEffect(() => {
+  // Subscribe during commit, before paint or an incoming agent patch can edit the session.
+  useLayoutEffect(() => {
     const unsubscribe = session.subscribe((event) => {
       if (event.type === 'document-changed') {
         setDirty(true);
