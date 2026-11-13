@@ -178,15 +178,32 @@ export const NodeCard = ({
         <span className="shrink-0" style={{ color }}>
           {entityKindLabel(entity)}
         </span>
-        {summary.responsibility !== null ? (
-          <span
-            className="min-w-0 truncate rounded border bg-white px-1 text-[#8d6200]"
-            title={`责任角色：${summary.responsibility}（${summary.responsibilityRef}）`}
-            aria-label={`责任角色：${summary.responsibility}`}
-          >
-            ⚑ {summary.responsibility}
-          </span>
-        ) : null}
+        <span className="flex min-w-0 items-center justify-end gap-1">
+          {summary.partyBadge !== null ? (
+            <span
+              className="min-w-0 truncate rounded border border-[#78a788] bg-[#eff8f1] px-1 text-[#3d7553]"
+              title={`当事人：${summary.partyBadge.participants
+                .map(({ label, id }) => `${label}（${id}）`)
+                .join('、')}`}
+              aria-label={`当事人：${summary.partyBadge.label}`}
+              data-card-party-badge=""
+            >
+              ◉ {summary.partyBadge.label}
+              {summary.partyBadge.total > 1
+                ? ` +${summary.partyBadge.total - 1}`
+                : ''}
+            </span>
+          ) : null}
+          {summary.responsibility !== null ? (
+            <span
+              className="min-w-0 truncate rounded border bg-white px-1 text-[#8d6200]"
+              title={`责任角色：${summary.responsibility}（${summary.responsibilityRef}）`}
+              aria-label={`责任角色：${summary.responsibility}`}
+            >
+              ⚑ {summary.responsibility}
+            </span>
+          ) : null}
+        </span>
       </div>
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <span

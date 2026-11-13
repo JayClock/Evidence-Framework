@@ -52,6 +52,50 @@ describe('business card summaries', () => {
     ).toBeNull();
   });
 
+  it('badges the party that signs a non-contract evidence', () => {
+    const document = createDesktopFixture();
+    const summaries = summarizeCards(document);
+
+    expect(summaries.get('evidence.request')!.partyBadge).toEqual({
+      participants: [
+        { id: 'participant.supplier', label: '供应方企业（Supplier Org）' },
+      ],
+      label: '供应方企业（Supplier Org）',
+      total: 1,
+    });
+    // A contract states both sides by its roles; a badge would name only one.
+    expect(summaries.get('evidence.contract')!.partyBadge).toBeNull();
+    expect(summaries.get('participant.buyer')!.partyBadge).toBeNull();
+  });
+
+  it('counts extra players instead of hiding them', () => {
+    const document = createDesktopFixture();
+    document.entities.push({
+      type: 'entity',
+      id: 'participant.supplier-agent',
+      category: 'participant',
+      kind: 'party',
+      label: '供应方代理（Supplier Agent）',
+    });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.agent-plays-supplier',
+      kind: 'plays_role',
+      sourceRef: 'participant.supplier-agent',
+      targetRef: 'role.supplier',
+      label: '供应方代理扮演供应方',
+    });
+
+    const badge = summarizeCards(document).get('evidence.request')!.partyBadge!;
+
+    expect(badge.label).toBe('供应方企业（Supplier Org）');
+    expect(badge.total).toBe(2);
+    expect(badge.participants.map(({ id }) => id)).toEqual([
+      'participant.supplier',
+      'participant.supplier-agent',
+    ]);
+  });
+
   it('shows the full unresolved responsibility ref rather than guessing from another field', () => {
     const document = createDesktopFixture();
     const request = document.entities.find(
@@ -92,6 +136,9 @@ describe('NodeCard modes', () => {
       within(card).getByLabelText('责任角色：供应方（Supplier）'),
     ).not.toHaveClass('absolute');
     expect(
+      within(card).getByLabelText('当事人：供应方企业（Supplier Org）'),
+    ).toHaveTextContent('供应方企业（Supplier Org）');
+    expect(
       within(card).getByText('时间：开始时间 → 截止时间'),
     ).toBeInTheDocument();
     expect(within(card).getByText('规则 1')).toHaveAttribute(
@@ -109,6 +156,10 @@ describe('NodeCard modes', () => {
     expect(screen.queryByText('规则 1')).toBeNull();
     expect(
       screen.getByLabelText('责任角色：供应方（Supplier）'),
+    ).toBeInTheDocument();
+    // The signer survives the compact reading: it is a fact, not decoration.
+    expect(
+      screen.getByLabelText('当事人：供应方企业（Supplier Org）'),
     ).toBeInTheDocument();
     expect(card).toHaveStyle({ height: '82px' });
     expect(
