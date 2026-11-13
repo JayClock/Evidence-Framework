@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 import { readModelRoot } from '../adapters/modelRoot.js';
@@ -122,6 +123,17 @@ describe('timelineSummary', () => {
 });
 
 describe('digestOf', () => {
+  it.each(['', '业务凭证 🔄', 'a'.repeat(256)])(
+    'matches Node SHA-256 for UTF-8 JSON %j with a trailing newline',
+    (value) => {
+      const expected = createHash('sha256')
+        .update(`${JSON.stringify(value)}\n`, 'utf8')
+        .digest('hex');
+
+      expect(digestOf(value)).toBe(`sha256:${expected}`);
+    },
+  );
+
   it('sorts keys and joins without spaces so bytes are stable', () => {
     expect(digestOf({ b: 1, a: [2, 3] })).toBe(digestOf({ a: [2, 3], b: 1 }));
     expect(digestOf({ a: 1 })).not.toBe(digestOf({ a: 2 }));

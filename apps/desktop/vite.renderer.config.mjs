@@ -12,6 +12,8 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
+    // Override Forge's default so linked workspace packages stay source, not optimized deps.
+    preserveSymlinks: false,
     conditions: [
       '@evidence-poc/source',
       'module',

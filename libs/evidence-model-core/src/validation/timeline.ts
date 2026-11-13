@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { hash } from 'fast-sha256';
 
 import {
   REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
@@ -100,11 +100,15 @@ const canonicalJson = (value: unknown): string => {
   return JSON.stringify(value) ?? 'null';
 };
 
-/** `sha256:<hex>` over the canonical JSON plus a trailing newline. */
-export const digestOf = (value: unknown): string =>
-  `sha256:${createHash('sha256')
-    .update(`${canonicalJson(value)}\n`, 'utf8')
-    .digest('hex')}`;
+/** `sha256:<hex>` over the canonical JSON plus a trailing newline, in Node or a browser. */
+export const digestOf = (value: unknown): string => {
+  const bytes = new TextEncoder().encode(`${canonicalJson(value)}\n`);
+  const hex = Array.from(hash(bytes), (byte) =>
+    byte.toString(16).padStart(2, '0'),
+  ).join('');
+
+  return `sha256:${hex}`;
+};
 
 const timeAttributesOf = (kind: string): readonly string[] =>
   isEvidenceKind(kind) ? REQUIRED_EVIDENCE_TIME_ATTRIBUTES[kind] : [];
