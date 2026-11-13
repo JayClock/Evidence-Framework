@@ -102,9 +102,10 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const reviewExport = useReviewExport(project.rootPath);
   const { state, save, reloadFromDisk, dismissExternalChange } =
-    useEditorSession(project, initialDocument);
+    useEditorSession(project, initialDocument, viewMode);
   const agent = useAgentSession(project.rootPath);
   const sensors = useSensorsState(project.rootPath);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
@@ -131,7 +132,6 @@ const EditorWorkspace = ({
     report: sensors.report,
     revision: revisionRef.current,
   });
-  const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const [searchTerm, setSearchTerm] = useState('');
   const [focusRequest, setFocusRequest] = useState<{
     nodeId: string;
@@ -229,7 +229,14 @@ const EditorWorkspace = ({
       zoomOut: () => requestZoom('out'),
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
-    [acceptPatch, patchReview.review, requestZoom, revertPatch, save, state.session],
+    [
+      acceptPatch,
+      patchReview.review,
+      requestZoom,
+      revertPatch,
+      save,
+      state.session,
+    ],
   );
 
   useEditorShortcuts(shortcuts);

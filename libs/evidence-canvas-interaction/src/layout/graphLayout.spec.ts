@@ -38,6 +38,34 @@ describe('createGraphLayout', () => {
     ).toBe(64 + 18 + 32);
   });
 
+  it('reflows frames and routes with mode-specific card rectangles', () => {
+    const graph = createDomainGraph(createFixtureDocument());
+    const compact = createGraphLayout(graph, { viewMode: 'simplified' });
+    const standard = createGraphLayout(graph, { viewMode: 'standard' });
+    expect(standard.nodes.map((node) => node.nodeId)).toEqual(
+      compact.nodes.map((node) => node.nodeId),
+    );
+    for (const node of standard.nodes) {
+      expect(node.box.height).toBe(156);
+      expect(compact.nodeById.get(node.nodeId)!.box.height).toBe(82);
+      if (node.contextId)
+        expect(
+          rectContainsRect(
+            standard.contextGroupById.get(node.contextId)!.box,
+            node.box,
+          ),
+        ).toBe(true);
+    }
+    for (const edge of standard.edges) {
+      expect(edge.points).toEqual(
+        routeEdge(
+          standard.nodeById.get(edge.sourceRef)!.box,
+          standard.nodeById.get(edge.targetRef)!.box,
+        ),
+      );
+    }
+  });
+
   it('places every non-context entity exactly once', () => {
     const { document, layout } = createFixtureModel();
     const placed = new Set(layout.nodes.map(({ nodeId }) => nodeId));

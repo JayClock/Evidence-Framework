@@ -1,7 +1,12 @@
 import type { EntityAST } from '@evidence-poc/evidence-schema';
-import type { LayoutNode } from '@evidence-poc/evidence-canvas-interaction';
+import type {
+  CanvasViewMode,
+  LayoutNode,
+} from '@evidence-poc/evidence-canvas-interaction';
+import type { CardSummary } from './cardSummary';
 
 import {
+  CATEGORY_TOKENS,
   TYPED_TIME_ATTRIBUTES,
   entityColor,
   entityKindLabel,
@@ -15,23 +20,11 @@ interface NodeCardProps {
   selected: boolean;
   dimmed: boolean;
   highlighted: boolean;
+  viewMode: CanvasViewMode;
+  summary: CardSummary;
   onHover: (nodeId: string | null) => void;
   onSelect: (nodeId: string) => void;
 }
-
-const responsibilityLabel = (entity: EntityAST): string | null => {
-  if (entity.category !== 'evidence') {
-    return null;
-  }
-
-  const responsible = entity.responsibleRoleRef;
-
-  if (responsible === undefined) {
-    return null;
-  }
-
-  return responsible.split('.').at(-1) ?? responsible;
-};
 
 const timeAttributes = (entity: EntityAST): string[] =>
   TYPED_TIME_ATTRIBUTES.filter(
@@ -119,17 +112,17 @@ export const NodeCard = ({
   selected,
   dimmed,
   highlighted,
+  viewMode,
+  summary,
   onHover,
   onSelect,
 }: NodeCardProps) => {
   const { entity, box } = node;
   const color = entityColor(entity);
-  const badge = responsibilityLabel(entity);
+  const token = CATEGORY_TOKENS[entity.category];
   const time = businessTime(entity);
   const shape = entityShape(entity);
-  const keyData = (entity.attributes ?? []).filter(
-    (attribute) => attribute.keyData === true,
-  );
+  const standard = viewMode === 'standard';
 
   return (
     <div
@@ -140,7 +133,7 @@ export const NodeCard = ({
       data-category={entity.category}
       data-node-shape={shape}
       className={[
-        'absolute flex cursor-pointer flex-col items-center justify-center gap-0.5 overflow-hidden border px-3 text-center transition-[opacity,box-shadow] duration-150 outline-none',
+        'absolute flex cursor-pointer flex-col gap-1 overflow-hidden border px-2 py-1.5 text-center transition-[opacity,box-shadow] duration-150 outline-none',
         selected ? 'ring-2 ring-evidence-accent ring-offset-1' : '',
         highlighted && !selected ? 'shadow-[0_0_0_2px_#2f5d8f55]' : '',
         dimmed ? 'opacity-20' : 'opacity-100',
@@ -151,10 +144,10 @@ export const NodeCard = ({
         width: box.width,
         height: box.height,
         borderRadius: entityRadius(entity),
-        borderColor: selected ? '#2f5d8f' : '#d7dbe2',
+        borderColor: selected ? '#2f5d8f' : token.stroke,
         borderLeftWidth: 3,
         borderLeftColor: color,
-        backgroundColor: `${color}0d`,
+        backgroundColor: token.fill,
         boxShadow: selected
           ? undefined
           : '0 1px 2px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.06)',
@@ -171,45 +164,68 @@ export const NodeCard = ({
         }
       }}
     >
-      <span
-        className="max-w-full overflow-hidden text-[11px] leading-tight font-medium text-ellipsis whitespace-nowrap text-evidence-ink"
-        title={entity.label}
-      >
-        {entity.label}
-      </span>
-      <span className="text-[9px] leading-tight" style={{ color }}>
-        {entityKindLabel(entity)}
-      </span>
-
-      {shape === 'interval' ? <IntervalBar accent={color} /> : null}
-      {shape === 'moment' ? <MomentStamp accent={color} /> : null}
-
-      {time !== null ? (
+      <div className="flex min-w-0 items-center justify-between gap-1 text-[9px] leading-tight">
+        <span className="shrink-0" style={{ color }}>
+          {entityKindLabel(entity)}
+        </span>
+        {summary.responsibility !== null ? (
+          <span
+            className="min-w-0 truncate rounded border bg-white px-1 text-[#8d6200]"
+            title={`责任角色：${summary.responsibility}（${summary.responsibilityRef}）`}
+            aria-label={`责任角色：${summary.responsibility}`}
+          >
+            ⚑ {summary.responsibility}
+          </span>
+        ) : null}
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <span
-          className="max-w-full overflow-hidden text-[9px] leading-tight text-ellipsis whitespace-nowrap text-evidence-muted"
-          title={time}
+          className="line-clamp-2 text-[11px] leading-tight font-medium text-evidence-ink"
+          title={entity.label}
         >
-          {time}
+          {entity.label}
         </span>
-      ) : null}
-      {keyData.length > 0 ? (
-        <span className="text-[9px] leading-tight text-evidence-muted">
-          关键数据 {keyData.length}
-        </span>
-      ) : null}
-
-      {badge !== null ? (
-        <span
-          className="absolute -top-2 -right-2 grid h-[18px] min-w-[18px] place-items-center rounded-full border px-1 text-[8px] font-semibold"
-          style={{
-            borderColor: color,
-            color,
-            backgroundColor: '#ffffff',
-          }}
-          aria-hidden="true"
+        {standard ? (
+          <span
+            className="max-w-full truncate text-[8px] text-evidence-muted"
+            title={entity.id}
+          >
+            {entity.id}
+          </span>
+        ) : null}
+        {shape === 'interval' ? <IntervalBar accent={color} /> : null}
+        {shape === 'moment' ? <MomentStamp accent={color} /> : null}
+      </div>
+      {standard ? (
+        <div
+          data-card-meta=""
+          className="shrink-0 space-y-0.5 border-t border-evidence-line/60 pt-1 text-left text-[9px] leading-tight text-evidence-muted"
         >
-          {badge.slice(0, 2)}
-        </span>
+          {time !== null ? (
+            <div className="truncate" title={time}>
+              时间：{time}
+            </div>
+          ) : null}
+          <div className="truncate" title={summary.attributes.join('、')}>
+            {summary.attributes.length
+              ? summary.attributes.join(' · ')
+              : '无属性'}
+            {summary.remainingAttributes > 0
+              ? ` +${summary.remainingAttributes}`
+              : ''}
+          </div>
+          <div className="flex justify-between gap-1">
+            <span>关键数据 {summary.keyDataCount}</span>
+            {summary.rules.length ? (
+              <span
+                className="rounded bg-[#fff8e8] px-1 text-[#8d6200]"
+                title={summary.rules.join('、')}
+              >
+                规则 {summary.rules.length}
+              </span>
+            ) : null}
+          </div>
+        </div>
       ) : null}
     </div>
   );

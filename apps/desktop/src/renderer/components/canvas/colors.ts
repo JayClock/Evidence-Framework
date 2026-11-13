@@ -1,5 +1,30 @@
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
+export const CATEGORY_TOKENS = {
+  context: { stroke: '#5b6472', fill: '#f8fafc', radius: 8, label: '业务边界' },
+  evidence: {
+    stroke: '#bd6b83',
+    fill: '#fff1f5',
+    radius: 2,
+    label: '业务凭证',
+  },
+  participant: {
+    stroke: '#78a788',
+    fill: '#eff8f1',
+    radius: 12,
+    label: '参与者 / 标的',
+  },
+  role: { stroke: '#b79b56', fill: '#fff8e8', radius: 12, label: '业务角色' },
+} as const;
+
+export const EDGE_STYLES = {
+  stroke: '#98a2b3',
+  highlighted: '#2f5d8f',
+  dashed: '4 4',
+  width: 1.5,
+  activeWidth: 2.2,
+} as const;
+
 export const CATEGORY_COLORS = {
   evidence: '#b43656',
   participant: '#3d7553',
@@ -52,7 +77,7 @@ export const entityColor = (entity: EntityAST): string =>
 
 /** Evidence keeps square corners, roles and participants are rounded cards. */
 export const entityRadius = (entity: EntityAST): number =>
-  entity.category === 'evidence' ? 2 : 12;
+  CATEGORY_TOKENS[entity.category].radius;
 
 /** Evidence time attributes already modeled, shown inside the node. */
 export const TYPED_TIME_ATTRIBUTES = [

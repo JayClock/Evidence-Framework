@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type {
   DomainGraphLayout,
   LayoutEdge,
@@ -10,7 +11,9 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { LifecycleBanner } from './LifecycleBanner';
 import { NodeCard } from './NodeCard';
 
-export type CanvasViewMode = 'simplified' | 'standard';
+import { summarizeCards } from './cardSummary';
+export type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
+import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
 /** How a change relates to the object the active model draws. */
 export type OverlayChange = 'added' | 'removed' | 'modified';
@@ -70,6 +73,7 @@ export const CanvasStage = ({
   onHoverContext,
   onSelect,
 }: CanvasStageProps) => {
+  const summaries = useMemo(() => summarizeCards(document), [document]);
   const width = Math.max(1, layout.bounds.width);
   const height = Math.max(1, layout.bounds.height);
   const swimlanes = isLifecycleLayout(layout) ? layout : null;
@@ -249,6 +253,8 @@ export const CanvasStage = ({
         <NodeCard
           key={node.nodeId}
           node={node}
+          viewMode={viewMode}
+          summary={summaries.get(node.nodeId)!}
           selected={selection.nodeId === node.nodeId}
           highlighted={highlightedNodeIds.has(node.nodeId)}
           dimmed={dimmed && !highlightedNodeIds.has(node.nodeId)}

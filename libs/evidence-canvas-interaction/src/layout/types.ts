@@ -82,7 +82,11 @@ export interface DomainGraphLayout {
   omittedContextIds: readonly string[];
 }
 
+export type CanvasViewMode = 'simplified' | 'standard';
+
 export interface GraphLayoutOptions {
+  /** Omitted preserves the persisted layout's original sizing contract. */
+  viewMode?: CanvasViewMode;
   nodeWidth?: number;
   columnGap?: number;
   rowGap?: number;

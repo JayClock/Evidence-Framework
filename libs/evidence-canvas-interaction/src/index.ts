@@ -117,6 +117,7 @@ export {
 } from './layout/fulfillmentAlignment.js';
 
 export type {
+  CanvasViewMode,
   ContextLayoutGroup,
   DomainGraphLayout,
   FulfillmentLayoutGroup,

@@ -11,6 +11,7 @@ import type {
   ValidationResult,
 } from '@evidence-poc/evidence-schema';
 import {
+  type CanvasViewMode,
   type LifecycleSwimlaneLayout,
   createLifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
@@ -45,6 +46,7 @@ const readState = (
   project: EvidenceProjectSummary,
   rootPath: string,
   session: ModelSession,
+  viewMode: CanvasViewMode,
   extras: {
     savedAt: string | null;
     saveError: string | null;
@@ -61,7 +63,7 @@ const readState = (
     session,
     document,
     graph,
-    layout: createLifecycleSwimlaneLayout(graph),
+    layout: createLifecycleSwimlaneLayout(graph, { viewMode }),
     selection: session.getSelection(),
     canUndo: session.canUndo(),
     canRedo: session.canRedo(),
@@ -79,6 +81,7 @@ const readState = (
 export const useEditorSession = (
   project: EvidenceProjectSummary,
   initialDocument: DomainModelDocument,
+  viewMode: CanvasViewMode = 'simplified',
 ): EditorSessionController => {
   const sessionRef = useRef<ModelSession | null>(null);
 
@@ -117,13 +120,22 @@ export const useEditorSession = (
     // `version` is read so the snapshot refreshes after every session event.
     void version;
 
-    return readState(project, project.rootPath, session, {
+    return readState(project, project.rootPath, session, viewMode, {
       savedAt,
       saveError,
       externalChangeAt,
       dirty,
     });
-  }, [project, session, version, savedAt, saveError, externalChangeAt, dirty]);
+  }, [
+    project,
+    session,
+    version,
+    savedAt,
+    saveError,
+    externalChangeAt,
+    dirty,
+    viewMode,
+  ]);
 
   const save = useCallback(async () => {
     const result = await window.evidenceAPI.projects.save({

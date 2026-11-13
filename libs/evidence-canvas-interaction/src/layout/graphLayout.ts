@@ -17,6 +17,7 @@ import {
 } from '../geometry.js';
 
 import type {
+  CanvasViewMode,
   ContextLayoutGroup,
   DomainGraphLayout,
   FulfillmentLayoutGroup,
@@ -46,7 +47,13 @@ export const FREE_BAND_COLUMNS = 3;
 /** Deterministic node height: label lines plus capped attribute rows. */
 export const measureNodeHeight = (
   entity: Pick<EntityAST, 'label' | 'attributes'>,
+  viewMode?: CanvasViewMode,
 ): number => {
+  // Routes, frames, hit testing and patch rings all use this same rectangle.
+  if (viewMode !== undefined) {
+    return viewMode === 'standard' ? 156 : 82;
+  }
+
   const labelLines = Math.min(
     2,
     Math.max(1, Math.ceil(entity.label.length / LABEL_CHARS_PER_LINE)),
@@ -300,7 +307,7 @@ export const createGraphLayout = (
         x: contentOriginX + x,
         y: contentOriginY + y,
         width: nodeWidth,
-        height: measureNodeHeight(entity),
+        height: measureNodeHeight(entity, options.viewMode),
       };
 
       nodes.push({ nodeId: entity.id, entity, box, contextId: context.id });
@@ -378,7 +385,10 @@ export const createGraphLayout = (
 
     const others: StackItem[] = entities
       .filter((entity) => !consumed.has(entity.id))
-      .map((entity) => ({ entity, height: measureNodeHeight(entity) }));
+      .map((entity) => ({
+        entity,
+        height: measureNodeHeight(entity, options.viewMode),
+      }));
 
     for (let index = 0; index < others.length; ) {
       const row = others.slice(index, index + FREE_BAND_COLUMNS);
@@ -520,14 +530,16 @@ export const createGraphLayout = (
       index += FREE_BAND_COLUMNS
     ) {
       const row = freeEntities.slice(index, index + FREE_BAND_COLUMNS);
-      const rowHeight = Math.max(...row.map(measureNodeHeight));
+      const rowHeight = Math.max(
+        ...row.map((entity) => measureNodeHeight(entity, options.viewMode)),
+      );
 
       row.forEach((entity, column) => {
         const box: Rect = {
           x: columnX[column]!,
           y: freeY,
           width: nodeWidth,
-          height: measureNodeHeight(entity),
+          height: measureNodeHeight(entity, options.viewMode),
         };
 
         allNodes.push({ nodeId: entity.id, entity, box, contextId: null });
