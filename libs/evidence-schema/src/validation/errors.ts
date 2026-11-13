@@ -45,6 +45,7 @@ export type ValidationCode =
   | 'relationship.cardinality'
   | 'relationship.contractPair'
   | 'relationship.playsRole.endpoints'
+  | 'relationship.playsRole.momentOnly'
   | 'relationship.references.endpoints'
   | 'relationship.references.crossContext'
   | 'rule.shape'

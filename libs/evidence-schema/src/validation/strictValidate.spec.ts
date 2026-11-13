@@ -582,7 +582,30 @@ describe('relationship checks', () => {
       label: '时段凭证不可扮演角色',
     });
 
-    expectIssue(document, 'relationship.playsRole.endpoints');
+    expectIssue(document, 'relationship.playsRole.momentOnly');
+  });
+
+  it('rejects an rfp or proposal playing role.evidence', () => {
+    const document = baseDocument();
+
+    document.entities.push({
+      type: 'entity',
+      id: 'role.proposal-evidence-role',
+      label: '提案凭证角色',
+      category: 'role',
+      kind: 'evidence',
+      contextRef: 'context.product-procurement',
+    });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation-proposal-plays-evidence-role',
+      kind: 'plays_role',
+      sourceRef: 'proposal.product-quotation',
+      targetRef: 'role.proposal-evidence-role',
+      label: '时段凭证不可扮演角色',
+    });
+
+    expectIssue(document, 'relationship.playsRole.momentOnly');
   });
 
   it('rejects malformed cardinality', () => {

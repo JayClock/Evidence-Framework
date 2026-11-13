@@ -1308,6 +1308,29 @@ const PLAYS_ROLE_PAIRS: readonly string[] = [
   'participant.thing>role.domain',
 ];
 
+/**
+ * Evidence kinds that state a settled result rather than an open window.
+ *
+ * Only these can stand behind an Evidence Role: an obligation that is still
+ * running has not discharged anything, so it cannot be the thing another
+ * contract depends on.
+ */
+const MOMENT_EVIDENCE_KINDS: readonly string[] = [
+  'fulfillment_confirmation',
+  'other_evidence',
+  'contract',
+];
+
+const isMomentEvidence = (object: JsonObject | undefined): boolean => {
+  const kind = kindOf(object);
+
+  return (
+    categoryOf(object) === 'evidence' &&
+    kind !== undefined &&
+    MOMENT_EVIDENCE_KINDS.includes(kind)
+  );
+};
+
 const isPlaysRolePair = (
   source: JsonObject,
   target: JsonObject,
@@ -1328,13 +1351,7 @@ const isPlaysRolePair = (
 
   // A moment Evidence can play an Evidence Role owned by another Context.
   // Moment evidences are: fulfillment_confirmation, other_evidence, contract.
-  return (
-    signatureOf(source)[0] === 'evidence' &&
-    (kindOf(source) === 'fulfillment_confirmation' ||
-      kindOf(source) === 'other_evidence' ||
-      kindOf(source) === 'contract') &&
-    signatureOf(target).join('.') === 'role.evidence'
-  );
+  return isMomentEvidence(source) && signatureOf(target).join('.') === 'role.evidence';
 };
 
 const validateRelationships = (
@@ -1413,6 +1430,22 @@ const validateRelationships = (
 
     if (kind === 'plays_role') {
       if (!isPlaysRolePair(source, target)) {
+        const intervalPlaysEvidenceRole =
+          signatureOf(source)[0] === 'evidence' &&
+          !isMomentEvidence(source) &&
+          targetSignature === 'role.evidence';
+
+        if (intervalPlaysEvidenceRole) {
+          pushIssue(
+            issues,
+            'relationship.playsRole.momentOnly',
+            path,
+            `Evidence Role '${asString(target, 'label') ?? targetRef}' can only be played by a moment Evidence (fulfillment_confirmation, other_evidence, contract); '${asString(source, 'label') ?? sourceRef}' is an interval (${String(kindOf(source))}) and states a window that has not been discharged.`,
+            relationshipId,
+          );
+          return;
+        }
+
         pushIssue(
           issues,
           'relationship.playsRole.endpoints',
