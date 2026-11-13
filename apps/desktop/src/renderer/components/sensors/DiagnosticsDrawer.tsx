@@ -5,6 +5,8 @@ import type {
 
 interface DiagnosticsDrawerProps {
   report: SensorReport;
+  selectedIssueIds?: readonly string[];
+  stale?: boolean;
   onClose: () => void;
   onFocusIssue: (issue: SensorIssue) => void;
 }
@@ -27,6 +29,8 @@ const severityClass = (severity: SensorIssue['severity']): string =>
  */
 export const DiagnosticsDrawer = ({
   report,
+  selectedIssueIds = [],
+  stale = false,
   onClose,
   onFocusIssue,
 }: DiagnosticsDrawerProps) => (
@@ -48,14 +52,15 @@ export const DiagnosticsDrawer = ({
       </button>
     </div>
 
+    {stale ? <p role="status" className="px-3 text-[11px] text-evidence-muted">检查基于磁盘快照；当前有未保存或外部修改，保存并重新检查后更新图上标记。</p> : null}
     {report.issues.length === 0 ? (
       <p className="px-3 py-2 text-[11px] text-evidence-muted">
         本轮没有发现项。
       </p>
     ) : (
       <ul className="divide-y divide-evidence-line">
-        {report.issues.map((issue) => (
-          <li key={issue.issueId}>
+        {[...report.issues].sort((a, b) => Number(selectedIssueIds.includes(b.issueId)) - Number(selectedIssueIds.includes(a.issueId))).map((issue) => (
+          <li key={issue.issueId} data-active-issue={selectedIssueIds.includes(issue.issueId) || undefined} className={selectedIssueIds.includes(issue.issueId) ? 'bg-blue-50' : ''}>
             <button
               type="button"
               onClick={() => onFocusIssue(issue)}

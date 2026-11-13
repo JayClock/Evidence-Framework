@@ -24,6 +24,7 @@ import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
 import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
+import { createDiagnosticIndex } from '../state/diagnosticIndex';
 import { useSensorsState } from '../state/useSensorsState';
 
 type LoadState =
@@ -139,6 +140,12 @@ const EditorWorkspace = ({
       setSelectedScope(null);
   }, [selectedScope, scope, state.selection.nodeId]);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const [activeIssueIds, setActiveIssueIds] = useState<readonly string[]>([]);
+  // Sensor runs read disk, not the live ModelSession. Never paint old findings as current.
+  const diagnosticsStale = state.dirty || state.externalChangeAt !== null || sensors.loading || sensors.error !== null ||
+    (state.savedAt !== null && (sensors.report === null || sensors.report.timestamp < state.savedAt));
+  const diagnostics = useMemo(() => createDiagnosticIndex(diagnosticsStale ? null : sensors.report, state.document), [diagnosticsStale, sensors.report, state.document]);
+  useEffect(() => { if (state.savedAt !== null) void sensors.refresh(); }, [state.savedAt, sensors.refresh]);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [sandboxOpen, setSandboxOpen] = useState(false);
 
@@ -200,7 +207,7 @@ const EditorWorkspace = ({
       if (target !== undefined) {
         const [nodeId, attributeName] = target.split('#');
 
-        if (nodeId !== undefined && nodeId !== '') {
+        if (nodeId !== undefined && state.layout.nodeById.has(nodeId)) {
           if (scope !== null && !scope.nodeIds.has(nodeId))
             setSelectedScope(null);
           state.session.selectAttribute(nodeId, attributeName ?? null);
@@ -211,7 +218,7 @@ const EditorWorkspace = ({
         }
       }
 
-      const contextRef = issue.contextRef;
+      const contextRef = issue.contextRef ?? target?.split('#')[0];
       const group = state.layout.contextGroups.find(
         (candidate) => candidate.contextId === contextRef,
       );
@@ -221,7 +228,7 @@ const EditorWorkspace = ({
         focusNode(nodeId);
       }
     },
-    [focusNode, state.layout.contextGroups, state.session, scope],
+    [focusNode, state.layout.contextGroups, state.layout.nodeById, state.session, scope],
   );
 
   // What the next question will be about: the canvas selection, reduced to what
@@ -383,6 +390,12 @@ const EditorWorkspace = ({
             selection={state.selection}
             focusRequest={focusRequest}
             zoomCommand={zoomCommand}
+            diagnostics={diagnostics}
+            onOpenIssues={(issues) => {
+              setActiveIssueIds(issues.map((issue) => issue.issueId));
+              setDiagnosticsOpen(true);
+              if (issues[0]) focusIssue(issues[0]);
+            }}
             overlay={patchReview.review?.overlay ?? null}
             scope={scope}
             onScopeChange={changeScope}
@@ -437,6 +450,8 @@ const EditorWorkspace = ({
 
       {diagnosticsOpen && sensors.report !== null ? (
         <DiagnosticsDrawer
+          selectedIssueIds={activeIssueIds}
+          stale={diagnosticsStale}
           report={sensors.report}
           onClose={() => setDiagnosticsOpen(false)}
           onFocusIssue={focusIssue}

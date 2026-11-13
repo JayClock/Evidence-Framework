@@ -9,6 +9,9 @@ import type {
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
+import { DiagnosticMarkers } from './DiagnosticMarkers';
+import { diagnosticColor, type DiagnosticIndex } from '../../state/diagnosticIndex';
+import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import { EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
 import { LifecycleBanner } from './LifecycleBanner';
@@ -44,6 +47,8 @@ interface CanvasStageProps {
   dimmed: boolean;
   marquee: { x: number; y: number; width: number; height: number } | null;
   overlay?: ModelOverlay | null;
+  diagnostics?: DiagnosticIndex;
+  onOpenIssues?: (issues: readonly SensorIssue[]) => void;
   scope?: ContextScope | null;
   onHoverNode: (nodeId: string | null) => void;
   onHoverEdge: (edgeId: string | null) => void;
@@ -72,6 +77,8 @@ export const CanvasStage = ({
   dimmed,
   marquee,
   overlay = null,
+  diagnostics,
+  onOpenIssues,
   scope = null,
   onHoverNode,
   onHoverEdge,
@@ -215,6 +222,7 @@ export const CanvasStage = ({
               }
               onMouseLeave={() => !outOfScope && onHoverEdge(null)}
             >
+              {diagnostics?.has(edge.relationshipId) ? <polyline points={points} fill="none" stroke={diagnosticColor(diagnostics.get(edge.relationshipId)!.severity)} strokeWidth={6} opacity={0.35} data-edge-diagnostic={edge.relationshipId} /> : null}
               <polyline
                 points={points}
                 fill="none"
@@ -282,6 +290,7 @@ export const CanvasStage = ({
         />
       ))}
 
+      {diagnostics && onOpenIssues ? <DiagnosticMarkers index={diagnostics} layout={layout} scope={scope} onOpen={onOpenIssues} /> : null}
       {overlay === null
         ? null
         : [...overlay.marks.entries()].map(([nodeId, change]) => {

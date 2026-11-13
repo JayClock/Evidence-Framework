@@ -27,6 +27,8 @@ import {
   type ModelOverlay,
   type CanvasViewMode,
 } from './CanvasStage';
+import type { DiagnosticIndex } from '../../state/diagnosticIndex';
+import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import { ScopeFilterControl } from './ScopeFilterControl';
 import { BusinessLegend } from './BusinessLegend';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
@@ -43,6 +45,8 @@ interface CanvasViewportProps {
   zoomCommand: { direction: 'in' | 'out'; token: number } | null;
   /** Rings the objects a pending agent patch touches. */
   overlay?: ModelOverlay | null;
+  diagnostics?: DiagnosticIndex;
+  onOpenIssues?: (issues: readonly SensorIssue[]) => void;
   scope?: ContextScope | null;
   onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
@@ -68,6 +72,8 @@ export const CanvasViewport = ({
   focusRequest,
   zoomCommand,
   overlay = null,
+  diagnostics,
+  onOpenIssues,
   scope = null,
   onScopeChange,
   onSelect,
@@ -422,6 +428,8 @@ export const CanvasViewport = ({
           }}
         >
           <CanvasStage
+            {...(diagnostics === undefined ? {} : { diagnostics })}
+            {...(onOpenIssues === undefined ? {} : { onOpenIssues })}
             layout={layout}
             document={document}
             viewMode={viewMode}
