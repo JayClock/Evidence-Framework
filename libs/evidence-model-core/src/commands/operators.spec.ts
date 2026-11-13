@@ -372,7 +372,7 @@ describe('roleifyAndInvertDependency', () => {
           },
         },
       }),
-    ).toThrow("'request.payment' 不是履约确认");
+    ).toThrow('是时段凭证');
   });
 });
 

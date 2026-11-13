@@ -359,8 +359,15 @@ export const roleifyAndInvertDependency = (
     target.category !== 'evidence' ||
     target.kind !== 'fulfillment_confirmation'
   ) {
+    const interval =
+      target !== undefined &&
+      target.category === 'evidence' &&
+      target.kind !== 'fulfillment_confirmation';
+
     throw new Error(
-      `'${intent.targetConfirmationRef}' 不是履约确认，无法抽象为能力角色。`,
+      interval
+        ? `'${intent.targetConfirmationRef}' 是时段凭证（${target.kind}），只表示尚未落定的履约窗口，不能扮演能力角色；请先为它补上对应的履约确认，再抽象该确认。`
+        : `'${intent.targetConfirmationRef}' 不是履约确认，无法抽象为能力角色。`,
     );
   }
 
