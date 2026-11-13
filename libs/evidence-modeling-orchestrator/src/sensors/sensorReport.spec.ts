@@ -50,6 +50,31 @@ describe('fmCheckIssues', () => {
       }),
     ).toEqual([]);
   });
+
+  it('keeps naming advice a warning that points at the object', () => {
+    const issues = fmCheckIssues({
+      valid: true,
+      errors: [],
+      gaps: [],
+      executedScenarioCount: 3,
+      advisories: [
+        {
+          code: 'ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC',
+          entityId: 'role.pricing',
+          message: '领域组件「折扣算法」建议改名。',
+          suggestion: '折扣计算器',
+        },
+      ],
+    });
+
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toMatchObject({
+      severity: 'warn',
+      code: 'ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC',
+      targetNodeId: 'role.pricing',
+    });
+    expect(issues[0]?.suggestion).toContain('折扣计算器');
+  });
 });
 
 describe('keyDataSummaryOf', () => {

@@ -88,6 +88,13 @@ export interface FmCheckReport {
   gaps?: readonly string[];
   scopeRefs?: readonly string[];
   executedScenarioCount?: number;
+  /** Non-blocking modelling advice the check already computed. */
+  advisories?: readonly {
+    code: string;
+    entityId: string;
+    message: string;
+    suggestion?: string;
+  }[];
 }
 
 /** The key data audit report. */
@@ -219,6 +226,17 @@ export const fmCheckIssues = (report: FmCheckReport): SensorIssue[] => {
         'FM_NO_SCENARIO',
         '当前范围没有可执行的验证场景。',
       ),
+    );
+  }
+
+  for (const advisory of report.advisories ?? []) {
+    issues.push(
+      issue('check_fm', 'warn', advisory.code, advisory.message, {
+        targetNodeId: advisory.entityId,
+        ...(advisory.suggestion === undefined
+          ? {}
+          : { suggestion: `改名为「${advisory.suggestion}」后重新检查。` }),
+      }),
     );
   }
 
