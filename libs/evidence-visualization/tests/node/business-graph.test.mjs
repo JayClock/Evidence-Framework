@@ -5,44 +5,69 @@ import vm from 'node:vm';
 
 const sandbox = vm.createContext({});
 vm.runInContext(
-  readFileSync(new URL('../../assets/business-graph.js', import.meta.url), 'utf8'),
+  readFileSync(
+    new URL('../../assets/business-graph.js', import.meta.url),
+    'utf8',
+  ),
   sandbox,
 );
-const build = (data, options = {}) => sandbox.buildBusinessGraph(data, options);
+const graphOf = (data) => sandbox.businessGraphOf(data);
+
+const box = (x, y, width = 220, height = 64) => ({ x, y, width, height });
+
+/**
+ * A page as the generator writes it: objects in `nodes`, placement in `layout`.
+ *
+ * The geometry here is deliberately arbitrary — nothing in the page may derive
+ * it — so a test that reads a coordinate is reading the placement, not a
+ * second layout pass.
+ */
 const fixture = () => ({
   nodes: [
-    { id: 'a', group: 'context', kind: 'contract', label: '合同边界' },
+    { id: 'contract-a', group: 'context', kind: 'contract', label: '合同边界' },
+    { id: 'delivery', group: 'context', kind: 'domain', label: '交付域' },
     {
       id: 'contract',
       group: 'evidence',
       kind: 'contract',
-      parent: 'a',
+      parent: 'contract-a',
       label: '合同',
     },
-    { id: 'party', group: 'role', kind: 'party', parent: 'a', label: '责任方' },
+    {
+      id: 'party',
+      group: 'role',
+      kind: 'party',
+      parent: 'contract-a',
+      label: '责任方',
+    },
     {
       id: 'request',
       group: 'evidence',
       kind: 'fulfillment_request',
-      parent: 'a',
-      label: '请求',
+      parent: 'contract-a',
+      label: '履约请求',
+    },
+    {
+      id: 'confirmation',
+      group: 'evidence',
+      kind: 'fulfillment_confirmation',
+      parent: 'contract-a',
+      label: '履约确认',
     },
     {
       id: 'proof',
       group: 'role',
       kind: 'evidence',
-      parent: 'a',
+      parent: 'contract-a',
       label: '证明角色',
     },
-    { id: 'b', group: 'context', kind: 'contract', label: '外部合同' },
     {
-      id: 'player',
-      group: 'evidence',
-      kind: 'fulfillment_confirmation',
-      parent: 'b',
-      label: '具体凭证',
+      id: 'thing',
+      group: 'participant',
+      kind: 'thing',
+      parent: 'delivery',
+      label: '独立标的',
     },
-    { id: 'thing', group: 'participant', kind: 'thing', label: '独立标的' },
     {
       id: 'use',
       group: 'relationship',
@@ -50,14 +75,14 @@ const fixture = () => ({
       sourceRef: 'request',
       targetRef: 'proof',
       label: '采信',
-      sourceCardinality: '1',
-      targetCardinality: 'N',
+      sourceCardinality: { min: 1, max: 1 },
+      targetCardinality: { min: 0, max: 'many' },
     },
     {
       id: 'play',
       group: 'relationship',
       kind: 'plays_role',
-      sourceRef: 'player',
+      sourceRef: 'confirmation',
       targetRef: 'proof',
       label: '扮演',
     },
@@ -66,8 +91,16 @@ const fixture = () => ({
       group: 'relationship',
       kind: 'references',
       sourceRef: 'request',
-      targetRef: 'contract',
-      label: '合同依据',
+      targetRef: 'thing',
+      label: '外部引用',
+    },
+    {
+      id: 'orphan',
+      group: 'relationship',
+      kind: 'references',
+      sourceRef: 'request',
+      targetRef: 'absent',
+      label: '缺失',
     },
     {
       id: 'request#started_at',
@@ -76,23 +109,363 @@ const fixture = () => ({
       name: 'started_at',
       label: '开始',
     },
-    ...['rule', 'instance', 'scenario', 'capability'].map((group) => ({
-      id: group,
-      group,
-      parent: 'a',
-    })),
+    ...['rule', 'instance', 'scenario', 'capability', 'service'].map(
+      (group) => ({
+        id: group,
+        group,
+        parent: 'contract-a',
+      }),
+    ),
   ],
-  edges: [
-    { from: 'request', to: 'party', label: '凭证责任方' },
-    { from: 'contract', to: 'party', label: '合同责任角色' },
-  ],
+  edges: [{ from: 'request', to: 'party', label: '凭证责任方' }],
+  unresolved: ['orphan'],
+  layout: {
+    bounds: { x: 0, y: 0, width: 1420, height: 900 },
+    nodes: [
+      { nodeId: 'contract', box: box(60, 120), contextId: 'contract-a' },
+      { nodeId: 'party', box: box(60, 210), contextId: 'contract-a' },
+      {
+        nodeId: 'request',
+        box: box(340, 120, 220, 100),
+        contextId: 'contract-a',
+      },
+      { nodeId: 'confirmation', box: box(620, 120), contextId: 'contract-a' },
+      { nodeId: 'proof', box: box(900, 120), contextId: 'contract-a' },
+      { nodeId: 'thing', box: box(60, 560), contextId: 'delivery' },
+    ],
+    edges: [
+      {
+        relationshipId: 'use',
+        kind: 'references',
+        sourceRef: 'request',
+        targetRef: 'proof',
+        points: [
+          { x: 560, y: 170 },
+          { x: 730, y: 170 },
+          { x: 730, y: 152 },
+          { x: 900, y: 152 },
+        ],
+        dashed: false,
+        arrow: false,
+        crossContext: false,
+        label: '采信',
+      },
+      {
+        relationshipId: 'play',
+        kind: 'plays_role',
+        sourceRef: 'confirmation',
+        targetRef: 'proof',
+        points: [
+          { x: 840, y: 152 },
+          { x: 900, y: 152 },
+        ],
+        dashed: true,
+        arrow: true,
+        crossContext: false,
+        label: '扮演',
+      },
+      {
+        relationshipId: 'basis',
+        kind: 'references',
+        sourceRef: 'request',
+        targetRef: 'thing',
+        points: [
+          { x: 450, y: 220 },
+          { x: 450, y: 560 },
+          { x: 60, y: 560 },
+          { x: 60, y: 592 },
+        ],
+        dashed: true,
+        arrow: false,
+        crossContext: true,
+        label: '外部引用',
+      },
+    ],
+    responsibilityLinks: [
+      { sourceRef: 'request', roleId: 'party', kind: 'responsibility' },
+      { sourceRef: 'contract', roleId: 'party', kind: 'contract_party' },
+    ],
+    contextGroups: [
+      {
+        contextId: 'contract-a',
+        box: box(0, 60, 1180, 420),
+        titleBox: box(0, 60, 1180, 36),
+        depth: 0,
+        parentContextId: null,
+        childContextIds: ['delivery'],
+        nodeIds: ['contract', 'party', 'request', 'confirmation', 'proof'],
+        fulfillmentGroupIds: ['fulfillment:request'],
+      },
+      {
+        contextId: 'delivery',
+        box: box(0, 500, 340, 200),
+        titleBox: box(0, 500, 340, 36),
+        depth: 1,
+        parentContextId: 'contract-a',
+        childContextIds: [],
+        nodeIds: ['thing'],
+        fulfillmentGroupIds: [],
+      },
+    ],
+    fulfillmentGroups: [
+      {
+        groupId: 'fulfillment:request',
+        contractId: 'contract',
+        requestId: 'request',
+        confirmationIds: ['confirmation'],
+        proofIds: ['proof'],
+        box: box(326, 106, 808, 128),
+      },
+    ],
+    freeNodeIds: [],
+    omittedContextIds: [],
+  },
 });
 
-test('legend uses only present object kinds, real examples and explicit responsibility', () => {
+test('the drawing reads the persisted placement instead of computing one', () => {
+  const data = fixture(),
+    before = JSON.stringify(data),
+    graph = graphOf(data);
+  assert.deepEqual(
+    Array.from(graph.boxes, (entry) => [
+      entry.id,
+      entry.x,
+      entry.y,
+      entry.width,
+      entry.height,
+    ]),
+    [
+      ['contract', 60, 120, 220, 64],
+      ['party', 60, 210, 220, 64],
+      ['request', 340, 120, 220, 100],
+      ['confirmation', 620, 120, 220, 64],
+      ['proof', 900, 120, 220, 64],
+      ['thing', 60, 560, 220, 64],
+    ],
+  );
+  assert.equal(graph.width, 1420);
+  assert.equal(graph.height, 900);
+  assert.equal(graph.warnings.length, 0);
+  assert.equal(JSON.stringify(data), before);
+});
+test('objects carry the content the page already holds, joined by id', () => {
+  const data = fixture(),
+    graph = graphOf(data);
+  const request = graph.boxes.find((entry) => entry.id === 'request'),
+    proof = graph.boxes.find((entry) => entry.id === 'proof');
+  assert.equal(request.label, '履约请求');
+  assert.equal(request.owner, 'contract-a');
+  assert.equal(request.fulfillmentParent, 'fulfillment:request');
+  assert.deepEqual(Array.from(request.timeFields), ['started_at']);
+  // A responsibility badge is an explicit field, and a role never carries one.
+  assert.equal(request.responsibleRef, 'party');
+  assert.equal(proof.responsibleRef, undefined);
+  assert.deepEqual(Array.from(proof.timeFields), []);
+  assert.ok(!graph.boxes.some((entry) => entry.group === 'attribute'));
+});
+test('edges are the placement routes; style and cardinality are copied, never invented', () => {
+  const graph = graphOf(fixture());
+  assert.deepEqual(
+    Array.from(graph.edges, (edge) => [
+      edge.id,
+      edge.from,
+      edge.to,
+      edge.dashed,
+      edge.arrow,
+    ]),
+    [
+      ['use', 'request', 'proof', false, false],
+      ['play', 'confirmation', 'proof', true, true],
+      ['basis', 'request', 'thing', true, false],
+    ],
+  );
+  const use = graph.edges.find((edge) => edge.id === 'use'),
+    play = graph.edges.find((edge) => edge.id === 'play');
+  assert.equal(play.crossBoundary, false);
+  assert.equal(use.points.length, 4);
+  assert.equal(use.sourceCardinality.min, 1);
+  assert.equal(use.targetCardinality.max, 'many');
+  assert.equal(play.sourceCardinality, undefined);
+  assert.equal(play.label, '扮演');
+});
+test('a relationship the placement could not route stays in the relation list only', () => {
+  const graph = graphOf(fixture());
+  assert.ok(!graph.edges.some((edge) => edge.id === 'orphan'));
+  assert.deepEqual(
+    Array.from(graph.relations, (node) => node.id),
+    ['use', 'play', 'basis', 'orphan'],
+  );
+});
+test('fulfillment bands name the Context that owns them and remember their members', () => {
+  const graph = graphOf(fixture());
+  assert.deepEqual(
+    Array.from(graph.boundaries, (boundary) => [
+      boundary.id,
+      boundary.kind,
+      boundary.parent,
+    ]),
+    [
+      ['contract-a', 'contract', ''],
+      ['delivery', 'domain', 'contract-a'],
+      ['fulfillment:request', 'fulfillment', 'contract-a'],
+    ],
+  );
+  const band = graph.boundaries.find(
+    (boundary) => boundary.id === 'fulfillment:request',
+  );
+  assert.deepEqual(Array.from(band.members), [
+    'request',
+    'confirmation',
+    'proof',
+  ]);
+  assert.equal(band.label, '履约请求');
+  assert.deepEqual(
+    [band.x, band.y, band.width, band.height],
+    [326, 106, 808, 128],
+  );
+});
+test('a placement that names an object the page does not carry is reported, not drawn blind', () => {
+  const data = fixture();
+  data.layout.nodes.push({
+    nodeId: 'ghost',
+    box: box(10, 10),
+    contextId: 'contract-a',
+  });
+  const graph = graphOf(data);
+  assert.equal(graph.boxes.filter((entry) => entry.id === 'ghost').length, 1);
+  assert.ok(graph.warnings.some((warning) => warning.includes('ghost')));
+});
+test('a page with no placement shows no graph instead of a fabricated one', () => {
+  const data = fixture();
+  delete data.layout;
+  const graph = graphOf(data);
+  assert.equal(graph.boxes.length, 0);
+  assert.equal(graph.boundaries.length, 0);
+  assert.equal(graph.edges.length, 0);
+  assert.equal(graph.width, 0);
+  assert.ok(graph.warnings.length > 0);
+});
+test('object highlighting follows one drawn hop, not transitive dependencies', () => {
+  const graph = graphOf(fixture()),
+    before = JSON.stringify(graph);
+  const state = sandbox.businessGraphHighlight(graph, {
+    type: 'node',
+    id: 'proof',
+  });
+  assert.deepEqual(Array.from(state.nodes).sort(), [
+    'confirmation',
+    'proof',
+    'request',
+  ]);
+  assert.deepEqual(Array.from(state.edges).sort(), ['play', 'use']);
+  assert.deepEqual(Array.from(state.boundaries).sort(), [
+    'contract-a',
+    'fulfillment:request',
+  ]);
+  assert.equal(state.primaryNode, 'proof');
+  assert.equal(JSON.stringify(graph), before);
+  const crossBoundary = sandbox.businessGraphHighlight(graph, {
+    type: 'node',
+    id: 'thing',
+  });
+  assert.deepEqual(Array.from(crossBoundary.nodes).sort(), [
+    'request',
+    'thing',
+  ]);
+  assert.deepEqual(Array.from(crossBoundary.edges), ['basis']);
+  // A frame is highlighted through the Context chain the placement recorded;
+  // the hop itself is drawn, but never carries the target's own frames over.
+  assert.deepEqual(Array.from(crossBoundary.boundaries).sort(), [
+    'contract-a',
+    'delivery',
+  ]);
+});
+test('a frame highlights exactly the objects drawn inside it', () => {
+  const graph = graphOf(fixture());
+  const band = sandbox.businessGraphHighlight(graph, {
+    type: 'boundary',
+    id: 'fulfillment:request',
+  });
+  assert.deepEqual(Array.from(band.nodes).sort(), [
+    'confirmation',
+    'proof',
+    'request',
+  ]);
+  assert.deepEqual(Array.from(band.edges).sort(), ['play', 'use']);
+  assert.deepEqual(Array.from(band.boundaries), ['fulfillment:request']);
+
+  const context = sandbox.businessGraphHighlight(graph, {
+    type: 'boundary',
+    id: 'contract-a',
+  });
+  assert.deepEqual(Array.from(context.nodes).sort(), [
+    'confirmation',
+    'contract',
+    'party',
+    'proof',
+    'request',
+    'thing',
+  ]);
+  assert.deepEqual(Array.from(context.edges).sort(), ['basis', 'play', 'use']);
+  assert.deepEqual(Array.from(context.boundaries).sort(), [
+    'contract-a',
+    'delivery',
+    'fulfillment:request',
+  ]);
+
+  const child = sandbox.businessGraphHighlight(graph, {
+    type: 'boundary',
+    id: 'delivery',
+  });
+  assert.deepEqual(Array.from(child.nodes), ['thing']);
+  assert.equal(child.edges.size, 0);
+  assert.deepEqual(Array.from(child.boundaries), ['delivery']);
+});
+test('edge and badge highlighting stay on the drawn lines', () => {
+  const graph = graphOf(fixture());
+  const edge = sandbox.businessGraphHighlight(graph, {
+    type: 'edge',
+    id: 'basis',
+  });
+  assert.deepEqual(Array.from(edge.nodes).sort(), ['request', 'thing']);
+  assert.deepEqual(Array.from(edge.edges), ['basis']);
+  assert.deepEqual(Array.from(edge.boundaries).sort(), [
+    'contract-a',
+    'delivery',
+    'fulfillment:request',
+  ]);
+  const badge = sandbox.businessGraphHighlight(graph, {
+    type: 'node',
+    id: 'party',
+  });
+  // A responsibility field is a badge, not a drawn line: only the role itself.
+  assert.deepEqual(Array.from(badge.nodes), ['party']);
+  assert.equal(badge.edges.size, 0);
+  assert.deepEqual(Array.from(badge.boundaries), ['contract-a']);
+  assert.equal(sandbox.businessGraphHighlight(graph, null).active, false);
+  assert.equal(
+    sandbox.businessGraphHighlight(graph, { type: 'node', id: 'absent' })
+      .active,
+    false,
+  );
+});
+test('legend covers exactly the drawn types with real examples', () => {
   const data = fixture(),
     before = JSON.stringify(data);
-  const legend = sandbox.buildBusinessLegend(build(data));
-  const get = (key) => legend.find((n) => n.key === key);
+  const graph = graphOf(data),
+    legend = sandbox.buildBusinessLegend(graph);
+  const keys = Array.from(legend, (item) => item.key).sort();
+  const drawn = [
+    ...new Set([
+      ...graph.boxes.map((entry) => `${entry.group}.${entry.kind}`),
+      ...graph.boundaries.map((entry) => `${entry.group}.${entry.kind}`),
+    ]),
+  ].sort();
+  assert.deepEqual(
+    keys.filter((key) => !key.startsWith('line.')),
+    drawn,
+  );
+  const get = (key) => legend.find((item) => item.key === key);
   assert.equal(get('evidence.contract').example.id, 'contract');
   assert.equal(
     get('evidence.fulfillment_request').example.responsibleRef,
@@ -100,389 +473,36 @@ test('legend uses only present object kinds, real examples and explicit responsi
   );
   assert.equal(get('role.evidence').example.id, 'proof');
   assert.equal(get('role.evidence').example.responsibleRef, undefined);
-  assert.equal(get('fulfillment.fulfillment').example.parent, 'a');
-  assert.equal(get('line.plays_role').example.from, 'player');
-  assert.equal(get('line.plays_role').example.to, 'proof');
+  assert.equal(get('fulfillment.fulfillment').example.parent, 'contract-a');
+  assert.equal(get('line.plays_role').example.id, 'play');
   assert.equal(get('line.plays_role').example.arrow, true);
-  assert.equal(get('participant.party'), undefined);
-  assert.equal(JSON.stringify(data), before);
-});
-test('legend distinguishes cross-boundary lines from role arrows and handles empty models', () => {
-  assert.equal(
-    sandbox.buildBusinessLegend(build({ nodes: [], edges: [] })).length,
-    0,
-  );
-  const data = fixture();
-  data.nodes.push({
-    id: 'external',
-    group: 'relationship',
-    kind: 'references',
-    sourceRef: 'request',
-    targetRef: 'thing',
-    label: '外部引用',
-  });
-  const legend = sandbox.buildBusinessLegend(build(data));
-  const cross = legend.find((n) => n.key === 'line.cross');
-  assert.equal(cross.example.id, 'external');
-  assert.equal(cross.example.arrow, false);
-  assert.equal(cross.example.dashed, true);
-  assert.ok(legend.find((n) => n.key === 'line.local').example.arrow === false);
-});
-
-test('one global canvas contains every concrete object and actual relationship endpoint', () => {
-  const data = fixture(),
-    graph = build(data);
-  assert.deepEqual(
-    Array.from(graph.boxes, (b) => b.id).sort(),
-    data.nodes
-      .filter((n) => ['evidence', 'role', 'participant'].includes(n.group))
-      .map((n) => n.id)
-      .sort(),
-  );
-  assert.equal(graph.edges.length, 3);
-  assert.ok(
-    graph.edges.every((e) => e.from === e.sourceRef && e.to === e.targetRef),
-  );
-  assert.equal(new Set(graph.boxes.map((b) => b.id)).size, graph.boxes.length);
-});
-test('contract spine aligns requests and proofs without fabricating confirmations', () => {
-  const graph = build(fixture());
-  const box = (id) => graph.boxes.find((b) => b.id === id);
-  assert.ok(box('contract').x < box('request').x);
-  assert.ok(box('request').x < box('proof').x);
-  assert.equal(box('request').y, box('proof').y);
-  assert.equal(box('request').responsibleRef, 'party');
-  assert.equal(box('proof').responsibleRef, undefined);
-  assert.ok(box('player'));
-  assert.ok(
-    graph.roleLinks.some((e) => e.from === 'contract' && e.to === 'party'),
-  );
-  assert.deepEqual(Array.from(box('request').timeFields), ['started_at']);
-  assert.ok(!graph.boxes.some((b) => b.group === 'attribute'));
-});
-test('external players retain original ownership and point to evidence role', () => {
-  const graph = build(fixture());
-  const player = graph.boxes.find((b) => b.id === 'player');
-  assert.equal(player.parent, 'b');
-  assert.equal(player.owner, 'b');
-  const edge = graph.edges.find((e) => e.id === 'play');
-  assert.equal(edge.crossBoundary, true);
-  assert.equal(edge.arrow, true);
-  assert.equal(edge.dashed, true);
-  const use = graph.edges.find((e) => e.id === 'use');
-  assert.equal(use.crossBoundary, false);
-  assert.equal(use.arrow, false);
-  assert.equal(use.dashed, false);
-  assert.equal(graph.edges.find((e) => e.id === 'basis').arrow, false);
-});
-test('shared confirmation is one node, not copied for each request', () => {
-  const data = fixture();
-  data.nodes.push({
-    id: 'confirmation',
-    group: 'evidence',
-    kind: 'fulfillment_confirmation',
-    parent: 'a',
-    label: '共享确认',
-  });
-  data.nodes.push({
-    id: 'rel_c1',
-    group: 'relationship',
-    kind: 'references',
-    sourceRef: 'confirmation',
-    targetRef: 'request',
-  });
-  data.nodes.push({
-    id: 'r2',
-    group: 'evidence',
-    kind: 'fulfillment_request',
-    parent: 'a',
-    label: '另一请求',
-  });
-  data.nodes.push({
-    id: 'rel_c2',
-    group: 'relationship',
-    kind: 'references',
-    sourceRef: 'confirmation',
-    targetRef: 'r2',
-  });
-  const graph = build(data, { scope: 'a' });
-  assert.equal(graph.boxes.filter((b) => b.id === 'confirmation').length, 1);
-  assert.ok(graph.boxes.some((b) => b.id === 'proof'));
-});
-test('cross-boundary line style is independent of relation kind; missing cardinalities stay absent', () => {
-  const data = fixture();
-  data.nodes.push({
-    id: 'ref',
-    group: 'relationship',
-    kind: 'references',
-    sourceRef: 'request',
-    targetRef: 'thing',
-    label: '引用',
-  });
-  const graph = build(data, { scope: 'a' });
-  const edge = graph.edges.find((e) => e.id === 'ref');
-  assert.equal(edge.dashed, true);
-  assert.equal(edge.arrow, false);
-  assert.equal(edge.sourceCardinality, undefined);
-  assert.equal(graph.edges.find((e) => e.id === 'use').targetCardinality, 'N');
-});
-test('parallel relations, self references, unknown kinds and missing targets remain reviewable', () => {
-  const data = fixture();
-  data.nodes.push({
-    id: 'self',
-    group: 'relationship',
-    kind: 'custom',
-    sourceRef: 'request',
-    targetRef: 'request',
-    label: '自身',
-  });
-  data.nodes.push({
-    id: 'parallel',
-    group: 'relationship',
-    kind: 'custom',
-    sourceRef: 'request',
-    targetRef: 'proof',
-    label: '另一关联',
-  });
-  data.nodes.push({
-    id: 'missing',
-    group: 'relationship',
-    kind: 'references',
-    sourceRef: 'request',
-    targetRef: 'absent',
-    label: '缺失',
-  });
-  const graph = build(data, { scope: 'a' });
-  assert.ok(graph.edges.some((e) => e.id === 'self'));
-  assert.ok(graph.edges.some((e) => e.id === 'parallel' && e.arrow === false));
-  assert.equal(graph.unresolved.length, 1);
-  assert.ok(graph.relations.some((e) => e.id === 'missing'));
-});
-test('empty, domain-only and cyclic models terminate; layout does not mutate input', () => {
-  assert.equal(build({ nodes: [], edges: [] }).boxes.length, 0);
-  const data = fixture();
-  const before = JSON.stringify(data);
-  assert.equal(
-    JSON.stringify(build(data, { scope: 'a' })),
-    JSON.stringify(build(data, { scope: 'a' })),
-  );
-  assert.equal(JSON.stringify(data), before);
-  data.nodes.find((n) => n.id === 'a').parent = 'f';
-  assert.ok(build(data).warnings.length > 0);
-  const domain = {
-    nodes: [
-      { id: 'd', group: 'context', kind: 'domain', label: '领域' },
-      {
-        id: 't',
-        group: 'participant',
-        kind: 'thing',
-        parent: 'd',
-        label: '标的',
-      },
-    ],
-    edges: [],
-  };
-  assert.equal(build(domain, { scope: 'd' }).boxes[0].id, 't');
-});
-const contains = (outer, inner) =>
-  outer.x <= inner.x &&
-  outer.y <= inner.y &&
-  outer.x + outer.width >= inner.x + inner.width &&
-  outer.y + outer.height >= inner.y + inner.height;
-
-test('context boundaries enclose actual owners and nest fulfillment within contract', () => {
-  const data = fixture();
-  data.nodes.push(
-    { id: 'd', group: 'context', kind: 'domain', label: '领域' },
-    {
-      id: 't',
-      group: 'participant',
-      kind: 'thing',
-      parent: 'd',
-      label: '标的',
-    },
-  );
-  for (const mode of ['simple', 'standard']) {
-    const graph = build(data, { mode });
-    assert.deepEqual(Array.from(graph.boundaries || [], (b) => b.id).sort(), [
-      'a',
-      'b',
-      'd',
-      'fulfillment:request',
-    ]);
-    const boundary = (id) => graph.boundaries.find((b) => b.id === id);
-    const box = (id) => graph.boxes.find((b) => b.id === id);
-    assert.ok(contains(boundary('a'), boundary('fulfillment:request')));
-    assert.equal(boundary('fulfillment:request').parent, 'a');
-    for (const [context, id] of [
-      ['a', 'contract'],
-      ['a', 'party'],
-      ['fulfillment:request', 'request'],
-      ['fulfillment:request', 'proof'],
-      ['b', 'player'],
-      ['d', 't'],
-    ])
-      assert.ok(contains(boundary(context), box(id)), `${context} owns ${id}`);
-    assert.ok(!contains(boundary('a'), box('player')));
-    assert.ok(!graph.boundaries.some((b) => contains(b, box('thing'))));
-    for (const b of graph.boundaries)
-      assert.ok(
-        contains({ x: 0, y: 0, width: graph.width, height: graph.height }, b),
-      );
+  assert.equal(get('line.cross').example.id, 'basis');
+  assert.equal(get('line.cross').example.dashed, true);
+  assert.equal(get('line.cross').example.arrow, false);
+  assert.equal(get('line.local').example.id, 'use');
+  for (const item of legend) {
+    const example = item.example;
+    const drawnSomewhere = item.key.startsWith('line.')
+      ? graph.edges.some((edge) => edge.id === example.id)
+      : graph.boxes.some((entry) => entry.id === example.id) ||
+        graph.boundaries.some((entry) => entry.id === example.id);
+    assert.ok(
+      drawnSomewhere,
+      `${item.key} must illustrate what the canvas draws`,
+    );
   }
-});
-
-test('empty context projections fail instead of becoming valid-looking boundaries', () => {
-  const data = fixture();
-  data.nodes.push({ id: 'empty', group: 'context', kind: 'domain', label: '无内容边界' });
-  const before = JSON.stringify(data);
-  assert.throws(() => build(data), /empty.*context|context.*empty/i);
   assert.equal(JSON.stringify(data), before);
 });
-
-test('shared confirmation stays inside its declared owner', () => {
+test('legend stays empty when nothing is drawn', () => {
+  assert.equal(sandbox.buildBusinessLegend(graphOf({ nodes: [] })).length, 0);
   const data = fixture();
-  const graph = build(data);
-  const player = graph.boxes.find((b) => b.id === 'player');
-  assert.equal(graph.boxes.filter((b) => b.id === 'player').length, 1);
-  assert.ok(
-    contains(
-      graph.boundaries.find((b) => b.id === 'b'),
-      player,
-    ),
-  );
-  assert.ok(
-    !contains(
-      graph.boundaries.find((b) => b.id === 'fulfillment:request'),
-      player,
-    ),
-  );
-  // A reference to a sibling's confirmation must not determine its placement.
-  data.nodes.push({
-    id: 'c',
-    group: 'context',
-    kind: 'contract',
-    label: '另一上下文',
-  });
-  data.nodes.find((n) => n.id === 'player').parent = 'c';
-  data.nodes = data.nodes.filter((n) => n.id !== 'b');
-  const shared = build(data);
-  const sharedPlayer = shared.boxes.find((b) => b.id === 'player');
-  assert.ok(
-    contains(
-      shared.boundaries.find((b) => b.id === 'c'),
-      sharedPlayer,
-    ),
-  );
-  assert.ok(
-    !contains(
-      shared.boundaries.find((b) => b.id === 'fulfillment:request'),
-      sharedPlayer,
-    ),
-  );
+  delete data.layout;
+  assert.equal(sandbox.buildBusinessLegend(graphOf(data)).length, 0);
 });
-
-test('object highlighting follows one visible hop, not transitive dependencies', () => {
-  const graph = build(fixture()),
-    before = JSON.stringify(graph);
-  const h = sandbox.businessGraphHighlight(graph, {
-    type: 'node',
-    id: 'proof',
-  });
-  assert.deepEqual(Array.from(h.nodes).sort(), ['player', 'proof', 'request']);
-  assert.deepEqual(Array.from(h.edges).sort(), ['play', 'use']);
-  assert.deepEqual(Array.from(h.boundaries).sort(), ['a', 'fulfillment:request']);
-  assert.equal(h.primaryNode, 'proof');
-  assert.equal(JSON.stringify(graph), before);
-  const isolated = sandbox.businessGraphHighlight(graph, {
-    type: 'node',
-    id: 'thing',
-  });
-  assert.deepEqual(Array.from(isolated.nodes), ['thing']);
-  assert.equal(isolated.edges.size, 0);
-});
-test('context highlighting stays inside the exact context and includes descendants', () => {
-  const graph = build(fixture());
-  const h = sandbox.businessGraphHighlight(graph, {
-    type: 'boundary',
-    id: 'fulfillment:request',
-  });
-  assert.deepEqual(Array.from(h.nodes).sort(), ['proof', 'request']);
-  assert.deepEqual(Array.from(h.edges), ['use']);
-  assert.deepEqual(Array.from(h.boundaries), ['fulfillment:request']);
-  const root = sandbox.businessGraphHighlight(graph, {
-    type: 'boundary',
-    id: 'a',
-  });
-  assert.deepEqual(Array.from(root.nodes).sort(), [
-    'contract',
-    'party',
-    'proof',
-    'request',
-  ]);
-  assert.ok(!root.edges.has('play'));
-  assert.equal(root.edges.size, 3); // includes the explicit contract responsibility line
-});
-test('role badges use the role neighborhood; edges, real contexts and missing targets are bounded', () => {
-  const graph = build(fixture());
-  const role = sandbox.businessGraphHighlight(graph, {
-    type: 'node',
-    id: 'party',
-  });
-  assert.deepEqual(Array.from(role.nodes).sort(), ['contract', 'party']);
-  assert.equal(role.edges.size, 1);
-  const edge = sandbox.businessGraphHighlight(graph, {
-    type: 'edge',
-    id: 'play',
-  });
-  assert.deepEqual(Array.from(edge.nodes).sort(), ['player', 'proof']);
-  assert.deepEqual(Array.from(edge.edges), ['play']);
-  const external = sandbox.businessGraphHighlight(graph, {
-    type: 'boundary',
-    id: 'b',
-  });
-  assert.deepEqual(Array.from(external.nodes), ['player']);
-  assert.deepEqual(Array.from(external.boundaries), ['b']);
-  assert.equal(sandbox.businessGraphHighlight(graph, null).active, false);
-  assert.equal(
-    sandbox.businessGraphHighlight(graph, { type: 'node', id: 'missing' })
-      .active,
-    false,
-  );
-  graph.boundaries.find((b) => b.id === 'a').parent = 'fulfillment:request';
-  assert.ok(
-    sandbox.businessGraphHighlight(graph, { type: 'node', id: 'proof' }).active,
-  );
-});
-
 test('cardinality formats actual min/max ranges without inventing requiredness', () => {
   assert.equal(sandbox.graphCardinality({ min: 1, max: 1 }), '1');
   assert.equal(sandbox.graphCardinality({ min: 0, max: 1 }), '0..1');
   assert.equal(sandbox.graphCardinality({ min: 0, max: 'many' }), '0..N');
   assert.equal(sandbox.graphCardinality(undefined), '');
   assert.equal(sandbox.graphCardinality(null), '');
-});
-
-test('all boxes stay inside canvas and do not overlap; standard view retains room for fields', () => {
-  const graph = build(fixture(), {
-    scope: 'a',
-    players: true,
-    mode: 'standard',
-  });
-  for (const a of graph.boxes) {
-    assert.ok(
-      a.x >= 0 &&
-        a.y >= 0 &&
-        a.x + a.width <= graph.width &&
-        a.y + a.height <= graph.height,
-    );
-    for (const b of graph.boxes)
-      if (a !== b)
-        assert.ok(
-          a.x + a.width <= b.x ||
-            b.x + b.width <= a.x ||
-            a.y + a.height <= b.y ||
-            b.y + b.height <= a.y,
-        );
-  }
 });

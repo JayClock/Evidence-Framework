@@ -5,6 +5,15 @@ const businessGraphKinds = {
   plays_role: '角色扮演',
 };
 
+/** Attribute names the canvas draws as a business-time window. */
+const businessGraphTimeFields = [
+  'started_at',
+  'expired_at',
+  'signed_at',
+  'confirmed_at',
+  'created_at',
+];
+
 function graphCardinality(value) {
   if (value === undefined || value === null) return '';
   if (typeof value !== 'object') return String(value);
@@ -14,293 +23,180 @@ function graphCardinality(value) {
   return lower === upper ? String(lower) : `${lower}..${upper}`;
 }
 
-// Layout is a projection, not another model. Only explicit facts become links.
-function buildBusinessGraph(data, options = {}) {
-  const entities = data.nodes.filter((n) =>
-    ['context', 'evidence', 'participant', 'role'].includes(
-      n.group,
-    ),
+/**
+ * Reads the page canvas out of the placement the generator persisted.
+ *
+ * Coordinates come from `DATA.layout` and from nowhere else: the generator drew
+ * them with the same layout the desktop canvas uses, so a page that recomputed
+ * its own placement would show a second opinion about the model it describes.
+ * What is joined here is content only — labels, kinds, business time, the
+ * responsible role — read from the objects the page already carries.
+ *
+ * The maps below index the placement once, so highlighting and the legend walk
+ * the drawn picture instead of re-deriving it.
+ */
+function businessGraphOf(data) {
+  const layout = data.layout;
+  const objects = new Map((data.nodes || []).map((node) => [node.id, node]));
+  const relationships = (data.nodes || []).filter(
+    (node) => node.group === 'relationship',
   );
-  const index = new Map(entities.map((n) => [n.id, n]));
-  const warnings = [];
-  for (const node of entities) {
-    const seen = new Set();
-    let current = node;
-    while (current && !seen.has(current.id)) {
-      seen.add(current.id);
-      current = index.get(current.parent);
-    }
-    if (current) warnings.push(`${node.label}：归属环`);
-    if (node.parent && !index.has(node.parent))
-      warnings.push(`${node.label}：所属边界未解析`);
-  }
-  function owner(id) {
-    let node = index.get(id),
-      last = id;
-    const seen = new Set();
-    while (node && !seen.has(node.id)) {
-      seen.add(node.id);
-      last = node.id;
-      if (node.group === 'context') return node.id;
-      node = index.get(node.parent);
-    }
-    return last;
-  }
-  const scopes = entities.filter(
-    (n) => n.group === 'context' && owner(n.id) === n.id,
-  );
-  const relations = data.nodes.filter((n) => n.group === 'relationship');
-  const unresolved = relations
-    .filter((e) => !index.has(e.sourceRef) || !index.has(e.targetRef))
-    .map((e) => e.id);
-  const boxMap = new Map(),
-    boundaryMap = new Map();
-  let originX = 0,
-    originY = 0;
-  const standard = options.mode === 'standard';
-  const height = standard ? 142 : 88,
-    step = height + 42;
-  const facts = data.edges || [];
-  function put(node, x, y) {
-    if (!node || boxMap.has(node.id)) return;
-    const responsibleRef =
-      node.group === 'evidence'
-        ? facts.find((e) => e.from === node.id && e.label === '凭证责任方')?.to
-        : undefined;
-    const timeFields =
-      node.group === 'evidence'
-        ? data.nodes
-            .filter(
-              (n) =>
-                n.group === 'attribute' &&
-                n.parent === node.id &&
-                [
-                  'started_at',
-                  'expired_at',
-                  'signed_at',
-                  'confirmed_at',
-                  'created_at',
-                ].includes(n.name),
-            )
-            .map((n) => n.name)
-        : [];
-    boxMap.set(node.id, {
-      ...node,
-      x: x + originX,
-      y: y + originY,
-      width: 200,
-      height,
-      owner: owner(node.id),
-      responsibleRef,
-      timeFields,
-    });
-  }
-  function enclose(context, contents) {
-    if (!contents.length)
-      throw new Error(`${context.id}: empty ${context.group} projection is invalid`);
-    const items = contents;
-    const x = Math.min(...items.map((b) => b.x)) - 24;
-    const y = Math.min(...items.map((b) => b.y)) - 50;
-    const boundary = {
-      id: context.id,
-      parent: context.parent,
-      kind: context.kind,
-      group: context.group,
-      label: context.label,
-      x,
-      y,
-      width: Math.max(
-        360,
-        Math.max(...items.map((b) => b.x + b.width)) + 24 - x,
-      ),
-      height: Math.max(
-        140,
-        Math.max(...items.map((b) => b.y + b.height)) + 24 - y,
-      ),
+
+  if (!layout || !Array.isArray(layout.nodes)) {
+    return {
+      boxes: [],
+      boundaries: [],
+      edges: [],
+      relations: relationships,
+      warnings: ['本页没有画布坐标，无法绘制业务模型图；请重新生成。'],
+      width: 0,
+      height: 0,
+      contextOfNode: new Map(),
+      groupOfNode: new Map(),
+      parentOfContext: new Map(),
+      parentOfGroup: new Map(),
+      membersOf: new Map(),
     };
-    boundaryMap.set(context.id, boundary);
-    return boundary;
   }
-  // Pack complete contract spines into one canvas. Each object is placed only
-  // in its actual owner; cross-contract links use those same visible nodes.
-  const roots = [...new Set(entities.map((n) => owner(n.id)))];
-  const columns = [0, 0];
-  roots.sort(
-    (a, b) =>
-      entities.filter((n) => owner(n.id) === b).length -
-      entities.filter((n) => owner(n.id) === a).length,
+
+  const fieldsByParent = new Map();
+  for (const node of data.nodes || []) {
+    if (node.group !== 'attribute' || !businessGraphTimeFields.includes(node.name))
+      continue;
+    const bucket = fieldsByParent.get(node.parent);
+    if (bucket) bucket.push(node.name);
+    else fieldsByParent.set(node.parent, [node.name]);
+  }
+
+  const parentOfContext = new Map(
+    layout.contextGroups.map((group) => [
+      group.contextId,
+      group.parentContextId || '',
+    ]),
   );
-  for (const scope of roots) {
-    const column = columns[0] <= columns[1] ? 0 : 1;
-    originX = 40 + column * 1480;
-    originY = 60 + columns[column];
-    const owned = entities.filter((n) => owner(n.id) === scope);
-    const ownIds = new Set(owned.map((n) => n.id));
-    const requests = owned.filter(
-      (n) => n.group === 'evidence' && n.kind === 'fulfillment_request',
-    );
-    let y = 90;
-    for (const request of requests) {
-      const confirmations = owned
-        .filter(
-          (n) =>
-            n.group === 'evidence' &&
-            n.kind === 'fulfillment_confirmation' &&
-            !boxMap.has(n.id) &&
-            relations.some(
-              (r) =>
-                r.kind === 'references' &&
-                ((r.sourceRef === n.id && r.targetRef === request.id) ||
-                 (r.targetRef === n.id && r.sourceRef === request.id)),
-            ),
-        )
-        .map((n) => n.id);
-      const proofRoles = owned
-        .filter(
-          (n) =>
-            n.group === 'role' &&
-            n.kind === 'evidence' &&
-            !boxMap.has(n.id) &&
-            relations.some(
-              (r) =>
-                r.kind === 'references' &&
-                ((r.sourceRef === n.id && r.targetRef === request.id) ||
-                 (r.targetRef === n.id && r.sourceRef === request.id)),
-            ),
-        )
-        .map((n) => n.id);
-      const results = confirmations.length ? confirmations : proofRoles;
-      const dependencies = owned.filter(
-        (n) =>
-          n.group !== 'context' &&
-          n.kind !== 'contract' &&
-          !(n.group === 'role' && n.kind === 'party') &&
-          n.id !== request.id &&
-          !results.includes(n.id) &&
-          !boxMap.has(n.id) &&
-          relations.some(
-            (r) =>
-              r.kind === 'references' &&
-              ((r.sourceRef === n.id && (r.targetRef === request.id || results.includes(r.targetRef))) ||
-               (r.targetRef === n.id && (r.sourceRef === request.id || results.includes(r.sourceRef)))),
-          ),
-      );
-      put(request, 540, y);
-      results.forEach((id, i) => put(index.get(id), 820, y + i * step));
-      dependencies.forEach((n, i) => put(n, 1100, y + i * step));
-      const rowHeight =
-        Math.max(1, results.length, dependencies.length) * step;
-      const memberBoxes = [
-        boxMap.get(request.id),
-        ...results.map((id) => boxMap.get(id)),
-        ...dependencies.map((d) => boxMap.get(d.id)),
-      ].filter(Boolean);
-      const virtualFulfillment = {
-        id: `fulfillment:${request.id}`,
-        parent: scope,
-        kind: 'fulfillment',
-        group: 'fulfillment',
-        label: request.label,
-        members: memberBoxes.map((b) => b.id),
-      };
-      memberBoxes.forEach((b) => {
-        b.fulfillmentParent = virtualFulfillment.id;
-      });
-      enclose(virtualFulfillment, memberBoxes);
-      y += rowHeight + 64;
-    }
-    const contracts = owned.filter(
-      (n) => n.group === 'evidence' && n.kind === 'contract',
-    );
-    const parties = owned.filter(
-      (n) => n.group === 'role' && n.kind === 'party' && !boxMap.has(n.id),
-    );
-    const middle = Math.max(90, (y - height) / 2);
-    contracts.forEach((n, i) => put(n, 280, middle + i * step));
-    parties.forEach((n, i) =>
-      put(
-        n,
-        20,
-        Math.max(90, middle - ((parties.length - 1) * step) / 2) + i * step,
-      ),
-    );
-    const rest = Math.max(
-      requests.length ? y + 20 : 90,
-      ...[...boxMap.values()]
-        .filter((b) => ownIds.has(b.id) && b.x === originX + 280)
-        .map((b) => b.y - originY + b.height + 42),
-    );
-    owned
-      .filter(
-        (n) =>
-          n.group !== 'context' && !boxMap.has(n.id),
-      )
-      .forEach((n, i) =>
-        put(n, 280 + (i % 3) * 280, rest + Math.floor(i / 3) * step),
-      );
-    const scopeNode = index.get(scope);
-    const contents = [
-      ...[...boxMap.values()].filter((b) => ownIds.has(b.id)),
-      ...[...boundaryMap.values()].filter((b) => b.parent === scope),
-    ];
-    if (scopeNode?.group === 'context' && !boundaryMap.has(scope)) {
-      enclose(scopeNode, contents);
-    }
-    columns[column] =
-      Math.max(
-        originY,
-        ...contents.map((b) => b.y + b.height),
-        boundaryMap.get(scope)?.y + boundaryMap.get(scope)?.height || 0,
-      ) + 100;
+  const parentOfGroup = new Map();
+  const membersOf = new Map();
+  const groupOfNode = new Map();
+  for (const group of layout.fulfillmentGroups) {
+    const context =
+      layout.contextGroups.find((candidate) =>
+        candidate.fulfillmentGroupIds.includes(group.groupId),
+      )?.contextId || '';
+    parentOfGroup.set(group.groupId, context);
+    const members = new Set([
+      group.requestId,
+      ...group.confirmationIds,
+      ...group.proofIds,
+    ]);
+    membersOf.set(group.groupId, members);
+    for (const id of members) groupOfNode.set(id, group.groupId);
   }
-  const edges = [];
-  for (const e of relations) {
-    const from = e.sourceRef,
-      to = e.targetRef;
-    if (!boxMap.has(from) || !boxMap.has(to)) continue;
-    const crossBoundary = owner(e.sourceRef) !== owner(e.targetRef);
-    edges.push({
-      ...e,
-      from,
-      to,
-      crossBoundary,
-      dashed: crossBoundary || e.kind === 'plays_role',
-      arrow: e.kind === 'plays_role',
+
+  const responsibleRef = new Map();
+  for (const link of layout.responsibilityLinks || []) {
+    if (link.kind === 'responsibility')
+      responsibleRef.set(link.sourceRef, link.roleId);
+  }
+
+  const contextOfNode = new Map();
+  const boxes = layout.nodes.map((placed) => {
+    const node = objects.get(placed.nodeId) || {
+      id: placed.nodeId,
+      label: placed.nodeId,
+      group: 'entity',
+      kind: 'entity',
+    };
+    const contextId = placed.contextId || '';
+    contextOfNode.set(placed.nodeId, contextId);
+
+    return {
+      ...node,
+      x: placed.box.x,
+      y: placed.box.y,
+      width: placed.box.width,
+      height: placed.box.height,
+      owner: contextId,
+      parent: contextId,
+      responsibleRef: responsibleRef.get(placed.nodeId),
+      timeFields: fieldsByParent.get(placed.nodeId) || [],
+      fulfillmentParent: groupOfNode.get(placed.nodeId) || '',
+    };
+  });
+
+  const boundaries = [];
+  for (const group of layout.contextGroups) {
+    const context = objects.get(group.contextId);
+    boundaries.push({
+      id: group.contextId,
+      parent: group.parentContextId || '',
+      kind: context ? context.kind : 'context',
+      group: 'context',
+      label: context ? context.label : group.contextId,
+      x: group.box.x,
+      y: group.box.y,
+      width: group.box.width,
+      height: group.box.height,
+      depth: group.depth,
     });
   }
-  const roleLinks = facts
-    .filter(
-      (e) =>
-        e.label === '合同责任角色' && boxMap.has(e.from) && boxMap.has(e.to),
-    )
-    .map((e) => ({ ...e, detailRef: e.to }));
-  const boxes = [...boxMap.values()];
-  // Paint parents before children without making contexts relationship endpoints.
-  const boundaries = [...boundaryMap.values()].sort(
-    (a, b) => (a.kind === 'fulfillment') - (b.kind === 'fulfillment'),
-  );
+  for (const group of layout.fulfillmentGroups) {
+    const request = objects.get(group.requestId);
+    boundaries.push({
+      id: group.groupId,
+      parent: parentOfGroup.get(group.groupId) || '',
+      kind: 'fulfillment',
+      group: 'fulfillment',
+      label: request ? request.label : group.requestId,
+      x: group.box.x,
+      y: group.box.y,
+      width: group.box.width,
+      height: group.box.height,
+      members: [...membersOf.get(group.groupId)],
+    });
+  }
+
+  const edges = layout.edges.map((edge) => {
+    const relationship = objects.get(edge.relationshipId) || {};
+    return {
+      ...relationship,
+      id: edge.relationshipId,
+      kind: edge.kind,
+      label: edge.label,
+      from: edge.sourceRef,
+      to: edge.targetRef,
+      sourceRef: edge.sourceRef,
+      targetRef: edge.targetRef,
+      points: edge.points,
+      crossBoundary: edge.crossContext,
+      dashed: edge.dashed,
+      arrow: edge.arrow,
+      sourceCardinality: relationship.sourceCardinality,
+      targetCardinality: relationship.targetCardinality,
+    };
+  });
+
+  const warnings = [];
+  for (const placed of layout.nodes)
+    if (!objects.has(placed.nodeId))
+      warnings.push(`${placed.nodeId}：画布上的对象未在页面数据中声明`);
+
   return {
     boxes,
     boundaries,
-    scopes,
     edges,
-    roleLinks,
-    relations,
-    unresolved,
+    relations: relationships,
     warnings,
-
-    width: Math.max(
-      600,
-      ...[...boxes, ...boundaries].map((b) => b.x + b.width + 90),
-    ),
-    height: Math.max(
-      240,
-      ...[...boxes, ...boundaries].map((b) => b.y + b.height + 60),
-    ),
+    width: Math.max(1, layout.bounds.width),
+    height: Math.max(1, layout.bounds.height),
+    contextOfNode,
+    groupOfNode,
+    parentOfContext,
+    parentOfGroup,
+    membersOf,
   };
 }
 
-function buildBusinessLegend(layout) {
+function buildBusinessLegend(graph) {
   const items = [];
   const names = {
     'evidence.contract': ['合同凭证', '约定双方权责的凭证。'],
@@ -315,7 +211,7 @@ function buildBusinessLegend(layout) {
     'role.party': ['当事人角色', '参与者在当前上下文中承担的角色。'],
     'role.evidence': ['凭证角色', '由具体凭证扮演，不是另一份确认凭证。'],
   };
-  for (const example of layout.boxes) {
+  for (const example of graph.boxes) {
     const key = `${example.group}.${example.kind}`;
     if (items.some((item) => item.key === key)) continue;
     const [label, description] = names[key] || [
@@ -332,7 +228,7 @@ function buildBusinessLegend(layout) {
       '合约内的请求、完成证明及规则，不构成上下文边界。',
     ],
   };
-  for (const example of layout.boundaries) {
+  for (const example of graph.boundaries) {
     const key = `${example.group}.${example.kind}`;
     if (items.some((item) => item.key === key)) continue;
     const [label, description] = contexts[example.kind] || [
@@ -347,7 +243,6 @@ function buildBusinessLegend(layout) {
       example,
     });
   }
-  const lines = [...layout.edges, ...layout.roleLinks];
   for (const [key, label, description, predicate] of [
     [
       'local',
@@ -368,7 +263,7 @@ function buildBusinessLegend(layout) {
       (e) => e.arrow,
     ],
   ]) {
-    const example = lines.find(predicate);
+    const example = graph.edges.find(predicate);
     if (example)
       items.push({
         key: `line.${key}`,
@@ -392,11 +287,24 @@ function graphTypeLabel(box) {
 }
 
 function businessGraphEdgeKey(edge) {
-  return edge.id || `responsibility:${JSON.stringify([edge.from, edge.to])}`;
+  return edge.id;
+}
+
+/** Every Context this frame sits in, innermost first. */
+function businessGraphContexts(graph, contextId) {
+  const chain = [];
+  const seen = new Set();
+  let current = contextId;
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    chain.push(current);
+    current = graph.parentOfContext.get(current) || '';
+  }
+  return chain;
 }
 
 // Highlight only relationships drawn on this canvas; never infer extra links.
-function businessGraphHighlight(layout, target) {
+function businessGraphHighlight(graph, target) {
   const result = {
     active: false,
     nodes: new Set(),
@@ -406,64 +314,61 @@ function businessGraphHighlight(layout, target) {
     primaryBoundary: '',
   };
   if (!target) return result;
-  const index = new Map(
-    [...layout.boxes, ...layout.boundaries].map((n) => [n.id, n]),
-  );
-  const boundaryIds = new Set(layout.boundaries.map((n) => n.id));
-  const lines = [...layout.edges, ...layout.roleLinks];
-  function belongs(id, context) {
-    const seen = new Set();
-    let node = index.get(id);
-    while (node && !seen.has(node.id)) {
-      if (node.id === context) return true;
-      seen.add(node.id);
-      node = index.get(node.fulfillmentParent || node.parent);
-    }
-    const b = index.get(context);
-    if (b && b.members && b.members.includes(id)) return true;
-    return false;
-  }
+  const boundaryIds = new Set(graph.boundaries.map((boundary) => boundary.id));
+
+  /** The frames an object is drawn inside: its band and every owner Context. */
   function owners(id) {
-    const item = index.get(id);
-    if (item?.fulfillmentParent && boundaryIds.has(item.fulfillmentParent)) {
-      result.boundaries.add(item.fulfillmentParent);
-    }
-    const seen = new Set([id]);
-    let parent = item?.parent;
-    while (parent && !seen.has(parent)) {
-      seen.add(parent);
-      if (boundaryIds.has(parent)) result.boundaries.add(parent);
-      parent = index.get(parent)?.parent;
-    }
+    const group = graph.groupOfNode.get(id);
+    if (group && boundaryIds.has(group)) result.boundaries.add(group);
+    for (const context of businessGraphContexts(
+      graph,
+      graph.contextOfNode.get(id) || '',
+    ))
+      if (boundaryIds.has(context)) result.boundaries.add(context);
   }
+
+  /** Whether an object or frame is drawn inside the given frame. */
+  function belongs(id, boundary) {
+    if (id === boundary) return true;
+    if (graph.membersOf.get(boundary)?.has(id)) return true;
+    const start = graph.contextOfNode.has(id)
+      ? graph.contextOfNode.get(id) || ''
+      : graph.parentOfGroup.get(id) || id;
+    return businessGraphContexts(graph, start).includes(boundary);
+  }
+
   if (target.type === 'boundary' && boundaryIds.has(target.id)) {
     result.active = true;
     result.primaryBoundary = target.id;
-    layout.boxes
-      .filter((n) => belongs(n.id, target.id))
-      .forEach((n) => result.nodes.add(n.id));
-    layout.boundaries
-      .filter((n) => belongs(n.id, target.id))
-      .forEach((n) => result.boundaries.add(n.id));
-    lines
-      .filter((e) => result.nodes.has(e.from) && result.nodes.has(e.to))
-      .forEach((e) => result.edges.add(businessGraphEdgeKey(e)));
+    graph.boxes
+      .filter((box) => belongs(box.id, target.id))
+      .forEach((box) => result.nodes.add(box.id));
+    graph.boundaries
+      .filter((boundary) => belongs(boundary.id, target.id))
+      .forEach((boundary) => result.boundaries.add(boundary.id));
+    graph.edges
+      .filter(
+        (edge) => result.nodes.has(edge.from) && result.nodes.has(edge.to),
+      )
+      .forEach((edge) => result.edges.add(businessGraphEdgeKey(edge)));
   } else if (
     target.type === 'node' &&
-    layout.boxes.some((n) => n.id === target.id)
+    graph.boxes.some((box) => box.id === target.id)
   ) {
     result.active = true;
     result.primaryNode = target.id;
     result.nodes.add(target.id);
     owners(target.id);
-    for (const edge of lines)
+    for (const edge of graph.edges)
       if (edge.from === target.id || edge.to === target.id) {
         result.edges.add(businessGraphEdgeKey(edge));
         result.nodes.add(edge.from);
         result.nodes.add(edge.to);
       }
   } else if (target.type === 'edge') {
-    const edge = lines.find((e) => businessGraphEdgeKey(e) === target.id);
+    const edge = graph.edges.find(
+      (candidate) => businessGraphEdgeKey(candidate) === target.id,
+    );
     if (edge) {
       result.active = true;
       result.edges.add(target.id);
@@ -477,7 +382,6 @@ function businessGraphHighlight(layout, target) {
 }
 
 const businessGraphState = {
-  mode: 'simple',
   zoom: null,
   left: 0,
   top: 0,
@@ -494,24 +398,9 @@ function renderBusinessGraph(target) {
   const selection = el('p', '', 'graph-selection');
   selection.setAttribute('aria-live', 'polite');
   const relationDetails = el('details', '', 'graph-relation-list');
-  let layout, svg;
+  let graph, svg;
   const zoomLabel = el('span', '', 'graph-zoom');
-  function choice(id, label, values, value, onChange) {
-    const wrap = el('label', `${label} `),
-      input = el('select');
-    input.id = id;
-    input.setAttribute('aria-label', label);
-    values.forEach(([key, text]) => {
-      const option = el('option', text);
-      option.value = key;
-      input.append(option);
-    });
-    input.value = value;
-    input.addEventListener('change', () => onChange(input.value));
-    wrap.append(input);
-    toolbar.append(wrap);
-    return input;
-  }
+
   function control(id, label, run) {
     const button = action(label, run);
     button.id = id;
@@ -519,24 +408,10 @@ function renderBusinessGraph(target) {
     return button;
   }
 
-  choice(
-    'graph-mode',
-    '显示模式',
-    [
-      ['simple', '简化图'],
-      ['standard', '标准图'],
-    ],
-    businessGraphState.mode,
-    (value) => {
-      businessGraphState.mode = value;
-      draw();
-    },
-  );
-
   function setZoom(value) {
     businessGraphState.zoom = Math.max(0.2, Math.min(2, value));
-    svg.setAttribute('width', layout.width * businessGraphState.zoom);
-    svg.setAttribute('height', layout.height * businessGraphState.zoom);
+    svg.setAttribute('width', graph.width * businessGraphState.zoom);
+    svg.setAttribute('height', graph.height * businessGraphState.zoom);
     zoomLabel.textContent = `${Math.round(businessGraphState.zoom * 100)}%`;
   }
   control('graph-zoom-out', '− 缩小', () =>
@@ -547,7 +422,7 @@ function renderBusinessGraph(target) {
   );
   toolbar.append(zoomLabel);
   control('graph-fit', '适合宽度', () => {
-    setZoom(Math.min(1, (viewport.clientWidth - 4) / layout.width));
+    setZoom(Math.min(1, (viewport.clientWidth - 4) / graph.width));
     viewport.scrollTo(0, 0);
   });
   control('graph-actual', '原始大小', () => setZoom(1));
@@ -597,7 +472,7 @@ function renderBusinessGraph(target) {
   }
   function drawLegend() {
     legendBody.replaceChildren();
-    const items = buildBusinessLegend(layout);
+    const items = buildBusinessLegend(graph);
     if (!items.length) {
       legendBody.append(el('p', '当前没有可展示的图形。', 'muted'));
       return;
@@ -614,11 +489,11 @@ function renderBusinessGraph(target) {
         grid = el('div', '', 'legend-grid');
       group.append(el('h3', heading), grid);
       for (const item of selected) {
-        const card = el('div', '', 'legend-card'),
+        const legendCard = el('div', '', 'legend-card'),
           sample = el('div', '', 'legend-sample');
         const example = item.example;
-        card.dataset.legendKind = item.key;
-        card.dataset.legendExample = example.id || example.from;
+        legendCard.dataset.legendKind = item.key;
+        legendCard.dataset.legendExample = example.id || example.from;
         if (sectionKey === 'objects') {
           const square =
             example.group === 'evidence' ||
@@ -669,8 +544,8 @@ function renderBusinessGraph(target) {
           line.dataset.dashed = String(Boolean(example.dashed));
           line.dataset.arrow = String(Boolean(example.arrow));
           line.setAttribute('aria-hidden', 'true');
-          card.dataset.legendFrom = example.from;
-          card.dataset.legendTo = example.to;
+          legendCard.dataset.legendFrom = example.from;
+          legendCard.dataset.legendTo = example.to;
           connection.append(
             el('span', title(example.from), 'legend-endpoint'),
             line,
@@ -678,12 +553,16 @@ function renderBusinessGraph(target) {
           );
           sample.append(connection);
         }
-        card.append(sample, el('h4', item.label), el('p', item.description));
-        grid.append(card);
+        legendCard.append(
+          sample,
+          el('h4', item.label),
+          el('p', item.description),
+        );
+        grid.append(legendCard);
       }
       legendBody.append(group);
     }
-    if (layout.boxes.some((box) => box.responsibleRef))
+    if (graph.boxes.some((box) => box.responsibleRef))
       legendBody.append(
         el(
           'p',
@@ -694,17 +573,34 @@ function renderBusinessGraph(target) {
     legendBody.append(
       el(
         'p',
-        '示例取自当前模型。标准图补充已有类型、业务时间与关系基数；未声明的内容不补画。',
+        '示例取自当前模型；业务时间与关系基数只在模型已声明时绘制，未声明的内容不补画。',
         'legend-note',
       ),
     );
   }
+  function pathOf(points) {
+    return points
+      .map(
+        (point, index) =>
+          `${index === 0 ? 'M' : 'L'} ${round(point.x)} ${round(point.y)}`,
+      )
+      .join(' ');
+  }
+  function round(value) {
+    return Math.round(value * 100) / 100;
+  }
   function draw() {
-    layout = buildBusinessGraph(DATA, businessGraphState);
+    graph = businessGraphOf(DATA);
     drawLegend();
     viewport.replaceChildren();
+    if (graph.boxes.length === 0 && graph.boundaries.length === 0) {
+      viewport.append(el('p', graph.warnings.join('；') || '当前没有可绘制的业务对象。', 'muted'));
+      relationDetails.replaceChildren(el('summary', '查看关系详情'), selection);
+      selection.textContent = graph.warnings.join('；');
+      return;
+    }
     svg = element('svg', {
-      viewBox: `0 0 ${layout.width} ${layout.height}`,
+      viewBox: `0 0 ${graph.width} ${graph.height}`,
       role: 'group',
       'aria-label': '业务模型图',
     });
@@ -713,7 +609,7 @@ function renderBusinessGraph(target) {
       focused = null;
     function paintHighlight() {
       const active = focused || hovered;
-      const state = businessGraphHighlight(layout, active?.target);
+      const state = businessGraphHighlight(graph, active?.target);
       for (const entry of entries) {
         const { item, target: ref } = entry;
         let related = false,
@@ -743,7 +639,7 @@ function renderBusinessGraph(target) {
       }
       selection.textContent = state.active
         ? active.description
-        : layout.warnings.join('；');
+        : graph.warnings.join('；');
     }
     function bindHighlight(
       item,
@@ -795,7 +691,9 @@ function renderBusinessGraph(target) {
       element('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: '#4b5e75' }),
     );
     defs.append(marker);
-    for (const boundary of layout.boundaries) {
+    // Frames first, then the lines, then the objects: the placement already
+    // nests them, so the drawing order is all the layering that is left.
+    for (const boundary of graph.boundaries) {
       const group = element('g', {
         'data-graph-boundary': boundary.id,
         'data-boundary-kind': boundary.kind,
@@ -821,14 +719,19 @@ function renderBusinessGraph(target) {
           contract: '合同上下文',
           fulfillment: '权责履约',
         }[boundary.kind] || '上下文';
+      // A band is drawn tight around its objects, so its title sits above the
+      // frame and names only the boundary kind: the request inside already
+      // carries the name, and a second copy would run over the Context title.
+      const band = boundary.group === 'fulfillment';
       const label = element(
         'text',
         {
-          x: boundary.x + 16,
-          y: boundary.y + 25,
-          class: 'graph-boundary-label',
+          x: band ? boundary.x + boundary.width - 4 : boundary.x + 16,
+          y: band ? boundary.y - 8 : boundary.y + 25,
+          'text-anchor': band ? 'end' : 'start',
+          class: `graph-boundary-label${band ? ' graph-band-label' : ''}`,
         },
-        `${kind} · ${boundary.label}`,
+        band ? kind : `${kind} · ${boundary.label}`,
       );
       label.append(element('title', {}, `${boundary.label} · ${boundary.id}`));
       interactive(label, `定位${kind}：${boundary.label}`, () =>
@@ -843,43 +746,37 @@ function renderBusinessGraph(target) {
       );
       svg.append(group);
     }
-    const boxes = new Map(layout.boxes.map((b) => [b.id, b]));
     const edgeLayer = element('g', { class: 'graph-edges' });
     svg.append(edgeLayer);
-    const visibleEdges = layout.edges;
-    function drawEdge(edge, i, roleLink = false) {
-      const a = boxes.get(edge.from),
-        b = boxes.get(edge.to);
-      const right = b.x > a.x;
-      const sourceRight = b.x >= a.x;
-      const x1 = sourceRight ? a.x + a.width : a.x,
-        x2 = right ? b.x : b.x + b.width;
-      const y1 = a.y + a.height / 2,
-        y2 = b.y + b.height / 2;
-      let d;
-      if (a.id === b.id)
-        d = `M ${a.x + a.width} ${y1 - 12} C ${a.x + a.width + 65} ${y1 - 60}, ${a.x + a.width + 65} ${y1 + 60}, ${a.x + a.width} ${y1 + 12}`;
-      else if (a.x === b.x) {
-        const end = a.x + a.width,
-          lane = end + 24 + (i % 5) * 8;
-        d = `M ${end} ${y1} C ${lane} ${y1}, ${lane} ${y2}, ${end} ${y2}`;
-      } else
-        d = `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`;
+    function cardinalityLabel(chart, value, point, next) {
+      const horizontal = Math.abs(next.x - point.x) >= Math.abs(next.y - point.y);
+      const forward = horizontal ? next.x > point.x : next.y > point.y;
+      const text = element(
+        'text',
+        {
+          x: horizontal ? point.x + (forward ? 6 : -6) : point.x + 8,
+          y: horizontal ? point.y - 8 : point.y + (forward ? 14 : -8),
+          'text-anchor': horizontal ? (forward ? 'start' : 'end') : 'start',
+          'data-cardinality-for': chart,
+          class: 'graph-cardinality',
+        },
+        graphCardinality(value),
+      );
+      return text;
+    }
+    function drawEdge(edge) {
+      const points = edge.points || [];
+      if (points.length < 2) return;
       const group = element('g', {
         class: 'graph-edge',
         'data-highlight-edge': businessGraphEdgeKey(edge),
-        ...(roleLink
-          ? { 'data-role-link': edge.to }
-          : {
-              'data-graph-edge': edge.id,
-              'data-kind': edge.kind,
-              'data-cross-boundary': String(edge.crossBoundary),
-            }),
+        'data-graph-edge': edge.id,
+        'data-kind': edge.kind,
+        'data-cross-boundary': String(edge.crossBoundary),
       });
-      const label = roleLink
-        ? '合同责任角色'
-        : businessGraphKinds[edge.kind] || edge.kind;
-      const full = `${title(edge.sourceRef || edge.from)} — ${title(edge.targetRef || edge.to)}：${edge.label}（${label}）`;
+      const label = businessGraphKinds[edge.kind] || edge.kind;
+      const full = `${title(edge.from)} — ${title(edge.to)}：${edge.label}（${label}）`;
+      const d = pathOf(points);
       const attrs = { d, stroke: '#4b5e75', class: 'graph-line' };
       if (edge.dashed) attrs['stroke-dasharray'] = '5 4';
       if (edge.arrow) attrs['marker-end'] = 'url(#graph-arrow)';
@@ -888,49 +785,30 @@ function renderBusinessGraph(target) {
         element('path', attrs),
         element('path', { d, class: 'graph-hit' }),
       );
-      if (businessGraphState.mode === 'standard' && !roleLink) {
-        if (edge.sourceCardinality !== undefined)
-          group.append(
-            element(
-              'text',
-              {
-                x: x1 + (sourceRight ? 8 : -8),
-                'text-anchor': sourceRight ? 'start' : 'end',
-                'data-cardinality-for': edge.sourceRef,
-                y: y1 - 9,
-                class: 'graph-cardinality',
-              },
-              graphCardinality(edge.sourceCardinality),
-            ),
-          );
-        if (edge.targetCardinality !== undefined)
-          group.append(
-            element(
-              'text',
-              {
-                x: x2 + (right ? -8 : 8),
-                'text-anchor': right ? 'end' : 'start',
-                'data-cardinality-for': edge.targetRef,
-                y: y2 - 9,
-                class: 'graph-cardinality',
-              },
-              graphCardinality(edge.targetCardinality),
-            ),
-          );
-      }
-      interactive(group, full, () =>
-        select(roleLink ? edge.detailRef : edge.id),
-      );
-      bindHighlight(
-        group,
-        { type: 'edge', id: businessGraphEdgeKey(edge) },
-        full,
-      );
+      if (edge.sourceCardinality !== undefined)
+        group.append(
+          cardinalityLabel(
+            edge.sourceRef,
+            edge.sourceCardinality,
+            points[0],
+            points[1],
+          ),
+        );
+      if (edge.targetCardinality !== undefined)
+        group.append(
+          cardinalityLabel(
+            edge.targetRef,
+            edge.targetCardinality,
+            points[points.length - 1],
+            points[points.length - 2],
+          ),
+        );
+      interactive(group, full, () => select(edge.id));
+      bindHighlight(group, { type: 'edge', id: businessGraphEdgeKey(edge) }, full);
       edgeLayer.append(group);
     }
-    visibleEdges.forEach((e, i) => drawEdge(e, i));
-    layout.roleLinks.forEach((e, i) => drawEdge(e, i, true));
-    for (const box of layout.boxes) {
+    graph.edges.forEach(drawEdge);
+    for (const box of graph.boxes) {
       const evidenceRole = box.group === 'role' && box.kind === 'evidence';
       const group = element('g', {
         'data-graph-node': box.id,
@@ -946,38 +824,34 @@ function renderBusinessGraph(target) {
         }),
       );
       const content = element('g', { class: 'graph-node-content' });
-      const standard = businessGraphState.mode === 'standard';
-      if (standard)
-        content.append(
-          element(
-            'text',
-            { x: 0, y: 0, class: 'graph-type', 'text-anchor': 'middle' },
-            `<${graphTypeLabel(box)}>`,
-          ),
-        );
-      const labelY = standard ? 20 : 0;
+      content.append(
+        element(
+          'text',
+          { x: 0, y: 0, class: 'graph-type', 'text-anchor': 'middle' },
+          `<${graphTypeLabel(box)}>`,
+        ),
+      );
       const labelLines = textLines(
         content,
         box.label,
         0,
-        labelY,
+        20,
         'graph-node-label',
       );
-      if (standard)
-        box.timeFields.forEach((name, i) =>
-          content.append(
-            element(
-              'text',
-              {
-                x: 0,
-                y: labelY + Math.max(0, labelLines - 1) * 19 + 18 + i * 16,
-                class: 'graph-time-field',
-                'text-anchor': 'middle',
-              },
-              name,
-            ),
+      box.timeFields.forEach((name, i) =>
+        content.append(
+          element(
+            'text',
+            {
+              x: 0,
+              y: 20 + Math.max(0, labelLines - 1) * 19 + 18 + i * 16,
+              class: 'graph-time-field',
+              'text-anchor': 'middle',
+            },
+            name,
           ),
-        );
+        ),
+      );
       group.append(content);
       group.append(
         element('title', {}, `${box.label} · ${box.id} · ${title(box.owner)}`),
@@ -993,7 +867,7 @@ function renderBusinessGraph(target) {
         });
         badge.append(
           element('rect', {
-            x: box.x + 100,
+            x: box.x + box.width / 2 - 56,
             y: box.y - 14,
             width: 112,
             height: 27,
@@ -1049,15 +923,15 @@ function renderBusinessGraph(target) {
     }, 0);
     setZoom(
       businessGraphState.zoom ??
-        Math.min(1, (viewport.clientWidth - 4) / layout.width),
+        Math.min(1, (viewport.clientWidth - 4) / graph.width),
     );
     viewport.scrollTo(businessGraphState.left, businessGraphState.top);
-    selection.textContent = layout.warnings.join('；');
+    selection.textContent = graph.warnings.join('；');
     relationDetails.replaceChildren(el('summary', '查看关系详情'), selection);
     relationDetails.append(
       table(
         ['起点', '关系', '终点'],
-        layout.relations.map((e) => [
+        graph.relations.map((e) => [
           link(e.sourceRef),
           link(e.id, `${businessGraphKinds[e.kind] || e.kind} · ${e.label}`),
           link(e.targetRef),
