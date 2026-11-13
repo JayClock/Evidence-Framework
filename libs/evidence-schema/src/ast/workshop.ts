@@ -81,3 +81,20 @@ export const workshopStepFocus = (id: WorkshopStepId): string => {
     ? ''
     : `【第 ${workshopStepRank(id)} 步 · ${step.label}】`;
 };
+
+/**
+ * A second way to open a workshop: from production, not from an agreement.
+ *
+ * Plenty of business has no contract to read — only receipts, approvals and the
+ * argument that happens when something arrives late. Naming the mode lets the
+ * modeler say so in one move instead of explaining the situation every turn.
+ */
+export const REVERSE_CONTRACT_MODE = {
+  id: 'reverse-contract',
+  label: '无合同逆推',
+  hint: '手头没有合约：从必须留存的凭证与违约追责反向推导合约与履约边界',
+  /** Prefix that travels with the prompt, like a workshop step. */
+  focus: '【无合同逆推 · 从凭证与追责推导合约】',
+} as const;
+
+export type ReverseContractMode = typeof REVERSE_CONTRACT_MODE;

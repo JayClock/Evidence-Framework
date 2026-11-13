@@ -76,6 +76,15 @@ describe('the built-in instructions', () => {
     expect(ROLE_PROMPT).toContain('允许粗糙');
     expect(ROLE_PROMPT).not.toContain('审讯员');
   });
+
+  it('can open a workshop from receipts when there is no agreement to read', () => {
+    // Without an agreement the question order reverses: the documents come
+    // first, and the contract is what the three answers converge on.
+    expect(WORKFLOW_PROMPT).toContain('没有合约时：从凭证逆推');
+    expect(WORKFLOW_PROMPT).toContain('哪些凭证必须留存与追溯');
+    expect(WORKFLOW_PROMPT).toContain('违约时凭什么追责');
+    expect(WORKFLOW_PROMPT).toContain('根合同');
+  });
 });
 
 describe('the governance instructions', () => {

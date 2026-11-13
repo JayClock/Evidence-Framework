@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  REVERSE_CONTRACT_MODE,
   WORKSHOP_STEPS,
   WORKSHOP_STEP_IDS,
   isWorkshopStepId,
@@ -35,5 +36,13 @@ describe('workshop steps', () => {
     expect(isWorkshopStepId('anchor-contract')).toBe(true);
     expect(isWorkshopStepId('design-database')).toBe(false);
     expect(isWorkshopStepId(undefined)).toBe(false);
+  });
+
+  it('names the mode that starts from receipts instead of an agreement', () => {
+    expect(REVERSE_CONTRACT_MODE.label.length).toBeGreaterThan(0);
+    expect(REVERSE_CONTRACT_MODE.hint).toContain('合约');
+    expect(REVERSE_CONTRACT_MODE.focus).toContain(
+      REVERSE_CONTRACT_MODE.label,
+    );
   });
 });
