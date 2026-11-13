@@ -301,6 +301,7 @@ export const createGraphLayout = (
     const groupIds: string[] = [];
     const contentOriginX = CONTEXT_PADDING;
     const contentOriginY = CONTEXT_PADDING + CONTEXT_TITLE_HEIGHT;
+    const placedBoxById = new Map<string, Rect>();
 
     const place = (entity: EntityAST, x: number, y: number): Rect => {
       const box: Rect = {
@@ -313,9 +314,21 @@ export const createGraphLayout = (
       nodes.push({ nodeId: entity.id, entity, box, contextId: context.id });
       nodeIds.push(entity.id);
       consumed.add(entity.id);
+      placedBoxById.set(entity.id, box);
 
       return box;
     };
+
+    /**
+     * Places an object once per Context.
+     *
+     * A confirmation may discharge more than one request, and both requests
+     * live in the same Context. Placing it per row would emit the same node id
+     * twice and stack two frames on one stamp, so the second request reuses the
+     * box the first row placed and reports the shared id instead.
+     */
+    const placeOnce = (entity: EntityAST, x: number, y: number): Rect =>
+      placedBoxById.get(entity.id) ?? place(entity, x, y);
 
     let cursorY = 0;
     let contentWidth = 0;
@@ -330,20 +343,31 @@ export const createGraphLayout = (
         pair?.proofs.filter(
           (entity) => ownerContextId(entity) === context.id,
         ) ?? [];
-      const requestBox = place(request, columnX[0]!, cursorY);
+      const requestBox = placeOnce(request, columnX[0]!, cursorY);
       const confirmationBoxes: Rect[] = [];
       const proofBoxes: Rect[] = [];
+      const sharedResultIds: string[] = [];
       let columnY = cursorY;
 
       for (const confirmation of confirmations) {
-        const box = place(confirmation, columnX[1]!, columnY);
+        if (placedBoxById.has(confirmation.id)) {
+          sharedResultIds.push(confirmation.id);
+          continue;
+        }
+
+        const box = placeOnce(confirmation, columnX[1]!, columnY);
         confirmationBoxes.push(box);
         columnY = rectBottom(box) - contentOriginY + STACK_GAP;
       }
 
       columnY = cursorY;
       for (const proof of proofs) {
-        const box = place(proof, columnX[2]!, columnY);
+        if (placedBoxById.has(proof.id)) {
+          sharedResultIds.push(proof.id);
+          continue;
+        }
+
+        const box = placeOnce(proof, columnX[2]!, columnY);
         proofBoxes.push(box);
         columnY = rectBottom(box) - contentOriginY + STACK_GAP;
       }
@@ -373,6 +397,7 @@ export const createGraphLayout = (
         requestId: request.id,
         confirmationIds: confirmations.map(({ id }) => id),
         proofIds: proofs.map(({ id }) => id),
+        sharedResultIds,
         box: groupBox,
       });
       groupIds.push(groupId);

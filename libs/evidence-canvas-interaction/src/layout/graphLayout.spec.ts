@@ -143,6 +143,91 @@ describe('createGraphLayout', () => {
     }
   });
 
+  it('places a confirmation shared by two requests exactly once', () => {
+    const document = createFixtureDocument();
+    document.entities.push({
+      type: 'entity',
+      id: 'evidence.inspection-request',
+      category: 'evidence',
+      kind: 'fulfillment_request',
+      label: '验收请求（Inspection Request）',
+      contextRef: 'context.product-procurement',
+      responsibleRoleRef: 'role.supplier',
+      attributes: [
+        {
+          name: 'started_at',
+          label: '开始时间',
+          meaning: '采购方发起',
+          valueType: 'timestamp',
+          required: true,
+          keyData: true,
+        },
+        {
+          name: 'expired_at',
+          label: '截止时间',
+          meaning: '合同约定',
+          valueType: 'timestamp',
+          required: true,
+          keyData: true,
+        },
+      ],
+    });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.shared-confirmation-references-inspection',
+      kind: 'references',
+      sourceRef: 'evidence.delivery-confirmation',
+      targetRef: 'evidence.inspection-request',
+      label: '交付确认同时回应验收请求',
+    });
+
+    const layout = createGraphLayout(createDomainGraph(document));
+
+    expect(new Set(layout.nodes.map(({ nodeId }) => nodeId)).size).toBe(
+      layout.nodes.length,
+    );
+    expect(
+      layout.nodes.filter(
+        ({ nodeId }) => nodeId === 'evidence.delivery-confirmation',
+      ),
+    ).toHaveLength(1);
+
+    const delivery = layout.fulfillmentGroupByRequest.get(
+      'evidence.delivery-request',
+    )!;
+    const inspection = layout.fulfillmentGroupByRequest.get(
+      'evidence.inspection-request',
+    )!;
+
+    expect(delivery.sharedResultIds).toEqual([]);
+    // The proof hangs off the shared confirmation, so it is shared as well.
+    expect(inspection.sharedResultIds).toEqual([
+      'evidence.delivery-confirmation',
+      'evidence.delivery-note',
+    ]);
+    // Both rows still state the same claim; only the frame differs.
+    expect(inspection.confirmationIds).toEqual([
+      'evidence.delivery-confirmation',
+    ]);
+    expect(rectContainsRect(inspection.box, delivery.box)).toBe(false);
+    expect(
+      rectContainsRect(
+        inspection.box,
+        layout.nodeById.get('evidence.delivery-request')!.box,
+      ),
+    ).toBe(false);
+    for (const nodeId of [
+      inspection.requestId,
+      ...inspection.proofIds.filter(
+        (id) => !inspection.sharedResultIds.includes(id),
+      ),
+    ]) {
+      expect(
+        rectContainsRect(inspection.box, layout.nodeById.get(nodeId)!.box),
+      ).toBe(true);
+    }
+  });
+
   it('routes edges and marks cross-context and plays_role lines', () => {
     const { layout } = createFixtureModel();
     const playsRole = layout.edgeById.get('relation.buyer-plays-role')!;

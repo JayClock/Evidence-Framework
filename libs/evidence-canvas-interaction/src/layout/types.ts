@@ -62,6 +62,15 @@ export interface FulfillmentLayoutGroup {
   requestId: string;
   confirmationIds: readonly string[];
   proofIds: readonly string[];
+  /**
+   * Results of this pair that sit in another request's row.
+   *
+   * One confirmation may discharge several requests; the layout places it once,
+   * so the row that does not own the stamp reports it here instead of drawing a
+   * second box. The pair link still runs to the shared stamp.
+   */
+  sharedResultIds: readonly string[];
+  /** The frame only covers objects this row actually placed. */
   box: Rect;
 }
 
