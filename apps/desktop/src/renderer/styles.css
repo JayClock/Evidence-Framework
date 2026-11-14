@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+/**
+ * The studio's components live in workspace libraries under `libs/`, which sit
+ * outside this app's Vite root. Tailwind's automatic detection only scans the
+ * root, so every utility that appears *only* in a library (the canvas's
+ * `top-[24px]` / `origin-top-left`, the ui-kit's `data-[panel-group-direction]`
+ * variants, the inspector's table columns) would otherwise be missing from the
+ * bundle and silently collapse the layout.
+ */
+@source '../../../../libs/desktop';
+
 @theme {
   --color-evidence-ink: #1f2329;
   --color-evidence-muted: #6b7280;

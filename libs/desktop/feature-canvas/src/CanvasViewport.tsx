@@ -384,7 +384,7 @@ export const CanvasViewport = ({
   return (
     <div
       ref={containerRef}
-      className="relative min-h-0 flex-1 overflow-hidden bg-[#fbfbfc]"
+      className="relative h-full w-full min-h-0 min-w-0 flex-1 overflow-hidden bg-[#fbfbfc]"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
