@@ -90,12 +90,15 @@ export const KeyDataLedgerSheet = ({
       }
 
       event.preventDefault();
+      // Capture runs before the editor's window listener, so closing the sheet
+      // does not also clear the selection the inspector behind it shows.
+      event.stopPropagation();
       onClose();
     };
 
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keydown', onKeyDown, true);
 
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
   }, [onClose]);
 
   return (

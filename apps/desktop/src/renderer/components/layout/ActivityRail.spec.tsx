@@ -38,13 +38,13 @@ describe('ActivityRail', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: '门禁与诊断' })).toHaveTextContent(
-      '3',
-    );
     expect(
-      screen.getByRole('button', { name: 'AI 协同' }).querySelectorAll(
-        'span[aria-hidden="true"]',
-      ).length,
+      screen.getByRole('button', { name: '门禁与诊断' }),
+    ).toHaveTextContent('3');
+    expect(
+      screen
+        .getByRole('button', { name: 'AI 协同' })
+        .querySelectorAll('span[aria-hidden="true"]').length,
     ).toBeGreaterThan(0);
   });
 });

@@ -31,7 +31,11 @@ const report = () =>
         suggestion: '补齐履约配对。',
       }),
       issue({ issueId: 'warn-1', severity: 'warn', message: '派生规则重复' }),
-      issue({ issueId: 'info-1', severity: 'info', message: '建议补充业务时间' }),
+      issue({
+        issueId: 'info-1',
+        severity: 'info',
+        message: '建议补充业务时间',
+      }),
     ],
   });
 
@@ -105,12 +109,14 @@ describe('ProblemsPanel', () => {
   it('marks the finding the modeler was sent to', () => {
     setup({ activeIssueId: 'warn-1' });
 
-    expect(
-      document.querySelector('[data-issue-id="warn-1"]'),
-    ).toHaveAttribute('data-active', 'true');
-    expect(
-      document.querySelector('[data-issue-id="block-1"]'),
-    ).toHaveAttribute('data-active', 'false');
+    expect(document.querySelector('[data-issue-id="warn-1"]')).toHaveAttribute(
+      'data-active',
+      'true',
+    );
+    expect(document.querySelector('[data-issue-id="block-1"]')).toHaveAttribute(
+      'data-active',
+      'false',
+    );
   });
 
   it('says when the verdict no longer describes the model on screen', () => {

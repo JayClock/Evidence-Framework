@@ -58,16 +58,16 @@ describe('EditorScreen', () => {
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
 
-  it('slides the problems panel over the canvas with Cmd+J', async () => {
+  it('slides the problems panel over the canvas with Alt+X', async () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
-    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+    fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
     expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
-    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+    fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
 
@@ -496,6 +496,35 @@ describe('EditorScreen sensors', () => {
     fireEvent.click(await screen.findByRole('option', { name: /总台账/ }));
 
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+  });
+
+  it('opens the agent on the selection with Cmd+J', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.contract"]') as Element,
+    );
+    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+
+    expect(await screen.findByLabelText('行内 AI 协同')).toBeInTheDocument();
+    expect(screen.getByTestId('inline-copilot-focus')).toHaveTextContent(
+      '采购协议（Procurement Contract）',
+    );
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    await waitFor(() =>
+      expect(screen.queryByLabelText('行内 AI 协同')).toBeNull(),
+    );
+    // Closing the card must not clear the object it was about: the inspector
+    // still shows the contract the question named.
+    expect(
+      screen.getByDisplayValue('采购协议（Procurement Contract）'),
+    ).toBeInTheDocument();
   });
 
   it('tells the copilot what the next question is about', async () => {

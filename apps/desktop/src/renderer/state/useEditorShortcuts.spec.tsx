@@ -20,6 +20,7 @@ const setup = (
     toggleLeftRail: vi.fn(),
     toggleRightRail: vi.fn(),
     toggleProblems: vi.fn(),
+    openInlineCopilot: vi.fn(),
     ...overrides,
   };
 
@@ -71,7 +72,9 @@ describe('useEditorShortcuts', () => {
 
     expect(handlers.toggleLeftRail).toHaveBeenCalled();
     expect(handlers.toggleRightRail).toHaveBeenCalled();
-    expect(handlers.toggleProblems).toHaveBeenCalledTimes(2);
+    // Mod+J is the agent, Alt+X is the findings list.
+    expect(handlers.openInlineCopilot).toHaveBeenCalledTimes(1);
+    expect(handlers.toggleProblems).toHaveBeenCalledTimes(1);
   });
 
   it('binds the two chords the floating island prints', () => {

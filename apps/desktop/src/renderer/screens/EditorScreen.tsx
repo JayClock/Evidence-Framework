@@ -30,6 +30,7 @@ import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
 import { AgentCopilot } from '../components/agent/AgentCopilot';
+import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
 import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
 import { DeliveryHub } from '../components/delivery/DeliveryHub';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
@@ -509,6 +510,7 @@ const EditorWorkspace = ({
       toggleRightRail: () => {
         toggleRail(rightRail);
       },
+      openInlineCopilot: layout.openInlineCopilot,
       toggleProblems: layout.toggleProblemsPanel,
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
@@ -519,6 +521,7 @@ const EditorWorkspace = ({
       revertPatch,
       focusSearch,
       layout.openHub,
+      layout.openInlineCopilot,
       layout.toggleProblemsPanel,
       layout.toggleRailTab,
       reviewExport.exportPage,
@@ -682,93 +685,115 @@ const EditorWorkspace = ({
           )}
 
           <div className="flex min-h-0 min-w-0 flex-1">
-          <ResizablePanelGroup
-            direction="horizontal"
-            autoSaveId="evidence-studio-horizontal-v2"
-          >
-            <ResizablePanel id="center-stage" order={1} minSize={35}>
-              <ResizablePanelGroup
-                direction="vertical"
-                autoSaveId="evidence-studio-vertical-v1"
-              >
-                <ResizablePanel id="canvas-stage" order={1} minSize={25}>
-                  <CentralStageContainer
-                    mode={workspaceView.mode}
-                    graph={
-                      <CanvasViewport
-                        graph={state.graph}
-                        layout={state.layout}
-                        document={state.document}
-                        viewMode={viewMode}
-                        selection={state.selection}
-                        focusRequest={focusRequest}
-                        zoomCommand={zoomCommand}
-                        hud={(controls) => (
-                          <CanvasFloatingHud
-                            {...controls}
-                            viewMode={workspaceView.mode}
-                            onViewModeChange={workspaceView.setMode}
-                            density={viewMode}
-                            onDensityChange={setViewMode}
-                            hasSelection={state.selection.nodeId !== null}
-                            onClearSelection={() =>
-                              state.session.clearSelection()
-                            }
-                          />
-                        )}
-                        diagnostics={diagnostics}
-                        onOpenIssues={(issues) => {
-                          if (issues[0] === undefined) return;
-                          layout.openProblemsWithIssue(issues[0].issueId);
-                          focusIssue(issues[0]);
-                        }}
-                        overlay={patchReview.review?.overlay ?? null}
-                        scope={scope}
-                        onScopeChange={changeScope}
-                        onSelect={(nodeId) => state.session.select(nodeId)}
-                        onClearSelection={() => state.session.clearSelection()}
-                      />
-                    }
-                    table={
-                      <DomainLedgerTable
-                        document={state.document}
-                        session={state.session}
-                        diagnostics={diagnostics}
-                        selectedNodeId={state.selection.nodeId}
-                        selectedAttributeName={state.selection.attributeName}
-                        focusNodeId={state.selection.nodeId}
-                        onRevealOnGraph={(nodeId) => {
-                          focusNode(nodeId);
-                          workspaceView.setMode('graph');
-                        }}
-                      />
-                    }
-                  />
-                </ResizablePanel>
-
-              </ResizablePanelGroup>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-
-            <ResizablePanel
-              id="right-rail"
-              order={2}
-              defaultSize={22}
-              minSize={14}
-              maxSize={32}
-              collapsible
-              collapsedSize={0}
-              ref={rightRail}
+            <ResizablePanelGroup
+              direction="horizontal"
+              autoSaveId="evidence-studio-horizontal-v2"
             >
-              <RightInspector
-                graph={state.graph}
-                session={state.session}
-                selection={state.selection}
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+              <ResizablePanel id="center-stage" order={1} minSize={35}>
+                <ResizablePanelGroup
+                  direction="vertical"
+                  autoSaveId="evidence-studio-vertical-v1"
+                >
+                  <ResizablePanel id="canvas-stage" order={1} minSize={25}>
+                    <CentralStageContainer
+                      mode={workspaceView.mode}
+                      graph={
+                        <CanvasViewport
+                          graph={state.graph}
+                          layout={state.layout}
+                          document={state.document}
+                          viewMode={viewMode}
+                          selection={state.selection}
+                          focusRequest={focusRequest}
+                          zoomCommand={zoomCommand}
+                          hud={(controls) => (
+                            <CanvasFloatingHud
+                              {...controls}
+                              viewMode={workspaceView.mode}
+                              onViewModeChange={workspaceView.setMode}
+                              density={viewMode}
+                              onDensityChange={setViewMode}
+                              hasSelection={state.selection.nodeId !== null}
+                              onClearSelection={() =>
+                                state.session.clearSelection()
+                              }
+                            />
+                          )}
+                          diagnostics={diagnostics}
+                          onOpenIssues={(issues) => {
+                            if (issues[0] === undefined) return;
+                            layout.openProblemsWithIssue(issues[0].issueId);
+                            focusIssue(issues[0]);
+                          }}
+                          overlay={patchReview.review?.overlay ?? null}
+                          scope={scope}
+                          onScopeChange={changeScope}
+                          onSelect={(nodeId) => state.session.select(nodeId)}
+                          onClearSelection={() =>
+                            state.session.clearSelection()
+                          }
+                        />
+                      }
+                      table={
+                        <DomainLedgerTable
+                          document={state.document}
+                          session={state.session}
+                          diagnostics={diagnostics}
+                          selectedNodeId={state.selection.nodeId}
+                          selectedAttributeName={state.selection.attributeName}
+                          focusNodeId={state.selection.nodeId}
+                          onRevealOnGraph={(nodeId) => {
+                            focusNode(nodeId);
+                            workspaceView.setMode('graph');
+                          }}
+                        />
+                      }
+                    />
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              </ResizablePanel>
+
+              <ResizableHandle withHandle />
+
+              <ResizablePanel
+                id="right-rail"
+                order={2}
+                defaultSize={22}
+                minSize={14}
+                maxSize={32}
+                collapsible
+                collapsedSize={0}
+                ref={rightRail}
+              >
+                <RightInspector
+                  graph={state.graph}
+                  session={state.session}
+                  selection={state.selection}
+                />
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
+
+          {layout.isInlineCopilotOpen ? (
+            <div
+              data-canvas-control=""
+              data-evidence-capture-hide=""
+              className="pointer-events-none absolute inset-x-0 bottom-16 z-40 flex justify-center px-4"
+            >
+              <InlinePatchCopilot
+                focus={promptFocus}
+                controller={agent}
+                patchReview={patchReview}
+                onFocusEntity={focusNode}
+                onClose={layout.closeInlineCopilot}
+                onOpenFullInterview={() => {
+                  layout.closeInlineCopilot();
+                  layout.setActiveRailTab('copilot');
+                  setAgentFocusToken((token) => token + 1);
+                }}
+              />
+            </div>
+          ) : null}
 
           {layout.isProblemsPanelOpen ? (
             <ProblemsPanel

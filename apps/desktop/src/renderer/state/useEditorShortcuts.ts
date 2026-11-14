@@ -31,8 +31,10 @@ interface ShortcutHandlers {
   toggleLeftRail?: () => void;
   /** Collapses the right workbench rail (Mod+I). */
   toggleRightRail?: () => void;
-  /** Slides the problems panel in or out (Mod+J / Alt+X). */
+  /** Slides the problems panel in or out (Alt+X). */
   toggleProblems?: () => void;
+  /** Opens the agent on the current selection (Mod+J). */
+  openInlineCopilot?: () => void;
   /**
    * Settles a pending agent patch.
    *
@@ -141,6 +143,20 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         }
       }
 
+      // The agent comes to the selection rather than asking the modeler to
+      // leave the canvas, so Mod+J opens the inline composer.
+      if (
+        mod &&
+        !event.shiftKey &&
+        !typing &&
+        event.key.toLowerCase() === 'j' &&
+        handlers.openInlineCopilot !== undefined
+      ) {
+        event.preventDefault();
+        handlers.openInlineCopilot();
+        return;
+      }
+
       // Layout keys belong to the workspace, but a text field may want them for
       // its own formatting, so they only fire outside an input.
       if (mod && !typing) {
@@ -150,9 +166,7 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
             ? handlers.toggleLeftRail
             : layoutKey === 'i'
               ? handlers.toggleRightRail
-              : layoutKey === 'j'
-                ? handlers.toggleProblems
-                : undefined;
+              : undefined;
 
         if (toggle !== undefined) {
           event.preventDefault();
