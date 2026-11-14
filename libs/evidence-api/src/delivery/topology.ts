@@ -3,7 +3,10 @@ import type {
   DomainModelDocument,
   EntityAST,
 } from '@evidence-poc/evidence-schema';
-import { createDomainGraph, type DomainGraph } from '@evidence-poc/evidence-model-core';
+import {
+  createDomainGraph,
+  type DomainGraph,
+} from '@evidence-poc/evidence-model-core';
 
 import { rawSegmentOf, serviceIdOf } from './segments.js';
 
@@ -28,7 +31,11 @@ import { rawSegmentOf, serviceIdOf } from './segments.js';
  *   touching the agreement that needs it.
  */
 
-export type DeliveryServiceKind = 'channel' | 'fulfillment' | 'domain' | 'capability';
+export type DeliveryServiceKind =
+  | 'channel'
+  | 'fulfillment'
+  | 'domain'
+  | 'capability';
 
 export interface DeliveryService {
   id: string;
@@ -73,9 +80,9 @@ const contextOf = (
 ): ContextEntityAST | undefined => {
   const contextRef = 'contextRef' in entity ? entity.contextRef : undefined;
 
-  return contextRef === undefined ? undefined : graph.getEntity(contextRef) as
-    | ContextEntityAST
-    | undefined;
+  return contextRef === undefined
+    ? undefined
+    : (graph.getEntity(contextRef) as ContextEntityAST | undefined);
 };
 
 /**
@@ -87,7 +94,10 @@ const contextOf = (
 const socketSupplies = (
   graph: DomainGraph,
 ): Map<string, { socketRef: string; consumerContextRef: string }[]> => {
-  const supplies = new Map<string, { socketRef: string; consumerContextRef: string }[]>();
+  const supplies = new Map<
+    string,
+    { socketRef: string; consumerContextRef: string }[]
+  >();
 
   for (const relationship of graph.relationships()) {
     if (relationship.kind !== 'plays_role') {
@@ -112,7 +122,10 @@ const socketSupplies = (
     }
 
     const bucket = supplies.get(supplier.id) ?? [];
-    bucket.push({ socketRef: socket.id, consumerContextRef: socket.contextRef });
+    bucket.push({
+      socketRef: socket.id,
+      consumerContextRef: socket.contextRef,
+    });
     supplies.set(supplier.id, bucket);
   }
 
@@ -228,7 +241,8 @@ export const buildDeliveryTopology = (
           entity.kind === 'evidence' &&
           supplied.every((entry) => entry.socketRef !== entity.id),
       )
-      .map((entity) => entity.id);
+      .map((entity) => entity.id)
+      .sort();
 
     services.push({
       id: serviceIdOf(context.id),
@@ -236,11 +250,12 @@ export const buildDeliveryTopology = (
       kind,
       contextRef: context.id,
       lane: rawSegmentOf(context.id),
-      rootRefs: context.rootRefs ?? [],
+      rootRefs: [...(context.rootRefs ?? [])].sort(),
       evidenceRefs: members
         .filter((entity) => entity.category === 'evidence')
-        .map((entity) => entity.id),
-      supplies: supplied.map((entry) => entry.socketRef),
+        .map((entity) => entity.id)
+        .sort(),
+      supplies: [...new Set(supplied.map((entry) => entry.socketRef))].sort(),
       consumes,
       notes: notesFor(kind, context, supplied.length),
     });
@@ -276,7 +291,10 @@ export const buildDeliveryTopology = (
       });
     }
 
-    if (context.kind === 'pre_contract' && context.parentContextRef !== undefined) {
+    if (
+      context.kind === 'pre_contract' &&
+      context.parentContextRef !== undefined
+    ) {
       const contract = graph.rootContractOf(context.parentContextRef);
 
       links.push({
@@ -285,7 +303,8 @@ export const buildDeliveryTopology = (
         to: serviceIdOf(context.parentContextRef),
         kind: 'signs',
         mode: 'sync',
-        label: contract === undefined ? '签约后进入履约' : `签约${contract.label}`,
+        label:
+          contract === undefined ? '签约后进入履约' : `签约${contract.label}`,
         viaRef: contract?.id ?? context.parentContextRef,
       });
     }
