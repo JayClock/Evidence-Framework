@@ -32,6 +32,16 @@ if (!('ResizeObserver' in globalThis)) {
   });
 }
 
+if (!('scrollIntoView' in Element.prototype)) {
+  // jsdom has no scrolling and no layout; `cmdk` scrolls the active row into
+  // view on every keystroke, so the palette would throw without this.
+  Object.defineProperty(Element.prototype, 'scrollIntoView', {
+    value: () => undefined,
+    configurable: true,
+    writable: true,
+  });
+}
+
 if (!('setPointerCapture' in HTMLElement.prototype)) {
   Object.defineProperties(HTMLElement.prototype, {
     setPointerCapture: { value: () => undefined, configurable: true },

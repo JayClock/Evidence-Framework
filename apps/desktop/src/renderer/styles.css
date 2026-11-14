@@ -1,14 +1,15 @@
 @import 'tailwindcss';
 
-/**
- * The studio's components live in workspace libraries under `libs/`, which sit
- * outside this app's Vite root. Tailwind's automatic detection only scans the
- * root, so every utility that appears *only* in a library (the canvas's
- * `top-[24px]` / `origin-top-left`, the ui-kit's `data-[panel-group-direction]`
- * variants, the inspector's table columns) would otherwise be missing from the
- * bundle and silently collapse the layout.
+/*
+ * Tailwind v4 derives its content graph from the CSS entry point. Under Vite it
+ * scans the directory that owns `@import 'tailwindcss'` and stops there, so the
+ * workspace libraries would be invisible: a class used only in `ui-kit` would
+ * compile to nothing. Each shared library is therefore named explicitly.
+ * See docs/rfc-phase-1-ui-infra-and-command-palette.md §3.3.
  */
-@source '../../../../libs/desktop';
+@source '../../../../libs/desktop/ui-kit/src';
+@source '../../../../libs/desktop/feature-canvas/src';
+@source '../../../../libs/desktop/feature-inspector/src';
 
 @theme {
   --color-evidence-ink: #1f2329;
@@ -19,6 +20,18 @@
   --color-evidence-evidence: #b43656;
   --color-evidence-participant: #3d7553;
   --color-evidence-role: #8d6200;
+
+  /* Semantic interaction layers, so a control asks for a role, not a hex. */
+  --color-evidence-panel: #ffffff;
+  --color-evidence-hover: #f1f3f5;
+  --color-evidence-active: #e8eef6;
+  --color-evidence-border: #e2e4e8;
+  --color-evidence-ring: rgba(47, 93, 143, 0.35);
+  --color-evidence-kbd: #f3f4f6;
+
+  --shadow-overlay:
+    0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-hud: 0 4px 12px 0 rgb(0 0 0 / 0.08);
 }
 
 :root {
@@ -66,4 +79,129 @@ body[data-evidence-capture='true'] [data-node-id] {
 
 body[data-evidence-capture='true'] [data-evidence-capture-hide] {
   display: none !important;
+}
+
+/*
+ * Motion for the overlay primitives in `desktop-ui-kit`.
+ *
+ * Tailwind v4 dropped the `animate-in` plugins, and an overlay that appears
+ * without a transition reads as a layout glitch rather than a layer above the
+ * model. The component classes name these keyframes, so the vocabulary lives
+ * here, next to the tokens they animate over.
+ */
+@keyframes evidence-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes evidence-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/*
+ * Position comes from the `translate` utilities on the content, which v4 emits
+ * as the standalone `translate` property. These keyframes therefore only scale:
+ * adding `translate(-50%, -50%)` here would offset the box twice.
+ */
+@keyframes evidence-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes evidence-zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes evidence-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes evidence-slide-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes evidence-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes evidence-slide-out-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes evidence-slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes evidence-slide-out-bottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes evidence-slide-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes evidence-slide-out-top {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
 }
