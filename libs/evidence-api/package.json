@@ -29,7 +29,10 @@
     "name": "evidence-api",
     "tags": [
       "type:lib",
-      "scope:evidence"
+      "layer:projection",
+      "platform:node",
+      "surface:browser-safe",
+      "scope:api"
     ]
   },
   "dependencies": {

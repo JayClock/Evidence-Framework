@@ -19,8 +19,9 @@
     "name": "desktop-feature-inspector",
     "tags": [
       "type:lib",
-      "scope:desktop",
-      "platform:browser"
+      "layer:feature",
+      "platform:browser",
+      "scope:desktop"
     ]
   },
   "dependencies": {

@@ -23,7 +23,13 @@
   },
   "nx": {
     "name": "evidence-agent",
-    "tags": ["type:lib", "scope:evidence"]
+    "tags": [
+      "type:lib",
+      "layer:orchestration",
+      "platform:node",
+      "surface:browser-safe",
+      "scope:agent"
+    ]
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",

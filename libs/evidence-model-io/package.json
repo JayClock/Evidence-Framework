@@ -27,7 +27,12 @@
   },
   "nx": {
     "name": "evidence-model-io",
-    "tags": ["type:lib", "scope:evidence", "platform:node"]
+    "tags": [
+      "type:lib",
+      "layer:io",
+      "platform:node",
+      "scope:model"
+    ]
   },
   "dependencies": {
     "@evidence-poc/evidence-model-core": "workspace:*",

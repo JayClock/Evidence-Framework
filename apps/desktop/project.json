@@ -3,7 +3,7 @@
   "name": "desktop",
   "projectType": "application",
   "sourceRoot": "apps/desktop",
-  "tags": ["scope:desktop", "type:app"],
+  "tags": ["type:app", "layer:app", "platform:node", "scope:desktop"],
   "targets": {
     "prepare-resources": {
       "executor": "nx:run-commands",

@@ -17,7 +17,12 @@
   },
   "nx": {
     "name": "desktop-testing",
-    "tags": ["type:lib", "scope:desktop", "platform:browser"]
+    "tags": [
+      "type:lib",
+      "layer:testing",
+      "platform:browser",
+      "scope:desktop"
+    ]
   },
   "dependencies": {
     "@evidence-poc/evidence-schema": "workspace:*",

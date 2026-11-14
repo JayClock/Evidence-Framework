@@ -22,6 +22,11 @@
   },
   "nx": {
     "name": "evidence-canvas-interaction",
-    "tags": ["type:lib", "scope:evidence"]
+    "tags": [
+      "type:lib",
+      "layer:domain",
+      "platform:universal",
+      "scope:model"
+    ]
   }
 }

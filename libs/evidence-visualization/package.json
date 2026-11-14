@@ -27,7 +27,12 @@
   },
   "nx": {
     "name": "evidence-visualization",
-    "tags": ["type:lib", "scope:evidence"]
+    "tags": [
+      "type:lib",
+      "layer:projection",
+      "platform:node",
+      "scope:visualization"
+    ]
   },
   "dependencies": {
     "@evidence-poc/evidence-api": "workspace:*",

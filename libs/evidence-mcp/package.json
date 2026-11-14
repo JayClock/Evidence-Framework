@@ -23,7 +23,12 @@
   },
   "nx": {
     "name": "evidence-mcp",
-    "tags": ["type:lib", "scope:evidence"]
+    "tags": [
+      "type:lib",
+      "layer:orchestration",
+      "platform:node",
+      "scope:mcp"
+    ]
   },
   "dependencies": {
     "@evidence-poc/evidence-model-core": "workspace:*",

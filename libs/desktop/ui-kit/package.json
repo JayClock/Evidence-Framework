@@ -17,7 +17,12 @@
   },
   "nx": {
     "name": "desktop-ui-kit",
-    "tags": ["type:lib", "scope:desktop", "platform:browser"]
+    "tags": [
+      "type:lib",
+      "layer:ui",
+      "platform:browser",
+      "scope:desktop"
+    ]
   },
   "dependencies": {
     "clsx": "^2.1.1",
