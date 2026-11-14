@@ -2,7 +2,7 @@ import type {
   SensorIssue,
   SensorReport,
   SensorSeverity,
-} from '@evidence-poc/evidence-modeling-orchestrator/browser';
+} from '@evidence-poc/evidence-agent/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 export interface DiagnosticStatus {

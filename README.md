@@ -94,9 +94,8 @@
 ├── libs/
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格校验契约
 │   ├── evidence-model-core/             # 纯内存图引擎、命令总线 (Undo/Redo)、CEL 仿真执行器
-│   ├── evidence-modeling-orchestrator/  # 传感器调度引擎、阶段门禁判定与链路追踪
+│   ├── evidence-agent/                  # AI Agent 运行时：会话、提示词、治理、传感器、工具注入
 │   ├── evidence-canvas-interaction/     # 画布交互、连线计算与手势交互逻辑
-│   ├── evidence-agent-core/             # AI Agent 运行时集成 (Pi SDK 原生适配)
 │   └── evidence-mcp/                    # Model Context Protocol 工具服务
 └── docs/                                # 架构设计 RFC 与工作区规范
 ```

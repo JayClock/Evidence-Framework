@@ -8,14 +8,12 @@ import { describe, expect, it, vi } from 'vitest';
 import type {
   EvidenceAgentSession,
   EvidenceAgentSessionOptions,
-} from '@evidence-poc/evidence-agent-core';
-import type {
   ModelPatchRequest,
   ModelPatchResult,
   SensorOutcome,
   SensorReport,
   SensorsEngine,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 
 import { createAgentRuntime, type AgentRuntimeTransport } from './agentRuntime';
 import { createDesktopFixture } from '../renderer/test-support/modelFixture';

@@ -29,13 +29,13 @@ and no checkout of this repository. Nothing is discovered from the project
 either: an opened folder only has to hold its `.evidence/` sources.
 
 - The instructions the session starts with are code —
-  `@evidence-poc/evidence-agent-core/src/prompts/` (role, modeling red lines,
+  `@evidence-poc/evidence-agent/src/prompts/` (role, modeling red lines,
   the turn loop). They are appended to Pi's prompt, and the session asks for
   `noSkills: true`, so no working copy is scanned for `SKILL.md` and the model is
   never invited to go looking for one.
 - Every sensor — consistency, key data, timeline, scenarios and the stage gate —
-  is TypeScript. `@evidence-poc/evidence-modeling-orchestrator`
-  reads the model once per run and decides from that one read.
+  is TypeScript. `@evidence-poc/evidence-agent` reads the model once per run
+  and decides from that one read.
 - `build` and `make` first run `scripts/prepare-desktop-resources.mjs`
   (`prepare-resources` target), which copies the review page assets into the
   tree Forge ships through `extraResource` — next to `app.asar` rather than
@@ -83,8 +83,8 @@ Renderer modules map onto the four packages built earlier:
 | documents, undo, commands              | `@evidence-poc/evidence-model-core/browser`    |
 | inspector groups and fields            | `@evidence-poc/evidence-schema`                |
 | layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction`    |
-| agent session, sensor engine mode      | `@evidence-poc/evidence-agent-core`            |
-| sensors, tools                         | `@evidence-poc/evidence-modeling-orchestrator` |
+| agent session, prompts, sensor mode    | `@evidence-poc/evidence-agent`                 |
+| sensors, tools, drift audits           | `@evidence-poc/evidence-agent`                 |
 
 `/browser` is the model-core entry that excludes `node:fs`, so the renderer
 bundle never pulls a Node built-in.

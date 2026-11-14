@@ -6,7 +6,7 @@ import type {
 import type {
   ApiCoverageSummary,
   SensorIssue,
-} from '@evidence-poc/evidence-modeling-orchestrator/browser';
+} from '@evidence-poc/evidence-agent/browser';
 import type { DeliveryPreview } from './projects';
 
 /** The baseline is the document at editor open; save does not silently accept changes. */

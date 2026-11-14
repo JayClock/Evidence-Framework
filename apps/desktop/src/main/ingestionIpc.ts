@@ -9,7 +9,7 @@ import {
   parseBlueprint,
   readIngestionDraftJson,
 } from '@evidence-poc/evidence-model-core';
-import { buildIngestionPrompt } from '@evidence-poc/evidence-agent-core';
+import { buildIngestionPrompt } from '@evidence-poc/evidence-agent';
 import type { IngestionDraft } from '@evidence-poc/evidence-schema';
 
 import { EVIDENCE_INGESTION_IPC_CHANNELS } from '../shared/ipc';

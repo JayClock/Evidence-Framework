@@ -295,9 +295,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.43.15
         version: 6.43.15
-      '@evidence-poc/evidence-agent-core':
+      '@evidence-poc/evidence-agent':
         specifier: workspace:*
-        version: link:../../libs/evidence-agent-core
+        version: link:../../libs/evidence-agent
       '@evidence-poc/evidence-api':
         specifier: workspace:*
         version: link:../../libs/evidence-api
@@ -310,9 +310,6 @@ importers:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../../libs/evidence-model-core
-      '@evidence-poc/evidence-modeling-orchestrator':
-        specifier: workspace:*
-        version: link:../../libs/evidence-modeling-orchestrator
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../libs/evidence-schema
@@ -387,14 +384,26 @@ importers:
         specifier: ^4.1.16
         version: 4.3.5
 
-  libs/evidence-agent-core:
+  libs/evidence-agent:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: ^1.5.2
-        version: 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(ws@8.22.2)(zod@3.25.76)
+        version: 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(ws@8.22.2)(zod@3.25.76)
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../evidence-api
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../evidence-schema
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
+      typebox:
+        specifier: ^1.3.27
+        version: 1.4.6
 
   libs/evidence-api:
     dependencies:
@@ -462,27 +471,6 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
-
-  libs/evidence-modeling-orchestrator:
-    dependencies:
-      '@earendil-works/pi-coding-agent':
-        specifier: ^1.5.2
-        version: 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(ws@8.22.2)(zod@3.25.76)
-      '@evidence-poc/evidence-api':
-        specifier: workspace:*
-        version: link:../evidence-api
-      '@evidence-poc/evidence-model-core':
-        specifier: workspace:*
-        version: link:../evidence-model-core
-      '@evidence-poc/evidence-schema':
-        specifier: workspace:*
-        version: link:../evidence-schema
-      tslib:
-        specifier: ^2.3.0
-        version: 2.9.1
-      typebox:
-        specifier: ^1.3.27
-        version: 1.4.6
 
   libs/evidence-schema:
     dependencies:
@@ -7632,9 +7620,9 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.2': {}
 
-  '@earendil-works/pi-agent-core@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)':
+  '@earendil-works/pi-agent-core@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)':
     dependencies:
-      '@earendil-works/pi-ai': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
+      '@earendil-works/pi-ai': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
       '@earendil-works/pi-schema': 1.5.2
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-node'
@@ -7649,16 +7637,16 @@ snapshots:
       - ws
       - zod
 
-  '@earendil-works/pi-ai@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)':
+  '@earendil-works/pi-ai@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)':
     dependencies:
       '@anthropic-ai/sdk': 0.129.0(zod@3.25.76)
       '@aws-sdk/client-bedrock-runtime': 3.1127.0
       '@earendil-works/pi-schema': 1.5.2
       '@earendil-works/pi-telemetry': 1.5.2
-      '@google/genai': 2.21.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(supports-color@8.1.1)
+      '@google/genai': 2.21.0(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(supports-color@10.2.2)
       '@smithy/node-http-handler': 4.12.1
-      http-proxy-agent: 9.1.0(supports-color@8.1.1)
-      https-proxy-agent: 9.1.0(supports-color@8.1.1)
+      http-proxy-agent: 9.1.0(supports-color@10.2.2)
+      https-proxy-agent: 9.1.0(supports-color@10.2.2)
       openai: 7.19.0(@aws-sdk/credential-provider-node@3.972.95)(@smithy/signature-v4@5.7.5)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
       partial-json: 0.1.7
     transitivePeerDependencies:
@@ -7678,10 +7666,10 @@ snapshots:
     dependencies:
       quickjs-wasi: 3.6.2
 
-  '@earendil-works/pi-coding-agent@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(ws@8.22.2)(zod@3.25.76)':
+  '@earendil-works/pi-coding-agent@1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(ws@8.22.2)(zod@3.25.76)':
     dependencies:
-      '@earendil-works/pi-agent-core': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
-      '@earendil-works/pi-ai': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@8.1.1)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
+      '@earendil-works/pi-agent-core': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
+      '@earendil-works/pi-ai': 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(undici@8.12.3)(ws@8.22.2)(zod@3.25.76)
       '@earendil-works/pi-codemode': 1.5.2
       '@earendil-works/pi-mcp': 1.5.2
       '@earendil-works/pi-tui': 1.5.2
@@ -8198,14 +8186,14 @@ snapshots:
 
   '@gar/promisify@1.1.3': {}
 
-  '@google/genai@2.21.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76))(supports-color@8.1.1)':
+  '@google/genai@2.21.0(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(supports-color@10.2.2)':
     dependencies:
-      google-auth-library: 10.9.1(supports-color@8.1.1)
+      google-auth-library: 10.9.1(supports-color@10.2.2)
       p-retry: 4.6.2
       protobufjs: 7.6.6
       ws: 8.22.2
     optionalDependencies:
-      '@modelcontextprotocol/sdk': 1.32.2(supports-color@8.1.1)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.32.2(supports-color@10.2.2)(zod@3.25.76)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8386,6 +8374,29 @@ snapshots:
       cross-spawn: 7.0.6
 
   '@marijn/find-cluster-break@1.0.4': {}
+
+  '@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76)':
+    dependencies:
+      '@hono/node-server': 2.1.6(hono@4.13.17)
+      ajv: 8.20.0
+      ajv-formats: 3.0.1
+      content-type: 1.0.5
+      cors: 2.8.6
+      cross-spawn: 7.0.6
+      eventsource: 3.0.7
+      eventsource-parser: 3.1.1
+      express: 5.3.0(supports-color@10.2.2)
+      express-rate-limit: 8.7.4(express@5.3.0(supports-color@10.2.2))(supports-color@10.2.2)
+      hono: 4.13.17
+      jose: 6.2.17
+      json-schema-typed: 8.0.2
+      pkce-challenge: 5.0.1
+      raw-body: 3.0.2
+      zod: 3.25.76
+      zod-to-json-schema: 3.25.2(zod@3.25.76)
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   '@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76)':
     dependencies:
@@ -9856,6 +9867,21 @@ snapshots:
 
   bluebird@3.7.2: {}
 
+  body-parser@2.4.0(supports-color@10.2.2):
+    dependencies:
+      bytes: 3.1.2
+      content-type: 2.1.0
+      debug: 4.4.3(supports-color@10.2.2)
+      http-errors: 2.0.1
+      iconv-lite: 0.7.3
+      on-finished: 2.4.2
+      qs: 6.17.1
+      raw-body: 3.0.2
+      type-is: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   body-parser@2.4.0(supports-color@8.1.1):
     dependencies:
       bytes: 3.1.2
@@ -10753,6 +10779,15 @@ snapshots:
 
   exponential-backoff@3.1.3: {}
 
+  express-rate-limit@8.7.4(express@5.3.0(supports-color@10.2.2))(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+      express: 5.3.0(supports-color@10.2.2)
+      ip-address: 10.7.6
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   express-rate-limit@8.7.4(express@5.3.0(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -10760,6 +10795,40 @@ snapshots:
       ip-address: 10.7.6
     transitivePeerDependencies:
       - supports-color
+
+  express@5.3.0(supports-color@10.2.2):
+    dependencies:
+      accepts: 2.0.0
+      body-parser: 2.4.0(supports-color@10.2.2)
+      content-disposition: 2.0.1
+      content-type: 2.1.0
+      cookie: 0.7.2
+      cookie-signature: 1.2.2
+      debug: 4.4.3(supports-color@10.2.2)
+      depd: 2.0.0
+      encodeurl: 2.0.1
+      escape-html: 1.0.3
+      etag: 1.8.1
+      finalhandler: 2.1.1(supports-color@10.2.2)
+      fresh: 2.0.0
+      http-errors: 2.0.1
+      merge-descriptors: 2.0.0
+      mime-types: 3.0.2
+      on-finished: 2.4.2
+      once: 1.4.0
+      parseurl: 1.3.3
+      proxy-addr: 2.0.8
+      qs: 6.17.1
+      range-parser: 1.3.0
+      router: 2.2.0(supports-color@10.2.2)
+      send: 1.2.1(supports-color@10.2.2)
+      serve-static: 2.2.1(supports-color@10.2.2)
+      statuses: 2.0.2
+      type-is: 2.1.0
+      vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   express@5.3.0(supports-color@8.1.1):
     dependencies:
@@ -10905,6 +10974,18 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
+  finalhandler@2.1.1(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+      encodeurl: 2.0.1
+      escape-html: 1.0.3
+      on-finished: 2.4.2
+      parseurl: 1.3.3
+      statuses: 2.0.2
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   finalhandler@2.1.1(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -11048,17 +11129,17 @@ snapshots:
   gar@1.0.4:
     optional: true
 
-  gaxios@7.3.1(supports-color@8.1.1):
+  gaxios@7.3.1(supports-color@10.2.2):
     dependencies:
       extend: 3.0.2
-      https-proxy-agent: 7.0.6(supports-color@8.1.1)
+      https-proxy-agent: 7.0.6(supports-color@10.2.2)
       node-fetch: 3.3.2
     transitivePeerDependencies:
       - supports-color
 
-  gcp-metadata@8.1.2(supports-color@8.1.1):
+  gcp-metadata@8.1.2(supports-color@10.2.2):
     dependencies:
-      gaxios: 7.3.1(supports-color@8.1.1)
+      gaxios: 7.3.1(supports-color@10.2.2)
       google-logging-utils: 1.1.3
       json-bigint: 1.0.0
     transitivePeerDependencies:
@@ -11174,12 +11255,12 @@ snapshots:
       define-properties: 1.2.1
       gopd: 1.2.0
 
-  google-auth-library@10.9.1(supports-color@8.1.1):
+  google-auth-library@10.9.1(supports-color@10.2.2):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 7.3.1(supports-color@8.1.1)
-      gcp-metadata: 8.1.2(supports-color@8.1.1)
+      gaxios: 7.3.1(supports-color@10.2.2)
+      gcp-metadata: 8.1.2(supports-color@10.2.2)
       google-logging-utils: 1.1.3
       jws: 4.0.1
     transitivePeerDependencies:
@@ -11291,10 +11372,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  http-proxy-agent@9.1.0(supports-color@8.1.1):
+  http-proxy-agent@9.1.0(supports-color@10.2.2):
     dependencies:
       agent-base: 9.0.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3(supports-color@10.2.2)
       proxy-agent-negotiate: 1.1.0
     transitivePeerDependencies:
       - kerberos
@@ -11365,10 +11446,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@9.1.0(supports-color@8.1.1):
+  https-proxy-agent@9.1.0(supports-color@10.2.2):
     dependencies:
       agent-base: 9.0.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3(supports-color@10.2.2)
       proxy-agent-negotiate: 1.1.0
     transitivePeerDependencies:
       - kerberos
@@ -12831,6 +12912,17 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.2.18
       '@rolldown/binding-win32-x64-msvc': 1.2.18
 
+  router@2.2.0(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+      depd: 2.0.0
+      is-promise: 4.0.0
+      parseurl: 1.3.3
+      path-to-regexp: 8.4.2
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   router@2.2.0(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -12912,6 +13004,23 @@ snapshots:
 
   semver@7.8.6: {}
 
+  send@1.2.1(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+      encodeurl: 2.0.1
+      escape-html: 1.0.3
+      etag: 1.8.1
+      fresh: 2.0.0
+      http-errors: 2.0.1
+      mime-types: 3.0.2
+      ms: 2.1.3
+      on-finished: 2.4.2
+      range-parser: 1.3.0
+      statuses: 2.0.2
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   send@1.2.1(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -12931,6 +13040,16 @@ snapshots:
   serialize-error@7.0.1:
     dependencies:
       type-fest: 0.13.1
+    optional: true
+
+  serve-static@2.2.1(supports-color@10.2.2):
+    dependencies:
+      encodeurl: 2.0.1
+      escape-html: 1.0.3
+      parseurl: 1.3.3
+      send: 1.2.1(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
     optional: true
 
   serve-static@2.2.1(supports-color@8.1.1):

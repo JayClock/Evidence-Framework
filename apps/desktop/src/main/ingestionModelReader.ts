@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { createEvidenceAgentSession } from '@evidence-poc/evidence-agent-core';
+import { createEvidenceAgentSession } from '@evidence-poc/evidence-agent';
 
 import type { IngestionTextGenerator } from './ingestionIpc';
 

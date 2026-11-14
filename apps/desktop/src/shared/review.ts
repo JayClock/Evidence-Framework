@@ -1,5 +1,5 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import type { WorkbenchData } from '@evidence-poc/evidence-visualization';
 
 export interface PreviewReviewInput {

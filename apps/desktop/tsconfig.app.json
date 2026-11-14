@@ -28,9 +28,6 @@
       "path": "../../libs/evidence-schema/tsconfig.lib.json"
     },
     {
-      "path": "../../libs/evidence-modeling-orchestrator/tsconfig.lib.json"
-    },
-    {
       "path": "../../libs/evidence-model-core/tsconfig.lib.json"
     },
     {
@@ -43,7 +40,7 @@
       "path": "../../libs/evidence-api/tsconfig.lib.json"
     },
     {
-      "path": "../../libs/evidence-agent-core/tsconfig.lib.json"
+      "path": "../../libs/evidence-agent/tsconfig.lib.json"
     }
   ]
 }

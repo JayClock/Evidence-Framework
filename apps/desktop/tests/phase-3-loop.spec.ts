@@ -4,20 +4,17 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createSensorsEngine,
+  type EvidenceAgentSession,
+  type EvidenceAgentSessionOptions,
   type ModelPatchRequest,
   type SensorReport,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 import {
   createModelSession,
   decodeModelPatch,
   readModelDirectory,
 } from '@evidence-poc/evidence-model-core';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
-
-import type {
-  EvidenceAgentSession,
-  EvidenceAgentSessionOptions,
-} from '@evidence-poc/evidence-agent-core';
 
 import { createAgentRuntime } from '../src/main/agentRuntime';
 

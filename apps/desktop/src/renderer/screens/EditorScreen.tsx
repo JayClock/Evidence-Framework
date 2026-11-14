@@ -10,7 +10,7 @@ import {
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';

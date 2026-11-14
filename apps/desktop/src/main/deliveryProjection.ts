@@ -1,4 +1,4 @@
-import { checkNativeApiSensor } from '@evidence-poc/evidence-modeling-orchestrator';
+import { checkNativeApiSensor } from '@evidence-poc/evidence-agent';
 import { renderApiDiff } from '@evidence-poc/evidence-api';
 import type {
   LiveDeliveryInput,

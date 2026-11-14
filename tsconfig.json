@@ -13,10 +13,7 @@
       "path": "./libs/evidence-canvas-interaction"
     },
     {
-      "path": "./libs/evidence-agent-core"
-    },
-    {
-      "path": "./libs/evidence-modeling-orchestrator"
+      "path": "./libs/evidence-agent"
     },
     {
       "path": "./libs/evidence-mcp"

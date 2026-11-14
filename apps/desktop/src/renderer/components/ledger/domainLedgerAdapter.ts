@@ -9,7 +9,7 @@ import {
   type KeyDataSourceKind,
   type ValueType,
 } from '@evidence-poc/evidence-schema';
-import type { SensorSeverity } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorSeverity } from '@evidence-poc/evidence-agent/browser';
 
 import type { DiagnosticIndex } from '../../state/diagnosticIndex';
 import { entityKindLabel } from '../canvas/colors';

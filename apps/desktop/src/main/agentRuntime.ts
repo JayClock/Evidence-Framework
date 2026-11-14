@@ -3,22 +3,20 @@ import { validateLiveDeliveryInput } from './deliveryProjection';
 import path from 'node:path';
 
 import {
-  createEvidenceAgentSession,
-  type AgentStreamEvent,
-  type EvidenceAgentSession,
-  type EvidenceAgentSessionOptions,
-} from '@evidence-poc/evidence-agent-core';
-import {
   TOOL_NAMES,
+  createEvidenceAgentSession,
   createEvidenceToolsExtension,
   createSensorsEngine,
+  type AgentStreamEvent,
   type CanvasContext,
+  type EvidenceAgentSession,
+  type EvidenceAgentSessionOptions,
   type ModelPatchRequest,
   type ModelPatchResult,
   type SensorOutcome,
   type SensorReport,
   type SensorsEngine,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 import {
   readModelBundle,
   readModelDirectory,

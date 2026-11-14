@@ -2,9 +2,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/libs/evidence-agent-core',
+  cacheDir: '../../node_modules/.vite/libs/evidence-agent',
   test: {
-    name: 'evidence-agent-core',
+    name: 'evidence-agent',
     watch: false,
     globals: true,
     environment: 'node',

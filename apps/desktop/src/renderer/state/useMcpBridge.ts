@@ -10,7 +10,7 @@ import type {
   DomainModelDocument,
   ValidationResult,
 } from '@evidence-poc/evidence-schema';
-import type { SensorReport } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorReport } from '@evidence-poc/evidence-agent/browser';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import type {

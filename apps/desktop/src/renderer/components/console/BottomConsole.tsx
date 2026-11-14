@@ -10,7 +10,7 @@ import {
 import type {
   SensorIssue,
   SensorReport,
-} from '@evidence-poc/evidence-modeling-orchestrator/browser';
+} from '@evidence-poc/evidence-agent/browser';
 
 import type { PreviewReviewInput } from '../../../shared/review';
 import type { DeliveryHubController } from '../../state/useDeliveryHub';

@@ -15,17 +15,17 @@ npx nx start desktop
 | -------------------------------------------------------------- | ------------------------------------------------- | ------------ |
 | model parsing, CEL, scope, simulation, timeline, FM report       | `libs/evidence-model-core/src/validation/`         | process      |
 | lineage, role-play packet, `check`/`compile`/`simulate` commands | `libs/evidence-model-core/src/derive/`             | process      |
-| sensors, stage gate, agent tools                                | `libs/evidence-modeling-orchestrator`             | process      |
+| agent session, sensors, stage gate, agent tools                 | `libs/evidence-agent`                             | process      |
 | API contract projection, OpenAPI, HTTP journeys                 | `libs/evidence-api` (`evidence-api` command)       | process      |
 | offline review page                                             | `libs/evidence-visualization` (`evidence-workbench` command) | process |
-| interview and modeling prompts                                  | `libs/evidence-agent-core/src/prompts/`             | prompt layer |
+| interview and modeling prompts                                  | `libs/evidence-agent/src/prompts/`                 | prompt layer |
 
 There is no skill tree. The agent's instructions are code, and the data they
 used to point at belongs to the library that consumes it:
 
 | What the agent or a generator needs | Where it lives |
 | ----------------------------------- | -------------- |
-| the prompt the session starts with   | `libs/evidence-agent-core/src/prompts/` |
+| the prompt the session starts with   | `libs/evidence-agent/src/prompts/` |
 | the FM and API JSON Schemas          | `libs/evidence-schema/schemas/`, `libs/evidence-api/schemas/` |
 | the page templates the generator inlines | `libs/evidence-visualization/assets/` |
 

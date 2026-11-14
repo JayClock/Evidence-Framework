@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type {
   SensorReport,
   SensorIssue,
-} from '@evidence-poc/evidence-modeling-orchestrator/browser';
+} from '@evidence-poc/evidence-agent/browser';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { createDesktopFixture } from '../test-support/modelFixture';

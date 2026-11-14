@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { decideGovernance } from '@evidence-poc/evidence-agent-core';
+import { decideGovernance } from '@evidence-poc/evidence-agent';
 
 import { createSimulationService } from './mcpSimulationService';
 

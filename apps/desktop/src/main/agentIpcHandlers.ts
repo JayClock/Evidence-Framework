@@ -7,7 +7,7 @@ import type {
   ModelPatchRequest,
   ModelPatchResult,
   SensorReport,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 
 import {
   EVIDENCE_AGENT_IPC_CHANNELS,

@@ -2,7 +2,7 @@ import {
   createSensorsEngine,
   type KeyDataAuditReport,
   type SensorsEngine,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 import type {
   McpKeyDataAudit,
   McpStageGateResult,

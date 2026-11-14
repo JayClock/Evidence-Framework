@@ -8,7 +8,7 @@ import {
   readProductionTrace,
   runNativeDriftAudit,
   type DriftAudit,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 import { replayValidationSuite } from '@evidence-poc/evidence-model-core';
 
 import { modelSourceOf } from './modelSource';

@@ -1,11 +1,11 @@
 import type { LiveDeliveryInput } from './delivery';
-import type { AgentStreamEvent } from '@evidence-poc/evidence-agent-core';
 import type {
+  AgentStreamEvent,
   CanvasContext,
   ModelPatchRequest,
   ModelPatchResult,
   SensorReport,
-} from '@evidence-poc/evidence-modeling-orchestrator';
+} from '@evidence-poc/evidence-agent';
 
 /**
  * IPC channels shared by the main process, the preload bridge and the renderer.

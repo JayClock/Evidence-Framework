@@ -5,7 +5,7 @@ import {
   compiledDocument,
   loadValidationSuite,
 } from '@evidence-poc/evidence-model-core';
-import { buildSensorReport } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import { buildSensorReport } from '@evidence-poc/evidence-agent/browser';
 import {
   isDomainModelDocumentShape,
   strictValidateDomainModel,

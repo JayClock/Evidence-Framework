@@ -28,7 +28,7 @@ import {
   type CanvasViewMode,
 } from './CanvasStage';
 import type { DiagnosticIndex } from '../../state/diagnosticIndex';
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import { ScopeFilterControl } from './ScopeFilterControl';
 import { BusinessLegend } from './BusinessLegend';
 import { RULER_THICKNESS, RulerTicks } from './RulerTicks';

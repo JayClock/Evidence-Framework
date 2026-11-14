@@ -8,7 +8,7 @@ import type {
   AgentStreamEvent,
   EvidenceAgentSession,
   EvidenceAgentSessionOptions,
-} from '@evidence-poc/evidence-agent-core';
+} from '@evidence-poc/evidence-agent';
 
 import { createModelIngestionReader } from './ingestionModelReader';
 
@@ -44,7 +44,7 @@ const scriptedSession = (
   return ((options: EvidenceAgentSessionOptions) => {
     log.push(options);
     return session;
-  }) as unknown as typeof import('@evidence-poc/evidence-agent-core').createEvidenceAgentSession;
+  }) as unknown as typeof import('@evidence-poc/evidence-agent').createEvidenceAgentSession;
 };
 
 describe('reading prose with the configured model', () => {

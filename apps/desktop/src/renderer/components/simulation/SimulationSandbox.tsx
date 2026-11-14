@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { DRIFT_KIND_LABELS } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import { DRIFT_KIND_LABELS } from '@evidence-poc/evidence-agent/browser';
 
 import { useDriftAudit, useSimulationReplay } from '../../state/useSimulation';
 

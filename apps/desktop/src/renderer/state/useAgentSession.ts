@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { AgentStreamEvent } from '@evidence-poc/evidence-agent-core';
+import type { AgentStreamEvent } from '@evidence-poc/evidence-agent';
 
 export interface AgentActivity {
   /** Stable id: the tool call id from the stream. */

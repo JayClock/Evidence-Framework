@@ -15,7 +15,7 @@ import {
   diagnosticColor,
   type DiagnosticIndex,
 } from '../../state/diagnosticIndex';
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import { CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
 import { LifecycleBanner } from './LifecycleBanner';

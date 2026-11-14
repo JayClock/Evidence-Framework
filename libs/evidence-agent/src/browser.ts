@@ -33,3 +33,9 @@ export {
   type ArchitectureDriftKind,
   type DriftAudit,
 } from './sensors/native/driftSensor.js';
+
+/**
+ * The projected agent event stream the renderer draws from. Type-only: the
+ * session harness behind it stays in the process entry (`.`).
+ */
+export type { AgentStreamEvent } from './session/streamEvents.js';

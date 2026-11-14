@@ -1,7 +1,7 @@
 import type {
   SensorIssue,
   SensorReport,
-} from '@evidence-poc/evidence-modeling-orchestrator/browser';
+} from '@evidence-poc/evidence-agent/browser';
 
 interface DiagnosticsDrawerProps {
   report: SensorReport;

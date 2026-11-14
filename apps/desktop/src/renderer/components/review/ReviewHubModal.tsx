@@ -3,7 +3,7 @@ import type {
   PreviewReviewInput,
   PreviewReviewResult,
 } from '../../../shared/review';
-import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 
 export const ReviewHubModal = ({
   input,
