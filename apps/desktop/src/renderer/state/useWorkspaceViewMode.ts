@@ -37,8 +37,11 @@ const isEditable = (target: EventTarget | null): boolean => {
  *
  * The mode is view state, not document state: it never enters the model, the
  * undo history or a saved file, so flipping to the ledger and back costs the
- * modeler nothing. `V` flips, `Mod+1/2/3` names a mode outright; a modifier key
+ * modeler nothing. `V` flips, `Alt+1/2/3` names a mode outright; a modifier key
  * combination is allowed while typing, a bare letter is not.
+ *
+ * The digits are read from `event.code` because macOS turns `Alt+2` into `™`:
+ * the letter a layout produces is not what the chord means.
  */
 export const useWorkspaceViewMode = (
   initialMode: WorkspaceViewMode = 'graph',
@@ -51,25 +54,21 @@ export const useWorkspaceViewMode = (
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      // A surface that already consumed the key owns it: the ledger studio and
+      // A surface that already consumed the key owns it: the ledger sheet and
       // the copilot composer both sit above the workspace.
-      if (event.defaultPrevented || event.altKey) {
+      if (event.defaultPrevented) {
         return;
       }
 
-      const mod = event.metaKey || event.ctrlKey;
-
-      if (mod) {
-        if (event.shiftKey) {
-          return;
-        }
-
+      // `Mod+1..4` belongs to the activity rail, so the view modes sit one
+      // modifier further out and never fight it for a digit.
+      if (event.altKey) {
         const target =
-          event.key === '1'
+          event.code === 'Digit1'
             ? 'graph'
-            : event.key === '2'
+            : event.code === 'Digit2'
               ? 'table'
-              : event.key === '3'
+              : event.code === 'Digit3'
                 ? 'split'
                 : undefined;
 
@@ -81,7 +80,11 @@ export const useWorkspaceViewMode = (
         return;
       }
 
-      if (event.shiftKey || isEditable(event.target)) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey) {
+        return;
+      }
+
+      if (isEditable(event.target)) {
         return;
       }
 

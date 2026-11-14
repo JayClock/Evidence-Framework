@@ -10,7 +10,10 @@ import {
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
-import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
+import type {
+  SensorIssue,
+  SensorReport,
+} from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
   type DomainModelDocument,
@@ -28,8 +31,12 @@ import {
   type CommandTarget,
 } from '../components/command/CommandPalette';
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
-import { LeftSidebar } from '../components/LeftSidebar';
-import { RightWorkbench } from '../components/RightWorkbench';
+import { ActivityDrawer } from '../components/layout/ActivityDrawer';
+import { ActivityRail } from '../components/layout/ActivityRail';
+import { TopologyDrawer } from '../components/layout/TopologyDrawer';
+import { AgentCopilot } from '../components/agent/AgentCopilot';
+import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
+import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
 import { TopHeader } from '../components/TopHeader';
 import {
   CanvasViewport,
@@ -37,6 +44,7 @@ import {
   createDiagnosticIndex,
   type CanvasViewMode,
 } from '@evidence-poc/desktop-feature-canvas';
+import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -59,6 +67,10 @@ import { useMcpBridge } from '../state/useMcpBridge';
 import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
+import {
+  type RailTabId,
+  useWorkspaceLayoutState,
+} from '../state/useWorkspaceLayoutState';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 type LoadState =
@@ -138,12 +150,89 @@ interface EditorWorkspaceProps {
   initialDocument: DomainModelDocument;
 }
 
+const RailDiagnostics = ({
+  report,
+  reportLoading,
+  reportError,
+  reportStale,
+  activeIssueIds,
+  onFocusIssue,
+  onRerun,
+  onClose,
+}: {
+  report: SensorReport | null;
+  reportLoading: boolean;
+  reportError: string | null;
+  reportStale: boolean;
+  activeIssueIds: readonly string[];
+  onFocusIssue: (issue: SensorIssue) => void;
+  onRerun: () => void;
+  onClose: () => void;
+}) => {
+  if (report === null) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-[11px] text-evidence-muted">
+        {reportError === null ? null : (
+          <p role="alert" className="text-[#b42318]">
+            {reportError}
+          </p>
+        )}
+        <p>{reportLoading ? '正在运行检查器…' : '尚未运行检查器'}</p>
+        <button
+          type="button"
+          onClick={onRerun}
+          className="rounded border border-evidence-line px-2 py-0.5 hover:text-evidence-ink"
+        >
+          立即检查
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex shrink-0 items-center justify-between border-b border-evidence-line px-2 py-1">
+        <span className="text-[10px] text-evidence-muted">
+          {reportStale ? '检查结果已过期' : `文档修订 ${report.documentRevision}`}
+        </span>
+        <button
+          type="button"
+          onClick={onRerun}
+          className="rounded border border-evidence-line px-1.5 py-0.5 text-[10px] text-evidence-muted hover:text-evidence-ink"
+        >
+          重新检查
+        </button>
+      </div>
+      <div className="min-h-0 flex-1 overflow-hidden">
+        <DiagnosticsDrawer
+          embedded
+          report={report}
+          selectedIssueIds={activeIssueIds}
+          stale={reportStale}
+          onClose={onClose}
+          onFocusIssue={onFocusIssue}
+        />
+      </div>
+    </div>
+  );
+};
+
+const RAIL_TITLES: Record<RailTabId, string> = {
+  topology: '业务结构',
+  diagnostics: '门禁与诊断',
+  simulation: '场景仿真',
+  copilot: 'AI 协同',
+};
+
 const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const workspaceView = useWorkspaceViewMode();
+  // Every drawer, sheet and overlay is one object, so the shell renders a
+  // projection instead of coordinating four independent booleans.
+  const layout = useWorkspaceLayoutState();
   const reviewExport = useReviewExport(project.rootPath);
   const { state, save, reloadFromDisk, dismissExternalChange } =
     useEditorSession(project, initialDocument, viewMode);
@@ -262,7 +351,18 @@ const EditorWorkspace = ({
     token: number;
   } | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const [searchFocusToken, setSearchFocusToken] = useState(0);
   const tokenRef = useRef(0);
+  // The search box only exists while its drawer is open, so the chord has to
+  // open the drawer first and land the caret on the next paint.
+  const focusSearch = useCallback(() => {
+    layout.setActiveRailTab('topology');
+    setSearchFocusToken((token) => token + 1);
+  }, [layout.setActiveRailTab]);
+  useEffect(() => {
+    if (layout.activeRailTab !== 'topology' || searchFocusToken === 0) return;
+    searchInputRef.current?.focus();
+  }, [layout.activeRailTab, searchFocusToken]);
   // ⌘K bumps this, which moves the caret into the agent composer.
   const [agentFocusToken, setAgentFocusToken] = useState(0);
 
@@ -282,9 +382,8 @@ const EditorWorkspace = ({
     setFocusRequest({ nodeId, token: tokenRef.current });
   }, [workspaceView.mode, state.selection.nodeId]);
 
-  // The rails are also collapsed from the keyboard, and the imperative handle is
-  // the only way to move a panel without a pointer drag.
-  const leftRail = useRef<ImperativePanelHandle>(null);
+  // The inspector is also collapsed from the keyboard, and the imperative handle
+  // is the only way to move a panel without a pointer drag.
   const rightRail = useRef<ImperativePanelHandle>(null);
   const toggleRail = useCallback(
     (rail: RefObject<ImperativePanelHandle | null>) => {
@@ -412,7 +511,7 @@ const EditorWorkspace = ({
         state.session.redo();
       },
       setViewMode: workspaceView.setMode,
-      focusSearch: () => searchInputRef.current?.focus(),
+      focusSearch,
       openReview: () => openConsole('review'),
       exportReview: () => void reviewExport.exportPage(),
       exportDiff: () => void reviewExport.exportPage(true),
@@ -420,11 +519,14 @@ const EditorWorkspace = ({
       openSandbox: () => openConsole('simulation'),
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
-        rightRail.current?.expand();
+        layout.setActiveRailTab('copilot');
         setAgentFocusToken((token) => token + 1);
       },
+      openRail: layout.setActiveRailTab,
     }),
     [
+      focusSearch,
+      layout.setActiveRailTab,
       openConsole,
       reviewExport.exportPage,
       save,
@@ -467,7 +569,7 @@ const EditorWorkspace = ({
         state.session.redo();
       },
       save: () => void save(),
-      focusSearch: () => searchInputRef.current?.focus(),
+      focusSearch,
       openCommandPalette: () => setPaletteOpen(true),
       exportReview: () => void reviewExport.exportPage(),
       rerunSensors: () => void sensors.refresh(),
@@ -477,7 +579,7 @@ const EditorWorkspace = ({
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
       toggleLeftRail: () => {
-        toggleRail(leftRail);
+        layout.toggleRailTab('topology');
       },
       toggleRightRail: () => {
         toggleRail(rightRail);
@@ -492,6 +594,8 @@ const EditorWorkspace = ({
       patchReview.review,
       requestZoom,
       revertPatch,
+      focusSearch,
+      layout.toggleRailTab,
       reviewExport.exportPage,
       save,
       sensors.refresh,
@@ -572,39 +676,106 @@ const EditorWorkspace = ({
         )}
 
         {/*
-          The studio is one split view: outline, stage and workbench share the
-          width, and the console takes the stage's lower half instead of opening
-          over it. Every size is draggable and remembered across restarts.
+          The studio is the canvas plus one inspector: outline, diagnostics,
+          sandbox and copilot are drawers the 48px activity rail opens, so the
+          canvas owns every pixel the modeler is not actively using, and the
+          console takes the stage's lower half instead of opening over it.
         */}
-        <div className="flex min-h-0 flex-1">
+        <div className="relative flex min-h-0 flex-1">
+          <ActivityRail
+            activeTab={layout.activeRailTab}
+            onSelect={layout.toggleRailTab}
+            badges={{
+              ...(sensors.report === null
+                ? {}
+                : {
+                    diagnostics: {
+                      count:
+                        sensors.report.blockCount + sensors.report.warnCount,
+                      tone:
+                        sensors.report.blockCount > 0
+                          ? ('error' as const)
+                          : sensors.report.warnCount > 0
+                            ? ('warning' as const)
+                            : ('default' as const),
+                    },
+                  }),
+              ...(patchReview.review === null
+                ? {}
+                : { copilot: { tone: 'default' as const } }),
+            }}
+          />
+
+          {layout.activeRailTab === null ? null : (
+            <div
+              className={
+                layout.isRailPinned
+                  ? 'h-full w-[300px] shrink-0'
+                  : 'absolute inset-y-0 left-12 z-30 w-[320px]'
+              }
+            >
+              <ActivityDrawer
+                title={RAIL_TITLES[layout.activeRailTab]}
+                pinned={layout.isRailPinned}
+                onTogglePinned={layout.toggleRailPinned}
+                onClose={() => layout.setActiveRailTab(null)}
+              >
+                {layout.activeRailTab === 'topology' ? (
+                  <TopologyDrawer
+                    graph={state.graph}
+                    layout={state.layout}
+                    selectedNodeId={state.selection.nodeId}
+                    searchTerm={searchTerm}
+                    onSearchTermChange={setSearchTerm}
+                    searchInputRef={searchInputRef}
+                    onFocusNode={focusNode}
+                  />
+                ) : null}
+
+                {layout.activeRailTab === 'diagnostics' ? (
+                  <RailDiagnostics
+                    report={sensors.report}
+                    reportLoading={sensors.loading}
+                    reportError={sensors.error}
+                    reportStale={diagnosticsStale}
+                    activeIssueIds={activeIssueIds}
+                    onFocusIssue={focusIssue}
+                    onRerun={() => void sensors.refresh()}
+                    onClose={() => layout.setActiveRailTab(null)}
+                  />
+                ) : null}
+
+                {layout.activeRailTab === 'simulation' ? (
+                  <SimulationSandbox
+                    embedded
+                    rootPath={project.rootPath}
+                    onClose={() => layout.setActiveRailTab(null)}
+                    onFocusEntity={focusNode}
+                  />
+                ) : null}
+
+                {layout.activeRailTab === 'copilot' ? (
+                  <AgentCopilot
+                    controller={agent}
+                    patchReview={patchReview}
+                    focus={promptFocus}
+                    onClearFocus={() => state.session.clearSelection()}
+                    onFocusEntity={focusNode}
+                    focusToken={agentFocusToken}
+                    prefill={reviewPrompt}
+                    onPrefillConsumed={() => setReviewPrompt(null)}
+                  />
+                ) : null}
+              </ActivityDrawer>
+            </div>
+          )}
+
+          <div className="flex min-h-0 min-w-0 flex-1">
           <ResizablePanelGroup
             direction="horizontal"
-            autoSaveId="evidence-studio-horizontal-v1"
+            autoSaveId="evidence-studio-horizontal-v2"
           >
-            <ResizablePanel
-              id="left-rail"
-              order={1}
-              defaultSize={18}
-              minSize={12}
-              maxSize={32}
-              collapsible
-              collapsedSize={0}
-              ref={leftRail}
-            >
-              <LeftSidebar
-                graph={state.graph}
-                layout={state.layout}
-                selectedNodeId={state.selection.nodeId}
-                searchTerm={searchTerm}
-                onSearchTermChange={setSearchTerm}
-                searchInputRef={searchInputRef}
-                onFocusNode={focusNode}
-              />
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-
-            <ResizablePanel id="center-stage" order={2} minSize={35}>
+            <ResizablePanel id="center-stage" order={1} minSize={35}>
               <ResizablePanelGroup
                 direction="vertical"
                 autoSaveId="evidence-studio-vertical-v1"
@@ -700,29 +871,22 @@ const EditorWorkspace = ({
 
             <ResizablePanel
               id="right-rail"
-              order={3}
-              defaultSize={26}
-              minSize={16}
-              maxSize={40}
+              order={2}
+              defaultSize={22}
+              minSize={14}
+              maxSize={32}
               collapsible
               collapsedSize={0}
               ref={rightRail}
             >
-              <RightWorkbench
+              <RightInspector
                 graph={state.graph}
                 session={state.session}
                 selection={state.selection}
-                agent={agent}
-                patchReview={patchReview}
-                focus={promptFocus}
-                onClearFocus={() => state.session.clearSelection()}
-                onFocusEntity={focusNode}
-                focusToken={agentFocusToken}
-                prefill={reviewPrompt}
-                onPrefillConsumed={() => setReviewPrompt(null)}
               />
             </ResizablePanel>
           </ResizablePanelGroup>
+          </div>
         </div>
 
         <BottomStatusBar

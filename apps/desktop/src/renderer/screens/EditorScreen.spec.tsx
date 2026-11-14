@@ -48,13 +48,10 @@ describe('EditorScreen', () => {
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
-    // Inspection owns the right rail by default; the copilot shares it as a tab.
-    expect(screen.getByRole('tab', { name: '属性' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    // Inspection owns the right rail by default; the copilot is a drawer.
+    expect(screen.getByText('选择画布上的业务对象查看属性。')).toBeInTheDocument();
     expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
-    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
     expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约对 1')).toBeInTheDocument();
@@ -74,24 +71,34 @@ describe('EditorScreen', () => {
     expect(screen.queryByLabelText('工作台控制台')).toBeNull();
   });
 
-  it('collapses and restores the outline rail with Cmd+B', async () => {
+  it('opens and closes the outline drawer with Cmd+B', async () => {
     readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
+    render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
-    const rail = () => container.querySelector('[data-panel-id="left-rail"]');
 
-    expect(rail()).toHaveAttribute('data-panel-collapsible', 'true');
+    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
+    fireEvent.keyDown(window, { key: 'b', metaKey: true });
+    expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
     fireEvent.keyDown(window, { key: 'b', metaKey: true });
     await waitFor(() =>
-      expect(rail()?.getAttribute('data-panel-size')).toBe('0.0'),
+      expect(screen.queryByLabelText('搜索业务对象')).toBeNull(),
     );
-    fireEvent.keyDown(window, { key: 'b', metaKey: true });
+  });
+
+  it('opens every rail drawer with Mod+1 to Mod+4', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: '1', metaKey: true });
+    expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: '4', metaKey: true });
+    expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: '4', metaKey: true });
     await waitFor(() =>
-      expect(Number(rail()?.getAttribute('data-panel-size'))).toBeGreaterThan(
-        0,
-      ),
+      expect(screen.queryByLabelText('访谈内容')).toBeNull(),
     );
   });
 
@@ -145,7 +152,8 @@ describe('EditorScreen', () => {
     expect(
       container.querySelector('[data-node-id="evidence.request"]'),
     ).toHaveAttribute('aria-disabled', 'true');
-    // The sidebar remains a full-model navigator, not a second scope filter.
+    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
+    // The drawer remains a full-model navigator, not a second scope filter.
     const request = screen
       .getAllByText('交付请求（Delivery Request）')
       .find((item) => item.closest('button') !== null)!;
@@ -374,7 +382,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
     expect(screen.getByText('新增 1')).toBeInTheDocument();
@@ -420,7 +428,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     fireEvent.click(await screen.findByRole('button', { name: '保留' }));
 
     await waitFor(() => {
@@ -467,12 +475,9 @@ describe('EditorScreen sensors', () => {
     fireEvent.click(screen.getByRole('option', { name: /采购协议/ }));
 
     // Selecting a target moves the shared selection, which the inspector reads.
-    await waitFor(() =>
-      expect(screen.getByRole('tab', { name: '属性' })).toHaveAttribute(
-        'aria-selected',
-        'true',
-      ),
-    );
+    expect(
+      await screen.findByDisplayValue('采购协议（Procurement Contract）'),
+    ).toBeInTheDocument();
   });
 
   it('runs the view commands from the hub without a header button', async () => {
@@ -494,7 +499,7 @@ describe('EditorScreen sensors', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
-    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
 
     expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
 
@@ -527,14 +532,14 @@ describe('EditorScreen dual-mode stage', () => {
     Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
   });
 
-  it('opens the whole ledger with Mod+2 and returns to the graph with Mod+1', async () => {
+  it('opens the whole ledger with Alt+2 and returns to the graph with Alt+1', async () => {
     readyProject();
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
-    fireEvent.keyDown(window, { key: '2', metaKey: true });
+    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
 
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
     expect(
@@ -542,7 +547,7 @@ describe('EditorScreen dual-mode stage', () => {
     ).toBeNull();
     expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
 
-    fireEvent.keyDown(window, { key: '1', metaKey: true });
+    fireEvent.keyDown(window, { code: 'Digit1', altKey: true });
 
     await waitFor(() =>
       expect(
@@ -577,7 +582,7 @@ describe('EditorScreen dual-mode stage', () => {
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
-    fireEvent.keyDown(window, { key: '3', metaKey: true });
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
 
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
     expect(
@@ -594,7 +599,7 @@ describe('EditorScreen dual-mode stage', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
-    fireEvent.keyDown(window, { key: '2', metaKey: true });
+    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 
     fireEvent.click(

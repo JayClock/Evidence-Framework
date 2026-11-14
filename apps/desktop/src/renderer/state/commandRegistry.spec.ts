@@ -33,6 +33,7 @@ const handlers = (): CommandHandlers => ({
   openSandbox: vi.fn(),
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
+  openRail: vi.fn(),
 });
 
 const find = (id: string, overrides: Partial<CommandCapabilities> = {}) =>
@@ -53,7 +54,20 @@ describe('buildCommands', () => {
   it('prints the chord the shortcut map actually binds', () => {
     expect(find('model.save')?.shortcut).toBe(CHORDS.save);
     expect(find('view.table')?.shortcut).toBe(CHORDS.table);
+    expect(find('view.rail-topology')?.shortcut).toBe(CHORDS.railTopology);
     expect(find('delivery.export-review')?.shortcut).toBe(CHORDS.exportReview);
+  });
+
+  it('opens a rail drawer without touching the document', () => {
+    const onRail = vi.fn();
+    const commands = buildCommands(capabilities(), {
+      ...handlers(),
+      openRail: onRail,
+    });
+
+    commands.find((command) => command.id === 'view.rail-copilot')?.perform();
+
+    expect(onRail).toHaveBeenCalledWith('copilot');
   });
 
   it('refuses to export an unsaved model and says why', () => {

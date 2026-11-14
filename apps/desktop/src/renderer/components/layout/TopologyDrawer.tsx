@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import type { DomainGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 
-interface LeftSidebarProps {
+interface TopologyDrawerProps {
   graph: DomainGraph;
   layout: DomainGraphLayout;
   selectedNodeId: string | null;
@@ -22,10 +22,13 @@ interface TreeGroup {
 }
 
 /**
- * Context hierarchy plus its objects. Contexts are containers, so they render as
- * collapsible group headers, never as selectable business objects.
+ * Context hierarchy plus its objects.
+ *
+ * Contexts are containers, so they render as collapsible group headers, never as
+ * selectable business objects. The drawer holds no chrome of its own: the
+ * activity rail decides when it is on screen and whether it floats or is pinned.
  */
-export const LeftSidebar = ({
+export const TopologyDrawer = ({
   graph,
   layout,
   selectedNodeId,
@@ -33,7 +36,7 @@ export const LeftSidebar = ({
   onSearchTermChange,
   searchInputRef,
   onFocusNode,
-}: LeftSidebarProps) => {
+}: TopologyDrawerProps) => {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
   const groups = useMemo<TreeGroup[]>(
     () =>
@@ -65,7 +68,7 @@ export const LeftSidebar = ({
   }, [layout.nodes, searchTerm]);
 
   return (
-    <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
+    <div className="flex h-full min-h-0 w-full flex-col bg-white">
       <div className="border-b border-evidence-line p-3">
         <input
           ref={searchInputRef}
@@ -205,6 +208,6 @@ export const LeftSidebar = ({
           </>
         )}
       </div>
-    </aside>
+    </div>
   );
 };

@@ -9,20 +9,20 @@ const MODES: readonly {
   {
     id: 'graph',
     label: '拓扑图',
-    hint: '按因果与泳道阅读模型（V / ⌘1）',
-    shortcut: 'V',
+    hint: '按因果与泳道阅读模型（V / ⌥1）',
+    shortcut: '⌥1',
   },
   {
     id: 'table',
     label: '总台账',
-    hint: '逐字段阅读与编辑整个模型（V / ⌘2）',
-    shortcut: '⌘2',
+    hint: '逐字段阅读与编辑整个模型（⌥2）',
+    shortcut: '⌥2',
   },
   {
     id: 'split',
     label: '分屏',
-    hint: '左边看图、右边改字段（⌘3）',
-    shortcut: '⌘3',
+    hint: '左边看图、右边改字段（⌥3）',
+    shortcut: '⌥3',
   },
 ];
 

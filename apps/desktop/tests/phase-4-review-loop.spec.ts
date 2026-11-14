@@ -57,8 +57,9 @@ describe('phase 4 review-authoring loop', () => {
     );
     render(createElement(EditorScreen, { rootPath: '/models/procurement' }));
     await screen.findByText('Phase 4');
-    // The copilot docks in the right rail, so the draft is typed there.
-    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    // The copilot docks in the activity rail's drawer, so the draft is typed
+    // there and stays as long as the drawer is open.
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     fireEvent.change(screen.getByLabelText('访谈内容'), {
       target: { value: '保留我的草稿' },
     });

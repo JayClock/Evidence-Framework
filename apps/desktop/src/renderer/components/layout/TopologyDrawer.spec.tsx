@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 
-import { LeftSidebar } from './LeftSidebar';
+import { TopologyDrawer } from './TopologyDrawer';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const setup = () => {
@@ -14,7 +14,7 @@ const setup = () => {
   const onSearchTermChange = vi.fn();
 
   const view = render(
-    <LeftSidebar
+    <TopologyDrawer
       graph={graph}
       layout={layout}
       selectedNodeId={null}
@@ -28,7 +28,7 @@ const setup = () => {
   return { ...view, graph, layout, onFocusNode, onSearchTermChange };
 };
 
-describe('LeftSidebar', () => {
+describe('TopologyDrawer', () => {
   it('lists contexts as groups and their objects as entries', () => {
     setup();
 
@@ -71,7 +71,7 @@ describe('LeftSidebar', () => {
     const onSearchTermChange = vi.fn();
 
     const { rerender } = render(
-      <LeftSidebar
+      <TopologyDrawer
         graph={graph}
         layout={layout}
         selectedNodeId={null}
@@ -89,7 +89,7 @@ describe('LeftSidebar', () => {
     expect(onSearchTermChange).toHaveBeenCalledWith('请求');
 
     rerender(
-      <LeftSidebar
+      <TopologyDrawer
         graph={graph}
         layout={layout}
         selectedNodeId={null}
@@ -107,7 +107,7 @@ describe('LeftSidebar', () => {
     expect(screen.queryByText('商品目录（Catalog）')).not.toBeInTheDocument();
 
     rerender(
-      <LeftSidebar
+      <TopologyDrawer
         graph={graph}
         layout={layout}
         selectedNodeId={null}

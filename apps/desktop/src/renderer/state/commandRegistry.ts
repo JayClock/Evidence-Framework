@@ -1,8 +1,10 @@
 import {
   Activity,
+  Bot,
   Columns2,
   FileDown,
   FlaskConical,
+  FolderTree,
   GitCompareArrows,
   Network,
   Redo2,
@@ -17,6 +19,8 @@ import {
 } from 'lucide-react';
 
 import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
+
+import type { RailTabId } from './useWorkspaceLayoutState';
 
 /**
  * One keyboard-first action.
@@ -78,9 +82,14 @@ export const CHORDS = {
   redo: '⌘+Shift+Z',
   search: '⌘+F',
   palette: '⌘+K',
-  graph: '⌘+1',
-  table: '⌘+2',
-  split: '⌘+3',
+  // The rail owns the bare digits; the three view modes sit one modifier out.
+  railTopology: '⌘+1',
+  railDiagnostics: '⌘+2',
+  railSimulation: '⌘+3',
+  railCopilot: '⌘+4',
+  graph: '⌥+1',
+  table: '⌥+2',
+  split: '⌥+3',
   review: '⌥+R',
   exportReview: '⌘+Shift+E',
   delivery: '⌥+D',
@@ -111,6 +120,7 @@ export interface CommandHandlers {
   openSandbox: () => void;
   rerunSensors: () => void;
   askAgent: () => void;
+  openRail: (tab: RailTabId) => void;
 }
 
 /**
@@ -196,9 +206,39 @@ export const buildCommands = (
       perform: () => handlers.setViewMode('split'),
     },
     {
+      id: 'view.rail-topology',
+      title: '打开业务结构抽屉',
+      subtitle: '上下文层级与业务对象导航',
+      category: 'view',
+      shortcut: CHORDS.railTopology,
+      icon: FolderTree,
+      keywords: ['rail', 'outline', 'topology', '大纲', '结构'],
+      perform: () => handlers.openRail('topology'),
+    },
+    {
+      id: 'view.rail-diagnostics',
+      title: '打开门禁与诊断抽屉',
+      subtitle: 'AST 检查、悬空引用与派生对称性',
+      category: 'view',
+      shortcut: CHORDS.railDiagnostics,
+      icon: ShieldCheck,
+      keywords: ['rail', 'diagnostics', 'lint', '门禁'],
+      perform: () => handlers.openRail('diagnostics'),
+    },
+    {
+      id: 'view.rail-copilot',
+      title: '打开 AI 协同抽屉',
+      subtitle: '多轮访谈、工具调用与补丁复核',
+      category: 'view',
+      shortcut: CHORDS.railCopilot,
+      icon: Bot,
+      keywords: ['rail', 'agent', 'copilot', '协同'],
+      perform: () => handlers.openRail('copilot'),
+    },
+    {
       id: 'navigation.search',
       title: '搜索业务对象',
-      subtitle: '把光标移进左侧大纲的搜索框',
+      subtitle: '打开业务结构抽屉，把光标移进搜索框',
       category: 'navigation',
       shortcut: CHORDS.search,
       icon: Search,
@@ -208,7 +248,7 @@ export const buildCommands = (
     {
       id: 'delivery.review',
       title: '打开审查预览',
-      subtitle: '底部控制台的模型审查页',
+      subtitle: '审查中心：逐条发现、画布定位与派单',
       category: 'delivery',
       shortcut: CHORDS.review,
       icon: ShieldCheck,

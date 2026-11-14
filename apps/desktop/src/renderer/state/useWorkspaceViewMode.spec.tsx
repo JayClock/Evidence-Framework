@@ -22,14 +22,22 @@ describe('useWorkspaceViewMode', () => {
     expect(result.current.mode).toBe('graph');
   });
 
-  it('names each mode with Mod+1, Mod+2 and Mod+3', () => {
+  it('names each mode with Alt+1, Alt+2 and Alt+3', () => {
+    const { result } = renderHook(() => useWorkspaceViewMode());
+
+    press({ code: 'Digit2', altKey: true });
+    expect(result.current.mode).toBe('table');
+    press({ code: 'Digit3', altKey: true });
+    expect(result.current.mode).toBe('split');
+    press({ code: 'Digit1', altKey: true });
+    expect(result.current.mode).toBe('graph');
+  });
+
+  it('leaves the digits to the activity rail', () => {
     const { result } = renderHook(() => useWorkspaceViewMode());
 
     press({ key: '2', metaKey: true });
-    expect(result.current.mode).toBe('table');
-    press({ key: '3', ctrlKey: true });
-    expect(result.current.mode).toBe('split');
-    press({ key: '1', metaKey: true });
+
     expect(result.current.mode).toBe('graph');
   });
 
