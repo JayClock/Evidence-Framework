@@ -81,7 +81,9 @@ describe('DeliveryHub in the console', () => {
       <DeliveryHub hub={controller()} onClose={() => undefined} embedded />,
     );
 
-    expect(screen.getByRole('region', { name: '交付中心' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: '交付中心' }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

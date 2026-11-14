@@ -68,7 +68,11 @@ export const RightWorkbench = ({
 
       <div className="min-h-0 flex-1 overflow-hidden">
         {tab === 'inspect' ? (
-          <RightInspector graph={graph} session={session} selection={selection} />
+          <RightInspector
+            graph={graph}
+            session={session}
+            selection={selection}
+          />
         ) : (
           <AgentPanel controller={agent} />
         )}

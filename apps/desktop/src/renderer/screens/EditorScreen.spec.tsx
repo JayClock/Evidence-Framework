@@ -85,7 +85,9 @@ describe('EditorScreen', () => {
     );
     fireEvent.keyDown(window, { key: 'b', metaKey: true });
     await waitFor(() =>
-      expect(Number(rail()?.getAttribute('data-panel-size'))).toBeGreaterThan(0),
+      expect(Number(rail()?.getAttribute('data-panel-size'))).toBeGreaterThan(
+        0,
+      ),
     );
   });
 

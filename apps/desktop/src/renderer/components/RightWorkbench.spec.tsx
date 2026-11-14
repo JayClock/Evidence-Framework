@@ -37,9 +37,10 @@ describe('RightWorkbench', () => {
   it('opens on inspection and keeps the agent stream one tab away', () => {
     setup();
 
-    expect(
-      screen.getByRole('tab', { name: '属性' }),
-    ).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: '属性' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     expect(
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
@@ -47,8 +48,6 @@ describe('RightWorkbench', () => {
     fireEvent.click(screen.getByRole('tab', { name: '协同' }));
 
     expect(screen.getByText('AI 访谈与操控')).toBeInTheDocument();
-    expect(
-      screen.queryByText('选择画布上的业务对象查看属性。'),
-    ).toBeNull();
+    expect(screen.queryByText('选择画布上的业务对象查看属性。')).toBeNull();
   });
 });

@@ -25,7 +25,9 @@ const delivery = (): BottomConsoleProps['delivery'] => ({
   dismissNotice: vi.fn(),
 });
 
-const props = (overrides: Partial<BottomConsoleProps> = {}): BottomConsoleProps => ({
+const props = (
+  overrides: Partial<BottomConsoleProps> = {},
+): BottomConsoleProps => ({
   rootPath: '/models/procurement',
   activeTab: 'diagnostics',
   onTabChange: vi.fn(),
@@ -68,7 +70,9 @@ describe('BottomConsole', () => {
   it('renders the docked delivery hub on its own tab', () => {
     render(<BottomConsole {...props({ activeTab: 'delivery' })} />);
 
-    expect(screen.getByRole('region', { name: '交付中心' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: '交付中心' }),
+    ).toBeInTheDocument();
   });
 
   it('asks for the review input before offering the review tab', () => {

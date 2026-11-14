@@ -119,7 +119,8 @@ const InspectorBody = ({
 
   return (
     <div className="space-y-4">
-      {entity.category === 'evidence' && entity.kind === 'fulfillment_request' ? (
+      {entity.category === 'evidence' &&
+      entity.kind === 'fulfillment_request' ? (
         <FulfillmentPairSection
           entity={entity}
           graph={graph}
@@ -281,7 +282,9 @@ const PropertyRow = ({
         </Labeled>
       );
     case 'attribute-table':
-      return <AttributeTableEditor entity={entity} graph={graph} session={session} />;
+      return (
+        <AttributeTableEditor entity={entity} graph={graph} session={session} />
+      );
     case 'cel-editor':
       return (
         <span className="text-[10px] text-evidence-muted">

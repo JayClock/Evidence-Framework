@@ -198,12 +198,14 @@ export const SimulationSandbox = ({
 
               <div className="min-h-0 flex-1 overflow-auto px-4 py-3">
                 {replay.error === null ? null : (
-                  <p role="alert" className="mb-2 text-[11px] text-evidence-evidence">
+                  <p
+                    role="alert"
+                    className="mb-2 text-[11px] text-evidence-evidence"
+                  >
                     {replay.error}
                   </p>
                 )}
-                {replay.replay !== null &&
-                replay.replay.errors.length > 0 ? (
+                {replay.replay !== null && replay.replay.errors.length > 0 ? (
                   <ul className="mb-3 flex flex-col gap-1">
                     {replay.replay.errors.map((message) => (
                       <li
@@ -225,7 +227,8 @@ export const SimulationSandbox = ({
                     <div className="rounded border border-evidence-line px-3 py-2">
                       <div className="flex items-baseline justify-between gap-2">
                         <p className="text-[12px] font-medium text-evidence-ink">
-                          第 {replay.frame.sequence} 步 · {replay.frame.entityRef}
+                          第 {replay.frame.sequence} 步 ·{' '}
+                          {replay.frame.entityRef}
                         </p>
                         <button
                           type="button"
@@ -360,14 +363,18 @@ export const SimulationSandbox = ({
 
             <div className="min-h-0 flex-1 overflow-auto px-4 py-3">
               {drift.error === null ? null : (
-                <p role="alert" className="mb-2 text-[11px] text-evidence-evidence">
+                <p
+                  role="alert"
+                  className="mb-2 text-[11px] text-evidence-evidence"
+                >
                   {drift.error}
                 </p>
               )}
 
               {drift.audit === null ? (
                 <p className="text-[11px] text-evidence-muted">
-                  选一份 OTLP/JSON 导出，就能看到生产提交了哪些凭证、哪些字段和模型对不上。
+                  选一份 OTLP/JSON
+                  导出，就能看到生产提交了哪些凭证、哪些字段和模型对不上。
                 </p>
               ) : (
                 <div className="flex flex-col gap-3">
@@ -414,7 +421,8 @@ export const SimulationSandbox = ({
                                   : 'bg-evidence-surface text-evidence-muted',
                               ].join(' ')}
                             >
-                              {SEVERITY_LABELS[finding.severity] ?? finding.severity}
+                              {SEVERITY_LABELS[finding.severity] ??
+                                finding.severity}
                             </span>
                             <span className="text-[11px] font-medium text-evidence-ink">
                               {DRIFT_KIND_LABELS[

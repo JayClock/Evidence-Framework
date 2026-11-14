@@ -134,7 +134,8 @@ export const ReviewHubModal = ({
           <section
             aria-label="审查发现"
             className="max-h-48 shrink-0 overflow-auto border-y p-3 text-xs"
-          >            <p>
+          >
+            <p>
               一致性：
               {result.data.validation.consistent === true ? '通过' : '未通过'} ·
               完整性：

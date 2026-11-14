@@ -68,7 +68,10 @@ describe('SimulationSandbox', () => {
     installDesktopApi({ replayResult: replay() });
 
     render(
-      <SimulationSandbox rootPath="/models/procurement" onClose={() => undefined} />,
+      <SimulationSandbox
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     expect(await screen.findByText('按期付款')).toBeInTheDocument();
@@ -81,10 +84,12 @@ describe('SimulationSandbox', () => {
         '第 1 / 2 步',
       );
     });
-    expect(screen.getByTestId('fulfillment-instance.payment-request')).toHaveTextContent(
-      '待履约',
-    );
-    expect(screen.getByText('request.payment#amount = 19900')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('fulfillment-instance.payment-request'),
+    ).toHaveTextContent('待履约');
+    expect(
+      screen.getByText('request.payment#amount = 19900'),
+    ).toBeInTheDocument();
 
     // The step-forward control is the whole point: the frame before a
     // confirmation must not already show the request as complete.
@@ -95,9 +100,9 @@ describe('SimulationSandbox', () => {
         '第 2 / 2 步',
       );
     });
-    expect(screen.getByTestId('fulfillment-instance.payment-request')).toHaveTextContent(
-      '已完成',
-    );
+    expect(
+      screen.getByTestId('fulfillment-instance.payment-request'),
+    ).toHaveTextContent('已完成');
     expect(screen.getByRole('button', { name: '下一步' })).toBeDisabled();
   });
 
@@ -105,7 +110,10 @@ describe('SimulationSandbox', () => {
     const api = installDesktopApi({ replayResult: replay() });
 
     render(
-      <SimulationSandbox rootPath="/models/procurement" onClose={() => undefined} />,
+      <SimulationSandbox
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     fireEvent.click(await screen.findByRole('button', { name: /逾期未付/ }));
@@ -160,16 +168,19 @@ describe('SimulationSandbox', () => {
     });
 
     render(
-      <SimulationSandbox rootPath="/models/procurement" onClose={() => undefined} />,
+      <SimulationSandbox
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     fireEvent.click(screen.getByRole('tab', { name: '生产漂移' }));
-    fireEvent.click(await screen.findByRole('button', { name: '选择 trace 文件' }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: '选择 trace 文件' }),
+    );
 
     expect(await screen.findByText('派生值被当成人参')).toBeInTheDocument();
-    expect(
-      screen.getByText('把该字段从写入路径上撤下。'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('把该字段从写入路径上撤下。')).toBeInTheDocument();
     expect(screen.getByText('存在阻塞漂移')).toBeInTheDocument();
   });
 
@@ -177,11 +188,16 @@ describe('SimulationSandbox', () => {
     const api = installDesktopApi({ traceDialogResult: { canceled: true } });
 
     render(
-      <SimulationSandbox rootPath="/models/procurement" onClose={() => undefined} />,
+      <SimulationSandbox
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     fireEvent.click(screen.getByRole('tab', { name: '生产漂移' }));
-    fireEvent.click(await screen.findByRole('button', { name: '选择 trace 文件' }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: '选择 trace 文件' }),
+    );
 
     await waitFor(() => {
       expect(screen.getByText('还没有比对过任何 trace')).toBeInTheDocument();
@@ -202,7 +218,9 @@ describe('SimulationSandbox in the console', () => {
       />,
     );
 
-    expect(screen.getByRole('region', { name: '场景沙盒' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: '场景沙盒' }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
