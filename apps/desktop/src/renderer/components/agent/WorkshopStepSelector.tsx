@@ -1,3 +1,5 @@
+import { RefreshCw } from 'lucide-react';
+
 import {
   REVERSE_CONTRACT_MODE,
   WORKSHOP_STEPS,
@@ -77,13 +79,14 @@ export const WorkshopStepSelector = ({
           );
         }}
         className={cn(
-          'rounded-full border px-1.5 py-0.5 text-[10px] transition',
+          'flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] transition',
           selection === REVERSE_CONTRACT_MODE.id
             ? 'border-[#b79b56] bg-[#fff8e8] text-[#8d6200]'
             : 'border-evidence-line text-evidence-muted hover:border-[#b79b56]',
         )}
       >
-        🔄 {REVERSE_CONTRACT_MODE.label}
+        <RefreshCw aria-hidden="true" className="h-2.5 w-2.5" />
+        {REVERSE_CONTRACT_MODE.label}
       </button>
 
       {selection === null ? null : (

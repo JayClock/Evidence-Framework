@@ -5,7 +5,9 @@ import { WorkshopStepSelector } from './WorkshopStepSelector';
 
 describe('WorkshopStepSelector', () => {
   it('offers all seven steps with their hints', () => {
-    render(<WorkshopStepSelector selection={null} onSelect={() => undefined} />);
+    render(
+      <WorkshopStepSelector selection={null} onSelect={() => undefined} />,
+    );
 
     const steps = screen.getByRole('group', { name: '工作坊步骤' });
 
@@ -20,7 +22,10 @@ describe('WorkshopStepSelector', () => {
     const onSelect = vi.fn();
 
     render(
-      <WorkshopStepSelector selection={'pair-fulfillment'} onSelect={onSelect} />,
+      <WorkshopStepSelector
+        selection={'pair-fulfillment'}
+        onSelect={onSelect}
+      />,
     );
 
     const chip = screen.getByRole('button', { name: '2. 成对挖掘履约项' });
@@ -40,7 +45,7 @@ describe('WorkshopStepSelector', () => {
 
     render(<WorkshopStepSelector selection={null} onSelect={onSelect} />);
 
-    const reverse = screen.getByRole('button', { name: '🔄 无合同逆推' });
+    const reverse = screen.getByRole('button', { name: '无合同逆推' });
 
     expect(reverse).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(reverse);
@@ -56,9 +61,10 @@ describe('WorkshopStepSelector', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('button', { name: '🔄 无合同逆推' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: '无合同逆推' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(
       screen.getByRole('button', { name: '3. 补上标的物与领域组件' }),
     ).toHaveAttribute('aria-pressed', 'false');
