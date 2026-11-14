@@ -703,6 +703,75 @@ describe('EditorScreen dual-mode stage', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('reads the projected contract, rules and sandbox beside the graph', async () => {
+    installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document: createDesktopFixture(),
+        issues: [],
+      },
+      deliveryPreviewResult: {
+        success: true,
+        preview: {
+          modelId: 'desktop-fixture',
+          modelName: '桌面端夹具',
+          modelVersion: '1.0',
+          services: [],
+          links: [],
+          routes: [
+            {
+              method: 'POST',
+              path: '/v1/procurement/orders',
+              summary: '发起采购',
+              serviceId: 'svc.procurement',
+            },
+          ],
+          limitations: [],
+        },
+      },
+    });
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+
+    expect(await screen.findByLabelText('副视口')).toBeInTheDocument();
+    // The stage opens on the ledger, the projection the split always had.
+    expect(screen.getByLabelText('领域模型总台账')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: /交付契约/ }));
+    expect(
+      container.querySelector('[data-region="openapi-spec"]'),
+    ).not.toBeNull();
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-region="code-editor"]'),
+      ).not.toBeNull(),
+    );
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-region="code-editor"]')?.textContent,
+      ).toContain('openapi: 3.1.0'),
+    );
+
+    fireEvent.click(screen.getByRole('tab', { name: /派生规则/ }));
+    expect(
+      container.querySelector('[data-region="cel-rules"]'),
+    ).not.toBeNull();
+
+    // Closing the stage returns to the graph, not to a bare ledger.
+    fireEvent.click(screen.getByRole('button', { name: '关闭分屏' }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText('副视口')).toBeNull(),
+    );
+    expect(
+      container.querySelector('[data-region="canvas-viewport"]'),
+    ).not.toBeNull();
+  });
+
   it('walks from a ledger row back to the same object on the canvas', async () => {
     readyProject();
     const { container } = render(

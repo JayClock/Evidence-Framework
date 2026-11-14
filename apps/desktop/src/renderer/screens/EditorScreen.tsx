@@ -30,6 +30,9 @@ import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
 import { AgentCopilot } from '../components/agent/AgentCopilot';
 import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
+import { CelRulesPane } from '../components/split/CelRulesPane';
+import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
+import { SecondaryStage } from '../components/split/SecondaryStage';
 import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
 import { DeliveryHub } from '../components/delivery/DeliveryHub';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
@@ -68,6 +71,7 @@ import {
   type RailTabId,
   useWorkspaceLayoutState,
 } from '../state/useWorkspaceLayoutState';
+import { useWorkspaceSplitState } from '../state/useWorkspaceSplitState';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 type LoadState =
@@ -160,6 +164,12 @@ const EditorWorkspace = ({
 }: EditorWorkspaceProps) => {
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const workspaceView = useWorkspaceViewMode();
+  // The split stage shares the view mode: "分屏" is one more mode, not a second
+  // boolean that could disagree with the segmented control.
+  const split = useWorkspaceSplitState(
+    workspaceView.mode,
+    workspaceView.setMode,
+  );
   // Every drawer, sheet and overlay is one object, so the shell renders a
   // projection instead of coordinating four independent booleans.
   const layout = useWorkspaceLayoutState();
@@ -617,9 +627,58 @@ const EditorWorkspace = ({
     />
   );
 
-  // One model, three projections: the graph, the ledger, or both side by side.
-  // The stage composes them itself instead of delegating to a wrapper, because
-  // the only thing the wrapper ever decided was which of the two to mount.
+  /*
+   * One stage, four secondary projections.
+   *
+   * The graph keeps the left side either way: what changes is which document is
+   * read beside it — the ledger the graph edits, the contract it projects, the
+   * rules it enforces, or the scenarios it must survive. The stage owns the tab
+   * rail so the shell never has to know how many projections exist.
+   */
+  const secondaryStage = (
+    <SecondaryStage
+      activePane={split.activePane}
+      onPaneChange={split.setActivePane}
+      direction={split.splitDirection}
+      onRotateDirection={split.rotateSplitDirection}
+      onClose={split.closeSplit}
+      badges={{
+        openapi: delivery.analysis?.preview.routes.length ?? 0,
+        cel: state.document.rules.length,
+      }}
+      panes={{
+        ledger: ledgerStage,
+        openapi: (
+          <OpenApiSpecViewer
+            analysis={delivery.analysis}
+            stale={delivery.stale}
+            loading={delivery.loading}
+            error={delivery.error}
+            focusEntityId={state.selection.nodeId}
+            onFocusEntity={focusNode}
+          />
+        ),
+        cel: (
+          <CelRulesPane
+            document={state.document}
+            focusEntityId={state.selection.nodeId}
+            onFocusEntity={focusNode}
+          />
+        ),
+        simulation: (
+          <SimulationSandbox
+            embedded
+            rootPath={project.rootPath}
+            onClose={split.closeSplit}
+            onFocusEntity={focusNode}
+          />
+        ),
+      }}
+    />
+  );
+
+  // One model, four projections: the graph alone, one document alone, or the
+  // graph beside whichever document is being compared against it.
   const canvasStage =
     workspaceView.mode === 'graph' ? (
       graphStage
@@ -627,25 +686,25 @@ const EditorWorkspace = ({
       ledgerStage
     ) : (
       <ResizablePanelGroup
-        direction="horizontal"
-        autoSaveId="evidence-stage-split-v1"
+        direction={split.splitDirection}
+        autoSaveId={`evidence-stage-split-${split.splitDirection}-v1`}
       >
         <ResizablePanel
           id="split-graph"
           order={1}
-          defaultSize={50}
+          defaultSize={100 - split.splitSize}
           minSize={20}
         >
           {graphStage}
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel
-          id="split-table"
+          id="split-secondary"
           order={2}
-          defaultSize={50}
+          defaultSize={split.splitSize}
           minSize={20}
         >
-          {ledgerStage}
+          {secondaryStage}
         </ResizablePanel>
       </ResizablePanelGroup>
     );
