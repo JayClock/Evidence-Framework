@@ -114,7 +114,19 @@ describe('EditorScreen', () => {
     expect(
       container.querySelector('[data-node-id="role.inventory"]'),
     ).toHaveStyle({ height: '156px' });
-    expect(screen.getByTitle('撤销（Cmd/Ctrl+Z）')).toBeDisabled();
+    // Undo has no history to walk, and the hub reports that instead of the
+    // header, which no longer carries a greyed-out history button.
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    expect(await screen.findByRole('option', { name: /撤销/ })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: 'Escape',
+    });
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull(),
+    );
     expect(screen.queryByTitle('有未保存修改')).toBeNull();
     fireEvent.click(screen.getByText('保存'));
     await waitFor(() => expect(api.calls.save).toHaveLength(1));
@@ -161,7 +173,7 @@ describe('EditorScreen', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
   });
 
-  it('opens the delivery hub from the header', async () => {
+  it('opens the delivery hub from its chord', async () => {
     const api = installDesktopApi({
       openResult: {
         success: true,
@@ -197,7 +209,7 @@ describe('EditorScreen', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
 
     await screen.findByText('桌面端夹具（Desktop Fixture）');
-    fireEvent.click(screen.getByText('交付'));
+    fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
 
     expect(await screen.findByLabelText('交付中心')).toBeInTheDocument();
     expect(await screen.findByText('核心履约')).toBeInTheDocument();

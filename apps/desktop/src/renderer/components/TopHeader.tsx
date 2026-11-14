@@ -1,55 +1,59 @@
 import { useMemo } from 'react';
 
+import { Command as CommandIcon } from 'lucide-react';
+
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core';
+import {
+  Button,
+  KbdChord,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  ViewModeSegmentedControl,
+  type WorkspaceViewMode,
+} from '@evidence-poc/desktop-ui-kit';
 
 import { McpStatusPill } from './McpStatusPill';
-import { ViewModeSegmentedControl } from '@evidence-poc/desktop-ui-kit';
-import type { WorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 interface TopHeaderProps {
   projectName: string;
   dirty: boolean;
-  canUndo: boolean;
-  canRedo: boolean;
   workspaceViewMode: WorkspaceViewMode;
   graph: DomainGraph;
   selection: ModelSelection;
-  onUndo: () => void;
-  onRedo: () => void;
   onSave: () => void;
-  /** Writes the offline review page; reports progress so the button can wait. */
-  onPreviewReview?: () => void;
   onExportDiffReview?: () => void;
   onExportReview: () => void;
   exportReviewBusy: boolean;
-  /** Opens the delivery hub: what the model becomes when it is deployed. */
-  onOpenDelivery: () => void;
-  /** Opens the sandbox: does the model still hold, does production match it. */
-  onOpenSandbox: () => void;
   onWorkspaceViewModeChange: (mode: WorkspaceViewMode) => void;
-  onSearch: () => void;
+  /** Opens the command hub, which now owns every action this row dropped. */
+  onOpenCommandPalette: () => void;
 }
 
+/**
+ * The window's title row.
+ *
+ * It used to be a toolbar: search, undo, redo, review, two exports, delivery,
+ * sandbox and save all competed for the same strip, and each new capability made
+ * the breadcrumb narrower. Those actions now live in the command hub behind one
+ * chord, so the row keeps only what a modeler reads at a glance — where they
+ * are, what state the document is in, and the three controls they press without
+ * thinking about it.
+ */
 export const TopHeader = ({
   projectName,
   dirty,
-  canUndo,
-  canRedo,
   workspaceViewMode,
   graph,
   selection,
-  onUndo,
-  onRedo,
   onSave,
-  onPreviewReview,
   onExportDiffReview,
   onExportReview,
   exportReviewBusy,
-  onOpenDelivery,
-  onOpenSandbox,
   onWorkspaceViewModeChange,
-  onSearch,
+  onOpenCommandPalette,
 }: TopHeaderProps) => {
   const breadcrumb = useMemo(() => {
     const nodeId = selection.nodeId;
@@ -99,55 +103,40 @@ export const TopHeader = ({
       </div>
 
       <div className="evidence-no-drag flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={onSearch}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-          title="全局搜索（Cmd/Ctrl+K）"
-        >
-          搜索
-        </button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                aria-label="打开快速命令"
+                className="flex h-7 items-center gap-1.5 rounded-md border border-evidence-line bg-evidence-surface pr-1 pl-2 text-[11px] text-evidence-muted transition-colors hover:border-evidence-accent hover:text-evidence-ink"
+              >
+                <CommandIcon aria-hidden="true" className="size-3.5" />
+                <span>快速命令</span>
+                <KbdChord chord="⌘+K" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">搜索命令与业务对象</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <ViewModeSegmentedControl
           mode={workspaceViewMode}
           onChange={onWorkspaceViewModeChange}
         />
 
-        <button
-          type="button"
-          onClick={onUndo}
-          disabled={!canUndo}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted disabled:opacity-40"
-          title="撤销（Cmd/Ctrl+Z）"
-        >
-          撤销
-        </button>
-        <button
-          type="button"
-          onClick={onRedo}
-          disabled={!canRedo}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted disabled:opacity-40"
-          title="重做（Cmd/Ctrl+Shift+Z）"
-        >
-          重做
-        </button>
         <McpStatusPill />
 
-        {onPreviewReview ? (
-          <button
-            type="button"
-            onClick={onPreviewReview}
-            title="在底部控制台打开审查中心（Alt+R）"
-            className="rounded border border-evidence-line px-2 py-1 text-[11px]"
-          >
-            审查中心
-          </button>
-        ) : null}
-        <button
-          type="button"
+        {/*
+          These two keep their own buttons: they are disabled while the model is
+          dirty, and a disabled control cannot raise a tooltip, so the reason has
+          to live in the native `title` the pointer still reads.
+        */}
+        <Button
+          variant="outline"
           onClick={onExportReview}
           disabled={exportReviewBusy || dirty}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink disabled:opacity-40"
           title={
             dirty
               ? '请先保存；正式审查导出只读取磁盘快照'
@@ -155,10 +144,10 @@ export const TopHeader = ({
           }
         >
           {exportReviewBusy ? '导出中…' : '导出审查页'}
-        </button>
+        </Button>
         {onExportDiffReview ? (
-          <button
-            type="button"
+          <Button
+            variant="outline"
             disabled={exportReviewBusy || dirty}
             onClick={onExportDiffReview}
             title={
@@ -166,38 +155,18 @@ export const TopHeader = ({
                 ? '请先保存再与基线比较'
                 : '选择 *.evidence.json 基线，导出差异审查页'
             }
-            className="rounded border border-evidence-line px-2 py-1 text-[11px] disabled:opacity-40"
           >
             导出差异审查
-          </button>
+          </Button>
         ) : null}
 
-        <button
-          type="button"
-          onClick={onOpenDelivery}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-          title="在底部控制台查看服务边界，并导出契约、拓扑与部署草图"
-        >
-          交付
-        </button>
-
-        <button
-          type="button"
-          onClick={onOpenSandbox}
-          className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-          title="在底部控制台逐步回放业务场景，并把导出的 trace 与模型比对"
-        >
-          沙盒
-        </button>
-
-        <button
-          type="button"
+        <Button
+          variant="default"
           onClick={onSave}
-          className="rounded bg-evidence-accent px-2.5 py-1 text-[11px] font-medium text-white hover:bg-[#274c76]"
           title="保存到磁盘（Cmd/Ctrl+S）"
         >
           保存
-        </button>
+        </Button>
       </div>
     </header>
   );

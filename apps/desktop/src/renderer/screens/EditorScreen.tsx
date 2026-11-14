@@ -535,26 +535,15 @@ const EditorWorkspace = ({
         <TopHeader
           projectName={state.project.name}
           dirty={state.dirty}
-          canUndo={state.canUndo}
-          canRedo={state.canRedo}
           workspaceViewMode={workspaceView.mode}
           graph={state.graph}
           selection={state.selection}
-          onUndo={() => {
-            state.session.undo();
-          }}
-          onRedo={() => {
-            state.session.redo();
-          }}
           onSave={() => void save()}
-          onPreviewReview={() => openConsole('review')}
           onExportDiffReview={() => void reviewExport.exportPage(true)}
           onExportReview={() => void reviewExport.exportPage()}
           exportReviewBusy={reviewExport.busy}
-          onOpenDelivery={() => openConsole('delivery')}
-          onOpenSandbox={() => openConsole('simulation')}
           onWorkspaceViewModeChange={workspaceView.setMode}
-          onSearch={() => searchInputRef.current?.focus()}
+          onOpenCommandPalette={() => setPaletteOpen(true)}
         />
 
         {liveModel.error === null ? null : (
