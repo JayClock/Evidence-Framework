@@ -196,6 +196,26 @@ describe('RightInspector', () => {
     expect(screen.getByText('基础信息')).toBeInTheDocument();
   });
 
+  it('opens the wide ledger studio from the attribute grid', () => {
+    setup('evidence.contract').renderInspector();
+
+    fireEvent.click(screen.getByText('⛶ 工作台'));
+
+    expect(
+      screen.getByRole('dialog', { name: '关键数据台账工作台' }),
+    ).toBeInTheDocument();
+  });
+
+  it('opens the ledger studio with Alt+L', () => {
+    setup('evidence.contract').renderInspector();
+
+    fireEvent.keyDown(window, { key: 'l', altKey: true, code: 'KeyL' });
+
+    expect(
+      screen.getByRole('dialog', { name: '关键数据台账工作台' }),
+    ).toBeInTheDocument();
+  });
+
   it('rejects an unknown selection without crashing', () => {
     setup('evidence.missing').renderInspector();
 

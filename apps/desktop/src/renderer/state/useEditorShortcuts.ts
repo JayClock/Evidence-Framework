@@ -46,6 +46,13 @@ const isEditable = (target: EventTarget | null): boolean => {
 export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      // A surface that already consumed the key owns it: Escape in the ledger
+      // studio closes the studio, and must not also clear the selection the
+      // inspector behind it is showing.
+      if (event.defaultPrevented) {
+        return;
+      }
+
       const mod = event.metaKey || event.ctrlKey;
       const typing = isEditable(event.target);
       if (

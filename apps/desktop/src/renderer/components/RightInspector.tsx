@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   type EntityAST,
@@ -16,6 +16,7 @@ import {
 
 import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
+import { KeyDataLedgerStudio } from './inspector/KeyDataLedgerStudio';
 
 interface RightInspectorProps {
   graph: DomainGraph;
@@ -71,20 +72,55 @@ export const RightInspector = ({
 }: RightInspectorProps) => {
   const entity =
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
+  const [studioOpen, setStudioOpen] = useState(false);
+
+  // Alt+L opens the wide ledger, but only while an object is being inspected:
+  // the studio has nothing to show without one.
+  useEffect(() => {
+    if (entity === undefined) {
+      return undefined;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!event.altKey || event.code !== 'KeyL') {
+        return;
+      }
+
+      event.preventDefault();
+      setStudioOpen(true);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [entity]);
 
   if (entity === undefined) {
     return <InspectorShell>选择画布上的业务对象查看属性。</InspectorShell>;
   }
 
   return (
-    <InspectorShell>
-      <InspectorBody
-        key={entity.id}
-        graph={graph}
-        session={session}
-        entity={entity}
-      />
-    </InspectorShell>
+    <>
+      <InspectorShell>
+        <InspectorBody
+          key={entity.id}
+          graph={graph}
+          session={session}
+          entity={entity}
+          onOpenStudio={() => setStudioOpen(true)}
+        />
+      </InspectorShell>
+
+      {studioOpen ? (
+        <KeyDataLedgerStudio
+          entity={entity}
+          graph={graph}
+          session={session}
+          initialAttribute={selection.attributeName}
+          onClose={() => setStudioOpen(false)}
+        />
+      ) : null}
+    </>
   );
 };
 
@@ -103,10 +139,12 @@ const InspectorBody = ({
   graph,
   session,
   entity,
+  onOpenStudio,
 }: {
   graph: DomainGraph;
   session: ModelSession;
   entity: EntityAST;
+  onOpenStudio?: () => void;
 }) => {
   const groups = useMemo(
     () => getInspectorGroups(entity.category),
@@ -146,6 +184,7 @@ const InspectorBody = ({
                 )}
                 onPatch={patch}
                 session={session}
+                {...(onOpenStudio === undefined ? {} : { onOpenStudio })}
               />
             ))}
           </div>
@@ -162,6 +201,7 @@ interface PropertyRowProps {
   constraint: InspectorReferenceConstraint | undefined;
   session: ModelSession;
   onPatch: (fields: Readonly<Partial<EntityAST>>) => void;
+  onOpenStudio?: () => void;
 }
 
 const PropertyRow = ({
@@ -171,6 +211,7 @@ const PropertyRow = ({
   constraint,
   session,
   onPatch,
+  onOpenStudio,
 }: PropertyRowProps) => {
   const value = fieldValue(entity, property.field);
 
@@ -283,7 +324,12 @@ const PropertyRow = ({
       );
     case 'attribute-table':
       return (
-        <AttributeDataGrid entity={entity} graph={graph} session={session} />
+        <AttributeDataGrid
+          entity={entity}
+          graph={graph}
+          session={session}
+          {...(onOpenStudio === undefined ? {} : { onOpenStudio })}
+        />
       );
     case 'cel-editor':
       return (
