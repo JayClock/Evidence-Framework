@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import * as YAML from 'yaml';
 
@@ -6,6 +6,11 @@ import { CodeEditor } from '@evidence-poc/desktop-ui-kit';
 import type { DeliveryContract } from '@evidence-poc/evidence-api';
 
 import type { LiveDeliveryPreview } from '../../../shared/delivery';
+import {
+  requestFocusEntity,
+  useBilateralSync,
+  type FocusEntityEvent,
+} from '../../state/useBilateralSync';
 import { buildOpenApiLineIndex } from './openApiLineIndex';
 
 export type OpenApiFormat = 'yaml' | 'json';
@@ -16,12 +21,6 @@ export interface OpenApiSpecViewerProps {
   stale: boolean;
   loading: boolean;
   error: string | null;
-  /** Object the rest of the workspace is pointing at. */
-  focusEntityId?: string | null;
-  /** Replays a focus request even when the target did not change. */
-  revealToken?: number;
-  /** A contract line a reader pressed, named back to the canvas. */
-  onFocusEntity?: (entityId: string) => void;
 }
 
 const FORMATS: readonly { id: OpenApiFormat; label: string }[] = [
@@ -50,11 +49,20 @@ export const OpenApiSpecViewer = ({
   stale,
   loading,
   error,
-  focusEntityId = null,
-  revealToken = 0,
-  onFocusEntity,
 }: OpenApiSpecViewerProps) => {
   const [format, setFormat] = useState<OpenApiFormat>('yaml');
+  // The workspace's selection arrives on the bus; a line pressed here leaves on
+  // the same bus, so the pane never learns who else is listening.
+  const [focus, setFocus] = useState<{
+    entityId: string;
+    token: number;
+  } | null>(null);
+
+  const onFocusEntity = useCallback((event: FocusEntityEvent) => {
+    if (event.source === 'code') return;
+    setFocus({ entityId: event.entityId, token: event.token });
+  }, []);
+  useBilateralSync({ focusEntity: onFocusEntity });
   const spec = analysis?.openapi ?? null;
   const [text, index] = useMemo(() => {
     if (spec === null) return ['', null] as const;
@@ -71,23 +79,23 @@ export const OpenApiSpecViewer = ({
   const schemas = spec === null ? 0 : Object.keys(spec.components.schemas).length;
 
   const revealLine = useMemo(() => {
-    if (index === null || focusEntityId === null) return null;
+    if (index === null || focus === null) return null;
 
-    const line = index.entityLine.get(focusEntityId);
+    const line = index.entityLine.get(focus.entityId);
     if (line === undefined) return null;
 
-    return { line, token: revealToken };
-  }, [index, focusEntityId, revealToken]);
+    return { line, token: focus.token };
+  }, [index, focus]);
 
   const handleLineActivate = useMemo(() => {
-    if (index === null || onFocusEntity === undefined) return undefined;
+    if (index === null) return undefined;
 
     return (line: number) => {
       const entityId = index.lineEntity.get(line);
 
-      if (entityId !== undefined) onFocusEntity(entityId);
+      if (entityId !== undefined) requestFocusEntity(entityId, 'code');
     };
-  }, [index, onFocusEntity]);
+  }, [index]);
 
   return (
     <section

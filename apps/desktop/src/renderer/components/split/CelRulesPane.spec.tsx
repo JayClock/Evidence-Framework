@@ -1,8 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
+import {
+  bilateralSync,
+  requestFocusEntity,
+} from '../../state/useBilateralSync';
 import { CelRulesPane } from './CelRulesPane';
 
 const model = createDesktopFixture();
@@ -26,29 +30,35 @@ describe('CelRulesPane', () => {
   });
 
   it('names the object a rule belongs to back to the canvas', () => {
-    const onFocusEntity = vi.fn();
     const targeted = derived.rules[0]!;
+    const seen = vi.fn();
+    const unsubscribe = bilateralSync.subscribe(seen);
 
-    render(
-      <CelRulesPane document={derived} onFocusEntity={onFocusEntity} />,
-    );
+    render(<CelRulesPane document={derived} />);
     fireEvent.click(screen.getByText(targeted.expression));
+    unsubscribe();
 
-    expect(onFocusEntity).toHaveBeenCalledWith(targeted.target?.entityRef);
+    expect(seen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'focus-entity',
+        entityId: targeted.target?.entityRef,
+        source: 'code',
+      }),
+    );
   });
 
   it('follows the canvas selection to the rule that computes it', () => {
-    render(
-      <CelRulesPane
-        document={derived}
-        focusEntityId="evidence.contract"
-      />,
-    );
+    render(<CelRulesPane document={derived} />);
+
+    act(() => {
+      requestFocusEntity('evidence.contract', 'canvas');
+    });
 
     const rows = window.document.querySelectorAll(
       '[data-rule-id][aria-pressed="true"]',
     );
     expect(rows).toHaveLength(1);
+    expect(rows[0]).toHaveAttribute('data-rule-id', derived.rules[0]!.id);
   });
 
   it('says so when the model has no rules instead of showing an empty editor', () => {

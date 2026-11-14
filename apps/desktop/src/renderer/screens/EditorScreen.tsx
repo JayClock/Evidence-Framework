@@ -71,6 +71,12 @@ import {
   type RailTabId,
   useWorkspaceLayoutState,
 } from '../state/useWorkspaceLayoutState';
+import {
+  requestFocusEntity,
+  useBilateralSync,
+  type FocusEntityEvent,
+  type FocusRuleEvent,
+} from '../state/useBilateralSync';
 import { useWorkspaceSplitState } from '../state/useWorkspaceSplitState';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
@@ -381,6 +387,50 @@ const EditorWorkspace = ({
     [state.layout, state.session, scope],
   );
 
+  /*
+   * The workspace's own selection, announced rather than prop-drilled.
+   *
+   * Every pane reads the same revision, so the only thing that has to travel is
+   * "which object": the canvas says it once and the ledger, the contract and the
+   * rules each decide how to show it.
+   */
+  useEffect(() => {
+    if (state.selection.nodeId === null) return;
+
+    requestFocusEntity(
+      state.selection.nodeId,
+      'canvas',
+      state.selection.attributeName,
+    );
+  }, [state.selection.nodeId, state.selection.attributeName]);
+
+  // A request from a pane travels back the other way: the canvas owns what
+  // "showing an object" means, so the shell is the one place that resolves it.
+  const focusFromPane = useCallback(
+    (event: FocusEntityEvent) => {
+      if (event.source === 'canvas') return;
+      if (!state.layout.nodeById.has(event.entityId)) return;
+      if (scope !== null && !scope.nodeIds.has(event.entityId))
+        setSelectedScope(null);
+
+      state.session.selectAttribute(event.entityId, event.attributeName);
+      tokenRef.current += 1;
+      setFocusRequest({ nodeId: event.entityId, token: tokenRef.current });
+    },
+    [scope, state.layout, state.session],
+  );
+  const showRulesPane = useCallback(
+    (event: FocusRuleEvent) => {
+      if (event.source === 'code' || !split.isSplit) return;
+      split.setActivePane('cel');
+    },
+    [split],
+  );
+  useBilateralSync({
+    focusEntity: focusFromPane,
+    focusRule: showRulesPane,
+  });
+
   // What the next question will be about: the canvas selection, reduced to what
   // the composer can name without a graph.
   const selectedEntity =
@@ -654,17 +704,9 @@ const EditorWorkspace = ({
             stale={delivery.stale}
             loading={delivery.loading}
             error={delivery.error}
-            focusEntityId={state.selection.nodeId}
-            onFocusEntity={focusNode}
           />
         ),
-        cel: (
-          <CelRulesPane
-            document={state.document}
-            focusEntityId={state.selection.nodeId}
-            onFocusEntity={focusNode}
-          />
-        ),
+        cel: <CelRulesPane document={state.document} />,
         simulation: (
           <SimulationSandbox
             embedded

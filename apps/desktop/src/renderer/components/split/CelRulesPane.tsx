@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { CodeEditor, cn } from '@evidence-poc/desktop-ui-kit';
 import {
@@ -6,11 +6,16 @@ import {
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 
+import {
+  requestFocusEntity,
+  requestFocusRule,
+  useBilateralSync,
+  type FocusEntityEvent,
+  type FocusRuleEvent,
+} from '../../state/useBilateralSync';
+
 export interface CelRulesPaneProps {
   document: DomainModelDocument;
-  focusEntityId?: string | null;
-  /** Names the object a rule belongs to back to the canvas. */
-  onFocusEntity?: (entityId: string) => void;
 }
 
 interface RuleRow {
@@ -32,12 +37,21 @@ interface RuleRow {
  * read-only for the same reason the contract pane is — a rule is edited on the
  * attribute it derives, where its bindings are in scope.
  */
-export const CelRulesPane = ({
-  document,
-  focusEntityId = null,
-  onFocusEntity,
-}: CelRulesPaneProps) => {
+export const CelRulesPane = ({ document }: CelRulesPaneProps) => {
   const [pinnedRuleId, setPinnedRuleId] = useState<string | null>(null);
+  const [focusEntityId, setFocusEntityId] = useState<string | null>(null);
+
+  // The canvas and the ledger speak first; a row pressed here answers on the
+  // same bus rather than through a callback threaded down from the shell.
+  const onFocusEntity = useCallback((event: FocusEntityEvent) => {
+    if (event.source === 'code') return;
+    setFocusEntityId(event.entityId);
+  }, []);
+  const onFocusRule = useCallback((event: FocusRuleEvent) => {
+    if (event.source === 'code') return;
+    setPinnedRuleId(event.ruleId);
+  }, []);
+  useBilateralSync({ focusEntity: onFocusEntity, focusRule: onFocusRule });
 
   const rows = useMemo<readonly RuleRow[]>(
     () => {
@@ -98,7 +112,9 @@ export const CelRulesPane = ({
               aria-pressed={selected}
               onClick={() => {
                 setPinnedRuleId(row.id);
-                if (row.entityRef !== null) onFocusEntity?.(row.entityRef);
+                requestFocusRule(row.id, row.entityRef, 'code');
+                if (row.entityRef !== null)
+                  requestFocusEntity(row.entityRef, 'code');
               }}
               className={cn(
                 'flex w-full flex-col gap-0.5 border-b border-evidence-line/60 px-3 py-1.5 text-left transition-colors last:border-b-0',

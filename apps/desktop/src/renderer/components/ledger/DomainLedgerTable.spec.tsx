@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createModelSession } from '@evidence-poc/evidence-model-core';
 
@@ -8,6 +8,10 @@ import type {
   DiagnosticStatus,
 } from '@evidence-poc/desktop-feature-canvas';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
+import {
+  bilateralSync,
+  requestFocusEntity,
+} from '../../state/useBilateralSync';
 import { DomainLedgerTable } from './DomainLedgerTable';
 
 // jsdom reports every element as zero-sized, and the virtual list only renders
@@ -216,6 +220,42 @@ describe('DomainLedgerTable', () => {
     expect(
       container.querySelector('[data-ledger-row="evidence.confirmation"]'),
     ).toBeNull();
+  });
+
+  it('lights the row the canvas pointed at and lets it fade', async () => {
+    const session = sessionOf();
+    const { container } = renderTable(session);
+
+    act(() => {
+      requestFocusEntity('evidence.request', 'canvas');
+    });
+
+    expect(
+      container.querySelector('[data-row-flash][data-row-entity="evidence.request"]'),
+    ).not.toBeNull();
+
+    await waitFor(
+      () => expect(container.querySelector('[data-row-flash]')).toBeNull(),
+      { timeout: 3000 },
+    );
+  });
+
+  it('announces a pressed row so the canvas can travel to it', () => {
+    const session = sessionOf();
+    const seen = vi.fn();
+    const unsubscribe = bilateralSync.subscribe(seen);
+
+    const { container } = renderTable(session);
+    fireEvent.click(ledgerRow(container, 'evidence.request'));
+    unsubscribe();
+
+    expect(seen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'focus-entity',
+        entityId: 'evidence.request',
+        source: 'table',
+      }),
+    );
   });
 
   it('scrolls to the selected object when the stage hands over a target', () => {

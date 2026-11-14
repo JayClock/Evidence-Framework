@@ -23,6 +23,11 @@ import {
 import { createLedgerColumns } from './domainLedgerColumns';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import {
+  requestFocusEntity,
+  useBilateralSync,
+  type FocusEntityEvent,
+} from '../../state/useBilateralSync';
 
 export interface DomainLedgerTableProps {
   document: DomainModelDocument;
@@ -36,6 +41,9 @@ export interface DomainLedgerTableProps {
   /** Pans the graph to the object and leaves the table mode. */
   onRevealOnGraph?: (entityId: string) => void;
 }
+
+/** How long a row stays lit after the canvas pointed at it. */
+const FLASH_MS = 1500;
 
 const HEADER_HEIGHT = 30;
 const ROW_HEIGHT = 34;
@@ -63,6 +71,10 @@ export const DomainLedgerTable = ({
   const [query, setQuery] = useState('');
   const [onlyIssues, setOnlyIssues] = useState(false);
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
+  const [flash, setFlash] = useState<{
+    entityId: string;
+    token: number;
+  } | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const projected = useMemo(
@@ -152,6 +164,34 @@ export const DomainLedgerTable = ({
     // Scrolling belongs to the target, not to every re-render of the rows.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusNodeId]);
+
+  // A canvas selection scrolls the table to the object and lights the row for as
+  // long as it takes to notice. The ledger ignores its own requests, so pressing
+  // a row does not make the table chase itself.
+  const onFocusEntity = useCallback((event: FocusEntityEvent) => {
+    if (event.source === 'table') return;
+    setFlash({ entityId: event.entityId, token: event.token });
+  }, []);
+  useBilateralSync({ focusEntity: onFocusEntity });
+
+  useEffect(() => {
+    if (flash === null) return;
+
+    const index = rows.findIndex(
+      (row) =>
+        row.original.rowKind === 'entity' &&
+        row.original.entityId === flash.entityId,
+    );
+
+    if (index >= 0) virtualizer.scrollToIndex(index, { align: 'center' });
+
+    const timer = setTimeout(() => setFlash(null), FLASH_MS);
+
+    return () => clearTimeout(timer);
+    // Same reason as the focus effect above: the rows change on every edit, the
+    // request does not.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flash]);
 
   const selected = (row: LedgerRow): boolean => {
     if (row.entityId === null || row.entityId !== selectedNodeId) return false;
@@ -300,21 +340,36 @@ export const DomainLedgerTable = ({
                   role="row"
                   data-ledger-row={row.rowId}
                   onClick={() => {
-                    if (row.entityId !== null) {
-                      session.selectAttribute(
-                        row.entityId,
-                        row.attribute?.name ?? null,
-                      );
-                    }
+                    if (row.entityId === null) return;
+
+                    // Selecting is the model edit; the request is what tells the
+                    // canvas to travel to the object that now owns the selection.
+                    session.selectAttribute(
+                      row.entityId,
+                      row.attribute?.name ?? null,
+                    );
+                    requestFocusEntity(
+                      row.entityId,
+                      'table',
+                      row.attribute?.name ?? null,
+                    );
                   }}
                   style={gridStyle}
+                  data-row-entity={row.entityId ?? undefined}
+                  data-row-flash={
+                    flash !== null && row.entityId === flash.entityId
+                      ? ''
+                      : undefined
+                  }
                   className={[
                     'absolute top-0 left-0 grid w-full cursor-default items-center border-b border-evidence-line/40',
-                    selected(row)
-                      ? 'bg-evidence-accent/10'
-                      : row.rowKind === 'entity'
-                        ? 'bg-white hover:bg-evidence-surface/70'
-                        : 'bg-white hover:bg-evidence-surface/40',
+                    flash !== null && row.entityId === flash.entityId
+                      ? 'bg-[#e8eef6] transition-colors duration-150'
+                      : selected(row)
+                        ? 'bg-evidence-accent/10'
+                        : row.rowKind === 'entity'
+                          ? 'bg-white hover:bg-evidence-surface/70'
+                          : 'bg-white hover:bg-evidence-surface/40',
                   ].join(' ')}
                 >
                   {cells.map((cell) => (
