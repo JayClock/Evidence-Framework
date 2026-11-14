@@ -30,7 +30,7 @@
     "@evidence-poc/evidence-canvas-interaction": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
-    "@use-gesture/react": "^10.3.1",
+    "@xyflow/react": "^12.12.1",
     "react": "^19.2.8",
     "tslib": "^2.3.0"
   }

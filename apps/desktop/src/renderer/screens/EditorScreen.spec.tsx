@@ -151,7 +151,7 @@ describe('EditorScreen', () => {
     });
     fireEvent.click(screen.getByText('标准图'));
     const world = container.querySelector(
-      '[data-region="canvas-world"]',
+      '.react-flow__viewport',
     ) as HTMLElement;
     const beforeKeys = world.style.transform;
     fireEvent.keyDown(screen.getByLabelText('聚焦范围'), { key: '+' });
@@ -622,8 +622,9 @@ describe('EditorScreen dual-mode stage', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
+    // React Flow keeps the pan/zoom transform on its viewport element.
     const world = () =>
-      container.querySelector('[data-region="canvas-world"]') as HTMLElement;
+      container.querySelector('.react-flow__viewport') as HTMLElement;
 
     fireEvent.keyDown(window, { key: '0', metaKey: true });
     await waitFor(() => expect(world().style.transform).toContain('scale(1)'));
@@ -781,8 +782,9 @@ describe('EditorScreen dual-mode stage', () => {
     fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 
+    // React Flow keeps the pan/zoom transform on its viewport element.
     const world = () =>
-      container.querySelector('[data-region="canvas-world"]') as HTMLElement;
+      container.querySelector('.react-flow__viewport') as HTMLElement;
     const before = world().style.transform;
 
     fireEvent.click(

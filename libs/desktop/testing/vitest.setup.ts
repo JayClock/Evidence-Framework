@@ -50,6 +50,29 @@ if (!('setPointerCapture' in HTMLElement.prototype)) {
   });
 }
 
+/**
+ * jsdom has no DOMMatrix either, and the canvas engine reads the renderer's
+ * zoom back out of a CSS transform through `DOMMatrixReadOnly`. A scale-only
+ * shim is enough for that one read.
+ */
+if (!('DOMMatrixReadOnly' in globalThis)) {
+  class DOMMatrixReadOnlyStub {
+    m22 = 1;
+
+    constructor(transform?: string) {
+      const scale = /scale\(\s*(-?[\d.]+)\s*\)/.exec(transform ?? '');
+
+      if (scale?.[1] !== undefined) this.m22 = Number(scale[1]);
+    }
+  }
+
+  Object.defineProperty(globalThis, 'DOMMatrixReadOnly', {
+    value: DOMMatrixReadOnlyStub,
+    configurable: true,
+    writable: true,
+  });
+}
+
 afterEach(() => {
   cleanup();
 });

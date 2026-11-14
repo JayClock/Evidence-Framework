@@ -20,7 +20,13 @@ import type {
 
 import { resolveCaptureRect, type CaptureRect } from './mcpCapture';
 
-const RULER_THICKNESS = 24;
+/**
+ * How far the stage canvas is inset from its container.
+ *
+ * The rulers that used to own 24px are gone; the canvas now fills the stage, so
+ * a capture rectangle is the viewport rectangle.
+ */
+const VIEWPORT_INSET = 0;
 
 export interface McpBridgeContext {
   project: EvidenceProjectSummary;
@@ -180,7 +186,7 @@ const captureRect = ({
     target,
     stage: rectOf(document.querySelector('[data-region="canvas-stage"]')),
     viewport,
-    rulerThickness: RULER_THICKNESS,
+    rulerThickness: VIEWPORT_INSET,
   });
 };
 

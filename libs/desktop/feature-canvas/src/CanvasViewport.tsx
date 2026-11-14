@@ -1,3 +1,7 @@
+// The engine ships its structural styles beside its JavaScript; the layer must
+// travel with the component, not with the app that happens to host it.
+import '@xyflow/react/dist/style.css';
+
 import {
   useCallback,
   useEffect,
@@ -6,22 +10,29 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useGesture } from '@use-gesture/react';
 
 import {
-  DEFAULT_VIEWPORT,
-  calculateZoomToFit,
+  Background,
+  BackgroundVariant,
+  ReactFlow,
+  ReactFlowProvider,
+  SelectionMode,
+  ViewportPortal,
+  useReactFlow,
+  useViewport,
+  type NodeTypes,
+  type EdgeTypes,
+} from '@xyflow/react';
+
+import {
+  MAX_ZOOM,
+  MIN_ZOOM,
   computeHighlight,
-  panViewport,
-  selectNodesInBox,
-  zoomAtPoint,
-  zoomByFactor,
+  type CanvasViewMode,
   type ContextScope,
   type DomainGraphLayout,
   type HighlightResult,
-  type Point,
-  type Rect,
-  type ViewportState,
+  type LifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type {
   DomainGraph,
@@ -30,15 +41,26 @@ import type {
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import {
-  CanvasStage,
-  type ModelOverlay,
-  type CanvasViewMode,
-} from './CanvasStage';
+  CanvasInteractionProvider,
+  type CanvasInteraction,
+} from './CanvasInteractionContext';
+import { BusinessLegend } from './BusinessLegend';
+import { ContextGroupNode, EntityNode } from './EntityNode';
+import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
+import { LifecycleBanner } from './LifecycleBanner';
+import { ScopeFilterControl } from './ScopeFilterControl';
+import { summarizeCards } from './cardSummary';
+import { ChangeRing, type ModelOverlay } from './canvasOverlay';
+import { DiagnosticMarkers } from './DiagnosticMarkers';
 import type { DiagnosticIndex } from './diagnosticIndex';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
-import { ScopeFilterControl } from './ScopeFilterControl';
-import { BusinessLegend } from './BusinessLegend';
-import { RULER_THICKNESS, RulerTicks } from './RulerTicks';
+import {
+  boundsOf,
+  convertLayoutToReactFlow,
+  type CanvasFlowEdge,
+  type CanvasFlowNode,
+} from './useReactFlowAdapter';
+export type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
 interface CanvasViewportProps {
   graph: DomainGraph;
@@ -86,24 +108,52 @@ export interface CanvasHudControls {
   fitToContent: () => void;
 }
 
-type DragState =
-  | { mode: 'pan'; last: Point }
-  | { mode: 'marquee'; start: Point; current: Point };
+const NODE_TYPES = {
+  entityNode: EntityNode,
+  contextGroup: ContextGroupNode,
+} satisfies NodeTypes;
 
-const MIN_ZOOM_STEP = 0.02;
+const EDGE_TYPES = {
+  fulfillmentEdge: FulfillmentEdge,
+  pairLink: PairLinkEdge,
+} satisfies EdgeTypes;
+
+/** Lane data only exists on a lifecycle layout, but the stage accepts either. */
+const isLifecycleLayout = (
+  layout: DomainGraphLayout,
+): layout is LifecycleSwimlaneLayout => 'swimlanes' in layout;
+
+const reducedMotion = (): boolean =>
+  globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)').matches ===
+  true;
 
 /**
- * Rulers, gestures and the transformed stage. Screen/world maths all comes from
- * `evidence-canvas-interaction`, so this file only wires pointers to it.
+ * The canvas, delegated.
+ *
+ * `evidence-canvas-interaction` still decides everything a modeler would call
+ * the drawing: which Contexts exist, where a card sits, how a route turns. This
+ * component only owns the viewport — pan, zoom, fit, marquee and the floating
+ * furniture — which is the part React Flow has spent years making feel right on
+ * a trackpad.
+ *
+ * The world coordinates are unchanged between the two, which is what makes the
+ * delegation cheap: a node's position is the box the layout placed, and an edge
+ * is the polyline the router returned.
  */
-export const CanvasViewport = ({
+export const CanvasViewport = (props: CanvasViewportProps) => (
+  <ReactFlowProvider>
+    <CanvasSurface {...props} />
+  </ReactFlowProvider>
+);
+
+const CanvasSurface = ({
   graph,
   layout,
   document,
   viewMode,
   selection,
-  focusRequest,
-  zoomCommand,
+  focusRequest = null,
+  zoomCommand = null,
   hud,
   overlay = null,
   diagnostics,
@@ -113,217 +163,14 @@ export const CanvasViewport = ({
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const [viewport, setViewport] = useState<ViewportState>(DEFAULT_VIEWPORT);
+  const { fitBounds, setCenter, zoomIn, zoomOut, zoomTo, getZoom } =
+    useReactFlow<CanvasFlowNode, CanvasFlowEdge>();
+  const { zoom } = useViewport();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
   const [hoveredContextId, setHoveredContextId] = useState<string | null>(null);
-  const [drag, setDrag] = useState<DragState | null>(null);
-  const [marqueeSelection, setMarqueeSelection] = useState<readonly string[]>(
-    [],
-  );
-  const spacePressed = useRef(false);
-  const [transitioning, setTransitioning] = useState(false);
-  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scopeId = scope?.contextId ?? null;
-  useEffect(
-    () => () => {
-      if (transitionTimer.current !== null)
-        clearTimeout(transitionTimer.current);
-    },
-    [],
-  );
 
-  useEffect(() => {
-    const element = containerRef.current;
-
-    if (element === null) {
-      return;
-    }
-
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry === undefined) {
-        return;
-      }
-
-      setSize({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
-      });
-    });
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
-  const fitToContent = useCallback(() => {
-    setViewport(
-      calculateZoomToFit(scope?.bounds ?? layout.bounds, {
-        width: Math.max(1, size.width - RULER_THICKNESS),
-        height: Math.max(1, size.height - RULER_THICKNESS),
-      }),
-    );
-  }, [layout.bounds, scope, size.height, size.width]);
-
-  // Fit once the first layout and viewport size are known.
-  const fittedRef = useRef(false);
-
-  useEffect(() => {
-    if (fittedRef.current || size.width === 0 || layout.nodes.length === 0) {
-      return;
-    }
-
-    fittedRef.current = true;
-    fitToContent();
-  }, [fitToContent, layout.nodes.length, size.width]);
-
-  const previousFitKey = useRef(`${scopeId ?? ''}:${viewMode}`);
-  useEffect(() => {
-    const key = `${scopeId ?? ''}:${viewMode}`;
-    if (size.width === 0 || previousFitKey.current === key) return;
-    previousFitKey.current = key;
-    fitToContent();
-    setHoveredNodeId(null);
-    setHoveredEdgeId(null);
-    setHoveredContextId(null);
-    setMarqueeSelection([]);
-    setDrag(null);
-    if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      setTransitioning(true);
-      if (transitionTimer.current !== null)
-        clearTimeout(transitionTimer.current);
-      transitionTimer.current = setTimeout(() => setTransitioning(false), 180);
-    }
-  }, [fitToContent, scopeId, viewMode, size.width]);
-
-  const lastZoomToken = useRef<number | null>(null);
-  useEffect(() => {
-    if (zoomCommand === null || lastZoomToken.current === zoomCommand.token) {
-      return;
-    }
-    lastZoomToken.current = zoomCommand.token;
-
-    if (zoomCommand.direction === 'fit') {
-      fitToContent();
-      return;
-    }
-
-    const anchor = {
-      x: (size.width - RULER_THICKNESS) / 2,
-      y: (size.height - RULER_THICKNESS) / 2,
-    };
-
-    setViewport((current) =>
-      zoomAtPoint(
-        current,
-        zoomCommand.direction === 'reset'
-          ? 1
-          : current.zoom * (zoomCommand.direction === 'in' ? 1.25 : 0.8),
-        anchor,
-      ),
-    );
-  }, [fitToContent, zoomCommand, size.height, size.width]);
-
-  const lastFocusToken = useRef<number | null>(null);
-  useEffect(() => {
-    if (
-      focusRequest === null ||
-      lastFocusToken.current === focusRequest.token
-    ) {
-      return;
-    }
-
-    const node = layout.nodeById.get(focusRequest.nodeId);
-    const context = layout.contextGroups.find(
-      (item) => item.contextId === focusRequest.nodeId,
-    );
-    const edge = layout.edges.find(
-      (item) => item.relationshipId === focusRequest.nodeId,
-    );
-    const box = node?.box ?? context?.box;
-    const point = box
-      ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
-      : edge?.points[Math.floor(edge.points.length / 2)];
-    if (!point) return;
-    if (edge) setHoveredEdgeId(edge.relationshipId);
-    if (context) setHoveredContextId(context.contextId);
-
-    lastFocusToken.current = focusRequest.token;
-    setViewport((current) => {
-      const target = {
-        x: size.width - RULER_THICKNESS,
-        y: size.height - RULER_THICKNESS,
-      };
-
-      return panViewport(
-        current,
-        target.x / 2 - point.x * current.zoom - current.panX,
-        target.y / 2 - point.y * current.zoom - current.panY,
-      );
-    });
-  }, [focusRequest, layout, size.height, size.width]);
-
-  useEffect(() => {
-    const down = (event: KeyboardEvent) => {
-      if (
-        event.code === 'Space' &&
-        !(
-          event.target instanceof Element &&
-          event.target.closest(
-            '[data-canvas-control], input, textarea, [contenteditable="true"], [data-node-id]',
-          )
-        )
-      ) {
-        spacePressed.current = true;
-      }
-    };
-    const up = (event: KeyboardEvent) => {
-      if (event.code === 'Space') {
-        spacePressed.current = false;
-      }
-    };
-
-    const resetSpace = () => {
-      spacePressed.current = false;
-    };
-    window.addEventListener('keydown', down);
-    window.addEventListener('keyup', up);
-    window.addEventListener('blur', resetSpace);
-
-    return () => {
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-      window.removeEventListener('blur', resetSpace);
-    };
-  }, []);
-
-  useGesture(
-    {
-      onWheel: ({ event, delta: [dx, dy], ctrlKey, metaKey, pinching }) => {
-        if ((event.target as Element).closest('[data-canvas-control]')) return;
-        setTransitioning(false);
-        event.preventDefault();
-
-        const stagePoint = stagePointOf(event, containerRef.current);
-
-        if (ctrlKey || metaKey || pinching) {
-          const factor = Math.exp(-dy * 0.01);
-
-          setViewport((current) =>
-            Math.abs(factor - 1) < MIN_ZOOM_STEP
-              ? current
-              : zoomByFactor(current, factor, stagePoint),
-          );
-          return;
-        }
-
-        setViewport((current) => panViewport(current, -dx, -dy));
-      },
-    },
-    { target: containerRef, eventOptions: { passive: false } },
-  );
+  const summaries = useMemo(() => summarizeCards(document), [document]);
 
   const highlight = useMemo<HighlightResult>(
     () =>
@@ -345,175 +192,275 @@ export const CanvasViewport = ({
     return computeHighlight({ graph, layout, activeNodeId: selection.nodeId });
   }, [graph, layout, highlight, selection.nodeId]);
 
-  const marqueeRect = useMemo<Rect | null>(
+  const { nodes, edges } = useMemo(
     () =>
-      drag === null || drag.mode !== 'marquee'
-        ? null
-        : marqueeSelectionOf(drag, viewport),
-    [drag, viewport],
+      convertLayoutToReactFlow({
+        layout,
+        document,
+        selection,
+        highlightedNodeIds: selectedHighlight.nodeIds,
+        highlightedEdgeIds: selectedHighlight.edgeIds,
+        highlightedContextIds: selectedHighlight.contextIds,
+        dimmed: selectedHighlight.dimmed,
+        scope,
+        overlay,
+        summaries,
+        hoveredEdgeId,
+        viewMode,
+        ...(diagnostics === undefined ? {} : { diagnostics }),
+      }),
+    [
+      layout,
+      document,
+      selection,
+      selectedHighlight,
+      scope,
+      overlay,
+      summaries,
+      hoveredEdgeId,
+      viewMode,
+      diagnostics,
+    ],
   );
 
-  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if ((event.target as Element).closest('[data-canvas-control]')) return;
-    setTransitioning(false);
-    const stagePoint = stagePointOf(event, containerRef.current);
+  const fitToContent = useCallback(() => {
+    void fitBounds(boundsOf(layout, scope), {
+      padding: 0.08,
+      duration: reducedMotion() ? 0 : 180,
+    });
+  }, [fitBounds, layout, scope]);
 
-    if (event.button === 1 || spacePressed.current) {
-      event.currentTarget.setPointerCapture(event.pointerId);
-      setDrag({ mode: 'pan', last: stagePoint });
+  // A scope change is a new stage: the fit follows it, and so do the hover
+  // marks, because the object under the pointer may no longer be on screen.
+  const previousFitKey = useRef(`${scope?.contextId ?? ''}:${viewMode}`);
+  useEffect(() => {
+    const key = `${scope?.contextId ?? ''}:${viewMode}`;
+    if (previousFitKey.current === key) return;
+    previousFitKey.current = key;
+    fitToContent();
+    setHoveredNodeId(null);
+    setHoveredEdgeId(null);
+    setHoveredContextId(null);
+  }, [fitToContent, scope?.contextId, viewMode]);
+
+  const lastZoomToken = useRef<number | null>(null);
+  useEffect(() => {
+    if (zoomCommand === null || lastZoomToken.current === zoomCommand.token) {
+      return;
+    }
+    lastZoomToken.current = zoomCommand.token;
+    const duration = reducedMotion() ? 0 : 140;
+
+    if (zoomCommand.direction === 'fit') {
+      fitToContent();
       return;
     }
 
-    if (event.button !== 0) {
+    if (zoomCommand.direction === 'reset') {
+      void zoomTo(1, { duration });
       return;
     }
 
-    const target = event.target as HTMLElement;
+    void (zoomCommand.direction === 'in'
+      ? zoomIn({ duration })
+      : zoomOut({ duration }));
+  }, [zoomCommand, fitToContent, zoomIn, zoomOut, zoomTo]);
 
-    if (target.closest('[data-node-id]') !== null) {
+  const lastFocusToken = useRef<number | null>(null);
+  useEffect(() => {
+    if (
+      focusRequest === null ||
+      lastFocusToken.current === focusRequest.token
+    ) {
       return;
     }
 
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setDrag({ mode: 'marquee', start: stagePoint, current: stagePoint });
-    setMarqueeSelection([]);
-  };
-
-  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (drag === null) {
-      return;
-    }
-
-    const stagePoint = stagePointOf(event, containerRef.current);
-
-    if (drag.mode === 'pan') {
-      setViewport((current) =>
-        panViewport(
-          current,
-          stagePoint.x - drag.last.x,
-          stagePoint.y - drag.last.y,
-        ),
-      );
-      setDrag({ mode: 'pan', last: stagePoint });
-      return;
-    }
-
-    const current = { ...drag, current: stagePoint };
-
-    setDrag(current);
-
-    const rect = marqueeSelectionOf(current, viewport);
-
-    setMarqueeSelection(
-      selectNodesInBox(layout, rect, { minimumSize: 2 }).filter(
-        (id) => scope === null || scope.nodeIds.has(id),
-      ),
+    const node = layout.nodeById.get(focusRequest.nodeId);
+    const group = layout.contextGroups.find(
+      (item) => item.contextId === focusRequest.nodeId,
     );
-  };
+    const edge = layout.edges.find(
+      (item) => item.relationshipId === focusRequest.nodeId,
+    );
+    const box = node?.box ?? group?.box;
+    const point = box
+      ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+      : edge?.points[Math.floor(edge.points.length / 2)];
 
-  const onPointerUp = () => {
-    if (drag?.mode === 'marquee' && marqueeSelection.length > 0) {
-      onSelect(marqueeSelection[0]!);
-    }
+    if (point === undefined) return;
+    if (edge !== undefined) setHoveredEdgeId(edge.relationshipId);
+    if (group !== undefined) setHoveredContextId(group.contextId);
 
-    setDrag(null);
-  };
+    lastFocusToken.current = focusRequest.token;
+    void setCenter(point.x, point.y, {
+      zoom: getZoom(),
+      duration: reducedMotion() ? 0 : 250,
+    });
+  }, [focusRequest, layout, setCenter, getZoom]);
+
+  const interaction = useMemo<CanvasInteraction>(
+    () => ({
+      viewMode,
+      onHoverNode: setHoveredNodeId,
+      onHoverContext: setHoveredContextId,
+      onHoverEdge: setHoveredEdgeId,
+      onSelect,
+    }),
+    [onSelect, viewMode],
+  );
+
+  const changeRings = useMemo(
+    () =>
+      overlay === null
+        ? []
+        : [...overlay.marks.entries()].flatMap(([nodeId, change]) => {
+            const node = layout.nodeById.get(nodeId);
+
+            return node === undefined
+              ? []
+              : [{ nodeId, change, node }];
+          }),
+    [layout.nodeById, overlay],
+  );
 
   return (
     <div
-      ref={containerRef}
       className="relative h-full w-full min-h-0 min-w-0 flex-1 overflow-hidden bg-[#fbfbfc]"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={() => setDrag(null)}
-      onClick={(event) => {
-        const target = event.target as HTMLElement;
-
-        if (
-          target.closest('[data-node-id]') === null &&
-          target.closest('[data-canvas-control]') === null &&
-          target.closest('button') === null &&
-          drag === null
-        ) {
-          onClearSelection();
-        }
-      }}
       data-region="canvas-viewport"
+      data-canvas-mode={viewMode}
     >
-      <div className="absolute top-0 left-0 z-20 h-[24px] w-[24px] border-r border-b border-evidence-line bg-[#f3f4f6]" />
-      <div className="absolute top-0 left-[24px] right-0 z-20 h-[24px] border-b border-evidence-line bg-[#fafbfc]">
-        <RulerTicks
-          axis="x"
-          size={Math.max(0, size.width - RULER_THICKNESS)}
-          viewport={viewport}
-        />
-      </div>
-      <div className="absolute top-[24px] left-0 z-20 w-[24px] bottom-0 border-r border-evidence-line bg-[#fafbfc]">
-        <RulerTicks
-          axis="y"
-          size={Math.max(0, size.height - RULER_THICKNESS)}
-          viewport={viewport}
-        />
-      </div>
-
-      <div
-        className="absolute top-[24px] left-[24px] overflow-hidden"
-        style={{
-          right: 0,
-          bottom: 0,
-          cursor: drag?.mode === 'pan' ? 'grabbing' : 'default',
-        }}
-      >
-        <div
-          data-region="canvas-world"
-          className="absolute origin-top-left"
-          style={{
-            transition: transitioning ? 'transform 180ms ease-out' : undefined,
-            transform: `translate(${viewport.panX}px, ${viewport.panY}px) scale(${viewport.zoom})`,
+      <CanvasInteractionProvider value={interaction}>
+        <ReactFlow<CanvasFlowNode, CanvasFlowEdge>
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={NODE_TYPES}
+          edgeTypes={EDGE_TYPES}
+          minZoom={MIN_ZOOM}
+          maxZoom={MAX_ZOOM}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          edgesFocusable={false}
+          selectNodesOnDrag={false}
+          elevateNodesOnSelect={false}
+          selectionOnDrag
+          selectionMode={SelectionMode.Partial}
+          panOnDrag={[1, 2]}
+          panOnScroll
+          zoomOnScroll={false}
+          zoomOnPinch
+          zoomOnDoubleClick={false}
+          preventScrolling
+          onPaneClick={onClearSelection}
+          onNodeMouseEnter={(_, node) => {
+            if (node.type === 'contextGroup') setHoveredContextId(node.id);
           }}
+          onNodeMouseLeave={(_, node) => {
+            if (node.type === 'contextGroup') setHoveredContextId(null);
+          }}
+          onSelectionChange={({ nodes: selected }) => {
+            const first = selected.find(
+              (candidate) => candidate.type === 'entityNode',
+            );
+
+            if (first !== undefined && first.id !== selection.nodeId) {
+              onSelect(first.id);
+            }
+          }}
+          aria-label="履约模型画布"
         >
-          <CanvasStage
-            {...(diagnostics === undefined ? {} : { diagnostics })}
-            {...(onOpenIssues === undefined ? {} : { onOpenIssues })}
-            layout={layout}
-            document={document}
-            viewMode={viewMode}
-            selection={selection}
-            hoveredEdgeId={hoveredEdgeId}
-            hoveredContextId={hoveredContextId}
-            highlightedNodeIds={mergeSelection(
-              selectedHighlight.nodeIds,
-              marqueeSelection,
-            )}
-            highlightedEdgeIds={selectedHighlight.edgeIds}
-            highlightedContextIds={selectedHighlight.contextIds}
-            dimmed={selectedHighlight.dimmed}
-            marquee={marqueeRect}
-            overlay={overlay}
-            scope={scope}
-            onHoverNode={setHoveredNodeId}
-            onHoverEdge={setHoveredEdgeId}
-            onHoverContext={setHoveredContextId}
-            onSelect={onSelect}
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={18}
+            size={1}
+            color="#d5dae2"
           />
-        </div>
-      </div>
+
+          {/*
+            Everything the layout draws in world space but does not want a DOM
+            node for: the fulfillment frame, the pair links, the swimlane banner
+            and the measuring box the MCP capture uses. It sits at z-index 0 so
+            notes always stay on top of their paper.
+          */}
+          <ViewportPortal>
+            <div
+              className="pointer-events-none absolute"
+              style={{ zIndex: 0, left: 0, top: 0 }}
+            >
+              <div
+                data-region="canvas-stage"
+                className="pointer-events-none absolute"
+                style={{
+                  left: layout.bounds.x,
+                  top: layout.bounds.y,
+                  width: Math.max(1, layout.bounds.width),
+                  height: Math.max(1, layout.bounds.height),
+                }}
+              />
+              <svg
+                className="pointer-events-none absolute overflow-visible"
+                width={Math.max(1, layout.bounds.width)}
+                height={Math.max(1, layout.bounds.height)}
+                aria-hidden="true"
+              >
+                {layout.fulfillmentGroups.map((group) => (
+                  <rect
+                    key={group.groupId}
+                    x={group.box.x}
+                    y={group.box.y}
+                    width={group.box.width}
+                    height={group.box.height}
+                    opacity={
+                      scope !== null && !scope.nodeIds.has(group.requestId)
+                        ? 0.15
+                        : 1
+                    }
+                    rx={10}
+                    fill="none"
+                    stroke="rgba(180, 54, 86, 0.35)"
+                    strokeWidth={1}
+                    strokeDasharray="6 4"
+                  />
+                ))}
+              </svg>
+              {isLifecycleLayout(layout) ? (
+                <LifecycleBanner layout={layout} />
+              ) : null}
+            </div>
+          </ViewportPortal>
+
+          {/* Diagnostics and patch rings take pointer events, so they sit above
+              the notes they annotate. */}
+          <ViewportPortal>
+            <div
+              className="absolute"
+              style={{ zIndex: 3, left: 0, top: 0, pointerEvents: 'none' }}
+            >
+              {diagnostics !== undefined && onOpenIssues !== undefined ? (
+                <DiagnosticMarkers
+                  index={diagnostics}
+                  layout={layout}
+                  scope={scope}
+                  onOpen={onOpenIssues}
+                />
+              ) : null}
+              {changeRings.map(({ nodeId, change, node }) => (
+                <ChangeRing key={`mark-${nodeId}`} node={node} change={change} />
+              ))}
+            </div>
+          </ViewportPortal>
+        </ReactFlow>
+      </CanvasInteractionProvider>
 
       {onScopeChange ? (
         <ScopeFilterControl
           contextGroups={layout.contextGroups}
-          selectedScope={scopeId}
+          selectedScope={scope?.contextId ?? null}
           onScopeChange={onScopeChange}
         />
       ) : null}
-      <BusinessLegend compact={size.width < 800} viewMode={viewMode} />
 
-      {/*
-        One island in the bottom centre instead of three corner strips: it is
-        the only furniture that floats over the model, so the model keeps the
-        corners it used to lose to zoom, density and legend buttons.
-      */}
+      <BusinessLegend viewMode={viewMode} />
+
       {hud === undefined ? null : (
         <div
           data-canvas-control=""
@@ -521,71 +468,14 @@ export const CanvasViewport = ({
           className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center px-4"
         >
           {hud({
-            zoom: viewport.zoom,
-            zoomIn: () => {
-              setViewport((current) =>
-                zoomAtPoint(current, current.zoom * 1.25, {
-                  x: (size.width - RULER_THICKNESS) / 2,
-                  y: (size.height - RULER_THICKNESS) / 2,
-                }),
-              );
-            },
-            zoomOut: () => {
-              setViewport((current) =>
-                zoomAtPoint(current, current.zoom * 0.8, {
-                  x: (size.width - RULER_THICKNESS) / 2,
-                  y: (size.height - RULER_THICKNESS) / 2,
-                }),
-              );
-            },
-            resetZoom: () =>
-              setViewport((current) =>
-                zoomAtPoint(current, 1, {
-                  x: (size.width - RULER_THICKNESS) / 2,
-                  y: (size.height - RULER_THICKNESS) / 2,
-                }),
-              ),
+            zoom,
+            zoomIn: () => void zoomIn({ duration: reducedMotion() ? 0 : 120 }),
+            zoomOut: () => void zoomOut({ duration: reducedMotion() ? 0 : 120 }),
+            resetZoom: () => void zoomTo(1, { duration: reducedMotion() ? 0 : 120 }),
             fitToContent,
           })}
         </div>
       )}
     </div>
   );
-};
-
-const mergeSelection = (
-  nodeIds: ReadonlySet<string>,
-  extra: readonly string[],
-): ReadonlySet<string> =>
-  extra.length === 0 ? nodeIds : new Set([...nodeIds, ...extra]);
-
-const stagePointOf = (
-  event: { clientX: number; clientY: number },
-  container: HTMLDivElement | null,
-): Point => {
-  const rect = container?.getBoundingClientRect();
-
-  return {
-    x: event.clientX - (rect?.left ?? 0) - RULER_THICKNESS,
-    y: event.clientY - (rect?.top ?? 0) - RULER_THICKNESS,
-  };
-};
-
-const marqueeSelectionOf = (
-  drag: Extract<DragState, { mode: 'marquee' }>,
-  viewport: ViewportState,
-): Rect => {
-  const toWorld = (point: Point): Point => ({
-    x: (point.x - viewport.panX) / viewport.zoom,
-    y: (point.y - viewport.panY) / viewport.zoom,
-  });
-  const start = toWorld(drag.start);
-  const end = toWorld(drag.current);
-
-  return {
-    x: Math.min(start.x, end.x),
-    y: Math.min(start.y, end.y),
-    width: Math.abs(end.x - start.x),
-    height: Math.abs(end.y - start.y),
-  };
 };
