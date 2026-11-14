@@ -9,7 +9,7 @@ const tokenize = (expression: string): readonly string[] => {
   const tokens: string[] = [];
   while (!stream.eol()) {
     const start = stream.pos;
-    const token = celStreamParser.token(stream);
+    const token = celStreamParser.token(stream, null);
 
     // A tokenizer that skipped the whitespace itself leaves the stream moved;
     // only a token that consumed nothing needs the caller to advance it.

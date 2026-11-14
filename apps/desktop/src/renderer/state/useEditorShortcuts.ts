@@ -19,6 +19,7 @@ interface ShortcutHandlers {
   /** Re-runs the AST gate and the sensors. */
   rerunSensors?: () => void;
   openDelivery?: () => void;
+  /** Opens the sandbox hub (Alt+Shift+S); Alt+S now flips the split. */
   openSandbox?: () => void;
   clearSelection: () => void;
   zoomIn: () => void;
@@ -27,6 +28,16 @@ interface ShortcutHandlers {
   resetZoom?: () => void;
   /** Fits the model into the stage (Shift+1). */
   fitCanvas?: () => void;
+  /** Frames the selected object (Shift+2). */
+  zoomToSelection?: () => void;
+  /** Opens the split stage on the ledger (Alt+3). */
+  openLedgerSplit?: () => void;
+  /** Opens the split stage on the contract (Alt+4). */
+  openContractSplit?: () => void;
+  /** Flips the split between side-by-side and stacked (Alt+S). */
+  rotateSplit?: () => void;
+  /** Leaves the split stage (Alt+2 is the ledger, Alt+1 the graph). */
+  closeSplit?: () => void;
   /** Collapses the left outline rail (Mod+B). */
   toggleLeftRail?: () => void;
   /** Collapses the inspector rail (Mod+I / Mod+\). */
@@ -102,6 +113,12 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
+      if (event.altKey && event.shiftKey && !typing && event.code === 'KeyS') {
+        event.preventDefault();
+        handlers.openSandbox?.();
+        return;
+      }
+
       if (mod && event.shiftKey) {
         const shifted = event.key.toLowerCase();
         const shiftedAction =
@@ -130,11 +147,15 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         const altAction =
           event.code === 'KeyD'
             ? handlers.openDelivery
-            : event.code === 'KeyS'
-              ? handlers.openSandbox
-              : event.code === 'KeyX'
-                ? handlers.toggleProblems
-                : undefined;
+            : event.code === 'KeyX'
+              ? handlers.toggleProblems
+              : event.code === 'KeyS'
+                ? handlers.rotateSplit
+                : event.code === 'Digit3'
+                  ? handlers.openLedgerSplit
+                  : event.code === 'Digit4'
+                    ? handlers.openContractSplit
+                    : undefined;
 
         if (altAction !== undefined) {
           event.preventDefault();
@@ -222,13 +243,19 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
-      if (
-        event.shiftKey &&
-        event.code === 'Digit1' &&
-        handlers.fitCanvas !== undefined
-      ) {
+      if (event.shiftKey && event.code === 'Digit1' && handlers.fitCanvas) {
         event.preventDefault();
         handlers.fitCanvas();
+        return;
+      }
+
+      if (
+        event.shiftKey &&
+        event.code === 'Digit2' &&
+        handlers.zoomToSelection
+      ) {
+        event.preventDefault();
+        handlers.zoomToSelection();
         return;
       }
 

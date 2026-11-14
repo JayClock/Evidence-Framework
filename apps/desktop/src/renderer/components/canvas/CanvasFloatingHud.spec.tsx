@@ -21,6 +21,10 @@ const setup = (
     zoomOut: vi.fn(),
     resetZoom: vi.fn(),
     fitToContent: vi.fn(),
+    onGridChange: vi.fn(),
+    onOpenSplit: vi.fn(),
+    onCloseSplit: vi.fn(),
+    onShowLedger: vi.fn(),
   };
 
   render(
@@ -30,6 +34,10 @@ const setup = (
       density={overrides.density ?? 'standard'}
       hasSelection={overrides.hasSelection ?? false}
       zoom={overrides.zoom ?? 1}
+      grid="dots"
+      splitPane="ledger"
+      minimapOpen={false}
+      onToggleMinimap={vi.fn()}
     />,
   );
 
@@ -58,11 +66,32 @@ describe('CanvasFloatingHud', () => {
       'true',
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /分屏/ }));
+    // The segmented control prints its chord beside the label.
+    fireEvent.click(screen.getByRole('button', { name: /分屏⌥3/ }));
     expect(handlers.onViewModeChange).toHaveBeenCalledWith('split');
 
     fireEvent.click(screen.getByRole('button', { name: '简化图' }));
     expect(handlers.onDensityChange).toHaveBeenCalledWith('simplified');
+  });
+
+  it('opens a chosen comparison beside the graph', () => {
+    const handlers = setup({ viewMode: 'split' });
+
+    fireEvent.click(screen.getByRole('button', { name: /选择分屏对照/ }));
+    fireEvent.click(screen.getByRole('button', { name: /交付契约/ }));
+
+    expect(handlers.onOpenSplit).toHaveBeenCalledWith('openapi');
+    expect(
+      screen.getByRole('button', { name: /选择分屏对照/ }),
+    ).toHaveTextContent('关键台账');
+  });
+
+  it('cycles the paper the model sits on', () => {
+    const handlers = setup();
+
+    fireEvent.click(screen.getByRole('button', { name: /画布底纹/ }));
+
+    expect(handlers.onGridChange).toHaveBeenCalledWith('lines');
   });
 
   it('drives the zoom the viewport handed it', () => {

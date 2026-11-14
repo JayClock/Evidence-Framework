@@ -110,7 +110,8 @@ describe('useEditorShortcuts', () => {
     fireEvent.keyDown(window, { key: 'E', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { key: 'R', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
-    fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
+    // The sandbox moved one modifier out: Alt+S now flips the split.
+    fireEvent.keyDown(window, { code: 'KeyS', altKey: true, shiftKey: true });
 
     expect(handlers.exportReview).toHaveBeenCalledTimes(1);
     expect(handlers.rerunSensors).toHaveBeenCalledTimes(1);
@@ -119,6 +120,25 @@ describe('useEditorShortcuts', () => {
     // Mod+Shift+Z must stay redo, not become another shifted action.
     fireEvent.keyDown(window, { key: 'Z', metaKey: true, shiftKey: true });
     expect(handlers.redo).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens each comparison and flips the split from the keyboard', () => {
+    const handlers = setup({
+      openLedgerSplit: vi.fn(),
+      openContractSplit: vi.fn(),
+      rotateSplit: vi.fn(),
+      zoomToSelection: vi.fn(),
+    });
+
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
+    fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit2', shiftKey: true });
+
+    expect(handlers.openLedgerSplit).toHaveBeenCalledTimes(1);
+    expect(handlers.openContractSplit).toHaveBeenCalledTimes(1);
+    expect(handlers.rotateSplit).toHaveBeenCalledTimes(1);
+    expect(handlers.zoomToSelection).toHaveBeenCalledTimes(1);
   });
 
   it('leaves the alt chords to a text field that is being typed in', () => {

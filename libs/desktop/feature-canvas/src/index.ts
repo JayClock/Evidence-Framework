@@ -1,5 +1,6 @@
 export {
   CanvasViewport,
+  type CanvasGridStyle,
   type CanvasHudControls,
   type ZoomDirection,
 } from './CanvasViewport.js';

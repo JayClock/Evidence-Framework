@@ -2,6 +2,8 @@
 // travel with the component, not with the app that happens to host it.
 import '@xyflow/react/dist/style.css';
 
+import { Radar } from 'lucide-react';
+
 import {
   useCallback,
   useEffect,
@@ -14,6 +16,7 @@ import {
 import {
   Background,
   BackgroundVariant,
+  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   SelectionMode,
@@ -38,7 +41,10 @@ import type {
   DomainGraph,
   ModelSelection,
 } from '@evidence-poc/evidence-model-core';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  DomainModelDocument,
+  EntityAST,
+} from '@evidence-poc/evidence-schema';
 
 import {
   CanvasInteractionProvider,
@@ -50,6 +56,7 @@ import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
 import { LifecycleBanner } from './LifecycleBanner';
 import { ScopeFilterControl } from './ScopeFilterControl';
 import { summarizeCards } from './cardSummary';
+import { entityColor } from './colors';
 import { ChangeRing, type ModelOverlay } from './canvasOverlay';
 import { DiagnosticMarkers } from './DiagnosticMarkers';
 import type { DiagnosticIndex } from './diagnosticIndex';
@@ -96,7 +103,10 @@ interface CanvasViewportProps {
   onClearSelection: () => void;
 }
 
-export type ZoomDirection = 'in' | 'out' | 'fit' | 'reset';
+export type ZoomDirection = 'in' | 'out' | 'fit' | 'reset' | 'selection';
+
+/** What the background is drawn as. `none` leaves the model on plain paper. */
+export type CanvasGridStyle = 'dots' | 'lines' | 'none';
 
 /** What the floating island needs from the viewport it floats over. */
 export interface CanvasHudControls {
@@ -106,6 +116,12 @@ export interface CanvasHudControls {
   /** 1:1 at the centre of the stage. */
   resetZoom: () => void;
   fitToContent: () => void;
+  /** The paper the model sits on, switched from the island. */
+  grid: CanvasGridStyle;
+  onGridChange: (grid: CanvasGridStyle) => void;
+  /** True while the radar thumbnail is expanded. */
+  minimapOpen: boolean;
+  onToggleMinimap: () => void;
 }
 
 const NODE_TYPES = {
@@ -140,6 +156,28 @@ const reducedMotion = (): boolean =>
  * delegation cheap: a node's position is the box the layout placed, and an edge
  * is the polyline the router returned.
  */
+/** The business object a flow node draws, if it draws one at all. */
+const entityOfFlowNode = (node: { data?: unknown }): EntityAST | null => {
+  const data = node.data as { node?: { entity?: EntityAST } } | undefined;
+
+  return data?.node?.entity ?? null;
+};
+
+/** The box a "zoom to selection" request should frame. */
+const selectedBox = (
+  layout: DomainGraphLayout,
+  selection: ModelSelection,
+): { x: number; y: number; width: number; height: number } | null => {
+  if (selection.nodeId === null) return null;
+
+  return (
+    layout.nodeById.get(selection.nodeId)?.box ??
+    layout.contextGroups.find((group) => group.contextId === selection.nodeId)
+      ?.box ??
+    null
+  );
+};
+
 export const CanvasViewport = (props: CanvasViewportProps) => (
   <ReactFlowProvider>
     <CanvasSurface {...props} />
@@ -169,6 +207,10 @@ const CanvasSurface = ({
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
   const [hoveredContextId, setHoveredContextId] = useState<string | null>(null);
+  const [grid, setGrid] = useState<CanvasGridStyle>('dots');
+  // The radar is collapsed until asked for: a minimap over a 40-node board is
+  // furniture, and furniture should not take the corner by default.
+  const [minimapOpen, setMinimapOpen] = useState(false);
 
   const summaries = useMemo(() => summarizeCards(document), [document]);
 
@@ -261,10 +303,26 @@ const CanvasSurface = ({
       return;
     }
 
+    if (zoomCommand.direction === 'selection') {
+      const box = selectedBox(layout, selection);
+      if (box === null) return;
+      void fitBounds(box, { padding: 0.9, duration: reducedMotion() ? 0 : 250 });
+      return;
+    }
+
     void (zoomCommand.direction === 'in'
       ? zoomIn({ duration })
       : zoomOut({ duration }));
-  }, [zoomCommand, fitToContent, zoomIn, zoomOut, zoomTo]);
+  }, [
+    zoomCommand,
+    fitToContent,
+    fitBounds,
+    layout,
+    selection,
+    zoomIn,
+    zoomOut,
+    zoomTo,
+  ]);
 
   const lastFocusToken = useRef<number | null>(null);
   useEffect(() => {
@@ -368,12 +426,16 @@ const CanvasSurface = ({
           }}
           aria-label="履约模型画布"
         >
-          <Background
-            variant={BackgroundVariant.Dots}
-            gap={18}
-            size={1}
-            color="#d5dae2"
-          />
+          {grid === 'none' ? null : (
+            <Background
+              variant={
+                grid === 'lines' ? BackgroundVariant.Lines : BackgroundVariant.Dots
+              }
+              gap={grid === 'lines' ? 96 : 18}
+              size={1}
+              color="#d5dae2"
+            />
+          )}
 
           {/*
             Everything the layout draws in world space but does not want a DOM
@@ -448,6 +510,28 @@ const CanvasSurface = ({
               ))}
             </div>
           </ViewportPortal>
+
+          {/*
+            The radar: a reader who has zoomed into one Context still needs to
+            know where that Context sits in the model. Colours match the cards,
+            so the thumbnail is readable without a second legend.
+          */}
+          {minimapOpen ? (
+            <MiniMap
+              pannable
+              zoomable
+              position="top-right"
+              ariaLabel="画布雷达"
+              style={{ width: 176, height: 120, marginTop: 30 }}
+              nodeColor={(node) => {
+                const entity = entityOfFlowNode(node);
+
+                return entity === null ? '#cbd5e1' : entityColor(entity);
+              }}
+              nodeStrokeWidth={2}
+              maskColor="rgba(247, 248, 250, 0.72)"
+            />
+          ) : null}
         </ReactFlow>
       </CanvasInteractionProvider>
 
@@ -461,6 +545,20 @@ const CanvasSurface = ({
 
       <BusinessLegend viewMode={viewMode} />
 
+      {/* The radar is a pill until it is asked for. */}
+      <button
+        type="button"
+        data-canvas-control=""
+        data-evidence-capture-hide=""
+        aria-label={minimapOpen ? '收起画布雷达' : '展开画布雷达'}
+        aria-pressed={minimapOpen}
+        onClick={() => setMinimapOpen((current) => !current)}
+        className="absolute top-2 right-4 z-30 flex items-center gap-1 rounded-full border border-evidence-line bg-white/95 px-2 py-0.5 text-[10px] text-evidence-muted shadow-sm transition-colors hover:text-evidence-ink"
+      >
+        <Radar aria-hidden="true" className="size-3" />
+        雷达
+      </button>
+
       {hud === undefined ? null : (
         <div
           data-canvas-control=""
@@ -473,6 +571,10 @@ const CanvasSurface = ({
             zoomOut: () => void zoomOut({ duration: reducedMotion() ? 0 : 120 }),
             resetZoom: () => void zoomTo(1, { duration: reducedMotion() ? 0 : 120 }),
             fitToContent,
+            grid,
+            onGridChange: setGrid,
+            minimapOpen,
+            onToggleMinimap: () => setMinimapOpen((current) => !current),
           })}
         </div>
       )}

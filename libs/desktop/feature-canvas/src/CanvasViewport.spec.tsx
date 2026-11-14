@@ -195,6 +195,83 @@ describe('CanvasViewport', () => {
     );
   });
 
+  it('keeps the radar collapsed until it is asked for', () => {
+    setup();
+
+    expect(
+      window.document.querySelector('[data-testid="rf__minimap"]'),
+    ).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: '展开画布雷达' }));
+
+    expect(
+      window.document.querySelector('[data-testid="rf__minimap"]'),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole('button', { name: '收起画布雷达' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('lets the island change the paper the model sits on', () => {
+    const Harness = () => (
+      <CanvasViewport
+        document={document}
+        graph={graph}
+        layout={layout}
+        viewMode="standard"
+        selection={{ nodeId: null, attributeName: null }}
+        focusRequest={null}
+        zoomCommand={null}
+        hud={(controls) => (
+          <button type="button" onClick={() => controls.onGridChange('none')}>
+            {`底纹 ${controls.grid}`}
+          </button>
+        )}
+        onSelect={vi.fn()}
+        onClearSelection={vi.fn()}
+      />
+    );
+    render(<Harness />);
+
+    expect(
+      window.document.querySelector('.react-flow__background'),
+    ).not.toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: '底纹 dots' }));
+
+    expect(
+      window.document.querySelector('.react-flow__background'),
+    ).toBeNull();
+  });
+
+  it('frames the selected object on a zoom-to-selection command', async () => {
+    const props = {
+      document,
+      graph,
+      layout,
+      viewMode: 'standard' as const,
+      selection: { nodeId: 'evidence.contract', attributeName: null },
+      focusRequest: null,
+      onSelect: vi.fn(),
+      onClearSelection: vi.fn(),
+    };
+    const { container, rerender } = render(
+      <CanvasViewport {...props} zoomCommand={null} />,
+    );
+    const before = viewportTransform(container);
+
+    rerender(
+      <CanvasViewport
+        {...props}
+        zoomCommand={{ direction: 'selection', token: 1 }}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(viewportTransform(container)).not.toBe(before),
+    );
+  });
+
   it('marks the objects a pending patch touches', () => {
     const { container } = setup({
       overlay: {

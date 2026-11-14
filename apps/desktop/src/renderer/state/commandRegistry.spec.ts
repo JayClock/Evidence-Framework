@@ -17,6 +17,7 @@ const capabilities = (
   dirty: false,
   busy: false,
   viewMode: 'graph',
+  hasSelection: false,
   ...overrides,
 });
 
@@ -25,6 +26,9 @@ const handlers = (): CommandHandlers => ({
   undo: vi.fn(),
   redo: vi.fn(),
   setViewMode: vi.fn(),
+  openContractSplit: vi.fn(),
+  rotateSplit: vi.fn(),
+  zoomToSelection: vi.fn(),
   focusSearch: vi.fn(),
   openReview: vi.fn(),
   exportReview: vi.fn(),

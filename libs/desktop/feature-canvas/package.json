@@ -31,6 +31,7 @@
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@xyflow/react": "^12.12.1",
+    "lucide-react": "^1.72.0",
     "react": "^19.2.8",
     "tslib": "^2.3.0"
   }

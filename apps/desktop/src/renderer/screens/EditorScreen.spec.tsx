@@ -773,6 +773,37 @@ describe('EditorScreen dual-mode stage', () => {
     ).not.toBeNull();
   });
 
+  it('opens the contract comparison with Alt+4 and flips its direction with Alt+S', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
+
+    const stage = await screen.findByLabelText('副视口');
+    expect(stage).toHaveAttribute('data-pane', 'openapi');
+    expect(stage).toHaveAttribute('data-direction', 'horizontal');
+    expect(
+      container.querySelector('[data-region="openapi-spec"]'),
+    ).not.toBeNull();
+
+    fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
+
+    await waitFor(() =>
+      expect(screen.getByLabelText('副视口')).toHaveAttribute(
+        'data-direction',
+        'vertical',
+      ),
+    );
+
+    // The graph and the comparison share the stage in either direction.
+    expect(
+      container.querySelector('[data-region="canvas-viewport"]'),
+    ).not.toBeNull();
+  });
+
   it('travels from a ledger row to the object on the canvas beside it', async () => {
     readyProject();
     const { container } = render(

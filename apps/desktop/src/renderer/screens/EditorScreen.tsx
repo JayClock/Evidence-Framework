@@ -474,11 +474,13 @@ const EditorWorkspace = ({
       dirty: state.dirty,
       busy: reviewExport.busy,
       viewMode: workspaceView.mode,
+      hasSelection: state.selection.nodeId !== null,
     }),
     [
       state.canUndo,
       state.canRedo,
       state.dirty,
+      state.selection.nodeId,
       reviewExport.busy,
       workspaceView.mode,
     ],
@@ -494,6 +496,9 @@ const EditorWorkspace = ({
         state.session.redo();
       },
       setViewMode: workspaceView.setMode,
+      openContractSplit: () => split.openSplit('openapi'),
+      rotateSplit: split.rotateSplitDirection,
+      zoomToSelection: () => requestZoom('selection'),
       focusSearch,
       openReview: () => layout.openHub('review'),
       exportReview: () => void reviewExport.exportPage(),
@@ -515,6 +520,8 @@ const EditorWorkspace = ({
       reviewExport.exportPage,
       save,
       sensors.refresh,
+      split.openSplit,
+      split.rotateSplitDirection,
       state.session,
       workspaceView.setMode,
     ],
@@ -564,6 +571,7 @@ const EditorWorkspace = ({
       zoomOut: () => requestZoom('out'),
       resetZoom: () => requestZoom('reset'),
       fitCanvas: () => requestZoom('fit'),
+      zoomToSelection: () => requestZoom('selection'),
       toggleLeftRail: () => {
         layout.toggleRailTab('topology');
       },
@@ -572,6 +580,11 @@ const EditorWorkspace = ({
       },
       openInlineCopilot: layout.openInlineCopilot,
       toggleProblems: layout.toggleProblemsPanel,
+      // The stage's own chords: one per comparison, plus the direction flip.
+      openLedgerSplit: () => split.openSplit('ledger'),
+      openContractSplit: () => split.openSplit('openapi'),
+      rotateSplit: split.rotateSplitDirection,
+      closeSplit: split.closeSplit,
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
@@ -588,6 +601,9 @@ const EditorWorkspace = ({
       reviewExport.exportPage,
       save,
       sensors.refresh,
+      split.openSplit,
+      split.closeSplit,
+      split.rotateSplitDirection,
       state.session,
       toggleRail,
     ],
@@ -661,6 +677,10 @@ const EditorWorkspace = ({
           onDensityChange={setViewMode}
           hasSelection={state.selection.nodeId !== null}
           onClearSelection={() => state.session.clearSelection()}
+          splitPane={split.activePane}
+          onOpenSplit={split.openSplit}
+          onCloseSplit={split.closeSplit}
+          onShowLedger={() => workspaceView.setMode('table')}
         />
       )}
       diagnostics={diagnostics}

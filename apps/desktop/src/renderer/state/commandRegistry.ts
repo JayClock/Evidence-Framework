@@ -90,10 +90,13 @@ export const CHORDS = {
   graph: '⌥+1',
   table: '⌥+2',
   split: '⌥+3',
+  splitContract: '⌥+4',
+  rotateSplit: '⌥+S',
+  zoomSelection: '⇧+2',
   review: '⌥+R',
   exportReview: '⌘+Shift+E',
   delivery: '⌥+D',
-  sandbox: '⌥+S',
+  sandbox: '⌥+⇧+S',
   rerunSensors: '⌘+Shift+R',
   problems: '⌥+X',
 } as const;
@@ -106,6 +109,8 @@ export interface CommandCapabilities {
   /** A review export is already being written. */
   busy: boolean;
   viewMode: WorkspaceViewMode;
+  /** Whether anything is selected, so "zoom to selection" can be honest. */
+  hasSelection: boolean;
 }
 
 export interface CommandHandlers {
@@ -113,6 +118,12 @@ export interface CommandHandlers {
   undo: () => void;
   redo: () => void;
   setViewMode: (mode: WorkspaceViewMode) => void;
+  /** Opens the split stage on the contract rail. */
+  openContractSplit: () => void;
+  /** Flips the split between side-by-side and stacked. */
+  rotateSplit: () => void;
+  /** Frames the selected object. */
+  zoomToSelection: () => void;
   focusSearch: () => void;
   openReview: () => void;
   exportReview: () => void;
@@ -206,6 +217,37 @@ export const buildCommands = (
       keywords: ['split', '分屏'],
       disabled: capabilities.viewMode === 'split',
       perform: () => handlers.setViewMode('split'),
+    },
+    {
+      id: 'view.split-contract',
+      title: '分屏：图 + 交付契约',
+      subtitle: '左边看履约架构流，右边读 OpenAPI 3.1 契约',
+      category: 'view',
+      shortcut: CHORDS.splitContract,
+      icon: Columns2,
+      keywords: ['split', 'openapi', 'contract', '契约', '分屏'],
+      perform: handlers.openContractSplit,
+    },
+    {
+      id: 'view.rotate-split',
+      title: '切换分屏方向',
+      subtitle: '左右并排与上下并排互换',
+      category: 'view',
+      shortcut: CHORDS.rotateSplit,
+      icon: Columns2,
+      keywords: ['split', 'direction', 'rotate', '方向'],
+      perform: handlers.rotateSplit,
+    },
+    {
+      id: 'view.zoom-selection',
+      title: '缩放到当前对象',
+      subtitle: '把选中的实体铺满画布',
+      category: 'view',
+      shortcut: CHORDS.zoomSelection,
+      icon: Search,
+      keywords: ['zoom', 'selection', 'focus', '放大'],
+      disabled: !capabilities.hasSelection,
+      perform: handlers.zoomToSelection,
     },
     {
       id: 'view.rail-topology',
