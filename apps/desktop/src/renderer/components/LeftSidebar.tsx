@@ -65,7 +65,7 @@ export const LeftSidebar = ({
   }, [layout.nodes, searchTerm]);
 
   return (
-    <aside className="flex h-full min-h-0 w-[248px] shrink-0 flex-col border-r border-evidence-line bg-white/70">
+    <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
       <div className="border-b border-evidence-line p-3">
         <input
           ref={searchInputRef}

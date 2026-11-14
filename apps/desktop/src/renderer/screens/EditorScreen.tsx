@@ -1,23 +1,36 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
-import { ReviewHubModal } from '../components/review/ReviewHubModal';
-import { AgentPanel } from '../components/agent/AgentPanel';
 import { PatchReviewBar } from '../components/agent/PatchReviewBar';
 import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
+import {
+  BottomConsole,
+  type ConsoleTab,
+} from '../components/console/BottomConsole';
 import { LeftSidebar } from '../components/LeftSidebar';
-import { RightInspector } from '../components/RightInspector';
-import { DeliveryHub } from '../components/delivery/DeliveryHub';
-import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
-import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
+import { RightWorkbench } from '../components/RightWorkbench';
 import { TopHeader } from '../components/TopHeader';
 import { CanvasViewport } from '../components/canvas/CanvasViewport';
 import type { CanvasViewMode } from '../components/canvas/CanvasStage';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '../components/ui/Resizable';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import { useAgentSession } from '../state/useAgentSession';
 import { LiveApiProvider } from '../state/LiveApiContext';
@@ -157,7 +170,12 @@ const EditorWorkspace = ({
     )
       setSelectedScope(null);
   }, [selectedScope, scope, state.selection.nodeId]);
-  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const [consoleOpen, setConsoleOpen] = useState(false);
+  const [consoleTab, setConsoleTab] = useState<ConsoleTab>('diagnostics');
+  const openConsole = useCallback((tab: ConsoleTab) => {
+    setConsoleTab(tab);
+    setConsoleOpen(true);
+  }, []);
   const [activeIssueIds, setActiveIssueIds] = useState<readonly string[]>([]);
   // Findings must describe the exact live revision, including undo/redo.
   const diagnosticsStale =
@@ -176,7 +194,6 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
-  const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewRevision, setReviewRevision] = useState(0);
   const [reviewPrompt, setReviewPrompt] = useState<{
     token: number;
@@ -193,8 +210,6 @@ const EditorWorkspace = ({
     }),
     [project.rootPath, state.document, reviewRevision],
   );
-  const [deliveryOpen, setDeliveryOpen] = useState(false);
-  const [sandboxOpen, setSandboxOpen] = useState(false);
 
   const patchReview = usePatchReview(state.session, state.document);
 
@@ -229,6 +244,21 @@ const EditorWorkspace = ({
   const tokenRef = useRef(0);
   // ⌘K bumps this, which moves the caret into the agent composer.
   const [agentFocusToken, setAgentFocusToken] = useState(0);
+
+  // The rails are also collapsed from the keyboard, and the imperative handle is
+  // the only way to move a panel without a pointer drag.
+  const leftRail = useRef<ImperativePanelHandle>(null);
+  const rightRail = useRef<ImperativePanelHandle>(null);
+  const toggleRail = useCallback(
+    (rail: RefObject<ImperativePanelHandle | null>) => {
+      const panel = rail.current;
+
+      if (panel === null) return;
+      if (panel.isCollapsed()) panel.expand();
+      else panel.collapse();
+    },
+    [],
+  );
 
   const focusNode = useCallback(
     (nodeId: string) => {
@@ -306,7 +336,7 @@ const EditorWorkspace = ({
 
   const shortcuts = useMemo(
     () => ({
-      openReview: () => setReviewOpen(true),
+      openReview: () => openConsole('review'),
       undo: () => {
         state.session.undo();
       },
@@ -319,6 +349,15 @@ const EditorWorkspace = ({
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
+      toggleLeftRail: () => {
+        toggleRail(leftRail);
+      },
+      toggleRightRail: () => {
+        toggleRail(rightRail);
+      },
+      toggleConsole: () => {
+        setConsoleOpen((open) => !open);
+      },
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
@@ -327,7 +366,9 @@ const EditorWorkspace = ({
       requestZoom,
       revertPatch,
       save,
+      openConsole,
       state.session,
+      toggleRail,
     ],
   );
 
@@ -366,6 +407,20 @@ const EditorWorkspace = ({
     state.document.manifest.id,
   ]);
 
+  const canLocateIssue = useCallback(
+    (issue: SensorIssue) => {
+      const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
+
+      return (
+        !!id &&
+        (state.layout.nodeById.has(id) ||
+          state.layout.contextGroups.some((group) => group.contextId === id) ||
+          state.layout.edges.some((edge) => edge.relationshipId === id))
+      );
+    },
+    [state.layout],
+  );
+
   return (
     <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
       <div className="flex h-full flex-col bg-evidence-surface">
@@ -384,12 +439,12 @@ const EditorWorkspace = ({
             state.session.redo();
           }}
           onSave={() => void save()}
-          onPreviewReview={() => setReviewOpen(true)}
+          onPreviewReview={() => openConsole('review')}
           onExportDiffReview={() => void reviewExport.exportPage(true)}
           onExportReview={() => void reviewExport.exportPage()}
           exportReviewBusy={reviewExport.busy}
-          onOpenDelivery={() => setDeliveryOpen(true)}
-          onOpenSandbox={() => setSandboxOpen(true)}
+          onOpenDelivery={() => openConsole('delivery')}
+          onOpenSandbox={() => openConsole('simulation')}
           onViewModeChange={setViewMode}
           onSearch={() => searchInputRef.current?.focus()}
         />
@@ -418,127 +473,155 @@ const EditorWorkspace = ({
           </div>
         ) : null}
 
+        {/*
+          The studio is one split view: outline, stage and workbench share the
+          width, and the console takes the stage's lower half instead of opening
+          over it. Every size is draggable and remembered across restarts.
+        */}
         <div className="flex min-h-0 flex-1">
-          <LeftSidebar
-            graph={state.graph}
-            layout={state.layout}
-            selectedNodeId={state.selection.nodeId}
-            searchTerm={searchTerm}
-            onSearchTermChange={setSearchTerm}
-            searchInputRef={searchInputRef}
-            onFocusNode={focusNode}
-          />
+          <ResizablePanelGroup
+            direction="horizontal"
+            autoSaveId="evidence-studio-horizontal-v1"
+          >
+            <ResizablePanel
+              id="left-rail"
+              order={1}
+              defaultSize={18}
+              minSize={12}
+              maxSize={32}
+              collapsible
+              collapsedSize={0}
+              ref={leftRail}
+            >
+              <LeftSidebar
+                graph={state.graph}
+                layout={state.layout}
+                selectedNodeId={state.selection.nodeId}
+                searchTerm={searchTerm}
+                onSearchTermChange={setSearchTerm}
+                searchInputRef={searchInputRef}
+                onFocusNode={focusNode}
+              />
+            </ResizablePanel>
 
-          <AgentPanel controller={agent} />
+            <ResizableHandle withHandle />
 
-          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-            <CanvasViewport
-              graph={state.graph}
-              layout={state.layout}
-              document={state.document}
-              viewMode={viewMode}
-              selection={state.selection}
-              focusRequest={focusRequest}
-              zoomCommand={zoomCommand}
-              diagnostics={diagnostics}
-              onOpenIssues={(issues) => {
-                setActiveIssueIds(issues.map((issue) => issue.issueId));
-                setDiagnosticsOpen(true);
-                if (issues[0]) focusIssue(issues[0]);
-              }}
-              overlay={patchReview.review?.overlay ?? null}
-              scope={scope}
-              onScopeChange={changeScope}
-              onSelect={(nodeId) => state.session.select(nodeId)}
-              onClearSelection={() => state.session.clearSelection()}
-            />
+            <ResizablePanel id="center-stage" order={2} minSize={35}>
+              <ResizablePanelGroup
+                direction="vertical"
+                autoSaveId="evidence-studio-vertical-v1"
+              >
+                <ResizablePanel id="canvas-stage" order={1} minSize={25}>
+                  <div className="relative h-full w-full">
+                    <CanvasViewport
+                      graph={state.graph}
+                      layout={state.layout}
+                      document={state.document}
+                      viewMode={viewMode}
+                      selection={state.selection}
+                      focusRequest={focusRequest}
+                      zoomCommand={zoomCommand}
+                      diagnostics={diagnostics}
+                      onOpenIssues={(issues) => {
+                        setActiveIssueIds(issues.map((issue) => issue.issueId));
+                        openConsole('diagnostics');
+                        if (issues[0]) focusIssue(issues[0]);
+                      }}
+                      overlay={patchReview.review?.overlay ?? null}
+                      scope={scope}
+                      onScopeChange={changeScope}
+                      onSelect={(nodeId) => state.session.select(nodeId)}
+                      onClearSelection={() => state.session.clearSelection()}
+                    />
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
-              {patchReview.review === null ? null : (
-                <PatchReviewBar
-                  review={patchReview.review}
-                  onAccept={patchReview.accept}
-                  onRevert={patchReview.revert}
-                />
-              )}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
+                      {patchReview.review === null ? null : (
+                        <PatchReviewBar
+                          review={patchReview.review}
+                          onAccept={patchReview.accept}
+                          onRevert={patchReview.revert}
+                        />
+                      )}
 
-              <div className="pointer-events-auto">
-                <PromptDock
-                  prefill={reviewPrompt}
-                  running={agent.state.running}
-                  activeToolName={agent.state.activeToolName}
-                  onSubmit={agent.submit}
-                  onStop={agent.stop}
-                  focus={promptFocus}
-                  onClearFocus={() => state.session.clearSelection()}
-                  focusToken={agentFocusToken}
-                />
-              </div>
-            </div>
-          </div>
+                      <div className="pointer-events-auto">
+                        <PromptDock
+                          prefill={reviewPrompt}
+                          running={agent.state.running}
+                          activeToolName={agent.state.activeToolName}
+                          onSubmit={agent.submit}
+                          onStop={agent.stop}
+                          focus={promptFocus}
+                          onClearFocus={() => state.session.clearSelection()}
+                          focusToken={agentFocusToken}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
 
-          <RightInspector
-            graph={state.graph}
-            session={state.session}
-            selection={state.selection}
-          />
+                {consoleOpen ? (
+                  <>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel
+                      id="bottom-console"
+                      order={2}
+                      defaultSize={36}
+                      minSize={15}
+                      maxSize={70}
+                    >
+                      <BottomConsole
+                        rootPath={project.rootPath}
+                        activeTab={consoleTab}
+                        onTabChange={setConsoleTab}
+                        onClose={() => setConsoleOpen(false)}
+                        report={sensors.report}
+                        reportStale={diagnosticsStale}
+                        reportLoading={sensors.loading}
+                        reportError={sensors.error}
+                        activeIssueIds={activeIssueIds}
+                        onFocusIssue={focusIssue}
+                        onRerunDiagnostics={() => void sensors.refresh()}
+                        delivery={delivery}
+                        reviewInput={reviewInput}
+                        canLocate={canLocateIssue}
+                        onPromptIssue={(issue) => {
+                          setConsoleOpen(false);
+                          focusIssue(issue);
+                          tokenRef.current += 1;
+                          setReviewPrompt({
+                            token: tokenRef.current,
+                            text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
+                          });
+                        }}
+                        onFocusEntity={focusNode}
+                      />
+                    </ResizablePanel>
+                  </>
+                ) : null}
+              </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            <ResizablePanel
+              id="right-rail"
+              order={3}
+              defaultSize={26}
+              minSize={16}
+              maxSize={40}
+              collapsible
+              collapsedSize={0}
+              ref={rightRail}
+            >
+              <RightWorkbench
+                graph={state.graph}
+                session={state.session}
+                selection={state.selection}
+                agent={agent}
+              />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
-
-        {reviewOpen ? (
-          <ReviewHubModal
-            input={reviewInput}
-            onClose={() => setReviewOpen(false)}
-            canLocate={(issue) => {
-              const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
-              return (
-                !!id &&
-                (state.layout.nodeById.has(id) ||
-                  state.layout.contextGroups.some(
-                    (group) => group.contextId === id,
-                  ) ||
-                  state.layout.edges.some((edge) => edge.relationshipId === id))
-              );
-            }}
-            onLocate={(issue) => {
-              setReviewOpen(false);
-              focusIssue(issue);
-            }}
-            onPrompt={(issue) => {
-              setReviewOpen(false);
-              focusIssue(issue);
-              tokenRef.current += 1;
-              setReviewPrompt({
-                token: tokenRef.current,
-                text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
-              });
-            }}
-          />
-        ) : null}
-        {deliveryOpen ? (
-          <DeliveryHub
-            hub={delivery}
-            onFocusEntity={focusNode}
-            onClose={() => setDeliveryOpen(false)}
-          />
-        ) : null}
-
-        {sandboxOpen ? (
-          <SimulationSandbox
-            rootPath={project.rootPath}
-            onClose={() => setSandboxOpen(false)}
-            onFocusEntity={focusNode}
-          />
-        ) : null}
-
-        {diagnosticsOpen && sensors.report !== null ? (
-          <DiagnosticsDrawer
-            selectedIssueIds={activeIssueIds}
-            stale={diagnosticsStale}
-            report={sensors.report}
-            onClose={() => setDiagnosticsOpen(false)}
-            onFocusIssue={focusIssue}
-          />
-        ) : null}
 
         <BottomStatusBar
           layout={state.layout}
@@ -547,8 +630,15 @@ const EditorWorkspace = ({
           reportStale={diagnosticsStale}
           sensorLoading={sensors.loading}
           sensorError={sensors.error}
-          diagnosticsOpen={diagnosticsOpen}
-          onToggleDiagnostics={() => setDiagnosticsOpen((open) => !open)}
+          diagnosticsOpen={consoleOpen && consoleTab === 'diagnostics'}
+          onToggleDiagnostics={() => {
+            if (consoleOpen && consoleTab === 'diagnostics') {
+              setConsoleOpen(false);
+              return;
+            }
+
+            openConsole('diagnostics');
+          }}
           onRerunSensors={() => void sensors.refresh()}
           dirty={state.dirty}
           savedAt={state.savedAt}

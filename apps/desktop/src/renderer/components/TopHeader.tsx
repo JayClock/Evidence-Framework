@@ -149,7 +149,7 @@ export const TopHeader = ({
           <button
             type="button"
             onClick={onPreviewReview}
-            title="审查中心（Alt+R）"
+            title="在底部控制台打开审查中心（Alt+R）"
             className="rounded border border-evidence-line px-2 py-1 text-[11px]"
           >
             审查中心
@@ -188,7 +188,7 @@ export const TopHeader = ({
           type="button"
           onClick={onOpenDelivery}
           className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-          title="查看服务边界并导出契约、拓扑与部署草图"
+          title="在底部控制台查看服务边界，并导出契约、拓扑与部署草图"
         >
           交付
         </button>
@@ -197,7 +197,7 @@ export const TopHeader = ({
           type="button"
           onClick={onOpenSandbox}
           className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-          title="逐步回放业务场景，并把导出的 trace 与模型比对"
+          title="在底部控制台逐步回放业务场景，并把导出的 trace 与模型比对"
         >
           沙盒
         </button>

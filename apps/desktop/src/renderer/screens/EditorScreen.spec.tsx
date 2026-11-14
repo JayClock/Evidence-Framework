@@ -49,9 +49,25 @@ describe('EditorScreen', () => {
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
     expect(screen.getByLabelText('AI 访谈输入')).toBeInTheDocument();
+    // Inspection owns the right rail by default; the agent history shares it as a tab.
+    expect(screen.queryByText('AI 访谈与操控')).toBeNull();
+    fireEvent.click(screen.getByRole('tab', { name: '协同' }));
     expect(screen.getByText('AI 访谈与操控')).toBeInTheDocument();
     expect(screen.getByText('履约对 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
+  });
+
+  it('docks the console with Cmd+J instead of covering the canvas', async () => {
+    readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    expect(screen.queryByLabelText('工作台控制台')).toBeNull();
+    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+    expect(await screen.findByLabelText('工作台控制台')).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+    expect(screen.queryByLabelText('工作台控制台')).toBeNull();
   });
 
   it('keeps scope and view mode out of the document and undo history', async () => {

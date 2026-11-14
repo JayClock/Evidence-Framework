@@ -89,7 +89,7 @@ export const RightInspector = ({
 };
 
 const InspectorShell = ({ children }: { children: React.ReactNode }) => (
-  <aside className="flex h-full min-h-0 w-[324px] shrink-0 flex-col border-l border-evidence-line bg-white/70">
+  <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
     <div className="border-b border-evidence-line px-3 py-2 text-[10px] tracking-wide text-evidence-muted uppercase">
       检视器
     </div>

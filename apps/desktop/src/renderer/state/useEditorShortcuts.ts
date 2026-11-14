@@ -11,6 +11,12 @@ interface ShortcutHandlers {
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  /** Collapses the left outline rail (Mod+B). */
+  toggleLeftRail?: () => void;
+  /** Collapses the right workbench rail (Mod+I). */
+  toggleRightRail?: () => void;
+  /** Collapses the bottom console (Mod+J). */
+  toggleConsole?: () => void;
   /**
    * Settles a pending agent patch.
    *
@@ -69,6 +75,26 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         event.preventDefault();
         handlers.focusSearch();
         return;
+      }
+
+      // Layout keys belong to the workspace, but a text field may want them for
+      // its own formatting, so they only fire outside an input.
+      if (mod && !typing) {
+        const layoutKey = event.key.toLowerCase();
+        const toggle =
+          layoutKey === 'b'
+            ? handlers.toggleLeftRail
+            : layoutKey === 'i'
+              ? handlers.toggleRightRail
+              : layoutKey === 'j'
+                ? handlers.toggleConsole
+                : undefined;
+
+        if (toggle !== undefined) {
+          event.preventDefault();
+          toggle();
+          return;
+        }
       }
 
       if (event.key === 'Escape' && handlers.revertPatch !== undefined) {

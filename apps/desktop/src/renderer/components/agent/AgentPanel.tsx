@@ -25,7 +25,7 @@ export const AgentPanel = ({ controller }: AgentPanelProps) => {
   const { state } = controller;
 
   return (
-    <aside className="flex h-full min-h-0 w-[268px] shrink-0 flex-col border-r border-evidence-line bg-white/70">
+    <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
       <div className="flex items-center justify-between border-b border-evidence-line px-3 py-2">
         <span className="text-[10px] tracking-wide text-evidence-muted uppercase">
           AI 访谈与操控
