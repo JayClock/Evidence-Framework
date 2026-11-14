@@ -25,7 +25,11 @@ export {
   type NodeShape,
 } from './colors.js';
 export { pointOnRoute } from './edgeLabels.js';
-export { summarizeCards, type CardSummary, type PartyBadge } from './cardSummary.js';
+export {
+  summarizeCards,
+  type CardSummary,
+  type PartyBadge,
+} from './cardSummary.js';
 export {
   OVERLAY_COLOR,
   OVERLAY_LABEL,

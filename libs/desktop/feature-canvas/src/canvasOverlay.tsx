@@ -49,7 +49,8 @@ export const ChangeRing = ({
       width: node.box.width + 6,
       height: node.box.height + 6,
       borderColor: OVERLAY_COLOR[change],
-      borderStyle: change === 'removed' || change === 'added' ? 'dashed' : 'solid',
+      borderStyle:
+        change === 'removed' || change === 'added' ? 'dashed' : 'solid',
     }}
   />
 );

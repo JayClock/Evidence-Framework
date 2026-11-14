@@ -122,6 +122,15 @@ describe('useEditorShortcuts', () => {
     expect(handlers.redo).toHaveBeenCalledTimes(1);
   });
 
+  it('closes the comparison on Escape before it clears a selection', () => {
+    const handlers = setup({ closeSplit: vi.fn(), clearSelection: vi.fn() });
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(handlers.closeSplit).toHaveBeenCalledTimes(1);
+    expect(handlers.clearSelection).not.toHaveBeenCalled();
+  });
+
   it('opens each comparison and flips the split from the keyboard', () => {
     const handlers = setup({
       openLedgerSplit: vi.fn(),

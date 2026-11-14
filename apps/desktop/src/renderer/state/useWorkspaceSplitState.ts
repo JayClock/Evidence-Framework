@@ -3,12 +3,7 @@ import { useCallback, useState } from 'react';
 import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
 
 /** The four ways one model can be read beside the graph. */
-export const SPLIT_PANES = [
-  'ledger',
-  'openapi',
-  'cel',
-  'simulation',
-] as const;
+export const SPLIT_PANES = ['ledger', 'openapi', 'cel', 'simulation'] as const;
 
 export type SplitPaneMode = (typeof SPLIT_PANES)[number];
 

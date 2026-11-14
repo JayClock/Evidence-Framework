@@ -91,9 +91,7 @@ describe('useBilateralSync', () => {
 
   it('unsubscribes when the pane unmounts', () => {
     const focusEntity = vi.fn();
-    const { unmount } = renderHook(() =>
-      useBilateralSync({ focusEntity }),
-    );
+    const { unmount } = renderHook(() => useBilateralSync({ focusEntity }));
 
     unmount();
     const seenBefore = focusEntity.mock.calls.length;

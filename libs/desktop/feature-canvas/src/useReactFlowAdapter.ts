@@ -111,9 +111,7 @@ export const convertLayoutToReactFlow = ({
   edges: CanvasFlowEdge[];
 } => {
   const groupBoxById = new Map(
-    layout.contextGroups.map(
-      (group) => [group.contextId, group.box] as const,
-    ),
+    layout.contextGroups.map((group) => [group.contextId, group.box] as const),
   );
 
   const nodes: CanvasFlowNode[] = [];
@@ -121,8 +119,7 @@ export const convertLayoutToReactFlow = ({
   // Parents first: React Flow adopts a child only once its parent is known.
   for (const group of layout.contextGroups) {
     const highlighted = highlightedContextIds.has(group.contextId);
-    const outOfScope =
-      scope !== null && !scope.contextIds.has(group.contextId);
+    const outOfScope = scope !== null && !scope.contextIds.has(group.contextId);
 
     nodes.push({
       id: group.contextId,
@@ -194,8 +191,7 @@ export const convertLayoutToReactFlow = ({
           ...node,
           box: { ...node.box, x: 0, y: 0 },
         },
-        summary:
-          summaries.get(node.nodeId) ??
+        summary: summaries.get(node.nodeId) ??
           // A card summarised from nothing still has to render; the layout
           // builder summarises every placed node, so this is unreachable.
           {
@@ -260,8 +256,7 @@ export const convertLayoutToReactFlow = ({
         highlighted,
         hovered: hoveredEdgeId === edge.relationshipId,
         dimmed: dimmed && !highlighted,
-        outOfScope:
-          scope !== null && !scope.edgeIds.has(edge.relationshipId),
+        outOfScope: scope !== null && !scope.edgeIds.has(edge.relationshipId),
         muted,
         diagnosticSeverity: severity,
       },

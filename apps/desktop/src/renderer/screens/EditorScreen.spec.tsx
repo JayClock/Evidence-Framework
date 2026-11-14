@@ -759,15 +759,11 @@ describe('EditorScreen dual-mode stage', () => {
     );
 
     fireEvent.click(screen.getByRole('tab', { name: /派生规则/ }));
-    expect(
-      container.querySelector('[data-region="cel-rules"]'),
-    ).not.toBeNull();
+    expect(container.querySelector('[data-region="cel-rules"]')).not.toBeNull();
 
     // Closing the stage returns to the graph, not to a bare ledger.
     fireEvent.click(screen.getByRole('button', { name: '关闭分屏' }));
-    await waitFor(() =>
-      expect(screen.queryByLabelText('副视口')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByLabelText('副视口')).toBeNull());
     expect(
       container.querySelector('[data-region="canvas-viewport"]'),
     ).not.toBeNull();
@@ -825,9 +821,7 @@ describe('EditorScreen dual-mode stage', () => {
     // The pane's request reaches the canvas on the same bus the canvas uses to
     // tell the pane which row to light.
     await waitFor(() => expect(world().style.transform).not.toBe(before));
-    expect(
-      container.querySelector('[data-row-flash]'),
-    ).not.toBeNull();
+    expect(container.querySelector('[data-row-flash]')).not.toBeNull();
   });
 
   it('walks from a ledger row back to the same object on the canvas', async () => {

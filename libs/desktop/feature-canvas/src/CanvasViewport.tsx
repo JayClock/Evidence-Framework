@@ -140,8 +140,8 @@ const isLifecycleLayout = (
 ): layout is LifecycleSwimlaneLayout => 'swimlanes' in layout;
 
 const reducedMotion = (): boolean =>
-  globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)').matches ===
-  true;
+  globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)')
+    .matches === true;
 
 /**
  * The canvas, delegated.
@@ -306,7 +306,10 @@ const CanvasSurface = ({
     if (zoomCommand.direction === 'selection') {
       const box = selectedBox(layout, selection);
       if (box === null) return;
-      void fitBounds(box, { padding: 0.9, duration: reducedMotion() ? 0 : 250 });
+      void fitBounds(box, {
+        padding: 0.9,
+        duration: reducedMotion() ? 0 : 250,
+      });
       return;
     }
 
@@ -374,9 +377,7 @@ const CanvasSurface = ({
         : [...overlay.marks.entries()].flatMap(([nodeId, change]) => {
             const node = layout.nodeById.get(nodeId);
 
-            return node === undefined
-              ? []
-              : [{ nodeId, change, node }];
+            return node === undefined ? [] : [{ nodeId, change, node }];
           }),
     [layout.nodeById, overlay],
   );
@@ -429,7 +430,9 @@ const CanvasSurface = ({
           {grid === 'none' ? null : (
             <Background
               variant={
-                grid === 'lines' ? BackgroundVariant.Lines : BackgroundVariant.Dots
+                grid === 'lines'
+                  ? BackgroundVariant.Lines
+                  : BackgroundVariant.Dots
               }
               gap={grid === 'lines' ? 96 : 18}
               size={1}
@@ -439,9 +442,9 @@ const CanvasSurface = ({
 
           {/*
             Everything the layout draws in world space but does not want a DOM
-            node for: the fulfillment frame, the pair links, the swimlane banner
-            and the measuring box the MCP capture uses. It sits at z-index 0 so
-            notes always stay on top of their paper.
+            node for: the fulfillment frame, the swimlane banner and the
+            measuring box the MCP capture uses. It sits at z-index 0 so notes
+            always stay on top of their paper.
           */}
           <ViewportPortal>
             <div
@@ -506,7 +509,11 @@ const CanvasSurface = ({
                 />
               ) : null}
               {changeRings.map(({ nodeId, change, node }) => (
-                <ChangeRing key={`mark-${nodeId}`} node={node} change={change} />
+                <ChangeRing
+                  key={`mark-${nodeId}`}
+                  node={node}
+                  change={change}
+                />
               ))}
             </div>
           </ViewportPortal>
@@ -568,8 +575,10 @@ const CanvasSurface = ({
           {hud({
             zoom,
             zoomIn: () => void zoomIn({ duration: reducedMotion() ? 0 : 120 }),
-            zoomOut: () => void zoomOut({ duration: reducedMotion() ? 0 : 120 }),
-            resetZoom: () => void zoomTo(1, { duration: reducedMotion() ? 0 : 120 }),
+            zoomOut: () =>
+              void zoomOut({ duration: reducedMotion() ? 0 : 120 }),
+            resetZoom: () =>
+              void zoomTo(1, { duration: reducedMotion() ? 0 : 120 }),
             fitToContent,
             grid,
             onGridChange: setGrid,

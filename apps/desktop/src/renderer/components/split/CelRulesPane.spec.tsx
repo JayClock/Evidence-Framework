@@ -62,9 +62,7 @@ describe('CelRulesPane', () => {
   });
 
   it('says so when the model has no rules instead of showing an empty editor', () => {
-    render(
-      <CelRulesPane document={{ ...model, rules: [] }} />,
-    );
+    render(<CelRulesPane document={{ ...model, rules: [] }} />);
 
     expect(screen.getByText('当前模型还没有派生规则。')).toBeInTheDocument();
   });

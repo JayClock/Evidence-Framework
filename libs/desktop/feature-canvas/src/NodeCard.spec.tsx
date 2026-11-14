@@ -6,10 +6,7 @@ import {
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
-import {
-  LiveApiProvider,
-  type LiveRouteBinding,
-} from './LiveApiContext';
+import { LiveApiProvider, type LiveRouteBinding } from './LiveApiContext';
 import { NodeCard } from './NodeCard';
 import { summarizeCards } from './cardSummary';
 

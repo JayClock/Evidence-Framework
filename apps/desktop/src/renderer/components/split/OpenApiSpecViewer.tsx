@@ -76,7 +76,8 @@ export const OpenApiSpecViewer = ({
   }, [spec, format, analysis?.bindings]);
 
   const routes = spec === null ? 0 : Object.keys(spec.paths).length;
-  const schemas = spec === null ? 0 : Object.keys(spec.components.schemas).length;
+  const schemas =
+    spec === null ? 0 : Object.keys(spec.components.schemas).length;
 
   const revealLine = useMemo(() => {
     if (index === null || focus === null) return null;

@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SecondaryStage } from './SecondaryStage';
 
-const setup = (overrides: Partial<Parameters<typeof SecondaryStage>[0]> = {}) => {
+const setup = (
+  overrides: Partial<Parameters<typeof SecondaryStage>[0]> = {},
+) => {
   const props = {
     activePane: 'ledger' as const,
     onPaneChange: vi.fn(),
@@ -52,9 +54,10 @@ describe('SecondaryStage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '最大化副屏' }));
     expect(screen.getByLabelText('副视口').className).toContain('fixed');
-    expect(
-      screen.getByRole('button', { name: '还原分屏' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: '还原分屏' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
 
     fireEvent.click(screen.getByRole('button', { name: '关闭分屏' }));
     expect(props.onClose).toHaveBeenCalledTimes(1);

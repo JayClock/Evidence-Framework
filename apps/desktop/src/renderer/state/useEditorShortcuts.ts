@@ -36,7 +36,7 @@ interface ShortcutHandlers {
   openContractSplit?: () => void;
   /** Flips the split between side-by-side and stacked (Alt+S). */
   rotateSplit?: () => void;
-  /** Leaves the split stage (Alt+2 is the ledger, Alt+1 the graph). */
+  /** Leaves the split stage on Escape, before the escape clears a selection. */
   closeSplit?: () => void;
   /** Collapses the left outline rail (Mod+B). */
   toggleLeftRail?: () => void;
@@ -204,6 +204,14 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       }
 
       if (typing) {
+        return;
+      }
+
+      // Escape belongs to the stage while one is open: closing the comparison
+      // is what the modeler is looking at, and the selection survives it.
+      if (event.key === 'Escape' && handlers.closeSplit !== undefined) {
+        event.preventDefault();
+        handlers.closeSplit();
         return;
       }
 

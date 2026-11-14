@@ -24,9 +24,7 @@ describe('CodeEditor', () => {
   });
 
   it('marks a read-only contract as not editable', () => {
-    render(
-      <CodeEditor label="契约" language="json" value={'{"a":1}'} />,
-    );
+    render(<CodeEditor label="契约" language="json" value={'{"a":1}'} />);
 
     expect(
       document.querySelector('.cm-content')?.getAttribute('contenteditable'),

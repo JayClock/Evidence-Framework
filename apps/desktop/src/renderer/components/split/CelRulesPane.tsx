@@ -53,29 +53,26 @@ export const CelRulesPane = ({ document }: CelRulesPaneProps) => {
   }, []);
   useBilateralSync({ focusEntity: onFocusEntity, focusRule: onFocusRule });
 
-  const rows = useMemo<readonly RuleRow[]>(
-    () => {
-      const labelById = new Map(
-        document.entities.map((entity) => [entity.id, entity.label] as const),
-      );
+  const rows = useMemo<readonly RuleRow[]>(() => {
+    const labelById = new Map(
+      document.entities.map((entity) => [entity.id, entity.label] as const),
+    );
 
-      return document.rules.map((rule) => {
-        const entityRef = rule.target?.entityRef ?? null;
+    return document.rules.map((rule) => {
+      const entityRef = rule.target?.entityRef ?? null;
 
-        return {
-          id: rule.id,
-          label: rule.label,
-          kindLabel: RULE_KIND_LABELS[rule.kind],
-          expression: rule.expression,
-          entityRef,
-          entityLabel:
-            entityRef === null ? null : (labelById.get(entityRef) ?? null),
-          attribute: rule.target?.attribute ?? null,
-        };
-      });
-    },
-    [document.entities, document.rules],
-  );
+      return {
+        id: rule.id,
+        label: rule.label,
+        kindLabel: RULE_KIND_LABELS[rule.kind],
+        expression: rule.expression,
+        entityRef,
+        entityLabel:
+          entityRef === null ? null : (labelById.get(entityRef) ?? null),
+        attribute: rule.target?.attribute ?? null,
+      };
+    });
+  }, [document.entities, document.rules]);
 
   // A canvas selection outranks a pinned row: pointing at an object should show
   // what that object computes, not whatever was last read.

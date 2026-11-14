@@ -156,10 +156,7 @@ export const CodeEditor = ({
     const view = viewRef.current;
     if (view === null || revealLine === null) return;
 
-    const line = Math.min(
-      Math.max(1, revealLine.line),
-      view.state.doc.lines,
-    );
+    const line = Math.min(Math.max(1, revealLine.line), view.state.doc.lines);
     const from = view.state.doc.line(line).from;
 
     view.dispatch({

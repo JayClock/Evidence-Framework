@@ -1,7 +1,11 @@
 import { useId, useState } from 'react';
 import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
-import { CATEGORY_TOKENS, CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
+import {
+  CATEGORY_TOKENS,
+  CROSS_CONTEXT_EDGE_STYLES,
+  EDGE_STYLES,
+} from './colors';
 
 const STORAGE_KEY = 'evidence.canvas.legend.expanded';
 const readExpanded = () => {
@@ -102,7 +106,12 @@ export const BusinessLegend = ({
             <p>跨边界的三种原因：</p>
             {Object.entries(CROSS_CONTEXT_EDGE_STYLES).map(([kind, style]) => (
               <div key={kind} className="flex items-start gap-2">
-                <svg aria-hidden="true" width="28" height="12" className="shrink-0">
+                <svg
+                  aria-hidden="true"
+                  width="28"
+                  height="12"
+                  className="shrink-0"
+                >
                   <path
                     d="M0 6 H28"
                     stroke={style.stroke}

@@ -3,10 +3,7 @@ import type {
   DomainGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
-import {
-  diagnosticColor,
-  type DiagnosticIndex,
-} from './diagnosticIndex';
+import { diagnosticColor, type DiagnosticIndex } from './diagnosticIndex';
 import { pointOnRoute } from './edgeLabels';
 
 /** Sibling controls avoid nested buttons and leave selection/patch rings intact. */

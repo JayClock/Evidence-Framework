@@ -52,7 +52,9 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
     relationship.crossContextKind === null
       ? null
       : CROSS_CONTEXT_EDGE_STYLES[relationship.crossContextKind];
-  const stroke = highlighted ? EDGE_HIGHLIGHT : (crossing?.stroke ?? EDGE_COLOR);
+  const stroke = highlighted
+    ? EDGE_HIGHLIGHT
+    : (crossing?.stroke ?? EDGE_COLOR);
   const strokeWidth = highlighted
     ? EDGE_STYLES.activeWidth
     : (crossing?.width ?? EDGE_STYLES.width);
@@ -89,7 +91,9 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
           strokeLinecap: 'round',
         }}
         data-edge-line={relationship.relationshipId}
-        onMouseEnter={() => interactive && onHoverEdge(relationship.relationshipId)}
+        onMouseEnter={() =>
+          interactive && onHoverEdge(relationship.relationshipId)
+        }
         onMouseLeave={() => interactive && onHoverEdge(null)}
       />
       <EndArrow

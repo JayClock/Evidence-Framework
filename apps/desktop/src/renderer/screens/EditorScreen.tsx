@@ -584,7 +584,9 @@ const EditorWorkspace = ({
       openLedgerSplit: () => split.openSplit('ledger'),
       openContractSplit: () => split.openSplit('openapi'),
       rotateSplit: split.rotateSplitDirection,
-      closeSplit: split.closeSplit,
+      // Only bound while the stage exists, so Escape keeps clearing a selection
+      // in the single-surface workspace.
+      ...(split.isSplit ? { closeSplit: split.closeSplit } : {}),
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
@@ -603,6 +605,7 @@ const EditorWorkspace = ({
       sensors.refresh,
       split.openSplit,
       split.closeSplit,
+      split.isSplit,
       split.rotateSplitDirection,
       state.session,
       toggleRail,

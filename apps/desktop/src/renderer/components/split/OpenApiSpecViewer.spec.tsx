@@ -46,8 +46,7 @@ const analysis = () => {
   };
 };
 
-const content = () =>
-  document.querySelector('.cm-content')?.textContent ?? '';
+const content = () => document.querySelector('.cm-content')?.textContent ?? '';
 
 describe('OpenApiSpecViewer', () => {
   it('reads the projected contract as YAML and names its route count', () => {
@@ -96,12 +95,7 @@ describe('OpenApiSpecViewer', () => {
 
   it('explains itself when there is no contract yet', () => {
     const { rerender } = render(
-      <OpenApiSpecViewer
-        analysis={null}
-        stale={false}
-        loading
-        error={null}
-      />,
+      <OpenApiSpecViewer analysis={null} stale={false} loading error={null} />,
     );
     expect(screen.getByText('正在投影交付契约…')).toBeInTheDocument();
 

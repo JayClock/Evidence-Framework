@@ -54,7 +54,9 @@ describe('convertLayoutToReactFlow', () => {
     const group = layout.contextGroups.find(
       (candidate) => candidate.contextId === placed.contextId,
     )!;
-    const node = nodes.find((candidate) => candidate.id === 'evidence.contract')!;
+    const node = nodes.find(
+      (candidate) => candidate.id === 'evidence.contract',
+    )!;
 
     expect(node.parentId).toBe(placed.contextId);
     expect(node.position).toEqual({
@@ -76,7 +78,9 @@ describe('convertLayoutToReactFlow', () => {
 
   it('draws the card at its own origin so the wrapper owns the geometry', () => {
     const { nodes } = convert();
-    const node = nodes.find((candidate) => candidate.id === 'evidence.contract')!;
+    const node = nodes.find(
+      (candidate) => candidate.id === 'evidence.contract',
+    )!;
     const data = node.data as { node: { box: { x: number; y: number } } };
 
     expect(data.node.box).toMatchObject({ x: 0, y: 0 });
@@ -85,16 +89,19 @@ describe('convertLayoutToReactFlow', () => {
   it('binds each relationship to its two objects and keeps the route', () => {
     const { edges } = convert();
     const routed = layout.edges.find(
-      (edge) => edge.relationshipId === 'relation.confirmation-references-request',
+      (edge) =>
+        edge.relationshipId === 'relation.confirmation-references-request',
     )!;
-    const edge = edges.find((candidate) => candidate.id === routed.relationshipId)!;
+    const edge = edges.find(
+      (candidate) => candidate.id === routed.relationshipId,
+    )!;
 
     expect(edge.source).toBe(routed.sourceRef);
     expect(edge.target).toBe(routed.targetRef);
     expect(edge.type).toBe('fulfillmentEdge');
-    expect(
-      (edge.data as { edge: { points: unknown } }).edge.points,
-    ).toEqual(routed.points);
+    expect((edge.data as { edge: { points: unknown } }).edge.points).toEqual(
+      routed.points,
+    );
   });
 
   it('states a fulfillment pair as its own dashed edge', () => {
@@ -132,7 +139,9 @@ describe('convertLayoutToReactFlow', () => {
     const selected = nodes.find(
       (candidate) => candidate.id === 'evidence.contract',
     )!;
-    const other = nodes.find((candidate) => candidate.id === 'evidence.request')!;
+    const other = nodes.find(
+      (candidate) => candidate.id === 'evidence.request',
+    )!;
 
     expect(selected.data).toMatchObject({ selected: true, highlighted: true });
     expect(other.data).toMatchObject({ selected: false, highlighted: false });
@@ -145,7 +154,9 @@ describe('convertLayoutToReactFlow', () => {
 
   it('declares the anchors so an edge can render before anything is measured', () => {
     const { nodes } = convert();
-    const node = nodes.find((candidate) => candidate.id === 'evidence.contract')!;
+    const node = nodes.find(
+      (candidate) => candidate.id === 'evidence.contract',
+    )!;
 
     expect(node.initialWidth).toBeGreaterThan(0);
     expect(node.handles?.map((handle) => handle.id)).toEqual([

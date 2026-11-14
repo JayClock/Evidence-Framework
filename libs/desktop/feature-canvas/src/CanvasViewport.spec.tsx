@@ -70,9 +70,7 @@ class MeasuredResizeObserver {
   constructor(private readonly callback: (entries: unknown[]) => void) {}
 
   observe(target: Element): void {
-    this.callback([
-      { target, contentRect: { width: 900, height: 600 } },
-    ]);
+    this.callback([{ target, contentRect: { width: 900, height: 600 } }]);
   }
 
   unobserve(): void {
@@ -103,7 +101,9 @@ describe('CanvasViewport', () => {
       container.querySelector('[data-node-id="participant.buyer"]'),
     ).not.toBeNull();
     expect(
-      container.querySelector('[data-edge-id="relation.confirmation-references-request"]'),
+      container.querySelector(
+        '[data-edge-id="relation.confirmation-references-request"]',
+      ),
     ).not.toBeNull();
     // A fulfillment pair is stated as its own edge, not as a relationship.
     expect(container.querySelector('[data-pair-link]')).not.toBeNull();
@@ -122,9 +122,7 @@ describe('CanvasViewport', () => {
       target: { value: 'context.procurement' },
     });
 
-    const outside = container.querySelector(
-      '[data-node-id="role.inventory"]',
-    )!;
+    const outside = container.querySelector('[data-node-id="role.inventory"]')!;
     expect(outside).toHaveStyle({ opacity: '0.15', pointerEvents: 'none' });
     expect(outside).toHaveAttribute('tabindex', '-1');
     fireEvent.click(outside);
@@ -146,17 +144,13 @@ describe('CanvasViewport', () => {
 
     // React Flow owns the transform; the fit maths still comes from the
     // interaction library, so a scoped stage must not keep the old framing.
-    await waitFor(() =>
-      expect(viewportTransform(container)).not.toBe(before),
-    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
     const scoped = viewportTransform(container);
 
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: '' },
     });
-    await waitFor(() =>
-      expect(viewportTransform(container)).not.toBe(scoped),
-    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(scoped));
   });
 
   it('does not clear the selection when the modeler presses canvas furniture', () => {
@@ -190,9 +184,7 @@ describe('CanvasViewport', () => {
       />,
     );
 
-    await waitFor(() =>
-      expect(viewportTransform(container)).not.toBe(before),
-    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
   });
 
   it('keeps the radar collapsed until it is asked for', () => {
@@ -239,9 +231,7 @@ describe('CanvasViewport', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '底纹 dots' }));
 
-    expect(
-      window.document.querySelector('.react-flow__background'),
-    ).toBeNull();
+    expect(window.document.querySelector('.react-flow__background')).toBeNull();
   });
 
   it('frames the selected object on a zoom-to-selection command', async () => {
@@ -267,9 +257,7 @@ describe('CanvasViewport', () => {
       />,
     );
 
-    await waitFor(() =>
-      expect(viewportTransform(container)).not.toBe(before),
-    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
   });
 
   it('marks the objects a pending patch touches', () => {
