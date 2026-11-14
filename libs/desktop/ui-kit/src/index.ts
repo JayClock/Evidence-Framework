@@ -73,3 +73,5 @@ export {
 } from './components/command/Command.js';
 export type { CommandDialogProps } from './components/command/Command.js';
 export { Toaster, notify, toast } from './components/sonner/Toaster.js';
+export { CodeEditor, type CodeEditorProps, type CodeLanguage } from './components/code/CodeEditor.js';
+export { celLanguage, celStreamParser } from './components/code/celLanguage.js';
