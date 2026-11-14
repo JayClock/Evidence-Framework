@@ -5,13 +5,7 @@ import { API_SCHEMA } from '../schemas/apiSchema.js';
 import { compileSchema, type CompiledSchema } from '../schemas/jsonSchema.js';
 import { errorDiagnostic, type Diagnostic } from '../diagnostics.js';
 
-/**
- * The two contracts a projection is checked against.
- *
- * `api.schema.json` describes what a designer may write; `api-projection.schema.json`
- * describes what this engine must produce. Validating against the second is what
- * stops the renderer from silently inventing a shape a consumer cannot read.
- */
+/** The local overlay input and generated snapshot are independently validated. */
 
 /** The design file must be one JSON object of this shape. */
 export interface RouteOverlay {
@@ -90,119 +84,23 @@ const messagesOf = (
     }))
     .sort((left, right) => left.location.localeCompare(right.location));
 
-/** Raised when a design file has two keys with the same name. */
-export class DesignJsonError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'DesignJsonError';
+/** JSON.parse validates syntax; a token walk prevents duplicate overlay keys from disappearing. */
+const parseOverlayJson = (text: string): unknown => {
+  const parsed: unknown = JSON.parse(text);
+  const frames: (Set<string> | null)[] = [];
+  for (const match of text.matchAll(/"(?:[^"\\]|\\.)*"|[{}[\]]/g)) {
+    const token = match[0];
+    if (token === '{') frames.push(new Set());
+    else if (token === '[') frames.push(null);
+    else if (token === '}' || token === ']') frames.pop();
+    else if (/^\s*:/.test(text.slice(match.index + token.length))) {
+      const keys = frames.at(-1);
+      const key = JSON.parse(token) as string;
+      if (keys?.has(key)) throw new Error(`设计包含重复 JSON key: ${key}`);
+      keys?.add(key);
+    }
   }
-}
-
-/**
- * Parses JSON while refusing what `JSON.parse` silently accepts.
- *
- * A duplicated key means one decision overwrote another, and `NaN` is not JSON:
- * both would let a design pass review with content nobody wrote.
- */
-export const parseStrictJson = (text: string): unknown => {
-  let parsed: unknown;
-
-  try {
-    parsed = JSON.parse(text, (key, value: unknown) => value);
-  } catch (error) {
-    throw new DesignJsonError(
-      error instanceof Error ? error.message : String(error),
-    );
-  }
-
   return parsed;
-};
-
-/** Scans the raw text for duplicate keys, which `JSON.parse` collapses. */
-const duplicateKeyOf = (text: string): string | null => {
-  const stack: { keys: Set<string>; expectKey: boolean }[] = [];
-  let index = 0;
-
-  while (index < text.length) {
-    const character = text[index] as string;
-
-    if (character === '"') {
-      let cursor = index + 1;
-      let value = '';
-
-      while (cursor < text.length) {
-        const current = text[cursor] as string;
-
-        if (current === '\\') {
-          value += text.slice(cursor, cursor + 2);
-          cursor += 2;
-          continue;
-        }
-        if (current === '"') {
-          break;
-        }
-
-        value += current;
-        cursor += 1;
-      }
-
-      const frame = stack.at(-1);
-
-      if (frame?.expectKey === true) {
-        let decoded = value;
-
-        try {
-          decoded = JSON.parse(`"${value}"`) as string;
-        } catch {
-          decoded = value;
-        }
-
-        if (frame.keys.has(decoded)) {
-          return decoded;
-        }
-
-        frame.keys.add(decoded);
-        frame.expectKey = false;
-      }
-
-      index = cursor + 1;
-      continue;
-    }
-
-    if (character === '{') {
-      stack.push({ keys: new Set<string>(), expectKey: true });
-      index += 1;
-      continue;
-    }
-
-    if (character === '[') {
-      // Array members are values, so the enclosing object is not expecting a key.
-      stack.push({ keys: new Set<string>(), expectKey: false });
-      index += 1;
-      continue;
-    }
-
-    if (character === '}' || character === ']') {
-      stack.pop();
-      index += 1;
-      continue;
-    }
-
-    if (character === ',') {
-      const frame = stack.at(-1);
-
-      if (frame !== undefined) {
-        frame.expectKey = frame.expectKey || frame.keys.size > 0;
-      }
-
-      index += 1;
-      continue;
-    }
-
-    index += 1;
-  }
-
-  return null;
 };
 
 export interface LoadDesignResult {
@@ -260,13 +158,7 @@ export const loadDesign = (
   let design: unknown;
 
   try {
-    const duplicate = duplicateKeyOf(text);
-
-    if (duplicate !== null) {
-      throw new DesignJsonError(`设计包含重复 JSON key: ${duplicate}`);
-    }
-
-    design = parseStrictJson(text);
+    design = parseOverlayJson(text);
   } catch (error) {
     return {
       design: null,

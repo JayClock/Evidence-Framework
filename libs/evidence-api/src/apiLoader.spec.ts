@@ -12,9 +12,7 @@ import {
 } from './diagnostics.js';
 import {
   API_DESIGN_SECTIONS,
-  DesignJsonError,
   loadDesign,
-  parseStrictJson,
   validateProjection,
 } from './loader/apiLoader.js';
 import {
@@ -23,9 +21,6 @@ import {
 } from './schemas/apiProjectionSchema.js';
 import { API_SCHEMA, API_SCHEMA_TEXT } from './schemas/apiSchema.js';
 import { instanceErrors } from './schemas/jsonSchema.js';
-
-const fixture = (name: string): string =>
-  fileURLToPath(new URL(`../tests/fixtures/${name}`, import.meta.url));
 
 describe('the embedded contracts', () => {
   it('are the documents this package ships, byte for byte', () => {
@@ -82,7 +77,15 @@ describe('loadDesign', () => {
   });
 
   it('rejects obsolete full designs rather than silently ignoring their fields', () => {
-    const result = loadDesign(fixture('full-lifecycle/api.json'));
+    const result = loadDesign(
+      '/project/overlay.json',
+      JSON.stringify({
+        schemaVersion: '5.0',
+        resources: [],
+        bindings: [],
+        capabilities: [],
+      }),
+    );
     expect(
       result.diagnostics.some((item) => item.code === 'DESIGN_INVALID'),
     ).toBe(true);
@@ -128,6 +131,43 @@ describe('loadDesign', () => {
 
     expect(design).toBeNull();
     expect(diagnostics[0]?.message).toContain('设计包含重复 JSON key: id');
+  });
+
+  it.each([
+    '{"routes":[{"id":"route.a","id":"route.b"}]}',
+    '{"routes":[{"id":"a","summary":"one","summ\\u0061ry":"two"}]}',
+    '{"journeys":[{"id":"start","roleRef":"role.a","routeId":"route.a","nextPossibleSteps":[],"nextPossibleSteps":[]}]}',
+  ])('refuses nested and escaped duplicate keys: %s', (text) => {
+    const result = loadDesign('/project/overlay.json', text);
+    expect(result.design).toBeNull();
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'DESIGN_INVALID',
+        message: expect.stringContaining('重复 JSON key'),
+      }),
+    );
+  });
+
+  it('accepts repeated keys in different objects and structural characters in string values', () => {
+    const result = loadDesign(
+      '/project/overlay.json',
+      JSON.stringify({
+        routes: [
+          { id: 'route.a', summary: '{ "id": [1, 2] }' },
+          { id: 'route.b', summary: 'quote " slash \\ and comma ,' },
+        ],
+        journeys: [
+          {
+            id: 'start',
+            roleRef: 'role.a',
+            routeId: 'route.a',
+            nextPossibleSteps: ['finish'],
+          },
+          { id: 'finish', roleRef: 'role.a', routeId: 'route.b' },
+        ],
+      }),
+    );
+    expect(result.diagnostics).toEqual([]);
   });
 
   it('refuses a non-standard constant', () => {
@@ -176,13 +216,6 @@ describe('validateProjection', () => {
         expect.objectContaining({ code: 'PROJECTION_INVALID' }),
       ]),
     );
-  });
-});
-
-describe('parseStrictJson', () => {
-  it('reports invalid JSON instead of throwing a SyntaxError', () => {
-    expect(() => parseStrictJson('{')).toThrow(DesignJsonError);
-    expect(parseStrictJson('{"a": 1}')).toEqual({ a: 1 });
   });
 });
 

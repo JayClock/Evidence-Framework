@@ -37,12 +37,10 @@ export { canonicalJson, sortedKeys } from './canonicalJson.js';
 
 export {
   API_DESIGN_SECTIONS,
-  DesignJsonError,
   loadDesign,
   normalizeDesignDocument,
   type RouteOverlay,
   type JourneyOverlay,
-  parseStrictJson,
   validateProjection,
   type DesignDocument,
   type LoadDesignResult,

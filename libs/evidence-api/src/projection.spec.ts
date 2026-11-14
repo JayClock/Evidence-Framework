@@ -24,6 +24,11 @@ import { buildDelivery, buildProjection } from './projector.js';
 import { renderOutputs, writeOutput } from './renderer/outputRenderer.js';
 import { validateProjection } from './loader/apiLoader.js';
 import { digestBytes, loadFmFromDocument } from './adapter/fmAdapter.js';
+import {
+  procurementEvolution,
+  addFulfillmentBranches,
+} from '../tests/support/procurement.js';
+import { contractProblems } from '../tests/support/openapi.js';
 
 const withScratch = async (
   run: (directory: string) => Promise<void>,
@@ -45,6 +50,44 @@ const args = (command: string, directory: string): string[] => [
 ];
 
 describe('model-driven snapshots', () => {
+  it('keeps local overrides stable while new model branches flow through every exported contract', () => {
+    const before = procurementEvolution()[2]!;
+    const after = addFulfillmentBranches(before);
+    const design = {
+      routes: [
+        {
+          id: 'route.confirm.confirmation.payment',
+          path: '/payments/{contractId}/receipt',
+          summary: 'Payment receipt',
+        },
+      ],
+    };
+    const project = (document: typeof before) =>
+      buildProjection({ index: loadFmFromDocument(document).index!, design })
+        .projection;
+    const baseline = project(before);
+    const current = project(after);
+    expect(current.diagnostics).toEqual([]);
+    expect(current.routes).toHaveLength(baseline.routes.length + 6);
+    const routeId = design.routes[0]!.id;
+    expect(current.routes.find((route) => route.id === routeId)).toEqual(
+      baseline.routes.find((route) => route.id === routeId),
+    );
+    expect(
+      current.openapi.paths['/payments/{contractId}/receipt']!['post'],
+    ).toMatchObject({ summary: 'Payment receipt' });
+    const files = renderOutputs(current);
+    const exported = JSON.parse(files['projection.json']!);
+    expect(exported).toEqual(JSON.parse(JSON.stringify(current)));
+    expect(contractProblems(current.openapi)).toEqual([]);
+    expect(validateProjection(exported)).toEqual([]);
+    const journey = current.journeys.find((step) => step.routeId === routeId)!;
+    expect(journey.path).toBe('/payments/{contractId}/receipt');
+    expect(journey.nextPossibleSteps).toHaveLength(2);
+    expect(JSON.parse(files['http-journeys.json']!).journeys).toContainEqual(
+      journey,
+    );
+  });
   it('uses the same contract for memory, indexed projection and delivery exports', async () => {
     const { bundle } = await readModelRoot(fullLifecycle().modelRoot);
     const memory = buildDelivery(bundle);
