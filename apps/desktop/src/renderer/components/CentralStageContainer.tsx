@@ -4,7 +4,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from './ui/Resizable';
+} from '@evidence-poc/desktop-ui-kit';
 import type { WorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 export interface CentralStageContainerProps {

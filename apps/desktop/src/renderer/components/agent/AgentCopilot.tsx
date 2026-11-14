@@ -16,7 +16,7 @@ import {
   type AgentWorkshopSelection,
 } from './WorkshopStepSelector';
 import { parseStreamedTranscript } from './thinkingParser';
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 /** What the next prompt is about, when the modeler has something selected. */
 export interface PromptFocus {

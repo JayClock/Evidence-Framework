@@ -4,7 +4,7 @@ import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 
 import { McpStatusPill } from './McpStatusPill';
-import { ViewModeSegmentedControl } from './ViewModeSegmentedControl';
+import { ViewModeSegmentedControl } from '@evidence-poc/desktop-ui-kit';
 import type { WorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 interface TopHeaderProps {

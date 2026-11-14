@@ -7,7 +7,7 @@ import {
   type WorkshopStepId,
 } from '@evidence-poc/evidence-schema';
 
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 /**
  * The one modeling move the next question is about.

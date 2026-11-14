@@ -18,7 +18,7 @@ import { DeliveryHub } from '../delivery/DeliveryHub';
 import { ReviewHubModal } from '../review/ReviewHubModal';
 import { DiagnosticsDrawer } from '../sensors/DiagnosticsDrawer';
 import { SimulationSandbox } from '../simulation/SimulationSandbox';
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 export type ConsoleTab = 'diagnostics' | 'simulation' | 'delivery' | 'review';
 

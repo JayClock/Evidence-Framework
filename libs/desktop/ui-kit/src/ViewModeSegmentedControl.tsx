@@ -1,4 +1,4 @@
-import type { WorkspaceViewMode } from '../state/useWorkspaceViewMode';
+import type { WorkspaceViewMode } from './workspaceViewMode';
 
 const MODES: readonly {
   id: WorkspaceViewMode;

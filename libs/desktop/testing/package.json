@@ -1,0 +1,26 @@
+{
+  "name": "@evidence-poc/desktop-testing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "desktop-testing",
+    "tags": ["type:lib", "scope:desktop", "platform:browser"]
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "tslib": "^2.3.0"
+  }
+}

@@ -41,6 +41,12 @@
     },
     {
       "path": "../../libs/evidence-agent/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/ui-kit/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/testing/tsconfig.lib.json"
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BrainCircuit, ChevronDown, ChevronRight } from 'lucide-react';
 
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 export interface ThinkingBlockProps {
   /** Reasoning lifted from the transcript; null when the turn had none. */

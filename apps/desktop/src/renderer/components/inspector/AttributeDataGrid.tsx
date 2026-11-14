@@ -27,7 +27,7 @@ import {
 import { ApiFieldBadge } from './ApiFieldBadge';
 import { DerivedRuleSection } from './DerivedRuleSection';
 import { KeyDataProvenancePicker } from './KeyDataProvenancePicker';
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 interface AttributeDataGridProps {
   entity: EntityAST;

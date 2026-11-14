@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Check, ChevronDown, ChevronRight, Loader2, X } from 'lucide-react';
 
 import type { AgentActivity } from '../../state/useAgentSession';
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 /**
  * The agent's tools, named the way a modeler reads them.

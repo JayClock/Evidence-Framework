@@ -1,7 +1,7 @@
 import { Check, RotateCcw, Sparkles } from 'lucide-react';
 
 import type { PatchReview } from '../../state/usePatchReview';
-import { cn } from '../ui/utils';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
 export interface InlinePatchCardProps {
   review: PatchReview;

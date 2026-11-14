@@ -23,6 +23,12 @@
     },
     {
       "path": "./libs/evidence-visualization"
+    },
+    {
+      "path": "./libs/desktop/ui-kit"
+    },
+    {
+      "path": "./libs/desktop/testing"
     }
   ]
 }

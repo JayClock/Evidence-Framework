@@ -30,7 +30,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '../components/ui/Resizable';
+} from '@evidence-poc/desktop-ui-kit';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import { useAgentSession } from '../state/useAgentSession';
 import { LiveApiProvider } from '../state/LiveApiContext';

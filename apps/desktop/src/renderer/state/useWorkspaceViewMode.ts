@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** The three ways one model can occupy the centre of the studio. */
-export type WorkspaceViewMode = 'graph' | 'table' | 'split';
+import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
 
-export const WORKSPACE_VIEW_MODES: readonly WorkspaceViewMode[] = [
-  'graph',
-  'table',
-  'split',
-];
+export type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
+export { WORKSPACE_VIEW_MODES } from '@evidence-poc/desktop-ui-kit';
 
 export interface WorkspaceViewModeController {
   mode: WorkspaceViewMode;

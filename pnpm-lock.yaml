@@ -295,6 +295,12 @@ importers:
       '@codemirror/view':
         specifier: ^6.43.15
         version: 6.43.15
+      '@evidence-poc/desktop-testing':
+        specifier: workspace:*
+        version: link:../../libs/desktop/testing
+      '@evidence-poc/desktop-ui-kit':
+        specifier: workspace:*
+        version: link:../../libs/desktop/ui-kit
       '@evidence-poc/evidence-agent':
         specifier: workspace:*
         version: link:../../libs/evidence-agent
@@ -383,6 +389,33 @@ importers:
       tailwindcss:
         specifier: ^4.1.16
         version: 4.3.5
+
+  libs/desktop/testing:
+    dependencies:
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../evidence-schema
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+
+  libs/desktop/ui-kit:
+    dependencies:
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^19.2.8
+        version: 19.3.1
+      react-resizable-panels:
+        specifier: ^2.1.9
+        version: 2.1.9(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      tailwind-merge:
+        specifier: ^3.7.0
+        version: 3.7.0
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
 
   libs/evidence-agent:
     dependencies:
