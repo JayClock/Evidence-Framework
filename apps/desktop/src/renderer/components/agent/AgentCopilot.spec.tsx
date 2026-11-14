@@ -268,7 +268,7 @@ describe('AgentCopilot focus and workshop moves', () => {
 
     render(<AgentCopilot controller={agent} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '🔄 无合同逆推' }));
+    fireEvent.click(screen.getByRole('button', { name: '无合同逆推' }));
     type('我们只有回执和退款的微信聊天记录');
     fireEvent.click(screen.getByRole('button', { name: /发送/ }));
 

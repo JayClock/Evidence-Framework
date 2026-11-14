@@ -14,8 +14,6 @@ import type { SensorIssue } from '@evidence-poc/evidence-modeling-orchestrator/b
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
-import { PatchReviewBar } from '../components/agent/PatchReviewBar';
-import { PromptDock } from '../components/agent/PromptDock';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import {
   BottomConsole,
@@ -345,7 +343,10 @@ const EditorWorkspace = ({
       },
       save: () => void save(),
       focusSearch: () => searchInputRef.current?.focus(),
-      focusAgent: () => setAgentFocusToken((token) => token + 1),
+      focusAgent: () => {
+        rightRail.current?.expand();
+        setAgentFocusToken((token) => token + 1);
+      },
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -533,29 +534,6 @@ const EditorWorkspace = ({
                       onSelect={(nodeId) => state.session.select(nodeId)}
                       onClearSelection={() => state.session.clearSelection()}
                     />
-
-                    <div className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex flex-col items-center gap-2">
-                      {patchReview.review === null ? null : (
-                        <PatchReviewBar
-                          review={patchReview.review}
-                          onAccept={patchReview.accept}
-                          onRevert={patchReview.revert}
-                        />
-                      )}
-
-                      <div className="pointer-events-auto">
-                        <PromptDock
-                          prefill={reviewPrompt}
-                          running={agent.state.running}
-                          activeToolName={agent.state.activeToolName}
-                          onSubmit={agent.submit}
-                          onStop={agent.stop}
-                          focus={promptFocus}
-                          onClearFocus={() => state.session.clearSelection()}
-                          focusToken={agentFocusToken}
-                        />
-                      </div>
-                    </div>
                   </div>
                 </ResizablePanel>
 
@@ -618,6 +596,13 @@ const EditorWorkspace = ({
                 session={state.session}
                 selection={state.selection}
                 agent={agent}
+                patchReview={patchReview}
+                focus={promptFocus}
+                onClearFocus={() => state.session.clearSelection()}
+                onFocusEntity={focusNode}
+                focusToken={agentFocusToken}
+                prefill={reviewPrompt}
+                onPrefillConsumed={() => setReviewPrompt(null)}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

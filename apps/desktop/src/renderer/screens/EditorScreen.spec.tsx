@@ -48,11 +48,15 @@ describe('EditorScreen', () => {
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
-    expect(screen.getByLabelText('AI 访谈输入')).toBeInTheDocument();
-    // Inspection owns the right rail by default; the agent history shares it as a tab.
-    expect(screen.queryByText('AI 访谈与操控')).toBeNull();
-    fireEvent.click(screen.getByRole('tab', { name: '协同' }));
-    expect(screen.getByText('AI 访谈与操控')).toBeInTheDocument();
+    // Inspection owns the right rail by default; the copilot shares it as a tab.
+    expect(screen.getByRole('tab', { name: '属性' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
+    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
+    expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
+    expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约对 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
@@ -326,6 +330,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
+    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
     expect(screen.getByText('新增 1')).toBeInTheDocument();
@@ -371,6 +376,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
+    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
     fireEvent.click(await screen.findByRole('button', { name: '保留' }));
 
     await waitFor(() => {
@@ -386,27 +392,30 @@ describe('EditorScreen sensors', () => {
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
-    expect(document.activeElement).toBe(screen.getByLabelText('访谈内容'));
+    expect(document.activeElement).toBe(
+      await screen.findByLabelText('访谈内容'),
+    );
 
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
     expect(document.activeElement).toBe(screen.getByLabelText('搜索业务对象'));
   });
 
-  it('tells the dock what the next question is about', async () => {
+  it('tells the copilot what the next question is about', async () => {
     readyProject();
 
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
     await screen.findByText('桌面端夹具（Desktop Fixture）');
+    fireEvent.click(screen.getByRole('tab', { name: /协同/ }));
 
-    expect(screen.queryByTestId('prompt-dock-focus')).toBeNull();
+    expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
 
     fireEvent.click(
       container.querySelector('[data-node-id="evidence.contract"]') as Element,
     );
 
-    expect(await screen.findByTestId('prompt-dock-focus')).toHaveTextContent(
+    expect(await screen.findByTestId('agent-copilot-focus')).toHaveTextContent(
       '焦点：',
     );
   });
