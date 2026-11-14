@@ -70,6 +70,25 @@ describe('EditorScreen', () => {
     expect(screen.queryByLabelText('工作台控制台')).toBeNull();
   });
 
+  it('collapses and restores the outline rail with Cmd+B', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    const rail = () => container.querySelector('[data-panel-id="left-rail"]');
+
+    expect(rail()).toHaveAttribute('data-panel-collapsible', 'true');
+    fireEvent.keyDown(window, { key: 'b', metaKey: true });
+    await waitFor(() =>
+      expect(rail()?.getAttribute('data-panel-size')).toBe('0.0'),
+    );
+    fireEvent.keyDown(window, { key: 'b', metaKey: true });
+    await waitFor(() =>
+      expect(Number(rail()?.getAttribute('data-panel-size'))).toBeGreaterThan(0),
+    );
+  });
+
   it('keeps scope and view mode out of the document and undo history', async () => {
     const api = readyProject();
     const { container } = render(
