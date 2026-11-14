@@ -35,6 +35,9 @@
     },
     {
       "path": "./libs/desktop/feature-inspector"
+    },
+    {
+      "path": "./libs/evidence-model-io"
     }
   ]
 }

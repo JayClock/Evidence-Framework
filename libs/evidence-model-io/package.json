@@ -1,0 +1,30 @@
+{
+  "name": "@evidence-poc/evidence-model-io",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "FM 模型源树的磁盘适配：目录读写、单文件 Bundle 打包与解包、模型根指纹",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-model-io",
+    "tags": [
+      "type:lib",
+      "scope:evidence",
+      "platform:node"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}
