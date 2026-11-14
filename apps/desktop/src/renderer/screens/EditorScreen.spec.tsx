@@ -58,17 +58,17 @@ describe('EditorScreen', () => {
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
 
-  it('docks the console with Cmd+J instead of covering the canvas', async () => {
+  it('slides the problems panel over the canvas with Cmd+J', async () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
-    expect(screen.queryByLabelText('工作台控制台')).toBeNull();
+    expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
     fireEvent.keyDown(window, { key: 'j', metaKey: true });
-    expect(await screen.findByLabelText('工作台控制台')).toBeInTheDocument();
+    expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
     fireEvent.keyDown(window, { key: 'j', metaKey: true });
-    expect(screen.queryByLabelText('工作台控制台')).toBeNull();
+    expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
 
   it('opens and closes the outline drawer with Cmd+B', async () => {
@@ -92,6 +92,10 @@ describe('EditorScreen', () => {
 
     fireEvent.keyDown(window, { key: '1', metaKey: true });
     expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: '2', metaKey: true });
+    expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
+    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
 
     fireEvent.keyDown(window, { key: '4', metaKey: true });
     expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
@@ -323,9 +327,11 @@ describe('EditorScreen sensors', () => {
     expect(api.calls.triggerSensors).toEqual(['/models/procurement']);
 
     fireEvent.click(screen.getByTitle('展开检查结果'));
-    expect(await screen.findByLabelText('检查结果')).toBeInTheDocument();
+    expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('采购协议缺少确认端'));
+    fireEvent.click(
+      screen.getByRole('button', { name: '定位到 采购协议缺少确认端' }),
+    );
 
     expect(
       await screen.findByDisplayValue('采购协议（Procurement Contract）'),

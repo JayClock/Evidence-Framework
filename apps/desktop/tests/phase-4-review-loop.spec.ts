@@ -64,11 +64,11 @@ describe('phase 4 review-authoring loop', () => {
       target: { value: '保留我的草稿' },
     });
     fireEvent.keyDown(window, { altKey: true, code: 'KeyR', key: '®' });
-    const dialog = await screen.findByRole('region', { name: '审查中心' });
+    const dialog = await screen.findByRole('dialog', { name: '审查中心' });
     fireEvent.click(
       await within(dialog).findByRole('button', { name: '交由 Agent 修复' }),
     );
-    expect(screen.queryByRole('region', { name: '审查中心' })).toBeNull();
+    expect(screen.queryByRole('dialog', { name: '审查中心' })).toBeNull();
     expect(
       (screen.getByLabelText('访谈内容') as HTMLTextAreaElement).value,
     ).toContain('保留我的草稿');

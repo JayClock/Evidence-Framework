@@ -96,7 +96,22 @@ export const useWorkspaceLayoutState = (
     setRailPinned((current) => !current);
   }, []);
 
+  /**
+   * One rail button, one surface.
+   *
+   * Diagnostics is the exception on purpose: its list is a strip under the
+   * canvas rather than a drawer beside it, because a finding is read *while*
+   * looking at the object it names. The rail still owns the button, so the
+   * chord and the highlight behave like every other tab.
+   */
   const toggleRailTab = useCallback((tab: RailTabId) => {
+    if (tab === 'diagnostics') {
+      setActiveRailTab(null);
+      setActiveIssueId(null);
+      setProblemsPanelOpen((open) => !open);
+      return;
+    }
+
     setActiveRailTab((current) => (current === tab ? null : tab));
   }, []);
 

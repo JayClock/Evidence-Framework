@@ -10,10 +10,7 @@ import {
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
-import type {
-  SensorIssue,
-  SensorReport,
-} from '@evidence-poc/evidence-agent/browser';
+import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
   type DomainModelDocument,
@@ -22,10 +19,7 @@ import {
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { CentralStageContainer } from '../components/CentralStageContainer';
-import {
-  BottomConsole,
-  type ConsoleTab,
-} from '../components/console/BottomConsole';
+import { ProblemsPanel } from '../components/console/ProblemsPanel';
 import {
   CommandPalette,
   type CommandTarget,
@@ -36,8 +30,9 @@ import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
 import { AgentCopilot } from '../components/agent/AgentCopilot';
-import { DiagnosticsDrawer } from '../components/sensors/DiagnosticsDrawer';
 import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
+import { DeliveryHub } from '../components/delivery/DeliveryHub';
+import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
 import {
   CanvasViewport,
@@ -152,73 +147,6 @@ interface EditorWorkspaceProps {
   initialDocument: DomainModelDocument;
 }
 
-const RailDiagnostics = ({
-  report,
-  reportLoading,
-  reportError,
-  reportStale,
-  activeIssueIds,
-  onFocusIssue,
-  onRerun,
-  onClose,
-}: {
-  report: SensorReport | null;
-  reportLoading: boolean;
-  reportError: string | null;
-  reportStale: boolean;
-  activeIssueIds: readonly string[];
-  onFocusIssue: (issue: SensorIssue) => void;
-  onRerun: () => void;
-  onClose: () => void;
-}) => {
-  if (report === null) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-[11px] text-evidence-muted">
-        {reportError === null ? null : (
-          <p role="alert" className="text-[#b42318]">
-            {reportError}
-          </p>
-        )}
-        <p>{reportLoading ? '正在运行检查器…' : '尚未运行检查器'}</p>
-        <button
-          type="button"
-          onClick={onRerun}
-          className="rounded border border-evidence-line px-2 py-0.5 hover:text-evidence-ink"
-        >
-          立即检查
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center justify-between border-b border-evidence-line px-2 py-1">
-        <span className="text-[10px] text-evidence-muted">
-          {reportStale ? '检查结果已过期' : `文档修订 ${report.documentRevision}`}
-        </span>
-        <button
-          type="button"
-          onClick={onRerun}
-          className="rounded border border-evidence-line px-1.5 py-0.5 text-[10px] text-evidence-muted hover:text-evidence-ink"
-        >
-          重新检查
-        </button>
-      </div>
-      <div className="min-h-0 flex-1 overflow-hidden">
-        <DiagnosticsDrawer
-          embedded
-          report={report}
-          selectedIssueIds={activeIssueIds}
-          stale={reportStale}
-          onClose={onClose}
-          onFocusIssue={onFocusIssue}
-        />
-      </div>
-    </div>
-  );
-};
-
 const RAIL_TITLES: Record<RailTabId, string> = {
   topology: '业务结构',
   diagnostics: '门禁与诊断',
@@ -279,16 +207,9 @@ const EditorWorkspace = ({
     )
       setSelectedScope(null);
   }, [selectedScope, scope, state.selection.nodeId]);
-  const [consoleOpen, setConsoleOpen] = useState(false);
-  const [consoleTab, setConsoleTab] = useState<ConsoleTab>('diagnostics');
   // The palette replaces a row of header buttons with one chord; every action
   // it runs is the same handler the header used to call.
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const openConsole = useCallback((tab: ConsoleTab) => {
-    setConsoleTab(tab);
-    setConsoleOpen(true);
-  }, []);
-  const [activeIssueIds, setActiveIssueIds] = useState<readonly string[]>([]);
   // Findings must describe the exact live revision, including undo/redo.
   const diagnosticsStale =
     liveModel.error !== null ||
@@ -514,11 +435,11 @@ const EditorWorkspace = ({
       },
       setViewMode: workspaceView.setMode,
       focusSearch,
-      openReview: () => openConsole('review'),
+      openReview: () => layout.openHub('review'),
       exportReview: () => void reviewExport.exportPage(),
       exportDiff: () => void reviewExport.exportPage(true),
-      openDelivery: () => openConsole('delivery'),
-      openSandbox: () => openConsole('simulation'),
+      openDelivery: () => layout.openHub('delivery'),
+      openSandbox: () => layout.openHub('simulation'),
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
         layout.setActiveRailTab('copilot');
@@ -529,7 +450,7 @@ const EditorWorkspace = ({
     [
       focusSearch,
       layout.setActiveRailTab,
-      openConsole,
+      layout.openHub,
       reviewExport.exportPage,
       save,
       sensors.refresh,
@@ -563,7 +484,7 @@ const EditorWorkspace = ({
 
   const shortcuts = useMemo(
     () => ({
-      openReview: () => openConsole('review'),
+      openReview: () => layout.openHub('review'),
       undo: () => {
         state.session.undo();
       },
@@ -575,8 +496,8 @@ const EditorWorkspace = ({
       openCommandPalette: () => setPaletteOpen(true),
       exportReview: () => void reviewExport.exportPage(),
       rerunSensors: () => void sensors.refresh(),
-      openDelivery: () => openConsole('delivery'),
-      openSandbox: () => openConsole('simulation'),
+      openDelivery: () => layout.openHub('delivery'),
+      openSandbox: () => layout.openHub('simulation'),
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -588,9 +509,7 @@ const EditorWorkspace = ({
       toggleRightRail: () => {
         toggleRail(rightRail);
       },
-      toggleConsole: () => {
-        setConsoleOpen((open) => !open);
-      },
+      toggleProblems: layout.toggleProblemsPanel,
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
@@ -599,11 +518,12 @@ const EditorWorkspace = ({
       requestZoom,
       revertPatch,
       focusSearch,
+      layout.openHub,
+      layout.toggleProblemsPanel,
       layout.toggleRailTab,
       reviewExport.exportPage,
       save,
       sensors.refresh,
-      openConsole,
       state.session,
       toggleRail,
     ],
@@ -670,7 +590,6 @@ const EditorWorkspace = ({
           onExportDiffReview={() => void reviewExport.exportPage(true)}
           onExportReview={() => void reviewExport.exportPage()}
           exportReviewBusy={reviewExport.busy}
-          onWorkspaceViewModeChange={workspaceView.setMode}
           onOpenCommandPalette={() => setPaletteOpen(true)}
         />
 
@@ -681,12 +600,14 @@ const EditorWorkspace = ({
         {/*
           The studio is the canvas plus one inspector: outline, diagnostics,
           sandbox and copilot are drawers the 48px activity rail opens, so the
-          canvas owns every pixel the modeler is not actively using, and the
-          console takes the stage's lower half instead of opening over it.
+          canvas owns every pixel the modeler is not actively using. Findings
+          and the delivery/review hubs slide over that canvas only while open.
         */}
         <div className="relative flex min-h-0 flex-1">
           <ActivityRail
-            activeTab={layout.activeRailTab}
+            activeTab={
+              layout.isProblemsPanelOpen ? 'diagnostics' : layout.activeRailTab
+            }
             onSelect={layout.toggleRailTab}
             badges={{
               ...(sensors.report === null
@@ -732,19 +653,6 @@ const EditorWorkspace = ({
                     onSearchTermChange={setSearchTerm}
                     searchInputRef={searchInputRef}
                     onFocusNode={focusNode}
-                  />
-                ) : null}
-
-                {layout.activeRailTab === 'diagnostics' ? (
-                  <RailDiagnostics
-                    report={sensors.report}
-                    reportLoading={sensors.loading}
-                    reportError={sensors.error}
-                    reportStale={diagnosticsStale}
-                    activeIssueIds={activeIssueIds}
-                    onFocusIssue={focusIssue}
-                    onRerun={() => void sensors.refresh()}
-                    onClose={() => layout.setActiveRailTab(null)}
                   />
                 ) : null}
 
@@ -810,11 +718,9 @@ const EditorWorkspace = ({
                         )}
                         diagnostics={diagnostics}
                         onOpenIssues={(issues) => {
-                          setActiveIssueIds(
-                            issues.map((issue) => issue.issueId),
-                          );
-                          openConsole('diagnostics');
-                          if (issues[0]) focusIssue(issues[0]);
+                          if (issues[0] === undefined) return;
+                          layout.openProblemsWithIssue(issues[0].issueId);
+                          focusIssue(issues[0]);
                         }}
                         overlay={patchReview.review?.overlay ?? null}
                         scope={scope}
@@ -840,45 +746,6 @@ const EditorWorkspace = ({
                   />
                 </ResizablePanel>
 
-                {consoleOpen ? (
-                  <>
-                    <ResizableHandle withHandle />
-                    <ResizablePanel
-                      id="bottom-console"
-                      order={2}
-                      defaultSize={36}
-                      minSize={15}
-                      maxSize={70}
-                    >
-                      <BottomConsole
-                        rootPath={project.rootPath}
-                        activeTab={consoleTab}
-                        onTabChange={setConsoleTab}
-                        onClose={() => setConsoleOpen(false)}
-                        report={sensors.report}
-                        reportStale={diagnosticsStale}
-                        reportLoading={sensors.loading}
-                        reportError={sensors.error}
-                        activeIssueIds={activeIssueIds}
-                        onFocusIssue={focusIssue}
-                        onRerunDiagnostics={() => void sensors.refresh()}
-                        delivery={delivery}
-                        reviewInput={reviewInput}
-                        canLocate={canLocateIssue}
-                        onPromptIssue={(issue) => {
-                          setConsoleOpen(false);
-                          focusIssue(issue);
-                          tokenRef.current += 1;
-                          setReviewPrompt({
-                            token: tokenRef.current,
-                            text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
-                          });
-                        }}
-                        onFocusEntity={focusNode}
-                      />
-                    </ResizablePanel>
-                  </>
-                ) : null}
               </ResizablePanelGroup>
             </ResizablePanel>
 
@@ -902,7 +769,58 @@ const EditorWorkspace = ({
             </ResizablePanel>
           </ResizablePanelGroup>
           </div>
+
+          {layout.isProblemsPanelOpen ? (
+            <ProblemsPanel
+              report={sensors.report}
+              reportStale={diagnosticsStale}
+              reportLoading={sensors.loading}
+              reportError={sensors.error}
+              activeIssueId={layout.activeIssueId}
+              onFocusIssue={(issue) => {
+                layout.openProblemsWithIssue(issue.issueId);
+                focusIssue(issue);
+              }}
+              onRerun={() => void sensors.refresh()}
+              onClose={layout.closeProblemsPanel}
+            />
+          ) : null}
         </div>
+
+        {layout.activeHub === 'delivery' ? (
+          <DeliveryHub
+            hub={delivery}
+            onClose={layout.closeHub}
+            onFocusEntity={focusNode}
+          />
+        ) : null}
+
+        {layout.activeHub === 'simulation' ? (
+          <SimulationSandbox
+            rootPath={project.rootPath}
+            onClose={layout.closeHub}
+            onFocusEntity={focusNode}
+          />
+        ) : null}
+
+        {layout.activeHub === 'review' && reviewInput !== null ? (
+          <ReviewHubModal
+            input={reviewInput}
+            onClose={layout.closeHub}
+            canLocate={canLocateIssue}
+            onLocate={focusIssue}
+            onPrompt={(issue) => {
+              layout.closeHub();
+              layout.setActiveRailTab('copilot');
+              focusIssue(issue);
+              tokenRef.current += 1;
+              setReviewPrompt({
+                token: tokenRef.current,
+                text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
+              });
+            }}
+          />
+        ) : null}
 
         <BottomStatusBar
           layout={state.layout}
@@ -911,15 +829,8 @@ const EditorWorkspace = ({
           reportStale={diagnosticsStale}
           sensorLoading={sensors.loading}
           sensorError={sensors.error}
-          diagnosticsOpen={consoleOpen && consoleTab === 'diagnostics'}
-          onToggleDiagnostics={() => {
-            if (consoleOpen && consoleTab === 'diagnostics') {
-              setConsoleOpen(false);
-              return;
-            }
-
-            openConsole('diagnostics');
-          }}
+          diagnosticsOpen={layout.isProblemsPanelOpen}
+          onToggleDiagnostics={layout.toggleProblemsPanel}
           onRerunSensors={() => void sensors.refresh()}
           dirty={state.dirty}
           savedAt={state.savedAt}

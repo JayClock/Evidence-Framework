@@ -31,6 +31,18 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.activeRailTab).toBeNull();
   });
 
+  it('puts the diagnostics list under the canvas, not in a drawer', () => {
+    const { result } = renderHook(() => useWorkspaceLayoutState());
+
+    press({ key: '2', metaKey: true });
+
+    expect(result.current.isProblemsPanelOpen).toBe(true);
+    expect(result.current.activeRailTab).toBeNull();
+
+    press({ key: '2', metaKey: true });
+    expect(result.current.isProblemsPanelOpen).toBe(false);
+  });
+
   it('switches drawers instead of stacking them', () => {
     const { result } = renderHook(() => useWorkspaceLayoutState());
 

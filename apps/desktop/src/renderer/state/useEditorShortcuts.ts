@@ -31,8 +31,8 @@ interface ShortcutHandlers {
   toggleLeftRail?: () => void;
   /** Collapses the right workbench rail (Mod+I). */
   toggleRightRail?: () => void;
-  /** Collapses the bottom console (Mod+J). */
-  toggleConsole?: () => void;
+  /** Slides the problems panel in or out (Mod+J / Alt+X). */
+  toggleProblems?: () => void;
   /**
    * Settles a pending agent patch.
    *
@@ -130,7 +130,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
             ? handlers.openDelivery
             : event.code === 'KeyS'
               ? handlers.openSandbox
-              : undefined;
+              : event.code === 'KeyX'
+                ? handlers.toggleProblems
+                : undefined;
 
         if (altAction !== undefined) {
           event.preventDefault();
@@ -149,7 +151,7 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
             : layoutKey === 'i'
               ? handlers.toggleRightRail
               : layoutKey === 'j'
-                ? handlers.toggleConsole
+                ? handlers.toggleProblems
                 : undefined;
 
         if (toggle !== undefined) {

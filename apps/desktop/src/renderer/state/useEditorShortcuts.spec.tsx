@@ -19,7 +19,7 @@ const setup = (
     fitCanvas: vi.fn(),
     toggleLeftRail: vi.fn(),
     toggleRightRail: vi.fn(),
-    toggleConsole: vi.fn(),
+    toggleProblems: vi.fn(),
     ...overrides,
   };
 
@@ -67,10 +67,11 @@ describe('useEditorShortcuts', () => {
     fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     fireEvent.keyDown(window, { key: 'j', ctrlKey: true });
+    fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
 
     expect(handlers.toggleLeftRail).toHaveBeenCalled();
     expect(handlers.toggleRightRail).toHaveBeenCalled();
-    expect(handlers.toggleConsole).toHaveBeenCalled();
+    expect(handlers.toggleProblems).toHaveBeenCalledTimes(2);
   });
 
   it('binds the two chords the floating island prints', () => {
