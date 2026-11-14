@@ -283,9 +283,6 @@ importers:
       '@evidence-poc/desktop-feature-inspector':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-inspector
-      '@evidence-poc/desktop-testing':
-        specifier: workspace:*
-        version: link:../../libs/desktop/testing
       '@evidence-poc/desktop-ui-kit':
         specifier: workspace:*
         version: link:../../libs/desktop/ui-kit
@@ -347,6 +344,9 @@ importers:
       '@electron-forge/plugin-vite':
         specifier: ^7.10.2
         version: 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
+      '@evidence-poc/desktop-testing':
+        specifier: workspace:*
+        version: link:../../libs/desktop/testing
       '@tailwindcss/vite':
         specifier: ^4.1.15
         version: 4.3.5(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))
