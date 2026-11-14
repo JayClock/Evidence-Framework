@@ -2,7 +2,7 @@
   "name": "@evidence-poc/desktop",
   "version": "0.0.1",
   "private": true,
-  "description": "Evidence \u5c65\u7ea6\u5efa\u6a21\u684c\u9762\u7aef\uff1a\u672c\u5730 .evidence/fm \u6e90\u6811\u7684\u4ea4\u4e92\u5f0f\u753b\u5e03",
+  "description": "Evidence 履约建模桌面端：本地 .evidence/fm 源树的交互式画布",
   "productName": "Evidence Modeling",
   "main": ".vite/build/main.js",
   "dependencies": {
@@ -15,8 +15,12 @@
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-visualization": "workspace:*",
     "@use-gesture/react": "^10.3.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.72.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-resizable-panels": "^2.1.9",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
