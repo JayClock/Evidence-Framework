@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:60df35eeab088f8cc27abdba07c07e0ad4629404f1daf7393b6aa061a84b93e8",
+  "pageVersion": "sha256:21799987a4f796fa9f5ac9a2e89fb45789d479bb7cf7de9cddfb65a37ca24519",
   "claims": [
     {
       "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
@@ -21,8 +21,8 @@
       "statement": "pnpm-workspace.yaml sets nodeLinker hoisted because Electron Forge's flora-colossus does not follow pnpm symlinks, disables blockExoticSubdeps for electron-winstaller's git dependency, approves six lifecycle-script packages, and exempts the exact @earendil-works/pi-* 1.5.2 versions from the release-age quarantine.",
       "evidence": [
         {
-          "resource": "repo://pnpm-workspace.yaml#L1-L35",
-          "version": "repo-lines-v1:sha256:3e5610cf9074a0aa39d0352090a868c263b6f85b04906191129886de2a0ad427:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYjA3NmViODBhZGUxOWZlYTNlMGE0MzE5ODZiNjU1ZjVmYTU5ZWQ2MjY3ZTEwN2Q2ODhiNjFjM2Y0MjE3OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMDQ2ZjM2MTc0MzYwMDAyZjZjNjhjZGUxYzYzOGI0MzUyN2E0OWZiYjZlYWExZTFhZDRiMzM2Yjg1NDNkOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://pnpm-workspace.yaml#L1-L36",
+          "version": "repo-lines-v1:sha256:4d013ba818fcaeddb3c991f66061ba5c4c1ee198dd792444ea120dc1e4ae5bc3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYjA3NmViODBhZGUxOWZlYTNlMGE0MzE5ODZiNjU1ZjVmYTU5ZWQ2MjY3ZTEwN2Q2ODhiNjFjM2Y0MjE3OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMDQ2ZjM2MTc0MzYwMDAyZjZjNjhjZGUxYzYzOGI0MzUyN2E0OWZiYjZlYWExZTFhZDRiMzM2Yjg1NDNkOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -41,30 +41,46 @@
       "statement": "Workspace packages export a @evidence-poc/source condition pointing at src before types/import, and tsconfig.base.json sets customConditions to the same name, so the type checker reads sources without a paths table.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/package.json#L12-L32",
-          "version": "repo-lines-v1:sha256:ad5d463563f66eb4e390a6599603ce8485ae0022017d608e2499a7a5a89c7015:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDViYjlmNGE4Yjk4NDUxMGY4MTVhNWZjNDA3OGQ3N2M1YTIwZTkzZjMzNzNkYzVkZGU0YTM0MWQxYjQwYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZjY0N2M1YWRmMzUzNTA2ZDdlZTBiZDNjZDc4NWE1NzkzN2E3ZTFkYTZhNzU4Y2UxMWJhZmU4OWY0YmUzOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWM1NjM3NDBlYzU5ZWJjMWUwNDdhMmM2MGQ1Y2NkOTM2MDRmYTAwNmI5ZTg0MzAwOWQxYjc4ZGQzYzAzZjUifQ"
+          "resource": "repo://libs/evidence-model-core/package.json#L9-L24",
+          "version": "repo-lines-v1:sha256:7b42e5ff5f7fd33db64f1576507d08eb23b06849aa9ba6f62dabd538f871c9d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDViYjlmNGE4Yjk4NDUxMGY4MTVhNWZjNDA3OGQ3N2M1YTIwZTkzZjMzNzNkYzVkZGU0YTM0MWQxYjQwYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYWJmMTk0ZjIxZjMyZjI0ZDEzZGZlYjJkM2Q3OTQxYTEwZDBhZTkwM2UwYjM4ZmE2NGRlZjQzZWFhYjlkYTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2ZmQyYmU2YjU3N2JhOTcxMDQ0OGE1NGYzN2EwZmY2MTNlMTM5YTEzZWM2MDgxMzcwYTRlODQyY2M4ZmUzYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZWJkYTA0ZjAyNDQxZTZhZDRhMTA3ZDI0NDYwMjYwZDVkNjE1Zjc4NWM1ZTgzOGNjOTRhYzQ5NmQ3YTM3YzUifQ"
         },
         {
-          "resource": "repo://tsconfig.base.json#L1-L20",
-          "version": "repo-lines-v1:sha256:41da777ce7f03ee38254f80824c904fce5cac2d4eb1187d5e1902bee717090d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://tsconfig.base.json#L2-L20",
+          "version": "repo-lines-v1:sha256:23b09d16a4ae906c9303ccdab7dd3e48300ba5db99d2364b9ba9407e708fa057:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMGNkOTc0ZWU2ZjM2NjYwMjI0MzRhNmRlODBkZDlmMTA3Zjk5MGYwZDk4MzM1ZjRkYWM2OWYwZGEyYWNkOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoxLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
     {
       "id": "claim_92a9e851c42344dcb2eff6ed3e1fab8c",
-      "statement": "Every consumer repeats the source condition in resolve.conditions, with node for main/preload and browser for the renderer; omitting it silently falls back to dist and looks like a missing module rather than a missing condition.",
+      "statement": "Consumers that bundle repeat the @evidence-poc/source condition in resolve.conditions: the desktop's main, preload, renderer and Vitest configs use `browser` for renderer-side and `node` for preload/ssr resolution (Forge adds `node` to the main target itself), and the Vitest configs of evidence-api, evidence-visualization, evidence-model-io, evidence-canvas-interaction and desktop-ui-kit repeat it, while evidence-model-core, evidence-schema, evidence-agent and evidence-mcp omit it and depend on `targetDefaults.test.dependsOn` `^build` having produced dist.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/vite.main.config.mjs#L1-L28",
-          "version": "repo-lines-v1:sha256:f50295f8270b616f4b9bc79d53bafe1ca3f1e8efe62bcc5bc9d4ccc1e0f3dd98:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZDAyMTI3OTkzMzU4NzY1OTg0Mjk3ZGQzMzgzNWUwMGYyMjc0MjRjYmQ2NGMyY2JmMDJjYjcxMTQ1Y2ZmMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/vite.main.config.mjs#L9-L16",
+          "version": "repo-lines-v1:sha256:09d65a1e1655e8d0841335d2182d76ad1ac00c7237769f6a86452e0915bb7530:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjdiNWUwZDI4MmZlMGRkOGNkN2UxMjczNDE2OGI4MTQ4Yzk1ZTlmZjk1OTExOTNmNThlYjEzNzc3YzIyNDFmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjk4MGRhZGNiY2E1ODMyZDEwYzU2ZDY5MWYyM2ZlNzdkMGI5MGRmMjEyN2E2MjQ3MzhhOTMyNzAwZDhjN2MyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzJiZGY4OWRmMzAyMTVjODdlYzZlNGZhZjcyZDhjMTYwZjFiZTM0YWI3NWUxZTNmZmNjNmU1OTA0ZjQ4OTdjNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L1-L25",
-          "version": "repo-lines-v1:sha256:2445357792a82189860d0dd034876759d56bce4a25a2f58ec9c20febec95701e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNGFiMTViZDZiNWEyOTMwMjA3YjFjY2MwMDY3OTZjMzNjYmVjYWRkODViYzdiYmQzMDcyNDllMGUwYmNjN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNmQzNzJlNzJhNjVhZjY0ZTU0ZDlmODkwYTA5OGJjYTFhOWRmM2JiNzMxMzE5ODU1MzI0MTY0NDEzNjA4MzQifQ"
+          "resource": "repo://apps/desktop/vite.preload.config.mjs#L10-L18",
+          "version": "repo-lines-v1:sha256:eda26f6c7ba57279d51af6afa6772a53b353e090b81cdf3d576880d81edf21fe:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjZWNiMTQ0YTQ2ZjVkY2YxMmE2MTY5ZmNlZWQ3Njk1ZTgyOTRiMDkwZGU3NmYzNjYxY2RkMDI0OTMwMDE0NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDVhNmE4M2U0OWYwMDc1Yzg0OGE4Zjc0OTc4ZDZiNTM4NmEwNDczYzU3MTdkMGUwYTg4NjBkN2Y5YjYwOWE0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDhlOTkxZjAwMTUyM2U2ZTM2NTM5MWFhMWFkNGU4NzAwNDk1YzBhY2ZjYmYwNmE0NDZmZGI5M2Q0MWNhYTJjNiJ9"
         },
         {
-          "resource": "repo://apps/desktop/vitest.config.mts#L1-L40",
-          "version": "repo-lines-v1:sha256:14ca9cbd2e259a78706d62339246c1124cd61034a711e0ce026a02d0356a42f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2MwM2ZiZGY5YjM0NmFhNTUyNzg2YjVlZWJiM2FhZDRmYWM4M2FiOWU1YzZiNWQ1MTVhM2ViNTljZWVkNTIifQ"
+          "resource": "repo://apps/desktop/vite.renderer.config.mjs#L13-L25",
+          "version": "repo-lines-v1:sha256:aa26fda0f044b08a6f12aaac6e2347aa78d82261994d9d69f29633b9109867d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4NDVmOTQwZGJmZjY0OTFjNTI4NGJhYzdjZDFiMGE2M2U0ZmJiMDczNTk2M2JmZjc1ZDc2NDI2N2YyYTgzZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNGUzOTk0OTZiOTA3MmMwOGI1MTI4OGMxMWE0ZDFmN2Y0ODc0MjkxM2ZmZjA0NDljNmQwOTM3NGNkYzFlYTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YzFlMzkzNDdiNjY0ODRiNTIwMzhlYWIzNTI0OTBiOTZhODE5ZTMzMGU1NWQzMzUwMWY4YWFlNDQwYzZlOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiMjJkNTRmOTVmOGRlNzg5MDI4NmI5MThiYTYxMDIyOTEwZWY2OGZjMWU2M2EzNzkzYzc2NTViMTliN2MwYmYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/vitest.config.mts#L14-L25",
+          "version": "repo-lines-v1:sha256:60c44d2489be6e98935bd1a9d257483ccb466275c4a665ca8a325239244e6daf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOTZjN2Q0MmM0MGY0NzljNjZhNjAwMmVhODJjNDE2NDdjZTk0N2VkZmFlNGUwYTI3NTIyZDVmMWNiNzE4ZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MzZkZjdhNWEzYWFmMTgwY2ZmZDFkNjVjNjQ2ZWY2YWVhMzUyY2MyNzc3NDY4NjE5OWNkOGZiM2U4OTljN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyZDYwNTVmOTJmZGM0ZGI3MjQxOThmMzQwN2RkYWIwMGYzNjM0OGRhMTIzZmY2OTY0MzFjZjRlYWQ2YzBlNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzZWEzNzU0NWMwZDg4ODQzOWU4NGY3MzM4ZTYzNmEyNDhiM2FjNzZkNWFjYzIyMThiMDRlMjE3MmU0OWIzZWIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/vitest.config.mts#L6-L12",
+          "version": "repo-lines-v1:sha256:5d06c8d8ab7447e331d5fcc104891cb08dee1932d017da47fd862b676c8327b6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODkyN2EzODFhOTMzOGI0MjA4OGRiNWJlYTAwNjk3YjUzNzc1M2FlMmM5YTYwY2QwNTg0N2RmY2M5NTAzNzk0OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGQyMmIwNjZkZDRlMjE3ODNmYjdiOWIxMTIzMzUwMjdkNjExZTViN2QxZTZlNzAwMmQ2ZjI1YmE3NGIyMmU0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzBmYjAwMmUyZjllMDRjMzQ1ZDAyNGMwYzNiNGNjODdhNzAxODRhODU4NGQ2NTI2NDNhNjQ5ZWM4M2QwNTYyNiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/vitest.config.mts#L1-L18",
+          "version": "repo-lines-v1:sha256:3ff3f506ad3532818a2d480c6e3932030f9a2d7a75c1d0141edd5b47b7b177d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTE5MjExYzNhMDNiOTg3OTQ3ZjI0YjY5YmRjYzQ2OWY0Nzk0ODI5YTVmNWE0YTE4OGVhMmUxODE2NTRiOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNzQxZDJjMDhlNmY1MTBiN2U5YTI2NGYzNzhmOWNlMDA0OWE1MDRlMGU3ZWY1ZDY3Y2QzZWE4MTNmODU0NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://nx.json#L60-L65",
+          "version": "repo-lines-v1:sha256:efe4a899718a8b98be7cf4c9a39d3d984bf27924ed9b13e4cea10bc708824c92:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjEwOTU5NjUyYzBkN2Q5MmVlODRhMWY3NTQ0MmRiNzQ5NTgxZjVlNmUwMWIwOWNjYTQ2Njc1YWQ5YWYxMThmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY1Y2VkOTNkMzhiNjAxZDRhZDRkZmRkODBjYjVjMDEzNzVhYjg0MDY2YzExMmIxODg2NTJjMDZhMDgyODk3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTA3ZTNlNzg2ZTY1NmIxZTYxZjRhMTEyNDdiZjNkYjE1OWE3ZDU5NTFkZTQ2YjA4ZjNlZmQwMjY1YWFmODdkMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTY3MDEzYjY3ZWJhN2VjMDkyNDE2MTUzMWRkMGFkNmVkMDI3MTFjYjViYjIwZTQ2MDM0YmEzZDJhZTlkZDdkMSJ9"
         }
       ]
     },
@@ -73,8 +89,8 @@
       "statement": "@nx/enforce-module-boundaries allows type:app to depend only on type:lib and type:lib only on type:lib, which is what stops a library from importing the Electron main process after the hoisted linker made undeclared imports resolvable.",
       "evidence": [
         {
-          "resource": "repo://eslint.config.mjs#L18-L38",
-          "version": "repo-lines-v1:sha256:22dad557fad9330aae1b34c19b4811fcbcd3c8caa10493143655904f191e7270:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTM1NzkyMTQ1ZTJkYmQzODBiYmZiNjMxYjkzMmNhODkyNTFkNWE4M2NmYTUyMTYwNjc3MzEyYTllNjgwZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlYjI5NjEyZTE4MzU2NjZmMzNkNmYyYTdjZDE1OWMyZDUzYjZkYTBkZmU2YWM4ZDU2MzY0NzkwOGNlOGRhNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNjdkYjcwMjI0YWIxNjk4NTE4NmIyYjBhZWE3NTU2M2E4MTBiMDA2MTY2Mjk2N2Y0M2IyNGQ0YmZiMTQ4Y2YifQ"
+          "resource": "repo://eslint.config.mjs#L18-L196",
+          "version": "repo-lines-v1:sha256:1d15acf06c5dd4e5e97573200a32c993fbd56f206b1781c30b866ada0101f195:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDkzNTc5MjE0NWUyZGJkMzgwYmJmYjYzMWI5MzJjYTg5MjUxZDVhODNjZmE1MjE2MDY3NzMxMmE5ZTY4MGZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZjBjZGI5NzJhN2JmYjdlZDI0NmY5ZmY2NzIzODVlNTVmNDk2OGZjMTEwNDNkYzViNjg0ZDUxZGZhMzFkYmNiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZWIyOTYxMmUxODM1NjY2ZjMzZDZmMmE3Y2QxNTljMmQ1M2I2ZGEwZGZlNmFjOGQ1NjM2NDc5MDhjZThkYTQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMTY3ZGI3MDIyNGFiMTY5ODUxODZiMmIwYWVhNzU1NjNhODEwYjAwNjE2NjI5NjdmNDNiMjRkNGJmYjE0OGNmIn0"
         }
       ]
     },
@@ -131,8 +147,8 @@
       "statement": "CI installs with a frozen lockfile on Node 22 and runs lint, typecheck and test across all projects before building the desktop app, which also exercises prepare-resources and electron-forge package.",
       "evidence": [
         {
-          "resource": "repo://.github/workflows/ci.yml#L1-L45",
-          "version": "repo-lines-v1:sha256:41f7d1c96e403241a9ce5092b763854d8e7f04058758e236fdc4cff73f4ae198:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ZTFiMzJmYTA5MDc5YWUyZjAwMDFmZmYwZWNhMjdiNDk4NTk1N2Q0ZWI0ODU3OTI5YjNjZjA1OGZhYWU1NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://.github/workflows/ci.yml#L1-L55",
+          "version": "repo-lines-v1:sha256:35b94d1e9db504943d5ef91d77f1fa64f4c6535569f28badef51d36a22946114:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ZTFiMzJmYTA5MDc5YWUyZjAwMDFmZmYwZWNhMjdiNDk4NTk1N2Q0ZWI0ODU3OTI5YjNjZjA1OGZhYWU1NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -145,10 +161,234 @@
           "version": "repo-lines-v1:sha256:e78cad2b2675c29142457c5cf8d4b7019d11d3ebf62ced96360d3f3674f7c32b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMjkyNzNkNDJmOTdlNjg5YzgyYWE3NWZiNTI5OWRkZDM5OGRhYjZlOGJlZGFhNzQ2YmJlNjZiMTcxMDI1ZDdjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwYjMyYjk4NzI2M2RmMjE2M2U3MjZkNDhiOTJmNmY5NjUxNDhjYjZiNmQyODMxNzkxNTE0YzkzOWY4MzdhMTQyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2ZTVlMTQyN2FiZjkwMWMzOWUxYzkwZDI3M2I4YWE0OTU1NjA1MTgwNjFiYzIzNWY0YTdiY2NlYTFhMjYxYzg1In0"
         }
       ]
+    },
+    {
+      "id": "claim_33a144fa53d04b519982f70694598700",
+      "statement": "pnpm-workspace.yaml selects three globs (apps/*, libs/*, libs/desktop/*) because libs/* matches only direct children, so the four desktop libraries one level deeper need their own entry, and the root manifest pins pnpm@12.16.1 with pnpm-lock.yaml as the install contract.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L19-L20",
+          "version": "repo-lines-v1:sha256:50ad787d4822d18bd69775175393ab0bd9d44c367066048413c7a194a5cb382e:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDBmYTZiN2M3YWRjMTFjZTA5OGE0YTljZjc1MmViZDg1ZGQzZTU4YWMwZjhlODA0ZDkzMjljYWY5YjRhYmZlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzk0MmQ5MWI5N2E2Y2QwNTIxNmRhMDI2MTkyMjc0MTY1OWJmZTYyNmQ0OTU5NjMzNGY4MmFkOGJjZmRlMGY5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2QzMjBlNGI4YTUwY2MzY2MxYjU2M2M3OTRhYWM0NmI1NGQ5NDNhYjVkNzA2OWVkMjFmMmExYzJhOWU2ZGY1MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjc4MGU4YTYwMzBhMjE2YTU2OWZlNzQ1YTYxNTU3ZGRjMGVjNDE3MjFjZGJhOWE5MzU2MDg0NzYxN2NmMzA3NyJ9"
+        },
+        {
+          "resource": "repo://pnpm-workspace.yaml#L1-L3",
+          "version": "repo-lines-v1:sha256:bd8de11b235f23ec34277523ad8736424b28a6d0042527449bd8a234f8c52b21:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRiMDc2ZWI4MGFkZTE5ZmVhM2UwYTQzMTk4NmI2NTVmNWZhNTllZDYyNjdlMTA3ZDY4OGI2MWMzZjQyMTc5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJlYWJhZGI3ZmJmOGZiYTk5NWE1ZjA4NDYzOTRjYTY5NGVjNTZmMDg1ZDhjYWJjYWExN2ZmYjk3MzI0ODkwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmYzMmMzODJhYzJlNjFmY2VkMjgwMDFmY2Q4MzMwZTgzY2FmNDhiMWUzZTJjYjNkNTdjYmQwMTE1ZGYxZjA1NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_23734e02d4c44c2db069d75a2ad103bb",
+      "statement": "docs/workspace-layout.md still lists evidence-agent-core and evidence-modeling-orchestrator and a scope:evidence tag, none of which exist: libs/evidence-agent replaced the pair and the manifests carry the scopes shared, model, api, visualization, agent, mcp and desktop.",
+      "evidence": [
+        {
+          "resource": "repo://docs/workspace-layout.md#L1-L15",
+          "version": "repo-lines-v1:sha256:9527a07fd98a2cd8c897f09afdbe1e512aa6b602ade4c14571ee9c32b10a0154:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzAyNDUyMDMzNDJlNzhiNTc1N2RmZGM4ZjUyN2NiYjE0YjgzZTljNGFlODY0OGVkZmMyNjFkNTA2NDQ5Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTA4YThkYTcxZjFmZmViMmE4OTlmYmI3M2ExNTExMmNjMDFmMmYwMmJhZTdkOWQ0MjQwMjlhZmY0ZTY5MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNjViZjM4ZTc3OTFlYzcwZjM4ZDM5MTBlZTBiYzAyYzE4NjMyMTgxZWNlN2Q1MDU1MWFhMjA4MTIxMzlkMmQifQ"
+        },
+        {
+          "resource": "repo://docs/workspace-layout.md#L86-L98",
+          "version": "repo-lines-v1:sha256:6971b91825164f30788ef4dc92af3d131b641c78c844aca30d6ca48fba193e30:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyNWY3ZmJkMThmMGY1OTQwMzY0NzEzOWYzZGVlZDY5YzNmYjcyZjc1NjQ4YWFjOGIyNmI0ZTljZjU0MDk5ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyY2FlNTUyNTgyY2VjODI0NDY0ZTNmZGEyZGZhNmZlMWFlYTBhYWIwNWE3NGE5ZmNhYzM4MTUxZDZlZDI5MTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViYjE2MzEzMjc3NTU1MzA2NmZjZWYyZWUzMDNlNTAwNWYyMzk4MTQyZjQ0ZGJmYTlkOTE0YjJlOGY0NmFkMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0ODQ2NTUwZjNmOWMwMTJlYWYxNThiODY4MjdiMTc4MDY2ZjQ3MWQwZjhjOTE1YmVlYjY2ZTUzZjkyYmM4MzkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/package.json#L24-L43",
+          "version": "repo-lines-v1:sha256:85eddd4c86c601a913c9c7f8ff4146b9635bf49395f9f62d3d82412b81f2a1d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYWJmMTk0ZjIxZjMyZjI0ZDEzZGZlYjJkM2Q3OTQxYTEwZDBhZTkwM2UwYjM4ZmE2NGRlZjQzZWFhYjlkYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOTRhM2FhZDVjZTI0MWFlMWVhZmViMDU2YjgzNjYyZjcwNDVhZThmMDQ5YmFkMWQ1OGVmYzg4ODQ5ZWQ5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b471ed6e05f746beabf877475ac56ad5",
+      "statement": "The boundary linter is driven only by nx.tags in five families: type (app/lib), layer rings (schema, domain, io, ui, projection, orchestration, feature, testing, app), platform (universal, node, browser), surface:browser-safe marking the two Node packages a browser project may reach (evidence-api, evidence-agent), and scope for business contexts.",
+      "evidence": [
+        {
+          "resource": "repo://eslint.config.mjs#L113-L144",
+          "version": "repo-lines-v1:sha256:da2d804319995b3ed079b30dd60c0bb7ab850315f3cbb143e547a08b5e072f34:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwZjg4MzY0Njg5MTRjYTI3MjlhZGM5MGJmNjIxMGYyMjBlODI3ODI0NzkwYWM1Yjk2YTEyZWI2OTZmYzQ4MDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwOTNkY2UwMmZhM2U1YzBiOGMxYzg2YWM2N2U4NzYzZTNhMjQ5YWFhZDAxZjlhOGVkZTJkNjcyNzE1MGJkNzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhYmM2ZDY2YWIwNDE4MzAxMzhmNDVhYmJjYTg0OTY5NDc2YWVkYjFkZDI3MDExOTU3YWY2ZTY2YjY3ODE5OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyNjNhNzhhNDA0OGU4YzYyM2JmMGQzZmQ2ZDI4ZDUyNDlhM2IxNjI2OTg1MGI5ODMyNzJlN2ZkZjU2YWQ2NTgifQ"
+        },
+        {
+          "resource": "repo://eslint.config.mjs#L146-L194",
+          "version": "repo-lines-v1:sha256:9722c59c2319429fa2cd08098303d9ba68321f5a610cf5fb24fc969fa733bdaf:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZTcxMzdlYTY0ZDU5MmQ3MmJkNjUyZjU0NDI4MmI0NzU3OGE5MTFkZjUyNGUyODliNmUwMTQxODA5MjYzODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjczYWJkNDU3YTk3ZWVhMTdhNjAwNjJlYjBmYWVhNmJkZjA5NDg2OGNjNmI4ZjhjMGViZGEyZjYxZWQ0MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGUyYmI0MTc2ZGQ5YTg4ZjBhY2U3ZWFmOWFhYzkxODY4NTc2MmY3ZTNhNTA5NDJiNjEwNGZhMzJlOTgzNjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmYTM2ZDVhZDcxNGZjYTlkNTc5MzczYWIwMmE0NjI0Zjg3ZDBiMDg2MTRlZTRhZmQwMzk1N2RmMGU1YmQyZWYifQ"
+        },
+        {
+          "resource": "repo://eslint.config.mjs#L18-L36",
+          "version": "repo-lines-v1:sha256:5e1c7522e1d0574204d59d8f54a000c1e60a5c544762a36b842d0617f189721b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTM1NzkyMTQ1ZTJkYmQzODBiYmZiNjMxYjkzMmNhODkyNTFkNWE4M2NmYTUyMTYwNjc3MzEyYTllNjgwZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiY2Y1OTVmYTYzYWQ1MTUzNTk0ZTM5NDFlZDgzN2QwYTRlYTY4YzMzOGMyZmUyNWJhMzI5MjQzZmVkODM5MzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlYjI5NjEyZTE4MzU2NjZmMzNkNmYyYTdjZDE1OWMyZDUzYjZkYTBkZmU2YWM4ZDU2MzY0NzkwOGNlOGRhNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwN2EyYjZiOGRjNzgzZmE4Yjc0ODNlYzc5Njc3N2QwZWI0YmI4MTdlOWQ5YjUxYzQ2M2NkODIwZmIxMWQ1MjYifQ"
+        },
+        {
+          "resource": "repo://eslint.config.mjs#L38-L112",
+          "version": "repo-lines-v1:sha256:f3c8bc1de24366ae527089ed09debfefa169813996f48042a0a46b05c643b468:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYWQyYTU0N2QzMGY0MGYwMmZhNjAzYzEzZjQ0Y2E5ZDliZTE3OGU2MTE5YTU5ZDU4ZTA3ZGVhOWUzOWZhNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhODE0NjY3YTNmNDE4MDUxMmE5NGZkMGJjMTUyMzU2ZjRkZGMwMWQ1NzdhNjg0MjdhYzllYzc4MjgxMDU4NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZDc3YjE3YWNiYmM1NzVmYzAwOThhMTRiYjc4YjdiZmViMWFmZDE4MGI2ZDU2NTNiNDdiZmIwYjIzODc1YjEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/package.json#L24-L32",
+          "version": "repo-lines-v1:sha256:ad066fe041ba7462d032d8603dd24c63990039ce897dfaa45468d82cddc12247:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGNhYmYxOTRmMjFmMzJmMjRkMTNkZmViMmQzZDc5NDFhMTBkMGFlOTAzZTBiMzhmYTY0ZGVmNDNlYWFiOWRhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWRkMjQ0NTgyYjZmYjAzZDIzYjg0MTVhYmVjZDM0NmIwYzlmNDY2YjZmNzUyYjA2ODE4OWNlN2U5YTJkYzM1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTI5NGEzYWFkNWNlMjQxYWUxZWFmZWIwNTZiODM2NjJmNzA0NWFlOGYwNDliYWQxZDU4ZWZjODg4NDllZDk1MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTlhNGFiNzFlN2Q2NGZmZWIyZjZjZDUyM2JhM2FmODlkMTg1MjFjZjBhMmNlYmQ1ZDA3NzY3MzE2OGI0ODQ5YiJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-api/package.json#L33-L42",
+          "version": "repo-lines-v1:sha256:31258525712cc3caf140f8405be7b8de2f5802cb176767b69f78ba780574574b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZDI0NDU4MmI2ZmIwM2QyM2I4NDE1YWJlY2QzNDZiMGM5ZjQ2NmI2Zjc1MmIwNjgxODljZTdlOWEyZGMzNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4NGEzNWU0NjRhYjZkNDZiNjA1YzY5NzhmMTNjMTgxYTZhMWJjMjliYzgxZjVjMDkwMjJiZDY1NjNlMWQwZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0ZWQxMjk3MmQwOWZlNmVjZTQ5OTNlNTg2MjRlNDU0ZmI1N2Q5YjQ1ZTQ4MDI3ZjMyYjU0ZjVkODI0NDJmMmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e7045d5663a44f37ac67c66dca2b342f",
+      "statement": "Because the hoisted linker lets an undeclared import resolve, the @nx/dependency-checks rule configured in each project's eslint.config.mjs (together with the workspace:* protocol) is the guard against missing or unused dependency declarations.",
+      "evidence": [
+        {
+          "resource": "repo://docs/workspace-layout.md#L49-L50",
+          "version": "repo-lines-v1:sha256:db6553e035f6e2127a0f1a15ef6a56f6557df41bce8a4e5e77e04debfc0d5586:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ0YmM3Njg0MGRlMjk1YmFjZWI0ZWYwMzE1YWQzNmU4NmJkZDNkZWY4YTRkZjY2NDRiZWMxNzExMDBjNDY0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGZiN2IxZmQ1NjBmZWRjNTIwMjExNDkxZDNhOGFlZGRiMmM2ZGQ0YmQ4MTY0ODNhNTU1NzRiMDljNDEwNTQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY1M2Y1ZjE4NGYwOGQ3NzVkMDljM2FiNmNjYzg1YWYwNmEwOTAyOGY1OWJiZmEzYzg0ZTNiMDVmYWNjZTJhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzE5MGY4OGJlZThkYWRjZjVlODZhZDUwNWIyN2MxYmFjYzg3NzI4YjdjZWQ5YTAzMzk2ODBjYWI3MmU4MzMxNSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-api/eslint.config.mjs#L6-L20",
+          "version": "repo-lines-v1:sha256:fcb53c69e0675616de0d2c04e0e80aee47ec5ad22e79713aabd4332e35c40e53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NGNmM2I0ODBkZjdlZGRmNDk5NjQ1ZWU1OTEwMzE3N2Q1Y2Q3ZDc5Mjc2MGRjNDdkYTU2YjVlYjdiMzk4ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiZGViNmZjYTMwN2YxZWMzNzc3MzQzMjc2YmI1OGJiYzM2NTgyNmQ1NjAzYzAzODczMmE2OWVkZDA3NTk5N2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmNjIyN2UxZWRhNzkxNGI4MDM3MGE2NzYwZmJlNzQyYmFiOTc2YmEzYTU5ZTkzNjNkNTg5MjZmMTgwMjI2NmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_216c5f5bb606410b813752d1ead9ba8d",
+      "statement": "nx.json lists tools/eslint/**/* in namedInputs.sharedGlobals so an edit to a shared lint rule invalidates cached lint results, and its production input excludes specs, eslint configs, tsconfig.spec.json, test setup and src/test/** so test-only changes do not invalidate production builds.",
+      "evidence": [
+        {
+          "resource": "repo://nx.json#L4-L16",
+          "version": "repo-lines-v1:sha256:9b3572fd5237051cc098274b4ee58f274a30803bc64f430f3e1344e76d063dd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZjdhMzA5MzIxZWJkYTcwZTc4OWVhMmZkZjIxYTc0OTA4MzEyMDA1ZjdhMDhlZWFhZDM2OTUyYThjZTAyM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0MjhiMjAzYjliMzQwYzY5ZDIxYmNhMGZhMDk3YmE1Y2JmZGMzODg5Nzg0ZjI1NjMzN2FiYzI4NTEyZGIxY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlNWQyNDJhZWNhN2E5MWE3NjRlMWEzZmM4NzAwZmZhNmU4YzY2MWUyNzkzNjczODZiM2EwMzM3NDlmZGM3ZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc97bb5e0738443d89ea04a6dfe4db95",
+      "statement": "The desktop build target depends only on prepare-resources and runs electron-forge package, deliberately not waiting for library builds because everything it imports resolves from src through the source condition; make depends on build and writes out/make, while package is an nx:noop alias of build kept for the documented nx package desktop workflow.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/project.json#L24-L45",
+          "version": "repo-lines-v1:sha256:23da6325e2d7b1ca579da634448414b00aa42a2c2084c4b834af842a3b2da725:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllY2VlOTlmN2ExZTVlMGNkYzllODNiYTZlNWE4MGUwM2FiNDQ3ZWZiNjRkYmQ4ZTk0YWIwYTk0OTg5YTAyYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlYjEyODE5OGVlMjE2MmE3MDc0MWY5NDk5NzdjNTBjNDZmNzUzMzAzNzU3YTc0NDA1MGQwY2U5ODY4Y2E4NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0Y2FiMTkyNThkMDRmZTA1ZjBhYWZkODM3MDY3NDhhN2M1MWZjODM1ZTNjNGQxODA0Y2M4ZjIzMDdjMTAwYzUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/project.json#L46-L56",
+          "version": "repo-lines-v1:sha256:f7fde60d4459426362984fc062bb44531720246c3e574af1d7b8e4695184a742:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyNGM5ODZlMzZjOGYyZGZkNWU5ODA1YzdiMjkzNGVlNTRhOTNlZjJmMWExZWRiYWZjMGRmMWRjZTU5OTIxNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljNTJjODEwZWU3ZDM4M2I0NmI5MWIwMjU1MWE0NGM3NDIxMDY0NGNlZjRhZDRkMDcwNGJiZTYzY2EwMjM4YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhOGQyNzYwNGUyMTFiNzVlMWE1ZmQxY2FjNmFlMjdjMDJmYTc1YWQ2NDExN2Q0YzVlZTA5MDZmOWFmNjEzMDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c1b307d2e82247828e223737903bff8d",
+      "statement": "prepare-resources runs scripts/prepare-desktop-resources.mjs, is cached on libs/evidence-visualization/assets plus the script, and clears the destination before copying exactly four files (workbench.html, workbench.css, workbench.js, business-graph.js) into apps/desktop/resources/assets, keeping the browser test harnesses out of the installer.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/project.json#L8-L23",
+          "version": "repo-lines-v1:sha256:1f76880b42bbcb5fa6abef3258eff8363c9028c74aa4b790a66e78197875f372:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YzE1NTk1YTkxZjM1NTgzNGVmYjEwYWQ4MGQwNzRiMTlhZTdkN2NlNTZmZjE0MmUyNTIzMTFlNTk3NWVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MTU2OThlODdlMmMxOTk3ZTU4MjlhODIxOTIyMTUwNTRjOGI0NTdlM2IyZjczMzYyYzZlMGQ4NGZiN2RkOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxOTdlM2Y5NDY2OGNlNGRiOTQ2ODVhNTJhYjBmZWE3ODMxZWExMzQ0NTY4ZTAzMWIxZGViYjZlZjk4NGVkMmEifQ"
+        },
+        {
+          "resource": "repo://scripts/prepare-desktop-resources.mjs#L22-L41",
+          "version": "repo-lines-v1:sha256:83107a993cecd8d1c45c441211325cec9c23326dffabd12d380eef76fcb6e32e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYWFlYzJlNDdiZGUzYzZmNmEwMmZhYzE5MWVkMmI0MzZhYTMxMGNlN2VjOTMxOWFjMjYxZjE2OTc2MTk3YmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiMWE3YjA2NjFiY2IwYTNkNjRjN2UyMGMwMzc1NzZhMjYwNGFmM2JhOGZmOWUwMjAwMzIyN2FhMzM0ZDY3YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MThkN2E1MGMxNGU1MDFmMDJlZDMxY2U2ZjdhNWRhOGM3YThkODMwZjlhMWQ2Y2MxOWMwYTk1ODY5NjcyYzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7fe3832f553e4c3e92c53a1d0bb10889",
+      "statement": "Electron Forge packages with asar enabled and the prepared assets as extraResource beside app.asar, Vite plugin entries for src/main/main.ts, src/preload/index.ts and the main_window renderer, signing/notarization only when APPLE_ID is present, and Squirrel, ZIP (darwin), RPM and DEB makers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L24-L71",
+          "version": "repo-lines-v1:sha256:47bca7d2a1a44b5b2a3f56fa8b0e722f7408d84286a2a55d2372fe19046f6aeb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MmQ0OWJkZTA3YTIzMWZlZGEzMmQwMTQ3ZjU1ZTUyZjAwNTQ0OTdiNjM5MDdjMGI5MDhlNjI1NjI5ZGYyZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5Y2NhNzk3N2YxZmQ1MTk5MmY1MGU1OWI4ZDcyMzA4MWVlNjgyNzhiYzVlZDcwMzBiMDA2YWIxOGVkOTVjMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0bbcd231e18947418c209b399ab06312",
+      "statement": "The main Vite config must set rolldownOptions.platform to 'node' because Forge's Vite plugin emits CJS without build.ssr and Vite 8 would otherwise turn import.meta.url into undefined and break createRequire, and the preload config pins output.entryFileNames to preload.js because Forge names bundles after the entry file.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/vite.main.config.mjs#L17-L24",
+          "version": "repo-lines-v1:sha256:9168c8556899ed50d22cac55cffbdb752edd28b2156c1b18200ad875ecc66435:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhhY2M2Yjk0OGMyMjVlNGQyNjg0NmU5Mzc4NjEyYjI5MTc5YmQyNWVmZTM2ZDA1MGZhMDE5MjFjMjA3MjlkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGI5MWRjNGYxMTNhZWQzZjIxYjBhOWVmNGJlNDM1OGM4NGMyOTFmMDllOTU0NDZkZTI4MDhlM2I2MmI2N2JjOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGJjNzY5ZDJhNmIwZDNiODI4ZWYxZDAzYmNjMzA2NmEyMGMxNmRhMmQyNmFmN2M5YzAyMjU2ZWYyMDU5ZDkyNCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/vite.preload.config.mjs#L9-L22",
+          "version": "repo-lines-v1:sha256:3e49b874f4b57a17890529ba9be9247912042204a6967f5f730c7499504a3880:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MDZkY2U0NGYxNDcyNTkyNDk2MDVmNTRlZmI0MTFiZWY3MWI1NDY0MGVkMTMwNWY5Mjk5NDk5NzhjYmUyMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2MwM2ZiZGY5YjM0NmFhNTUyNzg2YjVlZWJiM2FhZDRmYWM4M2FiOWU1YzZiNWQ1MTVhM2ViNTljZWVkNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0a64e80973344e2d91fa09eaffeb4e32",
+      "statement": "The root manifest exposes thin nx wrappers plus boundaries:drill, graph, desktop, desktop:package, desktop:make, test:desktop and model:pack/unpack/inspect; the model:* scripts invoke libs/evidence-model-io/dist/cli.js directly, so they fail until that project has been built, and there is no typecheck root script.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L5-L18",
+          "version": "repo-lines-v1:sha256:60c69889dda3110b1aaf4828b3a07b97b2a6f4976ac8b45bf8d3e2feca0c3369:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0M2QyZDJhMTBiYzQyZTk5MmQzNjBiYjM3MDFhOTk0YzNhMjYyMTJmNGU3NDg1OGQyZTBjZTNkOGNiMDdmOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlMTFlNmIyNGUyNDYxZmEwY2NiMmFjMDYyMTA4ODVlMDZjMjc5NmJiZWIwNmVmNDVmY2QxNjhiNjE2ZTJiM2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_99ef7c09bc414c7688e06dc94ca30858",
+      "statement": "The modeling CLI lives in libs/evidence-model-io, a platform:node disk adapter that declares bin.evidence-model on dist/cli.js and a ./cli export entry, and its CLI re-exports the report builders from evidence-model-core and adds the directory and bundle adapters from its own package.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-io/package.json#L10-L27",
+          "version": "repo-lines-v1:sha256:91fce96f4f318152f5ec426aa672c10ca6f4a3108aa6b829f2ee27c55effe98c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzE0NzU3YjhlMWU5ZDZhN2RlZTk5MDJlOTA0MDdhZDhjZjY3M2IzZThkNzYzZTI3OTUwZDE5ZDA2NzhkNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2ZmQyYmU2YjU3N2JhOTcxMDQ0OGE1NGYzN2EwZmY2MTNlMTM5YTEzZWM2MDgxMzcwYTRlODQyY2M4ZmUzYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViMTU5NDE1MGNjOTM3NDBjYmU5YWI1N2ZkOTBhOTU3OTExNGE3MDdiYjdlZDZiMzY5ZDZjZWJjNTUyNjhiYmYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/cli.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:eaa8f3aaafd2932ec85d5a466f50cb1d2863b0e18d0bb46a2c8c79ee8f2972d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OWM0Nzg3MmI3MWYxMjU4OTk0Mjg5MjQ2NGU3NjRjMGRiMzUwYzIwYjcyMjI4NjQ1NjE1Y2MzNmUwYTA3MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0ODA3MThhZmQ4ODlmNWU2ZmMzNGUxNTU3YmZlYzE3ODgwZTljYjcxYzkyNzkxMDE1OWZiOTc5MWE4MTg0ZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhNjA0YjFmZGUzZTI2Mjg4MzE0MTdkZmQyM2E0ZThiN2NlZTNhNDBkODg0OTZkN2E5ZGY2MWEzMzU3N2U3YjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3479e8540a544e0297effd395dfb9028",
+      "statement": "tools/eslint/browser-platform.mjs closes the gap the tag rules cannot see (node builtins are not project-graph nodes) by banning node:* and fs/path/child_process/os/stream plus the package roots of evidence-api and evidence-agent, whose browser-safe subpaths must be imported instead; the rule is opt-in, so each of the four platform:browser libraries imports it in its own eslint.config.mjs and tagging a new browser project without the import leaves builtins unguarded.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/eslint.config.mjs#L1-L10",
+          "version": "repo-lines-v1:sha256:73eecef680af39dd3c887c43f8696eecd898745e5092939ddf09ae1bd66cb3d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYmY0YWEzOTcwYmE1NjczNTIwNzY5NTUzMWE2MjIwMDY3MDk1NzFiM2Y1YTdlZjg1MzYzN2U2ZDdhODY1NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2Yzk2YWM0ZjgxYzE2ZDljMjc1YzEzY2E1ZjZiYzNiYTA1ODAwNmQ3MWJhMWY3Yjg4MDU2NTUyNmRmMWU4MWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwNTM2ZWZhZDcyOTc3Njc4M2UxZDU0MzU5NjlkZTgwYTYyNmVlNTM2YzVjMGJmMjM2M2FmMzAzZGQ2ZjY3MzYifQ"
+        },
+        {
+          "resource": "repo://tools/eslint/browser-platform.mjs#L1-L44",
+          "version": "repo-lines-v1:sha256:999d87b657b62465bbdec8a67147ff4632b0394e881490cbd2603fcc00bb216a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f5621ca631204603868027e9fc009bba",
+      "statement": "libs/evidence-model-core/src/purity.spec.ts bundles the package with Vite and a resolver plugin that throws on any Node builtin, so a universal library cannot quietly acquire a Node-only import even where the lint rule is absent.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/purity.spec.ts#L6-L34",
+          "version": "repo-lines-v1:sha256:65d6c9978e0bdbf7d36f7af90e7de0171ae93bc8e0e913ba5d6b44a40a318573:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZGZjNTRmZTgyZWZmNTYzYzYxNjE1ODhiMzAyNzMzYzA2ZDQxZTVkOWYzZjBiZTUzMTgzZjYxODI4MGJlODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3ZmU2OTU1M2VhZTc0NjI2OTNjMWM5MWI1MmY0NzU5NGRlMWZhOGE1NGU3MzVlNTQzMzlkZjViYjYyY2FlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a7bc94101324d1b902dcdd7db624d7e",
+      "statement": "`pnpm boundaries:drill` writes one probe import per documented violation into the owning project, lints it with nx lint <project> --skip-nx-cache, requires a specific message fragment, removes the probe in a finally block, and exits non-zero if any rule no longer refuses; its cases cover a domain library reaching a projection, a browser library reaching a Node-only projection, a browser library importing node:fs, and one scope reading another.",
+      "evidence": [
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L17-L45",
+          "version": "repo-lines-v1:sha256:7a31382447746b0f84f405d1a47871f540da450b6a92dc1e942128e5a1ce7f92:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMGNiYzM0OTk3ODNmMjJiM2Q5YmI5YTBkZDljNjAzZTczY2Y4MDkxZmRiNzVhMjgzZDllZWY4YzAxNzkyMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZDhiZjI3ZGM3MzQ5MDA0ZTY0MDg1ZWJiZjI1ZGI2MDhhYjY1NDQyYmNkZjYyODcxMzNlOGE4ZWVkZjQ0YjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNTUxMTY0MjY2ZjliOTZlMGQ2NjI4OWI2ZTVhODVhYmM1MDMzYzAzNWE1NTY3MDc5ZWI2MjM5NWIxMzJiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3OTZmMDU2NWY5ZjNkODFiNzUzOGI4OWVhNDIxMDc4ZWFhYWZhZmM4YmRkMTEyMzM0ZjM2ODhkZDlhYzNkYzEifQ"
+        },
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L60-L72",
+          "version": "repo-lines-v1:sha256:d4e5081765fc157f2cefa952df12f2171b5e0647cbb059f13bf5263cf109748e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1ZDFlYjMzNWI3YzBmZDgwYzIyMzQyZTk2OTU3YjYzYWE2ZDVhZmM1MWU5ZWU4NjU0ZDJiZDg5MWFjNWNiMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2NmMxMThjYjA4YzExYWI0NWRjZDk5YjdmODMwNTFiMTM2NzBjODJmNmE2M2M0MGZlMmQxYmMzNDQ3YzVkNjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIifQ"
+        },
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L84-L109",
+          "version": "repo-lines-v1:sha256:f675d23bcdca31a43ef2c2cce487006180446922aebaedbe5187236945517ef9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2NTk1ZjRlZTVmZjYzZDUwOTUwNDE5ZGMzNDQxNDUxMzg1MWRjOTczNmZkMTdhNGY3YmZhOTMwYjI2MWI2ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlOTYzNTI3MjA5ODZlZTQwNzc2NjFjZDRmZGNiNDA5YTkwODBmN2Q5NDBlMmZkNDc5YzIyYmMzNmUyNGVlOTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiNmJjMmU4MzZjZGExZmQ1YTUwYTUyOTA5YmYyYjg3MWZlYmUwM2Q5ZWJkZTg2NzQ0MGY4NDE1ODU1OGM5NDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f81a981b7cd042da8cdb894cc1fe3f61",
+      "statement": "CI runs the boundary drill first after a frozen-lockfile install, then lints affected projects on pull requests (base and head SHAs) but the whole workspace on main pushes, then typechecks and tests all projects and finishes with nx build desktop as the packaging smoke test.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L26-L55",
+          "version": "repo-lines-v1:sha256:bc25951134de12aaa8db4732054d9bf5e8ab4456ad3934d299e4e0bd0bbfd205:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2ZDcxMGExNzYyODk1Y2Q0YzkzYzZhMmEyOWU2MjkyNGQ2ZjczMGQ5NWUyYWQxNzdjYTUwNDhlYjU2OWM5YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiODg2OGJmZTBhMGMxM2U2MmJlMWE2MTdkNDllYjhjODcwZGUyNmZjNGRiMTliY2JmMGFmZWE1OWUyNGEzMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afb850a86a3849c387ef28586b66106d",
+      "statement": "The release workflow builds a four-way matrix (macOS arm64, macOS x64, Windows x64, Linux x64), installs rpm/fakeroot/dpkg on Linux, runs nx run desktop:make with an arch argument, collects .zip, .exe, .nupkg, RELEASES, .deb and .rpm from apps/desktop/out/make, and publishes a GitHub Release; Apple secrets are optional, so macOS artifacts are unsigned without them.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release-desktop.yml#L1-L126",
+          "version": "repo-lines-v1:sha256:d642723f27a2bd061bf68443fb691ffeb2402effdcadc663ca9328657dfdd1c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMjkyNzNkNDJmOTdlNjg5YzgyYWE3NWZiNTI5OWRkZDM5OGRhYjZlOGJlZGFhNzQ2YmJlNjZiMTcxMDI1ZDdjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODY4NTJmNzJlNTE0M2QzNTlhNTgzNWM0MjZjNDk1YjczOTU2MzMxOGUyYzRkYWQxZWJkYmEyMzMwOTUyMDEyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-14T20:15:23.211Z"
   }
 }

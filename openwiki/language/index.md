@@ -1,4 +1,4 @@
 # Files
 
-- [The Fulfillment Modeling DSL (FM v5)](fm-dsl.md) - The model language behind every Evidence artifact — manifest, four entity categories, attributes, relationships, CEL rules, identifiers and value types — and the structural rules that make an invalid model impossible to save.
-- [Key data, business time and provenance](key-data-and-provenance.md) - The vocabulary that decides whether a value has a provider — key data source kinds, the mandated business-time attributes, request-formation fields, attribute-level lineage, and how source snippets and interview bindings tie claims back to evidence.
+- [The FM model language (FM v5)](fm-dsl.md) - The AST kinds of Fulfillment Modeling v5 — entity categories, roles, contexts, relationships, lifecycle stages, rules, clause readings and workshop steps — the closed vocabulary registry that names them, and the strict validator that turns authored JSON into an accepted DomainModelDocument.
+- [Key data and provenance](key-data-and-provenance.md) - The shared eight-kind vocabulary that decides whether an amount, deadline or time difference has a named provider, the ledger the inspector edits and the native audit grades, the business-time and lineage rules around it, and the provenance chain from a source sentence to a sensor issue.
