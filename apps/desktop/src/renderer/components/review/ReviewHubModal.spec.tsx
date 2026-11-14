@@ -120,3 +120,25 @@ describe('review hub', () => {
     expect(locate).not.toHaveBeenCalled();
   });
 });
+
+describe('ReviewHubModal in the console', () => {
+  it('docks as a region and still closes on Escape', async () => {
+    installDesktopApi();
+    const close = vi.fn();
+    render(
+      <ReviewHubModal
+        input={input}
+        onLocate={vi.fn()}
+        onPrompt={vi.fn()}
+        onClose={close}
+        canLocate={() => true}
+        embedded
+      />,
+    );
+
+    const region = screen.getByRole('region', { name: '审查中心' });
+    expect(region).not.toHaveAttribute('aria-modal');
+    fireEvent.keyDown(region, { key: 'Escape' });
+    expect(close).toHaveBeenCalledOnce();
+  });
+});

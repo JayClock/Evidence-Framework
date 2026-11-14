@@ -189,3 +189,20 @@ describe('SimulationSandbox', () => {
     expect(api.calls.drift).toEqual([]);
   });
 });
+
+describe('SimulationSandbox in the console', () => {
+  it('docks as a region instead of a blocking dialog', () => {
+    installDesktopApi({ replayResult: replay() });
+
+    render(
+      <SimulationSandbox
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+        embedded
+      />,
+    );
+
+    expect(screen.getByRole('region', { name: '场景沙盒' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});

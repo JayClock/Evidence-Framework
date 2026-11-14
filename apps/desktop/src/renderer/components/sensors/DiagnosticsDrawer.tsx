@@ -9,6 +9,8 @@ interface DiagnosticsDrawerProps {
   stale?: boolean;
   onClose: () => void;
   onFocusIssue: (issue: SensorIssue) => void;
+  /** Fills the console pane instead of capping itself at 16rem. */
+  embedded?: boolean;
 }
 
 const severityLabel = (severity: SensorIssue['severity']): string =>
@@ -33,10 +35,15 @@ export const DiagnosticsDrawer = ({
   stale = false,
   onClose,
   onFocusIssue,
+  embedded = false,
 }: DiagnosticsDrawerProps) => (
   <section
     aria-label="检查结果"
-    className="max-h-64 shrink-0 overflow-y-auto border-t border-evidence-line bg-white/95"
+    className={
+      embedded
+        ? 'flex min-h-0 flex-1 flex-col overflow-y-auto bg-transparent'
+        : 'max-h-64 shrink-0 overflow-y-auto border-t border-evidence-line bg-white/95'
+    }
   >
     <div className="sticky top-0 flex items-center justify-between border-b border-evidence-line bg-white/95 px-3 py-1.5">
       <span className="text-[10px] tracking-wide text-evidence-muted uppercase">

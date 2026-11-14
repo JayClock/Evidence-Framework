@@ -11,12 +11,21 @@ export const ReviewHubModal = ({
   onLocate,
   onPrompt,
   canLocate,
+  embedded = false,
 }: {
   input: PreviewReviewInput;
   onClose: () => void;
   onLocate: (issue: SensorIssue) => void;
   onPrompt: (issue: SensorIssue) => void;
   canLocate: (issue: SensorIssue) => boolean;
+  /**
+   * Docks the review into the bottom console instead of covering the canvas.
+   *
+   * A reader who jumps to a finding has to see the object it names, so the
+   * console keeps the model on screen; the standing modal remains for callers
+   * that need one blocking surface.
+   */
+  embedded?: boolean;
 }) => {
   const [result, setResult] = useState<PreviewReviewResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -52,17 +61,26 @@ export const ReviewHubModal = ({
   }, []);
   return (
     <div
-      role="dialog"
-      aria-modal="true"
+      role={embedded ? 'region' : 'dialog'}
+      aria-modal={embedded ? undefined : 'true'}
       aria-label="审查中心"
       tabIndex={-1}
       ref={dialog}
-      className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-evidence-line bg-white shadow-xl"
+      className={
+        embedded
+          ? 'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-white outline-none'
+          : 'fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-evidence-line bg-white shadow-xl'
+      }
       onKeyDown={(event) => {
         event.stopPropagation();
         if (event.key === 'Escape') {
           event.preventDefault();
           onClose();
+        }
+        // Escape and Tab belong to the modal surface; inside the console the
+        // surrounding workspace keeps its own focus order.
+        if (embedded) {
+          return;
         }
         if (event.key === 'Tab') {
           const controls = [
@@ -86,7 +104,7 @@ export const ReviewHubModal = ({
         }
       }}
     >
-      <header className="flex items-center gap-3 border-b p-3 text-sm">
+      <header className="flex shrink-0 items-center gap-3 border-b p-3 text-sm">
         <h2 className="flex-1 font-semibold">业务对象工作台 · 审查中心</h2>
         <button type="button" disabled={busy} onClick={() => void refresh()}>
           刷新审查
@@ -116,8 +134,7 @@ export const ReviewHubModal = ({
           <section
             aria-label="审查发现"
             className="max-h-48 shrink-0 overflow-auto border-y p-3 text-xs"
-          >
-            <p>
+          >            <p>
               一致性：
               {result.data.validation.consistent === true ? '通过' : '未通过'} ·
               完整性：

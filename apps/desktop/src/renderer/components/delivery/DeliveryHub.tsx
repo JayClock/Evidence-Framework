@@ -18,6 +18,8 @@ export interface DeliveryHubProps {
   hub: DeliveryHubController;
   onFocusEntity?: (entityRef: string) => void;
   onClose: () => void;
+  /** Docks the hub into the bottom console instead of covering the canvas. */
+  embedded?: boolean;
 }
 
 /**
@@ -31,19 +33,30 @@ export const DeliveryHub = ({
   hub,
   onClose,
   onFocusEntity,
+  embedded = false,
 }: DeliveryHubProps) => {
   const [tab, setTab] = useState<'full' | 'diff'>('full');
   const preview = hub.preview;
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
+      role={embedded ? 'region' : 'dialog'}
+      aria-modal={embedded ? undefined : 'true'}
       aria-label="交付中心"
-      className="fixed inset-0 z-40 flex items-center justify-center bg-[#0b1a2a33] p-6"
+      className={
+        embedded
+          ? 'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-white'
+          : 'fixed inset-0 z-40 flex items-center justify-center bg-[#0b1a2a33] p-6'
+      }
     >
-      <div className="flex max-h-[80vh] w-[860px] max-w-full flex-col overflow-hidden rounded-xl border border-evidence-line bg-white shadow-[0_12px_48px_#00000024]">
-        <header className="flex items-center justify-between border-b border-evidence-line px-5 py-3">
+      <div
+        className={
+          embedded
+            ? 'flex min-h-0 w-full flex-1 flex-col overflow-hidden'
+            : 'flex max-h-[80vh] w-[860px] max-w-full flex-col overflow-hidden rounded-xl border border-evidence-line bg-white shadow-[0_12px_48px_#00000024]'
+        }
+      >
+        <header className="flex shrink-0 items-center justify-between border-b border-evidence-line px-5 py-3">
           <div>
             <p className="text-[10px] tracking-[0.14em] text-evidence-muted">
               DELIVERY HUB

@@ -74,3 +74,14 @@ describe('DeliveryHub', () => {
     expect(screen.getByRole('button', { name: '导出当前草稿' })).toBeDisabled();
   });
 });
+
+describe('DeliveryHub in the console', () => {
+  it('docks as a region instead of a blocking dialog', () => {
+    render(
+      <DeliveryHub hub={controller()} onClose={() => undefined} embedded />,
+    );
+
+    expect(screen.getByRole('region', { name: '交付中心' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
