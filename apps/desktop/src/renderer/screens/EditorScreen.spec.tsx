@@ -385,19 +385,62 @@ describe('EditorScreen sensors', () => {
     expect(screen.queryByLabelText('本次补丁新增 审计员')).toBeNull();
   });
 
-  it('focuses the agent composer on Cmd+K and the search on Cmd+F', async () => {
+  it('opens the command hub on Cmd+K and reaches the copilot from it', async () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('桌面端夹具（Desktop Fixture）');
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
-    expect(document.activeElement).toBe(
-      await screen.findByLabelText('访谈内容'),
-    );
 
+    expect(
+      await screen.findByRole('dialog', { name: '快速命令' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('option', { name: /向 AI 建模副驾提问/ }));
+
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByLabelText('访谈内容')),
+    );
+    expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull();
+
+    // The outline search keeps its own chord, because "find this object" and
+    // "run this action" are different questions.
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
     expect(document.activeElement).toBe(screen.getByLabelText('搜索业务对象'));
+  });
+
+  it('jumps to a business object from the command hub', async () => {
+    readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.change(await screen.findByLabelText('搜索命令或业务对象'), {
+      target: { value: '采购协议' },
+    });
+    fireEvent.click(screen.getByRole('option', { name: /采购协议/ }));
+
+    // Selecting a target moves the shared selection, which the inspector reads.
+    await waitFor(() =>
+      expect(screen.getByRole('tab', { name: '属性' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      ),
+    );
+  });
+
+  it('runs the view commands from the hub without a header button', async () => {
+    readyProject();
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.click(await screen.findByRole('option', { name: /总台账/ }));
+
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
   });
 
   it('tells the copilot what the next question is about', async () => {

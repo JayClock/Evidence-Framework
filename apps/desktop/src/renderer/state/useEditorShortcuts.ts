@@ -6,8 +6,20 @@ interface ShortcutHandlers {
   redo: () => void;
   save: () => void;
   focusSearch: () => void;
-  /** Moves the caret into the agent composer. */
-  focusAgent: () => void;
+  /**
+   * Opens the command palette (Mod+K).
+   *
+   * The palette is the single owner of everything else: the copilot composer,
+   * the exports and the sandbox are rows in it, so one chord reaches all of them
+   * and the header does not need a button per feature.
+   */
+  openCommandPalette?: () => void;
+  /** Writes the offline review page, the same action as the palette row. */
+  exportReview?: () => void;
+  /** Re-runs the AST gate and the sensors. */
+  rerunSensors?: () => void;
+  openDelivery?: () => void;
+  openSandbox?: () => void;
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
@@ -72,16 +84,55 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
-      if (mod && event.key.toLowerCase() === 'k') {
+      // The palette is the way in: it is the only chord the header advertises,
+      // and every other surface (copilot, exports, sandbox) is a row inside it.
+      if (
+        mod &&
+        event.key.toLowerCase() === 'k' &&
+        handlers.openCommandPalette
+      ) {
         event.preventDefault();
-        handlers.focusAgent();
+        handlers.openCommandPalette();
         return;
+      }
+
+      if (mod && event.shiftKey) {
+        const shifted = event.key.toLowerCase();
+        const shiftedAction =
+          shifted === 'e'
+            ? handlers.exportReview
+            : shifted === 'r'
+              ? handlers.rerunSensors
+              : undefined;
+
+        if (shiftedAction !== undefined) {
+          event.preventDefault();
+          shiftedAction();
+          return;
+        }
       }
 
       if (mod && event.key.toLowerCase() === 'f') {
         event.preventDefault();
         handlers.focusSearch();
         return;
+      }
+
+      // Alt chords stay off a text field: a modeler typing a CEL expression
+      // wants the character, not the panel behind it.
+      if (event.altKey && !typing) {
+        const altAction =
+          event.code === 'KeyD'
+            ? handlers.openDelivery
+            : event.code === 'KeyS'
+              ? handlers.openSandbox
+              : undefined;
+
+        if (altAction !== undefined) {
+          event.preventDefault();
+          altAction();
+          return;
+        }
       }
 
       // Layout keys belong to the workspace, but a text field may want them for

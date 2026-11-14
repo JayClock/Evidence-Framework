@@ -11,7 +11,10 @@ import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import {
+  ENTITY_CATEGORY_LABELS,
+  type DomainModelDocument,
+} from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
@@ -20,6 +23,10 @@ import {
   BottomConsole,
   type ConsoleTab,
 } from '../components/console/BottomConsole';
+import {
+  CommandPalette,
+  type CommandTarget,
+} from '../components/command/CommandPalette';
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightWorkbench } from '../components/RightWorkbench';
@@ -36,6 +43,11 @@ import {
   ResizablePanelGroup,
 } from '@evidence-poc/desktop-ui-kit';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
+import type {
+  CommandCapabilities,
+  CommandHandlers,
+} from '../state/commandRegistry';
+import { useCommandRegistry } from '../state/useCommandRegistry';
 import { useAgentSession } from '../state/useAgentSession';
 import { useDeliveryHub } from '../state/useDeliveryHub';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
@@ -176,6 +188,9 @@ const EditorWorkspace = ({
   }, [selectedScope, scope, state.selection.nodeId]);
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [consoleTab, setConsoleTab] = useState<ConsoleTab>('diagnostics');
+  // The palette replaces a row of header buttons with one chord; every action
+  // it runs is the same handler the header used to call.
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const openConsole = useCallback((tab: ConsoleTab) => {
     setConsoleTab(tab);
     setConsoleOpen(true);
@@ -352,6 +367,73 @@ const EditorWorkspace = ({
     setZoomCommand({ direction, token: tokenRef.current });
   }, []);
 
+  const commandTargets = useMemo<readonly CommandTarget[]>(
+    () =>
+      state.layout.nodes.map((node) => ({
+        id: node.nodeId,
+        label: node.entity.label,
+        category: ENTITY_CATEGORY_LABELS[node.entity.category],
+        path:
+          node.contextId === null
+            ? []
+            : state.graph
+                .contextPath(node.contextId)
+                .map((context) => context.label),
+      })),
+    [state.layout.nodes, state.graph],
+  );
+
+  const commandCapabilities = useMemo<CommandCapabilities>(
+    () => ({
+      canUndo: state.canUndo,
+      canRedo: state.canRedo,
+      dirty: state.dirty,
+      busy: reviewExport.busy,
+      viewMode: workspaceView.mode,
+    }),
+    [
+      state.canUndo,
+      state.canRedo,
+      state.dirty,
+      reviewExport.busy,
+      workspaceView.mode,
+    ],
+  );
+
+  const commandHandlers = useMemo<CommandHandlers>(
+    () => ({
+      save: () => void save(),
+      undo: () => {
+        state.session.undo();
+      },
+      redo: () => {
+        state.session.redo();
+      },
+      setViewMode: workspaceView.setMode,
+      focusSearch: () => searchInputRef.current?.focus(),
+      openReview: () => openConsole('review'),
+      exportReview: () => void reviewExport.exportPage(),
+      exportDiff: () => void reviewExport.exportPage(true),
+      openDelivery: () => openConsole('delivery'),
+      openSandbox: () => openConsole('simulation'),
+      rerunSensors: () => void sensors.refresh(),
+      askAgent: () => {
+        rightRail.current?.expand();
+        setAgentFocusToken((token) => token + 1);
+      },
+    }),
+    [
+      openConsole,
+      reviewExport.exportPage,
+      save,
+      sensors.refresh,
+      state.session,
+      workspaceView.setMode,
+    ],
+  );
+
+  const commands = useCommandRegistry(commandCapabilities, commandHandlers);
+
   const { accept: acceptPatch, revert: revertPatch } = patchReview;
 
   const shortcuts = useMemo(
@@ -365,10 +447,11 @@ const EditorWorkspace = ({
       },
       save: () => void save(),
       focusSearch: () => searchInputRef.current?.focus(),
-      focusAgent: () => {
-        rightRail.current?.expand();
-        setAgentFocusToken((token) => token + 1);
-      },
+      openCommandPalette: () => setPaletteOpen(true),
+      exportReview: () => void reviewExport.exportPage(),
+      rerunSensors: () => void sensors.refresh(),
+      openDelivery: () => openConsole('delivery'),
+      openSandbox: () => openConsole('simulation'),
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -388,7 +471,9 @@ const EditorWorkspace = ({
       patchReview.review,
       requestZoom,
       revertPatch,
+      reviewExport.exportPage,
       save,
+      sensors.refresh,
       openConsole,
       state.session,
       toggleRail,
@@ -673,6 +758,14 @@ const EditorWorkspace = ({
           externalChangeAt={state.externalChangeAt}
           onReload={() => void reloadFromDisk()}
           onDismissExternalChange={dismissExternalChange}
+        />
+
+        <CommandPalette
+          open={paletteOpen}
+          onOpenChange={setPaletteOpen}
+          commands={commands}
+          targets={commandTargets}
+          onFocusTarget={focusNode}
         />
       </div>
     </LiveApiProvider>
