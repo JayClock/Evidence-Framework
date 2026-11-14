@@ -532,6 +532,47 @@ describe('EditorScreen dual-mode stage', () => {
     Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
   });
 
+  it('switches stage and density from the floating island', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.click(screen.getByRole('button', { name: '简化图' }));
+    expect(screen.getByRole('button', { name: '简化图' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /总台账/ }));
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+  });
+
+  it('resets the zoom with Cmd+0 and fits the model with Shift+1', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    const world = () =>
+      container.querySelector('[data-region="canvas-world"]') as HTMLElement;
+
+    fireEvent.keyDown(window, { key: '0', metaKey: true });
+    await waitFor(() => expect(world().style.transform).toContain('scale(1)'));
+
+    const reset = world().style.transform;
+    fireEvent.keyDown(window, { code: 'Digit1', shiftKey: true });
+    await waitFor(() => expect(world().style.transform).not.toBe(reset));
+  });
+
+  it('reaches the ledger from the floating island without a header control', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    // The header no longer carries a view switch: the island owns it.
+    expect(screen.getAllByRole('button', { name: /拓扑图/ })).toHaveLength(1);
+  });
+
   it('opens the whole ledger with Alt+2 and returns to the graph with Alt+1', async () => {
     readyProject();
     const { container } = render(

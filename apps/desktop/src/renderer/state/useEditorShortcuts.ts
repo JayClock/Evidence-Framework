@@ -23,6 +23,10 @@ interface ShortcutHandlers {
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  /** Resets the canvas to 1:1 (Mod+0). */
+  resetZoom?: () => void;
+  /** Fits the model into the stage (Shift+1). */
+  fitCanvas?: () => void;
   /** Collapses the left outline rail (Mod+B). */
   toggleLeftRail?: () => void;
   /** Collapses the right workbench rail (Mod+I). */
@@ -190,6 +194,24 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
 
       if (event.key === 'Escape') {
         handlers.clearSelection();
+        return;
+      }
+
+      // The HUD advertises these two, so the keys have to exist: Mod+0 is the
+      // 100% button and Shift+1 is the fit button.
+      if (mod && event.key === '0' && handlers.resetZoom !== undefined) {
+        event.preventDefault();
+        handlers.resetZoom();
+        return;
+      }
+
+      if (
+        event.shiftKey &&
+        event.code === 'Digit1' &&
+        handlers.fitCanvas !== undefined
+      ) {
+        event.preventDefault();
+        handlers.fitCanvas();
         return;
       }
 

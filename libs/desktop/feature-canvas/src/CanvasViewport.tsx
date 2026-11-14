@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useGesture } from '@use-gesture/react';
 
 import {
@@ -41,10 +48,22 @@ interface CanvasViewportProps {
   selection: ModelSelection;
   /** Incremented by the sidebar/search to reveal a node. */
   focusRequest: { nodeId: string; token: number } | null;
-  /** Keyboard zoom requests, one token per key press. */
-  zoomCommand: { direction: 'in' | 'out'; token: number } | null;
-  /** Declutters or expands the cards; absent when nothing can set it. */
-  onViewModeChange?: (mode: CanvasViewMode) => void;
+  /**
+   * Keyboard view commands, one token per key press.
+   *
+   * `fit` and `reset` travel the same channel as `in`/`out` because the viewport
+   * owns the zoom that the chord is about: the app presses one key and the
+   * canvas decides what "100%" or "fit" means for the current stage size.
+   */
+  zoomCommand: { direction: ZoomDirection; token: number } | null;
+  /**
+   * Renders the floating tool island over the canvas.
+   *
+   * The island is the app's control surface, not the canvas's: it switches the
+   * workspace between graph and ledger and speaks the app's view-mode chords, so
+   * the viewport only hands it the zoom maths it owns.
+   */
+  hud?: (controls: CanvasHudControls) => ReactNode;
   /** Rings the objects a pending agent patch touches. */
   overlay?: ModelOverlay | null;
   diagnostics?: DiagnosticIndex;
@@ -53,6 +72,18 @@ interface CanvasViewportProps {
   onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
+}
+
+export type ZoomDirection = 'in' | 'out' | 'fit' | 'reset';
+
+/** What the floating island needs from the viewport it floats over. */
+export interface CanvasHudControls {
+  zoom: number;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  /** 1:1 at the centre of the stage. */
+  resetZoom: () => void;
+  fitToContent: () => void;
 }
 
 type DragState =
@@ -73,7 +104,7 @@ export const CanvasViewport = ({
   selection,
   focusRequest,
   zoomCommand,
-  onViewModeChange,
+  hud,
   overlay = null,
   diagnostics,
   onOpenIssues,
@@ -174,6 +205,11 @@ export const CanvasViewport = ({
     }
     lastZoomToken.current = zoomCommand.token;
 
+    if (zoomCommand.direction === 'fit') {
+      fitToContent();
+      return;
+    }
+
     const anchor = {
       x: (size.width - RULER_THICKNESS) / 2,
       y: (size.height - RULER_THICKNESS) / 2,
@@ -182,11 +218,13 @@ export const CanvasViewport = ({
     setViewport((current) =>
       zoomAtPoint(
         current,
-        current.zoom * (zoomCommand.direction === 'in' ? 1.25 : 0.8),
+        zoomCommand.direction === 'reset'
+          ? 1
+          : current.zoom * (zoomCommand.direction === 'in' ? 1.25 : 0.8),
         anchor,
       ),
     );
-  }, [zoomCommand, size.height, size.width]);
+  }, [fitToContent, zoomCommand, size.height, size.width]);
 
   const lastFocusToken = useRef<number | null>(null);
   useEffect(() => {
@@ -470,24 +508,47 @@ export const CanvasViewport = ({
         />
       ) : null}
       <BusinessLegend compact={size.width < 800} viewMode={viewMode} />
-      {onViewModeChange === undefined ? null : (
-        <CanvasViewModeControl
-          viewMode={viewMode}
-          onChange={onViewModeChange}
-        />
+
+      {/*
+        One island in the bottom centre instead of three corner strips: it is
+        the only furniture that floats over the model, so the model keeps the
+        corners it used to lose to zoom, density and legend buttons.
+      */}
+      {hud === undefined ? null : (
+        <div
+          data-canvas-control=""
+          data-evidence-capture-hide=""
+          className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center px-4"
+        >
+          {hud({
+            zoom: viewport.zoom,
+            zoomIn: () => {
+              setViewport((current) =>
+                zoomAtPoint(current, current.zoom * 1.25, {
+                  x: (size.width - RULER_THICKNESS) / 2,
+                  y: (size.height - RULER_THICKNESS) / 2,
+                }),
+              );
+            },
+            zoomOut: () => {
+              setViewport((current) =>
+                zoomAtPoint(current, current.zoom * 0.8, {
+                  x: (size.width - RULER_THICKNESS) / 2,
+                  y: (size.height - RULER_THICKNESS) / 2,
+                }),
+              );
+            },
+            resetZoom: () =>
+              setViewport((current) =>
+                zoomAtPoint(current, 1, {
+                  x: (size.width - RULER_THICKNESS) / 2,
+                  y: (size.height - RULER_THICKNESS) / 2,
+                }),
+              ),
+            fitToContent,
+          })}
+        </div>
       )}
-      <ZoomControl
-        zoom={viewport.zoom}
-        onFit={fitToContent}
-        onActual={() =>
-          setViewport((current) =>
-            zoomAtPoint(current, 1, {
-              x: (size.width - RULER_THICKNESS) / 2,
-              y: (size.height - RULER_THICKNESS) / 2,
-            }),
-          )
-        }
-      />
     </div>
   );
 };
@@ -528,68 +589,3 @@ const marqueeSelectionOf = (
     height: Math.abs(end.y - start.y),
   };
 };
-
-const CanvasViewModeControl = ({
-  viewMode,
-  onChange,
-}: {
-  viewMode: CanvasViewMode;
-  onChange: (mode: CanvasViewMode) => void;
-}) => (
-  <div
-    data-canvas-control=""
-    data-evidence-capture-hide=""
-    className="absolute right-4 bottom-14 z-30 flex items-center gap-0.5 rounded-md border border-evidence-line bg-white/95 p-0.5 text-[10px] text-evidence-muted shadow-sm"
-  >
-    {(['simplified', 'standard'] as const).map((mode) => (
-      <button
-        key={mode}
-        type="button"
-        aria-pressed={viewMode === mode}
-        onClick={() => onChange(mode)}
-        className={[
-          'rounded px-1.5 py-0.5',
-          viewMode === mode
-            ? 'bg-evidence-accent text-white'
-            : 'hover:bg-[#eef1f5] hover:text-evidence-ink',
-        ].join(' ')}
-      >
-        {mode === 'simplified' ? '简化图' : '标准图'}
-      </button>
-    ))}
-  </div>
-);
-
-const ZoomControl = ({
-  zoom,
-  onFit,
-  onActual,
-}: {
-  zoom: number;
-  onFit: () => void;
-  onActual: () => void;
-}) => (
-  <div
-    data-canvas-control=""
-    data-evidence-capture-hide=""
-    className="absolute right-4 bottom-4 z-30 flex items-center gap-1 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] text-evidence-muted shadow-sm"
-  >
-    <span className="w-12 tabular-nums text-center">
-      {Math.round(zoom * 100)}%
-    </span>
-    <button
-      type="button"
-      className="rounded px-1.5 py-0.5 hover:bg-[#eef1f5]"
-      onClick={onFit}
-    >
-      适合宽度
-    </button>
-    <button
-      type="button"
-      className="rounded px-1.5 py-0.5 hover:bg-[#eef1f5]"
-      onClick={onActual}
-    >
-      原始大小
-    </button>
-  </div>
-);

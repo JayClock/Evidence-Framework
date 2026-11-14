@@ -34,6 +34,11 @@ const setup = () => {
         selection={{ nodeId: null, attributeName: null }}
         focusRequest={null}
         zoomCommand={null}
+        hud={(controls) => (
+          <button type="button" onClick={controls.resetZoom}>
+            {`缩放 ${Math.round(controls.zoom * 100)}%`}
+          </button>
+        )}
         onSelect={onSelect}
         onClearSelection={onClearSelection}
       />
@@ -112,7 +117,7 @@ describe('CanvasViewport scope controls', () => {
     fireEvent.click(select);
     fireEvent.wheel(select, { deltaY: 60 });
     fireEvent.click(screen.getByRole('button', { name: '图例说明' }));
-    fireEvent.click(screen.getByRole('button', { name: '原始大小' }));
+    fireEvent.click(screen.getByRole('button', { name: /缩放 \d+%/ }));
     expect(onClearSelection).not.toHaveBeenCalled();
     expect(before).not.toBe('');
     expect(world.style.transform).toContain('scale(1)');

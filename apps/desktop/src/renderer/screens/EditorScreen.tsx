@@ -31,6 +31,7 @@ import {
   type CommandTarget,
 } from '../components/command/CommandPalette';
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
+import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
@@ -43,6 +44,7 @@ import {
   LiveApiProvider,
   createDiagnosticIndex,
   type CanvasViewMode,
+  type ZoomDirection,
 } from '@evidence-poc/desktop-feature-canvas';
 import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
 import {
@@ -347,7 +349,7 @@ const EditorWorkspace = ({
     token: number;
   } | null>(null);
   const [zoomCommand, setZoomCommand] = useState<{
-    direction: 'in' | 'out';
+    direction: ZoomDirection;
     token: number;
   } | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -463,7 +465,7 @@ const EditorWorkspace = ({
           kind: selectedEntity.category,
         };
 
-  const requestZoom = useCallback((direction: 'in' | 'out') => {
+  const requestZoom = useCallback((direction: ZoomDirection) => {
     tokenRef.current += 1;
     setZoomCommand({ direction, token: tokenRef.current });
   }, []);
@@ -578,6 +580,8 @@ const EditorWorkspace = ({
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
+      resetZoom: () => requestZoom('reset'),
+      fitCanvas: () => requestZoom('fit'),
       toggleLeftRail: () => {
         layout.toggleRailTab('topology');
       },
@@ -660,7 +664,6 @@ const EditorWorkspace = ({
         <TopHeader
           projectName={state.project.name}
           dirty={state.dirty}
-          workspaceViewMode={workspaceView.mode}
           graph={state.graph}
           selection={state.selection}
           onSave={() => void save()}
@@ -792,7 +795,19 @@ const EditorWorkspace = ({
                         selection={state.selection}
                         focusRequest={focusRequest}
                         zoomCommand={zoomCommand}
-                        onViewModeChange={setViewMode}
+                        hud={(controls) => (
+                          <CanvasFloatingHud
+                            {...controls}
+                            viewMode={workspaceView.mode}
+                            onViewModeChange={workspaceView.setMode}
+                            density={viewMode}
+                            onDensityChange={setViewMode}
+                            hasSelection={state.selection.nodeId !== null}
+                            onClearSelection={() =>
+                              state.session.clearSelection()
+                            }
+                          />
+                        )}
                         diagnostics={diagnostics}
                         onOpenIssues={(issues) => {
                           setActiveIssueIds(

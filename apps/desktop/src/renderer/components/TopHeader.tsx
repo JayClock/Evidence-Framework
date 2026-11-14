@@ -11,8 +11,6 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  ViewModeSegmentedControl,
-  type WorkspaceViewMode,
 } from '@evidence-poc/desktop-ui-kit';
 
 import { McpStatusPill } from './McpStatusPill';
@@ -20,14 +18,12 @@ import { McpStatusPill } from './McpStatusPill';
 interface TopHeaderProps {
   projectName: string;
   dirty: boolean;
-  workspaceViewMode: WorkspaceViewMode;
   graph: DomainGraph;
   selection: ModelSelection;
   onSave: () => void;
   onExportDiffReview?: () => void;
   onExportReview: () => void;
   exportReviewBusy: boolean;
-  onWorkspaceViewModeChange: (mode: WorkspaceViewMode) => void;
   /** Opens the command hub, which now owns every action this row dropped. */
   onOpenCommandPalette: () => void;
 }
@@ -45,14 +41,12 @@ interface TopHeaderProps {
 export const TopHeader = ({
   projectName,
   dirty,
-  workspaceViewMode,
   graph,
   selection,
   onSave,
   onExportDiffReview,
   onExportReview,
   exportReviewBusy,
-  onWorkspaceViewModeChange,
   onOpenCommandPalette,
 }: TopHeaderProps) => {
   const breadcrumb = useMemo(() => {
@@ -120,11 +114,6 @@ export const TopHeader = ({
             <TooltipContent side="bottom">搜索命令与业务对象</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-
-        <ViewModeSegmentedControl
-          mode={workspaceViewMode}
-          onChange={onWorkspaceViewModeChange}
-        />
 
         <McpStatusPill />
 

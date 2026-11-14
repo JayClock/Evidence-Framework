@@ -5,6 +5,10 @@ export {
   type OverlayChange,
 } from './CanvasStage.js';
 export { CanvasViewport } from './CanvasViewport.js';
+export type {
+  CanvasHudControls,
+  ZoomDirection,
+} from './CanvasViewport.js';
 export { NodeCard } from './NodeCard.js';
 export { BusinessLegend } from './BusinessLegend.js';
 export { DiagnosticMarkers } from './DiagnosticMarkers.js';

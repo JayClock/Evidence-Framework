@@ -15,6 +15,8 @@ const setup = (
     clearSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
+    resetZoom: vi.fn(),
+    fitCanvas: vi.fn(),
     toggleLeftRail: vi.fn(),
     toggleRightRail: vi.fn(),
     toggleConsole: vi.fn(),
@@ -69,6 +71,16 @@ describe('useEditorShortcuts', () => {
     expect(handlers.toggleLeftRail).toHaveBeenCalled();
     expect(handlers.toggleRightRail).toHaveBeenCalled();
     expect(handlers.toggleConsole).toHaveBeenCalled();
+  });
+
+  it('binds the two chords the floating island prints', () => {
+    const handlers = setup();
+
+    fireEvent.keyDown(window, { key: '0', metaKey: true });
+    fireEvent.keyDown(window, { code: 'Digit1', shiftKey: true });
+
+    expect(handlers.resetZoom).toHaveBeenCalledTimes(1);
+    expect(handlers.fitCanvas).toHaveBeenCalledTimes(1);
   });
 
   it('opens the command palette on Mod+K instead of focusing a surface', () => {
