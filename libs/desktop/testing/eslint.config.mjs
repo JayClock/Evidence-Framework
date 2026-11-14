@@ -1,4 +1,4 @@
-import browserPlatform from '../../../tools/eslint-rules/browser-platform.mjs';
+import browserPlatform from '../../../tools/eslint/browser-platform.mjs';
 import baseConfig from '../../../eslint.config.mjs';
 
 export default [
