@@ -18,6 +18,60 @@ const model = async () =>
   ).bundle;
 
 describe('API sensor', () => {
+  it('carries derived-to-input drift from unsaved models through draft and release diagnostics', async () => {
+    const baseDocument = await model();
+    baseDocument.entities
+      .find((entity) => entity.id === 'confirmation.payment')!
+      .attributes!.push({
+        name: 'total_amount',
+        label: 'Total amount',
+        meaning: 'Confirmed amount',
+        valueType: 'decimal',
+        required: true,
+        derivedByRuleRef: 'rule.total-amount',
+      });
+    baseDocument.rules.push({
+      type: 'rule',
+      id: 'rule.total-amount',
+      kind: 'derivation',
+      label: 'Total amount',
+      description: 'Calculate amount',
+      contextRef: 'context.product-procurement',
+      expression: '42.0',
+      bindings: {},
+      resultType: 'decimal',
+      target: { entityRef: 'confirmation.payment', attribute: 'total_amount' },
+    });
+    const currentDocument = structuredClone(baseDocument);
+    currentDocument.rules = currentDocument.rules.filter(
+      (rule) => rule.id !== 'rule.total-amount',
+    );
+    delete currentDocument.entities
+      .find((entity) => entity.id === 'confirmation.payment')!
+      .attributes!.find((field) => field.name === 'total_amount')!
+      .derivedByRuleRef;
+    const original = JSON.stringify([baseDocument, currentDocument]);
+    const draft = checkNativeApiSensor({ baseDocument, currentDocument });
+    const release = checkNativeApiSensor({
+      baseDocument,
+      currentDocument,
+      mode: 'release',
+    });
+    expect(draft.snapshot.diagnostics).toEqual([]);
+    expect(draft.diff?.summary.hasBreakingChanges).toBe(true);
+    const breaking = (outcome: typeof draft) =>
+      outcome.issues.filter((issue) => issue.code === 'API_BREAKING_CHANGE');
+    expect(breaking(draft).length).toBeGreaterThan(0);
+    expect(breaking(draft).every((issue) => issue.severity === 'warn')).toBe(
+      true,
+    );
+    expect(breaking(release).every((issue) => issue.severity === 'block')).toBe(
+      true,
+    );
+    expect(release.diff).toEqual(draft.diff);
+    expect(release.summary.breakingChangeCount).toBe(breaking(release).length);
+    expect(JSON.stringify([baseDocument, currentDocument])).toBe(original);
+  });
   it('analyses an unsaved document without reading modelRoot or inventing a baseline', async () => {
     const document = await model();
     const result = await runNativeSensors({
