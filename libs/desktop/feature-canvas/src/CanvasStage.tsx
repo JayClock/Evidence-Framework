@@ -7,7 +7,7 @@ import type {
   LayoutNode,
   LifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
-import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
+import type { ModelSelection } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { DiagnosticMarkers } from './DiagnosticMarkers';

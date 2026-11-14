@@ -1,5 +1,5 @@
 import type { AttributeAST } from '@evidence-poc/evidence-schema';
-import type { CelCandidate } from '@evidence-poc/evidence-model-core/browser';
+import type { CelCandidate } from '@evidence-poc/evidence-model-core';
 
 import { CelCodeMirrorEditor } from './CelCodeMirrorEditor';
 

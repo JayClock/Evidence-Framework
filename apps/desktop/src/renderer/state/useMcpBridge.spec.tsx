@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 import type { McpRendererRequest } from '../../shared/mcpIpc';
 
 import { useMcpBridge } from './useMcpBridge';

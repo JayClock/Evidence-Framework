@@ -1,4 +1,4 @@
-import type { CelCandidate } from '@evidence-poc/evidence-model-core/browser';
+import type { CelCandidate } from '@evidence-poc/evidence-model-core';
 
 /** One row the editor may insert, with the business meaning beside it. */
 export interface CelCompletionOption {

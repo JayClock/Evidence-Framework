@@ -4,7 +4,7 @@ import {
   collectCelCandidates,
   type CelCandidate,
   type DomainGraph,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 /**
  * Resolves the candidate pool for one attribute's derivation rule.

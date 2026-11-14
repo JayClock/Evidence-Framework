@@ -3,7 +3,7 @@ import {
   type AttributeAST,
   type EntityAST,
 } from '@evidence-poc/evidence-schema';
-import type { DomainGraph, KeyDataEntry } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainGraph, KeyDataEntry } from '@evidence-poc/evidence-model-core';
 
 interface KeyDataProvenancePickerProps {
   entity: EntityAST;

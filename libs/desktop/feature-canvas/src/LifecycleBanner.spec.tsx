@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createLifecycleSwimlaneLayout } from '@evidence-poc/evidence-canvas-interaction';
 
 import { LifecycleBanner, laneTint } from './LifecycleBanner';

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { forceLinting } from '@codemirror/lint';
 
-import type { CelCandidate } from '@evidence-poc/evidence-model-core/browser';
+import type { CelCandidate } from '@evidence-poc/evidence-model-core';
 
 import { CelCodeMirrorEditor } from './CelCodeMirrorEditor';
 import {

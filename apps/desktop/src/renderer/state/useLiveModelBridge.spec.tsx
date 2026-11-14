@@ -3,7 +3,7 @@ import { expect, it, vi } from 'vitest';
 import {
   createModelSession,
   UpdateEntityCommand,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import { installDesktopApi } from '../test-support/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { useLiveModelBridge } from './useLiveModelBridge';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ModelSession } from '@evidence-poc/evidence-model-core/browser';
+import type { ModelSession } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type {
   LiveDeliveryInput,

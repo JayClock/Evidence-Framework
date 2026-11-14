@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 
 import { RightWorkbench, type RightWorkbenchProps } from './RightWorkbench';
 import type { AgentSessionController } from '../state/useAgentSession';

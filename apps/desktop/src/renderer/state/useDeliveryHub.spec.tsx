@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createModelSession,
   UpdateEntityCommand,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type {
   LiveDeliveryInput,
   LiveDeliveryResult,

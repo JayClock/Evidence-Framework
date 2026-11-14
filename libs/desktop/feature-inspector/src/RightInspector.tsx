@@ -12,7 +12,7 @@ import {
   type DomainGraph,
   type ModelSelection,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';

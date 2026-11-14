@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 
 import { RightInspector } from './RightInspector';
 import { blurEditor, typeExpression } from './testing/codeEditor';

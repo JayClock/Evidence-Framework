@@ -4,7 +4,7 @@ import type {
   DomainGraph,
   ModelSelection,
   ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 import type { AgentSessionController } from '../state/useAgentSession';
 import type { PatchReviewController } from '../state/usePatchReview';

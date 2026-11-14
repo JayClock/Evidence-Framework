@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 
 import type {
   DiagnosticIndex,

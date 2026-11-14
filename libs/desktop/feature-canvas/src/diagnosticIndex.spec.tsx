@@ -4,7 +4,7 @@ import type {
   SensorReport,
   SensorIssue,
 } from '@evidence-poc/evidence-agent/browser';
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { createDiagnosticIndex } from './diagnosticIndex';

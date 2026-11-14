@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type { DomainGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
-import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 
 interface LeftSidebarProps {
   graph: DomainGraph;

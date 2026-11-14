@@ -6,7 +6,7 @@ import {
   createModelSession,
   decodeModelPatch,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { usePatchReview, type PatchReviewController } from './usePatchReview';

@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
-import type { DeliveryField } from '@evidence-poc/evidence-api/browser';
+import type { DeliveryField } from '@evidence-poc/evidence-api';
 
 /**
  * One route the delivery projection exposes for an entity.

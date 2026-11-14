@@ -2,7 +2,7 @@ import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   type AttributeAST,
 } from '@evidence-poc/evidence-schema';
-import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 import type { DeliveryField } from './routes.js';
 
 const timeAttributes = new Set<string>(EVIDENCE_TIME_ATTRIBUTE_NAMES);

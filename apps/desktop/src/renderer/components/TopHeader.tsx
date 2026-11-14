@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainGraph } from '@evidence-poc/evidence-model-core';
+import type { ModelSelection } from '@evidence-poc/evidence-model-core';
 
 import { McpStatusPill } from './McpStatusPill';
 import { ViewModeSegmentedControl } from '@evidence-poc/desktop-ui-kit';

@@ -5,7 +5,7 @@ import {
   type ModelSelection,
   type ModelSession,
   createModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type {
   DomainModelDocument,
   ValidationResult,

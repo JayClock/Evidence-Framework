@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import { build } from 'vite';
 
-it('bundles the browser entry without Node built-ins', async () => {
+it('bundles the package without Node built-ins', async () => {
   const builtins = new Set(builtinModules);
 
   await build({
@@ -18,7 +18,7 @@ it('bundles the browser entry without Node built-ins', async () => {
         enforce: 'pre',
         resolveId(id) {
           if (id.startsWith('node:') || builtins.has(id)) {
-            throw new Error(`Browser entry imports Node built-in: ${id}`);
+            throw new Error(`Model core imports Node built-in: ${id}`);
           }
         },
       },
@@ -27,7 +27,7 @@ it('bundles the browser entry without Node built-ins', async () => {
       write: false,
       minify: false,
       lib: {
-        entry: fileURLToPath(new URL('./browser.ts', import.meta.url)),
+        entry: fileURLToPath(new URL('./index.ts', import.meta.url)),
         formats: ['es'],
       },
     },

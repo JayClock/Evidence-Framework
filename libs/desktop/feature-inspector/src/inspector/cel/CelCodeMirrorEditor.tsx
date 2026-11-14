@@ -18,7 +18,7 @@ import {
   analyzeCelExpression,
   type CelCandidate,
   type CelDiagnostic,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 import { computeCelCompletions } from './celCompletion';
 import { celHighlighting, celLanguage } from './celLanguage';

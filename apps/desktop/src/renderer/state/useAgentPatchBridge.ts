@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import {
   decodeModelPatch,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 /** One agent patch that actually reached the model. */

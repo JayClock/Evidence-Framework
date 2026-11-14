@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ModelSession } from '@evidence-poc/evidence-model-core/browser';
+import type { ModelSession } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 /** Publish before patch acknowledgement so the next agent tool sees the same edit. */

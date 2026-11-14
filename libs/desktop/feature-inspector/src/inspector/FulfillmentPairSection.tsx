@@ -11,7 +11,7 @@ import {
   UpdateRuleCommand,
   type DomainGraph,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 import { CelCodeMirrorEditor } from './cel/CelCodeMirrorEditor';
 import { useCelCompletion } from './useCelCompletion';

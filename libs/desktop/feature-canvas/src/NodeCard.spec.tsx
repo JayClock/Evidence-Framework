@@ -4,7 +4,7 @@ import {
   createGraphLayout,
   toSerializableLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import {
   LiveApiProvider,

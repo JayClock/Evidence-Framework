@@ -6,7 +6,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   createModelSession,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import {

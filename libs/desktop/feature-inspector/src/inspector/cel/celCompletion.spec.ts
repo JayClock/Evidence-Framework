@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CelCandidate } from '@evidence-poc/evidence-model-core/browser';
+import type { CelCandidate } from '@evidence-poc/evidence-model-core';
 
 import { computeCelCompletions } from './celCompletion';
 

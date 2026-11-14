@@ -1,6 +1,6 @@
-import { fieldFor } from '@evidence-poc/evidence-api/browser';
+import { fieldFor } from '@evidence-poc/evidence-api';
 import type { AttributeAST } from '@evidence-poc/evidence-schema';
-import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 
 export const ApiFieldBadge = ({
   attribute,

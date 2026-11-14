@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import {

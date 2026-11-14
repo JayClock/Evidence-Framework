@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import { fieldFor } from './browser.js';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
+import { fieldFor } from '../index.js';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 it('classifies fields without needing a projection or filesystem', () => {

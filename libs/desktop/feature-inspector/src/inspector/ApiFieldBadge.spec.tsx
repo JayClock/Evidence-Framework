@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { expect, it } from 'vitest';
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { ApiFieldBadge } from './ApiFieldBadge';
 

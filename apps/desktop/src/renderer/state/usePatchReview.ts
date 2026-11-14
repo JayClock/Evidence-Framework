@@ -4,7 +4,7 @@ import {
   diffDomainModels,
   type ModelDiff,
   type ModelSession,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { ModelOverlay, OverlayChange } from '@evidence-poc/desktop-feature-canvas';

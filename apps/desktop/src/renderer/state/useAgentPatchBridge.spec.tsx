@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { useAgentPatchBridge, type AppliedPatch } from './useAgentPatchBridge';

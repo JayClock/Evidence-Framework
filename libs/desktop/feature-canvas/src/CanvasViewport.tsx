@@ -19,7 +19,7 @@ import {
 import type {
   DomainGraph,
   ModelSelection,
-} from '@evidence-poc/evidence-model-core/browser';
+} from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import {

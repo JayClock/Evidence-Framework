@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
+import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 
 import { LeftSidebar } from './LeftSidebar';
