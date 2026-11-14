@@ -6,6 +6,7 @@
     "build": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
     "lint": "nx run-many --target=lint --all",
+    "boundaries:drill": "node tools/workspace-rules/boundary-drill.mjs",
     "graph": "nx graph",
     "desktop": "nx start desktop",
     "desktop:package": "nx package desktop",
