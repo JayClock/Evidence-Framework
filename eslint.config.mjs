@@ -142,6 +142,54 @@ export default [
                 '@earendil-works/pi-coding-agent',
               ],
             },
+
+            // The business contexts. The ring rules already drop most wrong
+            // edges; these catch the ones two libraries share a layer on:
+            // the API contract is the source the review page compiles, never
+            // the other way around, and a desktop-only fixture library is not
+            // something a model package may reach for.
+            {
+              sourceTag: 'scope:shared',
+              notDependOnLibsWithTags: ['scope:desktop', 'layer:testing'],
+            },
+            {
+              sourceTag: 'scope:model',
+              notDependOnLibsWithTags: ['scope:desktop', 'layer:testing'],
+            },
+            {
+              sourceTag: 'scope:api',
+              notDependOnLibsWithTags: [
+                'scope:desktop',
+                'scope:visualization',
+                'layer:testing',
+              ],
+            },
+            {
+              sourceTag: 'scope:visualization',
+              notDependOnLibsWithTags: [
+                'scope:desktop',
+                'scope:agent',
+                'scope:mcp',
+                'layer:testing',
+              ],
+            },
+            {
+              sourceTag: 'scope:agent',
+              notDependOnLibsWithTags: [
+                'scope:desktop',
+                'scope:visualization',
+                'scope:mcp',
+                'layer:testing',
+              ],
+            },
+            {
+              sourceTag: 'scope:mcp',
+              notDependOnLibsWithTags: [
+                'scope:desktop',
+                'scope:visualization',
+                'layer:testing',
+              ],
+            },
           ],
         },
       ],
