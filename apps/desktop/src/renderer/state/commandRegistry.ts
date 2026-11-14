@@ -95,6 +95,7 @@ export const CHORDS = {
   delivery: '⌥+D',
   sandbox: '⌥+S',
   rerunSensors: '⌘+Shift+R',
+  problems: '⌥+X',
 } as const;
 
 export interface CommandCapabilities {
@@ -121,6 +122,7 @@ export interface CommandHandlers {
   rerunSensors: () => void;
   askAgent: () => void;
   openRail: (tab: RailTabId) => void;
+  toggleProblems: () => void;
 }
 
 /**
@@ -295,6 +297,16 @@ export const buildCommands = (
       icon: FlaskConical,
       keywords: ['sandbox', 'simulation', 'scenario', '沙盒'],
       perform: handlers.openSandbox,
+    },
+    {
+      id: 'diagnostics.problems',
+      title: '展开或收合门禁问题面板',
+      subtitle: '按等级过滤、定位到问题对象',
+      category: 'diagnostics',
+      shortcut: CHORDS.problems,
+      icon: ShieldCheck,
+      keywords: ['problems', 'issues', 'problems panel', '问题'],
+      perform: handlers.toggleProblems,
     },
     {
       id: 'diagnostics.rerun',

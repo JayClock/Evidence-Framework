@@ -34,6 +34,7 @@ const handlers = (): CommandHandlers => ({
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
   openRail: vi.fn(),
+  toggleProblems: vi.fn(),
 });
 
 const find = (id: string, overrides: Partial<CommandCapabilities> = {}) =>

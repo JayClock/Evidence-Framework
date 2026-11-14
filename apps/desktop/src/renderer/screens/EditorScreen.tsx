@@ -18,7 +18,6 @@ import {
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
-import { CentralStageContainer } from '../components/CentralStageContainer';
 import { ProblemsPanel } from '../components/console/ProblemsPanel';
 import {
   CommandPalette,
@@ -447,6 +446,7 @@ const EditorWorkspace = ({
         setAgentFocusToken((token) => token + 1);
       },
       openRail: layout.setActiveRailTab,
+      toggleProblems: layout.toggleProblemsPanel,
     }),
     [
       focusSearch,
@@ -524,6 +524,7 @@ const EditorWorkspace = ({
       layout.openInlineCopilot,
       layout.toggleProblemsPanel,
       layout.toggleRailTab,
+      layout.setActiveRailTab,
       reviewExport.exportPage,
       save,
       sensors.refresh,
@@ -567,6 +568,88 @@ const EditorWorkspace = ({
     state.document.manifest.id,
   ]);
 
+  const ledgerStage = (
+    <DomainLedgerTable
+      document={state.document}
+      session={state.session}
+      diagnostics={diagnostics}
+      selectedNodeId={state.selection.nodeId}
+      selectedAttributeName={state.selection.attributeName}
+      focusNodeId={state.selection.nodeId}
+      onRevealOnGraph={(nodeId) => {
+        focusNode(nodeId);
+        workspaceView.setMode('graph');
+      }}
+    />
+  );
+
+  const graphStage = (
+    <CanvasViewport
+      graph={state.graph}
+      layout={state.layout}
+      document={state.document}
+      viewMode={viewMode}
+      selection={state.selection}
+      focusRequest={focusRequest}
+      zoomCommand={zoomCommand}
+      hud={(controls) => (
+        <CanvasFloatingHud
+          {...controls}
+          viewMode={workspaceView.mode}
+          onViewModeChange={workspaceView.setMode}
+          density={viewMode}
+          onDensityChange={setViewMode}
+          hasSelection={state.selection.nodeId !== null}
+          onClearSelection={() => state.session.clearSelection()}
+        />
+      )}
+      diagnostics={diagnostics}
+      onOpenIssues={(issues) => {
+        if (issues[0] === undefined) return;
+        layout.openProblemsWithIssue(issues[0].issueId);
+        focusIssue(issues[0]);
+      }}
+      overlay={patchReview.review?.overlay ?? null}
+      scope={scope}
+      onScopeChange={changeScope}
+      onSelect={(nodeId) => state.session.select(nodeId)}
+      onClearSelection={() => state.session.clearSelection()}
+    />
+  );
+
+  // One model, three projections: the graph, the ledger, or both side by side.
+  // The stage composes them itself instead of delegating to a wrapper, because
+  // the only thing the wrapper ever decided was which of the two to mount.
+  const canvasStage =
+    workspaceView.mode === 'graph' ? (
+      graphStage
+    ) : workspaceView.mode === 'table' ? (
+      ledgerStage
+    ) : (
+      <ResizablePanelGroup
+        direction="horizontal"
+        autoSaveId="evidence-stage-split-v1"
+      >
+        <ResizablePanel
+          id="split-graph"
+          order={1}
+          defaultSize={50}
+          minSize={20}
+        >
+          {graphStage}
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel
+          id="split-table"
+          order={2}
+          defaultSize={50}
+          minSize={20}
+        >
+          {ledgerStage}
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    );
+
   const canLocateIssue = useCallback(
     (issue: SensorIssue) => {
       const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
@@ -590,7 +673,6 @@ const EditorWorkspace = ({
           graph={state.graph}
           selection={state.selection}
           onSave={() => void save()}
-          onExportDiffReview={() => void reviewExport.exportPage(true)}
           onExportReview={() => void reviewExport.exportPage()}
           exportReviewBusy={reviewExport.busy}
           onOpenCommandPalette={() => setPaletteOpen(true)}
@@ -655,7 +737,12 @@ const EditorWorkspace = ({
                     searchTerm={searchTerm}
                     onSearchTermChange={setSearchTerm}
                     searchInputRef={searchInputRef}
-                    onFocusNode={focusNode}
+                    onFocusNode={(nodeId) => {
+                      focusNode(nodeId);
+                      // An unpinned drawer exists to get you to an object; once
+                      // the canvas shows it, the drawer has done its job.
+                      if (!layout.isRailPinned) layout.setActiveRailTab(null);
+                    }}
                   />
                 ) : null}
 
@@ -690,67 +777,7 @@ const EditorWorkspace = ({
               autoSaveId="evidence-studio-horizontal-v2"
             >
               <ResizablePanel id="center-stage" order={1} minSize={35}>
-                <ResizablePanelGroup
-                  direction="vertical"
-                  autoSaveId="evidence-studio-vertical-v1"
-                >
-                  <ResizablePanel id="canvas-stage" order={1} minSize={25}>
-                    <CentralStageContainer
-                      mode={workspaceView.mode}
-                      graph={
-                        <CanvasViewport
-                          graph={state.graph}
-                          layout={state.layout}
-                          document={state.document}
-                          viewMode={viewMode}
-                          selection={state.selection}
-                          focusRequest={focusRequest}
-                          zoomCommand={zoomCommand}
-                          hud={(controls) => (
-                            <CanvasFloatingHud
-                              {...controls}
-                              viewMode={workspaceView.mode}
-                              onViewModeChange={workspaceView.setMode}
-                              density={viewMode}
-                              onDensityChange={setViewMode}
-                              hasSelection={state.selection.nodeId !== null}
-                              onClearSelection={() =>
-                                state.session.clearSelection()
-                              }
-                            />
-                          )}
-                          diagnostics={diagnostics}
-                          onOpenIssues={(issues) => {
-                            if (issues[0] === undefined) return;
-                            layout.openProblemsWithIssue(issues[0].issueId);
-                            focusIssue(issues[0]);
-                          }}
-                          overlay={patchReview.review?.overlay ?? null}
-                          scope={scope}
-                          onScopeChange={changeScope}
-                          onSelect={(nodeId) => state.session.select(nodeId)}
-                          onClearSelection={() =>
-                            state.session.clearSelection()
-                          }
-                        />
-                      }
-                      table={
-                        <DomainLedgerTable
-                          document={state.document}
-                          session={state.session}
-                          diagnostics={diagnostics}
-                          selectedNodeId={state.selection.nodeId}
-                          selectedAttributeName={state.selection.attributeName}
-                          focusNodeId={state.selection.nodeId}
-                          onRevealOnGraph={(nodeId) => {
-                            focusNode(nodeId);
-                            workspaceView.setMode('graph');
-                          }}
-                        />
-                      }
-                    />
-                  </ResizablePanel>
-                </ResizablePanelGroup>
+                {canvasStage}
               </ResizablePanel>
 
               <ResizableHandle withHandle />
@@ -758,9 +785,9 @@ const EditorWorkspace = ({
               <ResizablePanel
                 id="right-rail"
                 order={2}
-                defaultSize={22}
+                defaultSize={20}
                 minSize={14}
-                maxSize={32}
+                maxSize={26}
                 collapsible
                 collapsedSize={0}
                 ref={rightRail}

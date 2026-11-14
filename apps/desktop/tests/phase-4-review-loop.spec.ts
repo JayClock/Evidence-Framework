@@ -102,19 +102,25 @@ describe('phase 4 review-authoring loop', () => {
       }),
     );
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '导出差异审查' })).toBeDisabled();
+    // The header keeps one review entry; the diff export is a palette row.
+    expect(screen.getByRole('button', { name: '导出审查页' })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: '保留' }));
     fireEvent.click(screen.getByText('保存'));
     await waitFor(() =>
       expect(
-        screen.getByRole('button', { name: '导出差异审查' }),
+        screen.getByRole('button', { name: '导出审查页' }),
       ).toBeEnabled(),
     );
-    fireEvent.click(screen.getByRole('button', { name: '导出差异审查' }));
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.click(
+      await screen.findByRole('option', { name: /导出变更审查差异/ }),
+    );
     await waitFor(() =>
       expect(api.calls.exportDiffReview).toEqual(['/models/procurement']),
     );
     fireEvent.keyDown(window, { key: 'z', ctrlKey: true });
-    expect(screen.getByRole('button', { name: '导出差异审查' })).toBeDisabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '导出审查页' })).toBeDisabled(),
+    );
   });
 });

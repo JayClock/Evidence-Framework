@@ -21,7 +21,6 @@ interface TopHeaderProps {
   graph: DomainGraph;
   selection: ModelSelection;
   onSave: () => void;
-  onExportDiffReview?: () => void;
   onExportReview: () => void;
   exportReviewBusy: boolean;
   /** Opens the command hub, which now owns every action this row dropped. */
@@ -44,7 +43,6 @@ export const TopHeader = ({
   graph,
   selection,
   onSave,
-  onExportDiffReview,
   onExportReview,
   exportReviewBusy,
   onOpenCommandPalette,
@@ -134,21 +132,6 @@ export const TopHeader = ({
         >
           {exportReviewBusy ? '导出中…' : '导出审查页'}
         </Button>
-        {onExportDiffReview ? (
-          <Button
-            variant="outline"
-            disabled={exportReviewBusy || dirty}
-            onClick={onExportDiffReview}
-            title={
-              dirty
-                ? '请先保存再与基线比较'
-                : '选择 *.evidence.json 基线，导出差异审查页'
-            }
-          >
-            导出差异审查
-          </Button>
-        ) : null}
-
         <Button
           variant="default"
           onClick={onSave}

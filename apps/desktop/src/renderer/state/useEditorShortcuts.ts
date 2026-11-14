@@ -29,7 +29,7 @@ interface ShortcutHandlers {
   fitCanvas?: () => void;
   /** Collapses the left outline rail (Mod+B). */
   toggleLeftRail?: () => void;
-  /** Collapses the right workbench rail (Mod+I). */
+  /** Collapses the inspector rail (Mod+I / Mod+\). */
   toggleRightRail?: () => void;
   /** Slides the problems panel in or out (Alt+X). */
   toggleProblems?: () => void;
@@ -161,10 +161,11 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       // its own formatting, so they only fire outside an input.
       if (mod && !typing) {
         const layoutKey = event.key.toLowerCase();
+        // `Mod+\` is the chord the inspector's own fold prints.
         const toggle =
           layoutKey === 'b'
             ? handlers.toggleLeftRail
-            : layoutKey === 'i'
+            : layoutKey === 'i' || event.key === '\\'
               ? handlers.toggleRightRail
               : undefined;
 

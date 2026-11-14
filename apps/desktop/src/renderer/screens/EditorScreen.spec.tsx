@@ -49,7 +49,9 @@ describe('EditorScreen', () => {
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
     // Inspection owns the right rail by default; the copilot is a drawer.
-    expect(screen.getByText('选择画布上的业务对象查看属性。')).toBeInTheDocument();
+    expect(
+      screen.getByText('选择画布上的业务对象查看属性。'),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
@@ -85,6 +87,40 @@ describe('EditorScreen', () => {
     );
   });
 
+  it('hands the canvas back once a drawer picked an object', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: '采购协议（Procurement Contract）' }),
+    );
+
+    // The selection reached the inspector, and the drawer stopped covering the
+    // canvas it just navigated.
+    expect(
+      screen.getByDisplayValue('采购协议（Procurement Contract）'),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
+  });
+
+  it('keeps a pinned drawer open while the modeler picks objects', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
+    fireEvent.click(screen.getByRole('button', { name: '固定面板' }));
+
+    const request = screen
+      .getAllByText('交付请求（Delivery Request）')
+      .find((item) => item.closest('button') !== null)!;
+    fireEvent.click(request);
+
+    expect(screen.getByLabelText('搜索业务对象')).toBeInTheDocument();
+  });
+
   it('opens every rail drawer with Mod+1 to Mod+4', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
@@ -101,9 +137,7 @@ describe('EditorScreen', () => {
     expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: '4', metaKey: true });
-    await waitFor(() =>
-      expect(screen.queryByLabelText('访谈内容')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByLabelText('访谈内容')).toBeNull());
   });
 
   it('keeps scope and view mode out of the document and undo history', async () => {

@@ -67,11 +67,12 @@ describe('useEditorShortcuts', () => {
 
     fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
+    fireEvent.keyDown(window, { key: '\\', metaKey: true });
     fireEvent.keyDown(window, { key: 'j', ctrlKey: true });
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
 
     expect(handlers.toggleLeftRail).toHaveBeenCalled();
-    expect(handlers.toggleRightRail).toHaveBeenCalled();
+    expect(handlers.toggleRightRail).toHaveBeenCalledTimes(2);
     // Mod+J is the agent, Alt+X is the findings list.
     expect(handlers.openInlineCopilot).toHaveBeenCalledTimes(1);
     expect(handlers.toggleProblems).toHaveBeenCalledTimes(1);
