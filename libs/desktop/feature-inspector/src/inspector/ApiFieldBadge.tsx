@@ -1,4 +1,4 @@
-import { fieldFor } from '@evidence-poc/evidence-api';
+import { fieldFor } from '@evidence-poc/evidence-api/delivery';
 import type { AttributeAST } from '@evidence-poc/evidence-schema';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 
