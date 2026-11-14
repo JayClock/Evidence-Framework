@@ -31,6 +31,16 @@ afterAll(() => {
 const sessionOf = () =>
   createModelSession({ document: createDesktopFixture() });
 
+const ledgerRow = (container: HTMLElement, id: string): HTMLElement => {
+  const element = container.querySelector<HTMLElement>(
+    `[data-ledger-row="${id}"]`,
+  );
+
+  if (element === null) throw new Error(`missing ledger row: ${id}`);
+
+  return element;
+};
+
 const renderTable = (
   session: ReturnType<typeof sessionOf>,
   overrides: Partial<Parameters<typeof DomainLedgerTable>[0]> = {},
@@ -156,11 +166,7 @@ describe('DomainLedgerTable', () => {
     const session = sessionOf();
 
     const { container } = renderTable(session);
-    fireEvent.click(
-      container.querySelector(
-        '[data-ledger-row="evidence.contract#signed_at"]',
-      )!,
-    );
+    fireEvent.click(ledgerRow(container, 'evidence.contract#signed_at'));
 
     expect(session.getSelection()).toEqual({
       nodeId: 'evidence.contract',
@@ -172,8 +178,7 @@ describe('DomainLedgerTable', () => {
     const session = sessionOf();
 
     const { container } = renderTable(session);
-    const contextRow = () =>
-      container.querySelector('[data-ledger-row="context.procurement"]')!;
+    const contextRow = () => ledgerRow(container, 'context.procurement');
 
     expect(contextRow()).toHaveAttribute('aria-expanded', 'true');
     fireEvent.click(contextRow());

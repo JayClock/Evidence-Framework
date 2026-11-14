@@ -176,14 +176,15 @@ export const createLedgerColumns = (options: LedgerColumnOptions) => [
 
       if (row.rowKind !== 'attribute' || row.attribute === null) return null;
 
+      const { entityId, attribute } = row;
+      if (entityId === null) return null;
+
       return (
         <LedgerTextCell
-          value={row.attribute.label}
+          value={attribute.label}
           placeholder="业务名"
           onCommit={(label) =>
-            options.onUpdateAttribute(row.entityId!, row.attribute!.name, {
-              label,
-            })
+            options.onUpdateAttribute(entityId, attribute.name, { label })
           }
         />
       );
@@ -198,12 +199,15 @@ export const createLedgerColumns = (options: LedgerColumnOptions) => [
 
       if (row.rowKind !== 'attribute' || row.attribute === null) return null;
 
+      const { entityId, attribute } = row;
+      if (entityId === null) return null;
+
       return (
         <select
-          value={row.attribute.valueType ?? ''}
-          aria-label={`${row.attribute.name} 类型`}
+          value={attribute.valueType ?? ''}
+          aria-label={`${attribute.name} 类型`}
           onChange={(event) =>
-            options.onUpdateAttribute(row.entityId!, row.attribute!.name, {
+            options.onUpdateAttribute(entityId, attribute.name, {
               valueType: event.target.value as ValueType,
             })
           }

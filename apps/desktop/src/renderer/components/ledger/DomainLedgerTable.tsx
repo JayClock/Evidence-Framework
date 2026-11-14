@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   flexRender,
@@ -90,15 +90,14 @@ export const DomainLedgerTable = ({
     });
   };
 
-  const updateAttribute = (
-    entityId: string,
-    attributeName: string,
-    patch: Partial<AttributeAST>,
-  ) => {
-    session.dispatch(
-      new UpdateAttributeCommand(entityId, attributeName, patch),
-    );
-  };
+  const updateAttribute = useCallback(
+    (entityId: string, attributeName: string, patch: Partial<AttributeAST>) => {
+      session.dispatch(
+        new UpdateAttributeCommand(entityId, attributeName, patch),
+      );
+    },
+    [session],
+  );
 
   const columns = useMemo(
     () =>
@@ -110,8 +109,7 @@ export const DomainLedgerTable = ({
         ...(onRevealOnGraph === undefined ? {} : { onRevealOnGraph }),
         onUpdateAttribute: updateAttribute,
       }),
-    // `session` is the stable accessor the columns dispatch through.
-    [session, onRevealOnGraph],
+    [session, updateAttribute, onRevealOnGraph],
   );
 
   const table = useReactTable({

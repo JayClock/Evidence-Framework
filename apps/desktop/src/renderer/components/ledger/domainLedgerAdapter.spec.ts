@@ -66,7 +66,7 @@ const diagnostics = (): DiagnosticIndex =>
           {
             issueId: 'issue.context',
             severity: 'info' as const,
-            source: 'static' as const,
+            source: 'check_fm' as const,
             code: 'FM_CONTEXT_EMPTY',
             message: '上下文没有入口。',
             contextRef: 'context.procurement',
@@ -82,7 +82,7 @@ const diagnostics = (): DiagnosticIndex =>
           {
             issueId: 'issue.request',
             severity: 'warn' as const,
-            source: 'static' as const,
+            source: 'check_fm' as const,
             code: 'FM_REQUEST_INPUT',
             message: '请求缺少业务时间。',
             targetNodeId: 'evidence.request',
@@ -90,7 +90,7 @@ const diagnostics = (): DiagnosticIndex =>
           {
             issueId: 'issue.amount',
             severity: 'block' as const,
-            source: 'static' as const,
+            source: 'check_fm' as const,
             code: 'FM_DERIVATION_TARGET',
             message: '派生目标不完整。',
             targetNodeId: 'evidence.request#total_amount',
@@ -106,7 +106,7 @@ const diagnostics = (): DiagnosticIndex =>
           {
             issueId: 'issue.contract',
             severity: 'warn' as const,
-            source: 'static' as const,
+            source: 'check_fm' as const,
             code: 'FM_CONTRACT_ROLE',
             message: '合同角色缺失。',
             targetNodeId: 'evidence.contract',

@@ -426,9 +426,11 @@ export const filterLedgerRows = (
 
     const blocks: LedgerRow[][] = [];
     for (const row of contextRows.slice(1)) {
-      if (row.rowKind === 'entity') blocks.push([row]);
-      else if (row.rowKind === 'attribute' && blocks.length > 0) {
-        blocks.at(-1)!.push(row);
+      if (row.rowKind === 'entity') {
+        blocks.push([row]);
+      } else if (row.rowKind === 'attribute') {
+        const current = blocks.at(-1);
+        if (current !== undefined) current.push(row);
       }
     }
 

@@ -5,7 +5,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { EditorScreen } from './EditorScreen';
 import {
@@ -418,5 +418,114 @@ describe('EditorScreen sensors', () => {
     expect(await screen.findByTestId('agent-copilot-focus')).toHaveTextContent(
       '焦点：',
     );
+  });
+});
+
+describe('EditorScreen dual-mode stage', () => {
+  // The ledger is virtualised; jsdom reports a zero-height viewport and would
+  // render none of its rows.
+  beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      value: 640,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      value: 1200,
+    });
+  });
+
+  afterAll(() => {
+    Reflect.deleteProperty(HTMLElement.prototype, 'clientHeight');
+    Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
+  });
+
+  it('opens the whole ledger with Mod+2 and returns to the graph with Mod+1', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: '2', metaKey: true });
+
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-region="canvas-viewport"]'),
+    ).toBeNull();
+    expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: '1', metaKey: true });
+
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-region="canvas-viewport"]'),
+      ).not.toBeNull(),
+    );
+    expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
+  });
+
+  it('flips between the graph and the ledger on V', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: 'v' });
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'v' });
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-region="canvas-viewport"]'),
+      ).not.toBeNull(),
+    );
+  });
+
+  it('keeps both surfaces mounted in split mode', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.keyDown(window, { key: '3', metaKey: true });
+
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-region="canvas-viewport"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelectorAll('[data-panel-resize-handle-id]').length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('walks from a ledger row back to the same object on the canvas', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    fireEvent.keyDown(window, { key: '2', metaKey: true });
+    await screen.findByLabelText('领域模型总台账');
+
+    fireEvent.click(
+      screen.getByLabelText('在拓扑图中定位 采购协议（Procurement Contract）'),
+    );
+
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-region="canvas-viewport"]'),
+      ).not.toBeNull(),
+    );
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    // The breadcrumb names the object the table was reading.
+    expect(
+      screen.getAllByText('采购协议（Procurement Contract）').length,
+    ).toBeGreaterThan(0);
   });
 });

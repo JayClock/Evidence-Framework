@@ -247,6 +247,22 @@ const EditorWorkspace = ({
   // ⌘K bumps this, which moves the caret into the agent composer.
   const [agentFocusToken, setAgentFocusToken] = useState(0);
 
+  // The table and the graph share one selection, so leaving the ledger lands on
+  // the object that was being read instead of the fit-to-content corner.
+  const previousWorkspaceView = useRef(workspaceView.mode);
+  useEffect(() => {
+    const previous = previousWorkspaceView.current;
+    previousWorkspaceView.current = workspaceView.mode;
+
+    if (previous === 'graph' || workspaceView.mode === 'table') return;
+
+    const nodeId = state.selection.nodeId;
+    if (nodeId === null) return;
+
+    tokenRef.current += 1;
+    setFocusRequest({ nodeId, token: tokenRef.current });
+  }, [workspaceView.mode, state.selection.nodeId]);
+
   // The rails are also collapsed from the keyboard, and the imperative handle is
   // the only way to move a panel without a pointer drag.
   const leftRail = useRef<ImperativePanelHandle>(null);
@@ -551,6 +567,11 @@ const EditorWorkspace = ({
                         diagnostics={diagnostics}
                         selectedNodeId={state.selection.nodeId}
                         selectedAttributeName={state.selection.attributeName}
+                        focusNodeId={state.selection.nodeId}
+                        onRevealOnGraph={(nodeId) => {
+                          focusNode(nodeId);
+                          workspaceView.setMode('graph');
+                        }}
                       />
                     }
                   />
