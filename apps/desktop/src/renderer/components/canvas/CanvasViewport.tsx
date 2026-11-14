@@ -43,6 +43,8 @@ interface CanvasViewportProps {
   focusRequest: { nodeId: string; token: number } | null;
   /** Keyboard zoom requests, one token per key press. */
   zoomCommand: { direction: 'in' | 'out'; token: number } | null;
+  /** Declutters or expands the cards; absent when nothing can set it. */
+  onViewModeChange?: (mode: CanvasViewMode) => void;
   /** Rings the objects a pending agent patch touches. */
   overlay?: ModelOverlay | null;
   diagnostics?: DiagnosticIndex;
@@ -71,6 +73,7 @@ export const CanvasViewport = ({
   selection,
   focusRequest,
   zoomCommand,
+  onViewModeChange,
   overlay = null,
   diagnostics,
   onOpenIssues,
@@ -467,6 +470,12 @@ export const CanvasViewport = ({
         />
       ) : null}
       <BusinessLegend compact={size.width < 800} viewMode={viewMode} />
+      {onViewModeChange === undefined ? null : (
+        <CanvasViewModeControl
+          viewMode={viewMode}
+          onChange={onViewModeChange}
+        />
+      )}
       <ZoomControl
         zoom={viewport.zoom}
         onFit={fitToContent}
@@ -519,6 +528,37 @@ const marqueeSelectionOf = (
     height: Math.abs(end.y - start.y),
   };
 };
+
+const CanvasViewModeControl = ({
+  viewMode,
+  onChange,
+}: {
+  viewMode: CanvasViewMode;
+  onChange: (mode: CanvasViewMode) => void;
+}) => (
+  <div
+    data-canvas-control=""
+    data-evidence-capture-hide=""
+    className="absolute right-4 bottom-14 z-30 flex items-center gap-0.5 rounded-md border border-evidence-line bg-white/95 p-0.5 text-[10px] text-evidence-muted shadow-sm"
+  >
+    {(['simplified', 'standard'] as const).map((mode) => (
+      <button
+        key={mode}
+        type="button"
+        aria-pressed={viewMode === mode}
+        onClick={() => onChange(mode)}
+        className={[
+          'rounded px-1.5 py-0.5',
+          viewMode === mode
+            ? 'bg-evidence-accent text-white'
+            : 'hover:bg-[#eef1f5] hover:text-evidence-ink',
+        ].join(' ')}
+      >
+        {mode === 'simplified' ? '简化图' : '标准图'}
+      </button>
+    ))}
+  </div>
+);
 
 const ZoomControl = ({
   zoom,

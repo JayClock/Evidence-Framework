@@ -3,15 +3,16 @@ import { useMemo } from 'react';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core/browser';
 
-import type { CanvasViewMode } from './canvas/CanvasStage';
 import { McpStatusPill } from './McpStatusPill';
+import { ViewModeSegmentedControl } from './ViewModeSegmentedControl';
+import type { WorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 interface TopHeaderProps {
   projectName: string;
   dirty: boolean;
   canUndo: boolean;
   canRedo: boolean;
-  viewMode: CanvasViewMode;
+  workspaceViewMode: WorkspaceViewMode;
   graph: DomainGraph;
   selection: ModelSelection;
   onUndo: () => void;
@@ -26,7 +27,7 @@ interface TopHeaderProps {
   onOpenDelivery: () => void;
   /** Opens the sandbox: does the model still hold, does production match it. */
   onOpenSandbox: () => void;
-  onViewModeChange: (mode: CanvasViewMode) => void;
+  onWorkspaceViewModeChange: (mode: WorkspaceViewMode) => void;
   onSearch: () => void;
 }
 
@@ -35,7 +36,7 @@ export const TopHeader = ({
   dirty,
   canUndo,
   canRedo,
-  viewMode,
+  workspaceViewMode,
   graph,
   selection,
   onUndo,
@@ -47,7 +48,7 @@ export const TopHeader = ({
   exportReviewBusy,
   onOpenDelivery,
   onOpenSandbox,
-  onViewModeChange,
+  onWorkspaceViewModeChange,
   onSearch,
 }: TopHeaderProps) => {
   const breadcrumb = useMemo(() => {
@@ -107,23 +108,10 @@ export const TopHeader = ({
           搜索
         </button>
 
-        <div className="flex items-center rounded border border-evidence-line p-0.5 text-[11px]">
-          {(['simplified', 'standard'] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => onViewModeChange(mode)}
-              className={[
-                'rounded px-2 py-0.5',
-                viewMode === mode
-                  ? 'bg-evidence-accent text-white'
-                  : 'text-evidence-muted hover:text-evidence-ink',
-              ].join(' ')}
-            >
-              {mode === 'simplified' ? '简化图' : '标准图'}
-            </button>
-          ))}
-        </div>
+        <ViewModeSegmentedControl
+          mode={workspaceViewMode}
+          onChange={onWorkspaceViewModeChange}
+        />
 
         <button
           type="button"

@@ -15,10 +15,12 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceProjectSummary } from '../../shared/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
+import { CentralStageContainer } from '../components/CentralStageContainer';
 import {
   BottomConsole,
   type ConsoleTab,
 } from '../components/console/BottomConsole';
+import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightWorkbench } from '../components/RightWorkbench';
 import { TopHeader } from '../components/TopHeader';
@@ -41,6 +43,7 @@ import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
 import { createDiagnosticIndex } from '../state/diagnosticIndex';
 import { useSensorsState } from '../state/useSensorsState';
+import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 type LoadState =
   | { name: 'loading' }
@@ -124,6 +127,7 @@ const EditorWorkspace = ({
   initialDocument,
 }: EditorWorkspaceProps) => {
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
+  const workspaceView = useWorkspaceViewMode();
   const reviewExport = useReviewExport(project.rootPath);
   const { state, save, reloadFromDisk, dismissExternalChange } =
     useEditorSession(project, initialDocument, viewMode);
@@ -430,7 +434,7 @@ const EditorWorkspace = ({
           dirty={state.dirty}
           canUndo={state.canUndo}
           canRedo={state.canRedo}
-          viewMode={viewMode}
+          workspaceViewMode={workspaceView.mode}
           graph={state.graph}
           selection={state.selection}
           onUndo={() => {
@@ -446,7 +450,7 @@ const EditorWorkspace = ({
           exportReviewBusy={reviewExport.busy}
           onOpenDelivery={() => openConsole('delivery')}
           onOpenSandbox={() => openConsole('simulation')}
-          onViewModeChange={setViewMode}
+          onWorkspaceViewModeChange={workspaceView.setMode}
           onSearch={() => searchInputRef.current?.focus()}
         />
 
@@ -513,28 +517,43 @@ const EditorWorkspace = ({
                 autoSaveId="evidence-studio-vertical-v1"
               >
                 <ResizablePanel id="canvas-stage" order={1} minSize={25}>
-                  <div className="relative h-full w-full">
-                    <CanvasViewport
-                      graph={state.graph}
-                      layout={state.layout}
-                      document={state.document}
-                      viewMode={viewMode}
-                      selection={state.selection}
-                      focusRequest={focusRequest}
-                      zoomCommand={zoomCommand}
-                      diagnostics={diagnostics}
-                      onOpenIssues={(issues) => {
-                        setActiveIssueIds(issues.map((issue) => issue.issueId));
-                        openConsole('diagnostics');
-                        if (issues[0]) focusIssue(issues[0]);
-                      }}
-                      overlay={patchReview.review?.overlay ?? null}
-                      scope={scope}
-                      onScopeChange={changeScope}
-                      onSelect={(nodeId) => state.session.select(nodeId)}
-                      onClearSelection={() => state.session.clearSelection()}
-                    />
-                  </div>
+                  <CentralStageContainer
+                    mode={workspaceView.mode}
+                    graph={
+                      <CanvasViewport
+                        graph={state.graph}
+                        layout={state.layout}
+                        document={state.document}
+                        viewMode={viewMode}
+                        selection={state.selection}
+                        focusRequest={focusRequest}
+                        zoomCommand={zoomCommand}
+                        onViewModeChange={setViewMode}
+                        diagnostics={diagnostics}
+                        onOpenIssues={(issues) => {
+                          setActiveIssueIds(
+                            issues.map((issue) => issue.issueId),
+                          );
+                          openConsole('diagnostics');
+                          if (issues[0]) focusIssue(issues[0]);
+                        }}
+                        overlay={patchReview.review?.overlay ?? null}
+                        scope={scope}
+                        onScopeChange={changeScope}
+                        onSelect={(nodeId) => state.session.select(nodeId)}
+                        onClearSelection={() => state.session.clearSelection()}
+                      />
+                    }
+                    table={
+                      <DomainLedgerTable
+                        document={state.document}
+                        session={state.session}
+                        diagnostics={diagnostics}
+                        selectedNodeId={state.selection.nodeId}
+                        selectedAttributeName={state.selection.attributeName}
+                      />
+                    }
+                  />
                 </ResizablePanel>
 
                 {consoleOpen ? (
