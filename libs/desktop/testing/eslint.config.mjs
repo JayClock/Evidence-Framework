@@ -1,7 +1,11 @@
+import browserPlatform from '../../../tools/eslint-rules/browser-platform.mjs';
 import baseConfig from '../../../eslint.config.mjs';
 
 export default [
   ...baseConfig,
+  // The renderer-side half of this project's `platform:browser` tag: Node
+  // builtins are not project-graph nodes, so the tag rule cannot see them.
+  ...browserPlatform,
   {
     files: ['**/*.json'],
     rules: {
