@@ -62,8 +62,8 @@ apps/desktop/
 │   ├── main/          # main process: windows, IPC, ProjectStore, watcher,
 │   │                  # agentRuntime (Pi session), sensorRuntime (debounce)
 │   ├── preload/       # the only `contextBridge` surface (index.ts)
-│   ├── renderer/      # React 19 UI: canvas, inspector, sidebar, agent panel,
-│   │                  # PromptDock, sensor status bar and diagnostics drawer
+│   ├── renderer/      # React 19 UI: canvas, inspector, outline, agent copilot,
+│   │                  # docked console and status bar
 │   └── shared/        # IPC channel names and payload contracts (project, agent)
 ├── resources/         # build output: the bundled page assets (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
@@ -143,7 +143,7 @@ a library's `/browser` entry whenever a Node-only adapter exists.
 ## Agent and sensors (phase 3)
 
 ```text
-PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
+AgentCopilot ──IPC: agent:prompt──▶ agentRuntime (main)
                                     │ Pi AgentSession + built-in instructions
                                     │ custom tools: run_sensors,
                                     │   apply_model_patch, get_canvas_selection
@@ -153,7 +153,7 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
                                     └─ respondPatch(result) — same undo stack
                      IPC: sensor:model-changed ──▶ debounced sensorRuntime
                                     ▼
-                     IPC: sensor:report ──▶ status bar + diagnostics drawer
+                     IPC: sensor:report ──▶ status bar + docked console
 ```
 
 - The renderer holds no model credentials and never runs Python; it asks the
@@ -166,8 +166,11 @@ PromptDock ──IPC: agent:prompt──▶ agentRuntime (main)
 - Key data that still owes a provider decision is a warning, not a static error,
   but it keeps `isStageGateReady` false — the model can be saved, the gate stays
   shut.
-- `PromptDock` sends when idle and steers the live run when busy, so a wrong
-  assumption is corrected in place instead of restarting the round.
+- `AgentCopilot` sends when idle and steers the live run when busy, so a wrong
+  assumption is corrected in place instead of restarting the round. It shares
+  the right rail with the inspector: reasoning folds away, each tool call opens
+  for its input, and a pending patch is reviewed inline with a click that pans
+  the canvas to the object it touched.
 
 ## Key data, CEL and fulfillment editing (phase 4)
 
