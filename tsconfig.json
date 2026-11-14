@@ -32,6 +32,9 @@
     },
     {
       "path": "./libs/desktop/testing"
+    },
+    {
+      "path": "./libs/desktop/feature-inspector"
     }
   ]
 }

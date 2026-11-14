@@ -9,7 +9,7 @@ import type {
 import type { AgentSessionController } from '../state/useAgentSession';
 import type { PatchReviewController } from '../state/usePatchReview';
 import { AgentCopilot, type PromptFocus } from './agent/AgentCopilot';
-import { RightInspector } from './RightInspector';
+import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
 import { cn } from '@evidence-poc/desktop-ui-kit';
 
 export type WorkbenchTab = 'inspect' | 'agent';

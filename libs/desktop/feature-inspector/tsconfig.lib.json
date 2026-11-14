@@ -1,0 +1,42 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["node"],
+    "rootDir": "src",
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es2023"],
+    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [
+    {
+      "path": "../testing/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-schema/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-model-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-api/tsconfig.lib.json"
+    },
+    {
+      "path": "../ui-kit/tsconfig.lib.json"
+    }
+  ],
+  "exclude": [
+    "out-tsc",
+    "dist",
+    "src/testing/**",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts"
+  ]
+}

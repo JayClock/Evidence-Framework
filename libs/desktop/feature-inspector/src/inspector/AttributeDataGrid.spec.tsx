@@ -13,7 +13,7 @@ import {
   blurEditor,
   readExpression,
   typeExpression,
-} from '../../test-support/codeEditor';
+} from '../testing/codeEditor';
 import { AttributeDataGrid } from './AttributeDataGrid';
 
 /**

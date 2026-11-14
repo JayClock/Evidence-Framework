@@ -1,0 +1,42 @@
+{
+  "name": "@evidence-poc/desktop-feature-inspector",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "desktop-feature-inspector",
+    "tags": [
+      "type:lib",
+      "scope:desktop",
+      "platform:browser"
+    ]
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@evidence-poc/desktop-ui-kit": "workspace:*",
+    "@evidence-poc/evidence-api": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "@lezer/highlight": "^1.2.5",
+    "@tanstack/react-table": "^8.21.3",
+    "react": "^19.2.8",
+    "tslib": "^2.3.0"
+  }
+}

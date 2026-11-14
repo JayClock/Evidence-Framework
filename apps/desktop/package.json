@@ -6,13 +6,8 @@
   "productName": "Evidence Modeling",
   "main": ".vite/build/main.js",
   "dependencies": {
-    "@codemirror/autocomplete": "^6.20.4",
-    "@codemirror/commands": "^6.11.1",
-    "@codemirror/language": "^6.13.1",
-    "@codemirror/lint": "^6.9.7",
-    "@codemirror/state": "^6.7.6",
-    "@codemirror/view": "^6.43.15",
     "@evidence-poc/desktop-feature-canvas": "workspace:*",
+    "@evidence-poc/desktop-feature-inspector": "workspace:*",
     "@evidence-poc/desktop-testing": "workspace:*",
     "@evidence-poc/desktop-ui-kit": "workspace:*",
     "@evidence-poc/evidence-agent": "workspace:*",
@@ -22,16 +17,12 @@
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-visualization": "workspace:*",
-    "@lezer/highlight": "^1.2.5",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.26",
-    "@use-gesture/react": "^10.3.1",
-    "clsx": "^2.1.1",
     "lucide-react": "^1.72.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-resizable-panels": "^2.1.9",
-    "tailwind-merge": "^3.7.0"
+    "react-resizable-panels": "^2.1.9"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",

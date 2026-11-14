@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 
 import { RightInspector } from './RightInspector';
-import { blurEditor, typeExpression } from '../test-support/codeEditor';
+import { blurEditor, typeExpression } from './testing/codeEditor';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const setup = (nodeId: string | null) => {

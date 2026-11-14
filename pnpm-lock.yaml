@@ -277,27 +277,12 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@codemirror/autocomplete':
-        specifier: ^6.20.4
-        version: 6.20.4
-      '@codemirror/commands':
-        specifier: ^6.11.1
-        version: 6.11.1
-      '@codemirror/language':
-        specifier: ^6.13.1
-        version: 6.13.1
-      '@codemirror/lint':
-        specifier: ^6.9.7
-        version: 6.9.7
-      '@codemirror/state':
-        specifier: ^6.7.6
-        version: 6.7.6
-      '@codemirror/view':
-        specifier: ^6.43.15
-        version: 6.43.15
       '@evidence-poc/desktop-feature-canvas':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-canvas
+      '@evidence-poc/desktop-feature-inspector':
+        specifier: workspace:*
+        version: link:../../libs/desktop/feature-inspector
       '@evidence-poc/desktop-testing':
         specifier: workspace:*
         version: link:../../libs/desktop/testing
@@ -325,21 +310,12 @@ importers:
       '@evidence-poc/evidence-visualization':
         specifier: workspace:*
         version: link:../../libs/evidence-visualization
-      '@lezer/highlight':
-        specifier: ^1.2.5
-        version: 1.2.5
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tanstack/react-virtual':
         specifier: ^3.14.26
         version: 3.14.26(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@use-gesture/react':
-        specifier: ^10.3.1
-        version: 10.3.1(react@19.3.1)
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       lucide-react:
         specifier: ^1.72.0
         version: 1.72.0(@types/react@19.3.0)(react@19.3.1)
@@ -352,9 +328,6 @@ importers:
       react-resizable-panels:
         specifier: ^2.1.9
         version: 2.1.9(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      tailwind-merge:
-        specifier: ^3.7.0
-        version: 3.7.0
     devDependencies:
       '@electron-forge/cli':
         specifier: ^7.10.2
@@ -413,6 +386,51 @@ importers:
       '@use-gesture/react':
         specifier: ^10.3.1
         version: 10.3.1(react@19.3.1)
+      react:
+        specifier: ^19.2.8
+        version: 19.3.1
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+
+  libs/desktop/feature-inspector:
+    dependencies:
+      '@codemirror/autocomplete':
+        specifier: ^6.20.4
+        version: 6.20.4
+      '@codemirror/commands':
+        specifier: ^6.11.1
+        version: 6.11.1
+      '@codemirror/language':
+        specifier: ^6.13.1
+        version: 6.13.1
+      '@codemirror/lint':
+        specifier: ^6.9.7
+        version: 6.9.7
+      '@codemirror/state':
+        specifier: ^6.7.6
+        version: 6.7.6
+      '@codemirror/view':
+        specifier: ^6.43.15
+        version: 6.43.15
+      '@evidence-poc/desktop-ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../../evidence-api
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../evidence-schema
+      '@lezer/highlight':
+        specifier: ^1.2.5
+        version: 1.2.5
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react:
         specifier: ^19.2.8
         version: 19.3.1

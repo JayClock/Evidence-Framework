@@ -12,7 +12,7 @@ import {
   editorViewFor,
   readExpression,
   typeExpression,
-} from '../../../test-support/codeEditor';
+} from '../../testing/codeEditor';
 
 const candidates: readonly CelCandidate[] = [
   {

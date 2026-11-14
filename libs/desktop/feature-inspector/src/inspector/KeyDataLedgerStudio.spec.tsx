@@ -9,7 +9,7 @@ import {
   blurEditor,
   readExpression,
   typeExpression,
-} from '../../test-support/codeEditor';
+} from '../testing/codeEditor';
 import { KeyDataLedgerStudio } from './KeyDataLedgerStudio';
 
 /** The contract with one derived amount and one field whose provider is owed. */
