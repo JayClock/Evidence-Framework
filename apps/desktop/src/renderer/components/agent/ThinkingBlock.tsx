@@ -34,9 +34,7 @@ export const ThinkingBlock = ({
 
   const body = thinking ?? '';
   const label =
-    thinking === null
-      ? '正在推演履约因果…'
-      : `${lineCount(thinking)} 行推理`;
+    thinking === null ? '正在推演履约因果…' : `${lineCount(thinking)} 行推理`;
 
   return (
     <section

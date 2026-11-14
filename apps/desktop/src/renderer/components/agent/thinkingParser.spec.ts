@@ -24,9 +24,7 @@ describe('parseStreamedTranscript', () => {
   });
 
   it('treats an unterminated block as reasoning in progress', () => {
-    expect(
-      parseStreamedTranscript('<thought>先判断这是凭证还是角色'),
-    ).toEqual({
+    expect(parseStreamedTranscript('<thought>先判断这是凭证还是角色')).toEqual({
       thinking: '先判断这是凭证还是角色',
       content: '',
       thinkingActive: true,

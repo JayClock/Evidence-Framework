@@ -14,7 +14,10 @@ describe('ThinkingBlock', () => {
 
   it('folds the reasoning and expands it on request', () => {
     render(
-      <ThinkingBlock thinking={'先判断是否成对。\n再补确认端。'} active={false} />,
+      <ThinkingBlock
+        thinking={'先判断是否成对。\n再补确认端。'}
+        active={false}
+      />,
     );
 
     expect(screen.queryByText(/再补确认端/)).toBeNull();

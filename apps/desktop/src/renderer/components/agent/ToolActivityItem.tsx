@@ -37,7 +37,10 @@ const STATUS_LABEL: Record<AgentActivity['status'], string> = {
 
 const StatusIcon = ({ status }: { status: AgentActivity['status'] }) =>
   status === 'running' ? (
-    <Loader2 aria-hidden="true" className="h-3 w-3 animate-spin text-evidence-accent" />
+    <Loader2
+      aria-hidden="true"
+      className="h-3 w-3 animate-spin text-evidence-accent"
+    />
   ) : status === 'completed' ? (
     <Check aria-hidden="true" className="h-3 w-3 text-evidence-participant" />
   ) : (
@@ -76,7 +79,9 @@ export const ToolActivityItem = ({ activity }: ToolActivityItemProps) => {
           </span>
         </span>
         <span className="flex shrink-0 items-center gap-1 text-[10px] text-evidence-muted">
-          <span className={cn(activity.status === 'failed' && 'text-[#b42318]')}>
+          <span
+            className={cn(activity.status === 'failed' && 'text-[#b42318]')}
+          >
             {STATUS_LABEL[activity.status]}
           </span>
           {open ? (
