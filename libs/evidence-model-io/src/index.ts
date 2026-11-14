@@ -6,4 +6,30 @@
  * CLI). The in-memory model itself lives in `@evidence-poc/evidence-model-core`
  * and stays usable from the renderer.
  */
-export {};
+export {
+  readModelDirectory,
+  writeModelDirectory,
+  type WriteModelResult,
+} from './adapters/diskAdapter.js';
+
+export {
+  MODEL_CHECK_TREES,
+  MODEL_GENERATED_TREE,
+  isValidationPath,
+  modelDigestOf,
+  readModelRoot,
+  readModelRootBytes,
+  readModelRootFiles,
+  type ModelRootBytes,
+} from './adapters/modelRoot.js';
+
+export {
+  MODEL_DIRECTORY,
+  isModelBundleFile,
+  packModelDirectory,
+  readModelBundle,
+  unpackModelBundle,
+  writeModelBundle,
+  type UnpackResult,
+  type WriteModelBundleResult,
+} from './adapters/modelFileAdapter.js';

@@ -11,12 +11,10 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import {
-  readModelDirectory,
-  serializeDomainModel,
-  writeModelDirectory,
-} from '../index.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { serializeDomainModel } from '@evidence-poc/evidence-model-core';
+import { createProcurementModel } from '@evidence-poc/evidence-model-core/testing';
+
+import { readModelDirectory, writeModelDirectory } from '../index.js';
 
 const canonical = (document: ReturnType<typeof createProcurementModel>) => ({
   ...document,

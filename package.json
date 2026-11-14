@@ -11,9 +11,9 @@
     "desktop:package": "nx package desktop",
     "desktop:make": "nx make desktop",
     "test:desktop": "nx test desktop",
-    "model:pack": "node libs/evidence-model-core/dist/cli.js pack",
-    "model:unpack": "node libs/evidence-model-core/dist/cli.js unpack",
-    "model:inspect": "node libs/evidence-model-core/dist/cli.js inspect"
+    "model:pack": "node libs/evidence-model-io/dist/cli.js pack",
+    "model:unpack": "node libs/evidence-model-io/dist/cli.js unpack",
+    "model:inspect": "node libs/evidence-model-io/dist/cli.js inspect"
   },
   "private": true,
   "packageManager": "pnpm@12.16.1",

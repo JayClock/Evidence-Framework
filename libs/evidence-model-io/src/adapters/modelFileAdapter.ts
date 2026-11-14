@@ -10,8 +10,6 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-
 import {
   MODEL_README_PATH,
   createEmptyModelBundle,
@@ -22,10 +20,12 @@ import {
   serializeModelBundle,
   type DomainModelBundle,
   type ModelBundleParseResult,
+  type ModelSourceFile,
+  type ModelSourceIssue,
   type PackResult,
   type SerializeBundleOptions,
-} from './modelBundle.js';
-import type { ModelSourceFile, ModelSourceIssue } from './modelSourceFiles.js';
+} from '@evidence-poc/evidence-model-core';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 /** Relative location of the FM source tree inside a project root. */
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');

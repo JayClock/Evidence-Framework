@@ -1,6 +1,6 @@
 import type { DomainModelDocument, EntityAST } from '@evidence-poc/evidence-schema';
 
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 import { diffDomainModels } from './modelDiff.js';
 
 const clone = (): DomainModelDocument =>

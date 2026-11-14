@@ -11,7 +11,7 @@ import {
 } from './operators.js';
 import { decodeModelPatch, type ModelPatchCommand } from './patches.js';
 import { createModelSession } from '../session/createModelSession.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 
 const apply = (
   model = createProcurementModel(),

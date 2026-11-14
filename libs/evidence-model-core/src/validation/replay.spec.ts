@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-import { readModelRoot } from '../adapters/modelRoot.js';
+import { readModelRoot } from '../../tests/support/modelRoot.js';
 import {
   replayScenario,
   replayValidationSuite,

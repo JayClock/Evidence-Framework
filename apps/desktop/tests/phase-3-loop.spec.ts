@@ -12,8 +12,8 @@ import {
 import {
   createModelSession,
   decodeModelPatch,
-  readModelDirectory,
 } from '@evidence-poc/evidence-model-core';
+import { readModelDirectory } from '@evidence-poc/evidence-model-io';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { createAgentRuntime } from '../src/main/agentRuntime';

@@ -6,10 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createModelSession,
-  readModelDirectory,
-  writeModelDirectory,
   UpdateEntityCommand,
 } from '@evidence-poc/evidence-model-core';
+import {
+  readModelDirectory,
+  writeModelDirectory,
+} from '@evidence-poc/evidence-model-io';
 import {
   computeHighlight,
   createGraphLayout,

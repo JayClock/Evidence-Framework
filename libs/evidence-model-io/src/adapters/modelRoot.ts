@@ -4,16 +4,14 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
-  packModelSourceFiles,
-  VALIDATION_INSTANCE_TREE,
-  VALIDATION_SCENARIO_TREE,
-  type PackResult,
-} from './modelBundle.js';
-import {
   MODEL_MANIFEST_PATH,
   MODEL_SOURCE_TREES,
+  VALIDATION_INSTANCE_TREE,
+  VALIDATION_SCENARIO_TREE,
+  packModelSourceFiles,
   type ModelSourceFile,
-} from './modelSourceFiles.js';
+  type PackResult,
+} from '@evidence-poc/evidence-model-core';
 
 /**
  * Reads a `.evidence/fm/` root into source files, including `validation/`.

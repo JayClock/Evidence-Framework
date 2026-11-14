@@ -5,14 +5,16 @@ import {
   analyzeTraceability,
   buildFmCheckReport,
   loadValidationSuite,
-  modelDigestOf,
-  readModelRoot,
-  readModelRootBytes,
   type FmCheckReport,
   type SimulationReport,
   type TraceabilityDocument,
   type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
+import {
+  modelDigestOf,
+  readModelRoot,
+  readModelRootBytes,
+} from '@evidence-poc/evidence-model-io';
 
 /**
  * Reads a model root once for every sensor.

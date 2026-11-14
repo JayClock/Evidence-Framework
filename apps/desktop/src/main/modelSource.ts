@@ -1,9 +1,7 @@
 import path from 'node:path';
 
-import {
-  MODEL_DIRECTORY,
-  isModelBundlePath,
-} from '@evidence-poc/evidence-model-core';
+import { isModelBundlePath } from '@evidence-poc/evidence-model-core';
+import { MODEL_DIRECTORY } from '@evidence-poc/evidence-model-io';
 
 /**
  * A project root is either a folder holding `.evidence/fm/` or one

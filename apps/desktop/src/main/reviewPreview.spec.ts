@@ -2,10 +2,8 @@ import { cp, mkdtemp, rm, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import {
-  readModelRoot,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { workbenchFingerprint } from '@evidence-poc/evidence-visualization';
 import { previewReview } from './reviewPreview';
 

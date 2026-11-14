@@ -12,16 +12,18 @@ import {
   compiledDocument,
   isModelBundlePath,
   loadValidationSuite,
-  modelDigestOf,
   parseModelBundleText,
-  readModelRoot,
-  readModelRootBytes,
   type CompiledModelDocument,
   type DomainModelBundle,
   type EvidenceInstance,
   type Scenario,
   type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
+import {
+  modelDigestOf,
+  readModelRoot,
+  readModelRootBytes,
+} from '@evidence-poc/evidence-model-io';
 
 import { canonicalJson } from '../canonicalJson.js';
 import {

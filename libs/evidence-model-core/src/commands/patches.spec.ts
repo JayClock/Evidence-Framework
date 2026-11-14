@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { createModelSession } from '../session/createModelSession.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 import {
   ModelPatchError,
   decodeModelPatch,

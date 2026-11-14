@@ -5,7 +5,7 @@ import {
   ModelCommandError,
   assertMandatoryTime,
 } from '../index.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 
 const base = () => createProcurementModel();
 

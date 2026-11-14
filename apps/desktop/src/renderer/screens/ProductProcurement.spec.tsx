@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { readModelDirectory } from '@evidence-poc/evidence-model-core';
+import { readModelDirectory } from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { EditorScreen } from './EditorScreen';

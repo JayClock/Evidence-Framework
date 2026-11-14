@@ -2,17 +2,19 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import * as modelCore from '@evidence-poc/evidence-model-core';
+import * as modelIo from '@evidence-poc/evidence-model-io';
 import { vi } from 'vitest';
 
 import {
   buildFmCheckReport,
   loadValidationSuite,
+  serializeModelBundle,
+} from '@evidence-poc/evidence-model-core';
+import {
   modelDigestOf,
   readModelRoot,
   readModelRootBytes,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+} from '@evidence-poc/evidence-model-io';
 
 import {
   checkReportProblem,
@@ -192,8 +194,8 @@ describe('loadFmFromDocument', () => {
   });
 
   it('still refuses a source that changes during a read', async () => {
-    const original = modelCore.readModelRootBytes;
-    const spy = vi.spyOn(modelCore, 'readModelRootBytes');
+    const original = modelIo.readModelRootBytes;
+    const spy = vi.spyOn(modelIo, 'readModelRootBytes');
     spy
       .mockImplementationOnce(original)
       .mockImplementationOnce(async (root) => [

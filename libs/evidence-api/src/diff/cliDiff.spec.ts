@@ -1,10 +1,8 @@
 import { mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import {
-  readModelRoot,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { API_FIXTURES } from '../../tests/support/fixtures.js';
 import { runCli } from '../cli.js';
 import { renderApiDiff } from './renderApiDiff.js';

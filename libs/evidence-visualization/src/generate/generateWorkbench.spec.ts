@@ -13,10 +13,8 @@ import { fileURLToPath } from 'node:url';
 
 import { collectWorkbench, workbenchFingerprint } from './collectWorkbench.js';
 import { generateWorkbench, reviewPagePath } from './generateWorkbench.js';
-import {
-  readModelRoot,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
 
 /**

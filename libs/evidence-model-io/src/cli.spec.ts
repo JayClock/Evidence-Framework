@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { runEvidenceModelCommand } from './cli.js';
 import { readModelBundle, writeModelDirectory } from './index.js';
-import { createProcurementModel } from '../tests/support/modelFixture.js';
+import { createProcurementModel } from '@evidence-poc/evidence-model-core/testing';
 
 describe('evidence-model CLI', () => {
   let root: string;

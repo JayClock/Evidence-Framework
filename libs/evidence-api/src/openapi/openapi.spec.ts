@@ -9,7 +9,7 @@ import {
   resolveSchema,
   type Operation,
 } from '../../tests/support/contract.js';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { fullLifecycle } from '../../tests/support/fixtures.js';
 import { buildDelivery } from '../projector.js';
 

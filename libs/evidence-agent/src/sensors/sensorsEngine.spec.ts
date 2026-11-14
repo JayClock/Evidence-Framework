@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { buildDelivery } from '@evidence-poc/evidence-api';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { createSensorsEngine } from './sensorsEngine.js';
 
 const goldenModel = fileURLToPath(

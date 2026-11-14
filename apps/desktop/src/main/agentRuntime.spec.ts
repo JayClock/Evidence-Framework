@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { writeModelDirectory } from '@evidence-poc/evidence-model-core';
+import { writeModelDirectory } from '@evidence-poc/evidence-model-io';
 import { describe, expect, it, vi } from 'vitest';
 
 import type {

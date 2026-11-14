@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import type { LiveDeliveryInput } from '../shared/delivery';
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 

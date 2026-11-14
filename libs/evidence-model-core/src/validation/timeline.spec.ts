@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-import { readModelRoot } from '../adapters/modelRoot.js';
+import { readModelRoot } from '../../tests/support/modelRoot.js';
 import { buildTimeline, digestOf, timelineSummary } from './timeline.js';
 import { loadValidationSuite } from './validationSuite.js';
 

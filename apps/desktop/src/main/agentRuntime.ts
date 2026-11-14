@@ -20,7 +20,7 @@ import {
 import {
   readModelBundle,
   readModelDirectory,
-} from '@evidence-poc/evidence-model-core';
+} from '@evidence-poc/evidence-model-io';
 
 import {
   isBundleProject,

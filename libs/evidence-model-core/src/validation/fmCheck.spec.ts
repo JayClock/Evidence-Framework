@@ -4,7 +4,7 @@ import {
   modelDigestOf,
   readModelRoot,
   readModelRootBytes,
-} from '../adapters/modelRoot.js';
+} from '../../tests/support/modelRoot.js';
 import { buildFmCheckReport, FM_CHECK_VERSION } from './fmCheck.js';
 import { digestOf } from './timeline.js';
 import { analyzeTraceability } from './traceability.js';

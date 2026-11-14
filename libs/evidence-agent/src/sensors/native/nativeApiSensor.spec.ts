@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { fileURLToPath } from 'node:url';
 import { checkNativeApiSensor } from './nativeApiSensor.js';
 import { runNativeSensors } from './nativeSensors.js';

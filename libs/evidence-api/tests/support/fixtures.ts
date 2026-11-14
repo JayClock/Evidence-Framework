@@ -3,10 +3,12 @@ import { fileURLToPath } from 'node:url';
 import {
   buildFmCheckReport,
   loadValidationSuite,
+} from '@evidence-poc/evidence-model-core';
+import {
   modelDigestOf,
   readModelRoot,
   readModelRootBytes,
-} from '@evidence-poc/evidence-model-core';
+} from '@evidence-poc/evidence-model-io';
 
 import { loadFm, type FmIndex } from '../../src/adapter/fmAdapter.js';
 

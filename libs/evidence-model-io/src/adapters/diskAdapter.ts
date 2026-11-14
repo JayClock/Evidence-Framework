@@ -10,8 +10,6 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-
 import {
   MODEL_MANIFEST_PATH,
   MODEL_SOURCE_TREES,
@@ -19,7 +17,8 @@ import {
   serializeDomainModel,
   type ModelSourceFile,
   type ModelSourceParseResult,
-} from './modelSourceFiles.js';
+} from '@evidence-poc/evidence-model-core';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 export interface WriteModelResult {
   written: string[];

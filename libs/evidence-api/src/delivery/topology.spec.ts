@@ -1,4 +1,4 @@
-import { readModelRoot } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { API_FIXTURES } from '../../tests/support/fixtures.js';

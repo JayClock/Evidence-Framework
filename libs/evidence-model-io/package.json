@@ -7,6 +7,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "evidence-model": "./dist/cli.js"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -14,17 +17,21 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./cli": {
+      "@evidence-poc/source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "default": "./dist/cli.js"
     }
   },
   "nx": {
     "name": "evidence-model-io",
-    "tags": [
-      "type:lib",
-      "scope:evidence",
-      "platform:node"
-    ]
+    "tags": ["type:lib", "scope:evidence", "platform:node"]
   },
   "dependencies": {
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
     "tslib": "^2.3.0"
   }
 }

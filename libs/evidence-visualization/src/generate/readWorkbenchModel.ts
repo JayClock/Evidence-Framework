@@ -3,8 +3,8 @@ import {
   isModelBundlePath,
   modelBundleSourceFiles,
   parseModelBundleText,
-  readModelRoot,
 } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 
 /** One source reader for previews/exports; the bundle retains its validation suite. */
 export const readWorkbenchModel = async (

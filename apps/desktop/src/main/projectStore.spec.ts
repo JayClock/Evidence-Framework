@@ -10,7 +10,7 @@ import {
   readModelBundle,
   writeModelBundle,
   writeModelDirectory,
-} from '@evidence-poc/evidence-model-core';
+} from '@evidence-poc/evidence-model-io';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {

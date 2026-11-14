@@ -8,7 +8,7 @@ import {
   serializeDomainModel,
   stringifyModelJson,
 } from '../index.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 
 /** Parsing follows file order, so compare collections as id-sorted sets. */
 const canonical = (document: ReturnType<typeof createProcurementModel>) => ({

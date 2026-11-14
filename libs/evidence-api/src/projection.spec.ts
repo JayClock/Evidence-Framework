@@ -10,10 +10,8 @@ import {
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import {
-  readModelRoot,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { runCli } from './cli.js';
 import {
   fullLifecycle,

@@ -167,23 +167,6 @@ export {
 } from './adapters/modelSourceFiles.js';
 
 export {
-  readModelDirectory,
-  writeModelDirectory,
-  type WriteModelResult,
-} from './adapters/diskAdapter.js';
-
-export {
-  MODEL_CHECK_TREES,
-  MODEL_GENERATED_TREE,
-  isValidationPath,
-  modelDigestOf,
-  readModelRoot,
-  readModelRootBytes,
-  readModelRootFiles,
-  type ModelRootBytes,
-} from './adapters/modelRoot.js';
-
-export {
   comparableValue,
   indexSuite,
   loadValidationSuite,
@@ -325,14 +308,3 @@ export {
   type PackResult,
   type SerializeBundleOptions,
 } from './adapters/modelBundle.js';
-
-export {
-  MODEL_DIRECTORY,
-  isModelBundleFile,
-  packModelDirectory,
-  readModelBundle,
-  unpackModelBundle,
-  writeModelBundle,
-  type UnpackResult,
-  type WriteModelBundleResult,
-} from './adapters/modelFileAdapter.js';

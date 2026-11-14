@@ -9,7 +9,7 @@ import {
   type ModelCommand,
   type ModelSessionEvent,
 } from '../index.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 
 const session = (
   overrides: Partial<Parameters<typeof createModelSession>[0]> = {},

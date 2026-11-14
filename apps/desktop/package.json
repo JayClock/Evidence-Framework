@@ -14,6 +14,7 @@
     "@evidence-poc/evidence-canvas-interaction": "workspace:*",
     "@evidence-poc/evidence-mcp": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-model-io": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-visualization": "workspace:*",
     "@tanstack/react-table": "^8.21.3",

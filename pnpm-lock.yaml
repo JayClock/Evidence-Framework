@@ -301,6 +301,9 @@ importers:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../../libs/evidence-model-core
+      '@evidence-poc/evidence-model-io':
+        specifier: workspace:*
+        version: link:../../libs/evidence-model-io
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../libs/evidence-schema
@@ -476,6 +479,9 @@ importers:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../evidence-model-core
+      '@evidence-poc/evidence-model-io':
+        specifier: workspace:*
+        version: link:../evidence-model-io
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema
@@ -491,6 +497,9 @@ importers:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../evidence-model-core
+      '@evidence-poc/evidence-model-io':
+        specifier: workspace:*
+        version: link:../evidence-model-io
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema
@@ -555,6 +564,12 @@ importers:
 
   libs/evidence-model-io:
     dependencies:
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../evidence-schema
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
@@ -576,6 +591,9 @@ importers:
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../evidence-model-core
+      '@evidence-poc/evidence-model-io':
+        specifier: workspace:*
+        version: link:../evidence-model-io
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema

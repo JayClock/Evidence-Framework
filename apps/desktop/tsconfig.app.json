@@ -6,17 +6,10 @@
     "declarationMap": false,
     "noEmit": true,
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2023"
-    ],
+    "lib": ["dom", "dom.iterable", "es2023"],
     "module": "esnext",
     "moduleResolution": "bundler",
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "types": ["node", "vite/client"],
     "forceConsistentCasingInFileNames": true
   },
   "include": [
@@ -33,6 +26,9 @@
     },
     {
       "path": "../../libs/evidence-schema/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/evidence-model-io/tsconfig.lib.json"
     },
     {
       "path": "../../libs/evidence-model-core/tsconfig.lib.json"
@@ -53,13 +49,13 @@
       "path": "../../libs/desktop/ui-kit/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/desktop/feature-inspector/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/desktop/feature-canvas/tsconfig.lib.json"
     },
     {
       "path": "../../libs/desktop/testing/tsconfig.lib.json"
-    },
-    {
-      "path": "../../libs/desktop/feature-inspector/tsconfig.lib.json"
     }
   ]
 }

@@ -15,11 +15,13 @@ import {
   compiledDocument,
   isModelBundlePath,
   loadValidationSuite,
-  modelDigestOf,
-  readModelRootBytes,
   type FmCheckReport,
   type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
+import {
+  modelDigestOf,
+  readModelRootBytes,
+} from '@evidence-poc/evidence-model-io';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { projectWorkbenchDiff } from '../projection/workbenchDiff.js';

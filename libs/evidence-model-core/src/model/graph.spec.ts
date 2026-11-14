@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
 
 import { createDomainGraph } from '../index.js';
-import { createProcurementModel } from '../../tests/support/modelFixture.js';
+import { createProcurementModel } from '../testing/modelFixture.js';
 
 const graph = () => createDomainGraph(createProcurementModel());
 

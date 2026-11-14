@@ -12,12 +12,17 @@
   },
   "include": ["src/**/*.ts"],
   "references": [
-    { "path": "../evidence-api/tsconfig.lib.json" },
     {
       "path": "../evidence-schema/tsconfig.lib.json"
     },
     {
+      "path": "../evidence-model-io/tsconfig.lib.json"
+    },
+    {
       "path": "../evidence-model-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../evidence-api/tsconfig.lib.json"
     }
   ],
   "exclude": [

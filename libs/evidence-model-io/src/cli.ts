@@ -6,22 +6,25 @@ import { pathToFileURL } from 'node:url';
 
 import {
   DEFAULT_MODEL_BUNDLE_FILE,
+  RolePlayPackError,
+  buildFmCheckReport,
   buildRolePlayPack,
   compiledDocument,
   derivedSimulation,
   derivedTimeline,
   derivedTraceability,
-  RolePlayPackError,
-  MODEL_DIRECTORY,
-  buildFmCheckReport,
   isModelBundlePath,
   loadValidationSuite,
+  stringifyModelJson,
+} from '@evidence-poc/evidence-model-core';
+
+import {
+  MODEL_DIRECTORY,
   modelDigestOf,
   packModelDirectory,
   readModelBundle,
   readModelRoot,
   readModelRootBytes,
-  stringifyModelJson,
   unpackModelBundle,
   writeModelBundle,
 } from './index.js';

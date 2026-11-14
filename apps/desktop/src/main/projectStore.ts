@@ -4,13 +4,15 @@ import path from 'node:path';
 
 import {
   EMPTY_MODEL_ISSUE_CODE,
-  isModelBundleFile,
   isModelBundlePath,
+} from '@evidence-poc/evidence-model-core';
+import {
+  isModelBundleFile,
   readModelBundle,
   readModelDirectory,
   writeModelBundle,
   writeModelDirectory,
-} from '@evidence-poc/evidence-model-core';
+} from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type {

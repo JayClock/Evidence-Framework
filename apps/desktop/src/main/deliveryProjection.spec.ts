@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import {
-  readModelRoot,
-  serializeModelBundle,
-} from '@evidence-poc/evidence-model-core';
+import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
+import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { deliveryFilesOf, readDelivery } from './deliveryProjection';
 
 const modelRoot = path.resolve(
