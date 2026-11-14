@@ -41,6 +41,8 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
+  Toaster,
+  toast,
 } from '@evidence-poc/desktop-ui-kit';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import type {
@@ -434,6 +436,25 @@ const EditorWorkspace = ({
 
   const commands = useCommandRegistry(commandCapabilities, commandHandlers);
 
+  /*
+   * Export outcomes arrive here whichever entry point started them — the header,
+   * a chord or a palette row — so the report is bound to the controller's notice
+   * rather than to the control that was pressed. A cancelled save dialog resolves
+   * with no notice and therefore says nothing.
+   */
+  const { notice: exportNotice, dismissNotice } = reviewExport;
+  useEffect(() => {
+    if (exportNotice === null) return;
+
+    if (exportNotice.tone === 'saved') {
+      toast.success(exportNotice.message);
+    } else {
+      toast.error(exportNotice.message);
+    }
+
+    dismissNotice();
+  }, [exportNotice, dismissNotice]);
+
   const { accept: acceptPatch, revert: revertPatch } = patchReview;
 
   const shortcuts = useMemo(
@@ -549,26 +570,6 @@ const EditorWorkspace = ({
         {liveModel.error === null ? null : (
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>
         )}
-        {reviewExport.notice !== null ? (
-          <div
-            role="status"
-            className={[
-              'flex items-center justify-between gap-2 border-b px-4 py-1.5 text-[11px]',
-              reviewExport.notice.tone === 'saved'
-                ? 'border-evidence-line bg-evidence-surface text-evidence-muted'
-                : 'border-evidence-evidence bg-[#fdf3f1] text-evidence-evidence',
-            ].join(' ')}
-          >
-            <span className="truncate">{reviewExport.notice.message}</span>
-            <button
-              type="button"
-              onClick={reviewExport.dismissNotice}
-              className="shrink-0 rounded border border-evidence-line px-1.5 py-0.5 text-evidence-muted hover:text-evidence-ink"
-            >
-              知道了
-            </button>
-          </div>
-        ) : null}
 
         {/*
           The studio is one split view: outline, stage and workbench share the
@@ -756,6 +757,7 @@ const EditorWorkspace = ({
           targets={commandTargets}
           onFocusTarget={focusNode}
         />
+        <Toaster />
       </div>
     </LiveApiProvider>
   );

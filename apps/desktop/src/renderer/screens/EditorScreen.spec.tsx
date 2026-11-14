@@ -173,6 +173,38 @@ describe('EditorScreen', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
   });
 
+  it('reports a finished export as a toast, not as a strip under the header', async () => {
+    const api = installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document: createDesktopFixture(),
+        issues: [],
+      },
+      exportReviewResult: {
+        status: 'saved',
+        path: '/models/procurement/review.html',
+        counts: {
+          contracts: 1,
+          entities: 8,
+          rules: 2,
+          scenarios: 1,
+          capabilities: 0,
+        },
+      },
+    });
+
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await screen.findByText('桌面端夹具（Desktop Fixture）');
+
+    fireEvent.click(screen.getByRole('button', { name: '导出审查页' }));
+
+    expect(await screen.findByText(/已导出审查页/)).toBeInTheDocument();
+    expect(api.calls.exportReview).toEqual(['/models/procurement']);
+    // The result is transient: it must not occupy a row of the layout.
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
   it('opens the delivery hub from its chord', async () => {
     const api = installDesktopApi({
       openResult: {
