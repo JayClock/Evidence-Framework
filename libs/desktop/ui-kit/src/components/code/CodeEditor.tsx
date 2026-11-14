@@ -23,6 +23,13 @@ export interface CodeEditorProps {
   theme?: 'light' | 'dark';
   /** A 1-based line to select and scroll to; the token replays a request. */
   revealLine?: { line: number; token: number } | null;
+  /**
+   * Reports the 1-based line a reader pressed on.
+   *
+   * A contract rail is also a navigation surface: the line under the pointer
+   * names the object the rest of the workspace should show.
+   */
+  onLineActivate?: (line: number) => void;
   className?: string;
 }
 
@@ -110,13 +117,34 @@ export const CodeEditor = ({
   onChange,
   theme = 'light',
   revealLine = null,
+  onLineActivate,
   className,
 }: CodeEditorProps) => {
   const viewRef = useRef<EditorView | null>(null);
-  const extensions = useMemo(
-    () => [languageExtension(language), EditorView.lineWrapping],
-    [language],
-  );
+  const extensions = useMemo(() => {
+    const base = [languageExtension(language), EditorView.lineWrapping];
+
+    if (onLineActivate === undefined) return base;
+
+    return [
+      ...base,
+      EditorView.domEventHandlers({
+        mousedown(event, view) {
+          const position = view.posAtCoords({
+            x: event.clientX,
+            y: event.clientY,
+          });
+
+          // jsdom has no layout, and a click on the gutter has no position
+          // either; both simply report nothing.
+          if (position === null) return false;
+
+          onLineActivate(view.state.doc.lineAt(position).number);
+          return false;
+        },
+      }),
+    ];
+  }, [language, onLineActivate]);
   const themeExtension = theme === 'dark' ? darkTheme : lightTheme;
 
   const onCreateEditor = useCallback((view: EditorView) => {

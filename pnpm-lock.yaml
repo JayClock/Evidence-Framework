@@ -328,6 +328,9 @@ importers:
       react-resizable-panels:
         specifier: ^2.1.9
         version: 2.1.9(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.1
     devDependencies:
       '@electron-forge/cli':
         specifier: ^7.10.2
@@ -352,7 +355,7 @@ importers:
         version: link:../../libs/desktop/testing
       '@tailwindcss/vite':
         specifier: ^4.1.15
-        version: 4.3.5(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))
+        version: 4.3.5(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.1))
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.9.1
@@ -9889,12 +9892,12 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.5
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.5
 
-  '@tailwindcss/vite@4.3.5(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))':
+  '@tailwindcss/vite@4.3.5(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
       '@tailwindcss/node': 4.3.5
       '@tailwindcss/oxide': 4.3.5
       tailwindcss: 4.3.5
-      vite: 8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0)
+      vite: 8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.1)
 
   '@tanstack/react-table@8.21.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -14595,6 +14598,20 @@ snapshots:
       jiti: 2.4.2
       terser: 5.51.2
       yaml: 2.9.0
+
+  vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.1):
+    dependencies:
+      lightningcss: 1.33.0
+      picomatch: 4.0.7
+      postcss: 8.5.32
+      rolldown: 1.2.18
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 22.20.5
+      fsevents: 2.3.3
+      jiti: 2.4.2
+      terser: 5.51.2
+      yaml: 2.9.1
 
   vitest@4.1.12(@types/node@22.20.5)(@vitest/coverage-v8@4.1.12)(@vitest/ui@4.1.12)(jsdom@27.4.0(supports-color@8.1.1))(vite@8.3.7(@types/node@22.20.5)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0)):
     dependencies:

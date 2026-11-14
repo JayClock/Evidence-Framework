@@ -17,6 +17,18 @@ export const liveDeliveryPreview = (
     routes: [],
     limitations: [],
   },
+  openapi: {
+    openapi: '3.1.0',
+    info: {
+      title: '测试',
+      version: '1.0',
+      description: '由履约模型直接投影的契约。',
+    },
+    'x-evidence-model': 'test',
+    paths: {},
+    components: { schemas: {} },
+    'x-evidence-services': [],
+  },
   diff: {
     baseModelId: 'test',
     targetModelId: 'test',

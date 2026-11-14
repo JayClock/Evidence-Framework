@@ -155,6 +155,7 @@ export const livePreviewOf = (
     modelDigest: outcome.snapshot.digests.model,
     baseModelDigest: diff.baseModelDigest,
     preview: previewOf(outcome.snapshot),
+    openapi: outcome.snapshot.openapi,
     diff,
     changeLog: renderApiDiff(diff),
     apiSummary: outcome.summary,

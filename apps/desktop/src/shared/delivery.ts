@@ -1,6 +1,7 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type {
   ApiModelDiffResult,
+  DeliveryContract,
   DeliveryField,
 } from '@evidence-poc/evidence-api';
 import type {
@@ -32,6 +33,11 @@ export interface LiveDeliveryPreview {
   modelDigest: string;
   baseModelDigest: string;
   preview: DeliveryPreview;
+  /**
+   * The same document the export writes, so the contract rail reads the exact
+   * revision the diff beside it describes instead of re-projecting locally.
+   */
+  openapi: DeliveryContract;
   diff: ApiModelDiffResult;
   changeLog: string;
   apiSummary: ApiCoverageSummary;
