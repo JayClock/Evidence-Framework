@@ -262,9 +262,9 @@ export const AttributeDataGrid = ({
               type="button"
               onClick={onOpenStudio}
               className="shrink-0 rounded border border-evidence-line px-1.5 py-0.5 text-[9px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-              title="在台账工作台中编辑全部字段（Alt+L）"
+              title="在宽屏台账中编辑全部字段（Alt+L）"
             >
-              ⛶ 工作台
+              ⛶ 台账
             </button>
           )}
         </div>

@@ -10,7 +10,7 @@ import {
   readExpression,
   typeExpression,
 } from '../testing/codeEditor';
-import { KeyDataLedgerStudio } from './KeyDataLedgerStudio';
+import { KeyDataLedgerSheet } from './KeyDataLedgerSheet';
 
 /** The contract with one derived amount and one field whose provider is owed. */
 const createFixture = (): DomainModelDocument => {
@@ -64,7 +64,7 @@ const setup = (
   const session = createModelSession({ document: createFixture() });
   const onClose = vi.fn();
   const view = render(
-    <KeyDataLedgerStudio
+    <KeyDataLedgerSheet
       entity={session.getGraph().getEntity(entityId)!}
       graph={session.getGraph()}
       session={session}
@@ -76,7 +76,7 @@ const setup = (
   return { session, onClose, view };
 };
 
-describe('KeyDataLedgerStudio', () => {
+describe('KeyDataLedgerSheet', () => {
   it('lists every field and closes the ledger once nothing is owed', () => {
     setup();
 
@@ -152,6 +152,15 @@ describe('KeyDataLedgerStudio', () => {
     expect(
       session.getGraph().attribute('evidence.contract', 'signed_at')?.required,
     ).toBe(true);
+  });
+
+  it('slides in from the right instead of replacing the workspace', () => {
+    setup();
+
+    const sheet = document.querySelector('[data-slot="sheet-content"]');
+
+    expect(sheet).toHaveAttribute('data-side', 'right');
+    expect(sheet?.className).toContain('w-[55vw]');
   });
 
   it('closes on Escape', () => {

@@ -16,7 +16,7 @@ import {
 
 import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
-import { KeyDataLedgerStudio } from './inspector/KeyDataLedgerStudio';
+import { KeyDataLedgerSheet } from './inspector/KeyDataLedgerSheet';
 
 interface RightInspectorProps {
   graph: DomainGraph;
@@ -75,7 +75,7 @@ export const RightInspector = ({
   const [studioOpen, setStudioOpen] = useState(false);
 
   // Alt+L opens the wide ledger, but only while an object is being inspected:
-  // the studio has nothing to show without one.
+  // the sheet has nothing to show without one.
   useEffect(() => {
     if (entity === undefined) {
       return undefined;
@@ -99,9 +99,32 @@ export const RightInspector = ({
     return <InspectorShell>选择画布上的业务对象查看属性。</InspectorShell>;
   }
 
+  const attributeCount = entity.attributes?.length ?? 0;
+
   return (
     <>
-      <InspectorShell>
+      <InspectorShell
+        footer={
+          attributeCount === 0 ? null : (
+            <button
+              type="button"
+              onClick={() => setStudioOpen(true)}
+              className="flex w-full items-center justify-between gap-2 rounded border border-evidence-line bg-white px-2 py-1.5 text-left text-[11px] text-evidence-ink transition-colors hover:border-evidence-accent"
+              title="在宽屏台账中编辑全部字段与 CEL 规则（Alt+L）"
+            >
+              <span className="truncate">
+                展开数据台账与 CEL 规则
+                <span className="ml-1 text-[10px] text-evidence-muted">
+                  {attributeCount} 个字段
+                </span>
+              </span>
+              <span aria-hidden="true" className="shrink-0 text-evidence-accent">
+                →
+              </span>
+            </button>
+          )
+        }
+      >
         <InspectorBody
           key={entity.id}
           graph={graph}
@@ -112,7 +135,7 @@ export const RightInspector = ({
       </InspectorShell>
 
       {studioOpen ? (
-        <KeyDataLedgerStudio
+        <KeyDataLedgerSheet
           entity={entity}
           graph={graph}
           session={session}
@@ -124,7 +147,13 @@ export const RightInspector = ({
   );
 };
 
-const InspectorShell = ({ children }: { children: React.ReactNode }) => (
+const InspectorShell = ({
+  children,
+  footer,
+}: {
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}) => (
   <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
     <div className="border-b border-evidence-line px-3 py-2 text-[10px] tracking-wide text-evidence-muted uppercase">
       检视器
@@ -132,6 +161,11 @@ const InspectorShell = ({ children }: { children: React.ReactNode }) => (
     <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2 text-[11px]">
       {children}
     </div>
+    {footer === undefined ? null : (
+      <div className="shrink-0 border-t border-evidence-line px-3 py-2">
+        {footer}
+      </div>
+    )}
   </aside>
 );
 

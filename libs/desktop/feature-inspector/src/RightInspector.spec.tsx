@@ -196,17 +196,27 @@ describe('RightInspector', () => {
     expect(screen.getByText('基础信息')).toBeInTheDocument();
   });
 
-  it('opens the wide ledger studio from the attribute grid', () => {
+  it('opens the wide ledger sheet from the attribute grid', () => {
     setup('evidence.contract').renderInspector();
 
-    fireEvent.click(screen.getByText('⛶ 工作台'));
+    fireEvent.click(screen.getByText('⛶ 台账'));
 
     expect(
       screen.getByRole('dialog', { name: '关键数据台账工作台' }),
     ).toBeInTheDocument();
   });
 
-  it('opens the ledger studio with Alt+L', () => {
+  it('opens the ledger sheet from the inspector footer', () => {
+    setup('evidence.contract').renderInspector();
+
+    fireEvent.click(screen.getByText(/展开数据台账与 CEL 规则/));
+
+    expect(
+      screen.getByRole('dialog', { name: '关键数据台账工作台' }),
+    ).toBeInTheDocument();
+  });
+
+  it('opens the ledger sheet with Alt+L', () => {
     setup('evidence.contract').renderInspector();
 
     fireEvent.keyDown(window, { key: 'l', altKey: true, code: 'KeyL' });

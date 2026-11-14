@@ -7,9 +7,9 @@ export {
 } from './inspector/DerivedRuleSection.js';
 export { FulfillmentPairSection } from './inspector/FulfillmentPairSection.js';
 export {
-  KeyDataLedgerStudio,
-  type KeyDataLedgerStudioProps,
-} from './inspector/KeyDataLedgerStudio.js';
+  KeyDataLedgerSheet,
+  type KeyDataLedgerSheetProps,
+} from './inspector/KeyDataLedgerSheet.js';
 export { KeyDataProvenancePicker } from './inspector/KeyDataProvenancePicker.js';
 export { useCelCompletion } from './inspector/useCelCompletion.js';
 export {
