@@ -109,6 +109,39 @@ export default [
               sourceTag: 'layer:app',
               onlyDependOnLibsWithTags: ['*'],
             },
+
+            // Where the code runs. A universal library is the one contract
+            // both runtimes share, so it may not lean on either side; a
+            // browser library may reach a Node project only through the
+            // surface it explicitly publishes for the browser.
+            {
+              sourceTag: 'platform:universal',
+              onlyDependOnLibsWithTags: ['platform:universal'],
+            },
+            {
+              sourceTag: 'platform:node',
+              onlyDependOnLibsWithTags: [
+                'platform:node',
+                'platform:universal',
+                // The Electron shell renders a browser UI; the ring rules
+                // above still decide which browser library it may assemble.
+                'platform:browser',
+              ],
+            },
+            {
+              sourceTag: 'platform:browser',
+              onlyDependOnLibsWithTags: [
+                'platform:browser',
+                'platform:universal',
+                // A Node project that publishes a browser-safe entry.
+                'surface:browser-safe',
+              ],
+              bannedExternalImports: [
+                'electron',
+                '@modelcontextprotocol/sdk',
+                '@earendil-works/pi-coding-agent',
+              ],
+            },
           ],
         },
       ],
