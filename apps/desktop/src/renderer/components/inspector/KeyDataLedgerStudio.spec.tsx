@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import {
   blurEditor,
   readExpression,

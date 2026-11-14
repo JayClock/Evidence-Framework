@@ -295,6 +295,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.43.15
         version: 6.43.15
+      '@evidence-poc/desktop-feature-canvas':
+        specifier: workspace:*
+        version: link:../../libs/desktop/feature-canvas
       '@evidence-poc/desktop-testing':
         specifier: workspace:*
         version: link:../../libs/desktop/testing
@@ -389,6 +392,33 @@ importers:
       tailwindcss:
         specifier: ^4.1.16
         version: 4.3.5
+
+  libs/desktop/feature-canvas:
+    dependencies:
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../../evidence-agent
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../../evidence-api
+      '@evidence-poc/evidence-canvas-interaction':
+        specifier: workspace:*
+        version: link:../../evidence-canvas-interaction
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../evidence-schema
+      '@use-gesture/react':
+        specifier: ^10.3.1
+        version: 10.3.1(react@19.3.1)
+      react:
+        specifier: ^19.2.8
+        version: 19.3.1
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
 
   libs/desktop/testing:
     dependencies:

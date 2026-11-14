@@ -5,7 +5,7 @@ import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
 import { createLifecycleSwimlaneLayout } from '@evidence-poc/evidence-canvas-interaction';
 
 import { LifecycleBanner, laneTint } from './LifecycleBanner';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const layoutOf = () =>
   createLifecycleSwimlaneLayout(createDomainGraph(createDesktopFixture()));

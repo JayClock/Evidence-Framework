@@ -6,7 +6,7 @@ import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 import { RightWorkbench, type RightWorkbenchProps } from './RightWorkbench';
 import type { AgentSessionController } from '../state/useAgentSession';
 import type { PatchReviewController } from '../state/usePatchReview';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const agent = (): AgentSessionController => ({
   state: {

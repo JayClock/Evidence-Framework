@@ -13,7 +13,7 @@ import {
   type ModelSession,
 } from '@evidence-poc/evidence-model-core/browser';
 
-import type { DiagnosticIndex } from '../../state/diagnosticIndex';
+import type { DiagnosticIndex } from '@evidence-poc/desktop-feature-canvas';
 import {
   filterLedgerRows,
   projectDocumentToLedgerRows,

@@ -8,7 +8,7 @@ import {
 } from '@evidence-poc/evidence-canvas-interaction';
 
 import { CanvasStage } from './CanvasStage';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const setup = (
   overrides: Partial<React.ComponentProps<typeof CanvasStage>> = {},

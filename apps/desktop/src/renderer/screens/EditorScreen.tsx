@@ -24,8 +24,12 @@ import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { LeftSidebar } from '../components/LeftSidebar';
 import { RightWorkbench } from '../components/RightWorkbench';
 import { TopHeader } from '../components/TopHeader';
-import { CanvasViewport } from '../components/canvas/CanvasViewport';
-import type { CanvasViewMode } from '../components/canvas/CanvasStage';
+import {
+  CanvasViewport,
+  LiveApiProvider,
+  createDiagnosticIndex,
+  type CanvasViewMode,
+} from '@evidence-poc/desktop-feature-canvas';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -33,7 +37,6 @@ import {
 } from '@evidence-poc/desktop-ui-kit';
 import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import { useAgentSession } from '../state/useAgentSession';
-import { LiveApiProvider } from '../state/LiveApiContext';
 import { useDeliveryHub } from '../state/useDeliveryHub';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
@@ -41,7 +44,6 @@ import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
 import { usePatchReview } from '../state/usePatchReview';
 import { useReviewExport } from '../state/useReviewExport';
-import { createDiagnosticIndex } from '../state/diagnosticIndex';
 import { useSensorsState } from '../state/useSensorsState';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 

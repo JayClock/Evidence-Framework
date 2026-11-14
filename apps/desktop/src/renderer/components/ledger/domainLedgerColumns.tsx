@@ -8,7 +8,7 @@ import {
 } from '@evidence-poc/evidence-schema';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import { diagnosticColor } from '../../state/diagnosticIndex';
+import { diagnosticColor } from '@evidence-poc/desktop-feature-canvas';
 import type { LedgerRow } from './domainLedgerAdapter';
 
 export interface LedgerColumnOptions {

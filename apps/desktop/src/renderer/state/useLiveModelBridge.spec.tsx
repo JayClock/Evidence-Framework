@@ -5,7 +5,7 @@ import {
   UpdateEntityCommand,
 } from '@evidence-poc/evidence-model-core/browser';
 import { installDesktopApi } from '../test-support/desktopApi';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { useLiveModelBridge } from './useLiveModelBridge';
 
 it('publishes each document transition immediately, not selection changes, and keeps the baseline', async () => {

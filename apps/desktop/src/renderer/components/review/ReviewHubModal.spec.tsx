@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReviewHubModal } from './ReviewHubModal';
 import { installDesktopApi } from '../../test-support/desktopApi';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import type { PreviewReviewResult } from '../../../shared/review';
 
 const input = {

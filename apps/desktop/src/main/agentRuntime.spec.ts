@@ -16,7 +16,7 @@ import type {
 } from '@evidence-poc/evidence-agent';
 
 import { createAgentRuntime, type AgentRuntimeTransport } from './agentRuntime';
-import { createDesktopFixture } from '../renderer/test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const REPORT: SensorReport = {
   timestamp: '2026-11-11T09:00:00.000Z',

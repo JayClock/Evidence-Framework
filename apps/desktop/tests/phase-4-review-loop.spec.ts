@@ -19,7 +19,7 @@ import {
   installDesktopApi,
   projectSummary,
 } from '../src/renderer/test-support/desktopApi';
-import { createDesktopFixture } from '../src/renderer/test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 describe('phase 4 review-authoring loop', () => {
   it('opens with Alt+R, prepares a repair prompt, applies a reviewable patch, and exports only saved snapshots', async () => {

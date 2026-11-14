@@ -11,7 +11,7 @@ import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { usePatchReview, type PatchReviewController } from './usePatchReview';
 import { installDesktopApi } from '../test-support/desktopApi';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const participant = (id: string, label: string): EntityAST => ({
   type: 'entity',

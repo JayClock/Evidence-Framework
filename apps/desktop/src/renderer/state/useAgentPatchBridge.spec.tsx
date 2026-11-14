@@ -6,7 +6,7 @@ import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { useAgentPatchBridge, type AppliedPatch } from './useAgentPatchBridge';
 import { installDesktopApi } from '../test-support/desktopApi';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const BridgeHarness = ({
   session,

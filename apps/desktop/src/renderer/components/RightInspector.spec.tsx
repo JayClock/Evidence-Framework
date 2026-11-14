@@ -5,7 +5,7 @@ import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 
 import { RightInspector } from './RightInspector';
 import { blurEditor, typeExpression } from '../test-support/codeEditor';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const setup = (nodeId: string | null) => {
   const session = createModelSession({ document: createDesktopFixture() });

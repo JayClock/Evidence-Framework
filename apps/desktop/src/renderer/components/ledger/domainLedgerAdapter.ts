@@ -11,8 +11,10 @@ import {
 } from '@evidence-poc/evidence-schema';
 import type { SensorSeverity } from '@evidence-poc/evidence-agent/browser';
 
-import type { DiagnosticIndex } from '../../state/diagnosticIndex';
-import { entityKindLabel } from '../canvas/colors';
+import {
+  entityKindLabel,
+  type DiagnosticIndex,
+} from '@evidence-poc/desktop-feature-canvas';
 
 export type LedgerRowKind = 'context' | 'entity' | 'attribute';
 

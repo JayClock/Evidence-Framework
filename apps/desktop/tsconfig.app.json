@@ -46,6 +46,9 @@
       "path": "../../libs/desktop/ui-kit/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/desktop/feature-canvas/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/desktop/testing/tsconfig.lib.json"
     }
   ]

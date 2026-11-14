@@ -27,7 +27,7 @@ import {
   type ModelOverlay,
   type CanvasViewMode,
 } from './CanvasStage';
-import type { DiagnosticIndex } from '../../state/diagnosticIndex';
+import type { DiagnosticIndex } from './diagnosticIndex';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import { ScopeFilterControl } from './ScopeFilterControl';
 import { BusinessLegend } from './BusinessLegend';

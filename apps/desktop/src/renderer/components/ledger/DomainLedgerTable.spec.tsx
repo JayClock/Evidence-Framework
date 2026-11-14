@@ -6,8 +6,8 @@ import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 import type {
   DiagnosticIndex,
   DiagnosticStatus,
-} from '../../state/diagnosticIndex';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+} from '@evidence-poc/desktop-feature-canvas';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { DomainLedgerTable } from './DomainLedgerTable';
 
 // jsdom reports every element as zero-sized, and the virtual list only renders

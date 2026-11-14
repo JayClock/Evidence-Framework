@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { expect, it } from 'vitest';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { ApiFieldBadge } from './ApiFieldBadge';
 
 it('refreshes input, derived and service-time labels using the same classifier as the contract', () => {

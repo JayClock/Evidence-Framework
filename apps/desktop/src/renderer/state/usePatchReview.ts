@@ -7,7 +7,7 @@ import {
 } from '@evidence-poc/evidence-model-core/browser';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-import type { ModelOverlay, OverlayChange } from '../components/canvas/CanvasStage';
+import type { ModelOverlay, OverlayChange } from '@evidence-poc/desktop-feature-canvas';
 import type { AppliedPatch } from './useAgentPatchBridge';
 
 /** What one applied agent patch changed, kept until the modeler decides. */

@@ -1,0 +1,36 @@
+{
+  "name": "@evidence-poc/desktop-feature-canvas",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "desktop-feature-canvas",
+    "tags": [
+      "type:lib",
+      "scope:desktop",
+      "platform:browser"
+    ]
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-agent": "workspace:*",
+    "@evidence-poc/evidence-api": "workspace:*",
+    "@evidence-poc/evidence-canvas-interaction": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "@use-gesture/react": "^10.3.1",
+    "react": "^19.2.8",
+    "tslib": "^2.3.0"
+  }
+}

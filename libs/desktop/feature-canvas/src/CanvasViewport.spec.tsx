@@ -7,7 +7,7 @@ import {
   createGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { CanvasViewport } from './CanvasViewport';
 
 const document = createDesktopFixture();

@@ -9,7 +9,7 @@ import type {
   LiveDeliveryResult,
 } from '../../shared/delivery';
 import { installDesktopApi } from '../test-support/desktopApi';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { liveDeliveryPreview } from '../test-support/liveDelivery';
 import { useDeliveryHub } from './useDeliveryHub';
 

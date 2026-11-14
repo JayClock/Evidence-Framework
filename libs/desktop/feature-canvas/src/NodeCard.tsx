@@ -1,4 +1,4 @@
-import { useLiveApi } from '../../state/LiveApiContext';
+import { useLiveApi } from './LiveApiContext';
 import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   type EntityAST,

@@ -6,7 +6,7 @@ import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   diagnosticColor,
   type DiagnosticIndex,
-} from '../../state/diagnosticIndex';
+} from './diagnosticIndex';
 import { pointOnRoute } from './edgeLabels';
 
 /** Sibling controls avoid nested buttons and leave selection/patch rings intact. */

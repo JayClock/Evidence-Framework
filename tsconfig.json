@@ -28,6 +28,9 @@
       "path": "./libs/desktop/ui-kit"
     },
     {
+      "path": "./libs/desktop/feature-canvas"
+    },
+    {
       "path": "./libs/desktop/testing"
     }
   ]

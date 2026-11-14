@@ -5,9 +5,11 @@ import {
   toSerializableLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core/browser';
-import { createDesktopFixture } from '../../test-support/modelFixture';
-import { LiveApiProvider } from '../../state/LiveApiContext';
-import { liveDeliveryPreview } from '../../test-support/liveDelivery';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
+import {
+  LiveApiProvider,
+  type LiveRouteBinding,
+} from './LiveApiContext';
 import { NodeCard } from './NodeCard';
 import { summarizeCards } from './cardSummary';
 
@@ -130,7 +132,7 @@ describe('NodeCard modes', () => {
       onHover: vi.fn(),
       onSelect: vi.fn(),
     };
-    const analysis = liveDeliveryPreview();
+    const analysis = { bindings: [] as LiveRouteBinding[] };
     analysis.bindings = [
       {
         id: 'route.request',
@@ -156,7 +158,7 @@ describe('NodeCard modes', () => {
     expect(screen.getByText('API 待刷新')).toBeInTheDocument();
     expect(screen.queryByText('内部 · POST /test/request')).toBeNull();
     rerender(
-      <LiveApiProvider analysis={liveDeliveryPreview()} stale={false}>
+      <LiveApiProvider analysis={{ bindings: [] }} stale={false}>
         <NodeCard {...props} />
       </LiveApiProvider>,
     );

@@ -14,7 +14,7 @@ import { DiagnosticMarkers } from './DiagnosticMarkers';
 import {
   diagnosticColor,
   type DiagnosticIndex,
-} from '../../state/diagnosticIndex';
+} from './diagnosticIndex';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import { CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';

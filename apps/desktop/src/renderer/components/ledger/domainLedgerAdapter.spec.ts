@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-import type { DiagnosticIndex } from '../../state/diagnosticIndex';
-import { createDesktopFixture } from '../../test-support/modelFixture';
+import type { DiagnosticIndex } from '@evidence-poc/desktop-feature-canvas';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import {
   filterLedgerRows,
   projectDocumentToLedgerRows,

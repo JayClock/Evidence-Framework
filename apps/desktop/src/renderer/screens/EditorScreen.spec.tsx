@@ -13,7 +13,7 @@ import {
   installDesktopApi,
   projectSummary,
 } from '../test-support/desktopApi';
-import { createDesktopFixture } from '../test-support/modelFixture';
+import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const readyProject = () =>
   installDesktopApi({
