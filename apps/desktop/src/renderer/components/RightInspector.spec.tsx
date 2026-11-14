@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { createModelSession } from '@evidence-poc/evidence-model-core/browser';
 
 import { RightInspector } from './RightInspector';
+import { blurEditor, typeExpression } from '../test-support/codeEditor';
 import { createDesktopFixture } from '../test-support/modelFixture';
 
 const setup = (nodeId: string | null) => {
@@ -131,10 +132,9 @@ describe('RightInspector', () => {
       />,
     );
 
-    const editor = screen.getByLabelText('total_amount CEL 表达式');
-
-    fireEvent.change(editor, { target: { value: 'contract.quantity * 120' } });
-    fireEvent.blur(editor);
+    fireEvent.click(screen.getByLabelText('total_amount 展开'));
+    typeExpression('total_amount CEL 表达式', 'contract.quantity * 120');
+    blurEditor('total_amount CEL 表达式');
 
     const rule = session.getGraph().getRule('rule.contract-total');
 
@@ -149,14 +149,14 @@ describe('RightInspector', () => {
     const { session, renderInspector } = setup('evidence.contract');
     renderInspector();
 
+    fireEvent.click(screen.getByLabelText('signed_at 展开'));
+
     const row = screen.getByText(/未声明派生规则/).closest('div')!;
 
     fireEvent.click(within(row).getByText('绑定派生规则'));
 
-    const expression = screen.getByLabelText('派生规则表达式');
-
-    fireEvent.change(expression, { target: { value: 'self.signed_at' } });
-    fireEvent.blur(expression);
+    typeExpression('派生规则表达式', 'self.signed_at');
+    blurEditor('派生规则表达式');
     fireEvent.click(screen.getByText('保存'));
 
     const attribute = session

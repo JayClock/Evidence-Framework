@@ -13,7 +13,7 @@ import {
   type ModelSession,
 } from '@evidence-poc/evidence-model-core/browser';
 
-import { InlineCelEditor } from './InlineCelEditor';
+import { CelCodeMirrorEditor } from './cel/CelCodeMirrorEditor';
 import { useCelCompletion } from './useCelCompletion';
 
 interface FulfillmentPairSectionProps {
@@ -122,11 +122,13 @@ export const FulfillmentPairSection = ({
               onCancel={() => setPairing(false)}
               onPair={(confirmationId) => {
                 setError(
-                  dispatchOrReportError(session, () =>
-                    new PairFulfillmentCommand({
-                      requestRef: entity.id,
-                      confirmationRef: confirmationId,
-                    }),
+                  dispatchOrReportError(
+                    session,
+                    () =>
+                      new PairFulfillmentCommand({
+                        requestRef: entity.id,
+                        confirmationRef: confirmationId,
+                      }),
                   ),
                 );
                 setPairing(false);
@@ -161,11 +163,13 @@ export const FulfillmentPairSection = ({
                   onCancel={() => setBreaching(false)}
                   onBind={(rule) => {
                     setError(
-                      dispatchOrReportError(session, () =>
-                        new BindBreachRuleCommand({
-                          requestRef: entity.id,
-                          rule,
-                        }),
+                      dispatchOrReportError(
+                        session,
+                        () =>
+                          new BindBreachRuleCommand({
+                            requestRef: entity.id,
+                            rule,
+                          }),
                       ),
                     );
                     setBreaching(false);
@@ -254,7 +258,7 @@ const CompletionRuleEditor = ({
       <p className="text-[9px] leading-snug text-[#6b7280]">
         {rule.description}
       </p>
-      <InlineCelEditor
+      <CelCodeMirrorEditor
         value={rule.expression}
         candidates={candidates}
         ariaLabel={`${rule.id} CEL 表达式`}
@@ -361,7 +365,7 @@ const BreachForm = ({
         onChange={(event) => setDescription(event.target.value)}
         className="w-full rounded border border-evidence-line bg-white px-1.5 py-0.5 text-[9px]"
       />
-      <InlineCelEditor
+      <CelCodeMirrorEditor
         value={expression}
         candidates={candidates}
         ariaLabel="违约规则表达式"

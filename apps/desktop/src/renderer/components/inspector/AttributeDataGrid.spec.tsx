@@ -9,7 +9,12 @@ import {
 } from '@evidence-poc/evidence-model-core/browser';
 
 import { createDesktopFixture } from '../../test-support/modelFixture';
-import { AttributeTableEditor } from './AttributeTableEditor';
+import {
+  blurEditor,
+  readExpression,
+  typeExpression,
+} from '../../test-support/codeEditor';
+import { AttributeDataGrid } from './AttributeDataGrid';
 
 /**
  * The shared fixture plus the two fields this file is about: a contract
@@ -77,7 +82,7 @@ const Harness = ({
   );
 
   return (
-    <AttributeTableEditor
+    <AttributeDataGrid
       entity={session.getGraph().getEntity(entityId)!}
       graph={session.getGraph()}
       session={session}
@@ -95,7 +100,11 @@ const setup = (entityId: string) => {
 const provenanceFor = (attribute: string): HTMLElement =>
   document.querySelector(`[data-provenance-for="${attribute}"]`) as HTMLElement;
 
-describe('AttributeTableEditor', () => {
+const expand = (attribute: string): void => {
+  fireEvent.click(screen.getByLabelText(`${attribute} 展开`));
+};
+
+describe('AttributeDataGrid', () => {
   it('adds and removes an attribute through commands', () => {
     const { session } = setup('evidence.contract');
 
@@ -140,18 +149,7 @@ describe('AttributeTableEditor', () => {
     ).toBe('签署时间');
   });
 
-  it('shows the resolved provider for a contract term', () => {
-    setup('evidence.contract');
-
-    const picker = provenanceFor('signed_at');
-
-    expect(
-      within(picker).getByText('合同参数（Contract Term）'),
-    ).toBeInTheDocument();
-    expect(within(picker).queryByText(/仍待决策/)).not.toBeInTheDocument();
-  });
-
-  it('summarises the ledger and keeps the count honest', () => {
+  it('keeps the ledger summary honest without expanding a row', () => {
     const { session } = setup('evidence.request');
 
     expect(
@@ -170,8 +168,26 @@ describe('AttributeTableEditor', () => {
     ).toContain('关键数据 2 项 · 待决 1 项');
   });
 
+  it('opens the provider decision underneath the row it belongs to', () => {
+    setup('evidence.contract');
+
+    expect(document.querySelector('[data-provenance-for]')).toBeNull();
+
+    expand('signed_at');
+
+    expect(
+      within(provenanceFor('signed_at')).getByText('合同参数（Contract Term）'),
+    ).toBeInTheDocument();
+    expect(
+      within(provenanceFor('signed_at')).queryByText(/仍待决策/),
+    ).not.toBeInTheDocument();
+  });
+
   it('offers to bind a derivation rule when the decision is still owed', () => {
     const { session } = setup('evidence.request');
+
+    expand('penalty_amount');
+
     const picker = provenanceFor('penalty_amount');
 
     expect(within(picker).getByText(/仍待决策/)).toBeInTheDocument();
@@ -182,10 +198,8 @@ describe('AttributeTableEditor', () => {
       'rule.evidence.request.penalty-amount',
     );
 
-    const expression = screen.getByLabelText('派生规则表达式');
-
-    fireEvent.change(expression, { target: { value: 'contract.quantity' } });
-    fireEvent.blur(expression);
+    typeExpression('派生规则表达式', 'contract.quantity');
+    blurEditor('派生规则表达式');
     fireEvent.click(screen.getByText('保存'));
 
     const attribute = session
@@ -200,11 +214,47 @@ describe('AttributeTableEditor', () => {
     ).toBeInTheDocument();
   });
 
+  it('edits a bound rule in the code editor and undoes it', () => {
+    const { session } = setup('evidence.request');
+
+    expand('penalty_amount');
+    fireEvent.click(
+      within(provenanceFor('penalty_amount')).getByText('绑定派生规则'),
+    );
+
+    typeExpression('派生规则表达式', 'contract.quantity');
+    blurEditor('派生规则表达式');
+    fireEvent.click(screen.getByText('保存'));
+
+    typeExpression('penalty_amount CEL 表达式', 'contract.quantity * 2');
+    blurEditor('penalty_amount CEL 表达式');
+
+    const attribute = session
+      .getGraph()
+      .attribute('evidence.request', 'penalty_amount');
+    const rule = session.getGraph().getRule(attribute!.derivedByRuleRef!);
+
+    expect(rule?.expression).toBe('contract.quantity * 2');
+    expect(readExpression('penalty_amount CEL 表达式')).toBe(
+      'contract.quantity * 2',
+    );
+
+    act(() => {
+      session.undo();
+    });
+
+    expect(
+      session.getGraph().getRule(attribute!.derivedByRuleRef!)?.expression,
+    ).toBe('contract.quantity');
+  });
+
   it('lets a key data claim be withdrawn with one undo step', () => {
     const { session } = setup('evidence.request');
-    const picker = provenanceFor('penalty_amount');
 
-    fireEvent.click(within(picker).getByText('并非关键数据'));
+    expand('penalty_amount');
+    fireEvent.click(
+      within(provenanceFor('penalty_amount')).getByText('并非关键数据'),
+    );
 
     expect(
       session.getGraph().attribute('evidence.request', 'penalty_amount')

@@ -14,7 +14,7 @@ import {
   type ModelSession,
 } from '@evidence-poc/evidence-model-core/browser';
 
-import { AttributeTableEditor } from './inspector/AttributeTableEditor';
+import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
 
 interface RightInspectorProps {
@@ -283,12 +283,12 @@ const PropertyRow = ({
       );
     case 'attribute-table':
       return (
-        <AttributeTableEditor entity={entity} graph={graph} session={session} />
+        <AttributeDataGrid entity={entity} graph={graph} session={session} />
       );
     case 'cel-editor':
       return (
         <span className="text-[10px] text-evidence-muted">
-          在属性表中编辑。
+          在属性台账中编辑。
         </span>
       );
     default:
