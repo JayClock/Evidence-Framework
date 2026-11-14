@@ -32,7 +32,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify module boundaries
+        # The only check that notices a deleted constraint: it writes the imports
+        # the rules must refuse and fails if a project's lint accepts one.
+        run: pnpm boundaries:drill
+
+      - name: Lint affected projects
+        if: github.event_name == 'pull_request'
+        run: pnpm nx affected --target=lint --base=${{ github.event.pull_request.base.sha }} --head=${{ github.event.pull_request.head.sha }}
+
       - name: Lint workspace
+        if: github.event_name == 'push'
         run: pnpm nx run-many --target=lint --all
 
       - name: Typecheck workspace
