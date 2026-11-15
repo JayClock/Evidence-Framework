@@ -86,12 +86,10 @@ describe('incremental flow story projection', () => {
   });
 
   it('retains a generated gap question and drops unsolicited suspense for complete steps', async () => {
-    const generate = vi
-      .fn()
-      .mockResolvedValue({
-        ...sceneDraft(),
-        pendingSuspense: '请问金额由哪份合同提供？',
-      });
+    const generate = vi.fn().mockResolvedValue({
+      ...sceneDraft(),
+      pendingSuspense: '请问金额由哪份合同提供？',
+    });
     const projector = createFlowStoryProjector({ agent: { generate } });
     const step = stepFixture({ gaps: ['missing_source'] });
     expect(
