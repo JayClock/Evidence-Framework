@@ -49,6 +49,19 @@ it('compares directories and bundles as JSON or Markdown without touching inputs
   }
 });
 
+it('returns a tool failure distinct from a breaking change', async () => {
+  vi.stubEnv('EVIDENCE_OASDIFF_BIN', '/missing/oasdiff');
+  try {
+    const root = `${API_FIXTURES}full-lifecycle/fm`;
+    const result = await runCli(['diff', '--base', root, '--target', root]);
+    expect(result.exitCode).toBe(2);
+    expect(result.error).toContain('oasdiff failed');
+    expect(result.output).toBeNull();
+  } finally {
+    vi.unstubAllEnvs();
+  }
+});
+
 it.each([
   ['diff'],
   ['diff', '--base', 'relative', '--target', '/absolute'],

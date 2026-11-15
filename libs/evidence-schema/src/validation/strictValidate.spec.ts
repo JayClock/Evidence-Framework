@@ -33,6 +33,47 @@ const expectIssue = (document: unknown, code: string) => {
 
 const baseDocument = () => cloneDocument(loadFixtureModel());
 
+describe('inline examples', () => {
+  it('accepts JSON facts without mutating them', () => {
+    const document = baseDocument();
+    document.entities[0]!.examples = [
+      {
+        label: 'sample',
+        description: 'Example',
+        value: { nested: [true, null, { number: 1 }] },
+      },
+    ];
+    const original = structuredClone(document);
+    expect(validate(document).valid).toBe(true);
+    expect(document).toEqual(original);
+  });
+  it.each([
+    null,
+    {},
+    [null],
+    [{ label: '', value: {} }],
+    [
+      { label: 'x', value: {} },
+      { label: 'x', value: {} },
+    ],
+    [{ label: 'x', value: [], unexpected: true }],
+    [{ label: 'x', value: { amount: Infinity } }],
+    [{ label: 'x', value: { date: new Date() } }],
+    [{ label: 'x', description: 42, value: {} }],
+  ])('rejects malformed examples: %j', (examples) => {
+    const document = baseDocument();
+    Object.assign(document.entities[0]!, { examples });
+    expectIssue(document, 'entity.shape');
+  });
+  it('rejects cyclic values', () => {
+    const value: Record<string, unknown> = {};
+    value['self'] = value;
+    const document = baseDocument();
+    document.entities[0]!.examples = [{ label: 'cycle', value }];
+    expectIssue(document, 'entity.shape');
+  });
+});
+
 const withDerivation = (): DomainModelDocument => {
   const document = baseDocument();
   const request = requireEvidence(document, 'request.payment');
@@ -182,9 +223,12 @@ describe('identifier checks', () => {
   it('rejects unsupported entity fields', () => {
     const document = baseDocument();
 
-    (requireEvidence(document, 'request.payment') as unknown as Record<string, unknown>)[
-      'owner'
-    ] = 'buyer';
+    (
+      requireEvidence(document, 'request.payment') as unknown as Record<
+        string,
+        unknown
+      >
+    )['owner'] = 'buyer';
 
     expectIssue(document, 'entity.unknownField');
   });
@@ -277,16 +321,23 @@ describe('attribute checks', () => {
 
   it('rejects a derivation rule that targets another attribute', () => {
     const document = withDerivation();
-    const rule = document.rules.find((item) => item.id === 'rule.payment-total')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.payment-total',
+    )!;
 
-    rule.target = { entityRef: 'request.payment', attribute: 'requested_minor_units' };
+    rule.target = {
+      entityRef: 'request.payment',
+      attribute: 'requested_minor_units',
+    };
 
     expectIssue(document, 'rule.derivation.mismatch');
   });
 
   it('rejects a derivation rule owned by another context', () => {
     const document = withDerivation();
-    const rule = document.rules.find((item) => item.id === 'rule.payment-total')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.payment-total',
+    )!;
 
     rule.contextRef = 'context.wechat-payment';
 
@@ -338,10 +389,12 @@ describe('context checks', () => {
   it('forbids contextRef on a Context', () => {
     const document = baseDocument();
 
-    (requireContext(document, 'context.product-catalog') as unknown as Record<
-      string,
-      unknown
-    >)['contextRef'] = 'context.product-procurement';
+    (
+      requireContext(document, 'context.product-catalog') as unknown as Record<
+        string,
+        unknown
+      >
+    )['contextRef'] = 'context.product-procurement';
 
     expectIssue(document, 'entity.contextRef.forbidden');
   });
@@ -639,14 +692,18 @@ describe('relationship checks', () => {
     const result = validate(document);
 
     expect(result.valid).toBe(false);
-    expect(codes(result.issues)).toContain('relationship.references.crossContext');
+    expect(codes(result.issues)).toContain(
+      'relationship.references.crossContext',
+    );
   });
 });
 
 describe('rule checks', () => {
   it('requires decision rules to return bool', () => {
     const document = baseDocument();
-    const rule = document.rules.find((item) => item.id === 'rule.delivery-completed')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.delivery-completed',
+    )!;
 
     (rule as unknown as Record<string, unknown>)['resultType'] = 'string';
 
@@ -655,9 +712,14 @@ describe('rule checks', () => {
 
   it('forbids targets on non-derivation rules', () => {
     const document = baseDocument();
-    const rule = document.rules.find((item) => item.id === 'rule.delivery-completed')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.delivery-completed',
+    )!;
 
-    rule.target = { entityRef: 'request.delivery', attribute: 'request_number' };
+    rule.target = {
+      entityRef: 'request.delivery',
+      attribute: 'request_number',
+    };
 
     expectIssue(document, 'rule.target.forbidden');
   });
@@ -682,16 +744,23 @@ describe('rule checks', () => {
 
   it('requires derivation targets to exist', () => {
     const document = withDerivation();
-    const rule = document.rules.find((item) => item.id === 'rule.payment-total')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.payment-total',
+    )!;
 
-    rule.target = { entityRef: 'request.payment', attribute: 'missing_attribute' };
+    rule.target = {
+      entityRef: 'request.payment',
+      attribute: 'missing_attribute',
+    };
 
     expectIssue(document, 'rule.target.unresolved');
   });
 
   it('rejects bindings to unknown ids', () => {
     const document = baseDocument();
-    const rule = document.rules.find((item) => item.id === 'rule.delivery-completed')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.delivery-completed',
+    )!;
 
     rule.bindings['request'] = { ref: 'request.ghost' };
 
@@ -700,7 +769,9 @@ describe('rule checks', () => {
 
   it('requires rule contextRef to reference a Context', () => {
     const document = baseDocument();
-    const rule = document.rules.find((item) => item.id === 'rule.delivery-completed')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.delivery-completed',
+    )!;
 
     rule.contextRef = 'context.ghost';
 
@@ -709,7 +780,9 @@ describe('rule checks', () => {
 
   it('rejects malformed bindings', () => {
     const document = baseDocument();
-    const rule = document.rules.find((item) => item.id === 'rule.delivery-completed')!;
+    const rule = document.rules.find(
+      (item) => item.id === 'rule.delivery-completed',
+    )!;
 
     (rule as unknown as Record<string, Record<string, unknown>>)['bindings'][
       'request'

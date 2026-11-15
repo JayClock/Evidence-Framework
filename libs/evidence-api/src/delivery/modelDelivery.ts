@@ -1,3 +1,5 @@
+import { compileSchema } from '../schemas/jsonSchema.js';
+import { errorDiagnostic, type Diagnostic } from '../diagnostics.js';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
@@ -81,7 +83,7 @@ const examplesFor = (
         value:
           direction === 'request'
             ? requestExampleValue(route, example.value)
-            : example.value,
+            : { ...example.value, _links: {} },
       },
     ]),
   );
@@ -96,7 +98,7 @@ const examplesForSchemas = (routes: readonly DeliveryRoute[]): JsonObject =>
           ...(example.description === undefined
             ? {}
             : { description: example.description }),
-          value: example.value,
+          value: { ...example.value, _links: {} },
         },
       ]),
     ),
@@ -176,7 +178,12 @@ const objectSchemas = (
       ...(required.length === 0 ? {} : { required }),
       ...(route.examples.length === 0
         ? {}
-        : { examples: route.examples.map((example) => example.value) }),
+        : {
+            examples: route.examples.map((example) => ({
+              ...example.value,
+              _links: {},
+            })),
+          }),
       additionalProperties: false,
     };
   }
@@ -275,10 +282,9 @@ const operationOf = (
           ? {
               content: {
                 'application/hal+json': {
-                  examples:
-                    route.examples.length === 0
-                      ? undefined
-                      : examplesFor(route, 'response'),
+                  ...(route.examples.length === 0
+                    ? {}
+                    : { examples: examplesFor(route, 'response') }),
                   'x-evidence-link-templates': halLinksFor(links, route.id),
                   schema: {
                     $ref: `#/components/schemas/${componentOf(response.entityRef)}`,
@@ -355,6 +361,31 @@ export const buildDeliveryContract = (
       basePath: `/${service.lane}`,
     })),
   };
+};
+
+/** Example facts must satisfy the same payload contract as a real response. */
+export const validateDeliveryExamples = (
+  contract: DeliveryContract,
+  routes: readonly DeliveryRoute[],
+): Diagnostic[] => {
+  const diagnostics: Diagnostic[] = [];
+  for (const route of routes) {
+    if (route.examples.length === 0) continue;
+    const schema = compileSchema(
+      contract.components.schemas[componentName(route.entityRef)],
+    );
+    for (const example of route.examples) {
+      if (!schema.validate({ ...example.value, _links: {} }))
+        diagnostics.push(
+          errorDiagnostic(
+            'API_EXAMPLE_INVALID',
+            `${example.label}: ${JSON.stringify(schema.errors())}`,
+            route.entityRef,
+          ),
+        );
+    }
+  }
+  return diagnostics;
 };
 
 /** The deployment sketch: one container per Context, gateway in front. */

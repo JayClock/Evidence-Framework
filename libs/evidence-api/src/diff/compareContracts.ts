@@ -1,3 +1,4 @@
+import { assertOpenApiContract } from '../openapi/validateContract.js';
 import type { EvidenceApiSnapshot } from '../types.js';
 import { hasErrors } from '../diagnostics.js';
 import { OasdiffRunner, type OasdiffComparison } from './oasdiffRunner.js';
@@ -20,6 +21,8 @@ export const compareContracts = async (
     throw new Error(
       diagnostics.map((item) => `${item.code}: ${item.message}`).join('\n'),
     );
+  await assertOpenApiContract(base.openapi);
+  await assertOpenApiContract(target.openapi);
   return {
     ...(await runner.compare({ ...base.openapi }, { ...target.openapi })),
     baseModelDigest: base.digests.model,

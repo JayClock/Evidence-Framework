@@ -14,6 +14,7 @@ import {
 } from './loader/apiLoader.js';
 import { buildProjection, isComplete } from './projector.js';
 import { compareContracts } from './diff/compareContracts.js';
+import { assertOpenApiContract } from './openapi/validateContract.js';
 import { OasdiffError } from './diff/oasdiffRunner.js';
 import {
   defaultOutputDirectory,
@@ -337,6 +338,7 @@ export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
 
   const out = options.out ?? defaultOutputDirectory(options.projectRoot);
   try {
+    await assertOpenApiContract(built.projection.openapi);
     mkdirSync(path.dirname(out), { recursive: true });
     const outputs = renderOutputs(built.projection);
     writeOutput(out, outputs);

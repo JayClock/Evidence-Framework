@@ -13,6 +13,7 @@ import {
   buildModelDelivery,
   buildDeliveryContract,
   buildDeliveryDeployment,
+  validateDeliveryExamples,
 } from './delivery/modelDelivery.js';
 import {
   errorDiagnostic,
@@ -160,6 +161,8 @@ export const buildProjection = ({
       nextPossibleSteps: [...(step.nextPossibleSteps ?? [])],
     });
   }
+  const openapi = buildDeliveryContract(model, routes, baseline.services);
+  diagnostics.push(...validateDeliveryExamples(openapi, routes));
   const sorted = normalizeDiagnostics(diagnostics);
   const projection: EvidenceApiSnapshot = {
     ...baseline,
@@ -170,7 +173,7 @@ export const buildProjection = ({
     hypermedia,
     journeys:
       declared.length === 0 ? deriveJourneys(routes, hypermedia) : journeys,
-    openapi: buildDeliveryContract(model, routes, baseline.services),
+    openapi,
     deployment: buildDeliveryDeployment(
       model,
       routes,

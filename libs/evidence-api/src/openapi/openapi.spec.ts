@@ -93,7 +93,9 @@ describe('OpenAPI consumer contract', () => {
   it('projects entity examples into request, response and component examples', async () => {
     const document = structuredClone(stages[3]!);
     const baseline = buildDelivery(document);
-    const route = baseline.routes.find((item) => item.method === 'POST')!;
+    const route = baseline.routes.find(
+      (item) => item.id === 'route.confirm.confirmation.payment',
+    )!;
     const entity = document.entities.find(
       (item) => item.id === route.entityRef,
     )!;
@@ -101,12 +103,18 @@ describe('OpenAPI consumer contract', () => {
       {
         label: 'standard',
         description: 'A complete business moment.',
-        value: {
-          ...Object.fromEntries(
-            route.outputFields.map((field) => [field.name, null]),
-          ),
-          _links: {},
-        },
+        value: Object.fromEntries(
+          route.outputFields.map((field) => [
+            field.name,
+            field.valueType === 'timestamp'
+              ? '2026-01-01T00:00:00Z'
+              : ['money', 'decimal', 'int', 'uint', 'double'].includes(
+                    field.valueType,
+                  )
+                ? 42
+                : 'sample',
+          ]),
+        ),
       },
     ];
 
@@ -118,11 +126,15 @@ describe('OpenAPI consumer contract', () => {
       operation.responses['201']!.content!['application/hal+json']!.examples!;
     const componentExamples = snapshot.openapi.components.examples;
 
+    expect(snapshot.diagnostics).toEqual([]);
     expect(Object.values(requestExamples)).toHaveLength(1);
     expect(Object.values(requestExamples)[0]).toMatchObject({
       summary: 'standard',
       value: Object.fromEntries(
-        route.fields.map((field) => [field.name, null]),
+        route.fields.map((field) => [
+          field.name,
+          entity.examples![0]!.value[field.name],
+        ]),
       ),
     });
     expect(Object.values(responseExamples)[0]).toMatchObject({
@@ -134,6 +146,37 @@ describe('OpenAPI consumer contract', () => {
       true,
     );
   });
+  it.each([
+    { label: 'missing', value: {} },
+    {
+      label: 'wrong-type',
+      value: {
+        id: 123,
+        proof_id: 'p',
+        total_amount: 'invalid',
+        confirmed_at: 'not a timestamp',
+      },
+    },
+    {
+      label: 'extra',
+      value: {
+        id: 'a',
+        proof_id: 'p',
+        total_amount: 42,
+        confirmed_at: '2026-01-01T00:00:00Z',
+        unexpected: true,
+      },
+    },
+  ])('rejects invalid example facts: $label', (example) => {
+    const document = structuredClone(stages[3]!);
+    document.entities.find(
+      (entity) => entity.id === 'confirmation.payment',
+    )!.examples = [example];
+    expect(buildDelivery(document).diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'API_EXAMPLE_INVALID' }),
+    );
+  });
+
   it('rejects invalid OpenAPI structure instead of accepting a JSON-shaped object', async () => {
     const contract = structuredClone(buildDelivery(stages[3]!).openapi);
     const raw: Record<string, unknown> = { ...contract };

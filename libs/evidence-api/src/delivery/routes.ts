@@ -105,6 +105,24 @@ export interface DeliveryRoute {
   >[];
 }
 
+const examplesOf = (
+  graph: DomainGraph,
+  entityRef: string,
+): readonly DeliveryExample[] => {
+  const examples = graph.getEntity(entityRef)?.examples;
+  return Array.isArray(examples)
+    ? examples.filter(
+        (example) =>
+          example !== null &&
+          typeof example === 'object' &&
+          typeof example.label === 'string' &&
+          example.value !== null &&
+          typeof example.value === 'object' &&
+          !Array.isArray(example.value),
+      )
+    : [];
+};
+
 /** Classifies every attribute of one object once, in declaration order. */
 const fieldsOf = (
   entityRef: string,
@@ -538,7 +556,7 @@ export const buildDeliveryRoutes = (
         outputFields: graph
           .attributesOf(route.entityRef)
           .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
-        examples: graph.getEntity(route.entityRef)?.examples ?? [],
+        examples: examplesOf(graph, route.entityRef),
       };
     })
     .sort(compareRoutes);
