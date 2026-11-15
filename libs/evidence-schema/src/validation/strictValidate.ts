@@ -1,3 +1,4 @@
+import { exampleTestErrors } from '../ast/example.js';
 import {
   ATTRIBUTE_NAME_PATTERN,
   DOMAIN_ID_PATTERN,
@@ -506,7 +507,7 @@ const validateExamples = (
 
     for (const field of unknownFields(
       example,
-      new Set(['label', 'description', 'value']),
+      new Set(['label', 'description', 'value', 'test']),
     )) {
       pushIssue(
         issues,
@@ -549,6 +550,23 @@ const validateExamples = (
         'example description must be a non-empty string when present.',
         entityId,
       );
+    }
+
+    if (example['test'] !== undefined) {
+      const errors = exampleTestErrors(example['test']);
+      if (entity['category'] !== 'evidence')
+        errors.push('only evidence examples can define acceptance tests');
+      if (!isJsonValue(example['test']))
+        errors.push('test metadata must contain only JSON values');
+      for (const message of errors) {
+        pushIssue(
+          issues,
+          'entity.shape',
+          `${examplePath}.test`,
+          message,
+          entityId,
+        );
+      }
     }
 
     if (!isObject(example['value']) || !isJsonValue(example['value'])) {

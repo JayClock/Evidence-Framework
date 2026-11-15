@@ -237,3 +237,5 @@ export {
   type InspectorPropertyDefinition,
   type InspectorReferenceConstraint,
 } from './inspector/registry.js';
+
+export type { ExampleTestAST } from './ast/example.js';

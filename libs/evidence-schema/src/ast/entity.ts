@@ -1,3 +1,4 @@
+import type { ExampleTestAST } from './example.js';
 import type { ValueType } from './values.js';
 import type { ProvenanceSnippet } from './provenance.js';
 import {
@@ -187,6 +188,8 @@ export interface ModelExampleAST {
   readonly description?: string;
   /** JSON object supplied to the operation or returned by it. */
   readonly value: Record<string, unknown>;
+  /** Optional acceptance-test instructions; plain examples remain documentation only. */
+  readonly test?: ExampleTestAST;
 }
 
 interface EntityBase {
