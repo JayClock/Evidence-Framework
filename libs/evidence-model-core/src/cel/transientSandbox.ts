@@ -3,16 +3,22 @@ import type {
   RuleAST,
 } from '@evidence-poc/evidence-schema';
 import { celValueToJson, compileCelExpression } from './celEvaluator.js';
-import { CelDuration, CelTimestamp } from './celEvaluator.js';
+import { UnsignedInt, parse } from '@marcbachmann/cel-js/evaluator';
 import {
   isTimestampText,
   validateTypedValue,
 } from '../validation/typedValues.js';
 
+const parseDuration = parse('duration(value)');
+
 const typedToCel = (value: unknown, type: string): unknown => {
-  if (type === 'timestamp') return CelTimestamp.parse(String(value)) ?? value;
-  if (type === 'duration') return CelDuration.parse(String(value)) ?? value;
-  if (['int', 'uint', 'double', 'decimal'].includes(type))
+  if (type === 'timestamp')
+    return typeof value === 'string' ? new Date(value) : value;
+  if (type === 'duration') return parseDuration({ value });
+  if (type === 'int') return BigInt(value as number | string | bigint);
+  if (type === 'uint')
+    return new UnsignedInt(BigInt(value as number | string | bigint));
+  if (['double', 'decimal'].includes(type))
     return typeof value === 'number' ? value : Number(value);
   return value;
 };

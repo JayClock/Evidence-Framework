@@ -75,15 +75,9 @@ export {
 } from './cel/celAnalysis.js';
 
 export {
-  CelDuration,
-  CelEvaluationError,
-  CelTimestamp,
-  celEquals,
   celValueToJson,
   compileCelExpression,
   evaluateCelExpression,
-  parseCelExpression,
-  type CelNode,
   type CompiledCel,
 } from './cel/celEvaluator.js';
 

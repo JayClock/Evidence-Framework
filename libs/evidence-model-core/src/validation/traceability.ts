@@ -5,12 +5,14 @@ import type {
   RuleAST,
 } from '@evidence-poc/evidence-schema';
 
+import { ParseError, type ASTNode } from '@marcbachmann/cel-js';
+
+import { compileCelExpression } from '../cel/celEvaluator.js';
 import {
-  CelEvaluationError,
-  compileCelExpression,
-  parseCelExpression,
-  type CelNode,
-} from '../cel/celEvaluator.js';
+  CEL_COLLECTION_MACROS,
+  resolveCelReference,
+  walkCelAst,
+} from '../cel/celAst.js';
 
 /**
  * Attribute-level lineage for the CEL rules.
@@ -21,8 +23,6 @@ import {
  * binding must be iterated by a macro, an access must name a real attribute, and
  * a derivation cycle is an error rather than a curiosity.
  */
-
-const MACRO_NAMES = new Set(['all', 'exists', 'exists_one', 'filter', 'map']);
 
 /** One CEL read of a modeled attribute, through one rule binding. */
 export interface AttributeAccess {
@@ -65,12 +65,18 @@ export interface TraceabilityDocument {
 export const attributePath = (entityRef: string, attribute: string): string =>
   `${entityRef}#${attribute}`;
 
-const attributesOf = (entity: EntityAST | undefined): Map<string, AttributeAST> =>
+const attributesOf = (
+  entity: EntityAST | undefined,
+): Map<string, AttributeAST> =>
   new Map(
-    (entity?.attributes ?? []).map((attribute) => [attribute.name, attribute] as const),
+    (entity?.attributes ?? []).map(
+      (attribute) => [attribute.name, attribute] as const,
+    ),
   );
 
-const dedupe = (messages: readonly string[]): string[] => [...new Set(messages)];
+const dedupe = (messages: readonly string[]): string[] => [
+  ...new Set(messages),
+];
 
 /** Binding name resolved through the current macro scope, else the rule's own. */
 type Source = {
@@ -79,9 +85,7 @@ type Source = {
   cardinality: 'one' | 'many';
 };
 
-const bindingSources = (
-  rule: RuleAST,
-): Map<string, Source> => {
+const bindingSources = (rule: RuleAST): Map<string, Source> => {
   const sources = new Map<string, Source>();
 
   for (const [name, binding] of Object.entries(rule.bindings)) {
@@ -97,218 +101,72 @@ const bindingSources = (
   return sources;
 };
 
-/** The `alias.a.b` path a member or index chain reads, when it is static. */
-const memberPath = (node: CelNode): readonly string[] | null => {
-  if (node.kind === 'identifier') {
-    return [node.name];
-  }
-
-  if (node.kind === 'member') {
-    const base = memberPath(node.object);
-
-    return base === null ? null : [...base, node.name];
-  }
-
-  if (node.kind === 'index') {
-    const base = memberPath(node.object);
-
-    if (base === null || node.index.kind !== 'literal') {
-      return null;
-    }
-
-    return typeof node.index.value === 'string'
-      ? [...base, node.index.value]
-      : null;
-  }
-
-  return null;
-};
-
-/** The literal string a node evaluates to, unwrapping parentheses. */
-const literalString = (node: CelNode): string | null =>
-  node.kind === 'literal' && typeof node.value === 'string' ? node.value : null;
-
-/**
- * Extracts the attribute reads of one rule's expression.
- *
- * A macro body reads through the macro's own variable, so the walk carries the
- * macro's source down into the body instead of stopping at the binder.
- */
+/** Extract reads directly from the native AST, including lexical macro aliases. */
 export const extractRuleAttributeAccesses = (
   rule: RuleAST,
 ): { accesses: readonly AttributeAccess[]; errors: readonly string[] } => {
-  let ast: CelNode;
-
+  let ast: ASTNode;
   try {
-    ast = parseCelExpression(rule.expression);
+    ast = compileCelExpression(rule.expression).expr.ast;
   } catch (error) {
     // Syntax diagnostics belong to the static checks, not to lineage.
-    if (error instanceof CelEvaluationError) {
-      return { accesses: [], errors: [] };
-    }
-
+    if (error instanceof ParseError) return { accesses: [], errors: [] };
     throw error;
   }
 
   const sources = bindingSources(rule);
   const accesses = new Map<string, AttributeAccess>();
   const errors: string[] = [];
-
-  const collectionSource = (
-    node: CelNode,
-    local: ReadonlyMap<string, Source>,
-  ): Source | null => {
-    const path = memberPath(node);
-
-    if (path !== null && path.length === 1) {
-      const name = path[0] as string;
-
-      return local.get(name) ?? sources.get(name) ?? null;
-    }
-
-    if (node.kind === 'call' && node.callee.kind === 'member') {
-      const method = node.callee.name;
-
-      if (method === 'filter' || method === 'map' || MACRO_NAMES.has(method)) {
-        return collectionSource(node.callee.object, local);
+  walkCelAst(ast, (node, scope) => {
+    if (node.op === 'rcall' && CEL_COLLECTION_MACROS.has(node.args[0])) {
+      const reference = resolveCelReference(node.args[1], scope);
+      const source =
+        reference === null ? undefined : sources.get(reference.root);
+      if (
+        source !== undefined &&
+        reference?.members.length === 0 &&
+        (source.cardinality !== 'many' || reference.iterated)
+      ) {
+        errors.push(
+          `${rule.id}: CEL macro '${node.args[0]}' iterates binding '${source.binding}', which must declare cardinality: many`,
+        );
       }
     }
-
-    return null;
-  };
-
-  const record = (
-    path: readonly string[],
-    local: ReadonlyMap<string, Source>,
-  ): void => {
-    if (path.length < 2) {
+    if (
+      node.op !== '.' &&
+      node.op !== '.?' &&
+      node.op !== '[]' &&
+      node.op !== '[?]'
+    )
+      return;
+    const reference = resolveCelReference(node, scope);
+    if (reference === null && (node.op === '[]' || node.op === '[?]')) {
+      const base = resolveCelReference(node.args[0], scope);
+      const source = base === null ? undefined : sources.get(base.root);
+      if (source !== undefined && base?.members.length === 0) {
+        errors.push(
+          source.cardinality === 'many' && !base.iterated
+            ? `${rule.id}: many binding '${source.binding}' must be accessed through a CEL collection macro`
+            : `${rule.id}: Entity binding '${source.binding}' must use a static string attribute index for traceability`,
+        );
+      }
       return;
     }
-
-    const root = path[0] as string;
-    const source = local.get(root) ?? sources.get(root);
-
-    if (source === undefined) {
+    const source = reference === null ? undefined : sources.get(reference.root);
+    const attribute = reference?.members[0]?.name;
+    if (source === undefined || attribute === undefined || reference === null)
       return;
-    }
-
-    if (source.cardinality === 'many' && !local.has(root)) {
+    if (source.cardinality === 'many' && !reference.iterated) {
       errors.push(
         `${rule.id}: many binding '${source.binding}' must be accessed through a CEL collection macro`,
       );
     }
-
-    const attribute = path[1] as string;
-
     accesses.set(`${source.entityRef}#${attribute}#${source.binding}`, {
       entityRef: source.entityRef,
       attribute,
       binding: source.binding,
     });
-  };
-
-  const walk = (node: CelNode, local: ReadonlyMap<string, Source>): void => {
-    if (node.kind === 'call' && node.callee.kind === 'member') {
-      const method = node.callee.name;
-
-      if (MACRO_NAMES.has(method)) {
-        walk(node.callee.object, local);
-
-        const [binder, ...rest] = node.args;
-        const source = collectionSource(node.callee.object, local);
-        const nested = new Map(local);
-
-        if (binder?.kind === 'identifier' && source !== null) {
-          if (source.cardinality !== 'many') {
-            errors.push(
-              `${rule.id}: CEL macro '${method}' iterates binding '${source.binding}', which must declare cardinality: many`,
-            );
-          }
-
-          nested.set(binder.name, { ...source, cardinality: 'one' });
-        }
-
-        rest.forEach((argument) => walk(argument, nested));
-
-        return;
-      }
-
-      walk(node.callee.object, local);
-      node.args.forEach((argument) => walk(argument, local));
-
-      return;
-    }
-
-    const path = memberPath(node);
-
-    if (node.kind === 'member' || node.kind === 'index') {
-      if (node.kind === 'index' && path === null) {
-        const base = memberPath(node.object);
-        const root = base !== null && base.length === 1 ? (base[0] as string) : null;
-        const source =
-          root === null ? null : (local.get(root) ?? sources.get(root) ?? null);
-        const attribute = literalString(node.index);
-
-        if (source !== null && attribute === null) {
-          errors.push(
-            source.cardinality === 'many'
-              ? `${rule.id}: many binding '${source.binding}' must be accessed through a CEL collection macro`
-              : `${rule.id}: Entity binding '${source.binding}' must use a static string attribute index for traceability`,
-          );
-        }
-      }
-
-      if (path !== null) {
-        record(path, local);
-      }
-
-      walk(node.object, local);
-
-      if (node.kind === 'index') {
-        walk(node.index, local);
-      }
-
-      return;
-    }
-
-    switch (node.kind) {
-      case 'call':
-        node.args.forEach((argument) => walk(argument, local));
-
-        return;
-      case 'identifier':
-      case 'literal':
-        return;
-      case 'unary':
-        walk(node.operand, local);
-
-        return;
-      case 'binary':
-        walk(node.left, local);
-        walk(node.right, local);
-
-        return;
-      case 'conditional':
-        walk(node.test, local);
-        walk(node.consequent, local);
-        walk(node.alternate, local);
-
-        return;
-      case 'list':
-        node.items.forEach((item) => walk(item, local));
-
-        return;
-      case 'map':
-        node.entries.forEach((entry) => {
-          walk(entry.key, local);
-          walk(entry.value, local);
-        });
-
-        return;
-    }
-  };
-
-  walk(ast, new Map());
+  });
 
   return {
     accesses: [...accesses.values()].sort(
@@ -326,18 +184,13 @@ const freeIdentifiers = (rule: RuleAST): readonly string[] => {
   try {
     return compileCelExpression(rule.expression).identifiers();
   } catch (error) {
-    if (error instanceof CelEvaluationError) {
-      return [];
-    }
-
+    if (error instanceof ParseError) return [];
     throw error;
   }
 };
 
 /** Cycles in the lineage graph, printed as the path that closes them. */
-const lineageCycleErrors = (
-  edges: readonly TraceabilityEdge[],
-): string[] => {
+const lineageCycleErrors = (edges: readonly TraceabilityEdge[]): string[] => {
   const adjacency = new Map<string, Set<string>>();
 
   for (const edge of edges) {
@@ -378,9 +231,7 @@ const lineageCycleErrors = (
     walk(node);
   }
 
-  return [...cycles]
-    .sort()
-    .map((cycle) => `attribute lineage cycle: ${cycle}`);
+  return [...cycles].sort().map((cycle) => `attribute lineage cycle: ${cycle}`);
 };
 
 /**
@@ -404,14 +255,17 @@ export const analyzeTraceability = (
 
     for (const attribute of entity.attributes ?? []) {
       if (names.has(attribute.name)) {
-        errors.push(`${entity.id}: duplicate attribute name '${attribute.name}'`);
+        errors.push(
+          `${entity.id}: duplicate attribute name '${attribute.name}'`,
+        );
       }
       names.add(attribute.name);
     }
   }
 
   for (const rule of model.rules) {
-    const { accesses, errors: accessErrors } = extractRuleAttributeAccesses(rule);
+    const { accesses, errors: accessErrors } =
+      extractRuleAttributeAccesses(rule);
     accessesByRule.set(rule.id, accesses);
     errors.push(...accessErrors);
 
@@ -426,7 +280,11 @@ export const analyzeTraceability = (
 
       const binding = rule.bindings[access.binding];
 
-      if (binding !== undefined && 'ref' in binding && binding.ref !== access.entityRef) {
+      if (
+        binding !== undefined &&
+        'ref' in binding &&
+        binding.ref !== access.entityRef
+      ) {
         errors.push(
           `${rule.id}: attribute access '${attributePath(access.entityRef, access.attribute)}' does not match binding '${access.binding}'`,
         );
@@ -439,7 +297,9 @@ export const analyzeTraceability = (
   const ruleByTarget = new Map<string, string>();
   const accessedPaths = new Set(
     [...accessesByRule.values()].flatMap((accesses) =>
-      accesses.map((access) => attributePath(access.entityRef, access.attribute)),
+      accesses.map((access) =>
+        attributePath(access.entityRef, access.attribute),
+      ),
     ),
   );
 
@@ -447,7 +307,10 @@ export const analyzeTraceability = (
     const accesses = accessesByRule.get(rule.id) ?? [];
 
     if (rule.kind === 'derivation' && rule.target !== undefined) {
-      const target = attributePath(rule.target.entityRef, rule.target.attribute);
+      const target = attributePath(
+        rule.target.entityRef,
+        rule.target.attribute,
+      );
       const previous = ruleByTarget.get(target);
 
       if (previous !== undefined && previous !== rule.id) {
@@ -473,7 +336,11 @@ export const analyzeTraceability = (
       ruleRef: rule.id,
       kind: rule.kind,
       attributeRefs: [
-        ...new Set(accesses.map((access) => attributePath(access.entityRef, access.attribute))),
+        ...new Set(
+          accesses.map((access) =>
+            attributePath(access.entityRef, access.attribute),
+          ),
+        ),
       ].sort(),
     });
   }
@@ -489,7 +356,11 @@ export const analyzeTraceability = (
       const path = attributePath(entity.id, attribute.name);
       const derivedBy = attribute.derivedByRuleRef;
 
-      if (attribute.keyData !== true && derivedBy === undefined && !accessedPaths.has(path)) {
+      if (
+        attribute.keyData !== true &&
+        derivedBy === undefined &&
+        !accessedPaths.has(path)
+      ) {
         continue;
       }
 
@@ -525,7 +396,9 @@ export const analyzeTraceability = (
       if (attribute.keyData === true && derivation !== undefined) {
         const used = new Set(freeIdentifiers(derivation));
         const scalarInputs = Object.entries(derivation.bindings)
-          .filter(([variable, binding]) => used.has(variable) && 'type' in binding)
+          .filter(
+            ([variable, binding]) => used.has(variable) && 'type' in binding,
+          )
           .map(([variable]) => variable)
           .sort();
 
@@ -557,7 +430,9 @@ export const analyzeTraceability = (
     document: {
       schemaVersion: '5.0',
       modelId: model.manifest.id,
-      nodes: [...nodes].sort((left, right) => left.path.localeCompare(right.path)),
+      nodes: [...nodes].sort((left, right) =>
+        left.path.localeCompare(right.path),
+      ),
       edges: [...edges].sort(
         (left, right) =>
           left.target.localeCompare(right.target) ||
