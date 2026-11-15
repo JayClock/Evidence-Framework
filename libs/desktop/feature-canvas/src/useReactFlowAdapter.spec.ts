@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   computeContextScope,
-  createGraphLayout,
+  computeGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
@@ -12,7 +12,7 @@ import { boundsOf, convertLayoutToReactFlow } from './useReactFlowAdapter';
 
 const document = createDesktopFixture();
 const graph = createDomainGraph(document);
-const layout = createGraphLayout(graph, { viewMode: 'standard' });
+const layout = await computeGraphLayout(graph, { viewMode: 'standard' });
 const summaries = summarizeCards(document);
 
 const convert = (
@@ -48,20 +48,17 @@ describe('convertLayoutToReactFlow', () => {
     );
   });
 
-  it('folds a child position to its Context origin and keeps free nodes absolute', () => {
+  it('uses ELK local positions directly and keeps free nodes absolute', () => {
     const { nodes } = convert();
     const placed = layout.nodeById.get('evidence.contract')!;
-    const group = layout.contextGroups.find(
-      (candidate) => candidate.contextId === placed.contextId,
-    )!;
     const node = nodes.find(
       (candidate) => candidate.id === 'evidence.contract',
     )!;
 
     expect(node.parentId).toBe(placed.contextId);
     expect(node.position).toEqual({
-      x: placed.box.x - group.box.x,
-      y: placed.box.y - group.box.y,
+      x: placed.box.x,
+      y: placed.box.y,
     });
     expect(node.style).toMatchObject({
       width: placed.box.width,
@@ -110,7 +107,12 @@ describe('convertLayoutToReactFlow', () => {
 
     expect(pair.length).toBeGreaterThan(0);
     expect(pair[0]!.id.startsWith('pair:')).toBe(true);
-    expect(pair[0]!.data).toMatchObject({ outOfScope: false });
+    expect(pair[0]!.data).toMatchObject({
+      outOfScope: false,
+      points: layout.fulfillmentPairs[0]!.points.map(
+        (point) => `${point.x},${point.y}`,
+      ).join(' '),
+    });
   });
 
   it('skips an edge whose endpoints the layout did not place', () => {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  createGraphLayout,
+  computeGraphLayout,
   toSerializableLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
@@ -114,11 +114,11 @@ describe('business card summaries', () => {
 });
 
 describe('NodeCard modes', () => {
-  it('shows projected routes, distinguishes internal operations and hides stale bindings', () => {
+  it('shows projected routes, distinguishes internal operations and hides stale bindings', async () => {
     const document = createDesktopFixture();
-    const node = createGraphLayout(createDomainGraph(document)).nodeById.get(
-      'evidence.request',
-    )!;
+    const node = (
+      await computeGraphLayout(createDomainGraph(document))
+    ).nodeById.get('evidence.request')!;
     const props = {
       node,
       selected: false,
@@ -161,12 +161,14 @@ describe('NodeCard modes', () => {
     );
     expect(screen.getByText('No API Exposure')).toBeInTheDocument();
   });
-  it('keeps an accessible responsibility in bounds and hides detail only in simplified mode', () => {
+  it('keeps an accessible responsibility in bounds and hides detail only in simplified mode', async () => {
     const document = createDesktopFixture();
     const graph = createDomainGraph(document);
-    const node = createGraphLayout(graph, {
-      viewMode: 'standard',
-    }).nodeById.get('evidence.request')!;
+    const node = (
+      await computeGraphLayout(graph, {
+        viewMode: 'standard',
+      })
+    ).nodeById.get('evidence.request')!;
     const props = {
       node,
       selected: false,
@@ -197,9 +199,11 @@ describe('NodeCard modes', () => {
     fireEvent.keyDown(card, { key: ' ' });
     expect(props.onSelect).toHaveBeenCalledWith(node.nodeId);
 
-    const compact = createGraphLayout(graph, {
-      viewMode: 'simplified',
-    }).nodeById.get(node.nodeId)!;
+    const compact = (
+      await computeGraphLayout(graph, {
+        viewMode: 'simplified',
+      })
+    ).nodeById.get(node.nodeId)!;
     rerender(<NodeCard {...props} node={compact} viewMode="simplified" />);
     expect(screen.queryByText('规则 1')).toBeNull();
     expect(
@@ -212,7 +216,7 @@ describe('NodeCard modes', () => {
     expect(card).toHaveStyle({ height: '82px' });
     expect(
       toSerializableLayout(
-        createGraphLayout(graph, { viewMode: 'simplified' }),
+        await computeGraphLayout(graph, { viewMode: 'simplified' }),
       ).nodes.find((placed) => placed.nodeId === node.nodeId)!.box,
     ).toEqual(compact.box);
   });

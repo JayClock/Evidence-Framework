@@ -22,20 +22,18 @@ import {
   SelectionMode,
   ViewportPortal,
   useReactFlow,
+  useStore,
   useViewport,
   type NodeTypes,
   type EdgeTypes,
 } from '@xyflow/react';
 
 import {
-  MAX_ZOOM,
-  MIN_ZOOM,
   computeHighlight,
   type CanvasViewMode,
   type ContextScope,
   type DomainGraphLayout,
   type HighlightResult,
-  type LifecycleSwimlaneLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type {
   DomainGraph,
@@ -53,7 +51,6 @@ import {
 import { BusinessLegend } from './BusinessLegend';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
-import { LifecycleBanner } from './LifecycleBanner';
 import { ScopeFilterControl } from './ScopeFilterControl';
 import { summarizeCards } from './cardSummary';
 import { entityColor } from './colors';
@@ -134,11 +131,6 @@ const EDGE_TYPES = {
   pairLink: PairLinkEdge,
 } satisfies EdgeTypes;
 
-/** Lane data only exists on a lifecycle layout, but the stage accepts either. */
-const isLifecycleLayout = (
-  layout: DomainGraphLayout,
-): layout is LifecycleSwimlaneLayout => 'swimlanes' in layout;
-
 const reducedMotion = (): boolean =>
   globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)')
     .matches === true;
@@ -171,9 +163,9 @@ const selectedBox = (
   if (selection.nodeId === null) return null;
 
   return (
-    layout.nodeById.get(selection.nodeId)?.box ??
+    layout.nodeById.get(selection.nodeId)?.worldBox ??
     layout.contextGroups.find((group) => group.contextId === selection.nodeId)
-      ?.box ??
+      ?.worldBox ??
     null
   );
 };
@@ -201,9 +193,19 @@ const CanvasSurface = ({
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
-  const { fitBounds, setCenter, zoomIn, zoomOut, zoomTo, getZoom } =
-    useReactFlow<CanvasFlowNode, CanvasFlowEdge>();
+  const {
+    fitBounds,
+    setCenter,
+    zoomIn,
+    zoomOut,
+    zoomTo,
+    getZoom,
+    viewportInitialized,
+  } = useReactFlow<CanvasFlowNode, CanvasFlowEdge>();
   const { zoom } = useViewport();
+  const viewportSized = useStore(
+    (state) => state.width > 0 && state.height > 0,
+  );
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
   const [hoveredContextId, setHoveredContextId] = useState<string | null>(null);
@@ -266,16 +268,23 @@ const CanvasSurface = ({
   );
 
   const fitToContent = useCallback(() => {
+    if (!viewportSized) return;
     void fitBounds(boundsOf(layout, scope), {
       padding: 0.08,
       duration: reducedMotion() ? 0 : 180,
     });
-  }, [fitBounds, layout, scope]);
+  }, [fitBounds, layout, scope, viewportSized]);
 
   // A scope change is a new stage: the fit follows it, and so do the hover
   // marks, because the object under the pointer may no longer be on screen.
-  const previousFitKey = useRef(`${scope?.contextId ?? ''}:${viewMode}`);
+  const previousFitKey = useRef<string | null>(null);
   useEffect(() => {
+    if (
+      !viewportInitialized ||
+      !viewportSized ||
+      (layout.nodes.length === 0 && layout.contextGroups.length === 0)
+    )
+      return;
     const key = `${scope?.contextId ?? ''}:${viewMode}`;
     if (previousFitKey.current === key) return;
     previousFitKey.current = key;
@@ -283,7 +292,14 @@ const CanvasSurface = ({
     setHoveredNodeId(null);
     setHoveredEdgeId(null);
     setHoveredContextId(null);
-  }, [fitToContent, scope?.contextId, viewMode]);
+  }, [
+    fitToContent,
+    layout,
+    scope?.contextId,
+    viewMode,
+    viewportInitialized,
+    viewportSized,
+  ]);
 
   const lastZoomToken = useRef<number | null>(null);
   useEffect(() => {
@@ -330,6 +346,7 @@ const CanvasSurface = ({
   const lastFocusToken = useRef<number | null>(null);
   useEffect(() => {
     if (
+      !viewportInitialized ||
       focusRequest === null ||
       lastFocusToken.current === focusRequest.token
     ) {
@@ -343,7 +360,7 @@ const CanvasSurface = ({
     const edge = layout.edges.find(
       (item) => item.relationshipId === focusRequest.nodeId,
     );
-    const box = node?.box ?? group?.box;
+    const box = node?.worldBox ?? group?.worldBox;
     const point = box
       ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
       : edge?.points[Math.floor(edge.points.length / 2)];
@@ -357,7 +374,7 @@ const CanvasSurface = ({
       zoom: getZoom(),
       duration: reducedMotion() ? 0 : 250,
     });
-  }, [focusRequest, layout, setCenter, getZoom]);
+  }, [focusRequest, layout, setCenter, getZoom, viewportInitialized]);
 
   const interaction = useMemo<CanvasInteraction>(
     () => ({
@@ -394,8 +411,8 @@ const CanvasSurface = ({
           edges={edges}
           nodeTypes={NODE_TYPES}
           edgeTypes={EDGE_TYPES}
-          minZoom={MIN_ZOOM}
-          maxZoom={MAX_ZOOM}
+          minZoom={0.1}
+          maxZoom={2}
           nodesDraggable={false}
           nodesConnectable={false}
           edgesFocusable={false}
@@ -461,35 +478,6 @@ const CanvasSurface = ({
                   height: Math.max(1, layout.bounds.height),
                 }}
               />
-              <svg
-                className="pointer-events-none absolute overflow-visible"
-                width={Math.max(1, layout.bounds.width)}
-                height={Math.max(1, layout.bounds.height)}
-                aria-hidden="true"
-              >
-                {layout.fulfillmentGroups.map((group) => (
-                  <rect
-                    key={group.groupId}
-                    x={group.box.x}
-                    y={group.box.y}
-                    width={group.box.width}
-                    height={group.box.height}
-                    opacity={
-                      scope !== null && !scope.nodeIds.has(group.requestId)
-                        ? 0.15
-                        : 1
-                    }
-                    rx={10}
-                    fill="none"
-                    stroke="rgba(180, 54, 86, 0.35)"
-                    strokeWidth={1}
-                    strokeDasharray="6 4"
-                  />
-                ))}
-              </svg>
-              {isLifecycleLayout(layout) ? (
-                <LifecycleBanner layout={layout} />
-              ) : null}
             </div>
           </ViewportPortal>
 

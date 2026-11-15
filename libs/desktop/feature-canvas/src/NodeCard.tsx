@@ -130,7 +130,7 @@ export const NodeCard = ({
   const token = CATEGORY_TOKENS[entity.category];
   const time = businessTime(entity);
   const shape = entityShape(entity);
-  const standard = viewMode === 'standard';
+  const standard = viewMode !== 'simplified';
 
   return (
     <div

@@ -9,7 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   computeContextScope,
-  createGraphLayout,
+  computeGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
@@ -18,7 +18,7 @@ import { createDiagnosticIndex } from './diagnosticIndex';
 
 const document = createDesktopFixture();
 const graph = createDomainGraph(document);
-const layout = createGraphLayout(graph, { viewMode: 'standard' });
+const layout = await computeGraphLayout(graph, { viewMode: 'standard' });
 
 const setup = (
   overrides: Partial<React.ComponentProps<typeof CanvasViewport>> = {},
@@ -338,7 +338,7 @@ describe('CanvasViewport', () => {
     rerender(
       <CanvasViewport
         {...props}
-        layout={createGraphLayout(graph, { viewMode: 'standard' })}
+        layout={{ ...layout }}
         zoomCommand={{ direction: 'in', token: 1 }}
       />,
     );

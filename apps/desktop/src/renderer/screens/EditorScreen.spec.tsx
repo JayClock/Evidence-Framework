@@ -25,6 +25,14 @@ const readyProject = () =>
     },
   });
 
+const readyCanvas = async () => {
+  const title = await screen.findByText('桌面端夹具（Desktop Fixture）');
+  await waitFor(() =>
+    expect(screen.queryByText('正在计算画布布局…')).toBeNull(),
+  );
+  return title;
+};
+
 describe('EditorScreen', () => {
   it('explains a missing project path instead of rendering an empty canvas', async () => {
     installDesktopApi();
@@ -41,9 +49,7 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
 
-    expect(
-      await screen.findByText('桌面端夹具（Desktop Fixture）'),
-    ).toBeInTheDocument();
+    expect(await readyCanvas()).toBeInTheDocument();
     expect(
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
@@ -56,7 +62,7 @@ describe('EditorScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
     expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
-    expect(screen.getByText('履约对 1')).toBeInTheDocument();
+    expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
 
@@ -64,7 +70,7 @@ describe('EditorScreen', () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
@@ -76,7 +82,7 @@ describe('EditorScreen', () => {
   it('opens and closes the outline drawer with Cmd+B', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
     fireEvent.keyDown(window, { key: 'b', metaKey: true });
@@ -90,7 +96,7 @@ describe('EditorScreen', () => {
   it('hands the canvas back once a drawer picked an object', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
     fireEvent.click(
@@ -108,7 +114,7 @@ describe('EditorScreen', () => {
   it('keeps a pinned drawer open while the modeler picks objects', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
     fireEvent.click(screen.getByRole('button', { name: '固定面板' }));
@@ -124,7 +130,7 @@ describe('EditorScreen', () => {
   it('opens every rail drawer with Mod+1 to Mod+4', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { key: '1', metaKey: true });
     expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
@@ -145,7 +151,7 @@ describe('EditorScreen', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
     });
@@ -156,9 +162,11 @@ describe('EditorScreen', () => {
     const beforeKeys = world.style.transform;
     fireEvent.keyDown(screen.getByLabelText('聚焦范围'), { key: '+' });
     expect(world.style.transform).toBe(beforeKeys);
-    expect(
-      container.querySelector('[data-node-id="role.inventory"]'),
-    ).toHaveStyle({ height: '156px' });
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-node-id="role.inventory"]'),
+      ).toHaveStyle({ height: '156px' }),
+    );
     // Undo has no history to walk, and the hub reports that instead of the
     // header, which no longer carries a greyed-out history button.
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
@@ -183,7 +191,7 @@ describe('EditorScreen', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
     });
@@ -210,7 +218,7 @@ describe('EditorScreen', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.click(screen.getByText('保存'));
 
     await waitFor(() => {
@@ -240,7 +248,7 @@ describe('EditorScreen', () => {
     });
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.click(screen.getByRole('button', { name: '导出审查页' }));
 
@@ -285,7 +293,7 @@ describe('EditorScreen', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
 
     expect(await screen.findByLabelText('交付中心')).toBeInTheDocument();
@@ -307,7 +315,7 @@ describe('EditorScreen', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.click(screen.getByText('保存'));
 
     expect(await screen.findByText('磁盘不可写。')).toBeInTheDocument();
@@ -395,7 +403,7 @@ describe('EditorScreen sensors', () => {
     const api = readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.procurement' },
@@ -436,8 +444,10 @@ describe('EditorScreen sensors', () => {
       expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
     });
     expect(screen.queryByLabelText('本次补丁新增 审计员')).toBeNull();
-    expect(screen.getByLabelText('聚焦范围')).toHaveValue(
-      'context.procurement',
+    await waitFor(() =>
+      expect(screen.getByLabelText('聚焦范围')).toHaveValue(
+        'context.procurement',
+      ),
     );
   });
 
@@ -445,7 +455,7 @@ describe('EditorScreen sensors', () => {
     const api = readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     act(() =>
       api.agentMock.requestPatch({
@@ -482,7 +492,7 @@ describe('EditorScreen sensors', () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
 
@@ -507,7 +517,7 @@ describe('EditorScreen sensors', () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
     fireEvent.change(await screen.findByLabelText('搜索命令或业务对象'), {
@@ -525,7 +535,7 @@ describe('EditorScreen sensors', () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
     fireEvent.click(await screen.findByRole('option', { name: /总台账/ }));
@@ -538,7 +548,7 @@ describe('EditorScreen sensors', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.click(
       container.querySelector('[data-node-id="evidence.contract"]') as Element,
@@ -568,7 +578,7 @@ describe('EditorScreen sensors', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
 
     expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
@@ -605,7 +615,7 @@ describe('EditorScreen dual-mode stage', () => {
   it('switches stage and density from the floating island', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.click(screen.getByRole('button', { name: '简化图' }));
     expect(screen.getByRole('button', { name: '简化图' })).toHaveAttribute(
@@ -622,7 +632,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     // React Flow keeps the pan/zoom transform on its viewport element.
     const world = () =>
       container.querySelector('.react-flow__viewport') as HTMLElement;
@@ -638,7 +648,7 @@ describe('EditorScreen dual-mode stage', () => {
   it('reaches the ledger from the floating island without a header control', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     // The header no longer carries a view switch: the island owns it.
     expect(screen.getAllByRole('button', { name: /拓扑图/ })).toHaveLength(1);
@@ -649,7 +659,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
 
@@ -674,7 +684,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { key: 'v' });
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
@@ -692,7 +702,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
 
@@ -736,7 +746,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
 
@@ -775,7 +785,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
 
     fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
 
@@ -806,7 +816,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 
@@ -830,7 +840,7 @@ describe('EditorScreen dual-mode stage', () => {
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
-    await screen.findByText('桌面端夹具（Desktop Fixture）');
+    await readyCanvas();
     fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 

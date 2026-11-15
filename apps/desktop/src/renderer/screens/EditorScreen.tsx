@@ -215,6 +215,7 @@ const EditorWorkspace = ({
   // Deletion/undo and selection from inspectors, sensors or MCP must never
   // leave the editor inspecting an invisible, non-interactive object.
   useEffect(() => {
+    if (state.layoutPending || state.layoutError !== null) return;
     if (
       selectedScope !== null &&
       (scope === null ||
@@ -222,7 +223,13 @@ const EditorWorkspace = ({
           !scope.nodeIds.has(state.selection.nodeId)))
     )
       setSelectedScope(null);
-  }, [selectedScope, scope, state.selection.nodeId]);
+  }, [
+    selectedScope,
+    scope,
+    state.selection.nodeId,
+    state.layoutPending,
+    state.layoutError,
+  ]);
   // The palette replaces a row of header buttons with one chord; every action
   // it runs is the same handler the header used to call.
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -663,41 +670,56 @@ const EditorWorkspace = ({
   );
 
   const graphStage = (
-    <CanvasViewport
-      graph={state.graph}
-      layout={state.layout}
-      document={state.document}
-      viewMode={viewMode}
-      selection={state.selection}
-      focusRequest={focusRequest}
-      zoomCommand={zoomCommand}
-      hud={(controls) => (
-        <CanvasFloatingHud
-          {...controls}
-          viewMode={workspaceView.mode}
-          onViewModeChange={workspaceView.setMode}
-          density={viewMode}
-          onDensityChange={setViewMode}
-          hasSelection={state.selection.nodeId !== null}
-          onClearSelection={() => state.session.clearSelection()}
-          splitPane={split.activePane}
-          onOpenSplit={split.openSplit}
-          onCloseSplit={split.closeSplit}
-          onShowLedger={() => workspaceView.setMode('table')}
-        />
-      )}
-      diagnostics={diagnostics}
-      onOpenIssues={(issues) => {
-        if (issues[0] === undefined) return;
-        layout.openProblemsWithIssue(issues[0].issueId);
-        focusIssue(issues[0]);
-      }}
-      overlay={patchReview.review?.overlay ?? null}
-      scope={scope}
-      onScopeChange={changeScope}
-      onSelect={(nodeId) => state.session.select(nodeId)}
-      onClearSelection={() => state.session.clearSelection()}
-    />
+    <div
+      className="relative flex h-full min-h-0 flex-1"
+      aria-busy={state.layoutPending}
+    >
+      {state.layoutPending || state.layoutError ? (
+        <div
+          role={state.layoutError ? 'alert' : 'status'}
+          className="absolute left-4 top-4 z-40 rounded bg-white px-3 py-2 text-sm shadow"
+        >
+          {state.layoutError
+            ? `画布布局失败：${state.layoutError}`
+            : '正在计算画布布局…'}
+        </div>
+      ) : null}
+      <CanvasViewport
+        graph={state.graph}
+        layout={state.layout}
+        document={state.document}
+        viewMode={viewMode}
+        selection={state.selection}
+        focusRequest={focusRequest}
+        zoomCommand={zoomCommand}
+        hud={(controls) => (
+          <CanvasFloatingHud
+            {...controls}
+            viewMode={workspaceView.mode}
+            onViewModeChange={workspaceView.setMode}
+            density={viewMode}
+            onDensityChange={setViewMode}
+            hasSelection={state.selection.nodeId !== null}
+            onClearSelection={() => state.session.clearSelection()}
+            splitPane={split.activePane}
+            onOpenSplit={split.openSplit}
+            onCloseSplit={split.closeSplit}
+            onShowLedger={() => workspaceView.setMode('table')}
+          />
+        )}
+        diagnostics={diagnostics}
+        onOpenIssues={(issues) => {
+          if (issues[0] === undefined) return;
+          layout.openProblemsWithIssue(issues[0].issueId);
+          focusIssue(issues[0]);
+        }}
+        overlay={patchReview.review?.overlay ?? null}
+        scope={scope}
+        onScopeChange={changeScope}
+        onSelect={(nodeId) => state.session.select(nodeId)}
+        onClearSelection={() => state.session.clearSelection()}
+      />
+    </div>
   );
 
   /*

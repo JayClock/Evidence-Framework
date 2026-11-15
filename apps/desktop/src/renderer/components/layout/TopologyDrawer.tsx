@@ -37,6 +37,13 @@ export const TopologyDrawer = ({
   onFocusNode,
 }: TopologyDrawerProps) => {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
+  const freeNodeIds = useMemo(
+    () =>
+      layout.nodes
+        .filter((node) => node.contextId === null)
+        .map((node) => node.nodeId),
+    [layout.nodes],
+  );
   const groups = useMemo<TreeGroup[]>(
     () =>
       layout.contextGroups
@@ -183,12 +190,12 @@ export const TopologyDrawer = ({
               );
             })}
 
-            {layout.freeNodeIds.length > 0 ? (
+            {freeNodeIds.length > 0 ? (
               <div className="mb-1">
                 <p className="px-2 py-1 text-[10px] tracking-wide text-evidence-muted uppercase">
                   独立参与者
                 </p>
-                {layout.freeNodeIds.map((nodeId) => {
+                {freeNodeIds.map((nodeId) => {
                   const entity = graph.getEntity(nodeId);
 
                   return entity === undefined ? null : (

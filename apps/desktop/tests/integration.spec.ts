@@ -14,8 +14,7 @@ import {
 } from '@evidence-poc/evidence-model-io';
 import {
   computeHighlight,
-  createGraphLayout,
-  selectNodesInBox,
+  computeGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
 
@@ -59,40 +58,35 @@ describe('product-procurement end to end', () => {
     const parsed = await readModelDirectory(FIXTURE_ROOT);
     const session = createModelSession({ document: parsed.document });
     const graph = session.getGraph();
-    const layout = createGraphLayout(graph);
+    const layout = await computeGraphLayout(graph);
     const contextCount = parsed.document.entities.filter(
       (entity) => entity.category === 'context',
     ).length;
 
-    expect(layout.omittedContextIds).toEqual([]);
     expect(layout.contextGroups).toHaveLength(contextCount);
     expect(layout.nodes.length).toBe(
       parsed.document.entities.length - contextCount,
     );
-    expect(layout.fulfillmentGroups.length).toBe(
-      parsed.document.entities.filter(
-        (entity) =>
-          entity.category === 'evidence' &&
-          entity.kind === 'fulfillment_request',
-      ).length,
+    expect(layout.fulfillmentPairs.length).toBe(
+      graph
+        .fulfillmentPairs()
+        .reduce(
+          (count, pair) =>
+            count + pair.confirmations.length + pair.proofs.length,
+          0,
+        ),
     );
-
-    const request = layout.fulfillmentGroups[0];
-
-    expect(request).toBeDefined();
-
-    const marquee = layout.fulfillmentGroups[0]!.box;
-    const selected = selectNodesInBox(layout, marquee);
-
-    expect(selected).toContain(layout.fulfillmentGroups[0]!.requestId);
+    expect(
+      layout.fulfillmentPairs.every((pair) => pair.points.length >= 2),
+    ).toBe(true);
   });
 
   it('highlights the neighbours of a hovered request', async () => {
     const parsed = await readModelDirectory(FIXTURE_ROOT);
     const session = createModelSession({ document: parsed.document });
     const graph = session.getGraph();
-    const layout = createGraphLayout(graph);
-    const requestId = layout.fulfillmentGroups[0]!.requestId;
+    const layout = await computeGraphLayout(graph);
+    const requestId = layout.fulfillmentPairs[0]!.requestId;
     const highlight = computeHighlight({
       graph,
       layout,

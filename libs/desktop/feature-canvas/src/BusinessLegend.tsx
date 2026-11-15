@@ -35,7 +35,7 @@ export const BusinessLegend = ({
 }: BusinessLegendProps) => {
   const [expanded, setExpanded] = useState(readExpanded);
   const id = useId();
-  const standard = viewMode === 'standard';
+  const standard = viewMode !== 'simplified';
 
   return (
     <aside

@@ -49,6 +49,7 @@ export interface CanvasFloatingHudProps extends CanvasHudControls {
 const DENSITIES: readonly { id: CanvasViewMode; label: string }[] = [
   { id: 'simplified', label: '简化图' },
   { id: 'standard', label: '标准图' },
+  { id: 'expanded', label: '展开图' },
 ];
 
 const GRIDS: readonly { id: CanvasGridStyle; label: string }[] = [

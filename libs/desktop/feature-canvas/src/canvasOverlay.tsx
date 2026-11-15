@@ -44,8 +44,8 @@ export const ChangeRing = ({
     data-overlay-node-id={node.nodeId}
     className="pointer-events-none absolute rounded-md border-2"
     style={{
-      left: node.box.x - 3,
-      top: node.box.y - 3,
+      left: node.worldBox.x - 3,
+      top: node.worldBox.y - 3,
       width: node.box.width + 6,
       height: node.box.height + 6,
       borderColor: OVERLAY_COLOR[change],

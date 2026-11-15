@@ -5,7 +5,7 @@ import type {
   SensorIssue,
 } from '@evidence-poc/evidence-agent/browser';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
-import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
+import { computeGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { createDiagnosticIndex } from './diagnosticIndex';
 import { DiagnosticMarkers } from './DiagnosticMarkers';
@@ -61,9 +61,9 @@ describe('diagnostic projection', () => {
     expect(index.get(id)?.issues).toHaveLength(2);
     expect(createDiagnosticIndex(null, document).size).toBe(0);
   });
-  it('locates context and edge findings and activates sibling controls without selecting cards', () => {
+  it('locates context and edge findings and activates sibling controls without selecting cards', async () => {
     const document = createDesktopFixture();
-    const layout = createGraphLayout(createDomainGraph(document));
+    const layout = await computeGraphLayout(createDomainGraph(document));
     const edge = layout.edges[0]!;
     const context = layout.contextGroups[0]!;
     const items = [

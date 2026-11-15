@@ -186,13 +186,8 @@ export const BottomStatusBar = ({
         onRerun={onRerunSensors}
       />
       <span>业务对象 {layout.nodes.length}</span>
-      <span>履约对 {layout.fulfillmentGroups.length}</span>
+      <span>履约连线 {layout.fulfillmentPairs.length}</span>
       <span>上下文 {layout.contextGroups.length}</span>
-      {layout.omittedContextIds.length > 0 ? (
-        <span className="text-[#b42318]" title="空壳上下文没有绘制">
-          空壳上下文 {layout.omittedContextIds.length}
-        </span>
-      ) : null}
     </div>
 
     <div className="flex items-center gap-3">

@@ -9,9 +9,8 @@ import { healthyReport } from '../test-support/desktopApi';
 
 const layout = {
   nodes: [],
-  fulfillmentGroups: [],
+  fulfillmentPairs: [],
   contextGroups: [],
-  omittedContextIds: [],
 } as unknown as DomainGraphLayout;
 
 const valid: ValidationResult = { valid: true, issues: [] };

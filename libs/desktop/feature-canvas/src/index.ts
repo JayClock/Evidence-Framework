@@ -10,7 +10,6 @@ export { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge.js';
 export { NodeCard } from './NodeCard.js';
 export { BusinessLegend } from './BusinessLegend.js';
 export { DiagnosticMarkers } from './DiagnosticMarkers.js';
-export { LANE_TINTS, LifecycleBanner, laneTint } from './LifecycleBanner.js';
 export { ScopeFilterControl } from './ScopeFilterControl.js';
 export {
   CATEGORY_COLORS,

@@ -1,7 +1,7 @@
 import type { EdgeProps } from '@xyflow/react';
 
 import { useCanvasInteraction } from './CanvasInteractionContext';
-import { CROSS_CONTEXT_EDGE_STYLES, EDGE_STYLES } from './colors';
+import { EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
 import type {
   FulfillmentFlowEdge,
@@ -48,22 +48,9 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
   const points = relationship.points
     .map((point) => `${point.x},${point.y}`)
     .join(' ');
-  const crossing =
-    relationship.crossContextKind === null
-      ? null
-      : CROSS_CONTEXT_EDGE_STYLES[relationship.crossContextKind];
-  const stroke = highlighted
-    ? EDGE_HIGHLIGHT
-    : (crossing?.stroke ?? EDGE_COLOR);
-  const strokeWidth = highlighted
-    ? EDGE_STYLES.activeWidth
-    : (crossing?.width ?? EDGE_STYLES.width);
-  const strokeDasharray =
-    crossing === null
-      ? relationship.dashed
-        ? EDGE_STYLES.dashed
-        : undefined
-      : crossing.dasharray;
+  const stroke = highlighted ? EDGE_HIGHLIGHT : EDGE_COLOR;
+  const strokeWidth = highlighted ? EDGE_STYLES.activeWidth : EDGE_STYLES.width;
+  const strokeDasharray = relationship.dashed ? EDGE_STYLES.dashed : undefined;
 
   const opacity = outOfScope ? 0.15 : muted ? 0 : dimmed ? 0.16 : 1;
   const interactive = !outOfScope && !muted;
@@ -89,6 +76,7 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         style={{
           pointerEvents: interactive ? 'stroke' : 'none',
           strokeLinecap: 'round',
+          strokeLinejoin: 'round',
         }}
         data-edge-line={relationship.relationshipId}
         onMouseEnter={() =>
@@ -101,17 +89,7 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         color={stroke}
         visible={relationship.kind === 'plays_role'}
       />
-      {relationship.crossContextKind === 'role_inversion' ? (
-        <circle
-          cx={midpoint.x}
-          cy={midpoint.y}
-          r={4}
-          fill="#fff"
-          stroke={crossing?.stroke ?? EDGE_COLOR}
-          strokeWidth={1.6}
-          data-edge-socket={relationship.relationshipId}
-        />
-      ) : null}
+
       {cardinality.source === undefined && cardinality.target === undefined
         ? null
         : [

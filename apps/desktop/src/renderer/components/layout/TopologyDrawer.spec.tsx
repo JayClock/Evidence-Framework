@@ -2,14 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
-import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
+import { computeGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 
 import { TopologyDrawer } from './TopologyDrawer';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
-const setup = (document = createDesktopFixture()) => {
+const setup = async (document = createDesktopFixture()) => {
   const graph = createDomainGraph(document);
-  const layout = createGraphLayout(graph);
+  const layout = await computeGraphLayout(graph);
   const onFocusNode = vi.fn();
   const onSearchTermChange = vi.fn();
 
@@ -29,8 +29,8 @@ const setup = (document = createDesktopFixture()) => {
 };
 
 describe('TopologyDrawer', () => {
-  it('lists contexts as groups and their objects as entries', () => {
-    setup();
+  it('lists contexts as groups and their objects as entries', async () => {
+    await setup();
 
     expect(screen.getByText('商品采购（Procurement）')).toBeInTheDocument();
     expect(screen.getByText('商品目录（Catalog）')).toBeInTheDocument();
@@ -40,8 +40,8 @@ describe('TopologyDrawer', () => {
     expect(screen.getByText('采购方企业（Buyer Org）')).toBeInTheDocument();
   });
 
-  it('collapses a context group without dropping other groups', () => {
-    const { graph, layout } = setup();
+  it('collapses a context group without dropping other groups', async () => {
+    const { graph, layout } = await setup();
     const toggle = screen.getByRole('button', {
       name: /商品采购（Procurement）/,
     });
@@ -57,17 +57,17 @@ describe('TopologyDrawer', () => {
     expect(graph.getEntity('evidence.contract')).toBeDefined();
   });
 
-  it('focuses a node when its entry is clicked', () => {
-    const { onFocusNode } = setup();
+  it('focuses a node when its entry is clicked', async () => {
+    const { onFocusNode } = await setup();
 
     fireEvent.click(screen.getByText('交付请求（Delivery Request）'));
 
     expect(onFocusNode).toHaveBeenCalledWith('evidence.request');
   });
 
-  it('filters by label and reports empty results', () => {
+  it('filters by label and reports empty results', async () => {
     const graph = createDomainGraph(createDesktopFixture());
-    const layout = createGraphLayout(graph);
+    const layout = await computeGraphLayout(graph);
     const onSearchTermChange = vi.fn();
 
     const { rerender } = render(
@@ -121,15 +121,15 @@ describe('TopologyDrawer', () => {
     expect(screen.getByText('没有匹配的业务对象。')).toBeInTheDocument();
   });
 
-  it('does not advertise retired scenarios or claim to execute backend acceptance', () => {
-    setup();
+  it('does not advertise retired scenarios or claim to execute backend acceptance', async () => {
+    await setup();
     expect(screen.getByText('验收样例 · 0')).toBeInTheDocument();
     expect(
       screen.getByText('在实体 examples[].test 中声明验收样例。'),
     ).toBeInTheDocument();
     expect(screen.queryByText('验证场景')).toBeNull();
   });
-  it('lists executable inline examples and focuses their owning entity', () => {
+  it('lists executable inline examples and focuses their owning entity', async () => {
     const document = createDesktopFixture();
     const entity = document.entities.find(
       (entity) => entity.id === 'evidence.request',
@@ -146,7 +146,7 @@ describe('TopologyDrawer', () => {
       },
       { label: '只作文档', value: {} },
     ];
-    const { onFocusNode } = setup(document);
+    const { onFocusNode } = await setup(document);
     expect(screen.getByText('验收样例 · 1')).toBeInTheDocument();
     fireEvent.click(
       screen.getByRole('button', {

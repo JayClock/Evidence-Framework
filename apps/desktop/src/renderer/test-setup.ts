@@ -4,9 +4,10 @@ import { afterEach } from 'vitest';
 
 // jsdom ships neither of these, and the canvas measures itself with them.
 class ResizeObserverStub {
-  // jsdom has no layout, so observing is a no-op in tests.
-  observe(): void {
-    return undefined;
+  constructor(private readonly callback: (entries: unknown[]) => void) {}
+
+  observe(target: Element): void {
+    this.callback([{ target, contentRect: { width: 1200, height: 640 } }]);
   }
 
   unobserve(): void {

@@ -34,7 +34,7 @@ export const DiagnosticMarkers = ({
         )
       )
         return null;
-      const box = node?.box ?? context?.box;
+      const box = node?.worldBox ?? context?.worldBox;
       const point = box
         ? { x: box.x + box.width - 16, y: box.y + box.height - 10 }
         : edge

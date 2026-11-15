@@ -12,10 +12,10 @@ import type {
 } from '@evidence-poc/evidence-schema';
 import {
   type CanvasViewMode,
-  type LifecycleSwimlaneLayout,
-  createLifecycleSwimlaneLayout,
+  type DomainGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 
+import { useGraphLayout } from './useGraphLayout';
 import type { EvidenceProjectSummary } from '../../shared/projects';
 
 export interface EditorSessionState {
@@ -24,7 +24,9 @@ export interface EditorSessionState {
   session: ModelSession;
   document: DomainModelDocument;
   graph: DomainGraph;
-  layout: LifecycleSwimlaneLayout;
+  layout: DomainGraphLayout;
+  layoutPending: boolean;
+  layoutError: string | null;
   selection: ModelSelection;
   canUndo: boolean;
   canRedo: boolean;
@@ -46,14 +48,13 @@ const readState = (
   project: EvidenceProjectSummary,
   rootPath: string,
   session: ModelSession,
-  viewMode: CanvasViewMode,
   extras: {
     savedAt: string | null;
     saveError: string | null;
     externalChangeAt: string | null;
     dirty: boolean;
   },
-): EditorSessionState => {
+): Omit<EditorSessionState, 'layout' | 'layoutPending' | 'layoutError'> => {
   const document = session.getDocument();
   const graph = session.getGraph();
 
@@ -63,7 +64,6 @@ const readState = (
     session,
     document,
     graph,
-    layout: createLifecycleSwimlaneLayout(graph, { viewMode }),
     selection: session.getSelection(),
     canUndo: session.canUndo(),
     canRedo: session.canRedo(),
@@ -121,22 +121,14 @@ export const useEditorSession = (
     // `version` is read so the snapshot refreshes after every session event.
     void version;
 
-    return readState(project, project.rootPath, session, viewMode, {
+    return readState(project, project.rootPath, session, {
       savedAt,
       saveError,
       externalChangeAt,
       dirty,
     });
-  }, [
-    project,
-    session,
-    version,
-    savedAt,
-    saveError,
-    externalChangeAt,
-    dirty,
-    viewMode,
-  ]);
+  }, [project, session, version, savedAt, saveError, externalChangeAt, dirty]);
+  const placement = useGraphLayout(state.graph, viewMode);
 
   const save = useCallback(async () => {
     const result = await window.evidenceAPI.projects.save({
@@ -173,7 +165,7 @@ export const useEditorSession = (
   }, []);
 
   return {
-    state,
+    state: { ...state, ...placement },
     save,
     reloadFromDisk,
     dismissExternalChange,

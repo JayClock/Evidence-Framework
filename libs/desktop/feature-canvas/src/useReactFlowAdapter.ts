@@ -1,6 +1,7 @@
 import { Position, type Edge, type Node, type NodeHandle } from '@xyflow/react';
 
 import type {
+  CanvasViewMode,
   ContextScope,
   DomainGraphLayout,
   LayoutEdge,
@@ -80,7 +81,7 @@ export interface ConvertLayoutInput {
   summaries: ReadonlyMap<string, CardSummary>;
   hoveredEdgeId: string | null;
   /** The card density the stage is reading at. */
-  viewMode: 'simplified' | 'standard';
+  viewMode: CanvasViewMode;
 }
 
 /**
@@ -88,9 +89,7 @@ export interface ConvertLayoutInput {
  *
  * Kept a pure function with one input object: the mapping is the part worth
  * testing — parent organisation, world coordinates, edge binding — and a hook
- * that also rendered would make it untestable without a DOM. Coordinates stay
- * in layout world space; a child node's position is folded to its Context's
- * origin because that is what `parentId` means to React Flow.
+ * ELK's local positions map directly to parentId; routes stay in world space.
  */
 export const convertLayoutToReactFlow = ({
   layout,
@@ -110,10 +109,6 @@ export const convertLayoutToReactFlow = ({
   nodes: CanvasFlowNode[];
   edges: CanvasFlowEdge[];
 } => {
-  const groupBoxById = new Map(
-    layout.contextGroups.map((group) => [group.contextId, group.box] as const),
-  );
-
   const nodes: CanvasFlowNode[] = [];
 
   // Parents first: React Flow adopts a child only once its parent is known.
@@ -125,6 +120,10 @@ export const convertLayoutToReactFlow = ({
       id: group.contextId,
       type: 'contextGroup',
       position: { x: group.box.x, y: group.box.y },
+      ...(group.parentContextId === null
+        ? {}
+        : { parentId: group.parentContextId, extent: 'parent' as const }),
+      handles: edgeHandles(group.box.width, group.box.height),
       draggable: false,
       selectable: false,
       connectable: false,
@@ -155,8 +154,6 @@ export const convertLayoutToReactFlow = ({
   }
 
   for (const node of layout.nodes) {
-    const origin =
-      node.contextId === null ? null : groupBoxById.get(node.contextId);
     const entity = document.entities.find((item) => item.id === node.nodeId);
     const outOfScope = scope !== null && !scope.nodeIds.has(node.nodeId);
     const highlighted = highlightedNodeIds.has(node.nodeId);
@@ -164,11 +161,8 @@ export const convertLayoutToReactFlow = ({
     nodes.push({
       id: node.nodeId,
       type: 'entityNode',
-      position: {
-        x: node.box.x - (origin?.x ?? 0),
-        y: node.box.y - (origin?.y ?? 0),
-      },
-      ...(origin === undefined || node.contextId === null
+      position: { x: node.box.x, y: node.box.y },
+      ...(node.contextId === null
         ? {}
         : { parentId: node.contextId, extent: 'parent' as const }),
       draggable: false,
@@ -211,7 +205,7 @@ export const convertLayoutToReactFlow = ({
     });
   }
 
-  const placed = new Set(layout.nodes.map((node) => node.nodeId));
+  const placed = new Set(nodes.map((node) => node.id));
   const relationshipById = new Map(
     document.relationships.map(
       (relationship) => [relationship.id, relationship] as const,
@@ -229,7 +223,6 @@ export const convertLayoutToReactFlow = ({
     const muted =
       viewMode === 'simplified' &&
       edge.kind === 'plays_role' &&
-      edge.crossContextKind !== 'role_inversion' &&
       !highlighted &&
       hoveredEdgeId !== edge.relationshipId;
 
@@ -265,63 +258,29 @@ export const convertLayoutToReactFlow = ({
 
   // A pair is a claim about delivery, not a modeled relationship: it gets its
   // own edge type so the graph can state it without inventing a relation.
-  for (const group of layout.fulfillmentGroups) {
-    const request = layout.nodeById.get(group.requestId);
-
-    if (request === undefined) continue;
-
-    for (const resultId of [...group.confirmationIds, ...group.proofIds]) {
-      const result = layout.nodeById.get(resultId);
-
-      if (result === undefined) continue;
-
-      edges.push({
-        id: `pair:${group.groupId}:${resultId}`,
-        type: 'pairLink',
-        source: group.requestId,
-        target: resultId,
-        sourceHandle: 'source',
-        targetHandle: 'target',
-        selectable: false,
-        focusable: false,
-        data: {
-          points: pairLinkPoints(request, result),
-          outOfScope:
-            scope !== null &&
-            (!scope.nodeIds.has(group.requestId) ||
-              !scope.nodeIds.has(resultId)),
-        },
-      });
-    }
+  for (const pair of layout.fulfillmentPairs) {
+    if (!placed.has(pair.requestId) || !placed.has(pair.confirmationId))
+      continue;
+    edges.push({
+      id: pair.id,
+      type: 'pairLink',
+      source: pair.requestId,
+      target: pair.confirmationId,
+      sourceHandle: 'source',
+      targetHandle: 'target',
+      selectable: false,
+      focusable: false,
+      data: {
+        points: pair.points.map((point) => `${point.x},${point.y}`).join(' '),
+        outOfScope:
+          scope !== null &&
+          (!scope.nodeIds.has(pair.requestId) ||
+            !scope.nodeIds.has(pair.confirmationId)),
+      },
+    });
   }
 
   return { nodes, edges };
-};
-
-/**
- * Request's right edge to result's left edge, stepped at the halfway point.
- *
- * Drawn from the boxes rather than from the route: a pair link says "same
- * obligation", while a `references` route says "this document cites that one",
- * and the two must not overlap into one line.
- */
-const pairLinkPoints = (request: LayoutNode, result: LayoutNode): string => {
-  const origin = {
-    x: request.box.x + request.box.width,
-    y: request.box.y + request.box.height / 2,
-  };
-  const target = {
-    x: result.box.x,
-    y: result.box.y + result.box.height / 2,
-  };
-  const midX = (origin.x + target.x) / 2;
-
-  return [
-    `${origin.x},${origin.y}`,
-    `${midX},${origin.y}`,
-    `${midX},${target.y}`,
-    `${target.x},${target.y}`,
-  ].join(' ');
 };
 
 /**
