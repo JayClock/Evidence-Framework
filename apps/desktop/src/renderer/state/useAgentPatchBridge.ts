@@ -9,11 +9,11 @@ import {
 /** One agent patch that actually reached the model. */
 export interface AppliedPatch {
   rationale: string;
-  /** Command types, for the review bar and the activity stream. */
+  /** Patch operation names, for the review bar and activity stream. */
   commands: readonly string[];
-  /** Model before the dispatch; the review baseline. */
+  /** Model before the transaction; the review baseline. */
   before: DomainModelDocument;
-  /** Model after the dispatch; the document the canvas now shows. */
+  /** Model after the transaction; the document the canvas now shows. */
   after: DomainModelDocument;
 }
 
@@ -21,8 +21,8 @@ export interface AppliedPatch {
  * Applies agent patches through the live session.
  *
  * The renderer is the only place that holds the `ModelSession`, so the main
- * process asks it to dispatch; every agent edit therefore lands in the same
- * undo history as a human edit and is rejected by the same guards.
+ * process asks it to apply patches; every edit lands in the same undo history
+ * as a human edit, with syntax checks and the session's configured static guard.
  *
  * `onApplied` receives both snapshots so the caller can show what changed and
  * offer one-step revert while the patch is still the newest edit.
@@ -48,12 +48,15 @@ export const useAgentPatchBridge = (
               appliedCommands: commands,
             },
           });
-          onApplied?.({
-            rationale: patch.rationale,
-            commands,
-            before,
-            after: session.getDocument(),
-          });
+          const after = session.getDocument();
+          if (after !== before) {
+            onApplied?.({
+              rationale: parsed.rationale,
+              commands,
+              before,
+              after,
+            });
+          }
         } catch (error) {
           window.evidenceAPI.agent.respondPatch({
             requestId,

@@ -187,7 +187,77 @@ describe('useMcpBridge', () => {
       success: true,
       result: { success: false, appliedCommands: [] },
     });
-    expect(JSON.stringify(response)).toContain('OPERATION_PATH_UNRESOLVABLE');
+    expect(JSON.stringify(response)).toContain('out-of-bounds array index');
+  });
+
+  it('answers rapid calls from the live session and advances revisions without waiting for React to render', async () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    render(<BridgeHarness session={session} />);
+
+    for (const [offset, label] of ['first', 'second'].entries()) {
+      const response = await answerFor(
+        api,
+        request('apply_model_patch', {
+          rationale: label,
+          patches: [{ op: 'replace', path: '/entities/0/label', value: label }],
+        }),
+      );
+      expect(response).toMatchObject({
+        result: { success: true, revision: 5 + offset },
+      });
+    }
+    expect(await answerFor(api, request('get_domain_model'))).toMatchObject({
+      result: {
+        document: {
+          entities: [
+            expect.objectContaining({ label: 'second' }),
+            ...session.getDocument().entities.slice(1),
+          ],
+        },
+      },
+    });
+    expect(await answerFor(api, request('get_app_state'))).toMatchObject({
+      result: { activeProject: { documentRevision: 6 } },
+    });
+
+    const tested = await answerFor(
+      api,
+      request('apply_model_patch', {
+        rationale: 'assert current identity',
+        patches: [{ op: 'test', path: '/entities/0/label', value: 'second' }],
+      }),
+    );
+    expect(tested).toMatchObject({ result: { success: true, revision: 6 } });
+    const rejected = await answerFor(
+      api,
+      request('apply_model_patch', {
+        rationale: 'stale snapshot',
+        patches: [
+          { op: 'replace', path: '/entities/0/label', value: 'must roll back' },
+          { op: 'test', path: '/entities/0/id', value: 'stale-id' },
+        ],
+      }),
+    );
+    expect(rejected).toMatchObject({ result: { success: false, revision: 6 } });
+    expect(session.getDocument().entities[0].label).toBe('second');
+  });
+
+  it('rejects the legacy command envelope at the renderer boundary', async () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    const before = session.getDocument();
+    render(<BridgeHarness session={session} />);
+    const response = await answerFor(
+      api,
+      request('apply_model_patch', {
+        rationale: 'legacy',
+        commands: [{ type: 'delete-entity', entityId: 'evidence.request' }],
+      }),
+    );
+    expect(response).toMatchObject({ result: { success: false, revision: 4 } });
+    expect(session.getDocument()).toBe(before);
+    expect(session.canUndo()).toBe(false);
   });
 
   it('returns null when the canvas is not laid out', async () => {

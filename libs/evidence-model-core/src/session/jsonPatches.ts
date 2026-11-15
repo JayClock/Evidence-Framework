@@ -30,29 +30,80 @@ export const toJsonPatches = (
     })),
   );
 
+/** Validate against own JSON members before the library can coerce an array
+ * index to int32 (e.g. 4294967296 -> 0), or resolve an inherited property. */
+const assertLocation = (
+  root: unknown,
+  pointer: string,
+  adding = false,
+): void => {
+  if (pointer === '') return;
+  const parts = pointer
+    .slice(1)
+    .split('/')
+    .map((part) => part.replaceAll('~1', '/').replaceAll('~0', '~'));
+  let node = root;
+  for (const [index, part] of parts.entries()) {
+    const last = index === parts.length - 1;
+    if (node === null || typeof node !== 'object')
+      throw new Error(`Patch path '${pointer}' does not exist.`);
+    if (Array.isArray(node)) {
+      if (last && adding && part === '-') return;
+      const offset = Number(part);
+      if (
+        !/^(0|[1-9][0-9]*)$/.test(part) ||
+        !Number.isSafeInteger(offset) ||
+        offset >= node.length + Number(last && adding)
+      ) {
+        throw new Error(
+          `Patch path '${pointer}' has an invalid or out-of-bounds array index.`,
+        );
+      }
+    }
+    if (last && adding) return;
+    if (!Object.hasOwn(node, part))
+      throw new Error(`Patch path '${pointer}' does not exist.`);
+    node = (node as Record<string, unknown>)[part];
+  }
+};
+
 export const applyJsonPatchMutator = (
   draft: Draft<DomainModelDocument>,
   patches: readonly JsonPatchOperation[],
 ): void => {
-  // Parsing and cloning also prevent caller-owned values from becoming frozen or
-  // aliased into the session. The RFC implementation validates each operation
-  // against the evolving draft, including test/from and array bounds.
+  // Never freeze caller-owned values or alias them into the document.
   const operations = structuredClone(JsonPatchSchema.parse(patches));
+  if (operations.length === 0) return;
+  let next: DomainModelDocument = draft;
   for (const operation of operations) {
-    if (
-      operation.op === 'move' &&
-      operation.path.startsWith(`${operation.from}/`)
-    ) {
-      throw new Error('Cannot move a value into its own descendant.');
+    if (operation.op === 'move' || operation.op === 'copy')
+      assertLocation(next, operation.from);
+    if (operation.op === 'move') {
+      if (operation.path.startsWith(`${operation.from}/`))
+        throw new Error('Cannot move a value into its own descendant.');
+      if (operation.path === operation.from) continue;
+      const removed = jsonPatch.applyOperation(
+        next,
+        { op: 'remove', path: operation.from },
+        true,
+      );
+      next = removed.newDocument;
+      // RFC 6902 evaluates the destination after removing the source.
+      assertLocation(next, operation.path, true);
+      next = jsonPatch.applyOperation(
+        next,
+        { op: 'add', path: operation.path, value: removed.removed },
+        true,
+      ).newDocument;
+    } else {
+      assertLocation(
+        next,
+        operation.path,
+        operation.op === 'add' || operation.op === 'copy',
+      );
+      next = jsonPatch.applyOperation(next, operation, true).newDocument;
     }
   }
-  const next = jsonPatch.applyPatch(
-    draft,
-    operations,
-    true,
-    true,
-    true,
-  ).newDocument;
   DomainModelDocumentSyntaxSchema.parse(next);
   // Root add/replace/copy/move may replace the RFC document, even after earlier
   // writes. Reconcile it into the draft instead of returning a replacement from

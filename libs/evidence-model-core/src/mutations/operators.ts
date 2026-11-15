@@ -206,14 +206,6 @@ export const addBreachCompensationMutator = (
     throw new Error(`'${intent.requestRef}' 不是履约请求，无法声明违约补偿。`);
   }
 
-  const contextRef = breaching.contextRef;
-  const compensation = introduceFulfillmentPairMutator(document, {
-    contextRef,
-    request: intent.request,
-    confirmation: intent.confirmation,
-    ...(intent.proof === undefined ? {} : { proof: intent.proof }),
-  });
-
   bindBreachRuleMutator(document, {
     requestRef: intent.requestRef,
     rule: {
@@ -234,6 +226,12 @@ export const addBreachCompensationMutator = (
       expression: `now > request.expired_at && !confirmations.exists(c, c.confirmed_at <= request.expired_at)`,
       resultType: 'bool',
     },
+  });
+  const compensation = introduceFulfillmentPairMutator(document, {
+    contextRef: breaching.contextRef,
+    request: intent.request,
+    confirmation: intent.confirmation,
+    ...(intent.proof === undefined ? {} : { proof: intent.proof }),
   });
   return {
     createdIds: [

@@ -123,7 +123,7 @@ export const FulfillmentPairSection = ({
               onCancel={() => setPairing(false)}
               onPair={(confirmationId) => {
                 setError(
-                  dispatchOrReportError(session, (draft) =>
+                  mutateOrReportError(session, (draft) =>
                     pairFulfillmentMutator(draft, {
                       requestRef: entity.id,
                       confirmationRef: confirmationId,
@@ -162,7 +162,7 @@ export const FulfillmentPairSection = ({
                   onCancel={() => setBreaching(false)}
                   onBind={(rule) => {
                     setError(
-                      dispatchOrReportError(session, (draft) =>
+                      mutateOrReportError(session, (draft) =>
                         bindBreachRuleMutator(draft, {
                           requestRef: entity.id,
                           rule,
@@ -205,12 +205,10 @@ export const FulfillmentPairSection = ({
 };
 
 /**
- * Runs one command and reports a rejected guard instead of crashing the panel.
- *
- * Command guards are the authority on red lines, so their message is the message
- * the modeler should read.
+ * Runs one recipe and reports a rejected guard instead of crashing the panel.
+ * Domain guards supply the error message the modeler should read.
  */
-const dispatchOrReportError = (
+const mutateOrReportError = (
   session: ModelSession,
   recipe: ModelRecipe<unknown>,
 ): string | null => {

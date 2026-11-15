@@ -161,6 +161,56 @@ describe('useAgentPatchBridge', () => {
     expect(onApplied).not.toHaveBeenCalled();
   });
 
+  it('does not publish a review card for a successful test-only patch', () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    const before = session.getDocument();
+    const onApplied = vi.fn<(patch: AppliedPatch) => void>();
+    render(<BridgeHarness session={session} onApplied={onApplied} />);
+    api.agentMock.requestPatch({
+      requestId: 'test-only',
+      patch: {
+        rationale: '检查当前模型',
+        patches: [
+          { op: 'test', path: '/manifest/id', value: 'desktop-fixture' },
+        ],
+      },
+    });
+    expect(api.agentMock.patchResponses).toEqual([
+      {
+        requestId: 'test-only',
+        result: { success: true, appliedCommands: ['test'] },
+      },
+    ]);
+    expect(onApplied).not.toHaveBeenCalled();
+    expect(session.getDocument()).toBe(before);
+    expect(session.canUndo()).toBe(false);
+  });
+
+  it('rolls back earlier writes when a later JSON Patch test fails', () => {
+    const api = installDesktopApi();
+    const session = createModelSession({ document: createDesktopFixture() });
+    const before = session.getDocument();
+    const onApplied = vi.fn<(patch: AppliedPatch) => void>();
+    render(<BridgeHarness session={session} onApplied={onApplied} />);
+    api.agentMock.requestPatch({
+      requestId: 'stale',
+      patch: {
+        rationale: '过期补丁',
+        patches: [
+          { op: 'replace', path: '/entities/0/label', value: 'must roll back' },
+          { op: 'test', path: '/entities/0/id', value: 'context.wrong' },
+        ],
+      },
+    });
+    expect(api.agentMock.patchResponses[0]).toMatchObject({
+      result: { success: false },
+    });
+    expect(onApplied).not.toHaveBeenCalled();
+    expect(session.getDocument()).toBe(before);
+    expect(session.canUndo()).toBe(false);
+  });
+
   it('stops listening once the harness unmounts', () => {
     const api = installDesktopApi();
     const session = createModelSession({ document: createDesktopFixture() });

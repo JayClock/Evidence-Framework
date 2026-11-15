@@ -138,7 +138,7 @@ const textResult = <T>(value: T, text: string) => ({
  *
  * They are registered as Pi extension factories so the model can call them
  * mid-conversation: read the canvas, run the sensors, then patch the model
- * through the same command layer a human edit uses.
+ * through the same transactional session a human edit uses.
  */
 export const createEvidenceToolsExtension =
   (handlers: EvidenceToolsHandlers) =>
@@ -366,11 +366,9 @@ export const createEvidenceToolsExtension =
     });
 
     /**
-     * Runs one operator and hands its commands to the patch channel.
-     *
-     * The operator decides nothing the model cannot check: its commands go
-     * through the same guards and undo history as a hand edit, and a builder
-     * refusal comes back as a readable tool error instead of a stack trace.
+     * Runs guarded domain recipes locally and sends standard patches through
+     * the shared channel. A builder refusal is a readable tool error, not a
+     * partial write; the renderer owns the actual document and undo history.
      */
     const runOperator = async (
       rationale: string,

@@ -84,12 +84,9 @@ const json = (value: unknown): EvidenceToolResult => ({
 });
 
 /**
- * Builds one operator's commands against the live model, then commits them
- * through the same patch channel a hand-written command batch uses.
- *
- * External agents hit the same guards and the same undo history as the desktop
- * session; a builder refusal becomes a readable error instead of a partial
- * write.
+ * Runs a guarded draft operator against the live model, then sends its standard
+ * patches through the same transactional channel as hand-written JSON Patch.
+ * A builder refusal becomes a readable error instead of a partial write.
  */
 const runOperator = async (
   client: EvidenceMcpAppClient,
@@ -355,4 +352,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test and run as exported Step CI/Hurl scripts, not in-memory replay. When the question is whether production matches it, audit_production_drift — and treat a blocking drift as a service-side defect, not a reason to edit the model.';
+  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written patches: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch using { rationale, patches } with RFC 6902 operations and RFC 6901 string pointers (not array paths or typed commands). Before positional edits, test the expected object id to reject a stale snapshot. The modeler can undo each batch; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test and run as exported Step CI/Hurl scripts, not in-memory replay. When the question is whether production matches it, audit_production_drift — and treat a blocking drift as a service-side defect, not a reason to edit the model.';

@@ -86,8 +86,9 @@ export const extractAffectedIds = (
 };
 
 export function createModelSession(options: ModelSessionOptions): ModelSession {
-  const historyLimit = Number.isFinite(options.historyLimit)
-    ? Math.max(1, Math.floor(options.historyLimit!))
+  const requestedLimit = options.historyLimit ?? 100;
+  const historyLimit = Number.isFinite(requestedLimit)
+    ? Math.max(1, Math.floor(requestedLimit))
     : 100;
   const listeners = new Set<(event: ModelSessionEvent) => void>();
   let document = options.document;

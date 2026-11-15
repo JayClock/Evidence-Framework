@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 import {
   buildKeyDataLedger,
@@ -193,19 +193,42 @@ const captureRect = ({
 /**
  * Answers MCP tool calls that need the live `ModelSession`.
  *
- * Every mutation goes through `session.mutate`, so an external agent's edit is
+ * Every mutation goes through `session.applyPatchBatch`, so an external agent's edit is
  * one undo step the modeler can reverse with ⌘Z — exactly like a human edit.
  */
 export const useMcpBridge = (context: McpBridgeContext): void => {
   const latest = useRef(context);
-
+  const revision = useRef({
+    session: context.session,
+    value: context.revision,
+  });
+  if (revision.current.session !== context.session) {
+    revision.current = { session: context.session, value: context.revision };
+  } else {
+    revision.current.value = Math.max(revision.current.value, context.revision);
+  }
   latest.current = context;
+
+  // Count synchronous transitions, not React renders: several IPC edits may
+  // arrive before React commits its next snapshot (and its revision prop).
+  useLayoutEffect(
+    () =>
+      context.session.subscribe((event) => {
+        if (event.type === 'document-changed') revision.current.value += 1;
+      }),
+    [context.session],
+  );
 
   useEffect(() => {
     const answer = (
       request: McpRendererRequest,
     ): McpRendererResponse | null => {
-      const current = latest.current;
+      const current: McpBridgeContext = {
+        ...latest.current,
+        document: latest.current.session.getDocument(),
+        graph: latest.current.session.getGraph(),
+        revision: revision.current.value,
+      };
 
       switch (request.method) {
         case 'get_app_state':
