@@ -15,10 +15,16 @@ test('diff review draws removed objects at baseline coordinates and expands safe
   });
   const layout = (id, x) => ({
     bounds: { x: 0, y: 0, width: 500, height: 300 },
-    nodes: [{ nodeId: id, box: { x, y: 50, width: 180, height: 88 } }],
+    nodes: [
+      {
+        nodeId: id,
+        box: { x: 0, y: 0, width: 180, height: 88 },
+        worldBox: { x, y: 50, width: 180, height: 88 },
+      },
+    ],
     edges: [],
     contextGroups: [],
-    fulfillmentGroups: [],
+    fulfillmentPairs: [],
     responsibilityLinks: [],
   });
   const data = {

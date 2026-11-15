@@ -374,9 +374,7 @@ describe('projectWorkbenchData', () => {
       edges: [],
       responsibilityLinks: [],
       contextGroups: [],
-      fulfillmentGroups: [],
-      freeNodeIds: [],
-      omittedContextIds: [],
+      fulfillmentPairs: [],
     };
 
     expect(project(fixture(), { layout }).layout).toEqual(layout);

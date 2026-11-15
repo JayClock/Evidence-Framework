@@ -168,7 +168,7 @@ try {
     // the generator put it, so the page and the desktop canvas show one model.
     assert.equal(
       await evaluate(`(() => {
-      const placed=new Map(DATA.layout.nodes.map(n=>[n.nodeId,n.box]));
+      const placed=new Map(DATA.layout.nodes.map(n=>[n.nodeId,n.worldBox]));
       const drawn=[...document.querySelectorAll('[data-graph-node]')];
       if(drawn.length!==placed.size)throw Error('Drawn objects differ from the placement: '+drawn.length+' of '+placed.size);
       for(const node of drawn) {
@@ -180,10 +180,12 @@ try {
           throw Error('Card moved away from its placement: '+node.dataset.graphNode);
       }
       const frames=new Set(DATA.layout.contextGroups.map(g=>g.contextId));
-      const bands=new Set(DATA.layout.fulfillmentGroups.map(g=>g.groupId));
+      const pairs=new Set(DATA.layout.fulfillmentPairs.map(pair=>pair.id));
+      const drawnPairs=[...document.querySelectorAll('[data-pair-link]')];
+      if(drawnPairs.length!==pairs.size||drawnPairs.some(path=>!pairs.has(path.dataset.pairLink)))throw Error('Pair routes differ from the placement');
       for(const boundary of document.querySelectorAll('[data-graph-boundary]')) {
         const id=boundary.dataset.graphBoundary;
-        if(!frames.has(id)&&!bands.has(id))throw Error('Frame invented for '+id);
+        if(!frames.has(id))throw Error('Frame invented for '+id);
       }
       return true;
     })()`),
@@ -381,15 +383,13 @@ try {
     DATA.layout = {
       bounds: box(0,0,520,280),
       nodes:[
-        {nodeId:'cell-evidence',box:box(20,40,220,170),contextId:'cell-context'},
-        {nodeId:'cell-role',box:box(280,40,220,64),contextId:'cell-context'},
+        {nodeId:'cell-evidence',box:box(20,20,220,170),worldBox:box(20,40,220,170),contextId:'cell-context'},
+        {nodeId:'cell-role',box:box(280,20,220,64),worldBox:box(280,40,220,64),contextId:'cell-context'},
       ],
       edges:[],
       responsibilityLinks:[],
-      contextGroups:[{contextId:'cell-context',box:box(0,20,520,240),titleBox:box(0,20,520,36),depth:0,parentContextId:null,childContextIds:[],nodeIds:['cell-evidence','cell-role'],fulfillmentGroupIds:[]}],
-      fulfillmentGroups:[],
-      freeNodeIds:[],
-      omittedContextIds:[],
+      contextGroups:[{contextId:'cell-context',box:box(0,20,520,240),worldBox:box(0,20,520,240),titleBox:box(0,20,520,36),depth:0,parentContextId:null,childContextIds:[],nodeIds:['cell-evidence','cell-role']}],
+      fulfillmentPairs:[],
     };
     DATA.nodes.forEach(n=>nodes.set(n.id,n));
     document.getElementById('detail').append(cellFixture.host);

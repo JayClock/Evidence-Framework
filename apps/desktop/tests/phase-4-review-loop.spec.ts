@@ -38,7 +38,7 @@ describe('phase 4 review-authoring loop', () => {
         revision: input.revision,
         data: projectWorkbenchData({
           model: compiledDocument(input.document) as unknown as CompiledModel,
-          layout: workbenchLayoutOf(input.document),
+          layout: await workbenchLayoutOf(input.document),
           check: {},
         }),
         html: '<h1>审查快照</h1>',

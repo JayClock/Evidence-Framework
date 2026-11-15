@@ -5,7 +5,9 @@ import {
 
 import { workbenchLayoutOf } from './workbenchLayout.js';
 
-const documentOf = (entities: DomainModelDocument['entities']): DomainModelDocument => ({
+const documentOf = (
+  entities: DomainModelDocument['entities'],
+): DomainModelDocument => ({
   manifest: { ...EMPTY_MODEL_MANIFEST, name: '布局夹具' },
   entities,
   relationships: [],
@@ -13,8 +15,8 @@ const documentOf = (entities: DomainModelDocument['entities']): DomainModelDocum
 });
 
 describe('workbenchLayoutOf', () => {
-  it('places the objects of the document it was given', () => {
-    const layout = workbenchLayoutOf(
+  it('places the objects of the document it was given', async () => {
+    const layout = await workbenchLayoutOf(
       documentOf([
         {
           type: 'entity',
@@ -43,8 +45,8 @@ describe('workbenchLayoutOf', () => {
     expect(layout.bounds.width).toBeGreaterThan(0);
   });
 
-  it('survives JSON, because a page is read back from a file', () => {
-    const layout = workbenchLayoutOf(
+  it('survives JSON, because a page is read back from a file', async () => {
+    const layout = await workbenchLayoutOf(
       documentOf([
         {
           type: 'entity',
@@ -69,7 +71,7 @@ describe('workbenchLayoutOf', () => {
     expect(JSON.parse(JSON.stringify(layout))).toEqual(layout);
   });
 
-  it('describes a model with no entities as an empty drawing', () => {
-    expect(workbenchLayoutOf(documentOf([])).nodes).toEqual([]);
+  it('describes a model with no entities as an empty drawing', async () => {
+    expect((await workbenchLayoutOf(documentOf([]))).nodes).toEqual([]);
   });
 });

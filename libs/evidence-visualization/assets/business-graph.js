@@ -74,23 +74,10 @@ function businessGraphOf(data) {
       group.parentContextId || '',
     ]),
   );
+  // Fulfillment is an ELK-routed link, not a synthetic rectangular band.
   const parentOfGroup = new Map();
   const membersOf = new Map();
   const groupOfNode = new Map();
-  for (const group of layout.fulfillmentGroups) {
-    const context =
-      layout.contextGroups.find((candidate) =>
-        candidate.fulfillmentGroupIds.includes(group.groupId),
-      )?.contextId || '';
-    parentOfGroup.set(group.groupId, context);
-    const members = new Set([
-      group.requestId,
-      ...group.confirmationIds,
-      ...group.proofIds,
-    ]);
-    membersOf.set(group.groupId, members);
-    for (const id of members) groupOfNode.set(id, group.groupId);
-  }
 
   const responsibleRef = new Map();
   for (const link of layout.responsibilityLinks || []) {
@@ -111,10 +98,10 @@ function businessGraphOf(data) {
 
     return {
       ...node,
-      x: placed.box.x,
-      y: placed.box.y,
-      width: placed.box.width,
-      height: placed.box.height,
+      x: placed.worldBox.x,
+      y: placed.worldBox.y,
+      width: placed.worldBox.width,
+      height: placed.worldBox.height,
       owner: contextId,
       parent: contextId,
       responsibleRef: responsibleRef.get(placed.nodeId),
@@ -132,26 +119,11 @@ function businessGraphOf(data) {
       kind: context ? context.kind : 'context',
       group: 'context',
       label: context ? context.label : group.contextId,
-      x: group.box.x,
-      y: group.box.y,
-      width: group.box.width,
-      height: group.box.height,
+      x: group.worldBox.x,
+      y: group.worldBox.y,
+      width: group.worldBox.width,
+      height: group.worldBox.height,
       depth: group.depth,
-    });
-  }
-  for (const group of layout.fulfillmentGroups) {
-    const request = objects.get(group.requestId);
-    boundaries.push({
-      id: group.groupId,
-      parent: parentOfGroup.get(group.groupId) || '',
-      kind: 'fulfillment',
-      group: 'fulfillment',
-      label: request ? request.label : group.requestId,
-      x: group.box.x,
-      y: group.box.y,
-      width: group.box.width,
-      height: group.box.height,
-      members: [...membersOf.get(group.groupId)],
     });
   }
 
@@ -824,6 +796,17 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
       edgeLayer.append(group);
     }
     graph.edges.forEach(drawEdge);
+    for (const pair of data.layout.fulfillmentPairs) {
+      edgeLayer.append(element('path', {
+        d: pathOf(pair.points),
+        'data-pair-link': pair.id,
+        fill: 'none',
+        stroke: 'rgba(180, 54, 86, 0.55)',
+        'stroke-width': 1,
+        'stroke-dasharray': '3 3',
+        'pointer-events': 'none',
+      }));
+    }
     for (const box of graph.boxes) {
       const evidenceRole = box.group === 'role' && box.kind === 'evidence';
       const group = element('g', {

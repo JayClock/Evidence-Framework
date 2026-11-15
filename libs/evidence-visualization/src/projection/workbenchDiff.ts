@@ -37,17 +37,17 @@ export interface WorkbenchDiffSummary {
 }
 
 /** Diff the model, but export only the same business fields the normal page exposes. */
-export const projectWorkbenchDiff = (
+export const projectWorkbenchDiff = async (
   before: DomainModelDocument,
   after: DomainModelDocument,
   current: WorkbenchData,
-): WorkbenchDiffSummary => {
+): Promise<WorkbenchDiffSummary> => {
   if (before.manifest.id !== after.manifest.id) {
     throw new Error('基线与当前模型 ID 不一致，不能进行差异审查');
   }
   const baseline = projectWorkbenchData({
     model: compiledDocument(before) as unknown as CompiledModel,
-    layout: workbenchLayoutOf(before),
+    layout: await workbenchLayoutOf(before),
     check: {},
   });
   const oldNodes = new Map(baseline.nodes.map((node) => [node.id, node]));

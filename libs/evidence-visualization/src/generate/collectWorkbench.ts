@@ -363,7 +363,7 @@ export const collectWorkbench = async ({
     model: compiledDocument(bundle) as unknown as CompiledModel,
     // The page carries the placement the canvas computed, from the same
     // document the check accepted, so the drawing and the review agree.
-    layout: workbenchLayoutOf(bundle),
+    layout: await workbenchLayoutOf(bundle),
     api,
     delivery: deliveryViewOf(projection ?? buildDelivery(bundle)),
     check: {
@@ -376,7 +376,7 @@ export const collectWorkbench = async ({
     ...(generatedAt === undefined ? {} : { generatedAt }),
   });
   if (baselineDocument !== undefined) {
-    data.diff = projectWorkbenchDiff(baselineDocument, bundle, data);
+    data.diff = await projectWorkbenchDiff(baselineDocument, bundle, data);
   }
   return {
     data,

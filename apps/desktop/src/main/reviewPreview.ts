@@ -79,7 +79,7 @@ export const previewReview = async (
   ];
   let data = projectWorkbenchData({
     model: compiledDocument(document) as unknown as CompiledModel,
-    layout: workbenchLayoutOf(document),
+    layout: await workbenchLayoutOf(document),
     checked: check.valid,
     delivery: deliveryViewOf(buildDelivery(document)),
     check,

@@ -15,7 +15,9 @@ const base = () => {
     kind: 'party',
     label: '旧主体',
     notes: 'PRIVATE_SOURCE',
-    attributes: [{ name: 'name', label: '姓名', valueType: 'string', meaning: '姓名' }],
+    attributes: [
+      { name: 'name', label: '姓名', valueType: 'string', meaning: '姓名' },
+    ],
   });
   return document;
 };
@@ -26,10 +28,10 @@ const dataOf = (document: ReturnType<typeof base>) =>
   });
 
 describe('workbench diff', () => {
-  it('retains removed objects and their old geometry without leaking source records', () => {
+  it('retains removed objects and their old geometry without leaking source records', async () => {
     const before = base();
     const after = createEmptyDomainModel({ id: 'model.review' });
-    const diff = projectWorkbenchDiff(before, after, dataOf(after));
+    const diff = await projectWorkbenchDiff(before, after, dataOf(after));
     expect(diff.counts).toEqual({ added: 0, modified: 0, removed: 1 });
     expect(diff.baseline.layout.nodes[0]?.nodeId).toBe('party.old');
     expect(diff.changes[0]?.attributeChanges[0]?.before?.id).toBe(
@@ -38,7 +40,7 @@ describe('workbench diff', () => {
     expect(JSON.stringify(diff)).not.toContain('PRIVATE_SOURCE');
     expect(JSON.parse(JSON.stringify(diff))).toEqual(diff);
   });
-  it('projects added and modified fields and leaves the current layout unchanged', () => {
+  it('projects added and modified fields and leaves the current layout unchanged', async () => {
     const before = base();
     const after = base();
     after.entities[0]!.label = '新主体';
@@ -52,21 +54,21 @@ describe('workbench diff', () => {
     });
     const data = dataOf(after);
     const original = JSON.stringify(data);
-    const diff = projectWorkbenchDiff(before, after, data);
+    const diff = await projectWorkbenchDiff(before, after, data);
     expect(diff.counts).toEqual({ added: 1, modified: 1, removed: 0 });
     expect(
       diff.changes.find((item) => item.id === 'party.old')?.fields,
     ).toContainEqual({ name: 'label', before: '旧主体', after: '新主体' });
     expect(JSON.stringify(data)).toBe(original);
   });
-  it('reports an empty comparison and refuses unrelated models', () => {
+  it('reports an empty comparison and refuses unrelated models', async () => {
     expect(
-      projectWorkbenchDiff(base(), base(), dataOf(base())).changes,
+      (await projectWorkbenchDiff(base(), base(), dataOf(base()))).changes,
     ).toEqual([]);
     const other = base();
     other.manifest.id = 'model.other';
-    expect(() => projectWorkbenchDiff(base(), other, dataOf(other))).toThrow(
-      'ID 不一致',
-    );
+    await expect(
+      projectWorkbenchDiff(base(), other, dataOf(other)),
+    ).rejects.toThrow('ID 不一致');
   });
 });
