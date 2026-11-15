@@ -1,28 +1,36 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bf7017384e276a22d9d776ea715f873619ccc2c7b3bef337984b780cd4552404",
+  "pageVersion": "sha256:846e57bc0b0da1b758ec9300b175739389872e3dc7d6831325d95bd53f0bcc33",
   "claims": [
     {
       "id": "claim_268478c2f76e469a8fa21a385f68eec1",
-      "statement": "createGraphLayout is a pure, deterministic function of the document: the same model produces the same boxes and order, using fixed node width, base height, label/attribute increments, column and row gaps, and context chrome constants.",
+      "statement": "createGraphLayout is a pure, deterministic function of the document — no randomness, text measurement or DOM — and its grid is a set of named constants for card width, base and label heights, attribute row height, column/row/stack gaps, Context padding, title height, Context gap, fulfillment padding, minimum Context width and free-band columns.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L33-L50",
-          "version": "repo-lines-v1:sha256:97a79677058692f1b3bf402b4bc43e68022e7639a6b622c514fa030b5ac97244:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ZGVhMmU0NzBmYWEzNTBjNDI2YTlhNDcyNTg4NGViNTc0MTYxNDQ2MWRlNGRlODdiMzdiZDdiMWUxZDAzOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2N2E4ZmJiMTUxZjg2ZDU2YzM3MWUxZGMwZDY4MzI2ZWQzZGU4ZTI3MTYzYzNiNGZmNzdjYjUxNDUyNjc1ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmMTk1NTQ3NzBhNDAyODlhOGFhMzYyZmE3Mzk5MGNmNzk5NjA4ODZhMmFmNjdkZGViMmVkZGRkOGM1MGZmYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyYzIxMGIxZjQxMjg4NTEyNzYxYWI4MDFmMmIxYzg2OTAwZTdhNTY5NjZhYWI2ZmQxMWQ2MjViNjAyY2JkZmYifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L16-L21",
+          "version": "repo-lines-v1:sha256:94eafbef9689b46934083390e8a854b8a74bab59b8604900c90d1c61b5cfe7e4:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDNhZmQ1MzM0NWMzNWNlODczZTQ5Y2M0NWE4NmM2MmZlM2Y5ZDZjMTk1OWEzYjg3MWM4YWVkZDg1YmQxN2VjOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg0OGE2OGFkNWIwZjczNTk5YTA0YzU2ZWY2MTEzMmQ3ZWRiZjE5Y2ViMjVkNGFiNWUxOTkxZTk2YjIzOTE3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzdmMWNmZmVkNTAwZjk4ZDAxNzI1ODBkNDlkMzk2ZjZlZmI1ZDk2OGZjMWZiY2Q5YjI4MmE1MWRhMzUzNTM3MSJ9"
         },
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L88-L100",
-          "version": "repo-lines-v1:sha256:175079122b910affdeefacf9bc42f64330d2ba82f4e84358c0c98acc097b2aa0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzOTBmYzMzZDE2MDkwYzExYzI1NWJlNzcwYWE0NjBlOTU0YjNhN2Y0MGZiZjNhYzcxZGEwN2M2MTNlZTBkMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhOWFkNDJlZWE2MjRhZDllYWIwNWNlM2FkOGFmNzFhNjk1Y2VmYWVjZGNhODVlZTZkOTRjZTY0YTVlZWZiYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyMjQ1NGJkNzAwZjk5ZTVmN2VhOTE0ODc1ZjEwODI1ZmVkZjIyZjIxNGYxMTQ3ZDdiOTgxMDUzNmExMGVkZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NTBjNDg4NjdkZmRiNzliYzI4ZDg3OTc5NWNmMGNhM2QzNmM4MWMxZmUxOTgxODY5YmViYzdmYzhmZWVhYWMifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L238-L246",
+          "version": "repo-lines-v1:sha256:e7d8618167f1fc48eaf21374fc98628526988849ba5806ac6da455f0d78c8b6c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM5MGZjMzNkMTYwOTBjMTFjMjU1YmU3NzBhYTQ2MGU5NTRiM2E3ZjQwZmJmM2FjNzFkYTA3YzYxM2VlMGQyYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2I0NWZkZmI4YmMzMGU1MjNlOTk3MDNjNGQ4YmNlYzRiZDI2ZmVkYTcyYjQxNjcyOGYxMDEzNWIxNjIwMTgxYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzRhNzYwMjdkNjhlMzZkNGJhNzNiYTRlMmQ3NGM1NzMyMmMxNDAxZmNlODQ3M2E5YmMxZTFlYTI2YjdmZDY2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDI0NjBhYWNkMDFhNzg0MWU0Nzk4ZGY4ZDg1ODFjNmQyZjNmNzg5MGNjZTU2MjA2YzE3MTk1NDYyMTAzNDE1MyJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L26-L43",
+          "version": "repo-lines-v1:sha256:b82bad2d17db25e2f789d511570bc8e645b7f51fc00025aa11c273bfa0f7360b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZGJmZjBjMDMyYTczZmRjOTZhOWEzMThlZWY3YTA5NmExNjliZjU4ODAzYzRlZDI5NTY1YzQ3MGM0NjA0NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0Mjk2NTU5ZjQ4ZjU4N2I4OGQ0YjY0ZjE5YWU4OTQ1NzExYzYzNmYwOTNjNTAwYmVlMzJmMDNjMDkyNGY3NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1MTQzOGFmNDIzNzBlODMzM2NkMmM3NmU5ODQ2ZTQ3YjQ4OGRhMzI2MmMxMTY4YzQxZGNlYzQ5MzhkNDFhZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMjIwZDY2NmJhNjRiYjlkZWU2ZmVjMWU1ZWQ0MGIzM2IyYmFhNTE3YzFkZTNiN2I1NTgwZDk0ZGMyOWRmMDUifQ"
         }
       ]
     },
     {
       "id": "claim_77512ae7b4f448a38fc27b6428a4ee6a",
-      "statement": "Node height is derived from at most two label lines and at most three attribute rows, so two objects with the same label length and attribute count always measure the same height.",
+      "statement": "measureNodeHeight has two modes: with a viewMode every card is a fixed rectangle (156 px in standard, 82 px in simplified) so routes, frames, hit testing and patch rings agree with what the card draws; without one, height comes from at most two label lines plus at most three attribute rows.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L52-L70",
-          "version": "repo-lines-v1:sha256:ecd6a76da6b68d30ffa1d03f22ad2d0b7145153fddbb6144391d40c29ada7a4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NTU3MzQ1OGY1M2NmN2I5N2NmOTM4M2VjODAzMjQwMzM2NWU4ZWUwYTM5ZTkxNTEzOTFmNGM4NGRhNjM5NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwYjg1M2RhYjZjN2Q4YTI0YzA0OWU0YTZiOWFlZmNjNTA0NDBiN2IxMDVhYmZiMmZmMmVhYjBhMDI1NDg3MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiM2ZjYzcwODFlOGIxNmNlZmU0MGViOTBiYmRjMThiOTg2ODBjN2UyOWY5MjAxODNhZjI5ZmQ4MDExOTRlODMifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L24-L67",
+          "version": "repo-lines-v1:sha256:03408c60b5cbc49dabc2fee22387de581bd944fee599dffca55437a4981f2232:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0YjIzNjQwMTAzN2VjMWFhNzQ3NGNlMDEyZWI1MTRiMDZhMTIzYWExZjFhMDE1MTczNDM0YTc5OTRiZWY0OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3Y2UwMjc4NzljMTExZGI1MWFlMzRmNTFmNWRmZGJhOGEwZmI3MzcxMGMxMjIyODNmY2QyYTcwOGY3ZTMzOTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L66-L85",
+          "version": "repo-lines-v1:sha256:fbe2f77102af358a7ca10bfd6671cabb701b5f8f3de91f6c070c529f920e6889:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwN2NkZTZiOTFiMWUwYWJiMjMxYmMyN2RiYzFlZWMwMTg4ODQ1MThmMGFhZjcwY2UwMTQ5ODFhMzc1ZjMwODciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyMTc1N2YxYWQ3NGZjN2MwZjM5M2Y4N2M4MTg2YjU5N2QxZWU5ZDcyYjJhNThkOTJmMGVmNTE0NmUwZjI4YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1YmE3M2I1MWNhY2JhODZkNmUwNDE0M2NhYzAzZTBiZDA0YjZkMmU2NDIwN2Y4ZDFmMzY2MGI2ZmEzMDQwZjUifQ"
         }
       ]
     },
@@ -31,32 +39,36 @@
       "statement": "Entities are bucketed by contextRef into context cards, entities with a missing or unknown context become free nodes, contexts nest by parentContextRef, and an empty context is omitted rather than drawn as a shell with its id recorded in omittedContextIds.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L102-L170",
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L252-L320",
           "version": "repo-lines-v1:sha256:41057f025a7a45a5efd4e0c535454eebda0c3bcb8cf890d61ab6a6f0ef7ff0a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMDQzMDhlYTJiZjNhYWQwODlkNjUyYmM0OGZjYmZiMTNhMzg5Mjg3NjNmNDEyOTcwNDc2Y2YzZjkxZjc5NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmZTFmOWFkNTA5MWY3M2RhN2I4N2RkOTYxZjY2YjRmYzkxN2EwMWVkN2YwNmZhZjNjZTlhOWFmZmE1OWU0MmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1NTA5OTQwOWY3MmJlZTU4MjU4MTIzZWU3YTk1ODJhNTI0ODBkMzkwZWU1Yjg1YzZmYjM3YzAyMzU3YzViOGMifQ"
         },
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L294-L306",
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L472-L484",
           "version": "repo-lines-v1:sha256:14c35b72b704e01e1ef609c68f507b38ea927c35126e95fcb6e785953222a190:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNTljOGJmNzkxNzExZDQ2OTI5MmNlZTZjODZmOWQ4MjAyNjUzMjQzZmFlZTE5ZWJmOWMzMzk3NTJmNTk1NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4MjcwOWExOGQwY2IxNTVkZGE3OWZlMmIzMDcwMzMxNDY5YzdmN2NlMzZmOTJkZDBlYjg2ODZhMTZiMGQ3MGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiZWM3NDEyMTZkODExY2Y2N2RmOWZmOGYyZjk1NmFmN2VmY2UzNGUxZDY4MDM4ZWMzMWE1MDJiYWVjOWVmZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyYmMxODY2MTcyYWFiYmFmZmQxODdlZDA2MWE0YmY1N2ZjY2E1ZDUyNmNkZGFiNTQ3N2M2M2RhMzlmY2VjMDAifQ"
         }
       ]
     },
     {
       "id": "claim_5c13fc31fe1047a38135ca8bf27b6f72",
-      "statement": "Each fulfillment request becomes one row: request in column 0, its confirmations in column 1, its proofs in column 2, enclosed by one fulfillment group box so the pair reads as a single object.",
+      "statement": "Each fulfillment request in a Context becomes one row: the request in column 0, its confirmations stacked in column 1, its proofs stacked in column 2, all enclosed by one FulfillmentLayoutGroup frame, with the cursor advancing past the tallest column.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L192-L262",
-          "version": "repo-lines-v1:sha256:41e705c94022572b0990023bb5ad4a32ab834fd978e68c05a0dd9a50177ade8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlODRkNDFhYjZhY2FhMzQ2NzkwMjVmMzg5YmFiZWE0MjEzMDEyNzhhNGNiYWNhOTJjZGZjYThjMWM3NjI3OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1ODhjZGI0OWFhYmE1OGRhMDBlN2Q4ZGUwZDVlMTQzMjUxMWMxMDJkMzgwZWM3YWFlOWI5YzViZmY5OWFlYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyYzc2Nzg0NmZkMTNmYmNmM2Y2NmJkY2FlYTdhYjZmYWNhMWJhMzMzNTQwM2ZmZDZmYmQxMzE1YzJmZmQxZmIifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L355-L428",
+          "version": "repo-lines-v1:sha256:949d1aae47c5502e556a270eb54f2e9586973fa194279dc560a3ac17a65c6209:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlODRkNDFhYjZhY2FhMzQ2NzkwMjVmMzg5YmFiZWE0MjEzMDEyNzhhNGNiYWNhOTJjZGZjYThjMWM3NjI3OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1ODhjZGI0OWFhYmE1OGRhMDBlN2Q4ZGUwZDVlMTQzMjUxMWMxMDJkMzgwZWM3YWFlOWI5YzViZmY5OWFlYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2OGM5Y2I2MmUxNWFkM2VjM2E3ZmE5M2MwYTc3YzRkYjE3ZGRkYzNkZThiYzdjZmNiOGI4NmEyMjEzOTNkZWQifQ"
         }
       ]
     },
     {
       "id": "claim_cb2c77179e6e4178b93a864897f4959d",
-      "statement": "Relationship edges are dashed when cross-context or plays_role, arrowed only for plays_role, skipped when an endpoint is not laid out, and responsibility links are derived only from explicit roleRefs and responsibleRoleRef fields.",
+      "statement": "Relationship edges are dashed when cross-context or plays_role, arrowed only for plays_role, carry crossContext plus a crossContextKind, are skipped when an endpoint was not placed, and responsibility links come only from explicit roleRefs (contract_party) and responsibleRoleRef (responsibility) fields naming a placed role.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L441-L504",
-          "version": "repo-lines-v1:sha256:702c51b61eca82fb60df77c2806581023dd4899e0472c5b7359e98b69d6077e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MzgxOWE1ZGNkMGJiYzA1ODFjZWY5ZDdiNjgyYjFjNzc4NjllMmQxOTRhZjhjYzcxMjA4M2JiMjM2NzUxYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3OTQ2NGY5NWQ0OTY2MjI0NjgzNDI0MDI2MGRhNGVjMDQwY2QwNDQ3YzI0NTMxNTdjZGJiZWJmMTFlNjNkNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MDRlYzVjNzM0ZDJmYjc4NTMxZDI1M2RiYjYyMDkzOTBmNGYzMDlkN2Q5YmYwNjgzMTJiNjhjYTk3MmMwMzUifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L122-L181",
+          "version": "repo-lines-v1:sha256:2f3cff54cafd96a5849be86d3928f511e7e402242d8ea942105465ccce314fa1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZTdiNWFhNmYwN2I3NGYzY2Y1MWZlODQ0MjI1M2IwZDc2YmRkMTFjMTA1ZWU5NmUxZGFmNmE0MWNiNGEwOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlMDUyYzVkMTFiNzk5OTNlNTA5YjE2YWZhNDNlMmM2MGNkYWZlODViODcwZjQ4NzYzNDZiODdhMDE0NzUyM2YifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L184-L213",
+          "version": "repo-lines-v1:sha256:14800186cd6143ebb6edfddf6ed835b7b82444dcf1aa26b316258f13c6534f2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1ZDEwMWY1ODVlNjYzZjUyY2ZlNzA1Y2ZjODdlMTU4NjhhOWMwMzY2NzJiNzEyZDMyMzBjNTJlMDQ2MmI2YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlNTkwYzgyNjFmNmUwYWQ3NDVlYjgyNzdiY2I0MjgxNzUxM2ZhNzcyM2FiYTc3OTEzMWExZWVlY2JkZGZiNWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNjY4ZjQ1NTNiNzM4YmIyMTUzMzFjMjZiMDI5MWUwNTQ2YzE5MGU4Njg0YWQ5ZTU3MDE4NmNkZGNmYzYzMDcifQ"
         }
       ]
     },
@@ -65,7 +77,7 @@
       "statement": "Edges are routed as orthogonal two- or three-segment polylines chosen from the relative box positions, so horizontally aligned boxes get a straight line and offset boxes get a midpoint bend.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L548-L597",
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L662-L711",
           "version": "repo-lines-v1:sha256:0674b06f0a5aae7c63f392209a0ec67e245dd58a76719500c4ada135d52f3498:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGRhY2U4M2FmOTdlMDZjNzA5YTVkODA2NTkxOGNhNGNiYTZhZDZlYjk1ZmUxOGViMTQwZmU2MjkyOTIwZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2MTRlMTk5NDgzZDQ2NmUwMTIyNjI4ODExMzBjMGJmOTFlMzI4N2JjMmNkY2I4NzJjODkxZWVkZWUyMmFmOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -110,8 +122,12 @@
     },
     {
       "id": "claim_63495ba29aa348e7aaa6092977776d61",
-      "statement": "Marquee selection intersects layout boxes and can be suppressed below a minimum size, intersecting contexts are ordered outermost first, and pointer hit testing prefers objects over the context background while choosing the innermost context.",
+      "statement": "The layout library's marquee and hit-testing helpers intersect layout boxes, can be suppressed below a minimum size, order intersecting contexts outermost first and prefer objects over the context background; the React stage does not call them and instead delegates marquee selection to React Flow, reporting only the first selected entity node.",
       "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L400-L445",
+          "version": "repo-lines-v1:sha256:fb355cc45a0b367dcda4e3d972bff2567c00892ea466a3b4f6c0a03d5cfcbcf5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjZDdlMjk2ZTA0YzU4MGMzMTk3MDNjNGQ0OTFkNDMwNDM4NGY3MWIxMWQ1OGMyYzJlODdjYTI5NjU2NDQ5NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkYzVlYTRkZTc4MDczMDVkZDljMGE4NzMxMTRiNjY4NzZhM2VhZWQyOGUyYTc3ZTFkMmQzNDhlM2ViNmVmMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiMDM4MjM3MzFmNWQ4MmM0NmM2N2Y2YzY1ZGMwNzc4MDhhZTQ3ZWJkOGJhYmNlYjJjNWIwODFjMmYwN2I5YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNTljNWFhNDNhZjZhZDc1ZDdlZDg3OTA0YjE5ODA1MGJiMzRkN2YxODYxZWIxYmQ5MDAyYjE3MWY4ODg0NTMifQ"
+        },
         {
           "resource": "repo://libs/evidence-canvas-interaction/src/selection/boxSelection.ts#L12-L77",
           "version": "repo-lines-v1:sha256:8d43f4a6397575f80478c6ac26c667538173bb7a6b38cb062987437b5c1f6690:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYWQxM2I2M2NhN2U1MzY2YmQ2YzU5MzcxMjYzY2ZiYzAxZjU2ZTI5MTEyZTFiZWU4NjI4OWJjNTZlZDBhMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNTkyODIwMWY2Mjc3NWI0NTc0YjM0NjRiYjQ3MGQ5ZjI3ZTc4ZTQ1NTVmYWYxNDUyN2U1MjMyMDgyODhhYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
@@ -120,57 +136,329 @@
     },
     {
       "id": "claim_f119e31896a64934870a8752399082c9",
-      "statement": "The editor hook owns one ModelSession per window, rebuilds graph and layout from the session document on every session event, and routes save, reload and adoptDocument through the session; reload and adopt reset history because previous undo steps no longer apply.",
+      "statement": "The editor hook owns one ModelSession per window and re-reads it on every session event, so each render carries a fresh document, graph and createLifecycleSwimlaneLayout(graph, { viewMode }); save posts the document to the main process, and reloadFromDisk replaces it with resetHistory because the previous undo steps no longer apply.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L123-L130",
-          "version": "repo-lines-v1:sha256:df03499e3d44f476c0b32c9b82d31382a9d9bf5319d6040d187baa4684e5204f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk4NDEwYjdkNWQ2MDUzNWIxNDdmZjZlNzVjY2U0Mjg1NjM0YzFhMjA2ZDhmMDRlZmJhNmE0YjNkYTA0MzJhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdhMTg0ZTFjMDIyMWUxMGZiYTI1M2M3ZWI5YjMwZTUwMzExNjYxNGViM2IzYTNlNDI2NDQ1ZjdmODJlOTVjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjgzNDgwMWIxNzNhNjI0NGQ0ZGQyNDFiZTEzYjlkOTY2YmNhZmVlMmYwZjEwYTE5OWVkNmExNTQ0NTk0ZmQ0YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU4MzczNmU0ZmRmYjJmZGQwZjExM2UyZDEzNjZjMjg4ZWI4Yjk3ZTc5ZTM2ZWM2MGQzMjkxZDgxY2Y2ODBlYyJ9"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L122-L157",
+          "version": "repo-lines-v1:sha256:610a1378e4a92583e50fa60a841307c4857b70c94295078cfbc54851a1838b5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4OTQxNjRiMzE3Njk4ZTJjYTkxZDhkZmRjN2VlNDBjY2FhYjg4MjhiODI4MzVkNDNhNzZiNTNmMDEzYTAzNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhN2NjYWViNzM4YTVmZjI3MzgwYmMwMGY0NzMxZjY3NDIyYjQwMjYwY2NhYTQ2ZDRhZjc4NjcwMjY4NTg4NTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmZGI4NWQ0YzZmYWY5OTRlMzA5YzY1ZmMzYTdlNTFiYzIwN2U1NDM3MGZhOTIzYjYxMDQ3MjA1MTlmN2NmNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMTY2MGFhZmVmZjZhNmE0ODcwY2EyYTBhNjBiMGViNzM2ODY4MWJjNWIzZGE2Y2Y4NTE4MGZjODU1MGM2NjcifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L51-L80",
-          "version": "repo-lines-v1:sha256:d6508ad935284ae4adf8a31937fb50c800acb992af82090ce36f80ce95159d9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1OTMwMDk2Yzk3ZDAwNDZhYzE3MWQ0MzE1MGMwNDczZjM0YjZlYmZhOTM5ZTJlYmE3NTIyYTExNGY4MTA1YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmZGFjNWI1OWJhN2MzZWJlOGI0MDJjMzIzOGVhOTE0Yzk0MDRiYjk5NjhhYWQ1YzcxODZmMzEwMzVlZWUxNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlN2E2MjU2YmQyYTI3M2ZhMjhiZmI0MmUxYWM0ZDk1NTZjMTYyNzAxNzZiMDUyYTEyOTBmNjRkNDZmMjIzMTMifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L46-L77",
+          "version": "repo-lines-v1:sha256:ff1d24faffd43a46389d9b8e6d5d0653c8271038256a9fb0b316c31694d3bc35:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4YjE2NzYyNDI3NGViNzZiMzRkNWU2Nzk3MmViNDFmMzk4OGNlYWQ5ZWU3NTU4ZTlmYWI4NDU3M2I4YmEyNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyYmVlMGUzY2YyNDdjMWMxMDg2MTVjM2E2YzFhYWU2Y2E4YTljNDJlYzI0MzcyNTc1ZTE3ZWIxNDc0YjU0OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA3YWNkMThlOTZiYjViZjJmNDY0MDFlOTM0N2YwY2ZlMTY2OWIyODdjOGI3NjljNWQzZDkwMTVmMDQ3ZDRjZmIifQ"
         }
       ]
     },
     {
       "id": "claim_7196e81329cf4d7195992e8661d968ae",
-      "statement": "The inspector is generated from a declarative registry: five group ids with labels, property definitions naming field, editor kind, select options, reference constraints and helper text, and only getInspectorGroups/getInspectorGroup/getReferenceConstraint as lookup APIs; responsibility roles are constrained to same-context Party Roles.",
+      "statement": "The inspector is generated from a declarative registry: five declared group ids with labels, property definitions naming field, editor kind, select options, reference constraints and helper text, and only getInspectorGroups/getInspectorGroup/getReferenceConstraint as lookup APIs; the evidence responsibility fields constrain roles to same-context Party Roles, and the per-category sets use only the general, responsibility and attributes groups.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/inspector/groups.ts#L1-L18",
-          "version": "repo-lines-v1:sha256:dc7b5751b4ea9ee08071ad3bea7d2d60dc1a02eca8d053666efa0ab685c625c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYTk2ZDUzYTIzOGJkYjBhMmUxMzA5NWIzOWU4OWM5YjJmZmZmYTEzYmEyN2RhOGEwMDM2N2FkMDU3MWJlOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-schema/src/inspector/groups.ts#L9-L23",
+          "version": "repo-lines-v1:sha256:fa1c4f7540a3039668e12148c3f5729fc4eb60d21cdef7ebad32470070a38837:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZTQ4OWMzZDgzYmRmYmU2ZjdhODE1MDU2M2QyMTMyNmZmZTA2NGNiYTM4OWEwNjJjMWQ4Y2FmNzQwYTc3ZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjMDZiOWNjOWI3MjIzMzMwZjlkYTFkM2ZmMmIzZGYzZmE5YTAwZjllZWZkZTkyNDliMjk3NjUwMWZhZjg0NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L16-L60",
-          "version": "repo-lines-v1:sha256:a166ff5bf2144b574e3efc19f153b2a8280504ffef46c0a97c691f0facba1fec:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZWY1YmU3NzRjMzE2OGZmMmNlYWYxMmJjNDBlMDIzOTk3ZGFiN2I5YmRiMjQ3OGFlMWJlNDVlMzhkNjZjODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4ZTU4MTAwOTFjM2M0MGIxOGE2N2EzZTNkN2E0YTkzZTEwODVmYmZiNThhZWZkYWZkYTViNDc3NGIwN2RiMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmMDM5MzkyZjE2NTZjNWIxMzRhY2JjMWE2YjczNjk1N2JmMjZjOTBkMjBiYTI2YjU0NmJlMzBjZjE0Zjc2NzMifQ"
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L118-L160",
+          "version": "repo-lines-v1:sha256:74e9a6dd6863708cc6821819ed72add74197dfc0b20a1a5c22873808ed95dee0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NzcyZjc0YmQ1NmE3ZmY5ZWI5MjI5MjNjNTJiYjdiOWQxMWJiYjAzMGFkZDIyZjlmMTE1NjExNjI0NDRmOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyOGE2Yjc2ZGY1Nzk2NDk2NGJiODA3MmMwOTkzY2VjMmIzZDMwYjc1ZjkzNTA0Mjc3MTM3Y2UyMDdhMGM1OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0YTdjODZjNjllYzM3MmVmN2U2YzcwMTliYjQ5MjFjMjlhMzFhNGZiM2MzMGIwMjZlMDAzYjk4MTNlZTAzYmIifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L307-L334",
-          "version": "repo-lines-v1:sha256:cc56b1d55ac9476ba0a5ed5730860450dc548984538415368c6ba0096a07943a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0YTIyZmIzNDViZTJmMTk5NjQ0MDQ0NzI5MWU4ODk1MWNkYjhkMDQzNTExYzVmODk4Y2IzZDg1MTc2YmJiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5YzhhOWViYzBhOTRhZWExOWIyZGVmNDNiZDY2Y2QzYWM0MWI0Y2M2ZGY4NThhMmVkZDMxODFhN2ExMzQ3NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlZjRhODA3ZTVmODVjOTAyMzIzODJjODE4YmI2YjA1NGM0NjMzY2I0N2MzYWQxYTNjMTAxMmNlZjVmZmNkZDcifQ"
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L14-L52",
+          "version": "repo-lines-v1:sha256:db54dcda22cdb5e8cb74f14e4c0247f2bba4371c40e13fd9ac4b95d0fc1888f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMjI3ZTI3M2NiMTZhZmEzOTM5YTcxMTZmNWZlYzI0YTY3MTFlMTA1ODI1NDU4YzhhMDg1OGIzZmZmOWQ4MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmNjQ1OTEzMjJjMTk2N2JkZGZiMTNiYjE5YTliNTdkMDUwNGRiMzQ2NWQ3NTdkMWY1MDcwOWY0ODRhMjlmZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2M2I5ZjNlNTI3Yjk5NjI0MzZiNzE1OWU4ZTRjMWQ3NDRmYjYxYmIxOWY5NjQ3OGY1YzZmNTY2MTQwYTQ5ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkMWY0OTJkNDIwNzI5MzBlZDczMTQ0YzBlMmQzZTg2ZjYxZjdhY2ZkZjA3ODU1ODRiYTRlOWU5YjhiZWVkNjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/inspector/registry.ts#L328-L363",
+          "version": "repo-lines-v1:sha256:1ed606ca75f5f84558645578a272317a52d794a50195bc87bdffd754f260a42b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1OTdlOGE2MzViODBjMzlkOWM3MjhkZDU1ODYwNTcyMWY5ZDA2Y2ZhZTBhOTI5NTRiYjJmMDZhZjE3OWU2MmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MjQ5OWJiOTgwMjgxYjM0NTcxMjZlMWU5ZGM3NThiOGUwZGRlOTc2ODNiNWI0ZmRkZWE0MjExMzY4ZmVlOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_c3efdc30d35541c8a66a6cdc1c98af0c",
-      "statement": "Tests pin layout determinism, height measurement, one placement per entity, free participants, child nesting, fulfillment grouping, edge styling, explicit-only responsibility links, empty-context omission, bounds, routing shapes, one-hop highlighting and marquee/hit-test behaviour.",
+      "statement": "Tests pin layout determinism, height measurement, one placement per entity, free participants, child nesting, fulfillment grouping and shared results, edge styling and boundary reasons, explicit-only responsibility links, empty-context omission, bounds, routing shapes, one-hop highlighting, and the React stage's placement, scope, framing, overlay and diagnostic behaviour.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L15-L210",
-          "version": "repo-lines-v1:sha256:30d4fbcd70a69fefa220942ca7262af13c9687e983b36c7151e87ba73b81f1a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYWZiNzhiNDA5YWI5N2U1ZWRmZjk3MjZmMzJhNzg2OTBhYjg4YjJkNmMwMTYzZmFiYTAzZjI4NDllMTYxMDhkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYjFiMmQ4Y2E5NDFjODlhOGFmOTBhYjMzNzlkODQyMTMzMmJmZmIxOThjYmNhMmIzMjNmMDMyM2NlNzA3OGFlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMjI4YjNmYzg1MDNmOTBiOTYyYTQ0NDMzMzMyZjA5ZDIzNTU0NjRhZTAwZjIxNjAwZTQ2YjE5YThiZDEzNDExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MjFlNzVlZWU0MGE3ZDY5NzE4MDhhZjFmOTRhODZhODkwODNhZTY5YTg2OWZhZWQ2MDg1N2Q3OTFkMDNlY2JlIn0"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.spec.tsx#L93-L348",
+          "version": "repo-lines-v1:sha256:41309171d8dc29713067fe1934cb2e4e49443ee52d8442616ece88e52f3379e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4YjI0MzliZWRjNTMxYzk5YWZhZDRkMmNkY2UwM2E2NTYzMTA3NTc5NTI2Y2FkMjE4ZjU4MDA0YzFmNTkzOTYxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmMzcyYTg5ZDMzNjg3ZmM3NWVkZGU4MjVhZGQxNTQyOWU4MzQ2ZjA4ZmVkZGM5ZGJhYmZhNzlhZjFkYjU4OWU5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/selection/boxSelection.spec.ts#L8-L54",
-          "version": "repo-lines-v1:sha256:1affff3b1e7eb7792e0e947530ab3cf7268b765b3d4ad175dbceb150382a8cfe:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNmU3YmUxNWYyYzcyOWU1MTM2NjQxYzU3MTg4ODViMmQ0ZWJmNzMwNDE0NjNjMWNiN2E3YzRiMjVkOGU1ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwYzYyMDUxNWUyOWNlZmMyYWQ1ZmEwMjk1NGQ1NzU4M2EwOTZhZWI1MTg4NDRmMTA5MDc4YWRiZGQxOTgwNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjMmMzOWI0YTA5OWU3NDE5NDk0ZTc1NDZjNzgxNTVjOWYxYjJjNzM2YzQ0OGYzNzU0YzA4ZjhlMjlkZTQwNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5YWI4ZjY2MGRiN2JmZTI5NTJhMTA3MTk5NWY1ZTExNzY0NmEyMDc3N2E0ZjE1YjY1ODRhYjgwZjFmMTE4MDgifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.spec.ts#L33-L189",
+          "version": "repo-lines-v1:sha256:91457bfc2053ddc573886ecfa3691b2cf0c8cd12093afa0a53dd8f5e4030b4fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMTU3ODMwOTYwYTQ4YzZlZjhjM2YxN2Q1NjEyZjAxNWQxMDMzM2Y0N2U4MTg2MjQxMTFhMDEyMTdmMmJlNDY3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4YTk0ZTEwYWE2YTc5MjVhZTA0MDk2MGQ3OTFmZmI3ZWU4YjM1NzhiM2QwMmQ1MzM2N2ZmOGU2MTJhNzNkNTBiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/selection/hoverHighlight.spec.ts#L10-L97",
-          "version": "repo-lines-v1:sha256:2b0bcc3c495211a8cb2b13de535301b4c31291a98cfaec2e8f67ab20120f4dee:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMTNlM2QzMzgxOWQ3NGFmYzFkMmVhMDBmNDU1YzVjNTMwM2YwZGRhNDRmMjg0YjllMWUwNzljOGUzMWZmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NzMxYjY2M2I3NzBkNWU4YTM0YWIwYTExMTIzMDBlZDlhMmEzMDEzMTllZjJkNDM4NTc1Njk4NDJjZWQ0MDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjMmMzOWI0YTA5OWU3NDE5NDk0ZTc1NDZjNzgxNTVjOWYxYjJjNzM2YzQ0OGYzNzU0YzA4ZjhlMjlkZTQwNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwMTQ2N2MzZDc2NGIzMDM0M2JhMGUzYmQzMmU1NDhkMTdlNDQwNTUyYTQ1NGNhNjhkOTk5NjY5NzA0ZGNhMzYifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L16-L353",
+          "version": "repo-lines-v1:sha256:e488c3b08eecf01112715a03acdbec11fb05f69e0afdce4e59d43b9b7553e953:eyJzZWxlY3RlZExpbmVDb3VudCI6MzM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0M2FmZDUzMzQ1YzM1Y2U4NzNlNDljYzQ1YTg2YzYyZmUzZjlkNmMxOTU5YTNiODcxYzhhZWRkODViZDE3ZWM4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ODQ4YTY4YWQ1YjBmNzM1OTlhMDRjNTZlZjYxMTMyZDdlZGJmMTljZWIyNWQ0YWI1ZTE5OTFlOTZiMjM5MTdmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/lifecycleSwimlaneLayout.spec.ts#L91-L397",
+          "version": "repo-lines-v1:sha256:c97425370a09f9f71b7ca7c0d0893238ebd9957e86bb8d05b9e12df22924ccc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3YTU0MjIyMmRhMDkxNmY3ZjI5YTNjMmUyYmVhM2NkYWMwNGMwYTIzOTMzOGIyYjRjZDlkMjM5NjdhYWE5NDBkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkMzcyYmQ2MmM5ZGQzMWNkMDI1OTEyYmEzNmNhNzgxNGIzZWFiYWU0N2U3N2I3NzgzMmEyZGEyZjg1YTJlOTQzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwNDllNWIyMjc1YTc4OTMwYTM5ZTk3MTYxOGQxYzQxY2RjZmRjMzc4MmY1MTJjMjRjNWY5ODYyN2E0OWRiMTdhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmN2RjMWJkNjk3NWM1YTRjZTkyYWFiZjUwZTAyYTkyNTJkMGZmMzUyZDYzZTM2ZDQwMjg4MzQwZGQyMDM5NTg0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b3099e5e98f84929a55099c427e3caf2",
+      "statement": "assembleGraphLayout is the derived half of a layout — edges, responsibility links, id lookups and bounds — factored out of createGraphLayout so a second placement pass such as the lifecycle board reuses the same routing instead of duplicating it.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L100-L232",
+          "version": "repo-lines-v1:sha256:060c9a434e55760ef35d30476640ead7c575de1616019f0886d8568a9ea07e81:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMTNkZDY5MDUxNGE3OGZhMzNkNGMwZTU2YzBhYzFlN2M1ZjVjZDRlYjZkN2JlY2M3OWY3MTAwNTQ5M2YwYTkxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3MDJjNDE0YjU0Y2Y4NmRmYjRmOTBkZmU3ZDdiZGJmYTY2NmI3ZGRkZDMyZjEyODZmMjMwYTViNTMyNDE4MThhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhMzM4YmFlY2Y4NTY3N2ViNTIxYmVlYzBkMzAwOWE1NjlhOTRjZWVkNmY5MTM1NWQzMmUzODAxZGQwOTA5NzQ4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MDFjMTQ3Y2Q3NzZkY2E1ZjhhNWMwOGUyNDUxNTI0ZWQ3N2E3YzMzOTcwMWNiYTdkM2M4YWQ1MGIyNzk1ODg1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f9c72b1a2fc461ca473190d93864e19",
+      "statement": "A confirmation or proof shared by two requests in one Context is placed once: the later row reports the id in sharedResultIds, its fulfillment frame excludes that box, and every node id appears at most once in layout.nodes.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.spec.ts#L146-L228",
+          "version": "repo-lines-v1:sha256:4660357caca763184e1bd8747db18e924b48e50847af0729958894adf2f3df85:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3Mjc3ZTI2ZjczZjZlZmNjN2UxYTdlZTdhZWQyYWEwNDk3ZWJjMDM5MzhlNTViZjkwNjBhNmRhOWZjN2VmOTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMGZjOWU2N2RiMDdlZDIzOWJiM2FkMjMxMmVhYWI5YTcwZTFmNmZiYTAxMjg4YjBiYTZlNjFkN2Y4ZWU3ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkYzA5ODljOTM2YmQ0MGJkNmI2OTFjYjkyZmRkMjRiN2I0MTI4MjljYmJiMWVjN2U4NmY0NzdjYjNmNjNmNGYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/graphLayout.ts#L338-L395",
+          "version": "repo-lines-v1:sha256:6e4efd6471add4796a6646c729d096cd3ad14dd6bc04e6952ae4d002c5337513:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMDMwZjliNjA0M2U1YmZlMDVjNjk4ZDJiYTY1MDAwNTVlYzY3ZTdiNTdjOTQxMDIwOGUwMzc5NjVhZjEyNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0ZTRkN2U0MjAwZGJiY2JkMDQ4YzIxMzI4Y2U2OWVlMTg0NGYwYjY0ZmEzNzI3OTNjNDZiMjUwMzZhN2UzYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzNzQxMDY1MmIyNmUwOTc3OTFlYTgyMzdkMjM0N2YyNDI3YjliODc3ZmMzNzc3ZjAxYzU1ZDE2MGU0ZmU5MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkM2MwMmJkYjJlNTQ3YTI4Mjg5YjBlMjYxZGRhOWVkM2FmODY5NTZlZjc4ZDk2MTk2YTUyNGE2MzQyZTU2ZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b224d917a2224b0c9b82cbfee436784d",
+      "statement": "createLifecycleSwimlaneLayout places each root Context's whole subtree in the lane of the stage derived from the root's own objects, keeps an empty stage as a reserved column at least MIN_LANE_WIDTH wide, moves Context-less objects into a shared band under the lanes, unions lanes, band and assembled bounds, and re-runs assembleGraphLayout so routes match the moved boxes; a parentContextRef cycle stops the lane walk instead of hanging.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/lifecycleSwimlaneLayout.ts#L282-L346",
+          "version": "repo-lines-v1:sha256:17eb0551f275dff8bc474d6280eca0c978a676073c78db568281d7d46adea2ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjYTcxYjVhMWQwZTU2ZGFiMGY5OWNhZDYzYWM2YzgyMzM1ZDNkYzZkNjk2Yzc1NWVhYmU5YjBjMTQzMzE0ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkOTk2OWEyMTM2MWYzNmRiM2U0MGZjMWM4ZWRlYTkzYzIyNjVjNzNjNDE2Yjg3NDc4YjViNWYxMjRmZDk0ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/lifecycleSwimlaneLayout.ts#L78-L250",
+          "version": "repo-lines-v1:sha256:e4a6b197697cfaa9bd4b41a2053aa511a9633bf8db87ff5c9b4063c68891fe6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTczLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiY2EyYTAxOWJmMTRhYTMyYjA1OWJkNWE3N2EzN2ZlNTc2OTdhMzIxZWQzMDYxNTljYWRiZjY4NzU5M2Q4MDkxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmY2NlNmUyMDA2MzNmM2I2MWY0Njc5ZTVmZTNmODViNjJjMTMzYjk4NzZiYzIwNDdlMjc2MzdhMDQxM2UxZWFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNTg5MTNjY2U3NzM0Nzk1ZWVjYzkyMjI0Y2FiZjkxNjdjZjE5NDRjODU0OGU4NDhkMDNhMTQ4ZWM4NTNjZThmIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_3e101154528c4f2786f0ddc6b7c6430e",
+      "statement": "classifyCrossContextEdge names why two objects in different Contexts are connected — moment_trace, role_inversion, shared_thing or standard_cross, and null when both ends sit in one Context — and the canvas styles each boundary kind differently.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/colors.ts#L45-L70",
+          "version": "repo-lines-v1:sha256:bdd531a5ce685cef54555e9cecd7cd2ae8ec0c63eedd0d6923fd2450ecd037cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNWVmNjI1MzRiY2JjYTBlMGUxZTRiYTA4NDFjMWY1YjdkOTc5ZGIxMTJiOTY5ZjRkOGM3ZWZjM2EzMzY1NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3MDUyMmYzYzAyNjkzMTQzMWNiNTE1ZTc3OGI2MmZiMjhmM2QzNDcwMWZkMThhNzFhZDNiYWQzMjE2ZDA2ZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3N2QzMjM4YzFiZGUzMDQ2YTI5NGY4NDgzZWY3NGM4NmJlNmVkM2ExNjQ3YzE3ZGZhYTExOWNjYTQ1ZDRhZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwM2Y5ZjE4ZTdlNGI3YjAyMGY1NjMwYTU1MjllZDUxNjZlMTNkZWU0Y2MxOGZiNDA4ZTVmZjQ3MzJhMDAzYjQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/edgeClassification.ts#L28-L72",
+          "version": "repo-lines-v1:sha256:0532c56a5310b2cf63a28083f8034a925aaaea26e9cc8a000d17a3f3cb3b8a4b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZWI0ZGNkZGIwOWM5N2FmOWQyZjIyOTk4NzdiYjg4MzFiZTk2ZTk3MzU4N2U5MGZmMWY1ZWY1ZjRiZjkyMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4NTQ2ZGIxNjhkNGZmNTIwYmY1NTZjNTE4ZmY0ZGExMDAzYTE0YzY1ZWZjNTBlZDdhNGUwM2MwZDBjZjk0N2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae1bbcb5fab54e25a5a85227a554de0d",
+      "statement": "A computed layout is an indexed structure plus a JSON-safe reduction: toSerializableLayout copies bounds, placed nodes, routed edges, responsibility links, Context frames, fulfillment groups, free and omitted ids by name, dropping entity records and the id maps that JSON.stringify would turn into empty objects.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/serializable.ts#L10-L117",
+          "version": "repo-lines-v1:sha256:b5e99c498475b9b8b57ff234cc7eb864e58115224867758e327e2fcfa8ea3721:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNjFmOTAwMmM1MTQ2ZmM0YTE5MzM1ODE3YjIzNmY3Y2RiYWVmYWJmYzU1YzIwNjUwZDk0YTMxNTZjNzhhYzFjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_ec010b2882bc41729679105cc95e0ee5",
+      "statement": "CanvasViewport wraps a CanvasSurface in ReactFlowProvider and delegates pan, pinch zoom, marquee and fit animation to @xyflow/react while keeping world coordinates equal to the layout boxes: nodes are neither draggable nor connectable, wheel zoom is off, a pane click clears the selection, and zoom is bounded by the interaction library's MIN_ZOOM 0.25 and MAX_ZOOM 4.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L149-L200",
+          "version": "repo-lines-v1:sha256:3d0acdfdd91666190bb91156dca317c7428e3e2b85646818760332d9bd814ed7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiN2UxZjAxZTgxYWVkZDE2NzVjMmZlOTdhYzcxYWJmZDQ3ODNmMTQzZmEwMTM0MWQ4NTM5MDI1N2Y3MzQwMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMTkxMWY0NTNjMzUwZDRlNThmMDNkNGJhMjY5ODY2NjRhZDBjOTJjYTA4Zjk2NWMxYTA1YjcyOGFkM2YzMGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlZjE1ZmQxZDZiNzYyYzJiZTQzNDg1ZDZiNjIwZjVkMTBhNTUzNzZhNGNiOWM1OWJkYzVlZDQ2MDdlOGU5MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzMzYyNjZmZGZkYTk2ZTE2MTgzMWQxMmQ5M2UzNTY0M2UxNDQyZjYzMjFhMGE0MmI5NWQ2MzQ1NmI3MjZjN2MifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L390-L445",
+          "version": "repo-lines-v1:sha256:509800c013ae80e8522009a79595d48143fed6c6078bc1a82352a475ef31e4cf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5MDZjODEyZWRhMDE3ZWUwMzcwNmNmZjQ0N2NmMjg2YmYzMTlkOGMzYTE4ZTBlNzhlNzI4MmFjNjY3Mzk4MTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkYzVlYTRkZTc4MDczMDVkZDljMGE4NzMxMTRiNjY4NzZhM2VhZWQyOGUyYTc3ZTFkMmQzNDhlM2ViNmVmMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxNDhkNDMxY2U1MmExODEyNDE1MjQ1NTY4NjNjOTdhMjFmZGIxZGRlMjBkZDAzNGU1Y2IxZWIxNWYwZTI0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNTljNWFhNDNhZjZhZDc1ZDdlZDg3OTA0YjE5ODA1MGJiMzRkN2YxODYxZWIxYmQ5MDAyYjE3MWY4ODg0NTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/viewport/zoom.ts#L5-L16",
+          "version": "repo-lines-v1:sha256:7c54e0668f30e0795c1ad1cee8ab72edc3d652c1ba70afbcc52a56949c0ed79e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjNjA4M2Q1YjNmNWY1Y2VhM2RhOWEwNzBmMTE1NzgxODFiODMzMDY5NWU2YzlkMjQ1ZDNiOGRiZjhkMTU5ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxZWExNjFkYWY3NmRjYzBkNmJmYzlmYWMwNDM4MThhYmJlNmVhNmIzMjczYzllYWQ5ZTQxNjhhODI1NmE1YjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOGNkNjMyNDFiZmFkMDA3ODY4YjFhMDcyOTkyMDQzMWIzYjhiOTc3NmRjYTZhOGUwNzcyZTY0ZjU3M2EyYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5OGYxMGJjMDYzZTBhZmNkMGZlMzFhZTBhNzk4OGRhNjMxNWE0MDQxMjY4MjYwOGM1MTRhYWY0Nzk3YzdlYTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_064d31bf9a8e4659863b956f7cd01339",
+      "statement": "convertLayoutToReactFlow is a pure mapping from a layout to React Flow nodes and edges: Contexts are listed before their cards, a child's position is folded to its Context origin with parentId and extent parent, free nodes keep absolute coordinates, boxes are seeded as initialWidth/initialHeight with explicit source and target handles so edges render before measurement, edges with an unplaced endpoint are dropped, and each fulfillment group yields its own pairLink edges.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L150-L230",
+          "version": "repo-lines-v1:sha256:fc28ef0215c529ebcc7d4fa647099280019ab6fef7ebad2065f7cdd949c99835:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYzk0NDRkYTJhZDI1NGYyMTM2NmZmYmNiZDg0OTBlNjllY2YwODA5ZDc3NmU1M2U2MTQyMzI2OWIxOTczMTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZWMwMDIxOGMwZDE2YjIzYmRkMWVhYjhlYmViMTBiZDE0MThmOTg0ZWExYzg3NDFlZmZhNGM5MjY3YTkwZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmZTRiYWI2NzlmZWZiMzE5MWEwMjZhYzJlYTc3YzNkMDUzODk5NjNmODNhYjg2OTI3OGMyYjJiNWFhMjM3ZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyNTM1YzQ1ZDEwN2E3Y2VlZDIxZjZiMTY4NTYwNzM2ZTMyYjcxN2FlZDhlYWQ2MGVjODc3NWMwNTViNTA1NTAifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L266-L330",
+          "version": "repo-lines-v1:sha256:4bac21233a21ce57e4aaa599761b016d891231605cff81cb943e72535f848c37:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4OGFiNDdhYTVlOTY1MDVkYjdkNzIxZjJjYWNiYzBiOGRkNzRlMDcwODQ2MGU5NWM1OWE3NDhlNDlmOTUyNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZmMzNmEzZjAzYjdjMGFhN2MxOTEwZjc2OWZlYjZiMmIxYzViYmIyNDZhODEzYjIyMTE1NThjMjJhNWI5YjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyYTM2MThiNmM2MmVmOTZmM2MwZjU2OTE3OWExMDQxMTM2YzkzMmNlMWE2YzRkMmFlYTBmMDIxNzZmY2EyM2QifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L74-L120",
+          "version": "repo-lines-v1:sha256:f7c345fca463e5054c82dd6d3926e741c4dbd3ad63f8c54b5650b08b7175f487:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1ZDIwMzQwNTM3M2Y5NTQ3NDE0Y2NhZjlkYzU1MTNiMTIzNGIxZGZlODdlOGJmNzA1NDYzYjIwMDc3NWE1NzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiMjA3MjZjYjE5ODMwODAzZWVmZWI3OGIzZmJhNThhZTU5ZTg2NGViMTIwNzNhMTFkODUyMmM0NzkxODJkYzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMWY1MzViNTQ1Y2FjNTdiMmNiOTRhMDYzN2E2MDkzNzk3N2UxN2Y1ZjNkNzMwOTJiMTgxZjE4MWFlMzAzYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2MmI3NjA0ZTViODFjZDAyYWUxN2I4ODA5Yzk2YTRkODAzOGU4ZWZkYzk0Y2MzNTE0ZmM2ZWQzOGE3ODA3MTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_18e614aa8d9340d6b930322707deb5b7",
+      "statement": "Framing is token-driven: fitToContent fits boundsOf(layout, scope) with padding, a change of scope or density refits and clears every hover mark, zoomCommand and focusRequest are deduplicated by monotonic tokens so a re-render cannot replay a key press, and boundsOf falls back to the scope bounds or the layout bounds with a 1 px minimum.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L268-L377",
+          "version": "repo-lines-v1:sha256:16f62b641e3c9549be498888698f7818c22e6abcffbf6a40b84c81036f42d836:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkYzMzZWFiYjA2NmJmNDg1NDc0Njg2MzhkY2YwOGYxMjY2NmJhNmUzMDhmYjIyODcwYmRhMGZmYmZiYzExNDA4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMWJhMzNkYzU2YzRmZjk3Mzg4YmMwZmRkYjBmNDRhOTAzNWY5YzE5OGZlYzU4M2E3NDVkZmI0MzgyNWY2YTAwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyODJkZDJlMTkwOWYyZjRlODllMWFkOWE2ZGVhODdkMTgzZjBmZWI0MDQ4NzA1YmUyZWRjODY2ZWVmMWQzZjQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0YTQ5YWRlYTMxOTJkMDdkYTQ3OGNmZmZlZWI5MjYxOTJkMWQ4OTNiN2MwZTUzODcyZWY1YmJmZTBkZmI5NTRmIn0"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L356-L368",
+          "version": "repo-lines-v1:sha256:d5df7b8b6a8b73b0b8e2aef20b91ed447e95f4735b08d0d83906141361c66768:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODJmNzI2NTI4OWZlNmUzZGI4ZmE1ZTBkZjUxZmY5YzQyNmNjMDY2ZDJiMDE0MjI2YjgwNjFmMjY3OTdkODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjN2FmNjU2Y2Y0YjkwNDlmOTFiYjhiYmMxMDE3ZmM4ZWIzMjE5MTczOTljYzQxZDM4YTcyZjU4N2IwMjMwMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c9733f9195644fb81111f9937053412",
+      "statement": "The viewport hands its floating island a CanvasHudControls contract (zoom, zoom in/out, reset to 1:1, fit to content, grid style, minimap toggle), and the app's CanvasFloatingHud adds workspace concerns on top — view mode, card density, split target, clear selection — while object creation is deliberately absent because a Context and role bindings must exist first.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L74-L120",
+          "version": "repo-lines-v1:sha256:25a36e170130efea90fefa8fe2d3598e6dfc750cef8b955e008b60c9ff8f048c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNjQ0YzkzZmMwNDg5NGFiZDk0MjcxN2MzNzQ1MjYzN2JlYjkxYjc0ZWVjN2NhODg3YjFhNTg1MTgwNWU3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzY2MmQ4NDUxNmY2OGE4NWYyYzYyMWVjNDAxZTBkYWYzMDUxODM1ZTNhZTdmMzQxMGQwMTU3NzJiMDlmNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3YjFkNTRkZTExYjY2ODVjOTMzYTI4ZmEzYzg5YmM3MmI5YWE2ZmQzZDgxM2EyNjM0NzA4YzRiYTgxNjQ1MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNzc4OWZhOTI4YzRlODQxNTg0ZDRiZThhN2VlNmRmYjExN2MyNjBhODFjNjNhMWI5ZThhOTViZjQ4NTczZGYifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L96-L128",
+          "version": "repo-lines-v1:sha256:f8d52d9d10ad43cb33676546fe6520b59c00a6dc4256e0a6efa5db38767d9186:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5Yjc2NmJhYmU5NzcyY2EzNzE4YTk2ZDE2NzNkMmY0YzhjMDkyY2FhZTQxYmEzN2NmOTc1YThiYmNjZmRlZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZTkzNTU3YmE5MDE4Zjg3Njg4MmQ5M2JiMTNiMzA5NmZlYWQ3ODVmYTg3NjI2MDMxY2RhYzljNThjZWMxMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxNWM2YzJiODg1ZDhiNDAyODc3ODFmZTNhODcwY2Q4NzM0Njg4YzY2NTdhZjA0YTcyZTlmNjdmYjA0ZGVmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0N2MzNzkyMzNmMmU2NDhjNWNjZTE1YTNlNmFmN2Y1MWQzMTBiZWJlNDE5ZDliOTUzMzAxMzYyMTZjZDIwYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_71d69c108dcf4e8f84870029667bcd3d",
+      "statement": "NodeCard draws a business object as a sticky note with a category spine and a clock shape (interval for rfp, proposal and fulfillment_request; moment for contract and fulfillment_confirmation; card otherwise) plus party, responsibility and API-route badges and standard-density metadata, and makes out-of-scope objects non-interactive; EntityNode adds only the measured box and invisible handles, and ContextGroupNode is non-interactive paper.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/EntityNode.tsx#L17-L63",
+          "version": "repo-lines-v1:sha256:a6788b6125b841427b11a91b67351020460901a2687ba874cb8ff76610d0654b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMzdjNzczZGEzMWQ0NTI2OGNlNGQ5MmVhYWQxMmZmMDI4Mzg3MTUyN2NlMjU2ZjY0NDlhNTIwMjIxMzYwYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmNTM3ZGJhZTY5MTQxMDdkZTU2MWViNGNiMGM2M2VlMWZiNWNiYTJkODZjYmIzNTI1YTc2MjA2ZTNhODY2MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OTg4MzFiN2NmMWI5ZmE1NTYxYjVkM2VkZjAyOGI5OTcwYmE0NGQ0ODQyNjY1YWE5NzQzNjBkMDFiYWI3MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2YWMyZGIwNTkwZjlmZmExMGY5ODBhNzY3NTIwNDZjNzViMTY3M2NiMTJhZjA5N2NjMGNmYmEzZTMxZWYyNTMifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/NodeCard.tsx#L114-L215",
+          "version": "repo-lines-v1:sha256:5680c2b11f0f197cae63a22db397b9ef51419174a2db92175ecb77f578450e34:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMDVjNGRkMzQyNTFjM2NlMjA0MDM4ZjM0OTY1ZTEyMWYyNTI0OTMyMjJkZGYxNmM0ODUxZTRhNzk1YmE4YzliIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYjAyNTM1NzkwYWM1Zjc2Mzc3MWYxM2I2ZTNmMzVlOTIwODVkNDcwZDE1NzkyNGM1ZWQ4MTQyOTllNTdiNjkyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZmZmYzNmZjc4ZDViNjZkYWEzNDQ0NTUzYmZkYmQwZWQ0ZjVlNTVmNDQwZDY0OWFmZWE1ODdkZDZhMTY0M2ZkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxNzFiNmJmNmZlZDc0YTcwMzQyOTk3ZDkzYjkyMGM2M2I4OTVlOTY4ODkxNTgwN2NkODk5NGI5OWVmMWZmZDIzIn0"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/colors.ts#L108-L160",
+          "version": "repo-lines-v1:sha256:1ae48d88ee9f3219ea15ee26934b907d671387e32049bbc6fbe9fb338503af39:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZDY0ZDI1MTRhNmY1NDY5Yzk3MjQ5YzE2ZDM4NTVkYTIwMzVjNjhlZWFmNGFkMWQ3NWQ0MjMwYjk1NGZmZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_91446fad50bb4864ba5a75ffb8050f6e",
+      "statement": "FulfillmentEdge draws the layout's routed polyline with an optional diagnostic halo, crossing-specific stroke styles, an arrow only for plays_role, a socket at the midpoint for role_inversion, cardinality chips and a hover-only label; PairLinkEdge is thin, dashed and unarrowed; and simplified density mutes plays_role edges to zero opacity until hovered or highlighted.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx#L29-L160",
+          "version": "repo-lines-v1:sha256:14e745f37f4cbab9f0da548b7e7f522e625297c3d64ad63daf6d744035144da9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhYzFiMjJlZGEyMjFiODRlOTg5MWQ5ZGQzMWE0MTIwY2Y2ZDUyNzU2MTNmOGJhYzZmNzEyM2VjNTYwYWFjZWVlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkMmVkMmFmMWE2Yzc4Mzg2ZGFjNTM1NDNkNjk1MjEwN2FmN2YyOTVhNzI5YjI5NTVhZjc5OTI0MTA4ODdmMWIzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlYTNiOWI5NDdiZDIyMjRlOWUxYzg3MzU4N2VhZmIzOWRmNmVkNjI3ZWJlYTBhZDA3ZjBkNThhY2YyZTdkNmY1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhZmVhODVjZDY5ZDAwZGVjZDgwM2M2YmVmZGVlNGQ0YmQ2Yjc4YjlmZGRkM2U3NjE0YzUwYWJlM2M1NjYzYTA3In0"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L210-L245",
+          "version": "repo-lines-v1:sha256:de7ffe7c2a2e1c40309db1269899e44baef0fc50de0ee8877546ec8f19a991d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4YzE4Y2Y4YmMzZmJhMWUxMWEyMmQwMjk4MjUxOWUyZDYyYjhkYzAwODY2Y2U2ODVlMGJjZGUwNWQ3Y2E2MmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NGZmOTg5ODE1ZmQ2ZDgyZTQ0YmQ3YjhhOTcwYTNiNDkyZmU2OWUwY2Q5M2FlMWIzN2Q5YTY1ZDYzYWNkZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMjJlNzdhNzEyYzgxM2YwMTdkYzJiYTRhNmRkNmM4MWI5NTYxNzNkZTFjMGI2Y2NhYjY5NGY3ZmFkODg5MTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6291e37ad5d649f98244be5ff44d14a7",
+      "statement": "createDiagnosticIndex attaches a sensor issue only by explicit reference — a targetNodeId trimmed at # naming a known entity or relationship, else a contextRef naming a real Context — collapses duplicate issue ids and keeps the highest severity per object, and DiagnosticMarkers renders each bucket as an outline plus count badge that hands its issues to the app and skips out-of-scope ids.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/DiagnosticMarkers.tsx#L7-L79",
+          "version": "repo-lines-v1:sha256:15b1b0e747e5e9df65b47a5a813031cb7cb6aed76e8896f7de06c63f39e02022:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMTZiNWFmODZkM2UxYmM1NDEzNjUyZmU4NDRkN2ExYmIzYjE3NmRjZjUyMjBiYTFlNDhmYWJhMmFkOWZiNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlYzNhMmEwMGNhZTA0NGRmZDNiNWVjYTk5NWZlNmMxNzE2YWFhYTdhM2NlN2M1ZTEwMjU3M2JmNGI0NzEwYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/diagnosticIndex.ts#L18-L56",
+          "version": "repo-lines-v1:sha256:e2a1fbbc4b67a4e2b0fed53b0d936db066301f57bd58bdf695ef2eacef9fc224:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMjQ0MDI0MDM0ZTRhOGU4ZTQ5Y2ZkY2RhZDgwNDIxMzM3ZmE2MDlhNjY1ZmM0MTk1YmNkNjRlYWJhNjAzNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxYTA4ZDcyOTdjYmIxODdlZGJlZDk2N2Q2MDM1ZWY1NjE2ZTQzYTM3YTljMzI2NjcyYjI5YTUwYmJjOTc3YWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_574b06e8589a451fbdd17e188a8358fa",
+      "statement": "computeContextScope is a mask over the canonical placement rather than a second layout: it records the selected Context subtree, the owned objects plus explicit one-hop neighbours, the frames needed to read them with ancestors added as frames only, the touching relationships, and bounds that exclude unrelated ancestor space.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/selection/contextScope.ts#L17-L100",
+          "version": "repo-lines-v1:sha256:7dafe6dfe2f32bcf4fefcecc73b08ec2db17531b726b06dcfbedffabf87dc5ef:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMzJiZWVlYTQ4ZmUzNDIxNzFjOTMxMzU3ZThkYmQ4N2Y3Y2Y4ODUwODZkNzVhZTM3MWVjYTk5MGVmMzhkNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlOTFjYzIwMjZjMjJmM2MzY2FiYmI2YTAyZWZiZTljNzg1NmVmNGViN2QyMGMxODhjMzcyYTcwMjIwN2IwZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_23d1dab008b84952b36535f0dba10cee",
+      "statement": "Beyond its generated rows the inspector has specialised graph-driven sections: the fulfillment pair section reads graph.fulfillmentPair and dispatches PairFulfillmentCommand or BindBreachRuleCommand while printing a rejected guard's message, and the attribute grid expands each row into a KeyDataProvenancePicker and a DerivedRuleSection, every edit travelling as an add/update/remove-attribute, update-rule or bind-derived-rule command so one commit is one undo step.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.tsx#L56-L120",
+          "version": "repo-lines-v1:sha256:89e0810910970c78f6ae56fa2c603ed5c289e1db4ad9412bf61e7b224d080df3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiOTk3MGJiYmQ5ZGQ4NWRhZmQ1NDQzMDg3M2NjNDg3MDAwMGMzY2ZjNmE1M2E3NWEwZjQ5MzE5ODcyMTlhYmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkYTQ1NWY0ZmE3NTI1YjY3MjQ5MmMzMzIyOTIwYzlhM2JhODhjNTMzNDExMjdkYTFlOTQ1ZjkxOGQ2MjlkMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMjgzYTQwYzdkZGJiY2NjOGYzYThlN2ZjZjk1NTAxMTM0NzNlZGMwZjJkYWUzOTM5OWExZTYzZmEwNjM5NDEifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/DerivedRuleSection.tsx#L36-L125",
+          "version": "repo-lines-v1:sha256:7347f7adba475ebff713c5871f1e36935ec00ad85cbe7bcef0af137c2ff9ed64:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMGRjZjc3MTUyN2RlMTJiMTI0ZTcxNGJiOWRjY2Y0MmRlY2UyZjYyZTJkZThiMjA0YmVlZjIwOGM1YTQ0NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMDdlZmNjN2I3MjNmZDExMjFiMDlkMGUwNGZiMGU5YTA2ZTNkNzYzMjI5MTFmZTYzNTk3N2RmNjU2ZGQwOTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1ZWM1MjA0OGU5YzIzZjAxODVmZmFlMjcxYjVlOWExYjE0NDg3N2RhNjZkZGQxYTFjMzE0ZWI0OGUzNjBmYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMjIzZDU0MzYwNTU5MmEwYWIwYzAzMmNjNDc2OWM1MmI4ZDkxNzQ3NWRlZjk1YWYxNzdlZGJlNmNjYzkxMDgifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/FulfillmentPairSection.tsx#L28-L110",
+          "version": "repo-lines-v1:sha256:96373b5e6092b88e3decc303163375b9e7a970a09d4b0bb6e2a2cd6503e3cda2:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlNzBkZGQ1NmMwOWE4M2YwNjg1ZmVhYTBmZGQwZTBlZWMyY2JmZmJkMmNkZjlhYjE0OTA1MDk5MGI3MTRjODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2NDIyMzRhOWNhNGQ4ZThjNDg2YmVhNTg3ODMyYzA4MWJhNjdiMzA0MmU5MDY4Zjk4OWIyNTM0ZDExMDFhOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0MTNjNTA2ZmYyYTgyZjkxZWZmMjA3MDYxNzEwZTk4ODU1YjZiOWE5OGQzYjY5NTg1MDg0OGQ1NDRkOTdjMDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0bf085412ae64f14b8f66897ea84a518",
+      "statement": "ApiFieldBadge classifies a field as CEL Derived, Service Timestamp or Input through the delivery projection's fieldFor, and KeyDataProvenancePicker shows the ledger's provider verdict with only 'bind a derivation rule' or 'this is not key data' as actions; both verdicts are derived from the document rather than stored as flags.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/ApiFieldBadge.tsx#L5-L41",
+          "version": "repo-lines-v1:sha256:9935494caad1ce3db9900e84b329b960449dac3dff40c50126b890251a2e305a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNjJmNmMyZmZmNjFjNTg3ZTQxYzczNzNhYjQ5NWJkZWViYjk0ODM5ZmVhMTgxMzk4NzFkMjY1MTljNTM1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkYjA3Y2U3NjBmZTliYmJmNjk4OWY5Y2Q0YjlmYTkzMmFlYzg5YTgyZDQwMzMwZGQ2MGExNDExOTA3NDUyMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx#L36-L116",
+          "version": "repo-lines-v1:sha256:6aa0817ce4a03ae1c93e96a9649184e74e1c4e998723b7c0b6faa807964e3a10:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNjM5NDhhNTQyZTgzNTJhM2MxNzMzMjllM2Q3NGEyNWIxNmM0MmQyZTRiNmYwZDFmZDA2ZTc0Y2IzNDc1ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4ba9cb7926c5474aa37233736b9c1af2",
+      "statement": "KeyDataLedgerSheet is the wide ledger, opened from the attribute grid, the inspector footer or Alt+L; it edits the same session, states the field and decision-owed counts, edits the active row's expression from a CelFormulaBar, and captures Escape on window with stopPropagation so closing it does not clear the canvas selection.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L68-L100",
+          "version": "repo-lines-v1:sha256:b5deda235e46ce57f2fde2e122c01588c2f95f8ca905f33aede3aa13a11702c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NTk0MzQwOWRhYTU4ZDE3NjhiMGM4NzczMTRkMzVjMzAwNTQwM2VjY2FlNDFkOWJhZjE5NDg1NjE1MjY1NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3ZWVjNTVmMmJhZjIwYjEzODY5ZDM1Y2M4M2Y1OTFkZmI2M2U0NzE1NTA4OTJhNzgwODQ0ZWEzM2YzMDEyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjZGNlMmE2ZWQyMjNkMTM1ODU2M2MwMGI3ZDZmODcxNGE4NzY2YjMxNGRlNGFiNzIyN2RjY2E3NDc4MWQ4YmMifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L30-L160",
+          "version": "repo-lines-v1:sha256:d6b6e5216a3687be17e76ffd90c6ba278d511891d2afc29979178c050bb64b48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZDAxZmYxNDhiMDQwOTZlMjcxY2FkNjJjZWYwZjgxZTFkMGJlZDQ5NjE3MzNmMzlhZDQ3MmU2MmU3NGY1ZWFiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYmUwNDI0ZWIwNDAyMjRkMjBlNDZjOGVkZTgzZjkzMWRkNTI0MDBmMWNmZGY2MGYxZTE3NDM4ZTM1MjkwZjY4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiY2EyM2VjMGRjYWJkNThiNzVkNjg5ODFkNTE5NzM1YjZhYmYzOTk3ZGI5M2Y4MTM0OTBlMDgxZTdmNmJiZmIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZGUxM2RlMDA0MWRjZGMzZGE3ODZlZmExMGYxNjQ0OTI5NjJjMWM4ZjZmODZkZDc3ODkwMTllOGQxY2ExMjAzIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_65ce564515b94f388764fadf44c75742",
+      "statement": "Rule editing is the one CodeMirror surface the inspector owns: CelCodeMirrorEditor mounts CodeMirror with autocompletion from computeCelCompletions over model-derived CelCandidates, a 200 ms linter over analyzeCelExpression whose verdict is a guard rather than the authority, and commits on blur or Mod+Enter exactly once, replacing the draft only when an external value differs.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/CelCodeMirrorEditor.tsx#L93-L260",
+          "version": "repo-lines-v1:sha256:cfd74f8bcbdeb7efe1028bc6115b047b7081134227f8c501f14bfec4d81a880b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NjkzNzg5MmQwNGEwZGUyZGZkNWI3NTljNmViNWY0NmQzODI2MDQwNmQxNjM0Nzk3MmMzMmNiOTJiODEwYTQ5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxNzFiNzJlNTljOGY4MWY0MWQyNmU1ODVlNTAyMzllZDYyYTU0YTc4YjBjNzk4NGZjMzY4ODI4OTc2MGQxYjAxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZjg4MDk4YWU4YmMzYWFlNmJkNmQ0Nzc2NWIxZGMyMDhmMmExMDY4NWE4OTZkOTU4OWQyNGRiMjljZWRlMGY4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzZmNhNzkzMGMzOTRlOTAwYjZlYjk2MDQxNGU5ODc0NDY4ZDdmMDUwZWJiZjM4YTAwNTU3OTMyYTY1MzFjMDgxIn0"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/celCompletion.ts#L70-L141",
+          "version": "repo-lines-v1:sha256:d798243e7d64ed38a3a53a15dac73e8481859095823b097ed08b48715f0bcb6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMGY2ODQ3NTliMTFmOTQxNzZiYzU2ZDFjMTBlOTg1YmZkMTAzMDYzNzRiOWM1OWRmMGQ1ZmE1YmVhMDA2NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_79afee0f1a894eaaa6d726340d9665ba",
+      "statement": "The code-surface dependency boundary is split: ui-kit exports CodeEditor plus its own CEL tokenizer and the desktop renderer imports no @codemirror/*, while feature-inspector depends on @codemirror/* for the editing surface and ships a second, richer tokenizer that tracks member reads — so a newly allowed CEL builtin must be added to both celLanguage files or the read-only and editing views colour the same expression differently.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/package.json#L28-L33",
+          "version": "repo-lines-v1:sha256:7f1308b57200eddfc89ea71b44f7930d80c5f8959946f9b449e2d5b88edbd663:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA0MmMwMmFjYjQyYjg4ZDkwMjBjNjk3YjE2OTdhYzkzNTg3MGU3YzAwMmU0MGE5MTRmN2MyZTEwMDI1ZTRiMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQzZGQ0ZmJkMzhjYTU3NzhmMzdhYTJlNmZiZTQyYzA4ODViMjZmOTczODMwMDAyYWM4MTA5YmRmMzI5ZmZiMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDFjMGEzMzQzYzQ4MjBkMjNjNjk2OGM3YWVkNDk1YWM4OGI5ZTZlYmMzOTNjMjkzYTNhYWJmMTMyZmMxM2E3OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjBlZmYxNGNmOWFjYThlNDAzNDc2ZGRhYmQ4OWQzZjhkMTdhMTdiNmI1MmI1ZWY3ZWRkZTA2MWZjZTJmM2VhYiJ9"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/celLanguage.ts#L70-L140",
+          "version": "repo-lines-v1:sha256:aae153ce63cb9d2a78f3f500234443566092e1a92aa4debe2fb9c3c48231d2e9:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmOTk1NWFhYmMxZGY5OGQ1MDJhODhjMWIxYjllYjJlMGFkMTA0NWVkZDkwZWIwNzY1NjI0Y2ZiNmMxYjEyOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1MzY0NzlmZGZlMTQ0MDBjMzdiN2M4ZjhhNGU0ZmQxMjM3ZTNiMzQ5YWNlYWJjZThjNjU5NWYzOTkyMTk5ZTIifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/ui-kit/src/components/code/celLanguage.ts#L1-L57",
+          "version": "repo-lines-v1:sha256:179d296cc959cf688be9a9674dc6d96c0f41cb0ecdfc78bd3b078665e3f16dae:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5ZDZjZmE5YTQwOTU4NzVlOTczMmJjOTk5MGFlOTNlMDEwZGIyNmY5NDFjMGQwYzU5YWRmOGVjNTlhZmQ1ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMWY2NGNhNGM0YTI3OGI1YzcxOTg5NDk2MjJmMzU2ZjYzZGUwZDg2Y2NhMWI0YjFiMjQ0NTNjMTVhNGJkYTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/ui-kit/src/index.ts#L76-L77",
+          "version": "repo-lines-v1:sha256:f310750461574dc0f34303756172153549bdb8dbd5356ac1af0f8a5578f2394d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQ3N2YxYWJmNjEzYzQwMDEyZjUxN2I1ZTQyZWE5MjU5MjRkYTViNWQzODRlNTdiN2RjMDhiYzhjMzhlMjZlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkMzNmMWU3ZjZkNDI4OGIyOTIzZDZmMzRjNWI5MTFkNTVmN2RmYWUwMTBjOGVlMThiMWFhYzY5YmM0YmMyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ0MzU3YjZiMjA2MGRkZTIwOWE1MWY1NDIxOWE2Mzk2NGM4ZmYxYWQxZjc0NDUxMjg3Mzc4Y2YwOTZjMTgwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-12T12:33:13.984Z"
+    "at": "2026-11-14T20:15:23.211Z"
   }
 }

@@ -1,3 +1,3 @@
 # Files
 
-- [System map and dependency direction](overview.md) - How the one desktop app and eight TypeScript libraries compose, which way dependencies point, and how a model travels from source text to a checked verdict, an API contract and an offline review page.
+- [System map and dependency direction](overview.md) - The package map of the Evidence workspace, the direction its dependencies may point, how the @evidence-poc/source condition lets one app consume libraries from src, and the end-to-end paths from a model document to checks, contracts, delivery and the review page.
