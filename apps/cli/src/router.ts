@@ -1,3 +1,4 @@
+import { exportCommand } from './commands/export.js';
 import { checkCommand } from './commands/check.js';
 import { diffCommand } from './commands/diff.js';
 import type { CommandContext } from './context.js';
@@ -5,6 +6,7 @@ import type { CommandContext } from './context.js';
 const HELP = `Evidence — model-driven contracts and black-box acceptance
 
 Usage:
+  evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir]
   evidence check [model] [--json]
   evidence diff api <old-model> <new-model> [--format json|markdown]
   evidence --help
@@ -28,12 +30,13 @@ export async function dispatch(
       return 0;
     }
     if (
-      ['check', 'diff'].includes(command) &&
+      ['export', 'check', 'diff'].includes(command) &&
       (rest.includes('--help') || rest.includes('-h'))
     ) {
       context.stdout(HELP);
       return 0;
     }
+    if (command === 'export') return await exportCommand(rest, context);
     if (command === 'check') return await checkCommand(rest, context);
     if (command === 'diff') return await diffCommand(rest, context);
     throw new Error(`Unknown command: ${command}. Run evidence --help.`);

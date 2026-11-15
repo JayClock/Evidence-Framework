@@ -1,3 +1,4 @@
+export { renderDeliverables } from './renderDeliverables.js';
 export {
   projectAcceptanceTests,
   type AcceptanceProjection,
