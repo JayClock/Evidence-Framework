@@ -1,4 +1,8 @@
 export * from './ingestion/index.js';
+export {
+  evaluateRuleOnExample,
+  type ExampleRuleInputs,
+} from './cel/transientSandbox.js';
 
 export {
   createDomainGraph,
@@ -204,7 +208,10 @@ export {
   type TimelineUnresolvedOrder,
 } from './validation/timeline.js';
 
-export { compiledDocument, type CompiledModelDocument } from './model/compiledDocument.js';
+export {
+  compiledDocument,
+  type CompiledModelDocument,
+} from './model/compiledDocument.js';
 
 export {
   ReadyScopeError,
