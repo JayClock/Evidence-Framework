@@ -141,7 +141,7 @@ export {
   type DiffCliOptions,
   type CliResult,
   type Command,
-} from './cli.js';
+} from './commands.js';
 
 export { compareText, sortedText } from './order.js';
 export type { JsonObject } from './types.js';

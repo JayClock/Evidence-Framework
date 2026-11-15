@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          pnpm evidence diff api reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
+          pnpm evidence diff reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
       - name: Publish API summary
         if: always()
         run: test ! -f reports/api-diff.md || cat reports/api-diff.md >> "$GITHUB_STEP_SUMMARY"

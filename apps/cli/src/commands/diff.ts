@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { runDiff } from '@evidence-poc/evidence-api/cli';
+import { runDiff } from '@evidence-poc/evidence-api/commands';
 import {
   stringOption,
   type CommandOptions,

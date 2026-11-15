@@ -58,6 +58,19 @@ describe('evidence-model CLI', () => {
     expect(await runEvidenceModelCommand(['--help'])).toBe(0);
   });
 
+  it('rejects unknown, duplicate and missing option values without writing', async () => {
+    for (const args of [
+      ['pack', modelRoot, '--bad'],
+      ['pack', modelRoot, '--out'],
+      ['pack', modelRoot, '--out', join(root, 'a'), '-o', join(root, 'b')],
+      ['check', modelRoot, '--scope'],
+      ['check', modelRoot, '--scope', ''],
+      ['inspect', modelRoot, '--json', '--json'],
+      ['inspect', modelRoot, 'extra'],
+    ])
+      expect(await runEvidenceModelCommand(args), args.join(' ')).toBe(2);
+  });
+
   it('refuses to unpack a file that is not a bundle', async () => {
     expect(
       await runEvidenceModelCommand(['unpack', join(root, 'model.json')]),

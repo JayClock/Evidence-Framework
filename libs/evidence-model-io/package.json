@@ -43,6 +43,7 @@
   "dependencies": {
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
+    "cac": "^6.7.14",
     "tslib": "^2.3.0"
   }
 }

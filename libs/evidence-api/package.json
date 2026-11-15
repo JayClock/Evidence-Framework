@@ -18,6 +18,12 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./commands": {
+      "@evidence-poc/source": "./src/commands.ts",
+      "types": "./dist/commands.d.ts",
+      "import": "./dist/commands.js",
+      "default": "./dist/commands.js"
+    },
     "./cli": {
       "@evidence-poc/source": "./src/cli.ts",
       "types": "./dist/cli.d.ts",
@@ -51,10 +57,15 @@
         "executor": "nx:run-commands",
         "cache": false,
         "dependsOn": [
-          "build"
+          {
+            "target": "build",
+            "projects": [
+              "cli"
+            ]
+          }
         ],
         "options": {
-          "command": "node libs/evidence-api/dist/cli.js deliver",
+          "command": "node apps/cli/dist/cli.js api deliver",
           "cwd": "."
         }
       },
@@ -62,10 +73,15 @@
         "executor": "nx:run-commands",
         "cache": false,
         "dependsOn": [
-          "build"
+          {
+            "target": "build",
+            "projects": [
+              "cli"
+            ]
+          }
         ],
         "options": {
-          "command": "node libs/evidence-api/dist/cli.js export-tests",
+          "command": "node apps/cli/dist/cli.js api export-tests",
           "cwd": "."
         }
       },
@@ -73,10 +89,15 @@
         "executor": "nx:run-commands",
         "cache": false,
         "dependsOn": [
-          "build"
+          {
+            "target": "build",
+            "projects": [
+              "cli"
+            ]
+          }
         ],
         "options": {
-          "command": "node libs/evidence-api/dist/cli.js diff",
+          "command": "node apps/cli/dist/cli.js api diff",
           "cwd": "."
         }
       },
@@ -93,6 +114,7 @@
     "@stepci/runner": "2.0.7",
     "ajv": "^8.20.0",
     "ajv-formats": "3.0.1",
+    "cac": "^6.7.14",
     "tslib": "^2.3.0",
     "yaml": "2.9.1"
   },

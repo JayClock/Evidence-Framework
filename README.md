@@ -90,6 +90,7 @@
 
 ```text
 ├── apps/
+│   ├── cli/                             # 统一 evidence 命令行入口 (cac)
 │   └── desktop/                         # 桌面可视化工作台宿主 (Electron Forge)
 ├── libs/
 │   ├── desktop/                         # 桌面端下沉的 UI 与功能库
@@ -114,8 +115,8 @@
 
 ### 依赖环境
 
-- Node.js >= 20.0.0
-- pnpm >= 9.0.0
+- Node.js 22
+- pnpm 12.16.1（见 `package.json` 的 `packageManager`）
 
 ### 启动桌面建模工作台
 
@@ -133,18 +134,44 @@ pnpm desktop
 
 `pnpm install` 不会自动安装 `oasdiff`。`pnpm api:setup` 下载固定版本的预编译二进制并校验归档校验和及可执行文件版本，无需 Go 或 Docker；已有匹配版本时复用缓存。删除 `node_modules` 或工具缓存后，需在 API 比对及相关测试前重新运行。详见 [ENVIRONMENT.md](ENVIRONMENT.md)。
 
-### 命令行打包与检查模型
+### 统一命令行
+
+先运行 `pnpm nx build cli`，再使用唯一入口 `pnpm evidence <command>`。各命令的参数说明由 `--help` 查看；输出路径均相对调用方的工作目录解析。
 
 ```bash
-# 将模型目录打包为便携 Bundle
-pnpm model:pack .evidence/fm --out procurement.evidence.json
+# 静态检查（不等同于 HTTP 验收）；--scope 可重复
+pnpm evidence check .evidence/fm --scope context.procurement --json
 
-# 静态检查与审查关键数据台账
-pnpm model:inspect procurement.evidence.json
+# 将模型目录打包为便携 Bundle，再解包回目录树
+pnpm evidence pack .evidence/fm -o procurement.evidence.json
+pnpm evidence unpack procurement.evidence.json --out .evidence/fm
+pnpm evidence inspect procurement.evidence.json --json
 
-# 解包 Bundle 回目录树
-pnpm model:unpack procurement.evidence.json --out .evidence/fm
+# 编译通过静态检查的模型、导出属性追溯与离线审查页
+pnpm evidence compile .evidence/fm --out compiled.json --compact
+pnpm evidence lineage .evidence/fm --out lineage.json
+pnpm evidence review --project-root . --out review.html
+
+# 导出 OpenAPI 3.1 与 Step CI / Hurl（默认 Step CI）
+pnpm evidence export --model procurement.evidence.json --out dist/contracts
+pnpm evidence export --model procurement.evidence.json --out dist/contracts --verify
+pnpm evidence test --target http://localhost:8080 --scenarios dist/contracts --json
+
+# 契约演进比较（默认 Markdown；机器消费时显式指定 JSON）
+pnpm evidence diff baseline.evidence.json procurement.evidence.json --format json
 ```
+
+旧的 `evidence-model`、`evidence-api`、`evidence-workbench` 可执行入口暂时保留，执行时只向 **stderr** 输出弃用提示，不污染 JSON stdout。它们与统一入口复用库内执行逻辑，不反向依赖应用包。
+
+| 旧入口                                                                                      | 推荐入口                                                         |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `evidence-model pack/unpack/inspect/check/compile/lineage`                                  | `evidence pack/unpack/inspect/check/compile/lineage`             |
+| `evidence-workbench generate`                                                               | `evidence review`                                                |
+| 常规契约与验收导出                                                                          | `evidence export`                                                |
+| `evidence-api inspect/check/project/deliver/export-tests/diff`（含 overlay 与固定检查报告） | `evidence api <command>`（兼容原参数，也支持 `--model` 与 `-o`） |
+| `evidence diff api <base> <target>`                                                         | `evidence diff <base> <target>`；旧写法保留 JSON 默认值          |
+
+`model:pack`、`model:unpack`、`model:inspect`、`api:export`、`api:diff` 根脚本仍可使用，但均已转到 `apps/cli`。门禁参数、退出码与只读 `--verify` 行为保持不变。
 
 ---
 
@@ -153,15 +180,18 @@ pnpm model:unpack procurement.evidence.json --out .evidence/fm
 随着 DSL、纯内存校验仿真引擎与桌面端三态视图的完备，后续待办主要聚焦于**下游实现投影**、**独立运行入口收敛**与**运行时双向闭环**：
 
 ### 1. 下游投影与交付契约（Downstream Projections）
+
 - [x] **API 契约投影与 OpenAPI 导出**：严格遵守出入参隔离纪律，自动派生出标准 OpenAPI 3.1 交付契约（已在 `libs/evidence-api` 实现）。
 - [x] **单文件离线审查工作台**：编译生成包含图谱投影、内联资产与 CSP 安全签名的独立审查 HTML（已在 `libs/evidence-visualization` 实现）。
 - [ ] **Database Projection (SQL DDL)**：基于不可逆证据事实时间线与因果外键拓扑，自动派生标准关系型数据库（如 PostgreSQL）DDL 与版本化 Migration 迁移脚本。
 - [ ] **多语言路由骨架代码生成（Code Generators）**：基于派生的 OpenAPI 契约，自动生成各后端主流语言/框架（如 Node.js / Go / Spring Boot）的强类型路由与 Controller 接口骨架。
 
 ### 2. 独立运行容器与入口收敛（Apps & Packaging）
-- [ ] **统一命令行工具容器 (`apps/cli`)**：将目前散落在各 Libs 中的 `bin` 命令（`evidence-model`, `evidence-api`, `evidence-workbench`）收敛为统一命名的 `evidence <command>` 脚手架工具。
+
+- [x] **统一命令行工具容器 (`apps/cli`)**：基于 `cac` 提供 `evidence check/test/export/diff/pack/unpack/compile/review`；保留 `inspect/lineage` 与 `api` 兼容工作流，旧 Libs `bin` 入口作为弃用适配器过渡。
 - [ ] **独立 MCP 服务端应用 (`apps/mcp-server`)**：将 MCP 协议服务从纯 Libs 提升为可脱离桌面端、独立以 stdio/SSE 启动的长周期服务容器。
 
 ### 3. 生产语义漂移与闭环治理（Drift & Governance）
+
 - [ ] **生产环境双向语义漂移实时检测（Live Drift Check）**：深化本地传感器体系，实现对下游实际运行 API / 数据库表结构与 DSL 模型基线的在线语义比对和告警。
 - [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Step CI / Hurl，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。

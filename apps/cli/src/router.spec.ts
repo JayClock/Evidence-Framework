@@ -26,6 +26,20 @@ describe('unified CLI dispatch', () => {
     expect(await dispatch(['check', '--bad'], context)).toBe(1);
     expect(errors.join('')).toContain('Unknown option');
   });
+  it('rejects incompatible API flags and mixed legacy aliases', async () => {
+    for (const args of [
+      ['api', 'unknown'],
+      ['api', 'diff', '--model', 'model.evidence.json'],
+      ['api', 'inspect', '--format', 'json'],
+      ['api', 'inspect', '--fm', 'a', '--model', 'b'],
+      ['pack', 'missing', '--out', 'a', '-o', 'b'],
+    ]) {
+      const { context, errors } = captureContext();
+      expect(await dispatch(args, context), args.join(' ')).toBe(1);
+      expect(errors).not.toEqual([]);
+    }
+  });
+
   it('checks bundle models through the static engine', async () => {
     const { context, output } = captureContext();
     expect(

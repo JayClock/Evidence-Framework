@@ -37,7 +37,7 @@ contract-and-hygiene:
       else
         cp "$BOOTSTRAP_MODEL" reports/baseline.evidence.json
       fi
-      pnpm evidence diff api reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
+      pnpm evidence diff reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
   artifacts:
     when: always
     paths: [reports/]

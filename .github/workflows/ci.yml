@@ -54,5 +54,11 @@ jobs:
       - name: Run tests
         run: pnpm nx run-many --target=test --all
 
+      - name: Verify unified CLI entrypoint
+        run: |
+          pnpm nx build cli
+          pnpm evidence --help
+          pnpm evidence --version
+
       - name: Verify desktop build
         run: pnpm nx build desktop

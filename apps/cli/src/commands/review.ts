@@ -1,6 +1,6 @@
 import path from 'node:path';
 import {
-  generateWorkbench,
+  runReviewCommand,
   reviewPagePath,
 } from '@evidence-poc/evidence-visualization';
 import {
@@ -20,9 +20,9 @@ export async function reviewCommand(
   const scopeRefs = options.scope as string[] | undefined;
   scopeRefs?.forEach(stringOption);
   const assets = stringOption(options.assets);
-  const generated = await generateWorkbench({
+  const result = await runReviewCommand({
     projectRoot,
-    output: path.resolve(
+    out: path.resolve(
       context.cwd,
       stringOption(options.out) ?? reviewPagePath(projectRoot),
     ),
@@ -30,16 +30,7 @@ export async function reviewCommand(
     requireApi: options.requireApi === true,
     ...(assets ? { assetsDirectory: path.resolve(context.cwd, assets) } : {}),
   });
-  context.stdout(
-    JSON.stringify(
-      {
-        output: generated.output,
-        counts: generated.data.counts,
-        validation: generated.data.validation,
-      },
-      null,
-      2,
-    ),
-  );
-  return 0;
+  if (result.error) throw new Error(result.error);
+  context.stdout(JSON.stringify(result.output, null, 2));
+  return result.exitCode;
 }

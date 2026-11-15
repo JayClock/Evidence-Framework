@@ -591,6 +591,9 @@ importers:
       ajv-formats:
         specifier: 3.0.1
         version: 3.0.1
+      cac:
+        specifier: ^6.7.14
+        version: 6.7.14
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
@@ -667,6 +670,9 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema
+      cac:
+        specifier: ^6.7.14
+        version: 6.7.14
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
@@ -700,6 +706,9 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../evidence-schema
+      cac:
+        specifier: ^6.7.14
+        version: 6.7.14
       tslib:
         specifier: ^2.3.0
         version: 2.9.1

@@ -61,4 +61,4 @@ export {
   type GenerateWorkbenchResult,
 } from './generate/generateWorkbench.js';
 
-export { runCli, type CliResult } from './cli.js';
+export { runCli, runReviewCommand, type CliResult, type ReviewOptions } from './commands.js';

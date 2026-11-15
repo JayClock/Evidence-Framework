@@ -5,6 +5,7 @@ import { checkCommand } from './commands/check.js';
 import { diffCommand } from './commands/diff.js';
 import { modelCommand } from './commands/model.js';
 import { reviewCommand } from './commands/review.js';
+import { apiCommand } from './commands/api.js';
 import {
   stringOption,
   type CommandContext,
@@ -107,6 +108,29 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
     .option('--require-api', 'Require a complete API projection')
     .option('--assets <dir>', 'Workbench assets directory')
     .action((options: CommandOptions) => reviewCommand(options, context));
+  cli
+    .command(
+      'api <command>',
+      'Legacy API inspect/check/project/deliver/diff/export-tests workflows',
+    )
+    .option('--project-root <dir>', 'Project root')
+    .option(
+      '--fm, --model <path>',
+      'Model directory or bundle (--fm is a legacy alias)',
+    )
+    .option('--fm-check <file>', 'Pinned check report')
+    .option('--api <file>', 'API overlay')
+    .option('-o, --out <dir>', 'Dedicated output directory')
+    .option('--base <path>', 'Baseline model for API diff')
+    .option('--target <path>', 'Target model for API diff')
+    .option('--base-api <file>', 'Baseline API overlay')
+    .option(
+      '--format <format>',
+      'json | markdown for diff; stepci | hurl for export-tests',
+    )
+    .action((command: string, options: CommandOptions) =>
+      apiCommand(command, options, context),
+    );
   cli.help();
   cli.version('0.0.1');
   // cac's default printer writes to console. Render its registered metadata to
@@ -138,8 +162,23 @@ function validateInvocation(cli: CAC): void {
     throw new Error(
       `Unknown command: ${cli.args[0] ?? ''}. Run evidence --help.`,
     );
+  // mri may overwrite mixed short/long aliases instead of preserving an array.
+  const raw = cli.rawArgs.slice(2);
+  const end = raw.indexOf('--');
+  const flags = end < 0 ? raw : raw.slice(0, end);
+  for (const option of command.options.filter(
+    (entry) => entry.names.length > 1,
+  )) {
+    const count = flags.filter((token) =>
+      option.names.some((name) => {
+        const flag = `${name.length === 1 ? '-' : '--'}${name}`;
+        return token === flag || token.startsWith(`${flag}=`);
+      }),
+    ).length;
+    if (count > 1) throw new Error(`Duplicate option: --${option.name}`);
+  }
   // cac uses arrays for repeated options; only explicitly repeatable flags may
-  // accept them. This also rejects duplicates expressed via short aliases.
+  // accept them.
   for (const [name, value] of Object.entries(cli.options)) {
     if (name === '--') {
       if ((value as unknown[]).length)

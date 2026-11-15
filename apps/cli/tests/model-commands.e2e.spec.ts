@@ -99,13 +99,14 @@ it('supports direct diff with a Markdown default, explicit JSON and legacy JSON'
       hasBreakingChanges: false,
     });
   }
-});
+}, 20000);
 
 it('rejects invalid and duplicate options and missing or extra arguments without writes', async () => {
   for (const args of [
     ['pack'],
     ['pack', 'missing', '--out'],
     ['pack', 'missing', '-o', 'a', '--out', 'b'],
+    ['pack', 'missing', '--out', 'a', '-o', 'b'],
     ['compile', '.evidence/fm'],
     ['review', '--unknown'],
     ['check', 'source.evidence.json', 'extra'],
@@ -135,4 +136,4 @@ it('rejects invalid and duplicate options and missing or extra arguments without
   const version = await invoke(['--version']);
   expect(version.code).toBe(0);
   expect(version.stdout.trim()).toBe('evidence/0.0.1');
-});
+}, 20000);

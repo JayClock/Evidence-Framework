@@ -13,12 +13,12 @@
     "desktop:package": "nx package desktop",
     "desktop:make": "nx make desktop",
     "test:desktop": "nx test desktop",
-    "model:pack": "node libs/evidence-model-io/dist/cli.js pack",
-    "model:unpack": "node libs/evidence-model-io/dist/cli.js unpack",
-    "model:inspect": "node libs/evidence-model-io/dist/cli.js inspect",
+    "model:pack": "node apps/cli/dist/cli.js pack",
+    "model:unpack": "node apps/cli/dist/cli.js unpack",
+    "model:inspect": "node apps/cli/dist/cli.js inspect",
     "api:setup": "node tools/oasdiff/setup.mjs",
-    "api:export": "node libs/evidence-api/dist/cli.js deliver",
-    "api:diff": "node libs/evidence-api/dist/cli.js diff"
+    "api:export": "node apps/cli/dist/cli.js api deliver",
+    "api:diff": "node apps/cli/dist/cli.js api diff"
   },
   "private": true,
   "packageManager": "pnpm@12.16.1",
