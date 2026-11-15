@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { forceLinting } from '@codemirror/lint';
+import { forEachDiagnostic, forceLinting } from '@codemirror/lint';
 
 import type { CelCandidate } from '@evidence-poc/evidence-model-core';
 
@@ -138,6 +138,82 @@ describe('CelCodeMirrorEditor', () => {
     expect(
       document.querySelector('[data-cel-diagnostics]')?.textContent,
     ).toContain('exchange_rate');
+  });
+
+  it('accepts multiline nested macros and commits only business aliases', () => {
+    const onCommitAliases = vi.fn();
+    render(
+      <CelCodeMirrorEditor
+        value="self.quantity"
+        candidates={candidates}
+        ariaLabel="测试表达式"
+        onCommit={() => undefined}
+        onCommitAliases={onCommitAliases}
+      />,
+    );
+    typeExpression(
+      '测试表达式',
+      `confirmations.all(c,
+      confirmations.exists(c, c.confirmed_at > self.quantity))
+      && size(confirmations) > 0`,
+    );
+    blurEditor('测试表达式');
+    expect(document.querySelector('[data-cel-diagnostics]')).toBeNull();
+    expect(onCommitAliases).toHaveBeenCalledWith(['confirmations', 'self']);
+  });
+
+  it('underlines the native parser range in the untrimmed multiline document', async () => {
+    render(
+      <CelCodeMirrorEditor
+        value="self.quantity"
+        candidates={candidates}
+        ariaLabel="测试表达式"
+        onCommit={() => undefined}
+      />,
+    );
+    const expression = '  self.quantity +\n  )';
+    typeExpression('测试表达式', expression);
+    const editor = editorViewFor('测试表达式');
+    forceLinting(editor);
+    await waitFor(() => {
+      const ranges: { from: number; to: number }[] = [];
+      forEachDiagnostic(editor.state, (_diagnostic, from, to) =>
+        ranges.push({ from, to }),
+      );
+      expect(ranges).toEqual([
+        { from: expression.indexOf(')'), to: expression.indexOf(')') + 1 },
+      ]);
+    });
+  });
+
+  it('underlines an unknown modeled attribute inside a macro', async () => {
+    render(
+      <CelCodeMirrorEditor
+        value="self.quantity"
+        candidates={candidates}
+        ariaLabel="测试表达式"
+        onCommit={() => undefined}
+      />,
+    );
+    const expression = 'confirmations.exists(c, c.missing > 0)';
+    typeExpression('测试表达式', expression);
+    const editor = editorViewFor('测试表达式');
+    forceLinting(editor);
+    await waitFor(() => {
+      const ranges: { from: number; to: number }[] = [];
+      forEachDiagnostic(editor.state, (_diagnostic, from, to) =>
+        ranges.push({ from, to }),
+      );
+      expect(ranges).toEqual([
+        {
+          from: expression.indexOf('missing'),
+          to: expression.indexOf('missing') + 7,
+        },
+      ]);
+    });
+    expect(
+      document.querySelector('[data-cel-diagnostics]')?.textContent,
+    ).toContain('confirmations.missing');
   });
 
   it('lists the source aliases under the field', () => {
