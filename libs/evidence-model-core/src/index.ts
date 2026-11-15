@@ -97,6 +97,13 @@ export {
 
 export { digestOf } from './validation/modelDigest.js';
 
+export { computeStepHash } from './trace/flowAggregator.js';
+export type {
+  FlowScenarioTrace,
+  FlowStepTrace,
+  StepFingerprintInput,
+} from './trace/types.js';
+
 export {
   compiledDocument,
   type CompiledModelDocument,
