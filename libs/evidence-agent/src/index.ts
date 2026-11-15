@@ -1,3 +1,19 @@
+// ─── Incremental business story projection ─────────────────────────────────
+export {
+  createFlowStoryProjector,
+  type FlowStoryProjector,
+  type FlowStoryProjectorOptions,
+} from './story/flowStoryProjector.js';
+export { createStoryAgent } from './story/storyAgent.js';
+export { StorySceneCache } from './story/storyCache.js';
+export { STORY_SYSTEM_PROMPT } from './story/prompts.js';
+export type {
+  BusinessStoryProjection,
+  DocumentCardField,
+  StoryAgent,
+  StoryScene,
+} from './story/types.js';
+
 // ─── Agent session, prompts and governance ────────────────────────────────
 export { GOVERNANCE_PROMPT } from './prompts/governance.js';
 
