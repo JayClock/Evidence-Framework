@@ -1,3 +1,5 @@
+import { z } from 'zod';
+import { DomainIdSchema } from './id.js';
 import {
   isVocabularyId,
   vocabularyIds,
@@ -11,29 +13,45 @@ export const RELATIONSHIP_KIND_DEFINITIONS = {
 } as const satisfies Record<string, { readonly label: string }>;
 
 export type RelationshipKind = keyof typeof RELATIONSHIP_KIND_DEFINITIONS;
-
 export const RELATIONSHIP_KINDS = vocabularyIds(RELATIONSHIP_KIND_DEFINITIONS);
-
 export const RELATIONSHIP_KIND_LABELS = vocabularyLabels(
   RELATIONSHIP_KIND_DEFINITIONS,
 );
+export const RelationshipKindSchema = z.enum(
+  RELATIONSHIP_KINDS as unknown as [RelationshipKind, ...RelationshipKind[]],
+);
 
-export interface CardinalityAST {
-  min: number;
-  max: number | 'many';
-}
+export const CardinalityASTSchema = z
+  .object({
+    min: z.number().int().nonnegative(),
+    max: z.union([z.number().int().min(1), z.literal('many')]),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.max !== 'many' && value.min > value.max) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'cardinality min must not exceed max',
+        params: { validationCode: 'relationship.cardinality' },
+      });
+    }
+  });
+export type CardinalityAST = z.infer<typeof CardinalityASTSchema>;
 
-export interface RelationshipAST {
-  type: 'relationship';
-  id: string;
-  kind: RelationshipKind;
-  sourceRef: string;
-  targetRef: string;
-  label: string;
-  sourceCardinality?: CardinalityAST;
-  targetCardinality?: CardinalityAST;
-  notes?: string;
-}
+export const RelationshipASTSchema = z
+  .object({
+    type: z.literal('relationship'),
+    id: DomainIdSchema,
+    kind: RelationshipKindSchema,
+    sourceRef: DomainIdSchema,
+    targetRef: DomainIdSchema,
+    label: z.string().min(1),
+    sourceCardinality: CardinalityASTSchema.optional(),
+    targetCardinality: CardinalityASTSchema.optional(),
+    notes: z.string().min(1).optional(),
+  })
+  .strict();
+export type RelationshipAST = z.infer<typeof RelationshipASTSchema>;
 
 export function isRelationshipKind(value: unknown): value is RelationshipKind {
   return isVocabularyId(RELATIONSHIP_KIND_DEFINITIONS, value);
@@ -41,19 +59,5 @@ export function isRelationshipKind(value: unknown): value is RelationshipKind {
 
 /** Value semantics are intentionally left to the owning rule language. */
 export function isCardinality(value: unknown): value is CardinalityAST {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-  const { min, max } = candidate;
-
-  return (
-    typeof min === 'number' &&
-    Number.isInteger(min) &&
-    min >= 0 &&
-    (max === 'many' ||
-      (typeof max === 'number' && Number.isInteger(max) && max >= 1)) &&
-    (max === 'many' || min <= max)
-  );
+  return CardinalityASTSchema.safeParse(value).success;
 }

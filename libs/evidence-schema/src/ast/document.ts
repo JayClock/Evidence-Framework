@@ -1,35 +1,42 @@
-import { isDomainId, isModelVersion } from './id.js';
-import type { EntityAST } from './entity.js';
-import type { RelationshipAST } from './relationship.js';
-import type { RuleAST } from './rule.js';
+import { z } from 'zod';
+import {
+  DomainIdSchema,
+  ModelVersionSchema,
+  isDomainId,
+  isModelVersion,
+} from './id.js';
+import { EntityASTSchema, type EntityAST } from './entity.js';
+import { RelationshipASTSchema, type RelationshipAST } from './relationship.js';
+import { RuleASTSchema, type RuleAST } from './rule.js';
 
 /** FM schema version emitted by this package. */
 export const FM_SCHEMA_VERSION = '5.0' as const;
-
 export const FM_RULE_LANGUAGE = 'CEL' as const;
 
-export interface DomainModelManifest {
-  type: 'fm_model';
-  schemaVersion: typeof FM_SCHEMA_VERSION;
-  id: string;
-  name: string;
-  version: string;
-  ruleLanguage: typeof FM_RULE_LANGUAGE;
-  entryContextRefs: string[];
-  description?: string;
-}
+export const DomainModelManifestSchema = z
+  .object({
+    type: z.literal('fm_model'),
+    schemaVersion: z.literal(FM_SCHEMA_VERSION),
+    id: DomainIdSchema,
+    name: z.string().min(1),
+    version: ModelVersionSchema,
+    ruleLanguage: z.literal(FM_RULE_LANGUAGE),
+    entryContextRefs: z.array(DomainIdSchema).min(1),
+    description: z.string().min(1).optional(),
+  })
+  .strict();
 
-/**
- * In-memory form of a `.evidence/fm/` source tree: the manifest plus the three
- * flat collections. Ordering is preserved from the source files so the disk
- * adapter can report stable, git-friendly output.
- */
-export interface DomainModelDocument {
-  manifest: DomainModelManifest;
-  entities: EntityAST[];
-  relationships: RelationshipAST[];
-  rules: RuleAST[];
-}
+export const DomainModelDocumentSchema = z
+  .object({
+    manifest: DomainModelManifestSchema,
+    entities: z.array(EntityASTSchema),
+    relationships: z.array(RelationshipASTSchema),
+    rules: z.array(RuleASTSchema),
+  })
+  .strict();
+
+export type DomainModelManifest = z.infer<typeof DomainModelManifestSchema>;
+export type DomainModelDocument = z.infer<typeof DomainModelDocumentSchema>;
 
 export const EMPTY_MODEL_MANIFEST: DomainModelManifest = {
   type: 'fm_model',
@@ -74,19 +81,8 @@ export function isDomainModelDocumentShape(
 export function isDomainModelManifest(
   value: unknown,
 ): value is DomainModelManifest {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-
-  return (
-    candidate.type === 'fm_model' &&
-    candidate.schemaVersion === FM_SCHEMA_VERSION &&
-    isDomainId(candidate.id) &&
-    typeof candidate.name === 'string' &&
-    isModelVersion(candidate.version) &&
-    candidate.ruleLanguage === FM_RULE_LANGUAGE &&
-    Array.isArray(candidate.entryContextRefs)
-  );
+  return DomainModelManifestSchema.safeParse(value).success;
 }
+
+export type { EntityAST, RelationshipAST, RuleAST };
+export { DomainIdSchema, ModelVersionSchema, isDomainId, isModelVersion };

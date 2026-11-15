@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /** Value types accepted by FM v5 attributes, CEL rule results and bindings. */
 export const VALUE_TYPES = [
   'bool',
@@ -18,20 +20,19 @@ export const VALUE_TYPES = [
   'dynamic',
 ] as const;
 
-export type ValueType = (typeof VALUE_TYPES)[number];
+export const ValueTypeSchema = z.enum(VALUE_TYPES);
+export type ValueType = z.infer<typeof ValueTypeSchema>;
 
 export function isValueType(value: unknown): value is ValueType {
-  return (
-    typeof value === 'string' &&
-    (VALUE_TYPES as readonly string[]).includes(value)
-  );
+  return ValueTypeSchema.safeParse(value).success;
 }
 
 /** How a CEL binding is consumed: a single modeled instance or a collection. */
-export type BindingCardinality = 'one' | 'many';
+export const BindingCardinalitySchema = z.enum(['one', 'many']);
+export type BindingCardinality = z.infer<typeof BindingCardinalitySchema>;
 
 export function isBindingCardinality(
   value: unknown,
 ): value is BindingCardinality {
-  return value === 'one' || value === 'many';
+  return BindingCardinalitySchema.safeParse(value).success;
 }

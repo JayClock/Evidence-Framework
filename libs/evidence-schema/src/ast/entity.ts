@@ -1,6 +1,11 @@
-import type { ExampleTestAST } from './example.js';
-import type { ValueType } from './values.js';
-import type { ProvenanceSnippet } from './provenance.js';
+import { z } from 'zod';
+import {
+  AttributeNameSchema,
+  DomainIdSchema,
+} from './id.js';
+import { ExampleTestASTSchema } from './example.js';
+import { ProvenanceSnippetSchema } from './provenance.js';
+import { ValueTypeSchema } from './values.js';
 import {
   isVocabularyId,
   vocabularyField,
@@ -19,36 +24,25 @@ export const ENTITY_CATEGORY_DEFINITIONS = {
 export type EntityCategory = keyof typeof ENTITY_CATEGORY_DEFINITIONS;
 
 export const ENTITY_CATEGORIES = vocabularyIds(ENTITY_CATEGORY_DEFINITIONS);
-
 export const ENTITY_CATEGORY_LABELS = vocabularyLabels(
   ENTITY_CATEGORY_DEFINITIONS,
 );
+export const EntityCategorySchema = z.enum(
+  ENTITY_CATEGORIES as unknown as [EntityCategory, ...EntityCategory[]],
+);
 
-/**
- * What one evidence moment claims, and the time it must carry to claim it.
- *
- * The label is what the canvas, the inspector and the review panel print; the
- * time attributes are the business clock the kind cannot be modeled without.
- */
 export interface EvidenceKindDefinition {
   readonly label: string;
-  /** Name in the tuple must be modeled as a required `keyData` timestamp. */
   readonly requiredTimeAttributes: readonly string[];
 }
 
 export const EVIDENCE_KIND_DEFINITIONS = {
-  rfp: {
-    label: '询价',
-    requiredTimeAttributes: ['started_at', 'expired_at'],
-  },
+  rfp: { label: '询价', requiredTimeAttributes: ['started_at', 'expired_at'] },
   proposal: {
     label: '方案',
     requiredTimeAttributes: ['started_at', 'expired_at'],
   },
-  contract: {
-    label: '合同',
-    requiredTimeAttributes: ['signed_at'],
-  },
+  contract: { label: '合同', requiredTimeAttributes: ['signed_at'] },
   fulfillment_request: {
     label: '履约请求',
     requiredTimeAttributes: ['started_at', 'expired_at'],
@@ -64,17 +58,14 @@ export const EVIDENCE_KIND_DEFINITIONS = {
 } as const satisfies Record<string, EvidenceKindDefinition>;
 
 export type EvidenceKind = keyof typeof EVIDENCE_KIND_DEFINITIONS;
-
 export const EVIDENCE_KINDS = vocabularyIds(EVIDENCE_KIND_DEFINITIONS);
+export const EVIDENCE_KIND_LABELS = vocabularyLabels(
+  EVIDENCE_KIND_DEFINITIONS,
+);
+export const EvidenceKindSchema = z.enum(
+  EVIDENCE_KINDS as unknown as [EvidenceKind, ...EvidenceKind[]],
+);
 
-export const EVIDENCE_KIND_LABELS = vocabularyLabels(EVIDENCE_KIND_DEFINITIONS);
-
-/**
- * Evidence kinds whose business time attribute is mandatory.
- *
- * The name in the tuple must be modeled as a required `keyData` timestamp
- * attribute.
- */
 export const REQUIRED_EVIDENCE_TIME_ATTRIBUTES: Record<
   EvidenceKind,
   readonly string[]
@@ -86,22 +77,14 @@ export const PARTICIPANT_KIND_DEFINITIONS = {
 } as const satisfies Record<string, { readonly label: string }>;
 
 export type ParticipantKind = keyof typeof PARTICIPANT_KIND_DEFINITIONS;
-
 export const PARTICIPANT_KINDS = vocabularyIds(PARTICIPANT_KIND_DEFINITIONS);
-
 export const PARTICIPANT_KIND_LABELS = vocabularyLabels(
   PARTICIPANT_KIND_DEFINITIONS,
 );
+export const ParticipantKindSchema = z.enum(
+  PARTICIPANT_KINDS as unknown as [ParticipantKind, ...ParticipantKind[]],
+);
 
-/**
- * What a `thing` stands for when the domain is the hard part.
- *
- * Most things are what the business trades in (a course, a device, a carton).
- * Some are not objects at all but the work the domain exists to do: a pricing
- * band, a ratio, a tier ladder, an eligibility test. Naming that difference keeps
- * a calculated value out of the contract, where it would become a hard-coded
- * number, and puts it in the Domain Context where a rule can own it.
- */
 export const DOMAIN_COMPONENT_ROLE_DEFINITIONS = {
   calculator: { label: '计算器' },
   checker: { label: '检查器' },
@@ -109,13 +92,17 @@ export const DOMAIN_COMPONENT_ROLE_DEFINITIONS = {
 
 export type DomainComponentRole =
   keyof typeof DOMAIN_COMPONENT_ROLE_DEFINITIONS;
-
 export const DOMAIN_COMPONENT_ROLES = vocabularyIds(
   DOMAIN_COMPONENT_ROLE_DEFINITIONS,
 );
-
 export const DOMAIN_COMPONENT_ROLE_LABELS = vocabularyLabels(
   DOMAIN_COMPONENT_ROLE_DEFINITIONS,
+);
+export const DomainComponentRoleSchema = z.enum(
+  DOMAIN_COMPONENT_ROLES as unknown as [
+    DomainComponentRole,
+    ...DomainComponentRole[],
+  ],
 );
 
 export const ROLE_KIND_DEFINITIONS = {
@@ -127,10 +114,11 @@ export const ROLE_KIND_DEFINITIONS = {
 } as const satisfies Record<string, { readonly label: string }>;
 
 export type RoleKind = keyof typeof ROLE_KIND_DEFINITIONS;
-
 export const ROLE_KINDS = vocabularyIds(ROLE_KIND_DEFINITIONS);
-
 export const ROLE_KIND_LABELS = vocabularyLabels(ROLE_KIND_DEFINITIONS);
+export const RoleKindSchema = z.enum(
+  ROLE_KINDS as unknown as [RoleKind, ...RoleKind[]],
+);
 
 export const CONTEXT_KIND_DEFINITIONS = {
   contract: { label: '合同上下文' },
@@ -139,17 +127,14 @@ export const CONTEXT_KIND_DEFINITIONS = {
 } as const satisfies Record<string, { readonly label: string }>;
 
 export type ContextKind = keyof typeof CONTEXT_KIND_DEFINITIONS;
-
 export const CONTEXT_KINDS = vocabularyIds(CONTEXT_KIND_DEFINITIONS);
+export const CONTEXT_KIND_LABELS = vocabularyLabels(
+  CONTEXT_KIND_DEFINITIONS,
+);
+export const ContextKindSchema = z.enum(
+  CONTEXT_KINDS as unknown as [ContextKind, ...ContextKind[]],
+);
 
-export const CONTEXT_KIND_LABELS = vocabularyLabels(CONTEXT_KIND_DEFINITIONS);
-
-/**
- * Attribute names recognised as business time of a modeled evidence moment.
- *
- * The label is the short form a card prints when a project modeled the attribute
- * without a label of its own; the model's own label always wins.
- */
 export const EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS = {
   started_at: { label: '开始' },
   expired_at: { label: '截止' },
@@ -161,94 +146,104 @@ export const EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS = {
 export const EVIDENCE_TIME_ATTRIBUTE_NAMES = vocabularyIds(
   EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
 );
-
 export const EVIDENCE_TIME_ATTRIBUTE_LABELS = vocabularyLabels(
   EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
 );
 
-export interface AttributeAST {
-  /** Lower snake_case attribute name, unique inside its entity. */
-  name: string;
-  /** Canonical Chinese（English） business label. */
-  label: string;
-  /** Business meaning, including who provides the value when it is key data. */
-  meaning: string;
-  valueType?: ValueType;
-  required?: boolean;
-  /** Amounts, deadlines, quantities and time differences are key data. */
-  keyData?: boolean;
-  /** Derivation rule that produces this attribute value. */
-  derivedByRuleRef?: string;
-  notes?: string;
-}
+export const AttributeASTSchema = z
+  .object({
+    name: AttributeNameSchema,
+    label: z.string().min(1),
+    meaning: z.string().min(1),
+    valueType: ValueTypeSchema.optional(),
+    required: z.boolean().optional(),
+    keyData: z.boolean().optional(),
+    derivedByRuleRef: DomainIdSchema.optional(),
+    notes: z.string().min(1).optional(),
+  })
+  .strict();
+export type AttributeAST = z.infer<typeof AttributeASTSchema>;
 
-export interface ModelExampleAST {
-  /** Stable human-readable name used as the OpenAPI example key. */
-  readonly label: string;
-  readonly description?: string;
-  /** JSON object supplied to the operation or returned by it. */
-  readonly value: Record<string, unknown>;
-  /** Optional acceptance-test instructions; plain examples remain documentation only. */
-  readonly test?: ExampleTestAST;
-}
+export const ModelExampleASTSchema = z
+  .object({
+    label: z.string().min(1),
+    description: z.string().min(1).optional(),
+    value: z.record(z.unknown()),
+    test: ExampleTestASTSchema.optional(),
+  })
+  .strict();
+export type ModelExampleAST = z.infer<typeof ModelExampleASTSchema>;
 
-interface EntityBase {
-  type: 'entity';
-  id: string;
-  label: string;
-  aliases?: string[];
-  attributes?: AttributeAST[];
-  /** Concrete values that anchor this entity in generated contracts. */
-  examples?: ModelExampleAST[];
-  notes?: string;
-  /**
-   * Sentence this element was read from.
-   *
-   * An ingested element keeps the clause that established it, so a reviewer can
-   * re-read the business text instead of trusting the extraction. Hand-written
-   * entities may omit it; nothing in the model depends on it.
-   */
-  sourceSnippet?: ProvenanceSnippet;
-}
+const EntityBaseSchema = z.object({
+  type: z.literal('entity'),
+  id: DomainIdSchema,
+  label: z.string().min(1),
+  aliases: z.array(z.string().min(1)).optional(),
+  attributes: z.array(AttributeASTSchema).optional(),
+  examples: z.array(ModelExampleASTSchema).optional(),
+  notes: z.string().min(1).optional(),
+  sourceSnippet: ProvenanceSnippetSchema.optional(),
+});
 
-export interface EvidenceEntityAST extends EntityBase {
-  category: 'evidence';
-  kind: EvidenceKind;
-  contextRef: string;
-  /** Required for every non-contract evidence moment. */
-  responsibleRoleRef?: string;
-  /** Contracts are saved with exactly two contextual Party Roles. */
-  roleRefs?: string[];
-}
+/** Evidence objects carry a context and may own responsibility metadata. */
+export const EvidenceEntitySchema = EntityBaseSchema.extend({
+  category: z.literal('evidence'),
+  kind: EvidenceKindSchema,
+  contextRef: DomainIdSchema.optional(),
+  responsibleRoleRef: DomainIdSchema.optional(),
+  roleRefs: z.array(DomainIdSchema).optional(),
+  parentContextRef: DomainIdSchema.optional(),
+  rootRefs: z.array(DomainIdSchema).optional(),
+  domainRole: DomainComponentRoleSchema.optional(),
+}).strict();
 
-export interface ParticipantEntityAST extends EntityBase {
-  category: 'participant';
-  kind: ParticipantKind;
-  /** Required for `thing`, forbidden for `party`. */
-  contextRef?: string;
-  /** Set on a `thing` that stands for domain computation, never on a `party`. */
-  domainRole?: DomainComponentRole;
-}
+/** Participant parties are global; participant things belong to a domain context. */
+export const ParticipantEntitySchema = EntityBaseSchema.extend({
+  category: z.literal('participant'),
+  kind: ParticipantKindSchema,
+  contextRef: DomainIdSchema.optional(),
+  domainRole: DomainComponentRoleSchema.optional(),
+  responsibleRoleRef: DomainIdSchema.optional(),
+  roleRefs: z.array(DomainIdSchema).optional(),
+  parentContextRef: DomainIdSchema.optional(),
+  rootRefs: z.array(DomainIdSchema).optional(),
+}).strict();
 
-export interface RoleEntityAST extends EntityBase {
-  category: 'role';
-  kind: RoleKind;
-  contextRef: string;
-}
+export const RoleEntitySchema = EntityBaseSchema.extend({
+  category: z.literal('role'),
+  kind: RoleKindSchema,
+  contextRef: DomainIdSchema.optional(),
+  responsibleRoleRef: DomainIdSchema.optional(),
+  roleRefs: z.array(DomainIdSchema).optional(),
+  domainRole: DomainComponentRoleSchema.optional(),
+  parentContextRef: DomainIdSchema.optional(),
+  rootRefs: z.array(DomainIdSchema).optional(),
+}).strict();
 
-export interface ContextEntityAST extends EntityBase {
-  category: 'context';
-  kind: ContextKind;
-  parentContextRef?: string;
-  /** Contract and Domain contexts must declare their roots. */
-  rootRefs?: string[];
-}
+export const ContextEntitySchema = EntityBaseSchema.extend({
+  category: z.literal('context'),
+  kind: ContextKindSchema,
+  contextRef: DomainIdSchema.optional(),
+  parentContextRef: DomainIdSchema.optional(),
+  rootRefs: z.array(DomainIdSchema).optional(),
+  responsibleRoleRef: DomainIdSchema.optional(),
+  roleRefs: z.array(DomainIdSchema).optional(),
+  domainRole: DomainComponentRoleSchema.optional(),
+}).strict();
 
-export type EntityAST =
-  | EvidenceEntityAST
-  | ParticipantEntityAST
-  | RoleEntityAST
-  | ContextEntityAST;
+/** One discriminated Zod union is the source of every entity AST type. */
+export const EntityASTSchema = z.discriminatedUnion('category', [
+  EvidenceEntitySchema,
+  ParticipantEntitySchema,
+  RoleEntitySchema,
+  ContextEntitySchema,
+]);
+
+export type EvidenceEntityAST = z.infer<typeof EvidenceEntitySchema>;
+export type ParticipantEntityAST = z.infer<typeof ParticipantEntitySchema>;
+export type RoleEntityAST = z.infer<typeof RoleEntitySchema>;
+export type ContextEntityAST = z.infer<typeof ContextEntitySchema>;
+export type EntityAST = z.infer<typeof EntityASTSchema>;
 
 /** Composite `category.kind` signature used by graph and validation checks. */
 export type EntitySignature = `${EntityCategory}.${string}`;
@@ -275,9 +270,7 @@ export function isContractEntity(
 export function isFulfillmentRequest(
   entity: EntityAST | undefined,
 ): entity is EvidenceEntityAST {
-  return (
-    entity?.category === 'evidence' && entity.kind === 'fulfillment_request'
-  );
+  return entity?.category === 'evidence' && entity.kind === 'fulfillment_request';
 }
 
 export function isFulfillmentConfirmation(
@@ -322,13 +315,6 @@ export const isDomainComponentRole = (
 ): value is DomainComponentRole =>
   isVocabularyId(DOMAIN_COMPONENT_ROLE_DEFINITIONS, value);
 
-/**
- * True for the thing a derivation reads instead of a contract parameter.
- *
- * A calculator or checker is where a "how much" or "may they" question lives
- * once it has been taken out of the agreement, so the model can answer it with a
- * rule instead of a value somebody typed in.
- */
 export function isDomainComponent(
   entity: EntityAST | undefined,
 ): entity is ParticipantEntityAST & { domainRole: DomainComponentRole } {

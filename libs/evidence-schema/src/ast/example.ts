@@ -1,29 +1,31 @@
+import { z } from 'zod';
+import { DomainIdSchema } from './id.js';
+
 /** Test-only metadata attached to a concrete model example, never a separate suite. */
-export interface ExampleTestAST {
-  /** Examples in one flow execute sequentially; different flows are isolated. */
-  readonly flow: string;
-  /** Optional selection labels, carried in native Step CI test env metadata. */
-  readonly tags?: readonly string[];
-  readonly actingRoleRef: string;
-  /** Explicit business clock; never inferred from wall time. */
-  readonly asOf: string;
-  /** References use `entity.id#example label`; dependencies stay in the same flow. */
-  readonly basedOn?: readonly string[];
-  /** Defaults to the modeled success response. Errors must be modeled explicitly. */
-  readonly expectedStatus?: number;
-  /** Raw request override for negative tests; never exported as an OpenAPI example. */
-  readonly inputs?: Record<string, unknown>;
-  /** Explicit capture source when a path dependency cannot be inferred uniquely. */
-  readonly pathParameters?: Record<
-    string,
-    {
-      readonly exampleRef: string;
-      readonly jsonpath: string;
-    }
-  >;
-  /** Additional response assertions (JSONPath -> expected JSON value). */
-  readonly expect?: Record<string, unknown>;
-}
+export const ExampleTestASTSchema = z
+  .object({
+    flow: z.string().min(1),
+    tags: z.array(z.string().min(1)).optional(),
+    actingRoleRef: DomainIdSchema,
+    asOf: z.string().min(1),
+    basedOn: z.array(z.string().min(1)).optional(),
+    expectedStatus: z.number().int().min(200).max(599).optional(),
+    inputs: z.record(z.unknown()).optional(),
+    pathParameters: z
+      .record(
+        z
+          .object({
+            exampleRef: z.string().min(1),
+            jsonpath: z.string().startsWith('$'),
+          })
+          .strict(),
+      )
+      .optional(),
+    expect: z.record(z.unknown()).optional(),
+  })
+  .strict();
+
+export type ExampleTestAST = z.infer<typeof ExampleTestASTSchema>;
 
 const record = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -54,9 +56,9 @@ export function exampleTestErrors(value: unknown): string[] {
   if (
     !text(value.asOf) ||
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
-      value.asOf,
+      String(value.asOf),
     ) ||
-    Number.isNaN(Date.parse(value.asOf))
+    Number.isNaN(Date.parse(String(value.asOf)))
   ) {
     errors.push('asOf must be an RFC 3339 timestamp with an explicit offset');
   }

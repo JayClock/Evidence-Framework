@@ -3,6 +3,10 @@ export {
   CEL_VARIABLE_PATTERN,
   DOMAIN_ID_PATTERN,
   MODEL_VERSION_PATTERN,
+  AttributeNameSchema,
+  CelVariableNameSchema,
+  DomainIdSchema,
+  ModelVersionSchema,
   isAttributeName,
   isCelVariableName,
   isDomainId,
@@ -11,6 +15,8 @@ export {
 
 export {
   VALUE_TYPES,
+  BindingCardinalitySchema,
+  ValueTypeSchema,
   isBindingCardinality,
   isValueType,
   type BindingCardinality,
@@ -43,22 +49,31 @@ export {
   DOMAIN_COMPONENT_ROLES,
   DOMAIN_COMPONENT_ROLE_DEFINITIONS,
   DOMAIN_COMPONENT_ROLE_LABELS,
+  DomainComponentRoleSchema,
   ENTITY_CATEGORIES,
   ENTITY_CATEGORY_DEFINITIONS,
   ENTITY_CATEGORY_LABELS,
+  EntityASTSchema,
+  EntityCategorySchema,
   EVIDENCE_KINDS,
   EVIDENCE_KIND_DEFINITIONS,
   EVIDENCE_KIND_LABELS,
+  EvidenceEntitySchema,
+  EvidenceKindSchema,
   EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
   EVIDENCE_TIME_ATTRIBUTE_LABELS,
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
   PARTICIPANT_KINDS,
   PARTICIPANT_KIND_DEFINITIONS,
   PARTICIPANT_KIND_LABELS,
+  ParticipantEntitySchema,
+  ParticipantKindSchema,
   REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
   ROLE_KINDS,
   ROLE_KIND_DEFINITIONS,
   ROLE_KIND_LABELS,
+  RoleEntitySchema,
+  RoleKindSchema,
   entitySignature,
   findAttribute,
   isContextEntity,
@@ -74,7 +89,9 @@ export {
   isPartyRole,
   isRoleEntity,
   type AttributeAST,
+  AttributeASTSchema,
   type ContextEntityAST,
+  ContextEntitySchema,
   type ContextKind,
   type DomainComponentRole,
   type EntityAST,
@@ -84,6 +101,7 @@ export {
   type EvidenceKind,
   type EvidenceKindDefinition,
   type ModelExampleAST,
+  ModelExampleASTSchema,
   type ParticipantEntityAST,
   type ParticipantKind,
   type RoleEntityAST,
@@ -135,6 +153,8 @@ export {
 } from './ast/keyData.js';
 
 export {
+  CardinalityASTSchema,
+  RelationshipASTSchema,
   RELATIONSHIP_KINDS,
   RELATIONSHIP_KIND_DEFINITIONS,
   RELATIONSHIP_KIND_LABELS,
@@ -147,6 +167,10 @@ export {
 
 export {
   BOOLEAN_RULE_KINDS,
+  RuleASTSchema,
+  RuleBindingSchema,
+  RuleKindSchema,
+  RuleTargetSchema,
   RULE_KINDS,
   RULE_KIND_DEFINITIONS,
   RULE_KIND_LABELS,
@@ -163,6 +187,8 @@ export {
 } from './ast/rule.js';
 
 export {
+  DomainModelDocumentSchema,
+  DomainModelManifestSchema,
   EMPTY_MODEL_MANIFEST,
   FM_RULE_LANGUAGE,
   FM_SCHEMA_VERSION,
@@ -177,6 +203,8 @@ export {
   INGESTION_SOURCE_KINDS,
   INGESTION_SOURCE_KIND_DEFINITIONS,
   INGESTION_SOURCE_KIND_LABELS,
+  IngestionSourceKindSchema,
+  ProvenanceSnippetSchema,
   isIngestionSourceKind,
   type IngestionSourceKind,
   type ProvenanceSnippet,
@@ -239,3 +267,4 @@ export {
 } from './inspector/registry.js';
 
 export type { ExampleTestAST } from './ast/example.js';
+export { ExampleTestASTSchema } from './ast/example.js';
