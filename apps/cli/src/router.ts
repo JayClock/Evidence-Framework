@@ -1,3 +1,4 @@
+import { testCommand } from './commands/test.js';
 import { exportCommand } from './commands/export.js';
 import { checkCommand } from './commands/check.js';
 import { diffCommand } from './commands/diff.js';
@@ -7,6 +8,7 @@ const HELP = `Evidence — model-driven contracts and black-box acceptance
 
 Usage:
   evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir]
+  evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json]
   evidence check [model] [--json]
   evidence diff api <old-model> <new-model> [--format json|markdown]
   evidence --help
@@ -30,12 +32,13 @@ export async function dispatch(
       return 0;
     }
     if (
-      ['export', 'check', 'diff'].includes(command) &&
+      ['export', 'test', 'check', 'diff'].includes(command) &&
       (rest.includes('--help') || rest.includes('-h'))
     ) {
       context.stdout(HELP);
       return 0;
     }
+    if (command === 'test') return await testCommand(rest, context);
     if (command === 'export') return await exportCommand(rest, context);
     if (command === 'check') return await checkCommand(rest, context);
     if (command === 'diff') return await diffCommand(rest, context);
