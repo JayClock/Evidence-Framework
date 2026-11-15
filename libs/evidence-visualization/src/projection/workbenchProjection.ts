@@ -45,12 +45,9 @@ export interface WorkbenchValidation {
   scopeRefs: unknown;
   contextRefs: unknown;
   gaps: unknown;
-  simulationLimitations: unknown;
-  simulation: unknown;
   /** Whether the API contract is complete; null when there is no API. */
   api: unknown;
   runtime: false;
-  unresolvedOrderCount: unknown;
 }
 
 /** One service the model splits into, as the page lists it. */
@@ -92,7 +89,6 @@ export interface WorkbenchCounts {
   contracts: number;
   entities: number;
   rules: number;
-  scenarios: number;
   capabilities: number;
 }
 
@@ -147,10 +143,6 @@ export interface WorkbenchCheckInput {
   scopeRefs?: unknown;
   contextRefs?: unknown;
   gaps?: unknown;
-  simulationLimitations?: unknown;
-  simulationPassed?: unknown;
-  scenarioResults?: unknown;
-  timelineSummary?: { unresolvedOrderCount?: unknown } | null;
 }
 
 export interface WorkbenchProjectionInput {
@@ -163,10 +155,6 @@ export interface WorkbenchProjectionInput {
    * describe, so the page states an empty drawing instead of inventing one.
    */
   layout?: SerializableGraphLayout;
-  scenarios?: readonly JsonObject[];
-  instances?: readonly JsonObject[];
-  /** Scenario results from the checked FM run. */
-  simulation?: { scenarioResults?: readonly JsonObject[] };
   api?: WorkbenchApiInput | null;
   delivery?: WorkbenchDelivery | null;
   check: WorkbenchCheckInput;
@@ -180,37 +168,12 @@ const isRecord = (value: unknown): value is JsonObject =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /** `{key: value[key] …}` for the keys the page may show, in the given order. */
-const select = (
-  value: JsonObject,
-  keys: string,
-): JsonObject => {
+const select = (value: JsonObject, keys: string): JsonObject => {
   const picked: JsonObject = {};
 
   for (const key of keys.split(' ')) {
     if (key in value) {
       picked[key] = value[key];
-    }
-  }
-
-  return picked;
-};
-
-/** Scalars only: a nested document would leak structure the page never shows. */
-const scalarValues = (value: unknown): JsonObject => {
-  if (!isRecord(value)) {
-    return {};
-  }
-
-  const picked: JsonObject = {};
-
-  for (const [key, item] of Object.entries(value)) {
-    if (
-      item === null ||
-      typeof item === 'string' ||
-      typeof item === 'number' ||
-      typeof item === 'boolean'
-    ) {
-      picked[key] = item;
     }
   }
 
@@ -242,7 +205,7 @@ const fieldRows = (fields: unknown): JsonObject[] =>
   });
 
 /**
- * Projects the checked model, its scenarios and an optional API contract.
+ * Projects the checked model and an optional API contract.
  *
  * Node ids are the formal business ids — `request.payment`, `request.payment#amount`
  * — so a reader can quote one and find it in the source. Edges are labelled in
@@ -251,9 +214,6 @@ const fieldRows = (fields: unknown): JsonObject[] =>
 export const projectWorkbenchData = ({
   model,
   layout = EMPTY_GRAPH_LAYOUT,
-  scenarios = [],
-  instances = [],
-  simulation = {},
   api = null,
   delivery = null,
   check,
@@ -264,11 +224,7 @@ export const projectWorkbenchData = ({
   const edges: WorkbenchEdge[] = [];
   const edgeKeys = new Set<string>();
 
-  const add = (
-    value: JsonObject,
-    group: string,
-    title = '',
-  ): WorkbenchNode => {
+  const add = (value: JsonObject, group: string, title = ''): WorkbenchNode => {
     const identity = idOf(value);
 
     if (nodes.has(identity)) {
@@ -290,8 +246,7 @@ export const projectWorkbenchData = ({
     const label = title !== '' ? title : value['label'];
     const node: WorkbenchNode = {
       id: identity,
-      label:
-        typeof label === 'string' && label !== '' ? label : identity,
+      label: typeof label === 'string' && label !== '' ? label : identity,
       group,
       kind: typeof value['kind'] === 'string' ? value['kind'] : group,
       parent: contextRef,
@@ -320,7 +275,10 @@ export const projectWorkbenchData = ({
 
   for (const entity of model.entities) {
     const category = entity['category'];
-    const node = add(entity, typeof category === 'string' ? category : 'entity');
+    const node = add(
+      entity,
+      typeof category === 'string' ? category : 'entity',
+    );
 
     link(
       node.id,
@@ -328,13 +286,17 @@ export const projectWorkbenchData = ({
       '所属上下文',
     );
 
-    for (const ref of Array.isArray(entity['roleRefs']) ? entity['roleRefs'] : []) {
+    for (const ref of Array.isArray(entity['roleRefs'])
+      ? entity['roleRefs']
+      : []) {
       link(node.id, ref, '合同责任角色');
     }
 
     link(node.id, entity['responsibleRoleRef'], '凭证责任方');
 
-    for (const ref of Array.isArray(entity['rootRefs']) ? entity['rootRefs'] : []) {
+    for (const ref of Array.isArray(entity['rootRefs'])
+      ? entity['rootRefs']
+      : []) {
       link(node.id, ref, '边界根对象');
     }
 
@@ -412,83 +374,6 @@ export const projectWorkbenchData = ({
         `${String(target['entityRef'])}#${String(target['attribute'])}`,
         '计算结果',
       );
-    }
-  }
-
-  for (const instance of instances) {
-    const node = add(instance, 'instance');
-
-    node['values'] = scalarValues(instance['values']);
-    node['parent'] =
-      typeof instance['entityRef'] === 'string' ? instance['entityRef'] : '';
-    link(node.id, instance['entityRef'], '凭证类型');
-
-    for (const ref of Array.isArray(instance['basedOn']) ? instance['basedOn'] : []) {
-      link(node.id, ref, '已有凭证依赖');
-    }
-  }
-
-  const results = new Map<string, JsonObject>(
-    listOf(simulation.scenarioResults).map((result) => [
-      String(result['scenarioId']),
-      result,
-    ]),
-  );
-
-  for (const scenario of scenarios) {
-    const node = add(scenario, 'scenario');
-    const result = results.get(node.id) ?? {};
-    const actuals = listOf(result['evaluations']);
-    const evaluations: JsonObject[] = [];
-
-    // Absent check values are printed as `null`, not dropped: the page must
-    // describe the same run whether or not a field was asserted.
-    node['asOf'] = scenario['asOf'] ?? null;
-    node['passed'] = result['simulationPassed'] ?? null;
-    node['steps'] = listOf(scenario['steps']).map((step) =>
-      select(
-        step,
-        'sequence actingRoleRef issueInstanceRef availableInstanceRefs',
-      ),
-    );
-
-    listOf(scenario['evaluations']).forEach((evaluation, index) => {
-      const actual = actuals[index];
-      const matches =
-        actual !== undefined && actual['ruleRef'] === evaluation['ruleRef'];
-      const used = matches ? actual : {};
-
-      evaluations.push({
-        ruleRef: evaluation['ruleRef'] ?? null,
-        expected: evaluation['expectedResult'] ?? null,
-        actual: used['result'] ?? null,
-        passed: used['passed'] ?? null,
-      });
-      link(node.id, evaluation['ruleRef'], '验证规则');
-    });
-
-    node['evaluations'] = evaluations;
-    node['statuses'] = listOf(result['fulfillmentStatuses']).map((status) =>
-      select(
-        status,
-        'requestInstanceRef requestEntityRef requestRef expectedStatus status passed',
-      ),
-    );
-    node['events'] = listOf(result['instanceValues']).map((event) => ({
-      instanceRef: event['instanceRef'],
-      entityRef: event['entityRef'],
-      values: scalarValues(event['values']),
-    }));
-
-    for (const step of listOf(scenario['steps'])) {
-      link(node.id, step['actingRoleRef'], '场景参与角色');
-      link(node.id, step['issueInstanceRef'], '场景形成凭证');
-    }
-
-    for (const ref of Array.isArray(scenario['givenInstanceRefs'])
-      ? scenario['givenInstanceRefs']
-      : []) {
-      link(node.id, ref, '场景已有凭证');
     }
   }
 
@@ -576,7 +461,9 @@ export const projectWorkbenchData = ({
       }
 
       const operation = operations.get(node.id) ?? {};
-      const request = isRecord(operation['request']) ? operation['request'] : {};
+      const request = isRecord(operation['request'])
+        ? operation['request']
+        : {};
 
       node['fields'] = fieldRows(request['fields']);
 
@@ -639,7 +526,11 @@ export const projectWorkbenchData = ({
     for (const edge of delivery.links) {
       // A link between two services is drawn as the boundary crossing it is;
       // both ends are service nodes, so nothing has to be invented.
-      link(edge.from, edge.to, edge.mode === 'async' ? `${edge.label}（异步）` : edge.label);
+      link(
+        edge.from,
+        edge.to,
+        edge.mode === 'async' ? `${edge.label}（异步）` : edge.label,
+      );
     }
   }
 
@@ -660,7 +551,6 @@ export const projectWorkbenchData = ({
       ).length,
       entities: model.entities.length,
       rules: model.rules.length,
-      scenarios: scenarios.length,
       capabilities: api?.capabilities?.length ?? 0,
     },
     validation: {
@@ -670,11 +560,9 @@ export const projectWorkbenchData = ({
       scopeRefs: check.scopeRefs ?? null,
       contextRefs: check.contextRefs ?? null,
       gaps: check.gaps ?? null,
-      simulationLimitations: check.simulationLimitations ?? [],
-      simulation: check.simulationPassed ?? null,
-      api: api === null ? null : (isRecord(api.http) ? api.http['complete'] : null),
+      api:
+        api === null ? null : isRecord(api.http) ? api.http['complete'] : null,
       runtime: false,
-      unresolvedOrderCount: check.timelineSummary?.unresolvedOrderCount ?? 0,
     },
     delivery,
     layout,

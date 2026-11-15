@@ -12,7 +12,7 @@ export {
   type GovernanceActionKind,
   type GovernanceDecision,
   type GovernanceDrift,
-  type GovernanceSimulation,
+  type GovernanceAcceptance,
   type GovernanceVerdict,
 } from './governance/governanceLoop.js';
 
@@ -127,7 +127,6 @@ export {
   runNativeFmCheck,
   runNativeKeyDataAudit,
   runNativeSensors,
-  scenarioResultsOf,
   type ModelSources,
   type NativeFmCheckOptions,
   type NativeFmCheckOutcome,

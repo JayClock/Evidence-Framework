@@ -1,3 +1,4 @@
+import { buildFmCheckReport } from './fmCheck.js';
 import { fileURLToPath } from 'node:url';
 
 import { readModelRoot } from '../../tests/support/modelRoot.js';
@@ -7,25 +8,50 @@ import {
   completenessIssues,
   pairingGaps,
   referencesOf,
-  scopeSuite,
+  readyScope,
   selectScope,
-  simulationRules,
 } from './scope.js';
-import { loadValidationSuite } from './validationSuite.js';
 
 const fixture = (name: string): string =>
   fileURLToPath(
-    new URL(
-      `../../tests/fixtures/models/${name}`,
-      import.meta.url,
-    ),
+    new URL(`../../tests/fixtures/models/${name}`, import.meta.url),
   );
 
 const load = async (name: string) => {
-  const { bundle, files } = await readModelRoot(fixture(name));
+  const { bundle } = await readModelRoot(fixture(name));
 
-  return { bundle, suite: loadValidationSuite(files) };
+  return { bundle };
 };
+
+describe('model hand-off report v6', () => {
+  it('accepts static completeness without claiming to have executed backend tests', async () => {
+    const { bundle } = await load('valid-traceable-subscription');
+    const { report } = buildFmCheckReport({
+      model: bundle,
+      scopeRefs: ['context.content-subscription'],
+    });
+    expect(report.valid).toBe(true);
+    expect(report.checkVersion).toBe(6);
+    expect(report).not.toHaveProperty('simulationPassed');
+    expect(readyScope(bundle, report).entities.length).toBeGreaterThan(0);
+    expect(() => readyScope(bundle, { ...report, checkVersion: 5 })).toThrow(
+      'successful scope completeness',
+    );
+  });
+  it('never treats test example refs or raw input Ref keys as model scope edges', () => {
+    expect([
+      ...referencesOf({
+        contextRef: 'context.owner',
+        examples: [
+          {
+            value: { contextRef: 'context.unrelated' },
+            test: { basedOn: ['contract.unrelated#sample'] },
+          },
+        ],
+      }),
+    ]).toEqual(['context.owner']);
+  });
+});
 
 describe('referencesOf', () => {
   it('collects endpoints, rule bindings and instance basis', () => {
@@ -58,7 +84,9 @@ describe('selectScope', () => {
     expect(scoped.manifest.entryContextRefs).toEqual([
       'context.content-subscription',
     ]);
-    expect(scoped.entities.every((entity) => entity.id.startsWith(''))).toBe(true);
+    expect(scoped.entities.every((entity) => entity.id.startsWith(''))).toBe(
+      true,
+    );
   });
 
   it('refuses a child Context and a duplicated scope', async () => {
@@ -87,43 +115,6 @@ describe('selectScope', () => {
   });
 });
 
-describe('scopeSuite', () => {
-  it('keeps the scenarios and instances the scope can run', async () => {
-    const { bundle, suite } = await load('valid-traceable-subscription');
-    const scoped = scopeSuite(
-      selectScope(bundle, ['context.content-subscription']),
-      suite,
-    );
-
-    expect(scoped.scenarios.map((scenario) => scenario.id).sort()).toEqual([
-      'scenario.content-access-after-payment',
-      'scenario.overdue-payment',
-      'scenario.successful-payment',
-    ]);
-    expect(scoped.instances.map((instance) => instance.id)).toEqual(
-      expect.arrayContaining(['instance.payment-request']),
-    );
-  });
-
-  it('drops a scenario the scope can neither execute nor resolve', async () => {
-    const { bundle, suite } = await load('valid-traceable-subscription');
-    const scoped = scopeSuite({ ...bundle, rules: [], entities: [] }, suite);
-
-    expect(scoped.scenarios).toEqual([]);
-    expect(scoped.instances).toEqual([]);
-  });
-});
-
-describe('simulationRules', () => {
-  it('keeps Evidence rules and reports the rest as limitations', async () => {
-    const { bundle } = await load('valid-traceable-subscription');
-    const { rules, limitations } = simulationRules(bundle);
-
-    expect(rules.map((rule) => rule.id)).toContain('rule.payment-expired');
-    expect(limitations).toEqual([]);
-  });
-});
-
 describe('completenessGaps', () => {
   it('reports nothing for the golden fixture', async () => {
     const { bundle } = await load('valid-traceable-subscription');
@@ -138,7 +129,9 @@ describe('completenessGaps', () => {
     const withoutRequests = {
       ...bundle,
       entities: bundle.entities.filter(
-        (entity) => entity.category !== 'evidence' || entity.kind !== 'fulfillment_request',
+        (entity) =>
+          entity.category !== 'evidence' ||
+          entity.kind !== 'fulfillment_request',
       ),
     };
 

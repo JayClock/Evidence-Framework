@@ -60,18 +60,10 @@ describe('serializeModelBundle', () => {
     const text = serializeModelBundle({
       ...bundleOf(createProcurementModel()),
       readme: '范围与来源说明。\n',
-      validation: {
-        instances: [{ id: 'evidence-instance.a' }],
-        scenarios: [],
-      },
     });
     const bundle = JSON.parse(text) as Record<string, unknown>;
 
     expect(bundle['readme']).toBe('范围与来源说明。\n');
-    expect(bundle['validation']).toEqual({
-      instances: [{ id: 'evidence-instance.a' }],
-      scenarios: [],
-    });
   });
 });
 
@@ -138,17 +130,11 @@ describe('parseModelBundleText', () => {
     const text = serializeModelBundle({
       ...bundleOf(createProcurementModel()),
       readme: '说明\n',
-      validation: {
-        instances: [{ id: 'evidence-instance.a', type: 'evidence_instance' }],
-        scenarios: [{ id: 'scenario.a', type: 'fm_scenario' }],
-      },
     });
     const { document, issues } = parseModelBundleText(text);
 
     expect(issues).toEqual([]);
     expect(document.readme).toBe('说明\n');
-    expect(document.validation?.instances).toHaveLength(1);
-    expect(document.validation?.scenarios).toHaveLength(1);
   });
 });
 
@@ -157,10 +143,6 @@ describe('editing a bundled document', () => {
     const text = serializeModelBundle({
       ...bundleOf(createProcurementModel()),
       readme: '说明\n',
-      validation: {
-        instances: [{ id: 'evidence-instance.a', type: 'evidence_instance' }],
-        scenarios: [],
-      },
     });
     const session = createModelSession({
       document: parseModelBundleText(text).document,
@@ -177,10 +159,6 @@ describe('editing a bundled document', () => {
     ) as Record<string, unknown>;
 
     expect(rewritten['readme']).toBe('说明\n');
-    expect(rewritten['validation']).toEqual({
-      instances: [{ id: 'evidence-instance.a', type: 'evidence_instance' }],
-      scenarios: [],
-    });
   });
 });
 
@@ -189,17 +167,11 @@ describe('modelBundleSourceFiles', () => {
     const files = modelBundleSourceFiles({
       ...bundleOf(createProcurementModel()),
       readme: '说明',
-      validation: {
-        instances: [{ id: 'evidence-instance.a', type: 'evidence_instance' }],
-        scenarios: [{ id: 'scenario.a', type: 'fm_scenario' }],
-      },
     });
     const paths = files.map((file) => file.path);
 
     expect(paths[0]).toBe('model.json');
     expect(paths).toContain('entities/evidence-contract--procurement.json');
-    expect(paths).toContain('validation/instances/evidence-instance--a.json');
-    expect(paths).toContain('validation/scenarios/scenario--a.json');
     expect(paths.at(-1)).toBe(MODEL_README_PATH);
     expect(files.at(-1)?.content).toBe('说明\n');
   });
@@ -216,28 +188,29 @@ describe('modelBundleSourceFiles', () => {
 });
 
 describe('packModelSourceFiles', () => {
-  it('carries validation inputs and the readme into the bundle', () => {
-    const files = [
-      ...serializeDomainModel(createProcurementModel()),
-      {
-        path: 'validation/instances/evidence-instance--a.json',
-        content: JSON.stringify({ id: 'evidence-instance.a' }),
-      },
-      {
-        path: 'validation/scenarios/scenario--a.json',
-        content: JSON.stringify({ id: 'scenario.a' }),
-      },
+  it('carries inline examples and readme, never a validation envelope', () => {
+    const model = createProcurementModel();
+    model.entities[0]!.examples = [{ label: 'documentation', value: {} }];
+    const { bundle, issues } = packModelSourceFiles([
+      ...serializeDomainModel(model),
       { path: MODEL_README_PATH, content: '说明\n' },
-      { path: 'generated/compiled-model.json', content: '{}' },
-    ];
-    const { bundle, issues } = packModelSourceFiles(files);
-
+    ]);
     expect(issues).toEqual([]);
     expect(bundle.readme).toBe('说明\n');
-    expect(bundle.validation?.instances).toEqual([
-      { id: 'evidence-instance.a' },
-    ]);
-    expect(bundle.validation?.scenarios).toEqual([{ id: 'scenario.a' }]);
+    expect(bundle.entities[0]?.examples).toEqual(model.entities[0]!.examples);
+    expect(bundle).not.toHaveProperty('validation');
+  });
+
+  it('rejects legacy envelopes even when empty rather than silently losing them', () => {
+    const legacy = {
+      ...bundleOf(createProcurementModel()),
+      validation: { instances: [], scenarios: [] },
+    };
+    expect(parseModelBundleText(JSON.stringify(legacy)).issues).toEqual(
+      expect.arrayContaining([expect.objectContaining({ path: 'validation' })]),
+    );
+    expect(() => serializeModelBundle(legacy)).toThrow('no longer supported');
+    expect(() => modelBundleSourceFiles(legacy)).toThrow('no longer supported');
   });
 
   it('reports a malformed validation file instead of dropping it', () => {

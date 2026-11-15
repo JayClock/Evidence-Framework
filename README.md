@@ -41,10 +41,10 @@
 - **声明式属性检查器（Inspector）**：所见即所得地配置字段契约、关键数据台账（Key Data Ledger）与派生规则。
 - **双向无损格式**：支持 Git 友好的目录树结构（`.evidence/fm/`）与轻量便携的单文件 Bundle（`*.evidence.json`），零 Git churn，随时解包与打包。
 
-### 3. 内存级确定性校验与场景仿真引擎
+### 3. 静态模型校验与标准化 HTTP 验收
 
 - **AST 严格静态门禁**：即时检测悬空引用、派生对称性破坏、角色权责失配等致命建模缺陷。
-- **CEL 场景实例仿真**：在内存中直接编译求值规则表达式，导入测试用例（Scenarios）断言履约状态，无需启动数据库或编写测试代码即可验证业务闭环。
+- **内联样例直出验收**：实体 `examples[].test` 声明测试流程，编译期 CEL 求值产生派生断言，直接导出 Step CI / Hurl；由标准工具对真实后端执行 HTTP 验收。静态检查通过不代表后端验收通过。
 - **纯 TypeScript 原生化**：核心引擎完全在内存执行，为画布提供按键级（Keystroke-level）的实时 Lint 反馈。
 
 ### 4. AI 智能体协同建模（MCP / Agent Core）
@@ -161,4 +161,4 @@ pnpm model:unpack procurement.evidence.json --out .evidence/fm
 
 ### 3. 生产语义漂移与闭环治理（Drift & Governance）
 - [ ] **生产环境双向语义漂移实时检测（Live Drift Check）**：深化本地传感器体系，实现对下游实际运行 API / 数据库表结构与 DSL 模型基线的在线语义比对和告警。
-- [ ] **交互式复杂场景时序回放（Interactive Timeline Visualization）**：在桌面端将验证用例（Scenarios）的 CEL 求值过程与时间线渲染为可交互缩放的时序图。
+- [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Step CI / Hurl，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。

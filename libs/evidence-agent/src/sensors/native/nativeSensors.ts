@@ -1,9 +1,5 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { checkNativeApiSensor } from './nativeApiSensor.js';
-import type {
-  ScenarioResult,
-  SimulationReport,
-} from '@evidence-poc/evidence-model-core';
 
 import {
   buildSensorReport,
@@ -22,7 +18,7 @@ import { runNativeKeyDataAudit } from './nativeKeyDataAudit.js';
 /**
  * The native sensor set, in one pass over one model read.
  *
- * The document, the validation suite and the digest are loaded once, so every
+ * The document, inline examples and the digest are loaded once, so every
  * sensor describes the same bytes. That is what makes a fresh verdict comparable
  * with a saved one.
  */
@@ -42,16 +38,7 @@ export interface NativeSensorsInput {
   now?: () => Date;
 }
 
-export interface NativeSensorsOutcome extends SensorOutcome {
-  /** Scenario rows, so a caller can show what executed and what it asserted. */
-  scenarioResults: readonly ScenarioResult[];
-  simulation: SimulationReport | null;
-}
-
-/** The scenario rows the desktop shows beside the verdict. */
-export const scenarioResultsOf = (
-  simulation: SimulationReport | null,
-): readonly ScenarioResult[] => simulation?.scenarioResults ?? [];
+export type NativeSensorsOutcome = SensorOutcome;
 
 /**
  * Runs the whole native sensor set and folds the reports into one verdict.
@@ -67,11 +54,7 @@ export const runNativeSensors = async (
     input.document === undefined
       ? await loadModelSources(input.modelRoot)
       : modelSourcesFromDocument(input.document);
-  const {
-    report: fmCheck,
-    traceability,
-    simulation,
-  } = await runNativeFmCheck(sources, {
+  const { report: fmCheck, traceability } = await runNativeFmCheck(sources, {
     ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
     ...(input.detectInputChange === false ? { detectInputChange: false } : {}),
   });
@@ -123,7 +106,5 @@ export const runNativeSensors = async (
     ...(keyData === undefined
       ? {}
       : { keyData: keyData as KeyDataAuditReport }),
-    scenarioResults: scenarioResultsOf(simulation),
-    simulation,
   };
 };

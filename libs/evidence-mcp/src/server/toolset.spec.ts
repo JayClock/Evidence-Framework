@@ -3,7 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceMcpAppClient } from '../types.js';
-import { TOOL_NAMES, createEvidenceTools, evidenceToolNames } from './toolset.js';
+import {
+  TOOL_NAMES,
+  createEvidenceTools,
+  evidenceToolNames,
+} from './toolset.js';
 
 const createClient = (
   overrides: Partial<EvidenceMcpAppClient> = {},
@@ -87,13 +91,6 @@ const createClient = (
     links: [],
     limitations: [],
   })),
-  runScenarioReplay: vi.fn(async () => ({
-    modelId: 'product-procurement',
-    passed: true,
-    scenarios: [],
-    frames: [],
-    errors: [],
-  })),
   auditProductionDrift: vi.fn(async () => ({
     modelId: 'product-procurement',
     spanCount: 0,
@@ -112,7 +109,6 @@ const createClient = (
   })),
   ...overrides,
 });
-
 
 const momentTime = (name: string) => ({
   name,
@@ -202,10 +198,9 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.roleifyAndInvertDependency,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
-      TOOL_NAMES.scenarioReplay,
       TOOL_NAMES.productionDrift,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(14);
+    expect(createEvidenceTools(createClient())).toHaveLength(13);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -217,7 +212,9 @@ describe('createEvidenceTools', () => {
 
     expect(topology.client.getDeliveryTopology).toHaveBeenCalledTimes(1);
     expect(topology.tool.annotations.readOnlyHint).toBe(true);
-    expect(topologyResult.value).toMatchObject({ modelId: 'product-procurement' });
+    expect(topologyResult.value).toMatchObject({
+      modelId: 'product-procurement',
+    });
     expect(contract.client.exportOpenApiContract).toHaveBeenCalledTimes(1);
     expect(contractResult.value).toMatchObject({ pathCount: 0 });
   });
@@ -387,30 +384,14 @@ describe('createEvidenceTools', () => {
     expect(client.applyModelPatch).not.toHaveBeenCalled();
   });
 
-  it('replays the scenario it was asked about and reports the frames', async () => {
-    const replay = toolOf(TOOL_NAMES.scenarioReplay);
-    const result = await replay.tool.run({ scenarioId: 'scenario.payment' });
-
-    expect(replay.client.runScenarioReplay).toHaveBeenCalledWith({
-      scenarioId: 'scenario.payment',
-    });
-    expect(JSON.parse(result.text)).toMatchObject({ passed: true });
-  });
-
-  it('omits the scenario id when the caller wants every summary', async () => {
-    const replay = toolOf(TOOL_NAMES.scenarioReplay);
-
-    await replay.tool.run({});
-
-    expect(replay.client.runScenarioReplay).toHaveBeenCalledWith({});
-  });
-
   it('hands the exported trace to the audit unchanged', async () => {
     const drift = toolOf(TOOL_NAMES.productionDrift);
     const document = { resourceSpans: [] };
 
     await drift.tool.run({ document });
 
-    expect(drift.client.auditProductionDrift).toHaveBeenCalledWith({ document });
+    expect(drift.client.auditProductionDrift).toHaveBeenCalledWith({
+      document,
+    });
   });
 });

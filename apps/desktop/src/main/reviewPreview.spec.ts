@@ -39,7 +39,7 @@ describe('live review preview', () => {
       revision: 1,
     });
     expect(result.success).toBe(true);
-    expect(result.data.counts.scenarios).toBeGreaterThan(0);
+    expect(result.data.counts).not.toHaveProperty('scenarios');
     expect(result.notice).toContain('已保存');
   });
   it('checks an unsaved snapshot without publishing files or overwriting sources', async () => {

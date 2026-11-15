@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { decideGovernance } from '@evidence-poc/evidence-agent';
 
-import { createSimulationService } from './mcpSimulationService';
+import { createDriftService } from './mcpDriftService';
 
 /**
  * The closed loop, from one saved model to a governance decision.
@@ -75,28 +75,9 @@ afterAll(async () => {
   await rm(projectRoot, { recursive: true, force: true });
 });
 
-describe('simulation to governance on one model', () => {
-  it('walks a payment from request to confirmation inside one scenario', async () => {
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-      scenarioId: 'scenario.successful-payment',
-    });
-    const states = replay.frames.map(
-      (frame) =>
-        frame.fulfillmentStates.find((state) =>
-          state.requestInstanceRef.includes('payment-request'),
-        )?.status,
-    );
-
-    expect(replay.passed).toBe(true);
-    expect(states).toEqual(['pending', 'pending', 'completed']);
-    expect(
-      replay.frames.flatMap((frame) => frame.derivations.map((item) => item.target)),
-    ).toContain('request.content-payment#expired_at');
-  });
-
+describe('production drift to governance on one model', () => {
   it('licenses no model change when production matches', async () => {
-    const audit = await createSimulationService().auditDrift({
+    const audit = await createDriftService().auditDrift({
       rootPath: projectRoot,
       document: exportOf([
         span(
@@ -113,9 +94,6 @@ describe('simulation to governance on one model', () => {
         ),
       ]),
     });
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-    });
 
     const decision = decideGovernance({
       drift: audit.findings.map((item) => ({
@@ -124,10 +102,6 @@ describe('simulation to governance on one model', () => {
         message: item.message,
         evidenceRef: item.evidenceRef,
       })),
-      simulation: {
-        scenarioCount: replay.scenarios.length,
-        passedCount: replay.scenarios.filter((item) => item.passed).length,
-      },
     });
 
     expect(audit.passed).toBe(true);
@@ -136,7 +110,7 @@ describe('simulation to governance on one model', () => {
   });
 
   it('refuses to absorb a derived value a service wrote itself', async () => {
-    const audit = await createSimulationService().auditDrift({
+    const audit = await createDriftService().auditDrift({
       rootPath: projectRoot,
       document: exportOf([
         span(
@@ -157,9 +131,6 @@ describe('simulation to governance on one model', () => {
         ),
       ]),
     });
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-    });
     const decision = decideGovernance({
       drift: audit.findings.map((item) => ({
         kind: item.kind,
@@ -167,10 +138,6 @@ describe('simulation to governance on one model', () => {
         message: item.message,
         evidenceRef: item.evidenceRef,
       })),
-      simulation: {
-        scenarioCount: replay.scenarios.length,
-        passedCount: replay.scenarios.filter((item) => item.passed).length,
-      },
     });
 
     expect(audit.passed).toBe(false);
@@ -182,7 +149,7 @@ describe('simulation to governance on one model', () => {
   });
 
   it('offers a repair when a breach in production left nothing behind', async () => {
-    const audit = await createSimulationService().auditDrift({
+    const audit = await createDriftService().auditDrift({
       rootPath: projectRoot,
       document: exportOf([
         span(
@@ -204,7 +171,6 @@ describe('simulation to governance on one model', () => {
         message: item.message,
         evidenceRef: item.evidenceRef,
       })),
-      simulation: { scenarioCount: 3, passedCount: 3 },
     });
 
     expect(audit.findings.map((item) => item.kind)).toEqual([

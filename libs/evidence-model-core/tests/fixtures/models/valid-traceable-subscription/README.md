@@ -14,11 +14,9 @@
 | 截止计算         | [期限规则](rules/rule--payment-deadline.json)                                                                                                       | 在独立 CEL Rule 中派生，属性引用唯一规则        |
 | 付款结果         | [付款确认](entities/evidence-fulfillment-confirmation--content-payment.json)                                                                        | 完成证据与请求要求分开，业务时刻不是回调时刻    |
 | 合格完成         | [完成规则](rules/rule--content-payment-completed.json)                                                                                              | 结合匹配与时间判断，纯图直连请求与确认          |
-| 正常与逾期       | [正常场景](validation/scenarios/scenario--successful-payment.json)、[逾期场景](validation/scenarios/scenario--overdue-payment.json)                 | 预期由合成规则确定，不靠校验器输出反改预期      |
 | 访问要求与结果   | [访问请求](entities/evidence-fulfillment-request--content-access.json)、[访问确认](entities/evidence-fulfillment-confirmation--content-access.json) | 订阅者主张，平台方记录结果                      |
-| 访问场景         | [访问场景](validation/scenarios/scenario--content-access-after-payment.json)                                                                        | 另一个方向也须有可执行预期                      |
 
-引用按消费凭证指向依据：付款请求 → 合同，付款确认 → 请求和补充回执。类型引用不是实例已形成的证明，实例依赖由 basedOn 指向已存在证据。
+引用按消费凭证指向依据：付款请求 → 合同，付款确认 → 请求和补充回执。类型引用不是运行时凭证已形成的证明。此目录仅验证静态模型；可执行的内联样例与独立后端见 examples/acceptance。
 
 ## 运行与反馈
 
@@ -29,7 +27,7 @@ npx evidence-model check libs/evidence-model-core/tests/fixtures/models/valid-tr
   > "$FM_CHECK_FILE"
 ```
 
-预期 valid 为 true，三项场景实际执行且 simulationPassed 为 true。合同两个方向都已成对落地，删除访问方向的履约项后范围检查应报缺口而一致性仍通过。运行前这些只是预期，实际退出码、摘要、覆盖和未执行项仍须报告。检查不会写入模型。
+预期 valid 为 true；v6 检查报告不执行 HTTP 验收，不再提供 simulationPassed。合同两个方向都已成对落地，删除访问方向的履约项后范围检查应报缺口而一致性仍通过。运行前这些只是预期，实际退出码、摘要、覆盖和未执行项仍须报告。检查不会写入模型。
 
 ## 反例
 

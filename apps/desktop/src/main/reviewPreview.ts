@@ -3,7 +3,6 @@ import {
   buildFmCheckReport,
   buildKeyDataLedger,
   compiledDocument,
-  loadValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 import { buildSensorReport } from '@evidence-poc/evidence-agent/browser';
 import {
@@ -26,7 +25,7 @@ import {
   projectDirectoryOf,
 } from './modelSource';
 
-/** Reads scenario inputs, but checks the supplied live model without saving it. */
+/** Checks the supplied live model without saving it. */
 export const previewReview = async (
   input: PreviewReviewInput,
 ): Promise<Omit<Extract<PreviewReviewResult, { success: true }>, 'html'>> => {
@@ -40,7 +39,6 @@ export const previewReview = async (
     workbenchFingerprint(projectDirectoryOf(input.rootPath), source);
   const before = await fingerprint();
   const loaded = await readWorkbenchModel(source);
-  const suite = loadValidationSuite(loaded.files);
   const document = input.document;
   const contexts = new Map(
     document.entities
@@ -52,7 +50,6 @@ export const previewReview = async (
   );
   const check = buildFmCheckReport({
     model: document,
-    suite,
     ...(scopes.length ? { scopeRefs: scopes } : {}),
   }).report;
   const validation = strictValidateDomainModel(document);
@@ -84,14 +81,6 @@ export const previewReview = async (
     model: compiledDocument(document) as unknown as CompiledModel,
     layout: workbenchLayoutOf(document),
     checked: check.valid,
-    scenarios: suite.scenarios as unknown as Record<string, unknown>[],
-    instances: suite.instances as unknown as Record<string, unknown>[],
-    simulation: {
-      scenarioResults: check.scenarioResults as unknown as Record<
-        string,
-        unknown
-      >[],
-    },
     delivery: deliveryViewOf(buildDelivery(document)),
     check,
   });
@@ -99,7 +88,7 @@ export const previewReview = async (
     JSON.stringify(compiledDocument(document)) ===
     JSON.stringify(compiledDocument(loaded.bundle));
   let notice =
-    '编辑快照预览（未保存）；场景来自磁盘，API 静态设计未检查。机器检查不等于业务批准。';
+    '编辑快照预览（未保存）；API 静态设计与 HTTP 验收未执行。机器检查不等于业务批准。';
   if (saved) {
     notice = '已保存模型预览；机器检查不等于业务批准。';
     if (check.valid && !isBundleProject(input.rootPath)) {

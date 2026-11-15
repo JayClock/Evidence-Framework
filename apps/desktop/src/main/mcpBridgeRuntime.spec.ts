@@ -29,14 +29,7 @@ const deliveryService = () => ({
   }),
 });
 
-const simulationService = () => ({
-  replay: async () => ({
-    modelId: 'product-procurement',
-    passed: true,
-    scenarios: [],
-    frames: [],
-    errors: [],
-  }),
+const driftService = () => ({
   auditDrift: async () => ({
     modelId: 'product-procurement',
     spanCount: 0,
@@ -95,8 +88,8 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          simulation: simulationService(),
-        sensors: {
+          drift: driftService(),
+          sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -155,8 +148,8 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          simulation: simulationService(),
-        sensors: {
+          drift: driftService(),
+          sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -211,8 +204,8 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          simulation: simulationService(),
-        sensors: {
+          drift: driftService(),
+          sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,
@@ -235,7 +228,9 @@ describe('startMcpBridgeRuntime', () => {
 
     try {
       const client = createEvidenceMcpBridgeClient({ endpoint });
-      const pending = client.getScreenshot({ targetNodeId: 'evidence.request' });
+      const pending = client.getScreenshot({
+        targetNodeId: 'evidence.request',
+      });
 
       await vi.waitFor(() => {
         expect(sent).toHaveLength(1);
@@ -258,7 +253,9 @@ describe('startMcpBridgeRuntime', () => {
         width: 320,
         height: 120,
       });
-      expect(sent.filter((entry) => entry.channel.endsWith('capture-mode'))).toEqual([
+      expect(
+        sent.filter((entry) => entry.channel.endsWith('capture-mode')),
+      ).toEqual([
         { channel: 'evidence:mcp:capture-mode', payload: true },
         { channel: 'evidence:mcp:capture-mode', payload: false },
       ]);
@@ -277,8 +274,8 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          simulation: simulationService(),
-        sensors: {
+          drift: driftService(),
+          sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
               keyDataCount: 0,

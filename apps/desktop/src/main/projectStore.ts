@@ -23,7 +23,10 @@ import type {
   OpenProjectResult,
   SaveProjectResult,
 } from '../shared/projects';
-import { createStarterDocument, deriveModelId } from './templates/starterModels';
+import {
+  createStarterDocument,
+  deriveModelId,
+} from './templates/starterModels';
 
 /** Relative location of the FM source tree inside a project root. */
 export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
@@ -344,7 +347,7 @@ export const createProjectStore = ({
       try {
         if (isModelBundlePath(rootPath)) {
           // The document the renderer holds already carries the bundle extras
-          // (`validation`, `readme`), so writing it back stays lossless.
+          // (`readme`, inline examples), so writing it back stays lossless.
           const written = await writeModelBundle(rootPath, document);
 
           return {

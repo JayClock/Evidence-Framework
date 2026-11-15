@@ -13,7 +13,7 @@ import type {
   IngestDraftResult,
 } from './ingestion';
 import type { EvidenceMcpApi } from './mcpIpc';
-import type { EvidenceSimulationApi } from './simulation';
+import type { EvidenceDriftApi } from './drift';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
@@ -114,12 +114,12 @@ export interface EvidenceDesktopApi {
   /** MCP bridge status and the renderer side of external tool calls. */
   mcp: EvidenceMcpApi;
   /**
-   * The simulation sandbox and the drift radar.
+   * The production drift radar.
    *
-   * Both read the saved model in the main process: a replay or an audit that
+   * Reads the saved model in the main process: an audit that
    * described unsaved canvas edits would answer a question nobody asked.
    */
-  simulation: EvidenceSimulationApi;
+  drift: EvidenceDriftApi;
   /**
    * Business text and blueprint tables in, a model out.
    *
@@ -148,11 +148,7 @@ export type {
   IngestionReader,
 } from './ingestion';
 
-export type {
-  DriftRequest,
-  ReplayRequest,
-  TraceDialogResult,
-} from './simulation';
+export type { DriftRequest, TraceDialogResult } from './drift';
 
 export type {
   DeliveryPreview,

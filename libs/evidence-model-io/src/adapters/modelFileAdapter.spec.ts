@@ -1,6 +1,6 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 import { MODEL_README_PATH } from '@evidence-poc/evidence-model-core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -28,21 +28,9 @@ describe('bundle files on disk', () => {
   it('packs a directory into one file and unpacks it again', async () => {
     const modelRoot = join(root, '.evidence', 'fm');
     const document = createProcurementModel();
-    const instancePath = join(
-      modelRoot,
-      'validation',
-      'instances',
-      'evidence-instance--a.json',
-    );
-
+    document.entities[0]!.examples = [{ label: 'example', value: {} }];
     await writeModelDirectory(modelRoot, document);
     await writeFile(join(modelRoot, MODEL_README_PATH), '说明\n', 'utf8');
-    await mkdir(dirname(instancePath), { recursive: true });
-    await writeFile(
-      instancePath,
-      JSON.stringify({ id: 'evidence-instance.a', type: 'evidence_instance' }),
-      'utf8',
-    );
 
     const packed = await packModelDirectory(modelRoot);
     const bundlePath = join(root, 'procurement.evidence.json');
@@ -53,7 +41,12 @@ describe('bundle files on disk', () => {
 
     expect(read.issues).toEqual([]);
     expect(read.document.readme).toBe('说明\n');
-    expect(read.document.validation?.instances).toHaveLength(1);
+    expect(
+      read.document.entities.find(
+        (entity) => entity.id === document.entities[0]!.id,
+      )?.examples,
+    ).toEqual(document.entities[0]!.examples);
+    expect(read.document).not.toHaveProperty('validation');
 
     const unpacked = await unpackModelBundle(
       bundlePath,
@@ -61,11 +54,7 @@ describe('bundle files on disk', () => {
     );
 
     expect(unpacked.result.written).toEqual(
-      expect.arrayContaining([
-        'model.json',
-        MODEL_README_PATH,
-        'validation/instances/evidence-instance--a.json',
-      ]),
+      expect.arrayContaining(['model.json', MODEL_README_PATH]),
     );
     expect(
       JSON.parse(await readFile(join(root, 'restored', 'model.json'), 'utf8')),

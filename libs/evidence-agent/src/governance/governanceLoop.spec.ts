@@ -8,15 +8,36 @@ const drift = (
 ) => ({ kind, severity, message, evidenceRef });
 
 describe('decideGovernance', () => {
+  it.each([
+    { testCount: 0, passedCount: 0 },
+    { testCount: 1.5, passedCount: 1.5 },
+    { testCount: 1, passedCount: 1, errors: ['runner failed'] },
+  ])(
+    'never treats an empty or invalid runner summary as a green gate',
+    (acceptance) => {
+      const result = decideGovernance({
+        drift: [
+          {
+            kind: 'UNMODELED_ATTRIBUTE_WRITTEN',
+            severity: 'warn',
+            message: 'new field',
+          },
+        ],
+        acceptance,
+      });
+      expect(result.canPatchModel).toBe(false);
+      expect(result.verdict).toBe('needs_repair');
+    },
+  );
   it('says healthy when production and the model agree', () => {
     const decision = decideGovernance({
       drift: [],
-      simulation: { scenarioCount: 3, passedCount: 3 },
+      acceptance: { testCount: 3, passedCount: 3 },
     });
 
     expect(decision).toEqual({
       verdict: 'healthy',
-      rationale: ['生产与模型没有分歧。', '3/3 个场景通过回放。'],
+      rationale: ['生产与模型没有分歧。', '3/3 个测试通过 HTTP 验收。'],
       actions: [],
       canPatchModel: false,
     });
@@ -24,8 +45,15 @@ describe('decideGovernance', () => {
 
   it('treats an unmodeled evidence as the model falling behind', () => {
     const decision = decideGovernance({
-      drift: [drift('UNMODELED_EVIDENCE_COMMITTED', 'block', '模型里没有这张凭证。', 'evidence.ghost')],
-      simulation: { scenarioCount: 2, passedCount: 2 },
+      drift: [
+        drift(
+          'UNMODELED_EVIDENCE_COMMITTED',
+          'block',
+          '模型里没有这张凭证。',
+          'evidence.ghost',
+        ),
+      ],
+      acceptance: { testCount: 2, passedCount: 2 },
     });
 
     expect(decision.verdict).toBe('model_lagging');
@@ -51,7 +79,7 @@ describe('decideGovernance', () => {
           'request.payment',
         ),
       ],
-      simulation: { scenarioCount: 2, passedCount: 2 },
+      acceptance: { testCount: 2, passedCount: 2 },
     });
 
     expect(decision.verdict).toBe('production_overreach');
@@ -64,8 +92,15 @@ describe('decideGovernance', () => {
 
   it('offers a patch when the only finding is a missing compensation path', () => {
     const decision = decideGovernance({
-      drift: [drift('BREACH_WITHOUT_FOLLOW_UP', 'warn', '违约后没有后续。', 'request.payment')],
-      simulation: { scenarioCount: 3, passedCount: 3 },
+      drift: [
+        drift(
+          'BREACH_WITHOUT_FOLLOW_UP',
+          'warn',
+          '违约后没有后续。',
+          'request.payment',
+        ),
+      ],
+      acceptance: { testCount: 3, passedCount: 3 },
     });
 
     expect(decision.verdict).toBe('model_lagging');
@@ -80,48 +115,59 @@ describe('decideGovernance', () => {
     expect(decision.canPatchModel).toBe(true);
   });
 
-  it('closes the patch path when the replay itself fails', () => {
+  it('closes the patch path when HTTP acceptance fails', () => {
     const decision = decideGovernance({
-      drift: [drift('UNMODELED_ATTRIBUTE_WRITTEN', 'warn', '多了一个字段。', 'evidence.payment')],
-      simulation: {
-        scenarioCount: 3,
+      drift: [
+        drift(
+          'UNMODELED_ATTRIBUTE_WRITTEN',
+          'warn',
+          '多了一个字段。',
+          'evidence.payment',
+        ),
+      ],
+      acceptance: {
+        testCount: 3,
         passedCount: 2,
         errors: ['scenario.payment: completed != pending'],
       },
     });
 
     expect(decision.verdict).toBe('needs_repair');
-    expect(decision.actions.map((item) => item.kind)).toContain('repair_model');
+    expect(decision.actions.map((item) => item.kind)).toContain(
+      'repair_implementation',
+    );
     expect(decision.canPatchModel).toBe(false);
-    expect(decision.rationale).toContain('2/3 个场景通过回放。');
+    expect(decision.rationale).toContain('2/3 个测试通过 HTTP 验收。');
   });
 
-  it('refuses to patch when there is no replay to stand on', () => {
+  it('refuses to patch when there is no HTTP acceptance result', () => {
     const decision = decideGovernance({
       drift: [drift('UNMODELED_ATTRIBUTE_WRITTEN', 'warn')],
     });
 
     expect(decision.canPatchModel).toBe(false);
-    expect(decision.rationale).toContain('没有回放结果：本轮不确认模型仍然成立。');
+    expect(decision.rationale).toContain(
+      '没有 HTTP 验收结果：本轮不确认实现符合模型。',
+    );
   });
 
-  it('ranks a production overreach above a broken replay', () => {
+  it('ranks a production overreach above a failed HTTP acceptance run', () => {
     const decision = decideGovernance({
       drift: [drift('DERIVED_VALUE_SUPPLIED', 'block')],
-      simulation: { scenarioCount: 1, passedCount: 0 },
+      acceptance: { testCount: 1, passedCount: 0 },
     });
 
     expect(decision.verdict).toBe('production_overreach');
     expect(decision.actions.map((item) => item.kind)).toEqual([
       'raise_blocking_ticket',
-      'repair_model',
+      'repair_implementation',
     ]);
   });
 
   it('hands an unknown kind to a person instead of guessing a remedy', () => {
     const decision = decideGovernance({
       drift: [drift('SOMETHING_NEW', 'warn')],
-      simulation: { scenarioCount: 1, passedCount: 1 },
+      acceptance: { testCount: 1, passedCount: 1 },
     });
 
     expect(decision.actions[0]).toMatchObject({

@@ -6,30 +6,18 @@ import path from 'node:path';
 import {
   MODEL_MANIFEST_PATH,
   MODEL_SOURCE_TREES,
-  VALIDATION_INSTANCE_TREE,
-  VALIDATION_SCENARIO_TREE,
   packModelSourceFiles,
   type ModelSourceFile,
   type PackResult,
 } from '@evidence-poc/evidence-model-core';
 
-/**
- * Reads a `.evidence/fm/` root into source files, including `validation/`.
- *
- * `readModelDirectory` deliberately stops at the three model trees because the
- * disk adapter only rewrites those. The checks need the validation inputs too,
- * so this reader walks the trees the sensors read and leaves `generated/` and
- * anything a checkout or a tool wrote beside the sources alone.
- */
+/** Reads model sources. The removed validation/ tree is scanned only to reject it. */
 
 /** Tree holding output the checks never read back. */
 export const MODEL_GENERATED_TREE = 'generated';
 
-/** Trees a check reads: the model sources plus the validation inputs. */
-export const MODEL_CHECK_TREES = [
-  ...MODEL_SOURCE_TREES,
-  'validation',
-] as const;
+/** Model source trees plus the retired path, detected as a blocking source issue. */
+export const MODEL_CHECK_TREES = [...MODEL_SOURCE_TREES, 'validation'] as const;
 
 /** Files the checks never read: generated output, caches and dot directories. */
 const isIgnored = (relativePath: string): boolean =>
@@ -75,7 +63,10 @@ const readTree = async (
       continue;
     }
 
-    if (!entry.isFile() || !entry.name.endsWith('.json')) {
+    if (
+      !entry.isFile() ||
+      (!entry.name.endsWith('.json') && !relative.startsWith('validation/'))
+    ) {
       continue;
     }
 
@@ -164,7 +155,10 @@ const readTreeBytes = async (
       continue;
     }
 
-    files.push({ path: relative, bytes: await readFile(path.join(root, relative)) });
+    files.push({
+      path: relative,
+      bytes: await readFile(path.join(root, relative)),
+    });
   }
 
   return files;
@@ -210,12 +204,6 @@ export const modelDigestOf = (
 
   return `sha256:${createHash('sha256').update(content, 'utf8').digest('hex')}`;
 };
-
-/** Files below `validation/`, which the checks read but never write. */
-export const isValidationPath = (relativePath: string): boolean =>
-  relativePath.startsWith('validation/') &&
-  (relativePath.startsWith(`${VALIDATION_INSTANCE_TREE}/`) ||
-    relativePath.startsWith(`${VALIDATION_SCENARIO_TREE}/`));
 
 /** Reads a model root and packs it, reporting file-level problems as issues. */
 export async function readModelRoot(

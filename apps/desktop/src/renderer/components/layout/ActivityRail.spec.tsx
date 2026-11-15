@@ -8,7 +8,7 @@ describe('ActivityRail', () => {
     render(<ActivityRail activeTab={null} onSelect={vi.fn()} />);
 
     expect(screen.getByRole('navigation', { name: '活动导轨' })).toBeVisible();
-    for (const label of ['业务结构', '门禁与诊断', '场景仿真', 'AI 协同'])
+    for (const label of ['业务结构', '门禁与诊断', '生产漂移', 'AI 协同'])
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
   });
 
@@ -21,9 +21,9 @@ describe('ActivityRail', () => {
       'aria-pressed',
       'true',
     );
-    fireEvent.click(screen.getByRole('button', { name: '场景仿真' }));
+    fireEvent.click(screen.getByRole('button', { name: '生产漂移' }));
 
-    expect(onSelect).toHaveBeenCalledWith('simulation');
+    expect(onSelect).toHaveBeenCalledWith('drift');
   });
 
   it('prints a blocking count instead of a bare dot', () => {

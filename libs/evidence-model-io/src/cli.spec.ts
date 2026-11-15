@@ -80,7 +80,12 @@ describe('evidence-model CLI', () => {
 
     // A scope the model does not contain fails the check instead of passing it.
     expect(
-      await runEvidenceModelCommand(['check', modelRoot, '--scope=context.missing', '--json']),
+      await runEvidenceModelCommand([
+        'check',
+        modelRoot,
+        '--scope=context.missing',
+        '--json',
+      ]),
     ).toBe(1);
 
     const printed = output.mock.calls.map(([chunk]) => String(chunk)).join('');
@@ -90,7 +95,7 @@ describe('evidence-model CLI', () => {
       errors: readonly string[];
     };
 
-    expect(report.checkVersion).toBe(5);
+    expect(report.checkVersion).toBe(6);
     expect(report.scopeRefs).toEqual(['context.missing']);
     expect(report.errors).toEqual([
       "scope 'context.missing' must be an independent Context, not a fulfillment slice",
@@ -98,9 +103,7 @@ describe('evidence-model CLI', () => {
 
     const bundlePath = join(root, 'bundle.evidence.json');
 
-    expect(
-      await runEvidenceModelCommand(['check', bundlePath]),
-    ).toBe(2);
+    expect(await runEvidenceModelCommand(['check', bundlePath])).toBe(2);
   });
 
   it('inspects a bundle without writing anything', async () => {

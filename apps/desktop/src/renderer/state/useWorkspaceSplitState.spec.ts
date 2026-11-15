@@ -45,12 +45,12 @@ describe('useWorkspaceSplitState', () => {
     act(() => result.current.split.toggleSplit());
     expect(result.current.split.activePane).toBe('ledger');
 
-    act(() => result.current.split.setActivePane('simulation'));
+    act(() => result.current.split.setActivePane('drift'));
     act(() => result.current.split.toggleSplit());
     expect(result.current.split.isSplit).toBe(false);
 
     act(() => result.current.split.toggleSplit());
-    expect(result.current.split.activePane).toBe('simulation');
+    expect(result.current.split.activePane).toBe('drift');
   });
 
   it('follows Alt+3 from the view-mode chords', () => {

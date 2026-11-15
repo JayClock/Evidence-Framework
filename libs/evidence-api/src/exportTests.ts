@@ -19,7 +19,7 @@ import { writeOutput } from './renderer/outputRenderer.js';
 export const defaultAcceptanceDirectory = (root: string): string =>
   path.join(root, '.evidence', 'api', 'acceptance');
 
-/** Direct source loader: does not load or simulate a legacy ValidationSuite. */
+/** Direct source loader: inline examples are the only acceptance source. */
 export async function exportAcceptanceTests(options: {
   fm: string;
   out: string;

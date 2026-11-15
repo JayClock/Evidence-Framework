@@ -3,11 +3,19 @@ import type {
   RuleAST,
 } from '@evidence-poc/evidence-schema';
 import { celValueToJson, compileCelExpression } from './celEvaluator.js';
-import { typedToCel } from '../validation/ruleActivation.js';
+import { CelDuration, CelTimestamp } from './celEvaluator.js';
 import {
   isTimestampText,
   validateTypedValue,
 } from '../validation/typedValues.js';
+
+const typedToCel = (value: unknown, type: string): unknown => {
+  if (type === 'timestamp') return CelTimestamp.parse(String(value)) ?? value;
+  if (type === 'duration') return CelDuration.parse(String(value)) ?? value;
+  if (['int', 'uint', 'double', 'decimal'].includes(type))
+    return typeof value === 'number' ? value : Number(value);
+  return value;
+};
 
 export interface ExampleRuleInputs {
   /** Alias -> concrete modeled values (or list of values for a many binding). */

@@ -7,7 +7,7 @@ import type { StageGateReport } from '../sensorReport.js';
  *
  * The gate consumes a *saved* FM check report, not the live model: it is the
  * moment a scope stops being under discussion and becomes something a contract
- * can be derived from. It refuses any report that is not contract version 5.
+ * can be derived from. It refuses any report that is not contract version 6.
  */
 
 type JsonObject = Record<string, unknown>;
@@ -15,7 +15,9 @@ type JsonObject = Record<string, unknown>;
 const isRecord = (value: unknown): value is JsonObject =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const unique = <TItem>(values: readonly TItem[]): TItem[] => [...new Set(values)];
+const unique = <TItem>(values: readonly TItem[]): TItem[] => [
+  ...new Set(values),
+];
 
 /** Fields the gate copies into its evidence block. */
 const EVIDENCE_FIELDS = [
@@ -48,16 +50,18 @@ export const filterFmCheckErrors = (
     evidence[field] = report[field];
   }
 
-  if (report['checkVersion'] !== 5) {
+  if (report['checkVersion'] !== 6) {
     errors.push(
-      `FM check contract is not version 5: ${JSON.stringify(report['checkVersion'])}`,
+      `FM check contract is not version 6: ${JSON.stringify(report['checkVersion'])}`,
     );
   }
   if (report['consistent'] !== true) {
     errors.push('FM check did not report consistent: true');
   }
   if (report['complete'] !== true) {
-    errors.push('FM check did not report complete: true for the requested scope');
+    errors.push(
+      'FM check did not report complete: true for the requested scope',
+    );
   }
   if (report['valid'] !== true) {
     errors.push('FM check did not report valid: true');
@@ -80,7 +84,9 @@ export const filterFmCheckErrors = (
 
   const covered = new Set(
     Array.isArray(report['scopeRefs'])
-      ? report['scopeRefs'].filter((ref): ref is string => typeof ref === 'string')
+      ? report['scopeRefs'].filter(
+          (ref): ref is string => typeof ref === 'string',
+        )
       : [],
   );
 
@@ -103,12 +109,16 @@ export interface StageGateInput {
 }
 
 /** Decides whether a checked scope may be handed to the next stage. */
-export const checkNativeStageGate = (input: StageGateInput): StageGateReport => {
+export const checkNativeStageGate = (
+  input: StageGateInput,
+): StageGateReport => {
   const errors: string[] = [];
   const evidence: Record<string, unknown> = { fmCheck: {} };
 
   if (input.scopes.length === 0) {
-    errors.push('no scope supplied; downstream never consumes an unbounded model');
+    errors.push(
+      'no scope supplied; downstream never consumes an unbounded model',
+    );
   }
 
   const fm = filterFmCheckErrors(input.fmCheck, input.scopes);

@@ -179,7 +179,7 @@ test('Wrapped result endpoints are visible before completion rules or support re
   }
 });
 
-test('Overview separates consistency, scope completeness, gaps and unexecuted simulation', () => {
+test('Overview separates consistency, scope completeness, gaps and the separate HTTP acceptance boundary', () => {
   for (const [complete, expected] of [
     [null, '未检查'],
     [false, '不完整'],
@@ -190,9 +190,7 @@ test('Overview separates consistency, scope completeness, gaps and unexecuted si
         consistent: true,
         complete,
         scopeRefs: complete === null ? [] : ['context.a'],
-        simulation: null,
         gaps: ['合成责任尚未完整'],
-        simulationLimitations: ['领域行为未执行'],
       },
     };
     const page = open(data);
@@ -206,10 +204,10 @@ test('Overview separates consistency, scope completeness, gaps and unexecuted si
       );
       assert.equal(rows.get('当前 FM 表达一致性'), '通过');
       assert.equal(rows.get('指定范围完整性'), expected);
-      assert.equal(rows.get('检查范围内的适用场景模拟'), '未执行 / 不适用');
+      assert.equal(rows.has('检查范围内的适用场景模拟'), false);
+      assert.match(rows.get('HTTP 验收（Step CI / Hurl）'), /此静态页面不执行/);
       const detail = page.document.querySelector('#detail').textContent;
       assert.ok(detail.includes('合成责任尚未完整'));
-      assert.ok(detail.includes('领域行为未执行'));
       assert.ok(detail.includes('当前整个 FM，含未完成内容'));
       assert.doesNotMatch(
         detail,

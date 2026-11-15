@@ -10,7 +10,7 @@ import type {
 import type { McpRendererMethod } from '../shared/mcpIpc';
 
 import type { McpDeliveryService } from './mcpDeliveryService';
-import type { SimulationService } from './mcpSimulationService';
+import type { DriftService } from './mcpDriftService';
 
 /** Thrown by a dependency to surface a stable MCP error code. */
 export class McpRequestError extends Error {
@@ -49,15 +49,13 @@ export interface McpRequestHandlerDeps {
   renderer: McpRendererChannel;
   sensors: McpSensorService;
   delivery: McpDeliveryService;
-  simulation: SimulationService;
+  drift: DriftService;
   capture: McpCaptureService;
   /** Notified for every served call, so the header can show activity. */
   onCall?: (method: EvidenceMcpAppRequest['method']) => void;
 }
 
-const activeRoot = async (
-  renderer: McpRendererChannel,
-): Promise<string> => {
+const activeRoot = async (renderer: McpRendererChannel): Promise<string> => {
   const state = (await renderer('get_app_state', null)) as McpAppState;
 
   if (state.activeProject === null) {
@@ -81,7 +79,7 @@ export const createMcpRequestHandler = ({
   renderer,
   sensors,
   delivery,
-  simulation,
+  drift,
   capture,
   onCall,
 }: McpRequestHandlerDeps) => {
@@ -94,9 +92,15 @@ export const createMcpRequestHandler = ({
       case 'get_app_state':
       case 'get_domain_model':
       case 'get_selected_entity':
-        return (await renderer(request.method, request)) as EvidenceMcpAppResult;
+        return (await renderer(
+          request.method,
+          request,
+        )) as EvidenceMcpAppResult;
       case 'apply_model_patch':
-        return (await renderer(request.method, request.patch)) as EvidenceMcpAppResult;
+        return (await renderer(
+          request.method,
+          request.patch,
+        )) as EvidenceMcpAppResult;
       case 'get_key_data_audit':
         return sensors.readKeyDataAudit(await activeRoot(renderer));
       case 'run_stage_gate':
@@ -105,24 +109,29 @@ export const createMcpRequestHandler = ({
           target: request.target,
         });
       case 'get_delivery_topology':
-        return (await delivery.topology(await activeRoot(renderer))) as EvidenceMcpAppResult;
+        return (await delivery.topology(
+          await activeRoot(renderer),
+        )) as EvidenceMcpAppResult;
       case 'export_openapi_contract':
-        return (await delivery.openapi(await activeRoot(renderer))) as EvidenceMcpAppResult;
-      case 'run_scenario_replay':
-        return simulation.replay({
-          rootPath: await activeRoot(renderer),
-          ...(request.scenarioId === undefined
-            ? {}
-            : { scenarioId: request.scenarioId }),
-        });
+        return (await delivery.openapi(
+          await activeRoot(renderer),
+        )) as EvidenceMcpAppResult;
       case 'audit_production_drift':
-        return simulation.auditDrift({
+        return drift.auditDrift({
           rootPath: await activeRoot(renderer),
           document: request.document,
         });
       case 'get_canvas_screenshot':
-        return captureCanvas({ renderer, capture, targetNodeId: request.targetNodeId });
+        return captureCanvas({
+          renderer,
+          capture,
+          targetNodeId: request.targetNodeId,
+        });
     }
+    throw new McpRequestError(
+      'UNSUPPORTED_METHOD',
+      'Unsupported MCP method; legacy scenario replay has been removed.',
+    );
   };
 };
 

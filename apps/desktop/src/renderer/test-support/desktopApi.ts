@@ -23,10 +23,8 @@ import type {
 import type {
   DriftRequest,
   McpDriftAudit,
-  McpScenarioReplay,
-  ReplayRequest,
   TraceDialogResult,
-} from '../../shared/simulation';
+} from '../../shared/drift';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
@@ -144,7 +142,6 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     exportDelivery: string[];
     ingestDraft: IngestDraftInput[];
     compileDraft: CompileDraftInput[];
-    replay: ReplayRequest[];
     drift: DriftRequest[];
   };
   agentMock: AgentMockController;
@@ -190,13 +187,6 @@ export const installDesktopApi = ({
     error: '测试没有配置导入结果。',
     issues: [],
   } as IngestDraftResult,
-  replayResult = {
-    modelId: 'product-procurement',
-    passed: true,
-    scenarios: [],
-    frames: [],
-    errors: [],
-  } as McpScenarioReplay,
   driftResult = {
     modelId: 'product-procurement',
     spanCount: 0,
@@ -234,7 +224,6 @@ export const installDesktopApi = ({
   >;
   ingestResult?: IngestDraftResult;
   compileResult?: CompileDraftOutcome;
-  replayResult?: McpScenarioReplay;
   driftResult?: McpDriftAudit;
   traceDialogResult?: TraceDialogResult;
 } = {}): DesktopApiMock => {
@@ -257,7 +246,6 @@ export const installDesktopApi = ({
     exportDelivery: [],
     ingestDraft: [],
     compileDraft: [],
-    replay: [],
     drift: [],
   };
 
@@ -479,12 +467,7 @@ export const installDesktopApi = ({
         return () => mcpCaptureListeners.delete(listener);
       },
     },
-    simulation: {
-      replay: async (input) => {
-        calls.replay.push(input);
-
-        return replayResult;
-      },
+    drift: {
       drift: async (input) => {
         calls.drift.push(input);
 

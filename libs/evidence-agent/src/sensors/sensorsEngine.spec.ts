@@ -27,7 +27,6 @@ describe('createSensorsEngine', () => {
     expect(outcome.report.timestamp).toBe('2026-11-11T09:00:00.000Z');
     expect(outcome.report.passed).toBe(true);
     expect(outcome.report.unavailableSensors).toEqual([]);
-    expect(outcome.fmCheck?.executedScenarioCount).toBe(3);
     expect(outcome.keyData?.keyDataCount).toBe(14);
   });
 

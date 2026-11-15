@@ -20,6 +20,17 @@ const validate = (metadata: unknown) => {
 };
 
 describe('inline acceptance metadata', () => {
+  it('refuses the removed validation envelope even when empty', () => {
+    const model = cloneDocument(loadFixtureModel());
+    Object.assign(model, { validation: { instances: [], scenarios: [] } });
+    const result = strictValidateDomainModel(model);
+    expect(result.valid).toBe(false);
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ path: '$.validation' }),
+      ]),
+    );
+  });
   it('accepts explicit flow, clock, dependencies and negative inputs', () => {
     expect(
       validate({

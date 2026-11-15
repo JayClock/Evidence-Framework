@@ -17,7 +17,7 @@ export const MODEL_SOURCE_TREES = [
 ] as const;
 
 /** Sibling trees that are not model sources; the adapter never rewrites them. */
-export const MODEL_NON_SOURCE_TREES = ['generated', 'validation'] as const;
+export const MODEL_NON_SOURCE_TREES = ['generated'] as const;
 
 export interface ModelSourceFile {
   /** POSIX-style path relative to the model root. */
@@ -258,6 +258,15 @@ export function parseModelSourceFiles(
       continue;
     }
 
+    if (path.startsWith('validation/')) {
+      issues.push({
+        path,
+        code: 'model.legacy-validation',
+        message:
+          'Legacy validation scenarios/instances are no longer supported; use entity examples[].test.',
+      });
+      continue;
+    }
     if (isIgnoredPath(path) || !isManagedJsonPath(path)) {
       continue;
     }

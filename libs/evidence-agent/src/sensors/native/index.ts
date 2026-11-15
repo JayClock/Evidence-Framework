@@ -31,7 +31,6 @@ export {
 
 export {
   runNativeSensors,
-  scenarioResultsOf,
   type NativeSensorsInput,
   type NativeSensorsOutcome,
 } from './nativeSensors.js';

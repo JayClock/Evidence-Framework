@@ -76,13 +76,6 @@ const client = (): EvidenceMcpAppClient => ({
     links: [],
     limitations: [],
   })),
-  runScenarioReplay: vi.fn(async () => ({
-    modelId: 'product-procurement',
-    passed: true,
-    scenarios: [],
-    frames: [],
-    errors: [],
-  })),
   auditProductionDrift: vi.fn(async () => ({
     modelId: 'product-procurement',
     spanCount: 0,
@@ -123,7 +116,7 @@ describe('createEvidenceMcpServer', () => {
     const { tools } = await mcp.listTools();
 
     expect(tools.map((tool) => tool.name)).toContain(TOOL_NAMES.appState);
-    expect(tools).toHaveLength(14);
+    expect(tools).toHaveLength(13);
     expect(
       tools.find((tool) => tool.name === TOOL_NAMES.applyPatch)?.annotations,
     ).toMatchObject({ readOnlyHint: false });

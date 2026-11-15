@@ -6,9 +6,8 @@ import {
   readModelRootBytes,
 } from '../../tests/support/modelRoot.js';
 import { buildFmCheckReport, FM_CHECK_VERSION } from './fmCheck.js';
-import { digestOf } from './timeline.js';
+import { digestOf } from './modelDigest.js';
 import { analyzeTraceability } from './traceability.js';
-import { loadValidationSuite } from './validationSuite.js';
 
 const fixture = (name: string, models = true): string =>
   fileURLToPath(
@@ -27,18 +26,18 @@ const check = async (
   } = {},
 ) => {
   const root = fixture(name, options.models ?? true);
-  const { bundle, files, issues } = await readModelRoot(root);
-  const suite = loadValidationSuite(files);
+  const { bundle, issues } = await readModelRoot(root);
   const bytes = await readModelRootBytes(root);
 
   return buildFmCheckReport({
     model: bundle,
-    suite,
     sourceIssues: issues.map((issue) => `${issue.path}: ${issue.message}`),
     modelDigest: modelDigestOf(
       bytes.map((file) => ({ path: file.path, content: file.bytes })),
     ),
-    ...(options.scopeRefs === undefined ? {} : { scopeRefs: options.scopeRefs }),
+    ...(options.scopeRefs === undefined
+      ? {}
+      : { scopeRefs: options.scopeRefs }),
     ...(options.currentDigest === undefined
       ? {}
       : { currentDigest: options.currentDigest }),
@@ -60,10 +59,7 @@ describe('buildFmCheckReport', () => {
       humanConfirmation: 'not-asserted-by-machine',
       inputChanged: false,
       modelValidated: true,
-      scenarioRequirement: 'not-checked',
-      scenarioCount: 3,
-      executedScenarioCount: 3,
-      simulationPassed: true,
+      testExampleCount: 0,
       errors: [],
       advisories: [],
     });
@@ -85,7 +81,7 @@ describe('buildFmCheckReport', () => {
       contextRef: 'context.cms',
     });
 
-    const { report } = buildFmCheckReport({ model, suite: { instances: [], scenarios: [], errors: [] } });
+    const { report } = buildFmCheckReport({ model });
 
     expect(report.consistent).toBe(true);
     expect(report.advisories).toEqual([
@@ -110,24 +106,11 @@ describe('buildFmCheckReport', () => {
       scopeRefs: ['context.content-subscription'],
       contextRefs: ['context.cms', 'context.content-subscription'],
       gaps: [],
-      scenarioRequirement: 'required',
-      scenarioCount: 3,
-      executedScenarioCount: 3,
-      simulationPassed: true,
+      testExampleCount: 0,
       errors: [],
-      modelDigest:
-        'sha256:7b002eff09437a82cc90f6b47830633fff1eeb2aa8f7213ba233e22bcdb21b04',
-      timelineSummary: {
-        laneCount: 1,
-        evidenceTypeCount: 6,
-        instanceCount: 6,
-        dependencyCount: 6,
-        unresolvedOrderCount: 6,
-        sha256:
-          'sha256:361a464e960aced6a173a1d6f4b74fbf8de7e8ee0d99df853c1106940d0e5602',
-      },
     });
-    expect(report.scenarioResults).toHaveLength(3);
+    expect(report).not.toHaveProperty('scenarioResults');
+    expect(report).not.toHaveProperty('simulationPassed');
   });
 
   it('marks the conclusion stale when the sources change during the check', async () => {
@@ -166,7 +149,7 @@ describe('buildFmCheckReport', () => {
       "context.content-subscription: primary Fulfillments must cover both Contract Parties; Party Role 'role.subscriber' is not the right holder of any Fulfillment Request",
     ]);
     expect(report.valid).toBe(true);
-    expect(report.simulationPassed).toBeNull();
+    expect(report).not.toHaveProperty('simulationPassed');
   });
 });
 
@@ -191,7 +174,9 @@ describe('modelDigestOf', () => {
 
 describe('analyzeTraceability', () => {
   it('builds lineage nodes and constraints for the golden fixture', async () => {
-    const { bundle } = await readModelRoot(fixture('valid-traceable-subscription'));
+    const { bundle } = await readModelRoot(
+      fixture('valid-traceable-subscription'),
+    );
     const { document, errors } = analyzeTraceability(bundle);
 
     expect(errors).toEqual([]);
@@ -199,8 +184,13 @@ describe('analyzeTraceability', () => {
 
     expect(paths).toContain('request.content-payment#expired_at');
     expect(
-      document.nodes.find((node) => node.path === 'request.content-payment#expired_at'),
-    ).toMatchObject({ origin: 'derived', derivedByRuleRef: 'rule.payment-deadline' });
+      document.nodes.find(
+        (node) => node.path === 'request.content-payment#expired_at',
+      ),
+    ).toMatchObject({
+      origin: 'derived',
+      derivedByRuleRef: 'rule.payment-deadline',
+    });
     expect(document.edges).toEqual(
       expect.arrayContaining([
         {
@@ -213,7 +203,9 @@ describe('analyzeTraceability', () => {
   });
 
   it('rejects a collection binding read without a macro', async () => {
-    const { bundle } = await readModelRoot(fixture('valid-traceable-subscription'));
+    const { bundle } = await readModelRoot(
+      fixture('valid-traceable-subscription'),
+    );
     const broken = {
       ...bundle,
       rules: bundle.rules.map((rule) =>
@@ -231,14 +223,17 @@ describe('analyzeTraceability', () => {
   });
 
   it('rejects a read of an attribute the entity does not model', async () => {
-    const { bundle } = await readModelRoot(fixture('valid-traceable-subscription'));
+    const { bundle } = await readModelRoot(
+      fixture('valid-traceable-subscription'),
+    );
     const broken = {
       ...bundle,
       rules: bundle.rules.map((rule) =>
         rule.id === 'rule.payment-matches-request'
           ? {
               ...rule,
-              expression: 'payment.unknown_attribute == request.requested_minor_units',
+              expression:
+                'payment.unknown_attribute == request.requested_minor_units',
             }
           : rule,
       ),
@@ -246,7 +241,9 @@ describe('analyzeTraceability', () => {
 
     expect(analyzeTraceability(broken).errors).toEqual(
       expect.arrayContaining([
-        expect.stringContaining("reads unknown attribute 'confirmation.content-payment#unknown_attribute'"),
+        expect.stringContaining(
+          "reads unknown attribute 'confirmation.content-payment#unknown_attribute'",
+        ),
       ]),
     );
   });

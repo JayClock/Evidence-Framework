@@ -166,9 +166,13 @@ describe('projectWorkbenchData', () => {
     const data = project();
 
     expect(
-      data.edges.filter((edge) => edge.to === 'role.proof').map((edge) => edge.from),
+      data.edges
+        .filter((edge) => edge.to === 'role.proof')
+        .map((edge) => edge.from),
     ).toContain('rule.a');
-    expect(nodeOf(data, 'rule.a')['description']).toBe('以外部付款证明判断完成。');
+    expect(nodeOf(data, 'rule.a')['description']).toBe(
+      '以外部付款证明判断完成。',
+    );
   });
 
   it('reuses a derivation rule for the field it computes', () => {
@@ -214,10 +218,13 @@ describe('projectWorkbenchData', () => {
     );
     expect(
       data.edges.some(
-        (edge) => edge.from === 'request.a#currency' && edge.label === '由规则计算',
+        (edge) =>
+          edge.from === 'request.a#currency' && edge.label === '由规则计算',
       ),
     ).toBe(false);
-    expect(data.nodes.filter((node) => node.id === 'rule.amount')).toHaveLength(1);
+    expect(data.nodes.filter((node) => node.id === 'rule.amount')).toHaveLength(
+      1,
+    );
     expect(JSON.stringify(data)).not.toContain('SECRET');
   });
 
@@ -257,35 +264,6 @@ describe('projectWorkbenchData', () => {
     expect(() => project(model)).toThrow(/重复对象 ID/);
   });
 
-  it('treats a false result as a successful counterexample', () => {
-    const data = project(fixture(), {
-      scenarios: [
-        {
-          id: 'scenario.no',
-          label: '未完成',
-          evaluations: [{ ruleRef: 'rule.a', expectedResult: false }],
-        },
-      ],
-      simulation: {
-        scenarioResults: [
-          {
-            scenarioId: 'scenario.no',
-            simulationPassed: true,
-            evaluations: [{ ruleRef: 'rule.a', result: false, passed: true }],
-          },
-        ],
-      },
-    });
-    const [evaluation] = nodeOf(data, 'scenario.no')['evaluations'] as JsonObject[];
-
-    expect(evaluation).toEqual({
-      ruleRef: 'rule.a',
-      expected: false,
-      actual: false,
-      passed: true,
-    });
-  });
-
   it('makes an API rule binding navigable without its basis', () => {
     const data = project(fixture(), {
       api: {
@@ -312,10 +290,7 @@ describe('projectWorkbenchData', () => {
   });
 
   it('prints an absent value as null so every key survives the round trip', () => {
-    const data = project(fixture(), {
-      scenarios: [{ id: 'scenario.a', label: '未运行' }],
-    });
-    const scenario = nodeOf(data, 'scenario.a');
+    const data = project(fixture());
 
     expect(Object.keys(data.validation).sort()).toEqual([
       'api',
@@ -326,14 +301,9 @@ describe('projectWorkbenchData', () => {
       'gaps',
       'runtime',
       'scopeRefs',
-      'simulation',
-      'simulationLimitations',
-      'unresolvedOrderCount',
     ]);
     expect(data.validation.consistent).toBeNull();
     expect(data.validation.scopeRefs).toBeNull();
-    expect(scenario['asOf']).toBeNull();
-    expect(scenario['passed']).toBeNull();
     expect(JSON.parse(JSON.stringify(data))).toEqual(data);
   });
 
@@ -371,15 +341,14 @@ describe('projectWorkbenchData', () => {
     expect(data.delivery?.services).toHaveLength(1);
   });
 
-  it('prints the check verdict the page displays', () => {    const data = project(fixture(), {
+  it('prints the check verdict the page displays', () => {
+    const data = project(fixture(), {
       check: {
         consistent: true,
         complete: true,
         scopeRefs: ['context.a'],
         contextRefs: ['context.a'],
         gaps: [],
-        simulationPassed: true,
-        timelineSummary: { unresolvedOrderCount: 3 },
       },
       generatedAt: '2026-11-12T00:00:00.000Z',
     });
@@ -391,11 +360,8 @@ describe('projectWorkbenchData', () => {
       scopeRefs: ['context.a'],
       contextRefs: ['context.a'],
       gaps: [],
-      simulationLimitations: [],
-      simulation: true,
       api: null,
       runtime: false,
-      unresolvedOrderCount: 3,
     });
     expect(data.generatedAt).toBe('2026-11-12T00:00:00.000Z');
     expect(data.title).toBe('测试模型');

@@ -21,8 +21,6 @@ const groups = {
   rule: '业务规则',
   attribute: '业务属性',
   relationship: '业务关系',
-  scenario: '验证场景',
-  instance: '场景凭证',
   capability: '接口能力',
   resource: '接口资源',
   representation: '响应表示',
@@ -245,12 +243,6 @@ function buildTree() {
   });
   if (!business.length) structure.append(el('p', '尚无业务对象', 'muted'));
 
-  const scenarios = DATA.nodes.filter((n) => n.group === 'scenario');
-  const scenarioSection = section('scenarios', '验证场景', scenarios.length);
-  scenarios.forEach((n) => scenarioSection.append(treeButton(n)));
-  if (!scenarios.length)
-    scenarioSection.append(el('p', '尚无验证场景', 'muted'));
-
   const apiGroups = ['capability', 'resource', 'journey'];
   const api = DATA.nodes.filter((n) => apiGroups.includes(n.group));
   const apiSection = section('api', 'API', api.length);
@@ -359,7 +351,6 @@ function overview() {
     ['contracts', '合同边界'],
     ['entities', '业务对象'],
     ['rules', '业务规则'],
-    ['scenarios', '验证场景'],
     ['capabilities', '接口能力'],
   ]) {
     const item = el('div');
@@ -412,13 +403,8 @@ function overview() {
         ],
         ['完整性检查范围', (validation.scopeRefs || []).join('、') || '未指定'],
         ['图示范围', '当前整个 FM，含未完成内容'],
-        [
-          '检查范围内的适用场景模拟',
-          verdict(validation.simulation, '通过', '未通过', '未执行 / 不适用'),
-        ],
         ['API 静态设计', verdict(validation.api, '完整', '不完整', '不适用')],
-        ['服务运行验证', '未执行'],
-        ['未确定的业务时间顺序', validation.unresolvedOrderCount || 0],
+        ['HTTP 验收（Step CI / Hurl）', '此静态页面不执行；请运行模型内联样例导出的标准脚本'],
         ['未解析的展示引用', DATA.unresolved.length],
       ],
     ),
@@ -432,7 +418,6 @@ function overview() {
   );
   for (const [title, messages] of [
     ['完整性缺口', validation.gaps],
-    ['模拟器未覆盖的行为', validation.simulationLimitations],
   ]) {
     if (!messages?.length) continue;
     checks.append(el('h3', title));
@@ -736,7 +721,6 @@ function renderNode(node) {
     card('凭证实例值').append(
       table(['字段', '值'], Object.entries(node.values)),
     );
-  if (node.group === 'scenario') renderScenario(node);
   if (node.group === 'journey') {
     const steps = card('HTTP 调用顺序 · 静态设计');
     steps.append(
@@ -800,72 +784,6 @@ function renderNode(node) {
       ),
     );
   renderReferences(node);
-}
-function renderScenario(node) {
-  const summary = card('场景判断');
-  summary.append(
-    el(
-      'p',
-      `固定观察时刻：${node.asOf} · ${verdict(node.passed, '预期匹配', '预期不匹配', '未执行')}`,
-    ),
-  );
-  summary.append(
-    el(
-      'p',
-      '场景数据用于模拟；false 可以是正确的反例结果，不等于检查失败。',
-      'muted',
-    ),
-  );
-  card('单据推演顺序 · 不代表实际时长').append(
-    table(
-      ['步骤', '参与角色', '形成凭证', '当时可用凭证'],
-      node.steps.map((s) => {
-        const available = el('div');
-        list(s.availableInstanceRefs || [], '无', available);
-        return [
-          s.sequence,
-          link(s.actingRoleRef),
-          link(s.issueInstanceRef),
-          available,
-        ];
-      }),
-    ),
-  );
-  card('规则预期与实际').append(
-    table(
-      ['规则', '预期', '实际', '匹配'],
-      node.evaluations.map((e) => [
-        link(e.ruleRef),
-        e.expected,
-        e.actual,
-        verdict(e.passed, '通过', '失败', '未执行'),
-      ]),
-    ),
-  );
-  if (node.statuses.length)
-    card('履约结果').append(
-      table(
-        ['请求实例', '请求定义', '预期', '实际'],
-        node.statuses.map((s) => [
-          link(s.requestInstanceRef),
-          link(s.requestEntityRef || s.requestRef),
-          s.expectedStatus,
-          s.status,
-        ]),
-      ),
-    );
-  if (node.events.length)
-    card('业务时间 · 保留区间与时刻').append(
-      table(
-        ['凭证', '开始', '截止', '实际时刻'],
-        node.events.map((e) => [
-          link(e.instanceRef),
-          e.values.started_at,
-          e.values.expired_at,
-          e.values.confirmed_at || e.values.signed_at || e.values.created_at,
-        ]),
-      ),
-    );
 }
 function renderReferences(
   node,

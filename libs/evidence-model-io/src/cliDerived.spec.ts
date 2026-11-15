@@ -45,13 +45,15 @@ describe('derived document commands', () => {
     ).toBe(0);
 
     const compiled = await read('model.json');
-    const ids = (compiled['entities'] as { id: string }[]).map((item) => item.id);
+    const ids = (compiled['entities'] as { id: string }[]).map(
+      (item) => item.id,
+    );
 
     expect(ids).toEqual([...ids].sort());
     expect(compiled['schemaVersion']).toBe('5.0');
   });
 
-  it('writes lineage, timeline and simulation reports', async () => {
+  it('writes attribute lineage', async () => {
     vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
     expect(
@@ -62,34 +64,17 @@ describe('derived document commands', () => {
         path.join(root, 'traceability.json'),
       ]),
     ).toBe(0);
-    expect(
-      await runEvidenceModelCommand([
-        'timeline',
-        FIXTURE,
-        '--out',
-        path.join(root, 'timeline.json'),
-      ]),
-    ).toBe(0);
-    expect(
-      await runEvidenceModelCommand([
-        'simulate',
-        FIXTURE,
-        '--out',
-        path.join(root, 'simulation.json'),
-      ]),
-    ).toBe(0);
-
     expect((await read('traceability.json'))['edges']).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ ruleRef: 'rule.payment-request-amount' }),
       ]),
     );
-    expect((await read('timeline.json'))['instances']).toHaveLength(6);
-    expect((await read('simulation.json'))['scenarioResults']).toHaveLength(3);
   });
 
   it('stops a derived command when the model does not pass its check', async () => {
-    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    const stderr = vi
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => true);
     const broken = path.join(root, 'broken');
     const { mkdir, cp } = await import('node:fs/promises');
 
@@ -105,51 +90,28 @@ describe('derived document commands', () => {
         path.join(root, 'model.json'),
       ]),
     ).toBe(1);
-    expect(stderr.mock.calls.map(([chunk]) => String(chunk)).join('')).toContain(
-      '已中止',
-    );
+    expect(
+      stderr.mock.calls.map(([chunk]) => String(chunk)).join(''),
+    ).toContain('已中止');
   });
 
-  it('writes a role-play packet to disk and refuses to overwrite it', async () => {
-    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
-    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
-    const out = path.join(root, 'pack');
-
-    expect(
-      await runEvidenceModelCommand([
-        'role-play',
-        FIXTURE,
-        'scenario.successful-payment',
-        '--out',
-        out,
-      ]),
-    ).toBe(0);
-    expect(
-      await readFile(path.join(out, 'facilitator.md'), 'utf8'),
-    ).toContain('Facilitator');
-
-    expect(
-      await runEvidenceModelCommand([
-        'role-play',
-        FIXTURE,
-        'scenario.successful-payment',
-        '--out',
-        out,
-      ]),
-    ).toBe(1);
-    expect(stderr.mock.calls.map(([chunk]) => String(chunk)).join('')).toContain(
-      '使用 --force',
-    );
-
-    expect(
-      await runEvidenceModelCommand([
-        'role-play',
-        FIXTURE,
-        'scenario.successful-payment',
-        '--out',
-        out,
-        '--force',
-      ]),
-    ).toBe(0);
-  });
+  it.each(['timeline', 'simulate', 'role-play'])(
+    'rejects the removed %s command',
+    async (command) => {
+      const stderr = vi
+        .spyOn(process.stderr, 'write')
+        .mockImplementation(() => true);
+      expect(
+        await runEvidenceModelCommand([
+          command,
+          FIXTURE,
+          '--out',
+          path.join(root, 'retired'),
+        ]),
+      ).toBe(2);
+      expect(
+        stderr.mock.calls.map(([chunk]) => String(chunk)).join(''),
+      ).toContain('未知命令');
+    },
+  );
 });

@@ -51,9 +51,9 @@ const RAIL_ITEMS: readonly {
     icon: Activity,
   },
   {
-    id: 'simulation',
-    label: '场景仿真',
-    hint: '逐步回放业务场景并比对 trace',
+    id: 'drift',
+    label: '生产漂移',
+    hint: '比对生产轨迹与模型',
     icon: FlaskConical,
   },
   {

@@ -182,7 +182,7 @@ describe('parseModelSourceFiles', () => {
     const parsed = parseModelSourceFiles([
       ...files,
       {
-        path: 'validation/scenarios/scenario--x.json',
+        path: 'generated/scenario--x.json',
         content: '{"type":"scenario","id":"scenario.x"}',
       },
       { path: 'entities/notes.md', content: '# notes' },
@@ -191,7 +191,7 @@ describe('parseModelSourceFiles', () => {
 
     expect(parsed.issues).toEqual([]);
     expect(canonical(parsed.document)).toEqual(canonical(model));
-    expect(MODEL_NON_SOURCE_TREES).toContain('validation');
+    expect(MODEL_NON_SOURCE_TREES).not.toContain('validation');
   });
 
   it('can run the static FM checks inline', () => {

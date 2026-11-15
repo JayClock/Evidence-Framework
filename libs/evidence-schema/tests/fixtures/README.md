@@ -3,8 +3,9 @@
 `product-procurement/` is a verbatim snapshot of the FM model source at
 `libs/evidence-api/tests/fixtures/full-lifecycle/fm` (schema v5, 商品采购协议
 full lifecycle): `model.json` plus the `entities/`, `relationships/` and
-`rules/` trees. That suite's `validation/` scenarios are intentionally excluded
-because these packages cover the model source only.
+`rules/` trees. These fixtures cover the model source only. Legacy validation
+files have been removed; executable acceptance examples live in
+`examples/acceptance/`.
 
 The tree is copied instead of referenced so that schema and model-core tests
 stay stable when the API fixture evolves.

@@ -33,7 +33,7 @@ export interface InspectSummary {
   unplayedPartyRoles: string[];
   resourceClues: InspectEntry[];
   contexts: string[];
-  scenarios: [string, unknown][];
+  testExamples: string[];
   inputFiles: Record<string, string>;
 }
 
@@ -76,7 +76,8 @@ export const inspectSummary = (index: FmIndex): InspectSummary => {
       .sort(),
     resourceClues: [...index.entities.values()]
       .filter(
-        (entity) => entity.category === 'evidence' || entity.category === 'participant',
+        (entity) =>
+          entity.category === 'evidence' || entity.category === 'participant',
       )
       .map((entity) => entryOf(entity, true))
       .sort(byId),
@@ -84,9 +85,13 @@ export const inspectSummary = (index: FmIndex): InspectSummary => {
       .filter((entity) => entity.category === 'context')
       .map((entity) => entity.id)
       .sort(),
-    scenarios: [...index.scenarios.entries()]
-      .map(([id, scenario]): [string, unknown] => [id, scenario.label])
-      .sort((left, right) => (left[0] < right[0] ? -1 : left[0] > right[0] ? 1 : 0)),
+    testExamples: [...index.entities.values()]
+      .flatMap((entity) =>
+        (entity.examples ?? [])
+          .filter((example) => example.test !== undefined)
+          .map((example) => `${entity.id}#${example.label}`),
+      )
+      .sort(),
     inputFiles: index.files,
   };
 };

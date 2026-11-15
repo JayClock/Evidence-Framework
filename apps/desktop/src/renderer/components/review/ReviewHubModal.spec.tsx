@@ -24,7 +24,6 @@ const result = (): Extract<PreviewReviewResult, { success: true }> => ({
       entities: 1,
       contracts: 1,
       rules: 0,
-      scenarios: 0,
       capabilities: 0,
     },
     validation: {
@@ -34,11 +33,8 @@ const result = (): Extract<PreviewReviewResult, { success: true }> => ({
       scopeRefs: [],
       contextRefs: [],
       gaps: [],
-      simulationLimitations: [],
-      simulation: null,
       api: null,
       runtime: false,
-      unresolvedOrderCount: 0,
     },
     delivery: null,
     layout: {

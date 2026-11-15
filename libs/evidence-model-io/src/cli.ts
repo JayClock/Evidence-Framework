@@ -1,20 +1,15 @@
 #!/usr/bin/env node
-import { existsSync, realpathSync } from 'node:fs';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { realpathSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import {
   DEFAULT_MODEL_BUNDLE_FILE,
-  RolePlayPackError,
   buildFmCheckReport,
-  buildRolePlayPack,
   compiledDocument,
-  derivedSimulation,
-  derivedTimeline,
   derivedTraceability,
   isModelBundlePath,
-  loadValidationSuite,
   stringifyModelJson,
 } from '@evidence-poc/evidence-model-core';
 
@@ -44,7 +39,7 @@ const USAGE = `Evidence 业务模型单文件打包
       只读打印清单、对象计数与文件级问题，不写任何文件。
 
   evidence-model check <模型目录> [--scope <上下文 ID>]... [--json]
-      只读执行一致性检查；带 --scope 时另核对责任范围完整性、覆盖与场景执行。
+      只读执行一致性检查；带 --scope 时另核对责任范围完整性；HTTP 验收请运行 evidence-api export-tests 的标准脚本。
       通过退出 0，发现阻塞问题退出 1。报告与桌面端、Agent 工具读的是同一份。
 
   evidence-model compile <模型目录> --out <文件> [--compact] [--sort-keys]
@@ -52,17 +47,6 @@ const USAGE = `Evidence 业务模型单文件打包
 
   evidence-model lineage <模型目录> --out <文件>
       写出属性追溯：每条 CEL 读取来自哪个 Entity Attribute。
-
-  evidence-model timeline <模型目录> --out <文件>
-      写出确定性证据时间线与依赖顺序。
-
-  evidence-model simulate <模型目录> --out <文件> [--scenario <场景 ID>]...
-      执行验证场景并写出模拟报告。
-
-  evidence-model role-play <模型目录> <场景 ID> --out <目录> [--force]
-      生成可离线使用的人工角色扮演包（空白凭证、角色卡、主持卡与审核清单）。
-
-所有 --out 命令只写指定路径；--force 才会替换已存在的目录。
 
 选项:
   --out <path>   输出路径；缺省见上面的默认值
@@ -74,10 +58,8 @@ const USAGE = `Evidence 业务模型单文件打包
 interface ParsedArguments {
   command: string | undefined;
   target: string | undefined;
-  subject: string | undefined;
   out: string | undefined;
   scopes: readonly string[];
-  force: boolean;
   compact: boolean;
   sortKeys: boolean;
   json: boolean;
@@ -88,7 +70,6 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
   const positional: string[] = [];
   let out: string | undefined;
   const scopes: string[] = [];
-  let force = false;
   let compact = false;
   let sortKeys = false;
   let json = false;
@@ -113,11 +94,6 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
 
     if (argument === '--json') {
       json = true;
-      continue;
-    }
-
-    if (argument === '--force') {
-      force = true;
       continue;
     }
 
@@ -159,10 +135,8 @@ const parseArguments = (argv: readonly string[]): ParsedArguments => {
   return {
     command: positional[0],
     target: positional[1],
-    subject: positional[2],
     out,
     scopes,
-    force,
     compact,
     sortKeys,
     json,
@@ -198,6 +172,10 @@ const runPack = async (parsed: ParsedArguments): Promise<number> => {
 
   const modelDirectory = path.resolve(target);
   const { bundle, issues } = await packModelDirectory(modelDirectory);
+  if (issues.length > 0) {
+    printIssues(issues);
+    return 1;
+  }
   const outPath =
     parsed.out === undefined
       ? defaultBundlePath(modelDirectory, bundle.manifest.id)
@@ -212,11 +190,7 @@ const runPack = async (parsed: ParsedArguments): Promise<number> => {
   );
   process.stdout.write(
     `对象: ${bundle.entities.length} 实体 / ${bundle.relationships.length} 关系 / ${bundle.rules.length} 规则` +
-      `${
-        bundle.validation === undefined
-          ? ''
-          : ` / ${bundle.validation.instances.length} 实例 / ${bundle.validation.scenarios.length} 场景`
-      }\n`,
+      `\n`,
   );
 
   if (issues.length > 0) {
@@ -296,8 +270,6 @@ const runInspect = async (parsed: ParsedArguments): Promise<number> => {
     entities: parsedModel.document.entities.length,
     relationships: parsedModel.document.relationships.length,
     rules: parsedModel.document.rules.length,
-    instances: parsedModel.document.validation?.instances.length ?? 0,
-    scenarios: parsedModel.document.validation?.scenarios.length ?? 0,
     issues: parsedModel.issues,
   };
 
@@ -311,7 +283,7 @@ const runInspect = async (parsed: ParsedArguments): Promise<number> => {
     `${summary.kind === 'bundle' ? '单文件' : '目录'} ${absolute}\n` +
       `模型: ${summary.modelName} (${summary.modelId} v${summary.modelVersion})\n` +
       `对象: ${summary.entities} 实体 / ${summary.relationships} 关系 / ${summary.rules} 规则` +
-      ` / ${summary.instances} 实例 / ${summary.scenarios} 场景\n`,
+      `\n`,
   );
 
   if (summary.issues.length > 0) {
@@ -326,30 +298,22 @@ const runInspect = async (parsed: ParsedArguments): Promise<number> => {
   return 0;
 };
 
-
-const printCheckSummary = (
-  report: {
-    valid: boolean;
-    consistent: boolean;
-    complete: boolean | null;
-    gaps: readonly string[];
-    errors: readonly string[];
-    advisories: readonly { entityId: string; message: string }[];
-    executedScenarioCount: number;
-    scenarioCount: number;
-    simulationPassed: boolean | null;
-    modelDigest: string;
-  },
-): void => {
+const printCheckSummary = (report: {
+  valid: boolean;
+  consistent: boolean;
+  complete: boolean | null;
+  gaps: readonly string[];
+  errors: readonly string[];
+  advisories: readonly { entityId: string; message: string }[];
+  testExampleCount: number;
+  modelDigest: string;
+}): void => {
   process.stdout.write(
     `一致性: ${report.consistent ? '通过' : '未通过'}` +
       (report.complete === null
         ? ''
         : ` · 范围完整性: ${report.complete ? '通过' : '未通过'}`) +
-      `\n场景: 执行 ${report.executedScenarioCount} / ${report.scenarioCount}` +
-      (report.simulationPassed === null
-        ? ''
-        : ` · ${report.simulationPassed ? '全部通过' : '存在失败'}`) +
+      `\n内联测试样例: ${report.testExampleCount}（未执行 HTTP 验收）` +
       `\n模型摘要: ${report.modelDigest}\n`,
   );
 
@@ -404,7 +368,7 @@ const runCheck = async (parsed: ParsedArguments): Promise<number> => {
     return 2;
   }
 
-  const [{ bundle, files, issues }, bytes] = await Promise.all([
+  const [{ bundle, issues }, bytes] = await Promise.all([
     readModelRoot(modelRoot),
     readModelRootBytes(modelRoot),
   ]);
@@ -418,7 +382,6 @@ const runCheck = async (parsed: ParsedArguments): Promise<number> => {
   );
   const { report } = buildFmCheckReport({
     model: bundle,
-    suite: loadValidationSuite(files),
     sourceIssues,
     modelDigest: digest,
     currentDigest: () => currentDigest,
@@ -434,7 +397,6 @@ const runCheck = async (parsed: ParsedArguments): Promise<number> => {
   return report.valid ? 0 : 1;
 };
 
-
 /** Reads a model root once, refusing the bundle a derived command cannot use. */
 const readDerivedInputs = async (
   parsed: ParsedArguments,
@@ -444,7 +406,7 @@ const readDerivedInputs = async (
   | {
       ok: true;
       modelRoot: string;
-      model: Awaited<ReturnType<typeof readModelRoot>>
+      model: Awaited<ReturnType<typeof readModelRoot>>;
     }
 > => {
   const target = parsed.target;
@@ -477,7 +439,6 @@ const ensureCheckable = (
   );
   const result = buildFmCheckReport({
     model: model.bundle,
-    suite: loadValidationSuite(model.files),
     sourceIssues,
     modelDigest: modelDigestOf([]),
   });
@@ -564,125 +525,6 @@ const runLineage = async (parsed: ParsedArguments): Promise<number> => {
   return 0;
 };
 
-const runTimeline = async (parsed: ParsedArguments): Promise<number> => {
-  const inputs = await readDerivedInputs(parsed, 'timeline');
-
-  if (!inputs.ok) {
-    return 2;
-  }
-
-  if (parsed.out === undefined) {
-    process.stderr.write('timeline 需要 --out <文件>。\n');
-
-    return 2;
-  }
-
-  const { timeline, errors } = derivedTimeline({
-    model: inputs.model.bundle,
-    suite: loadValidationSuite(inputs.model.files),
-  });
-
-  if (errors.length > 0) {
-    process.stderr.write('时间线存在问题，已中止：\n');
-
-    for (const message of errors) {
-      process.stderr.write(`- ${message}\n`);
-    }
-
-    return 1;
-  }
-
-  await writeJsonReport(parsed.out, timeline, parsed.compact, parsed.sortKeys);
-
-  return 0;
-};
-
-const runSimulate = async (parsed: ParsedArguments): Promise<number> => {
-  const inputs = await readDerivedInputs(parsed, 'simulate');
-
-  if (!inputs.ok) {
-    return 2;
-  }
-
-  if (parsed.out === undefined) {
-    process.stderr.write('simulate 需要 --out <文件>。\n');
-
-    return 2;
-  }
-
-  const suite = loadValidationSuite(inputs.model.files);
-  const { report } = derivedSimulation(
-    { model: inputs.model.bundle, suite },
-    parsed.scopes.length === 0 ? undefined : parsed.scopes,
-  );
-
-  await writeJsonReport(parsed.out, report, parsed.compact, parsed.sortKeys);
-
-  return report.simulationPassed ? 0 : 1;
-};
-
-const runRolePlay = async (parsed: ParsedArguments): Promise<number> => {
-  const scenarioId = parsed.subject;
-  const inputs = await readDerivedInputs(parsed, 'role-play');
-
-  if (!inputs.ok) {
-    return 2;
-  }
-
-  if (scenarioId === undefined || parsed.out === undefined) {
-    process.stderr.write(
-      'role-play 需要 <场景 ID> 与 --out <目录>。\n\n',
-    );
-
-    return 2;
-  }
-
-  const output = path.resolve(parsed.out);
-
-  if (existsSync(output)) {
-    if (!parsed.force) {
-      process.stderr.write(
-        `输出目录已存在：${output}；使用 --force 才会替换。\n`,
-      );
-
-      return 1;
-    }
-
-    await rm(output, { recursive: true, force: true });
-  }
-
-  let pack: ReturnType<typeof buildRolePlayPack>;
-
-  try {
-    pack = buildRolePlayPack({
-      model: inputs.model.bundle,
-      suite: loadValidationSuite(inputs.model.files),
-      scenarioId,
-    });
-  } catch (error) {
-    if (!(error instanceof RolePlayPackError)) {
-      throw error;
-    }
-
-    process.stderr.write(`${error.message}\n`);
-
-    return 1;
-  }
-
-  for (const [relative, content] of pack.files) {
-    const target = path.join(output, relative);
-
-    await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, content, 'utf8');
-  }
-
-  process.stdout.write(
-    `已生成角色扮演包 ${output}（场景 ${scenarioId}，${pack.files.size} 个文件）\n`,
-  );
-
-  return 0;
-};
-
 /** Runs one CLI invocation and returns the process exit code. */
 export const runEvidenceModelCommand = async (
   argv: readonly string[],
@@ -708,12 +550,6 @@ export const runEvidenceModelCommand = async (
       return runCompile(parsed);
     case 'lineage':
       return runLineage(parsed);
-    case 'timeline':
-      return runTimeline(parsed);
-    case 'simulate':
-      return runSimulate(parsed);
-    case 'role-play':
-      return runRolePlay(parsed);
     default:
       process.stderr.write(`未知命令 ${parsed.command}。\n\n${USAGE}`);
 

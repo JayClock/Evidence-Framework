@@ -58,7 +58,9 @@ describe('the built-in instructions', () => {
     const positions = anchors.map((anchor) => WORKFLOW_PROMPT.indexOf(anchor));
 
     expect(positions.every((position) => position >= 0)).toBe(true);
-    expect([...positions].sort((left, right) => left - right)).toEqual(positions);
+    expect([...positions].sort((left, right) => left - right)).toEqual(
+      positions,
+    );
   });
 
   it('reads a contract before it writes one', () => {
@@ -99,7 +101,7 @@ describe('the governance instructions', () => {
   });
 
   it('start from the trace instead of the workshop board', () => {
-    for (const tool of ['audit_production_drift', 'run_scenario_replay']) {
+    for (const tool of ['audit_production_drift', 'export-tests']) {
       expect(GOVERNANCE_PROMPT).toContain(tool);
     }
 
@@ -112,6 +114,9 @@ describe('the governance instructions', () => {
   it('never lets an audit rewrite the model to match a leaking service', () => {
     expect(GOVERNANCE_PROMPT).toContain('生产越权');
     expect(GOVERNANCE_PROMPT).toContain('不许改模型迁就');
-    expect(GOVERNANCE_PROMPT).toContain('没有回放结果就等于没有结论');
+    expect(GOVERNANCE_PROMPT).toContain(
+      '没有 HTTP 验收执行结果就不能声称后端符合模型',
+    );
+    expect(GOVERNANCE_PROMPT).not.toContain('run_scenario_replay');
   });
 });

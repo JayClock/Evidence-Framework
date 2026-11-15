@@ -16,7 +16,7 @@ const setup = (
       ledger: <p>台账内容</p>,
       openapi: <p>契约内容</p>,
       cel: <p>规则内容</p>,
-      simulation: <p>仿真内容</p>,
+      drift: <p>仿真内容</p>,
     },
     ...overrides,
   };

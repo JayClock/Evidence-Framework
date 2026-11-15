@@ -227,8 +227,8 @@ try {
       if(!legend || legend.tagName!=='DETAILS') throw Error('Missing collapsible illustrated legend');
       const cards=[...legend.querySelectorAll('[data-legend-kind]')];
       // The legend documents what the canvas draws: business objects plus the
-      // Context and fulfillment boundaries around them. Attributes, instances,
-      // scenarios and API objects are read in the side panel, never drawn, and
+      // Context and fulfillment boundaries around them. Attributes, rules
+      // and API objects are read in the side panel, never drawn, and
       // the fulfillment boundary is synthesized by the layout rather than read
       // from a node, so DATA.nodes alone cannot say which types are present.
       const expected=new Set();
@@ -844,7 +844,7 @@ try {
     await evaluate(
       '[...document.querySelectorAll("#tree > [data-navigation]")].map(n=>n.dataset.navigation)',
     ),
-    ['business', 'scenarios', 'api'],
+    ['business', 'api'],
   );
   assert.deepEqual(
     await evaluate(
@@ -856,7 +856,7 @@ try {
   );
   assert.ok(
     await evaluate(
-      '[...document.querySelectorAll("#tree [data-node]")].every(button=>{const n=nodes.get(button.dataset.node);const group=button.closest("[data-navigation]")?.dataset.navigation;return n.group==="scenario"?group==="scenarios":["capability","resource","journey"].includes(n.group)?group==="api":group==="business";})',
+      '[...document.querySelectorAll("#tree [data-node]")].every(button=>{const n=nodes.get(button.dataset.node);const group=button.closest("[data-navigation]")?.dataset.navigation;return ["capability","resource","journey"].includes(n.group)?group==="api":group==="business";})',
     ),
   );
   assert.deepEqual(
@@ -1173,7 +1173,7 @@ try {
   );
   assert.ok(navigationFixtures.every((f) => f.emptyApi));
   for (const fixture of navigationFixtures)
-    assert.deepEqual(fixture.sections, ['business', 'scenarios', 'api']);
+    assert.deepEqual(fixture.sections, ['business', 'api']);
   await evaluate('select("")');
   await evaluate(
     'document.querySelectorAll("#tree details").forEach(d=>d.open=["business","api"].includes(d.dataset.navigation)); document.getElementById("tree").scrollTo(0,0)',

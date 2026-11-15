@@ -19,7 +19,6 @@ describe('useReviewExport', () => {
           contracts: 2,
           entities: 28,
           rules: 8,
-          scenarios: 1,
           capabilities: 13,
         },
       },

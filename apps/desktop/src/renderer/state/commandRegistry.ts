@@ -35,7 +35,7 @@ export type CommandCategory =
   | 'view'
   | 'navigation'
   | 'delivery'
-  | 'simulation'
+  | 'drift'
   | 'diagnostics'
   | 'agent';
 
@@ -64,7 +64,7 @@ export const COMMAND_GROUPS: readonly {
   { id: 'view', label: '视图' },
   { id: 'navigation', label: '导航' },
   { id: 'delivery', label: '交付与评审' },
-  { id: 'simulation', label: '验证与仿真' },
+  { id: 'drift', label: '生产漂移' },
   { id: 'diagnostics', label: '门禁与诊断' },
   { id: 'agent', label: '智能协同' },
 ];
@@ -85,7 +85,7 @@ export const CHORDS = {
   // The rail owns the bare digits; the three view modes sit one modifier out.
   railTopology: '⌘+1',
   railDiagnostics: '⌘+2',
-  railSimulation: '⌘+3',
+  railDrift: '⌘+3',
   railCopilot: '⌘+4',
   graph: '⌥+1',
   table: '⌥+2',
@@ -331,13 +331,13 @@ export const buildCommands = (
       perform: handlers.openDelivery,
     },
     {
-      id: 'simulation.sandbox',
-      title: '运行场景实例仿真',
-      subtitle: '逐步回放业务场景并比对 trace',
-      category: 'simulation',
+      id: 'drift.sandbox',
+      title: '比对生产漂移',
+      subtitle: '用导出的 OTLP trace 比对模型',
+      category: 'drift',
       shortcut: CHORDS.sandbox,
       icon: FlaskConical,
-      keywords: ['sandbox', 'simulation', 'scenario', '沙盒'],
+      keywords: ['drift', 'trace', '漂移'],
       perform: handlers.openSandbox,
     },
     {

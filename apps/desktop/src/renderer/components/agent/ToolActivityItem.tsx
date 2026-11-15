@@ -23,7 +23,6 @@ export const TOOL_TITLES: Record<string, string> = {
   roleify_and_invert_dependency: '反转依赖并隔离变化点',
   get_delivery_topology: '读取交付拓扑',
   export_openapi_contract: '导出 OpenAPI 契约',
-  run_scenario_replay: '回放业务场景',
   audit_production_drift: '比对生产轨迹与模型',
   run_stage_gate: '执行阶段门禁',
   run_sensors: '运行检查器',

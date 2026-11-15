@@ -216,6 +216,15 @@ const readDocument = (
     return undefined;
   }
 
+  if (Object.hasOwn(input, 'validation')) {
+    pushIssue(
+      issues,
+      'document.shape',
+      '$.validation',
+      'Legacy validation scenarios/instances are no longer supported; use entity examples[].test.',
+    );
+  }
+
   const manifest = input['manifest'];
   const entities = input['entities'];
   const relationships = input['relationships'];

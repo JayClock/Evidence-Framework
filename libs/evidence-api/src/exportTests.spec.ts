@@ -114,6 +114,20 @@ describe('export-tests CLI', () => {
     expect((await runCli(args())).exitCode).toBe(1);
     expect(readdirSync(root)).toEqual(['model.evidence.json']);
   });
+  it('refuses legacy test envelopes and leaves the exported suite untouched', async () => {
+    await runCli(args());
+    const file = path.join(out, 'acceptance.stepci.yml');
+    const before = readFileSync(file, 'utf8');
+    const legacy = {
+      ...JSON.parse(serializeModelBundle(createAcceptanceModel())),
+      validation: { instances: [], scenarios: [] },
+    };
+    writeFileSync(fm, JSON.stringify(legacy));
+    const result = await runCli(args());
+    expect(result.exitCode).toBe(1);
+    expect(JSON.stringify(result.output)).toContain('no longer supported');
+    expect(readFileSync(file, 'utf8')).toBe(before);
+  });
   it('documents the command through help', async () => {
     const result = await runCli(['export-tests', '--help']);
     expect(result.exitCode).toBe(0);

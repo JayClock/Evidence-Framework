@@ -19,10 +19,9 @@ import {
   type EvidenceDesktopApi,
 } from '../shared/ipc';
 import {
-  EVIDENCE_SIMULATION_IPC_CHANNELS,
+  EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
-  type ReplayRequest,
-} from '../shared/simulation';
+} from '../shared/drift';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
@@ -174,13 +173,11 @@ const api: EvidenceDesktopApi = {
       };
     },
   },
-  simulation: {
-    replay: (input: ReplayRequest) =>
-      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.replay, input),
+  drift: {
     drift: (input: DriftRequest) =>
-      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.drift, input),
+      ipcRenderer.invoke(EVIDENCE_DRIFT_IPC_CHANNELS.drift, input),
     pickTrace: () =>
-      ipcRenderer.invoke(EVIDENCE_SIMULATION_IPC_CHANNELS.traceDialog),
+      ipcRenderer.invoke(EVIDENCE_DRIFT_IPC_CHANNELS.traceDialog),
   },
   ingestion: {
     draft: (input) =>

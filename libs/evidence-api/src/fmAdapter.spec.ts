@@ -7,7 +7,6 @@ import { vi } from 'vitest';
 
 import {
   buildFmCheckReport,
-  loadValidationSuite,
   serializeModelBundle,
 } from '@evidence-poc/evidence-model-core';
 import {
@@ -24,6 +23,7 @@ import {
   partyRolesPlayedByParticipants,
 } from './adapter/fmAdapter.js';
 import { inspectSummary } from './inspect.js';
+import { createAcceptanceModel } from '../tests/support/acceptance.js';
 
 const fmRoot = fileURLToPath(
   new URL('../tests/fixtures/full-lifecycle/fm', import.meta.url),
@@ -31,11 +31,10 @@ const fmRoot = fileURLToPath(
 
 /** The check report the FM stage would have handed over. */
 const checkReportOf = async (root: string) => {
-  const { bundle, files, issues } = await readModelRoot(root);
+  const { bundle, issues } = await readModelRoot(root);
   const bytes = await readModelRootBytes(root);
   const { report } = buildFmCheckReport({
     model: bundle,
-    suite: loadValidationSuite(files),
     sourceIssues: issues.map((issue) => `${issue.path}: ${issue.message}`),
     modelDigest: modelDigestOf(
       bytes.map((file) => ({ path: file.path, content: file.bytes })),
@@ -56,7 +55,7 @@ describe('digestBytes', () => {
 
 describe('checkReportProblem', () => {
   const ready = {
-    checkVersion: 5,
+    checkVersion: 6,
     consistent: true,
     complete: true,
     valid: true,
@@ -89,7 +88,7 @@ describe('checkReportProblem', () => {
 });
 
 describe('loadFm', () => {
-  it('indexes the checked model and its validation inputs', async () => {
+  it('indexes the checked model and its inline examples', async () => {
     const check = await checkReportOf(fmRoot);
     const { index, diagnostics } = await loadFm(fmRoot, check);
 
@@ -98,9 +97,11 @@ describe('loadFm', () => {
     expect([...(index?.entities.keys() ?? [])][0]).toBe(
       [...(index?.entities.keys() ?? [])].sort()[0],
     );
-    expect(index?.scenarios.size).toBeGreaterThan(0);
-    expect(index?.instances.size).toBeGreaterThan(0);
-    expect(Object.keys(index?.files ?? {}).length).toBe(77);
+    expect(
+      Object.keys(index?.files ?? {}).some((file) =>
+        file.startsWith('validation/'),
+      ),
+    ).toBe(false);
   });
 
   it('keeps the current model when its saved report is stale', async () => {
@@ -137,15 +138,13 @@ describe('loadFm', () => {
 });
 
 describe('loadFmFromDocument', () => {
-  it('indexes an in-memory document and its inline validation suite without a fake check', async () => {
+  it('indexes an in-memory document and its inline examples without a fake check', async () => {
     const { bundle } = await readModelRoot(fmRoot);
     const original = JSON.stringify(bundle);
     const { index, diagnostics } = loadFmFromDocument(bundle);
     expect(diagnostics).toEqual([]);
     expect(index?.check).toBeNull();
     expect(index?.entities.size).toBe(bundle.entities.length);
-    expect(index?.scenarios.size).toBeGreaterThan(0);
-    expect(index?.instances.size).toBeGreaterThan(0);
     expect(index?.modelDigest).toMatch(/^sha256:[a-f0-9]{64}$/);
     expect(loadFmFromDocument(bundle).index?.modelDigest).toBe(
       index?.modelDigest,
@@ -160,19 +159,28 @@ describe('loadFmFromDocument', () => {
     );
   });
 
-  it('pins indexed inputs and fingerprints inline scenario edits', async () => {
+  it('pins indexed inputs and fingerprints inline example edits', async () => {
     const { bundle } = await readModelRoot(fmRoot);
     const loaded = loadFmFromDocument(bundle).index!;
     const originalName = loaded.document.manifest.name;
     bundle.manifest.name = 'Later edit';
     expect(loaded.document.manifest.name).toBe(originalName);
     const next = structuredClone(bundle);
-    next.validation!.scenarios[0]!['label'] = 'Updated scenario';
+    next.entities[0]!.examples = [{ label: 'Updated example', value: {} }];
     expect(loadFmFromDocument(next).index?.modelDigest).not.toBe(
       loadFmFromDocument(bundle).index?.modelDigest,
     );
   });
 
+  it('refuses the retired envelope instead of dropping private test inputs', () => {
+    const result = loadFmFromDocument(
+      Object.assign(createAcceptanceModel(), {
+        validation: { instances: [], scenarios: [] },
+      }),
+    );
+    expect(result.index).toBeNull();
+    expect(result.diagnostics[0]?.code).toBe('FM_INVALID');
+  });
   it('reads directories and bundles without a check report', async () => {
     const directory = mkdtempSync(path.join(tmpdir(), 'api-input-'));
     try {
@@ -184,7 +192,7 @@ describe('loadFmFromDocument', () => {
       expect(tree.diagnostics).toEqual([]);
       expect(packed.diagnostics).toEqual([]);
       expect(packed.index?.compiled).toEqual(tree.index?.compiled);
-      expect(packed.index?.scenarios).toEqual(tree.index?.scenarios);
+      expect(packed.index).not.toHaveProperty('scenarios');
       expect(packed.index?.check).toBeNull();
       writeFileSync(file, '{');
       expect((await loadFm(file)).index).toBeNull();
@@ -254,8 +262,6 @@ describe('inspectSummary', () => {
     });
     // Roles print without a category: the list is already only roles.
     expect(summary.roles[0]).not.toHaveProperty('category');
-    expect(summary.scenarios.map(([id]) => id)).toEqual([
-      'scenario.product-procurement',
-    ]);
+    expect(summary.testExamples).toEqual([]);
   });
 });

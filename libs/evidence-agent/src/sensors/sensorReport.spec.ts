@@ -15,7 +15,6 @@ describe('fmCheckIssues', () => {
       valid: false,
       errors: ['request.payment: 缺少确认端'],
       gaps: ['global pursuit is not closed'],
-      executedScenarioCount: 2,
     });
 
     expect(issues.map(({ severity, code }) => ({ severity, code }))).toEqual([
@@ -25,18 +24,16 @@ describe('fmCheckIssues', () => {
     expect(issues[0]?.suggestion).toContain('重新运行一致性检查');
   });
 
-  it('reports stale evidence and an empty scenario set at their own severity', () => {
+  it('reports stale model evidence without inventing simulation findings', () => {
     const issues = fmCheckIssues({
       valid: true,
       errors: [],
       gaps: [],
       inputChanged: true,
-      executedScenarioCount: 0,
     });
 
     expect(issues.map(({ severity, code }) => `${severity}:${code}`)).toEqual([
       'warn:FM_INPUT_CHANGED',
-      'info:FM_NO_SCENARIO',
     ]);
   });
 
@@ -46,7 +43,6 @@ describe('fmCheckIssues', () => {
         valid: true,
         errors: [],
         gaps: [],
-        executedScenarioCount: 3,
       }),
     ).toEqual([]);
   });
@@ -56,7 +52,6 @@ describe('fmCheckIssues', () => {
       valid: true,
       errors: [],
       gaps: [],
-      executedScenarioCount: 3,
       advisories: [
         {
           code: 'ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC',
@@ -124,7 +119,7 @@ describe('keyDataSummaryOf', () => {
 describe('buildSensorReport', () => {
   it('keeps a model with owed decisions consistent but gates it shut', () => {
     const report = buildSensorReport({
-      fmCheck: { valid: true, errors: [], gaps: [], executedScenarioCount: 1 },
+      fmCheck: { valid: true, errors: [], gaps: [] },
       keyData: {
         keyDataCount: 10,
         needsDecision: [{ path: 'request.payment#expired_at' }],
@@ -173,7 +168,7 @@ describe('buildSensorReport', () => {
 describe('finalizeSensorReport', () => {
   it('recounts severities and de-duplicates identical findings', () => {
     const base = buildSensorReport({
-      fmCheck: { valid: true, errors: [], gaps: [], executedScenarioCount: 1 },
+      fmCheck: { valid: true, errors: [], gaps: [] },
     });
     const report = finalizeSensorReport({
       issues: [
@@ -229,7 +224,7 @@ describe('stageGateSummaryOf', () => {
 });
 
 describe('driftIssues', () => {
-  it('keeps the audit\'s severity and points at the evidence it names', () => {
+  it("keeps the audit's severity and points at the evidence it names", () => {
     const issues = driftIssues({
       findings: [
         {
@@ -264,7 +259,9 @@ describe('driftIssues', () => {
   });
 
   it('reports a trace it could not read instead of an empty clean audit', () => {
-    const issues = driftIssues({ errors: ['trace/resourceSpans: must be an array'] });
+    const issues = driftIssues({
+      errors: ['trace/resourceSpans: must be an array'],
+    });
 
     expect(issues).toHaveLength(1);
     expect(issues[0]).toMatchObject({

@@ -18,7 +18,6 @@ interface TreeGroup {
   label: string;
   depth: number;
   nodeIds: readonly string[];
-  scenarioCount: number;
 }
 
 /**
@@ -46,10 +45,22 @@ export const TopologyDrawer = ({
           label: group.entity.label,
           depth: group.depth,
           nodeIds: group.nodeIds,
-          scenarioCount: 0,
         }))
         .sort((left, right) => left.depth - right.depth),
     [layout.contextGroups],
+  );
+  const testExamples = useMemo(
+    () =>
+      graph.entities().flatMap((entity) =>
+        (entity.examples ?? [])
+          .filter((example) => example.test !== undefined)
+          .map((example) => ({
+            ref: `${entity.id}#${example.label}`,
+            entityId: entity.id,
+            label: `${entity.label} · ${example.label}`,
+          })),
+      ),
+    [graph],
   );
   const matches = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -200,10 +211,22 @@ export const TopologyDrawer = ({
             ) : null}
 
             <p className="mt-3 px-2 py-1 text-[10px] tracking-wide text-evidence-muted uppercase">
-              验证场景
+              验收样例 · {testExamples.length}
             </p>
+            {testExamples.map((example) => (
+              <button
+                key={example.ref}
+                type="button"
+                onClick={() => onFocusNode(example.entityId)}
+                className="block w-full truncate px-2 py-1 text-left text-[11px] text-evidence-ink"
+              >
+                {example.label}
+              </button>
+            ))}
             <p className="px-2 text-[11px] text-evidence-muted">
-              尚无验证场景。
+              {testExamples.length === 0
+                ? '在实体 examples[].test 中声明验收样例。'
+                : '使用 export-tests 导出 Step CI / Hurl；此处不执行 HTTP 验收。'}
             </p>
           </>
         )}

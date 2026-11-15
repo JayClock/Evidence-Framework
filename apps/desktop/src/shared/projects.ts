@@ -77,7 +77,6 @@ export interface ReviewPageCounts {
   contracts: number;
   entities: number;
   rules: number;
-  scenarios: number;
   capabilities: number;
 }
 

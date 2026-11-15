@@ -234,7 +234,6 @@ describe('EditorScreen', () => {
           contracts: 1,
           entities: 8,
           rules: 2,
-          scenarios: 1,
           capabilities: 0,
         },
       },

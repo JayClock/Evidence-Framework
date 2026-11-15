@@ -33,7 +33,7 @@ import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
 import { SecondaryStage } from '../components/split/SecondaryStage';
-import { SimulationSandbox } from '../components/simulation/SimulationSandbox';
+import { DriftRadar } from '../components/drift/DriftRadar';
 import { DeliveryHub } from '../components/delivery/DeliveryHub';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
@@ -160,7 +160,7 @@ interface EditorWorkspaceProps {
 const RAIL_TITLES: Record<RailTabId, string> = {
   topology: '业务结构',
   diagnostics: '门禁与诊断',
-  simulation: '场景仿真',
+  drift: '生产漂移',
   copilot: 'AI 协同',
 };
 
@@ -504,7 +504,7 @@ const EditorWorkspace = ({
       exportReview: () => void reviewExport.exportPage(),
       exportDiff: () => void reviewExport.exportPage(true),
       openDelivery: () => layout.openHub('delivery'),
-      openSandbox: () => layout.openHub('simulation'),
+      openSandbox: () => layout.openHub('drift'),
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
         layout.setActiveRailTab('copilot');
@@ -565,7 +565,7 @@ const EditorWorkspace = ({
       exportReview: () => void reviewExport.exportPage(),
       rerunSensors: () => void sensors.refresh(),
       openDelivery: () => layout.openHub('delivery'),
-      openSandbox: () => layout.openHub('simulation'),
+      openSandbox: () => layout.openHub('drift'),
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -730,12 +730,11 @@ const EditorWorkspace = ({
           />
         ),
         cel: <CelRulesPane document={state.document} />,
-        simulation: (
-          <SimulationSandbox
+        drift: (
+          <DriftRadar
             embedded
             rootPath={project.rootPath}
             onClose={split.closeSplit}
-            onFocusEntity={focusNode}
           />
         ),
       }}
@@ -870,12 +869,11 @@ const EditorWorkspace = ({
                   />
                 ) : null}
 
-                {layout.activeRailTab === 'simulation' ? (
-                  <SimulationSandbox
+                {layout.activeRailTab === 'drift' ? (
+                  <DriftRadar
                     embedded
                     rootPath={project.rootPath}
                     onClose={() => layout.setActiveRailTab(null)}
-                    onFocusEntity={focusNode}
                   />
                 ) : null}
 
@@ -885,7 +883,6 @@ const EditorWorkspace = ({
                     patchReview={patchReview}
                     focus={promptFocus}
                     onClearFocus={() => state.session.clearSelection()}
-                    onFocusEntity={focusNode}
                     focusToken={agentFocusToken}
                     prefill={reviewPrompt}
                     onPrefillConsumed={() => setReviewPrompt(null)}
@@ -971,12 +968,8 @@ const EditorWorkspace = ({
           />
         ) : null}
 
-        {layout.activeHub === 'simulation' ? (
-          <SimulationSandbox
-            rootPath={project.rootPath}
-            onClose={layout.closeHub}
-            onFocusEntity={focusNode}
-          />
+        {layout.activeHub === 'drift' ? (
+          <DriftRadar rootPath={project.rootPath} onClose={layout.closeHub} />
         ) : null}
 
         {layout.activeHub === 'review' && reviewInput !== null ? (

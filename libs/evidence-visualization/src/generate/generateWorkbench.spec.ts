@@ -19,7 +19,7 @@ import { WORKBENCH_MARKER } from '../render/workbenchRenderer.js';
 
 /**
  * The verified fixture the rest of the workspace checks against: a subscription
- * model with instances, three scenarios and a passing check.
+ * model with a passing static check (not a backend acceptance result).
  */
 const FIXTURE = fileURLToPath(
   new URL(
@@ -143,7 +143,7 @@ describe('workbenchFingerprint', () => {
 });
 
 describe('collectWorkbench', () => {
-  it('projects a checked model with its scenarios', async () => {
+  it('projects a checked model without retired simulation data', async () => {
     await withProject(async (root) => {
       const { data, check } = await collectWorkbench({
         projectRoot: root,
@@ -153,12 +153,14 @@ describe('collectWorkbench', () => {
 
       expect(check.valid).toBe(true);
       expect(data.title).toBe('可追溯内容订阅履约模型');
-      expect(data.counts).toMatchObject({ contracts: 1, scenarios: 3 });
+      expect(data.counts).toMatchObject({ contracts: 1 });
       expect(data.validation.complete).toBe(true);
-      expect(data.validation.simulation).toBe(true);
+      expect(data.validation).not.toHaveProperty('simulation');
       expect(
-        data.nodes.filter((node) => node.group === 'scenario'),
-      ).toHaveLength(3);
+        data.nodes.filter((node) =>
+          ['scenario', 'instance'].includes(node.group),
+        ),
+      ).toHaveLength(0);
       expect(data.generatedAt).toBe('2026-11-12T00:00:00.000Z');
     });
   });

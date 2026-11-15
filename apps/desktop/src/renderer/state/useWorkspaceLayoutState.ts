@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 export const RAIL_TABS = [
   'topology',
   'diagnostics',
-  'simulation',
+  'drift',
   'copilot',
 ] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
 
 /** Large surfaces that cover the workspace instead of sharing its width. */
-export type HubSurface = 'delivery' | 'simulation' | 'review';
+export type HubSurface = 'delivery' | 'drift' | 'review';
 
 export interface WorkspaceLayoutState {
   /** Open drawer; null leaves the rail as the only rail-width chrome. */
@@ -21,7 +21,7 @@ export interface WorkspaceLayoutState {
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
   readonly isInlineCopilotOpen: boolean;
-  /** Blocking hub (delivery, simulation, review), or null. */
+  /** Blocking hub (delivery, drift, review), or null. */
   readonly activeHub: HubSurface | null;
 }
 
@@ -51,7 +51,7 @@ export type WorkspaceLayoutController = WorkspaceLayoutState &
 export const RAIL_TAB_CHORDS: Record<RailTabId, string> = {
   topology: '⌘+1',
   diagnostics: '⌘+2',
-  simulation: '⌘+3',
+  drift: '⌘+3',
   copilot: '⌘+4',
 };
 

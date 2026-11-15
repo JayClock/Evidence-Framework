@@ -102,7 +102,6 @@ export interface FmCheckReport {
   errors?: readonly string[];
   gaps?: readonly string[];
   scopeRefs?: readonly string[];
-  executedScenarioCount?: number;
   /** Non-blocking modelling advice the check already computed. */
   advisories?: readonly {
     code: string;
@@ -208,7 +207,8 @@ export const fmCheckIssues = (report: FmCheckReport): SensorIssue[] => {
   for (const message of report.gaps ?? []) {
     issues.push(
       issue('check_fm', 'warn', 'FM_SCOPE_GAP', message, {
-        suggestion: '补齐责任闭环或补充验证场景后再交给下游。',
+        suggestion:
+          '补齐责任闭环后再交给下游；HTTP 验收使用内联样例导出的标准脚本。',
       }),
     );
   }
@@ -223,17 +223,6 @@ export const fmCheckIssues = (report: FmCheckReport): SensorIssue[] => {
         {
           suggestion: '重新运行一致性检查。',
         },
-      ),
-    );
-  }
-
-  if (report.executedScenarioCount === 0) {
-    issues.push(
-      issue(
-        'check_fm',
-        'info',
-        'FM_NO_SCENARIO',
-        '当前范围没有可执行的验证场景。',
       ),
     );
   }

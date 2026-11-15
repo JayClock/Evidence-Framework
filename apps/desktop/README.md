@@ -33,7 +33,7 @@ either: an opened folder only has to hold its `.evidence/` sources.
   the turn loop). They are appended to Pi's prompt, and the session asks for
   `noSkills: true`, so no working copy is scanned for `SKILL.md` and the model is
   never invited to go looking for one.
-- Every sensor — consistency, key data, timeline, scenarios and the stage gate —
+- Every sensor — consistency, key data and the stage gate —
   is TypeScript. `@evidence-poc/evidence-agent` reads the model once per run
   and decides from that one read.
 - `build` and `make` first run `scripts/prepare-desktop-resources.mjs`

@@ -171,42 +171,13 @@ export {
 } from './adapters/modelSourceFiles.js';
 
 export {
-  comparableValue,
-  indexSuite,
-  loadValidationSuite,
-  validateValidationSuite,
-  validationSuiteFromBundle,
-  validationSuiteFromFiles,
-  type EvaluationBinding,
-  type EvidenceInstance,
-  type FulfillmentStatus,
-  type FulfillmentStatusExpectation,
-  type Scenario,
-  type ScenarioEvaluation,
-  type ScenarioExpectations,
-  type ScenarioStep,
-  type ValidationSuite,
-} from './validation/validationSuite.js';
-
-export {
   isTimestampText,
   jsonValuesEqual,
   normalizeJsonValue,
   validateTypedValue,
 } from './validation/typedValues.js';
 
-export {
-  buildTimeline,
-  digestOf,
-  timelineSummary,
-  type EvidenceTimeline,
-  type TimelineDependency,
-  type TimelineEvidenceType,
-  type TimelineInstance,
-  type TimelineSummary,
-  type TimelineTime,
-  type TimelineUnresolvedOrder,
-} from './validation/timeline.js';
+export { digestOf } from './validation/modelDigest.js';
 
 export {
   compiledDocument,
@@ -223,33 +194,8 @@ export {
   fulfillmentResults,
   pairingGaps,
   referencesOf,
-  scopeSuite,
   selectScope,
-  simulationRules,
 } from './validation/scope.js';
-
-export {
-  replayScenario,
-  replayValidationSuite,
-  replayableScenarioIds,
-  type ReplayCheckpoint,
-  type ReplayDerivation,
-  type ReplayFulfillmentState,
-  type ReplayOpening,
-  type ReplayReport,
-  type ReplayStep,
-  type ScenarioReplay,
-} from './validation/replay.js';
-
-export {
-  simulateScenario,
-  simulateValidationSuite,
-  type ScenarioResult,
-  type SimulationEvaluationResult,
-  type SimulationInstanceValues,
-  type SimulationReport,
-  type SimulationStatusResult,
-} from './validation/simulation.js';
 
 export {
   analyzeTraceability,
@@ -268,7 +214,6 @@ export {
   type FmCheckOutcome,
   type FmCheckReport,
   type FmCheckRequest,
-  type FmCheckScenarioResultLine,
 } from './validation/fmCheck.js';
 
 export {
@@ -277,31 +222,13 @@ export {
   type ModelAdvisoryCode,
 } from './validation/lintRules.js';
 
-export {
-  derivedSimulation,
-  derivedTimeline,
-  derivedTraceability,
-  type DerivedInputs,
-} from './derive/derivedDocuments.js';
-
-export {
-  RolePlayPackError,
-  buildRolePlayPack,
-  type RolePlayPack,
-} from './derive/rolePlayPack.js';
-
-export {
-  emptyTimelineCollections,
-  type TimelineCollections,
-} from './validation/timeline.js';
+export { derivedTraceability } from './derive/derivedDocuments.js';
 
 export {
   DEFAULT_MODEL_BUNDLE_FILE,
   MODEL_BUNDLE_EXTENSION,
   MODEL_BUNDLE_TYPE,
   MODEL_README_PATH,
-  VALIDATION_INSTANCE_TREE,
-  VALIDATION_SCENARIO_TREE,
   createEmptyModelBundle,
   isModelBundlePath,
   isModelBundleShape,
@@ -311,7 +238,6 @@ export {
   serializeModelBundle,
   type DomainModelBundle,
   type ModelBundleParseResult,
-  type ModelBundleValidation,
   type PackResult,
   type SerializeBundleOptions,
 } from './adapters/modelBundle.js';

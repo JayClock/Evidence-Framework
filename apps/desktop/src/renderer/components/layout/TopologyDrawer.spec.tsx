@@ -7,8 +7,8 @@ import { createGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { TopologyDrawer } from './TopologyDrawer';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
-const setup = () => {
-  const graph = createDomainGraph(createDesktopFixture());
+const setup = (document = createDesktopFixture()) => {
+  const graph = createDomainGraph(document);
   const layout = createGraphLayout(graph);
   const onFocusNode = vi.fn();
   const onSearchTermChange = vi.fn();
@@ -121,10 +121,40 @@ describe('TopologyDrawer', () => {
     expect(screen.getByText('没有匹配的业务对象。')).toBeInTheDocument();
   });
 
-  it('keeps verification scenarios empty until scenarios are modeled', () => {
+  it('does not advertise retired scenarios or claim to execute backend acceptance', () => {
     setup();
-
-    expect(screen.getByText('验证场景')).toBeInTheDocument();
-    expect(screen.getByText('尚无验证场景。')).toBeInTheDocument();
+    expect(screen.getByText('验收样例 · 0')).toBeInTheDocument();
+    expect(
+      screen.getByText('在实体 examples[].test 中声明验收样例。'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('验证场景')).toBeNull();
+  });
+  it('lists executable inline examples and focuses their owning entity', () => {
+    const document = createDesktopFixture();
+    const entity = document.entities.find(
+      (entity) => entity.id === 'evidence.request',
+    )!;
+    entity.examples = [
+      {
+        label: '正常交付',
+        value: {},
+        test: {
+          flow: 'delivery',
+          actingRoleRef: 'role.buyer',
+          asOf: '2026-03-31T10:00:00Z',
+        },
+      },
+      { label: '只作文档', value: {} },
+    ];
+    const { onFocusNode } = setup(document);
+    expect(screen.getByText('验收样例 · 1')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '交付请求（Delivery Request） · 正常交付',
+      }),
+    );
+    expect(onFocusNode).toHaveBeenCalledWith('evidence.request');
+    expect(screen.queryByText(/只作文档/)).toBeNull();
+    expect(screen.getByText(/此处不执行 HTTP 验收/)).toBeInTheDocument();
   });
 });

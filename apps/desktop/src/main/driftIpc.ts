@@ -3,27 +3,26 @@ import path from 'node:path';
 
 import { dialog, ipcMain } from 'electron';
 
-import type { McpDriftAudit, McpScenarioReplay } from '@evidence-poc/evidence-mcp';
+import type { McpDriftAudit } from '@evidence-poc/evidence-mcp';
 
 import {
-  EVIDENCE_SIMULATION_IPC_CHANNELS,
+  EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
-  type ReplayRequest,
   type TraceDialogResult,
-} from '../shared/simulation';
+} from '../shared/drift';
 
-import type { SimulationService } from './mcpSimulationService';
+import type { DriftService } from './mcpDriftService';
 
 /**
- * The desktop half of the simulation sandbox and the drift radar.
+ * The desktop half of the production drift radar.
  *
- * Both answer from the saved sources in the main process: the renderer has no
+ * Answers from the saved sources in the main process: the renderer has no
  * filesystem, and an audit of a trace belongs against what was deployed rather
  * than against unsaved canvas edits.
  */
 
-export interface SimulationIpcOptions {
-  service?: SimulationService;
+export interface DriftIpcOptions {
+  service?: DriftService;
   /** Injected by a test that must not open a dialog. */
   showOpenDialog?: () => Promise<{ canceled: boolean; filePath?: string }>;
   /** Injected by a test that must not read the filesystem. */
@@ -40,19 +39,19 @@ const parseTrace = (text: string): unknown => {
   }
 };
 
-export const registerSimulationIpc = ({
+export const registerDriftIpc = ({
   service,
   showOpenDialog,
   readFile: read,
-}: SimulationIpcOptions = {}) => {
-  const resolve = async (): Promise<SimulationService> => {
+}: DriftIpcOptions = {}) => {
+  const resolve = async (): Promise<DriftService> => {
     if (service !== undefined) {
       return service;
     }
 
-    const { createSimulationService } = await import('./mcpSimulationService');
+    const { createDriftService } = await import('./mcpDriftService');
 
-    return createSimulationService();
+    return createDriftService();
   };
 
   const pickTrace = async (): Promise<TraceDialogResult> => {
@@ -76,18 +75,7 @@ export const registerSimulationIpc = ({
   };
 
   ipcMain.handle(
-    EVIDENCE_SIMULATION_IPC_CHANNELS.replay,
-    async (_event, input: ReplayRequest): Promise<McpScenarioReplay> =>
-      (await resolve()).replay({
-        rootPath: input.rootPath,
-        ...(input.scenarioId === undefined
-          ? {}
-          : { scenarioId: input.scenarioId }),
-      }),
-  );
-
-  ipcMain.handle(
-    EVIDENCE_SIMULATION_IPC_CHANNELS.drift,
+    EVIDENCE_DRIFT_IPC_CHANNELS.drift,
     async (_event, input: DriftRequest): Promise<McpDriftAudit> => {
       const text =
         read === undefined
@@ -102,13 +90,13 @@ export const registerSimulationIpc = ({
   );
 
   ipcMain.handle(
-    EVIDENCE_SIMULATION_IPC_CHANNELS.traceDialog,
+    EVIDENCE_DRIFT_IPC_CHANNELS.traceDialog,
     async (): Promise<TraceDialogResult> => pickTrace(),
   );
 
   return {
     dispose: (): void => {
-      for (const channel of Object.values(EVIDENCE_SIMULATION_IPC_CHANNELS)) {
+      for (const channel of Object.values(EVIDENCE_DRIFT_IPC_CHANNELS)) {
         ipcMain.removeHandler(channel);
       }
     },
@@ -117,4 +105,4 @@ export const registerSimulationIpc = ({
   };
 };
 
-export type SimulationIpc = ReturnType<typeof registerSimulationIpc>;
+export type DriftIpc = ReturnType<typeof registerDriftIpc>;

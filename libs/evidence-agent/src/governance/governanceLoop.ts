@@ -17,9 +17,9 @@ export interface GovernanceDrift {
   contextRef?: string | null;
 }
 
-/** What the replay of the model's own scenarios reported. */
-export interface GovernanceSimulation {
-  scenarioCount: number;
+/** Summary of an externally executed Step CI/Hurl acceptance run. */
+export interface GovernanceAcceptance {
+  testCount: number;
   passedCount: number;
   errors?: readonly string[];
 }
@@ -35,7 +35,7 @@ export type GovernanceActionKind =
   | 'close_compensation_gap'
   | 'move_write_to_owner'
   | 'raise_blocking_ticket'
-  | 'repair_model';
+  | 'repair_implementation';
 
 /** One thing the next turn may do, and the tool that would do it. */
 export interface GovernanceAction {
@@ -52,7 +52,7 @@ export interface GovernanceDecision {
   /** One line per signal group, so a reader can see why the verdict was chosen. */
   rationale: readonly string[];
   actions: readonly GovernanceAction[];
-  /** True only when the model may be edited: no blocking drift and a green replay. */
+  /** True only when the model may be edited: no blocking drift and a green acceptance run. */
   canPatchModel: boolean;
 }
 
@@ -129,22 +129,22 @@ const VERDICT_OF_ACTION: Readonly<
   close_compensation_gap: 'model_lagging',
   move_write_to_owner: 'production_overreach',
   raise_blocking_ticket: 'production_overreach',
-  repair_model: 'needs_repair',
+  repair_implementation: 'needs_repair',
 };
 
 /**
  * Turns the sensors into one verdict and the actions it licenses.
  *
- * A failing replay closes the patch path even when the drift is adoptable: the
+ * A failing acceptance run closes the patch path even when the drift is adoptable: the
  * model has to be green before it may absorb a production change, or the
  * repair would be built on a broken baseline.
  */
 export const decideGovernance = ({
   drift,
-  simulation,
+  acceptance,
 }: {
   drift: readonly GovernanceDrift[];
-  simulation?: GovernanceSimulation;
+  acceptance?: GovernanceAcceptance;
 }): GovernanceDecision => {
   const rationale: string[] = [];
   const actions = drift.map(actionFor);
@@ -160,23 +160,28 @@ export const decideGovernance = ({
   }
 
   const blocking = drift.filter((item) => item.severity === 'block');
-  const replayFailed =
-    simulation !== undefined && simulation.passedCount < simulation.scenarioCount;
+  const acceptanceFailed =
+    acceptance !== undefined &&
+    (!Number.isInteger(acceptance.testCount) ||
+      !Number.isInteger(acceptance.passedCount) ||
+      acceptance.testCount < 1 ||
+      acceptance.passedCount !== acceptance.testCount ||
+      (acceptance.errors?.length ?? 0) > 0);
 
-  if (simulation === undefined) {
-    rationale.push('没有回放结果：本轮不确认模型仍然成立。');
+  if (acceptance === undefined) {
+    rationale.push('没有 HTTP 验收结果：本轮不确认实现符合模型。');
   } else {
     rationale.push(
-      `${simulation.passedCount}/${simulation.scenarioCount} 个场景通过回放。`,
+      `${acceptance.passedCount}/${acceptance.testCount} 个测试通过 HTTP 验收。`,
     );
   }
 
-  if (replayFailed) {
+  if (acceptanceFailed) {
     actions.push({
-      kind: 'repair_model',
+      kind: 'repair_implementation',
       target: null,
-      reason: '已有场景回放失败：先修好模型，再谈吸收生产变化。',
-      tool: 'run_sensors',
+      reason: 'HTTP 验收失败：先修复后端实现，再谈吸收生产变化。',
+      tool: null,
     });
   }
 
@@ -189,7 +194,7 @@ export const decideGovernance = ({
 
   const verdict: GovernanceVerdict = ranked.includes('production_overreach')
     ? 'production_overreach'
-    : replayFailed || ranked.includes('needs_repair')
+    : acceptanceFailed || ranked.includes('needs_repair')
       ? 'needs_repair'
       : ranked.includes('model_lagging')
         ? 'model_lagging'
@@ -201,8 +206,8 @@ export const decideGovernance = ({
     actions,
     canPatchModel:
       blocking.length === 0 &&
-      !replayFailed &&
-      simulation !== undefined &&
+      !acceptanceFailed &&
+      acceptance !== undefined &&
       verdict === 'model_lagging',
   };
 };

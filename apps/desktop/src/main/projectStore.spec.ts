@@ -284,7 +284,6 @@ describe('projectStore with a single-file model', () => {
 
     const withExtras = {
       ...opened.document,
-      validation: { instances: [], scenarios: [] },
       readme: '范围说明\n',
     };
 
@@ -293,10 +292,7 @@ describe('projectStore with a single-file model', () => {
     const reread = await readModelBundle(bundlePath);
 
     expect(reread.document.readme).toBe('范围说明\n');
-    expect(reread.document.validation).toEqual({
-      instances: [],
-      scenarios: [],
-    });
+    expect(reread.document).not.toHaveProperty('validation');
   });
 
   it('fingerprints the file so an external write is detectable', async () => {
@@ -321,7 +317,9 @@ describe('projectStore.create', () => {
   let tempRoot: string;
 
   beforeEach(async () => {
-    tempRoot = await mkdtemp(path.join(os.tmpdir(), 'evidence-desktop-create-'));
+    tempRoot = await mkdtemp(
+      path.join(os.tmpdir(), 'evidence-desktop-create-'),
+    );
   });
 
   afterEach(async () => {

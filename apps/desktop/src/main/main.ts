@@ -11,8 +11,8 @@ import { registerAgentIpc } from './agentIpcHandlers';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
 import { createMcpRequestHandler } from './mcpRequestHandler';
-import { createSimulationService } from './mcpSimulationService';
-import { registerSimulationIpc } from './simulationIpc';
+import { createDriftService } from './mcpDriftService';
+import { registerDriftIpc } from './driftIpc';
 import {
   mcpClientConfigs,
   synchronizeEvidenceMcpRegistration,
@@ -25,7 +25,11 @@ import { registerDeliveryIpc } from './deliveryIpc';
 import { registerProjectIpc } from './projectIpc';
 import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
-import { createDashboardWindow, listEditorWindows, openEditorWindow } from './windows';
+import {
+  createDashboardWindow,
+  listEditorWindows,
+  openEditorWindow,
+} from './windows';
 
 const isMac = process.platform === 'darwin';
 const isMcpStdioMode = process.argv.includes('--mcp-stdio');
@@ -72,7 +76,7 @@ const startApplication = async (): Promise<void> => {
     openEditorWindow,
   });
   registerReviewIpc();
-  registerSimulationIpc();
+  registerDriftIpc();
   registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());
 
@@ -99,7 +103,7 @@ const startApplication = async (): Promise<void> => {
         capture,
         sensors: createMcpSensorService(),
         delivery: createMcpDeliveryService(),
-        simulation: createSimulationService(),
+        drift: createDriftService(),
         onCall,
       }),
     publishStatus: (status) => {

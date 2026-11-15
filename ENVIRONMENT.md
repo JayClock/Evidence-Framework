@@ -13,8 +13,8 @@ npx nx start desktop
 
 | Concern                                                        | Lives in                                          | Runs in      |
 | -------------------------------------------------------------- | ------------------------------------------------- | ------------ |
-| model parsing, CEL, scope, simulation, timeline, FM report       | `libs/evidence-model-core/src/validation/`         | process      |
-| lineage, role-play packet, `check`/`compile`/`simulate` commands | `libs/evidence-model-core/src/derive/`             | process      |
+| model parsing, CEL example oracle, scope, static FM report       | `libs/evidence-model-core/src/validation/`         | process      |
+| lineage projection (model I/O CLI owns `check` / `compile`) | `libs/evidence-model-core/src/derive/`             | process      |
 | agent session, sensors, stage gate, agent tools                 | `libs/evidence-agent`                             | process      |
 | API contract projection, OpenAPI, HTTP journeys                 | `libs/evidence-api` (`evidence-api` command)       | process      |
 | offline review page                                             | `libs/evidence-visualization` (`evidence-workbench` command) | process |

@@ -1,9 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-import {
-  buildFmCheckReport,
-  loadValidationSuite,
-} from '@evidence-poc/evidence-model-core';
+import { buildFmCheckReport } from '@evidence-poc/evidence-model-core';
 import {
   modelDigestOf,
   readModelRoot,
@@ -27,11 +24,10 @@ export const checkReportFor = async (
   modelRoot: string,
   scopes: readonly string[],
 ): Promise<Record<string, unknown>> => {
-  const { bundle, files, issues } = await readModelRoot(modelRoot);
+  const { bundle, issues } = await readModelRoot(modelRoot);
   const bytes = await readModelRootBytes(modelRoot);
   const { report } = buildFmCheckReport({
     model: bundle,
-    suite: loadValidationSuite(files),
     sourceIssues: issues.map((issue) => `${issue.path}: ${issue.message}`),
     modelDigest: modelDigestOf(
       bytes.map((file) => ({ path: file.path, content: file.bytes })),

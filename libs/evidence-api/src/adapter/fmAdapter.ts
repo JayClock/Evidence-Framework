@@ -11,13 +11,8 @@ import type {
 import {
   compiledDocument,
   isModelBundlePath,
-  loadValidationSuite,
   parseModelBundleText,
   type CompiledModelDocument,
-  type DomainModelBundle,
-  type EvidenceInstance,
-  type Scenario,
-  type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 import {
   modelDigestOf,
@@ -50,8 +45,6 @@ export interface FmIndex {
   entities: ReadonlyMap<string, EntityAST>;
   relationships: ReadonlyMap<string, RelationshipAST>;
   rules: ReadonlyMap<string, RuleAST>;
-  scenarios: ReadonlyMap<string, Scenario>;
-  instances: ReadonlyMap<string, EvidenceInstance>;
   membersByContext: ReadonlyMap<string, readonly string[]>;
   files: FmSnapshot;
 }
@@ -66,7 +59,6 @@ export interface LoadFmDocumentOptions {
   diagnostics?: readonly Diagnostic[];
   files?: FmSnapshot;
   modelDigest?: string;
-  suite?: ValidationSuite;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -87,7 +79,7 @@ export const checkReportProblem = (report: unknown): string | null => {
   if (!isRecord(report)) return 'FM 检查结果必须是 JSON 对象';
 
   const valid =
-    report['checkVersion'] === 5 &&
+    report['checkVersion'] === 6 &&
     report['consistent'] === true &&
     report['complete'] === true &&
     report['valid'] === true &&
@@ -105,27 +97,21 @@ export const loadFmFromDocument = (
   document: DomainModelDocument,
   options: LoadFmDocumentOptions = {},
 ): LoadFmResult => {
+  if (Object.hasOwn(document, 'validation'))
+    return {
+      index: null,
+      diagnostics: [
+        errorDiagnostic(
+          'FM_INVALID',
+          'Legacy validation scenarios/instances are no longer supported; use entity examples[].test.',
+        ),
+      ],
+    };
   // Pin the input so later caller edits cannot silently change an existing index.
   document = structuredClone(document);
   const compiled = compiledDocument(document);
-  const suite =
-    options.suite ?? loadValidationSuite(document as DomainModelBundle);
   const modelDigest =
-    options.modelDigest ??
-    `sha256:${digestBytes(
-      canonicalJson({
-        ...compiled,
-        validation: {
-          instances: [...suite.instances].sort((a, b) =>
-            a.id.localeCompare(b.id),
-          ),
-          scenarios: [...suite.scenarios].sort((a, b) =>
-            a.id.localeCompare(b.id),
-          ),
-          errors: [...suite.errors].sort(),
-        },
-      }),
-    )}`;
+    options.modelDigest ?? `sha256:${digestBytes(canonicalJson(compiled))}`;
   const diagnostics: Diagnostic[] = [...(options.diagnostics ?? [])];
   const problem = checkReportProblem(options.checkReport);
   if (problem !== null) {
@@ -147,10 +133,6 @@ export const loadFmFromDocument = (
       ),
     );
   }
-  for (const message of suite.errors) {
-    diagnostics.push(errorDiagnostic('FM_VALIDATION_INPUT_INVALID', message));
-  }
-
   const membersByContext = new Map<string, string[]>();
   for (const entity of compiled.entities) {
     if ('contextRef' in entity && typeof entity.contextRef === 'string') {
@@ -175,12 +157,6 @@ export const loadFmFromDocument = (
         ]),
       ),
       rules: new Map(compiled.rules.map((rule) => [rule.id, rule])),
-      scenarios: new Map(
-        suite.scenarios.map((scenario) => [scenario.id, scenario]),
-      ),
-      instances: new Map(
-        suite.instances.map((instance) => [instance.id, instance]),
-      ),
       membersByContext,
       files: options.files ?? {},
     },

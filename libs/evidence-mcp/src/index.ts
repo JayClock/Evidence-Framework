@@ -10,8 +10,6 @@ export {
   type McpDeliveryTopology,
   type McpDriftAudit,
   type McpDriftFinding,
-  type McpScenarioReplay,
-  type McpReplayFrame,
   type McpDomainModel,
   type McpOpenApiContract,
   type McpKeyDataAudit,

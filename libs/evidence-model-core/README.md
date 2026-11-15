@@ -25,22 +25,25 @@ canvas and inspector consume, and the only sanctioned way to change it.
   "entities": [],
   "relationships": [],
   "rules": [],
-  "validation": { "instances": [], "scenarios": [] }, // optional
   "readme": "…", // optional, `.evidence/fm/README.md`
 }
 ```
 
 - `parseModelBundleText` / `serializeModelBundle` are pure and browser-safe.
-  Bundle extras ride along on the document, so an edit-then-save round trip in
-  the canvas keeps `validation` and `readme`.
+  Inline `examples` and `readme` ride along on the document, so an edit-then-save
+  round trip in the canvas keeps them.
 - `packModelDirectory`, `unpackModelBundle` and `writeModelBundle` add the disk
   side. Unpacking never rewrites a file whose object already matches, so a
   hand-formatted tree keeps its bytes and its git status.
 - `generated/` never enters a bundle: it is derived output, not a source.
 
-Both forms are first-class for the library: `readModelRoot` and
-`loadValidationSuite` accept either, so a caller decides and no extraction step
-is implied.
+Both forms carry the same inline examples. Acceptance cases live exclusively in
+`entities[].examples[].test`; `evidence-api export-tests` emits Step CI / Hurl
+without a persisted intermediate format. Legacy bundle `validation` envelopes
+and `validation/` source files are rejected, not migrated or silently ignored.
+The static FM report (v6) proves consistency and scope completeness only, never
+backend test execution. The old simulator, instance timeline, role-play packet
+and replay APIs/CLI commands have been removed.
 
 ```bash
 pnpm model:pack .evidence/fm --out procurement.evidence.json

@@ -1,14 +1,10 @@
 import { createHash } from 'node:crypto';
-import { modelBundleSourceFiles } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   analyzeTraceability,
   buildFmCheckReport,
-  loadValidationSuite,
   type FmCheckReport,
-  type SimulationReport,
   type TraceabilityDocument,
-  type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 import {
   modelDigestOf,
@@ -19,12 +15,10 @@ import {
 /**
  * Reads a model root once for every sensor.
  *
- * Every sensor shares one read: the digest, the document and the validation
- * suite all describe the same bytes, which is what makes `inputChanged` honest.
+ * Every sensor shares one read: the digest, the document and inline examples all describe the same bytes, which is what makes `inputChanged` honest.
  */
 export interface ModelSources {
   model: DomainModelDocument;
-  suite: ValidationSuite;
   /** Problems found while reading the sources, as `path: message`. */
   sourceIssues: readonly string[];
   /** `sha256:...` of everything under the root. */
@@ -50,7 +44,7 @@ export const loadModelSources = async (
     );
   }
 
-  const [{ bundle, issues, files }, bytes] = await Promise.all([
+  const [{ bundle, issues }, bytes] = await Promise.all([
     readModelRoot(modelRoot),
     readModelRootBytes(modelRoot),
   ]);
@@ -60,7 +54,6 @@ export const loadModelSources = async (
 
   return {
     model: bundle,
-    suite: loadValidationSuite(files),
     sourceIssues: issues.map((issue) => `${issue.path}: ${issue.message}`),
     digest,
     rereadDigest: async () => {
@@ -79,7 +72,6 @@ export const modelSourcesFromDocument = (
   const digest = `sha256:${createHash('sha256').update(JSON.stringify(model)).digest('hex')}`;
   return {
     model,
-    suite: loadValidationSuite(modelBundleSourceFiles(model)),
     sourceIssues: [],
     digest,
     rereadDigest: async () => digest,
@@ -95,7 +87,6 @@ export interface NativeFmCheckOptions {
 export interface NativeFmCheckOutcome {
   report: FmCheckReport;
   traceability: TraceabilityDocument;
-  simulation: SimulationReport | null;
 }
 
 /**
@@ -115,7 +106,6 @@ export const runNativeFmCheck = async (
       : await sources.rereadDigest();
   const outcome = buildFmCheckReport({
     model: sources.model,
-    suite: sources.suite,
     sourceIssues: sources.sourceIssues,
     modelDigest: sources.digest,
     ...(currentDigest === undefined
@@ -129,6 +119,5 @@ export const runNativeFmCheck = async (
   return {
     report: outcome.report,
     traceability,
-    simulation: outcome.simulation,
   };
 };

@@ -39,7 +39,9 @@ export interface EvidenceTool {
   description: string;
   inputSchema: z.ZodRawShape;
   annotations: ToolAnnotations;
-  run(input: Record<string, never> | Record<string, unknown>): Promise<EvidenceToolResult>;
+  run(
+    input: Record<string, never> | Record<string, unknown>,
+  ): Promise<EvidenceToolResult>;
 }
 
 export const TOOL_NAMES = {
@@ -55,7 +57,6 @@ export const TOOL_NAMES = {
   roleifyAndInvertDependency: 'roleify_and_invert_dependency',
   deliveryTopology: 'get_delivery_topology',
   openApiContract: 'export_openapi_contract',
-  scenarioReplay: 'run_scenario_replay',
   productionDrift: 'audit_production_drift',
 } as const;
 
@@ -97,7 +98,9 @@ const runOperator = async (
   client: EvidenceMcpAppClient,
   rationale: string,
   build: (
-    document: Awaited<ReturnType<EvidenceMcpAppClient['getDomainModel']>>['document'],
+    document: Awaited<
+      ReturnType<EvidenceMcpAppClient['getDomainModel']>
+    >['document'],
   ) => OperatorPatch,
 ): Promise<EvidenceToolResult> => {
   let patch: OperatorPatch;
@@ -109,7 +112,11 @@ const runOperator = async (
   } catch (error) {
     const message = error instanceof Error ? error.message : '未知原因';
 
-    return { text: `算子未执行：${message}`, value: { error: message }, isError: true };
+    return {
+      text: `算子未执行：${message}`,
+      value: { error: message },
+      isError: true,
+    };
   }
 
   const result = await client.applyModelPatch({
@@ -156,10 +163,7 @@ export const createEvidenceTools = (
         .min(1)
         .optional()
         .describe('可选：只返回该上下文内的对象。'),
-      includeRules: z
-        .boolean()
-        .optional()
-        .describe('是否包含规则，默认包含。'),
+      includeRules: z.boolean().optional().describe('是否包含规则，默认包含。'),
     },
     annotations: READ_ONLY,
     run: async (input) =>
@@ -269,7 +273,11 @@ export const createEvidenceTools = (
         .describe('所属合同上下文 ID，例如 context.procurement。'),
       request: z.object({
         ...momentSchema,
-        window: z.string().min(1).optional().describe('履约窗口，例如 7 个工作日。'),
+        window: z
+          .string()
+          .min(1)
+          .optional()
+          .describe('履约窗口，例如 7 个工作日。'),
       }),
       confirmation: z.object(momentSchema),
       proof: proofSchema,
@@ -354,7 +362,10 @@ export const createEvidenceTools = (
           label: z.string().min(1),
           window: z.string().min(1).optional(),
         }),
-        confirmation: z.object({ id: z.string().min(1), label: z.string().min(1) }),
+        confirmation: z.object({
+          id: z.string().min(1),
+          label: z.string().min(1),
+        }),
       }),
     },
     annotations: WRITES_MODEL,
@@ -387,28 +398,6 @@ export const createEvidenceTools = (
     inputSchema: {},
     annotations: READ_ONLY,
     run: async () => json(await client.exportOpenApiContract()),
-  },
-  {
-    name: TOOL_NAMES.scenarioReplay,
-    title: '回放业务场景',
-    description:
-      '逐步回放模型自带的验证场景：每一步发起了什么、由谁发起、算出了哪些派生值、每个履约请求此刻是什么状态。用来确认模型自己的场景仍然成立，而不是只看最后一句结论。',
-    inputSchema: {
-      scenarioId: z
-        .string()
-        .min(1)
-        .optional()
-        .describe('可选：只回放该场景并返回它的逐帧结果，缺省只返回各场景摘要。'),
-    },
-    annotations: READ_ONLY,
-    run: async (input) =>
-      json(
-        await client.runScenarioReplay({
-          ...(typeof input.scenarioId === 'string'
-            ? { scenarioId: input.scenarioId }
-            : {}),
-        }),
-      ),
   },
   {
     name: TOOL_NAMES.productionDrift,
@@ -447,4 +436,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. When the question is whether the model still holds, run_scenario_replay; when the question is whether production matches it, audit_production_drift — and treat a blocking drift as a service-side defect, not a reason to edit the model.';
+  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written commands: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch so the modeler can undo it; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test and run as exported Step CI/Hurl scripts, not in-memory replay. When the question is whether production matches it, audit_production_drift — and treat a blocking drift as a service-side defect, not a reason to edit the model.';

@@ -14,9 +14,7 @@ import {
   buildFmCheckReport,
   compiledDocument,
   isModelBundlePath,
-  loadValidationSuite,
   type FmCheckReport,
-  type ValidationSuite,
 } from '@evidence-poc/evidence-model-core';
 import {
   modelDigestOf,
@@ -218,7 +216,6 @@ export interface CollectWorkbenchInput {
 export interface CollectedWorkbench {
   data: WorkbenchData;
   check: FmCheckReport;
-  suite: ValidationSuite;
   projection: Projection | null;
 }
 
@@ -254,7 +251,7 @@ export const collectWorkbench = async ({
     );
   }
 
-  const [{ bundle, issues, files }, bytes] = await Promise.all([
+  const [{ bundle, issues }, bytes] = await Promise.all([
     readWorkbenchModel(fmRoot),
     isModelBundlePath(fmRoot)
       ? readFile(fmRoot).then((bytes) => [
@@ -265,10 +262,8 @@ export const collectWorkbench = async ({
   const modelDigest = modelDigestOf(
     bytes.map((file) => ({ path: file.path, content: file.bytes })),
   );
-  const suite = loadValidationSuite(files);
   const checked = buildFmCheckReport({
     model: bundle,
-    suite,
     sourceIssues: issues.map((issue) => `${issue.path}: ${issue.message}`),
     modelDigest,
     ...(scopeRefs === undefined ? {} : { scopeRefs }),
@@ -283,7 +278,7 @@ export const collectWorkbench = async ({
     throw new WorkbenchInputError('FM 范围未闭环，不生成联合审核视图');
   }
   const loaded = includeApi
-    ? loadFmFromDocument(bundle, { checkReport: check, modelDigest, suite })
+    ? loadFmFromDocument(bundle, { checkReport: check, modelDigest })
     : null;
 
   if (loaded !== null && loaded.index === null) {
@@ -369,14 +364,6 @@ export const collectWorkbench = async ({
     // The page carries the placement the canvas computed, from the same
     // document the check accepted, so the drawing and the review agree.
     layout: workbenchLayoutOf(bundle),
-    scenarios: suite.scenarios as unknown as readonly Record<string, unknown>[],
-    instances: suite.instances as unknown as readonly Record<string, unknown>[],
-    simulation: {
-      scenarioResults: check.scenarioResults as unknown as readonly Record<
-        string,
-        unknown
-      >[],
-    },
     api,
     delivery: deliveryViewOf(projection ?? buildDelivery(bundle)),
     check: {
@@ -385,9 +372,6 @@ export const collectWorkbench = async ({
       scopeRefs: check.scopeRefs,
       contextRefs: check.contextRefs,
       gaps: check.gaps,
-      simulationLimitations: check.simulationLimitations,
-      simulationPassed: check.simulationPassed,
-      timelineSummary: check.timelineSummary,
     },
     ...(generatedAt === undefined ? {} : { generatedAt }),
   });
@@ -397,7 +381,6 @@ export const collectWorkbench = async ({
   return {
     data,
     check,
-    suite,
     projection,
   };
 };

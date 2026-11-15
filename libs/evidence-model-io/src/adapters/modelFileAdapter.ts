@@ -46,7 +46,7 @@ const isSkippedPath = (relative: string): boolean =>
 
 /**
  * Reads every file a bundle should carry: `model.json`, the three source trees,
- * `validation/**` and `README.md`.
+ * `README.md`. Retired validation files are read only to reject them.
  *
  * `generated/` stays behind because it is derived output, not a source.
  */
@@ -90,7 +90,8 @@ async function readSourceTree(root: string): Promise<ModelSourceFile[]> {
 
       const carried =
         entry.isFile() &&
-        (entry.name.endsWith('.json') ||
+        (relative.startsWith('validation/') ||
+          entry.name.endsWith('.json') ||
           (relativeDirectory === '' && entry.name === MODEL_README_PATH));
 
       if (!carried) {
@@ -250,6 +251,8 @@ export async function unpackModelBundle(
   result: UnpackResult;
 }> {
   const { document, issues } = await readModelBundle(filePath);
+  if (issues.length > 0)
+    return { bundle: document, issues, result: { written: [], unchanged: [] } };
   const written: string[] = [];
   const unchanged: string[] = [];
 

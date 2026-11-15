@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { createSimulationService } from './mcpSimulationService';
+import { createDriftService } from './mcpDriftService';
 
 const golden = path.resolve(
   import.meta.dirname,
@@ -16,7 +16,7 @@ const golden = path.resolve(
 let projectRoot = '';
 
 beforeAll(async () => {
-  projectRoot = await mkdtemp(path.join(tmpdir(), 'evidence-replay-'));
+  projectRoot = await mkdtemp(path.join(tmpdir(), 'evidence-drift-'));
   await mkdir(path.join(projectRoot, '.evidence'), { recursive: true });
   await symlink(golden, path.join(projectRoot, '.evidence', 'fm'), 'dir');
 });
@@ -29,7 +29,9 @@ const trace = {
   resourceSpans: [
     {
       resource: {
-        attributes: [{ key: 'service.name', value: { stringValue: 'billing' } }],
+        attributes: [
+          { key: 'service.name', value: { stringValue: 'billing' } },
+        ],
       },
       scopeSpans: [
         {
@@ -66,46 +68,9 @@ const trace = {
   ],
 };
 
-describe('createSimulationService', () => {
-  it('summarizes every scenario and returns the frames it was asked for', async () => {
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-      scenarioId: 'scenario.successful-payment',
-    });
-
-    expect(replay.passed).toBe(true);
-    expect(replay.errors).toEqual([]);
-    expect(replay.scenarios.map((item) => item.scenarioId)).toEqual([
-      'scenario.successful-payment',
-    ]);
-    expect(replay.frames.map((frame) => frame.sequence)).toEqual([1, 2, 3]);
-    expect(replay.frames.at(-1)?.fulfillmentStates).toEqual([
-      { requestInstanceRef: 'instance.payment-request', status: 'completed' },
-    ]);
-  });
-
-  it('returns summaries only when no scenario was named', async () => {
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-    });
-
-    expect(replay.frames).toEqual([]);
-    expect(replay.scenarios).toHaveLength(3);
-    expect(replay.scenarios.map((item) => item.stepCount)).toEqual([2, 1, 3]);
-  });
-
-  it('reports an unknown scenario as a failed replay instead of throwing', async () => {
-    const replay = await createSimulationService().replay({
-      rootPath: projectRoot,
-      scenarioId: 'scenario.absent',
-    });
-
-    expect(replay.passed).toBe(false);
-    expect(replay.errors).toEqual(["unknown scenario id 'scenario.absent'"]);
-  });
-
+describe('createDriftService', () => {
   it('audits a trace against the saved model', async () => {
-    const audit = await createSimulationService().auditDrift({
+    const audit = await createDriftService().auditDrift({
       rootPath: projectRoot,
       document: trace,
     });
@@ -120,16 +85,11 @@ describe('createSimulationService', () => {
   });
 
   it('answers readably when the model directory does not exist', async () => {
-    const replay = await createSimulationService().replay({
-      rootPath: '/nowhere/project',
-    });
-    const audit = await createSimulationService().auditDrift({
+    const audit = await createDriftService().auditDrift({
       rootPath: '/nowhere/project',
       document: trace,
     });
 
-    expect(replay.passed).toBe(false);
-    expect(replay.errors.length).toBeGreaterThan(0);
     expect(audit.passed).toBe(false);
     expect(audit.errors.length).toBeGreaterThan(0);
   });

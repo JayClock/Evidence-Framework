@@ -1,9 +1,12 @@
-import { ATTRIBUTE_NAME_PATTERN, DOMAIN_ID_PATTERN } from '@evidence-poc/evidence-schema';
+import {
+  ATTRIBUTE_NAME_PATTERN,
+  DOMAIN_ID_PATTERN,
+} from '@evidence-poc/evidence-schema';
 
 /**
- * Typed-value rules shared by the scenario simulator and the trace reader.
+ * Typed-value rules for compile-time example evaluation and trace inspection.
  *
- * They are the one reading of a typed value: the scenario simulator and the
+ * They are the one reading of a typed value: the compiler and the
  * trace reader accept exactly the same values, and a value either satisfies its
  * declared `valueType` or fails with the reason.
  */
@@ -42,9 +45,7 @@ export const validateTypedValue = (
         ? null
         : 'must be an integer';
     case 'uint':
-      return typeof value === 'number' &&
-        Number.isInteger(value) &&
-        value >= 0
+      return typeof value === 'number' && Number.isInteger(value) && value >= 0
         ? null
         : 'must be a non-negative integer';
     case 'double':
@@ -134,7 +135,10 @@ export const normalizeJsonValue = (value: unknown): unknown => {
   }
   if (isRecord(value)) {
     return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, normalizeJsonValue(item)]),
+      Object.entries(value).map(([key, item]) => [
+        key,
+        normalizeJsonValue(item),
+      ]),
     );
   }
 
