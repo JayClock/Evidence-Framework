@@ -130,6 +130,34 @@ describe('computeGraphLayout (headless ELK)', () => {
     expect(result.nodes.every((node) => node.contextId === null)).toBe(true);
     expect(result.edgeById.has('dangling')).toBe(false);
   });
+  it('places shared results once while routing every fulfillment claim', async () => {
+    const document = createFixtureDocument();
+    const request = document.entities.find(
+      (entity) => entity.id === 'evidence.delivery-request',
+    );
+    if (!request) throw new Error('fixture missing request');
+    document.entities.push({ ...request, id: 'evidence.second-request' });
+    document.relationships.push({
+      type: 'relationship',
+      id: 'relation.shared-result',
+      kind: 'references',
+      label: 'shared confirmation',
+      sourceRef: 'evidence.delivery-confirmation',
+      targetRef: 'evidence.second-request',
+    });
+    const result = await computeGraphLayout(createDomainGraph(document));
+    expect(
+      result.nodes.filter(
+        (node) => node.nodeId === 'evidence.delivery-confirmation',
+      ),
+    ).toHaveLength(1);
+    expect(
+      result.fulfillmentPairs.filter(
+        (pair) => pair.confirmationId === 'evidence.delivery-confirmation',
+      ),
+    ).toHaveLength(2);
+  });
+
   it('rejects Context cycles with an actionable error', async () => {
     const document = createFixtureDocument();
     const context = document.entities.find(

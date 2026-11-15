@@ -14,7 +14,6 @@ export { ScopeFilterControl } from './ScopeFilterControl.js';
 export {
   CATEGORY_COLORS,
   CATEGORY_TOKENS,
-  CROSS_CONTEXT_EDGE_STYLES,
   EDGE_STYLES,
   entityColor,
   entityKindLabel,

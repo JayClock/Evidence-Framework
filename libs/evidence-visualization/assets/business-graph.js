@@ -52,16 +52,14 @@ function businessGraphOf(data) {
       width: 0,
       height: 0,
       contextOfNode: new Map(),
-      groupOfNode: new Map(),
       parentOfContext: new Map(),
-      parentOfGroup: new Map(),
-      membersOf: new Map(),
     };
   }
 
   const fieldsByParent = new Map();
   for (const node of data.nodes || []) {
-    if (node.group !== 'attribute' || !businessGraphTimeFields.includes(node.name))
+    const parent = objects.get(node.parent);
+    if (node.group !== 'attribute' || parent?.group !== 'evidence' || !businessGraphTimeFields.includes(node.name))
       continue;
     const bucket = fieldsByParent.get(node.parent);
     if (bucket) bucket.push(node.name);
@@ -74,11 +72,6 @@ function businessGraphOf(data) {
       group.parentContextId || '',
     ]),
   );
-  // Fulfillment is an ELK-routed link, not a synthetic rectangular band.
-  const parentOfGroup = new Map();
-  const membersOf = new Map();
-  const groupOfNode = new Map();
-
   const responsibleRef = new Map();
   for (const link of layout.responsibilityLinks || []) {
     if (link.kind === 'responsibility')
@@ -106,7 +99,6 @@ function businessGraphOf(data) {
       parent: contextId,
       responsibleRef: responsibleRef.get(placed.nodeId),
       timeFields: fieldsByParent.get(placed.nodeId) || [],
-      fulfillmentParent: groupOfNode.get(placed.nodeId) || '',
     };
   });
 
@@ -161,10 +153,7 @@ function businessGraphOf(data) {
     width: Math.max(1, layout.bounds.width),
     height: Math.max(1, layout.bounds.height),
     contextOfNode,
-    groupOfNode,
     parentOfContext,
-    parentOfGroup,
-    membersOf,
   };
 }
 
@@ -195,10 +184,7 @@ function buildBusinessLegend(graph) {
   const contexts = {
     domain: ['领域上下文', '划分领域对象的归属。'],
     contract: ['合同上下文', '划分合同权责范围，不是合同凭证节点。'],
-    fulfillment: [
-      '权责履约',
-      '合约内的请求、完成证明及规则，不构成上下文边界。',
-    ],
+
   };
   for (const example of graph.boundaries) {
     const key = `${example.group}.${example.kind}`;
@@ -209,7 +195,7 @@ function buildBusinessLegend(graph) {
     ];
     items.push({
       key,
-      section: example.group === 'fulfillment' ? 'fulfillments' : 'contexts',
+      section: 'contexts',
       label,
       description,
       example,
@@ -288,10 +274,8 @@ function businessGraphHighlight(graph, target) {
   if (!target) return result;
   const boundaryIds = new Set(graph.boundaries.map((boundary) => boundary.id));
 
-  /** The frames an object is drawn inside: its band and every owner Context. */
+  /** Every owner Context, without synthesizing fulfillment frames. */
   function owners(id) {
-    const group = graph.groupOfNode.get(id);
-    if (group && boundaryIds.has(group)) result.boundaries.add(group);
     for (const context of businessGraphContexts(
       graph,
       graph.contextOfNode.get(id) || '',
@@ -302,10 +286,7 @@ function businessGraphHighlight(graph, target) {
   /** Whether an object or frame is drawn inside the given frame. */
   function belongs(id, boundary) {
     if (id === boundary) return true;
-    if (graph.membersOf.get(boundary)?.has(id)) return true;
-    const start = graph.contextOfNode.has(id)
-      ? graph.contextOfNode.get(id) || ''
-      : graph.parentOfGroup.get(id) || id;
+    const start = graph.contextOfNode.get(id) || id;
     return businessGraphContexts(graph, start).includes(boundary);
   }
 
@@ -465,7 +446,6 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
     for (const [sectionKey, heading] of [
       ['objects', '业务对象'],
       ['contexts', '上下文边界'],
-      ['fulfillments', '权责履约'],
       ['lines', '关系连线'],
     ]) {
       const selected = items.filter((item) => item.section === sectionKey);
@@ -505,24 +485,8 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
             symbol.append(badge);
           }
           sample.append(symbol);
-        } else if (sectionKey === 'contexts' || sectionKey === 'fulfillments') {
-          const frame = el(
-            'div',
-            example.label,
-            `legend-context legend-context-${example.kind}`,
-          );
-          if (
-            example.kind === 'fulfillment' &&
-            nodes.get(example.parent)?.group === 'context'
-          ) {
-            const parent = el(
-              'div',
-              '',
-              `legend-context legend-context-${nodes.get(example.parent).kind}`,
-            );
-            parent.append(el('small', title(example.parent)), frame);
-            sample.append(parent);
-          } else sample.append(frame);
+        } else if (sectionKey === 'contexts') {
+          sample.append(el('div', example.label, `legend-context legend-context-${example.kind}`));
         } else {
           const connection = el('div', '', 'legend-connection'),
             line = el('span', '', 'legend-line');
@@ -684,9 +648,7 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
         'data-graph-boundary': boundary.id,
         'data-boundary-kind': boundary.kind,
         'data-boundary-parent': boundary.parent || '',
-        [boundary.group === 'context'
-          ? 'data-graph-context'
-          : 'data-graph-fulfillment']: boundary.id,
+        'data-graph-context': boundary.id,
         'data-diff': diffType(boundary.id),
         class: `graph-boundary graph-boundary-${boundary.kind}`,
       });
@@ -700,25 +662,16 @@ function renderBusinessGraph(target, data = DATA, baseline = false) {
           class: 'graph-boundary-frame',
         }),
       );
-      const kind =
-        {
-          domain: '领域上下文',
-          contract: '合同上下文',
-          fulfillment: '权责履约',
-        }[boundary.kind] || '上下文';
-      // A band is drawn tight around its objects, so its title sits above the
-      // frame and names only the boundary kind: the request inside already
-      // carries the name, and a second copy would run over the Context title.
-      const band = boundary.group === 'fulfillment';
+      const kind = { domain: '领域上下文', contract: '合同上下文' }[boundary.kind] || '上下文';
       const label = element(
         'text',
         {
-          x: band ? boundary.x + boundary.width - 4 : boundary.x + 16,
-          y: band ? boundary.y - 8 : boundary.y + 25,
-          'text-anchor': band ? 'end' : 'start',
-          class: `graph-boundary-label${band ? ' graph-band-label' : ''}`,
+          x: boundary.x + 16,
+          y: boundary.y + 25,
+          'text-anchor': 'start',
+          class: 'graph-boundary-label',
         },
-        band ? kind : `${kind} · ${boundary.label}`,
+        `${kind} · ${boundary.label}`,
       );
       label.append(element('title', {}, `${boundary.label} · ${boundary.id}`));
       interactive(label, `定位${kind}：${boundary.label}`, () =>

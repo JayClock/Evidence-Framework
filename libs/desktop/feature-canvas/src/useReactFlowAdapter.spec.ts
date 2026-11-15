@@ -35,6 +35,40 @@ const convert = (
   });
 
 describe('convertLayoutToReactFlow', () => {
+  it('adopts nested Contexts and binds relationships whose endpoint is a Context', async () => {
+    const nestedDocument = createDesktopFixture();
+    const context = nestedDocument.entities.find(
+      (entity) => entity.id === 'context.catalog',
+    );
+    if (context?.category !== 'context')
+      throw new Error('fixture missing Context');
+    context.parentContextRef = 'context.procurement';
+    nestedDocument.relationships.push({
+      type: 'relationship',
+      id: 'relation.context-link',
+      kind: 'references',
+      label: 'Context reference',
+      sourceRef: 'context.catalog',
+      targetRef: 'evidence.contract',
+    });
+    const nestedLayout = await computeGraphLayout(
+      createDomainGraph(nestedDocument),
+    );
+    const result = convert({ document: nestedDocument, layout: nestedLayout });
+    const child = result.nodes.find((node) => node.id === 'context.catalog');
+    const group = nestedLayout.contextGroupById.get('context.catalog');
+    expect(child?.parentId).toBe('context.procurement');
+    expect(child?.position).toEqual({ x: group?.box.x, y: group?.box.y });
+    expect(
+      result.nodes.findIndex((node) => node.id === 'context.procurement'),
+    ).toBeLessThan(
+      result.nodes.findIndex((node) => node.id === 'context.catalog'),
+    );
+    expect(
+      result.edges.find((edge) => edge.id === 'relation.context-link')?.source,
+    ).toBe('context.catalog');
+  });
+
   it('lists every Context before the notes pinned to it', () => {
     const { nodes } = convert();
     const firstEntity = nodes.findIndex((node) => node.type === 'entityNode');

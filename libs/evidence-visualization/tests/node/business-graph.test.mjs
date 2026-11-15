@@ -115,6 +115,13 @@ const fixture = () => {
         name: 'started_at',
         label: '开始',
       },
+      {
+        id: 'proof#created_at',
+        group: 'attribute',
+        parent: 'proof',
+        name: 'created_at',
+        label: '建模时间',
+      },
       ...['rule', 'instance', 'scenario', 'capability', 'service'].map(
         (group) => ({
           id: group,
@@ -200,7 +207,6 @@ const fixture = () => {
           parentContextId: null,
           childContextIds: ['delivery'],
           nodeIds: ['contract', 'party', 'request', 'confirmation', 'proof'],
-          fulfillmentGroupIds: ['fulfillment:request'],
         },
         {
           contextId: 'delivery',
@@ -210,7 +216,6 @@ const fixture = () => {
           parentContextId: 'contract-a',
           childContextIds: [],
           nodeIds: ['thing'],
-          fulfillmentGroupIds: [],
         },
       ],
       fulfillmentPairs: [
@@ -267,7 +272,7 @@ test('objects carry the content the page already holds, joined by id', () => {
     proof = graph.boxes.find((entry) => entry.id === 'proof');
   assert.equal(request.label, '履约请求');
   assert.equal(request.owner, 'contract-a');
-  assert.equal(request.fulfillmentParent, '');
+  assert.equal(request.fulfillmentParent, undefined);
   assert.deepEqual(Array.from(request.timeFields), ['started_at']);
   // A responsibility badge is an explicit field, and a role never carries one.
   assert.equal(request.responsibleRef, 'party');

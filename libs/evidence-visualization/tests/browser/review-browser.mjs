@@ -211,7 +211,7 @@ try {
     assert.equal(
       await evaluate('document.querySelectorAll(".graph-time-field").length'),
       await evaluate(
-        '[...document.querySelectorAll("[data-graph-node]")].flatMap(b=>DATA.nodes.filter(n=>n.group==="attribute"&&n.parent===b.dataset.graphNode&&["started_at","expired_at","signed_at","confirmed_at","created_at"].includes(n.name))).length',
+        '[...document.querySelectorAll("[data-graph-node]")].flatMap(b=>DATA.nodes.filter(n=>nodes.get(b.dataset.graphNode).group==="evidence"&&n.group==="attribute"&&n.parent===b.dataset.graphNode&&["started_at","expired_at","signed_at","confirmed_at","created_at"].includes(n.name))).length',
       ),
     );
     const expectedCardinalities = await evaluate(
@@ -228,19 +228,14 @@ try {
       const legend=document.querySelector('.graph-legend');
       if(!legend || legend.tagName!=='DETAILS') throw Error('Missing collapsible illustrated legend');
       const cards=[...legend.querySelectorAll('[data-legend-kind]')];
-      // The legend documents what the canvas draws: business objects plus the
-      // Context and fulfillment boundaries around them. Attributes, rules
-      // and API objects are read in the side panel, never drawn, and
-      // the fulfillment boundary is synthesized by the layout rather than read
-      // from a node, so DATA.nodes alone cannot say which types are present.
+      // The legend covers business cards and declared Context boundaries.
       const expected=new Set();
       for(const node of document.querySelectorAll('[data-graph-node]')) {
         const box=nodes.get(node.dataset.graphNode);
         if(box) expected.add(box.group+'.'+box.kind);
       }
       for(const boundary of document.querySelectorAll('[data-graph-boundary]')) {
-        const group=boundary.hasAttribute('data-graph-context')?'context':'fulfillment';
-        expected.add(group+'.'+boundary.dataset.boundaryKind);
+        expected.add('context.'+boundary.dataset.boundaryKind);
       }
       const kinds=new Set(cards.filter(n=>!n.dataset.legendKind.startsWith('line.')).map(n=>n.dataset.legendKind));
       if(JSON.stringify([...expected].sort())!==JSON.stringify([...kinds].sort()))throw Error('Legend must cover exactly the drawn types: drawn '+JSON.stringify([...expected].sort())+', legend '+JSON.stringify([...kinds].sort()));
@@ -250,8 +245,7 @@ try {
         const exampleId=card.dataset.legendExample;
         const example=nodes.get(exampleId);
         const boundary=boundaryOf(exampleId);
-        // A card must illustrate something the canvas actually draws: a business
-        // object, a Context boundary or the synthesized fulfillment boundary.
+        // Every example is a declared business object or Context.
         if(!example&&!boundary) throw Error('Legend fabricated an example');
         const symbol=card.querySelector('.legend-symbol');
         if(symbol) {
@@ -269,18 +263,8 @@ try {
           const frame=frames[frames.length-1];
           const label=boundary.querySelector('.graph-boundary-label')?.textContent||'';
           if(!frame.classList.contains('legend-context-'+boundary.dataset.boundaryKind))throw Error('Legend boundary kind drift');
-          if(boundary.dataset.boundaryKind==='fulfillment') {
-            // A band is named by its kind on the canvas; the request it gathers
-            // is the card inside it, and the legend card illustrates that name.
-            if(!label.includes('权责履约'))throw Error('Legend band label drift');
-          } else if(!label.includes(frame.textContent.trim()))throw Error('Legend boundary label drift');
-          // The fulfillment boundary is drawn inside the Context that owns it, so
-          // its card nests it too; a child Context is drawn on its own and its
-          // card stays flat.
-          const parentId=boundary.dataset.boundaryParent||'';
-          const parent=boundary.dataset.boundaryKind==='fulfillment'&&parentId?boundaryOf(parentId):null;
-          if(frames.length!==(parent?2:1))throw Error('Legend boundary nesting drift');
-          if(parent&&!frames[0].classList.contains('legend-context-'+parent.dataset.boundaryKind))throw Error('Legend parent boundary kind drift');
+          if(!label.includes(frame.textContent.trim()))throw Error('Legend boundary label drift');
+          if(frames.length!==1)throw Error('Legend boundary nesting drift');
         }
         const line=card.querySelector('.legend-line');
         if(line) {
@@ -414,27 +398,20 @@ try {
     );
   }
   async function checkContextBoundaries() {
-    // A frame is either a Context the model declares, or the fulfillment group
-    // the layout synthesizes around one Fulfillment Request. The projection is a
-    // pure graph: it carries no `fulfillment` node for a frame to match, and a
-    // Context that owns nothing is not drawn at all.
+    // Every declared Context, including empty shells, is a compound node.
     assert.ok(
       await evaluate(`(() => {
       const drawn=[...document.querySelectorAll('[data-graph-boundary]')].map(n=>({id:n.dataset.graphBoundary,kind:n.dataset.boundaryKind}));
       const contexts=new Set(DATA.nodes.filter(n=>n.group==='context').map(n=>n.id));
-      const requests=new Set(DATA.nodes.filter(n=>n.kind==='fulfillment_request').map(n=>n.id));
-      const frames=drawn.filter(b=>b.kind!=='fulfillment');
+      const frames=drawn;
       if(new Set(frames.map(b=>b.id)).size!==frames.length) throw Error('Duplicate context frame');
+      if(frames.length!==contexts.size) throw Error('Missing Context frame');
       for(const frame of frames) if(!contexts.has(frame.id)) throw Error('Frame invented for '+frame.id);
-      for(const group of drawn.filter(b=>b.kind==='fulfillment')) {
-        if(!group.id.startsWith('fulfillment:')) throw Error('Fulfillment frame without a request: '+group.id);
-        if(!requests.has(group.id.slice('fulfillment:'.length))) throw Error('Fulfillment frame for an unknown request: '+group.id);
-      }
       const owners=new Set(DATA.nodes.filter(n=>['evidence','participant','role'].includes(n.group)).map(n=>n.parent).filter(Boolean));
       for(const owner of owners) if(!frames.some(b=>b.id===owner)) throw Error('Context with objects must be drawn: '+owner);
       return true;
     })()`),
-      'Every frame must be a declared Context or a request fulfillment group',
+      'Every frame must be a declared Context',
     );
     assert.ok(
       await evaluate(`(() => {
@@ -444,22 +421,14 @@ try {
       const contains = (a,b) => a.x<=b.x && a.y<=b.y && a.x+a.width>=b.x+b.width && a.y+a.height>=b.y+b.height;
       const overlaps = (a,b) => a.x<b.x+b.width && b.x<a.x+a.width && a.y<b.y+b.height && b.y<a.y+a.height;
       const ancestor = (id, parent) => {const seen=new Set(); let n=nodes.get(id); while(n && !seen.has(n.id)){seen.add(n.id); if(n.parent===parent)return true; n=nodes.get(n.parent);} return false;};
-      const contexts=frames.filter(f=>f.dataset.boundaryKind!=='fulfillment');
-      const groups=frames.filter(f=>f.dataset.boundaryKind==='fulfillment');
-      // A frame may only enclose objects that belong to it, and it must enclose
-      // the objects it owns directly: a stage Context is laid out beside its
-      // parent rather than inside it, so "inside means descendant" is not a rule
-      // the layout can keep.
+      const contexts=frames;
+      // Compound frames must contain descendants and exclude unrelated objects.
       const sound=contexts.every(frame => boxes.every(box => !contains(rect(frame),rect(box)) || ancestor(box.dataset.graphNode,frame.dataset.graphBoundary)));
-      const complete=contexts.every(frame => boxes.filter(box => nodes.get(box.dataset.graphNode)?.parent===frame.dataset.graphBoundary).every(box => contains(rect(frame),rect(box))));
+      const complete=contexts.every(frame => boxes.filter(box => ancestor(box.dataset.graphNode,frame.dataset.graphBoundary)).every(box => contains(rect(frame),rect(box))));
       const disjoint=contexts.every(frame => contexts.filter(other=>other!==frame).every(other => !overlaps(rect(frame),rect(other)) || ancestor(other.dataset.graphBoundary,frame.dataset.graphBoundary) || ancestor(frame.dataset.graphBoundary,other.dataset.graphBoundary)));
-      const nestedGroups=groups.every(group => {
-        const parent=contexts.find(f=>f.dataset.graphBoundary===group.dataset.boundaryParent);
-        return Boolean(parent) && contains(rect(parent),rect(group));
-      });
-      return sound && complete && disjoint && nestedGroups;
+      return sound && complete && disjoint;
     })()`),
-      'Context frames must enclose exactly their own objects, and fulfillment groups must sit inside their Context',
+      'Context frames must enclose exactly their descendants',
     );
     assert.ok(
       await evaluate(
@@ -497,25 +466,11 @@ try {
         same(objects.filter(n=>n.classList.contains('graph-primary')).map(n=>n.dataset.graphNode),[id],'primary object');
       }
       const belongs=(id,parent)=>{let n=nodes.get(id);const seen=new Set();while(n&&!seen.has(n.id)){if(n.id===parent)return true;seen.add(n.id);n=nodes.get(n.parent);}return false;};
-      // A fulfillment frame is synthesized by the layout, so its parent is read
-      // from the frame it was drawn as rather than from a node that does not exist.
-      const frameParent=(id)=>{const frame=[...document.querySelectorAll('[data-graph-boundary]')].find(n=>n.dataset.graphBoundary===id);return frame?frame.dataset.boundaryParent||'':null;};
-      const belongsFrame=(id,parent)=>{let current=id;const seen=new Set();while(current&&!seen.has(current)){seen.add(current);if(current===parent)return true;const node=nodes.get(current);current=node?node.parent:frameParent(current);}return false;};
+      const belongsFrame=belongs;
       for(const object of objects){enter(object);checkNode(object.dataset.graphNode);leave(object);}
       for(const context of contexts){
         enter(context);
-        if(context.dataset.boundaryKind==='fulfillment'){
-          // The group is synthesized, so its membership is the layout's: what can
-          // be checked is that it highlights its own request and never reaches
-          // outside the Context that owns it.
-          const request=context.dataset.graphBoundary.slice('fulfillment:'.length);
-          const highlighted=new Set(objects.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphNode));
-          if(!highlighted.has(request))throw Error('fulfillment group must highlight its request: '+request);
-          if([...highlighted].some(id=>!belongs(id,context.dataset.boundaryParent)))throw Error('fulfillment group reached outside its Context');
-          if(edgeElements.filter(n=>n.classList.contains('highlight')).some(n=>{const line=lines.find(e=>e.id===n.dataset.highlightEdge);return !line||!highlighted.has(line.from)||!highlighted.has(line.to);}))throw Error('fulfillment group highlighted an unrelated line');
-          leave(context);
-          continue;
-        }
+
         const members=new Set([...ids].filter(id=>belongs(id,context.dataset.graphBoundary)));
         checkObjects(members,new Set(lines.filter(e=>members.has(e.from)&&members.has(e.to)).map(e=>e.id)));
         same(contexts.filter(n=>n.classList.contains('highlight')).map(n=>n.dataset.graphBoundary),contexts.filter(n=>belongsFrame(n.dataset.graphBoundary,context.dataset.graphBoundary)).map(n=>n.dataset.graphBoundary),'context descendants only');
