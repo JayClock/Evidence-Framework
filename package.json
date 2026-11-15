@@ -14,7 +14,10 @@
     "test:desktop": "nx test desktop",
     "model:pack": "node libs/evidence-model-io/dist/cli.js pack",
     "model:unpack": "node libs/evidence-model-io/dist/cli.js unpack",
-    "model:inspect": "node libs/evidence-model-io/dist/cli.js inspect"
+    "model:inspect": "node libs/evidence-model-io/dist/cli.js inspect",
+    "api:setup": "node tools/oasdiff/setup.mjs",
+    "api:export": "node libs/evidence-api/dist/cli.js deliver",
+    "api:diff": "node libs/evidence-api/dist/cli.js diff"
   },
   "private": true,
   "packageManager": "pnpm@12.16.1",

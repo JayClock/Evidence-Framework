@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install pinned OpenAPI comparison tool
+        run: pnpm api:setup
+
       - name: Verify module boundaries
         # The only check that notices a deleted constraint: it writes the imports
         # the rules must refuse and fails if a project's lint accepts one.

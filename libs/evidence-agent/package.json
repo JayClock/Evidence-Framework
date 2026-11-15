@@ -29,7 +29,12 @@
       "platform:node",
       "surface:browser-safe",
       "scope:agent"
-    ]
+    ],
+    "targets": {
+      "test": {
+        "cache": false
+      }
+    }
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "^1.5.2",

@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -7,6 +8,25 @@ import { canonicalJson } from '../canonicalJson.js';
 
 const execute = promisify(execFile);
 export const OASDIFF_VERSION = '1.38.0';
+
+const defaultBinary = (): string => {
+  if (process.env['EVIDENCE_OASDIFF_BIN'])
+    return process.env['EVIDENCE_OASDIFF_BIN'];
+  let directory = process.cwd();
+  for (;;) {
+    const binary = path.join(
+      directory,
+      'node_modules/.cache/evidence/oasdiff',
+      OASDIFF_VERSION,
+      `${process.platform}-${process.arch}`,
+      process.platform === 'win32' ? 'oasdiff.exe' : 'oasdiff',
+    );
+    if (existsSync(binary)) return binary;
+    const parent = path.dirname(directory);
+    if (parent === directory) return 'oasdiff';
+    directory = parent;
+  }
+};
 
 /** Native oasdiff severity: INFO=1, WARN=2, ERR=3. */
 export interface OasdiffChange {
@@ -71,8 +91,7 @@ export class OasdiffRunner {
   private readonly timeout: number;
 
   constructor(options: OasdiffOptions = {}) {
-    this.binary =
-      options.binary ?? process.env['EVIDENCE_OASDIFF_BIN'] ?? 'oasdiff';
+    this.binary = options.binary ?? defaultBinary();
     this.timeout = options.timeoutMs ?? 30_000;
   }
 

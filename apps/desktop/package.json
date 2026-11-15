@@ -39,5 +39,12 @@
     "@types/node": "^22.20.1",
     "electron": "^38.4.0",
     "tailwindcss": "^4.1.16"
+  },
+  "nx": {
+    "targets": {
+      "test": {
+        "cache": false
+      }
+    }
   }
 }

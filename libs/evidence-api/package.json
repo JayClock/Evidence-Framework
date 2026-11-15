@@ -39,7 +39,34 @@
       "platform:node",
       "surface:browser-safe",
       "scope:api"
-    ]
+    ],
+    "targets": {
+      "export-openapi": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "command": "node libs/evidence-api/dist/cli.js deliver",
+          "cwd": "."
+        }
+      },
+      "diff": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "command": "node libs/evidence-api/dist/cli.js diff",
+          "cwd": "."
+        }
+      },
+      "test": {
+        "cache": false
+      }
+    }
   },
   "dependencies": {
     "@evidence-poc/evidence-model-core": "workspace:*",

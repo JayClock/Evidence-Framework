@@ -261,7 +261,12 @@ const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
 
 /** Preview and export current inputs; stale evidence is a gap, not a reason to hide the draft. */
 export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
-  if (argv.length === 1 && ['--help', '-h'].includes(argv[0]!))
+  if (
+    (argv.length === 1 && ['--help', '-h'].includes(argv[0]!)) ||
+    (argv.length === 2 &&
+      ['inspect', 'check', 'project', 'deliver', 'diff'].includes(argv[0]!) &&
+      ['--help', '-h'].includes(argv[1]!))
+  )
     return { output: `${USAGE}\n`, exitCode: 0 };
   const options = parse(argv);
   if (typeof options === 'string')
