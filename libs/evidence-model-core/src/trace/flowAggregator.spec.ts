@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
 import {
   compactCanonicalJson,
   createEmptyDomainModel,
+  DomainModelDocumentSchema,
+  type DomainModelDocument,
   type EntityAST,
   type EvidenceEntityAST,
   type ExampleTestAST,
@@ -8,6 +11,7 @@ import {
 } from '@evidence-poc/evidence-schema';
 import { describe, expect, it } from 'vitest';
 import { digestOf } from '../validation/modelDigest.js';
+import { buildFmCheckReport } from '../validation/fmCheck.js';
 import {
   collectFlowScenarios,
   computeStepHash,
@@ -367,6 +371,273 @@ describe('flow graph errors', () => {
         code: 'CYCLIC_DEPENDENCY',
         exampleRefs: ['e.self#sample'],
       }),
+    );
+  });
+});
+
+const acceptanceModel = (name = 'procurement'): DomainModelDocument =>
+  DomainModelDocumentSchema.parse(
+    JSON.parse(
+      readFileSync(
+        new URL(
+          `../../../../examples/acceptance/${name}.evidence.json`,
+          import.meta.url,
+        ),
+        'utf8',
+      ),
+    ),
+  );
+const exampleOf = (
+  model: DomainModelDocument,
+  entityId: string,
+  label?: string,
+) => {
+  const found = model.entities
+    .find((item) => item.id === entityId)
+    ?.examples?.find((item) => label === undefined || item.label === label);
+  if (found === undefined)
+    throw new Error(`Missing fixture example: ${entityId}#${label}`);
+  return found;
+};
+const deepFreeze = <T>(value: T): T => {
+  if (value !== null && typeof value === 'object') {
+    for (const child of Object.values(value)) deepFreeze(child);
+    Object.freeze(value);
+  }
+  return value;
+};
+const hashesByRef = (model: DomainModelDocument) =>
+  new Map(
+    collectFlowScenarios(model).flatMap((flow) =>
+      flow.steps.map(
+        (step) =>
+          [`${step.entityId}#${step.exampleLabel}`, step.stepHash] as const,
+      ),
+    ),
+  );
+
+describe('acceptance-model fact extraction', () => {
+  it('extracts the payment chain while retaining the explicitly modeled negative example', () => {
+    const model = acceptanceModel();
+    const { report } = buildFmCheckReport({ model });
+    const flows = collectFlowScenarios(model, report);
+    expect(flows).toHaveLength(1);
+    const [flow] = flows;
+    expect(flow.flowId).toBe('payment');
+    expect(
+      flow.steps.map((step) => `${step.entityId}#${step.exampleLabel}`),
+    ).toEqual([
+      'contract.agreement#signed',
+      'request.payment#requested',
+      'confirmation.payment#bad-input',
+      'confirmation.payment#confirmed',
+    ]);
+    const positive = flow.steps.filter(
+      (step) => step.exampleLabel !== 'bad-input',
+    );
+    expect(positive.map((step) => step.entityId)).toEqual([
+      'contract.agreement',
+      'request.payment',
+      'confirmation.payment',
+    ]);
+    expect(positive.map((step) => step.asOf)).toEqual(
+      Array(3).fill('2026-03-31T10:00:00Z'),
+    );
+    expect(positive.map((step) => step.basedOn)).toEqual([
+      [],
+      ['contract.agreement#signed'],
+      ['request.payment#requested'],
+    ]);
+    expect(positive[2]).toMatchObject({
+      entityKind: 'fulfillment_confirmation',
+      entityLabel: 'payment confirmation',
+      contextRef: 'context.procurement',
+      actingRoleRef: 'role.buyer',
+      responsibleRoleRef: 'role.buyer',
+      values: { id: 'confirmation-001', total_amount: 500 },
+    });
+    expect(flow.steps[2].derivedAssertions).toEqual({
+      '$.error': 'INVALID_INPUT',
+    });
+    expect(flow.involvedContextRefs).toEqual(['context.procurement']);
+    expect(flow.involvedRoleRefs).toEqual(['role.buyer', 'role.seller']);
+    expect(flow.traceDigest).toMatch(/^sha256:[a-f0-9]{64}$/);
+    for (const step of flow.steps)
+      expect(step.stepHash).toBe(computeStepHash(step));
+  });
+
+  it('extracts independent deposit and payment flows from the evolved model', () => {
+    const flows = collectFlowScenarios(acceptanceModel('procurement-deposit'));
+    expect(flows.map((flow) => flow.flowId)).toEqual(['deposit', 'payment']);
+    expect(flows[0].steps.map((step) => step.entityId)).toEqual([
+      'contract.agreement',
+      'request.deposit',
+      'confirmation.deposit',
+    ]);
+    expect(flows[0].steps.map((step) => step.sequence)).toEqual([1, 2, 3]);
+    expect(flows[1].steps.map((step) => step.sequence)).toEqual([1, 2, 3, 4]);
+    expect(flows[0].traceDigest).not.toBe(flows[1].traceDigest);
+  });
+
+  it('is idempotent and independent of entity, example and object-key iteration order', () => {
+    const model = acceptanceModel('procurement-deposit');
+    const baseline = collectFlowScenarios(model);
+    expect(collectFlowScenarios(model)).toEqual(baseline);
+    const reordered: DomainModelDocument = JSON.parse(
+      JSON.stringify(model, (_key, value: unknown) =>
+        value !== null && typeof value === 'object' && !Array.isArray(value)
+          ? Object.fromEntries(Object.entries(value).reverse())
+          : value,
+      ),
+    );
+    reordered.entities.reverse();
+    reordered.relationships.reverse();
+    reordered.rules.reverse();
+    for (const item of reordered.entities) item.examples?.reverse();
+    expect(collectFlowScenarios(reordered)).toEqual(baseline);
+  });
+
+  it('changes only the edited step hash, not its descendants or other flows', () => {
+    const model = acceptanceModel('procurement-deposit');
+    const before = hashesByRef(model);
+    const digests = collectFlowScenarios(model).map((flow) => flow.traceDigest);
+    exampleOf(model, 'request.payment').value.quantity = 11;
+    const after = hashesByRef(model);
+    for (const [ref, hash] of before) {
+      if (ref === 'request.payment#requested')
+        expect(after.get(ref)).not.toBe(hash);
+      else expect(after.get(ref)).toBe(hash);
+    }
+    const changed = collectFlowScenarios(model);
+    expect(changed[0].traceDigest).toBe(digests[0]);
+    expect(changed[1].traceDigest).not.toBe(digests[1]);
+  });
+
+  it('includes declared assertion changes in only that step fingerprint', () => {
+    const model = acceptanceModel();
+    const before = hashesByRef(model);
+    const negative = exampleOf(model, 'confirmation.payment', 'bad-input');
+    if (negative.test === undefined) throw new Error('Missing fixture test');
+    negative.test.expect = { '$.error': 'DIFFERENT_ERROR' };
+    const after = hashesByRef(model);
+    for (const [ref, hash] of before) {
+      if (ref.endsWith('#bad-input')) expect(after.get(ref)).not.toBe(hash);
+      else expect(after.get(ref)).toBe(hash);
+    }
+  });
+
+  it('does not invalidate existing hashes when inserting a step changes their sequence', () => {
+    const model = acceptanceModel();
+    const before = collectFlowScenarios(model)[0];
+    model.entities.push(
+      entity('e.earlier', [
+        example('sample', { asOf: '2026-03-30T10:00:00Z' }),
+      ]),
+    );
+    const after = collectFlowScenarios(model)[0];
+    expect(after.steps[0].entityId).toBe('e.earlier');
+    expect(after.steps.slice(1).map((step) => step.stepHash)).toEqual(
+      before.steps.map((step) => step.stepHash),
+    );
+    expect(after.steps.slice(1).map((step) => step.sequence)).toEqual([
+      2, 3, 4, 5,
+    ]);
+    expect(after.traceDigest).not.toBe(before.traceDigest);
+  });
+});
+
+describe('trace snapshots and reported gaps', () => {
+  it('copies values, assertions and dependency arrays without mutating frozen sources', () => {
+    const inputExample = example(
+      'sample',
+      {
+        basedOn: ['e.parent#sample'],
+        expect: { '$.detail': { amount: 10 } },
+      },
+      { detail: { amount: 10 } },
+    );
+    const model = deepFreeze(
+      modelWith(entity('e.parent'), entity('e.child', [inputExample])),
+    );
+    const before = structuredClone(model);
+    const [flow] = collectFlowScenarios(model);
+    const step = flow.steps[1];
+    expect(model).toEqual(before);
+    expect(step.values).not.toBe(inputExample.value);
+    expect(step.basedOn).not.toBe(inputExample.test?.basedOn);
+    expect(step.derivedAssertions).not.toBe(inputExample.test?.expect);
+    (step.values.detail as { amount: number }).amount = 20;
+    (step.derivedAssertions?.['$.detail'] as { amount: number }).amount = 20;
+    expect(model).toEqual(before);
+  });
+
+  it('keeps an existing snapshot and hash consistent when its input model changes later', () => {
+    const model = modelWith(
+      entity('e.parent', [example('sample', {}, { detail: { amount: 10 } })]),
+    );
+    const [flow] = collectFlowScenarios(model);
+    (exampleOf(model, 'e.parent').value.detail as { amount: number }).amount =
+      20;
+    expect(flow.steps[0].values).toEqual({ detail: { amount: 10 } });
+    expect(flow.steps[0].stepHash).toBe(computeStepHash(flow.steps[0]));
+  });
+
+  it('attaches only matching entity, attribute and context gap subjects, sorted and deduplicated', () => {
+    const item = entity('request.payment');
+    item.attributes = [
+      { name: 'amount', label: 'Amount', meaning: 'Payment amount' },
+    ];
+    const model = modelWith(item);
+    const report = deepFreeze({
+      gaps: [
+        'request.payment.amount: missing valueType',
+        'request.payment: missing confirmation',
+        'request.payment-extra: unrelated entity',
+        'request.payment.other: unrelated subject',
+        'context.procurement: missing primary obligation',
+        'other.entity: mentions request.payment but is unrelated',
+        'unstructured gap',
+        'request.payment: missing confirmation',
+      ],
+    });
+    const [flow] = collectFlowScenarios(model, report);
+    expect(flow.steps[0].gaps).toEqual([
+      'context.procurement: missing primary obligation',
+      'request.payment.amount: missing valueType',
+      'request.payment: missing confirmation',
+    ]);
+    const [withoutReport] = collectFlowScenarios(model);
+    expect(withoutReport.steps[0].gaps).toEqual([]);
+    expect(flow.steps[0].stepHash).toBe(withoutReport.steps[0].stepHash);
+    expect(flow.traceDigest).toBe(withoutReport.traceDigest);
+  });
+
+  it('handles a wide and a deep graph without losing or duplicating steps', () => {
+    const width = 150;
+    const wide = Array.from({ length: width }, (_, index) =>
+      entity(`e.${String(index).padStart(3, '0')}`),
+    );
+    const flow = collectFlowScenarios(modelWith(...wide.reverse()))[0];
+    expect(flow.steps).toHaveLength(width);
+    expect(flow.steps[0].entityId).toBe('e.000');
+    expect(flow.steps[width - 1].sequence).toBe(width);
+    const depth = 2000;
+    const deep = Array.from({ length: depth }, (_, index) =>
+      entity(`e.${index}`, [
+        example('sample', {
+          basedOn: index === 0 ? [] : [`e.${index - 1}#sample`],
+        }),
+      ]),
+    );
+    const deepFlow = collectFlowScenarios(modelWith(...deep.reverse()))[0];
+    expect(deepFlow.steps).toHaveLength(depth);
+    expect(deepFlow.steps[0].entityId).toBe('e.0');
+    expect(deepFlow.steps[depth - 1].entityId).toBe(`e.${depth - 1}`);
+    exampleOf(modelWith(...deep), 'e.0').test = example('sample', {
+      basedOn: [`e.${depth - 1}#sample`],
+    }).test;
+    expect(() => collectFlowScenarios(modelWith(...deep))).toThrow(
+      expect.objectContaining({ code: 'CYCLIC_DEPENDENCY' }),
     );
   });
 });
