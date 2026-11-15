@@ -1,7 +1,7 @@
 import { stringify } from 'yaml';
 import type { AcceptanceProjection } from '../delivery/scenarioProjector.js';
 
-/** Step CI 2.x uses Liquid templates (not GitHub Actions' ${{...}} syntax). */
+/** Step CI 2.x configures Liquidless with the `${{...}}` delimiter. */
 export function renderStepCi(projection: AcceptanceProjection): string {
   const tests = Object.fromEntries(
     projection.flows.map((flow, index) => [
@@ -11,7 +11,13 @@ export function renderStepCi(projection: AcceptanceProjection): string {
         steps: flow.steps.map((step) => ({
           name: step.ref,
           http: {
-            url: `{{env.host}}${step.route.path.replace(/\{([^{}]+)\}/g, (_match, name: string) => `{{captures.${step.parameters[name]}}}`)}`,
+            url:
+              '${{env.host}}' +
+              step.route.path.replace(
+                /\{([^{}]+)\}/g,
+                (_match, name: string) =>
+                  '${{captures.' + step.parameters[name] + '}}',
+              ),
             method: step.route.method,
             followRedirects: false,
             timeout: '5s',
@@ -45,12 +51,17 @@ export function renderStepCi(projection: AcceptanceProjection): string {
   );
   return (
     '# Generated from inline model examples. Do not edit. Test environment only.\n' +
-    stringify({
-      version: '1.1',
-      name: `${projection.modelId} acceptance`,
-      env: { host: 'http://localhost:8080' },
-      config: { concurrency: 1, continueOnFail: false },
-      tests,
-    })
+    stringify(
+      {
+        version: '1.1',
+        name: `${projection.modelId} acceptance`,
+        env: { host: 'http://localhost:8080' },
+        config: { concurrency: 1, continueOnFail: false },
+        tests,
+      },
+      // The Runner uses YAML 1.1: unquoted ISO timestamps become Date objects,
+      // which its template walker reconstructs using wall time. Quote literals.
+      { defaultStringType: 'QUOTE_DOUBLE' },
+    )
   );
 }

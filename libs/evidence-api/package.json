@@ -52,6 +52,17 @@
           "cwd": "."
         }
       },
+      "export-tests": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "command": "node libs/evidence-api/dist/cli.js export-tests",
+          "cwd": "."
+        }
+      },
       "diff": {
         "executor": "nx:run-commands",
         "cache": false,
@@ -78,6 +89,7 @@
     "yaml": "2.9.1"
   },
   "devDependencies": {
+    "@stepci/runner": "2.0.7",
     "openapi-typescript": "7.13.0",
     "typescript": "~6.0.3"
   }

@@ -3,6 +3,10 @@ import { mkdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import {
+  exportAcceptanceTests,
+  defaultAcceptanceDirectory,
+} from './exportTests.js';
 import { loadFm } from './adapter/fmAdapter.js';
 import { canonicalJson } from './canonicalJson.js';
 import { diagnosticToJson, hasErrors, hasGaps } from './diagnostics.js';
@@ -22,7 +26,13 @@ import {
   writeOutput,
 } from './renderer/outputRenderer.js';
 
-export type Command = 'inspect' | 'check' | 'project' | 'deliver' | 'diff';
+export type Command =
+  | 'inspect'
+  | 'check'
+  | 'project'
+  | 'deliver'
+  | 'diff'
+  | 'export-tests';
 
 export interface CliOptions {
   command: Exclude<Command, 'diff'>;
@@ -31,6 +41,7 @@ export interface CliOptions {
   fmCheck?: string;
   api?: string;
   out?: string;
+  format?: 'stepci' | 'hurl';
 }
 
 export interface DiffCliOptions {
@@ -49,7 +60,7 @@ export interface CliResult {
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|markdown]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|markdown]\n       evidence-api export-tests --project-root DIR --fm DIR_OR_BUNDLE [--format stepci|hurl] [--out DIR]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -103,9 +114,14 @@ const validateResolvedPaths = (options: CliOptions): string | null => {
   if (options.api !== undefined && isInside(canonicalPath(options.api), fm)) {
     return 'API_INPUT_CONFLICT: API 覆盖文件必须位于 FM 根目录之外';
   }
-  if (options.command !== 'project' && options.command !== 'deliver')
+  if (!['project', 'deliver', 'export-tests'].includes(options.command))
     return null;
-  const out = canonicalPath(options.out ?? defaultOutputDirectory(root));
+  const out = canonicalPath(
+    options.out ??
+      (options.command === 'export-tests'
+        ? defaultAcceptanceDirectory(root)
+        : defaultOutputDirectory(root)),
+  );
   if (!isInside(out, root))
     return 'OUTPUT_OUTSIDE_PROJECT: 输出目录必须位于项目根内';
   for (const input of [options.fm, options.api, options.fmCheck]) {
@@ -137,14 +153,17 @@ const parse = (
     command !== 'check' &&
     command !== 'project' &&
     command !== 'deliver' &&
-    command !== 'diff'
+    command !== 'diff' &&
+    command !== 'export-tests'
   )
     return USAGE;
   const values: Record<string, string> = {};
   const flags = new Set(
     command === 'diff'
       ? ['base', 'target', 'base-api', 'api', 'format']
-      : ['project-root', 'fm', 'fm-check', 'api', 'out'],
+      : command === 'export-tests'
+        ? ['project-root', 'fm', 'out', 'format']
+        : ['project-root', 'fm', 'fm-check', 'api', 'out'],
   );
   for (let index = 0; index < rest.length; index += 2) {
     const token = rest[index]!;
@@ -172,9 +191,18 @@ const parse = (
       ...(values['api'] === undefined ? {} : { api: values['api'] }),
     };
   }
+  if (
+    command === 'export-tests' &&
+    values['format'] !== undefined &&
+    !['stepci', 'hurl'].includes(values['format'])
+  )
+    return '--format 必须是 stepci 或 hurl';
   return {
     command,
     projectRoot: values['project-root'] ?? '',
+    ...(command === 'export-tests'
+      ? { format: (values['format'] ?? 'stepci') as 'stepci' | 'hurl' }
+      : {}),
     fm: values['fm'] ?? '',
     ...(values['fm-check'] === undefined
       ? {}
@@ -264,7 +292,14 @@ export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
   if (
     (argv.length === 1 && ['--help', '-h'].includes(argv[0]!)) ||
     (argv.length === 2 &&
-      ['inspect', 'check', 'project', 'deliver', 'diff'].includes(argv[0]!) &&
+      [
+        'inspect',
+        'check',
+        'project',
+        'deliver',
+        'diff',
+        'export-tests',
+      ].includes(argv[0]!) &&
       ['--help', '-h'].includes(argv[1]!))
   )
     return { output: `${USAGE}\n`, exitCode: 0 };
@@ -278,6 +313,30 @@ export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
   if (options.command === 'diff') return runDiff(options);
   const problem = validatePaths(options);
   if (problem !== null) return { output: null, error: problem, exitCode: 1 };
+  if (options.command === 'export-tests') {
+    const out = options.out ?? defaultAcceptanceDirectory(options.projectRoot);
+    try {
+      const exported = await exportAcceptanceTests({
+        fm: options.fm,
+        out,
+        format: options.format ?? 'stepci',
+      });
+      return {
+        output: {
+          valid: true,
+          out,
+          format: options.format ?? 'stepci',
+          ...exported,
+        },
+        exitCode: 0,
+      };
+    } catch (error) {
+      return refused(
+        'ACCEPTANCE_EXPORT_FAILED',
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
 
   let check: unknown;
   if (options.fmCheck !== undefined) {
