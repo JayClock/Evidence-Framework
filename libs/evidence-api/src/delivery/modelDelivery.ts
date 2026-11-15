@@ -47,6 +47,61 @@ const SCHEMA_FOR_TYPE: Record<string, JsonObject> = {
 const schemaOf = (field: DeliveryField): JsonObject =>
   SCHEMA_FOR_TYPE[field.valueType] ?? { type: 'string' };
 
+const exampleKey = (
+  route: DeliveryRoute,
+  label: string,
+  position: number,
+): string =>
+  `${componentName(route.id)}_${componentName(label)}_${position + 1}`;
+
+const requestExampleValue = (
+  route: DeliveryRoute,
+  value: Record<string, unknown>,
+): JsonObject =>
+  Object.fromEntries(
+    route.fields
+      .filter((field) =>
+        Object.prototype.hasOwnProperty.call(value, field.name),
+      )
+      .map((field) => [field.name, value[field.name]]),
+  );
+
+const examplesFor = (
+  route: DeliveryRoute,
+  direction: 'request' | 'response',
+): JsonObject =>
+  Object.fromEntries(
+    route.examples.map((example, position) => [
+      exampleKey(route, example.label, position),
+      {
+        summary: example.label,
+        ...(example.description === undefined
+          ? {}
+          : { description: example.description }),
+        value:
+          direction === 'request'
+            ? requestExampleValue(route, example.value)
+            : example.value,
+      },
+    ]),
+  );
+
+const examplesForSchemas = (routes: readonly DeliveryRoute[]): JsonObject =>
+  Object.fromEntries(
+    routes.flatMap((route) =>
+      route.examples.map((example, position) => [
+        exampleKey(route, example.label, position),
+        {
+          summary: example.label,
+          ...(example.description === undefined
+            ? {}
+            : { description: example.description }),
+          value: example.value,
+        },
+      ]),
+    ),
+  );
+
 const parameterName = (path: string): string[] => {
   const names: string[] = [];
 
@@ -119,6 +174,9 @@ const objectSchemas = (
       description: route.summary,
       properties,
       ...(required.length === 0 ? {} : { required }),
+      ...(route.examples.length === 0
+        ? {}
+        : { examples: route.examples.map((example) => example.value) }),
       additionalProperties: false,
     };
   }
@@ -157,6 +215,9 @@ const requestBody = (route: DeliveryRoute): JsonObject | null => {
           // A derived value or a business time is not the caller's to send.
           additionalProperties: false,
         },
+        ...(route.examples.length === 0
+          ? {}
+          : { examples: examplesFor(route, 'request') }),
       },
     },
   };
@@ -214,6 +275,10 @@ const operationOf = (
           ? {
               content: {
                 'application/hal+json': {
+                  examples:
+                    route.examples.length === 0
+                      ? undefined
+                      : examplesFor(route, 'response'),
                   'x-evidence-link-templates': halLinksFor(links, route.id),
                   schema: {
                     $ref: `#/components/schemas/${componentOf(response.entityRef)}`,
@@ -236,7 +301,7 @@ export interface DeliveryContract {
   };
   'x-evidence-model': string;
   paths: Record<string, JsonObject>;
-  components: { schemas: JsonObject };
+  components: { schemas: JsonObject; examples: JsonObject };
   'x-evidence-services': readonly {
     id: string;
     kind: string;
@@ -279,7 +344,10 @@ export const buildDeliveryContract = (
     },
     'x-evidence-model': document.manifest.id,
     paths,
-    components: { schemas: objectSchemas(routes, componentOf) },
+    components: {
+      schemas: objectSchemas(routes, componentOf),
+      examples: examplesForSchemas(routes),
+    },
     'x-evidence-services': services.map((service) => ({
       id: service.id,
       kind: service.kind,

@@ -14,11 +14,7 @@ import {
   isDomainComponentRole,
 } from '../ast/entity.js';
 import { isCardinality, RELATIONSHIP_KINDS } from '../ast/relationship.js';
-import {
-  BOOLEAN_RULE_KINDS,
-  RULE_KINDS,
-  isRuleBinding,
-} from '../ast/rule.js';
+import { BOOLEAN_RULE_KINDS, RULE_KINDS, isRuleBinding } from '../ast/rule.js';
 import { FM_RULE_LANGUAGE, FM_SCHEMA_VERSION } from '../ast/document.js';
 import { CEL_VARIABLE_PATTERN } from '../ast/id.js';
 import { VALUE_TYPES } from '../ast/values.js';
@@ -59,6 +55,7 @@ const ENTITY_KEYS = new Set([
   'roleRefs',
   'domainRole',
   'attributes',
+  'examples',
   'notes',
   'sourceSnippet',
 ]);
@@ -130,7 +127,10 @@ const asString = (object: JsonObject, key: string): string | undefined => {
   return typeof value === 'string' ? value : undefined;
 };
 
-const asStringList = (object: JsonObject, key: string): string[] | undefined => {
+const asStringList = (
+  object: JsonObject,
+  key: string,
+): string[] | undefined => {
   const value = object[key];
 
   if (!Array.isArray(value)) {
@@ -150,7 +150,10 @@ const kindOf = (object: JsonObject | undefined): string | undefined =>
 
 const signatureOf = (
   object: JsonObject | undefined,
-): [string | undefined, string | undefined] => [categoryOf(object), kindOf(object)];
+): [string | undefined, string | undefined] => [
+  categoryOf(object),
+  kindOf(object),
+];
 
 const isContext = (object: JsonObject | undefined): boolean =>
   categoryOf(object) === 'context';
@@ -190,10 +193,8 @@ const attributeOf = (
   );
 };
 
-const unknownFields = (
-  object: JsonObject,
-  allowed: Set<string>,
-): string[] => Object.keys(object).filter((key) => !allowed.has(key));
+const unknownFields = (object: JsonObject, allowed: Set<string>): string[] =>
+  Object.keys(object).filter((key) => !allowed.has(key));
 
 const pushIssue = (
   issues: ValidationIssue[],
@@ -441,6 +442,122 @@ const indexCollection = (
     }
 
     bucket.set(id, item);
+  });
+};
+
+const isJsonValue = (value: unknown): boolean => {
+  if (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'boolean'
+  ) {
+    return true;
+  }
+
+  if (typeof value === 'number') {
+    return Number.isFinite(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.every(isJsonValue);
+  }
+
+  return isObject(value) && Object.values(value).every(isJsonValue);
+};
+
+const validateExamples = (
+  entity: JsonObject,
+  entityId: string,
+  path: string,
+  issues: ValidationIssue[],
+): void => {
+  const examples = entity['examples'];
+
+  if (examples === undefined) {
+    return;
+  }
+
+  if (!Array.isArray(examples)) {
+    pushIssue(
+      issues,
+      'entity.shape',
+      `${path}.examples`,
+      'examples must be an array.',
+      entityId,
+    );
+    return;
+  }
+
+  const labels = new Set<string>();
+  examples.forEach((example, position) => {
+    const examplePath = `${path}.examples[${position}]`;
+    if (!isObject(example)) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        examplePath,
+        'example must be an object.',
+        entityId,
+      );
+      return;
+    }
+
+    for (const field of unknownFields(
+      example,
+      new Set(['label', 'description', 'value']),
+    )) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        `${examplePath}.${field}`,
+        `unsupported example field '${field}'.`,
+        entityId,
+      );
+    }
+
+    const label = example['label'];
+    if (!isNonEmptyString(label)) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        `${examplePath}.label`,
+        'example label must be a non-empty string.',
+        entityId,
+      );
+    } else if (labels.has(label)) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        `${examplePath}.label`,
+        `duplicate example label '${label}'.`,
+        entityId,
+      );
+    } else {
+      labels.add(label);
+    }
+
+    if (
+      example['description'] !== undefined &&
+      !isNonEmptyString(example['description'])
+    ) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        `${examplePath}.description`,
+        'example description must be a non-empty string when present.',
+        entityId,
+      );
+    }
+
+    if (!isObject(example['value']) || !isJsonValue(example['value'])) {
+      pushIssue(
+        issues,
+        'entity.shape',
+        `${examplePath}.value`,
+        'example value must be a JSON object.',
+        entityId,
+      );
+    }
   });
 };
 
@@ -701,7 +818,8 @@ const validateContextEntity = (
 
   if (kind === 'contract') {
     const contractRoots = roots.filter(
-      (ref) => signatureOf(index.entities.get(ref)).join('.') === 'evidence.contract',
+      (ref) =>
+        signatureOf(index.entities.get(ref)).join('.') === 'evidence.contract',
     );
 
     if (roots.length !== 1 || contractRoots.length !== 1) {
@@ -817,12 +935,15 @@ const validateEvidenceResponsibility = (
   }
 
   // A pre-contract stage borrows the parties bound by its parent Contract.
-  const parent = index.entities.get(asString(context ?? {}, 'parentContextRef') ?? '');
+  const parent = index.entities.get(
+    asString(context ?? {}, 'parentContextRef') ?? '',
+  );
   const owner =
     kindOf(context) === 'pre_contract' && kindOf(parent) === 'contract'
       ? parent
       : context;
-  const expectedContext = asString(owner ?? {}, 'id') ?? asString(entity, 'contextRef');
+  const expectedContext =
+    asString(owner ?? {}, 'id') ?? asString(entity, 'contextRef');
 
   if (ownerContextOf(role) !== expectedContext) {
     pushIssue(
@@ -987,7 +1108,11 @@ const validateNonContextEntity = (
     }
   }
 
-  if (category === 'participant' && kind === 'party' && contextRef !== undefined) {
+  if (
+    category === 'participant' &&
+    kind === 'party' &&
+    contextRef !== undefined
+  ) {
     pushIssue(
       issues,
       'entity.participantParty.contextRef',
@@ -1030,13 +1155,19 @@ const validateNonContextEntity = (
   }
 
   if (category === 'evidence') {
-    validateEvidenceResponsibility(entity, entityId, path, context, index, issues);
+    validateEvidenceResponsibility(
+      entity,
+      entityId,
+      path,
+      context,
+      index,
+      issues,
+    );
 
     const contextKind = kindOf(context);
 
     if (
-      (kind === 'fulfillment_request' ||
-        kind === 'fulfillment_confirmation') &&
+      (kind === 'fulfillment_request' || kind === 'fulfillment_confirmation') &&
       contextKind !== 'contract'
     ) {
       pushIssue(
@@ -1227,6 +1358,7 @@ const validateEntities = (
   for (const [entityId, entity] of index.entities) {
     const path = `entities.${entityId}`;
 
+    validateExamples(entity, entityId, path, issues);
     validateAttributes(entity, entityId, path, index, issues);
 
     if (isContext(entity)) {
@@ -1331,10 +1463,7 @@ const isMomentEvidence = (object: JsonObject | undefined): boolean => {
   );
 };
 
-const isPlaysRolePair = (
-  source: JsonObject,
-  target: JsonObject,
-): boolean => {
+const isPlaysRolePair = (source: JsonObject, target: JsonObject): boolean => {
   const pair = `${signatureOf(source).join('.')}>${signatureOf(target).join('.')}`;
 
   if (PLAYS_ROLE_PAIRS.includes(pair)) {
@@ -1351,7 +1480,10 @@ const isPlaysRolePair = (
 
   // A moment Evidence can play an Evidence Role owned by another Context.
   // Moment evidences are: fulfillment_confirmation, other_evidence, contract.
-  return isMomentEvidence(source) && signatureOf(target).join('.') === 'role.evidence';
+  return (
+    isMomentEvidence(source) &&
+    signatureOf(target).join('.') === 'role.evidence'
+  );
 };
 
 const validateRelationships = (
@@ -1518,7 +1650,9 @@ const validateRelationships = (
     if (contractToProposal) {
       const proposalContext = index.entities.get(targetContext ?? '');
 
-      if (asString(proposalContext ?? {}, 'parentContextRef') !== sourceContext) {
+      if (
+        asString(proposalContext ?? {}, 'parentContextRef') !== sourceContext
+      ) {
         pushIssue(
           issues,
           'relationship.references.crossContext',
@@ -1567,7 +1701,13 @@ const validateRuleShape = (
   const kind = kindOf(rule);
 
   if (kind === undefined) {
-    pushIssue(issues, 'rule.shape', `${path}.kind`, 'rule kind is required.', ruleId);
+    pushIssue(
+      issues,
+      'rule.shape',
+      `${path}.kind`,
+      'rule kind is required.',
+      ruleId,
+    );
   } else if (!(RULE_KINDS as readonly string[]).includes(kind)) {
     pushIssue(
       issues,
@@ -1640,7 +1780,11 @@ const validateRuleShape = (
         'rule target requires entityRef and attribute.',
         ruleId,
       );
-    } else if (Object.keys(target).some((key) => !['entityRef', 'attribute'].includes(key))) {
+    } else if (
+      Object.keys(target).some(
+        (key) => !['entityRef', 'attribute'].includes(key),
+      )
+    ) {
       pushIssue(
         issues,
         'rule.target.unresolved',

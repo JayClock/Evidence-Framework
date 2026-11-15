@@ -8,6 +8,7 @@ export type UnaddressedRoute = Omit<
   | 'allowedPartyRoleRefs'
   | 'exposure'
   | 'outputFields'
+  | 'examples'
   | 'rules'
 >;
 

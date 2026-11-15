@@ -90,6 +90,50 @@ describe('OpenAPI consumer contract', () => {
     expect(contractProblems(contract)).toEqual([]);
   });
 
+  it('projects entity examples into request, response and component examples', async () => {
+    const document = structuredClone(stages[3]!);
+    const baseline = buildDelivery(document);
+    const route = baseline.routes.find((item) => item.method === 'POST')!;
+    const entity = document.entities.find(
+      (item) => item.id === route.entityRef,
+    )!;
+    entity.examples = [
+      {
+        label: 'standard',
+        description: 'A complete business moment.',
+        value: {
+          ...Object.fromEntries(
+            route.outputFields.map((field) => [field.name, null]),
+          ),
+          _links: {},
+        },
+      },
+    ];
+
+    const snapshot = buildDelivery(document);
+    const operation = operationFor(snapshot, route.id);
+    const requestExamples =
+      operation.requestBody!.content['application/json']!.examples!;
+    const responseExamples =
+      operation.responses['201']!.content!['application/hal+json']!.examples!;
+    const componentExamples = snapshot.openapi.components.examples;
+
+    expect(Object.values(requestExamples)).toHaveLength(1);
+    expect(Object.values(requestExamples)[0]).toMatchObject({
+      summary: 'standard',
+      value: Object.fromEntries(
+        route.fields.map((field) => [field.name, null]),
+      ),
+    });
+    expect(Object.values(responseExamples)[0]).toMatchObject({
+      summary: 'standard',
+    });
+    expect(Object.values(componentExamples)).toHaveLength(1);
+    expect(contractProblems(snapshot.openapi)).toEqual([]);
+    expect((await validator.validate({ ...snapshot.openapi })).valid).toBe(
+      true,
+    );
+  });
   it('rejects invalid OpenAPI structure instead of accepting a JSON-shaped object', async () => {
     const contract = structuredClone(buildDelivery(stages[3]!).openapi);
     const raw: Record<string, unknown> = { ...contract };

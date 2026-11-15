@@ -2,6 +2,7 @@ import { fieldFor } from './fieldOrigin.js';
 export { fieldFor } from './fieldOrigin.js';
 import {
   type DomainModelDocument,
+  type ModelExampleAST,
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
 import {
@@ -69,6 +70,8 @@ export interface DeliveryRouteResponse {
   entityRef?: string;
 }
 
+export type DeliveryExample = ModelExampleAST;
+
 export interface DeliveryRoute {
   id: string;
   operationId: string;
@@ -94,6 +97,8 @@ export interface DeliveryRoute {
   allowedPartyRoleRefs: readonly string[];
   exposure: 'external' | 'internal';
   outputFields: readonly DeliveryField[];
+  /** Concrete values declared for the route's modeled entity. */
+  examples: readonly DeliveryExample[];
   rules: readonly Pick<
     RuleAST,
     'id' | 'kind' | 'expression' | 'bindings' | 'target' | 'resultType'
@@ -533,6 +538,7 @@ export const buildDeliveryRoutes = (
         outputFields: graph
           .attributesOf(route.entityRef)
           .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
+        examples: graph.getEntity(route.entityRef)?.examples ?? [],
       };
     })
     .sort(compareRoutes);

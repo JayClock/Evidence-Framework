@@ -181,12 +181,22 @@ export interface AttributeAST {
   notes?: string;
 }
 
+export interface ModelExampleAST {
+  /** Stable human-readable name used as the OpenAPI example key. */
+  readonly label: string;
+  readonly description?: string;
+  /** JSON object supplied to the operation or returned by it. */
+  readonly value: Record<string, unknown>;
+}
+
 interface EntityBase {
   type: 'entity';
   id: string;
   label: string;
   aliases?: string[];
   attributes?: AttributeAST[];
+  /** Concrete values that anchor this entity in generated contracts. */
+  examples?: ModelExampleAST[];
   notes?: string;
   /**
    * Sentence this element was read from.

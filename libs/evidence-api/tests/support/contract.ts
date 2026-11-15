@@ -10,14 +10,19 @@ export interface Schema {
   readOnly?: boolean;
   [key: string]: unknown;
 }
+export interface MediaType {
+  schema: Schema;
+  examples?: Record<string, unknown>;
+}
+
 export interface Operation {
   operationId: string;
   parameters: { name: string; in: string; required: boolean }[];
-  requestBody?: { content: Record<string, { schema: Schema }> };
+  requestBody?: { content: Record<string, MediaType> };
   responses: Record<
     string,
     {
-      content?: Record<string, { schema: Schema }>;
+      content?: Record<string, MediaType>;
       headers?: Record<string, unknown>;
     }
   >;

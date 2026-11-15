@@ -83,6 +83,7 @@ export {
   type EvidenceEntityAST,
   type EvidenceKind,
   type EvidenceKindDefinition,
+  type ModelExampleAST,
   type ParticipantEntityAST,
   type ParticipantKind,
   type RoleEntityAST,
