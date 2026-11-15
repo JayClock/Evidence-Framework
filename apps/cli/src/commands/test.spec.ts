@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -86,7 +86,15 @@ it('prints green, red and parseable JSON, ignoring a 404 health probe', async ()
     expect(errors).toEqual([]);
     expect(
       await dispatch(
-        [...args, '--gate', 'dod', '--allow-pending', '--json'],
+        [
+          ...args,
+          '--gate',
+          'dod',
+          '--allow-pending',
+          '--json',
+          '--report-dir',
+          'reports',
+        ],
         context,
       ),
     ).toBe(0);
@@ -95,6 +103,16 @@ it('prints green, red and parseable JSON, ignoring a 404 health probe', async ()
       pending: true,
       gate: 'dod',
     });
+    const saved = JSON.parse(
+      await readFile(path.join(root, 'reports/dod.json'), 'utf8'),
+    );
+    expect(saved).toMatchObject({ passed: false, pending: true });
+    expect(
+      await readFile(path.join(root, 'reports/dod.xml'), 'utf8'),
+    ).toContain('<failure');
+    expect(await readFile(path.join(root, 'reports/dod.md'), 'utf8')).toContain(
+      'PENDING',
+    );
     expect(
       await dispatch(
         [...args, '--gate', 'dod', '--report', 'markdown'],

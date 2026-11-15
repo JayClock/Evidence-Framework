@@ -1,0 +1,79 @@
+# Copy/include this template from your repository. Keep all gates strict on MRs/releases.
+# Assumes this pnpm workspace, with the three paths below customized for your project.
+stages: [contract, acceptance]
+
+variables:
+  GIT_DEPTH: '0'
+  MODEL: examples/acceptance/procurement-deposit.evidence.json
+  GENERATED: examples/governance/generated
+  BOOTSTRAP_MODEL: examples/acceptance/procurement.evidence.json
+  NX_DAEMON: 'false'
+
+.evidence-job:
+  image: node:22-bookworm
+  before_script:
+    - npm install --global pnpm@12.16.1
+    - pnpm install --frozen-lockfile
+    - pnpm nx build cli
+
+contract-and-hygiene:
+  extends: .evidence-job
+  stage: contract
+  script:
+    - pnpm api:setup
+    - pnpm evidence check "$MODEL"
+    - pnpm evidence export --model "$MODEL" --out "$GENERATED" --verify
+    - |
+      set -eu
+      mkdir -p reports
+      BASE_SHA="${CI_MERGE_REQUEST_DIFF_BASE_SHA:-${CI_COMMIT_BEFORE_SHA:-}}"
+      if [ -n "$BASE_SHA" ] && ! printf '%s' "$BASE_SHA" | grep -Eq '^0+$'; then
+        git cat-file -e "${BASE_SHA}^{commit}"
+        if git cat-file -e "${BASE_SHA}:${MODEL}" 2>/dev/null; then
+          git show "${BASE_SHA}:${MODEL}" > reports/baseline.evidence.json
+        else
+          git show "${BASE_SHA}:${BOOTSTRAP_MODEL}" > reports/baseline.evidence.json
+        fi
+      else
+        cp "$BOOTSTRAP_MODEL" reports/baseline.evidence.json
+      fi
+      pnpm evidence diff api reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
+  artifacts:
+    when: always
+    paths: [reports/]
+
+.evidence-gate:
+  extends: .evidence-job
+  stage: acceptance
+  needs:
+    - job: contract-and-hygiene
+      artifacts: true
+  script:
+    - |
+      set -eu
+      node examples/dogfood-backend/server.mjs --port 8085 --mode v2 > reports/backend.log 2>&1 &
+      SUT_PID=$!
+      trap 'kill "$SUT_PID" 2>/dev/null || true' EXIT
+      node --input-type=module -e '
+        for (let attempt = 0; ; attempt++) {
+          try { await fetch("http://127.0.0.1:8085", { method: "HEAD", signal: AbortSignal.timeout(500) }); break; }
+          catch (error) { if (attempt === 49) throw error; await new Promise(r => setTimeout(r, 100)); }
+        }'
+      pnpm evidence test --target http://127.0.0.1:8085 --scenarios "$GENERATED" \
+        --gate "$GATE" --baseline-model reports/baseline.evidence.json \
+        --strict-drift --report-dir reports
+  artifacts:
+    when: always
+    paths: [reports/]
+    reports:
+      junit: reports/*.xml
+
+regression-gate:
+  extends: .evidence-gate
+  variables:
+    GATE: regression
+
+dod-gate:
+  extends: .evidence-gate
+  variables:
+    GATE: dod

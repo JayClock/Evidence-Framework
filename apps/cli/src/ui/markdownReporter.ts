@@ -1,7 +1,10 @@
 import type { AcceptanceReport } from './trafficLightReporter.js';
 const xml = (value: unknown): string =>
-  String(value ?? '')
-    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '')
+  Array.from(String(value ?? ''))
+    .filter(
+      (char) => char.charCodeAt(0) >= 32 || ['\t', '\n', '\r'].includes(char),
+    )
+    .join('')
     .replace(
       /[<>&"']/g,
       (char) =>

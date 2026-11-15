@@ -10,7 +10,7 @@ Usage:
   evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir] [--verify]
   evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json|--report markdown|junit]
                 [--gate regression|dod] [--baseline-model path] [--filter pattern] [--tag label ...]
-                [--detect-drift] [--strict-drift] [--allow-pending]
+                [--detect-drift] [--strict-drift] [--allow-pending] [--report-dir dir]
   evidence check [model] [--json]
   evidence diff api <old-model> <new-model> [--format json|markdown]
   evidence --help

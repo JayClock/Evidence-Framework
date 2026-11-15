@@ -1,0 +1,119 @@
+name: Evidence Governance
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-governance-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MODEL: examples/acceptance/procurement-deposit.evidence.json
+  GENERATED: examples/governance/generated
+  BOOTSTRAP_MODEL: examples/acceptance/procurement.evidence.json
+  NX_DAEMON: 'false'
+
+jobs:
+  contract-and-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm api:setup
+      - run: pnpm nx build cli
+      - run: pnpm evidence check "$MODEL"
+      - run: pnpm evidence export --model "$MODEL" --out "$GENERATED" --verify
+      - name: Materialize immutable baseline (never fall back after a failed git show)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          if [[ -n "$BASE_SHA" && ! "$BASE_SHA" =~ ^0+$ ]]; then
+            git cat-file -e "${BASE_SHA}^{commit}"
+            if git cat-file -e "${BASE_SHA}:${MODEL}" 2>/dev/null; then
+              git show "${BASE_SHA}:${MODEL}" > reports/baseline.evidence.json
+            else
+              # Explicit bootstrap for the PR that first introduces MODEL.
+              git show "${BASE_SHA}:${BOOTSTRAP_MODEL}" > reports/baseline.evidence.json
+            fi
+          else
+            cp "$BOOTSTRAP_MODEL" reports/baseline.evidence.json
+          fi
+      - name: Breaking contract gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm evidence diff api reports/baseline.evidence.json "$MODEL" --format markdown > reports/api-diff.md
+      - name: Publish API summary
+        if: always()
+        run: test ! -f reports/api-diff.md || cat reports/api-diff.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-contract
+          path: reports/
+
+  acceptance:
+    name: ${{ matrix.gate }} gate
+    needs: contract-and-hygiene
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gate: [regression, dod]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm nx build cli
+      - uses: actions/download-artifact@v4
+        with:
+          name: evidence-contract
+          path: reports
+      - name: Start isolated SUT and run strict gate
+        env:
+          GATE: ${{ matrix.gate }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node examples/dogfood-backend/server.mjs --port 8085 --mode v2 > reports/backend.log 2>&1 &
+          SUT_PID=$!
+          trap 'kill "$SUT_PID" 2>/dev/null || true' EXIT
+          node --input-type=module -e '
+            for (let attempt = 0; ; attempt++) {
+              try { await fetch("http://127.0.0.1:8085", { method: "HEAD", signal: AbortSignal.timeout(500) }); break; }
+              catch (error) { if (attempt === 49) throw error; await new Promise(r => setTimeout(r, 100)); }
+            }'
+          pnpm evidence test --target http://127.0.0.1:8085 --scenarios "$GENERATED" \
+            --gate "$GATE" --baseline-model reports/baseline.evidence.json \
+            --strict-drift --report-dir reports
+      - name: Publish gate summary
+        if: always()
+        env:
+          GATE: ${{ matrix.gate }}
+        run: test ! -f "reports/$GATE.md" || cat "reports/$GATE.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-${{ matrix.gate }}
+          path: reports/

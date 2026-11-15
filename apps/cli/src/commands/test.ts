@@ -1,4 +1,4 @@
-import { readdir, stat } from 'node:fs/promises';
+import { readdir, stat, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   runAcceptanceSuite,
@@ -75,6 +75,7 @@ export async function testCommand(
     'strict-drift': { type: 'boolean' },
     'allow-pending': { type: 'boolean' },
     report: { type: 'string' },
+    'report-dir': { type: 'string' },
   });
   if (positionals.length)
     throw new Error(
@@ -167,6 +168,26 @@ export async function testCommand(
         ),
       ),
   };
+  const reportDir = stringOption(values['report-dir']);
+  if (reportDir) {
+    const directory = path.resolve(context.cwd, reportDir);
+    await mkdir(directory, { recursive: true });
+    const name = gate ?? 'acceptance';
+    await Promise.all([
+      writeFile(
+        path.join(directory, `${name}.json`),
+        JSON.stringify(report, null, 2) + '\n',
+      ),
+      writeFile(
+        path.join(directory, `${name}.md`),
+        markdownReport(report) + '\n',
+      ),
+      writeFile(
+        path.join(directory, `${name}.xml`),
+        junitReport(report) + '\n',
+      ),
+    ]);
+  }
   context.stdout(
     values.json
       ? JSON.stringify(report, null, 2)
