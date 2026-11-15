@@ -46,7 +46,7 @@ describe('DeliveryHub', () => {
       'aria-selected',
       'true',
     );
-    expect(screen.getByText('无路由变更')).toBeInTheDocument();
+    expect(screen.getByText('无契约兼容性变更')).toBeInTheDocument();
     expect(screen.queryByText('核心履约')).toBeNull();
     fireEvent.click(screen.getByRole('tab', { name: '契约全览' }));
     expect(screen.getByText('核心履约')).toBeInTheDocument();

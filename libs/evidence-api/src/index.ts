@@ -1,16 +1,15 @@
 export {
-  diffApiSnapshots,
-  diffModelToApi,
-  type ApiChangeType,
-  type BreakingChangeKind,
-  type ApiBreakingChange,
-  type FieldDiff,
-  type RouteDiff,
-  type HypermediaLinkDiff,
-  type ApiModelDiffResult,
-} from './diff/apiDiff.js';
-export { renderApiDiff } from './diff/renderApiDiff.js';
-export { patchDeliveryRoutes } from './diff/patchDeliveryRoutes.js';
+  compareContracts,
+  type ContractComparison,
+} from './diff/compareContracts.js';
+export {
+  OasdiffRunner,
+  OasdiffError,
+  OASDIFF_VERSION,
+  type OasdiffChange,
+  type OasdiffComparison,
+  type OasdiffOptions,
+} from './diff/oasdiffRunner.js';
 
 export {
   weaveHypermedia,

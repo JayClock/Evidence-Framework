@@ -99,7 +99,7 @@ export const registerDeliveryIpc = ({
     EVIDENCE_IPC_CHANNELS.deliveryLivePreview,
     async (_event, input: LiveDeliveryInput): Promise<LiveDeliveryResult> => {
       try {
-        return { success: true, analysis: livePreviewOf(input) };
+        return { success: true, analysis: await livePreviewOf(input) };
       } catch (error) {
         return {
           success: false,
@@ -120,7 +120,7 @@ export const registerDeliveryIpc = ({
         validateLiveDeliveryInput(input);
         // Freeze before the asynchronous directory picker; no later canvas/disk read.
         const frozen = structuredClone(input);
-        const analysis = livePreviewOf(frozen);
+        const analysis = await livePreviewOf(frozen);
         if (!analysis.canExportDraft)
           throw new Error('API 存在阻塞项，不能导出草稿。');
         if (analysis.modelDigest !== frozen.expectedModelDigest)

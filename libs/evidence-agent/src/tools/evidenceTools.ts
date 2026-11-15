@@ -20,7 +20,6 @@ import {
 import { Type } from 'typebox';
 
 import { checkNativeApiSensor } from '../sensors/native/nativeApiSensor.js';
-import { renderApiDiff } from '@evidence-poc/evidence-api';
 import type { SensorReport } from '../sensors/sensorReport.js';
 
 /** What the canvas is showing right now, for selection-aware answers. */
@@ -132,7 +131,7 @@ export const createEvidenceToolsExtension =
           params.proposedCommands === undefined
             ? await handlers.loadBaseDocument?.()
             : current;
-        const outcome = checkNativeApiSensor({
+        const outcome = await checkNativeApiSensor({
           currentDocument: proposed,
           ...(base === undefined ? {} : { baseDocument: base }),
         });
@@ -140,7 +139,7 @@ export const createEvidenceToolsExtension =
           outcome,
           outcome.diff === null
             ? '当前没有比较基线；仅返回当前 API 检查结果。'
-            : renderApiDiff(outcome.diff),
+            : outcome.diff.changelog,
         );
       },
     });
@@ -154,7 +153,7 @@ export const createEvidenceToolsExtension =
         await handlers.refreshApi?.();
         const current = await handlers.loadDocument();
         const base = await handlers.loadBaseDocument?.();
-        const outcome = checkNativeApiSensor({
+        const outcome = await checkNativeApiSensor({
           currentDocument: current,
           ...(base === undefined ? {} : { baseDocument: base }),
         });

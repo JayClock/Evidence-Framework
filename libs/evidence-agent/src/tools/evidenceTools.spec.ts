@@ -226,7 +226,7 @@ describe('API projection tools', () => {
       ],
     });
     expect(result.details).toMatchObject({
-      diff: { summary: { routesModified: 2 } },
+      diff: { hasBreakingChanges: false, changes: [] },
     });
     expect(patches).toEqual([]);
     expect(document).toEqual(original);

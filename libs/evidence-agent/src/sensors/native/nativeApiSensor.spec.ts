@@ -51,14 +51,14 @@ describe('API sensor', () => {
       .attributes!.find((field) => field.name === 'total_amount')!
       .derivedByRuleRef;
     const original = JSON.stringify([baseDocument, currentDocument]);
-    const draft = checkNativeApiSensor({ baseDocument, currentDocument });
-    const release = checkNativeApiSensor({
+    const draft = await checkNativeApiSensor({ baseDocument, currentDocument });
+    const release = await checkNativeApiSensor({
       baseDocument,
       currentDocument,
       mode: 'release',
     });
     expect(draft.snapshot.diagnostics).toEqual([]);
-    expect(draft.diff?.summary.hasBreakingChanges).toBe(true);
+    expect(draft.diff?.hasBreakingChanges).toBe(true);
     const breaking = (outcome: typeof draft) =>
       outcome.issues.filter((issue) => issue.code === 'API_BREAKING_CHANGE');
     expect(breaking(draft).length).toBeGreaterThan(0);
@@ -91,13 +91,22 @@ describe('API sensor', () => {
       (entity) => entity.id !== 'confirmation.payment',
     );
     after.relationships = after.relationships.filter(
-      (edge) => edge.sourceRef !== 'confirmation.payment',
+      (edge) =>
+        edge.sourceRef !== 'confirmation.payment' &&
+        edge.targetRef !== 'confirmation.payment',
     );
-    const draft = checkNativeApiSensor({
+    after.rules = after.rules.filter(
+      (rule) =>
+        !Object.values(rule.bindings).some(
+          (binding) =>
+            'ref' in binding && binding.ref === 'confirmation.payment',
+        ),
+    );
+    const draft = await checkNativeApiSensor({
       currentDocument: after,
       baseDocument: before,
     });
-    const release = checkNativeApiSensor({
+    const release = await checkNativeApiSensor({
       currentDocument: after,
       baseDocument: before,
       mode: 'release',
@@ -116,18 +125,26 @@ describe('API sensor', () => {
       }),
     );
     expect(
-      checkNativeApiSensor({ currentDocument: after, baseDocument: before })
-        .diff,
+      (
+        await checkNativeApiSensor({
+          currentDocument: after,
+          baseDocument: before,
+        })
+      ).diff,
     ).toEqual(draft.diff);
     expect(
-      checkNativeApiSensor({ currentDocument: before, baseDocument: before })
-        .diff?.summary.routesRemoved,
+      (
+        await checkNativeApiSensor({
+          currentDocument: before,
+          baseDocument: before,
+        })
+      ).diff?.changes.length,
     ).toBe(0);
   });
 
   it('does not demand CRUD endpoints for participants and roles', async () => {
     const document = await model();
-    const outcome = checkNativeApiSensor({ currentDocument: document });
+    const outcome = await checkNativeApiSensor({ currentDocument: document });
     expect(
       outcome.issues
         .filter((issue) => issue.code === 'API_COVERAGE_GAP')

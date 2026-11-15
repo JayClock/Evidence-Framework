@@ -37,6 +37,7 @@ const analysis = () => {
       'x-evidence-model': 'procurement',
       paths: { '/v1/procurement/orders': { post: { summary: '发起采购' } } },
       components: {
+        examples: {},
         schemas: {
           contract_product_procurement: { type: 'object' },
         },

@@ -86,7 +86,7 @@ export const runNativeSensors = async (
   input.signal?.throwIfAborted();
   let report = baseReport;
   try {
-    const api = checkNativeApiSensor({
+    const api = await checkNativeApiSensor({
       currentDocument: sources.model,
       ...(input.baseDocument === undefined
         ? {}

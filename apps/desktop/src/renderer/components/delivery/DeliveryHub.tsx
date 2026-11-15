@@ -106,7 +106,7 @@ export const DeliveryHub = ({
             onClick={() => setTab('diff')}
           >
             本次增量变更
-            {hub.analysis?.diff.summary.hasBreakingChanges ? ' ⚠' : ''}
+            {hub.analysis?.diff.hasBreakingChanges ? ' ⚠' : ''}
           </button>
         </div>
         <p role="status" className="px-5 py-2 text-[11px] text-evidence-muted">

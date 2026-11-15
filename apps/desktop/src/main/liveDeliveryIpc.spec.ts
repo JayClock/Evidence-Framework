@@ -53,7 +53,7 @@ describe('live delivery IPC', () => {
       analysis: { revision: 7, canExportDraft: true },
     });
     expect(build).not.toHaveBeenCalled();
-    expect(livePreviewOf(value).diff.summary.routesModified).toBeGreaterThan(0);
+    expect((await livePreviewOf(value)).diff.details).not.toEqual({});
   });
 
   it('reports invalid input and refuses stale or invalid exports before writing', async () => {
@@ -86,7 +86,7 @@ describe('live delivery IPC', () => {
 
   it('freezes the previewed document across the directory dialog and exports draft diagnostics', async () => {
     const value = await input();
-    const analysis = livePreviewOf(value);
+    const analysis = await livePreviewOf(value);
     const write = vi.fn(
       async (_directory: string, _files: { path: string; content: string }[]) =>
         undefined,

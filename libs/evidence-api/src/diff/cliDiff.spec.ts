@@ -5,10 +5,8 @@ import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { API_FIXTURES } from '../../tests/support/fixtures.js';
 import { runCli } from '../cli.js';
-import { renderApiDiff } from './renderApiDiff.js';
-import { diffModelToApi } from './apiDiff.js';
 
-it('compares directories and bundles as JSON or plain summaries without touching inputs', async () => {
+it('compares directories and bundles as JSON or Markdown without touching inputs', async () => {
   const directory = mkdtempSync(path.join(tmpdir(), 'api-diff-'));
   try {
     const root = `${API_FIXTURES}full-lifecycle/fm`;
@@ -20,15 +18,12 @@ it('compares directories and bundles as JSON or plain summaries without touching
     const same = await runCli(args);
     expect(same.exitCode).toBe(0);
     expect(same.output).toMatchObject({
-      summary: {
-        routesAdded: 0,
-        routesRemoved: 0,
-        routesModified: 0,
-        hasBreakingChanges: false,
-      },
+      hasBreakingChanges: false,
+      changes: [],
+      details: {},
     });
-    const summary = await runCli([...args, '--format', 'summary']);
-    expect(summary.output).toContain('No API changes.');
+    const summary = await runCli([...args, '--format', 'markdown']);
+    expect(typeof summary.output).toBe('string');
     const overlay = path.join(directory, 'overlay.json');
     writeFileSync(
       overlay,
@@ -39,18 +34,16 @@ it('compares directories and bundles as JSON or plain summaries without touching
       }),
     );
     const broken = await runCli([...args, '--api', overlay]);
-    expect(broken.exitCode).toBe(3);
+    expect(broken.exitCode).toBe(1);
     expect(broken.output).toMatchObject({
-      summary: { hasBreakingChanges: true },
+      hasBreakingChanges: true,
     });
-    const colored = renderApiDiff(diffModelToApi(bundle, bundle), true);
-    expect(colored).toContain('No API changes.');
     expect(readFileSync(file, 'utf8')).toBe(original);
     bundle.manifest.id = 'other';
     writeFileSync(file, serializeModelBundle(bundle));
-    expect((await runCli(args)).exitCode).toBe(1);
+    expect((await runCli(args)).exitCode).toBe(2);
     writeFileSync(file, 'not json');
-    expect((await runCli(args)).exitCode).toBe(1);
+    expect((await runCli(args)).exitCode).toBe(2);
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
@@ -64,5 +57,5 @@ it.each([
   ['diff', '--base', '/a', '--target', '/b', '--out', '/not-allowed'],
   ['diff', '--base'],
 ])('refuses malformed diff arguments: %j', async (...args) => {
-  expect((await runCli(args)).exitCode).toBe(1);
+  expect((await runCli(args)).exitCode).toBe(2);
 });

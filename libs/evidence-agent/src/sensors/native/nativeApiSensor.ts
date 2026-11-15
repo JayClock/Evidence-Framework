@@ -1,8 +1,8 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   buildDelivery,
-  diffModelToApi,
-  type ApiModelDiffResult,
+  compareContracts,
+  type ContractComparison,
   type EvidenceApiSnapshot,
 } from '@evidence-poc/evidence-api';
 import type { ApiCoverageSummary, SensorIssue } from '../sensorReport.js';
@@ -17,20 +17,20 @@ export interface ApiSensorOutcome {
   issues: readonly SensorIssue[];
   summary: ApiCoverageSummary;
   snapshot: EvidenceApiSnapshot;
-  diff: ApiModelDiffResult | null;
+  diff: ContractComparison | null;
 }
 
 /** Read-only analysis. Reprojection never acknowledges or repairs a contract. */
-export const checkNativeApiSensor = ({
+export const checkNativeApiSensor = async ({
   currentDocument,
   baseDocument,
   mode = 'draft',
-}: ApiSensorInput): ApiSensorOutcome => {
+}: ApiSensorInput): Promise<ApiSensorOutcome> => {
   const snapshot = buildDelivery(currentDocument);
+  const baseline =
+    baseDocument === undefined ? undefined : buildDelivery(baseDocument);
   const diff =
-    baseDocument === undefined
-      ? null
-      : diffModelToApi(baseDocument, currentDocument);
+    baseline === undefined ? null : await compareContracts(baseline, snapshot);
   const covered = new Set(snapshot.routes.map((route) => route.entityRef));
   // Roles and participants are not automatically public CRUD resources.
   const expected = currentDocument.entities.filter(
@@ -61,30 +61,19 @@ export const checkNativeApiSensor = ({
         : { targetNodeId: diagnostic.targetRef }),
     });
   }
-  for (const route of diff?.routes ?? []) {
-    for (const [index, breaking] of route.breakingChanges.entries()) {
-      issues.push({
-        issueId: `audit_api:API_BREAKING_CHANGE:${route.id}:${breaking.kind}:${index}`,
-        source: 'audit_api',
-        severity: mode === 'release' ? 'block' : 'warn',
-        code: 'API_BREAKING_CHANGE',
-        message: `${breaking.method} ${breaking.path}: ${breaking.description}`,
-        targetNodeId: route.entityRef,
-        suggestion: breaking.remediationHint,
-      });
-    }
-    for (const field of route.fieldDiffs.filter(
-      (field) => field.shifted === 'to_derived',
-    )) {
-      issues.push({
-        issueId: `audit_api:API_DERIVATION_DRIFT:${route.id}:${field.name}`,
-        source: 'audit_api',
-        severity: 'info',
-        code: 'API_DERIVATION_DRIFT',
-        message: `${field.name} 已转为服务端派生字段。`,
-        targetNodeId: `${route.entityRef}#${field.name}`,
-      });
-    }
+  for (const [index, change] of (diff?.changes ?? []).entries()) {
+    if (change.level < 2) continue;
+    const route = [...snapshot.routes, ...(baseline?.routes ?? [])].find(
+      (item) => item.path === change.path && item.method === change.operation,
+    );
+    issues.push({
+      issueId: `audit_api:API_BREAKING_CHANGE:${change.id}:${index}`,
+      source: 'audit_api',
+      severity: mode === 'release' ? 'block' : 'warn',
+      code: 'API_BREAKING_CHANGE',
+      message: `${change.operation ?? ''} ${change.path ?? ''}: ${change.text}`,
+      ...(route === undefined ? {} : { targetNodeId: route.entityRef }),
+    });
   }
   if (issues.length === 0)
     issues.push({
@@ -105,7 +94,8 @@ export const checkNativeApiSensor = ({
           ? 1
           : (expected.length - uncovered.length) / expected.length,
       uncoveredEntities: uncovered.map((entity) => entity.id).sort(),
-      breakingChangeCount: diff?.summary.breakingChangeCount ?? 0,
+      breakingChangeCount:
+        diff?.changes.filter((change) => change.level >= 2).length ?? 0,
       hasBaseline: baseDocument !== undefined,
       modelDigest: snapshot.digests.model,
     },

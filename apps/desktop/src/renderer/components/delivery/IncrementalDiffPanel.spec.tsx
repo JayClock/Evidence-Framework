@@ -5,56 +5,32 @@ import { IncrementalDiffPanel } from './IncrementalDiffPanel';
 
 const analysis = () => {
   const value = liveDeliveryPreview();
-  const breaking = {
-    kind: 'INPUT_FIELD_REMOVED' as const,
-    path: '/contract',
-    method: 'POST' as const,
-    description: '不再接受金额输入',
-    remediationHint: '迁移客户端',
-  };
-  value.diff.summary = {
-    routesAdded: 0,
-    routesRemoved: 0,
-    routesModified: 1,
-    breakingChangeCount: 1,
-    hasBreakingChanges: true,
-  };
-  value.diff.routes = [
+  value.diff.hasBreakingChanges = true;
+  value.diff.changes = [
+    {
+      id: 'request-property-removed',
+      text: '不再接受金额输入',
+      level: 3,
+      operation: 'POST',
+      path: '/contract',
+    },
+  ];
+  value.bindings = [
     {
       id: 'route.contract',
       entityRef: 'evidence.contract',
-      serviceId: 'service.test',
-      operationId: 'sign',
-      path: '/contract',
       method: 'POST',
-      changeType: 'modified',
-      breaking: true,
-      breakingChanges: [breaking],
-      fieldDiffs: [
-        {
-          name: 'total',
-          label: '总额',
-          changeType: 'modified',
-          shifted: 'to_derived',
-          after: {
-            name: 'total',
-            label: '总额',
-            valueType: 'decimal',
-            required: true,
-            reason: 'derived',
-            meaning: '总额',
-            ruleRef: 'rule.total',
-            ruleExpression: '10 * 2',
-          },
-        },
-      ],
+      path: '/contract',
+      roleRefs: [],
+      exposure: 'external',
+      fields: [],
     },
   ];
   return value;
 };
 afterEach(() => vi.unstubAllGlobals());
 
-it('shows breaking changes, field transitions, rules and model navigation', () => {
+it('shows native contract findings and model navigation', () => {
   const onFocusEntity = vi.fn();
   render(
     <IncrementalDiffPanel
@@ -64,9 +40,7 @@ it('shows breaking changes, field transitions, rules and model navigation', () =
     />,
   );
   expect(screen.getByRole('alert')).toHaveTextContent('未授权发布');
-  expect(screen.getByText(/Input → CEL Derived/)).toBeInTheDocument();
-  expect(screen.getByText('rule.total: 10 * 2')).toBeInTheDocument();
-  expect(screen.getByText(/迁移客户端/)).toBeInTheDocument();
+  expect(screen.getByText(/不再接受金额输入/)).toBeInTheDocument();
   fireEvent.click(
     screen.getByRole('button', { name: '定位模型：evidence.contract' }),
   );

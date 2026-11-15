@@ -1,6 +1,6 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type {
-  ApiModelDiffResult,
+  ContractComparison,
   DeliveryContract,
   DeliveryField,
 } from '@evidence-poc/evidence-api';
@@ -38,7 +38,7 @@ export interface LiveDeliveryPreview {
    * revision the diff beside it describes instead of re-projecting locally.
    */
   openapi: DeliveryContract;
-  diff: ApiModelDiffResult;
+  diff: ContractComparison;
   changeLog: string;
   apiSummary: ApiCoverageSummary;
   issues: readonly SensorIssue[];

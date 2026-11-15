@@ -13,9 +13,8 @@ import {
   type DesignDocument,
 } from './loader/apiLoader.js';
 import { buildProjection, isComplete } from './projector.js';
-import { diffApiSnapshots } from './diff/apiDiff.js';
-import { renderApiDiff } from './diff/renderApiDiff.js';
-import { diffDomainModels } from '@evidence-poc/evidence-model-core';
+import { compareContracts } from './diff/compareContracts.js';
+import { OasdiffError } from './diff/oasdiffRunner.js';
 import {
   defaultOutputDirectory,
   renderOutputs,
@@ -37,7 +36,7 @@ export interface DiffCliOptions {
   command: 'diff';
   base: string;
   target: string;
-  format: 'json' | 'summary';
+  format: 'json' | 'markdown';
   baseApi?: string;
   api?: string;
 }
@@ -49,7 +48,7 @@ export interface CliResult {
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|summary]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|markdown]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -159,8 +158,8 @@ const parse = (
   }
   if (command === 'diff') {
     const format = values['format'] ?? 'json';
-    if (format !== 'json' && format !== 'summary')
-      return '--format 必须是 json 或 summary';
+    if (format !== 'json' && format !== 'markdown')
+      return '--format 必须是 json 或 markdown';
     return {
       command,
       base: values['base'] ?? '',
@@ -198,14 +197,14 @@ const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
   ] as const) {
     if (value === undefined) {
       if (required)
-        return { output: null, error: `--${name} 是必需的`, exitCode: 1 };
+        return { output: null, error: `--${name} 是必需的`, exitCode: 2 };
     } else if (value === '')
-      return { output: null, error: `--${name} 是必需的`, exitCode: 1 };
+      return { output: null, error: `--${name} 是必需的`, exitCode: 2 };
     else if (!path.isAbsolute(value))
       return {
         output: null,
         error: `PATH_NOT_ABSOLUTE: --${name} 必须使用绝对路径`,
-        exitCode: 1,
+        exitCode: 2,
       };
   }
   try {
@@ -219,7 +218,7 @@ const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
             diagnosticToJson,
           ),
         },
-        exitCode: 1,
+        exitCode: 2,
       };
     const overlays = [options.baseApi, options.api].map((file) =>
       file === undefined ? undefined : loadDesign(file),
@@ -228,7 +227,7 @@ const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
     if (hasErrors(invalid))
       return {
         output: { valid: false, diagnostics: invalid.map(diagnosticToJson) },
-        exitCode: 1,
+        exitCode: 2,
       };
     const before = buildProjection({
       index: base.index,
@@ -238,43 +237,38 @@ const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
       index: target.index,
       ...(overlays[1]?.design == null ? {} : { design: overlays[1].design }),
     }).projection;
-    const diff = {
-      ...diffApiSnapshots(before, after),
-      modelChanges: diffDomainModels(
-        base.index.document,
-        target.index.document,
-      ),
-    };
-    const diagnostics = [...before.diagnostics, ...after.diagnostics];
-    const exitCode = hasErrors(diagnostics)
-      ? 1
-      : diff.summary.hasBreakingChanges || hasGaps(diagnostics)
-        ? 3
-        : 0;
+    const diff = await compareContracts(before, after);
     return {
-      output:
-        options.format === 'json'
-          ? diff
-          : renderApiDiff(
-              diff,
-              process.stdout.isTTY === true &&
-                process.env['NO_COLOR'] === undefined,
-            ),
-      exitCode,
+      output: options.format === 'json' ? diff : diff.changelog,
+      exitCode: diff.hasBreakingChanges ? 1 : 0,
     };
   } catch (error) {
-    return refused(
-      'API_DIFF_INVALID',
-      error instanceof Error ? error.message : String(error),
-    );
+    return {
+      output: null,
+      error:
+        error instanceof OasdiffError
+          ? [error.message, error.stdout, error.stderr]
+              .filter(Boolean)
+              .join('\n')
+          : error instanceof Error
+            ? error.message
+            : String(error),
+      exitCode: 2,
+    };
   }
 };
 
 /** Preview and export current inputs; stale evidence is a gap, not a reason to hide the draft. */
 export const runCli = async (argv: readonly string[]): Promise<CliResult> => {
+  if (argv.length === 1 && ['--help', '-h'].includes(argv[0]!))
+    return { output: `${USAGE}\n`, exitCode: 0 };
   const options = parse(argv);
   if (typeof options === 'string')
-    return { output: null, error: options, exitCode: 1 };
+    return {
+      output: null,
+      error: options,
+      exitCode: argv[0] === 'diff' ? 2 : 1,
+    };
   if (options.command === 'diff') return runDiff(options);
   const problem = validatePaths(options);
   if (problem !== null) return { output: null, error: problem, exitCode: 1 };

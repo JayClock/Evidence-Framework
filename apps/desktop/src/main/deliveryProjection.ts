@@ -1,5 +1,4 @@
 import { checkNativeApiSensor } from '@evidence-poc/evidence-agent';
-import { renderApiDiff } from '@evidence-poc/evidence-api';
 import type {
   LiveDeliveryInput,
   LiveDeliveryPreview,
@@ -141,11 +140,11 @@ export const validateLiveDeliveryInput = (input: LiveDeliveryInput): void => {
   }
 };
 
-export const livePreviewOf = (
+export const livePreviewOf = async (
   input: LiveDeliveryInput,
-): LiveDeliveryPreview => {
+): Promise<LiveDeliveryPreview> => {
   validateLiveDeliveryInput(input);
-  const outcome = checkNativeApiSensor({
+  const outcome = await checkNativeApiSensor({
     currentDocument: input.document,
     baseDocument: input.baseDocument,
   });
@@ -157,7 +156,7 @@ export const livePreviewOf = (
     preview: previewOf(outcome.snapshot),
     openapi: outcome.snapshot.openapi,
     diff,
-    changeLog: renderApiDiff(diff),
+    changeLog: diff.changelog,
     apiSummary: outcome.summary,
     issues: outcome.issues,
     canExportDraft: !outcome.issues.some((issue) => issue.severity === 'block'),
