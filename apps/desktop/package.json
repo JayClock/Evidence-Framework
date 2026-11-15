@@ -19,6 +19,7 @@
     "@evidence-poc/evidence-visualization": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.26",
+    "chokidar": "^4.0.3",
     "lucide-react": "^1.72.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

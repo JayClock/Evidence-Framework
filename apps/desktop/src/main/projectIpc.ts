@@ -39,7 +39,10 @@ export const registerProjectIpc = ({
   const watchers = new Map<number, ModelWatcher>();
 
   const stopWatching = (webContentsId: number): void => {
-    watchers.get(webContentsId)?.close();
+    void watchers
+      .get(webContentsId)
+      ?.close()
+      .catch((error) => console.warn('[modelWatcher] Close failed:', error));
     watchers.delete(webContentsId);
   };
 

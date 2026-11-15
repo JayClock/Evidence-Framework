@@ -1,161 +1,101 @@
-import { watch, type FSWatcher } from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { watch } from 'chokidar';
 
 import { isModelBundlePath } from '@evidence-poc/evidence-model-core';
 
-const WATCHED_DIRECTORIES = [
-  '.',
-  'entities',
-  'relationships',
-  'rules',
-] as const;
+const SOURCE_TREES = new Set(['entities', 'relationships', 'rules']);
 const DEFAULT_DEBOUNCE_MS = 200;
 
 export interface ModelWatcher {
-  close(): void;
+  /** Initial discovery is complete; existing files never trigger onChange. */
+  readonly ready: Promise<void>;
+  close(): Promise<void>;
 }
 
 /**
- * Watches `.evidence/fm` and its three source trees for external writes.
- *
- * Non-recursive watchers keep Windows working, and the debounce collapses the
- * burst of events Git or a script produces into one reload prompt.
+ * Chokidar v4 takes real paths, not globs. Watch the parent so replacing or
+ * creating the entire model root is observable, pruning unrelated trees before
+ * traversal. Only model.json and JSON files in the three source trees matter.
  */
-export const watchModelDirectory = (
-  modelRoot: string,
-  onChange: (paths: readonly string[]) => void,
-  debounceMs = DEFAULT_DEBOUNCE_MS,
-): ModelWatcher => {
-  const watchers: FSWatcher[] = [];
-  const pending = new Set<string>();
-  let timer: NodeJS.Timeout | null = null;
-  let closed = false;
-
-  const flush = (): void => {
-    timer = null;
-
-    if (closed || pending.size === 0) {
-      return;
-    }
-
-    const paths = [...pending].map((name) => path.join(modelRoot, name));
-
-    pending.clear();
-    onChange(paths);
-  };
-
-  for (const directory of WATCHED_DIRECTORIES) {
-    const target = path.join(modelRoot, directory);
-
-    try {
-      const watcher = watch(
-        target,
-        { persistent: false },
-        (_event, filename) => {
-          if (closed) {
-            return;
-          }
-
-          pending.add(
-            directory === '.'
-              ? (filename?.toString() ?? '.')
-              : path.join(directory, filename?.toString() ?? '.'),
-          );
-
-          if (timer === null) {
-            timer = setTimeout(flush, debounceMs);
-          }
-        },
-      );
-
-      watcher.on('error', () => watcher.close());
-      watchers.push(watcher);
-    } catch {
-      // The tree may not exist yet; `save` creates it on first write.
-    }
-  }
-
-  return {
-    close() {
-      closed = true;
-
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
-      }
-
-      for (const watcher of watchers) {
-        watcher.close();
-      }
-    },
-  };
-};
-
-/**
- * Watches a single-file bundle.
- *
- * The directory is watched, not the file, because an editor that saves through
- * a rename would otherwise detach the watcher after the first write.
- */
-export const watchModelBundle = (
-  bundlePath: string,
-  onChange: (paths: readonly string[]) => void,
-  debounceMs = DEFAULT_DEBOUNCE_MS,
-): ModelWatcher => {
-  const target = path.resolve(bundlePath);
-  const fileName = path.basename(target);
-  let timer: NodeJS.Timeout | null = null;
-  let closed = false;
-  let watcher: FSWatcher | null = null;
-
-  try {
-    watcher = watch(
-      path.dirname(target),
-      { persistent: false },
-      (_event, filename) => {
-        if (closed || (filename !== null && filename.toString() !== fileName)) {
-          return;
-        }
-
-        if (timer !== null) {
-          clearTimeout(timer);
-        }
-
-        timer = setTimeout(() => {
-          timer = null;
-
-          if (!closed) {
-            onChange([target]);
-          }
-        }, debounceMs);
-      },
-    );
-
-    watcher.on('error', () => watcher?.close());
-  } catch {
-    // The folder may be gone; `save` reports the real error.
-  }
-
-  return {
-    close() {
-      closed = true;
-
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
-      }
-
-      watcher?.close();
-    },
-  };
-};
-
-/** Watches the model source: a whole tree, or one bundle file. */
 export const watchModelSource = (
   source: string,
   onChange: (paths: readonly string[]) => void,
   debounceMs = DEFAULT_DEBOUNCE_MS,
-): ModelWatcher =>
-  isModelBundlePath(source)
-    ? watchModelBundle(source, onChange, debounceMs)
-    : watchModelDirectory(source, onChange, debounceMs);
+): ModelWatcher => {
+  const target = path.resolve(source);
+  const bundle = isModelBundlePath(target);
+  const relevant = (file: string): boolean => {
+    if (bundle) return file === target;
+    const relative = path.relative(target, file);
+    return (
+      relative === 'model.json' ||
+      (SOURCE_TREES.has(relative.split(path.sep)[0] ?? '') &&
+        path.extname(file) === '.json')
+    );
+  };
+  // Watch an existing ancestor even before first save creates .evidence/fm.
+  let watchRoot = path.dirname(target);
+  while (!existsSync(watchRoot) && path.dirname(watchRoot) !== watchRoot)
+    watchRoot = path.dirname(watchRoot);
+  const watcher = watch(watchRoot, {
+    ignoreInitial: true,
+    persistent: false,
+    followSymlinks: false,
+    atomic: true,
+    awaitWriteFinish: { stabilityThreshold: 150, pollInterval: 50 },
+    ignored: (file, stats) => {
+      // Chokidar may probe missing parents up to the nearest existing ancestor.
+      const toTarget = path.relative(file, target);
+      if (
+        toTarget === '' ||
+        (toTarget !== '..' &&
+          !toTarget.startsWith(`..${path.sep}`) &&
+          !path.isAbsolute(toTarget))
+      )
+        return false;
+      if (bundle) return true;
+      const relative = path.relative(target, file);
+      if (!SOURCE_TREES.has(relative.split(path.sep)[0] ?? ''))
+        return relative !== 'model.json';
+      return stats !== undefined && !stats.isDirectory() && !relevant(file);
+    },
+  });
+  const ready = new Promise<void>((resolve) => watcher.once('ready', resolve));
+  const pending = new Set<string>();
+  let timer: NodeJS.Timeout | undefined;
+  let closed = false;
+
+  const flush = (): void => {
+    timer = undefined;
+    if (closed || pending.size === 0) return;
+    const paths = [...pending].sort();
+    pending.clear();
+    onChange(paths);
+  };
+  const onEvent = (file: string): void => {
+    if (closed || !relevant(file)) return;
+    pending.add(file);
+    if (timer !== undefined) clearTimeout(timer);
+    timer = setTimeout(flush, debounceMs);
+  };
+  watcher.on('add', onEvent).on('change', onEvent).on('unlink', onEvent);
+  watcher.on('error', (error) => {
+    console.warn('[modelWatcher] File watching degraded:', error);
+  });
+
+  return {
+    ready,
+    async close() {
+      closed = true;
+      if (timer !== undefined) clearTimeout(timer);
+      timer = undefined;
+      pending.clear();
+      await watcher.close();
+    },
+  };
+};
+
+/** Compatibility names retained for callers watching an explicit source kind. */
+export const watchModelDirectory = watchModelSource;
+export const watchModelBundle = watchModelSource;
