@@ -17,6 +17,70 @@ const canonical = (value: unknown): string =>
       : item,
   );
 
+/** Strip annotations only at schema nodes, never property names or const/example data. */
+function validationSchema(value: unknown): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(
+        ([key]) =>
+          ![
+            'examples',
+            'example',
+            'description',
+            'title',
+            '$comment',
+            'deprecated',
+            'default',
+            'readOnly',
+            'writeOnly',
+          ].includes(key) && !key.startsWith('x-'),
+      )
+      .map(([key, item]) => {
+        if (
+          [
+            'properties',
+            'patternProperties',
+            '$defs',
+            'definitions',
+            'dependentSchemas',
+          ].includes(key) &&
+          item &&
+          typeof item === 'object'
+        )
+          return [
+            key,
+            Object.fromEntries(
+              Object.entries(item).map(([name, schema]) => [
+                name,
+                validationSchema(schema),
+              ]),
+            ),
+          ];
+        if (
+          ['allOf', 'anyOf', 'oneOf', 'prefixItems'].includes(key) &&
+          Array.isArray(item)
+        )
+          return [key, item.map(validationSchema)];
+        if (
+          [
+            'items',
+            'additionalProperties',
+            'unevaluatedProperties',
+            'contains',
+            'not',
+            'if',
+            'then',
+            'else',
+            'propertyNames',
+          ].includes(key)
+        )
+          return [key, validationSchema(item)];
+        return [key, item];
+      }),
+  );
+}
+
 /** Compare executable semantics, not generated flow ordinals or capture variable names. */
 function fingerprint(
   workflow: Workflow,
@@ -52,7 +116,13 @@ function fingerprint(
       );
     return value;
   };
-  return canonical(visit(test.steps));
+  const steps = structuredClone(test.steps);
+  for (const step of steps)
+    if (step.http?.check?.schema)
+      step.http.check.schema = validationSchema(
+        step.http.check.schema,
+      ) as object;
+  return canonical(visit(steps));
 }
 function tagsOf(test: Workflow['tests'][string]): string[] {
   const value = (test.env as Record<string, unknown> | undefined)?.[

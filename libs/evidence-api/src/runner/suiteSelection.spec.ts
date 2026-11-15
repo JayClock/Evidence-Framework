@@ -64,6 +64,31 @@ it('filters by full flow name and native env tags, failing closed on empty selec
     selectAcceptanceFlows(suite({ a: flow('same'), b: flow('same') }), {}),
   ).toThrow('duplicate');
 });
+it('ignores schema annotations without ignoring properties named description or schema', () => {
+  const baseline = suite({ a: flow('payment') });
+  baseline.tests.a!.steps[0]!.http!.check!.schema = {
+    type: 'object',
+    properties: { description: { type: 'string' } },
+    examples: [{ description: 'a' }],
+  };
+  const head = structuredClone(baseline);
+  head.tests.a!.steps[0]!.http!.check!.schema = {
+    type: 'object',
+    properties: { description: { type: 'string', description: 'annotation' } },
+    examples: [{ description: 'b' }],
+  };
+  expect(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests).toEqual(
+    {},
+  );
+  head.tests.a!.steps[0]!.http!.check!.schema = {
+    type: 'object',
+    properties: { description: { type: 'number' } },
+  };
+  expect(
+    Object.keys(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests),
+  ).toEqual(['a']);
+});
+
 it('ignores generated capture and clock ordinals, but detects changed clocks', () => {
   const baseline = suite({
     a: {

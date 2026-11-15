@@ -1,0 +1,1684 @@
+{
+  "components": {
+    "examples": {
+      "route_confirm_confirmation_deposit_deposit-confirmed_1": {
+        "summary": "deposit-confirmed",
+        "value": {
+          "_links": {},
+          "confirmed_at": "2026-03-31T10:00:00Z",
+          "deposit_amount": 100,
+          "id": "deposit-confirmation-001"
+        }
+      },
+      "route_confirm_confirmation_payment_bad-input_2": {
+        "summary": "bad-input",
+        "value": {
+          "_links": {},
+          "confirmed_at": "2026-03-31T10:00:00Z",
+          "id": "confirmation-001",
+          "total_amount": 500
+        }
+      },
+      "route_confirm_confirmation_payment_confirmed_1": {
+        "summary": "confirmed",
+        "value": {
+          "_links": {},
+          "confirmed_at": "2026-03-31T10:00:00Z",
+          "id": "confirmation-001",
+          "total_amount": 500
+        }
+      },
+      "route_ledger_request_deposit_deposit-requested_1": {
+        "summary": "deposit-requested",
+        "value": {
+          "_links": {},
+          "expired_at": "2026-04-01T10:00:00Z",
+          "id": "deposit-request-001",
+          "quantity": 10,
+          "started_at": "2026-03-31T10:00:00Z",
+          "unit_price": 50
+        }
+      },
+      "route_ledger_request_payment_requested_1": {
+        "summary": "requested",
+        "value": {
+          "_links": {},
+          "expired_at": "2026-04-01T10:00:00Z",
+          "id": "request-001",
+          "quantity": 10,
+          "started_at": "2026-03-31T10:00:00Z",
+          "unit_price": 50
+        }
+      },
+      "route_read_contract_agreement_deposit-signed_2": {
+        "summary": "deposit-signed",
+        "value": {
+          "_links": {},
+          "id": "agreement-deposit-001",
+          "signed_at": "2026-03-31T10:00:00Z"
+        }
+      },
+      "route_read_contract_agreement_signed_1": {
+        "summary": "signed",
+        "value": {
+          "_links": {},
+          "id": "agreement-001",
+          "signed_at": "2026-03-31T10:00:00Z"
+        }
+      },
+      "route_request_request_deposit_deposit-requested_1": {
+        "summary": "deposit-requested",
+        "value": {
+          "_links": {},
+          "expired_at": "2026-04-01T10:00:00Z",
+          "id": "deposit-request-001",
+          "quantity": 10,
+          "started_at": "2026-03-31T10:00:00Z",
+          "unit_price": 50
+        }
+      },
+      "route_request_request_payment_requested_1": {
+        "summary": "requested",
+        "value": {
+          "_links": {},
+          "expired_at": "2026-04-01T10:00:00Z",
+          "id": "request-001",
+          "quantity": 10,
+          "started_at": "2026-03-31T10:00:00Z",
+          "unit_price": 50
+        }
+      },
+      "route_sign_contract_agreement_deposit-signed_2": {
+        "summary": "deposit-signed",
+        "value": {
+          "_links": {},
+          "id": "agreement-deposit-001",
+          "signed_at": "2026-03-31T10:00:00Z"
+        }
+      },
+      "route_sign_contract_agreement_signed_1": {
+        "summary": "signed",
+        "value": {
+          "_links": {},
+          "id": "agreement-001",
+          "signed_at": "2026-03-31T10:00:00Z"
+        }
+      }
+    },
+    "schemas": {
+      "confirmation_deposit": {
+        "additionalProperties": false,
+        "description": "登记deposit confirmation，关闭对应的履约请求",
+        "examples": [
+          {
+            "_links": {},
+            "confirmed_at": "2026-03-31T10:00:00Z",
+            "deposit_amount": 100,
+            "id": "deposit-confirmation-001"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "confirmed_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "deposit_amount": {
+            "description": "20% of the requested amount",
+            "readOnly": true,
+            "type": "number",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.deposit-amount",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.deposit-amount"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "deposit_amount",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "confirmation_payment": {
+        "additionalProperties": false,
+        "description": "登记payment confirmation，关闭对应的履约请求",
+        "examples": [
+          {
+            "_links": {},
+            "confirmed_at": "2026-03-31T10:00:00Z",
+            "id": "confirmation-001",
+            "total_amount": 500
+          },
+          {
+            "_links": {},
+            "confirmed_at": "2026-03-31T10:00:00Z",
+            "id": "confirmation-001",
+            "total_amount": 500
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "confirmed_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "note": {
+            "description": "note",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "total_amount": {
+            "description": "total_amount",
+            "readOnly": true,
+            "type": "number",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.total-amount",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.total-amount"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "total_amount",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "contract_agreement": {
+        "additionalProperties": false,
+        "description": "签署Agreement，双方权责自此成立",
+        "examples": [
+          {
+            "_links": {},
+            "id": "agreement-001",
+            "signed_at": "2026-03-31T10:00:00Z"
+          },
+          {
+            "_links": {},
+            "id": "agreement-deposit-001",
+            "signed_at": "2026-03-31T10:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "signed_at": {
+            "description": "signed_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "signed_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "proposal_quotation": {
+        "additionalProperties": false,
+        "description": "提交Quotation，回应Inquiry",
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "expired_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "started_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_deposit": {
+        "additionalProperties": false,
+        "description": "发起deposit request，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {},
+            "expired_at": "2026-04-01T10:00:00Z",
+            "id": "deposit-request-001",
+            "quantity": 10,
+            "started_at": "2026-03-31T10:00:00Z",
+            "unit_price": 50
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "expired_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "quantity": {
+            "description": "quantity",
+            "type": "integer",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "started_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "unit_price": {
+            "description": "unit_price",
+            "type": "number",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "quantity",
+          "unit_price",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_payment": {
+        "additionalProperties": false,
+        "description": "发起payment request，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {},
+            "expired_at": "2026-04-01T10:00:00Z",
+            "id": "request-001",
+            "quantity": 10,
+            "started_at": "2026-03-31T10:00:00Z",
+            "unit_price": 50
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "expired_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "quantity": {
+            "description": "quantity",
+            "type": "integer",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "started_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "unit_price": {
+            "description": "unit_price",
+            "type": "number",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "quantity",
+          "unit_price",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "rfp_inquiry": {
+        "additionalProperties": false,
+        "description": "读取Inquiry及其收到的方案",
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "expired_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "id",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "started_at",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "_links"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "由履约模型直接投影的契约：每个路径对应一个业务凭证时刻。\n派生值由服务端计算，业务时间由服务端打点，调用方不能提交或回填。",
+    "title": "Procurement with deposit payment",
+    "version": "1.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/procurement/agreement": {
+      "post": {
+        "operationId": "signContractAgreement",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_sign_contract_agreement_deposit-signed_2": {
+                  "summary": "deposit-signed",
+                  "value": {
+                    "id": "agreement-deposit-001"
+                  }
+                },
+                "route_sign_contract_agreement_signed_1": {
+                  "summary": "signed",
+                  "value": {
+                    "id": "agreement-001"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_sign_contract_agreement_deposit-signed_2": {
+                    "summary": "deposit-signed",
+                    "value": {
+                      "_links": {},
+                      "id": "agreement-deposit-001",
+                      "signed_at": "2026-03-31T10:00:00Z"
+                    }
+                  },
+                  "route_sign_contract_agreement_signed_1": {
+                    "summary": "signed",
+                    "value": {
+                      "_links": {},
+                      "id": "agreement-001",
+                      "signed_at": "2026-03-31T10:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_agreement"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.deposit": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/procurement/agreement/{contractId}/payment/request",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "协议已签署",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/procurement/agreement/{contractId}"
+              }
+            }
+          },
+          "422": {
+            "description": "条款缺失或双方角色不成立"
+          }
+        },
+        "summary": "签署Agreement，双方权责自此成立",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer",
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.agreement",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "sign",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}": {
+      "get": {
+        "operationId": "readContractAgreement",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_contract_agreement_deposit-signed_2": {
+                    "summary": "deposit-signed",
+                    "value": {
+                      "_links": {},
+                      "id": "agreement-deposit-001",
+                      "signed_at": "2026-03-31T10:00:00Z"
+                    }
+                  },
+                  "route_read_contract_agreement_signed_1": {
+                    "summary": "signed",
+                    "value": {
+                      "_links": {},
+                      "id": "agreement-001",
+                      "signed_at": "2026-03-31T10:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_agreement"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.deposit": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/procurement/agreement/{contractId}/payment/request",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "协议与履约全貌"
+          },
+          "404": {
+            "description": "协议不存在"
+          }
+        },
+        "summary": "读取Agreement及其全部履约状态",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer",
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.agreement",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/deposit": {
+      "get": {
+        "operationId": "readRequestDepositLedger",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_ledger_request_deposit_deposit-requested_1": {
+                    "summary": "deposit-requested",
+                    "value": {
+                      "_links": {},
+                      "expired_at": "2026-04-01T10:00:00Z",
+                      "id": "deposit-request-001",
+                      "quantity": 10,
+                      "started_at": "2026-03-31T10:00:00Z",
+                      "unit_price": 50
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_deposit"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.deposit": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request/{requestId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/deposit",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "履约请求、确认与证明"
+          },
+          "404": {
+            "description": "合同或履约项不存在"
+          }
+        },
+        "summary": "读取deposit request的请求与确认账本",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "request.deposit",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.deposit",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/deposit/request": {
+      "post": {
+        "operationId": "requestRequestDeposit",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_deposit_deposit-requested_1": {
+                  "summary": "deposit-requested",
+                  "value": {
+                    "id": "deposit-request-001",
+                    "quantity": 10,
+                    "unit_price": 50
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "quantity": {
+                    "description": "quantity",
+                    "type": "integer",
+                    "x-evidence-caller-input": true
+                  },
+                  "unit_price": {
+                    "description": "unit_price",
+                    "type": "number",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "quantity",
+                  "unit_price"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_deposit_deposit-requested_1": {
+                    "summary": "deposit-requested",
+                    "value": {
+                      "_links": {},
+                      "expired_at": "2026-04-01T10:00:00Z",
+                      "id": "deposit-request-001",
+                      "quantity": 10,
+                      "started_at": "2026-03-31T10:00:00Z",
+                      "unit_price": 50
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_deposit"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.deposit": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request/{requestId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request/{requestId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "履约请求已登记，等待确认",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/procurement/agreement/{contractId}/deposit/request/{requestId}"
+              }
+            }
+          },
+          "409": {
+            "description": "同一合同已有未关闭的同类请求"
+          }
+        },
+        "summary": "发起deposit request，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "request.deposit",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.deposit",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/deposit/request/{requestId}/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationDeposit",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_deposit_deposit-confirmed_1": {
+                  "summary": "deposit-confirmed",
+                  "value": {
+                    "id": "deposit-confirmation-001"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_deposit_deposit-confirmed_1": {
+                    "summary": "deposit-confirmed",
+                    "value": {
+                      "_links": {},
+                      "confirmed_at": "2026-03-31T10:00:00Z",
+                      "deposit_amount": 100,
+                      "id": "deposit-confirmation-001"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_deposit"
+                },
+                "x-evidence-link-templates": {
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/deposit/request/{requestId}/confirmation",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "确认已登记，请求关闭",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/procurement/agreement/{contractId}/deposit/request/{requestId}/confirmation"
+              }
+            }
+          },
+          "409": {
+            "description": "请求已过期或已由其他确认关闭"
+          },
+          "422": {
+            "description": "确认内容与请求不匹配"
+          }
+        },
+        "summary": "登记deposit confirmation，关闭对应的履约请求",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [
+          {
+            "name": "deposit_amount",
+            "ruleRef": "rule.deposit-amount"
+          }
+        ],
+        "x-evidence-entity": "confirmation.deposit",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.deposit",
+        "x-evidence-fulfillment-request": "request.deposit",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/payment": {
+      "get": {
+        "operationId": "readRequestPaymentLedger",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_ledger_request_payment_requested_1": {
+                    "summary": "requested",
+                    "value": {
+                      "_links": {},
+                      "expired_at": "2026-04-01T10:00:00Z",
+                      "id": "request-001",
+                      "quantity": 10,
+                      "started_at": "2026-03-31T10:00:00Z",
+                      "unit_price": 50
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.payment": {
+                    "href": "/procurement/agreement/{contractId}/payment/request/{requestId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/payment",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "履约请求、确认与证明"
+          },
+          "404": {
+            "description": "合同或履约项不存在"
+          }
+        },
+        "summary": "读取payment request的请求与确认账本",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "request.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/payment/request": {
+      "post": {
+        "operationId": "requestRequestPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_payment_requested_1": {
+                  "summary": "requested",
+                  "value": {
+                    "id": "request-001",
+                    "quantity": 10,
+                    "unit_price": 50
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "quantity": {
+                    "description": "quantity",
+                    "type": "integer",
+                    "x-evidence-caller-input": true
+                  },
+                  "unit_price": {
+                    "description": "unit_price",
+                    "type": "number",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "quantity",
+                  "unit_price"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_payment_requested_1": {
+                    "summary": "requested",
+                    "value": {
+                      "_links": {},
+                      "expired_at": "2026-04-01T10:00:00Z",
+                      "id": "request-001",
+                      "quantity": 10,
+                      "started_at": "2026-03-31T10:00:00Z",
+                      "unit_price": 50
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.payment": {
+                    "href": "/procurement/agreement/{contractId}/payment/request/{requestId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/payment/request/{requestId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "履约请求已登记，等待确认",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/procurement/agreement/{contractId}/payment/request/{requestId}"
+              }
+            }
+          },
+          "409": {
+            "description": "同一合同已有未关闭的同类请求"
+          }
+        },
+        "summary": "发起payment request，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.seller"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "request.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/procurement/agreement/{contractId}/payment/request/{requestId}/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_payment_bad-input_2": {
+                  "summary": "bad-input",
+                  "value": {
+                    "id": "confirmation-001"
+                  }
+                },
+                "route_confirm_confirmation_payment_confirmed_1": {
+                  "summary": "confirmed",
+                  "value": {
+                    "id": "confirmation-001"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "note": {
+                    "description": "note",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_payment_bad-input_2": {
+                    "summary": "bad-input",
+                    "value": {
+                      "_links": {},
+                      "confirmed_at": "2026-03-31T10:00:00Z",
+                      "id": "confirmation-001",
+                      "total_amount": 500
+                    }
+                  },
+                  "route_confirm_confirmation_payment_confirmed_1": {
+                    "summary": "confirmed",
+                    "value": {
+                      "_links": {},
+                      "confirmed_at": "2026-03-31T10:00:00Z",
+                      "id": "confirmation-001",
+                      "total_amount": 500
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_payment"
+                },
+                "x-evidence-link-templates": {
+                  "self": {
+                    "href": "/procurement/agreement/{contractId}/payment/request/{requestId}/confirmation",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "确认已登记，请求关闭",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/procurement/agreement/{contractId}/payment/request/{requestId}/confirmation"
+              }
+            }
+          },
+          "409": {
+            "description": "请求已过期或已由其他确认关闭"
+          },
+          "422": {
+            "description": "确认内容与请求不匹配"
+          }
+        },
+        "summary": "登记payment confirmation，关闭对应的履约请求",
+        "tags": [
+          "context:context.procurement"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer"
+        ],
+        "x-evidence-context": "context.procurement",
+        "x-evidence-contract": "contract.agreement",
+        "x-evidence-derived": [
+          {
+            "name": "total_amount",
+            "ruleRef": "rule.total-amount"
+          }
+        ],
+        "x-evidence-entity": "confirmation.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.payment",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.procurement",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/sourcing/inquiry": {
+      "post": {
+        "operationId": "openRfpInquiry",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rfp_inquiry"
+                },
+                "x-evidence-link-templates": {
+                  "next:proposal.quotation": {
+                    "href": "/sourcing/inquiry/{rfpId}/quotation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/sourcing/inquiry/{rfpId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "征询已登记",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/sourcing/inquiry/{rfpId}"
+              }
+            }
+          }
+        },
+        "summary": "发起Inquiry，向对方征询方案",
+        "tags": [
+          "context:context.sourcing"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer"
+        ],
+        "x-evidence-context": "context.sourcing",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "rfp.inquiry",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "open",
+        "x-evidence-service": "service.sourcing",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/sourcing/inquiry/{rfpId}": {
+      "get": {
+        "operationId": "readRfpInquiry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rfpId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rfp_inquiry"
+                },
+                "x-evidence-link-templates": {
+                  "next:proposal.quotation": {
+                    "href": "/sourcing/inquiry/{rfpId}/quotation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/sourcing/inquiry/{rfpId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "征询与方案"
+          },
+          "404": {
+            "description": "征询不存在"
+          }
+        },
+        "summary": "读取Inquiry及其收到的方案",
+        "tags": [
+          "context:context.sourcing"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.buyer"
+        ],
+        "x-evidence-context": "context.sourcing",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "rfp.inquiry",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.sourcing",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    },
+    "/sourcing/inquiry/{rfpId}/quotation": {
+      "post": {
+        "operationId": "proposeProposalQuotation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rfpId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "id",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/proposal_quotation"
+                },
+                "x-evidence-link-templates": {
+                  "next:contract.agreement": {
+                    "href": "/procurement/agreement",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/sourcing/inquiry/{rfpId}/quotation",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "方案已登记",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/sourcing/inquiry/{rfpId}/quotation"
+              }
+            }
+          },
+          "409": {
+            "description": "征询已关闭"
+          }
+        },
+        "summary": "提交Quotation，回应Inquiry",
+        "tags": [
+          "context:context.sourcing"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.seller"
+        ],
+        "x-evidence-context": "context.sourcing",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "proposal.quotation",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "propose",
+        "x-evidence-service": "service.sourcing",
+        "x-evidence-stamped": [
+          "started_at",
+          "expired_at"
+        ]
+      }
+    }
+  },
+  "x-evidence-model": "procurement-evolution",
+  "x-evidence-services": [
+    {
+      "basePath": "/procurement",
+      "contextRef": "context.procurement",
+      "id": "service.procurement",
+      "kind": "fulfillment"
+    },
+    {
+      "basePath": "/sourcing",
+      "contextRef": "context.sourcing",
+      "id": "service.sourcing",
+      "kind": "channel"
+    }
+  ]
+}

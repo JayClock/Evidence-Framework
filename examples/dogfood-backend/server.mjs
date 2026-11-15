@@ -9,6 +9,7 @@ const { values: options } = parseArgs({
   options: {
     port: { type: 'string', default: '8085' },
     fault: { type: 'string', default: 'none' },
+    mode: { type: 'string', default: 'v2' },
   },
 });
 const port = Number(options.port);
@@ -17,10 +18,18 @@ if (
   !Number.isInteger(port) ||
   port < 0 ||
   port > 65535 ||
-  !['none', 'amount', 'accept-derived', 'clock', 'extra-field'].includes(fault)
+  !['v1', 'v2'].includes(options.mode) ||
+  ![
+    'none',
+    'amount',
+    'accept-derived',
+    'clock',
+    'extra-field',
+    'missing-derived',
+  ].includes(fault)
 ) {
   throw new Error(
-    'usage: node backend.mjs [--port 8080] [--fault none|amount|accept-derived|clock|extra-field]',
+    'usage: node server.mjs [--port 8085] [--mode v1|v2] [--fault none|amount|accept-derived|clock|extra-field|missing-derived]',
   );
 }
 const agreements = new Map(),
@@ -28,6 +37,11 @@ const agreements = new Map(),
 const server = createServer((request, response) =>
   withEvidenceClock(request, true, async () => {
     const send = (status, body) => {
+      if (fault === 'missing-derived' && status === 201) {
+        body = { ...body };
+        delete body.total_amount;
+        delete body.deposit_amount;
+      }
       response.writeHead(status, { 'content-type': 'application/hal+json' });
       response.end(
         JSON.stringify(
@@ -83,10 +97,14 @@ const server = createServer((request, response) =>
         return;
       }
       const match =
-        /^\/procurement\/agreement\/([^/]+)\/payment\/request(?:\/([^/]+)\/confirmation)?$/.exec(
+        /^\/procurement\/agreement\/([^/]+)\/(payment|deposit)\/request(?:\/([^/]+)\/confirmation)?$/.exec(
           url ?? '',
         );
-      if (!match || request.method !== 'POST') {
+      if (
+        !match ||
+        request.method !== 'POST' ||
+        (match[2] === 'deposit' && options.mode === 'v1')
+      ) {
         failure(404, 'NOT_FOUND');
         return;
       }
@@ -95,7 +113,8 @@ const server = createServer((request, response) =>
         failure(404, 'CONTRACT_NOT_FOUND');
         return;
       }
-      if (match[2] === undefined) {
+      const kind = match[2];
+      if (match[3] === undefined) {
         if (role !== 'role.seller') {
           failure(403, 'FORBIDDEN');
           return;
@@ -121,7 +140,11 @@ const server = createServer((request, response) =>
             .replace('.000Z', 'Z'),
           _links: links(`${url}/${encodeURIComponent(body.id)}`),
         };
-        requests.set(body.id, { contractId, item, completed: false });
+        requests.set(`${kind}:${body.id}`, {
+          contractId,
+          item,
+          completed: false,
+        });
         send(201, item);
         return;
       }
@@ -141,7 +164,7 @@ const server = createServer((request, response) =>
         failure(422, 'INVALID_INPUT');
         return;
       }
-      const entry = requests.get(decodeURIComponent(match[2]));
+      const entry = requests.get(`${kind}:${decodeURIComponent(match[3])}`);
       if (!entry || entry.contractId !== contractId) {
         failure(404, 'REQUEST_NOT_FOUND');
         return;
@@ -162,7 +185,9 @@ const server = createServer((request, response) =>
         id: body.id,
         ...(body.note === undefined ? {} : { note: body.note }),
         confirmed_at: now,
-        total_amount,
+        ...(kind === 'deposit'
+          ? { deposit_amount: total_amount * 0.2 }
+          : { total_amount }),
         _links: links(url),
       });
     } catch (error) {
@@ -176,6 +201,7 @@ server.listen(port, '127.0.0.1', () => {
     JSON.stringify({
       host: `http://127.0.0.1:${server.address().port}`,
       fault,
+      mode: options.mode,
     }),
   );
 });

@@ -1,0 +1,437 @@
+# Generated from inline model examples. Do not edit. Test environment only.
+"version": "1.1"
+"name": "procurement-evolution acceptance"
+"env":
+  "host": "http://localhost:8080"
+  "asOf": "2026-03-31T10:00:00Z"
+"config":
+  "concurrency": 1
+  "continueOnFail": false
+"tests":
+  "flow_1":
+    "name": "deposit"
+    "env":
+      "evidenceTags": "[\"flow:deposit\",\"deposit\",\"dod\"]"
+    "steps":
+      - "name": "contract.agreement#deposit-signed"
+        "http":
+          "url": "${{env.host}}/procurement/agreement"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.buyer"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "agreement-deposit-001"
+          "captures":
+            "capture_1_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema": &a1
+              "type": "object"
+              "description": "签署Agreement，双方权责自此成立"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "signed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "signed_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "signed_at"
+                - "_links"
+              "examples":
+                - "id": "agreement-001"
+                  "signed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+                - "id": "agreement-deposit-001"
+                  "signed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "agreement-deposit-001"
+              "$[\"signed_at\"]": "2026-03-31T10:00:00Z"
+      - "name": "request.deposit#deposit-requested"
+        "http":
+          "url": "${{env.host}}/procurement/agreement/${{captures.capture_1_0}}/deposit/r\
+            equest"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.seller"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "deposit-request-001"
+            "quantity": 10
+            "unit_price": 50
+          "captures":
+            "capture_2_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "发起deposit request，开启一个有截止时间的履约窗口"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "started_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "started_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "expired_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "expired_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "quantity":
+                  "type": "integer"
+                  "description": "quantity"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "unit_price":
+                  "type": "number"
+                  "description": "unit_price"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "started_at"
+                - "expired_at"
+                - "quantity"
+                - "unit_price"
+                - "_links"
+              "examples":
+                - "id": "deposit-request-001"
+                  "quantity": 10
+                  "unit_price": 50
+                  "started_at": "2026-03-31T10:00:00Z"
+                  "expired_at": "2026-04-01T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "deposit-request-001"
+              "$[\"quantity\"]": 10
+              "$[\"unit_price\"]": 50
+              "$[\"started_at\"]": "2026-03-31T10:00:00Z"
+              "$[\"expired_at\"]": "2026-04-01T10:00:00Z"
+      - "name": "confirmation.deposit#deposit-confirmed"
+        "http":
+          "url": "${{env.host}}/procurement/agreement/${{captures.capture_1_0}}/deposit/r\
+            equest/${{captures.capture_2_0}}/confirmation"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.buyer"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "deposit-confirmation-001"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "登记deposit confirmation，关闭对应的履约请求"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "confirmed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "confirmed_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "deposit_amount":
+                  "type": "number"
+                  "description": "20% of the requested amount"
+                  "x-evidence-origin": "derived"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                  "x-evidence-rule": "rule.deposit-amount"
+                  "x-evidence-derived-by-rule": "rule.deposit-amount"
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "confirmed_at"
+                - "deposit_amount"
+                - "_links"
+              "examples":
+                - "id": "deposit-confirmation-001"
+                  "deposit_amount": 100
+                  "confirmed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "deposit-confirmation-001"
+              "$[\"confirmed_at\"]": "2026-03-31T10:00:00Z"
+              "$[\"deposit_amount\"]": 100
+  "flow_2":
+    "name": "payment"
+    "env":
+      "evidenceTags": "[\"flow:payment\"]"
+    "steps":
+      - "name": "contract.agreement#signed"
+        "http":
+          "url": "${{env.host}}/procurement/agreement"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.buyer"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "agreement-001"
+          "captures":
+            "capture_4_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema": *a1
+            "jsonpath":
+              "$[\"id\"]": "agreement-001"
+              "$[\"signed_at\"]": "2026-03-31T10:00:00Z"
+      - "name": "request.payment#requested"
+        "http":
+          "url": "${{env.host}}/procurement/agreement/${{captures.capture_4_0}}/payment/r\
+            equest"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.seller"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "request-001"
+            "quantity": 10
+            "unit_price": 50
+          "captures":
+            "capture_5_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "发起payment request，开启一个有截止时间的履约窗口"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "started_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "started_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "expired_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "expired_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "quantity":
+                  "type": "integer"
+                  "description": "quantity"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "unit_price":
+                  "type": "number"
+                  "description": "unit_price"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "started_at"
+                - "expired_at"
+                - "quantity"
+                - "unit_price"
+                - "_links"
+              "examples":
+                - "id": "request-001"
+                  "quantity": 10
+                  "unit_price": 50
+                  "started_at": "2026-03-31T10:00:00Z"
+                  "expired_at": "2026-04-01T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "request-001"
+              "$[\"quantity\"]": 10
+              "$[\"unit_price\"]": 50
+              "$[\"started_at\"]": "2026-03-31T10:00:00Z"
+              "$[\"expired_at\"]": "2026-04-01T10:00:00Z"
+      - "name": "confirmation.payment#bad-input"
+        "http":
+          "url": "${{env.host}}/procurement/agreement/${{captures.capture_4_0}}/payment/r\
+            equest/${{captures.capture_5_0}}/confirmation"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.buyer"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "rejected-001"
+            "total_amount": 1
+          "check":
+            "status": 422
+            "jsonpath":
+              "$.error": "INVALID_INPUT"
+      - "name": "confirmation.payment#confirmed"
+        "http":
+          "url": "${{env.host}}/procurement/agreement/${{captures.capture_4_0}}/payment/r\
+            equest/${{captures.capture_5_0}}/confirmation"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.buyer"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "confirmation-001"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "登记payment confirmation，关闭对应的履约请求"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "confirmed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "confirmed_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "total_amount":
+                  "type": "number"
+                  "description": "total_amount"
+                  "x-evidence-origin": "derived"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                  "x-evidence-rule": "rule.total-amount"
+                  "x-evidence-derived-by-rule": "rule.total-amount"
+                "note":
+                  "type": "string"
+                  "description": "note"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "confirmed_at"
+                - "total_amount"
+                - "_links"
+              "examples":
+                - "id": "confirmation-001"
+                  "total_amount": 500
+                  "confirmed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+                - "id": "confirmation-001"
+                  "total_amount": 500
+                  "confirmed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "confirmation-001"
+              "$[\"confirmed_at\"]": "2026-03-31T10:00:00Z"
+              "$[\"total_amount\"]": 500

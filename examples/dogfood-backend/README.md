@@ -30,6 +30,48 @@ of caller-supplied `total_amount`. Further fault modes: `accept-derived` and
 `extra-field`. The server binds **only to loopback**, prints its URL as JSON on
 startup (`--port 0` chooses an available port), and handles SIGINT/SIGTERM.
 
+## Incremental deposit / dual-gate demonstration
+
+`--mode v1` supports only the original payment flow. `--mode v2` (default) also
+supports an independent deposit request/confirmation pair and computes a 20%
+deposit without importing model rules. The deposit model preserves the original
+payment examples and adds an isolated three-step `deposit` flow. It intentionally
+does not make deposits mandatory for existing payments (that would be a breaking
+business policy change, not an additive demonstration).
+
+```sh
+pnpm evidence export --model examples/acceptance/procurement-deposit.evidence.json \
+  --out examples/governance/generated
+pnpm evidence export --model examples/acceptance/procurement-deposit.evidence.json \
+  --out examples/governance/generated --verify
+node examples/dogfood-backend/server.mjs --port 8085 --mode v1
+# Another terminal; regression passes, DoD fails at the new deposit request (404):
+pnpm evidence test --target http://127.0.0.1:8085 \
+  --scenarios examples/governance/generated --gate regression \
+  --baseline-model examples/acceptance/procurement.evidence.json
+pnpm evidence test --target http://127.0.0.1:8085 \
+  --scenarios examples/governance/generated --gate dod \
+  --baseline-model examples/acceptance/procurement.evidence.json
+```
+
+Restart with `--mode v2`: both gates pass. Use `--allow-pending` **explicitly** on
+DoD only for feature development; it returns zero for incomplete business checks
+but retains `passed: false` / PENDING in reports. Infrastructure errors and strict
+drift remain fatal. Never use it for merge/release gates.
+
+`--fault extra-field` produces `/unmodeled` warnings with `--detect-drift` and
+fails with `--strict-drift`. `--fault missing-derived` omits the calculated amount;
+JSONPath business assertions still fail in advisory mode, and the probe also
+reports the missing required field. `--fault amount` proves the original
+baseline regression still catches wrong totals. Drift inspects actual observed
+responses, not production traffic or unexecuted endpoints.
+
+Filters (`--filter 'deposit*'`, `--tag deposit`) select **whole flows**, including
+all prerequisite steps. Regression executes the original baseline suite, not a
+weakened intersection with head. DoD executes new **or changed** complete flows.
+Generated flow ordinals and capture names do not create false increments.
+Use `--json`, `--report markdown`, or `--report junit` to publish results in CI.
+
 ## Request-scoped business clock
 
 The server uses `interceptors/node.mjs` (AsyncLocalStorage). Every business read
