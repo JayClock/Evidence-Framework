@@ -19,6 +19,84 @@ const stepsFixture = () =>
     }),
   );
 
+describe('offline flow story projection', () => {
+  it('produces stable model-labeled fact cards without calling an injected agent or sharing its cache', async () => {
+    const generate = vi.fn().mockResolvedValue(sceneDraft());
+    const cache = new StorySceneCache();
+    const model = modelFixture();
+    const flow = flowFixture();
+    const ai = createFlowStoryProjector({ agent: { generate }, cache });
+    await ai.project(flow, model);
+    generate.mockClear();
+    const offline = createFlowStoryProjector({
+      skipAi: true,
+      agent: { generate },
+      cache,
+    });
+    const result = await offline.project(flow, model);
+    expect(result.scenes[0]).toMatchObject({
+      stepIndex: 1,
+      stepHash: flow.steps[0]!.stepHash,
+      phaseTitle: '办理《付款申请单》',
+      actingRoleLabel: '供应商销售部',
+      targetEntityLabel: '付款申请单',
+      documentCard: {
+        fields: [
+          { name: 'amount', label: '金额', value: '100', keyData: true },
+        ],
+      },
+      ruleEvaluations: [],
+    });
+    expect(result.scenes[0]!.narrative).toContain('未执行验收或规则判定');
+    expect(result.scenes[0]!.stateTransitionNotice).toBeUndefined();
+    expect(result.scenes[0]!.pendingSuspense).toBeUndefined();
+    expect(await offline.project(flow, model)).toEqual(result);
+    expect(generate).not.toHaveBeenCalled();
+    expect((await ai.project(flow, model)).scenes[0]!.phaseTitle).toBe(
+      '卖方发出支付主张',
+    );
+    expect(generate).not.toHaveBeenCalled();
+  });
+
+  it('works without a model, preserves exact values and declared basis, and exposes gap questions', async () => {
+    const cache = new StorySceneCache();
+    const projector = createFlowStoryProjector({ skipAi: true, cache });
+    const step = stepFixture({
+      actingRoleRef: undefined,
+      values: {
+        payload: { z: false, a: [1, null] },
+        amount: '9007199254740993',
+      },
+      basedOn: ['contract.purchase#签约'],
+      derivedAssertions: { completed: true },
+      gaps: ['unpaired_request'],
+    });
+    const result = await projector.project(flowFixture([step]));
+    expect(result.scenes[0]).toMatchObject({
+      actingRoleLabel: '待明确经办方',
+      documentCard: {
+        fields: [
+          {
+            name: 'amount',
+            label: 'amount',
+            value: '9007199254740993',
+            keyData: false,
+          },
+          { name: 'payload', value: '{"a":[1,null],"z":false}' },
+        ],
+        basisNotes: '声明依据：contract.purchase#签约',
+      },
+      ruleEvaluations: [],
+      pendingSuspense: expect.stringMatching(/确认单据.*[？?]/u),
+    });
+    expect(cache.has(step.stepHash)).toBe(false);
+    expect((await projector.project(flowFixture([]))).scenes).toEqual([]);
+    await expect(projector.project(flowFixture([step, step]))).rejects.toThrow(
+      'sequences',
+    );
+  });
+});
+
 describe('incremental flow story projection', () => {
   it('calls the agent once per initial step and only once for an edited third step', async () => {
     const generate = vi.fn().mockResolvedValue(sceneDraft());

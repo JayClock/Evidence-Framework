@@ -18,6 +18,8 @@ import type {
 } from './types.js';
 
 export interface FlowStoryProjectorOptions {
+  /** Deterministic fact cards only; never initialize or call an LLM. */
+  readonly skipAi?: boolean;
   readonly agent?: StoryAgent;
   readonly cache?: StorySceneCache;
   readonly projectRoot?: string;
@@ -39,7 +41,9 @@ const suspenseFor = (step: FlowStepTrace): string =>
 export const createFlowStoryProjector = (
   options: FlowStoryProjectorOptions = {},
 ): FlowStoryProjector => {
-  const agent = options.agent ?? createStoryAgent(options);
+  const agent = options.skipAi
+    ? undefined
+    : (options.agent ?? createStoryAgent(options));
   const cache = options.cache ?? new StorySceneCache();
   const pending = new Map<string, Promise<StoryScene>>();
 
@@ -66,6 +70,46 @@ export const createFlowStoryProjector = (
         );
         const labelOf = (ref: string | undefined): string | undefined =>
           model?.entities.find((item) => item.id === ref)?.label;
+        if (agent === undefined) {
+          const actingRoleLabel =
+            labelOf(step.actingRoleRef) ?? step.actingRoleRef ?? '待明确经办方';
+          scenes.push({
+            stepIndex: step.sequence,
+            stepHash: step.stepHash,
+            phaseTitle: `办理《${step.entityLabel}》`,
+            narrative: `${actingRoleLabel}办理《${step.entityLabel}》，业务时点为${step.asOf}。仅展示模型声明的事实，未执行验收或规则判定。`,
+            actingRoleLabel,
+            targetEntityLabel: step.entityLabel,
+            documentCard: {
+              title: step.entityLabel,
+              fields: Object.keys(step.values)
+                .sort()
+                .map((name) => {
+                  const attribute = entity?.attributes?.find(
+                    (item) => item.name === name,
+                  );
+                  return {
+                    name,
+                    label: attribute?.label ?? name,
+                    value:
+                      typeof step.values[name] === 'string'
+                        ? (step.values[name] as string)
+                        : compactCanonicalJson(step.values[name]),
+                    keyData: attribute?.keyData ?? false,
+                  };
+                }),
+              ...(step.basedOn.length === 0
+                ? {}
+                : { basisNotes: `声明依据：${step.basedOn.join('、')}` }),
+            },
+            ruleEvaluations: [],
+            ...(step.gaps.length === 0
+              ? {}
+              : { pendingSuspense: suspenseFor(step) }),
+          });
+          // Offline output must not read or populate the AI scene cache.
+          continue;
+        }
         // Do not include examples, sequence or traceDigest: unrelated edits and
         // inserting a step must not invalidate unchanged local business facts.
         const facts = {
