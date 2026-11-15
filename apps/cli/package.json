@@ -1,0 +1,45 @@
+{
+  "name": "@evidence-poc/cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "evidence": "./dist/cli.js"
+  },
+  "nx": {
+    "name": "cli",
+    "tags": [
+      "type:app",
+      "layer:app",
+      "platform:node",
+      "scope:cli"
+    ],
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": ["production", "^production"],
+        "outputs": [
+          "{projectRoot}/dist"
+        ],
+        "options": {
+          "command": "tsc -b apps/cli/tsconfig.app.json"
+        }
+      },
+      "test": {
+        "cache": false
+      }
+    }
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-api": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-model-io": "workspace:*",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "vitest": "~4.1.0"
+  }
+}
