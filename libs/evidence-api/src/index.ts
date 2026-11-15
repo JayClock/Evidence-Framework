@@ -1,4 +1,13 @@
 export {
+  projectAcceptanceTests,
+  type AcceptanceProjection,
+  type AcceptanceFlow,
+  type AcceptanceStep,
+} from './delivery/scenarioProjector.js';
+export { renderStepCi } from './renderer/stepCiRenderer.js';
+export { renderHurl } from './renderer/hurlRenderer.js';
+
+export {
   compareContracts,
   type ContractComparison,
 } from './diff/compareContracts.js';

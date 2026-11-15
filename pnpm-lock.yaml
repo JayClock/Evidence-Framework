@@ -557,6 +557,9 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
     devDependencies:
       openapi-typescript:
         specifier: 7.13.0
