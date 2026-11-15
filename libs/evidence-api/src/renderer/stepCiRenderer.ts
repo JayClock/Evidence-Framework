@@ -1,8 +1,25 @@
 import { stringify } from 'yaml';
+import { assertLiteralData } from './testLiterals.js';
 import type { AcceptanceProjection } from '../delivery/scenarioProjector.js';
 
 /** Step CI 2.x configures Liquidless with the `${{...}}` delimiter. */
 export function renderStepCi(projection: AcceptanceProjection): string {
+  for (const flow of projection.flows)
+    for (const step of flow.steps) {
+      assertLiteralData(
+        [
+          step.ref,
+          step.asOf,
+          step.actingRoleRef,
+          step.inputs,
+          step.assertions,
+          step.captures,
+          step.responseSchema,
+        ],
+        '${{',
+        step.ref,
+      );
+    }
   const tests = Object.fromEntries(
     projection.flows.map((flow, index) => [
       `flow_${index + 1}`,
@@ -40,6 +57,9 @@ export function renderStepCi(projection: AcceptanceProjection): string {
                 }),
             check: {
               status: step.status,
+              ...(step.responseSchema === undefined
+                ? {}
+                : { schema: step.responseSchema }),
               ...(Object.keys(step.assertions).length === 0
                 ? {}
                 : { jsonpath: step.assertions }),

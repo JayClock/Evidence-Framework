@@ -7,6 +7,9 @@ import {
 } from '@evidence-poc/evidence-schema';
 import { evaluateRuleOnExample } from '@evidence-poc/evidence-model-core';
 import { buildDeliveryRoutes, type DeliveryRoute } from './routes.js';
+import { buildDeliveryContract } from './modelDelivery.js';
+import { componentName } from './schemaName.js';
+import { compareText } from '../order.js';
 
 /** Ephemeral compiler IR, never a persisted or user-authored suite format. */
 export interface AcceptanceStep {
@@ -17,6 +20,7 @@ export interface AcceptanceStep {
   status: number;
   inputs: Record<string, unknown>;
   assertions: Record<string, unknown>;
+  responseSchema?: Record<string, unknown>;
   /** Path placeholder -> captured variable name. */
   parameters: Record<string, string>;
   /** Captured variable -> JSONPath in this response. */
@@ -45,7 +49,7 @@ const stable = (value: unknown): string =>
   JSON.stringify(value, (_key, item: unknown) =>
     item !== null && typeof item === 'object' && !Array.isArray(item)
       ? Object.fromEntries(
-          Object.entries(item).sort(([a], [b]) => a.localeCompare(b)),
+          Object.entries(item).sort(([a], [b]) => compareText(a, b)),
         )
       : item,
   );
@@ -59,6 +63,7 @@ export function projectAcceptanceTests(
   routes: readonly DeliveryRoute[] = buildDeliveryRoutes(model),
 ): AcceptanceProjection {
   assertValidDomainModel(model);
+  const schemas = buildDeliveryContract(model, routes).components.schemas;
   const cases = new Map<string, Case>();
   for (const entity of model.entities)
     for (const example of entity.examples ?? []) {
@@ -108,7 +113,7 @@ export function projectAcceptanceTests(
     ordered.push(item);
   };
   for (const item of [...cases.values()].sort((a, b) =>
-    a.ref.localeCompare(b.ref),
+    compareText(a.ref, b.ref),
   ))
     visit(item);
   const facts = new Map<string, Record<string, unknown>>();
@@ -244,6 +249,14 @@ export function projectAcceptanceTests(
       status: status!,
       inputs,
       assertions,
+      ...(positive
+        ? {
+            responseSchema: schemas[componentName(route.entityRef)] as Record<
+              string,
+              unknown
+            >,
+          }
+        : {}),
       parameters: {},
       captures: {},
     };
@@ -302,6 +315,6 @@ export function projectAcceptanceTests(
   }
   return {
     modelId: model.manifest.id,
-    flows: [...flows.values()].sort((a, b) => a.id.localeCompare(b.id)),
+    flows: [...flows.values()].sort((a, b) => compareText(a.id, b.id)),
   };
 }

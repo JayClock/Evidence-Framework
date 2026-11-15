@@ -172,6 +172,32 @@ describe('direct inline-example acceptance projection', () => {
     const steps = projectAcceptanceTests(model).flows[0]!.steps;
     expect(Object.values(steps[1]!.captures)).toContain('$.reference');
   });
+  it('refuses template injection in literal example data', () => {
+    const projection = projectAcceptanceTests(createAcceptanceModel());
+    projection.flows[0]!.steps[0]!.inputs['id'] = '${{env.host}}';
+    expect(() => renderStepCi(projection)).toThrow('TEST_TEMPLATE_UNSUPPORTED');
+    expect(() => renderHurl(projection)).toThrow('TEST_TEMPLATE_UNSUPPORTED');
+  });
+  it('keeps independent flows and capture namespaces separate', () => {
+    const model = createAcceptanceModel();
+    const contract = model.entities.find(
+      (entity) => entity.id === 'contract.agreement',
+    )!;
+    contract.examples!.push({
+      ...structuredClone(contract.examples![0]!),
+      label: 'independent',
+      test: { ...contract.examples![0]!.test!, flow: 'other' },
+    });
+    const projection = projectAcceptanceTests(model);
+    expect(projection.flows.map((flow) => flow.steps.length).sort()).toEqual([
+      1, 3,
+    ]);
+    expect(Object.keys(renderHurl(projection))).toEqual([
+      'flow-001.hurl',
+      'flow-002.hurl',
+    ]);
+    expect(Object.keys(parse(renderStepCi(projection)).tests)).toHaveLength(2);
+  });
   it('does not support complex Hurl equality silently', () => {
     const projection = projectAcceptanceTests(createAcceptanceModel());
     projection.flows[0]!.steps[0]!.assertions['$.object'] = { nested: 1 };

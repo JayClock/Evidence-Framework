@@ -43,6 +43,10 @@
       "items": { "$ref": "#/$defs/attribute" },
       "uniqueItems": true
     },
+    "examples": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/example" }
+    },
     "notes": { "type": "string", "minLength": 1 },
     "sourceSnippet": { "$ref": "#/$defs/provenance" }
   },
@@ -197,10 +201,78 @@
         "required": ["category"]
       },
       "then": { "required": ["kind"] }
+    },
+    {
+      "if": {
+        "properties": { "category": { "not": { "const": "evidence" } } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": {
+          "examples": { "items": { "properties": { "test": false } } }
+        }
+      }
     }
   ],
   "additionalProperties": false,
   "$defs": {
+    "example": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "value": { "type": "object" },
+        "test": { "$ref": "#/$defs/exampleTest" }
+      },
+      "additionalProperties": false
+    },
+    "exampleTest": {
+      "type": "object",
+      "required": ["flow", "actingRoleRef", "asOf"],
+      "properties": {
+        "flow": { "type": "string", "pattern": "\\S" },
+        "actingRoleRef": { "$ref": "#/$defs/id" },
+        "asOf": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "basedOn": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "expectedStatus": { "type": "integer", "minimum": 200, "maximum": 599 },
+        "inputs": { "type": "object" },
+        "expect": {
+          "type": "object",
+          "propertyNames": { "pattern": "^\\$" }
+        },
+        "pathParameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["exampleRef", "jsonpath"],
+            "properties": {
+              "exampleRef": { "type": "string", "minLength": 1 },
+              "jsonpath": { "type": "string", "pattern": "^\\$" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["inputs"] },
+          "then": {
+            "required": ["expectedStatus"],
+            "properties": { "expectedStatus": { "minimum": 400 } }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$" },
     "provenance": {
       "description": "Sentence an ingested element was read from, so a reviewer can re-read the clause instead of trusting the extraction.",

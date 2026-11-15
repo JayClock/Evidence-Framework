@@ -17,14 +17,15 @@ it('official Step CI Runner consumes emitted YAML and resolves chained captures'
     response.writeHead(step.status, { 'content-type': 'application/json' });
     // A fixed response for the syntax smoke: not an implementation of the model.
     response.end(
-      JSON.stringify(
-        Object.fromEntries(
+      JSON.stringify({
+        ...Object.fromEntries(
           Object.entries(step.assertions).map(([path, value]) => [
             JSON.parse(path.slice(2, -1)),
             value,
           ]),
         ),
-      ),
+        _links: {},
+      }),
     );
   });
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));

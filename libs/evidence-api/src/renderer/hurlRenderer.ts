@@ -1,3 +1,4 @@
+import { assertLiteralData } from './testLiterals.js';
 import type { AcceptanceProjection } from '../delivery/scenarioProjector.js';
 
 /** One independent Hurl document per flow: captures never leak across cases. */
@@ -10,6 +11,11 @@ export function renderHurl(
         '# Generated from inline model examples. Test environment only.',
       ];
       for (const step of flow.steps) {
+        assertLiteralData(
+          [step.inputs, step.assertions, step.captures],
+          '{{',
+          step.ref,
+        );
         const path = step.route.path.replace(
           /\{([^{}]+)\}/g,
           (_match, name: string) => `{{${step.parameters[name]}}}`,

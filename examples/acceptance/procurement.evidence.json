@@ -1,0 +1,433 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "procurement-evolution",
+    "name": "Procurement evolution",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "entryContextRefs": ["context.sourcing", "context.procurement"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "confirmation.payment",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "payment confirmation",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "confirmed_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "total_amount",
+          "label": "total_amount",
+          "meaning": "total_amount",
+          "valueType": "decimal",
+          "required": true,
+          "derivedByRuleRef": "rule.total-amount"
+        },
+        {
+          "name": "note",
+          "label": "note",
+          "meaning": "note",
+          "valueType": "string",
+          "required": false
+        }
+      ],
+      "examples": [
+        {
+          "label": "confirmed",
+          "value": {
+            "id": "confirmation-001",
+            "total_amount": 500,
+            "confirmed_at": "2026-03-31T10:00:00Z"
+          },
+          "test": {
+            "flow": "payment",
+            "asOf": "2026-03-31T10:00:00Z",
+            "actingRoleRef": "role.buyer",
+            "basedOn": ["request.payment#requested"]
+          }
+        },
+        {
+          "label": "bad-input",
+          "value": {
+            "id": "confirmation-001",
+            "total_amount": 500,
+            "confirmed_at": "2026-03-31T10:00:00Z"
+          },
+          "test": {
+            "flow": "payment",
+            "asOf": "2026-03-31T10:00:00Z",
+            "actingRoleRef": "role.buyer",
+            "basedOn": ["request.payment#requested"],
+            "expectedStatus": 422,
+            "inputs": {
+              "id": "rejected-001",
+              "total_amount": 1
+            },
+            "expect": {
+              "$.error": "INVALID_INPUT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "context.procurement",
+      "category": "context",
+      "kind": "contract",
+      "label": "Procurement",
+      "rootRefs": ["contract.agreement"]
+    },
+    {
+      "type": "entity",
+      "id": "context.sourcing",
+      "category": "context",
+      "kind": "pre_contract",
+      "label": "Sourcing",
+      "parentContextRef": "context.procurement"
+    },
+    {
+      "type": "entity",
+      "id": "contract.agreement",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.procurement",
+      "label": "Agreement",
+      "roleRefs": ["role.buyer", "role.seller"],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "signed_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "signed",
+          "value": {
+            "id": "agreement-001",
+            "signed_at": "2026-03-31T10:00:00Z"
+          },
+          "test": {
+            "flow": "payment",
+            "asOf": "2026-03-31T10:00:00Z",
+            "actingRoleRef": "role.buyer"
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "party.buyer",
+      "category": "participant",
+      "kind": "party",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "party.seller",
+      "category": "participant",
+      "kind": "party",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "proposal.quotation",
+      "category": "evidence",
+      "kind": "proposal",
+      "contextRef": "context.sourcing",
+      "label": "Quotation",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.payment",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "payment request",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "quantity",
+          "label": "quantity",
+          "meaning": "quantity",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "unit_price",
+          "label": "unit_price",
+          "meaning": "unit_price",
+          "valueType": "decimal",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "requested",
+          "value": {
+            "id": "request-001",
+            "quantity": 10,
+            "unit_price": 50,
+            "started_at": "2026-03-31T10:00:00Z",
+            "expired_at": "2026-04-01T10:00:00Z"
+          },
+          "test": {
+            "flow": "payment",
+            "asOf": "2026-03-31T10:00:00Z",
+            "actingRoleRef": "role.seller",
+            "basedOn": ["contract.agreement#signed"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "rfp.inquiry",
+      "category": "evidence",
+      "kind": "rfp",
+      "contextRef": "context.sourcing",
+      "label": "Inquiry",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.buyer",
+      "category": "role",
+      "kind": "party",
+      "label": "buyer",
+      "contextRef": "context.procurement"
+    },
+    {
+      "type": "entity",
+      "id": "role.seller",
+      "category": "role",
+      "kind": "party",
+      "label": "seller",
+      "contextRef": "context.procurement"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.payment-request.payment",
+      "kind": "references",
+      "sourceRef": "confirmation.payment",
+      "targetRef": "request.payment",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.agreement-proposal.quotation",
+      "kind": "references",
+      "sourceRef": "contract.agreement",
+      "targetRef": "proposal.quotation",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.buyer-role.buyer",
+      "kind": "plays_role",
+      "sourceRef": "party.buyer",
+      "targetRef": "role.buyer",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.seller-role.seller",
+      "kind": "plays_role",
+      "sourceRef": "party.seller",
+      "targetRef": "role.seller",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.proposal.quotation-rfp.inquiry",
+      "kind": "references",
+      "sourceRef": "proposal.quotation",
+      "targetRef": "rfp.inquiry",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.payment-contract.agreement",
+      "kind": "references",
+      "sourceRef": "request.payment",
+      "targetRef": "contract.agreement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.total-amount",
+      "kind": "derivation",
+      "label": "Total amount",
+      "description": "Calculate the confirmed amount",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "request": {
+          "ref": "request.payment"
+        }
+      },
+      "expression": "double(request.quantity) * request.unit_price",
+      "resultType": "decimal",
+      "target": {
+        "entityRef": "confirmation.payment",
+        "attribute": "total_amount"
+      }
+    }
+  ]
+}
