@@ -5,6 +5,8 @@ import {
   rmSync,
   writeFileSync,
   symlinkSync,
+  statSync,
+  mkdirSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -65,6 +67,35 @@ it('leaves previous output intact if acceptance compilation fails', async () => 
   expect(await dispatch(['export', '--model', model], context())).toBe(1);
   expect(readFileSync(suite, 'utf8')).toBe(before);
 });
+
+it('verifies exact artifacts without writes and diagnoses missing, changed and orphan files', async () => {
+  const args = ['export', '--model', model, '--out', 'generated'];
+  const errors: string[] = [];
+  const ctx = { ...context(), stderr: (text: string) => errors.push(text) };
+  expect(await dispatch([...args, '--verify'], ctx)).toBe(1);
+  expect(errors.pop()).toContain('MISSING: openapi.json');
+  expect(readdirSync(root)).toEqual(['model.evidence.json']);
+  expect(await dispatch(args, ctx)).toBe(0);
+  const out = path.join(root, 'generated');
+  const file = path.join(out, 'openapi.json');
+  const modified = statSync(file).mtimeMs;
+  expect(await dispatch([...args, '--verify'], ctx)).toBe(0);
+  expect(statSync(file).mtimeMs).toBe(modified);
+  writeFileSync(file, readFileSync(file, 'utf8').replace(/\n/g, '\r\n'));
+  rmSync(path.join(out, 'acceptance.stepci.yml'));
+  mkdirSync(path.join(out, 'old'));
+  writeFileSync(path.join(out, 'old', 'orphan.hurl'), 'orphan');
+  expect(await dispatch([...args, '--verify'], ctx)).toBe(1);
+  expect(errors.pop()).toMatch(
+    /MISSING: acceptance.stepci.yml[\s\S]*MODIFIED: openapi.json[\s\S]*EXTRA: old\/orphan.hurl[\s\S]*evidence export/,
+  );
+  expect(await dispatch(args, ctx)).toBe(0);
+  expect(await dispatch([...args, '--verify'], ctx)).toBe(0);
+  rmSync(file);
+  symlinkSync(path.join(root, 'missing'), file);
+  expect(await dispatch([...args, '--verify'], ctx)).toBe(1);
+});
+
 it('refuses destructive output overlaps including symlink aliases', async () => {
   for (const out of ['.', path.parse(root).root, model])
     expect(
