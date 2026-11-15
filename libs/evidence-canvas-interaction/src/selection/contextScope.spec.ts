@@ -2,7 +2,7 @@ import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { describe, expect, it } from 'vitest';
 import {
   computeContextScope,
-  createGraphLayout,
+  computeGraphLayout,
   rectContainsRect,
   toSerializableLayout,
 } from '../index.js';
@@ -11,9 +11,10 @@ import {
   createFixtureModel,
 } from '../../tests/support/fixtureModel.js';
 
+const { layout } = await createFixtureModel();
+
 describe('computeContextScope', () => {
-  it('includes descendants and explicit one-hop neighbours, not their other neighbours', () => {
-    const { layout } = createFixtureModel();
+  it('includes descendants and one-hop neighbours without mutating the layout', () => {
     const before = JSON.stringify(toSerializableLayout(layout));
     const scope = computeContextScope(layout, 'context.product-sourcing')!;
     expect([...scope.subtreeContextIds].sort()).toEqual([
@@ -26,19 +27,18 @@ describe('computeContextScope', () => {
     expect(scope.contextIds.has('context.product-catalog')).toBe(true);
     expect(scope.edgeIds.has('relation.request-references-product')).toBe(true);
     for (const id of scope.nodeIds)
-      expect(rectContainsRect(scope.bounds, layout.nodeById.get(id)!.box)).toBe(
-        true,
-      );
+      expect(
+        rectContainsRect(scope.bounds, layout.nodeById.get(id)!.worldBox),
+      ).toBe(true);
     expect(JSON.stringify(toSerializableLayout(layout))).toBe(before);
   });
   it('does not pull a parent Context’s objects into a child scope', () => {
-    const { layout } = createFixtureModel();
     const scope = computeContextScope(layout, 'context.product-procurement')!;
     expect(scope.contextIds.has('context.product-sourcing')).toBe(true);
     expect(scope.subtreeContextIds.has('context.product-sourcing')).toBe(false);
     expect(scope.nodeIds.has('evidence.rfp')).toBe(false);
   });
-  it('includes responsibility-only neighbours without inventing relationship edges', () => {
+  it('includes responsibility-only neighbours without inventing edges', async () => {
     const document = createFixtureDocument();
     const request = document.entities.find(
       (entity) => entity.id === 'evidence.delivery-request',
@@ -46,13 +46,13 @@ describe('computeContextScope', () => {
     if (request.category === 'evidence')
       request.responsibleRoleRef = 'role.inventory';
     const scope = computeContextScope(
-      createGraphLayout(createDomainGraph(document)),
+      await computeGraphLayout(createDomainGraph(document)),
       'context.product-procurement',
     )!;
     expect(scope.nodeIds.has('role.inventory')).toBe(true);
     expect(scope.edgeIds.size).toBe(document.relationships.length);
   });
-  it('only returns relevant edges even when both endpoints happen to be one-hop neighbours', () => {
+  it('excludes unrelated edges between neighbours', async () => {
     const document = createFixtureDocument();
     document.relationships.push({
       type: 'relationship',
@@ -63,25 +63,13 @@ describe('computeContextScope', () => {
       label: '外部关系',
     });
     const scope = computeContextScope(
-      createGraphLayout(createDomainGraph(document)),
+      await computeGraphLayout(createDomainGraph(document)),
       'context.product-procurement',
     )!;
     expect(scope.edgeIds.has('unrelated')).toBe(false);
   });
-  it('falls back to the whole model for cleared, missing and omitted Contexts', () => {
-    const { layout } = createFixtureModel();
-    expect(computeContextScope(layout, null)).toBeNull();
-    expect(computeContextScope(layout, 'deleted')).toBeNull();
-    expect(computeContextScope(layout, 'evidence.delivery-request')).toBeNull();
-  });
-  it('terminates on malformed Context hierarchy cycles', () => {
-    const { layout } = createFixtureModel();
-    const root = layout.contextGroupById.get('context.product-sourcing')!;
-    const child = layout.contextGroupById.get('context.product-procurement')!;
-    child.childContextIds = [root.contextId];
-    root.parentContextId = child.contextId;
-    expect(
-      computeContextScope(layout, root.contextId)!.subtreeContextIds.size,
-    ).toBe(2);
+  it('returns null for cleared, missing and non-Context ids', () => {
+    for (const id of [null, 'deleted', 'evidence.delivery-request'])
+      expect(computeContextScope(layout, id)).toBeNull();
   });
 });

@@ -10,7 +10,7 @@ import {
   type DomainGraph,
 } from '@evidence-poc/evidence-model-core';
 
-import { createGraphLayout, type DomainGraphLayout } from '../../src/index.js';
+import { computeGraphLayout, type DomainGraphLayout } from '../../src/index.js';
 
 const timestamp = (
   name: string,
@@ -293,9 +293,9 @@ export interface FixtureModel {
   layout: DomainGraphLayout;
 }
 
-export const createFixtureModel = (): FixtureModel => {
+export const createFixtureModel = async (): Promise<FixtureModel> => {
   const document = createFixtureDocument();
   const graph = createDomainGraph(document);
 
-  return { document, graph, layout: createGraphLayout(graph) };
+  return { document, graph, layout: await computeGraphLayout(graph) };
 };

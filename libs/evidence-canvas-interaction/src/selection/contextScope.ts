@@ -51,7 +51,7 @@ export const computeContextScope = (
     const group = layout.contextGroupById.get(ref);
     if (group) {
       contextIds.add(ref);
-      if (!subtreeContextIds.has(ref)) neighbourFrames.push(group.box);
+      if (!subtreeContextIds.has(ref)) neighbourFrames.push(group.worldBox);
     }
   };
 
@@ -88,13 +88,13 @@ export const computeContextScope = (
     contextIds,
     edgeIds,
     bounds: boundsOfRects([
-      selected.box,
+      selected.worldBox,
       ...neighbourFrames,
       ...layout.nodes
         .filter(
           (node) => nodeIds.has(node.nodeId) && !coreNodeIds.has(node.nodeId),
         )
-        .map((node) => node.box),
+        .map((node) => node.worldBox),
     ])!,
   };
 };
