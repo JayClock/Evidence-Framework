@@ -10,6 +10,85 @@ import { projectAcceptanceTests } from '../delivery/scenarioProjector.js';
 import { createAcceptanceModel } from '../../tests/support/acceptance.js';
 import { runAcceptanceSuite, validateAsOf } from './acceptanceRunner.js';
 
+it('reports drift as advisory or strict without replacing other official assertions', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'acceptance-drift-'));
+  let payload = '{"amount":500,"secret":true}';
+  const server = createServer((_req, res) => {
+    res.setHeader('content-type', 'application/json');
+    res.end(payload);
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const suitePath = path.join(root, 'suite.yml');
+    await writeFile(
+      suitePath,
+      stringify({
+        version: '1.1',
+        name: 'drift',
+        tests: {
+          flow: {
+            steps: [
+              {
+                http: {
+                  url: '${{env.host}}',
+                  method: 'GET',
+                  check: {
+                    status: 200,
+                    schema: {
+                      type: 'object',
+                      required: ['amount'],
+                      additionalProperties: false,
+                      properties: { amount: { type: 'number' } },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }),
+    );
+    const options = {
+      suitePath,
+      targetUrl: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
+    };
+    expect((await runAcceptanceSuite(options)).passed).toBe(false);
+    const advisory = await runAcceptanceSuite({
+      ...options,
+      detectDrift: true,
+    });
+    expect(advisory.passed).toBe(true);
+    expect(advisory.steps[0]?.driftIssues).toContainEqual(
+      expect.objectContaining({ type: 'extraneous_field', path: '/secret' }),
+    );
+    expect(
+      (await runAcceptanceSuite({ ...options, strictDrift: true })).passed,
+    ).toBe(false);
+    payload = 'not-json';
+    expect(
+      (await runAcceptanceSuite({ ...options, strictDrift: true })).steps[0]
+        ?.driftIssues?.[0]?.keyword,
+    ).toBe('parse');
+    payload = '{"amount":500}';
+    expect(
+      (await runAcceptanceSuite({ ...options, strictDrift: true })).passed,
+    ).toBe(true);
+    const baselineYaml = await import('node:fs/promises').then((fs) =>
+      fs.readFile(suitePath, 'utf8'),
+    );
+    expect(
+      await runAcceptanceSuite({ ...options, gate: 'dod', baselineYaml }),
+    ).toMatchObject({ passed: true, selectedFlowCount: 0, steps: [] });
+    await expect(
+      runAcceptanceSuite({ ...options, filter: 'missing' }),
+    ).rejects.toThrow('No acceptance flows');
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 it('parameterizes distinct step clocks without collapsing a scenario timeline', () => {
   const projection = projectAcceptanceTests(createAcceptanceModel());
   projection.flows[0]!.steps[1]!.asOf = '2026-04-01T10:00:00Z';

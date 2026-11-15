@@ -28,6 +28,7 @@ export interface AcceptanceStep {
 }
 export interface AcceptanceFlow {
   id: string;
+  tags?: string[];
   steps: AcceptanceStep[];
 }
 export interface AcceptanceProjection {
@@ -310,6 +311,10 @@ export function projectAcceptanceTests(
       id: test.flow,
       steps: [],
     };
+    if (test.tags?.length)
+      flow.tags = [...new Set([...(flow.tags ?? []), ...test.tags])].sort(
+        compareText,
+      );
     flow.steps.push(step);
     flows.set(test.flow, flow);
   }

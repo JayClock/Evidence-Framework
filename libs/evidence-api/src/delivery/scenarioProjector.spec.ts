@@ -14,6 +14,24 @@ const getExample = (
 ) => model.entities.find((item) => item.id === entity)!.examples![0]!;
 
 describe('direct inline-example acceptance projection', () => {
+  it('carries optional model tags through standard Step CI test env metadata', () => {
+    const model = createAcceptanceModel();
+    const entity = model.entities.find(
+      (item) => item.id === 'confirmation.payment',
+    )!;
+    entity.examples![0] = {
+      ...entity.examples![0]!,
+      test: { ...entity.examples![0]!.test!, tags: ['dod', 'payment'] },
+    };
+    const projection = projectAcceptanceTests(model);
+    expect(projection.flows[0]?.tags).toEqual(['dod', 'payment']);
+    const workflow = parse(renderStepCi(projection));
+    expect(JSON.parse(workflow.tests.flow_1.env.evidenceTags)).toEqual([
+      `flow:${projection.flows[0]!.id}`,
+      'dod',
+      'payment',
+    ]);
+  });
   it('orders causality, derives assertions and captures modeled IDs without mutating inputs', () => {
     const model = createAcceptanceModel(),
       before = structuredClone(model);

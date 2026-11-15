@@ -49,7 +49,7 @@ export function createDriftInspector(
     strict: false,
     validateFormats: true,
   });
-  addFormats(ajv);
+  addFormats.default(ajv);
   // Local references are resolved by AJV. Remote references are never fetched.
   const validate = ajv.compile(schema);
   return (payload) => {

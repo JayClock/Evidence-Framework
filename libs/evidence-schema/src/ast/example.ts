@@ -2,6 +2,8 @@
 export interface ExampleTestAST {
   /** Examples in one flow execute sequentially; different flows are isolated. */
   readonly flow: string;
+  /** Optional selection labels, carried in native Step CI test env metadata. */
+  readonly tags?: readonly string[];
   readonly actingRoleRef: string;
   /** Explicit business clock; never inferred from wall time. */
   readonly asOf: string;
@@ -34,6 +36,7 @@ export function exampleTestErrors(value: unknown): string[] {
   const errors: string[] = [];
   const keys = new Set([
     'flow',
+    'tags',
     'actingRoleRef',
     'asOf',
     'basedOn',
@@ -57,6 +60,13 @@ export function exampleTestErrors(value: unknown): string[] {
   ) {
     errors.push('asOf must be an RFC 3339 timestamp with an explicit offset');
   }
+  if (
+    value.tags !== undefined &&
+    (!Array.isArray(value.tags) ||
+      !value.tags.every(text) ||
+      new Set(value.tags).size !== value.tags.length)
+  )
+    errors.push('tags must contain unique non-empty strings');
   if (
     value.basedOn !== undefined &&
     (!Array.isArray(value.basedOn) ||

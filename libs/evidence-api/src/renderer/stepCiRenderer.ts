@@ -8,6 +8,7 @@ export function renderStepCi(projection: AcceptanceProjection): string {
     for (const step of flow.steps) {
       assertLiteralData(
         [
+          flow.tags,
           step.ref,
           step.asOf,
           step.actingRoleRef,
@@ -36,6 +37,12 @@ export function renderStepCi(projection: AcceptanceProjection): string {
       `flow_${index + 1}`,
       {
         name: flow.id,
+        env: {
+          evidenceTags: JSON.stringify([
+            `flow:${flow.id}`,
+            ...(flow.tags ?? []),
+          ]),
+        },
         steps: flow.steps.map((step) => ({
           name: step.ref,
           http: {

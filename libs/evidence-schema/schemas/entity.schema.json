@@ -232,6 +232,11 @@
       "required": ["flow", "actingRoleRef", "asOf"],
       "properties": {
         "flow": { "type": "string", "pattern": "\\S" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "\\S" },
+          "uniqueItems": true
+        },
         "actingRoleRef": { "$ref": "#/$defs/id" },
         "asOf": {
           "type": "string",
